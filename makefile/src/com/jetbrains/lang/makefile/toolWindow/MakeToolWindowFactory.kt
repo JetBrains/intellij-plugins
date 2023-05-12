@@ -74,7 +74,7 @@ class MakeToolWindowFactory : ToolWindowFactory {
         showsRootHandles = true
       }
       TreeUtil.installActions(tree)
-      TreeUIHelper.getInstance().installTreeSpeedSearch(tree)
+      TreeSpeedSearch(tree)
       panel.add(ScrollPaneFactory.createScrollPane(tree))
 
       val toolBarPanel = JPanel(GridLayout())

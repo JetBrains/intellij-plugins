@@ -97,7 +97,7 @@ public class ActionScriptPackageChooserDialog extends DialogWrapper {
     JScrollPane scrollPane = new JScrollPane(myTree);
     scrollPane.setPreferredSize(JBUI.size(500, 300));
 
-    TreeSpeedSearch.installOn(myTree, false, path -> {
+    new TreeSpeedSearch(myTree, false, path -> {
       DefaultMutableTreeNode node = (DefaultMutableTreeNode)path.getLastPathComponent();
       Object object = node.getUserObject();
       if (object instanceof VirtualFile) {
