@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.lang.typescript.service
 
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.integration.JSAnnotationError
+import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.service.JSLanguageServiceAnnotationResult
 import com.intellij.lang.javascript.service.JSLanguageServiceFileCommandCache
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceObject
@@ -22,10 +23,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.Consumer
 import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 import org.jetbrains.vuejs.index.findModule
+import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.typescript.service.protocol.VueTypeScriptServiceProtocol
 
@@ -149,6 +153,11 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
     arguments.extraFileExtensions = arrayOf(fileExtensionInfo)
 
     result[ConfigureRequest(arguments)] = Consumer {}
+  }
+
+  override fun skipInternalErrors(element: PsiElement): Boolean {
+    val context = PsiTreeUtil.getParentOfType(element, VueJSEmbeddedExpressionContent::class.java, JSEmbeddedContent::class.java)
+    return context !is VueJSEmbeddedExpressionContent
   }
 
   override fun createFixSet(file: PsiFile,
