@@ -1,5 +1,5 @@
 <script lang="ts">
-namespace <info descr="moduleName">space</info> {
+<info descr="null">namespace</info> <info descr="moduleName">space</info> {
 export class <info descr="exported class">SpaceInterface</info> {
 }
 var <info descr="static field">i</info>:<info descr="exported class">SpaceInterface</info>;
