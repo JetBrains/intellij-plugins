@@ -190,6 +190,24 @@ public class Angular2ExpressionTypesInspectionTest extends Angular2CodeInsightFi
     myFixture.checkHighlighting();
   }
 
+  public void testExpectedTypeTwoDirectives() {
+    configureCommonFiles();
+    myFixture.configureByFiles("expectedTypeTwoDirectives.ts");
+    myFixture.checkHighlighting();
+  }
+
+  public void testExpectedTypeTwoDirectivesWithCommonType() {
+    configureCommonFiles();
+    myFixture.configureByFiles("expectedTypeTwoDirectivesWithCommonType.ts");
+    myFixture.checkHighlighting();
+  }
+
+  public void testExpectedTypeGenericInferenceFromTwoInputs() {
+    configureCommonFiles();
+    myFixture.configureByFiles("expectedTypeGenericInferenceFromTwoInputs.ts");
+    myFixture.checkHighlighting();
+  }
+
   public void testGenericDirectiveReferenceNonStrict() {
     configureCopy(myFixture, ANGULAR_MATERIAL_16_0_0_NEXT_6, ANGULAR_CORE_16_0_0_NEXT_4, ANGULAR_COMMON_16_0_0_NEXT_4,
                   ANGULAR_FORMS_16_0_0_NEXT_4);

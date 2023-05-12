@@ -7,7 +7,7 @@ import {CommonModule} from "@angular/common";
   imports: [CommonModule, AgreeDirective],
   standalone: true,
   template: `
-    <div *appAgree="<error descr="Type Person | null is not assignable to type Person | (null & Person)...  Type null is not assignable to type Person | (null & Person)">personPromise | async</error> as person; second: personPromise | async">
+    <div *appAgree="personPromise | async as person; second: personPromise | async">
       {{expectPerson(<error descr="Argument type Person | null is not assignable to parameter type Person  Type null is not assignable to type Person">person</error>)}}
       {{expectNumber(<error descr="Argument type Person | null is not assignable to parameter type number  Type Person is not assignable to type number">person</error>)}}
     </div>
@@ -34,7 +34,7 @@ export class TestComponentOne extends TestComponentBase {
   imports: [CommonModule, AgreeDirective, AgreeDirectiveDuplicate],
   standalone: true,
   template: `
-    <div *appAgree="<error descr="Type Person | null is not assignable to type Person | (Person & undefined) | (Person & null) | (null & Person)...  Type null is not assignable to type Person | (Person & undefined) | (Person & null) | (null & Person)">personPromise | async</error> as person; second: personPromise | async">
+    <div *appAgree="personPromise | async as person; second: personPromise | async">
       {{expectPerson(<error descr="Argument type Person | null is not assignable to parameter type Person  Type null is not assignable to type Person">person</error>)}}
       {{expectNumber(<error descr="Argument type Person | null is not assignable to parameter type number  Type Person is not assignable to type number">person</error>)}}
     </div>
