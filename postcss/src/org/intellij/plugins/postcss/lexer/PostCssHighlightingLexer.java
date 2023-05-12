@@ -10,8 +10,6 @@ import java.util.Set;
 public class PostCssHighlightingLexer extends CssHighlighterLexer {
   private static final int AFTER_AMPERSAND_FLAG = 0x20;
   private static final int AFTER_NUMBER_FLAG = 0x40;
-  private static final int BLOCK_LEVEL_MASK = 0xF; //last 4 bits for level
-  private int blockNestingDepth = 0;
   private boolean afterAmpersand = false;
   private boolean afterNumber = false;
 
@@ -22,8 +20,6 @@ public class PostCssHighlightingLexer extends CssHighlighterLexer {
   @Override
   public void advance() {
     final IElementType type = getTokenType();
-    if (type == CssElementTypes.CSS_LBRACE && !myAfterKeyframes) { blockNestingDepth++; }
-    if (type == CssElementTypes.CSS_RBRACE && !myInKeyframes && blockNestingDepth > 0) { blockNestingDepth--; }
     if (type == PostCssTokenTypes.POST_CSS_CUSTOM_MEDIA_SYM) {
       myAfterMediaOrSupports = true;
       //little hack for @media screen proper highlighting, we deny property names for 'screen'
@@ -33,7 +29,6 @@ public class PostCssHighlightingLexer extends CssHighlighterLexer {
     afterAmpersand = PostCssTokenTypes.AMPERSAND == type;
     afterNumber = CssElementTypes.CSS_NUMBER == type;
     super.advance();
-    myInsideBlock = blockNestingDepth > 0;
   }
 
   @Override
@@ -42,7 +37,6 @@ public class PostCssHighlightingLexer extends CssHighlighterLexer {
     int state = initialState >> MY_BASE_STATE_SHIFT;
     afterAmpersand = (state & AFTER_AMPERSAND_FLAG) != 0;
     afterNumber = (state & AFTER_NUMBER_FLAG) != 0;
-    blockNestingDepth = state & BLOCK_LEVEL_MASK;
   }
 
   @Override
@@ -50,7 +44,6 @@ public class PostCssHighlightingLexer extends CssHighlighterLexer {
     int state = 0;
     state |= afterAmpersand ? AFTER_AMPERSAND_FLAG : 0;
     state |= afterAmpersand ? AFTER_NUMBER_FLAG : 0;
-    state |= Math.min(blockNestingDepth, BLOCK_LEVEL_MASK);
     return super.getState() | (state << MY_BASE_STATE_SHIFT);
   }
 
