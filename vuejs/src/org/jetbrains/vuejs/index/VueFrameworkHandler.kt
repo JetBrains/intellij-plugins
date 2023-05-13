@@ -48,6 +48,7 @@ import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 import org.jetbrains.vuejs.codeInsight.toAsset
+import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
 import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes
 import org.jetbrains.vuejs.libraries.componentDecorator.VueDecoratedComponentInfoProvider
@@ -404,7 +405,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
   private fun isPossiblyVueContainerInitializer(initializer: JSObjectLiteralExpression?): Boolean {
     return initializer != null
-           && (initializer.containingFile.isDotVueFile
+           && (initializer.containingFile is VueFile
                || (initializer.containingFile is JSFile && hasComponentIndicatorProperties(initializer)))
   }
 
@@ -446,7 +447,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     if (JSElementTypes.ARRAY_LITERAL_EXPRESSION == parentType
         || (JSElementTypes.PROPERTY == parentType
             && (isComponentPropertyWithStubbedLiteral(treeParent) || isComponentModelProperty(treeParent)))) {
-      return TreeUtil.getFileElement(literalExpressionNode)?.psi?.containingFile?.isDotVueFile == true
+      return TreeUtil.getFileElement(literalExpressionNode)?.psi?.containingFile is VueFile
              || insideVueDescriptor(literalExpressionNode)
     }
     if (parentType == JSElementTypes.ARGUMENT_LIST) {

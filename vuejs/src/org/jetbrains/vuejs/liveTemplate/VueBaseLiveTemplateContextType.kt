@@ -13,11 +13,11 @@ import com.intellij.psi.xml.XmlTokenType
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.context.isVueContext
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
+import org.jetbrains.vuejs.lang.html.VueFile
 
 class VueBaseLiveTemplateContextType : TemplateContextType(VueBundle.message("vue.documentation.vue")) {
   override fun isInContext(file: PsiFile, offset: Int): Boolean {
-    return file.isDotVueFile
+    return file is VueFile
   }
 
   companion object {
@@ -29,7 +29,7 @@ class VueBaseLiveTemplateContextType : TemplateContextType(VueBundle.message("vu
       if (offset < 0) return false
       val element = file.findElementAt(offset) ?: return false
 
-      if (!file.isDotVueFile) {
+      if (file !is VueFile) {
         return isVueContext(file) && notVueFileType != null && notVueFileType.invoke(element)
       }
 
