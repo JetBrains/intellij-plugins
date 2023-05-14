@@ -302,6 +302,8 @@
 
     <fileTypeStatisticProvider implementation="org.intellij.terraform.hcl.TerraformFileTypeStatisticProvider"/>
     <notificationGroup id="Terraform Execution" displayType="TOOL_WINDOW" toolWindowId="Run" bundle="messages.HCLBundle" key="notification.group.terraform.execution"/>
+
+    <dependencySupport kind="executable" coordinate="terraform"/>
   </extensions>
 
   <actions>
