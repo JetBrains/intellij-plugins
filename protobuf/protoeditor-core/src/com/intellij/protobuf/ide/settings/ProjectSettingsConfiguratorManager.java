@@ -22,8 +22,6 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.workspaceModel.ide.WorkspaceModelChangeListener;
 import com.intellij.workspaceModel.ide.WorkspaceModelTopics;
 import com.intellij.workspaceModel.storage.EntityChange;
@@ -33,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -128,8 +127,8 @@ public final class ProjectSettingsConfiguratorManager implements Disposable {
 
     @Override
     public void changed(@NotNull VersionedStorageChange event) {
-      EntityChange<ContentRootEntity> entityChange = ContainerUtil.getFirstItem(event.getChanges(ContentRootEntity.class));
-      if (entityChange == null) return;
+      Iterator<EntityChange<ContentRootEntity>> changes = event.getChanges(ContentRootEntity.class).iterator();
+      if (!changes.hasNext()) return;
       getInstance(myProject).configureSettingsIfNecessary();
     }
   }

@@ -9,6 +9,7 @@ import com.intellij.workspaceModel.storage.bridgeEntities.ModuleEntity;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
+import kotlin.sequences.SequencesKt;
 import org.jetbrains.annotations.NotNull;
 
 public class DartWorkspaceModelChangeListener implements WorkspaceModelChangeListener {
@@ -21,7 +22,7 @@ public class DartWorkspaceModelChangeListener implements WorkspaceModelChangeLis
 
   @Override
   public void changed(@NotNull VersionedStorageChange event) {
-    for (EntityChange<ContentRootEntity> change : event.getChanges(ContentRootEntity.class)) {
+    for (EntityChange<ContentRootEntity> change : SequencesKt.asIterable(event.getChanges(ContentRootEntity.class))) {
       ContentRootEntity oldContentRootEntity = change.getOldEntity();
       ContentRootEntity newContentRootEntity = change.getNewEntity();
 
@@ -32,7 +33,7 @@ public class DartWorkspaceModelChangeListener implements WorkspaceModelChangeLis
       }
     }
 
-    for (EntityChange<ModuleEntity> change : event.getChanges(ModuleEntity.class)) {
+    for (EntityChange<ModuleEntity> change : SequencesKt.asIterable(event.getChanges(ModuleEntity.class))) {
       ModuleEntity oldModuleEntity = change.getOldEntity();
       ModuleEntity newModuleEntity = change.getNewEntity();
       boolean oldDartEnabled = oldModuleEntity != null && DartSdkLibUtil.isDartSdkEnabled(oldModuleEntity);
