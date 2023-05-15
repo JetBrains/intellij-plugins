@@ -54,10 +54,9 @@ public abstract class ActionScriptImplementedMethodProcessor extends JSCollectMe
     JSFunctionCollector functionsCollector = null;
 
     for (PsiElement _function : results) {
-      if (!(_function instanceof JSFunction)) {
+      if (!(_function instanceof JSFunction function)) {
         continue;
       }
-      final JSFunction function = (JSFunction)_function;
       final String name = function.getName();
       if (name == null) continue;
 

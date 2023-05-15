@@ -36,12 +36,11 @@ public class FlexCompositeSdkProjectViewStructureProvider implements TreeStructu
 
     for (AbstractTreeNode child : children) {
       Object value = child.getValue();
-      if (!(value instanceof NamedLibraryElement)) {
+      if (!(value instanceof NamedLibraryElement libraryElement)) {
         result.add(child);
         continue;
       }
 
-      NamedLibraryElement libraryElement = (NamedLibraryElement)value;
       OrderEntry orderEntry = libraryElement.getOrderEntry();
       if (!(orderEntry instanceof JdkOrderEntry)) {
         result.add(child);

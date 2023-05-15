@@ -22,6 +22,7 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.lang.javascript.psi.util.stubSafeGetAttribute
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
@@ -45,10 +46,13 @@ import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes
+import org.jetbrains.vuejs.libraries.componentDecorator.VueDecoratedComponentInfoProvider
 import org.jetbrains.vuejs.libraries.componentDecorator.isComponentDecorator
 import org.jetbrains.vuejs.model.getSlotTypeFromContext
+import org.jetbrains.vuejs.model.hasSrcReference
 import org.jetbrains.vuejs.model.source.*
-import org.jetbrains.vuejs.model.source.VueComponents.Companion.isStrictDefineComponentOrVueExtendCall
+import org.jetbrains.vuejs.model.source.VueComponents.Companion.isStrictComponentDefiningCall
+import org.jetbrains.vuejs.model.tryResolveSrcReference
 import org.jetbrains.vuejs.model.typed.VueTypedEntitiesProvider
 import org.jetbrains.vuejs.types.VueCompositionPropsTypeProvider
 import kotlin.contracts.ExperimentalContracts
@@ -83,7 +87,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     private const val REQUIRE = "require"
 
     private val VUE_DESCRIPTOR_OWNERS = arrayOf(VUE_NAMESPACE, MIXIN_FUN, COMPONENT_FUN, EXTEND_FUN, DIRECTIVE_FUN, DELIMITERS_PROP,
-                                                FILTER_FUN, DEFINE_COMPONENT_FUN)
+                                                FILTER_FUN, DEFINE_COMPONENT_FUN, DEFINE_NUXT_COMPONENT_FUN)
     private val COMPONENT_INDICATOR_PROPS = setOf(TEMPLATE_PROP, DATA_PROP, "render", PROPS_PROP, "propsData", COMPUTED_PROP, METHODS_PROP,
                                                   "watch", MIXINS_PROP, COMPONENTS_PROP, DIRECTIVES_PROP, FILTERS_PROP, SETUP_METHOD,
                                                   MODEL_PROP)
@@ -222,12 +226,12 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       if (parent is JSExportAssignment ||
           parent is JSAssignmentExpression && isDefaultExports(parent.definitionExpression?.expression) ||
           parent is JSArgumentList && parent.parent?.asSafely<JSCallExpression>()
-            ?.let { isDefineComponentOrVueExtendCall(it.node) } == true) {
+            ?.let { isComponentDefiningCall(it.node) } == true) {
         if (isPossiblyVueContainerInitializer(obj)) {
           if (out == null) out = JSElementIndexingDataImpl()
           val element = createImplicitElement(VueComponentsIndex.JS_KEY, getComponentNameFromDescriptor(obj), property)
           if (parent is JSArgumentList && parent.parent?.asSafely<JSCallExpression>()
-              ?.let { isStrictDefineComponentOrVueExtendCall(it) } == false) {
+              ?.let { isStrictComponentDefiningCall(it) } == false) {
             out.setAddUnderlyingElementToSymbolIndex(true)
           }
           out.addImplicitElement(element)
@@ -262,7 +266,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     return isCompositionApiAppObjectCall(node)
            || VueStaticMethod.matchesAny(methodExpression)
            || isScriptSetupMacroCall(node)
-           || isDefineComponentOrVueExtendCall(node)
+           || isComponentDefiningCall(node)
   }
 
   override fun shouldCreateStubForArrayLiteral(node: ASTNode): Boolean =
@@ -281,7 +285,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       recordVueFunctionName(this, outData, callExpression, referenceName)
       return
     }
-    if (isDefineComponentOrVueExtendCall(callExpression.node)) {
+    if (isComponentDefiningCall(callExpression.node)) {
       recordVueFunctionName(this, outData, callExpression, referenceName)
     }
 
@@ -361,9 +365,9 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
           .setUserStringWithData(
             this, VueCompositionAppIndex.JS_KEY,
             // Store reference name for resolution
-                                     callExpression.arguments
+            callExpression.arguments
               .getOrNull(if (referenceName == CREATE_APP_FUN || referenceName == MIXIN_FUN) 0 else 1)
-                                       .asSafely<JSReferenceExpression>()
+              .asSafely<JSReferenceExpression>()
               ?.takeIf { it.qualifier == null }
               ?.referenceName
           )
@@ -433,19 +437,36 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   }
 
   override fun hasSignificantValue(expression: JSLiteralExpression): Boolean {
-    val parentType = expression.node.treeParent?.elementType ?: return false
+    val treeParent = expression.node.treeParent
+    val parentType = treeParent?.elementType ?: return false
     if (JSElementTypes.ARRAY_LITERAL_EXPRESSION == parentType
-        || (JSElementTypes.PROPERTY == parentType
-            && expression.node.treeParent.findChildByType(JSTokenTypes.IDENTIFIER)?.text in listOf(PROPS_REQUIRED_PROP, EL_PROP,
-                                                                                                   NAME_PROP))) {
+        || (JSElementTypes.PROPERTY == parentType && (isComponentPropertyWithStubbedLiteral(treeParent) || isComponentModelProperty(
+        treeParent)))) {
       return VueFileType.INSTANCE == expression.containingFile.fileType || insideVueDescriptor(expression)
     }
     if (parentType == JSElementTypes.ARGUMENT_LIST) {
-      return expression.node.treeParent.treeParent
-        .let { it != null && isCompositionApiAppObjectCall(it) }
+      return treeParent.treeParent
+        .let { it != null && (isCompositionApiAppObjectCall(it) || isVueComponentDecoratorCall(it)) }
     }
     return false
   }
+
+  private fun isComponentPropertyWithStubbedLiteral(property: ASTNode) =
+    property.findChildByType(JSTokenTypes.IDENTIFIER)?.text in
+      listOf(PROPS_REQUIRED_PROP, EL_PROP, TEMPLATE_PROP, NAME_PROP)
+
+  private fun isComponentModelProperty(property: ASTNode) =
+    property.findChildByType(JSTokenTypes.IDENTIFIER)?.text.let { it == MODEL_PROP_PROP || it == MODEL_EVENT_PROP }
+    && property.treeParent?.treeParent.let {
+      it != null && it.elementType == JSElementTypes.PROPERTY
+      && it.findChildByType(JSTokenTypes.IDENTIFIER)?.text == MODEL_PROP
+    }
+
+  private fun isVueComponentDecoratorCall(callNode: ASTNode): Boolean =
+    callNode.treeParent?.elementType == JSElementTypes.ES6_DECORATOR
+    && checkCallExpression(callNode) { refName, hasQualifier ->
+      !hasQualifier && VueDecoratedComponentInfoProvider.isVueComponentDecoratorName(refName)
+    }
 
   // limit building stub in other file types like js/html to Vue-descriptor-like members
   private fun insideVueDescriptor(expression: JSLiteralExpression): Boolean {
@@ -502,7 +523,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       if (!hasQualifier)
         refName == CREATE_APP_FUN
       else {
-        refName == MOUNT_FUN || refName == MIXIN_FUN ||
+        refName == CREATE_APP_FUN || refName == MOUNT_FUN || refName == MIXIN_FUN ||
         ((refName == COMPONENT_FUN || refName == FILTER_FUN || refName == DIRECTIVE_FUN)
          && callNode.findChildByType(JSElementTypes.ARGUMENT_LIST)?.getChildren(JSElementTypes.EXPRESSIONS)?.size == 2)
       }
@@ -513,9 +534,10 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       !hasQualifier && referenceName in SCRIPT_SETUP_MACROS && isDescendantOfStubbedScriptTag(callNode)
     }
 
-  private fun isDefineComponentOrVueExtendCall(callNode: ASTNode): Boolean =
+  private fun isComponentDefiningCall(callNode: ASTNode): Boolean =
     checkCallExpression(callNode) { referenceName, hasQualifier ->
       (!hasQualifier && referenceName == DEFINE_COMPONENT_FUN)
+      || (!hasQualifier && referenceName == DEFINE_NUXT_COMPONENT_FUN)
       || (hasQualifier && referenceName == EXTEND_FUN)
     }
 
@@ -566,13 +588,20 @@ fun processScriptSetupTopLevelDeclarations(context: PsiElement, consumer: (JSPsi
 }
 
 @StubSafe
-fun findModule(element: PsiElement?, setup: Boolean): JSEmbeddedContent? =
+fun findModule(element: PsiElement?, setup: Boolean): JSExecutionScope? =
   element
     ?.let { InjectedLanguageManager.getInstance(element.project) }
     ?.getTopLevelFile(element)
     ?.asSafely<XmlFile>()
     ?.let { findScriptTag(it, setup) }
-    ?.let { PsiTreeUtil.getStubChildOfType(it, JSEmbeddedContent::class.java) }
+    ?.let { tag ->
+      if (tag.hasSrcReference() && !setup) {
+        tag.tryResolveSrcReference().asSafely<JSFile>()
+      }
+      else {
+        PsiTreeUtil.getStubChildOfType(tag, JSEmbeddedContent::class.java)
+      }
+    }
 
 @StubSafe
 fun findScriptTag(xmlFile: XmlFile, setup: Boolean): XmlTag? =

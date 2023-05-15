@@ -7,9 +7,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
-* @author irengrig
-*/
 public class P4ConnectionParameters {
   // server + port
   @Nullable
@@ -23,9 +20,9 @@ public class P4ConnectionParameters {
   @Nullable
   private String myCharset;
   @Nullable  
-  private String myConfigFileName = P4ConfigHelper.getP4ConfigFileName();
+  private String myConfigFileName;
   @Nullable 
-  private String myIgnoreFileName = P4ConfigHelper.getP4IgnoreFileName();
+  private String myIgnoreFileName;
 
   private Throwable myException;
   private final List<String> myWarnings;
@@ -163,7 +160,7 @@ public class P4ConnectionParameters {
     return myIgnoreFileName;
   }
 
-  public void setIgnoreFileName(@NotNull String ignoreFileName) {
+  public void setIgnoreFileName(@Nullable String ignoreFileName) {
     myIgnoreFileName = ignoreFileName;
   }
 

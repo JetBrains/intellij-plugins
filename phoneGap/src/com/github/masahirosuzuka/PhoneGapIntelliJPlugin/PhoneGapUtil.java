@@ -4,6 +4,8 @@ package com.github.masahirosuzuka.PhoneGapIntelliJPlugin;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.PhoneGapSettings;
 import com.intellij.execution.configurations.PathEnvironmentVariableUtil;
+import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -23,7 +25,9 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.ui.TextFieldWithHistory;
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.SlowOperations;
+import com.intellij.util.concurrency.AppExecutorUtil;
+import com.intellij.util.concurrency.annotations.RequiresBackgroundThread;
+import com.intellij.util.concurrency.annotations.RequiresReadLock;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.SwingHelper;
 import org.jetbrains.annotations.NotNull;
@@ -56,11 +60,20 @@ public final class PhoneGapUtil {
   }
 
   @NotNull
-  public static TextFieldWithHistoryWithBrowseButton createPhoneGapWorkingDirectoryField(@Nullable final Project project) {
+  public static TextFieldWithHistoryWithBrowseButton createPhoneGapWorkingDirectoryField(@NotNull final Project project) {
     TextFieldWithHistoryWithBrowseButton field = SwingHelper.createTextFieldWithHistoryWithBrowseButton(
       project, PhoneGapBundle.message("phonegap.conf.work.dir.title"),
-      FileChooserDescriptorFactory.createSingleFolderDescriptor(), () -> getDefaultWorkingDirectory(project));
+      FileChooserDescriptorFactory.createSingleFolderDescriptor(), null);
     setDefaultValue(field, PhoneGapSettings.getInstance().getWorkingDirectory(project));
+    ReadAction
+      .nonBlocking(() -> {
+        return getDefaultWorkingDirectory(project);
+      })
+      .expireWith(field)
+      .finishOnUiThread(ModalityState.any(), it -> {
+        SwingHelper.setHistory(field.getChildComponent(), ContainerUtil.notNullize(it), true);
+      })
+      .submit(AppExecutorUtil.getAppExecutorService());
 
     return field;
   }
@@ -81,9 +94,10 @@ public final class PhoneGapUtil {
   }
 
   @NotNull
-  public static List<String> getDefaultWorkingDirectory(@Nullable Project project) {
+  @RequiresBackgroundThread(generateAssertion = false)
+  @RequiresReadLock(generateAssertion = false)
+  private static List<String> getDefaultWorkingDirectory(@NotNull Project project) {
     List<String> paths = new ArrayList<>();
-    if (project == null) return paths;
     VirtualFile baseDir = ProjectUtil.guessProjectDir(project);
     if (baseDir == null) return paths;
 
@@ -94,7 +108,7 @@ public final class PhoneGapUtil {
       ContainerUtil.addIfNotNull(paths, project.getBasePath());
     }
     else {
-      addPaths(paths, SlowOperations.allowSlowOperations(() -> getFolders(project)));
+      addPaths(paths, getFolders(project));
     }
 
     return paths;

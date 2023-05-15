@@ -134,7 +134,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
         }
       }
     });
-    new TableSpeedSearch(myBundlesTable).setComparator(new SpeedSearchComparator(false));
+    TableSpeedSearch.installOn(myBundlesTable).setComparator(new SpeedSearchComparator(false));
 
     myOsmorcControlledDir.addChangeListener((e) -> {
       boolean isUserDefined = !myOsmorcControlledDir.isSelected();

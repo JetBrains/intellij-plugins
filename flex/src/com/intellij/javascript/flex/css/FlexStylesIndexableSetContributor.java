@@ -14,9 +14,6 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.Set;
 
-/**
- * @author ksafonov
- */
 public class FlexStylesIndexableSetContributor extends IndexableSetContributor {
   private static final Logger LOG = Logger.getInstance(FlexStylesIndexableSetContributor.class);
 

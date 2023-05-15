@@ -1,0 +1,9 @@
+HCLFile: ClosingBraceInInterpolationStringLiteral.tf
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('stage')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLStringLiteral
+      PsiElement(DOUBLE_QUOTED_STRING)('"${replace("}", "$")}"')

@@ -48,9 +48,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-/**
- * @author Eugene.Kudelevsky
- */
 public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
   @NotNull private final String myInherit;
   private final boolean myShorthand;
@@ -504,9 +501,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof FlexCssPropertyDescriptor)) return false;
-
-    FlexCssPropertyDescriptor that = (FlexCssPropertyDescriptor)o;
+    if (!(o instanceof FlexCssPropertyDescriptor that)) return false;
 
     if (myShorthand != that.myShorthand) return false;
     if (!myClassNames.equals(that.myClassNames)) return false;

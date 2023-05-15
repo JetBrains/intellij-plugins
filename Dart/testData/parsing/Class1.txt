@@ -305,6 +305,24 @@ Dart File
                   LITERAL_EXPRESSION
                     PsiElement(NUMBER)('1')
                 PsiElement(;)(';')
+                ASSIGN_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('a')
+                  ASSIGNMENT_OPERATOR
+                    PsiElement(>>>=)('>>>=')
+                  LITERAL_EXPRESSION
+                    PsiElement(NUMBER)('1')
+                PsiElement(;)(';')
+                SHIFT_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('a')
+                  SHIFT_OPERATOR
+                    PsiElement(>>>)('>>>')
+                  LITERAL_EXPRESSION
+                    PsiElement(NUMBER)('1')
+                PsiElement(;)(';')
                 CALL_EXPRESSION
                   REFERENCE_EXPRESSION
                     CALL_EXPRESSION
@@ -1850,22 +1868,260 @@ Dart File
         ID
           PsiElement(on)('on')
       PsiElement(;)(';')
-  FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
-    RETURN_TYPE
+  EXTENSION_DECLARATION
+    PsiElement(extension)('extension')
+    PsiElement(on)('on')
+    TYPE
+      RECORD_TYPE
+        PsiElement(()('(')
+        PsiElement())(')')
+    CLASS_BODY
+      PsiElement({)('{')
+      CLASS_MEMBERS
+        <empty list>
+      PsiElement(})('}')
+  CLASS_DEFINITION
+    PsiElement(abstract)('abstract')
+    PsiElement(final)('final')
+    PsiElement(class)('class')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('Vehicle')
+    CLASS_BODY
+      PsiElement({)('{')
+      CLASS_MEMBERS
+        <empty list>
+      PsiElement(})('}')
+  CLASS_DEFINITION
+    PsiElement(interface)('interface')
+    PsiElement(class)('class')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('NoExtend')
+    CLASS_BODY
+      PsiElement({)('{')
+      CLASS_MEMBERS
+        <empty list>
+      PsiElement(})('}')
+  CLASS_DEFINITION
+    PsiElement(interface)('interface')
+    PsiElement(class)('class')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('MySubclass')
+    SUPERCLASS
+      PsiElement(extends)('extends')
       TYPE
         SIMPLE_TYPE
           REFERENCE_EXPRESSION
             ID
-              PsiElement(extension)('extension')
+              PsiElement(IDENTIFIER)('NoExtend')
+    CLASS_BODY
+      PsiElement({)('{')
+      CLASS_MEMBERS
+        <empty list>
+      PsiElement(})('}')
+  CLASS_DEFINITION
+    METADATA
+      PsiElement(@)('@')
+      REFERENCE_EXPRESSION
+        ID
+          PsiElement(IDENTIFIER)('reopen')
+    PsiElement(class)('class')
     COMPONENT_NAME
       ID
-        PsiElement(on)('on')
-    FORMAL_PARAMETER_LIST
-      PsiElement(()('(')
-      PsiElement())(')')
-    FUNCTION_BODY
-      LAZY_PARSEABLE_BLOCK
-        PsiElement({)('{')
-        STATEMENTS
-          <empty list>
-        PsiElement(})('}')
+        PsiElement(IDENTIFIER)('MySubclass')
+    SUPERCLASS
+      PsiElement(extends)('extends')
+      TYPE
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('NoExtend')
+    CLASS_BODY
+      PsiElement({)('{')
+      CLASS_MEMBERS
+        <empty list>
+      PsiElement(})('}')
+  CLASS_DEFINITION
+    PsiElement(base)('base')
+    PsiElement(class)('class')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('A')
+    CLASS_BODY
+      PsiElement({)('{')
+      CLASS_MEMBERS
+        <empty list>
+      PsiElement(})('}')
+  CLASS_DEFINITION
+    PsiElement(final)('final')
+    PsiElement(class)('class')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('A')
+    CLASS_BODY
+      PsiElement({)('{')
+      CLASS_MEMBERS
+        <empty list>
+      PsiElement(})('}')
+  CLASS_DEFINITION
+    PsiElement(sealed)('sealed')
+    PsiElement(class)('class')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('A')
+    CLASS_BODY
+      PsiElement({)('{')
+      CLASS_MEMBERS
+        <empty list>
+      PsiElement(})('}')
+  CLASS_DEFINITION
+    PsiElement(abstract)('abstract')
+    PsiElement(class)('class')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('A')
+    CLASS_BODY
+      PsiElement({)('{')
+      CLASS_MEMBERS
+        <empty list>
+      PsiElement(})('}')
+  CLASS_DEFINITION
+    PsiElement(abstract)('abstract')
+    PsiElement(base)('base')
+    PsiElement(class)('class')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('A')
+    CLASS_BODY
+      PsiElement({)('{')
+      CLASS_MEMBERS
+        <empty list>
+      PsiElement(})('}')
+  CLASS_DEFINITION
+    PsiElement(abstract)('abstract')
+    PsiElement(interface)('interface')
+    PsiElement(class)('class')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('A')
+    CLASS_BODY
+      PsiElement({)('{')
+      CLASS_MEMBERS
+        <empty list>
+      PsiElement(})('}')
+  CLASS_DEFINITION
+    PsiElement(abstract)('abstract')
+    PsiElement(final)('final')
+    PsiElement(class)('class')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('A')
+    CLASS_BODY
+      PsiElement({)('{')
+      CLASS_MEMBERS
+        <empty list>
+      PsiElement(})('}')
+  CLASS_DEFINITION
+    PsiElement(mixin)('mixin')
+    PsiElement(class)('class')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('A')
+    CLASS_BODY
+      PsiElement({)('{')
+      CLASS_MEMBERS
+        <empty list>
+      PsiElement(})('}')
+  CLASS_DEFINITION
+    PsiElement(base)('base')
+    PsiElement(mixin)('mixin')
+    PsiElement(class)('class')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('A')
+    CLASS_BODY
+      PsiElement({)('{')
+      CLASS_MEMBERS
+        <empty list>
+      PsiElement(})('}')
+  CLASS_DEFINITION
+    PsiElement(abstract)('abstract')
+    PsiElement(mixin)('mixin')
+    PsiElement(class)('class')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('A')
+    CLASS_BODY
+      PsiElement({)('{')
+      CLASS_MEMBERS
+        <empty list>
+      PsiElement(})('}')
+  CLASS_DEFINITION
+    PsiElement(abstract)('abstract')
+    PsiElement(base)('base')
+    PsiElement(mixin)('mixin')
+    PsiElement(class)('class')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('A')
+    CLASS_BODY
+      PsiElement({)('{')
+      CLASS_MEMBERS
+        <empty list>
+      PsiElement(})('}')
+  MIXIN_DECLARATION
+    PsiElement(mixin)('mixin')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('A')
+    CLASS_BODY
+      PsiElement({)('{')
+      CLASS_MEMBERS
+        <empty list>
+      PsiElement(})('}')
+  MIXIN_DECLARATION
+    PsiElement(base)('base')
+    PsiElement(mixin)('mixin')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('A')
+    CLASS_BODY
+      PsiElement({)('{')
+      CLASS_MEMBERS
+        <empty list>
+      PsiElement(})('}')
+  MIXIN_DECLARATION
+    PsiElement(interface)('interface')
+    PsiElement(mixin)('mixin')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('A')
+    CLASS_BODY
+      PsiElement({)('{')
+      CLASS_MEMBERS
+        <empty list>
+      PsiElement(})('}')
+  MIXIN_DECLARATION
+    PsiElement(final)('final')
+    PsiElement(mixin)('mixin')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('A')
+    CLASS_BODY
+      PsiElement({)('{')
+      CLASS_MEMBERS
+        <empty list>
+      PsiElement(})('}')
+  MIXIN_DECLARATION
+    PsiElement(sealed)('sealed')
+    PsiElement(mixin)('mixin')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('A')
+    CLASS_BODY
+      PsiElement({)('{')
+      CLASS_MEMBERS
+        <empty list>
+      PsiElement(})('}')

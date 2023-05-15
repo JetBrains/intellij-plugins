@@ -1,0 +1,7 @@
+model User {
+  /// Skip
+
+  /// Model
+  /// Doc
+  i<caret>d Int @id @default(autoincrement()) /// Skip
+}

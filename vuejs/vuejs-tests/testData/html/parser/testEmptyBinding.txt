@@ -17,8 +17,8 @@ HtmlFile:test.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
-              VueJSEmbeddedExpression
+            ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR_VueJS)
+              VueJSEmbeddedExpressionContent(VueJS)
                 <empty list>
             XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
         XmlToken:XML_TAG_END('>')
@@ -36,8 +36,8 @@ HtmlFile:test.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
-              VueJSEmbeddedExpression
+            ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR_VueJS)
+              VueJSEmbeddedExpressionContent(VueJS)
                 PsiErrorElement:Expression expected
                   <empty list>
             XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
@@ -50,3 +50,4 @@ HtmlFile:test.vue
       XmlToken:XML_END_TAG_START('</')
       XmlToken:XML_NAME('template')
       XmlToken:XML_TAG_END('>')
+  PsiElement(VUE_LANG_MODE_NO_TS)('')

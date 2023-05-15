@@ -38,13 +38,16 @@ public interface DartStatements extends DartExecutionScope {
   List<DartLabel> getLabelList();
 
   @NotNull
+  List<DartPatternAssignment> getPatternAssignmentList();
+
+  @NotNull
+  List<DartPatternVariableDeclaration> getPatternVariableDeclarationList();
+
+  @NotNull
   List<DartRethrowStatement> getRethrowStatementList();
 
   @NotNull
   List<DartReturnStatement> getReturnStatementList();
-
-  @NotNull
-  List<DartSwitchStatement> getSwitchStatementList();
 
   @NotNull
   List<DartTryStatement> getTryStatementList();

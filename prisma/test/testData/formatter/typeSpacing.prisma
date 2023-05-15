@@ -1,0 +1,19 @@
+type   User    {
+  id    Int    @id     @default ( autoincrement ( ) )   //  comment
+  email String @unique
+
+  firstName   String ?    // comment
+  lastName    String?
+  social      Json?
+  isAdmin     Boolean            @default( false )
+  // Relation fields
+  courses     CourseEnrollment   [  ] // asd
+  testResults TestResult[]       @  relation(  name :  "results"  )    /// doc
+  testsGraded TestResult[]       @ relation  (name  :  "graded")
+  tokens      Token[]
+  feedback    CourseFeedback[ ]
+  unsup       Unsupported ( "123" )
+
+  @@  index( [  result  ,  createdAt  ( sort : Desc  )] )    // comment
+  @@ignore    /// doc
+}

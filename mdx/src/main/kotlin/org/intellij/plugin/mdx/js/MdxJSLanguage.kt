@@ -1,12 +1,12 @@
 package org.intellij.plugin.mdx.js
 
 import com.intellij.lang.PsiBuilder
-import com.intellij.lang.javascript.DialectOptionHolder
+import com.intellij.lang.javascript.DialectOptionHolder.JS_WITH_JSX
 import com.intellij.lang.javascript.JSLanguageDialect
-import com.intellij.lang.javascript.JavaScriptSupportLoader
+import com.intellij.lang.javascript.JavaScriptSupportLoader.ECMA_SCRIPT_6
 import com.intellij.lang.javascript.parsing.JavaScriptParser
 
-class MdxJSLanguage : JSLanguageDialect("MdxJS", DialectOptionHolder.JSX, JavaScriptSupportLoader.JSX_HARMONY) {
+class MdxJSLanguage : JSLanguageDialect("MdxJS", JS_WITH_JSX, ECMA_SCRIPT_6) {
   companion object {
     val INSTANCE = MdxJSLanguage()
   }

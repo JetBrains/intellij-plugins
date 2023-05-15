@@ -6,9 +6,6 @@ import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlTailType extends TailType {
   public static final TailType PARENTHS = new CfmlTailType();
 

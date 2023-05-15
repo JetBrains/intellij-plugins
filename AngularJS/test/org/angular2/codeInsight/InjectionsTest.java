@@ -17,18 +17,18 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ExcludeFolder;
 import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.Pair;
-import com.intellij.psi.PsiDirectory;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.webSymbols.context.WebSymbolsContext;
 import com.intellij.webSymbols.context.WebSymbolsContextProvider;
@@ -50,6 +50,7 @@ import static com.intellij.webSymbols.context.WebSymbolsContext.KIND_FRAMEWORK;
 import static java.util.Arrays.asList;
 import static org.angular2.modules.Angular2TestModule.*;
 import static org.angularjs.AngularTestUtil.findOffsetBySignature;
+import static org.angularjs.AngularTestUtil.renderLookupItems;
 
 public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
   @Override
@@ -95,10 +96,10 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testHost() {
     myFixture.configureByFiles("host.ts", "package.json");
-    for (Pair<String, ? extends JSLanguageDialect> signature : ContainerUtil.newArrayList(
-      Pair.create("eve<caret>nt", Angular2Language.INSTANCE),
-      Pair.create("bind<caret>ing", Angular2Language.INSTANCE),
-      Pair.create("at<caret>tribute", JavaScriptSupportLoader.TYPESCRIPT))) {
+    for (Pair<String, ? extends JSLanguageDialect> signature : List.of(Pair.create("eve<caret>nt", Angular2Language.INSTANCE),
+                                                                       Pair.create("bind<caret>ing", Angular2Language.INSTANCE),
+                                                                       Pair.create("at<caret>tribute",
+                                                                                   JavaScriptSupportLoader.TYPESCRIPT))) {
       final int offset = findOffsetBySignature(signature.first, myFixture.getFile());
       PsiElement element = InjectedLanguageManager.getInstance(getProject()).findInjectedElementAt(myFixture.getFile(), offset);
       if (element == null) {
@@ -110,11 +111,10 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testNonAngular() {
     myFixture.configureByFiles("nonAngularComponent.ts", "package.json");
-    for (Pair<String, ? extends Language> signature : ContainerUtil.newArrayList(
-      Pair.create("<foo><caret></foo>", HTMLLanguage.INSTANCE),
-      Pair.create("eve<caret>nt", JavaScriptSupportLoader.TYPESCRIPT),
-      Pair.create("bind<caret>ing", JavaScriptSupportLoader.TYPESCRIPT),
-      Pair.create("at<caret>tribute", JavaScriptSupportLoader.TYPESCRIPT))) {
+    for (Pair<String, ? extends Language> signature : List.of(Pair.create("<foo><caret></foo>", HTMLLanguage.INSTANCE),
+                                                              Pair.create("eve<caret>nt", JavaScriptSupportLoader.TYPESCRIPT),
+                                                              Pair.create("bind<caret>ing", JavaScriptSupportLoader.TYPESCRIPT),
+                                                              Pair.create("at<caret>tribute", JavaScriptSupportLoader.TYPESCRIPT))) {
       final int offset = findOffsetBySignature(signature.first, myFixture.getFile());
       PsiElement element = InjectedLanguageManager.getInstance(getProject()).findInjectedElementAt(myFixture.getFile(), offset);
       if (element == null) {
@@ -152,10 +152,10 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testUserSpecifiedInjection() {
     myFixture.configureByFiles("userSpecifiedLang.ts", "package.json");
-    for (Pair<String, String> signature : ContainerUtil.newArrayList(
-      Pair.create("<div><caret></div>", Angular2HtmlLanguage.INSTANCE.getID()),
-      Pair.create("$text<caret>-color", "SCSS"), //fails if correct order of injectors is not ensured
-      Pair.create("color: <caret>#00aa00", CSSLanguage.INSTANCE.getID()))) {
+    for (Pair<String, String> signature : List.of(Pair.create("<div><caret></div>", Angular2HtmlLanguage.INSTANCE.getID()),
+                                                  Pair.create("$text<caret>-color", "SCSS"),
+                                                  //fails if correct order of injectors is not ensured
+                                                  Pair.create("color: <caret>#00aa00", CSSLanguage.INSTANCE.getID()))) {
 
       final int offset = findOffsetBySignature(signature.first, myFixture.getFile());
       final PsiElement element = InjectedLanguageManager.getInstance(getProject()).findInjectedElementAt(myFixture.getFile(), offset);
@@ -175,8 +175,8 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFiles("event_private.html", "event_private.ts", "package.json");
     myFixture.completeBasic();
     assertEquals("Private members should be sorted after public ones",
-                 ContainerUtil.newArrayList("callSecuredApi", "callZ", "_callApi", "callA", "callAnonymousApi"),
-                 myFixture.getLookupElementStrings());
+                 List.of("_callApi", "callSecuredApi", "callZ", "callA", "callAnonymousApi"),
+                 renderLookupItems(myFixture, false, false, true));
   }
 
   public void testResolutionWithDifferentTemplateName() {
@@ -247,7 +247,7 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
         new WebSymbolsContextProviderExtensionPoint(KIND_FRAMEWORK, "angular", new WebSymbolsContextProvider() {
           @NotNull
           @Override
-          public CachedValueProvider.Result<Integer> isEnabled(@NotNull PsiDirectory directory) {
+          public CachedValueProvider.Result<Integer> isEnabled(@NotNull Project project, @NotNull VirtualFile directory) {
             return CachedValueProvider.Result.create(1, ModificationTracker.EVER_CHANGED);
           }
         }),

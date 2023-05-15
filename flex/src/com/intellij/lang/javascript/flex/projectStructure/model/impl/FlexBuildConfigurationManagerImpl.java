@@ -209,7 +209,7 @@ public final class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurat
     if (duplicateName != null) {
       LOG.warn("Duplicate build configuration name: " + duplicateName);
       List<String> uniqueNames =
-        generateUniqueNames(ContainerUtil.map2List(configList, bc -> bc.getName()));
+        generateUniqueNames(ContainerUtil.map(configList, bc -> bc.getName()));
       for (int i = 0; i < configList.size(); i++) {
         configList.get(i).setName(uniqueNames.get(i));
       }

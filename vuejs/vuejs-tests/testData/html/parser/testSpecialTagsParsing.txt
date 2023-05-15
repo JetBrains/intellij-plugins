@@ -29,97 +29,98 @@ HtmlFile:test.vue
           XmlToken:XML_END_TAG_START('</')
           XmlToken:XML_NAME('title')
           XmlToken:XML_TAG_END('>')
-      HtmlTag:body
-        XmlToken:XML_START_TAG_START('<')
-        XmlToken:XML_NAME('body')
-        XmlToken:XML_TAG_END('>')
-        XmlText
-          PsiWhiteSpace('\n')
-        HtmlTag:script
+        HtmlTag:body
           XmlToken:XML_START_TAG_START('<')
-          XmlToken:XML_NAME('script')
-          PsiWhiteSpace(' ')
-          PsiElement(XML_ATTRIBUTE)
-            XmlToken:XML_NAME('type')
-            XmlToken:XML_EQ('=')
-            PsiElement(XML_ATTRIBUTE_VALUE)
-              XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-              XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('foo/bar')
-              XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+          XmlToken:XML_NAME('body')
           XmlToken:XML_TAG_END('>')
           XmlText
-            XmlToken:XML_DATA_CHARACTERS('<div> </div>')
-          XmlToken:XML_END_TAG_START('</')
-          XmlToken:XML_NAME('script')
-          XmlToken:XML_TAG_END('>')
-        XmlText
-          PsiWhiteSpace('\n')
-        HtmlTag:style
-          XmlToken:XML_START_TAG_START('<')
-          XmlToken:XML_NAME('style')
-          PsiWhiteSpace(' ')
-          PsiElement(XML_ATTRIBUTE)
-            XmlToken:XML_NAME('type')
-            XmlToken:XML_EQ('=')
-            PsiElement(XML_ATTRIBUTE_VALUE)
-              XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
-              XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('foo/bar')
-              XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER(''')
-          XmlToken:XML_TAG_END('>')
-          PsiElement(POST_CSS_LAZY_STYLESHEET)
-            PsiElement(POST_CSS_STYLESHEET)
-              PsiElement(CSS_RULESET_LIST)
-                PsiErrorElement:Unexpected token
-                  <empty list>
-                PsiElement(CSS_LT)('<')
-                PsiElement(CSS_RULESET)
-                  PsiElement(CSS_SELECTOR_LIST)
-                    PsiElement(CSS_SELECTOR)
-                      PsiElement(CSS_SIMPLE_SELECTOR)
-                        PsiElement(CSS_IDENT)('my')
-                        PsiElement(CSS_SELECTOR_SUFFIX_LIST)
-                          <empty list>
-                      PsiElement(CSS_GT)('>')
-                      PsiElement(CSS_SIMPLE_SELECTOR)
-                        PsiElement(CSS_SELECTOR_SUFFIX_LIST)
-                          <empty list>
-                PsiErrorElement:Unexpected token
-                  <empty list>
-                PsiElement(CSS_LT)('<')
-                PsiElement(CSS_RULESET)
-                  PsiElement(CSS_SELECTOR_LIST)
-                    PsiElement(CSS_SELECTOR)
-                      PsiElement(CSS_SIMPLE_SELECTOR)
-                        PsiElement(CSS_IDENT)('style')
-                        PsiElement(CSS_SELECTOR_SUFFIX_LIST)
-                          <empty list>
-                      PsiElement(CSS_GT)('>')
-          XmlToken:XML_END_TAG_START('</')
-          XmlToken:XML_NAME('style')
-          XmlToken:XML_TAG_END('>')
-        XmlText
-          PsiWhiteSpace('\n')
-        HtmlTag:textarea
-          XmlToken:XML_START_TAG_START('<')
-          XmlToken:XML_NAME('textarea')
-          XmlToken:XML_TAG_END('>')
-          HtmlRawText
-            XmlToken:XML_DATA_CHARACTERS('this')
+            PsiWhiteSpace('\n')
+          HtmlTag:script
+            XmlToken:XML_START_TAG_START('<')
+            XmlToken:XML_NAME('script')
             PsiWhiteSpace(' ')
-            XmlToken:XML_DATA_CHARACTERS('{{text}}')
+            PsiElement(XML_ATTRIBUTE)
+              XmlToken:XML_NAME('type')
+              XmlToken:XML_EQ('=')
+              PsiElement(XML_ATTRIBUTE_VALUE)
+                XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+                XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('foo/bar')
+                XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+            XmlToken:XML_TAG_END('>')
+            XmlText
+              XmlToken:XML_DATA_CHARACTERS('<div> </div>')
+            XmlToken:XML_END_TAG_START('</')
+            XmlToken:XML_NAME('script')
+            XmlToken:XML_TAG_END('>')
+          XmlText
+            PsiWhiteSpace('\n')
+          HtmlTag:style
+            XmlToken:XML_START_TAG_START('<')
+            XmlToken:XML_NAME('style')
             PsiWhiteSpace(' ')
-            XmlToken:XML_DATA_CHARACTERS('{area}')
-            PsiWhiteSpace(' ')
-            XmlToken:XML_CHAR_ENTITY_REF('&nbsp;')
-            PsiWhiteSpace(' ')
-            XmlToken:XML_DATA_CHARACTERS('<is></cool>')
-          XmlToken:XML_END_TAG_START('</')
-          XmlToken:XML_NAME('textarea')
-          XmlToken:XML_TAG_END('>')
-        XmlText
-          PsiWhiteSpace('\n')
-        PsiErrorElement:Element body is not closed
-          <empty list>
+            PsiElement(XML_ATTRIBUTE)
+              XmlToken:XML_NAME('type')
+              XmlToken:XML_EQ('=')
+              PsiElement(XML_ATTRIBUTE_VALUE)
+                XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
+                XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('foo/bar')
+                XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER(''')
+            XmlToken:XML_TAG_END('>')
+            PsiElement(POST_CSS_LAZY_STYLESHEET)
+              PsiElement(POST_CSS_STYLESHEET)
+                PsiElement(CSS_RULESET_LIST)
+                  PsiErrorElement:Unexpected token
+                    <empty list>
+                  PsiElement(CSS_LT)('<')
+                  PsiElement(CSS_RULESET)
+                    PsiElement(CSS_SELECTOR_LIST)
+                      PsiElement(CSS_SELECTOR)
+                        PsiElement(CSS_SIMPLE_SELECTOR)
+                          PsiElement(CSS_IDENT)('my')
+                          PsiElement(CSS_SELECTOR_SUFFIX_LIST)
+                            <empty list>
+                        PsiElement(CSS_GT)('>')
+                        PsiElement(CSS_SIMPLE_SELECTOR)
+                          PsiElement(CSS_SELECTOR_SUFFIX_LIST)
+                            <empty list>
+                  PsiErrorElement:Unexpected token
+                    <empty list>
+                  PsiElement(CSS_LT)('<')
+                  PsiElement(CSS_RULESET)
+                    PsiElement(CSS_SELECTOR_LIST)
+                      PsiElement(CSS_SELECTOR)
+                        PsiElement(CSS_SIMPLE_SELECTOR)
+                          PsiElement(CSS_IDENT)('style')
+                          PsiElement(CSS_SELECTOR_SUFFIX_LIST)
+                            <empty list>
+                        PsiElement(CSS_GT)('>')
+            XmlToken:XML_END_TAG_START('</')
+            XmlToken:XML_NAME('style')
+            XmlToken:XML_TAG_END('>')
+          XmlText
+            PsiWhiteSpace('\n')
+          HtmlTag:textarea
+            XmlToken:XML_START_TAG_START('<')
+            XmlToken:XML_NAME('textarea')
+            XmlToken:XML_TAG_END('>')
+            HtmlRawText
+              XmlToken:XML_DATA_CHARACTERS('this')
+              PsiWhiteSpace(' ')
+              XmlToken:XML_DATA_CHARACTERS('{{text}}')
+              PsiWhiteSpace(' ')
+              XmlToken:XML_DATA_CHARACTERS('{area}')
+              PsiWhiteSpace(' ')
+              XmlToken:XML_CHAR_ENTITY_REF('&nbsp;')
+              PsiWhiteSpace(' ')
+              XmlToken:XML_DATA_CHARACTERS('<is></cool>')
+            XmlToken:XML_END_TAG_START('</')
+            XmlToken:XML_NAME('textarea')
+            XmlToken:XML_TAG_END('>')
+          XmlText
+            PsiWhiteSpace('\n')
+          PsiErrorElement:Element body is not closed
+            <empty list>
       XmlToken:XML_END_TAG_START('</')
       XmlToken:XML_NAME('template')
       XmlToken:XML_TAG_END('>')
+  PsiElement(VUE_LANG_MODE_NO_TS)('')

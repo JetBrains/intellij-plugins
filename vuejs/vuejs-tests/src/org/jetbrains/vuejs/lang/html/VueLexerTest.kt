@@ -9,13 +9,19 @@ import com.intellij.testFramework.fixtures.IdeaProjectTestFixture
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.vuejs.lang.getVueTestDataPath
-import org.jetbrains.vuejs.lang.html.lexer.VueLexerImpl
+import org.jetbrains.vuejs.lang.html.parser.VueParserDefinition
 import kotlin.properties.Delegates.notNull
 
 open class VueLexerTest : LexerTestCase() {
   private var fixture: IdeaProjectTestFixture by notNull()
 
   protected var interpolationConfig: Pair<String, String>? = null
+
+  override fun createLexer(): Lexer = VueParserDefinition.createLexer(fixture.project, interpolationConfig)
+
+  override fun getDirPath() = "html/lexer"
+
+  override fun getPathToTestDataFile(extension: String?): String = getVueTestDataPath() + "/$dirPath/" + getTestName(true) + extension
 
   override fun setUp() {
     super.setUp()
@@ -38,12 +44,14 @@ open class VueLexerTest : LexerTestCase() {
     }
   }
 
-  fun testScriptEmpty() = doTest("""
+  fun testEmptyFile() = doTestWithoutInterpolations("")
+
+  fun testScriptBlank() = doTestWithoutInterpolations("""
     |<script>
     |</script>
   """)
 
-  fun testScriptEmpty2() = doTest("""
+  fun testScriptEmptyNested() = doTestWithoutInterpolations("""
     |<div :foo='something()'>
     |  <script></script>
     |  <div :foo='something()'>
@@ -51,11 +59,37 @@ open class VueLexerTest : LexerTestCase() {
     |</div>
   """)
 
+  fun testScriptLangTemplate() {
+    doTest("""
+      |<script lang="template">
+      |  <div v-if="true"></div>
+      |</script>
+    """, true)
+  }
+
+  fun testScriptLangEmpty() {
+    doTest("""
+      |<script lang=''><</script>
+    """, true)
+  }
+
+  fun testScriptLangBoolean() {
+    doTest("""
+      |<script lang><</script>
+    """, true)
+  }
+
+  fun testScriptLangMissing() {
+    doTest("""
+      |<script><</script>
+    """, true)
+  }
+
   fun testScriptTS() = doTest("""
-    |<script lang="typescript">
+    |<script lang="ts">
     |(() => {})();
     |</script>
-  """, false)
+  """)
 
   fun testStyleEmpty() = doTest("""
     |<style>
@@ -71,7 +105,7 @@ open class VueLexerTest : LexerTestCase() {
     |  font: 100% ${'$'}font-stack
     |  color: ${'$'}primary-color
     |</style>
-  """, false)
+  """)
 
   fun testStyleSassAfterTemplate() = doTest("""
     |<template>
@@ -85,7 +119,7 @@ open class VueLexerTest : LexerTestCase() {
     |  font: 100% ${'$'}font-stack
     |  color: ${'$'}primary-color
     |</style>
-  """, false)
+  """)
 
   fun testTemplateEmpty() = doTest("""
     |<template>
@@ -115,7 +149,7 @@ open class VueLexerTest : LexerTestCase() {
     |  .block
     |    input#bar.foo1.foo2
     |</template>
-  """, false)
+  """)
 
   fun testTemplateNewLine() = doTest("""
     |<template>
@@ -141,7 +175,7 @@ open class VueLexerTest : LexerTestCase() {
     |<template lang="html">
     |  <toggle :item="item"/>
     |</template>
-  """, false)
+  """)
 
   fun testVFor() = doTest("""
     |<template>
@@ -174,13 +208,13 @@ open class VueLexerTest : LexerTestCase() {
     |    }
     |  }
     |</script>
-  """, false)
+  """)
 
   fun testScriptES6() = doTest("""
     |<script lang="typescript">
     | (() => {})();
     |</script>
-  """, false)
+  """)
 
   fun testTemplateHtml() = doTest("""
     |<template>
@@ -208,9 +242,9 @@ open class VueLexerTest : LexerTestCase() {
     |    <td>{{i + 1}}</td>
     |  </tr>
     |</template>
-  """, false)
+  """)
 
-  /** Following 3 tests require fixes in JS lexer for html **/
+  //region Following 3 tests require fixes in JS lexer for html
   @Suppress("TestFunctionName")
   fun _testEscapes() = doTest("""
     |<template>
@@ -232,6 +266,7 @@ open class VueLexerTest : LexerTestCase() {
     | <div [foo]="&apos;test&apos; + 12">
     |</template>
   """)
+  //endregion
 
   fun testScriptSrc() = doTest("""
     |<template>
@@ -261,7 +296,7 @@ open class VueLexerTest : LexerTestCase() {
     | </script>
     | <div></div>
     |</template>
-  """, false) // TODO improve JS embedded lexer
+  """)
 
   fun testStyleTag() = doTest("""
     |<template>
@@ -271,7 +306,7 @@ open class VueLexerTest : LexerTestCase() {
     | </style>
     | <div></div>
     |</template>
-  """, false) // TODO improve CSS lexer to have less states
+  """)
 
   fun testStyleVueEvent() = doTest("""
     |<template>
@@ -281,7 +316,7 @@ open class VueLexerTest : LexerTestCase() {
     | </style>
     | <div></div>
     |</template>
-  """, false) // TODO improve CSS lexer to have less states
+  """)
 
   fun testStyleWithEventAndBinding() = doTest("""
     |<template>
@@ -291,7 +326,7 @@ open class VueLexerTest : LexerTestCase() {
     | </style>
     | <div></div>
     |</template>
-  """, false) // TODO improve CSS lexer to have less states
+  """)
 
   fun testStyleAfterBinding() = doTest("""
     |<template>
@@ -299,7 +334,7 @@ open class VueLexerTest : LexerTestCase() {
     |   <span @click="foo"></span>
     | </div>
     |</template>
-  """, false) // TODO improve CSS lexer to have less states
+  """)
 
   fun testStyleAfterStyle() = doTest("""
     |<template>
@@ -307,7 +342,7 @@ open class VueLexerTest : LexerTestCase() {
     |   <span style='width: 13px' @click="foo"></span>
     | </div>
     |</template>
-  """, false) // TODO improve CSS lexer to have less states
+  """)
 
   fun testBindingAfterStyle() = doTest("""
     |<template>
@@ -315,7 +350,7 @@ open class VueLexerTest : LexerTestCase() {
     |  <span style='width: 13px' @click="foo"></span>
     | </div>
     |</template>
-  """, false) // TODO improve CSS lexer to have less states
+  """)
 
   fun testEmptyDirective() = doTest("""
     |<div v-foo :bar=""></div>
@@ -407,20 +442,18 @@ open class VueLexerTest : LexerTestCase() {
       |    <div :foo="some - script()"></div>
       |  </script>
       |</template>
-    """, false)
+    """)
   }
 
   fun testTextarea() {
     doTest("<textarea>with { some } {{wierd}} <stuff> in it</textarea>")
   }
 
-  override fun createLexer(): Lexer = VueLexerImpl(JSLanguageLevel.ES6, fixture.project, interpolationConfig)
-
-  override fun getDirPath() = "html/lexer"
-
-  override fun getPathToTestDataFile(extension: String?): String = getVueTestDataPath() + "/$dirPath/" + getTestName(true) + extension
-
   override fun doTest(@NonNls text: String) {
+    doTest(text, false)
+  }
+
+  fun doTestWithoutInterpolations(@NonNls text: String) {
     doTest(text, true)
   }
 
@@ -442,19 +475,14 @@ open class VueLexerTest : LexerTestCase() {
     }
   }
 
-  private fun doTest(@NonNls text: String, checkRestartOnEveryToken: Boolean) {
+  private fun doTest(@NonNls text: String, skipInterpolationCheck: Boolean) {
     val test = {
       val withoutMargin = text.trimMargin()
       super.doTest(withoutMargin)
-      //if (checkRestartOnEveryToken) {
-      //  checkCorrectRestartOnEveryToken(text)
-      //}
-      //else {
-        checkCorrectRestart(withoutMargin)
-      //}
+      checkCorrectRestart(withoutMargin)
     }
     test()
-    if (interpolationConfig == null) {
+    if (!skipInterpolationCheck && interpolationConfig == null) {
       testCustomInterpolation(Pair("{{", "}}"), test)
     }
   }

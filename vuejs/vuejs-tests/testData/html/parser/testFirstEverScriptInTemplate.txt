@@ -1,0 +1,106 @@
+HtmlFile:test.vue
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    HtmlTag:template
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('template')
+      XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n  ')
+      HtmlTag:script
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('script')
+        XmlToken:XML_TAG_END('>')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_NAME('script')
+        XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n  ')
+      HtmlTag:div
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('div')
+        PsiWhiteSpace(' ')
+        PsiElement(XML_ATTRIBUTE)
+          XmlToken:XML_NAME('v-if')
+          XmlToken:XML_EQ('=')
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+            ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR_VueJS)
+              VueJSEmbeddedExpressionContent(VueJS)
+                ES6ClassExpression
+                  JSAttributeList
+                    <empty list>
+                  PsiElement(JS:CLASS_KEYWORD)('class')
+                  PsiWhiteSpace(' ')
+                  PsiElement(JS:LBRACE)('{')
+                  PsiElement(JS:RBRACE)('}')
+            XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+        XmlToken:XML_TAG_END('>')
+        XmlText
+          XmlToken:XML_DATA_CHARACTERS('This')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('is')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('buggy')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_NAME('div')
+        XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('template')
+      XmlToken:XML_TAG_END('>')
+    PsiWhiteSpace('\n')
+    HtmlTag:script
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('script')
+      PsiWhiteSpace(' ')
+      PsiElement(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('lang')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+          XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('ts')
+          XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+      XmlToken:XML_TAG_END('>')
+      JSEmbeddedContent:JS:MOD_ES6_EMBEDDED_CONTENT
+        PsiWhiteSpace('\n')
+        ES6Class
+          JSAttributeList
+            PsiElement(JS:EXPORT_KEYWORD)('export')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:CLASS_KEYWORD)('class')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:IDENTIFIER)('X')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:LBRACE)('{')
+          PsiElement(JS:RBRACE)('}')
+        PsiWhiteSpace('\n')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('script')
+      XmlToken:XML_TAG_END('>')
+    PsiWhiteSpace('\n')
+    HtmlTag:script
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('script')
+      PsiWhiteSpace(' ')
+      PsiElement(VUE:STUBBED_ATTRIBUTE)
+        XmlToken:XML_NAME('setup')
+      XmlToken:XML_TAG_END('>')
+      VueScriptSetupEmbeddedContent:VUE:SCRIPT_SETUP_JS_EMBEDDED_CONTENT
+        PsiWhiteSpace('\n')
+        ES6Class
+          JSAttributeList
+            <empty list>
+          PsiElement(JS:CLASS_KEYWORD)('class')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:IDENTIFIER)('XS')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:LBRACE)('{')
+          PsiElement(JS:RBRACE)('}')
+        PsiWhiteSpace('\n')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('script')
+      XmlToken:XML_TAG_END('>')
+  PsiElement(VUE_LANG_MODE_NO_TS)('')

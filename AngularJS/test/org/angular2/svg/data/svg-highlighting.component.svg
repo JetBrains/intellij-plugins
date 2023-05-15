@@ -26,6 +26,6 @@
   />
   <<warning descr="Unknown html tag feBlend">feBlend</warning>></<warning descr="Unknown html tag feBlend">feBlend</warning>>
   <<warning descr="Unknown html tag paths">paths</warning>></<warning descr="Unknown html tag paths">paths</warning>>
-  <rect class="cls-3"
+  <<warning descr="Element rect doesn't have required attribute height"><warning descr="Element rect doesn't have required attribute width">rect</warning></warning> class="cls-3"
      <weak_warning descr="No directive is matched on attribute foo">*foo</weak_warning>="12"/>
 </svg>

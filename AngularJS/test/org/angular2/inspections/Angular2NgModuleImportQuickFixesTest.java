@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections;
 
-import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection;
+import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
@@ -264,7 +264,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
   public void testLocalLibCompletion() {
     doCompletionTest("localLib", "src/app/app.component.html",
                      "lib-my-lib", "lib-my-l\n",
-                     "MyLibModule - \"../../dist/my-lib\"");
+                     "MyLibModule - \"my-lib\"");
   }
 
   public void testImportStandaloneComponentToStandaloneComponent() {
@@ -297,6 +297,12 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
                     "app-<caret>classic",
                     "Import ClassicModule",
                     "ClassicModule - \"./classic\"");
+  }
+
+  public void testLocalLibraryWithAlias() {
+    doMultiFileTest("projects/demo/src/app/app.component.html",
+                    "Import Lib1Module"
+    );
   }
 
   private void doMultiFileTest(@NotNull String mainFile,
@@ -371,7 +377,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
       AngularUndefinedBindingInspection.class,
       AngularUndefinedTagInspection.class,
       AngularInvalidTemplateReferenceVariableInspection.class,
-      TypeScriptUnresolvedFunctionInspection.class
+      TypeScriptUnresolvedReferenceInspection.class
     );
   }
 }

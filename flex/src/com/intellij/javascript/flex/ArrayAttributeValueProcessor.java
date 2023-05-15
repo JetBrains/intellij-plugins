@@ -17,9 +17,6 @@ package com.intellij.javascript.flex;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Eugene.Kudelevsky
- */
 public abstract class ArrayAttributeValueProcessor {
   public void process(@NotNull String value) {
     int length = value.length();

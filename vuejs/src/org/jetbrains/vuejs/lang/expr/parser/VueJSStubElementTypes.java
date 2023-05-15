@@ -3,10 +3,12 @@ package org.jetbrains.vuejs.lang.expr.parser;
 
 import com.intellij.lang.javascript.types.JSParameterElementType;
 import com.intellij.lang.javascript.types.JSVariableElementType;
+import org.jetbrains.vuejs.lang.expr.VueJSLanguage;
+import org.jetbrains.vuejs.lang.expr.VueTSLanguage;
 
 public interface VueJSStubElementTypes {
 
-  int STUB_VERSION = 1;
+  int STUB_VERSION = 3;
 
   String EXTERNAL_ID_PREFIX = "VUE-JS:";
 
@@ -14,7 +16,13 @@ public interface VueJSStubElementTypes {
 
   JSParameterElementType SLOT_PROPS_PARAMETER = new VueJSSlotPropsParameterElementType();
 
-  JSParameterElementType SCRIPT_SETUP_PARAMETER = new VueJSScriptSetupParameterElementType();
+  VueJSScriptSetupTypeParameterListElementType SCRIPT_SETUP_TYPE_PARAMETER_LIST =
+    new VueJSScriptSetupTypeParameterListElementType();
 
+  VueJSEmbeddedExpressionContentElementType EMBEDDED_EXPR_CONTENT_JS = new VueJSEmbeddedExpressionContentElementType(
+    "EMBEDDED_EXPR_CONTENT_JS", VueJSLanguage.Companion.getINSTANCE());
+
+  VueJSEmbeddedExpressionContentElementType EMBEDDED_EXPR_CONTENT_TS = new VueJSEmbeddedExpressionContentElementType(
+    "EMBEDDED_EXPR_CONTENT_TS", VueTSLanguage.Companion.getINSTANCE());
 }
 

@@ -30,9 +30,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlForImpl extends CfmlCompositeElement {
 
   public static class Variable extends CfmlCompositeElement implements CfmlVariable {

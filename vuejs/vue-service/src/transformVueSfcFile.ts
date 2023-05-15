@@ -5,10 +5,10 @@ import {Parser} from "htmlparser2/lib/Parser"
 
 type TS = typeof import("typescript/lib/tsserverlibrary");
 
-const prefix = ";(async ()=>{";
-const suffix = "})();";
-const prefixLength = prefix.length;
-const suffixLength = suffix.length;
+const scriptSetupPrefix = ";(async ()=>{";
+const scriptSetupSuffix = "})();";
+const prefixLength = scriptSetupPrefix.length;
+const suffixLength = scriptSetupSuffix.length;
 const componentShim = "import componentDefinition from '*.vue'; export default componentDefinition;";
 
 export function transformVueSfcFile(ts: TS, contents: string): { result: string, scriptKind: ScriptKind } {
@@ -20,6 +20,7 @@ export function transformVueSfcFile(ts: TS, contents: string): { result: string,
   let scriptKind = ts.ScriptKind.JS;
   let inScriptSetup = false;
   let addedScriptSetupPrefix = false;
+  let scriptSetupGeneric = ""
 
   let hadScriptSetup = false;
   let hadScriptNormal = false;
@@ -41,6 +42,9 @@ export function transformVueSfcFile(ts: TS, contents: string): { result: string,
             addedScriptSetupPrefix = false
             hadScriptSetup = true
           }
+          if (attr.toLowerCase() == "generic") {
+            scriptSetupGeneric = attrs[attr]
+          }
         }
         hadScriptNormal = hadScriptNormal || !inScriptSetup
       }
@@ -53,8 +57,14 @@ export function transformVueSfcFile(ts: TS, contents: string): { result: string,
         if (inScriptSetup && !addedScriptSetupPrefix) {
           addedScriptSetupPrefix = true
           scriptSetupStartLoc = result.length
-          result += prefix
-          charsCount -= prefixLength
+          if (scriptSetupGeneric) {
+            const genericPrefix = `;(async<${scriptSetupGeneric}>()=>{`
+            result += genericPrefix
+            charsCount -= genericPrefix.length
+          } else {
+            result += scriptSetupPrefix
+            charsCount -= prefixLength
+          }
         }
         result += " ".repeat(charsCount) + "\n".repeat(lineCount) + data
         lastIndex = parser.endIndex! + 1 // TODO handle null assertion
@@ -63,7 +73,7 @@ export function transformVueSfcFile(ts: TS, contents: string): { result: string,
     onclosetag(name: string) {
       if (inScriptSetup) {
         scriptSetupEndLoc = result.length
-        result += suffix
+        result += scriptSetupSuffix
         inScriptSetup = false
         lastIndex += suffixLength
       }

@@ -80,8 +80,7 @@ public class DartComponentMover extends LineMover {
         lastMember = firstMember;
         firstMember = findAttachedComment(firstMember);
         if (firstMember == lastMember && !isMovingDown) {
-          if (lastMember.getParent() instanceof DartClassMembers) {
-            DartClassMembers members = (DartClassMembers)lastMember.getParent();
+          if (lastMember.getParent() instanceof DartClassMembers members) {
             PsiElement next = nextSib(members, false);
             if (next instanceof PsiWhiteSpace && !isCommentSeparator(next)) next = nextSib(next, false);
             if (isComment(next)) firstMember = next;
@@ -95,8 +94,7 @@ public class DartComponentMover extends LineMover {
         if (isSemicolon(next)) lastMember = next;
         if (isMovingDown) {
           next = lastMember.getNextSibling();
-          if (next == null && lastMember.getParent() instanceof DartClassMembers) {
-            DartClassMembers members = (DartClassMembers)lastMember.getParent();
+          if (next == null && lastMember.getParent() instanceof DartClassMembers members) {
             next = nextSib(members, true);
           }
           if (next instanceof PsiWhiteSpace && !StringUtil.containsLineBreak(next.getText())) next = next.getNextSibling();
@@ -152,8 +150,7 @@ public class DartComponentMover extends LineMover {
         PsiElement next = sibling.getNextSibling();
         if (isLineComment(next)) sibling = next.getNextSibling();
       }
-      if (sibling == null && ref.getParent() instanceof DartClassMembers) {
-        DartClassMembers members = (DartClassMembers)ref.getParent();
+      if (sibling == null && ref.getParent() instanceof DartClassMembers members) {
         sibling = nextSib(members, isMovingDown);
       }
       PsiElement firstElement = firstNonWhiteElement(sibling, isMovingDown);

@@ -7,7 +7,6 @@ import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.daemon.impl.HighlightInfoType;
 import com.intellij.codeInsight.daemon.impl.SeverityRegistrar;
 import com.intellij.codeInsight.daemon.impl.UpdateHighlightersUtil;
-import com.intellij.codeInsight.daemon.impl.quickfix.QuickFixAction;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.ProblemDescriptorUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -158,8 +157,8 @@ final class ActionScriptUnusedImportsPassFactory implements TextEditorHighlighti
 
         HighlightInfoType highlightInfoType =
           ProblemDescriptorUtil.getHighlightInfoType(type, HighlightSeverity.WARNING, SeverityRegistrar.getSeverityRegistrar(unusedImport.getProject()));
-        HighlightInfo info = HighlightInfo.newHighlightInfo(highlightInfoType).range(range).descriptionAndTooltip(message).create();
-        QuickFixAction.registerQuickFixAction(info, action);
+        HighlightInfo info = HighlightInfo.newHighlightInfo(highlightInfoType).range(range).descriptionAndTooltip(message)
+          .registerFix(action, null, null, null, null).create();
         ContainerUtil.addIfNotNull(result, info);
       }
     }

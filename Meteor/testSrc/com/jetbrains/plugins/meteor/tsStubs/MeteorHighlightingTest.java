@@ -4,6 +4,7 @@ package com.jetbrains.plugins.meteor.tsStubs;
 import com.dmarcotte.handlebars.config.HbConfig;
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 
@@ -38,7 +39,7 @@ public class MeteorHighlightingTest extends MeteorProjectTestBase {
       HbConfig.setShouldOpenHtmlAsHandlebars(true, getProject());
       PsiReference reference = myFixture.getReferenceAtCaretPosition(getTestName(false) + ".js", getTestName(false) + ".html");
       assertInstanceOf(reference, JSReferenceExpression.class);
-      PsiElement resolve = reference.resolve();// may be null if Hb file element type is not stub, just don't throw an assertion
+      PsiElement resolve = ReadAction.compute(() -> reference.resolve());// may be null if Hb file element type is not stub, just don't throw an assertion
       //assertNotNull(resolve);
     }
     finally {

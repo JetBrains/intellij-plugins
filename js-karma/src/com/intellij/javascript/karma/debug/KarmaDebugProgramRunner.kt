@@ -16,6 +16,7 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.ExecutionUtil
 import com.intellij.execution.ui.RunContentDescriptor
 import com.intellij.ide.browsers.BrowserFamily
+import com.intellij.ide.browsers.BrowserSettings
 import com.intellij.ide.browsers.WebBrowserManager
 import com.intellij.javascript.debugger.DebuggableFileFinder
 import com.intellij.javascript.debugger.JavaScriptDebugProcess
@@ -27,8 +28,12 @@ import com.intellij.javascript.karma.execution.KarmaRunProgramRunner
 import com.intellij.javascript.karma.server.KarmaServer
 import com.intellij.javascript.karma.util.KarmaUtil
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.options.ShowSettingsUtil
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.registry.Registry
+import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.ManagingFS
@@ -48,6 +53,8 @@ import org.jetbrains.debugger.connection.VmConnection
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.nio.charset.StandardCharsets
+import javax.swing.event.HyperlinkEvent
+import javax.swing.event.HyperlinkListener
 
 class KarmaDebugProgramRunner : AsyncProgramRunner<RunnerSettings>() {
   override fun getRunnerId(): String = "KarmaJavaScriptTestRunnerDebug"
@@ -65,27 +72,41 @@ class KarmaDebugProgramRunner : AsyncProgramRunner<RunnerSettings>() {
           consoleView.karmaServer.onPortBound { ExecutionUtil.restartIfActive(it) }
         })
       }
-      val debuggableWebBrowser = getChromeInfo()
+      val debuggableWebBrowser = Handler.getChromeInfo(environment.project)
       return@thenAsync debuggableWebBrowser.debugEngine.prepareDebugger(environment.project, debuggableWebBrowser.webBrowser).then {
-        createDescriptor(environment, executionResult, consoleView, debuggableWebBrowser)
+        Handler.createDescriptor(environment, executionResult, consoleView, debuggableWebBrowser)
       }
     }
   }
 
-  companion object {
+  private class ChromeRequiredException(private val project: Project): ExecutionException(message()), HyperlinkListener {
+    override fun hyperlinkUpdate(e: HyperlinkEvent) {
+      if (e.eventType == HyperlinkEvent.EventType.ACTIVATED) {
+        ShowSettingsUtil.getInstance().showSettingsDialog(project, BrowserSettings::class.java)
+      }
+    }
+
+    companion object {
+      fun message(): @NlsContexts.DialogMessage String {
+        return KarmaBundle.message("debug.debugging_available_in_chrome_only.dialog.message",
+                                   HtmlChunk.link("", BrowserSettings().displayName).toString())
+      }
+    }
+  }
+
+  private object Handler { // not a companion object to load less bytecode simultaneously with KarmaDebugProgramRunner
     @Throws(ExecutionException::class)
-    private fun getChromeInfo(): DebuggableWebBrowser {
-      val browser = WebBrowserManager.getInstance().getFirstBrowserOrNull(BrowserFamily.CHROME)
-                    ?: throw ExecutionException(KarmaBundle.message("debug.debugging_available_in_chrome_only.dialog.message"))
+    fun getChromeInfo(project: Project): DebuggableWebBrowser {
+      val browser = WebBrowserManager.getInstance().getFirstBrowserOrNull(BrowserFamily.CHROME) ?: throw ChromeRequiredException(project)
       return DebuggableWebBrowser.create(browser) ?: throw ExecutionException(
         KarmaBundle.message("debug.cannot_find_chrome.dialog.message"))
     }
 
     @Throws(ExecutionException::class)
-    private fun createDescriptor(environment: ExecutionEnvironment,
-                                 executionResult: ExecutionResult,
-                                 consoleView: KarmaConsoleView,
-                                 debuggableWebBrowser: DebuggableWebBrowser): RunContentDescriptor {
+    fun createDescriptor(environment: ExecutionEnvironment,
+                         executionResult: ExecutionResult,
+                         consoleView: KarmaConsoleView,
+                         debuggableWebBrowser: DebuggableWebBrowser): RunContentDescriptor {
       val karmaServer = consoleView.karmaServer
       val url = newFromEncoded(karmaServer.formatUrl("/"))
       val fileFinder = getDebuggableFileFinder(karmaServer)

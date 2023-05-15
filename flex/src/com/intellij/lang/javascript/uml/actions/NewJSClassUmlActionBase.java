@@ -59,12 +59,12 @@ public abstract class NewJSClassUmlActionBase extends DiagramCreateNewElementAct
 
   @Override
   public boolean isEnabled(@NotNull AnActionEvent e, @NotNull DiagramBuilder b) {
-    return b != null && b.getDataModel() instanceof FlashUmlDataModel;
+    return b.getDataModel() instanceof FlashUmlDataModel;
   }
 
   @Override
   public @NotNull ActionUpdateThread getActionUpdateThread() {
-    return ActionUpdateThread.BGT;
+    return super.getActionUpdateThread();
   }
   @Override
   @Nullable

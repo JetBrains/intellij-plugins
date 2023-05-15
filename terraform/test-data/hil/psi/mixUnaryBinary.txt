@@ -1,0 +1,30 @@
+HILFile: a.hil
+  ILExpressionHolder
+    PsiElement(${)('${')
+    ILBinaryExpression
+      ILParenthesizedExpression
+        PsiElement(()('(')
+        ILBinaryExpression
+          ILUnaryExpression
+            PsiElement(-)('-')
+            ILVariable
+              PsiElement(ID)('a')
+          PsiElement(+)('+')
+          ILVariable
+            PsiElement(ID)('b')
+        PsiElement())(')')
+      PsiWhiteSpace(' ')
+      PsiElement(*)('*')
+      PsiWhiteSpace(' ')
+      ILParenthesizedExpression
+        PsiElement(()('(')
+        ILBinaryExpression
+          ILUnaryExpression
+            PsiElement(-)('-')
+            ILLiteral
+              PsiElement(NUMBER)('1')
+          PsiElement(+)('+')
+          ILLiteral
+            PsiElement(NUMBER)('1')
+        PsiElement())(')')
+    PsiElement(})('}')

@@ -1,0 +1,32 @@
+AstroFile:test.astro
+  AstroContentRoot:ASTRO:CONTENT_ROOT
+    PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
+    AstroFrontmatterScript:ASTRO:FRONTMATTER_SCRIPT
+      <empty list>
+    PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
+    PsiWhiteSpace('\n')
+    PsiElement(XML_COMMENT)
+      XmlToken:XML_COMMENT_START('<?')
+      XmlToken:XML_COMMENT_CHARACTERS('xml version="1.0" encoding="UTF-8"')
+      XmlToken:XML_COMMENT_END('?>')
+    PsiElement(XML_COMMENT)
+      XmlToken:XML_COMMENT_START('<?')
+      XmlToken:XML_COMMENT_CHARACTERS('xml-stylesheet type="text/xsl" href="document.xsl"')
+      XmlToken:XML_COMMENT_END('?>')
+    PsiElement(XML_COMMENT)
+      XmlToken:XML_COMMENT_START('<!--')
+      XmlToken:XML_COMMENT_CHARACTERS(' @(#) $Id$ ')
+      XmlToken:XML_COMMENT_END('-->')
+    PsiElement(XML_COMMENT)
+      XmlToken:XML_COMMENT_START('<!DOCTYPE')
+      XmlToken:XML_COMMENT_CHARACTERS(' api SYSTEM "document.dtd"')
+      XmlToken:XML_COMMENT_END('>')
+    PsiElement(XML_PROLOG)
+      <empty list>
+    AstroTag:api
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('api')
+      XmlToken:XML_TAG_END('>')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('api')
+      XmlToken:XML_TAG_END('>')

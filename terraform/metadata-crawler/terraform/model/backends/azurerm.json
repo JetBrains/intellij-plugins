@@ -1,0 +1,126 @@
+{
+  ".schema_version": "2",
+  ".sdk_type": "builtin",
+  "name": "azurerm",
+  "type": "backend",
+  "version": "v1.3.0-dev",
+  "schema": {
+    "access_key": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The access key.",
+      "DefaultFunc": "ENV(ARM_ACCESS_KEY)"
+    },
+    "client_certificate_password": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The password associated with the Client Certificate specified in `client_certificate_path`",
+      "DefaultFunc": "ENV(ARM_CLIENT_CERTIFICATE_PASSWORD)"
+    },
+    "client_certificate_path": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The path to the PFX file used as the Client Certificate when authenticating as a Service Principal",
+      "DefaultFunc": "ENV(ARM_CLIENT_CERTIFICATE_PATH)"
+    },
+    "client_id": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The Client ID.",
+      "DefaultFunc": "ENV(ARM_CLIENT_ID)"
+    },
+    "client_secret": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The Client Secret.",
+      "DefaultFunc": "ENV(ARM_CLIENT_SECRET)"
+    },
+    "container_name": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The container name."
+    },
+    "endpoint": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "A custom Endpoint used to access the Azure Resource Manager API's.",
+      "DefaultFunc": "ENV(ARM_ENDPOINT)"
+    },
+    "environment": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The Azure cloud environment.",
+      "DefaultFunc": "ENV(ARM_ENVIRONMENT)"
+    },
+    "key": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The blob key."
+    },
+    "metadata_host": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The Metadata URL which will be used to obtain the Cloud Environment.",
+      "DefaultFunc": "ENV(ARM_METADATA_HOST)"
+    },
+    "msi_endpoint": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The Managed Service Identity Endpoint.",
+      "DefaultFunc": "ENV(ARM_MSI_ENDPOINT)"
+    },
+    "resource_group_name": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The resource group name."
+    },
+    "sas_token": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "A SAS Token used to interact with the Blob Storage Account.",
+      "DefaultFunc": "ENV(ARM_SAS_TOKEN)"
+    },
+    "snapshot": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "Enable/Disable automatic blob snapshotting",
+      "DefaultFunc": "ENV(ARM_SNAPSHOT)"
+    },
+    "storage_account_name": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The name of the storage account."
+    },
+    "subscription_id": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The Subscription ID.",
+      "DefaultFunc": "ENV(ARM_SUBSCRIPTION_ID)"
+    },
+    "tenant_id": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The Tenant ID.",
+      "DefaultFunc": "ENV(ARM_TENANT_ID)"
+    },
+    "use_azuread_auth": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "Should Terraform use AzureAD Authentication to access the Blob?",
+      "DefaultFunc": "ENV(ARM_USE_AZUREAD)"
+    },
+    "use_microsoft_graph": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "Should Terraform obtain an MSAL auth token and use Microsoft Graph rather than Azure Active Directory?",
+      "DefaultFunc": "ENV(ARM_USE_MSGRAPH)",
+      "Deprecated": "This field now defaults to `true` and will be removed in v1.3 of Terraform Core due to the deprecation of ADAL by Microsoft."
+    },
+    "use_msi": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "Should Managed Service Identity be used?",
+      "DefaultFunc": "ENV(ARM_USE_MSI)"
+    }
+  }
+}

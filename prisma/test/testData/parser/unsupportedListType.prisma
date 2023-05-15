@@ -1,0 +1,4 @@
+model Post {
+  location Unsupported("\"public\".geography")[]
+  title    String
+}

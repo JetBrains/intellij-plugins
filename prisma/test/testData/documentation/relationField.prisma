@@ -1,0 +1,11 @@
+model Post {
+  id       Int    @default(autoincrement())
+  title    String
+  author   User   @relation(fields: [auth<caret>orId], references: [id])
+  authorId Int
+}
+
+model User {
+  id    Int    @id @default(autoincrement())
+  posts Post[]
+}

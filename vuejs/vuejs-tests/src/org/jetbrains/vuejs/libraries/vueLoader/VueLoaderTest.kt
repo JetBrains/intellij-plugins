@@ -6,7 +6,7 @@ import com.intellij.webSymbols.assertUnresolvedReference
 import com.intellij.webSymbols.resolveReference
 import com.intellij.lang.javascript.buildTools.bundler.WebBundlerResolve
 import com.intellij.lang.javascript.buildTools.bundler.WebBundlerResolveAlias
-import com.intellij.lang.javascript.buildTools.webpack.createAndSetWebpackConfig
+import com.intellij.webpack.createAndSetWebpackConfig
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.css.inspections.invalid.CssUnknownTargetInspection
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -69,5 +69,4 @@ class VueLoaderTest  : BasePlatformTestCase() {
       }
     }
   }
-
 }

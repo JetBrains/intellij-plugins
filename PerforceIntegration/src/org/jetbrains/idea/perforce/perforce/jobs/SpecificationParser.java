@@ -22,9 +22,7 @@ public class SpecificationParser {
       if (inFields) {
         if (fieldsFinished(line)) break;
         final PerforceJobField field = parseField(line);
-        if (field != null) {
-          fields.add(field);
-        }
+        fields.add(field);
       } else {
         inFields = fieldsStarted(line);
       }
@@ -76,17 +74,14 @@ public class SpecificationParser {
     },
     new FieldParser("name") {
       @Override
-      protected void parseAndFill(String s, PerforceJobField field) throws VcsException {
+      protected void parseAndFill(String s, PerforceJobField field) {
         field.setName(s);
       }
     },
     new FieldParser("datatype") {
       @Override
-      protected void parseAndFill(String s, PerforceJobField field) throws VcsException {
+      protected void parseAndFill(String s, PerforceJobField field) {
         final PerforceJobFieldType type = PerforceJobFieldType.valueOf(s);
-        if (type == null) {
-          LOG.generateParseException("Cannot parse field type: " + s);
-        }
         field.setType(type);
       }
     },

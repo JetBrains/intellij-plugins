@@ -3,6 +3,9 @@ import {Component} from "@angular/core"
 
 @Component({
   template:`
+    <div *ngFor='let item of foo'>
+      {{item.<weak_warning descr="Unresolved variable blibop">blibop</weak_warning>}}
+    </div>
     <div *ngFor='let item of $any(foo)'>
       {{item.<weak_warning descr="Unresolved variable blibop">blibop</weak_warning>}}
     </div>

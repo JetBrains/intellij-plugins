@@ -135,8 +135,9 @@ public final class DartResolveUtil {
   public static String getLibraryName(@NotNull final PsiFile psiFile) {
     if (psiFile instanceof DartFile) {
       final DartLibraryStatement libraryStatement = PsiTreeUtil.getChildOfType(psiFile, DartLibraryStatement.class);
-      if (libraryStatement != null) {
-        return libraryStatement.getLibraryNameElement().getName();
+      DartLibraryNameElement nameElement = libraryStatement != null ? libraryStatement.getLibraryNameElement() : null;
+      if (nameElement != null) {
+        return nameElement.getName();
       }
 
       final DartPartOfStatement partOfStatement = PsiTreeUtil.getChildOfType(psiFile, DartPartOfStatement.class);
@@ -446,7 +447,7 @@ public final class DartResolveUtil {
 
   public static boolean processSuperClasses(PsiElementProcessor<? super DartClass> processor, DartClass @NotNull ... rootDartClasses) {
     final Set<DartClass> processedClasses = new HashSet<>();
-    LinkedList<DartClass> classes = new LinkedList<>(Arrays.asList(rootDartClasses));
+    ArrayDeque<DartClass> classes = new ArrayDeque<>(Arrays.asList(rootDartClasses));
     while (!classes.isEmpty()) {
       final DartClass dartClass = classes.pollFirst();
       if (dartClass == null || processedClasses.contains(dartClass)) {
@@ -651,8 +652,7 @@ public final class DartResolveUtil {
     if (element instanceof DartComponentName) {
       return getDartClassResolveResult(parentElement, specialization);
     }
-    if (element instanceof DartClass) {
-      final DartClass dartClass = (DartClass)element;
+    if (element instanceof DartClass dartClass) {
       return DartClassResolveResult.create(dartClass, specialization);
     }
 
@@ -804,9 +804,8 @@ public final class DartResolveUtil {
         }
       }
     }
-    else if (UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpacesAndComments(place, true) instanceof DartArgumentList) {
+    else if (UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpacesAndComments(place, true) instanceof DartArgumentList prevSibling) {
       // seems foo(param1, param2<caret>)
-      final DartArgumentList prevSibling = (DartArgumentList)UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpacesAndComments(place, true);
       assert prevSibling != null;
       // callExpression -> arguments -> argumentList
       parameterIndex = prevSibling.getExpressionList().size() + prevSibling.getNamedArgumentList().size();

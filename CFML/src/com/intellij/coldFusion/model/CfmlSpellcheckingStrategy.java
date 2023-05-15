@@ -33,9 +33,6 @@ import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlSpellcheckingStrategy extends SpellcheckingStrategy {
   private final Tokenizer<LeafPsiElement> myCfmlCommentTokenizer = TokenizerBase.create(CfmlCommentSplitter.INSTANCE);
 
@@ -45,7 +42,7 @@ public class CfmlSpellcheckingStrategy extends SpellcheckingStrategy {
     if (element instanceof CfmlStringLiteralExpression) {
       return new Tokenizer() {
         @Override
-        public void tokenize(@NotNull final PsiElement element, TokenConsumer consumer) {
+        public void tokenize(@NotNull final PsiElement element, @NotNull TokenConsumer consumer) {
           consumer.consumeToken(element, new TextSplitter() {
             @Override
             public void split(@Nullable String text, @NotNull TextRange range, Consumer<TextRange> consumer) {
@@ -66,8 +63,7 @@ public class CfmlSpellcheckingStrategy extends SpellcheckingStrategy {
     }
     else if (element instanceof CfmlReferenceExpression) {
       final PsiElement parent = element.getParent();
-      if (parent instanceof CfmlAssignmentExpression) {
-        CfmlAssignmentExpression assignment = (CfmlAssignmentExpression)parent;
+      if (parent instanceof CfmlAssignmentExpression assignment) {
         CfmlVariable var = assignment.getAssignedVariable();
         if (var != null && assignment.getAssignedVariableElement() == element) {
           return TEXT_TOKENIZER;

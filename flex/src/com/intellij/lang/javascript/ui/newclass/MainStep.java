@@ -19,6 +19,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.psi.impl.PublicInheritorFilter;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
+import com.intellij.lang.javascript.ui.ActionScriptPackageChooserDialog;
 import com.intellij.lang.javascript.ui.JSClassChooserDialog;
 import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
 import com.intellij.openapi.Disposable;
@@ -407,7 +408,7 @@ public class MainStep extends AbstractWizardStepEx {
       myResizeDispatcher.getMulticaster().stateChanged(new ChangeEvent(this));
     }
 
-    Set<String> attrs = ContainerUtil.set(unsetAttributes);
+    Set<String> attrs = ContainerUtil.newHashSet(unsetAttributes);
     attrs.remove(ActionScriptCreateClassOrInterfaceFix.SUPERCLASS);
     attrs.remove(ActionScriptCreateClassOrInterfaceFix.SUPER_INTERFACES);
     attrs.remove(FileTemplate.ATTRIBUTE_NAME);
@@ -494,9 +495,9 @@ public class MainStep extends AbstractWizardStepEx {
     // need to configure myModule prior to getTargetClassScopeAndBaseDir() call
     myModule = ModuleUtilCore.findModuleForPsiElement(myContext);
     myPackageCombo =
-      JSReferenceEditor
-        .forPackageName(myPackageNameInitial, myProject, DESTINATION_PACKAGE_RECENT_KEY, myModel.getTargetClassScopeAndBaseDir().first,
-                        RefactoringBundle.message("choose.destination.package"));
+      ActionScriptPackageChooserDialog
+        .createPackageReferenceEditor(myPackageNameInitial, myProject, DESTINATION_PACKAGE_RECENT_KEY, myModel.getTargetClassScopeAndBaseDir().first,
+                                      RefactoringBundle.message("choose.destination.package"));
     myPackageCombo.setHeightProvider(() -> myTemplateComboWithBrowse.getChildComponent().getPreferredSize().height);
 
     final GlobalSearchScope superClassScope = getSuperclassScope();

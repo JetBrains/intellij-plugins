@@ -8,8 +8,7 @@ import com.intellij.codeInspection.htmlInspections.*
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedAttributeInspection
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedTagInspection
 import com.intellij.lang.javascript.inspections.*
-import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection
-import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection
+import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection
 import com.intellij.xml.util.CheckEmptyTagInspection
 import com.sixrr.inspectjs.validity.ThisExpressionReferencesGlobalObjectJSInspection
@@ -35,15 +34,14 @@ class VueInspectionsProvider : InspectionToolProvider {
       CheckEmptyTagInspection::class.java,
       JSAnnotatorInspection::class.java,
       JSCheckFunctionSignaturesInspection::class.java,
-      JSUnresolvedVariableInspection::class.java,
-      JSUnresolvedFunctionInspection::class.java,
+      JSConstantReassignmentInspection::class.java,
+      JSUnresolvedReferenceInspection::class.java,
       JSUndeclaredVariableInspection::class.java,
       JSUnusedLocalSymbolsInspection::class.java,
       JSValidateTypesInspection::class.java,
       JSIncompatibleTypesComparisonInspection::class.java,
       ThisExpressionReferencesGlobalObjectJSInspection::class.java,
       TypeScriptValidateTypesInspection::class.java,
-      TypeScriptUnresolvedVariableInspection::class.java,
-      TypeScriptUnresolvedFunctionInspection::class.java
+      TypeScriptUnresolvedReferenceInspection::class.java,
     )
 }

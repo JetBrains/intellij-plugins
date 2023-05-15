@@ -24,7 +24,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ThreeState;
-import com.intellij.util.containers.ContainerUtil;
 import icons.PhoneGapIcons;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -91,7 +90,7 @@ public class CordovaProjectGenerator extends NpmPackageProjectGenerator {
 
   @Override
   protected List<String> packageNames() {
-    return ContainerUtil.immutableList("ionic", "cordova", "phonegap");
+    return List.of("ionic", "cordova", "phonegap");
   }
 
   @Override

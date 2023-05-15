@@ -25,6 +25,8 @@ public interface PerforcePanel {
 
   void applyTo(PerforceSettings settings) throws ConfigurationException;
 
+  default void cancel(PerforceSettings settings) {}
+
   boolean isModified(PerforceSettings settings);
 
   JPanel getPanel();

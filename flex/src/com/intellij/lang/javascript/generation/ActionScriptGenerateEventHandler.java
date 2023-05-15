@@ -494,8 +494,7 @@ public class ActionScriptGenerateEventHandler extends BaseJSGenerateHandler {
           }
         }
 
-        if (params[0] instanceof JSReferenceExpression) {
-          final JSReferenceExpression referenceExpression = (JSReferenceExpression)params[0];
+        if (params[0] instanceof JSReferenceExpression referenceExpression) {
 
           final JSExpression qualifier = referenceExpression.getQualifier();
           if (qualifier != null) {

@@ -89,7 +89,7 @@ internal class P4RootChecker : VcsRootChecker() {
 
     val defaultParameters = P4ConnectionParameters()
     val parameters = P4ConnectionParameters()
-    P4ConnectionCalculator.parseSetOutput(defaultParameters, parameters, p4SetOut.stdout)
+    P4ParamsCalculator.parseSetOutput(defaultParameters, parameters, p4SetOut.stdout)
     return parameters
   }
 

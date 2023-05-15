@@ -26,9 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlComponentConstructorCall extends CfmlFunctionCallExpression implements CfmlFunctionCall {
   public CfmlComponentConstructorCall(@NotNull ASTNode node) {
     super(node);
@@ -54,8 +51,7 @@ public class CfmlComponentConstructorCall extends CfmlFunctionCallExpression imp
             List<CfmlFunction> result = new LinkedList<>();
             for (ResolveResult resolveResult : resolveResults) {
               PsiElement element = resolveResult.getElement();
-              if (element instanceof CfmlComponent) {
-                CfmlComponent component = (CfmlComponent)element;
+              if (element instanceof CfmlComponent component) {
                 CfmlFunction[] functions = component.getFunctions();
                 for (CfmlFunction function : functions) {
                   if ("init".equalsIgnoreCase(function.getName())) {

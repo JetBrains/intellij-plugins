@@ -38,10 +38,10 @@ import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.Phone
 
 public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunConfiguration> {
 
-  public static final ArrayList<String> COMMANDS_LIST =
-    ContainerUtil.newArrayList(COMMAND_EMULATE, COMMAND_RUN, COMMAND_PREPARE, COMMAND_SERVE);
-  public static final ArrayList<String> COMMANDS_PHONEGAP_LIST =
-    ContainerUtil.newArrayList(COMMAND_EMULATE, COMMAND_RUN, COMMAND_PREPARE, COMMAND_SERVE, COMMAND_REMOTE_BUILD, COMMAND_REMOTE_RUN);
+  public static final List<String> COMMANDS_LIST =
+    List.of(COMMAND_EMULATE, COMMAND_RUN, COMMAND_PREPARE, COMMAND_SERVE);
+  public static final List<String> COMMANDS_PHONEGAP_LIST =
+    List.of(COMMAND_EMULATE, COMMAND_RUN, COMMAND_PREPARE, COMMAND_SERVE, COMMAND_REMOTE_BUILD, COMMAND_REMOTE_RUN);
 
   public static final String PLATFORM_ANDROID = "android";
   public static final String PLATFORM_IOS = "ios";
@@ -59,13 +59,13 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
   private TextFieldWithHistoryWithBrowseButton myWorkDirField;
   private ComboBoxWithMoreOption myPlatformField;
   private ComboBox<String> myCommand;
-  private final Project myProject;
+  private final @NotNull Project myProject;
   private JBCheckBox myHasTarget;
   private PhoneGapTargetsPanel myTarget;
   private JBTextField myExtraArgsTextField;
   private EnvironmentVariablesTextFieldWithBrowseButton myEnvComponent;
 
-  public PhoneGapRunConfigurationEditor(Project project) {
+  public PhoneGapRunConfigurationEditor(@NotNull Project project) {
     myProject = project;
   }
 
@@ -284,7 +284,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
     myCommand.removeAllItems();
     addItems(myCommand, commandList);
 
-    if (commandList.contains(selectedItem)) {
+    if (selectedItem != null && commandList.contains(selectedItem)) {
       myCommand.setSelectedItem(selectedItem);
     }
   }

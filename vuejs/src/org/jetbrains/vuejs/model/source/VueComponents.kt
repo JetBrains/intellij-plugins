@@ -13,6 +13,7 @@ import com.intellij.lang.javascript.psi.resolve.ES6QualifiedNameResolver
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.util.JSProjectUtil
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
@@ -21,9 +22,9 @@ import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.refactoring.suggested.createSmartPointer
+import com.intellij.util.applyIf
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
-import org.jetbrains.vuejs.codeInsight.stubSafeCallArguments
 import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.index.getVueIndexData
 import org.jetbrains.vuejs.lang.html.VueFileType
@@ -75,11 +76,13 @@ class VueComponents {
       return JSStubBasedPsiTreeUtil.resolveLocally(reference, context)
                ?.let { getVueComponentFromResolve(listOf(it)) }
                ?.let { return it }
-             ?: getVueComponentFromResolve(ES6QualifiedNameResolver(context).resolveQualifiedName(reference))
+             ?: getVueComponentFromResolve(ES6QualifiedNameResolver(context, true).resolveQualifiedName(reference))
     }
 
     private fun getVueComponentFromResolve(result: Collection<PsiElement>): VueEntityDescriptor? {
-      return result.firstNotNullOfOrNull(::getComponentDescriptor)
+      return result.firstNotNullOfOrNull {
+        getComponentDescriptor(it.applyIf(it is JSImplicitElement) { it.context ?: return@firstNotNullOfOrNull null })
+      }
     }
 
     fun getClassComponentDescriptor(clazz: JSClass): VueSourceEntityDescriptor =
@@ -111,7 +114,7 @@ class VueComponents {
         // Vue.extend({...})
         // defineComponent({...})
         is JSCallExpression ->
-          if (isDefineComponentOrVueExtendCall(resolved)) {
+          if (isComponentDefiningCall(resolved)) {
             resolved.stubSafeCallArguments
               .getOrNull(0)
               ?.let { it as? JSObjectLiteralExpression }
@@ -156,14 +159,15 @@ class VueComponents {
     }
 
     @StubSafe
-    fun isDefineComponentOrVueExtendCall(callExpression: JSCallExpression): Boolean =
+    fun isComponentDefiningCall(callExpression: JSCallExpression): Boolean =
       VueFrameworkHandler.getFunctionNameFromVueIndex(callExpression).let {
-        it == DEFINE_COMPONENT_FUN || it == EXTEND_FUN
+        it == DEFINE_COMPONENT_FUN || it == DEFINE_NUXT_COMPONENT_FUN || it == EXTEND_FUN
       }
 
-    fun isStrictDefineComponentOrVueExtendCall(callExpression: JSCallExpression): Boolean =
+    fun isStrictComponentDefiningCall(callExpression: JSCallExpression): Boolean =
       callExpression.methodExpression?.let {
         JSSymbolUtil.isAccurateReferenceExpressionName(it, DEFINE_COMPONENT_FUN) ||
+        JSSymbolUtil.isAccurateReferenceExpressionName(it, DEFINE_NUXT_COMPONENT_FUN) ||
         JSSymbolUtil.isAccurateReferenceExpressionName(it, VUE_NAMESPACE, EXTEND_FUN)
       } ?: false
   }

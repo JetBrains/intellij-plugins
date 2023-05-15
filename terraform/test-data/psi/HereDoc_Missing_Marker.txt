@@ -1,0 +1,16 @@
+HCLFile: HereDoc_Missing_Marker.hcl
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('foo')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiErrorElement:<boolean>, <expression>, <heredoc>, <null>, <number>, <string literal> or HD_START expected, got '<<'
+      <empty list>
+  PsiWhiteSpace(' ')
+  PsiElement(HD_START)('<<')
+  PsiElement(BAD_CHARACTER)('\n')
+  PsiElement(ID)('bar')
+  PsiWhiteSpace('\n')
+  PsiElement(ID)('baz')
+  PsiWhiteSpace('\n')
+  PsiElement(ID)('EOF')

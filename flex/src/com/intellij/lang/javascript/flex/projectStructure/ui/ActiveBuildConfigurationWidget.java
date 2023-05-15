@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigu
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
+import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
@@ -47,20 +48,19 @@ import java.util.List;
 public final class ActiveBuildConfigurationWidget {
   private final Project myProject;
 
-  @Nullable
-  private MyWidget myWidget;
+  private @Nullable MyWidget myWidget;
 
   public ActiveBuildConfigurationWidget(final Project project) {
     myProject = project;
 
     myProject.getMessageBus().connect(myProject).subscribe(ProjectTopics.MODULES, new ModuleListener() {
       @Override
-      public void modulesAdded(@NotNull Project project, @NotNull List<Module> modules) {
+      public void modulesAdded(@NotNull Project project, @NotNull List<? extends Module> modules) {
         showOrHideWidget(false);
       }
 
       @Override
-      public void moduleRemoved(@NotNull final Project project, @NotNull final Module module) {
+      public void moduleRemoved(final @NotNull Project project, final @NotNull Module module) {
         showOrHideWidget(false);
       }
     });
@@ -114,7 +114,7 @@ public final class ActiveBuildConfigurationWidget {
       Disposer.register(project, this);
       project.getMessageBus().connect(this).subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
         @Override
-        public void rootsChanged(@NotNull final ModuleRootEvent event) {
+        public void rootsChanged(final @NotNull ModuleRootEvent event) {
           update();
         }
       });
@@ -181,8 +181,7 @@ public final class ActiveBuildConfigurationWidget {
     }
 
     @Override
-    @Nullable
-    public WidgetPresentation getPresentation() {
+    public @Nullable WidgetPresentation getPresentation() {
       return null;
     }
 
@@ -222,18 +221,23 @@ public final class ActiveBuildConfigurationWidget {
     }
 
     @Override
-    @NotNull
-    public String ID() {
+    public @NotNull String ID() {
       return "ActiveFlexBuildConfiguration";
     }
 
     @Override
-    public void selectionChanged(@NotNull FileEditorManagerEvent event) {
-      update();
+    public void install(@NotNull StatusBar statusBar) {
+      super.install(statusBar);
+
+      myConnection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener() {
+        @Override
+        public void selectionChanged(@NotNull FileEditorManagerEvent event) {
+          update();
+        }
+      });
     }
 
-    @Nullable
-    private Module findCurrentFlexModule() {
+    private @Nullable Module findCurrentFlexModule() {
       final VirtualFile selectedFile = getSelectedFile();
       if (selectedFile == null) {
         return null;

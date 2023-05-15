@@ -46,6 +46,12 @@ public class DartIfStatementImpl extends DartPsiCompositeElementImpl implements 
   }
 
   @Override
+  @Nullable
+  public DartConstantPattern getConstantPattern() {
+    return findChildByClass(DartConstantPattern.class);
+  }
+
+  @Override
   @NotNull
   public List<DartContinueStatement> getContinueStatementList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartContinueStatement.class);
@@ -76,6 +82,12 @@ public class DartIfStatementImpl extends DartPsiCompositeElementImpl implements 
   }
 
   @Override
+  @Nullable
+  public DartIdentifierPattern getIdentifierPattern() {
+    return findChildByClass(DartIdentifierPattern.class);
+  }
+
+  @Override
   @NotNull
   public List<DartIfStatement> getIfStatementList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartIfStatement.class);
@@ -85,6 +97,66 @@ public class DartIfStatementImpl extends DartPsiCompositeElementImpl implements 
   @NotNull
   public List<DartLabel> getLabelList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartLabel.class);
+  }
+
+  @Override
+  @Nullable
+  public DartListPattern getListPattern() {
+    return findChildByClass(DartListPattern.class);
+  }
+
+  @Override
+  @Nullable
+  public DartLogicalAndPattern getLogicalAndPattern() {
+    return findChildByClass(DartLogicalAndPattern.class);
+  }
+
+  @Override
+  @Nullable
+  public DartLogicalOrPattern getLogicalOrPattern() {
+    return findChildByClass(DartLogicalOrPattern.class);
+  }
+
+  @Override
+  @Nullable
+  public DartMapPattern getMapPattern() {
+    return findChildByClass(DartMapPattern.class);
+  }
+
+  @Override
+  @Nullable
+  public DartObjectPattern getObjectPattern() {
+    return findChildByClass(DartObjectPattern.class);
+  }
+
+  @Override
+  @Nullable
+  public DartParenthesizedPattern getParenthesizedPattern() {
+    return findChildByClass(DartParenthesizedPattern.class);
+  }
+
+  @Override
+  @NotNull
+  public List<DartPatternAssignment> getPatternAssignmentList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartPatternAssignment.class);
+  }
+
+  @Override
+  @NotNull
+  public List<DartPatternVariableDeclaration> getPatternVariableDeclarationList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartPatternVariableDeclaration.class);
+  }
+
+  @Override
+  @Nullable
+  public DartRecordPattern getRecordPattern() {
+    return findChildByClass(DartRecordPattern.class);
+  }
+
+  @Override
+  @Nullable
+  public DartRelationalPattern getRelationalPattern() {
+    return findChildByClass(DartRelationalPattern.class);
   }
 
   @Override
@@ -101,20 +173,26 @@ public class DartIfStatementImpl extends DartPsiCompositeElementImpl implements 
 
   @Override
   @NotNull
-  public List<DartSwitchStatement> getSwitchStatementList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartSwitchStatement.class);
+  public List<DartTryStatement> getTryStatementList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartTryStatement.class);
   }
 
   @Override
-  @NotNull
-  public List<DartTryStatement> getTryStatementList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartTryStatement.class);
+  @Nullable
+  public DartUnaryPattern getUnaryPattern() {
+    return findChildByClass(DartUnaryPattern.class);
   }
 
   @Override
   @NotNull
   public List<DartVarDeclarationList> getVarDeclarationListList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartVarDeclarationList.class);
+  }
+
+  @Override
+  @Nullable
+  public DartVariablePattern getVariablePattern() {
+    return findChildByClass(DartVariablePattern.class);
   }
 
   @Override

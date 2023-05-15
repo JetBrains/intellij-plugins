@@ -2,6 +2,7 @@
 {{items[0].someValue}}
 {{items[0].<error descr="Unresolved variable foo">foo</error>}}
 <div *ngFor="let item of items; let idx = index">
+  {{fun(<error descr="Argument type Item is not assignable to parameter type string">item</error>)}}
   {{idx + 1}}. Name: {{item.someName}}, Value: {{item.someValue}}
 </div>
 

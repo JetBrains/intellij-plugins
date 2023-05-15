@@ -1,0 +1,24 @@
+{
+ class: "VueSourceComponent",
+ defaultName: "PropsConstructorsAndGenerics",
+ props: [
+  {
+   class: "VueSourceInputProperty",
+   name: "autofocus",
+   jsType: "boolean",
+   required: false,
+  },
+  {
+   class: "VueSourceInputProperty",
+   name: "msg",
+   jsType: "string",
+   required: true,
+  },
+  {
+   class: "VueSourceInputProperty",
+   name: "value",
+   jsType: "number",
+   required: false,
+  },
+ ],
+}

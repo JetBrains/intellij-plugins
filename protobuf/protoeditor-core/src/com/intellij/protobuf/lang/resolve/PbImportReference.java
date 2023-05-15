@@ -121,10 +121,9 @@ public class PbImportReference extends PsiPolyVariantReferenceBase<PsiElement> {
   @Override
   public PsiElement handleElementRename(@NotNull String newElementName) {
     PsiElement element = getElement();
-    if (!(element instanceof PbImportName)) {
+    if (!(element instanceof PbImportName importName)) {
       return super.handleElementRename(newElementName);
     }
-    PbImportName importName = (PbImportName) element;
     // newElementName is just the file's base name, so only replace the last path component.
     // The import string can be multiple string parts. For simplicity, just put the whole of
     // newElementName in the last part, and delete remnants of oldElementName that may be earlier.

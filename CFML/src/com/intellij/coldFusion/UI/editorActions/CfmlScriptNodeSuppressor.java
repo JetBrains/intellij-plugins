@@ -14,9 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 
-/**
- * @author vnikolaenko
- */
 // TODO: to generalize with com.jetbrains.php.config.sdk.PhpDiagnosticScriptNodeSuppressor
 public class CfmlScriptNodeSuppressor implements TreeStructureProvider, DumbAware {
 

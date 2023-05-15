@@ -20,7 +20,7 @@ class MakefileToolWindowOptions(val project: Project) {
     set(value) { settings?.settings?.sortAlphabeticallyInToolWindow = value }
 
   fun getRootNode(): TreeNode {
-    val files = MakefileTargetIndex
+    val files = MakefileTargetIndex.getInstance()
       .allTargets(project)
       .filterNot { (it.isSpecialTarget && !showSpecialTargets) || it.isPatternTarget }
       .groupBy { it.containingFile }

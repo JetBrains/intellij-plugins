@@ -17,6 +17,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.List;
 
+import static org.angularjs.AngularTestUtil.renderLookupItems;
+
 public class FrameworkHandlerTest extends Angular2CodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
@@ -38,12 +40,14 @@ public class FrameworkHandlerTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByText("test.html", "{{ <caret> }}");
     assertSize(1, Angular2ComponentLocator.findComponentClasses(myFixture.getFile()));
     myFixture.completeBasic();
-    assertOrderedEquals(ContainerUtil.sorted(myFixture.getLookupElementStrings()), "$any", "fooField1", "fooField2");
+    assertOrderedEquals(ContainerUtil.sorted(renderLookupItems(myFixture,false, false, true)),
+                        "$any", "fooField1", "fooField2");
 
     Disposer.dispose(disposable);
     assertSize(0, Angular2ComponentLocator.findComponentClasses(myFixture.getFile()));
     myFixture.completeBasic();
-    assertOrderedEquals(ContainerUtil.sorted(myFixture.getLookupElementStrings()), "$any");
+    assertOrderedEquals(ContainerUtil.sorted(renderLookupItems(myFixture,false, false, true)),
+                        "$any");
   }
 
   public void testSelectModuleForDeclarationsScope() {
@@ -51,7 +55,7 @@ public class FrameworkHandlerTest extends Angular2CodeInsightFixtureTestCase {
     Disposer.register(myFixture.getTestRootDisposable(), disposable);
     Angular2FrameworkHandler.EP_NAME.getPoint().registerExtension(new Angular2FrameworkHandler() {
       @Override
-      public @NotNull Angular2Module selectModuleForDeclarationsScope(@NotNull Collection<@NotNull Angular2Module> modules,
+      public @NotNull Angular2Module selectModuleForDeclarationsScope(@NotNull Collection<? extends @NotNull Angular2Module> modules,
                                                                       @NotNull Angular2Component component,
                                                                       @NotNull PsiFile context) {
         return ContainerUtil.find(modules, module -> module.getName().equals("FooModule"));
@@ -79,7 +83,7 @@ public class FrameworkHandlerTest extends Angular2CodeInsightFixtureTestCase {
   public void testSuppressModuleInspectionErrors() {
     Angular2FrameworkHandler.EP_NAME.getPoint().registerExtension(new Angular2FrameworkHandler() {
       @Override
-      public boolean suppressModuleInspectionErrors(@NotNull Collection<@NotNull Angular2Module> modules,
+      public boolean suppressModuleInspectionErrors(@NotNull Collection<? extends @NotNull Angular2Module> modules,
                                                     @NotNull Angular2Declaration declaration) {
         return "FooComponent".equals(declaration.getName());
       }

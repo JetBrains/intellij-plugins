@@ -19,19 +19,19 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.protobuf.lang.psi.PbFile;
+import com.intellij.protobuf.lang.resolve.FileResolveProvider.ChildEntry;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.protobuf.lang.psi.PbFile;
-import com.intellij.protobuf.lang.resolve.FileResolveProvider.ChildEntry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Function;
 
 /** A helper class for finding files given path names. */
-public class PbFileResolver {
+public final class PbFileResolver {
 
   @NotNull
   public static List<PbFile> findFilesForContext(

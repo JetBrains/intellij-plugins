@@ -231,15 +231,15 @@ class VueAttributeNameParser private constructor() {
     SCRIPT_ID(ID_ATTRIBUTE_NAME, requiresTag = SCRIPT_TAG_NAME, onlyTopLevelTag = false),
     SCRIPT_SRC(SRC_ATTRIBUTE_NAME, requiresTag = SCRIPT_TAG_NAME),
     SCRIPT_LANG(LANG_ATTRIBUTE_NAME, requiresTag = SCRIPT_TAG_NAME),
-    SCRIPT_SETUP(SETUP_ATTRIBUTE_NAME, injectJS = true, requiresValue = false, requiresTag = SCRIPT_TAG_NAME,
-      /* Should actually be only a top level tag, but HTML lexer is unable to distinguish that */
-                 onlyTopLevelTag = false),
+    SCRIPT_SETUP(SETUP_ATTRIBUTE_NAME, injectJS = false, requiresValue = false, requiresTag = SCRIPT_TAG_NAME),
+    SCRIPT_GENERIC(GENERIC_ATTRIBUTE_NAME, injectJS = true, requiresValue = true, requiresTag = SCRIPT_TAG_NAME,
+                   onlyTopLevelTag = false)
     ;
 
     fun isValidIn(context: String?, isTopLevel: Boolean): Boolean {
       return requiresTag == null
              || ((!onlyTopLevelTag || isTopLevel)
-                 && context?.toLowerCase(Locale.US) == requiresTag)
+                 && context?.lowercase(Locale.US) == requiresTag)
     }
 
     fun isValidIn(context: XmlTag): Boolean {
@@ -266,6 +266,6 @@ class VueAttributeNameParser private constructor() {
     SLOT(requiresValue = false),
     TEXT;
 
-    val directiveName get() = if (hasName) name.toLowerCase(Locale.US).replace('_', '-') else null
+    val directiveName get() = if (hasName) name.lowercase(Locale.US).replace('_', '-') else null
   }
 }

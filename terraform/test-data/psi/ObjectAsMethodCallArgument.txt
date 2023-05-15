@@ -1,0 +1,39 @@
+HCLFile: a.hcl
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('x')
+    PsiElement(=)('=')
+    HCLMethodCallExpression
+      HCLIdentifier
+        PsiElement(ID)('foo')
+      HCLParameterListImpl(PARAMETER_LIST)
+        PsiElement(()('(')
+        HCLObject
+          PsiElement({)('{')
+          HCLProperty
+            HCLIdentifier
+              PsiElement(ID)('a')
+            PsiWhiteSpace(' ')
+            PsiElement(=)('=')
+            PsiWhiteSpace(' ')
+            HCLNumberLiteral
+              PsiElement(NUMBER)('1')
+          PsiElement(,)(',')
+          PsiWhiteSpace(' ')
+          HCLProperty
+            HCLIdentifier
+              PsiElement(ID)('b')
+            PsiWhiteSpace(' ')
+            PsiElement(=)('=')
+            PsiWhiteSpace(' ')
+            HCLArray
+              PsiElement([)('[')
+              HCLBooleanLiteral
+                PsiElement(true)('true')
+              PsiElement(,)(',')
+              PsiWhiteSpace(' ')
+              HCLBooleanLiteral
+                PsiElement(false)('false')
+              PsiElement(])(']')
+          PsiElement(})('}')
+        PsiElement())(')')

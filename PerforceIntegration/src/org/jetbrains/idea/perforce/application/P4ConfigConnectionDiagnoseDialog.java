@@ -6,6 +6,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.NlsSafe;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vcs.VcsException;
@@ -17,7 +18,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.perforce.PerforceBundle;
-import org.jetbrains.idea.perforce.perforce.connections.P4ConfigHelper;
+import org.jetbrains.idea.perforce.perforce.connections.P4EnvHelper;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import org.jetbrains.idea.perforce.perforce.connections.P4ConnectionParameters;
 import org.jetbrains.idea.perforce.perforce.connections.PerforceMultipleConnections;
@@ -31,21 +32,20 @@ import java.io.File;
 import java.util.List;
 import java.util.*;
 
-/**
- * @author irengrig
- */
 public class P4ConfigConnectionDiagnoseDialog extends DialogWrapper {
   private PerforceMultipleConnections myMultipleConnections;
   private P4RootsInformation myChecker;
   private Tree myTree;
   private BaseNode myRoot;
   private final Project myProject;
+  private final P4EnvHelper myP4EnvHelper;
   private final ConnectionDiagnoseRefresher myRefresher;
   private DialogWrapper.DialogWrapperAction myRefreshAction;
 
   public P4ConfigConnectionDiagnoseDialog(Project project, ConnectionDiagnoseRefresher refresher) {
     super(project, true);
     myProject = project;
+    myP4EnvHelper = P4EnvHelper.getConfigHelper(project);
     myRefresher = refresher;
     setTitle(PerforceBundle.message("config.dialog.title"));
     setCancelButtonText(CommonBundle.message("close.action.name"));
@@ -81,7 +81,7 @@ public class P4ConfigConnectionDiagnoseDialog extends DialogWrapper {
     myChecker = myRefresher.getP4RootsInformation();
 
     final DefaultTreeModel model = (DefaultTreeModel)myTree.getModel();
-    final TreeMap<VirtualFile,P4ConnectionParameters> map = myMultipleConnections.getParametersMap();
+    Collection<Pair<VirtualFile, P4ConnectionParameters>> connectionParameters = myMultipleConnections.getAllConnectionParameters();
     final P4ConnectionParameters defaultParameters = myMultipleConnections.getDefaultParameters();
     final Map<VirtualFile, File> configsMap = myMultipleConnections.getConfigsMap();
 
@@ -89,17 +89,18 @@ public class P4ConfigConnectionDiagnoseDialog extends DialogWrapper {
 
     int i = 0;
     boolean containNoConfigs = false;
-    for (Map.Entry<VirtualFile, P4ConnectionParameters> entry : map.entrySet()) {
-      final VirtualFile root = entry.getKey();
+    for (Pair<VirtualFile, P4ConnectionParameters> entry : connectionParameters) {
+      final VirtualFile root = entry.first;
+      final P4ConnectionParameters parameters = entry.second;
+
       final BaseNode fileNode = new BaseNode(root, NodeType.root);
       model.insertNodeInto(fileNode, myRoot, i);
       /*myRoot.add(fileNode);
       fileNode.setParent(myRoot);*/
 
       final File configDir = configsMap.get(root);
-      putConfigDir(fileNode, configDir, entry.getValue().isNoConfigFound());
+      putConfigDir(fileNode, configDir, parameters.isNoConfigFound());
 
-      final P4ConnectionParameters parameters = entry.getValue();
       containNoConfigs |= parameters.isNoConfigFound();
       ContainerUtil.addIfNotNull(p4ConfigNames, parameters.getConfigFileName());
       if (! putConfigLines(defaultParameters, fileNode, configDir, parameters)) {
@@ -118,7 +119,7 @@ public class P4ConfigConnectionDiagnoseDialog extends DialogWrapper {
       ++i;
     }
 
-    String envP4Config = P4ConfigHelper.getP4ConfigFileName();
+    String envP4Config = myP4EnvHelper.getP4Config();
     if (envP4Config != null) {
       addNode(myRoot,
               new BaseNode(PerforceBundle.message("connection.env", envP4Config), NodeType.info));
@@ -327,7 +328,7 @@ public class P4ConfigConnectionDiagnoseDialog extends DialogWrapper {
 
     myRoot = new BaseNode("", NodeType.veryRoot);
     myTree = new Tree(myRoot);
-    new TreeSpeedSearch(myTree);
+    TreeUIHelper.getInstance().installTreeSpeedSearch(myTree);
     TreeUtil.installActions(myTree);
     myTree.setRootVisible(false);
     myTree.setShowsRootHandles(false);
@@ -398,8 +399,7 @@ public class P4ConfigConnectionDiagnoseDialog extends DialogWrapper {
                                       boolean leaf,
                                       int row,
                                       boolean hasFocus) {
-      if (! (value instanceof BaseNode)) return;
-      final BaseNode baseNode = (BaseNode) value;
+      if (! (value instanceof BaseNode baseNode)) return;
       final NodeType type = baseNode.getNodeType();
       final Object uo = baseNode.getUserObject();
 

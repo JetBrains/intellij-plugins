@@ -1,0 +1,7 @@
+/omit-if-no-ref/ &label;
+
+/omit-if-no-ref/ &{/node@0};
+
+/ {
+    /omit-if-no-ref/ node@0 {};
+};

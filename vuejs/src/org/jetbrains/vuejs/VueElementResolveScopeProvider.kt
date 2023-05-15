@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs
 
+import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.ecmascript6.TypeScriptResolveScopeProvider
 import com.intellij.lang.javascript.psi.resolve.JSElementResolveScopeProvider
@@ -23,10 +24,11 @@ class VueElementResolveScopeProvider : JSElementResolveScopeProvider {
   }
 
   override fun getElementResolveScope(element: PsiElement): GlobalSearchScope? {
-    val psiFile = element.containingFile
+    val project = element.project
+    val psiFile = InjectedLanguageManager.getInstance(project).getTopLevelFile(element)
     if (psiFile?.fileType != VueFileType.INSTANCE) return null
     if (DialectDetector.isTypeScript(element)) {
-      return tsProvider.getResolveScope(psiFile.viewProvider.virtualFile, element.project)
+      return tsProvider.getResolveScope(psiFile.viewProvider.virtualFile, project)
     }
     return null
   }

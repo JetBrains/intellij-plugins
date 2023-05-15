@@ -7,7 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.*
 import javax.swing.*
 
-class MakefileCellRenderer(project: Project) : ColoredTreeCellRenderer() {
+class MakefileCellRenderer(private val project: Project) : ColoredTreeCellRenderer() {
   private val rootDir: VirtualFile? = project.guessProjectDir()
 
   override fun customizeCellRenderer(tree: JTree, value: Any, selected: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean) {
@@ -18,7 +18,7 @@ class MakefileCellRenderer(project: Project) : ColoredTreeCellRenderer() {
     }
     else {
       append(value.name)
-      if (value is MakefileFileNode) {
+      if (value is MakefileFileNode && !project.isDisposed) {
         val file = value.psiFile.containingDirectory?.virtualFile ?: return
         if (rootDir != null) {
           val relativePath = VfsUtilCore.getRelativePath(file, rootDir) ?: file.path

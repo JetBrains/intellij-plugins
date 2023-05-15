@@ -4,7 +4,10 @@ package org.jetbrains.vuejs.model.source
 import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclarationPart
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.JSStubElementTypes
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.JSFile
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.JSTypeOwner
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
@@ -12,6 +15,7 @@ import com.intellij.lang.javascript.psi.types.JSBooleanLiteralTypeImpl
 import com.intellij.lang.javascript.psi.types.JSModuleTypeImpl
 import com.intellij.lang.javascript.psi.util.JSClassUtils
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.openapi.project.DumbService
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -48,7 +52,11 @@ interface EntityContainerInfoProvider<T> {
       descriptor.initializer?.let {
         val manager = CachedValuesManager.getManager(it.project)
         manager.getCachedValue(it, manager.getKeyForClass(this::class.java), {
-          CachedValueProvider.Result.create(createInfo(it), PsiModificationTracker.MODIFICATION_COUNT)
+          CachedValueProvider.Result.create(
+            createInfo(it),
+            PsiModificationTracker.MODIFICATION_COUNT,
+            DumbService.getInstance(it.project)
+          )
         }, false)
       }
 

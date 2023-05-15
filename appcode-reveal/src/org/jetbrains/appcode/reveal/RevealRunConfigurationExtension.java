@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.appcode.reveal;
 
 import com.intellij.execution.ExecutionException;
@@ -54,7 +54,7 @@ public final class RevealRunConfigurationExtension extends AppCodeRunConfigurati
   private static final Key<RevealSettings> REVEAL_SETTINGS_KEY = Key.create(REVEAL_SETTINGS_TAG);
   private static final Key<String> BUNDLE_ID_KEY = Key.create("BUNDLE_INFO");
   private static final Key<File> FILE_TO_INJECT = Key.create("reveal.library.to.inject");
-  private static final List<String> KNOWN_FRAMEWORK_NAMES = ContainerUtil.newArrayList("RevealServer", "Reveal");
+  private static final List<String> KNOWN_FRAMEWORK_NAMES = List.of("RevealServer", "Reveal");
 
   @NotNull
   public static RevealSettings getRevealSettings(@NotNull AppCodeRunConfiguration config) {
@@ -68,7 +68,7 @@ public final class RevealRunConfigurationExtension extends AppCodeRunConfigurati
 
   @Override
   protected void readExternal(@NotNull AppCodeRunConfiguration runConfiguration, @NotNull Element element)
-          throws InvalidDataException {
+    throws InvalidDataException {
     Element settingsTag = element.getChild(REVEAL_SETTINGS_TAG);
     RevealSettings settings = null;
     if (settingsTag != null) {
@@ -76,7 +76,7 @@ public final class RevealRunConfigurationExtension extends AppCodeRunConfigurati
       settings.autoInject = getAttributeValue(settingsTag.getAttributeValue("autoInject"), settings.autoInject);
       settings.autoInstall = getAttributeValue(settingsTag.getAttributeValue("autoInstall"), settings.autoInstall);
       settings.askToEnableAutoInstall =
-              getAttributeValue(settingsTag.getAttributeValue("askToEnableAutoInstall"), settings.askToEnableAutoInstall);
+        getAttributeValue(settingsTag.getAttributeValue("askToEnableAutoInstall"), settings.askToEnableAutoInstall);
     }
     setRevealSettings(runConfiguration, settings);
   }
@@ -167,10 +167,10 @@ public final class RevealRunConfigurationExtension extends AppCodeRunConfigurati
     super.createAdditionalActions(configuration, product, environment, buildConfiguration, console, processHandler, actions);
 
     actions.add(new RefreshRevealAction(configuration,
-            environment,
-            processHandler,
-            buildConfiguration.getDestination(),
-            getBundleID(environment, product)));
+                                        environment,
+                                        processHandler,
+                                        buildConfiguration.getDestination(),
+                                        getBundleID(environment, product)));
   }
 
   @Override
@@ -202,7 +202,8 @@ public final class RevealRunConfigurationExtension extends AppCodeRunConfigurati
     File appBundle = Reveal.getDefaultRevealApplicationBundle();
     if (appBundle == null) throw new ExecutionException(RevealBundle.message("dialog.message.reveal.application.bundle.not.found"));
 
-    XCBuildSettings buildSettings = ReadAction.compute(() -> XCBuildSettings.withOverriddenSdk(buildConfiguration.getConfiguration(), buildConfiguration.getSdk()));
+    XCBuildSettings buildSettings =
+      ReadAction.compute(() -> XCBuildSettings.withOverriddenSdk(buildConfiguration.getConfiguration(), buildConfiguration.getSdk()));
     File libReveal = Reveal.getRevealLib(appBundle, buildSettings);
     if (libReveal == null) throw new ExecutionException(RevealBundle.message("dialog.message.reveal.library.not.found"));
 
@@ -225,7 +226,7 @@ public final class RevealRunConfigurationExtension extends AppCodeRunConfigurati
       if (!settings.askToEnableAutoInstall) return null;
 
       boolean[] response = new boolean[1];
-      UIUtil.invokeAndWaitIfNeeded((Runnable)() -> {
+      UIUtil.invokeAndWaitIfNeeded(() -> {
         response[0] = MessageDialogBuilder.yesNo(RevealBundle.message("dialog.title.reveal"),
                                                  RevealBundle.message("project.is.not.configured.with.reveal.library"))
           .doNotAsk(new DoNotAskOption() {

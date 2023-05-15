@@ -10,14 +10,13 @@ import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.ui.EditorNotificationPanel;
-import com.intellij.ui.EditorNotifications;
+import com.intellij.ui.EditorNotificationProvider;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
@@ -30,45 +29,37 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
+import java.util.function.Function;
 
-public class DartEditorNotificationsProvider extends EditorNotifications.Provider<EditorNotificationPanel> {
-  private static final Key<EditorNotificationPanel> KEY = Key.create("DartEditorNotificationsProvider");
+public class DartEditorNotificationsProvider implements EditorNotificationProvider {
   private static final NotificationGroup NOTIFICATION_GROUP = NotificationGroupManager.getInstance().getNotificationGroup("Dart Support");
 
   @Override
-  @NotNull
-  public Key<EditorNotificationPanel> getKey() {
-    return KEY;
-  }
-
-  @Override
-  @Nullable
-  public EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile vFile,
-                                                         @NotNull FileEditor fileEditor,
-                                                         @NotNull Project project) {
-    if (!vFile.isInLocalFileSystem()) {
+  public @Nullable Function<? super @NotNull FileEditor, ? extends @Nullable JComponent> collectNotificationData(@NotNull Project project,
+                                                                                                                 @NotNull VirtualFile file) {
+    if (!file.isInLocalFileSystem()) {
       return null;
     }
 
-    boolean isPubspecFile = PubspecYamlUtil.isPubspecFile(vFile);
+    boolean isPubspecFile = PubspecYamlUtil.isPubspecFile(file);
 
     if (isPubspecFile) {
-      final Module module = ModuleUtilCore.findModuleForFile(vFile, project);
+      final Module module = ModuleUtilCore.findModuleForFile(file, project);
       if (module == null) return null;
 
       // Defer to the Flutter plugin for package management and SDK configuration if appropriate.
-      if (FlutterUtil.isFlutterPluginInstalled() && FlutterUtil.isPubspecDeclaringFlutter(vFile)) return null;
+      if (FlutterUtil.isFlutterPluginInstalled() && FlutterUtil.isPubspecDeclaringFlutter(file)) return null;
 
       final DartSdk sdk = DartSdk.getDartSdk(project);
       if (sdk != null && DartSdkLibUtil.isDartSdkEnabled(module)) {
-        return new PubActionsPanel(sdk);
+        return fileEditor -> new PubActionsPanel(fileEditor, sdk);
       }
     }
 
-    if (isPubspecFile || FileTypeRegistry.getInstance().isFileOfType(vFile, DartFileType.INSTANCE)) {
+    if (isPubspecFile || FileTypeRegistry.getInstance().isFileOfType(file, DartFileType.INSTANCE)) {
       final DartSdk sdk = DartSdk.getDartSdk(project);
 
-      final PsiFile psiFile = PsiManager.getInstance(project).findFile(vFile);
+      final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
       if (psiFile == null) return null;
 
       final Module module = ModuleUtilCore.findModuleForPsiElement(psiFile);
@@ -78,29 +69,30 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
       if (sdk == null) {
         final String sdkPath = DartSdkUtil.getFirstKnownDartSdkPath();
         if (DartSdkUtil.isDartSdkHome(sdkPath)) {
-          return createNotificationToEnableDartSupport(fileEditor, module);
+          return fileEditor -> createNotificationToEnableDartSupport(fileEditor, module);
         }
         else {
-          return createNoDartSdkPanel(fileEditor, project, DartBundle.message("dart.sdk.is.not.configured"));
+          return fileEditor -> createNoDartSdkPanel(fileEditor, project, DartBundle.message("dart.sdk.is.not.configured"));
         }
       }
 
       // SDK not enabled for this module
       if (!DartSdkLibUtil.isDartSdkEnabled(module)) {
-        return createNotificationToEnableDartSupport(fileEditor, module);
+        return fileEditor -> createNotificationToEnableDartSupport(fileEditor, module);
       }
 
       if (!DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) {
         String message = DartBundle.message("old.dart.sdk.configured", DartAnalysisServerService.MIN_SDK_VERSION, sdk.getVersion());
-        return createNoDartSdkPanel(fileEditor, project, message);
+        return fileEditor -> createNoDartSdkPanel(fileEditor, project, message);
       }
     }
 
     return null;
   }
 
-  @NotNull
-  public EditorNotificationPanel createNoDartSdkPanel(@NotNull FileEditor fileEditor, @NotNull Project project, @NlsContexts.Label String message) {
+  public @NotNull EditorNotificationPanel createNoDartSdkPanel(@NotNull FileEditor fileEditor,
+                                                               @NotNull Project project,
+                                                               @NlsContexts.Label String message) {
     final String downloadUrl = DartSdkUpdateChecker.SDK_STABLE_DOWNLOAD_URL;
 
     final EditorNotificationPanel panel =
@@ -110,8 +102,8 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
     return panel;
   }
 
-  @NotNull
-  private static EditorNotificationPanel createNotificationToEnableDartSupport(@NotNull FileEditor fileEditor, @NotNull final Module module) {
+  private static @NotNull EditorNotificationPanel createNotificationToEnableDartSupport(@NotNull FileEditor fileEditor,
+                                                                                        @NotNull Module module) {
     final String message = DartSdkLibUtil.isIdeWithMultipleModuleSupport()
                            ? DartBundle.message("dart.support.is.not.enabled.for.module.0", module.getName())
                            : DartBundle.message("dart.support.is.not.enabled.for.project");
@@ -123,8 +115,8 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
   }
 
   private static final class PubActionsPanel extends EditorNotificationPanel {
-    private PubActionsPanel(@NotNull DartSdk sdk) {
-      super(EditorColors.GUTTER_BACKGROUND, Status.Info);
+    private PubActionsPanel(@NotNull FileEditor fileEditor, @NotNull DartSdk sdk) {
+      super(fileEditor, null, EditorColors.GUTTER_BACKGROUND, Status.Info);
       createActionLabel(DartBundle.message("pub.get"), "Dart.pub.get");
       createActionLabel(DartBundle.message("pub.upgrade"), "Dart.pub.upgrade");
 
@@ -140,7 +132,7 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
   private static class EnableDartSupportForModule implements Runnable {
     private final Module myModule;
 
-    EnableDartSupportForModule(@NotNull final Module module) {
+    EnableDartSupportForModule(@NotNull Module module) {
       this.myModule = module;
     }
 
@@ -184,9 +176,9 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
   }
 
   private static final class OpenWebPageRunnable implements Runnable {
-    @NotNull private final String myUrl;
+    private final @NotNull String myUrl;
 
-    private OpenWebPageRunnable(@NotNull final String url) {
+    private OpenWebPageRunnable(@NotNull String url) {
       myUrl = url;
     }
 
@@ -197,9 +189,9 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
   }
 
   private static final class OpenDartSettingsRunnable implements Runnable {
-    @NotNull private final Project myProject;
+    private final @NotNull Project myProject;
 
-    private OpenDartSettingsRunnable(@NotNull final Project project) {
+    private OpenDartSettingsRunnable(@NotNull Project project) {
       myProject = project;
     }
 

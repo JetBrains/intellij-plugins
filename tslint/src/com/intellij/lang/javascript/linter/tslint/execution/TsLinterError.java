@@ -7,9 +7,6 @@ import com.intellij.lang.javascript.linter.tslint.highlight.TsLintFixInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Irina.Chernushina on 6/4/2015.
- */
 public final class TsLinterError extends JSLinterError {
   @Nullable
   private final String myPath;

@@ -1,0 +1,53 @@
+AstroFile:test.astro
+  AstroContentRoot:ASTRO:CONTENT_ROOT
+    PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
+    AstroFrontmatterScript:ASTRO:FRONTMATTER_SCRIPT
+      <empty list>
+    PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
+    PsiWhiteSpace('\n')
+    PsiElement(XML_COMMENT)
+      XmlToken:XML_COMMENT_START('<!DOCTYPE')
+      XmlToken:XML_COMMENT_CHARACTERS(' aaa [<!ELEMENT a #EMPTY')
+      XmlToken:XML_COMMENT_END('>')
+    PsiElement(XML_PROLOG)
+      <empty list>
+    XmlToken:XML_DATA_CHARACTERS('<!ATTLIST')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('a')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('xx')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('CDATA')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('#IMPLIED')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('yy')
+    PsiWhiteSpace('  ')
+    XmlToken:XML_DATA_CHARACTERS('#IMPLIED')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('zz')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('CDATA')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('#IMPLIED>]>')
+    PsiWhiteSpace('\n')
+    AstroTag:a
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('a')
+      XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace(' ')
+      AstroTag:b
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('b')
+        XmlToken:XML_TAG_END('>')
+        XmlText
+          PsiWhiteSpace(' ')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_NAME('b')
+        XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace(' ')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('a')
+      XmlToken:XML_TAG_END('>')

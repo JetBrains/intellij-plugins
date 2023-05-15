@@ -7,12 +7,17 @@ import com.intellij.lang.javascript.JavaScriptSpecificHandlersFactory
 import com.intellij.lang.javascript.ecmascript6.TypeScriptQualifiedItemProcessor
 import com.intellij.lang.javascript.findUsages.JSDialectSpecificReadWriteAccessDetector
 import com.intellij.lang.javascript.psi.JSControlFlowScope
+import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.*
 import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeGuard
+import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.typescript.resolve.TypeScriptTypeHelper
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiPolyVariantReference
 import com.intellij.psi.impl.source.resolve.ResolveCache.PolyVariantResolver
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder
 import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver
@@ -50,11 +55,11 @@ class Angular2SpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
   }
 
   override fun getReadWriteAccessDetector(): JSDialectSpecificReadWriteAccessDetector {
-    return Angular2ReadWriteAccessDetector.INSTANCE
+    return Angular2ReadWriteAccessDetector
   }
 
   override fun getTypeGuardEvaluator(): JSTypeGuardEvaluator {
-    return Angular2TypeGuardEvaluator.INSTANCE
+    return Angular2TypeGuardEvaluator
   }
 
   override fun createTypeGuard(element: PsiElement): TypeScriptTypeGuard {
@@ -64,4 +69,20 @@ class Angular2SpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
   override fun getTypeHelper(): JSTypeHelper {
     return TypeScriptTypeHelper.getInstance()
   }
+
+  override fun getExportScope(element: PsiElement): JSElement? =
+    if (element is PsiFile)
+      null
+    else
+      Angular2ComponentLocator.findComponentClass(element)
+        ?.containingFile as? JSFile
+      ?: super.getExportScope(element)
+
+  override fun resolveLimited(reference: PsiPolyVariantReference, referenceName: String): PsiElement? {
+    return super.resolveLimited(reference, referenceName)
+           ?: Angular2ComponentLocator.findComponentClass(reference.element)?.let {
+             JSStubBasedPsiTreeUtil.resolveLocally(referenceName, it, false)
+           }
+  }
+
 }

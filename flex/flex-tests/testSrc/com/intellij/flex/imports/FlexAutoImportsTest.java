@@ -11,7 +11,7 @@ import com.intellij.flex.util.FlexModuleFixtureBuilderImpl;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.lang.javascript.JSTestUtils;
-import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
+import com.intellij.lang.javascript.inspections.JSUnresolvedReferenceInspection;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
@@ -40,7 +40,7 @@ public class FlexAutoImportsTest extends CodeInsightFixtureTestCase<FlexModuleFi
     super.setUp();
     JSTestUtils.initJSIndexes(getProject());
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getProjectDisposable());
-    myFixture.enableInspections(JSUnresolvedVariableInspection.class);
+    myFixture.enableInspections(JSUnresolvedReferenceInspection.class);
     myFixture.setTestDataPath(FlexTestUtils.getTestDataPath("imports/auto"));
   }
 

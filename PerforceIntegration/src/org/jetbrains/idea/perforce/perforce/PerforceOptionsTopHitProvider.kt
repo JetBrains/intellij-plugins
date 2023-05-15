@@ -5,7 +5,6 @@ import com.intellij.ide.ui.search.OptionDescription
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.changes.VcsDirtyScopeManager
 import com.intellij.openapi.vcs.configurable.VcsOptionsTopHitProviderBase
-import com.intellij.ui.layout.*
 import org.jetbrains.idea.perforce.PerforceBundle
 import org.jetbrains.idea.perforce.application.PerforceVcs
 
@@ -23,18 +22,18 @@ private fun cdUseP4Jobs(project: Project): CheckboxDescriptor =             Chec
 
 private fun cdEnable(project: Project): CheckboxDescriptor =
   CheckboxDescriptor(PerforceBundle.message("checkbox.configure.perforce.is.enabled"),
-                     PropertyBinding({ configuration(project).ENABLED },
-                                     { enabled ->
-                                       val configuration = configuration(project)
-                                       configuration.ENABLED = enabled
-                                       if (enabled) {
-                                         configuration.enable()
-                                       }
-                                       else {
-                                         configuration.disable(true)
-                                         VcsDirtyScopeManager.getInstance(project).markEverythingDirty()
-                                       }
-                                     }),
+                     { configuration(project).ENABLED },
+                     { enabled ->
+                       val configuration = configuration(project)
+                       configuration.ENABLED = enabled
+                       if (enabled) {
+                         configuration.enable()
+                       }
+                       else {
+                         configuration.disable(true)
+                         VcsDirtyScopeManager.getInstance(project).markEverythingDirty()
+                       }
+                     },
                      groupName = p4OptionGroupName)
 
 internal class PerforceOptionsTopHitProvider : VcsOptionsTopHitProviderBase() {

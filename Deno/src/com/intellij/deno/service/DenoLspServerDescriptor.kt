@@ -5,12 +5,10 @@ import com.google.gson.JsonParser
 import com.google.gson.JsonPrimitive
 import com.intellij.deno.DenoSettings
 import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.lsp.LspServerDescriptor
-import com.intellij.lsp.LspServerSupportProvider
-import com.intellij.lsp.SocketModeDescriptor
-import com.intellij.openapi.Disposable
+import com.intellij.lang.javascript.TypeScriptFileType
+import com.intellij.lsp.api.LspServerDescriptor
+import com.intellij.lsp.api.LspServerSupportProvider
 import com.intellij.openapi.components.PathMacroManager
-import com.intellij.openapi.components.Service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.util.io.FileUtil
@@ -18,25 +16,27 @@ import com.intellij.openapi.vfs.VirtualFile
 import java.io.File
 
 class DenoLspSupportProvider : LspServerSupportProvider {
-  override fun getServerDescriptor(project: Project, virtualFile: VirtualFile) =
-    if (DenoSettings.getService(project).isUseDeno()) {
-      getDenoDescriptor(project)
-    }
-    else {
-      LspServerDescriptor.emptyDescriptor()
-    }
+  override fun fileOpened(project: Project, file: VirtualFile, serverStarter: LspServerSupportProvider.LspServerStarter) {
+    getDenoDescriptor(project)?.let { serverStarter.ensureServerStarted(it) }
+  }
 }
 
-fun getDenoDescriptor(project: Project): DenoLspServerDescriptor {
-  return project.getService(DenoLspServerDescriptor::class.java)
+fun getDenoDescriptor(project: Project): DenoLspServerDescriptor? {
+  if (DenoSettings.getService(project).isUseDeno()) {
+    // TODO don't use guessProjectDir()
+    val root = project.guessProjectDir()
+    if (root != null) {
+      return DenoLspServerDescriptor(project, root)
+    }
+  }
+  return null
 }
 
-@Service
-class DenoLspServerDescriptor(private val myProject: Project) : LspServerDescriptor(), Disposable {
+class DenoLspServerDescriptor(project: Project, vararg roots: VirtualFile) : LspServerDescriptor(project, "Deno", *roots) {
 
-  override fun getProject(): Project = myProject
+  override fun isSupportedFile(file: VirtualFile) = file.fileType == TypeScriptFileType.INSTANCE
 
-  override fun createStdioServerStartingCommandLine(): GeneralCommandLine {
+  override fun createCommandLine(): GeneralCommandLine {
     return DenoSettings.getService(project).getDenoPath().ifEmpty { null }?.let {
       GeneralCommandLine(it, "lsp")
     }.also { DenoTypings.getInstance(project).reloadAsync() } ?: throw RuntimeException("deno is not installed")
@@ -51,8 +51,6 @@ class DenoLspServerDescriptor(private val myProject: Project) : LspServerDescrip
 
     return result
   }
-
-  override fun getRoot(): VirtualFile = project.guessProjectDir()!!
 
   private fun expandRelativePath(jsonElement: JsonElement, name: String) {
     val basePath = project.basePath
@@ -69,12 +67,7 @@ class DenoLspServerDescriptor(private val myProject: Project) : LspServerDescrip
     jsonObject.add(name, JsonPrimitive(FileUtil.toSystemDependentName("$basePath/$text")))
   }
 
-  override fun getSocketModeDescriptor(): SocketModeDescriptor? = null
-
-  override fun useGenericCompletion() = false
-
-  override fun useGenericHighlighting() = false
-
-  override fun useGenericNavigation() = false
-  override fun dispose() {}
+  override val lspCompletionSupport = null
+  override val handlePublishDiagnostics = false
+  override val useGenericNavigation = false
 }

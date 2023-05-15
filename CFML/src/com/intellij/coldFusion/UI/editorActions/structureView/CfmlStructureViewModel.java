@@ -50,7 +50,7 @@ public class CfmlStructureViewModel extends TextEditorBasedStructureViewModel {
 
   @Override
   public Filter @NotNull [] getFilters() {
-    return Filter.EMPTY_ARRAY;
+    return super.getFilters();
   }
 
   @Override

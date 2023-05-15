@@ -18,6 +18,7 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.util.LineSeparator;
+import com.intellij.util.ThrowableRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Assert;
@@ -36,7 +37,8 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     super.setUp();
     myFixture.setTestDataPath(PrettierJSTestUtil.getTestDataPath() + "reformat");
     PrettierConfiguration.getInstance(getProject())
-      .withLinterPackage(NodePackageRef.create(getNodePackage()));
+      .withLinterPackage(NodePackageRef.create(getNodePackage()))
+      .getState().configurationMode = PrettierConfiguration.ConfigurationMode.MANUAL;
   }
 
   public void testWithoutConfig() {
@@ -85,7 +87,8 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     enableDetailedLogs();
     doReformatFile("toReformat", "js", () -> JSTestUtils.ensureLineSeparators(myFixture.getFile(), LineSeparator.CRLF));
     FileDocumentManager.getInstance().saveAllDocuments();
-    assertEquals(LineSeparator.CRLF, StringUtil.detectSeparators(VfsUtilCore.loadText(getFile().getVirtualFile())));
+    // Default Prettier behavior starting from v2.0.0 is 'lf'. See https://prettier.io/docs/en/options.html#end-of-line
+    assertEquals(LineSeparator.LF, StringUtil.detectSeparators(VfsUtilCore.loadText(getFile().getVirtualFile())));
   }
 
   public void testWithUpdatingLfToCrlf() throws IOException {
@@ -112,8 +115,8 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
 
   private void doTestRunPrettierOnSave(@NotNull String saveActionId) {
     PrettierConfiguration configuration = PrettierConfiguration.getInstance(getProject());
-    boolean origRunOnSave = configuration.isRunOnSave();
-    configuration.setRunOnSave(true);
+    boolean origRunOnSave = configuration.getState().runOnSave;
+    configuration.getState().runOnSave = true;
     try {
       myFixture.configureByText("foo.js", "var  a=''");
       myFixture.type(' ');
@@ -122,43 +125,38 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
       myFixture.checkResult("var a = \"\";\n");
     }
     finally {
-      configuration.setRunOnSave(origRunOnSave);
+      configuration.getState().runOnSave = origRunOnSave;
     }
   }
 
   public void testRunPrettierOnCodeReformat() {
     PrettierConfiguration configuration = PrettierConfiguration.getInstance(getProject());
-    boolean origRunOnReformat = configuration.isRunOnReformat();
-    configuration.setRunOnReformat(true);
+    boolean origRunOnReformat = configuration.getState().runOnReformat;
+    configuration.getState().runOnReformat = true;
     try {
       myFixture.configureByText("foo.js", "var  a=''");
       myFixture.performEditorAction(IdeActions.ACTION_EDITOR_REFORMAT);
       myFixture.checkResult("var a = \"\";\n");
     }
     finally {
-      configuration.setRunOnReformat(origRunOnReformat);
+      configuration.getState().runOnReformat = origRunOnReformat;
     }
   }
 
-  public void testYarnPrettierBasicExample() {
+  public void testYarnPrettierBasicExample() throws Exception {
     doReformatFile("toReformat", "js", () -> {
       VirtualFile file = myFixture.findFileInTempDir("toReformat.js");
       VirtualFile root = file.getParent();
-      try {
-        NodePackage yarnPkg = AbstractYarnPnpIntegrationTest.installYarnGlobally(getNodeJsAppRule());
-        AbstractYarnPnpIntegrationTest.configureYarnBerryAndRunYarnInstall(getProject(), yarnPkg, getNodeJsAppRule(), root);
-        configureYarnPrettierPackage(root);
-      }
-      catch (Exception e) {
-        throw new RuntimeException(e);
-      }
+      NodePackage yarnPkg = AbstractYarnPnpIntegrationTest.installYarnGlobally(getNodeJsAppRule());
+      AbstractYarnPnpIntegrationTest.configureYarnBerryAndRunYarnInstall(getProject(), yarnPkg, getNodeJsAppRule(), root);
+      configureYarnPrettierPackage(root);
     });
   }
 
   public void testIncompleteBlock() {
     PrettierConfiguration configuration = PrettierConfiguration.getInstance(getProject());
-    boolean origRunOnReformat = configuration.isRunOnReformat();
-    configuration.setRunOnReformat(true);
+    boolean origRunOnReformat = configuration.getState().runOnReformat;
+    configuration.getState().runOnReformat = true;
     try {
       String dirName = getTestName(true);
       myFixture.copyDirectoryToProject(dirName, "");
@@ -169,7 +167,7 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
       myFixture.checkResultByFile(dirName + "/" + "toReformat_after.js");
     }
     finally {
-      configuration.setRunOnReformat(origRunOnReformat);
+      configuration.getState().runOnReformat = origRunOnReformat;
     }
   }
 
@@ -181,6 +179,22 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     });
   }
 
+  public void testResolveConfig() {
+    doReformatFile("webc");
+  }
+
+  public void testAutoconfigured() {
+    PrettierConfiguration.getInstance(getProject())
+      .getState().configurationMode = PrettierConfiguration.ConfigurationMode.AUTOMATIC;
+    doReformatFile("subdir/formatted", "js", () -> {
+      myFixture.getTempDirFixture().copyAll(getNodePackage().getSystemIndependentPath(), "subdir/node_modules/prettier");
+    });
+
+    myFixture.configureFromExistingVirtualFile(myFixture.findFileInTempDir("ignored.js"));
+    runReformatAction();
+    myFixture.checkResultByFile(getTestName(true) + "/ignored_after.js");
+  }
+
   private void configureYarnPrettierPackage(VirtualFile root) {
     PrettierConfiguration configuration = PrettierConfiguration.getInstance(getProject());
     YarnPnpNodePackage yarnPrettierPkg = YarnPnpNodePackage.create(getProject(),
@@ -188,7 +202,7 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
                                                                    PrettierUtil.PACKAGE_NAME, false, false);
     assertNotNull(yarnPrettierPkg);
     configuration.withLinterPackage(NodePackageRef.create(yarnPrettierPkg));
-    NodePackage readYarnPrettierPkg = configuration.getPackage();
+    NodePackage readYarnPrettierPkg = configuration.getPackage(null);
     assertInstanceOf(readYarnPrettierPkg, YarnPnpNodePackage.class);
     assertEquals("yarn:package.json:prettier", readYarnPrettierPkg.getSystemIndependentPath());
   }
@@ -201,9 +215,9 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     doReformatFile(fileNamePrefix, extension, null);
   }
 
-  private void doReformatFile(final String fileNamePrefix,
-                              final String extension,
-                              @Nullable Runnable configureFixture) {
+  private <T extends Throwable> void doReformatFile(final String fileNamePrefix,
+                                                    final String extension,
+                                                    @Nullable ThrowableRunnable<T> configureFixture) throws T {
     String dirName = getTestName(true);
     myFixture.copyDirectoryToProject(dirName, "");
     String extensionWithDot = StringUtil.isEmpty(extension) ? "" : "." + extension;
@@ -211,6 +225,11 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     if (configureFixture != null) {
       configureFixture.run();
     }
+    runReformatAction();
+    myFixture.checkResultByFile(dirName + "/" + fileNamePrefix + "_after" + extensionWithDot);
+  }
+
+  private void runReformatAction() {
     myFixture.testAction(new ReformatWithPrettierAction((new ReformatWithPrettierAction.ErrorHandler() {
       @Override
       public void showError(@NotNull Project project, @Nullable Editor editor,
@@ -224,7 +243,6 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
         throw new RuntimeException(text + " " + details);
       }
     })));
-    myFixture.checkResultByFile(dirName + "/" + fileNamePrefix + "_after" + extensionWithDot);
   }
 
   private static void assertError(Condition<String> checkException, Runnable runnable) {

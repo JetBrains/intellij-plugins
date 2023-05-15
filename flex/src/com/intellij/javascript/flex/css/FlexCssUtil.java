@@ -14,9 +14,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-/**
- * @author Eugene.Kudelevsky
- */
 public final class FlexCssUtil {
   private static final String STYLE_NAME_SUFFIX = "style-name";
 

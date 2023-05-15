@@ -63,7 +63,7 @@ public class FlexUnitMethodReturnTypeInspection extends FlexUnitMethodInspection
     }
 
     @Override
-    public void visitJSReturnStatement(JSReturnStatement statement) {
+    public void visitJSReturnStatement(@NotNull JSReturnStatement statement) {
       super.visitJSReturnStatement(statement);
       if (statement.getExpression() != null) {
         final JSFunction containingFunction = PsiTreeUtil.getParentOfType(statement, JSFunction.class);
@@ -74,7 +74,7 @@ public class FlexUnitMethodReturnTypeInspection extends FlexUnitMethodInspection
     }
 
     @Override
-    public void visitJSFunctionDeclaration(JSFunction function) {
+    public void visitJSFunctionDeclaration(@NotNull JSFunction function) {
       // do nothing, so that it doesn't drill into nested functions
     }
 

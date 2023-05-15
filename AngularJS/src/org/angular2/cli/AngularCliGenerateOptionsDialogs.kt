@@ -18,7 +18,7 @@ class AngularCliGenerateOptionsDialogs(val project: Project, val schematic: Sche
   private lateinit var editor: EditorTextField
 
   init {
-    title = Angular2Bundle.message("action.angularCliGenerate.title", schematic.name)
+    title = Angular2Bundle.message("action.angularCliGenerate.title", schematic.name ?: "???")
     init()
   }
 

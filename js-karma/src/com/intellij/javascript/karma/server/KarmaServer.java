@@ -13,6 +13,7 @@ import com.intellij.javascript.karma.execution.KarmaServerSettings;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.karma.util.StreamEventListener;
 import com.intellij.javascript.nodejs.execution.NodeTargetRun;
+import com.intellij.javascript.nodejs.execution.NodeTargetRunOptions;
 import com.intellij.javascript.nodejs.library.yarn.pnp.YarnPnpNodePackage;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.javascript.testing.AngularCliConfig;
@@ -27,7 +28,6 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.PathUtil;
-import com.intellij.util.ThreeState;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.execution.ParametersListUtil;
 import com.intellij.util.text.SemVer;
@@ -61,21 +61,23 @@ public final class KarmaServer {
   private final MyDisposable myDisposable;
   private final KarmaServerRestarter myRestarter;
   private final int myProcessHashCode;
+  private final NodeTargetRun myTargetRun;
 
   public KarmaServer(@NotNull Project project, @NotNull KarmaServerSettings serverSettings) throws IOException {
     myServerSettings = serverSettings;
     myCoveragePeer = serverSettings.isWithCoverage() ? new KarmaCoveragePeer() : null;
     KillableProcessHandler processHandler = startServer(project, serverSettings, myCoveragePeer, myCommandLineFolder);
+    myTargetRun = NodeTargetRun.getTargetRun(processHandler);
     myProcessHashCode = System.identityHashCode(processHandler.getProcess());
-    File configurationFile = myServerSettings.getConfigurationFile();
-    myState = new KarmaServerState(this, configurationFile);
+    String configurationFilePath = myServerSettings.getConfigurationFilePath();
+    myState = new KarmaServerState(this, configurationFilePath, myServerSettings.getWorkingDirectorySystemDependent());
     myProcessOutputManager = new KarmaProcessOutputManager(processHandler, myState::onStandardOutputLineAvailable);
     registerStreamEventHandlers();
     myProcessOutputManager.startNotify();
 
     myDisposable = new MyDisposable();
     Disposer.register(KarmaServerRegistry.getInstance(project), myDisposable);
-    myRestarter = new KarmaServerRestarter(configurationFile, myDisposable);
+    myRestarter = new KarmaServerRestarter(configurationFilePath, myDisposable);
 
     final int processHashCode = System.identityHashCode(processHandler.getProcess());
     LOG.info("Karma server " + processHashCode + " started successfully: " + processHandler.getCommandLine());
@@ -138,6 +140,10 @@ public final class KarmaServer {
     return myCommandLineFolder;
   }
 
+  public @NotNull NodeTargetRun getTargetRun() {
+    return myTargetRun;
+  }
+
   private static @NotNull KillableProcessHandler startServer(@NotNull Project project,
                                                              @NotNull KarmaServerSettings serverSettings,
                                                              @Nullable KarmaCoveragePeer coveragePeer,
@@ -165,8 +171,8 @@ public final class KarmaServer {
                                                         @Nullable KarmaCoveragePeer coveragePeer,
                                                         @NotNull ConsoleCommandLineFolder commandLineFolder)
     throws IOException, ExecutionException {
-    NodeTargetRun targetRun =
-      new NodeTargetRun(serverSettings.getNodeInterpreter(), project, null, NodeTargetRun.createOptions(ThreeState.NO, List.of()));
+    NodeTargetRun targetRun = new NodeTargetRun(serverSettings.getNodeInterpreter(), project, null,
+                                                NodeTargetRunOptions.of(false, serverSettings.getRunConfiguration()));
     targetRun.setEnvData(serverSettings.getEnvData());
     TargetedCommandLineBuilder commandLine = targetRun.getCommandLineBuilder();
     commandLine.setWorkingDirectory(targetRun.path(serverSettings.getWorkingDirectorySystemDependent()));
@@ -176,7 +182,8 @@ public final class KarmaServer {
       targetRun.addNodeOptionsWithExpandedMacros(false, "--inspect-brk=34598");
     }
     NodePackage pkg = serverSettings.getKarmaPackage();
-    String userConfigFileName = PathUtil.getFileName(serverSettings.getConfigurationFilePath());
+    String configurationFilePath = serverSettings.getConfigurationFilePath();
+    String userConfigFileName = PathUtil.getFileName(configurationFilePath);
     // upload karma-intellij/ folder to the remote if needed
     targetRun.path(KarmaJsSourcesLocator.getInstance().getKarmaIntellijPackageDir().getAbsolutePath());
     boolean angularCli = KarmaUtil.isAngularCliPkg(pkg);
@@ -194,7 +201,7 @@ public final class KarmaServer {
       SemVer version = pkg.getVersion();
       if (version == null || version.isGreaterOrEqualThan(6, 0, 0)) {
         AngularCliConfig config = AngularCliConfig.findProjectConfig(workingDir);
-        VirtualFile karmaConfFile = LocalFileSystem.getInstance().findFileByPath(serverSettings.getConfigurationFilePath());
+        VirtualFile karmaConfFile = LocalFileSystem.getInstance().findFileByPath(configurationFilePath);
         String defaultProject = config != null ? config.getProjectContainingFileOrDefault(karmaConfFile) : null;
         if (defaultProject != null) {
           commandLine.addParameter(defaultProject);
@@ -232,7 +239,8 @@ public final class KarmaServer {
     List<String> karmaOptions = ParametersListUtil.parse(serverSettings.getKarmaOptions());
     commandLine.addParameters(karmaOptions);
     commandLineFolder.addPlaceholderTexts(karmaOptions);
-    setIntellijParameter(commandLine, "user_config", targetRun.path(serverSettings.getConfigurationFilePath()));
+    setIntellijParameter(commandLine, "user_config", configurationFilePath.isEmpty() ? TargetValue.fixed("")
+                                                                                     : targetRun.path(configurationFilePath));
     if (coveragePeer != null) {
       setIntellijParameter(commandLine, "coverage_temp_dir", targetRun.path(coveragePeer.getCoverageTempDir().getAbsolutePath()));
       if (angularCli) {

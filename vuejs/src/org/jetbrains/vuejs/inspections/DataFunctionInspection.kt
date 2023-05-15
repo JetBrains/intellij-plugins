@@ -18,9 +18,8 @@ import org.jetbrains.vuejs.lang.html.VueFileType
 class DataFunctionInspection : LocalInspectionTool() {
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
     return object : JSElementVisitor() {
-      override fun visitJSProperty(node: JSProperty?) {
-        if ("data" != node?.name || node.value is JSFunction || node.value is JSReferenceExpression) return
-
+      override fun visitJSProperty(node: JSProperty) {
+        if ("data" != node.name || node.value is JSFunction || node.value is JSReferenceExpression) return
 
         if (isComponent(node)) {
           val quickFixes: Array<LocalQuickFix> =
@@ -32,7 +31,7 @@ class DataFunctionInspection : LocalInspectionTool() {
         }
       }
 
-      override fun visitJSFunctionProperty(functionProperty: JSFunctionProperty?) {
+      override fun visitJSFunctionProperty(functionProperty: JSFunctionProperty) {
         return
       }
     }

@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.libraries.webpack
 
 import com.intellij.javascript.debugger.NodeJsAppRule
-import com.intellij.lang.javascript.buildTools.webpack.WebpackIntegrationTestBase
+import com.intellij.webpack.WebpackIntegrationTestBase
 import org.jetbrains.vuejs.lang.vueRelativeTestDataPath
 
 class VueWebpackTest : WebpackIntegrationTestBase() {

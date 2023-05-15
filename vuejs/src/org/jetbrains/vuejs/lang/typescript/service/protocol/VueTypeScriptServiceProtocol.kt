@@ -19,11 +19,21 @@ class VueTypeScriptServiceProtocol(project: Project,
 
   override fun createState(): TypeScriptServiceInitialStateObject {
     val state = super.createState()
-
     state.pluginName = "vueTypeScript"
-    val pluginProbe = JSLanguageServiceUtil.getPluginDirectory(this::class.java, "vue-service/node_modules/ws-typescript-vue-plugin").parentFile.parentFile.path
-    state.pluginProbeLocations = state.pluginProbeLocations + LocalFilePath.create(pluginProbe)
-    state.globalPlugins = arrayOf("ws-typescript-vue-plugin")
     return state
+  }
+
+  override fun getGlobalPlugins(): List<String> {
+    val globalPlugins = super.getGlobalPlugins()
+    return globalPlugins + "ws-typescript-vue-plugin"
+  }
+
+  override fun getProbeLocations(): Array<LocalFilePath> {
+    val probeLocations = super.getProbeLocations()
+    val pluginProbe = JSLanguageServiceUtil.getPluginDirectory(this::class.java,
+                                                               "vue-service/node_modules/ws-typescript-vue-plugin").parentFile.parentFile.path
+
+    val element = LocalFilePath.create(pluginProbe) ?: return probeLocations
+    return probeLocations + element
   }
 }

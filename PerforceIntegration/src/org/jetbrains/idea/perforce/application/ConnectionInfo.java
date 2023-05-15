@@ -31,9 +31,8 @@ public class ConnectionInfo {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof ConnectionInfo)) return false;
+    if (!(o instanceof ConnectionInfo info1)) return false;
 
-    ConnectionInfo info1 = (ConnectionInfo)o;
     return myClient.equals(info1.myClient) && myInfo.equals(info1.myInfo) && Comparing.equal(myException, info1.myException);
   }
 

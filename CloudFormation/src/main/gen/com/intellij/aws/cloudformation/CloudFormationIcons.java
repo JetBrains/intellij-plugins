@@ -13,6 +13,6 @@ public final class CloudFormationIcons {
   private static @NotNull Icon load(@NotNull String path, int cacheKey, int flags) {
     return IconManager.getInstance().loadRasterizedIcon(path, CloudFormationIcons.class.getClassLoader(), cacheKey, flags);
   }
-  /** 16x16 */ public static final @NotNull Icon Aws = load("icons/aws.svg", -607101785, 0);
-  /** 16x16 */ public static final @NotNull Icon AwsFile = load("icons/awsFile.svg", 857372646, 0);
+  /** 16x16 */ public static final @NotNull Icon Aws = load("icons/aws.svg", -1711889556, 0);
+  /** 16x16 */ public static final @NotNull Icon AwsFile = load("icons/awsFile.svg", -1068919126, 0);
 }

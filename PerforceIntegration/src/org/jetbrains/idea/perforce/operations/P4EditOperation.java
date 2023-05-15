@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.idea.perforce.PerforceBundle;
+import org.jetbrains.idea.perforce.application.PerforceBaseInfoWorker;
 import org.jetbrains.idea.perforce.application.PerforceVcs;
 import org.jetbrains.idea.perforce.perforce.FStat;
 import org.jetbrains.idea.perforce.perforce.P4File;
@@ -49,18 +50,22 @@ public class P4EditOperation extends VcsOperationOnPath {
 
   @Override
   public void execute(final Project project, ProcessingContext context) throws VcsException {
-    final Ref<PerforceVcs> vcs = new Ref<>();
-    final Ref<PerforceRunner> runner = new Ref<>();
+    final Ref<PerforceVcs> vcsRef = new Ref<>();
+    final Ref<PerforceRunner> runnerRef = new Ref<>();
     ApplicationManager.getApplication().runReadAction(() -> {
       if (project.isDisposed()) return;
-      vcs.set(PerforceVcs.getInstance(project));
-      runner.set(PerforceRunner.getInstance(project));
+      vcsRef.set(PerforceVcs.getInstance(project));
+      runnerRef.set(PerforceRunner.getInstance(project));
     });
 
-    if (vcs.isNull()) return;
+    PerforceVcs vcs = vcsRef.get();
+    PerforceRunner runner = runnerRef.get();
+    if (vcs == null) return;
+
     try {
       final P4File p4File = P4File.createInefficientFromLocalPath(myPath);
-      FStat p4FStat = vcs.get().getFstatSafe(p4File);
+      FStat p4FStat = p4File.getFstat(project, true);
+
       if (p4FStat == null) return;
       if ((p4FStat.status == FStat.STATUS_NOT_ADDED || p4FStat.status == FStat.STATUS_ONLY_LOCAL) &&
           p4FStat.local != FStat.LOCAL_BRANCHING) {
@@ -80,7 +85,7 @@ public class P4EditOperation extends VcsOperationOnPath {
       }
 
       long changeListNumber = getPerforceChangeList(project, p4File, context);
-      runner.get().edit(p4File, changeListNumber);
+      runner.edit(p4File, changeListNumber);
     }
     catch (VcsException e) {
       if (mySuppressErrors) {
@@ -98,7 +103,7 @@ public class P4EditOperation extends VcsOperationOnPath {
       VirtualFile vFile = getFilePath().getVirtualFile();
       if (vFile != null) {
         vFile.refresh(true, false);
-        vcs.get().asyncEditCompleted(vFile);
+        vcs.asyncEditCompleted(vFile);
       }
     }
     final FilePath filePath = getFilePath();

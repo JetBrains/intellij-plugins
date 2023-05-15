@@ -1,0 +1,8 @@
+ASTRO:FRONTMATTER_SEPARATOR ('---')
+ASTRO:FRONTMATTER_SEPARATOR ('---')
+XML_WHITE_SPACE ('\n')
+JS:XML_LBRACE ('{')
+WHITE_SPACE (' ')
+JS:XML_STYLE_COMMENT ('<!-- this is a comment } ha -->')
+WHITE_SPACE (' ')
+JS:XML_RBRACE ('}')

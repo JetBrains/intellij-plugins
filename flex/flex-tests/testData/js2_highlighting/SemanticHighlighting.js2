@@ -3,7 +3,7 @@ public class <info descr="class">SemanticHighlighting</info> {
 
     private function <info descr="instance method">foo</info>():void {
         if (<info descr="class">Math</info>.<info descr="static method">random</info>() > 0.5) {
-            <symbolName descr="null">goto</symbolName> <info descr="label">myLabel</info>;
+            <info descr="null">goto</info> <info descr="label">myLabel</info>;
         }
         else {
             <info descr="label">myLabel</info>:

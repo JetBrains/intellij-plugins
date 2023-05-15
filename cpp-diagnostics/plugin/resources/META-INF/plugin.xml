@@ -1,0 +1,18 @@
+<idea-plugin implementation-detail="true" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <id>com.intellij.cpp-diagnostics</id>
+  <name>CLion Diagnostics</name>
+  <vendor>JetBrains</vendor>
+
+  <description><![CDATA[
+      C/C++ Diagnostics (shows project model structure, toolchains and more)
+    ]]></description>
+
+  <depends>com.intellij.modules.clion</depends>
+  <depends>com.intellij.modules.clion.ide</depends>
+
+  <module value="com.intellij.modules.clion.diagnostics"/>
+
+  <resource-bundle>messages.CppDiagnosticsBundle</resource-bundle>
+
+  <xi:include href="/META-INF/CLionDiagnosticsPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+</idea-plugin>

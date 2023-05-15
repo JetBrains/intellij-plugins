@@ -45,9 +45,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-/**
- * @author Irina.Chernushina on 6/3/2015.
- */
 public final class TsLintExternalAnnotator extends JSLinterWithInspectionExternalAnnotator<TsLintState, TsLinterInput> {
 
   private static final TsLintExternalAnnotator INSTANCE_FOR_BATCH_INSPECTION = new TsLintExternalAnnotator(false);
@@ -66,10 +63,9 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
     super(onTheFly);
   }
 
-  @NotNull
   @Override
-  protected JSLinterConfigurable<TsLintState> createSettingsConfigurable(@NotNull Project project) {
-    return new TsLintConfigurable(project, true);
+  protected @NotNull String getSettingsConfigurableID() {
+    return TsLintConfigurable.SETTINGS_JAVA_SCRIPT_LINTERS_TSLINT;
   }
 
   @Override
@@ -215,10 +211,9 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
       .setEditConfig(false);
 
     fixes.setErrorToIntentionConverter(errorBase -> {
-      if (!(errorBase instanceof TsLinterError)) {
+      if (!(errorBase instanceof TsLinterError tslintError)) {
         return ContainerUtil.emptyList();
       }
-      TsLinterError tslintError = (TsLinterError)errorBase;
       ArrayList<IntentionAction> result = new ArrayList<>();
       if (tslintError.hasFix()) {
         if (document != null && isOnTheFly()) {

@@ -203,8 +203,7 @@ public class FlexStackFrame extends XStackFrame {
         if (elements.length == 1 && elements[0] instanceof JSExpressionStatement) {
           final JSExpression expression = ((JSExpressionStatement)elements[0]).getExpression();
 
-          if (expression instanceof JSAssignmentExpression) {
-            JSAssignmentExpression expr = (JSAssignmentExpression)expression;
+          if (expression instanceof JSAssignmentExpression expr) {
             final JSExpression lOperand = expr.getLOperand();
             final String lOperandText = lOperand == null ? null : lOperand.getText();
             final JSExpression rOperand = expr.getROperand();

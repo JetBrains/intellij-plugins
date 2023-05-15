@@ -1,3 +1,5 @@
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+
 // This is a generated file. Not intended for manual editing.
 package com.intellij.plugins.drools.lang.psi.impl;
 
@@ -16,10 +18,12 @@ public class DroolsNumberLiteralImpl extends DroolsExpressionImpl implements Dro
     super(node);
   }
 
+  @Override
   public void accept(@NotNull DroolsVisitor visitor) {
     visitor.visitNumberLiteral(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DroolsVisitor) accept((DroolsVisitor)visitor);
     else super.accept(visitor);

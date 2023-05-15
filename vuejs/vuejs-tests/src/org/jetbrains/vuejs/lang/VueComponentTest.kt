@@ -2,7 +2,9 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.lang.javascript.TypeScriptTestUtil
+import com.intellij.lang.javascript.psi.JSParameterTypeDecorator
 import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.JSVariable
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VirtualFileFilter
 import com.intellij.psi.PsiDocumentManager
@@ -15,6 +17,7 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.webSymbols.DebugOutputPrinter
 import com.intellij.webSymbols.checkTextByFile
 import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
+import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.model.*
 
 /**
@@ -74,15 +77,18 @@ class VueComponentTest : BasePlatformTestCase() {
 
   fun testDefinePropsTypeDeclarationTypeAliasTS() = doTest(true)
 
-  fun testWithDefaultsTypeDeclarationTS() = doTest(true)
+  fun testWithDefaultsTypeDeclarationTS() = doSingleStrictnessTest(false)
+  fun testWithDefaultsTypeDeclarationTSNullChecks() = doSingleStrictnessTest(true)
 
-  fun testWithDefaultsTypeDeclarationWithAssignmentTS() = doTest(true)
+  fun testWithDefaultsTypeDeclarationWithAssignmentTS() = doSingleStrictnessTest(false)
+  fun testWithDefaultsTypeDeclarationWithAssignmentTSNullChecks() = doSingleStrictnessTest(true)
 
   fun testWithDefaultsTypeDeclarationPartialTS() = doTest()
 
   fun testWithDefaultsTypeDeclarationLocalReferencesTS() = doTest(true)
 
-  fun testPropsDestructureTypeDeclarationTS() = doTest(true)
+  fun testPropsDestructureTypeDeclarationTS() = doSingleStrictnessTest(false)
+  fun testPropsDestructureTypeDeclarationTSNullChecks() = doSingleStrictnessTest(true)
 
   fun testPropsDestructureRuntimeDeclarationJS() = doTest()
 
@@ -90,7 +96,17 @@ class VueComponentTest : BasePlatformTestCase() {
 
   fun testDefineEmits() = doTest()
 
+  fun testDefineEmitsObjectLiteral() = doTest()
+
+  fun testDefineEmitsExplicitType() = doTest()
+
   fun testDefineComponentWithEmits() = doTest()
+
+  fun testScriptSetupGeneric() = doTest(true, addNodeModules = listOf(VueTestModule.VUE_3_3_0_ALPHA5))
+
+  fun testPropsConstructorsAndGenerics() = doTest(true)
+
+  fun testDecoratedComponentEmitsTS() = doTest(addNodeModules = listOf(VueTestModule.VUE_2_6_10))
 
   /**
    * Runs `doTestInner` twice: once for default TS config, once for strict TS config
@@ -115,10 +131,23 @@ class VueComponentTest : BasePlatformTestCase() {
     file = doTestInner(file, strictNullChecksDiffer)
   }
 
+  private fun doSingleStrictnessTest(strictNullChecks: Boolean, addNodeModules: List<VueTestModule> = listOf(VueTestModule.VUE_3_2_2)) {
+    val file = configureTestProject(addNodeModules) as PsiFileImpl
+
+    if (strictNullChecks) {
+      TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
+    }
+    else {
+      TypeScriptTestUtil.forceDefaultTsConfig(project, testRootDisposable)
+    }
+
+    doTestInner(file, false)
+  }
+
   /**
    * Checks highlighting, then checks the AST-based component model, then compares it with the Stub-based component model.
    */
-  private fun doTestInner(_file: PsiFileImpl, strictNullChecks: Boolean): PsiFileImpl {
+  private fun doTestInner(_file: PsiFileImpl, appendSuffixToExpected: Boolean): PsiFileImpl {
     var file = _file
 
     file.node // ensure that the AST is loaded
@@ -127,7 +156,7 @@ class VueComponentTest : BasePlatformTestCase() {
     myFixture.checkHighlighting()
 
     val newModel = buildComponentModel(file)
-    val expectedFile = "${getTestName(false)}.${if (strictNullChecks) "strictNullChecks." else ""}expected.txt"
+    val expectedFile = "${getTestName(false)}.${if (appendSuffixToExpected) "strictNullChecks." else ""}expected.txt"
     myFixture.checkTextByFile(newModel, expectedFile)
 
     assertNull(file.stub)
@@ -173,6 +202,7 @@ class VueComponentTest : BasePlatformTestCase() {
         is VueModelDirectiveProperties -> builder.printVueModelDirectiveProperties(level, value)
         is VueTemplate<*> -> builder.printVueTemplate(level, value)
         is JSType -> builder.printJSType(level, value)
+        is JSParameterTypeDecorator -> builder.printParameter(level, value)
         else -> super.printValueImpl(builder, level, value)
       }
 
@@ -189,6 +219,12 @@ class VueComponentTest : BasePlatformTestCase() {
 
     private fun StringBuilder.printJSType(level: Int, type: JSType): StringBuilder =
       this.printValue(level, type.substitute().getTypeText(JSType.TypeTextFormat.PRESENTABLE))
+
+    private fun StringBuilder.printParameter(topLevel: Int, param: JSParameterTypeDecorator): StringBuilder =
+      printObject(topLevel) { level ->
+        printProperty(level, "name", param.name)
+        printProperty(level, "type", param.inferredType?.substitute()?.getTypeText(JSType.TypeTextFormat.PRESENTABLE))
+      }
 
     private fun StringBuilder.printVueSourceElement(topLevel: Int, sourceElement: VueSourceElement): StringBuilder =
       printObject(topLevel) { level ->
@@ -216,7 +252,8 @@ class VueComponentTest : BasePlatformTestCase() {
           printProperty(level, "pattern", sourceElement.pattern)
         }
         if (sourceElement is VueEntitiesContainer) {
-          printProperty(level, "components", sourceElement.components.takeIf { it.isNotEmpty() }?.toSortedMap())
+          printProperty(level, "components", sourceElement.components.takeIf { it.isNotEmpty() }
+            ?.filterOutLowercaseScriptSetupVariables()?.toSortedMap())
           printProperty(level, "directives", sourceElement.directives.takeIf { it.isNotEmpty() }?.toSortedMap())
           printProperty(level, "mixins", sourceElement.mixins.takeIf { it.isNotEmpty() })
         }
@@ -248,10 +285,22 @@ class VueComponentTest : BasePlatformTestCase() {
         }
         if (sourceElement is VueEmitCall) {
           printProperty(level, "eventJSType", sourceElement.eventJSType)
+          printProperty(level, "params", sourceElement.params)
+          printProperty(level, "hasStrictSignature", sourceElement.hasStrictSignature)
+          printProperty(level, "callSignature", sourceElement.callSignature)
         }
       }
   }
 
 }
+
+private fun Map<String, VueComponent>.filterOutLowercaseScriptSetupVariables(): Map<String, VueComponent> =
+  filter { (_, component) ->
+    component.rawSource.let {
+      it !is JSVariable
+      || findModule(it, true) == null
+      || it.name?.getOrNull(0)?.isUpperCase() == true
+    }
+  }
 
 

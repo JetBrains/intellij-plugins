@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.highlight;
 
 import com.intellij.lexer.Lexer;
@@ -21,31 +21,37 @@ public class DroolsSyntaxHighlighter extends SyntaxHighlighterBase {
   static {
     myMap = new HashMap<>();
 
-    SyntaxHighlighterBase.fillMap(myMap, DroolsSyntaxHighlighterColors.PARENTHS, DroolsTokenTypes.LPAREN, DroolsTokenTypes.RPAREN);
-    SyntaxHighlighterBase.fillMap(myMap, DroolsSyntaxHighlighterColors.BRACES, DroolsTokenTypes.LBRACE, DroolsTokenTypes.RBRACE);
-    SyntaxHighlighterBase.fillMap(myMap, DroolsSyntaxHighlighterColors.BRACKETS, DroolsTokenTypes.LBRACKET, DroolsTokenTypes.RBRACKET);
-    SyntaxHighlighterBase.fillMap(myMap, DroolsSyntaxHighlighterColors.COMMA, DroolsTokenTypes.COMMA);
-    SyntaxHighlighterBase.fillMap(myMap, DroolsSyntaxHighlighterColors.STRING, DroolsTokenTypes.STRING_LITERAL);
-    SyntaxHighlighterBase.fillMap(myMap, DroolsSyntaxHighlighterColors.NUMBER, DroolsTokenTypes.INT_TOKEN);
-    SyntaxHighlighterBase.fillMap(myMap, DroolsSyntaxHighlighterColors.NUMBER, DroolsTokenTypes.FLOAT_TOKEN);
-    SyntaxHighlighterBase.fillMap(myMap, DroolsSyntaxHighlighterColors.COMMA, JavaTokenType.COMMA);
-    SyntaxHighlighterBase.fillMap(myMap, DroolsSyntaxHighlighterColors.DOT, JavaTokenType.DOT);
-    SyntaxHighlighterBase.fillMap(myMap, DroolsSyntaxHighlighterColors.BAD_CHARACTER, TokenType.BAD_CHARACTER);
+    fillMap(myMap, DroolsSyntaxHighlighterColors.PARENTHS, DroolsTokenTypes.LPAREN, DroolsTokenTypes.RPAREN);
+    fillMap(myMap, DroolsSyntaxHighlighterColors.BRACES, DroolsTokenTypes.LBRACE, DroolsTokenTypes.RBRACE);
+    fillMap(myMap, DroolsSyntaxHighlighterColors.BRACKETS, DroolsTokenTypes.LBRACKET, DroolsTokenTypes.RBRACKET);
+    fillMap(myMap, DroolsSyntaxHighlighterColors.COMMA, DroolsTokenTypes.COMMA);
+    fillMap(myMap, DroolsSyntaxHighlighterColors.STRING, DroolsTokenTypes.STRING_LITERAL);
+    fillMap(myMap, DroolsSyntaxHighlighterColors.STRING, DroolsTokenTypes.STRING_ID);
+    fillMap(myMap, DroolsSyntaxHighlighterColors.STRING, DroolsTokenTypes.STRING_IDENTIFIER);
+    fillMap(myMap, DroolsSyntaxHighlighterColors.STRING, DroolsTokenTypes.STRING_TOKEN);
+    fillMap(myMap, DroolsSyntaxHighlighterColors.NUMBER, DroolsTokenTypes.INT_TOKEN);
+    fillMap(myMap, DroolsSyntaxHighlighterColors.NUMBER, DroolsTokenTypes.FLOAT_TOKEN);
+    fillMap(myMap, DroolsSyntaxHighlighterColors.FIELD, DroolsTokenTypes.FIELD);
+    fillMap(myMap, DroolsSyntaxHighlighterColors.COMMA, JavaTokenType.COMMA);
+    fillMap(myMap, DroolsSyntaxHighlighterColors.DOT, JavaTokenType.DOT);
+    fillMap(myMap, DroolsSyntaxHighlighterColors.BAD_CHARACTER, TokenType.BAD_CHARACTER);
 
-    SyntaxHighlighterBase.fillMap(myMap, DroolsTokenTypeSets.PRIMITIVE_TYPES, DroolsSyntaxHighlighterColors.KEYWORD);
 
-    SyntaxHighlighterBase.fillMap(myMap, DroolsTokenTypeSets.KEYWORDS, DroolsSyntaxHighlighterColors.KEYWORD);
-    SyntaxHighlighterBase.fillMap(myMap, DroolsTokenTypeSets.KEYWORD_ATTRS, DroolsSyntaxHighlighterColors.ATTRIBUTES);
+    fillMap(myMap, DroolsTokenTypeSets.STRINGS, DroolsSyntaxHighlighterColors.STRING);
+    fillMap(myMap, DroolsTokenTypeSets.PRIMITIVE_TYPES, DroolsSyntaxHighlighterColors.KEYWORD);
 
-    SyntaxHighlighterBase.fillMap(myMap, DroolsTokenTypeSets.OPERATIONS, DroolsSyntaxHighlighterColors.OPERATIONS);
-    SyntaxHighlighterBase.fillMap(myMap, DroolsTokenTypeSets.OPERATORS, DroolsSyntaxHighlighterColors.KEYWORD_OPERATIONS);
+    fillMap(myMap, DroolsTokenTypeSets.KEYWORDS, DroolsSyntaxHighlighterColors.KEYWORD);
+    fillMap(myMap, DroolsTokenTypeSets.KEYWORD_ATTRS, DroolsSyntaxHighlighterColors.ATTRIBUTES);
 
-    SyntaxHighlighterBase.fillMap(myMap, DroolsTokenTypeSets.KEYWORD_OPS, DroolsSyntaxHighlighterColors.KEYWORD_OPERATIONS);
-    SyntaxHighlighterBase.fillMap(myMap, DroolsTokenTypeSets.BOOLEANS,  DroolsSyntaxHighlighterColors.KEYWORD);
+    fillMap(myMap, DroolsTokenTypeSets.OPERATIONS, DroolsSyntaxHighlighterColors.OPERATIONS);
+    fillMap(myMap, DroolsTokenTypeSets.OPERATORS, DroolsSyntaxHighlighterColors.KEYWORD_OPERATIONS);
 
-    SyntaxHighlighterBase.fillMap(myMap, DroolsSyntaxHighlighterColors.LINE_COMMENT,  DroolsTokenTypeSets.SINGLE_LINE_COMMENT);
-    SyntaxHighlighterBase.fillMap(myMap, DroolsSyntaxHighlighterColors.LINE_COMMENT,  DroolsTokenTypeSets.SINGLE_LINE_COMMENT_DEPR);
-    SyntaxHighlighterBase.fillMap(myMap, DroolsSyntaxHighlighterColors.BLOCK_COMMENT,  DroolsTokenTypeSets.MULTI_LINE_COMMENT);
+    fillMap(myMap, DroolsTokenTypeSets.KEYWORD_OPS, DroolsSyntaxHighlighterColors.KEYWORD_OPERATIONS);
+    fillMap(myMap, DroolsTokenTypeSets.BOOLEANS,  DroolsSyntaxHighlighterColors.KEYWORD);
+
+    fillMap(myMap, DroolsSyntaxHighlighterColors.LINE_COMMENT,  DroolsTokenTypeSets.SINGLE_LINE_COMMENT);
+    fillMap(myMap, DroolsSyntaxHighlighterColors.LINE_COMMENT,  DroolsTokenTypeSets.SINGLE_LINE_COMMENT_DEPR);
+    fillMap(myMap, DroolsSyntaxHighlighterColors.BLOCK_COMMENT,  DroolsTokenTypeSets.MULTI_LINE_COMMENT);
   }
 
   @Override
@@ -56,6 +62,6 @@ public class DroolsSyntaxHighlighter extends SyntaxHighlighterBase {
 
   @Override
   public TextAttributesKey @NotNull [] getTokenHighlights(final IElementType tokenType) {
-    return SyntaxHighlighterBase.pack(myMap.get(tokenType));
+    return pack(myMap.get(tokenType));
   }
 }

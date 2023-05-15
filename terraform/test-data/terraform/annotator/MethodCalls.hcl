@@ -1,0 +1,6 @@
+a = foo()
+a = foo(1,)
+a = foo(1,2 ,)
+a = foo(1,2 ...)
+a = foo(1,2<error descr="Closing parentheses expected immediately after an expanded function argument">...</error><error descr="')' expected, got ','"> </error>,)
+a = foo(1,2, <error descr="Start of expression expected">...</error>)

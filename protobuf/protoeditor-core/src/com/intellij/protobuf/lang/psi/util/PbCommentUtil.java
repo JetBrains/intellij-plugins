@@ -16,11 +16,11 @@
 package com.intellij.protobuf.lang.psi.util;
 
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -59,7 +59,7 @@ import java.util.regex.Pattern;
  *   // ignored detached comments.
  * </pre>
  */
-public class PbCommentUtil {
+public final class PbCommentUtil {
 
   /** Collect comments that begin directly before <code>element</code>. */
   public static List<PsiComment> collectLeadingComments(PsiElement element) {

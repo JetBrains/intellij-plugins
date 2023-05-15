@@ -111,7 +111,7 @@ class VueResolveTest : BasePlatformTestCase() {
   fun testResolveIntoComputedProperty() {
     myFixture.configureByText("ResolveIntoComputedProperty.vue", """
 <template>
-{{<caret>TestRight}}
+{{<caret>testRight}}
 </template>
 <script>
 export default {
@@ -133,7 +133,7 @@ export default {
   fun testResolveIntoComputedES6FunctionProperty() {
     myFixture.configureByText("ResolveIntoComputedES6FunctionProperty.vue", """
 <template>
-{{<caret>TestRight}}
+{{<caret>testRight}}
 </template>
 <script>
 export default {
@@ -2058,6 +2058,37 @@ export default class UsageComponent extends Vue {
     val mixinsViaPsi = VueModelManager.getGlobal(mixinJsPsiFile).mixins
 
     assertSameElements(mixinsViaStubs, mixinsViaPsi)
+  }
+
+  fun testMixinQualifiedReference() {
+    myFixture.copyDirectoryToProject("mixinQualifiedReference", ".")
+    myFixture.configureFromTempProjectFile("Test.vue")
+    TestCase.assertEquals("clickMixin.js",
+                          myFixture.resolveReference("cl<caret>icked(").containingFile.name)
+  }
+
+  fun testScriptSetupCustomEmitInObjectLiteral() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.configureByFile("${getTestName(true)}.vue")
+    sequenceOf(
+      "@<caret>add" to 105,
+      "@ch<caret>ange" to 114,
+      "v-on:re<caret>move" to 161
+    ).forEach { (signature, offset) ->
+      myFixture.checkGotoDeclaration(signature, offset)
+    }
+  }
+
+  fun testPropsConstructorsAndGenerics() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.configureByFile("${getTestName(true)}.vue")
+    sequenceOf(
+      "m<caret>sg=\"You did it!\"" to 452,
+      "auto<caret>focus :value" to 283,
+      "autofocus :va<caret>lue" to 147,
+    ).forEach { (signature, offset) ->
+      myFixture.checkGotoDeclaration(signature, offset)
+    }
   }
 }
 

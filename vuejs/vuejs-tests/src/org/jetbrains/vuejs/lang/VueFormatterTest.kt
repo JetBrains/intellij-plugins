@@ -59,21 +59,21 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
     doTestFromFile("vue")
   }
 
-  fun testPerLangIndent() {
+  fun testIndentationPerLang() {
     JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) {
       it.getCustomSettings(VueCodeStyleSettings::class.java).UNIFORM_INDENT = false
       doIndentationTest(it)
     }
   }
 
-  fun testUniformIndent() {
+  fun testIndentationUniform() {
     JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) {
       it.getCustomSettings(VueCodeStyleSettings::class.java).UNIFORM_INDENT = true
       doIndentationTest(it)
     }
   }
 
-  fun testBlockIndentation1() {
+  fun testIndentationBlock1() {
     JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) {
       it.getCustomSettings(VueCodeStyleSettings::class.java).UNIFORM_INDENT = true
       it.getCustomSettings(VueCodeStyleSettings::class.java).INDENT_CHILDREN_OF_TOP_LEVEL = "script,style"
@@ -81,7 +81,7 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
     }
   }
 
-  fun testBlockIndentation2() {
+  fun testIndentationBlock2() {
     JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) {
       it.getCustomSettings(VueCodeStyleSettings::class.java).UNIFORM_INDENT = false
       it.getCustomSettings(VueCodeStyleSettings::class.java).INDENT_CHILDREN_OF_TOP_LEVEL = "template,script"
@@ -89,7 +89,7 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
     }
   }
 
-  fun testHtmlUniformIndent() {
+  fun testIndentationHtmlUniform() {
     JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) {
       it.getCustomSettings(VueCodeStyleSettings::class.java).UNIFORM_INDENT = false
       it.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_UNIFORM_INDENT = true
@@ -165,7 +165,7 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
     }
   }
 
-  fun testInjections() {
+  fun testInjectionsJS() {
     JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->
       styleSettings.getCustomSettings(VueCodeStyleSettings::class.java).let {
         it.UNIFORM_INDENT = true
@@ -178,7 +178,20 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
     }
   }
 
-  fun testInjections2() {
+  fun testInjectionsTS() {
+    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->
+      styleSettings.getCustomSettings(VueCodeStyleSettings::class.java).let {
+        it.UNIFORM_INDENT = true
+        it.INDENT_CHILDREN_OF_TOP_LEVEL = "template"
+        it.SPACES_WITHIN_INTERPOLATION_EXPRESSIONS = true
+      }
+      styleSettings.getCommonSettings(JavaScriptSupportLoader.TYPESCRIPT).SPACE_AROUND_ADDITIVE_OPERATORS = false
+      styleSettings.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 2
+      doTestFromFile("vue")
+    }
+  }
+
+  fun testInjectionsWithDifferentSpacing() {
     JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->
       styleSettings.getCustomSettings(VueCodeStyleSettings::class.java).let {
         it.UNIFORM_INDENT = true
@@ -250,10 +263,10 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
     settings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 2
     settings.getLanguageIndentOptions(CSSLanguage.INSTANCE).INDENT_SIZE = 3
     settings.getLanguageIndentOptions(JavascriptLanguage.INSTANCE).INDENT_SIZE = 4
-    settings.getLanguageIndentOptions(JavaScriptSupportLoader.TYPESCRIPT).INDENT_SIZE = 5
+    //settings.getLanguageIndentOptions(JavaScriptSupportLoader.TYPESCRIPT).INDENT_SIZE = 5 // impossible to have TS and JS in single file
     settings.getLanguageIndentOptions(SCSSLanguage.INSTANCE).INDENT_SIZE = 6
     settings.getLanguageIndentOptions(JadeLanguage.INSTANCE).INDENT_SIZE = 7
-    doTestFromAbsolutePaths(Paths.get(testDataPath, basePath, "indentation.vue").toFile().toString(),
+    doTestFromAbsolutePaths(Paths.get(testDataPath, basePath, "Indentation.vue").toFile().toString(),
                             Paths.get(testDataPath, basePath, getTestName(false) + "_after.vue").toFile().toString(),
                             "vue")
   }

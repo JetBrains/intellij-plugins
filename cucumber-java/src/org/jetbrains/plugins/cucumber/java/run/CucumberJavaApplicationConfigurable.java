@@ -76,8 +76,7 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
   private void createUIComponents() {
     myMainClass = new LabeledComponent<>();
     myMainClass.setComponent(new EditorTextFieldWithBrowseButton(myProject, true, (declaration, place) -> {
-      if (declaration instanceof PsiClass) {
-        PsiClass aClass = (PsiClass)declaration;
+      if (declaration instanceof PsiClass aClass) {
         if (ConfigurationUtil.MAIN_CLASS.value(aClass) && PsiMethodUtil.findMainMethod(aClass) != null) {
           return JavaCodeFragment.VisibilityChecker.Visibility.VISIBLE;
         }

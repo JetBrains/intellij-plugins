@@ -24,6 +24,7 @@ import com.intellij.openapi.vcs.update.UpdatedFiles;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.idea.perforce.perforce.ExecResult;
 import org.jetbrains.idea.perforce.perforce.P4File;
+import org.jetbrains.idea.perforce.perforce.PerforceRunner;
 import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 
 import java.util.Collection;
@@ -71,7 +72,7 @@ public class PerforceUpdateEnvironment extends AbstractUpdateEnvironment{
 
   @Override
   protected ExecResult performUpdate(final P4File p4Dir, final PerforceSettings settings) throws VcsException {
-    return myRunner.sync(p4Dir, settings.SYNC_FORCE);
+    return PerforceRunner.getInstance(myProject).sync(p4Dir, settings.SYNC_FORCE);
   }
 
   @Override

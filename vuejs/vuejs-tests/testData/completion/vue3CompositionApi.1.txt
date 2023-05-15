@@ -1,11 +1,11 @@
 !foo#string#101
 !increment#any#101
-!state#{double: …, count: …}#101
+!state#{double: UnwrapRef<ComputedRef<unknown>>, count: UnwrapRef<number>} & SymbolExtract<{double: ComputedRef<unknown>, count: number}>#101
 !$#ComponentInternalInstance#100
 !$attrs#null#100
 !$data#null#100
 !$el#any#100
-!$emit#null#100
+!$emit#(event: string, ...args: any[]) => void#100
 !$forceUpdate#T#100
 !$nextTick#Promise<void>#100
 !$options#null#100

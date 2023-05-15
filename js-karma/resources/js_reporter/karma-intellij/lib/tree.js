@@ -17,7 +17,13 @@ function inherit(child, parent) {
 
 
 function Tree(configFilePath, write) {
-  this.configFileNode = new TestSuiteNode(this, 1, null, path.basename(configFilePath), 'config', configFilePath);
+  if (configFilePath) {
+    this.configFileNode = new TestSuiteNode(this, 1, null, path.basename(configFilePath), 'config', configFilePath);
+  }
+  else {
+    this.configFileNode = new TestSuiteNode(this, 0, null, path.basename(process.cwd()), 'config', process.cwd());
+    this.configFileNode.isStartMessageWritten = true;
+  }
   this.write = write;
   this.nextId = 2;
 }
@@ -52,7 +58,9 @@ Node.prototype.finishIfStarted = function () {
     for (var i = 0; i < this.children.length; i++) {
       this.children[i].finishIfStarted();
     }
-    this.writeFinishMessage();
+    if (this.id !== 0) {
+      this.writeFinishMessage();
+    }
     this.isFinished = true;
   }
 };

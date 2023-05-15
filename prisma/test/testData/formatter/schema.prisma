@@ -1,0 +1,34 @@
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-1.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url =   env("DATABASE_URL")
+}
+
+model Post {
+  id Int @default(autoincrement()) @id
+  createdAt DateTime @default(now())
+  title String
+  content      String?
+  published Boolean @default(false)
+  author User @relation(fields: [authorId], references: [id]) // renamed from `User` -> `author`
+  authorId Int      // relation scalar field
+}
+
+model Profile {
+  id Int @default(autoincrement()) @id
+ bio String?
+  userId Int  @unique  // relation scalar field
+user User @relation(fields: [userId], references: [id]) // renamed from `User` -> `user`
+}
+
+model User {
+  id  Int  @default(autoincrement()) @id
+  email String @unique
+  name   String?
+  posts Post[] // renamed from `Post` -> `posts`
+  profile Profile? // renamed from `Profile` -> `profile`
+}

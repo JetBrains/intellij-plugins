@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.prettierjs;
 
 import com.intellij.codeInsight.actions.onSave.FormatOnSaveOptions;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class PrettierActionOnSave extends ActionsOnSaveFileDocumentManagerListener.ActionOnSave {
+final class PrettierActionOnSave extends ActionsOnSaveFileDocumentManagerListener.ActionOnSave {
   static final ReformatWithPrettierAction.ErrorHandler NOOP_ERROR_HANDLER = new ReformatWithPrettierAction.ErrorHandler() {
     @Override
     public void showError(@NotNull Project project, @Nullable Editor editor, @NotNull String text, @Nullable Runnable onLinkClick) {
@@ -25,13 +25,16 @@ public class PrettierActionOnSave extends ActionsOnSaveFileDocumentManagerListen
 
   @Override
   public boolean isEnabledForProject(@NotNull Project project) {
-    return PrettierConfiguration.getInstance(project).isRunOnSave();
+    var configuration = PrettierConfiguration.getInstance(project);
+    return configuration.isRunOnSave();
   }
 
   @Override
   public void processDocuments(@NotNull Project project, @NotNull Document @NotNull [] documents) {
     PrettierConfiguration prettierConfiguration = PrettierConfiguration.getInstance(project);
-    if (!prettierConfiguration.isRunOnSave()) return;
+    if (!prettierConfiguration.isRunOnSave()) {
+      return;
+    }
 
     FileDocumentManager manager = FileDocumentManager.getInstance();
     List<VirtualFile> files = ContainerUtil.mapNotNull(documents, document -> {

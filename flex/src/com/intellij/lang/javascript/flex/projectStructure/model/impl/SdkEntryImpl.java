@@ -1,28 +1,22 @@
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.containers.hash.LinkedHashMap;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Tag;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-/**
- * @author ksafonov
- */
-class SdkEntryImpl implements SdkEntry {
+final class SdkEntryImpl implements SdkEntry {
 
   @NotNull
   private final String myName;
 
-  private final LinkedHashMap<String, DependencyTypeImpl> myDependencyTypes = new LinkedHashMap<>();
+  private final Map<String, DependencyTypeImpl> myDependencyTypes = new LinkedHashMap<>();
 
   SdkEntryImpl(State state) {
     myName = StringUtil.notNullize(state.NAME);

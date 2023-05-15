@@ -52,7 +52,7 @@ public class FormattingTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testAttributeTyping() {
     myFixture.configureByFiles("attrTyping.html", "package.json");
-    myFixture.type("\ntest2\n[test]=\"\n[(banana)]=\"\nother\n");
+    myFixture.type("\ntest2\n[test]=\"\"\n[(banana)]=\"\"\nother\n");
     myFixture.checkResultByFile("attrTyping_after.html");
   }
 

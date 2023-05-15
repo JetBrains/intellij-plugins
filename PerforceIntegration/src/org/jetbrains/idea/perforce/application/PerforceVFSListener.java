@@ -219,6 +219,11 @@ public final class PerforceVFSListener extends VcsVFSListener {
   }
 
   @Override
+  protected boolean processBeforeContentsChange() {
+    return true;
+  }
+
+  @Override
   protected void beforeContentsChange(@NotNull VFileContentChangeEvent event) {
     VirtualFile file = event.getFile();
     updateLastUnchangedContent(file, myChangeListManager);

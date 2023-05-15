@@ -86,8 +86,8 @@ public class FlexMoveInnerClassTest extends MultiFileTestCase {
                              String[] conflicts) {
     PsiFile sourceFile = myPsiManager.findFile(rootDir.findFileByRelativePath(fromFilePath));
     final EditorInfo editorInfo = new EditorInfo(sourceFile.getText());
-    assertEquals("Wrong number of carets", 1, editorInfo.caretState.carets.size());
-    assertNotNull("No caret specified", editorInfo.caretState.carets.get(0).position);
+    assertEquals("Wrong number of carets", 1, editorInfo.caretState.carets().size());
+    assertNotNull("No caret specified", editorInfo.caretState.carets().get(0).position);
     final Document doc = PsiDocumentManager.getInstance(myProject).getDocument(sourceFile);
 
     final PsiDirectory targetDirectory = WriteAction.compute(() -> {
@@ -105,7 +105,7 @@ public class FlexMoveInnerClassTest extends MultiFileTestCase {
       }
     });
 
-    PsiElement element = sourceFile.findElementAt(editorInfo.caretState.carets.get(0).getCaretOffset(doc));
+    PsiElement element = sourceFile.findElementAt(editorInfo.caretState.carets().get(0).getCaretOffset(doc));
 
     while (true) {
       assertFalse("inner element to move not found", element instanceof JSFile);

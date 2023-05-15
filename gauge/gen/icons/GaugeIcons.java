@@ -13,5 +13,5 @@ public final class GaugeIcons {
   private static @NotNull Icon load(@NotNull String path, int cacheKey, int flags) {
     return IconManager.getInstance().loadRasterizedIcon(path, GaugeIcons.class.getClassLoader(), cacheKey, flags);
   }
-  /** 16x16 */ public static final @NotNull Icon Gauge = load("icons/gauge.svg", -1821069521, 2);
+  /** 16x16 */ public static final @NotNull Icon Gauge = load("icons/gauge.svg", -1073490608, 2);
 }

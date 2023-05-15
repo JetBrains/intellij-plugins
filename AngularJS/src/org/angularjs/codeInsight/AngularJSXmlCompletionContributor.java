@@ -15,9 +15,6 @@ import java.util.Collection;
 
 import static org.angularjs.codeInsight.AngularJavaScriptCompletionContributor.addCompletionVariants;
 
-/**
- * @author Irina.Chernushina on 3/30/2016.
- */
 public class AngularJSXmlCompletionContributor extends CompletionContributor {
   @Override
   public void fillCompletionVariants(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result) {

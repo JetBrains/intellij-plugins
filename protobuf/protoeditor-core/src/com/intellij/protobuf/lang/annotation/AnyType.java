@@ -38,10 +38,9 @@ public final class AnyType {
    * @return An instanceof AnyType if the given message type looks like google.protobuf.Any
    */
   public static AnyType forElement(PbNamedTypeElement element) {
-    if (!(element instanceof PbMessageType)) {
+    if (!(element instanceof PbMessageType message)) {
       return null;
     }
-    PbMessageType message = (PbMessageType) element;
     QualifiedName qualifiedName = message.getQualifiedName();
     if (qualifiedName == null || !"google.protobuf.Any".equals(qualifiedName.toString())) {
       return null;

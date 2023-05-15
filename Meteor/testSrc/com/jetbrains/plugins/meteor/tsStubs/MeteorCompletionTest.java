@@ -1,11 +1,15 @@
 package com.jetbrains.plugins.meteor.tsStubs;
 
 import com.intellij.lang.javascript.BaseJSCompletionTestCase;
-import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.util.indexing.FileBasedIndex;
+import com.intellij.util.ui.UIUtil;
 import com.jetbrains.plugins.meteor.spacebars.templates.MeteorTemplateIndex;
 
 public class MeteorCompletionTest extends BaseJSCompletionTestCase {
+  @Override
+  protected boolean runInDispatchThread() {
+    return false;
+  }
 
   @Override
   protected String getTestDataPath() {
@@ -34,7 +38,7 @@ public class MeteorCompletionTest extends BaseJSCompletionTestCase {
     MeteorTestUtil.enableMeteor();
     super.setUp();
     FileBasedIndex.getInstance().requestRebuild(MeteorTemplateIndex.METEOR_TEMPLATES_INDEX);
-    PlatformTestUtil.dispatchAllEventsInIdeEventQueue();
+    UIUtil.pump();
     MeteorProjectTestBase.initMeteorDirs(getProject());
   }
 

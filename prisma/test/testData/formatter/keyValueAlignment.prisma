@@ -1,0 +1,26 @@
+generator client {
+  provider = "prisma-client-js" // comment
+  // comment
+  // comment
+  // comment
+  binaryTargets = ["native"]
+  // comment
+  engineType = "library"
+
+  output = "node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+
+  url = env("DATABASE_URL")
+  url = env("DATABASE_URL")
+
+  provider = "postgresql" // comment
+  url = env("DATABASE_URL")
+  // comment
+  // comment
+  // comment
+  url = env("DATABASE_URL")
+}

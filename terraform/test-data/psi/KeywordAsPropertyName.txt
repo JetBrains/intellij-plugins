@@ -1,0 +1,72 @@
+HCLFile: KeywordAsPropertyName.hcl
+  HCLBlock
+    HCLIdentifier
+      PsiElement(ID)('terraform')
+    PsiWhiteSpace(' ')
+    HCLBlockObject
+      PsiElement({)('{')
+      PsiWhiteSpace('\n  ')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('required_version')
+        PsiWhiteSpace(' ')
+        PsiElement(=)('=')
+        PsiWhiteSpace(' ')
+        HCLStringLiteral
+          PsiElement(DOUBLE_QUOTED_STRING)('">= 0.12"')
+      PsiWhiteSpace('\n  ')
+      HCLBlock
+        HCLIdentifier
+          PsiElement(ID)('required_providers')
+        PsiWhiteSpace(' ')
+        HCLBlockObject
+          PsiElement({)('{')
+          PsiWhiteSpace('\n    ')
+          HCLProperty
+            HCLIdentifier
+              PsiElement(ID)('aws')
+            PsiWhiteSpace('    ')
+            PsiElement(=)('=')
+            PsiWhiteSpace(' ')
+            HCLStringLiteral
+              PsiElement(DOUBLE_QUOTED_STRING)('">= 2.20"')
+          PsiWhiteSpace('\n    ')
+          HCLProperty
+            HCLNullLiteral
+              PsiElement(null)('null')
+            PsiWhiteSpace('   ')
+            PsiElement(=)('=')
+            PsiWhiteSpace(' ')
+            HCLStringLiteral
+              PsiElement(DOUBLE_QUOTED_STRING)('"~> 1.2"')
+          PsiWhiteSpace('\n    ')
+          HCLProperty
+            HCLBooleanLiteral
+              PsiElement(true)('true')
+            PsiWhiteSpace('   ')
+            PsiElement(=)('=')
+            PsiWhiteSpace(' ')
+            HCLStringLiteral
+              PsiElement(DOUBLE_QUOTED_STRING)('"~> 2.1"')
+          PsiWhiteSpace('\n    ')
+          HCLProperty
+            HCLBooleanLiteral
+              PsiElement(false)('false')
+            PsiWhiteSpace('  ')
+            PsiElement(=)('=')
+            PsiWhiteSpace(' ')
+            HCLStringLiteral
+              PsiElement(DOUBLE_QUOTED_STRING)('"~> 2.1"')
+          PsiWhiteSpace('\n    ')
+          HCLProperty
+            HCLIdentifier
+              PsiElement(ID)('random')
+            PsiWhiteSpace(' ')
+            PsiElement(=)('=')
+            PsiWhiteSpace(' ')
+            HCLStringLiteral
+              PsiElement(DOUBLE_QUOTED_STRING)('"~> 2.1"')
+          PsiWhiteSpace('\n  ')
+          PsiElement(})('}')
+      PsiWhiteSpace('\n')
+      PsiElement(})('}')

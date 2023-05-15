@@ -26,7 +26,7 @@ public class DartEnterInDocLineCommentHandler extends EnterHandlerDelegateAdapte
   public Result preprocessEnter(@NotNull final PsiFile file,
                                 @NotNull final Editor editor,
                                 @NotNull final Ref<Integer> caretOffsetRef,
-                                @NotNull final Ref<Integer> caretAdvance,
+                                final @NotNull Ref<Integer> caretAdvance,
                                 @NotNull final DataContext dataContext,
                                 final EditorActionHandler originalHandler) {
     if (file.getLanguage() != DartLanguage.INSTANCE && !HtmlUtil.isHtmlFile(file)) return Result.Continue;

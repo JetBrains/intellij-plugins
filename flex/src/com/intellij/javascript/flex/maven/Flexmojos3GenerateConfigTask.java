@@ -29,7 +29,7 @@ import org.jetbrains.idea.maven.model.MavenExplicitProfiles;
 import org.jetbrains.idea.maven.model.MavenWorkspaceMap;
 import org.jetbrains.idea.maven.project.*;
 import org.jetbrains.idea.maven.server.MavenEmbedderWrapper;
-import org.jetbrains.idea.maven.server.MavenServerExecutionResult;
+import org.jetbrains.idea.maven.server.MavenGoalExecutionRequest;
 import org.jetbrains.idea.maven.utils.MavenLog;
 import org.jetbrains.idea.maven.utils.MavenProcessCanceledException;
 import org.jetbrains.idea.maven.utils.MavenProgressIndicator;
@@ -70,7 +70,7 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
 
     indicator.setText(FlexBundle.message("generating.flex.config.for", myMavenProject.getDisplayName()));
 
-    final MavenProjectResolver.EmbedderTask task = new MavenProjectResolver.EmbedderTask() {
+    final MavenEmbeddersManager.EmbedderTask task = new MavenEmbeddersManager.EmbedderTask() {
       @Override
       public void run(MavenEmbedderWrapper embedder) throws MavenProcessCanceledException {
         List<VirtualFile> temporaryFiles = null;
@@ -78,13 +78,12 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
           MavenWorkspaceMap workspaceMap = new MavenWorkspaceMap();
           temporaryFiles = mavenIdToOutputFileMapping(workspaceMap, project, myTree.getProjects());
 
-          embedder.customizeForStrictResolve(workspaceMap, console, indicator);
           final String generateConfigGoal = FlexmojosImporter.FLEXMOJOS_GROUP_ID + ":" + FlexmojosImporter.FLEXMOJOS_ARTIFACT_ID +
                                             ":generate-config-" + myMavenProject.getPackaging();
           final MavenExplicitProfiles profilesIds = myMavenProject.getActivatedProfilesIds();
-          MavenServerExecutionResult result = embedder
-            .execute(myMavenProject.getFile(), profilesIds.getEnabledProfiles(), profilesIds.getDisabledProfiles(), Collections.singletonList(generateConfigGoal));
-          if (result.projectData == null) {
+          var request = new MavenGoalExecutionRequest(new File(myMavenProject.getPath()), profilesIds);
+          var result = embedder.executeGoal(List.of(request), generateConfigGoal, indicator, console).get(0);
+          if (!result.success) {
             myFlexConfigInformer.showFlexConfigWarningIfNeeded(project);
           }
 
@@ -114,7 +113,7 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
       }
     };
 
-    myResolver.executeWithEmbedder(myMavenProject, embeddersManager, MavenEmbeddersManager.FOR_POST_PROCESSING, console, indicator, task);
+    embeddersManager.execute(myMavenProject, MavenEmbeddersManager.FOR_POST_PROCESSING, task);
   }
 
   /**

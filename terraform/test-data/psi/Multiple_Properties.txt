@@ -1,0 +1,18 @@
+HCLFile: Multiple_Properties.hcl
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('foo')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLStringLiteral
+      PsiElement(DOUBLE_QUOTED_STRING)('"bar"')
+  PsiWhiteSpace('\n')
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('key')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLNumberLiteral
+      PsiElement(NUMBER)('42')

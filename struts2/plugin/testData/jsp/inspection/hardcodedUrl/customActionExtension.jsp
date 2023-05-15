@@ -1,1 +1,0 @@
-<a href="/t<caret>est.custom">Link</a>

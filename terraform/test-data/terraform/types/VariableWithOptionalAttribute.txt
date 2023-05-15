@@ -1,0 +1,20 @@
+HCLFile: VariableWithOptionalAttribute.tf
+      HCLProperty at line 11
+        HCLIdentifier
+        HCLSelectExpression - object({a=string, b=optional(string)})
+          HCLIdentifier - identifier
+          HCLIdentifier - identifier
+      HCLProperty at line 12
+        HCLIdentifier
+        HCLSelectExpression - string
+          HCLSelectExpression - object({a=string, b=optional(string)})
+            HCLIdentifier - identifier
+            HCLIdentifier - identifier
+          HCLIdentifier - identifier
+      HCLProperty at line 13
+        HCLIdentifier
+        HCLSelectExpression - optional(string)
+          HCLSelectExpression - object({a=string, b=optional(string)})
+            HCLIdentifier - identifier
+            HCLIdentifier - identifier
+          HCLIdentifier - identifier

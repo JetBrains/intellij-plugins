@@ -1,0 +1,92 @@
+HCLFile: ForListExpression.tf
+  HCLProperty at line 2
+    HCLIdentifier
+    HCLForArrayExpression - list(number)
+      HCLForIntroImpl(FOR_INTRO)
+        HCLIdentifier - number
+        HCLIdentifier - number
+        HCLArray - list(number)
+          HCLNumberLiteral - number
+          HCLNumberLiteral - number
+          HCLNumberLiteral - number
+      HCLIdentifier - number
+  HCLProperty at line 3
+    HCLIdentifier
+    HCLForArrayExpression - list(number)
+      HCLForIntroImpl(FOR_INTRO)
+        HCLIdentifier - number
+        HCLIdentifier - bool
+        HCLArray - list(bool)
+          HCLBooleanLiteral - bool
+          HCLBooleanLiteral - bool
+          HCLBooleanLiteral - bool
+      HCLIdentifier - number
+  HCLProperty at line 4
+    HCLIdentifier
+    HCLForArrayExpression - list(number)
+      HCLForIntroImpl(FOR_INTRO)
+        HCLIdentifier - number
+        HCLIdentifier - any
+        HCLArray - list
+      HCLIdentifier - number
+  HCLProperty at line 6
+    HCLIdentifier
+    HCLForArrayExpression - list(number)
+      HCLForIntroImpl(FOR_INTRO)
+        HCLIdentifier - number
+        HCLIdentifier - number
+        HCLArray - list(number)
+          HCLNumberLiteral - number
+          HCLNumberLiteral - number
+          HCLNumberLiteral - number
+      HCLIdentifier - number
+  HCLProperty at line 7
+    HCLIdentifier
+    HCLForArrayExpression - list(bool)
+      HCLForIntroImpl(FOR_INTRO)
+        HCLIdentifier - number
+        HCLIdentifier - bool
+        HCLArray - list(bool)
+          HCLBooleanLiteral - bool
+          HCLBooleanLiteral - bool
+          HCLBooleanLiteral - bool
+      HCLIdentifier - bool
+  HCLProperty at line 8
+    HCLIdentifier
+    HCLForArrayExpression - list(any)
+      HCLForIntroImpl(FOR_INTRO)
+        HCLIdentifier - number
+        HCLIdentifier - any
+        HCLArray - list
+      HCLIdentifier - any
+  HCLProperty at line 10
+    HCLIdentifier
+    HCLForArrayExpression - list(object)
+      HCLForIntroImpl(FOR_INTRO)
+        HCLIdentifier - number
+        HCLIdentifier - object
+        HCLArray - list(object)
+          HCLObject - object
+      HCLIdentifier - object
+  HCLProperty at line 12
+    HCLIdentifier
+    HCLForArrayExpression - list(string)
+      HCLForIntroImpl(FOR_INTRO)
+        HCLIdentifier - string
+        HCLIdentifier - number
+        HCLObject - object({y=number})
+          HCLProperty at line 12
+            HCLIdentifier
+            HCLNumberLiteral - number
+      HCLIdentifier - string
+  HCLProperty at line 13
+    HCLIdentifier
+    HCLForArrayExpression - list(number)
+      HCLForIntroImpl(FOR_INTRO)
+        HCLIdentifier - string
+        HCLIdentifier - number
+        HCLObject - object({y=number})
+          HCLProperty at line 13
+            HCLIdentifier
+            HCLNumberLiteral - number
+      HCLIdentifier - number

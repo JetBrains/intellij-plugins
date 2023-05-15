@@ -1,5 +1,7 @@
 package com.jetbrains.plugins.meteor.tsStubs;
 
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.builders.ModuleFixtureBuilder;
@@ -16,6 +18,11 @@ public abstract class MeteorProjectTestBase extends CodeInsightFixtureTestCase<M
   }
 
   @Override
+  protected boolean runInDispatchThread() {
+    return false;
+  }
+
+  @Override
   protected void setUp() throws Exception {
     MeteorTestUtil.enableMeteor();
     super.setUp();
@@ -23,9 +30,10 @@ public abstract class MeteorProjectTestBase extends CodeInsightFixtureTestCase<M
   }
 
   public static void initMeteorDirs(Project project) {
-    FileBasedIndex.getInstance().ensureUpToDate(MeteorTemplateIndex.METEOR_TEMPLATES_INDEX, project, GlobalSearchScope.allScope(project));
+    ApplicationManager.getApplication().assertReadAccessNotAllowed();
+    ReadAction.run(() -> FileBasedIndex.getInstance().ensureUpToDate(MeteorTemplateIndex.METEOR_TEMPLATES_INDEX, project, GlobalSearchScope.allScope(project)));
     MeteorLibraryUpdater.findAndInitMeteorRoots(project);
-    UIUtil.dispatchAllInvocationEvents(); // invokelater in com.jetbrains.plugins.meteor.MeteorProjectStartupActivity.findMeteorRoots
+    UIUtil.pump(); // invokelater in com.jetbrains.plugins.meteor.MeteorProjectStartupActivity.findMeteorRoots
   }
 
   @Override

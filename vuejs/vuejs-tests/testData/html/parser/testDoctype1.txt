@@ -22,3 +22,4 @@ HtmlFile:test.vue
         PsiWhiteSpace(' ')
         XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('"hello.dtd"')
         XmlToken:XML_DOCTYPE_END('>')
+  PsiElement(VUE_LANG_MODE_NO_TS)('')

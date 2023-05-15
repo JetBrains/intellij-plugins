@@ -36,10 +36,9 @@ public class PbStructureViewElement extends PsiTreeElementBase<PbElement> {
   @Override
   public Collection<StructureViewTreeElement> getChildrenBase() {
     PbElement element = getElement();
-    if (!(element instanceof PbStatementOwner)) {
+    if (!(element instanceof PbStatementOwner owner)) {
       return Collections.emptyList();
     }
-    PbStatementOwner owner = (PbStatementOwner) element;
     // Only allow expanding statements at lower levels. Otherwise, statements like
     // syntax, import, file-levels option, etc. show up at the top-level.
     boolean allowStatements = !(element instanceof PbFile);

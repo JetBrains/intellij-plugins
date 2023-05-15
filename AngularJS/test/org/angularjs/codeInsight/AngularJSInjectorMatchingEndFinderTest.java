@@ -4,9 +4,6 @@ import com.intellij.openapi.util.text.InjectorMatchingEndFinder;
 import junit.framework.TestCase;
 import org.junit.Assert;
 
-/**
- * @author Irina.Chernushina on 12/2/2015.
- */
 public class AngularJSInjectorMatchingEndFinderTest extends TestCase {
   public void test() {
     defaultTest("{{recipients.length, plural, =0 {something} }}", "recipients.length, plural, =0 {something} ");

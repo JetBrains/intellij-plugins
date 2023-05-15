@@ -1,0 +1,14 @@
+HILFile: a.hil
+  ILExpressionHolder
+    PsiElement(${)('${')
+    ILSelectExpression
+      ILSelectExpression
+        ILVariable
+          PsiElement(ID)('var')
+        PsiElement(.)('.')
+        ILVariable
+          PsiElement(ID)('amis')
+      PsiElement(.)('.')
+      ILVariable
+        PsiElement(ID)('us-east-1')
+    PsiElement(})('}')

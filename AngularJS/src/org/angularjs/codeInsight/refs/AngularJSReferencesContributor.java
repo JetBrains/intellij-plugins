@@ -40,8 +40,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
     PlatformPatterns.psiElement(JSLiteralExpression.class).and(new FilterPattern(new ElementFilter() {
       @Override
       public boolean isAcceptable(Object element, @Nullable PsiElement context) {
-        if (element instanceof JSLiteralExpression) {
-          final JSLiteralExpression literal = (JSLiteralExpression)element;
+        if (element instanceof JSLiteralExpression literal) {
           if (literal.isQuotedLiteral()) {
             final PsiElement original = CompletionUtil.getOriginalOrSelf(literal);
             final PsiLanguageInjectionHost host = InjectedLanguageUtil.findInjectionHost(original);
@@ -152,8 +151,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
     return PlatformPatterns.psiElement(JSLiteralExpression.class).and(new FilterPattern(new ElementFilter() {
       @Override
       public boolean isAcceptable(Object element, @Nullable PsiElement context) {
-        if (element instanceof JSLiteralExpression) {
-          final JSLiteralExpression literal = (JSLiteralExpression)element;
+        if (element instanceof JSLiteralExpression literal) {
           if (literal.isQuotedLiteral()) {
             final PsiElement parent = literal.getParent();
             if (parent instanceof JSProperty && propertyName.equals(((JSProperty)parent).getName())) {

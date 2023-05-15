@@ -37,12 +37,11 @@ import java.util.List;
 public final class Reveal {
   public static final Logger LOG = Logger.getInstance("#" + Reveal.class.getPackage().getName());
 
-  private static final List<String> APPLICATION_BUNDLE_IDENTIFIERS =
-    ContainerUtil.newArrayList("com.ittybittyapps.Reveal2", "com.ittybittyapps.Reveal");
+  private static final List<String> APPLICATION_BUNDLE_IDENTIFIERS = List.of("com.ittybittyapps.Reveal2", "com.ittybittyapps.Reveal");
 
   @Nullable
   public static File getDefaultRevealApplicationBundle() {
-    for (String identifier: APPLICATION_BUNDLE_IDENTIFIERS) {
+    for (String identifier : APPLICATION_BUNDLE_IDENTIFIERS) {
       String path = NSWorkspace.absolutePathForAppBundleWithIdentifier(identifier);
       if (path != null) {
         File file = new File(path);
@@ -155,17 +154,22 @@ public final class Reveal {
                        parts.size() > 2 ? StringUtil.parseInt(parts.get(2), 0) : 0);
   }
 
-  public static void refreshReveal(@NotNull Project project, @NotNull File revealBundle, @NotNull String bundleID, @Nullable String deviceName) throws ExecutionException {
+  public static void refreshReveal(@NotNull Project project,
+                                   @NotNull File revealBundle,
+                                   @NotNull String bundleID,
+                                   @Nullable String deviceName) throws ExecutionException {
     RevealUsageTriggerCollector.SHOW_IN_REVEAL.log(project);
 
     if (isCompatibleWithRevealOnePointSixOrHigher(revealBundle)) {
       refreshRevealPostOnePointSix(revealBundle, bundleID, deviceName);
-    } else {
+    }
+    else {
       refreshRevealPreOnePointSix(bundleID, deviceName);
     }
   }
 
-  private static void refreshRevealPostOnePointSix(@NotNull File revealBundle, @NotNull String bundleID, @Nullable String deviceName) throws ExecutionException {
+  private static void refreshRevealPostOnePointSix(@NotNull File revealBundle, @NotNull String bundleID, @Nullable String deviceName)
+    throws ExecutionException {
     // Reveal 1.6 and later bundle the refresh script with the application - execute it using osascript
     File inspectionScript = getRevealInspectionScript(revealBundle);
     if (inspectionScript == null) {
@@ -173,10 +177,10 @@ public final class Reveal {
     }
 
     try {
-      List<String> args = ContainerUtil.newArrayList(ExecUtil.getOsascriptPath(),
-                                                     inspectionScript.toString(),
-                                                     bundleID);
-      ContainerUtil.addIfNotNull(args, deviceName);
+      List<String> args = List.of(ExecUtil.getOsascriptPath(), inspectionScript.toString(), bundleID);
+      if (deviceName != null) {
+        args = ContainerUtil.append(args, deviceName);
+      }
 
       CapturingProcessHandler handler = new CapturingProcessHandler(new GeneralCommandLine(args));
       handler.addProcessListener(new ProcessAdapter() {
@@ -197,9 +201,9 @@ public final class Reveal {
   private static void refreshRevealPreOnePointSix(@NotNull String bundleID, @Nullable String deviceName) throws ExecutionException {
     // Pre Reveal 1.6, the refresh script was not bundled with the application
     @NonNls String script = "activate\n" +
-            "repeat with doc in documents\n" +
-            " refresh doc " +
-            "   application bundle identifier \"" + StringUtil.escapeQuotes(bundleID) + "\"";
+                            "repeat with doc in documents\n" +
+                            " refresh doc " +
+                            "   application bundle identifier \"" + StringUtil.escapeQuotes(bundleID) + "\"";
 
     if (deviceName != null) {
       script += "   device name \"" + StringUtil.escapeQuotes(deviceName) + "\"";
@@ -213,8 +217,8 @@ public final class Reveal {
 
     try {
       AppleScript.tell("Reveal",
-              script,
-              true
+                       script,
+                       true
       );
     }
     catch (IdeScriptException e) {

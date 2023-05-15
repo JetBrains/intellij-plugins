@@ -1,0 +1,19 @@
+{
+  ".schema_version": "2",
+  ".sdk_type": "builtin",
+  "name": "local",
+  "type": "backend",
+  "version": "v1.3.0-dev",
+  "schema": {
+    "path": {
+      "Type": "String",
+      "Optional": true,
+      "ConfigImplicitMode": "Attr"
+    },
+    "workspace_dir": {
+      "Type": "String",
+      "Optional": true,
+      "ConfigImplicitMode": "Attr"
+    }
+  }
+}

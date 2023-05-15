@@ -138,8 +138,7 @@ public class SelectedBundle {
       return false;
     }
 
-    if (o instanceof SelectedBundle) {
-      SelectedBundle other = (SelectedBundle)o;
+    if (o instanceof SelectedBundle other) {
       return isModule() ? isEqual(myDisplayName, other.myDisplayName) : isEqual(myBundlePath, other.myBundlePath);
     }
 

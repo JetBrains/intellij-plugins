@@ -33,12 +33,9 @@ public interface FileResolveProvider {
   ExtensionPointName<FileResolveProvider> EP_NAME =
       ExtensionPointName.create("com.intellij.protobuf.fileResolveProvider");
 
-  VirtualFileFilter PROTO_AND_DIRECTORY_FILTER =
-      file ->
-          file != null && (file.isDirectory() || file.getFileType() instanceof PbFileType);
+  VirtualFileFilter PROTO_AND_DIRECTORY_FILTER = file -> file.isDirectory() || file.getFileType() instanceof PbFileType;
 
-  VirtualFileFilter PROTO_FILTER =
-      file -> file != null && file.getFileType() instanceof PbFileType;
+  VirtualFileFilter PROTO_FILTER = file -> file.getFileType() instanceof PbFileType;
 
   /** A class representing a child element, and whether it is a directory. */
   class ChildEntry {
@@ -64,10 +61,9 @@ public interface FileResolveProvider {
 
     @Override
     public boolean equals(Object obj) {
-      if (!(obj instanceof ChildEntry)) {
+      if (!(obj instanceof ChildEntry other)) {
         return false;
       }
-      ChildEntry other = (ChildEntry) obj;
       return Objects.equals(name, other.name) && Objects.equals(isDirectory, other.isDirectory);
     }
 

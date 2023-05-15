@@ -5,19 +5,26 @@ import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.model.Symbol
 import com.intellij.refactoring.rename.api.RenameTarget
+import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
+import com.intellij.webSymbols.WebSymbolsScope
+import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.refactoring.WebSymbolRenameTarget
+import com.intellij.webSymbols.utils.match
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.model.*
-import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension.Companion.KIND_VUE_MODEL
-import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension.Companion.PROP_VUE_MODEL_EVENT
-import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension.Companion.PROP_VUE_MODEL_PROP
+import org.jetbrains.vuejs.model.source.VueScriptSetupLocalDirective
+import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.KIND_VUE_MODEL
+import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.PROP_VUE_MODEL_EVENT
+import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.PROP_VUE_MODEL_PROP
 import org.jetbrains.vuejs.web.symbols.VueComponentSymbol
 import org.jetbrains.vuejs.web.symbols.VueDirectiveSymbol
 import org.jetbrains.vuejs.web.symbols.VueScopeElementSymbol
+import org.jetbrains.vuejs.web.symbols.VueScriptSetupLocalDirectiveSymbol
 
 fun WebSymbolElementDescriptor.getModel(): VueModelDirectiveProperties =
-  runNameMatchQuery(listOf(KIND_VUE_MODEL)).firstOrNull()
+  runNameMatchQuery(NAMESPACE_HTML, KIND_VUE_MODEL, "").firstOrNull()
     ?.let {
       VueModelDirectiveProperties(prop = it.properties[PROP_VUE_MODEL_PROP] as? String,
                                   event = it.properties[PROP_VUE_MODEL_EVENT] as? String)
@@ -27,6 +34,7 @@ fun WebSymbolElementDescriptor.getModel(): VueModelDirectiveProperties =
 fun VueScopeElement.asWebSymbol(name: String, forcedProximity: VueModelVisitor.Proximity): WebSymbol? =
   when (this) {
     is VueComponent -> VueComponentSymbol(toAsset(name, true), this, forcedProximity)
+    is VueScriptSetupLocalDirective -> VueScriptSetupLocalDirectiveSymbol(this, forcedProximity)
     is VueDirective -> VueDirectiveSymbol(name, this, forcedProximity)
     else -> null
   }
@@ -43,3 +51,18 @@ fun VueModelVisitor.Proximity.asWebSymbolPriority(): WebSymbol.Priority =
     VueModelVisitor.Proximity.PLUGIN, VueModelVisitor.Proximity.GLOBAL -> WebSymbol.Priority.NORMAL
     VueModelVisitor.Proximity.OUT_OF_SCOPE -> WebSymbol.Priority.LOW
   }
+
+
+fun <T : VueSourceElement> List<T>.mapWithNameFilter(
+  name: String?,
+  params: WebSymbolsNameMatchQueryParams,
+  context: Stack<WebSymbolsScope>,
+  mapper: (T) -> WebSymbol
+): List<WebSymbol> =
+  if (name != null) {
+    asSequence()
+      .map(mapper)
+      .flatMap { it.match(name, context, params) }
+      .toList()
+  }
+  else this.map(mapper)

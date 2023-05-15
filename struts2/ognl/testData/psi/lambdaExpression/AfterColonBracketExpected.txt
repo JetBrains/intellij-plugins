@@ -1,7 +1,0 @@
-OgnlFile:AfterColonBracketExpected.ognl
-  PsiElement(%{)('%{')
-  LAMBDA_EXPRESSION
-    PsiElement(:)(':')
-    PsiErrorElement:'[' expected, got '}'
-      <empty list>
-  PsiElement(EXPRESSION_END)('}')

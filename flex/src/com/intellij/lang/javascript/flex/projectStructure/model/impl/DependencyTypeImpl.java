@@ -7,9 +7,6 @@ import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Tag;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author ksafonov
- */
 class DependencyTypeImpl implements ModifiableDependencyType {
 
   @NotNull

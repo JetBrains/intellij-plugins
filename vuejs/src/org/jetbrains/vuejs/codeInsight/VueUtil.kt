@@ -3,18 +3,15 @@ package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.extapi.psi.ASTWrapperPsiElement
-import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.lang.ecmascript6.psi.ES6ImportCall
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
-import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.index.JSSymbolUtil
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptAsExpression
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver
@@ -25,23 +22,21 @@ import com.intellij.lang.javascript.psi.types.evaluable.JSApplyNewType
 import com.intellij.lang.javascript.psi.types.evaluable.JSReturnedExpressionType
 import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
-import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil.isStubBased
-import com.intellij.lang.typescript.psi.TypeScriptPsiUtil
+import com.intellij.lang.javascript.psi.util.stubSafeStringValue
 import com.intellij.notification.NotificationGroup
 import com.intellij.notification.NotificationGroupManager
-import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiPolyVariantReference
-import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.impl.source.resolve.FileContextUtil
 import com.intellij.psi.tree.TokenSet
-import com.intellij.psi.util.*
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlAttribute
+import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
-import com.intellij.util.ObjectUtils.tryCast
 import com.intellij.util.asSafely
 import com.intellij.util.text.SemVer
 import com.intellij.webSymbols.WebSymbol
@@ -50,29 +45,32 @@ import com.intellij.webSymbols.utils.unwrapMatchedSymbols
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.index.resolveLocally
-import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
+import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.VueModelProximityVisitor
 import org.jetbrains.vuejs.model.VueModelVisitor
+import org.jetbrains.vuejs.model.source.PROPS_DEFAULT_PROP
 import org.jetbrains.vuejs.model.source.PROPS_REQUIRED_PROP
 import org.jetbrains.vuejs.model.source.PROPS_TYPE_PROP
 import org.jetbrains.vuejs.types.asCompleteType
-import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension
+import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
 
 const val LANG_ATTRIBUTE_NAME = "lang"
 const val SETUP_ATTRIBUTE_NAME = "setup"
 const val REF_ATTRIBUTE_NAME = "ref"
 const val MODULE_ATTRIBUTE_NAME = "module"
+const val GENERIC_ATTRIBUTE_NAME = "generic"
 const val ATTR_DIRECTIVE_PREFIX = "v-"
 const val ATTR_EVENT_SHORTHAND = '@'
 const val ATTR_SLOT_SHORTHAND = '#'
 const val ATTR_ARGUMENT_PREFIX = ':'
 const val ATTR_MODIFIER_PREFIX = '.'
+
+const val VITE_PKG = "vite"
 
 val VUE_NOTIFICATIONS: NotificationGroup
   get() = NotificationGroupManager.getInstance().getNotificationGroup("Vue")
@@ -82,13 +80,16 @@ fun fromAsset(name: String, hyphenBeforeDigit: Boolean = false): String {
   for (ch in name) {
     when {
       ch.isUpperCase() -> {
-        if (result.isNotEmpty()) {
+        if (result.isNotEmpty()
+            && result.last() != '-') {
           result.append('-')
         }
         result.append(StringUtil.toLowerCase(ch))
       }
       ch in '0'..'9' -> {
-        if (hyphenBeforeDigit) {
+        if (hyphenBeforeDigit
+            && result.isNotEmpty()
+            && result.last() != '-') {
           result.append('-')
         }
         result.append(ch)
@@ -143,16 +144,15 @@ fun getStringLiteralsFromInitializerArray(holder: PsiElement): List<JSLiteralExp
     }
 }
 
-@StubSafe
-fun getTextIfLiteral(holder: PsiElement?): String? =
+fun getTextIfLiteral(holder: PsiElement?, forceStubs: Boolean = true): String? =
   (if (holder is JSReferenceExpression) {
-    resolveLocally(holder).mapNotNull { (it as? JSVariable)?.initializerOrStub }.firstOrNull()
+    resolveLocally(holder).firstNotNullOfOrNull { (it as? JSVariable)?.initializerOrStub }
   }
   else holder)
     ?.asSafely<JSLiteralExpression>()
     ?.let { literalExpr ->
       when {
-        (literalExpr as? StubBasedPsiElement<*>)?.stub != null -> literalExpr.significantValue?.let { es6Unquote(it) }
+        forceStubs -> literalExpr.stubSafeStringValue
         literalExpr.isQuotedLiteral -> literalExpr.stringValue
         else -> null
       }
@@ -272,42 +272,6 @@ fun processJSTypeMembers(type: JSType?): List<Pair<String, JSElement>> =
     }
   ?: emptyList()
 
-val XmlTag.stubSafeAttributes: List<XmlAttribute>
-  get() =
-    if (isStubBased(this)) {
-      PsiTreeUtil.getStubChildrenOfTypeAsList(this, XmlAttribute::class.java)
-    }
-    else {
-      this.attributes.filter { isStubBased(it) }
-    }
-
-fun XmlTag.stubSafeGetAttribute(qname: String): XmlAttribute? =
-  stubSafeAttributes.find { it.name == qname }
-
-val JSCallExpression.stubSafeCallArguments: List<PsiElement>
-  get() {
-    if (isStubBased(this)) {
-      (this as StubBasedPsiElementBase<*>).stub?.let { stub ->
-        val methodExpr = stubSafeMethodExpression
-        return stub.childrenStubs.map { it.psi }.filter { it !== methodExpr }.toList()
-      }
-      return arguments.filter { isStubBased(it) }.toList()
-    }
-    return emptyList()
-  }
-
-val JSArrayLiteralExpression.stubSafeElements: List<PsiElement>
-  get() {
-    if (isStubBased(this)) {
-      (this as StubBasedPsiElementBase<*>).stub
-        ?.childrenStubs
-        ?.map { it.psi }
-        ?.let { return it }
-      return expressions.filter { isStubBased(it) }.toList()
-    }
-    return emptyList()
-  }
-
 fun getJSTypeFromPropOptions(expression: JSExpression?): JSType? =
   when (expression) {
     is JSArrayLiteralExpression -> JSCompositeTypeImpl.getCommonType(
@@ -333,14 +297,20 @@ fun JSType.fixPrimitiveTypes(): JSType =
     else it
   }
 
-private fun getJSTypeFromConstructor(expression: JSExpression): JSType =
-  (expression as? TypeScriptAsExpression)
-    ?.type?.jsType?.asSafely<JSGenericTypeImpl>()
-    ?.takeIf { (it.type as? JSTypeImpl)?.typeText == "PropType" }
+private fun getJSTypeFromConstructor(expression: JSExpression): JSType {
+  return getPropTypeFromGenericType((expression as? TypeScriptAsExpression)?.type?.jsType)
+         ?: JSApplyNewType(JSTypeofTypeImpl(expression, JSTypeSourceFactory.createTypeSource(expression, false)),
+                           JSTypeSourceFactory.createTypeSource(expression.containingFile, false))
+}
+
+private val PROPS_CONTAINER_TYPES = setOf("PropType", "PropOptions")
+
+fun getPropTypeFromGenericType(jsType: JSType?): JSType? =
+  jsType
+    ?.asSafely<JSGenericTypeImpl>()
+    ?.takeIf { (it.type as? JSTypeImpl)?.typeText in PROPS_CONTAINER_TYPES }
     ?.arguments?.getOrNull(0)
     ?.asCompleteType()
-  ?: JSApplyNewType(JSTypeofTypeImpl(expression, JSTypeSourceFactory.createTypeSource(expression, false)),
-                    JSTypeSourceFactory.createTypeSource(expression.containingFile, false))
 
 fun getRequiredFromPropOptions(expression: JSExpression?): Boolean =
   (expression as? JSObjectLiteralExpression)
@@ -356,22 +326,27 @@ fun getRequiredFromPropOptions(expression: JSExpression?): Boolean =
     }
   ?: false
 
-fun <T : JSExpression> findExpressionInAttributeValue(attribute: XmlAttribute,
-                                                      expressionClass: Class<T>): T? {
-  val value = attribute.valueElement ?: return null
+fun getDefaultTypeFromPropOptions(expression: JSExpression?): JSType? =
+  (expression as? JSObjectLiteralExpression)
+    ?.findProperty(PROPS_DEFAULT_PROP)
+    ?.jsType
+    ?.substitute()
 
+inline fun <reified T : JSExpression> XmlAttributeValue.findJSExpression(): T? {
+  return findVueJSEmbeddedExpressionContent()?.firstChild as? T
+}
+
+fun XmlAttributeValue.findVueJSEmbeddedExpressionContent(): VueJSEmbeddedExpressionContent? {
   val root = when {
-    attribute.language === VueLanguage.INSTANCE ->
-      value.children
-        .find { it is ASTWrapperPsiElement }
-    value.textLength >= 2 ->
-      InjectedLanguageManager.getInstance(attribute.project).findInjectedElementAt(
-        value.containingFile, value.textOffset + 1)
+    language === VueLanguage.INSTANCE ->
+      children.find { it is ASTWrapperPsiElement }
+    textLength >= 2 ->
+      InjectedLanguageManager.getInstance(project)
+        .findInjectedElementAt(containingFile, textOffset + 1)
         ?.containingFile
     else -> null
   }
-
-  return tryCast((root?.firstChild as? VueJSEmbeddedExpression)?.firstChild, expressionClass)
+  return root?.firstChild?.asSafely<VueJSEmbeddedExpressionContent>()
 }
 
 fun getFirstInjectedFile(element: PsiElement?): PsiFile? {
@@ -402,60 +377,6 @@ private fun findDefaultCommonJSExport(element: PsiElement): PsiElement? {
     .firstOrNull()
 }
 
-private val resolveSymbolCache = ConcurrentHashMap<String, Key<CachedValue<*>>>()
-
-private fun <T> computeKey(moduleName: String, symbolName: String, symbolClass: Class<T>): Key<CachedValue<T>> {
-  @Suppress("UNCHECKED_CAST")
-  val key: Key<CachedValue<T>> = resolveSymbolCache.computeIfAbsent("$moduleName/$symbolName/${symbolClass.simpleName}") {
-    Key.create(it)
-  } as Key<CachedValue<T>>
-  return key
-}
-
-fun <T : PsiElement> resolveSymbolFromNodeModule(scope: PsiElement?, moduleName: String, symbolName: String, symbolClass: Class<T>): T? {
-  val key = computeKey(moduleName, symbolName, symbolClass)
-  val file = scope?.containingFile ?: return null
-
-  return CachedValuesManager.getCachedValue(file, key) {
-    val modules = JSFileReferencesUtil.resolveModuleReference(file, moduleName)
-    val resolvedSymbols = modules
-      .filterIsInstance<JSElement>()
-      .let { ES6PsiUtil.resolveSymbolInModules(symbolName, file, it) }
-    val suitableSymbol = resolvedSymbols
-      .filter { it.element?.isValid == true }
-      .mapNotNull { tryCast(it.element, symbolClass) }
-      .minByOrNull { TypeScriptPsiUtil.isFromAugmentationModule(it) }
-
-    CachedValueProvider.Result.create(suitableSymbol, PsiModificationTracker.MODIFICATION_COUNT)
-  }
-}
-
-fun resolveMergedInterfaceJSTypeFromNodeModule(scope: PsiElement?, moduleName: String, symbolName: String): JSRecordType {
-  val key = computeKey(moduleName, symbolName, JSRecordType::class.java)
-  val file = scope?.containingFile ?: return JSTypeCastUtil.NO_RECORD_TYPE
-
-  return CachedValuesManager.getCachedValue(file, key) {
-    val modules = JSFileReferencesUtil.resolveModuleReference(file, moduleName)
-    val resolvedSymbols = modules
-      .filterIsInstance<JSElement>()
-      .let { ES6PsiUtil.resolveSymbolInModules(symbolName, file, it) }
-    val interfaces = resolvedSymbols
-      .filter { it.element?.isValid == true }
-      .mapNotNull { tryCast(it.element, TypeScriptInterface::class.java) }
-
-    var typeSource: JSTypeSource? = null
-    val typeMembers = mutableListOf<JSRecordType.TypeMember>()
-    for (tsInterface in interfaces) {
-      val singleRecord = tsInterface.jsType.asRecordType()
-      typeSource = singleRecord.source
-      typeMembers.addAll(singleRecord.typeMembers)
-    }
-
-    val jsRecordType = JSRecordTypeImpl(typeSource ?: JSTypeSourceFactory.createTypeSource(null, false), typeMembers)
-    CachedValueProvider.Result.create(jsRecordType, PsiModificationTracker.MODIFICATION_COUNT)
-  }
-}
-
 fun resolveLocalComponent(context: VueEntitiesContainer, tagName: String, containingFile: PsiFile): List<VueComponent> {
   val result = mutableListOf<VueComponent>()
   val normalizedTagName = fromAsset(tagName)
@@ -483,4 +404,12 @@ fun WebSymbol.extractComponentSymbol(): WebSymbol? =
     ?.toList()
     ?.takeIf { it.size == 2 && it[0].pattern != null }
     ?.get(1)
-    ?.takeIf { it.kind == VueWebSymbolsRegistryExtension.KIND_VUE_COMPONENTS }
+    ?.takeIf { it.kind == VueWebSymbolsQueryConfigurator.KIND_VUE_COMPONENTS }
+
+inline fun <reified T : PsiElement> PsiElement.parentOfTypeInAttribute(): T? {
+  val host = InjectedLanguageManager.getInstance(project).getInjectionHost(this) ?: this
+  return host.parentOfType<T>()
+}
+
+fun isScriptSetupLocalDirectiveName(name: String): Boolean =
+  name.length > 1 && name[0] == 'v' && name[1].isUpperCase()

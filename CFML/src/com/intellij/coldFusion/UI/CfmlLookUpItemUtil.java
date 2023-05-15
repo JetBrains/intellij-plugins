@@ -74,8 +74,7 @@ public class CfmlLookUpItemUtil implements PlatformIcons {
       PsiType returnType = ((CfmlFunction)element).getReturnType();
       typeText = returnType != null ? returnType.getCanonicalText() : null;
     }
-    else if (element instanceof CfmlNamedAttributeImpl && element.getParent() instanceof CfmlFunction) {
-      CfmlFunction cfmlFunction = (CfmlFunction)element.getParent();
+    else if (element instanceof CfmlNamedAttributeImpl && element.getParent() instanceof CfmlFunction cfmlFunction) {
       tailText = "(" + cfmlFunction.getParametersAsString() + ")";
       PsiType returnType = cfmlFunction.getReturnType();
       typeText = returnType != null ? returnType.getCanonicalText() : null;

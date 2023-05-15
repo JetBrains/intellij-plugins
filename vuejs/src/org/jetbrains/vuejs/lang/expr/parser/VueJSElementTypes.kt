@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.lang.expr.parser
 
 import com.intellij.lang.ASTNode
+import com.intellij.lang.Language
 import com.intellij.lang.javascript.types.JSExpressionElementType
 import com.intellij.psi.tree.ICompositeElementType
 import com.intellij.psi.tree.IElementType
@@ -10,7 +11,6 @@ import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.psi.impl.*
 
 object VueJSElementTypes {
-
   val FILTER_ARGUMENTS_LIST: IElementType = VueJSExpressionElementType(
     "FILTER_ARGUMENTS_LIST", ::VueJSFilterArgumentsListImpl)
 
@@ -29,21 +29,16 @@ object VueJSElementTypes {
   val SLOT_PROPS_EXPRESSION: IElementType = VueJSExpressionElementType(
     "SLOT_PROPS_EXPRESSION", ::VueJSSlotPropsExpressionImpl)
 
-  val SCRIPT_SETUP_EXPRESSION: IElementType = VueJSExpressionElementType(
-    "SCRIPT_SETUP_EXPRESSION", ::VueJSScriptSetupExpressionImpl)
-
-  val EMBEDDED_EXPR_STATEMENT: IElementType = VueJSElementType(
-    "VUE:EMBEDDED_EXPR_STATEMENT", ::VueJSEmbeddedExpressionImpl)
-
-
-  private open class VueJSElementType(@NonNls debugName: String, private val myClassConstructor: (VueJSElementType) -> ASTNode)
-    : IElementType(debugName, VueJSLanguage.INSTANCE), ICompositeElementType {
+  private abstract class VueJSElementType(@NonNls debugName: String,
+                                          language: Language,
+                                          private val myClassConstructor: (VueJSElementType) -> ASTNode)
+    : IElementType(debugName, language), ICompositeElementType {
     final override fun createCompositeNode(): ASTNode = myClassConstructor(this)
   }
 
   private class VueJSExpressionElementType(@NonNls debugName: String,
                                            classConstructor: (VueJSElementType) -> ASTNode)
-    : VueJSElementType(debugName, classConstructor), JSExpressionElementType
+    : VueJSElementType(debugName, VueJSLanguage.INSTANCE, classConstructor), JSExpressionElementType
 
 
 }

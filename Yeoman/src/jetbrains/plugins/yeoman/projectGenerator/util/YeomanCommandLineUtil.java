@@ -46,9 +46,6 @@ public final class YeomanCommandLineUtil {
           ProcessListener listener = new ProcessAdapter() {
             @Override
             public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
-              if (event == null) {
-                return;
-              }
               String text = event.getText().trim();
               if (outputType == ProcessOutputTypes.STDERR || outputType == ProcessOutputTypes.STDOUT) {
                 indicator.setText2(text);

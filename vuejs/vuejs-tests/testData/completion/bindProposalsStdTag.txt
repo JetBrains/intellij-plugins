@@ -12,10 +12,12 @@ datatype
 dir
 download
 draggable
+enterkeyhint
 hidden
 href
 hreflang
 id
+inert
 inlist
 inputmode
 itemid

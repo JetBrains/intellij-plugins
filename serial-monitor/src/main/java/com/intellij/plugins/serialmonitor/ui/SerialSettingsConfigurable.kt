@@ -3,7 +3,7 @@ package com.intellij.plugins.serialmonitor.ui
 import com.intellij.CommonBundle
 import com.intellij.icons.AllIcons
 import com.intellij.ide.IdeBundle
-import com.intellij.openapi.actionSystem.ActionUpdateThread.*
+import com.intellij.openapi.actionSystem.ActionUpdateThread.EDT
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonShortcuts
@@ -70,7 +70,7 @@ internal class SerialSettingsConfigurable : SearchableConfigurable, MasterDetail
   override fun createActions(fromPopup: Boolean): MutableList<AnAction> {
     val addAction = object : DumbAwareAction(IdeBundle.messagePointer("action.NamedItemsListEditor.AddAction.text.add"),
                                              IdeBundle.messagePointer("action.NamedItemsListEditor.AddAction.description.add"),
-                                             IconUtil.getAddIcon()) {
+                                             IconUtil.addIcon) {
       override fun actionPerformed(e: AnActionEvent) {
         val portNames = JsscSerialService.getPortNames().toTypedArray()
         var portName = if (portNames.isNotEmpty()) portNames[0]

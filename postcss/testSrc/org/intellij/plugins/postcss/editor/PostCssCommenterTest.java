@@ -1,13 +1,26 @@
 package org.intellij.plugins.postcss.editor;
 
+import com.intellij.application.options.CodeStyle;
 import com.intellij.openapi.actionSystem.IdeActions;
 import org.intellij.plugins.postcss.PostCssFileType;
 import org.intellij.plugins.postcss.PostCssFixtureTestCase;
+import org.intellij.plugins.postcss.settings.PostCssCodeStyleSettings;
 import org.jetbrains.annotations.NotNull;
 
 public class PostCssCommenterTest extends PostCssFixtureTestCase {
   public void testLineComment() {
-    doTestCommentLine("a \n{\n  <caret>color: red\n}", "a \n{\n  //color: red\n}");
+    PostCssCodeStyleSettings settings = CodeStyle.getSettings(myFixture.getProject()).getCustomSettings(PostCssCodeStyleSettings.class);
+    boolean initialValue = settings.COMMENTS_INLINE_STYLE;
+    try {
+      settings.COMMENTS_INLINE_STYLE = true;
+      doTestCommentLine("a \n{\n  <caret>color: red\n}", "a \n{\n  //color: red\n}");
+
+      settings.COMMENTS_INLINE_STYLE = false;
+      doTestCommentLine("a \n{\n  <caret>color: red\n}", "a \n{\n  /*color: red*/\n}");
+    }
+    finally {
+      settings.COMMENTS_INLINE_STYLE = initialValue;
+    }
   }
 
   public void testLineBlockComment() {

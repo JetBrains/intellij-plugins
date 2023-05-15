@@ -17,7 +17,6 @@ package com.intellij.protobuf.jvm;
 
 import com.google.common.collect.ImmutableList;
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationHandler;
-import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.protobuf.jvm.names.NameGeneratorSelector;
@@ -41,12 +40,6 @@ import java.util.List;
  * Handles goto declaration from java generated code -> .proto files.
  */
 public class PbJavaGotoDeclarationHandler implements GotoDeclarationHandler {
-
-  @Nullable
-  @Override
-  public String getActionText(@NotNull DataContext dataContext) {
-    return null;
-  }
 
   @Override
   public PsiElement @Nullable [] getGotoDeclarationTargets(
@@ -182,8 +175,7 @@ public class PbJavaGotoDeclarationHandler implements GotoDeclarationHandler {
               }
               else {
                 for (PbStatement statement : oneof.getStatements()) {
-                  if (statement instanceof PbField) {
-                    PbField oneofField = (PbField)statement;
+                  if (statement instanceof PbField oneofField) {
                     if (matcher.matchesOneofEnumValue(oneofField)) {
                       results.add(oneofField);
                     }

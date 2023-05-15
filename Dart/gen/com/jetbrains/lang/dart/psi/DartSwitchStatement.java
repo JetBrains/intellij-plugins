@@ -10,9 +10,6 @@ public interface DartSwitchStatement extends DartPsiCompositeElement {
   @Nullable
   DartDefaultCase getDefaultCase();
 
-  @Nullable
-  DartExpression getExpression();
-
   @NotNull
   List<DartSwitchCase> getSwitchCaseList();
 

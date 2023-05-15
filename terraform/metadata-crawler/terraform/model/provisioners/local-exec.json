@@ -1,0 +1,29 @@
+{
+  ".schema_version": "2",
+  ".sdk_type": "builtin",
+  "name": "local-exec",
+  "type": "provisioner",
+  "version": "v1.1.4",
+  "schema": {
+    "command": {
+      "Type": "cty.String",
+      "Required": true,
+      "ConfigImplicitMode": "Attr"
+    },
+    "environment": {
+      "Type": "Map(cty.String)",
+      "Optional": true,
+      "ConfigImplicitMode": "Attr"
+    },
+    "interpreter": {
+      "Type": "List(cty.String)",
+      "Optional": true,
+      "ConfigImplicitMode": "Attr"
+    },
+    "working_dir": {
+      "Type": "cty.String",
+      "Optional": true,
+      "ConfigImplicitMode": "Attr"
+    }
+  }
+}

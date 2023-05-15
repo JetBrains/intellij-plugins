@@ -1,3 +1,5 @@
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+
 // This is a generated file. Not intended for manual editing.
 package com.intellij.plugins.drools.lang.psi.impl;
 
@@ -20,6 +22,7 @@ public class DroolsLhsUnaryImpl extends DroolsPsiCompositeElementImpl implements
     visitor.visitLhsUnary(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DroolsVisitor) accept((DroolsVisitor)visitor);
     else super.accept(visitor);
@@ -59,6 +62,12 @@ public class DroolsLhsUnaryImpl extends DroolsPsiCompositeElementImpl implements
   @Nullable
   public DroolsLhsNot getLhsNot() {
     return findChildByClass(DroolsLhsNot.class);
+  }
+
+  @Override
+  @Nullable
+  public DroolsLhsOOPathBind getLhsOOPathBind() {
+    return findChildByClass(DroolsLhsOOPathBind.class);
   }
 
   @Override

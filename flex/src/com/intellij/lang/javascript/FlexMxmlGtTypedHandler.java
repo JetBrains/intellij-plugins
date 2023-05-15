@@ -43,8 +43,7 @@ public class FlexMxmlGtTypedHandler extends XmlGtTypedHandler {
     Collection<TextRange> cdataReformatRanges = null;
     final XmlElementDescriptor descriptor = tag.getDescriptor();
 
-    if (descriptor instanceof XmlElementDescriptorWithCDataContent) {
-      final XmlElementDescriptorWithCDataContent cDataContainer = (XmlElementDescriptorWithCDataContent)descriptor;
+    if (descriptor instanceof XmlElementDescriptorWithCDataContent cDataContainer) {
 
       cdataReformatRanges = new SmartList<>();
       if (cDataContainer.requiresCdataBracesInContext(tag)) {

@@ -1,10 +1,10 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang
 
+import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.lang.javascript.controlflow.BaseJSControlFlowTest
 import com.intellij.lang.javascript.psi.JSExecutionScope
 import com.intellij.lang.javascript.psi.controlflow.JSControlFlowBuilder
-import com.intellij.lang.javascript.psi.controlflow.JSControlFlowService
 import com.intellij.psi.xml.XmlFile
 import org.jetbrains.vuejs.codeInsight.controlflow.VueControlFlowBuilder
 
@@ -16,15 +16,29 @@ class VueControlFlowTest : BaseJSControlFlowTest() {
     myFixture.enableInspections(VueInspectionsProvider())
   }
 
+  fun testLogicalExpression() = doTest()
+
+  fun testConditionalExpression() = doTest()
+
   fun testIfElseIfElse() = doTest()
 
   fun testIfElseIfElseWithRef() = doTest()
 
   fun testIfElseIfElseWithCallExpressionGuard() = doTest()
 
-  fun testFor() = doTest()
+  fun testFor() {
+    TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
+    doTest()
+  }
+
+  fun testIfElseNullChecks() {
+    TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
+    doTest()
+  }
 
   fun testIfDiscriminator() = doTest()
+
+  fun testIfWithBinaryExpression() = doTest()
 
   override fun createJSControlFlowBuilder(): JSControlFlowBuilder {
     return VueControlFlowBuilder()

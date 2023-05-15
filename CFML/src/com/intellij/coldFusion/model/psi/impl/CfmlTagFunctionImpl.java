@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi.impl;
 
 import com.intellij.coldFusion.UI.CfmlLookUpItemUtil;
@@ -53,17 +53,11 @@ public class CfmlTagFunctionImpl extends CfmlNamedTagImpl implements CfmlFunctio
 
     RowIcon baseIcon = IconManager.getInstance().createRowIcon(2);
     baseIcon.setIcon(IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Method), 0);
-    if ("private".equals(access)) {
-      baseIcon.setIcon(IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Private), 1);
-    }
-    else if ("package".equals(access)) {
-      baseIcon.setIcon(IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Local), 1);
-    }
-    else if ("public".equals(access)) {
-      baseIcon.setIcon(PUBLIC_ICON, 1);
-    }
-    else if ("remote".equals(access)) {
-      baseIcon.setIcon(CFMLIcons.Remote_access, 1);
+    switch (access) {
+      case "private" -> baseIcon.setIcon(IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Private), 1);
+      case "package" -> baseIcon.setIcon(IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Local), 1);
+      case "public" -> baseIcon.setIcon(PUBLIC_ICON, 1);
+      case "remote" -> baseIcon.setIcon(CFMLIcons.Remote_access, 1);
     }
     return baseIcon;
   }

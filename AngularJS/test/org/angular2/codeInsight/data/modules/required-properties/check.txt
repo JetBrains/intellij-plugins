@@ -1,0 +1,46 @@
+AppModule: Angular2SourceModule
+  imports:
+    NgForOf: Angular2IvyDirective
+      standalone: true
+      selector: [ngFor]
+      kind: STRUCTURAL
+      inputs:
+        ngForOf <required>
+        ngForTemplate
+        ngForTrackBy
+    NgIf: Angular2IvyDirective
+      standalone: true
+      selector: [ngIf]
+      kind: STRUCTURAL
+      inputs:
+        ngIf <required>
+        ngIfElse
+        ngIfThen
+  declarations:
+    AppComponent: Angular2SourceComponent
+      standalone: true
+      selector: app-root
+      kind: REGULAR
+      inputs:
+        newName
+        newNameRequired <required>
+        notRequiredInput
+        oldName
+        requiredInput <required>
+      imports:
+      scope:
+        AppComponent: Angular2SourceComponent
+          <printed above>
+      scope fully resolved: true
+  exports:
+  all-exported-declarations:
+  scope:
+    AppComponent: Angular2SourceComponent
+      <printed above>
+    NgForOf: Angular2IvyDirective
+      <printed above>
+    NgIf: Angular2IvyDirective
+      <printed above>
+  scope fully resolved: true
+  exports fully resolved: true
+  declarations fully resolved: true

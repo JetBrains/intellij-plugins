@@ -8,9 +8,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlTagScriptImpl extends CfmlTagImpl {
   public static final String TAG_NAME = "cfscript";
 

@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.model
 
 import com.intellij.codeInsight.completion.CompletionUtil
+import com.intellij.javascript.web.js.WebJSResolveUtil
 import com.intellij.lang.ecmascript6.psi.ES6ClassExpression
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.injection.InjectedLanguageManager
@@ -13,10 +14,10 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
-import com.intellij.openapi.util.Condition
-import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.css.CssElement
 import com.intellij.psi.search.GlobalSearchScope
@@ -24,6 +25,7 @@ import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.parents
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlFile
@@ -53,11 +55,20 @@ class VueModelManager {
     fun findEnclosingContainer(templateElement: PsiElement): VueEntitiesContainer =
       findEntitiesContainerContext(templateElement).second
 
-    private fun findEntitiesContainerContext(context: PsiElement): Pair<() -> VueGlobal, VueEntitiesContainer> =
-      VueGlobalImpl.get(context).let { global ->
-        val container = findComponent(context) as? VueEntitiesContainer ?: findVueApp(context, global) ?: global
-        Pair({ container.source?.let { VueTypedGlobal(global, it) } ?: global }, container)
-      }
+    private fun findEntitiesContainerContext(context: PsiElement): Pair<() -> VueGlobal, VueEntitiesContainer> {
+      fun find() =
+        VueGlobalImpl.get(context).let { global ->
+          val container = findComponent(context) as? VueEntitiesContainer ?: findVueApp(context, global) ?: global
+          Pair({ container.source?.let { VueTypedGlobal(global, it) } ?: global }, container)
+        }
+
+      return if (ApplicationManager.getApplication().let { it.isDispatchThread && !it.isUnitTestMode})
+        WebJSResolveUtil.disableIndexUpToDateCheckIn(context) {
+          find()
+        }
+      else
+        find()
+    }
 
     /* This method is required in JS context. In TS context `this` type is resolved from the expected type handler. */
     fun findComponentForThisResolve(jsThisExpression: JSThisExpression): VueComponent? {
@@ -101,7 +112,7 @@ class VueModelManager {
 
     private fun findComponent(templateElement: PsiElement): VueComponent? {
       val baseElement: PsiElement? =
-        if ((templateElement is JSElement || templateElement is CssElement) && templateElement.containingFile is XmlFile) {
+        if ((templateElement is JSElement || templateElement is CssElement || templateElement is PsiWhiteSpace) && templateElement.containingFile is XmlFile) {
           PsiTreeUtil.getParentOfType(templateElement, XmlElement::class.java)
         }
         else {
@@ -128,13 +139,19 @@ class VueModelManager {
         context = element.context
         if (context is JSCallExpression
             || (context is JSProperty && context.name != "name")) {
-          getVueIndexData(element)
+          val indexData = getVueIndexData(element)
+          indexData
             ?.descriptorQualifiedReference
             ?.let { VueComponents.resolveReferenceToVueComponent(context!!, it) }
             ?.asSafely<VueSourceEntityDescriptor>()
             ?.let { return it }
 
           if (context is JSProperty) {
+            if (indexData != null) {
+              context.parent.asSafely<JSObjectLiteralExpression>()?.let {
+                return VueSourceEntityDescriptor(it)
+              }
+            }
             return VueSourceEntityDescriptor(source = element)
           }
         }
@@ -255,12 +272,9 @@ class VueModelManager {
     private fun getDescriptorFromVueModule(element: PsiElement): VueSourceEntityDescriptor? {
       val file = element.containingFile?.originalFile as? XmlFile
       if (file != null && file.fileType == VueFileType.INSTANCE) {
-        val script = findScriptTag(file, false)
-        if (script != null) {
-          findDefaultExport(
-            resolveTagSrcReference(script) as? PsiFile
-            ?: PsiTreeUtil.getStubChildOfType(script, JSEmbeddedContent::class.java)
-          )
+        val scriptModule = findModule(file, false)
+        if (scriptModule != null) {
+          findDefaultExport(scriptModule)
             ?.let { getComponentDescriptor(it) }
             ?.asSafely<VueSourceEntityDescriptor>()
             ?.let { return it }
@@ -284,21 +298,14 @@ class VueModelManager {
           }
         } ?: return null
 
-      var result: VueApp? = null
-      PsiTreeUtil.findFirstParent(xmlElement, Condition {
-        if (it is PsiFile) return@Condition true
-        val idValue = (it as? XmlTag)?.getAttribute("id")?.valueElement?.value
-                      ?: return@Condition false
-        if (!StringUtil.isEmptyOrSpaces(idValue)) {
-          val idReference = "#$idValue"
-          global.apps.find { app -> idReference == app.element }?.let { app ->
-            result = app
-            return@Condition true
-          }
+      val element2app = global.apps.associateBy { it.element }
+      return xmlElement
+        .parents(true)
+        .filterIsInstance<XmlTag>()
+        .firstNotNullOfOrNull { parent ->
+          element2app[parent.localName]
+          ?: element2app[parent.getAttributeValue("id")?.let { "#$it" }]
         }
-        false
-      })
-      return result
     }
 
     /**

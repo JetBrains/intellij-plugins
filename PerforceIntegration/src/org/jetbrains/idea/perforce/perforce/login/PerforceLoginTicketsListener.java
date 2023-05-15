@@ -22,9 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 
-/**
- * @author irengrig
- */
 public class PerforceLoginTicketsListener implements VirtualFileListener {
   // null -> listener disabled
   @Nullable

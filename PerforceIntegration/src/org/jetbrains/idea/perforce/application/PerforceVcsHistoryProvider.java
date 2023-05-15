@@ -142,13 +142,12 @@ public class PerforceVcsHistoryProvider implements VcsHistoryProvider {
 
       @Override
       public boolean isCurrentRevision(VcsRevisionNumber rev) {
-        if (!(rev instanceof PerforceVcsRevisionNumber)) return false;
-        PerforceVcsRevisionNumber p4rev = (PerforceVcsRevisionNumber) rev;
+        if (!(rev instanceof PerforceVcsRevisionNumber p4rev)) return false;
         PerforceVcsRevisionNumber currentRev = (PerforceVcsRevisionNumber) getCachedRevision();
         if (currentRev != null && p4rev.getRevisionNumber() == currentRev.getRevisionNumber() && !p4rev.isBranched()) {
           final String curPath = currentRev.getDepotPath();
           final String revPath = p4rev.getDepotPath();
-          return curPath == null || revPath == null || curPath.equals(revPath);
+          return curPath.equals(revPath);
         }
         return false;
       }

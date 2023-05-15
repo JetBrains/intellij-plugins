@@ -5,14 +5,13 @@ import com.intellij.find.usages.api.SearchTarget
 import com.intellij.find.usages.api.UsageHandler
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
-import com.intellij.navigation.TargetPresentation
+import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.SymbolNamespace
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolOrigin
-import org.jetbrains.vuejs.model.VueComponent
-import org.jetbrains.vuejs.model.VueContainer
-import org.jetbrains.vuejs.model.VueEmitCall
+import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
+import org.jetbrains.vuejs.model.*
 
 class VueEmitCallSymbol(emitCall: VueEmitCall,
                         owner: VueComponent,
@@ -30,6 +29,9 @@ class VueEmitCallSymbol(emitCall: VueEmitCall,
 
   override val priority: WebSymbol.Priority
     get() = WebSymbol.Priority.HIGHEST
+
+  override val attributeValue: WebSymbolHtmlAttributeValue =
+    WebSymbolHtmlAttributeValue.create(WebSymbolHtmlAttributeValue.Kind.EXPRESSION, WebSymbolHtmlAttributeValue.Type.OF_MATCH)
 
   override fun presentation(): TargetPresentation {
     return presentation

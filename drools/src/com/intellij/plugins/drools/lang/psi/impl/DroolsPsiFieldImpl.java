@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
@@ -14,6 +14,8 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public abstract class DroolsPsiFieldImpl extends DroolsPsiCompositeElementImpl implements DroolsPsiField, DroolsField {
 
@@ -33,8 +35,6 @@ public abstract class DroolsPsiFieldImpl extends DroolsPsiCompositeElementImpl i
   public void setInitializer(@Nullable PsiExpression initializer) throws IncorrectOperationException {
 
   }
-
-
   @NotNull
   @Override
   public PsiIdentifier getNameIdentifier() {
@@ -125,5 +125,29 @@ public abstract class DroolsPsiFieldImpl extends DroolsPsiCompositeElementImpl i
   @Override
   public boolean hasModifierProperty(@PsiModifier.ModifierConstant @NonNls @NotNull String name) {
     return false;
+  }
+
+  @Override
+  @NotNull
+  public List<DroolsAnnotation> getAnnotationList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DroolsAnnotation.class);
+  }
+
+  @Override
+  @Nullable
+  public DroolsConditionalExpr getConditionalExpr() {
+    return findChildByClass(DroolsConditionalExpr.class);
+  }
+
+  @Override
+  @NotNull
+  public DroolsFieldName getFieldName() {
+    return findNotNullChildByClass(DroolsFieldName.class);
+  }
+
+  @Override
+  @Nullable
+  public DroolsFieldType getFieldType() {
+    return findChildByClass(DroolsFieldType.class);
   }
 }

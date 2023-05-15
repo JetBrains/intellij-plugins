@@ -4,6 +4,7 @@ import com.intellij.ide.errorTreeView.ErrorTreeElementKind;
 import com.intellij.ide.errorTreeView.HotfixData;
 import com.intellij.ide.errorTreeView.HotfixGate;
 import com.intellij.ide.errorTreeView.SimpleErrorData;
+import com.intellij.openapi.components.Service;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -29,7 +30,9 @@ import org.jetbrains.idea.perforce.perforce.PerforceRunner;
 import java.io.File;
 import java.util.*;
 
-public class PerforceExceptionsHotFixer implements VcsExceptionsHotFixer {
+@Service(Service.Level.PROJECT)
+public final class PerforceExceptionsHotFixer implements VcsExceptionsHotFixer {
+
   private final MyListChecker myUpdateChecker;
 
   public PerforceExceptionsHotFixer(final Project project) {
@@ -104,11 +107,9 @@ public class PerforceExceptionsHotFixer implements VcsExceptionsHotFixer {
 
   private static class MyClobberWriteableHotfix implements Consumer<HotfixGate> {
     private final Project myProject;
-    private final VcsDirtyScopeManager myDirtyScopeManager;
 
     MyClobberWriteableHotfix(Project project) {
       myProject = project;
-      myDirtyScopeManager = project.isDefault() ? null : VcsDirtyScopeManager.getInstance(myProject);
     }
 
     @Override
@@ -127,8 +128,7 @@ public class PerforceExceptionsHotFixer implements VcsExceptionsHotFixer {
           }
           catch (ProcessCanceledException e) {
             for (Object child : childData) {
-              if (child instanceof VirtualFile) {
-                final VirtualFile vf = (VirtualFile)child;
+              if (child instanceof VirtualFile vf) {
                 failed.add(createErrorData(vf, PerforceBundle.message("hotfix.op.canceled")));
               }
             }
@@ -160,7 +160,9 @@ public class PerforceExceptionsHotFixer implements VcsExceptionsHotFixer {
     }
 
     private void refreshVfs(final List<VirtualFile> processedFiles) {
-      RefreshQueue.getInstance().refresh(true, false, () -> myDirtyScopeManager.filesDirty(processedFiles, null), processedFiles);
+      RefreshQueue.getInstance().refresh(true, false, () -> {
+        VcsDirtyScopeManager.getInstance(myProject).filesDirty(processedFiles, null);
+      }, processedFiles);
     }
 
     private void edit(final List<Object> childData, final List<SimpleErrorData> processed, final List<VirtualFile> processedFiles,
@@ -169,8 +171,7 @@ public class PerforceExceptionsHotFixer implements VcsExceptionsHotFixer {
       final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
 
       for (Object child : childData) {
-        if (child instanceof VirtualFile) {
-          final VirtualFile vf = (VirtualFile)child;
+        if (child instanceof VirtualFile vf) {
           if (indicator != null) {
             indicator.checkCanceled();
           }

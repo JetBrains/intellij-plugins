@@ -7,9 +7,11 @@ import com.intellij.testFramework.TestLoggerFactory
 import com.intellij.util.CollectConsumer
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.ui.UIUtil
+import org.jetbrains.idea.perforce.application.PerforceBaseInfoWorker
+import org.jetbrains.idea.perforce.application.PerforceInfoAndClient
 import org.jetbrains.idea.perforce.perforce.PerforceSettings
 import org.jetbrains.idea.perforce.perforce.connections.AbstractP4Connection
-import org.jetbrains.idea.perforce.perforce.connections.P4ConfigHelper
+import org.jetbrains.idea.perforce.perforce.connections.P4EnvHelper
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager
 import org.jetbrains.idea.perforce.perforce.login.LoginPerformerImpl
 import org.jetbrains.idea.perforce.perforce.login.PerforceLoginManager
@@ -26,9 +28,7 @@ class PerforceAuthenticationTest extends PerforceTestCase {
 
   @Test
   void "test one authentication for several P4CONFIG roots"() {
-    TestLoggerFactory.enableDebugLogging(myTestRootDisposable,
-                                         "#org.jetbrains.idea.perforce.application.PerforceBaseInfoWorker",
-                                         "#org.jetbrains.idea.perforce.application.PerforceInfoAndClient")
+    TestLoggerFactory.enableDebugLogging(myTestRootDisposable, PerforceBaseInfoWorker.class, PerforceInfoAndClient.class)
 
 
     int count = 4
@@ -70,7 +70,7 @@ class PerforceAuthenticationTest extends PerforceTestCase {
   
   @Test
   void "test use default p4config file name when no P4CONFIG env variable is defined"() {
-    assert !P4ConfigHelper.hasP4ConfigSettingInEnvironment()
+    assert !P4EnvHelper.hasP4ConfigSettingInEnvironment()
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD, VcsShowConfirmationOption.Value.DO_ACTION_SILENTLY)
 
     def config = createFileInCommand(TEST_P4CONFIG, createP4Config('test'))
@@ -87,7 +87,7 @@ class PerforceAuthenticationTest extends PerforceTestCase {
     Assume.assumeFalse("p4 set doesn't work on linux :(, so skipping PerforceAuthenticationTest.test custom p4config file name",
                        SystemInfo.isLinux)
 
-    assert !P4ConfigHelper.hasP4ConfigSettingInEnvironment()
+    assert !P4EnvHelper.hasP4ConfigSettingInEnvironment()
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD, VcsShowConfirmationOption.Value.DO_ACTION_SILENTLY)
 
     def customName = "customName"

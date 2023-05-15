@@ -60,8 +60,7 @@ public class MeteorReferenceContributor implements JSModuleReferenceContributor 
       JsonValue resValue = resources.getValue();
       if (!(resValue instanceof JsonArray)) return ByteArraySequence.EMPTY;
       for (JsonValue jsonValue : ((JsonArray)resValue).getValueList()) {
-        if (!(jsonValue instanceof JsonObject)) continue;
-        JsonObject resource = (JsonObject)jsonValue;
+        if (!(jsonValue instanceof JsonObject resource)) continue;
         JsonProperty options = resource.findProperty("fileOptions");
         if (options == null) continue;
         JsonValue optionsValue = options.getValue();

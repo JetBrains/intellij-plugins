@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<problems>
+  <problem>
+    <file>main.tf</file>
+    <line>1</line>
+    <module>0</module>
+    <problem_class severity="TYPO" attribute_key="TYPO">Typo</problem_class>
+    <description>Typo: In word 'fiajfoasfous'</description>
+  </problem>
+  <problem>
+    <file>main.tf</file>
+    <line>2</line>
+    <module>0</module>
+    <problem_class severity="TYPO" attribute_key="TYPO">Typo</problem_class>
+    <description>Typo: In word 'ekjkhcbhsebl'</description>
+  </problem>
+  <problem>
+    <file>main.tf</file>
+    <line>8</line>
+    <module>0</module>
+    <problem_class severity="TYPO" attribute_key="TYPO">Typo</problem_class>
+    <description>Typo: In word 'fnjjnsv'</description>
+  </problem>
+  <problem>
+    <file>main.tf</file>
+    <line>9</line>
+    <module>0</module>
+    <problem_class severity="TYPO" attribute_key="TYPO">Typo</problem_class>
+    <description>Typo: In word 'vjnzdnlk'</description>
+  </problem>
+  <problem>
+    <file>main.tf</file>
+    <line>10</line>
+    <module>0</module>
+    <problem_class severity="TYPO" attribute_key="TYPO">Typo</problem_class>
+    <description>Typo: In word 'aljndac'</description>
+  </problem>
+  <problem>
+    <file>main.tf</file>
+    <line>11</line>
+    <module>0</module>
+    <problem_class severity="TYPO" attribute_key="TYPO">Typo</problem_class>
+    <description>Typo: In word 'aadjknl'</description>
+  </problem>
+  <problem>
+    <file>main.tf</file>
+    <line>12</line>
+    <module>0</module>
+    <problem_class severity="TYPO" attribute_key="TYPO">Typo</problem_class>
+    <description>Typo: In word 'aadjknl'</description>
+  </problem>
+  <problem>
+    <file>main.tf</file>
+    <line>29</line>
+    <module>0</module>
+    <problem_class severity="TYPO" attribute_key="TYPO">Typo</problem_class>
+    <description>Typo: In word 'asjrhsbc'</description>
+  </problem>
+  <problem>
+    <file>heredoc.tf</file>
+    <line>2</line>
+    <module>0</module>
+    <problem_class severity="TYPO" attribute_key="TYPO">Typo</problem_class>
+    <description>Typo: In word 'ASDASDA'</description>
+  </problem>
+  <problem>
+    <file>heredoc.tf</file>
+    <line>3</line>
+    <module>0</module>
+    <problem_class severity="TYPO" attribute_key="TYPO">Typo</problem_class>
+    <description>Typo: In word 'ASDASDA'</description>
+  </problem>
+  <problem>
+    <file>heredoc.tf</file>
+    <line>7</line>
+    <module>0</module>
+    <problem_class severity="TYPO" attribute_key="TYPO">Typo</problem_class>
+    <description>Typo: In word 'askbhsvaj'</description>
+  </problem>
+  <problem>
+    <file>heredoc.tf</file>
+    <line>9</line>
+    <module>0</module>
+    <problem_class severity="TYPO" attribute_key="TYPO">Typo</problem_class>
+    <description>Typo: In word 'afjjskdbh'</description>
+  </problem>
+</problems>
+

@@ -26,7 +26,38 @@
         {
           "name": "Vue component",
           "pattern": {
-            "items": "/html/vue-components"
+            "or": [
+              {
+                "items": "/html/vue-components"
+              },
+              {
+                "items":"/js/vue-component-namespaces",
+                "template":  [
+                  "#item",
+                  {
+                    "items": [
+                      {
+                        "path": "/html/vue-components",
+                        "name-conversion": {
+                          "canonical-names": "as-is",
+                          "match-names": ["as-is"],
+                          "name-variants": ["as-is"]
+                        }
+                      },
+                      "/js/vue-component-namespaces"
+                    ],
+                    "template": [
+                      ".",
+                      "#...",
+                      "#item"
+                    ],
+                    "repeat": true,
+                    "unique": false,
+                    "required": false
+                  }
+                ]
+              }
+            ]
           },
           "attributes": [
             {
@@ -44,8 +75,7 @@
                 ]
               },
               "value": {
-                "type": "of-match",
-                "kind": "plain"
+                "type": "of-match"
               },
               "vue-custom-prop": {
                 "name": "Custom Vue component property",
@@ -442,8 +472,7 @@
               "description": "An HTML tag name, a Component name or Component class reference.",
               "type": [
                 "string",
-                "ComponentDefinition",
-                "ComponentConstructor"
+                "object"
               ]
             },
             {
@@ -937,6 +966,7 @@
               "items": [
                 {
                   "path": "/html/attributes",
+                  "includeVirtual": false,
                   "filter": "match-with-target-list",
                   "target-list": "/js/events",
                   "prefix": "update:"
@@ -982,6 +1012,12 @@
           "doc-url": "https://vuejs.org/v2/api/#v-once",
           "attribute-value": {
             "kind": "no-value"
+          }
+        },
+        {
+          "name": "Vue Composition API local directive",
+          "pattern": {
+            "items": "vue-script-setup-local-directives"
           }
         }
       ],

@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi;
 
 import com.intellij.codeInsight.completion.InsertHandler;
@@ -39,9 +39,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-/**
- * @author vnikolaenko
- */
 // TODO: correctly deal with intersecting mappings (or show error?)
 public class CfmlComponentReference extends CfmlCompositeElement implements CfmlReference, PlatformIcons {
   private PsiElement myParent = null;
@@ -355,8 +352,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
       }
     }
     containingFile = containingFile == null ? null : containingFile.getOriginalFile();
-    if (containingFile instanceof CfmlFile) {
-      CfmlFile cfmlContainingFile = (CfmlFile)containingFile;
+    if (containingFile instanceof CfmlFile cfmlContainingFile) {
       if (directoryName.isEmpty()) {
         PsiDirectory directory = cfmlContainingFile.getParent();
         if (directory != null) {
@@ -372,7 +368,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
     final String finalDirectoryName = directoryName;
 
     return ContainerUtil.map2Array(variants, new Function<>() {
-      class DotInsertHandler implements InsertHandler<LookupElement> {
+      static class DotInsertHandler implements InsertHandler<LookupElement> {
         @Override
         public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement item) {
           Document document = context.getDocument();
@@ -384,8 +380,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
 
       @Override
       public Object fun(final Object object) {
-        if (object instanceof VirtualFile) {
-          VirtualFile element = (VirtualFile)object;
+        if (object instanceof VirtualFile element) {
           String elementNameWithoutExtension = element.getNameWithoutExtension();
           String name = forceQualify ?
                         finalDirectoryName + (finalDirectoryName.isEmpty() ? "" : ".") + elementNameWithoutExtension :

@@ -1,0 +1,7 @@
+/delete-node/ &label;
+
+/delete-node/ &{/node@0};
+
+/ {
+    /delete-node/ node@0;
+};

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.externalToolsDetector.PhoneGapExecutableChecker;
@@ -8,6 +8,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -29,8 +30,7 @@ import java.util.Set;
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil.*;
 import static com.intellij.openapi.roots.ModuleRootModificationUtil.updateExcludedFolders;
 
-public class PhoneGapStartupActivity implements StartupActivity.Background {
-  
+public final class PhoneGapStartupActivity implements StartupActivity, DumbAware {
   public static final String EXCLUDED_WWW_DIRECTORY = "excluded.www.directory";
 
   @Override

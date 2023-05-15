@@ -5,9 +5,6 @@ import com.intellij.coldFusion.model.files.CfmlFile;
 import com.intellij.psi.stubs.PsiFileStubImpl;
 import com.intellij.util.io.StringRef;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlFileStubImpl extends PsiFileStubImpl<CfmlFile> implements CfmlFileStub {
   private StringRef myName;
 

@@ -8,8 +8,8 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.util.NlsActions
 import com.intellij.openapi.vcs.VcsDataKeys
 import org.jetbrains.idea.perforce.PerforceBundle
-import org.jetbrains.idea.perforce.actions.ShelveAction.Companion.getConnections
-import org.jetbrains.idea.perforce.actions.ShelveAction.Companion.supportsShelve
+import org.jetbrains.idea.perforce.actions.ShelveAction.Handler.getConnections
+import org.jetbrains.idea.perforce.actions.ShelveAction.Handler.supportsShelve
 import org.jetbrains.idea.perforce.application.ShelvedChange
 import java.util.function.Supplier
 import javax.swing.Icon

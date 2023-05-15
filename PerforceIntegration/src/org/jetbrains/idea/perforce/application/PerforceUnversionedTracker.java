@@ -1,5 +1,6 @@
 package org.jetbrains.idea.perforce.application;
 
+import com.intellij.concurrency.ConcurrentCollectionFactory;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.advanced.AdvancedSettings;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -33,8 +34,8 @@ import java.util.*;
 
 public class PerforceUnversionedTracker {
   private static final Logger LOG = Logger.getInstance(PerforceUnversionedTracker.class);
-  private final Set<VirtualFile> myUnversionedFiles = ContainerUtil.newConcurrentSet();
-  private final Set<VirtualFile> myIgnoredFiles = ContainerUtil.newConcurrentSet();
+  private final Set<VirtualFile> myUnversionedFiles = ConcurrentCollectionFactory.createConcurrentSet();
+  private final Set<VirtualFile> myIgnoredFiles = ConcurrentCollectionFactory.createConcurrentSet();
   private final Project myProject;
   private final static int ourFilesThreshold = 200;
 

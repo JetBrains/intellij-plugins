@@ -25,6 +25,53 @@ require 'teamcity/utils/url_formatter'
 module Spec
   module Runner
     module Formatter
+
+      class RunningExampleData
+        attr_reader :id, :full_name, :stdout_file_old, :stderr_file_old, :stdout_file_new, :stderr_file_new
+
+        def initialize(id, full_name, stdout_file_old, stderr_file_old, stdout_file_new, stderr_file_new)
+          @id = id
+          @full_name = full_name
+          @stdout_file_old = stdout_file_old
+          @stderr_file_old = stderr_file_old
+          @stdout_file_new = stdout_file_new
+          @stderr_file_new = stderr_file_new
+        end
+
+        def std_files
+          [@stdout_file_old, @stderr_file_old, @stdout_file_new, @stderr_file_new]
+        end
+
+        def placeholder_full_name?
+          @full_name =~ /.*example at .+:\d+/
+        end
+
+        def to_s
+          "RunningExampleData{#{@id}, #{@full_name}, #{@stdout_file_old}, #{@stderr_file_old}, #{@stdout_file_new}, #{@stderr_file_new}}"
+        end
+
+        def inspect
+          to_s
+        end
+      end
+
+      class ExampleGroupData
+        attr_reader :id, :full_name
+
+        def initialize(id, full_name)
+          @id = id
+          @full_name = full_name
+        end
+
+        def to_s
+          "ExampleGroupData{#{@id}, #{@full_name}}"
+        end
+
+        def inspect
+          to_s
+        end
+      end
+
       class TeamcityFormatter < RSpec::Core::Formatters::BaseFormatter
         include ::Rake::TeamCity::StdCaptureHelper
         include ::Rake::TeamCity::RunnerUtils
@@ -38,7 +85,8 @@ module Spec
                                          :dump_summary, :seed
 
         RUNNER_ISNT_COMPATIBLE_MESSAGE = "TeamCity Rake Runner Plugin isn't compatible with this RSpec version.\n\n"
-        TEAMCITY_FORMATTER_INTERNAL_ERRORS =[]
+        ROOT_GROUP_DATA = Spec::Runner::Formatter::ExampleGroupData.new('0', '[root]')
+        TEAMCITY_FORMATTER_INTERNAL_ERRORS = []
         @@reporter_closed = false
 
         ########## Teamcity #############################
@@ -49,11 +97,11 @@ module Spec
           msg
         end
 
-        def self.closed?()
+        def self.closed?
           @@reporter_closed
         end
 
-        def self.close()
+        def self.close
           @@reporter_closed = true
         end
 
@@ -65,9 +113,7 @@ module Spec
           @groups_stack = []
 
           # check out output stream is a Drb stream, in such case all commands should be send there
-          if !output.nil? && (defined? DRb::DRbObject) && output.kind_of?(DRb::DRbObject)
-            @@original_stdout = output
-          end
+          @@original_stdout = output if !output.nil? && (defined? DRb::DRbObject) && output.is_a?(DRb::DRbObject)
 
           ###############################################
 
@@ -92,23 +138,27 @@ module Spec
           # Saves STDOUT, STDERR because bugs in RSpec/formatter can break it
           @sout, @serr = copy_stdout_stderr
 
-          debug_log("Starting..")
+          debug_log('Starting..')
         end
 
         def example_group_started(group_notification)
-          super
-          my_add_example_group(group_notification.group.description, group_notification.group)
+          group = group_notification.group
+          parent_group_data = peek_groups_stack
+          started_group_data = push_groups_stack(Spec::Runner::Formatter::ExampleGroupData.new(group.id, group.description))
+
+          debug_log("Adding example group(behaviour)...: [#{started_group_data}]...")
+          log(@message_factory.create_suite_started(started_group_data.full_name,
+                                                    location_from_link(*extract_source_location_from_group(group)),
+                                                    parent_group_data.id,
+                                                    started_group_data.id))
         end
 
-
         def example_group_finished(group_notification)
-          return if @groups_stack.empty?
+          finished_group_data = pop_groups_stack
+          return if finished_group_data == ROOT_GROUP_DATA
 
-          # get and remove
-          current_group_description = @groups_stack.pop
-
-          debug_log("Closing example group(behaviour): [#{current_group_description}].")
-          log(@message_factory.create_suite_finished(current_group_description))
+          debug_log("Closing example group(behaviour): [#{finished_group_data}].")
+          log(@message_factory.create_suite_finished(finished_group_data.full_name, finished_group_data.id))
         end
 
         #########################################################
@@ -120,19 +170,23 @@ module Spec
 
         def example_started(example_notification)
           example = example_notification.example
-          my_running_example_desc = example_description(example)
+          my_running_example_desc = example_description(example).to_s
           debug_log("example started [#{my_running_example_desc}]  #{example}")
 
           # Send open event
           debug_log("Example starting.. - full name = [#{my_running_example_desc}], desc = [#{my_running_example_desc}]")
-          log(@message_factory.create_test_started("#{my_running_example_desc}", location_from_link(*extract_source_location_from_example(example))))
+          parent_group_data = peek_groups_stack
+          log(@message_factory.create_test_started(my_running_example_desc,
+                                                   location_from_link(*extract_source_location_from_example(example)),
+                                                   parent_group_data.id,
+                                                   example.id))
 
           # Start capturing...
           std_files = capture_output_start_external
 
           debug_log('Output capturing started.')
 
-          put_data_to_storage(example, RunningExampleData.new("#{my_running_example_desc}", '', *std_files))
+          put_data_to_storage(example, Spec::Runner::Formatter::RunningExampleData.new(example.id, my_running_example_desc, *std_files))
         end
 
         def example_passed(example_notification)
@@ -152,12 +206,9 @@ module Spec
 
           # example service data
           example_data = get_data_from_storage(example)
-          additional_flowid_suffix = example_data.additional_flowid_suffix
-          running_example_full_name = example_data.full_name
-
           failure = example.exception
-          expectation_not_met = failure.kind_of?(RSpec::Expectations::ExpectationNotMetError)
-          pending_fixed = failure.kind_of?(RSpec::Core::Pending::PendingExampleFixedError)
+          expectation_not_met = failure.is_a?(RSpec::Expectations::ExpectationNotMetError)
+          pending_fixed = failure.is_a?(RSpec::Core::Pending::PendingExampleFixedError)
 
           # Failure message:
           message = if failure.nil?
@@ -172,24 +223,23 @@ module Spec
 
           # Backtrace
 
-          if example_notification.respond_to? :fully_formatted_lines
-            backtrace_lines = example_notification.fully_formatted_lines(0, RSpec::Core::Notifications::NullColorizer)
-          else
-            backtrace_lines = example_notification.formatted_backtrace
-          end
+          backtrace_lines = if example_notification.respond_to? :fully_formatted_lines
+                              example_notification.fully_formatted_lines(0, RSpec::Core::Notifications::NullColorizer)
+                            else
+                              example_notification.formatted_backtrace
+                            end
           backtrace = backtrace_lines.join("\n")
 
-          debug_log("Example failing... full name = [#{running_example_full_name}], Message:\n#{message} \n\nBackrace:\n#{backtrace}\n\n, additional flowid suffix=[#{additional_flowid_suffix}]")
+          debug_log("Example failing... [#{example_data}], Message:\n#{message} \n\nBackrace:\n#{backtrace}]")
 
           # Expectation failures will be shown as failures and other exceptions as Errors
           if expectation_not_met
-            log(@message_factory.create_test_failed(running_example_full_name, message, backtrace))
+            log(@message_factory.create_test_failed(example_data.full_name, message, backtrace, example_data.id))
           else
-            log(@message_factory.create_test_error(running_example_full_name, message, backtrace))
+            log(@message_factory.create_test_error(example_data.full_name, message, backtrace, example_data.id))
           end
           close_test_block(example)
         end
-
 
         def example_pending(example_notification)
           example = example_notification.example
@@ -201,11 +251,10 @@ module Spec
 
           # example service data
           example_data = get_data_from_storage(example)
-          additional_flowid_suffix = example_data.additional_flowid_suffix
-          running_example_full_name = example_data.full_name
+          parent_group_data = peek_groups_stack
 
-          debug_log("Example pending... [#{@groups_stack.last}].[#{running_example_full_name}] - #{message}, additional flowid suffix=[#{additional_flowid_suffix}]")
-          log(@message_factory.create_test_ignored(running_example_full_name, "Pending: #{message}"))
+          debug_log("Example pending... [#{parent_group_data}].[#{example_data}] - #{message}]")
+          log(@message_factory.create_test_ignored(example_data.full_name, "Pending: #{message}", nil, example_data.id))
 
           close_test_block(example)
         end
@@ -232,7 +281,7 @@ module Spec
           totals = "#{example_count} example#{'s' unless example_count == 1}"
           totals << ", #{failure_count} failure#{'s' unless failure_count == 1}"
           totals << ", #{example_count - failure_count - pending_count} passed"
-          totals << ", #{pending_count} pending" if pending_count > 0
+          totals << ", #{pending_count} pending" if pending_count.positive?
 
           # Total statistic
           debug_log(totals)
@@ -244,12 +293,14 @@ module Spec
           log(status_message)
 
           #Really must be '@example_count == example_count', it is hack for spec trunk tests
-          if !@setup_failed && @example_count > example_count
-            msg = "#{RUNNER_ISNT_COMPATIBLE_MESSAGE}Error: Not all examples have been run! (#{example_count} of #{@example_count})\n#{gather_unfinished_examples_name}"
+          unless @groups_stack.empty?
+            if !@setup_failed && @example_count > example_count
+              msg = "#{RUNNER_ISNT_COMPATIBLE_MESSAGE}Error: Not all examples have been run! (#{example_count} of #{@example_count})\n#{gather_unfinished_examples_name}"
 
-            log_and_raise_internal_error msg
-            debug_log(msg)
-          end unless @groups_stack.empty?
+              log_and_raise_internal_error msg
+              debug_log(msg)
+            end
+          end
 
           unless @@RUNNING_EXAMPLES_STORAGE.empty?
             # unfinished examples statistics
@@ -260,9 +311,9 @@ module Spec
           # finishing
           @@RUNNING_EXAMPLES_STORAGE.clear
 
-          debug_log("Summary finished.")
+          debug_log('Summary finished.')
         end
-        
+
         def seed(notification)
           log(notification.fully_formatted) if notification.seed_used?
         end
@@ -271,30 +322,21 @@ module Spec
           tc_rspec_do_close
         end
 
-        ###########################################################################
-        ###########################################################################
-        ###########################################################################
         private
 
         def gather_unfinished_examples_name
-          if @@RUNNING_EXAMPLES_STORAGE.empty?
-            return ""
-          end
+          return '' if @@RUNNING_EXAMPLES_STORAGE.empty?
 
           msg = "Following examples weren't finished:"
           count = 1
-          @@RUNNING_EXAMPLES_STORAGE.each { |key, value|
+          @@RUNNING_EXAMPLES_STORAGE.each do |key, value|
             msg << "\n  #{count}. Example : '#{value.full_name}'"
             sout_str, serr_str = get_redirected_stdout_stderr_from_files(value.stdout_file_new, value.stderr_file_new)
-            unless sout_str.empty?
-              msg << "\n[Example Output]:\n#{sout_str}"
-            end
-            unless serr_str.empty?
-              msg << "\n[Example Error Output]:\n#{serr_str}"
-            end
+            msg << "\n[Example Output]:\n#{sout_str}" unless sout_str.empty?
+            msg << "\n[Example Error Output]:\n#{serr_str}" unless serr_str.empty?
 
             count += 1
-          }
+          end
           msg
         end
 
@@ -302,6 +344,18 @@ module Spec
           example.description || '<noname>'
         end
 
+        def peek_groups_stack
+          @groups_stack.last || ROOT_GROUP_DATA
+        end
+
+        def pop_groups_stack
+          @groups_stack.pop || ROOT_GROUP_DATA
+        end
+
+        def push_groups_stack(group)
+          @groups_stack.push(group)
+          group
+        end
 
         # Repairs SDOUT, STDERR from saved data
         def repair_process_output
@@ -312,33 +366,34 @@ module Spec
           end
         end
 
-        # Refactored initialize method. Is used for support rspec API < 1.1 and >= 1.1.
-        # spec_location_info : "$PATH:$LINE_NUM"
-        def my_add_example_group(group_desc, example_group = nil)
-          # New block starts.
-          @groups_stack << "#{group_desc}"
-
-          description = @groups_stack.last
-          debug_log("Adding example group(behaviour)...: [#{description}]...")
-          log(@message_factory.create_suite_started(description,
-                                                    location_from_link(*extract_source_location_from_group(example_group))))
-        end
-
         def close_test_block(example)
           example_data = remove_data_from_storage(example)
+
+          if ::Rake::TeamCity.is_in_idea_mode && example_data.placeholder_full_name?
+            new_full_name = example_description(example).to_s
+            if example_data.full_name != new_full_name
+             log(@message_factory.create_set_node_name(new_full_name, example_data.id))
+            end
+          end
+
           finished_at_ms = get_time_in_ms(example.execution_result.finished_at)
           started_at_ms = get_time_in_ms(example.execution_result.started_at)
           duration = finished_at_ms - started_at_ms
 
-          additional_flowid_suffix = example_data.additional_flowid_suffix
-          running_example_full_name = example_data.full_name
+          debug_log("Example finishing... full example name = [#{example_data}], duration = #{duration} ms]")
+          diagnostic_info = "rspec [#{::RSpec::Core::Version::STRING}]" \
+                            ", f/s=(#{finished_at_ms}, #{started_at_ms})" \
+                            ", duration=#{duration}" \
+                            ", time.now=#{Time.now}" \
+                            ", raw[:started_at]=#{example.execution_result.started_at}" \
+                            ", raw[:finished_at]=#{example.execution_result.finished_at}" \
+                            ", raw[:run_time]=#{example.execution_result.run_time}"
 
-          debug_log("Example finishing... full example name = [#{running_example_full_name}], duration = #{duration} ms, additional flowid suffix=[#{additional_flowid_suffix}]")
-          diagnostic_info = "rspec [#{::RSpec::Core::Version::STRING}]" + ", f/s=(#{finished_at_ms}, #{started_at_ms}), duration=#{duration}, time.now=#{Time.now.to_s}, raw[:started_at]=#{example.execution_result.started_at.to_s}, raw[:finished_at]=#{example.execution_result.finished_at.to_s}, raw[:run_time]=#{example.execution_result.run_time.to_s}"
-
-          log(@message_factory.create_test_finished(running_example_full_name, duration, ::Rake::TeamCity.is_in_buildserver_mode ? nil : diagnostic_info))
+          log(@message_factory.create_test_finished(example_data.full_name,
+                                                    duration,
+                                                    ::Rake::TeamCity.is_in_buildserver_mode ? nil : diagnostic_info,
+                                                    example_data.id))
         end
-
 
         def debug_log(string)
           # Logs output.
@@ -347,53 +402,25 @@ module Spec
 
         def stop_capture_output_and_log_it(example)
           example_data = get_data_from_storage(example)
-          additional_flowid_suffix = example_data.additional_flowid_suffix
-          running_example_full_name = example_data.full_name
 
-          stdout_string, stderr_string = capture_output_end_external(*example_data.get_std_files)
-          debug_log("Example capturing was stopped.")
+          stdout_string, stderr_string = capture_output_end_external(*example_data.std_files)
+          debug_log('Example capturing was stopped.')
 
-          debug_log("My stdOut: [#{stdout_string}] additional flow id=[#{additional_flowid_suffix}]")
+          debug_log("My stdOut: [#{stdout_string}]")
           if stdout_string && !stdout_string.empty?
-            log(@message_factory.create_test_output_message(running_example_full_name, true, stdout_string))
+            log(@message_factory.create_test_output_message(example_data.full_name, true, stdout_string, example_data.id))
           end
-          debug_log("My stdErr: [#{stderr_string}] additional flow id=[#{additional_flowid_suffix}]")
+          debug_log("My stdErr: [#{stderr_string}]")
           if stderr_string && !stderr_string.empty?
-            log(@message_factory.create_test_output_message(running_example_full_name, false, stderr_string))
+            log(@message_factory.create_test_output_message(example_data.full_name, false, stderr_string, example_data.id))
           end
         end
 
-        ######################################################
-        ############# Assertions #############################
-        ######################################################
-        #        def assert_example_valid(example_desc)
-        #           if (example_desc != @my_running_example_desc)
-        #              msg = "Example [#{example_desc}] doesn't correspond to current running example [#{@my_running_example_desc}]!"
-        #              debug_log(msg)
-        #              ... [send error to teamcity] ...
-        #              close_test_block
-        #
-        #              raise ::Rake::TeamCity::InnerException, msg, caller
-        #            end
-        #        end
-
-        # We doesn't support concurrent example groups executing
-        def assert_example_group_valid(group_description)
-          current_group_description = @groups_stack.last
-          if group_description != current_group_description
-            msg = "Example group(behaviour) [#{group_description}] doesn't correspond to current running example group [#{ current_group_description}]!"
-            debug_log(msg)
-
-            raise ::Rake::TeamCity::InnerException, msg, caller
-          end
-        end
-
-        ######################################################
         def log_and_raise_internal_error(msg, raise_now = false)
           debug_log(msg)
 
           log(msg)
-          log(@message_factory.create_build_error_report("Failed to run RSpec.."))
+          log(@message_factory.create_build_error_report('Failed to run RSpec..'))
 
           excep_data = [msg, caller]
           if raise_now
@@ -413,33 +440,6 @@ module Spec
 
         def put_data_to_storage(example, data)
           @@RUNNING_EXAMPLES_STORAGE[example.object_id] = data
-        end
-
-        ######################################################
-        ######################################################
-        #TODO remove flowid
-        class RunningExampleData
-          attr_reader :full_name # full task name, example name in build log
-          #          TODO: Remove!
-          attr_reader :additional_flowid_suffix # to support concurrently running examples
-          attr_reader :stdout_file_old # before capture
-          attr_reader :stderr_file_old # before capture
-          attr_reader :stdout_file_new #current capturing storage
-          attr_reader :stderr_file_new # current capturing storage
-
-          def initialize(full_name, additional_flowid_suffix, stdout_file_old, stderr_file_old, stdout_file_new, stderr_file_new)
-            @full_name = full_name
-#          TODO: Remove!
-            @additional_flowid_suffix = additional_flowid_suffix
-            @stdout_file_old = stdout_file_old
-            @stderr_file_old = stderr_file_old
-            @stdout_file_new = stdout_file_new
-            @stderr_file_new = stderr_file_new
-          end
-
-          def get_std_files
-            return @stdout_file_old, @stderr_file_old, @stdout_file_new, @stderr_file_new
-          end
         end
       end
     end

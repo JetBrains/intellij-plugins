@@ -176,8 +176,7 @@ public class BundleSelector extends DialogWrapper {
     public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
       if (value instanceof DefaultMutableTreeNode) {
         Object object = ((DefaultMutableTreeNode)value).getUserObject();
-        if (object instanceof SelectedBundle) {
-          SelectedBundle bundle = (SelectedBundle)object;
+        if (object instanceof SelectedBundle bundle) {
           if (bundle.isModule()) {
             setIcon(AllIcons.Nodes.Module);
           }

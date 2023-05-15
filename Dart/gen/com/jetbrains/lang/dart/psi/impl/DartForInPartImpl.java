@@ -41,6 +41,42 @@ public class DartForInPartImpl extends DartPsiCompositeElementImpl implements Da
 
   @Override
   @Nullable
+  public DartListPattern getListPattern() {
+    return findChildByClass(DartListPattern.class);
+  }
+
+  @Override
+  @Nullable
+  public DartMapPattern getMapPattern() {
+    return findChildByClass(DartMapPattern.class);
+  }
+
+  @Override
+  @NotNull
+  public List<DartMetadata> getMetadataList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMetadata.class);
+  }
+
+  @Override
+  @Nullable
+  public DartObjectPattern getObjectPattern() {
+    return findChildByClass(DartObjectPattern.class);
+  }
+
+  @Override
+  @Nullable
+  public DartParenthesizedPattern getParenthesizedPattern() {
+    return findChildByClass(DartParenthesizedPattern.class);
+  }
+
+  @Override
+  @Nullable
+  public DartRecordPattern getRecordPattern() {
+    return findChildByClass(DartRecordPattern.class);
+  }
+
+  @Override
+  @Nullable
   public DartVarAccessDeclaration getVarAccessDeclaration() {
     return findChildByClass(DartVarAccessDeclaration.class);
   }

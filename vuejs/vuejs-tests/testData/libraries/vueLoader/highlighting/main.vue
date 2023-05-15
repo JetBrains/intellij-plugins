@@ -5,7 +5,7 @@
   <img src="~@/logo.png"/>
   <img src="~foo/logo.png"/>
   <img src="~foo/<warning descr="Cannot resolve file 'foo.png'">foo.png</warning>"/>
-  <img src="~<warning descr="Cannot resolve directory 'bar'">bar</warning>/<warning descr="Cannot resolve file 'logo.png'">logo.png</warning>"/>
+  <img src="<warning descr="Cannot resolve directory '~bar'">~bar</warning>/<warning descr="Cannot resolve file 'logo.png'">logo.png</warning>"/>
   <img src="~bar_module/logo.png"/>
   <img src="~bar_module/<warning descr="Cannot resolve file 'foo.png'">foo.png</warning>"/>
 </template>

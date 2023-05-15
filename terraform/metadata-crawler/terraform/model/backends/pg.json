@@ -1,0 +1,42 @@
+{
+  ".schema_version": "2",
+  ".sdk_type": "builtin",
+  "name": "pg",
+  "type": "backend",
+  "version": "v1.3.0-dev",
+  "schema": {
+    "conn_str": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Postgres connection string; a `postgres://` URL"
+    },
+    "schema_name": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Name of the automatically managed Postgres schema to store state",
+      "Default": {
+        "Type": "string",
+        "Value": "terraform_remote_state"
+      }
+    },
+    "skip_index_creation": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "If set to `true`, Terraform won't try to create the Postgres index"
+    },
+    "skip_schema_creation": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "If set to `true`, Terraform won't try to create the Postgres schema",
+      "Default": {
+        "Type": "bool",
+        "Value": "false"
+      }
+    },
+    "skip_table_creation": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "If set to `true`, Terraform won't try to create the Postgres table"
+    }
+  }
+}

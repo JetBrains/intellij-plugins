@@ -1,0 +1,12 @@
+WebAssembly File(0,176)
+  PsiComment(WebAssemblyToken.LINE_COMMENT)(';;; TOOL: wat2wasm')(0,18)
+  PsiWhiteSpace('\n')(18,19)
+  PsiComment(WebAssemblyToken.LINE_COMMENT)(';;; ERROR: 1')(19,31)
+  PsiWhiteSpace('\n')(31,32)
+  WebAssemblyModuleImpl(MODULE)(32,39)
+    PsiElement(WebAssemblyToken.LPAR)('(')(32,33)
+    PsiElement(WebAssemblyToken.MODULEKEY)('module')(33,39)
+    PsiErrorElement:WebAssemblyToken.RPAR expected(39,39)
+      <empty list>
+  PsiWhiteSpace('\n')(39,40)
+  PsiComment(WebAssemblyToken.BLOCK_COMMENT)('(;; STDERR ;;;\nout/test/parse/module/bad-module-no-close.txt:4:1: error: unexpected token "EOF", expected a module field.\n;;; STDERR ;;)')(40,176)

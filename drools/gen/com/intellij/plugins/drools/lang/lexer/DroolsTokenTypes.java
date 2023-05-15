@@ -1,3 +1,5 @@
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+
 // This is a generated file. Not intended for manual editing.
 package com.intellij.plugins.drools.lang.lexer;
 
@@ -57,6 +59,7 @@ public interface DroolsTokenTypes {
   IElementType FROM_ENTRY_POINT = new DroolsElementType("FROM_ENTRY_POINT");
   IElementType FROM_EXPRESSION = new DroolsElementType("FROM_EXPRESSION");
   IElementType FROM_WINDOW = new DroolsElementType("FROM_WINDOW");
+  IElementType FUNCTION_NAME = new DroolsElementType("FUNCTION_NAME");
   IElementType FUNCTION_STATEMENT = new DroolsElementType("FUNCTION_STATEMENT");
   IElementType GLOBAL_STATEMENT = new DroolsElementType("GLOBAL_STATEMENT");
   IElementType IDENTIFIER = new DroolsElementType("IDENTIFIER");
@@ -80,6 +83,9 @@ public interface DroolsTokenTypes {
   IElementType LHS_FORALL = new DroolsElementType("LHS_FORALL");
   IElementType LHS_NAMED_CONSEQUENCE = new DroolsElementType("LHS_NAMED_CONSEQUENCE");
   IElementType LHS_NOT = new DroolsElementType("LHS_NOT");
+  IElementType LHS_OOP_SEGMENT = new DroolsElementType("LHS_OOP_SEGMENT");
+  IElementType LHS_OO_PATH_BIND = new DroolsElementType("LHS_OO_PATH_BIND");
+  IElementType LHS_OO_PATH_SEGMENT_ID = new DroolsElementType("LHS_OO_PATH_SEGMENT_ID");
   IElementType LHS_OR = new DroolsElementType("LHS_OR");
   IElementType LHS_PAREN = new DroolsElementType("LHS_PAREN");
   IElementType LHS_PATTERN = new DroolsElementType("LHS_PATTERN");
@@ -123,6 +129,7 @@ public interface DroolsTokenTypes {
   IElementType SQUARE_ARGUMENTS = new DroolsElementType("SQUARE_ARGUMENTS");
   IElementType STRING_ID = new DroolsElementType("STRING_ID");
   IElementType STRING_LITERAL = new DroolsElementType("STRING_LITERAL");
+  IElementType STRING_SEQUENCE = new DroolsElementType("STRING_SEQUENCE");
   IElementType SUPER_SUFFIX = new DroolsElementType("SUPER_SUFFIX");
   IElementType SUPER_TYPE = new DroolsElementType("SUPER_TYPE");
   IElementType TRAITABLE = new DroolsElementType("TRAITABLE");
@@ -135,10 +142,13 @@ public interface DroolsTokenTypes {
   IElementType UNARY_ASSIGN_EXPR = new DroolsElementType("UNARY_ASSIGN_EXPR");
   IElementType UNARY_EXPR = new DroolsElementType("UNARY_EXPR");
   IElementType UNARY_NOT_PLUS_MINUS_EXPR = new DroolsElementType("UNARY_NOT_PLUS_MINUS_EXPR");
+  IElementType UNIT_NAME = new DroolsElementType("UNIT_NAME");
+  IElementType UNIT_STATEMENT = new DroolsElementType("UNIT_STATEMENT");
   IElementType UPDATE_RHS_STATEMENT = new DroolsElementType("UPDATE_RHS_STATEMENT");
   IElementType VARIABLE_INITIALIZER = new DroolsElementType("VARIABLE_INITIALIZER");
   IElementType VAR_TYPE = new DroolsElementType("VAR_TYPE");
   IElementType WINDOW_DECLARATION = new DroolsElementType("WINDOW_DECLARATION");
+  IElementType WINDOW_ID = new DroolsElementType("WINDOW_ID");
 
   IElementType ACCUMULATE = DroolsElementFactory.getTokenType("accumulate");
   IElementType ACTION = DroolsElementFactory.getTokenType("action");
@@ -170,6 +180,7 @@ public interface DroolsTokenTypes {
   IElementType ENABLED = DroolsElementFactory.getTokenType("enabled");
   IElementType END = DroolsElementFactory.getTokenType("end");
   IElementType ENTRY_POINT = DroolsElementFactory.getTokenType("entry-point");
+  IElementType ENUM = DroolsElementFactory.getTokenType("enum");
   IElementType EQ = DroolsElementFactory.getTokenType("EQ");
   IElementType EVAL = DroolsElementFactory.getTokenType("eval");
   IElementType EXISTS = DroolsElementFactory.getTokenType("exists");
@@ -203,6 +214,7 @@ public interface DroolsTokenTypes {
   IElementType NOT = DroolsElementFactory.getTokenType("not");
   IElementType NO_LOOP = DroolsElementFactory.getTokenType("no-loop");
   IElementType NULL = DroolsElementFactory.getTokenType("null");
+  IElementType NULL_DOT = DroolsElementFactory.getTokenType("!.");
   IElementType OP_ASSIGN = DroolsElementFactory.getTokenType("=");
   IElementType OP_AT = DroolsElementFactory.getTokenType("@");
   IElementType OP_BIT_AND = DroolsElementFactory.getTokenType("&");
@@ -243,6 +255,7 @@ public interface DroolsTokenTypes {
   IElementType QUEST = DroolsElementFactory.getTokenType("?");
   IElementType RBRACE = DroolsElementFactory.getTokenType("}");
   IElementType RBRACKET = DroolsElementFactory.getTokenType("]");
+  IElementType REFRACT = DroolsElementFactory.getTokenType("refract");
   IElementType RESULT = DroolsElementFactory.getTokenType("result");
   IElementType RETRACT = DroolsElementFactory.getTokenType("retract");
   IElementType REVERSE = DroolsElementFactory.getTokenType("reverse");
@@ -253,15 +266,18 @@ public interface DroolsTokenTypes {
   IElementType SEMICOLON = DroolsElementFactory.getTokenType(";");
   IElementType SHORT = DroolsElementFactory.getTokenType("short");
   IElementType SOUNDSLIKE = DroolsElementFactory.getTokenType("soundslike");
+  IElementType STRING_IDENTIFIER = DroolsElementFactory.getTokenType("STRING_IDENTIFIER");
   IElementType STRING_TOKEN = DroolsElementFactory.getTokenType("STRING_TOKEN");
   IElementType TEMPLATE = DroolsElementFactory.getTokenType("template");
   IElementType THEN = DroolsElementFactory.getTokenType("then");
   IElementType THIS = DroolsElementFactory.getTokenType("this");
   IElementType TIMER = DroolsElementFactory.getTokenType("timer");
   IElementType TRUE = DroolsElementFactory.getTokenType("true");
+  IElementType UNIT = DroolsElementFactory.getTokenType("unit");
   IElementType UPDATE = DroolsElementFactory.getTokenType("update");
   IElementType VOID = DroolsElementFactory.getTokenType("void");
   IElementType WHEN = DroolsElementFactory.getTokenType("when");
+  IElementType WINDOW = DroolsElementFactory.getTokenType("window");
 
   class Factory {
     public static PsiElement createElement(ASTNode node) {
@@ -410,6 +426,9 @@ public interface DroolsTokenTypes {
       else if (type == FROM_WINDOW) {
         return new DroolsFromWindowImpl(node);
       }
+      else if (type == FUNCTION_NAME) {
+        return new DroolsFunctionNameImpl(node);
+      }
       else if (type == FUNCTION_STATEMENT) {
         return new DroolsFunctionStatementImpl(node);
       }
@@ -478,6 +497,15 @@ public interface DroolsTokenTypes {
       }
       else if (type == LHS_NOT) {
         return new DroolsLhsNotImpl(node);
+      }
+      else if (type == LHS_OOP_SEGMENT) {
+        return new DroolsLhsOOPSegmentImpl(node);
+      }
+      else if (type == LHS_OO_PATH_BIND) {
+        return new DroolsLhsOOPathBindImpl(node);
+      }
+      else if (type == LHS_OO_PATH_SEGMENT_ID) {
+        return new DroolsLhsOOPathSegmentIdImpl(node);
       }
       else if (type == LHS_OR) {
         return new DroolsLhsOrImpl(node);
@@ -605,6 +633,9 @@ public interface DroolsTokenTypes {
       else if (type == STRING_LITERAL) {
         return new DroolsStringLiteralImpl(node);
       }
+      else if (type == STRING_SEQUENCE) {
+        return new DroolsStringSequenceImpl(node);
+      }
       else if (type == SUPER_SUFFIX) {
         return new DroolsSuperSuffixImpl(node);
       }
@@ -641,6 +672,12 @@ public interface DroolsTokenTypes {
       else if (type == UNARY_NOT_PLUS_MINUS_EXPR) {
         return new DroolsUnaryNotPlusMinusExprImpl(node);
       }
+      else if (type == UNIT_NAME) {
+        return new DroolsUnitNameImpl(node);
+      }
+      else if (type == UNIT_STATEMENT) {
+        return new DroolsUnitStatementImpl(node);
+      }
       else if (type == UPDATE_RHS_STATEMENT) {
         return new DroolsUpdateRhsStatementImpl(node);
       }
@@ -652,6 +689,9 @@ public interface DroolsTokenTypes {
       }
       else if (type == WINDOW_DECLARATION) {
         return new DroolsWindowDeclarationImpl(node);
+      }
+      else if (type == WINDOW_ID) {
+        return new DroolsWindowIdImpl(node);
       }
       throw new AssertionError("Unknown element type: " + type);
     }

@@ -43,9 +43,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-/**
- * @author Irina.Chernushina on 3/22/2016.
- */
 public class AngularJSModuleReferencesProvider extends PsiReferenceProvider {
   public static final String ANGULAR = "angular";
 
@@ -140,8 +137,7 @@ public class AngularJSModuleReferencesProvider extends PsiReferenceProvider {
           final JSCallExpression expression = PsiTreeUtil.getParentOfType((PsiElement)reference, JSCallExpression.class);
           if (expression == null || !PsiTreeUtil.isAncestor(expression.getMethodExpression(), (PsiElement)reference, false)) continue;
           final JSExpression[] arguments = expression.getArguments();
-          if (arguments.length > pair.getSecond() && arguments[pair.getSecond()] instanceof JSLiteralExpression) {
-            final JSLiteralExpression literal = (JSLiteralExpression)arguments[pair.getSecond()];
+          if (arguments.length > pair.getSecond() && arguments[pair.getSecond()] instanceof JSLiteralExpression literal) {
             if (literal.isQuotedLiteral() && moduleName.equals(StringUtil.unquoteString(literal.getText()))) {
               result.add(new JSResolveResult((PsiElement)reference));
             }

@@ -24,6 +24,7 @@ import com.intellij.lang.javascript.refactoring.changeSignature.JSMethodDescript
 import com.intellij.lang.javascript.refactoring.changeSignature.JSParameterTableModel;
 import com.intellij.lang.javascript.refactoring.introduceConstant.JSIntroduceConstantDialog;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
+import com.intellij.lang.javascript.ui.ActionScriptPackageChooserDialog;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -103,7 +104,7 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
     setUpJdk();
     myFixture.configureByFiles(getTestName(false) + "_2.js2");
     PsiFile fragment =
-      JSReferenceEditor.forPackageName("", getProject(), "", GlobalSearchScope.projectScope(getProject()), "").getPsiFile();
+      ActionScriptPackageChooserDialog.createPackageReferenceEditor("", getProject(), "", GlobalSearchScope.projectScope(getProject()), "").getPsiFile();
     String[] included = new String[]{"com"};
     String[] excluded = new String[]{"public", "function", "while", "Z111", "Z222", "int", "String", "uint", "Number", "EventDispatcher"};
     checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "com", getTestName(false) + ".txt");
@@ -114,7 +115,7 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
     setUpJdk();
     myFixture.configureByFiles(getTestName(false) + "_2.js2");
     PsiFile fragment =
-      JSReferenceEditor.forPackageName("", getProject(), "", GlobalSearchScope.projectScope(getProject()), "").getPsiFile();
+      ActionScriptPackageChooserDialog.createPackageReferenceEditor("", getProject(), "", GlobalSearchScope.projectScope(getProject()), "").getPsiFile();
     String[] included = new String[]{"foo"};
     String[] excluded = new String[]{"public", "function", "while", "Z111", "Z222", "int", "String", "uint", "Number", "EventDispatcher"};
     checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "foo", getTestName(false) + ".txt");

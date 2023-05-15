@@ -38,8 +38,7 @@ public class DartUnitMemberUsageGroupingRule extends SingleParentUsageGroupingRu
     // todo Docs are not parsed perfectly and doc comment may be not a child of the corresponding function. Related to comment for DartDocUtil.getDocumentationText
 
     while (psiElement != null) {
-      if (psiElement instanceof DartComponent && psiElement.getParent() instanceof DartFile) {
-        final DartComponent componentElement = (DartComponent)psiElement;
+      if (psiElement instanceof DartComponent componentElement && psiElement.getParent() instanceof DartFile) {
         return new DartComponentUsageGroup(componentElement);
       }
       psiElement = psiElement.getParent();

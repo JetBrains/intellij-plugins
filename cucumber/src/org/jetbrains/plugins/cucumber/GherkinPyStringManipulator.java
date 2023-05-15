@@ -36,8 +36,7 @@ public class GherkinPyStringManipulator extends AbstractElementManipulator<Gherk
     PsiFile dummyFile =
       PsiFileFactory.getInstance(element.getProject()).createFileFromText("test.feature", GherkinFileType.INSTANCE, dummyFileText);
     PsiElement pyStringQuotes = dummyFile.findElementAt(dummyFile.getTextLength() - 1);
-    if (pyStringQuotes != null && pyStringQuotes.getParent() instanceof GherkinPystring) {
-      GherkinPystring pyStringElement = (GherkinPystring)pyStringQuotes.getParent();
+    if (pyStringQuotes != null && pyStringQuotes.getParent() instanceof GherkinPystring pyStringElement) {
       return (GherkinPystring)element.replace(pyStringElement);
     }
     return element;

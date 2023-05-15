@@ -51,15 +51,15 @@ public class JSUntypedDeclarationInspection extends JSInspection {
   @NotNull
   protected JSElementVisitor createVisitor(final ProblemsHolder holder, LocalInspectionToolSession session) {
     return new JSElementVisitor() {
-      @Override public void visitJSVariable(final JSVariable node) {
+      @Override public void visitJSVariable(final @NotNull JSVariable node) {
         process(node, holder);
       }
 
-      @Override public void visitJSFunctionExpression(final JSFunctionExpression node) {
+      @Override public void visitJSFunctionExpression(final @NotNull JSFunctionExpression node) {
         process(node, holder);
       }
 
-      @Override public void visitJSFunctionDeclaration(final JSFunction node) {
+      @Override public void visitJSFunctionDeclaration(final @NotNull JSFunction node) {
         if (node.isConstructor() || node.isSetProperty()) return;
         process(node, holder);
       }

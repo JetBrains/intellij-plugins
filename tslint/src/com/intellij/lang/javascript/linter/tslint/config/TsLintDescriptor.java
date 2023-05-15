@@ -20,9 +20,6 @@ import java.util.Collection;
 
 import static com.intellij.lang.javascript.linter.JSLinterConfigFileUtil.findDistinctConfigInContentRoots;
 
-/**
- * @author Irina.Chernushina on 11/24/2016.
- */
 public final class TsLintDescriptor extends JSLinterDescriptor {
   public static final String PACKAGE_NAME = "tslint";
 

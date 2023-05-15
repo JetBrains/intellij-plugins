@@ -1,0 +1,11 @@
+;;; TOOL: wast2json
+(module
+  (export "test" (func $test))
+  (func $test (param i32) (result i32)
+    get_local 0
+    i32.const 100
+    i32.add))
+
+(invoke "test" (i32.const 1))
+(invoke "test" (i32.const 100))
+(invoke "test" (i32.const -30))

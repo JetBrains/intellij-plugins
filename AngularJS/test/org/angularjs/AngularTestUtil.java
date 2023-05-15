@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs;
 
+import com.intellij.lang.javascript.completion.JSCompletionUtil;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.psi.PsiElement;
@@ -17,9 +18,10 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.List;
 
+import static com.intellij.lang.javascript.completion.JSLookupPriority.*;
 import static com.intellij.testFramework.UsefulTestCase.assertInstanceOf;
 import static junit.framework.TestCase.assertEquals;
-import static org.angular2.web.Angular2WebSymbolsRegistryExtension.PROP_ERROR_SYMBOL;
+import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.PROP_ERROR_SYMBOL;
 
 public final class AngularTestUtil {
 
@@ -81,7 +83,34 @@ public final class AngularTestUtil {
     WebTestUtil.assertUnresolvedReference(fixture, signature);
   }
 
-  public static List<String> renderLookupItems(@NotNull CodeInsightTestFixture fixture, boolean renderPriority, boolean renderTypeText) {
-    return WebTestUtil.renderLookupItems(fixture, renderPriority, renderTypeText);
+  public static List<String> renderLookupItems(@NotNull CodeInsightTestFixture fixture,
+                                               boolean renderPriority,
+                                               boolean renderTypeText) {
+    return renderLookupItems(fixture, renderPriority, renderTypeText, false);
+  }
+
+  public static List<String> renderLookupItems(@NotNull CodeInsightTestFixture fixture,
+                                               boolean renderPriority,
+                                               boolean renderTypeText,
+                                               boolean filterOutGlobalSymbols) {
+    return renderLookupItems(fixture, renderPriority, renderTypeText, false, filterOutGlobalSymbols);
+  }
+
+  public static List<String> renderLookupItems(@NotNull CodeInsightTestFixture fixture,
+                                               boolean renderPriority,
+                                               boolean renderTypeText,
+                                               boolean renderTailText,
+                                               boolean filterOutGlobalSymbols) {
+    return WebTestUtil.renderLookupItems(fixture, renderPriority,
+                                         renderTypeText, renderTailText, false, false, lookupElement -> {
+        if (!filterOutGlobalSymbols || "$any".equals(lookupElement.getLookupString())) {
+          return true;
+        }
+        var priority = (int)JSCompletionUtil.getLookupElementPriority(lookupElement);
+        return priority != NON_CONTEXT_KEYWORDS_PRIORITY.getPriorityValue()
+               && priority != KEYWORDS_PRIORITY.getPriorityValue()
+               && priority != TOP_LEVEL_SYMBOLS_FROM_OTHER_FILES.getPriorityValue()
+               && priority != 0;
+      });
   }
 }

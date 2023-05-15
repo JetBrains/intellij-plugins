@@ -1,0 +1,8 @@
+crossorigin#null#50
+define:vars#null#10
+is:inline#null#10
+class:list#null#10
+client:#null#10
+set:html#null#10
+set:text#null#10
+is:raw#null#1

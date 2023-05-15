@@ -32,42 +32,6 @@
     <orderEntry type="module" module-name="intellij.platform.util.jdom" />
     <orderEntry type="module" module-name="intellij.platform.builtInServer.impl" />
     <orderEntry type="module" module-name="intellij.platform.scriptDebugger.ui" />
-    <orderEntry type="module-library" scope="PROVIDED">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/JavaScriptPluginStub.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" scope="PROVIDED">
-      <library>
-        <CLASSES>
-          <root url="jar://$IDEA_ULTIMATE_PLUGINS$/JavaScriptDebugger/lib/JavaScriptDebugger.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" scope="PROVIDED">
-      <library>
-        <CLASSES>
-          <root url="jar://$IDEA_ULTIMATE_PLUGINS$/JavaScriptDebugger/lib/ChromeConnector.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" scope="PROVIDED">
-      <library>
-        <CLASSES>
-          <root url="jar://$IDEA_ULTIMATE_PLUGINS$/JavaScriptDebugger/lib/FirefoxConnector.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="module" module-name="intellij.yaml" />
     <orderEntry type="module" module-name="intellij.copyright" />
     <orderEntry type="module" module-name="intellij.spellchecker" />
@@ -75,26 +39,15 @@
     <orderEntry type="module" module-name="intellij.platform.externalSystem.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.coverage" />
     <orderEntry type="module" module-name="intellij.platform.ide.util.netty" />
-    <orderEntry type="library" exported="" name="Guava" level="project" />
-    <orderEntry type="library" exported="" name="gson" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.markdown.utils" />
+    <orderEntry type="library" name="Guava" level="project" />
+    <orderEntry type="library" name="gson" level="project" />
     <orderEntry type="library" name="snakeyaml" level="project" />
     <orderEntry type="library" name="netty-buffer" level="project" />
     <orderEntry type="library" name="netty-codec-http" level="project" />
-    <orderEntry type="library" exported="" name="markdownj" level="project" />
     <orderEntry type="library" name="caffeine" level="project" />
     <orderEntry type="library" name="fastutil-min" level="project" />
-    <orderEntry type="module-library">
-      <library name="org.apache.commons:commons-lang3:3.9" type="repository">
-        <properties maven-id="org.apache.commons:commons-lang3:3.9" />
-        <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-lang3/3.9/commons-lang3-3.9.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-lang3/3.9/commons-lang3-3.9-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
+    <orderEntry type="library" name="commons-lang3" level="project" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>

@@ -1,0 +1,56 @@
+HILFile: a.hil
+  ILExpressionHolder
+    PsiElement(${)('${')
+    ILMethodCallExpression
+      ILVariable
+        PsiElement(ID)('format')
+      ILParameterList
+        PsiElement(()('(')
+        ILLiteral
+          PsiElement(DOUBLE_QUOTED_STRING)('""')
+        PsiElement(,)(',')
+        PsiWhiteSpace(' ')
+        ILLiteral
+          PsiElement(NUMBER)('0')
+        PsiElement(,)(',')
+        PsiWhiteSpace(' ')
+        ILLiteral
+          PsiElement(NUMBER)('1')
+        PsiElement(,)(',')
+        PsiWhiteSpace(' ')
+        ILUnaryExpression
+          PsiElement(-)('-')
+          ILLiteral
+            PsiElement(NUMBER)('1')
+        PsiElement(,)(',')
+        PsiWhiteSpace(' ')
+        ILUnaryExpression
+          PsiElement(+)('+')
+          ILLiteral
+            PsiElement(NUMBER)('1')
+        PsiElement(,)(',')
+        PsiWhiteSpace(' ')
+        ILUnaryExpression
+          PsiElement(-)('-')
+          ILLiteral
+            PsiElement(NUMBER)('0')
+        PsiElement(,)(',')
+        PsiWhiteSpace(' ')
+        ILUnaryExpression
+          PsiElement(+)('+')
+          ILLiteral
+            PsiElement(NUMBER)('0')
+        PsiElement(,)(',')
+        PsiWhiteSpace(' ')
+        ILUnaryExpression
+          PsiElement(-)('-')
+          ILLiteral
+            PsiElement(NUMBER)('10.0e5')
+        PsiElement(,)(',')
+        PsiWhiteSpace(' ')
+        ILUnaryExpression
+          PsiElement(+)('+')
+          ILLiteral
+            PsiElement(NUMBER)('10.5e-2')
+        PsiElement())(')')
+    PsiElement(})('}')

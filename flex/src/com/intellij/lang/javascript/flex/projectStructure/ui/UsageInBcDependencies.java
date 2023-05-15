@@ -45,8 +45,7 @@ public abstract class UsageInBcDependencies extends ProjectStructureElementUsage
       }
       return new PlaceInBuildConfiguration(myContainingElement, DependenciesConfigurable.getTabName(), tableEntry);
     }
-    else if (mySourceElement instanceof BuildConfigurationProjectStructureElement) {
-      BuildConfigurationProjectStructureElement bcElement = (BuildConfigurationProjectStructureElement)mySourceElement;
+    else if (mySourceElement instanceof BuildConfigurationProjectStructureElement bcElement) {
       String moduleName = bcElement.getModule().getName();
       String bcName = bcElement.getBC().getName();
       DependenciesConfigurable.Location.TableEntry tableEntry = DependenciesConfigurable.Location.TableEntry.forBc(moduleName, bcName);

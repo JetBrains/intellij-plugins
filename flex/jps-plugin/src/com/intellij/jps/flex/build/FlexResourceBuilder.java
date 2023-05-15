@@ -59,7 +59,7 @@ public class FlexResourceBuilder extends TargetBuilder<BuildRootDescriptor, Flex
     try {
       holder.processDirtyFiles(new FileProcessor<BuildRootDescriptor, FlexResourceBuildTarget>() {
         @Override
-        public boolean apply(final FlexResourceBuildTarget target, final File file, final BuildRootDescriptor root) throws IOException {
+        public boolean apply(@NotNull FlexResourceBuildTarget target, @NotNull File file, @NotNull BuildRootDescriptor root) throws IOException {
           if (excludes.isExcluded(file)) return true;
 
           final String relativePath = FileUtil.toSystemIndependentName(FileUtil.getRelativePath(root.getRootFile(), file));

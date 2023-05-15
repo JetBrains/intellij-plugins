@@ -13,9 +13,6 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Irina.Chernushina on 6/3/2015.
- */
 @State(name = "TsLintConfiguration", storages = @Storage("jsLinters/tslint.xml"))
 public class TsLintConfiguration extends JSLinterConfiguration<TsLintState> {
   private static final String TSLINT_ELEMENT_NAME = "tslint";

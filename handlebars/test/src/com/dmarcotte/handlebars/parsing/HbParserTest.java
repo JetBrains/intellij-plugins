@@ -48,11 +48,11 @@ public abstract class HbParserTest extends ParsingTestCase {
 
     MockApplication app = getApplication();
 
-    myProject.registerService(TemplateDataLanguageMappings.class, TemplateDataLanguageMappings.class);
+    project.registerService(TemplateDataLanguageMappings.class, TemplateDataLanguageMappings.class);
 
     // PropertiesComponent is used by HbConfig
     app.registerService(PropertiesComponent.class, BasePropertyService.class);
-    myProject.registerService(PropertiesComponent.class, BasePropertyService.class);
+    project.registerService(PropertiesComponent.class, BasePropertyService.class);
 
     app.registerService(TemplateDataLanguagePatterns.class, new TemplateDataLanguagePatterns());
     registerParserDefinition(new HbParseDefinition());

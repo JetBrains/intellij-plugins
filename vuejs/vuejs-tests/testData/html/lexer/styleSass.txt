@@ -11,3 +11,4 @@ SASS_LAZY_STYLESHEET ('\n$font-stack:    Helvetica, sans-serif\n$primary-color: 
 XML_END_TAG_START ('</')
 XML_NAME ('style')
 XML_TAG_END ('>')
+VUE_LANG_MODE_NO_TS ('')

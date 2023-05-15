@@ -10,6 +10,6 @@ public class TestClass {
      * as
      * doc
      */
-    
+</selection>    
     public var foo:int;
-</selection>}
+}

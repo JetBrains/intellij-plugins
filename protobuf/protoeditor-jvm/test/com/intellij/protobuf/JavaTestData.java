@@ -36,7 +36,7 @@ import java.io.File;
 import static com.intellij.protobuf.TestUtils.notNull;
 
 /** Utilities to load some testdata for the java integration tests. */
-public class JavaTestData {
+public final class JavaTestData {
 
   // The default java package declared in the testdata's .java files.
   private static final String USER_TEST_PACKAGE = "testdata.java";

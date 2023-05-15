@@ -1,0 +1,20 @@
+HILFile: a.hil
+  ILExpressionHolder
+    PsiElement(${)('${')
+    ILBinaryExpression
+      ILLiteral
+        PsiElement(true)('true')
+      PsiWhiteSpace(' ')
+      PsiElement(||)('||')
+      PsiWhiteSpace(' ')
+      ILBinaryExpression
+        ILUnaryExpression
+          PsiElement(!)('!')
+          ILLiteral
+            PsiElement(false)('false')
+        PsiWhiteSpace(' ')
+        PsiElement(&&)('&&')
+        PsiWhiteSpace(' ')
+        ILLiteral
+          PsiElement(true)('true')
+    PsiElement(})('}')

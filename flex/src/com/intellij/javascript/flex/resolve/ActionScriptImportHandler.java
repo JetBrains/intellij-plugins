@@ -192,8 +192,7 @@ public class ActionScriptImportHandler extends JSImportHandler {
       resolveTypeNameUsingImportsInner(resolveProcessor, parent);
       final ResolveResult[] resolveResults = resolveProcessor.getResultsAsResolveResults();
       assert resolveResults.length < 2;
-      if (resolveResults.length == 1 && resolveResults[0] instanceof JSResolveResult) {
-        JSResolveResult resolveResult = (JSResolveResult)resolveResults[0];
+      if (resolveResults.length == 1 && resolveResults[0] instanceof JSResolveResult resolveResult) {
         final PsiElement element = resolveResult.getElement();
         String typeName = ((JSQualifiedNamedElement)element).getQualifiedName();
         result = new JSImportedElementResolveResult(typeName, element, resolveResult.getActionScriptImport());

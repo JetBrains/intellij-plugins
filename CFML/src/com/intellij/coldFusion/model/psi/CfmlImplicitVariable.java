@@ -17,9 +17,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlImplicitVariable extends RenameableFakePsiElement implements CfmlVariable {
   private final PsiComment myComment;
   private final String myName;

@@ -1,3 +1,5 @@
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+
 // This is a generated file. Not intended for manual editing.
 package com.intellij.plugins.drools.lang.psi;
 
@@ -24,6 +26,9 @@ public interface DroolsLhsUnary extends DroolsPsiCompositeElement {
 
   @Nullable
   DroolsLhsNot getLhsNot();
+
+  @Nullable
+  DroolsLhsOOPathBind getLhsOOPathBind();
 
   @Nullable
   DroolsLhsOr getLhsOr();

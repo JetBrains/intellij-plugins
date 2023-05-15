@@ -209,8 +209,7 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
 
       @Override
       public EdgeLabel @NotNull [] getEdgeLabels(@Nullable DiagramEdge umlEdge, @NotNull String label) {
-        if (!(umlEdge instanceof AngularUiRouterEdge)) return super.getEdgeLabels(umlEdge, label);
-        AngularUiRouterEdge angularEdge = (AngularUiRouterEdge)umlEdge;
+        if (!(umlEdge instanceof AngularUiRouterEdge angularEdge)) return super.getEdgeLabels(umlEdge, label);
         if (!getSettings().isShowEdgeLabels() || StringUtil.isEmptyOrSpaces(angularEdge.getLabel())) {
           return EMPTY_LABELS;
         }
@@ -497,6 +496,11 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
     }
 
     @Override
+    public @NotNull ActionUpdateThread getActionUpdateThread() {
+      return ActionUpdateThread.BGT;
+    }
+
+    @Override
     public void update(@NotNull AnActionEvent e) {
       final Project project = e.getData(CommonDataKeys.PROJECT);
       if (project == null) {
@@ -514,11 +518,10 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
         return;
       }
       final List<DiagramNode<?>> nodes = JSModulesDiagramUtils.getSelectedNodes(e);
-      if (nodes == null || nodes.size() != 1 || !(nodes.get(0) instanceof AngularUiRouterNode)) {
+      if (nodes == null || nodes.size() != 1 || !(nodes.get(0) instanceof AngularUiRouterNode node)) {
         return;
       }
 
-      final AngularUiRouterNode node = (AngularUiRouterNode)nodes.get(0);
       final DiagramObject main = node.getIdentifyingElement();
       final List<DiagramObject> childrenList = main.getChildrenList();
       if (childrenList.isEmpty()) {

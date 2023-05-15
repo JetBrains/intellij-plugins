@@ -13,5 +13,7 @@
     <!-- proto -> java find usages -->
     <findUsagesHandlerFactory
       implementation="com.intellij.protobuf.jvm.PbJavaFindUsagesHandlerFactory"/>
+    <codeInsight.lineMarkerProvider language="JAVA"
+                                    implementationClass="com.intellij.protobuf.jvm.gutter.PbJavaLineMarkerProvider"/>
   </extensions>
 </idea-plugin>

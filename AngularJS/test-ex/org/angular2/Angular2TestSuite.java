@@ -8,6 +8,7 @@ import org.angular2.codeInsight.template.Angular2LiveTemplateTest;
 import org.angular2.css.CssClassTest;
 import org.angular2.css.CssCompletionTest;
 import org.angular2.css.CssInspectionsTest;
+import org.angular2.editor.Angular2CopyPasteTest;
 import org.angular2.editor.Angular2ParameterHintsTest;
 import org.angular2.editor.Angular2PipeParameterInfoTest;
 import org.angular2.editor.ComponentDeclarationNavigationTest;
@@ -48,7 +49,8 @@ import org.junit.runners.Suite;
   Angular2HtmlParsingTest.class,
   Angular2DirectiveSimpleSelectorSpecTest.class,
   Angular2DocumentationTest.class,
-  Attributes2Test.class,
+  Angular2CompletionTest.class,
+  Angular2AttributesTest.class,
   ContextTest.class,
   InjectionsTest.class,
   InspectionsTest.class,
@@ -73,6 +75,7 @@ import org.junit.runners.Suite;
   Angular2InaccessibleMemberAotQuickFixesTest.class,
   Angular2InaccessibleMemberAotInspectionTest.class,
   Angular2ControlFlowTest.class,
+  Angular2CopyPasteTest.class,
   AngularFindUsagesTest.class,
   DirectiveRenameTest.class,
   MoveTest.class,

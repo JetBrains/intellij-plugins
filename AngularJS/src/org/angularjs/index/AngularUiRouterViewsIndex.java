@@ -7,9 +7,6 @@ import com.intellij.util.io.KeyDescriptor;
 import org.angularjs.codeInsight.router.AngularJSUiRouterConstants;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Irina.Chernushina on 2/11/2016.
- */
 public class AngularUiRouterViewsIndex extends FileBasedIndexExtension<String, AngularNamedItemDefinition> {
   public static final ID<String, AngularNamedItemDefinition> UI_ROUTER_VIEWS_CACHE_INDEX = ID.create("angularjs.ui.router.views.index");
   private final AngularAttributeIndexer myIndexer = new AngularAttributeIndexer(AngularJSUiRouterConstants.uiView);

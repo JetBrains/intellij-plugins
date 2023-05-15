@@ -65,6 +65,7 @@ public class FlexmojosSdkDataConfigurable implements AdditionalDataConfigurable 
 
   @Override
   public void disposeUIResources() {
+    AdditionalDataConfigurable.super.disposeUIResources();
   }
 
   private static final class FlexmojosSdkForm {

@@ -1,0 +1,10 @@
+AstroFile:test.astro
+  AstroContentRoot:ASTRO:CONTENT_ROOT
+    PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
+    AstroFrontmatterScript:ASTRO:FRONTMATTER_SCRIPT
+      <empty list>
+    PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
+    PsiWhiteSpace('\n')
+    PsiElement(XML_PROLOG)
+      <empty list>
+    XmlToken:XML_DATA_CHARACTERS('<:foo/>')

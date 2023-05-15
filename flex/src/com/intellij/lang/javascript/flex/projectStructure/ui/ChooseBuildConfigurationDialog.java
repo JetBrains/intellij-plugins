@@ -32,9 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author ksafonov
- */
 public final class ChooseBuildConfigurationDialog extends DialogWrapper {
   private final Map<Module, List<FlexBCConfigurable>> myTreeItems;
   private Tree myTree;
@@ -126,7 +123,7 @@ public final class ChooseBuildConfigurationDialog extends DialogWrapper {
     }
     myTree.setModel(new DefaultTreeModel(root));
     myTree.setRootVisible(false);
-    new TreeSpeedSearch(myTree, true, o -> {
+    TreeSpeedSearch.installOn(myTree, true, o -> {
       Object lastPathComponent = o.getLastPathComponent();
       return getText((DefaultMutableTreeNode)lastPathComponent);
     }).setComparator(new SpeedSearchComparator(false));
@@ -149,13 +146,11 @@ public final class ChooseBuildConfigurationDialog extends DialogWrapper {
                                         boolean hasFocus) {
         DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)value;
         Object object = treeNode.getUserObject();
-        if (object instanceof Module) {
-          Module module = (Module)object;
+        if (object instanceof Module module) {
           setIcon(ModuleType.get(module).getIcon());
           append(module.getName());
         }
-        else if (object instanceof FlexBCConfigurable) {
-          FlexBCConfigurable configurable = (FlexBCConfigurable)object;
+        else if (object instanceof FlexBCConfigurable configurable) {
           setIcon(configurable.getIcon());
           BCUtils.renderBuildConfiguration(configurable.getEditableObject(), null).appendToComponent(this);
         }
@@ -199,8 +194,7 @@ public final class ChooseBuildConfigurationDialog extends DialogWrapper {
 
   private static String getText(DefaultMutableTreeNode node) {
     Object object = node.getUserObject();
-    if (object instanceof Module) {
-      Module module = (Module)object;
+    if (object instanceof Module module) {
       return module.getName();
     }
     else {

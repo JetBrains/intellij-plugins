@@ -22,13 +22,16 @@ import org.apache.commons.lang.StringUtils
 import org.jetbrains.vuejs.codeInsight.attributes.VueCustomAttributeValueProvider.Companion.isVBindClassAttribute
 import org.jetbrains.vuejs.codeInsight.template.VueTemplateScopesResolver
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
-import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
+import org.jetbrains.vuejs.lang.expr.VueTSLanguage
+import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 
 class VueCssReferencesContributor : PsiReferenceContributor() {
 
   override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
     CssClassInJSLiteralOrIdentifierReferenceProvider.register(registrar, VueJSLanguage.INSTANCE,
-                                                              VueJSEmbeddedExpression::class.java, ::isVBindClassAttribute)
+                                                              VueJSEmbeddedExpressionContent::class.java, ::isVBindClassAttribute)
+    CssClassInJSLiteralOrIdentifierReferenceProvider.register(registrar, VueTSLanguage.INSTANCE,
+                                                              VueJSEmbeddedExpressionContent::class.java, ::isVBindClassAttribute)
     registrar.registerReferenceProvider(PlatformPatterns.psiElement(CssElementTypes.CSS_IDENT).withParent(CssTerm::class.java),
                                         VBindIdentifierReferenceProvider())
   }

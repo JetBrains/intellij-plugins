@@ -39,7 +39,7 @@
     <localInspection language="TypeScript"
                      bundle="messages.TsLintBundle"
                      key="settings.javascript.linters.tslint.configurable.name"
-                     groupPath="JavaScript and TypeScript"
+                     groupPathKey="js.inspection.group.path"
                      groupKey="js.linters.inspection.group.name"
                      enabledByDefault="false"
                      level="WARNING"

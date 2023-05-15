@@ -1,3 +1,5 @@
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+
 // This is a generated file. Not intended for manual editing.
 package com.intellij.plugins.drools.lang.psi;
 
@@ -139,11 +141,11 @@ public class DroolsVisitor extends PsiElementVisitor {
   }
 
   public void visitEnumDeclaration(@NotNull DroolsEnumDeclaration o) {
-    visitPsiCompositeElement(o);
+    visitPsiClass(o);
   }
 
   public void visitEnumerative(@NotNull DroolsEnumerative o) {
-    visitPsiCompositeElement(o);
+    visitEnumConstant(o);
   }
 
   public void visitEqualityExpr(@NotNull DroolsEqualityExpr o) {
@@ -199,6 +201,10 @@ public class DroolsVisitor extends PsiElementVisitor {
   }
 
   public void visitFromWindow(@NotNull DroolsFromWindow o) {
+    visitPsiCompositeElement(o);
+  }
+
+  public void visitFunctionName(@NotNull DroolsFunctionName o) {
     visitPsiCompositeElement(o);
   }
 
@@ -291,6 +297,18 @@ public class DroolsVisitor extends PsiElementVisitor {
   }
 
   public void visitLhsNot(@NotNull DroolsLhsNot o) {
+    visitPsiCompositeElement(o);
+  }
+
+  public void visitLhsOOPSegment(@NotNull DroolsLhsOOPSegment o) {
+    visitPsiCompositeElement(o);
+  }
+
+  public void visitLhsOOPathBind(@NotNull DroolsLhsOOPathBind o) {
+    visitVariable(o);
+  }
+
+  public void visitLhsOOPathSegmentId(@NotNull DroolsLhsOOPathSegmentId o) {
     visitPsiCompositeElement(o);
   }
 
@@ -471,6 +489,10 @@ public class DroolsVisitor extends PsiElementVisitor {
     visitExpression(o);
   }
 
+  public void visitStringSequence(@NotNull DroolsStringSequence o) {
+    visitPsiCompositeElement(o);
+  }
+
   public void visitSuperSuffix(@NotNull DroolsSuperSuffix o) {
     visitPsiCompositeElement(o);
   }
@@ -520,6 +542,14 @@ public class DroolsVisitor extends PsiElementVisitor {
     visitExpression(o);
   }
 
+  public void visitUnitName(@NotNull DroolsUnitName o) {
+    visitPsiCompositeElement(o);
+  }
+
+  public void visitUnitStatement(@NotNull DroolsUnitStatement o) {
+    visitPsiCompositeElement(o);
+  }
+
   public void visitUpdateRhsStatement(@NotNull DroolsUpdateRhsStatement o) {
     visitSimpleRhsStatement(o);
   }
@@ -533,6 +563,14 @@ public class DroolsVisitor extends PsiElementVisitor {
   }
 
   public void visitWindowDeclaration(@NotNull DroolsWindowDeclaration o) {
+    visitPsiCompositeElement(o);
+  }
+
+  public void visitWindowId(@NotNull DroolsWindowId o) {
+    visitWindowReference(o);
+  }
+
+  public void visitEnumConstant(@NotNull DroolsEnumConstant o) {
     visitPsiCompositeElement(o);
   }
 
@@ -565,6 +603,10 @@ public class DroolsVisitor extends PsiElementVisitor {
   }
 
   public void visitVariable(@NotNull DroolsVariable o) {
+    visitPsiCompositeElement(o);
+  }
+
+  public void visitWindowReference(@NotNull DroolsWindowReference o) {
     visitPsiCompositeElement(o);
   }
 

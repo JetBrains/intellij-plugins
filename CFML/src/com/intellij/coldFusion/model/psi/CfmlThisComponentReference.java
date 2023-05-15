@@ -9,9 +9,6 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlThisComponentReference extends CfmlCompositeElement implements CfmlReference {
   public CfmlThisComponentReference(@NotNull ASTNode node) {
     super(node);
@@ -77,11 +74,7 @@ public class CfmlThisComponentReference extends CfmlCompositeElement implements 
 
   @Nullable
   private CfmlComponent getComponentDefinition() {
-    CfmlFile containingFile = getContainingFile();
-    if (containingFile != null) {
-      return containingFile.getComponentDefinition();
-    }
-    return null;
+    return getContainingFile().getComponentDefinition();
   }
 
   @Override

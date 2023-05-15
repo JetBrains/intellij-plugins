@@ -97,7 +97,7 @@ public class FlexXmlBackedSymbolContributor implements ChooseByNameContributorEx
 
     @Override
     public ItemPresentation getPresentation() {
-      return this;
+      return super.getPresentation();
     }
 
     @Override

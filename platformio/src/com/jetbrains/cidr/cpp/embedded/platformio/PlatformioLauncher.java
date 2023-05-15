@@ -68,6 +68,11 @@ public class PlatformioLauncher extends CLionLauncher {
     this.command = command;
   }
 
+  @Override
+  protected boolean emulateTerminal(@NotNull CPPEnvironment environment, boolean isDebugMode) {
+    return false;
+  }
+
   @NotNull
   @Override
   protected Pair<File, CPPEnvironment> getRunFileAndEnvironment() {
@@ -81,8 +86,9 @@ public class PlatformioLauncher extends CLionLauncher {
   protected GeneralCommandLine createCommandLine(@NotNull CommandLineState state,
                                                  @NotNull File runFile,
                                                  @NotNull CPPEnvironment environment,
-                                                 boolean usePty) throws ExecutionException {
-    GeneralCommandLine commandLine = super.createCommandLine(state, runFile, environment, usePty);
+                                                 boolean usePty,
+                                                 boolean emulateTerminal) throws ExecutionException {
+    GeneralCommandLine commandLine = super.createCommandLine(state, runFile, environment, usePty, emulateTerminal);
     commandLine.setWorkDirectory(getProjectBaseDir());
     if (cliParameters != null) {
       commandLine.addParameters(cliParameters);
@@ -234,7 +240,7 @@ public class PlatformioLauncher extends CLionLauncher {
     CMakeModel model = workspace.getModel();
     CMakeBuildProfileExecutionTarget selectedBuildProfile = CMakeAppRunConfiguration.getSelectedBuildProfile(project);
     File projectDir = workspace.getProjectPath().toFile();
-    if (model == null || selectedBuildProfile == null || projectDir == null) {
+    if (model == null || selectedBuildProfile == null) {
       return null;
     }
 

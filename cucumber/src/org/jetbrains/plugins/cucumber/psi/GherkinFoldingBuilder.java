@@ -26,7 +26,7 @@ public class GherkinFoldingBuilder implements FoldingBuilder, DumbAware {
   public FoldingDescriptor @NotNull [] buildFoldRegions(@NotNull ASTNode node, @NotNull Document document) {
     List<FoldingDescriptor> descriptors = new ArrayList<>();
     appendDescriptors(node, descriptors);
-    return descriptors.toArray(FoldingDescriptor.EMPTY);
+    return descriptors.toArray(FoldingDescriptor.EMPTY_ARRAY);
   }
 
   private void appendDescriptors(ASTNode node, List<FoldingDescriptor> descriptors) {

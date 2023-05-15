@@ -1,0 +1,11 @@
+;;; TOOL: wast2json
+;;; ERROR: 1
+(module
+  (func (param i32))
+  (export "foo" (func 0)))
+(invoke "foo")
+(;; STDERR ;;;
+out/test/parse/assert/bad-invoke-too-few.txt:6:2: error: too few parameters to function. got 0, expected 1
+(invoke "foo")
+ ^^^^^^
+;;; STDERR ;;)

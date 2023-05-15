@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.flex.projectStructure.ui.CompositeConfigurab
 import com.intellij.lang.javascript.flex.projectStructure.ui.DependenciesConfigurable;
 import com.intellij.lang.javascript.flex.projectStructure.ui.FlexBCConfigurable;
 import com.intellij.lang.javascript.flex.projectStructure.ui.FlexProjectStructureUtil;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.module.Module;
@@ -141,6 +142,11 @@ public class FlexBuildConfigurationsExtension extends ModuleStructureExtension {
     final Collection<AnAction> actions = new ArrayList<>(2);
     actions.add(new DumbAwareAction(FlexBundle.message("create.bc.action.text"), FlexBundle.message("create.bc.action.description"),
                                     FlexIcons.Flash_run_config) {
+      @Override
+      public @NotNull ActionUpdateThread getActionUpdateThread() {
+        return ActionUpdateThread.EDT;
+      }
+
       @Override
       public void update(@NotNull final AnActionEvent e) {
         e.getPresentation().setVisible(getFlexModuleForNode(selectedNodeRetriever.compute()) != null);

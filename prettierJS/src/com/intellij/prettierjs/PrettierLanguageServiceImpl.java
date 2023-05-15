@@ -34,10 +34,13 @@ import java.util.concurrent.CompletableFuture;
 import static com.intellij.lang.javascript.service.JSLanguageServiceQueue.LOGGER;
 
 public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implements PrettierLanguageService {
+  private final VirtualFile myWorkingDirectory;
   private volatile boolean myFlushConfigCache;
 
-  public PrettierLanguageServiceImpl(@NotNull Project project) {
+  public PrettierLanguageServiceImpl(@NotNull Project project,
+                                     @NotNull VirtualFile workingDirectory) {
     super(project);
+    myWorkingDirectory = workingDirectory;
     project.getMessageBus().connect(this).subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
       @Override
       public void after(@NotNull List<? extends @NotNull VFileEvent> events) {
@@ -102,7 +105,7 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
     return false;
   }
 
-  private static class Protocol extends JSLanguageServiceNodeStdProtocolBase {
+  private class Protocol extends JSLanguageServiceNodeStdProtocolBase {
     Protocol(@NotNull Project project, @NotNull Consumer<?> readyConsumer) {
       super("prettier", project, readyConsumer);
     }
@@ -124,7 +127,7 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
           return file.getPath();
         }
       }
-      return super.getWorkingDirectory();
+      return FileUtil.toSystemDependentName(myWorkingDirectory.getPath());
     }
 
     @Override
@@ -193,8 +196,7 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
                                                                         @NotNull NodePackage prettierPackage) {
       String packagePath;
       String packageJsonPath;
-      if (prettierPackage instanceof YarnPnpNodePackage) {
-        YarnPnpNodePackage pnpPkg = (YarnPnpNodePackage)prettierPackage;
+      if (prettierPackage instanceof YarnPnpNodePackage pnpPkg) {
         packagePath = pnpPkg.getName();
         packageJsonPath = pnpPkg.getPackageJsonPath(project);
         if (packageJsonPath == null) {

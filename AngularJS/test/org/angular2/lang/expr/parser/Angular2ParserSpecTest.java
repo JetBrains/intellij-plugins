@@ -24,7 +24,6 @@ import org.junit.runner.RunWith;
 import java.util.List;
 import java.util.Map;
 
-import static com.intellij.util.containers.ContainerUtil.newArrayList;
 import static com.mscharhag.oleaster.matcher.Matchers.expect;
 import static com.mscharhag.oleaster.runner.StaticRunnerSupport.describe;
 import static com.mscharhag.oleaster.runner.StaticRunnerSupport.it;
@@ -379,40 +378,40 @@ public class Angular2ParserSpecTest {
 
         it("should parse a key without a value",
            () -> {
-             expect(keys(parseTemplateBindings("a", ""))).toEqual(newArrayList("a"));
+             expect(keys(parseTemplateBindings("a", ""))).toEqual(List.of("a"));
            });
 
         it("should allow string including dashes as keys", () -> {
           Angular2TemplateBinding[] bindings = parseTemplateBindings("a", "b");
-          expect(keys(bindings)).toEqual(newArrayList("a"));
+          expect(keys(bindings)).toEqual(List.of("a"));
 
           bindings = parseTemplateBindings("a-b", "c");
-          expect(keys(bindings)).toEqual(newArrayList("a-b"));
+          expect(keys(bindings)).toEqual(List.of("a-b"));
         });
 
         it("should detect expressions as value", () -> {
           Angular2TemplateBinding[] bindings = parseTemplateBindings("a", "b");
-          expect(exprSources(bindings)).toEqual(newArrayList("b"));
+          expect(exprSources(bindings)).toEqual(List.of("b"));
 
           bindings = parseTemplateBindings("a", "1+1");
-          expect(exprSources(bindings)).toEqual(newArrayList("1+1"));
+          expect(exprSources(bindings)).toEqual(List.of("1+1"));
         });
 
         it("should detect names as value", () -> {
           final Angular2TemplateBinding[] bindings = parseTemplateBindings("a", "let b");
-          expect(keyValues(bindings)).toEqual(newArrayList("a", "let b=$implicit"));
+          expect(keyValues(bindings)).toEqual(List.of("a", "let b=$implicit"));
         });
 
         it("should allow space and colon as separators", () -> {
           Angular2TemplateBinding[] bindings = parseTemplateBindings("a", "b");
-          expect(keys(bindings)).toEqual(newArrayList("a"));
-          expect(exprSources(bindings)).toEqual(newArrayList("b"));
+          expect(keys(bindings)).toEqual(List.of("a"));
+          expect(exprSources(bindings)).toEqual(List.of("b"));
         });
 
         it("should allow multiple pairs", () -> {
           final Angular2TemplateBinding[] bindings = parseTemplateBindings("a", "1 b 2");
-          expect(keys(bindings)).toEqual(newArrayList("a", "aB"));
-          expect(exprSources(bindings)).toEqual(newArrayList("1", "2"));
+          expect(keys(bindings)).toEqual(List.of("a", "aB"));
+          expect(exprSources(bindings)).toEqual(List.of("1", "2"));
         });
 
         it("should store the sources in the result", () -> {
@@ -431,52 +430,41 @@ public class Angular2ParserSpecTest {
 
         it("should support let notation", () -> {
           Angular2TemplateBinding[] bindings = parseTemplateBindings("key", "let i");
-          expect(keyValues(bindings)).toEqual(newArrayList("key", "let i=$implicit"));
+          expect(keyValues(bindings)).toEqual(List.of("key", "let i=$implicit"));
 
           bindings = parseTemplateBindings("key", "let a; let b");
-          expect(keyValues(bindings)).toEqual(newArrayList(
-            "key",
-            "let a=$implicit",
-            "let b=$implicit"
-          ));
+          expect(keyValues(bindings)).toEqual(List.of("key",
+                                                      "let a=$implicit",
+                                                      "let b=$implicit"));
 
           bindings = parseTemplateBindings("key", "let a; let b;");
-          expect(keyValues(bindings)).toEqual(newArrayList(
-            "key",
-            "let a=$implicit",
-            "let b=$implicit"
-          ));
+          expect(keyValues(bindings)).toEqual(List.of("key",
+                                                      "let a=$implicit",
+                                                      "let b=$implicit"));
 
           bindings = parseTemplateBindings("key", "let i-a = k-a");
-          expect(keyValues(bindings)).toEqual(newArrayList(
-            "key",
-            "let i-a=k-a"
-          ));
+          expect(keyValues(bindings)).toEqual(List.of("key",
+                                                      "let i-a=k-a"));
 
           bindings = parseTemplateBindings("key", "let item; let i = k");
-          expect(keyValues(bindings)).toEqual(newArrayList(
-            "key",
-            "let item=$implicit",
-            "let i=k"
-          ));
+          expect(keyValues(bindings)).toEqual(List.of("key",
+                                                      "let item=$implicit",
+                                                      "let i=k"));
 
           bindings = parseTemplateBindings("directive", "let item in expr; let a = b", "location");
-          expect(keyValues(bindings)).toEqual(newArrayList(
-            "directive",
-            "let item=$implicit",
-            "directiveIn=expr"/* in location"*/,
-            "let a=b"
-          ));
+          expect(keyValues(bindings)).toEqual(List.of("directive",
+                                                      "let item=$implicit",
+                                                      "directiveIn=expr"/* in location"*/,
+                                                      "let a=b"));
         });
 
         it("should support as notation", () -> {
           Angular2TemplateBinding[] bindings = parseTemplateBindings("ngIf", "exp as local", "location");
-          expect(keyValues(bindings)).toEqual(newArrayList("ngIf=exp"/*  in location"*/, "let local=ngIf"));
+          expect(keyValues(bindings)).toEqual(List.of("ngIf=exp"/*  in location"*/, "let local=ngIf"));
 
           bindings = parseTemplateBindings("ngFor", "let item of items as iter; index as i", "L");
-          expect(keyValues(bindings)).toEqual(newArrayList(
-            "ngFor", "let item=$implicit", "ngForOf=items"/*  in L"*/, "let iter=ngForOf", "let i=index"
-          ));
+          expect(keyValues(bindings)).toEqual(
+            List.of("ngFor", "let item=$implicit", "ngForOf=items"/*  in L"*/, "let iter=ngForOf", "let i=index"));
         });
 
         it("should parse pipes", () -> {
@@ -488,24 +476,21 @@ public class Angular2ParserSpecTest {
         describe("spans", () -> {
           it("should should support let", () -> {
             final String source = "let i";
-            expect(keySpans(source, parseTemplateBindings("key", "let i"))).toEqual(newArrayList("", "let i"));
+            expect(keySpans(source, parseTemplateBindings("key", "let i"))).toEqual(List.of("", "let i"));
           });
 
           it("should support multiple lets", () -> {
             final String source = "let item; let i=index; let e=even;";
             expect(keySpans(source, parseTemplateBindings("key", source)))
-              .toEqual(newArrayList("", "let item", "let i=index", "let e=even"
-              ));
+              .toEqual(List.of("", "let item", "let i=index", "let e=even"));
           });
 
           it("should support a prefix", () -> {
             final String source = "let person of people";
             final String prefix = "ngFor";
             final Angular2TemplateBinding[] bindings = parseTemplateBindings(prefix, source);
-            expect(keyValues(bindings)).toEqual(newArrayList(
-              "ngFor", "let person=$implicit", "ngForOf=people"/* in null"*/
-            ));
-            expect(keySpans(source, bindings)).toEqual(newArrayList("", "let person", "of people"));
+            expect(keyValues(bindings)).toEqual(List.of("ngFor", "let person=$implicit", "ngForOf=people"));
+            expect(keySpans(source, bindings)).toEqual(List.of("", "let person", "of people"));
           });
         });
       });
@@ -746,12 +731,12 @@ public class Angular2ParserSpecTest {
     }
 
     @Override
-    public void visitJSExpressionStatement(JSExpressionStatement node) {
+    public void visitJSExpressionStatement(@NotNull JSExpressionStatement node) {
       printElement(node.getExpression());
     }
 
     @Override
-    public void visitJSReferenceExpression(JSReferenceExpression node) {
+    public void visitJSReferenceExpression(@NotNull JSReferenceExpression node) {
       JSExpression qualifier = node.getQualifier();
       if (qualifier != null) {
         printElement(qualifier);
@@ -823,7 +808,7 @@ public class Angular2ParserSpecTest {
     }
 
     @Override
-    public void visitJSIndexedPropertyAccessExpression(JSIndexedPropertyAccessExpression node) {
+    public void visitJSIndexedPropertyAccessExpression(@NotNull JSIndexedPropertyAccessExpression node) {
       JSExpression qualifier = node.getQualifier();
       qualifier.accept(this);
       if (node.isElvis()) {
@@ -836,14 +821,14 @@ public class Angular2ParserSpecTest {
     }
 
     @Override
-    public void visitJSParenthesizedExpression(JSParenthesizedExpression node) {
+    public void visitJSParenthesizedExpression(@NotNull JSParenthesizedExpression node) {
       result.append("(");
       printElement(node.getInnerExpression());
       result.append(")");
     }
 
     @Override
-    public void visitJSBinaryExpression(JSBinaryExpression node) {
+    public void visitJSBinaryExpression(@NotNull JSBinaryExpression node) {
       printElement(node.getLOperand());
       result.append(" ");
       printOperator(node.getOperationSign());
@@ -852,19 +837,19 @@ public class Angular2ParserSpecTest {
     }
 
     @Override
-    public void visitJSPrefixExpression(JSPrefixExpression node) {
+    public void visitJSPrefixExpression(@NotNull JSPrefixExpression node) {
       printOperator(node.getOperationSign());
       printElement(node.getExpression());
     }
 
     @Override
-    public void visitJSPostfixExpression(JSPostfixExpression node) {
+    public void visitJSPostfixExpression(@NotNull JSPostfixExpression node) {
       printElement(node.getExpression());
       printOperator(node.getOperationSign());
     }
 
     @Override
-    public void visitJSLiteralExpression(JSLiteralExpression node) {
+    public void visitJSLiteralExpression(@NotNull JSLiteralExpression node) {
       if (node.isStringLiteral()) {
         result.append("\"")
           .append(node.getStringValue())
@@ -876,7 +861,7 @@ public class Angular2ParserSpecTest {
     }
 
     @Override
-    public void visitJSArrayLiteralExpression(JSArrayLiteralExpression node) {
+    public void visitJSArrayLiteralExpression(@NotNull JSArrayLiteralExpression node) {
       result.append("[");
       boolean first = true;
       for (JSExpression expr : node.getExpressions()) {
@@ -892,7 +877,7 @@ public class Angular2ParserSpecTest {
     }
 
     @Override
-    public void visitJSObjectLiteralExpression(JSObjectLiteralExpression node) {
+    public void visitJSObjectLiteralExpression(@NotNull JSObjectLiteralExpression node) {
       result.append("{");
       boolean first = true;
       for (JSProperty property : node.getProperties()) {
@@ -910,7 +895,7 @@ public class Angular2ParserSpecTest {
     }
 
     @Override
-    public void visitJSCallExpression(JSCallExpression node) {
+    public void visitJSCallExpression(@NotNull JSCallExpression node) {
       printElement(node.getMethodExpression());
       result.append("(");
       boolean first = true;
@@ -927,7 +912,7 @@ public class Angular2ParserSpecTest {
     }
 
     @Override
-    public void visitJSConditionalExpression(JSConditionalExpression node) {
+    public void visitJSConditionalExpression(@NotNull JSConditionalExpression node) {
       printElement(node.getCondition());
       result.append(" ? ");
       printElement(node.getThenBranch());
@@ -936,24 +921,24 @@ public class Angular2ParserSpecTest {
     }
 
     @Override
-    public void visitJSAssignmentExpression(JSAssignmentExpression node) {
+    public void visitJSAssignmentExpression(@NotNull JSAssignmentExpression node) {
       printElement(node.getLOperand());
       result.append(" = ");
       printElement(node.getROperand());
     }
 
     @Override
-    public void visitJSDefinitionExpression(JSDefinitionExpression node) {
+    public void visitJSDefinitionExpression(@NotNull JSDefinitionExpression node) {
       printElement(node.getExpression());
     }
 
     @Override
-    public void visitJSThisExpression(JSThisExpression node) {
+    public void visitJSThisExpression(@NotNull JSThisExpression node) {
       result.append("this");
     }
 
     @Override
-    public void visitJSEmptyStatement(JSEmptyStatement node) {
+    public void visitJSEmptyStatement(@NotNull JSEmptyStatement node) {
     }
 
     @Override

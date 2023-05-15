@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<problems>
+  <problem>
+    <file>test.tf</file>
+    <line>3</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Conflicting properties</problem_class>
+    <description>Conflicts with: key_name_prefix</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>4</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Conflicting properties</problem_class>
+    <description>Conflicts with: key_name</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>12</line>
+    <module>1</module>
+    <problem_class severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Conflicting properties</problem_class>
+    <description>Conflicts with: count</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>13</line>
+    <module>1</module>
+    <problem_class severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Conflicting properties</problem_class>
+    <description>Conflicts with: for_each</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>17</line>
+    <module>1</module>
+    <problem_class severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Conflicting properties</problem_class>
+    <description>Conflicts with: count</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>18</line>
+    <module>1</module>
+    <problem_class severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Conflicting properties</problem_class>
+    <description>Conflicts with: for_each</description>
+  </problem>
+</problems>
+

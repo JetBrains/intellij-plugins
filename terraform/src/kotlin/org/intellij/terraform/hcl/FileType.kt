@@ -1,0 +1,17 @@
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.intellij.terraform.hcl
+
+import com.intellij.openapi.fileTypes.LanguageFileType
+
+object HCLFileType : LanguageFileType(HCLLanguage) {
+
+  override fun getIcon() = Icons.FileTypes.HCL
+
+  override fun getDefaultExtension() = "hcl"
+
+  override fun getDescription() = HCLBundle.message("HCLFileType.description")
+
+  override fun getName() = "HCL"
+
+  override fun toString() = name
+}

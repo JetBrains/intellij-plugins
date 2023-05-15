@@ -2,9 +2,12 @@
 package org.jetbrains.vuejs.lang.expr.psi.impl
 
 import com.intellij.lang.ASTNode
+import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.ecma6.impl.TypeScriptVariableImpl
 import com.intellij.lang.javascript.psi.impl.JSParameterImpl
 import com.intellij.lang.javascript.psi.util.JSDestructuringUtil
+import com.intellij.lang.typescript.psi.TypeScriptPsiUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.LocalSearchScope
@@ -25,9 +28,19 @@ class VueJSSlotPropsParameterImpl(node: ASTNode) : JSParameterImpl(node), VueJSS
   override fun getDeclarationScope(): PsiElement? =
     PsiTreeUtil.getContextOfType(this, XmlTag::class.java, PsiFile::class.java)
 
-  override fun calculateType(): JSType? =
-    JSDestructuringUtil.getTypeFromInitializer(this) {
+  override fun calculateType(): JSType? {
+    val type = calculateDeclaredType() ?: JSDestructuringUtil.getTypeFromInitializer(this) {
       getSlotTypeFromContext(this)
-    }?.asCompleteType()
+    }
+
+    return type?.asCompleteType()
+  }
+
+  private fun calculateDeclaredType(): JSType? {
+    if (!DialectDetector.isTypeScript(this)) return null
+
+    return TypeScriptPsiUtil.getTypeFromDeclaration(this)
+           ?: TypeScriptVariableImpl.calculateDestructuringTypeStubSafe(this)
+  }
 
 }

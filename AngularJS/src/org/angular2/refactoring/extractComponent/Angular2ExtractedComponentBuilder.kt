@@ -15,7 +15,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.parents
 import com.intellij.psi.xml.XmlTag
-import org.angular2.codeInsight.template.Angular2StandardSymbolsScopesProvider.`$EVENT`
+import org.angular2.codeInsight.template.Angular2StandardSymbolsScopesProvider.Companion.`$EVENT`
 import org.angular2.codeInsight.template.Angular2TemplateScopesResolver
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.Angular2LangUtil.OUTPUT_CHANGE_SUFFIX
@@ -27,7 +27,7 @@ import org.angular2.lang.expr.psi.Angular2RecursiveVisitor
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.lang.html.psi.*
-import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.ELEMENT_NG_CONTENT
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.ELEMENT_NG_CONTENT
 
 
 class Angular2ExtractedComponentBuilder(private val sourceFile: PsiFile, private val selectionStart: Int, private val selectionEnd: Int) {

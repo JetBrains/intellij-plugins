@@ -5,7 +5,7 @@
 !$delete#null#100
 !$destroy#void#100
 !$el#HTMLElement#100
-!$emit#this#100
+!$emit#(event: string, ...args: any[]) => void#100
 !$event#null#100
 !$forceUpdate#void#100
 !$isServer#boolean#100
@@ -15,7 +15,7 @@
 !$off#this#100
 !$on#this#100
 !$once#this#100
-!$options#ComponentOptions<Vue>#100
+!$options#null#100
 !$parent#Vue#100
 !$props#null#100
 !$refs#null#100
@@ -29,7 +29,9 @@
 !this#null#6
 !async#null#5
 !delete#null#5
+!export#null#5
 !false#null#5
+!import#null#5
 !new#null#5
 !null#null#5
 !true#null#5

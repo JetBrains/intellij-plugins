@@ -11,8 +11,8 @@ HtmlFile:ForbiddenVueContext.html
         XmlToken:XML_EQ('=')
         PsiElement(XML_ATTRIBUTE_VALUE)
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-          ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
-            VueJSEmbeddedExpression
+          ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR_VueJS)
+            VueJSEmbeddedExpressionContent(VueJS)
               JSFunctionExpression
                 JSAttributeList
                   <empty list>
@@ -28,3 +28,4 @@ HtmlFile:ForbiddenVueContext.html
       XmlToken:XML_NAME('div')
       XmlToken:XML_TAG_END('>')
     PsiWhiteSpace('\n')
+  PsiElement(VUE_LANG_MODE_NO_TS)('')

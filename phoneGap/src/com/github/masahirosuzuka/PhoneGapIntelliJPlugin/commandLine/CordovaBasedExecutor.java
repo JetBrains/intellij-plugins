@@ -5,10 +5,10 @@ import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.*;
-import static com.intellij.util.containers.ContainerUtil.newArrayList;
 
 public class CordovaBasedExecutor {
 
@@ -74,7 +74,7 @@ public class CordovaBasedExecutor {
   }
 
   private String @NotNull [] getServeCommands(String extraArgs) {
-    return appendParsedArguments(newArrayList(myPath, "serve"), extraArgs);
+    return appendParsedArguments(Arrays.asList(myPath, "serve"), extraArgs);
   }
 
   public String @NotNull [] getEmulateCommand(@NotNull String platform,

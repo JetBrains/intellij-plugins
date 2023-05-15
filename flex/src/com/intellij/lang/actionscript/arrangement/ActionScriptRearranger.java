@@ -285,7 +285,7 @@ public class ActionScriptRearranger extends JSRearrangerBase {
       }
     }
     else {
-      LOG.error(type);
+      LOG.error("Unexpected token type: " + type);
       return true;
     }
   }

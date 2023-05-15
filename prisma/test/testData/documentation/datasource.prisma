@@ -1,0 +1,8 @@
+/// Skip
+
+/// Datasource
+/// Docs
+datasource d<caret>b {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}

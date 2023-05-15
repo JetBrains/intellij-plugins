@@ -21,9 +21,6 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.regex.Matcher;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlJavaLoaderClassType extends PsiType {
   private final GlobalSearchScope mySearchScope;
   private final Project myProject;

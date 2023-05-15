@@ -1,0 +1,84 @@
+{
+  ".schema_version": "2",
+  ".sdk_type": "builtin",
+  "name": "http",
+  "type": "backend",
+  "version": "v1.3.0-dev",
+  "schema": {
+    "address": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The address of the REST endpoint",
+      "DefaultFunc": "ENV(TF_HTTP_ADDRESS)"
+    },
+    "lock_address": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The address of the lock REST endpoint",
+      "DefaultFunc": "ENV(TF_HTTP_LOCK_ADDRESS)"
+    },
+    "lock_method": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The HTTP method to use when locking",
+      "DefaultFunc": "ENV(TF_HTTP_LOCK_METHOD)"
+    },
+    "password": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The password for HTTP basic authentication",
+      "DefaultFunc": "ENV(TF_HTTP_PASSWORD)"
+    },
+    "retry_max": {
+      "Type": "Int",
+      "Optional": true,
+      "Description": "The number of HTTP request retries.",
+      "DefaultFunc": "ENV(TF_HTTP_RETRY_MAX)"
+    },
+    "retry_wait_max": {
+      "Type": "Int",
+      "Optional": true,
+      "Description": "The maximum time in seconds to wait between HTTP request attempts.",
+      "DefaultFunc": "ENV(TF_HTTP_RETRY_WAIT_MAX)"
+    },
+    "retry_wait_min": {
+      "Type": "Int",
+      "Optional": true,
+      "Description": "The minimum time in seconds to wait between HTTP request attempts.",
+      "DefaultFunc": "ENV(TF_HTTP_RETRY_WAIT_MIN)"
+    },
+    "skip_cert_verification": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "Whether to skip TLS verification.",
+      "Default": {
+        "Type": "bool",
+        "Value": "false"
+      }
+    },
+    "unlock_address": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The address of the unlock REST endpoint",
+      "DefaultFunc": "ENV(TF_HTTP_UNLOCK_ADDRESS)"
+    },
+    "unlock_method": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The HTTP method to use when unlocking",
+      "DefaultFunc": "ENV(TF_HTTP_UNLOCK_METHOD)"
+    },
+    "update_method": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "HTTP method to use when updating state",
+      "DefaultFunc": "ENV(TF_HTTP_UPDATE_METHOD)"
+    },
+    "username": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The username for HTTP basic authentication",
+      "DefaultFunc": "ENV(TF_HTTP_USERNAME)"
+    }
+  }
+}

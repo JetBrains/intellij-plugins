@@ -2,6 +2,7 @@
 package com.intellij.prettierjs;
 
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.javascript.nodejs.util.NodePackageDescriptor;
 import com.intellij.javascript.nodejs.util.NodePackageRef;
@@ -10,27 +11,44 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
+import com.intellij.util.xmlb.annotations.OptionTag;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 @State(name = "PrettierConfiguration", storages = @Storage("prettier.xml"))
 public final class PrettierConfiguration implements JSNpmLinterState<PrettierConfiguration>,
                                                     PersistentStateComponent<PrettierConfiguration.State> {
 
-  static class State {
-    public boolean myRunOnSave = PRETTIER_ON_SAVE_DEFAULT;
-    public boolean myRunOnReformat = PRETTIER_ON_REFORMAT_DEFAULT;
-    public @NotNull String myFilesPattern = PRETTIER_FILES_PATTERN_DEFAULT;
+  @ApiStatus.Internal
+  public enum ConfigurationMode {
+    DISABLED,
+    AUTOMATIC,
+    MANUAL
+  }
+
+  @ApiStatus.Internal
+  public static class State {
+    @OptionTag("myConfigurationMode")
+    @Nullable
+    public ConfigurationMode configurationMode = null;
+    @OptionTag("myRunOnSave")
+    public boolean runOnSave = PRETTIER_ON_SAVE_DEFAULT;
+    @OptionTag("myRunOnReformat")
+    public boolean runOnReformat = PRETTIER_ON_REFORMAT_DEFAULT;
+    @OptionTag("myFilesPattern")
+    public @NotNull String filesPattern = PRETTIER_FILES_PATTERN_DEFAULT;
   }
 
   @NonNls private static final String PACKAGE_PROPERTY = "prettierjs.PrettierConfiguration.Package";
 
-  @NonNls private static final String OLD_PRETTIER_ON_SAVE_PROPERTY = "run.prettier.on.save";
-  @NonNls private static final String OLD_PRETTIER_FILES_PATTERN_PROPERTY = "prettier.files.pattern";
-
   private static final boolean PRETTIER_ON_SAVE_DEFAULT = false;
   private static final boolean PRETTIER_ON_REFORMAT_DEFAULT = false;
-  @NonNls private static final String PRETTIER_FILES_PATTERN_DEFAULT = "{**/*,*}.{js,ts,jsx,tsx}";
+  @NonNls private static final String PRETTIER_FILES_PATTERN_DEFAULT = "{**/*,*}.{js,ts,jsx,tsx,vue,astro}";
 
   private static final NodePackageDescriptor PKG_DESC = new NodePackageDescriptor(PrettierUtil.PACKAGE_NAME);
 
@@ -54,33 +72,12 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
   @Override
   public void loadState(@NotNull State state) {
     myState = state;
-
-    PropertiesComponent.getInstance(myProject).setValue(OLD_PRETTIER_ON_SAVE_PROPERTY, null);
-    PropertiesComponent.getInstance(myProject).setValue(OLD_PRETTIER_FILES_PATTERN_PROPERTY, null);
-  }
-
-  @Override
-  public void noStateLoaded() {
-    // Previously, 'run on save' and 'pattern' values were stored in workspace.xml. Need to load old values if any.
-    PropertiesComponent properties = PropertiesComponent.getInstance(myProject);
-    boolean oldRunOnSave = properties.getBoolean(OLD_PRETTIER_ON_SAVE_PROPERTY, PRETTIER_ON_SAVE_DEFAULT);
-    String oldPattern = properties.getValue(OLD_PRETTIER_FILES_PATTERN_PROPERTY, PRETTIER_FILES_PATTERN_DEFAULT);
-
-    properties.setValue(OLD_PRETTIER_ON_SAVE_PROPERTY, null);
-    properties.setValue(OLD_PRETTIER_FILES_PATTERN_PROPERTY, null);
-
-    if (oldRunOnSave != PRETTIER_ON_SAVE_DEFAULT) {
-      setRunOnSave(oldRunOnSave);
-    }
-    if (!PRETTIER_FILES_PATTERN_DEFAULT.equals(oldPattern)) {
-      setFilesPattern(oldPattern);
-    }
   }
 
   @NotNull
   @Override
   public NodePackageRef getNodePackageRef() {
-    return NodePackageRef.create(getPackage());
+    return NodePackageRef.create(getPackage(null));
   }
 
   @Override
@@ -92,12 +89,30 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
   }
 
   @NotNull
-  public NodePackage getPackage() {
-    String value = PropertiesComponent.getInstance(myProject).getValue(PACKAGE_PROPERTY);
-    if (value != null) {
-      return PKG_DESC.createPackage(value);
+  public NodePackage getPackage(@Nullable PsiElement context) {
+    if (isDisabled()) {
+      return PKG_DESC.createPackage("");
+    }
+    if (getConfigurationMode() == ConfigurationMode.MANUAL) {
+      String value = PropertiesComponent.getInstance(myProject).getValue(PACKAGE_PROPERTY);
+      if (value != null && !value.isBlank()) {
+        return PKG_DESC.createPackage(value);
+      }
+    }
+    if (context != null && context.getContainingFile() != null && isAutomatic()) {
+      var contextFile = context.getContainingFile().getOriginalFile().getVirtualFile();
+      final List<NodePackage> available = new NodePackageDescriptor(PrettierUtil.PACKAGE_NAME)
+        .listAvailable(myProject, NodeJsInterpreterManager.getInstance(myProject).getInterpreter(),
+                       contextFile, false, true);
+      if (!available.isEmpty()) {
+        return available.get(0);
+      }
     }
     NodePackage pkg = PKG_DESC.findUnambiguousDependencyPackage(myProject);
+    if (pkg == null && (context == null || !isAutomatic())) {
+      pkg = NodePackage.findDefaultPackage(myProject, PrettierUtil.PACKAGE_NAME,
+                                           NodeJsInterpreterManager.getInstance(myProject).getInterpreter());
+    }
     if (pkg != null) {
       if (pkg.isValid(myProject)) {
         PropertiesComponent.getInstance(myProject).setValue(PACKAGE_PROPERTY, pkg.getSystemDependentPath());
@@ -108,27 +123,34 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
   }
 
   public boolean isRunOnSave() {
-    return myState.myRunOnSave;
-  }
-
-  public void setRunOnSave(boolean runOnSave) {
-    myState.myRunOnSave = runOnSave;
+    return !isDisabled() && myState.runOnSave;
   }
 
   public boolean isRunOnReformat() {
-    return myState.myRunOnReformat;
-  }
-
-  public void setRunOnReformat(boolean runOnReformat) {
-    myState.myRunOnReformat = runOnReformat;
+    return !isDisabled() && (isAutomatic() || myState.runOnReformat);
   }
 
   @NotNull
   public String getFilesPattern() {
-    return myState.myFilesPattern;
+    return myState.filesPattern;
   }
 
-  public void setFilesPattern(@NotNull String filesPattern) {
-    myState.myFilesPattern = filesPattern;
+  public ConfigurationMode getConfigurationMode() {
+    ConfigurationMode mode = myState.configurationMode;
+    if (mode == null) {
+      var pkg = PropertiesComponent.getInstance(myProject).getValue(PACKAGE_PROPERTY);
+      return pkg != null && !pkg.isBlank()
+             ? ConfigurationMode.MANUAL
+             : ConfigurationMode.DISABLED;
+    }
+    return mode;
+  }
+
+  private boolean isDisabled() {
+    return getConfigurationMode() == ConfigurationMode.DISABLED;
+  }
+
+  private boolean isAutomatic() {
+    return getConfigurationMode() == ConfigurationMode.AUTOMATIC;
   }
 }

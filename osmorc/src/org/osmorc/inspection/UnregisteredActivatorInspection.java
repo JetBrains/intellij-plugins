@@ -24,6 +24,7 @@
  */
 package org.osmorc.inspection;
 
+import com.intellij.codeInsight.intention.preview.IntentionPreviewInfo;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -31,7 +32,7 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.lang.manifest.psi.ManifestFile;
+import org.jetbrains.lang.manifest.ManifestFileType;
 import org.jetbrains.osgi.project.BundleManifest;
 import org.jetbrains.osgi.project.BundleManifestCache;
 import org.osgi.framework.Constants;
@@ -48,9 +49,8 @@ import org.osmorc.util.OsgiPsiUtil;
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class UnregisteredActivatorInspection extends AbstractOsgiVisitor {
-  @NotNull
   @Override
-  protected PsiElementVisitor buildVisitor(final OsmorcFacet facet, final ProblemsHolder holder, boolean isOnTheFly) {
+  protected @NotNull PsiElementVisitor buildVisitor(final OsmorcFacet facet, final ProblemsHolder holder, boolean isOnTheFly) {
     if (!(holder.getFile() instanceof PsiClassOwner)) return PsiElementVisitor.EMPTY_VISITOR;
     return new JavaElementVisitor() {
       @Override
@@ -90,17 +90,30 @@ public class UnregisteredActivatorInspection extends AbstractOsgiVisitor {
       myActivatorClass = activatorClass;
     }
 
-    @NotNull
     @Override
-    public String getName() {
+    public @NotNull String getName() {
       return OsmorcBundle.message("UnregisteredActivatorInspection.fix.manifest");
     }
 
     @Override
     public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-      ManifestFile manifestFile = getVerifiedManifestFile(descriptor.getEndElement());
+      var manifestFile = getVerifiedManifestFile(descriptor.getEndElement());
       if (manifestFile != null) {
         WriteCommandAction.writeCommandAction(project, manifestFile).run(() -> OsgiPsiUtil.setHeader(manifestFile, Constants.BUNDLE_ACTIVATOR, myActivatorClass));
+      }
+    }
+
+    @Override
+    public @NotNull IntentionPreviewInfo generatePreview(@NotNull Project project, @NotNull ProblemDescriptor previewDescriptor) {
+      var manifestFile = getManifestFile(previewDescriptor.getEndElement());
+      if (manifestFile != null) {
+        var existing = manifestFile.getHeader(Constants.BUNDLE_ACTIVATOR);
+        var oldText = existing != null ? existing.getText() : "";
+        var newText = Constants.BUNDLE_ACTIVATOR + ": " + myActivatorClass;
+        return new IntentionPreviewInfo.CustomDiff(ManifestFileType.INSTANCE, oldText, newText);
+      }
+      else {
+        return IntentionPreviewInfo.EMPTY;
       }
     }
   }
@@ -114,15 +127,19 @@ public class UnregisteredActivatorInspection extends AbstractOsgiVisitor {
       myConfiguration = configuration;
     }
 
-    @NotNull
     @Override
-    public String getName() {
+    public @NotNull String getName() {
       return OsmorcBundle.message("UnregisteredActivatorInspection.fix.config");
     }
 
     @Override
     public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
       myConfiguration.setBundleActivator(myActivatorClass);
+    }
+
+    @Override
+    public @NotNull IntentionPreviewInfo generatePreview(@NotNull Project project, @NotNull ProblemDescriptor previewDescriptor) {
+      return IntentionPreviewInfo.EMPTY;
     }
   }
 }

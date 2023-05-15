@@ -5,7 +5,7 @@
 !$delete#null#100
 !$destroy#null#100
 !$el#null#100
-!$emit#null#100
+!$emit#(event: string, ...args: any[]) => void#100
 !$forceUpdate#null#100
 !$isServer#null#100
 !$listeners#null#100
@@ -224,7 +224,7 @@
 !HTMLOptionsCollection#HTMLOptionsCollection#1
 !HTMLOutputElement#HTMLOutputElement#1
 !HTMLParagraphElement#HTMLParagraphElement#1
-!HTMLParamElement#HTMLParamElement#1
+!~HTMLParamElement#HTMLParamElement#1
 !HTMLPictureElement#HTMLPictureElement#1
 !HTMLPreElement#HTMLPreElement#1
 !HTMLProgressElement#HTMLProgressElement#1
@@ -277,14 +277,6 @@
 !Location#Location#1
 !Lock#Lock#1
 !LockManager#LockManager#1
-!MIDIAccess#MIDIAccess#1
-!MIDIConnectionEvent#MIDIConnectionEvent#1
-!MIDIInput#MIDIInput#1
-!MIDIInputMap#MIDIInputMap#1
-!MIDIMessageEvent#MIDIMessageEvent#1
-!MIDIOutput#MIDIOutput#1
-!MIDIOutputMap#MIDIOutputMap#1
-!MIDIPort#MIDIPort#1
 !MathMLElement#MathMLElement#1
 !MediaCapabilities#MediaCapabilities#1
 !MediaDeviceInfo#MediaDeviceInfo#1
@@ -322,7 +314,6 @@
 !NamedNodeMap#NamedNodeMap#1
 !NavigationPreloadManager#NavigationPreloadManager#1
 !Navigator#Navigator#1
-!NetworkInformation#NetworkInformation#1
 !Node#Node#1
 !NodeFilter#null#1
 !NodeIterator#NodeIterator#1
@@ -391,7 +382,10 @@
 !RTCTrackEvent#RTCTrackEvent#1
 !RadioNodeList#RadioNodeList#1
 !Range#Range#1
+!ReadableByteStreamController#ReadableByteStreamController#1
 !ReadableStream#ReadableStream<R>#1
+!ReadableStreamBYOBReader#ReadableStreamBYOBReader#1
+!ReadableStreamBYOBRequest#ReadableStreamBYOBRequest#1
 !ReadableStreamDefaultController#ReadableStreamDefaultController<any>#1
 !ReadableStreamDefaultReader#ReadableStreamDefaultReader<R>#1
 !RemotePlayback#RemotePlayback#1
@@ -537,4 +531,10 @@
 !TextTrackCueList#TextTrackCueList#1
 !TextTrackList#TextTrackList#1
 !TimeRanges#TimeRanges#1
+!Touch#Touch#1
+!TouchEvent#TouchEvent#1
+!TouchList#TouchList#1
+!TrackEvent#TrackEvent#1
+!TransformStream#TransformStream<I, O>#1
+!TransformStreamDefaultController#TransformStreamDefaultController<any>#1
 !WebKitCSSMatrix#DOMMatrix#1

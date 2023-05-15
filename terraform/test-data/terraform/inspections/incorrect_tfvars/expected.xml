@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<problems>
+  <problem>
+    <file>terraform.tfvars</file>
+    <line>13</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Incorrect .tfvars content</problem_class>
+    <description>Only 'key=value' elements allowed</description>
+  </problem>
+  <problem>
+    <file>terraform.tfvars</file>
+    <line>15</line>
+    <module>0</module>
+    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Incorrect .tfvars content</problem_class>
+    <description>Argument names must not be quoted</description>
+  </problem>
+  <problem>
+    <file>terraform.tfvars</file>
+    <line>16</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Incorrect .tfvars content</problem_class>
+    <description>Undefined variable 'true'</description>
+  </problem>
+  <problem>
+    <file>terraform.tfvars</file>
+    <line>16</line>
+    <module>0</module>
+    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Incorrect .tfvars content</problem_class>
+    <description>Argument names must not be quoted</description>
+  </problem>
+  <problem>
+    <file>terraform.tfvars</file>
+    <line>18</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Incorrect .tfvars content</problem_class>
+    <description>Incorrect variable value type. Expected: 'list'</description>
+  </problem>
+  <problem>
+    <file>terraform.tfvars</file>
+    <line>19</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Incorrect .tfvars content</problem_class>
+    <description>Incorrect variable value type. Expected: 'list'</description>
+  </problem>
+  <problem>
+    <file>terraform.tfvars</file>
+    <line>22</line>
+    <module>0</module>
+    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Incorrect .tfvars content</problem_class>
+    <description>Argument names must not be quoted</description>
+  </problem>
+</problems>
+

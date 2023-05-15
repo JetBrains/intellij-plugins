@@ -195,10 +195,7 @@ function IntellijReporter(config, fileList, formatError, globalEmitter, injector
     var suiteNode = getOrCreateLowerSuiteNode(browserNode, suiteNames, write);
     var specNode = createSpecNode(suiteNode, suiteNames, specName);
     var status = result.pending ? 1 : result.success ? 0 : 2;
-    var stack = '';
-    result.log.forEach(function (log) {
-      stack += formatError(log, '\t');
-    });
+    var stack = createStack(result.log, formatError);
     if (stack.length === 0 && result.pending) {
       stack = 'Pending test \'' + specName + '\''
     }
@@ -221,12 +218,12 @@ function IntellijReporter(config, fileList, formatError, globalEmitter, injector
 
 function normalizeAssertionError(stack, assertionError) {
   if (!assertionError) {
-    return {stack: stack};
+    return normalizeErrorStack(stack);
   }
   stack = stack || '';
   var assertionMessage = assertionError.message;
   var assertionName = assertionError.name;
-  var stackLeftTrimmed = stack.trimLeft();
+  var stackLeftTrimmed = stack.trimStart();
   if (util.isString(assertionMessage) && stackLeftTrimmed.indexOf(assertionMessage) === 0) {
     stack = stackLeftTrimmed.substring(assertionMessage.length);
   }
@@ -246,6 +243,31 @@ function normalizeAssertionError(stack, assertionError) {
     expected: assertionError.expected,
     actual: assertionError.actual
   };
+}
+
+function normalizeErrorStack(stack) {
+  const stackLines = splitByLines(stack.trimStart());
+  if (stackLines.length > 0) {
+    const firstLine = stackLines[0];
+    if (!firstLine.startsWith("at ")) {
+      return {
+        message: firstLine,
+        stack: stackLines.slice(1).join('\n')
+      }
+    }
+  }
+  return {
+    stack: stack
+  }
+}
+
+function createStack(logs, formatError) {
+  const lines = logs.map(log => formatError(log, util.isString(log) ? '' : '\t'));
+  return lines.join('');
+}
+
+function splitByLines(text) {
+  return text.split(/\n|\r\n/);
 }
 
 IntellijReporter.$inject = ['config', 'fileList', 'formatError', 'emitter', 'injector'];

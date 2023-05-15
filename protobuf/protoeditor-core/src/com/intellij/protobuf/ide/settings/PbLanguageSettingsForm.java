@@ -221,7 +221,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
   }
 
   private boolean isDescriptorPathValid() {
-    PbProjectSettings tempSettings = new PbProjectSettings();
+    PbProjectSettings tempSettings = new PbProjectSettings(project);
     applyNoNotify(tempSettings);
     FileResolveProvider provider = new SettingsFileResolveProvider(tempSettings);
     return provider.getDescriptorFile(project) != null;
@@ -254,7 +254,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
       new FileChooserDescriptor(
         false, // chooseFiles
         true, // chooseFolders
-        false, // chooseJars
+        true, // chooseJars
         false, // chooseJarsAsFiles
         true, // chooseJarContents
         false) // chooseMultiple

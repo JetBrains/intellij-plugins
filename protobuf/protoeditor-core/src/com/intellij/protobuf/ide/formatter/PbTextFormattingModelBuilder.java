@@ -66,6 +66,6 @@ public class PbTextFormattingModelBuilder implements FormattingModelBuilder {
   @Nullable
   @Override
   public TextRange getRangeAffectingIndent(PsiFile file, int offset, ASTNode elementAtOffset) {
-    return null;
+    return FormattingModelBuilder.super.getRangeAffectingIndent(file, offset, elementAtOffset);
   }
 }

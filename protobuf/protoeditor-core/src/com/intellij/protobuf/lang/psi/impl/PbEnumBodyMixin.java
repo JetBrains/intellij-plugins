@@ -41,10 +41,9 @@ abstract class PbEnumBodyMixin extends PbElementBase implements PbEnumBody {
   @Nullable
   public QualifiedName getExtensionOptionScope() {
     PsiElement parent = getParent();
-    if (!(parent instanceof PbEnumDefinition)) {
+    if (!(parent instanceof PbEnumDefinition enumDefinition)) {
       return null;
     }
-    PbEnumDefinition enumDefinition = (PbEnumDefinition) parent;
     QualifiedName name = enumDefinition.getQualifiedName();
     return name != null ? name.removeLastComponent() : null;
   }

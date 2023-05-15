@@ -1,3 +1,5 @@
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+
 // This is a generated file. Not intended for manual editing.
 package com.intellij.plugins.drools.lang.psi.impl;
 
@@ -10,7 +12,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes.*;
 import com.intellij.plugins.drools.lang.psi.*;
 
-public class DroolsEnumerativeImpl extends DroolsPsiCompositeElementImpl implements DroolsEnumerative {
+public class DroolsEnumerativeImpl extends DroolsEnumConstantImpl implements DroolsEnumerative {
 
   public DroolsEnumerativeImpl(@NotNull ASTNode node) {
     super(node);
@@ -20,6 +22,7 @@ public class DroolsEnumerativeImpl extends DroolsPsiCompositeElementImpl impleme
     visitor.visitEnumerative(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DroolsVisitor) accept((DroolsVisitor)visitor);
     else super.accept(visitor);
@@ -33,8 +36,8 @@ public class DroolsEnumerativeImpl extends DroolsPsiCompositeElementImpl impleme
 
   @Override
   @NotNull
-  public DroolsIdentifier getIdentifier() {
-    return findNotNullChildByClass(DroolsIdentifier.class);
+  public DroolsFieldName getFieldName() {
+    return findNotNullChildByClass(DroolsFieldName.class);
   }
 
 }

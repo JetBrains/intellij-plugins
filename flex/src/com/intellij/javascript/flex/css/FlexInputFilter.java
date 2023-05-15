@@ -10,9 +10,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.indexing.DefaultFileTypeSpecificInputFilter;
 import org.jetbrains.annotations.NotNull;
 
-/**
-* @author Eugene.Kudelevsky
-*/
 final class FlexInputFilter extends DefaultFileTypeSpecificInputFilter {
 
   private FlexInputFilter() {

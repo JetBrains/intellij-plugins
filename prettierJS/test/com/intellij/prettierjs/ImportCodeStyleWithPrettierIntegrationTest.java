@@ -20,7 +20,8 @@ public class ImportCodeStyleWithPrettierIntegrationTest extends JSExternalToolIn
     super.setUp();
     myFixture.setTestDataPath(PrettierJSTestUtil.getTestDataPath() + "import");
     PrettierConfiguration.getInstance(getProject())
-      .withLinterPackage(NodePackageRef.create(getNodePackage()));
+      .withLinterPackage(NodePackageRef.create(getNodePackage()))
+      .getState().configurationMode = PrettierConfiguration.ConfigurationMode.MANUAL;
   }
 
   public void testFromJsFile() {

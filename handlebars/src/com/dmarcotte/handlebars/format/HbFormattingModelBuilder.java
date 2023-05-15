@@ -249,8 +249,7 @@ public class HbFormattingModelBuilder extends TemplateLanguageFormattingModelBui
         }
 
         // otherwise, only indent if our foreign parent isn't indenting us
-        if (foreignBlockParent.getNode() instanceof XmlTag) {
-          XmlTag xmlTag = (XmlTag)foreignBlockParent.getNode();
+        if (foreignBlockParent.getNode() instanceof XmlTag xmlTag) {
           if (!myHtmlPolicy.indentChildrenOf(xmlTag)) {
             // no indent from xml parent, add our own
             return Indent.getNormalIndent();

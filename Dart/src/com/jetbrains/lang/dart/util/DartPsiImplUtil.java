@@ -114,7 +114,7 @@ public final class DartPsiImplUtil {
     final String uri = uriElement.getUriStringAndItsRange().first;
     final VirtualFile file = DartResolveUtil.getRealVirtualFile(partOfStatement.getContainingFile());
     final VirtualFile targetFile = file == null ? null : DartResolveUtil.getImportedFile(partOfStatement.getProject(), file, uri);
-    return targetFile == null ? Collections.emptyList() : Collections.singletonList(targetFile);
+    return ContainerUtil.createMaybeSingletonList(targetFile);
   }
 
   @NotNull
@@ -134,8 +134,9 @@ public final class DartPsiImplUtil {
     final DartLibraryStatement libraryStatement = targetPsiFile == null
                                                   ? null
                                                   : PsiTreeUtil.getChildOfType(targetPsiFile, DartLibraryStatement.class);
-    if (libraryStatement != null) {
-      return libraryStatement.getLibraryNameElement().getName();
+    DartLibraryNameElement nameElement = libraryStatement != null ? libraryStatement.getLibraryNameElement() : null;
+    if (nameElement != null) {
+      return nameElement.getName();
     }
 
     return PathUtil.getFileName(uri);

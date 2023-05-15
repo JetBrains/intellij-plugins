@@ -1,0 +1,10 @@
+DTSI file
+  DtsContentImpl(CONTENT)
+    DtsEntryImpl(ENTRY)
+      DtsCompilerDirectiveImpl(COMPILER_DIRECTIVE)
+        PsiElement(DtsTokenType.DELETE_NODE)('/delete-node/')
+        PsiWhiteSpace(' ')
+        DtsPHandleImpl(P_HANDLE)
+          PsiElement(DtsTokenType.HANDLE)('&')
+          PsiElement(DtsTokenType.NAME)('label')
+      PsiElement(DtsTokenType.SEMICOLON)(';')

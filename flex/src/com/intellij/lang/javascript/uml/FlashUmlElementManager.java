@@ -58,8 +58,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
     if (element instanceof PsiFile && JavaScriptSupportLoader.isFlexMxmFile((PsiFile)element)) {
       return true;
     }
-    if (element instanceof PsiDirectory) {
-      PsiDirectory directory = (PsiDirectory)element;
+    if (element instanceof PsiDirectory directory) {
       String packageName = JSResolveUtil.getExpectedPackageNameFromFile(directory.getVirtualFile(), directory.getProject());
       return packageName != null && packageExists(directory.getProject(), packageName, GlobalSearchScope.allScope(directory.getProject()));
     }
@@ -135,8 +134,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
 
   @Override
   public PsiElement @NotNull [] getNodeItems(Object parent) {
-    if (parent instanceof JSClass) {
-      final JSClass clazz = (JSClass)parent;
+    if (parent instanceof JSClass clazz) {
       if (!clazz.isValid()) return PsiElement.EMPTY_ARRAY;
       final List<PsiElement> elements = new ArrayList<>();
       ContainerUtil.addAll(elements, clazz.getFields());
@@ -166,7 +164,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
 
   @Override
   public boolean canCollapse(Object element) {
-    return false;
+    return super.canCollapse(element);
   }
 
   @Override
@@ -211,8 +209,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
     else if (element instanceof JSClass) {
       return getClassPresentableName((JSClass)element);
     }
-    else if (element instanceof String) {
-      String s = (String)element;
+    else if (element instanceof String s) {
       return decorate(getPackageDisplayName(s));
     }
     else if (element instanceof JSPackageStatement) {
@@ -224,8 +221,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
     else if (element instanceof XmlFile && JavaScriptSupportLoader.isFlexMxmFile((PsiFile)element)) {
       return decorate(getElementTitle(element));
     }
-    else if (element instanceof PsiDirectory) {
-      PsiDirectory directory = (PsiDirectory)element;
+    else if (element instanceof PsiDirectory directory) {
       String qName = JSResolveUtil.getExpectedPackageNameFromFile(directory.getVirtualFile(), directory.getProject());
       return decorate(getElementTitle(qName));
     }
@@ -311,8 +307,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
   }
 
   public static Icon getNodeElementIconStatic(Object element) {
-    if (element instanceof JSFunction) {
-      JSFunction method = (JSFunction)element;
+    if (element instanceof JSFunction method) {
       if (method.getKind() == JSFunction.FunctionKind.GETTER || method.getKind() == JSFunction.FunctionKind.SETTER) {
         final Icon propertyIcon = JSFormatUtil.getPropertyIcon(method);
         return ElementBase.buildRowIcon(propertyIcon, method.getAttributeList().getAccessType().getIcon());

@@ -1,0 +1,12 @@
+model Session {
+  id String @id @default(cuid())
+}
+
+view User {
+  id       String    @id @default(cuid())
+  sessions Session[]
+}
+
+model Login {
+  id String @id @default(cuid())
+}

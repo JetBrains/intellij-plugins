@@ -9,15 +9,19 @@ import com.intellij.lang.LanguageHtmlScriptContentProvider
 import com.intellij.lang.LanguageParserDefinitions
 import com.intellij.lang.css.CSSLanguage
 import com.intellij.lang.css.CSSParserDefinition
+import com.intellij.lang.ecmascript6.ES6ScriptContentProvider
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.html.HTMLParserDefinition
+import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lang.javascript.JavascriptParserDefinition
 import com.intellij.lang.javascript.dialects.ECMA6ParserDefinition
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
+import com.intellij.lang.javascript.dialects.TypeScriptParserDefinition
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler
 import com.intellij.lang.javascript.index.FrameworkIndexingHandlerEP
 import com.intellij.lang.javascript.settings.JSRootConfiguration
 import com.intellij.lang.javascript.settings.JSRootConfigurationBase
+import com.intellij.lang.typescript.TypeScriptContentProvider
 import com.intellij.lexer.EmbeddedTokenTypesProvider
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.progress.EmptyProgressIndicator
@@ -33,6 +37,7 @@ import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorProviderImpl
 import com.intellij.psi.impl.BlockSupportImpl
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.impl.source.html.TemplateHtmlScriptContentProvider
+import com.intellij.psi.tree.CustomLanguageASTComparator
 import com.intellij.util.ObjectUtils
 import org.intellij.plugins.postcss.PostCssEmbeddedTokenTypesProvider
 import org.intellij.plugins.postcss.PostCssLanguage
@@ -41,7 +46,7 @@ import org.intellij.plugins.postcss.parser.PostCssParserDefinition
 import org.intellij.plugins.postcss.psi.impl.PostCssTreeElementFactory
 import org.jetbrains.vuejs.lang.expr.parser.VueJSParserDefinition
 import org.jetbrains.vuejs.lang.html.lexer.VueEmbeddedContentSupport
-import org.jetbrains.vuejs.lang.html.parser.VueFileElementType
+import org.jetbrains.vuejs.lang.html.parser.VueASTComparator
 import org.jetbrains.vuejs.lang.html.parser.VueParserDefinition
 
 class VueParserTest : HtmlParsingTest("", "vue",
@@ -54,6 +59,7 @@ class VueParserTest : HtmlParsingTest("", "vue",
 
   override fun setUp() {
     super.setUp()
+    addExplicitExtension(CustomLanguageASTComparator.EXTENSION_POINT_NAME, VueLanguage.INSTANCE, VueASTComparator())
 
     registerExtensions(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, EmbeddedTokenTypesProvider::class.java,
                        listOf(CssEmbeddedTokenTypesProvider(), PostCssEmbeddedTokenTypesProvider()))
@@ -68,7 +74,10 @@ class VueParserTest : HtmlParsingTest("", "vue",
 
     // Update parser definition if version is changed
     assert(JSLanguageLevel.DEFAULT == JSLanguageLevel.ES6)
-    addExplicitExtension(LanguageParserDefinitions.INSTANCE, JSLanguageLevel.ES6.dialect, ECMA6ParserDefinition())
+    addExplicitExtension(LanguageParserDefinitions.INSTANCE, JavaScriptSupportLoader.ECMA_SCRIPT_6, ECMA6ParserDefinition())
+    addExplicitExtension(LanguageParserDefinitions.INSTANCE, JavaScriptSupportLoader.TYPESCRIPT, TypeScriptParserDefinition())
+    addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, JavaScriptSupportLoader.ECMA_SCRIPT_6, ES6ScriptContentProvider())
+    addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, JavaScriptSupportLoader.TYPESCRIPT, TypeScriptContentProvider())
     addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, HTMLLanguage.INSTANCE, TemplateHtmlScriptContentProvider())
 
     registerExtensionPoint(FrameworkIndexingHandler.EP_NAME, FrameworkIndexingHandlerEP::class.java)
@@ -113,6 +122,154 @@ class VueParserTest : HtmlParsingTest("", "vue",
   }
 
   override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/html/parser"
+
+  fun testScriptNoLang() {
+    // classes have a different element type between JS & TS contexts
+    doTestVue("""
+      <script>
+      class X {}
+      </script>
+      <template>
+        <div v-if="class {}"></div>
+      </template>
+    """)
+  }
+
+  fun testScriptJs() {
+    // classes have a different element type between JS & TS contexts
+    doTestVue("""
+      <script lang="js">
+      class X {}
+      </script>
+      <template>
+        <div v-if="class {}"></div>
+      </template>
+    """)
+  }
+
+  fun testScriptTs() {
+    // classes have a different element type between JS & TS contexts
+    doTestVue("""
+      <script lang="ts">
+      class X {}
+      </script>
+      <template>
+        <div v-if="class {}"></div>
+      </template>
+    """)
+  }
+
+  fun testScriptTypo() {
+    // classes have a different element type between JS & TS contexts
+    doTestVue("""
+      <script lang="tss">
+      class X {}
+      </script>
+      <template>
+        <div v-if="class {}"></div>
+      </template>
+    """)
+  }
+
+  fun testScriptsWithMixedLanguages() {
+    // classes have a different element type between JS & TS contexts
+    doTestVue("""
+      <script lang="ts">
+      export class X {}
+      </script>
+      <script setup>
+      class XS {}
+      </script>
+      <template>
+        <div v-if="class {}"></div>
+      </template>
+    """)
+  }
+
+  fun testScriptTsTemplateFirst() {
+    // classes have a different element type between JS & TS contexts
+    doTestVue("""
+      <template>
+        <div v-if="class {}"></div>
+      </template>
+      <script lang="ts">
+      class X {}
+      </script>
+    """)
+  }
+
+  fun testScriptTsNoContent() {
+    // classes have a different element type between JS & TS contexts
+    doTestVue("""
+      <template>
+        <div v-if="class {}"></div>
+      </template>
+      <script lang="ts" />
+    """)
+  }
+
+  fun testFirstEverScriptInTemplate() {
+    // classes have a different element type between JS & TS contexts
+    doTestVue("""
+      <template>
+        <script></script>
+        <div v-if="class {}">This is buggy</div>
+      </template>
+      <script lang="ts">
+      export class X {}
+      </script>
+      <script setup>
+      class XS {}
+      </script>
+    """)
+  }
+
+  fun testVueInnerScriptTagTS() {
+    // classes have a different element type between JS & TS contexts
+    doTestVue("""
+      <script lang="ts"></script>
+      <template>
+        <script type="text/x-template" id="foo">
+          <div v-if="class {}"></div>
+          <script>class {}</script>
+        </script>
+      </template>
+    """)
+  }
+
+  fun testScriptStrangeLang1() {
+    doTestVue("""
+      <script lang="html">
+        <div v-if="true"></div>
+      </script>
+    """)
+  }
+
+  fun testScriptStrangeLang2() {
+    doTestVue("""
+      <script lang="template">
+        <div v-if="true"></div>
+      </script>
+    """)
+  }
+
+  fun testVue2FilterJs() {
+    doTestVue("""
+      <script lang="js"></script>
+      <template>
+        <div v-bind:title="1 | fooFilter"></div>
+      </template>
+    """)
+  }
+
+  fun testVue2FilterTs() {
+    doTestVue("""
+      <script lang="ts"></script>
+      <template>
+        <div v-bind:title="1 | fooFilter"></div>
+      </template>
+    """)
+  }
 
   fun testVueInnerScriptTag() {
     doTestVue("""
@@ -163,6 +320,7 @@ class VueParserTest : HtmlParsingTest("", "vue",
       <template>
         <a v-bind:href="url"></a>
         <a :href="url"></a>
+        <a :href=url></a>
         <a href="https://foo.bar"></a>
       </template>
     """)
@@ -243,6 +401,65 @@ class VueParserTest : HtmlParsingTest("", "vue",
       <template><div lang="ts"><span></span></div></template>
       <template lang="html"><div lang="ts"><span></span></div></template>
     """.trimIndent())
+  }
+
+  fun testDivNestedUnderP() {
+    doTestVue("<template><p><div></div></p></template>")
+  }
+
+  fun testScriptSetupGeneric() {
+    doTestVue("""
+      <script setup lang="ts" generic="Clearable extends boolean, ValueType extends string | number | null | undefined">
+      </script>
+    """.trimIndent())
+  }
+
+  fun testScriptSetupGenericBroken() {
+    doTestVue("""
+      <script setup lang="ts" generic="Clearable boolean, , ValueType extends string || number, ||">
+      </script>
+    """.trimIndent())
+  }
+
+  fun testScriptSetupGenericJS() {
+    doTestVue("""
+      <script setup generic="Clearable extends boolean">
+      </script>
+    """.trimIndent())
+  }
+
+  fun testLangReparse() {
+    val baseText = """
+      <script lang="js">
+      export class X1 {}
+      </script>
+
+      <script setup>
+      class X2 {}
+      </script>
+      
+      <template>
+        <div v-text="class {}"></div>
+      </template>
+    """.trimIndent()
+    val changedText = baseText.replace("js", "ts")
+
+    val file = createFile("test.vue", baseText)
+    val fileAfter = createFile("test.vue", changedText)
+
+    val psiToStringDefault = DebugUtil.psiToString(fileAfter, true, false)
+    DebugUtil.performPsiModification<RuntimeException>("ensureCorrectReparse") {
+      val fileText = file.text
+      val diffLog = BlockSupportImpl().reparseRange(
+        file,
+        file.node,
+        TextRange.allOf(fileText),
+        fileAfter.text,
+        EmptyProgressIndicator(),
+        fileText)
+      diffLog.performActualPsiChange(file)
+    }
+    assertEquals(psiToStringDefault, DebugUtil.psiToString(file, true, false))
   }
 
   private class MockJSRootConfiguration constructor(project: Project) : JSRootConfigurationBase(project) {

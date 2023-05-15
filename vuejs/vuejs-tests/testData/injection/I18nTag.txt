@@ -148,3 +148,4 @@ HtmlFile:I18nTag.vue
       XmlToken:XML_END_TAG_START('</')
       XmlToken:XML_NAME('i18n')
       XmlToken:XML_TAG_END('>')
+  PsiElement(VUE_LANG_MODE_NO_TS)('')

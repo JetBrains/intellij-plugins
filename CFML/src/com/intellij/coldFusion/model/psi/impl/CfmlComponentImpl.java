@@ -17,9 +17,6 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlComponentImpl extends CfmlCompositeElement implements CfmlComponent, StubBasedPsiElement<NamedStub> {
   public CfmlComponentImpl(@NotNull ASTNode node) {
     super(node);

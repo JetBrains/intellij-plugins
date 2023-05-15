@@ -20,9 +20,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author ksafonov
- */
 public class CompositeConfigurable extends ProjectStructureElementConfigurable<ModifiableFlexBuildConfiguration> implements Place.Navigator {
 
   public static final String TAB_NAME = "tabName";

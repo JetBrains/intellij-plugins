@@ -33,7 +33,6 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -365,7 +364,7 @@ public class BndTestState extends JavaCommandLineState {
 
         if (myFailingTest != null) {
           String testName = fullTestName(parseTestName(myFailingTest, false), myFailingTest);
-          boolean testError = myReason != Proto.FAILED;
+          boolean testError = !Proto.FAILED.equals(myReason);
           String expected = Pair.getFirst(pair);
           String actual = Pair.getSecond(pair);
           myProcessor.onTestFailure(new TestFailedEvent(testName, message, stack.toString(), testError, actual, expected));
@@ -407,15 +406,13 @@ public class BndTestState extends JavaCommandLineState {
     }
 
     private static final class Comparisons {
-      private static final List<Pattern> PATTERNS = ContainerUtil.newArrayList(
-        compile("\nExpected: is \"(.*)\"\n\\s*got: \"(.*)\"\n"),
-        compile("\nExpected: is \"(.*)\"\n\\s*but: was \"(.*)\""),
-        compile("\nExpected: (.*)\n\\s*got: (.*)"),
-        compile(".*?\\s*expected same:<(.*)> was not:<(.*)>"),
-        compile(".*?\\s*expected:<(.*?)> but was:<(.*?)>"),
-        compile("\nExpected: \"(.*)\"\n\\s*but: was \"(.*)\""),
-        compile("\\s*Expected: (.*)\\s*but: was (.*)")
-      );
+      private static final List<Pattern> PATTERNS = List.of(compile("\nExpected: is \"(.*)\"\n\\s*got: \"(.*)\"\n"),
+                                                            compile("\nExpected: is \"(.*)\"\n\\s*but: was \"(.*)\""),
+                                                            compile("\nExpected: (.*)\n\\s*got: (.*)"),
+                                                            compile(".*?\\s*expected same:<(.*)> was not:<(.*)>"),
+                                                            compile(".*?\\s*expected:<(.*?)> but was:<(.*?)>"),
+                                                            compile("\nExpected: \"(.*)\"\n\\s*but: was \"(.*)\""),
+                                                            compile("\\s*Expected: (.*)\\s*but: was (.*)"));
 
       private static Pattern compile(String regex) {
         return Pattern.compile(regex, Pattern.DOTALL | Pattern.CASE_INSENSITIVE);

@@ -19,30 +19,26 @@ package com.thoughtworks.gauge;
 import com.intellij.DynamicBundle;
 import com.intellij.openapi.util.NlsSafe;
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
 
 import java.util.function.Supplier;
 
-public final class GaugeBundle extends DynamicBundle {
+public final class GaugeBundle {
   public static final @NlsSafe String GAUGE = "Gauge";
 
   private static final String BUNDLE = "messages.GaugeBundle";
-  private static final GaugeBundle INSTANCE = new GaugeBundle();
+  private static final DynamicBundle INSTANCE = new DynamicBundle(GaugeBundle.class, BUNDLE);
 
   private GaugeBundle() {
-    super(BUNDLE);
   }
 
-  @NotNull
-  public static @Nls String message(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, Object @NotNull ... params) {
+  public static @NotNull @Nls String message(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, Object @NotNull ... params) {
     return INSTANCE.getMessage(key, params);
   }
 
-  @NotNull
-  public static Supplier<@Nls String> messagePointer(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key,
-                                                     Object @NotNull ... params) {
+  public static @NotNull Supplier<@Nls String> messagePointer(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key,
+                                                              Object @NotNull ... params) {
     return INSTANCE.getLazyMessage(key, params);
   }
 }

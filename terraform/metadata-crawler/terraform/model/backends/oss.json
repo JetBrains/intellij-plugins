@@ -1,0 +1,174 @@
+{
+  ".schema_version": "2",
+  ".sdk_type": "builtin",
+  "name": "oss",
+  "type": "backend",
+  "version": "v1.3.0-dev",
+  "schema": {
+    "access_key": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Alibaba Cloud Access Key ID",
+      "DefaultFunc": "ENV(ALICLOUD_ACCESS_KEY)"
+    },
+    "acl": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Object ACL to be applied to the state file",
+      "Default": {
+        "Type": "string"
+      }
+    },
+    "assume_role": {
+      "Type": "Set",
+      "Optional": true,
+      "MaxItems": 1,
+      "Deprecated": "use assume_role_* options instead",
+      "IsBlock": true,
+      "ConfigImplicitMode": "Block",
+      "Elem": {
+        "Type": "SchemaInfo",
+        "Info": {
+          "policy": {
+            "Type": "String",
+            "Optional": true,
+            "Description": "The permissions applied when assuming a role. You cannot use this policy to grant permissions which exceed those of the role that is being assumed."
+          },
+          "role_arn": {
+            "Type": "String",
+            "Required": true,
+            "Description": "The ARN of a RAM role to assume prior to making API calls.",
+            "DefaultFunc": "ENV(ALICLOUD_ASSUME_ROLE_ARN)"
+          },
+          "session_expiration": {
+            "Type": "Int",
+            "Optional": true,
+            "Description": "The time after which the established session for assuming role expires."
+          },
+          "session_name": {
+            "Type": "String",
+            "Optional": true,
+            "Description": "The session name to use when assuming the role.",
+            "DefaultFunc": "ENV(ALICLOUD_ASSUME_ROLE_SESSION_NAME)"
+          }
+        }
+      }
+    },
+    "assume_role_policy": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The permissions applied when assuming a role. You cannot use this policy to grant permissions which exceed those of the role that is being assumed."
+    },
+    "assume_role_role_arn": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The ARN of a RAM role to assume prior to making API calls.",
+      "DefaultFunc": "ENV(ALICLOUD_ASSUME_ROLE_ARN)"
+    },
+    "assume_role_session_expiration": {
+      "Type": "Int",
+      "Optional": true,
+      "Description": "The time after which the established session for assuming role expires."
+    },
+    "assume_role_session_name": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The session name to use when assuming the role.",
+      "DefaultFunc": "ENV(ALICLOUD_ASSUME_ROLE_SESSION_NAME)"
+    },
+    "bucket": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The name of the OSS bucket"
+    },
+    "ecs_role_name": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The RAM Role Name attached on a ECS instance for API operations. You can retrieve this from the 'Access Control' section of the Alibaba Cloud console.",
+      "DefaultFunc": "ENV(ALICLOUD_ECS_ROLE_NAME)"
+    },
+    "encrypt": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "Whether to enable server side encryption of the state file",
+      "Default": {
+        "Type": "bool",
+        "Value": "false"
+      }
+    },
+    "endpoint": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "A custom endpoint for the OSS API",
+      "DefaultFunc": "ENV(ALICLOUD_OSS_ENDPOINT)"
+    },
+    "key": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The path of the state file inside the bucket",
+      "Default": {
+        "Type": "string",
+        "Value": "terraform.tfstate"
+      }
+    },
+    "prefix": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The directory where state files will be saved inside the bucket",
+      "Default": {
+        "Type": "string",
+        "Value": "env:"
+      }
+    },
+    "profile": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "This is the Alibaba Cloud profile name as set in the shared credentials file. It can also be sourced from the `ALICLOUD_PROFILE` environment variable.",
+      "DefaultFunc": "ENV(ALICLOUD_PROFILE)"
+    },
+    "region": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The region of the OSS bucket.",
+      "DefaultFunc": "ENV(ALICLOUD_REGION)"
+    },
+    "secret_key": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Alibaba Cloud Access Secret Key",
+      "DefaultFunc": "ENV(ALICLOUD_SECRET_KEY)"
+    },
+    "security_token": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Alibaba Cloud Security Token",
+      "DefaultFunc": "ENV(ALICLOUD_SECURITY_TOKEN)"
+    },
+    "shared_credentials_file": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "This is the path to the shared credentials file. If this is not set and a profile is specified, `~/.aliyun/config.json` will be used.",
+      "DefaultFunc": "ENV(ALICLOUD_SHARED_CREDENTIALS_FILE)"
+    },
+    "sts_endpoint": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "A custom endpoint for the STS API",
+      "DefaultFunc": "ENV(ALICLOUD_STS_ENDPOINT)"
+    },
+    "tablestore_endpoint": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "A custom endpoint for the TableStore API",
+      "DefaultFunc": "ENV(ALICLOUD_TABLESTORE_ENDPOINT)"
+    },
+    "tablestore_table": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "TableStore table for state locking and consistency",
+      "Default": {
+        "Type": "string"
+      }
+    }
+  }
+}

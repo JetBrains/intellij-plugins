@@ -1,7 +1,6 @@
 package org.jetbrains.idea.perforce.util.tracer;
 
 import com.intellij.openapi.util.Factory;
-import com.intellij.openapi.util.Timed;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

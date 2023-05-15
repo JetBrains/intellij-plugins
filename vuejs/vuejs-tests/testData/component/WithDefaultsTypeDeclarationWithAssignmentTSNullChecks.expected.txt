@@ -1,0 +1,32 @@
+{
+ class: "VueSourceComponent",
+ components: {
+  WithDefaultsTypeDeclarationWithAssignmentTSNullChecks: <recursive value of class VueSourceComponent>,
+ },
+ props: [
+  {
+   class: "VueScriptSetupInputProperty",
+   name: "prop1",
+   jsType: "number",
+   required: true,
+  },
+  {
+   class: "VueScriptSetupInputProperty",
+   name: "prop2",
+   jsType: "number",
+   required: false,
+  },
+  {
+   class: "VueScriptSetupInputProperty",
+   name: "prop3",
+   jsType: "number | undefined",
+   required: false,
+  },
+  {
+   class: "VueScriptSetupInputProperty",
+   name: "prop4",
+   jsType: "number | undefined",
+   required: false,
+  },
+ ],
+}

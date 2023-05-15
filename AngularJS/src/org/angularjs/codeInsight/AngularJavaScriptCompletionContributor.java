@@ -26,9 +26,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-/**
- * @author Irina.Chernushina on 2/22/2016.
- */
 public class AngularJavaScriptCompletionContributor extends CompletionContributor {
   @Override
   public void fillCompletionVariants(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result) {

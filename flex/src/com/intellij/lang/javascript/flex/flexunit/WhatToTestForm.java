@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigu
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
+import com.intellij.lang.javascript.ui.ActionScriptPackageChooserDialog;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -72,8 +73,8 @@ public class WhatToTestForm {
     myMainClassFilter = new TestClassFilter(myProject);
     myClassField = JSReferenceEditor.forClassName("", myProject, null, GlobalSearchScope.EMPTY_SCOPE, null, myMainClassFilter,
                                                   ExecutionBundle.message("choose.test.class.dialog.title"));
-    myPackageField = JSReferenceEditor.forPackageName("", myProject, null, GlobalSearchScope.EMPTY_SCOPE,
-                                                      ExecutionBundle.message("choose.package.dialog.title"));
+    myPackageField = ActionScriptPackageChooserDialog.createPackageReferenceEditor("", myProject, null, GlobalSearchScope.EMPTY_SCOPE,
+                                                                                   ExecutionBundle.message("choose.package.dialog.title"));
   }
 
   private void updateOnScopeChange() {

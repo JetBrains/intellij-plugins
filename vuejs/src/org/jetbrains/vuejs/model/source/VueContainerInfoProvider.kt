@@ -24,6 +24,7 @@ interface VueContainerInfoProvider : EntityContainerInfoProvider<VueContainerInf
     fun get(local: Boolean): MultiMap<String, VueComponent> = if (local) this.local else global
   }
 
+  @JvmDefaultWithCompatibility
   interface VueContainerInfo {
     val components: Map<String, VueComponent> get() = emptyMap()
     val directives: Map<String, VueDirective> get() = emptyMap()

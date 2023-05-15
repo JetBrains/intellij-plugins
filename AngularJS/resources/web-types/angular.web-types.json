@@ -545,6 +545,12 @@
               "name": "Namespaced attribute",
               "pattern": ".+:.+",
               "doc-hide-pattern": true
+            },
+            {
+              "name": "Custom data attribute",
+              "pattern": "data-.+",
+              "doc-hide-pattern": true,
+              "hide-from-completion": true
             }
           ]
         },

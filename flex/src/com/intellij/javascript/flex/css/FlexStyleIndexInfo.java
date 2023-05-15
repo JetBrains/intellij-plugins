@@ -6,9 +6,8 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Eugene.Kudelevsky
- */
+import java.util.Objects;
+
 public class FlexStyleIndexInfo {
   private final String myClassOrFileName;
   private final String myAttributeName;
@@ -62,8 +61,7 @@ public class FlexStyleIndexInfo {
     return pair != null ? pair.getSimpleValue() : null;
   }
 
-  @Nullable
-  public static FlexStyleIndexInfo create(@NotNull String className, @NotNull String name, @NotNull JSAttribute attribute, boolean inClass) {
+  public static @NotNull FlexStyleIndexInfo create(@NotNull String className, @NotNull String name, @NotNull JSAttribute attribute, boolean inClass) {
     String inherit = getValue(attribute, "inherit");
     if (inherit == null) inherit = "no";
     String type = getValue(attribute, "type");
@@ -98,23 +96,19 @@ public class FlexStyleIndexInfo {
     if (o == null || getClass() != o.getClass()) return false;
 
     FlexStyleIndexInfo that = (FlexStyleIndexInfo)o;
-
-    if (myInClass != that.myInClass) return false;
-    if (myAttributeName != null ? !myAttributeName.equals(that.myAttributeName) : that.myAttributeName != null) return false;
-    if (myClassOrFileName != null ? !myClassOrFileName.equals(that.myClassOrFileName) : that.myClassOrFileName != null) return false;
-    if (myEnumeration != null ? !myEnumeration.equals(that.myEnumeration) : that.myEnumeration != null) return false;
-    if (myFormat != null ? !myFormat.equals(that.myFormat) : that.myFormat != null) return false;
-    if (myInherit != null ? !myInherit.equals(that.myInherit) : that.myInherit != null) return false;
-    if (myType != null ? !myType.equals(that.myType) : that.myType != null) return false;
-
-    return true;
+    return myInClass == that.myInClass && 
+           Objects.equals(myAttributeName, that.myAttributeName) &&
+           Objects.equals(myClassOrFileName, that.myClassOrFileName) &&
+           Objects.equals(myEnumeration, that.myEnumeration) &&
+           Objects.equals(myFormat, that.myFormat) &&
+           Objects.equals(myInherit, that.myInherit) && Objects.equals(myType, that.myType);
   }
 
   @Override
   public int hashCode() {
-    int result = myClassOrFileName != null ? myClassOrFileName.hashCode() : 0;
-    result = 31 * result + (myAttributeName != null ? myAttributeName.hashCode() : 0);
-    result = 31 * result + (myInherit != null ? myInherit.hashCode() : 0);
+    int result = myClassOrFileName.hashCode();
+    result = 31 * result + myAttributeName.hashCode();
+    result = 31 * result + myInherit.hashCode();
     result = 31 * result + (myType != null ? myType.hashCode() : 0);
     result = 31 * result + (myFormat != null ? myFormat.hashCode() : 0);
     result = 31 * result + (myEnumeration != null ? myEnumeration.hashCode() : 0);

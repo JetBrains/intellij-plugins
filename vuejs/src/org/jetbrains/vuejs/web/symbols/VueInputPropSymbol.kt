@@ -9,15 +9,15 @@ import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueInputProperty
 import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension
+import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
 
 class VueInputPropSymbol(property: VueInputProperty,
                          owner: VueComponent,
                          origin: WebSymbolOrigin)
-  : VueNamedWebSymbol<VueInputProperty>(property, owner, origin) {
+  : VuePropertySymbol<VueInputProperty>(property, owner, origin) {
 
   override val kind: SymbolKind
-    get() = VueWebSymbolsRegistryExtension.KIND_VUE_COMPONENT_PROPS
+    get() = VueWebSymbolsQueryConfigurator.KIND_VUE_COMPONENT_PROPS
 
   override val type: JSType?
     get() = item.jsType

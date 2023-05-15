@@ -9,7 +9,7 @@ export default defineComponent({
 <error descr="TS2304: Cannot find name 'bar'.">bar</error> = 234;
 </script>
 
-<script setup>
+<script setup lang='ts'>
 import {ref} from "vue"
 import MyComponent from "./my-component.vue"
 import MyComponent2 from "./my-component2.vue"
@@ -17,7 +17,7 @@ import MyComponent2 from "./my-component2.vue"
 
 var bar = 123;
 
-<error descr="Attempt to assign to const or readonly variable">foo</error> = 12
+<error>foo</error> = 12
 
 </script>
 <template>
@@ -26,5 +26,5 @@ var bar = 123;
   <MyComponent2/>
   {{ bar }}
   {{ foo }}
-  {{ <weak_warning descr="Unresolved variable or type foobar">foobar</weak_warning> }}
+  {{ <error descr="Unresolved variable or type foobar">foobar</error> }}
 </template>

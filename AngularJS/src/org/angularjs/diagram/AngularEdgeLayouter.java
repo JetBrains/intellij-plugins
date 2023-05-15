@@ -105,7 +105,7 @@ final class AngularEdgeLayouter {
     private static int getOffsetInElements(final AngularUiRouterNode node, final String name) {
       final List<DiagramObject> list = node.getIdentifyingElement().getChildrenList();
       int idx = -1;
-      if (name != null && list != null) {
+      if (name != null) {
         for (int i = 0; i < list.size(); i++) {
           DiagramObject object = list.get(i);
           if (object.getName().equals(name)) {

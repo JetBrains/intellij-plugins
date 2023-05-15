@@ -36,9 +36,11 @@
     <module name="intellij.vuejs/copyright"/>
   </content>
   <dependencies>
+    <plugin id="com.intellij.modules.xml"/>
     <plugin id="JavaScript"/>
     <plugin id="com.intellij.css"/>
     <plugin id="intellij.webpack"/>
+    <plugin id="org.intellij.plugins.postcss"/>
   </dependencies>
   <depends optional="true" config-file="js-debugger.xml">JavaScriptDebugger</depends>
 
@@ -58,33 +60,39 @@
     <css.embeddedCssProvider implementation="org.jetbrains.vuejs.css.VueEmbeddedCssProvider"/>
     <css.inclusionContext implementation="org.jetbrains.vuejs.css.VueCssInclusionContext"/>
     <html.attributeValueProvider implementation="org.jetbrains.vuejs.codeInsight.attributes.VueCustomAttributeValueProvider"/>
+    <metaLanguage implementation="org.jetbrains.vuejs.lang.expr.VueExprMetaLanguage"/>
     <fileType name="Vue.js" extensions="vue" language="Vue" implementationClass="org.jetbrains.vuejs.lang.html.VueFileType"
               fieldName="INSTANCE"/>
     <lang.parserDefinition language="Vue" implementationClass="org.jetbrains.vuejs.lang.html.parser.VueParserDefinition"/>
     <lang.parserDefinition language="VueJS" implementationClass="org.jetbrains.vuejs.lang.expr.parser.VueJSParserDefinition"/>
+    <lang.parserDefinition language="VueTS" implementationClass="org.jetbrains.vuejs.lang.expr.parser.VueTSParserDefinition"/>
+    <tree.CustomLanguageASTComparator language="Vue" implementationClass="org.jetbrains.vuejs.lang.html.parser.VueASTComparator"/>
+    <html.embeddedContentSupport implementation="org.jetbrains.vuejs.lang.html.lexer.VueEmbeddedContentSupport"/>
+    <html.embeddedContentSupport implementation="org.jetbrains.vuejs.libraries.i18n.VueI18nEmbeddedContentSupport"/>
     <typedHandler implementation="org.jetbrains.vuejs.editor.VueJSBracesInterpolationTypedHandler"/>
-    <lang.braceMatcher language="VueJS" implementationClass="com.intellij.lang.javascript.highlighting.JSBraceMatcher"/>
-    <annotator language="VueJS" implementationClass="com.intellij.lang.javascript.validation.JSAnnotator"/>
+    <lang.braceMatcher language="VueExpr" implementationClass="com.intellij.lang.javascript.highlighting.JSBraceMatcher"/>
     <psi.referenceContributor language="JavaScript" implementation="org.jetbrains.vuejs.codeInsight.refs.VueJSReferenceContributor"/>
     <psi.referenceContributor language="Vue" implementation="org.jetbrains.vuejs.codeInsight.refs.VueReferenceContributor"/>
     <psi.referenceContributor language="JavaScript"
                               implementation="org.jetbrains.vuejs.libraries.vuex.codeInsight.refs.VuexReferenceContributor"/>
-    <psi.referenceContributor language="VueJS" implementation="org.jetbrains.vuejs.css.refs.VueCssReferencesContributor"/>
+    <psi.referenceContributor language="VueExpr" implementation="org.jetbrains.vuejs.css.refs.VueCssReferencesContributor"/>
     <psi.referenceContributor language="CSS" implementation="org.jetbrains.vuejs.css.refs.VueCssReferencesContributor"/>
     <pom.declarationSearcher implementation="org.jetbrains.vuejs.codeInsight.refs.VuePomDeclarationSearcher"/>
     <psi.fileReferenceHelper implementation="org.jetbrains.vuejs.libraries.nuxt.codeInsight.NuxtFileReferenceHelper"/>
-    <pathReferenceProvider implementation="org.jetbrains.vuejs.libraries.vueLoader.VueLoaderPathReferenceProvider"/>
     <useScopeEnlarger implementation="org.jetbrains.vuejs.findUsages.VueUseScopeEnlarger"/>
+    <implicitUsageProvider implementation="org.jetbrains.vuejs.codeInsight.refs.VueImplicitUsageProvider"/>
+    <lsp.serverSupportProvider implementation="org.jetbrains.vuejs.lang.typescript.service.volar.VolarSupportProvider"/>
+
     <!--suppress PluginXmlValidity -->
     <quoteHandler className="com.intellij.codeInsight.editorActions.HtmlQuoteHandler" fileType="Vue.js"/>
+    <copyPastePostProcessor implementation="org.jetbrains.vuejs.codeInsight.imports.VueTemplateExpressionsCopyPasteProcessor"/>
+    <copyPastePostProcessor implementation="org.jetbrains.vuejs.codeInsight.imports.VueComponentCopyPasteProcessor"/>
 
     <lang.syntaxHighlighterFactory language="Vue"
                                    implementationClass="org.jetbrains.vuejs.lang.html.highlighting.VueSyntaxHighlighterFactory"/>
 
     <xml.xmlExtension implementation="org.jetbrains.vuejs.codeInsight.VueXmlExtension" order="before web-symbols-react"/>
     <xml.xmlSuppressionProvider implementation="org.jetbrains.vuejs.inspections.VueXmlSuppressionProvider" order="first"/>
-    <html.embeddedContentSupport implementation="org.jetbrains.vuejs.lang.html.lexer.VueEmbeddedContentSupport"/>
-    <html.embeddedContentSupport implementation="org.jetbrains.vuejs.libraries.i18n.VueI18nEmbeddedContentSupport"/>
     <notificationGroup displayType="BALLOON" id="Vue" isLogByDefault="true"
                        bundle="messages.VueBundle" key="vue.documentation.vue"/>
 
@@ -99,6 +107,7 @@
     <stubIndex implementation="org.jetbrains.vuejs.index.VueGlobalFiltersIndex"/>
     <stubIndex implementation="org.jetbrains.vuejs.libraries.vuex.index.VuexStoreIndex"/>
     <fileBasedIndex implementation="org.jetbrains.vuejs.index.VueEmptyComponentInitializersIndex"/>
+    <fileBasedIndex implementation="org.jetbrains.vuejs.index.VueComponentStylesIndex"/>
 
     <stubElementTypeHolder class="org.jetbrains.vuejs.lang.expr.parser.VueJSStubElementTypes" externalIdPrefix="VUE-JS:"/>
     <stubElementTypeHolder class="org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes" externalIdPrefix="VUE:"/>
@@ -107,6 +116,16 @@
     <fileIndentOptionsProvider implementation="org.jetbrains.vuejs.lang.html.psi.formatter.VueFileIndentOptionsProvider"
                                id="vue" order="before html"/>
 
+    <!-- we store settings under ts since there is only ts server specific options there -->
+    <projectConfigurable parentId="settings.typescriptcompiler"
+                         instance="org.jetbrains.vuejs.options.VueConfigurable"
+                         id="settings.vue"
+                         bundle="messages.VueBundle"
+                         key="vue.configurable.title"
+                         nonDefaultProject="true"
+    />
+
+    <projectService serviceImplementation="org.jetbrains.vuejs.options.VueSettings" />
 
     <postStartupActivity implementation="org.jetbrains.vuejs.lang.html.psi.arrangement.VueArrangementSettingsMigration"/>
 
@@ -191,11 +210,14 @@
                        order="before JSConfigurationInjector, before WebSymbolsHtmlText, after TemporaryPlacesInjector"
                        id="VueInjector"/>
 
-    <internalFileTemplate name="Vue Single File Component"/>
+    <internalFileTemplate name="Vue Composition API Component"/>
+    <internalFileTemplate name="Vue Options API Component"/>
+    <internalFileTemplate name="Vue Class API Component"/>
+
     <createFromTemplateHandler implementation="org.jetbrains.vuejs.VueCreateFromTemplateHandler"/>
+    <defaultTemplatePropertiesProvider implementation="org.jetbrains.vuejs.VueDefaultTemplatePropertiesProvider"/>
 
     <spellchecker.bundledDictionaryProvider implementation="org.jetbrains.vuejs.spellchecker.VueSpellcheckingDictionaryProvider"/>
-    <spellchecker.support language="Vue" implementationClass="org.jetbrains.vuejs.spellchecker.VueSpellcheckingStrategy"/>
 
     <liveTemplateContext contextId="Vue" implementation="org.jetbrains.vuejs.liveTemplate.VueBaseLiveTemplateContextType"/>
     <liveTemplateContext contextId="VUE_SCRIPT" baseContextId="Vue"
@@ -209,7 +231,7 @@
     <liveTemplateContext contextId="VUE_TOP_LEVEL" baseContextId="Vue"
                          implementation="org.jetbrains.vuejs.liveTemplate.VueTopLevelLiveTemplateContextType"/>
     <defaultLiveTemplates file="liveTemplates/Vue"/>
-    <referencesSearch implementation="org.jetbrains.vuejs.findUsages.VueJSReferenceSearcher"/>
+    <referencesSearch implementation="org.jetbrains.vuejs.findUsages.VueReferenceSearcher"/>
     <completion.contributor language="any"
                             implementationClass="org.jetbrains.vuejs.codeInsight.VueCompletionContributor"
                             id="VueCompletionContributor"
@@ -223,25 +245,27 @@
     <highlightingPassFactory
       implementation="org.jetbrains.vuejs.lang.typescript.service.VueTypeScriptServiceHighlightingPassFactoryRegistrar"/>
     <lang.formatter language="Vue" implementationClass="org.jetbrains.vuejs.lang.html.psi.formatter.VueFormattingModelBuilder"/>
-    <lang.formatter language="VueJS" implementationClass="org.jetbrains.vuejs.lang.expr.psi.formatter.VueJSFormattingModelBuilder"/>
+    <lang.formatter language="VueExpr" implementationClass="org.jetbrains.vuejs.lang.expr.psi.formatter.VueExprFormattingModelBuilder"/>
     <lang.rearranger language="Vue" implementationClass="org.jetbrains.vuejs.lang.html.psi.arrangement.VueRearranger"/>
     <multiLangCommenter implementation="org.jetbrains.vuejs.editor.VueCommenterProvider"/>
 
     <lang.syntaxHighlighterFactory language="VueJS"
                                    implementationClass="org.jetbrains.vuejs.lang.expr.highlighting.VueJSHighlighterFactory"/>
-    <idIndexer filetype="Vue" implementationClass="org.jetbrains.vuejs.lang.html.index.VueIdIndexer"/>
-    <todoIndexer filetype="Vue" implementationClass="org.jetbrains.vuejs.lang.html.index.VueTodoIndexer"/>
+    <lang.syntaxHighlighterFactory language="VueTS"
+                                   implementationClass="org.jetbrains.vuejs.lang.expr.highlighting.VueTSHighlighterFactory"/>
+    <idIndexer filetype="Vue.js" implementationClass="org.jetbrains.vuejs.lang.html.index.VueIdIndexer"/>
+    <todoIndexer filetype="Vue.js" implementationClass="org.jetbrains.vuejs.lang.html.index.VueTodoIndexer"/>
 
-    <codeInsight.parameterInfo language="VueJS" implementationClass="com.intellij.javascript.JSParameterInfoHandler"/>
+    <codeInsight.parameterInfo language="VueExpr" implementationClass="com.intellij.javascript.JSParameterInfoHandler"/>
     <codeInsight.parameterNameHints language="Vue"
-                                    implementationClass="org.jetbrains.vuejs.editor.VueJSInlayParameterHintsProvider"/>
+                                    implementationClass="org.jetbrains.vuejs.editor.VueInlayParameterHintsProvider"/>
 
     <eslint.ruleMappersFactory implementation="org.jetbrains.vuejs.libraries.eslint.VueEslintRuleMappersFactory"/>
 
     <psi.symbolReferenceProvider hostElementClass="com.intellij.psi.xml.XmlAttributeValue"
                                  hostLanguage="HtmlCompatible"
                                  implementationClass="org.jetbrains.vuejs.web.VueDeprecatedSlotAttributeReferenceProvider"
-                                 anyReferenceClass="true"
+                                 referenceClass="com.intellij.webSymbols.references.WebSymbolReference"
                                  targetClass="com.intellij.webSymbols.WebSymbol"/>
     <rename.symbolRenameTargetFactory implementation="org.jetbrains.vuejs.web.VueSymbolRenameTargetFactory"/>
     <webSymbols.declarationProvider implementation="org.jetbrains.vuejs.web.VueSymbolDeclarationProvider"/>
@@ -263,15 +287,16 @@
     <webSymbols.webTypes source="web-types/vue@2.7.0.web-types.json"/>
     <webSymbols.webTypes source="web-types/vue@3.0.0.web-types.json"/>
     <webSymbols.webTypes source="web-types/vue@3.1.0.web-types.json"/>
-    <webSymbols.webTypes source="web-types/vue@3.2.0.web-types.json" enableByDefault="true"/>
+    <webSymbols.webTypes source="web-types/vue@3.2.0.web-types.json"/>
+    <webSymbols.webTypes source="web-types/vue@3.3.0.web-types.json" enableByDefault="true"/>
     <webSymbols.webTypes source="web-types/vue-i18n@0.0.0.web-types.json"/>
     <webSymbols.webTypes source="web-types/vue-contexts@0.0.0.web-types.json" enableByDefault="true"/>
 
-    <webSymbols.registryExtension implementation="org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension" id="vue"/>
-    <webSymbols.registryExtension implementation="org.jetbrains.vuejs.libraries.i18n.VueI18NRegistryExtension"
-                                          id="vue-i18n"/>
+    <webSymbols.queryConfigurator implementation="org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator" id="vue"/>
+    <webSymbols.queryConfigurator implementation="org.jetbrains.vuejs.libraries.i18n.VueI18NQueryConfigurator"
+                                  id="vue-i18n"/>
 
-    <webSymbols.scopeProvider implementation="org.jetbrains.vuejs.web.VueWebSymbolsScope$Provider"/>
+    <webSymbols.queryResultsCustomizerFactory implementation="org.jetbrains.vuejs.web.VueWebSymbolsQueryResultsCustomizer$Provider"/>
     <webSymbols.webTypes.filter name="vue-bind" implementation="org.jetbrains.vuejs.web.VueBindFilter"/>
     <webSymbols.codeCompletionItemCustomizer
       implementation="org.jetbrains.vuejs.web.VueSymbolsCodeCompletionItemCustomizer"/>
@@ -324,7 +349,7 @@
                                  id="css-modules"/>
 
     <lang.documentationProvider implementationClass="org.jetbrains.vuejs.codeInsight.documentation.VueDocumentationProvider"
-                                language="VueJS"/>
+                                language="VueExpr"/>
   </extensions>
   <actions>
     <action class="org.jetbrains.vuejs.CreateVueSingleFileComponentAction" id="CreateVueSingleFileComp">
@@ -339,16 +364,23 @@
     <elementScopeProvider implementation="org.jetbrains.vuejs.VueElementResolveScopeProvider"/>
     <indexedFileTypeProvider implementation="org.jetbrains.vuejs.lang.html.VueIndexedFileTypeProvider"/>
 
-    <frameworkIndexingHandler implementation="org.jetbrains.vuejs.index.VueFrameworkHandler" version="23"/>
+    <frameworkIndexingHandler implementation="org.jetbrains.vuejs.index.VueFrameworkHandler" version="25"/>
     <frameworkIndexingHandler implementation="org.jetbrains.vuejs.libraries.vuex.index.VuexFrameworkHandler" version="7"/>
     <frameworkIndexingHandler implementation="org.jetbrains.vuejs.libraries.templateLoader.TemplateLoaderFrameworkHandler" version="1"/>
 
-    <intentionAndInspectionFilter language="VueJS" implementationClass="org.jetbrains.vuejs.inspections.VueInspectionFilter"/>
-    <inheritedLanguagesConfigurableProvider language="VueJS"
-                                            implementationClass="org.jetbrains.vuejs.codeInsight.VueJSLanguageConfigurableProvider"/>
+    <intentionAndInspectionFilter language="VueExpr" implementationClass="org.jetbrains.vuejs.inspections.VueInspectionFilter"/>
+    <inheritedLanguagesConfigurableProvider language="VueExpr"
+                                            implementationClass="org.jetbrains.vuejs.codeInsight.VueExprLanguageConfigurableProvider"/>
     <dialectSpecificHandlersFactory language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory"/>
-    <dialectSpecificHandlersFactory language="Vue" implementationClass="org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory"/>
+    <dialectSpecificHandlersFactory language="VueTS" implementationClass="org.jetbrains.vuejs.codeInsight.VueTSSpecificHandlersFactory"/>
+    <dialectSpecificHandlersFactory language="Vue"
+                                    implementationClass="org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory"/> <!-- control flow only, refactor -->
     <handlersFactory language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.VueJSHandlersFactory"/>
+    <handlersFactory language="VueTS" implementationClass="org.jetbrains.vuejs.codeInsight.VueTSHandlersFactory"/>
+    <handlersFactory language="Vue"
+                     implementationClass="org.jetbrains.vuejs.codeInsight.VueJSHandlersFactory"/> <!-- JSImportOnCopyCollectors -->
+    <analysisHandlersFactory language="VueJS" implementationClass="org.jetbrains.vuejs.inspections.VueJSAnalysisHandlersFactory"/>
+    <analysisHandlersFactory language="VueTS" implementationClass="org.jetbrains.vuejs.inspections.VueTSAnalysisHandlersFactory"/>
     <frameworkSpecificHandler language="JavaScript"
                               implementationClass="org.jetbrains.vuejs.libraries.nuxt.codeInsight.NuxtFrameworkSpecificHandler"/>
     <frameworkSpecificHandler language="JavaScript"
@@ -357,13 +389,12 @@
                               implementationClass="org.jetbrains.vuejs.codeInsight.VueFrameworkInsideScriptSpecificHandler"/>
     <frameworkSpecificHandler language="JavaScript"
                               implementationClass="org.jetbrains.vuejs.libraries.vuex.codeInsight.VuexFrameworkSpecificHandler"/>
-    <analysisHandlersFactory implementationClass="org.jetbrains.vuejs.inspections.VueAnalysisHandlersFactory" language="VueJS"/>
     <tsImportResolver implementation="org.jetbrains.vuejs.lang.typescript.VueTypeScriptImportsResolverProvider" order="first"/>
     <importModulePathStrategy implementation="org.jetbrains.vuejs.lang.VueImportModulePathStrategy"/>
     <!--suppress PluginXmlValidity -->
     <languageServiceProvider order="first" implementation="org.jetbrains.vuejs.lang.typescript.service.VueLanguageServiceProvider"/>
-    <importCandidatesFactory implementation="org.jetbrains.vuejs.codeInsight.VueScriptCandidatesProvider$Companion"/>
-    <importCandidatesFactory implementation="org.jetbrains.vuejs.codeInsight.VueComponentImportCandidatesProvider$Companion"/>
+    <importCandidatesFactory implementation="org.jetbrains.vuejs.codeInsight.imports.VueScriptCandidatesProviderFactory"/>
+    <importCandidatesFactory implementation="org.jetbrains.vuejs.codeInsight.imports.VueComponentImportCandidatesProviderFactory"/>
   </extensions>
 
   <extensions defaultExtensionNs="intellij.webpack">

@@ -7,7 +7,7 @@
   <tree-modal-direct></tree-modal-direct>
   <ComplexModalDirect></ComplexModalDirect>
   <default-modal-direct></default-modal-direct>
-  {{ printString(<weak_warning descr="Argument type 12 is not assignable to parameter type string">Bar</weak_warning>) + printString(<weak_warning descr="Argument type 12 is not assignable to parameter type string">Foo</weak_warning>) }}
+  {{ printString(<error descr="Argument type 12 is not assignable to parameter type string">Bar</error>) + printString(<error descr="Argument type 12 is not assignable to parameter type string">Foo</error>) }}
 
   <TabGroup>
     <TabList>

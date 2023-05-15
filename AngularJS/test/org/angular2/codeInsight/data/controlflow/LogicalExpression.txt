@@ -1,0 +1,15 @@
+0(1) element: null
+1(2) element: JSReferenceExpression Read(isString)
+2(3) element: JSReferenceExpression Read(bar)
+3(4,5) element: JSCallExpression
+4(6) element: JSCallExpression condition: true, reachable
+5(11) element: JSCallExpression condition: false, reachable
+6(7) element: JSBinaryExpression LOGICAL_EXPRESSION (branch) true
+7(8) element: JSReferenceExpression Read(bar)
+8(9,10) element: JSReferenceExpression Read(length)
+9(11) element: JSReferenceExpression condition: true, reachable
+10(11) element: JSReferenceExpression condition: false, reachable
+11(12) element: JSBinaryExpression
+12(13) element: JSReferenceExpression Read(bar)
+13(14) element: JSReferenceExpression Read(length)
+14() element: null

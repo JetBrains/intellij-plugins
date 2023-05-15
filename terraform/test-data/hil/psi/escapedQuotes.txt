@@ -1,0 +1,6 @@
+HILFile: a.hil
+  ILExpressionHolder
+    PsiElement(${)('${')
+    ILLiteral
+      PsiElement(DOUBLE_QUOTED_STRING)('"\"x\""')
+    PsiElement(})('}')

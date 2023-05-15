@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.lang.expr.psi.impl
 
 import com.intellij.lang.ASTNode
+import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.impl.JSVariableImpl
@@ -11,18 +12,18 @@ import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator
 import com.intellij.lang.javascript.psi.resolve.JSTypeProcessor
 import com.intellij.lang.javascript.psi.stubs.JSVariableStubBase
 import com.intellij.lang.javascript.psi.types.*
-import com.intellij.lang.javascript.psi.types.primitives.JSNumberType
-import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveType
-import com.intellij.lang.javascript.psi.types.primitives.JSStringType
+import com.intellij.lang.javascript.psi.types.primitives.*
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
-import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForExpression
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForVariable
 
-class VueJSVForVariableImpl(node: ASTNode) : JSVariableImpl<JSVariableStubBase<JSVariable>, JSVariable>(node), VueJSVForVariable, JSEvaluableElement {
+class VueJSVForVariableImpl(node: ASTNode) :
+  JSVariableImpl<JSVariableStubBase<JSVariable>, JSVariable>(node),
+  VueJSVForVariable,
+  JSEvaluableElement {
 
   override fun hasBlockScope(): Boolean = true
 
@@ -48,22 +49,18 @@ class VueJSVForVariableImpl(node: ASTNode) : JSVariableImpl<JSVariableStubBase<J
       0 -> {
         val destructuringParents = JSTypeEvaluator.findDestructuringParents(this)
         val expression = evaluateContext.processedExpression
-        val type = when (val collectionType = JSResolveUtil.getElementJSType(collectionExpr)?.substitute()) {
+        val type = when (val collectionType = removeNullAndUndefinedFromUnion(JSResolveUtil.getElementJSType(collectionExpr)?.substitute())) {
           is JSStringType -> getVForVarType(collectionExpr, ::JSStringType)
           is JSNumberType -> getVForVarType(collectionExpr, ::JSNumberType)
           is JSType -> {
             val type = JSTypeUtils.getIterableComponentType(collectionType)
             when {
               type != null -> type
-              useTypeScriptKeyofType(collectionType) -> {
-                val keyOfType = JSCompositeTypeFactory.createKeyOfType(collectionType, collectionType.source)
-                val indexedAccessType = JSCompositeTypeFactory.createIndexedAccessType(collectionType, keyOfType, collectionType.source)
-                JSWidenType.createWidening(indexedAccessType, null)
-              }
+              collectionType is JSRecordType -> createIndexedAccessType(collectionType)
               else -> {
                 val typeEvaluator = JSDialectSpecificHandlersFactory.forElement(collectionExpr).newTypeEvaluator(evaluateContext)
                 val componentTypeFromArrayExpression = typeEvaluator.getComponentTypeFromArrayExpression(expression, collectionExpr)
-                getVForVarType(collectionExpr, *componentTypeFromArrayExpression.toTypedArray())
+                getVForVarType(collectionExpr, *componentTypeFromArrayExpression.map { preprocessItemType(it) }.toTypedArray())
               }
             }
           }
@@ -75,11 +72,14 @@ class VueJSVForVariableImpl(node: ASTNode) : JSVariableImpl<JSVariableStubBase<J
         }
       }
       1 -> {
-        val collectionType = JSResolveUtil.getElementJSType(collectionExpr)?.substitute()
+        val collectionType = removeNullAndUndefinedFromUnion(JSResolveUtil.getElementJSType(collectionExpr)?.substitute())
         val type: JSType? = if (collectionType == null || JSTypeUtils.isAnyType(collectionType)) {
           getVForVarType(collectionExpr, ::JSStringType, ::JSNumberType)
         }
-        else if (JSTypeUtils.isArrayLikeType(collectionType) || collectionType is JSPrimitiveType) {
+        else if (JSTypeUtils.isArrayLikeType(collectionType) ||
+                 collectionType is JSPrimitiveType ||
+                 (collectionType is JSUnionType &&
+                  collectionType.types.all { JSTypeUtils.isArrayLikeType(it) || it is JSPrimitiveType })) {
           getVForVarType(collectionExpr, ::JSNumberType)
         }
         else {
@@ -92,8 +92,7 @@ class VueJSVForVariableImpl(node: ASTNode) : JSVariableImpl<JSVariableStubBase<J
 
             when {
               indexerTypes.isNotEmpty() -> getVForVarType(collectionExpr, *indexerTypes.toTypedArray())
-              useTypeScriptKeyofType(collectionType) ->
-                JSCompositeTypeFactory.createKeyOfType(collectionType, collectionType.source)
+              useKeyOfForIndexParam(collectionType) -> JSCompositeTypeFactory.createKeyOfType(collectionType, collectionType.source)
               else -> getVForVarType(collectionExpr, ::JSStringType, ::JSNumberType)
             }
           }
@@ -108,18 +107,44 @@ class VueJSVForVariableImpl(node: ASTNode) : JSVariableImpl<JSVariableStubBase<J
     return true
   }
 
+  private fun removeNullAndUndefinedFromUnion(type: JSType?): JSType? =
+    if (type is JSUnionType)
+      JSCompositeTypeFactory.createUnionType(
+        type.source,
+        type.types.filter { it !is JSUndefinedType && it !is JSNullType }
+      )
+    else
+      type
+
+  private fun createIndexedAccessType(collectionType: JSType): JSType {
+    val keyOfType = JSCompositeTypeFactory.createKeyOfType(collectionType, collectionType.source)
+    val indexedAccessType = JSCompositeTypeFactory.createIndexedAccessType(collectionType, keyOfType, collectionType.source)
+    return JSWidenType.createWidening(indexedAccessType, null)
+  }
+
   private fun getVForVarType(source: PsiElement, vararg types: (Boolean, JSTypeSource, JSTypeContext) -> JSType): JSType? {
-    val typeSource = JSTypeSourceFactory.createTypeSource(source, false)
+    val typeSource = JSTypeSourceFactory.createTypeSource(source, DialectDetector.isTypeScript(source))
     return getVForVarType(source, *types.map { it(true, typeSource, JSTypeContext.INSTANCE) }.toTypedArray())
   }
 
   private fun getVForVarType(source: PsiElement, vararg types: JSType): JSType? {
-    val typeSource = JSTypeSourceFactory.createTypeSource(source, false)
-    return (JSTupleTypeImpl(typeSource, types.toMutableList(), emptyList(), false, 0, false).toArrayType(false) as JSArrayType).type
+    val typeSource = JSTypeSourceFactory.createTypeSource(source, DialectDetector.isTypeScript(source))
+    val tupleType = JSTupleTypeImpl(typeSource, types.toMutableList(), emptyList(), false, 0, false)
+    return (tupleType.toArrayType(false) as JSArrayType).type
   }
 
-  private fun useTypeScriptKeyofType(collectionType: JSType): Boolean {
-    return (collectionType.isTypeScript || collectionType.sourceElement?.language == VueJSLanguage.INSTANCE)
-           && collectionType is JSRecordType
+  private fun preprocessItemType(type: JSType): JSType {
+    if (type !is JSIterableComponentTypeImpl) {
+      return type
+    }
+
+    return when (val iterableType = type.iterableType) {
+      is JSNumberType, is JSStringType -> iterableType
+      is JSTypeImpl, is JSWrapperType -> createIndexedAccessType(iterableType.asRecordType())
+      else -> type
+    }
   }
+
+  private fun useKeyOfForIndexParam(collectionType: JSType): Boolean =
+    collectionType !is JSObjectType
 }

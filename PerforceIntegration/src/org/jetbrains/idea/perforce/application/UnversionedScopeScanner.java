@@ -22,9 +22,6 @@ import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import java.io.File;
 import java.util.*;
 
-/**
- * @author Irina Chernushina
- */
 public abstract class UnversionedScopeScanner {
   private static final Logger LOG = Logger.getInstance(UnversionedScopeScanner.class);
   private final Project myProject;

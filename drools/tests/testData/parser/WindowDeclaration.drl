@@ -1,0 +1,24 @@
+dialect "mvel"
+
+declare Candle
+  @role(event)
+  @timestamp(closeTime)
+end
+
+declare window CandleWindow
+  Candle() over window:length(12)
+end
+
+declare window CandleWindow2
+  Candle() over window:time(12m)
+end
+
+rule "stream test"
+  salience 100
+  when
+    Number($d : doubleValue) from accumulate(
+      Candle($close : close) from window CandleWindow,
+      average($close))
+  then
+    System.out.println($d);
+  end

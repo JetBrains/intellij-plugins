@@ -1,0 +1,27 @@
+{
+  ".schema_version": "2",
+  ".sdk_type": "builtin",
+  "name": "atlas",
+  "type": "backend",
+  "version": "v0.13.0-beta3",
+  "schema": {
+    "access_token": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Access token to use to access Terraform Enterprise; the ATLAS_TOKEN environment variable is used if this argument is not set",
+      "ConfigImplicitMode": "Attr"
+    },
+    "address": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Base URL for your Terraform Enterprise installation; the ATLAS_ADDRESS environment variable is used if this argument is not set, finally falling back to a default of 'https://atlas.hashicorp.com/' if neither are set.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "name": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Full name of the environment in Terraform Enterprise, such as 'myorg/myenv'",
+      "ConfigImplicitMode": "Attr"
+    }
+  }
+}

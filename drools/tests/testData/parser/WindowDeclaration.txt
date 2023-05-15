@@ -1,0 +1,221 @@
+Drools File
+  ATTRIBUTE
+    PsiElement(dialect)('dialect')
+    PsiWhiteSpace(' ')
+    STRING_LITERAL
+      PsiElement(STRING_TOKEN)('"mvel"')
+  PsiWhiteSpace('\n\n')
+  DECLARE_STATEMENT
+    PsiElement(declare)('declare')
+    PsiWhiteSpace(' ')
+    TYPE_DECLARATION
+      TYPE_NAME
+        QUALIFIED_NAME
+          QUALIFIED_IDENTIFIER
+            IDENTIFIER
+              PsiElement(JAVA_IDENTIFIER)('Candle')
+      PsiWhiteSpace('\n  ')
+      ANNOTATION
+        PsiElement(@)('@')
+        IDENTIFIER
+          PsiElement(JAVA_IDENTIFIER)('role')
+        CHUNK
+          PsiElement(()('(')
+          PsiElement(CHUNK_BLOCK)('event')
+          PsiElement())(')')
+      PsiWhiteSpace('\n  ')
+      ANNOTATION
+        PsiElement(@)('@')
+        IDENTIFIER
+          PsiElement(JAVA_IDENTIFIER)('timestamp')
+        CHUNK
+          PsiElement(()('(')
+          PsiElement(CHUNK_BLOCK)('closeTime')
+          PsiElement())(')')
+    PsiWhiteSpace('\n')
+    PsiElement(end)('end')
+  PsiWhiteSpace('\n\n')
+  DECLARE_STATEMENT
+    PsiElement(declare)('declare')
+    PsiWhiteSpace(' ')
+    WINDOW_DECLARATION
+      PsiElement(window)('window')
+      PsiWhiteSpace(' ')
+      SIMPLE_NAME
+        IDENTIFIER
+          PsiElement(JAVA_IDENTIFIER)('CandleWindow')
+      PsiWhiteSpace('\n  ')
+      LHS_PATTERN_BIND
+        LHS_PATTERN
+          LHS_PATTERN_TYPE
+            QUALIFIED_IDENTIFIER
+              IDENTIFIER
+                PsiElement(JAVA_IDENTIFIER)('Candle')
+          PsiElement(()('(')
+          PsiElement())(')')
+          PsiWhiteSpace(' ')
+          PATTERN_FILTER
+            PsiElement(over)('over')
+            PsiWhiteSpace(' ')
+            PsiElement(window)('window')
+            PsiElement(:)(':')
+            PsiElement(JAVA_IDENTIFIER)('length')
+            PsiElement(()('(')
+            NUMBER_LITERAL
+              PsiElement(INT_TOKEN)('12')
+            PsiElement())(')')
+    PsiWhiteSpace('\n')
+    PsiElement(end)('end')
+  PsiWhiteSpace('\n\n')
+  DECLARE_STATEMENT
+    PsiElement(declare)('declare')
+    PsiWhiteSpace(' ')
+    WINDOW_DECLARATION
+      PsiElement(window)('window')
+      PsiWhiteSpace(' ')
+      SIMPLE_NAME
+        IDENTIFIER
+          PsiElement(JAVA_IDENTIFIER)('CandleWindow2')
+      PsiWhiteSpace('\n  ')
+      LHS_PATTERN_BIND
+        LHS_PATTERN
+          LHS_PATTERN_TYPE
+            QUALIFIED_IDENTIFIER
+              IDENTIFIER
+                PsiElement(JAVA_IDENTIFIER)('Candle')
+          PsiElement(()('(')
+          PsiElement())(')')
+          PsiWhiteSpace(' ')
+          PATTERN_FILTER
+            PsiElement(over)('over')
+            PsiWhiteSpace(' ')
+            PsiElement(window)('window')
+            PsiElement(:)(':')
+            PsiElement(JAVA_IDENTIFIER)('time')
+            PsiElement(()('(')
+            STRING_SEQUENCE
+              PsiElement(STRING_IDENTIFIER)('12m')
+            PsiElement())(')')
+    PsiWhiteSpace('\n')
+    PsiElement(end)('end')
+  PsiWhiteSpace('\n\n')
+  RULE_STATEMENT
+    PsiElement(rule)('rule')
+    PsiWhiteSpace(' ')
+    RULE_NAME
+      STRING_ID
+        PsiElement(STRING_TOKEN)('"stream test"')
+    PsiWhiteSpace('\n  ')
+    RULE_ATTRIBUTES
+      ATTRIBUTE
+        PsiElement(salience)('salience')
+        PsiWhiteSpace(' ')
+        NUMBER_LITERAL
+          PsiElement(INT_TOKEN)('100')
+    PsiWhiteSpace('\n  ')
+    LHS
+      PsiElement(when)('when')
+      PsiWhiteSpace('\n    ')
+      LHS_EXPRESSION
+        LHS_OR
+          LHS_AND
+            LHS_UNARY
+              LHS_PATTERN_BIND
+                LHS_PATTERN
+                  LHS_PATTERN_TYPE
+                    QUALIFIED_IDENTIFIER
+                      IDENTIFIER
+                        PsiElement(JAVA_IDENTIFIER)('Number')
+                  PsiElement(()('(')
+                  CONSTRAINT
+                    UNARY_ASSIGN_EXPR
+                      NAME_ID
+                        PsiElement(JAVA_IDENTIFIER)('$d')
+                      PsiWhiteSpace(' ')
+                      PsiElement(:)(':')
+                      PsiWhiteSpace(' ')
+                      PRIMARY_EXPR
+                        IDENTIFIER
+                          PsiElement(JAVA_IDENTIFIER)('doubleValue')
+                  PsiElement())(')')
+                  PsiWhiteSpace(' ')
+                  PATTERN_SOURCE
+                    PsiElement(from)('from')
+                    PsiWhiteSpace(' ')
+                    FROM_ACCUMULATE
+                      PsiElement(accumulate)('accumulate')
+                      PsiElement(()('(')
+                      PsiWhiteSpace('\n      ')
+                      LHS_AND
+                        LHS_UNARY
+                          LHS_PATTERN_BIND
+                            LHS_PATTERN
+                              LHS_PATTERN_TYPE
+                                QUALIFIED_IDENTIFIER
+                                  IDENTIFIER
+                                    PsiElement(JAVA_IDENTIFIER)('Candle')
+                              PsiElement(()('(')
+                              CONSTRAINT
+                                UNARY_ASSIGN_EXPR
+                                  NAME_ID
+                                    PsiElement(JAVA_IDENTIFIER)('$close')
+                                  PsiWhiteSpace(' ')
+                                  PsiElement(:)(':')
+                                  PsiWhiteSpace(' ')
+                                  PRIMARY_EXPR
+                                    IDENTIFIER
+                                      PsiElement(JAVA_IDENTIFIER)('close')
+                              PsiElement())(')')
+                              PsiWhiteSpace(' ')
+                              PATTERN_SOURCE
+                                PsiElement(from)('from')
+                                PsiWhiteSpace(' ')
+                                FROM_WINDOW
+                                  PsiElement(window)('window')
+                                  PsiWhiteSpace(' ')
+                                  WINDOW_ID
+                                    PsiElement(JAVA_IDENTIFIER)('CandleWindow')
+                      PsiElement(,)(',')
+                      PsiWhiteSpace('\n      ')
+                      ACCUMULATE_FUNCTION
+                        FUNCTION_NAME
+                          PsiElement(JAVA_IDENTIFIER)('average')
+                        ACCUMULATE_PARAMETERS
+                          PsiElement(()('(')
+                          PRIMARY_EXPR
+                            IDENTIFIER
+                              PsiElement(JAVA_IDENTIFIER)('$close')
+                          PsiElement())(')')
+                      PsiElement())(')')
+    PsiWhiteSpace('\n  ')
+    RHS
+      PsiElement(then)('then')
+      PsiWhiteSpace('\n    ')
+      JAVA_RHS_STATEMENT
+        DroolsCompositeJavaStatementElement(JAVA_STATEMENT)
+          PsiExpressionStatement
+            PsiMethodCallExpression:System.out.println($d)
+              PsiReferenceExpression:System.out.println
+                PsiReferenceExpression:System.out
+                  PsiReferenceExpression:System
+                    PsiReferenceParameterList
+                      <empty list>
+                    PsiIdentifier:System('System')
+                  PsiJavaToken:DOT('.')
+                  PsiReferenceParameterList
+                    <empty list>
+                  PsiIdentifier:out('out')
+                PsiJavaToken:DOT('.')
+                PsiReferenceParameterList
+                  <empty list>
+                PsiIdentifier:println('println')
+              PsiExpressionList
+                PsiJavaToken:LPARENTH('(')
+                PsiReferenceExpression:$d
+                  PsiReferenceParameterList
+                    <empty list>
+                  PsiIdentifier:$d('$d')
+                PsiJavaToken:RPARENTH(')')
+            PsiJavaToken:SEMICOLON(';')
+          PsiWhiteSpace('\n  ')
+    PsiElement(end)('end')

@@ -11,8 +11,7 @@ public class FlashUmlEdgeCreationPolicy extends DiagramEdgeCreationPolicy<Object
 
   @Override
   public boolean acceptSource(@NotNull final DiagramNode<Object> source) {
-    if (!(source.getIdentifyingElement() instanceof JSClass)) return false;
-    final JSClass clazz = (JSClass)source.getIdentifyingElement();
+    if (!(source.getIdentifyingElement() instanceof JSClass clazz)) return false;
     JSAttributeList attributeList = clazz.getAttributeList();
     if (attributeList != null && attributeList.hasModifier(JSAttributeList.ModifierType.FINAL)) return false;
     if (JSProjectUtil.isInLibrary(clazz)) return false;
@@ -21,8 +20,7 @@ public class FlashUmlEdgeCreationPolicy extends DiagramEdgeCreationPolicy<Object
 
   @Override
   public boolean acceptTarget(@NotNull final DiagramNode<Object> target) {
-    if (!(target.getIdentifyingElement() instanceof JSClass)) return false;
-    final JSClass clazz = (JSClass)target.getIdentifyingElement();
+    if (!(target.getIdentifyingElement() instanceof JSClass clazz)) return false;
     JSAttributeList attributeList = clazz.getAttributeList();
     if (attributeList != null && attributeList.hasModifier(JSAttributeList.ModifierType.FINAL)) return false;
     return true;

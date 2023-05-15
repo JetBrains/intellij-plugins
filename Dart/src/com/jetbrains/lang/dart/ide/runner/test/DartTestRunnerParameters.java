@@ -87,12 +87,12 @@ public class DartTestRunnerParameters extends DartCommandLineRunnerParameters im
     /**
      * @deprecated GROUP_OR_TEST_BY_NAME used instead
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     GROUP(new Computable.PredefinedValueComputable<>("Test group")),
     /**
      * @deprecated GROUP_OR_TEST_BY_NAME used instead
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     METHOD(new Computable.PredefinedValueComputable<>("Test name")),
     GROUP_OR_TEST_BY_NAME(DartBundle.messagePointer("test.mode.test.group.or.test.by.name")),
     MULTIPLE_NAMES(new Computable.PredefinedValueComputable<>("")); // Used by test re-runner action; not visible in UI

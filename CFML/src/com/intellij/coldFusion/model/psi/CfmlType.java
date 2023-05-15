@@ -21,9 +21,6 @@ import com.intellij.psi.PsiTypeVisitor;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlType extends PsiType {
   private final String myName;
 

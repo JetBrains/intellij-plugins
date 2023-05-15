@@ -60,6 +60,14 @@ class VueRenameTest : BasePlatformTestCase() {
     doTest("newName")
   }
 
+  fun testQualifiedWatchProperty() {
+    doTest("newName")
+  }
+
+  fun testWatchProperty() {
+    doTest("newName")
+  }
+
   fun testInlineFieldRename() {
     myFixture.configureByFile("inlineField.vue")
     CodeInsightTestUtil.doInlineRename(VariableInplaceRenameHandler(), "foo", myFixture)
@@ -124,6 +132,24 @@ class VueRenameTest : BasePlatformTestCase() {
     myFixture.moveToOffsetBySignature("v-f<caret>oo")
     myFixture.renameWebSymbol("bar")
     checkResultByDir("createAppDirective_after")
+  }
+
+  fun testNamespacedComponents() {
+    myFixture.copyDirectoryToProject("../completion/namespacedComponents", ".")
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.configureFromTempProjectFile("scriptSetup.vue")
+    myFixture.type("Forms.FooBars.Input")
+    myFixture.moveToOffsetBySignature(".In<caret>put")
+    myFixture.renameWebSymbol("NewName")
+    checkResultByDir("namespacedComponents_after")
+  }
+
+  fun testCompositionApiLocalDirective() {
+    myFixture.copyDirectoryToProject(getTestName(true), ".")
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.configureFromTempProjectFile("scriptSetup.vue")
+    myFixture.renameWebSymbol("vNewName")
+    checkResultByDir("${getTestName(true)}_after")
   }
 
   private fun doTest(newName: String, usingHandler: Boolean = false) {

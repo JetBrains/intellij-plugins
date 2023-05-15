@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.vuelidate
 
+import com.intellij.javascript.web.js.WebJSResolveUtil.resolveSymbolFromNodeModule
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSTypeUtils
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
@@ -8,7 +9,6 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
 import com.intellij.lang.javascript.psi.resolve.generic.JSTypeSubstitutorImpl
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
-import org.jetbrains.vuejs.codeInsight.resolveSymbolFromNodeModule
 import org.jetbrains.vuejs.index.VUE_INSTANCE_MODULE
 import org.jetbrains.vuejs.model.VueInstanceOwner
 import org.jetbrains.vuejs.model.createImplicitPropertySignature

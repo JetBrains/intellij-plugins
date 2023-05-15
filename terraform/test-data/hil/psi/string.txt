@@ -1,0 +1,12 @@
+HILFile: a.hil
+  ILExpressionHolder
+    PsiElement(${)('${')
+    ILMethodCallExpression
+      ILVariable
+        PsiElement(ID)('file')
+      ILParameterList
+        PsiElement(()('(')
+        ILLiteral
+          PsiElement(DOUBLE_QUOTED_STRING)('"ecs-container-definitions.json"')
+        PsiElement())(')')
+    PsiElement(})('}')

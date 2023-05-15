@@ -1,0 +1,9 @@
+HCLFile: Terraform_With_String_In_IL.tf
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('container_definitions')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLStringLiteral
+      PsiElement(DOUBLE_QUOTED_STRING)('"${file("ecs-container-definitions.json")}"')

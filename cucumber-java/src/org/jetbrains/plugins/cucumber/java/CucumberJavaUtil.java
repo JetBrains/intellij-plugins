@@ -87,7 +87,7 @@ public final class CucumberJavaUtil {
     return !expression.startsWith("^") && !expression.endsWith("$") && !SCRIPT_STYLE_REGEXP.matcher(expression).find();
   }
 
-  private static String getCucumberAnnotationSuffix(@NotNull String name) {
+  private static @NotNull String getCucumberAnnotationSuffix(@NotNull String name) {
     for (String pkg : CUCUMBER_ANNOTATION_PACKAGES) {
       if (name.startsWith(pkg)) {
         return name.substring(pkg.length());
@@ -378,12 +378,10 @@ public final class CucumberJavaUtil {
       if (element == null) {
         continue;
       }
-      if (element.getParent() instanceof PsiNewExpression) {
-        PsiNewExpression newExpression = (PsiNewExpression)element.getParent();
+      if (element.getParent() instanceof PsiNewExpression newExpression) {
         processParameterTypeFromConstructor(values, declarations, newExpression);
       }
-      if (element.getParent() instanceof PsiMethodCallExpression ) {
-        PsiMethodCallExpression call = (PsiMethodCallExpression)element.getParent();
+      if (element.getParent() instanceof PsiMethodCallExpression call) {
 
         processParameterTypeMethodDeclaration(values, declarations, call);
       }
@@ -437,10 +435,9 @@ public final class CucumberJavaUtil {
       return;
     }
     PsiExpression enumClass = arguments[0];
-    if (!(enumClass instanceof PsiClassObjectAccessExpression)) {
+    if (!(enumClass instanceof PsiClassObjectAccessExpression objectAccessExpression)) {
       return;
     }
-    PsiClassObjectAccessExpression objectAccessExpression = (PsiClassObjectAccessExpression)enumClass;
     PsiClass psiClass = PsiUtil.resolveClassInClassTypeOnly(objectAccessExpression.getOperand().getType());
 
     if (psiClass == null || !psiClass.isEnum() || psiClass.getName() == null) {

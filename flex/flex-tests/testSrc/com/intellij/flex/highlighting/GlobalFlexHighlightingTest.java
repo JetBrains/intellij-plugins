@@ -1,11 +1,12 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.highlighting;
 
-import com.intellij.codeInsight.daemon.impl.DefaultHighlightVisitorBasedInspection;
+import com.intellij.codeInsight.daemon.impl.HighlightVisitorBasedInspection;
 import com.intellij.codeInspection.ex.InspectionToolRegistrar;
 import com.intellij.codeInspection.ex.InspectionToolWrapper;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.testFramework.JavaInspectionTestCase;
+import com.intellij.util.containers.ContainerUtil;
 
 import java.util.List;
 
@@ -17,18 +18,9 @@ public class GlobalFlexHighlightingTest extends JavaInspectionTestCase {
   }
 
   public void testAvailability() {
-    boolean foundSyntaxCheckInspection = false;
-    boolean foundAnnotatorInspection = false;
-
     List<InspectionToolWrapper<?, ?>> tools = InspectionToolRegistrar.getInstance().createTools();
-    for (InspectionToolWrapper tool : tools) {
-      String shortName = tool.getShortName();
-      foundAnnotatorInspection |= shortName.equals("Annotator");
-      foundSyntaxCheckInspection |= shortName.equals("SyntaxError");
-    }
-
-    assertTrue("Should have global syntax inspection provided", foundSyntaxCheckInspection);
-    assertTrue("Should have global annotator inspection provided", foundAnnotatorInspection);
+    assertNotNull("Should have 'Annotator' inspection configured", ContainerUtil.find(tools, tool -> tool.getShortName()
+      .equals(HighlightVisitorBasedInspection.SHORT_NAME)));
   }
 
   public void testReportingSyntaxProblemsInMxml() {
@@ -40,7 +32,7 @@ public class GlobalFlexHighlightingTest extends JavaInspectionTestCase {
   }
 
   private void doSyntaxErrorsTest() {
-    doTest(getTestName(false), new DefaultHighlightVisitorBasedInspection.SyntaxErrorInspection());
+    doTest(getTestName(false), new HighlightVisitorBasedInspection().setHighlightErrorElements(true));
   }
 
 /*

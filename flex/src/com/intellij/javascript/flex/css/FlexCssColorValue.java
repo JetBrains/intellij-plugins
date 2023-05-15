@@ -7,9 +7,6 @@ import com.intellij.xml.util.ColorMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Eugene.Kudelevsky
- */
 public class FlexCssColorValue extends CssColorValue {
   public FlexCssColorValue() {
     super(false);

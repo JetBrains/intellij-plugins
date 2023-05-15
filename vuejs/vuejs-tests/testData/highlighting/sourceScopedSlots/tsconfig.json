@@ -1,0 +1,55 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    // `baseUrl` must be placed on the extending configuration in devland, or paths won't be recognized
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    // Needed to address https://github.com/quasarframework/app-extension-typescript/issues/36
+    "noEmit": true,
+    "resolveJsonModule": true,
+    // Avoid cross-os errors due to inconsistent file casing
+    "forceConsistentCasingInFileNames": true,
+    "sourceMap": true,
+    "strict": true,
+    "target": "esnext",
+    "isolatedModules": true,
+    "useDefineForClassFields": true,
+    "jsx": "preserve",
+    "lib": ["esnext", "dom"],
+    "types": ["vite/client", "node"],
+    "baseUrl": ".",
+    "paths": {
+      "src/*": [
+        "src/*"
+      ],
+      "app/*": [
+        "*"
+      ],
+      "components/*": [
+        "src/components/*"
+      ],
+      "layouts/*": [
+        "src/layouts/*"
+      ],
+      "pages/*": [
+        "src/pages/*"
+      ],
+      "assets/*": [
+        "src/assets/*"
+      ],
+      "boot/*": [
+        "src/boot/*"
+      ],
+      "stores/*": [
+        "src/stores/*"
+      ]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.d.ts",
+    "**/*.tsx",
+    "**/*.vue"
+  ]
+}

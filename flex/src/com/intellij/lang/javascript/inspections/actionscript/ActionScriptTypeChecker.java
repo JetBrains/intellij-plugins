@@ -49,78 +49,74 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
     boolean isAssignable =
       checkExpressionIsAssignableToTypeAndReportError(expr, type, p, problemKey, null, true);
 
-    PsiElement _fun;
     if (isAssignable &&
         type != null && FUNCTION_CLASS_NAMES.contains(type.getResolvedTypeText()) &&
         p instanceof JSParameter &&
-        isAddEventListenerMethod((JSFunction)p.getParent().getParent()) &&
-        ((expr instanceof JSReferenceExpression &&
-          (_fun = ((JSReferenceExpression)expr).resolve()) instanceof JSFunction
-         ) ||
-         (
-           expr instanceof JSFunctionExpression &&
-           (_fun = expr) != null
-         )
-        )) {
-      JSFunction fun = (JSFunction)_fun;
-      JSParameterList parameterList = fun.getParameterList();
+        isAddEventListenerMethod((JSFunction)p.getParent().getParent())) {
+      JSFunction fun = 
+        expr instanceof JSReferenceExpression ref && ref.resolve() instanceof JSFunction fn ? fn :
+        expr instanceof JSFunctionExpression fn ? fn :
+        null;
+      if (fun != null) {
+        JSParameterList parameterList = fun.getParameterList();
 
-      if (parameterList != null) {
-        JSParameter[] parameters = parameterList.getParameterVariables();
-        boolean invalidArgs = parameters.length == 0;
+        if (parameterList != null) {
+          JSParameter[] parameters = parameterList.getParameterVariables();
+          boolean invalidArgs = parameters.length == 0;
 
-        if (!invalidArgs && parameters.length > 1) {
-          for (int i = parameters.length - 1; i > 0; --i) {
-            if (!parameters[i].isRest() && parameters[i].getInitializer() == null) {
-              invalidArgs = true;
-              break;
+          if (!invalidArgs && parameters.length > 1) {
+            for (int i = parameters.length - 1; i > 0; --i) {
+              if (!parameters[i].isRest() && parameters[i].getInitializer() == null) {
+                invalidArgs = true;
+                break;
+              }
             }
           }
-        }
 
 
-        if (invalidArgs) {
-          PsiElement expr_;
-          if (expr instanceof JSFunctionExpression) {
-            expr_ = ((JSFunctionExpression)expr).getParameterList();
-          }
-          else {
-            expr_ = expr;
-          }
-          registerProblem(
-            expr_,
-            FlexBundle.message("javascript.callback.signature.mismatch"),
-            ProblemHighlightType.WEAK_WARNING,
-            getChangeSignatureFixForEventListener(fun, expr)
-          );
-          return false;
-        }
-        else {
-          final JSClass expectedEventClass = calcNontrivialExpectedEventType(expr);
-          JSType paramType = parameters[0].getJSType();
-          final String actualParameterType = paramType != null ? paramType.getResolvedTypeText() : null;
-
-          if (expectedEventClass == null) {
-            if (!ActionScriptResolveUtil.isAssignableType(FlexCommonTypeNames.FLASH_EVENT_FQN, actualParameterType, parameters[0]) &&
-                !ActionScriptResolveUtil.isAssignableType(FlexCommonTypeNames.STARLING_EVENT_FQN, actualParameterType, parameters[0])) {
-              registerProblem(
-                expr instanceof JSFunctionExpression ? parameters[0] : expr,
-                FlexBundle.message("javascript.callback.signature.mismatch"),
-                ProblemHighlightType.WEAK_WARNING,
-                getChangeSignatureFixForEventListener(fun, expr)
-              );
-              return false;
+          if (invalidArgs) {
+            PsiElement expr_;
+            if (expr instanceof JSFunctionExpression) {
+              expr_ = ((JSFunctionExpression)expr).getParameterList();
             }
+            else {
+              expr_ = expr;
+            }
+            registerProblem(
+              expr_,
+              FlexBundle.message("javascript.callback.signature.mismatch"),
+              ProblemHighlightType.WEAK_WARNING,
+              getChangeSignatureFixForEventListener(fun, expr)
+            );
+            return false;
           }
           else {
-            if (!ActionScriptResolveUtil.isAssignableType(actualParameterType, expectedEventClass.getQualifiedName(), parameters[0])) {
-              registerProblem(
-                expr instanceof JSFunctionExpression ? parameters[0] : expr,
-                FlexBundle.message("javascript.callback.signature.mismatch.event.class", expectedEventClass.getQualifiedName()),
-                ProblemHighlightType.WEAK_WARNING,
-                getChangeSignatureFixForEventListener(fun, expr)
-              );
-              return false;
+            final JSClass expectedEventClass = calcNontrivialExpectedEventType(expr);
+            JSType paramType = parameters[0].getJSType();
+            final String actualParameterType = paramType != null ? paramType.getResolvedTypeText() : null;
+
+            if (expectedEventClass == null) {
+              if (!ActionScriptResolveUtil.isAssignableType(FlexCommonTypeNames.FLASH_EVENT_FQN, actualParameterType, parameters[0]) &&
+                  !ActionScriptResolveUtil.isAssignableType(FlexCommonTypeNames.STARLING_EVENT_FQN, actualParameterType, parameters[0])) {
+                registerProblem(
+                  expr instanceof JSFunctionExpression ? parameters[0] : expr,
+                  FlexBundle.message("javascript.callback.signature.mismatch"),
+                  ProblemHighlightType.WEAK_WARNING,
+                  getChangeSignatureFixForEventListener(fun, expr)
+                );
+                return false;
+              }
+            }
+            else {
+              if (!ActionScriptResolveUtil.isAssignableType(actualParameterType, expectedEventClass.getQualifiedName(), parameters[0])) {
+                registerProblem(
+                  expr instanceof JSFunctionExpression ? parameters[0] : expr,
+                  FlexBundle.message("javascript.callback.signature.mismatch.event.class", expectedEventClass.getQualifiedName()),
+                  ProblemHighlightType.WEAK_WARNING,
+                  getChangeSignatureFixForEventListener(fun, expr)
+                );
+                return false;
+              }
             }
           }
         }
@@ -154,8 +150,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
   private static boolean isAddEventListenerMethod(final JSFunction method) {
     if (ActionScriptResolveUtil.ADD_EVENT_LISTENER_METHOD.equals(method.getName())) {
       PsiElement methodParent = method.getParent();
-      if (methodParent instanceof JSClass) {
-        JSClass declaringClass = (JSClass)methodParent;
+      if (methodParent instanceof JSClass declaringClass) {
         if (ActionScriptResolveUtil
               .isAssignableType(FlexCommonTypeNames.FLASH_IEVENT_DISPATCHER_FQN, declaringClass.getQualifiedName(), method)
             || ActionScriptClassResolver.isParentClass(declaringClass, FlexCommonTypeNames.STARLING_EVENT_DISPATCHER_FQN, false)) {
@@ -213,8 +208,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
 
     if (adHocQualifierExpr instanceof JSReferenceExpression) {
       PsiElement resolve = ((JSReferenceExpression)adHocQualifierExpr).resolve();
-      if (resolve instanceof JSClass) {
-        JSClass clazz = (JSClass)resolve;
+      if (resolve instanceof JSClass clazz) {
         if (ActionScriptClassResolver.isParentClass((JSClass)resolve, FlexCommonTypeNames.FLASH_EVENT_FQN, false) ||
             ActionScriptClassResolver.isParentClass((JSClass)resolve, FlexCommonTypeNames.STARLING_EVENT_FQN, false)) {
           return clazz;

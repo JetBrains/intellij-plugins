@@ -7,13 +7,13 @@ import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.util.JSDestructuringUtil
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.contextOfType
 import com.intellij.refactoring.suggested.startOffset
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
-import org.jetbrains.vuejs.codeInsight.stubSafeCallArguments
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.GETTERS
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.ROOT_GETTERS
@@ -75,7 +75,7 @@ open class VuexHelpersContextNamespace(private val decorator: Boolean) : VuexSto
       }
       ?.arguments
       ?.getOrNull(0)
-      ?.let { getTextIfLiteral(it) }
+      ?.let { getTextIfLiteral(it, false) }
   }
 
   override fun equals(other: Any?): Boolean {

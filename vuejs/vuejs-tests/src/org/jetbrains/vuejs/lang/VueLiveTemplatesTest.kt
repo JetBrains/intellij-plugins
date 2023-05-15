@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.lang
 import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupManager
 import com.intellij.codeInsight.lookup.impl.LookupImpl
+import com.intellij.codeInsight.template.TemplateActionContext
 import com.intellij.codeInsight.template.TemplateContextType
 import com.intellij.codeInsight.template.impl.actions.ListTemplatesAction
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -130,6 +131,6 @@ export default {
 
   private fun doTestIsApplicable(context: TemplateContextType, value: Boolean) {
     TestCase.assertEquals("Wrong in: ${myFixture.file.name}, text: \"${myFixture.file.text}\"",
-                          value, context.isInContext(myFixture.file, myFixture.caretOffset))
+                          value, context.isInContext(TemplateActionContext.expanding(myFixture.file, myFixture.caretOffset)))
   }
 }

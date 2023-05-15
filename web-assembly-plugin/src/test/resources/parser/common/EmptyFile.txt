@@ -1,0 +1,8 @@
+WebAssembly File(0,178)
+  PsiComment(WebAssemblyToken.LINE_COMMENT)(';;; TOOL: wat2wasm')(0,18)
+  PsiWhiteSpace('\n')(18,19)
+  PsiComment(WebAssemblyToken.LINE_COMMENT)(';;; ERROR: 1')(19,31)
+  PsiWhiteSpace('\n')(31,32)
+  PsiComment(WebAssemblyToken.LINE_COMMENT)(';; empty file')(32,45)
+  PsiWhiteSpace('\n')(45,46)
+  PsiComment(WebAssemblyToken.BLOCK_COMMENT)('(;; STDERR ;;;\nout/test/parse/empty-file.txt:4:1: error: unexpected token "EOF", expected a module field or a module.\n;;; STDERR ;;)')(46,178)

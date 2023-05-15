@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.testFramework.ParsingTestCase
@@ -317,10 +318,30 @@ Vue.options.delimiters = ['<%', '%>']
     }
   }
 
+  fun testCompletionInsideInjectedI18NContents() {
+    createPackageJsonWithVueDependency(myFixture, """ "vue-i18n": "*" """)
+    myFixture.configureByText("Test.vue", """
+      <i18n lang="yaml">
+      keep-a<caret>
+      </i18n>
+    """.trimIndent())
+    myFixture.completeBasic()
+    // non-ideal - here we test that completion actually works without throwing exceptions, but it shouldn't suggest any tags here
+    assertContainsElements(myFixture.lookupElementStrings!!, "<keep-alive")
+  }
+
   fun testTypingInI18NTag() {
     myFixture.configureByFile(getTestName(false) + ".vue")
     myFixture.type(':')
     myFixture.type('"')
+    checkParseTree()
+  }
+
+  fun testTypingLangAttr() {
+    myFixture.configureByFile(getTestName(false) + ".vue")
+    toParseTreeText(myFixture.file) // expands lazy tokens deeply
+    myFixture.type("\b\bts") // js -> ts
+    PsiDocumentManager.getInstance(project).commitAllDocuments()
     checkParseTree()
   }
 

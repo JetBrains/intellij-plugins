@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 public class PhoneGapPackageManagementService extends PackageManagementServiceEx {
@@ -143,7 +144,7 @@ public class PhoneGapPackageManagementService extends PackageManagementServiceEx
       consumer.consume(ContainerUtil.emptyList());
       return;
     }
-    consumer.consume(ContainerUtil.newArrayList(aPackage.getLatestVersion()));
+    consumer.consume(Collections.singletonList(aPackage.getLatestVersion()));
   }
 
   @Override

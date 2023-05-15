@@ -8,9 +8,6 @@ import com.jetbrains.lang.dart.ide.surroundWith.statement.DartWithIfElseSurround
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Fedor.Korotkov
- */
 public class DartSurroundWithInHtmlTest extends LightPlatformCodeInsightTestCase {
   @NotNull
   @Override

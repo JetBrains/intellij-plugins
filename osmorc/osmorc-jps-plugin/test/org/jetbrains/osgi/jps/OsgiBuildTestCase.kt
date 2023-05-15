@@ -7,7 +7,6 @@ import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModule
-import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.osgi.jps.build.OsmorcBuilder
 import org.jetbrains.osgi.jps.model.JpsOsmorcExtensionService
 import org.jetbrains.osgi.jps.model.JpsOsmorcModuleExtension
@@ -24,7 +23,7 @@ abstract class OsgiBuildTestCase : JpsBuildTestCase() {
   fun module(name: String, osgi: Boolean = true): JpsModule {
     val module = addModule(name)
 
-    val contentRoot = JpsPathUtil.pathToUrl(getAbsolutePath(name))
+    val contentRoot = getUrl(name)
     module.contentRootsList.addUrl(contentRoot)
     module.addSourceRoot("${contentRoot}/src", JavaSourceRootType.SOURCE)
     module.addSourceRoot("${contentRoot}/res", JavaResourceRootType.RESOURCE)

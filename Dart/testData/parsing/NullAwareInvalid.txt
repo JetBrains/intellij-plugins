@@ -29,7 +29,7 @@ Dart File
                     COMPONENT_NAME
                       ID
                         PsiElement(IDENTIFIER)('y')
-                PsiErrorElement:',', ';' or '=' expected, got '??='
+                PsiErrorElement:'(', ',', ';', <, <qualified reference expression> or '=' expected, got '??='
                   <empty list>
               PsiElement(??=)('??=')
               PsiElement(IDENTIFIER)('x')

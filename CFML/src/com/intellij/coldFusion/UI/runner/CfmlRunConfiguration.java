@@ -71,6 +71,7 @@ public class CfmlRunConfiguration extends RunConfigurationBase<Element> implemen
       if (url == null) {
         throw new MalformedURLException("No start file specified or this file is invalid");
       }
+      //noinspection ResultOfObjectAllocationIgnored
       new URL(url);
     }
     catch (MalformedURLException ignored) {

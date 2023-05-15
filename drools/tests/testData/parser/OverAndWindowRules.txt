@@ -37,26 +37,14 @@ Drools File
                   PsiWhiteSpace(' ')
                   PATTERN_FILTER
                     PsiElement(over)('over')
-                  PsiErrorElement:JAVA_IDENTIFIER expected, got 'window'
-                    <empty list>
-        PsiWhiteSpace(' ')
-        LHS_OR
-          LHS_AND
-            LHS_UNARY
-              LHS_PATTERN_BIND
-                NAME_ID
-                  PsiElement(JAVA_IDENTIFIER)('window')
-                PsiElement(:)(':')
-                LHS_PATTERN
-                  LHS_PATTERN_TYPE
-                    QUALIFIED_IDENTIFIER
-                      IDENTIFIER
-                        PsiElement(JAVA_IDENTIFIER)('length')
-                  PsiElement(()('(')
-                  CONSTRAINT
+                    PsiWhiteSpace(' ')
+                    PsiElement(window)('window')
+                    PsiElement(:)(':')
+                    PsiElement(JAVA_IDENTIFIER)('length')
+                    PsiElement(()('(')
                     NUMBER_LITERAL
                       PsiElement(INT_TOKEN)('1')
-                  PsiElement())(')')
+                    PsiElement())(')')
                   PsiWhiteSpace(' ')
                   PATTERN_SOURCE
                     PsiElement(from)('from')
@@ -486,7 +474,8 @@ Drools File
                       PsiElement(,)(',')
                       PsiWhiteSpace('\n            ')
                       ACCUMULATE_FUNCTION
-                        PsiElement(JAVA_IDENTIFIER)('count')
+                        FUNCTION_NAME
+                          PsiElement(JAVA_IDENTIFIER)('count')
                         ACCUMULATE_PARAMETERS
                           PsiElement(()('(')
                           PsiWhiteSpace(' ')

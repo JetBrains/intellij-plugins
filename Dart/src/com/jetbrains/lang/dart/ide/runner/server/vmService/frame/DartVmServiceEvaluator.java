@@ -87,14 +87,12 @@ public class DartVmServiceEvaluator extends XDebuggerEvaluator {
       // TODO(jacobr): we could use the most recently selected Dart file instead
       // of using the selected file.
       final FileEditor editor = manager.getSelectedEditor();
-      if (editor instanceof TextEditor) {
-        final TextEditor textEditor = (TextEditor)editor;
+      if (editor instanceof TextEditor textEditor) {
         final FileEditorLocation fileEditorLocation = textEditor.getCurrentLocation();
         final VirtualFile virtualFile = editor.getFile();
         if (virtualFile != null) {
           psiFile = PsiManager.getInstance(project).findFile(virtualFile);
-          if (psiFile != null && fileEditorLocation instanceof TextEditorLocation) {
-            TextEditorLocation textEditorLocation = (TextEditorLocation)fileEditorLocation;
+          if (psiFile != null && fileEditorLocation instanceof TextEditorLocation textEditorLocation) {
             element = psiFile.findElementAt(textEditor.getEditor().logicalPositionToOffset(textEditorLocation.getPosition()));
           }
         }

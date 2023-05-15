@@ -84,8 +84,7 @@ public class P4RevertOperation extends VcsOperation {
         }
       }
     }
-    else if (oldOp instanceof P4MoveRenameOperation) {
-      P4MoveRenameOperation renameOp = (P4MoveRenameOperation) oldOp;
+    else if (oldOp instanceof P4MoveRenameOperation renameOp) {
       if (FileUtil.pathsEqual(renameOp.newPath, afterPath)) {
         return null;
       }

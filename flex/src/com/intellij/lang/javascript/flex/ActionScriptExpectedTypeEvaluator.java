@@ -20,12 +20,11 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
 
   @Override
   protected void findRestParameterExpectedType(JSParameterItem parameterItem) {
-    if (!(parameterItem instanceof JSParameter)) {
+    if (!(parameterItem instanceof JSParameter param)) {
       super.findRestParameterExpectedType(parameterItem);
       return;
     }
 
-    final JSParameter param = (JSParameter)parameterItem;
     final JSFunction fun = param.getDeclaringFunction();
     if (fun == null) {
       super.findRestParameterExpectedType(parameterItem);
@@ -116,7 +115,7 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
   }
 
   @Override
-  public void visitJSArrayLiteralExpression(JSArrayLiteralExpression node) {
+  public void visitJSArrayLiteralExpression(@NotNull JSArrayLiteralExpression node) {
     if (myParent.getParent() instanceof JSNewExpression) {
       JSType type = getQualifiedExpressionType((JSExpression)myParent.getParent());
       if (type instanceof JSGenericTypeImpl) {

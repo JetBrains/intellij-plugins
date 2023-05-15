@@ -1,0 +1,8 @@
+;;; TOOL: wast2json
+;;; ERROR: 1
+(assert_return (invoke "f") (i32.const 0))
+(;; STDERR ;;;
+out/test/parse/assert/bad-assert-before-module.txt:3:17: error: unknown module
+(assert_return (invoke "f") (i32.const 0))
+                ^^^^^^
+;;; STDERR ;;)

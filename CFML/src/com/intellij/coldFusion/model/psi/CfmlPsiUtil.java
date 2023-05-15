@@ -94,8 +94,7 @@ public final class CfmlPsiUtil {
           }
         }
       }
-      else if (element instanceof CfmlAssignmentExpression) {
-        final CfmlAssignmentExpression assignmentExpression = (CfmlAssignmentExpression)element;
+      else if (element instanceof CfmlAssignmentExpression assignmentExpression) {
         CfmlVariable assignedVariable = assignmentExpression.getAssignedVariable();
         if (assignedVariable != null &&
             lastParent != assignmentExpression.getRightHandExpr() &&
@@ -346,7 +345,7 @@ public final class CfmlPsiUtil {
 
         @Override
         public void visitCfmlComponent(CfmlComponent component) {
-          super.visitElement(component);
+          super.visitCfmlComponent(component);
         }
 
         @Override

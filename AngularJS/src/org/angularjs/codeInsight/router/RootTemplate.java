@@ -6,9 +6,6 @@ import com.intellij.psi.SmartPsiElementPointer;
 
 import java.util.Set;
 
-/**
- * @author Irina.Chernushina on 3/17/2016.
- */
 public class RootTemplate {
   private final SmartPsiElementPointer<PsiElement> myPointer;
   private final String myRelativeUrl;

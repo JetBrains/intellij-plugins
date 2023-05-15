@@ -34,12 +34,6 @@ public class DartSwitchStatementImpl extends DartPsiCompositeElementImpl impleme
   }
 
   @Override
-  @Nullable
-  public DartExpression getExpression() {
-    return findChildByClass(DartExpression.class);
-  }
-
-  @Override
   @NotNull
   public List<DartSwitchCase> getSwitchCaseList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartSwitchCase.class);

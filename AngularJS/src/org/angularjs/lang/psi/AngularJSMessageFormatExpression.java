@@ -17,9 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author Irina.Chernushina on 12/2/2015.
- */
 public class AngularJSMessageFormatExpression extends JSExpressionImpl {
   private static final Logger LOG = Logger.getInstance(AngularJSMessageFormatExpression.class);
 

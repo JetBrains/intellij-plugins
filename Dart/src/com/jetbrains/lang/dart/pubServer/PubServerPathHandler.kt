@@ -20,9 +20,7 @@ import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.http.EmptyHttpHeaders
 import io.netty.handler.codec.http.FullHttpRequest
 import io.netty.handler.codec.http.HttpHeaders
-import io.netty.handler.codec.http.HttpResponseStatus
 import org.jetbrains.builtInWebServer.*
-import org.jetbrains.io.send
 
 private val LOG = logger<PubServerPathHandler>()
 
@@ -48,8 +46,7 @@ private class PubServerPathHandler : WebServerPathHandlerAdapter() {
     }
 
     if (project == null) {
-      HttpResponseStatus.NOT_FOUND.send(context.channel(), request)
-      return true
+      return false
     }
 
     val sdk = DartSdk.getDartSdk(project)

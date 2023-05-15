@@ -16,16 +16,15 @@
 package com.intellij.protobuf.ide.settings;
 
 import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.protobuf.ide.settings.PbProjectSettings.ImportPathEntry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
@@ -69,14 +68,14 @@ public final class DefaultConfigurator implements ProjectSettingsConfigurator {
 
   @Nullable
   public ImportPathEntry getBuiltInIncludeEntry() {
-    // Assume that the migration was successfully performed in the post startup activity, return null otherwise
-    File extractedProtoFile = getExtractedProtoPath().toFile();
-    if (!extractedProtoFile.exists()) {
-      Logger.getInstance(DefaultConfigurator.class)
-        .warn("Bundled proto files directory is not found in local file system or is not accessible");
+    URL includedDescriptorsDirectoryUrl = DefaultConfigurator.class.getClassLoader().getResource("include");
+    if (includedDescriptorsDirectoryUrl == null) {
       return null;
     }
-    String url = VfsUtilCore.pathToUrl(extractedProtoFile.getPath());
-    return new ImportPathEntry(url, null);
+    VirtualFile descriptorsDirectory = VfsUtil.findFileByURL(includedDescriptorsDirectoryUrl);
+    if (descriptorsDirectory == null || !descriptorsDirectory.isDirectory()) {
+      return null;
+    }
+    return new ImportPathEntry(descriptorsDirectory.getUrl(), null);
   }
 }

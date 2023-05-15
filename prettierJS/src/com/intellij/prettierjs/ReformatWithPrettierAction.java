@@ -91,7 +91,11 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       e.getPresentation().setEnabledAndVisible(false);
       return;
     }
-    NodePackage nodePackage = PrettierConfiguration.getInstance(project).getPackage();
+    var element = e.getData(CommonDataKeys.PSI_ELEMENT);
+    if (element == null) {
+      element = e.getData(CommonDataKeys.PSI_FILE);
+    }
+    NodePackage nodePackage = PrettierConfiguration.getInstance(project).getPackage(element);
     e.getPresentation().setEnabledAndVisible(!nodePackage.isEmptyPath() && isAcceptableFileContext(e));
   }
 
@@ -162,16 +166,15 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     return true;
   }
 
-  private static void processFileInEditor(@NotNull Project project, @NotNull Editor editor, @NotNull ErrorHandler errorHandler) {
+  public static void processFileInEditor(@NotNull Project project, @NotNull Editor editor, @NotNull ErrorHandler errorHandler) {
     PrettierConfiguration configuration = PrettierConfiguration.getInstance(project);
-    NodePackage nodePackage = configuration.getPackage();
-
-    if (!checkNodeAndPackage(project, editor, configuration.getInterpreterRef(), nodePackage, errorHandler)) return;
-
     PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
     if (file == null) {
       return;
     }
+    NodePackage nodePackage = configuration.getPackage(file);
+    if (!checkNodeAndPackage(project, editor, configuration.getInterpreterRef(), nodePackage, errorHandler)) return;
+
     VirtualFile vFile = file.getVirtualFile();
     if (ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(Collections.singletonList(vFile))
       .hasReadonlyFiles()) {
@@ -181,7 +184,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     TextRange range = editor.getSelectionModel().hasSelection()
                       ? new TextRange(editor.getSelectionModel().getSelectionStart(), editor.getSelectionModel().getSelectionEnd()) : null;
     ensureConfigsSaved(Collections.singletonList(vFile), project);
-    PrettierLanguageService service = PrettierLanguageService.getInstance(file.getProject());
+    PrettierLanguageService service = PrettierLanguageService.getInstance(file.getProject(), vFile, nodePackage);
     ThrowableComputable<PrettierLanguageService.FormatResult, RuntimeException> computable =
       () -> performRequestForFile(project, nodePackage, service, file, range);
     PrettierLanguageService.FormatResult result = ProgressManager
@@ -232,7 +235,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
 
     Project project = file.getProject();
     PrettierConfiguration configuration = PrettierConfiguration.getInstance(project);
-    NodePackage nodePackage = configuration.getPackage();
+    NodePackage nodePackage = configuration.getPackage(file);
 
     if (!checkNodeAndPackage(project, null, configuration.getInterpreterRef(), nodePackage, PrettierActionOnSave.NOOP_ERROR_HANDLER)) {
       return range;
@@ -240,7 +243,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
 
     VirtualFile vFile = file.getVirtualFile();
     ensureConfigsSaved(Collections.singletonList(vFile), project);
-    PrettierLanguageService service = PrettierLanguageService.getInstance(file.getProject());
+    PrettierLanguageService service = PrettierLanguageService.getInstance(file.getProject(), vFile, nodePackage);
     PrettierLanguageService.FormatResult result = performRequestForFile(project, nodePackage, service, file, range);
     if (result != null) {
       int delta = applyFormatResult(project, vFile, result);
@@ -265,10 +268,6 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   public static void processVirtualFiles(@NotNull Project project,
                                          @NotNull List<VirtualFile> virtualFiles,
                                          @NotNull ErrorHandler errorHandler) {
-    PrettierConfiguration configuration = PrettierConfiguration.getInstance(project);
-    NodePackage nodePackage = configuration.getPackage();
-    if (!checkNodeAndPackage(project, null, configuration.getInterpreterRef(), nodePackage, errorHandler)) return;
-
     ReadonlyStatusHandler.OperationStatus readonlyStatus = ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(virtualFiles);
     if (readonlyStatus.hasReadonlyFiles()) {
       return;
@@ -280,20 +279,19 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       if (psiDirectory == null) {
         return;
       }
-      processFileIterator(project, new FileTreeIterator(psiDirectory), nodePackage, false, errorHandler);
+      processFileIterator(project, new FileTreeIterator(psiDirectory), false, errorHandler);
     }
     else {
-      processFileIterator(project, new FileTreeIterator(PsiUtilCore.toPsiFiles(psiManager, virtualFiles)),
-                          nodePackage, true, errorHandler);
+      processFileIterator(project, new FileTreeIterator(PsiUtilCore.toPsiFiles(psiManager, virtualFiles)), true, errorHandler);
     }
   }
 
   private static void processFileIterator(@NotNull Project project,
                                           @NotNull final FileTreeIterator fileIterator,
-                                          @NotNull NodePackage nodePackage,
                                           boolean reportSkippedFiles,
                                           @NotNull ErrorHandler errorHandler) {
-    PrettierLanguageService service = PrettierLanguageService.getInstance(project);
+    PrettierConfiguration configuration = PrettierConfiguration.getInstance(project);
+    @SuppressWarnings("UsagesOfObsoleteApi")
     Map<PsiFile, PrettierLanguageService.FormatResult> results = executeUnderProgress(project, indicator -> {
       Map<PsiFile, PrettierLanguageService.FormatResult> reformattedResults = new HashMap<>();
 
@@ -306,6 +304,12 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
 
       for (PsiFile currentFile : files) {
         indicator.setText(PrettierBundle.message("processing.0.progress", currentFile.getName()));
+        NodePackage nodePackage = configuration.getPackage(currentFile);
+        if (!checkNodeAndPackage(project, null, configuration.getInterpreterRef(), nodePackage, errorHandler)) {
+          return Collections.emptyMap();
+        }
+
+        PrettierLanguageService service = PrettierLanguageService.getInstance(project, currentFile.getVirtualFile(), nodePackage);
         PrettierLanguageService.FormatResult result = performRequestForFile(project, nodePackage, service, currentFile, null);
         // timed out. show notification?
         if (result == null) {
@@ -391,8 +395,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       // PsiFile might be not committed at this point, take text from document
       Document document = PsiDocumentManager.getInstance(project).getDocument(currentFile);
       if (document == null) return;
-      CharSequence content = document.getImmutableCharSequence();
-      text.set(JSLanguageServiceUtil.convertLineSeparatorsToFileOriginal(project, content, currentVFile).toString());
+      text.set(document.getText());
       VirtualFile ignoreVFile = PrettierUtil.findIgnoreFile(currentVFile, project);
       if (ignoreVFile != null) {
         ignoreFilePath.set(ignoreVFile.getPath());
@@ -508,7 +511,9 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
         showHintLater(editor, PrettierBundle.message("prettier.formatter.hint.0", text), true, listener);
       }
       else {
-        Notification notification = JSLinterGuesser.NOTIFICATION_GROUP.createNotification(PrettierBundle.message("prettier.formatter.notification.title"), text, NotificationType.ERROR);
+        Notification notification =
+          JSLinterGuesser.NOTIFICATION_GROUP.createNotification(PrettierBundle.message("prettier.formatter.notification.title"), text,
+                                                                NotificationType.ERROR);
         if (onLinkClick != null) {
           notification.setListener(new NotificationListener.Adapter() {
             @Override

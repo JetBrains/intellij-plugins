@@ -14,7 +14,7 @@ HtmlFile:StubbedAttribute.vue
           XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('{{foo.test()}}')
           XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
           JSFile:StubbedAttribute.vue.int
-            VueJSEmbeddedExpression
+            VueJSEmbeddedExpressionContent(VueJS)
               JSCallExpression
                 JSReferenceExpression
                   JSReferenceExpression
@@ -29,3 +29,4 @@ HtmlFile:StubbedAttribute.vue
       XmlToken:XML_NAME('script')
       XmlToken:XML_TAG_END('>')
     PsiWhiteSpace('\n')
+  PsiElement(VUE_LANG_MODE_NO_TS)('')

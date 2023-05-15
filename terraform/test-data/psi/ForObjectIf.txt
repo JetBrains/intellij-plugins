@@ -1,0 +1,53 @@
+HCLFile: a.hcl
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLForObjectExpression
+      PsiElement({)('{')
+      PsiWhiteSpace('\n  ')
+      HCLForIntroImpl(FOR_INTRO)
+        PsiElement(ID)('for')
+        PsiWhiteSpace(' ')
+        HCLIdentifier
+          PsiElement(ID)('instance')
+        PsiWhiteSpace(' ')
+        PsiElement(ID)('in')
+        PsiWhiteSpace(' ')
+        HCLSelectExpression
+          HCLIdentifier
+            PsiElement(ID)('aws_instance')
+          PsiElement(.)('.')
+          HCLIdentifier
+            PsiElement(ID)('example')
+        PsiElement(:)(':')
+      PsiWhiteSpace('\n  ')
+      HCLSelectExpression
+        HCLIdentifier
+          PsiElement(ID)('instance')
+        PsiElement(.)('.')
+        HCLIdentifier
+          PsiElement(ID)('id')
+      PsiWhiteSpace(' ')
+      PsiElement(=>)('=>')
+      PsiWhiteSpace(' ')
+      HCLSelectExpression
+        HCLIdentifier
+          PsiElement(ID)('instance')
+        PsiElement(.)('.')
+        HCLIdentifier
+          PsiElement(ID)('public')
+      PsiWhiteSpace('\n  ')
+      HCLForConditionImpl(FOR_CONDITION)
+        PsiElement(ID)('if')
+        PsiWhiteSpace(' ')
+        HCLSelectExpression
+          HCLIdentifier
+            PsiElement(ID)('instance')
+          PsiElement(.)('.')
+          HCLIdentifier
+            PsiElement(ID)('associate_public_ip_address')
+      PsiWhiteSpace('\n')
+      PsiElement(})('}')

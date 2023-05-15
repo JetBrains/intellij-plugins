@@ -113,7 +113,7 @@ public class PerforceChangeListListener implements ChangeListListener {
   }
 
   @Override
-  public void changesMoved(final Collection<Change> changes, ChangeList fromList, final ChangeList toList) {
+  public void changesMoved(final Collection<? extends Change> changes, ChangeList fromList, final ChangeList toList) {
     final List<Change> changesUnderPerforce = new ArrayList<>();
     for (final Change change : changes) {
       AbstractVcs vcs = ChangesUtil.getVcsForChange(change, myProject);

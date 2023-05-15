@@ -9,6 +9,7 @@ var bar = 123;
 <error descr="TS2304: Cannot find name 'foo'.">foo</error> = 12
 
 </script>
+
 <template>
   <MyComponent :count="12" :bar="'foo'"
                v-<warning descr="Unrecognized Vue directive">click-outsde</warning>
@@ -17,5 +18,5 @@ var bar = 123;
   <MyComponent2/>
   {{ bar }}
   {{ foo }}
-  {{ <weak_warning descr="Unresolved variable or type foobar">foobar</weak_warning> }}
+  {{ <error descr="Unresolved variable or type foobar">foobar</error> }}
 </template>

@@ -17,6 +17,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.run.BCBasedRunnerParameters;
 import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -80,14 +81,16 @@ public class FlexBuildTargetScopeProvider extends BuildTargetScopeProvider {
       }
     }
     else {
-      for (final Module module : scope.getAffectedModules()) {
-        if (module.isDisposed() || ModuleType.get(module) != FlexModuleType.getInstance()) continue;
-        for (final FlexBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
-          if (!bc.isSkipCompile()) {
-            result.add(Pair.create(module, bc));
+      ReadAction.run(() -> {
+        for (final Module module : scope.getAffectedModules()) {
+          if (module.isDisposed() || ModuleType.get(module) != FlexModuleType.getInstance()) continue;
+          for (final FlexBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
+            if (!bc.isSkipCompile()) {
+              result.add(Pair.create(module, bc));
+            }
           }
         }
-      }
+      });
     }
 
     return result;
@@ -128,8 +131,7 @@ public class FlexBuildTargetScopeProvider extends BuildTargetScopeProvider {
                                            final Module module,
                                            final FlexBuildConfiguration bc) throws ConfigurationException {
     for (final DependencyEntry entry : bc.getDependencies().getEntries()) {
-      if (entry instanceof BuildConfigurationEntry) {
-        final BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)entry;
+      if (entry instanceof BuildConfigurationEntry bcEntry) {
 
         final Module dependencyModule = bcEntry.findModule();
         final FlexBuildConfiguration dependencyBC = dependencyModule == null ? null : bcEntry.findBuildConfiguration();

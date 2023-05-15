@@ -14,6 +14,9 @@ import com.intellij.openapi.vcs.history.VcsRevisionNumber
 import com.intellij.openapi.vcs.impl.AbstractVcsHelperImpl
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.newvfs.RefreshWorker
+import com.intellij.openapi.vfs.newvfs.impl.VfsData
+import com.intellij.openapi.vfs.newvfs.persistent.PersistentFS
 import com.intellij.testFramework.EdtTestUtil
 import com.intellij.testFramework.TestLoggerFactory
 import com.intellij.util.Consumer
@@ -356,10 +359,7 @@ class PerforceMoveRenameTest extends PerforceTestCase {
     assertEmpty(getChangeListManager().getModifiedWithoutEditing())
     assertEmpty(getChangeListManager().getDeletedFiles())
 
-    TestLoggerFactory.enableDebugLogging(myTestRootDisposable,
-                                         "#com.intellij.openapi.vfs.newvfs.persistent.RefreshWorker_Attributes",
-                                         "#com.intellij.openapi.vfs.newvfs.persistent.PersistentFS",
-                                         "#com.intellij.openapi.vfs.newvfs.impl.VfsData")
+    TestLoggerFactory.enableDebugLogging(myTestRootDisposable, RefreshWorker.class, PersistentFS.class, VfsData.class)
 
     submitDefaultList("move")
     VfsUtil.markDirty(true, false, file1, file2)

@@ -8,6 +8,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
+import static com.intellij.openapi.options.Configurable.isFieldModified;
+
 public class PlatformioConfigurable implements SearchableConfigurable {
 
   private static final String ID = "PlatformIO.settings";
@@ -29,7 +31,7 @@ public class PlatformioConfigurable implements SearchableConfigurable {
 
   @Override
   public boolean isModified() {
-    return mySettingsPanel != null && isModified(mySettingsPanel.getTextField(), getPioLocation());
+    return mySettingsPanel != null && isFieldModified(mySettingsPanel.getTextField(), getPioLocation());
   }
 
   @Override

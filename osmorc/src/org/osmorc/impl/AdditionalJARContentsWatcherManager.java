@@ -29,6 +29,7 @@ import com.intellij.facet.FacetManagerAdapter;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectCloseListener;
 import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Pair;
@@ -138,7 +139,7 @@ public final class AdditionalJARContentsWatcherManager {
     }
   }
 
-  public static class ProjectListener implements ProjectManagerListener {
+  public static class ProjectListener implements ProjectCloseListener {
     @Override
     public void projectClosing(@NotNull Project project) {
       for (Module module : ModuleManager.getInstance(project).getModules()) {

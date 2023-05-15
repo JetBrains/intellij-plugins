@@ -10,9 +10,6 @@ import com.maddyhome.idea.copyright.psi.UpdateCopyright;
 import com.maddyhome.idea.copyright.psi.UpdateCopyrightsProvider;
 import com.maddyhome.idea.copyright.psi.UpdateJavaScriptFileCopyright;
 
-/**
- * @author Fedor.Korotkov
- */
 public class UpdateDartCopyrightsProvider extends UpdateCopyrightsProvider {
 
   @Override

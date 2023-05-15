@@ -4,15 +4,15 @@
 3(5) element: JSBinaryExpression condition: true, reachable
 4(18) element: JSBinaryExpression condition: false, reachable
 5(6) element: HtmlTag:div IF (branch) true
-6(7) element: VueJSEmbeddedExpression
+6(7) element: VueJSEmbeddedExpressionContent(VueTS)
 7(8) element: JSReferenceExpression Read(union)
 8(9) element: JSReferenceExpression Read(toFixed)
 9(10) element: JSCallExpression
-10(11) element: VueJSEmbeddedExpression
+10(11) element: VueJSEmbeddedExpressionContent(VueTS)
 11(12) element: JSReferenceExpression Read(union)
 12(13) element: JSReferenceExpression Read(toUpperCase)
 13(14) element: JSCallExpression
-14(15) element: VueJSEmbeddedExpression
+14(15) element: VueJSEmbeddedExpressionContent(VueTS)
 15(16) element: JSReferenceExpression Read(union)
 16(17) element: JSReferenceExpression Read(join)
 17(49) element: JSCallExpression
@@ -22,28 +22,28 @@
 21(23) element: JSBinaryExpression condition: true, reachable
 22(36) element: JSBinaryExpression condition: false, reachable
 23(24) element: HtmlTag:div IF (branch) true
-24(25) element: VueJSEmbeddedExpression
+24(25) element: VueJSEmbeddedExpressionContent(VueTS)
 25(26) element: JSReferenceExpression Read(union)
 26(27) element: JSReferenceExpression Read(toFixed)
 27(28) element: JSCallExpression
-28(29) element: VueJSEmbeddedExpression
+28(29) element: VueJSEmbeddedExpressionContent(VueTS)
 29(30) element: JSReferenceExpression Read(union)
 30(31) element: JSReferenceExpression Read(toUpperCase)
 31(32) element: JSCallExpression
-32(33) element: VueJSEmbeddedExpression
+32(33) element: VueJSEmbeddedExpressionContent(VueTS)
 33(34) element: JSReferenceExpression Read(union)
 34(35) element: JSReferenceExpression Read(join)
 35(49) element: JSCallExpression
 36(37) element: HtmlTag:div IF (branch) false
-37(38) element: VueJSEmbeddedExpression
+37(38) element: VueJSEmbeddedExpressionContent(VueTS)
 38(39) element: JSReferenceExpression Read(union)
 39(40) element: JSReferenceExpression Read(toFixed)
 40(41) element: JSCallExpression
-41(42) element: VueJSEmbeddedExpression
+41(42) element: VueJSEmbeddedExpressionContent(VueTS)
 42(43) element: JSReferenceExpression Read(union)
 43(44) element: JSReferenceExpression Read(toUpperCase)
 44(45) element: JSCallExpression
-45(46) element: VueJSEmbeddedExpression
+45(46) element: VueJSEmbeddedExpressionContent(VueTS)
 46(47) element: JSReferenceExpression Read(union)
 47(48) element: JSReferenceExpression Read(join)
 48(49) element: JSCallExpression

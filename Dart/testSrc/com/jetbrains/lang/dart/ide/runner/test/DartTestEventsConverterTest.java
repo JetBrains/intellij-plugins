@@ -368,7 +368,7 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
     super.setUp();
     myNodes = new HashMap<>();
     final ExecutionEnvironment environment = new ExecutionEnvironment();
-    myMockResettablePrinter = new MockPrinter(true);
+    myMockResettablePrinter = new MockPrinter();
     TestConsoleProperties consoleProperties = createConsoleProperties();
     myConsole = new MyConsoleView(consoleProperties, environment);
     myConsole.initUI();

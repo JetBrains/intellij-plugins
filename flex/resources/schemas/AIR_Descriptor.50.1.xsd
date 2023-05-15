@@ -35,6 +35,15 @@
         <xs:element name="copyright" type="xs:string" minOccurs="0" />
         <xs:element name="icon" type="IconType" minOccurs="0" />
         <xs:element name="allowMultipleInstances" type="xs:boolean" minOccurs="0" />
+        <xs:element name="stacktraces" minOccurs="0">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="none" />
+              <xs:enumeration value="standard" />
+              <xs:enumeration value="verbose" />
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
 
         <!-- How to start this application -->
         <xs:element name="initialWindow">
@@ -294,6 +303,7 @@
               <xs:element name="createAppBundle" type="xs:boolean" minOccurs="0" />
               <xs:element name="buildArchitectures" type="xs:string" minOccurs="0" />
               <xs:element name="uncompressedExtensions" type="xs:string" minOccurs="0" />
+              <xs:element name="disableSensorAccess" type="xs:boolean" minOccurs="0" />
 
               <!-- asset packs: list of assetPack entries each with 'id', 'delivery' and 'folder' attributes -->
               <xs:element name="assetPacks" minOccurs="0">

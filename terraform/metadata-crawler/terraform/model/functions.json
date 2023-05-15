@@ -1,0 +1,1242 @@
+{
+  ".schema_version": "2",
+  ".sdk_type": "builtin",
+  "name": "functions",
+  "type": "functions",
+  "version": "v1.1.4",
+  "schema": {
+    "abs": {
+      "Parameters": [
+        {
+          "Name": "num",
+          "Type": "Number",
+          "AllowDynamicType": true,
+          "AllowMarked": true
+        }
+      ],
+      "ReturnType": "Number"
+    },
+    "abspath": {
+      "Parameters": [
+        {
+          "Name": "path",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "alltrue": {
+      "Parameters": [
+        {
+          "Name": "list",
+          "Type": "List(Bool)"
+        }
+      ],
+      "ReturnType": "Bool"
+    },
+    "anytrue": {
+      "Parameters": [
+        {
+          "Name": "list",
+          "Type": "List(Bool)"
+        }
+      ],
+      "ReturnType": "Bool"
+    },
+    "base64decode": {
+      "Parameters": [
+        {
+          "Name": "str",
+          "Type": "String",
+          "AllowMarked": true
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "base64encode": {
+      "Parameters": [
+        {
+          "Name": "str",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "base64gzip": {
+      "Parameters": [
+        {
+          "Name": "str",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "base64sha256": {
+      "Parameters": [
+        {
+          "Name": "str",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "base64sha512": {
+      "Parameters": [
+        {
+          "Name": "str",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "basename": {
+      "Parameters": [
+        {
+          "Name": "path",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "bcrypt": {
+      "Parameters": [
+        {
+          "Name": "str",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String",
+      "VariadicParameter": {
+        "Name": "cost",
+        "Type": "Number"
+      }
+    },
+    "can": {
+      "Parameters": [
+        {
+          "Name": "expression",
+          "Type": "Expression"
+        }
+      ],
+      "ReturnType": "Bool"
+    },
+    "ceil": {
+      "Parameters": [
+        {
+          "Name": "num",
+          "Type": "Number"
+        }
+      ],
+      "ReturnType": "Number"
+    },
+    "chomp": {
+      "Parameters": [
+        {
+          "Name": "str",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "chunklist": {
+      "Parameters": [
+        {
+          "Name": "list",
+          "Type": "List(Any)",
+          "AllowMarked": true
+        },
+        {
+          "Name": "size",
+          "Type": "Number",
+          "AllowMarked": true
+        }
+      ],
+      "ReturnType": "List(List(Any))"
+    },
+    "cidrhost": {
+      "Parameters": [
+        {
+          "Name": "prefix",
+          "Type": "String"
+        },
+        {
+          "Name": "hostnum",
+          "Type": "Number"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "cidrnetmask": {
+      "Parameters": [
+        {
+          "Name": "prefix",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "cidrsubnet": {
+      "Parameters": [
+        {
+          "Name": "prefix",
+          "Type": "String"
+        },
+        {
+          "Name": "newbits",
+          "Type": "Number"
+        },
+        {
+          "Name": "netnum",
+          "Type": "Number"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "cidrsubnets": {
+      "Parameters": [
+        {
+          "Name": "prefix",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "List(String)",
+      "VariadicParameter": {
+        "Name": "newbits",
+        "Type": "Number"
+      }
+    },
+    "coalesce": {
+      "ReturnType": "Any",
+      "VariadicParameter": {
+        "Name": "vals",
+        "Type": "Any",
+        "AllowNull": true,
+        "AllowUnknown": true,
+        "AllowDynamicType": true
+      }
+    },
+    "coalescelist": {
+      "ReturnType": "Any",
+      "VariadicParameter": {
+        "Name": "vals",
+        "Type": "Any",
+        "AllowNull": true,
+        "AllowUnknown": true,
+        "AllowDynamicType": true
+      }
+    },
+    "compact": {
+      "Parameters": [
+        {
+          "Name": "list",
+          "Type": "List(String)"
+        }
+      ],
+      "ReturnType": "List(String)"
+    },
+    "concat": {
+      "ReturnType": "Any",
+      "VariadicParameter": {
+        "Name": "seqs",
+        "Type": "Any",
+        "AllowMarked": true
+      }
+    },
+    "contains": {
+      "Parameters": [
+        {
+          "Name": "list",
+          "Type": "Any"
+        },
+        {
+          "Name": "value",
+          "Type": "Any"
+        }
+      ],
+      "ReturnType": "Any"
+    },
+    "csvdecode": {
+      "Parameters": [
+        {
+          "Name": "str",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "Any"
+    },
+    "defaults": {
+      "Parameters": [
+        {
+          "Name": "input",
+          "Type": "Any",
+          "AllowNull": true,
+          "AllowMarked": true
+        },
+        {
+          "Name": "defaults",
+          "Type": "Any",
+          "AllowMarked": true
+        }
+      ],
+      "ReturnType": "Any"
+    },
+    "dirname": {
+      "Parameters": [
+        {
+          "Name": "path",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "distinct": {
+      "Parameters": [
+        {
+          "Name": "list",
+          "Type": "List(Any)"
+        }
+      ],
+      "ReturnType": "List(Any)"
+    },
+    "element": {
+      "Parameters": [
+        {
+          "Name": "list",
+          "Type": "Any",
+          "AllowMarked": true
+        },
+        {
+          "Name": "index",
+          "Type": "Number"
+        }
+      ],
+      "ReturnType": "Any"
+    },
+    "file": {
+      "Parameters": [
+        {
+          "Name": "path",
+          "Type": "String",
+          "AllowMarked": true
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "filebase64": {
+      "Parameters": [
+        {
+          "Name": "path",
+          "Type": "String",
+          "AllowMarked": true
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "filebase64sha256": {
+      "Parameters": [
+        {
+          "Name": "path",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "filebase64sha512": {
+      "Parameters": [
+        {
+          "Name": "path",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "fileexists": {
+      "Parameters": [
+        {
+          "Name": "path",
+          "Type": "String",
+          "AllowMarked": true
+        }
+      ],
+      "ReturnType": "Bool"
+    },
+    "filemd5": {
+      "Parameters": [
+        {
+          "Name": "path",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "fileset": {
+      "Parameters": [
+        {
+          "Name": "path",
+          "Type": "String",
+          "AllowMarked": true
+        },
+        {
+          "Name": "pattern",
+          "Type": "String",
+          "AllowMarked": true
+        }
+      ],
+      "ReturnType": "Set(String)"
+    },
+    "filesha1": {
+      "Parameters": [
+        {
+          "Name": "path",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "filesha256": {
+      "Parameters": [
+        {
+          "Name": "path",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "filesha512": {
+      "Parameters": [
+        {
+          "Name": "path",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "flatten": {
+      "Parameters": [
+        {
+          "Name": "list",
+          "Type": "Any",
+          "AllowMarked": true
+        }
+      ],
+      "ReturnType": "Any"
+    },
+    "floor": {
+      "Parameters": [
+        {
+          "Name": "num",
+          "Type": "Number"
+        }
+      ],
+      "ReturnType": "Number"
+    },
+    "format": {
+      "Parameters": [
+        {
+          "Name": "format",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String",
+      "VariadicParameter": {
+        "Name": "args",
+        "Type": "Any",
+        "AllowNull": true
+      }
+    },
+    "formatdate": {
+      "Parameters": [
+        {
+          "Name": "format",
+          "Type": "String"
+        },
+        {
+          "Name": "time",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "formatlist": {
+      "Parameters": [
+        {
+          "Name": "format",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "List(String)",
+      "VariadicParameter": {
+        "Name": "args",
+        "Type": "Any",
+        "AllowNull": true,
+        "AllowUnknown": true
+      }
+    },
+    "indent": {
+      "Parameters": [
+        {
+          "Name": "spaces",
+          "Type": "Number"
+        },
+        {
+          "Name": "str",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "index": {
+      "Parameters": [
+        {
+          "Name": "list",
+          "Type": "Any"
+        },
+        {
+          "Name": "value",
+          "Type": "Any"
+        }
+      ],
+      "ReturnType": "Any"
+    },
+    "join": {
+      "Parameters": [
+        {
+          "Name": "separator",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String",
+      "VariadicParameter": {
+        "Name": "lists",
+        "Type": "List(String)"
+      }
+    },
+    "jsondecode": {
+      "Parameters": [
+        {
+          "Name": "str",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "Any"
+    },
+    "jsonencode": {
+      "Parameters": [
+        {
+          "Name": "val",
+          "Type": "Any",
+          "AllowNull": true,
+          "AllowDynamicType": true
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "keys": {
+      "Parameters": [
+        {
+          "Name": "inputMap",
+          "Type": "Any",
+          "AllowUnknown": true,
+          "AllowMarked": true
+        }
+      ],
+      "ReturnType": "Any"
+    },
+    "length": {
+      "Parameters": [
+        {
+          "Name": "value",
+          "Type": "Any",
+          "AllowUnknown": true,
+          "AllowDynamicType": true,
+          "AllowMarked": true
+        }
+      ],
+      "ReturnType": "Number"
+    },
+    "log": {
+      "Parameters": [
+        {
+          "Name": "num",
+          "Type": "Number"
+        },
+        {
+          "Name": "base",
+          "Type": "Number"
+        }
+      ],
+      "ReturnType": "Number"
+    },
+    "lookup": {
+      "Parameters": [
+        {
+          "Name": "inputMap",
+          "Type": "Any",
+          "AllowMarked": true
+        },
+        {
+          "Name": "key",
+          "Type": "String",
+          "AllowMarked": true
+        }
+      ],
+      "ReturnType": "Any",
+      "VariadicParameter": {
+        "Name": "default",
+        "Type": "Any",
+        "AllowNull": true,
+        "AllowUnknown": true,
+        "AllowDynamicType": true,
+        "AllowMarked": true
+      }
+    },
+    "lower": {
+      "Parameters": [
+        {
+          "Name": "str",
+          "Type": "String",
+          "AllowDynamicType": true
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "matchkeys": {
+      "Parameters": [
+        {
+          "Name": "values",
+          "Type": "List(Any)"
+        },
+        {
+          "Name": "keys",
+          "Type": "List(Any)"
+        },
+        {
+          "Name": "searchset",
+          "Type": "List(Any)"
+        }
+      ],
+      "ReturnType": "List(Any)"
+    },
+    "max": {
+      "ReturnType": "Number",
+      "VariadicParameter": {
+        "Name": "numbers",
+        "Type": "Number",
+        "AllowDynamicType": true
+      }
+    },
+    "md5": {
+      "Parameters": [
+        {
+          "Name": "str",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "merge": {
+      "ReturnType": "Object({})",
+      "VariadicParameter": {
+        "Name": "maps",
+        "Type": "Any",
+        "AllowNull": true,
+        "AllowDynamicType": true,
+        "AllowMarked": true
+      }
+    },
+    "min": {
+      "ReturnType": "Number",
+      "VariadicParameter": {
+        "Name": "numbers",
+        "Type": "Number",
+        "AllowDynamicType": true
+      }
+    },
+    "nonsensitive": {
+      "Parameters": [
+        {
+          "Name": "value",
+          "Type": "Any",
+          "AllowNull": true,
+          "AllowUnknown": true,
+          "AllowDynamicType": true,
+          "AllowMarked": true
+        }
+      ],
+      "ReturnType": "Any"
+    },
+    "one": {
+      "Parameters": [
+        {
+          "Name": "list",
+          "Type": "Any"
+        }
+      ],
+      "ReturnType": "Any"
+    },
+    "parseint": {
+      "Parameters": [
+        {
+          "Name": "number",
+          "Type": "Any"
+        },
+        {
+          "Name": "base",
+          "Type": "Number"
+        }
+      ],
+      "ReturnType": "Any"
+    },
+    "pathexpand": {
+      "Parameters": [
+        {
+          "Name": "path",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "pow": {
+      "Parameters": [
+        {
+          "Name": "num",
+          "Type": "Number"
+        },
+        {
+          "Name": "power",
+          "Type": "Number"
+        }
+      ],
+      "ReturnType": "Number"
+    },
+    "range": {
+      "ReturnType": "List(Number)",
+      "VariadicParameter": {
+        "Name": "params",
+        "Type": "Number"
+      }
+    },
+    "regex": {
+      "Parameters": [
+        {
+          "Name": "pattern",
+          "Type": "String"
+        },
+        {
+          "Name": "string",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "Any"
+    },
+    "regexall": {
+      "Parameters": [
+        {
+          "Name": "pattern",
+          "Type": "String"
+        },
+        {
+          "Name": "string",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "List(Any)"
+    },
+    "replace": {
+      "Parameters": [
+        {
+          "Name": "str",
+          "Type": "String"
+        },
+        {
+          "Name": "substr",
+          "Type": "String"
+        },
+        {
+          "Name": "replace",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "reverse": {
+      "Parameters": [
+        {
+          "Name": "list",
+          "Type": "Any",
+          "AllowMarked": true
+        }
+      ],
+      "ReturnType": "Any"
+    },
+    "rsadecrypt": {
+      "Parameters": [
+        {
+          "Name": "ciphertext",
+          "Type": "String"
+        },
+        {
+          "Name": "privatekey",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "sensitive": {
+      "Parameters": [
+        {
+          "Name": "value",
+          "Type": "Any",
+          "AllowNull": true,
+          "AllowUnknown": true,
+          "AllowDynamicType": true,
+          "AllowMarked": true
+        }
+      ],
+      "ReturnType": "Any"
+    },
+    "setintersection": {
+      "Parameters": [
+        {
+          "Name": "first_set",
+          "Type": "Set(Any)",
+          "AllowDynamicType": true
+        }
+      ],
+      "ReturnType": "Set(Any)",
+      "VariadicParameter": {
+        "Name": "other_sets",
+        "Type": "Set(Any)",
+        "AllowDynamicType": true
+      }
+    },
+    "setproduct": {
+      "ReturnType": "Any",
+      "VariadicParameter": {
+        "Name": "sets",
+        "Type": "Any",
+        "AllowMarked": true
+      }
+    },
+    "setsubtract": {
+      "Parameters": [
+        {
+          "Name": "a",
+          "Type": "Set(Any)",
+          "AllowDynamicType": true
+        },
+        {
+          "Name": "b",
+          "Type": "Set(Any)",
+          "AllowDynamicType": true
+        }
+      ],
+      "ReturnType": "Set(Any)"
+    },
+    "setunion": {
+      "Parameters": [
+        {
+          "Name": "first_set",
+          "Type": "Set(Any)",
+          "AllowDynamicType": true
+        }
+      ],
+      "ReturnType": "Set(Any)",
+      "VariadicParameter": {
+        "Name": "other_sets",
+        "Type": "Set(Any)",
+        "AllowDynamicType": true
+      }
+    },
+    "sha1": {
+      "Parameters": [
+        {
+          "Name": "str",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "sha256": {
+      "Parameters": [
+        {
+          "Name": "str",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "sha512": {
+      "Parameters": [
+        {
+          "Name": "str",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "signum": {
+      "Parameters": [
+        {
+          "Name": "num",
+          "Type": "Number"
+        }
+      ],
+      "ReturnType": "Number"
+    },
+    "slice": {
+      "Parameters": [
+        {
+          "Name": "list",
+          "Type": "Any",
+          "AllowMarked": true
+        },
+        {
+          "Name": "start_index",
+          "Type": "Number"
+        },
+        {
+          "Name": "end_index",
+          "Type": "Number"
+        }
+      ],
+      "ReturnType": "Any"
+    },
+    "sort": {
+      "Parameters": [
+        {
+          "Name": "list",
+          "Type": "List(String)"
+        }
+      ],
+      "ReturnType": "List(String)"
+    },
+    "split": {
+      "Parameters": [
+        {
+          "Name": "separator",
+          "Type": "String"
+        },
+        {
+          "Name": "str",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "List(String)"
+    },
+    "strrev": {
+      "Parameters": [
+        {
+          "Name": "str",
+          "Type": "String",
+          "AllowDynamicType": true
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "substr": {
+      "Parameters": [
+        {
+          "Name": "str",
+          "Type": "String",
+          "AllowDynamicType": true
+        },
+        {
+          "Name": "offset",
+          "Type": "Number",
+          "AllowDynamicType": true
+        },
+        {
+          "Name": "length",
+          "Type": "Number",
+          "AllowDynamicType": true
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "sum": {
+      "Parameters": [
+        {
+          "Name": "list",
+          "Type": "Any"
+        }
+      ],
+      "ReturnType": "Any"
+    },
+    "templatefile": {
+      "Parameters": [
+        {
+          "Name": "path",
+          "Type": "String",
+          "AllowMarked": true
+        },
+        {
+          "Name": "vars",
+          "Type": "Any"
+        }
+      ],
+      "ReturnType": "Any"
+    },
+    "textdecodebase64": {
+      "Parameters": [
+        {
+          "Name": "source",
+          "Type": "String"
+        },
+        {
+          "Name": "encoding",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "textencodebase64": {
+      "Parameters": [
+        {
+          "Name": "string",
+          "Type": "String"
+        },
+        {
+          "Name": "encoding",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "timeadd": {
+      "Parameters": [
+        {
+          "Name": "timestamp",
+          "Type": "String"
+        },
+        {
+          "Name": "duration",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "timestamp": {
+      "ReturnType": "String"
+    },
+    "title": {
+      "Parameters": [
+        {
+          "Name": "str",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "tobool": {
+      "Parameters": [
+        {
+          "Name": "v",
+          "Type": "Any",
+          "AllowNull": true,
+          "AllowMarked": true
+        }
+      ],
+      "ReturnType": "Any"
+    },
+    "tolist": {
+      "Parameters": [
+        {
+          "Name": "v",
+          "Type": "Any",
+          "AllowNull": true,
+          "AllowMarked": true
+        }
+      ],
+      "ReturnType": "Any"
+    },
+    "tomap": {
+      "Parameters": [
+        {
+          "Name": "v",
+          "Type": "Any",
+          "AllowNull": true,
+          "AllowMarked": true
+        }
+      ],
+      "ReturnType": "Any"
+    },
+    "tonumber": {
+      "Parameters": [
+        {
+          "Name": "v",
+          "Type": "Any",
+          "AllowNull": true,
+          "AllowMarked": true
+        }
+      ],
+      "ReturnType": "Any"
+    },
+    "toset": {
+      "Parameters": [
+        {
+          "Name": "v",
+          "Type": "Any",
+          "AllowNull": true,
+          "AllowMarked": true
+        }
+      ],
+      "ReturnType": "Any"
+    },
+    "tostring": {
+      "Parameters": [
+        {
+          "Name": "v",
+          "Type": "Any",
+          "AllowNull": true,
+          "AllowMarked": true
+        }
+      ],
+      "ReturnType": "Any"
+    },
+    "transpose": {
+      "Parameters": [
+        {
+          "Name": "values",
+          "Type": "Map(List(String))"
+        }
+      ],
+      "ReturnType": "Map(List(String))"
+    },
+    "trim": {
+      "Parameters": [
+        {
+          "Name": "str",
+          "Type": "String"
+        },
+        {
+          "Name": "cutset",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "trimprefix": {
+      "Parameters": [
+        {
+          "Name": "str",
+          "Type": "String"
+        },
+        {
+          "Name": "prefix",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "trimspace": {
+      "Parameters": [
+        {
+          "Name": "str",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "trimsuffix": {
+      "Parameters": [
+        {
+          "Name": "str",
+          "Type": "String"
+        },
+        {
+          "Name": "suffix",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "try": {
+      "ReturnType": "Expression",
+      "VariadicParameter": {
+        "Name": "expressions",
+        "Type": "Expression"
+      }
+    },
+    "upper": {
+      "Parameters": [
+        {
+          "Name": "str",
+          "Type": "String",
+          "AllowDynamicType": true
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "urlencode": {
+      "Parameters": [
+        {
+          "Name": "str",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "uuid": {
+      "ReturnType": "String"
+    },
+    "uuidv5": {
+      "Parameters": [
+        {
+          "Name": "namespace",
+          "Type": "String"
+        },
+        {
+          "Name": "name",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "values": {
+      "Parameters": [
+        {
+          "Name": "values",
+          "Type": "Any",
+          "AllowMarked": true
+        }
+      ],
+      "ReturnType": "Any"
+    },
+    "yamldecode": {
+      "Parameters": [
+        {
+          "Name": "src",
+          "Type": "String"
+        }
+      ],
+      "ReturnType": "Any"
+    },
+    "yamlencode": {
+      "Parameters": [
+        {
+          "Name": "value",
+          "Type": "Any",
+          "AllowNull": true,
+          "AllowDynamicType": true
+        }
+      ],
+      "ReturnType": "String"
+    },
+    "zipmap": {
+      "Parameters": [
+        {
+          "Name": "keys",
+          "Type": "List(String)",
+          "AllowMarked": true
+        },
+        {
+          "Name": "values",
+          "Type": "Any",
+          "AllowMarked": true
+        }
+      ],
+      "ReturnType": "Any"
+    }
+  }
+}

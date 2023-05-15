@@ -191,10 +191,9 @@ public class ProtoSymbolPathReference extends PsiPolyVariantReferenceBase<PsiEle
     // A parent of a child SymbolPath that provides a ProtoSymbolPathReference should also provide
     // a ProtoSymbolPathReference.
     PsiReference ref = parentPath.getReference();
-    if (!(ref instanceof ProtoSymbolPathReference)) {
+    if (!(ref instanceof ProtoSymbolPathReference pathReference)) {
       return null;
     }
-    ProtoSymbolPathReference pathReference = (ProtoSymbolPathReference) ref;
 
     ResolveResult[] resolveResults = pathReference.multiResolve(false);
     if (resolveResults.length == 0) {
@@ -205,10 +204,9 @@ public class ProtoSymbolPathReference extends PsiPolyVariantReferenceBase<PsiEle
 
     for (ResolveResult result : pathReference.multiResolve(false)) {
       // Results should always be PbResolveResult instances.
-      if (!(result instanceof PbResolveResult)) {
+      if (!(result instanceof PbResolveResult pbResult)) {
         continue;
       }
-      PbResolveResult pbResult = (PbResolveResult) result;
 
       // Start with the more qualified element's name.
       QualifiedName refElementScope = pbResult.getName();
@@ -324,8 +322,7 @@ public class ProtoSymbolPathReference extends PsiPolyVariantReferenceBase<PsiEle
     if (name == null) {
       return null;
     }
-    if (element instanceof PbSymbol) {
-      PbSymbol symbol = (PbSymbol) element;
+    if (element instanceof PbSymbol symbol) {
       if (name.equals(symbol.getQualifiedName())) {
         return PbResolveResult.create(symbol);
       }

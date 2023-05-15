@@ -7,9 +7,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.regex.Pattern;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlAttributeDescription implements Comparable<CfmlAttributeDescription> {
   private final Pattern myNamePattern;
   // private String myName;

@@ -2,9 +2,10 @@
 package org.jetbrains.vuejs.model
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 import org.jetbrains.vuejs.codeInsight.fromAsset
 
-interface VueScopeElement : VueSourceElement {
+interface VueScopeElement : VueDocumentedItem {
 
   override val source: PsiElement?
 

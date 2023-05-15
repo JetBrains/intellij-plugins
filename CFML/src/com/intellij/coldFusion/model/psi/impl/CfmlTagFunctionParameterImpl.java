@@ -77,12 +77,9 @@ public class CfmlTagFunctionParameterImpl extends CfmlTagImpl implements CfmlPar
   @NotNull
   @Override
   public PsiElement getNavigationElement() {
-    final PsiElement parameterName = findChildByClass(CfmlAttributeNameImpl.class);
+    final CfmlAttributeNameImpl parameterName = findChildByClass(CfmlAttributeNameImpl.class);
     if (parameterName != null) {
-      PsiElement navigationElement = parameterName.getNavigationElement();
-      if (navigationElement != null) {
-        return navigationElement;
-      }
+      return parameterName.getNavigationElement();
     }
     return super.getNavigationElement();
   }

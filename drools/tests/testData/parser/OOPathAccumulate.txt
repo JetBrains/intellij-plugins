@@ -1,0 +1,116 @@
+Drools File
+  PACKAGE_STATEMENT
+    PsiElement(package)('package')
+    PsiWhiteSpace(' ')
+    NAMESPACE
+      PsiElement(JAVA_IDENTIFIER)('org')
+      PsiElement(.)('.')
+      PsiElement(JAVA_IDENTIFIER)('kie')
+      PsiElement(.)('.')
+      PsiElement(JAVA_IDENTIFIER)('kogito')
+      PsiElement(.)('.')
+      PsiElement(JAVA_IDENTIFIER)('queries')
+    PsiElement(;)(';')
+  PsiWhiteSpace('\n')
+  UNIT_STATEMENT
+    PsiElement(unit)('unit')
+    PsiWhiteSpace(' ')
+    UNIT_NAME
+      STRING_ID
+        IDENTIFIER
+          PsiElement(JAVA_IDENTIFIER)('LoanUnit')
+  PsiElement(;)(';')
+  PsiWhiteSpace('\n')
+  RULE_STATEMENT
+    PsiElement(rule)('rule')
+    PsiWhiteSpace(' ')
+    RULE_NAME
+      STRING_ID
+        IDENTIFIER
+          PsiElement(JAVA_IDENTIFIER)('AllAmounts')
+    PsiWhiteSpace('\n')
+    LHS
+      PsiElement(when)('when')
+      PsiWhiteSpace('\n    ')
+      LHS_EXPRESSION
+        LHS_OR
+          LHS_AND
+            LHS_UNARY
+              LHS_ACCUMULATE
+                PsiElement(accumulate)('accumulate')
+                PsiWhiteSpace(' ')
+                PsiElement(()('(')
+                PsiWhiteSpace(' ')
+                LHS_AND
+                  LHS_UNARY
+                    LHS_OO_PATH_BIND
+                      NAME_ID
+                        PsiElement(JAVA_IDENTIFIER)('$a')
+                      PsiWhiteSpace(' ')
+                      PsiElement(:)(':')
+                      PsiWhiteSpace(' ')
+                      PsiElement(/)('/')
+                      LHS_OOP_SEGMENT
+                        LHS_OO_PATH_SEGMENT_ID
+                          PsiElement(JAVA_IDENTIFIER)('loanApplications')
+                PsiWhiteSpace(' ')
+                PsiElement(;)(';')
+                PsiWhiteSpace(' ')
+                ACCUMULATE_FUNCTION_BINDING
+                  NAME_ID
+                    PsiElement(JAVA_IDENTIFIER)('$sum')
+                  PsiWhiteSpace(' ')
+                  PsiElement(:)(':')
+                  PsiWhiteSpace(' ')
+                  ACCUMULATE_FUNCTION
+                    FUNCTION_NAME
+                      PsiElement(JAVA_IDENTIFIER)('sum')
+                    ACCUMULATE_PARAMETERS
+                      PsiElement(()('(')
+                      PRIMARY_EXPR
+                        IDENTIFIER
+                          PsiElement(JAVA_IDENTIFIER)('$a')
+                        PsiElement(.)('.')
+                        IDENTIFIER
+                          PsiElement(JAVA_IDENTIFIER)('amount')
+                      PsiElement())(')')
+                PsiElement())(')')
+    PsiWhiteSpace('\n')
+    RHS
+      PsiElement(then)('then')
+      PsiWhiteSpace('\n    ')
+      JAVA_RHS_STATEMENT
+        DroolsCompositeJavaStatementElement(JAVA_STATEMENT)
+          PsiExpressionStatement
+            PsiMethodCallExpression:allAmounts.add(new AllAmounts($sum))
+              PsiReferenceExpression:allAmounts.add
+                PsiReferenceExpression:allAmounts
+                  PsiReferenceParameterList
+                    <empty list>
+                  PsiIdentifier:allAmounts('allAmounts')
+                PsiJavaToken:DOT('.')
+                PsiReferenceParameterList
+                  <empty list>
+                PsiIdentifier:add('add')
+              PsiExpressionList
+                PsiJavaToken:LPARENTH('(')
+                PsiNewExpression:new AllAmounts($sum)
+                  PsiKeyword:new('new')
+                  PsiReferenceParameterList
+                    <empty list>
+                  PsiWhiteSpace(' ')
+                  PsiJavaCodeReferenceElement:AllAmounts
+                    PsiIdentifier:AllAmounts('AllAmounts')
+                    PsiReferenceParameterList
+                      <empty list>
+                  PsiExpressionList
+                    PsiJavaToken:LPARENTH('(')
+                    PsiReferenceExpression:$sum
+                      PsiReferenceParameterList
+                        <empty list>
+                      PsiIdentifier:$sum('$sum')
+                    PsiJavaToken:RPARENTH(')')
+                PsiJavaToken:RPARENTH(')')
+            PsiJavaToken:SEMICOLON(';')
+          PsiWhiteSpace('\n')
+    PsiElement(end)('end')

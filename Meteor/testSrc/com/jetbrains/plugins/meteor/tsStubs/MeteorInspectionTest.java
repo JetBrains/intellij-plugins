@@ -1,6 +1,7 @@
 package com.jetbrains.plugins.meteor.tsStubs;
 
 import com.intellij.codeInspection.ex.LocalInspectionToolWrapper;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.jetbrains.plugins.meteor.spacebars.inspection.MeteorUnresolvedSymbolInspection;
 
@@ -16,6 +17,11 @@ public class MeteorInspectionTest extends BasePlatformTestCase {
     MeteorTestUtil.enableMeteor();
     super.setUp();
     MeteorProjectTestBase.initMeteorDirs(getProject());
+  }
+
+  @Override
+  protected boolean runInDispatchThread() {
+    return false;
   }
 
   @Override
@@ -36,6 +42,6 @@ public class MeteorInspectionTest extends BasePlatformTestCase {
   }
 
   private void doTest() {
-    myFixture.testInspection(getTestName(false), new LocalInspectionToolWrapper(new MeteorUnresolvedSymbolInspection()));
+    ApplicationManager.getApplication().invokeAndWait(() -> myFixture.testInspection(getTestName(false), new LocalInspectionToolWrapper(new MeteorUnresolvedSymbolInspection())));
   }
 }

@@ -457,11 +457,10 @@ public final class DartConfigurable implements SearchableConfigurable, NoScroll 
     final CheckboxTree.CheckboxTreeCellRenderer checkboxTreeCellRenderer = new CheckboxTree.CheckboxTreeCellRenderer() {
       @Override
       public void customizeRenderer(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-        if (!(value instanceof CheckedTreeNode)) return;
+        if (!(value instanceof CheckedTreeNode node)) return;
 
         final boolean dartSupportEnabled = myEnableDartSupportCheckBox.isSelected();
 
-        final CheckedTreeNode node = (CheckedTreeNode)value;
         final Object userObject = node.getUserObject();
 
         if (userObject instanceof Project) {

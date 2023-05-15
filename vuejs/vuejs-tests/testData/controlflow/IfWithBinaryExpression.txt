@@ -1,0 +1,73 @@
+0(1) element: null
+1(2) element: HtmlTag:div
+2(3) element: JSReferenceExpression Read(isString)
+3(4) element: JSReferenceExpression Read(bar)
+4(5,6) element: JSCallExpression
+5(7) element: JSCallExpression condition: true, reachable
+6(27) element: JSCallExpression condition: false, reachable
+7(8,9) element: JSBinaryExpression LOGICAL_EXPRESSION (branch) true
+8(10) element: JSLiteralExpression condition: true, reachable
+9(27) element: JSLiteralExpression condition: false, unreachable
+10(11) element: HtmlTag:div IF (branch) true
+11(12) element: VueJSEmbeddedExpressionContent(VueTS)
+12(13) element: JSReferenceExpression Read(bar)
+13(14) element: JSReferenceExpression Read(length)
+14(15) element: VueJSEmbeddedExpressionContent(VueTS)
+15(16) element: JSReferenceExpression Read(bar)
+16(17) element: JSReferenceExpression Read(unresolved)
+17(18,19) element: VueJSEmbeddedExpressionContent(VueTS)
+18(23) element: JSLiteralExpression condition: true, reachable
+19(20) element: JSLiteralExpression condition: false, unreachable
+20(21,22) element: JSBinaryExpression LOGICAL_EXPRESSION (branch) false
+21(23) element: JSLiteralExpression condition: true, unreachable
+22(23) element: JSLiteralExpression condition: false, reachable
+23(24) element: JSBinaryExpression
+24(25) element: VueJSEmbeddedExpressionContent(VueTS)
+25(26) element: JSReferenceExpression Read(bar)
+26(28) element: JSReferenceExpression Read(length)
+27(28) element: HtmlTag:div IF (branch) false
+28(29) element: VueJSEmbeddedExpressionContent(VueTS)
+29(30) element: JSReferenceExpression Read(bar)
+30(31) element: JSReferenceExpression Read(length)
+31(32) element: VueJSEmbeddedExpressionContent(VueTS)
+32(33) element: JSReferenceExpression Read(isString)
+33(34) element: JSReferenceExpression Read(bar)
+34(35,36) element: JSCallExpression
+35(37) element: JSCallExpression condition: true, reachable
+36(42) element: JSCallExpression condition: false, reachable
+37(38) element: JSBinaryExpression LOGICAL_EXPRESSION (branch) true
+38(39) element: JSReferenceExpression Read(bar)
+39(40,41) element: JSReferenceExpression Read(length)
+40(42) element: JSReferenceExpression condition: true, reachable
+41(42) element: JSReferenceExpression condition: false, reachable
+42(43) element: JSBinaryExpression
+43(44) element: VueJSEmbeddedExpressionContent(VueTS)
+44(45) element: JSConditionalExpression
+45(46) element: JSReferenceExpression Read(isString)
+46(47) element: JSReferenceExpression Read(bar)
+47(48,49) element: JSCallExpression
+48(50) element: JSCallExpression condition: true, reachable
+49(53) element: JSCallExpression condition: false, reachable
+50(51) element: JSConditionalExpression CONDITIONAL_EXPRESSION (branch) true
+51(52) element: JSReferenceExpression Read(bar)
+52(56) element: JSReferenceExpression Read(length)
+53(54) element: JSConditionalExpression CONDITIONAL_EXPRESSION (branch) false
+54(55) element: JSReferenceExpression Read(bar)
+55(56) element: JSReferenceExpression Read(length)
+56(57) element: HtmlTag:div
+57(58) element: JSReferenceExpression Read(isString)
+58(59) element: JSReferenceExpression Read(bar)
+59(60,61) element: JSCallExpression
+60(62) element: JSCallExpression condition: true, reachable
+61(71) element: JSCallExpression condition: false, reachable
+62(63) element: JSBinaryExpression LOGICAL_EXPRESSION (branch) true
+63(64) element: JSReferenceExpression Read(bar)
+64(65,66) element: JSReferenceExpression Read(length)
+65(67) element: JSReferenceExpression condition: true, reachable
+66(71) element: JSReferenceExpression condition: false, reachable
+67(68) element: HtmlTag:div IF (branch) true
+68(69) element: VueJSEmbeddedExpressionContent(VueTS)
+69(70) element: JSReferenceExpression Read(bar)
+70(72) element: JSReferenceExpression Read(length)
+71(72) element: HtmlTag:div IF (branch) false
+72() element: null

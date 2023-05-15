@@ -145,7 +145,7 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
     myFixture.openFileInEditor(file);
 
     final EditorTestUtil.CaretAndSelectionState markers = EditorTestUtil.extractCaretAndSelectionMarkers(getEditor().getDocument());
-    getEditor().getCaretModel().moveToOffset(markers.carets.get(0).getCaretOffset(getEditor().getDocument()));
+    getEditor().getCaretModel().moveToOffset(markers.carets().get(0).getCaretOffset(getEditor().getDocument()));
 
     myFixture.doHighlighting();
     myFixture.complete(CompletionType.BASIC);

@@ -41,7 +41,7 @@ abstract class PbStubbedDefinitionBase<T extends PbElementStub<?>> extends PbStu
   @Nullable
   @Override
   public PbStatementOwner getStatementOwner() {
-    return PbPsiImplUtil.getStatementOwner(this);
+    return PbDefinition.super.getStatementOwner();
   }
 
   @NotNull

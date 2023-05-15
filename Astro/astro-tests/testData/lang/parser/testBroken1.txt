@@ -1,0 +1,36 @@
+AstroFile:test.astro
+  AstroContentRoot:ASTRO:CONTENT_ROOT
+    PsiElement(XML_PROLOG)
+      <empty list>
+    AstroTag:a
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('a')
+      XmlToken:XML_TAG_END('>')
+      AstroTag:b
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('b')
+        XmlToken:XML_TAG_END('>')
+        XmlText
+          XmlToken:XML_DATA_CHARACTERS('12')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_NAME('b')
+        XmlToken:XML_TAG_END('>')
+      JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+        PsiElement(JS:XML_LBRACE)('{')
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('23')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:PLUS)('+')
+          AstroTag:c
+            XmlToken:XML_START_TAG_START('<')
+            XmlToken:XML_NAME('c')
+            XmlToken:XML_EMPTY_ELEMENT_END('/>')
+        PsiErrorElement:} expected
+          <empty list>
+        PsiErrorElement:Closing tag matches nothing
+          XmlToken:XML_END_TAG_START('</')
+          XmlToken:XML_NAME('a')
+          XmlToken:XML_TAG_END('>')
+      PsiErrorElement:Element a is not closed
+        <empty list>

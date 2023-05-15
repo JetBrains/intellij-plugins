@@ -1,0 +1,30 @@
+<idea-plugin>
+    <id>com.intellij.dts</id>
+    <name>Device Tree</name>
+    <vendor>JetBrains</vendor>
+
+    <description>Language plugin for device tree files and device tree include files.</description>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <fileType
+                language="DTS"
+                name="DTS"
+                implementationClass="com.intellij.dts.lang.DtsFileType"
+                extensions="dts;dtsi"/>
+        <lang.parserDefinition
+                language="DTS"
+                implementationClass="com.intellij.dts.lang.parser.DtsParserDefinition"/>
+
+        <lang.syntaxHighlighterFactory
+                language="DTS"
+                implementationClass="com.intellij.dts.highlighting.DtsSyntaxHighlighter$Factory"/>
+        <annotator
+                language="DTS"
+                implementationClass="com.intellij.dts.highlighting.DtsHighlightAnnotator"/>
+
+        <colorSettingsPage
+                implementation="com.intellij.dts.settings.DtsColorSettingsPage"/>
+    </extensions>
+</idea-plugin>

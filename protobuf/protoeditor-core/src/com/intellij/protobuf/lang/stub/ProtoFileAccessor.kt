@@ -16,7 +16,7 @@ import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.util.CommonProcessors
 import com.intellij.util.Processor
 
-@Service
+@Service(Service.Level.PROJECT)
 class ProtoFileAccessor(private val project: Project) {
 
   fun findMethodByFqn(exactFqn: String): PbServiceMethod? {

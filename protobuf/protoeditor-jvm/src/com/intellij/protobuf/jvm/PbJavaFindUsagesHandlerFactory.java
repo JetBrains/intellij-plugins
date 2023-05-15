@@ -56,10 +56,9 @@ public class PbJavaFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
     if (forHighlightUsages) {
       return null;
     }
-    if (!(psiElement instanceof PbSymbol)) {
+    if (!(psiElement instanceof PbSymbol symbol)) {
       return null;
     }
-    PbSymbol symbol = ((PbSymbol) psiElement);
     PbFile file = symbol.getPbFile();
     ProtoToJavaConverter dispatcher = new ProtoToJavaConverter(file);
     symbol.accept(dispatcher);

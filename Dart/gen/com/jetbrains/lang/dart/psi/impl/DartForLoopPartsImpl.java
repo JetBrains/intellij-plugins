@@ -47,6 +47,12 @@ public class DartForLoopPartsImpl extends DartPsiCompositeElementImpl implements
 
   @Override
   @Nullable
+  public DartPatternVariableDeclaration getPatternVariableDeclaration() {
+    return findChildByClass(DartPatternVariableDeclaration.class);
+  }
+
+  @Override
+  @Nullable
   public DartVarDeclarationList getVarDeclarationList() {
     return findChildByClass(DartVarDeclarationList.class);
   }

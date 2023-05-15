@@ -14,3 +14,4 @@ HtmlFile:test.vue
         PsiWhiteSpace(' ')
         XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('"http://java.sun.com/products/javahelp/toc_1_0.dtd"')
         XmlToken:XML_DOCTYPE_END('>')
+  PsiElement(VUE_LANG_MODE_NO_TS)('')

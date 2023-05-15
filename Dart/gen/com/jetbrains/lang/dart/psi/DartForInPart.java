@@ -14,6 +14,24 @@ public interface DartForInPart extends DartPsiCompositeElement {
   DartExpression getExpression();
 
   @Nullable
+  DartListPattern getListPattern();
+
+  @Nullable
+  DartMapPattern getMapPattern();
+
+  @NotNull
+  List<DartMetadata> getMetadataList();
+
+  @Nullable
+  DartObjectPattern getObjectPattern();
+
+  @Nullable
+  DartParenthesizedPattern getParenthesizedPattern();
+
+  @Nullable
+  DartRecordPattern getRecordPattern();
+
+  @Nullable
   DartVarAccessDeclaration getVarAccessDeclaration();
 
 }

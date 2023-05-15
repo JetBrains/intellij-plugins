@@ -1,5 +1,6 @@
 package com.jetbrains.plugins.meteor.tsStubs;
 
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FilenameIndex;
@@ -13,14 +14,15 @@ public class MeteorProjectTest extends MeteorProjectTestBase {
   
   public void testExcludeLocalForMeteorProjectWithRootMeteorFolder() {
     myFixture.copyDirectoryToProject("/testProject", "");
-
-    Project project = myFixture.getProject();
-    Collection<VirtualFile> local = FilenameIndex.getVirtualFilesByName("local", GlobalSearchScope.allScope(project));
-    Collection<VirtualFile> meteor = FilenameIndex.getVirtualFilesByName(".meteor", GlobalSearchScope.allScope(project));
-    Collection<VirtualFile> emptyFile = FilenameIndex.getVirtualFilesByName("empty.txt", GlobalSearchScope.allScope(project));
-    assertNotEmpty(meteor);
-    assertEmpty(local);
-    assertEmpty(emptyFile);
+    ReadAction.run(() -> {
+      Project project = myFixture.getProject();
+      Collection<VirtualFile> local = FilenameIndex.getVirtualFilesByName("local", GlobalSearchScope.allScope(project));
+      Collection<VirtualFile> meteor = FilenameIndex.getVirtualFilesByName(".meteor", GlobalSearchScope.allScope(project));
+      Collection<VirtualFile> emptyFile = FilenameIndex.getVirtualFilesByName("empty.txt", GlobalSearchScope.allScope(project));
+      assertNotEmpty(meteor);
+      assertEmpty(local);
+      assertEmpty(emptyFile);
+    });
   }
 
   /**
@@ -33,7 +35,7 @@ public class MeteorProjectTest extends MeteorProjectTestBase {
       myFixture.copyDirectoryToProject("/testProject", "");
 
       Project project = myFixture.getProject();
-      Collection<VirtualFile> local = FilenameIndex.getVirtualFilesByName("local", GlobalSearchScope.allScope(project));
+      Collection<VirtualFile> local = ReadAction.compute(() -> FilenameIndex.getVirtualFilesByName("local", GlobalSearchScope.allScope(project)));
       assertEquals(1, local.size());
     }
     finally {

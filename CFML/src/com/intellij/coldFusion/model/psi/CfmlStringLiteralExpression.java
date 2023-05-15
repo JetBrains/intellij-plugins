@@ -14,9 +14,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlStringLiteralExpression extends CfmlCompositeElement implements CfmlExpression {
   public CfmlStringLiteralExpression(@NotNull final ASTNode node) {
     super(node);

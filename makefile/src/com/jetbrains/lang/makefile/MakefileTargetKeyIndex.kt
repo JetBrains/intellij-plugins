@@ -11,7 +11,7 @@ import com.jetbrains.lang.makefile.psi.MakefileTarget
 
 val TARGET_INDEX_KEY = StubIndexKey.createIndexKey<String, MakefileTarget>("makefile.target.index")
 
-object MakefileTargetIndex : StringStubIndexExtension<MakefileTarget>() {
+class MakefileTargetIndex : StringStubIndexExtension<MakefileTarget>() {
   fun allTargets(project: Project): List<MakefileTarget> {
     val allTargets = mutableSetOf<String>()
     processAllKeys(project, CommonProcessors.CollectProcessor(allTargets))
@@ -22,4 +22,10 @@ object MakefileTargetIndex : StringStubIndexExtension<MakefileTarget>() {
 
   override fun get(key: String, project: Project, scope: GlobalSearchScope): Collection<MakefileTarget> =
       StubIndex.getElements(TARGET_INDEX_KEY, key, project, scope, MakefileTarget::class.java)
+
+  companion object {
+    fun getInstance(): MakefileTargetIndex {
+      return EP_NAME.findExtensionOrFail(MakefileTargetIndex::class.java)
+    }
+  }
 }

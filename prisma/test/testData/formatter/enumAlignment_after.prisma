@@ -1,0 +1,10 @@
+enum Enum1 {
+  VALUE             @map("admin")
+  VAL
+  VERYVERYLONGVALUE @map("admin")
+
+  VALUE1 // comment
+  VL     @map("gh")
+
+  @@map("enum111")
+}

@@ -10,8 +10,8 @@ public class TestClass {
      * as
      * doc
      */
-    
+</selection>    
     public function otherMethod():void {
         
     }
-</selection>}
+}

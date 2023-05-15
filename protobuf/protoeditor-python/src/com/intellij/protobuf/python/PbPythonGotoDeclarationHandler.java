@@ -19,7 +19,6 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationHandler;
-import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.protobuf.lang.psi.PbElement;
 import com.intellij.protobuf.lang.psi.PbFile;
@@ -29,7 +28,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.QualifiedName;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.PyFile;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -40,12 +38,6 @@ import static java.util.stream.Collectors.toList;
 
 /** Handles goto declaration from python generated code -> .proto files. */
 public final class PbPythonGotoDeclarationHandler implements GotoDeclarationHandler {
-
-  @Nullable
-  @Override
-  public String getActionText(@NotNull DataContext context) {
-    return null;
-  }
 
   @Override
   public PsiElement @Nullable [] getGotoDeclarationTargets(

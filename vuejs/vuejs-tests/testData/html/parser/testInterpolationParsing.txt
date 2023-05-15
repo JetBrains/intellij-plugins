@@ -3,8 +3,8 @@ HtmlFile:test.{{.}}.#@injected@#.html
     PsiElement(XML_PROLOG)
       <empty list>
     PsiElement(VUE:INTERPOLATION_START)('{{')
-    ASTWrapperPsiElement(VUE_JS:INTERPOLATION_EXPR)
-      VueJSEmbeddedExpression
+    ASTWrapperPsiElement(VUE_JS:INTERPOLATION_EXPR_VueJS)
+      VueJSEmbeddedExpressionContent(VueJS)
         JSReferenceExpression
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('foo')
@@ -21,8 +21,8 @@ HtmlFile:test.{{.}}.#@injected@#.html
         XmlToken:XML_EQ('=')
         PsiElement(XML_ATTRIBUTE_VALUE)
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-          ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
-            VueJSEmbeddedExpression
+          ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR_VueJS)
+            VueJSEmbeddedExpressionContent(VueJS)
               JSObjectLiteralExpression
                 PsiElement(JS:LBRACE)('{')
                 PsiErrorElement:Identifier or string literal or numeric literal expected
@@ -44,8 +44,8 @@ HtmlFile:test.{{.}}.#@injected@#.html
         PsiElement(XML_ATTRIBUTE_VALUE)
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
           PsiElement(VUE:INTERPOLATION_START)('{{')
-          ASTWrapperPsiElement(VUE_JS:INTERPOLATION_EXPR)
-            VueJSEmbeddedExpression
+          ASTWrapperPsiElement(VUE_JS:INTERPOLATION_EXPR_VueJS)
+            VueJSEmbeddedExpressionContent(VueJS)
               JSReferenceExpression
                 PsiElement(JS:IDENTIFIER)('bar')
           PsiElement(VUE:INTERPOLATION_END)('}}')
@@ -57,8 +57,8 @@ HtmlFile:test.{{.}}.#@injected@#.html
         PsiElement(XML_ATTRIBUTE_VALUE)
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
           PsiElement(VUE:INTERPOLATION_START)('{{')
-          ASTWrapperPsiElement(VUE_JS:INTERPOLATION_EXPR)
-            VueJSEmbeddedExpression
+          ASTWrapperPsiElement(VUE_JS:INTERPOLATION_EXPR_VueJS)
+            VueJSEmbeddedExpressionContent(VueJS)
               JSReferenceExpression
                 PsiElement(JS:IDENTIFIER)('bar')
           PsiElement(VUE:INTERPOLATION_END)('}}')
@@ -67,8 +67,8 @@ HtmlFile:test.{{.}}.#@injected@#.html
       XmlText
         PsiWhiteSpace('\n  ')
       PsiElement(VUE:INTERPOLATION_START)('{{')
-      ASTWrapperPsiElement(VUE_JS:INTERPOLATION_EXPR)
-        VueJSEmbeddedExpression
+      ASTWrapperPsiElement(VUE_JS:INTERPOLATION_EXPR_VueJS)
+        VueJSEmbeddedExpressionContent(VueJS)
           JSReferenceExpression
             JSReferenceExpression
               PsiElement(JS:IDENTIFIER)('foo')
@@ -80,3 +80,4 @@ HtmlFile:test.{{.}}.#@injected@#.html
       XmlToken:XML_END_TAG_START('</')
       XmlToken:XML_NAME('div')
       XmlToken:XML_TAG_END('>')
+  PsiElement(VUE_LANG_MODE_NO_TS)('')

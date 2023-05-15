@@ -86,9 +86,7 @@ public class DroolsLightClass extends LightClass {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof DroolsLightClass)) return false;
-
-    DroolsLightClass aClass = (DroolsLightClass)o;
+    if (!(o instanceof DroolsLightClass aClass)) return false;
 
     if (myResolve != null ? !myResolve.equals(aClass.myResolve) : aClass.myResolve != null) return false;
 

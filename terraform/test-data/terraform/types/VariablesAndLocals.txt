@@ -1,0 +1,13 @@
+HCLFile: VariablesAndLocals.tf
+      HCLProperty at line 8
+        HCLIdentifier
+        HCLSelectExpression - list(number)
+          HCLIdentifier - identifier
+          HCLIdentifier - identifier
+      HCLProperty at line 9
+        HCLIdentifier
+        HCLIndexSelectExpression - number
+          HCLSelectExpression - list(number)
+            HCLIdentifier - identifier
+            HCLIdentifier - identifier
+          HCLNumberLiteral - number

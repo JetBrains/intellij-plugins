@@ -14,3 +14,4 @@ HtmlFile:test.vue
         XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"')
         XmlToken:XML_DOCTYPE_END('>')
       PsiWhiteSpace('\n')
+  PsiElement(VUE_LANG_MODE_NO_TS)('')

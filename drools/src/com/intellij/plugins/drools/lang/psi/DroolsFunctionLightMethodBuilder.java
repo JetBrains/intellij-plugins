@@ -4,9 +4,7 @@ package com.intellij.plugins.drools.lang.psi;
 import com.intellij.ide.presentation.Presentation;
 import com.intellij.plugins.drools.DroolsLanguage;
 import com.intellij.plugins.drools.lang.psi.util.DroolsResolveUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiParameter;
-import com.intellij.psi.PsiType;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.light.LightMethodBuilder;
 import com.intellij.psi.impl.light.LightParameter;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +41,7 @@ public class DroolsFunctionLightMethodBuilder extends LightMethodBuilder {
     final PsiType psiType = DroolsResolveUtil.resolveType(droolsParameter.getType());
 
     if (psiType == null) {
-      parameter = new DroolsLightParameter(droolsParameter, paramName, PsiType.NULL, this);
+      parameter = new DroolsLightParameter(droolsParameter, paramName, PsiTypes.nullType(), this);
     } else {
       parameter = new DroolsLightParameter(droolsParameter,paramName, psiType, this);
     }

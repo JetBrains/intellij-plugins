@@ -106,8 +106,7 @@ public final class YeomanGeneratorFullInfo implements YeomanGeneratorInfo {
 
   @Override
   public int compareTo(YeomanGeneratorInfo o) {
-    if (o instanceof YeomanGeneratorFullInfo) {
-      final YeomanGeneratorFullInfo fullInfo = (YeomanGeneratorFullInfo)o;
+    if (o instanceof YeomanGeneratorFullInfo fullInfo) {
       return (stars < fullInfo.stars) ? -1 : ((stars == fullInfo.stars) ? StringUtil.compare(this.getName(), o.getName(), false) : 1);
     }
     return StringUtil.compare(this.getName(), o.getName(), false);

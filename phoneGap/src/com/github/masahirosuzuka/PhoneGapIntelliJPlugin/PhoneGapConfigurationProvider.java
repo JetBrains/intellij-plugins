@@ -6,6 +6,7 @@ import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurableProvider;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -15,9 +16,9 @@ import org.jetbrains.annotations.Nullable;
  */
 public class PhoneGapConfigurationProvider extends ConfigurableProvider {
 
-  private final Project myProject;
+  private final @NotNull Project myProject;
 
-  public PhoneGapConfigurationProvider(Project project) {
+  public PhoneGapConfigurationProvider(@NotNull Project project) {
     myProject = project;
   }
 

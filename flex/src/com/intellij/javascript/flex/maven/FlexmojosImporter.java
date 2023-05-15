@@ -71,27 +71,27 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
   }
 
   @Override
-  public void getSupportedPackagings(Collection<String> result) {
+  public void getSupportedPackagings(Collection<? super String> result) {
     Collections.addAll(result, SUPPORTED_PACKAGINGS);
   }
 
   @Override
-  public void getSupportedDependencyTypes(Collection<String> result, SupportedRequestType type) {
+  public void getSupportedDependencyTypes(Collection<? super String> result, SupportedRequestType type) {
     result.addAll(type == SupportedRequestType.FOR_COMPLETION ? DEPENDENCY_TYPES_FOR_COMPLETION : DEPENDENCY_TYPES_FOR_IMPORT);
   }
 
   @Override
-  public void getSupportedDependencyScopes(Collection<String> result) {
+  public void getSupportedDependencyScopes(Collection<? super String> result) {
     Collections.addAll(result, "merged", "internal", "external", "caching", "rsl");
   }
 
   @Override
   public void resolve(Project project, MavenProject mavenProject, NativeMavenProjectHolder nativeMavenProject,
-                      MavenEmbedderWrapper embedder, ResolveContext context) throws MavenProcessCanceledException {
+                      MavenEmbedderWrapper embedder) throws MavenProcessCanceledException {
     final MavenPlugin plugin = getFlexmojosPlugin(mavenProject);
     final String version = plugin.getVersion();
     if (version != null && StringUtil.compareVersionNumbers(version, "4") < 0) {
-      embedder.resolvePlugin(plugin, mavenProject.getRemoteRepositories(), nativeMavenProject, true);
+      embedder.resolvePlugin(plugin, nativeMavenProject);
     }
   }
 
@@ -120,14 +120,14 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
   }
 
   @Override
-  public void process(final IdeModifiableModelsProvider modelsProvider,
-                      final Module module,
-                      final MavenRootModelAdapter modelAdapter,
-                      final MavenProjectsTree mavenTree,
-                      final MavenProject mavenProject,
-                      final MavenProjectChanges changes,
-                      final Map<MavenProject, String> mavenProjectToModuleName,
-                      final List<MavenProjectsProcessorTask> postTasks) {
+  public void process(final @NotNull IdeModifiableModelsProvider modelsProvider,
+                      final @NotNull Module module,
+                      final @NotNull MavenRootModelAdapter modelAdapter,
+                      final @NotNull MavenProjectsTree mavenTree,
+                      final @NotNull MavenProject mavenProject,
+                      final @NotNull MavenProjectChanges changes,
+                      final @NotNull Map<MavenProject, String> mavenProjectToModuleName,
+                      final @NotNull List<MavenProjectsProcessorTask> postTasks) {
     expireNotification();
 
     final FlexProjectConfigurationEditor currentEditor = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor();

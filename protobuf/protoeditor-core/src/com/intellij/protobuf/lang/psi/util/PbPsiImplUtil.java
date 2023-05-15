@@ -141,8 +141,7 @@ public final class PbPsiImplUtil {
           builder.put(name, symbol);
         }
       }
-      if (statement instanceof PbSymbolContributor) {
-        PbSymbolContributor contributor = (PbSymbolContributor) statement;
+      if (statement instanceof PbSymbolContributor contributor) {
         for (PbSymbol sibling : contributor.getAdditionalSiblings()) {
           if (typeClass.isInstance(sibling)) {
             String name = sibling.getName();

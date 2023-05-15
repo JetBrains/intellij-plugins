@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveResult
 import com.intellij.util.Processor
 import one.util.streamex.StreamEx
-import org.jetbrains.vuejs.lang.expr.VueJSLanguage
+import org.jetbrains.vuejs.lang.expr.VueExprMetaLanguage
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
 object VueTemplateScopesResolver {
@@ -19,7 +19,7 @@ object VueTemplateScopesResolver {
     if (!checkLanguage(original)) {
       return
     }
-    val expressionIsInjected = original.containingFile.language == VueJSLanguage.INSTANCE
+    val expressionIsInjected = VueExprMetaLanguage.matches(original.containingFile.language)
     val hostElement: PsiElement?
     if (expressionIsInjected) {
       //we are working within injection
@@ -39,9 +39,9 @@ object VueTemplateScopesResolver {
 
   private fun checkLanguage(element: PsiElement): Boolean {
     return element.language.let {
-      it == VueJSLanguage.INSTANCE || it == VueLanguage.INSTANCE || it.isKindOf(CSSLanguage.INSTANCE)
+      VueExprMetaLanguage.matches(it) || it == VueLanguage.INSTANCE || it.isKindOf(CSSLanguage.INSTANCE)
     } || element.parent?.language.let {
-      it == VueJSLanguage.INSTANCE || it == VueLanguage.INSTANCE
+      VueExprMetaLanguage.matches(it) || it == VueLanguage.INSTANCE
     }
   }
 

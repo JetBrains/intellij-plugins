@@ -40,15 +40,11 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlFoldingBuilder implements FoldingBuilder, DumbAware {
   @Override
   public FoldingDescriptor @NotNull [] buildFoldRegions(@NotNull ASTNode node, @NotNull Document document) {
     final PsiElement element = node.getPsi();
-    if (element instanceof CfmlFile) {
-      final CfmlFile file = (CfmlFile)element;
+    if (element instanceof CfmlFile file) {
       final PsiElement[] children = file.getChildren();
       Collection<FoldingDescriptor> result = new LinkedList<>();
       for (PsiElement child : children) {
@@ -59,9 +55,9 @@ public class CfmlFoldingBuilder implements FoldingBuilder, DumbAware {
           result.addAll(descriptors);
         }
       }
-      return result.toArray(FoldingDescriptor.EMPTY);
+      return result.toArray(FoldingDescriptor.EMPTY_ARRAY);
     }
-    return FoldingDescriptor.EMPTY;
+    return FoldingDescriptor.EMPTY_ARRAY;
   }
 
   private static void addFoldingDescriptorsFromChildren(List<FoldingDescriptor> descriptors,

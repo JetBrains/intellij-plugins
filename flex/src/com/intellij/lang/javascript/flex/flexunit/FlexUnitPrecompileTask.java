@@ -19,7 +19,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileTask;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -56,11 +55,6 @@ public final class FlexUnitPrecompileTask implements CompileTask {
   public static String getPathToFlexUnitTempDirectory(final Project project) {
     final BuildManager buildManager = BuildManager.getInstance();
     final File projectSystemDir = buildManager.getProjectSystemDirectory(project);
-    if (projectSystemDir == null) {
-      Logger.getInstance(FlexUnitPrecompileTask.class.getName()).error(project);
-      return "";
-    }
-
     return FileUtil.toSystemIndependentName(projectSystemDir.getPath()) + "/tmp";
   }
 
@@ -279,8 +273,8 @@ public final class FlexUnitPrecompileTask implements CompileTask {
 
     final File tmpDir = new File(getPathToFlexUnitTempDirectory(myProject));
     boolean ok = true;
-    if (tmpDir.isFile()) ok &= FileUtil.delete(tmpDir);
-    if (!tmpDir.isDirectory()) ok &= tmpDir.mkdirs();
+    if (tmpDir.isFile() && !FileUtil.delete(tmpDir)) ok = false;
+    if (!tmpDir.isDirectory() && !tmpDir.mkdirs()) ok = false;
     if (!ok) {
       final String message =
         UIBundle.message("create.new.folder.could.not.create.folder.error.message", FileUtil.toSystemDependentName(tmpDir.getPath()));

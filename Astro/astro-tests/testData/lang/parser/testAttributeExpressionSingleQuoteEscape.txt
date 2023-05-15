@@ -1,0 +1,20 @@
+AstroFile:test.astro
+  AstroContentRoot:ASTRO:CONTENT_ROOT
+    PsiElement(XML_PROLOG)
+      <empty list>
+    AstroTag:a
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('a')
+      PsiWhiteSpace(' ')
+      PsiElement(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('foo')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+            PsiElement(JS:XML_LBRACE)('{')
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)(''<">\'}'')
+            PsiElement(JS:XML_RBRACE)('}')
+      XmlToken:XML_TAG_END('>')
+      PsiErrorElement:Element a is not closed
+        <empty list>

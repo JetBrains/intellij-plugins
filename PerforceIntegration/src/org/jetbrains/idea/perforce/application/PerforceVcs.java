@@ -16,7 +16,6 @@
 package org.jetbrains.idea.perforce.application;
 
 import com.intellij.ide.IdeBundle;
-import com.intellij.notification.impl.NotificationsConfigurationImpl;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
@@ -45,7 +44,6 @@ import com.intellij.openapi.vcs.merge.MergeProvider;
 import com.intellij.openapi.vcs.rollback.RollbackEnvironment;
 import com.intellij.openapi.vcs.update.UpdateEnvironment;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.ThreeState;
 import com.intellij.util.containers.MultiMap;
@@ -59,7 +57,6 @@ import org.jetbrains.idea.perforce.merge.PerforceMergeProvider;
 import org.jetbrains.idea.perforce.operations.P4EditOperation;
 import org.jetbrains.idea.perforce.operations.VcsOperation;
 import org.jetbrains.idea.perforce.operations.VcsOperationLog;
-import org.jetbrains.idea.perforce.perforce.FStat;
 import org.jetbrains.idea.perforce.perforce.P4File;
 import org.jetbrains.idea.perforce.perforce.PerforceRunner;
 import org.jetbrains.idea.perforce.perforce.PerforceSettings;
@@ -82,7 +79,6 @@ public final class PerforceVcs extends AbstractVcs {
   private RollbackEnvironment myOfflineRollbackEnvironment;
   private PerforceCommittedChangesProvider myCommittedChangesProvider;
 
-  private final ChangeListManager myChangeListManager;
   private final MyEditFileProvider myMyEditFileProvider;
   private PerforceChangeProvider myChangeProvider;
   private ChangeProvider myOfflineChangeProvider;
@@ -90,9 +86,7 @@ public final class PerforceVcs extends AbstractVcs {
   private PerforceAnnotationProvider myAnnotationProvider;
   private PerforceDiffProvider myDiffProvider;
   private PerforceTreeDiffProvider myTreeDiffProvider;
-  private final PerforceSettings mySettings;
 
-  private final VirtualFileListener myAnnotationsVfsListener;
   private MergeProvider myMergeProvider;
 
   private Disposable myDisposable;
@@ -100,24 +94,12 @@ public final class PerforceVcs extends AbstractVcs {
   private final Set<VirtualFile> myAsyncEditFiles = new HashSet<>();
 
   private final Map<ConnectionKey, List<PerforceJob>> myDefaultAssociated = new HashMap<>();
-  private final PerforceExceptionsHotFixer myHotFixer;
-  private final PerforceRunner myPerforceRunner;
-  private final PerforceBaseInfoWorker myPerforceBaseInfoWorker;
 
   private final ReentrantReadWriteLock myP4Lock = new ReentrantReadWriteLock();
 
   public PerforceVcs(@NotNull Project project) {
     super(project, NAME);
-    myPerforceRunner = PerforceRunner.getInstance(project);
-    myPerforceBaseInfoWorker = project.getService(PerforceBaseInfoWorker.class);
-    myChangeListManager = project.isDefault() ? null : ChangeListManager.getInstance(project);
-    mySettings = PerforceSettings.getSettings(myProject);
     myMyEditFileProvider = new MyEditFileProvider();
-    myAnnotationsVfsListener = new AnnotationsWriteableFilesVfsListener(project, getKey());
-
-    myHotFixer = new PerforceExceptionsHotFixer(project);
-    // remove used some time before old notification group ids
-    NotificationsConfigurationImpl.remove("PerforceId", "ourP4ConfigNotFoundGroupId");
   }
 
   @Override
@@ -133,14 +115,24 @@ public final class PerforceVcs extends AbstractVcs {
     return PerforceBundle.message("perforce.name.with.mnemonic");
   }
 
+  @Override
+  public boolean isCommitActionDisabled() {
+    return !PerforceSettings.getSettings(myProject).ENABLED;
+  }
+
+  @Override
+  public boolean isUpdateActionDisabled() {
+    return !PerforceSettings.getSettings(myProject).ENABLED;
+  }
+
   @Nullable
   private <T> T validProvider(T initialValue) {
-    return mySettings.ENABLED ? initialValue : null;
+    return getSettings().ENABLED ? initialValue : null;
   }
 
   @Override
   public boolean allowsRemoteCalls(@NotNull VirtualFile file) {
-    return mySettings.ENABLED;
+    return getSettings().ENABLED;
   }
 
   @Override
@@ -180,11 +172,11 @@ public final class PerforceVcs extends AbstractVcs {
   }
 
   private void autoEditVFile(final VirtualFile[] vFiles) {
+    ChangeListManager changeListManager = ChangeListManager.getInstance(myProject);
     // check whether it will be under any clientspec
-
     ApplicationManager.getApplication().runWriteAction(() -> {
       for (VirtualFile file : vFiles) {
-        PerforceVFSListener.updateLastUnchangedContent(file, myChangeListManager);
+        PerforceVFSListener.updateLastUnchangedContent(file, changeListManager);
         try {
           ReadOnlyAttributeUtil.setReadOnlyAttribute(file, false);
         }
@@ -197,20 +189,14 @@ public final class PerforceVcs extends AbstractVcs {
 
     List<VcsOperation> operations = new ArrayList<>();
     for(VirtualFile vFile: vFiles) {
-      LocalChangeList list = myChangeListManager.getChangeList(vFile);
+      LocalChangeList list = changeListManager.getChangeList(vFile);
       if (list == null) {
-        list = myChangeListManager.getDefaultChangeList();
+        list = changeListManager.getDefaultChangeList();
       }
       operations.add(new P4EditOperation(list.getName(), vFile));
     }
     VcsOperationLog.getInstance(myProject).queueOperations(operations, PerforceBundle.message("progress.title.perforce.edit"),
                                                            PerformInBackgroundOption.ALWAYS_BACKGROUND);
-  }
-
-  @Nullable
-  public FStat getFstatSafe(final P4File p4File) throws VcsException {
-    if (myProject.isDisposed()) return null;
-    return p4File.getFstat(myPerforceBaseInfoWorker, myChangeListManager, myPerforceRunner, true);
   }
 
   public void startAsyncEdit(VirtualFile... vFiles) {
@@ -246,7 +232,7 @@ public final class PerforceVcs extends AbstractVcs {
   }
 
   public PerforceSettings getSettings() {
-    return mySettings;
+    return PerforceSettings.getSettings(myProject);
   }
 
   @Nullable
@@ -300,7 +286,7 @@ public final class PerforceVcs extends AbstractVcs {
 
     final PerforceManager perforceManager = PerforceManager.getInstance(getProject());
 
-    if (! mySettings.ENABLED) {
+    if (! getSettings().ENABLED) {
       return true;
     }
 
@@ -355,7 +341,7 @@ public final class PerforceVcs extends AbstractVcs {
   @Override
   @NotNull
   public ChangeProvider getChangeProvider() {
-    if (mySettings.ENABLED) {
+    if (getSettings().ENABLED) {
       return getOnlineChangeProvider();
     }
     else {
@@ -400,7 +386,7 @@ public final class PerforceVcs extends AbstractVcs {
     ReadonlyStatusIsVisibleActivationCheck.check(myProject, NAME);
     initChangeProvider();
     myChangeProvider.activate(disposable);
-    VirtualFileManager.getInstance().addVirtualFileListener(myAnnotationsVfsListener, disposable);
+    VirtualFileManager.getInstance().addVirtualFileListener(new AnnotationsWriteableFilesVfsListener(myProject, getKey()), disposable);
   }
 
   @Override
@@ -493,7 +479,7 @@ public final class PerforceVcs extends AbstractVcs {
 
   @Override
   public VcsExceptionsHotFixer getVcsExceptionsHotFixer() {
-    return myHotFixer;
+    return myProject.getService(PerforceExceptionsHotFixer.class);
   }
 
   public static VcsKey getKey() {

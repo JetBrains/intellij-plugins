@@ -1,0 +1,7 @@
+<app-foo <weak_warning descr="fooCmp is deprecated, consult docs for better alternative">fooCmp</weak_warning>="" [fooCmp2]=""></app-foo>
+<app-foo [<weak_warning descr="fooCmp is deprecated, consult docs for better alternative">fooCmp</weak_warning>]="" fooCmp2=""></app-foo>
+<<warning descr="app-bar is deprecated, do not use!">app-bar</warning> ></<warning descr="app-bar is deprecated, do not use!">app-bar</warning>>
+<<warning descr="app-bar is deprecated, do not use!">app-bar</warning> [<weak_warning descr="bar is deprecated, do not use!">bar</weak_warning>]="'12'" <weak_warning descr="barCmp is deprecated, do not use!">barCmp</weak_warning>="111"></<warning descr="app-bar is deprecated, do not use!">app-bar</warning>>
+
+<div <weak_warning descr="bar is deprecated, do not use!">bar</weak_warning>="12" [<weak_warning descr="bar2 is deprecated, do not use!">bar2</weak_warning>]="'12'" <warning descr="Attribute fff is not allowed here">fff</warning>="12"></div>
+<div fooBar="12" [<weak_warning descr="fooBar2 is deprecated, do not use!">fooBar2</weak_warning>]="'12'"></div>

@@ -2,9 +2,7 @@
 package org.jetbrains.vuejs.service
 
 import com.intellij.codeInsight.completion.CompletionType
-import com.intellij.webSymbols.moveToOffsetBySignature
 import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase.checkHighlightByFile
-import com.intellij.lang.javascript.service.JSLanguageService
 import com.intellij.lang.javascript.service.JSLanguageServiceBase
 import com.intellij.lang.javascript.service.JSLanguageServiceProvider
 import com.intellij.lang.javascript.typescript.service.TypeScriptServiceTestBase
@@ -18,8 +16,8 @@ import com.intellij.refactoring.actions.RenameElementAction
 import com.intellij.refactoring.rename.PsiElementRenameHandler.DEFAULT_NAME
 import com.intellij.testFramework.TestActionEvent
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
-import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.ui.UIUtil
+import com.intellij.webSymbols.moveToOffsetBySignature
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.VueInspectionsProvider
 import org.jetbrains.vuejs.lang.VueTestModule
@@ -28,18 +26,26 @@ import org.jetbrains.vuejs.lang.typescript.service.VueTypeScriptService
 import org.jetbrains.vuejs.lang.vueRelativeTestDataPath
 import org.junit.Test
 
+fun CodeInsightTestFixture.configureFileAndCheckHighlighting(filePath: String) {
+  val myFixture = this
+  myFixture.configureFromTempProjectFile(filePath)
+  myFixture.checkHighlighting()
+}
+
+const val SERVICE_TEST_PATH = "/ts_ls_highlighting"
+
+
 class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
-  override fun getService(): JSLanguageServiceBase {
-    val services = JSLanguageServiceProvider.getLanguageServices(project)
-    return ContainerUtil.find(services) { el: JSLanguageService? -> el is VueTypeScriptService } as JSLanguageServiceBase
-  }
+  override fun getService(): JSLanguageServiceBase =
+    JSLanguageServiceProvider.getLanguageServices(project)
+      .firstNotNullOf { it as? VueTypeScriptService }
 
   override fun getExtension(): String {
     return "vue"
   }
 
   override fun getBasePath(): String {
-    return vueRelativeTestDataPath() + BASE_PATH
+    return vueRelativeTestDataPath() + SERVICE_TEST_PATH
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS26)
@@ -157,6 +163,25 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
     myFixture.configureFileAndCheckHighlighting("ScriptSetupAwaitTwoScripts.vue") // WEB-52317
   }
 
+  @TypeScriptVersion(TypeScriptVersions.TS36)
+  @Test
+  fun testScriptSetupGeneric() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_0_ALPHA5)
+    myFixture.configureByFile("tsconfig.json")
+    // Required to load global declarations (defineProps) by the service
+    myFixture.configureByText("import.ts", "import * from 'vue'")
+    myFixture.configureByFile(getTestName(false) + ".vue")
+    myFixture.checkHighlighting()
+  }
+
+  fun testTSErrorsInsideTemplate() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
+    copyDirectory()
+    myFixture.configureFileAndCheckHighlighting("TSErrorsInsideTemplate.vue")
+  }
+
   @TypeScriptVersion(TypeScriptVersions.TS26)
   @Test
   fun testFileRename() {
@@ -169,14 +194,14 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
 
     //do the renaming
     val action = RenameElementAction()
-    val e = TestActionEvent({ name ->
-                              when (name) {
-                                DEFAULT_NAME.name -> "newTest.vue"
-                                PSI_ELEMENT.name -> myFixture.file
-                                PROJECT.name -> myFixture.project
-                                else -> null
-                              }
-                            }, action)
+    val e = TestActionEvent.createTestEvent(action) { name ->
+      when (name) {
+        DEFAULT_NAME.name -> "newTest.vue"
+        PSI_ELEMENT.name -> myFixture.file
+        PROJECT.name -> myFixture.project
+        else -> null
+      }
+    }
     TestCase.assertTrue(ActionUtil.lastUpdateAndCheckDumb(action, e, true))
     ActionUtil.performActionDumbAwareWithCallbacks(action, e)
     TestCase.assertEquals("newTest.vue", myFixture.file.name)
@@ -288,19 +313,9 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
 
   private fun completeTsLangAndAssert() {
     doTestWithCopyDirectory()
-    myFixture.type(" lang=\"\bts\"")
+    myFixture.type(" lang=\"ts\"")
     FileDocumentManager.getInstance().saveDocument(myFixture.getDocument(myFixture.file))
     UIUtil.dispatchAllInvocationEvents()
     checkAfterFile("vue")
-  }
-
-  private fun CodeInsightTestFixture.configureFileAndCheckHighlighting(filePath: String) {
-    val myFixture = this
-    myFixture.configureFromTempProjectFile(filePath)
-    myFixture.checkHighlighting()
-  }
-
-  companion object {
-    private const val BASE_PATH = "/ts_ls_highlighting"
   }
 }

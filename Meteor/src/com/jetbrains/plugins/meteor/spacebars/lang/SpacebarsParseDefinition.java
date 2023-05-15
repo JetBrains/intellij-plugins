@@ -16,7 +16,7 @@ import com.jetbrains.plugins.meteor.spacebars.lang.parsing.SpacebarsParsing;
 import org.jetbrains.annotations.NotNull;
 
 public class SpacebarsParseDefinition extends HbParseDefinition {
-  private static final IFileElementType FILE = new IStubFileElementType<>("FILE", SpacebarsLanguageDialect.INSTANCE);
+  private static final IFileElementType FILE = new IStubFileElementType<>("spacebars", SpacebarsLanguageDialect.INSTANCE);
 
   @Override
   public @NotNull PsiParser createParser(Project project) {

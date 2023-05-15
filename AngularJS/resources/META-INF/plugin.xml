@@ -3,30 +3,23 @@
   <name>Angular and AngularJS</name>
   <category>JavaScript Frameworks and Tools</category>
   <description><![CDATA[
-    <p>Support for <a href="https://angular.io/">Angular</a> and <a href="https://angularjs.org/">AngularJS</a> projects.</p>
-    <h2>Getting started</h2>
-    <ul>
-      <li>Open your Angular or AngularJS project.</li>
-      <li>Make sure that you have AngularJS or Angular library files in your project (for example, in the node_modules folder) - this is
-        required for the IDE to enable Angular support for this project.
-      </li>
-      <li>Now, you will get Angular-specific code completion, navigation, and many other features.</li>
-    </ul>
+    <p>Provides support for <a href="https://angular.io/">Angular</a> and <a href="https://angularjs.org/">AngularJS</a>
+      to all JetBrains IDEs that <a href="https://www.jetbrains.com/products/#lang=js&type=ide">support JavaScript</a>.</p>
     <h2>Features</h2>
     <ul>
-      <li>Code completion for Angular or AngularJS APIs in JavaScript or TypeScript files</li>
-      <li>Completion for components, built-in and custom directives, and methods in templates</li>
-      <li>Navigation from the component, custom directives and event handlers to their definition</li>
-      <li>Collection of code snippets for Angular and AngularJS</li>
-      <li>Create new projects from the IDE Welcome screen using Angular CLI or built-in template for AngularJS</li>
-      <li>Generate new app elements using Angular CLI</li>
-      <li>For AngularJS apps that use ui-router, see state diagram</li>
+      <li>Code completion for Angular or AngularJS APIs in JavaScript or TypeScript files
+      <li>Code completion for components, built-in and custom directives, and methods in templates
+      <li>Navigation from the component, custom directives, and event handlers to their definition
+      <li>Collection of code snippets for Angular and AngularJS
+      <li>Option in the Welcome screen to create new Angular projects
+      <li>Generation of new app elements using Angular CLI
     </ul>
-    <p>Here you can find more information on using <a href="https://www.jetbrains.com/help/webstorm/angular.html">Angular</a> and <a
-      href="https://www.jetbrains.com/help/webstorm/angularjs.html">AngularJS</a> in the IDE.</p>
-    <p>Please report any issues on the <a href="https://youtrack.jetbrains.com/issues/WEB">tracker</a>.</p>
-    <p></p>
-    <p>Originally developed by John Lindquist.</p>
+    <h2>Getting started</h2>
+    <p>For information on getting started, head over to the <a href="https://www.jetbrains.com/help/">documentation</a> for your IDE.
+      For WebStorm, you can check out these sections: <a href="https://www.jetbrains.com/help/webstorm/angular.html">Angular</a> and
+      <a href="https://www.jetbrains.com/help/webstorm/angularjs.html">AngularJS</a>.
+    <h2>Notes</h2>
+    <p>This plugin is bundled in WebStorm and some other IntelliJ-based IDEs.
     ]]></description>
   <vendor>JetBrains</vendor>
 
@@ -36,6 +29,7 @@
 
   <depends>JavaScript</depends>
   <depends>com.intellij.modules.platform</depends>
+  <depends>HtmlTools</depends>
   <depends optional="true" config-file="css-support.xml">com.intellij.css</depends>
   <depends optional="true" config-file="tslint-support.xml">tslint</depends>
   <depends>intellij.webpack</depends>
@@ -134,6 +128,7 @@
                     serviceImplementation="org.angular2.refactoring.extractComponent.Angular2CliComponentGeneratorImpl"
                     testServiceImplementation="org.angular2.refactoring.Angular2CliComponentGeneratorMockImpl"
     />
+    <platform.backend.documentation.psiTargetProvider implementation="org.angular2.entities.impl.Angular2ElementDocumentationTargetFactory"/>
 
     <!--suppress PluginXmlValidity -->
     <javascript.rename.extension implementation="org.angular2.refactoring.Angular2RenameExtension"/>
@@ -183,10 +178,12 @@
     <psi.referenceContributor implementation="org.angular2.codeInsight.refs.Angular2ReferencesContributor"/>
     <psi.symbolReferenceProvider hostElementClass="org.angular2.lang.html.psi.Angular2HtmlNgContentSelector"
                                  hostLanguage="Angular2Html"
+                                 referenceClass="com.intellij.webSymbols.references.WebSymbolReference"
                                  implementationClass="org.angular2.codeInsight.refs.Angular2SelectorReferencesProvider$NgContentSelectorProvider"
                                  targetClass="com.intellij.webSymbols.WebSymbol"/>
     <psi.symbolReferenceProvider hostElementClass="com.intellij.lang.javascript.psi.JSLiteralExpression"
                                  hostLanguage="TypeScript"
+                                 referenceClass="com.intellij.webSymbols.references.WebSymbolReference"
                                  implementationClass="org.angular2.codeInsight.refs.Angular2SelectorReferencesProvider$NgDecoratorSelectorProvider"
                                  targetClass="com.intellij.webSymbols.WebSymbol"/>
     <webSymbols.declarationProvider implementation="org.angular2.codeInsight.refs.Angular2SelectorDeclarationProvider"/>
@@ -225,6 +222,9 @@
     <localInspection implementationClass="org.angular2.inspections.AngularMultipleStructuralDirectivesInspection"
                      groupKey="angular.inspection.group.name" enabledByDefault="true" language="HtmlCompatible"
                      level="ERROR" key="angular.inspection.multiple-structural-directives.name" bundle="messages.Angular2Bundle"/>
+    <localInspection implementationClass="org.angular2.inspections.AngularNgOptimizedImageInspection"
+                     groupKey="angular.inspection.group.name" enabledByDefault="true" language="HtmlCompatible"
+                     level="WEAK WARNING" key="angular.inspection.ng-optimized-image.name" bundle="messages.Angular2Bundle"/>
     <localInspection implementationClass="org.angular2.inspections.AngularInvalidAnimationTriggerAssignmentInspection"
                      groupKey="angular.inspection.group.name" enabledByDefault="true" language="HtmlCompatible"
                      level="ERROR" key="angular.inspection.animation-trigger-assignment.name"
@@ -242,6 +242,9 @@
     <localInspection implementationClass="org.angular2.inspections.AngularAmbiguousComponentTagInspection"
                      groupKey="angular.inspection.group.name" enabledByDefault="true" language="HtmlCompatible"
                      level="ERROR" key="angular.inspection.ambiguous-component-tag.name" bundle="messages.Angular2Bundle"/>
+    <localInspection implementationClass="org.angular2.inspections.AngularMissingRequiredDirectiveInputBindingInspection"
+                     groupKey="angular.inspection.group.name" enabledByDefault="true" language="HtmlCompatible"
+                     level="ERROR" key="angular.inspection.missing-required-directive-input.name" bundle="messages.Angular2Bundle"/>
     <localInspection implementationClass="org.angular2.inspections.AngularUndefinedTagInspection"
                      groupKey="angular.inspection.group.name" enabledByDefault="true" language="HtmlCompatible"
                      level="ERROR" key="angular.inspection.undefined-tag.name" bundle="messages.Angular2Bundle"/>
@@ -256,11 +259,14 @@
     <colorSettingsPage implementation="org.angular2.lang.html.highlighting.Angular2ColorsAndFontsPage"/>
     <xml.xmlSuppressionProvider implementation="org.angular2.inspections.Angular2HtmlSuppressionProvider" order="first"/>
     <html.embeddedContentSupport implementation="org.angular2.lang.html.lexer.Angular2HtmlEmbeddedContentSupport"/>
+    <copyPastePostProcessor implementation="org.angular2.codeInsight.imports.Angular2DeclarationsCopyPasteProcessor"/>
+    <copyPastePostProcessor implementation="org.angular2.codeInsight.imports.Angular2ExpressionsCopyPasteProcessor"/>
 
     <webSymbols.webTypes enableByDefault="true" source="web-types/angular.web-types.json"/>
+    <webSymbols.webTypes enableByDefault="true" source="web-types/angular-hacks.web-types.json"/>
     <webSymbols.webTypes enableByDefault="true" source="web-types/hammerjs.web-types.json"/>
-    <webSymbols.registryExtension implementation="org.angular2.web.Angular2WebSymbolsRegistryExtension"/>
-    <webSymbols.scopeProvider implementation="org.angular2.web.Angular2WebSymbolsScope$Provider"/>
+    <webSymbols.queryConfigurator implementation="org.angular2.web.Angular2WebSymbolsQueryConfigurator"/>
+    <webSymbols.queryResultsCustomizerFactory implementation="org.angular2.web.Angular2WebSymbolsQueryResultsCustomizer$Factory"/>
     <webSymbols.codeCompletionItemCustomizer implementation="org.angular2.web.Angular2CompletionItemCustomizer"/>
 
     <!-- Angular 2 SVG contributions -->
@@ -326,6 +332,8 @@
     <analysisHandlersFactory language="Angular2" implementationClass="org.angular2.inspections.Angular2AnalysisHandlersFactory"/>
     <inheritedLanguagesConfigurableProvider language="Angular2"
                                             implementationClass="org.angular2.codeInsight.Angular2LanguageConfigurableProvider"/>
+    <handlersFactory language="Angular2" implementationClass="org.angular2.codeInsight.Angular2HandlersFactory"/>
+    <importCandidatesFactory implementation="org.angular2.codeInsight.imports.Angular2GlobalImportCandidatesProvider$Factory"/>
 
     <!-- Angular2 metadata JSON contributions -->
     <nodeModulesIndexableFileNamesProvider implementation="org.angular2.index.Angular2IndexableFileNamesProvider"/>

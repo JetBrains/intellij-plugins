@@ -23,7 +23,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.css.impl.util.CssPsiColorUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.ui.ColorChooser;
+import com.intellij.ui.ColorChooserService;
 import com.intellij.ui.ColorLineMarkerProvider;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ui.ColorIcon;
@@ -36,24 +36,19 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * @author Eugene.Kudelevsky
- */
 public class FlexMxmlColorAnnotator implements Annotator {
   @Override
   public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-    if (!(element instanceof XmlAttribute) || !JavaScriptSupportLoader.isFlexMxmFile(element.getContainingFile())) {
+    if (!(element instanceof XmlAttribute attribute) || !JavaScriptSupportLoader.isFlexMxmFile(element.getContainingFile())) {
       return;
     }
     if (!LineMarkerSettings.getSettings().isEnabled(ColorLineMarkerProvider.INSTANCE)) {
       return;
     }
-    XmlAttribute attribute = (XmlAttribute)element;
     XmlAttributeDescriptor descriptor = attribute.getDescriptor();
-    if (!(descriptor instanceof AnnotationBackedDescriptorImpl)) {
+    if (!(descriptor instanceof AnnotationBackedDescriptorImpl annotationBackedDescriptor)) {
       return;
     }
-    AnnotationBackedDescriptorImpl annotationBackedDescriptor = (AnnotationBackedDescriptorImpl)descriptor;
     String format = annotationBackedDescriptor.getFormat();
     if (!FlexCssPropertyDescriptor.COLOR_FORMAT.equals(format)) {
       return;
@@ -173,8 +168,8 @@ public class FlexMxmlColorAnnotator implements Annotator {
           final Editor editor = e.getData(CommonDataKeys.EDITOR);
           if (editor != null) {
             Color currentColor = getColor(myColorValue);
-            final Color color = ColorChooser
-              .chooseColor(editor.getProject(), editor.getComponent(), FlexBundle.message("flex.choose.color.dialog.title"), currentColor);
+            final Color color = ColorChooserService.getInstance()
+              .showDialog(editor.getProject(), editor.getComponent(), FlexBundle.message("flex.choose.color.dialog.title"), currentColor);
             if (color != null && !color.equals(currentColor)) {
               final PsiFile psiFile = myAttribute.getContainingFile();
               if (!FileModificationService.getInstance().prepareFileForWrite(psiFile)) return;

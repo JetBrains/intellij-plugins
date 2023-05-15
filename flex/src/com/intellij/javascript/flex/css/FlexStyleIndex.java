@@ -37,9 +37,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @author Eugene.Kudelevsky
- */
 public final class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyleIndexInfo>> {
   public static final ID<String, Set<FlexStyleIndexInfo>> INDEX_ID = ID.create("js.style.index");
 
@@ -196,12 +193,10 @@ public final class FlexStyleIndex extends FileBasedIndexExtension<String, Set<Fl
           if (propertyName != null) {
             if (classQName != null) {
               FlexStyleIndexInfo info = FlexStyleIndexInfo.create(classQName, propertyName, jsAttribute, inClass);
-              if (info != null) {
-                addElement(map, propertyName, info);
-                String classicPropertyName = FlexCssUtil.toClassicForm(propertyName);
-                if (!propertyName.equals(classicPropertyName)) {
-                  addElement(map, classicPropertyName, info);
-                }
+              addElement(map, propertyName, info);
+              String classicPropertyName = FlexCssUtil.toClassicForm(propertyName);
+              if (!propertyName.equals(classicPropertyName)) {
+                addElement(map, classicPropertyName, info);
               }
             }
           }

@@ -39,6 +39,12 @@ class VueFindUsagesTest : BasePlatformTestCase() {
       }
   }
 
+  fun testScriptSetupImportedDirective() {
+    myFixture.configureByFiles("scriptSetupImportedDirective.vue")
+    myFixture.configureByFiles("vFocus.js")
+    myFixture.checkUsages("v<caret>Focus", getTestName(true))
+  }
+
   fun testTypedComponents() {
     myFixture.configureVueDependencies(VueTestModule.HEADLESS_UI_1_4_1, VueTestModule.NAIVE_UI_2_19_11)
     myFixture.configureByFiles("typedComponentsClassic.vue", "typedComponentsScriptSetup.vue")

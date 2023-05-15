@@ -29,8 +29,7 @@ public final class OsgiPsiUtil {
   private OsgiPsiUtil() { }
 
   public static boolean isActivator(@Nullable PsiElement element) {
-    if (element instanceof PsiClass) {
-      PsiClass psiClass = (PsiClass)element;
+    if (element instanceof PsiClass psiClass) {
       if (!psiClass.hasModifierProperty(PsiModifier.ABSTRACT) && OsmorcFacet.getInstance(psiClass) != null) {
         PsiClass activator = getActivatorClass(psiClass.getProject());
         if (activator != null && psiClass.isInheritor(activator, true)) {

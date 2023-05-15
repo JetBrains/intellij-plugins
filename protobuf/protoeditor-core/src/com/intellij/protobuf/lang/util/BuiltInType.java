@@ -120,10 +120,9 @@ public enum BuiltInType {
     @Override
     public ValueTester getValueTester(ValueTesterType type) {
       return value -> {
-        if (!(value instanceof ProtoNumberValue)) {
+        if (!(value instanceof ProtoNumberValue number)) {
           return PbLangBundle.message("integer.value.expected");
         }
-        ProtoNumberValue number = (ProtoNumberValue) value;
         if (number.getSourceType() != SourceType.INTEGER) {
           return PbLangBundle.message("integer.value.expected");
         }

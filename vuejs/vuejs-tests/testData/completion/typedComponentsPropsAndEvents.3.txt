@@ -1,4 +1,6 @@
 !offset#number#100
+!on-change#((fixed: boolean) => any) | undefined#100
+!on-scroll#((args_0: {scrollTop: number, fixed: boolean}) => any) | undefined#100
 !position#"top" | "bottom"#100
 !target#string#100
 !z-index#any#100
@@ -19,8 +21,10 @@ datasrc#null#1
 datatype#null#1
 dir#null#1
 draggable#null#1
+enterkeyhint#null#1
 hidden#null#1
 id#null#1
+inert#null#1
 inlist#null#1
 inputmode#null#1
 itemid#null#1

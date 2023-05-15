@@ -30,9 +30,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-/**
- * @author Irina.Chernushina on 3/8/2016.
- */
 public class AngularUiRouterDiagramBuilder {
   private final List<UiRouterState> myStates;
   private final Map<VirtualFile, Template> myTemplatesMap;
@@ -248,7 +245,7 @@ public class AngularUiRouterDiagramBuilder {
       @Override
       protected boolean check(VirtualFile file) {
         // do not add lib (especially angular) files
-        return !NodeModuleUtil.isFromNodeModules(myProject, file);
+        return !NodeModuleUtil.hasNodeModulesDirInPath(file, null);
       }
     };
 
@@ -305,7 +302,7 @@ public class AngularUiRouterDiagramBuilder {
       if (element != null && element.getNavigationElement() != null && element.getNavigationElement().getContainingFile() != null) {
         final VirtualFile file = element.getNavigationElement().getContainingFile().getVirtualFile();
         // prefer library resolves
-        if (NodeModuleUtil.isFromNodeModules(myProject, file)) return;
+        if (NodeModuleUtil.hasNodeModulesDirInPath(file, null)) return;
       }
     }
 
@@ -363,10 +360,9 @@ public class AngularUiRouterDiagramBuilder {
     }
     final JSProperty views = object.findProperty("views");
     if (views != null) {
-      final JSExpression value = views.getValue();
-      if (value instanceof JSObjectLiteralExpression) {
-        final JSProperty[] viewsProperties = ((JSObjectLiteralExpression)value).getProperties();
-        if (viewsProperties != null && viewsProperties.length > 0) {
+      if (views.getValue() instanceof JSObjectLiteralExpression literal) {
+        final JSProperty[] viewsProperties = literal.getProperties();
+        if (viewsProperties.length > 0) {
           final List<UiView> viewsList = new ArrayList<>();
           for (JSProperty property : viewsProperties) {
             if (property.getName() != null && property.getValue() != null) {

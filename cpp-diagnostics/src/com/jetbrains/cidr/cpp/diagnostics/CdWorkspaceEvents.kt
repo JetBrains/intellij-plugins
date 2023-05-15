@@ -7,7 +7,7 @@ import com.intellij.openapi.util.registry.Registry
 import com.jetbrains.cidr.lang.workspace.OCWorkspaceListener
 
 // A dummy example of listening for project model changes
-class CdOCWorkspaceEventsListener(val project: Project) : OCWorkspaceListener {
+class CdOCWorkspaceEventsListener(private val project: Project) : OCWorkspaceListener {
 
   override fun workspaceChanged(event: OCWorkspaceListener.OCWorkspaceEvent) {
     project.service<CdWorkspaceEvents>().workspaceChanged(event)

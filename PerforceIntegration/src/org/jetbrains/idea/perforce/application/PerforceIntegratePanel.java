@@ -63,6 +63,18 @@ public class PerforceIntegratePanel implements PerforcePanel{
   }
 
   @Override
+  public void cancel(PerforceSettings settings) {
+    if (!isModified(settings))
+      return;
+
+    settings.INTEGRATE_REVERT_UNCHANGED = myRevertUnchanged.isSelected();
+    settings.INTEGRATE_RUN_RESOLVE = myRunResolve.isSelected();
+    for (ParticularConnectionPerforceIntegratePanel panel : myConnectionPanels) {
+      panel.cancel(settings);
+    }
+  }
+
+  @Override
   public boolean isModified(PerforceSettings settings) {
     for (ParticularConnectionPerforceIntegratePanel panel : myConnectionPanels) {
       if (panel.isModified(settings)) {

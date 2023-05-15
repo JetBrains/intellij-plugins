@@ -1,0 +1,17 @@
+{
+  "name": "prisma-language-server",
+  "scripts": {
+    "prisma:lsp": "cross-env NODE_ENV=production webpack --config webpack.config.js"
+  },
+  "dependencies": {
+    "@prisma/language-server": "^4.13.0",
+    "@prisma/prisma-fmt-wasm": "^4.14.0-43.3b25dbc49c0a515ef7b4d7c4fcca6395e8e98dc1"
+  },
+  "devDependencies": {
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0",
+    "ts-loader": "^9.3.1",
+    "copy-webpack-plugin": "^11.0.0",
+    "cross-env": "^7.0.3"
+  }
+}

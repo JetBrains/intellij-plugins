@@ -1,3 +1,4 @@
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.inspections;
 
 import com.intellij.codeInsight.CodeInsightUtilCore;
@@ -42,10 +43,9 @@ public class CucumberCreateExamplesSectionFix implements LocalQuickFix {
     final List<String> params = new ArrayList<>();
     final PsiElement[] elements = outline.getChildren();
     for (PsiElement element : elements) {
-      if (!(element instanceof GherkinStep)) {
+      if (!(element instanceof GherkinStep step)) {
         continue;
       }
-      final GherkinStep step = (GherkinStep)element;
       final List<String> substitutions = step.getParamsSubstitutions();
       for (String substitution : substitutions) {
         if (!params.contains(substitution)) {

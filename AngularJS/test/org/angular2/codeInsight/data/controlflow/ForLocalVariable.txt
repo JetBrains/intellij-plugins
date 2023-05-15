@@ -1,0 +1,27 @@
+0(1) element: null
+1(2) element: JSReferenceExpression Read(items)
+2(3) element: Angular2TemplateVariable Write(item)
+3(4) element: JSReferenceExpression Read(isString)
+4(5) element: JSReferenceExpression Read(item)
+5(6,7) element: JSCallExpression
+6(8) element: JSCallExpression condition: true, reachable
+7(13) element: JSCallExpression condition: false, reachable
+8(9) element: JSBinaryExpression LOGICAL_EXPRESSION (branch) true
+9(10) element: JSReferenceExpression Read(item)
+10(11,12) element: JSReferenceExpression Read(length)
+11(13) element: JSReferenceExpression condition: true, reachable
+12(13) element: JSReferenceExpression condition: false, reachable
+13(14) element: JSBinaryExpression
+14(15) element: JSReferenceExpression Read(isString)
+15(16) element: JSReferenceExpression Read(item)
+16(17,18) element: JSCallExpression
+17(19) element: JSCallExpression condition: true, reachable
+18(25) element: JSCallExpression condition: false, reachable
+19(20) element: JSBinaryExpression LOGICAL_EXPRESSION (branch) true
+20(21) element: JSReferenceExpression Read(item)
+21(22) element: JSReferenceExpression Read(toFixed)
+22(23,24) element: JSCallExpression
+23(25) element: JSCallExpression condition: true, reachable
+24(25) element: JSCallExpression condition: false, reachable
+25(26) element: JSBinaryExpression
+26() element: null

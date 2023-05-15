@@ -21,17 +21,18 @@ HtmlFile:MultipleInterpolationsInVue.vue
         PsiWhiteSpace(' ')
         XmlToken:XML_DATA_CHARACTERS('{{another}}{{two}}')
         JSFile:MultipleInterpolationsInVue.vue.int
-          VueJSEmbeddedExpression
+          VueJSEmbeddedExpressionContent(VueJS)
             JSReferenceExpression
               PsiElement(JS:IDENTIFIER)('interpolation')
         JSFile:MultipleInterpolationsInVue.vue.int
-          VueJSEmbeddedExpression
+          VueJSEmbeddedExpressionContent(VueJS)
             JSReferenceExpression
               PsiElement(JS:IDENTIFIER)('another')
         JSFile:MultipleInterpolationsInVue.vue.int
-          VueJSEmbeddedExpression
+          VueJSEmbeddedExpressionContent(VueJS)
             JSReferenceExpression
               PsiElement(JS:IDENTIFIER)('two')
       XmlToken:XML_END_TAG_START('</')
       XmlToken:XML_NAME('template')
       XmlToken:XML_TAG_END('>')
+  PsiElement(VUE_LANG_MODE_NO_TS)('')

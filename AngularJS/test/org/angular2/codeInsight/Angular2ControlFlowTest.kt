@@ -18,20 +18,35 @@ class Angular2ControlFlowTest : BaseJSControlFlowTest() {
     AngularTestUtil.enableAstLoadingFilter(this)
   }
 
-  fun testNonStrictMode() = doTest("<div <caret>*customIf", skipTSConfig = true)
+  fun testNonStrictMode() = doTest("<div <caret>*ngIf", skipTSConfig = true)
+
+  fun testLogicalExpression() = doTest("{{<caret>isString")
+
+  fun testConditionalExpression() = doTest("{{<caret>isString")
 
   fun testIfDiscriminatedUnion() = doTest("<div <caret>*customIf")
 
+  fun testForInput() = doTest("<div <caret>*ngFor")
+
+  fun testForInputNgTemplate() = doTest("<caret>[ngFor")
+
+  fun testIfWithBinaryExpression() = doTest("<div <caret>*ngIf")
+
   fun testIfLoadedTypeGuard() = doTest("<p <caret>*appIfLoaded")
+
+  fun testForLocalVariable() = doTest("<div <caret>*ngFor")
+
+  fun testNullChecks() = doTest("<div <caret>*ngFor")
 
   override fun createJSControlFlowBuilder(): JSControlFlowBuilder {
     return Angular2ControlFlowBuilder()
   }
 
   fun doTest(signature: String, skipTSConfig: Boolean = false) {
-    Angular2TestModule.configureLink(myFixture, Angular2TestModule.ANGULAR_CORE_13_3_5, Angular2TestModule.ANGULAR_COMMON_13_3_5)
+    Angular2TestModule.configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_15_1_5, Angular2TestModule.ANGULAR_COMMON_15_1_5)
     if (!skipTSConfig) {
       myFixture.configureByFile("tsconfig.json")
+      myFixture.configureByFile("tsconfig.app.json")
     }
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
 

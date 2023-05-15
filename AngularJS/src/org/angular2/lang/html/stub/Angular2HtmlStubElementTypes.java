@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.lang.html.stub;
 
 import com.intellij.lang.javascript.psi.JSStubElementType;
@@ -19,3 +19,4 @@ public interface Angular2HtmlStubElementTypes {
 
   Angular2HtmlNgContentSelectorElementType NG_CONTENT_SELECTOR = new Angular2HtmlNgContentSelectorElementType();
 }
+

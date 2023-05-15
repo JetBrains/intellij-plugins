@@ -2,6 +2,8 @@
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
 import com.google.common.collect.Lists;
+import com.google.common.net.PercentEscaper;
+import com.google.gson.JsonObject;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -9,8 +11,11 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Alarm;
 import com.intellij.util.concurrency.Semaphore;
+import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
@@ -77,12 +82,8 @@ public class VmServiceWrapper implements Disposable {
   }
 
   private void assertSyncRequestAllowed() {
-    if (ApplicationManager.getApplication().isDispatchThread()) {
-      LOG.error("EDT should not be blocked by waiting for for the answer from the Dart debugger");
-    }
-    if (ApplicationManager.getApplication().isReadAccessAllowed()) {
-      LOG.error("Waiting for for the answer from the Dart debugger under read action may lead to EDT freeze");
-    }
+    ApplicationManager.getApplication().assertIsNonDispatchThread();
+    ApplicationManager.getApplication().assertReadAccessNotAllowed();
     if (myVmServiceReceiverThreadId == Thread.currentThread().getId()) {
       LOG.error("Synchronous requests must not be made in Web Socket listening thread: answer will never be received");
     }
@@ -193,17 +194,48 @@ public class VmServiceWrapper implements Disposable {
 
     // Just to make sure that the main isolate is not handled twice, both from handleDebuggerConnected() and DartVmServiceListener.received(PauseStart)
     if (newIsolate) {
-      addRequest(() -> myVmService.setExceptionPauseMode(isolateRef.getId(),
-                                                         myDebugProcess.getBreakOnExceptionMode(),
-                                                         new VmServiceConsumers.SuccessConsumerWrapper() {
-                                                           @Override
-                                                           public void received(Success response) {
-                                                             setInitialBreakpointsAndResume(isolateRef);
-                                                           }
-                                                         }));
+      setIsolatePauseMode(isolateRef.getId(), myDebugProcess.getBreakOnExceptionMode(), isolateRef);
     }
     else {
       checkInitialResume(isolateRef);
+    }
+  }
+
+  private void setIsolatePauseMode(@NotNull String isolateId, @NotNull ExceptionPauseMode mode, @NotNull IsolateRef isolateRef) {
+    if (supportsSetIsolatePauseMode()) {
+      SetIsolatePauseModeConsumer sipmc = new SetIsolatePauseModeConsumer() {
+        @Override
+        public void onError(RPCError error) {
+        }
+
+        @Override
+        public void received(Sentinel response) {
+        }
+
+        @Override
+        public void received(Success response) {
+          setInitialBreakpointsAndResume(isolateRef);
+        }
+      };
+      addRequest(() -> myVmService.setIsolatePauseMode(isolateId, mode, false, sipmc));
+    }
+    else {
+      SetExceptionPauseModeConsumer wrapper = new SetExceptionPauseModeConsumer() {
+        @Override
+        public void onError(RPCError error) {
+        }
+
+        @Override
+        public void received(Sentinel response) {
+        }
+
+        @Override
+        public void received(Success response) {
+          setInitialBreakpointsAndResume(isolateRef);
+        }
+      };
+      //noinspection deprecation
+      addRequest(() -> myVmService.setExceptionPauseMode(isolateId, mode, wrapper));
     }
   }
 
@@ -254,21 +286,23 @@ public class VmServiceWrapper implements Disposable {
     final AtomicInteger counter = new AtomicInteger(xBreakpoints.size());
 
     for (final XLineBreakpoint<XBreakpointProperties> xBreakpoint : xBreakpoints) {
-      addBreakpoint(isolateId, xBreakpoint.getSourcePosition(), new VmServiceConsumers.BreakpointConsumerWrapper() {
+      addBreakpoint(isolateId, xBreakpoint.getSourcePosition(), new VmServiceConsumers.BreakpointsConsumer() {
         @Override
         void sourcePositionNotApplicable() {
-          checkDone();
-        }
-
-        @Override
-        public void received(Breakpoint vmBreakpoint) {
-          myBreakpointHandler.vmBreakpointAdded(xBreakpoint, isolateId, vmBreakpoint);
-          checkDone();
-        }
-
-        @Override
-        public void onError(RPCError error) {
           myBreakpointHandler.breakpointFailed(xBreakpoint);
+          checkDone();
+        }
+
+        @Override
+        public void received(List<Breakpoint> breakpointResponses, List<RPCError> errorResponses) {
+          if (breakpointResponses.size() > 0) {
+            for (Breakpoint breakpoint : breakpointResponses) {
+              myBreakpointHandler.vmBreakpointAdded(xBreakpoint, isolateId, breakpoint);
+            }
+          }
+          else if (errorResponses.size() > 0) {
+            myBreakpointHandler.breakpointFailed(xBreakpoint);
+          }
           checkDone();
         }
 
@@ -283,35 +317,167 @@ public class VmServiceWrapper implements Disposable {
 
   public void addBreakpoint(@NotNull String isolateId,
                             @Nullable XSourcePosition position,
-                            @NotNull VmServiceConsumers.BreakpointConsumerWrapper consumer) {
+                            @NotNull VmServiceConsumers.BreakpointsConsumer consumer) {
     if (position == null || !FileTypeRegistry.getInstance().isFileOfType(position.getFile(), DartFileType.INSTANCE)) {
       consumer.sourcePositionNotApplicable();
       return;
     }
+    if (supportsLookupPackageUris()) {
+      addBreakpointWithVmService(isolateId, position, consumer);
+    }
+    else {
+      addBreakpointWithMapper(isolateId, position, consumer);
+    }
+  }
 
+  // This is the old way of mapping breakpoints, which uses analyzer.
+  public void addBreakpointWithMapper(@NotNull String isolateId,
+                                      @NotNull XSourcePosition position,
+                                      @NotNull VmServiceConsumers.BreakpointsConsumer consumer) {
     addRequest(() -> {
-      final int line = position.getLine() + 1;
-      for (String uri : myDebugProcess.getUrisForFile(position.getFile())) {
-        myVmService.addBreakpointWithScriptUri(isolateId, uri, line, consumer);
+      int line = position.getLine() + 1;
+
+      Collection<String> scriptUris = myDebugProcess.getUrisForFile(position.getFile());
+      List<Breakpoint> breakpointResponses = new ArrayList<>();
+      List<RPCError> errorResponses = new ArrayList<>();
+
+      for (String uri : scriptUris) {
+        myVmService.addBreakpointWithScriptUri(isolateId, uri, line, new AddBreakpointWithScriptUriConsumer() {
+          @Override
+          public void received(Breakpoint response) {
+            breakpointResponses.add(response);
+            checkDone();
+          }
+
+          @Override
+          public void received(Sentinel response) {
+            checkDone();
+          }
+
+          @Override
+          public void onError(RPCError error) {
+            errorResponses.add(error);
+
+            checkDone();
+          }
+
+          private void checkDone() {
+            if (scriptUris.size() == breakpointResponses.size() + errorResponses.size()) {
+              consumer.received(breakpointResponses, errorResponses);
+            }
+          }
+        });
       }
     });
+  }
+
+  public void addBreakpointWithVmService(@NotNull String isolateId,
+                                         @NotNull XSourcePosition position,
+                                         @NotNull VmServiceConsumers.BreakpointsConsumer consumer) {
+    addRequest(() -> {
+      int line = position.getLine() + 1;
+
+      String resolvedUri = getResolvedUri(position);
+      LOG.info("Computed resolvedUri: " + resolvedUri);
+      List<String> resolvedUriList = List.of(percentEscapeUri(resolvedUri));
+
+      List<Breakpoint> breakpointResponses = new ArrayList<>();
+      List<RPCError> errorResponses = new ArrayList<>();
+
+      myVmService.lookupPackageUris(isolateId, resolvedUriList, new UriListConsumer() {
+        @Override
+        public void received(UriList response) {
+          LOG.info("in received of lookupPackageUris");
+          if (myDebugProcess.getSession().getProject().isDisposed()) {
+            return;
+          }
+
+          List<String> uris = response.getUris();
+
+          if (uris == null || uris.get(0) == null) {
+            LOG.info("Uri was not found");
+            JsonObject error = new JsonObject();
+            error.addProperty("error", "Breakpoint could not be mapped to package URI");
+            errorResponses.add(new RPCError(error));
+
+            consumer.received(breakpointResponses, errorResponses);
+            return;
+          }
+
+          String scriptUri = uris.get(0);
+          LOG.info("in received of lookupPackageUris. scriptUri: " + scriptUri);
+          myVmService.addBreakpointWithScriptUri(isolateId, scriptUri, line, new AddBreakpointWithScriptUriConsumer() {
+            @Override
+            public void received(Breakpoint response) {
+              breakpointResponses.add(response);
+              checkDone();
+            }
+
+            @Override
+            public void received(Sentinel response) {
+              checkDone();
+            }
+
+            @Override
+            public void onError(RPCError error) {
+              errorResponses.add(error);
+
+              checkDone();
+            }
+
+            private void checkDone() {
+              consumer.received(breakpointResponses, errorResponses);
+            }
+          });
+        }
+
+        @Override
+        public void onError(RPCError error) {
+          LOG.warn("VmService.lookupPackageUris() failed with error code " + error.getCode() +
+                   "\n  message: " + error.getMessage() +
+                   "\n  details: " + error.getDetails() +
+                   "\n  request: " + error.getRequest());
+          errorResponses.add(error);
+          consumer.received(breakpointResponses, errorResponses);
+        }
+      });
+    });
+  }
+
+  private String getResolvedUri(@NotNull XSourcePosition position) {
+    XDebugSession session = myDebugProcess.getSession();
+    assert session != null;
+    VirtualFile file = position.getFile().getCanonicalFile();
+    assert file != null;
+    String url = file.getUrl();
+    LOG.info("in getResolvedUri. url: " + url);
+
+    if (SystemInfo.isWindows) {
+      // Dart and the VM service use three /'s in file URIs: https://api.dart.dev/stable/2.16.1/dart-core/Uri-class.html.
+      return url.replace("file://", "file:///");
+    }
+
+    return url;
+  }
+
+  private static String percentEscapeUri(String uri) {
+    PercentEscaper escaper = new PercentEscaper("!#$&'()*+,-./:;=?@_~", false);
+    return escaper.escape(uri);
   }
 
   public void addBreakpointForIsolates(@NotNull XLineBreakpoint<XBreakpointProperties> xBreakpoint,
                                        @NotNull Collection<IsolatesInfo.IsolateInfo> isolateInfos) {
     for (final IsolatesInfo.IsolateInfo isolateInfo : isolateInfos) {
-      addBreakpoint(isolateInfo.getIsolateId(), xBreakpoint.getSourcePosition(), new VmServiceConsumers.BreakpointConsumerWrapper() {
+      addBreakpoint(isolateInfo.getIsolateId(), xBreakpoint.getSourcePosition(), new VmServiceConsumers.BreakpointsConsumer() {
         @Override
         void sourcePositionNotApplicable() {
         }
 
         @Override
-        public void received(Breakpoint vmBreakpoint) {
-          myBreakpointHandler.vmBreakpointAdded(xBreakpoint, isolateInfo.getIsolateId(), vmBreakpoint);
-        }
-
-        @Override
-        public void onError(RPCError error) {
+        public void received(List<Breakpoint> breakpointResponses, List<RPCError> errorResponses) {
+          for (Breakpoint breakpoint : breakpointResponses) {
+            myBreakpointHandler.vmBreakpointAdded(xBreakpoint, isolateInfo.getIsolateId(), breakpoint);
+          }
         }
       });
     }
@@ -331,36 +497,71 @@ public class VmServiceWrapper implements Disposable {
   }
 
   public void addTemporaryBreakpoint(@NotNull XSourcePosition position, @NotNull String isolateId) {
-    addBreakpoint(isolateId, position, new VmServiceConsumers.BreakpointConsumerWrapper() {
+    addBreakpoint(isolateId, position, new VmServiceConsumers.BreakpointsConsumer() {
       @Override
       void sourcePositionNotApplicable() {
       }
 
       @Override
-      public void received(Breakpoint vmBreakpoint) {
-        myBreakpointHandler.temporaryBreakpointAdded(isolateId, vmBreakpoint);
-      }
-
-      @Override
-      public void onError(RPCError error) {
+      public void received(List<Breakpoint> breakpointResponses, List<RPCError> errorResponses) {
+        for (Breakpoint breakpoint : breakpointResponses) {
+          myBreakpointHandler.temporaryBreakpointAdded(isolateId, breakpoint);
+        }
       }
     });
   }
 
   public void removeBreakpoint(@NotNull String isolateId, @NotNull String vmBreakpointId) {
-    addRequest(() -> myVmService.removeBreakpoint(isolateId, vmBreakpointId, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER));
+    addRequest(() -> myVmService.removeBreakpoint(isolateId, vmBreakpointId, new RemoveBreakpointConsumer() {
+      @Override
+      public void onError(RPCError error) {
+      }
+
+      @Override
+      public void received(Sentinel response) {
+      }
+
+      @Override
+      public void received(Success response) {
+      }
+    }));
   }
 
   public void resumeIsolate(@NotNull String isolateId, @Nullable StepOption stepOption) {
     addRequest(() -> {
       myLatestStep = stepOption;
-      myVmService.resume(isolateId, stepOption, null, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER);
+      myVmService.resume(isolateId, stepOption, null, new VmServiceConsumers.EmptyResumeConsumer() {
+      });
     });
   }
 
   public void setExceptionPauseMode(@NotNull ExceptionPauseMode mode) {
     for (final IsolatesInfo.IsolateInfo isolateInfo : myIsolatesInfo.getIsolateInfos()) {
-      addRequest(() -> myVmService.setExceptionPauseMode(isolateInfo.getIsolateId(), mode, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER));
+      if (supportsSetIsolatePauseMode()) {
+        addRequest(() -> myVmService.setIsolatePauseMode(isolateInfo.getIsolateId(), mode, false, new SetIsolatePauseModeConsumer() {
+          @Override
+          public void onError(RPCError error) { }
+
+          @Override
+          public void received(Sentinel response) { }
+
+          @Override
+          public void received(Success response) { }
+        }));
+      }
+      else {
+        //noinspection deprecation
+        addRequest(() -> myVmService.setExceptionPauseMode(isolateInfo.getIsolateId(), mode, new SetExceptionPauseModeConsumer() {
+          @Override
+          public void onError(RPCError error) { }
+
+          @Override
+          public void received(Sentinel response) { }
+
+          @Override
+          public void received(Success response) { }
+        }));
+      }
     }
   }
 
@@ -373,29 +574,37 @@ public class VmServiceWrapper implements Disposable {
   public void dropFrame(@NotNull String isolateId, int frameIndex) {
     addRequest(() -> {
       myLatestStep = StepOption.Rewind;
-      myVmService.resume(isolateId, StepOption.Rewind, frameIndex, new SuccessConsumer() {
+      myVmService.resume(isolateId, StepOption.Rewind, frameIndex, new VmServiceConsumers.EmptyResumeConsumer() {
         @Override
         public void onError(RPCError error) {
           myDebugProcess.getSession().getConsoleView()
             .print("Error from drop frame: " + error.getMessage() + "\n", ConsoleViewContentType.ERROR_OUTPUT);
-        }
-
-        @Override
-        public void received(Success response) {
         }
       });
     });
   }
 
   public void pauseIsolate(@NotNull String isolateId) {
-    addRequest(() -> myVmService.pause(isolateId, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER));
+    addRequest(() -> myVmService.pause(isolateId, new PauseConsumer() {
+      @Override
+      public void onError(RPCError error) {
+      }
+
+      @Override
+      public void received(Sentinel response) {
+      }
+
+      @Override
+      public void received(Success response) {
+      }
+    }));
   }
 
   public void computeStackFrames(@NotNull String isolateId,
                                  int firstFrameIndex,
                                  @NotNull XExecutionStack.XStackFrameContainer container,
                                  @Nullable InstanceRef exception) {
-    addRequest(() -> myVmService.getStack(isolateId, new StackConsumer() {
+    addRequest(() -> myVmService.getStack(isolateId, new GetStackConsumer() {
       @Override
       public void received(final Stack vmStack) {
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
@@ -435,6 +644,12 @@ public class VmServiceWrapper implements Disposable {
       @Override
       public void onError(final RPCError error) {
         @NlsSafe String message = error.getMessage();
+        container.errorOccurred(message);
+      }
+
+      @Override
+      public void received(Sentinel response) {
+        @NlsSafe String message = response.getValueAsString();
         container.errorOccurred(message);
       }
     }));
@@ -594,7 +809,20 @@ public class VmServiceWrapper implements Disposable {
    * Return whether the "invoke" call is supported by this connection.
    */
   private boolean supportsInvoke() {
-    final Version version = myVmService.getRuntimeVersion();
-    return version.getMajor() >= 3 && version.getMinor() >= 11;
+    Version version = myVmService.getRuntimeVersion();
+    return version.getMajor() > 3 ||
+           version.getMajor() == 3 && version.getMinor() >= 11;
+  }
+
+  private boolean supportsSetIsolatePauseMode() {
+    Version version = myVmService.getRuntimeVersion();
+    return version.getMajor() > 3 ||
+           version.getMajor() == 3 && version.getMinor() >= 53;
+  }
+
+  private boolean supportsLookupPackageUris() {
+    Version version = myVmService.getRuntimeVersion();
+    return version.getMajor() > 3 ||
+           version.getMajor() == 3 && version.getMinor() >= 0;
   }
 }

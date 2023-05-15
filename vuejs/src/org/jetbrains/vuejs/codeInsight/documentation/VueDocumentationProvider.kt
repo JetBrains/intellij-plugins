@@ -13,7 +13,7 @@ import com.intellij.psi.impl.FakePsiElement
 import com.intellij.util.asSafely
 import org.jetbrains.annotations.Nls
 import org.jetbrains.vuejs.VueBundle
-import org.jetbrains.vuejs.codeInsight.refs.VueJSReferenceExpressionResolver
+import org.jetbrains.vuejs.codeInsight.refs.VueExprReferenceExpressionResolver
 import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterReferenceExpression
 
 class VueDocumentationProvider : DocumentationProvider {
@@ -54,7 +54,7 @@ class VueDocumentationProvider : DocumentationProvider {
       else -> originalElement
     }
     return when (docSource) {
-      is VueJSFilterReferenceExpression -> VueJSReferenceExpressionResolver
+      is VueJSFilterReferenceExpression -> VueExprReferenceExpressionResolver
         .resolveFiltersFromReferenceExpression(docSource)
         .getOrNull(0)
         ?.let { Pair(it.documentation, docSource) }

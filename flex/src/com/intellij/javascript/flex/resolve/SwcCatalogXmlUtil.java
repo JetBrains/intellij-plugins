@@ -180,7 +180,7 @@ public final class SwcCatalogXmlUtil {
 
     try {
       final Element rootElement = JDOMUtil.load(catalogFile.getInputStream());
-      if (rootElement != null && "swc".equals(rootElement.getName())) {
+      if ("swc".equals(rootElement.getName())) {
         for (final Element librariesElement : rootElement.getChildren("libraries", rootElement.getNamespace())) {
           for (final Element libraryElement : librariesElement.getChildren("library", librariesElement.getNamespace())) {
             final String swfName = libraryElement.getAttributeValue("path");

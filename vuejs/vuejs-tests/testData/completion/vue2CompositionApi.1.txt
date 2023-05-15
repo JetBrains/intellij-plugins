@@ -10,7 +10,7 @@
 !$delete#null#100
 !$destroy#void#100
 !$el#Element#100
-!$emit#this#100
+!$emit#(event: string, ...args: any[]) => void#100
 !$forceUpdate#void#100
 !$isServer#boolean#100
 !$listeners#null#100

@@ -4,7 +4,7 @@
     <css.inclusionContext implementation="org.angular2.css.Angular2CssInclusionContext"/>
     <css.embeddedCssProvider implementation="org.angular2.codeInsight.Angular2EmbeddedCssProvider"/>
     <css.classOrIdUsagesProvider implementation="org.angular2.css.findUsages.Angular2CssClassOrIdUsagesProvider"/>
-    <psi.fileReferenceHelper implementation="org.angular2.css.refs.Angular2CssFileReferenceHelper"/>
     <psi.referenceContributor implementation="org.angular2.css.refs.Angular2CssReferencesContributor"/>
+    <psi.fileReferenceHelper order="before JsCss" implementation="org.angular2.css.refs.Angular2CssFileReferenceHelper" />
   </extensions>
 </idea-plugin>

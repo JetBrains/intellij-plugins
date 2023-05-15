@@ -1,0 +1,18 @@
+<div class='definition'><pre>is:inline</pre></div>
+<div class='content'>
+<p>By default, Astro will process, optimize, and bundle any <code>&lt;script&gt;</code> and <code>&lt;style&gt;</code> tags that it sees on the page. You can opt-out of this behavior with the <code>is:inline</code> directive.</p><p><code>is:inline</code> tells Astro to leave the <code>&lt;script&gt;</code> or <code>&lt;style&gt;</code> tag as-is in the final output HTML. The contents will not be processed, optimized, or bundled. This limits some Astro features, like importing an npm package or using a compile-to-CSS language like Sass.</p><p>The <code>is:inline</code> directive means that <code>&lt;style&gt;</code> and <code>&lt;script&gt;</code> tags:</p><ul><li>Will not be bundled into an external file. This means that <a href="https://javascript.info/script-async-defer">attributes like <code>defer</code></a> which control the loading of an external file will have no effect.</li><li>Will not be deduplicated—the element will appear as many times as it is rendered.</li><li>Will not have its <code>import</code>/<code>@import</code>/<code>url()</code> references resolved relative to the <code>.astro</code> file.</li><li>Will be rendered in the final output HTML exactly where it is authored.</li><li>Styles will be global and not scoped to the component.</li></ul><pre><code class="language-astro">&lt;style is:inline&gt;
+ /* inline: relative &amp; npm package imports are not supported. */
+ @import '/assets/some-public-styles.css';
+ span { color: green; }
+&lt;/style&gt;
+
+&lt;script is:inline&gt;
+ /* inline: relative &amp; npm package imports are not supported. */
+ console.log('I am inlined right here in the final output HTML.');
+&lt;/script&gt;
+</pre><p>##Caution
+The <code>is:inline</code> directive is implied whenever any attribute other than <code>src</code> is used on a <code>&lt;script&gt;</code> or <code>&lt;style&gt;</code> tag.</p>
+</div><table class='sections'>
+<tr><td valign='top' class='section'><p>Related:</td><td valign='top'><p><a href="/en/core-concepts/astro-components/#client-side-scripts">Client-side scripts</a></p></td>
+<tr><td valign='top' class='section'><p>Library:</td><td valign='top'><p>astro</td>
+</table>

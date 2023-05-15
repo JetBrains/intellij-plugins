@@ -9,9 +9,6 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-/**
- * @author Irina.Chernushina on 3/17/2016.
- */
 public class AngularViewDefinitionExternalizer implements DataExternalizer<AngularNamedItemDefinition> {
   public static final AngularViewDefinitionExternalizer INSTANCE = new AngularViewDefinitionExternalizer();
 

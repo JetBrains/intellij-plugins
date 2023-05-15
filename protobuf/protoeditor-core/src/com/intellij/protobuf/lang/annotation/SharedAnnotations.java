@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** Annotations shared between proto and text format annotators. */
-public class SharedAnnotations {
+public final class SharedAnnotations {
 
   /** Psi reference states. */
   public enum ReferenceState {

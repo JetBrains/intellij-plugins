@@ -18,14 +18,15 @@ import MyComponent2 from "./my-component2.vue"
 
 let bar = 123;
 
-<error descr="TS2588: Cannot assign to 'foo' because it is a constant.">foo</error> = 12
+<error descr="Attempt to assign to const or readonly variable"><error descr="TS2588: Cannot assign to 'foo' because it is a constant.">foo</error></error> = 12
 const <error>await</error> = "expect error";
 </script>
+
 <template>
   <MyComponent :count="12" :bar="'foo'"/>
   <<warning descr="Unknown html tag MyComponentTypo">MyComponentTypo</warning>/>
   <MyComponent2/>
   {{ bar }}
   {{ foo }}
-  {{ <weak_warning descr="Unresolved variable or type undeclared">undeclared</weak_warning> }}
+  {{ <error descr="Unresolved variable or type undeclared">undeclared</error> }}
 </template>

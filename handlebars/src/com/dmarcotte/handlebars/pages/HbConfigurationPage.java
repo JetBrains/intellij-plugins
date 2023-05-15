@@ -13,6 +13,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings;
 import com.intellij.ui.SimpleListCellRenderer;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
@@ -98,12 +99,10 @@ public class HbConfigurationPage implements SearchableConfigurable {
 
   private void resetCommentLanguageCombo(@NotNull Language commentLanguage) {
     final DefaultComboBoxModel<Language> model = (DefaultComboBoxModel<Language>)myCommenterLanguage.getModel();
-    final List<Language> languages = TemplateDataLanguageMappings.getTemplateableLanguages();
-
+    final List<Language> languages = ContainerUtil.sorted(ContainerUtil.append(TemplateDataLanguageMappings.getTemplateableLanguages(),
     // add using the native Handlebars commenter as an option
-    languages.add(HbLanguage.INSTANCE);
+    HbLanguage.INSTANCE), Comparator.comparing(Language::getID));
 
-    languages.sort(Comparator.comparing(Language::getID));
     for (Language language : languages) {
       model.addElement(language);
     }

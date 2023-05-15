@@ -125,6 +125,8 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   private Runnable myAfterCommitRunnable = null;
 
+  private boolean myCheckPreview;
+
   {
     myTestsWithJSSupportLoader.addAll(
       Arrays.asList("Flex", "Flex2", "FlexWithLocalCss", "DuplicatedIdsInMxml", "PathesInMxml", "ReferencingClass", "EnumeratedValues"));
@@ -135,6 +137,11 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   @Retention(RetentionPolicy.RUNTIME)
   @Target(ElementType.METHOD)
   public @interface NeedsJavaModule {
+  }
+
+  @Override
+  protected boolean checkPreview() {
+    return myCheckPreview;
   }
 
   @NotNull
@@ -371,8 +378,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     VirtualFile libRoot = null;
 
     for (OrderEntry entry : ModuleRootManager.getInstance(myModule).getOrderEntries()) {
-      if (entry instanceof LibraryOrderEntry) {
-        final LibraryOrderEntry libraryOrderEntry = (LibraryOrderEntry)entry;
+      if (entry instanceof LibraryOrderEntry libraryOrderEntry) {
         if ("lib".equals(libraryOrderEntry.getLibraryName())) {
           VirtualFile[] files = libraryOrderEntry.getRootFiles(OrderRootType.CLASSES);
           libRoot = files[0];
@@ -771,7 +777,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
     myFile.acceptChildren(new JSRecursiveElementVisitor() {
       @Override
-      public void visitJSReferenceExpression(JSReferenceExpression node) {
+      public void visitJSReferenceExpression(@NotNull JSReferenceExpression node) {
         super.visitJSReferenceExpression(node);
         final PsiElement resolve = node.resolve();
 
@@ -2143,14 +2149,16 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
-  public void testAddLeadingSlashForEmbeddedAsset() {
+  public void testAddLeadingSlashForEmbeddedAsset() throws Exception {
+    myCheckPreview = true;
     final String testName = getTestName(false);
     final Collection<HighlightInfo> infoCollection =
       doTestFor(true, new File(getTestDataPath() + BASE_PATH + "/" + testName), (Runnable)null,
                 testName + "/pack/" + testName + ".as",
                 testName + "/assets/foo.txt");
-    findAndInvokeIntentionAction(infoCollection, "Add leading slash", myEditor, myFile);
+    findAndInvokeActionWithExpectedCheck("Add leading slash", "as", infoCollection);
   }
+
 
   @FlexTestOptions(FlexTestOption.WithGumboSdk)
   public void testUseOfTestClass() {

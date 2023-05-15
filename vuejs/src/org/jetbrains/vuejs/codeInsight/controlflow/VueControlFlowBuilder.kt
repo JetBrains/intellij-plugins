@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.codeInsight.controlflow
 
 import com.intellij.codeInsight.controlflow.Instruction
 import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.lang.javascript.psi.JSConditionalExpression
 import com.intellij.lang.javascript.psi.JSControlFlowScope
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.controlflow.JSControlFlowBuilder
@@ -14,9 +15,11 @@ import com.intellij.psi.html.HtmlTag
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlText
-import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
+import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 
 /**
+ * Only used for template block. For script scope, please see core JS/TS builders.
+ *
  * @see JSControlFlowBuilder
  */
 class VueControlFlowBuilder : JSControlFlowBuilder() {
@@ -24,6 +27,7 @@ class VueControlFlowBuilder : JSControlFlowBuilder() {
     private const val V_IF = "v-if"
     private const val V_ELSE_IF = "v-else-if"
     private const val V_ELSE = "v-else"
+
     // v-for is not included because Vue template has no break/continue/return/throw etc.
     private val controlFlowRelevantDirectives = setOf(V_IF, V_ELSE_IF, V_ELSE)
   }
@@ -99,7 +103,7 @@ class VueControlFlowBuilder : JSControlFlowBuilder() {
       is JSExpression -> {
         super.visitElement(element)
       }
-      is VueJSEmbeddedExpression -> {
+      is VueJSEmbeddedExpressionContent -> {
         myBuilder.startNode(element) // translates to JSExpressionStatement in pure JS CFG
         super.visitElement(element)
       }
@@ -123,11 +127,24 @@ class VueControlFlowBuilder : JSControlFlowBuilder() {
     }
   }
 
+  private var currentTopConditionExpression: JSExpression? = null
+
+  override fun isStatementCondition(parent: PsiElement?, currentElement: PsiElement?): Boolean {
+    return currentElement == currentTopConditionExpression
+  }
+
   private fun processIfBranching(element: HtmlTag, conditionAttribute: XmlAttribute) {
-    val condition = PsiTreeUtil.findChildOfType(conditionAttribute.valueElement, JSExpression::class.java)
+    val conditionExpression = PsiTreeUtil.findChildOfType(conditionAttribute.valueElement, JSExpression::class.java)
     element.visitingMode = HtmlTagVisitingMode.VisitChildren
     myBuilder.startNode(element)
-    processBranching(element, condition, element, findElseBranch(element), BranchOwner.IF)
+    currentTopConditionExpression = conditionExpression
+    processBranching(element, conditionExpression, element, findElseBranch(element), BranchOwner.IF)
+    currentTopConditionExpression = null
+  }
+
+  override fun visitJSConditionalExpression(node: JSConditionalExpression) {
+    super.visitJSConditionalExpression(node)
+    flushDelayedPendingEdges()
   }
 
   private fun findElseBranch(initialElement: HtmlTag): PsiElement? {

@@ -11,6 +11,7 @@ import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.nodes.Tag;
@@ -86,7 +87,8 @@ public final class FlutterUtil {
    * See comment above in {@link #isPubspecDeclaringFlutter(VirtualFile)}. This method was also copied from PubRoot.
    */
   private static Map<String, Object> loadPubspecInfo(@NotNull String yamlContents) {
-    final Yaml yaml = new Yaml(new SafeConstructor(), new Representer(), new DumperOptions(), new Resolver() {
+    DumperOptions dumperOptions = new DumperOptions();
+    final Yaml yaml = new Yaml(new SafeConstructor(new LoaderOptions()), new Representer(dumperOptions), dumperOptions, new Resolver() {
       @Override
       protected void addImplicitResolvers() {
         this.addImplicitResolver(Tag.BOOL, BOOL, "yYnNtTfFoO");

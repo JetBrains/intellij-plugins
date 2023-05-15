@@ -11,3 +11,4 @@ JADE_EMBEDDED_WRAPPER: FULL_JADE_EMBEDDED_CONTENT ('\n#content\n  .block\n    in
 XML_END_TAG_START ('</')
 XML_NAME ('template')
 XML_TAG_END ('>')
+VUE_LANG_MODE_NO_TS ('')

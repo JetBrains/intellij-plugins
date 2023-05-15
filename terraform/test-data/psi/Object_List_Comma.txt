@@ -1,0 +1,28 @@
+HCLFile: Object_List_Comma.hcl
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('foo')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLObject
+      PsiElement({)('{')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('one')
+        PsiWhiteSpace(' ')
+        PsiElement(=)('=')
+        PsiWhiteSpace(' ')
+        HCLNumberLiteral
+          PsiElement(NUMBER)('1')
+      PsiElement(,)(',')
+      PsiWhiteSpace(' ')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('two')
+        PsiWhiteSpace(' ')
+        PsiElement(=)('=')
+        PsiWhiteSpace(' ')
+        HCLNumberLiteral
+          PsiElement(NUMBER)('2')
+      PsiElement(})('}')

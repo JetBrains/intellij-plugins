@@ -1,6 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.types
 
+import com.intellij.javascript.web.js.WebJSResolveUtil.resolveSymbolFromNodeModule
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
 import com.intellij.lang.javascript.evaluation.JSCodeBasedTypeFactory
 import com.intellij.lang.javascript.psi.*
@@ -18,7 +19,6 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.ProcessingContext
 import com.intellij.util.asSafely
-import org.jetbrains.vuejs.codeInsight.resolveSymbolFromNodeModule
 import org.jetbrains.vuejs.index.COMPOSITION_API_MODULE
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.model.source.VueCompositionInfoHelper
@@ -126,8 +126,8 @@ class VueUnwrapRefType private constructor(private val typeToUnwrap: JSType, sou
 
   private fun resolveUnrefFunction(): TypeScriptFunction? {
     val file = source.sourceElement?.containingFile ?: return null
-    return resolveSymbolFromNodeModule(file, VUE_MODULE, "unref", TypeScriptFunction::class.java) ?:
-           resolveSymbolFromNodeModule(file, COMPOSITION_API_MODULE, "unref", TypeScriptFunction::class.java)
+    return resolveSymbolFromNodeModule(file, VUE_MODULE, "unref", TypeScriptFunction::class.java)
+           ?: resolveSymbolFromNodeModule(file, COMPOSITION_API_MODULE, "unref", TypeScriptFunction::class.java)
   }
 
   private fun assertVuePackageResolved() {
@@ -185,8 +185,10 @@ class VueUnwrapRefType private constructor(private val typeToUnwrap: JSType, sou
         return if (result is JSRecordType) {
           result.transformTypeHierarchy {
             // JSLookupUtilImpl.isTypeAcceptableForLookupElement
-            t -> if (t is JSGenericTypeImpl || t is JSRecordType && t != result)
-              JSNamedTypeFactory.createType(StringUtil.ELLIPSIS, t.source, JSContext.STATIC) else t
+            t ->
+            if (t is JSGenericTypeImpl || t is JSRecordType && t != result)
+              JSNamedTypeFactory.createType(StringUtil.ELLIPSIS, t.source, JSContext.STATIC)
+            else t
           }
         }
         else if (result != type && !JSTypeUtils.hasTypes(result, TypeScriptConditionalTypeJSTypeImpl::class.java)) {

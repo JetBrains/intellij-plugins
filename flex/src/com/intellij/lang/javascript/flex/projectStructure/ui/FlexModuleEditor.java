@@ -14,9 +14,6 @@ import org.jetbrains.jps.model.java.JavaSourceRootType;
 import javax.swing.*;
 import java.util.List;
 
-/**
- * @author ksafonov
- */
 public class FlexModuleEditor implements ModuleConfigurationEditor {
   public static final String DISPLAY_NAME = "Flex";
 

@@ -21,9 +21,6 @@ import com.intellij.coldFusion.model.psi.impl.CfmlComponentImpl;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlComponentElementTypeImpl extends CfmlComponentElementType {
   public CfmlComponentElementTypeImpl(@NotNull @NonNls final String debugName) {
     super(debugName, CfmlLanguage.INSTANCE);

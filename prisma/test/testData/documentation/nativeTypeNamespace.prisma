@@ -1,0 +1,7 @@
+datasource pg {
+  provider = "postgresql"
+}
+
+model M {
+  id Int @p<caret>g
+}

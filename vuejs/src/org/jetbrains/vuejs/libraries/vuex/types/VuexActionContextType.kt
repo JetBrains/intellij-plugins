@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.vuex.types
 
+import com.intellij.javascript.web.js.WebJSResolveUtil.resolveSymbolFromNodeModule
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSTypeTextBuilder
@@ -10,7 +11,6 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.psi.PsiElement
 import com.intellij.util.ProcessingContext
-import org.jetbrains.vuejs.codeInsight.resolveSymbolFromNodeModule
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.COMMIT
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.DISPATCH
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.GETTERS

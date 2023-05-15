@@ -14,7 +14,6 @@ import com.intellij.util.ProcessingContext
 import com.intellij.util.asSafely
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
-import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.ACTION_DEC
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.COMMIT
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.CONTEXT
@@ -253,7 +252,7 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
 
   override fun getReferencesByElement(element: PsiElement, processingContext: ProcessingContext): Array<PsiReference> {
     if (element is JSLiteralExpression) {
-      val text = getTextIfLiteral(element) ?: return PsiReference.EMPTY_ARRAY
+      val text = getTextIfLiteral(element, false) ?: return PsiReference.EMPTY_ARRAY
       val settings = getSettings(element)
       if (settings != null && isVuexContext(element)) {
         var lastIndex = 0

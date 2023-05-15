@@ -8,9 +8,10 @@ import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 import static java.util.Arrays.asList;
-import static org.angular2.modules.Angular2TestModule.ANGULAR_COMMON_4_0_0;
-import static org.angular2.modules.Angular2TestModule.configureLink;
+import static org.angular2.modules.Angular2TestModule.*;
 
 public class CssClassTest extends Angular2CodeInsightFixtureTestCase {
 
@@ -97,13 +98,13 @@ public class CssClassTest extends Angular2CodeInsightFixtureTestCase {
                                "angular.json", "package.json");
     AngularTestUtil.moveToOffsetBySignature("<div class=\"<caret>\">", myFixture);
     myFixture.completeBasic();
-    assertEquals(ContainerUtil.newArrayList("cli-class",
-                                            "index-html-link-class",
-                                            "inline-class",
-                                            "inline-html-class",
-                                            "internal-class",
-                                            //"index-html-inline-class", - not supported yet
-                                            "simpleNameClass"),
+    assertEquals(List.of("cli-class",
+                         "index-html-link-class",
+                         "inline-class",
+                         "inline-html-class",
+                         "internal-class",
+                         //"index-html-inline-class", - not supported yet
+                         "simpleNameClass"),
                  ContainerUtil.sorted(myFixture.getLookupElementStrings()));
   }
 
@@ -142,13 +143,12 @@ public class CssClassTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.completeBasic();
     assertContainsElements(myFixture.getLookupElementStrings(), "[class.");
     myFixture.type("[class.");
-    assertEquals(ContainerUtil.newArrayList(
-      "cli-class]",
-      "ext-html-class]",
-      "index-html-link-class]",
-      "inline-class]",
-      "internal-class]",
-      "simpleNameClass]"),
+    assertEquals(List.of("cli-class]",
+                         "ext-html-class]",
+                         "index-html-link-class]",
+                         "inline-class]",
+                         "internal-class]",
+                         "simpleNameClass]"),
                  ContainerUtil.sorted(myFixture.getLookupElementStrings()));
     myFixture.type("cli\n");
     assertEquals(AngularTestUtil.findOffsetBySignature("[class.cli-class]=\"<caret>\"", myFixture.getFile()),
@@ -166,13 +166,12 @@ public class CssClassTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.type("bind-");
     assertContainsElements(myFixture.getLookupElementStrings(), "class.");
     myFixture.type("class.");
-    assertEquals(ContainerUtil.newArrayList(
-      "cli-class",
-      "ext-html-class",
-      "index-html-link-class",
-      "inline-class",
-      "internal-class",
-      "simpleNameClass"),
+    assertEquals(List.of("cli-class",
+                         "ext-html-class",
+                         "index-html-link-class",
+                         "inline-class",
+                         "internal-class",
+                         "simpleNameClass"),
                  ContainerUtil.sorted(myFixture.getLookupElementStrings()));
     myFixture.type("cli\n");
     assertEquals(AngularTestUtil.findOffsetBySignature("bind-class.cli-class=\"<caret>\"", myFixture.getFile()),
@@ -180,7 +179,7 @@ public class CssClassTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testClassCodeCompletionRun() {
-    configureLink(myFixture, ANGULAR_COMMON_4_0_0);
+    configureLink(myFixture, ANGULAR_COMMON_15_1_5);
     myFixture.configureByFiles("complex.html", "complex.ts", "complex-global.css", "complex-internal.css",
                                "complex-cli.css", "complex-cli-index.html", "complex-cli-index.css",
                                "angular.json");
@@ -195,17 +194,17 @@ public class CssClassTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.type(" ");
     myFixture.completeBasic();
     assertContainsElements(myFixture.getLookupElementStrings(), "[ngClass]");
+    assertDoesntContain(myFixture.getLookupElementStrings(), "ngClass");
     myFixture.type("ngCl\n");
     PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
     myFixture.type("{");
     myFixture.completeBasic();
-    assertEquals(ContainerUtil.newArrayList(
-      "cli-class",
-      "ext-html-class",
-      "index-html-link-class",
-      "inline-class",
-      "internal-class",
-      "simpleNameClass"),
+    assertEquals(List.of("cli-class",
+                         "ext-html-class",
+                         "index-html-link-class",
+                         "inline-class",
+                         "internal-class",
+                         "simpleNameClass"),
                  ContainerUtil.sorted(myFixture.getLookupElementStrings()));
     myFixture.type("cli\n");
     PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
@@ -214,6 +213,7 @@ public class CssClassTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.type(": true, ");
     myFixture.completeBasic();
     assertSameElements(myFixture.getLookupElementStrings(),
+                       "cli-class", //TODO: remove - CSS reference actually does not filter already present class names, though it should
                        "inline-class",
                        "internal-class",
                        "ext-html-class",

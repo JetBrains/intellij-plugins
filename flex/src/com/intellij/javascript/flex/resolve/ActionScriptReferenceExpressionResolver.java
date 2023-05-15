@@ -161,9 +161,8 @@ public class ActionScriptReferenceExpressionResolver
     boolean allowOnlyCompleteMatches = false;
 
     PsiElement context = processor.getContext();
-    if (context instanceof JSReferenceExpression) {
+    if (context instanceof JSReferenceExpression refExpr) {
       boolean haveEncounteredDynamics = false;
-      final JSReferenceExpression refExpr = (JSReferenceExpression)context;
       final JSExpression originalQualifier = refExpr.getQualifier();
       final JSExpression qualifier = JSResolveUtil.getRealRefExprQualifier(refExpr);
       if (originalQualifier == null && qualifier != null && refExpr.isAttributeReference()) {
@@ -236,7 +235,7 @@ public class ActionScriptReferenceExpressionResolver
         constantName = sibling.getText();
       }
       else {
-        return new ResolveResult[]{new JSResolveResult(jsReferenceExpression, null, "javascript.unresolved.symbol.message")};
+        return new ResolveResult[]{new JSResolveResult(jsReferenceExpression, null, JSResolveResult.ProblemKind.UNRESOLVED_SYMBOL)};
       }
     }
     else {
@@ -256,7 +255,7 @@ public class ActionScriptReferenceExpressionResolver
         constantName = sibling.getText();
       }
       else {
-        return new ResolveResult[]{new JSResolveResult(jsReferenceExpression, null, "javascript.unresolved.symbol.message")};
+        return new ResolveResult[]{new JSResolveResult(jsReferenceExpression, null, JSResolveResult.ProblemKind.UNRESOLVED_SYMBOL)};
       }
     }
 
@@ -267,6 +266,6 @@ public class ActionScriptReferenceExpressionResolver
       }
     }
 
-    return new ResolveResult[]{new JSResolveResult(jsReferenceExpression, null, "javascript.unresolved.symbol.message")};
+    return new ResolveResult[]{new JSResolveResult(jsReferenceExpression, null, JSResolveResult.ProblemKind.UNRESOLVED_SYMBOL)};
   }
 }

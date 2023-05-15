@@ -151,9 +151,7 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
   }
 
   public void testExpansionFormComplex() {
-    doTest("<div>Text{ form, open, =23 {{{{foo: 12} }} is {inner, open, =34{{{\"test\"}} cool } =12{<tag test='12'></tag>}}}}}} {}",
-           // TODO improve state handling when nesting expansion forms
-           false);
+    doTest("<div>Text{ form, open, =23 {{{{foo: 12} }} is {inner, open, =34{{{\"test\"}} cool } =12{<tag test='12'></tag>}}}}}} {}");
   }
 
   public void testScriptSrc() {
@@ -185,9 +183,7 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
              <script src="//example.com" onerror="console.log(1)" (error)='console.log(1)'onload="console.log(1)" (load)='console.log(1)'>
                console.log(2)
              </script>
-             <div></div>""",
-           // TODO improve JS embedded lexer
-           false);
+             <div></div>""");
   }
 
   public void testStyleTag() {
@@ -196,9 +192,7 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
                div {
                }
              </style>
-             <div></div>""",
-           // TODO improve CSS lexer to have less states
-           false);
+             <div></div>""");
   }
 
   public void testStyleAngularAttr() {
@@ -207,9 +201,7 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
                div {
                }
              </style>
-             <div></div>""",
-           // TODO improve CSS lexer to have less states
-           false);
+             <div></div>""");
   }
 
   public void testStyleWithEventAndAngularAttr() {
@@ -218,36 +210,28 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
                div {
                }
              </style>
-             <div></div>""",
-           // TODO improve CSS lexer to have less states
-           false);
+             <div></div>""");
   }
 
   public void testStyleAfterBinding() {
     doTest("""
              <div *foo style="width: 13px">
                <span (click)="foo"></span>
-             </div>""",
-           // TODO improve CSS lexer to have less states
-           false);
+             </div>""");
   }
 
   public void testStyleAfterStyle() {
     doTest("""
              <div style style *foo='bar'>
                <span style='width: 13px' (click)="foo"></span>
-             </div>""",
-           // TODO improve CSS lexer to have less states
-           false);
+             </div>""");
   }
 
   public void testBindingAfterStyle() {
     doTest("""
              <div style *foo='bar'>
                <span style='width: 13px' (click)="foo"></span>
-             </div>""",
-           // TODO improve CSS lexer to have less states
-           false);
+             </div>""");
   }
 
   public void testEmptyStructuralDirective() {
@@ -266,17 +250,8 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
 
   @Override
   protected void doTest(@NonNls String text) {
-    doTest(text, true);
-  }
-
-  protected void doTest(@NonNls String text, boolean checkRestartOnEveryToken) {
     super.doTest(text);
-    //if (checkRestartOnEveryToken) {
-    //  checkCorrectRestartOnEveryToken(text);
-    //}
-    //else {
-      checkCorrectRestart(text);
-    //}
+    checkCorrectRestart(text);
   }
 
   @Override

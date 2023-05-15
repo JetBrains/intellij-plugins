@@ -24,18 +24,15 @@ import org.jetbrains.annotations.PropertyKey;
 /**
  * Resource bundle for proto messages.
  */
-public class PbLangBundle extends DynamicBundle {
-  @NonNls
-  private static final String BUNDLE = "messages.ProtobufLangBundle";
+public final class PbLangBundle {
+  private static final @NonNls String BUNDLE = "messages.ProtobufLangBundle";
 
-  private static final PbLangBundle INSTANCE = new PbLangBundle();
+  private static final DynamicBundle INSTANCE = new DynamicBundle(PbLangBundle.class, BUNDLE);
 
-  public PbLangBundle() {
-    super(BUNDLE);
+  private PbLangBundle() {
   }
 
-  @Nls
-  public static String message(@PropertyKey(resourceBundle = BUNDLE) @NotNull @NonNls String key, Object @NotNull ... params) {
+  public static @Nls String message(@PropertyKey(resourceBundle = BUNDLE) @NotNull @NonNls String key, Object @NotNull ... params) {
     return INSTANCE.getMessage(key, params);
   }
 }

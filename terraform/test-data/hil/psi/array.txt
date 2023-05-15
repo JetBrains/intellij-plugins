@@ -1,0 +1,13 @@
+HILFile: a.hil
+  ILExpressionHolder
+    PsiElement(${)('${')
+    ILCollectionValue
+      ILArray
+        PsiElement([)('[')
+        ILLiteral
+          PsiElement(true)('true')
+        PsiElement(,)(',')
+        ILLiteral
+          PsiElement(false)('false')
+        PsiElement(])(']')
+    PsiElement(})('}')

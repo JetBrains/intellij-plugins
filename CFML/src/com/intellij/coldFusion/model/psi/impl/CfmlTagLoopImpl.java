@@ -15,9 +15,6 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlTagLoopImpl extends CfmlTagImpl {
 
   public CfmlTagLoopImpl(ASTNode astNode) {
@@ -59,8 +56,7 @@ public class CfmlTagLoopImpl extends CfmlTagImpl {
     @NotNull
     @Override
     public PsiElement getNavigationElement() {
-      PsiElement element = findChildByType(CfmlElementTypes.ATTRIBUTE_VALUE);
-      return element != null ? element : this;
+      return super.getNavigationElement();
     }
 
     @Override

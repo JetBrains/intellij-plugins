@@ -24,7 +24,7 @@ public class MeteorMainProcessHandler extends KillableColoredProcessHandler {
   private final Object myLock = new Object();
 
   public MeteorMainProcessHandler(@NotNull GeneralCommandLine commandLine) throws ExecutionException {
-    super(commandLine, true);
+    super(commandLine);
     addProcessListener(new ProcessAdapter() {
       @Override
       public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {

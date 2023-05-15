@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.model
 
 import com.intellij.html.webSymbols.attributes.WebSymbolAttributeDescriptor
 import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
-import com.intellij.javascript.web.js.jsType
+import com.intellij.javascript.webSymbols.jsType
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
@@ -51,7 +51,7 @@ fun getSlotTypeFromContext(context: PsiElement): JSType? =
     ?.asCompleteType()
 
 private fun WebSymbolElementDescriptor.getSlots(name: String?): List<WebSymbol> =
-  runNameMatchQuery(listOfNotNull(WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_SLOTS, name))
+  runNameMatchQuery(WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_SLOTS, name ?:"")
 
 private fun WebSymbolElementDescriptor.getSlotsCompletions(name: String?, position: Int): List<WebSymbolCodeCompletionItem> =
-  runCodeCompletionQuery(listOfNotNull(WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_SLOTS, name), position)
+  runCodeCompletionQuery(WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_SLOTS, name ?: "", position)

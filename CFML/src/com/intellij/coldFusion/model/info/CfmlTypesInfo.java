@@ -5,9 +5,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author vnikolaenko
- */
 public final class CfmlTypesInfo {
   private static final String[] ourTypeNames = {
     "string",

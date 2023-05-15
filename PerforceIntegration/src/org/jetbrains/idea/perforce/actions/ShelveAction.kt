@@ -29,26 +29,16 @@ class ShelveAction : AbstractCommitChangesAction() {
       presentation.isEnabledAndVisible = false
     }
     else {
-      val connections = getConnections(project, changes.filterNot { it is ShelvedChange.IdeaChange }).keySet()
-      presentation.isEnabledAndVisible = connections.isNotEmpty() && connections.all { supportsShelve(project, it) }
+      val connections = Handler.getConnections(project, changes.filterNot { it is ShelvedChange.IdeaChange }).keySet()
+      presentation.isEnabledAndVisible = connections.isNotEmpty() && connections.all { Handler.supportsShelve(project, it) }
     }
   }
 
   override fun getExecutor(project: Project): CommitExecutor {
-    return object : CommitExecutor {
-      override fun getActionText(): String = PerforceBundle.message("shelve")
-
-      override fun createCommitSession(commitContext: CommitContext): CommitSession {
-        return object : CommitSession {
-          override fun execute(changes: Collection<Change>, commitMessage: String?) {
-            shelveChanges(project, commitMessage, changes)
-          }
-        }
-      }
-    }
+    return P4ShelveCommitExecutor(project)
   }
 
-  companion object {
+  object Handler { // not a companion object to load less bytecode simultaneously with ShelveAction
     @VisibleForTesting
     @JvmStatic
     fun shelveChanges(project: Project, commitMessage: String?, changes: Collection<Change>) {
@@ -118,6 +108,20 @@ class ShelveAction : AbstractCommitChangesAction() {
       catch (e: VcsException) {
         return false
       }
+    }
+  }
+
+  private class P4ShelveCommitExecutor(private val project: Project) : CommitExecutor {
+    override fun getActionText(): String = PerforceBundle.message("shelve")
+
+    override fun createCommitSession(commitContext: CommitContext): CommitSession {
+      return P4ShelveCommitSession(project)
+    }
+  }
+
+  private class P4ShelveCommitSession(private val project: Project) : CommitSession {
+    override fun execute(changes: Collection<Change>, commitMessage: String?) {
+      Handler.shelveChanges(project, commitMessage, changes)
     }
   }
 }

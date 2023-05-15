@@ -47,7 +47,7 @@ public class JSFieldCanBeLocalInspection extends JSInspection {
     }
 
     @Override
-    public void visitJSVariable(final JSVariable field) {
+    public void visitJSVariable(final @NotNull JSVariable field) {
       if (!DialectDetector.isActionScript(field)) return;
       final PsiElement parentParent = field.getParent().getParent();
       final PsiElement context = parentParent.getContext();

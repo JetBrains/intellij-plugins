@@ -25,6 +25,7 @@ public final class DartSyntaxHighlighterColors {
 
   public static final String DART_ENUM = "DART_ENUM";
   public static final String DART_ENUM_CONSTANT = "DART_ENUM_CONSTANT";
+  public static final String DART_EXTENSION = "DART_EXTENSION";
   public static final String DART_FUNCTION_TYPE_ALIAS = "DART_FUNCTION_TYPE_ALIAS";
   public static final String DART_TYPE_ALIAS = "DART_TYPE_ALIAS";
 
@@ -49,6 +50,8 @@ public final class DartSyntaxHighlighterColors {
   public static final String DART_LOCAL_FUNCTION_TEAR_OFF = "DART_LOCAL_FUNCTION_TEAR_OFF";
   public static final String DART_LOCAL_VARIABLE_DECLARATION = "DART_LOCAL_VARIABLE_DECLARATION";
   public static final String DART_LOCAL_VARIABLE_REFERENCE = "DART_LOCAL_VARIABLE_REFERENCE";
+
+  public static final String DART_MIXIN = "DART_MIXIN";
 
   public static final String DART_PARAMETER_DECLARATION = "DART_PARAMETER_DECLARATION";
   public static final String DART_PARAMETER_REFERENCE = "DART_PARAMETER_REFERENCE";
@@ -135,6 +138,7 @@ public final class DartSyntaxHighlighterColors {
   public static final TextAttributesKey ENUM = createTextAttributesKey(DART_ENUM, DefaultLanguageHighlighterColors.CLASS_NAME);
   public static final TextAttributesKey ENUM_CONSTANT =
     createTextAttributesKey(DART_ENUM_CONSTANT, DefaultLanguageHighlighterColors.INSTANCE_FIELD);
+  public static final TextAttributesKey EXTENSION = createTextAttributesKey(DART_EXTENSION, DefaultLanguageHighlighterColors.CLASS_NAME);
   public static final TextAttributesKey FUNCTION_TYPE_ALIAS =
     createTextAttributesKey(DART_FUNCTION_TYPE_ALIAS, DefaultLanguageHighlighterColors.CLASS_NAME);
   public static final TextAttributesKey TYPE_ALIAS =
@@ -171,6 +175,10 @@ public final class DartSyntaxHighlighterColors {
     createTextAttributesKey(DART_LOCAL_VARIABLE_DECLARATION, DefaultLanguageHighlighterColors.LOCAL_VARIABLE);
   public static final TextAttributesKey LOCAL_VARIABLE_REFERENCE =
     createTextAttributesKey(DART_LOCAL_VARIABLE_REFERENCE, DefaultLanguageHighlighterColors.LOCAL_VARIABLE);
+
+  public static final TextAttributesKey MIXIN =
+    createTextAttributesKey(DART_MIXIN, DefaultLanguageHighlighterColors.CLASS_NAME);
+
   public static final TextAttributesKey PARAMETER_DECLARATION =
     createTextAttributesKey(DART_PARAMETER_DECLARATION, DefaultLanguageHighlighterColors.PARAMETER);
   public static final TextAttributesKey PARAMETER_REFERENCE =

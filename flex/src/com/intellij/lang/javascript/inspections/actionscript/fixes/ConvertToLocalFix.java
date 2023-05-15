@@ -130,8 +130,7 @@ public class ConvertToLocalFix implements LocalQuickFix {
   }
 
   private static boolean isAssignment(final PsiElement anchorElement, PsiElement ref) {
-    if (anchorElement instanceof JSExpressionStatement) {
-      final JSExpressionStatement expressionStatement = (JSExpressionStatement)anchorElement;
+    if (anchorElement instanceof JSExpressionStatement expressionStatement) {
       final JSExpression expression = expressionStatement.getExpression();
       if (expression instanceof JSAssignmentExpression) {
         return ((JSAssignmentExpression)expression).getOperationSign() == JSTokenTypes.EQ &&

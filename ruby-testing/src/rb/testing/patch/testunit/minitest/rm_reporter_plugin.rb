@@ -267,7 +267,7 @@ module Minitest
     end
 
     def normalize(test_method_name)
-      test_method_name.gsub(/test_\d{4}_/, '')
+      test_method_name.gsub(/test_(\d{4}_|: )/, '')
     end
 
     def time_in_ms(time)

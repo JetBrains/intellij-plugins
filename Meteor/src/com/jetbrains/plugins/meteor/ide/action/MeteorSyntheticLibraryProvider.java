@@ -2,6 +2,7 @@ package com.jetbrains.plugins.meteor.ide.action;
 
 import com.intellij.lang.javascript.library.JSSyntheticLibraryProvider;
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectLocator;
@@ -33,11 +34,9 @@ import java.util.stream.Collectors;
 
 import static com.jetbrains.plugins.meteor.ide.action.MeteorPackagesUtil.PACKAGES_FOLDER;
 
-public class MeteorSyntheticLibraryProvider extends AdditionalLibraryRootsProvider implements JSSyntheticLibraryProvider {
-
-  @NotNull
+public final class MeteorSyntheticLibraryProvider extends AdditionalLibraryRootsProvider implements JSSyntheticLibraryProvider {
   @Override
-  public Collection<SyntheticLibrary> getAdditionalProjectLibraries(@NotNull Project project) {
+  public @NotNull Collection<SyntheticLibrary> getAdditionalProjectLibraries(@NotNull Project project) {
     if (!MeteorFacade.getInstance().isMeteorProject(project)) {
       return ContainerUtil.emptyList();
     }
@@ -46,8 +45,7 @@ public class MeteorSyntheticLibraryProvider extends AdditionalLibraryRootsProvid
     return getLibraries(project);
   }
 
-  @NotNull
-  public static SyntheticLibrary.ExcludeFileCondition createExcludeConditions() {
+  public static @NotNull SyntheticLibrary.ExcludeFileCondition createExcludeConditions() {
     return new SyntheticLibrary.ExcludeFileCondition() {
       @Override
       public boolean shouldExclude(boolean isDir,
@@ -65,24 +63,20 @@ public class MeteorSyntheticLibraryProvider extends AdditionalLibraryRootsProvid
     };
   }
 
-  @NotNull
   @Override
-  public Collection<VirtualFile> getRootsToWatch(@NotNull Project project) {
+  public @NotNull Collection<VirtualFile> getRootsToWatch(@NotNull Project project) {
     return getRoots(project);
   }
 
-  @NotNull
-  public static Collection<VirtualFile> getRoots(@NotNull Project project) {
+  public static @NotNull Collection<VirtualFile> getRoots(@NotNull Project project) {
     if (!MeteorFacade.getInstance().isMeteorProject(project)) return ContainerUtil.emptyList();
 
     return getLibraries(project).stream().flatMap(el -> el.getSourceRoots().stream()).collect(Collectors.toList());
   }
 
   private static class MeteorSyntheticLibrary extends SyntheticLibrary implements ItemPresentation {
-    @NlsSafe
-    private final String myLibName;
-    @NotNull
-    private final Collection<VirtualFile> myRoots;
+    private final @NlsSafe String myLibName;
+    private final @NotNull Collection<VirtualFile> myRoots;
 
     MeteorSyntheticLibrary(@NlsSafe String libName, @NotNull Collection<VirtualFile> sourceRoots) {
       super("MeteorSyntheticLibrary::" + libName, createExcludeConditions());
@@ -90,16 +84,14 @@ public class MeteorSyntheticLibraryProvider extends AdditionalLibraryRootsProvid
       myRoots = sourceRoots;
     }
 
-    @NotNull
     @Override
-    public Collection<VirtualFile> getSourceRoots() {
+    public @NotNull Collection<VirtualFile> getSourceRoots() {
       return myRoots;
     }
 
-    @NotNull
     @Override
-    public Set<VirtualFile> getExcludedRoots() {
-      return Collections.emptySet();
+    public @NotNull Set<VirtualFile> getExcludedRoots() {
+      return super.getExcludedRoots();
     }
 
     @Override
@@ -115,27 +107,23 @@ public class MeteorSyntheticLibraryProvider extends AdditionalLibraryRootsProvid
       return Objects.hash(myLibName, getClass().hashCode());
     }
 
-    @Nullable
     @Override
-    public String getPresentableText() {
+    public @Nullable String getPresentableText() {
       return myLibName;
     }
 
-    @Nullable
     @Override
-    public String getLocationString() {
+    public @Nullable String getLocationString() {
       return "meteor";
     }
 
-    @Nullable
     @Override
-    public Icon getIcon(boolean unused) {
+    public @Nullable Icon getIcon(boolean unused) {
       return MeteorIcons.Meteor2;
     }
   }
 
-  @NotNull
-  public static Collection<SyntheticLibrary> getLibraries(@NotNull Project project) {
+  public static @NotNull Collection<SyntheticLibrary> getLibraries(@NotNull Project project) {
     final Collection<MeteorImportPackagesAsExternalLib.CodeType> codes = MeteorPackagesUtil.getCodes(project);
     if (codes.isEmpty()) return ContainerUtil.emptyList();
 
@@ -170,8 +158,7 @@ public class MeteorSyntheticLibraryProvider extends AdditionalLibraryRootsProvid
     return ContainerUtil.emptyList();
   }
 
-  @NotNull
-  public static List<MeteorPackagesUtil.PackageWrapper> getWrappers(@NotNull Project project) {
+  public static @NotNull List<MeteorPackagesUtil.PackageWrapper> getWrappers(@NotNull Project project) {
     return CachedValuesManager.getManager(project).getCachedValue(project, () -> {
       final VirtualFile dotMeteorVirtualFile = MeteorPackagesUtil.getDotMeteorVirtualFile(project, null, true);
       if (dotMeteorVirtualFile == null) {
@@ -189,8 +176,8 @@ public class MeteorSyntheticLibraryProvider extends AdditionalLibraryRootsProvid
 
       // force project because load text can lead to SOE because of the recursive project calc
       String text;
-      try {
-        text = ProjectLocator.computeWithPreferredProject(versionsFile, project, () -> VfsUtilCore.loadText(versionsFile));
+      try (AccessToken ignored = ProjectLocator.withPreferredProject(versionsFile, project)) {
+        text = VfsUtilCore.loadText(versionsFile);
       }
       catch (IOException e) {
         //ignore
@@ -209,13 +196,11 @@ public class MeteorSyntheticLibraryProvider extends AdditionalLibraryRootsProvid
     });
   }
 
-  @NotNull
-  private static CachedValueProvider.Result<List<MeteorPackagesUtil.PackageWrapper>> emptyResult() {
+  private static @NotNull CachedValueProvider.Result<List<MeteorPackagesUtil.PackageWrapper>> emptyResult() {
     return CachedValueProvider.Result.create(ContainerUtil.emptyList(), PsiModificationTracker.MODIFICATION_COUNT);
   }
 
-  @Nullable
-  public static VirtualFile getPackagesFolder(@NotNull Project project) {
+  public static @Nullable VirtualFile getPackagesFolder(@NotNull Project project) {
     final String pathToMeteorGlobal = MeteorPackagesUtil.getPathToGlobalMeteorRoot(project);
 
     String packagesPath = FileUtil.toCanonicalPath(pathToMeteorGlobal) + "/" + PACKAGES_FOLDER;
@@ -223,9 +208,8 @@ public class MeteorSyntheticLibraryProvider extends AdditionalLibraryRootsProvid
     return LocalFileFinder.findFile(packagesPath);
   }
 
-  @Nullable
-  private static VirtualFile getRootForPackage(@NotNull VirtualFile folder,
-                                               @NotNull MeteorImportPackagesAsExternalLib.CodeType type) {
+  private static @Nullable VirtualFile getRootForPackage(@NotNull VirtualFile folder,
+                                                         @NotNull MeteorImportPackagesAsExternalLib.CodeType type) {
     if (!folder.isValid()) return null;
     VirtualFile requiredFolder = folder.findChild(type.getFolder());
     if (requiredFolder == null || !requiredFolder.isValid()) return null;

@@ -128,6 +128,9 @@ public class DartIndentProcessor {
     if (parentType == SWITCH_STATEMENT && (elementType == SWITCH_CASE || elementType == DEFAULT_CASE)) {
       return Indent.getNormalIndent();
     }
+    if (parentType == SWITCH_EXPRESSION && elementType == SWITCH_EXPRESSION_CASE) {
+      return Indent.getNormalIndent();
+    }
     if ((parentType == SWITCH_CASE || parentType == DEFAULT_CASE) && elementType == STATEMENTS) {
       return Indent.getNormalIndent();
     }
@@ -185,7 +188,7 @@ public class DartIndentProcessor {
     if (elementType == SUPER_CALL_OR_FIELD_INITIALIZER) {
       return Indent.getContinuationIndent();
     }
-    if (parentType == SUPER_CALL_OR_FIELD_INITIALIZER && elementType != COLON) {
+    if (parentType == SUPER_CALL_OR_FIELD_INITIALIZER) {
       return Indent.getNormalIndent();
     }
 

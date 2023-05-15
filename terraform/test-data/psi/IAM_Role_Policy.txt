@@ -1,0 +1,137 @@
+HCLFile: IAM_Role_Policy.hcl
+  HCLBlock
+    HCLIdentifier
+      PsiElement(ID)('resource')
+    PsiWhiteSpace(' ')
+    HCLStringLiteral
+      PsiElement(DOUBLE_QUOTED_STRING)('"aws_iam_role_policy"')
+    PsiWhiteSpace(' ')
+    HCLStringLiteral
+      PsiElement(DOUBLE_QUOTED_STRING)('"test_policy"')
+    PsiWhiteSpace(' ')
+    HCLBlockObject
+      PsiElement({)('{')
+      PsiWhiteSpace('\n    ')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('name')
+        PsiWhiteSpace(' ')
+        PsiElement(=)('=')
+        PsiWhiteSpace(' ')
+        HCLStringLiteral
+          PsiElement(DOUBLE_QUOTED_STRING)('"test_policy"')
+      PsiWhiteSpace('\n    ')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('role')
+        PsiWhiteSpace(' ')
+        PsiElement(=)('=')
+        PsiWhiteSpace(' ')
+        HCLStringLiteral
+          PsiElement(DOUBLE_QUOTED_STRING)('"${aws_iam_role.test_role.id}"')
+      PsiWhiteSpace('\n    ')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('policy')
+        PsiWhiteSpace(' ')
+        PsiElement(=)('=')
+        PsiWhiteSpace(' ')
+        HCLHeredocLiteral
+          PsiElement(HD_START)('<<')
+          HCLHeredocMarkerImpl(HEREDOC_MARKER)
+            PsiElement(HD_MARKER)('EOF')
+          PsiWhiteSpace('\n')
+          HCLHeredocContent
+            PsiElement(HD_LINE)('{')
+            PsiElement(HD_EOL)('\n')
+            PsiElement(HD_LINE)('  "Version": "2012-10-17",')
+            PsiElement(HD_EOL)('\n')
+            PsiElement(HD_LINE)('  "Statement": [')
+            PsiElement(HD_EOL)('\n')
+            PsiElement(HD_LINE)('    {')
+            PsiElement(HD_EOL)('\n')
+            PsiElement(HD_LINE)('      "Action": [')
+            PsiElement(HD_EOL)('\n')
+            PsiElement(HD_LINE)('        "ec2:Describe*"')
+            PsiElement(HD_EOL)('\n')
+            PsiElement(HD_LINE)('      ],')
+            PsiElement(HD_EOL)('\n')
+            PsiElement(HD_LINE)('      "Effect": "Allow",')
+            PsiElement(HD_EOL)('\n')
+            PsiElement(HD_LINE)('      "Resource": "*"')
+            PsiElement(HD_EOL)('\n')
+            PsiElement(HD_LINE)('    }')
+            PsiElement(HD_EOL)('\n')
+            PsiElement(HD_LINE)('  ]')
+            PsiElement(HD_EOL)('\n')
+            PsiElement(HD_LINE)('}')
+            PsiElement(HD_EOL)('\n')
+          HCLHeredocMarkerImpl(HEREDOC_MARKER)
+            PsiElement(HD_MARKER)('EOF')
+      PsiWhiteSpace('\n')
+      PsiElement(})('}')
+  PsiWhiteSpace('\n\n')
+  HCLBlock
+    HCLIdentifier
+      PsiElement(ID)('resource')
+    PsiWhiteSpace(' ')
+    HCLStringLiteral
+      PsiElement(DOUBLE_QUOTED_STRING)('"aws_iam_role"')
+    PsiWhiteSpace(' ')
+    HCLStringLiteral
+      PsiElement(DOUBLE_QUOTED_STRING)('"test_role"')
+    PsiWhiteSpace(' ')
+    HCLBlockObject
+      PsiElement({)('{')
+      PsiWhiteSpace('\n    ')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('name')
+        PsiWhiteSpace(' ')
+        PsiElement(=)('=')
+        PsiWhiteSpace(' ')
+        HCLStringLiteral
+          PsiElement(DOUBLE_QUOTED_STRING)('"test_role"')
+      PsiWhiteSpace('\n    ')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('assume_role_policy')
+        PsiWhiteSpace(' ')
+        PsiElement(=)('=')
+        PsiWhiteSpace(' ')
+        HCLHeredocLiteral
+          PsiElement(HD_START)('<<')
+          HCLHeredocMarkerImpl(HEREDOC_MARKER)
+            PsiElement(HD_MARKER)('EOF')
+          PsiWhiteSpace('\n')
+          HCLHeredocContent
+            PsiElement(HD_LINE)('{')
+            PsiElement(HD_EOL)('\n')
+            PsiElement(HD_LINE)('  "Version": "2012-10-17",')
+            PsiElement(HD_EOL)('\n')
+            PsiElement(HD_LINE)('  "Statement": [')
+            PsiElement(HD_EOL)('\n')
+            PsiElement(HD_LINE)('    {')
+            PsiElement(HD_EOL)('\n')
+            PsiElement(HD_LINE)('      "Action": "sts:AssumeRole",')
+            PsiElement(HD_EOL)('\n')
+            PsiElement(HD_LINE)('      "Principal": {')
+            PsiElement(HD_EOL)('\n')
+            PsiElement(HD_LINE)('        "Service": "ec2.amazonaws.com"')
+            PsiElement(HD_EOL)('\n')
+            PsiElement(HD_LINE)('      },')
+            PsiElement(HD_EOL)('\n')
+            PsiElement(HD_LINE)('      "Effect": "Allow",')
+            PsiElement(HD_EOL)('\n')
+            PsiElement(HD_LINE)('      "Sid": ""')
+            PsiElement(HD_EOL)('\n')
+            PsiElement(HD_LINE)('    }')
+            PsiElement(HD_EOL)('\n')
+            PsiElement(HD_LINE)('  ]')
+            PsiElement(HD_EOL)('\n')
+            PsiElement(HD_LINE)('}')
+            PsiElement(HD_EOL)('\n')
+          HCLHeredocMarkerImpl(HEREDOC_MARKER)
+            PsiElement(HD_MARKER)('EOF')
+      PsiWhiteSpace('\n')
+      PsiElement(})('}')

@@ -25,8 +25,11 @@ public class KarmaServerRestarter {
   private final AtomicInteger myActiveRunners = new AtomicInteger(0);
   private final AtomicBoolean myConfigChanged = new AtomicBoolean(false);
 
-  public KarmaServerRestarter(@NotNull File configurationFile, @NotNull Disposable parentDisposable) {
-    listenForConfigurationFileChanges(configurationFile, parentDisposable);
+  public KarmaServerRestarter(@NotNull String configurationFilePath, @NotNull Disposable parentDisposable) {
+    File configurationFile = new File(configurationFilePath);
+    if (configurationFile.exists()) {
+      listenForConfigurationFileChanges(configurationFile, parentDisposable);
+    }
   }
 
   private void listenForConfigurationFileChanges(@NotNull final File configurationFile,

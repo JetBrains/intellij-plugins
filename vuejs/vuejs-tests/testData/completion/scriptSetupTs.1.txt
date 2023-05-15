@@ -1,8 +1,9 @@
 Foo#null
 SelectProps#null
 count#number
+emit#null
 foo#string | undefined
-foos#null
+fooBar#null
 inc#() => void
 props#null
 ref#<T extends object>(value: T) => ToRef<T>
@@ -13,7 +14,7 @@ $#ComponentInternalInstance
 $attrs#null
 $data#null
 $el#any
-$emit#null
+$emit#((event: "add", id: number) => void) & ((event: "remove", force: boolean) => void)
 $forceUpdate#void
 $nextTick#Promise<void>
 $options#null
@@ -275,14 +276,6 @@ KeyframeEffect#null
 Location#Location
 Lock#Lock
 LockManager#LockManager
-MIDIAccess#MIDIAccess
-MIDIConnectionEvent#MIDIConnectionEvent
-MIDIInput#MIDIInput
-MIDIInputMap#MIDIInputMap
-MIDIMessageEvent#MIDIMessageEvent
-MIDIOutput#MIDIOutput
-MIDIOutputMap#MIDIOutputMap
-MIDIPort#MIDIPort
 MathMLElement#MathMLElement
 MediaCapabilities#MediaCapabilities
 MediaDeviceInfo#MediaDeviceInfo
@@ -320,7 +313,6 @@ MutationRecord#MutationRecord
 NamedNodeMap#NamedNodeMap
 NavigationPreloadManager#NavigationPreloadManager
 Navigator#Navigator
-NetworkInformation#NetworkInformation
 Node#Node
 NodeFilter#null
 NodeIterator#NodeIterator
@@ -389,7 +381,10 @@ RTCStatsReport#RTCStatsReport
 RTCTrackEvent#RTCTrackEvent
 RadioNodeList#RadioNodeList
 Range#Range
+ReadableByteStreamController#ReadableByteStreamController
 ReadableStream#ReadableStream<R>
+ReadableStreamBYOBReader#ReadableStreamBYOBReader
+ReadableStreamBYOBRequest#ReadableStreamBYOBRequest
 ReadableStreamDefaultController#ReadableStreamDefaultController<any>
 ReadableStreamDefaultReader#ReadableStreamDefaultReader<R>
 RemotePlayback#RemotePlayback
@@ -535,4 +530,10 @@ TextTrackCue#TextTrackCue
 TextTrackCueList#TextTrackCueList
 TextTrackList#TextTrackList
 TimeRanges#TimeRanges
+Touch#Touch
+TouchEvent#TouchEvent
+TouchList#TouchList
+TrackEvent#TrackEvent
+TransformStream#TransformStream<I, O>
+TransformStreamDefaultController#TransformStreamDefaultController<any>
 WebKitCSSMatrix#DOMMatrix

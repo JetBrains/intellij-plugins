@@ -22,10 +22,6 @@
       "email": "vojta.jina@gmail.com"
     }
   ],
-  "dependencies": {},
-  "peerDependencies": {
-    "karma": ">=1.4.0"
-  },
   "licenses": [
     {
       "type": "Apache 2.0",

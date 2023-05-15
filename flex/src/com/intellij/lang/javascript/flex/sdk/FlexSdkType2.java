@@ -51,10 +51,6 @@ public class FlexSdkType2 extends SdkType {
 
   @Override
   public boolean isValidSdkHome(final @NotNull String path) {
-    if (path == null) {
-      return false;
-    }
-
     final VirtualFile sdkHome = LocalFileSystem.getInstance().findFileByPath(path);
     if (sdkHome == null || !sdkHome.isDirectory()) {
       return false;
@@ -120,7 +116,7 @@ public class FlexSdkType2 extends SdkType {
   }
 
   @Override
-  public String getVersionString(final String sdkHome) {
+  public String getVersionString(final @NotNull String sdkHome) {
     final VirtualFile sdkRoot = LocalFileSystem.getInstance().findFileByPath(sdkHome);
     final String flexVersion = FlexSdkUtils.doReadFlexSdkVersion(sdkRoot);
     if (flexVersion != null) return flexVersion;

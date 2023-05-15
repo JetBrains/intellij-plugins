@@ -32,7 +32,6 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -223,8 +222,7 @@ public class FlexDebugProcess extends XDebugProcess {
 
     fdbProcess = launchFdb(fdbLaunchCommand);
 
-    if (params instanceof FlashRunnerParameters) {
-      final FlashRunnerParameters appParams = (FlashRunnerParameters)params;
+    if (params instanceof FlashRunnerParameters appParams) {
 
       switch (bc.getTargetPlatform()) {
         case Web -> {
@@ -260,8 +258,7 @@ public class FlexDebugProcess extends XDebugProcess {
         }
       }
     }
-    else if (params instanceof FlexUnitRunnerParameters) {
-      final FlexUnitRunnerParameters flexUnitParams = (FlexUnitRunnerParameters)params;
+    else if (params instanceof FlexUnitRunnerParameters flexUnitParams) {
       openFlexUnitConnections(flexUnitParams.getSocketPolicyPort(), flexUnitParams.getPort());
       if (bc.getTargetPlatform() == TargetPlatform.Web) {
         sendCommand(new LaunchBrowserCommand(bc.getActualOutputFilePath(), flexUnitParams.getLauncherParameters()));
@@ -812,11 +809,11 @@ public class FlexDebugProcess extends XDebugProcess {
     final GlobalSearchScope bcScopeBase = FlexUtils.getModuleWithDependenciesAndLibrariesScope(myModule, myBC, isFlexUnit());
     final GlobalSearchScope bcScope = uniteWithLibrarySourcesOfBC(bcScopeBase, myModule, myBC, new HashSet<>());
 
-    Collection<VirtualFile> files = getFilesByName(getSession().getProject(), bcScope, fileName);
+    Collection<VirtualFile> files = getFilesByName(bcScope, fileName);
 
     VirtualFile file = getFileMatchingPackageName(getSession().getProject(), files, packageName);
     if (file == null) {
-      files = getFilesByName(getSession().getProject(), GlobalSearchScope.allScope(getSession().getProject()), fileName);
+      files = getFilesByName(GlobalSearchScope.allScope(getSession().getProject()), fileName);
       file = getFileMatchingPackageName(getSession().getProject(), files, packageName);
     }
 
@@ -830,10 +827,10 @@ public class FlexDebugProcess extends XDebugProcess {
   private VirtualFile findFile(final String fileName) {
     // [4]
     final GlobalSearchScope bcScope = FlexUtils.getModuleWithDependenciesAndLibrariesScope(myModule, myBC, isFlexUnit());
-    Collection<VirtualFile> files = getFilesByName(getSession().getProject(), bcScope, fileName);
+    Collection<VirtualFile> files = getFilesByName(bcScope, fileName);
 
     if (files.isEmpty()) {
-      files = getFilesByName(getSession().getProject(), GlobalSearchScope.allScope(getSession().getProject()), fileName);
+      files = getFilesByName(GlobalSearchScope.allScope(getSession().getProject()), fileName);
     }
 
     if (!files.isEmpty()) {
@@ -866,7 +863,7 @@ public class FlexDebugProcess extends XDebugProcess {
     // File is found on the computer but it doesn't belong to the project. That means that the library is compiled on this computer,
     // but in this project it is configured as if it were a 3rd party library. So we'll try to find if sources of this library are also configured.
 
-    final Collection<VirtualFile> files = getFilesByName(project, allScope, file.getName());
+    final Collection<VirtualFile> files = getFilesByName(allScope, file.getName());
 
     if (packageName == null) {
       return !files.isEmpty() ? files.iterator().next() : file;
@@ -877,8 +874,8 @@ public class FlexDebugProcess extends XDebugProcess {
     }
   }
 
-  private static Collection<VirtualFile> getFilesByName(final Project project, final GlobalSearchScope scope, final String fileName) {
-    return ReadAction.compute(() -> FilenameIndex.getVirtualFilesByName(fileName, scope));
+  private static Collection<VirtualFile> getFilesByName(final GlobalSearchScope scope, final String fileName) {
+    return FilenameIndex.getVirtualFilesByName(fileName, scope);
   }
 
   @Nullable
@@ -1224,7 +1221,7 @@ public class FlexDebugProcess extends XDebugProcess {
     }
 
     String readLine(boolean nonblock) throws IOException {
-      if (lastText != null) {
+      {
         final String lastText = getNextLine(nonblock);
         if (lastText != null) return lastText;
       }

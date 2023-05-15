@@ -4,8 +4,10 @@ package org.jetbrains.vuejs.lang.html.lexer
 import com.intellij.html.embedding.*
 import com.intellij.html.embedding.HtmlEmbeddedContentSupport.Companion.getStyleTagEmbedmentInfo
 import com.intellij.lang.Language
+import com.intellij.lang.css.CSSLanguage
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.javascript.JSElementTypes
+import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lexer.BaseHtmlLexer
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.fileTypes.FileTypeManager
@@ -17,9 +19,11 @@ import com.intellij.psi.xml.XmlElementType.HTML_EMBEDDED_CONTENT
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.xml.util.HtmlUtil
 import com.intellij.xml.util.HtmlUtil.TYPE_ATTRIBUTE_NAME
+import org.intellij.plugins.postcss.PostCssLanguage
 import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
-import org.jetbrains.vuejs.lang.expr.highlighting.VueJSSyntaxHighlighter
+import org.jetbrains.vuejs.lang.LangMode
+import org.jetbrains.vuejs.lang.VueScriptLangs
 import org.jetbrains.vuejs.lang.expr.parser.VueJSEmbeddedExprTokenType
 import org.jetbrains.vuejs.lang.html.highlighting.VueHighlightingLexer
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_EXPR
@@ -29,11 +33,16 @@ class VueEmbeddedContentSupport : HtmlEmbeddedContentSupport {
   override fun isEnabled(lexer: BaseHtmlLexer): Boolean = lexer is VueLexer
 
   override fun createEmbeddedContentProviders(lexer: BaseHtmlLexer): List<HtmlEmbeddedContentProvider> =
-    listOf(VueAttributeEmbeddedContentProvider(lexer), VueTagEmbeddedContentProvider(lexer),
-           HtmlTokenEmbeddedContentProvider(
-             lexer, INTERPOLATION_EXPR,
-             { VueJSSyntaxHighlighter().highlightingLexer },
-             { VueJSEmbeddedExprTokenType.createInterpolationExpression((lexer as VueLexer).project) }))
+    listOf(
+      VueAttributeEmbeddedContentProvider(lexer),
+      VueTagEmbeddedContentProvider(lexer),
+      HtmlTokenEmbeddedContentProvider(
+        lexer,
+        INTERPOLATION_EXPR,
+        { VueScriptLangs.createExprHighlightingLexer((lexer as VueLexer).langMode) },
+        { VueJSEmbeddedExprTokenType.createInterpolationExpression((lexer as VueLexer).langMode, (lexer as VueLexer).project) }
+      )
+    )
 }
 
 class VueAttributeEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlAttributeEmbeddedContentProvider(lexer) {
@@ -45,19 +54,14 @@ class VueAttributeEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlAttributeE
     super.handleToken(tokenType, range)
     when (tokenType) {
       XmlTokenType.XML_ATTRIBUTE_VALUE_START_DELIMITER -> injectEmpty = true
-      XmlTokenType.XML_ATTRIBUTE_VALUE_END_DELIMITER -> {
-      }
+      XmlTokenType.XML_ATTRIBUTE_VALUE_END_DELIMITER -> Unit
       else -> injectEmpty = false
     }
   }
 
-  override fun isInterestedInTag(tagName: CharSequence): Boolean {
-    return true
-  }
+  override fun isInterestedInTag(tagName: CharSequence): Boolean = true
 
-  override fun isInterestedInAttribute(attributeName: CharSequence): Boolean {
-    return true
-  }
+  override fun isInterestedInAttribute(attributeName: CharSequence): Boolean = true
 
   override fun isStartOfEmbedment(tokenType: IElementType): Boolean =
     super.isStartOfEmbedment(tokenType)
@@ -68,27 +72,28 @@ class VueAttributeEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlAttributeE
       .takeIf { it.injectJS }
       ?.let { attributeInfo ->
         injectEmpty = false
-        VueEmbeddedExpressionInfo(attributeInfo, project)
+        VueEmbeddedExpressionInfo(attributeInfo, (lexer as VueLexer).langMode, project)
       }
 
   private class VueEmbeddedExpressionInfo(val attributeInfo: VueAttributeNameParser.VueAttributeInfo,
+                                          val langMode: LangMode,
                                           val project: Project?) : HtmlEmbedmentInfo {
     override fun getElementType(): IElementType =
-      VueJSEmbeddedExprTokenType.createEmbeddedExpression(attributeInfo, project)
+      VueJSEmbeddedExprTokenType.createEmbeddedExpression(attributeInfo, langMode, project)
 
     override fun createHighlightingLexer(): Lexer =
-      VueJSSyntaxHighlighter().highlightingLexer
+      VueScriptLangs.createExprHighlightingLexer(langMode)
   }
 }
 
 class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedContentProvider(lexer) {
 
   private val languageLevel get() = (lexer as VueLexer).languageLevel
+  private val langMode get() = (lexer as VueLexer).langMode
   private val project get() = (lexer as VueLexer).project
   private val interpolationConfig get() = (lexer as VueLexer).interpolationConfig
 
-  private val interestingTags: List<String> = listOf(HtmlUtil.TEMPLATE_TAG_NAME, HtmlUtil.SCRIPT_TAG_NAME,
-                                                     HtmlUtil.STYLE_TAG_NAME)
+  private val interestingTags: List<String> = listOf(HtmlUtil.TEMPLATE_TAG_NAME, HtmlUtil.SCRIPT_TAG_NAME, HtmlUtil.STYLE_TAG_NAME)
 
   override fun isInterestedInTag(tagName: CharSequence): Boolean =
     interestingTags.any { namesEqual(tagName, it) }
@@ -97,40 +102,88 @@ class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedConte
     namesEqual(attributeName, LANG_ATTRIBUTE_NAME)
     || (namesEqual(attributeName, TYPE_ATTRIBUTE_NAME) && namesEqual(tagName, HtmlUtil.SCRIPT_TAG_NAME))
 
+  override fun handleToken(tokenType: IElementType, range: TextRange) {
+    if (tokenType == XmlTokenType.XML_EMPTY_ELEMENT_END || tokenType == XmlTokenType.XML_TAG_END) {
+      handleLangMode()
+    }
+
+    super.handleToken(tokenType, range)
+  }
+
+  private fun handleLangMode() {
+    val lexer = lexer as VueLexer
+    // we only consider the first occurence in a file because we need to have script content tokens settled
+    if (lexer.lexedLangMode != LangMode.PENDING) return
+
+    val tagName = tagName ?: return
+    val attributeName = attributeName?.trim()?.toString()
+    val attributeValue = attributeValue?.trim()?.toString()
+
+    if (isBoundLang(tagName, attributeName, attributeValue)) {
+      lexer.lexedLangMode = LangMode.fromAttrValue(attributeValue)
+    }
+  }
+
+  private fun isBoundLang(tagName: CharSequence, attributeName: String?, attributeValue: String?): Boolean {
+    // let's not mix JS & TS in one file
+    // attributeValue can be null if the whole attribute is missing, or "lang" if the attribute value is missing
+    return (attributeName == null || namesEqual(attributeName, LANG_ATTRIBUTE_NAME)) &&
+           namesEqual(tagName, HtmlUtil.SCRIPT_TAG_NAME) &&
+           LangMode.knownAttrValues.contains(attributeValue)
+  }
+
   override fun createEmbedmentInfo(): HtmlEmbedmentInfo? {
     val tagName = tagName ?: return null
-    val lang = attributeValue?.trim()?.toString()
+    val attributeName = attributeName?.trim()?.toString()
+    val attributeValue = attributeValue?.trim()?.toString()
     return when {
-      namesEqual(tagName, HtmlUtil.STYLE_TAG_NAME) -> styleLanguage(lang)?.let { getStyleTagEmbedmentInfo(it) }
+      namesEqual(tagName, HtmlUtil.STYLE_TAG_NAME) -> styleLanguage(attributeValue)?.let { getStyleTagEmbedmentInfo(it) }
                                                       ?: HtmlEmbeddedContentProvider.RAW_TEXT_EMBEDMENT
+      isBoundLang(tagName, attributeName, attributeValue) -> getBoundScriptLangTagInfo()
       namesEqual(tagName, HtmlUtil.SCRIPT_TAG_NAME)
-      || namesEqual(tagName, HtmlUtil.TEMPLATE_TAG_NAME) -> getScriptOrTemplateTagInfo(tagName, lang)
+      || namesEqual(tagName, HtmlUtil.TEMPLATE_TAG_NAME) -> getClassicScriptOrTemplateTagInfo(tagName, attributeValue)
       else -> null
     }
   }
 
-  private fun getScriptOrTemplateTagInfo(tagName: CharSequence, lang: String?): HtmlEmbedmentInfo? {
+  private fun getClassicScriptOrTemplateTagInfo(tagName: CharSequence, lang: String?): HtmlEmbedmentInfo? {
     if (namesEqual(tagName, HtmlUtil.TEMPLATE_TAG_NAME)) {
       if (lang == null || lang.equals("html", ignoreCase = true)) return null
     }
-    val provider = scriptContentProvider(lang)
-    return when (val elementType = provider?.getElementType()) {
-      HTML_EMBEDDED_CONTENT -> object : HtmlEmbedmentInfo {
-        override fun getElementType(): IElementType = VueElementTypes.VUE_EMBEDDED_CONTENT
-        override fun createHighlightingLexer(): Lexer =
-          VueHighlightingLexer(languageLevel, project, interpolationConfig)
-      }
-      null -> HtmlEmbeddedContentProvider.RAW_TEXT_EMBEDMENT
-      else -> object : HtmlEmbedmentInfo {
-        override fun getElementType(): IElementType? = JSElementTypes.toModuleContentType(elementType)
-        override fun createHighlightingLexer(): Lexer? = provider.createHighlightingLexer()
-      }
+
+    return findEmbedmentInfo(lang)
+  }
+
+
+  private fun getBoundScriptLangTagInfo(): HtmlEmbedmentInfo {
+    if (lexer is VueLexerImpl) {
+      // we're lexing for parsing
+      val langMode = (lexer as VueLexer).lexedLangMode
+      return langMode.scriptEmbedmentInfo
+    }
+    else {
+      // we're lexing for syntax highlighting
+      return findEmbedmentInfo(langMode.canonicalAttrValue)
     }
   }
 
-  private fun scriptContentProvider(language: String?): HtmlEmbedmentInfo? =
-    if (language != null)
-      Language.findInstancesByMimeType(language)
+  class VueScriptEmbedmentInfo(private val elementType: IElementType) : HtmlEmbedmentInfo {
+    override fun getElementType(): IElementType = elementType
+    override fun createHighlightingLexer(): Lexer = error("VueEmbeddedContentSupport did something unexpected")
+  }
+
+  private fun findEmbedmentInfo(language: String?): HtmlEmbedmentInfo = when (language) {
+    null -> {
+      HtmlEmbeddedContentSupport.getScriptTagEmbedmentInfo(languageLevel.dialect)
+    }
+    "js" -> { // fast path + special case for VueParserTest
+      HtmlEmbeddedContentSupport.getScriptTagEmbedmentInfo(JavaScriptSupportLoader.ECMA_SCRIPT_6)
+    }
+    "ts" -> { // fast path + special case for VueParserTest
+      HtmlEmbeddedContentSupport.getScriptTagEmbedmentInfo(JavaScriptSupportLoader.TYPESCRIPT)
+    }
+    else -> {
+      val languageSequence = Language.findInstancesByMimeType(language)
         .asSequence()
         .plus(Language.findInstancesByMimeType("text/$language"))
         .plus(
@@ -139,10 +192,28 @@ class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedConte
             .filter { languageMatches(language, it) }
         )
         .plus(if (StringUtil.containsIgnoreCase(language, "template")) listOf(HTMLLanguage.INSTANCE) else emptyList())
-        .map { HtmlEmbeddedContentSupport.getScriptTagEmbedmentInfo(it) }
-        .firstOrNull { it != null }
-    else
-      HtmlEmbeddedContentSupport.getScriptTagEmbedmentInfo(languageLevel.dialect)
+
+      languageSequence.map {
+        HtmlEmbeddedContentSupport.getScriptTagEmbedmentInfo(it)
+      }.firstOrNull()
+    }
+  }.let(::wrapEmbedmentInfo)
+
+  private fun wrapEmbedmentInfo(embedmentInfo: HtmlEmbedmentInfo?): HtmlEmbedmentInfo {
+    return when (val elementType = embedmentInfo?.getElementType()) {
+      HTML_EMBEDDED_CONTENT -> object : HtmlEmbedmentInfo {
+        override fun getElementType(): IElementType = VueElementTypes.VUE_EMBEDDED_CONTENT
+        override fun createHighlightingLexer(): Lexer =
+          VueHighlightingLexer(languageLevel, langMode, project, interpolationConfig)
+      }
+      null -> HtmlEmbeddedContentProvider.RAW_TEXT_EMBEDMENT
+      else -> object : HtmlEmbedmentInfo {
+        // JSElementTypes.toModuleContentType is significant for JSX/TSX
+        override fun getElementType(): IElementType? = JSElementTypes.toModuleContentType(elementType)
+        override fun createHighlightingLexer(): Lexer? = embedmentInfo.createHighlightingLexer()
+      }
+    }
+  }
 
   private fun languageMatches(scriptType: String, language: Language): Boolean =
     scriptType.equals(language.id, ignoreCase = true)
@@ -151,18 +222,18 @@ class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedConte
 
   companion object {
     fun styleLanguage(styleLang: String?): Language? {
-      val cssLanguage = Language.findLanguageByID("CSS")
+      val cssLanguage = CSSLanguage.INSTANCE
       if (styleLang != null) {
         if (styleLang.equals("text/css", ignoreCase = true)) return cssLanguage
         cssLanguage
-          ?.dialects
-          ?.firstOrNull { dialect ->
+          .dialects
+          .firstOrNull { dialect ->
             dialect.id.equals(styleLang, ignoreCase = true)
             || dialect.mimeTypes.any { it.equals(styleLang, ignoreCase = true) }
           }
           ?.let { return it }
       }
-      return Language.findLanguageByID("PostCSS") ?: cssLanguage
+      return PostCssLanguage.INSTANCE
     }
   }
 

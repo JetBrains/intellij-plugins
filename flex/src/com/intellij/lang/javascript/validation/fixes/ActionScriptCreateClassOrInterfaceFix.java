@@ -80,8 +80,8 @@ public class ActionScriptCreateClassOrInterfaceFix extends FixAndIntentionAction
   @NonNls public static final String SUPER_INTERFACES = "SuperInterfaces";
 
   public static final Collection<String> ACTIONSCRIPT_TEMPLATES_EXTENSIONS =
-    ContainerUtil.immutableList(JavaScriptSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION, JavaScriptSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION2,
-                  JavaScriptSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION3);
+    List.of(JavaScriptSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION, JavaScriptSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION2,
+            JavaScriptSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION3);
 
   private static String ourPreviousClassTemplateName;
   private static String ourPreviousInterfaceTemplateName;

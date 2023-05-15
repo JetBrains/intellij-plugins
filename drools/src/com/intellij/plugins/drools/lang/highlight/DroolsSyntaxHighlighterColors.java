@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.highlight;
 
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
@@ -37,5 +37,6 @@ public final class DroolsSyntaxHighlighterColors {
   public static final TextAttributesKey RULE = createTextAttributesKey(DROOLS_RULE, DefaultLanguageHighlighterColors.CLASS_NAME);
   public static final TextAttributesKey LOCAL_VARIABLE =  createTextAttributesKey(DROOLS_LOCAL_VARIABLE, DefaultLanguageHighlighterColors.LOCAL_VARIABLE);
   public static final TextAttributesKey FUNCTION = createTextAttributesKey(DROOLS_FUNCTION, DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
+  public static final TextAttributesKey FIELD = createTextAttributesKey("FIELD", DefaultLanguageHighlighterColors.INSTANCE_FIELD);
   public static final TextAttributesKey PUBLIC_STATIC_FIELD =  createTextAttributesKey(DROOLS_PUBLIC_STATIC_FIELD, DefaultLanguageHighlighterColors.CONSTANT);
 }

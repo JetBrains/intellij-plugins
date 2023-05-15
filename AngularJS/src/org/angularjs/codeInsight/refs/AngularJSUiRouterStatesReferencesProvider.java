@@ -13,9 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Irina.Chernushina on 2/12/2016.
- */
 public class AngularJSUiRouterStatesReferencesProvider extends PsiReferenceProvider {
   @Override
   public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {

@@ -130,21 +130,21 @@ public final class ActionScriptReferenceChecker extends TypedJSReferenceChecker 
   }
 
   @Override
-  protected LocalQuickFix createClassOrInterfaceFix(@NotNull JSReferenceExpression referenceExpression, boolean isInterface) {
+  protected @NotNull LocalQuickFix createClassOrInterfaceFix(@NotNull JSReferenceExpression referenceExpression, boolean isInterface) {
     return new ActionScriptCreateClassOrInterfaceFix(referenceExpression, isInterface, null, null);
   }
 
   @Override
-  protected LocalQuickFix createClassFromNewFix(@NotNull JSReferenceExpression referenceExpression,
-                                                @Nullable JSArgumentList argumentList,
-                                                @Nullable JSType expectedType) {
+  protected @NotNull LocalQuickFix createClassFromNewFix(@NotNull JSReferenceExpression referenceExpression,
+                                                         @Nullable JSArgumentList argumentList,
+                                                         @Nullable JSType expectedType) {
     return new ActionScriptCreateClassOrInterfaceFix(referenceExpression, false, argumentList, expectedType);
   }
 
   @Override
   protected boolean addCreateFromUsageFixes(JSReferenceExpression node,
                                             ResolveResult[] resolveResults,
-                                            List<? super LocalQuickFix> fixes,
+                                            @NotNull List<? super @NotNull LocalQuickFix> fixes,
                                             boolean inTypeContext,
                                             boolean ecma) {
     final PsiElement nodeParent = node.getParent();
@@ -189,7 +189,7 @@ public final class ActionScriptReferenceChecker extends TypedJSReferenceChecker 
   protected void addCreateFromUsageFixesForCall(@NotNull JSReferenceExpression methodExpression,
                                                 boolean isNewExpression,
                                                 ResolveResult @NotNull [] resolveResults,
-                                                @NotNull List<LocalQuickFix> quickFixes) {
+                                                @NotNull List<? super @NotNull LocalQuickFix> quickFixes) {
     if (canHaveImportTo(resolveResults)) {
       quickFixes.add(new AddImportECMAScriptClassOrFunctionAction(null, methodExpression));
     }
@@ -209,7 +209,7 @@ public final class ActionScriptReferenceChecker extends TypedJSReferenceChecker 
     for (ResolveResult r : resolveResults) {
       if (!r.isValidResult()) {
         if (r instanceof JSResolveResult &&
-            ((JSResolveResult)r).getResolveProblemKey() == JSResolveResult.QUALIFIED_NAME_IS_NOT_IMPORTED) {
+            ((JSResolveResult)r).getResolveProblemKind() == JSResolveResult.ProblemKind.QUALIFIED_NAME_IS_NOT_IMPORTED) {
           return true;
         }
         continue;

@@ -1,0 +1,8 @@
+prop = "value";
+
+node {
+    prop = "value";
+
+    /delete-node/ name;
+};
+

@@ -16,6 +16,7 @@ package org.jetbrains.vuejs.lang
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
+import com.intellij.lang.javascript.inspections.ES6ShorthandObjectPropertyInspection
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -55,6 +56,18 @@ class VueIntentionsTest : BasePlatformTestCase() {
     doIntentionTest(JSIntentionBundle.message("trivialif.replace-if-with-conditional.display-name"))
   }
 
+  fun testExpandShorthandPropertyJS() {
+    myFixture.enableInspections(ES6ShorthandObjectPropertyInspection())
+    doIntentionTest(JavaScriptBundle.message("js.expand.shorthand.property.quick.fix"))
+    myFixture.checkHighlighting()
+  }
+
+  fun testExpandShorthandPropertyTS() {
+    myFixture.enableInspections(ES6ShorthandObjectPropertyInspection())
+    doIntentionTest(JavaScriptBundle.message("js.expand.shorthand.property.quick.fix"))
+    myFixture.checkHighlighting()
+  }
+
   fun testReplaceWithIndexerAccess() {
     JSTestUtils.testWithTempCodeStyleSettings<RuntimeException>(project) { settings ->
       val custom = settings.getCustomSettings(JSCodeStyleSettings::class.java)
@@ -84,14 +97,16 @@ class VueIntentionsTest : BasePlatformTestCase() {
       for (signature in listOf("\"Co<caret>lor.", "in it<caret>ems", "get<caret>Text()")) {
         myFixture.moveToOffsetBySignature(signature)
         val intention = myFixture.availableIntentions
-                          .singleOrNull { it.text.startsWith("Insert \"import") || it.text.startsWith("Insert \'import") }
+                          .singleOrNull {
+                            it.text.startsWith("Add import") // TS
+                            || it.text.startsWith("Insert \"import") || it.text.startsWith("Insert \'import") // JS
+                          }
                         ?: throw AssertionError("Failed to find single 'insert import' intention for $signature. " +
                                                 "Available intentions: ${
                                                   myFixture.availableIntentions.map {
                                                     StringUtil.shortenPathWithEllipsis(it.text, 25)
                                                   }
                                                 }")
-        TestCase.assertTrue(intention.startInWriteAction())
         WriteCommandAction.runWriteCommandAction(myFixture.project) { intention.invoke(project, myFixture.editor, myFixture.file) }
       }
     }
@@ -114,8 +129,8 @@ class VueIntentionsTest : BasePlatformTestCase() {
     myFixture.configureFromTempProjectFile("test.ts")
     for (signature in listOf("NoScript<caret>Component", "Script<caret>SetupComponent")) {
       myFixture.moveToOffsetBySignature(signature)
-      val intention = myFixture.findSingleIntention("Add import statement")
-      WriteCommandAction.runWriteCommandAction(myFixture.project) { intention.invoke(project, myFixture.editor, myFixture.file) }
+      val intention = myFixture.findSingleIntention("Insert 'import")
+      myFixture.launchAction(intention)
     }
     myFixture.checkResultByFile("${getTestName(true)}/test.after.ts")
   }
@@ -151,6 +166,21 @@ class VueIntentionsTest : BasePlatformTestCase() {
 
     myFixture.checkResultByFile("${getTestName(true)}/test.after.vue")
   }
+
+  fun testAddMissingFunctionImport() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    myFixture.copyDirectoryToProject(getTestName(true), ".")
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+
+    myFixture.configureFromTempProjectFile("components/Test.vue")
+    myFixture.moveToOffsetBySignature("get<caret>Client()")
+
+    val intention = myFixture.findSingleIntention("Insert 'import")
+    WriteCommandAction.runWriteCommandAction(myFixture.project) { intention.invoke(project, myFixture.editor, myFixture.file) }
+
+    myFixture.checkResultByFile("${getTestName(true)}/components/Test.after.vue")
+  }
+
 
   private fun doIntentionTest(name: String) {
     val intention = myFixture.getAvailableIntention(name, getTestName(true) + ".vue")

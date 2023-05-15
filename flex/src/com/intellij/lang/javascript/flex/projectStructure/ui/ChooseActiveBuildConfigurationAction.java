@@ -96,7 +96,7 @@ public final class ChooseActiveBuildConfigurationAction extends DumbAwareAction 
                                                         final int index,
                                                         final boolean isSelected,
                                                         final boolean cellHasFocus) {
-            MyPanel p = (MyPanel)myComponent;
+            MyPanel p = (MyPanel)getItemComponent();
             p.clear();
 
             PopupFactoryImpl.ActionItem actionItem = (PopupFactoryImpl.ActionItem)value;

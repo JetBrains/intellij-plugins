@@ -11,7 +11,6 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.execution.ui.layout.PlaceInGrid;
-import com.intellij.ide.browsers.OpenUrlHyperlinkInfo;
 import com.intellij.javascript.karma.KarmaBundle;
 import com.intellij.javascript.karma.util.ArchivedOutputListener;
 import com.intellij.openapi.Disposable;
@@ -192,18 +191,7 @@ public final class KarmaServerLogComponent implements ComponentWithActions {
   }
 
   private void printCaptureMessage() {
-    String url = myServer.formatUrl("/");
-    String text = KarmaBundle.message("waiting.for.captured.browser.text", url);
-    int urlInd = text.indexOf(url);
-    if (urlInd >= 0) {
-      myConsole.print(text.substring(0, urlInd), ConsoleViewContentType.SYSTEM_OUTPUT);
-      myConsole.printHyperlink(url, new OpenUrlHyperlinkInfo(url));
-      myConsole.print(text.substring(urlInd + url.length()), ConsoleViewContentType.SYSTEM_OUTPUT);
-    }
-    else {
-      myConsole.print(text, ConsoleViewContentType.SYSTEM_OUTPUT);
-    }
-    myConsole.print("\n", ConsoleViewContentType.SYSTEM_OUTPUT);
+    myConsole.print(KarmaBundle.message("test.run.waiting_for_browser_capturing.text") + "\n", ConsoleViewContentType.SYSTEM_OUTPUT);
   }
 
   private static boolean startsWithMessage(@NotNull String line, @NonNls @NotNull String message) {

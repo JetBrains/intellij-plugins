@@ -27,7 +27,7 @@ public class KarmaCoverageAnnotator extends SimpleCoverageAnnotator {
   @Override
   @Nullable
   protected FileCoverageInfo fillInfoForUncoveredFile(@NotNull File file) {
-    return null;
+    return super.fillInfoForUncoveredFile(file);
   }
 
   @Override

@@ -52,11 +52,7 @@ public class PerforceBinaryContentRevision extends PerforceContentRevision imple
     if (!settings.ENABLED) return null;
     String rev = myStringRevision.startsWith("@=") ? myStringRevision :
                  "#" + (myRevision > 0 ? myRevision : p4File.getFstat(myProject, false).haveRev);
-    final byte[] bytes = PerforceRunner.getInstance(myProject).getByteContent(p4File, rev);
-    if (bytes != null) {
-      myContent = bytes;
-    }
-
+    myContent = PerforceRunner.getInstance(myProject).getByteContent(p4File, rev);
     return myContent;
   }
 

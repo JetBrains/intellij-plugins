@@ -109,7 +109,7 @@ public class P4MoveRenameOperation extends VcsOperation {
     final P4Connection oldConnection = PerforceConnectionManager.getInstance(project).getConnectionForFile(oldP4File);
     final P4Connection newConnection = PerforceConnectionManager.getInstance(project).getConnectionForFile(newP4File);
 
-    if (runner.getClient(newConnection) == null || oldConnection == null || newConnection == null) {
+    if (runner.getClient(newConnection) == null || oldConnection == null) {
       return;
     }
 
@@ -402,8 +402,7 @@ public class P4MoveRenameOperation extends VcsOperation {
         return new P4AddOperation(myChangeList, newPath);
       }
     }
-    else if (oldOp instanceof P4MoveRenameOperation) {
-      final P4MoveRenameOperation moveOp = (P4MoveRenameOperation)oldOp;
+    else if (oldOp instanceof P4MoveRenameOperation moveOp) {
       if (FileUtil.pathsEqual(moveOp.newPath, oldPath)) {
         if (FileUtil.pathsEqual(moveOp.oldPath, newPath)) {
           return new P4EditOperation(myChangeList, newPath);

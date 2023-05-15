@@ -26,9 +26,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlTagPropertyImpl extends CfmlNamedTagImpl implements CfmlProperty {
   public CfmlTagPropertyImpl(ASTNode astNode) {
     super(astNode);

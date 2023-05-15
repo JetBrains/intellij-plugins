@@ -100,7 +100,7 @@ final class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
     list.setListData(ArrayUtil.toObjectArray(data));
     JBPopupFactory.getInstance().createListPopupBuilder(list)
       .setTitle(AngularJSBundle.message("angularjs.ui.router.diagram.action.new.diagram.select.main.file"))
-      .setItemChoosenCallback(() -> {
+      .setItemChosenCallback(() -> {
         final int index = list.getSelectedIndex();
         if (index >= 0) {
           consumer.consume(builders.get(index).getSecond());

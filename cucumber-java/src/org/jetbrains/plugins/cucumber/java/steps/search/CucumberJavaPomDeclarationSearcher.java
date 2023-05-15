@@ -18,10 +18,9 @@ public class CucumberJavaPomDeclarationSearcher extends PomDeclarationSearcher {
     }
 
     Object value = ((PsiLiteralExpression)element).getValue();
-    if (!(value instanceof String)) {
+    if (!(value instanceof String stringValue)) {
       return;
     }
-    String stringValue = (String)value;
 
     PsiNewExpression newExp = PsiTreeUtil.getParentOfType(element, PsiNewExpression.class);
     if (newExp != null) {

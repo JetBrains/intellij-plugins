@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.lang.typescript.service
 
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.integration.JSAnnotationError
+import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.service.JSLanguageServiceAnnotationResult
 import com.intellij.lang.javascript.service.JSLanguageServiceFileCommandCache
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceObject
@@ -22,10 +23,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.Consumer
-import org.jetbrains.vuejs.context.isVueContext
+import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 import org.jetbrains.vuejs.index.findModule
+import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.typescript.service.protocol.VueTypeScriptServiceProtocol
 
@@ -38,7 +42,7 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
     return service.getDirectIncludePreferableConfig(virtualFile) != null
   }
 
-  override fun postprocessErrors(file: PsiFile, errors: MutableList<JSAnnotationError>): List<JSAnnotationError> {
+  override fun postprocessErrors(file: PsiFile, errors: List<JSAnnotationError>): List<JSAnnotationError> {
     if (file.virtualFile != null && isVueFile(file.virtualFile)) {
       return ReadAction.compute<List<JSAnnotationError>, Throwable> {
         val document = PsiDocumentManager.getInstance(file.project).getDocument(file) ?: return@compute emptyList()
@@ -66,6 +70,7 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
     6198, // All destructured elements are unused.
     6199, // All variables are unused.
     1184, // Modifiers cannot appear here. // Actually covers both type and value declarations, TODO reimplement only for value declarations as an inspection
+    2614, // Module '{0}' has no exported member '{1}' // TODO consider implementing WEB-54985 or something different, then remove this suppression
   )
 
   private fun skipScriptSetupError(error: JSLanguageServiceAnnotationResult): Boolean {
@@ -95,11 +100,11 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
 
   override fun isDisabledByContext(context: VirtualFile): Boolean {
     if (super.isDisabledByContext(context)) return true
-    if (context.fileType is VueFileType) return false
 
-    //other files
-    return !isVueContext(context, myProject)
+    return !isVueServiceAvailableByContext(context)
   }
+
+  private fun isVueServiceAvailableByContext(context: VirtualFile): Boolean = isVueTypeScriptServiceEnabled(myProject, context)
 
   override fun createProtocol(readyConsumer: Consumer<*>, tsServicePath: String): JSLanguageServiceProtocol {
     return VueTypeScriptServiceProtocol(myProject, mySettings, readyConsumer, createEventConsumer(), tsServicePath)
@@ -137,7 +142,7 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
   private fun addConfigureCommand(result: MutableMap<JSLanguageServiceSimpleCommand, Consumer<JSLanguageServiceObject>>) {
     val arguments = ConfigureRequestArguments()
     val fileExtensionInfo = FileExtensionInfo()
-    fileExtensionInfo.extension = ".vue"
+    fileExtensionInfo.extension = VUE_FILE_EXTENSION
 
     //see ts.getSupportedExtensions
     //x.scriptKind === ScriptKind.Deferred(7) || needJsExtensions && isJSLike(x.scriptKind) ? x.extension : undefined
@@ -150,13 +155,22 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
     result[ConfigureRequest(arguments)] = Consumer {}
   }
 
+  override fun skipInternalErrors(element: PsiElement): Boolean {
+    val context = PsiTreeUtil.getParentOfType(element, VueJSEmbeddedExpressionContent::class.java, JSEmbeddedContent::class.java)
+    return context !is VueJSEmbeddedExpressionContent
+  }
+
   override fun createFixSet(file: PsiFile,
                             cache: JSLanguageServiceFileCommandCache,
                             typescriptResult: TypeScriptLanguageServiceAnnotationResult): TypeScriptLanguageServiceFixSet {
-    val textRanges = mutableListOf<TextRange>()
-    findModule(file, true)?.let { textRanges.add(it.textRange) }
-    findModule(file, false)?.let { textRanges.add(it.textRange) }
-    return TypeScriptLanguageServiceFixSet(file.project, cache, file.virtualFile, typescriptResult, textRanges)
+    if (isVueFile(file.virtualFile)) {
+      val textRanges = mutableListOf<TextRange>()
+      findModule(file, true)?.let { textRanges.add(it.textRange) }
+      findModule(file, false)?.let { textRanges.add(it.textRange) }
+      return TypeScriptLanguageServiceFixSet(file.project, cache, file.virtualFile, typescriptResult, textRanges)
+    }
+
+    return super.createFixSet(file, cache, typescriptResult)
   }
 
   private fun isVueFile(virtualFile: VirtualFile) = FileTypeRegistry.getInstance().isFileOfType(virtualFile, VueFileType.INSTANCE)

@@ -1,5 +1,5 @@
 <template>
-  <div id="scroller" v-on:click="foo = <weak_warning descr="Assigned expression type number is not assignable to type boolean">12</weak_warning>"></div>
+  <div id="scroller" v-on:click="foo = <error descr="Assigned expression type 12 is not assignable to type boolean">12</error>"></div>
   <div id="scrollers" v-on:click="onScrolled"></div>
   {{12 + foo}}
   {{bar}}
@@ -8,7 +8,7 @@
 <script lang="ts">
   import {Component, Vue} from 'vue-property-decorator'
 
-  <warning descr="Unused default export">export default</warning>
+  export default
   @Component({})
   class Index extends <error descr="No base constructor has the specified number of type arguments">Vue</error> {
 

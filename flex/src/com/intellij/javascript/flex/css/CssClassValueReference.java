@@ -21,9 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-/**
- * @author Eugene.Kudelevsky
- */
 public class CssClassValueReference extends PsiPolyVariantCachingReference implements CssReference {
   private final PsiElement myElement;
   private final int myStart;

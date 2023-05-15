@@ -151,13 +151,10 @@ const Map<String, LibraryInfo> LIBRARIES = const {
       public void visitMapEntry(@NotNull DartMapEntry mapEntry) {
         final List<DartExpression> expressions = mapEntry.getExpressionList();
         if (expressions.size() != 2 ||
-            !(expressions.get(0) instanceof DartStringLiteralExpression) ||
-            !(expressions.get(1) instanceof DartNewExpression)) {
+            !(expressions.get(0) instanceof DartStringLiteralExpression keyExpression) ||
+            !(expressions.get(1) instanceof DartNewExpression newExpression)) {
           return;
         }
-
-        final DartStringLiteralExpression keyExpression = (DartStringLiteralExpression)expressions.get(0);
-        final DartNewExpression newExpression = (DartNewExpression)expressions.get(1);
 
         final String libraryName = StringUtil.unquoteString(keyExpression.getText());
 

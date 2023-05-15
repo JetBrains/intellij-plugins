@@ -34,23 +34,22 @@ public class PbDocumentationProvider extends AbstractDocumentationProvider {
   @Nullable
   @Override
   public @Nls String getQuickNavigateInfo(PsiElement element, PsiElement originalElement) {
-    return null;
+    return super.getQuickNavigateInfo(element, originalElement);
   }
 
   @Nullable
   @Override
   public List<String> getUrlFor(PsiElement element, PsiElement originalElement) {
-    return null;
+    return super.getUrlFor(element, originalElement);
   }
 
   @Nullable
   @Override
   public @Nls String generateDoc(PsiElement element, @Nullable PsiElement originalElement) {
-    if (!(element instanceof PbCommentOwner)) {
+    if (!(element instanceof PbCommentOwner owner)) {
       return null;
     }
 
-    PbCommentOwner owner = (PbCommentOwner) element;
     List<PsiComment> comments = owner.getComments();
     if (comments.isEmpty()) {
       return null;
@@ -69,8 +68,7 @@ public class PbDocumentationProvider extends AbstractDocumentationProvider {
 
   @Nullable
   @Override
-  public PsiElement getDocumentationElementForLink(
-      PsiManager psiManager, String link, PsiElement context) {
-    return null;
+  public PsiElement getDocumentationElementForLink(PsiManager psiManager, String link, PsiElement context) {
+    return super.getDocumentationElementForLink(psiManager, link, context);
   }
 }

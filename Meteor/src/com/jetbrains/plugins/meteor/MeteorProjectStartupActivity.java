@@ -9,6 +9,7 @@ import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.fileTypes.ex.FileTypeManagerEx;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.RootsChangeRescanningInfo;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -30,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-public final class MeteorProjectStartupActivity implements StartupActivity.Background {
+public final class MeteorProjectStartupActivity implements StartupActivity, DumbAware {
   public static final String METEOR_FOLDER = ".meteor";
   public static final String METEOR_LOCAL_FOLDER = "local";
   public static final String METEOR_RELATIVE_PATH_TO_LOCAL_FOLDER = METEOR_FOLDER + "/" + METEOR_LOCAL_FOLDER;
@@ -39,8 +40,7 @@ public final class MeteorProjectStartupActivity implements StartupActivity.Backg
   public static final String METEOR_FOLDERS_CACHED = "js.meteor.library.cached";
   public static final String METEOR_PROJECT_KEY = "js.meteor.project";
 
-  @NotNull
-  private static MeteorLibraryUpdater getPackageUpdater(@NotNull Project project) {
+  private static @NotNull MeteorLibraryUpdater getPackageUpdater(@NotNull Project project) {
     return MeteorLibraryUpdater.get(project);
   }
 
@@ -56,19 +56,19 @@ public final class MeteorProjectStartupActivity implements StartupActivity.Backg
     });
   }
 
-  @RequiresReadLock
   public static void initMeteorProject(@NotNull Project project, boolean shouldUpdateFileTypes) {
-    attachPredefinedMeteorLibrary(project);
-    shouldUpdateFileTypes = setDefaultForShouldOpenHtmlAsHandlebars(project) || shouldUpdateFileTypes;
+    attachPredefinedMeteorLibrary(project); // refresh must be run out of read action
 
-    if (MeteorSettings.getInstance().isExcludeMeteorLocalFolder()) {
-      excludeLocalMeteorFolders(project);
-    }
+    ReadAction.run(() -> {
+      if (MeteorSettings.getInstance().isExcludeMeteorLocalFolder()) {
+        excludeLocalMeteorFolders(project);
+      }
 
-    if (shouldUpdateFileTypes) {
-      updateFileTypesAfterChanges();
-      MeteorLibraryUpdater.get(project).update();
-    }
+      if (setDefaultForShouldOpenHtmlAsHandlebars(project) || shouldUpdateFileTypes) {
+        updateFileTypesAfterChanges();
+        MeteorLibraryUpdater.get(project).update();
+      }
+    });
   }
 
   private static void updateFileTypesAfterChanges() {
@@ -93,7 +93,6 @@ public final class MeteorProjectStartupActivity implements StartupActivity.Backg
     return false;
   }
 
-  @RequiresReadLock
   private static void attachPredefinedMeteorLibrary(@NotNull Project project) {
     if (!isMeteorLibraryWasEnabled(project)) {
       Runnable runnable = () -> {
@@ -104,7 +103,7 @@ public final class MeteorProjectStartupActivity implements StartupActivity.Backg
         setMeteorLibraryWasEnabled(project);
         updateLibrariesFiles(project);
       };
-      if (ApplicationManager.getApplication().isWriteThread()) {
+      if (ApplicationManager.getApplication().isWriteIntentLockAcquired()) {
         ApplicationManager.getApplication().runWriteAction(runnable);
       }
       else {
@@ -121,7 +120,7 @@ public final class MeteorProjectStartupActivity implements StartupActivity.Backg
   private static void updateLibrariesFiles(@NotNull Project project) {
     if (project.isDisposed()) return;
     final JSLibraryManager libraryManager = JSLibraryManager.getInstance(project);
-    boolean isAsync = !ApplicationManager.getApplication().isUnitTestMode();
+    boolean isAsync = true;
 
     MeteorStubPath.getStubDir().refresh(isAsync, true, () -> {
       if (project.isDisposed()) return;
@@ -167,7 +166,7 @@ public final class MeteorProjectStartupActivity implements StartupActivity.Backg
     return root == null ? null : ProjectRootManager.getInstance(module.getProject()).getFileIndex().getContentRootForFile(root);
   }
 
-  private static Collection<String> getOldExcludedFolders(@NotNull Module module, @NotNull final VirtualFile root) {
+  private static Collection<String> getOldExcludedFolders(@NotNull Module module, final @NotNull VirtualFile root) {
     return ContainerUtil.filter(ModuleRootManager.getInstance(module).getExcludeRootUrls(),
                                 url -> url.startsWith(root.getUrl() + "/" + METEOR_RELATIVE_PATH_TO_LOCAL_FOLDER));
   }

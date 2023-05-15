@@ -1,0 +1,164 @@
+HCLFile: Resources.tf
+      HCLProperty at line 9
+        HCLIdentifier
+        HCLSelectExpression - string
+          HCLSelectExpression - resource(aws_instance)
+            HCLIdentifier - identifier
+            HCLIdentifier - identifier
+          HCLIdentifier - identifier
+      HCLProperty at line 10
+        HCLIdentifier
+        HCLSelectExpression - string
+          HCLSelectExpression - resource(aws_instance)
+            HCLIdentifier - identifier
+            HCLIdentifier - identifier
+          HCLIdentifier - identifier
+      HCLProperty at line 11
+        HCLIdentifier
+        HCLSelectExpression - bool
+          HCLSelectExpression - resource(aws_instance)
+            HCLIdentifier - identifier
+            HCLIdentifier - identifier
+          HCLIdentifier - identifier
+      HCLProperty at line 12
+        HCLIdentifier
+        HCLSelectExpression - string
+          HCLIndexSelectExpression - resource(aws_instance)
+            HCLSelectExpression - list(resource(aws_instance))
+              HCLIdentifier - identifier
+              HCLIdentifier - identifier
+            HCLNumberLiteral - number
+          HCLIdentifier - identifier
+      HCLProperty at line 13
+        HCLIdentifier
+        HCLSelectExpression - string
+          HCLIndexSelectExpression - resource(aws_instance)
+            HCLSelectExpression - list(resource(aws_instance))
+              HCLIdentifier - identifier
+              HCLIdentifier - identifier
+            HCLNumberLiteral - number
+          HCLIdentifier - identifier
+      HCLProperty at line 14
+        HCLIdentifier
+        HCLSelectExpression - bool
+          HCLIndexSelectExpression - resource(aws_instance)
+            HCLSelectExpression - list(resource(aws_instance))
+              HCLIdentifier - identifier
+              HCLIdentifier - identifier
+            HCLNumberLiteral - number
+          HCLIdentifier - identifier
+      HCLProperty at line 41
+        HCLIdentifier
+        HCLSelectExpression - list(string)
+          HCLSelectExpression - list(resource(random_string))
+            HCLSelectExpression - list(resource(random_string))
+              HCLIdentifier - identifier
+              HCLIdentifier - identifier
+            HCLVariable - identifier
+          HCLIdentifier - identifier
+      HCLProperty at line 42
+        HCLIdentifier
+        HCLSelectExpression - list(string)
+          HCLIndexSelectExpression - list(resource(random_string))
+            HCLSelectExpression - list(resource(random_string))
+              HCLIdentifier - identifier
+              HCLIdentifier - identifier
+            HCLVariable - identifier
+          HCLIdentifier - identifier
+      HCLProperty at line 44
+        HCLIdentifier
+        HCLSelectExpression - string
+          HCLSelectExpression - resource(random_string)
+            HCLSelectExpression - list(resource(random_string))
+              HCLIdentifier - identifier
+              HCLIdentifier - identifier
+            HCLNumberLiteral - number
+          HCLIdentifier - identifier
+      HCLProperty at line 45
+        HCLIdentifier
+        HCLSelectExpression - string
+          HCLIndexSelectExpression - resource(random_string)
+            HCLSelectExpression - list(resource(random_string))
+              HCLIdentifier - identifier
+              HCLIdentifier - identifier
+            HCLNumberLiteral - number
+          HCLIdentifier - identifier
+      HCLProperty at line 47
+        HCLIdentifier
+        HCLMethodCallExpression - list(resource(random_string))
+          HCLIdentifier - identifier
+          HCLParameterListImpl(PARAMETER_LIST)
+            HCLSelectExpression - map(resource(random_string))
+              HCLIdentifier - identifier
+              HCLIdentifier - identifier
+      HCLProperty at line 49
+        HCLIdentifier
+        HCLIndexSelectExpression - list(resource(random_string))
+          HCLMethodCallExpression - list(resource(random_string))
+            HCLIdentifier - identifier
+            HCLParameterListImpl(PARAMETER_LIST)
+              HCLSelectExpression - map(resource(random_string))
+                HCLIdentifier - identifier
+                HCLIdentifier - identifier
+          HCLVariable - identifier
+      HCLProperty at line 51
+        HCLIdentifier
+        HCLSelectExpression - list(string)
+          HCLIndexSelectExpression - list(resource(random_string))
+            HCLMethodCallExpression - list(resource(random_string))
+              HCLIdentifier - identifier
+              HCLParameterListImpl(PARAMETER_LIST)
+                HCLSelectExpression - map(resource(random_string))
+                  HCLIdentifier - identifier
+                  HCLIdentifier - identifier
+            HCLVariable - identifier
+          HCLIdentifier - identifier
+      HCLProperty at line 53
+        HCLIdentifier
+        HCLSelectExpression - string
+          HCLIndexSelectExpression - resource(random_string)
+            HCLSelectExpression - map(resource(random_string))
+              HCLIdentifier - identifier
+              HCLIdentifier - identifier
+            HCLStringLiteral - string
+          HCLIdentifier - identifier
+      HCLProperty at line 56
+        HCLIdentifier
+        HCLSelectExpression - string
+          HCLSelectExpression - resource(random_string)
+            HCLIdentifier - identifier
+            HCLIdentifier - identifier
+          HCLIdentifier - identifier
+      HCLProperty at line 58
+        HCLIdentifier
+        HCLSelectExpression - list(string)
+          HCLSelectExpression - list(resource(random_string))
+            HCLSelectExpression - resource(random_string)
+              HCLIdentifier - identifier
+              HCLIdentifier - identifier
+            HCLVariable - identifier
+          HCLIdentifier - identifier
+      HCLProperty at line 60
+        HCLIdentifier
+        HCLSelectExpression - string
+          HCLIndexSelectExpression - resource(random_string)
+            HCLParenthesizedExpression - list(resource(random_string))
+              HCLSelectExpression - list(resource(random_string))
+                HCLSelectExpression - resource(random_string)
+                  HCLIdentifier - identifier
+                  HCLIdentifier - identifier
+                HCLVariable - identifier
+            HCLNumberLiteral - number
+          HCLIdentifier - identifier
+      HCLProperty at line 62
+        HCLIdentifier
+        HCLSelectExpression - string
+          HCLSelectExpression - resource(random_string)
+            HCLParenthesizedExpression - list(resource(random_string))
+              HCLSelectExpression - list(resource(random_string))
+                HCLSelectExpression - resource(random_string)
+                  HCLIdentifier - identifier
+                  HCLIdentifier - identifier
+                HCLVariable - identifier
+            HCLNumberLiteral - number
+          HCLIdentifier - identifier

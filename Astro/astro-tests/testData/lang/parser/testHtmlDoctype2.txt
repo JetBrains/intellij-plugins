@@ -1,0 +1,14 @@
+AstroFile:test.astro
+  AstroContentRoot:ASTRO:CONTENT_ROOT
+    PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
+    AstroFrontmatterScript:ASTRO:FRONTMATTER_SCRIPT
+      <empty list>
+    PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
+    PsiWhiteSpace('\n ')
+    PsiElement(XML_COMMENT)
+      XmlToken:XML_COMMENT_START('<!DOCTYPE')
+      XmlToken:XML_COMMENT_CHARACTERS(' HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"')
+      XmlToken:XML_COMMENT_END('>')
+    PsiWhiteSpace('\n')
+    PsiElement(XML_PROLOG)
+      <empty list>

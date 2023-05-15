@@ -1,0 +1,7 @@
+model SuperUser {
+  parent SuperUser
+}
+model Account {
+  user       SuperUser
+  oldAccount SuperUser
+}

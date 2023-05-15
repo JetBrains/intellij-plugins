@@ -7,9 +7,11 @@ import com.intellij.lang.javascript.JavaScriptFormatterTestBase
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.modules.JSImportHighlightingAndCompletionLightTestBase
-import com.intellij.lang.typescript.intentions.TypeScriptAddImportStatementFix
+import com.intellij.lang.javascript.modules.JSImportTestUtil
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.css.inspections.invalid.CssUnknownTargetInspection
 import com.intellij.util.Consumer
+import org.jetbrains.plugins.scss.inspections.SassScssUnresolvedMixinInspection
 
 private const val BASE_PATH = "/ts_imports"
 
@@ -18,7 +20,7 @@ class VueModuleImportTest : JSImportHighlightingAndCompletionLightTestBase() {
   override fun getBasePath(): String = BASE_PATH
   override fun getExtension(): String = "vue"
   override fun getTestDataPath(): String = getVueTestDataPath() + basePath
-  
+
   fun testTypesModule() {
     doTestWithCopyDirectory()
   }
@@ -44,7 +46,7 @@ class VueModuleImportTest : JSImportHighlightingAndCompletionLightTestBase() {
   }
 
   fun testAutoImportVueFileToTs() {
-    doTestActionWithCopyDirectory(TypeScriptAddImportStatementFix.getActionName(), "ts", null, null)
+    doTestActionWithCopyDirectory(JSImportTestUtil.getActionName(), "ts", null, null)
   }
 
   fun testAutoImportFromVueWithJs() {
@@ -78,8 +80,8 @@ class VueModuleImportTest : JSImportHighlightingAndCompletionLightTestBase() {
   fun testReExportWIthJs() {
     doTestWithCopyDirectory(1, true, "ts")
   }
-  
-  @JSTestOptions(JSTestOption.WithSymbolNames)
+
+  @JSTestOptions(JSTestOption.WithInfos, JSTestOption.WithSymbolNames)
   fun testCustomComponentHighlighting() {
     doTestWithCopyDirectory()
   }
@@ -95,5 +97,24 @@ class VueModuleImportTest : JSImportHighlightingAndCompletionLightTestBase() {
   fun testVueFileNameCompletion() {
     doTestWithCopyDirectory()
     checkAfterFile(extension)
+  }
+
+  fun testStylesResolvePathMapping() {
+    //css doesn't have stubs for imports!
+    Registry.get("ast.loading.filter").setValue(false, testRootDisposable)
+
+    myFixture.enableInspections(CssUnknownTargetInspection(), SassScssUnresolvedMixinInspection())
+    myFixture.copyDirectoryToProject(getTestName(false), "")
+    myFixture.configureFromTempProjectFile("spa/src/testComponent.vue")
+    myFixture.allowTreeAccessForAllFiles()
+    myFixture.testHighlighting()
+  }
+
+  fun testTSOverVuePriority() {
+    doHighlightOnlyTestWithCopyDirectory(extension)
+  }
+
+  fun testJSOverVuePriority() {
+    doHighlightOnlyTestWithCopyDirectory(extension)
   }
 }

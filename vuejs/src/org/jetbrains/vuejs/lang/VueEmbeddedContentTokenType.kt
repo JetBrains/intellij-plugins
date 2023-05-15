@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.lang
 
 import com.intellij.embedding.EmbeddingElementType
 import com.intellij.lang.*
-import com.intellij.lang.javascript.psi.impl.JSEmbeddedContentImpl
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.project.Project
 import com.intellij.psi.impl.source.tree.LazyParseableElement
@@ -46,8 +45,7 @@ abstract class VueEmbeddedContentTokenType protected constructor(@NonNls debugNa
 
     val lexer = createLexer()
 
-    val builder = PsiBuilderFactory.getInstance().createBuilder(
-      project, chameleon, lexer, language, chars)
+    val builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, lexer, language, chars)
 
     parse(builder)
     return builder

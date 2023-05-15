@@ -38,8 +38,7 @@ public class DroolsCompositeJavaStatementElement extends ASTWrapperPsiElement im
     if (count == 0) return result;
     int idx = 0;
     for (ASTNode child = getFirstChild().getNode(); child != null && idx < count; child = child.getTreeNext()) {
-      if (child.getPsi() instanceof PsiStatement) {
-        PsiStatement element = (PsiStatement)child.getPsi();
+      if (child.getPsi() instanceof PsiStatement element) {
         //LOG.assertTrue(element != null, child);
         result[idx++] = element;
       }

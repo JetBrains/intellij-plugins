@@ -1,0 +1,4 @@
+!as#null#5
+!in#null#5
+!instanceof#null#5
+!satisfies#null#5

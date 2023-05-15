@@ -10,9 +10,6 @@ import org.jetbrains.idea.perforce.perforce.PerforcePhysicalConnectionParameters
 
 import java.io.File;
 
-/**
- * @author irengrig
- */
 public class PerforceLocalConnection extends AbstractP4Connection {
   // also singleton but not equal to those SingletonConnection
   private final ConnectionId myConnectionId;
@@ -20,7 +17,7 @@ public class PerforceLocalConnection extends AbstractP4Connection {
 
   public PerforceLocalConnection(@NotNull final String workingDir) {
     myCwd = new File(workingDir);
-    myConnectionId = new ConnectionId(P4ConfigHelper.getP4ConfigFileName(), workingDir);
+    myConnectionId = new ConnectionId(null, workingDir);
   }
 
   @Override

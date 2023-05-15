@@ -80,6 +80,7 @@ public interface DartTokenTypesSets {
 
   TokenSet BUILT_IN_IDENTIFIERS = TokenSet.create(ABSTRACT,
                                                   AS,
+                                                  BASE,
                                                   COVARIANT,
                                                   DEFERRED,
                                                   EXPORT,
@@ -89,13 +90,16 @@ public interface DartTokenTypesSets {
                                                   GET,
                                                   IMPLEMENTS,
                                                   IMPORT,
+                                                  INTERFACE,
                                                   LIBRARY,
                                                   MIXIN,
                                                   OPERATOR,
                                                   PART,
+                                                  SEALED,
                                                   SET,
                                                   STATIC,
                                                   TYPEDEF,
+                                                  WHEN,
                                                   // next are not listed in spec, but they seem to have the same sense as BUILT_IN_IDENTIFIERS: somewhere treated as keywords, but can be used as normal identifiers
                                                   ON,
                                                   OF,
@@ -111,13 +115,13 @@ public interface DartTokenTypesSets {
 
   TokenSet OPERATORS = TokenSet.create(
     MINUS, MINUS_EQ, MINUS_MINUS, PLUS, PLUS_PLUS, PLUS_EQ, DIV, DIV_EQ, MUL, MUL_EQ, INT_DIV, INT_DIV_EQ, REM_EQ, REM, BIN_NOT, NOT,
-    EQ, EQ_EQ, NEQ, GT, GT_EQ, GT_GT_EQ, GT_GT, GT_GT_GT, LT, LT_EQ, LT_LT, LT_LT_EQ, OR, OR_EQ, OR_OR, OR_OR_EQ, XOR, XOR_EQ, AND,
-    AND_EQ, AND_AND, AND_AND_EQ, LBRACKET, RBRACKET, AS, QUEST_QUEST, QUEST_QUEST_EQ
+    EQ, EQ_EQ, NEQ, GT, GT_EQ, GT_GT_EQ, GT_GT, GT_GT_GT_EQ, GT_GT_GT, LT, LT_EQ, LT_LT, LT_LT_EQ, OR, OR_EQ, OR_OR, OR_OR_EQ, XOR, XOR_EQ,
+    AND, AND_EQ, AND_AND, AND_AND_EQ, LBRACKET, RBRACKET, AS, QUEST_QUEST, QUEST_QUEST_EQ
   );
 
   TokenSet ASSIGNMENT_OPERATORS = TokenSet.create(
-    // '=' | '*=' | '/=' | '~/=' | '%=' | '+=' | '-=' | '<<=' | '>>=' | '&=' | '&&=' | '^=' | '|=' | '||=' | '??='
-    EQ, MUL_EQ, DIV_EQ, INT_DIV_EQ, REM_EQ, PLUS_EQ, MINUS_EQ, LT_LT_EQ, GT_GT_EQ, AND_EQ, AND_AND_EQ, XOR_EQ, OR_EQ, OR_OR_EQ,
+    // '=' | '*=' | '/=' | '~/=' | '%=' | '+=' | '-=' | '<<=' | '>>=' | '>>>=' | '&=' | '&&=' | '^=' | '|=' | '||=' | '??='
+    EQ, MUL_EQ, DIV_EQ, INT_DIV_EQ, REM_EQ, PLUS_EQ, MINUS_EQ, LT_LT_EQ, GT_GT_EQ, GT_GT_GT_EQ, AND_EQ, AND_AND_EQ, XOR_EQ, OR_EQ, OR_OR_EQ,
     QUEST_QUEST_EQ
   );
 

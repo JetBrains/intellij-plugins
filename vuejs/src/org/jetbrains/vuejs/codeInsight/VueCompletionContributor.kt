@@ -4,7 +4,6 @@ package org.jetbrains.vuejs.codeInsight
 import com.intellij.codeInsight.completion.CompletionContributor
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.javascript.web.css.CssInBindingExpressionCompletionProvider
-import com.intellij.lang.Language
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.patterns.JSPatterns
 import com.intellij.lang.javascript.psi.JSThisExpression
@@ -16,7 +15,7 @@ import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.ProcessingContext
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeValueCompletionProvider
 import org.jetbrains.vuejs.codeInsight.attributes.VueRefValueCompletionProvider
-import org.jetbrains.vuejs.lang.expr.VueJSLanguage
+import org.jetbrains.vuejs.lang.expr.VueExprMetaLanguage
 
 class VueCompletionContributor : CompletionContributor() {
   init {
@@ -24,24 +23,20 @@ class VueCompletionContributor : CompletionContributor() {
            VueAttributeValueCompletionProvider())
     extend(CompletionType.BASIC, psiElement(XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN),
            VueRefValueCompletionProvider())
-    extend(CompletionType.BASIC, psiElement().with(language(VueJSLanguage.INSTANCE)),
-           VueJSCompletionProvider())
-    extend(CompletionType.BASIC, psiElement().with(language(VueJSLanguage.INSTANCE)),
+    extend(CompletionType.BASIC, psiElement().with(exprLanguage()),
+           VueExprCompletionProvider())
+    extend(CompletionType.BASIC, psiElement().with(exprLanguage()),
            CssInBindingExpressionCompletionProvider())
     extend(CompletionType.BASIC,
            psiElement(JSTokenTypes.IDENTIFIER)
              .withParent(JSPatterns.jsReferenceExpression().withFirstChild(psiElement(JSThisExpression::class.java))),
            VueThisInstanceCompletionProvider())
-    extend(CompletionType.BASIC,
-           psiElement(JSTokenTypes.IDENTIFIER).withParent(JSPatterns.jsReferenceExpression()),
-           VueScriptScopeCompletionProvider())
   }
 
-  // TODO merge with Angular
-  private fun <T : PsiElement> language(language: Language): PatternCondition<T> {
-    return object : PatternCondition<T>("language(" + language.id + ")") {
+  private fun <T : PsiElement> exprLanguage(): PatternCondition<T> {
+    return object : PatternCondition<T>("exprlanguage") {
       override fun accepts(t: T, context: ProcessingContext): Boolean {
-        return language.`is`(PsiUtilCore.findLanguageFromElement(t))
+        return VueExprMetaLanguage.matches(PsiUtilCore.findLanguageFromElement(t))
       }
     }
   }

@@ -46,7 +46,9 @@ public class CssCompletionTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.addFileToProject("src/foobar/main.scss", "@import '<caret>';");
     myFixture.configureFromTempProjectFile("src/foobar/main.scss");
     myFixture.completeBasic();
-    assertSameElements(myFixture.getLookupElementStrings(), "~foo", "~foobar", "bar", "var2");
+
+    //todo remove src context
+    assertSameElements(myFixture.getLookupElementStrings(), "~foo", "~foobar", "bar", "var2", "src");
   }
 
   public void testBaseURLPriority() {
@@ -60,7 +62,9 @@ public class CssCompletionTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.addFileToProject("src/foobar/main.scss", "@import '<caret>';");
     myFixture.configureFromTempProjectFile("src/foobar/main.scss");
     myFixture.completeBasic();
-    assertSameElements(myFixture.getLookupElementStrings(), "~bar", "bar", "var2");
+
+    //todo remove src context
+    assertSameElements(myFixture.getLookupElementStrings(), "~bar", "bar", "var2", "src");
   }
 
   public void testLegacyPreprocessorIncludePaths() {

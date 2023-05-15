@@ -51,8 +51,7 @@ public class DartParameterInfoHandler implements ParameterInfoHandler<PsiElement
     if (element instanceof DartCallExpression) {
       functionDescription = DartFunctionDescription.tryGetDescription((DartCallExpression)element);
     }
-    else if (element instanceof DartNewExpression) {
-      final DartNewExpression newExpression = (DartNewExpression)element;
+    else if (element instanceof DartNewExpression newExpression) {
       final DartType type = newExpression.getType();
       final DartClassResolveResult classResolveResult = DartResolveUtil.resolveClassByType(type);
       List<DartReferenceExpression> expressionList = ((DartNewExpression)element).getReferenceExpressionList();

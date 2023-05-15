@@ -153,6 +153,8 @@ public final class ResourceCollector {
     List<String> packageInfoIncludes = Collections.singletonList("**/packageinfo");
 
     for (String sourceRoot : currentProject.getSources()) {
+      if (null == sourceRoot) continue;
+
       MavenResource packageInfoResource = new MavenResource(sourceRoot, false, null, packageInfoIncludes, null);
       resources.add(packageInfoResource);
     }

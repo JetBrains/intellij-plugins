@@ -68,6 +68,12 @@ public class Angular2DocumentationTest extends Angular2CodeInsightFixtureTestCas
     checkDocumentationAtCaret(myFixture);
   }
 
+  public void testComponentDecorator() {
+    configureCopy(myFixture, ANGULAR_CORE_16_0_0_NEXT_4);
+    myFixture.configureByFiles(getTestName(true) + ".ts");
+    checkDocumentationAtCaret(myFixture);
+  }
+
   public void testUnknownDirective() {
     doTest();
   }

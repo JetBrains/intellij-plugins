@@ -4,7 +4,6 @@ import com.intellij.lang.javascript.library.JSLibraryUtil;
 import com.intellij.util.containers.ContainerUtil;
 import junit.framework.TestCase;
 
-import java.util.Collections;
 import java.util.List;
 
 
@@ -12,8 +11,7 @@ public class MeteorStubPathTest extends TestCase {
 
   public void testVersionNumber() {
     List<MeteorStubPath.VersionNumber> versions =
-      ContainerUtil.newArrayList(create("meteor-v1.1.1.d.ts"), create("meteor-v0.1.d.ts"), create("meteor-v0.2.2.d.ts"), create("meteor-v0.2.d.ts"));
-    Collections.sort(versions);
+      ContainerUtil.sorted(List.of(create("meteor-v1.1.1.d.ts"), create("meteor-v0.1.d.ts"), create("meteor-v0.2.2.d.ts"), create("meteor-v0.2.d.ts")));
 
     assertName(versions, 0, "meteor-v0.1.d.ts");
     assertName(versions, 1, "meteor-v0.2.d.ts");

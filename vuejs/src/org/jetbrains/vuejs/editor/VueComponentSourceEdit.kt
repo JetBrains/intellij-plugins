@@ -27,19 +27,20 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.WebSymbol.Companion.KIND_HTML_ATTRIBUTES
-import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
-import com.intellij.webSymbols.registry.WebSymbolsRegistryManager
-import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
-import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
+import com.intellij.xml.util.XmlTagUtil
 import org.jetbrains.vuejs.codeInsight.toAsset
-import org.jetbrains.vuejs.context.isVue3
-import org.jetbrains.vuejs.index.*
+import org.jetbrains.vuejs.context.*
+import org.jetbrains.vuejs.index.VUE_MODULE
+import org.jetbrains.vuejs.index.findScriptTag
+import org.jetbrains.vuejs.index.isScriptSetupTag
 import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.libraries.VUE_CLASS_COMPONENT
 import org.jetbrains.vuejs.model.VueEntitiesContainer
-import org.jetbrains.vuejs.model.source.*
-import org.jetbrains.vuejs.web.VueFramework
-import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension.Companion.KIND_VUE_TOP_LEVEL_ELEMENTS
+import org.jetbrains.vuejs.model.source.COMPONENTS_PROP
+import org.jetbrains.vuejs.model.source.NAME_PROP
+import org.jetbrains.vuejs.model.source.VueComponents
+import org.jetbrains.vuejs.model.source.VueSourceComponent
+import org.jetbrains.vuejs.model.tryResolveSrcReference
 
 class VueComponentSourceEdit private constructor(private val component: Pointer<VueSourceComponent>) {
 
@@ -50,6 +51,14 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
         VueComponentSourceEdit(component.createPointer())
       else null
 
+    fun getOrCreateScriptScope(component: VueEntitiesContainer?): JSExecutionScope? {
+      return create(component)?.let {
+        val script = it.getOrCreateScriptScope()
+        it.reformatChanges()
+        script
+      }
+    }
+
   }
 
   fun getOrCreateScriptScope(): JSExecutionScope? {
@@ -58,14 +67,23 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
     if (file !is XmlFile) return null
     val scriptTag = findScriptTag(file, true) ?: findScriptTag(file, false) ?: createScriptTag(file)
 
+    if (!scriptTag.isScriptSetupTag()) {
+      scriptTag.tryResolveSrcReference().asSafely<JSFile>()?.let { return it }
+    }
+
     scriptTag
       .children
       .firstNotNullOfOrNull { it as? JSEmbeddedContent }
       ?.let { return it }
 
     // Script content is empty - let's add a new line
+    // Keep attributes intact
+    val tagText = XmlTagUtil.getStartTagRange(scriptTag)
+                    ?.substring(file.text)
+                    ?.trimEnd { it == '>' || it == '/' }
+                  ?: "<script"
     val newScriptTag = PsiFileFactory.getInstance(file.project)
-      .createFileFromText("dummy.vue", VueFileType.INSTANCE, "<script>\n</script>")
+      .createFileFromText("dummy.vue", VueFileType.INSTANCE, "$tagText>\n</script>")
       .let { PsiTreeUtil.findChildOfType(it, XmlTag::class.java)!! }
 
     return scriptTag.replace(newScriptTag)
@@ -112,18 +130,13 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
 
   private fun createScriptTag(file: XmlFile): XmlTag {
     val dummyScript = createEmptyScript(file)
-    return file.addAfter(dummyScript, file.lastChild) as XmlTag
+    return file.document!!.let { it.addAfter(dummyScript, it.lastChild) as XmlTag }
   }
 
   private fun createEmptyScript(context: XmlFile): XmlTag {
     val project = context.project
 
-    val hasScriptSetup = file
-      ?.let { WebSymbolsRegistryManager.get(it, false) }
-      ?.takeIf { it.framework == VueFramework.ID }
-      ?.runNameMatchQuery(listOf(NAMESPACE_HTML, KIND_VUE_TOP_LEVEL_ELEMENTS, SCRIPT_TAG_NAME,
-                                 KIND_HTML_ATTRIBUTES, SETUP_ATTRIBUTE_NAME))
-      ?.firstOrNull() != null
+    val hasScriptSetup = supportsScriptSetup(file)
 
     val hasTypeScript = TypeScriptService.getForFile(context.project, context.virtualFile) != null
     val langText = if (hasTypeScript) " lang=\"ts\"" else ""
@@ -156,16 +169,15 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
     val fileName = FileUtil.getNameWithoutExtension(scriptScope.containingFile.name)
 
     val isTs = DialectDetector.isTypeScript(scriptScope)
-    val isVue3 = isVue3(scriptScope)
 
-    @Suppress("UnnecessaryVariable")
-    val useDefineComponent = isVue3
-    val useClassComponent = hasVueClassComponentLibrary(scriptScope)
-    val useVueExtend = isTs && !isVue3
+    val useDefineComponent = supportsDefineComponent(scriptScope)
+    val classComponentLibrary = getVueClassComponentLibrary(scriptScope)
+    val componentDecoratorName = getVueClassComponentDecoratorName(scriptScope)
+    val useVueExtend = isTs && !useDefineComponent
 
     val componentName = toAsset(StringUtil.capitalize(fileName).replace(Regex("[^0-9a-zA-Z-]+"), "-"))
     val exportText = when {
-      useClassComponent -> "@Component\nexport default class $componentName extends Vue {\n}"
+      classComponentLibrary != null -> "@$componentDecoratorName({})\nexport default class $componentName extends Vue {\n}"
       useDefineComponent -> "export default defineComponent({\n})"
       useVueExtend -> "export default Vue.extend({\n})"
       else -> "export default {\n}"
@@ -181,9 +193,14 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
       addedExport = JSChangeUtil.doAddBefore(scriptScope, defaultExport, anchorPair.second) as JSExportAssignment
     }
     when {
-      useClassComponent -> {
-        insertImportIfNotThere("Vue", true, VUE_MODULE, scriptScope)
-        insertImportIfNotThere("Component", false, VUE_CLASS_COMPONENT_MODULE, scriptScope)
+      classComponentLibrary != null -> {
+        if (classComponentLibrary == VUE_CLASS_COMPONENT) {
+          insertImportIfNotThere("Vue", true, VUE_MODULE, scriptScope)
+          insertImportIfNotThere(componentDecoratorName, true, classComponentLibrary, scriptScope)
+        } else {
+          insertImportIfNotThere("Vue", false, classComponentLibrary, scriptScope)
+          insertImportIfNotThere(componentDecoratorName, false, classComponentLibrary, scriptScope)
+        }
       }
       useDefineComponent -> {
         insertImportIfNotThere("defineComponent", false, VUE_MODULE, scriptScope)

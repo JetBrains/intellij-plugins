@@ -41,10 +41,9 @@ abstract class PbServiceBodyMixin extends PbElementBase implements PbServiceBody
   @Nullable
   public QualifiedName getExtensionOptionScope() {
     PsiElement parent = getParent();
-    if (!(parent instanceof PbServiceDefinition)) {
+    if (!(parent instanceof PbServiceDefinition service)) {
       return null;
     }
-    PbServiceDefinition service = (PbServiceDefinition) parent;
     QualifiedName name = service.getQualifiedName();
     return name != null ? name.removeLastComponent() : null;
   }

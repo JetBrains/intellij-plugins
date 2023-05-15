@@ -97,8 +97,7 @@ public class MxmlLanguageInjector implements MultiHostInjector, JSTargetedInject
     }
     else if (host instanceof XmlText) {
       final PsiElement _tag = host.getParent();
-      if (_tag instanceof XmlTag) {
-        final XmlTag tag = (XmlTag)_tag;
+      if (_tag instanceof XmlTag tag) {
 
         if (isFxPrivateTag(tag) || isInsideFxPrivateTag(tag) || tag instanceof HtmlTag) {
           return;

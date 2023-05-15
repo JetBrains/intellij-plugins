@@ -18,9 +18,6 @@ import java.util.List;
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.intellij.patterns.StandardPatterns.string;
 
-/**
- * @author vnikolaenko
- */
 public final class CfmlReferenceContributor extends PsiReferenceContributor {
   private static final class Holder {
     public static final PsiElementPattern.Capture<PsiComment> CFMLVARIABLE_COMMENT =

@@ -102,5 +102,6 @@ public class FlexCompilerProjectConfigurable implements SearchableConfigurable, 
 
   @Override
   public void disposeUIResources() {
+    SearchableConfigurable.super.disposeUIResources();
   }
 }

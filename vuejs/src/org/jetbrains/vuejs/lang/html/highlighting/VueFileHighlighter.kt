@@ -13,10 +13,12 @@ import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair.pair
 import com.intellij.psi.tree.IElementType
+import org.jetbrains.vuejs.lang.LangMode
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_END
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_START
 
 internal class VueFileHighlighter(private val languageLevel: JSLanguageLevel,
+                                  private val langMode: LangMode,
                                   private val project: Project?,
                                   private val myInterpolationConfig: Pair<String, String>?) : HtmlFileHighlighter() {
 
@@ -26,7 +28,7 @@ internal class VueFileHighlighter(private val languageLevel: JSLanguageLevel,
   }
 
   override fun getHighlightingLexer(): Lexer {
-    return VueHighlightingLexer(languageLevel, project, myInterpolationConfig)
+    return VueHighlightingLexer(languageLevel, langMode, project, myInterpolationConfig)
   }
 
   companion object {

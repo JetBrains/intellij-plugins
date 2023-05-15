@@ -407,7 +407,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
   protected void setUseP4Config(@NotNull String p4ConfigName) {
     getChangeListManager().waitUntilRefreshed();
     PerforceSettings.getSettings(myProject).useP4CONFIG = true;
-    AbstractP4Connection.setTestEnvironment(Map.of(P4ConfigHelper.P4_CONFIG, p4ConfigName), myTestRootDisposable);
+    AbstractP4Connection.setTestEnvironment(Map.of(P4ConfigFields.P4CONFIG.getName(), p4ConfigName), myTestRootDisposable);
     PerforceConnectionManager.getInstance(myProject).updateConnections();
   }
 

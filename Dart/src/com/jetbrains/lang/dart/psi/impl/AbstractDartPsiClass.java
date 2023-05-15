@@ -127,8 +127,7 @@ abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl imp
   @Override
   public DartMethodDeclaration findOperator(final String operator, @Nullable final DartClass rightDartClass) {
     return ContainerUtil.find(getOperators(), (Condition<PsiElement>)element -> {
-      if (element instanceof DartMethodDeclaration) {
-        final DartMethodDeclaration method = (DartMethodDeclaration)element;
+      if (element instanceof DartMethodDeclaration method) {
         if (method.isOperator() && operator.equals(method.getName())) {
           if (rightDartClass == null) {
             return true;

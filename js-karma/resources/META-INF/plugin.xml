@@ -2,7 +2,19 @@
   <id>Karma</id>
   <name>Karma</name>
   <description><![CDATA[
-  Integration with <a href="https://karma-runner.github.io/">Karma</a>, a spectacular test runner for JavaScript
+  Provides <a href="https://karma-runner.github.io/">Karma</a> support to all JetBrains IDEs that
+   <a href="https://www.jetbrains.com/products/#lang=js&type=ide">support JavaScript</a>.
+
+  <h3>Features</h3>
+  <ul>
+  <li>Test coverage with built-in running, debugging, and monitoring</li>
+  <li>Test results in treeview with easy navigation to test sources</li>
+  <li>Test statuses in the editor with options to run or debug</li>
+  </ul>
+
+  <h3>Getting started</h3>
+  For information on getting started, head over to the <a href="https://www.jetbrains.com/help/">documentation</a> for your IDE.
+  For WebStorm, you can check out this section in the <a href="https://www.jetbrains.com/help/webstorm/running-unit-tests-on-karma.html">documentation</a>.
   ]]></description>
   <vendor>JetBrains</vendor>
   <category>JavaScript Frameworks and Tools</category>
@@ -19,7 +31,7 @@
     <configurationType implementation="com.intellij.javascript.karma.execution.KarmaConfigurationType"/>
     <programRunner implementation="com.intellij.javascript.karma.execution.KarmaRunProgramRunner"/>
     <psi.referenceContributor language="JavaScript" implementation="com.intellij.javascript.karma.config.KarmaConfigReferenceContributor"/>
-    <localInspection groupPath="JavaScript and TypeScript"
+    <localInspection groupPathKey="js.inspection.group.path"
                      groupBundle="messages.JavaScriptBundle" groupKey="js.testing.inspection.group.name"
                      key="inspection.karma.config"
                      bundle="messages.KarmaBundle"

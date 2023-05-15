@@ -44,8 +44,7 @@
                 ]
               },
               "value": {
-                "type": "of-match",
-                "kind": "plain"
+                "type": "of-match"
               },
               "vue-custom-prop": {
                 "name": "Custom Vue component property",
@@ -381,8 +380,7 @@
               "description": "An HTML tag name, a Component name or Component class reference.",
               "type": [
                 "string",
-                "ComponentDefinition",
-                "ComponentConstructor"
+                "object"
               ]
             },
             {
@@ -867,6 +865,7 @@
             "pattern": {
               "items": {
                 "path": "attributes",
+                "includeVirtual": false,
                 "filter": "match-with-target-list",
                 "target-list": "/js/events",
                 "prefix": "update:"

@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class DartQuickFixSet {
-  private static final String MIN_SDK_VERSION_WITH_IGNORE_FIXES = "14";
+  private static final String MIN_SDK_VERSION_WITH_IGNORE_FIXES = "2.14";
   private static final String DART_FIX_IGNORE_PREFIX = "dart.fix.ignore";
   private static final int MAX_QUICK_FIXES = 5;
 

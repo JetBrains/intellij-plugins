@@ -20,9 +20,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlTagDescription {
   private String myDescription = "";
   private final Collection<CfmlAttributeDescription> myAttributes = new LinkedList<>();

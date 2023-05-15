@@ -35,6 +35,12 @@ public class DartCallExpressionImpl extends DartReferenceImpl implements DartCal
   }
 
   @Override
+  @Nullable
+  public DartSwitchExpressionWrapper getSwitchExpressionWrapper() {
+    return findChildByClass(DartSwitchExpressionWrapper.class);
+  }
+
+  @Override
   @NotNull
   public List<DartTypeArguments> getTypeArgumentsList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartTypeArguments.class);

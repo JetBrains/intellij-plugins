@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import static com.intellij.protobuf.lang.psi.util.PbPsiUtil.*;
 
 /** Conditions to restrict resolve results. */
-public class ResolveFilters {
+public final class ResolveFilters {
 
   // Static instances for filters that require no parameterization.
 

@@ -560,7 +560,7 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     if (function != null) {
       function.accept(new JSRecursiveWalkingElementVisitor() {
         @Override
-        public void visitJSProperty(JSProperty node) {
+        public void visitJSProperty(@NotNull JSProperty node) {
           final String name = node.getName();
           final JSExpression value = node.getValue();
           if (RESTRICT_PROP.equals(name)) {
@@ -616,8 +616,7 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     final JSCallExpression call = PsiTreeUtil.getParentOfType(function, JSCallExpression.class);
     if (call != null) {
       final JSExpression methodExpression = call.getMethodExpression();
-      if (!(methodExpression instanceof JSReferenceExpression)) return null;
-      JSReferenceExpression callee = (JSReferenceExpression)methodExpression;
+      if (!(methodExpression instanceof JSReferenceExpression callee)) return null;
       JSExpression qualifier = callee.getQualifier();
 
       if (qualifier == null) return null;
@@ -706,8 +705,7 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     return new PairProcessor<>() {
       @Override
       public boolean process(JSProperty property, JSElementIndexingData outData) {
-        if (!(property.getValue() instanceof JSLiteralExpression)) return true;
-        final JSLiteralExpression value = (JSLiteralExpression)property.getValue();
+        if (!(property.getValue() instanceof JSLiteralExpression value)) return true;
         if (!value.isQuotedLiteral()) return true;
         final String unquotedValue = unquote(value);
         if (AngularJSUiRouterConstants.controllerAs.equals(property.getName())) {

@@ -59,7 +59,7 @@ final class DartStructureViewElement extends PsiTreeElementBase<PsiElement> {
   @Override
   public Collection<StructureViewTreeElement> getChildrenBase() {
     if (myOutline.getChildren().isEmpty()) return Collections.emptyList();
-    return ContainerUtil.map2List(myOutline.getChildren(), outline -> new DartStructureViewElement(myPsiFile, outline));
+    return ContainerUtil.map(myOutline.getChildren(), outline -> new DartStructureViewElement(myPsiFile, outline));
   }
 
   @Override

@@ -29,6 +29,12 @@ public class DartTypeImpl extends DartPsiCompositeElementImpl implements DartTyp
 
   @Override
   @Nullable
+  public DartRecordType getRecordType() {
+    return findChildByClass(DartRecordType.class);
+  }
+
+  @Override
+  @Nullable
   public DartSimpleType getSimpleType() {
     return findChildByClass(DartSimpleType.class);
   }

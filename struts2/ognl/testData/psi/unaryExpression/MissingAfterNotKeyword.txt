@@ -1,7 +1,0 @@
-OgnlFile:MissingAfterNotKeyword.ognl
-  PsiElement(%{)('%{')
-  UNARY_EXPRESSION
-    PsiElement(not)('not')
-    PsiErrorElement:<expression> expected, got '}'
-      <empty list>
-  PsiElement(EXPRESSION_END)('}')

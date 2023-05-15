@@ -9,19 +9,17 @@ import org.jetbrains.annotations.PropertyKey;
 
 import java.util.function.Supplier;
 
-public final class CfmlBundle extends DynamicBundle {
-  @NonNls private static final String BUNDLE = "messages.CfmlBundle";
-  private static final CfmlBundle INSTANCE = new CfmlBundle();
+public final class CfmlBundle {
+  private static final @NonNls String BUNDLE = "messages.CfmlBundle";
+  private static final DynamicBundle INSTANCE = new DynamicBundle(CfmlBundle.class, BUNDLE);
 
-  private CfmlBundle() { super(BUNDLE); }
+  private CfmlBundle() {}
 
-  @NotNull
-  public static @Nls String message(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, Object @NotNull ... params) {
+  public static @NotNull @Nls String message(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, Object @NotNull ... params) {
     return INSTANCE.getMessage(key, params);
   }
 
-  @NotNull
-  public static Supplier<@Nls String> messagePointer(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, Object @NotNull ... params) {
+  public static @NotNull Supplier<@Nls String> messagePointer(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, Object @NotNull ... params) {
     return INSTANCE.getLazyMessage(key, params);
   }
 

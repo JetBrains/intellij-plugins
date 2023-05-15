@@ -81,8 +81,7 @@ public class DartPsiCompositeElementImpl extends ASTWrapperPsiElement implements
       DartControlFlowUtil.getSimpleDeclarations(children, lastParent, context instanceof DartStatements);
 
     for (PsiElement child : children) {
-      if (child instanceof DartFormalParameterList) {
-        final DartFormalParameterList formalParameterList = (DartFormalParameterList)child;
+      if (child instanceof DartFormalParameterList formalParameterList) {
         final List<DartNormalFormalParameter> normalFormalParameterList =
           new ArrayList<>(formalParameterList.getNormalFormalParameterList());
         final DartOptionalFormalParameters optionalFormalParameters = formalParameterList.getOptionalFormalParameters();

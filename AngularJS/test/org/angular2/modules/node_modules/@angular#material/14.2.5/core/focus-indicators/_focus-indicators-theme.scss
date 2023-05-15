@@ -1,0 +1,40 @@
+@use 'sass:map';
+@use 'sass:meta';
+@use '../theming/theming';
+@use './private';
+
+$_prefix: 'mat';
+
+// stylelint-disable-next-line material/theme-mixin-api
+@mixin color($config-or-theme-or-color) {
+  @if meta.type-of($config-or-theme-or-color) == 'color' {
+    @include private.customize-focus-indicators((
+      border-color: $config-or-theme-or-color
+    ), $_prefix);
+  }
+  @else {
+    $config: theming.get-color-config($config-or-theme-or-color);
+    $border-color: theming.get-color-from-palette(map.get($config, primary));
+    @include private.customize-focus-indicators((
+      border-color: $border-color
+    ), $_prefix);
+  }
+}
+
+// stylelint-disable-next-line material/theme-mixin-api
+@mixin theme($theme-or-color-config-or-color) {
+  @if meta.type-of($theme-or-color-config-or-color) == 'color' {
+    @include private.customize-focus-indicators((
+      border-color: $theme-or-color-config-or-color
+    ), $_prefix);
+  }
+  @else {
+    $theme: theming.private-legacy-get-theme($theme-or-color-config-or-color);
+    @include theming.private-check-duplicate-theme-styles($theme, 'mat-focus-indicators') {
+      $color: theming.get-color-config($theme);
+      @if $color != null {
+        @include color($color);
+      }
+    }
+  }
+}

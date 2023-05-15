@@ -7,9 +7,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-/**
- * @author Irina.Chernushina on 3/23/2016.
- */
 public class AngularUiRouterNode extends DiagramNodeBase<DiagramObject> {
   private final @NotNull DiagramObject myDiagramObject;
 

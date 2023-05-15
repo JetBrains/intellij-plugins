@@ -1,0 +1,18 @@
+HCLFile: a.hcl
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('x')
+    PsiElement(=)('=')
+    HCLMethodCallExpression
+      HCLIdentifier
+        PsiElement(ID)('foo')
+      HCLParameterListImpl(PARAMETER_LIST)
+        PsiElement(()('(')
+        HCLNumberLiteral
+          PsiElement(NUMBER)('1')
+        PsiElement(,)(',')
+        PsiWhiteSpace(' ')
+        HCLNumberLiteral
+          PsiElement(NUMBER)('2')
+        PsiElement(...)('...')
+        PsiElement())(')')

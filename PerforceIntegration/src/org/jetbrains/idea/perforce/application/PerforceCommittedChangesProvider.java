@@ -20,6 +20,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.LineTokenizer;
 import com.intellij.openapi.vcs.*;
 import com.intellij.openapi.vcs.actions.VcsContextFactory;
@@ -283,9 +284,12 @@ public class PerforceCommittedChangesProvider implements CachingCommittedChanges
     return new PerforceChangeList(myProject, stream, connection, perforceClient, new PerforceChangeCache(myProject));
   }
 
-  @NotNull
+  @Nullable
   @Override
   public Collection<FilePath> getIncomingFiles(@NotNull RepositoryLocation location) throws VcsException {
+    if (!Registry.is("p4.use.p4.sync.for.incoming.files"))
+      return null;
+
     if (!PerforceSettings.getSettings(myProject).ENABLED) {
       throw new VcsException(PerforceBundle.message("perforce.is.offline"));
     }
@@ -319,7 +323,7 @@ public class PerforceCommittedChangesProvider implements CachingCommittedChanges
     String[] lines = LineTokenizer.tokenize(result.getStdout(), false);
     for (String line : lines) {
       String lineConverted = FilePathsHelper.convertPath(line);
-      int pos = clientRoot == null ? -1 : lineConverted.indexOf(clientRoot);
+      int pos = lineConverted.indexOf(clientRoot);
       if (pos >= 0) {
         final File localFile = new File(line.substring(pos));
         LOG.debug("Incoming file: " + line.substring(pos));

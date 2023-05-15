@@ -1,0 +1,9 @@
+datasource db {
+  provider = "mysql"
+}
+
+model M {
+  id String
+
+  @@i<caret>d([])
+}

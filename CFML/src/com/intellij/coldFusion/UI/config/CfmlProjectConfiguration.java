@@ -16,9 +16,6 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author vnikolaenko
- */
 @State(name = "CfmlProjectConfiguration", storages = @Storage("cfml.xml"))
 public class CfmlProjectConfiguration implements PersistentStateComponent<CfmlProjectConfiguration.State> {
   private State myState = new State();
@@ -36,9 +33,6 @@ public class CfmlProjectConfiguration implements PersistentStateComponent<CfmlPr
   @Override
   public void loadState(@NotNull State state) {
     myState = state;
-    if (state == null) {
-      return;
-    }
     state.migrateIfNeeded();
   }
 

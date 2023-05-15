@@ -6,9 +6,6 @@ import com.intellij.psi.css.impl.util.table.CssPropertyValueImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Eugene.Kudelevsky
- */
 public class FlexCssPropertyValue extends CssPropertyValueImpl {
   private final boolean mySoft;
 

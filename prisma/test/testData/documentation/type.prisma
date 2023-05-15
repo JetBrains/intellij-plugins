@@ -1,0 +1,11 @@
+/// Skip
+
+/// Type
+/// Doc
+type Use<caret>r {
+  id          Int                @id @default(autoincrement())
+  email       String             @unique
+
+  @@index([result, createdAt(sort: Desc)])
+  @@ignore
+}

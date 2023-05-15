@@ -70,8 +70,7 @@ public class ActionScriptMoveMembersHandler extends MoveHandlerDelegate {
         return;
       }
 
-      if (element instanceof JSVariable) {
-        JSVariable field = (JSVariable)element;
+      if (element instanceof JSVariable field) {
         if (field.getAttributeList() == null || !field.getAttributeList().hasModifier(JSAttributeList.ModifierType.STATIC)) {
           String fieldName = field.getName();
           String message = RefactoringBundle.message("field.0.is.not.static", fieldName, getRefactoringName());
@@ -80,8 +79,7 @@ public class ActionScriptMoveMembersHandler extends MoveHandlerDelegate {
         }
         preselectMembers.add(field);
       }
-      else if (element instanceof JSFunction) {
-        JSFunction method = (JSFunction)element;
+      else if (element instanceof JSFunction method) {
         String methodName = method.getName();
         if (method.isConstructor()) {
           String message = RefactoringBundle.message("0.refactoring.cannot.be.applied.to.constructors", getRefactoringName());

@@ -4,6 +4,7 @@ import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.refactoring.introduceField.JSIntroduceFieldSettings;
 import com.intellij.lang.javascript.refactoring.introduceField.MockJSIntroduceFieldHandler;
+import com.intellij.lang.javascript.refactoring.introduceVariable.JSIntroduceVariableTestCase;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.testFramework.LightJavaCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +34,7 @@ public class FlexIntroduceFieldTest extends LightJavaCodeInsightTestCase {
     configureByFile(fileName + "." + ext);
     new MockJSIntroduceFieldHandler(varName, replaceAll, accessType, initializationPlace)
       .invoke(getProject(), getEditor(), getFile(), null);
+    JSIntroduceVariableTestCase.waitIntroduceHandler();
     checkResultByFile(fileName + "_after." + ext);
   }
 

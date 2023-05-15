@@ -1,0 +1,37 @@
+{
+  ".schema_version": "2",
+  ".sdk_type": "builtin",
+  "name": "artifactory",
+  "type": "backend",
+  "version": "v1.3.0-dev",
+  "schema": {
+    "password": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Password",
+      "DefaultFunc": "ENV(ARTIFACTORY_PASSWORD)"
+    },
+    "repo": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The repository name"
+    },
+    "subpath": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Path within the repository"
+    },
+    "url": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Artfactory base URL",
+      "DefaultFunc": "ENV(ARTIFACTORY_URL)"
+    },
+    "username": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Username",
+      "DefaultFunc": "ENV(ARTIFACTORY_USERNAME)"
+    }
+  }
+}

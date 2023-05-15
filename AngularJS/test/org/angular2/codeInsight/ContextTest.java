@@ -1,9 +1,10 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
-import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.JavaScriptBundle;
+import com.intellij.lang.javascript.TypeScriptTestUtil;
+import com.intellij.lang.javascript.inspections.JSUnresolvedReferenceInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -11,20 +12,20 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.ecma6.impl.TypeScriptFieldImpl;
 import com.intellij.lang.javascript.psi.ecma6.impl.TypeScriptParameterImpl;
 import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings;
-import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection;
-import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection;
+import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection;
 import com.intellij.psi.PsiElement;
-import com.intellij.testFramework.fixtures.TestLookupElementPresentation;
 import com.intellij.xml.util.CheckDtdReferencesInspection;
-import one.util.streamex.StreamEx;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.inspections.Angular2TemplateInspectionsProvider;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 import static com.intellij.lang.javascript.BaseJSCompletionTestCase.getLocationPresentation;
-import static com.intellij.util.containers.ContainerUtil.newArrayList;
+import static com.intellij.util.containers.ContainerUtil.sorted;
+import static org.angularjs.AngularTestUtil.renderLookupItems;
 
 public class ContextTest extends Angular2CodeInsightFixtureTestCase {
   @Override
@@ -123,63 +124,63 @@ public class ContextTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testInlineTemplateCreateFunction2TypeScript() {
-    myFixture.enableInspections(TypeScriptUnresolvedFunctionInspection.class);
+    myFixture.enableInspections(TypeScriptUnresolvedReferenceInspection.class);
     myFixture.getAllQuickFixes("createFunction.ts", "package.json");
     myFixture.launchAction(myFixture.findSingleIntention(JavaScriptBundle.message("javascript.create.method.intention.name", "fetchFromApi")));
     myFixture.checkResultByFile("createFunction.fixed.ts", true);
   }
 
   public void testInlineTemplateCreateFunctionWithParam2TypeScript() {
-    myFixture.enableInspections(TypeScriptUnresolvedFunctionInspection.class);
+    myFixture.enableInspections(TypeScriptUnresolvedReferenceInspection.class);
     myFixture.getAllQuickFixes("createFunctionWithParam.ts", "package.json");
     myFixture.launchAction(myFixture.findSingleIntention(JavaScriptBundle.message("javascript.create.method.intention.name", "fetchFromApi")));
     myFixture.checkResultByFile("createFunctionWithParam.fixed.ts", true);
   }
 
   public void testInlineTemplateCreateFunctionEventEmitter2TypeScript() {
-    myFixture.enableInspections(TypeScriptUnresolvedFunctionInspection.class);
+    myFixture.enableInspections(TypeScriptUnresolvedReferenceInspection.class);
     myFixture.getAllQuickFixes("createFunctionEventEmitter.ts", "package.json");
     myFixture.launchAction(myFixture.findSingleIntention(JavaScriptBundle.message("javascript.create.method.intention.name", "fetchFromApi")));
     myFixture.checkResultByFile("createFunctionEventEmitter.fixed.ts", true);
   }
 
   public void testInlineTemplateCreateFunctionWithType2TypeScript() {
-    myFixture.enableInspections(TypeScriptUnresolvedFunctionInspection.class);
+    myFixture.enableInspections(TypeScriptUnresolvedReferenceInspection.class);
     myFixture.getAllQuickFixes("createFunctionWithType.ts", "package.json");
     myFixture.launchAction(myFixture.findSingleIntention(JavaScriptBundle.message("javascript.create.method.intention.name", "fetchFromApi")));
     myFixture.checkResultByFile("createFunctionWithType.fixed.ts", true);
   }
 
   public void testInlineTemplateCreateFunctionEventEmitterImplicit2TypeScript() {
-    myFixture.enableInspections(TypeScriptUnresolvedFunctionInspection.class);
+    myFixture.enableInspections(TypeScriptUnresolvedReferenceInspection.class);
     myFixture.getAllQuickFixes("createFunctionEventEmitterImplicit.ts", "package.json");
     myFixture.launchAction(myFixture.findSingleIntention(JavaScriptBundle.message("javascript.create.method.intention.name", "fetchFromApi")));
     myFixture.checkResultByFile("createFunctionEventEmitterImplicit.fixed.ts", true);
   }
 
   public void testInlineTemplateCreateField2TypeScript() {
-    myFixture.enableInspections(TypeScriptUnresolvedVariableInspection.class);
+    myFixture.enableInspections(TypeScriptUnresolvedReferenceInspection.class);
     myFixture.getAllQuickFixes("createField.ts", "package.json");
     myFixture.launchAction(myFixture.findSingleIntention(JavaScriptBundle.message("javascript.create.field.intention.name", "todo")));
     myFixture.checkResultByFile("createField.fixed.ts", true);
   }
 
   public void testNonInlineTemplateCreateFunction2TypeScript() {
-    myFixture.enableInspections(TypeScriptUnresolvedFunctionInspection.class);
+    myFixture.enableInspections(TypeScriptUnresolvedReferenceInspection.class);
     myFixture.getAllQuickFixes("createFunction.html", "createFunction.ts", "package.json");
     myFixture.launchAction(myFixture.findSingleIntention(JavaScriptBundle.message("javascript.create.method.intention.name", "fetchFromApi")));
     myFixture.checkResultByFile("createFunction.ts", "createFunction.fixed.ts", true);
   }
 
   public void testNonInlineTemplateCreateField2TypeScript() {
-    myFixture.enableInspections(TypeScriptUnresolvedVariableInspection.class);
+    myFixture.enableInspections(TypeScriptUnresolvedReferenceInspection.class);
     myFixture.getAllQuickFixes("createField.html", "createField.ts", "package.json");
     myFixture.launchAction(myFixture.findSingleIntention(JavaScriptBundle.message("javascript.create.field.intention.name", "todo")));
     myFixture.checkResultByFile("createField.ts", "createField.fixed.ts", true);
   }
 
   public void testNonInlineTemplateCreateFunctionDoubleClass2TypeScript() {
-    myFixture.enableInspections(TypeScriptUnresolvedFunctionInspection.class);
+    myFixture.enableInspections(TypeScriptUnresolvedReferenceInspection.class);
     myFixture.getAllQuickFixes("createFunctionDoubleClass.html", "createFunctionDoubleClass.ts", "package.json");
     myFixture.launchAction(myFixture.findSingleIntention(JavaScriptBundle.message("javascript.create.method.intention.name", "fetchFromApi")));
     myFixture.checkResultByFile("createFunctionDoubleClass.ts", "createFunctionDoubleClass.fixed.ts", true);
@@ -188,10 +189,10 @@ public class ContextTest extends Angular2CodeInsightFixtureTestCase {
   public void testCreateFieldWithExplicitPublicModifier() {
     JSTestUtils.testWithTempCodeStyleSettings(getProject(), settings -> {
       settings.getCustomSettings(TypeScriptCodeStyleSettings.class).USE_PUBLIC_MODIFIER = true;
-      myFixture.enableInspections(TypeScriptUnresolvedVariableInspection.class);
+      myFixture.enableInspections(TypeScriptUnresolvedReferenceInspection.class);
       myFixture.configureByFiles("createFieldWithExplicitPublic.html", "createFieldWithExplicitPublic.ts", "package.json");
       myFixture.launchAction(myFixture.findSingleIntention(JavaScriptBundle.message("javascript.create.field.intention.name", "unresolved")));
-      myFixture.checkResultByFile("createFieldWithExplicitPublic.ts", "createFieldWithExplicitPublic.fixed.ts", true);  
+      myFixture.checkResultByFile("createFieldWithExplicitPublic.ts", "createFieldWithExplicitPublic.fixed.ts", true);
     });
   }
 
@@ -206,15 +207,12 @@ public class ContextTest extends Angular2CodeInsightFixtureTestCase {
   public void testOverriddenMethods() {
     myFixture.configureByFiles("overriddenMethods.ts", "package.json");
     myFixture.completeBasic();
-    assertEquals(newArrayList("$any#any#(arg: any)" + getLocationPresentation(null, "overriddenMethods.ts"),
-                              "bar#string#()" ,
-                              "bar#string#(test: boolean)",
-                              "bar#string#(test: string)",
-                              "foo#string#null"),
-                 StreamEx.of(myFixture.getLookupElements()).map(el -> {
-                   LookupElementPresentation presentation = TestLookupElementPresentation.renderReal(el);
-                   return presentation.getItemText() + "#" + presentation.getTypeText() + "#" + presentation.getTailText();
-                 }).sorted().toList());
+    assertEquals(List.of("$any%(arg: any)" + getLocationPresentation(null, "overriddenMethods.ts") + "#any",
+                         "bar%()#string",
+                         "bar%(test: boolean)#string",
+                         "bar%(test: string)#string",
+                         "foo%null#string"),
+                 sorted(renderLookupItems(myFixture, false, true, true, true)));
   }
 
   public void testNonNullAssertionResolutionTypeScript() {
@@ -244,7 +242,8 @@ public class ContextTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testUnionsWithoutTypeGuardSupport() {
-    myFixture.enableInspections(TypeScriptUnresolvedVariableInspection.class);
+    TypeScriptTestUtil.forceConfig(getProject(), null, getTestRootDisposable());
+    myFixture.enableInspections(TypeScriptUnresolvedReferenceInspection.class, JSUnresolvedReferenceInspection.class);
     myFixture.configureByFiles("unions.ts", "ng_for_of.ts", "iterable_differs.ts", "package.json");
     myFixture.checkHighlighting();
   }

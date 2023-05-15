@@ -9,7 +9,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.TestDataPath;
-import com.intellij.util.containers.ContainerUtil;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 import org.junit.runners.Parameterized;
@@ -19,11 +18,10 @@ import java.util.*;
 
 public abstract class AngularJSBaseCompletionTest extends ReSharperCompletionTestCase {
 
-  private static final Map<String, String> VERSIONS = ContainerUtil.<String,String>immutableMapBuilder()
-    .put("12","angular.1.2.28.js")
-    .put("13","angular.1.3.15.js")
-    .put("14","angular.1.4.0.js")
-    .build();
+  private static final Map<String, String> VERSIONS = Map.of(
+    "12","angular.1.2.28.js",
+    "13","angular.1.3.15.js",
+    "14","angular.1.4.0.js");
 
   @SuppressWarnings("MethodOverridesStaticMethodOfSuperclass")
   public static String findTestData(@NotNull Class<?> klass) {

@@ -118,7 +118,7 @@
                      groupKey="protobuf.inspections.group.name"
                      enabledByDefault="true"
                      implementationClass="com.intellij.protobuf.lang.inspection.PbDuplicatedImportsInspection"/>
-    <codeInsight.lineMarkerProvider language=""
+    <codeInsight.lineMarkerProvider language="protobuf"
                                     implementationClass="com.intellij.protobuf.ide.gutter.PbCodeImplementationLineMarkerProvider"/>
 
     <!-- Navigation -->
@@ -138,16 +138,12 @@
     <stubIndex implementation="com.intellij.protobuf.lang.stub.index.ShortNameIndex"/>
 
     <!-- Settings -->
-    <postStartupActivity implementation="com.intellij.protobuf.ide.settings.BundledProtoResourcesMigrationPostStartupActivity"
-                         id="PbSettingsMigrationActivity"/>
     <projectConfigurable instance="com.intellij.protobuf.ide.settings.PbLanguageSettingsConfigurable" groupId="language">
       <configurable instance="com.intellij.protobuf.ide.settings.PbTextLanguageSettingsConfigurable"/>
     </projectConfigurable>
     <projectService serviceImplementation="com.intellij.protobuf.ide.settings.PbProjectSettings"/>
     <projectService serviceImplementation="com.intellij.protobuf.ide.settings.PbTextLanguageSettings"/>
-    <postStartupActivity
-      implementation="com.intellij.protobuf.ide.settings.ProjectSettingsConfiguratorManager$ProjectOpenedActivity"
-      order="after PbSettingsMigrationActivity"/>
+    <postStartupActivity implementation="com.intellij.protobuf.ide.settings.ProjectSettingsConfiguratorManager$ProjectOpenedActivity"/>
 
     <!-- Enable usage highlights for non-project targets -->
     <useScopeEnlarger implementation="com.intellij.protobuf.lang.resolve.PbUseScopeEnlarger"/>

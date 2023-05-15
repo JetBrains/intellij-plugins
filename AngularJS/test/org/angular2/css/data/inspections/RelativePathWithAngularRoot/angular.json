@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "projects": {
+    "relativePathWithAngularRoot": {
+      "projectType": "application",
+      "root": ""
+    }
+  }
+}

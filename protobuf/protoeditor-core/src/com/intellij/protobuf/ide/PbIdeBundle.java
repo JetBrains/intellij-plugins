@@ -20,18 +20,15 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.PropertyKey;
 
-public final class PbIdeBundle extends DynamicBundle {
-  private static final PbIdeBundle INSTANCE = new PbIdeBundle();
+public final class PbIdeBundle {
+  private static final @NonNls String BUNDLE = "messages.ProtobufIdeBundle";
 
-  @NonNls
-  private static final String BUNDLE = "messages.ProtobufIdeBundle";
+  private static final DynamicBundle INSTANCE = new DynamicBundle(PbIdeBundle.class, BUNDLE);
 
   private PbIdeBundle() {
-    super(BUNDLE);
   }
 
-  @Nls
-  public static String message(@PropertyKey(resourceBundle = BUNDLE) String key, Object... params) {
+  public static @Nls String message(@PropertyKey(resourceBundle = BUNDLE) String key, Object... params) {
     return INSTANCE.getMessage(key, params);
   }
 }

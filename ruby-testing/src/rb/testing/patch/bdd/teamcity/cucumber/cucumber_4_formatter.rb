@@ -100,7 +100,7 @@ module Teamcity
         end
 
         if event.result.duration.kind_of?(::Cucumber::Core::Test::Result::Duration)
-          duration_ms = event.result.duration.nanoseconds / 1000
+          duration_ms = event.result.duration.nanoseconds / 1_000_000
         else
           duration_ms = 0
         end

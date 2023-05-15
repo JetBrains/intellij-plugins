@@ -11,9 +11,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Irina.Chernushina on 6/4/2015.
- */
 public final class TsLintConfigFileChangeTracker extends JSLinterConfigChangeTracker {
 
   public TsLintConfigFileChangeTracker(@NotNull Project project) {

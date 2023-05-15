@@ -66,8 +66,7 @@ public class DartCoverageEngine extends CoverageEngine {
                                            @NotNull String name,
                                            @NotNull CoverageFileProvider coverageDataFileProvider,
                                            @NotNull CoverageEnabledConfiguration config) {
-    if (config instanceof DartCoverageEnabledConfiguration) {
-      DartCoverageEnabledConfiguration dartConfig = (DartCoverageEnabledConfiguration)config;
+    if (config instanceof DartCoverageEnabledConfiguration dartConfig) {
       Project project = config.getConfiguration().getProject();
       final String contextFilePath = ((DartCommandLineRunConfiguration)dartConfig.getConfiguration()).getRunnerParameters().getFilePath();
       return new DartCoverageSuite(project, name, coverageDataFileProvider, covRunner, contextFilePath, dartConfig.getCoverageProcess());

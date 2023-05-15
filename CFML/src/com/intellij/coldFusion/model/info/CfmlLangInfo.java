@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.info;
 
 import com.intellij.coldFusion.UI.config.CfmlProjectConfiguration;
@@ -6,7 +6,6 @@ import com.intellij.coldFusion.model.CfmlLanguage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.reference.SoftReference;
 import com.intellij.util.text.LineReader;
 import org.jetbrains.annotations.Nullable;
 import org.xml.sax.InputSource;
@@ -15,14 +14,14 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 import java.io.InputStream;
 import java.lang.ref.Reference;
+import java.lang.ref.SoftReference;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * @author vnikolaenko
- */
+import static com.intellij.reference.SoftReference.dereference;
+
 public class CfmlLangInfo {
   private final Project myProject;
   private Reference<CfmlLangDictionary> myCFDictionary;
@@ -83,12 +82,12 @@ public class CfmlLangInfo {
     CfmlLangDictionary dictionary;
 
     if (Objects.equals(myCFDictionaryLevel, languageLevel)) {
-      dictionary = SoftReference.dereference(myCFDictionary);
+      dictionary = dereference(myCFDictionary);
       if (dictionary != null) return dictionary;
     }
 
     synchronized (CfmlLangInfo.class) {
-      dictionary = SoftReference.dereference(myCFDictionary);
+      dictionary = dereference(myCFDictionary);
       if (dictionary == null || !Objects.equals(myCFDictionaryLevel, languageLevel)) {
         dictionary = new CfmlLangDictionary("scopes.txt", languageLevel);
         myCFDictionary = new SoftReference<>(dictionary);

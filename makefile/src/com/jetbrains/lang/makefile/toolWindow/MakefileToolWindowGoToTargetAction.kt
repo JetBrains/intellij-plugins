@@ -14,7 +14,7 @@ class MakefileToolWindowGoToTargetAction(private val tree: Tree, private val pro
     val selectedNodes = tree.getSelectedNodes(MakefileTargetNode::class.java, {true})
     if (selectedNodes.any()) {
       val selected = selectedNodes.first()
-      val elements = MakefileTargetIndex.get(selected.name, project, GlobalSearchScope.fileScope(selected.parent.psiFile))
+      val elements = MakefileTargetIndex.getInstance().get(selected.name, project, GlobalSearchScope.fileScope(selected.parent.psiFile))
       elements.first().navigate(true)
     }
   }

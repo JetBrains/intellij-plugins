@@ -31,8 +31,7 @@ public class PbElementDescriptionProvider implements ElementDescriptionProvider 
   @Override
   public String getElementDescription(@NotNull PsiElement element, @NotNull ElementDescriptionLocation location) {
     if (location instanceof UsageViewLongNameLocation) {
-      if (element instanceof PbSymbol) {
-        PbSymbol symbol = (PbSymbol) element;
+      if (element instanceof PbSymbol symbol) {
         QualifiedName qualifiedName = symbol.getQualifiedName();
         if (qualifiedName != null) {
           return qualifiedName.toString();

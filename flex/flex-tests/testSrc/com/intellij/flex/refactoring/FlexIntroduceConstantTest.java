@@ -13,6 +13,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.refactoring.introduceConstant.FlexIntroduceConstantHandler;
 import com.intellij.lang.javascript.refactoring.introduceConstant.IntroduceConstantInfoProvider;
 import com.intellij.lang.javascript.refactoring.introduceConstant.JSIntroduceConstantSettings;
+import com.intellij.lang.javascript.refactoring.introduceVariable.JSIntroduceVariableTestCase;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
@@ -20,6 +21,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
+import com.intellij.refactoring.util.CommonRefactoringUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class FlexIntroduceConstantTest extends JavaCodeInsightTestCase {
@@ -94,6 +96,7 @@ public class FlexIntroduceConstantTest extends JavaCodeInsightTestCase {
       myFile = PsiDocumentManager.getInstance(myProject).getPsiFile(myEditor.getDocument());
     }
     handler.invoke(getProject(), getEditor(), getFile(), null);
+    JSIntroduceVariableTestCase.waitIntroduceHandler();
     if (injectedEditor instanceof EditorWindow) {
       myEditor = ((EditorWindow)injectedEditor).getDelegate();
       myFile = PsiDocumentManager.getInstance(myProject).getPsiFile(myEditor.getDocument());
@@ -133,14 +136,13 @@ public class FlexIntroduceConstantTest extends JavaCodeInsightTestCase {
     doTest("created", false, JSAttributeList.AccessType.PRIVATE, getTestName(false), "js2");
   }
 
-  public void testCannotIntroduce() throws Exception {
-    try {
-      doTest("created", false, JSAttributeList.AccessType.PRIVATE, getTestName(false), "js2");
-      assertFalse(true);
-    }
-    catch (RuntimeException ex) {
-      assertEquals(ex.getMessage(), JavaScriptBundle.message("javascript.introduce.constant.error.not.constant.expression.selected"));
-    }
+  public void testCannotIntroduce() {
+    assertThrows(
+      CommonRefactoringUtil.RefactoringErrorHintException.class,
+      JavaScriptBundle.message("javascript.introduce.constant.error.not.constant.expression.selected"),
+      () -> {
+        doTest("created", false, JSAttributeList.AccessType.PRIVATE, getTestName(false), "js2");
+      });
   }
 
   public void testNiceNameWhenIntroducingFromLiteral() throws Exception {

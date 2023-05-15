@@ -6,7 +6,7 @@
   <category>Version Controls</category>
   <description>
       <![CDATA[
-      Allows working with <a href="http://www.perforce.com/">Perforce version control system</a>.
+      Allows working with <a href="https://www.perforce.com/">Perforce version control system</a>.
       The following features are available:
         <ul>
         <li>Submit, merge, diff, shelf and more</li>
@@ -49,6 +49,13 @@
       <add-to-group group-id="VcsGlobalGroup" anchor="after" relative-to-action="Vcs.Specific"/>
     </group>
 
+    <group id="Perforce.Toolbar">
+      <reference id="Vcs.UpdateProject"/>
+      <reference id="CheckinProject"/>
+      <reference id="ChangesView.Revert"/>
+      <reference id="PerforceEnableIntegration"/>
+    </group>
+
     <action id="SetJobsForChangeList" class="org.jetbrains.idea.perforce.actions.LinkChangeListToJobsAction">
       <add-to-group group-id="ChangesViewPopupMenu" relative-to-action="EditSource" anchor="after"/>
     </action>
@@ -75,6 +82,12 @@
     <action id="Perforce.Toolbar.ShowMoreActions" class="org.jetbrains.idea.perforce.actions.PerforceQuickActionsToolbarPopup">
       <add-to-group group-id="SegmentedVcsActionsBarGroup" anchor="last"/>
     </action>
+    <action id="Perforce.Toolbar.WorkspaceAction" class="org.jetbrains.idea.perforce.actions.PerforceWorkspaceComboBoxAction">
+      <add-to-group group-id="SegmentedVcsActionsBarGroup" anchor="first"/>
+    </action>
+    <action id="Perforce.Toolbar.PerforceToolbarWidgetAction" class="org.jetbrains.idea.perforce.actions.PerforceToolbarWidgetAction">
+      <add-to-group group-id="MainToolbarLeft"/>
+    </action>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -94,11 +107,15 @@
     <projectService serviceImplementation="org.jetbrains.idea.perforce.operations.VcsOperationLog"/>
     <projectService serviceImplementation="org.jetbrains.idea.perforce.application.LastSuccessfulUpdateTracker"/>
     <projectService serviceImplementation="org.jetbrains.idea.perforce.application.PerforceNumberNameSynchronizer"/>
+    <projectService serviceImplementation="org.jetbrains.idea.perforce.perforce.connections.P4EnvHelper"/>
 
     <registryKey key="p4.ignore.all.potentially.ignored" defaultValue="true"
                  description="Consider all excluded files as ignored and do not check them via native ignores"/>
 
     <registryKey key="p4.new.project.mappings.handling" defaultValue="true" restartRequired="true"
                  description="Use new approach to automatic P4 root detection for &lt;Project&gt; mapping"/>
+
+    <registryKey key="p4.use.p4.sync.for.incoming.files" defaultValue="false"
+                 description="Use p4 sync to get a list of incoming files during the refresh"/>
   </extensions>
 </idea-plugin>

@@ -1,7 +1,8 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.psi.util;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.RecursionManager;
 import com.intellij.openapi.util.Ref;
@@ -15,6 +16,8 @@ import com.intellij.psi.impl.beanProperties.BeanProperty;
 import com.intellij.psi.impl.beanProperties.BeanPropertyElement;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PropertyUtilBase;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.CommonProcessors.CollectProcessor;
@@ -26,15 +29,17 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public final class DroolsResolveUtil {
-  public static DroolsDeclarationsProcessor[] myDeclarationsProcessors = new DroolsDeclarationsProcessor[]{
+  public static final DroolsDeclarationsProcessor[] myDeclarationsProcessors = new DroolsDeclarationsProcessor[]{
     DroolsImportedPackagesProcessor.getInstance(),
     DroolsImportedClassesProcessor.getInstance(),
     DroolsLhsBindVariablesProcessor.getInstance(),
+    DroolsLhsOOPathBindVariablesProcessor.getInstance(),
     DroolsImplicitVariablesProcessor.getInstance(),
     DroolsGlobalVariablesProcessor.getInstance(),
     DroolsFunctionsProcessor.getInstance(),
     DroolsDeclaredTypesProcessor.getInstance(),
     DroolsLocalVariablesProcessor.getInstance(),
+    DroolsUnitMembersProcessor.getInstance(),
     DroolsRhsImplicitAssignExpressionsProcessor.getInstance()
   };
 
@@ -96,6 +101,7 @@ public final class DroolsResolveUtil {
     if (!processConstrains(processor, reference)) return false;
     if (!processPrimaryExpression(processor, reference)) return false;
     if (!processPatternBinds(processor, reference)) return false;
+    if (!processOOPathBinds(processor, reference)) return false;
 
     if (!processQueries(processor, reference)) return false;
 
@@ -195,9 +201,11 @@ public final class DroolsResolveUtil {
 
   private static boolean processClassMembers(@NotNull CollectProcessor<PsiElement> processor, DroolsReference leftReference) {
     PsiElement resolve = leftReference.resolve();
-    if (resolve instanceof DroolsLhsPatternBind) {
-      final DroolsLhsPatternBind bind = (DroolsLhsPatternBind)resolve;
+    if (resolve instanceof DroolsLhsPatternBind bind) {
       return processClassMembers(processor, getPatternBindType(bind.getLhsPatternList()), false);
+    }
+    else if (resolve instanceof DroolsLhsOOPathBind bind) {
+      return processClassMembers(processor, getPatternOOPathBindType(bind.getLhsOOPSegmentList()), false);
     }
     else if (resolve instanceof DroolsUnaryAssignExpr) {
       DroolsLhsPattern droolsLhsPattern = PsiTreeUtil.getParentOfType(resolve, DroolsLhsPattern.class);
@@ -214,6 +222,12 @@ public final class DroolsResolveUtil {
         return processClassMembers(processor, Collections.singleton(((PsiClassType)type).resolve()), false);
       }
     }
+    else if (resolve instanceof BeanProperty) {
+      PsiType type = ((BeanProperty)resolve).getPropertyType();
+      if (type instanceof PsiClassType) {
+        return processClassMembers(processor, Collections.singleton(((PsiClassType)type).resolve()), false);
+      }
+    }
     return true;
   }
 
@@ -223,6 +237,16 @@ public final class DroolsResolveUtil {
       final DroolsLhsPattern lhsPatternBind = PsiTreeUtil.getParentOfType(constraint, DroolsLhsPattern.class);
       if (lhsPatternBind != null) {
         if (!processClassMembers(processor, getPatternBindType(Collections.singletonList(lhsPatternBind)), false)) return false;
+      }
+      else {
+        final @Nullable DroolsLhsOOPSegment lhsOOPSegment = PsiTreeUtil.getParentOfType(constraint, DroolsLhsOOPSegment.class);
+        if (lhsOOPSegment != null) {
+          if (!processClassMembers(processor, getPatternOOPathBindType(Collections.singletonList(lhsOOPSegment)), false)) return false;
+        }
+      }
+      final PsiClass unitClass = getUnitClass((DroolsFile)constraint.getContainingFile());
+      if (unitClass != null) {
+        if (!processClassMembers(processor, Collections.singleton(unitClass), false)) return false;
       }
     }
     return true;
@@ -250,6 +274,36 @@ public final class DroolsResolveUtil {
     return true;
   }
 
+  private static boolean processOOPathBinds(CollectProcessor<PsiElement> processor, DroolsReference reference) {
+    Set<PsiVariable> patternBinds = DroolsLhsOOPathBindVariablesProcessor.getOOPathBinds(reference);
+    for (PsiVariable psiVariable : patternBinds) {
+      if (!processor.process(psiVariable)) return false;
+    }
+    return true;
+  }
+
+  @Nullable
+  public static PsiClass getUnitClass(@NotNull DroolsFile droolsFile) {
+    return CachedValuesManager.getCachedValue(droolsFile, () -> {
+      return CachedValueProvider.Result.create(getUnitPsiClass(droolsFile), droolsFile,
+                                               ProjectRootManager.getInstance(droolsFile.getProject()));
+    });
+  }
+
+  @Nullable
+  private static PsiClass getUnitPsiClass(@NotNull DroolsFile droolsFile) {
+    final DroolsUnitStatement unitStatement = droolsFile.getUnitStatement();
+    if (unitStatement != null) {
+      final String name = unitStatement.getUnitName().getText();
+      for (PsiPackage defaultPackage : getDefaultPackages(droolsFile)) {
+        final PsiClass[] classByShortName =
+          defaultPackage.findClassByShortName(name, GlobalSearchScope.projectScope(droolsFile.getProject()));
+        if (classByShortName.length > 0) return classByShortName[0];
+      }
+    }
+    return null;
+  }
+
   private static boolean processParameters(CollectProcessor<PsiElement> processor, DroolsReference reference) {
     final DroolsFakePsiMethod psiMethod = PsiTreeUtil.getParentOfType(reference, DroolsFakePsiMethod.class);
     if (psiMethod != null) {
@@ -264,6 +318,20 @@ public final class DroolsResolveUtil {
   private static Set<PsiClass> resolveBoundVariableType(DroolsLhsPattern lhsPattern) {
     DroolsQualifiedIdentifier qi = lhsPattern.getLhsPatternType().getQualifiedIdentifier();
     return resolveQualifiedIdentifier(qi);
+  }
+
+  @NotNull
+  private static Set<PsiClass> resolveOOPathBoundVariableType(DroolsLhsOOPSegment lhsPattern) {
+    final String name = lhsPattern.getLhsOOPathSegmentId().getText();
+    final String classNameCandidate = StringUtil.unpluralize(StringUtil.capitalize(name));
+    if (StringUtil.isEmptyOrSpaces(classNameCandidate)) return Collections.emptySet();
+    final PsiFile file = lhsPattern.getContainingFile();
+    if (file instanceof DroolsFile) {
+      for (PsiClass aClass : getExplicitlyImportedClasses((DroolsFile)file)) {
+        if (classNameCandidate.equals(aClass.getName())) return Collections.singleton(aClass);
+      }
+    }
+    return Collections.emptySet();
   }
 
   @NotNull
@@ -405,18 +473,25 @@ public final class DroolsResolveUtil {
     for (PsiClass psiClass : psiClasses) {
       if (psiClass == null) continue;
       if (isStatic) {
-        for (PsiField field : psiClass.getAllFields()) {
-          final PsiModifierList modifierList = field.getModifierList();
-          if (modifierList != null
-              && modifierList.hasModifierProperty(PsiModifier.PUBLIC)
-              && modifierList.hasModifierProperty(PsiModifier.STATIC)) {
+        if (psiClass.isEnum()) {
+          for (PsiField field : psiClass.getAllFields()) {
             if (!processor.process(field)) return false;
           }
         }
-        for (PsiMethod method : psiClass.getAllMethods()) {
-          final PsiModifierList modifierList = method.getModifierList();
-          if (modifierList.hasModifierProperty(PsiModifier.PUBLIC) && modifierList.hasModifierProperty(PsiModifier.STATIC)) {
-            if (!processor.process(method)) return false;
+        else {
+          for (PsiField field : psiClass.getAllFields()) {
+            final PsiModifierList modifierList = field.getModifierList();
+            if (modifierList != null
+                && modifierList.hasModifierProperty(PsiModifier.PUBLIC)
+                && modifierList.hasModifierProperty(PsiModifier.STATIC)) {
+              if (!processor.process(field)) return false;
+            }
+          }
+          for (PsiMethod method : psiClass.getAllMethods()) {
+            final PsiModifierList modifierList = method.getModifierList();
+            if (modifierList.hasModifierProperty(PsiModifier.PUBLIC) && modifierList.hasModifierProperty(PsiModifier.STATIC)) {
+              if (!processor.process(method)) return false;
+            }
           }
         }
       }
@@ -440,6 +515,15 @@ public final class DroolsResolveUtil {
     Set<PsiClass> psiClasses = new HashSet<>();
     for (DroolsLhsPattern lhsPattern : patternBinds) {
       psiClasses.addAll(resolveBoundVariableType(lhsPattern));
+    }
+    return psiClasses;
+  }
+
+  @NotNull
+  public static Set<PsiClass> getPatternOOPathBindType(@NotNull List<DroolsLhsOOPSegment> oopSegments) {
+    Set<PsiClass> psiClasses = new HashSet<>();
+    for (DroolsLhsOOPSegment lhsPattern : oopSegments) {
+      psiClasses.addAll(resolveOOPathBoundVariableType(lhsPattern));
     }
     return psiClasses;
   }
@@ -477,6 +561,7 @@ public final class DroolsResolveUtil {
 
       processConstrains(processor, reference);
       processPatternBinds(processor, reference);
+      processOOPathBinds(processor, reference);
 
       for (PsiElement resolve : processor.getResults()) {
         if (resolve instanceof PsiVariable) {
@@ -623,8 +708,7 @@ public final class DroolsResolveUtil {
 
     @Override
     public boolean process(PsiElement psiElement) {
-      if (psiElement instanceof PsiMethod) {
-        final PsiMethod psiMethod = (PsiMethod)psiElement;
+      if (psiElement instanceof PsiMethod psiMethod) {
         if (myTextToResolve.equals(psiMethod.getName())) {
           getResults().add(psiMethod);
         }
@@ -637,8 +721,7 @@ public final class DroolsResolveUtil {
           }
         }
       }
-      else if (psiElement instanceof PsiField) {
-        final PsiField psiField = (PsiField)psiElement;
+      else if (psiElement instanceof PsiField psiField) {
         if (myTextToResolve.equals(psiField.getName())) {
           getResults().add(psiField);
         }

@@ -20,7 +20,9 @@ import com.intellij.psi.impl.source.xml.XmlAttributeValueImpl
 import com.intellij.psi.impl.source.xml.XmlTextImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.parents
 import com.intellij.psi.xml.XmlAttribute
+import com.intellij.psi.xml.XmlTag
 import com.intellij.util.NullableFunction
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.es6Unquote
@@ -29,10 +31,11 @@ import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.index.VueOptionsIndex
 import org.jetbrains.vuejs.index.resolve
+import org.jetbrains.vuejs.lang.VueScriptLangs
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
-import org.jetbrains.vuejs.lang.expr.parser.VueJSParserDefinition
+import org.jetbrains.vuejs.lang.expr.parser.VueExprParsing
 import org.jetbrains.vuejs.lang.html.VueLanguage
-import org.jetbrains.vuejs.lang.html.parser.VueFileElementType.Companion.INJECTED_FILE_SUFFIX
+import org.jetbrains.vuejs.lang.html.VueFileElementType.Companion.INJECTED_FILE_SUFFIX
 import org.jetbrains.vuejs.libraries.componentDecorator.isComponentDecorator
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueRegularComponent
@@ -46,7 +49,7 @@ class VueInjector : MultiHostInjector {
     private val delimitersOptionHolders = setOf("Vue.config.delimiters", "Vue.options.delimiters")
 
     val BRACES_FACTORY: NullableFunction<PsiElement, Pair<String, String>> = JSInjectionBracesUtil.delimitersFactory(
-      VueJSLanguage.INSTANCE.displayName,
+      VueJSLanguage.INSTANCE.id, // might be slightly wrong for VueTSLanguage, but so far nothing was found
       { element ->
         (VueModelManager.findEnclosingContainer(element) as? VueSourceContainer)
           ?.delimiters
@@ -95,6 +98,8 @@ class VueInjector : MultiHostInjector {
     val parent = context.parent
     if (parent == null || !isVueContext(context)) return
 
+    if (inVPreContext(context)) return
+
     // this supposed to work in <template lang="jade"> attribute values
     if (context is XmlAttributeValueImpl
         && context.value.isNotBlank()
@@ -106,11 +111,11 @@ class VueInjector : MultiHostInjector {
         if (embedded != null) {
           val literal = PsiTreeUtil.getChildOfType(embedded, JSLiteralExpressionImpl::class.java)
           if (literal != null && literal.isValidHost) {
-            injectInElement(literal, registrar, parent.name)
+            injectExpressionIn(literal, registrar, parent.name)
           }
         }
         else {
-          injectInElement(context, registrar, parent.name)
+          injectExpressionIn(context, registrar, parent.name)
         }
       }
       return
@@ -118,9 +123,10 @@ class VueInjector : MultiHostInjector {
 
     if (context is XmlTextImpl || context is XmlAttributeValueImpl) {
       val braces = Holder.BRACES_FACTORY.`fun`(context) ?: return
-      injectInXmlTextByDelimiters(registrar, context, VueJSLanguage.INSTANCE,
+      val exprLanguage = VueScriptLangs.getLatestKnownLang(context).exprLang
+      injectInXmlTextByDelimiters(registrar, context, exprLanguage,
                                   braces.getFirst(), braces.getSecond(),
-                                  VueJSParserDefinition.INTERPOLATION)
+                                  VueExprParsing.INTERPOLATION)
     }
     else if (context is JSLiteralExpressionImpl
              && context.isQuotedLiteral
@@ -155,11 +161,11 @@ class VueInjector : MultiHostInjector {
              ?.let { isComponentDecorator(it) } == true
   }
 
-  private fun injectInElement(host: PsiLanguageInjectionHost,
-                              registrar: MultiHostRegistrar,
-                              attributeName: String) {
-    registrar.startInjecting(VueJSLanguage.INSTANCE, "${attributeName.replace('.', ' ')}.${VueJSParserDefinition.EXPRESSION}")
-      .addPlace(null, null, host, ElementManipulators.getValueTextRange(host))
+  private fun injectExpressionIn(context: PsiLanguageInjectionHost, registrar: MultiHostRegistrar, attributeName: String) {
+    val exprLanguage = VueScriptLangs.getLatestKnownLang(context).exprLang
+    val extension = "${attributeName.replace('.', ' ')}.${VueExprParsing.EXPRESSION}"
+    registrar.startInjecting(exprLanguage, extension)
+      .addPlace(null, null, context, ElementManipulators.getValueTextRange(context))
       .doneInjecting()
   }
 
@@ -168,4 +174,9 @@ class VueInjector : MultiHostInjector {
                   XmlAttributeValueImpl::class.java,
                   JSLiteralExpressionImpl::class.java)
   }
+
+  private fun inVPreContext(element: PsiElement): Boolean =
+    element.parents(true).any {
+      (it as? XmlTag)?.getAttribute("v-pre") != null
+    }
 }

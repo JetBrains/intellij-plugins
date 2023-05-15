@@ -49,8 +49,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -62,9 +62,9 @@ import java.util.stream.Stream;
 public final class MdxTagNameSynchronizer implements EditorFactoryListener {
   private static final Key<Boolean> SKIP_COMMAND;
   private static final Logger LOG = Logger.getInstance(MdxTagNameSynchronizer.class);
-  private static final Set<Language> SUPPORTED_LANGUAGES = ContainerUtil.set(HTMLLanguage.INSTANCE,
-                                                                             XMLLanguage.INSTANCE,
-                                                                             XHTMLLanguage.INSTANCE, MdxJSLanguage.Companion.getINSTANCE());
+  private static final List<Language> SUPPORTED_LANGUAGES = List.of(HTMLLanguage.INSTANCE,
+                                                                    XMLLanguage.INSTANCE,
+                                                                    XHTMLLanguage.INSTANCE, MdxJSLanguage.Companion.getINSTANCE());
 
   private static final Key<TagNameSynchronizer> SYNCHRONIZER_KEY = Key.create("tag_name_synchronizer");
 

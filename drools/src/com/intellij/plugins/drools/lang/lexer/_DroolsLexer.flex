@@ -5,11 +5,29 @@ import static com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes.*;
 import static com.intellij.plugins.drools.lang.lexer.DroolsTokenTypeSets.*;
 import com.intellij.lexer.*;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.TokenType;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 
 %%
 %{
   public _DroolsLexer() {
     this((java.io.Reader)null);
+  }
+  private final IntArrayList myStateStack = new IntArrayList();
+
+  private void pushState(int newState) {
+   myStateStack.add(yystate());
+   yybegin(newState);
+  }
+
+  private void popState() {
+   if (myStateStack.isEmpty()) return;
+   int state = myStateStack.removeInt(myStateStack.size() - 1);
+   yybegin(state);
+  }
+
+  protected void resetInternal() {
+    myStateStack.clear();
   }
 %}
 
@@ -23,6 +41,7 @@ import com.intellij.psi.tree.IElementType;
 %state LHS_STATE
 %state RHS_STATE
 %state QUERY_STATE
+%state FQN_STATE
 
 WHITE_SPACE_CHAR=[\ \n\r\t\f]
 SINGLE_LINE_COMMENT="/""/"[^\r\n]*
@@ -38,6 +57,7 @@ DIGIT = [:digit:]
 ESCAPE_SEQUENCE=\\[^\r\n]
 
 JAVA_IDENTIFIER=("$" | "_")? {LETTER} ({DIGIT} | "_" | {LETTER})*
+STRING_IDENTIFIER=  ({DIGIT}| {LETTER})*
 
 HEX_DIGIT = [0-9A-Fa-f]
 INT_DIGIT = [0-9]
@@ -52,7 +72,10 @@ NUM_FLOAT = ( (({DIGIT}* "." {DIGIT}+) | ({DIGIT}+ "." {DIGIT}*)) {FLOAT_EXPONEN
 
 CHARACTER_LITERAL="'"([^\\\'\r\n]|{ESCAPE_SEQUENCE})*("'"|\\)?
 STRING_LITERAL=\"([^\\\"\r\n]|{ESCAPE_SEQUENCE})*(\"|\\)?
-ESCAPE_SEQUENCE=\\[^\r\n]
+
+%eof{
+  resetInternal();
+%eof}
 
 %%
 <YYINITIAL> "when" {{ yybegin(LHS_STATE);  return WHEN;}}
@@ -66,6 +89,11 @@ ESCAPE_SEQUENCE=\\[^\r\n]
     "break"                       {  return      BREAK; }
     "then" {yybegin(YYINITIAL); return THEN; }
     "end" {yybegin(YYINITIAL); return END;}
+}
+
+<FQN_STATE> {
+  "."                         { return DOT; }
+  {JAVA_IDENTIFIER}           {  return JAVA_IDENTIFIER ; }
 }
 
 <YYINITIAL, LHS_STATE, QUERY_STATE> {
@@ -113,8 +141,10 @@ ESCAPE_SEQUENCE=\\[^\r\n]
 "end"                         {  return      END; }
 "over"                        {  return      OVER; }
 "init"                        {  return      INIT; }
+"unit"                        {  return      UNIT; }
 "modify"                      {  return      MODIFY; }
 "update"                      {  return      UPDATE; }
+"enum"                        {  return      ENUM; }
 "retract"                     {  return      RETRACT; }
 "insert"                      {  return      INSERT; }
 "insertLogical"               {  return      INSERT_LOGICAL; }
@@ -123,6 +153,7 @@ ESCAPE_SEQUENCE=\\[^\r\n]
 "matches"                     {  return      MATCHES; }
 "soundslike"                  {  return      SOUNDSLIKE; }
 "isA"                         {  return      IS_A; }
+"window"                      {  return      WINDOW; }
 
 "this"                        {  return      THIS; }
 
@@ -136,7 +167,6 @@ ESCAPE_SEQUENCE=\\[^\r\n]
 ";"                           {  return       SEMICOLON; }
 ":"                           {  return       COLON; }
 ","                           {  return       COMMA; }
-"."                           {  return       DOT; }
 "?"                           {  return       QUEST; }
 
 "+"                           {  return       OP_PLUS; }
@@ -153,6 +183,7 @@ ESCAPE_SEQUENCE=\\[^\r\n]
 "/="                          {  return       OP_DIV_ASSIGN; }
 "&="                          {  return       OP_BIT_AND_ASSIGN; }
 "|="                          {  return       OP_BIT_OR_ASSIGN; }
+"!."                          {  return       NULL_DOT; }
 "^="                          {  return       OP_BIT_XOR_ASSIGN; }
 "%="                          {  return       OP_REMAINDER_ASSIGN; }
 "<<="                         {  return       OP_SL_ASSIGN; }
@@ -185,8 +216,10 @@ ESCAPE_SEQUENCE=\\[^\r\n]
 "float"                       {  return       FLOAT; }
 "double"                      {  return       DOUBLE; }
 "void"                        {  return       VOID; }
+"."                            { return DOT; }
 
-{JAVA_IDENTIFIER}             {  return     JAVA_IDENTIFIER ; }
+{JAVA_IDENTIFIER}             {  pushState(FQN_STATE); return JAVA_IDENTIFIER ; }
+
 {SINGLE_LINE_COMMENT}         {  return     SINGLE_LINE_COMMENT ; }
 {SINGLE_LINE_COMMENT_DEPR}    {  return     SINGLE_LINE_COMMENT_DEPR ; }
 {MULTI_LINE_COMMENT}          {  return     MULTI_LINE_COMMENT ; }
@@ -194,5 +227,14 @@ ESCAPE_SEQUENCE=\\[^\r\n]
 {CHARACTER_LITERAL}           {  return     CHARACTER_LITERAL; }
 {NUM_INT} | {NUM_HEX}         {  return     INT_TOKEN ; }
 {NUM_FLOAT}                   {  return     FLOAT_TOKEN ; }
+{STRING_IDENTIFIER}           {  return     STRING_IDENTIFIER ; }
 }
-[^] {  yybegin(YYINITIAL); return com.intellij.psi.TokenType.BAD_CHARACTER; }
+
+[^] {
+        if (myStateStack.isEmpty()) {
+          return TokenType.BAD_CHARACTER;
+        }
+
+        yypushback(yylength());
+        popState();
+    }

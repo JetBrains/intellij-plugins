@@ -88,7 +88,7 @@
                              implementationClass="com.thoughtworks.gauge.findUsages.SpecStepFindUsagesProvider"/>
     <lang.findUsagesProvider language="Concept"
                              implementationClass="com.thoughtworks.gauge.findUsages.ConceptStepFindUsagesProvider"/>
-    <referencesSearch implementation="com.thoughtworks.gauge.findUsages.ReferenceSearch"/>
+    <referencesSearch implementation="com.thoughtworks.gauge.findUsages.GaugeReferenceSearch"/>
     <findUsagesHandlerFactory implementation="com.thoughtworks.gauge.findUsages.CustomFindUsagesHandlerFactory"/>
     <defaultLiveTemplates file="liveTemplates/gaugeTemplates.xml"/>
 

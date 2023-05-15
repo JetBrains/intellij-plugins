@@ -7,9 +7,6 @@ import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @author irengrig
- */
 public interface P4RootsInformation {
   MultiMap<P4Connection, VcsException> getErrors();
   boolean hasAnyErrors();

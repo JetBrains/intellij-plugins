@@ -41,10 +41,9 @@ abstract class PbOneofBodyMixin extends PbElementBase implements PbOneofBody {
   @Nullable
   public QualifiedName getExtensionOptionScope() {
     PsiElement parent = getParent();
-    if (!(parent instanceof PbOneofDefinition)) {
+    if (!(parent instanceof PbOneofDefinition oneof)) {
       return null;
     }
-    PbOneofDefinition oneof = (PbOneofDefinition) parent;
     QualifiedName name = oneof.getQualifiedName();
     return name != null ? name.removeLastComponent() : null;
   }

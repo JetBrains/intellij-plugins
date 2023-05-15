@@ -90,8 +90,7 @@ final class FlexSmartStepIntoHandler extends XSmartStepIntoHandler<PsiBackedSmar
         visited.add(expr);
         PsiElement resolve = expr.resolve();
 
-        if (resolve instanceof JSFunction) {
-          JSFunction fun = (JSFunction)resolve;
+        if (resolve instanceof JSFunction fun) {
           PsiElement responsibleElement = expr;
 
           PsiElement parent = responsibleElement.getParent();

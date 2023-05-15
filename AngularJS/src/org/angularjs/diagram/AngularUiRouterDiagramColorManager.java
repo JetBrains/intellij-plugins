@@ -33,8 +33,7 @@ public final class AngularUiRouterDiagramColorManager extends DiagramColorManage
   }
 
   private @NotNull Color getColor(DiagramBuilder builder, Object nodeElement) {
-    if (nodeElement instanceof DiagramObject) {
-      DiagramObject element = ((DiagramObject)nodeElement);
+    if (nodeElement instanceof DiagramObject element) {
       if (Type.state.equals(element.getType())) {
         return LightColors.YELLOW;
       }

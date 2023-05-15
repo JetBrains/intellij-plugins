@@ -61,10 +61,9 @@ public final class FlashUmlDataModel extends DiagramDataModel<Object> {
     super(project, provider);
     myEditorFile = file;
     spManager = SmartPointerManager.getInstance(project);
-    if (element instanceof JSClass) {
+    if (element instanceof JSClass psiClass) {
       initialPackage = null;
       myInitialElement = spManager.createSmartPsiElementPointer((JSClass)element);
-      JSClass psiClass = (JSClass)element;
       classesAddedByUser.put(psiClass.getQualifiedName(), (SmartPsiElementPointer<JSClass>)myInitialElement);
       final Collection<JSClass> classes = JSInheritanceUtil.findAllParentsForClass(psiClass, true);
       for (JSClass aClass : classes) {
@@ -170,12 +169,9 @@ public final class FlashUmlDataModel extends DiagramDataModel<Object> {
     final Object source = edge.getSource().getIdentifyingElement();
     final Object target = edge.getTarget().getIdentifyingElement();
     final DiagramRelationshipInfo relationship = edge.getRelationship();
-    if (!(source instanceof JSClass) || !(target instanceof JSClass) || relationship == DiagramRelationshipInfo.NO_RELATIONSHIP) {
+    if (!(source instanceof JSClass fromClass) || !(target instanceof JSClass toClass) || relationship == DiagramRelationshipInfo.NO_RELATIONSHIP) {
       return;
     }
-
-    final JSClass fromClass = (JSClass)source;
-    final JSClass toClass = (JSClass)target;
 
     if (JSProjectUtil.isInLibrary(fromClass)) {
       return;
@@ -392,16 +388,16 @@ public final class FlashUmlDataModel extends DiagramDataModel<Object> {
     if (!options.contains(FlashUmlDependenciesSettingsOption.SELF) && JSPsiImplUtils.isTheSameClass(from, to)) {
       return false;
     }
-    if (!options.contains(FlashUmlDependenciesSettingsOption.ONE_TO_ONE) && relShip.getType() == FlashUmlRelationship.TYPE_ONE_TO_ONE) {
+    if (!options.contains(FlashUmlDependenciesSettingsOption.ONE_TO_ONE) && relShip.getType() == FlashUmlRelationship.RelationshipType.ONE_TO_ONE) {
       return false;
     }
-    if (!options.contains(FlashUmlDependenciesSettingsOption.ONE_TO_MANY) && relShip.getType() == FlashUmlRelationship.TYPE_ONE_TO_MANY) {
+    if (!options.contains(FlashUmlDependenciesSettingsOption.ONE_TO_MANY) && relShip.getType() == FlashUmlRelationship.RelationshipType.ONE_TO_MANY) {
       return false;
     }
-    if (!options.contains(FlashUmlDependenciesSettingsOption.USAGES) && relShip.getType() == FlashUmlRelationship.TYPE_DEPENDENCY) {
+    if (!options.contains(FlashUmlDependenciesSettingsOption.USAGES) && relShip.getType() == FlashUmlRelationship.RelationshipType.DEPENDENCY) {
       return false;
     }
-    if (!options.contains(FlashUmlDependenciesSettingsOption.CREATE) && relShip.getType() == FlashUmlRelationship.TYPE_CREATE) {
+    if (!options.contains(FlashUmlDependenciesSettingsOption.CREATE) && relShip.getType() == FlashUmlRelationship.RelationshipType.CREATE) {
       return false;
     }
     return true;
@@ -578,8 +574,7 @@ public final class FlashUmlDataModel extends DiagramDataModel<Object> {
       classesRemovedByUser.put(psiClass.getQualifiedName(), spManager.createSmartPsiElementPointer(psiClass));
       classesAddedByUser.remove(psiClass.getQualifiedName());
     }
-    if (element instanceof String) {
-      String p = (String)element;
+    if (element instanceof String p) {
       packages.remove(p);
       packagesRemovedByUser.add(p);
 
@@ -602,12 +597,11 @@ public final class FlashUmlDataModel extends DiagramDataModel<Object> {
   public DiagramNode<Object> addElement(@Nullable Object element) {
     if (findNode(element) != null) return null;
 
-    if (element instanceof JSClass) {
+    if (element instanceof JSClass psiClass) {
       if (!isAllowedToShow((JSClass)element)) {
         return null;
       }
 
-      JSClass psiClass = (JSClass)element;
       if (psiClass.getQualifiedName() == null) return null;
       final SmartPsiElementPointer<JSClass> pointer = spManager.createSmartPsiElementPointer(psiClass);
       final String fqn = psiClass.getQualifiedName();
@@ -618,8 +612,7 @@ public final class FlashUmlDataModel extends DiagramDataModel<Object> {
 
       return new FlashUmlClassNode((JSClass)element, getProvider());
     }
-    else if (element instanceof String) {
-      String aPackage = (String)element;
+    else if (element instanceof String aPackage) {
       packages.add(aPackage);
       packagesRemovedByUser.remove(aPackage);
       return new FlashUmlPackageNode(aPackage, getProvider());
@@ -870,9 +863,7 @@ public final class FlashUmlDataModel extends DiagramDataModel<Object> {
   private DiagramEdge<Object> addEdgeAndRefresh(DiagramNode<Object> from, DiagramNode<Object> to, DiagramRelationshipInfo type) {
     FlashUmlEdge result = addEdge(from, to, type);
     final DiagramBuilder builder = getBuilder();
-    if (builder != null) {
-      builder.queryUpdate().withDataReload().withPresentationUpdate().run();
-    }
+    builder.queryUpdate().withDataReload().withPresentationUpdate().run();
     return result;
   }
 

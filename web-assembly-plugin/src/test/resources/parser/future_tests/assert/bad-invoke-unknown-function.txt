@@ -1,0 +1,12 @@
+;;; TOOL: wast2json
+;;; ERROR: 1
+(module
+  (export "foo" (func $foo))
+  (func $foo))
+
+(invoke "bar")
+(;; STDERR ;;;
+out/test/parse/assert/bad-invoke-unknown-function.txt:7:2: error: unknown function export "bar"
+(invoke "bar")
+ ^^^^^^
+;;; STDERR ;;)

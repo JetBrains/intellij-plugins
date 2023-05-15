@@ -1,15 +1,14 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model
 
+import com.intellij.javascript.web.js.WebJSResolveUtil.resolveSymbolFromNodeModule
 import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSType
-import com.intellij.lang.javascript.psi.JSTypeOwner
 import com.intellij.lang.javascript.psi.ecma6.JSTypedEntity
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
-import com.intellij.lang.javascript.psi.ecma6.impl.jsdoc.JSDocPropertySignatureImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.JSRecordTypeImpl.PropertySignatureImpl
@@ -20,7 +19,6 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
-import org.jetbrains.vuejs.codeInsight.resolveSymbolFromNodeModule
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.types.VueCompleteRecordType
@@ -144,6 +142,8 @@ private fun contributeComponentProperties(instance: VueInstanceOwner,
   replaceStandardProperty(INSTANCE_OPTIONS_PROP, buildOptionsType(instance, result[INSTANCE_OPTIONS_PROP]?.jsType), source, result)
   replaceStandardProperty(INSTANCE_SLOTS_PROP, buildSlotsType(instance, result[INSTANCE_SLOTS_PROP]?.jsType), source, result)
 
+  replaceStandardProperty(INSTANCE_EMIT_METHOD, buildEmitType(instance), source, result)
+
   // Vue will not proxy data properties starting with _ or $
   // https://vuejs.org/v2/api/#data
   // Interestingly it doesn't apply to computed, methods and props.
@@ -166,12 +166,12 @@ private fun buildSlotsType(instance: VueInstanceOwner, originalType: JSType?): J
   val slotsType = slots.asSequence().filter {
     it.pattern == null
   }.map {
-    PropertySignatureImpl(it.name, slotType, true,true, it.source)
+    PropertySignatureImpl(it.name, slotType, true, true, it.source)
   }
     .toList()
     .let { JSRecordTypeImpl(typeSource, it) }
   return if (originalType == null)
-     slotsType
+    slotsType
   else
     JSCompositeTypeFactory.createIntersectionType(listOf(originalType, slotsType), typeSource)
 }
@@ -197,6 +197,39 @@ private fun buildOptionsType(instance: VueInstanceOwner, originalType: JSType?):
   }, VueModelVisitor.Proximity.LOCAL)
   return JSCompositeTypeFactory.createIntersectionType(
     result, originalType?.source ?: JSTypeSourceFactory.createTypeSource(instance.source!!, false))
+}
+
+private fun buildEmitType(instance: VueInstanceOwner): JSType {
+  val source =
+    JSTypeSourceFactory.createTypeSource(instance.source!!, true).copyWithNewLanguage(JSTypeSource.SourceLanguage.TS)
+  val emitCalls = instance.asSafely<VueContainer>()?.emits ?: emptyList()
+  val hasUniqueSignatures = emitCalls.any { it.params.isNotEmpty() || it.hasStrictSignature }
+
+  val eventTypes = if (emitCalls.isNotEmpty()) {
+    if (!hasUniqueSignatures) {
+      val combinedEventsType = JSCompositeTypeFactory.createUnionType(
+        source,
+        emitCalls.map {
+          JSStringLiteralTypeImpl(it.name, false, source)
+        }
+      )
+      val parameters = listOf(createEmitEventParam(combinedEventsType), createEmitRestParam(source))
+      listOf(TypeScriptJSFunctionTypeImpl(source, emptyList(), parameters, null, null))
+    }
+    else {
+      emitCalls.map { it.callSignature }
+    }
+  }
+  else {
+    emptyList()
+  }
+
+  return if (eventTypes.isEmpty()) {
+    createDefaultEmitCallSignature(source)
+  }
+  else {
+    JSCompositeTypeFactory.createIntersectionType(eventTypes, source)
+  }
 }
 
 private fun replaceStandardProperty(propName: String, properties: List<JSRecordType.PropertySignature>,

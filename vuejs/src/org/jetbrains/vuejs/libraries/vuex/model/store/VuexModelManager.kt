@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.psi.JSImplicitElementProvider
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
@@ -15,8 +16,6 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
-import org.jetbrains.vuejs.codeInsight.stubSafeCallArguments
-import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.libraries.nuxt.model.NuxtModelManager
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.REGISTER_MODULE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.STORE

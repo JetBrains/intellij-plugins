@@ -1,0 +1,14 @@
+<root>
+  <item name='com.intellij.openapi.diagnostic.Logger void debug(java.lang.String)'>
+    <annotation name='java.lang.Deprecated'/>
+  </item>
+  <item name='com.intellij.openapi.diagnostic.Logger void debug(java.lang.String, java.lang.Object...)'>
+    <annotation name='java.lang.Deprecated'/>
+  </item>
+  <item name='com.intellij.openapi.diagnostic.Logger void debug(java.lang.String, java.lang.Throwable)'>
+    <annotation name='java.lang.Deprecated'/>
+  </item>
+  <item name='com.intellij.openapi.diagnostic.Logger void debug(java.lang.Throwable)'>
+    <annotation name='java.lang.Deprecated'/>
+  </item>
+</root>

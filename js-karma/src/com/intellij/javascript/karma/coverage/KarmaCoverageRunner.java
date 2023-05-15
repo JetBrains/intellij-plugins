@@ -4,8 +4,7 @@ package com.intellij.javascript.karma.coverage;
 import com.intellij.coverage.CoverageEngine;
 import com.intellij.coverage.CoverageRunner;
 import com.intellij.coverage.CoverageSuite;
-import com.intellij.javascript.karma.KarmaConfig;
-import com.intellij.javascript.karma.server.KarmaServer;
+import com.intellij.javascript.nodejs.execution.NodeTargetRun;
 import com.intellij.javascript.testing.CoverageProjectDataLoader;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.rt.coverage.data.ProjectData;
@@ -13,12 +12,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Objects;
 
 public class KarmaCoverageRunner extends CoverageRunner {
 
   private static final Logger LOG = Logger.getInstance(KarmaCoverageRunner.class);
-  private KarmaServer myKarmaServer;
+  private NodeTargetRun myTargetRun;
+  private Path myLocalProjectRoot;
 
   @NotNull
   public static KarmaCoverageRunner getInstance() {
@@ -27,30 +28,24 @@ public class KarmaCoverageRunner extends CoverageRunner {
 
   @Override
   public ProjectData loadCoverageData(@NotNull File sessionDataFile, @Nullable CoverageSuite baseCoverageSuite) {
-    KarmaConfig karmaConfig = null;
-    if (myKarmaServer != null) {
-      karmaConfig = myKarmaServer.getKarmaConfig();
-    }
-    String basePath = null;
-    if (karmaConfig != null) {
-      basePath = karmaConfig.getBasePath();
-    }
-    if (basePath != null) {
-      File basePathDir = new File(basePath);
-      if (basePathDir.isAbsolute() && basePathDir.isDirectory()) {
-        try {
-          return CoverageProjectDataLoader.readProjectData(sessionDataFile, basePathDir, myKarmaServer.getServerSettings().getNodeInterpreter());
-        }
-        catch (Exception e) {
-          LOG.warn("Can't read coverage data", e);
-        }
+    Path localProjectRoot = myLocalProjectRoot;
+    if (localProjectRoot != null) {
+      try {
+        return CoverageProjectDataLoader.readProjectData(sessionDataFile, localProjectRoot.toFile(), myTargetRun);
+      }
+      catch (Exception e) {
+        LOG.warn("Can't read coverage data", e);
       }
     }
     return null;
   }
 
-  public void setKarmaServer(@NotNull KarmaServer karmaServer) {
-    myKarmaServer = karmaServer;
+  public void setTargetRun(@NotNull NodeTargetRun targetRun) {
+    myTargetRun = targetRun;
+  }
+
+  public void setProjectRoot(@NotNull Path localProjectRoot) {
+    myLocalProjectRoot = localProjectRoot;
   }
 
   @Override

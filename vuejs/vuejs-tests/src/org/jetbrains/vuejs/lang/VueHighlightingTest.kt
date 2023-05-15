@@ -22,11 +22,12 @@ import com.intellij.xml.util.CheckTagEmptyBodyInspection
 import junit.framework.TestCase
 import org.jetbrains.plugins.scss.inspections.SassScssResolvedByNameOnlyInspection
 import org.jetbrains.plugins.scss.inspections.SassScssUnresolvedVariableInspection
-import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.libraries.nuxt.NuxtHighlightingTest
 
 /**
  * @see VueComponentTest
  * @see VueControlFlowTest
+ * @see NuxtHighlightingTest
  */
 class VueHighlightingTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = getVueTestDataPath() + "/highlighting"
@@ -58,16 +59,18 @@ class VueHighlightingTest : BasePlatformTestCase() {
     return myFixture.configureByFile(getTestName(true) + "." + extension)
   }
 
-  private fun doDirTest(addNodeModules: List<VueTestModule> = emptyList(), fileName: String? = null) {
+  private fun doDirTest(addNodeModules: List<VueTestModule> = emptyList(), fileName: String? = null, vararg additionalFilesToCheck: String) {
     val testName = getTestName(true)
     if (addNodeModules.isNotEmpty()) {
       myFixture.configureVueDependencies(*addNodeModules.toTypedArray())
     }
     myFixture.copyDirectoryToProject(testName, ".")
-    val actualFileName = fileName ?: "$testName.vue"
-    myFixture.configureFromTempProjectFile(actualFileName)
-      .virtualFile.putUserData(VfsTestUtil.TEST_DATA_FILE_PATH, "$testDataPath/$testName/$actualFileName")
-    myFixture.checkHighlighting()
+
+    for (toCheck in sequenceOf(fileName ?: "$testName.vue").plus(additionalFilesToCheck)) {
+      myFixture.configureFromTempProjectFile(toCheck)
+        .virtualFile.putUserData(VfsTestUtil.TEST_DATA_FILE_PATH, "$testDataPath/$testName/$toCheck")
+      myFixture.checkHighlighting()
+    }
   }
 
   fun testDirectivesWithoutParameters() = doTest()
@@ -159,24 +162,17 @@ const props = {seeMe: {}}
 
   fun testNoDoubleSpellCheckingInAttributesWithEmbeddedContents() {
     myFixture.enableInspections(SpellCheckingInspection())
-    myFixture.configureByText(VueFileType.INSTANCE, """
-<template>
-    <div>
-        <ul>
-            <li v-for="somewordd in someObject">{{ somewordd }}
-        </ul>
-    </div>
-</template>
-<script>
-    var someObject = []
-</script>
-""")
-    val list = myFixture.doHighlighting().filter { it.severity.name == "TYPO" }
-    val typoRanges: MutableSet<Pair<Int, Int>> = mutableSetOf()
-    for (info in list) {
-      val pair = Pair(info.startOffset, info.endOffset)
-      if (!typoRanges.add(pair)) TestCase.assertTrue("Duplicate $pair", false)
-    }
+    doTest()
+  }
+
+  fun testNoSpellcheckInEnumeratedAttributes() {
+    myFixture.enableInspections(SpellCheckingInspection())
+    doTest()
+  }
+
+  fun testSpellchecking() {
+    myFixture.enableInspections(SpellCheckingInspection())
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
   }
 
   fun testTypeScriptTypesAreResolved() = doTest()
@@ -487,6 +483,13 @@ const props = {seeMe: {}}
     doTest()
   }
 
+  fun testScriptSetupImportedDirective() {
+    myFixture.enableInspections(
+      ES6UnusedImportsInspection(),
+    )
+    doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
+  }
+
   fun testTypedComponentsScriptSetup() {
     myFixture.enableInspections(ES6UnusedImportsInspection())
     doTest(addNodeModules = listOf(VueTestModule.NAIVE_UI_2_19_11, VueTestModule.HEADLESS_UI_1_4_1, VueTestModule.VUE_3_2_2))
@@ -561,9 +564,99 @@ const props = {seeMe: {}}
     doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2, VueTestModule.NAIVE_UI_2_33_2_PATCHED))
   }
 
+  fun testLocalWebTypes() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    doDirTest(emptyList(), "main.vue", "main2.vue")
+  }
+
   fun testPropertyReferenceInLambda() {
     myFixture.enableInspections(VueInspectionsProvider())
     doTest()
+  }
+
+  fun testSourceScopedSlots() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2), "Catalogue.vue")
+  }
+
+  fun testCustomEvents() {
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
+  }
+
+  fun testCustomEventsTypedComponent() {
+    doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
+  }
+
+  fun testLifecycleEventsVue2ClassComponent() {
+    myFixture.enableInspections(
+      JSUnusedLocalSymbolsInspection(),
+      JSUnusedGlobalSymbolsInspection()
+    )
+    doTest(addNodeModules = listOf(VueTestModule.VUE_2_6_10))
+  }
+
+  fun testLifecycleEventsVue2VueExtend() {
+    myFixture.enableInspections(
+      JSUnusedLocalSymbolsInspection(),
+      JSUnusedGlobalSymbolsInspection()
+    )
+    doTest(addNodeModules = listOf(VueTestModule.VUE_2_6_10))
+  }
+
+  fun testLifecycleEventsVue3Options() {
+    myFixture.enableInspections(
+      JSUnusedLocalSymbolsInspection(),
+      JSUnusedGlobalSymbolsInspection()
+    )
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
+  }
+
+  fun testLifecycleEventsVue3DefineComponent() {
+    myFixture.enableInspections(
+      JSUnusedLocalSymbolsInspection(),
+      JSUnusedGlobalSymbolsInspection()
+    )
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
+  }
+
+  fun testIdIndexer() {
+    myFixture.enableInspections(
+      JSUnusedLocalSymbolsInspection(),
+      JSUnusedGlobalSymbolsInspection()
+    )
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
+  }
+
+  fun testVueCreateApp() {
+    doDirTest(fileName = "test.html")
+  }
+
+  fun testInstanceMountedOnElement() {
+    doDirTest(fileName = "test.html")
+  }
+
+  fun testScriptCaseSensitivity() {
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
+  }
+
+  fun testVPre() {
+    doTest()
+  }
+
+  fun testHtmlTagOmission() {
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2), extension = "html")
+  }
+
+  fun testVueNoTagOmission() {
+    doTest()
+  }
+
+  fun testScriptSetupGeneric() {
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_0_ALPHA5))
+  }
+
+  fun testGenericComponentUsage() {
+    doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_3_0_ALPHA5))
   }
 
 }

@@ -578,7 +578,7 @@ final class JDOMResult extends SAXResult {
   // FragmentHandler nested class
   //=========================================================================
 
-  private static class FragmentHandler extends SAXHandler {
+  private static final class FragmentHandler extends SAXHandler {
     /**
      * A dummy root element required by SAXHandler that can only
      * cope with well-formed documents.

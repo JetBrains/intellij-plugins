@@ -5,8 +5,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.intellij.javascript.nodejs.interpreter.NodeInterpreterUtil;
-import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ObjectUtils;
@@ -85,13 +83,12 @@ public class KarmaConfig {
 
   @Nullable
   public static KarmaConfig parseFromJson(@NotNull JsonElement jsonElement,
-                                          @NotNull File configurationFileDir,
-                                          @NotNull NodeJsInterpreter interpreter) {
+                                          @NotNull File configurationFileDir) {
     if (jsonElement.isJsonObject()) {
       JsonObject rootObject = jsonElement.getAsJsonObject();
 
       List<String> browsers = parseBrowsers(rootObject);
-      String basePath = parseBasePath(jsonElement, rootObject, configurationFileDir, interpreter);
+      String basePath = parseBasePath(jsonElement, rootObject, configurationFileDir);
       String protocol = ObjectUtils.notNull(JsonUtil.getChildAsString(rootObject, PROTOCOL), "http:");
       String hostname = parseHostname(jsonElement, rootObject);
       String urlRoot = parseUrlRoot(jsonElement, rootObject);
@@ -106,20 +103,19 @@ public class KarmaConfig {
   @NotNull
   private static String parseBasePath(@NotNull JsonElement all,
                                       @NotNull JsonObject obj,
-                                      @NotNull File configurationFileDir,
-                                      @NotNull NodeJsInterpreter interpreter) {
+                                      @NotNull File configurationFileDir) {
     String basePath = JsonUtil.getChildAsString(obj, BASE_PATH);
     if (basePath == null) {
-      LOG.warn("Can not parse Karma config.basePath from " + all.toString());
+      LOG.warn("Can not parse Karma config.basePath from " + all);
       basePath = configurationFileDir.getAbsolutePath();
     }
-    return NodeInterpreterUtil.convertRemotePathToLocal(basePath, interpreter);
+    return basePath;
   }
 
   private static String parseUrlRoot(@NotNull JsonElement all, @NotNull JsonObject obj) {
     String urlRoot = JsonUtil.getChildAsString(obj, URL_ROOT);
     if (urlRoot == null) {
-      LOG.warn("Can not parse Karma config.urlRoot from " + all.toString());
+      LOG.warn("Can not parse Karma config.urlRoot from " + all);
       urlRoot = "/";
     }
     if (!urlRoot.startsWith("/")) {
@@ -134,7 +130,7 @@ public class KarmaConfig {
   private static String parseHostname(@NotNull JsonElement all, @NotNull JsonObject obj) {
     String hostname = JsonUtil.getChildAsString(obj, HOST_NAME);
     if (hostname == null) {
-      LOG.warn("Can not parse Karma config.hostname from " + all.toString());
+      LOG.warn("Can not parse Karma config.hostname from " + all);
       hostname = "localhost";
     }
     hostname = StringUtil.toLowerCase(hostname);

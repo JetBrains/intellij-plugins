@@ -36,9 +36,9 @@ public class PhoneGapConfigurable implements Configurable {
   private TextFieldWithHistoryWithBrowseButton myWorkingDirectory;
 
   private final PhoneGapSettings mySettings = PhoneGapSettings.getInstance();
-  private UIController myUIController;
+  private PhoneUIController myUIController;
   private PhoneGapPluginsView phoneGapPluginsView;
-  private final Project myProject;
+  private final @NotNull Project myProject;
   private JPanel myWrapper;
   private JBLabel myVersion;
   private RepositoryStore myRepositoryStore;
@@ -72,11 +72,11 @@ public class PhoneGapConfigurable implements Configurable {
     }
   }
 
-  public PhoneGapConfigurable(Project project) {
+  public PhoneGapConfigurable(@NotNull Project project) {
     myProject = project;
   }
 
-  private class UIController {
+  private class PhoneUIController {
 
     public void reset(PhoneGapSettings.State state) {
       PhoneGapUtil.setFieldWithHistoryWithBrowseButtonPath(myExecutablePath, state.getExecutablePath());
@@ -123,7 +123,7 @@ public class PhoneGapConfigurable implements Configurable {
       myExecutablePath = PhoneGapUtil.createPhoneGapExecutableTextField(myProject);
       myWorkingDirectory = PhoneGapUtil.createPhoneGapWorkingDirectoryField(myProject);
       myVersion = new JBLabel();
-      myUIController = new UIController();
+      myUIController = new PhoneUIController();
       myExcludePlatformsCheckBox = new JCheckBox(PhoneGapBundle.message("phonegap.conf.exclude.platforms"));
       myRepositoryStore = new RepositoryStore();
       myUIController.reset(mySettings.getState());

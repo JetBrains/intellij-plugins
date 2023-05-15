@@ -24,7 +24,7 @@ public class DartOperatorExpressionImpl extends DartExpressionImpl implements Da
 
   @Override
   public PsiReference getReference() {
-    return null;
+    return super.getReference();
   }
 
   @NotNull
@@ -93,8 +93,7 @@ public class DartOperatorExpressionImpl extends DartExpressionImpl implements Da
     if (this instanceof DartLogicAndExpression) {
       return "&&";
     }
-    if (this instanceof DartCompareExpression) {
-      final DartCompareExpression compareExpression = (DartCompareExpression)this;
+    if (this instanceof DartCompareExpression compareExpression) {
       final DartEqualityOperator equalityOperator = compareExpression.getEqualityOperator();
       final DartRelationalOperator relationalOperator = compareExpression.getRelationalOperator();
       return DartResolveUtil.getOperatorString(equalityOperator == null ? relationalOperator : equalityOperator);

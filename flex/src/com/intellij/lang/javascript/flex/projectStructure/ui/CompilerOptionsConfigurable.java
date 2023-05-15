@@ -17,6 +17,7 @@ import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
@@ -483,7 +484,7 @@ public final class CompilerOptionsConfigurable extends NamedConfigurable<Compile
     group.add(new RestoreDefaultValueAction(tree));
     PopupHandler.installPopupMenu(treeTable, group, "FlexCompilerOptionsTreePopup");
 
-    new TreeTableSpeedSearch(treeTable, o -> {
+    TreeTableSpeedSearch.installOn(treeTable, o -> {
       final Object userObject = ((DefaultMutableTreeNode)o.getLastPathComponent()).getUserObject();
       return userObject instanceof CompilerOptionInfo ? ((CompilerOptionInfo)userObject).DISPLAY_NAME : "";
     }).setComparator(new SpeedSearchComparator(false));
@@ -499,12 +500,11 @@ public final class CompilerOptionsConfigurable extends NamedConfigurable<Compile
       public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded,
                                                     boolean leaf, int row, boolean hasFocus) {
         final Object userObject = ((DefaultMutableTreeNode)value).getUserObject();
-        if (!(userObject instanceof CompilerOptionInfo)) {
+        if (!(userObject instanceof CompilerOptionInfo info)) {
           // invisible root node
           return myLabel;
         }
 
-        final CompilerOptionInfo info = (CompilerOptionInfo)userObject;
         myLabel.setText(info.DISPLAY_NAME);
 
         final ValueSource valueSource = getValueAndSource(info).second;
@@ -531,13 +531,12 @@ public final class CompilerOptionsConfigurable extends NamedConfigurable<Compile
 
       @Override
       public Component getTableCellRendererComponent(JTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
-        if (!(value instanceof CompilerOptionInfo)) {
+        if (!(value instanceof CompilerOptionInfo info)) {
           // invisible root node or group node
           myLabel.setText("");
           return myLabel;
         }
 
-        final CompilerOptionInfo info = (CompilerOptionInfo)value;
         final Pair<String, ValueSource> valueAndSource = getValueAndSource(info);
 
         switch (info.TYPE) {
@@ -986,6 +985,11 @@ public final class CompilerOptionsConfigurable extends NamedConfigurable<Compile
     RestoreDefaultValueAction(final JTree tree) {
       super("Restore Default Value");
       myTree = tree;
+    }
+
+    @Override
+    public @NotNull ActionUpdateThread getActionUpdateThread() {
+      return ActionUpdateThread.EDT;
     }
 
     @Override

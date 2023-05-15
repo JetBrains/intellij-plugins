@@ -5,6 +5,7 @@ import com.google.dart.server.utilities.general.ObjectUtilities;
 import com.intellij.navigation.NavigationItemFileStatus;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataProvider;
+import com.intellij.openapi.actionSystem.PlatformCoreDataKeys;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.text.StringUtil;
@@ -52,8 +53,7 @@ class DartComponentUsageGroup implements UsageGroup, DataProvider {
   }
 
   public boolean equals(Object object) {
-    if (object instanceof DartComponentUsageGroup) {
-      final DartComponentUsageGroup other = (DartComponentUsageGroup)object;
+    if (object instanceof DartComponentUsageGroup other) {
       return ObjectUtilities.equals(other.myFile, myFile) && ObjectUtilities.equals(other.myText, myText);
     }
     return false;
@@ -61,7 +61,14 @@ class DartComponentUsageGroup implements UsageGroup, DataProvider {
 
   @Nullable
   @Override
-  public Object getData(@NotNull @NonNls String dataId) {
+  public Object getData(@NotNull String dataId) {
+    if (PlatformCoreDataKeys.BGT_DATA_PROVIDER.is(dataId)) {
+      return (DataProvider)this::getSlowData;
+    }
+    return null;
+  }
+
+  private @Nullable Object getSlowData(@NonNls String dataId) {
     if (CommonDataKeys.PSI_ELEMENT.is(dataId)) {
       final DartComponentName nameElement = getNameElement();
       if (nameElement != null) {

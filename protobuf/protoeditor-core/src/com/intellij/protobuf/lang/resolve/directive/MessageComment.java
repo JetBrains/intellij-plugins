@@ -74,12 +74,11 @@ class MessageComment extends SchemaComment {
       return ImmutableList.of();
     }
     PsiElement file = fileReference.resolve();
-    if (!(file instanceof PbFile)) {
+    if (!(file instanceof PbFile pbFile)) {
       return ImmutableList.of();
     }
 
     // First, parse the symbol path into its standard recursive form.
-    PbFile pbFile = (PbFile) file;
     PbTypeName parsedType =
         PbElementFactory.getInstance(pbFile)
             .typeNameBuilder()

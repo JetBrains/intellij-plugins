@@ -1,0 +1,80 @@
+AstroFile:test.astro
+  AstroContentRoot:ASTRO:CONTENT_ROOT
+    PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
+    PsiWhiteSpace('\n')
+    AstroFrontmatterScript:ASTRO:FRONTMATTER_SCRIPT
+      JSVarStatement
+        JSAttributeList
+          <empty list>
+        PsiElement(JS:CONST_KEYWORD)('const')
+        PsiWhiteSpace(' ')
+        TypeScriptVariable
+          PsiElement(JS:IDENTIFIER)('visible')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:EQ)('=')
+          PsiWhiteSpace(' ')
+          JSLiteralExpression
+            PsiElement(JS:TRUE_KEYWORD)('true')
+        PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace('\n')
+    PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
+    PsiWhiteSpace('\n')
+    PsiElement(XML_PROLOG)
+      <empty list>
+    JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+      PsiElement(JS:XML_LBRACE)('{')
+      JSBinaryExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('visible')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:ANDAND)('&&')
+        PsiWhiteSpace(' ')
+        AstroTag:p
+          XmlToken:XML_START_TAG_START('<')
+          XmlToken:XML_NAME('p')
+          XmlToken:XML_TAG_END('>')
+          XmlText
+            XmlToken:XML_DATA_CHARACTERS('Show')
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('me!')
+          XmlToken:XML_END_TAG_START('</')
+          XmlToken:XML_NAME('p')
+          XmlToken:XML_TAG_END('>')
+      PsiElement(JS:XML_RBRACE)('}')
+    PsiWhiteSpace('\n\n')
+    JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+      PsiElement(JS:XML_LBRACE)('{')
+      JSConditionalExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('visible')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:QUEST)('?')
+        PsiWhiteSpace(' ')
+        AstroTag:p
+          XmlToken:XML_START_TAG_START('<')
+          XmlToken:XML_NAME('p')
+          XmlToken:XML_TAG_END('>')
+          XmlText
+            XmlToken:XML_DATA_CHARACTERS('Show')
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('me!')
+          XmlToken:XML_END_TAG_START('</')
+          XmlToken:XML_NAME('p')
+          XmlToken:XML_TAG_END('>')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:COLON)(':')
+        PsiWhiteSpace(' ')
+        AstroTag:p
+          XmlToken:XML_START_TAG_START('<')
+          XmlToken:XML_NAME('p')
+          XmlToken:XML_TAG_END('>')
+          XmlText
+            XmlToken:XML_DATA_CHARACTERS('Else')
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('show')
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('me!')
+          XmlToken:XML_END_TAG_START('</')
+          XmlToken:XML_NAME('p')
+          XmlToken:XML_TAG_END('>')
+      PsiElement(JS:XML_RBRACE)('}')

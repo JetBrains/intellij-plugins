@@ -92,8 +92,7 @@ public class FlexMxmlNSDescriptor implements XmlNSDescriptor, Validator<XmlDocum
   }
 
   private static boolean isLegalRootElementDescriptor(final @NotNull XmlElementDescriptor _descriptor) {
-    if (_descriptor instanceof ClassBackedElementDescriptor) {
-      final ClassBackedElementDescriptor descriptor = (ClassBackedElementDescriptor)_descriptor;
+    if (_descriptor instanceof ClassBackedElementDescriptor descriptor) {
       final PsiElement element = descriptor.getDeclaration();
       if (element instanceof JSClass) {
         final JSAttributeList attributeList = ((JSClass)element).getAttributeList();

@@ -14,7 +14,7 @@ public final class FlexModuleRendererFactory extends DefaultModuleRendererFactor
 
   @Override
   protected boolean handles(final Object element) {
-    return true;
+    return super.handles(element);
   }
 
   @Override

@@ -1,0 +1,99 @@
+<idea-plugin url="https://github.com/JetBrains/intellij-plugins/tree/master/astro" package="org.jetbrains.astro">
+  <!--suppress PluginXmlCapitalization -->
+  <name>Astro</name>
+  <id>org.jetbrains.plugins.astro</id>
+  <description><![CDATA[
+    <p>Provides support for <a href="https://astro.build/">Astro</a>
+      to all JetBrains IDEs that <a href="https://www.jetbrains.com/products/#lang=js&type=ide">support JavaScript</a>.
+    <h2>Features</h2>
+    <ul>
+      <li>Syntax & semantic highlighting
+      <li>Code completion (with auto-imports)
+      <li>Refactorings
+      <li>Navigation
+      <li>Intentions
+      <li>Code folding
+      <li>Emmet support
+      <li>Formatting
+    </ul>
+    ]]></description>
+  <vendor>JetBrains</vendor>
+  <category>JavaScript Frameworks and Tools</category>
+
+  <dependencies>
+    <plugin id="com.intellij.modules.xml"/>
+    <plugin id="JavaScript"/>
+    <plugin id="com.intellij.css"/>
+  </dependencies>
+
+  <extensionPoints>
+  </extensionPoints>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <dependencySupport kind="javascript" coordinate="npm:astro" displayName="Astro"/>
+
+    <internalFileTemplate name="Astro Component"/>
+    <createFromTemplateHandler implementation="org.jetbrains.astro.AstroCreateFromTemplateHandler"/>
+
+    <!-- Astro -->
+    <fileType name="Astro" extensions="astro" language="Astro" implementationClass="org.jetbrains.astro.lang.AstroFileType"
+              fieldName="INSTANCE"/>
+    <lang.parserDefinition language="Astro" implementationClass="org.jetbrains.astro.lang.parser.AstroParserDefinition"/>
+    <lang.parserDefinition language="AstroFrontmatter" implementationClass="org.jetbrains.astro.lang.frontmatter.AstroFrontmatterParserDefinition"/>
+
+    <lang.syntaxHighlighterFactory language="Astro"
+                                   implementationClass="org.jetbrains.astro.lang.highlighting.AstroHighlighterFactory"/>
+    <colorSettingsPage implementation="org.jetbrains.astro.lang.highlighting.AstroColorsAndFontsPage"/>
+    <braceMatcher filetype="Astro" implementationClass="org.jetbrains.astro.lang.AstroBraceMatcher"/>
+    <quoteHandler fileType="Astro" className="com.intellij.javascript.JSQuoteHandler"/>
+    <lang.commenter language="Astro" implementationClass="com.intellij.lang.xml.XmlCommenter" />
+    <multiLangCommenter implementation="org.jetbrains.astro.editor.AstroCommentProvider"/>
+
+    <stubElementTypeHolder class="org.jetbrains.astro.lang.parser.AstroStubElementTypes" externalIdPrefix="ASTRO:"/>
+    <implicitUsageProvider implementation="org.jetbrains.astro.codeInsight.refs.AstroImplicitUsageProvider"/>
+
+    <html.compatibleLanguage language="Astro"/>
+    <xml.xmlExtension implementation="org.jetbrains.astro.codeInsight.AstroHtmlExtension" order="before html, before web-symbols-react"
+                      id="astro"/>
+    <xml.zenCodingGenerator implementation="org.jetbrains.astro.editor.AstroHtmlZenCodingGenerator" />
+    <xml.fileNSInfoProvider implementation="org.jetbrains.astro.codeInsight.AstroNSInfoProvider"/>
+    <lang.documentationProvider language="Astro" implementationClass="com.intellij.xml.util.documentation.HtmlDocumentationProvider"
+                                id="html"/>
+    <lang.formatter language="Astro" implementationClass="org.jetbrains.astro.lang.formatter.AstroFormattingModelBuilder"/>
+    <lang.refactoringSupport language="Astro" implementationClass="org.jetbrains.astro.refactoring.AstroRefactoringSupportProvider"/>
+    <lang.refactoringSupport language="AstroFrontmatter" implementationClass="org.jetbrains.astro.refactoring.AstroRefactoringSupportProvider"/>
+    <copyPastePostProcessor implementation="org.jetbrains.astro.codeInsight.imports.AstroComponentCopyPasteProcessor"/>
+
+    <webSymbols.framework id="astro" implementation="org.jetbrains.astro.AstroFramework"/>
+    <webSymbols.webTypes enableByDefault="true" source="web-types/astro.web-types.json"/>
+    <webSymbols.queryConfigurator implementation="org.jetbrains.astro.webSymbols.AstroQueryConfigurator"/>
+    <webSymbols.queryResultsCustomizerFactory implementation="org.jetbrains.astro.webSymbols.AstroWebSymbolsQueryResultsCustomizer$Provider"/>
+
+    <html.embeddedContentSupport implementation="org.jetbrains.astro.lang.parser.AstroEmbeddedContentSupport" />
+
+    <lang.fileViewProviderFactory language="Astro" implementationClass="org.jetbrains.astro.lang.AstroFileViewProviderFactory" />
+
+    <localInspection language="Astro" groupKey="astro.inspection.group.name" shortName="AstroMissingComponentImportInspection"
+                     enabledByDefault="true" level="ERROR"
+                     implementationClass="org.jetbrains.astro.inspections.AstroMissingComponentImportInspection"
+                     key="astro.inspection.display.name.missing.component.import" bundle="messages.AstroBundle"/>
+
+  </extensions>
+
+  <extensions defaultExtensionNs="JavaScript">
+    <indexedFileTypeProvider implementation="org.jetbrains.astro.lang.AstroIndexedFileTypeProvider"/>
+    <dialectSpecificHandlersFactory language="Astro" implementationClass="org.jetbrains.astro.codeInsight.AstroSpecificHandlersFactory"/>
+    <dialectSpecificHandlersFactory language="AstroFrontmatter" implementationClass="org.jetbrains.astro.codeInsight.AstroSpecificHandlersFactory"/>
+    <handlersFactory language="Astro" implementationClass="org.jetbrains.astro.codeInsight.AstroHandlersFactory"/>
+    <inheritedLanguagesConfigurableProvider language="Astro"
+                                            implementationClass="org.jetbrains.astro.lang.AstroLanguageConfigurableProvider"/>
+    <inheritedLanguagesConfigurableProvider language="AstroFrontmatter"
+                                            implementationClass="org.jetbrains.astro.lang.frontmatter.AstroFrontmatterConfigurableProvider"/>
+  </extensions>
+  <actions>
+    <action class="org.jetbrains.astro.CreateAstroComponentAction" id="CreateAstroComponent">
+      <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
+    </action>
+  </actions>
+
+</idea-plugin>

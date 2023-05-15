@@ -1,22 +1,18 @@
 package com.intellij.lang.javascript.linter.tslint.highlight;
 
 import com.intellij.codeInspection.SuppressQuickFix;
+import com.intellij.codeInspection.options.OptPane;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.linter.JSLinterInspection;
 import com.intellij.lang.javascript.linter.tslint.service.TslintLanguageServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.util.List;
 
-/**
- * @author Irina.Chernushina on 6/3/2015.
- */
 public final class TsLintInspection extends JSLinterInspection {
 
   public boolean useSeverityFromConfigFile = true;
@@ -34,8 +30,8 @@ public final class TsLintInspection extends JSLinterInspection {
   }
 
   @Override
-  public JComponent createOptionsPanel() {
-    return createOptionPanelForConfigFileOption("useSeverityFromConfigFile");
+  public @NotNull OptPane getOptionsPane() {
+    return getOptionsPaneForConfigFileOption("useSeverityFromConfigFile");
   }
 
   @Override
@@ -57,7 +53,7 @@ public final class TsLintInspection extends JSLinterInspection {
   @NotNull
   @Override
   protected List<String> getSettingsPath() {
-    return ContainerUtil.newArrayList(
+    return List.of(
       JavaScriptBundle.message("typescript.compiler.configurable.name"),
       getDisplayName()
     );

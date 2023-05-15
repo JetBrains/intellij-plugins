@@ -28,7 +28,7 @@ public abstract class FlexUnitMethodInspectionBase extends LocalInspectionTool {
   public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
     return new FlexUnitInspectionVisitor() {
       @Override
-      public void visitJSFunctionDeclaration(JSFunction function) {
+      public void visitJSFunctionDeclaration(@NotNull JSFunction function) {
         if (!(function.getParent() instanceof JSClass)) return;
         FlexUnitSupport support = getFlexUnitSupport(function);
         if (support == null || !support.isPotentialTestMethod(function)) return;

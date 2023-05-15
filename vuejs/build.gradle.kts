@@ -7,20 +7,35 @@ plugins {
   id("org.jetbrains.intellij")
 }
 
-val targetVersion = rootProject.extensions.get("targetVersion")
+val targetVersion = rootProject.extensions["targetVersion"]
+val iuVersion = rootProject.extensions["iuVersion"]
 
 intellij {
-  pluginName.set("Vue.js")
-
-  plugins.set(listOf("JavaScriptLanguage", "JSIntentionPowerPack", "JavaScriptDebugger", "CSS", "HtmlTools",
-         "org.jetbrains.plugins.sass", "org.jetbrains.plugins.less", "org.jetbrains.plugins.stylus",
-         "org.intellij.plugins.postcss:$targetVersion",
-         "com.jetbrains.plugins.Jade:$targetVersion",
-         "intellij.prettierJS:$targetVersion",
-         "intellij.webpack:$targetVersion"))
-
-  version.set("LATEST-EAP-SNAPSHOT")
+  version.set(iuVersion.toString())
   type.set("IU")
+  pluginName.set("Vue.js")
+  downloadSources.set(true)
+  plugins.set(listOf("JavaScript", "JSIntentionPowerPack", "JavaScriptDebugger", "com.intellij.css", "HtmlTools",
+                     "org.jetbrains.plugins.sass", "org.jetbrains.plugins.less", "intellij.webpack",
+                     "org.jetbrains.plugins.stylus:$targetVersion",
+                     "org.intellij.plugins.postcss",
+                     "com.jetbrains.plugins.Jade:$targetVersion",
+                     "intellij.prettierJS"
+                     ))
+}
+
+tasks {
+  withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java) {
+    kotlinOptions.jvmTarget = "17"
+    kotlinOptions.freeCompilerArgs = listOf("-Xjvm-default=all")
+  }
+  java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+  }
+  runIde {
+    autoReloadPlugins.set(false)
+  }
 }
 
 sourceSets {

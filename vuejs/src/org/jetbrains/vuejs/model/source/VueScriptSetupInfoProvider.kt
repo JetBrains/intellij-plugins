@@ -5,12 +5,18 @@ import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.evaluation.JSCodeBasedTypeFactory
 import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSStubElementImpl
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
+import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
+import com.intellij.lang.javascript.psi.util.stubSafeChildren
 import com.intellij.lang.typescript.TypeScriptStubElementTypes
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -35,7 +41,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       }
   }
 
-  class VueScriptSetupInfo(val module: JSEmbeddedContent) : VueContainerInfoProvider.VueContainerInfo {
+  class VueScriptSetupInfo(val module: JSExecutionScope) : VueContainerInfoProvider.VueContainerInfo {
 
     override val components: Map<String, VueComponent>
     override val directives: Map<String, VueDirective>
@@ -62,12 +68,12 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
         module,
         { element, _ ->
           val name = (element as? JSPsiNamedElementBase)?.let { if (it is ES6ImportSpecifier) it.declaredName else it.name }
-          if (name?.getOrNull(0)?.isUpperCase() == true) {
+          if (name != null && isScriptSetupLocalDirectiveName(name)) {
+            directives[name.substring(1)] = VueScriptSetupLocalDirective(name, element)
+          }
+          else if (name != null && element !is JSClass) {
             (VueModelManager.getComponent(VueComponents.getComponentDescriptor(element)) ?: VueUnresolvedComponent(element, element, name))
               .let { components[name] = if (it is VueRegularComponent) VueLocallyDefinedRegularComponent(it, element) else it }
-          }
-          else if (name?.getOrNull(0) == 'v' && name.getOrNull(1)?.isUpperCase() == true) {
-            directives[name.substring(1)] = VueSourceDirective(name.substring(1), element)
           }
           true
         },
@@ -76,7 +82,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
       val fileName = FileUtil.getNameWithoutExtension(module.containingFile.name)
       VueModelManager.findEnclosingComponent(module)?.let { component ->
-        components.putIfAbsent(fileName.capitalize(), component)
+        components.putIfAbsent(StringUtil.capitalize(fileName), component)
       }
 
       this.components = components
@@ -180,7 +186,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       return props
     }
 
-    private fun JSEmbeddedContent.getStubSafeDefineCalls(): Sequence<JSCallExpression> {
+    private fun JSExecutionScope.getStubSafeDefineCalls(): Sequence<JSCallExpression> {
       (this as? JSStubElementImpl<*>)?.stub?.let { moduleStub ->
         return moduleStub.childrenStubs.asSequence().flatMap { stub ->
           when (val psi = stub.psi) {
@@ -221,16 +227,42 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
         }
     }
 
-    private fun analyzeDefineEmits(call: JSCallExpression): List<VueEmitCall> =
-      call.stubSafeCallArguments.getOrNull(0)
-        .asSafely<JSArrayLiteralExpression>()
-        ?.stubSafeElements
-        ?.mapNotNull { literal ->
+    private fun analyzeDefineEmits(call: JSCallExpression): List<VueEmitCall> {
+      val arg = call.stubSafeCallArguments.getOrNull(0)
+
+      if (arg is JSArrayLiteralExpression) {
+        return arg.stubSafeChildren.mapNotNull { literal ->
           (literal as? JSLiteralExpression)
             ?.significantValue
             ?.let { VueScriptSetupLiteralBasedEvent(es6Unquote(it), literal) }
         }
-      ?: emptyList()
+      }
+
+      val eventSources =
+        arg.asSafely<JSObjectLiteralExpression>()
+          ?.let { JSResolveUtil.getElementJSType(it) }
+          ?.asRecordType()
+          ?.properties
+          ?.associate { it.memberName to it.memberSource.singleElement }
+        ?: emptyMap()
+
+      return JSResolveUtil
+               .getElementJSType(call)
+               ?.asRecordType()
+               ?.callSignatures
+               ?.mapNotNull { callSignature ->
+                 callSignature
+                   .functionType
+                   .parameters.getOrNull(0)
+                   ?.inferredType
+                   ?.asSafely<JSStringLiteralTypeImpl>()
+                   ?.let {
+                     val name = es6Unquote(it.valueAsString)
+                     val source = eventSources[name] ?: it.sourceElement
+                     VueScriptSetupTypedEvent(name, source, callSignature.functionType)
+                   }
+               } ?: emptyList()
+    }
 
     private fun JSCallExpression.getInnerDefineProps(): JSCallExpression? =
       stubSafeCallArguments
@@ -266,6 +298,18 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
   }
 
   private class VueScriptSetupLiteralBasedEvent(override val name: String,
-                                                override val source: JSLiteralExpression) : VueEmitCall
+                                                override val source: PsiElement?) : VueEmitCall
+
+  private class VueScriptSetupTypedEvent(
+    override val name: String,
+    override val source: PsiElement?,
+    private val eventSignature: JSFunctionType,
+  ) : VueEmitCall {
+    override val params: List<JSParameterTypeDecorator>
+      get() = eventSignature.parameters.drop(1)
+
+    override val hasStrictSignature: Boolean
+      get() = true
+  }
 
 }

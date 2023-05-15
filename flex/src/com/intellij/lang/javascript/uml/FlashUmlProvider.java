@@ -82,8 +82,7 @@ public final class FlashUmlProvider extends DiagramProvider<Object> {
     else if (element instanceof XmlFile && JavaScriptSupportLoader.isFlexMxmFile((PsiFile)element)) {
       element = XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)element);
     }
-    else if (element instanceof PsiDirectory) {
-      PsiDirectory directory = (PsiDirectory)element;
+    else if (element instanceof PsiDirectory directory) {
       element = JSResolveUtil.getExpectedPackageNameFromFile(directory.getVirtualFile(), directory.getProject());
     }
     return new FlashUmlDataModel(project, element, file, this);

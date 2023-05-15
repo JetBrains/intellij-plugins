@@ -88,7 +88,7 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
 
     holder.processDirtyFiles(new FileProcessor<BuildRootDescriptor, FlexBuildTarget>() {
       @Override
-      public boolean apply(final FlexBuildTarget target, final File file, final BuildRootDescriptor root) throws IOException {
+      public boolean apply(@NotNull FlexBuildTarget target, @NotNull File file, @NotNull BuildRootDescriptor root) throws IOException {
         assert target == buildTarget;
         dirtyFilePaths.add(file.getPath());
         return true;

@@ -27,8 +27,7 @@ abstract class AbstractDumpProcessor implements FlexByteCodeInformationProcessor
     String parentName = null;
 
     if (member.parentTraits != null) {
-      if(member.parentTraits.name instanceof Multiname) {
-        final Multiname multiname = (Multiname)member.parentTraits.name;
+      if(member.parentTraits.name instanceof Multiname multiname) {
 
         if(multiname.hasNamespace()) {
           parentName = multiname.name;

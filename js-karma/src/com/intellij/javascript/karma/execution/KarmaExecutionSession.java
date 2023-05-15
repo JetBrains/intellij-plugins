@@ -5,7 +5,9 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.filters.Filter;
 import com.intellij.execution.process.*;
+import com.intellij.execution.target.ResolvedPortBinding;
 import com.intellij.execution.target.TargetedCommandLineBuilder;
+import com.intellij.execution.target.value.TargetValue;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.javascript.karma.KarmaBundle;
@@ -16,7 +18,9 @@ import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerTerminatedListener;
 import com.intellij.javascript.nodejs.NodeStackTraceFilter;
 import com.intellij.javascript.nodejs.execution.NodeTargetRun;
+import com.intellij.javascript.nodejs.execution.NodeTargetRunOptions;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
+import com.intellij.javascript.nodejs.interpreter.remote.NodeJsRemoteInterpreter;
 import com.intellij.javascript.testFramework.interfaces.mochaTdd.MochaTddFileStructure;
 import com.intellij.javascript.testFramework.interfaces.mochaTdd.MochaTddFileStructureBuilder;
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructure;
@@ -28,6 +32,7 @@ import com.intellij.javascript.testFramework.util.JSTestNamePattern;
 import com.intellij.javascript.testing.JSTestRunnerUtil;
 import com.intellij.lang.javascript.ConsoleCommandLineFolder;
 import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -35,16 +40,18 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.PathUtil;
-import com.intellij.util.ThreeState;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.concurrency.Promise;
 import org.jetbrains.io.LocalFileFinder;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static com.intellij.javascript.nodejs.execution.NodeTargetRunOptions.shouldUsePtyForTestRunners;
 
 public class KarmaExecutionSession {
 
@@ -145,7 +152,8 @@ public class KarmaExecutionSession {
 
   @NotNull
   private NodeTargetRun createTargetRun(@NotNull NodeJsInterpreter interpreter, @NotNull KarmaServer server) throws ExecutionException {
-    NodeTargetRun targetRun = new NodeTargetRun(interpreter, myProject, null, NodeTargetRun.createOptions(ThreeState.NO, List.of()));
+    NodeTargetRun targetRun = new NodeTargetRun(interpreter, myProject, null, NodeTargetRunOptions.of(shouldUsePtyForTestRunners(),
+                                                                                                      myRunConfiguration));
     TargetedCommandLineBuilder commandLine = targetRun.getCommandLineBuilder();
     commandLine.setWorkingDirectory(targetRun.path(myRunSettings.getWorkingDirectorySystemDependent()));
     targetRun.addNodeOptionsWithExpandedMacros(false, myRunSettings.getNodeOptions());
@@ -155,7 +163,21 @@ public class KarmaExecutionSession {
     targetRun.path(KarmaJsSourcesLocator.getInstance().getKarmaIntellijPackageDir().getAbsolutePath());
     File clientAppFile = KarmaJsSourcesLocator.getInstance().getClientAppFile();
     commandLine.addParameter(targetRun.path(clientAppFile.getAbsolutePath()));
-    commandLine.addParameter("--serverPort=" + server.getServerPort());
+    if (NodeJsRemoteInterpreter.isDocker(interpreter) || NodeJsRemoteInterpreter.isDockerCompose(interpreter)) {
+      // Workaround for Docker/Docker Compose: assume remove karma server port is forwarded to IDE host with the same port.
+      // Need to run karma-runner and karma server in the same Docker container, but it's not possible now.
+      Promise<ResolvedPortBinding> resolvedPortBinding = targetRun.localPortBinding(server.getServerPort());
+      commandLine.addParameter(TargetValue.create("--serverHost=127.0.0.1", resolvedPortBinding.then((portBinding) -> {
+        return "--serverHost=" + portBinding.getTargetEndpoint().getHost();
+      })));
+      commandLine.addParameter(TargetValue.create("--serverPort=" + server.getServerPort(), resolvedPortBinding.then((portBinding) -> {
+        return "--serverPort=" + portBinding.getTargetEndpoint().getPort();
+      })));
+    }
+    else {
+      commandLine.addParameter("--serverHost=127.0.0.1");
+      commandLine.addParameter("--serverPort=" + server.getServerPort());
+    }
     KarmaConfig config = server.getKarmaConfig();
     if (config != null) {
       commandLine.addParameter("--protocol=" + config.getProtocol());
@@ -178,7 +200,9 @@ public class KarmaExecutionSession {
       return JSTestRunnerUtil.getTestsPattern(myFailedTestNames, false);
     }
     if (myRunSettings.getScopeKind() == KarmaScopeKind.TEST_FILE) {
-      List<List<JSTestNamePattern>> allFileTests = findAllFileTests(myProject, myRunSettings.getTestFileSystemIndependentPath());
+      List<List<JSTestNamePattern>> allFileTests = ReadAction.compute(() -> {
+        return findAllFileTests(myProject, myRunSettings.getTestFileSystemIndependentPath());
+      });
       String testFileName = PathUtil.getFileName(myRunSettings.getTestFileSystemIndependentPath());
       if (allFileTests.isEmpty()) {
         throw new ExecutionException(KarmaBundle.message("execution.no_tests_found_in_file.dialog.message", testFileName));
@@ -219,7 +243,7 @@ public class KarmaExecutionSession {
     }
     QUnitFileStructure qunit = QUnitFileStructureBuilder.getInstance().fetchCachedTestFileStructure(jsFile);
     qunit.forEachTest(test -> {
-      allTestsPatterns.add(ContainerUtil.newArrayList(JSTestNamePattern.literalPattern(test.getModuleStructure().getName()),
+      allTestsPatterns.add(List.of(JSTestNamePattern.literalPattern(test.getModuleStructure().getName()),
                                                       JSTestNamePattern.literalPattern(test.getName())));
     });
     if (!allTestsPatterns.isEmpty()) {

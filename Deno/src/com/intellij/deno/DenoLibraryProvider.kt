@@ -1,5 +1,6 @@
 package com.intellij.deno
 
+import com.intellij.deno.roots.useWorkspaceModel
 import com.intellij.deno.service.DenoTypings
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
 import com.intellij.lang.javascript.library.JSSyntheticLibraryProvider
@@ -7,17 +8,18 @@ import com.intellij.navigation.ItemPresentation
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.AdditionalLibraryRootsProvider
 import com.intellij.openapi.roots.SyntheticLibrary
+import com.intellij.openapi.roots.SyntheticLibrary.ExcludeFileCondition
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import javax.swing.Icon
 
-class DenoLibrary(private val libs: List<VirtualFile>) :
-  SyntheticLibrary("DenoLib",
-                   ExcludeFileCondition { isDir, filename, _, _, _ ->
-                     !isDir && !TypeScriptUtil.isDefinitionFile(
-                       filename) && FileUtilRt.getExtension(filename).isNotEmpty()
-                   }), ItemPresentation {
+internal val excludeCondition = ExcludeFileCondition { isDir, filename, _, _, _ ->
+  !isDir && !TypeScriptUtil.isDefinitionFile(
+    filename) && FileUtilRt.getExtension(filename).isNotEmpty()
+}
+
+class DenoLibrary(private val libs: List<VirtualFile>) : SyntheticLibrary("DenoLib", excludeCondition), ItemPresentation {
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
@@ -38,6 +40,7 @@ class DenoLibrary(private val libs: List<VirtualFile>) :
 
 class DenoLibraryProvider : AdditionalLibraryRootsProvider(), JSSyntheticLibraryProvider {
   override fun getAdditionalProjectLibraries(project: Project): Collection<SyntheticLibrary> {
+    if (useWorkspaceModel()) return emptyList()
     val service = DenoSettings.getService(project)
     if (!service.isUseDeno()) return emptyList()
 
@@ -56,6 +59,7 @@ class DenoLibraryProvider : AdditionalLibraryRootsProvider(), JSSyntheticLibrary
   }
 
   override fun getRootsToWatch(project: Project): Collection<VirtualFile> {
+    if (useWorkspaceModel()) return emptyList()
     val service = DenoSettings.getService(project)
     return if (!service.isUseDeno()) emptyList() else getLibs(project, service)
   }

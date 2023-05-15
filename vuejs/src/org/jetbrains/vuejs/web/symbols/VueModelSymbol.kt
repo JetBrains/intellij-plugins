@@ -7,19 +7,21 @@ import com.intellij.webSymbols.SymbolNamespace
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolOrigin
 import org.jetbrains.vuejs.model.VueModelDirectiveProperties
-import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension
+import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
 
 class VueModelSymbol(override val origin: WebSymbolOrigin,
                      private val vueModel: VueModelDirectiveProperties) : WebSymbol {
 
+  override val name: String
+    get() = "Vue Model"
   override val namespace: SymbolNamespace get() = WebSymbol.NAMESPACE_HTML
-  override val kind: SymbolKind get() = VueWebSymbolsRegistryExtension.KIND_VUE_MODEL
+  override val kind: SymbolKind get() = VueWebSymbolsQueryConfigurator.KIND_VUE_MODEL
 
   override val properties: Map<String, Any>
     get() {
       val map = mutableMapOf<String, Any>()
-      vueModel.prop?.let { map[VueWebSymbolsRegistryExtension.PROP_VUE_MODEL_PROP] = it }
-      vueModel.event?.let { map[VueWebSymbolsRegistryExtension.PROP_VUE_MODEL_EVENT] = it }
+      vueModel.prop?.let { map[VueWebSymbolsQueryConfigurator.PROP_VUE_MODEL_PROP] = it }
+      vueModel.event?.let { map[VueWebSymbolsQueryConfigurator.PROP_VUE_MODEL_EVENT] = it }
       return map
     }
 

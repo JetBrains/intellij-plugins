@@ -811,9 +811,7 @@ public class CfmlExpressionParser {
 
   private void parseStringText() {
     IElementType tokenType = getTokenType();
-    if ((tokenType != CfmlTokenTypes.STRING_TEXT && tokenType != OPENSHARP) ||
-        tokenType == CfmlTokenTypes.DOUBLE_QUOTE_CLOSER ||
-        tokenType == CfmlTokenTypes.SINGLE_QUOTE_CLOSER) {
+    if (tokenType != CfmlTokenTypes.STRING_TEXT && tokenType != OPENSHARP) {
       return;
     }
 

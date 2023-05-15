@@ -64,7 +64,7 @@ public class ActionScriptAccessibilityProcessingHandler extends AccessibilityPro
     if (JSResolveUtil.getClassOfContext(place) != JSResolveUtil.getClassOfContext(element)) {
       if (!acceptPrivateMembers) {
         if (attributeList != null && attributeList.getAccessType() == JSAttributeList.AccessType.PRIVATE) {
-          resolveProcessor.addPossibleCandidateResult(element, JSResolveResult.PRIVATE_MEMBER_IS_NOT_ACCESSIBLE);
+          resolveProcessor.addPossibleCandidateResult(element, JSResolveResult.ProblemKind.PRIVATE_MEMBER_IS_NOT_ACCESSIBLE);
           return false;
         }
       }
@@ -75,7 +75,7 @@ public class ActionScriptAccessibilityProcessingHandler extends AccessibilityPro
           ) {
           // we are resolving in context of the class or element within context of the class
           if ((myClassScopes != null || isParentClassContext(element))) {
-            resolveProcessor.addPossibleCandidateResult(element, JSResolveResult.PROTECTED_MEMBER_IS_NOT_ACCESSIBLE);
+            resolveProcessor.addPossibleCandidateResult(element, JSResolveResult.ProblemKind.PROTECTED_MEMBER_IS_NOT_ACCESSIBLE);
             return false;
           } // if element / context out of class then protected element is ok due to includes
         }
@@ -87,12 +87,12 @@ public class ActionScriptAccessibilityProcessingHandler extends AccessibilityPro
     if (processStatics) {
       if ((attributeList == null || !attributeList.hasModifier(JSAttributeList.ModifierType.STATIC))) {
         if (JSResolveUtil.PROTOTYPE_FIELD_NAME.equals(resolveProcessor.getName())) return true;
-        resolveProcessor.addPossibleCandidateResult(element, JSResolveResult.INSTANCE_MEMBER_INACCESSIBLE);
+        resolveProcessor.addPossibleCandidateResult(element, JSResolveResult.ProblemKind.INSTANCE_MEMBER_INACCESSIBLE);
         return false;
       }
       if (myTypeName != null && elt instanceof JSClass && !myTypeName.equals(((JSClass)elt).getQualifiedName())) {
         // static members are inherited in TypeScript classes
-        resolveProcessor.addPossibleCandidateResult(element, JSResolveResult.STATIC_MEMBER_INACCESSIBLE);
+        resolveProcessor.addPossibleCandidateResult(element, JSResolveResult.ProblemKind.STATIC_MEMBER_INACCESSIBLE);
         return false;
       }
     }
@@ -116,7 +116,7 @@ public class ActionScriptAccessibilityProcessingHandler extends AccessibilityPro
           }
         }
         if (!referencingClass) {
-          resolveProcessor.addPossibleCandidateResult(element, JSResolveResult.STATIC_MEMBER_INACCESSIBLE);
+          resolveProcessor.addPossibleCandidateResult(element, JSResolveResult.ProblemKind.STATIC_MEMBER_INACCESSIBLE);
           return false;
         }
       }
@@ -155,7 +155,7 @@ public class ActionScriptAccessibilityProcessingHandler extends AccessibilityPro
         !ActionScriptResolveUtil.AS3_NAMESPACE.equals(attributeNs) // AS3 is opened by default from compiler settings and for JavaScript symbols
       ) {
       if (attributeNs != null || defaultNsIsNotAllowed) {
-        resolveProcessor.addPossibleCandidateResult(element, JSResolveResult.MEMBER_FROM_UNOPENED_NAMESPACE);
+        resolveProcessor.addPossibleCandidateResult(element, JSResolveResult.ProblemKind.MEMBER_FROM_UNOPENED_NAMESPACE);
         return true;
       }
     }

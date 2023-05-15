@@ -9,7 +9,6 @@ import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
-import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.Trinity
@@ -29,12 +28,12 @@ import com.intellij.util.asSafely
 import com.intellij.xml.util.HtmlUtil.STYLE_TAG_NAME
 import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.*
-import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
 import org.jetbrains.vuejs.editor.VueComponentSourceEdit
+import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 import org.jetbrains.vuejs.index.VueFileVisitor
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.findScriptTag
-import org.jetbrains.vuejs.lang.expr.VueJSLanguage
+import org.jetbrains.vuejs.lang.expr.VueExprMetaLanguage
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.VueModelManager
 
@@ -59,7 +58,7 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
       }
       val resolved = refData.resolve() ?: return@forEach
       var parentTag = PsiTreeUtil.getParentOfType(resolved, XmlTag::class.java)
-      if (parentTag == null && VueJSLanguage.INSTANCE == resolved.language) {
+      if (parentTag == null && VueExprMetaLanguage.matches(resolved.language)) {
         val host = InjectedLanguageManager.getInstance(list[0].project).getInjectionHost(resolved)
         if (host != null) {
           parentTag = PsiTreeUtil.getParentOfType(host, XmlTag::class.java)
@@ -137,7 +136,7 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
   fun createNewComponent(newComponentName: String): VirtualFile? {
     val newText = generateNewComponentText(newComponentName)
     val folder: PsiDirectory = containingFile.parent ?: return null
-    val virtualFile = folder.virtualFile.createChildData(this, toAsset(newComponentName, true) + ".vue")
+    val virtualFile = folder.virtualFile.createChildData(this, toAsset(newComponentName, true) + VUE_FILE_EXTENSION)
     VfsUtil.saveText(virtualFile, newText)
     return virtualFile
   }

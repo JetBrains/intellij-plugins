@@ -1,0 +1,545 @@
+//noinspection RegExpRedundantEscapeForFile
+/*
+ * Copyright 2000-2015 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+{
+//  org.intellij.terraform.hcl
+  parserClass = 'org.intellij.terraform.hcl.HCLParser'
+  parserUtilClass = "org.intellij.terraform.hcl.psi.HCLParserUtil"
+  psiPackage = 'org.intellij.terraform.hcl.psi'
+  psiImplPackage = 'org.intellij.terraform.hcl.psi.impl'
+
+  elementTypeHolderClass = 'org.intellij.terraform.hcl.HCLElementTypes'
+  elementTypeClass = 'org.intellij.terraform.hcl.HCLElementType'
+  psiClassPrefix = 'HCL'
+  psiVisitorName = 'HCLElementVisitor'
+
+  psiImplUtilClass = 'org.intellij.terraform.hcl.psi.impl.HCLPsiImplUtilJ'
+  tokenTypeClass = 'org.intellij.terraform.hcl.HCLTokenType'
+
+  implements = 'org.intellij.terraform.hcl.psi.HCLElement'
+
+  tokens = [
+//    space = "regexp:\s+"
+    line_c_comment = "regexp:(//.*)"
+    line_hash_comment = "regexp:(#.*)"
+    block_comment = "regexp:/\*([^*]|\*[^/])*\*?(\*/)?"
+
+    L_PAREN='('
+    R_PAREN=')'
+    L_BRACKET='['
+    R_BRACKET=']'
+    L_CURLY='{'
+    R_CURLY='}'
+    COMMA=','
+    EQUALS='='
+
+    DOUBLE_QUOTED_STRING="regexp:\"([^\\\"\r\n]|\\[^\r\n])*\"?"
+    SINGLE_QUOTED_STRING="regexp:'([^\\\'\r\n]|\\[^\r\n])*'?"
+
+    NUMBER='regexp:-?(0x)?(0|[1-9])\d*(\.\d+)?([eE][-+]?\d+)?'
+
+    TRUE='true'
+    FALSE='false'
+    NULL='null'
+
+    ID="regexp:[a-zA-Z_][0-9a-zA-Z\-_]*"
+
+    OP_DOT='.'
+
+    // Operators
+    OP_PLUS='+'
+    OP_MINUS='-'
+    OP_MUL='*'
+    OP_DIV='/'
+    OP_MOD='%'
+
+    // Logic operators
+    // Unary
+    OP_NOT='!'
+    // Binary
+    OP_EQUAL='=='
+    OP_NOT_EQUAL='!='
+    OP_LESS='<'
+    OP_GREATER='>'
+    OP_LESS_OR_EQUAL='<='
+    OP_GREATER_OR_EQUAL='>='
+    OP_AND_AND='&&'
+    OP_OR_OR='||'
+    // Ternary condition
+    OP_COLON=':'
+    OP_QUEST='?'
+
+    // HCL2 For expressions
+    OP_MAPPING='=>'
+    OP_ELLIPSIS='...'
+  ]
+
+  extends("container|literal|identifier")=value
+  extends("array|object|block_object")=container
+  extends(".*_literal")=literal
+
+  extends("Binary.+Expression")=BinaryExpression
+
+  extends(".*Expression|.*Variable|ExpressionHolder|CollectionValue")=Expression
+}
+
+root ::= root_element*
+
+private root_element ::= block_outer | property_outer
+
+private property_outer ::= property_name property {
+  pin=2
+}
+
+left property ::= ('='|':') Expression {
+  methods=[
+    getName
+    getNameElement
+    getValue
+    // suppress getValueList() accessor
+//    value=""
+    Expression=""
+    getPresentation
+  ]
+  implements=[
+    "org.intellij.terraform.hcl.psi.HCLElement"
+    'com.intellij.psi.PsiNameIdentifierOwner'
+  ]
+  mixin="org.intellij.terraform.hcl.psi.impl.HCLPropertyMixin"
+  pin('.*')=1
+}
+
+private block_outer ::= property_name block {
+  pin=2
+}
+
+left block ::= property_name* block_object {
+  methods=[
+      getName
+      getFullName
+      getNameElements
+      getObject
+      // suppress getValueList() accessor
+      value=""
+      getPresentation
+  ]
+  implements=[
+    'org.intellij.terraform.hcl.psi.HCLElement'
+    'com.intellij.psi.PsiNameIdentifierOwner'
+  ]
+  mixin="org.intellij.terraform.hcl.psi.impl.HCLBlockMixin"
+  pin=2
+}
+
+block_object ::= '{' object_element* '}' {
+  pin=1
+  extends=object
+}
+
+private object_element ::= (block_outer | property_outer) (','|&'}')? {
+  pin=1
+  recoverWhile = not_brace_or_next_value
+}
+
+private property_name ::= identifier | string_literal | boolean_literal | null_literal
+
+fake container ::= {
+}
+
+value ::= literal | identifier | array | object {
+  extends=Expression
+  mixin = 'org.intellij.terraform.hcl.psi.impl.HCLElementImpl'
+}
+
+
+//region HCL2
+Expression ::= (
+      ParenthesizedExpression
+
+    | ConditionalExpression
+
+    | BinaryOrExpression
+    | BinaryAndExpression
+
+    | BinaryEqualityExpression
+    | BinaryRelationalExpression
+
+    | BinaryAdditionExpression
+    | BinaryMultiplyExpression
+
+    | ForArrayExpression | ForObjectExpression
+
+    | UnaryExpression
+    | MethodCallExpression
+    | SelectExpression
+    | IndexSelectExpression
+
+
+    | CollectionValue
+    | Variable
+    //| TemplateExpression // TODO: Investigate templates
+    | literal
+) {
+  name="expression"
+  methods = [
+  ]
+  implements=[
+    "org.intellij.terraform.hcl.psi.HCLElement"
+    "org.intellij.terraform.hcl.psi.common.BaseExpression"
+  ]
+  mixin = "org.intellij.terraform.hcl.psi.impl.HCLExpressionBase"
+}
+
+// TODO: Check ILVariable
+SelectExpression ::= Expression OP_DOT (number_literal|Variable) {
+  //noinspection BnfResolve
+  pin(".*")=OP_DOT
+  methods=[
+    Expression=""
+    from="Expression[0]"
+    field="Expression[1]"
+    getReference
+    getReferences
+  ]
+  implements="org.intellij.terraform.hcl.psi.common.SelectExpression<org.intellij.terraform.hcl.psi.HCLExpression>"
+}
+
+IndexSelectExpression ::= Expression ('[' Expression ']') {
+  pin(".*")="'\['"
+  extends = SelectExpression
+  implements="org.intellij.terraform.hcl.psi.common.IndexSelectExpression<org.intellij.terraform.hcl.psi.HCLExpression>"
+}
+
+ParenthesizedExpression ::= '(' Expression ')'
+{
+  implements="org.intellij.terraform.hcl.psi.common.ParenthesizedExpression<org.intellij.terraform.hcl.psi.HCLExpression>"
+}
+
+Variable ::= identifier | '*' {
+  name="Identifier"
+  implements=[
+    "org.intellij.terraform.hcl.psi.common.Identifier"
+  ]
+  mixin="org.intellij.terraform.hcl.psi.impl.HCLVariableMixin"
+}
+
+CollectionValue ::= array | object;
+
+array ::= '[' array_element* ']'  {
+  methods=[
+    getPresentation
+    Elements="Expression"
+  ]
+  pin=1
+  implements="org.intellij.terraform.hcl.psi.common.CollectionExpression<org.intellij.terraform.hcl.psi.HCLExpression>"
+}
+
+private array_element ::= (Expression) (','|&']') {
+  pin=1
+  recoverWhile = not_bracket_or_next_value
+}
+
+object ::= '{' object_element2* '}' {
+  pin=1
+  methods=[
+    findProperty
+    getPresentation
+    getBlockList
+    getElements
+  ]
+  implements="org.intellij.terraform.hcl.psi.common.CollectionExpression<org.intellij.terraform.hcl.psi.HCLExpression>"
+}
+
+private object_element2 ::= (ObjectElement) (','|&'}')? {
+  pin=1
+  recoverWhile = not_brace_or_next_value_2
+}
+private ObjectElement ::= Expression property (','|&'}')?
+{
+  pin=2
+}
+
+//TemplateExpression ::= string_literal | heredoc_literal;
+
+MethodCallExpression ::= identifier ParameterList
+{
+  methods=[
+    Callee="identifier"
+    ParameterList="ParameterList"
+    getQualifier
+    getMethod
+  ]
+  implements="org.intellij.terraform.hcl.psi.common.MethodCallExpression<org.intellij.terraform.hcl.psi.HCLExpression>"
+}
+ParameterList ::= '(' ParameterListElement* '...'? ')' {
+  pin(".*")=1
+  methods=[
+    Expression=""
+    Elements="Expression"
+  ]
+  implements=[
+    "com.intellij.psi.PsiElement" // To prevent loop in HCLElementVisitor.visitParameterList
+    "org.intellij.terraform.hcl.psi.common.ParameterList<org.intellij.terraform.hcl.psi.HCLExpression>"
+  ]
+}
+
+private ParameterListElement ::= (Expression) (','|&')')? {
+  pin=1
+  recoverWhile = not_paren_or_next_value
+}
+
+fake ForExpression ::=ForIntro Expression? ForCondition?
+{
+  methods=[
+    Expression=""
+    Intro="ForIntro"
+    Condition="ForCondition"
+  ]
+}
+
+ForArrayExpression ::= "[" ForIntro Expression ForCondition? "]"
+{
+  extends=ForExpression
+  methods=[
+    getExpression
+  ]
+}
+ForObjectExpression ::= "{" ForIntro Expression "=>" Expression "..."? ForCondition? "}"
+{
+  extends=ForExpression
+  methods=[
+    Expression=""
+    getKey
+    getValue
+    isGrouping
+  ]
+}
+
+ForIntro ::= "for" identifier ("," identifier)? ("in" Expression) ":"
+{
+  pin('.*')=1
+  methods=[
+    getVar1
+    getVar2
+    getContainer
+    Expression=""
+  ]
+}
+ForCondition ::= "if" Expression
+{
+  pin=1
+}
+
+
+
+// TODO: Priorities
+UnaryExpression ::= unaryOp Expression
+{
+  methods = [
+    operand="Expression"
+    getOperationSign
+  ]
+  implements="org.intellij.terraform.hcl.psi.common.UnaryExpression<org.intellij.terraform.hcl.psi.HCLExpression>"
+}
+
+fake BinaryExpression ::= Expression+ {
+  methods = [
+    Expression=""
+    LeftOperand="Expression[0]"
+    RightOperand="Expression[1]"
+    getOperationSign
+  ]
+  implements="org.intellij.terraform.hcl.psi.common.BinaryExpression<org.intellij.terraform.hcl.psi.HCLExpression>"
+}
+
+BinaryRelationalExpression ::= Expression relationalOp Expression
+BinaryEqualityExpression ::= Expression equalityOp Expression
+
+BinaryAndExpression ::= Expression andOp Expression
+BinaryOrExpression ::= Expression orOp Expression
+
+BinaryAdditionExpression ::= Expression addOp Expression
+BinaryMultiplyExpression ::= Expression mulOp Expression
+
+
+
+ConditionalExpression ::= Expression('?' Expression (':' Expression))
+{
+  pin(".*")="'\?'|'\:'"
+  methods=[
+    condition="Expression[0]"
+    then="Expression[1]"
+    otherwise="Expression[2]"
+  ]
+  implements="org.intellij.terraform.hcl.psi.common.ConditionalExpression<org.intellij.terraform.hcl.psi.HCLExpression>"
+}
+
+// Kinda interpolations (HIL)
+//Template ::= (
+//    TemplateExpression |
+//    TemplateInterpolation |
+//    TemplateDirective
+//)*
+//TemplateDirective ::= TemplateIf | TemplateFor;
+//TemplateInterpolation ::= ("${" | "${~") Expression ("}" | "~}")
+//TemplateIf ::= (
+//    ("%{" | "%{~") "if" Expression ("}" | "~}")
+//    Template
+//    (
+//        ("%{" | "%{~") "else" ("}" | "~}")
+//        Template
+//    )?
+//    ("%{" | "%{~") "endif" ("}" | "~}")
+//);
+//TemplateFor ::= (
+//    ("%{" | "%{~") "for" identifier ("," identifier) "in" Expression ("}" | "~}")
+//    Template
+//    ("%{" | "%{~") "endfor" ("}" | "~}")
+//);
+
+
+// Operators
+private mulOp ::= OP_MUL | OP_DIV | OP_MOD
+{
+  name="operator"
+}
+private addOp ::= OP_PLUS | OP_MINUS
+{
+  name="operator"
+}
+// TODO: Check whether OP_PLUS supported as unary operator
+private unaryOp ::= OP_MINUS | OP_NOT
+{
+  name="operator"
+}
+private orOp ::= OP_OR_OR
+{
+  name="operator"
+}
+private andOp ::= OP_AND_AND
+{
+  name="operator"
+}
+private equalityOp ::= OP_EQUAL
+                    | OP_NOT_EQUAL
+{
+  name="operator"
+}
+private relationalOp ::= OP_LESS
+                       | OP_GREATER
+                       | OP_LESS_OR_EQUAL
+                       | OP_GREATER_OR_EQUAL
+{
+  name="operator"
+}
+
+
+//endregion HCL2
+
+
+identifier ::= ID {
+  name = "identifier"
+  methods = [
+    getId
+    ID=""
+  ]
+  mixin = 'org.intellij.terraform.hcl.psi.impl.HCLIdentifierMixin'
+  implements="org.intellij.terraform.hcl.psi.common.Identifier"
+}
+
+
+literal ::= string_literal | number_literal | boolean_literal | null_literal | heredoc_literal {
+  methods = [
+    isQuotedString
+  ]
+  mixin = 'org.intellij.terraform.hcl.psi.impl.HCLLiteralMixin'
+  implements="org.intellij.terraform.hcl.psi.common.LiteralExpression"
+}
+
+string_literal::= DOUBLE_QUOTED_STRING | SINGLE_QUOTED_STRING {
+  name = "string literal"
+  methods=[
+    getTextFragments
+    getValue
+    getQuoteSymbol
+    SINGLE_QUOTED_STRING=""
+    DOUBLE_QUOTED_STRING=""
+  ]
+  mixin = 'org.intellij.terraform.hcl.psi.impl.HCLStringLiteralMixin'
+  implements = [
+    "com.intellij.psi.PsiLanguageInjectionHost"
+    "com.intellij.psi.NavigatablePsiElement"
+  ]
+}
+number_literal::= NUMBER {
+  name="number"
+  methods=[
+    getValue
+    NUMBER=""
+  ]
+}
+boolean_literal::= TRUE | FALSE {
+  name="boolean"
+  methods=[
+    getValue
+  ]
+}
+null_literal::= NULL {
+  name="null"
+}
+
+heredoc_literal::= heredoc {
+  name="heredoc"
+  methods=[
+    getValue
+    heredoc_marker=""
+    content="heredoc_content"
+    marker-start="heredoc_marker[0]"
+    marker-end="heredoc_marker[1]"
+    isIndented
+    getIndentation
+  ]
+}
+private heredoc::= HD_START heredoc_marker heredoc_content heredoc_marker
+heredoc_content::=heredoc_line* {
+  methods=[
+    getLines
+    getLinesRaw
+    getLinesCount
+    getValue
+    getMinimalIndentation
+    getTextFragments
+ ]
+  mixin = 'org.intellij.terraform.hcl.psi.impl.HCLHeredocContentMixin'
+}
+private heredoc_line::= HD_LINE HD_EOL {
+  name = "heredoc content"
+}
+heredoc_marker::= HD_MARKER {
+  methods=[
+    getName
+  ]
+  name = "heredoc anchor" // called that way in HCL parser errors. In bash it's 'limit string'
+}
+
+
+// Recoveries
+private not_paren_or_next_value ::= !(')'|'...'|Expression)
+private not_bracket_or_next_value ::= !(']'|Expression)
+private not_brace_or_next_value ::= !('}'|value)
+
+private not_brace_or_next_value_2 ::= !('}'|ObjectElement)
+

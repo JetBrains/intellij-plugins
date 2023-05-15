@@ -17,9 +17,6 @@ package com.intellij.coldFusion;
 
 import com.intellij.codeInsight.folding.CodeFoldingSettings;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlFoldingTest extends CfmlCodeInsightFixtureTestCase {
   @Override
   protected String getBasePath() {

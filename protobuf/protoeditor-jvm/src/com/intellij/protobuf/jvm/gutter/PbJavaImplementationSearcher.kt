@@ -8,7 +8,10 @@ import com.intellij.protobuf.jvm.PbJavaGotoDeclarationHandler
 import com.intellij.protobuf.lang.psi.*
 import com.intellij.protobuf.lang.stub.PbSearchParameters
 import com.intellij.protobuf.lang.stub.ProtoFileAccessor
-import com.intellij.psi.*
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ClassInheritorsSearch
 import com.intellij.psi.util.InheritanceUtil
@@ -18,7 +21,7 @@ import com.intellij.util.asSafely
 
 internal class PbJavaImplementationSearcher : PbCodeImplementationSearcher {
   override fun findImplementationsForProtoElement(pbElement: PbElement,
-                                                  converters: Collection<PbGeneratedCodeConverter>): Sequence<NavigatablePsiElement> {
+                                                  converters: Collection<PbGeneratedCodeConverter>): Sequence<PsiElement> {
     return when (pbElement) {
       is PbServiceDefinition -> handleServiceImplementations(pbElement, converters)
       is PbServiceMethod -> handleMethodImplementations(pbElement, converters)
@@ -136,6 +139,7 @@ internal class PbJavaImplementationSearcher : PbCodeImplementationSearcher {
   private fun hasServiceSuperclass(psiClass: PsiClass, converters: Collection<PbGeneratedCodeConverter>): Boolean {
     return converters
       .map(PbGeneratedCodeConverter::generatedFileNameHint)
+      .distinct()
       .any { InheritanceUtil.isInheritor(psiClass, it) }
   }
 }

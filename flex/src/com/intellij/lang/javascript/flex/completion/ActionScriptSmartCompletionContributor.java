@@ -62,8 +62,7 @@ public final class ActionScriptSmartCompletionContributor extends JSSmartComplet
       ) {
       final JSExpression calledExpr = ((JSCallExpression)parent.getParent()).getMethodExpression();
 
-      if (calledExpr instanceof JSReferenceExpression) {
-        final JSReferenceExpression expression = (JSReferenceExpression)calledExpr;
+      if (calledExpr instanceof JSReferenceExpression expression) {
         @NonNls final String s = expression.getReferencedName();
 
         if (ActionScriptResolveUtil.ADD_EVENT_LISTENER_METHOD.equals(s) ||
@@ -372,8 +371,7 @@ public final class ActionScriptSmartCompletionContributor extends JSSmartComplet
 
     @Override
     public boolean execute(@NotNull final PsiElement element, @NotNull final ResolveState state) {
-      if (element instanceof JSVariable) {
-        final JSVariable variable = (JSVariable)element;
+      if (element instanceof JSVariable variable) {
         final JSAttributeList attributeList = variable.getAttributeList();
 
         if (attributeList != null &&

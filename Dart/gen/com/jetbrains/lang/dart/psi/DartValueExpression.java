@@ -11,6 +11,9 @@ public interface DartValueExpression extends DartExpression {
   List<DartExpression> getExpressionList();
 
   @Nullable
+  DartSwitchExpressionWrapper getSwitchExpressionWrapper();
+
+  @Nullable
   DartTypeArguments getTypeArguments();
 
 }

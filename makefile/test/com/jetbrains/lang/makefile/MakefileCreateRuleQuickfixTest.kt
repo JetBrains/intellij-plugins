@@ -1,11 +1,16 @@
 package com.jetbrains.lang.makefile
 
 import com.intellij.testFramework.fixtures.*
+import com.jetbrains.lang.makefile.inspections.MakefileUnresolvedPrerequisiteInspection
 
 class MakefileCreateRuleQuickfixTest : BasePlatformTestCase() {
   fun testSimple() = doTest()
   fun testMiddle() = doTest()
 
+  override fun setUp() {
+    super.setUp()
+    myFixture.enableInspections(MakefileUnresolvedPrerequisiteInspection::class.java)
+  }
 
   fun doTest() {
     myFixture.configureByFile("$basePath/${getTestName(true)}.mk")

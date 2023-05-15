@@ -1,0 +1,60 @@
+<idea-plugin>
+    <id>com.jetbrains.webstorm.web-assembly-plugin</id>
+    <name>WebAssembly</name>
+    <vendor>JetBrains</vendor>
+
+    <description>
+        <![CDATA[
+        The plugin supports the WebAssembly language. The following features are available for wat-files:
+        <br>
+        <ul>
+            <li>Syntax highlighting</li>
+            <li>Minor features (brace matching, commenter, code folding)</li>
+            <li>Code completion</li>
+            <li>References and navigation</li>
+            <li>Features of the new release (bulk instructions, reference types)</li>
+        </ul>
+        ]]>
+    </description>
+
+    <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <fileType name="WebAssembly file"
+                  implementationClass="org.jetbrains.webstorm.lang.psi.WebAssemblyFileType"
+                  fieldName="INSTANCE"
+                  language="WebAssembly"
+                  extensions="wat;wast"/>
+
+        <lang.parserDefinition language="WebAssembly"
+                               implementationClass="org.jetbrains.webstorm.lang.parser.WebAssemblyParserDefinition"/>
+
+        <lang.syntaxHighlighterFactory language="WebAssembly"
+                                       implementationClass="org.jetbrains.webstorm.ide.WebAssemblySyntaxHighlighterFactory"/>
+
+        <colorSettingsPage implementation="org.jetbrains.webstorm.ide.colors.WebAssemblyColorSettingPage"/>
+
+        <!-- Matcher -->
+        <lang.braceMatcher language="WebAssembly"
+                           implementationClass="org.jetbrains.webstorm.ide.WebAssemblyBraceMatcher"/>
+
+        <!-- Commenter -->
+        <lang.commenter language="WebAssembly"
+                        implementationClass="org.jetbrains.webstorm.lang.WebAssemblyCommenter"/>
+
+        <!-- Folding -->
+        <lang.foldingBuilder language="WebAssembly"
+                             implementationClass="org.jetbrains.webstorm.lang.WebAssemblyFoldingBuilder"/>
+
+        <!-- Completion -->
+        <completion.contributor language="WebAssembly"
+                                implementationClass="org.jetbrains.webstorm.lang.WebAssemblyKeywordCompletionContributor"/>
+
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+    </actions>
+</idea-plugin>

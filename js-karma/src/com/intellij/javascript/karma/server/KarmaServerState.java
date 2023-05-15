@@ -6,7 +6,6 @@ import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.intellij.javascript.karma.KarmaConfig;
-import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ObjectUtils;
@@ -47,13 +46,13 @@ public class KarmaServerState {
   private final List<String> myFailedToStartBrowsers = ContainerUtil.createLockFreeCopyOnWriteList();
   private volatile KarmaConfig myConfig;
 
-  public KarmaServerState(@NotNull KarmaServer server, @NotNull File configurationFile) {
+  public KarmaServerState(@NotNull KarmaServer server, @NotNull String configurationFilePath, @NotNull String workingDirectory) {
     myServer = server;
     myOverriddenBrowsers = parseBrowsers(findBrowsers(server.getServerSettings().getKarmaOptions()));
     myServer.registerStreamEventHandler(new BrowserEventHandler(BROWSER_CONNECTED_EVENT_TYPE));
     myServer.registerStreamEventHandler(new BrowserEventHandler(BROWSER_DISCONNECTED_EVENT_TYPE));
     myServer.registerStreamEventHandler(new BrowserCapturingFailedEventHandler());
-    myServer.registerStreamEventHandler(new ConfigHandler(configurationFile, server.getServerSettings().getNodeInterpreter()));
+    myServer.registerStreamEventHandler(new ConfigHandler(configurationFilePath, workingDirectory));
   }
 
   @NotNull
@@ -112,7 +111,7 @@ public class KarmaServerState {
     }
     Set<String> expectedBrowserSet = new HashSet<>(expectedBrowsers);
     myFailedToStartBrowsers.forEach(expectedBrowserSet::remove);
-    if (myCapturedBrowsers.values().stream().anyMatch(o -> !o.isAutoCaptured())) {
+    if (ContainerUtil.exists(myCapturedBrowsers.values(), o -> !o.isAutoCaptured())) {
       return true;
     }
     long autoCapturedCount = myCapturedBrowsers.values().stream().filter(o -> o.isAutoCaptured()).count();
@@ -212,7 +211,7 @@ public class KarmaServerState {
           handleBrowsersChange(myEventType, id, name, autoCaptured);
         }
         else {
-          LOG.warn("Illegal browser event. Type: " + myEventType + ", body: " + eventBody.toString());
+          LOG.warn("Illegal browser event. Type: " + myEventType + ", body: " + eventBody);
         }
       }
     }
@@ -221,11 +220,15 @@ public class KarmaServerState {
   private class ConfigHandler implements StreamEventHandler {
 
     private final File myConfigurationFileDir;
-    private final NodeJsInterpreter myInterpreter;
 
-    ConfigHandler(@NotNull File configurationFile, @NotNull NodeJsInterpreter interpreter) {
-      myConfigurationFileDir = configurationFile.getParentFile();
-      myInterpreter = interpreter;
+    public ConfigHandler(@NotNull String configurationFilePath, @NotNull String workingDirectory) {
+      File configFile = new File(configurationFilePath);
+      if (configFile.isFile()) {
+        myConfigurationFileDir = configFile.getParentFile();
+      }
+      else {
+        myConfigurationFileDir = new File(workingDirectory);
+      }
     }
 
     @NotNull
@@ -236,7 +239,7 @@ public class KarmaServerState {
 
     @Override
     public void handle(@NotNull JsonElement eventBody) {
-      myConfig = KarmaConfig.parseFromJson(eventBody, myConfigurationFileDir, myInterpreter);
+      myConfig = KarmaConfig.parseFromJson(eventBody, myConfigurationFileDir);
     }
   }
 

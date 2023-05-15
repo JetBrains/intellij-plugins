@@ -409,9 +409,8 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       }
     }
 
-    if (parent instanceof JSClass && !node.isConstructor()) {
+    if (parent instanceof JSClass clazz && !node.isConstructor()) {
       final JSAttributeList attributeList = node.getAttributeList();
-      final JSClass clazz = (JSClass)parent;
 
       if (attributeList == null ||
           !attributeList.hasModifier(JSAttributeList.ModifierType.STATIC) &&
@@ -555,7 +554,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   @Override
-  public void visitJSClass(JSClass jsClass) {
+  public void visitJSClass(@NotNull JSClass jsClass) {
     super.visitJSClass(jsClass);
     checkPackageElement(jsClass);
 
@@ -628,7 +627,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   @Override
-  public void visitJSPackageStatement(final JSPackageStatement packageStatement) {
+  public void visitJSPackageStatement(final @NotNull JSPackageStatement packageStatement) {
     final JSFile jsFile = PsiTreeUtil.getParentOfType(packageStatement, JSFile.class);
     final PsiElement context = jsFile == null ? null : jsFile.getContext();
     boolean injected = context instanceof XmlAttributeValue || context instanceof XmlText;
@@ -732,7 +731,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   @Override
-  public void visitJSReferenceExpression(JSReferenceExpression node) {
+  public void visitJSReferenceExpression(@NotNull JSReferenceExpression node) {
     super.visitJSReferenceExpression(node);
 
     final PsiElement parent = node.getParent();
@@ -751,8 +750,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     }
 
 
-    if (parent instanceof JSNamedElement) {
-      JSNamedElement namedElement = (JSNamedElement)parent;
+    if (parent instanceof JSNamedElement namedElement) {
       final ASTNode nameIdentifier = namedElement.findNameIdentifier();
 
       if (nameIdentifier != null && nameIdentifier.getPsi() == node) {
@@ -787,7 +785,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   @Override
-  public void visitJSReferenceList(JSReferenceList referenceList) {
+  public void visitJSReferenceList(@NotNull JSReferenceList referenceList) {
     PsiElement jsClass = referenceList.getParent();
     if (jsClass instanceof JSClass && !((JSClass)jsClass).isInterface()
         && (((JSClass)jsClass).getExtendsList() == referenceList || ((JSClass)jsClass).getImplementsList() == referenceList)) {
@@ -821,7 +819,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
 
   @Override
-  public void visitJSAttributeList(JSAttributeList attributeList) {
+  public void visitJSAttributeList(@NotNull JSAttributeList attributeList) {
     PsiElement namespaceElement = ActionScriptPsiImplUtil.getNamespaceElement(attributeList);
     PsiElement accessTypeElement = attributeList.findAccessTypeElement();
     PsiElement namespaceOrAccessModifierElement = namespaceElement;
@@ -1050,7 +1048,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   @Override
-  public void visitJSAttribute(JSAttribute jsAttribute) {
+  public void visitJSAttribute(@NotNull JSAttribute jsAttribute) {
     if ("Embed".equals(jsAttribute.getName())) {
       JSVarStatement varStatement = PsiTreeUtil.getParentOfType(jsAttribute, JSVarStatement.class);
 
@@ -1079,7 +1077,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   @Override
-  public void visitJSNamespaceDeclaration(JSNamespaceDeclaration namespaceDeclaration) {
+  public void visitJSNamespaceDeclaration(@NotNull JSNamespaceDeclaration namespaceDeclaration) {
     checkPackageElement(namespaceDeclaration);
     final PsiElement initializer = namespaceDeclaration.getInitializer();
     if (initializer instanceof JSExpression) {
@@ -1219,7 +1217,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   @Override
-  public void visitJSThisExpression(final JSThisExpression node) {
+  public void visitJSThisExpression(final @NotNull JSThisExpression node) {
     checkClassReferenceInStaticContext(node, "javascript.validation.message.this.referenced.from.static.context");
   }
 
@@ -1227,8 +1225,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     PsiElement element =
       PsiTreeUtil.getParentOfType(node, JSExecutionScope.class, JSClass.class, JSObjectLiteralExpression.class);
 
-    if (element instanceof JSFunction) {
-      final JSFunction function = (JSFunction)element;
+    if (element instanceof JSFunction function) {
 
       final JSAttributeList attributeList = function.getAttributeList();
       if (attributeList != null && attributeList.hasModifier(JSAttributeList.ModifierType.STATIC)) {
@@ -1253,7 +1250,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   @Override
-  public void visitJSSuperExpression(final JSSuperExpression node) {
+  public void visitJSSuperExpression(final @NotNull JSSuperExpression node) {
     checkClassReferenceInStaticContext(node, "javascript.validation.message.super.referenced.from.static.context");
   }
 

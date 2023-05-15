@@ -1,6 +1,6 @@
 package org.angularjs.codeInsight;
 
-import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
+import com.intellij.lang.javascript.inspections.JSUnresolvedReferenceInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
@@ -63,7 +63,7 @@ public class NgRepeatTest extends BasePlatformTestCase {
   }
 
   public void testInspection() {
-    myFixture.enableInspections(JSUnresolvedVariableInspection.class);
+    myFixture.enableInspections(JSUnresolvedReferenceInspection.class);
     myFixture.disableInspections();
     myFixture.configureByFiles("controllerWithAlias.inspect.html", "angular.js", "customNoVar.js");
     myFixture.checkHighlighting();

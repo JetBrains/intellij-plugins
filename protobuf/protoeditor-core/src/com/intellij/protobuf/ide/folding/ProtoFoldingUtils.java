@@ -25,7 +25,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import java.util.Collection;
 
 /** Common utilities for building folding regions. */
-public class ProtoFoldingUtils {
+public final class ProtoFoldingUtils {
 
   public static <T> void addIfNotNull(Collection<T> collection, T item) {
     if (item != null) {

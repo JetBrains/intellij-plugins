@@ -17,6 +17,9 @@ public interface DartForLoopParts extends DartPsiCompositeElement {
   DartForInPart getForInPart();
 
   @Nullable
+  DartPatternVariableDeclaration getPatternVariableDeclaration();
+
+  @Nullable
   DartVarDeclarationList getVarDeclarationList();
 
 }

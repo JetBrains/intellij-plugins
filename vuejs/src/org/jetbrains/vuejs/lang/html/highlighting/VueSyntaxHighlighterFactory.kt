@@ -7,13 +7,24 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter
 import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.vuejs.lang.html.parser.VueFileElementType
+import org.jetbrains.vuejs.lang.LangMode
+import org.jetbrains.vuejs.lang.VueScriptLangs
+import org.jetbrains.vuejs.lang.html.VueFileElementType
 
 class VueSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
   override fun getSyntaxHighlighter(project: Project?, virtualFile: VirtualFile?): SyntaxHighlighter {
-    return VueFileHighlighter(
-      project?.let { JSRootConfiguration.getInstance(it).languageLevel } ?: JSLanguageLevel.getLevelForJSX(),
-      project,
-      VueFileElementType.readDelimiters(virtualFile?.name))
+    val langMode = VueScriptLangs.getLatestKnownLang(project, virtualFile)
+    return getSyntaxHighlighter(project, virtualFile, langMode)
   }
+
+  companion object {
+    fun getSyntaxHighlighter(project: Project?, virtualFile: VirtualFile?, langMode: LangMode): SyntaxHighlighter =
+      VueFileHighlighter(
+        project?.let { JSRootConfiguration.getInstance(it).languageLevel } ?: JSLanguageLevel.getLevelForJSX(),
+        langMode,
+        project,
+        VueFileElementType.readDelimiters(virtualFile?.name)
+      )
+  }
+
 }

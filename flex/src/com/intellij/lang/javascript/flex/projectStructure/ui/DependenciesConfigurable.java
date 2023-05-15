@@ -310,10 +310,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     @Override
     public boolean isModified(final DependencyEntry entry) {
-      if (!(entry instanceof BuildConfigurationEntry)) {
+      if (!(entry instanceof BuildConfigurationEntry bcEntry)) {
         return true;
       }
-      BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)entry;
       if (configurable != null) {
         if (configurable.getModule() != bcEntry.findModule()) return true;
         if (!configurable.getDisplayName().equals(bcEntry.getBcName())) return true;
@@ -329,7 +328,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     @Override
     public boolean canEdit() {
-      return false;
+      return super.canEdit();
     }
 
     @Override
@@ -416,10 +415,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     @Override
     public boolean isModified(final DependencyEntry entry) {
-      if (!(entry instanceof ModuleLibraryEntry)) {
+      if (!(entry instanceof ModuleLibraryEntry libraryEntry)) {
         return true;
       }
-      ModuleLibraryEntry libraryEntry = (ModuleLibraryEntry)entry;
       if (!libraryEntry.getLibraryId().equals(libraryId)) {
         return true;
       }
@@ -521,10 +519,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     @Override
     public boolean isModified(final DependencyEntry entry) {
-      if (!(entry instanceof ModifiableSharedLibraryEntry)) {
+      if (!(entry instanceof ModifiableSharedLibraryEntry libraryEntry)) {
         return true;
       }
-      ModifiableSharedLibraryEntry libraryEntry = (ModifiableSharedLibraryEntry)entry;
       Library liveLibrary = findLiveLibrary();
       if (liveLibrary != null) {
         if (!libraryEntry.getLibraryName().equals(liveLibrary.getName())) return true;
@@ -1333,8 +1330,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     FlexBCConfigurator configurator = FlexBuildConfigurationsExtension.getInstance().getConfigurator();
     for (DependencyEntry entry : myDependencies.getEntries()) {
       MyTableItem item = null;
-      if (entry instanceof BuildConfigurationEntry) {
-        final BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)entry;
+      if (entry instanceof BuildConfigurationEntry bcEntry) {
         Module module = bcEntry.findModule();
         CompositeConfigurable configurable =
           module != null ? ContainerUtil.find(configurator.getBCConfigurables(module),
@@ -1347,15 +1343,13 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         }
         ((BCItem)item).dependencyType.copyFrom(entry.getDependencyType());
       }
-      else if (entry instanceof ModuleLibraryEntry) {
-        ModuleLibraryEntry moduleLibraryEntry = (ModuleLibraryEntry)entry;
+      else if (entry instanceof ModuleLibraryEntry moduleLibraryEntry) {
         item = new ModuleLibraryItem(moduleLibraryEntry.getLibraryId(),
                                      myConfigEditor.findLibraryOrderEntry(myDependencies, moduleLibraryEntry),
                                      myProject);
         ((ModuleLibraryItem)item).dependencyType.copyFrom(entry.getDependencyType());
       }
-      else if (entry instanceof SharedLibraryEntry) {
-        SharedLibraryEntry sharedLibraryEntry = (SharedLibraryEntry)entry;
+      else if (entry instanceof SharedLibraryEntry sharedLibraryEntry) {
         LibrariesModifiableModel model = ProjectStructureConfigurable.getInstance(myProject).getContext()
           .createModifiableModelProvider(sharedLibraryEntry.getLibraryLevel()).getModifiableModel();
         LibraryEx library = (LibraryEx)model.getLibraryByName(sharedLibraryEntry.getLibraryName());

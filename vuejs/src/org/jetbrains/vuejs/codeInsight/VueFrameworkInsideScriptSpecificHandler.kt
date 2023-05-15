@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight
 
+import com.intellij.javascript.web.js.WebJSResolveUtil.resolveSymbolFromNodeModule
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.frameworks.JSFrameworkSpecificHandler
@@ -17,12 +18,13 @@ import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.index.VueFrameworkHandler
-import org.jetbrains.vuejs.lang.expr.VueJSLanguage
+import org.jetbrains.vuejs.lang.expr.VueExprMetaLanguage
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.source.COMPUTED_PROP
 import org.jetbrains.vuejs.model.source.METHODS_PROP
 import org.jetbrains.vuejs.model.source.WATCH_PROP
+import org.jetbrains.vuejs.types.VueLazyThisType
 
 class VueFrameworkInsideScriptSpecificHandler : JSFrameworkSpecificHandler {
   companion object {
@@ -37,7 +39,7 @@ class VueFrameworkInsideScriptSpecificHandler : JSFrameworkSpecificHandler {
       val language = DialectDetector.languageOfElement(element)
       if ((VueFileType.INSTANCE == element.containingFile?.fileType
            && isInsideScript(element)
-           && VueJSLanguage.INSTANCE != language
+           && !VueExprMetaLanguage.matches(language)
            && (VueFrameworkHandler.hasComponentIndicatorProperties(element) || element.context is ES6ExportDefaultAssignment))
           || (element.containingFile is JSFile && VueFrameworkHandler.hasComponentIndicatorProperties(element)
               && isVueContext(element))) {
@@ -50,7 +52,7 @@ class VueFrameworkInsideScriptSpecificHandler : JSFrameworkSpecificHandler {
   private fun getObjectLiteralTypeForComponent(obj: JSObjectLiteralExpression): JSType? {
     /* The information about `this` type is processed only in TS context. */
     val thisType = VueModelManager.findEnclosingComponent(obj)
-      ?.thisType
+      ?.let { VueLazyThisType(it) }
       ?.let {
         JSGenericTypeImpl(it.source, JSNamedTypeFactory.createType("ThisType", it.source, JSTypeContext.INSTANCE), it)
       }
@@ -71,7 +73,7 @@ class VueFrameworkInsideScriptSpecificHandler : JSFrameworkSpecificHandler {
       }
       ?.let {
         if (it is JSUnionType) {
-          JSCompositeTypeFactory.createContextualUnionType(it.types, it.source)
+          JSCompositeTypeFactory.createContextualUnionType(it.types, it.source, false)
         }
         else it
       }

@@ -1,0 +1,8 @@
+XML_START_TAG_START ('<')
+XML_NAME ('script')
+XML_TAG_END ('>')
+JS:MOD_ES6_EMBEDDED_CONTENT ('\n')
+XML_END_TAG_START ('</')
+XML_NAME ('script')
+XML_TAG_END ('>')
+VUE_LANG_MODE_NO_TS ('')

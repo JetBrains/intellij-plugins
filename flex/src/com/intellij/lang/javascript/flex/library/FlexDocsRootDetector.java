@@ -13,9 +13,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author ksafonov
- */
 class FlexDocsRootDetector extends RootDetector {
   FlexDocsRootDetector() {
     super(JavadocOrderRootType.getInstance(), false, FlexBundle.message("docs.root.detector.name"));

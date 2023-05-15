@@ -11,6 +11,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.importing.FacetImporter;
 import org.jetbrains.idea.maven.importing.MavenRootModelAdapter;
 import org.jetbrains.idea.maven.model.MavenId;
@@ -49,19 +50,16 @@ public class OsmorcBndFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFac
   }
 
   @Override
-  public void getSupportedDependencyTypes(Collection<String> result, SupportedRequestType type) {
+  public void getSupportedDependencyTypes(Collection<? super String> result, SupportedRequestType type) {
     result.add("bundle");
   }
 
   @Override
-  protected void setupFacet(OsmorcFacet osmorcFacet, MavenProject mavenProjectModel) { }
-
-  @Override
-  protected void reimportFacet(IdeModifiableModelsProvider modelsProvider, Module module,
-                               MavenRootModelAdapter mavenRootModelAdapter, OsmorcFacet osmorcFacet,
-                               MavenProjectsTree mavenProjectsTree, MavenProject mavenProject,
-                               MavenProjectChanges changes, Map<MavenProject, String> mavenProjectStringMap,
-                               List<MavenProjectsProcessorTask> mavenProjectsProcessorPostConfigurationTasks) {
+  protected void reimportFacet(@NotNull IdeModifiableModelsProvider modelsProvider, @NotNull Module module,
+                               @NotNull MavenRootModelAdapter mavenRootModelAdapter, @NotNull OsmorcFacet osmorcFacet,
+                               @NotNull MavenProjectsTree mavenProjectsTree, @NotNull MavenProject mavenProject,
+                               @NotNull MavenProjectChanges changes, @NotNull Map<MavenProject, String> mavenProjectStringMap,
+                               @NotNull List<MavenProjectsProcessorTask> mavenProjectsProcessorPostConfigurationTasks) {
     OsmorcFacetConfiguration conf = osmorcFacet.getConfiguration();
     if (conf.isDoNotSynchronizeWithMaven()) {
       return;

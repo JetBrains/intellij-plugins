@@ -9,9 +9,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Irina.Chernushina on 3/8/2016.
- */
 public class UiRouterState {
   private final @NotNull String myName;
   private String myUrl;

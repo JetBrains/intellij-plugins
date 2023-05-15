@@ -1,9 +1,9 @@
 public class TestClass {
-<selection>    public function someMethod():void {
+    public function someMethod():void {
         
     }
     
-    /**
+<selection>    /**
      * some
      * lines
 <caret>    * of

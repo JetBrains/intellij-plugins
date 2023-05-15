@@ -64,8 +64,7 @@ public class ChangeListChooser {
     myChangeList.setRenderer(new ColoredListCellRenderer() {
       @Override
       protected void customizeCellRenderer(@NotNull JList list, Object value, int index, boolean selected, boolean hasFocus) {
-        if (value instanceof PerforceChangeList) {
-          PerforceChangeList changeList = (PerforceChangeList) value;
+        if (value instanceof PerforceChangeList changeList) {
           String description = changeList.getComment();
           if (description.length() > 30) {
             description = description.substring(0, 25) + "...";

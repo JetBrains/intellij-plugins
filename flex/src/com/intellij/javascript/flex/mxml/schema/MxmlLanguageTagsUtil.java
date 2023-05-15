@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.codeInsight.daemon.IdeValidationHost;
@@ -187,23 +187,16 @@ public final class MxmlLanguageTagsUtil {
 
       if (attribute.isNamespaceDeclaration()) {
         final String namespace = attribute.getValue();
-        if (MXML_URI.equals(namespace)) {
-          flex3NamespaceDeclaration = attribute;
-        }
-        else if (MXML_URI3.equals(namespace)) {
-          flex4NamespaceDeclaration = attribute;
+        switch (namespace) {
+          case MXML_URI -> flex3NamespaceDeclaration = attribute;
+          case MXML_URI3 -> flex4NamespaceDeclaration = attribute;
         }
       }
       else if (checkStateSpecificAttrs) {
-        if (FlexStateElementNames.INCLUDE_IN.equals(name) ||
-                 FlexStateElementNames.EXCLUDE_FROM.equals(name)) {
-          includeInOrExcludeFromAttrPresent = true;
-        }
-        else if (FlexStateElementNames.ITEM_CREATION_POLICY.equals(name)) {
-          itemCreationPolicyAttr = attribute;
-        }
-        else if (FlexStateElementNames.ITEM_DESTRUCTION_POLICY.equals(name)) {
-          itemDestructionPolicyAttr = attribute;
+        switch (name) {
+          case FlexStateElementNames.INCLUDE_IN, FlexStateElementNames.EXCLUDE_FROM -> includeInOrExcludeFromAttrPresent = true;
+          case FlexStateElementNames.ITEM_CREATION_POLICY -> itemCreationPolicyAttr = attribute;
+          case FlexStateElementNames.ITEM_DESTRUCTION_POLICY -> itemDestructionPolicyAttr = attribute;
         }
       }
     }

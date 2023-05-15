@@ -1,15 +1,12 @@
 package com.jetbrains.lang.makefile
 
-import com.intellij.codeInspection.InspectionManager
-import com.intellij.codeInspection.ProblemHighlightType
-import com.intellij.lang.*
-import com.intellij.lang.annotation.*
-import com.intellij.lang.annotation.HighlightSeverity.*
-import com.intellij.openapi.editor.colors.*
-import com.intellij.openapi.util.*
-import com.intellij.psi.*
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.*
-import com.intellij.psi.tree.*
+import com.intellij.lang.ASTNode
+import com.intellij.lang.annotation.AnnotationHolder
+import com.intellij.lang.annotation.Annotator
+import com.intellij.lang.annotation.HighlightSeverity.INFORMATION
+import com.intellij.openapi.editor.colors.TextAttributesKey
+import com.intellij.psi.PsiElement
+import com.intellij.psi.tree.TokenSet
 import com.jetbrains.lang.makefile.MakefileSyntaxHighlighter.Companion.FUNCTION
 import com.jetbrains.lang.makefile.MakefileSyntaxHighlighter.Companion.PREREQUISITE
 import com.jetbrains.lang.makefile.MakefileSyntaxHighlighter.Companion.SPECIAL_TARGET
@@ -28,51 +25,6 @@ class MakefileAnnotator : Annotator {
       holder.mark(element, if (element.isSpecialTarget) SPECIAL_TARGET else TARGET)
     } else if (element is MakefilePrerequisite) {
       holder.mark(element, PREREQUISITE)
-
-      if (Regex("""\$\((.*)\)""").matches(element.text)) {
-        return
-      }
-
-      val targetLine = element.parent.parent.parent as MakefileTargetLine
-      if (targetLine.targets.targetList.firstOrNull()?.isSpecialTarget == false && targetLine.targetPattern == null) {
-        val targetReferences = element.references.filter { it is MakefileTargetReference && it.multiResolve(false).isNotEmpty() }.any()
-
-        var fileReferenceResolved = false
-        var unresolvedFile: TextRange? = null
-        element.references.filter { it is FileReference }.forEach {
-          if (it.resolve() == null) {
-            if (!targetReferences) {
-              val startOffset = element.textRange.startOffset
-              val start = startOffset + it.rangeInElement.startOffset
-              val end = startOffset + it.rangeInElement.endOffset
-              val textRange = TextRange.create(start, end)
-              unresolvedFile = unresolvedFile?.union(textRange) ?: textRange
-            }
-          } else {
-            fileReferenceResolved = true
-          }
-        }
-
-        if (!targetReferences && !fileReferenceResolved) {
-          val fix = CreateRuleFix()
-          val problemDescriptor = InspectionManager.getInstance(element.project).createProblemDescriptor(
-            element,
-            MakefileLangBundle.message("intention.name.create.rule"),
-            fix,
-            ProblemHighlightType.WEAK_WARNING,
-            true
-          )
-          holder
-            .newAnnotation(WEAK_WARNING, MakefileLangBundle.message("inspection.message.unresolved.prerequisite"))
-            .newLocalQuickFix(fix, problemDescriptor).range(element.textRange).registerFix()
-            .create()
-        } else if (unresolvedFile != null) {
-          holder
-            .newAnnotation(WEAK_WARNING, MakefileLangBundle.message("inspection.message.file.not.found"))
-            .range(unresolvedFile!!)
-            .create()
-        }
-      }
     } else if (element is MakefileVariable) {
       holder.mark(element, VARIABLE)
     } else if (element is MakefileVariableValue) {

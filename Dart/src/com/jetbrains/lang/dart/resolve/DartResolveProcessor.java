@@ -29,8 +29,7 @@ public class DartResolveProcessor extends DartPsiScopeProcessor {
   protected boolean doExecute(final @NotNull DartComponentName componentName) {
     final PsiElement parentElement = componentName.getParent();
 
-    if (parentElement instanceof DartComponent) {
-      final DartComponent dartComponent = (DartComponent)parentElement;
+    if (parentElement instanceof DartComponent dartComponent) {
       // try set getter or get setter
       if (myLValue && dartComponent.isGetter()) return true;
       if (!myLValue && dartComponent.isSetter()) return true;

@@ -145,10 +145,9 @@ final class MessageFieldTracker {
 
     private void visitFields(PbMessageType messageType) {
       for (PbSymbol symbol : messageType.getSymbols()) {
-        if (!(symbol instanceof PbField)) {
+        if (!(symbol instanceof PbField field)) {
           continue;
         }
-        PbField field = (PbField) symbol;
         String fieldName = field.getName();
         if (fieldName != null) {
           visitFieldName(field, fieldName);

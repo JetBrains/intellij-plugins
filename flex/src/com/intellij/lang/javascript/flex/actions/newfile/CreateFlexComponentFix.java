@@ -39,7 +39,7 @@ import java.util.List;
 
 public class CreateFlexComponentFix extends ActionScriptCreateClassOrInterfaceFix {
   public static final Collection<String> FLEX_TEMPLATES_EXTENSIONS =
-    ContainerUtil.immutableList(JavaScriptSupportLoader.MXML_FILE_EXTENSION);
+    List.of(JavaScriptSupportLoader.MXML_FILE_EXTENSION);
   @NonNls static final String FLEX3_COMPONENT_TEMPLATE_NAME = "Flex 3 Component";
   @NonNls static final String FLEX4_COMPONENT_TEMPLATE_NAME = "Flex 4 Component";
 

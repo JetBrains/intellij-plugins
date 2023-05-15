@@ -49,7 +49,7 @@ public class KarmaBasePathFinder {
     final Ref<String> basePathRef = Ref.create(null);
     JSElementVisitor visitor = new JSElementVisitor() {
       @Override
-      public void visitJSProperty(JSProperty property) {
+      public void visitJSProperty(@NotNull JSProperty property) {
         String name = JsPsiUtils.getPropertyName(property);
         if (BASE_PATH_VAR_NAME.equals(name)) {
           JSLiteralExpression value = ObjectUtils.tryCast(property.getValue(), JSLiteralExpression.class);

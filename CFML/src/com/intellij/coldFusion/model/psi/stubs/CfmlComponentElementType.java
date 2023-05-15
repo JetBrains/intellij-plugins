@@ -14,9 +14,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
-/**
- * @author vnikolaenko
- */
 public abstract class CfmlComponentElementType extends CfmlStubElementType<CfmlComponentStub, CfmlComponent> {
   public CfmlComponentElementType(@NotNull @NonNls final String debugName, @Nullable final Language language) {
     super(debugName, language);

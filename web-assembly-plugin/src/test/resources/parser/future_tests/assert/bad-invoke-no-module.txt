@@ -1,0 +1,8 @@
+;;; TOOL: wast2json
+;;; ERROR: 1
+(invoke "foo")
+(;; STDERR ;;;
+out/test/parse/assert/bad-invoke-no-module.txt:3:2: error: unknown module
+(invoke "foo")
+ ^^^^^^
+;;; STDERR ;;)

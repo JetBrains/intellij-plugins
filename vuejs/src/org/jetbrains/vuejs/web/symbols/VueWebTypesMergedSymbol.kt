@@ -1,28 +1,32 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web.symbols
 
-import com.intellij.javascript.web.js.jsType
-import com.intellij.lang.documentation.DocumentationTarget
+import com.intellij.javascript.webSymbols.jsType
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
-import com.intellij.navigation.TargetPresentation
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.platform.backend.documentation.DocumentationTarget
+import com.intellij.platform.backend.presentation.TargetPresentation
+import com.intellij.psi.PsiElement
+import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.documentation.WebSymbolDocumentation
 import com.intellij.webSymbols.documentation.WebSymbolDocumentationTarget
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
-import com.intellij.webSymbols.registry.WebSymbolsCodeCompletionQueryParams
-import com.intellij.webSymbols.registry.WebSymbolsNameMatchQueryParams
+import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
+import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
+import com.intellij.webSymbols.utils.coalesceApiStatus
 import com.intellij.webSymbols.utils.merge
 import org.jetbrains.annotations.Nls
 import org.jetbrains.vuejs.codeInsight.toAsset
 import javax.swing.Icon
 
-class VueWebTypesMergedSymbol(sourceSymbol: PsiSourcedWebSymbol,
-                              webTypesSymbols: Collection<WebSymbol>)
-  : PsiSourcedWebSymbolDelegate<PsiSourcedWebSymbol>(sourceSymbol) {
+class VueWebTypesMergedSymbol(override val name: String,
+                              sourceSymbol: PsiSourcedWebSymbol,
+                              val webTypesSymbols: Collection<WebSymbol>)
+  : PsiSourcedWebSymbolDelegate<PsiSourcedWebSymbol>(sourceSymbol), CompositeWebSymbol {
 
   private val symbols: List<WebSymbol> = sequenceOf(sourceSymbol)
     .plus(webTypesSymbols).toList()
@@ -40,7 +44,7 @@ class VueWebTypesMergedSymbol(sourceSymbol: PsiSourcedWebSymbol,
 
   override val nameSegments: List<WebSymbolNameSegment>
     get() = listOf(WebSymbolNameSegment(
-      0, matchedName.length, symbols
+      0, name.length, symbols
     ))
 
   override val description: String?
@@ -58,11 +62,8 @@ class VueWebTypesMergedSymbol(sourceSymbol: PsiSourcedWebSymbol,
   override val icon: Icon?
     get() = symbols.firstNotNullOfOrNull { it.icon }
 
-  override val deprecated: Boolean
-    get() = symbols.any { it.deprecated }
-
-  override val experimental: Boolean
-    get() = symbols.any { it.experimental }
+  override val apiStatus: WebSymbolApiStatus
+    get() = coalesceApiStatus(symbols) { it.apiStatus }
 
   override val required: Boolean?
     get() = symbols.firstNotNullOfOrNull { it.required }
@@ -88,31 +89,31 @@ class VueWebTypesMergedSymbol(sourceSymbol: PsiSourcedWebSymbol,
       .distinctBy { it.key }
       .associateBy({ it.key }, { it.value })
 
-  override val contextContainers: Sequence<WebSymbolsContainer>
-    get() = sequenceOf(this)
+  override val queryScope: List<WebSymbolsScope>
+    get() = listOf(this)
 
-  override val documentation: WebSymbolDocumentation
-    get() = WebSymbolDocumentation.create(this).let { doc ->
+  override fun createDocumentation(location: PsiElement?): WebSymbolDocumentation =
+    WebSymbolDocumentation.create(this, location).let { doc ->
       originalName
         ?.let { doc.withDefinition(StringUtil.escapeXmlEntities(it) + " as " + doc.definition) }
       ?: doc
     }
 
-  override fun getDocumentationTarget(): DocumentationTarget =
-    VueMergedSymbolDocumentationTarget(this, originalName ?: name)
+  override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget =
+    VueMergedSymbolDocumentationTarget(this, location, originalName ?: name)
 
-  override fun getSymbols(namespace: SymbolNamespace?,
+  override fun getSymbols(namespace: SymbolNamespace,
                           kind: SymbolKind,
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
-                          context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
+                          scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
     symbols
       .flatMap {
-        it.getSymbols(namespace, kind, name, params, context)
+        it.getSymbols(namespace, kind, name, params, scope)
       }
       .takeIf { it.isNotEmpty() }
       ?.let { list ->
-        val containers = mutableListOf<WebSymbolsContainer>()
+        val containers = mutableListOf<WebSymbolsScope>()
         var psiSourcedWebSymbol: PsiSourcedWebSymbol? = null
         val webSymbols = mutableListOf<WebSymbol>()
         for (item in list) {
@@ -128,7 +129,7 @@ class VueWebTypesMergedSymbol(sourceSymbol: PsiSourcedWebSymbol,
           }
         }
         if (psiSourcedWebSymbol != null) {
-          containers.add(VueWebTypesMergedSymbol(psiSourcedWebSymbol, webSymbols))
+          containers.add(VueWebTypesMergedSymbol(psiSourcedWebSymbol.name, psiSourcedWebSymbol, webSymbols))
         }
         else {
           containers.addAll(webSymbols)
@@ -137,13 +138,13 @@ class VueWebTypesMergedSymbol(sourceSymbol: PsiSourcedWebSymbol,
       }
     ?: emptyList()
 
-  override fun getCodeCompletions(namespace: SymbolNamespace?,
+  override fun getCodeCompletions(namespace: SymbolNamespace,
                                   kind: SymbolKind,
                                   name: String?,
                                   params: WebSymbolsCodeCompletionQueryParams,
-                                  context: Stack<WebSymbolsContainer>): List<WebSymbolCodeCompletionItem> =
+                                  scope: Stack<WebSymbolsScope>): List<WebSymbolCodeCompletionItem> =
     symbols.asSequence()
-      .flatMap { it.getCodeCompletions(namespace, kind, name, params, context) }
+      .flatMap { it.getCodeCompletions(namespace, kind, name, params, scope) }
       .groupBy { it.name }
       .values
       .map { items ->
@@ -158,26 +159,29 @@ class VueWebTypesMergedSymbol(sourceSymbol: PsiSourcedWebSymbol,
             else symbols.add(it)
           }
           psiSourcedWebSymbol?.let {
-            items[0].withSymbol(VueWebTypesMergedSymbol(it, symbols))
+            items[0].withSymbol(VueWebTypesMergedSymbol(it.name, it, symbols))
           } ?: items[0]
         }
       }
 
-  override fun createPointer(): Pointer<out WebSymbol> {
+  override fun createPointer(): Pointer<out PsiSourcedWebSymbol> {
     val pointers = symbols.map { it.createPointer() }
+    val matchedName = name
     return Pointer {
       val symbols = pointers.map { it.dereference() ?: return@Pointer null }
-      VueWebTypesMergedSymbol(symbols[0] as? PsiSourcedWebSymbol ?: return@Pointer null,
+      VueWebTypesMergedSymbol(matchedName,
+                              symbols[0] as? PsiSourcedWebSymbol ?: return@Pointer null,
                               symbols.subList(1, symbols.size))
     }
   }
 
   class VueMergedSymbolDocumentationTarget(
     override val symbol: WebSymbol,
+    override val location: PsiElement?,
     @Nls val displayName: String,
   ) : WebSymbolDocumentationTarget {
 
-    override fun presentation(): TargetPresentation {
+    override fun computePresentation(): TargetPresentation {
       return TargetPresentation.builder(displayName)
         .icon(symbol.icon)
         .presentation()
@@ -185,9 +189,10 @@ class VueWebTypesMergedSymbol(sourceSymbol: PsiSourcedWebSymbol,
 
     override fun createPointer(): Pointer<out DocumentationTarget> {
       val pointer = symbol.createPointer()
+      val locationPtr = location?.createSmartPointer()
       val displayName = this.displayName
       return Pointer<DocumentationTarget> {
-        pointer.dereference()?.let { VueMergedSymbolDocumentationTarget(it, displayName) }
+        pointer.dereference()?.let { VueMergedSymbolDocumentationTarget(it, locationPtr?.dereference(), displayName) }
       }
     }
   }

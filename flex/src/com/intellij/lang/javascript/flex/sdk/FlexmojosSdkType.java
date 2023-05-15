@@ -124,7 +124,7 @@ public class FlexmojosSdkType extends SdkType {
   }
 
   @Override
-  public String getVersionString(final String sdkHome) {
+  public String getVersionString(final @NotNull String sdkHome) {
     // C:/Users/xxx/.m2/repository/com/adobe/flex/compiler/4.10.0-SNAPSHOT/compiler-4.10.0-SNAPSHOT.pom
     final int index1 = sdkHome.lastIndexOf("compiler-");
     return index1 > 0 && sdkHome.endsWith(".pom") ? sdkHome.substring(index1 + "compiler-".length(), sdkHome.length() - ".pom".length())

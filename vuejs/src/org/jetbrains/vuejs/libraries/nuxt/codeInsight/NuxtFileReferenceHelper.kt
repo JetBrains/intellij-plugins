@@ -23,8 +23,8 @@ class NuxtFileReferenceHelper : FileReferenceHelper() {
 
   override fun getContexts(project: Project, file: VirtualFile): Collection<PsiFileSystemItem> = emptyList()
 
-  override fun getRoots(module: Module, file: VirtualFile): Collection<PsiFileSystemItem> =
-    getPsiFileSystemItem(module.project, file)
+  override fun getRoots(module: Module, hostFile: VirtualFile): Collection<PsiFileSystemItem> =
+    getPsiFileSystemItem(module.project, hostFile)
       ?.let { NuxtModelManager.getApplication(it) }
       ?.staticResourcesDir
       ?.let { listOf(it) }

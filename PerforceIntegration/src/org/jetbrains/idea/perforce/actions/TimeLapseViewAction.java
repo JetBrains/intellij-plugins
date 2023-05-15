@@ -32,7 +32,7 @@ public class TimeLapseViewAction extends RevisionGraphAction {
 
   @Override
   public @NotNull ActionUpdateThread getActionUpdateThread() {
-    return ActionUpdateThread.BGT;
+    return super.getActionUpdateThread();
   }
 
   @Override

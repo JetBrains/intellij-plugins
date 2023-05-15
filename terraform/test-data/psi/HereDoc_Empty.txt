@@ -1,0 +1,16 @@
+HCLFile: HereDoc_Empty.hcl
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('foo')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLHeredocLiteral
+      PsiElement(HD_START)('<<')
+      HCLHeredocMarkerImpl(HEREDOC_MARKER)
+        PsiElement(HD_MARKER)('EOF')
+      PsiWhiteSpace('\n')
+      HCLHeredocContent
+        <empty list>
+      HCLHeredocMarkerImpl(HEREDOC_MARKER)
+        PsiElement(HD_MARKER)('EOF')
