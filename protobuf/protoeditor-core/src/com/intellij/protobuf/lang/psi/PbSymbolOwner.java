@@ -17,6 +17,7 @@ package com.intellij.protobuf.lang.psi;
 
 import com.google.common.collect.Multimap;
 import com.intellij.psi.util.QualifiedName;
+import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,11 +44,11 @@ public interface PbSymbolOwner extends PbElement {
    * #getChildScope()}.
    */
   @NotNull
-  Multimap<String, PbSymbol> getSymbolMap();
+  Map<String, Collection<PbSymbol>> getSymbolMap();
 
   @NotNull
   default Collection<PbSymbol> getSymbols() {
-    return getSymbolMap().values();
+    return getSymbolMap().values().stream().flatMap(Collection::stream).collect(Collectors.toSet());
   }
 
   @NotNull

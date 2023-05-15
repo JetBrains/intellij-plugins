@@ -26,6 +26,8 @@ import com.intellij.protobuf.lang.psi.PbSymbol;
 import com.intellij.protobuf.lang.psi.PbSymbolOwner;
 import com.intellij.protobuf.lang.psi.util.PbPsiImplUtil;
 import com.intellij.protobuf.lang.stub.PbNamedElementStub;
+import java.util.Collection;
+import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,7 +50,7 @@ abstract class PbStubbedSymbolOwnerBase<T extends PbNamedElementStub<?>>
 
   @NotNull
   @Override
-  public Multimap<String, PbSymbol> getSymbolMap() {
+  public Map<String, Collection<PbSymbol>> getSymbolMap() {
     return PbPsiImplUtil.getCachedSymbolMap(this);
   }
 
