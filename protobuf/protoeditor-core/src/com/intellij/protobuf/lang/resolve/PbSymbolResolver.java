@@ -15,6 +15,7 @@
  */
 package com.intellij.protobuf.lang.resolve;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Multimap;
@@ -30,6 +31,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.apache.commons.compress.utils.Lists;
+import org.assertj.core.util.Sets;
 
 /** Utilities for finding PbSymbol elements using protobuf's scoping and resolution rules. */
 public class PbSymbolResolver {
@@ -42,19 +45,21 @@ public class PbSymbolResolver {
 
   /** Returns a PbSymbolResolver that can resolve symbols in the given file and its imports. */
   public static PbSymbolResolver forFile(PbFile file) {
-    return new PbSymbolResolver(file.getFullQualifiedSymbolMap());
+    return new PbSymbolResolver(
+        Multimaps.newSetMultimap(file.getExportedQualifiedSymbolMap(), Sets::newHashSet));
   }
 
   /** Returns a PbSymbolResolver that can resolve symbols exported by the given file. */
   public static PbSymbolResolver forFileExports(PbFile file) {
-    return new PbSymbolResolver(file.getExportedQualifiedSymbolMap());
+    return new PbSymbolResolver(
+        Multimaps.newSetMultimap(file.getExportedQualifiedSymbolMap(), Sets::newHashSet));
   }
 
   /** Returns a PbSymbolResolver that can resolve symbols exported by the given files. */
   public static PbSymbolResolver forFileExports(List<PbFile> files) {
     ImmutableSetMultimap.Builder<QualifiedName, PbSymbol> builder = ImmutableSetMultimap.builder();
     for (PbFile file : files) {
-      builder.putAll(file.getExportedQualifiedSymbolMap());
+      file.getExportedQualifiedSymbolMap().forEach(builder::putAll);
     }
     return new PbSymbolResolver(builder.build());
   }

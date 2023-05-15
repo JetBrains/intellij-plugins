@@ -25,6 +25,8 @@ import com.intellij.psi.util.CachedValueProvider.Result;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.QualifiedName;
+import java.util.Collection;
+import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -110,13 +112,14 @@ public final class PbPsiImplUtil {
     return TextRange.create(start, end);
   }
 
-  public static ImmutableMultimap<String, PbSymbol> getCachedSymbolMap(PbStatementOwner owner) {
+  public static Map<String, Collection<PbSymbol>> getCachedSymbolMap(PbStatementOwner owner) {
     return CachedValuesManager.getCachedValue(
         owner,
         () ->
             Result.create(
                 computeSymbolMap(owner, PbSymbol.class),
-                PbCompositeModificationTracker.byElement(owner)));
+                PbCompositeModificationTracker.byElement(owner)))
+        .asMap();
   }
 
   public static ImmutableMultimap<String, PbEnumValue> getCachedEnumValueMap(

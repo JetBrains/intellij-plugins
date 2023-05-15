@@ -15,14 +15,14 @@
  */
 package com.intellij.protobuf.lang.psi;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.intellij.psi.impl.PsiFileEx;
 import com.intellij.psi.impl.source.PsiFileWithStubSupport;
 import com.intellij.psi.util.QualifiedName;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 /** A protobuf file. */
 public interface PbFile
@@ -67,7 +67,7 @@ public interface PbFile
    * @return A map containing the package's children.
    */
   @NotNull
-  ImmutableMultimap<String, PbSymbol> getPackageSymbolMap(QualifiedName packageName);
+  Map<String, Collection<PbSymbol>> getPackageSymbolMap(QualifiedName packageName);
 
   /**
    * Returns a map of all fully-qualified symbols defined in this file.
@@ -78,7 +78,7 @@ public interface PbFile
    * for "com", "com.foo", "com.foo.bar", and "com.foo.bar.MyMessage".
    */
   @NotNull
-  ImmutableMultimap<QualifiedName, PbSymbol> getLocalQualifiedSymbolMap();
+  Map<QualifiedName, Collection<PbSymbol>> getLocalQualifiedSymbolMap();
 
   /**
    * Returns a map of all fully-qualified symbols exported when this file is imported.
@@ -93,7 +93,7 @@ public interface PbFile
    * @see #getLocalQualifiedSymbolMap()
    */
   @NotNull
-  ImmutableMultimap<QualifiedName, PbSymbol> getExportedQualifiedSymbolMap();
+  Map<QualifiedName, Collection<PbSymbol>> getExportedQualifiedSymbolMap();
 
   /**
    * Returns a map of all fully-qualified symbols defined in this and imported files.
@@ -108,7 +108,7 @@ public interface PbFile
    * @see #getLocalQualifiedSymbolMap()
    */
   @NotNull
-  ImmutableMultimap<QualifiedName, PbSymbol> getFullQualifiedSymbolMap();
+  Map<QualifiedName, Collection<PbSymbol>> getFullQualifiedSymbolMap();
 
   /**
    * Returns the {@link PbSymbolOwner} that owns the elements defined in this file. This is either

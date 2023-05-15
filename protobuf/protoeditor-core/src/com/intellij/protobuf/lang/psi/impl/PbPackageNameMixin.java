@@ -28,6 +28,8 @@ import com.intellij.protobuf.lang.psi.PbSymbol;
 import com.intellij.protobuf.lang.psi.PbSymbolOwner;
 import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
 import com.intellij.protobuf.lang.psi.util.PbPsiImplUtil;
+import java.util.Collection;
+import java.util.Map;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -96,7 +98,7 @@ abstract class PbPackageNameMixin extends PbElementBase implements PbPackageName
 
   @NotNull
   @Override
-  public Multimap<String, PbSymbol> getSymbolMap() {
+  public Map<String, Collection<PbSymbol>> getSymbolMap() {
     return getPbFile().getPackageSymbolMap(getQualifiedName());
   }
 
