@@ -94,7 +94,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
     private val INTERESTING_PROPERTIES = arrayOf(MIXINS_PROP, EXTENDS_PROP, DIRECTIVES_PROP, NAME_PROP, TEMPLATE_PROP)
 
-    private val SCRIPT_SETUP_MACROS = setOf(DEFINE_EXPOSE_FUN, DEFINE_EMITS_FUN, DEFINE_PROPS_FUN, WITH_DEFAULTS_FUN)
+    private val SCRIPT_SETUP_MACROS = setOf(DEFINE_EXPOSE_FUN, DEFINE_EMITS_FUN, DEFINE_PROPS_FUN, WITH_DEFAULTS_FUN, DEFINE_MODEL_FUN)
 
     private const val METHOD_NAME_USER_STRING = "vmn"
 
@@ -446,7 +446,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     }
     if (parentType == JSElementTypes.ARGUMENT_LIST) {
       return treeParent.treeParent
-        .let { it != null && (isCompositionApiAppObjectCall(it) || isVueComponentDecoratorCall(it)) }
+        .let { it != null && (isCompositionApiAppObjectCall(it) || isVueComponentDecoratorCall(it) || isScriptSetupMacroCall(it)) }
     }
     return false
   }

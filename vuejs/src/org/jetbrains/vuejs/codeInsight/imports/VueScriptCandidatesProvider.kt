@@ -6,10 +6,7 @@ import com.intellij.lang.javascript.modules.imports.JSImportCandidatesBase
 import com.intellij.lang.javascript.modules.imports.providers.JSCandidatesProcessor
 import com.intellij.lang.javascript.modules.imports.providers.JSImportCandidatesProvider
 import org.jetbrains.vuejs.lang.html.VueFileType
-import org.jetbrains.vuejs.model.source.DEFINE_EMITS_FUN
-import org.jetbrains.vuejs.model.source.DEFINE_EXPOSE_FUN
-import org.jetbrains.vuejs.model.source.DEFINE_PROPS_FUN
-import org.jetbrains.vuejs.model.source.WITH_DEFAULTS_FUN
+import org.jetbrains.vuejs.model.source.*
 import java.util.function.Predicate
 
 internal val SCRIPT_SETUP_API = setOf(
@@ -17,6 +14,7 @@ internal val SCRIPT_SETUP_API = setOf(
   DEFINE_EMITS_FUN,
   DEFINE_EXPOSE_FUN,
   WITH_DEFAULTS_FUN,
+  DEFINE_MODEL_FUN,
 )
 
 class VueScriptCandidatesProvider(placeInfo: JSImportPlaceInfo) : JSImportCandidatesBase(placeInfo) {

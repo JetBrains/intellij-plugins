@@ -20,7 +20,9 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyNewType
 import com.intellij.lang.javascript.psi.types.evaluable.JSReturnedExpressionType
+import com.intellij.lang.javascript.psi.types.primitives.JSBooleanType
 import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveType
+import com.intellij.lang.javascript.psi.types.primitives.JSUndefinedType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.psi.util.stubSafeStringValue
 import com.intellij.notification.NotificationGroup
@@ -51,6 +53,7 @@ import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.VueModelProximityVisitor
 import org.jetbrains.vuejs.model.VueModelVisitor
+import org.jetbrains.vuejs.model.source.MODEL_LOCAL_PROP
 import org.jetbrains.vuejs.model.source.PROPS_DEFAULT_PROP
 import org.jetbrains.vuejs.model.source.PROPS_REQUIRED_PROP
 import org.jetbrains.vuejs.model.source.PROPS_TYPE_PROP
@@ -313,18 +316,30 @@ fun getPropTypeFromGenericType(jsType: JSType?): JSType? =
     ?.asCompleteType()
 
 fun getRequiredFromPropOptions(expression: JSExpression?): Boolean =
+  getBooleanFromPropOptions(expression, PROPS_REQUIRED_PROP)
+
+fun getLocalFromPropOptions(expression: JSExpression?): Boolean =
+  getBooleanFromPropOptions(expression, MODEL_LOCAL_PROP)
+
+private fun getBooleanFromPropOptions(expression: JSExpression?, propName: String) =
   (expression as? JSObjectLiteralExpression)
-    ?.findProperty(PROPS_REQUIRED_PROP)
+    ?.findProperty(propName)
     ?.jsType
     ?.let { type ->
-      if (type is JSWidenType)
-        type.originalType
-      else type
+      if (type is JSWidenType) type.originalType else type
     }
     ?.let { type ->
       (type as? JSBooleanLiteralTypeImpl)?.literal
     }
   ?: false
+
+fun getPropOptionality(options: JSExpression?, required: Boolean): Boolean =
+  when (val defaultType = getDefaultTypeFromPropOptions(options)) {
+    null -> if (required) false else getJSTypeFromPropOptions(options)?.substitute() !is JSBooleanType
+    is JSUndefinedType -> true
+    is JSFunctionType -> defaultType.returnType?.substitute() is JSUndefinedType
+    else -> false
+  }
 
 fun getDefaultTypeFromPropOptions(expression: JSExpression?): JSType? =
   (expression as? JSObjectLiteralExpression)

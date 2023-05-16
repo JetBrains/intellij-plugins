@@ -9,6 +9,9 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSStubElementImpl
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.lang.javascript.psi.types.JSAnyType
+import com.intellij.lang.javascript.psi.types.JSParameterTypeDecoratorImpl
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
@@ -27,6 +30,8 @@ import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.types.VueSourceModelPropType
+import org.jetbrains.vuejs.types.optionalIf
 
 class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
@@ -48,6 +53,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
     override val props: List<VueInputProperty>
     override val emits: List<VueEmitCall>
+    override val modelDecls: List<VueModelDecl>
 
     override val computed: List<VueComputedProperty>
       get() = rawBindings.filterIsInstance(VueComputedProperty::class.java)
@@ -92,6 +98,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       var props: List<VueInputProperty> = emptyList()
       var emits: List<VueEmitCall> = emptyList()
       var rawBindings: List<VueNamedSymbol> = emptyList()
+      val modelDecls: MutableMap<String, VueModelDecl> = mutableMapOf()
 
       module.getStubSafeDefineCalls().forEach { call ->
         when (VueFrameworkHandler.getFunctionNameFromVueIndex(call)) {
@@ -136,11 +143,26 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
                           ?: emptyList()
 
           }
+          DEFINE_MODEL_FUN -> analyzeDefineModel(call)?.let { modelDecls[it.name] = it }
         }
+      }
+
+      if (modelDecls.isNotEmpty()) {
+        val modelProps: MutableList<VueInputProperty> = mutableListOf()
+        val modelEmits: MutableList<VueEmitCall> = mutableListOf()
+
+        modelDecls.values.forEach {
+          modelProps.add(VueScriptSetupModelInputProperty(it))
+          modelEmits.add(VueScriptSetupModelEvent(it))
+        }
+
+        props = props + modelProps
+        emits = emits + modelEmits
       }
 
       this.props = props
       this.emits = emits
+      this.modelDecls = modelDecls.values.toList()
       this.rawBindings = rawBindings
     }
 
@@ -219,7 +241,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
         .filterIsInstance<JSCallExpression>()
         .mapNotNull { call ->
           when ((call.methodExpression as? JSReferenceExpression)?.referenceName) {
-            DEFINE_PROPS_FUN, DEFINE_EMITS_FUN, DEFINE_EXPOSE_FUN, WITH_DEFAULTS_FUN -> {
+            DEFINE_PROPS_FUN, DEFINE_EMITS_FUN, DEFINE_EXPOSE_FUN, WITH_DEFAULTS_FUN, DEFINE_MODEL_FUN -> {
               call
             }
             else -> null
@@ -262,6 +284,27 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
                      VueScriptSetupTypedEvent(name, source, callSignature.functionType)
                    }
                } ?: emptyList()
+    }
+
+    private fun analyzeDefineModel(call: JSCallExpression): VueModelDecl? {
+      val typeArgs = call.typeArguments
+      val arguments = call.stubSafeCallArguments
+      val nameElement = arguments.getOrNull(0).asSafely<JSLiteralExpression>()
+      val name = if (nameElement != null) {
+        nameElement.significantValue?.let { es6Unquote(it) }?.takeIf { it.isNotBlank() } ?: return null
+      }
+      else {
+        MODEL_VALUE_PROP
+      }
+
+      val options = when {
+        arguments.size == 2 -> arguments[1]
+        arguments.size == 1 && arguments[0] is JSObjectLiteralExpression -> arguments[0]
+        else -> null
+      } as? JSObjectLiteralExpression
+
+      val jsType = typeArgs.firstOrNull()?.jsType ?: options?.let { VueSourceModelPropType(name, it) } ?: JSAnyType.get(call, true)
+      return VueScriptSetupModelDecl(name, jsType, options, call)
     }
 
     private fun JSCallExpression.getInnerDefineProps(): JSCallExpression? =
@@ -310,6 +353,58 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
     override val hasStrictSignature: Boolean
       get() = true
+  }
+
+  private class VueScriptSetupModelDecl(override val name: String,
+                                        modelType: JSType,
+                                        options: JSObjectLiteralExpression?,
+                                        sourceElement: PsiElement) : VueModelDecl {
+
+    override val required: Boolean = getRequiredFromPropOptions(options)
+
+    override val local: Boolean = getLocalFromPropOptions(options)
+
+    override val jsType: JSType = modelType.optionalIf(!required)
+
+    override val localType: JSType = modelType.optionalIf(getPropOptionality(options, required))
+
+    override val source: PsiElement = VueImplicitElement(
+      name, localType, sourceElement, JSImplicitElement.Type.Property, true)
+
+    override fun toString(): String {
+      return "VueScriptSetupModelDecl(name='$name', required=$required, jsType=$jsType, local=$local)"
+    }
+  }
+
+  private class VueScriptSetupModelInputProperty(private val modelDecl: VueModelDecl) : VueInputProperty {
+    override val name: String
+      get() = modelDecl.name
+
+    override val source: PsiElement?
+      get() = modelDecl.source
+
+    override val required: Boolean
+      get() = modelDecl.required
+
+    override val jsType: JSType?
+      get() = modelDecl.jsType
+
+    override fun toString(): String {
+      return "VueScriptSetupModelInputProperty(modelDecl=$modelDecl)"
+    }
+  }
+
+  private class VueScriptSetupModelEvent(private val modelDecl: VueModelDecl) : VueEmitCall {
+    override val name: String
+      get() = modelDecl.name
+
+    override val source: PsiElement?
+      get() = modelDecl.source
+
+    override val params: List<JSParameterTypeDecorator> =
+      listOf(JSParameterTypeDecoratorImpl("value", modelDecl.localType, false, false, true))
+
+    override val hasStrictSignature: Boolean = true
   }
 
 }

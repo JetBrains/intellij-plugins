@@ -108,6 +108,12 @@ class VueComponentTest : BasePlatformTestCase() {
 
   fun testDecoratedComponentEmitsTS() = doTest(addNodeModules = listOf(VueTestModule.VUE_2_6_10))
 
+  fun testDefineModels() = doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_2))
+
+  fun testDefineModelsTS() = doTest(true, addNodeModules = listOf(VueTestModule.VUE_3_3_2))
+
+  fun testDefineModelsOverride() = doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_2))
+
   /**
    * Runs `doTestInner` twice: once for default TS config, once for strict TS config
    */
@@ -264,6 +270,7 @@ class VueComponentTest : BasePlatformTestCase() {
           printProperty(level, "props", sourceElement.props.takeIf { it.isNotEmpty() }?.sortedWith(Comparator.comparing { it.name }))
           printProperty(level, "emits", sourceElement.emits.takeIf { it.isNotEmpty() }?.sortedWith(Comparator.comparing { it.name }))
           printProperty(level, "slots", sourceElement.slots.takeIf { it.isNotEmpty() }?.sortedWith(Comparator.comparing { it.name }))
+          printProperty(level, "modelDecls", sourceElement.modelDecls.takeIf { it.isNotEmpty() }?.sortedWith(Comparator.comparing { it.name }))
           if (printSources) {
             printProperty(level, "template", sourceElement.template)
           }
@@ -288,6 +295,12 @@ class VueComponentTest : BasePlatformTestCase() {
           printProperty(level, "params", sourceElement.params)
           printProperty(level, "hasStrictSignature", sourceElement.hasStrictSignature)
           printProperty(level, "callSignature", sourceElement.callSignature)
+        }
+        if (sourceElement is VueModelDecl) {
+          printProperty(level, "jsType", sourceElement.jsType)
+          printProperty(level, "required", sourceElement.required)
+          printProperty(level, "defaultValue", sourceElement.defaultValue)
+          printProperty(level, "local", sourceElement.local)
         }
       }
   }

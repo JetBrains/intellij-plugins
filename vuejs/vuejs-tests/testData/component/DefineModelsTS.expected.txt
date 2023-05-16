@@ -1,0 +1,142 @@
+{
+ class: "VueSourceComponent",
+ components: {
+  DefineModelsTS: <recursive value of class VueSourceComponent>,
+ },
+ props: [
+  {
+   class: "VueScriptSetupModelInputProperty",
+   name: "count",
+   jsType: "number",
+   required: false,
+  },
+  {
+   class: "VueScriptSetupModelInputProperty",
+   name: "countLocal",
+   jsType: "number",
+   required: false,
+  },
+  {
+   class: "VueScriptSetupModelInputProperty",
+   name: "countRequired",
+   jsType: "number | boolean[]",
+   required: true,
+  },
+  {
+   class: "VueScriptSetupModelInputProperty",
+   name: "countType",
+   jsType: "string",
+   required: false,
+  },
+  {
+   class: "VueScriptSetupModelInputProperty",
+   name: "modelValue",
+   jsType: "string",
+   required: true,
+  },
+ ],
+ emits: [
+  {
+   class: "VueScriptSetupModelEvent",
+   name: "count",
+   eventJSType: "(value: (number | undefined)) => void",
+   params: [
+    {
+     name: "value",
+     type: "number",
+    },
+   ],
+   hasStrictSignature: true,
+   callSignature: "(event: "count", value: (number | undefined)) => void",
+  },
+  {
+   class: "VueScriptSetupModelEvent",
+   name: "countLocal",
+   eventJSType: "(value: (number | undefined)) => void",
+   params: [
+    {
+     name: "value",
+     type: "number",
+    },
+   ],
+   hasStrictSignature: true,
+   callSignature: "(event: "countLocal", value: (number | undefined)) => void",
+  },
+  {
+   class: "VueScriptSetupModelEvent",
+   name: "countRequired",
+   eventJSType: "(value: (number | boolean[])) => void",
+   params: [
+    {
+     name: "value",
+     type: "number | boolean[]",
+    },
+   ],
+   hasStrictSignature: true,
+   callSignature: "(event: "countRequired", value: (number | boolean[])) => void",
+  },
+  {
+   class: "VueScriptSetupModelEvent",
+   name: "countType",
+   eventJSType: "(value: (string | undefined)) => void",
+   params: [
+    {
+     name: "value",
+     type: "string",
+    },
+   ],
+   hasStrictSignature: true,
+   callSignature: "(event: "countType", value: (string | undefined)) => void",
+  },
+  {
+   class: "VueScriptSetupModelEvent",
+   name: "modelValue",
+   eventJSType: "(value: string) => void",
+   params: [
+    {
+     name: "value",
+     type: "string",
+    },
+   ],
+   hasStrictSignature: true,
+   callSignature: "(event: "modelValue", value: string) => void",
+  },
+ ],
+ modelDecls: [
+  {
+   class: "VueScriptSetupModelDecl",
+   name: "count",
+   jsType: "number",
+   required: false,
+   local: false,
+  },
+  {
+   class: "VueScriptSetupModelDecl",
+   name: "countLocal",
+   jsType: "number",
+   required: false,
+   local: true,
+  },
+  {
+   class: "VueScriptSetupModelDecl",
+   name: "countRequired",
+   jsType: "number | boolean[]",
+   required: true,
+   local: false,
+  },
+  {
+   class: "VueScriptSetupModelDecl",
+   name: "countType",
+   jsType: "string",
+   required: false,
+   local: false,
+  },
+  {
+   class: "VueScriptSetupModelDecl",
+   name: "modelValue",
+   jsType: "string",
+   required: true,
+   local: false,
+  },
+ ],
+}

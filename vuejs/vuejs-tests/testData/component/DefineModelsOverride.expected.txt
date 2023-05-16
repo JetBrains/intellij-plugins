@@ -1,0 +1,64 @@
+{
+ class: "VueSourceComponent",
+ components: {
+  DefineModelsOverride: <recursive value of class VueSourceComponent>,
+ },
+ props: [
+  {
+   class: "VueScriptSetupModelInputProperty",
+   name: "count",
+   jsType: "number | boolean[]",
+   required: true,
+  },
+  {
+   class: "VueScriptSetupModelInputProperty",
+   name: "modelValue",
+   jsType: "number",
+   required: true,
+  },
+ ],
+ emits: [
+  {
+   class: "VueScriptSetupModelEvent",
+   name: "count",
+   eventJSType: "(value: (number | boolean[])) => void",
+   params: [
+    {
+     name: "value",
+     type: "number | boolean[]",
+    },
+   ],
+   hasStrictSignature: true,
+   callSignature: "(event: "count", value: (number | boolean[])) => void",
+  },
+  {
+   class: "VueScriptSetupModelEvent",
+   name: "modelValue",
+   eventJSType: "(value: number) => void",
+   params: [
+    {
+     name: "value",
+     type: "number",
+    },
+   ],
+   hasStrictSignature: true,
+   callSignature: "(event: "modelValue", value: number) => void",
+  },
+ ],
+ modelDecls: [
+  {
+   class: "VueScriptSetupModelDecl",
+   name: "count",
+   jsType: "number | boolean[]",
+   required: true,
+   local: false,
+  },
+  {
+   class: "VueScriptSetupModelDecl",
+   name: "modelValue",
+   jsType: "number",
+   required: true,
+   local: false,
+  },
+ ],
+}

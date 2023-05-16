@@ -120,6 +120,8 @@ class VueTypedComponent(override val source: PsiElement,
         PsiModificationTracker.MODIFICATION_COUNT)
     }
 
+  override val modelDecls: List<VueModelDecl> = emptyList()
+
   override val slots: List<VueSlot>
     get() = CachedValuesManager.getCachedValue(source) {
       CachedValueProvider.Result(

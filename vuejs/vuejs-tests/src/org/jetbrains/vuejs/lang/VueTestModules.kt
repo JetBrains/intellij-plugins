@@ -66,6 +66,7 @@ enum class VueTestModule(val folder: String, vararg packageNames: String) {
   VUE_3_1_0("vue/3.1.0", "vue"),
   VUE_3_2_2("vue/3.2.2", "vue"),
   VUE_3_3_0_ALPHA5("vue/3.3.0-alpha", "vue"), // TODO - replace with 3.0.0 once released
+  VUE_3_3_2("vue/3.3.2", "vue"),
   VUELIDATE_0_7_13("vuelidate", "@types/vuelidate", "vuelidate"),
   VUETIFY_0_17_2("vuetify/0.17.2", "vuetify"),
   VUETIFY_1_2_10("vuetify/1.2.10", "vuetify"),

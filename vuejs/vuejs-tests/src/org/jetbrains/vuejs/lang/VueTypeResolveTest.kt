@@ -92,6 +92,19 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
+  fun testModelPropsTS() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
+    myFixture.configureByFile("modelProps-ts.vue")
+
+    doTest(
+      "modelValue" to "string | undefined",
+      "numDefault" to "123 | 234",
+      "nameRequired" to "string",
+      "nameRequiredGeneric" to "string",
+    )
+  }
+
   fun testScriptCaseSensitivity() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)

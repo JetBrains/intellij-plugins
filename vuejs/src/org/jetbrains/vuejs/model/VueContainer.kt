@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 import org.jetbrains.vuejs.context.isVue3
+import org.jetbrains.vuejs.model.source.MODEL_VALUE_PROP
 
 interface VueContainer : VueEntitiesContainer {
   val data: List<VueDataProperty>
@@ -14,6 +15,7 @@ interface VueContainer : VueEntitiesContainer {
   val props: List<VueInputProperty>
   val emits: List<VueEmitCall>
   val slots: List<VueSlot>
+  val modelDecls: List<VueModelDecl>
 
   val template: VueTemplate<*>? get() = null
   val element: String? get() = null
@@ -29,7 +31,7 @@ data class VueModelDirectiveProperties(
   companion object {
 
     private val DEFAULT_V2 = VueModelDirectiveProperties("value", "input")
-    private val DEFAULT_V3 = VueModelDirectiveProperties("modelValue", "update:modelValue")
+    private val DEFAULT_V3 = VueModelDirectiveProperties(MODEL_VALUE_PROP, "update:$MODEL_VALUE_PROP")
 
     fun getDefault(context: PsiElement): VueModelDirectiveProperties =
       if (isVue3(context))
@@ -92,3 +94,11 @@ interface VueDataProperty : VueProperty
 interface VueComputedProperty : VueProperty
 
 interface VueMethod : VueProperty
+
+interface VueModelDecl : VueNamedSymbol {
+  val jsType: JSType? get() = null
+  val localType: JSType? get() = jsType
+  val required: Boolean
+  val defaultValue: String? get() = null
+  val local: Boolean? get() = null
+}

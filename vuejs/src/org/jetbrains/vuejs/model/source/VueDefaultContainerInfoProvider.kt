@@ -8,8 +8,6 @@ import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyCallType
-import com.intellij.lang.javascript.psi.types.primitives.JSBooleanType
-import com.intellij.lang.javascript.psi.types.primitives.JSUndefinedType
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
@@ -233,16 +231,8 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
       return getRequiredFromPropOptions((sourceElement as? JSProperty)?.initializerOrStub)
     }
 
-    private fun isOptional(sourceElement: PsiElement?): Boolean {
-      val options = (sourceElement as? JSProperty)?.initializerOrStub
-      return when (val defaultType = getDefaultTypeFromPropOptions(options)) {
-        null -> if (required) false else getJSTypeFromPropOptions(options)?.substitute() !is JSBooleanType
-        is JSUndefinedType -> true
-        is JSFunctionType -> defaultType.returnType?.substitute() is JSUndefinedType
-        else -> false
-      }
-    }
-
+    private fun isOptional(sourceElement: PsiElement?): Boolean =
+      getPropOptionality((sourceElement as? JSProperty)?.initializerOrStub, required)
   }
 
   private class VueSourceDataProperty(override val name: String,
