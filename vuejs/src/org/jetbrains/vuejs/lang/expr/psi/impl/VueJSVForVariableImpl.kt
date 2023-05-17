@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.lang.expr.psi.impl
 
 import com.intellij.lang.ASTNode
+import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory
 import com.intellij.lang.javascript.psi.*
@@ -17,6 +18,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
+import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForExpression
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForVariable
 
@@ -35,8 +37,20 @@ class VueJSVForVariableImpl(node: ASTNode) :
       ?.let { JSPsiBasedTypeOfType(this, false) }
   }
 
-  override fun getDeclarationScope(): PsiElement? =
-    PsiTreeUtil.getContextOfType(this, XmlTag::class.java, PsiFile::class.java)
+  override fun getDeclarationScope(): PsiElement? {
+    var element: PsiElement = this
+    val jsFile = (((parent as? JSVarStatement)
+      ?.parent as? VueJSVForExpression)
+      ?.parent as? VueJSEmbeddedExpressionContent)
+      ?.parent as? JSFile
+    if (jsFile != null) {
+      val injectionHost = InjectedLanguageManager.getInstance(jsFile.project).getInjectionHost(jsFile)
+      if (injectionHost is JSLiteralExpression) {
+        element = injectionHost
+      }
+    }
+    return PsiTreeUtil.getContextOfType(element, XmlTag::class.java, PsiFile::class.java)
+  }
 
   override fun evaluate(evaluateContext: JSEvaluateContext, typeProcessor: JSTypeProcessor): Boolean {
     val vForExpression = PsiTreeUtil.getParentOfType(this, VueJSVForExpression::class.java) ?: return false
