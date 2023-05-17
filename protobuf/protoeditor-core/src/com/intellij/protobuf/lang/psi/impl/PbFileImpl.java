@@ -184,7 +184,7 @@ public class PbFileImpl extends PsiFileBase implements PbFile {
       if (packageElementName == null) {
         return ImmutableMap.of();
       }
-      return ImmutableListMultimap.of(packageElementName, packageElement).asMap();
+      return ImmutableListMultimap.of(packageElementName, ((PbSymbol)packageElement)).asMap();
     } else {
       // Package name is not a prefix of this file's declared package.
       return ImmutableMap.of();

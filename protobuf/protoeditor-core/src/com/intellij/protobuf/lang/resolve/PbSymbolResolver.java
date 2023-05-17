@@ -24,12 +24,8 @@ import com.intellij.protobuf.lang.psi.PbFile;
 import com.intellij.protobuf.lang.psi.PbSymbol;
 import com.intellij.protobuf.lang.psi.PbSymbolOwner;
 import com.intellij.psi.util.QualifiedName;
-import org.assertj.core.util.Sets;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /** Utilities for finding PbSymbol elements using protobuf's scoping and resolution rules. */
@@ -44,13 +40,13 @@ public class PbSymbolResolver {
   /** Returns a PbSymbolResolver that can resolve symbols in the given file and its imports. */
   public static PbSymbolResolver forFile(PbFile file) {
     return new PbSymbolResolver(
-        Multimaps.newSetMultimap(file.getExportedQualifiedSymbolMap(), Sets::newHashSet));
+        Multimaps.newSetMultimap(file.getExportedQualifiedSymbolMap(), HashSet::new));
   }
 
   /** Returns a PbSymbolResolver that can resolve symbols exported by the given file. */
   public static PbSymbolResolver forFileExports(PbFile file) {
     return new PbSymbolResolver(
-        Multimaps.newSetMultimap(file.getExportedQualifiedSymbolMap(), Sets::newHashSet));
+        Multimaps.newSetMultimap(file.getExportedQualifiedSymbolMap(), HashSet::new));
   }
 
   /** Returns a PbSymbolResolver that can resolve symbols exported by the given files. */

@@ -175,7 +175,7 @@ public class Proto2DefinitionClassNames {
       PbMessageType message, String outerClassName) {
     Map<String, Collection<PbSymbol>> symbolMap = message.getSymbolMap();
     Collection<PbSymbol> matches = symbolMap.get(outerClassName);
-    if (ContainerUtil.exists(matches, PbNamedTypeElement.class::isInstance)) {
+    if (matches != null && ContainerUtil.exists(matches, PbNamedTypeElement.class::isInstance)) {
       return true;
     }
     List<PbMessageType> messagesToVisit =

@@ -15,7 +15,6 @@
  */
 package com.intellij.protobuf.lang.annotation;
 
-import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -40,6 +39,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.QualifiedName;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -663,11 +663,11 @@ public class PbAnnotator implements Annotator {
     int symbolOffset = annotationElement.getTextRange().getStartOffset();
     Set<PbFile> conflictFiles = new HashSet<>();
 
-    // Iterate over all of the symbols for this qualified name looking for one to use as the first
+    // Iterate over all the symbols for this qualified name looking for one to use as the first
     // definition, in this order of preference:
     // * a symbol in the same file at a smaller text offset
     // * a symbol in a different file
-    ImmutableCollection<PbSymbol> symbols = file.getFullQualifiedSymbolMap().get(qualifiedName);
+    Collection<PbSymbol> symbols = file.getFullQualifiedSymbolMap().get(qualifiedName);
     for (PbSymbol otherSymbol : symbols) {
       if (symbol.equals(otherSymbol)) {
         continue;

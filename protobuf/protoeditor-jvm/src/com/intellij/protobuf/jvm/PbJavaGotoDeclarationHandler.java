@@ -142,7 +142,7 @@ public class PbJavaGotoDeclarationHandler implements GotoDeclarationHandler {
     List<PsiElement> results,
     List<PsiElement> matchedTypeElements) {
     boolean searchEnumValues = context.resolvedElement instanceof PsiEnumConstant;
-    for (PbSymbol symbol : file.getLocalQualifiedSymbolMap().values()) {
+    for (PbSymbol symbol : ContainerUtil.flatten(file.getLocalQualifiedSymbolMap().values())) {
       if (PbPsiUtil.isEnumElement(symbol)) {
         PbEnumDefinition enumDefinition = (PbEnumDefinition)symbol;
         for (NameMatcher matcher : nameMatchers) {
@@ -196,7 +196,7 @@ public class PbJavaGotoDeclarationHandler implements GotoDeclarationHandler {
     List<PsiElement> results,
     List<PsiElement> matchedTypeElements) {
     boolean searchFields = context.resolvedElement instanceof PsiMember;
-    for (PbSymbol symbol : file.getLocalQualifiedSymbolMap().values()) {
+    for (PbSymbol symbol : ContainerUtil.flatten(file.getLocalQualifiedSymbolMap().values())) {
       if (PbPsiUtil.isMessageElement(symbol)) {
         PbMessageType message = (PbMessageType)symbol;
         for (NameMatcher matcher : nameMatchers) {
