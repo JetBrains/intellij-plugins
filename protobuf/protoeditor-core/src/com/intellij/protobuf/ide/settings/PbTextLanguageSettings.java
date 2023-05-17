@@ -17,7 +17,6 @@ package com.intellij.protobuf.ide.settings;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
@@ -31,7 +30,7 @@ import java.util.Objects;
 
 /** A persistent service that stores protobuf text format settings. */
 @State(name = "PrototextLanguageSettings", storages = @Storage("protoeditor.xml"))
-public class PbTextLanguageSettings
+public final class PbTextLanguageSettings
     implements PersistentStateComponent<PbTextLanguageSettings.State> {
 
   private State state;
@@ -46,7 +45,7 @@ public class PbTextLanguageSettings
   }
 
   public static PbTextLanguageSettings getInstance(Project project) {
-    return ServiceManager.getService(project, PbTextLanguageSettings.class);
+    return project.getService(PbTextLanguageSettings.class);
   }
 
   public static ModificationTracker getModificationTracker(Project project) {
@@ -58,9 +57,8 @@ public class PbTextLanguageSettings
     DaemonCodeAnalyzer.getInstance(project).restart();
   }
 
-  @Nullable
   @Override
-  public State getState() {
+  public @Nullable State getState() {
     return state;
   }
 
