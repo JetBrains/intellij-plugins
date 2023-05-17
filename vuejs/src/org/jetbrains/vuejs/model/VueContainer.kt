@@ -96,9 +96,20 @@ interface VueComputedProperty : VueProperty
 interface VueMethod : VueProperty
 
 interface VueModelDecl : VueNamedSymbol {
+  /**
+   * Type of a property outside of a component, e.g. a component attribute's type.
+   */
   val jsType: JSType? get() = null
-  val localType: JSType? get() = jsType
+
+  /**
+   * This type is typically referenced from within a component when the passed property is used, in contrast to [jsType].
+   * For example, it could consider default values that eliminate "undefined" from a type declaration.
+   */
+  val referenceType: JSType? get() = jsType
+
   val required: Boolean
+
   val defaultValue: String? get() = null
+
   val local: Boolean? get() = null
 }

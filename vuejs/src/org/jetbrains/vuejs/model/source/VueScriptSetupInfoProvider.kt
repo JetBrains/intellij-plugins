@@ -367,10 +367,10 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
     override val jsType: JSType = modelType.optionalIf(!required)
 
-    override val localType: JSType = modelType.optionalIf(getPropOptionality(options, required))
+    override val referenceType: JSType = modelType.optionalIf(getPropOptionality(options, required))
 
     override val source: PsiElement = VueImplicitElement(
-      name, localType, sourceElement, JSImplicitElement.Type.Property, true)
+      name, referenceType, sourceElement, JSImplicitElement.Type.Property, true)
 
     override fun toString(): String {
       return "VueScriptSetupModelDecl(name='$name', required=$required, jsType=$jsType, local=$local)"
@@ -403,7 +403,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       get() = modelDecl.source
 
     override val params: List<JSParameterTypeDecorator> =
-      listOf(JSParameterTypeDecoratorImpl("value", modelDecl.localType, false, false, true))
+      listOf(JSParameterTypeDecoratorImpl("value", modelDecl.referenceType, false, false, true))
 
     override val hasStrictSignature: Boolean = true
   }
