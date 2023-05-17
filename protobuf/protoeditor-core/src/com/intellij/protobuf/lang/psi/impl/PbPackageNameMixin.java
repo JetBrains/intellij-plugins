@@ -15,24 +15,25 @@
  */
 package com.intellij.protobuf.lang.psi.impl;
 
-import com.google.common.collect.Multimap;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.impl.source.tree.LeafElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.QualifiedName;
-import com.intellij.util.IncorrectOperationException;
 import com.intellij.protobuf.ide.util.PbIcons;
 import com.intellij.protobuf.lang.psi.PbPackageName;
 import com.intellij.protobuf.lang.psi.PbSymbol;
 import com.intellij.protobuf.lang.psi.PbSymbolOwner;
 import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
 import com.intellij.protobuf.lang.psi.util.PbPsiImplUtil;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.impl.source.tree.LeafElement;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.QualifiedName;
+import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Collection;
+import java.util.Map;
 
 abstract class PbPackageNameMixin extends PbElementBase implements PbPackageName {
 
@@ -96,7 +97,7 @@ abstract class PbPackageNameMixin extends PbElementBase implements PbPackageName
 
   @NotNull
   @Override
-  public Multimap<String, PbSymbol> getSymbolMap() {
+  public Map<String, Collection<PbSymbol>> getSymbolMap() {
     return getPbFile().getPackageSymbolMap(getQualifiedName());
   }
 

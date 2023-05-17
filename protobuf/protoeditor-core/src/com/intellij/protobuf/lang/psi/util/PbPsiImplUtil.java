@@ -28,7 +28,9 @@ import com.intellij.psi.util.QualifiedName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class contains static utility methods that are used by various PSI implementations.
@@ -110,13 +112,14 @@ public final class PbPsiImplUtil {
     return TextRange.create(start, end);
   }
 
-  public static ImmutableMultimap<String, PbSymbol> getCachedSymbolMap(PbStatementOwner owner) {
+  public static Map<String, Collection<PbSymbol>> getCachedSymbolMap(PbStatementOwner owner) {
     return CachedValuesManager.getCachedValue(
         owner,
         () ->
             Result.create(
                 computeSymbolMap(owner, PbSymbol.class),
-                PbCompositeModificationTracker.byElement(owner)));
+                PbCompositeModificationTracker.byElement(owner)))
+        .asMap();
   }
 
   public static ImmutableMultimap<String, PbEnumValue> getCachedEnumValueMap(
