@@ -17,7 +17,6 @@ package com.intellij.protobuf.python;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Multimap;
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationHandler;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.protobuf.lang.psi.PbElement;
@@ -30,6 +29,7 @@ import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.PyFile;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -94,7 +94,7 @@ public final class PbPythonGotoDeclarationHandler implements GotoDeclarationHand
       return ImmutableList.of(pbFile);
     }
     QualifiedName qualifiedName = pbFile.getPackageQualifiedName().append(fileLocalSymbol);
-    Multimap<QualifiedName, PbSymbol> fileSymbols = pbFile.getLocalQualifiedSymbolMap();
+    Map<QualifiedName, Collection<PbSymbol>> fileSymbols = pbFile.getLocalQualifiedSymbolMap();
     return ImmutableList.copyOf(fileSymbols.get(qualifiedName));
   }
 
@@ -108,12 +108,15 @@ public final class PbPythonGotoDeclarationHandler implements GotoDeclarationHand
       return ImmutableList.of();
     }
     String desiredSymbol = fileLocalSymbol.replace('.', '_');
-    Multimap<QualifiedName, PbSymbol> fileSymbols = pbFile.getLocalQualifiedSymbolMap();
+    Map<QualifiedName, Collection<PbSymbol>> fileSymbols = pbFile.getLocalQualifiedSymbolMap();
     int numPackageComponents = pbFile.getPackageQualifiedName().getComponentCount();
     List<PbSymbol> matches =
         fileSymbols
-            .entries()
+            .entrySet()
             .stream()
+            .flatMap(e -> e.getValue()
+                .stream()
+                .map(v -> new AbstractMap.SimpleEntry<>(e.getKey(), v)))
             .filter(
                 entry -> {
                   QualifiedName qualifiedName = entry.getKey();

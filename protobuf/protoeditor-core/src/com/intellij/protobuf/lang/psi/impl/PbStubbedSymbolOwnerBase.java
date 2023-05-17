@@ -15,19 +15,21 @@
  */
 package com.intellij.protobuf.lang.psi.impl;
 
-import com.google.common.collect.Multimap;
 import com.intellij.lang.ASTNode;
+import com.intellij.protobuf.lang.psi.PbSymbol;
+import com.intellij.protobuf.lang.psi.PbSymbolOwner;
+import com.intellij.protobuf.lang.psi.util.PbPsiImplUtil;
+import com.intellij.protobuf.lang.stub.PbNamedElementStub;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.util.QualifiedName;
-import com.intellij.protobuf.lang.psi.PbSymbol;
-import com.intellij.protobuf.lang.psi.PbSymbolOwner;
-import com.intellij.protobuf.lang.psi.util.PbPsiImplUtil;
-import com.intellij.protobuf.lang.stub.PbNamedElementStub;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
+import java.util.Map;
 
 abstract class PbStubbedSymbolOwnerBase<T extends PbNamedElementStub<?>>
     extends PbStubbedNamedDefinitionBase<T> implements PbSymbolOwner {
@@ -48,7 +50,7 @@ abstract class PbStubbedSymbolOwnerBase<T extends PbNamedElementStub<?>>
 
   @NotNull
   @Override
-  public Multimap<String, PbSymbol> getSymbolMap() {
+  public Map<String, Collection<PbSymbol>> getSymbolMap() {
     return PbPsiImplUtil.getCachedSymbolMap(this);
   }
 
