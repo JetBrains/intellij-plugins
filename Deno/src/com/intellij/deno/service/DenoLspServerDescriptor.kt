@@ -68,6 +68,6 @@ class DenoLspServerDescriptor(project: Project, vararg roots: VirtualFile) : Lsp
   }
 
   override val lspCompletionSupport = null
-  override val handlePublishDiagnostics = false
+  override val lspDiagnosticsSupport = null
   override val useGenericNavigation = false
 }

@@ -63,7 +63,7 @@ class VolarServerDescriptor(project: Project, vararg roots: VirtualFile) : LspSe
   }
 
   override val lspCompletionSupport = null
-  override val handlePublishDiagnostics = false
+  override val lspDiagnosticsSupport = null
   override val useGenericNavigation = false
 
   override fun createCommandLine(): GeneralCommandLine {
