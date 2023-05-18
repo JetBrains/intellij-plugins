@@ -152,6 +152,26 @@ class VueRenameTest : BasePlatformTestCase() {
     checkResultByDir("${getTestName(true)}_after")
   }
 
+  fun testModelDeclaration() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    doTest("alignment")
+  }
+
+  fun testModelDeclarationWithVar() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    doTest("alignment")
+  }
+
+  fun testDefinePropsRecordType() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    doTest("alignment")
+  }
+
+  fun testDefinePropsArrayLiteral() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    doTest("alignment")
+  }
+
   private fun doTest(newName: String, usingHandler: Boolean = false) {
     myFixture.configureByFile(getTestName(true) + ".vue")
     if (usingHandler) {

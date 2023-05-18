@@ -47,6 +47,10 @@ abstract class VueModelVisitor {
     return visitProperty(method, proximity)
   }
 
+  open fun visitModelDecl(modelDecl: VueModelDecl, proximity: Proximity): Boolean {
+    return true
+  }
+
   enum class Proximity {
     OUT_OF_SCOPE,
     GLOBAL,
