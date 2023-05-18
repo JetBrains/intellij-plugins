@@ -1,0 +1,226 @@
+JSFile:Broken.js2
+  JSPackageStatement
+    PsiElement(JS:PACKAGE_KEYWORD)('package')
+    PsiErrorElement:Package name or { expected
+      <empty list>
+  PsiWhiteSpace(' ')
+  JSExpressionStatement
+    XmlTag:error
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_TAG_NAME('error')
+      XmlToken:XML_TAG_END('>')
+      XmlText
+        XmlToken:XML_DATA_CHARACTERS('xxx')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_TAG_NAME('error')
+      XmlToken:XML_TAG_END('>')
+    PsiErrorElement:Newline or semicolon expected
+      <empty list>
+  PsiWhiteSpace(' ')
+  JSBlockStatement
+    PsiElement(JS:LBRACE)('{')
+    PsiWhiteSpace('\n  ')
+    ActionScriptClass
+      PsiElement(JS:CLASS_KEYWORD)('class')
+      PsiErrorElement:* or type name expected
+        <empty list>
+    PsiWhiteSpace(' ')
+    PsiElement(JS:LT)('<')
+    JSExpressionStatement
+      JSBinaryExpression
+        JSBinaryExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('error')
+          PsiElement(JS:GT)('>')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('AAA')
+        PsiElement(JS:LT)('<')
+        JSLiteralExpression
+          PsiElement(JS:REGEXP_LITERAL)('/error> {')
+    PsiWhiteSpace('\n    ')
+    JSVarStatement
+      PsiElement(JS:VAR_KEYWORD)('var')
+      PsiWhiteSpace(' ')
+      JSLocalVariable
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('mytext')
+      PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace('\n    ')
+    ActionScriptFunction
+      PsiElement(JS:FUNCTION_KEYWORD)('function')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:GET_KEYWORD)('get')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:IDENTIFIER)('field')
+      JSParameterList
+        PsiElement(JS:LPAR)('(')
+        PsiElement(JS:RPAR)(')')
+      PsiElement(JS:COLON)(':')
+      PsiElement(JS:ANY_IDENTIFIER)('*')
+      PsiWhiteSpace(' ')
+      JSBlockStatement
+        PsiElement(JS:LBRACE)('{')
+        PsiElement(JS:RBRACE)('}')
+    PsiWhiteSpace('\n    ')
+    ActionScriptFunction
+      PsiElement(JS:FUNCTION_KEYWORD)('function')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:SET_KEYWORD)('set')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:IDENTIFIER)('field')
+      JSParameterList
+        PsiElement(JS:LPAR)('(')
+        ActionScriptParameter
+          PsiElement(JS:IDENTIFIER)('v')
+          PsiElement(JS:COLON)(':')
+          PsiElement(JS:ANY_IDENTIFIER)('*')
+        PsiElement(JS:RPAR)(')')
+      PsiElement(JS:COLON)(':')
+      PsiElement(JS:VOID_KEYWORD)('void')
+      PsiWhiteSpace(' ')
+      JSBlockStatement
+        PsiElement(JS:LBRACE)('{')
+        PsiElement(JS:RBRACE)('}')
+    PsiWhiteSpace('\n    ')
+    ActionScriptFunction
+      PsiElement(JS:FUNCTION_KEYWORD)('function')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:GET_KEYWORD)('get')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:IDENTIFIER)('field2')
+      JSParameterList
+        PsiElement(JS:LPAR)('(')
+        PsiElement(JS:RPAR)(')')
+      PsiElement(JS:COLON)(':')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('Object')
+      PsiWhiteSpace(' ')
+      JSBlockStatement
+        PsiElement(JS:LBRACE)('{')
+        PsiElement(JS:RBRACE)('}')
+    PsiWhiteSpace('\n    ')
+    ActionScriptFunction
+      PsiElement(JS:FUNCTION_KEYWORD)('function')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:SET_KEYWORD)('set')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:IDENTIFIER)('field2')
+      JSParameterList
+        PsiElement(JS:LPAR)('(')
+        ActionScriptParameter
+          PsiElement(JS:IDENTIFIER)('v')
+          PsiElement(JS:COLON)(':')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('Object')
+        PsiElement(JS:RPAR)(')')
+      PsiElement(JS:COLON)(':')
+      PsiElement(JS:VOID_KEYWORD)('void')
+      PsiWhiteSpace(' ')
+      JSBlockStatement
+        PsiElement(JS:LBRACE)('{')
+        PsiElement(JS:RBRACE)('}')
+    PsiWhiteSpace('\n  ')
+    PsiElement(JS:RBRACE)('}')
+  PsiWhiteSpace('\n\n  ')
+  ActionScriptClass
+    ActionScriptAttributeList
+      <empty list>
+    PsiElement(JS:CLASS_KEYWORD)('class')
+    PsiErrorElement:* or type name expected
+      <empty list>
+  PsiWhiteSpace(' ')
+  PsiElement(JS:LT)('<')
+  JSExpressionStatement
+    JSBinaryExpression
+      JSBinaryExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('error')
+        PsiElement(JS:GT)('>')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('BBB')
+      PsiElement(JS:LT)('<')
+      JSLiteralExpression
+        PsiElement(JS:REGEXP_LITERAL)('/error> extends AAA {')
+  PsiWhiteSpace('\n    ')
+  ActionScriptFunction
+    ActionScriptAttributeList
+      <empty list>
+    PsiElement(JS:FUNCTION_KEYWORD)('function')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:IDENTIFIER)('BBB')
+    JSParameterList
+      PsiElement(JS:LPAR)('(')
+      PsiElement(JS:RPAR)(')')
+    PsiWhiteSpace(' ')
+    JSBlockStatement
+      PsiElement(JS:LBRACE)('{')
+      PsiWhiteSpace('\n      ')
+      JSExpressionStatement
+        JSCallExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('BBB')
+          JSArgumentList
+            PsiElement(JS:LPAR)('(')
+            JSReferenceExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('field')
+              PsiElement(JS:DOT)('.')
+              PsiElement(JS:IDENTIFIER)('mytext')
+            PsiElement(JS:RPAR)(')')
+      PsiWhiteSpace('\n      ')
+      JSExpressionStatement
+        JSCallExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('BBB')
+          JSArgumentList
+            PsiElement(JS:LPAR)('(')
+            JSReferenceExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('field2')
+              PsiElement(JS:DOT)('.')
+              PsiElement(JS:IDENTIFIER)('mytext')
+            PsiElement(JS:RPAR)(')')
+      PsiWhiteSpace('\n      ')
+      JSExpressionStatement
+        JSCallExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('BBB')
+          JSArgumentList
+            PsiElement(JS:LPAR)('(')
+            JSReferenceExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('field2')
+              PsiElement(JS:DOT)('.')
+              PsiElement(JS:IDENTIFIER)('mytext2')
+            PsiElement(JS:RPAR)(')')
+      PsiWhiteSpace('\n      ')
+      JSExpressionStatement
+        JSAssignmentExpression
+          JSDefinitionExpression
+            JSReferenceExpression
+              JSCallExpression
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('Object')
+                JSArgumentList
+                  PsiElement(JS:LPAR)('(')
+                  JSThisExpression
+                    PsiElement(JS:THIS_KEYWORD)('this')
+                  PsiElement(JS:RPAR)(')')
+              PsiElement(JS:DOT)('.')
+              PsiElement(JS:IDENTIFIER)('mytext2')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:EQ)('=')
+          PsiWhiteSpace(' ')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n    ')
+      PsiElement(JS:RBRACE)('}')
+  PsiErrorElement:Statement expected
+    <empty list>
+  PsiWhiteSpace('\n  ')
+  PsiElement(JS:RBRACE)('}')
+  PsiErrorElement:Statement expected
+    <empty list>
+  PsiWhiteSpace('\n')
+  PsiElement(JS:RBRACE)('}')

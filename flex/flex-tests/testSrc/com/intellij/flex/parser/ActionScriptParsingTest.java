@@ -186,4 +186,9 @@ public class ActionScriptParsingTest extends JSParsingTestBase {
   public void testGoto() {
     doTest(true);
   }
+
+  public void testBroken() {
+    doTest(true);
+  }
+
 }
