@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 /**
  * @author Dmitry_Cherkas
  */
-public class SerialMonitorBundle {
+public final class SerialMonitorBundle {
   public static final String BUNDLE = "messages.SerialMonitorBundle";
   private static final DynamicBundle INSTANCE = new DynamicBundle(SerialMonitorBundle.class, BUNDLE);
 
