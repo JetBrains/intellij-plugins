@@ -88,33 +88,32 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
 
   fun resolveDirectiveExportAsType(exportName: String?): JSType? {
     val hasExport = !exportName.isNullOrEmpty()
-    return directives
-      .asSequence()
-      .filter { directive ->
-        if (hasExport)
-          directive.exportAsList.contains(exportName)
-        else
-          directive.isComponent
-      }
-      .mapNotNull { directive ->
-        val cls = directive.typeScriptClass ?: return@mapNotNull null
-        val genericParameters = cls.typeParameters.mapTo(HashSet()) { it.genericId }
-        val clsType = if (genericParameters.isNotEmpty())
-          JSTypeUtils.createNotSubstitutedGenericType(cls, cls.jsType)
-        else
-          cls.jsType
-        processAndMerge(listOf(clsType))
-          // In case of references, it may happen that some generic params are not substituted.
-          // Let's be permissive here and replace each generic param from directive definition
-          // with `any` type to avoid type checking errors in such situation.
-          ?.transformTypeHierarchy {
-            if (it is JSGenericParameterType && genericParameters.contains(it.genericId))
-              JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS, false)
-            else it
-          }
-      }
-      .firstOrNull()
+    directives.forEach { directive ->
+      val isApplicable = if (hasExport)
+        directive.exportAsList.contains(exportName)
+      else
+        directive.isComponent
+      if (!isApplicable) return@forEach
+      val cls = directive.typeScriptClass ?: return@forEach
 
+      val genericParameters = cls.typeParameters.mapTo(HashSet()) { it.genericId }
+      val clsType = if (genericParameters.isNotEmpty())
+        JSTypeUtils.createNotSubstitutedGenericType(cls, cls.jsType)
+      else
+        cls.jsType
+      val instanceType = processAndMerge(listOf(clsType))
+      // In the case of references, it may happen that some generic params are not substituted.
+      // Let's be permissive here and replace each generic param from directive definition
+      // with `any` type to avoid type checking errors in such situation.
+      instanceType?.transformTypeHierarchy {
+        if (it is JSGenericParameterType && genericParameters.contains(it.genericId))
+          JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS, false)
+        else it
+      }?.let {
+        return it
+      }
+    }
+    return null
   }
 
   fun resolveTemplateContextType(): JSType? {
