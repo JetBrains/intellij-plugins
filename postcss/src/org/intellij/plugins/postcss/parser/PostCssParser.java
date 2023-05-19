@@ -181,11 +181,6 @@ public class PostCssParser extends CssParser2 {
     return true;
   }
 
-  @Override
-  protected void parseNestedRulesetList() {
-    parseDeclarationBlock();
-  }
-
   private boolean parseCustomSelectorAtRule() {
     if (getTokenType() != PostCssTokenTypes.POST_CSS_CUSTOM_SELECTOR_SYM) {
       return false;
