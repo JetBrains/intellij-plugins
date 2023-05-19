@@ -139,7 +139,7 @@ COMMENT_C         = "/*"([^*]|"*"[^/])*"*/"
 }
 
 <WAITING_BITS> {
-    {INT}                                           { popState(); return DtsTypes.INT; }
+    {INT}                                           { popState(); return DtsTypes.INT_VALUE; }
 }
 
 <WAITING_HANDLE> {
@@ -159,7 +159,7 @@ COMMENT_C         = "/*"([^*]|"*"[^/])*"*/"
 
     "&"                                             { pushState(WAITING_HANDLE); return DtsTypes.HANDLE; }
 
-    {INT}                                           { return DtsTypes.INT; }
+    {INT}                                           { return DtsTypes.INT_VALUE; }
     {NAME}":"                                       { return DtsTypes.LABEL; }
     {IDENTIFIER}                                    { return DtsTypes.NAME; }
 }
@@ -167,8 +167,9 @@ COMMENT_C         = "/*"([^*]|"*"[^/])*"*/"
 <WAITING_BYTE> {
     "]"                                             { popState(); return DtsTypes.RBRAC; }
 
-    {BYTE}                                          { return DtsTypes.BYTE; }
+    {BYTE}                                          { return DtsTypes.BYTE_VALUE; }
     {NAME}":"                                       { return DtsTypes.LABEL; }
+    {IDENTIFIER}                                    { return DtsTypes.NAME; }
 }
 
 <WAITING_EXPR> {
@@ -201,7 +202,7 @@ COMMENT_C         = "/*"([^*]|"*"[^/])*"*/"
 
     ","                                             { return DtsTypes.COMMA; }
 
-    {INT}                                           { return DtsTypes.INT; }
+    {INT}                                           { return DtsTypes.INT_VALUE; }
     {IDENTIFIER}                                    { return DtsTypes.NAME; }
 
     "'"                                             { pushState(WAITING_CHAR); return DtsTypes.SQUOTE; }

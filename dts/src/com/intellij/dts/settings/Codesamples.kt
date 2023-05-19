@@ -1,7 +1,7 @@
 package com.intellij.dts.settings
 
 object Codesamples {
-    val coloring = """
+    const val coloring = """
 /dts-v1/;
 
 // comment
@@ -17,5 +17,50 @@ object Codesamples {
 &ref {
     <PROPERTY>property</PROPERTY> = &{/path/ref};
 }; 
+"""
+
+    const val indenting = """
+/dts-v1/;
+
+/ {
+    property = "value";
+
+    node {
+        property = "value",
+        "continuation";
+
+        subNode {
+            property = "value";
+        };
+    };
+};
+"""
+
+    const val spacing = """
+/dts-v1/;
+
+/ {
+    list = "value1", "value2";
+    cells = <0x1 0x2 0x3>;
+    bytes = [010203];
+    empty = <>, [];
+    expr = <((1 + 2) * 3 << 4 & 5) (0 || 1 ? 2 : 3)>;
+
+    label: node { };
+};
+"""
+
+    const val wrapping = """
+/dts-v1/;
+
+/ {
+    property = "value";
+
+    list = "value1",
+    "value2";
+    
+    array = <0x00000000
+    0x00000000>;
+};
 """
 }

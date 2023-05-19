@@ -5,11 +5,11 @@ package com.intellij.dts.lang.psi;
 public interface DtsTypes {
 
   com.intellij.psi.tree.IElementType ADD_EXPR = new com.intellij.dts.lang.DtsElementType("ADD_EXPR");
+  com.intellij.psi.tree.IElementType BYTE = new com.intellij.dts.lang.DtsElementType("BYTE");
   com.intellij.psi.tree.IElementType BYTE_ARRAY = new com.intellij.dts.lang.DtsElementType("BYTE_ARRAY");
   com.intellij.psi.tree.IElementType B_AND_EXPR = new com.intellij.dts.lang.DtsElementType("B_AND_EXPR");
   com.intellij.psi.tree.IElementType B_NOT_EXPR = new com.intellij.dts.lang.DtsElementType("B_NOT_EXPR");
   com.intellij.psi.tree.IElementType B_OR_EXPR = new com.intellij.dts.lang.DtsElementType("B_OR_EXPR");
-  com.intellij.psi.tree.IElementType CELL = new com.intellij.dts.lang.DtsElementType("CELL");
   com.intellij.psi.tree.IElementType CELL_ARRAY = new com.intellij.dts.lang.DtsElementType("CELL_ARRAY");
   com.intellij.psi.tree.IElementType CELL_ARRAY_BITS = new com.intellij.dts.lang.DtsElementType("CELL_ARRAY_BITS");
   com.intellij.psi.tree.IElementType CHAR = new com.intellij.dts.lang.DtsElementType("CHAR");
@@ -20,8 +20,10 @@ public interface DtsTypes {
   com.intellij.psi.tree.IElementType ENTRY = new com.intellij.dts.lang.DtsElementType("ENTRY");
   com.intellij.psi.tree.IElementType EQ_EXPR = new com.intellij.dts.lang.DtsElementType("EQ_EXPR");
   com.intellij.psi.tree.IElementType EXPR = new com.intellij.dts.lang.DtsElementType("EXPR");
+  com.intellij.psi.tree.IElementType EXPR_VALUE = new com.intellij.dts.lang.DtsElementType("EXPR_VALUE");
   com.intellij.psi.tree.IElementType GEQ_EXPR = new com.intellij.dts.lang.DtsElementType("GEQ_EXPR");
   com.intellij.psi.tree.IElementType GRT_EXPR = new com.intellij.dts.lang.DtsElementType("GRT_EXPR");
+  com.intellij.psi.tree.IElementType INT = new com.intellij.dts.lang.DtsElementType("INT");
   com.intellij.psi.tree.IElementType INT_EXPR = new com.intellij.dts.lang.DtsElementType("INT_EXPR");
   com.intellij.psi.tree.IElementType LEQ_EXPR = new com.intellij.dts.lang.DtsElementType("LEQ_EXPR");
   com.intellij.psi.tree.IElementType LES_EXPR = new com.intellij.dts.lang.DtsElementType("LES_EXPR");
@@ -38,6 +40,7 @@ public interface DtsTypes {
   com.intellij.psi.tree.IElementType PP_MACRO = new com.intellij.dts.lang.DtsElementType("PP_MACRO");
   com.intellij.psi.tree.IElementType PP_MACRO_EXPR = new com.intellij.dts.lang.DtsElementType("PP_MACRO_EXPR");
   com.intellij.psi.tree.IElementType PROPERTY = new com.intellij.dts.lang.DtsElementType("PROPERTY");
+  com.intellij.psi.tree.IElementType PROPERTY_CONTENT = new com.intellij.dts.lang.DtsElementType("PROPERTY_CONTENT");
   com.intellij.psi.tree.IElementType P_HANDLE = new com.intellij.dts.lang.DtsElementType("P_HANDLE");
   com.intellij.psi.tree.IElementType ROOT_NODE = new com.intellij.dts.lang.DtsElementType("ROOT_NODE");
   com.intellij.psi.tree.IElementType RSH_EXPR = new com.intellij.dts.lang.DtsElementType("RSH_EXPR");
@@ -51,7 +54,7 @@ public interface DtsTypes {
   com.intellij.psi.tree.IElementType AND = new com.intellij.dts.lang.DtsTokenType("AND");
   com.intellij.psi.tree.IElementType ASSIGN = new com.intellij.dts.lang.DtsTokenType("ASSIGN");
   com.intellij.psi.tree.IElementType BITS = new com.intellij.dts.lang.DtsTokenType("BITS");
-  com.intellij.psi.tree.IElementType BYTE = new com.intellij.dts.lang.DtsTokenType("BYTE");
+  com.intellij.psi.tree.IElementType BYTE_VALUE = new com.intellij.dts.lang.DtsTokenType("BYTE_VALUE");
   com.intellij.psi.tree.IElementType CHAR_VALUE = new com.intellij.dts.lang.DtsTokenType("CHAR_VALUE");
   com.intellij.psi.tree.IElementType COLON = new com.intellij.dts.lang.DtsTokenType("COLON");
   com.intellij.psi.tree.IElementType COMMA = new com.intellij.dts.lang.DtsTokenType("COMMA");
@@ -65,7 +68,7 @@ public interface DtsTypes {
   com.intellij.psi.tree.IElementType GEQ = new com.intellij.dts.lang.DtsTokenType("GEQ");
   com.intellij.psi.tree.IElementType GRT = new com.intellij.dts.lang.DtsTokenType("GRT");
   com.intellij.psi.tree.IElementType HANDLE = new com.intellij.dts.lang.DtsTokenType("HANDLE");
-  com.intellij.psi.tree.IElementType INT = new com.intellij.dts.lang.DtsTokenType("INT");
+  com.intellij.psi.tree.IElementType INT_VALUE = new com.intellij.dts.lang.DtsTokenType("INT_VALUE");
   com.intellij.psi.tree.IElementType LABEL = new com.intellij.dts.lang.DtsTokenType("LABEL");
   com.intellij.psi.tree.IElementType LANGL = new com.intellij.dts.lang.DtsTokenType("LANGL");
   com.intellij.psi.tree.IElementType LBRAC = new com.intellij.dts.lang.DtsTokenType("LBRAC");
@@ -109,6 +112,9 @@ public interface DtsTypes {
       if (type == ADD_EXPR) {
         return new com.intellij.dts.lang.psi.impl.DtsAddExprImpl(node);
       }
+      else if (type == BYTE) {
+        return new com.intellij.dts.lang.psi.impl.DtsByteImpl(node);
+      }
       else if (type == BYTE_ARRAY) {
         return new com.intellij.dts.lang.psi.impl.DtsByteArrayImpl(node);
       }
@@ -120,9 +126,6 @@ public interface DtsTypes {
       }
       else if (type == B_OR_EXPR) {
         return new com.intellij.dts.lang.psi.impl.DtsBOrExprImpl(node);
-      }
-      else if (type == CELL) {
-        return new com.intellij.dts.lang.psi.impl.DtsCellImpl(node);
       }
       else if (type == CELL_ARRAY) {
         return new com.intellij.dts.lang.psi.impl.DtsCellArrayImpl(node);
@@ -151,11 +154,17 @@ public interface DtsTypes {
       else if (type == EQ_EXPR) {
         return new com.intellij.dts.lang.psi.impl.DtsEqExprImpl(node);
       }
+      else if (type == EXPR_VALUE) {
+        return new com.intellij.dts.lang.psi.impl.DtsExprValueImpl(node);
+      }
       else if (type == GEQ_EXPR) {
         return new com.intellij.dts.lang.psi.impl.DtsGeqExprImpl(node);
       }
       else if (type == GRT_EXPR) {
         return new com.intellij.dts.lang.psi.impl.DtsGrtExprImpl(node);
+      }
+      else if (type == INT) {
+        return new com.intellij.dts.lang.psi.impl.DtsIntImpl(node);
       }
       else if (type == INT_EXPR) {
         return new com.intellij.dts.lang.psi.impl.DtsIntExprImpl(node);
@@ -204,6 +213,9 @@ public interface DtsTypes {
       }
       else if (type == PROPERTY) {
         return new com.intellij.dts.lang.psi.impl.DtsPropertyImpl(node);
+      }
+      else if (type == PROPERTY_CONTENT) {
+        return new com.intellij.dts.lang.psi.impl.DtsPropertyContentImpl(node);
       }
       else if (type == P_HANDLE) {
         return new com.intellij.dts.lang.psi.impl.DtsPHandleImpl(node);

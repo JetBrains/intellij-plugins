@@ -17,9 +17,21 @@
   parserUtilClass="com.intellij.dts.lang.parser.DtsParserUtil"
 
   implements("rootNode")="com.intellij.dts.lang.psi.DtsNode.Root"
+  mixin("rootNode")="com.intellij.dts.lang.psi.mixin.DtsRootNodeMixin"
+
   implements("subNode")="com.intellij.dts.lang.psi.DtsNode.Sub"
+  mixin("subNode")="com.intellij.dts.lang.psi.mixin.DtsSubNodeMixin"
+
+  implements("content")="com.intellij.dts.lang.psi.mixin.IDtsContent"
+  mixin("content")="com.intellij.dts.lang.psi.mixin.DtsContentMixin"
+
+  implements("cellArray")="com.intellij.dts.lang.psi.DtsArray.Cell"
+  implements("byteArray")="com.intellij.dts.lang.psi.DtsArray.Byte"
+
+  implements("int|byte|char|string|pHandle|cellArray|byteArray|exprValue|ppMacro")="com.intellij.dts.lang.psi.DtsValue"
 
   extends(".*Expr")=expr
+  extends("nodeContent")=content
 
   tokens=[
     COMMENT_EOL="COMMENT_EOL"
@@ -58,40 +70,47 @@ subNode ::= LABEL* OMIT_NODE? LABEL* NAME LBRACE nodeContent? RBRACE {pin=5 reco
 private nodeRecover ::= !(SEMICOLON | NAME)
 
 property ::= LABEL* NAME propertyAssignment?
-private propertyAssignment ::= ASSIGN LABEL* propertyValue LABEL* (COMMA LABEL* propertyValue LABEL*)* {pin=1 recoverWhile="propertyRecover"}
+private propertyAssignment ::= ASSIGN propertyContent {pin=1}
+propertyContent ::= propertyValue (COMMA propertyValue)* {recoverWhile="propertyRecover"}
+private propertyValue ::= <<value (string | pHandle | cellArray | byteArray | ppMacro)>>
 private propertyRecover ::= !(SEMICOLON | RBRACE | NAME)
 
-private propertyValue ::= string | pHandle | cellArray | byteArray | ppMacro
-
 cellArray ::= cellArrayBits? LANGL cellArrayContent RANGL {pin=2}
-private cellArrayContent ::= (LABEL* (pHandle | cell) LABEL*)* {recoverWhile="cellArrayRecover"}
+private cellArrayContent ::= cellArrayValue* {recoverWhile="cellArrayRecover"}
+private cellArrayValue ::= <<value (pHandle | cell)>>
 private cellArrayRecover ::= !(SEMICOLON | RBRACE | COMMA | RANGL | RPAREN)
 
-cellArrayBits ::= BITS (INT | ppMacro) {pin=1 recoverWhile="cellArrayBitsRecover"}
+cellArrayBits ::= BITS (int | ppMacro) {pin=1 recoverWhile="cellArrayBitsRecover"}
 private cellArrayBitsRecover ::= !(SEMICOLON | RBRACE | LANGL)
 
 byteArray ::= LBRAC byteArrayContent RBRAC {pin=1}
-private byteArrayContent ::= (LABEL* (BYTE | ppMacro) LABEL*)* {recoverWhile="byteArrayRecover"}
+private byteArrayContent ::= byteArrayValue* {recoverWhile="byteArrayRecover"}
+private byteArrayValue ::= <<value (byte | ppMacro)>>
 private byteArrayRecover ::= !(SEMICOLON | RBRACE | COMMA | RBRAC | RPAREN)
-
-string ::= DQUOTE STRING_VALUE? DQUOTE {pin=1}
-char ::= SQUOTE CHAR_VALUE* SQUOTE {pin=1}
 
 pHandle ::= HANDLE (NAME | pHandlePath) {pin=1}
 private pHandlePath ::= LBRACE path RBRACE {pin=1}
 private path ::= PATH {recoverWhile="pathRecover"}
 private pathRecover ::= !(SEMICOLON | RANGL | RBRACE)
 
-ppMacro ::= parserPpMacro
-external parserPpMacro ::= parsePpMacro
-
 meta entry ::= <<arg>> SEMICOLON {pin=1}
+private meta value ::= LABEL* <<arg>> LABEL*
 
 private meta compilerDirectiveEntry ::= <<entry <<compilerDirective <<directive>> <<arg>>>>>>
 meta compilerDirective ::= <<directive>> <<arg>> {pin=1 recoverWhile="compilerDirectiveRecover"}
 private compilerDirectiveRecover ::= !(SEMICOLON)
 
-cell ::= INT | char | LPAREN expr RPAREN | ppMacro
+private cell ::= int | char | exprValue | ppMacro
+
+byte ::= BYTE_VALUE
+int ::= INT_VALUE
+string ::= DQUOTE STRING_VALUE? DQUOTE {pin=1}
+char ::= SQUOTE CHAR_VALUE* SQUOTE {pin=1}
+
+ppMacro ::= parserPpMacro
+external parserPpMacro ::= parsePpMacro
+
+exprValue ::= LPAREN expr RPAREN {pin=1}
 
 expr ::= ppMacroExpr
     | ternaryExpr
@@ -146,6 +165,6 @@ geqExpr ::= expr GEQ expr
 eqExpr ::= expr EQ expr
 neqExpr ::= expr NEQ expr
 
-intExpr ::= INT
+intExpr ::= int
 charExpr ::= char
 parenExpr ::= LPAREN expr RPAREN

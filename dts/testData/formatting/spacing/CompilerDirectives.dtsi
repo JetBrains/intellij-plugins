@@ -1,0 +1,3 @@
+ /dts-v1/ ;
+
+ label:/memreserve/1 2 ;

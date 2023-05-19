@@ -1,0 +1,3 @@
+prop = "value";
+
+prop = "value1", "value2";

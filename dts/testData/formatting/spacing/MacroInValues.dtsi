@@ -1,0 +1,5 @@
+prop = [ MACRO  ];
+prop = < MACRO  >;
+prop = [10  20MACRO  3040];
+prop = <00  20MACRO  30>;
+porp = "this", "is",MACRO , "list";

@@ -11,6 +11,12 @@ public class DtsCellArrayBitsImpl extends com.intellij.extapi.psi.ASTWrapperPsiE
 
   @java.lang.Override
   @org.jetbrains.annotations.Nullable
+  public com.intellij.dts.lang.psi.DtsInt getInt() {
+    return findChildByClass(com.intellij.dts.lang.psi.DtsInt.class);
+  }
+
+  @java.lang.Override
+  @org.jetbrains.annotations.Nullable
   public com.intellij.dts.lang.psi.DtsPpMacro getPpMacro() {
     return findChildByClass(com.intellij.dts.lang.psi.DtsPpMacro.class);
   }

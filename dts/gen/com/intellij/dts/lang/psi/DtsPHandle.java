@@ -2,6 +2,6 @@
 package com.intellij.dts.lang.psi;
 
 
-public interface DtsPHandle extends com.intellij.psi.PsiElement {
+public interface DtsPHandle extends com.intellij.dts.lang.psi.DtsValue {
 
 }

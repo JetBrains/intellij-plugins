@@ -29,6 +29,7 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   public static final com.intellij.psi.tree.TokenSet[] EXTENDS_SETS_ = new com.intellij.psi.tree.TokenSet[] {
+    create_token_set_(CONTENT, NODE_CONTENT),
     create_token_set_(ADD_EXPR, B_AND_EXPR, B_NOT_EXPR, B_OR_EXPR,
       CHAR_EXPR, DIV_EXPR, EQ_EXPR, EXPR,
       GEQ_EXPR, GRT_EXPR, INT_EXPR, LEQ_EXPR,
@@ -37,6 +38,18 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
       NEQ_EXPR, PAREN_EXPR, PP_MACRO_EXPR, RSH_EXPR,
       SUB_EXPR, TERNARY_EXPR, XOR_EXPR),
   };
+
+  /* ********************************************************** */
+  // BYTE_VALUE
+  public static boolean byte_$(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "byte_$")) return false;
+    if (!nextTokenIs(builder_, BYTE_VALUE)) return false;
+    boolean result_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, BYTE_VALUE);
+    exit_section_(builder_, marker_, BYTE, result_);
+    return result_;
+  }
 
   /* ********************************************************** */
   // LBRAC byteArrayContent RBRAC
@@ -54,59 +67,16 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   /* ********************************************************** */
-  // (LABEL* (BYTE | ppMacro) LABEL*)*
+  // byteArrayValue*
   static boolean byteArrayContent(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "byteArrayContent")) return false;
     com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_);
     while (true) {
       int pos_ = current_position_(builder_);
-      if (!byteArrayContent_0(builder_, level_ + 1)) break;
+      if (!byteArrayValue(builder_, level_ + 1)) break;
       if (!empty_element_parsed_guard_(builder_, "byteArrayContent", pos_)) break;
     }
     exit_section_(builder_, level_, marker_, true, false, DtsParser::byteArrayRecover);
-    return true;
-  }
-
-  // LABEL* (BYTE | ppMacro) LABEL*
-  private static boolean byteArrayContent_0(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "byteArrayContent_0")) return false;
-    boolean result_;
-    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
-    result_ = byteArrayContent_0_0(builder_, level_ + 1);
-    result_ = result_ && byteArrayContent_0_1(builder_, level_ + 1);
-    result_ = result_ && byteArrayContent_0_2(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // LABEL*
-  private static boolean byteArrayContent_0_0(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "byteArrayContent_0_0")) return false;
-    while (true) {
-      int pos_ = current_position_(builder_);
-      if (!consumeToken(builder_, LABEL)) break;
-      if (!empty_element_parsed_guard_(builder_, "byteArrayContent_0_0", pos_)) break;
-    }
-    return true;
-  }
-
-  // BYTE | ppMacro
-  private static boolean byteArrayContent_0_1(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "byteArrayContent_0_1")) return false;
-    boolean result_;
-    result_ = consumeToken(builder_, BYTE);
-    if (!result_) result_ = ppMacro(builder_, level_ + 1);
-    return result_;
-  }
-
-  // LABEL*
-  private static boolean byteArrayContent_0_2(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "byteArrayContent_0_2")) return false;
-    while (true) {
-      int pos_ = current_position_(builder_);
-      if (!consumeToken(builder_, LABEL)) break;
-      if (!empty_element_parsed_guard_(builder_, "byteArrayContent_0_2", pos_)) break;
-    }
     return true;
   }
 
@@ -134,28 +104,29 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   /* ********************************************************** */
-  // INT | char | LPAREN expr RPAREN | ppMacro
-  public static boolean cell(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "cell")) return false;
+  // <<value (byte | ppMacro)>>
+  static boolean byteArrayValue(com.intellij.lang.PsiBuilder builder_, int level_) {
+    return value(builder_, level_ + 1, DtsParser::byteArrayValue_0_0);
+  }
+
+  // byte | ppMacro
+  private static boolean byteArrayValue_0_0(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "byteArrayValue_0_0")) return false;
     boolean result_;
-    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_, CELL, "<cell>");
-    result_ = consumeToken(builder_, INT);
-    if (!result_) result_ = char_$(builder_, level_ + 1);
-    if (!result_) result_ = cell_2(builder_, level_ + 1);
+    result_ = byte_$(builder_, level_ + 1);
     if (!result_) result_ = ppMacro(builder_, level_ + 1);
-    exit_section_(builder_, level_, marker_, result_, false, null);
     return result_;
   }
 
-  // LPAREN expr RPAREN
-  private static boolean cell_2(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "cell_2")) return false;
+  /* ********************************************************** */
+  // int | char | exprValue | ppMacro
+  static boolean cell(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "cell")) return false;
     boolean result_;
-    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, LPAREN);
-    result_ = result_ && expr(builder_, level_ + 1, -1);
-    result_ = result_ && consumeToken(builder_, RPAREN);
-    exit_section_(builder_, marker_, null, result_);
+    result_ = int_$(builder_, level_ + 1);
+    if (!result_) result_ = char_$(builder_, level_ + 1);
+    if (!result_) result_ = exprValue(builder_, level_ + 1);
+    if (!result_) result_ = ppMacro(builder_, level_ + 1);
     return result_;
   }
 
@@ -183,7 +154,7 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   /* ********************************************************** */
-  // BITS (INT | ppMacro)
+  // BITS (int | ppMacro)
   public static boolean cellArrayBits(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "cellArrayBits")) return false;
     boolean result_, pinned_;
@@ -195,11 +166,11 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
     return result_ || pinned_;
   }
 
-  // INT | ppMacro
+  // int | ppMacro
   private static boolean cellArrayBits_1(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "cellArrayBits_1")) return false;
     boolean result_;
-    result_ = consumeToken(builder_, INT);
+    result_ = int_$(builder_, level_ + 1);
     if (!result_) result_ = ppMacro(builder_, level_ + 1);
     return result_;
   }
@@ -226,59 +197,16 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   /* ********************************************************** */
-  // (LABEL* (pHandle | cell) LABEL*)*
+  // cellArrayValue*
   static boolean cellArrayContent(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "cellArrayContent")) return false;
     com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_);
     while (true) {
       int pos_ = current_position_(builder_);
-      if (!cellArrayContent_0(builder_, level_ + 1)) break;
+      if (!cellArrayValue(builder_, level_ + 1)) break;
       if (!empty_element_parsed_guard_(builder_, "cellArrayContent", pos_)) break;
     }
     exit_section_(builder_, level_, marker_, true, false, DtsParser::cellArrayRecover);
-    return true;
-  }
-
-  // LABEL* (pHandle | cell) LABEL*
-  private static boolean cellArrayContent_0(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "cellArrayContent_0")) return false;
-    boolean result_;
-    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
-    result_ = cellArrayContent_0_0(builder_, level_ + 1);
-    result_ = result_ && cellArrayContent_0_1(builder_, level_ + 1);
-    result_ = result_ && cellArrayContent_0_2(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // LABEL*
-  private static boolean cellArrayContent_0_0(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "cellArrayContent_0_0")) return false;
-    while (true) {
-      int pos_ = current_position_(builder_);
-      if (!consumeToken(builder_, LABEL)) break;
-      if (!empty_element_parsed_guard_(builder_, "cellArrayContent_0_0", pos_)) break;
-    }
-    return true;
-  }
-
-  // pHandle | cell
-  private static boolean cellArrayContent_0_1(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "cellArrayContent_0_1")) return false;
-    boolean result_;
-    result_ = pHandle(builder_, level_ + 1);
-    if (!result_) result_ = cell(builder_, level_ + 1);
-    return result_;
-  }
-
-  // LABEL*
-  private static boolean cellArrayContent_0_2(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "cellArrayContent_0_2")) return false;
-    while (true) {
-      int pos_ = current_position_(builder_);
-      if (!consumeToken(builder_, LABEL)) break;
-      if (!empty_element_parsed_guard_(builder_, "cellArrayContent_0_2", pos_)) break;
-    }
     return true;
   }
 
@@ -302,6 +230,21 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
     if (!result_) result_ = consumeToken(builder_, COMMA);
     if (!result_) result_ = consumeToken(builder_, RANGL);
     if (!result_) result_ = consumeToken(builder_, RPAREN);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // <<value (pHandle | cell)>>
+  static boolean cellArrayValue(com.intellij.lang.PsiBuilder builder_, int level_) {
+    return value(builder_, level_ + 1, DtsParser::cellArrayValue_0_0);
+  }
+
+  // pHandle | cell
+  private static boolean cellArrayValue_0_0(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "cellArrayValue_0_0")) return false;
+    boolean result_;
+    result_ = pHandle(builder_, level_ + 1);
+    if (!result_) result_ = cell(builder_, level_ + 1);
     return result_;
   }
 
@@ -377,7 +320,7 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   // )*
   public static boolean content(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "content")) return false;
-    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_, CONTENT, "<content>");
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _COLLAPSE_, CONTENT, "<content>");
     while (true) {
       int pos_ = current_position_(builder_);
       if (!content_0(builder_, level_ + 1)) break;
@@ -473,6 +416,33 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
     result_ = result_ && consumeToken(builder_, SEMICOLON);
     exit_section_(builder_, level_, marker_, result_, pinned_, null);
     return result_ || pinned_;
+  }
+
+  /* ********************************************************** */
+  // LPAREN expr RPAREN
+  public static boolean exprValue(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "exprValue")) return false;
+    if (!nextTokenIs(builder_, LPAREN)) return false;
+    boolean result_, pinned_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_, EXPR_VALUE, null);
+    result_ = consumeToken(builder_, LPAREN);
+    pinned_ = result_; // pin = 1
+    result_ = result_ && report_error_(builder_, expr(builder_, level_ + 1, -1));
+    result_ = pinned_ && consumeToken(builder_, RPAREN) && result_;
+    exit_section_(builder_, level_, marker_, result_, pinned_, null);
+    return result_ || pinned_;
+  }
+
+  /* ********************************************************** */
+  // INT_VALUE
+  public static boolean int_$(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "int_$")) return false;
+    if (!nextTokenIs(builder_, INT_VALUE)) return false;
+    boolean result_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, INT_VALUE);
+    exit_section_(builder_, marker_, INT, result_);
+    return result_;
   }
 
   /* ********************************************************** */
@@ -663,87 +633,51 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   /* ********************************************************** */
-  // ASSIGN LABEL* propertyValue LABEL* (COMMA LABEL* propertyValue LABEL*)*
+  // ASSIGN propertyContent
   static boolean propertyAssignment(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "propertyAssignment")) return false;
+    if (!nextTokenIs(builder_, ASSIGN)) return false;
     boolean result_, pinned_;
     com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_);
     result_ = consumeToken(builder_, ASSIGN);
     pinned_ = result_; // pin = 1
-    result_ = result_ && report_error_(builder_, propertyAssignment_1(builder_, level_ + 1));
-    result_ = pinned_ && report_error_(builder_, propertyValue(builder_, level_ + 1)) && result_;
-    result_ = pinned_ && report_error_(builder_, propertyAssignment_3(builder_, level_ + 1)) && result_;
-    result_ = pinned_ && propertyAssignment_4(builder_, level_ + 1) && result_;
-    exit_section_(builder_, level_, marker_, result_, pinned_, DtsParser::propertyRecover);
+    result_ = result_ && propertyContent(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, result_, pinned_, null);
     return result_ || pinned_;
   }
 
-  // LABEL*
-  private static boolean propertyAssignment_1(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "propertyAssignment_1")) return false;
-    while (true) {
-      int pos_ = current_position_(builder_);
-      if (!consumeToken(builder_, LABEL)) break;
-      if (!empty_element_parsed_guard_(builder_, "propertyAssignment_1", pos_)) break;
-    }
-    return true;
-  }
-
-  // LABEL*
-  private static boolean propertyAssignment_3(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "propertyAssignment_3")) return false;
-    while (true) {
-      int pos_ = current_position_(builder_);
-      if (!consumeToken(builder_, LABEL)) break;
-      if (!empty_element_parsed_guard_(builder_, "propertyAssignment_3", pos_)) break;
-    }
-    return true;
-  }
-
-  // (COMMA LABEL* propertyValue LABEL*)*
-  private static boolean propertyAssignment_4(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "propertyAssignment_4")) return false;
-    while (true) {
-      int pos_ = current_position_(builder_);
-      if (!propertyAssignment_4_0(builder_, level_ + 1)) break;
-      if (!empty_element_parsed_guard_(builder_, "propertyAssignment_4", pos_)) break;
-    }
-    return true;
-  }
-
-  // COMMA LABEL* propertyValue LABEL*
-  private static boolean propertyAssignment_4_0(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "propertyAssignment_4_0")) return false;
+  /* ********************************************************** */
+  // propertyValue (COMMA propertyValue)*
+  public static boolean propertyContent(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "propertyContent")) return false;
     boolean result_;
-    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, COMMA);
-    result_ = result_ && propertyAssignment_4_0_1(builder_, level_ + 1);
-    result_ = result_ && propertyValue(builder_, level_ + 1);
-    result_ = result_ && propertyAssignment_4_0_3(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_, PROPERTY_CONTENT, "<property content>");
+    result_ = propertyValue(builder_, level_ + 1);
+    result_ = result_ && propertyContent_1(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, result_, false, DtsParser::propertyRecover);
     return result_;
   }
 
-  // LABEL*
-  private static boolean propertyAssignment_4_0_1(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "propertyAssignment_4_0_1")) return false;
+  // (COMMA propertyValue)*
+  private static boolean propertyContent_1(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "propertyContent_1")) return false;
     while (true) {
       int pos_ = current_position_(builder_);
-      if (!consumeToken(builder_, LABEL)) break;
-      if (!empty_element_parsed_guard_(builder_, "propertyAssignment_4_0_1", pos_)) break;
+      if (!propertyContent_1_0(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "propertyContent_1", pos_)) break;
     }
     return true;
   }
 
-  // LABEL*
-  private static boolean propertyAssignment_4_0_3(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "propertyAssignment_4_0_3")) return false;
-    while (true) {
-      int pos_ = current_position_(builder_);
-      if (!consumeToken(builder_, LABEL)) break;
-      if (!empty_element_parsed_guard_(builder_, "propertyAssignment_4_0_3", pos_)) break;
-    }
-    return true;
+  // COMMA propertyValue
+  private static boolean propertyContent_1_0(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "propertyContent_1_0")) return false;
+    boolean result_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, COMMA);
+    result_ = result_ && propertyValue(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
   }
 
   /* ********************************************************** */
@@ -768,9 +702,14 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   /* ********************************************************** */
-  // string | pHandle | cellArray | byteArray | ppMacro
+  // <<value (string | pHandle | cellArray | byteArray | ppMacro)>>
   static boolean propertyValue(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "propertyValue")) return false;
+    return value(builder_, level_ + 1, DtsParser::propertyValue_0_0);
+  }
+
+  // string | pHandle | cellArray | byteArray | ppMacro
+  private static boolean propertyValue_0_0(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "propertyValue_0_0")) return false;
     boolean result_;
     result_ = string(builder_, level_ + 1);
     if (!result_) result_ = pHandle(builder_, level_ + 1);
@@ -906,6 +845,41 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   private static boolean subNode_5(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "subNode_5")) return false;
     nodeContent(builder_, level_ + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // LABEL* <<arg>> LABEL*
+  static boolean value(com.intellij.lang.PsiBuilder builder_, int level_, Parser arg) {
+    if (!recursion_guard_(builder_, level_, "value")) return false;
+    boolean result_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
+    result_ = value_0(builder_, level_ + 1);
+    result_ = result_ && arg.parse(builder_, level_);
+    result_ = result_ && value_2(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // LABEL*
+  private static boolean value_0(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "value_0")) return false;
+    while (true) {
+      int pos_ = current_position_(builder_);
+      if (!consumeToken(builder_, LABEL)) break;
+      if (!empty_element_parsed_guard_(builder_, "value_0", pos_)) break;
+    }
+    return true;
+  }
+
+  // LABEL*
+  private static boolean value_2(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "value_2")) return false;
+    while (true) {
+      int pos_ = current_position_(builder_);
+      if (!consumeToken(builder_, LABEL)) break;
+      if (!empty_element_parsed_guard_(builder_, "value_2", pos_)) break;
+    }
     return true;
   }
 
@@ -1091,13 +1065,13 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
     return result_ || pinned_;
   }
 
-  // INT
+  // int
   public static boolean intExpr(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "intExpr")) return false;
-    if (!nextTokenIsSmart(builder_, INT)) return false;
+    if (!nextTokenIsSmart(builder_, INT_VALUE)) return false;
     boolean result_;
     com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
-    result_ = consumeTokenSmart(builder_, INT);
+    result_ = int_$(builder_, level_ + 1);
     exit_section_(builder_, marker_, INT_EXPR, result_);
     return result_;
   }

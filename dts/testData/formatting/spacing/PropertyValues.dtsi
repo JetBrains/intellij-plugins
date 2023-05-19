@@ -1,0 +1,6 @@
+prop = [   ];
+prop = [1020  30];
+prop = <1  2 3 >;
+prop = <1'2'>;
+prop = <1(2 + 3)>;
+prop = "this","is"  ,  "list";

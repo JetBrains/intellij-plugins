@@ -17,14 +17,23 @@
                 language="DTS"
                 implementationClass="com.intellij.dts.lang.parser.DtsParserDefinition"/>
 
+        <!-- syntax highlighting -->
         <lang.syntaxHighlighterFactory
                 language="DTS"
                 implementationClass="com.intellij.dts.highlighting.DtsSyntaxHighlighter$Factory"/>
         <annotator
                 language="DTS"
                 implementationClass="com.intellij.dts.highlighting.DtsHighlightAnnotator"/>
-
         <colorSettingsPage
                 implementation="com.intellij.dts.settings.DtsColorSettingsPage"/>
+
+        <!-- code formatting -->
+        <lang.formatter
+                language="DTS"
+                implementationClass="com.intellij.dts.formatting.DtsFormattingBuilder"/>
+        <codeStyleSettingsProvider
+                implementation="com.intellij.dts.settings.DtsCodeStyleSettingsProvider"/>
+        <langCodeStyleSettingsProvider
+                implementation="com.intellij.dts.settings.DtsLangCodeStyleSettingsProvider"/>
     </extensions>
 </idea-plugin>

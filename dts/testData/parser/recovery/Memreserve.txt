@@ -4,9 +4,9 @@ DTS file
       DtsCompilerDirectiveImpl(COMPILER_DIRECTIVE)
         PsiElement(DtsTokenType.MEMRESERVE)('/memreserve/')
         PsiWhiteSpace(' ')
-        PsiElement(DtsTokenType.INT)('00')
+        PsiElement(DtsTokenType.INT_VALUE)('00')
         PsiWhiteSpace(' ')
-        PsiErrorElement:<cell> expected, got '$'
+        PsiErrorElement:DtsTokenType.INT_VALUE, DtsTokenType.LPAREN, DtsTokenType.NAME or DtsTokenType.SQUOTE expected, got '$'
           PsiElement(BAD_CHARACTER)('$')
         PsiWhiteSpace(' ')
         PsiElement(BAD_CHARACTER)('$')

@@ -6,11 +6,13 @@ DTSI file
         PsiWhiteSpace(' ')
         PsiElement(DtsTokenType.ASSIGN)('=')
         PsiWhiteSpace(' ')
-        DtsByteArrayImpl(BYTE_ARRAY)
-          PsiElement(DtsTokenType.LBRAC)('[')
-          PsiElement(DtsTokenType.BYTE)('00')
-          PsiErrorElement:DtsTokenType.RBRAC expected, got ';'
-            <empty list>
+        DtsPropertyContentImpl(PROPERTY_CONTENT)
+          DtsByteArrayImpl(BYTE_ARRAY)
+            PsiElement(DtsTokenType.LBRAC)('[')
+            DtsByteImpl(BYTE)
+              PsiElement(DtsTokenType.BYTE_VALUE)('00')
+            PsiErrorElement:DtsTokenType.RBRAC expected, got ';'
+              <empty list>
       PsiWhiteSpace(' ')
       PsiElement(DtsTokenType.SEMICOLON)(';')
     PsiWhiteSpace('\n')
@@ -20,13 +22,15 @@ DTSI file
         PsiWhiteSpace(' ')
         PsiElement(DtsTokenType.ASSIGN)('=')
         PsiWhiteSpace(' ')
-        DtsByteArrayImpl(BYTE_ARRAY)
-          PsiElement(DtsTokenType.LBRAC)('[')
-          PsiElement(DtsTokenType.BYTE)('00')
-          PsiWhiteSpace(' ')
-          PsiErrorElement:DtsTokenType.BYTE, DtsTokenType.LABEL or DtsTokenType.NAME expected, got '$'
+        DtsPropertyContentImpl(PROPERTY_CONTENT)
+          DtsByteArrayImpl(BYTE_ARRAY)
+            PsiElement(DtsTokenType.LBRAC)('[')
+            DtsByteImpl(BYTE)
+              PsiElement(DtsTokenType.BYTE_VALUE)('00')
+            PsiWhiteSpace(' ')
+            PsiErrorElement:DtsTokenType.BYTE_VALUE, DtsTokenType.LABEL or DtsTokenType.NAME expected, got '$'
+              PsiElement(BAD_CHARACTER)('$')
+            PsiWhiteSpace(' ')
             PsiElement(BAD_CHARACTER)('$')
-          PsiWhiteSpace(' ')
-          PsiElement(BAD_CHARACTER)('$')
-          PsiElement(DtsTokenType.RBRAC)(']')
+            PsiElement(DtsTokenType.RBRAC)(']')
       PsiElement(DtsTokenType.SEMICOLON)(';')

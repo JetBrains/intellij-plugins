@@ -1,0 +1,4 @@
+/ {
+    prop =  &  ref  ;
+    prop =  &   {  /path/ } ;
+};

@@ -1,0 +1,4 @@
+/ {
+    prop = "value";
+    prop = "value";
+};

@@ -10,33 +10,9 @@ public class DtsPropertyImpl extends com.intellij.extapi.psi.ASTWrapperPsiElemen
   }
 
   @java.lang.Override
-  @org.jetbrains.annotations.NotNull
-  public java.util.List<com.intellij.dts.lang.psi.DtsByteArray> getByteArrayList() {
-    return com.intellij.psi.util.PsiTreeUtil.getChildrenOfTypeAsList(this, com.intellij.dts.lang.psi.DtsByteArray.class);
-  }
-
-  @java.lang.Override
-  @org.jetbrains.annotations.NotNull
-  public java.util.List<com.intellij.dts.lang.psi.DtsCellArray> getCellArrayList() {
-    return com.intellij.psi.util.PsiTreeUtil.getChildrenOfTypeAsList(this, com.intellij.dts.lang.psi.DtsCellArray.class);
-  }
-
-  @java.lang.Override
-  @org.jetbrains.annotations.NotNull
-  public java.util.List<com.intellij.dts.lang.psi.DtsPHandle> getPHandleList() {
-    return com.intellij.psi.util.PsiTreeUtil.getChildrenOfTypeAsList(this, com.intellij.dts.lang.psi.DtsPHandle.class);
-  }
-
-  @java.lang.Override
-  @org.jetbrains.annotations.NotNull
-  public java.util.List<com.intellij.dts.lang.psi.DtsPpMacro> getPpMacroList() {
-    return com.intellij.psi.util.PsiTreeUtil.getChildrenOfTypeAsList(this, com.intellij.dts.lang.psi.DtsPpMacro.class);
-  }
-
-  @java.lang.Override
-  @org.jetbrains.annotations.NotNull
-  public java.util.List<com.intellij.dts.lang.psi.DtsString> getStringList() {
-    return com.intellij.psi.util.PsiTreeUtil.getChildrenOfTypeAsList(this, com.intellij.dts.lang.psi.DtsString.class);
+  @org.jetbrains.annotations.Nullable
+  public com.intellij.dts.lang.psi.DtsPropertyContent getPropertyContent() {
+    return findChildByClass(com.intellij.dts.lang.psi.DtsPropertyContent.class);
   }
 
 }

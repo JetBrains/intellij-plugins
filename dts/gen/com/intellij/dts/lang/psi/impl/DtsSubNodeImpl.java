@@ -3,9 +3,9 @@ package com.intellij.dts.lang.psi.impl;
 
 import static com.intellij.dts.lang.psi.DtsTypes.*;
 
-public class DtsSubNodeImpl extends com.intellij.extapi.psi.ASTWrapperPsiElement implements com.intellij.dts.lang.psi.DtsSubNode {
+public class DtsSubNodeImpl extends com.intellij.dts.lang.psi.mixin.DtsSubNodeMixin implements com.intellij.dts.lang.psi.DtsSubNode {
 
-  public DtsSubNodeImpl(@org.jetbrains.annotations.NotNull com.intellij.lang.ASTNode node) {
+  public DtsSubNodeImpl(com.intellij.lang.ASTNode node) {
     super(node);
   }
 

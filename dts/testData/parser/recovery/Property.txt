@@ -5,10 +5,9 @@ DTSI file
         PsiElement(DtsTokenType.NAME)('prop')
         PsiWhiteSpace(' ')
         PsiElement(DtsTokenType.ASSIGN)('=')
-        PsiErrorElement:<cell array>, DtsTokenType.DQUOTE, DtsTokenType.HANDLE, DtsTokenType.LABEL, DtsTokenType.LBRAC or DtsTokenType.NAME expected, got '$'
-          <empty list>
         PsiWhiteSpace(' ')
-        PsiElement(BAD_CHARACTER)('$')
+        PsiErrorElement:<property content> expected, got '$'
+          PsiElement(BAD_CHARACTER)('$')
         PsiWhiteSpace(' ')
         PsiElement(BAD_CHARACTER)('$')
       PsiElement(DtsTokenType.SEMICOLON)(';')

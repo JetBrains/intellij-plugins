@@ -1,0 +1,11 @@
+prop        = "value1",
+              "value2";
+
+proploooong = "value1",
+              "value2";
+
+prop        = <00
+               00>;
+
+prop        = [00
+               00];
