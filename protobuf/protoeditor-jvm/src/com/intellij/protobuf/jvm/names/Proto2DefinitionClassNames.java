@@ -182,6 +182,7 @@ public class Proto2DefinitionClassNames {
         symbolMap
             .values()
             .stream()
+            .flatMap(Collection::stream)
             .filter(PbMessageType.class::isInstance)
             .map(PbMessageType.class::cast)
             .toList();
