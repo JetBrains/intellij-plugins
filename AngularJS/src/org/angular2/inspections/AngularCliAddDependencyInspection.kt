@@ -44,7 +44,7 @@ class AngularCliAddDependencyInspection : LocalInspectionTool() {
     private fun annotate(file: JsonFile, holder: ProblemsHolder) {
       val packageJson = file.virtualFile
       val project = file.project
-      if (packageJson == null || !JSLibraryUtil.isUnderContentRootsAndOutsideOfLibraryRoots(project, packageJson)) return
+      if (packageJson == null || !JSLibraryUtil.isInProjectAndOutsideOfLibraryRoots(project, packageJson)) return
 
       val properties = PackageJsonUtil.getDependencies(file, PackageJsonUtil.PROD_DEV_DEPENDENCIES)
       if (properties.isEmpty()) return
