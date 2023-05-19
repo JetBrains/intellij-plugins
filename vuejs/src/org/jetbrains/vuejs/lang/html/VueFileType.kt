@@ -13,7 +13,7 @@ class VueFileType private constructor() : WebFrameworkHtmlFileType(VueLanguage.I
 
     val PsiFile.isDotVueFile
       get() = originalFile.virtualFile?.isDotVueFile
-              ?: (this is VueFile && !this.name.endsWith(".html", true))
+              ?: (this is VueFile && isVueFileName(this.name))
 
     val VirtualFile.isDotVueFile
       get() = nameSequence.endsWith(VUE_FILE_EXTENSION)
