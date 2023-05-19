@@ -38,11 +38,6 @@ public class PostCssParser extends CssParser2 {
   }
 
   @Override
-  public boolean supportsNestedBlocks() {
-    return true;
-  }
-
-  @Override
   protected TokenSet getCommentTokenTypes() {
     return PostCssTokenTypes.POST_CSS_COMMENTS;
   }
