@@ -253,7 +253,7 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
                                                directiveInputs: MutableList<Pair<JSType, JSExpression?>>,
                                                element: PsiElement,
                                                elementTypeSource: JSTypeSource): JSType {
-      val genericConstructorReturnType = TypeScriptTypeParser.createConstructorReturnType(cls, classTypeSource)
+      val genericConstructorReturnType = JSTypeUtils.createNotSubstitutedGenericType(cls, cls.jsType)
 
       // conceptually: const Directive = (...) => {...}, it misses the type arguments <...> part, so we patch that later
       val directiveFactoryType = JSFunctionTypeImpl(
