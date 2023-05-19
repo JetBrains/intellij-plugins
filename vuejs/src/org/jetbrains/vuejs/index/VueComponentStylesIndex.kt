@@ -2,18 +2,19 @@
 package org.jetbrains.vuejs.index
 
 import com.intellij.lang.javascript.modules.NodeModuleUtil
+import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.XmlElementVisitor
 import com.intellij.psi.xml.XmlTag
-import com.intellij.util.indexing.DataIndexer
+import com.intellij.util.ThreeState
+import com.intellij.util.indexing.*
 import com.intellij.util.indexing.FileBasedIndex.InputFilter
-import com.intellij.util.indexing.FileContent
-import com.intellij.util.indexing.ID
-import com.intellij.util.indexing.ScalarIndexExtension
+import com.intellij.util.indexing.hints.BaseFileTypeInputFilter
 import com.intellij.util.io.EnumeratorStringDescriptor
 import com.intellij.util.io.KeyDescriptor
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.lang.html.VueFile
+import org.jetbrains.vuejs.lang.html.VueFileType
 
 /**
  * Indexes style languages used in *.vue files.
@@ -42,8 +43,20 @@ class VueComponentStylesIndex : ScalarIndexExtension<String>() {
 
   override fun getVersion(): Int = 2
 
-  override fun getInputFilter(): InputFilter =
-    InputFilter { it.nameSequence.endsWith(VUE_FILE_EXTENSION) && !NodeModuleUtil.hasNodeModulesDirInPath(it, null) }
+  override fun getInputFilter(): InputFilter = object : BaseFileTypeInputFilter() {
+    override fun acceptFileType(fileType: FileType): ThreeState {
+      return if (fileType == VueFileType.INSTANCE) {
+        ThreeState.UNSURE // check hasNodeModulesDirInPath
+      }
+      else {
+        ThreeState.NO
+      }
+    }
+
+    override fun whenAllOtherHintsUnsure(file: IndexedFile): Boolean {
+      return !NodeModuleUtil.hasNodeModulesDirInPath(file.file, null)
+    }
+  }
 
   override fun dependsOnFileContent(): Boolean = true
 
