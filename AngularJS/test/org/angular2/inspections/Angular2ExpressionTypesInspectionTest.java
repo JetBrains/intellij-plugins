@@ -190,6 +190,13 @@ public class Angular2ExpressionTypesInspectionTest extends Angular2CodeInsightFi
     myFixture.checkHighlighting();
   }
 
+  public void testGenericDirectiveReferenceNonStrict() {
+    configureCopy(myFixture, ANGULAR_MATERIAL_16_0_0_NEXT_6, ANGULAR_CORE_16_0_0_NEXT_4, ANGULAR_COMMON_16_0_0_NEXT_4,
+                  ANGULAR_FORMS_16_0_0_NEXT_4);
+    myFixture.configureByFile("genericDirectiveReference.ts");
+    myFixture.checkHighlighting();
+  }
+
   private void configureCommonFiles() {
     configureCopy(myFixture, ANGULAR_CORE_15_1_5, ANGULAR_COMMON_15_1_5, RXJS_6_4_0);
     myFixture.configureByFile("tsconfig.json");
