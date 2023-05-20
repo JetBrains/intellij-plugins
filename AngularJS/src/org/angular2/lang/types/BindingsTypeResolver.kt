@@ -393,7 +393,7 @@ internal class BindingsTypeResolver private constructor(element: PsiElement,
   }
 
   /**
-   * This class doesn't simplify much, but allows to use find usages to find related code for different web frameworks.
+   * This class doesn't simplify much, but allows using find usages to find related code for different web frameworks.
    */
   class WebJSSyntheticFunctionCall(val place: PsiElement?,
                                    val argumentListProvider: (typeFactory: JSExpressionTypeFactory) -> List<JSType?>) : JSCallItem {
