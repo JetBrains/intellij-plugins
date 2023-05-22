@@ -37,7 +37,7 @@ public class PbSymbolResolver {
 
   /** Returns a PbSymbolResolver that can resolve symbols in the given file and its imports. */
   public static PbSymbolResolver forFile(PbFile file) {
-    return new PbSymbolResolver(convertJdkMapToGuava(file.getExportedQualifiedSymbolMap()));
+    return new PbSymbolResolver(convertJdkMapToGuava(file.getFullQualifiedSymbolMap()));
   }
 
   /** Returns a PbSymbolResolver that can resolve symbols exported by the given file. */
