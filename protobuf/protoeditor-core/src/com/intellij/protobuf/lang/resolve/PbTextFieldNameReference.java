@@ -18,15 +18,16 @@ package com.intellij.protobuf.lang.resolve;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.protobuf.lang.annotation.OptionOccurrenceTracker;
+import com.intellij.protobuf.lang.psi.*;
+import com.intellij.protobuf.lang.psi.util.PbPsiUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.impl.source.tree.LeafElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.protobuf.lang.annotation.OptionOccurrenceTracker;
-import com.intellij.protobuf.lang.psi.*;
-import com.intellij.protobuf.lang.psi.util.PbPsiUtil;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -78,11 +79,9 @@ public class PbTextFieldNameReference extends PsiReferenceBase<PbTextFieldName> 
       return null;
     }
 
-    PbSymbol symbol =
-        type.getSymbolMap().get(name).stream()
-            .filter(s -> s instanceof PbField || s instanceof PbGroupDefinition)
-            .findFirst()
-            .orElse(null);
+    Collection<PbSymbol> pbSymbols = type.getSymbolMap().get(name);
+    if (pbSymbols == null || pbSymbols.isEmpty()) return null;
+    PbSymbol symbol = ContainerUtil.find(pbSymbols, s -> s instanceof PbField || s instanceof PbGroupDefinition);
 
     if (symbol instanceof PbGroupDefinition) {
       PbField generatedField = ((PbGroupDefinition) symbol).getGeneratedField();

@@ -95,7 +95,8 @@ public final class PbPythonGotoDeclarationHandler implements GotoDeclarationHand
     }
     QualifiedName qualifiedName = pbFile.getPackageQualifiedName().append(fileLocalSymbol);
     Map<QualifiedName, Collection<PbSymbol>> fileSymbols = pbFile.getLocalQualifiedSymbolMap();
-    return ImmutableList.copyOf(fileSymbols.get(qualifiedName));
+    Collection<PbSymbol> pbSymbols = fileSymbols.get(qualifiedName);
+    return ImmutableList.copyOf(pbSymbols == null ? List.of() : pbSymbols);
   }
 
   // For API v1, the code generator converts nested messages like Foo.Bar.Baz to Foo_Bar_Baz.

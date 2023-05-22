@@ -21,6 +21,7 @@ import com.intellij.protobuf.lang.psi.PbFile;
 import com.intellij.protobuf.lang.psi.PbSymbol;
 import com.intellij.protobuf.lang.psi.PbSymbolOwner;
 import com.intellij.psi.util.QualifiedName;
+import com.intellij.util.SmartList;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -55,7 +56,7 @@ public class PbSymbolResolver {
   }
 
   private static Multimap<QualifiedName, PbSymbol> convertJdkMapToGuava(Map<QualifiedName, Collection<PbSymbol>> jdkMap) {
-    SetMultimap<QualifiedName, PbSymbol> multimap = Multimaps.newSetMultimap(new HashMap<>(), HashSet::new);
+    Multimap<QualifiedName, PbSymbol> multimap = Multimaps.newListMultimap(new HashMap<>(), SmartList::new);
     jdkMap.forEach((key, value) -> multimap.putAll(key, value));
     return multimap;
   }

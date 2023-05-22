@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -47,7 +48,7 @@ public interface PbSymbolOwner extends PbElement {
 
   @NotNull
   default Collection<PbSymbol> getSymbols() {
-    return getSymbolMap().values().stream().flatMap(Collection::stream).collect(Collectors.toSet());
+    return getSymbolMap().values().stream().flatMap(Collection::stream).collect(Collectors.toList());
   }
 
   @NotNull
@@ -96,7 +97,8 @@ public interface PbSymbolOwner extends PbElement {
   /** Return direct symbol children with the given name. */
   @NotNull
   default Collection<PbSymbol> findSymbols(String name) {
-    return getSymbolMap().get(name);
+    Collection<PbSymbol> pbSymbols = getSymbolMap().get(name);
+    return pbSymbols == null ? List.of() : pbSymbols;
   }
 
   /** Return direct symbol children with the given name and type. */
