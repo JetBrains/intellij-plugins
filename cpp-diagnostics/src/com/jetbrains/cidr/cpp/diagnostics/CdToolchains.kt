@@ -210,7 +210,7 @@ private fun checkRsyncDownload(remoteHost: HostMachine): Boolean {
     file.write(testString, createParentDirs = false)
 
     RSyncUtil.downloadFolderWithRSync(local.path, remote.toString(), credentials,
-                                      ProgressManager.getInstance().progressIndicator, RSyncOptions().withLogfilePath(logFile.path))
+                                      ProgressManager.getInstance().progressIndicator, RSyncOptions(logfilePath = logFile.path))
 
     val text = FileUtil.loadFile(File(local, "file.txt"))
     return testString == text
