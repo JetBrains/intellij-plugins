@@ -17,16 +17,13 @@ package com.intellij.protobuf.lang.resolve;
 
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.protobuf.lang.annotation.OptionOccurrenceTracker;
+import com.intellij.protobuf.lang.psi.*;
+import com.intellij.protobuf.lang.psi.util.PbPsiImplUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
-import com.intellij.protobuf.lang.annotation.OptionOccurrenceTracker;
-import com.intellij.protobuf.lang.psi.PbField;
-import com.intellij.protobuf.lang.psi.PbMessageType;
-import com.intellij.protobuf.lang.psi.PbOptionName;
-import com.intellij.protobuf.lang.psi.PbOptionOwner;
-import com.intellij.protobuf.lang.psi.util.PbPsiImplUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -78,9 +75,9 @@ public class PbOptionNameReference extends PsiReferenceBase<PbOptionName> {
       return null;
     }
 
-    return type.getSymbolMap()
-        .get(name)
-        .stream()
+    Collection<PbSymbol> pbSymbols = type.getSymbolMap().get(name);
+    if (pbSymbols == null || pbSymbols.isEmpty()) return null;
+    return pbSymbols.stream()
         .filter(symbol -> symbol instanceof PbField)
         .map(symbol -> (PbField) symbol)
         .filter(field -> !field.isExtension())

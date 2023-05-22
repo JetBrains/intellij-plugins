@@ -267,7 +267,7 @@ public class PbFileImpl extends PsiFileBase implements PbFile {
   private ImmutableMultimap<QualifiedName, PbSymbol> computeExportedQualifiedSymbolMap() {
     // Return all local symbols from this file and all files in the transitive set of public
     // imports.
-    ImmutableSetMultimap.Builder<QualifiedName, PbSymbol> builder = ImmutableSetMultimap.builder();
+    ImmutableMultimap.Builder<QualifiedName, PbSymbol> builder = ImmutableListMultimap.builder();
 
     getLocalQualifiedSymbolMap().forEach(builder::putAll);
     for (PbFile importedFile : getImportedFileList(/* includePrivate= */ false)) {
