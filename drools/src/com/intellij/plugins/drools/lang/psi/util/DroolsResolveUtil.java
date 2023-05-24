@@ -37,6 +37,7 @@ public final class DroolsResolveUtil {
     DroolsImplicitVariablesProcessor.getInstance(),
     DroolsGlobalVariablesProcessor.getInstance(),
     DroolsFunctionsProcessor.getInstance(),
+    DroolsImportedFunctionsProcessor.getInstance(),
     DroolsDeclaredTypesProcessor.getInstance(),
     DroolsLocalVariablesProcessor.getInstance(),
     DroolsUnitMembersProcessor.getInstance(),
@@ -65,8 +66,8 @@ public final class DroolsResolveUtil {
     else {
       processSimplePackageOrClass(processor, reference);
       Collection<PsiElement> results = processor.getResults();
-      if (results.size() > 0) return results;
-      processVariables(processor, reference, incompleteCode);
+      if (!results.isEmpty()) return results;
+      if (!processVariables(processor, reference, incompleteCode)) return processor.getResults();
     }
     return processor.getResults();
   }
@@ -106,6 +107,7 @@ public final class DroolsResolveUtil {
     if (!processQueries(processor, reference)) return false;
 
     if (!processFunctions(processor, reference)) return false;
+    if (!processImportedFunctions(processor, reference)) return false;
     if (!processParameters(processor, reference)) return false;
     if (!processGlobalVariables(processor, reference)) return false;
 
@@ -117,6 +119,16 @@ public final class DroolsResolveUtil {
     if (containingFile instanceof DroolsFile) {
       for (DroolsFunctionStatement functionStatement : ((DroolsFile)containingFile).getFunctions()) {
         if (!processor.process(functionStatement)) return false;
+      }
+    }
+    return true;
+  }
+
+  private static boolean processImportedFunctions(CollectProcessor<PsiElement> processor, DroolsReference reference) {
+    PsiFile containingFile = reference.getContainingFile();
+    if (containingFile instanceof DroolsFile) {
+      for (PsiMethod importedFunction : DroolsImportedFunctionsProcessor.getImportedFunctions((DroolsFile)containingFile)) {
+        if (!processor.process(importedFunction)) return false;
       }
     }
     return true;
@@ -211,22 +223,26 @@ public final class DroolsResolveUtil {
       DroolsLhsPattern droolsLhsPattern = PsiTreeUtil.getParentOfType(resolve, DroolsLhsPattern.class);
       if (droolsLhsPattern != null) {
         PsiType psiType = ((DroolsUnaryAssignExpr)resolve).getType();
-        if (psiType instanceof PsiClassType) {
+        if (processPsiClassTypeMembers(processor, psiType)) {
           return processClassMembers(processor, Collections.singleton(((PsiClassType)psiType).resolve()), false);
         }
       }
     }
     else if (resolve instanceof PsiVariable) {
-      PsiType type = ((PsiVariable)resolve).getType();
-      if (type instanceof PsiClassType) {
-        return processClassMembers(processor, Collections.singleton(((PsiClassType)type).resolve()), false);
-      }
+      return processPsiClassTypeMembers(processor, ((PsiVariable)resolve).getType());
     }
     else if (resolve instanceof BeanProperty) {
-      PsiType type = ((BeanProperty)resolve).getPropertyType();
-      if (type instanceof PsiClassType) {
-        return processClassMembers(processor, Collections.singleton(((PsiClassType)type).resolve()), false);
-      }
+      return processPsiClassTypeMembers(processor, ((BeanProperty)resolve).getPropertyType());
+    }
+    else if (resolve instanceof BeanPropertyElement) {
+      return processPsiClassTypeMembers(processor, ((BeanPropertyElement)resolve).getPropertyType());
+    }
+    return true;
+  }
+
+  private static boolean processPsiClassTypeMembers(@NotNull CollectProcessor<PsiElement> processor, PsiType type) {
+    if (type instanceof PsiClassType) {
+      return processClassMembers(processor, Collections.singleton(((PsiClassType)type).resolve()), false);
     }
     return true;
   }

@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
@@ -33,12 +33,13 @@ public abstract class DroolsImportImpl extends DroolsPsiCompositeElementImpl imp
   @Override
   public String getImportedFunction() {
     if (isFunction()) {
-        return getImportQualifier().getText();
+      return getImportQualifier().getText();
     }
     return null;
   }
 
-  private boolean isFunction() {
-    return  findChildByType(DroolsTokenTypes.FUNCTION) != null;
+  @Override
+  public boolean isFunction() {
+    return findChildByType(DroolsTokenTypes.FUNCTION) != null;
   }
 }

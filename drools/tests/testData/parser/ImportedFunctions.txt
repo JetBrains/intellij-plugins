@@ -1,0 +1,88 @@
+Drools File
+  IMPORT_STATEMENT
+    PsiElement(import)('import')
+    PsiWhiteSpace(' ')
+    PsiElement(function)('function')
+    PsiWhiteSpace(' ')
+    IMPORT_QUALIFIER
+      QUALIFIED_IDENTIFIER
+        IDENTIFIER
+          PsiElement(JAVA_IDENTIFIER)('org')
+        PsiElement(.)('.')
+        IDENTIFIER
+          PsiElement(JAVA_IDENTIFIER)('kie')
+        PsiElement(.)('.')
+        IDENTIFIER
+          PsiElement(JAVA_IDENTIFIER)('kogito')
+        PsiElement(.)('.')
+        IDENTIFIER
+          PsiElement(JAVA_IDENTIFIER)('queries')
+        PsiElement(.)('.')
+        IDENTIFIER
+          PsiElement(JAVA_IDENTIFIER)('AllAmounts')
+        PsiElement(.)('.')
+        IDENTIFIER
+          PsiElement(JAVA_IDENTIFIER)('isMonitorTimeWindow')
+  PsiElement(;)(';')
+  PsiWhiteSpace('\n\n')
+  RULE_STATEMENT
+    PsiElement(rule)('rule')
+    PsiWhiteSpace(' ')
+    RULE_NAME
+      STRING_ID
+        PsiElement(STRING_TOKEN)('"status alert"')
+    PsiWhiteSpace(' ')
+    RULE_ATTRIBUTES
+      ATTRIBUTE
+        PsiElement(dialect)('dialect')
+        PsiWhiteSpace(' ')
+        STRING_LITERAL
+          PsiElement(STRING_TOKEN)('"mvel"')
+    PsiWhiteSpace('\n')
+    LHS
+      PsiElement(when)('when')
+      PsiWhiteSpace('\n    ')
+      LHS_EXPRESSION
+        LHS_OR
+          LHS_AND
+            LHS_UNARY
+              LHS_EVAL
+                PsiElement(eval)('eval')
+                PsiElement(()('(')
+                PRIMARY_EXPR
+                  IDENTIFIER
+                    PsiElement(JAVA_IDENTIFIER)('isMonitorTimeWindow')
+                  IDENTIFIER_SUFFIX
+                    ARGUMENTS
+                      PsiElement(()('(')
+                      PsiElement())(')')
+                PsiElement())(')')
+    PsiWhiteSpace('\n')
+    RHS
+      PsiElement(then)('then')
+      PsiWhiteSpace('\n   ')
+      MODIFY_RHS_STATEMENT
+        PsiElement(modify)('modify')
+        PAR_EXPR
+          PsiElement(()('(')
+          PRIMARY_EXPR
+            IDENTIFIER
+              PsiElement(JAVA_IDENTIFIER)('$l')
+          PsiElement())(')')
+        PsiWhiteSpace(' ')
+        PsiElement({)('{')
+        PsiWhiteSpace(' ')
+        PRIMARY_EXPR
+          IDENTIFIER
+            PsiElement(JAVA_IDENTIFIER)('setApproved')
+          IDENTIFIER_SUFFIX
+            ARGUMENTS
+              PsiElement(()('(')
+              BOOLEAN_LITERAL
+                PsiElement(TRUE)('true')
+              PsiElement())(')')
+        PsiWhiteSpace(' ')
+        PsiElement(})('}')
+      PsiElement(;)(';')
+    PsiWhiteSpace('\n')
+    PsiElement(end)('end')

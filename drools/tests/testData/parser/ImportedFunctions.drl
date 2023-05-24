@@ -1,0 +1,8 @@
+import function org.kie.kogito.queries.AllAmounts.isMonitorTimeWindow;
+
+rule "status alert" dialect "mvel"
+when
+    eval(isMonitorTimeWindow())
+then
+   modify($l) { setApproved(true) };
+end
