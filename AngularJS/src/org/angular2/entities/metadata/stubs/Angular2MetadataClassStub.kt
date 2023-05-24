@@ -13,11 +13,9 @@ import java.io.IOException
 class Angular2MetadataClassStub : Angular2MetadataClassStubBase<Angular2MetadataClass> {
 
   constructor(memberName: String?, source: JsonValue, parent: StubElement<*>?)
-    : super(memberName, parent, source as JsonObject, Angular2MetadataElementTypes.CLASS) {
-  }
+    : super(memberName, parent, source as JsonObject, Angular2MetadataElementTypes.CLASS)
 
   @Throws(IOException::class)
   constructor(stream: StubInputStream, parent: StubElement<*>?)
-    : super(stream, parent, Angular2MetadataElementTypes.CLASS) {
-  }
+    : super(stream, parent, Angular2MetadataElementTypes.CLASS)
 }

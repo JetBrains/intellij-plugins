@@ -14,13 +14,11 @@ open class Angular2MetadataEntityStub<Psi : PsiElement> : Angular2MetadataClassS
   constructor(memberName: String?,
               parent: StubElement<*>?,
               source: JsonObject,
-              elementType: MetadataElementType<*>) : super(memberName, parent, source, elementType) {
-  }
+              elementType: MetadataElementType<*>) : super(memberName, parent, source, elementType)
 
   @Throws(IOException::class)
   constructor(stream: StubInputStream,
-              parent: StubElement<*>?, elementType: MetadataElementType<*>) : super(stream, parent, elementType) {
-  }
+              parent: StubElement<*>?, elementType: MetadataElementType<*>) : super(stream, parent, elementType)
 
   protected fun stubDecoratorFields(initializer: JsonObject, vararg fields: String) {
     for (name in fields) {
