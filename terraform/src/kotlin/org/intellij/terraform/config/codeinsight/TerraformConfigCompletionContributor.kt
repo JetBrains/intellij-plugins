@@ -538,15 +538,17 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       val parent = position.parent
       LOG.debug { "TF.VariableNameTFVARSCompletionProvider{position=$position, parent=$parent}" }
       val module: Module
-      if (parent is HCLFile) {
-        module = parent.getTerraformModule()
+      when (parent) {
+        is HCLFile -> {
+          module = parent.getTerraformModule()
+        }
+        is HCLElement -> {
+          val pp = parent.parent as? HCLProperty ?: return
+          if (parent !== pp.nameIdentifier) return
+          module = parent.getTerraformModule()
+        }
+        else -> return
       }
-      else if (parent is HCLElement) {
-        val pp = parent.parent as? HCLProperty ?: return
-        if (parent !== pp.nameIdentifier) return
-        module = parent.getTerraformModule()
-      }
-      else return
       val variables = module.getAllVariables()
       result.addAllElements(variables.map { create(it.name, false).withInsertHandler(ResourcePropertyInsertHandler) })
     }

@@ -109,17 +109,20 @@ class HCLLiteralAnnotator : Annotator {
             else {
               fix = null
             }
-            if (i == ne.lastIndex) {
-              addBlockNameAnnotation(holder, HCLBundle.message("hcl.literal.annotator.block.name.identifier"), HCLSyntaxHighlighterFactory.HCL_BLOCK_NAME_KEY, fix)
-
-            } else if (i == 0) {
-              addBlockNameAnnotation(holder, HCLBundle.message("hcl.literal.annotator.block.type.1.element"),
-                                     HCLSyntaxHighlighterFactory.HCL_BLOCK_FIRST_TYPE_KEY, unifix = null)
-            } else if (i == 1) {
-              addBlockNameAnnotation(holder, HCLBundle.message("hcl.literal.annotator.block.type.2.element"), HCLSyntaxHighlighterFactory.HCL_BLOCK_SECOND_TYPE_KEY, fix)
-
-            } else {
-              addBlockNameAnnotation(holder, HCLBundle.message("hcl.literal.annotator.block.type.3.element"), HCLSyntaxHighlighterFactory.HCL_BLOCK_OTHER_TYPES_KEY, fix)
+            when (i) {
+              ne.lastIndex -> {
+                addBlockNameAnnotation(holder, HCLBundle.message("hcl.literal.annotator.block.name.identifier"), HCLSyntaxHighlighterFactory.HCL_BLOCK_NAME_KEY, fix)
+              }
+              0 -> {
+                addBlockNameAnnotation(holder, HCLBundle.message("hcl.literal.annotator.block.type.1.element"),
+                                       HCLSyntaxHighlighterFactory.HCL_BLOCK_FIRST_TYPE_KEY, unifix = null)
+              }
+              1 -> {
+                addBlockNameAnnotation(holder, HCLBundle.message("hcl.literal.annotator.block.type.2.element"), HCLSyntaxHighlighterFactory.HCL_BLOCK_SECOND_TYPE_KEY, fix)
+              }
+              else -> {
+                addBlockNameAnnotation(holder, HCLBundle.message("hcl.literal.annotator.block.type.3.element"), HCLSyntaxHighlighterFactory.HCL_BLOCK_OTHER_TYPES_KEY, fix)
+              }
             }
 
             break

@@ -40,27 +40,31 @@ class HILOperationTypesMismatchInspection : LocalInspectionTool() {
       val leftType = left.getType()
       val rightType = right.getType()
 
-      val elementType = operation.node.elementType
-      if (elementType in ILBinaryNumericOnlyOperations) {
-        if (leftType != null && leftType != Types.Number && leftType != Types.Any) {
-          holder.registerProblem(left, HCLBundle.message("hil.operation.types.mismatch.inspection.number.expected.error.message", leftType.presentableText), ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
+      when (operation.node.elementType) {
+        in ILBinaryNumericOnlyOperations -> {
+          if (leftType != null && leftType != Types.Number && leftType != Types.Any) {
+            holder.registerProblem(left, HCLBundle.message("hil.operation.types.mismatch.inspection.number.expected.error.message", leftType.presentableText), ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
+          }
+          if (rightType != null && rightType != Types.Number && rightType != Types.Any) {
+            holder.registerProblem(right, HCLBundle.message("hil.operation.types.mismatch.inspection.number.expected.error.message", rightType.presentableText), ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
+          }
+          return
         }
-        if (rightType != null && rightType != Types.Number && rightType != Types.Any) {
-          holder.registerProblem(right, HCLBundle.message("hil.operation.types.mismatch.inspection.number.expected.error.message", rightType.presentableText), ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
+        IL_BINARY_EQUALITY_EXPRESSION -> {
+          return // could compare anything with implicit 'toString' conversion. TODO: Add warning?
         }
-        return
-      } else if (elementType == IL_BINARY_EQUALITY_EXPRESSION) {
-        return // could compare anything with implicit 'toString' conversion. TODO: Add warning?
-      } else if (elementType in ILBinaryBooleanOnlyOperations) {
-        if (leftType != null && leftType != Types.Boolean && leftType != Types.Any) {
-          holder.registerProblem(left, HCLBundle.message("hil.operation.types.mismatch.inspection.boolean.expected.error.message", leftType.presentableText), ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
+        in ILBinaryBooleanOnlyOperations -> {
+          if (leftType != null && leftType != Types.Boolean && leftType != Types.Any) {
+            holder.registerProblem(left, HCLBundle.message("hil.operation.types.mismatch.inspection.boolean.expected.error.message", leftType.presentableText), ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
+          }
+          if (rightType != null && rightType != Types.Boolean && rightType != Types.Any) {
+            holder.registerProblem(right, HCLBundle.message("hil.operation.types.mismatch.inspection.boolean.expected.error.message", rightType.presentableText), ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
+          }
+          return
         }
-        if (rightType != null && rightType != Types.Boolean && rightType != Types.Any) {
-          holder.registerProblem(right, HCLBundle.message("hil.operation.types.mismatch.inspection.boolean.expected.error.message", rightType.presentableText), ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
+        else -> {
+          return
         }
-        return
-      } else {
-        return
       }
     }
 
@@ -74,19 +78,22 @@ class HILOperationTypesMismatchInspection : LocalInspectionTool() {
       // Return if we cannot determine operands type
       val type = operand.getType() ?: return
 
-
-      if (sign == HILElementTypes.OP_PLUS || sign == HILElementTypes.OP_MINUS) {
-        if (type != Types.Number && type != Types.Any) {
-          holder.registerProblem(operand, HCLBundle.message("hil.operation.types.mismatch.inspection.number.expected.error.message", type.presentableText), ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
+      when (sign) {
+        HILElementTypes.OP_PLUS, HILElementTypes.OP_MINUS -> {
+          if (type != Types.Number && type != Types.Any) {
+            holder.registerProblem(operand, HCLBundle.message("hil.operation.types.mismatch.inspection.number.expected.error.message", type.presentableText), ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
+          }
+          return
         }
-        return
-      } else if (sign == HILElementTypes.OP_NOT) {
-        if (type != Types.Boolean && type != Types.Any) {
-          holder.registerProblem(operand, HCLBundle.message("hil.operation.types.mismatch.inspection.boolean.expected.error.message", type.presentableText), ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
+        HILElementTypes.OP_NOT -> {
+          if (type != Types.Boolean && type != Types.Any) {
+            holder.registerProblem(operand, HCLBundle.message("hil.operation.types.mismatch.inspection.boolean.expected.error.message", type.presentableText), ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
+          }
+          return
         }
-        return
-      } else {
-        return
+        else -> {
+          return
+        }
       }
     }
 

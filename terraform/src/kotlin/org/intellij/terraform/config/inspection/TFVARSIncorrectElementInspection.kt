@@ -85,14 +85,13 @@ class TFVARSIncorrectElementInspection : LocalInspectionTool() {
     override fun getText() = HCLBundle.message("tfvars.unsupported.element.inspection.convert.to.double.quoted.string.quick.fix.name")
     override fun getFamilyName() = text
     override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
-      val element = startElement
       val text: String
-      if (element is HCLIdentifier || element is HCLNullLiteral || element is HCLBooleanLiteral) {
-        text = element.text
-      } else if (element is HCLStringLiteral) {
-        text = element.value
-      } else return
-      element.replace(HCLElementGenerator(project).createStringLiteral(text))
+      when (startElement) {
+        is HCLIdentifier, is HCLNullLiteral, is HCLBooleanLiteral -> text = startElement.text
+        is HCLStringLiteral -> text = startElement.value
+        else -> return
+      }
+      startElement.replace(HCLElementGenerator(project).createStringLiteral(text))
     }
   }
 }

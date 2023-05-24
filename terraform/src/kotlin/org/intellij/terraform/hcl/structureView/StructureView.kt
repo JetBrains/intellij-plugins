@@ -70,12 +70,10 @@ class HCLStructureViewElement(val element: HCLElement) : StructureViewTreeElemen
 
   override fun getChildren(): Array<out TreeElement> {
     val value: HCLElement
-    if (element is HCLProperty) {
-      value = element.value as? HCLValue ?: return emptyArray()
-    } else if (element is HCLBlock) {
-      value = element.`object` ?: return emptyArray()
-    } else {
-      value = element
+    when (element) {
+      is HCLProperty -> value = element.value as? HCLValue ?: return emptyArray()
+      is HCLBlock -> value = element.`object` ?: return emptyArray()
+      else -> value = element
     }
 
     val list: List<HCLStructureViewElement> = value.children.mapNotNull {

@@ -82,15 +82,17 @@ abstract class MetadataElementStub<Psi : PsiElement> : StubBase<Psi> {
 
   protected fun createMember(name: String?, member: JsonValue?) {
     var constructor: ConstructorFromJsonValue? = null
-    if (member is JsonArray) {
-      constructor = typeFactory[ARRAY_TYPE]
-    }
-    else if (member is JsonObject) {
-      val type = readStringPropertyValue(member.findProperty(SYMBOL_TYPE))
-      constructor = typeFactory[type ?: OBJECT_TYPE]
-    }
-    else if (member is JsonStringLiteral) {
-      constructor = typeFactory[STRING_TYPE]
+    when (member) {
+      is JsonArray -> {
+        constructor = typeFactory[ARRAY_TYPE]
+      }
+      is JsonObject -> {
+        val type = readStringPropertyValue(member.findProperty(SYMBOL_TYPE))
+        constructor = typeFactory[type ?: OBJECT_TYPE]
+      }
+      is JsonStringLiteral -> {
+        constructor = typeFactory[STRING_TYPE]
+      }
     }
     constructor?.construct(name, member!!, this)
   }
