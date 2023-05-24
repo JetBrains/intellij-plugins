@@ -1,6 +1,8 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.psi.util;
 
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Condition;
@@ -311,9 +313,11 @@ public final class DroolsResolveUtil {
     final DroolsUnitStatement unitStatement = droolsFile.getUnitStatement();
     if (unitStatement != null) {
       final String name = unitStatement.getUnitName().getText();
+      final Module module = ModuleUtilCore.findModuleForPsiElement(droolsFile);
+      final GlobalSearchScope scope =
+        module != null ? module.getModuleRuntimeScope(false) : GlobalSearchScope.allScope(droolsFile.getProject());
       for (PsiPackage defaultPackage : getDefaultPackages(droolsFile)) {
-        final PsiClass[] classByShortName =
-          defaultPackage.findClassByShortName(name, GlobalSearchScope.projectScope(droolsFile.getProject()));
+        final PsiClass[] classByShortName = defaultPackage.findClassByShortName(name, scope);
         if (classByShortName.length > 0) return classByShortName[0];
       }
     }
