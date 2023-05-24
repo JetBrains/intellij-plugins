@@ -46,7 +46,7 @@ object ReferenceCompletionHelper {
       return if (parts.size == 1) property else null
     }
     // TODO: Support many blocks with same name
-    val blk = obj.blockList.find { HCLQualifiedNameProvider.getQualifiedModelName(it)?.let { it == fqn || fqn.startsWith(it + '.') } ?: false }
+    val blk = obj.blockList.find { it -> HCLQualifiedNameProvider.getQualifiedModelName(it)?.let { it == fqn || fqn.startsWith("$it.") } ?: false }
     if (blk != null) {
       return if (parts.size == 1) blk else find(blk, parts.subList(1, parts.size), fqn)
     }

@@ -158,7 +158,7 @@ object HCLQuoter {
                 if (safe) buffer.append('\\').append(ch)
                 else throw e
               }
-            } else if (safe) buffer.append('\\').append(ch) else throw Exception("Illegal character: incorrect octal: " + sub)
+            } else if (safe) buffer.append('\\').append(ch) else throw Exception("Illegal character: incorrect octal: $sub")
           } else if (safe) buffer.append('\\').append(ch) else throw Exception("Illegal character: unfinished octal")
 
           else -> if (safe) buffer.append('\\').append(ch) else throw Exception("Illegal character: ${ch.code}")

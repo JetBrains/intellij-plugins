@@ -94,7 +94,7 @@ class SwiftLearningCourse : LearningCourseBase("Swift") {
   ) = LearningModule(id = id,
                      name = name,
                      description = description,
-                     sampleFilePath = "LearnProject/" + fileName + ".swift",
+                     sampleFilePath = "LearnProject/$fileName.swift",
                      primaryLanguage = langSupport,
                      moduleType = LessonType.PROJECT,
                      initLessons = initLessons,
