@@ -9,6 +9,7 @@ import com.intellij.execution.testframework.sm.UITestUtil;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerTestTreeView;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.execution.util.ExecUtil;
+import com.intellij.maven.testFramework.utils.MavenImportingTestCaseKt;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
@@ -70,9 +71,8 @@ public abstract class JavaTestFrameworkIntegrationTest extends HeavyPlatformTest
 
     UIUtil.invokeAndWaitIfNeeded(() -> {
       mavenProjectsManager.waitForResolvingCompletion();
-      mavenProjectsManager.scheduleImportInTests(pomFiles);
-      mavenProjectsManager.importMavenProjectsSync();
     });
+    MavenImportingTestCaseKt.importMavenProjectsSync(mavenProjectsManager, pomFiles);
 
     Module module = ReadAction.compute(() -> ModuleManager.getInstance(myProject).findModuleByName("test-project-sample"));
     ModuleRootModificationUtil.updateModel(module, model -> {
