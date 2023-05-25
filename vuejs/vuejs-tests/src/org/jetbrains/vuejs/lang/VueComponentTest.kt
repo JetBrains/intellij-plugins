@@ -270,7 +270,6 @@ class VueComponentTest : BasePlatformTestCase() {
           printProperty(level, "props", sourceElement.props.takeIf { it.isNotEmpty() }?.sortedWith(Comparator.comparing { it.name }))
           printProperty(level, "emits", sourceElement.emits.takeIf { it.isNotEmpty() }?.sortedWith(Comparator.comparing { it.name }))
           printProperty(level, "slots", sourceElement.slots.takeIf { it.isNotEmpty() }?.sortedWith(Comparator.comparing { it.name }))
-          printProperty(level, "modelDecls", sourceElement.modelDecls.takeIf { it.isNotEmpty() }?.sortedWith(Comparator.comparing { it.name }))
           if (printSources) {
             printProperty(level, "template", sourceElement.template)
           }

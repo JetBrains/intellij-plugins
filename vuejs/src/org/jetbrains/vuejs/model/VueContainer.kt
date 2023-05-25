@@ -15,7 +15,6 @@ interface VueContainer : VueEntitiesContainer {
   val props: List<VueInputProperty>
   val emits: List<VueEmitCall>
   val slots: List<VueSlot>
-  val modelDecls: List<VueModelDecl>
 
   val template: VueTemplate<*>? get() = null
   val element: String? get() = null

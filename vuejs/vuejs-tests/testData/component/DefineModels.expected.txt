@@ -121,48 +121,4 @@
    callSignature: "(event: "update:modelValue", value: string) => void",
   },
  ],
- modelDecls: [
-  {
-   class: "VueScriptSetupModelDecl",
-   name: "count",
-   jsType: "number",
-   required: false,
-   local: false,
-  },
-  {
-   class: "VueScriptSetupModelDecl",
-   name: "countAny",
-   jsType: "any",
-   required: false,
-   local: false,
-  },
-  {
-   class: "VueScriptSetupModelDecl",
-   name: "countLocal",
-   jsType: "number",
-   required: false,
-   local: true,
-  },
-  {
-   class: "VueScriptSetupModelDecl",
-   name: "countRequired",
-   jsType: "number | boolean",
-   required: true,
-   local: false,
-  },
-  {
-   class: "VueScriptSetupModelDecl",
-   name: "countType",
-   jsType: "string",
-   required: false,
-   local: false,
-  },
-  {
-   class: "VueScriptSetupModelDecl",
-   name: "modelValue",
-   jsType: "string",
-   required: true,
-   local: false,
-  },
- ],
 }

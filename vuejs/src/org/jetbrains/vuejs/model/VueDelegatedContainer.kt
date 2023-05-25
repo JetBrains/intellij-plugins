@@ -20,9 +20,6 @@ abstract class VueDelegatedContainer<T : VueContainer> : VueDelegatedEntitiesCon
   override val emits: List<VueEmitCall>
     get() = delegate?.emits ?: emptyList()
 
-  override val modelDecls: List<VueModelDecl>
-    get() = delegate?.modelDecls ?: emptyList()
-
   override val slots: List<VueSlot>
     get() = delegate?.slots ?: emptyList()
 

@@ -37,7 +37,6 @@ interface VueContainerInfoProvider : EntityContainerInfoProvider<VueContainerInf
     val computed: List<VueComputedProperty> get() = emptyList()
     val methods: List<VueMethod> get() = emptyList()
     val emits: List<VueEmitCall> get() = emptyList()
-    val modelDecls: List<VueModelDecl> get() = emptyList()
 
     val model: VueModelDirectiveProperties? get() = null
     val template: VueTemplate<*>? get() = null

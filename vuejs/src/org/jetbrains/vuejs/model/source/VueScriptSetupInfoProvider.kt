@@ -54,7 +54,6 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
     override val props: List<VueInputProperty>
     override val emits: List<VueEmitCall>
-    override val modelDecls: List<VueModelDecl>
 
     override val computed: List<VueComputedProperty>
       get() = rawBindings.filterIsInstance(VueComputedProperty::class.java)
@@ -163,7 +162,6 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
       this.props = props
       this.emits = emits
-      this.modelDecls = modelDecls.values.toList()
       this.rawBindings = rawBindings
     }
 
