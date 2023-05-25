@@ -38,7 +38,7 @@
  emits: [
   {
    class: "VueScriptSetupModelEvent",
-   name: "count",
+   name: "update:count",
    eventJSType: "(value: (number | undefined)) => void",
    params: [
     {
@@ -47,11 +47,11 @@
     },
    ],
    hasStrictSignature: true,
-   callSignature: "(event: "count", value: (number | undefined)) => void",
+   callSignature: "(event: "update:count", value: (number | undefined)) => void",
   },
   {
    class: "VueScriptSetupModelEvent",
-   name: "countLocal",
+   name: "update:countLocal",
    eventJSType: "(value: (number | undefined)) => void",
    params: [
     {
@@ -60,11 +60,11 @@
     },
    ],
    hasStrictSignature: true,
-   callSignature: "(event: "countLocal", value: (number | undefined)) => void",
+   callSignature: "(event: "update:countLocal", value: (number | undefined)) => void",
   },
   {
    class: "VueScriptSetupModelEvent",
-   name: "countRequired",
+   name: "update:countRequired",
    eventJSType: "(value: (number | boolean[])) => void",
    params: [
     {
@@ -73,11 +73,11 @@
     },
    ],
    hasStrictSignature: true,
-   callSignature: "(event: "countRequired", value: (number | boolean[])) => void",
+   callSignature: "(event: "update:countRequired", value: (number | boolean[])) => void",
   },
   {
    class: "VueScriptSetupModelEvent",
-   name: "countType",
+   name: "update:countType",
    eventJSType: "(value: (string | undefined)) => void",
    params: [
     {
@@ -86,11 +86,11 @@
     },
    ],
    hasStrictSignature: true,
-   callSignature: "(event: "countType", value: (string | undefined)) => void",
+   callSignature: "(event: "update:countType", value: (string | undefined)) => void",
   },
   {
    class: "VueScriptSetupModelEvent",
-   name: "modelValue",
+   name: "update:modelValue",
    eventJSType: "(value: string) => void",
    params: [
     {
@@ -99,7 +99,7 @@
     },
    ],
    hasStrictSignature: true,
-   callSignature: "(event: "modelValue", value: string) => void",
+   callSignature: "(event: "update:modelValue", value: string) => void",
   },
  ],
  modelDecls: [

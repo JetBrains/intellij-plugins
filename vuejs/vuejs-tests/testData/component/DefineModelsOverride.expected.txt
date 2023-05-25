@@ -20,7 +20,7 @@
  emits: [
   {
    class: "VueScriptSetupModelEvent",
-   name: "count",
+   name: "update:count",
    eventJSType: "(value: (number | boolean[])) => void",
    params: [
     {
@@ -29,11 +29,11 @@
     },
    ],
    hasStrictSignature: true,
-   callSignature: "(event: "count", value: (number | boolean[])) => void",
+   callSignature: "(event: "update:count", value: (number | boolean[])) => void",
   },
   {
    class: "VueScriptSetupModelEvent",
-   name: "modelValue",
+   name: "update:modelValue",
    eventJSType: "(value: number) => void",
    params: [
     {
@@ -42,7 +42,7 @@
     },
    ],
    hasStrictSignature: true,
-   callSignature: "(event: "modelValue", value: number) => void",
+   callSignature: "(event: "update:modelValue", value: number) => void",
   },
  ],
  modelDecls: [

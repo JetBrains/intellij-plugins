@@ -397,7 +397,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
   private class VueScriptSetupModelEvent(private val modelDecl: VueModelDecl) : VueEmitCall {
     override val name: String
-      get() = modelDecl.name
+      get() = "update:${modelDecl.name}"
 
     override val source: PsiElement?
       get() = modelDecl.source
