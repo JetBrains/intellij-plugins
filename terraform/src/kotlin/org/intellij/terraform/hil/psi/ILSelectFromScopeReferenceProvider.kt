@@ -43,7 +43,7 @@ object ILSelectFromScopeReferenceProvider : PsiReferenceProvider() {
         // TODO: Resolve 'cwd' and 'root' paths
         if (element.name == "module") {
           val file = host.containingFile.originalFile
-          return arrayOf(PsiReferenceBase.Immediate<Identifier>(element, true, file.containingDirectory ?: file))
+          return arrayOf(PsiReferenceBase.Immediate(element, true, file.containingDirectory ?: file))
         }
       }
       "terraform" -> {

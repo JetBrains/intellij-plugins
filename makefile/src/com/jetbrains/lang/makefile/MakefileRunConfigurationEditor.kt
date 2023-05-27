@@ -22,7 +22,7 @@ import javax.swing.event.DocumentEvent
 class MakefileRunConfigurationEditor(private val project: Project) : SettingsEditor<MakefileRunConfiguration>() {
   private val filenameField = TextFieldWithBrowseButton()
   private val targetCompletionProvider = TextFieldWithAutoCompletion.StringsCompletionProvider(emptyList(), MakefileTargetIcon)
-  private val targetField = TextFieldWithAutoCompletion<String>(project, targetCompletionProvider, true, "")
+  private val targetField = TextFieldWithAutoCompletion(project, targetCompletionProvider, true, "")
   private val argumentsField = ExpandableTextField()
   private val workingDirectoryField = TextFieldWithBrowseButton()
   private val environmentVarsComponent = EnvironmentVariablesComponent()

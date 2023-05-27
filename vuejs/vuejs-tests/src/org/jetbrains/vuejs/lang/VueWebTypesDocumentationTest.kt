@@ -45,7 +45,7 @@ class VueWebTypesDocumentationTest : BasePlatformTestCase() {
     @com.intellij.testFramework.Parameterized.Parameters(name = "{0}")
     fun testNames(@Suppress("UNUSED_PARAMETER") klass: Class<*>): List<String> {
       val testData = File(TEST_DATA_PATH)
-      return StreamEx.of<File>(*testData.listFiles()!!)
+      return StreamEx.of(*testData.listFiles()!!)
         .filter { file -> file.isFile && file.name.endsWith(".vue") }
         .map { file -> file.name.substring(0, file.name.length - 4) }
         .toList()

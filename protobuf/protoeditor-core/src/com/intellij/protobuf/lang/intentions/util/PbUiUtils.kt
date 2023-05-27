@@ -33,6 +33,7 @@ internal fun selectItemAndApply(variants: List<PbImportIntentionVariant>,
   invokeLater {
     val customRenderer = createRenderer()
     JBPopupFactory.getInstance().createListPopup(project, createPopup(variants, project)) {
+      @Suppress("RemoveExplicitTypeArguments")
       ListCellRenderer<PbImportIntentionVariant> { list, value, index, isSelected, cellHasFocus ->
         JPanel(BorderLayout()).apply {
           add(customRenderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus))

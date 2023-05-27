@@ -34,7 +34,7 @@ interface EntityContainerInfoProvider<T> {
     final override fun getInfo(descriptor: VueSourceEntityDescriptor): T? =
       descriptor.clazz?.let {
         val manager = CachedValuesManager.getManager(it.project)
-        manager.getCachedValue(it, manager.getKeyForClass<T>(this::class.java), {
+        manager.getCachedValue(it, manager.getKeyForClass(this::class.java), {
           val dependencies = mutableListOf<Any>()
           JSClassUtils.processClassesInHierarchy(it, true) { aClass, _, _ ->
             dependencies.add(aClass)

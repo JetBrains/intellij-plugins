@@ -90,7 +90,7 @@ class ShelveAction : AbstractCommitChangesAction() {
     }
 
     fun getConnections(project: Project, changes: Collection<Change>): MultiMap<P4Connection, FilePath> {
-      return FileGrouper.distributePathsByConnection(changes.flatMapTo(linkedSetOf<FilePath>()) { change ->
+      return FileGrouper.distributePathsByConnection(changes.flatMapTo(linkedSetOf()) { change ->
         val beforeFile = change.beforeRevision?.file
         val afterFile = change.afterRevision?.file
         val file = afterFile ?: beforeFile!!

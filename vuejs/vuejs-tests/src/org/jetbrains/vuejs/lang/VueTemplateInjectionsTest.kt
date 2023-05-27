@@ -56,7 +56,7 @@ class VueTemplateInjectionsTest : BasePlatformTestCase() {
     @JvmStatic
     fun testNames(@Suppress("UNUSED_PARAMETER") klass: Class<*>): List<String> {
       val testData = File(testDataPath)
-      return StreamEx.of<File>(*testData.listFiles()!!)
+      return StreamEx.of(*testData.listFiles()!!)
         .filter { file -> file.name.endsWith("js") || file.name.endsWith("ts") }
         .map { file -> file.name }
         .toList()

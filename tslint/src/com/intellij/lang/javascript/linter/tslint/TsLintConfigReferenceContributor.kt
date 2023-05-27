@@ -17,12 +17,12 @@ const val extendsProperty: String = "extends"
 
 class TsLintConfigReferenceContributor : PsiReferenceContributor() {
 
-  private val CONFIG_PATTERN = psiFile<JsonFile>(JsonFile::class.java).withName(TslintUtil.TSLINT_JSON)
-  private val STRING_LITERAL_IN_CONFIG: PsiElementPattern.Capture<JsonStringLiteral> = psiElement<JsonStringLiteral>(
+  private val CONFIG_PATTERN = psiFile(JsonFile::class.java).withName(TslintUtil.TSLINT_JSON)
+  private val STRING_LITERAL_IN_CONFIG: PsiElementPattern.Capture<JsonStringLiteral> = psiElement(
     JsonStringLiteral::class.java).inFile(CONFIG_PATTERN)
 
   private val EXTENDS_ARRAY = STRING_LITERAL_IN_CONFIG.withSuperParent(1, psiElement(JsonArray::class.java)).
-    withSuperParent(2, psiElement<JsonProperty>(JsonProperty::class.java).withName(extendsProperty))
+    withSuperParent(2, psiElement(JsonProperty::class.java).withName(extendsProperty))
   private val EXTENDS_STRING = STRING_LITERAL_IN_CONFIG.withSuperParent(1, psiElement(JsonProperty::class.java).withName(extendsProperty))
 
   override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {

@@ -95,7 +95,7 @@ class TFBlockNameValidnessInspection : LocalInspectionTool() {
       val required = (type.args + 1) - nameElements.size
       if (required <= 0) return
 
-      WriteAction.run(ThrowableRunnable<Throwable> {
+      WriteAction.run(ThrowableRunnable {
         val offset = nameElements.last().let { it.textOffset + it.textLength }
         editor.caretModel.moveToOffset(offset)
         InsertHandlersUtil.addArguments(required, editor)

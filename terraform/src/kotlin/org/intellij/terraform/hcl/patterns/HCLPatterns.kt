@@ -12,7 +12,7 @@ import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.psi.*
 
 object HCLPatterns {
-  val Nothing: ElementPattern<PsiElement> = StandardPatterns.alwaysFalse<PsiElement>()
+  val Nothing: ElementPattern<PsiElement> = StandardPatterns.alwaysFalse()
 
   val WhiteSpace: PsiElementPattern.Capture<PsiWhiteSpace> = PlatformPatterns.psiElement(PsiWhiteSpace::class.java)
   val AtLeastOneEOL: PsiElementPattern.Capture<PsiWhiteSpace> = PlatformPatterns.psiElement(PsiWhiteSpace::class.java).withText(StandardPatterns.string().contains("\n"))

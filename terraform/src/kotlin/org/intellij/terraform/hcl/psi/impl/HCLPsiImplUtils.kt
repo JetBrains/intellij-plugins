@@ -68,7 +68,7 @@ object HCLPsiImplUtils {
     var child: PsiElement? = block.firstChild
     while (child != null) {
       if (child is HCLIdentifier || child is HCLStringLiteral) {
-        if (result == null) result = SmartList<HCLElement>()
+        if (result == null) result = SmartList()
         //noinspection unchecked
         result.add(child as HCLElement)
       }
@@ -78,11 +78,11 @@ object HCLPsiImplUtils {
   }
 
   fun getValue(property: HCLProperty): HCLExpression? {
-    return PsiTreeUtil.getNextSiblingOfType<HCLExpression>(getNameElement(property), HCLExpression::class.java)
+    return PsiTreeUtil.getNextSiblingOfType(getNameElement(property), HCLExpression::class.java)
   }
 
   fun getObject(block: HCLBlock): HCLObject? {
-    return PsiTreeUtil.getNextSiblingOfType<HCLObject>(block.firstChild, HCLObject::class.java)
+    return PsiTreeUtil.getNextSiblingOfType(block.firstChild, HCLObject::class.java)
   }
 
   fun isQuotedString(literal: HCLLiteral): Boolean {

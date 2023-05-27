@@ -110,14 +110,14 @@ internal class AngularProjectImpl(override val name: String,
 
   override val protractorConfigFile get() = resolveFile(ngProject.targets?.e2e?.options?.protractorConfig)
 
-  override val tsLintConfigurations = ngProject.targets?.lint?.let { lint ->
+  override val tsLintConfigurations: List<AngularLintConfiguration> = ngProject.targets?.lint?.let { lint ->
     val result = mutableListOf<AngularLintConfiguration>()
     lint.options?.let { result.add(AngularLintConfiguration(this, it)) }
     lint.configurations.mapTo(result) { (name, config) ->
       AngularLintConfiguration(this, config, name)
     }
     result
-  } ?: emptyList<AngularLintConfiguration>()
+  } ?: emptyList()
 
   override val type: AngularProjectType?
     get() = ngProject.projectType

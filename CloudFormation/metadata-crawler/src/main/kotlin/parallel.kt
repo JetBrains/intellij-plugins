@@ -7,7 +7,7 @@ import java.util.concurrent.Executors
 fun <T, R> Iterable<T>.pmap(numThreads: Int = maxOf(Runtime.getRuntime().availableProcessors() - 2, 1), exec: ExecutorService = Executors.newFixedThreadPool(numThreads), transform: (T) -> R): List<R> {
 
   try {
-    val result = exec.invokeAll(this.map { item -> Callable<R> { transform(item) } })
+    val result = exec.invokeAll(this.map { item -> Callable { transform(item) } })
     return result.map { it.get() }
   } finally {
     exec.shutdownNow()
