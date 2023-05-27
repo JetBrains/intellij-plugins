@@ -15,7 +15,7 @@ class PrismaSyntaxHighlighter : SyntaxHighlighterBase() {
     pack(attributes[tokenType])
 
   companion object {
-    private val attributes = buildMap<IElementType, TextAttributesKey>() {
+    private val attributes = buildMap<IElementType, TextAttributesKey> {
       put(PrismaParserDefinition.DOC_COMMENT, PrismaColors.DOC_COMMENT)
       put(PrismaParserDefinition.LINE_COMMENT, PrismaColors.LINE_COMMENT)
       put(PrismaElementTypes.STRING_LITERAL, PrismaColors.STRING_LITERAL)
