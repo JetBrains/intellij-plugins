@@ -668,6 +668,9 @@ public class PbAnnotator implements Annotator {
     // * a symbol in the same file at a smaller text offset
     // * a symbol in a different file
     Collection<PbSymbol> symbols = file.getFullQualifiedSymbolMap().get(qualifiedName);
+    if (symbols == null) {
+      return false;
+    }
     for (PbSymbol otherSymbol : symbols) {
       if (symbol.equals(otherSymbol)) {
         continue;
