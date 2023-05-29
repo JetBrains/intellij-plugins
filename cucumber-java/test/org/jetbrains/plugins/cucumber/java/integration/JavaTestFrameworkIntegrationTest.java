@@ -70,7 +70,7 @@ public abstract class JavaTestFrameworkIntegrationTest extends HeavyPlatformTest
     mavenProjectsManager.waitForReadingCompletion();
 
     UIUtil.invokeAndWaitIfNeeded(() -> {
-      mavenProjectsManager.waitForResolvingCompletion();
+      mavenProjectsManager.waitForReadingCompletion();
     });
     MavenImportingTestCaseKt.importMavenProjectsSync(mavenProjectsManager, pomFiles);
 
