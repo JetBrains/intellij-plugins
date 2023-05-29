@@ -375,7 +375,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
     }
   }
 
-  private class VueScriptSetupModelInputProperty(private val modelDecl: VueModelDecl) : VueInputProperty {
+  private class VueScriptSetupModelInputProperty(override val modelDecl: VueModelDecl) : VueInputProperty, VueModelOwner {
     override val name: String
       get() = modelDecl.name
 
@@ -393,7 +393,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
     }
   }
 
-  private class VueScriptSetupModelEvent(private val modelDecl: VueModelDecl) : VueEmitCall {
+  private class VueScriptSetupModelEvent(override val modelDecl: VueModelDecl) : VueEmitCall, VueModelOwner {
     override val name: String
       get() = "update:${modelDecl.name}"
 

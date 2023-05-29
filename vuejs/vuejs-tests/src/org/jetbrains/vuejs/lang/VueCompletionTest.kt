@@ -2140,6 +2140,22 @@ export default {
       "clearable.<caret>", "value.<caret>", "Clearable).<caret>\">", "Clearable).<caret> }}", "foo.<caret>;"))
   }
 
+  fun testDefineModelAttribute() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureByText("FooBar.vue", """
+      <script setup lang="ts">
+      let count = defineModel<number>('count', {default: 0})
+      </script>
+    """.trimIndent())
+    myFixture.configureByText("app.vue", """
+      <template>
+        <FooBar v-model:<caret>></FooBar>
+      </template>
+    """.trimIndent())
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "count")
+  }
+
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()
     assertDoesntContain(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")

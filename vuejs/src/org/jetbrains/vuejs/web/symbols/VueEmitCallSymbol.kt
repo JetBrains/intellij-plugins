@@ -11,7 +11,10 @@ import com.intellij.webSymbols.SymbolNamespace
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolOrigin
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
+import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
 import org.jetbrains.vuejs.model.*
+
+private const val UPDATE_PREFIX = "update:"
 
 class VueEmitCallSymbol(emitCall: VueEmitCall,
                         owner: VueComponent,
@@ -32,6 +35,13 @@ class VueEmitCallSymbol(emitCall: VueEmitCall,
 
   override val attributeValue: WebSymbolHtmlAttributeValue =
     WebSymbolHtmlAttributeValue.create(WebSymbolHtmlAttributeValue.Kind.EXPRESSION, WebSymbolHtmlAttributeValue.Type.OF_MATCH)
+
+  override fun adjustNameForRefactoring(queryExecutor: WebSymbolsQueryExecutor, newName: String, occurence: String): String {
+    if (item is VueModelOwner && occurence.startsWith(UPDATE_PREFIX) && !newName.startsWith(UPDATE_PREFIX)) {
+      return "$UPDATE_PREFIX$newName"
+    }
+    return super.adjustNameForRefactoring(queryExecutor, newName, occurence)
+  }
 
   override fun presentation(): TargetPresentation {
     return presentation

@@ -26,11 +26,11 @@
 // limitations under the License.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.webSymbols.moveToOffsetBySignature
-import com.intellij.webSymbols.renameWebSymbol
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil
+import com.intellij.webSymbols.moveToOffsetBySignature
+import com.intellij.webSymbols.renameWebSymbol
 
 class VueRenameTest : BasePlatformTestCase() {
 
@@ -162,6 +162,16 @@ class VueRenameTest : BasePlatformTestCase() {
     doTest("alignment")
   }
 
+  fun testModelDeclarationProp() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    doTestDir("count")
+  }
+
+  fun testModelDeclarationEvent() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    doTestDir("count")
+  }
+
   fun testDefinePropsRecordType() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
     doTest("alignment")
@@ -183,10 +193,18 @@ class VueRenameTest : BasePlatformTestCase() {
       finally {
         myFixture.editor.settings.isVariableInplaceRenameEnabled = oldSetting
       }
-    } else {
+    }
+    else {
       myFixture.renameElementAtCaret(newName)
     }
     myFixture.checkResultByFile(getTestName(true) + "_after.vue")
+  }
+  private fun doTestDir(newName: String) {
+    val testName = getTestName(true)
+    myFixture.copyDirectoryToProject(testName, ".")
+    myFixture.configureFromTempProjectFile("$testName.vue")
+    myFixture.renameWebSymbol(newName)
+    myFixture.checkResultByFile("$testName/${testName}_after.vue")
   }
 
   private fun checkResultByDir(resultsDir: String = getTestName(true) + "_after") {

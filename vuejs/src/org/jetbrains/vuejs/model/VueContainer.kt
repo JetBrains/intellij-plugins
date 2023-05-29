@@ -94,6 +94,10 @@ interface VueComputedProperty : VueProperty
 
 interface VueMethod : VueProperty
 
+interface VueModelOwner {
+  val modelDecl: VueModelDecl
+}
+
 interface VueModelDecl : VueNamedSymbol {
   /**
    * Type of a property outside of a component, e.g. a component attribute's type.
