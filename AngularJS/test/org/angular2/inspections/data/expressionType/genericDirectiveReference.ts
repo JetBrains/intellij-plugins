@@ -40,6 +40,7 @@ function moment(input?: string, strict?: boolean): Moment {
         #dp
         startView="multi-year"
         (monthSelected)="setMonthAndYear($event, dp)"
+        (yearSelected)="acceptBoolean(<error descr="Argument type MatDatepicker<any> is not assignable to parameter type boolean">dp</error>)"
         panelClass="example-month-picker"
       >
       </mat-datepicker>
@@ -49,13 +50,14 @@ function moment(input?: string, strict?: boolean): Moment {
       [startAt]="12"
       startView="multi-year"
       (monthSelected)="setMonthAndYear(<error descr="Argument type number is not assignable to parameter type Moment">$event</error>, <error descr="Argument type MatDatepicker<number> is not assignable to parameter type MatDatepicker<Moment>...  Type (date: number) => void is not assignable to type (date: Moment) => void    Type Moment is not assignable to type number">dp2</error>)"
+      (yearSelected)="acceptBoolean(<error descr="Argument type MatDatepicker<number> is not assignable to parameter type boolean">dp2</error>)"
       panelClass="example-month-picker"
     />
   `,
   imports: [
-   MatDatepickerModule,
-   MatInputModule,
-   ReactiveFormsModule
+    MatDatepickerModule,
+    MatInputModule,
+    ReactiveFormsModule
   ]
 })
 export class DatepickerViewsSelectionExample {
@@ -70,6 +72,9 @@ export class DatepickerViewsSelectionExample {
     const ctrlValue = this.date.value!;
     this.date.setValue(ctrlValue);
     datepicker.close();
+  }
+
+  acceptBoolean(_arg: boolean){
   }
 }
 
