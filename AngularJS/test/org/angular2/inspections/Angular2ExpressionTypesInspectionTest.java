@@ -150,6 +150,12 @@ public class Angular2ExpressionTypesInspectionTest extends Angular2CodeInsightFi
     myFixture.checkHighlighting();
   }
 
+  public void testNgTemplateContextGuardOmittedGenericType() {
+    configureCommonFiles();
+    myFixture.configureByFiles("ngTemplateContextGuardOmittedGenericType.ts");
+    myFixture.checkHighlighting();
+  }
+
   public void testNgTemplateContextGuardMalformed() {
     configureCommonFiles();
     myFixture.configureByFiles("ngTemplateContextGuardMalformed.ts");

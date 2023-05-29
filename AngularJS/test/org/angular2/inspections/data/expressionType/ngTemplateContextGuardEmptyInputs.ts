@@ -7,35 +7,35 @@ import {CommonModule} from "@angular/common";
   imports: [CommonModule, HelloDirective, HelloConstrainedDirective],
   standalone: true,
   template: `
-    <div *appHello="as person"> <!-- string -->
-      {{expectNumber(<error descr="Argument type string is not assignable to parameter type number">person</error>)}}
+    <div *appHello="as person"> <!-- any in WebStorm, string in Angular -->
+      {{expectNumber(person)}}
     </div>
-    <div *appHello="let person"> <!-- string -->
-      {{expectNumber(<error descr="Argument type string is not assignable to parameter type number">person</error>)}}
+    <div *appHello="let person"> <!-- any in WebStorm, string in Angular -->
+      {{expectNumber(person)}}
     </div>
-    <ng-template appHello let-person> <!-- string -->
-      {{expectNumber(<error descr="Argument type string is not assignable to parameter type number">person</error>)}}
+    <ng-template appHello let-person> <!-- any in WebStorm, string in Angular -->
+      {{expectNumber(person)}}
     </ng-template>
-    <ng-template <warning descr="[appHello] requires value">[appHello]</warning> let-person> <!-- exception, string in WebStorm, undefined in Angular -->
-      {{expectNumber(<error descr="Argument type string is not assignable to parameter type number">person</error>)}}
+    <ng-template <warning descr="[appHello] requires value">[appHello]</warning> let-person> <!-- any in WebStorm, undefined in Angular -->
+      {{expectNumber(person)}}
     </ng-template>
     <ng-template [appHello]="" let-person> <!-- undefined -->
       {{expectNumber(<error descr="Argument type undefined is not assignable to parameter type number">person</error>) }}
     </ng-template>
 
-    <div *appHelloConstrained="as person"> <!-- todo missing assignment type error -->
+    <div *appHelloConstrained="as person"> <!-- any in WebStorm, number in Angular --> <!-- todo missing assignment type error -->
       {{expectNumber(person)}}
     </div>
-    <div *appHelloConstrained="let person"> <!-- todo missing assignment type error -->
+    <div *appHelloConstrained="let person"> <!-- any in WebStorm, number in Angular --> <!-- todo missing assignment type error -->
       {{expectNumber(person)}}
     </div>
-    <ng-template appHelloConstrained let-person> <!-- todo missing assignment type error -->
+    <ng-template appHelloConstrained let-person> <!-- any in WebStorm, number in Angular --> <!-- todo missing assignment type error -->
       {{expectNumber(person)}}
     </ng-template>
-    <ng-template <warning descr="[appHelloConstrained] requires value">[appHelloConstrained]</warning> let-person> <!-- todo missing assignment type error -->
+    <ng-template <warning descr="[appHelloConstrained] requires value">[appHelloConstrained]</warning> let-person> <!-- any in WebStorm, number in Angular --> <!-- todo missing assignment type error -->
       {{expectNumber(person)}}
     </ng-template>
-    <ng-template [appHelloConstrained]="" let-person> <!-- todo missing assignment type error -->
+    <ng-template [appHelloConstrained]="" let-person> <!-- any in WebStorm, number in Angular --> <!-- todo missing assignment type error -->
       {{expectNumber(person) }}
     </ng-template>
   `,

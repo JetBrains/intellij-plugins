@@ -11,6 +11,18 @@ import {CommonModule} from "@angular/common";
       {{expectPerson(<error descr="Argument type Person | null is not assignable to parameter type Person  Type null is not assignable to type Person">person</error>)}}
       {{expectNumber(<error descr="Argument type Person | null is not assignable to parameter type number  Type Person is not assignable to type number">person</error>)}}
     </div>
+    <div *appAgree="null as person; second: undefined">
+      {{expectPerson(<error descr="Argument type null is not assignable to parameter type Person">person</error>)}}
+      {{expectNumber(<error descr="Argument type null is not assignable to parameter type number">person</error>)}}
+    </div>
+    <div *appAgree="null as person"> <!-- Angular types variables as any in case of omitted inputs -->
+      {{expectPerson(<error descr="Argument type null is not assignable to parameter type Person">person</error>)}}
+      {{expectNumber(<error descr="Argument type null is not assignable to parameter type number">person</error>)}}
+    </div>
+    <div *appAgree="personPromise | async as person"> <!-- Angular types variables as any in case of omitted inputs -->
+      {{expectPerson(<error descr="Argument type Person | null is not assignable to parameter type Person  Type null is not assignable to type Person">person</error>)}}
+      {{expectNumber(<error descr="Argument type Person | null is not assignable to parameter type number  Type Person is not assignable to type number">person</error>)}}
+    </div>
     <footer>{{<error descr="Indexed expression can be null or undefined">(personPromise | async)</error>[0]}}</footer> <!-- ensure that null checks work -->
   `,
 })
@@ -23,6 +35,18 @@ export class TestComponentOne extends TestComponentBase {
   standalone: true,
   template: `
     <div *appAgree="<error descr="Type Person | null is not assignable to type Person | (Person & undefined) | (Person & null) | (null & Person)...  Type null is not assignable to type Person | (Person & undefined) | (Person & null) | (null & Person)">personPromise | async</error> as person; second: personPromise | async">
+      {{expectPerson(<error descr="Argument type Person | null is not assignable to parameter type Person  Type null is not assignable to type Person">person</error>)}}
+      {{expectNumber(<error descr="Argument type Person | null is not assignable to parameter type number  Type Person is not assignable to type number">person</error>)}}
+    </div>
+    <div *appAgree="null as person; second: undefined">
+      {{expectPerson(<error descr="Argument type null is not assignable to parameter type Person">person</error>)}}
+      {{expectNumber(<error descr="Argument type null is not assignable to parameter type number">person</error>)}}
+    </div>
+    <div *appAgree="null as person"> <!-- Angular types variables as any in case of omitted inputs -->
+      {{expectPerson(<error descr="Argument type null is not assignable to parameter type Person">person</error>)}}
+      {{expectNumber(<error descr="Argument type null is not assignable to parameter type number">person</error>)}}
+    </div>
+    <div *appAgree="personPromise | async as person"> <!-- Angular types variables as any in case of omitted inputs -->
       {{expectPerson(<error descr="Argument type Person | null is not assignable to parameter type Person  Type null is not assignable to type Person">person</error>)}}
       {{expectNumber(<error descr="Argument type Person | null is not assignable to parameter type number  Type Person is not assignable to type number">person</error>)}}
     </div>

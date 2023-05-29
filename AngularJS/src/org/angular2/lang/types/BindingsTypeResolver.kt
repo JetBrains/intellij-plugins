@@ -272,7 +272,7 @@ internal class BindingsTypeResolver private constructor(element: PsiElement,
       val directiveFactoryCall = WebJSSyntheticFunctionCall(element) { typeFactory ->
         directiveInputs.map { (_, expression) ->
           when (expression) {
-            null -> JSStringType(true, elementTypeSource, JSTypeContext.INSTANCE)
+            null -> JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS, false)
             is JSEmptyExpression -> JSUndefinedType(elementTypeSource)
             else -> typeFactory.evaluate(expression)
           }
