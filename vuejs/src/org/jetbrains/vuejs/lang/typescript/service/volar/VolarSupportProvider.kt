@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 import java.util.function.BiFunction
 
-internal  val volarVersion = SemVer.parseFromText("1.4.0")
+internal  val volarVersion = SemVer.parseFromText("1.6.5")
 internal const val volarPackage = "@volar/vue-language-server"
 
 
