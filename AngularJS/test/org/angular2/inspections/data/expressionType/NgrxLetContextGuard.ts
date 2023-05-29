@@ -10,7 +10,7 @@ import {LetDirective} from "./let.directive";
   standalone: true,
   template: `
     <ng-container *ngrxLet="number$ as number">{{number.toFixed()}}</ng-container>
-    <ng-container *ngrxLet="number$OrNot as number">{{number.<error descr="Qualifier of 'toFixed' is possibly undefined">toFixed</error>()}}</ng-container>
+    <ng-container *ngrxLet="number$OrNot as number">{{number.<error descr="Unresolved function or method toFixed()">toFixed</error>()}}</ng-container>
     <ng-container *ngrxLet="numberOrNot$ as number">{{number.<error descr="Qualifier of 'toFixed' is possibly undefined">toFixed</error>()}}</ng-container>
     
     <ng-container *ngrxLet="number$ as n1; let n2; error as e; complete as c">
