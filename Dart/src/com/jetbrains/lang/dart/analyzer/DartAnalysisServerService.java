@@ -2172,7 +2172,7 @@ public final class DartAnalysisServerService implements Disposable {
         mySdkVersion = sdk.getVersion();
         //myDoEnableMLBasedCodeCompletion = doEnableMLBasedCodeCompletion;
 
-        startedServer.analysis_updateOptions(new AnalysisOptions(true, true, true, true, true, false, true, false));
+        startedServer.analysis_updateOptions(new AnalysisOptions(true, true, true, true, false, true, false));
 
         myServer = startedServer;
 
@@ -2185,6 +2185,8 @@ public final class DartAnalysisServerService implements Disposable {
           ModalityState.NON_MODAL,
           myDisposedCondition
         );
+
+        server_setClientCapabilities(startedServer, Collections.singletonList("showMessageRequest"));
 
         // This must be done after myServer is set, and should be done each time the server starts.
         registerPostfixCompletionTemplates();
@@ -2533,6 +2535,12 @@ public final class DartAnalysisServerService implements Disposable {
     if (server != null) {
       server.server_setSubscriptions(mySubscribeToServerLog ? Arrays.asList(ServerService.STATUS, ServerService.LOG)
                                                             : Collections.singletonList(ServerService.STATUS));
+    }
+  }
+
+  private void server_setClientCapabilities(@Nullable AnalysisServer server, @Nullable List<String> requests) {
+    if (server != null && requests != null && !requests.isEmpty()) {
+      server.server_setClientCapabilities(requests);
     }
   }
 }

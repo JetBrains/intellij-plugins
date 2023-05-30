@@ -29,7 +29,15 @@ import com.google.dart.server.utilities.logging.Logging;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.jetbrains.lang.dart.DartBundle;
 import org.dartlang.analysis.server.protocol.*;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.osgi.framework.Version;
 
 import java.io.IOException;
@@ -84,6 +92,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
 
   // Execution domain
   private static final String LAUNCH_DATA_NOTIFICATION_RESULTS = "execution.launchData";
+  private static final @NonNls String GROUP_DISPLAY_ID = "Dart Analysis Server";
   private final AnalysisServerSocket socket;
   private final Object requestSinkLock = new Object();
   private RequestSink requestSink;
@@ -368,13 +377,16 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
-  public void edit_bulkFixes(List<String> included, boolean inTestMode, BulkFixesConsumer consumer) { }
+  public void edit_bulkFixes(List<String> included, boolean inTestMode, List<String> codes, BulkFixesConsumer consumer) { }
 
   @Override
   public void edit_format(String file, int selectionOffset, int selectionLength, int lineLength, FormatConsumer consumer) {
     String id = generateUniqueId();
     sendRequestToServer(id, RequestUtilities.generateEditFormat(id, file, selectionOffset, selectionLength, lineLength), consumer);
   }
+
+  @Override
+  public void edit_formatIfEnabled(List<String> directories, FormatConsumer consumer) {}
 
   @Override
   public void edit_getAssists(String file, int offset, int length, GetAssistsConsumer consumer) {
@@ -505,10 +517,6 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
-  public void kythe_getKytheEntries(String file, GetKytheEntriesConsumer consumer) {
-  }
-
-  @Override
   public void removeAnalysisServerListener(AnalysisServerListener listener) {
     this.listener.removeListener(listener);
   }
@@ -570,6 +578,12 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     sendRequestToServer(id, RequestUtilities.generateServerGetVersion(id), consumer);
   }
 
+  // This is overridden due to the generated methods from the Dart SDK, but the implementation (if implemented) would be in #processRequests.
+  @Override
+  public void server_openUrlRequest(String url) {
+    // do nothing.
+  }
+
   @Override
   public void server_setSubscriptions(List<String> subscriptions) {
     String id = generateUniqueId();
@@ -577,6 +591,21 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
       subscriptions = StringUtilities.EMPTY_LIST;
     }
     sendRequestToServer(id, RequestUtilities.generateServerSetSubscriptions(id, subscriptions));
+  }
+
+  // This is overridden due to the generated methods from the Dart SDK, but the implementation here is handled in #processRequests.
+  @Override
+  public void server_showMessageRequest(String type, String message, List<MessageAction> actions, ShowMessageRequestConsumer consumer) {
+    // do nothing.
+  }
+
+  @Override
+  public void server_setClientCapabilities(List<String> requests) {
+    String id = generateUniqueId();
+    if (requests == null) {
+      requests = StringUtilities.EMPTY_LIST;
+    }
+    sendRequestToServer(id, RequestUtilities.generateClientCapabilities(id, requests));
   }
 
   @Override
@@ -715,6 +744,59 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     return true;
   }
 
+  /**
+   * Attempts to handle the given {@link JsonObject} as a request. Return {@code true} if it
+   * was handled, otherwise {@code false} is returned.
+   *
+   * @return {@code true} if it was handled, otherwise {@code false} is returned
+   */
+  private boolean processRequests(final JsonObject response, final String idString) throws Exception {
+    // prepare notification kind
+    JsonElement methodElement = response.get("method");
+    if (methodElement == null || !methodElement.isJsonPrimitive()) {
+      return false;
+    }
+    String method = methodElement.getAsString();
+    // handle each supported requests kind
+    if (method.equals("server.showMessageRequest")) {
+      // server.showMessageRequest
+      JsonObject paramsObject = response.get("params").getAsJsonObject();
+      final String type = paramsObject.get("type").getAsString();
+      final String message = paramsObject.get("message").getAsString();
+      final List<JsonElement> actionsJSList = paramsObject.get("actions").getAsJsonArray().asList();
+      final List<String> actionStrs = new ArrayList<String>(actionsJSList.size());
+      for (JsonElement actionJsonElt: actionsJSList) {
+        actionStrs.add(actionJsonElt.getAsJsonObject().get("label").getAsString());
+      }
+
+      NotificationType notificationType;
+      if(type.equals(MessageType.ERROR)) {
+        notificationType =  NotificationType.ERROR;
+      } else if(type.equals(MessageType.WARNING)) {
+        notificationType =  NotificationType.WARNING;
+      } else {
+        notificationType =  NotificationType.INFORMATION;
+      }
+
+      final Notification notification = new Notification(GROUP_DISPLAY_ID, message, notificationType);
+      for (String actionStr: actionStrs) {
+        notification.addAction(new AnAction(actionStr) {
+          @Override
+          public void actionPerformed(@NotNull AnActionEvent e) {
+            // Create and call a response with the user action (i.e. this actionStr)
+            synchronized (requestSinkLock) {
+              requestSink.add(RequestUtilities.generateShowMessageRequestResponse(idString, actionStr));
+            }
+            notification.hideBalloon();
+          }
+        });
+      }
+      Notifications.Bus.notify(notification);
+      return true;
+    }
+    return false;
+  }
+
   private void processResponse(JsonObject response) throws Exception {
     notifyResponseListeners(response);
     // handle notification
@@ -732,6 +814,12 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     synchronized (consumerMapLock) {
       consumer = consumerMap.get(idString);
     }
+
+    // handle requests by calling processRequests, return if this was a request input type
+    if(consumer == null && processRequests(response, idString)) {
+      return;
+    }
+
     JsonObject errorObject = (JsonObject)response.get("error");
     RequestError requestError = null;
     if (errorObject != null) {

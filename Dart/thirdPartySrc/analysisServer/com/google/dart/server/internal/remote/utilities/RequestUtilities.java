@@ -51,6 +51,8 @@ public class RequestUtilities {
   private static final String OUTPUT_DIR = "outputDir";
   private static final String PARAMS = "params";
   private static final String CLIENT_REQUEST_TIME = "clientRequestTime";
+  public static final String REQUESTS = "requests";
+  public static final String RESULT = "result";
   private static final String SELECTION_LENGTH = "selectionLength";
   private static final String SELECTION_OFFSET = "selectionOffset";
   private static final String SUBSCRIPTIONS = "subscriptions";
@@ -68,6 +70,8 @@ public class RequestUtilities {
   private static final String METHOD_SERVER_GET_VERSION = "server.getVersion";
   private static final String METHOD_SERVER_SHUTDOWN = "server.shutdown";
   private static final String METHOD_SERVER_SET_SUBSCRIPTIONS = "server.setSubscriptions";
+
+  public static final String METHOD_SERVER_SET_CAPABILITIES = "server.setClientCapabilities";
 
   // Analysis domain
   private static final String METHOD_ANALYSIS_GET_ERRORS = "analysis.getErrors";
@@ -1032,6 +1036,25 @@ public class RequestUtilities {
   }
 
   /**
+   * Generate and return a {@value #METHOD_SERVER_SET_CAPABILITIES} request.
+   * <p>
+   * <pre>
+   * request: {
+   *   "id": String
+   *   "method": "server.setClientCapabilities"
+   *   "params": {
+   *     "requests": List&lt;String&gt;
+   *   }
+   * }
+   * </pre>
+   */
+  public static JsonObject generateClientCapabilities(String idValue, List<String> requests) {
+    JsonObject params = new JsonObject();
+    params.add(REQUESTS, buildJsonElement(requests));
+    return buildJsonObjectRequest(idValue, METHOD_SERVER_SET_CAPABILITIES, params);
+  }
+
+  /**
    * Generate and return a {@value #METHOD_SERVER_SHUTDOWN} request.
    * <p>
    * <pre>
@@ -1132,6 +1155,29 @@ public class RequestUtilities {
     if (includeRequestTime) {
       jsonObject.addProperty(CLIENT_REQUEST_TIME, System.currentTimeMillis());
     }
+    return jsonObject;
+  }
+
+  /**
+   * Generate and return a response to the "server.showMessageRequest" request.
+   * <p>
+   * <pre>
+   * response: {
+   *   "id": String
+   *   "error": optional RequestError
+   *   "result": {
+   *     "action": optional String
+   *   }
+   * }
+   * </pre>
+   */
+  public static JsonObject generateShowMessageRequestResponse(String idValue, String action) {
+    JsonObject resultJsonObject = new JsonObject();
+    resultJsonObject.add(ACTION, buildJsonElement(action));
+
+    JsonObject jsonObject = new JsonObject();
+    jsonObject.addProperty(ID, idValue);
+    jsonObject.add(RESULT, resultJsonObject);
     return jsonObject;
   }
 
