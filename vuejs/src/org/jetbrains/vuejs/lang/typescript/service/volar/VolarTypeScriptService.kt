@@ -92,8 +92,8 @@ class VolarTypeScriptService(private val project: Project) : TypeScriptService, 
 
   override fun getQuickInfoAt(element: PsiElement,
                               originalElement: PsiElement,
-                              originalFile: VirtualFile): CompletableFuture<TypeScriptQuickInfoResponse?> =
-    completedFuture(quickInfo(element))
+                              originalFile: VirtualFile): CompletableFuture<String?> =
+    completedFuture(quickInfo(element)?.documentation)
 
   override fun restart(recreateToolWindow: Boolean) {
     val lspServerManager = LspServerManager.getInstance(project)
