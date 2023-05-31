@@ -26,5 +26,6 @@
     <microservices.urlResolverFactory implementation="com.intellij.vaadin.endpoints.VaadinUrlResolverFactory"/>
 
     <dependencySupport kind="java" coordinate="com.vaadin:flow-server" displayName="Vaadin Flow"/>
+    <implicitUsageProvider implementation="com.intellij.vaadin.endpoints.VaadinImplicitUsageProvider"/>
   </extensions>
 </idea-plugin>
