@@ -8,6 +8,8 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.css.CssBlock;
+import com.intellij.psi.css.CssSimpleSelector;
 import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.util.completion.provider.PropertyNamesCompletionProvider;
 import com.intellij.psi.css.impl.util.completion.provider.TagsCompletionProvider;
@@ -19,8 +21,8 @@ import org.intellij.plugins.postcss.psi.PostCssPsiUtil;
 import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
-import static com.intellij.psi.css.impl.util.completion.CssDumbAwareCompletionContributor.propertyDeclaration;
-import static com.intellij.psi.css.impl.util.completion.CssDumbAwareCompletionContributor.propertyName;
+import static com.intellij.patterns.StandardPatterns.or;
+import static com.intellij.psi.css.impl.util.completion.CssDumbAwareCompletionContributor.*;
 
 public class PostCssDumbAwareCompletionContributor extends CompletionContributor implements DumbAware {
   private static final PostCssOneLineAtRuleInsertHandler ONE_LINE_STATEMENT_HANDLER = new PostCssOneLineAtRuleInsertHandler();
@@ -28,6 +30,14 @@ public class PostCssDumbAwareCompletionContributor extends CompletionContributor
   public PostCssDumbAwareCompletionContributor() {
     extend(CompletionType.BASIC, selector(), new TagsCompletionProvider());
     extend(CompletionType.BASIC, propertyDeclaration(), new PropertyNamesCompletionProvider());
+  }
+
+  private static ElementPattern<? extends PsiElement> propertyDeclaration() {
+    return inPostCssFile(CssElementTypes.CSS_IDENT)
+      .andOr(propertyName(),
+             psiElement().withParent(CssSimpleSelector.class).inside(CssBlock.class)
+               .afterLeafSkipping(or(emptyElement(), spaceElement()), blockStartOrEnd())
+               .beforeLeafSkipping(or(emptyElement(), spaceElement()), blockStartOrEnd()));
   }
 
   private static ElementPattern<PsiElement> selector() {
