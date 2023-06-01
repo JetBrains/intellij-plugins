@@ -215,8 +215,7 @@ abstract class FunctionSpacesRule : TsLintSimpleRule<Boolean>("space-before-func
     }
 
     val secondIndexValues = option.getStringMapValue()
-    val valueFromLiteral = secondIndexValues[getCode()]
-    when (valueFromLiteral) {
+    when (secondIndexValues[getCode()]) {
       ALWAYS -> return true
       NEVER -> return false
     }
