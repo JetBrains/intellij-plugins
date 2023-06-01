@@ -10,9 +10,8 @@ import com.intellij.psi.util.InheritanceUtil
 
 internal class VaadinImplicitUsageProvider : ImplicitUsageProvider {
   override fun isImplicitUsage(element: PsiElement): Boolean {
-    if (element !is PsiClass) return false
-
-    return !element.isInterface
+    return element is PsiClass
+           && !element.isInterface
            && !element.isEnum
            && !element.hasModifier(JvmModifier.ABSTRACT)
            && !element.isAnnotationType
