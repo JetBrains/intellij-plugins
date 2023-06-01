@@ -39,11 +39,10 @@ class HCLTypeProvider : ExpressionTypeProvider<HCLElement>() {
     return "No expression found"
   }
 
-  private fun isSupportedExpression(e: HCLElement): Boolean {
-    return when {
-      e is HCLProperty -> true
-      e is HCLBlock -> true
+  private fun isSupportedExpression(e: HCLElement): Boolean =
+    when (e) {
+      is HCLProperty -> true
+      is HCLBlock -> true
       else -> false
     }
-  }
 }

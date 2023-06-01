@@ -27,8 +27,8 @@ object VariableTypeCompletionProvider : CompletionProvider<CompletionParameters>
     if (call?.callee === parent) {
       call = PsiTreeUtil.getParentOfType(parent.parent, HCLMethodCallExpression::class.java, true)
     }
-    when {
-      p.name == "type" -> {
+    when (p.name) {
+      "type" -> {
         result.addAllElements(listOf("string", "number", "bool", "any").map { LookupElementBuilder.create(it) })
         result.addAllElements(listOf("list", "set", "map", "object", "tuple").map { LookupElementBuilder.create(it).withInsertHandler(FunctionInsertHandler) })
         if (call?.callee?.text == "object") {
@@ -36,7 +36,7 @@ object VariableTypeCompletionProvider : CompletionProvider<CompletionParameters>
           result.addElement(LookupElementBuilder.create("optional").withInsertHandler(FunctionInsertHandler))
         }
       }
-      p.name == "default" -> {
+      "default" -> {
 
       }
     }
