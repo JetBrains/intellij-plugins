@@ -26,20 +26,22 @@ internal class VaadinUrlResolver(private val project: Project) : UrlResolver {
     get() = HTTP_SCHEMES
 
   override fun getVariants(): Iterable<UrlTargetInfo> {
-    val modules = ModuleManager.getInstance(project).modules
-
-    return modules.asSequence()
-        .flatMap(::getVariants)
-        .map(::VaadinUrlTargetInfo)
+    return getAllModuleVariants(project)
         .asIterable()
   }
 
   override fun resolve(request: UrlResolveRequest): Iterable<UrlTargetInfo> {
     if (request.method != HttpMethods.GET) return emptyList()
 
-    return getVariants().asSequence()
-        .filter { it.path.isCompatibleWith(request.path) }
-        .asIterable()
+    val allModuleVariants = getAllModuleVariants(project)
+      .toList()
+
+    return UrlPath.combinations(request.path)
+      .flatMap { path ->
+        allModuleVariants.asSequence()
+          .filter { it.path.isCompatibleWith(path) }
+      }
+      .asIterable()
   }
 }
 
@@ -47,6 +49,14 @@ internal val VAADIN_ROUTES_SEARCH: SourceLibSearchProvider<List<VaadinRoute>, Mo
     SourceLibSearchProvider("VAADIN_ROUTES") { p, _, scope ->
       findVaadinRoutes(p, scope).toList()
     }
+
+private fun getAllModuleVariants(project: Project): Sequence<VaadinUrlTargetInfo> {
+  val modules = ModuleManager.getInstance(project).modules
+
+  return modules.asSequence()
+    .flatMap(::getVariants)
+    .map(::VaadinUrlTargetInfo)
+}
 
 private fun getVariants(module: Module): Sequence<VaadinRoute> {
   if (!hasVaadinFlow(module)) return emptySequence()
