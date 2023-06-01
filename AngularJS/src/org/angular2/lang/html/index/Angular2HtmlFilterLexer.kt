@@ -4,6 +4,7 @@ package org.angular2.lang.html.index
 import com.intellij.lang.Language
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.javascript.JSKeywordSets
+import com.intellij.lang.javascript.JSLexerUtil
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.xml.XMLLanguage
 import com.intellij.lexer.Lexer
@@ -90,7 +91,7 @@ class Angular2HtmlFilterLexer(occurrenceConsumer: OccurrenceConsumer, originalLe
       JSTokenTypes.LITERALS
     )
     private val SKIP_WORDS = TokenSet.orSet(
-      JSTokenTypes.SKIP_WORDS_SCAN_SET,
+      JSLexerUtil.SKIP_WORDS_SCAN_SET,
       XmlFilterLexer.NO_WORDS_TOKEN_SET,
       TokenSet.create(
         Angular2HtmlTokenTypes.INTERPOLATION_START,

@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.lang.html.index
 import com.intellij.lang.Language
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.javascript.JSKeywordSets
+import com.intellij.lang.javascript.JSLexerUtil
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.xml.XMLLanguage
 import com.intellij.lexer.Lexer
@@ -105,7 +106,7 @@ class VueFilterLexer(occurrenceConsumer: OccurrenceConsumer, originalLexer: Lexe
     )
 
     private val SKIP_WORDS = orSet(
-      JSTokenTypes.SKIP_WORDS_SCAN_SET,
+      JSLexerUtil.SKIP_WORDS_SCAN_SET,
       XmlFilterLexer.NO_WORDS_TOKEN_SET,
       create(
         XmlTokenType.XML_COMMA
