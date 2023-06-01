@@ -71,7 +71,7 @@ public class NonJarDependenciesImportingTest extends MavenImportingTestCase {
     setRepositoryPath(new File(myDir, "__repo").getPath());
     myProjectsManager.getEmbeddersManager().reset();
 
-    scheduleResolveAll();
+    resolveAndImportAllMavenProjects();
     resolveDependenciesAndImport();
 
     assertModuleLibDeps("project", "Maven: com.adobe.flex.framework:framework:swc:3.2.0.3958");
