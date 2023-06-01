@@ -63,7 +63,7 @@
 ></my-comp>
 
 <my-comp
-    [obj]="<error descr="Type {e: \"ddd\", f: \"test\"} is not assignable to type {f: string, e: MyType}...  Type \"ddd\" is not assignable to type MyType    Type \"ddd\" is not assignable to type \"off\" | \"polite\" | \"assertive\"      Type \"ddd\" is not assignable to type \"assertive\"">{f: 'test', e: 'ddd'}</error>"
+    [obj]="<error descr="Type { e: \"ddd\", f: \"test\" } is not assignable to type { f: string, e: MyType }...  Type \"ddd\" is not assignable to type MyType    Type \"ddd\" is not assignable to type \"off\" | \"polite\" | \"assertive\"      Type \"ddd\" is not assignable to type \"assertive\"">{f: 'test', e: 'ddd'}</error>"
 ></my-comp>
 
 <input [ngModel]="true" #model="ngModel"/>

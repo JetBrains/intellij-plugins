@@ -16,8 +16,8 @@ interface Person {
     <ng-container *ngrxLet="personPromise as person; let person2">
       {{ expectPerson(person) }}
       {{ expectPerson(person2) }}
-      {{ expectNumber(<error descr="Argument type LetViewContextValue<Promise<{familyName: string}>> is not assignable to parameter type number">person</error>) }}
-      {{ expectNumber(<error descr="Argument type LetViewContextValue<Promise<{familyName: string}>> is not assignable to parameter type number">person2</error>) }}
+      {{ expectNumber(<error descr="Argument type LetViewContextValue<Promise<{    familyName: string}>> is not assignable to parameter type number">person</error>) }}
+      {{ expectNumber(<error descr="Argument type LetViewContextValue<Promise<{    familyName: string}>> is not assignable to parameter type number">person2</error>) }}
     </ng-container>
   `
 })
