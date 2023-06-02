@@ -7,12 +7,10 @@ import com.intellij.dts.lang.psi.dtsVisitor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 
-class DtsLabelNameInspection : LocalInspectionTool() {
-    companion object {
-        private val rx = Regex("[a-zA-Z0-9_]")
-        private val startRx = Regex("[a-zA-Z_]")
-    }
+private val rx = Regex("[a-zA-Z0-9_]")
+private val startRx = Regex("[a-zA-Z_]")
 
+class DtsLabelNameInspection : LocalInspectionTool() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = dtsVisitor(DtsTypes.LABEL) {
         checkLabel(it, holder)
     }

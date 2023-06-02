@@ -7,7 +7,7 @@ import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.FileViewProvider
 
 sealed class DtsFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, DtsLanguage), DtsContainer {
-    override fun getFileType(): FileType = DtsFileType.INSTANCE
+    override fun getFileType(): FileType = DtsFileType
 
     override val isDtsRootContainer: Boolean = true
 

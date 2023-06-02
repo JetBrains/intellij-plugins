@@ -16,6 +16,7 @@ DTSI file
   PsiErrorElement:<property>, <sub node>, DtsTokenType.DELETE_NODE or DtsTokenType.DELETE_PROP expected, got '/'
     PsiElement(DtsTokenType.SLASH)('/')
   PsiWhiteSpace(' ')
-  PsiElement(DtsTokenType.LBRACE)('{')
-  PsiElement(DtsTokenType.RBRACE)('}')
+  PsiElement(DUMMY_BLOCK)
+    PsiElement(DtsTokenType.LBRACE)('{')
+    PsiElement(DtsTokenType.RBRACE)('}')
   PsiElement(DtsTokenType.SEMICOLON)(';')

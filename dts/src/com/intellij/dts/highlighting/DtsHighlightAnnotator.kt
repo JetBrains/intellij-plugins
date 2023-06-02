@@ -14,11 +14,9 @@ import com.intellij.dts.lang.psi.DtsProperty
 import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.dts.util.DtsUtil
 
-class DtsHighlightAnnotator : Annotator {
-    companion object {
-        private val stringEscapeRx = Regex("\\\\((x[0-9a-fA-F]{1,2})|([0-7][0-8]{0,2})|[^x0-7])")
-    }
+private val stringEscapeRx = Regex("\\\\((x[0-9a-fA-F]{1,2})|([0-7][0-8]{0,2})|[^x0-7])")
 
+class DtsHighlightAnnotator : Annotator {
     private fun highlight(holder: AnnotationHolder, range: TextRange, attr: DtsTextAttributes) {
         holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
             .range(range)

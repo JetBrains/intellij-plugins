@@ -12,6 +12,7 @@ abstract class DtsInspectionTest(private val inspectionClass: KClass<out LocalIn
 
         myFixture.enableInspections(inspectionClass.java)
     }
+
     protected fun doTestHighlighting(extension: String = "dtsi") {
         val path = "${basePath}/${getTestName(false)}.${extension}"
 

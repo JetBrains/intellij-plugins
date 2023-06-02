@@ -58,7 +58,7 @@ private object DtsNodeContentOrderFix : LocalQuickFix {
         applyFix(project, previewDescriptor)
 
         val text = container.dtsContent?.text ?: return IntentionPreviewInfo.EMPTY
-        return IntentionPreviewInfo.CustomDiff(DtsFileType.INSTANCE, "", text)
+        return IntentionPreviewInfo.CustomDiff(DtsFileType, "", text)
     }
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {

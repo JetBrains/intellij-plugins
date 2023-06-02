@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.jetbrains"
-version = "0.2"
+version = "0.5"
 
 repositories {
     mavenCentral()
@@ -65,5 +65,10 @@ tasks {
         pathToParser.set("com/intellij/dts/lang/parser/DtsParser.java")
         pathToPsiRoot.set("com/intellij/dts/lang/psi")
         purgeOldFiles.set(true)
+    }
+
+    patchPluginXml {
+        sinceBuild.set("221")
+        untilBuild.set("232.*")
     }
 }

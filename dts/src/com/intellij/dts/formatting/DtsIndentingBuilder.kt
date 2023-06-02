@@ -9,6 +9,7 @@ import com.intellij.formatting.Indent
 import com.intellij.psi.PsiElement
 import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 
 class DtsIndentingBuilder {
@@ -38,7 +39,17 @@ class DtsIndentingBuilder {
         }
     }
 
+    private fun isOnNewLine(element: PsiElement): Boolean {
+        return PsiTreeUtil.prevLeaf(element)?.text?.contains("\n") ?: false
+    }
+
+    private fun notIndented(block: Block): Boolean {
+        return block.indent?.let { it.type == Indent.Type.NONE } ?: return true
+    }
+
     fun getIndenting(parent: Block?, child: Block?): Indent? {
+        if (parent == null || child == null) return null
+
         val parentElement = ASTBlock.getPsiElement(parent) ?: return null
         val childElement = ASTBlock.getPsiElement(child) ?: return null
 
@@ -47,8 +58,8 @@ class DtsIndentingBuilder {
 
         return when {
             parentElement is DtsNodeContent && !parentElement.dtsContainer.isDtsRootContainer -> Indent.getNormalIndent()
-            parentElement is DtsPropertyContent && childElement is DtsValue -> Indent.getContinuationIndent(false)
-            parentElement is DtsArray && childElement is DtsValue -> Indent.getContinuationIndent(false)
+            parentElement is DtsPropertyContent && childElement is DtsValue && isOnNewLine(childElement) -> Indent.getContinuationIndent(false)
+            parentElement is DtsArray && childElement is DtsValue && notIndented(parent) -> Indent.getContinuationIndent(false)
             else -> Indent.getNoneIndent()
         }
     }

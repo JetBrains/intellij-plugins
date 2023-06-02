@@ -7,11 +7,9 @@ import com.intellij.dts.lang.psi.dtsVisitor
 import com.intellij.dts.util.DtsUtil
 import com.intellij.openapi.util.TextRange
 
-class DtsUnitNameInspection : LocalInspectionTool() {
-    companion object {
-        private val leading0s = Regex("0[0-9a-f]")
-    }
+private val leading0s = Regex("0[0-9a-f]")
 
+class DtsUnitNameInspection : LocalInspectionTool() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = dtsVisitor(DtsSubNode::class) {
         checkNodeName(it, holder)
     }

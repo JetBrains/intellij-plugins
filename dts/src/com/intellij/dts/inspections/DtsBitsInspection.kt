@@ -6,11 +6,9 @@ import com.intellij.dts.lang.psi.DtsCellArrayBits
 import com.intellij.dts.lang.psi.DtsInt
 import com.intellij.dts.lang.psi.dtsVisitor
 
-class DtsBitsInspection : LocalInspectionTool() {
-    companion object {
-        private val validBits = arrayOf(8, 16, 32, 64)
-    }
+private val validBits = arrayOf(8, 16, 32, 64)
 
+class DtsBitsInspection : LocalInspectionTool() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = dtsVisitor(DtsCellArrayBits::class) {
         checkBits(it, holder)
     }

@@ -5,11 +5,9 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.dts.lang.psi.DtsSubNode
 import com.intellij.dts.lang.psi.dtsVisitor
 
-class DtsNodeNameInspection : LocalInspectionTool() {
-    companion object {
-        private val rx = Regex("[a-zA-Z0-9,._+@-]")
-    }
+private val rx = Regex("[a-zA-Z0-9,._+@-]")
 
+class DtsNodeNameInspection : LocalInspectionTool() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = dtsVisitor(DtsSubNode::class) {
         checkNodeName(it, holder)
     }

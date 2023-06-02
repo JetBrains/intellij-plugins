@@ -5,11 +5,9 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.dts.lang.psi.DtsProperty
 import com.intellij.dts.lang.psi.dtsVisitor
 
-class DtsPropertyNameInspection : LocalInspectionTool() {
-    companion object {
-        private val rx = Regex("[a-zA-Z0-9,._+*#?-]")
-    }
+private val rx = Regex("[a-zA-Z0-9,._+*#?-]")
 
+class DtsPropertyNameInspection : LocalInspectionTool() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = dtsVisitor(DtsProperty::class) {
         checkPropertyName(it, holder)
     }

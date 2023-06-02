@@ -16,11 +16,9 @@ import com.intellij.dts.lang.DtsTokenSets
 import com.intellij.dts.lang.lexer.DtsLexerAdapter
 import com.intellij.dts.lang.psi.DtsTypes
 
-open class DtsParserDefinition : ParserDefinition {
-    companion object {
-        val file = IFileElementType(DtsLanguage)
-    }
+private val file = IFileElementType(DtsLanguage)
 
+open class DtsParserDefinition : ParserDefinition {
     override fun createLexer(project: Project?): Lexer = DtsLexerAdapter()
 
     override fun createParser(project: Project?): PsiParser = DtsParser()

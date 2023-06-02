@@ -8,7 +8,7 @@ import com.intellij.psi.PsiWhiteSpace
 
 object DtsElementFactory {
     private fun createFile(project: Project, text: String): DtsFile.Include {
-        return PsiFileFactory.getInstance(project).createFileFromText("a.dtsi", DtsFileType.INSTANCE, text) as DtsFile.Include
+        return PsiFileFactory.getInstance(project).createFileFromText("a.dtsi", DtsFileType, text) as DtsFile.Include
     }
 
     fun createNodeContent(project: Project): DtsNodeContent {
