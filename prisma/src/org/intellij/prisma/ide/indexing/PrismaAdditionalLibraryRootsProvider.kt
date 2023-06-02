@@ -1,6 +1,6 @@
 package org.intellij.prisma.ide.indexing
 
-import com.intellij.javascript.nodejs.library.NodeModulesDirectoryManager
+import com.intellij.javascript.nodejs.library.node_modules.NodeModulesDirectoryManager
 import com.intellij.lang.javascript.library.JSSyntheticLibraryProvider
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service

@@ -1,7 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro
 
-import com.intellij.javascript.nodejs.library.NodeModulesDirectoryManager
+import com.intellij.javascript.nodejs.library.node_modules.NodeModulesDirectoryManager
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.openapi.project.Project
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture

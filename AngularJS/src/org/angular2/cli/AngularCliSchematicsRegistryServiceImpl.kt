@@ -4,7 +4,7 @@ package org.angular2.cli
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.google.gson.stream.JsonReader
-import com.intellij.javascript.nodejs.library.NodeModulesDirectoryManager
+import com.intellij.javascript.nodejs.library.node_modules.NodeModulesDirectoryManager
 import com.intellij.javascript.nodejs.npm.registry.NpmRegistryService
 import com.intellij.javascript.nodejs.packageJson.InstalledPackageVersion
 import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo
