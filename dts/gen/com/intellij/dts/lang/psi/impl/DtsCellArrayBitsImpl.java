@@ -3,9 +3,9 @@ package com.intellij.dts.lang.psi.impl;
 
 import static com.intellij.dts.lang.psi.DtsTypes.*;
 
-public class DtsCellArrayBitsImpl extends com.intellij.extapi.psi.ASTWrapperPsiElement implements com.intellij.dts.lang.psi.DtsCellArrayBits {
+public class DtsCellArrayBitsImpl extends com.intellij.dts.lang.psi.mixin.DtsCellArrayBitsMixin implements com.intellij.dts.lang.psi.DtsCellArrayBits {
 
-  public DtsCellArrayBitsImpl(@org.jetbrains.annotations.NotNull com.intellij.lang.ASTNode node) {
+  public DtsCellArrayBitsImpl(com.intellij.lang.ASTNode node) {
     super(node);
   }
 

@@ -1,0 +1,3 @@
+name@<warning descr="Unit name should not have leading 0s">01</warning> {};
+
+name@10 {};

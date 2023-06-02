@@ -2,6 +2,6 @@
 package com.intellij.dts.lang.psi;
 
 
-public interface DtsEntry extends com.intellij.psi.PsiElement {
+public interface DtsEntry extends com.intellij.dts.lang.psi.mixin.IDtsEntry {
 
 }

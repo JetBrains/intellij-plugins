@@ -2,7 +2,7 @@
 package com.intellij.dts.lang.psi;
 
 
-public interface DtsByteArray extends com.intellij.dts.lang.psi.DtsArray.Byte, com.intellij.dts.lang.psi.DtsValue {
+public interface DtsByteArray extends com.intellij.dts.lang.psi.DtsArray.Byte, com.intellij.dts.lang.psi.DtsValue.Untyped {
 
   @org.jetbrains.annotations.NotNull
   java.util.List<com.intellij.dts.lang.psi.DtsByte> getByteList();

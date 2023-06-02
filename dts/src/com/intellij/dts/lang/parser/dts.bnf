@@ -18,17 +18,34 @@
 
   implements("rootNode")="com.intellij.dts.lang.psi.DtsNode.Root"
   mixin("rootNode")="com.intellij.dts.lang.psi.mixin.DtsRootNodeMixin"
-
   implements("subNode")="com.intellij.dts.lang.psi.DtsNode.Sub"
   mixin("subNode")="com.intellij.dts.lang.psi.mixin.DtsSubNodeMixin"
 
+  implements("property")="com.intellij.dts.lang.psi.mixin.IDtsProperty"
+  mixin("property")="com.intellij.dts.lang.psi.mixin.DtsPropertyMixin"
+
+  implements("compilerDirective")="com.intellij.dts.lang.psi.mixin.IDtsCompilerDirective"
+  mixin("compilerDirective")="com.intellij.dts.lang.psi.mixin.DtsCompilerDirectiveMixin"
+
   implements("content")="com.intellij.dts.lang.psi.mixin.IDtsContent"
   mixin("content")="com.intellij.dts.lang.psi.mixin.DtsContentMixin"
+  mixin("nodeContent")="com.intellij.dts.lang.psi.mixin.DtsNodeContentMixin"
+
+  implements("entry")="com.intellij.dts.lang.psi.mixin.IDtsEntry"
+  mixin("entry")="com.intellij.dts.lang.psi.mixin.DtsEntryMixin"
 
   implements("cellArray")="com.intellij.dts.lang.psi.DtsArray.Cell"
+  mixin("cellArray")="com.intellij.dts.lang.psi.mixin.DtsCellArrayMixin"
+
   implements("byteArray")="com.intellij.dts.lang.psi.DtsArray.Byte"
 
-  implements("int|byte|char|string|pHandle|cellArray|byteArray|exprValue|ppMacro")="com.intellij.dts.lang.psi.DtsValue"
+  implements("cellArrayBits")="com.intellij.dts.lang.psi.mixin.IDtsCellArrayBits"
+  mixin("cellArrayBits")="com.intellij.dts.lang.psi.mixin.DtsCellArrayBitsMixin"
+
+  implements("byte|char|string|pHandle|cellArray|byteArray|exprValue|ppMacro")="com.intellij.dts.lang.psi.DtsValue.Untyped"
+
+  implements("int")="com.intellij.dts.lang.psi.DtsValue.Int"
+  mixin("int")="com.intellij.dts.lang.psi.mixin.DtsIntMixin"
 
   extends(".*Expr")=expr
   extends("nodeContent")=content

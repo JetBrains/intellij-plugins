@@ -1,0 +1,6 @@
+prop = <>;
+prop = /bits/ 8U <>;
+prop = /bits/ 16L <>;
+prop = /bits/ 32LL <>;
+prop = /bits/ 64ULL <>;
+prop = /bits/ MACRO <>;

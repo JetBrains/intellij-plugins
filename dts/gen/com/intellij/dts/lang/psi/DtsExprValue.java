@@ -2,7 +2,7 @@
 package com.intellij.dts.lang.psi;
 
 
-public interface DtsExprValue extends com.intellij.dts.lang.psi.DtsValue {
+public interface DtsExprValue extends com.intellij.dts.lang.psi.DtsValue.Untyped {
 
   @org.jetbrains.annotations.Nullable
   com.intellij.dts.lang.psi.DtsExpr getExpr();

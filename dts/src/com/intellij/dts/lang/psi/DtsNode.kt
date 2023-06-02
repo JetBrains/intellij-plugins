@@ -1,7 +1,13 @@
 package com.intellij.dts.lang.psi
 
-sealed interface DtsNode : DtsContainer {
+import com.intellij.psi.PsiElement
+
+sealed interface DtsNode : DtsContainer, DtsAnnotationTarget {
     interface Root : DtsNode
 
-    interface Sub : DtsNode
+    interface Sub : DtsNode {
+        val dtsName: String
+
+        val dtsNameElement: PsiElement
+    }
 }

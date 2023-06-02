@@ -44,13 +44,13 @@ class DtsHighlightAnnotator : Annotator {
         else if (element.parent is DtsNode) {
             val (name, addr) = DtsUtil.splitName(element.text)
 
-            if (name != null) {
+            if (name.isNotEmpty()) {
                 val nameRange = TextRange.from(element.startOffset, name.length)
                 highlight(holder, nameRange, DtsTextAttributes.NODE_NAME)
             }
 
             if (addr != null) {
-                val addrStart = element.startOffset + (name?.length ?: 0) + 1
+                val addrStart = element.startOffset + name.length + 1
                 val addrRange = TextRange(addrStart, element.endOffset)
                 highlight(holder, addrRange, DtsTextAttributes.NODE_UNIT_ADDR)
             }

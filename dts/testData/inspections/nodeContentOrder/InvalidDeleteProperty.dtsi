@@ -1,0 +1,5 @@
+prop = "value";
+
+name {};
+
+<error descr="Properties should be defined before nodes">/delete-property/</error> prop;

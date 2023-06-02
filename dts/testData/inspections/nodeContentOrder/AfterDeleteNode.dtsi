@@ -1,0 +1,5 @@
+prop = "value";
+
+/delete-node/ name;
+
+<error descr="Properties should be defined before nodes">prop</error> = "value";

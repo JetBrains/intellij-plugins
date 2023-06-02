@@ -1,0 +1,3 @@
+<error descr="Bad character \"#\" in node name">nam#e</error> {};
+
+name {};

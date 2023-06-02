@@ -7,6 +7,8 @@
 
     <depends>com.intellij.modules.platform</depends>
 
+    <resource-bundle>messages.DtsBundle</resource-bundle>
+
     <extensions defaultExtensionNs="com.intellij">
         <fileType
                 language="DTS"
@@ -35,5 +37,49 @@
                 implementation="com.intellij.dts.settings.DtsCodeStyleSettingsProvider"/>
         <langCodeStyleSettingsProvider
                 implementation="com.intellij.dts.settings.DtsLangCodeStyleSettingsProvider"/>
+
+        <!-- inspections -->
+        <localInspection
+                language="DTS"
+                bundle="messages.DtsBundle" key="inspections.dts_content.display_name" groupKey="inspections.group"
+                enabledByDefault="true"
+                level="ERROR"
+                implementationClass="com.intellij.dts.inspections.DtsContentInspection"/>
+        <localInspection
+                language="DTS"
+                bundle="messages.DtsBundle" key="inspections.node_content_order.display_name" groupKey="inspections.group"
+                enabledByDefault="true"
+                level="ERROR"
+                implementationClass="com.intellij.dts.inspections.DtsNodeContentOrderInspection"/>
+        <localInspection
+                language="DTS"
+                bundle="messages.DtsBundle" key="inspections.label_name.display_name" groupKey="inspections.group"
+                enabledByDefault="true"
+                level="ERROR"
+                implementationClass="com.intellij.dts.inspections.DtsLabelNameInspection"/>
+        <localInspection
+                language="DTS"
+                bundle="messages.DtsBundle" key="inspections.node_name.display_name" groupKey="inspections.group"
+                enabledByDefault="true"
+                level="ERROR"
+                implementationClass="com.intellij.dts.inspections.DtsNodeNameInspection"/>
+        <localInspection
+                language="DTS"
+                bundle="messages.DtsBundle" key="inspections.unit_name.display_name" groupKey="inspections.group"
+                enabledByDefault="false"
+                level="WARNING"
+                implementationClass="com.intellij.dts.inspections.DtsUnitNameInspection"/>
+        <localInspection
+                language="DTS"
+                bundle="messages.DtsBundle" key="inspections.property_name.display_name" groupKey="inspections.group"
+                enabledByDefault="true"
+                level="ERROR"
+                implementationClass="com.intellij.dts.inspections.DtsPropertyNameInspection"/>
+        <localInspection
+                language="DTS"
+                bundle="messages.DtsBundle" key="inspections.bits.display_name" groupKey="inspections.group"
+                enabledByDefault="true"
+                level="ERROR"
+                implementationClass="com.intellij.dts.inspections.DtsBitsInspection"/>
     </extensions>
 </idea-plugin>

@@ -1,26 +1,89 @@
 package com.intellij.dts.highlighting
 
+import com.intellij.dts.DtsBundle
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
 import com.intellij.openapi.editor.HighlighterColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.options.colors.AttributesDescriptor
+import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.annotations.PropertyKey
 
 enum class DtsTextAttributes() {
-    COMMENT("DTS_COMMENT", "Comment", DefaultLanguageHighlighterColors.LINE_COMMENT),
-    COMPILER_DIRECTIVE("DTS_COMPILER_DIRECTIVE" , "Compiler directive", DefaultLanguageHighlighterColors.METADATA),
-    STRING("DTS_STRING", "String//String Text", DefaultLanguageHighlighterColors.STRING),
-    STRING_ESCAPE("DTS_STRING_ESCAPE", "String//Escape Sequence", DefaultLanguageHighlighterColors.VALID_STRING_ESCAPE),
-    NODE_NAME("DTS_NODE_NAME", "Node//Name//Name Text", DefaultLanguageHighlighterColors.KEYWORD),
-    NODE_UNIT_ADDR("DTS_NODE_UNIT_ADDR", "Node//Name//Unit Address", null),
-    PROPERTY_NAME("DTS_PROP_NAME", "Node//Property Name", DefaultLanguageHighlighterColors.INSTANCE_FIELD),
-    BRACES("DTS_BRACES", "Braces and Operators//Braces", DefaultLanguageHighlighterColors.BRACES),
-    BRACKETS("DTS_BRACKETS", "Braces and Operators//Brackets", DefaultLanguageHighlighterColors.BRACKETS),
-    OPERATOR("DTS_OPERATOR", "Braces and Operators//Operators", DefaultLanguageHighlighterColors.OPERATION_SIGN),
-    COMMA("DTS_COMMA", "Braces and Operators//Comma", DefaultLanguageHighlighterColors.COMMA),
-    SEMICOLON("DTS_SEMICOLON", "Braces and Operators//Semicolon", DefaultLanguageHighlighterColors.SEMICOLON),
-    LABEL("DTS_LABEL", "Label", DefaultLanguageHighlighterColors.LABEL),
-    NUMBER("DTS_NUMBER", "Number", DefaultLanguageHighlighterColors.NUMBER),
-    BAD_CHARACTER("DTS_BAD_CHARACTER", "Bad character", HighlighterColors.BAD_CHARACTER);
+    STRING(
+        "DTS_STRING",
+        DefaultLanguageHighlighterColors.STRING,
+        "settings.colors.group.string", "settings.colors.string.text"
+    ),
+    STRING_ESCAPE(
+        "DTS_STRING_ESCAPE",
+        DefaultLanguageHighlighterColors.VALID_STRING_ESCAPE,
+        "settings.colors.group.string", "settings.colors.string.escape"
+    ),
+    NODE_NAME(
+        "DTS_NODE_NAME",
+        DefaultLanguageHighlighterColors.KEYWORD,
+        "settings.colors.group.node", "settings.colors.group.node.node_name", "settings.colors.node.node_name.name_text"
+    ),
+    NODE_UNIT_ADDR(
+        "DTS_NODE_UNIT_ADDR",
+        null,
+        "settings.colors.group.node", "settings.colors.group.node.node_name", "settings.colors.node.node_name.unit_address"
+    ),
+    PROPERTY_NAME(
+        "DTS_PROP_NAME",
+        DefaultLanguageHighlighterColors.INSTANCE_FIELD,
+        "settings.colors.group.node", "settings.colors.node.property_name"
+    ),
+    BRACES(
+        "DTS_BRACES",
+        DefaultLanguageHighlighterColors.BRACES,
+        "settings.colors.group.bao", "settings.colors.bao.braces"
+    ),
+    BRACKETS(
+        "DTS_BRACKETS",
+        DefaultLanguageHighlighterColors.BRACKETS,
+        "settings.colors.group.bao", "settings.colors.bao.brackets"
+    ),
+    OPERATOR(
+        "DTS_OPERATOR",
+        DefaultLanguageHighlighterColors.OPERATION_SIGN,
+        "settings.colors.group.bao", "settings.colors.bao.operators"
+    ),
+    COMMA(
+        "DTS_COMMA",
+        DefaultLanguageHighlighterColors.COMMA,
+        "settings.colors.group.bao", "settings.colors.bao.comma"
+    ),
+    SEMICOLON(
+        "DTS_SEMICOLON",
+        DefaultLanguageHighlighterColors.SEMICOLON,
+        "settings.colors.group.bao", "settings.colors.bao.semicolon"
+    ),
+    COMPILER_DIRECTIVE(
+        "DTS_COMPILER_DIRECTIVE",
+        DefaultLanguageHighlighterColors.METADATA,
+        "settings.colors.compiler_directive"
+    ),
+    COMMENT(
+        "DTS_COMMENT",
+        DefaultLanguageHighlighterColors.LINE_COMMENT,
+        "settings.colors.comment"
+    ),
+    LABEL(
+        "DTS_LABEL",
+        DefaultLanguageHighlighterColors.LABEL,
+        "settings.colors.label"
+    ),
+    NUMBER(
+        "DTS_NUMBER",
+        DefaultLanguageHighlighterColors.NUMBER,
+        "settings.colors.number"
+    ),
+    BAD_CHARACTER(
+        "DTS_BAD_CHARACTER",
+        HighlighterColors.BAD_CHARACTER,
+        "settings.colors.bad_char"
+    );
 
     lateinit var attribute: TextAttributesKey
         private set
@@ -28,8 +91,12 @@ enum class DtsTextAttributes() {
     lateinit var descriptor: AttributesDescriptor
         private set
 
-    constructor(externalName: String, displayName: String, fallbackKey: TextAttributesKey?) : this() {
+    constructor(
+        externalName: String,
+        fallbackKey: TextAttributesKey?,
+        vararg bundleKey: @PropertyKey(resourceBundle = DtsBundle.BUNDLE) String,
+    ) : this() {
         attribute = TextAttributesKey.createTextAttributesKey(externalName, fallbackKey)
-        descriptor = AttributesDescriptor(displayName, attribute)
+        descriptor = AttributesDescriptor(StringUtil.join(bundleKey.map { DtsBundle.message(it) }, "//"), attribute)
     }
 }

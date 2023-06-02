@@ -2,6 +2,6 @@
 package com.intellij.dts.lang.psi;
 
 
-public interface DtsCompilerDirective extends com.intellij.psi.PsiElement {
+public interface DtsCompilerDirective extends com.intellij.dts.lang.psi.mixin.IDtsCompilerDirective {
 
 }

@@ -1,0 +1,3 @@
+<error descr="Multiple \"@\" characters in node name">name@@10</error> {};
+
+name@10 {};

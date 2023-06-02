@@ -1,0 +1,4 @@
+prop = /bits/ <error descr="Array elements must be 8, 16, 32 or 64-bits">2</error> <>;
+prop = /bits/ <error descr="Array elements must be 8, 16, 32 or 64-bits">4</error> <>;
+prop = /bits/ <error descr="Array elements must be 8, 16, 32 or 64-bits">7</error> <>;
+prop = /bits/ <error descr="Array elements must be 8, 16, 32 or 64-bits">31</error> <>;

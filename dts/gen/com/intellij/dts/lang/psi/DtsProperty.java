@@ -2,7 +2,7 @@
 package com.intellij.dts.lang.psi;
 
 
-public interface DtsProperty extends com.intellij.psi.PsiElement {
+public interface DtsProperty extends com.intellij.dts.lang.psi.mixin.IDtsProperty {
 
   @org.jetbrains.annotations.Nullable
   com.intellij.dts.lang.psi.DtsPropertyContent getPropertyContent();

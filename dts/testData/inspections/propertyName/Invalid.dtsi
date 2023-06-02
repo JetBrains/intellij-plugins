@@ -1,0 +1,1 @@
+<error descr="Bad character \"@\" in property name">pro@p</error> = "value";
