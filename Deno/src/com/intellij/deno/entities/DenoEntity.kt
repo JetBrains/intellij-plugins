@@ -1,11 +1,11 @@
 package com.intellij.deno.entities
 
-import com.intellij.workspaceModel.storage.*
-import com.intellij.workspaceModel.storage.EntitySource
-import com.intellij.workspaceModel.storage.GeneratedCodeApiVersion
-import com.intellij.workspaceModel.storage.MutableEntityStorage
-import com.intellij.workspaceModel.storage.WorkspaceEntity
-import com.intellij.workspaceModel.storage.url.VirtualFileUrl
+import com.intellij.platform.workspaceModel.storage.*
+import com.intellij.platform.workspaceModel.storage.EntitySource
+import com.intellij.platform.workspaceModel.storage.GeneratedCodeApiVersion
+import com.intellij.platform.workspaceModel.storage.MutableEntityStorage
+import com.intellij.platform.workspaceModel.storage.WorkspaceEntity
+import com.intellij.platform.workspaceModel.storage.url.VirtualFileUrl
 import kotlin.jvm.JvmName
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic

@@ -22,10 +22,10 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PlatformUtils;
 import com.intellij.util.SmartList;
-import com.intellij.workspaceModel.storage.bridgeEntities.LibraryId;
-import com.intellij.workspaceModel.storage.bridgeEntities.LibraryTableId;
-import com.intellij.workspaceModel.storage.bridgeEntities.ModuleDependencyItem;
-import com.intellij.workspaceModel.storage.bridgeEntities.ModuleEntity;
+import com.intellij.platform.workspaceModel.storage.bridgeEntities.LibraryId;
+import com.intellij.platform.workspaceModel.storage.bridgeEntities.LibraryTableId;
+import com.intellij.platform.workspaceModel.storage.bridgeEntities.ModuleDependencyItem;
+import com.intellij.platform.workspaceModel.storage.bridgeEntities.ModuleEntity;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import org.jetbrains.annotations.NotNull;
 
