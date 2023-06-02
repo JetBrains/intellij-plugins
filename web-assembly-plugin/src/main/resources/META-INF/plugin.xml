@@ -1,4 +1,4 @@
-<idea-plugin>
+<idea-plugin package="com.intellij.webassembly">
     <id>com.jetbrains.webstorm.web-assembly-plugin</id>
     <name>WebAssembly</name>
     <vendor>JetBrains</vendor>
@@ -19,38 +19,37 @@
 
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
-    <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <fileType name="WebAssembly file"
-                  implementationClass="org.jetbrains.webstorm.lang.psi.WebAssemblyFileType"
+                  implementationClass="com.intellij.webassembly.lang.psi.WebAssemblyFileType"
                   fieldName="INSTANCE"
                   language="WebAssembly"
                   extensions="wat;wast"/>
 
         <lang.parserDefinition language="WebAssembly"
-                               implementationClass="org.jetbrains.webstorm.lang.parser.WebAssemblyParserDefinition"/>
+                               implementationClass="com.intellij.webassembly.lang.parser.WebAssemblyParserDefinition"/>
 
         <lang.syntaxHighlighterFactory language="WebAssembly"
-                                       implementationClass="org.jetbrains.webstorm.ide.WebAssemblySyntaxHighlighterFactory"/>
+                                       implementationClass="com.intellij.webassembly.ide.WebAssemblySyntaxHighlighterFactory"/>
 
-        <colorSettingsPage implementation="org.jetbrains.webstorm.ide.colors.WebAssemblyColorSettingPage"/>
+        <colorSettingsPage implementation="com.intellij.webassembly.ide.colors.WebAssemblyColorSettingPage"/>
 
         <!-- Matcher -->
         <lang.braceMatcher language="WebAssembly"
-                           implementationClass="org.jetbrains.webstorm.ide.WebAssemblyBraceMatcher"/>
+                           implementationClass="com.intellij.webassembly.ide.WebAssemblyBraceMatcher"/>
 
         <!-- Commenter -->
         <lang.commenter language="WebAssembly"
-                        implementationClass="org.jetbrains.webstorm.lang.WebAssemblyCommenter"/>
+                        implementationClass="com.intellij.webassembly.lang.WebAssemblyCommenter"/>
 
         <!-- Folding -->
         <lang.foldingBuilder language="WebAssembly"
-                             implementationClass="org.jetbrains.webstorm.lang.WebAssemblyFoldingBuilder"/>
+                             implementationClass="com.intellij.webassembly.lang.WebAssemblyFoldingBuilder"/>
 
         <!-- Completion -->
         <completion.contributor language="WebAssembly"
-                                implementationClass="org.jetbrains.webstorm.lang.WebAssemblyKeywordCompletionContributor"/>
+                                implementationClass="com.intellij.webassembly.lang.WebAssemblyKeywordCompletionContributor"/>
 
     </extensions>
 

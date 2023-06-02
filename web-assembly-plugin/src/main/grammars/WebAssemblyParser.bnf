@@ -1,12 +1,12 @@
 {
-  parserClass="org.jetbrains.webstorm.lang.parser.WebAssemblyParser"
-  parserUtilClass="org.jetbrains.webstorm.lang.parser.WebAssemblyParserUtil"
+  parserClass="com.intellij.webassembly.lang.parser.WebAssemblyParser"
+  parserUtilClass="com.intellij.webassembly.lang.parser.WebAssemblyParserUtil"
   psiClassPrefix="WebAssembly"
   psiImplClassSuffix="Impl"
   psiPackage="org.jetbrains.webstorm.lang.psi"
   psiImplPackage="org.jetbrains.webstorm.lang.psi.impl"
 
-  elementTypeHolderClass="org.jetbrains.webstorm.lang.psi.WebAssemblyTypes"
+  elementTypeHolderClass="com.intellij.webassembly.lang.psi.WebAssemblyTypes"
   elementTypeClass="org.jetbrains.webstorm.lang.psi.WebAssemblyElementType"         // lang.psi.ElementTypes
   tokenTypeClass="org.jetbrains.webstorm.lang.psi.WebAssemblyTokenType"             // lang.psi.ElementTypes
 }

@@ -1,0 +1,3 @@
+package com.intellij.webassembly.lang.psi
+
+interface WebAssemblyNamedReferencedElement : WebAssemblyNamedElement, WebAssemblyReferencedElement
