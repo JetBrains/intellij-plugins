@@ -13,7 +13,7 @@ DTSI file
             PsiElement(DtsTokenType.DQUOTE)('"')
       PsiElement(DtsTokenType.SEMICOLON)(';')
   PsiWhiteSpace('\n\n')
-  PsiErrorElement:<property> expected, got '/'
+  PsiErrorElement:<property>, <sub node>, DtsTokenType.DELETE_NODE or DtsTokenType.DELETE_PROP expected, got '/'
     PsiElement(DtsTokenType.SLASH)('/')
   PsiWhiteSpace(' ')
   PsiElement(DtsTokenType.LBRACE)('{')

@@ -1,0 +1,8 @@
+DtsTokenType.NAME ('prop')
+WHITE_SPACE (' ')
+DtsTokenType.ASSIGN ('=')
+WHITE_SPACE (' ')
+DtsTokenType.LANGL ('<')
+DtsTokenType.RANGL ('>')
+WHITE_SPACE ('\n\n')
+DtsTokenType.DELETE_NODE ('/delete-node/')

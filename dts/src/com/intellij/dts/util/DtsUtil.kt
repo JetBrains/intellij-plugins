@@ -3,6 +3,7 @@ package com.intellij.dts.util
 import com.intellij.dts.lang.DtsTokenSets
 import com.intellij.psi.PsiElement
 import com.intellij.psi.TokenType
+import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.siblings
 
@@ -26,21 +27,30 @@ object DtsUtil {
     }
 
     /**
-     * Iterates over the children of a psi element but skips comments and
-     * preprocessor statements.
+     * Iterates over the children of a psi element. If unfiltered is set to true
+     * unproductive elements will be skipped (see isProductiveElement).
      */
-    fun children(element: PsiElement, forward: Boolean = true): Sequence<PsiElement> {
+    fun children(element: PsiElement, forward: Boolean = true, unfiltered: Boolean = false): Sequence<PsiElement> {
         val start = if (forward) element.firstChild else element.lastChild
 
-        return start.siblings(forward = forward).filter {
+        val siblings = start.siblings(forward = forward)
+        if (unfiltered) return siblings
+
+        return siblings.filter {
             val type = it.elementType
-
-            if (type == TokenType.WHITE_SPACE) return@filter false
-            if (type in DtsTokenSets.comments) return@filter false
-
-            // filter preprocessor statements and includes
-
-            true
+            type != null && isProductiveElement(type)
         }
+    }
+
+    /**
+     * A token is considered productive if it is none of the following:
+     * - comment
+     * - whit space
+     * - any kind of preprocessor statement
+     */
+    fun isProductiveElement(type: IElementType): Boolean {
+        // add preprocessor statements and includes
+
+        return type != TokenType.WHITE_SPACE && type !in DtsTokenSets.comments
     }
 }

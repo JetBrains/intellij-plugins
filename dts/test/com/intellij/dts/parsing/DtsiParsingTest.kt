@@ -62,6 +62,10 @@ abstract class DtsiParsingTest(dataPath: String) : ParsingTestCase(dataPath, "dt
         fun testPHandle() = doTest()
 
         fun testProperty() = doTest()
+
+        fun testPropertyLineBreak() = doTest()
+
+        fun testSubNodeLineBreak() = doTest()
     }
 
     class Reject : DtsiParsingTest("reject") {

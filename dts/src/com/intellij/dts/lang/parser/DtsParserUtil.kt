@@ -17,7 +17,7 @@ object DtsParserUtil : GeneratedParserUtilBase() {
 
     @JvmStatic
     fun parseInvalidEntry(builder: PsiBuilder, level: Int): Boolean {
-        if (builder.tokenType == DtsTypes.RBRACE || builder.eof()) return false
+        if (builder.eof()) return false
 
         val endTokens = TokenSet.create(
             DtsTypes.SEMICOLON,
@@ -80,5 +80,10 @@ object DtsParserUtil : GeneratedParserUtilBase() {
         }
 
         return true
+    }
+
+    @JvmStatic
+    fun parseAfterLineBreak(builder: PsiBuilder, level: Int): Boolean {
+        return lookUpLineBrake(builder, -1)
     }
 }

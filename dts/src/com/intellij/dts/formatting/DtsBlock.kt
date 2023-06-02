@@ -17,11 +17,12 @@ class DtsBlock(
 
     override fun getSpacing(child1: Block?, child2: Block): Spacing? = spacingBuilder.getSpacing(this, child1, child2)
 
-    override fun getChildIndent(): Indent = indentingBuilder.getChildIndenting(this) ?: Indent.getNoneIndent()
-
     override fun getIndent(): Indent = indentingBuilder.getIndenting(parent, this) ?: Indent.getNoneIndent()
 
-    override fun getChildAttributes(newChildIndex: Int): ChildAttributes = ChildAttributes(childIndent, null)
+    override fun getChildAttributes(newChildIndex: Int): ChildAttributes = ChildAttributes(
+        indentingBuilder.getChildIndenting(this, newChildIndex),
+        null,
+    )
 
     override fun getDebugName(): String = "Dts${if (isLeaf) "Leaf" else ""}Block(${node.elementType})"
 

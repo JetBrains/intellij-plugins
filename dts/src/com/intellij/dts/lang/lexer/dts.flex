@@ -92,14 +92,14 @@ COMMENT_C         = "/*"([^*]|"*"[^/])*"*/"
 // dts include preprocesser statment
 "/include/"{LINE_WS}*"\""{STRING}"\""               { return DtsTypes.PP_STATEMENT; }
 
-<YYINITIAL> {
-    "/dts-v1/"                                      { return DtsTypes.V1; }
-    "/plugin/"                                      { return DtsTypes.PLUGIN; }
-    "/memreserve/"                                  { pushState(WAITING_CELL); return DtsTypes.MEMRESERVE; }
-    "/delete-node/"                                 { return DtsTypes.DELETE_NODE; }
-    "/delete-property/"                             { return DtsTypes.DELETE_PROP; }
-    "/omit-if-no-ref/"                              { return DtsTypes.OMIT_NODE; }
+"/dts-v1/"                                          { resetState(); return DtsTypes.V1; }
+"/plugin/"                                          { resetState(); return DtsTypes.PLUGIN; }
+"/memreserve/"                                      { resetState(); pushState(WAITING_CELL); return DtsTypes.MEMRESERVE; }
+"/delete-node/"                                     { resetState(); return DtsTypes.DELETE_NODE; }
+"/delete-property/"                                 { resetState(); return DtsTypes.DELETE_PROP; }
+"/omit-if-no-ref/"                                  { resetState(); return DtsTypes.OMIT_NODE; }
 
+<YYINITIAL> {
     ";"                                             { return DtsTypes.SEMICOLON; }
 
     "="                                             { pushState(WAITING_VALUE); return DtsTypes.ASSIGN; }

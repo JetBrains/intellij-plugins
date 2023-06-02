@@ -1,0 +1,17 @@
+DTSI file
+  DtsNodeContentImpl(NODE_CONTENT)
+    DtsEntryImpl(ENTRY)
+      DtsSubNodeImpl(SUB_NODE)
+        PsiElement(DtsTokenType.NAME)('name')
+        PsiWhiteSpace(' ')
+        PsiElement(DtsTokenType.LBRACE)('{')
+        PsiElement(DtsTokenType.RBRACE)('}')
+      PsiErrorElement:DtsTokenType.SEMICOLON expected, got '/delete-node/'
+        <empty list>
+    PsiWhiteSpace('\n\n')
+    DtsEntryImpl(ENTRY)
+      DtsCompilerDirectiveImpl(COMPILER_DIRECTIVE)
+        PsiElement(DtsTokenType.DELETE_NODE)('/delete-node/')
+        PsiWhiteSpace(' ')
+        PsiElement(DtsTokenType.NAME)('name')
+      PsiElement(DtsTokenType.SEMICOLON)(';')

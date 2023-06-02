@@ -38,6 +38,22 @@
         <langCodeStyleSettingsProvider
                 implementation="com.intellij.dts.settings.DtsLangCodeStyleSettingsProvider"/>
 
+        <!-- completion -->
+        <lang.quoteHandler
+                language="DTS"
+                implementationClass="com.intellij.dts.completion.DtsQuoteHandler"/>
+        <lang.commenter
+                language="DTS"
+                implementationClass="com.intellij.dts.completion.DtsCommenter"/>
+        <lang.braceMatcher
+                language="DTS"
+                implementationClass="com.intellij.dts.completion.DtsBraceMatcher"/>
+
+        <enterHandlerDelegate implementation="com.intellij.dts.completion.DtsSemicolonEnterHandler"/>
+
+        <typedHandler implementation="com.intellij.dts.completion.DtsAngularBraceTypedHandler"/>
+        <backspaceHandlerDelegate implementation="com.intellij.dts.completion.DtsAngularBraceBackspaceHandler"/>
+
         <!-- inspections -->
         <localInspection
                 language="DTS"

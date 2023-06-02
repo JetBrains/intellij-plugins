@@ -81,16 +81,16 @@ nodeContent ::= (
 external invalidEntry ::= parseInvalidEntry
 
 rootNode ::= LABEL* (SLASH | pHandle) LBRACE nodeContent? RBRACE {pin=3 recoverWhile="rootNodeRecover"}
-private rootNodeRecover ::= !(SEMICOLON)
+private rootNodeRecover ::= !(SEMICOLON | RBRACE | afterLineBreak)
 
-subNode ::= LABEL* OMIT_NODE? LABEL* NAME LBRACE nodeContent? RBRACE {pin=5 recoverWhile="nodeRecover"}
-private nodeRecover ::= !(SEMICOLON | NAME)
+subNode ::= LABEL* OMIT_NODE? LABEL* NAME LBRACE nodeContent? RBRACE {pin=5 recoverWhile="subNodeRecover"}
+private subNodeRecover ::= !(SEMICOLON | RBRACE | NAME | afterLineBreak)
 
 property ::= LABEL* NAME propertyAssignment?
 private propertyAssignment ::= ASSIGN propertyContent {pin=1}
 propertyContent ::= propertyValue (COMMA propertyValue)* {recoverWhile="propertyRecover"}
 private propertyValue ::= <<value (string | pHandle | cellArray | byteArray | ppMacro)>>
-private propertyRecover ::= !(SEMICOLON | RBRACE | NAME)
+private propertyRecover ::= !(SEMICOLON | RBRACE | NAME | afterLineBreak)
 
 cellArray ::= cellArrayBits? LANGL cellArrayContent RANGL {pin=2}
 private cellArrayContent ::= cellArrayValue* {recoverWhile="cellArrayRecover"}
@@ -115,7 +115,7 @@ private meta value ::= LABEL* <<arg>> LABEL*
 
 private meta compilerDirectiveEntry ::= <<entry <<compilerDirective <<directive>> <<arg>>>>>>
 meta compilerDirective ::= <<directive>> <<arg>> {pin=1 recoverWhile="compilerDirectiveRecover"}
-private compilerDirectiveRecover ::= !(SEMICOLON)
+private compilerDirectiveRecover ::= !(SEMICOLON | RBRACE | afterLineBreak)
 
 private cell ::= int | char | exprValue | ppMacro
 
@@ -126,6 +126,8 @@ char ::= SQUOTE CHAR_VALUE* SQUOTE {pin=1}
 
 ppMacro ::= parserPpMacro
 external parserPpMacro ::= parsePpMacro
+
+external afterLineBreak ::= parseAfterLineBreak
 
 exprValue ::= LPAREN expr RPAREN {pin=1}
 
