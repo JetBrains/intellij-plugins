@@ -18,7 +18,6 @@ To learn more about how to get started with Deno, check out <a href="https://blo
   <extensions defaultExtensionNs="com.intellij">
     <projectConfigurable groupId="language" instance="com.intellij.deno.DenoConfigurable"/>
     <projectService serviceImplementation="com.intellij.deno.DenoSettings"/>
-    <projectService serviceImplementation="com.intellij.deno.service.DenoTypeScriptService"/>
     <additionalLibraryRootsProvider implementation="com.intellij.deno.DenoLibraryProvider"/>
     <configurationType implementation="com.intellij.deno.run.DenoConfigurationType"/>
     <fileTypeOverrider implementation="com.intellij.deno.lang.DenoFileTypeOverrider"/>

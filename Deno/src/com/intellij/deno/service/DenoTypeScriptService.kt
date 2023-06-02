@@ -3,7 +3,6 @@ package com.intellij.deno.service
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.codeInsight.intention.IntentionAction
-import com.intellij.deno.DenoBundle
 import com.intellij.deno.DenoSettings
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.GeneralCommandLine
@@ -22,18 +21,18 @@ import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageS
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptMessageBus
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
 import com.intellij.lang.typescript.library.TypeScriptLibraryProvider
-import com.intellij.lang.typescript.lsp.LspAnnotationError
 import com.intellij.lang.typescript.lsp.BaseLspTypeScriptService
+import com.intellij.lang.typescript.lsp.LspAnnotationError
 import com.intellij.lsp.LspServer
 import com.intellij.lsp.api.LspServerManager
 import com.intellij.lsp.methods.HoverMethod
+import com.intellij.openapi.components.Service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.util.text.SemVer
-import org.eclipse.lsp4j.Diagnostic
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletableFuture.completedFuture
 
@@ -47,6 +46,7 @@ class DenoTypeScriptServiceProvider(val project: Project) : JSLanguageServicePro
     if (DenoSettings.getService(project).isUseDeno()) listOf(DenoTypeScriptService.getInstance(project)) else emptyList()
 }
 
+@Service(Service.Level.PROJECT)
 class DenoTypeScriptService(project: Project) : BaseLspTypeScriptService(project) {
   companion object {
     private val LOG = Logger.getInstance(DenoTypeScriptService::class.java)
@@ -56,7 +56,10 @@ class DenoTypeScriptService(project: Project) : BaseLspTypeScriptService(project
   override fun getLspServers(): Collection<LspServer> =
     LspServerManager.getInstance(project).getServersForProvider(DenoLspSupportProvider::class.java)
 
-  override val name = "Deno LSP"
+  override val name: String
+    get() = "Deno LSP"
+  override val prefix: String
+    get() = "Deno"
   override val serverVersion: SemVer? = null
 
   override fun getStatusText() = withServer {
@@ -81,7 +84,7 @@ class DenoTypeScriptService(project: Project) : BaseLspTypeScriptService(project
   }
 
   override fun getServiceFixes(file: PsiFile, element: PsiElement?, result: JSAnnotationError): Collection<IntentionAction> {
-    if (element != null && (result is DenoAnnotationError)) {
+    if (element != null && (result is LspAnnotationError)) {
       val virtualFile = file.virtualFile
       return withServer {
         getCodeActions(file, result.diagnostic) { command, _ ->
@@ -118,10 +121,6 @@ class DenoTypeScriptService(project: Project) : BaseLspTypeScriptService(project
   override fun getQuickInfoAt(element: PsiElement, originalElement: PsiElement, originalFile: VirtualFile): CompletableFuture<TypeScriptQuickInfoResponse?> =
     completedFuture(quickInfo(element))
 
-  override fun createAnnotationError(diagnostic: Diagnostic, virtualFile: VirtualFile): LspAnnotationError {
-    return DenoAnnotationError(diagnostic, virtualFile.canonicalPath)
-  }
-
   override fun canHighlight(file: PsiFile) = DialectDetector.isTypeScript(file)
 
   override fun isAcceptable(file: VirtualFile) =
@@ -134,8 +133,4 @@ class DenoTypeScriptService(project: Project) : BaseLspTypeScriptService(project
     LspServerManager.getInstance(project).stopAndRestartIfNeeded(DenoLspSupportProvider::class.java)
     TypeScriptMessageBus.get(project).changed()
   }
-}
-
-class DenoAnnotationError(diagnostic: Diagnostic, path: String?) : LspAnnotationError(diagnostic, path) {
-  override fun getDescription(): String = DenoBundle.message("deno.inspection.message.prefix", diagnostic.message)
 }

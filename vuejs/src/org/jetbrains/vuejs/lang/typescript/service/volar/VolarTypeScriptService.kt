@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.ecmascript6.TypeScriptAnnotatorCheckerProvid
 import com.intellij.lang.typescript.compiler.TypeScriptLanguageServiceAnnotatorCheckerProvider
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptMessageBus
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
-import com.intellij.lang.typescript.lsp.LspAnnotationError
 import com.intellij.lang.typescript.lsp.BaseLspTypeScriptService
 import com.intellij.lsp.LspServer
 import com.intellij.lsp.api.LspServerManager
@@ -14,8 +13,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import org.eclipse.lsp4j.Diagnostic
-import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.typescript.service.isVolarEnabled
 import org.jetbrains.vuejs.lang.typescript.service.isVolarFileTypeAcceptable
 import java.util.concurrent.CompletableFuture
@@ -42,10 +39,6 @@ class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(projec
                               originalFile: VirtualFile): CompletableFuture<TypeScriptQuickInfoResponse?> =
     completedFuture(quickInfo(element))
 
-  override fun createAnnotationError(diagnostic: Diagnostic, virtualFile: VirtualFile): LspAnnotationError {
-    return VolarAnnotationError(diagnostic, virtualFile.canonicalPath)
-  }
-
   override fun canHighlight(file: PsiFile): Boolean {
     val provider = TypeScriptAnnotatorCheckerProvider.getCheckerProvider(file)
     if (provider !is TypeScriptLanguageServiceAnnotatorCheckerProvider) return false
@@ -61,8 +54,4 @@ class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(projec
     updateVolarLsp(project, true)
     TypeScriptMessageBus.get(project).changed()
   }
-}
-
-class VolarAnnotationError(diagnostic: Diagnostic, path: String?) : LspAnnotationError(diagnostic, path) {
-  override fun getDescription(): String = VueBundle.message("volar.error.prefix", diagnostic.message)
 }
