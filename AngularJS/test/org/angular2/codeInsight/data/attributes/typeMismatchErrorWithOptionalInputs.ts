@@ -21,19 +21,19 @@ export class TestComponent {
              template: `
                <div>
                  <app-test [item1]="myItem1"></app-test>
-                 <app-test [item2]="<error descr="Type string | undefined is not assignable to type string  Type undefined is not assignable to type string">myItem1</error>"></app-test>
+                 <app-test [item2]="<error descr="Type  string | undefined  is not assignable to type  string   Type undefined is not assignable to type string">myItem1</error>"></app-test>
                  <app-test [item3]="myItem1"></app-test>
                  <app-test [item4]="myItem1"></app-test>
                </div>
                <div>
                  <app-test [item1]="myItem2"></app-test>
-                 <app-test [item2]="<error descr="Type string | undefined is not assignable to type string  Type undefined is not assignable to type string">myItem2</error>"></app-test>
+                 <app-test [item2]="<error descr="Type  string | undefined  is not assignable to type  string   Type undefined is not assignable to type string">myItem2</error>"></app-test>
                  <app-test [item3]="myItem2"></app-test>
                  <app-test [item4]="myItem2"></app-test>
                </div>
                <div>
                  <app-test [item1]="myItem3"></app-test>
-                 <app-test [item2]="<error descr="Type string | undefined is not assignable to type string  Type undefined is not assignable to type string">myItem3</error>"></app-test>
+                 <app-test [item2]="<error descr="Type  string | undefined  is not assignable to type  string   Type undefined is not assignable to type string">myItem3</error>"></app-test>
                  <app-test [item3]="myItem3"></app-test>
                  <app-test [item4]="myItem3"></app-test>
                </div>

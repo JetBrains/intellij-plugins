@@ -16,8 +16,8 @@ export interface Person {
       {{ person2.familyName }}
       {{ expectPerson(person1) }}
       {{ expectPerson(person2) }}
-      {{ expectNumber(<error descr="Argument type Person is not assignable to parameter type number">person1</error>) }}
-      {{ expectNumber(<error descr="Argument type Person is not assignable to parameter type number">person2</error>) }}
+      {{ expectNumber(<error descr="Argument type  Person  is not assignable to parameter type  number ">person1</error>) }}
+      {{ expectNumber(<error descr="Argument type  Person  is not assignable to parameter type  number ">person2</error>) }}
     </div>
   `,
 })

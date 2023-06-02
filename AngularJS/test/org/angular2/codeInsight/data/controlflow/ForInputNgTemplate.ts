@@ -11,7 +11,7 @@ import {CommonModule} from "@angular/common";
       <ng-template ngFor let-letter [ngForOf]="bar">{{letter}}</ng-template>
       <ng-template ngFor [ngForOf]="bar" let-letter>{{letter}}</ng-template>
     </ng-template>
-    <ng-template ngFor let-letter [ngForOf]="<error descr="Type string | number is not assignable to type (string & NgIterable<string>) | (number & NgIterable<string>) | undefined | null...  Type string | number is not assignable to type (string & Array<string>) | (string & Iterable<string>) | (number & Array<string>) | (number & Iterable<string>) | undefined | null">bar</error>">{{letter}}</ng-template>
+    <ng-template ngFor let-letter [ngForOf]="<error descr="Type  string | number  is not assignable to type (string & NgIterable<string>) | (number & NgIterable<string>) | undefined | null...  Type string | number is not assignable to type (string & Array<string>) | (string & Iterable<string>) | (number & Array<string>) | (number & Iterable<string>) | undefined | null">bar</error>">{{letter}}</ng-template>
   `,
 })
 export class FlowComponent {

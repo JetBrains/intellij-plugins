@@ -10,18 +10,18 @@ import {CommonModule} from "@angular/common";
     <div *appHello="let local">
       {{local.toFixed()}}
       {{expectNumber(local)}}
-      {{expectPerson(<error descr="Argument type number is not assignable to parameter type Person">local</error>)}}
+      {{expectPerson(<error descr="Argument type  number  is not assignable to parameter type  Person ">local</error>)}}
       {{local.<error descr="Unresolved variable leftovers">leftovers</error>}}
     </div>
     <div *appHelloIgnoredGeneric="(personPromise | async)!; let local">
       {{local.toFixed()}}
       {{expectNumber(local)}}
-      {{expectPerson(<error descr="Argument type number is not assignable to parameter type Person">local</error>)}}
+      {{expectPerson(<error descr="Argument type  number  is not assignable to parameter type  Person ">local</error>)}}
       {{local.<error descr="Unresolved variable leftovers">leftovers</error>}}
     </div>
     <div *appHelloInternalGeneric="let local">
       {{local.toLowerCase()}}
-      {{expectNumber(<error descr="Argument type \"left\" | \"right\" is not assignable to parameter type number  Type \"left\" is not assignable to type number">local</error>)}}
+      {{expectNumber(<error descr="Argument type  \"left\" | \"right\"  is not assignable to parameter type  number   Type \"left\" is not assignable to type number">local</error>)}}
     </div>
   `,
 })

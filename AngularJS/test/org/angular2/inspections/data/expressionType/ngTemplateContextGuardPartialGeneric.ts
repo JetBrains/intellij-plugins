@@ -12,7 +12,7 @@ import {CommonModule} from "@angular/common";
       {{local.length}} <!-- todo Unresolved variable length -->
       {{local.<weak_warning descr="Unresolved variable familyName">familyName</weak_warning>}}
       {{local.<weak_warning descr="Unresolved variable accomplishments">accomplishments</weak_warning>}}
-      {{expectPerson(<error descr="Argument type number is not assignable to parameter type Person">other</error>)}}
+      {{expectPerson(<error descr="Argument type  number  is not assignable to parameter type  Person ">other</error>)}}
       {{expectNumber(other)}}
     </div>
   `,

@@ -18,7 +18,7 @@ import {LetDirective} from "./let.directive";
       {{n2.toFixed()}}
       {{acceptBoolean(e)}}
       {{acceptBoolean(c)}}
-      {{acceptBoolean(<error descr="Argument type number is not assignable to parameter type boolean">n1</error>)}}
+      {{acceptBoolean(<error descr="Argument type  number  is not assignable to parameter type  boolean ">n1</error>)}}
     </ng-container>
     
     <ng-container *ngrxLet="{ number1: number$, number2: numberOrNot$ } as vm">

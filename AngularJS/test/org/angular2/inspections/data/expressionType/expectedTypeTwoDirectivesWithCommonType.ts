@@ -7,7 +7,7 @@ import {CommonModule} from "@angular/common";
   imports: [CommonModule, AmbiguousDirective, AmbiguousDirectiveDuplicate],
   standalone: true,
   template: `
-    <span [appAmbiguous]="<error descr="Type 1 is not assignable to type 2">1</error>"></span>
+    <span [appAmbiguous]="<error descr="Type  1  is not assignable to type  2 ">1</error>"></span>
     <span [appAmbiguous]="2"></span>
   `,
 })

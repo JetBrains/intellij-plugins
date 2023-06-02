@@ -9,10 +9,10 @@ import {CommonModule} from "@angular/common";
   template: `
     <div *fancyIf="let person from personPromise | async also 5 as other">
       {{expectPerson(person)}}
-      {{expectNumber(<error descr="Argument type Person is not assignable to parameter type number">person</error>)}}
+      {{expectNumber(<error descr="Argument type  Person  is not assignable to parameter type  number ">person</error>)}}
       {{person.familyName}}
       {{person.<error descr="Unresolved variable accomplishments">accomplishments</error>}}
-      {{expectPerson(<error descr="Argument type number is not assignable to parameter type Person">other</error>)}}
+      {{expectPerson(<error descr="Argument type  number  is not assignable to parameter type  Person ">other</error>)}}
       {{expectNumber(other)}}
     </div>
   `,

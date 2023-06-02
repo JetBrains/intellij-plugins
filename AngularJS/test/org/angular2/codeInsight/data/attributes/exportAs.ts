@@ -8,7 +8,7 @@ import {Component, Directive} from '@angular/core';
       {{ r.<error descr="Unresolved variable bar">bar</error> }}
       {{ f.<weak_warning descr="Unresolved variable bar">bar</weak_warning> }}
       {{ doIt(r) }}
-      {{ doIt(<error descr="Argument type \"test\" is not assignable to parameter type RefDirective">"test"</error>) }}
+      {{ doIt(<error descr="Argument type  \"test\"  is not assignable to parameter type  RefDirective ">"test"</error>) }}
     </div>`,
 })
 export class HeroAsyncMessageComponent {

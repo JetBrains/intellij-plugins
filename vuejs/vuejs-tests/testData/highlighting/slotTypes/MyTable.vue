@@ -4,11 +4,11 @@
       <template v-slot:body="props">
         <MyTableRow :data="props.key"/>
         <MyTableRow :data="props.<error descr="Unresolved variable keys">keys</error>"/>
-        <MyTableRow :data="<error descr="Type number is not assignable to type MyData">props.rowIndex</error>"/>
+        <MyTableRow :data="<error descr="Type  number  is not assignable to type  MyData ">props.rowIndex</error>"/>
       </template>
       <template v-slot:header="{selected, sort: foo} ">
-        <MyTableRow :data="<error descr="Type boolean is not assignable to type MyData">selected</error>"/>
-        <MyTableRow :data="<error descr="Type (col: any) => void is not assignable to type MyData">foo</error>"/>
+        <MyTableRow :data="<error descr="Type  boolean  is not assignable to type  MyData ">selected</error>"/>
+        <MyTableRow :data="<error descr="Type  (col: any) => void  is not assignable to type  MyData ">foo</error>"/>
       </template>
     </q-table>
   </div>

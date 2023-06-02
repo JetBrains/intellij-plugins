@@ -6,8 +6,8 @@ import {Component, Input} from "@angular/core"
  selector: "foo",
  template: `
     <foo 
-      [bar]="<error descr="Type 2 is not assignable to type string | boolean  Type 2 is not assignable to type boolean">2</error>" 
-      [boo]="<error descr="Type 3 is not assignable to type string">3</error>"
+      [bar]="<error descr="Type  2  is not assignable to type  string | boolean   Type 2 is not assignable to type boolean">2</error>" 
+      [boo]="<error descr="Type  3  is not assignable to type  string ">3</error>"
     ></foo>
  `
 })

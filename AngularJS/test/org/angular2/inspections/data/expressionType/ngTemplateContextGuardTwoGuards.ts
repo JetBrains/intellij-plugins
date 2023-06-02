@@ -9,8 +9,8 @@ import {CommonModule} from "@angular/common";
   standalone: true,
   template: `
     <div *appFoo="personPromise | async as person">
-      {{expectPerson(<error descr="Argument type Person | null is not assignable to parameter type Person  Type null is not assignable to type Person">person</error>)}} <!-- should be no error -->
-      {{expectNumber(<error descr="Argument type Person | null is not assignable to parameter type number  Type Person is not assignable to type number">person</error>)}}
+      {{expectPerson(<error descr="Argument type  Person | null  is not assignable to parameter type  Person   Type null is not assignable to type Person">person</error>)}} <!-- should be no error -->
+      {{expectNumber(<error descr="Argument type  Person | null  is not assignable to parameter type  number   Type Person is not assignable to type number">person</error>)}}
     </div>
     <footer>{{<error descr="Indexed expression can be null or undefined">(personPromise | async)</error>[0]}}</footer> <!-- ensure that null checks work -->
   `,

@@ -8,7 +8,7 @@ import {CommonModule} from "@angular/common";
   standalone: true,
   template: `
     <div *appHello="true as local; let foo = somethingOmitted">
-      {{expectNumber(<error descr="Argument type boolean is not assignable to parameter type number">local</error>)}}
+      {{expectNumber(<error descr="Argument type  boolean  is not assignable to parameter type  number ">local</error>)}}
       {{expectNumber(foo)}}
       {{foo.<weak_warning descr="Unresolved variable allYouEverWanted">allYouEverWanted</weak_warning>}}
     </div>

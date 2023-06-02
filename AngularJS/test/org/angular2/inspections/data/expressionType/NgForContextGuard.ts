@@ -10,22 +10,22 @@ import {CommonModule} from "@angular/common";
     <div *ngFor="let person of personsPromise | async as iterable; index as i">
       {{i.toFixed()}}
       {{expectPerson(person)}}
-      {{expectNumber(<error descr="Argument type Person is not assignable to parameter type number">person</error>)}}
-      {{expectNumber(<error descr="Argument type Person[] is not assignable to parameter type number">iterable</error>)}}
+      {{expectNumber(<error descr="Argument type  Person  is not assignable to parameter type  number ">person</error>)}}
+      {{expectNumber(<error descr="Argument type  Person[]  is not assignable to parameter type  number ">iterable</error>)}}
       {{expectPerson(iterable[0])}}
     </div>
     <div *ngFor="let person of personsPromise | async as iterable; index as i; trackBy: trackByPerson">
       {{i.toFixed()}}
       {{expectPerson(person)}}
-      {{expectNumber(<error descr="Argument type Person is not assignable to parameter type number">person</error>)}}
-      {{expectNumber(<error descr="Argument type Person[] is not assignable to parameter type number">iterable</error>)}}
+      {{expectNumber(<error descr="Argument type  Person  is not assignable to parameter type  number ">person</error>)}}
+      {{expectNumber(<error descr="Argument type  Person[]  is not assignable to parameter type  number ">iterable</error>)}}
       {{expectPerson(iterable[0])}}
     </div>
     <div *ngFor="let person of personsPromise | async as iterable; index as i; trackBy: trackByEntity">
       {{i.toFixed()}}
-      {{expectPerson(<error descr="Argument type Entity is not assignable to parameter type Person">person</error>)}} <!--todo bug in TS plugin itself -->
-      {{expectNumber(<error descr="Argument type Entity is not assignable to parameter type number">person</error>)}}
-      {{expectNumber(<error descr="Argument type Person[] is not assignable to parameter type number">iterable</error>)}}
+      {{expectPerson(<error descr="Argument type  Entity  is not assignable to parameter type  Person ">person</error>)}} <!--todo bug in TS plugin itself -->
+      {{expectNumber(<error descr="Argument type  Entity  is not assignable to parameter type  number ">person</error>)}}
+      {{expectNumber(<error descr="Argument type  Person[]  is not assignable to parameter type  number ">iterable</error>)}}
       {{expectPerson(iterable[0])}}
     </div>
     <footer>{{<error descr="Indexed expression can be null or undefined">(personsPromise | async)</error>[0]}}</footer> <!-- ensure that null checks work -->

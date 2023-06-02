@@ -6,7 +6,7 @@ const state: any = () => ({
 
 const getters = {
   getValueAsString2(state): number {
-    return <error descr="Returned expression type string is not assignable to type number">state.value</error>
+    return <error descr="Returned expression type  string  is not assignable to type  number ">state.value</error>
   },
   getUndefinedField2(state): string {
     return state.<error descr="Unresolved variable x">x</error>

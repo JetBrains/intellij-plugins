@@ -1,6 +1,6 @@
 <template>
   <n-button :color='colorValue'
-            :block="<error descr="Type string is not assignable to type boolean">colorValue</error>">
+            :block="<error descr="Type  string  is not assignable to type  boolean ">colorValue</error>">
   </n-button>
 </template>
 

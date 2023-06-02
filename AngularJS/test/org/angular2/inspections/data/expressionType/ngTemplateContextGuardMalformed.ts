@@ -53,7 +53,7 @@ import {CommonModule} from "@angular/common";
     <section>
       <!-- Angular highlights the whole embedded template as error, WebStorm is more permissive -->
       <div *appMalformed4="true; let local">
-        {{expectNumber(<error descr="Argument type boolean is not assignable to parameter type number">local</error>)}}
+        {{expectNumber(<error descr="Argument type  boolean  is not assignable to parameter type  number ">local</error>)}}
         {{local.<error descr="Unresolved variable allYouEverWanted">allYouEverWanted</error>}}
       </div>
       <div *appMalformed4="1; let local">

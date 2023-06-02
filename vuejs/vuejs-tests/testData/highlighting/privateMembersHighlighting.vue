@@ -1,5 +1,5 @@
 <template>
-  <div id="scroller" v-on:click="foo = <error descr="Assigned expression type 12 is not assignable to type boolean">12</error>"></div>
+  <div id="scroller" v-on:click="foo = <error descr="Assigned expression type  12  is not assignable to type  boolean ">12</error>"></div>
   <div id="scrollers" v-on:click="onScrolled"></div>
   {{12 + foo}}
   {{bar}}

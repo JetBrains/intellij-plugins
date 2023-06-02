@@ -20,7 +20,7 @@ import {CommonModule} from "@angular/common";
       {{expectNumber(person)}}
     </ng-template>
     <ng-template [appHello]="" let-person> <!-- undefined -->
-      {{expectNumber(<error descr="Argument type undefined is not assignable to parameter type number">person</error>) }}
+      {{expectNumber(<error descr="Argument type  undefined  is not assignable to parameter type  number ">person</error>) }}
     </ng-template>
 
     <div *appHelloConstrained="as person"> <!-- any in WebStorm, number in Angular --> <!-- todo missing assignment type error -->

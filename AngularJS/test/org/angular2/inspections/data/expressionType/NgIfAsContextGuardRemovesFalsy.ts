@@ -21,8 +21,8 @@ export interface Person {
       {{ expectPerson(person2) }}
       {{ person1.<error descr="Unresolved function or method indexOf()">indexOf</error>("") }}
       {{ person2.<error descr="Unresolved function or method indexOf()">indexOf</error>("") }}
-      {{ expectNumber(<error descr="Argument type Person is not assignable to parameter type number">person1</error>) }}
-      {{ expectNumber(<error descr="Argument type Person is not assignable to parameter type number">person2</error>) }}
+      {{ expectNumber(<error descr="Argument type  Person  is not assignable to parameter type  number ">person1</error>) }}
+      {{ expectNumber(<error descr="Argument type  Person  is not assignable to parameter type  number ">person2</error>) }}
     </div>
   `,
 })

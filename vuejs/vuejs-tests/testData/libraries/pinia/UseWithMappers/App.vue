@@ -39,11 +39,11 @@ export default defineComponent({
     ...mapState(useCartStore, ['formattedCart']),
   },
   created() {
-    let a: string = <error descr="Initializer type CartPreview[] is not assignable to variable type string">this.cartStore.formattedCart</error>
+    let a: string = <error descr="Initializer type  CartPreview[]  is not assignable to variable type  string ">this.cartStore.formattedCart</error>
     let b = this.cartStore.<error descr="Unresolved variable formattedGart">formattedGart</error>
-    let c: string = <error descr="Initializer type CartPreview[] is not assignable to variable type string">this.formattedCart</error>
+    let c: string = <error descr="Initializer type  CartPreview[]  is not assignable to variable type  string ">this.formattedCart</error>
     this.formattedCart[0].<error descr="Unresolved variable cst">cst</error>
-    let d: string = <error descr="Initializer type number is not assignable to variable type string">this.formattedCart[0].cost</error>
+    let d: string = <error descr="Initializer type  number  is not assignable to variable type  string ">this.formattedCart[0].cost</error>
     this.<error descr="Unresolved variable total">total</error>
     this.<error descr="Unresolved function or method remove()">remove</error>(12)
     let <warning descr="Unused local variable s">s</warning> = a + b + c + d
