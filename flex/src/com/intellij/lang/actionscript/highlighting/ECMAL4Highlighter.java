@@ -167,7 +167,8 @@ public class ECMAL4Highlighter extends JSHighlighter {
       ourAttributeMap.put(type, ECMAL4_DOC_COMMENT);
     }
 
-    ourAttributeMap.put(JSDocTokenTypes.DOC_TAG_VALUE, ECMAL4_DOC_COMMENT);
+    ourAttributeMap.put(JSDocTokenTypes.DOC_DESCRIPTION, ECMAL4_DOC_COMMENT);
+    ourAttributeMap.put(JSDocTokenTypes.DOC_TAG_TYPE, ECMAL4_DOC_COMMENT);
     ourAttributeMap.put(JSDocTokenTypes.DOC_TAG_NAMEPATH, ECMAL4_DOC_COMMENT);
     ourDocAttributeMap.put(JSDocTokenTypes.DOC_TAG_NAME, ECMAL4_DOC_TAG);
 
@@ -196,7 +197,7 @@ public class ECMAL4Highlighter extends JSHighlighter {
   @Override
   public TextAttributesKey @NotNull [] getTokenHighlights(IElementType tokenType) {
     if (ourDocAttributeMap.containsKey(tokenType)) {
-      return pack(ourAttributeMap.get(JSDocTokenTypes.DOC_TAG_VALUE), ourDocAttributeMap.get(tokenType));
+      return pack(ourAttributeMap.get(JSDocTokenTypes.DOC_DESCRIPTION), ourDocAttributeMap.get(tokenType));
     }
     if (ourAttributeMap.containsKey(tokenType)) {
       return pack(ourAttributeMap.get(tokenType));

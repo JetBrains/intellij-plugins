@@ -4,7 +4,7 @@ package org.angularjs;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocComment;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTag;
-import com.intellij.lang.javascript.psi.jsdoc.JSDocTagValue;
+import com.intellij.lang.javascript.psi.jsdoc.impl.JSDocTags;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -44,14 +44,15 @@ public class AngularJSDocumentationProvider implements DocumentationProvider {
       JSDocTag ngdocTag = null;
       JSDocTag nameTag = null;
       for (JSDocTag tag : ((JSDocComment)element).getTags()) {
-        if ("ngdoc".equals(tag.getName())) {
+        if (tag.is("ngdoc")) {
           ngdocTag = tag;
         }
-        else if ("name".equals(tag.getName())) nameTag = tag;
+        else if (tag.is(JSDocTags.NAME)) {
+          nameTag = tag;
+        }
       }
       if (ngdocTag != null && nameTag != null) {
-        final JSDocTagValue nameValue = nameTag.getValue();
-        String name = nameValue != null ? nameValue.getText() : null;
+        String name = nameTag.getNamepathText();
         if (name != null) name = name.substring(name.indexOf(':') + 1);
         if (name != null && getElementForDocumentation(element.getProject(), name) != null) {
           return Collections.singletonList("https://docs.angularjs.org/api/ng/directive/" + name);

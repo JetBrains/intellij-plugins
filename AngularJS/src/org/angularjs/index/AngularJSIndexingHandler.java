@@ -2,8 +2,6 @@
 package org.angularjs.index;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.javascript.JSDocTokenTypes;
-import com.intellij.lang.javascript.documentation.JSDocumentationUtils;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
 import com.intellij.lang.javascript.index.JSSymbolUtil;
 import com.intellij.lang.javascript.library.JSLibraryUtil;
@@ -13,7 +11,7 @@ import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocComment;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTag;
-import com.intellij.lang.javascript.psi.jsdoc.JSDocTagValue;
+import com.intellij.lang.javascript.psi.jsdoc.impl.JSDocTags;
 import com.intellij.lang.javascript.psi.literal.JSLiteralImplicitElementProvider;
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
@@ -30,7 +28,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.tree.CompositeElement;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubIndexKey;
@@ -338,7 +335,8 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     return outData;
   }
 
-  private record WrappingCall(@NotNull JSCallExpression call, int level, boolean immediate) {}
+  private record WrappingCall(@NotNull JSCallExpression call, int level, boolean immediate) {
+  }
 
   private static @Nullable WrappingCall findWrappingCall(@NotNull JSProperty property) {
     PsiElement current = property.getParent();
@@ -382,10 +380,11 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     if (index != null && sink != null) {
       if (index == AngularDirectivesIndex.KEY
           || index == AngularDirectivesDocIndex.KEY) {
-        for (String indexKey: getDirectiveIndexKeys(element)) {
+        for (String indexKey : getDirectiveIndexKeys(element)) {
           sink.occurrence(index, indexKey);
         }
-      }  else {
+      }
+      else {
         sink.occurrence(index, element.getName());
       }
       if (index != AngularSymbolIndex.KEY) {
@@ -399,31 +398,37 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   public JSElementIndexingData processJSDocComment(final @NotNull JSDocComment comment, @Nullable JSElementIndexingData outData) {
     JSDocTag ngdocTag = null;
     JSDocTag nameTag = null;
+    String restrict = null;
+    String element = "";
+    List<JSDocTag> params = new ArrayList<>();
     for (JSDocTag tag : comment.getTags()) {
-      if ("ngdoc".equals(tag.getName())) {
+      if (tag.is("ngdoc")) {
         ngdocTag = tag;
       }
-      else if ("name".equals(tag.getName())) nameTag = tag;
+      else if (tag.is(JSDocTags.NAME)) {
+        nameTag = tag;
+      }
+      else if (tag.is("restrict")) {
+        restrict = getParamValue(restrict, tag.getDescriptionText(), RESTRICT);
+      }
+      else if (tag.is(JSDocTags.PARAM)) {
+        params.add(tag);
+      }
+      else if (tag.is("element")) {
+        element = getParamValue(element, tag.getDescriptionText(), ELEMENT);
+      }
     }
     if (ngdocTag != null && nameTag != null) {
-      final JSDocTagValue nameValue = nameTag.getValue();
-      String name = nameValue != null ? nameValue.getText() : null;
+      String name = nameTag.getNamepathText();
       if (name != null) name = name.substring(name.indexOf(':') + 1);
 
-      String ngdocValue = null;
-      PsiElement nextSibling = ngdocTag.getNextSibling();
-      if (nextSibling instanceof PsiWhiteSpace) nextSibling = nextSibling.getNextSibling();
-      if (nextSibling != null && nextSibling.getNode().getElementType() == JSDocTokenTypes.DOC_COMMENT_DATA) {
-        ngdocValue = nextSibling.getText();
-      }
+      String ngdocValue = ngdocTag.getDescriptionText();
       if (ngdocValue != null && name != null) {
-        final String[] commentLines = StringUtil.splitByLines(comment.getText());
-
         final boolean directive = ngdocValue.contains(DIRECTIVE);
         final boolean component = ngdocValue.contains(COMPONENT);
         if (directive || component) {
           final List<Pair<String, String>> restrictions =
-            calculateRestrictions(comment, commentLines, name, directive ? DEFAULT_RESTRICTIONS : "E");
+            calculateRestrictions(name, params, element, restrict == null ? (directive ? DEFAULT_RESTRICTIONS : "E") : restrict);
           if (outData == null) outData = new JSElementIndexingDataImpl();
           for (Pair<String, String> p : restrictions) {
             addImplicitElements(comment, directive ? DIRECTIVE : COMPONENT, AngularDirectivesDocIndex.KEY, p.first, p.second, outData);
@@ -438,44 +443,37 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     return outData;
   }
 
-  private static List<Pair<String, String>> calculateRestrictions(@NotNull PsiElement context, 
-                                                                  final String[] commentLines,
-                                                                  String directiveName,
-                                                                  String defaultRestrictions) {
-    String restrict = defaultRestrictions;
-    String tag = "";
+  private static List<Pair<String, String>> calculateRestrictions(String directiveName,
+                                                                  List<JSDocTag> paramTags,
+                                                                  String elementName,
+                                                                  String restrict) {
     List<Pair<String, String>> result = new SmartList<>();
-    for (String line : commentLines) {
-      restrict = getParamValue(restrict, line, RESTRICT);
-      tag = getParamValue(tag, line, ELEMENT);
-      final int start = line.indexOf(PARAM);
-      if (start >= 0) {
-        final JSDocumentationUtils.DocTag docTag = JSDocumentationUtils.getDocTag(context, line.substring(start));
-        if (docTag != null && docTag.matchName != null) {
-          for (String paramName : StringUtil.split(docTag.matchName, "|")) {
-            if (restrict.equals(DEFAULT_RESTRICTIONS) || restrict.contains("A")) {
-              result.add(Pair.pair(paramName, "A;" + tag + (directiveName.equals(paramName) ? "" : "=" + directiveName) + ";"
-                                              + (docTag.matchValue != null ? docTag.matchValue : "") + ";"));
-            }
-            if (restrict.contains("E")) {
-              result.add(Pair.pair(paramName, "A;" + directiveName + ";"
-                                              + (docTag.matchValue != null ? docTag.matchValue : "") + ";"));
-            }
-          }
+    for (JSDocTag docTag : paramTags) {
+      var namepath = docTag.getNamepathText();
+      if (namepath == null) continue;
+      var type = docTag.getTypeText();
+      for (String paramName : StringUtil.split(namepath, "|")) {
+        if (restrict.equals(DEFAULT_RESTRICTIONS) || restrict.contains("A")) {
+          result.add(Pair.pair(paramName, "A;" + elementName + (directiveName.equals(paramName) ? "" : "=" + directiveName) + ";"
+                                          + (type != null ? type : "") + ";"));
+        }
+        if (restrict.contains("E")) {
+          result.add(Pair.pair(paramName, "A;" + directiveName + ";"
+                                          + (type != null ? type : "") + ";"));
         }
       }
     }
     if (restrict.contains("E")) {
-      result.add(Pair.pair(directiveName, "E;" + tag + ";;"));
+      result.add(Pair.pair(directiveName, "E;" + elementName + ";;"));
     }
     else if (result.isEmpty()) {
       if (restrict.equals(DEFAULT_RESTRICTIONS)) {
-        result.add(Pair.pair(directiveName, "A;" + tag + ";;"));
+        result.add(Pair.pair(directiveName, "A;" + elementName + ";;"));
       }
-      result.add(Pair.pair(directiveName, restrict + ";" + tag + ";;"));
+      result.add(Pair.pair(directiveName, restrict + ";" + elementName + ";;"));
     }
     else if (restrict.equals(DEFAULT_RESTRICTIONS)) {
-      result.add(Pair.pair(directiveName, "D;" + tag + ";;"));
+      result.add(Pair.pair(directiveName, "D;" + elementName + ";;"));
     }
     return result;
   }
