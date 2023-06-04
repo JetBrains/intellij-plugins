@@ -10,6 +10,7 @@ import com.intellij.dts.util.DtsUtil
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -43,7 +44,7 @@ class DtsSemicolonEnterHandler : EnterHandlerDelegateAdapter() {
     }
 
     override fun postProcessEnter(file: PsiFile, editor: Editor, dataContext: DataContext): Result {
-        if (file !is DtsFile) return Result.Continue
+        if (file !is DtsFile || !Registry.`is`("dts.insert_semicolons")) return Result.Continue
 
         PsiDocumentManager.getInstance(file.project).commitDocument(editor.document)
 

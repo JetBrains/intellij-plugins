@@ -68,6 +68,7 @@ public interface DtsTypes {
   com.intellij.psi.tree.IElementType GEQ = new com.intellij.dts.lang.DtsTokenType("GEQ");
   com.intellij.psi.tree.IElementType GRT = new com.intellij.dts.lang.DtsTokenType("GRT");
   com.intellij.psi.tree.IElementType HANDLE = new com.intellij.dts.lang.DtsTokenType("HANDLE");
+  com.intellij.psi.tree.IElementType INCLUDE = new com.intellij.dts.lang.DtsTokenType("INCLUDE");
   com.intellij.psi.tree.IElementType INT_VALUE = new com.intellij.dts.lang.DtsTokenType("INT_VALUE");
   com.intellij.psi.tree.IElementType LABEL = new com.intellij.dts.lang.DtsTokenType("LABEL");
   com.intellij.psi.tree.IElementType LANGL = new com.intellij.dts.lang.DtsTokenType("LANGL");

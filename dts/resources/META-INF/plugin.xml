@@ -28,6 +28,8 @@
                 implementationClass="com.intellij.dts.highlighting.DtsHighlightAnnotator"/>
         <colorSettingsPage
                 implementation="com.intellij.dts.settings.DtsColorSettingsPage"/>
+        <highlightErrorFilter
+                implementation="com.intellij.dts.lang.parser.DtsHighlightingErrorFilter"/>
 
         <!-- code formatting -->
         <lang.formatter
@@ -97,5 +99,15 @@
                 enabledByDefault="true"
                 level="ERROR"
                 implementationClass="com.intellij.dts.inspections.DtsBitsInspection"/>
+
+        <!-- registry keys -->
+        <registryKey
+                key="dts.parser_errors"
+                defaultValue="true"
+                description="Enables parser errors"/>
+        <registryKey
+                key="dts.insert_semicolons"
+                defaultValue="true"
+                description="Enables automatic semicolon insertion after entries"/>
     </extensions>
 </idea-plugin>

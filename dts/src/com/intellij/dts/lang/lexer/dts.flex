@@ -80,6 +80,7 @@ COMMENT_EOL       = "//"[^\r\n]*
 COMMENT_C         = "/*"([^*]|"*"[^/])*"*/"
 
 %state WAITING_CELL WAITING_BYTE WAITING_VALUE WAITING_BITS WAITING_EXPR WAITING_STRING WAITING_CHAR WAITING_HANDLE
+%state WAITING_INCLUDE
 
 %%
 
@@ -94,6 +95,7 @@ COMMENT_C         = "/*"([^*]|"*"[^/])*"*/"
 
 "/dts-v1/"                                          { resetState(); return DtsTypes.V1; }
 "/plugin/"                                          { resetState(); return DtsTypes.PLUGIN; }
+"/include/"                                         { pushState(WAITING_INCLUDE); return DtsTypes.INCLUDE; }
 "/memreserve/"                                      { resetState(); pushState(WAITING_CELL); return DtsTypes.MEMRESERVE; }
 "/delete-node/"                                     { resetState(); return DtsTypes.DELETE_NODE; }
 "/delete-property/"                                 { resetState(); return DtsTypes.DELETE_PROP; }
@@ -122,10 +124,12 @@ COMMENT_C         = "/*"([^*]|"*"[^/])*"*/"
     "<"                                             { pushState(WAITING_CELL); return DtsTypes.LANGL; }
     ">"                                             { return DtsTypes.RANGL; }
 
-    "\""                                            { pushState(WAITING_STRING); return DtsTypes.DQUOTE; }
-
     {NAME}":"                                       { return DtsTypes.LABEL; }
     {IDENTIFIER}                                    { return DtsTypes.NAME; }
+}
+
+<YYINITIAL, WAITING_VALUE, WAITING_INCLUDE> {
+    "\""                                            { pushState(WAITING_STRING); return DtsTypes.DQUOTE; }
 }
 
 <WAITING_STRING> {
