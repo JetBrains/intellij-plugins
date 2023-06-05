@@ -24,7 +24,6 @@
  */
 package org.osmorc.i18n;
 
-import com.intellij.AbstractBundle;
 import com.intellij.DynamicBundle;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationGroupManager;
@@ -44,7 +43,7 @@ import java.util.function.Supplier;
  */
 public final class OsmorcBundle {
   private static final String BUNDLE = "messages.OsmorcBundle";
-  private static final DynamicBundle INSTANCE = new DynamicBundle(AbstractBundle.class, BUNDLE);
+  private static final DynamicBundle INSTANCE = new DynamicBundle(OsmorcBundle.class, BUNDLE);
 
   private OsmorcBundle() {
   }
