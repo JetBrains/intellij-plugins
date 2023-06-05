@@ -53,7 +53,7 @@ class VueComponentStylesIndex : ScalarIndexExtension<String>() {
       }
     }
 
-    override fun whenFileTypeHintUnsure(file: IndexedFile): Boolean {
+    override fun slowPathIfFileTypeHintUnsure(file: IndexedFile): Boolean {
       return !NodeModuleUtil.hasNodeModulesDirInPath(file.file, null)
     }
   }
