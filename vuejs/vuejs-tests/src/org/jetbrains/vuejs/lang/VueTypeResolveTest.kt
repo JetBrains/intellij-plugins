@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.JSType
@@ -157,4 +158,11 @@ class VueTypeResolveTest : BasePlatformTestCase() {
   private fun findReferenceBySignature(signature: String) = InjectedLanguageManager.getInstance(project)
     .findInjectedElementAt(myFixture.file, myFixture.file.findOffsetBySignature(signature))
     ?.parentOfType<JSReferenceExpression>()
+
+  fun testTypeofImportRef() {
+    // WEB-56524
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.configureByFile("typeof-import-ref.ts")
+    assertEquals("Ref&lt;UnwrapRef&lt;string&gt;&gt;", JSTestUtils.getExpressionTypeFromEditor(myFixture))
+  }
 }
