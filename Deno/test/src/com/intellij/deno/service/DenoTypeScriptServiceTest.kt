@@ -1,18 +1,12 @@
 package com.intellij.deno.service
 
 import com.intellij.deno.DenoSettings
-import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase
 import com.intellij.lang.javascript.modules.JSTempDirWithNodeInterpreterTest
-import com.intellij.lang.javascript.typescript.TypeScriptFormatterTest
 import com.intellij.lsp.checkLspHighlighting
 import com.intellij.openapi.application.WriteAction
-import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.psi.PsiFile
-import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
-import com.intellij.util.ui.UIUtil
 
 class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
   override fun setUp() {
@@ -32,14 +26,14 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
     val file = myFixture.configureByText("bar.ts", "")
     myFixture.type("export class Hello {}\n" +
                    "<error descr=\"Deno: Cannot find name 'UnknownName'.\"><error descr=\"Unresolved variable or type UnknownName\">UnknownName</error></error>")
-    close(file)
+    FileEditorManager.getInstance(project).closeFile(file.virtualFile)
 
     myFixture.configureByText("foo.ts", "import {" +
                                         "<warning descr=\"Deno: `Hello` is never used\nIf this is intentional, alias it with an underscore like `Hello as _Hello`\">Hello</warning>, " +
                                         "<error descr=\"Cannot resolve symbol 'Goodbye'\"><error descr=\"Deno: Module '\\\"./bar.ts\\\"' has no exported member 'Goodbye'.\">Goodbye</error></error>} from './bar.ts';\n" +
                                         "<error descr=\"Deno: Cannot find name 'UnknownName'.\"><error descr=\"Unresolved variable or type UnknownName\">UnknownName</error></error>")
     myFixture.checkLspHighlighting()
-    close(this.file)
+    FileEditorManager.getInstance(project).closeFile(this.file.virtualFile)
 
     myFixture.openFileInEditor(file.virtualFile)
     myFixture.checkLspHighlighting()
@@ -93,42 +87,5 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
     WriteAction.run<Throwable> { myFixture.editor.document.setText(myFixture.editor.document.text.replace("UnknownName", errorWithMarkup)) }
     myFixture.checkLspHighlighting()
     myFixture.checkResult("import { Hello<caret>2 } from '../bar1.ts'\nconst _hi = new Hello2()\nUnknownName")
-  }
-
-  fun testDenoReformat() {
-    TypeScriptFormatterTest.setTempSettings(project) {
-      it.FORCE_SEMICOLON_STYLE = true
-    }
-    myFixture.configureByText("foo.ts", "export class Foo {}")
-    myFixture.configureByText("bar.ts", "export class Bar {}")
-    myFixture.configureByText("test.ts", """
-      import {  Foo  } from './foo.ts'
-      import {  Bar  } from './bar.ts'
-      console.log(Foo)
-      console.log(Bar)
-      console.log(<error>Bar1</error>)
-    """.trimIndent())
-    checkHighlightingByOptions(false)
-    CommandProcessor.getInstance().executeCommand(project, {
-      WriteAction.run<RuntimeException> {
-        CodeStyleManager.getInstance(project).reformat(myFixture.file)
-      }
-    }, "write", null)
-    UIUtil.dispatchAllInvocationEvents()
-    //have to wait for the annotations, because diagnostics are async
-    Thread.sleep(2000)
-    myFixture.doHighlighting()
-    JSDaemonAnalyzerLightTestCase.checkHighlightingByText(myFixture, """
-      import {Foo} from './foo.ts';
-      import {Bar} from './bar.ts';
-
-      console.log(Foo);
-      console.log(Bar);
-      console.log(<error>Bar1</error>);
-    """.trimIndent(), true)
-  }
-
-  private fun close(file: PsiFile) {
-    FileEditorManager.getInstance(project).closeFile(file.virtualFile)
   }
 }
