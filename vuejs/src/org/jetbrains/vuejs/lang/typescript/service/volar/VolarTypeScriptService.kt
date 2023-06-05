@@ -3,24 +3,24 @@ package org.jetbrains.vuejs.lang.typescript.service.volar
 
 import com.intellij.lang.javascript.ecmascript6.TypeScriptAnnotatorCheckerProvider
 import com.intellij.lang.typescript.compiler.TypeScriptLanguageServiceAnnotatorCheckerProvider
-import com.intellij.lang.typescript.compiler.languageService.TypeScriptMessageBus
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
-import com.intellij.lang.typescript.lsp.BaseLspTypeScriptService
-import com.intellij.lsp.LspServer
-import com.intellij.lsp.api.LspServerManager
+import com.intellij.lang.typescript.lsp.JSFrameworkLspTypeScriptService
+import com.intellij.lsp.api.LspServerDescriptor
+import com.intellij.lsp.api.LspServerSupportProvider
 import com.intellij.lsp.methods.HoverMethod
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import org.jetbrains.vuejs.lang.typescript.service.isVolarEnabled
+import org.jetbrains.vuejs.lang.typescript.service.isVolarEnabledAndAvailable
 import org.jetbrains.vuejs.lang.typescript.service.isVolarFileTypeAcceptable
+import org.jetbrains.vuejs.options.VueServiceSettings
+import org.jetbrains.vuejs.options.getVueSettings
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletableFuture.completedFuture
 
-class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(project) {
-  override fun getLspServers(): Collection<LspServer> =
-    LspServerManager.getInstance(project).getServersForProvider(VolarSupportProvider::class.java)
+class VolarTypeScriptService(project: Project) : JSFrameworkLspTypeScriptService(project) {
+  override fun getProviderClass(): Class<out LspServerSupportProvider> = VolarSupportProvider::class.java
 
   override val name = "Volar"
   override val serverVersion = volarVersion
@@ -46,12 +46,13 @@ class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(projec
     return isVolarFileTypeAcceptable(file.virtualFile ?: return false)
   }
 
-  override fun isAcceptable(file: VirtualFile) = isVolarEnabled(project, file)
+  override fun isAcceptable(file: VirtualFile) = isVolarEnabledAndAvailable(project, file)
 
-  override fun restart(recreateToolWindow: Boolean) {
-    val lspServerManager = LspServerManager.getInstance(project)
-    getLspServers().forEach { lspServerManager.stopServer(it) }
-    updateVolarLsp(project, true)
-    TypeScriptMessageBus.get(project).changed()
+  override fun isServiceEnabledBySettings(project: Project): Boolean {
+    return getVueSettings(project).serviceType == VueServiceSettings.VOLAR
+  }
+
+  override fun getLspServerDescriptor(project: Project, file: VirtualFile): LspServerDescriptor? {
+    return getVolarServerDescriptor(project, file)
   }
 }

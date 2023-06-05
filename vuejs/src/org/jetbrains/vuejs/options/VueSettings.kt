@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.options
 
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
-import org.jetbrains.vuejs.lang.typescript.service.volar.updateVolarLspAsync
+import org.jetbrains.vuejs.lang.typescript.service.restartTypeScriptServicesAsync
 
 @State(name = "VueSettings", storages = [Storage(StoragePathMacros.WORKSPACE_FILE)])
 class VueSettings(val project: Project) : SimplePersistentStateComponent<VueSettingsState>(VueSettingsState()) {
@@ -12,7 +12,7 @@ class VueSettings(val project: Project) : SimplePersistentStateComponent<VueSett
     set(value) {
       val changed = state.innerServiceType != value
       state.innerServiceType = value
-      if (changed) updateVolarLspAsync(project)
+      if (changed) restartTypeScriptServicesAsync(project)
     }
 }
 

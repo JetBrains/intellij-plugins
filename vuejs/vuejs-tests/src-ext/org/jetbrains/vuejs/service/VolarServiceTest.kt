@@ -14,9 +14,8 @@ import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.VueInspectionsProvider
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
+import org.jetbrains.vuejs.lang.typescript.service.volar.VolarExecutableDownloader
 import org.jetbrains.vuejs.lang.typescript.service.volar.VolarTypeScriptService
-import org.jetbrains.vuejs.lang.typescript.service.volar.getVolarExecutable
-import org.jetbrains.vuejs.lang.typescript.service.volar.scheduleVolarDownloading
 import org.jetbrains.vuejs.options.VueServiceSettings
 import org.jetbrains.vuejs.options.getVueSettings
 import org.junit.Test
@@ -37,12 +36,8 @@ class VolarServiceTest : JSTempDirWithNodeInterpreterTest() {
     vueSettings.serviceType = VueServiceSettings.VOLAR
     (myFixture as CodeInsightTestFixtureImpl).canChangeDocumentDuringHighlighting(true)
 
-    if (getVolarExecutable() == null) {
-      //blocking download
-      scheduleVolarDownloading(project)
-    }
-
-    TestCase.assertNotNull(getVolarExecutable())
+    VolarExecutableDownloader.getExecutableOrRefresh(project) // could run blocking download
+    TestCase.assertNotNull(VolarExecutableDownloader.getExecutable())
   }
 
   @Test
@@ -51,13 +46,13 @@ class VolarServiceTest : JSTempDirWithNodeInterpreterTest() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
 
     myFixture.configureByText("tsconfig.json", "{}")
-    myFixture.configureByText(
-      "Simple.vue",
-      "<template><div></div></template>\n" +
-      "<script lang=\"ts\">\n" +
-      "    export let <error descr=\"Volar: Type 'number' is not assignable to type 'string'.\">a</error>:string = 1; \n" +
-      "</script>"
-    )
+    myFixture.configureByText("Simple.vue", """
+      <script setup lang="ts">
+      let <error descr="Volar: Type 'number' is not assignable to type 'string'.">a</error>:string = 1; 
+      </script>
+      
+      <template><div></div></template>
+    """)
     myFixture.doHighlighting()
     val service = TypeScriptService.getForFile(project, file.virtualFile)
     UsefulTestCase.assertInstanceOf(service, VolarTypeScriptService::class.java)

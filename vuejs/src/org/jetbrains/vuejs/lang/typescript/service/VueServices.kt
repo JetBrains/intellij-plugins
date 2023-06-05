@@ -2,23 +2,25 @@
 package org.jetbrains.vuejs.lang.typescript.service
 
 import com.intellij.javascript.nodejs.PackageJsonData
+import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerState
 import com.intellij.lang.typescript.library.TypeScriptLibraryProvider
-import com.intellij.lang.typescript.library.TypeScriptServiceDirectoryWatcher
+import com.intellij.lang.typescript.lsp.getTypeScriptServiceDirectory
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
-import org.jetbrains.vuejs.lang.typescript.service.volar.getVolarExecutableAndRefresh
+import org.jetbrains.vuejs.lang.typescript.service.volar.VolarExecutableDownloader
 import org.jetbrains.vuejs.options.VueServiceSettings
 import org.jetbrains.vuejs.options.getVueSettings
 
 
-fun isVueServiceContext(project: Project, context: VirtualFile): Boolean = context.fileType is VueFileType || isVueContext(context, project)
+private fun isVueServiceContext(project: Project, context: VirtualFile): Boolean = context.fileType is VueFileType || isVueContext(context, project)
 
-fun isTypeScriptServiceBefore5Context(project: Project): Boolean {
+private fun isTypeScriptServiceBefore5Context(project: Project): Boolean {
   val path = getTypeScriptServiceDirectory(project)
 
   val packageJson = TypeScriptServerState.getPackageJsonFromServicePath(path)
@@ -27,11 +29,9 @@ fun isTypeScriptServiceBefore5Context(project: Project): Boolean {
   return version.major < 5
 }
 
-fun getTypeScriptServiceDirectory(project: Project): String {
-  val watcher = TypeScriptServiceDirectoryWatcher.getService(project)
-  return watcher.calcServiceDirectoryAndRefresh()
-}
-
+/**
+ * Refers to the classic service that predates Volar.
+ */
 fun isVueTypeScriptServiceEnabled(project: Project, context: VirtualFile): Boolean {
   if (!isVueServiceContext(project, context)) return false
 
@@ -42,10 +42,13 @@ fun isVueTypeScriptServiceEnabled(project: Project, context: VirtualFile): Boole
   }
 }
 
-fun isVolarEnabled(project: Project, context: VirtualFile): Boolean {
+/**
+ * If enabled but not available, will launch a background task that will eventually restart the services
+ */
+fun isVolarEnabledAndAvailable(project: Project, context: VirtualFile): Boolean {
   return isVolarFileTypeAcceptable(context) &&
          isVolarEnabledByContextAndSettings(project, context) &&
-         getVolarExecutableAndRefresh(project) != null
+         VolarExecutableDownloader.getExecutableOrRefresh(project) != null
 }
 
 fun isVolarFileTypeAcceptable(file: VirtualFile): Boolean {
@@ -54,7 +57,7 @@ fun isVolarFileTypeAcceptable(file: VirtualFile): Boolean {
   return file.isDotVueFile || TypeScriptLanguageServiceUtil.ACCEPTABLE_TS_FILE.value(file)
 }
 
-fun isVolarEnabledByContextAndSettings(project: Project, context: VirtualFile): Boolean {
+private fun isVolarEnabledByContextAndSettings(project: Project, context: VirtualFile): Boolean {
   if (!TypeScriptLanguageServiceUtil.isServiceEnabled(project)) return false
   if (!isVueServiceContext(project, context)) return false
   if (TypeScriptLibraryProvider.isLibraryOrBundledLibraryFile(project, context)) return false
@@ -64,4 +67,10 @@ fun isVolarEnabledByContextAndSettings(project: Project, context: VirtualFile): 
     VueServiceSettings.AUTO -> !isTypeScriptServiceBefore5Context(project)
     else -> false
   }
+}
+
+fun restartTypeScriptServicesAsync(project: Project) {
+  ApplicationManager.getApplication().invokeLater(Runnable {
+    TypeScriptService.restartServices(project)
+  }, project.disposed)
 }
