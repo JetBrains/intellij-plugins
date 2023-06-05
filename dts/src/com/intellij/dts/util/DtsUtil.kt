@@ -1,6 +1,7 @@
 package com.intellij.dts.util
 
 import com.intellij.dts.lang.DtsTokenSets
+import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.psi.PsiElement
 import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
@@ -44,13 +45,16 @@ object DtsUtil {
 
     /**
      * A token is considered productive if it is none of the following:
+     * - not null
      * - comment
      * - whit space
      * - any kind of preprocessor statement
      */
-    fun isProductiveElement(type: IElementType): Boolean {
-        // add preprocessor statements and includes
+    fun isProductiveElement(type: IElementType?): Boolean {
+        if (type == null) return false
 
-        return type != TokenType.WHITE_SPACE && type !in DtsTokenSets.comments
+        // add preprocessor statements
+
+        return type != TokenType.WHITE_SPACE && type !in DtsTokenSets.comments && type != DtsTypes.INCLUDE_DIRECTIVE
     }
 }

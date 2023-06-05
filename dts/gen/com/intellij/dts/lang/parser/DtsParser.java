@@ -446,6 +446,25 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   /* ********************************************************** */
+  // () INCLUDE string
+  public static boolean includeDirective(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "includeDirective")) return false;
+    boolean result_, pinned_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_, INCLUDE_DIRECTIVE, "<include directive>");
+    result_ = includeDirective_0(builder_, level_ + 1);
+    pinned_ = result_; // pin = 1
+    result_ = result_ && report_error_(builder_, consumeToken(builder_, INCLUDE));
+    result_ = pinned_ && string(builder_, level_ + 1) && result_;
+    exit_section_(builder_, level_, marker_, result_, pinned_, null);
+    return result_ || pinned_;
+  }
+
+  // ()
+  private static boolean includeDirective_0(com.intellij.lang.PsiBuilder builder_, int level_) {
+    return true;
+  }
+
+  /* ********************************************************** */
   // INT_VALUE
   public static boolean int_$(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "int_$")) return false;

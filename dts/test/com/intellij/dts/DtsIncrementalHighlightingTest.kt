@@ -8,8 +8,6 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 class DtsIncrementalHighlightingTest : BasePlatformTestCase() {
     fun testV1() = doTest("/dts-v1<caret>", "/", listOf(DtsTypes.V1))
 
-    fun testInclude() = doTest("/include/ \"<caret>\"", "a", listOf(DtsTypes.PP_STATEMENT))
-
     private fun doTest(text: String, character: String, tokenTypes: List<IElementType>) {
         require(text.contains("<caret>")) {
             "Test text must contain \"<caret>\" to indicate caret position"

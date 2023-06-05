@@ -4,11 +4,9 @@ import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegate.Result
 import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegateAdapter
 import com.intellij.dts.lang.DtsFile
 import com.intellij.dts.lang.psi.DtsEntry
-import com.intellij.dts.lang.psi.DtsProperty
 import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.dts.util.DtsUtil
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiDocumentManager
@@ -18,6 +16,7 @@ import com.intellij.psi.TokenType
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import com.intellij.refactoring.suggested.endOffset
+import com.intellij.refactoring.suggested.startOffset
 
 class DtsSemicolonEnterHandler : EnterHandlerDelegateAdapter() {
     private fun isLineBreak(element: PsiElement): Boolean {
@@ -25,22 +24,31 @@ class DtsSemicolonEnterHandler : EnterHandlerDelegateAdapter() {
         return element.text.contains('\n')
     }
 
-    private fun skipLabels(property: DtsProperty): Int {
-        val lastValue = property.dtsValues.lastOrNull() ?: return property.endOffset
+    private fun skippableElement(element: PsiElement): Boolean {
+        if (element.elementType == DtsTypes.LABEL) return true
 
-        val children = DtsUtil.children(lastValue, forward = false, unfiltered = true)
-
-        for (window in children.windowed(2)) {
-            if (window[0].elementType == TokenType.WHITE_SPACE) continue
-            if (window[0].elementType == DtsTypes.LABEL && isLineBreak(window[1])) continue
-
-            return window[0].endOffset
+        // find first unproductive element or stop the search at the entry element
+        val unproductiveElement = PsiTreeUtil.findFirstParent(element, false) {
+            it is DtsEntry || !DtsUtil.isProductiveElement(it.elementType)
         }
 
-        // fallback, should not be reachable
-        Logger.getInstance(this::class.java).warn("skip labels reached end of entry")
+        return unproductiveElement != null && unproductiveElement !is DtsEntry
+    }
 
-        return property.endOffset
+    private fun skipElements(file: PsiFile, editor: Editor, statement: PsiElement): Int {
+        val iterator = editor.highlighter.createIterator(statement.endOffset)
+
+        while (iterator.start > statement.startOffset) {
+            val element = file.findElementAt(iterator.start) ?: break
+
+            if (!skippableElement(element)) {
+                return iterator.end
+            } else {
+                iterator.retreat()
+            }
+        }
+
+        return iterator.end
     }
 
     override fun postProcessEnter(file: PsiFile, editor: Editor, dataContext: DataContext): Result {
@@ -59,11 +67,7 @@ class DtsSemicolonEnterHandler : EnterHandlerDelegateAdapter() {
         if (entry.hasDtsSemicolon) return Result.Continue
         if (PsiTreeUtil.hasErrorElements(statement)) return Result.Continue
 
-        if (statement is DtsProperty) {
-            editor.document.insertString(skipLabels(statement), ";")
-        } else {
-            editor.document.insertString(statement.endOffset, ";")
-        }
+        editor.document.insertString(skipElements(file, editor, statement), ";")
 
         return Result.Default
     }

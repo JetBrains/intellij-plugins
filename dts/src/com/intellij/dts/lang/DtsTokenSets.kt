@@ -24,7 +24,8 @@ object DtsTokenSets {
         DtsTypes.DELETE_PROP,
         DtsTypes.OMIT_NODE,
         DtsTypes.MEMRESERVE,
-        DtsTypes.BITS
+        DtsTypes.BITS,
+        DtsTypes.INCLUDE,
     )
 
     val operators = TokenSet.create(

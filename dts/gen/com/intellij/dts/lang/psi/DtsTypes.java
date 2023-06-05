@@ -23,6 +23,7 @@ public interface DtsTypes {
   com.intellij.psi.tree.IElementType EXPR_VALUE = new com.intellij.dts.lang.DtsElementType("EXPR_VALUE");
   com.intellij.psi.tree.IElementType GEQ_EXPR = new com.intellij.dts.lang.DtsElementType("GEQ_EXPR");
   com.intellij.psi.tree.IElementType GRT_EXPR = new com.intellij.dts.lang.DtsElementType("GRT_EXPR");
+  com.intellij.psi.tree.IElementType INCLUDE_DIRECTIVE = new com.intellij.dts.lang.DtsElementType("INCLUDE_DIRECTIVE");
   com.intellij.psi.tree.IElementType INT = new com.intellij.dts.lang.DtsElementType("INT");
   com.intellij.psi.tree.IElementType INT_EXPR = new com.intellij.dts.lang.DtsElementType("INT_EXPR");
   com.intellij.psi.tree.IElementType LEQ_EXPR = new com.intellij.dts.lang.DtsElementType("LEQ_EXPR");
@@ -163,6 +164,9 @@ public interface DtsTypes {
       }
       else if (type == GRT_EXPR) {
         return new com.intellij.dts.lang.psi.impl.DtsGrtExprImpl(node);
+      }
+      else if (type == INCLUDE_DIRECTIVE) {
+        return new com.intellij.dts.lang.psi.impl.DtsIncludeDirectiveImpl(node);
       }
       else if (type == INT) {
         return new com.intellij.dts.lang.psi.impl.DtsIntImpl(node);

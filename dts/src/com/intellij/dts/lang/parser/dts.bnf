@@ -188,3 +188,5 @@ neqExpr ::= expr NEQ expr
 intExpr ::= int
 charExpr ::= char
 parenExpr ::= LPAREN expr RPAREN
+
+includeDirective ::= () INCLUDE string { pin=1 }

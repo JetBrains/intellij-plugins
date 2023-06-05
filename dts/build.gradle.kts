@@ -22,7 +22,7 @@ intellij {
 sourceSets {
     main {
         kotlin.srcDirs("src")
-        java.srcDirs("gen")
+        java.srcDirs("src", "gen")
         resources.srcDirs("resources")
     }
 

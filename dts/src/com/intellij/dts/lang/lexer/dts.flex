@@ -90,9 +90,6 @@ COMMENT_C         = "/*"([^*]|"*"[^/])*"*/"
 // c prerpocssor statments
 "#"{LINE_WS}*{CPP_DIRECTIVES} (.+ | {EOL_ESC})*     { return DtsTypes.PP_STATEMENT; }
 
-// dts include preprocesser statment
-"/include/"{LINE_WS}*"\""{STRING}"\""               { return DtsTypes.PP_STATEMENT; }
-
 "/dts-v1/"                                          { resetState(); return DtsTypes.V1; }
 "/plugin/"                                          { resetState(); return DtsTypes.PLUGIN; }
 "/include/"                                         { pushState(WAITING_INCLUDE); return DtsTypes.INCLUDE; }

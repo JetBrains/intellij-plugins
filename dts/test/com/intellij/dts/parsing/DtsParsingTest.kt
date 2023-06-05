@@ -23,6 +23,10 @@ abstract class DtsParsingTest(dataPath: String) : ParsingTestCase(dataPath, "dts
         fun testLabel() = doTest()
 
         fun testOmitNode() = doTest()
+
+        fun testInclude() = doTest()
+
+        fun testMultipleIncludes() = doTest()
     }
 
     class Recovery : DtsParsingTest("recovery") {
@@ -33,6 +37,8 @@ abstract class DtsParsingTest(dataPath: String) : ParsingTestCase(dataPath, "dts
         fun testMemreserve() = doTest()
 
         fun testCompilerDirectiveLineBreak() = doTest()
+
+        fun testInclude() = doTest()
     }
 
     class Reject : DtsParsingTest("reject") {

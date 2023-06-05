@@ -7,7 +7,7 @@ import com.intellij.psi.TokenType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.dts.lang.psi.DtsTypes
 
-object DtsParserUtil : GeneratedParserUtilBase() {
+object DtsParserUtil : DtsJavaParserUtil() {
     private fun lookUpLineBrake(builder: PsiBuilder, steps: Int): Boolean {
         if (builder.rawLookup(steps) != TokenType.WHITE_SPACE) return false
 
