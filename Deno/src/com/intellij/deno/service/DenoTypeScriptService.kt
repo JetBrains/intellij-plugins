@@ -1,12 +1,8 @@
 package com.intellij.deno.service
 
 import com.intellij.codeInsight.completion.CompletionParameters
-import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.deno.DenoSettings
-import com.intellij.execution.ExecutionException
-import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.execution.util.ExecUtil
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.JSStringUtil
@@ -85,25 +81,7 @@ class DenoTypeScriptService(project: Project) : BaseLspTypeScriptService(project
 
   override fun getServiceFixes(file: PsiFile, element: PsiElement?, result: JSAnnotationError): Collection<IntentionAction> {
     if (element != null && (result is LspAnnotationError)) {
-      val virtualFile = file.virtualFile
-      return withServer {
-        getCodeActions(file, result.diagnostic) { command, _ ->
-          if (command == "deno.cache") {
-            //or implement using deno command
-            val commandLine = GeneralCommandLine(DenoSettings.getService(project).getDenoPath(), "cache", virtualFile.path)
-            try {
-              ExecUtil.execAndGetOutput(commandLine)
-              DaemonCodeAnalyzer.getInstance(project).restart()
-            }
-            catch (e: ExecutionException) {
-              //skip
-            }
-
-            return@getCodeActions true
-          }
-          return@getCodeActions false
-        }
-      } ?: return emptyList()
+      return withServer { getCodeActions(file, result.diagnostic) } ?: return emptyList()
     }
     return emptyList()
   }
