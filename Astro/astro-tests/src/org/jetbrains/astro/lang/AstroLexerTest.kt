@@ -89,6 +89,20 @@ open class AstroLexerTest : LexerTestCase() {
     |<h1>Hello, world!</h1>
   """)
 
+  fun testScssStyle() = doTest("""
+    |---
+    |// Frontmatter
+    |---
+    |<style lang="scss">
+    |  .card {
+    |    @media screen {
+    |    }
+    |  }
+    |</style>
+    |
+    |<div class="card">Content</div>
+  """)
+
   fun testBasicScript() = doTest("""
     |<button data-confetti-button>Celebrate!</button>
     |

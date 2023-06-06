@@ -24,6 +24,7 @@
     <plugin id="com.intellij.modules.xml"/>
     <plugin id="JavaScript"/>
     <plugin id="com.intellij.css"/>
+    <plugin id="org.intellij.plugins.postcss"/>
   </dependencies>
 
   <extensionPoints>
