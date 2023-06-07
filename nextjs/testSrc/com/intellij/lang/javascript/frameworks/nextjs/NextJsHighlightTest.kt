@@ -59,8 +59,10 @@ class NextJsHighlightTest : JSDaemonAnalyzerLightTestCase() {
       true, false, true,
       "app/page.tsx",
       "app/route.js",
-      "otherDir/otherPage.tsx",
-      "otherDir/otherRoute.js"
+      "otherDir/exportDefault.ts",
+      "otherDir/knownFunctions.js",
+      "otherDir/middleware.js",
+      "otherDir/route.jsx"
     )
   }
 }

@@ -1,1 +1,0 @@
-export const <warning descr="Unused constant baz">baz</warning> = 'baz'

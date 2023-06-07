@@ -1,1 +1,0 @@
-export const <warning descr="Unused constant qux">qux</warning> = 'qux'
