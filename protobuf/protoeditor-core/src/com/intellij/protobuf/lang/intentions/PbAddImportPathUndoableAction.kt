@@ -21,7 +21,7 @@ internal class PbAddImportPathUndoableAction(pathToAdd: ImportPathData, private 
   override fun redo() {
     if (project.isDisposed) return
     val projectSettings = PbProjectSettings.getInstance(project)
-    projectSettings.importPathEntries = projectSettings.importPathEntries + importPath
+    projectSettings.importPathEntries = listOf(importPath) + projectSettings.importPathEntries
     PbProjectSettings.notifyUpdated(project)
   }
 
