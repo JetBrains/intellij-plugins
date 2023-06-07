@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.modules.JSImportTestUtil
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.css.inspections.invalid.CssUnknownTargetInspection
 import com.intellij.util.Consumer
+import com.intellij.webpack.createAndSetWebpackConfig
 import org.jetbrains.plugins.scss.inspections.SassScssUnresolvedMixinInspection
 
 private const val BASE_PATH = "/ts_imports"
@@ -116,5 +117,11 @@ class VueModuleImportTest : JSImportHighlightingAndCompletionLightTestBase() {
 
   fun testJSOverVuePriority() {
     doHighlightOnlyTestWithCopyDirectory(extension)
+  }
+
+  fun testAutoImportFromVueWebpack() {
+    doTestActionWithCopyDirectory(JSImportTestUtil.getActionName(), "vue", Consumer {
+      createAndSetWebpackConfig(project, testRootDisposable, "aliasPath", "src", null, it.path)
+    }, null)
   }
 }
