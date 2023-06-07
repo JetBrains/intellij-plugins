@@ -138,8 +138,10 @@
     <stubIndex implementation="com.intellij.protobuf.lang.stub.index.ShortNameIndex"/>
 
     <!-- Settings -->
-    <projectConfigurable instance="com.intellij.protobuf.ide.settings.PbLanguageSettingsConfigurable" groupId="language">
-      <configurable instance="com.intellij.protobuf.ide.settings.PbTextLanguageSettingsConfigurable"/>
+    <projectConfigurable instance="com.intellij.protobuf.ide.settings.PbLanguageSettingsConfigurable" groupId="language"
+                         key="settings.project.display" bundle="messages.ProtobufIdeBundle">
+      <configurable instance="com.intellij.protobuf.ide.settings.PbTextLanguageSettingsConfigurable"
+                    key="prototext.settings.project.display" bundle="messages.ProtobufIdeBundle"/>
     </projectConfigurable>
     <projectService serviceImplementation="com.intellij.protobuf.ide.settings.PbProjectSettings"/>
     <projectService serviceImplementation="com.intellij.protobuf.ide.settings.PbTextLanguageSettings"/>

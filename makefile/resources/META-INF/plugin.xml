@@ -47,7 +47,8 @@ Plugin source code was previously located at <a href="https://github.com/kropp/i
     <configurationType implementation="com.jetbrains.lang.makefile.MakefileRunConfigurationType"/>
     <projectService serviceImplementation="com.jetbrains.lang.makefile.MakefileProjectSettings"/>
     <projectConfigurable groupId="build.tools" groupWeight="110" id="reference.settingsdialog.project.make"
-                         instance="com.jetbrains.lang.makefile.MakeConfigurable"/>
+                         instance="com.jetbrains.lang.makefile.MakeConfigurable"
+                         key="configurable.name" bundle="messages.MakefileLangBundle"/>
     <runLineMarkerContributor language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileTargetRunLineMarkerContributor"/>
     <runConfigurationProducer implementation="com.jetbrains.lang.makefile.MakefileRunConfigurationProducer"/>
     <codeStyleSettingsProvider implementation="com.jetbrains.lang.makefile.MakefileCodeStyleSettingsProvider"/>
