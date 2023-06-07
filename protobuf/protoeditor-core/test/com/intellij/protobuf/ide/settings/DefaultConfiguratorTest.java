@@ -16,7 +16,6 @@
 package com.intellij.protobuf.ide.settings;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
 import com.intellij.openapi.module.EmptyModuleType;
 import com.intellij.openapi.module.Module;
@@ -25,40 +24,20 @@ import com.intellij.openapi.project.ex.ProjectManagerEx;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.protobuf.ide.settings.PbProjectSettings.ImportPathEntry;
 import com.intellij.testFramework.HeavyPlatformTestCase;
+import com.intellij.util.containers.ContainerUtil;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Paths;
 
 import static com.intellij.protobuf.TestUtils.notNull;
 
-/**
- * Unit tests for {@link DefaultConfigurator}.
- */
 public class DefaultConfiguratorTest extends HeavyPlatformTestCase {
-
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
-  }
-
-  @Override
-  public void tearDown() throws Exception {
-    try {
-      FileUtil.delete(DefaultConfigurator.getExtractedProtoPath());
-    }
-    catch (Exception exception) {
-      Logger.getInstance(DefaultConfiguratorTest.class).warn(exception);
-    } finally {
-      super.tearDown();
-    }
-  }
 
   @Override
   protected boolean isCreateDirectoryBasedProject() {
@@ -84,46 +63,47 @@ public class DefaultConfiguratorTest extends HeavyPlatformTestCase {
     assertTrue(module2Root1Src1.mkdirs());
 
     ApplicationManager.getApplication()
-        .runWriteAction(
-            () -> {
-              ModifiableRootModel model1 =
-                  ModuleRootManager.getInstance(module1).getModifiableModel();
-              ModifiableRootModel model2 =
-                  ModuleRootManager.getInstance(module2).getModifiableModel();
-              ContentEntry entry = model1.addContentEntry(notNull(VfsUtil.findFileByIoFile(module1Root1, true)));
-              entry.addSourceFolder(entry.getUrl() + "/src1", false);
-              entry.addSourceFolder(entry.getUrl() + "/src2", false);
-              model1.commit();
-              entry = model2.addContentEntry(notNull(VfsUtil.findFileByIoFile(module2Root1, true)));
-              entry.addSourceFolder(entry.getUrl() + "/src1", false);
-              model2.commit();
-            });
+      .runWriteAction(
+        () -> {
+          ModifiableRootModel model1 =
+            ModuleRootManager.getInstance(module1).getModifiableModel();
+          ModifiableRootModel model2 =
+            ModuleRootManager.getInstance(module2).getModifiableModel();
+          ContentEntry entry = model1.addContentEntry(notNull(VfsUtil.findFileByIoFile(module1Root1, true)));
+          entry.addSourceFolder(entry.getUrl() + "/src1", false);
+          entry.addSourceFolder(entry.getUrl() + "/src2", false);
+          model1.commit();
+          entry = model2.addContentEntry(notNull(VfsUtil.findFileByIoFile(module2Root1, true)));
+          entry.addSourceFolder(entry.getUrl() + "/src1", false);
+          model2.commit();
+        });
 
-    PbProjectSettings settings = new PbProjectSettings(project);
+    PbProjectSettings settings = PbProjectSettings.getInstance(project);
     // The default project's directory exists in some temp path that shouldn't descend from
     // /google3/.
-    settings = new DefaultConfigurator().configure(project, settings);
+    settings.setIncludeContentRoots(true);
+    settings.setDescriptorPath(
+      ContainerUtil.getFirstItem(PbImportPathsConfiguration.getDescriptorPathSuggestions(myProject)));
     assertNotNull(settings);
 
     assertEquals("google/protobuf/descriptor.proto", settings.getDescriptorPath());
-    assertSameElements(
-        settings.getImportPathEntries(),
-        new ImportPathEntry(VfsUtil.pathToUrl(module1Root1Src1.getPath()), ""),
-        new ImportPathEntry(VfsUtil.pathToUrl(module1Root1Src2.getPath()), ""),
-        new ImportPathEntry(VfsUtil.pathToUrl(module2Root1Src1.getPath()), ""),
-        new DefaultConfigurator().getBuiltInIncludeEntry());
+    assertContainsElements(
+      PbImportPathsConfiguration.computeDeterministicImportPathsStream(project).toList(),
+      new ImportPathEntry(VfsUtilCore.pathToUrl(module1Root1Src1.getPath()), ""),
+      new ImportPathEntry(VfsUtilCore.pathToUrl(module1Root1Src2.getPath()), ""),
+      new ImportPathEntry(VfsUtilCore.pathToUrl(module2Root1Src1.getPath()), ""));
 
     ProjectManagerEx.getInstanceEx().forceCloseProject(project);
   }
 
   public void testGetDescriptorPathSuggestions() {
     assertContainsElements(
-        new DefaultConfigurator().getDescriptorPathSuggestions(getProject()),
-        "google/protobuf/descriptor.proto");
+      PbImportPathsConfiguration.getDescriptorPathSuggestions(myProject),
+      "google/protobuf/descriptor.proto");
   }
 
-  public void testBuiltInDescriptor() throws IOException {
-    ImportPathEntry includeEntry = new DefaultConfigurator().getBuiltInIncludeEntry();
+  public void testBuiltInDescriptor() {
+    ImportPathEntry includeEntry = PbImportPathsConfiguration.getBuiltInIncludeEntry();
     assertNotNull(includeEntry);
     assertEquals("", includeEntry.getPrefix());
     VirtualFile descriptorDir =

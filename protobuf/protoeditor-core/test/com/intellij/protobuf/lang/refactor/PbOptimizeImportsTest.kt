@@ -3,7 +3,6 @@ package com.intellij.protobuf.lang.refactor
 import com.intellij.codeInsight.actions.OptimizeImportsAction
 import com.intellij.ide.DataManager
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.protobuf.ide.settings.DefaultConfigurator
 import com.intellij.protobuf.ide.settings.PbProjectSettings
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.junit.After
@@ -16,7 +15,7 @@ internal class PbOptimizeImportsTest : BasePlatformTestCase() {
 
   @After
   fun afterEachTest() {
-    PbProjectSettings.getInstance(myFixture.project).importPathEntries = mutableListOf(DefaultConfigurator().builtInIncludeEntry)
+    PbProjectSettings.getInstance(myFixture.project).importPathEntries = mutableListOf()
   }
 
   @Test

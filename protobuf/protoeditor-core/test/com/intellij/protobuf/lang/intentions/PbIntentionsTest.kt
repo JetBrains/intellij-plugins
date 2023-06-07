@@ -2,21 +2,29 @@ package com.intellij.protobuf.lang.intentions
 
 import com.intellij.openapi.command.undo.UndoManager
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.protobuf.ide.settings.DefaultConfigurator
 import com.intellij.protobuf.ide.settings.PbProjectSettings
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import org.junit.After
 import org.junit.Assert
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
 internal class PbIntentionsTest : BasePlatformTestCase() {
+  @Before
+  fun beforeEachTest() {
+    PbProjectSettings.getInstance(myFixture.project).apply {
+      importPathEntries = mutableListOf()
+      isIndexBasedResolveEnabled = false
+    }
+  }
+
   @After
   fun afterEachTest() {
-    PbProjectSettings.getInstance(myFixture.project).importPathEntries = mutableListOf(DefaultConfigurator().builtInIncludeEntry)
+    PbProjectSettings.getInstance(myFixture.project).importPathEntries = mutableListOf()
   }
 
   @Test
@@ -136,7 +144,7 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
 
   @Test
   fun `configure settings with respect to existing unresolved import statement`() {
-     myFixture.addFileToProject("/root/imports/importMe.proto", """
+    myFixture.addFileToProject("/root/imports/importMe.proto", """
       message ImportedMessage {}
     """.trimIndent())
     configureAndCheckHighlighting(myFixture, "main.proto", """

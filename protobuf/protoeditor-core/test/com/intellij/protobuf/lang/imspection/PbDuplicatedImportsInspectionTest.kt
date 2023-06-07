@@ -1,6 +1,5 @@
 package com.intellij.protobuf.lang.imspection
 
-import com.intellij.protobuf.ide.settings.DefaultConfigurator
 import com.intellij.protobuf.ide.settings.PbProjectSettings
 import com.intellij.protobuf.lang.inspection.PbDuplicatedImportsInspection
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -18,7 +17,8 @@ class PbDuplicatedImportsInspectionTest : BasePlatformTestCase() {
 
   @After
   fun afterEachTest() {
-    PbProjectSettings.getInstance(myFixture.project).importPathEntries = mutableListOf(DefaultConfigurator().builtInIncludeEntry)
+    PbProjectSettings.getInstance(myFixture.project).importPathEntries = mutableListOf()
+      //PbImportPathsConfiguration.getInstance(myFixture.project).getBuiltInIncludeEntry())
   }
 
   @Test

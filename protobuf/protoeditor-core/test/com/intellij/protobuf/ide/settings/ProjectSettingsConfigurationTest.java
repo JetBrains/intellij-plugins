@@ -17,8 +17,7 @@ package com.intellij.protobuf.ide.settings;
 
 import com.intellij.testFramework.HeavyPlatformTestCase;
 
-/** Unit tests for {@link ProjectSettingsConfiguratorManager}. */
-public class ProjectSettingsConfiguratorManagerTest extends HeavyPlatformTestCase {
+public class ProjectSettingsConfigurationTest extends HeavyPlatformTestCase {
 
   @Override
   protected boolean isCreateDirectoryBasedProject() {
@@ -27,7 +26,7 @@ public class ProjectSettingsConfiguratorManagerTest extends HeavyPlatformTestCas
 
   public void testGetDescriptorPathSuggestions() {
     assertContainsElements(
-        ProjectSettingsConfiguratorManager.getInstance(getProject()).getDescriptorPathSuggestions(),
+        PbImportPathsConfiguration.getDescriptorPathSuggestions(getProject()),
         "google/protobuf/descriptor.proto");
   }
 }
