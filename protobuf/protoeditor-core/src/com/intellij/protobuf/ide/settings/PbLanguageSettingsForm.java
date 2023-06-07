@@ -16,9 +16,12 @@
 package com.intellij.protobuf.ide.settings;
 
 import com.intellij.icons.AllIcons.General;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.options.ConfigurableUi;
+import com.intellij.openapi.progress.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.LabeledComponent;
@@ -49,12 +52,15 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.EventObject;
 import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 import java.util.regex.Pattern;
+
+import static com.intellij.protobuf.ide.settings.PbSettingsUiUtilsKt.findIndexToInsertGroup;
 
 /** The protobuf language settings panel. */
 public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings> {
@@ -64,14 +70,12 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
   private static final Pattern LEADING_TRAILING_SLASHES = Pattern.compile("(^/+)|(/+$)");
 
   private final Project project;
-  private PbProjectSettings originalSettings;
   private JPanel panel;
   private ListTableModel<ImportPath> importPathModel;
   private ComboBox<String> descriptorPathField;
+  private JCheckBox isIncludeStandardProtoDirectoriesCheckbox;
+  private JCheckBox isIncludeContentRootsCheckbox;
   private JCheckBox autoConfigCheckbox;
-
-  // A list of components that are enabled/disabled based on the auto config check box.
-  private final List<JComponent> manualConfigComponents = new ArrayList<>();
 
   PbLanguageSettingsForm(Project project) {
     this.project = project;
@@ -80,15 +84,17 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
 
   @Override
   public void reset(@NotNull PbProjectSettings settings) {
-    originalSettings = settings;
     loadSettings(settings);
   }
 
   @Override
   public boolean isModified(@NotNull PbProjectSettings settings) {
     return !(getImportPathEntries().equals(settings.getImportPathEntries())
-        && getDescriptorPath().equals(settings.getDescriptorPath())
-        && isAutoConfigEnabled() == settings.isAutoConfigEnabled());
+             && getDescriptorPath().equals(settings.getDescriptorPath())
+             && isAutoConfigEnabled() == settings.isThirdPartyConfigurationEnabled()
+             && isIncludeStandardProtoDirectories() == settings.isIncludeProtoDirectories()
+             && isIncludeProjectContentRoots() == settings.isIncludeContentRoots()
+    );
   }
 
   @Override
@@ -104,120 +110,238 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
   }
 
   private void loadSettings(@NotNull PbProjectSettings settings) {
-    autoConfigCheckbox.setSelected(settings.isAutoConfigEnabled());
+    autoConfigCheckbox.setSelected(settings.isThirdPartyConfigurationEnabled());
+    isIncludeStandardProtoDirectoriesCheckbox.setSelected(settings.isIncludeProtoDirectories());
+    isIncludeContentRootsCheckbox.setSelected(settings.isIncludeContentRoots());
     descriptorPathField.setSelectedItem(settings.getDescriptorPath());
     importPathModel.setItems(new ArrayList<>());
     importPathModel.addRows(ContainerUtil.map(settings.getImportPathEntries(), ImportPath::new));
   }
 
   private void applyNoNotify(@NotNull PbProjectSettings settings) {
-    settings.setAutoConfigEnabled(isAutoConfigEnabled());
+    settings.setThirdPartyConfigurationEnabled(isAutoConfigEnabled());
+    settings.setIncludeContentRoots(isIncludeProjectContentRoots());
+    settings.setIncludeProtoDirectories(isIncludeStandardProtoDirectories());
     settings.setDescriptorPath(getDescriptorPath());
     settings.setImportPathEntries(getImportPathEntries());
   }
 
   private void initComponent() {
     JPanel pathsPanel = buildImportPathsPanel();
-    manualConfigComponents.add(pathsPanel);
     JPanel descriptorPanel = buildDescriptorPathPanel();
-    manualConfigComponents.add(descriptorPanel);
     JPanel manualConfigurationPanel = new BorderLayoutPanel();
     manualConfigurationPanel.add(pathsPanel, BorderLayout.CENTER);
     manualConfigurationPanel.add(descriptorPanel, BorderLayout.SOUTH);
     autoConfigCheckbox = new JBCheckBox(PbIdeBundle.message("settings.language.autoconfig"));
+    isIncludeStandardProtoDirectoriesCheckbox = new JBCheckBox(PbIdeBundle.message("settings.language.include.std.proto.dirs"));
+    isIncludeContentRootsCheckbox = new JBCheckBox(PbIdeBundle.message("settings.language.include.project.content.roots"));
+    JPanel autoDetectionPanel = new BorderLayoutPanel();
+    UIUtil.addBorder(
+      autoDetectionPanel,
+      IdeBorderFactory.createTitledBorder(PbIdeBundle.message("settings.language.autoconfiguration.section.title"), false));
+
+    autoDetectionPanel.add(autoConfigCheckbox, BorderLayout.NORTH);
+    autoDetectionPanel.add(isIncludeStandardProtoDirectoriesCheckbox, BorderLayout.CENTER);
+    autoDetectionPanel.add(isIncludeContentRootsCheckbox, BorderLayout.SOUTH);
+
     panel = new BorderLayoutPanel();
-    panel.add(autoConfigCheckbox, BorderLayout.NORTH);
+    panel.add(autoDetectionPanel, BorderLayout.NORTH);
     panel.add(manualConfigurationPanel, BorderLayout.CENTER);
 
-    // Component enable/disable happens in an ItemListener so that setSelected() as well as clicking
-    // toggles the state.
-    autoConfigCheckbox.addItemListener(
-        event -> {
-          boolean autoConfig = ((JCheckBox) event.getSource()).isSelected();
-          manualConfigComponents.forEach(component -> component.setEnabled(!autoConfig));
-        });
     // Re-configuration happens in an ActionListener which is not triggered by setSelected(). This
     // prevents the recursive sequence:
     //   loadSettings() -> setSelected(true) -> applyAutomaticConfiguration() -> loadSettings() ...
-    autoConfigCheckbox.addActionListener(
-        event -> {
-          boolean autoConfig = ((JCheckBox) event.getSource()).isSelected();
-          if (autoConfig) {
-            applyAutomaticConfiguration();
-          }
+    autoConfigCheckbox.addActionListener(createActionListener(autoConfiguredGroup, PbImportPathsConfiguration::thirdPartyImportPaths));
+    isIncludeStandardProtoDirectoriesCheckbox.addActionListener(
+      createActionListener(protoDirectoriesGroup, PbImportPathsConfiguration::standardProtoDirectories));
+    isIncludeContentRootsCheckbox.addActionListener(
+      createActionListener(contentRootsGroup, PbImportPathsConfiguration::projectContentRoots));
+    computePreciseAutoConfiguredEntriesCount();
+  }
+
+  private static final ImportPathGroup autoConfiguredGroup =
+    ImportPathGroup.create((count) -> PbIdeBundle.message("settings.virtual.group.contributed.name", count), 0);
+  private static final ImportPathGroup protoDirectoriesGroup =
+    ImportPathGroup.create((count) -> PbIdeBundle.message("settings.virtual.group.proto.directory.name", count), 1);
+  private static final ImportPathGroup contentRootsGroup =
+    ImportPathGroup.create((count) -> PbIdeBundle.message("settings.virtual.group.content.root.name", count), 2);
+  private static final ImportPathGroup bundledGoogleStdLibGroup =
+    ImportPathGroup.create((count) -> PbIdeBundle.message("settings.virtual.group.std.google.proto.name"), 3);
+
+  private static final ImportPathGroup loadingStateGroup =
+    ImportPathGroup.create((count) -> PbIdeBundle.message("settings.virtual.group.loading"), 100);
+
+  @NotNull
+  private ActionListener createActionListener(ImportPathGroup group,
+                                              Function<PbImportPathsConfiguration, Collection<ImportPathEntry>> heavyImportsFetcher) {
+    return new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent event) {
+        Object changeSource = event.getSource();
+        if (changeSource instanceof JCheckBox) {
+          computePresentationAndUpdateModel(((JCheckBox)changeSource), group, heavyImportsFetcher);
+        }
+      }
+    };
+  }
+
+  private void computePresentationAndUpdateModel(JCheckBox checkBox,
+                                                 ImportPathGroup group,
+                                                 Function<PbImportPathsConfiguration, Collection<ImportPathEntry>> heavyImportsFetcher) {
+    ProgressManager.getInstance().runProcessWithProgressSynchronously(
+      () -> {
+        var importsCount = ReadAction.compute(() -> heavyImportsFetcher.apply(PbImportPathsConfiguration.getInstance(project)).size());
+        ApplicationManager.getApplication().invokeLater(() -> {
+          processVirtualGroupItemPresentation(checkBox, group.copyWithPreciseCount(importsCount));
         });
+      },
+      PbIdeBundle.message("settings.compute.import.paths.modal.progress.title"),
+      true,
+      project);
+  }
+
+  private void computePreciseAutoConfiguredEntriesCount() {
+    ApplicationManager.getApplication().invokeLater(() -> addVirtualGroup(loadingStateGroup));
+    ProgressManager.getInstance().runProcessWithProgressAsynchronously(
+      new Task.Backgroundable(project, PbIdeBundle.message("settings.compute.import.paths.bg.progress.title"), false,
+                              PerformInBackgroundOption.ALWAYS_BACKGROUND) {
+        @Override
+        public void run(@NotNull ProgressIndicator indicator) {
+          PbImportPathsConfiguration importPathsConfiguration = PbImportPathsConfiguration.getInstance(project);
+          int contentRootsSize = importPathsConfiguration.projectContentRoots().size();
+          int protoDirsSize = importPathsConfiguration.standardProtoDirectories().size();
+          int contributedPathsSize = importPathsConfiguration.thirdPartyImportPaths().size();
+          ApplicationManager.getApplication().invokeLater(() -> {
+            removeVirtualGroup(loadingStateGroup);
+            processVirtualGroupItemPresentation(autoConfigCheckbox, autoConfiguredGroup.copyWithPreciseCount(contributedPathsSize));
+            processVirtualGroupItemPresentation(isIncludeStandardProtoDirectoriesCheckbox,
+                                                protoDirectoriesGroup.copyWithPreciseCount(protoDirsSize));
+            processVirtualGroupItemPresentation(isIncludeContentRootsCheckbox,
+                                                contentRootsGroup.copyWithPreciseCount(contentRootsSize));
+            addVirtualGroup(bundledGoogleStdLibGroup);
+          });
+        }
+      },
+      EmptyProgressIndicator.notNullize(ProgressIndicatorProvider.getGlobalProgressIndicator())
+    );
+  }
+
+  private void processVirtualGroupItemPresentation(JCheckBox checkBox, ImportPathGroup group) {
+    boolean isGroupPresent = importPathModel.indexOf(group) != -1;
+    if (checkBox.isSelected() && !isGroupPresent) {
+      addVirtualGroup(group);
+    }
+    else if (!checkBox.isSelected() && isGroupPresent) {
+      removeVirtualGroup(group);
+    }
+    else if (checkBox.isSelected() && isGroupPresent) {
+      removeVirtualGroup(group);
+      addVirtualGroup(group);
+    }
+  }
+
+  private void addVirtualGroup(ImportPathGroup group) {
+    importPathModel.insertRow(findIndexToInsertGroup(importPathModel, group), group);
+  }
+
+  private void removeVirtualGroup(ImportPathGroup group) {
+    int index = importPathModel.indexOf(group);
+    if (index == -1) return;
+    importPathModel.removeRow(index);
   }
 
   private JPanel buildDescriptorPathPanel() {
     List<String> descriptorOptions =
-        new ArrayList<>(
-            ProjectSettingsConfiguratorManager.getInstance(project).getDescriptorPathSuggestions());
+      new ArrayList<>(
+        PbImportPathsConfiguration.getInstance(project).getDescriptorPathSuggestions());
     descriptorPathField = new ComboBox<>(new CollectionComboBoxModel<>(descriptorOptions));
     descriptorPathField.setEditable(true);
-    JTextField editorComponent = (JTextField) descriptorPathField.getEditor().getEditorComponent();
+    JTextField editorComponent = (JTextField)descriptorPathField.getEditor().getEditorComponent();
     editorComponent
-        .getDocument()
-        .addDocumentListener(
-            new DocumentAdapter() {
-              @Override
-              protected void textChanged(@NotNull DocumentEvent e) {
-                updateDescriptorPathColor();
-              }
-            });
-    importPathModel.addTableModelListener(event -> updateDescriptorPathColor());
+      .getDocument()
+      .addDocumentListener(
+        new DocumentAdapter() {
+          @Override
+          protected void textChanged(@NotNull DocumentEvent e) {
+            updateDescriptorPathColor();
+          }
+        });
+    //importPathModel.addTableModelListener(event -> updateDescriptorPathColor()); todo
     return LabeledComponent.create(
-        descriptorPathField,
-        PbIdeBundle.message("settings.language.descriptor.path"),
-        BorderLayout.WEST);
+      descriptorPathField,
+      PbIdeBundle.message("settings.language.descriptor.path"),
+      BorderLayout.WEST);
   }
 
   private JPanel buildImportPathsPanel() {
     JPanel panel = new BorderLayoutPanel();
     UIUtil.addBorder(
-        panel,
-        IdeBorderFactory.createTitledBorder(
-            PbIdeBundle.message("settings.language.import.paths"), false));
+      panel,
+      IdeBorderFactory.createTitledBorder(
+        PbIdeBundle.message("settings.language.import.paths"), false));
 
     importPathModel = new ListTableModel<>(
-        new LocationColumn(PbIdeBundle.message("location")),
-        new PrefixColumn(PbIdeBundle.message("prefix"))
+      new LocationColumn(PbIdeBundle.message("location")),
+      new PrefixColumn(PbIdeBundle.message("prefix"))
     );
     TableView<ImportPath> importPathTable = new TableView<>(importPathModel);
     importPathTable.setStriped(true);
-    manualConfigComponents.add(importPathTable);
 
     // Without giving the rows some more room, the LocalPathCellEditor component is really squished.
     importPathTable.setMinRowHeight(25);
 
     ToolbarDecorator decorator = ToolbarDecorator.createDecorator(importPathTable, null);
+
+    decorator.setRemoveActionUpdater(allowOnlyEffectivePathEditing(importPathTable));
+    decorator.setEditActionUpdater(allowOnlyEffectivePathEditing(importPathTable));
+    decorator.setMoveDownActionUpdater(allowOnlyEffectivePathEditing(importPathTable));
+    decorator.setMoveUpActionUpdater(allowOnlyEffectivePathEditing(importPathTable));
+
     decorator.setAddAction(
-        (button) -> {
-          VirtualFile selectedFile =
-              FileChooser.chooseFile(getFileChooserDescriptor(null), project, null);
-          if (selectedFile != null) {
-            importPathModel.addRow(new ImportPath(selectedFile.getUrl()));
-          }
-        });
-    decorator.setEditAction(
-        (button) ->
-            importPathTable.editCellAt(
-                importPathTable.getSelectedRow(), importPathTable.getSelectedColumn()));
+      (button) -> {
+        VirtualFile selectedFile =
+          FileChooser.chooseFile(getFileChooserDescriptor(null), project, null);
+        if (selectedFile != null) {
+          importPathModel.insertRow(0, new ImportPath(selectedFile.getUrl()));
+        }
+      });
+    decorator.setEditAction((button) -> importPathTable.editCellAt(importPathTable.getSelectedRow(), importPathTable.getSelectedColumn()));
     decorator.addExtraAction(new PbExportSettingsAsCliCommandAction());
 
     panel.add(decorator.createPanel(), BorderLayout.CENTER);
     return panel;
   }
 
+  @NotNull
+  private static AnActionButtonUpdater allowOnlyEffectivePathEditing(TableView<ImportPath> importPathTable) {
+    return e -> {
+      int selectedRow = importPathTable.getSelectedRow();
+      if (selectedRow == -1) return false;
+      return !(importPathTable.getListTableModel().getItem(selectedRow) instanceof ImportPathGroup);
+    };
+  }
+
   private List<ImportPathEntry> getImportPathEntries() {
-    return ContainerUtil.map(importPathModel.getItems(), ImportPath::toEntry);
+    return importPathModel.getItems().stream()
+      .filter(PbLanguageSettingsForm::isEffectivePath)
+      .map(ImportPath::toEntry)
+      .toList();
   }
 
   private String getDescriptorPath() {
-    return (String) descriptorPathField.getEditor().getItem();
+    return (String)descriptorPathField.getEditor().getItem();
   }
 
   private boolean isAutoConfigEnabled() {
     return autoConfigCheckbox.isSelected();
+  }
+
+  private boolean isIncludeStandardProtoDirectories() {
+    return isIncludeStandardProtoDirectoriesCheckbox.isSelected();
+  }
+
+  private boolean isIncludeProjectContentRoots() {
+    return isIncludeContentRootsCheckbox.isSelected();
   }
 
   private boolean isDescriptorPathValid() {
@@ -230,21 +354,22 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
   private void updateDescriptorPathColor() {
     if (isDescriptorPathValid()) {
       descriptorPathField
-          .getEditor()
-          .getEditorComponent()
-          .setForeground(UIUtil.getTextFieldForeground());
-    } else {
+        .getEditor()
+        .getEditorComponent()
+        .setForeground(UIUtil.getTextFieldForeground());
+    }
+    else {
       descriptorPathField.getEditor().getEditorComponent().setForeground(JBColor.RED);
     }
   }
 
-  private void applyAutomaticConfiguration() {
-    PbProjectSettings currentSettings = originalSettings.copy();
-    applyNoNotify(currentSettings);
-    PbProjectSettings newSettings =
-      ProjectSettingsConfiguratorManager.getInstance(project).configure(currentSettings.copy());
-    loadSettings(newSettings != null ? newSettings : currentSettings);
-  }
+  //private void applyAutomaticConfiguration() {
+  //  PbProjectSettings currentSettings = originalSettings.copy();
+  //  applyNoNotify(currentSettings);
+  //  PbProjectSettings newSettings =
+  //    ProjectSettingsConfiguratorManager.getInstance(project).configure(currentSettings.copy());
+  //  loadSettings(newSettings != null ? newSettings : currentSettings);
+  //}
 
   /**
    * Return a descriptor that can select folders and jar file contents.
@@ -284,16 +409,18 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
     }
 
     @Override
-    public boolean isCellEditable(final ImportPath path) {
-      return true;
+    public boolean isCellEditable(final ImportPath item) {
+      return isEffectivePath(item);
     }
 
     @Override
     public TableCellRenderer getRenderer(final ImportPath path) {
       return new IconTableCellRenderer<String>() {
-        @Nullable
         @Override
-        protected Icon getIcon(@NotNull String value, JTable table, int row) {
+        protected @NotNull Icon getIcon(@NotNull String value, JTable table, int row) {
+          if (path instanceof ImportPathGroup) {
+            return General.ShowInfos;
+          }
           VirtualFile file = VirtualFileManager.getInstance().findFileByUrl(value);
           if (file != null && file.isDirectory()) {
             return PlatformIcons.FOLDER_ICON;
@@ -303,9 +430,9 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
 
         @Override
         protected void setValue(Object value) {
-          String url = (String) value;
+          String url = (String)value;
           VirtualFile file = VirtualFileManager.getInstance().findFileByUrl(url);
-          if (file == null || !file.isDirectory()) {
+          if (!(path instanceof ImportPathGroup) && (file == null || !file.isDirectory())) {
             setForeground(JBColor.RED);
           }
           setText(file != null ? file.getPresentableUrl() : url);
@@ -338,7 +465,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
 
     @Override
     public boolean isCellEditable(ImportPath item) {
-      return true;
+      return isEffectivePath(item);
     }
 
     @Override
@@ -349,7 +476,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
     }
   }
 
-  private static class ImportPath {
+  static class ImportPath {
     @NlsSafe
     String location;
     @NlsSafe
@@ -365,8 +492,57 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
       this.prefix = null;
     }
 
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (!(o instanceof ImportPath path)) return false;
+      return Objects.equals(location, path.location) && Objects.equals(prefix, path.prefix);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(location, prefix);
+    }
+
     ImportPathEntry toEntry() {
       return new ImportPathEntry(location, prefix);
+    }
+  }
+
+  static class ImportPathGroup extends ImportPath {
+
+    ImportPathGroup(Function<Integer, String> lazyMessage, String emptyMessage, int order) {
+      super(emptyMessage);
+      this.lazyMessage = lazyMessage;
+      myOrder = order;
+    }
+
+    ImportPathGroup copyWithPreciseCount(int groupItemsCount) {
+      var effectiveMessage = lazyMessage.apply(groupItemsCount);
+      return new ImportPathGroup(lazyMessage, effectiveMessage, this.myOrder);
+    }
+
+    static ImportPathGroup create(Function<Integer, String> lazyMessage, int order) {
+      return new ImportPathGroup(lazyMessage, lazyMessage.apply(0), order);
+    }
+
+    private final int myOrder;
+    private final Function<Integer, String> lazyMessage;
+
+    int getOrder() {
+      return myOrder;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (!(o instanceof ImportPathGroup group)) return false;
+      return myOrder == group.myOrder;
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(myOrder);
     }
   }
 
@@ -392,34 +568,31 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
 
     @Override
     public Component getTableCellEditorComponent(
-        final JTable table, Object value, boolean isSelected, final int row, int column) {
+      final JTable table, Object value, boolean isSelected, final int row, int column) {
       component =
-          new CellEditorComponentWithBrowseButton<>(
-              new TextFieldWithBrowseButton(createActionListener(table)), this);
-      component.getChildComponent().setText((String) value);
+        new CellEditorComponentWithBrowseButton<>(
+          new TextFieldWithBrowseButton(createActionListener(table)), this);
+      component.getChildComponent().setText((String)value);
       component.setFocusable(false);
       return component;
     }
 
     @Override
     public boolean isCellEditable(EventObject e) {
-      return !(e instanceof MouseEvent) || ((MouseEvent) e).getClickCount() >= 2;
+      return !(e instanceof MouseEvent) || ((MouseEvent)e).getClickCount() >= 2;
     }
 
     private ActionListener createActionListener(final JTable table) {
       return e -> {
-        String initialValue = (String) getCellEditorValue();
-        VirtualFile initialFile =
-            !StringUtil.isEmpty(initialValue)
-                ? VirtualFileManager.getInstance().findFileByUrl(initialValue)
-                : null;
-        FileChooser.chooseFile(
-            getFileChooserDescriptor(title),
-            project,
-            table,
-            initialFile,
-            file -> component.getChildComponent().setText(file.getUrl()));
+        String initialValue = (String)getCellEditorValue();
+        VirtualFile initialFile = !StringUtil.isEmpty(initialValue) ? VirtualFileManager.getInstance().findFileByUrl(initialValue) : null;
+        FileChooser.chooseFile(getFileChooserDescriptor(title), project, table, initialFile,
+                               file -> component.getChildComponent().setText(file.getUrl()));
       };
     }
+  }
+
+  private static boolean isEffectivePath(ImportPath item) {
+    return !(item instanceof ImportPathGroup);
   }
 }
