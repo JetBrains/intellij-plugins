@@ -19,6 +19,7 @@ import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.Service;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -33,15 +34,16 @@ import com.intellij.protobuf.lang.PbFileType;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.serviceContainer.NonInjectable;
+import com.intellij.util.SmartList;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 /** A persistent service that stores protobuf settings. */
+@Service(Service.Level.PROJECT)
 @State(name = "ProtobufLanguageSettings", storages = @Storage("protoeditor.xml"))
 public final class PbProjectSettings implements PersistentStateComponent<PbProjectSettings.State>, Disposable {
   private State state;
@@ -90,11 +92,6 @@ public final class PbProjectSettings implements PersistentStateComponent<PbProje
 
   @Override
   public @NotNull State getState() {
-    // If the settings are autoconfigured, just return the default state so that there's no
-    // need to serialize/persist it. It will be modified by autoconfiguration on restart anyway.
-    if (state.autoConfigEnabled) {
-      return new State();
-    }
     return state;
   }
 
@@ -103,19 +100,12 @@ public final class PbProjectSettings implements PersistentStateComponent<PbProje
     this.state = state;
   }
 
-  public void copyState(PbProjectSettings other) {
-    loadState(other.state);
-  }
-
   public List<ImportPathEntry> getImportPathEntries() {
     return state.importPathEntries;
   }
 
   public void setImportPathEntries(List<ImportPathEntry> importPathEntries) {
-    if (importPathEntries == null) {
-      importPathEntries = Collections.emptyList();
-    }
-    state.importPathEntries = importPathEntries;
+    state.importPathEntries = importPathEntries == null ? Collections.emptyList() : importPathEntries;
   }
 
   @NlsSafe
@@ -127,12 +117,28 @@ public final class PbProjectSettings implements PersistentStateComponent<PbProje
     state.descriptorPath = StringUtil.defaultIfEmpty(descriptorPath, "");
   }
 
-  public boolean isAutoConfigEnabled() {
-    return state.autoConfigEnabled;
+  public boolean isThirdPartyConfigurationEnabled() {
+    return state.thirdPartyConfiguration;
   }
 
-  public void setAutoConfigEnabled(boolean autoConfigEnabled) {
-    state.autoConfigEnabled = autoConfigEnabled;
+  public void setThirdPartyConfigurationEnabled(boolean autoConfigEnabled) {
+    state.thirdPartyConfiguration = autoConfigEnabled;
+  }
+
+  public boolean isIncludeProtoDirectories() {
+    return state.includeProtoDirectories;
+  }
+
+  public void setIncludeProtoDirectories(boolean includeProtoDirectories) {
+    state.includeProtoDirectories = includeProtoDirectories;
+  }
+
+  public boolean isIncludeContentRoots() {
+    return state.includeContentRoots;
+  }
+
+  public void setIncludeContentRoots(boolean includeSourceRoots) {
+    state.includeContentRoots = includeSourceRoots;
   }
 
   public PbProjectSettings copy() {
@@ -148,14 +154,13 @@ public final class PbProjectSettings implements PersistentStateComponent<PbProje
       return false;
     }
     PbProjectSettings other = (PbProjectSettings) obj;
-    return Objects.equals(isAutoConfigEnabled(), other.isAutoConfigEnabled())
-        && Objects.equals(getDescriptorPath(), other.getDescriptorPath())
+    return Objects.equals(getDescriptorPath(), other.getDescriptorPath())
         && Objects.equals(getImportPathEntries(), other.getImportPathEntries());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(isAutoConfigEnabled(), getDescriptorPath(), getImportPathEntries());
+    return Objects.hash(getDescriptorPath(), getImportPathEntries());
   }
 
   /**
@@ -221,9 +226,11 @@ public final class PbProjectSettings implements PersistentStateComponent<PbProje
    * Persistent state holder.
    * <p>Values must be public to be serialized. The initial values below represent defaults.</p>
    */
-  static class State extends SimpleModificationTracker {
-    public boolean autoConfigEnabled = true;
-    public List<ImportPathEntry> importPathEntries = new ArrayList<>();
+  public static class State extends SimpleModificationTracker {
+    public boolean thirdPartyConfiguration = true;
+    public boolean includeContentRoots = true;
+    public boolean includeProtoDirectories = true;
+    public List<ImportPathEntry> importPathEntries = new SmartList<>();
     @NlsSafe
     public String descriptorPath = "";
   }

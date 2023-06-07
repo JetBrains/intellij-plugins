@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+
 /** {@link FileResolveProvider} implementation that uses settings from {@link PbProjectSettings}. */
 public class SettingsFileResolveProvider implements FileResolveProvider {
 
@@ -55,8 +56,7 @@ public class SettingsFileResolveProvider implements FileResolveProvider {
   @Nullable
   @Override
   public VirtualFile findFile(@NotNull String path, @NotNull Project project) {
-    PbProjectSettings settings = getSettings(project);
-    for (ImportPathEntry entry : settings.getImportPathEntries()) {
+    for (ImportPathEntry entry : PbImportPathsConfiguration.getInstance(project).getOrComputeImportPaths()) {
       if (entry == null) continue;
       String prefix = normalizePath(entry.getPrefix());
       if (!path.startsWith(prefix)) {
@@ -79,16 +79,16 @@ public class SettingsFileResolveProvider implements FileResolveProvider {
   @NotNull
   @Override
   public Collection<ChildEntry> getChildEntries(@NotNull String path, @NotNull Project project) {
-    PbProjectSettings settings = getSettings(project);
     Set<ChildEntry> results = new HashSet<>();
-    for (ImportPathEntry entry : settings.getImportPathEntries()) {
+    for (ImportPathEntry entry : PbImportPathsConfiguration.getInstance(project).getOrComputeImportPaths()) {
       String prefix = normalizePath(entry.getPrefix());
       path = normalizePath(path);
 
       if (prefix.startsWith(path) && !prefix.equals(path)) {
         String nextPrefixComponent = prefix.substring(path.length()).split("/")[0];
         results.add(ChildEntry.directory(nextPrefixComponent));
-      } else if (path.startsWith(prefix)) {
+      }
+      else if (path.startsWith(prefix)) {
         // defer to the backing filesystem.
         VirtualFile location = VirtualFileManager.getInstance().findFileByUrl(entry.getLocation());
         if (location == null) {
@@ -119,8 +119,7 @@ public class SettingsFileResolveProvider implements FileResolveProvider {
   @Nullable
   @Override
   public VirtualFile getDescriptorFile(@NotNull Project project) {
-    PbProjectSettings settings = getSettings(project);
-    String descriptorPath = settings.getDescriptorPath();
+    String descriptorPath = PbProjectSettings.getInstance(project).getDescriptorPath();
     if (descriptorPath != null) {
       return findFile(descriptorPath, project);
     }
@@ -130,29 +129,18 @@ public class SettingsFileResolveProvider implements FileResolveProvider {
   @NotNull
   @Override
   public GlobalSearchScope getSearchScope(@NotNull Project project) {
-    PbProjectSettings settings = getSettings(project);
     VirtualFile[] roots =
-        settings
-            .getImportPathEntries()
-            .stream()
-            .map(ImportPathEntry::getLocation)
-            .map(VirtualFileManager.getInstance()::findFileByUrl)
-            .filter(Objects::nonNull)
-            .toArray(VirtualFile[]::new);
+      PbImportPathsConfiguration.getInstance(project).getOrComputeImportPaths()
+        .stream()
+        .map(ImportPathEntry::getLocation)
+        .map(VirtualFileManager.getInstance()::findFileByUrl)
+        .filter(Objects::nonNull)
+        .toArray(VirtualFile[]::new);
     return GlobalSearchScopesCore.directoriesScope(project, /* withSubDirectories= */ true, roots);
   }
 
-  @NotNull
-  private PbProjectSettings getSettings(Project project) {
-    if (staticSettings != null) {
-      return staticSettings;
-    }
-    return PbProjectSettings.getInstance(project);
-  }
-
   /** For the given path, return a non-null string that, if not empty, ends with a slash. */
-  private String normalizePath(@Nullable String path) {
-    // TODO(volkman): better way to handle multi-platform differences with filesystem separators?
+  private static String normalizePath(@Nullable String path) {
     if (path == null) {
       return "";
     }

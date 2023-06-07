@@ -103,7 +103,7 @@ public final class PbFileResolver {
   }
 
   @NotNull
-  static FileResolveProvider[] getProviders(@NotNull Project project) {
+  static FileResolveProvider @NotNull[] getProviders(@NotNull Project project) {
     return FileResolveProvider.EP_NAME.getExtensions(project);
   }
 

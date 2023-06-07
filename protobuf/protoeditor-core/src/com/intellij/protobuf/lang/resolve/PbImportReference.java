@@ -20,17 +20,17 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.protobuf.ide.util.PbIcons;
+import com.intellij.protobuf.lang.psi.PbFile;
+import com.intellij.protobuf.lang.psi.PbImportName;
+import com.intellij.protobuf.lang.psi.PbStringPart;
+import com.intellij.protobuf.lang.resolve.FileResolveProvider.ChildEntry;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
 import com.intellij.psi.PsiPolyVariantReferenceBase;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
-import com.intellij.protobuf.ide.util.PbIcons;
-import com.intellij.protobuf.lang.psi.PbFile;
-import com.intellij.protobuf.lang.psi.PbImportName;
-import com.intellij.protobuf.lang.psi.PbStringPart;
-import com.intellij.protobuf.lang.resolve.FileResolveProvider.ChildEntry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -67,7 +67,7 @@ public class PbImportReference extends PsiPolyVariantReferenceBase<PsiElement> {
 
   @NotNull
   @Override
-  public ResolveResult[] multiResolve(boolean incompleteCode) {
+  public ResolveResult @NotNull[] multiResolve(boolean incompleteCode) {
     ResolveCache cache = ResolveCache.getInstance(myElement.getProject());
     return cache.resolveWithCaching(
         this,
@@ -78,7 +78,7 @@ public class PbImportReference extends PsiPolyVariantReferenceBase<PsiElement> {
 
   @NotNull
   @Override
-  public Object[] getVariants() {
+  public Object @NotNull [] getVariants() {
     PsiElement value = getElement();
     String path = importPath;
     int lastSlash = path.lastIndexOf('/');
