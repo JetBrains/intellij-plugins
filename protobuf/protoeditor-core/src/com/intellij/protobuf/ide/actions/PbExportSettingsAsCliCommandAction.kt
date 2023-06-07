@@ -7,8 +7,8 @@ import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.protobuf.ide.PbIdeBundle
-import com.intellij.protobuf.ide.settings.PbImportPathsConfiguration
 import com.intellij.protobuf.ide.settings.PbProjectSettings
+import com.intellij.protobuf.ide.settings.computeImportPaths
 import com.intellij.ui.AnActionButton
 import com.intellij.util.execution.ParametersListUtil
 import com.intellij.util.io.URLUtil
@@ -38,8 +38,7 @@ class PbExportSettingsAsCliCommandAction : AnActionButton(
     }
 
     private fun retrieveImportUrls(project: Project): Sequence<String> {
-      return PbImportPathsConfiguration.getInstance(project).getOrComputeImportPaths()
-        .asSequence()
+      return computeImportPaths(project)
         .mapNotNull(PbProjectSettings.ImportPathEntry::getLocation)
     }
 

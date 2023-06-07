@@ -173,7 +173,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
 
   @NotNull
   private ActionListener createActionListener(ImportPathGroup group,
-                                              Function<PbImportPathsConfiguration, Collection<ImportPathEntry>> heavyImportsFetcher) {
+                                              Function<Project, Collection<ImportPathEntry>> heavyImportsFetcher) {
     return new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent event) {
@@ -187,10 +187,10 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
 
   private void computePresentationAndUpdateModel(JCheckBox checkBox,
                                                  ImportPathGroup group,
-                                                 Function<PbImportPathsConfiguration, Collection<ImportPathEntry>> heavyImportsFetcher) {
+                                                 Function<Project, Collection<ImportPathEntry>> heavyImportsFetcher) {
     ProgressManager.getInstance().runProcessWithProgressSynchronously(
       () -> {
-        var importsCount = ReadAction.compute(() -> heavyImportsFetcher.apply(PbImportPathsConfiguration.getInstance(project)).size());
+        var importsCount = ReadAction.compute(() -> heavyImportsFetcher.apply(project).size());
         ApplicationManager.getApplication().invokeLater(() -> {
           processVirtualGroupItemPresentation(checkBox, group.copyWithPreciseCount(importsCount));
         });
@@ -207,18 +207,19 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
                               PerformInBackgroundOption.ALWAYS_BACKGROUND) {
         @Override
         public void run(@NotNull ProgressIndicator indicator) {
-          PbImportPathsConfiguration importPathsConfiguration = PbImportPathsConfiguration.getInstance(project);
-          int contentRootsSize = importPathsConfiguration.projectContentRoots().size();
-          int protoDirsSize = importPathsConfiguration.standardProtoDirectories().size();
-          int contributedPathsSize = importPathsConfiguration.thirdPartyImportPaths().size();
-          ApplicationManager.getApplication().invokeLater(() -> {
-            removeVirtualGroup(loadingStateGroup);
-            processVirtualGroupItemPresentation(autoConfigCheckbox, autoConfiguredGroup.copyWithPreciseCount(contributedPathsSize));
-            processVirtualGroupItemPresentation(isIncludeStandardProtoDirectoriesCheckbox,
-                                                protoDirectoriesGroup.copyWithPreciseCount(protoDirsSize));
-            processVirtualGroupItemPresentation(isIncludeContentRootsCheckbox,
-                                                contentRootsGroup.copyWithPreciseCount(contentRootsSize));
-            addVirtualGroup(bundledGoogleStdLibGroup);
+          ReadAction.run(() -> {
+            int contentRootsSize = PbImportPathsConfiguration.projectContentRoots(project).size();
+            int protoDirsSize = PbImportPathsConfiguration.standardProtoDirectories(project).size();
+            int contributedPathsSize = PbImportPathsConfiguration.thirdPartyImportPaths(project).size();
+            ApplicationManager.getApplication().invokeLater(() -> {
+              removeVirtualGroup(loadingStateGroup);
+              processVirtualGroupItemPresentation(autoConfigCheckbox, autoConfiguredGroup.copyWithPreciseCount(contributedPathsSize));
+              processVirtualGroupItemPresentation(isIncludeStandardProtoDirectoriesCheckbox,
+                                                  protoDirectoriesGroup.copyWithPreciseCount(protoDirsSize));
+              processVirtualGroupItemPresentation(isIncludeContentRootsCheckbox,
+                                                  contentRootsGroup.copyWithPreciseCount(contentRootsSize));
+              addVirtualGroup(bundledGoogleStdLibGroup);
+            });
           });
         }
       },
@@ -253,7 +254,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
   private JPanel buildDescriptorPathPanel() {
     List<String> descriptorOptions =
       new ArrayList<>(
-        PbImportPathsConfiguration.getInstance(project).getDescriptorPathSuggestions());
+        PbImportPathsConfiguration.getDescriptorPathSuggestions(project));
     descriptorPathField = new ComboBox<>(new CollectionComboBoxModel<>(descriptorOptions));
     descriptorPathField.setEditable(true);
     JTextField editorComponent = (JTextField)descriptorPathField.getEditor().getEditorComponent();
@@ -263,7 +264,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
         new DocumentAdapter() {
           @Override
           protected void textChanged(@NotNull DocumentEvent e) {
-            updateDescriptorPathColor();
+            //updateDescriptorPathColor(); todo bg validation!
           }
         });
     //importPathModel.addTableModelListener(event -> updateDescriptorPathColor()); todo

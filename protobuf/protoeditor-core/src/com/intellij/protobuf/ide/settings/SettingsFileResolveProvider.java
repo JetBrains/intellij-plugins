@@ -25,10 +25,10 @@ import com.intellij.psi.search.GlobalSearchScopesCore;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+
+import static com.intellij.protobuf.ide.settings.PbImportPathsConfiguration.computeImportPaths;
+import static com.intellij.protobuf.ide.settings.PbImportPathsConfiguration.computeImportPathsStream;
 
 
 /** {@link FileResolveProvider} implementation that uses settings from {@link PbProjectSettings}. */
@@ -56,7 +56,9 @@ public class SettingsFileResolveProvider implements FileResolveProvider {
   @Nullable
   @Override
   public VirtualFile findFile(@NotNull String path, @NotNull Project project) {
-    for (ImportPathEntry entry : PbImportPathsConfiguration.getInstance(project).getOrComputeImportPaths()) {
+    Iterator<ImportPathEntry> iterator = computeImportPaths(project).iterator();
+    if (!iterator.hasNext()) return null;
+    for (ImportPathEntry entry = iterator.next(); iterator.hasNext(); iterator.next()) {
       if (entry == null) continue;
       String prefix = normalizePath(entry.getPrefix());
       if (!path.startsWith(prefix)) {
@@ -79,8 +81,10 @@ public class SettingsFileResolveProvider implements FileResolveProvider {
   @NotNull
   @Override
   public Collection<ChildEntry> getChildEntries(@NotNull String path, @NotNull Project project) {
+    Iterator<ImportPathEntry> iterator = computeImportPaths(project).iterator();
+    if (!iterator.hasNext()) return Collections.emptyList();
     Set<ChildEntry> results = new HashSet<>();
-    for (ImportPathEntry entry : PbImportPathsConfiguration.getInstance(project).getOrComputeImportPaths()) {
+    for (ImportPathEntry entry = iterator.next(); iterator.hasNext(); iterator.next()) {
       String prefix = normalizePath(entry.getPrefix());
       path = normalizePath(path);
 
@@ -130,8 +134,7 @@ public class SettingsFileResolveProvider implements FileResolveProvider {
   @Override
   public GlobalSearchScope getSearchScope(@NotNull Project project) {
     VirtualFile[] roots =
-      PbImportPathsConfiguration.getInstance(project).getOrComputeImportPaths()
-        .stream()
+      computeImportPathsStream(project)
         .map(ImportPathEntry::getLocation)
         .map(VirtualFileManager.getInstance()::findFileByUrl)
         .filter(Objects::nonNull)
