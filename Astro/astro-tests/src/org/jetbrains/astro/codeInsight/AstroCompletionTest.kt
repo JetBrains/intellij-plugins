@@ -31,6 +31,9 @@ class AstroCompletionTest : AstroCodeInsightTestCase() {
   fun testImportExternalSymbolExpression() =
     doTypingTest("olo\n", additionalFiles = listOf("colors.ts"))
 
+  fun testImportWithinScriptBlock() =
+    doTypingTest("getRandomNumber\n", additionalFiles = listOf("functions.ts"))
+
   fun testFrontmatterKeywords() =
     doLookupTest(additionalFiles = listOf("component.astro"),
                  filter = { it.endsWith("#6") || it.endsWith("#5") })
