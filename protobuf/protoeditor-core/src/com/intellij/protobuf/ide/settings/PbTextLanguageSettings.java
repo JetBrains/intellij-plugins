@@ -17,6 +17,7 @@ package com.intellij.protobuf.ide.settings;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.Service;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
@@ -29,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 /** A persistent service that stores protobuf text format settings. */
+@Service(Service.Level.PROJECT)
 @State(name = "PrototextLanguageSettings", storages = @Storage("protoeditor.xml"))
 public final class PbTextLanguageSettings
     implements PersistentStateComponent<PbTextLanguageSettings.State> {
@@ -93,7 +95,7 @@ public final class PbTextLanguageSettings
    *
    * <p>Values must be public to be serialized. The initial values below represent defaults.
    */
-  static class State extends SimpleModificationTracker {
+  public static class State extends SimpleModificationTracker {
     public boolean missingSchemaWarningEnabled = true;
   }
 }

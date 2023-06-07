@@ -60,9 +60,6 @@
     <!-- SettingsFileResolveProvider is listed first so that manually-configured descriptor paths always win. -->
     <fileResolveProvider id="settings" order="FIRST"
                          implementation="com.intellij.protobuf.ide.settings.SettingsFileResolveProvider"/>
-    <projectSettingsConfigurator id="default" order="LAST"
-                                 implementation="com.intellij.protobuf.ide.settings.DefaultConfigurator"/>
-
     <!-- Schema definition -->
     <schemaProvider implementation="com.intellij.protobuf.lang.resolve.directive.SchemaDirectiveSchemaProvider"/>
   </extensions>
@@ -143,9 +140,6 @@
       <configurable instance="com.intellij.protobuf.ide.settings.PbTextLanguageSettingsConfigurable"
                     key="prototext.settings.project.display" bundle="messages.ProtobufIdeBundle"/>
     </projectConfigurable>
-    <projectService serviceImplementation="com.intellij.protobuf.ide.settings.PbProjectSettings"/>
-    <projectService serviceImplementation="com.intellij.protobuf.ide.settings.PbTextLanguageSettings"/>
-    <postStartupActivity implementation="com.intellij.protobuf.ide.settings.ProjectSettingsConfiguratorManager$ProjectOpenedActivity"/>
 
     <!-- Enable usage highlights for non-project targets -->
     <useScopeEnlarger implementation="com.intellij.protobuf.lang.resolve.PbUseScopeEnlarger"/>
