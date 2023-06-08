@@ -23,6 +23,7 @@ import com.intellij.util.EventDispatcher;
 import com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings;
 import org.dartlang.analysis.server.protocol.ClosingLabel;
 import org.jetbrains.annotations.NotNull;
+import com.jetbrains.lang.dart.highlight.DartSyntaxHighlighterColors;
 
 import java.awt.*;
 import java.util.EventListener;
@@ -46,7 +47,7 @@ public class DartClosingLabelManager implements @NotNull Disposable {
                     }
                   }
                 },
-                this);
+            this);
   }
 
   public static DartClosingLabelManager getInstance() {
@@ -113,25 +114,28 @@ public class DartClosingLabelManager implements @NotNull Disposable {
             lineText.put(line, lineText.get(line) + ", " + label.getLabel());
           }
           else {
-            lineText.put(line, "// " + label.getLabel());
+//            lineText.put(line, "// " + label.getLabel());
+            lineText.put(line, "⦿‹" + label.getLabel());//«
           }
         }
 
         // build inlays from the line labels
         for (Integer line : lineText.keySet()) {
+//          inlayModel.addAfterLineEndElement(
+//            editor.getDocument().getLineEndOffset(line), true, new TextLabelCustomElementRenderer(lineText.get(line)));
           inlayModel.addAfterLineEndElement(
-            editor.getDocument().getLineEndOffset(line), true, new TextLabelCustomElementRenderer(lineText.get(line)));
+                  editor.getDocument().getLineEndOffset(line), true, new TextLabelCustomElementRenderer(lineText.get(line) + "›"));// »
         }
       }
     };
 
     ApplicationManager.getApplication()
-      .invokeLater(runnable, ModalityState.NON_MODAL, DartAnalysisServerService.getInstance(project).getDisposedCondition());
+            .invokeLater(runnable, ModalityState.NON_MODAL, DartAnalysisServerService.getInstance(project).getDisposedCondition());
   }
 
   private static void clearEditorInlays(@NotNull Editor editor) {
     editor.getInlayModel().getAfterLineEndElementsInRange(0, editor.getDocument().getTextLength(), TextLabelCustomElementRenderer.class)
-      .forEach(Disposer::dispose);
+            .forEach(Disposer::dispose);
   }
 
   private static void clearAllInlays() {
@@ -142,7 +146,7 @@ public class DartClosingLabelManager implements @NotNull Disposable {
         if (fileEditor instanceof TextEditor) {
           Editor editor = ((TextEditor)fileEditor).getEditor();
           editor.getInlayModel().getInlineElementsInRange(0, editor.getDocument().getTextLength(), TextLabelCustomElementRenderer.class)
-            .forEach(Disposer::dispose);
+                  .forEach(Disposer::dispose);
         }
       }
     }
@@ -155,7 +159,9 @@ public class DartClosingLabelManager implements @NotNull Disposable {
 }
 
 class TextLabelCustomElementRenderer implements EditorCustomElementRenderer {
-  private static final TextAttributesKey TEXT_ATTRIBUTES = DefaultLanguageHighlighterColors.LINE_COMMENT;
+  //private static final TextAttributesKey TEXT_ATTRIBUTES = DefaultLanguageHighlighterColors.LINE_COMMENT;
+  //private static final TextAttributesKey TEXT_ATTRIBUTES = DefaultLanguageHighlighterColors.INSTANCE_METHOD;
+  private static final TextAttributesKey TEXT_ATTRIBUTES = DartSyntaxHighlighterColors.CONSTRUCTOR;
 
   private final String label;
 
@@ -169,8 +175,8 @@ class TextLabelCustomElementRenderer implements EditorCustomElementRenderer {
     TextAttributes attributes = editor.getColorsScheme().getAttributes(TEXT_ATTRIBUTES);
     int fontStyle = attributes == null ? Font.PLAIN : attributes.getFontType();
     return ComplementaryFontsRegistry.getFontAbleToDisplay(
-      'a', fontStyle, fontPreferences,
-      FontInfo.getFontRenderContext(editor.getContentComponent()));
+            'a', fontStyle, fontPreferences,
+            FontInfo.getFontRenderContext(editor.getContentComponent()));
   }
 
   @Override
@@ -186,6 +192,12 @@ class TextLabelCustomElementRenderer implements EditorCustomElementRenderer {
     if (attributes == null) return;
     Color fgColor = attributes.getForegroundColor();
     if (fgColor == null) return;
+
+    fgColor = new Color(fgColor.getRed(),
+            fgColor.getGreen(),
+            fgColor.getBlue(),
+            (int)(fgColor.getAlpha() * 0.4));
+
     g.setColor(fgColor);
     FontInfo fontInfo = getFontInfo(editor);
     int ascent = editor.getAscent();
