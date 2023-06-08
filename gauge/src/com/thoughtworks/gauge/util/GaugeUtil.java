@@ -25,6 +25,9 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValueProvider.Result;
+import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.EnvironmentUtil;
 import com.thoughtworks.gauge.GaugeBootstrapService;
 import com.thoughtworks.gauge.GaugeConstants;
@@ -149,7 +152,10 @@ public final class GaugeUtil {
   }
 
   public static boolean isGaugeModule(@NotNull Module module) {
-    return isGaugeProjectDir(moduleDir(module));
+    return CachedValuesManager.getManager(module.getProject()).getCachedValue(module, () -> {
+      return Result.create(isGaugeProjectDir(moduleDir(module)),
+                           GaugeManifestModificationTracker.getInstance(module.getProject()));
+    });
   }
 
   public static Module moduleForPsiElement(PsiElement element) {
