@@ -27,7 +27,8 @@ class VolarTypeScriptService(project: Project) : JSFrameworkLspTypeScriptService
 
   private fun quickInfo(element: PsiElement): TypeScriptQuickInfoResponse? {
     val server = getServer() ?: return null
-    val raw = server.invokeSynchronously(HoverMethod.create(server, element)) ?: return null
+    val hoverMethod = HoverMethod.create(server, element) ?: return null
+    val raw = server.sendRequestSync(hoverMethod) ?: return null
     val response = TypeScriptQuickInfoResponse().apply {
       displayString = raw.substring("<html><body><pre>".length, raw.length - "</pre></body></html>".length)
     }
