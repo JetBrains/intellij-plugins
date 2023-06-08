@@ -604,6 +604,7 @@ class AstroParserTest : HtmlParsingTest("", "astro",
     override fun getUnescapedText(injectedNode: PsiElement): String = injectedNode.text
     override fun intersectWithAllEditableFragments(injectedPsi: PsiFile, rangeToEdit: TextRange): List<TextRange> = listOf(rangeToEdit)
     override fun isInjectedFragment(injectedFile: PsiFile): Boolean = false
+    override fun isInjectedViewProvider(viewProvider: FileViewProvider) = false
     override fun findInjectedElementAt(hostFile: PsiFile, hostDocumentOffset: Int): PsiElement? = null
     override fun getInjectedPsiFiles(host: PsiElement): List<Pair<PsiElement, TextRange>>? = null
     override fun dropFileCaches(file: PsiFile) {}
