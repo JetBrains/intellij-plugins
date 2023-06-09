@@ -18,14 +18,14 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.ArrayUtilRt;
-import com.intellij.util.PlatformUtils;
-import com.intellij.util.SmartList;
 import com.intellij.platform.workspaceModel.storage.bridgeEntities.LibraryId;
 import com.intellij.platform.workspaceModel.storage.bridgeEntities.LibraryTableId;
 import com.intellij.platform.workspaceModel.storage.bridgeEntities.ModuleDependencyItem;
 import com.intellij.platform.workspaceModel.storage.bridgeEntities.ModuleEntity;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.PlatformUtils;
+import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import org.jetbrains.annotations.NotNull;
 
