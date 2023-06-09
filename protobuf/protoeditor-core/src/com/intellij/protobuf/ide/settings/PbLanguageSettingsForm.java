@@ -38,6 +38,7 @@ import com.intellij.protobuf.lang.resolve.FileResolveProvider;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBTextField;
+import com.intellij.ui.components.panels.VerticalLayout;
 import com.intellij.ui.table.TableView;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
@@ -76,6 +77,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
   private JCheckBox isIncludeStandardProtoDirectoriesCheckbox;
   private JCheckBox isIncludeContentRootsCheckbox;
   private JCheckBox autoConfigCheckbox;
+  private JCheckBox isIndexBasedResolveEnabledCheckbox;
 
   PbLanguageSettingsForm(Project project) {
     this.project = project;
@@ -89,11 +91,12 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
 
   @Override
   public boolean isModified(@NotNull PbProjectSettings settings) {
-    return !(getImportPathEntries().equals(settings.getImportPathEntries())
-             && getDescriptorPath().equals(settings.getDescriptorPath())
+    return !(getDescriptorPath().equals(settings.getDescriptorPath())
              && isAutoConfigEnabled() == settings.isThirdPartyConfigurationEnabled()
              && isIncludeStandardProtoDirectories() == settings.isIncludeProtoDirectories()
              && isIncludeProjectContentRoots() == settings.isIncludeContentRoots()
+             && isIndexBasedResolveEnabled() == settings.isIndexBasedResolveEnabled()
+             && getImportPathEntries().equals(settings.getImportPathEntries())
     );
   }
 
@@ -113,6 +116,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
     autoConfigCheckbox.setSelected(settings.isThirdPartyConfigurationEnabled());
     isIncludeStandardProtoDirectoriesCheckbox.setSelected(settings.isIncludeProtoDirectories());
     isIncludeContentRootsCheckbox.setSelected(settings.isIncludeContentRoots());
+    isIndexBasedResolveEnabledCheckbox.setSelected(settings.isIndexBasedResolveEnabled());
     descriptorPathField.setSelectedItem(settings.getDescriptorPath());
     importPathModel.setItems(new ArrayList<>());
     importPathModel.addRows(ContainerUtil.map(settings.getImportPathEntries(), ImportPath::new));
@@ -122,6 +126,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
     settings.setThirdPartyConfigurationEnabled(isAutoConfigEnabled());
     settings.setIncludeContentRoots(isIncludeProjectContentRoots());
     settings.setIncludeProtoDirectories(isIncludeStandardProtoDirectories());
+    settings.setIndexBasedResolveEnabled(isIndexBasedResolveEnabled());
     settings.setDescriptorPath(getDescriptorPath());
     settings.setImportPathEntries(getImportPathEntries());
   }
@@ -135,27 +140,29 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
     autoConfigCheckbox = new JBCheckBox(PbIdeBundle.message("settings.language.autoconfig"));
     isIncludeStandardProtoDirectoriesCheckbox = new JBCheckBox(PbIdeBundle.message("settings.language.include.std.proto.dirs"));
     isIncludeContentRootsCheckbox = new JBCheckBox(PbIdeBundle.message("settings.language.include.project.content.roots"));
-    JPanel autoDetectionPanel = new BorderLayoutPanel();
+    isIndexBasedResolveEnabledCheckbox = new JBCheckBox(PbIdeBundle.message("settings.language.index.based.resolve.enabled"));
+    JPanel autoDetectionPanel = new JPanel(new VerticalLayout(0));
     UIUtil.addBorder(
       autoDetectionPanel,
       IdeBorderFactory.createTitledBorder(PbIdeBundle.message("settings.language.autoconfiguration.section.title"), false));
 
-    autoDetectionPanel.add(autoConfigCheckbox, BorderLayout.NORTH);
-    autoDetectionPanel.add(isIncludeStandardProtoDirectoriesCheckbox, BorderLayout.CENTER);
-    autoDetectionPanel.add(isIncludeContentRootsCheckbox, BorderLayout.SOUTH);
+    autoDetectionPanel.add(autoConfigCheckbox, VerticalLayout.CENTER);
+    autoDetectionPanel.add(isIncludeStandardProtoDirectoriesCheckbox, VerticalLayout.CENTER);
+    autoDetectionPanel.add(isIncludeContentRootsCheckbox, VerticalLayout.CENTER);
+    autoDetectionPanel.add(isIndexBasedResolveEnabledCheckbox, VerticalLayout.CENTER);
 
     panel = new BorderLayoutPanel();
     panel.add(autoDetectionPanel, BorderLayout.NORTH);
     panel.add(manualConfigurationPanel, BorderLayout.CENTER);
 
-    // Re-configuration happens in an ActionListener which is not triggered by setSelected(). This
-    // prevents the recursive sequence:
-    //   loadSettings() -> setSelected(true) -> applyAutomaticConfiguration() -> loadSettings() ...
     autoConfigCheckbox.addActionListener(createActionListener(autoConfiguredGroup, PbImportPathsConfiguration::thirdPartyImportPaths));
     isIncludeStandardProtoDirectoriesCheckbox.addActionListener(
       createActionListener(protoDirectoriesGroup, PbImportPathsConfiguration::standardProtoDirectories));
     isIncludeContentRootsCheckbox.addActionListener(
       createActionListener(contentRootsGroup, PbImportPathsConfiguration::projectContentRoots));
+    isIndexBasedResolveEnabledCheckbox.addActionListener(
+      createActionListener(filesFromIndexesGroup, null)
+    );
     computePreciseAutoConfiguredEntriesCount();
   }
 
@@ -167,6 +174,9 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
     ImportPathGroup.create((count) -> PbIdeBundle.message("settings.virtual.group.content.root.name", count), 2);
   private static final ImportPathGroup bundledGoogleStdLibGroup =
     ImportPathGroup.create((count) -> PbIdeBundle.message("settings.virtual.group.std.google.proto.name"), 3);
+
+  private static final ImportPathGroup filesFromIndexesGroup =
+    ImportPathGroup.create((count) -> PbIdeBundle.message("settings.virtual.group.from.indexes"), 4);
 
   private static final ImportPathGroup loadingStateGroup =
     ImportPathGroup.create((count) -> PbIdeBundle.message("settings.virtual.group.loading"), 100);
@@ -190,7 +200,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
                                                  Function<Project, Collection<ImportPathEntry>> heavyImportsFetcher) {
     ProgressManager.getInstance().runProcessWithProgressSynchronously(
       () -> {
-        var importsCount = ReadAction.compute(() -> heavyImportsFetcher.apply(project).size());
+        var importsCount = heavyImportsFetcher == null ? 0 : ReadAction.compute(() -> heavyImportsFetcher.apply(project).size());
         ApplicationManager.getApplication().invokeLater(() -> {
           processVirtualGroupItemPresentation(checkBox, group.copyWithPreciseCount(importsCount));
         });
@@ -211,6 +221,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
             int contentRootsSize = PbImportPathsConfiguration.projectContentRoots(project).size();
             int protoDirsSize = PbImportPathsConfiguration.standardProtoDirectories(project).size();
             int contributedPathsSize = PbImportPathsConfiguration.thirdPartyImportPaths(project).size();
+            int filesFromIndexSize = PbImportPathsConfiguration.findAllDirectoriesWithCorrespondingImportPaths(project).size();
             ApplicationManager.getApplication().invokeLater(() -> {
               removeVirtualGroup(loadingStateGroup);
               processVirtualGroupItemPresentation(autoConfigCheckbox, autoConfiguredGroup.copyWithPreciseCount(contributedPathsSize));
@@ -218,6 +229,8 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
                                                   protoDirectoriesGroup.copyWithPreciseCount(protoDirsSize));
               processVirtualGroupItemPresentation(isIncludeContentRootsCheckbox,
                                                   contentRootsGroup.copyWithPreciseCount(contentRootsSize));
+              processVirtualGroupItemPresentation(isIndexBasedResolveEnabledCheckbox,
+                                                  filesFromIndexesGroup.copyWithPreciseCount(filesFromIndexSize));
               addVirtualGroup(bundledGoogleStdLibGroup);
             });
           });
@@ -343,6 +356,10 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
 
   private boolean isIncludeProjectContentRoots() {
     return isIncludeContentRootsCheckbox.isSelected();
+  }
+
+  private boolean isIndexBasedResolveEnabled() {
+    return isIndexBasedResolveEnabledCheckbox.isSelected();
   }
 
   private boolean isDescriptorPathValid() {
