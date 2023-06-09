@@ -175,7 +175,7 @@ public class DartModuleBuilder extends ModuleBuilder {
     }
 
     StartupManager.getInstance(module.getProject()).runWhenProjectIsInitialized(() -> {
-      if (ApplicationManager.getApplication().getCurrentModalityState() == ModalityState.NON_MODAL) {
+      if (ModalityState.current() == ModalityState.NON_MODAL) {
         runnable.run();
       }
       else {
