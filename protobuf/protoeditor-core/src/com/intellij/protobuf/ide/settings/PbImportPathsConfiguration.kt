@@ -6,7 +6,10 @@ import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.protobuf.ide.settings.PbProjectSettings.ImportPathEntry
+import com.intellij.protobuf.lang.PbFileType
+import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
@@ -83,4 +86,23 @@ internal fun getBuiltInIncludeEntry(): ImportPathEntry? {
     null
   }
   else ImportPathEntry(descriptorsDirectory.url, "")
+}
+
+internal fun findFileByImportPath(searchedFileName: String,
+                                  searchScope: GlobalSearchScope,
+                                  path: String): VirtualFile? {
+  return Plow.of { processor ->
+    FileTypeIndex.processFiles(PbFileType.INSTANCE, processor, searchScope)
+  }.find { file ->
+    file.nameWithoutExtension == searchedFileName && file.url.endsWith(path)
+  }
+}
+
+internal fun findAllDirectoriesWithCorrespondingImportPaths(project: Project): List<ImportPathEntry> {
+  // todo for request execution
+  return Plow.of { processor ->
+    FileTypeIndex.processFiles(PbFileType.INSTANCE, processor, GlobalSearchScope.allScope(project))
+  }.map { file -> file.parent }
+    .map { directory -> ImportPathEntry(directory.url, "") }
+    .toList()
 }

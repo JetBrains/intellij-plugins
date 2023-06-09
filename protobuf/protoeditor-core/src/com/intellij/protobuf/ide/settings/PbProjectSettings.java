@@ -68,7 +68,7 @@ public final class PbProjectSettings implements PersistentStateComponent<PbProje
     return project.getService(PbProjectSettings.class);
   }
 
-  public static void notifyUpdated(Project project)  {
+  public static void notifyUpdated(Project project) {
     PbProjectSettings serviceInstance = getInstance(project);
     serviceInstance.state.incModificationCount();
 
@@ -133,6 +133,14 @@ public final class PbProjectSettings implements PersistentStateComponent<PbProje
     state.includeProtoDirectories = includeProtoDirectories;
   }
 
+  public boolean isIndexBasedResolveEnabled() {
+    return state.indexBasedResolveEnabled;
+  }
+
+  public void setIndexBasedResolveEnabled(boolean indexBasedResolveEnabled) {
+    state.indexBasedResolveEnabled = indexBasedResolveEnabled;
+  }
+
   public boolean isIncludeContentRoots() {
     return state.includeContentRoots;
   }
@@ -153,9 +161,9 @@ public final class PbProjectSettings implements PersistentStateComponent<PbProje
     if (!getClass().equals(obj.getClass())) {
       return false;
     }
-    PbProjectSettings other = (PbProjectSettings) obj;
+    PbProjectSettings other = (PbProjectSettings)obj;
     return Objects.equals(getDescriptorPath(), other.getDescriptorPath())
-        && Objects.equals(getImportPathEntries(), other.getImportPathEntries());
+           && Objects.equals(getImportPathEntries(), other.getImportPathEntries());
   }
 
   @Override
@@ -210,10 +218,10 @@ public final class PbProjectSettings implements PersistentStateComponent<PbProje
         return false;
       }
 
-      ImportPathEntry other = (ImportPathEntry) obj;
+      ImportPathEntry other = (ImportPathEntry)obj;
 
       return Objects.equals(this.location, other.location)
-          && Objects.equals(this.prefix, other.prefix);
+             && Objects.equals(this.prefix, other.prefix);
     }
 
     @Override
@@ -230,6 +238,8 @@ public final class PbProjectSettings implements PersistentStateComponent<PbProje
     public boolean thirdPartyConfiguration = true;
     public boolean includeContentRoots = true;
     public boolean includeProtoDirectories = true;
+
+    public boolean indexBasedResolveEnabled = true;
     public List<ImportPathEntry> importPathEntries = new SmartList<>();
     @NlsSafe
     public String descriptorPath = "";

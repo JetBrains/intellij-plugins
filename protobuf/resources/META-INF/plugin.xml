@@ -60,6 +60,8 @@
     <!-- SettingsFileResolveProvider is listed first so that manually-configured descriptor paths always win. -->
     <fileResolveProvider id="settings" order="FIRST"
                          implementation="com.intellij.protobuf.ide.settings.SettingsFileResolveProvider"/>
+    <fileResolveProvider implementation="com.intellij.protobuf.lang.resolve.PbIndexBasedFileResolveProvider"/>
+
     <!-- Schema definition -->
     <schemaProvider implementation="com.intellij.protobuf.lang.resolve.directive.SchemaDirectiveSchemaProvider"/>
   </extensions>
