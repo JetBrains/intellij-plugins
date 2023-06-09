@@ -13,7 +13,7 @@ import com.intellij.util.indexing.roots.builders.IndexableIteratorBuilderHandler
 import com.intellij.util.indexing.roots.kind.IndexableSetOrigin
 import com.intellij.workspaceModel.ide.virtualFile
 import com.intellij.platform.workspaceModel.storage.EntityStorage
-import com.intellij.platform.workspaceModel.storage.bridgeEntities.ModuleEntity
+import com.intellij.platform.workspaceModel.jps.entities.ModuleEntity
 
 class DenoIndexableEntityProvider : IndexableEntityProvider.Existing<DenoEntity> {
   override fun getEntityClass(): Class<DenoEntity> = DenoEntity::class.java
