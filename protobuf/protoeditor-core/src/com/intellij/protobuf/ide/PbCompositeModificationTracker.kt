@@ -12,12 +12,17 @@ import com.intellij.protobuf.lang.PbTextLanguage
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 
-@Service
+@Service(Service.Level.PROJECT)
 internal class PbCompositeModificationTracker(val project: Project) : ModificationTracker, Disposable {
   companion object {
     @JvmStatic
     fun byElement(psiElement: PsiElement): PbCompositeModificationTracker {
       return psiElement.project.service<PbCompositeModificationTracker>()
+    }
+
+    @JvmStatic
+    fun getInstance(project: Project): PbCompositeModificationTracker {
+      return project.service<PbCompositeModificationTracker>()
     }
   }
 

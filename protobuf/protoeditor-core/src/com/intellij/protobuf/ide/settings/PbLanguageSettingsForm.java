@@ -39,6 +39,7 @@ import com.intellij.ui.*;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.ui.components.panels.VerticalLayout;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.ui.table.TableView;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
@@ -155,13 +156,14 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
     panel.add(autoDetectionPanel, BorderLayout.NORTH);
     panel.add(manualConfigurationPanel, BorderLayout.CENTER);
 
-    autoConfigCheckbox.addActionListener(createActionListener(autoConfiguredGroup, PbImportPathsConfiguration::thirdPartyImportPaths));
+    autoConfigCheckbox.addActionListener(
+      groupItemPresentationUpdater(autoConfiguredGroup, PbImportPathsConfiguration::thirdPartyImportPaths));
     isIncludeStandardProtoDirectoriesCheckbox.addActionListener(
-      createActionListener(protoDirectoriesGroup, PbImportPathsConfiguration::standardProtoDirectories));
+      groupItemPresentationUpdater(protoDirectoriesGroup, PbImportPathsConfiguration::standardProtoDirectories));
     isIncludeContentRootsCheckbox.addActionListener(
-      createActionListener(contentRootsGroup, PbImportPathsConfiguration::projectContentRoots));
+      groupItemPresentationUpdater(contentRootsGroup, PbImportPathsConfiguration::projectContentRoots));
     isIndexBasedResolveEnabledCheckbox.addActionListener(
-      createActionListener(filesFromIndexesGroup, null)
+      groupItemPresentationUpdater(filesFromIndexesGroup, PbImportPathsConfiguration::getOrComputeImportPathsForAllImportStatements)
     );
     computePreciseAutoConfiguredEntriesCount();
   }
@@ -176,14 +178,14 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
     ImportPathGroup.create((count) -> PbIdeBundle.message("settings.virtual.group.std.google.proto.name"), 3);
 
   private static final ImportPathGroup filesFromIndexesGroup =
-    ImportPathGroup.create((count) -> PbIdeBundle.message("settings.virtual.group.from.indexes"), 4);
+    ImportPathGroup.create((count) -> PbIdeBundle.message("settings.virtual.group.from.indexes", count), 4);
 
   private static final ImportPathGroup loadingStateGroup =
     ImportPathGroup.create((count) -> PbIdeBundle.message("settings.virtual.group.loading"), 100);
 
   @NotNull
-  private ActionListener createActionListener(ImportPathGroup group,
-                                              Function<Project, Collection<ImportPathEntry>> heavyImportsFetcher) {
+  private ActionListener groupItemPresentationUpdater(ImportPathGroup group,
+                                                      Function<Project, Collection<?>> heavyImportsFetcher) {
     return new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent event) {
@@ -197,7 +199,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
 
   private void computePresentationAndUpdateModel(JCheckBox checkBox,
                                                  ImportPathGroup group,
-                                                 Function<Project, Collection<ImportPathEntry>> heavyImportsFetcher) {
+                                                 Function<Project, Collection<?>> heavyImportsFetcher) {
     ProgressManager.getInstance().runProcessWithProgressSynchronously(
       () -> {
         var importsCount = heavyImportsFetcher == null ? 0 : ReadAction.compute(() -> heavyImportsFetcher.apply(project).size());
@@ -221,7 +223,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
             int contentRootsSize = PbImportPathsConfiguration.projectContentRoots(project).size();
             int protoDirsSize = PbImportPathsConfiguration.standardProtoDirectories(project).size();
             int contributedPathsSize = PbImportPathsConfiguration.thirdPartyImportPaths(project).size();
-            int filesFromIndexSize = PbImportPathsConfiguration.findAllDirectoriesWithCorrespondingImportPaths(project).size();
+            int protoDirectoriesFromIndexSize = PbImportPathsConfiguration.getOrComputeImportPathsForAllImportStatements(project).size();
             ApplicationManager.getApplication().invokeLater(() -> {
               removeVirtualGroup(loadingStateGroup);
               processVirtualGroupItemPresentation(autoConfigCheckbox, autoConfiguredGroup.copyWithPreciseCount(contributedPathsSize));
@@ -230,7 +232,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
               processVirtualGroupItemPresentation(isIncludeContentRootsCheckbox,
                                                   contentRootsGroup.copyWithPreciseCount(contentRootsSize));
               processVirtualGroupItemPresentation(isIndexBasedResolveEnabledCheckbox,
-                                                  filesFromIndexesGroup.copyWithPreciseCount(filesFromIndexSize));
+                                                  filesFromIndexesGroup.copyWithPreciseCount(protoDirectoriesFromIndexSize));
               addVirtualGroup(bundledGoogleStdLibGroup);
             });
           });
@@ -491,6 +493,11 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
       DefaultCellEditor editor = new DefaultCellEditor(new JBTextField(path.prefix));
       editor.setClickCountToStart(2);
       return editor;
+    }
+
+    @Override
+    public int getWidth(JTable table) {
+      return JBUIScale.scale(200);
     }
   }
 

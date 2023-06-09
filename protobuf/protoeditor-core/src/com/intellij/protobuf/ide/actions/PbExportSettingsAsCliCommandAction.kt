@@ -4,11 +4,13 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.ide.CopyPasteManager
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.protobuf.ide.PbIdeBundle
 import com.intellij.protobuf.ide.settings.PbProjectSettings
-import com.intellij.protobuf.ide.settings.computeImportPaths
+import com.intellij.protobuf.ide.settings.computeDeterministicImportPaths
+import com.intellij.protobuf.ide.settings.getOrComputeImportPathsForAllImportStatements
 import com.intellij.ui.AnActionButton
 import com.intellij.util.execution.ParametersListUtil
 import com.intellij.util.io.URLUtil
@@ -20,7 +22,15 @@ class PbExportSettingsAsCliCommandAction : AnActionButton(
 ) {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
-    CopyPasteManager.getInstance().setContents(StringSelection(joinImportPathsIntoCliArgument(project, PROTOC_PATH_ARGUMENT)))
+    ProgressManager.getInstance().runProcessWithProgressSynchronously(
+      {
+        CopyPasteManager.getInstance().setContents(StringSelection(
+          joinImportPathsIntoCliArgument(project, PROTOC_PATH_ARGUMENT)
+        ))
+      },
+      PbIdeBundle.message("action.export.as.cli.argument.progress.title"),
+      true,
+      project)
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread {
@@ -38,14 +48,16 @@ class PbExportSettingsAsCliCommandAction : AnActionButton(
     }
 
     private fun retrieveImportUrls(project: Project): Sequence<String> {
-      return computeImportPaths(project)
+      return computeDeterministicImportPaths(project)
         .mapNotNull(PbProjectSettings.ImportPathEntry::getLocation)
+        .plus(getOrComputeImportPathsForAllImportStatements(project))
     }
 
     private fun retrieveUnescapedImportPaths(project: Project): Sequence<String> {
       return retrieveImportUrls(project)
         .map(URLUtil::extractPath)
         .map(FileUtil::toSystemDependentName)
+        .map { it.trim('/') }
     }
   }
 }

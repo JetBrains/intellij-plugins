@@ -27,8 +27,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static com.intellij.protobuf.ide.settings.PbImportPathsConfiguration.computeImportPaths;
-import static com.intellij.protobuf.ide.settings.PbImportPathsConfiguration.computeImportPathsStream;
+import static com.intellij.protobuf.ide.settings.PbImportPathsConfiguration.computeDeterministicImportPaths;
+import static com.intellij.protobuf.ide.settings.PbImportPathsConfiguration.computeDeterministicImportPathsStream;
 
 
 /** {@link FileResolveProvider} implementation that uses settings from {@link PbProjectSettings}. */
@@ -56,7 +56,7 @@ public class SettingsFileResolveProvider implements FileResolveProvider {
   @Nullable
   @Override
   public VirtualFile findFile(@NotNull String path, @NotNull Project project) {
-    Iterator<ImportPathEntry> iterator = computeImportPaths(project).iterator();
+    Iterator<ImportPathEntry> iterator = computeDeterministicImportPaths(project).iterator();
     if (!iterator.hasNext()) return null;
     for (ImportPathEntry entry = iterator.next(); iterator.hasNext(); iterator.next()) {
       if (entry == null) continue;
@@ -81,7 +81,7 @@ public class SettingsFileResolveProvider implements FileResolveProvider {
   @NotNull
   @Override
   public Collection<ChildEntry> getChildEntries(@NotNull String path, @NotNull Project project) {
-    Iterator<ImportPathEntry> iterator = computeImportPaths(project).iterator();
+    Iterator<ImportPathEntry> iterator = computeDeterministicImportPaths(project).iterator();
     if (!iterator.hasNext()) return Collections.emptyList();
     Set<ChildEntry> results = new HashSet<>();
     for (ImportPathEntry entry = iterator.next(); iterator.hasNext(); iterator.next()) {
@@ -134,7 +134,7 @@ public class SettingsFileResolveProvider implements FileResolveProvider {
   @Override
   public GlobalSearchScope getSearchScope(@NotNull Project project) {
     VirtualFile[] roots =
-      computeImportPathsStream(project)
+      computeDeterministicImportPathsStream(project)
         .map(ImportPathEntry::getLocation)
         .map(VirtualFileManager.getInstance()::findFileByUrl)
         .filter(Objects::nonNull)

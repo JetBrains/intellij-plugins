@@ -5,24 +5,29 @@ package com.intellij.protobuf.ide.settings
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.protobuf.ide.PbCompositeModificationTracker
 import com.intellij.protobuf.ide.settings.PbProjectSettings.ImportPathEntry
 import com.intellij.protobuf.lang.PbFileType
+import com.intellij.protobuf.lang.psi.PbFile
+import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.Plow
+import com.intellij.util.asSafely
 import java.util.stream.Stream
 import kotlin.streams.asStream
 
-fun computeImportPathsStream(project: Project): Stream<ImportPathEntry> {
-  return computeImportPaths(project).asStream()
+fun computeDeterministicImportPathsStream(project: Project): Stream<ImportPathEntry> {
+  return computeDeterministicImportPaths(project).asStream()
 }
 
-fun computeImportPaths(project: Project): Sequence<ImportPathEntry> {
+fun computeDeterministicImportPaths(project: Project): Sequence<ImportPathEntry> {
   return sequence {
     with(PbProjectSettings.getInstance(project)) {
       yieldAll(configuredImportPaths(project))
@@ -68,7 +73,7 @@ internal fun standardProtoDirectories(project: Project): List<ImportPathEntry> {
       CachedValueProvider.Result(
         protoDirectories,
         ProjectRootManager.getInstance(project),
-        PbProjectSettings.getInstance(project).state
+        PbCompositeModificationTracker.getInstance(project)
       )
     }
 }
@@ -98,11 +103,52 @@ internal fun findFileByImportPath(searchedFileName: String,
   }
 }
 
-internal fun findAllDirectoriesWithCorrespondingImportPaths(project: Project): List<ImportPathEntry> {
-  // todo for request execution
-  return Plow.of { processor ->
-    FileTypeIndex.processFiles(PbFileType.INSTANCE, processor, GlobalSearchScope.allScope(project))
-  }.map { file -> file.parent }
-    .map { directory -> ImportPathEntry(directory.url, "") }
+fun getOrComputeImportPathsForAllImportStatements(project: Project): List<String> {
+  if (true) return computeImportPathsForAllImportStatements(project)
+  return CachedValuesManager.getManager(project)
+    .getCachedValue(project) {
+      val allDiscoveredImportPaths = computeImportPathsForAllImportStatements(project)
+      CachedValueProvider.Result(
+        allDiscoveredImportPaths,
+        PbCompositeModificationTracker.getInstance(project),
+        ProjectRootManager.getInstance(project),
+      )
+    }
+}
+
+private fun computeImportPathsForAllImportStatements(project: Project): List<String> {
+  if (!PbProjectSettings.getInstance(project).isIndexBasedResolveEnabled) return emptyList()
+
+  val allProtoFiles = runReadAction { FileTypeIndex.getFiles(PbFileType.INSTANCE, GlobalSearchScope.allScope(project)) }
+  val psiManager = PsiManager.getInstance(project)
+
+  val importStatements = allProtoFiles.flatMap { virtualFile ->
+    runReadAction {
+      psiManager.findFile(virtualFile)?.asSafely<PbFile>()
+        ?.importStatements
+        ?.flatMap { importStatement -> importStatement.importName?.stringValue?.stringParts.orEmpty() }
+        ?.mapNotNull { singleImport -> singleImport.text?.let(StringUtil::unquoteString) }
+        .orEmpty()
+    }
+  }
+    .filter(String::isNotBlank)
+    .toSet()
+
+  val allProtoFileUrls = runReadAction { allProtoFiles.map(VirtualFile::getUrl) }
+
+  return allProtoFileUrls.asSequence()
+    .flatMap { fileUrl ->
+      importStatements.mapNotNull { importStatement ->
+        fileUrl.substringWithoutSuffixOrNull(importStatement)
+      }
+    }.distinct()
     .toList()
+}
+
+private fun String.substringWithoutSuffixOrNull(suffix: String): String? {
+  return when {
+    suffix.isEmpty() -> null
+    !this.endsWith(suffix) -> null
+    else -> this.removeSuffix(suffix)
+  }
 }
