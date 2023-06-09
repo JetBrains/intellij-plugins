@@ -153,7 +153,7 @@ final class GaugeModuleBuilder extends ModuleBuilder {
     module.putUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT, Boolean.TRUE);
 
     StartupManager.getInstance(module.getProject()).runAfterOpened(() -> {
-      ModalityUiUtil.invokeLaterIfNeeded(ModalityState.NON_MODAL, module.getDisposed(), () -> {
+      ModalityUiUtil.invokeLaterIfNeeded(ModalityState.nonModal(), module.getDisposed(), () -> {
         if (module.isDisposed()) return;
 
         new ReformatCodeProcessor(module.getProject(), module, false).run();

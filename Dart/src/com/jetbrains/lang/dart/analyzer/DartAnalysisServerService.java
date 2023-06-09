@@ -835,7 +835,7 @@ public final class DartAnalysisServerService implements Disposable {
   }
 
   void updateCurrentFile() {
-    ModalityUiUtil.invokeLaterIfNeeded(ModalityState.NON_MODAL, myDisposedCondition,
+    ModalityUiUtil.invokeLaterIfNeeded(ModalityState.nonModal(), myDisposedCondition,
                                        () -> DartProblemsView.getInstance(myProject).setCurrentFile(getCurrentOpenFile())
     );
   }
@@ -1862,7 +1862,7 @@ public final class DartAnalysisServerService implements Disposable {
 
     server.analysis_reanalyze();
 
-    ApplicationManager.getApplication().invokeLater(this::clearAllErrors, ModalityState.NON_MODAL, myDisposedCondition);
+    ApplicationManager.getApplication().invokeLater(this::clearAllErrors, ModalityState.nonModal(), myDisposedCondition);
   }
 
   private void analysis_setPriorityFiles() {
@@ -2159,7 +2159,7 @@ public final class DartAnalysisServerService implements Disposable {
                     final DartProblemsView problemsView = DartProblemsView.getInstance(myProject);
                     problemsView.showErrorNotificationTerse(DartBundle.message("analysis.server.terminated"));
                   },
-                  ModalityState.NON_MODAL,
+                  ModalityState.nonModal(),
                   myDisposedCondition
                 );
 
@@ -2182,7 +2182,7 @@ public final class DartAnalysisServerService implements Disposable {
             final DartProblemsView problemsView = DartProblemsView.getInstance(myProject);
             problemsView.clearNotifications();
           },
-          ModalityState.NON_MODAL,
+          ModalityState.nonModal(),
           myDisposedCondition
         );
 
@@ -2277,7 +2277,7 @@ public final class DartAnalysisServerService implements Disposable {
       myRootsHandler.onServerStopped();
 
       if (myProject.isOpen() && !myProject.isDisposed()) {
-        ApplicationManager.getApplication().invokeLater(this::clearAllErrors, ModalityState.NON_MODAL, myDisposedCondition);
+        ApplicationManager.getApplication().invokeLater(this::clearAllErrors, ModalityState.nonModal(), myDisposedCondition);
       }
     }
   }

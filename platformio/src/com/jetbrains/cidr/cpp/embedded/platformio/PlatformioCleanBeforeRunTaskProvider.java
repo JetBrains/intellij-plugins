@@ -79,7 +79,7 @@ public class PlatformioCleanBeforeRunTaskProvider extends BeforeRunTaskProvider<
 
     if (!success.get()) {
       ModalityUiUtil.invokeLaterIfNeeded(
-        ModalityState.NON_MODAL, () -> CidrBuild.showBuildNotification(configuration.getProject(), MessageType.ERROR,
+        ModalityState.nonModal(), () -> CidrBuild.showBuildNotification(configuration.getProject(), MessageType.ERROR,
                                                                        ClionEmbeddedPlatformioBundle.message("platformio.clean.failed"))
       );
     }

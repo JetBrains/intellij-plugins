@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.prettierjs;
 
 import com.intellij.codeInsight.actions.FileTreeIterator;
@@ -445,7 +445,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       HintManagerImpl.getInstanceImpl()
         .showEditorHint(hint, editor, HintManager.UNDER, HintManager.HIDE_BY_ANY_KEY | HintManager.HIDE_BY_TEXT_CHANGE |
                                                          HintManager.HIDE_BY_SCROLLING, 0, false);
-    }, ModalityState.NON_MODAL, o -> editor.isDisposed() || !editor.getComponent().isShowing());
+    }, ModalityState.nonModal(), o -> editor.isDisposed() || !editor.getComponent().isShowing());
   }
 
   private static void installPackage(@NotNull Project project) {

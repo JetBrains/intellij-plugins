@@ -60,7 +60,7 @@ public final class DartSdkUpdateChecker {
         if (sdkUpdateInfo != null && compareDartSdkVersions(sdkUpdateInfo.myVersion, currentSdkVersion) > 0) {
           ApplicationManager.getApplication().invokeLater(
             () -> notifySdkUpdateAvailable(project, currentSdkVersion, sdkUpdateInfo.myVersion, sdkUpdateInfo.myDownloadUrl),
-            ModalityState.NON_MODAL,
+            ModalityState.nonModal(),
             project.getDisposed()
           );
         }

@@ -170,16 +170,16 @@ public class DartModuleBuilder extends ModuleBuilder {
     // In WebStorm we get already initialized project at this point, but in IntelliJ IDEA - not yet initialized.
 
     if (module.getProject().isInitialized()) {
-      ApplicationManager.getApplication().invokeLater(runnable, ModalityState.NON_MODAL, module.getDisposed());
+      ApplicationManager.getApplication().invokeLater(runnable, ModalityState.nonModal(), module.getDisposed());
       return;
     }
 
     StartupManager.getInstance(module.getProject()).runWhenProjectIsInitialized(() -> {
-      if (ModalityState.current() == ModalityState.NON_MODAL) {
+      if (ModalityState.current() == ModalityState.nonModal()) {
         runnable.run();
       }
       else {
-        ApplicationManager.getApplication().invokeLater(runnable, ModalityState.NON_MODAL, o -> module.isDisposed());
+        ApplicationManager.getApplication().invokeLater(runnable, ModalityState.nonModal(), o -> module.isDisposed());
       }
     });
   }

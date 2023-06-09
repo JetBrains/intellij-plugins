@@ -59,7 +59,7 @@ public final class DartStartupActivity implements StartupActivity, DumbAware {
         return modulesAndPubspecs;
       })
       .expireWith(DartAnalysisServerService.getInstance(project))
-      .finishOnUiThread(ModalityState.NON_MODAL, modulesAndPubspecs -> {
+      .finishOnUiThread(ModalityState.nonModal(), modulesAndPubspecs -> {
         if (modulesAndPubspecs.isEmpty()) return;
 
         for (Pair<Module, VirtualFile> moduleAndPubspec : modulesAndPubspecs) {

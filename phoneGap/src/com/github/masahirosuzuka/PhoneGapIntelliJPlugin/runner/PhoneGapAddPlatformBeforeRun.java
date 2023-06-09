@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
@@ -143,7 +143,7 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
           }
         }
       }.queue();
-    }, ModalityState.NON_MODAL);
+    }, ModalityState.nonModal());
 
     if (!targetDone.waitFor(LOCK_TIMEOUT)) {
       ExecutionHelper.showErrors(project, ContainerUtil.createMaybeSingletonList(new RuntimeException("Timeout")), tabText, null);

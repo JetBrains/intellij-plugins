@@ -107,7 +107,7 @@ public class DartFileListener implements AsyncFileListener {
     ReadAction.nonBlocking(() -> collectPackagesLibraryRoots(project))
       .coalesceBy(DART_PACKAGE_ROOTS_UPDATE_COALESCE)
       .expireWith(DartAnalysisServerService.getInstance(project))
-      .finishOnUiThread(ModalityState.NON_MODAL, libInfo -> {
+      .finishOnUiThread(ModalityState.nonModal(), libInfo -> {
         if (libInfo.getLibRootUrls().isEmpty()) {
           removeDartPackagesLibraryAndDependencies(project);
           return;

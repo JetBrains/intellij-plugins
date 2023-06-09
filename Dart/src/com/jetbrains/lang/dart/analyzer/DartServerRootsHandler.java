@@ -61,7 +61,7 @@ public class DartServerRootsHandler {
     ReadAction.nonBlocking(() -> calcIncludedAndExcludedDartRoots())
       .coalesceBy(this)
       .expireWith(DartAnalysisServerService.getInstance(myProject))
-      .finishOnUiThread(ModalityState.NON_MODAL, includedAndExcludedRoots -> {
+      .finishOnUiThread(ModalityState.nonModal(), includedAndExcludedRoots -> {
         if (includedAndExcludedRoots != null) {
           sendSetAnalysisRootsRequest(includedAndExcludedRoots.first, includedAndExcludedRoots.second);
 

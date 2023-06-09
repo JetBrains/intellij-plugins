@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.UI.config;
 
 import com.intellij.coldFusion.CfmlBundle;
@@ -95,7 +95,7 @@ public class CfmlProjectConfigurable implements SearchableConfigurable, Configur
             return true;
           }, project, indicator);
         }
-        ApplicationManager.getApplication().invokeAndWait(() -> FileContentUtil.reparseFiles(project, cfmlFiles, true), ModalityState.NON_MODAL);
+        ApplicationManager.getApplication().invokeAndWait(() -> FileContentUtil.reparseFiles(project, cfmlFiles, true), ModalityState.nonModal());
       }
     };
     ProgressManager.getInstance().run(task);

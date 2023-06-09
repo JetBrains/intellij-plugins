@@ -100,13 +100,13 @@ public final class DartProblemsView implements PersistentStateComponent<DartProb
         @Override
         public void analysisStarted() {
           myAnalysisIsBusy = true;
-          ModalityUiUtil.invokeLaterIfNeeded(ModalityState.NON_MODAL, myProject.getDisposed(), () -> updateIcon());
+          ModalityUiUtil.invokeLaterIfNeeded(ModalityState.nonModal(), myProject.getDisposed(), () -> updateIcon());
         }
 
         @Override
         public void analysisFinished() {
           myAnalysisIsBusy = false;
-          ModalityUiUtil.invokeLaterIfNeeded(ModalityState.NON_MODAL, myProject.getDisposed(), () -> updateIcon());
+          ModalityUiUtil.invokeLaterIfNeeded(ModalityState.nonModal(), myProject.getDisposed(), () -> updateIcon());
         }
       }
     );
@@ -290,7 +290,7 @@ public final class DartProblemsView implements PersistentStateComponent<DartProb
   public void updateErrorsForFile(@NotNull final String filePath, @NotNull List<? extends AnalysisError> errors) {
     synchronized (myLock) {
       if (myScheduledFilePathToErrors.isEmpty()) {
-        myAlarm.addRequest(myUpdateRunnable, TABLE_REFRESH_PERIOD, ModalityState.NON_MODAL);
+        myAlarm.addRequest(myUpdateRunnable, TABLE_REFRESH_PERIOD, ModalityState.nonModal());
       }
 
       myScheduledFilePathToErrors.put(filePath, errors);

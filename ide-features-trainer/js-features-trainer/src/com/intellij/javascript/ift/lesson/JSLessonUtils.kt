@@ -7,7 +7,7 @@ import com.intellij.openapi.application.ModalityState
 import training.dsl.LessonContext
 
 fun LessonContext.setLanguageLevel() {
-  prepareRuntimeTask(ModalityState.NON_MODAL) {
+  prepareRuntimeTask(ModalityState.nonModal()) {
     JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
   }
 }

@@ -161,7 +161,7 @@ public final class PerforceConnectionProblemsNotifier extends GenericNotifierImp
   private void recalculateState() {
     if (mySettings.ENABLED && (myConnectionProblems || myParametersProblems)) {
       if (mySettings.myCanGoOffline && !ApplicationManager.getApplication().isUnitTestMode()) {
-        ApplicationManager.getApplication().invokeLater(() -> mySettings.disable(), ModalityState.NON_MODAL);
+        ApplicationManager.getApplication().invokeLater(() -> mySettings.disable(), ModalityState.nonModal());
       }
       ensureNotify(this);
     } else {

@@ -126,7 +126,7 @@ public class DartClosingLabelManager implements @NotNull Disposable {
     };
 
     ApplicationManager.getApplication()
-      .invokeLater(runnable, ModalityState.NON_MODAL, DartAnalysisServerService.getInstance(project).getDisposedCondition());
+      .invokeLater(runnable, ModalityState.nonModal(), DartAnalysisServerService.getInstance(project).getDisposedCondition());
   }
 
   private static void clearEditorInlays(@NotNull Editor editor) {

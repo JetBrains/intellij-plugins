@@ -125,7 +125,7 @@ public final class DartServerData {
 
     myOutlineData.put(filePath, outline);
     ApplicationManager.getApplication().invokeLater(() -> myEventDispatcher.getMulticaster().outlineUpdated(filePath),
-                                                    ModalityState.NON_MODAL,
+                                                    ModalityState.nonModal(),
                                                     myService.getDisposedCondition());
   }
 
@@ -318,7 +318,7 @@ public final class DartServerData {
                        }
                        DaemonCodeAnalyzer.getInstance(project).restart();
                      },
-                     ModalityState.NON_MODAL,
+                     ModalityState.nonModal(),
                      myService.getDisposedCondition());
     }
   }

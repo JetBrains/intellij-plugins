@@ -10,7 +10,7 @@ import training.dsl.LessonContext
 import training.dsl.TaskRuntimeContext
 
 fun LessonContext.setLanguageLevel() {
-  prepareRuntimeTask(ModalityState.NON_MODAL) {
+  prepareRuntimeTask(ModalityState.nonModal()) {
     JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
   }
 }
