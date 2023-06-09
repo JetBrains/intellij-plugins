@@ -15,10 +15,12 @@ class AstroInspectionsTest : AstroCodeInsightTestCase() {
                                             AstroBundle.message("astro.quickfix.import.component.name", "Component"),
                                             additionalFiles = listOf("Component.astro"))
 
+  fun testMissingComponentImportFalsePositive() = doTest(AstroMissingComponentImportInspection::class,
+                                                         null, additionalFiles = listOf("Nav.astro"))
+
   fun testMissingTsSymbolImport() = doTest(TypeScriptUnresolvedReferenceInspection::class,
                                            "Insert 'import {Colors} from \"./colors\"'",
-                                           additionalFiles = listOf("colors.ts")
-  )
+                                           additionalFiles = listOf("colors.ts"))
 
   fun testUnresolvedVariableInExprNoFrontmatter() = doTest(TypeScriptUnresolvedReferenceInspection::class,
                                                            JavaScriptBundle.message("javascript.create.variable.intention.name", "test"))
