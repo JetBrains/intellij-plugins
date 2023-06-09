@@ -111,6 +111,17 @@ class VueModuleImportTest : JSImportHighlightingAndCompletionLightTestBase() {
     myFixture.testHighlighting()
   }
 
+  fun testStylesResolvePathMappingTilde() {
+    //css doesn't have stubs for imports!
+    Registry.get("ast.loading.filter").setValue(false, testRootDisposable)
+
+    myFixture.enableInspections(CssUnknownTargetInspection(), SassScssUnresolvedMixinInspection())
+    myFixture.copyDirectoryToProject(getTestName(false), "")
+    myFixture.configureFromTempProjectFile("spa/src/testComponent.vue")
+    myFixture.allowTreeAccessForAllFiles()
+    myFixture.testHighlighting()
+  }
+
   fun testTSOverVuePriority() {
     doHighlightOnlyTestWithCopyDirectory(extension)
   }
