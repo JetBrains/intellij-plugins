@@ -41,7 +41,10 @@ fun computeDeterministicImportPaths(project: Project): Sequence<ImportPathEntry>
 
 internal fun projectContentRoots(project: Project): List<ImportPathEntry> {
   return runReadAction {
-    ProjectRootManager.getInstance(project).contentRootUrls.map { ImportPathEntry(it, "") }
+    ProjectRootManager.getInstance(project).let {
+      it.contentRoots.map { ImportPathEntry(it.url, "") } +
+      it.contentSourceRoots.map { ImportPathEntry(it.url, "") }
+    }
   }
 }
 
@@ -80,9 +83,11 @@ internal fun standardProtoDirectories(project: Project): List<ImportPathEntry> {
 
 internal fun getDescriptorPathSuggestions(project: Project): Collection<String> {
   return ProjectSettingsConfigurator.EP_NAME.getExtensions(project)
-    .flatMap { configurator -> configurator.getDescriptorPathSuggestions(project) }
-    .toSet()
+           .flatMap { configurator -> configurator.getDescriptorPathSuggestions(project) }
+           .toSet() + BUNDLED_DESCRIPTOR
 }
+
+private const val BUNDLED_DESCRIPTOR = "google/protobuf/descriptor.proto"
 
 internal fun getBuiltInIncludeEntry(): ImportPathEntry? {
   val includedDescriptorsDirectoryUrl = PbProjectSettings::class.java.classLoader.getResource("include") ?: return null
