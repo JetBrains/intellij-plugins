@@ -113,9 +113,7 @@ class ForceQuotemarkRule : TsLintSimpleRule<Boolean>("quotemark") {
 class SemicolonRule : TsLintSimpleRule<Boolean>("semicolon") {
   override fun getConfigValue(option: TslintJsonOption): Boolean {
     val stringValues = option.getStringValues()
-    if (stringValues.contains("never")) return false
-
-    return true
+    return !stringValues.contains("never")
   }
 
   override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {

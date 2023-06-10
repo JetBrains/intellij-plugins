@@ -10,10 +10,6 @@ class MdxInspectionSuppressor : InspectionSuppressor {
     return emptyArray()
   }
 
-  override fun isSuppressedFor(element: PsiElement, name: String): Boolean {
-    if (element is MdxFile && (name == "JSXNamespaceValidation" || name == "BadExpressionStatementJS")) {
-      return true
-    }
-    return false
-  }
+  override fun isSuppressedFor(element: PsiElement, name: String): Boolean =
+    element is MdxFile && (name == "JSXNamespaceValidation" || name == "BadExpressionStatementJS")
 }

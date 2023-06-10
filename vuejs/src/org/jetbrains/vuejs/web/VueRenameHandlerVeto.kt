@@ -12,12 +12,9 @@ class VueRenameHandlerVeto : Condition<PsiElement> {
 
   override fun value(t: PsiElement): Boolean {
     // AngularJS can break Vue references
-    if (t is JSImplicitElement
-        && t.parent is JSLiteralExpression
-        && isVueContext(t)
-        && WebSymbolDeclarationProvider.getAllDeclarations(t.parent, -1).isNotEmpty()) {
-      return true
-    }
-    return false
+    return t is JSImplicitElement &&
+           t.parent is JSLiteralExpression &&
+           isVueContext(t) &&
+           WebSymbolDeclarationProvider.getAllDeclarations(t.parent, -1).isNotEmpty()
   }
 }

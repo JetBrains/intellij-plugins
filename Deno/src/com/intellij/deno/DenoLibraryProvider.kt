@@ -26,9 +26,7 @@ class DenoLibrary(private val libs: List<VirtualFile>) : SyntheticLibrary("DenoL
     if (javaClass != other?.javaClass) return false
     other as DenoLibrary
 
-    if (libs != other.libs) return false
-
-    return true
+    return libs == other.libs
   }
 
   override fun getSourceRoots(): Collection<VirtualFile> = libs

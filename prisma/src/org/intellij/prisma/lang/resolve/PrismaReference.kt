@@ -74,10 +74,7 @@ abstract class PrismaReference(
     element: PsiElement,
   ): Boolean {
     val file = element.containingFile
-    if (!file.processDeclarations(processor, state, null, element)) {
-      return false
-    }
-    return true
+    return file.processDeclarations(processor, state, null, element)
   }
 
   override fun handleElementRename(newElementName: String): PsiElement {
