@@ -9,7 +9,7 @@ import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.util.ExecUtil
 import com.intellij.lang.javascript.TypeScriptFileType
 import com.intellij.lsp.LspServer
-import com.intellij.lsp.api.support.LspCommandsSupport
+import com.intellij.lsp.api.customization.LspCommandsSupport
 import com.intellij.lsp.api.LspServerDescriptor
 import com.intellij.lsp.api.LspServerSupportProvider
 import com.intellij.openapi.application.ApplicationManager
