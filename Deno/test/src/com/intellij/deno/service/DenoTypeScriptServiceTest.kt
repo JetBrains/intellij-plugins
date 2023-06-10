@@ -28,9 +28,9 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
                    "<error descr=\"Deno: Cannot find name 'UnknownName'.\"><error descr=\"Unresolved variable or type UnknownName\">UnknownName</error></error>")
     FileEditorManager.getInstance(project).closeFile(file.virtualFile)
 
-    myFixture.configureByText("foo.ts", "import {" +
+    myFixture.configureByText("foo.ts", "<weak_warning descr=\"Deno: All imports in import declaration are unused.\">import {" +
                                         "<warning descr=\"Deno: `Hello` is never used\nIf this is intentional, alias it with an underscore like `Hello as _Hello`\">Hello</warning>, " +
-                                        "<error descr=\"Cannot resolve symbol 'Goodbye'\"><error descr=\"Deno: Module '\\\"./bar.ts\\\"' has no exported member 'Goodbye'.\">Goodbye</error></error>} from './bar.ts';\n" +
+                                        "<error descr=\"Cannot resolve symbol 'Goodbye'\"><error descr=\"Deno: Module '\\\"./bar.ts\\\"' has no exported member 'Goodbye'.\">Goodbye</error></error>} from './bar.ts';</weak_warning>\n" +
                                         "<error descr=\"Deno: Cannot find name 'UnknownName'.\"><error descr=\"Unresolved variable or type UnknownName\">UnknownName</error></error>")
     myFixture.checkLspHighlighting()
     FileEditorManager.getInstance(project).closeFile(this.file.virtualFile)
@@ -44,19 +44,20 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
 
     val fooFile = myFixture.addFileToProject("foo.ts", "export class Hello {}\n$errorWithMarkup")
 
-    myFixture.configureByText("bar.ts", "import { Hello } from './foo.ts'\nconst _baz = new Hello<caret>()\n$errorWithMarkup")
+    myFixture.configureByText("bar.ts",
+                              "import { Hello } from './foo.ts'\nconst _baz = new Hello<caret>()\nconsole.log(_baz)\n$errorWithMarkup")
     myFixture.checkLspHighlighting()
-    myFixture.checkResult("import { Hello } from './foo.ts'\nconst _baz = new Hello<caret>()\nUnknownName")
+    myFixture.checkResult("import { Hello } from './foo.ts'\nconst _baz = new Hello<caret>()\nconsole.log(_baz)\nUnknownName")
 
     myFixture.renameElementAtCaret("Hello1")
     WriteAction.run<Throwable> { myFixture.editor.document.setText(myFixture.editor.document.text.replace("UnknownName", errorWithMarkup)) }
     myFixture.checkLspHighlighting()
-    myFixture.checkResult("import { Hello1 } from './foo.ts'\nconst _baz = new Hello<caret>1()\nUnknownName")
+    myFixture.checkResult("import { Hello1 } from './foo.ts'\nconst _baz = new Hello<caret>1()\nconsole.log(_baz)\nUnknownName")
 
     myFixture.renameElementAtCaret("Hello12")
     WriteAction.run<Throwable> { myFixture.editor.document.setText(myFixture.editor.document.text.replace("UnknownName", errorWithMarkup)) }
     myFixture.checkLspHighlighting()
-    myFixture.checkResult("import { Hello12 } from './foo.ts'\nconst _baz = new Hello<caret>12()\nUnknownName")
+    myFixture.checkResult("import { Hello12 } from './foo.ts'\nconst _baz = new Hello<caret>12()\nconsole.log(_baz)\nUnknownName")
 
     myFixture.openFileInEditor(fooFile.virtualFile)
     myFixture.checkLspHighlighting()
@@ -66,17 +67,18 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
   fun testDenoFileRename() {
     val errorWithMarkup = "<error descr=\"Deno: Cannot find name 'UnknownName'.\"><error descr=\"Unresolved variable or type UnknownName\">UnknownName</error></error>"
 
-    myFixture.configureByText("foo.ts", "import { Hello<caret> } from './subdir/bar.ts'\nconst _hi = new Hello()\n$errorWithMarkup")
+    myFixture.configureByText("foo.ts",
+                              "import { Hello<caret> } from './subdir/bar.ts'\nconst _hi = new Hello()\nconsole.log(_hi)\n$errorWithMarkup")
     val bar = myFixture.addFileToProject("subdir/bar.ts", "export class Hello {}")
     myFixture.checkLspHighlighting()
-    myFixture.checkResult("import { Hello<caret> } from './subdir/bar.ts'\nconst _hi = new Hello()\nUnknownName")
+    myFixture.checkResult("import { Hello<caret> } from './subdir/bar.ts'\nconst _hi = new Hello()\nconsole.log(_hi)\nUnknownName")
 
     myFixture.renameElementAtCaret("Hello1")
     myFixture.renameElement(file, "foo1.ts")
     myFixture.renameElement(bar, "bar1.ts")
     WriteAction.run<Throwable> { myFixture.editor.document.setText(myFixture.editor.document.text.replace("UnknownName", errorWithMarkup)) }
     myFixture.checkLspHighlighting()
-    myFixture.checkResult("import { Hello<caret>1 } from './subdir/bar1.ts'\nconst _hi = new Hello1()\nUnknownName")
+    myFixture.checkResult("import { Hello<caret>1 } from './subdir/bar1.ts'\nconst _hi = new Hello1()\nconsole.log(_hi)\nUnknownName")
 
     myFixture.renameElementAtCaret("Hello2")
     FileDocumentManager.getInstance().saveAllDocuments()
@@ -86,6 +88,6 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
     myFixture.renameElement(bar.containingDirectory, "subdir1")
     WriteAction.run<Throwable> { myFixture.editor.document.setText(myFixture.editor.document.text.replace("UnknownName", errorWithMarkup)) }
     myFixture.checkLspHighlighting()
-    myFixture.checkResult("import { Hello<caret>2 } from '../bar1.ts'\nconst _hi = new Hello2()\nUnknownName")
+    myFixture.checkResult("import { Hello<caret>2 } from '../bar1.ts'\nconst _hi = new Hello2()\nconsole.log(_hi)\nUnknownName")
   }
 }
