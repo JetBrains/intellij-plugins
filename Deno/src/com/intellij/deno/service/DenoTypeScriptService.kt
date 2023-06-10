@@ -21,7 +21,7 @@ import com.intellij.lang.typescript.lsp.BaseLspTypeScriptService
 import com.intellij.lang.typescript.lsp.LspAnnotationError
 import com.intellij.lsp.LspServer
 import com.intellij.lsp.api.LspServerManager
-import com.intellij.lsp.methods.HoverMethod
+import com.intellij.lsp.requests.LspHoverRequest
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
@@ -88,8 +88,8 @@ class DenoTypeScriptService(project: Project) : BaseLspTypeScriptService(project
 
   private fun quickInfo(element: PsiElement): TypeScriptQuickInfoResponse? {
     val server = getServer() ?: return null
-    val hoverMethod = HoverMethod.create(server, element) ?: return null
-    val raw = server.sendRequestSync(hoverMethod) ?: return null
+    val hoverRequest = LspHoverRequest.create(server, element) ?: return null
+    val raw = server.sendRequestSync(hoverRequest) ?: return null
     LOG.info("Quick info for $element : $raw")
     val response = TypeScriptQuickInfoResponse().apply {
       displayString = raw.substring("<html><body><pre>".length, raw.length - "</pre></body></html>".length) //
