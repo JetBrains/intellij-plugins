@@ -5,9 +5,10 @@ import com.intellij.lang.javascript.ecmascript6.TypeScriptAnnotatorCheckerProvid
 import com.intellij.lang.typescript.compiler.TypeScriptLanguageServiceAnnotatorCheckerProvider
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
 import com.intellij.lang.typescript.lsp.JSFrameworkLspTypeScriptService
-import com.intellij.lsp.api.LspServerDescriptor
-import com.intellij.lsp.api.LspServerSupportProvider
-import com.intellij.lsp.requests.LspHoverRequest
+import com.intellij.platform.lsp.api.LspServerDescriptor
+import com.intellij.platform.lsp.api.LspServerSupportProvider
+import com.intellij.platform.lsp.impl.LspServerImpl
+import com.intellij.platform.lsp.impl.requests.LspHoverRequest
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
@@ -28,7 +29,7 @@ class VolarTypeScriptService(project: Project) : JSFrameworkLspTypeScriptService
   private fun quickInfo(element: PsiElement): TypeScriptQuickInfoResponse? {
     val server = getServer() ?: return null
     val hoverRequest = LspHoverRequest.create(server, element) ?: return null
-    val raw = server.sendRequestSync(hoverRequest) ?: return null
+    val raw = (server as LspServerImpl).sendRequestSync(hoverRequest) ?: return null
     val response = TypeScriptQuickInfoResponse().apply {
       displayString = raw.substring("<html><body><pre>".length, raw.length - "</pre></body></html>".length)
     }

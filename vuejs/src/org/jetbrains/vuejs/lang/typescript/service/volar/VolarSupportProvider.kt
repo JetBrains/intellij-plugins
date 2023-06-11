@@ -5,9 +5,9 @@ import com.intellij.lang.javascript.library.typings.TypeScriptPackageName
 import com.intellij.lang.typescript.lsp.JSFrameworkLspServerDescriptor
 import com.intellij.lang.typescript.lsp.getLspServerExecutablePath
 import com.intellij.lang.typescript.lsp.scheduleLspServerDownloading
-import com.intellij.lsp.api.LspServerDescriptor
-import com.intellij.lsp.api.LspServerSupportProvider
-import com.intellij.lsp.api.LspServerSupportProvider.LspServerStarter
+import com.intellij.platform.lsp.api.LspServerDescriptor
+import com.intellij.platform.lsp.api.LspServerSupportProvider
+import com.intellij.platform.lsp.api.LspServerSupportProvider.LspServerStarter
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.vfs.VirtualFile

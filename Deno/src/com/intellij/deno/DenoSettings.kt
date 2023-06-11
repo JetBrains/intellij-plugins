@@ -4,7 +4,7 @@ import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.deno.roots.createDenoEntity
 import com.intellij.deno.roots.removeDenoEntity
 import com.intellij.deno.service.DenoLspSupportProvider
-import com.intellij.lsp.api.LspServerManager
+import com.intellij.platform.lsp.api.LspServerManager
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State

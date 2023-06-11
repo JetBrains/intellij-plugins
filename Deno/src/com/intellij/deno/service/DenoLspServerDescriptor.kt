@@ -8,10 +8,10 @@ import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.util.ExecUtil
 import com.intellij.lang.javascript.TypeScriptFileType
-import com.intellij.lsp.LspServer
-import com.intellij.lsp.api.customization.LspCommandsSupport
-import com.intellij.lsp.api.LspServerDescriptor
-import com.intellij.lsp.api.LspServerSupportProvider
+import com.intellij.platform.lsp.api.LspServer
+import com.intellij.platform.lsp.api.customization.LspCommandsSupport
+import com.intellij.platform.lsp.api.LspServerDescriptor
+import com.intellij.platform.lsp.api.LspServerSupportProvider
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PathMacroManager
 import com.intellij.openapi.project.Project

@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.modules.JSTempDirWithNodeInterpreterTest
 import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
 import com.intellij.lang.typescript.library.download.TypeScriptDefinitionFilesDirectory
-import com.intellij.lsp.checkLspHighlighting
+import com.intellij.platform.lsp.tests.checkLspHighlighting
 import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl

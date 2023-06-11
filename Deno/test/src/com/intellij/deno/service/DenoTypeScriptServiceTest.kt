@@ -2,7 +2,7 @@ package com.intellij.deno.service
 
 import com.intellij.deno.DenoSettings
 import com.intellij.lang.javascript.modules.JSTempDirWithNodeInterpreterTest
-import com.intellij.lsp.checkLspHighlighting
+import com.intellij.platform.lsp.tests.checkLspHighlighting
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager

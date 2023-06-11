@@ -4,7 +4,7 @@ import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter
 import com.intellij.javascript.nodejs.interpreter.wsl.WslNodeInterpreter
 import com.intellij.javascript.nodejs.packageJson.PackageJsonFileManager
-import com.intellij.lsp.api.LspServerSupportProvider
+import com.intellij.platform.lsp.api.LspServerSupportProvider
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.vfs.VirtualFile
