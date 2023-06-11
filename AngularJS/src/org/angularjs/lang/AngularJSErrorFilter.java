@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
@@ -31,6 +32,13 @@ public class AngularJSErrorFilter extends HighlightErrorFilter {
 
       PsiErrorElement nextError = error;
       while (nextError != null) {
+        // Need to workaround valid Angular in CSS injection (CSS parser emits 3 errors in this code):
+        // <div style="background-color: {{entity.color}}"></div>
+        if (nextError.getErrorDescription().equals("Unexpected token") &&
+            isErrorInTermListBeforeAngularCssValue(nextError, project, file)) {
+          return false;
+        }
+        if (nextError.getErrorDescription().equals("';' expected") && isAngularCssValue(nextError, project, file)) return false;
         if (hasAngularInjectionAt(project, file, nextError.getTextOffset())) return false;
         nextError = PsiTreeUtil.getNextSiblingOfType(nextError, PsiErrorElement.class);
       }
@@ -48,6 +56,34 @@ public class AngularJSErrorFilter extends HighlightErrorFilter {
       return !(descriptor instanceof AngularJSTagDescriptor);
     }
     return true;
+  }
+
+  private static boolean isErrorInTermListBeforeAngularCssValue(@NotNull PsiErrorElement error,
+                                                                @NotNull Project project,
+                                                                @NotNull PsiFile file) {
+    if (error.getParent() == null || error.getParent().getParent() == null || error.getParent().getParent().getNextSibling() == null) {
+      return false;
+    }
+    return isAngularCssValue(error.getParent().getParent().getNextSibling(), project, file);
+  }
+
+  private static boolean isAngularCssValue(@NotNull PsiElement error, @NotNull Project project, @NotNull PsiFile file) {
+    PsiElement element = error.getNextSibling();
+    while (element != null && element.getNode().getElementType().equals(CssElementTypes.CSS_WHITE_SPACE)) {
+      element = element.getNextSibling();
+    }
+    if (element != null && element.getNode().getElementType().equals(CssElementTypes.CSS_DECLARATION_BLOCK)) {
+      PsiElement firstChild = element.getFirstChild();
+      if (firstChild == null) return false;
+      PsiElement secondChild = firstChild.getNextSibling();
+      if (firstChild.getNode().getElementType().equals(CssElementTypes.CSS_LBRACE) &&
+          secondChild != null &&
+          secondChild.getNode().getElementType().equals(CssElementTypes.CSS_DECLARATION_BLOCK) &&
+          secondChild.getFirstChild() != null && secondChild.getFirstChild().getNextSibling() != null) {
+        return hasAngularInjectionAt(project, file, secondChild.getFirstChild().getNextSibling().getTextOffset());
+      }
+    }
+    return false;
   }
 
   private static boolean hasAngularInjectionAt(final Project project, final PsiFile file, final int offset) {
