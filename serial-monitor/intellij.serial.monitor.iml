@@ -18,5 +18,7 @@
     <orderEntry type="library" name="Guava" level="project" />
     <orderEntry type="library" name="io.github.java.native.jssc" level="project" />
     <orderEntry type="module" module-name="intellij.platform.statistics" />
+    <orderEntry type="library" name="jediterm-core" level="project" />
+    <orderEntry type="library" name="jediterm-ui" level="project" />
   </component>
 </module>

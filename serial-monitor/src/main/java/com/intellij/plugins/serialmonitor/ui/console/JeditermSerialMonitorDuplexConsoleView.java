@@ -1,20 +1,14 @@
 package com.intellij.plugins.serialmonitor.ui.console;
 
 import com.intellij.execution.ExecutionBundle;
-import com.intellij.execution.impl.ConsoleViewImpl;
-import com.intellij.execution.ui.ConsoleView;
-import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.actions.AbstractToggleUseSoftWrapsAction;
 import com.intellij.openapi.editor.actions.ScrollToTheEndToolbarAction;
-import com.intellij.openapi.editor.impl.softwrap.SoftWrapAppliancePlaces;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
@@ -29,19 +23,17 @@ import com.intellij.plugins.serialmonitor.ui.SerialMonitor;
 import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle;
 import com.intellij.plugins.serialmonitor.ui.actions.ConnectDisconnectAction;
 import com.intellij.plugins.serialmonitor.ui.actions.EditSettingsAction;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.components.JBLoadingPanel;
 import icons.SerialMonitorIcons;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 /**
- * @author Dmitry_Cherkas
+ * @author Dmitry_Cherkas, Ilia Motornyi
  */
-public class SerialMonitorDuplexConsoleView extends SerialConnectable<ConsoleViewImpl>
+public class JeditermSerialMonitorDuplexConsoleView extends SerialConnectable<JeditermConsoleView>
   implements Disposable, SerialSettingsChangeListener, SerialConnectionListener {
 
   private static final String STATE_STORAGE_KEY = "SerialMonitorDuplexConsoleViewState";
@@ -53,25 +45,40 @@ public class SerialMonitorDuplexConsoleView extends SerialConnectable<ConsoleVie
   @NotNull private final JBLoadingPanel myLoadingPanel;
   private SerialConnectionListener myListener;
   private Charset myCharset = StandardCharsets.US_ASCII;
+  private PortStatus myStatus = PortStatus.DISCONNECTED;
 
   @Override
   public void updateStatus(@NotNull PortStatus status) {
     if (myListener != null) myListener.updateStatus(status);
+    myStatus = status;
+  }
+  //todo TTY parameters:
+  //todo * echo
+  //todo front page
+  //todo front page - available ports
+  //todo front page always visible
+  //todo detachable window
+  //todo auto reconnect while build
+  //todo interoperability with other plugins
+  //todo fix reconnect behaviour
+
+  private static JeditermConsoleView createPlainConsole(Project project, @NotNull SerialPortProfile portProfile) {
+
+    return new JeditermConsoleView(project, portProfile.getPortName());
   }
 
-  public SerialMonitorDuplexConsoleView(@NotNull Project project,
-                                        @NlsSafe @NotNull final String name,
-                                        @NotNull SerialPortProfile portProfile,
-                                        @NotNull JBLoadingPanel loadingPanel) {
+  public JeditermSerialMonitorDuplexConsoleView(@NotNull Project project,
+                                                @NlsSafe @NotNull final String name,
+                                                @NotNull SerialPortProfile portProfile,
+                                                @NotNull JBLoadingPanel loadingPanel) {
     super(
-      new ConsoleViewImpl(project, GlobalSearchScope.allScope(project), true, true),
+      createPlainConsole(project, portProfile),
       new HexConsoleView(project, true), STATE_STORAGE_KEY);
     myProject = project;
     mySwitchConsoleAction = new SwitchConsoleViewAction();
     myLoadingPanel = loadingPanel;
     myName = name;
     myPortProfile = portProfile;
-    getPrimaryConsoleView().setEmulateCarriageReturn(false);
     ApplicationManager.getApplication().getMessageBus().connect(this).subscribe(SerialSettingsChangeListener.TOPIC, this);
   }
 
@@ -86,6 +93,16 @@ public class SerialMonitorDuplexConsoleView extends SerialConnectable<ConsoleVie
     return mySwitchConsoleAction.getTemplatePresentation();
   }
 
+  @Override
+  public boolean isOutputPaused() {
+    return getPrimaryConsoleView().isOutputPaused();
+  }
+
+  @Override
+  public boolean canPause() {
+    return true;
+  }
+
   /**
    * Allows filtering out inappropriate actions from toolbar.
    */
@@ -96,17 +113,16 @@ public class SerialMonitorDuplexConsoleView extends SerialConnectable<ConsoleVie
     return new AnAction[]{
       new ConnectDisconnectAction(this),
       mySwitchConsoleAction,
-      new MyToggleUseSoftWrapsAction(),
-      new MyScrollToTheEndToolbarAction(getPrimaryConsoleView().getEditor()),
+      getPrimaryConsoleView().getScrollToTheEndToolbarAction(),
       new MyScrollToTheEndToolbarAction(getSecondaryConsoleView().getEditor()),
-      new ClearAllAction(this),
-      new EditSettingsAction(myName, this)};
+      new SerialPauseAction(),
+      new ClearAllAction(),
+      new EditSettingsAction(myName, this)}; //todo simplify when switched to Jediterm
   }
-
 
   @Override
   public boolean isConnected() {
-    return serialService().isConnected(myPortProfile.getPortName());
+    return myStatus == PortStatus.CONNECTED;
   }
 
 
@@ -133,8 +149,9 @@ public class SerialMonitorDuplexConsoleView extends SerialConnectable<ConsoleVie
 
         if (isPortValid()) {
           // try to connect only when settings are known to be valid
-          serialService().connect(myPortProfile, this::append, myListener);
-          myListener.updateStatus(PortStatus.CONNECTED);
+          getPrimaryConsoleView().reconnect(getCharset(), myPortProfile.getNewLine());
+          serialService().connect(myPortProfile, this::append, this);
+          updateStatus(PortStatus.CONNECTED);
         }
         else {
           throw new SerialMonitorException(SerialMonitorBundle.message("serial.port.not.found", myName));
@@ -146,7 +163,7 @@ public class SerialMonitorDuplexConsoleView extends SerialConnectable<ConsoleVie
     }
     catch (SerialMonitorException sme) {
       SerialMonitor.Companion.errorNotification(sme.getMessage(), myProject);
-      myListener.updateStatus(PortStatus.FAILURE);
+      updateStatus(PortStatus.FAILURE);
     }
   }
 
@@ -216,14 +233,11 @@ public class SerialMonitorDuplexConsoleView extends SerialConnectable<ConsoleVie
     }
   }
 
-  private static class ClearAllAction extends DumbAwareAction {
+  private class ClearAllAction extends DumbAwareAction {
 
-    private final ConsoleView myConsoleView;
-
-    private ClearAllAction(ConsoleView consoleView) {
+    private ClearAllAction() {
       super(ExecutionBundle.messagePointer("clear.all.from.console.action.name"),
             SerialMonitorBundle.messagePointer("action.clear.contents.console.description"), AllIcons.Actions.GC);
-      myConsoleView = consoleView;
     }
 
     @Override
@@ -234,7 +248,7 @@ public class SerialMonitorDuplexConsoleView extends SerialConnectable<ConsoleVie
 
     @Override
     public void update(@NotNull AnActionEvent e) {
-      boolean enabled = myConsoleView != null && myConsoleView.getContentSize() > 0;
+      boolean enabled = getContentSize() > 0;
       if (!enabled) {
         enabled = e.getData(LangDataKeys.CONSOLE_VIEW) != null;
         Editor editor = e.getData(CommonDataKeys.EDITOR);
@@ -247,45 +261,35 @@ public class SerialMonitorDuplexConsoleView extends SerialConnectable<ConsoleVie
 
     @Override
     public void actionPerformed(final @NotNull AnActionEvent e) {
-      final ConsoleView consoleView = myConsoleView != null ? myConsoleView : e.getData(LangDataKeys.CONSOLE_VIEW);
-      if (consoleView != null) {
-        consoleView.clear();
-      }
+      clear();
     }
   }
 
   public void append(byte[] dataChunk) {
-    //    todo  quick and dirty fix for https://bitbucket.org/dmitry_cherkas/intellij-serial-monitor/issues/1
-    //todo crlf
-    String text = new String(dataChunk, getCharset()).replaceAll("\r", "");
-    getPrimaryConsoleView().print(text, ConsoleViewContentType.NORMAL_OUTPUT);
+    getPrimaryConsoleView().output(dataChunk);
     getSecondaryConsoleView().output(dataChunk);
   }
 
-  private class MyToggleUseSoftWrapsAction extends AbstractToggleUseSoftWrapsAction {
-    private MyToggleUseSoftWrapsAction() {
-      super(SoftWrapAppliancePlaces.CONSOLE, false);
-      ActionUtil.copyFrom(this, IdeActions.ACTION_EDITOR_USE_SOFT_WRAPS);
-    }
-
-    @Override
-    protected @Nullable Editor getEditor(@NotNull AnActionEvent e) {
-      return getPrimaryConsoleView().getEditor();
-    }
+  private class SerialPauseAction extends ToggleAction {
 
     @Override
     public @NotNull ActionUpdateThread getActionUpdateThread() {
-      return ActionUpdateThread.EDT;
+      return ActionUpdateThread.BGT;
+    }
+
+    private SerialPauseAction() {
+      super(() -> SerialMonitorBundle.message("action.pause.text"), () -> SerialMonitorBundle.message("action.pause.description"),
+            AllIcons.Actions.Pause);
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
-      if (isPrimaryConsoleEnabled()) {
-        super.update(e);
-      }
-      else {
-        e.getPresentation().setEnabled(false);
-      }
+    public boolean isSelected(@NotNull AnActionEvent e) {
+      return isOutputPaused();
+    }
+
+    @Override
+    public void setSelected(@NotNull AnActionEvent e, boolean state) {
+      setOutputPaused(state);
     }
   }
 
@@ -315,16 +319,6 @@ public class SerialMonitorDuplexConsoleView extends SerialConnectable<ConsoleVie
       myPortProfile = savedProfile;
       reconnect();
     }
-  }
-
-  @Override
-  public boolean isOutputPaused() {
-    return getPrimaryConsoleView().isOutputPaused();
-  }
-
-  @Override
-  public boolean canPause() {
-    return true;
   }
 
   @Override

@@ -1,5 +1,4 @@
 package com.intellij.plugins.serialmonitor.ui
-
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.NamedConfigurable
@@ -7,6 +6,7 @@ import com.intellij.openapi.util.Iconable
 import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.SystemInfo
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.plugins.serialmonitor.SerialPortProfile
 import com.intellij.plugins.serialmonitor.SerialProfileService
 import com.intellij.plugins.serialmonitor.service.JsscSerialService
@@ -24,11 +24,19 @@ private const val WINDOWS_DEF_SERIAL_PORT = "COM1"
 @NlsSafe
 private const val NIX_DEF_SERIAL_PORT = "/dev/ttyS0"
 
-private val charsets: List<String> = //todo move most popular charsets to the top
-  Charset.availableCharsets().filter { e ->
-    val charset = e.value
-    charset.canEncode() && charset.newEncoder().maxBytesPerChar() == 1.0f && charset.newDecoder().maxCharsPerByte() == 1.0f
-  }.map(Map.Entry<String, Any>::key)
+private fun charsets(): List<String> { //todo turn to constant when standard term is outdated
+  //todo move most popular charsets to the top
+  if (Registry.`is`("serial.monitor.jediterm")) {
+    return Charset.availableCharsets().filter { it.value.canEncode() }.map(Map.Entry<String, Any>::key)
+  }
+  else {
+    return Charset.availableCharsets().filter { e ->
+      val charset = e.value
+      charset.canEncode() && charset.newEncoder().maxBytesPerChar() == 1.0f && charset.newDecoder().maxCharsPerByte() == 1.0f
+    }.map(Map.Entry<String, Any>::key)
+  }
+
+}
 
 private val StandardBauds: List<Int> = listOf(300, 600, 1200, 2400, 4800, 9600, 19200, 28800, 38400, 57600, 76800, 115200, 230400,
                                               460800, 576000, 921600)
@@ -116,7 +124,7 @@ class SerialProfileConfigurable(var name: @NlsContexts.ConfigurableName String,
         row {
           comboBox(listOf(*SerialProfileService.NewLine.values())).bindItem(portProfile::newLine) { portProfile.newLine = it!! }.label(
             SerialMonitorBundle.message("label.new.line"))
-          comboBox(charsets)
+          comboBox(charsets())
             .applyToComponent { ComboboxSpeedSearch.installOn(this) }
             .bindItem(portProfile::encoding) { portProfile.encoding = it!! }
             .label(SerialMonitorBundle.message("label.encoding"))

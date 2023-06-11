@@ -27,7 +27,7 @@ data class SerialPortProfile(
   var parity: Parity = Parity.NONE,
 
   @Attribute("new-line")
-  var newLine: NewLine = NewLine.CR,
+  var newLine: NewLine = NewLine.CRLF,
 
   @Attribute
   var encoding: String = StandardCharsets.US_ASCII.name()

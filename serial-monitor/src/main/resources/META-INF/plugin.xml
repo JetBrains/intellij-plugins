@@ -35,9 +35,12 @@
     <applicationConfigurable groupId="tools" id="serialmonitor.settings"
                              provider="com.intellij.plugins.serialmonitor.ui.SerialSettingsConfigurableProvider"
                              bundle="messages.SerialMonitorBundle" key="settings.display.name"/>
-
-      <statistics.counterUsagesCollector implementationClass="com.intellij.plugins.serialmonitor.SerialMonitorConnectCollector"/>
-      <statistics.applicationUsagesCollector implementation="com.intellij.plugins.serialmonitor.SerialMonitorNumProfilesCollector"/>
+    <statistics.counterUsagesCollector implementationClass="com.intellij.plugins.serialmonitor.SerialMonitorConnectCollector"/>
+    <statistics.applicationUsagesCollector implementation="com.intellij.plugins.serialmonitor.SerialMonitorNumProfilesCollector"/>
+    <registryKey key="serial.monitor.jediterm"
+                 defaultValue="false"
+                 restartRequired="false"
+                 description="Use JediTerm as a terminal"/>
   </extensions>
   <actions>
     <group id="com.intellij.plugins.serialmonitor.connect" class="com.intellij.plugins.serialmonitor.ui.actions.ConnectActionGroup"
