@@ -34,7 +34,6 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.protobuf.ide.PbIdeBundle;
 import com.intellij.protobuf.ide.actions.PbExportSettingsAsCliCommandAction;
 import com.intellij.protobuf.ide.settings.PbProjectSettings.ImportPathEntry;
-import com.intellij.protobuf.lang.resolve.FileResolveProvider;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBTextField;
@@ -163,7 +162,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
     isIncludeContentRootsCheckbox.addActionListener(
       groupItemPresentationUpdater(contentRootsGroup, PbImportPathsConfiguration::projectContentRoots));
     isIndexBasedResolveEnabledCheckbox.addActionListener(
-      groupItemPresentationUpdater(filesFromIndexesGroup, PbImportPathsConfiguration::getOrComputeImportPathsForAllImportStatements)
+      groupItemPresentationUpdater(filesFromIndexesGroup, PbImportPathsConfiguration::computeImportPathsForAllImportStatements)
     );
     computePreciseAutoConfiguredEntriesCount();
   }
@@ -203,7 +202,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
     ProgressManager.getInstance().runProcessWithProgressSynchronously(
       () -> {
         var importsCount = heavyImportsFetcher == null ? 0 : ReadAction.compute(() -> heavyImportsFetcher.apply(project).size());
-        ApplicationManager.getApplication().invokeLater(() -> {
+        SwingUtilities.invokeLater(() -> {
           processVirtualGroupItemPresentation(checkBox, group.copyWithPreciseCount(importsCount));
         });
       },
@@ -213,7 +212,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
   }
 
   private void computePreciseAutoConfiguredEntriesCount() {
-    ApplicationManager.getApplication().invokeLater(() -> addVirtualGroup(loadingStateGroup));
+    SwingUtilities.invokeLater(() -> addVirtualGroup(loadingStateGroup));
     ProgressManager.getInstance().runProcessWithProgressAsynchronously(
       new Task.Backgroundable(project, PbIdeBundle.message("settings.compute.import.paths.bg.progress.title"), false,
                               PerformInBackgroundOption.ALWAYS_BACKGROUND) {
@@ -223,8 +222,8 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
             int contentRootsSize = PbImportPathsConfiguration.projectContentRoots(project).size();
             int protoDirsSize = PbImportPathsConfiguration.standardProtoDirectories(project).size();
             int contributedPathsSize = PbImportPathsConfiguration.thirdPartyImportPaths(project).size();
-            int protoDirectoriesFromIndexSize = PbImportPathsConfiguration.getOrComputeImportPathsForAllImportStatements(project).size();
-            ApplicationManager.getApplication().invokeLater(() -> {
+            int protoDirectoriesFromIndexSize = PbImportPathsConfiguration.computeImportPathsForAllImportStatements(project).size();
+            SwingUtilities.invokeLater(() -> {
               removeVirtualGroup(loadingStateGroup);
               processVirtualGroupItemPresentation(autoConfigCheckbox, autoConfiguredGroup.copyWithPreciseCount(contributedPathsSize));
               processVirtualGroupItemPresentation(isIncludeStandardProtoDirectoriesCheckbox,
@@ -279,10 +278,10 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
         new DocumentAdapter() {
           @Override
           protected void textChanged(@NotNull DocumentEvent e) {
-            //updateDescriptorPathColor(); todo bg validation!
+            scheduleDescriptorValidation();
           }
         });
-    //importPathModel.addTableModelListener(event -> updateDescriptorPathColor()); todo
+    importPathModel.addTableModelListener(event -> scheduleDescriptorValidation());
     return LabeledComponent.create(
       descriptorPathField,
       PbIdeBundle.message("settings.language.descriptor.path"),
@@ -367,29 +366,27 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
   private boolean isDescriptorPathValid() {
     PbProjectSettings tempSettings = new PbProjectSettings(project);
     applyNoNotify(tempSettings);
-    FileResolveProvider provider = new SettingsFileResolveProvider(tempSettings);
-    return provider.getDescriptorFile(project) != null;
+    return ReadAction.compute(
+      () -> SettingsFileResolveProvider.findFileWithSettings(tempSettings.getDescriptorPath(), project, tempSettings) != null);
   }
 
-  private void updateDescriptorPathColor() {
-    if (isDescriptorPathValid()) {
-      descriptorPathField
-        .getEditor()
-        .getEditorComponent()
-        .setForeground(UIUtil.getTextFieldForeground());
-    }
-    else {
-      descriptorPathField.getEditor().getEditorComponent().setForeground(JBColor.RED);
-    }
+  private void scheduleDescriptorValidation() {
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      if (isDescriptorPathValid()) {
+        SwingUtilities.invokeLater(() -> {
+          descriptorPathField
+            .getEditor()
+            .getEditorComponent()
+            .setForeground(UIUtil.getTextFieldForeground());
+        });
+      }
+      else {
+        SwingUtilities.invokeLater(() -> {
+          descriptorPathField.getEditor().getEditorComponent().setForeground(JBColor.RED);
+        });
+      }
+    });
   }
-
-  //private void applyAutomaticConfiguration() {
-  //  PbProjectSettings currentSettings = originalSettings.copy();
-  //  applyNoNotify(currentSettings);
-  //  PbProjectSettings newSettings =
-  //    ProjectSettingsConfiguratorManager.getInstance(project).configure(currentSettings.copy());
-  //  loadSettings(newSettings != null ? newSettings : currentSettings);
-  //}
 
   /**
    * Return a descriptor that can select folders and jar file contents.
