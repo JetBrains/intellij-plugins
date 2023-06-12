@@ -1,7 +1,10 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.service.volar
 
+import com.intellij.javascript.nodejs.PackageJsonData
+import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.ecmascript6.TypeScriptAnnotatorCheckerProvider
+import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.lang.typescript.compiler.TypeScriptLanguageServiceAnnotatorCheckerProvider
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
 import com.intellij.lang.typescript.lsp.JSFrameworkLspTypeScriptService
@@ -10,9 +13,11 @@ import com.intellij.platform.lsp.api.LspServerSupportProvider
 import com.intellij.platform.lsp.impl.LspServerImpl
 import com.intellij.platform.lsp.impl.requests.LspHoverRequest
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.util.text.SemVer
 import org.jetbrains.vuejs.lang.typescript.service.isVolarEnabledAndAvailable
 import org.jetbrains.vuejs.lang.typescript.service.isVolarFileTypeAcceptable
 import org.jetbrains.vuejs.options.VueServiceSettings
@@ -24,7 +29,15 @@ class VolarTypeScriptService(project: Project) : JSFrameworkLspTypeScriptService
   override fun getProviderClass(): Class<out LspServerSupportProvider> = VolarSupportProvider::class.java
 
   override val name = "Volar"
-  override val serverVersion = volarVersion
+  override val serverVersion: SemVer
+    get() = calculateVersion()
+
+  private fun calculateVersion(): SemVer {
+    return VolarExecutableDownloader.getExecutable(project)
+             ?.let { LocalFileSystem.getInstance().findFileByPath(it) }
+             ?.let { PackageJsonUtil.findUpPackageJson(it) }
+             ?.let { PackageJsonData.getOrCreate(it).version } ?: defaultVolarVersion
+  }
 
   private fun quickInfo(element: PsiElement): TypeScriptQuickInfoResponse? {
     val server = getServer() ?: return null

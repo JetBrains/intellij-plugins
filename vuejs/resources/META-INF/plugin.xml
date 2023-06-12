@@ -125,8 +125,6 @@
                          nonDefaultProject="true"
     />
 
-    <projectService serviceImplementation="org.jetbrains.vuejs.options.VueSettings" />
-
     <postStartupActivity implementation="org.jetbrains.vuejs.lang.html.psi.arrangement.VueArrangementSettingsMigration"/>
 
     <directoryIndexExcludePolicy implementation="org.jetbrains.vuejs.libraries.nuxt.index.NuxtIndexExcludePolicy"/>

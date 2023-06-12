@@ -14,11 +14,14 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.text.SemVer
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.vuejs.lang.typescript.service.isVolarEnabledAndAvailable
+import com.intellij.lang.typescript.lsp.defaultPackageKey
+import com.intellij.lang.typescript.lsp.extractRefText
+import org.jetbrains.vuejs.options.getVueSettings
 
-internal val volarVersion = SemVer.parseFromText("1.6.5")
-private const val volarPackage = "@volar/vue-language-server"
+val defaultVolarVersion: SemVer = SemVer.parseFromText("1.6.5")!!
+const val volarPackage = "@volar/vue-language-server"
 private const val packageRelativePath = "/bin/vue-language-server.js"
-val serverPackageName = TypeScriptPackageName(volarPackage, volarVersion)
+val serverPackageName = TypeScriptPackageName(volarPackage, defaultVolarVersion)
 
 class VolarSupportProvider : LspServerSupportProvider {
   override fun fileOpened(project: Project, file: VirtualFile, serverStarter: LspServerStarter) {
@@ -44,12 +47,18 @@ class VolarServerDescriptor(project: Project, vararg roots: VirtualFile)
 
 @ApiStatus.Experimental
 object VolarExecutableDownloader {
-  fun getExecutable(): String? {
-    return getLspServerExecutablePath(serverPackageName, packageRelativePath)
+  fun getExecutable(project: Project): String? {
+    val packageRef = getVueSettings(project).packageRef
+    val ref = extractRefText(packageRef)
+    if (ref == defaultPackageKey) {
+      return getLspServerExecutablePath(serverPackageName, packageRelativePath)
+    }
+
+    return ref
   }
 
   fun getExecutableOrRefresh(project: Project): String? {
-    val executable = getExecutable()
+    val executable = getExecutable(project)
     if (executable != null) return executable
     scheduleLspServerDownloading(project, serverPackageName)
     return null

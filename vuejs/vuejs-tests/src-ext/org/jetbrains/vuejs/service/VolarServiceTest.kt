@@ -37,7 +37,7 @@ class VolarServiceTest : JSTempDirWithNodeInterpreterTest() {
     (myFixture as CodeInsightTestFixtureImpl).canChangeDocumentDuringHighlighting(true)
 
     VolarExecutableDownloader.getExecutableOrRefresh(project) // could run blocking download
-    TestCase.assertNotNull(VolarExecutableDownloader.getExecutable())
+    TestCase.assertNotNull(VolarExecutableDownloader.getExecutable(project))
   }
 
   @Test
