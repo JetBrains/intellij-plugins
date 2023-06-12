@@ -2,12 +2,12 @@ DTS file
   DtsContentImpl(CONTENT)
     DtsEntryImpl(ENTRY)
       DtsCompilerDirectiveImpl(COMPILER_DIRECTIVE)
-        PsiElement(DtsTokenType.MEMRESERVE)('/memreserve/')
+        PsiElement(/memreserve/)('/memreserve/')
         PsiWhiteSpace(' ')
-        PsiElement(DtsTokenType.INT_VALUE)('00')
+        PsiElement(integer)('00')
         PsiWhiteSpace(' ')
-        PsiErrorElement:DtsTokenType.INT_VALUE, DtsTokenType.LPAREN, DtsTokenType.NAME or DtsTokenType.SQUOTE expected, got '$'
+        PsiErrorElement:''', '(', integer or name expected, got '$'
           PsiElement(BAD_CHARACTER)('$')
         PsiWhiteSpace(' ')
         PsiElement(BAD_CHARACTER)('$')
-      PsiElement(DtsTokenType.SEMICOLON)(';')
+      PsiElement(;)(';')
