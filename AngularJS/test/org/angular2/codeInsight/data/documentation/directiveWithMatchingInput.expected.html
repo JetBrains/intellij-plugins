@@ -19,19 +19,20 @@ true.&lt;/div&gt;&lt;/ng-template&gt;
 &lt;ng-template #elseBlock&gt;Content to render when condition is false.&lt;/ng-template&gt;
 </pre><p>Form with storing the value locally:<pre>&lt;div *ngIf=&quot;condition as value; else elseBlock&quot;&gt;{{value}}&lt;/div&gt;
 &lt;ng-template #elseBlock&gt;Content to render when value is null.&lt;/ng-template&gt;
-</pre><p><h3>Usage Notes</h3><p>The <code>*ngIf</code> directive is most commonly used to conditionally show an inline template,
+</pre><h3>Usage Notes</h3>
+<p>The <code>*ngIf</code> directive is most commonly used to conditionally show an inline template,
 as seen in the following  example.
-The default <code>else</code> template is blank.<p>{@example common/ngIf/ts/module.ts region='NgIfSimple'}<h3>Showing an alternative template using <code>else</code></h3><p>To display a template when <code>expression</code> evaluates to false, use an <code>else</code> template
+The default <code>else</code> template is blank.<h3>Showing an alternative template using <code>else</code></h3><p>To display a template when <code>expression</code> evaluates to false, use an <code>else</code> template
 binding as shown in the following example.
 The <code>else</code> binding points to an <code>&lt;ng-template&gt;</code>  element labeled <code>#elseBlock</code>.
 The template can be defined anywhere in the component view, but is typically placed right after
-<code>ngIf</code> for readability.<p>{@example common/ngIf/ts/module.ts region='NgIfElse'}<h3>Using an external <code>then</code> template</h3><p>In the previous example, the then-clause template is specified inline, as the content of the
+<code>ngIf</code> for readability.<h3>Using an external <code>then</code> template</h3><p>In the previous example, the then-clause template is specified inline, as the content of the
 tag that contains the <code>ngIf</code> directive. You can also specify a template that is defined
 externally, by referencing a labeled <code>&lt;ng-template&gt;</code> element. When you do this, you can
-change which template to use at runtime, as shown in the following example.<p>{@example common/ngIf/ts/module.ts region='NgIfThenElse'}<h3>Storing a conditional result in a variable</h3><p>You might want to show a set of properties from the same object. If you are waiting
+change which template to use at runtime, as shown in the following example.<h3>Storing a conditional result in a variable</h3><p>You might want to show a set of properties from the same object. If you are waiting
 for asynchronous data, the object can be undefined.
 In this case, you can use <code>ngIf</code> and store the result of the condition in a local
-variable as shown in the following example.<p>{@example common/ngIf/ts/module.ts region='NgIfAs'}<p>This code uses only one <code>AsyncPipe</code>, so only one subscription is created.
+variable as shown in the following example.<p>This code uses only one <code>AsyncPipe</code>, so only one subscription is created.
 The conditional statement stores the result of <code>userStream|async</code> in the local variable <code>user</code>.
 You can then bind the local <code>user</code> repeatedly.<p>The conditional displays the data only if <code>userStream</code> returns a value,
 so you don't need to use the

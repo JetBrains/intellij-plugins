@@ -1,11 +1,13 @@
 <div class='definition'><pre><span style='color: #000080'>directive property</span> <span style='color: #660e7a'>ngPlural</span><span style="">:&#32;</span><span style="color:#000080;">number</span></pre></div>
 <hr>
-<div class='definition'><pre><span style='color: #000080'>directive</span> <span style='color: #000000'>NgPlural</span></pre></div><div class='content'><p><h3>Usage Notes</h3><pre>&lt;some-element [ngPlural]=&quot;value&quot;&gt;
+<div class='definition'><pre><span style='color: #000080'>directive</span> <span style='color: #000000'>NgPlural</span></pre></div><div class='content'><p><h3>Usage Notes</h3>
+<pre>&lt;some-element [ngPlural]=&quot;value&quot;&gt;
   &lt;ng-template ngPluralCase=&quot;=0&quot;&gt;there is nothing&lt;/ng-template&gt;
   &lt;ng-template ngPluralCase=&quot;=1&quot;&gt;there is one&lt;/ng-template&gt;
   &lt;ng-template ngPluralCase=&quot;few&quot;&gt;there are a few&lt;/ng-template&gt;
 &lt;/some-element&gt;
-</pre><p><p>Adds / removes DOM sub-trees based on a numeric value. Tailored for pluralization.<p>Displays DOM sub-trees that match the switch expression value, or failing that, DOM sub-trees
+</pre>
+<p><p>Adds / removes DOM sub-trees based on a numeric value. Tailored for pluralization.<p>Displays DOM sub-trees that match the switch expression value, or failing that, DOM sub-trees
 that match the switch expression's pluralization category.<p>To use this directive you must provide a container element that sets the <code>[ngPlural]</code> attribute
 to a switch expression. Inner elements with a <code>[ngPluralCase]</code> will display based on their
 expression:<ul><li>if <code>[ngPluralCase]</code> is set to a value starting with <code>=</code>, it will only display if the value

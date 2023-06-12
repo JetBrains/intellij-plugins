@@ -8,9 +8,10 @@ to another component or application. To make it a member of an NgModule,
 list it in the <code>declarations</code> field of the <code>NgModule</code> metadata.<p>Note that, in addition to these options for configuring a directive,
 you can control a component's runtime behavior by implementing
 life-cycle hooks. For more information, see the
-<a href="guide/lifecycle-hooks">Lifecycle Hooks</a> guide.<p><h3>Usage Notes</h3><h3>Setting component inputs</h3><p>The following example creates a component with two data-bound properties,
+<a href="guide/lifecycle-hooks">Lifecycle Hooks</a> guide.<h3>Usage Notes</h3>
+<h3>Setting component inputs</h3><p>The following example creates a component with two data-bound properties,
 specified by the <code>inputs</code> value.<p>&lt;code-example path=&quot;core/ts/metadata/directives.ts&quot; region=&quot;component-input&quot;&gt;&lt;/code-example&gt;<h3>Setting component outputs</h3><p>The following example shows two event emitters that emit on an interval. One
-emits an output every second, while the other emits every five seconds.<p>{@example core/ts/metadata/directives.ts region='component-output-interval'}<h3>Injecting a class with a view provider</h3><p>The following simple example injects a class into a component
+emits an output every second, while the other emits every five seconds.<h3>Injecting a class with a view provider</h3><p>The following simple example injects a class into a component
 using the view provider specified in component metadata:<pre><code class="language-ts">class Greeter {
    greet(name:string) {
      return 'Hello ' + name + '!';
