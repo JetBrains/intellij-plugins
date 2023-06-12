@@ -11,7 +11,7 @@ import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocComment;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTag;
-import com.intellij.lang.javascript.psi.jsdoc.impl.JSDocTags;
+import com.intellij.lang.javascript.psi.jsdoc.impl.JSDocBlockTags;
 import com.intellij.lang.javascript.psi.literal.JSLiteralImplicitElementProvider;
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
@@ -405,13 +405,13 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       if (tag.is("ngdoc")) {
         ngdocTag = tag;
       }
-      else if (tag.is(JSDocTags.NAME)) {
+      else if (tag.is(JSDocBlockTags.NAME)) {
         nameTag = tag;
       }
       else if (tag.is("restrict")) {
         restrict = getParamValue(restrict, tag.getDescriptionText(), RESTRICT);
       }
-      else if (tag.is(JSDocTags.PARAM)) {
+      else if (tag.is(JSDocBlockTags.PARAM)) {
         params.add(tag);
       }
       else if (tag.is("element")) {

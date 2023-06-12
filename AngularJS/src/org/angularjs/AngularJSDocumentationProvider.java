@@ -4,7 +4,7 @@ package org.angularjs;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocComment;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTag;
-import com.intellij.lang.javascript.psi.jsdoc.impl.JSDocTags;
+import com.intellij.lang.javascript.psi.jsdoc.impl.JSDocBlockTags;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -47,7 +47,7 @@ public class AngularJSDocumentationProvider implements DocumentationProvider {
         if (tag.is("ngdoc")) {
           ngdocTag = tag;
         }
-        else if (tag.is(JSDocTags.NAME)) {
+        else if (tag.is(JSDocBlockTags.NAME)) {
           nameTag = tag;
         }
       }
