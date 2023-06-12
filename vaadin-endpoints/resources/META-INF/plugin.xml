@@ -3,6 +3,7 @@
 
   <name>Vaadin Endpoints</name>
   <vendor>JetBrains</vendor>
+  <category>JVM Frameworks</category>
 
   <description><![CDATA[
     <p>Provides navigation to <a href="https://vaadin.com/flow">Vaadin Flow</a> @Route views in Search Everywhere and Endpoints tool window.</p>
