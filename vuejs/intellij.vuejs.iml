@@ -46,7 +46,7 @@
     <orderEntry type="library" name="commons-lang" level="project" />
     <orderEntry type="module" module-name="intellij.platform.webSymbols" />
     <orderEntry type="module" module-name="intellij.postcss" />
-    <orderEntry type="module" module-name="intellij.platform.lsp" />
+    <orderEntry type="module" module-name="intellij.platform.lsp.impl" />
     <orderEntry type="module" module-name="intellij.platform.ide.util.io" />
     <orderEntry type="library" name="eclipse.lsp4j" level="project" />
   </component>
