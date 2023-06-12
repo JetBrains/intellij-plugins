@@ -44,6 +44,12 @@ public class DenoRunConfiguration extends DebuggableProcessRunConfigurationBase 
     setProgramParameters("run"); //default
   }
 
+  //hack to use inspector by default
+  @Override
+  public boolean hasConfiguredDebugAddress() {
+    return true;
+  }
+
   @Override
   protected @Nullable String computeDefaultExePath() {
     return DenoSettings.Companion.getService(getProject()).getDenoPath();
