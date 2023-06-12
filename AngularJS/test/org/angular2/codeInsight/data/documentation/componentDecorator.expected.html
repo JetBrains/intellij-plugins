@@ -45,9 +45,8 @@ To change the default setting for all components in your application, set
 the <code>preserveWhitespaces</code> option of the AOT compiler.<p>By default, the AOT compiler removes whitespace characters as follows:<ul><li>Trims all whitespaces at the beginning and the end of a template.</li><li>Removes whitespace-only text nodes. For example,</li></ul><pre><code class="language-html">&lt;button&gt;Action 1&lt;/button&gt;  &lt;button&gt;Action 2&lt;/button&gt;
 </pre><p>becomes:<pre><code class="language-html">&lt;button&gt;Action 1&lt;/button&gt;&lt;button&gt;Action 2&lt;/button&gt;
 </pre><ul><li>Replaces a series of whitespace characters in text nodes with a single space.
-For example, <code>&lt;span&gt;\n some text\n&lt;/span&gt;</code> becomes <code>&lt;span&gt; some text &lt;/span&gt;</code>.</li><li>Does NOT alter text nodes inside HTML tags such as `
-```` or <code>&lt;textarea&gt;</code>,
-where whitespace characters are significant.<p>Note that these transformations can influence DOM nodes layout, although impact
+For example, <code>&lt;span&gt;\n some text\n&lt;/span&gt;</code> becomes <code>&lt;span&gt; some text &lt;/span&gt;</code>.</li><li>Does NOT alter text nodes inside HTML tags such as <code>&lt;pre&gt;</code> or <code>&lt;textarea&gt;</code>,
+where whitespace characters are significant.</li></ul><p>Note that these transformations can influence DOM nodes layout, although impact
 should be minimal.<p>You can override the default behavior to preserve whitespace characters
 in certain fragments of a template. For example, you can exclude an entire
 DOM sub-tree by using the <code>ngPreserveWhitespaces</code> attribute:<pre><code class="language-html">&lt;div ngPreserveWhitespaces&gt;
@@ -64,4 +63,4 @@ the <code>preserveWhitespaces</code> option is set to <code>false</code>.<pre><c
 &lt;!-- compiled to be equivalent to:
  &lt;a&gt;before&lt;/a&gt; &lt;a&gt;after&lt;/a&gt; --&gt;
 </pre><p>To preserve sequences of whitespace characters, use the
-<code>ngPreserveWhitespaces</code> attribute.<p>@Annotation```</li></ul></div><table class='sections'><tr><td valign='top'><icon src='JavaScriptPsiIcons.FileTypes.TypeScriptFile'/>&nbsp;@angular/core</td></table>
+<code>ngPreserveWhitespaces</code> attribute.</div><table class='sections'><tr><td valign='top' class='section'><p>Annotation</td><td valign='top'><p></td><tr><td valign='top' colspan='2'><icon src='JavaScriptPsiIcons.FileTypes.TypeScriptFile'/>&nbsp;@angular/core</td></table>
