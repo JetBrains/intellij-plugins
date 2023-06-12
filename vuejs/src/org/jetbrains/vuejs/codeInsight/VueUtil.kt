@@ -58,10 +58,7 @@ import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.VueModelProximityVisitor
 import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.model.source.MODEL_LOCAL_PROP
-import org.jetbrains.vuejs.model.source.PROPS_DEFAULT_PROP
-import org.jetbrains.vuejs.model.source.PROPS_REQUIRED_PROP
-import org.jetbrains.vuejs.model.source.PROPS_TYPE_PROP
+import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.types.asCompleteType
 import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
 import java.util.*
@@ -345,6 +342,17 @@ fun getDefaultTypeFromPropOptions(expression: JSExpression?): JSType? =
     ?.findProperty(PROPS_DEFAULT_PROP)
     ?.jsType
     ?.substitute()
+
+fun getInjectAliasName(expression: JSExpression?): String? =
+  (expression as? JSObjectLiteralExpression)
+    ?.findProperty(INJECT_FROM)
+    ?.jsType
+    ?.let { type ->
+      if (type is JSWidenType) type.originalType else type
+    }
+    ?.let { type ->
+      (type as? JSStringLiteralTypeImpl)?.literal
+    }
 
 inline fun <reified T : JSExpression> XmlAttributeValue.findJSExpression(): T? {
   return findVueJSEmbeddedExpressionContent()?.firstChild as? T

@@ -2090,6 +2090,100 @@ export default class UsageComponent extends Vue {
       myFixture.checkGotoDeclaration(signature, offset)
     }
   }
+
+  fun testInjectLiteralLocal() {
+    myFixture.configureByText("InjectLiteral.vue", """
+      <script>
+      export default {
+        inject: ['message'],
+      }
+      </script>
+      
+      <template>
+        {{message}}
+      </template>
+    """.trimIndent())
+    myFixture.checkGotoDeclaration("{{me<caret>ssage}}", 37)
+  }
+
+  fun testInjectPropertyLocal() {
+    myFixture.configureByText("InjectProperty.vue", """
+      <script>
+      export default {
+        inject: {
+          message: {
+          }
+        }
+      }
+      </script>
+      
+      <template>
+        {{message}}
+      </template>
+    """.trimIndent())
+    myFixture.checkGotoDeclaration("{{mes<caret>sage}}", 42)
+  }
+
+  fun testInjectAliasedLocal() {
+    myFixture.configureByText("InjectAliased.vue", """
+      <script>
+      export default {
+        inject: {
+          localMessage: {
+            from: 'message'
+          }
+        }
+      }
+      </script>
+      
+      <template>
+        {{localMessage}}
+      </template>
+    """.trimIndent())
+    myFixture.checkGotoDeclaration("{{loc<caret>alMessage}}", 42)
+  }
+
+  fun testInjectLiteral() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.copyDirectoryToProject(getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+    myFixture.checkGotoDeclaration("'me<caret>ssage'", 123, "Provide.vue")
+  }
+
+  fun testInjectLiteralProvidedInApp() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.copyDirectoryToProject(getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+    myFixture.checkGotoDeclaration("'me<caret>ssage'", 162, "App.vue")
+  }
+
+  fun testInjectAlias() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.copyDirectoryToProject(getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+    myFixture.checkGotoDeclaration("'me<caret>ssage'", 133, "Provide.vue")
+  }
+
+  fun testInjectAliasDuplicatedName() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.copyDirectoryToProject(getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+    myFixture.checkGotoDeclaration("'me<caret>ssage'", 175, "Provide.vue")
+  }
+
+  fun testInjectProperty() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.copyDirectoryToProject(getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+    myFixture.checkGotoDeclaration("m<caret>essage", 142, "Provide.vue")
+  }
+
+  fun testInjectDeepNested() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.copyDirectoryToProject(getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+    myFixture.checkGotoDeclaration("'provide<caret>Deep'", 129, "ProvideB.vue")
+  }
 }
 
 fun globalMixinText(): String {

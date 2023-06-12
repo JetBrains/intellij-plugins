@@ -146,6 +146,10 @@ class VueTypedComponent(override val source: PsiElement,
     get() = emptyMap()
   override val mixins: List<VueMixin>
     get() = emptyList()
+  override val provide: List<VueProvide>
+    get() = emptyList()
+  override val inject: List<VueInject>
+    get() = emptyList()
 
   override val typeParameters: List<TypeScriptTypeParameter>
     get() = resolveElementTo(source, TypeScriptVariable::class, TypeScriptPropertySignature::class, TypeScriptClass::class)

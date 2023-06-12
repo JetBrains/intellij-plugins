@@ -99,6 +99,9 @@ private fun contributeComponentProperties(instance: VueInstanceOwner,
   val computed = mutableMapOf<String, JSRecordType.PropertySignature>()
   val data = mutableMapOf<String, JSRecordType.PropertySignature>()
   val methods = mutableMapOf<String, JSRecordType.PropertySignature>()
+  val injects = mutableMapOf<String, JSRecordType.PropertySignature>()
+
+  val provides = instance.collectProvides()
 
   instance.asSafely<VueEntitiesContainer>()
     ?.acceptPropertiesAndMethods(object : VueModelProximityVisitor() {
@@ -123,13 +126,24 @@ private fun contributeComponentProperties(instance: VueInstanceOwner,
         return true
       }
 
-      private fun process(property: VueProperty,
+      override fun visitInject(inject: VueInject, proximity: Proximity): Boolean {
+        val sourceElement = inject.source ?: return true
+        val type = provides[inject.from ?: inject.name]?.provide?.jsType
+        val implicitElement = VueImplicitElement(inject.name, type, sourceElement, JSImplicitElement.Type.Property, true)
+        process(inject, proximity, injects, true, type, implicitElement)
+        return true
+      }
+
+      private fun process(symbol: VueNamedSymbol,
                           proximity: Proximity,
                           dest: MutableMap<String, JSRecordType.PropertySignature>,
-                          isReadOnly: Boolean) {
-        if ((proximityMap.putIfAbsent(property.name, proximity) ?: proximity) >= proximity) {
-          dest.merge(property.name,
-                     JSRecordTypeImpl.PropertySignatureImpl(property.name, property.jsType, false, isReadOnly, property.source),
+                          isReadOnly: Boolean,
+                          type: JSType? = null,
+                          source: PsiElement? = null) {
+        if ((proximityMap.putIfAbsent(symbol.name, proximity) ?: proximity) >= proximity) {
+          val jsType = type ?: symbol.asSafely<VueProperty>()?.jsType
+          dest.merge(symbol.name,
+                     PropertySignatureImpl(symbol.name, jsType, false, isReadOnly, source ?: symbol.source),
                      ::mergeSignatures)
         }
       }
@@ -150,13 +164,14 @@ private fun contributeComponentProperties(instance: VueInstanceOwner,
   data.keys.removeIf { it.startsWith("_") || it.startsWith("\$") }
 
   result.keys.removeIf {
-    props.containsKey(it) || data.containsKey(it) || computed.containsKey(it) || methods.containsKey(it)
+    props.containsKey(it) || data.containsKey(it) || computed.containsKey(it) || methods.containsKey(it) || injects.containsKey(it)
   }
 
   mergePut(result, props)
   mergePut(result, data)
   mergePut(result, computed)
   mergePut(result, methods)
+  mergePut(result, injects)
 }
 
 private fun buildSlotsType(instance: VueInstanceOwner, originalType: JSType?): JSType {
@@ -253,7 +268,7 @@ private fun mergeSignatures(existing: JSRecordType.PropertySignature,
     null
   else
     JSCompositeTypeFactory.createUnionType(existingType.source, existingType, updatedType)
-  return JSRecordTypeImpl.PropertySignatureImpl(
+  return PropertySignatureImpl(
     existing.memberName, type, existing.isOptional && updated.isOptional,
     false, JSRecordMemberSourceFactory.createSource(existing.memberSource.allSourceElements +
                                                     updated.memberSource.allSourceElements,
@@ -272,6 +287,6 @@ fun createImplicitPropertySignature(name: String,
                                     equivalentToSource: Boolean = false,
                                     isReadOnly: Boolean = false,
                                     kind: JSImplicitElement.Type = JSImplicitElement.Type.Property): JSRecordType.PropertySignature {
-  return JSRecordTypeImpl.PropertySignatureImpl(name, type, false, isReadOnly,
-                                                VueImplicitElement(name, type, source, kind, equivalentToSource))
+  return PropertySignatureImpl(name, type, false, isReadOnly,
+                               VueImplicitElement(name, type, source, kind, equivalentToSource))
 }

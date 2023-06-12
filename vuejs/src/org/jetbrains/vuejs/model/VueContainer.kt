@@ -21,6 +21,8 @@ interface VueContainer : VueEntitiesContainer {
   val extends: List<VueContainer>
   val delimiters: Pair<String, String>? get() = null
   val model: VueModelDirectiveProperties?
+  val provide: List<VueProvide>
+  val inject: List<VueInject>
 }
 
 data class VueModelDirectiveProperties(
@@ -115,4 +117,13 @@ interface VueModelDecl : VueNamedSymbol {
   val defaultValue: String? get() = null
 
   val local: Boolean? get() = null
+}
+
+interface VueProvide : VueNamedSymbol {
+  val jsType: JSType? get() = null
+}
+
+interface VueInject : VueNamedSymbol {
+  val from: String? get() = null
+  val defaultValue: JSType? get() = null
 }

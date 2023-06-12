@@ -107,6 +107,7 @@ interface VueScopeElement : VueDocumentedItem {
                    || (container.data.all { visitor.visitDataProperty(it, proximity) }
                        && container.computed.all { visitor.visitComputedProperty(it, proximity) }
                        && container.methods.all { visitor.visitMethod(it, proximity) }
+                       && container.inject.all { visitor.visitInject(it, proximity) }
                       ))
       }
     }, VueModelVisitor.Proximity.GLOBAL)
@@ -138,5 +139,36 @@ interface VueScopeElement : VueDocumentedItem {
     }, VueModelVisitor.Proximity.GLOBAL)
     return VueModelDirectiveProperties(prop, event)
   }
+
+  fun collectProvides(): Map<String, VueProvideEntry> {
+    val provides = mutableMapOf<String, VueProvideEntry>()
+    val visited = mutableSetOf<VueScopeElement>()
+
+    fun acceptElement(element: VueScopeElement?) {
+      if (element == null || !visited.add(element)) return
+
+      if (element is VueContainer) {
+        element.provide.forEach {
+          provides[it.name] = VueProvideEntry(it, element)
+        }
+      }
+      if (element is VueGlobal) {
+        element.apps.forEach {
+          acceptElement(it)
+        }
+      }
+      if (element is VueEntitiesContainer) {
+        element.components.values.forEach {
+          acceptElement(it)
+        }
+      }
+    }
+
+    acceptElement(global)
+
+    return provides
+  }
+
+  data class VueProvideEntry(val provide: VueProvide, val owner: VueContainer)
 
 }

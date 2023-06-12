@@ -24,6 +24,7 @@ import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.getComponentDescriptor
 import org.jetbrains.vuejs.types.VueSourcePropType
+import org.jetbrains.vuejs.types.VueUnwrapRefType
 import org.jetbrains.vuejs.types.optionalIf
 
 class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedContainerInfoProvider(::VueSourceContainerInfo) {
@@ -43,6 +44,8 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     override val directives: Map<String, VueDirective> get() = get(DIRECTIVES)
     override val mixins: List<VueMixin> get() = get(MIXINS)
     override val filters: Map<String, VueFilter> get() = get(FILTERS)
+    override val provide: List<VueProvide> get() = get(PROVIDE)
+    override val inject: List<VueInject> get() = get(INJECT)
 
   }
 
@@ -59,6 +62,8 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
       val Delimiters = MemberReader(DELIMITERS_PROP, true, false)
       val Model = MemberReader(MODEL_PROP)
       val Data = MemberReader(DATA_PROP, canBeFunctionResult = true)
+      val Provide = MemberReader(PROVIDE_PROP, canBeFunctionResult = true)
+      val Inject = MemberReader(INJECT_PROP, canBeArray = true)
     }
 
     private val EXTENDS = MixinsAccessor(EXTENDS_PROP, VueExtendsBindingIndex.KEY)
@@ -68,6 +73,8 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     private val COMPONENTS = ComponentsAccessor()
     private val FILTERS = SimpleMemberMapAccessor(ContainerMember.Filters, ::VueSourceFilter)
     private val DELIMITERS = DelimitersAccessor()
+    private val PROVIDE = SimpleMemberAccessor(ContainerMember.Provide, ::VueSourceProvide)
+    private val INJECT = SimpleMemberAccessor(ContainerMember.Inject, ::VueSourceInject)
 
     private val PROPS = SimpleMemberAccessor(ContainerMember.Props, ::VueSourceInputProperty)
     private val DATA = SimpleMemberAccessor(ContainerMember.Data, ::VueSourceDataProperty)
@@ -280,4 +287,17 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
   private class VueSourceEmitDefinition(override val name: String,
                                         override val source: PsiElement?) : VueEmitCall
+
+  private class VueSourceInject(override val name: String, override val source: PsiElement?) : VueInject {
+    override val from: String? = getInjectAliasName(source.asSafely<JSProperty>()?.initializerOrStub)
+  }
+
+  private class VueSourceProvide(override val name: String, override val source: PsiElement?) : VueProvide {
+    override val jsType: JSType? = if (source is JSTypeOwner) {
+      source.jsType?.let { VueUnwrapRefType(it, source) }
+    }
+    else {
+      null
+    }
+  }
 }

@@ -127,6 +127,20 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
+  fun testProvide() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.copyDirectoryToProject(getTestName(true), "")
+    myFixture.configureFromTempProjectFile("Inject.vue")
+
+    doTest(
+      "literal" to "string",
+      "func" to "boolean",
+      "computed" to "number",
+      "funcData" to "any", // TODO: should have string type
+      "app" to "number",
+    )
+  }
+
   private fun testVFor(vararg testCases: Triple<String, String, String>, iterations: Int = 3) {
     for (test in testCases) {
       for (i in 1..iterations) {

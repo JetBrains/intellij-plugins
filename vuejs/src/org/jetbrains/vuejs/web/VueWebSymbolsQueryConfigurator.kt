@@ -1,9 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web
 
-import com.intellij.lang.javascript.psi.JSElement
-import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
-import com.intellij.lang.javascript.psi.JSProperty
+import com.intellij.lang.javascript.psi.*
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -26,9 +24,7 @@ import org.jetbrains.vuejs.codeInsight.isScriptSetupLocalDirectiveName
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
 import org.jetbrains.vuejs.model.*
-import org.jetbrains.vuejs.model.source.VueCompositionApp
-import org.jetbrains.vuejs.model.source.VueSourceComponent
-import org.jetbrains.vuejs.model.source.WATCH_PROP
+import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.web.scopes.*
 
 class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
@@ -100,7 +96,30 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
                                ?: return emptyList()
       return listOf(VueWatchSymbolsScope(enclosingComponent))
     }
+
+    if (allowResolve && (isInjectedAsArrayLiteral(element) || isInjectedAsAlias(element) || isInjectedAsProperty(element))) {
+      val enclosingComponent = VueModelManager.findEnclosingComponent(element) as? VueSourceComponent
+                               ?: return emptyList()
+      return listOf(VueInjectSymbolsScope(enclosingComponent))
+    }
+
     return emptyList()
+  }
+
+  private fun isInjectedAsArrayLiteral(element: JSElement) =
+    element is JSLiteralExpression &&
+    element.context is JSArrayLiteralExpression &&
+    element.context?.context?.asSafely<JSProperty>()?.name == INJECT_PROP
+
+  private fun isInjectedAsProperty(element: JSElement) =
+    element is JSObjectLiteralExpression &&
+    element.context?.asSafely<JSProperty>()?.name == INJECT_PROP
+
+  private fun isInjectedAsAlias(element: JSElement): Boolean {
+    if (element !is JSLiteralExpression) return false
+    val alias = element.context?.asSafely<JSProperty>()?.takeIf { it.name == INJECT_FROM } ?: return false
+    val inject = alias.context?.context?.asSafely<JSProperty>() ?: return false
+    return inject.context?.context?.asSafely<JSProperty>()?.name == INJECT_PROP
   }
 
   private fun addEntityContainers(element: PsiElement,

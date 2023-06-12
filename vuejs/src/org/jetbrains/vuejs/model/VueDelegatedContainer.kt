@@ -50,6 +50,12 @@ abstract class VueDelegatedContainer<T : VueContainer> : VueDelegatedEntitiesCon
   override val parents: List<VueEntitiesContainer>
     get() = delegate?.parents ?: emptyList()
 
+  override val provide: List<VueProvide>
+    get() = delegate?.provide ?: emptyList()
+
+  override val inject: List<VueInject>
+    get() = delegate?.inject ?: emptyList()
+
   companion object {
     fun unwrap(container: Any): Any =
       (container as? VueDelegatedContainer<*>)?.delegate ?: container

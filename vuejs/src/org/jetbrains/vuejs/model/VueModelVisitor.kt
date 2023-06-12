@@ -47,6 +47,10 @@ abstract class VueModelVisitor {
     return visitProperty(method, proximity)
   }
 
+  open fun visitInject(inject: VueInject, proximity: Proximity): Boolean {
+    return true
+  }
+
   open fun visitModelDecl(modelDecl: VueModelDecl, proximity: Proximity): Boolean {
     return true
   }
