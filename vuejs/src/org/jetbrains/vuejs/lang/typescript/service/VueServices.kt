@@ -68,9 +68,3 @@ private fun isVolarEnabledByContextAndSettings(project: Project, context: Virtua
     else -> false
   }
 }
-
-fun restartTypeScriptServicesAsync(project: Project) {
-  ApplicationManager.getApplication().invokeLater(Runnable {
-    TypeScriptService.restartServices(project)
-  }, project.disposed)
-}

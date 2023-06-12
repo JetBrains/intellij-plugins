@@ -116,7 +116,7 @@
     <fileIndentOptionsProvider implementation="org.jetbrains.vuejs.lang.html.psi.formatter.VueFileIndentOptionsProvider"
                                id="vue" order="before html"/>
 
-    <!-- we store settings under ts since there is only ts server specific options there -->
+    <!-- we store settings under ts since there are only ts server specific options there -->
     <projectConfigurable parentId="settings.typescriptcompiler"
                          instance="org.jetbrains.vuejs.options.VueConfigurable"
                          id="settings.vue"
