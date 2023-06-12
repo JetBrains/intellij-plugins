@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackage;
-import com.intellij.lang.javascript.psi.jsdoc.JSDocTagValue;
+import com.intellij.lang.javascript.psi.jsdoc.JSDocTagType;
 import com.intellij.lang.javascript.psi.resolve.*;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
 import com.intellij.lang.javascript.psi.types.JSNamedType;
@@ -66,7 +66,7 @@ public class ActionScriptCompletionPlaceFilterProvider implements JSCompletionPl
   public @Nullable JSCompletionPlaceFilter forPlace(@NotNull PsiElement place) {
     if (!DialectDetector.isActionScript(place)) return null;
 
-    if (place instanceof JSDocTagValue) {
+    if (place instanceof JSDocTagType) {
       return AS_TYPE_CONTEXT;
     }
     if (place instanceof JSReferenceExpression && ((JSReferenceExpression)place).getQualifier() == null) {
