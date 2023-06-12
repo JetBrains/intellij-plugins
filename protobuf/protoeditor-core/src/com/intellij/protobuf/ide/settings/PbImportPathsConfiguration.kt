@@ -23,13 +23,13 @@ import com.intellij.util.asSafely
 import java.util.stream.Stream
 import kotlin.streams.asStream
 
-fun computeDeterministicImportPathsStream(project: Project): Stream<ImportPathEntry> {
-  return computeDeterministicImportPaths(project).asStream()
+fun computeDeterministicImportPathsStream(project: Project, pbSettings: PbProjectSettings): Stream<ImportPathEntry> {
+  return computeDeterministicImportPaths(project, pbSettings).asStream()
 }
 
-fun computeDeterministicImportPaths(project: Project): Sequence<ImportPathEntry> {
+fun computeDeterministicImportPaths(project: Project, pbSettings: PbProjectSettings): Sequence<ImportPathEntry> {
   return sequence {
-    with(PbProjectSettings.getInstance(project)) {
+    with(pbSettings) {
       yieldAll(configuredImportPaths(project))
       if (isIncludeProtoDirectories) yieldAll(standardProtoDirectories(project))
       if (isIncludeContentRoots) yieldAll(projectContentRoots(project))
@@ -87,7 +87,7 @@ internal fun getDescriptorPathSuggestions(project: Project): Collection<String> 
            .toSet() + BUNDLED_DESCRIPTOR
 }
 
-private const val BUNDLED_DESCRIPTOR = "google/protobuf/descriptor.proto"
+internal const val BUNDLED_DESCRIPTOR = "google/protobuf/descriptor.proto"
 
 internal fun getBuiltInIncludeEntry(): ImportPathEntry? {
   val includedDescriptorsDirectoryUrl = PbProjectSettings::class.java.classLoader.getResource("include") ?: return null
@@ -109,7 +109,7 @@ internal fun findFileByImportPath(searchedFileName: String,
 }
 
 fun getOrComputeImportPathsForAllImportStatements(project: Project): List<String> {
-  if (true) return computeImportPathsForAllImportStatements(project)
+  if (!PbProjectSettings.getInstance(project).isIndexBasedResolveEnabled) return emptyList()
   return CachedValuesManager.getManager(project)
     .getCachedValue(project) {
       val allDiscoveredImportPaths = computeImportPathsForAllImportStatements(project)
@@ -121,9 +121,7 @@ fun getOrComputeImportPathsForAllImportStatements(project: Project): List<String
     }
 }
 
-private fun computeImportPathsForAllImportStatements(project: Project): List<String> {
-  if (!PbProjectSettings.getInstance(project).isIndexBasedResolveEnabled) return emptyList()
-
+internal fun computeImportPathsForAllImportStatements(project: Project): List<String> {
   val allProtoFiles = runReadAction { FileTypeIndex.getFiles(PbFileType.INSTANCE, GlobalSearchScope.allScope(project)) }
   val psiManager = PsiManager.getInstance(project)
 

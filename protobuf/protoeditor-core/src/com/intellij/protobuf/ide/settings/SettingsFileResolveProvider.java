@@ -27,64 +27,27 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static com.intellij.protobuf.ide.settings.PbImportPathsConfiguration.computeDeterministicImportPaths;
+import static com.intellij.protobuf.ide.settings.PbImportPathsConfiguration.BUNDLED_DESCRIPTOR;
 import static com.intellij.protobuf.ide.settings.PbImportPathsConfiguration.computeDeterministicImportPathsStream;
 
 
 /** {@link FileResolveProvider} implementation that uses settings from {@link PbProjectSettings}. */
 public class SettingsFileResolveProvider implements FileResolveProvider {
 
-  private final PbProjectSettings staticSettings;
-
   /** No-op constructor. Settings will be resolved by looking up the PbProjectSettings service. */
-  public SettingsFileResolveProvider() {
-    this.staticSettings = null;
-  }
-
-  /**
-   * Constructs a SettingsFileResolveProvider backed by the static {@link PbProjectSettings} object.
-   * Updates to the configuration in the {@link PbProjectSettings} service will not be reflected.
-   * This constructor can be used to preview the effects of settings that have not yet been
-   * persisted.
-   *
-   * @param staticSettings A {@link PbProjectSettings} object to use.
-   */
-  public SettingsFileResolveProvider(PbProjectSettings staticSettings) {
-    this.staticSettings = staticSettings;
-  }
+  public SettingsFileResolveProvider() { }
 
   @Nullable
   @Override
   public VirtualFile findFile(@NotNull String path, @NotNull Project project) {
-    Iterator<ImportPathEntry> iterator = computeDeterministicImportPaths(project).iterator();
-    if (!iterator.hasNext()) return null;
-    for (ImportPathEntry entry = iterator.next(); iterator.hasNext(); iterator.next()) {
-      if (entry == null) continue;
-      String prefix = normalizePath(entry.getPrefix());
-      if (!path.startsWith(prefix)) {
-        continue;
-      }
-
-      VirtualFile location = VirtualFileManager.getInstance().findFileByUrl(entry.getLocation());
-      if (location == null) {
-        continue;
-      }
-      String unprefixedPath = path.substring(prefix.length());
-      VirtualFile imported = location.findFileByRelativePath(unprefixedPath);
-      if (imported != null && PROTO_FILTER.accept(imported)) {
-        return imported;
-      }
-    }
-    return null;
+    return findFileWithSettings(path, project, PbProjectSettings.getInstance(project));
   }
 
   @NotNull
   @Override
   public Collection<ChildEntry> getChildEntries(@NotNull String path, @NotNull Project project) {
-    Iterator<ImportPathEntry> iterator = computeDeterministicImportPaths(project).iterator();
-    if (!iterator.hasNext()) return Collections.emptyList();
     Set<ChildEntry> results = new HashSet<>();
-    for (ImportPathEntry entry = iterator.next(); iterator.hasNext(); iterator.next()) {
+    for (ImportPathEntry entry : getImportPaths(project, PbProjectSettings.getInstance(project))) {
       String prefix = normalizePath(entry.getPrefix());
       path = normalizePath(path);
 
@@ -123,23 +86,44 @@ public class SettingsFileResolveProvider implements FileResolveProvider {
   @Nullable
   @Override
   public VirtualFile getDescriptorFile(@NotNull Project project) {
-    String descriptorPath = PbProjectSettings.getInstance(project).getDescriptorPath();
-    if (descriptorPath != null) {
-      return findFile(descriptorPath, project);
-    }
-    return null;
+    return findFile(BUNDLED_DESCRIPTOR, project);
   }
 
   @NotNull
   @Override
   public GlobalSearchScope getSearchScope(@NotNull Project project) {
     VirtualFile[] roots =
-      computeDeterministicImportPathsStream(project)
+      computeDeterministicImportPathsStream(project, PbProjectSettings.getInstance(project))
         .map(ImportPathEntry::getLocation)
         .map(VirtualFileManager.getInstance()::findFileByUrl)
         .filter(Objects::nonNull)
         .toArray(VirtualFile[]::new);
     return GlobalSearchScopesCore.directoriesScope(project, /* withSubDirectories= */ true, roots);
+  }
+
+  private static List<ImportPathEntry> getImportPaths(Project project, PbProjectSettings pbSettings) {
+    return computeDeterministicImportPathsStream(project, pbSettings).toList();
+  }
+
+  static VirtualFile findFileWithSettings(String path, Project project, PbProjectSettings settings) {
+    for (ImportPathEntry entry : getImportPaths(project, settings)) {
+      if (entry == null) continue;
+      String prefix = normalizePath(entry.getPrefix());
+      if (!path.startsWith(prefix)) {
+        continue;
+      }
+
+      VirtualFile location = VirtualFileManager.getInstance().findFileByUrl(entry.getLocation());
+      if (location == null) {
+        continue;
+      }
+      String unprefixedPath = path.substring(prefix.length());
+      VirtualFile imported = location.findFileByRelativePath(unprefixedPath);
+      if (imported != null && PROTO_FILTER.accept(imported)) {
+        return imported;
+      }
+    }
+    return null;
   }
 
   /** For the given path, return a non-null string that, if not empty, ends with a slash. */

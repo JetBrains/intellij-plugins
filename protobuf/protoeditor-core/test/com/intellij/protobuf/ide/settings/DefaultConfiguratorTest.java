@@ -88,7 +88,7 @@ public class DefaultConfiguratorTest extends HeavyPlatformTestCase {
 
     assertEquals("google/protobuf/descriptor.proto", settings.getDescriptorPath());
     assertContainsElements(
-      PbImportPathsConfiguration.computeDeterministicImportPathsStream(project).toList(),
+      PbImportPathsConfiguration.computeDeterministicImportPathsStream(project, settings).toList(),
       new ImportPathEntry(VfsUtilCore.pathToUrl(module1Root1Src1.getPath()), ""),
       new ImportPathEntry(VfsUtilCore.pathToUrl(module1Root1Src2.getPath()), ""),
       new ImportPathEntry(VfsUtilCore.pathToUrl(module2Root1Src1.getPath()), ""));

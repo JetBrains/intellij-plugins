@@ -48,7 +48,7 @@ class PbExportSettingsAsCliCommandAction : AnActionButton(
     }
 
     private fun retrieveImportUrls(project: Project): Sequence<String> {
-      return computeDeterministicImportPaths(project)
+      return computeDeterministicImportPaths(project, PbProjectSettings.getInstance(project))
         .mapNotNull(PbProjectSettings.ImportPathEntry::getLocation)
         .plus(getOrComputeImportPathsForAllImportStatements(project))
     }
