@@ -89,8 +89,8 @@ class VueParsingLexer(private val delegateLexer: VueLexerImpl, private val paren
     private const val SHIFT_1 = 2
     private const val SHIFT_2 = SHIFT_1 + 2
 
-    private const val BASE_LEXING = 0;
-    private const val ADDITIONAL_TOKEN_LEXING = 1;
-    private const val ADDITIONAL_TOKEN_LEXED = 2;
+    private const val BASE_LEXING = 0
+    private const val ADDITIONAL_TOKEN_LEXING = 1
+    private const val ADDITIONAL_TOKEN_LEXED = 2
   }
 }
