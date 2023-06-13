@@ -28,20 +28,19 @@ class AddClosingQuoteQuickFix(element: PsiElement) : LocalQuickFixAndIntentionAc
 
   override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
     if (!FileModificationService.getInstance().prepareFileForWrite(file)) return
-    val element = startElement
-    val rawText = element.text
-    if (element !is HCLStringLiteralMixin) {
-      LOG.error("Quick fix was applied to unexpected element", rawText, element.parent.text)
+    val rawText = startElement.text
+    if (startElement !is HCLStringLiteralMixin) {
+      LOG.error("Quick fix was applied to unexpected element", rawText, startElement.parent.text)
       return
     }
     if (rawText.isEmpty()) {
-      LOG.error("Quick fix was applied to empty string element", rawText, element.parent.text)
+      LOG.error("Quick fix was applied to empty string element", rawText, startElement.parent.text)
       return
     }
     val content = HCLPsiUtil.stripQuotes(rawText)
-    val quote = element.quoteSymbol
+    val quote = startElement.quoteSymbol
     CodeStyleManager.getInstance(project).performActionWithFormatterDisabled {
-      element.updateText(quote + content + quote)
+      startElement.updateText(quote + content + quote)
     }
   }
 }

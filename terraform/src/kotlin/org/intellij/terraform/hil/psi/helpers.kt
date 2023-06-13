@@ -15,8 +15,7 @@ import org.intellij.terraform.hil.psi.impl.getHCLHost
 
 fun getTerraformModule(element: BaseExpression): Module? {
   val host = element.getHCLHost() ?: return null
-  val module = host.getTerraformModule()
-  return module
+  return host.getTerraformModule()
 }
 
 fun getLocalDefinedVariables(element: BaseExpression): List<Variable> {
