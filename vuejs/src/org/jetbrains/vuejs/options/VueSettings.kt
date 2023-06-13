@@ -9,7 +9,7 @@ import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
 import org.jetbrains.vuejs.lang.typescript.service.volar.serverPackageName
 
-fun getVueSettings(project: Project): VueSettings = project.service<VueSettings>() //
+fun getVueSettings(project: Project): VueSettings = project.service<VueSettings>()
 
 @Service(Service.Level.PROJECT)
 @State(name = "VueSettings", storages = [Storage(StoragePathMacros.WORKSPACE_FILE)])
