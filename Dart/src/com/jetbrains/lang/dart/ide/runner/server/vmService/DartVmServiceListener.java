@@ -46,77 +46,32 @@ public class DartVmServiceListener implements VmServiceListener {
   @Override
   public void received(@NotNull final String streamId, @NotNull final Event event) {
     switch (event.getKind()) {
-      case BreakpointAdded:
+      case BreakpointAdded -> {
         // TODO Respond to breakpoints added by the observatory.
         // myBreakpointHandler.vmBreakpointAdded(null, event.getIsolate().getId(), event.getBreakpoint());
-        break;
-      case BreakpointRemoved:
-        break;
-      case BreakpointResolved:
-        myBreakpointHandler.breakpointResolved(Objects.requireNonNull(event.getBreakpoint()));
-        break;
-      case Extension:
-        break;
-      case GC:
-        break;
-      case Inspect:
-        break;
-      case IsolateExit:
-        myDebugProcess.isolateExit(Objects.requireNonNull(event.getIsolate()));
-        break;
-      case IsolateReload:
-        break;
-      case IsolateRunnable:
-        break;
-      case IsolateStart:
-        break;
-      case IsolateUpdate:
-        break;
-      case Logging:
-        break;
-      case None:
-        break;
-      case PauseBreakpoint:
-      case PauseException:
-      case PauseInterrupted:
+      }
+      case BreakpointRemoved, Unknown, VMUpdate, VMFlagUpdate, ServiceUnregistered, ServiceRegistered, ServiceExtensionAdded, PauseExit, 
+        None, Logging, IsolateUpdate, IsolateStart, IsolateRunnable, IsolateReload, Inspect, GC, Extension -> {
+      }
+      case BreakpointResolved -> myBreakpointHandler.breakpointResolved(Objects.requireNonNull(event.getBreakpoint()));
+      case IsolateExit -> myDebugProcess.isolateExit(Objects.requireNonNull(event.getIsolate()));
+      case PauseBreakpoint, PauseException, PauseInterrupted -> {
         myDebugProcess.isolateSuspended(Objects.requireNonNull(event.getIsolate()));
-
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
           final ElementList<Breakpoint> breakpoints = event.getKind() == EventKind.PauseBreakpoint ? event.getPauseBreakpoints() : null;
           final InstanceRef exception = event.getKind() == EventKind.PauseException ? event.getException() : null;
           onIsolatePaused(event.getIsolate(), breakpoints, exception, event.getTopFrame(), event.getAtAsyncSuspension());
         });
-        break;
-      case PausePostRequest:
+      }
+      case PausePostRequest ->
         // We get this event after an isolate reload call, when pause after reload has been requested.
         // This adds the "supports.pausePostRequest" capability.
         myDebugProcess.getVmServiceWrapper().restoreBreakpointsForIsolate(Objects.requireNonNull(event.getIsolate()).getId(),
                                                                           () -> myDebugProcess.getVmServiceWrapper()
                                                                             .resumeIsolate(event.getIsolate().getId(), null));
-        break;
-      case PauseExit:
-        break;
-      case PauseStart:
-        myDebugProcess.getVmServiceWrapper().handleIsolate(Objects.requireNonNull(event.getIsolate()), true);
-        break;
-      case Resume:
-        myDebugProcess.isolateResumed(Objects.requireNonNull(event.getIsolate()));
-        break;
-      case ServiceExtensionAdded:
-        break;
-      case ServiceRegistered:
-        break;
-      case ServiceUnregistered:
-        break;
-      case VMFlagUpdate:
-        break;
-      case VMUpdate:
-        break;
-      case WriteEvent:
-        myDebugProcess.handleWriteEvent(event.getBytes());
-        break;
-      case Unknown:
-        break;
+      case PauseStart -> myDebugProcess.getVmServiceWrapper().handleIsolate(Objects.requireNonNull(event.getIsolate()), true);
+      case Resume -> myDebugProcess.isolateResumed(Objects.requireNonNull(event.getIsolate()));
+      case WriteEvent -> myDebugProcess.handleWriteEvent(event.getBytes());
     }
   }
 

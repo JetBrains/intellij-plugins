@@ -1,3 +1,4 @@
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.execution.ExecutionException;
@@ -88,9 +89,8 @@ public class FlexDebugRunner extends FlexBaseRunner {
       final Sdk sdk = bc.getSdk();
 
       switch (runnerParameters.getMobileRunTarget()) {
-        case Emulator:
-          break;
-        case AndroidDevice:
+        case Emulator -> { }
+        case AndroidDevice -> {
           final String androidDescriptorPath = getAirDescriptorPath(bc, bc.getAndroidPackagingOptions());
           final String androidAppId = getApplicationId(androidDescriptorPath);
 
@@ -110,9 +110,8 @@ public class FlexDebugRunner extends FlexBaseRunner {
               return null;
             }
           }
-
-          break;
-        case iOSSimulator:
+        }
+        case iOSSimulator -> {
           final String adtVersionSimulator = AirPackageUtil.getAdtVersion(module.getProject(), bc.getSdk());
 
           final String iosSimulatorDescriptorPath = getAirDescriptorPath(bc, bc.getIosPackagingOptions());
@@ -128,9 +127,8 @@ public class FlexDebugRunner extends FlexBaseRunner {
           if (!packAndInstallToIOSSimulator(module, bc, runnerParameters, adtVersionSimulator, iosSimulatorAppId, true)) {
             return null;
           }
-
-          break;
-        case iOSDevice:
+        }
+        case iOSDevice -> {
           final String adtVersion = AirPackageUtil.getAdtVersion(module.getProject(), bc.getSdk());
 
           if (StringUtil.compareVersionNumbers(adtVersion, "3.4") >= 0) {
@@ -155,7 +153,7 @@ public class FlexDebugRunner extends FlexBaseRunner {
               return null;
             }
           }
-          break;
+        }
       }
     }
 

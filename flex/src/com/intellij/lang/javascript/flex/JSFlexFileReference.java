@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.openapi.module.Module;
@@ -56,20 +56,15 @@ public class JSFlexFileReference extends FileReference {
     String newName = null;
 
     switch (myRelativeToWhat) {
-      case Absolute:
-        newName = destVFile.getPath();
-        break;
-      case CurrentFile:
-        newName = getRelativePath(currentVFile, destVFile, '/');
-        break;
-      case ProjectRoot:
+      case Absolute -> newName = destVFile.getPath();
+      case CurrentFile -> newName = getRelativePath(currentVFile, destVFile, '/');
+      case ProjectRoot -> {
         final VirtualFile projectRoot = project.getBaseDir();
         newName = projectRoot == null ? null : getRelativePath(projectRoot, destVFile, '/');
-        break;
-      case SourceRoot:
+      }
+      case SourceRoot -> {
         // first try to get source root that contains the file
         final VirtualFile sourceRootForFile = ProjectRootManager.getInstance(project).getFileIndex().getSourceRootForFile(destVFile);
-
         if (sourceRootForFile != null) {
           newName = getRelativePath(sourceRootForFile, destVFile, '/');
         }
@@ -86,9 +81,9 @@ public class JSFlexFileReference extends FileReference {
             }
           }
         }
-        break;
-      case Other:
-        break;
+      }
+      case Other -> {
+      }
     }
 
     if (newName != null && getFileReferenceSet().getPathString().startsWith("/") && !newName.startsWith("/")) {

@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.osgi.project;
 
 import aQute.bnd.osgi.Constants;
@@ -83,7 +83,7 @@ public class BundleManifestCache {
         List<Object> dependencies = new SmartList<>(configuration);
 
         switch (configuration.getManifestGenerationMode()) {
-          case Manually: {
+          case Manually -> {
             PsiFile manifestFile = findInModuleRoots(facet.getModule(), configuration.getManifestLocation());
             if (manifestFile instanceof ManifestFile) {
               manifest = readManifest((ManifestFile)manifestFile);
@@ -92,19 +92,15 @@ public class BundleManifestCache {
             else {
               dependencies.add(PsiModificationTracker.MODIFICATION_COUNT);
             }
-            break;
           }
-
-          case OsmorcControlled: {
+          case OsmorcControlled -> {
             Map<String, String> map = new HashMap<>(configuration.getAdditionalPropertiesAsMap());
             map.put(Constants.BUNDLE_SYMBOLICNAME, configuration.getBundleSymbolicName());
             map.put(Constants.BUNDLE_VERSION, configuration.getBundleVersion());
             map.put(Constants.BUNDLE_ACTIVATOR, configuration.getBundleActivator());
             manifest = new BundleManifest(map);
-            break;
           }
-
-          case Bnd: {
+          case Bnd -> {
             PsiFile bndFile = findInModuleRoots(facet.getModule(), configuration.getBndFileLocation());
             if (bndFile != null) {
               manifest = readProperties(bndFile);
@@ -113,11 +109,10 @@ public class BundleManifestCache {
             else {
               dependencies.add(PsiModificationTracker.MODIFICATION_COUNT);
             }
-            break;
           }
-
-          case Bundlor:
-            break; // not supported
+          case Bundlor -> {
+            // not supported
+          }
         }
 
         return CachedValueProvider.Result.create(manifest, dependencies);

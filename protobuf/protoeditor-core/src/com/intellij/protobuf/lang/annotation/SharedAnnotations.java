@@ -77,16 +77,14 @@ public final class SharedAnnotations {
 
   private static void annotateEnumOptionValue(PsiElement enumElement, AnnotationHolder holder) {
     switch (getReferenceState(enumElement.getReference())) {
-      case VALID:
-      case NULL: // A null reference indicates that the value type isn't an enum.
-        break;
-      case UNRESOLVED:
-      default:
-        holder.newAnnotation(
-            HighlightSeverity.ERROR, PbLangBundle.message("cannot.resolve.enum.value", enumElement.getText()))
-            .range(enumElement.getTextRange())
-            .highlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL)
-            .create();
+      case VALID, NULL -> {
+        // A null reference indicates that the value type isn't an enum.
+      }
+      default -> holder.newAnnotation(
+          HighlightSeverity.ERROR, PbLangBundle.message("cannot.resolve.enum.value", enumElement.getText()))
+        .range(enumElement.getTextRange())
+        .highlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL)
+        .create();
     }
   }
 
@@ -138,27 +136,27 @@ public final class SharedAnnotations {
       }
     }
     switch (getReferenceState(path.getReference())) {
-      case AMBIGUOUS:
+      case AMBIGUOUS -> {
         if (path.getParent() instanceof ProtoSymbolPath) {
           return false;
         }
         holder.newAnnotation(
             HighlightSeverity.ERROR, PbLangBundle.message("ambiguous.symbol", path.getSymbol().getText()))
-            .range(path.getSymbol().getTextRange())
-            .create();
+          .range(path.getSymbol().getTextRange())
+          .create();
         return true;
-      case VALID:
-      case NULL:
-        break;
-      case UNRESOLVED:
-      default:
+      }
+      case VALID, NULL -> {
+      }
+      default -> {
         holder.newAnnotation(
             HighlightSeverity.ERROR, PbLangBundle.message("cannot.resolve.symbol", path.getSymbol().getText()))
-            .range(path.getSymbol().getTextRange())
-            .highlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL)
-            .withFix(new PbAddImportStatementIntention())
-            .create();
+          .range(path.getSymbol().getTextRange())
+          .highlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL)
+          .withFix(new PbAddImportStatementIntention())
+          .create();
         return true;
+      }
     }
     return false;
   }

@@ -484,17 +484,15 @@ public class PbAnnotator implements Annotator {
   private static void annotateOptionNameReference(PbOptionName name, AnnotationHolder holder) {
     PsiElement symbol = name.getSymbol();
     switch (SharedAnnotations.getReferenceState(name.getEffectiveReference())) {
-      case VALID:
-      case NULL:
-        break;
-      case UNRESOLVED:
-      default:
+      case VALID, NULL -> { }
+      default -> {
         TextRange range = symbol != null ? symbol.getTextRange() : name.getTextRange();
         String symbolName = symbol != null ? symbol.getText() : name.getText();
         holder.newAnnotation(HighlightSeverity.ERROR, PbLangBundle.message("cannot.resolve.option", symbolName))
-            .range(range)
-            .highlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL)
-            .create();
+          .range(range)
+          .highlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL)
+          .create();
+      }
     }
   }
 
@@ -590,21 +588,15 @@ public class PbAnnotator implements Annotator {
       return;
     }
     switch (SharedAnnotations.getReferenceState(name.getReference())) {
-      case AMBIGUOUS:
-        holder.newAnnotation(HighlightSeverity.ERROR, PbLangBundle.message("ambiguous.import", path))
-            .range(range)
-            .create();
-        break;
-      case VALID:
-      case NULL:
-        break;
-      case UNRESOLVED:
-      default:
-        holder.newAnnotation(HighlightSeverity.ERROR, PbLangBundle.message("cannot.resolve.import", path))
-            .range(range)
-            .highlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL)
-            .withFix(new PbAddImportPathIntention())
-            .create();
+      case AMBIGUOUS -> holder.newAnnotation(HighlightSeverity.ERROR, PbLangBundle.message("ambiguous.import", path))
+        .range(range)
+        .create();
+      case VALID, NULL -> { }
+      default -> holder.newAnnotation(HighlightSeverity.ERROR, PbLangBundle.message("cannot.resolve.import", path))
+        .range(range)
+        .highlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL)
+        .withFix(new PbAddImportPathIntention())
+        .create();
     }
   }
 

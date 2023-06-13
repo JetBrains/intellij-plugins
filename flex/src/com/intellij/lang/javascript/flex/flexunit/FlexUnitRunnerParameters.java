@@ -1,3 +1,4 @@
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.execution.configurations.RuntimeConfigurationError;
@@ -240,17 +241,14 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
     }
 
     switch (bc.getTargetPlatform()) {
-      case Web:
-        break;
-
-      case Desktop:
+      case Web -> {}
+      case Desktop -> {
         FlashRunnerParameters.checkAdlAndAirRuntime(sdk);
         if (bc.getOutputType() == OutputType.Application) {
           FlashRunnerParameters.checkCustomDescriptor(bc.getAirDesktopPackagingOptions(), getBCName(), getModuleName());
         }
-        break;
-
-      case Mobile:
+      }
+      case Mobile -> {
         FlashRunnerParameters.checkAdlAndAirRuntime(sdk);
 
         switch (myAppDescriptorForEmulator) {
@@ -265,7 +263,7 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
             }
           }
         }
-        break;
+      }
     }
 
     final FlexUnitSupport support = FlexUnitSupport.getSupport(bc, moduleAndBC.first);

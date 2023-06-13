@@ -23,10 +23,6 @@ import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.protobuf.ide.highlighter.PbSyntaxHighlighter;
 import com.intellij.protobuf.ide.highlighter.PbTextSyntaxHighlighter;
 import com.intellij.protobuf.lang.PbLangBundle;
@@ -35,6 +31,10 @@ import com.intellij.protobuf.lang.psi.*;
 import com.intellij.protobuf.lang.util.BuiltInType;
 import com.intellij.protobuf.lang.util.ValueTester;
 import com.intellij.protobuf.lang.util.ValueTester.ValueTesterType;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -295,17 +295,15 @@ public class PbTextAnnotator implements Annotator {
       // This is a normal field name.
       PsiElement identifier = name.getNameIdentifier();
       switch (SharedAnnotations.getReferenceState(name.getEffectiveReference())) {
-        case VALID:
-        case NULL:
-          break;
-        case UNRESOLVED:
-        default:
+        case VALID, NULL -> { }
+        default -> {
           TextRange range = identifier != null ? identifier.getTextRange() : name.getTextRange();
           String symbolName = identifier != null ? identifier.getText() : name.getText();
           holder.newAnnotation(HighlightSeverity.ERROR, PbLangBundle.message("cannot.resolve.field", symbolName))
-              .range(range)
-              .highlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL)
-              .create();
+            .range(range)
+            .highlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL)
+            .create();
+        }
       }
     }
 
