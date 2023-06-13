@@ -8,22 +8,17 @@ import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.lang.typescript.compiler.TypeScriptLanguageServiceAnnotatorCheckerProvider
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
 import com.intellij.lang.typescript.lsp.JSFrameworkLspTypeScriptService
-import com.intellij.platform.lsp.api.LspServerDescriptor
-import com.intellij.platform.lsp.api.LspServerSupportProvider
-import com.intellij.platform.lsp.impl.LspServerImpl
-import com.intellij.platform.lsp.impl.requests.LspHoverRequest
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiElement
+import com.intellij.platform.lsp.api.LspServerDescriptor
+import com.intellij.platform.lsp.api.LspServerSupportProvider
 import com.intellij.psi.PsiFile
 import com.intellij.util.text.SemVer
 import org.jetbrains.vuejs.lang.typescript.service.isVolarEnabledAndAvailable
 import org.jetbrains.vuejs.lang.typescript.service.isVolarFileTypeAcceptable
 import org.jetbrains.vuejs.options.VueServiceSettings
 import org.jetbrains.vuejs.options.getVueSettings
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.CompletableFuture.completedFuture
 
 class VolarTypeScriptService(project: Project) : JSFrameworkLspTypeScriptService(project) {
   override fun getProviderClass(): Class<out LspServerSupportProvider> = VolarSupportProvider::class.java
@@ -39,20 +34,11 @@ class VolarTypeScriptService(project: Project) : JSFrameworkLspTypeScriptService
              ?.let { PackageJsonData.getOrCreate(it).version } ?: defaultVolarVersion
   }
 
-  private fun quickInfo(element: PsiElement): TypeScriptQuickInfoResponse? {
-    val server = getServer() ?: return null
-    val hoverRequest = LspHoverRequest.create(server, element) ?: return null
-    val raw = (server as LspServerImpl).sendRequestSync(hoverRequest) ?: return null
-    val response = TypeScriptQuickInfoResponse().apply {
-      displayString = raw.substring("<html><body><pre>".length, raw.length - "</pre></body></html>".length)
+  override fun createQuickInfoResponse(rawResponse: String): TypeScriptQuickInfoResponse {
+    return TypeScriptQuickInfoResponse().apply {
+      displayString = rawResponse.removeSurrounding("<html><body><pre>", "</pre></body></html>")
     }
-    return response
   }
-
-  override fun getQuickInfoAt(element: PsiElement,
-                              originalElement: PsiElement,
-                              originalFile: VirtualFile): CompletableFuture<TypeScriptQuickInfoResponse?> =
-    completedFuture(quickInfo(element))
 
   override fun canHighlight(file: PsiFile): Boolean {
     val provider = TypeScriptAnnotatorCheckerProvider.getCheckerProvider(file)

@@ -19,19 +19,14 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.r
 import com.intellij.lang.typescript.library.TypeScriptLibraryProvider
 import com.intellij.lang.typescript.lsp.BaseLspTypeScriptService
 import com.intellij.lang.typescript.lsp.LspAnnotationError
-import com.intellij.platform.lsp.api.LspServer
-import com.intellij.platform.lsp.api.LspServerManager
-import com.intellij.platform.lsp.impl.LspServerImpl
-import com.intellij.platform.lsp.impl.requests.LspHoverRequest
 import com.intellij.openapi.components.Service
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.platform.lsp.api.LspServer
+import com.intellij.platform.lsp.api.LspServerManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.util.text.SemVer
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.CompletableFuture.completedFuture
 
 class DenoTypeScriptServiceProvider(val project: Project) : JSLanguageServiceProvider {
 
@@ -46,7 +41,6 @@ class DenoTypeScriptServiceProvider(val project: Project) : JSLanguageServicePro
 @Service(Service.Level.PROJECT)
 class DenoTypeScriptService(project: Project) : BaseLspTypeScriptService(project) {
   companion object {
-    private val LOG = Logger.getInstance(DenoTypeScriptService::class.java)
     fun getInstance(project: Project): DenoTypeScriptService = project.getService(DenoTypeScriptService::class.java)
   }
 
@@ -87,19 +81,11 @@ class DenoTypeScriptService(project: Project) : BaseLspTypeScriptService(project
     return emptyList()
   }
 
-  private fun quickInfo(element: PsiElement): TypeScriptQuickInfoResponse? {
-    val server = getServer() ?: return null
-    val hoverRequest = LspHoverRequest.create(server, element) ?: return null
-    val raw = (server as LspServerImpl).sendRequestSync(hoverRequest) ?: return null
-    LOG.info("Quick info for $element : $raw")
-    val response = TypeScriptQuickInfoResponse().apply {
-      displayString = raw.substring("<html><body><pre>".length, raw.length - "</pre></body></html>".length) //
+  override fun createQuickInfoResponse(rawResponse: String): TypeScriptQuickInfoResponse {
+    return TypeScriptQuickInfoResponse().apply {
+      displayString = rawResponse.removeSurrounding("<html><body><pre>", "</pre></body></html>")
     }
-    return response
   }
-
-  override fun getQuickInfoAt(element: PsiElement, originalElement: PsiElement, originalFile: VirtualFile): CompletableFuture<TypeScriptQuickInfoResponse?> =
-    completedFuture(quickInfo(element))
 
   override fun canHighlight(file: PsiFile) = DialectDetector.isTypeScript(file)
 
