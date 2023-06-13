@@ -43,7 +43,8 @@ JSFile:XmlDef.js2
         PsiWhiteSpace('\n   ')
         PsiElement(JS:DOC_COMMENT_LEADING_ASTERISK)('*')
         PsiWhiteSpace(' ')
-        PsiElement(JS:DOC_COMMENT_DATA)('Determines')
+        JSDocDescription
+          PsiElement(JS:DOC_COMMENT_DATA)('Determines')
         PsiWhiteSpace('\n   ')
         PsiElement(JS:DOC_COMMENT_END)('*/')
       PsiWhiteSpace('\n  ')

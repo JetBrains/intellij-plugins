@@ -33,7 +33,8 @@ JSFile:ASDoc.js2
         PsiWhiteSpace('\n ')
         PsiElement(JS:DOC_COMMENT_LEADING_ASTERISK)('*')
         PsiWhiteSpace(' ')
-        PsiElement(JS:DOC_COMMENT_DATA)('asdoc A')
+        JSDocDescription
+          PsiElement(JS:DOC_COMMENT_DATA)('asdoc A')
         PsiWhiteSpace('\n ')
         PsiElement(JS:DOC_COMMENT_END)('*/')
       PsiWhiteSpace('\n')
@@ -52,7 +53,8 @@ JSFile:ASDoc.js2
         PsiWhiteSpace('\n ')
         PsiElement(JS:DOC_COMMENT_LEADING_ASTERISK)('*')
         PsiWhiteSpace(' ')
-        PsiElement(JS:DOC_COMMENT_DATA)('asdoc B')
+        JSDocDescription
+          PsiElement(JS:DOC_COMMENT_DATA)('asdoc B')
         PsiWhiteSpace('\n ')
         PsiElement(JS:DOC_COMMENT_END)('*/')
       PsiWhiteSpace('\n\n')
@@ -71,7 +73,8 @@ JSFile:ASDoc.js2
       PsiWhiteSpace('\n ')
       PsiElement(JS:DOC_COMMENT_LEADING_ASTERISK)('*')
       PsiWhiteSpace(' ')
-      PsiElement(JS:DOC_COMMENT_DATA)('asdoc none')
+      JSDocDescription
+        PsiElement(JS:DOC_COMMENT_DATA)('asdoc none')
       PsiWhiteSpace('\n ')
       PsiElement(JS:DOC_COMMENT_END)('*/')
     PsiWhiteSpace('\n')
@@ -81,7 +84,8 @@ JSFile:ASDoc.js2
         PsiWhiteSpace('\n ')
         PsiElement(JS:DOC_COMMENT_LEADING_ASTERISK)('*')
         PsiWhiteSpace(' ')
-        PsiElement(JS:DOC_COMMENT_DATA)('asdoc C')
+        JSDocDescription
+          PsiElement(JS:DOC_COMMENT_DATA)('asdoc C')
         PsiWhiteSpace('\n ')
         PsiElement(JS:DOC_COMMENT_END)('*/')
       PsiWhiteSpace('\n')
@@ -105,7 +109,8 @@ JSFile:ASDoc.js2
         PsiWhiteSpace('\n ')
         PsiElement(JS:DOC_COMMENT_LEADING_ASTERISK)('*')
         PsiWhiteSpace(' ')
-        PsiElement(JS:DOC_COMMENT_DATA)('asdoc D')
+        JSDocDescription
+          PsiElement(JS:DOC_COMMENT_DATA)('asdoc D')
         PsiWhiteSpace('\n ')
         PsiElement(JS:DOC_COMMENT_END)('*/')
       PsiWhiteSpace('\n')
@@ -131,7 +136,8 @@ JSFile:ASDoc.js2
         PsiWhiteSpace('\n ')
         PsiElement(JS:DOC_COMMENT_LEADING_ASTERISK)('*')
         PsiWhiteSpace(' ')
-        PsiElement(JS:DOC_COMMENT_DATA)('asdoc E')
+        JSDocDescription
+          PsiElement(JS:DOC_COMMENT_DATA)('asdoc E')
         PsiWhiteSpace('\n ')
         PsiElement(JS:DOC_COMMENT_END)('*/')
       PsiWhiteSpace('\n\n')
@@ -154,7 +160,8 @@ JSFile:ASDoc.js2
           PsiWhiteSpace('\n ')
           PsiElement(JS:DOC_COMMENT_LEADING_ASTERISK)('*')
           PsiWhiteSpace(' ')
-          PsiElement(JS:DOC_COMMENT_DATA)('asdoc a()')
+          JSDocDescription
+            PsiElement(JS:DOC_COMMENT_DATA)('asdoc a()')
           PsiWhiteSpace('\n ')
           PsiElement(JS:DOC_COMMENT_END)('*/')
         PsiWhiteSpace('\n')
@@ -177,7 +184,8 @@ JSFile:ASDoc.js2
           PsiWhiteSpace('\n ')
           PsiElement(JS:DOC_COMMENT_LEADING_ASTERISK)('*')
           PsiWhiteSpace(' ')
-          PsiElement(JS:DOC_COMMENT_DATA)('asdoc b()')
+          JSDocDescription
+            PsiElement(JS:DOC_COMMENT_DATA)('asdoc b()')
           PsiWhiteSpace('\n ')
           PsiElement(JS:DOC_COMMENT_END)('*/')
         PsiWhiteSpace('\n\n')
@@ -200,7 +208,8 @@ JSFile:ASDoc.js2
         PsiWhiteSpace('\n ')
         PsiElement(JS:DOC_COMMENT_LEADING_ASTERISK)('*')
         PsiWhiteSpace(' ')
-        PsiElement(JS:DOC_COMMENT_DATA)('asdoc none')
+        JSDocDescription
+          PsiElement(JS:DOC_COMMENT_DATA)('asdoc none')
         PsiWhiteSpace('\n ')
         PsiElement(JS:DOC_COMMENT_END)('*/')
       PsiWhiteSpace('\n')
@@ -210,7 +219,8 @@ JSFile:ASDoc.js2
           PsiWhiteSpace('\n ')
           PsiElement(JS:DOC_COMMENT_LEADING_ASTERISK)('*')
           PsiWhiteSpace(' ')
-          PsiElement(JS:DOC_COMMENT_DATA)('asdoc c()')
+          JSDocDescription
+            PsiElement(JS:DOC_COMMENT_DATA)('asdoc c()')
           PsiWhiteSpace('\n ')
           PsiElement(JS:DOC_COMMENT_END)('*/')
         PsiWhiteSpace('\n')
@@ -238,7 +248,8 @@ JSFile:ASDoc.js2
           PsiWhiteSpace('\n ')
           PsiElement(JS:DOC_COMMENT_LEADING_ASTERISK)('*')
           PsiWhiteSpace(' ')
-          PsiElement(JS:DOC_COMMENT_DATA)('asdoc d')
+          JSDocDescription
+            PsiElement(JS:DOC_COMMENT_DATA)('asdoc d')
           PsiWhiteSpace('\n ')
           PsiElement(JS:DOC_COMMENT_END)('*/')
         PsiWhiteSpace('\n')
@@ -268,7 +279,8 @@ JSFile:ASDoc.js2
           PsiWhiteSpace('\n ')
           PsiElement(JS:DOC_COMMENT_LEADING_ASTERISK)('*')
           PsiWhiteSpace(' ')
-          PsiElement(JS:DOC_COMMENT_DATA)('asdoc e')
+          JSDocDescription
+            PsiElement(JS:DOC_COMMENT_DATA)('asdoc e')
           PsiWhiteSpace('\n ')
           PsiElement(JS:DOC_COMMENT_END)('*/')
         PsiWhiteSpace('\n\n')
@@ -313,7 +325,8 @@ JSFile:ASDoc.js2
           PsiWhiteSpace('\n ')
           PsiElement(JS:DOC_COMMENT_LEADING_ASTERISK)('*')
           PsiWhiteSpace(' ')
-          PsiElement(JS:DOC_COMMENT_DATA)('asdoc for v')
+          JSDocDescription
+            PsiElement(JS:DOC_COMMENT_DATA)('asdoc for v')
           PsiWhiteSpace('\n ')
           PsiElement(JS:DOC_COMMENT_END)('*/')
         PsiWhiteSpace('\n')
@@ -338,7 +351,8 @@ JSFile:ASDoc.js2
           PsiWhiteSpace('\n ')
           PsiElement(JS:DOC_COMMENT_LEADING_ASTERISK)('*')
           PsiWhiteSpace(' ')
-          PsiElement(JS:DOC_COMMENT_DATA)('asdoc for v2')
+          JSDocDescription
+            PsiElement(JS:DOC_COMMENT_DATA)('asdoc for v2')
           PsiWhiteSpace('\n ')
           PsiElement(JS:DOC_COMMENT_END)('*/')
         PsiWhiteSpace('\n')

@@ -338,7 +338,8 @@ JSFile:ClassesPackagesNamespaces.js2
     JSDocComment
       PsiElement(JS:DOC_COMMENT_START)('/**')
       PsiWhiteSpace(' ')
-      PsiElement(JS:DOC_COMMENT_DATA)('comment')
+      JSDocDescription
+        PsiElement(JS:DOC_COMMENT_DATA)('comment')
       PsiElement(JS:DOC_COMMENT_END)('*/')
     PsiWhiteSpace('\n')
     ActionScriptAttributeList
