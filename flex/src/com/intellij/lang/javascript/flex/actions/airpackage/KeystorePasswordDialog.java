@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.actions.airpackage;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.flex.projectStructure.model.AirSigningOption
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.ValidationInfo;
-import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.ui.JBInsets;
@@ -22,7 +21,7 @@ public class KeystorePasswordDialog extends DialogWrapper {
   private JCheckBox myRememberPasswordsCheckBox;
 
   private final Project myProject;
-  private final Collection<Trinity<AirSigningOptions, JPasswordField, JPasswordField>> myKeystoresAndPasswordFields;
+  private final Collection<AuthForm> myKeystoresAndPasswordFields;
   private JComponent myPreferredFocusedComponent;
 
   public KeystorePasswordDialog(final Project project, final Collection<AirSigningOptions> signingOptionsWithUnknownPasswords) {
@@ -36,8 +35,8 @@ public class KeystorePasswordDialog extends DialogWrapper {
     myRememberPasswordsCheckBox.setSelected(PasswordStore.getInstance(project).isRememberPasswords());
   }
 
-  private Collection<Trinity<AirSigningOptions, JPasswordField, JPasswordField>> createPasswordFields(final Collection<AirSigningOptions> signingOptionsWithUnknownPasswords) {
-    final Collection<Trinity<AirSigningOptions, JPasswordField, JPasswordField>> result =
+  private Collection<AuthForm> createPasswordFields(final Collection<AirSigningOptions> signingOptionsWithUnknownPasswords) {
+    final Collection<AuthForm> result =
       new ArrayList<>();
 
     final JPanel panel = new JPanel(new GridBagLayout());
@@ -72,7 +71,7 @@ public class KeystorePasswordDialog extends DialogWrapper {
       row++;
 
       if (signingOptions.getKeyAlias().isEmpty()) {
-        result.add(Trinity.create(signingOptions, keystorePasswordField, null));
+        result.add(new AuthForm(signingOptions, keystorePasswordField, null));
       }
       else {
         panel.add(new JLabel("Key alias:"), new GridBagConstraints(0, row, 1, 1, 0., 0., GridBagConstraints.WEST, GridBagConstraints.NONE,
@@ -88,12 +87,14 @@ public class KeystorePasswordDialog extends DialogWrapper {
                                                            JBInsets.create(2, 0), 0, 0));
         row++;
 
-        result.add(Trinity.create(signingOptions, keystorePasswordField, keyPasswordField));
+        result.add(new AuthForm(signingOptions, keystorePasswordField, keyPasswordField));
       }
     }
 
     return result;
   }
+  
+  private record AuthForm(AirSigningOptions signingOptions, JPasswordField keystorePasswordField, JPasswordField keyPasswordField) {}
 
   @Override
   protected JComponent createCenterPanel() {
@@ -107,11 +108,11 @@ public class KeystorePasswordDialog extends DialogWrapper {
 
   @Override
   protected ValidationInfo doValidate() {
-    for (Trinity<AirSigningOptions, JPasswordField, JPasswordField> entry : myKeystoresAndPasswordFields) {
-      final AirSigningOptions signingOptions = entry.first;
-      final JPasswordField keystorePasswordField = entry.second;
+    for (AuthForm form : myKeystoresAndPasswordFields) {
+      final AirSigningOptions signingOptions = form.signingOptions();
+      final JPasswordField keystorePasswordField = form.keystorePasswordField();
       final String keystorePassword = new String(keystorePasswordField.getPassword());
-      final JPasswordField keyPasswordField = entry.third;
+      final JPasswordField keyPasswordField = form.keyPasswordField();
       final String keyPassword = keyPasswordField == null ? "" : new String(keyPasswordField.getPassword());
       try {
         PasswordStore.checkPassword(signingOptions, keystorePassword, keyPassword);
@@ -149,10 +150,10 @@ public class KeystorePasswordDialog extends DialogWrapper {
   }
 
   private void storePasswords(final PasswordStore passwordStore) {
-    for (Trinity<AirSigningOptions, JPasswordField, JPasswordField> entry : myKeystoresAndPasswordFields) {
-      final AirSigningOptions signingOptions = entry.first;
-      final String keystorePassword = new String(entry.second.getPassword());
-      final JPasswordField keyPasswordField = entry.third;
+    for (AuthForm form : myKeystoresAndPasswordFields) {
+      final AirSigningOptions signingOptions = form.signingOptions();
+      final String keystorePassword = new String(form.keystorePasswordField().getPassword());
+      final JPasswordField keyPasswordField = form.keyPasswordField();
 
       passwordStore.storeKeystorePassword(signingOptions.getKeystorePath(), keystorePassword);
 

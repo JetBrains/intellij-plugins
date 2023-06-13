@@ -1,8 +1,7 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtilRt;
@@ -126,10 +125,10 @@ public class FlexSuspendContext extends XSuspendContext {
 
     VirtualFile file = null;
 
-    final Trinity<String, String, Integer> fileNameAndIndexAndLine = getFileNameAndIdAndLine(frameText);
-    final String fileName = fileNameAndIndexAndLine.first;
-    final String fileId = fileNameAndIndexAndLine.second;
-    final int line = fileNameAndIndexAndLine.third;
+    final Location fileNameAndIndexAndLine = getFileNameAndIdAndLine(frameText);
+    final String fileName = fileNameAndIndexAndLine.fileName;
+    final String fileId = fileNameAndIndexAndLine.fileId;
+    final int line = fileNameAndIndexAndLine.line;
 
     if (!StringUtil.isEmpty(fileName)) {
       file = ReadAction.compute(() -> flexDebugProcess.findFileByNameOrId(fileName, getPackageFromFrameText(frameText), fileId));
@@ -189,13 +188,7 @@ public class FlexSuspendContext extends XSuspendContext {
     // #0   this = [Object 403095729, class='DisplayShelf'].DisplayShelf() at DisplayShelf.as:156
     // #2   apply() at <null>:65535
     // #3   EventDispatcher/dispatchEventFunction() at <null>:0
-    int startIndex = stackFrame.indexOf(']');
-    if (startIndex == -1) {
-      startIndex = stackFrame.indexOf(' ');
-      while (startIndex != -1 && stackFrame.length() > startIndex + 1 && stackFrame.charAt(startIndex + 1) == ' ') {
-        startIndex++;
-      }
-    }
+    int startIndex = getStartIndex(stackFrame);
     final int dotIndex = Math.max(startIndex, stackFrame.indexOf('.', startIndex + 1));
     int lparIndex = stackFrame.indexOf('(', dotIndex);
     final String clsMethodText = stackFrame.substring(dotIndex + 1, lparIndex != -1 ? lparIndex : stackFrame.length());
@@ -204,9 +197,23 @@ public class FlexSuspendContext extends XSuspendContext {
     return methodStart == -1 ? clsMethodText : clsMethodText.substring(methodStart + 1) + ": " + clsMethodText.substring(0, methodStart);
   }
 
-  private static Trinity<String, String, Integer> getFileNameAndIdAndLine(final String text) {
+  private static int getStartIndex(String stackFrame) {
+    int startIndex = stackFrame.indexOf(']');
+    if (startIndex == -1) {
+      startIndex = stackFrame.indexOf(' ');
+      while (startIndex != -1 && stackFrame.length() > startIndex + 1 && stackFrame.charAt(startIndex + 1) == ' ') {
+        startIndex++;
+      }
+    }
+    return startIndex;
+  }
+
+  record Location(String fileName, String fileId, int line) {
+  }
+
+  private static Location getFileNameAndIdAndLine(final String text) {
     final int atPos = text.lastIndexOf(AT_MARKER);
-    if (atPos == -1) return Trinity.create(null, null, 0);
+    if (atPos == -1) return new Location(null, null, 0);
 
     final String fileName;
     String fileId = null;
@@ -240,6 +247,6 @@ public class FlexSuspendContext extends XSuspendContext {
       }
     }
 
-    return Trinity.create(fileName, fileId, line);
+    return new Location(fileName, fileId, line);
   }
 }
