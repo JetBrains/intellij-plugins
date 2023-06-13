@@ -2184,6 +2184,15 @@ export default class UsageComponent extends Vue {
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
     myFixture.checkGotoDeclaration("'provide<caret>Deep'", 129, "ProvideB.vue")
   }
+
+  fun testInjectScriptSetup() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.copyDirectoryToProject(getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+    myFixture.enableInspections(VueInspectionsProvider())
+    myFixture.checkHighlighting()
+    myFixture.checkGotoDeclaration("'provided<caret>InCall'", 108, "Provide.vue")
+  }
 }
 
 fun globalMixinText(): String {

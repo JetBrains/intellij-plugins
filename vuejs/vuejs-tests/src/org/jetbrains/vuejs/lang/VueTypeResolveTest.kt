@@ -138,6 +138,8 @@ class VueTypeResolveTest : BasePlatformTestCase() {
       "computed" to "number",
       "funcData" to "any", // TODO: should have string type
       "app" to "number",
+      "scriptSetup" to "boolean",
+      "scriptSetupRef" to "string",
     )
   }
 

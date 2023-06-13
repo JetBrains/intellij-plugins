@@ -127,6 +127,8 @@ private fun contributeComponentProperties(instance: VueInstanceOwner,
       }
 
       override fun visitInject(inject: VueInject, proximity: Proximity): Boolean {
+        if (inject is VueScriptSetupInfoProvider.VueScriptSetupInject) return true
+
         val sourceElement = inject.source ?: return true
         val type = provides[inject.from ?: inject.name]?.provide?.jsType
         val implicitElement = VueImplicitElement(inject.name, type, sourceElement, JSImplicitElement.Type.Property, true)

@@ -3,7 +3,7 @@ import {defineComponent} from "vue";
 
 export default defineComponent({
   name: "Inject",
-  inject: ["literal", "func", "computed", "funcData", "app"]
+  inject: ["literal", "func", "computed", "funcData", "app", "scriptSetup", "scriptSetupRef"]
 })
 </script>
 
@@ -13,4 +13,6 @@ export default defineComponent({
   {{ computed }}
   {{ funcData }}
   {{ app }}
+  {{ scriptSetup }}
+  {{ scriptSetupRef }}
 </template>

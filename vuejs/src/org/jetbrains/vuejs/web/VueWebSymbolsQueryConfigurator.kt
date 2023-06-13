@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.web
 
 import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -97,7 +98,11 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
       return listOf(VueWatchSymbolsScope(enclosingComponent))
     }
 
-    if (allowResolve && (isInjectedAsArrayLiteral(element) || isInjectedAsAlias(element) || isInjectedAsProperty(element))) {
+    if (allowResolve && (
+        isInjectedAsArrayLiteral(element) ||
+        isInjectedAsAlias(element) ||
+        isInjectedAsProperty(element) ||
+        isInjectedAsMacroCall(element))) {
       val enclosingComponent = VueModelManager.findEnclosingComponent(element) as? VueSourceComponent
                                ?: return emptyList()
       return listOf(VueInjectSymbolsScope(enclosingComponent))
@@ -121,6 +126,9 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
     val inject = alias.context?.context?.asSafely<JSProperty>() ?: return false
     return inject.context?.context?.asSafely<JSProperty>()?.name == INJECT_PROP
   }
+
+  private fun isInjectedAsMacroCall(element: JSElement): Boolean =
+    element.asSafely<JSLiteralExpression>()?.let { JSPsiImplUtils.isArgumentOfCallWithName(it, 0, INJECT_PROP) } ?: false
 
   private fun addEntityContainers(element: PsiElement,
                                   fileContext: PsiFile,

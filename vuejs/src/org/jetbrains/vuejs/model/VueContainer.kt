@@ -125,5 +125,4 @@ interface VueProvide : VueNamedSymbol {
 
 interface VueInject : VueNamedSymbol {
   val from: String? get() = null
-  val defaultValue: JSType? get() = null
 }

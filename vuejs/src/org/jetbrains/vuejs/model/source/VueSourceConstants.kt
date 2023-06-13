@@ -17,6 +17,8 @@ const val DEFINE_MODEL_FUN = "defineModel"
 const val WITH_DEFAULTS_FUN = "withDefaults"
 const val CREATE_APP_FUN = "createApp"
 const val MOUNT_FUN = "mount"
+const val PROVIDE_FUN = "provide"
+const val INJECT_FUN = "inject"
 
 const val MIXINS_PROP: String = "mixins"
 const val EXTENDS_PROP: String = "extends"

@@ -4,9 +4,10 @@ import ProvideLiteral from "./ProvideLiteral.vue";
 import ProvideFunction from "./ProvideFunction.vue";
 import ProvideComputed from "./ProvideComputed.vue";
 import ProvideFunctionData from "./ProvideFunctionData.vue";
+import ProvideScriptSetup from "./ProvideScriptSetup.vue";
 
 export default defineComponent({
-  components: {ProvideFunctionData, ProvideComputed, ProvideFunction, ProvideLiteral},
+  components: {ProvideFunctionData, ProvideComputed, ProvideFunction, ProvideLiteral, ProvideScriptSetup},
   provide: {
     app: 123,
   }
@@ -19,4 +20,5 @@ export default defineComponent({
   <ProvideFunction/>
   <ProvideComputed/>
   <ProvideFunctionData/>
+  <ProvideScriptSetup/>
 </template>

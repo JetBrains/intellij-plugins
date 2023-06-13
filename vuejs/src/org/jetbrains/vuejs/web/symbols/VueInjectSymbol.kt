@@ -23,9 +23,6 @@ class VueInjectSymbol(provide: VueProvide,
   override val type: JSType?
     get() = item.jsType
 
-  override val required: Boolean
-    get() = false
-
   override fun equals(other: Any?): Boolean =
     super.equals(other)
     && (other as VueInjectSymbol).kind == kind

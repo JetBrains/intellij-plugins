@@ -14,6 +14,7 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.lang.javascript.psi.types.JSParameterTypeDecoratorImpl
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
+import com.intellij.lang.javascript.psi.types.JSUnknownType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
 import com.intellij.lang.javascript.psi.util.stubSafeChildren
@@ -32,6 +33,7 @@ import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.types.VueSourceModelPropType
+import org.jetbrains.vuejs.types.VueUnwrapRefType
 import org.jetbrains.vuejs.types.optionalIf
 
 class VueScriptSetupInfoProvider : VueContainerInfoProvider {
@@ -54,6 +56,9 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
     override val props: List<VueInputProperty>
     override val emits: List<VueEmitCall>
+
+    override val provide: List<VueProvide>
+    override val inject: List<VueInject>
 
     override val computed: List<VueComputedProperty>
       get() = rawBindings.filterIsInstance(VueComputedProperty::class.java)
@@ -99,6 +104,8 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       var emits: List<VueEmitCall> = emptyList()
       var rawBindings: List<VueNamedSymbol> = emptyList()
       val modelDecls: MutableMap<String, VueModelDecl> = mutableMapOf()
+      val provides: MutableList<VueProvide> = mutableListOf()
+      val injects: MutableList<VueInject> = mutableListOf()
 
       module.getStubSafeDefineCalls().forEach { call ->
         when (VueFrameworkHandler.getFunctionNameFromVueIndex(call)) {
@@ -144,6 +151,8 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
           }
           DEFINE_MODEL_FUN -> analyzeDefineModel(call)?.let { modelDecls[it.name] = it }
+          PROVIDE_FUN -> analyzeProvide(call)?.let { provides.add(it) }
+          INJECT_FUN -> analyzeInject(call)?.let { injects.add(it) }
         }
       }
 
@@ -163,6 +172,8 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       this.props = props
       this.emits = emits
       this.rawBindings = rawBindings
+      this.provide = provides
+      this.inject = injects
     }
 
     private fun analyzeDefineProps(call: JSCallExpression, defaults: List<@NlsSafe String>): List<VueInputProperty> {
@@ -240,7 +251,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
         .filterIsInstance<JSCallExpression>()
         .mapNotNull { call ->
           when ((call.methodExpression as? JSReferenceExpression)?.referenceName) {
-            DEFINE_PROPS_FUN, DEFINE_EMITS_FUN, DEFINE_EXPOSE_FUN, WITH_DEFAULTS_FUN, DEFINE_MODEL_FUN -> {
+            DEFINE_PROPS_FUN, DEFINE_EMITS_FUN, DEFINE_EXPOSE_FUN, WITH_DEFAULTS_FUN, DEFINE_MODEL_FUN, INJECT_FUN, PROVIDE_FUN -> {
               call
             }
             else -> null
@@ -290,7 +301,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       val arguments = call.stubSafeCallArguments
       val nameElement = arguments.getOrNull(0).asSafely<JSLiteralExpression>()
       val name = if (nameElement != null) {
-        nameElement.significantValue?.let { unquoteWithoutUnescapingStringLiteralValue(it) }?.takeIf { it.isNotBlank() } ?: return null
+        getLiteralValue(nameElement) ?: return null
       }
       else {
         MODEL_VALUE_PROP
@@ -312,6 +323,33 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
         .asSafely<JSCallExpression>()
         ?.takeIf { VueFrameworkHandler.getFunctionNameFromVueIndex(it) == DEFINE_PROPS_FUN }
 
+    private fun analyzeProvide(call: JSCallExpression): VueProvide? {
+      val arguments = call.arguments
+      val injectionKey = arguments.getOrNull(0)
+      val defaultValue = arguments.getOrNull(1)
+      val type = defaultValue
+                   ?.let { JSResolveUtil.getElementJSType(it) }
+                   ?.let { VueUnwrapRefType(it, defaultValue) }
+                 ?: JSUnknownType.TS_INSTANCE
+      if (injectionKey is JSLiteralExpression) {
+        return getLiteralValue(injectionKey)?.let { VueScriptSetupProvide(it, type, injectionKey) }
+      }
+      return null
+    }
+
+    private fun analyzeInject(call: JSCallExpression): VueInject? {
+      val arguments = call.stubSafeCallArguments
+      val injectionKey = arguments.getOrNull(0)
+      if (injectionKey is JSLiteralExpression) {
+        return getLiteralValue(injectionKey)?.let { VueScriptSetupInject(it, injectionKey) }
+      }
+      return null
+    }
+
+    private fun getLiteralValue(literal: JSLiteralExpression): String? =
+      literal.significantValue
+        ?.let { unquoteWithoutUnescapingStringLiteralValue(it) }
+        ?.takeIf { it.isNotBlank() }
   }
 
   private class VueScriptSetupInputProperty(private val propertySignature: JSRecordType.PropertySignature,
@@ -405,5 +443,15 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
     override val hasStrictSignature: Boolean = true
   }
+
+  private class VueScriptSetupProvide(override val name: String,
+                                      override val jsType: JSType?,
+                                      sourceElement: PsiElement) : VueProvide {
+    override val source: PsiElement =
+      VueImplicitElement(name, jsType, sourceElement, JSImplicitElement.Type.Property, true)
+  }
+
+  class VueScriptSetupInject(override val name: String,
+                             override val source: PsiElement) : VueInject
 
 }
