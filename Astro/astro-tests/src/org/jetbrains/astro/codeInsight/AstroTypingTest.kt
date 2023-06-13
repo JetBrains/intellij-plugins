@@ -1,5 +1,6 @@
 package org.jetbrains.astro.codeInsight
 
+import com.intellij.lang.javascript.JSTestUtils
 import org.jetbrains.astro.AstroCodeInsightTestCase
 
 class AstroTypingTest : AstroCodeInsightTestCase() {
@@ -18,7 +19,11 @@ class AstroTypingTest : AstroCodeInsightTestCase() {
 
   fun testParensInHtmlCode() = doTest("(")
 
-  fun testEmmetExpressions() = doTest("\t")
+  fun testEmmetExpressions() {
+    configure()
+    JSTestUtils.runEmmetTemplate(myFixture)
+    checkResult()
+  }
 
   fun testHtmlTagRootElementCompletion() = doTest(">")
 

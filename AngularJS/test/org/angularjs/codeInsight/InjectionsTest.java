@@ -1,6 +1,7 @@
 package org.angularjs.codeInsight;
 
 import com.intellij.lang.html.HTMLLanguage;
+import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.inspections.JSBitwiseOperatorUsageInspection;
 import com.intellij.lang.javascript.psi.JSDefinitionExpression;
 import com.intellij.lang.javascript.psi.JSElement;
@@ -134,7 +135,7 @@ public class InjectionsTest extends BasePlatformTestCase {
 
   public void testEmmetBeforeInjection() {
     myFixture.configureByFiles("ngController.emmet.html", "angular.js", "custom.js");
-    myFixture.type('\t');
+    JSTestUtils.runEmmetTemplate(myFixture);
     myFixture.checkResultByFile("ngController.emmet.after.html");
   }
 
