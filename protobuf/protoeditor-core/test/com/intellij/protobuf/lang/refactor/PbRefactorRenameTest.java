@@ -16,9 +16,10 @@
 package com.intellij.protobuf.lang.refactor;
 
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
 import com.intellij.protobuf.TestUtils;
 import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
+import com.intellij.protobuf.ide.settings.PbProjectSettings;
+import com.intellij.psi.PsiFile;
 
 import java.io.IOException;
 
@@ -265,12 +266,15 @@ public class PbRefactorRenameTest extends PbCodeInsightFixtureTestCase {
   }
 
   public void testRenameFile_inSubdir_shorter() throws IOException {
-    createFile("definer.proto", "");
-    PsiFile fileInSubdirDef = createFile("subdir/definer.proto", "");
+    createFile("proto/definer.proto", "");
+    PbProjectSettings.getInstance(myFixture.getProject()).setIncludeProtoDirectories(true);
+    PsiFile fileInSubdirDef = createFile("proto/subdir/definer.proto", "");
     PsiFile fileUser =
         createFile("user.proto", "import \"definer.proto\";", "import \"subdir/definer.proto\";");
     myFixture.renameElement(fileInSubdirDef, "s.proto");
+
     assertFileContents(fileUser, "import \"definer.proto\";", "import \"subdir/s.proto\";");
+    PbProjectSettings.getInstance(myFixture.getProject()).setIncludeProtoDirectories(false);
   }
 
   public void testRenameFile_inSubdir_longer() throws IOException {
