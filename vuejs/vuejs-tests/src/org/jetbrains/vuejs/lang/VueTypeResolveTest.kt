@@ -140,6 +140,8 @@ class VueTypeResolveTest : BasePlatformTestCase() {
       "app" to "number",
       "scriptSetup" to "boolean",
       "scriptSetupRef" to "string",
+      "globalProvide" to "number",
+      "globalProvideRef" to "number",
     )
   }
 

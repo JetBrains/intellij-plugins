@@ -14,7 +14,6 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.lang.javascript.psi.types.JSParameterTypeDecoratorImpl
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
-import com.intellij.lang.javascript.psi.types.JSUnknownType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
 import com.intellij.lang.javascript.psi.util.stubSafeChildren
@@ -33,7 +32,6 @@ import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.types.VueSourceModelPropType
-import org.jetbrains.vuejs.types.VueUnwrapRefType
 import org.jetbrains.vuejs.types.optionalIf
 
 class VueScriptSetupInfoProvider : VueContainerInfoProvider {
@@ -324,15 +322,10 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
         ?.takeIf { VueFrameworkHandler.getFunctionNameFromVueIndex(it) == DEFINE_PROPS_FUN }
 
     private fun analyzeProvide(call: JSCallExpression): VueProvide? {
-      val arguments = call.arguments
+      val arguments = call.stubSafeCallArguments
       val injectionKey = arguments.getOrNull(0)
-      val defaultValue = arguments.getOrNull(1)
-      val type = defaultValue
-                   ?.let { JSResolveUtil.getElementJSType(it) }
-                   ?.let { VueUnwrapRefType(it, defaultValue) }
-                 ?: JSUnknownType.TS_INSTANCE
       if (injectionKey is JSLiteralExpression) {
-        return getLiteralValue(injectionKey)?.let { VueScriptSetupProvide(it, type, injectionKey) }
+        return getLiteralValue(injectionKey)?.let { VueSourceProvide(it, injectionKey) }
       }
       return null
     }
@@ -442,13 +435,6 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       listOf(JSParameterTypeDecoratorImpl("value", modelDecl.referenceType, false, false, true))
 
     override val hasStrictSignature: Boolean = true
-  }
-
-  private class VueScriptSetupProvide(override val name: String,
-                                      override val jsType: JSType?,
-                                      sourceElement: PsiElement) : VueProvide {
-    override val source: PsiElement =
-      VueImplicitElement(name, jsType, sourceElement, JSImplicitElement.Type.Property, true)
   }
 
   class VueScriptSetupInject(override val name: String,

@@ -291,13 +291,4 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
   private class VueSourceInject(override val name: String, override val source: PsiElement?) : VueInject {
     override val from: String? = getInjectAliasName(source.asSafely<JSProperty>()?.initializerOrStub)
   }
-
-  private class VueSourceProvide(override val name: String, override val source: PsiElement?) : VueProvide {
-    override val jsType: JSType? = if (source is JSTypeOwner) {
-      source.jsType?.let { VueUnwrapRefType(it, source) }
-    }
-    else {
-      null
-    }
-  }
 }

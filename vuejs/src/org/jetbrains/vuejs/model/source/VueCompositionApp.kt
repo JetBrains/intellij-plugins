@@ -43,6 +43,9 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
   override val filters: Map<String, VueFilter>
     get() = (delegate?.filters ?: emptyMap()) + getEntitiesAnalysis().filters
 
+  override val provide: List<VueProvide>
+    get() = (delegate?.provide ?: emptyList()) + getEntitiesAnalysis().provides
+
   override val element: String?
     get() = getEntitiesAnalysis().element
 
@@ -187,6 +190,16 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
         Pair(name, VueSourceFilter(name, nameLiteral!!))
       }.toMap()
 
+      val provides = resolve(PROVIDE_FUN, searchScope, VueCompositionAppIndex.KEY)
+        .asSequence()
+        .filter { resolveScope == null || PsiTreeUtil.isContextAncestor(resolveScope, it, false) }
+        .mapNotNull { el ->
+          val provideCall = el.context as? JSCallExpression ?: return@mapNotNull null
+          val nameLiteral = provideCall.stubSafeCallArguments.getOrNull(0) as? JSLiteralExpression ?: return@mapNotNull null
+          val name = getTextIfLiteral(nameLiteral) ?: return@mapNotNull null
+          VueSourceProvide(name, nameLiteral)
+        }.toList()
+
       val element = resolve(MOUNT_FUN, searchScope, VueCompositionAppIndex.KEY)
         .firstNotNullOfOrNull { element ->
           (element.context as? JSCallExpression)
@@ -195,7 +208,7 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
             ?.let { arg -> getTextIfLiteral(arg) }
         }
 
-      return EntitiesAnalysis(components, directives, mixins, filters, element)
+      return EntitiesAnalysis(components, directives, mixins, filters, element, provides)
     }
 
     private val IS_COMPOSITION_APP_COMPONENT_KEY = Key.create<Boolean>("vue.composition.app.component")
@@ -208,6 +221,7 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
                                       val directives: Map<String, VueDirective>,
                                       val mixins: List<VueMixin>,
                                       val filters: Map<String, VueFilter>,
-                                      val element: String?)
+                                      val element: String?,
+                                      val provides: List<VueProvide>)
 
 }

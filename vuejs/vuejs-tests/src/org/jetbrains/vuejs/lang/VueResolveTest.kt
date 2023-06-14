@@ -2193,6 +2193,13 @@ export default class UsageComponent extends Vue {
     myFixture.checkHighlighting()
     myFixture.checkGotoDeclaration("'provided<caret>InCall'", 108, "Provide.vue")
   }
+
+  fun testInjectAppGlobal() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.copyDirectoryToProject(getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+    myFixture.checkGotoDeclaration("'global<caret>Provide'", 97, "main.js")
+  }
 }
 
 fun globalMixinText(): String {
