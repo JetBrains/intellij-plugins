@@ -2156,6 +2156,24 @@ export default {
     assertContainsElements(myFixture.lookupElementStrings!!, "count")
   }
 
+  fun testInjectInLiterals() {
+    myFixture.copyDirectoryToProject(getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+    myFixture.completeBasic()
+    assertContainsElements(
+      myFixture.lookupElementStrings!!,
+      "literal",
+      "func",
+      "computed",
+      "funcData",
+      "app",
+      "scriptSetup",
+      "scriptSetupRef",
+      "globalProvide",
+      "globalProvideRef"
+    )
+  }
+
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()
     assertDoesntContain(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")

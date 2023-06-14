@@ -11,10 +11,10 @@ import com.intellij.webSymbols.WebSymbolOrigin
 import org.jetbrains.vuejs.model.VueContainer
 import org.jetbrains.vuejs.model.VueProvide
 
-class VueInjectSymbol(provide: VueProvide,
-                      private val owner: VueContainer,
-                      override val origin: WebSymbolOrigin,
-                      override val kind: SymbolKind)
+class VueProvideSymbol(provide: VueProvide,
+                       private val owner: VueContainer,
+                       override val origin: WebSymbolOrigin,
+                       override val kind: SymbolKind)
   : VueDocumentedItemSymbol<VueProvide>(provide.name, provide) {
 
   override val namespace: SymbolNamespace
@@ -25,7 +25,7 @@ class VueInjectSymbol(provide: VueProvide,
 
   override fun equals(other: Any?): Boolean =
     super.equals(other)
-    && (other as VueInjectSymbol).kind == kind
+    && (other as VueProvideSymbol).kind == kind
 
   override fun hashCode(): Int {
     var result = super.hashCode()
@@ -33,16 +33,16 @@ class VueInjectSymbol(provide: VueProvide,
     return result
   }
 
-  override fun createPointer(): Pointer<VueInjectSymbol> = object : Pointer<VueInjectSymbol> {
-    private val name = this@VueInjectSymbol.name
-    private val origin = this@VueInjectSymbol.origin
-    private val kind = this@VueInjectSymbol.kind
-    private val pointer = this@VueInjectSymbol.owner.createPointer()
+  override fun createPointer(): Pointer<VueProvideSymbol> = object : Pointer<VueProvideSymbol> {
+    private val name = this@VueProvideSymbol.name
+    private val origin = this@VueProvideSymbol.origin
+    private val kind = this@VueProvideSymbol.kind
+    private val pointer = this@VueProvideSymbol.owner.createPointer()
 
-    override fun dereference(): VueInjectSymbol? =
+    override fun dereference(): VueProvideSymbol? =
       pointer.dereference()?.asSafely<VueContainer>()?.let { container ->
         container.provides.find { it.name == name }?.let { provide ->
-          VueInjectSymbol(provide, container, origin, kind)
+          VueProvideSymbol(provide, container, origin, kind)
         }
       }
   }

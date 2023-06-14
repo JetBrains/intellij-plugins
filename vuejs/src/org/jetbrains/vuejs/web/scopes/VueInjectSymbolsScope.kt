@@ -9,27 +9,20 @@ import com.intellij.webSymbols.WebSymbol.Companion.KIND_JS_STRING_LITERALS
 import com.intellij.webSymbols.WebSymbolsScopeWithCache
 import org.jetbrains.vuejs.model.source.VueSourceComponent
 import org.jetbrains.vuejs.web.VueFramework
-import org.jetbrains.vuejs.web.symbols.VueInjectSymbol
+import org.jetbrains.vuejs.web.symbols.VueProvideSymbol
 import org.jetbrains.vuejs.web.symbols.VueScopeElementOrigin
 
 class VueInjectSymbolsScope(private val enclosingComponent: VueSourceComponent)
   : WebSymbolsScopeWithCache<VueSourceComponent, Unit>(VueFramework.ID, enclosingComponent.source.project, enclosingComponent, Unit) {
 
   override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
-    if (enclosingComponent.injects.isEmpty()) {
-      cacheDependencies.add(PsiModificationTracker.NEVER_CHANGED)
-      return
-    }
-
     val origin = VueScopeElementOrigin(enclosingComponent)
     val provides = enclosingComponent.collectProvides()
 
-    enclosingComponent.injects
-      .forEach {
-        val (provide, provideOwner) = provides[it.from ?: it.name] ?: return@forEach
-        consumer(VueInjectSymbol(provide, provideOwner, origin, KIND_JS_PROPERTIES))
-        consumer(VueInjectSymbol(provide, provideOwner, origin, KIND_JS_STRING_LITERALS))
-      }
+    provides.values.forEach { (provide, container) ->
+      consumer(VueProvideSymbol(provide, container, origin, KIND_JS_PROPERTIES))
+      consumer(VueProvideSymbol(provide, container, origin, KIND_JS_STRING_LITERALS))
+    }
 
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
   }
