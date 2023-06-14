@@ -1,4 +1,4 @@
-<div *ngFor="let item of <error descr="Type  number  is not assignable to type NgIterable<T> | QueryList<T>...  Type number is not assignable to type Array<T> | Iterable<T> | QueryList<T>">myNumber</error>">{{item}}</div>
+<div *ngFor="let item of <error descr="Type  number  is not assignable to type  NgIterable<T> | QueryList<T> ...  Type number is not assignable to type Array<T> | Iterable<T> | QueryList<T>">myNumber</error>">{{item}}</div>
 
 <div *ngFor="let item of myArray; trackBy: <error descr="Type  (items: string) => string  is not assignable to type  TrackByFunction<string>   Type number is not assignable to type string">myBadFunction</error>">{{item}}</div>
 <ng-template ngFor [ngForOf]="myArray" [ngForTrackBy]="<error descr="Type  (items: string) => string  is not assignable to type  TrackByFunction<string>   Type number is not assignable to type string">myBadFunction</error>" let-item>{{item}}</ng-template>
