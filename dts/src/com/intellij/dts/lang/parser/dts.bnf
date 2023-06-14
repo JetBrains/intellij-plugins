@@ -34,6 +34,9 @@
   implements("entry")="com.intellij.dts.lang.psi.mixin.IDtsEntry"
   mixin("entry")="com.intellij.dts.lang.psi.mixin.DtsEntryMixin"
 
+  implements("pHandle")="com.intellij.dts.lang.psi.mixin.IDtsPHandle"
+  mixin("pHandle")="com.intellij.dts.lang.psi.mixin.DtsPHandleMixin"
+
   implements("cellArray")="com.intellij.dts.lang.psi.DtsArray.Cell"
   mixin("cellArray")="com.intellij.dts.lang.psi.mixin.DtsCellArrayMixin"
 

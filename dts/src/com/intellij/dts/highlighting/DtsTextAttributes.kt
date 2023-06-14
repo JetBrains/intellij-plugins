@@ -26,7 +26,7 @@ enum class DtsTextAttributes() {
     ),
     NODE_UNIT_ADDR(
         "DTS_NODE_UNIT_ADDR",
-        null,
+        DefaultLanguageHighlighterColors.NUMBER,
         "settings.colors.group.node", "settings.colors.group.node.node_name", "settings.colors.node.node_name.unit_address"
     ),
     PROPERTY_NAME(
@@ -71,7 +71,7 @@ enum class DtsTextAttributes() {
     ),
     LABEL(
         "DTS_LABEL",
-        DefaultLanguageHighlighterColors.LABEL,
+        DefaultLanguageHighlighterColors.KEYWORD,
         "settings.colors.label"
     ),
     NUMBER(

@@ -10,6 +10,7 @@ import com.intellij.psi.util.elementType
 import com.intellij.refactoring.suggested.endOffset
 import com.intellij.refactoring.suggested.startOffset
 import com.intellij.dts.lang.psi.DtsNode
+import com.intellij.dts.lang.psi.DtsPHandle
 import com.intellij.dts.lang.psi.DtsProperty
 import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.dts.util.DtsUtil
@@ -60,8 +61,18 @@ class DtsHighlightAnnotator : Annotator {
         highlight(holder, range, DtsTextAttributes.LABEL)
     }
 
+    private fun annotatePHandle(element: DtsPHandle, holder: AnnotationHolder) {
+        val label = element.dtsPHandleLabel ?: return
+        highlight(holder, label.textRange, DtsTextAttributes.LABEL)
+    }
+
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
         if (element is ExternallyAnnotated) return
+
+        if (element is DtsPHandle) {
+            annotatePHandle(element, holder)
+            return
+        }
 
         when (element.elementType) {
             DtsTypes.LABEL -> annotateLabel(element, holder)
