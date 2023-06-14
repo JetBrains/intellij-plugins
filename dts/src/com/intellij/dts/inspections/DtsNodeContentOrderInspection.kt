@@ -33,7 +33,7 @@ class DtsNodeContentOrderInspection : LocalInspectionTool() {
 
             if (property && nodeDefinition) {
                 holder.registerProblem(
-                    entry.dtsAnnotationTarget,
+                    entry.dtsStatement.dtsAnnotationTarget,
                     DtsBundle.message("inspections.node_content_order.message"),
                     DtsNodeContentOrderFix,
                 )

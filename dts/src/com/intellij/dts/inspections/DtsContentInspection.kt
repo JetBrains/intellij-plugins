@@ -22,7 +22,7 @@ class DtsContentInspection : LocalInspectionTool() {
 
         content.dtsEntries.firstOrNull()?.let {
             holder.registerProblem(
-                it.dtsAnnotationTarget,
+                it.dtsStatement.dtsAnnotationTarget,
                 DtsBundle.message("inspections.dts_content.message"),
                 DtsContentFix
             )

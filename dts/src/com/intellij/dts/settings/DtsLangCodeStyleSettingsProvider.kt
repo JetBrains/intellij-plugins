@@ -3,11 +3,11 @@ package com.intellij.dts.settings
 import com.intellij.application.options.IndentOptionsEditor
 import com.intellij.application.options.SmartIndentOptionsEditor
 import com.intellij.dts.DtsBundle
+import com.intellij.dts.lang.DtsLanguage
 import com.intellij.lang.Language
 import com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable
 import com.intellij.psi.codeStyle.CodeStyleSettingsCustomizableOptions
 import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider
-import com.intellij.dts.lang.DtsLanguage
 
 class DtsLangCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
     override fun getLanguage(): Language = DtsLanguage
@@ -18,6 +18,7 @@ class DtsLangCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
         when (settingsType) {
             SettingsType.SPACING_SETTINGS -> customizeSpacingSettings(consumer)
             SettingsType.WRAPPING_AND_BRACES_SETTINGS -> customizeWrappingSettings(consumer)
+            SettingsType.BLANK_LINES_SETTINGS -> customizeBlankLinesSettings(consumer)
             else -> {}
         }
     }
@@ -105,12 +106,48 @@ class DtsLangCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
         )
     }
 
+    private fun customizeBlankLinesSettings(consumer: CodeStyleSettingsCustomizable) {
+        consumer.showStandardOptions("KEEP_BLANK_LINES_IN_CODE", "KEEP_LINE_BREAKS")
+
+        val options = CodeStyleSettingsCustomizableOptions.getInstance()
+
+        consumer.showCustomOption(
+            DtsCodeStyleSettings::class.java,
+            "MAX_BLANK_LINES_AROUND_PROPERTY",
+            DtsBundle.message("settings.style.blank_lines_around_property"),
+            options.BLANK_LINES_KEEP,
+        )
+        consumer.showCustomOption(
+            DtsCodeStyleSettings::class.java,
+            "MIN_BLANK_LINES_AROUND_PROPERTY",
+            DtsBundle.message("settings.style.blank_lines_around_property"),
+            options.BLANK_LINES,
+        )
+        consumer.showCustomOption(
+            DtsCodeStyleSettings::class.java,
+            "MAX_BLANK_LINES_AROUND_NODE",
+            DtsBundle.message("settings.style.blank_lines_around_node"),
+            options.BLANK_LINES_KEEP,
+        )
+        consumer.showCustomOption(
+            DtsCodeStyleSettings::class.java,
+            "MIN_BLANK_LINES_AROUND_NODE",
+            DtsBundle.message("settings.style.blank_lines_around_node"),
+            options.BLANK_LINES,
+        )
+    }
+
     override fun getCodeSample(settingsType: SettingsType): String {
         return when (settingsType) {
             SettingsType.SPACING_SETTINGS -> Codesamples.spacing
             SettingsType.INDENT_SETTINGS -> Codesamples.indenting
             SettingsType.WRAPPING_AND_BRACES_SETTINGS -> Codesamples.wrapping
+            SettingsType.BLANK_LINES_SETTINGS -> Codesamples.blankLines
             else -> Codesamples.spacing
         }
+    }
+
+    override fun usesCommonKeepLineBreaks(): Boolean {
+        return true
     }
 }

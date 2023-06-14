@@ -1,7 +1,7 @@
 package com.intellij.dts.lang.psi.mixin
 
 import com.intellij.dts.lang.psi.DtsEntry
-import com.intellij.dts.lang.psi.DtsAnnotationTarget
+import com.intellij.dts.lang.psi.DtsStatement
 import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.dts.util.DtsUtil
 import com.intellij.extapi.psi.ASTWrapperPsiElement
@@ -9,26 +9,15 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.elementType
 
-interface IDtsEntry : PsiElement, DtsAnnotationTarget {
-    val dtsStatement: PsiElement
+interface IDtsEntry : PsiElement {
+    val dtsStatement: DtsStatement
 
     val hasDtsSemicolon: Boolean
 }
 
 abstract class DtsEntryMixin(node: ASTNode) : ASTWrapperPsiElement(node), DtsEntry {
-    override val dtsStatement: PsiElement
-        get() = DtsUtil.children(this).first()
-
-    override val dtsAnnotationTarget: PsiElement
-        get() {
-            val statement = dtsStatement
-
-            return if (statement is DtsAnnotationTarget) {
-                statement.dtsAnnotationTarget
-            } else {
-                statement
-            }
-        }
+    override val dtsStatement: DtsStatement
+        get() = findNotNullChildByClass(DtsStatement::class.java)
 
     override val hasDtsSemicolon: Boolean
         get() {

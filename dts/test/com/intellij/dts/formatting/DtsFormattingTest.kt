@@ -15,6 +15,10 @@ abstract class DtsFormattingTest : FormatterTestCase() {
         keepLineBreaks: Boolean = false,
         alignPropertyAssignment: Boolean = false,
         alignPropertyValues: Boolean = false,
+        maxBlankLinesAroundProperty: Int = 1,
+        minBlankLinesAroundProperty: Int = 0,
+        maxBlankLinesAroundNode: Int = 1,
+        minBlankLinesAroundNode: Int = 1
     ) {
         val common = settings.getCommonSettings(DtsLanguage)
         common.KEEP_LINE_BREAKS = keepLineBreaks
@@ -22,6 +26,10 @@ abstract class DtsFormattingTest : FormatterTestCase() {
         val custom = settings.getCustomSettings(DtsCodeStyleSettings::class.java)
         custom.ALIGN_PROPERTY_ASSIGNMENT = alignPropertyAssignment
         custom.ALIGN_PROPERTY_VALUES = alignPropertyValues
+        custom.MAX_BLANK_LINES_AROUND_PROPERTY = maxBlankLinesAroundProperty
+        custom.MIN_BLANK_LINES_AROUND_PROPERTY = minBlankLinesAroundProperty
+        custom.MAX_BLANK_LINES_AROUND_NODE = maxBlankLinesAroundNode
+        custom.MIN_BLANK_LINES_AROUND_NODE = minBlankLinesAroundNode
 
         doTest()
     }

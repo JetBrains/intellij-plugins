@@ -63,4 +63,14 @@ object Codesamples {
     0x00000000>;
 };
 """
+
+    const val blankLines = """
+/dts-v1/;
+/ {
+    property1 = "value";
+    property2 = "value";
+    node1 {};
+    node2 {};
+}; 
+"""
 }

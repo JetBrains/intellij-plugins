@@ -21,10 +21,10 @@
   implements("subNode")="com.intellij.dts.lang.psi.DtsNode.Sub"
   mixin("subNode")="com.intellij.dts.lang.psi.mixin.DtsSubNodeMixin"
 
-  implements("property")="com.intellij.dts.lang.psi.mixin.IDtsProperty"
+  implements("property")="com.intellij.dts.lang.psi.DtsStatement.Property"
   mixin("property")="com.intellij.dts.lang.psi.mixin.DtsPropertyMixin"
 
-  implements("compilerDirective")="com.intellij.dts.lang.psi.mixin.IDtsCompilerDirective"
+  implements("compilerDirective")="com.intellij.dts.lang.psi.DtsStatement.CompilerDirective"
   mixin("compilerDirective")="com.intellij.dts.lang.psi.mixin.DtsCompilerDirectiveMixin"
 
   implements("content")="com.intellij.dts.lang.psi.mixin.IDtsContent"
