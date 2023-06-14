@@ -31,8 +31,8 @@ interface VueContainerInfoProvider : EntityContainerInfoProvider<VueContainerInf
     val filters: Map<String, VueFilter> get() = emptyMap()
     val mixins: List<VueMixin> get() = emptyList()
     val extends: List<VueMixin> get() = emptyList()
-    val provide: List<VueProvide> get() = emptyList()
-    val inject: List<VueInject> get() = emptyList()
+    val provides: List<VueProvide> get() = emptyList()
+    val injects: List<VueInject> get() = emptyList()
 
     val data: List<VueDataProperty> get() = emptyList()
     val props: List<VueInputProperty> get() = emptyList()

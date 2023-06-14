@@ -15,14 +15,14 @@ interface VueContainer : VueEntitiesContainer {
   val props: List<VueInputProperty>
   val emits: List<VueEmitCall>
   val slots: List<VueSlot>
+  val provides: List<VueProvide>
+  val injects: List<VueInject>
 
   val template: VueTemplate<*>? get() = null
   val element: String? get() = null
   val extends: List<VueContainer>
   val delimiters: Pair<String, String>? get() = null
   val model: VueModelDirectiveProperties?
-  val provide: List<VueProvide>
-  val inject: List<VueInject>
 }
 
 data class VueModelDirectiveProperties(

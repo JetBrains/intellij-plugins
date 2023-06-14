@@ -16,7 +16,7 @@ class VueInjectSymbolsScope(private val enclosingComponent: VueSourceComponent)
   : WebSymbolsScopeWithCache<VueSourceComponent, Unit>(VueFramework.ID, enclosingComponent.source.project, enclosingComponent, Unit) {
 
   override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
-    if (enclosingComponent.inject.isEmpty()) {
+    if (enclosingComponent.injects.isEmpty()) {
       cacheDependencies.add(PsiModificationTracker.NEVER_CHANGED)
       return
     }
@@ -24,7 +24,7 @@ class VueInjectSymbolsScope(private val enclosingComponent: VueSourceComponent)
     val origin = VueScopeElementOrigin(enclosingComponent)
     val provides = enclosingComponent.collectProvides()
 
-    enclosingComponent.inject
+    enclosingComponent.injects
       .forEach {
         val (provide, provideOwner) = provides[it.from ?: it.name] ?: return@forEach
         consumer(VueInjectSymbol(provide, provideOwner, origin, KIND_JS_PROPERTIES))

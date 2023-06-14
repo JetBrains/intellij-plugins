@@ -55,8 +55,8 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
     override val props: List<VueInputProperty>
     override val emits: List<VueEmitCall>
 
-    override val provide: List<VueProvide>
-    override val inject: List<VueInject>
+    override val provides: List<VueProvide>
+    override val injects: List<VueInject>
 
     override val computed: List<VueComputedProperty>
       get() = rawBindings.filterIsInstance(VueComputedProperty::class.java)
@@ -170,8 +170,8 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       this.props = props
       this.emits = emits
       this.rawBindings = rawBindings
-      this.provide = provides
-      this.inject = injects
+      this.provides = provides
+      this.injects = injects
     }
 
     private fun analyzeDefineProps(call: JSCallExpression, defaults: List<@NlsSafe String>): List<VueInputProperty> {

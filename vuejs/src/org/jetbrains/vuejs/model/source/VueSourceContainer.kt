@@ -40,8 +40,8 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
   override val directives: Map<String, VueDirective> get() = get(DIRECTIVES)
   override val mixins: List<VueMixin> get() = get(MIXINS)
   override val filters: Map<String, VueFilter> get() = get(FILTERS)
-  override val provide: List<VueProvide> get() = get(PROVIDE)
-  override val inject: List<VueInject> get() = get(INJECT)
+  override val provides: List<VueProvide> get() = get(PROVIDES)
+  override val injects: List<VueInject> get() = get(INJECTS)
 
   private fun <T> get(accessor: MemberAccessor<T>): T {
     return accessor.get(descriptor)
@@ -68,8 +68,8 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
     private val COMPONENTS = MapAccessor(VueContainerInfo::components)
     private val FILTERS = MapAccessor(VueContainerInfo::filters)
     private val DELIMITERS = DelimitersAccessor(VueContainerInfo::delimiters)
-    private val PROVIDE = NamedListAccessor(VueContainerInfo::provide)
-    private val INJECT = NamedListAccessor(VueContainerInfo::inject)
+    private val PROVIDES = NamedListAccessor(VueContainerInfo::provides)
+    private val INJECTS = NamedListAccessor(VueContainerInfo::injects)
 
     private val PROPS = NamedListAccessor(VueContainerInfo::props)
     private val DATA = NamedListAccessor(VueContainerInfo::data)

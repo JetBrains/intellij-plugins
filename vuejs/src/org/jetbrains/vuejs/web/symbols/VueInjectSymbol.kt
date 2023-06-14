@@ -41,7 +41,7 @@ class VueInjectSymbol(provide: VueProvide,
 
     override fun dereference(): VueInjectSymbol? =
       pointer.dereference()?.asSafely<VueContainer>()?.let { container ->
-        container.provide.find { it.name == name }?.let { provide ->
+        container.provides.find { it.name == name }?.let { provide ->
           VueInjectSymbol(provide, container, origin, kind)
         }
       }

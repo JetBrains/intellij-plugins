@@ -43,8 +43,8 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
   override val filters: Map<String, VueFilter>
     get() = (delegate?.filters ?: emptyMap()) + getEntitiesAnalysis().filters
 
-  override val provide: List<VueProvide>
-    get() = (delegate?.provide ?: emptyList()) + getEntitiesAnalysis().provides
+  override val provides: List<VueProvide>
+    get() = (delegate?.provides ?: emptyList()) + getEntitiesAnalysis().provides
 
   override val element: String?
     get() = getEntitiesAnalysis().element

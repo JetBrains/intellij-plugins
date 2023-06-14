@@ -107,7 +107,7 @@ interface VueScopeElement : VueDocumentedItem {
                    || (container.data.all { visitor.visitDataProperty(it, proximity) }
                        && container.computed.all { visitor.visitComputedProperty(it, proximity) }
                        && container.methods.all { visitor.visitMethod(it, proximity) }
-                       && container.inject.all { visitor.visitInject(it, proximity) }
+                       && container.injects.all { visitor.visitInject(it, proximity) }
                       ))
       }
     }, VueModelVisitor.Proximity.GLOBAL)
@@ -148,7 +148,7 @@ interface VueScopeElement : VueDocumentedItem {
       if (element == null || !visited.add(element)) return
 
       if (element is VueContainer) {
-        element.provide.forEach {
+        element.provides.forEach {
           provides[it.name] = VueProvideEntry(it, element)
         }
       }
