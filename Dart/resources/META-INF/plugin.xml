@@ -264,7 +264,7 @@
   </extensions>
 
   <projectListeners>
-    <listener class="com.jetbrains.lang.dart.DartWorkspaceModelChangeListener" topic="com.intellij.workspaceModel.ide.WorkspaceModelChangeListener"/>
+    <listener class="com.jetbrains.lang.dart.DartWorkspaceModelChangeListener" topic="com.intellij.platform.backend.workspace.WorkspaceModelChangeListener"/>
     <listener class="com.jetbrains.lang.dart.ide.errorTreeView.DartAnalysisToolWindowFactory$DartToolWindowManagerListener"
               topic="com.intellij.openapi.wm.ex.ToolWindowManagerListener"/>
   </projectListeners>

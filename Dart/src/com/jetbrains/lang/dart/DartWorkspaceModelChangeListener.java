@@ -1,11 +1,11 @@
 package com.jetbrains.lang.dart;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.workspaceModel.ide.WorkspaceModelChangeListener;
-import com.intellij.platform.workspace.storage.EntityChange;
-import com.intellij.platform.workspace.storage.VersionedStorageChange;
+import com.intellij.platform.backend.workspace.WorkspaceModelChangeListener;
 import com.intellij.platform.workspace.jps.entities.ContentRootEntity;
 import com.intellij.platform.workspace.jps.entities.ModuleEntity;
+import com.intellij.platform.workspace.storage.EntityChange;
+import com.intellij.platform.workspace.storage.VersionedStorageChange;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
