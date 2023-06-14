@@ -3,7 +3,7 @@
     <name>Device Tree</name>
     <vendor>JetBrains</vendor>
 
-    <description>Language plugin for device tree files and device tree include files.</description>
+    <description>Provides support for Device Tree (*.dts) files and Device Tree Include  (*.dtsi) files</description>
 
     <depends>com.intellij.modules.platform</depends>
 
