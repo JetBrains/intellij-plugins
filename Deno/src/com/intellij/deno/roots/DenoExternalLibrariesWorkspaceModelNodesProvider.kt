@@ -7,7 +7,7 @@ import com.intellij.ide.projectView.impl.nodes.ExternalLibrariesWorkspaceModelNo
 import com.intellij.ide.projectView.impl.nodes.ExternalLibrariesWorkspaceModelNodesProvider
 import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.openapi.project.Project
-import com.intellij.workspaceModel.ide.virtualFile
+import com.intellij.platform.backend.workspace.virtualFile
 
 class DenoExternalLibrariesWorkspaceModelNodesProvider : ExternalLibrariesWorkspaceModelNodesProvider<DenoEntity> {
   override fun getWorkspaceClass(): Class<DenoEntity> = DenoEntity::class.java

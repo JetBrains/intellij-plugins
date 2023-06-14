@@ -3,7 +3,7 @@ package com.intellij.deno.roots
 import com.intellij.deno.entities.DenoEntity
 import com.intellij.deno.excludeCondition
 import com.intellij.openapi.roots.impl.CustomEntityProjectModelInfoProvider
-import com.intellij.workspaceModel.ide.virtualFile
+import com.intellij.platform.backend.workspace.virtualFile
 import com.intellij.platform.workspace.storage.EntityStorage
 
 class DenoCustomEntityProjectModelInfoProvider : CustomEntityProjectModelInfoProvider<DenoEntity> {

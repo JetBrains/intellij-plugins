@@ -11,7 +11,7 @@ import com.intellij.util.indexing.roots.IndexableFilesIterationMethods
 import com.intellij.util.indexing.roots.IndexableFilesIterator
 import com.intellij.util.indexing.roots.builders.IndexableIteratorBuilderHandler
 import com.intellij.util.indexing.roots.kind.IndexableSetOrigin
-import com.intellij.workspaceModel.ide.virtualFile
+import com.intellij.platform.backend.workspace.virtualFile
 import com.intellij.platform.workspace.storage.EntityStorage
 import com.intellij.platform.workspace.jps.entities.ModuleEntity
 
