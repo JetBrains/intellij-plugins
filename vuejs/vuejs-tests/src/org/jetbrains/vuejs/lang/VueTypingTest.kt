@@ -171,6 +171,11 @@ class VueTypingTest: BasePlatformTestCase() {
     }
   }
 
+  // WEB-61505
+  fun testAutoStringInterpolation() {
+    doTest("{")
+  }
+
   private fun doTest(toType: String) {
     doTest(getTestName(false), toType)
   }
