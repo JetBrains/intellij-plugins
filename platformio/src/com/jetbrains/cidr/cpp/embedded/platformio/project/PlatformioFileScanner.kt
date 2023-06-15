@@ -116,11 +116,11 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
     )
     confBuilder.withLanguageConfiguration(cxxLanguageConfiguration)
     checkCancelled.run()
-    var fileCounter = 0
+    val fileList = mutableListOf<String>()
     fun addSources(srcFolder: VirtualFile, buildSrcFilter: PlatformioSrcFilters) =
       scanSources(srcFolder, buildSrcFilter).forEach {
         if (OCFileTypeHelpers.isSourceFile(it.name)) {
-          fileCounter++
+          fileList.add(it.absolutePath)
           when (val kind = OCFileTypeHelpers.getLanguageKind(it.name)) {
             CLanguageKind.CPP -> confBuilder.withFileConfiguration(
               ExternalFileConfigurationImpl(it, kind, cxxLanguageConfiguration.compilerSwitches))
@@ -132,8 +132,9 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
 
     addSources(srcFolder, buildSrcFilter)
 
-    publishMessage(ClionEmbeddedPlatformioBundle.message("build.event.message.parsed.sources", fileCounter),
-                   parentEventId = scanFilesEventId)
+    publishMessage(ClionEmbeddedPlatformioBundle.message("build.event.message.parsed.sources", fileList.size),
+                   parentEventId = scanFilesEventId,
+                   details = fileList.joinToString("\n"))
     val scanLibId = publishMessage(ClionEmbeddedPlatformioBundle.message("build.event.message.scanning.libraries"))
     val parsedLibraries = mutableListOf<String>()
     jsonConfig["libsource_dirs"].asSafely<List<String>>()?.forEach { libSource ->
@@ -160,7 +161,7 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
       }
     }
     publishMessage(message = ClionEmbeddedPlatformioBundle.message("build.event.message.parsed.libraries", parsedLibraries.size),
-                   details = parsedLibraries.joinToString(),
+                   details = parsedLibraries.joinToString("\n"),
                    parentEventId = scanLibId)
   }
 

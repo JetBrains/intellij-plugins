@@ -1,8 +1,6 @@
 package com.jetbrains.cidr.cpp.embedded.platformio.project
 
 import com.google.gson.Gson
-import com.intellij.build.events.MessageEvent
-import com.intellij.build.events.impl.MessageEventImpl
 import com.intellij.execution.DefaultExecutionTarget
 import com.intellij.execution.ExecutionTargetManager
 import com.intellij.execution.process.*
@@ -19,6 +17,8 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotifica
 import com.intellij.openapi.externalSystem.model.task.event.*
 import com.intellij.openapi.externalSystem.service.project.ExternalSystemProjectResolver
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
+import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
@@ -28,19 +28,16 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.asSafely
-import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle
-import com.jetbrains.cidr.cpp.embedded.platformio.PLATFORMIO_UPDATES_TOPIC
-import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
-import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioTargetData
+import com.jetbrains.cidr.cpp.embedded.platformio.*
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioProjectResolvePolicy
 import com.jetbrains.cidr.cpp.execution.manager.CLionRunConfigurationManager
 import com.jetbrains.cidr.cpp.external.system.project.attachExternalModule
 import com.jetbrains.cidr.external.system.model.ExternalModule
 import com.jetbrains.cidr.external.system.model.impl.ExternalModuleImpl
 import com.jetbrains.cidr.external.system.model.impl.ExternalResolveConfigurationBuilder
+import org.jetbrains.annotations.Nls
 import java.io.File
 import java.util.*
-import javax.swing.SwingUtilities
 
 open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioExecutionSettings> {
 
@@ -75,28 +72,28 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
     cancelled = false
     val project = id.findProject()!!
     project.messageBus.syncPublisher(PLATFORMIO_UPDATES_TOPIC).reparseStarted()
-    val platformioService = project.service<PlatformioService>()
-    if (resolverPolicy.asSafely<PlatformioProjectResolvePolicy>()?.cleanCache != false) {
-      platformioService.cleanCache()
-    }
-    val projectFile = LocalFileSystem.getInstance().findFileByPath(projectPath)!!
-    val projectDir = if (projectFile.isDirectory) projectFile else projectFile.parent
-    val projectName = project.name
-    val ideProjectPath = ExternalSystemApiUtil.toCanonicalPath(project.basePath ?: projectDir.path)
-    val projectData = ProjectData(ID, projectName, ideProjectPath,
-                                  ExternalSystemApiUtil.toCanonicalPath(projectDir.path))
-    var pioRunEventIdConfig: Any = id
     try {
+      val projectFile = LocalFileSystem.getInstance().findFileByPath(projectPath)!!
+      val projectDir = if (projectFile.isDirectory) projectFile else projectFile.parent
+      val boardInfo = project.getUserData(PROJECT_INIT_KEY)
+      if (boardInfo != null) {
+        cliGenerateProject(project, listener, id, projectDir, boardInfo)
+      }
+      checkCancelled()
+      val platformioService = project.service<PlatformioService>()
+      if (resolverPolicy.asSafely<PlatformioProjectResolvePolicy>()?.cleanCache != false) {
+        platformioService.cleanCache()
+      }
+      val projectName = project.name
+      val ideProjectPath = ExternalSystemApiUtil.toCanonicalPath(project.basePath ?: projectDir.path)
+      val projectData = ProjectData(ID, projectName, ideProjectPath,
+                                    ExternalSystemApiUtil.toCanonicalPath(projectDir.path))
       checkCancelled()
       var configJson = platformioService.configJson
       if (configJson == null) {
-        pioRunEventIdConfig = "pio-run:${UUID.randomUUID()}"
-        configJson = gatherConfigJson(id, pioRunEventIdConfig, project, listener)
+        configJson = gatherConfigJson(id, "pio-run:${UUID.randomUUID()}", project, listener)
         platformioService.configJson = configJson
       }
-      listener.onStatusChange(ExternalSystemBuildEvent(id, MessageEventImpl(pioRunEventIdConfig, MessageEvent.Kind.SIMPLE, null,
-                                                                            ClionEmbeddedPlatformioBundle.message(
-                                                                              "build.event.message.parse.project.config"), null)))
 
       val envs: Map<String, PlatformioExecutionTarget>
       val defaultEnv: PlatformioExecutionTarget?
@@ -140,17 +137,10 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
         val buildSrcFilter = scanner.gatherBuildSrcFilter(configMap, activeEnvName)
 
         var pioActiveMetadataText = platformioService.metadataJson[activeEnvName]
-        var pioRunEventIdEnv: Any = id
         if (pioActiveMetadataText == null) {
-          pioRunEventIdEnv = "pio-run:${UUID.randomUUID()}"
-          pioActiveMetadataText = gatherEnvMetadata(id, pioRunEventIdEnv, project, activeEnvName, listener)
+          pioActiveMetadataText = gatherEnvMetadata(id, "pio-run:${UUID.randomUUID()}", project, activeEnvName, listener)
           platformioService.setMetadataJson(activeEnvName, pioActiveMetadataText)
         }
-        listener.onStatusChange(
-          ExternalSystemBuildEvent(id, MessageEventImpl(pioRunEventIdEnv, MessageEvent.Kind.SIMPLE, null,
-                                                        ClionEmbeddedPlatformioBundle.message("build.event.message.parse.environment",
-                                                                                              activeEnv),
-                                                        null)))
         val pioActiveMetadata = Gson()
                                   .fromJson<Map<String, Any>>(pioActiveMetadataText, Map::class.java)
                                   ?.get(activeEnvName)
@@ -187,6 +177,7 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
     }
     catch (e: ProcessNotCreatedException) {
       project.messageBus.syncPublisher(PLATFORMIO_UPDATES_TOPIC).reparseFailed(true)
+      LOG.error(e)
       throw ExternalSystemException(e)
     }
     catch (e: ExternalSystemException) {
@@ -195,14 +186,46 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
     }
     catch (e: Throwable) {
       project.messageBus.syncPublisher(PLATFORMIO_UPDATES_TOPIC).reparseFailed(false)
+      LOG.error(e)
       throw ExternalSystemException(e)
     }
   }
 
+  private fun cliGenerateProject(project: Project,
+                                 listener: ExternalSystemTaskNotificationListener,
+                                 id: ExternalSystemTaskId,
+                                 baseDir: VirtualFile,
+                                 boardInfo: BoardInfo) {
+
+    PlatformioUsagesCollector.NEW_PROJECT.log(project)
+    runPio(id, id.toString(), project, listener, ClionEmbeddedPlatformioBundle.message("initializing.the.project"),
+           listOf("init") + boardInfo.parameters, true)
+    baseDir.refresh(false, true)
+    if (boardInfo.template !== SourceTemplate.NONE) {
+      val srcFolder = baseDir.findChild("src")
+      if (srcFolder != null && srcFolder.isDirectory) {
+        if (srcFolder.findChild("main.cpp") == null && srcFolder.findChild("main.c") == null) {
+          ApplicationManager.getApplication().invokeLater {
+            WriteAction.run<Throwable> {
+              if (!project.isDisposed) {
+                val virtualFile = srcFolder.createChildData(this, boardInfo.template.fileName)
+                virtualFile.setBinaryContent(boardInfo.template.content.toByteArray(Charsets.US_ASCII))
+                val descriptor = OpenFileDescriptor(project, virtualFile)
+                FileEditorManager.getInstance(project).openEditor(descriptor, true)
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
   protected open fun createRunConfigurationIfRequired(project: Project) {
-    SwingUtilities.invokeLater {
+    ApplicationManager.getApplication().invokeLater {
       WriteAction.run<Throwable> {
-        CLionRunConfigurationManager.getInstance(project).updateRunConfigurations(PlatformioRunConfigurationManagerHelper)
+        if (!project.isDisposed) {
+          CLionRunConfigurationManager.getInstance(project).updateRunConfigurations(PlatformioRunConfigurationManagerHelper)
+        }
       }
     }
   }
@@ -216,8 +239,8 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
     try {
       val parameters = mutableListOf("project", "metadata", "--json-output")
       if (!activeEnvName.isBlank()) parameters.apply { add("-e"); add(activeEnvName) }
-      runPio(id, pioRunEventId, project, listener, parameters,
-             listOf("--json-output-path", metadataFile.absolutePath))
+      runPio(id, pioRunEventId, project, listener, ClionEmbeddedPlatformioBundle.message("configuring.environment", activeEnvName),
+             parameters + listOf("--json-output-path", metadataFile.absolutePath))
       return metadataFile.readText()
     }
     finally {
@@ -227,35 +250,33 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
 
   protected open fun gatherConfigJson(id: ExternalSystemTaskId, pioRunEventId: String, project: Project,
                                       listener: ExternalSystemTaskNotificationListener): @NlsSafe String {
-    val configOutput = runPio(id, pioRunEventId, project, listener, listOf("project", "config", "--json-output"))
+    val configOutput = runPio(id, pioRunEventId, project, listener, ClionEmbeddedPlatformioBundle.message("configuring.project"),
+                              listOf("project", "config", "--json-output"))
     return configOutput.stdout
   }
 
   private fun runPio(id: ExternalSystemTaskId,
                      pioRunEventId: String,
                      project: Project,
-                     listener: ExternalSystemTaskNotificationListener, parameters: List<String>,
-                     nonLoggableParameters: List<String> = emptyList()): ProcessOutput {
+                     listener: ExternalSystemTaskNotificationListener,
+                     @Nls taskDescription: String,
+                     parameters: List<String>,
+                     logStdout: Boolean = false): ProcessOutput {
     checkCancelled()
 
-    val commandLine = PlatfromioCliBuilder(project).withParams(parameters).withParams(nonLoggableParameters).withVerboseAllowed(false)
+    val commandLine = PlatfromioCliBuilder(project).withParams(parameters).withVerboseAllowed(false)
     val processHandler = CapturingAnsiEscapesAwareProcessHandler(commandLine.build())
     processHandlerToKill = processHandler
 
-    val configTaskDescriptor = TaskOperationDescriptorImpl(
-      ClionEmbeddedPlatformioBundle.message("build.event.message.run.pio",
-                                            parameters.joinToString(
-                                              separator = " ")),
-      System.currentTimeMillis(),
-      "pio-project-config")
+    val configTaskDescriptor = TaskOperationDescriptorImpl(taskDescription, System.currentTimeMillis(), "pio-project-config")
     val configStartEvent = ExternalSystemStartEventImpl(pioRunEventId, null, configTaskDescriptor)
     listener.onStatusChange(ExternalSystemTaskExecutionEvent(id, configStartEvent))
 
     processHandler.addProcessListener(object : ProcessListener {
 
       override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
-        if (outputType != ProcessOutputType.STDOUT) {
-          listener.onTaskOutput(id, event.text, false)
+        if (logStdout || outputType != ProcessOutputType.STDOUT) {
+          listener.onTaskOutput(id, event.text, outputType == ProcessOutputType.STDOUT)
         }
       }
     })

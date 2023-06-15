@@ -17,7 +17,6 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.NlsContexts
 import com.intellij.ui.LayeredIcon
 import com.intellij.util.IconUtil
 import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle
@@ -134,16 +133,6 @@ fun notifyPlatformioNotFound(project: Project?) {
       NotificationAction.createSimple(ClionEmbeddedPlatformioBundle.message("install.guide"), OpenInstallGuide))
     .addAction(
       NotificationAction.createSimpleExpiring(ClionEmbeddedPlatformioBundle.message("open.settings.link"), OpenSettings(project)))
-    .notify(project)
-}
-
-fun notifyPlatformioFailed(project: Project?,
-                           @NlsContexts.NotificationTitle title: String,
-                           @NlsContexts.NotificationTitle subTitle: String?,
-                           @NlsContexts.NotificationContent content: String) {
-  NOTIFICATION_GROUP
-    .createNotification(title, content, NotificationType.WARNING)
-    .setSubtitle(subTitle)
     .notify(project)
 }
 

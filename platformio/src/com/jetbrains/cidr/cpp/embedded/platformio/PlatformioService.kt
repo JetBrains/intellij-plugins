@@ -1,6 +1,7 @@
 package com.jetbrains.cidr.cpp.embedded.platformio
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.components.*
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
@@ -100,9 +101,11 @@ val PlatformioProjectResolvePolicyCleanCache: PlatformioProjectResolvePolicy = P
 val PlatformioProjectResolvePolicyPreserveCache: PlatformioProjectResolvePolicy = PlatformioProjectResolvePolicy(false)
 
 fun refreshProject(project: Project, cleanCache: Boolean) {
-  ApplicationManager.getApplication().runWriteAction {
-    val policy = if (cleanCache) PlatformioProjectResolvePolicyCleanCache else PlatformioProjectResolvePolicyPreserveCache
-    ExternalSystemUtil.refreshProject(project.basePath!!, ImportSpecBuilder(project, ID).projectResolverPolicy(policy))
+  ApplicationManager.getApplication().invokeLater {
+    WriteAction.run<Throwable> {
+      val policy = if (cleanCache) PlatformioProjectResolvePolicyCleanCache else PlatformioProjectResolvePolicyPreserveCache
+      ExternalSystemUtil.refreshProject(project.basePath!!, ImportSpecBuilder(project, ID).projectResolverPolicy(policy))
+    }
   }
 }
 
