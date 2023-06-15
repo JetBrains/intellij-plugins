@@ -127,15 +127,15 @@
 
     <postStartupActivity implementation="org.jetbrains.vuejs.lang.html.psi.arrangement.VueArrangementSettingsMigration"/>
 
-    <directoryIndexExcludePolicy implementation="org.jetbrains.vuejs.libraries.nuxt.index.NuxtIndexExcludePolicy"/>
-    <additionalLibraryRootsProvider implementation="org.jetbrains.vuejs.libraries.nuxt.library.NuxtDotFolderSyntheticLibraryProvider"/>
-
     <!-- works in WebStorm and other SmallIDEs -->
     <directoryProjectGenerator implementation="org.jetbrains.vuejs.cli.VueCliProjectGenerator"/>
     <!-- works in IDEA -->
     <projectTemplatesFactory implementation="org.jetbrains.vuejs.cli.VueProjectTemplateFactory"/>
     <!-- works in new IDEA wizard -->
     <moduleBuilder builderClass="org.jetbrains.vuejs.cli.VueCLIProjectModuleBuilder"/>
+
+    <workspaceModel.fileIndexContributor implementation="org.jetbrains.vuejs.libraries.nuxt.library.NuxtFolderLibraryContributor"/>
+    <postStartupActivity implementation="org.jetbrains.vuejs.libraries.nuxt.library.NuxtFolderLibraryStartupActivity"/>
 
     <localInspection language="Vue" groupKey="vue.inspection.group.name" shortName="VueDataFunction"
                      enabledByDefault="true" level="WARNING"
@@ -391,6 +391,7 @@
     <languageServiceProvider order="first" implementation="org.jetbrains.vuejs.lang.typescript.service.VueLanguageServiceProvider"/>
     <importCandidatesFactory implementation="org.jetbrains.vuejs.codeInsight.imports.VueScriptCandidatesProviderFactory"/>
     <importCandidatesFactory implementation="org.jetbrains.vuejs.codeInsight.imports.VueComponentImportCandidatesProviderFactory"/>
+    <scanningFileListenerContributor implementation="org.jetbrains.vuejs.libraries.nuxt.library.NuxtFolderScanningListenerContributor"/>
   </extensions>
 
   <extensions defaultExtensionNs="intellij.webpack">

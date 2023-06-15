@@ -3,12 +3,21 @@ package org.jetbrains.vuejs.libraries.nuxt
 
 import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import org.jetbrains.vuejs.lang.*
-import org.jetbrains.vuejs.lang.forceReloadProjectRoots
+import org.jetbrains.vuejs.lang.VueInspectionsProvider
+import org.jetbrains.vuejs.lang.VueTestModule
+import org.jetbrains.vuejs.lang.configureVueDependencies
+import org.jetbrains.vuejs.lang.getVueTestDataPath
+import org.jetbrains.vuejs.libraries.nuxt.library.NuxtFolderModelSynchronizer
 
 class NuxtHighlightingTest : BasePlatformTestCase() {
 
   override fun getTestDataPath(): String = getVueTestDataPath() + "/libraries/nuxt/highlighting"
+
+  override fun setUp() {
+    super.setUp()
+    // clear Workspace Model from `NuxtFolderEntity` created by previous tests
+    NuxtFolderModelSynchronizer(project).sync()
+  }
 
   fun testRefToStatic() {
     myFixture.enableInspections(HtmlUnknownTargetInspection::class.java)
@@ -34,7 +43,6 @@ class NuxtHighlightingTest : BasePlatformTestCase() {
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.copyDirectoryToProject("nuxtAutoImports", ".")
     myFixture.configureFromTempProjectFile("app.vue")
-    forceReloadProjectRoots(project)
 
     myFixture.checkHighlighting(true, false, true)
   }
