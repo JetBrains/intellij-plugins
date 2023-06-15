@@ -8,37 +8,27 @@ import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.util.ExecUtil
 import com.intellij.lang.javascript.TypeScriptFileType
-import com.intellij.platform.lsp.api.LspServer
-import com.intellij.platform.lsp.api.customization.LspCommandsSupport
-import com.intellij.platform.lsp.api.LspServerDescriptor
-import com.intellij.platform.lsp.api.LspServerSupportProvider
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PathMacroManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.platform.lsp.api.LspServer
+import com.intellij.platform.lsp.api.LspServerSupportProvider
+import com.intellij.platform.lsp.api.ProjectWideLspServerDescriptor
+import com.intellij.platform.lsp.api.customization.LspCommandsSupport
 import org.eclipse.lsp4j.Command
 import java.io.File
 
 class DenoLspSupportProvider : LspServerSupportProvider {
   override fun fileOpened(project: Project, file: VirtualFile, serverStarter: LspServerSupportProvider.LspServerStarter) {
-    getDenoDescriptor(project)?.let { serverStarter.ensureServerStarted(it) }
-  }
-}
-
-fun getDenoDescriptor(project: Project): DenoLspServerDescriptor? {
-  if (DenoSettings.getService(project).isUseDeno()) {
-    // TODO don't use guessProjectDir()
-    val root = project.guessProjectDir()
-    if (root != null) {
-      return DenoLspServerDescriptor(project, root)
+    if (DenoSettings.getService(project).isUseDeno()) {
+      serverStarter.ensureServerStarted(DenoLspServerDescriptor(project))
     }
   }
-  return null
 }
 
-class DenoLspServerDescriptor(project: Project, vararg roots: VirtualFile) : LspServerDescriptor(project, "Deno", *roots) {
+class DenoLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor(project, "Deno") {
 
   override fun isSupportedFile(file: VirtualFile) = file.fileType == TypeScriptFileType.INSTANCE
 

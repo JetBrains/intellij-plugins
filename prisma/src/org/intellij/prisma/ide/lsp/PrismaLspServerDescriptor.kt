@@ -9,11 +9,11 @@ import com.intellij.javascript.nodejs.interpreter.wsl.WslNodeInterpreter
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.platform.lsp.api.LspServerDescriptor
+import com.intellij.platform.lsp.api.ProjectWideLspServerDescriptor
 import org.intellij.prisma.PrismaBundle
 import org.intellij.prisma.lang.PrismaFileType
 
-class PrismaLspServerDescriptor(project: Project, vararg roots: VirtualFile) : LspServerDescriptor(project, "Prisma", *roots) {
+class PrismaLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor(project, "Prisma") {
 
   override fun isSupportedFile(file: VirtualFile) = file.fileType == PrismaFileType
 

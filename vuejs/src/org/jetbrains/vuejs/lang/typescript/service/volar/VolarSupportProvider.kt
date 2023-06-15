@@ -3,12 +3,11 @@ package org.jetbrains.vuejs.lang.typescript.service.volar
 
 import com.intellij.lang.javascript.library.typings.TypeScriptPackageName
 import com.intellij.lang.typescript.lsp.*
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspServerDescriptor
 import com.intellij.platform.lsp.api.LspServerSupportProvider
 import com.intellij.platform.lsp.api.LspServerSupportProvider.LspServerStarter
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.guessProjectDir
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.text.SemVer
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.vuejs.lang.typescript.service.isVolarEnabledAndAvailable
@@ -27,12 +26,10 @@ class VolarSupportProvider : LspServerSupportProvider {
 
 fun getVolarServerDescriptor(project: Project, file: VirtualFile): LspServerDescriptor? {
   if (!isVolarEnabledAndAvailable(project, file)) return null
-  val projectDir = project.guessProjectDir() ?: return null
-  return VolarServerDescriptor(project, projectDir)
+  return VolarServerDescriptor(project)
 }
 
-class VolarServerDescriptor(project: Project, vararg roots: VirtualFile)
-  : JSFrameworkLspServerDescriptor(project, "Vue", *roots) {
+class VolarServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, "Vue") {
   override val relativeScriptPath = packageRelativePath
   override val npmPackage = serverPackageName
 
