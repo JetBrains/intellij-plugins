@@ -2,9 +2,7 @@
 package org.jetbrains.vuejs.lang.typescript.service.volar
 
 import com.intellij.lang.javascript.library.typings.TypeScriptPackageName
-import com.intellij.lang.typescript.lsp.JSFrameworkLspServerDescriptor
-import com.intellij.lang.typescript.lsp.getLspServerExecutablePath
-import com.intellij.lang.typescript.lsp.scheduleLspServerDownloading
+import com.intellij.lang.typescript.lsp.*
 import com.intellij.platform.lsp.api.LspServerDescriptor
 import com.intellij.platform.lsp.api.LspServerSupportProvider
 import com.intellij.platform.lsp.api.LspServerSupportProvider.LspServerStarter
@@ -14,8 +12,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.text.SemVer
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.vuejs.lang.typescript.service.isVolarEnabledAndAvailable
-import com.intellij.lang.typescript.lsp.defaultPackageKey
-import com.intellij.lang.typescript.lsp.extractRefText
 import org.jetbrains.vuejs.options.getVueSettings
 
 val defaultVolarVersion: SemVer = SemVer.parseFromText("1.6.5")!!
@@ -46,8 +42,8 @@ class VolarServerDescriptor(project: Project, vararg roots: VirtualFile)
 }
 
 @ApiStatus.Experimental
-object VolarExecutableDownloader {
-  fun getExecutable(project: Project): String? {
+object VolarExecutableDownloader : LspServerDownloader {
+  override fun getExecutable(project: Project): String? {
     val packageRef = getVueSettings(project).packageRef
     val ref = extractRefText(packageRef)
     if (ref == defaultPackageKey) {
@@ -57,7 +53,7 @@ object VolarExecutableDownloader {
     return ref
   }
 
-  fun getExecutableOrRefresh(project: Project): String? {
+  override fun getExecutableOrRefresh(project: Project): String? {
     val executable = getExecutable(project)
     if (executable != null) return executable
     scheduleLspServerDownloading(project, serverPackageName)

@@ -3,14 +3,9 @@ package org.jetbrains.vuejs.service
 
 import com.intellij.javascript.debugger.com.intellij.lang.javascript.service.BaseLspTypeScriptServiceTest
 import com.intellij.lang.javascript.library.typings.TypeScriptExternalDefinitionsRegistry
-import com.intellij.lang.javascript.modules.JSTempDirWithNodeInterpreterTest
-import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
 import com.intellij.lang.typescript.library.download.TypeScriptDefinitionFilesDirectory
 import com.intellij.openapi.util.Disposer
-import com.intellij.testFramework.UsefulTestCase
-import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
-import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.typescript.service.volar.VolarExecutableDownloader
 import org.jetbrains.vuejs.lang.typescript.service.volar.VolarTypeScriptService
 import org.jetbrains.vuejs.options.VueServiceSettings
@@ -40,8 +35,7 @@ abstract class VolarServiceTestBase : BaseLspTypeScriptServiceTest() {
     }
     vueSettings.serviceType = VueServiceSettings.VOLAR
 
-    VolarExecutableDownloader.getExecutableOrRefresh(project) // could run blocking download
-    TestCase.assertNotNull(VolarExecutableDownloader.getExecutable(project))
+    ensureServerDownloaded(VolarExecutableDownloader)
   }
 
   protected fun assertCorrectService() {
