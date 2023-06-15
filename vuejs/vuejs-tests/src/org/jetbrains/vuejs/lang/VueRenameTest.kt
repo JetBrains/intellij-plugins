@@ -182,6 +182,11 @@ class VueRenameTest : BasePlatformTestCase() {
     doTest("alignment")
   }
 
+  fun testInjectLiteral() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    doTestDir("newName", true)
+  }
+
   private fun doTest(newName: String, usingHandler: Boolean = false) {
     myFixture.configureByFile(getTestName(true) + ".vue")
     if (usingHandler) {
@@ -199,12 +204,19 @@ class VueRenameTest : BasePlatformTestCase() {
     }
     myFixture.checkResultByFile(getTestName(true) + "_after.vue")
   }
-  private fun doTestDir(newName: String) {
-    val testName = getTestName(true)
-    myFixture.copyDirectoryToProject(testName, ".")
+
+  private fun doTestDir(newName: String, checkByDir: Boolean = false) {
+    val dirName = getTestName(true)
+    val testName = getTestName(false)
+    myFixture.copyDirectoryToProject(dirName, "")
     myFixture.configureFromTempProjectFile("$testName.vue")
     myFixture.renameWebSymbol(newName)
-    myFixture.checkResultByFile("$testName/${testName}_after.vue")
+    if (checkByDir) {
+      checkResultByDir("${dirName}_after")
+    }
+    else {
+      myFixture.checkResultByFile("$dirName/${testName}_after.vue")
+    }
   }
 
   private fun checkResultByDir(resultsDir: String = getTestName(true) + "_after") {
