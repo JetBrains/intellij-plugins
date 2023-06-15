@@ -4,17 +4,18 @@ package org.jetbrains.vuejs.lang.typescript.service.volar
 import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.ecmascript6.TypeScriptAnnotatorCheckerProvider
-import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.lang.typescript.compiler.TypeScriptLanguageServiceAnnotatorCheckerProvider
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
 import com.intellij.lang.typescript.lsp.JSFrameworkLspTypeScriptService
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspServerDescriptor
 import com.intellij.platform.lsp.api.LspServerSupportProvider
 import com.intellij.psi.PsiFile
 import com.intellij.util.text.SemVer
+import com.intellij.util.ui.UIUtil
 import org.jetbrains.vuejs.lang.typescript.service.isVolarEnabledAndAvailable
 import org.jetbrains.vuejs.lang.typescript.service.isVolarFileTypeAcceptable
 import org.jetbrains.vuejs.options.VueServiceSettings
@@ -36,7 +37,28 @@ class VolarTypeScriptService(project: Project) : JSFrameworkLspTypeScriptService
 
   override fun createQuickInfoResponse(rawResponse: String): TypeScriptQuickInfoResponse {
     return TypeScriptQuickInfoResponse().apply {
-      displayString = rawResponse.removeSurrounding("<html><body><pre>", "</pre></body></html>")
+      val content = UIUtil.getHtmlBody(rawResponse)
+      val index = content.indexOf("<p>")
+
+      val firstPart: String
+      val secondPart: String?
+      if (index > -1) {
+        firstPart = content.substring(0, index)
+        secondPart = content.substring(index)
+      }
+      else {
+        firstPart = content
+        secondPart = null
+      }
+
+      displayString = firstPart
+        .removeSurrounding("<pre><code class=\"language-typescript\">", "</code></pre>")
+        .trim()
+        .let(StringUtil::unescapeXmlEntities)
+      if (secondPart != null) {
+        documentation = secondPart
+      }
+      // Vue LS omits "export" so we can't assign kindModifiers
     }
   }
 
