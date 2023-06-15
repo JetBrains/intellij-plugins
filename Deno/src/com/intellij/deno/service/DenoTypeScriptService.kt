@@ -75,10 +75,7 @@ class DenoTypeScriptService(project: Project) : BaseLspTypeScriptService(project
   }
 
   override fun getServiceFixes(file: PsiFile, element: PsiElement?, result: JSAnnotationError): Collection<IntentionAction> {
-    if (element != null && (result is LspAnnotationError) && file.virtualFile != null) {
-      return withServer { getQuickFixes(file.virtualFile, result.diagnostic) } ?: return emptyList()
-    }
-    return emptyList()
+    return (result as? LspAnnotationError)?.quickFixes ?: emptyList()
   }
 
   override fun createQuickInfoResponse(rawResponse: String): TypeScriptQuickInfoResponse {
