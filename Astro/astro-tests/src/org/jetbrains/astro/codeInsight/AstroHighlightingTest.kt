@@ -10,6 +10,8 @@ class AstroHighlightingTest : AstroCodeInsightTestCase() {
 
   fun testClientDirectives() = doTest(additionalFiles = listOf("component.astro"))
 
+  fun testUnusedImportFalsePositive() = doTest()
+
   //region Test configuration and helper methods
 
   override fun getBasePath(): String = "codeInsight/highlighting"

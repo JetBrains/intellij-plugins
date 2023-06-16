@@ -65,6 +65,8 @@
     <lang.refactoringSupport language="AstroFrontmatter" implementationClass="org.jetbrains.astro.refactoring.AstroRefactoringSupportProvider"/>
     <copyPastePostProcessor implementation="org.jetbrains.astro.codeInsight.imports.AstroComponentCopyPasteProcessor"/>
 
+    <referencesSearch implementation="org.jetbrains.astro.lang.psi.AstroReferencesSearch" order="first" />
+
     <webSymbols.framework id="astro" implementation="org.jetbrains.astro.AstroFramework"/>
     <webSymbols.webTypes enableByDefault="true" source="web-types/astro.web-types.json"/>
     <webSymbols.queryConfigurator implementation="org.jetbrains.astro.webSymbols.AstroQueryConfigurator"/>
