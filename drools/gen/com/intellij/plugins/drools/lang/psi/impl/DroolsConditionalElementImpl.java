@@ -29,6 +29,12 @@ public class DroolsConditionalElementImpl extends DroolsPsiCompositeElementImpl 
   }
 
   @Override
+  @Nullable
+  public DroolsLhsOOPathBind getLhsOOPathBind() {
+    return findChildByClass(DroolsLhsOOPathBind.class);
+  }
+
+  @Override
   @NotNull
   public List<DroolsLhsPatternBind> getLhsPatternBindList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DroolsLhsPatternBind.class);

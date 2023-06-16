@@ -310,7 +310,7 @@ lhsOOPathSegmentId ::= JAVA_IDENTIFIER
 
 nameId ::= JAVA_IDENTIFIER
 
-conditionalElement ::=  ("(" lhsPatternBind (("or"|"||"| "and"|"&&") lhsPatternBind)* ")") | lhsPatternBind
+conditionalElement ::=  ("(" lhsPatternBind (("or"|"||"| "and"|"&&") lhsPatternBind)* ")") | lhsPatternBind | lhsOOPathBind
 
 lhsAccumulate ::= "accumulate" "(" lhsAnd (","|";") accumulateFunctionBinding ("," accumulateFunctionBinding)* (";" constraints)? ")" ";"?
 

@@ -1,0 +1,6 @@
+rule SmallDepositApprove when
+    $l: /loanApplications[ applicant.age >= 20, deposit < 1000, amount <= 2000 ]
+    not /loanApplications[applicant.age <= 100]
+then
+    modify($l) { setApproved(true) };
+end

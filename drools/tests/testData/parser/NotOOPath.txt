@@ -1,0 +1,123 @@
+Drools File
+  RULE_STATEMENT
+    PsiElement(rule)('rule')
+    PsiWhiteSpace(' ')
+    RULE_NAME
+      STRING_ID
+        IDENTIFIER
+          PsiElement(JAVA_IDENTIFIER)('SmallDepositApprove')
+    PsiWhiteSpace(' ')
+    LHS
+      PsiElement(when)('when')
+      PsiWhiteSpace('\n    ')
+      LHS_EXPRESSION
+        LHS_OR
+          LHS_AND
+            LHS_UNARY
+              LHS_OO_PATH_BIND
+                NAME_ID
+                  PsiElement(JAVA_IDENTIFIER)('$l')
+                PsiElement(:)(':')
+                PsiWhiteSpace(' ')
+                PsiElement(/)('/')
+                LHS_OOP_SEGMENT
+                  LHS_OO_PATH_SEGMENT_ID
+                    PsiElement(JAVA_IDENTIFIER)('loanApplications')
+                  PsiElement([)('[')
+                  PsiWhiteSpace(' ')
+                  CONSTRAINT
+                    EQUALITY_EXPR
+                      PRIMARY_EXPR
+                        IDENTIFIER
+                          PsiElement(JAVA_IDENTIFIER)('applicant')
+                        PsiElement(.)('.')
+                        IDENTIFIER
+                          PsiElement(JAVA_IDENTIFIER)('age')
+                      PsiWhiteSpace(' ')
+                      PsiElement(>=)('>=')
+                      PsiWhiteSpace(' ')
+                      NUMBER_LITERAL
+                        PsiElement(INT_TOKEN)('20')
+                  PsiElement(,)(',')
+                  PsiWhiteSpace(' ')
+                  CONSTRAINT
+                    EQUALITY_EXPR
+                      PRIMARY_EXPR
+                        IDENTIFIER
+                          PsiElement(JAVA_IDENTIFIER)('deposit')
+                      PsiWhiteSpace(' ')
+                      PsiElement(<)('<')
+                      PsiWhiteSpace(' ')
+                      NUMBER_LITERAL
+                        PsiElement(INT_TOKEN)('1000')
+                  PsiElement(,)(',')
+                  PsiWhiteSpace(' ')
+                  CONSTRAINT
+                    EQUALITY_EXPR
+                      PRIMARY_EXPR
+                        IDENTIFIER
+                          PsiElement(JAVA_IDENTIFIER)('amount')
+                      PsiWhiteSpace(' ')
+                      PsiElement(<=)('<=')
+                      PsiWhiteSpace(' ')
+                      NUMBER_LITERAL
+                        PsiElement(INT_TOKEN)('2000')
+                  PsiWhiteSpace(' ')
+                  PsiElement(])(']')
+        PsiWhiteSpace('\n    ')
+        LHS_OR
+          LHS_AND
+            LHS_UNARY
+              LHS_NOT
+                PsiElement(not)('not')
+                PsiWhiteSpace(' ')
+                CONDITIONAL_ELEMENT
+                  LHS_OO_PATH_BIND
+                    PsiElement(/)('/')
+                    LHS_OOP_SEGMENT
+                      LHS_OO_PATH_SEGMENT_ID
+                        PsiElement(JAVA_IDENTIFIER)('loanApplications')
+                      PsiElement([)('[')
+                      CONSTRAINT
+                        EQUALITY_EXPR
+                          PRIMARY_EXPR
+                            IDENTIFIER
+                              PsiElement(JAVA_IDENTIFIER)('applicant')
+                            PsiElement(.)('.')
+                            IDENTIFIER
+                              PsiElement(JAVA_IDENTIFIER)('age')
+                          PsiWhiteSpace(' ')
+                          PsiElement(<=)('<=')
+                          PsiWhiteSpace(' ')
+                          NUMBER_LITERAL
+                            PsiElement(INT_TOKEN)('100')
+                      PsiElement(])(']')
+    PsiWhiteSpace('\n')
+    RHS
+      PsiElement(then)('then')
+      PsiWhiteSpace('\n    ')
+      MODIFY_RHS_STATEMENT
+        PsiElement(modify)('modify')
+        PAR_EXPR
+          PsiElement(()('(')
+          PRIMARY_EXPR
+            IDENTIFIER
+              PsiElement(JAVA_IDENTIFIER)('$l')
+          PsiElement())(')')
+        PsiWhiteSpace(' ')
+        PsiElement({)('{')
+        PsiWhiteSpace(' ')
+        PRIMARY_EXPR
+          IDENTIFIER
+            PsiElement(JAVA_IDENTIFIER)('setApproved')
+          IDENTIFIER_SUFFIX
+            ARGUMENTS
+              PsiElement(()('(')
+              BOOLEAN_LITERAL
+                PsiElement(TRUE)('true')
+              PsiElement())(')')
+        PsiWhiteSpace(' ')
+        PsiElement(})('}')
+      PsiElement(;)(';')
+    PsiWhiteSpace('\n')
+    PsiElement(end)('end')
