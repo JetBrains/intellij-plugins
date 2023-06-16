@@ -1744,7 +1744,7 @@ public class DroolsParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "importStatement_1_0")) return false;
     boolean r;
     r = consumeToken(b, FUNCTION);
-    if (!r) r = consumeToken(b, "static");
+    if (!r) r = consumeToken(b, STATIC);
     return r;
   }
 

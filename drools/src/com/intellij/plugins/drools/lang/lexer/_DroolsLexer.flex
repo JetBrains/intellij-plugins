@@ -154,6 +154,7 @@ STRING_LITERAL=\"([^\\\"\r\n]|{ESCAPE_SEQUENCE})*(\"|\\)?
 "soundslike"                  {  return      SOUNDSLIKE; }
 "isA"                         {  return      IS_A; }
 "window"                      {  return      WINDOW; }
+"static"                      {  return      STATIC; }
 
 "this"                        {  return      THIS; }
 

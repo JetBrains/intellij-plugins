@@ -42,4 +42,9 @@ public abstract class DroolsImportImpl extends DroolsPsiCompositeElementImpl imp
   public boolean isFunction() {
     return findChildByType(DroolsTokenTypes.FUNCTION) != null;
   }
+
+  @Override
+  public boolean isStatic() {
+    return findChildByType(DroolsTokenTypes.STATIC) != null;
+  }
 }

@@ -15,4 +15,6 @@ public interface DroolsImport extends DroolsPsiCompositeElement {
   String getImportedFunction();
 
   boolean isFunction();
+
+  boolean isStatic();
 }

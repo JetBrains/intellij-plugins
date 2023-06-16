@@ -56,8 +56,8 @@ public class DroolsFile extends PsiFileBase implements PsiImportHolder {
     return findChildrenByClass(DroolsQueryStatement.class);
   }
 
-  public DroolsImport[] getImports() {
-    return findChildrenByClass(DroolsImport.class);
+  public DroolsImportStatement[] getImports() {
+    return findChildrenByClass(DroolsImportStatement.class);
   }
 
   public DroolsGlobalStatement[] getGlobalVariables() {

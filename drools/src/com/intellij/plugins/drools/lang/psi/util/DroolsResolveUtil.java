@@ -40,6 +40,7 @@ public final class DroolsResolveUtil {
     DroolsGlobalVariablesProcessor.getInstance(),
     DroolsFunctionsProcessor.getInstance(),
     DroolsImportedFunctionsProcessor.getInstance(),
+    DroolsImportedStaticMembersProcessor.getInstance(),
     DroolsDeclaredTypesProcessor.getInstance(),
     DroolsLocalVariablesProcessor.getInstance(),
     DroolsUnitMembersProcessor.getInstance(),
@@ -110,6 +111,7 @@ public final class DroolsResolveUtil {
 
     if (!processFunctions(processor, reference)) return false;
     if (!processImportedFunctions(processor, reference)) return false;
+    if (!processImportedStaticMembers(processor, reference)) return false;
     if (!processParameters(processor, reference)) return false;
     if (!processGlobalVariables(processor, reference)) return false;
 
@@ -131,6 +133,16 @@ public final class DroolsResolveUtil {
     if (containingFile instanceof DroolsFile) {
       for (PsiMethod importedFunction : DroolsImportedFunctionsProcessor.getImportedFunctions((DroolsFile)containingFile)) {
         if (!processor.process(importedFunction)) return false;
+      }
+    }
+    return true;
+  }
+
+  private static boolean processImportedStaticMembers(CollectProcessor<PsiElement> processor, DroolsReference reference) {
+    PsiFile containingFile = reference.getContainingFile();
+    if (containingFile instanceof DroolsFile) {
+      for (PsiField psiField : DroolsImportedStaticMembersProcessor.getImportedStaticMembers((DroolsFile)containingFile)) {
+        if (!processor.process(psiField)) return false;
       }
     }
     return true;

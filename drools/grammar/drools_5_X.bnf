@@ -78,6 +78,7 @@
       DO="do"
       WINDOW="window"
       ENUM="enum"
+      STATIC="static"
 
       LBRACE="{"
       RBRACE="}"

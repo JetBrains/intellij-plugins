@@ -266,6 +266,7 @@ public interface DroolsTokenTypes {
   IElementType SEMICOLON = DroolsElementFactory.getTokenType(";");
   IElementType SHORT = DroolsElementFactory.getTokenType("short");
   IElementType SOUNDSLIKE = DroolsElementFactory.getTokenType("soundslike");
+  IElementType STATIC = DroolsElementFactory.getTokenType("static");
   IElementType STRING_IDENTIFIER = DroolsElementFactory.getTokenType("STRING_IDENTIFIER");
   IElementType STRING_TOKEN = DroolsElementFactory.getTokenType("STRING_TOKEN");
   IElementType TEMPLATE = DroolsElementFactory.getTokenType("template");
