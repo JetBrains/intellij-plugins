@@ -40,5 +40,4 @@ class PrismaLspServerDescriptor(project: Project) : ProjectWideLspServerDescript
   }
 
   override val lspCompletionSupport = null
-  override val useGenericNavigation = false
 }
