@@ -16,7 +16,7 @@
   <warning>console.log</warning>('line endings')
 
 
-  function foobar(p) {
+  function foobar(<weak_warning>p</weak_warning>) {
     
   }
 </script>
