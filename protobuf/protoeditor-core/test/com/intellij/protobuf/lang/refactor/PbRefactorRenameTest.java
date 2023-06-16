@@ -37,6 +37,7 @@ public class PbRefactorRenameTest extends PbCodeInsightFixtureTestCase {
     super.setUp();
     TestUtils.addTestFileResolveProvider(getProject(), getTestRootDisposable());
     TestUtils.registerTestdataFileExtension();
+    PbProjectSettings.getInstance(myFixture.getProject()).setIndexBasedResolveEnabled(false);
   }
 
   public void testRenameMessage() throws IOException {
