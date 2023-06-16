@@ -21,7 +21,7 @@ import {CommonModule} from "@angular/common";
     </div>
     <div *appHelloInternalGeneric="let local">
       {{local.toLowerCase()}}
-      {{expectNumber(<error descr="Argument type  \"left\" | \"right\"  is not assignable to parameter type  number   Type \"left\" is not assignable to type number">local</error>)}}
+      {{expectNumber(<error descr="Argument type  \"left\" | \"right\"  is not assignable to parameter type  number   Type  \"left\"  is not assignable to type  number ">local</error>)}}
     </div>
   `,
 })

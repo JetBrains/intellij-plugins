@@ -12,8 +12,8 @@ function acceptNumber(x: number): number {
 
 <template>
   <section>
-    <span v-text="acceptNumber(<error descr="Argument type  number | undefined  is not assignable to parameter type  number   Type undefined is not assignable to type number">union</error>)"></span>
-    <span>{{ acceptNumber(<error descr="Argument type  number | undefined  is not assignable to parameter type  number   Type undefined is not assignable to type number">union</error>) }}</span>
+    <span v-text="acceptNumber(<error descr="Argument type  number | undefined  is not assignable to parameter type  number   Type  undefined  is not assignable to type  number ">union</error>)"></span>
+    <span>{{ acceptNumber(<error descr="Argument type  number | undefined  is not assignable to parameter type  number   Type  undefined  is not assignable to type  number ">union</error>) }}</span>
     <div v-if="union != null">
       <span v-text="acceptNumber(union)"></span>
       <span>{{ acceptNumber(union) }}</span>
@@ -22,8 +22,8 @@ function acceptNumber(x: number): number {
       <span v-text="acceptNumber(<error descr="Argument type  undefined  is not assignable to parameter type  number ">union</error>)"></span>
       <span>{{ acceptNumber(<error descr="Argument type  undefined  is not assignable to parameter type  number ">union</error>) }}</span>
     </div>
-    <span v-text="acceptNumber(<error descr="Argument type  number | undefined  is not assignable to parameter type  number   Type undefined is not assignable to type number">union</error>)"></span>
-    <span>{{ acceptNumber(<error descr="Argument type  number | undefined  is not assignable to parameter type  number   Type undefined is not assignable to type number">union</error>) }}</span>
+    <span v-text="acceptNumber(<error descr="Argument type  number | undefined  is not assignable to parameter type  number   Type  undefined  is not assignable to type  number ">union</error>)"></span>
+    <span>{{ acceptNumber(<error descr="Argument type  number | undefined  is not assignable to parameter type  number   Type  undefined  is not assignable to type  number ">union</error>) }}</span>
     {{union ? union.toFixed() : union.<error descr="Unresolved function or method toFixed()">toFixed</error>()}}
     {{union.<error descr="Unresolved function or method toFixed()">toFixed</error>()}}
   </section>

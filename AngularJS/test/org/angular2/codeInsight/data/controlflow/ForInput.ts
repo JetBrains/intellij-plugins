@@ -10,7 +10,7 @@ import {CommonModule} from "@angular/common";
     <div *ngIf="isString(bar)">
       <div *ngFor="let letter of bar">{{letter}}</div>
     </div>
-    <div *ngFor="let letter of <error descr="Type  string | number  is not assignable to type (string & NgIterable<string>) | (number & NgIterable<string>) | undefined | null...  Type string | number is not assignable to type (string & Array<string>) | (string & Iterable<string>) | (number & Array<string>) | (number & Iterable<string>) | undefined | null">bar</error>">{{letter}}</div>
+    <div *ngFor="let letter of <error descr="Type  string | number  is not assignable to type (string & NgIterable<string>) | (number & NgIterable<string>) | undefined | null...  Type  string | number  is not assignable to type (string & Array<string>) | (string & Iterable<string>) | (number & Array<string>) | (number & Iterable<string>) | undefined | null">bar</error>">{{letter}}</div>
   `,
 })
 export class FlowComponent {

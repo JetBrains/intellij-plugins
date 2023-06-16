@@ -13,8 +13,8 @@ function renderNumber(num: number): string {
 
 <template>
   <section>
-    {{renderNumber(<error descr="Argument type  number | string | number[]  is not assignable to parameter type  number   Type string is not assignable to type number">union</error>)}}
-    <div v-for="item in union">{{ renderNumber(<error descr="Argument type  number | string  is not assignable to parameter type  number   Type string is not assignable to type number">item</error>) }}</div>
+    {{renderNumber(<error descr="Argument type  number | string | number[]  is not assignable to parameter type  number   Type  string  is not assignable to type  number ">union</error>)}}
+    <div v-for="item in union">{{ renderNumber(<error descr="Argument type  number | string  is not assignable to parameter type  number   Type  string  is not assignable to type  number ">item</error>) }}</div>
     <div v-if="typeof union === `number`">
       <!-- Vue treats numbers in v-for as range iteration -->
       <div v-for="item in union">{{ renderNumber(item) }}</div>

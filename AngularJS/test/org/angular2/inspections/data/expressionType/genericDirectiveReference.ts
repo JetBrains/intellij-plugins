@@ -49,7 +49,7 @@ function moment(input?: string, strict?: boolean): Moment {
       #dp2
       [startAt]="12"
       startView="multi-year"
-      (monthSelected)="setMonthAndYear(<error descr="Argument type  number  is not assignable to parameter type  Moment ">$event</error>, <error descr="Argument type  MatDatepicker<number>  is not assignable to parameter type  MatDatepicker<Moment> ...  Type (date: number) => void is not assignable to type (date: Moment) => void    Type Moment is not assignable to type number">dp2</error>)"
+      (monthSelected)="setMonthAndYear(<error descr="Argument type  number  is not assignable to parameter type  Moment ">$event</error>, <error descr="Argument type  MatDatepicker<number>  is not assignable to parameter type  MatDatepicker<Moment> ...  Type  (date: number) => void  is not assignable to type  (date: Moment) => void     Type  Moment  is not assignable to type  number ">dp2</error>)"
       (yearSelected)="acceptBoolean(<error descr="Argument type  MatDatepicker<number>  is not assignable to parameter type  boolean ">dp2</error>)"
       panelClass="example-month-picker"
     />

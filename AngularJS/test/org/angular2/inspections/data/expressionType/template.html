@@ -1,9 +1,9 @@
-<div *ngFor="let item of <error descr="Type  number  is not assignable to type  NgIterable<T> | QueryList<T> ...  Type number is not assignable to type Array<T> | Iterable<T> | QueryList<T>">myNumber</error>">{{item}}</div>
+<div *ngFor="let item of <error descr="Type  number  is not assignable to type  NgIterable<T> | QueryList<T> ...  Type  number  is not assignable to type Array<T> | Iterable<T> | QueryList<T>">myNumber</error>">{{item}}</div>
 
-<div *ngFor="let item of myArray; trackBy: <error descr="Type  (items: string) => string  is not assignable to type  TrackByFunction<string>   Type number is not assignable to type string">myBadFunction</error>">{{item}}</div>
-<ng-template ngFor [ngForOf]="myArray" [ngForTrackBy]="<error descr="Type  (items: string) => string  is not assignable to type  TrackByFunction<string>   Type number is not assignable to type string">myBadFunction</error>" let-item>{{item}}</ng-template>
+<div *ngFor="let item of myArray; trackBy: <error descr="Type  (items: string) => string  is not assignable to type  TrackByFunction<string>   Type  number  is not assignable to type  string ">myBadFunction</error>">{{item}}</div>
+<ng-template ngFor [ngForOf]="myArray" [ngForTrackBy]="<error descr="Type  (items: string) => string  is not assignable to type  TrackByFunction<string>   Type  number  is not assignable to type  string ">myBadFunction</error>" let-item>{{item}}</ng-template>
 
-<div *ngFor="let item of <error descr="Type  Array<string>  is not assignable to type NgIterable<never> | QueryList<never>...  Type Array<string> is not assignable to type Array<never> | Iterable<never> | QueryList<never>">myList</error>; trackBy: myAnotherFunction">{{item}}</div>
+<div *ngFor="let item of <error descr="Type  Array<string>  is not assignable to type NgIterable<never> | QueryList<never>...  Type  Array<string>  is not assignable to type Array<never> | Iterable<never> | QueryList<never>">myList</error>; trackBy: myAnotherFunction">{{item}}</div>
 
 <div *ngFor="let item of myArray; trackBy: myOkFunction">{{item}}</div>
 <ng-template ngFor [ngForOf]="myArray" [ngForTrackBy]="myOkFunction" let-item>{{item}}</ng-template>
@@ -14,7 +14,7 @@
 <div *ngIf="true; extra: <error descr="Type  12  is not assignable to type  never ">12</error>; super: <error descr="Type  \"ee\"  is not assignable to type  never ">'ee'</error>"></div>
 <ng-template [ngIf]="true" [ngIfExtra]="<error descr="Type  12  is not assignable to type  never ">12</error>" [ngIfSuper]="<error descr="Type  \"ee\"  is not assignable to type  never ">'ee'</error>"></ng-template>
 
-<div *ngIf="true; then <error descr="Type  string  is not assignable to type TemplateRef<NgIfContext> | null  Type string is not assignable to type TemplateRef<NgIfContext>">myThen</error>; else myElse"></div>
+<div *ngIf="true; then <error descr="Type  string  is not assignable to type TemplateRef<NgIfContext> | null  Type  string  is not assignable to type  TemplateRef<NgIfContext> ">myThen</error>; else myElse"></div>
 
 <ng-template #templateRef></ng-template>
 <div *ngIf="false; else templateRef"></div>
@@ -24,7 +24,7 @@
 <div *ngIf="false; number: <error descr="Type  MyCustomComponent  is not assignable to type  number ">compRef</error>"></div>
 
 <div #divRef></div>
-<div *ngIf="false; else <error descr="Type  HTMLDivElement  is not assignable to type TemplateRef<NgIfContext> | null  Type HTMLDivElement is not assignable to type TemplateRef<NgIfContext>">divRef</error>"></div>
+<div *ngIf="false; else <error descr="Type  HTMLDivElement  is not assignable to type TemplateRef<NgIfContext> | null  Type  HTMLDivElement  is not assignable to type  TemplateRef<NgIfContext> ">divRef</error>"></div>
 
 <div appDir #dirRef="dir"></div>
 <div *ngIf="false; number: <error descr="Type  MyDirective  is not assignable to type  number ">dirRef</error>"></div>

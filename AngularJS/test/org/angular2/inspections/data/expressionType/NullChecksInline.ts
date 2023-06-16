@@ -10,9 +10,9 @@ import {CommonModule} from "@angular/common";
     {{bar.<error descr="Qualifier of 'length' is possibly undefined">length</error>}}
     {{bar.<error descr="Unresolved variable unresolved">unresolved</error>}}
     <div [title]="bar.<error descr="Qualifier of 'length' is possibly undefined">length</error>"></div>
-    {{acceptString(<error descr="Argument type  string | undefined  is not assignable to parameter type  string   Type undefined is not assignable to type string">bar</error>)}}
-    <null-checks [foo]="<error descr="Type  string | undefined  is not assignable to type  string   Type undefined is not assignable to type string">bar</error>"></null-checks>
-    <null-checks [foo]="<error descr="Type  string | null  is not assignable to type  string   Type null is not assignable to type string">bazPromise | async</error>"></null-checks>
+    {{acceptString(<error descr="Argument type  string | undefined  is not assignable to parameter type  string   Type  undefined  is not assignable to type  string ">bar</error>)}}
+    <null-checks [foo]="<error descr="Type  string | undefined  is not assignable to type  string   Type  undefined  is not assignable to type  string ">bar</error>"></null-checks>
+    <null-checks [foo]="<error descr="Type  string | null  is not assignable to type  string   Type  null  is not assignable to type  string ">bazPromise | async</error>"></null-checks>
     <null-checks [foo]="(bazPromise | async)!"></null-checks>
   `
 })

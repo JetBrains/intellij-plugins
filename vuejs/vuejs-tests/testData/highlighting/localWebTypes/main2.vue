@@ -1,7 +1,7 @@
 <template>
   <div>
-    <Test2 :foo='<weak_warning descr="Type  number  is not assignable to type  string | undefined   Type number is not assignable to type string">12</weak_warning>' :bar="<weak_warning descr="Type number is not assignable to type string">12</weak_warning>" :fooBar="12"> </Test2>
-    <Test1 :foo='<weak_warning descr="Type  number  is not assignable to type  string | undefined   Type number is not assignable to type string">12</weak_warning>' :bar="<weak_warning descr="Type number is not assignable to type string">12</weak_warning>" :fooBar="12"> </Test1>
+    <Test2 :foo='<weak_warning descr="Type  number  is not assignable to type  string | undefined   Type  number  is not assignable to type  string ">12</weak_warning>' :bar="<weak_warning descr="Type  number  is not assignable to type  string ">12</weak_warning>" :fooBar="12"> </Test2>
+    <Test1 :foo='<weak_warning descr="Type  number  is not assignable to type  string | undefined   Type  number  is not assignable to type  string ">12</weak_warning>' :bar="<weak_warning descr="Type  number  is not assignable to type  string ">12</weak_warning>" :fooBar="12"> </Test1>
   </div>
 </template>
 <script>

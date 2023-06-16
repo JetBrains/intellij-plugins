@@ -11,7 +11,7 @@
 <script>
 import {mapState} from "vuex";
 
-<weak_warning descr="Unresolved variable or type module">module</weak_warning>.exports = <weak_warning descr="Unresolved variable or type Vue">Vue</weak_warning>.extend(<weak_warning descr="Argument type {computed: any, methods: {add()}, name: string, props: {msg: StringConstructor}} is not assignable to parameter type Node">{</weak_warning>
+<weak_warning descr="Unresolved variable or type module">module</weak_warning>.exports = <weak_warning descr="Unresolved variable or type Vue">Vue</weak_warning>.extend(<weak_warning descr="Argument type {    computed: any,    methods: {        add()    },    name: string,    props: {        msg: StringConstructor    }} is not assignable to parameter type  Node ">{</weak_warning>
   name: "HelloWorld",
   props: {
     msg: String
