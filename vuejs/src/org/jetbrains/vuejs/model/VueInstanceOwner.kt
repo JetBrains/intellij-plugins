@@ -130,7 +130,9 @@ private fun contributeComponentProperties(instance: VueInstanceOwner,
         if (inject is VueScriptSetupInfoProvider.VueScriptSetupInject) return true
 
         val sourceElement = inject.source ?: return true
-        val type = provides[inject.from ?: inject.name]?.provide?.jsType
+        val type = provides.asSequence().map { it.provide }.find { provide ->
+          provide.symbol?.isEquivalentTo(inject.symbol) ?: (provide.name == (inject.from ?: inject.name))
+        }?.jsType
         val implicitElement = VueImplicitElement(inject.name, type, sourceElement, JSImplicitElement.Type.Property, true)
         process(inject, proximity, injects, true, type, implicitElement)
         return true

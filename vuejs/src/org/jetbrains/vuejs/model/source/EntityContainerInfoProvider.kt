@@ -125,7 +125,8 @@ interface EntityContainerInfoProvider<T> {
     open class MemberReader(private val propertyName: String,
                             private val canBeArray: Boolean = false,
                             private val canBeObject: Boolean = true,
-                            private val canBeFunctionResult: Boolean = false) {
+                            private val canBeFunctionResult: Boolean = false,
+                            private val includeComputed: Boolean = false) {
       fun readMembers(descriptor: JSElement): List<Pair<String, JSElement>> =
         when (descriptor) {
           is JSObjectLiteralExpression -> readObjectLiteral(descriptor)
@@ -158,7 +159,7 @@ interface EntityContainerInfoProvider<T> {
           }
         }
         if (propsObject != null && canBeObject) {
-          return collectMembers(propsObject)
+          return collectMembers(propsObject, includeComputed)
         }
         if (canBeArray)
           readPropsFromArray(property).let {
@@ -178,7 +179,7 @@ interface EntityContainerInfoProvider<T> {
           ?.let { exportedMember ->
             val objectLiteral = objectLiteralFor(exportedMember)
             if (canBeObject && objectLiteral != null)
-              collectMembers(objectLiteral)
+              collectMembers(objectLiteral, includeComputed)
             else if (canBeArray)
               readPropsFromArray(exportedMember)
             else null

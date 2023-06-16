@@ -19,7 +19,7 @@ class VueInjectSymbolsScope(private val enclosingComponent: VueSourceComponent)
     val origin = VueScopeElementOrigin(enclosingComponent)
     val provides = enclosingComponent.collectProvides()
 
-    provides.values.forEach { (provide, container) ->
+    provides.forEach { (provide, container) ->
       consumer(VueProvideSymbol(provide, container, origin, KIND_JS_PROPERTIES))
       consumer(VueProvideSymbol(provide, container, origin, KIND_JS_STRING_LITERALS))
     }

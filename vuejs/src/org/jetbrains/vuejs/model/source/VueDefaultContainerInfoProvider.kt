@@ -6,7 +6,9 @@ import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
+import com.intellij.lang.javascript.psi.types.JSUniqueSymbolTypeImpl
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyCallType
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
@@ -61,7 +63,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
       val Delimiters = MemberReader(DELIMITERS_PROP, true, false)
       val Model = MemberReader(MODEL_PROP)
       val Data = MemberReader(DATA_PROP, canBeFunctionResult = true)
-      val Provides = MemberReader(PROVIDE_PROP, canBeFunctionResult = true)
+      val Provides = MemberReader(PROVIDE_PROP, canBeFunctionResult = true, includeComputed = true)
       val Injects = MemberReader(INJECT_PROP, canBeArray = true)
     }
 
@@ -288,6 +290,11 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
                                         override val source: PsiElement?) : VueEmitCall
 
   private class VueSourceInject(override val name: String, override val source: PsiElement?) : VueInject {
-    override val from: String? = getInjectAliasName(source.asSafely<JSProperty>()?.initializerOrStub)
+
+    private val keyType = getInjectionKeyType(source.asSafely<JSProperty>()?.initializerOrStub)
+
+    override val symbol: PsiNamedElement? = keyType.asSafely<JSUniqueSymbolTypeImpl>()?.element
+
+    override val from: String? = keyType.asSafely<JSStringLiteralTypeImpl>()?.literal
   }
 }

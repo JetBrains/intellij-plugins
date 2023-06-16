@@ -140,8 +140,8 @@ interface VueScopeElement : VueDocumentedItem {
     return VueModelDirectiveProperties(prop, event)
   }
 
-  fun collectProvides(): Map<String, VueProvideEntry> {
-    val provides = mutableMapOf<String, VueProvideEntry>()
+  fun collectProvides(): List<VueProvideEntry> {
+    val provides = mutableListOf<VueProvideEntry>()
     val visited = mutableSetOf<VueScopeElement>()
 
     fun acceptElement(element: VueScopeElement?) {
@@ -149,7 +149,7 @@ interface VueScopeElement : VueDocumentedItem {
 
       if (element is VueContainer) {
         element.provides.forEach {
-          provides[it.name] = VueProvideEntry(it, element)
+          provides.add(VueProvideEntry(it, element))
         }
       }
       if (element is VueGlobal) {

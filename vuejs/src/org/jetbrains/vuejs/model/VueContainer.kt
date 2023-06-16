@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.model
 import com.intellij.lang.javascript.psi.JSParameterTypeDecorator
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiNamedElement
 import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 import org.jetbrains.vuejs.context.isVue3
 import org.jetbrains.vuejs.model.source.MODEL_VALUE_PROP
@@ -120,9 +121,13 @@ interface VueModelDecl : VueNamedSymbol {
 }
 
 interface VueProvide : VueNamedSymbol {
+  val symbol: PsiNamedElement? get() = null
+
   val jsType: JSType? get() = null
 }
 
 interface VueInject : VueNamedSymbol {
+  val symbol: PsiNamedElement? get() = null
+
   val from: String? get() = null
 }

@@ -127,10 +127,10 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
-  fun testProvide() {
+  fun testInject() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
     myFixture.copyDirectoryToProject(getTestName(true), "")
-    myFixture.configureFromTempProjectFile("Inject.vue")
+    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
 
     doTest(
       "literal" to "string",
@@ -142,6 +142,17 @@ class VueTypeResolveTest : BasePlatformTestCase() {
       "scriptSetupRef" to "string",
       "globalProvide" to "number",
       "globalProvideRef" to "number",
+    )
+  }
+
+  fun testInjectSymbol() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.copyDirectoryToProject(getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+
+    doTest(
+      "myLocalInject" to "{name: string}",
+      "myLocalInject.n<caret>ame" to "\"bob\"",
     )
   }
 

@@ -11,6 +11,7 @@ import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.index.JSSymbolUtil
 import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecma6.JSComputedPropertyNameOwner
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptAsExpression
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
@@ -235,7 +236,7 @@ fun <T : PsiElement> resolveElementTo(element: PsiElement?, vararg classes: KCla
   return null
 }
 
-fun collectMembers(element: JSObjectLiteralExpression): List<Pair<String, JSElement>> {
+fun collectMembers(element: JSObjectLiteralExpression, includeComputed: Boolean = false): List<Pair<String, JSElement>> {
   val result = mutableListOf<Pair<String, JSElement>>()
   val initialPropsList = element.propertiesIncludingSpreads
   val queue = ArrayDeque<JSElement>(initialPropsList.size)
@@ -251,6 +252,11 @@ fun collectMembers(element: JSObjectLiteralExpression): List<Pair<String, JSElem
       is JSProperty -> {
         if (property.name != null) {
           result.add(Pair(property.name!!, property))
+        }
+        else if (includeComputed && property is JSComputedPropertyNameOwner) {
+          property.computedPropertyName?.expressionAsReferenceName?.let {
+            result.add(Pair(it, property))
+          }
         }
       }
       else -> processJSTypeMembers(JSTypeUtils.getTypeOfElement(element)).toCollection(result)
@@ -343,16 +349,14 @@ fun getDefaultTypeFromPropOptions(expression: JSExpression?): JSType? =
     ?.jsType
     ?.substitute()
 
-fun getInjectAliasName(expression: JSExpression?): String? =
+fun getInjectionKeyType(expression: JSExpression?): JSType? =
   (expression as? JSObjectLiteralExpression)
     ?.findProperty(INJECT_FROM)
     ?.jsType
     ?.let { type ->
       if (type is JSWidenType) type.originalType else type
     }
-    ?.let { type ->
-      (type as? JSStringLiteralTypeImpl)?.literal
-    }
+    ?.substitute()
 
 inline fun <reified T : JSExpression> XmlAttributeValue.findJSExpression(): T? {
   return findVueJSEmbeddedExpressionContent()?.firstChild as? T
