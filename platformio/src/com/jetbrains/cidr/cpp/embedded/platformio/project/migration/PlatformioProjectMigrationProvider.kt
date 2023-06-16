@@ -54,15 +54,27 @@ private class PlatformioProjectMigrationConverter(val context: ConversionContext
     return filesToDelete
   }
 
+  override fun createRunConfigurationsConverter(): ConversionProcessor<RunManagerSettings> =
+    object : ConversionProcessor<RunManagerSettings>() {
+      override fun isConversionNeeded(settings: RunManagerSettings): Boolean = this@PlatformioProjectMigrationConverter.isConversionNeeded
+      override fun process(settings: RunManagerSettings) {
+        val names = setOf("Debug", "Production", "Z_DUMMY_TARGET")
+        val elementsToDelete = settings.runConfigurations.filter {
+          names.contains(it.getAttributeValue("TARGET_NAME"))
+        }.toList()
+        elementsToDelete.forEach { it.detach() }
+      }
+    }
+
   override fun createWorkspaceFileConverter(): ConversionProcessor<WorkspaceSettings> =
     object : ConversionProcessor<WorkspaceSettings>() {
       override fun isConversionNeeded(settings: WorkspaceSettings?): Boolean = this@PlatformioProjectMigrationConverter.isConversionNeeded
 
       override fun process(settings: WorkspaceSettings) {
-        arrayOf("CMakePresetLoader", "CMakeReloadState", "CMakeRunConfigurationManager")
-          .forEach {
-            settings.getComponentElement(it)?.apply { parent.removeContent(this) }
-          }
+        val elementsToDelete =
+          arrayOf("CMakePresetLoader", "CMakeReloadState", "CMakeRunConfigurationManager")
+            .map { settings.getComponentElement(it) }.filterNotNull().toList()
+        elementsToDelete.forEach { it.detach() }
       }
     }
 
