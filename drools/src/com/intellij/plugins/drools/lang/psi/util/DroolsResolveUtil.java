@@ -327,7 +327,7 @@ public final class DroolsResolveUtil {
       final String name = unitStatement.getUnitName().getText();
       final Module module = ModuleUtilCore.findModuleForPsiElement(droolsFile);
       final GlobalSearchScope scope =
-        module != null ? module.getModuleRuntimeScope(false) : GlobalSearchScope.allScope(droolsFile.getProject());
+        module != null ? module.getModuleRuntimeScope(false) : getSearchScope(droolsFile);
       for (PsiPackage defaultPackage : getDefaultPackages(droolsFile)) {
         final PsiClass[] classByShortName = defaultPackage.findClassByShortName(name, scope);
         if (classByShortName.length > 0) return classByShortName[0];
@@ -382,34 +382,38 @@ public final class DroolsResolveUtil {
   public static boolean processQualifiedIdentifier(@NotNull CollectProcessor<PsiElement> processor,
                                                    @NotNull DroolsReference reference) {
     if (!isDroolsQualifiedIdentifier(reference)) return true;
-    DroolsReference leftReference = getLeftReference(reference);
-    if (leftReference == null) {
-      if (isImportQualifier(reference.getElement())) {
-        return processTopPackage(processor, reference.getProject());
+    final PsiFile file = reference.getContainingFile();
+    if (file instanceof DroolsFile) {
+      final GlobalSearchScope searchScope = getSearchScope((DroolsFile)file);
+      DroolsReference leftReference = getLeftReference(reference);
+      if (leftReference == null) {
+        if (isImportQualifier(reference.getElement())) {
+          return processTopPackage(processor, searchScope, reference.getProject());
+        }
+        return processSimplePackageOrClass(processor, reference); //
       }
-      return processSimplePackageOrClass(processor, reference); //
-    }
-    else {
-      for (ResolveResult result : leftReference.multiResolve(false)) {
-        PsiElement element = result.getElement();
-        if (element instanceof PsiPackage) {
-          for (PsiPackage subPackage : ((PsiPackage)element).getSubPackages()) {
-            if (!processor.process(subPackage)) return false;
+      else {
+        for (ResolveResult result : leftReference.multiResolve(false)) {
+          PsiElement element = result.getElement();
+          if (element instanceof PsiPackage) {
+            for (PsiPackage subPackage : ((PsiPackage)element).getSubPackages(searchScope)) {
+              if (!processor.process(subPackage)) return false;
+            }
+            for (PsiClass psiClass : ((PsiPackage)element).getClasses(searchScope)) {
+              if (!processor.process(psiClass)) return false;
+            }
           }
-          for (PsiClass psiClass : ((PsiPackage)element).getClasses()) {
-            if (!processor.process(psiClass)) return false;
+          else if (element instanceof PsiClass) {
+            for (PsiClass psiClass : ((PsiClass)element).getInnerClasses()) {
+              if (!processor.process(psiClass)) return false;
+            }
+            processClassMembers(processor, Collections.singleton((PsiClass)element), true);
           }
-        }
-        else if (element instanceof PsiClass) {
-          for (PsiClass psiClass : ((PsiClass)element).getInnerClasses()) {
-            if (!processor.process(psiClass)) return false;
-          }
-          processClassMembers(processor, Collections.singleton((PsiClass)element), true);
-        }
-        else if (element instanceof BeanPropertyElement) {
-          PsiType propertyType = ((BeanPropertyElement)element).getPropertyType();
-          if (propertyType instanceof PsiClassType) {
-            processClassMembers(processor, Collections.singleton(((PsiClassType)propertyType).resolve()), false);
+          else if (element instanceof BeanPropertyElement) {
+            PsiType propertyType = ((BeanPropertyElement)element).getPropertyType();
+            if (propertyType instanceof PsiClassType) {
+              processClassMembers(processor, Collections.singleton(((PsiClassType)propertyType).resolve()), false);
+            }
           }
         }
       }
@@ -424,9 +428,10 @@ public final class DroolsResolveUtil {
   private static boolean processSimplePackageOrClass(CollectProcessor<PsiElement> processor, DroolsReference reference) {
     DroolsFile droolsFile = PsiTreeUtil.getParentOfType(reference, DroolsFile.class);
     if (droolsFile != null) {
-      if (!processTopPackage(processor, reference.getProject())) return false;
+      final GlobalSearchScope scope = getSearchScope(droolsFile);
+      if (!processTopPackage(processor, scope, reference.getProject())) return false;
       for (PsiPackage aPackage : getImportedPackages(droolsFile)) {
-        if (!processPackage(processor, aPackage)) return false;
+        if (!processPackage(processor, aPackage, scope, false)) return false;
       }
 
       if (!processImportedClasses(droolsFile, processor)) return false;
@@ -444,24 +449,31 @@ public final class DroolsResolveUtil {
     return true;
   }
 
-  private static boolean processTopPackage(CollectProcessor<PsiElement> processor, Project project) {
+  private static boolean processTopPackage(CollectProcessor<PsiElement> processor,
+                                           @NotNull GlobalSearchScope searchScope,
+                                           Project project) {
     final PsiPackage top = JavaPsiFacade.getInstance(project).findPackage("");
     if (top != null) {
-      for (PsiPackage aPackage : top.getSubPackages()) {
-        if (!processPackage(processor, aPackage, false)) return false;
+      for (PsiPackage aPackage : top.getSubPackages(searchScope)) {
+        if (!processPackage(processor, aPackage, searchScope, false)) return false;
       }
     }
     return true;
   }
 
-  private static boolean processPackage(CollectProcessor<PsiElement> processor, PsiPackage aPackage) {
-    return processPackage(processor, aPackage, true);
+  private static boolean processPackage(CollectProcessor<PsiElement> processor,
+                                        PsiPackage aPackage,
+                                        @NotNull GlobalSearchScope searchScope) {
+    return processPackage(processor, aPackage, searchScope, true);
   }
 
-  private static boolean processPackage(CollectProcessor<PsiElement> processor, PsiPackage aPackage, boolean processClasses) {
+  private static boolean processPackage(CollectProcessor<PsiElement> processor,
+                                        PsiPackage aPackage,
+                                        @NotNull GlobalSearchScope searchScope,
+                                        boolean processClasses) {
     if (!processor.process(aPackage)) return false;
     if (processClasses) {
-      for (PsiClass psiClass : aPackage.getClasses()) {
+      for (PsiClass psiClass : aPackage.getClasses(searchScope)) {
         if (!processor.process(psiClass)) return false;
       }
     }
@@ -709,6 +721,12 @@ public final class DroolsResolveUtil {
     return variables;
   }
 
+  @NotNull
+  public static GlobalSearchScope getSearchScope(@NotNull DroolsFile droolsFile) {
+    final Module module = ModuleUtilCore.findModuleForPsiElement(droolsFile);
+    return module != null ? module.getModuleRuntimeScope(false) : GlobalSearchScope.allScope(droolsFile.getProject());
+  }
+
   private static class MyReferenceResolvePsiElementProcessor extends CollectProcessor<PsiElement> {
     private final String myTextToResolve;
 
@@ -768,7 +786,7 @@ public final class DroolsResolveUtil {
     CollectProcessor<PsiElement> processor = new CollectProcessor<>(imported);
 
     for (PsiPackage aPackage : getImportedPackages(droolsFile, false)) {
-      for (PsiClass psiClass : aPackage.getClasses()) {
+      for (PsiClass psiClass : aPackage.getClasses(getSearchScope(droolsFile))) {
         processor.process(psiClass);
       }
     }
@@ -785,7 +803,7 @@ public final class DroolsResolveUtil {
     for (DroolsImport droolsImport : imports) {
       String className = droolsImport.getImportedClassName();
       if (className != null) {
-        PsiClass psiClass = facade.findClass(className, GlobalSearchScope.allScope(droolsFile.getProject()));
+        PsiClass psiClass = facade.findClass(className, getSearchScope(droolsFile));
         if (psiClass != null) {
           DroolsLightClass droolsLightClass = new DroolsLightClass(psiClass);
           if (!processor.process(droolsLightClass)) {

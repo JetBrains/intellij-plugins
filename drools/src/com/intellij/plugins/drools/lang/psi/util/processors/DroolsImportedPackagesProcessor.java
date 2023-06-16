@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.psi.util.processors;
 
 import com.intellij.plugins.drools.lang.psi.DroolsFile;
@@ -37,7 +37,7 @@ public final class DroolsImportedPackagesProcessor implements DroolsDeclarations
     for (PsiPackage psiPackage : DroolsResolveUtil.getExplicitlyImportedPackages(droolsFile)) {
       if (psiPackage != null) {
         if (!psiPackage.processDeclarations(processor, state, lastParent, place)) return false;
-        for (PsiClass aClass : psiPackage.getClasses()) {
+        for (PsiClass aClass : psiPackage.getClasses(DroolsResolveUtil.getSearchScope(droolsFile))) {
           if (!aClass.processDeclarations(processor, state, lastParent, place)) return false;
         }
       }

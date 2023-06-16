@@ -1,12 +1,11 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.psi.util.processors;
 
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.plugins.drools.lang.psi.DroolsFile;
 import com.intellij.plugins.drools.lang.psi.DroolsImport;
 import com.intellij.plugins.drools.lang.psi.util.DroolsLightClass;
+import com.intellij.plugins.drools.lang.psi.util.DroolsResolveUtil;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -33,11 +32,8 @@ public final class DroolsImportedClassesProcessor implements DroolsDeclarationsP
                                 @NotNull ResolveState state,
                                 PsiElement lastParent,
                                 @NotNull PsiElement place, @NotNull DroolsFile droolsFile) {
-
-    final Module module = ModuleUtilCore.findModuleForPsiElement(droolsFile);
-    final GlobalSearchScope scope =
-      module != null ? module.getModuleRuntimeScope(false) : GlobalSearchScope.allScope(droolsFile.getProject());
-    return processImportedClasses(processor, state, droolsFile.getImports(), place.getProject(), scope);
+    return processImportedClasses(processor, state, droolsFile.getImports(), place.getProject(),
+                                  DroolsResolveUtil.getSearchScope(droolsFile));
   }
 
   private static boolean processImportedClasses(PsiScopeProcessor processor, ResolveState state, DroolsImport[] imports, Project project,
