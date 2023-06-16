@@ -2,10 +2,10 @@
 package org.jetbrains.vuejs.libraries.nuxt.library
 
 import com.intellij.lang.javascript.library.JSLibraryToResolveScopeContributor
+import com.intellij.platform.workspace.storage.EntityStorage
 import com.intellij.workspaceModel.core.fileIndex.WorkspaceFileIndexContributor
 import com.intellij.workspaceModel.core.fileIndex.WorkspaceFileKind
 import com.intellij.workspaceModel.core.fileIndex.WorkspaceFileSetRegistrar
-import com.intellij.workspaceModel.storage.EntityStorage
 
 class NuxtFolderLibraryContributor : WorkspaceFileIndexContributor<NuxtFolderEntity>, JSLibraryToResolveScopeContributor {
   override val entityClass: Class<NuxtFolderEntity>

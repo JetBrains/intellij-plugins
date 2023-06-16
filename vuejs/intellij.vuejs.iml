@@ -49,5 +49,6 @@
     <orderEntry type="module" module-name="intellij.platform.lsp.impl" />
     <orderEntry type="module" module-name="intellij.platform.ide.util.io" />
     <orderEntry type="library" name="eclipse.lsp4j" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.backend.workspace" />
   </component>
 </module>

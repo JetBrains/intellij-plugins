@@ -4,10 +4,10 @@ package org.jetbrains.vuejs.libraries.nuxt.library
 import com.intellij.javascript.nodejs.library.yarn.pnp.workspaceModel.createStorageFrom
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.ProjectActivity
-import com.intellij.workspaceModel.ide.WorkspaceModel
+import com.intellij.platform.backend.workspace.WorkspaceModel
+import com.intellij.platform.workspace.storage.url.VirtualFileUrl
+import com.intellij.platform.workspace.storage.url.VirtualFileUrlManager
 import com.intellij.workspaceModel.ide.getInstance
-import com.intellij.workspaceModel.storage.url.VirtualFileUrl
-import com.intellij.workspaceModel.storage.url.VirtualFileUrlManager
 
 class NuxtFolderLibraryStartupActivity : ProjectActivity {
   override suspend fun execute(project: Project) {
