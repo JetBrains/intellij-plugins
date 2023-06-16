@@ -1,6 +1,3 @@
-<div class='definition'><pre><span style="color:#660e7a;">ngController</span></pre></div><div class='content'><p>@param {expression} ngController Name of a globally accessible constructor function or an
-<a href="psi_element://guide/expression">expression</a> that on the current scope evaluates to a
-constructor function. The controller instance can be published into a scope property
-by specifying <code>as propertyName</code>.</div><table class='sections'><tr><td valign='top' class='section'><p>@ngdoc: </td><td valign='top'><p>directive</td><tr><td valign='top' colspan='2'><icon src='AllIcons.FileTypes.JavaScript'/>&nbsp;angular.js</td></table>
+<div class='definition'><pre><span style="color:#660e7a;">ngController</span></pre></div><table class='sections'><tr><td valign='top' class='section'><p>Ngdoc:</td><td valign='top'><p>directive</td><tr><td valign='top' colspan='2'><icon src='AllIcons.FileTypes.JavaScript'/>&nbsp;angular.js</td></table>
 ---
 https://docs.angularjs.org/api/ng/directive/ngController

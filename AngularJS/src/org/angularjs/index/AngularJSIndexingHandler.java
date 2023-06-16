@@ -409,13 +409,13 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         nameTag = tag;
       }
       else if (tag.is("restrict")) {
-        restrict = getParamValue(restrict, tag.getDescriptionText(), RESTRICT);
+        restrict = getParamValue(restrict, tag.getDescriptionText());
       }
       else if (tag.is(JSDocBlockTags.PARAM)) {
         params.add(tag);
       }
       else if (tag.is("element")) {
-        element = getParamValue(element, tag.getDescriptionText(), ELEMENT);
+        element = getParamValue(element, tag.getDescriptionText());
       }
     }
     if (ngdocTag != null && nameTag != null) {
@@ -482,17 +482,15 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     return restrictions == null || StringUtil.countChars(restrictions, ';') >= 3;
   }
 
-  static String getParamValue(String previousValue, String line, final String docTag) {
-    final int indexOfTag = line.indexOf(docTag);
-    if (indexOfTag >= 0) {
-      final int commentAtEndIndex = line.indexOf("//", indexOfTag);
-      String newValue = line.substring(indexOfTag + docTag.length(), commentAtEndIndex > 0 ? commentAtEndIndex : line.length());
+  static @Nullable String getParamValue(@Nullable String previousValue, @Nullable String description) {
+    if (description != null) {
+      final int commentAtEndIndex = description.indexOf("//");
+      String newValue = description.substring(0, commentAtEndIndex >= 0 ? commentAtEndIndex : description.length());
       newValue = newValue.trim();
       if (!StringUtil.isEmpty(newValue)) return newValue;
     }
     return previousValue;
   }
-
 
   private void generateNamespace(@NotNull JSLiteralExpression argument, @NotNull JSElementIndexingData outData) {
     final String namespace = unquote(argument);
