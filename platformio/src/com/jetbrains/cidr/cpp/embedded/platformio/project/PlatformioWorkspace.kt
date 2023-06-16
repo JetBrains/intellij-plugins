@@ -21,6 +21,7 @@ import com.jetbrains.cidr.project.workspace.CidrWorkspaceProvider
 import com.jetbrains.cidr.project.workspace.WorkspaceWithEnvironment
 import com.jetbrains.cidr.toolchains.EnvironmentProblems
 import icons.ClionEmbeddedPlatformioIcons
+import java.io.File
 import javax.swing.Icon
 
 @State(name = "PlatformIOWorkspace")
@@ -67,6 +68,15 @@ class PlatformioWorkspace(project: Project) : ExternalWorkspace(project), Worksp
     catch (ex: ExecutionException) {
       emptyList()
     }
+  }
+
+  override fun collectExcludeRoots(contentRoot: File?): List<File> {
+    if (isInitialized) {
+      val build = projectPath.resolve(".pio").resolve("build").toFile()
+      if (build.isDirectory) return listOf(build)
+    }
+    return emptyList<File>()
+
   }
 
   companion object {

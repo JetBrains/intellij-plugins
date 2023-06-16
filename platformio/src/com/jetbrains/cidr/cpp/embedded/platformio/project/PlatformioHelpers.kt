@@ -4,11 +4,8 @@ import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.roots.impl.DirectoryIndexExcludePolicy
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurationType
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioDebugConfiguration
-import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioFileType
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
 import com.jetbrains.cidr.cpp.embedded.platformio.project.builds.PlatformioBuildConfiguration
 import com.jetbrains.cidr.cpp.embedded.platformio.project.builds.PlatformioBuildTarget
@@ -37,13 +34,4 @@ object PlatformioRunConfigurationManagerHelper : CLionRunConfigurationManagerHel
       settings.configuration is PlatformioDebugConfiguration
     }
   }
-}
-
-class PlatformioExcludePolicy(private val myProject: Project) : DirectoryIndexExcludePolicy {
-  override fun getExcludeUrlsForProject(): Array<String> =
-    ProjectRootManager.getInstance(myProject).contentRoots
-      .filter { it.findChild(PlatformioFileType.FILE_NAME) != null }
-      .map { "${it.url}/.pio/build" }
-      .toTypedArray()
-
 }

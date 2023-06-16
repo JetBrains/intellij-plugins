@@ -7,8 +7,7 @@
   <description><![CDATA[
 <a href="https://platformio.org/">PlatformIO.org</a> plugin for CLion integration
 <br>
-<p>A new generation toolset for embedded C/C++ development</p>
-<p>PlatformIO is a new generation ecosystem for embedded development.</p>
+<p>PlatformIO is Professional collaborative platform for embedded development</p>
 <br>
 <p><b>!!! PLEASE <a href="https://docs.platformio.org/en/latest/ide/clion.html">READ DOCUMENTATION</a> BEFORE STARTING !!!</b></p>
 
@@ -18,29 +17,12 @@
   <li>Static Code Analyzer and Remote Unit Testing</li>
   <li>Multi-platform and Multi-architecture Build System</li>
 </ul>
-<p><b>Platforms:</b> Atmel AVR, Atmel SAM, Espressif 32, Espressif 8266, Freescale Kinetis, Infineon XMC, Intel ARC32, Intel MCS-51 (8051),
-  Kendryte K210, Lattice iCE40, Maxim 32, Microchip PIC32, Nordic nRF51, Nordic nRF52, NXP LPC, RISC-V, Samsung ARTIK, Silicon Labs EFM32,
-  ST STM32, ST STM8, Teensy, TI MSP430, TI Tiva, WIZNet W7500</p>
-<p><b>Frameworks:</b> Arduino, ARTIK SDK, CMSIS, ESP-IDF, ESP8266 RTOS SDK, Freedom E SDK, Kendryte Standalone SDK, Kendryte FreeRTOS SDK,
-  libOpenCM3, mbed, PULP OS, Pumbaa, Simba, SPL, STM32Cube, Tizen RT, WiringPi</p>
-<h3> Features</h3>
 
-<ul>
-  <li>Cross-platform code builder without external dependencies to a system software:</li>
-  <li>700+ embedded boards</li>
-  <li>30+ development platforms</li>
-  <li>20+ frameworks</li>
-  <li>PIO Unified Debugger</li>
-  <li>PIO Unit Testing</li>
-  <li>PIO Remote</li>
-  <li>C/C++ Intelligent Code Completion</li>
-  <li>C/C++ Smart Code Linter for rapid professional development</li>
-  <li>Library Manager for the thousands of popular libraries</li>
-</ul>
+<!-- todo uncomment when updated
 <h3>How it works</h3>
 <a href="https://docs.platformio.org/en/latest/ide/clion.html">Documentation</a>]]>
+    -->
   </description>
-
 
   <depends>com.intellij.cidr.base</depends>
   <depends>com.intellij.modules.clion</depends>
@@ -58,7 +40,6 @@
     <stepsBeforeRunProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioUploadBeforeRunTaskProvider"/>
     <notificationGroup id="PlatformIO plugin" displayType="BALLOON" bundle="messages.ClionEmbeddedPlatformioBundle"
                        key="notification.group.platformio"/>
-    <directoryIndexExcludePolicy implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioExcludePolicy"/>
     <applicationConfigurable order="last" id="clion.platformio.config"
                              instance="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurable"
                              bundle="messages.ClionEmbeddedPlatformioBundle"
