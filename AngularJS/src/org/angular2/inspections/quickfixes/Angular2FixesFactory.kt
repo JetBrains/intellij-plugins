@@ -1,8 +1,8 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.inspections.quickfixes
 
 import com.intellij.codeInsight.hint.QuestionAction
-import com.intellij.codeInsight.navigation.NavigationUtil
+import com.intellij.codeInsight.navigation.getPsiElementPopup
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.lang.ecmascript6.psi.impl.JSImportPathConfigurationImpl
 import com.intellij.lang.ecmascript6.psi.impl.TypeScriptImportPathBuilder
@@ -332,9 +332,9 @@ object Angular2FixesFactory {
     }
     if (editor.isDisposed) return
 
-    NavigationUtil.getPsiElementPopup(elementMap.keys.toTypedArray<JSElement>(),
-                                      ES6QualifiedNamedElementRenderer(),
-                                      title, processor)
+    getPsiElementPopup(elements = elementMap.keys.toTypedArray<JSElement>(),
+                       renderer = ES6QualifiedNamedElementRenderer(),
+                       title = title, processor = processor)
       .showInBestPositionFor(editor)
   }
 }
