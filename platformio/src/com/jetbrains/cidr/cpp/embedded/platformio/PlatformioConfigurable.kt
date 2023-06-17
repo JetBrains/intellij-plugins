@@ -11,13 +11,16 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.toNioPath
-import com.intellij.ui.components.JBCheckBox
+import com.intellij.ui.components.JBTextField
 import com.intellij.ui.dsl.builder.*
-import com.intellij.ui.layout.selected
+import com.intellij.util.FontUtil
 import com.intellij.util.SystemProperties
+import com.jetbrains.cidr.cpp.embedded.platformio.ui.OpenInstallGuide
 import java.nio.file.Path
 import javax.swing.JComponent
 import kotlin.io.path.exists
+import kotlin.io.path.isDirectory
+import kotlin.io.path.pathString
 
 class PlatformioConfigurable : SearchableConfigurable {
 
@@ -33,34 +36,37 @@ class PlatformioConfigurable : SearchableConfigurable {
   }
 
   override fun createComponent(): JComponent {
-    var enabledCheckBox: Cell<JBCheckBox>? = null
     val newSettingsPanel = panel {
       row {
-        label(ClionEmbeddedPlatformioBundle.message("home.location"))
+        textFieldWithBrowseButton(
+          project = null,
+          browseDialogTitle = ClionEmbeddedPlatformioBundle.message("dialog.title.home.location"),
+          fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor().withShowHiddenFiles(true))
+          .align(Align.FILL)
+          .label(ClionEmbeddedPlatformioBundle.message("home.location"), LabelPosition.TOP)
+          .bindText(::pioLocation.toMutableProperty())
+          .trimmedTextValidation(
+            validationErrorIf(ClionEmbeddedPlatformioBundle.message("dialog.message.platformio.utility.not.found.inside"), ::checkHome))
+          .applyToComponent {
+            val location = pioDefaultBinFolder().parent?.parent
+            (textField as JBTextField).emptyText.text =
+              if (location?.isDirectory() == true)
+                ClionEmbeddedPlatformioBundle.message("auto.detected.platformio", location.pathString)
+              else ClionEmbeddedPlatformioBundle.message("auto.not.detected.platformio")
+          }
       }
-      indent {
-        row {
-          enabledCheckBox = checkBox(ClionEmbeddedPlatformioBundle.message("custom.platformio.location.enabled")).align(Align.FILL)
-            .bindSelected(::pioLocationEnabled.toMutableProperty())
-        }
-        row {
-          textFieldWithBrowseButton(
-            project = null,
-            browseDialogTitle = ClionEmbeddedPlatformioBundle.message("dialog.title.home.location"),
-            fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor().withShowHiddenFiles(true))
-            .align(Align.FILL)
-            .enabledIf(enabledCheckBox!!.component.selected)
-            .bindText(::pioLocation.toMutableProperty())
-            .trimmedTextValidation(
-              validationErrorIf(ClionEmbeddedPlatformioBundle.message("dialog.message.platformio.utility.not.found.inside"), ::checkHome))
-        }
+      row {
+        link(ClionEmbeddedPlatformioBundle.message("install.guide"),
+             OpenInstallGuide::actionPerformed)
+          .applyToComponent {
+            font = FontUtil.minusOne(font)
+            setExternalLinkIcon()
+          }
       }
-    }.apply {
-      this@PlatformioConfigurable.disposable = Disposer.newDisposable().also {
-        registerValidators(it)
-      }
-      validateAll()
     }
+    this.disposable = Disposer.newDisposable()
+    newSettingsPanel.registerValidators(this.disposable!!)
+    newSettingsPanel.validateAll()
     settingsPanel = newSettingsPanel
     return newSettingsPanel
   }
@@ -89,18 +95,18 @@ class PlatformioConfigurable : SearchableConfigurable {
   companion object {
     private const val ID = "PlatformIO.settings"
     private const val PIO_LOCATION_KEY = "$ID.platformio.location"
-    private const val PIO_LOCATION_ENABLED_KEY = "$PIO_LOCATION_KEY.enabled"
-    private var pioLocationEnabled: Boolean
-      get() = PropertiesComponent.getInstance().getBoolean(PIO_LOCATION_ENABLED_KEY, false)
-      set(value) = PropertiesComponent.getInstance().setValue(PIO_LOCATION_ENABLED_KEY, value)
     private var pioLocation: String
       get() = PropertiesComponent.getInstance().getValue(PIO_LOCATION_KEY, "").trim()
       set(value) = PropertiesComponent.getInstance().setValue(PIO_LOCATION_KEY, value.trim())
 
-    fun pioBinFolder(): Path? {
-      if (pioLocationEnabled && pioLocation.isNotEmpty()) {
+    fun pioBinFolder(): Path {
+      if (pioLocation.isNotEmpty()) {
         return Path.of(pioLocation, "penv", "Scripts")
       }
+      return pioDefaultBinFolder()
+    }
+
+    private fun pioDefaultBinFolder(): Path {
       val path = PathEnvironmentVariableUtil.findExecutableInPathOnAnyOS("pio")?.parent?.toNioPath()
       if (path != null) {
         return path
@@ -111,9 +117,8 @@ class PlatformioConfigurable : SearchableConfigurable {
 
       val defaultPath2 = Path.of(SystemProperties.getUserHome(), ".pio", "penv", "Scripts")
       return if (defaultPath2.exists()) defaultPath2 else defaultPath1
-
     }
 
-    fun pioExePath() = pioBinFolder()?.resolve("pio")?.toString() ?: "pio"
+    fun pioExePath() = pioBinFolder().resolve("pio").toString()
   }
 }
