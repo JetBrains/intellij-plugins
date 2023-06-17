@@ -1,7 +1,7 @@
-<script>
+<script lang="ts">
 import {defineComponent} from 'vue'
 import {myInjectionKey} from "./injectionKey";
-import Inject from "./InjectSymbol.vue";
+import Inject from "./InjectSymbolTs.vue";
 
 export default defineComponent({
   components: {Inject},

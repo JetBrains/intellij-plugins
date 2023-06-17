@@ -12,6 +12,8 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.JSRecordTypeImpl.PropertySignatureImpl
+import com.intellij.lang.javascript.psi.types.primitives.JSUndefinedType
+import com.intellij.lang.javascript.psi.types.primitives.JSVoidType
 import com.intellij.openapi.util.RecursionManager
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.psi.PsiElement
@@ -21,10 +23,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.model.source.*
-import org.jetbrains.vuejs.types.VueCompleteRecordType
-import org.jetbrains.vuejs.types.VueComponentInstanceType
-import org.jetbrains.vuejs.types.VueRefsType
-import org.jetbrains.vuejs.types.createStrictTypeSource
+import org.jetbrains.vuejs.types.*
 import java.util.*
 
 interface VueInstanceOwner : VueScopeElement {
@@ -130,9 +129,11 @@ private fun contributeComponentProperties(instance: VueInstanceOwner,
         if (inject is VueScriptSetupInfoProvider.VueScriptSetupInject) return true
 
         val sourceElement = inject.source ?: return true
+        val defaultValue = inject.defaultValue
+        val isOptional = defaultValue == null || defaultValue is JSUndefinedType || defaultValue is JSVoidType
         val type = provides.asSequence().map { it.provide }.find { provide ->
           provide.symbol?.isEquivalentTo(inject.symbol) ?: (provide.name == (inject.from ?: inject.name))
-        }?.jsType
+        }?.jsType?.optionalIf(isOptional)
         val implicitElement = VueImplicitElement(inject.name, type, sourceElement, JSImplicitElement.Type.Property, true)
         process(inject, proximity, injects, true, type, implicitElement)
         return true

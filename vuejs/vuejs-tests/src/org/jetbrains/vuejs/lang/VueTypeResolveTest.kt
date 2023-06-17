@@ -145,6 +145,28 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
+  fun testInjectStrictNullChecks() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
+    myFixture.copyDirectoryToProject(getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+
+    doTest(
+      "message" to "\"hello\" | undefined",
+    )
+  }
+
+  fun testInjectWithDefault() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
+    myFixture.copyDirectoryToProject(getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+
+    doTest(
+      "message" to "\"hello\"",
+    )
+  }
+
   fun testInjectSymbol() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
     myFixture.copyDirectoryToProject(getTestName(true), "")
@@ -152,7 +174,41 @@ class VueTypeResolveTest : BasePlatformTestCase() {
 
     doTest(
       "myLocalInject" to "{name: string}",
+      "myLocalInject.n<caret>ame" to "string",
+    )
+  }
+
+  fun testInjectSymbolTs() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.copyDirectoryToProject(getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+
+    doTest(
+      "myLocalInject" to "{name: string}",
       "myLocalInject.n<caret>ame" to "\"bob\"",
+    )
+  }
+
+  fun testInjectSymbolProvideInCall() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.copyDirectoryToProject(getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+
+    doTest(
+      "myLocalInject" to "{name: string}",
+      "myLocalInject.n<caret>ame" to "string",
+    )
+  }
+
+  fun testInjectSymbolProvideInApp() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.copyDirectoryToProject(getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+
+    doTest(
+      "myLocalInject" to "{name?: string, lang?: Lang}",
+      "myLocalInject.n<caret>ame" to "string",
+      "myLocalInject.la<caret>ng" to "Lang",
     )
   }
 

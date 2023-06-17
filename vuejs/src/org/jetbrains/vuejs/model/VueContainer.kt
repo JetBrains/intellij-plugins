@@ -130,4 +130,6 @@ interface VueInject : VueNamedSymbol {
   val symbol: PsiNamedElement? get() = null
 
   val from: String? get() = null
+
+  val defaultValue: JSType? get() = null
 }

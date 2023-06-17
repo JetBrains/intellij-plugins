@@ -3,7 +3,7 @@ import {defineComponent} from 'vue'
 import {myInjectionKey} from "./injectionKey";
 
 export default defineComponent({
-  name: "Inject",
+  name: "InjectSymbolProvideInApp",
   inject: {
     myLocalInject: {
       from: myInjectionKey
@@ -15,4 +15,5 @@ export default defineComponent({
 <template>
   {{ myLocalInject }}
   {{ myLocalInject.name }}
+  {{ myLocalInject.lang }}
 </template>

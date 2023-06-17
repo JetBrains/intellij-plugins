@@ -16,6 +16,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptAsExpression
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.resolve.QualifiedItemProcessor
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
@@ -23,6 +24,7 @@ import com.intellij.lang.javascript.psi.types.evaluable.JSApplyNewType
 import com.intellij.lang.javascript.psi.types.evaluable.JSReturnedExpressionType
 import com.intellij.lang.javascript.psi.types.primitives.JSBooleanType
 import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveType
+import com.intellij.lang.javascript.psi.types.primitives.JSSymbolType
 import com.intellij.lang.javascript.psi.types.primitives.JSUndefinedType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.psi.util.stubSafeStringValue
@@ -59,7 +61,10 @@ import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.VueModelProximityVisitor
 import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.model.source.*
+import org.jetbrains.vuejs.model.source.MODEL_LOCAL_PROP
+import org.jetbrains.vuejs.model.source.PROPS_DEFAULT_PROP
+import org.jetbrains.vuejs.model.source.PROPS_REQUIRED_PROP
+import org.jetbrains.vuejs.model.source.PROPS_TYPE_PROP
 import org.jetbrains.vuejs.types.asCompleteType
 import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
 import java.util.*
@@ -349,14 +354,22 @@ fun getDefaultTypeFromPropOptions(expression: JSExpression?): JSType? =
     ?.jsType
     ?.substitute()
 
-fun getInjectionKeyType(expression: JSExpression?): JSType? =
-  (expression as? JSObjectLiteralExpression)
-    ?.findProperty(INJECT_FROM)
-    ?.jsType
-    ?.let { type ->
-      if (type is JSWidenType) type.originalType else type
-    }
-    ?.substitute()
+fun resolveInjectSymbol(expression: JSExpression?): JSFieldVariable? {
+  if (expression !is JSReferenceExpression) return null
+  val declaration = expression.resolve().asSafely<JSFieldVariable>() ?: return null
+  val symbolType = JSResolveUtil.getElementJSType(declaration)?.substitute()
+  return if (isInjectSymbolType(symbolType)) declaration else null
+}
+
+fun isInjectSymbolType(symbolType: JSType?): Boolean =
+  symbolType is JSSymbolType ||
+  (symbolType is JSGenericTypeImpl && symbolType.type.asSafely<JSTypeImpl>()?.typeText == "InjectionKey")
+
+fun getInjectDefaultType(expression: JSExpression?): JSType? =
+  when (val defaultType = getDefaultTypeFromPropOptions(expression)) {
+    is JSFunctionType -> defaultType.returnType?.substitute()
+    else -> defaultType
+  }
 
 inline fun <reified T : JSExpression> XmlAttributeValue.findJSExpression(): T? {
   return findVueJSEmbeddedExpressionContent()?.firstChild as? T

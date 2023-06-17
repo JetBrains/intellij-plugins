@@ -8,7 +8,7 @@ import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
-import com.intellij.lang.javascript.psi.types.JSUniqueSymbolTypeImpl
+import com.intellij.lang.javascript.psi.types.JSWidenType
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyCallType
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
@@ -291,10 +291,24 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
   private class VueSourceInject(override val name: String, override val source: PsiElement?) : VueInject {
 
-    private val keyType = getInjectionKeyType(source.asSafely<JSProperty>()?.initializerOrStub)
+    private val keyType = getInjectKeyType(source.asSafely<JSProperty>()?.initializerOrStub)
 
-    override val symbol: PsiNamedElement? = keyType.asSafely<JSUniqueSymbolTypeImpl>()?.element
+    override val symbol: PsiNamedElement? = keyType?.symbol
 
-    override val from: String? = keyType.asSafely<JSStringLiteralTypeImpl>()?.literal
+    override val from: String? = keyType?.name
+
+    override val defaultValue: JSType? = getInjectDefaultType(source.asSafely<JSProperty>()?.initializerOrStub)
+
+    private data class VueInjectKey(val name: String? = null, val symbol: PsiNamedElement? = null)
+
+    private fun getInjectKeyType(options: JSExpression?): VueInjectKey? {
+      val property = (options as? JSObjectLiteralExpression)?.findProperty(INJECT_FROM) ?: return null
+      val propertyType = property.jsType?.let { type -> if (type is JSWidenType) type.originalType else type }?.substitute()
+      return when {
+        propertyType is JSStringLiteralTypeImpl -> VueInjectKey(name = propertyType.literal)
+        isInjectSymbolType(propertyType) -> resolveInjectSymbol(property.initializerOrStub)?.let { VueInjectKey(symbol = it) }
+        else -> null
+      }
+    }
   }
 }

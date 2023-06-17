@@ -195,9 +195,11 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
         .filter { resolveScope == null || PsiTreeUtil.isContextAncestor(resolveScope, it, false) }
         .mapNotNull { el ->
           val provideCall = el.context as? JSCallExpression ?: return@mapNotNull null
-          val nameLiteral = provideCall.stubSafeCallArguments.getOrNull(0) as? JSLiteralExpression ?: return@mapNotNull null
-          val name = getTextIfLiteral(nameLiteral) ?: return@mapNotNull null
-          VueSourceProvide(name, nameLiteral)
+          when (val injectionKey = provideCall.arguments.getOrNull(0)) {
+            is JSLiteralExpression -> getTextIfLiteral(injectionKey)?.let { VueSourceProvide(it, injectionKey) }
+            is JSReferenceExpression -> injectionKey.referenceName?.let { VueSourceProvide(it, injectionKey) }
+            else -> null
+          }
         }.toList()
 
       val element = resolve(MOUNT_FUN, searchScope, VueCompositionAppIndex.KEY)

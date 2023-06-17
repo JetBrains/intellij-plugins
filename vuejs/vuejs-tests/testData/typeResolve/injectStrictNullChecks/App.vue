@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import Provide from './Provide.vue'
 </script>
 

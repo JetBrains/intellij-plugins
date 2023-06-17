@@ -322,12 +322,11 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
         ?.takeIf { VueFrameworkHandler.getFunctionNameFromVueIndex(it) == DEFINE_PROPS_FUN }
 
     private fun analyzeProvide(call: JSCallExpression): VueProvide? {
-      val arguments = call.stubSafeCallArguments
-      val injectionKey = arguments.getOrNull(0)
-      if (injectionKey is JSLiteralExpression) {
-        return getLiteralValue(injectionKey)?.let { VueSourceProvide(it, injectionKey) }
+      return when (val injectionKey = call.arguments.getOrNull(0)) {
+        is JSLiteralExpression -> getLiteralValue(injectionKey)?.let { VueSourceProvide(it, injectionKey) }
+        is JSReferenceExpression -> injectionKey.referenceName?.let { VueSourceProvide(it, injectionKey) }
+        else -> null
       }
-      return null
     }
 
     private fun analyzeInject(call: JSCallExpression): VueInject? {
