@@ -62,7 +62,6 @@
 
     <typedHandler implementation="org.angularjs.editor.AngularJSBracesInterpolationTypedHandler"/>
     <lang.braceMatcher language="AngularJS" implementationClass="com.intellij.lang.javascript.highlighting.JSBraceMatcher"/>
-    <directoryIndexExcludePolicy implementation="org.angular2.Angular2ExcludePolicy"/>
     <stubIndex implementation="org.angularjs.index.AngularDirectivesIndex"/>
     <stubIndex implementation="org.angularjs.index.AngularDirectivesDocIndex"/>
     <stubIndex implementation="org.angularjs.index.AngularControllerIndex"/>
@@ -337,6 +336,7 @@
 
     <!-- Angular2 metadata JSON contributions -->
     <nodeModulesIndexableFileNamesProvider implementation="org.angular2.index.Angular2IndexableFileNamesProvider"/>
+    <scanningFileListenerContributor implementation="org.angular2.Angular2ExcludeContributor"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.angular2">
