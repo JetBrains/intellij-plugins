@@ -3,10 +3,13 @@ package org.jetbrains.vuejs.web.scopes
 
 import com.intellij.model.Pointer
 import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.util.asSafely
+import com.intellij.util.containers.Stack
+import com.intellij.webSymbols.*
 import com.intellij.webSymbols.WebSymbol.Companion.KIND_JS_PROPERTIES
 import com.intellij.webSymbols.WebSymbol.Companion.KIND_JS_STRING_LITERALS
-import com.intellij.webSymbols.WebSymbolsScopeWithCache
+import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
+import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
 import org.jetbrains.vuejs.model.source.VueSourceComponent
 import org.jetbrains.vuejs.web.VueFramework
 import org.jetbrains.vuejs.web.symbols.VueProvideSymbol
@@ -25,6 +28,16 @@ class VueInjectSymbolsScope(private val enclosingComponent: VueSourceComponent)
     }
 
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
+  }
+
+  override fun getCodeCompletions(namespace: SymbolNamespace,
+                                  kind: SymbolKind,
+                                  name: String?,
+                                  params: WebSymbolsCodeCompletionQueryParams,
+                                  scope: Stack<WebSymbolsScope>): List<WebSymbolCodeCompletionItem> {
+    return super.getCodeCompletions(namespace, kind, name, params, scope).filterNot {
+      it.symbol.asSafely<VueProvideSymbol>()?.providedAsSymbol == true
+    }
   }
 
   override fun createPointer(): Pointer<VueInjectSymbolsScope> {

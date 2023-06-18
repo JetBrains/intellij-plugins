@@ -2192,6 +2192,7 @@ export default {
       "globalProvide",
       "globalProvideRef"
     )
+    assertDoesntContain(myFixture.lookupElementStrings!!, "myInjectionKey")
   }
 
   private fun assertDoesntContainVueLifecycleHooks() {

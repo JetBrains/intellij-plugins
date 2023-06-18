@@ -5,9 +5,10 @@ import ProvideFunction from "./ProvideFunction.vue";
 import ProvideComputed from "./ProvideComputed.vue";
 import ProvideFunctionData from "./ProvideFunctionData.vue";
 import ProvideScriptSetup from "./ProvideScriptSetup.vue";
+import ProvideSymbol from "./ProvideSymbol.vue";
 
 export default defineComponent({
-  components: {ProvideFunctionData, ProvideComputed, ProvideFunction, ProvideLiteral, ProvideScriptSetup},
+  components: {ProvideFunctionData, ProvideComputed, ProvideFunction, ProvideLiteral, ProvideScriptSetup, ProvideSymbol},
   provide: {
     app: 123,
   }
@@ -21,4 +22,5 @@ export default defineComponent({
   <ProvideComputed/>
   <ProvideFunctionData/>
   <ProvideScriptSetup/>
+  <ProvideSymbol/>
 </template>

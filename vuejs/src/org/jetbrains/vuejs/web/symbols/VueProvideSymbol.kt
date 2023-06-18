@@ -23,6 +23,8 @@ class VueProvideSymbol(provide: VueProvide,
   override val type: JSType?
     get() = item.jsType
 
+  val providedAsSymbol: Boolean = provide.symbol != null
+
   override fun equals(other: Any?): Boolean =
     super.equals(other)
     && (other as VueProvideSymbol).kind == kind
