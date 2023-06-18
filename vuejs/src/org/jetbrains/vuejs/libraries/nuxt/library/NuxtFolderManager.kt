@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.libraries.nuxt.library
 
+import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.psi.util.JSProjectUtil
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
@@ -44,20 +45,25 @@ class NuxtFolderManager(private val project: Project) : PersistentStateComponent
   override fun loadState(state: NuxtFolderManagerState) {
     val newFolders: List<VirtualFile> = state.folders.mapNotNull {
       val file = LocalFileSystem.getInstance().findFileByPath(it)
-      if (file != null && file.isValid && isAccepted(file)) file else null
+      if (file != null && isAccepted(file, false)) file else null
     }
     folders.clear()
     folders.addAll(newFolders)
   }
 
-  private fun isAccepted(nuxtFolder: VirtualFile): Boolean {
-    return isNuxtFolder(nuxtFolder) && ReadAction.compute<Boolean, Throwable> {
-      ProjectFileIndex.getInstance(project).isInContent(nuxtFolder)
+  private fun isAccepted(nuxtFolder: VirtualFile, asNewFolder: Boolean): Boolean {
+    return nuxtFolder.isValid && isNuxtFolder(nuxtFolder) && ReadAction.compute<Boolean, Throwable> {
+      if (asNewFolder) {
+        ProjectFileIndex.getInstance(project).isInContent(nuxtFolder)
+      }
+      else {
+        JSLibraryUtil.isInProjectAndOutsideOfLibraryRoots(project, nuxtFolder)
+      }
     }
   }
 
   fun addIfMissing(nuxtFolder: VirtualFile) {
-    if (!folders.contains(nuxtFolder) && isAccepted(nuxtFolder) && folders.add(nuxtFolder)) {
+    if (!folders.contains(nuxtFolder) && isAccepted(nuxtFolder, true) && folders.add(nuxtFolder)) {
       addExcludeEntity(nuxtFolder)
       addOrUpdateLibraryEntity(nuxtFolder)
     }
