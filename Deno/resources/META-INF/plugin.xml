@@ -26,7 +26,7 @@ To learn more about how to get started with Deno, check out <a href="https://blo
     <annotator language="JavaScript" implementationClass="com.intellij.deno.inspection.DenoEditorNotificationAnnotator"/>
     <lang.inspectionSuppressor language="JavaScript" implementationClass="com.intellij.deno.inspection.DenoInspectionSuppressor"/>
 
-    <lsp.serverSupportProvider implementation="com.intellij.deno.service.DenoLspSupportProvider"/>
+    <platform.lsp.serverSupportProvider implementation="com.intellij.deno.service.DenoLspSupportProvider"/>
     <editorTabTitleProvider implementation="com.intellij.deno.editor.DenoEditorTabTitleProvider"/>
 
     <workspaceModel.fileIndexContributor implementation="com.intellij.deno.roots.DenoWorkspaceFileIndexContributor"/>

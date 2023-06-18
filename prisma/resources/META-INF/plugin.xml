@@ -96,7 +96,7 @@
                              implementationClass="org.intellij.prisma.ide.folding.PrismaFoldingBuilder"/>
 
         <!-- LSP -->
-        <lsp.serverSupportProvider implementation="org.intellij.prisma.ide.lsp.PrismaLspServerSupportProvider"/>
+        <platform.lsp.serverSupportProvider implementation="org.intellij.prisma.ide.lsp.PrismaLspServerSupportProvider"/>
 
         <!-- UI -->
         <notificationGroup id="Prisma"
