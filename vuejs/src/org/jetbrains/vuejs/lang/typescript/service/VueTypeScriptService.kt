@@ -25,12 +25,12 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.util.Consumer
 import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
 import org.jetbrains.vuejs.lang.typescript.service.protocol.VueTypeScriptServiceProtocol
+import java.util.function.Consumer
 
 class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(project, "Vue Console") {
 
@@ -109,9 +109,9 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
     return VueTypeScriptServiceProtocol(myProject, mySettings, readyConsumer, createEventConsumer(), tsServicePath)
   }
 
-  override fun getInitialCommands(): Map<JSLanguageServiceSimpleCommand, Consumer<JSLanguageServiceObject>> {
+  override fun getInitialOpenCommands(): Map<JSLanguageServiceSimpleCommand, Consumer<JSLanguageServiceObject>> {
     //commands
-    val initialCommands = super.getInitialCommands()
+    val initialCommands = super.getInitialOpenCommands()
     val result: MutableMap<JSLanguageServiceSimpleCommand, Consumer<JSLanguageServiceObject>> = linkedMapOf()
     addConfigureCommand(result)
 
@@ -138,7 +138,7 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
   }
 
   private fun addConfigureCommand(result: MutableMap<JSLanguageServiceSimpleCommand, Consumer<JSLanguageServiceObject>>) {
-    val arguments = ConfigureRequestArguments()
+    val arguments = ConfigureRequestArguments("IntelliJ")
     val fileExtensionInfo = FileExtensionInfo()
     fileExtensionInfo.extension = VUE_FILE_EXTENSION
 

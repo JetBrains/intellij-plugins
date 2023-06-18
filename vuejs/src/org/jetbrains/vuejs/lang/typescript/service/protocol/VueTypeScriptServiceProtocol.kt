@@ -8,7 +8,7 @@ import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
 import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScriptServiceStandardOutputProtocol
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptServiceInitialStateObject
 import com.intellij.openapi.project.Project
-import com.intellij.util.Consumer
+import java.util.function.Consumer
 
 class VueTypeScriptServiceProtocol(project: Project,
                                    settings: TypeScriptCompilerSettings,

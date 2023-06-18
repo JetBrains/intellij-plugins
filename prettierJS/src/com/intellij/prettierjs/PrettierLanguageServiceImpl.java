@@ -21,8 +21,6 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
-import com.intellij.util.Consumer;
-import com.intellij.util.EmptyConsumer;
 import com.intellij.webcore.util.JsonUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 import static com.intellij.lang.javascript.service.JSLanguageServiceQueue.LOGGER;
 
@@ -96,7 +95,7 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
   @Nullable
   @Override
   protected JSLanguageServiceQueue createLanguageServiceQueue() {
-    return new JSLanguageServiceQueueImpl(myProject, new Protocol(myProject, EmptyConsumer.getInstance()),
+    return new JSLanguageServiceQueueImpl(myProject, new Protocol(myProject, o -> {}),
                                           myProcessConnector, myDefaultReporter, new JSLanguageServiceDefaultCacheData());
   }
 
