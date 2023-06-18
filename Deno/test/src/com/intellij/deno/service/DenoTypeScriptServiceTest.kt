@@ -2,10 +2,10 @@ package com.intellij.deno.service
 
 import com.intellij.deno.DenoSettings
 import com.intellij.lang.javascript.modules.JSTempDirWithNodeInterpreterTest
-import com.intellij.platform.lsp.tests.checkLspHighlighting
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.platform.lsp.tests.checkLspHighlighting
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 
 class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {

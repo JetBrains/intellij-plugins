@@ -39,5 +39,6 @@ class PrismaLspServerDescriptor(project: Project) : ProjectWideLspServerDescript
     }
   }
 
+  override val lspGoToDefinitionSupport = false
   override val lspCompletionSupport = null
 }

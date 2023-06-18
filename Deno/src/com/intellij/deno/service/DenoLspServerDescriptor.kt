@@ -63,6 +63,7 @@ class DenoLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor
     jsonObject.add(name, JsonPrimitive(FileUtil.toSystemDependentName("$basePath/$text")))
   }
 
+  override val lspGoToDefinitionSupport = false
   override val lspCompletionSupport = null
   override val lspDiagnosticsSupport = null
 
