@@ -11,7 +11,8 @@ import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocComment;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTag;
-import com.intellij.lang.javascript.psi.jsdoc.impl.JSDocBlockTags;
+import com.intellij.lang.javascript.psi.jsdoc.JSDocBlockTags;
+import com.intellij.lang.javascript.psi.jsdoc.JSDocTagDefinition;
 import com.intellij.lang.javascript.psi.literal.JSLiteralImplicitElementProvider;
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
@@ -62,6 +63,10 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private final Map<String, PairProcessor<JSProperty, JSElementIndexingData>> CUSTOM_INDIRECT_PROPERTY_PROCESSORS = new HashMap<>();
   private static final Map<String, Function<String, List<String>>> POLY_NAME_CONVERTERS = new HashMap<>();
   private static final Map<String, Processor<JSArgumentList>> ARGUMENT_LIST_CHECKERS = new HashMap<>();
+
+  private static final JSDocTagDefinition NG_DOC_TAG = JSDocBlockTags.definitionFor("ngdoc");
+  private static final JSDocTagDefinition RESTRICT_TAG = JSDocBlockTags.definitionFor("restrict");
+  private static final JSDocTagDefinition ELEMENT_TAG = JSDocBlockTags.definitionFor("element");
 
   public static final Set<String> INTERESTING_METHODS = new HashSet<>();
   public static final Set<String> INJECTABLE_METHODS = new HashSet<>();
@@ -154,10 +159,6 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     POLY_NAME_CONVERTERS.put(MODULE, Collections::singletonList);
     ARGUMENT_LIST_CHECKERS.put(MODULE, list -> list.getArguments().length > 1);
   }
-
-  static final String RESTRICT = "@restrict";
-  static final String ELEMENT = "@element";
-  private static final String PARAM = "@param";
 
   public AngularJSIndexingHandler() {
     CUSTOM_PROPERTY_PROCESSORS.put(COMPONENT, (property, data) -> processScopedProperty(property, data, BINDINGS, true));
@@ -402,19 +403,19 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     String element = "";
     List<JSDocTag> params = new ArrayList<>();
     for (JSDocTag tag : comment.getTags()) {
-      if (tag.is("ngdoc")) {
+      if (tag.is(NG_DOC_TAG)) {
         ngdocTag = tag;
       }
       else if (tag.is(JSDocBlockTags.NAME)) {
         nameTag = tag;
       }
-      else if (tag.is("restrict")) {
+      else if (tag.is(RESTRICT_TAG)) {
         restrict = getParamValue(restrict, tag.getDescriptionText());
       }
       else if (tag.is(JSDocBlockTags.PARAM)) {
         params.add(tag);
       }
-      else if (tag.is("element")) {
+      else if (tag.is(ELEMENT_TAG)) {
         element = getParamValue(element, tag.getDescriptionText());
       }
     }

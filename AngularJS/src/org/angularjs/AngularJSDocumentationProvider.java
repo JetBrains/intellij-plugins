@@ -4,7 +4,7 @@ package org.angularjs;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocComment;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTag;
-import com.intellij.lang.javascript.psi.jsdoc.impl.JSDocBlockTags;
+import com.intellij.lang.javascript.psi.jsdoc.JSDocBlockTags;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;

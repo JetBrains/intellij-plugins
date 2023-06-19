@@ -317,6 +317,7 @@
     <frameworkIndexingHandler implementation="org.angularjs.index.AngularJSIndexingHandler" version="66"/>
     <dialectSpecificHandlersFactory language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSSpecificHandlersFactory"/>
     <analysisHandlersFactory language="AngularJS" implementationClass="org.angularjs.inspections.AngularJSAnalysisHandlersFactory"/>
+    <jsDocCustomTagsHandler implementation="org.angular2.lang.Angular2JSDocTagsHandler" version="0"/>
 
     <tsConfigCustomizer implementation="org.angular2.codeInsight.Angular2TypeScriptConfigCustomizer"/>
 
