@@ -45,9 +45,8 @@ class VolarServiceDocumentationTest : VolarServiceTestBase() {
 
     myFixture.configureByText("tsconfig.json", tsconfig)
     myFixture.configureByFile(getTestName(false) + "." + extension)
-    myFixture.doHighlighting()
-    assertCorrectService()
     myFixture.checkLspHighlighting()
+    assertCorrectService()
 
     val doc = JSAbstractDocumentationTest.getQuickNavigateText(myFixture)
     JSAbstractDocumentationTest.checkExpected(doc, testDataPath + "/" + getTestName(false) + ".expected.html")
