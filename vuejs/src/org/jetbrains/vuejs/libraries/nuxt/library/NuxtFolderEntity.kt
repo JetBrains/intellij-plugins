@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.libraries.nuxt.library
 
 import com.intellij.platform.workspace.storage.*
 import com.intellij.platform.workspace.storage.impl.containers.toMutableWorkspaceList
-import com.intellij.platform.workspace.storage.impl.containers.toMutableWorkspaceList
 import com.intellij.platform.workspace.storage.url.VirtualFileUrl
 
 interface NuxtFolderEntity: WorkspaceEntity {
@@ -15,13 +14,13 @@ interface NuxtFolderEntity: WorkspaceEntity {
 
   //region generated code
   @GeneratedCodeApiVersion(1)
-  interface Builder : NuxtFolderEntity, WorkspaceEntity.Builder<NuxtFolderEntity>, ObjBuilder<NuxtFolderEntity> {
+  interface Builder : NuxtFolderEntity, WorkspaceEntity.Builder<NuxtFolderEntity> {
     override var entitySource: EntitySource
     override var nuxtFolderUrl: VirtualFileUrl
     override var libraryFileUrls: MutableList<VirtualFileUrl>
   }
 
-  companion object : Type<NuxtFolderEntity, Builder>() {
+  companion object : EntityType<NuxtFolderEntity, Builder>() {
     @JvmOverloads
     @JvmStatic
     @JvmName("create")

@@ -8,8 +8,7 @@ import com.intellij.platform.workspace.storage.url.VirtualFileUrl
 import kotlin.jvm.JvmName
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
-import com.intellij.platform.workspace.storage.ObjBuilder
-import com.intellij.platform.workspace.storage.Type
+import com.intellij.platform.workspace.storage.EntityType
 
 internal object DenoEntitySource : EntitySource
 
@@ -19,13 +18,13 @@ interface DenoEntity : WorkspaceEntity {
 
   //region generated code
   @GeneratedCodeApiVersion(1)
-  interface Builder : DenoEntity, WorkspaceEntity.Builder<DenoEntity>, ObjBuilder<DenoEntity> {
+  interface Builder : DenoEntity, WorkspaceEntity.Builder<DenoEntity> {
     override var entitySource: EntitySource
     override var depsFile: VirtualFileUrl?
     override var denoTypes: VirtualFileUrl?
   }
 
-  companion object : Type<DenoEntity, Builder>() {
+  companion object : EntityType<DenoEntity, Builder>() {
     @JvmOverloads
     @JvmStatic
     @JvmName("create")
