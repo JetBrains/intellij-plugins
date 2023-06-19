@@ -18,10 +18,7 @@ import com.intellij.psi.impl.beanProperties.BeanProperty;
 import com.intellij.psi.impl.beanProperties.BeanPropertyElement;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PropertyUtilBase;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.*;
 import com.intellij.util.CommonProcessors.CollectProcessor;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
@@ -29,6 +26,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+
+import static com.intellij.plugins.drools.DroolsConstants.DATA_STORE_CLASS;
 
 public final class DroolsResolveUtil {
   public static final DroolsDeclarationsProcessor[] myDeclarationsProcessors = new DroolsDeclarationsProcessor[]{
@@ -44,6 +43,7 @@ public final class DroolsResolveUtil {
     DroolsDeclaredTypesProcessor.getInstance(),
     DroolsLocalVariablesProcessor.getInstance(),
     DroolsUnitMembersProcessor.getInstance(),
+    DroolsOopSegmentProcessor.getInstance(),
     DroolsRhsImplicitAssignExpressionsProcessor.getInstance()
   };
 
@@ -356,13 +356,23 @@ public final class DroolsResolveUtil {
   @NotNull
   private static Set<PsiClass> resolveOOPathBoundVariableType(DroolsLhsOOPSegment lhsPattern) {
     final String name = lhsPattern.getLhsOOPathSegmentId().getText();
-    final String classNameCandidate = StringUtil.unpluralize(StringUtil.capitalize(name));
-    if (StringUtil.isEmptyOrSpaces(classNameCandidate)) return Collections.emptySet();
-    final PsiFile file = lhsPattern.getContainingFile();
-    if (file instanceof DroolsFile) {
-      for (PsiClass aClass : getExplicitlyImportedClasses((DroolsFile)file)) {
-        if (classNameCandidate.equals(aClass.getName())) return Collections.singleton(aClass);
+    final PsiClass unitClass = getUnitClass((DroolsFile)lhsPattern.getContainingFile());
+    if (unitClass != null) {
+      Set<PsiClass> classes = new HashSet<>();
+      for (PsiMethod psiMethod : PropertyUtilBase.getAllProperties(unitClass, false, true).values()) {
+        final BeanProperty beanProperty = BeanProperty.createBeanProperty(psiMethod);
+        if (beanProperty != null && name.equals(beanProperty.getName())) {
+          final PsiType propertyType = beanProperty.getPropertyType();
+          final PsiType dataStoreClass = PsiUtil.substituteTypeParameter(propertyType, DATA_STORE_CLASS, 0, false);
+          if (dataStoreClass instanceof PsiClassType) {
+            classes.add(((PsiClassType)dataStoreClass).resolve());
+          }
+          else if (propertyType instanceof PsiClassType) {
+            classes.add(((PsiClassType)propertyType).resolve());
+          }
+        }
       }
+      return classes;
     }
     return Collections.emptySet();
   }
