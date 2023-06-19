@@ -8,14 +8,16 @@ import com.intellij.lang.typescript.compiler.TypeScriptLanguageServiceAnnotatorC
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
 import com.intellij.lang.typescript.lsp.JSFrameworkLspTypeScriptService
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.text.HtmlBuilder
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspServerDescriptor
 import com.intellij.platform.lsp.api.LspServerSupportProvider
+import com.intellij.platform.lsp.util.convertMarkupContentToHtml
 import com.intellij.psi.PsiFile
 import com.intellij.util.text.SemVer
-import com.intellij.util.ui.UIUtil
+import org.eclipse.lsp4j.MarkupContent
 import org.jetbrains.vuejs.lang.typescript.service.isVolarEnabledAndAvailable
 import org.jetbrains.vuejs.lang.typescript.service.isVolarFileTypeAcceptable
 import org.jetbrains.vuejs.options.VueServiceSettings
@@ -35,9 +37,9 @@ class VolarTypeScriptService(project: Project) : JSFrameworkLspTypeScriptService
              ?.let { PackageJsonData.getOrCreate(it).version } ?: defaultVolarVersion
   }
 
-  override fun createQuickInfoResponse(rawResponse: String): TypeScriptQuickInfoResponse {
+  override fun createQuickInfoResponse(markupContent: MarkupContent): TypeScriptQuickInfoResponse {
     return TypeScriptQuickInfoResponse().apply {
-      val content = UIUtil.getHtmlBody(rawResponse)
+      val content = HtmlBuilder().appendRaw(convertMarkupContentToHtml(markupContent)).toString()
       val index = content.indexOf("<p>")
 
       val firstPart: String

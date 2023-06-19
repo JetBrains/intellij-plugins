@@ -21,12 +21,15 @@ import com.intellij.lang.typescript.lsp.BaseLspTypeScriptService
 import com.intellij.lang.typescript.lsp.LspAnnotationError
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.text.HtmlBuilder
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspServer
 import com.intellij.platform.lsp.api.LspServerManager
+import com.intellij.platform.lsp.util.convertMarkupContentToHtml
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.util.text.SemVer
+import org.eclipse.lsp4j.MarkupContent
 
 class DenoTypeScriptServiceProvider(val project: Project) : JSLanguageServiceProvider {
 
@@ -78,9 +81,10 @@ class DenoTypeScriptService(project: Project) : BaseLspTypeScriptService(project
     return (result as? LspAnnotationError)?.quickFixes ?: emptyList()
   }
 
-  override fun createQuickInfoResponse(rawResponse: String): TypeScriptQuickInfoResponse {
+  override fun createQuickInfoResponse(markupContent: MarkupContent): TypeScriptQuickInfoResponse {
     return TypeScriptQuickInfoResponse().apply {
-      displayString = rawResponse.removeSurrounding("<html><body><pre>", "</pre></body></html>")
+      val html = HtmlBuilder().appendRaw(convertMarkupContentToHtml(markupContent)).toString()
+      displayString = html.removeSurrounding("<pre>", "</pre>")
     }
   }
 
