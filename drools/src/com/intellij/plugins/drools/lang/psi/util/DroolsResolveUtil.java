@@ -328,8 +328,9 @@ public final class DroolsResolveUtil {
       final Module module = ModuleUtilCore.findModuleForPsiElement(droolsFile);
       final GlobalSearchScope scope =
         module != null ? module.getModuleRuntimeScope(false) : getSearchScope(droolsFile);
-      for (PsiPackage defaultPackage : getDefaultPackages(droolsFile)) {
-        final PsiClass[] classByShortName = defaultPackage.findClassByShortName(name, scope);
+      final PsiPackage currentPackage = getCurrentPsiPackage(droolsFile);
+      if (currentPackage != null) {
+        final PsiClass[] classByShortName = currentPackage.findClassByShortName(name, scope);
         if (classByShortName.length > 0) return classByShortName[0];
       }
     }
@@ -434,6 +435,10 @@ public final class DroolsResolveUtil {
         if (!processPackage(processor, aPackage, scope, false)) return false;
       }
 
+      final PsiPackage javaLangPackage = getJavaLangPackage(droolsFile.getProject());
+      if (javaLangPackage != null) {
+        if (!processPackage(processor, javaLangPackage, GlobalSearchScope.allScope(droolsFile.getProject()))) return false;
+      }
       if (!processImportedClasses(droolsFile, processor)) return false;
 
       // process declared types
@@ -452,7 +457,7 @@ public final class DroolsResolveUtil {
   private static boolean processTopPackage(CollectProcessor<PsiElement> processor,
                                            @NotNull GlobalSearchScope searchScope,
                                            Project project) {
-    final PsiPackage top = JavaPsiFacade.getInstance(project).findPackage("");
+    final PsiPackage top = getTopPackage(project);
     if (top != null) {
       for (PsiPackage aPackage : top.getSubPackages(searchScope)) {
         if (!processPackage(processor, aPackage, searchScope, false)) return false;
@@ -659,7 +664,9 @@ public final class DroolsResolveUtil {
     // todo cache it
     Set<PsiPackage> imported = new HashSet<>();
 
-    if (addDefaultPackages) imported.addAll(getDefaultPackages(droolsFile));
+    if (addDefaultPackages) {
+      ContainerUtil.addIfNotNull(imported, getCurrentPsiPackage(droolsFile));
+    }
 
     imported.addAll(getExplicitlyImportedPackages(droolsFile));
 
@@ -679,20 +686,20 @@ public final class DroolsResolveUtil {
     return imported;
   }
 
-  @NotNull
-  public static Set<PsiPackage> getDefaultPackages(DroolsFile droolsFile) {
-    Set<PsiPackage> imported = new HashSet<>();
-    JavaPsiFacade facade = JavaPsiFacade.getInstance(droolsFile.getProject());
-
-    addNotNull(imported, facade.findPackage("java.lang"));
-    addNotNull(imported, facade.findPackage(""));
-
+  @Nullable
+  public static PsiPackage getCurrentPsiPackage(DroolsFile droolsFile) {
     String packageName = getCurrentPackage(droolsFile);
-    if (!StringUtil.isEmptyOrSpaces(packageName)) {
-      addNotNull(imported, facade.findPackage(packageName));
-    }
+    return !StringUtil.isEmptyOrSpaces(packageName) ? JavaPsiFacade.getInstance(droolsFile.getProject()).findPackage(packageName) : null;
+  }
 
-    return imported;
+  @Nullable
+  public static PsiPackage getJavaLangPackage(@NotNull Project project) {
+    return JavaPsiFacade.getInstance(project).findPackage("java.lang");
+  }
+
+  @Nullable
+  public static PsiPackage getTopPackage(@NotNull Project project) {
+    return JavaPsiFacade.getInstance(project).findPackage("");
   }
 
   @NotNull

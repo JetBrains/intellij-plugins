@@ -29,10 +29,17 @@ public final class DroolsImportedPackagesProcessor implements DroolsDeclarations
                                 @NotNull ResolveState state,
                                 PsiElement lastParent,
                                 @NotNull PsiElement place, @NotNull DroolsFile droolsFile) {
-    for (PsiPackage psiPackage : DroolsResolveUtil.getDefaultPackages(droolsFile)) {
-      if (psiPackage != null) {
-        if (!psiPackage.processDeclarations(processor, state, lastParent, place)) return false;
-      }
+    final PsiPackage currentPackage = DroolsResolveUtil.getCurrentPsiPackage(droolsFile);
+    if (currentPackage != null) {
+      if (!currentPackage.processDeclarations(processor, state, lastParent, place)) return false;
+    }
+    final PsiPackage topPackage = DroolsResolveUtil.getTopPackage(droolsFile.getProject());
+    if (topPackage != null) {
+      if (!topPackage.processDeclarations(processor, state, lastParent, place)) return false;
+    }
+    final PsiPackage javaLangPackage = DroolsResolveUtil.getJavaLangPackage(droolsFile.getProject());
+    if (javaLangPackage != null) {
+      if (!javaLangPackage.processDeclarations(processor, state, lastParent, place)) return false;
     }
     for (PsiPackage psiPackage : DroolsResolveUtil.getExplicitlyImportedPackages(droolsFile)) {
       if (psiPackage != null) {
