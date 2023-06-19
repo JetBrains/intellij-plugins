@@ -42,6 +42,10 @@ class AstroCommenterTest : AstroCodeInsightTestCase() {
 
   fun testFrontmatterBlockUncomment() = doBlockCommentTest()
 
+  fun testBlockCommentStyle() = doBlockCommentTest()
+
+  fun testLineCommentStyle() = doLineCommentTest()
+
   override fun getBasePath() = "codeInsight/commenter"
 
   private fun doLineCommentTest() {
