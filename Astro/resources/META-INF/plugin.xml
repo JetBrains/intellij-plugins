@@ -63,7 +63,6 @@
     <lang.formatter language="Astro" implementationClass="org.jetbrains.astro.lang.formatter.AstroFormattingModelBuilder"/>
     <lang.refactoringSupport language="Astro" implementationClass="org.jetbrains.astro.refactoring.AstroRefactoringSupportProvider"/>
     <lang.refactoringSupport language="AstroFrontmatter" implementationClass="org.jetbrains.astro.refactoring.AstroRefactoringSupportProvider"/>
-    <lang.inspectionSuppressor language="AstroFrontmatter" implementationClass="org.jetbrains.astro.inspections.AstroInspectionSuppressor" />
     <copyPastePostProcessor implementation="org.jetbrains.astro.codeInsight.imports.AstroComponentCopyPasteProcessor"/>
 
     <referencesSearch implementation="org.jetbrains.astro.lang.psi.AstroReferencesSearch" order="first" />
