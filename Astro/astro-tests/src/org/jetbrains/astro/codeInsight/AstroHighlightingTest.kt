@@ -1,6 +1,7 @@
 package org.jetbrains.astro.codeInsight
 
 import org.jetbrains.astro.AstroCodeInsightTestCase
+import org.jetbrains.astro.AstroTestModule
 
 class AstroHighlightingTest : AstroCodeInsightTestCase() {
 
@@ -11,6 +12,11 @@ class AstroHighlightingTest : AstroCodeInsightTestCase() {
   fun testClientDirectives() = doTest(additionalFiles = listOf("component.astro"))
 
   fun testUnusedImportFalsePositive() = doTest()
+
+  fun testSuppressedTypeScriptCheckImport() {
+    configure(null, false, emptyList(), AstroTestModule.ASTRO_IMAGETOOLS)
+    myFixture.checkHighlighting()
+  }
 
   //region Test configuration and helper methods
 

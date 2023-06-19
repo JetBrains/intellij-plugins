@@ -38,6 +38,7 @@ internal fun forceReloadProjectRoots(project: Project) {
 
 enum class AstroTestModule(val folder: String, vararg packageNames: String) {
   ASTRO_1_9_0("astro/1.9.0", ASTRO_PKG),
+  ASTRO_IMAGETOOLS("astro-imagetools/0.8.1", "astro-imagetools")
   ;
 
   val packageNames: List<String>
