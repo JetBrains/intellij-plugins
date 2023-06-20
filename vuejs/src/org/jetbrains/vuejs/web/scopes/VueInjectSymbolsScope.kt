@@ -10,6 +10,7 @@ import com.intellij.webSymbols.WebSymbol.Companion.KIND_JS_PROPERTIES
 import com.intellij.webSymbols.WebSymbol.Companion.KIND_JS_STRING_LITERALS
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
+import org.jetbrains.vuejs.model.collectProvides
 import org.jetbrains.vuejs.model.source.VueSourceComponent
 import org.jetbrains.vuejs.web.VueFramework
 import org.jetbrains.vuejs.web.symbols.VueProvideSymbol
@@ -20,7 +21,7 @@ class VueInjectSymbolsScope(private val enclosingComponent: VueSourceComponent)
 
   override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     val origin = VueScopeElementOrigin(enclosingComponent)
-    val provides = enclosingComponent.collectProvides()
+    val provides = enclosingComponent.global.collectProvides()
 
     provides.forEach { (provide, container) ->
       consumer(VueProvideSymbol(provide, container, origin, KIND_JS_PROPERTIES))

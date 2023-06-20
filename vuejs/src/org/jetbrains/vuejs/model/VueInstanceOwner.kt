@@ -100,7 +100,7 @@ private fun contributeComponentProperties(instance: VueInstanceOwner,
   val methods = mutableMapOf<String, JSRecordType.PropertySignature>()
   val injects = mutableMapOf<String, JSRecordType.PropertySignature>()
 
-  val provides = instance.collectProvides()
+  val provides = instance.global.collectProvides()
 
   instance.asSafely<VueEntitiesContainer>()
     ?.acceptPropertiesAndMethods(object : VueModelProximityVisitor() {
