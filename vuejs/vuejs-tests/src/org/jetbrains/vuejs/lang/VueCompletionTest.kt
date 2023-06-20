@@ -2175,6 +2175,20 @@ export default {
     )
   }
 
+  fun testInjectInLiteralsUnique() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.copyDirectoryToProject(getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+    myFixture.completeBasic()
+    assertSize(3, myFixture.lookupElements!!)
+    assertSameElements(
+      myFixture.lookupElementStrings!!,
+      "provideGlobal",
+      "provideInApp",
+      "provideLiteral",
+    )
+  }
+
   fun testInjectInProperties() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
     myFixture.copyDirectoryToProject(getTestName(true), "")
