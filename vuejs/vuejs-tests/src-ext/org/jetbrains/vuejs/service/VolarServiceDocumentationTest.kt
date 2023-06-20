@@ -43,7 +43,7 @@ class VolarServiceDocumentationTest : VolarServiceTestBase() {
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
 
-    myFixture.configureByText("tsconfig.json", tsconfig)
+    myFixture.addFileToProject("tsconfig.json", tsconfig)
     myFixture.configureByFile(getTestName(false) + "." + extension)
     myFixture.checkLspHighlighting()
     assertCorrectService()
