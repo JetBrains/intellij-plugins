@@ -34,11 +34,12 @@ class VueSourceProvideType private constructor(typeSource: JSTypeSource,
     }
 
     return when (element) {
-             is JSTypeOwner -> element.jsType
+             is JSInitializerOwner -> JSResolveUtil.getElementJSType(element.initializer)
              is JSLiteralExpression, is JSReferenceExpression -> element.contextOfType<JSCallExpression>()
                ?.arguments
                ?.getOrNull(1)
                ?.let { JSCodeBasedTypeFactory.getCodeBasedType(it, true, false) }
+             is JSTypeOwner -> element.jsType
              else -> JSUnknownType.TS_INSTANCE
            }?.let { VueUnwrapRefType(it, element) } ?: JSUnknownType.TS_INSTANCE
   }
