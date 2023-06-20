@@ -14,7 +14,7 @@ class VolarServiceTest : VolarServiceTestBase() {
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
 
-    myFixture.configureByText("tsconfig.json", tsconfig)
+    myFixture.addFileToProject("tsconfig.json", tsconfig)
     myFixture.configureByText("Simple.vue", """
       <script setup lang="ts">
       let <error descr="Volar: Type 'number' is not assignable to type 'string'.">a</error>: string = 1;
