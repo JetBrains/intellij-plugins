@@ -176,6 +176,11 @@ class VueTypingTest: BasePlatformTestCase() {
     doTest("{")
   }
 
+  // TODO: Not yet supported and should be fixed as part of WEB-61577
+  fun testAutoStringInterpolationDirective() {
+    doTest("{")
+  }
+
   private fun doTest(toType: String) {
     doTest(getTestName(false), toType)
   }
