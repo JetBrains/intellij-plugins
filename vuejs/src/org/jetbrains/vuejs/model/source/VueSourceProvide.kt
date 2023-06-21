@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
-import org.jetbrains.vuejs.codeInsight.resolveInjectSymbol
+import org.jetbrains.vuejs.codeInsight.resolveInjectionSymbol
 import org.jetbrains.vuejs.model.VueImplicitElement
 import org.jetbrains.vuejs.model.VueProvide
 import org.jetbrains.vuejs.types.VueSourceProvideType
@@ -17,8 +17,8 @@ class VueSourceProvide(
   private val symbolSource: PsiNamedElement? = null
 ) : VueProvide {
 
-  override val symbol: PsiNamedElement?
-    get() = resolveInjectSymbol(symbolSource)
+  override val injectionKey: PsiNamedElement?
+    get() = resolveInjectionSymbol(symbolSource)
 
   override val jsType: JSType = VueSourceProvideType(sourceElement, symbolSource)
 

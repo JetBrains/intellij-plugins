@@ -23,7 +23,7 @@ class VueProvideSymbol(provide: VueProvide,
   override val type: JSType?
     get() = item.jsType
 
-  val providedAsSymbol: Boolean = provide.symbol != null
+  val providedAsSymbol: Boolean = provide.injectionKey != null
 
   override fun equals(other: Any?): Boolean =
     super.equals(other)
