@@ -14,20 +14,21 @@ import java.util.*
 
 class VueSourceProvideType private constructor(typeSource: JSTypeSource,
                                                private val element: PsiElement,
-                                               private val symbol: PsiNamedElement?)
+                                               private val symbolSource: PsiNamedElement?)
   : JSSimpleTypeBaseImpl(typeSource), JSCodeBasedType {
 
-  constructor(element: PsiElement, symbol: PsiNamedElement?) : this(JSTypeSourceFactory.createTypeSource(element, true), element, symbol)
+  constructor(element: PsiElement, symbolSource: PsiNamedElement?) :
+    this(JSTypeSourceFactory.createTypeSource(element, true), element, symbolSource)
 
   override fun copyWithNewSource(source: JSTypeSource): JSType =
-    VueSourceProvideType(source, element, symbol)
+    VueSourceProvideType(source, element, symbolSource)
 
   override fun isEquivalentToWithSameClass(type: JSType, context: ProcessingContext?, allowResolve: Boolean): Boolean =
-    (type is VueSourceProvideType && type.element == element && type.symbol == symbol)
+    (type is VueSourceProvideType && type.element == element && type.symbolSource == symbolSource)
 
   override fun substituteImpl(context: JSTypeSubstitutionContext): JSType {
-    if (symbol != null) {
-      val explicitType = JSResolveUtil.getElementJSType(symbol)?.substitute().asSafely<JSGenericTypeImpl>()?.arguments?.getOrNull(0)
+    if (symbolSource != null) {
+      val explicitType = JSResolveUtil.getElementJSType(symbolSource)?.substitute().asSafely<JSGenericTypeImpl>()?.arguments?.getOrNull(0)
       if (explicitType != null) {
         return explicitType
       }
@@ -35,16 +36,20 @@ class VueSourceProvideType private constructor(typeSource: JSTypeSource,
 
     return when (element) {
              is JSInitializerOwner -> JSResolveUtil.getElementJSType(element.initializer)
-             is JSLiteralExpression, is JSReferenceExpression -> element.contextOfType<JSCallExpression>()
-               ?.arguments
-               ?.getOrNull(1)
-               ?.let { JSCodeBasedTypeFactory.getCodeBasedType(it, true, false) }
+             is JSCallExpression -> inferTypeFromCallExpr(element)
+             is JSLiteralExpression -> inferTypeFromCallExpr(element.contextOfType<JSCallExpression>())
              is JSTypeOwner -> element.jsType
              else -> JSUnknownType.TS_INSTANCE
            }?.let { VueUnwrapRefType(it, element) } ?: JSUnknownType.TS_INSTANCE
   }
 
-  override fun hashCodeImpl(): Int = Objects.hash(element, symbol)
+  private fun inferTypeFromCallExpr(element: JSCallExpression?): JSType? =
+    element
+      ?.arguments
+      ?.getOrNull(1)
+      ?.let { JSCodeBasedTypeFactory.getCodeBasedType(it, true, false) }
+
+  override fun hashCodeImpl(): Int = Objects.hash(element, symbolSource)
 
   override fun buildTypeTextImpl(format: JSType.TypeTextFormat, builder: JSTypeTextBuilder) {
     if (format == JSType.TypeTextFormat.SIMPLE) {

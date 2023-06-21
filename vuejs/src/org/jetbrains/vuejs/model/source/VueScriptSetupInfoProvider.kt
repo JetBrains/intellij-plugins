@@ -22,6 +22,7 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
@@ -322,9 +323,12 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
         ?.takeIf { VueFrameworkHandler.getFunctionNameFromVueIndex(it) == DEFINE_PROPS_FUN }
 
     private fun analyzeProvide(call: JSCallExpression): VueProvide? {
-      return when (val injectionKey = call.arguments.getOrNull(0)) {
-        is JSLiteralExpression -> getLiteralValue(injectionKey)?.let { VueSourceProvide(it, injectionKey) }
-        is JSReferenceExpression -> injectionKey.referenceName?.let { VueSourceProvide(it, injectionKey) }
+      val referenceName = VueFrameworkHandler.getFunctionImplicitElement(call)?.userStringData
+      val literal = call.stubSafeCallArguments.getOrNull(0).asSafely<JSLiteralExpression>()
+      return when {
+        referenceName != null -> JSStubBasedPsiTreeUtil.resolveLocally(referenceName, call).asSafely<PsiNamedElement>()
+          ?.let { VueSourceProvide(referenceName, call, it) }
+        literal != null -> getLiteralValue(literal)?.let { VueSourceProvide(it, literal) }
         else -> null
       }
     }
