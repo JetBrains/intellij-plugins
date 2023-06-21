@@ -57,4 +57,13 @@ public class DroolsHighlightingTest extends DroolsLightTestCase {
     myFixture.copyFileToProject("examples/resolve/Foo.java");
     myFixture.testHighlighting(false, false, false, "MvelJavaResolve.drl");
   }
+
+  public void testOOPaths() {
+    myFixture.copyFileToProject("examples/kogito/LoanUnit.java");
+    myFixture.copyFileToProject("examples/kogito/Applicant.java");
+    myFixture.copyFileToProject("examples/kogito/LoanApplication.java");
+
+    myFixture.testHighlighting(false, false, false, "RuleUnitQuery.drl");
+  }
+
 }
