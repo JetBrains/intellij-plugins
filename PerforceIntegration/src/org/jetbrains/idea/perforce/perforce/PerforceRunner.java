@@ -434,6 +434,11 @@ public final class PerforceRunner implements PerforceRunnerI {
     return executeP4Command(arguments.getArguments(), connection);
   }
 
+  public ExecResult ignores(@NotNull P4Connection connection) {
+    CommandArguments arguments = CommandArguments.createOn(P4Command.ignores);
+    return executeP4Command(arguments.getArguments(), connection);
+  }
+
   @Override
   public ExecResult sync(final P4File p4File, boolean forceSync) throws VcsException {
     return doSync(p4File, forceSync ? "-f" : null);
