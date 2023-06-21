@@ -226,6 +226,21 @@ public class PerforceUnversionedTracker implements Disposable {
     return getIgnoredFilesByPreviewAdd(project, connection, toCheckIgnored);
   }
 
+  private static Set<VirtualFile> getIgnoredByPatterns(Project project, P4Connection connection, List<VirtualFile> toCheckIgnored) {
+    Stopwatch sw = Stopwatch.createStarted();
+    P4IgnoresMappingsHelper mappingsHelper = new P4IgnoresMappingsHelper(project, connection);
+    Set<VirtualFile> ignoredFiles = new HashSet<>();
+    for (VirtualFile file : toCheckIgnored) {
+      if (mappingsHelper.isIgnored(file)) {
+        ignoredFiles.add(file);
+      }
+    }
+
+    sw.stop();
+    LOG.debug("checking %d ignored files by pattern matching took %d s".formatted(toCheckIgnored.size(), sw.elapsed().toSeconds()));
+    return ignoredFiles;
+  }
+
   @NotNull
   private static Set<VirtualFile> getIgnoredFilesByPreviewAdd(Project project, P4Connection connection, List<VirtualFile> toCheckIgnored)
     throws VcsException {
