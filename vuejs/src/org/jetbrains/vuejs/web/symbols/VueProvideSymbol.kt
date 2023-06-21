@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
+import com.intellij.psi.PsiNamedElement
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.SymbolNamespace
@@ -11,7 +12,7 @@ import com.intellij.webSymbols.WebSymbolOrigin
 import org.jetbrains.vuejs.model.VueContainer
 import org.jetbrains.vuejs.model.VueProvide
 
-class VueProvideSymbol(provide: VueProvide,
+class VueProvideSymbol(private val provide: VueProvide,
                        private val owner: VueContainer,
                        override val origin: WebSymbolOrigin,
                        override val kind: SymbolKind)
@@ -23,7 +24,8 @@ class VueProvideSymbol(provide: VueProvide,
   override val type: JSType?
     get() = item.jsType
 
-  val providedAsSymbol: Boolean = provide.injectionKey != null
+  val injectionKey: PsiNamedElement?
+    get() = provide.injectionKey
 
   override fun equals(other: Any?): Boolean =
     super.equals(other)
