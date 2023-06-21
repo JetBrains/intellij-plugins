@@ -18,7 +18,6 @@ import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.vcsUtil.VcsUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 
 import java.io.File;
 import java.util.HashSet;
@@ -42,43 +41,27 @@ public final class PerforceReadOnlyFileStateManager {
   private volatile boolean myPreviousRescanProblem;
   private volatile boolean myHasLostFocus;
 
-  public PerforceReadOnlyFileStateManager(Project project) {
+  public PerforceReadOnlyFileStateManager(Project project, PerforceUnversionedTracker unversionedTracker) {
     myProject = project;
     myVcsManager = ProjectLevelVcsManager.getInstance(myProject);
-    myUnversionedTracker = new PerforceUnversionedTracker(project);
-  }
-
-  PerforceUnversionedTracker getUnversionedTracker() {
-    return myUnversionedTracker;
+    myUnversionedTracker = unversionedTracker;
   }
 
   public void activate(@NotNull Disposable parentDisposable) {
-    Disposer.register(parentDisposable, () -> deactivate());
-
-    final Runnable scheduleTotalRescan = () -> {
-      myUnversionedTracker.isActive = false;
-      myUnversionedTracker.totalRescan();
-    };
-
-    MessageBusConnection connection = myProject.getMessageBus().connect(parentDisposable);
-    connection.subscribe(ProjectLevelVcsManager.VCS_CONFIGURATION_CHANGED, () -> scheduleTotalRescan.run());
+    Disposer.register(parentDisposable, this::deactivate);
 
     VirtualFileManager.getInstance().addVirtualFileListener(new MyVfsListener(), parentDisposable);
-
     MessageBusConnection appConnection = ApplicationManager.getApplication().getMessageBus().connect(parentDisposable);
     appConnection.subscribe(ApplicationActivationListener.TOPIC, myFrameStateListener);
-
-    connection.subscribe(PerforceSettings.OFFLINE_MODE_EXITED, scheduleTotalRescan);
   }
 
   private void deactivate() {
-    myUnversionedTracker.isActive = false;
     myHasLostFocus = true;
   }
 
   public void getChanges(final VcsDirtyScope dirtyScope, final ChangelistBuilder builder, final ProgressIndicator progress,
                          final ChangeListManagerGate addGate) throws VcsException {
-    final Set<VirtualFile> newAdded = getAddedFilesInCurrentChangesView(addGate);
+    final Set<VirtualFile> newAdded = getAddedFilesInCurrentChangesView(addGate); // todo: check perf here?
     ThrowableComputable<UnversionedScopeScanner.ScanResult, VcsException> scanner;
     synchronized (myLock) {
       progress.checkCanceled();
@@ -92,36 +75,15 @@ public final class PerforceReadOnlyFileStateManager {
     UnversionedScopeScanner.ScanResult result = rescan(scanner);
     progress.checkCanceled();
 
-    for (VirtualFile file : result.allLocalFiles) {
-      myUnversionedTracker.markUnknown(file);
-    }
+    myUnversionedTracker.markUnknown(result.allLocalFiles);
     myUnversionedTracker.markUnversioned(result.localOnly);
-
-    dirtyScope.iterateExistingInsideScope(vf -> {
-      progress.checkCanceled();
-      if (!isKnownToPerforce(addGate, vf)) {
-        if (myUnversionedTracker.isUnversioned(vf)) {
-          builder.processUnversionedFile(vf);
-        }
-        else if (myUnversionedTracker.isIgnored(vf)) {
-          builder.processIgnoredFile(vf);
-        }
-      }
-      return true;
-    });
 
     Set<String> locallyDeleted = findLocallyDeletedMissingFiles(addGate, result.missingFiles);
     for (String path : locallyDeleted) {
       builder.processLocallyDeletedFile(VcsUtil.getFilePath(path, false));
     }
-  }
 
-  private static boolean isKnownToPerforce(ChangeListManagerGate addGate, VirtualFile file) {
-    FileStatus status = addGate.getStatus(file);
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("status " + status + " for " + file);
-    }
-    return status != null;
+    myUnversionedTracker.scheduleUpdate();
   }
 
   private UnversionedScopeScanner.ScanResult rescan(final ThrowableComputable<UnversionedScopeScanner.ScanResult, VcsException> scanner)
@@ -158,7 +120,7 @@ public final class PerforceReadOnlyFileStateManager {
       LOG.info("--- recheck missing");
       myHasLostFocus = false;
       if (myPreviousRescanProblem) {
-        myUnversionedTracker.totalRescan();
+        myUnversionedTracker.scheduleTotalRescan();
       }
     }
   }
@@ -188,7 +150,7 @@ public final class PerforceReadOnlyFileStateManager {
   }
 
   public void discardUnversioned() {
-    myUnversionedTracker.totalRescan();
+    myUnversionedTracker.scheduleTotalRescan();
   }
 
   private class MyVfsListener implements VirtualFileListener {
@@ -212,23 +174,19 @@ public final class PerforceReadOnlyFileStateManager {
     @Override
     public void fileCreated(@NotNull final VirtualFileEvent event) {
       if (!fileIsUnderP4Root(event.getFile())) return;
-      processCreated(event.getFile());
-    }
-
-    private void processCreated(VirtualFile root) {
-      myUnversionedTracker.reportRecheck(root);
+      myUnversionedTracker.reportRecheck(event.getFile());
     }
 
     @Override
     public void fileMoved(@NotNull VirtualFileMoveEvent event) {
       if (!fileIsUnderP4Root(event.getFile())) return;
-      processCreated(event.getFile());
+      myUnversionedTracker.reportRecheck(event.getFile());
     }
 
     @Override
     public void fileCopied(@NotNull VirtualFileCopyEvent event) {
       if (!fileIsUnderP4Root(event.getFile())) return;
-      processCreated(event.getFile());
+      myUnversionedTracker.reportRecheck(event.getFile());
     }
 
     @Override
