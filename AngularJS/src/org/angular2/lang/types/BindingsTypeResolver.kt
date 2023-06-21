@@ -281,7 +281,7 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
         null // can pass null because we currently don't use JSApplyCallType anyway
       )
 
-      val directiveFactoryCall = WebJSSyntheticFunctionCall(element) { typeFactory ->
+      val directiveFactoryCall = WebJSSyntheticFunctionCall(element, directiveInputs.size) { typeFactory ->
         directiveInputs.map { (_, expression) ->
           when (expression) {
             null -> JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS, false)
@@ -410,11 +410,14 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
    * This class doesn't simplify much, but allows using find usages to find related code for different web frameworks.
    */
   class WebJSSyntheticFunctionCall(val place: PsiElement?,
+                                   private val argSize: Int,
                                    val argumentListProvider: (typeFactory: JSExpressionTypeFactory) -> List<JSType?>) : JSCallItem {
     override fun getPsiContext(): PsiElement? = place
 
     override fun getArgumentTypes(argumentTypeFactory: JSExpressionTypeFactory): List<JSType?> {
       return argumentListProvider(argumentTypeFactory)
     }
+
+    override fun getArgumentSize() = argSize
   }
 }

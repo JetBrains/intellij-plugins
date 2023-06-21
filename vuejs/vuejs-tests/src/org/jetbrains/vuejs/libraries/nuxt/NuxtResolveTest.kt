@@ -1,9 +1,10 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.nuxt
 
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.webSymbols.multiResolveReference
 import com.intellij.webSymbols.resolveReference
 import com.intellij.webSymbols.resolveToWebSymbolSource
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
@@ -32,8 +33,8 @@ class NuxtResolveTest : BasePlatformTestCase() {
     myFixture.copyDirectoryToProject(getTestName(true), ".")
     myFixture.configureFromTempProjectFile("pages/index.vue")
 
-    myFixture.resolveReference("module1.prop<caret>InModule1")
-      .let { TestCase.assertEquals("module1.js", it.containingFile.virtualFile.name) }
+    myFixture.multiResolveReference("module1.prop<caret>InModule1")
+      .last().let { TestCase.assertEquals("module1.js", it.containingFile.virtualFile.name) }
 
     myFixture.resolveReference("module2/up<caret>date")
       .let { TestCase.assertEquals("module2.js", it.containingFile.virtualFile.name) }

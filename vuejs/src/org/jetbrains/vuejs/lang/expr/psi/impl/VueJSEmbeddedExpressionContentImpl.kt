@@ -136,6 +136,8 @@ class VueJSEmbeddedExpressionContentImpl :
               else argumentTypeFactory.evaluate(expression)
             }
 
+          override fun getArgumentSize(): Int = pairs.size
+
           override fun getPsiContext(): PsiElement =
             tag
         }, null
