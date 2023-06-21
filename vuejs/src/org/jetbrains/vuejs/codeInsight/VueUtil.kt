@@ -354,7 +354,7 @@ fun getDefaultTypeFromPropOptions(expression: JSExpression?): JSType? =
     ?.jsType
     ?.substitute()
 
-fun resolveInjectSymbol(element: PsiElement?): JSFieldVariable? {
+fun resolveInjectionSymbol(element: PsiElement?): JSFieldVariable? {
   val declaration =
     when (element) {
       is JSReferenceExpression -> element.resolve().asSafely<JSFieldVariable>()
@@ -363,10 +363,10 @@ fun resolveInjectSymbol(element: PsiElement?): JSFieldVariable? {
     } as? JSFieldVariable ?: return null
 
   val symbolType = JSResolveUtil.getElementJSType(declaration)?.substitute()
-  return if (isInjectSymbolType(symbolType)) declaration else null
+  return if (isInjectionSymbolType(symbolType)) declaration else null
 }
 
-fun isInjectSymbolType(symbolType: JSType?): Boolean =
+fun isInjectionSymbolType(symbolType: JSType?): Boolean =
   symbolType is JSSymbolType ||
   (symbolType is JSGenericTypeImpl && symbolType.type.asSafely<JSTypeImpl>()?.typeText == "InjectionKey")
 

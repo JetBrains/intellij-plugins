@@ -308,13 +308,13 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
   private class VueSourceInject(override val name: String, override val source: PsiElement?) : VueInject {
 
     private val keyType = lazy(LazyThreadSafetyMode.NONE) {
-      getInjectKeyType(source.asSafely<JSProperty>()?.initializerOrStub)
+      getInjectionKeyType(source.asSafely<JSProperty>()?.initializerOrStub)
     }
 
     override val from: String?
       get() = keyType.value?.name
 
-    override val symbol: PsiNamedElement?
+    override val injectionKey: PsiNamedElement?
       get() = keyType.value?.symbol
 
     override val defaultValue: JSType?
@@ -322,12 +322,12 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
     private data class VueInjectKey(val name: String? = null, val symbol: PsiNamedElement? = null)
 
-    private fun getInjectKeyType(options: JSExpression?): VueInjectKey? {
+    private fun getInjectionKeyType(options: JSExpression?): VueInjectKey? {
       val property = (options as? JSObjectLiteralExpression)?.findProperty(INJECT_FROM) ?: return null
       val propertyType = property.jsType?.let { type -> if (type is JSWidenType) type.originalType else type }?.substitute()
       return when {
         propertyType is JSStringLiteralTypeImpl -> VueInjectKey(name = propertyType.literal)
-        isInjectSymbolType(propertyType) -> resolveInjectSymbol(property.initializerOrStub)?.let { VueInjectKey(symbol = it) }
+        isInjectionSymbolType(propertyType) -> resolveInjectionSymbol(property.initializerOrStub)?.let { VueInjectKey(symbol = it) }
         else -> null
       }
     }

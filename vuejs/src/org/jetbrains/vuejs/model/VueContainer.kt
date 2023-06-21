@@ -121,13 +121,13 @@ interface VueModelDecl : VueNamedSymbol {
 }
 
 interface VueProvide : VueNamedSymbol {
-  val symbol: PsiNamedElement? get() = null
+  val injectionKey: PsiNamedElement? get() = null
 
   val jsType: JSType? get() = null
 }
 
 interface VueInject : VueNamedSymbol {
-  val symbol: PsiNamedElement? get() = null
+  val injectionKey: PsiNamedElement? get() = null
 
   val from: String? get() = null
 

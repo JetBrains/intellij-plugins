@@ -132,7 +132,7 @@ private fun contributeComponentProperties(instance: VueInstanceOwner,
         val defaultValue = inject.defaultValue
         val isOptional = defaultValue == null || defaultValue is JSUndefinedType || defaultValue is JSVoidType
         val type = provides.asSequence().map { it.provide }.find { provide ->
-          provide.symbol?.isEquivalentTo(inject.symbol) ?: (provide.name == (inject.from ?: inject.name))
+          provide.injectionKey?.isEquivalentTo(inject.injectionKey) ?: (provide.name == (inject.from ?: inject.name))
         }?.jsType?.optionalIf(isOptional)
         val implicitElement = VueImplicitElement(inject.name, type, sourceElement, JSImplicitElement.Type.Property, true)
         process(inject, proximity, injects, true, type, implicitElement)
