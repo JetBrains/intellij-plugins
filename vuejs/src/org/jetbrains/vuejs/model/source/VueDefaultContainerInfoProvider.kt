@@ -5,11 +5,13 @@ import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecma6.JSComputedPropertyNameOwner
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
 import com.intellij.lang.javascript.psi.types.JSWidenType
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyCallType
+import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
@@ -74,7 +76,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     private val COMPONENTS = ComponentsAccessor()
     private val FILTERS = SimpleMemberMapAccessor(ContainerMember.Filters, ::VueSourceFilter)
     private val DELIMITERS = DelimitersAccessor()
-    private val PROVIDES = SimpleMemberAccessor(ContainerMember.Provides, ::VueSourceProvide)
+    private val PROVIDES = ProvidesAccessor()
     private val INJECTS = SimpleMemberAccessor(ContainerMember.Injects, ::VueSourceInject)
 
     private val PROPS = SimpleMemberAccessor(ContainerMember.Props, ::VueSourceInputProperty)
@@ -179,6 +181,20 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
         }
         .distinctKeys()
         .into(mutableMapOf<String, VueComponent>())
+    }
+  }
+
+  private class ProvidesAccessor : ListAccessor<VueProvide>() {
+    override fun build(declaration: JSElement): List<VueProvide> {
+      return ContainerMember.Provides.readMembers(declaration).mapNotNull { (name, element) ->
+        if (element is JSComputedPropertyNameOwner && element.computedPropertyName != null) {
+          JSStubBasedPsiTreeUtil.resolveLocally(name, element).asSafely<PsiNamedElement>()
+            ?.let { VueSourceProvide(name, element, it) }
+        }
+        else {
+          VueSourceProvide(name, element)
+        }
+      }
     }
   }
 
@@ -291,13 +307,18 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
   private class VueSourceInject(override val name: String, override val source: PsiElement?) : VueInject {
 
-    private val keyType = getInjectKeyType(source.asSafely<JSProperty>()?.initializerOrStub)
+    private val keyType = lazy(LazyThreadSafetyMode.NONE) {
+      getInjectKeyType(source.asSafely<JSProperty>()?.initializerOrStub)
+    }
 
-    override val symbol: PsiNamedElement? = keyType?.symbol
+    override val from: String?
+      get() = keyType.value?.name
 
-    override val from: String? = keyType?.name
+    override val symbol: PsiNamedElement?
+      get() = keyType.value?.symbol
 
-    override val defaultValue: JSType? = getInjectDefaultType(source.asSafely<JSProperty>()?.initializerOrStub)
+    override val defaultValue: JSType?
+      get() = getInjectDefaultType(source.asSafely<JSProperty>()?.initializerOrStub)
 
     private data class VueInjectKey(val name: String? = null, val symbol: PsiNamedElement? = null)
 

@@ -19,6 +19,7 @@ import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
@@ -111,6 +112,11 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
         ?.implicitElements?.find { it.userString == METHOD_NAME_USER_STRING }
         ?.name
     }
+
+    fun getFunctionImplicitElement(call: JSCallExpression): JSImplicitElement? =
+      call.indexingData
+        ?.implicitElements
+        ?.find { it.userString == METHOD_NAME_USER_STRING }
 
     fun hasComponentIndicatorProperties(obj: JSObjectLiteralExpression, exclude: String? = null): Boolean =
       obj.properties.any { it.name != exclude && COMPONENT_INDICATOR_PROPS.contains(it.name) }
@@ -373,7 +379,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
             this, VueCompositionAppIndex.JS_KEY,
             // Store reference name for resolution
             callExpression.arguments
-              .getOrNull(if (referenceName == CREATE_APP_FUN || referenceName == MIXIN_FUN) 0 else 1)
+              .getOrNull(if (referenceName == CREATE_APP_FUN || referenceName == MIXIN_FUN || referenceName == PROVIDE_FUN) 0 else 1)
               .asSafely<JSReferenceExpression>()
               ?.takeIf { it.qualifier == null }
               ?.referenceName
@@ -558,9 +564,24 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
                                     outData: JSElementIndexingData,
                                     callExpression: JSCallExpression,
                                     referenceName: String) {
-    outData.addImplicitElement(JSImplicitElementImpl.Builder(referenceName, callExpression)
-                                 .setUserString(vueFrameworkHandler, METHOD_NAME_USER_STRING)
-                                 .toImplicitElement())
+    outData.addImplicitElement(
+      JSImplicitElementImpl.Builder(referenceName, callExpression)
+        .setUserStringWithData(
+          vueFrameworkHandler,
+          METHOD_NAME_USER_STRING,
+          if (referenceName == PROVIDE_FUN) {
+            callExpression.arguments
+              .getOrNull(0)
+              .asSafely<JSReferenceExpression>()
+              ?.takeUnless { it.hasQualifier() }
+              ?.referenceName
+          }
+          else {
+            null
+          }
+        )
+        .toImplicitElement()
+    )
   }
 
   private fun checkCallExpression(callNode: ASTNode, check: (referenceName: String, hasQualifier: Boolean) -> Boolean): Boolean {

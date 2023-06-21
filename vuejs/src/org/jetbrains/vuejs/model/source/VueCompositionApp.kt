@@ -11,6 +11,7 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.search.GlobalSearchScopeUtil
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.util.CachedValueProvider
@@ -195,9 +196,12 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
         .filter { resolveScope == null || PsiTreeUtil.isContextAncestor(resolveScope, it, false) }
         .mapNotNull { el ->
           val provideCall = el.context as? JSCallExpression ?: return@mapNotNull null
-          when (val injectionKey = provideCall.arguments.getOrNull(0)) {
-            is JSLiteralExpression -> getTextIfLiteral(injectionKey)?.let { VueSourceProvide(it, injectionKey) }
-            is JSReferenceExpression -> injectionKey.referenceName?.let { VueSourceProvide(it, injectionKey) }
+          val referenceName = el.userStringData
+          val literalKey = provideCall.stubSafeCallArguments.getOrNull(0).asSafely<JSLiteralExpression>()
+          when {
+            referenceName != null -> JSStubBasedPsiTreeUtil.resolveLocally(referenceName, provideCall).asSafely<PsiNamedElement>()
+              ?.let { VueSourceProvide(referenceName, provideCall, it) }
+            literalKey != null -> getTextIfLiteral(literalKey)?.let { VueSourceProvide(it, literalKey) }
             else -> null
           }
         }.toList()
