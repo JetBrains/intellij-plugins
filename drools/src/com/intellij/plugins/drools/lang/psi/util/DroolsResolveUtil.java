@@ -793,6 +793,11 @@ public final class DroolsResolveUtil {
           getResults().add(psiField);
         }
       }
+      else if (psiElement instanceof PsiVariable psiVariable) {
+        if (myTextToResolve.equals(psiVariable.getName())) {
+          getResults().add(psiVariable);
+        }
+      }
       return super.process(psiElement);
     }
   }

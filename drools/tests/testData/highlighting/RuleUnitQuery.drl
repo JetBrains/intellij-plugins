@@ -1,0 +1,50 @@
+package examples.kogito;
+unit LoanUnit;
+
+import examples.kogito.LoanApplication
+import static examples.kogito..Applicant.THIS_IS_A_CONSTANT
+
+rule SmallDepositApprove when
+    $l: /loanApplications[ applicant.age >= 20, deposit < 1000, amount <= 2000 ]
+    not /loanApplications[applicant.age <= 100]
+then
+    modify($l) { setApproved(true) };
+end
+
+rule SmallDepositReject when
+    $l: /loanApplications[ applicant.age >= 20, deposit < 1000, amount > 2000]
+    /accessorKeyDataStore   [fieldName  == ""]
+then
+    modify($l) {  setApproved(true ) };
+end
+
+rule LargeDepositApprove when
+    $l: /loanApplications[ applicant.age >= 20, deposit >= 1000, amount <= maxAmount, name == THIS_IS_A_CONSTANT ]
+then
+    String f = "f";
+    String a = THIS_IS_A_CONSTANT;
+    modify($l) {
+    setApproved(true) };
+end
+
+rule LargeDepositReject when
+    $l: /loanApplications[ applicant.age >= 20, deposit >= 1000, amount > maxAmount ]
+then
+    modify($l) { setApproved(false) };
+end
+
+rule NotAdultApplication when
+    $l: /loanApplications[ applicant.age < 20 ]
+then
+    modify($l) { setApproved(false) };
+end
+
+
+query FindApproved
+    $l: /loanApplications[ approved ]
+end
+
+query FindNotApprovedIdAndAmount
+    /loanApplications[ !approved, $id: id, $amount : amount ]
+end
+
