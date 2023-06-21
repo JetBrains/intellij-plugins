@@ -7,6 +7,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -34,11 +35,16 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PerforceChangeProvider implements ChangeProvider {
   private static final Logger LOG = Logger.getInstance(PerforceChangeProvider.class);
 
+  public PerforceUnversionedTracker getUnversionedTracker() {
+    return myUnversionedTracker;
+  }
+
   private final Project myProject;
   private final PerforceRunner myRunner;
   private final LastSuccessfulUpdateTracker myLastSuccessfulUpdateTracker;
   private final PerforceNumberNameSynchronizer mySynchronizer;
   private final PerforceReadOnlyFileStateManager myPerforceReadOnlyFileStateManager;
+  private final PerforceUnversionedTracker myUnversionedTracker;
   private final Map<VirtualFile, Boolean> myAlwaysWritable = new ConcurrentHashMap<>();
   private final PerforceShelf myShelf;
   private final PerforceVcs myVcs;
@@ -49,12 +55,15 @@ public class PerforceChangeProvider implements ChangeProvider {
     myRunner = PerforceRunner.getInstance(myProject);
     myLastSuccessfulUpdateTracker = LastSuccessfulUpdateTracker.getInstance(myProject);
     mySynchronizer = PerforceNumberNameSynchronizer.getInstance(myProject);
-    myPerforceReadOnlyFileStateManager = new PerforceReadOnlyFileStateManager(myProject);
+    myUnversionedTracker = new PerforceUnversionedTracker(myProject);
+    myPerforceReadOnlyFileStateManager = new PerforceReadOnlyFileStateManager(myProject, myUnversionedTracker);
     myShelf = PerforceManager.getInstance(myProject).getShelf();
   }
 
   public void activate(@NotNull Disposable parentDisposable) {
+    Disposer.register(parentDisposable, () -> myUnversionedTracker.isActive = false);
     myPerforceReadOnlyFileStateManager.activate(parentDisposable);
+    myUnversionedTracker.activate(parentDisposable);
   }
 
   @Override
@@ -112,8 +121,7 @@ public class PerforceChangeProvider implements ChangeProvider {
 
     Stopwatch sw = Stopwatch.createStarted();
     for (VirtualFile file : writableFiles) {
-      PerforceUnversionedTracker tracker = myPerforceReadOnlyFileStateManager.getUnversionedTracker();
-      if (!creator.reportedChanges.contains(file) && !tracker.isUnversioned(file) && !tracker.isIgnored(file)) {
+      if (!creator.reportedChanges.contains(file) && !myUnversionedTracker.isUnversioned(file) && !myUnversionedTracker.isIgnored(file)) {
         Boolean alwaysWritable = myAlwaysWritable.get(file);
         if (alwaysWritable == Boolean.FALSE) {
           logDebug("reportModifiedWithoutCheckout, hijacked file = " + file);
@@ -342,6 +350,6 @@ public class PerforceChangeProvider implements ChangeProvider {
   }
 
   public void clearUnversionedStatus(@NotNull VirtualFile file) {
-    myPerforceReadOnlyFileStateManager.getUnversionedTracker().reportRecheck(file);
+    myUnversionedTracker.reportRecheck(file);
   }
 }

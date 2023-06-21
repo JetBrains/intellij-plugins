@@ -100,6 +100,8 @@
     <vcsPopupProvider implementation="org.jetbrains.idea.perforce.actions.PerforceQuickListContentProvider"/>
     <search.projectOptionsTopHitProvider implementation="org.jetbrains.idea.perforce.perforce.PerforceOptionsTopHitProvider"/>
     <vcsRootChecker implementation="org.jetbrains.idea.perforce.perforce.P4RootChecker"/>
+    <vcs.ignoredFilesHolder implementation="org.jetbrains.idea.perforce.application.PerforceIgnoredFilesHolder$Provider"/>
+    <vcs.unversionedFilesHolder implementation="org.jetbrains.idea.perforce.application.PerforceUnversionedFilesHolder$Provider"/>
 
     <projectService serviceInterface="org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManagerI"
     serviceImplementation="org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager"/>
