@@ -116,6 +116,7 @@
 !ChangeDetectorRef#null#0
 !CharacterData#CharacterData#0
 !HighContrastModeDetector#null#0
+!OffscreenCanvasRenderingContext2D#OffscreenCanvasRenderingContext2D#0
 !OverlayOutsideClickDispatcher#null#0
 !RTCDTMFSender#RTCDTMFSender#0
 !RTCDTMFToneChangeEvent#RTCDTMFToneChangeEvent#0

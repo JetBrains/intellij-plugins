@@ -9,7 +9,7 @@
 (beforeinput)%null#InputEvent#50
 (beforepaste)%null#null#50
 (blur)%null#FocusEvent#50
-(cancel)%null#null#50
+(cancel)%null#Event#50
 (canplay)%null#Event#50
 (canplaythrough)%null#Event#50
 (change)%null#Event#50
