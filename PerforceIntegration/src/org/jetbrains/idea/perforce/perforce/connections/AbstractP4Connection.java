@@ -31,6 +31,7 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.process.InterruptibleProcess;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.util.Consumer;
 import com.intellij.util.EmptyConsumer;
@@ -40,6 +41,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.idea.perforce.PerforceBundle;
 import org.jetbrains.idea.perforce.application.PerforceManager;
+import org.jetbrains.idea.perforce.application.PerforceVcs;
 import org.jetbrains.idea.perforce.perforce.*;
 
 import javax.swing.*;
@@ -381,6 +383,12 @@ public abstract class AbstractP4Connection implements P4Connection {
       if (myProject.isDisposed()) {
         return TIMEOUT_EXIT_CODE;
       }
+
+      PerforceVcs vcs = PerforceVcs.getInstance(myProject);
+      if (!ProjectLevelVcsManager.getInstance(myProject).checkVcsIsActive(vcs)) {
+        return TIMEOUT_EXIT_CODE;
+      }
+
       return Messages
         .showOkCancelDialog(myProject, PerforceBundle.message("confirmation.text.perforce.server.not.responding.disable.integration"),
                             PerforceBundle.message("dialog.title.perforce"),
