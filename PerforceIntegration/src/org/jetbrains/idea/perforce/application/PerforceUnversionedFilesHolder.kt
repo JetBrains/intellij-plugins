@@ -3,7 +3,6 @@ package org.jetbrains.idea.perforce.application
 import com.intellij.dvcs.repo.VcsManagedFilesHolderBase
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.FilePath
-import com.intellij.openapi.vcs.LocalFilePath
 import com.intellij.openapi.vcs.changes.VcsManagedFilesHolder
 import com.intellij.openapi.vfs.VirtualFile
 
@@ -11,13 +10,11 @@ class PerforceUnversionedFilesHolder(private val unversionedTracker: PerforceUnv
   override fun isInUpdatingMode() = unversionedTracker.isInUpdateMode
 
   override fun containsFile(file: FilePath, vcsRoot: VirtualFile): Boolean {
-    val virtualFile = file.virtualFile ?: return false
-    return unversionedTracker.isUnversioned(virtualFile)
+    return unversionedTracker.isUnversioned(file)
   }
 
-  // todo: use FilePath from the start
   override fun values(): Collection<FilePath> {
-    return unversionedTracker.unversionedFiles.map { LocalFilePath(it.path, it.isDirectory) }
+    return unversionedTracker.unversionedFiles
   }
 
   class Provider(val project: Project) : VcsManagedFilesHolder.Provider {

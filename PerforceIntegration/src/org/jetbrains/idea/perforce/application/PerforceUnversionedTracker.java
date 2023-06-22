@@ -26,6 +26,7 @@ import com.intellij.util.containers.MultiMap;
 import com.intellij.util.ui.update.ComparableObject;
 import com.intellij.util.ui.update.DisposableUpdate;
 import com.intellij.util.ui.update.MergingUpdateQueue;
+import com.intellij.vcsUtil.VcsUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.perforce.PerforceBundle;
@@ -42,8 +43,8 @@ import java.util.stream.Collectors;
 
 public class PerforceUnversionedTracker implements Disposable {
   private static final Logger LOG = Logger.getInstance(PerforceUnversionedTracker.class);
-  private final Set<VirtualFile> myUnversionedFiles = ConcurrentCollectionFactory.createConcurrentSet();
-  private final Set<VirtualFile> myIgnoredFiles = ConcurrentCollectionFactory.createConcurrentSet();
+  private final Set<FilePath> myUnversionedFiles = ConcurrentCollectionFactory.createConcurrentSet();
+  private final Set<FilePath> myIgnoredFiles = ConcurrentCollectionFactory.createConcurrentSet();
 
   private final Project myProject;
   private final Set<VirtualFile> myDirtyFiles = new HashSet<>();
@@ -56,19 +57,19 @@ public class PerforceUnversionedTracker implements Disposable {
     myQueue = VcsIgnoreManagerImpl.getInstanceImpl(myProject).getIgnoreRefreshQueue();
   }
 
-  public boolean isUnversioned(@NotNull VirtualFile file) {
+  public boolean isUnversioned(@NotNull FilePath file) {
     return myUnversionedFiles.contains(file);
   }
 
-  public boolean isIgnored(@NotNull VirtualFile file) {
+  public boolean isIgnored(@NotNull FilePath file) {
     return myIgnoredFiles.contains(file) || isPotentiallyIgnoredFile(file);
   }
 
-  public Collection<VirtualFile> getIgnoredFiles() {
+  public Collection<FilePath> getIgnoredFiles() {
     return myIgnoredFiles;
   }
 
-  public Collection<VirtualFile> getUnversionedFiles() {
+  public Collection<FilePath> getUnversionedFiles() {
     return myUnversionedFiles;
   }
 
@@ -113,10 +114,11 @@ public class PerforceUnversionedTracker implements Disposable {
     }
 
     for (VirtualFile file : map.values()) {
+      FilePath path = VcsUtil.getFilePath(file);
       if (ignoredSet.contains(file)) {
-        myIgnoredFiles.add(file);
+        myIgnoredFiles.add(path);
       } else {
-        myUnversionedFiles.add(file);
+        myUnversionedFiles.add(path);
       }
     }
 
@@ -141,16 +143,20 @@ public class PerforceUnversionedTracker implements Disposable {
 
   public void markUnknown(@NotNull Set<VirtualFile> files) {
     synchronized (LOCK) {
-      files.forEach(myUnversionedFiles::remove);
-      files.forEach(myIgnoredFiles::remove);
+      files.forEach(file -> {
+        FilePath path = VcsUtil.getFilePath(file);
+        myUnversionedFiles.remove(path);
+        myIgnoredFiles.remove(path);
+      });
     }
   }
 
   public void markUnknown(@Nullable VirtualFile file) {
     if (file != null) {
       synchronized (LOCK) {
-        myUnversionedFiles.remove(file);
-        myIgnoredFiles.remove(file);
+        FilePath path = VcsUtil.getFilePath(file);
+        myUnversionedFiles.remove(path);
+        myIgnoredFiles.remove(path);
       }
     }
   }
@@ -271,7 +277,7 @@ public class PerforceUnversionedTracker implements Disposable {
     return result;
   }
 
-  private boolean isPotentiallyIgnoredFile(VirtualFile file) {
+  private boolean isPotentiallyIgnoredFile(FilePath file) {
     return (Registry.is("p4.ignore.all.potentially.ignored") && VcsIgnoreManager.getInstance(myProject).isPotentiallyIgnoredFile(file));
   }
 
