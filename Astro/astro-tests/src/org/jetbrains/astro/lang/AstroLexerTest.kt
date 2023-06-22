@@ -103,6 +103,32 @@ open class AstroLexerTest : LexerTestCase() {
     |<div class="card">Content</div>
   """)
 
+  fun testLessStyle() = doTest("""
+    |---
+    |// Frontmatter
+    |---
+    |<style lang="less">
+    |  @color-orange: #ff9900;
+    |
+    |  .concrete {
+    |    color: @color-orange;
+    |  }
+    |</style>
+  """)
+
+  fun testSassStyle() = doTest("""
+    |---
+    |// Frontmatter
+    |---
+    |<style lang="sass">
+    |  ${"$"}family: 'serif';
+    |
+    |  body
+    |    p
+    |      font-family: ${"$"}family
+    |</style>
+  """)
+
   fun testBasicScript() = doTest("""
     |<button data-confetti-button>Celebrate!</button>
     |

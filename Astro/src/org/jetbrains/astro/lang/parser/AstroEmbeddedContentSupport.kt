@@ -30,8 +30,9 @@ class AstroTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedCon
     interestingTags.any { namesEqual(tagName, it) }
 
   override fun isInterestedInAttribute(attributeName: CharSequence): Boolean =
-    namesEqual(tagName, HtmlUtil.SCRIPT_TAG_NAME) &&
-    (namesEqual(attributeName, ASTRO_INLINE_DIRECTIVE) || namesEqual(attributeName, HtmlUtil.TYPE_ATTRIBUTE_NAME))
+    namesEqual(attributeName, "lang") ||
+    (namesEqual(tagName, HtmlUtil.SCRIPT_TAG_NAME) &&
+    (namesEqual(attributeName, ASTRO_INLINE_DIRECTIVE) || namesEqual(attributeName, HtmlUtil.TYPE_ATTRIBUTE_NAME)))
 
   override fun createEmbedmentInfo(): HtmlEmbedmentInfo? {
     val tagName = tagName ?: return null
