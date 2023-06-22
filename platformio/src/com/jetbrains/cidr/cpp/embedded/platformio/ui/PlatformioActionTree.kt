@@ -34,7 +34,6 @@ internal class PlatformioActionTree(private val project: Project, private val me
   private val envNode: DefaultMutableTreeNode
 
   init {
-    project.messageBus.connect().subscribe(PLATFORMIO_UPDATES_TOPIC, this)
     isRootVisible = false
     setExpandableItemsEnabled(false)
     setCellRenderer(object : LabelBasedRenderer.Tree() {
@@ -84,6 +83,9 @@ internal class PlatformioActionTree(private val project: Project, private val me
 
     }
     TreeUtil.expandAll(this)
+    project.messageBus.connect().subscribe(PLATFORMIO_UPDATES_TOPIC, this)
+    targetsChanged()
+    projectStateChanged()
   }
 
   private fun DefaultMutableTreeNode.addNode(childUserObject: Any): DefaultMutableTreeNode {
@@ -94,7 +96,6 @@ internal class PlatformioActionTree(private val project: Project, private val me
 
   private fun DefaultMutableTreeNode.addEnvNodes(actionManager: ActionManager,
                                                  targets: List<PlatformioTargetData> = emptyList()): DefaultMutableTreeNode {
-    //todo check nodes visibility
     val visibleActions = mutableSetOf<String>()
     targets.forEach { targetData ->
 
@@ -119,7 +120,7 @@ internal class PlatformioActionTree(private val project: Project, private val me
     return this
   }
 
-  override fun reparseFailed(pioStartFailed: Boolean) {
+  private fun reparseFailed(pioStartFailed: Boolean) {
     fun tryReparseControl() =
       messageHolder.appendLine(ClionEmbeddedPlatformioBundle.message("parse.again"),
                                LINK_ATTRIBUTES) { _ ->
@@ -144,22 +145,24 @@ internal class PlatformioActionTree(private val project: Project, private val me
     isVisible = false
   }
 
-
-  override fun reparseStarted() {
-    messageHolder.text = ClionEmbeddedPlatformioBundle.message("status.text.parsing")
-    isVisible = false
+  override fun projectStateChanged() {
+    when (project.service<PlatformioService>().projectStatus) {
+      PlatformioProjectStatus.PARSED -> isVisible = true
+      PlatformioProjectStatus.PARSE_FAILED -> reparseFailed(false)
+      PlatformioProjectStatus.UTILITY_FAILED -> reparseFailed(true)
+      else -> {
+        messageHolder.text = ClionEmbeddedPlatformioBundle.message("status.text.parsing")
+        isVisible = false
+      }
+    }
   }
 
-  override fun reparseSuccess() {
-    isVisible = true
-  }
-
-  override fun targetsChanged(newTargets: List<PlatformioTargetData>) {
+  override fun targetsChanged() {
     envNode.userObject = targetName(ExecutionTargetManager.getActiveTarget(project))
     val envNodeWasEmpty = envNode.childCount == 0
     val actionManager = ActionManager.getInstance()
     envNode.removeAllChildren()
-    envNode.addEnvNodes(actionManager, newTargets)
+    envNode.addEnvNodes(actionManager, project.service<PlatformioService>().targets)
     (model as DefaultTreeModel).nodeStructureChanged(envNode)
     if (envNodeWasEmpty) {
       expandPath(TreePath(envNode.path))

@@ -29,6 +29,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.asSafely
 import com.jetbrains.cidr.cpp.embedded.platformio.*
+import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioProjectStatus.*
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioProjectResolvePolicy
 import com.jetbrains.cidr.cpp.execution.manager.CLionRunConfigurationManager
 import com.jetbrains.cidr.cpp.external.system.project.attachExternalModule
@@ -71,7 +72,8 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
                                   listener: ExternalSystemTaskNotificationListener): DataNode<ProjectData>? {
     cancelled = false
     val project = id.findProject()!!
-    project.messageBus.syncPublisher(PLATFORMIO_UPDATES_TOPIC).reparseStarted()
+    val platformioService = project.service<PlatformioService>()
+    platformioService.projectStatus = PARSING
     try {
       val projectFile = LocalFileSystem.getInstance().findFileByPath(projectPath)!!
       val projectDir = if (projectFile.isDirectory) projectFile else projectFile.parent
@@ -80,7 +82,6 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
         cliGenerateProject(project, listener, id, projectDir, boardInfo)
       }
       checkCancelled()
-      val platformioService = project.service<PlatformioService>()
       if (resolverPolicy.asSafely<PlatformioProjectResolvePolicy>()?.cleanCache != false) {
         platformioService.cleanCache()
       }
@@ -172,20 +173,22 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
         }
       }
       while (needsToBeReparsed)
-      project.messageBus.syncPublisher(PLATFORMIO_UPDATES_TOPIC).reparseSuccess()
+      platformioService.projectStatus = PARSED
+      project.messageBus.syncPublisher(PLATFORMIO_UPDATES_TOPIC).projectStateChanged()
       return projectNode
     }
     catch (e: ProcessNotCreatedException) {
-      project.messageBus.syncPublisher(PLATFORMIO_UPDATES_TOPIC).reparseFailed(true)
+      platformioService.projectStatus = PARSED
+      platformioService.projectStatus = UTILITY_FAILED
       LOG.error(e)
       throw ExternalSystemException(e)
     }
     catch (e: ExternalSystemException) {
-      project.messageBus.syncPublisher(PLATFORMIO_UPDATES_TOPIC).reparseFailed(false)
+      platformioService.projectStatus = PARSE_FAILED
       throw e
     }
     catch (e: Throwable) {
-      project.messageBus.syncPublisher(PLATFORMIO_UPDATES_TOPIC).reparseFailed(false)
+      platformioService.projectStatus = PARSE_FAILED
       LOG.error(e)
       throw ExternalSystemException(e)
     }
