@@ -5,6 +5,7 @@ import com.intellij.json.JsonLanguage
 import com.intellij.json.psi.impl.JsonFileImpl
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileFilter
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.stubs.BinaryFileStubBuilder
 import com.intellij.psi.stubs.Stub
@@ -12,9 +13,12 @@ import com.intellij.util.indexing.FileContent
 import org.angular2.lang.metadata.stubs.MetadataFileStubImpl
 
 class MetadataJsonStubBuilder : BinaryFileStubBuilder {
+  override fun getFileFilter(): VirtualFileFilter {
+    return VirtualFileFilter.ALL // any file of file type that this builder is registered for
+  }
 
   override fun acceptsFile(file: VirtualFile): Boolean {
-    return file.fileType is MetadataJsonFileType
+    return true
   }
 
   override fun buildStubTree(fileContent: FileContent): Stub {

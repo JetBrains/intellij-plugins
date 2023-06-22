@@ -16,6 +16,7 @@
 package com.intellij.protobuf.lang.stub;
 
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileFilter;
 import com.intellij.psi.stubs.BinaryFileStubBuilder;
 import com.intellij.psi.stubs.Stub;
 import com.intellij.util.indexing.FileContent;
@@ -25,6 +26,11 @@ import org.jetbrains.annotations.Nullable;
 /** Empty stub builder to suppress errors when IntelliJ is looking for stubs. */
 public class PbTextFileStubBuilder implements BinaryFileStubBuilder {
   private static final int STUB_VERSION = 0;
+
+  @Override
+  public @NotNull VirtualFileFilter getFileFilter() {
+    return VirtualFileFilter.NONE;
+  }
 
   @Override
   public boolean acceptsFile(@NotNull VirtualFile file) {
