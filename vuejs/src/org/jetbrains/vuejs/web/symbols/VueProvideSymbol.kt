@@ -7,19 +7,23 @@ import com.intellij.psi.PsiNamedElement
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.SymbolNamespace
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.WebSymbolOrigin
 import org.jetbrains.vuejs.model.VueContainer
 import org.jetbrains.vuejs.model.VueProvide
+import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.KIND_VUE_PROVIDES
 
-class VueProvideSymbol(private val provide: VueProvide,
-                       private val owner: VueContainer,
-                       override val origin: WebSymbolOrigin,
-                       override val kind: SymbolKind)
-  : VueDocumentedItemSymbol<VueProvide>(provide.name, provide) {
+class VueProvideSymbol(
+  private val provide: VueProvide,
+  private val owner: VueContainer,
+  override val origin: WebSymbolOrigin,
+) : VueDocumentedItemSymbol<VueProvide>(provide.name, provide) {
 
   override val namespace: SymbolNamespace
-    get() = WebSymbol.NAMESPACE_JS
+    get() = NAMESPACE_JS
+
+  override val kind: SymbolKind
+    get() = KIND_VUE_PROVIDES
 
   override val type: JSType?
     get() = item.jsType
@@ -27,26 +31,15 @@ class VueProvideSymbol(private val provide: VueProvide,
   val injectionKey: PsiNamedElement?
     get() = provide.injectionKey
 
-  override fun equals(other: Any?): Boolean =
-    super.equals(other)
-    && (other as VueProvideSymbol).kind == kind
-
-  override fun hashCode(): Int {
-    var result = super.hashCode()
-    result = 31 * result + kind.hashCode()
-    return result
-  }
-
   override fun createPointer(): Pointer<VueProvideSymbol> = object : Pointer<VueProvideSymbol> {
     private val name = this@VueProvideSymbol.name
     private val origin = this@VueProvideSymbol.origin
-    private val kind = this@VueProvideSymbol.kind
     private val pointer = this@VueProvideSymbol.owner.createPointer()
 
     override fun dereference(): VueProvideSymbol? =
       pointer.dereference()?.asSafely<VueContainer>()?.let { container ->
         container.provides.find { it.name == name }?.let { provide ->
-          VueProvideSymbol(provide, container, origin, kind)
+          VueProvideSymbol(provide, container, origin)
         }
       }
   }
