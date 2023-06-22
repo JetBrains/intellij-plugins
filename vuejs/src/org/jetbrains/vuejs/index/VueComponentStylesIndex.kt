@@ -9,6 +9,7 @@ import com.intellij.util.ThreeState
 import com.intellij.util.indexing.*
 import com.intellij.util.indexing.FileBasedIndex.InputFilter
 import com.intellij.util.indexing.hints.BaseFileTypeInputFilter
+import com.intellij.util.indexing.hints.FileTypeSubstitutionStrategy.AFTER_SUBSTITUTION
 import com.intellij.util.io.EnumeratorStringDescriptor
 import com.intellij.util.io.KeyDescriptor
 import com.intellij.xml.util.HtmlUtil
@@ -43,7 +44,7 @@ class VueComponentStylesIndex : ScalarIndexExtension<String>() {
 
   override fun getVersion(): Int = 2
 
-  override fun getInputFilter(): InputFilter = object : BaseFileTypeInputFilter() {
+  override fun getInputFilter(): InputFilter = object : BaseFileTypeInputFilter(AFTER_SUBSTITUTION) {
     override fun acceptFileType(fileType: FileType): ThreeState {
       return if (fileType == VueFileType.INSTANCE) {
         ThreeState.UNSURE // check hasNodeModulesDirInPath
