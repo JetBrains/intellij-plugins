@@ -105,36 +105,45 @@ public class PerforceChangeProvider implements ChangeProvider {
     }
 
     myPerforceReadOnlyFileStateManager.getChanges(dirtyScope, builder, progress, addGate);
-    final Set<VirtualFile> writableFiles = collectWritableFiles(dirtyScope, false);
+    final Set<FilePath> writableFiles = collectWritableFiles(dirtyScope, false);
 
     for (VirtualFile file : PerforceVcs.getInstance(myProject).getAsyncEditedFiles()) {
-      if (writableFiles.contains(file)) {
+      FilePath path = VcsUtil.getFilePath(file);
+      if (writableFiles.contains(path)) {
         processAsyncEdit(file, builder, creator);
-        writableFiles.remove(file);
+        writableFiles.remove(path);
       }
     }
     reportModifiedWithoutCheckout(builder, creator, writableFiles);
     myLastSuccessfulUpdateTracker.updateSuccessful();
   }
 
-  private void reportModifiedWithoutCheckout(ChangelistBuilder builder, ChangeCreator creator, Set<VirtualFile> writableFiles) throws VcsException {
+  private void reportModifiedWithoutCheckout(ChangelistBuilder builder, ChangeCreator creator, Set<FilePath> writableFiles) throws VcsException {
     List<VirtualFile> unknown = new ArrayList<>();
 
     Stopwatch sw = Stopwatch.createStarted();
-    for (VirtualFile file : writableFiles) {
-      if (!creator.reportedChanges.contains(file) && !myUnversionedTracker.isUnversioned(file) && !myUnversionedTracker.isIgnored(file)) {
-        Boolean alwaysWritable = myAlwaysWritable.get(file);
-        if (alwaysWritable == Boolean.FALSE) {
-          logDebug("reportModifiedWithoutCheckout, hijacked file = " + file);
-          builder.processModifiedWithoutCheckout(file);
-        } else if (alwaysWritable == null) {
-          logDebug("reportModifiedWithoutCheckout, unknown file = " + file);
-          unknown.add(file);
+    for (FilePath path : writableFiles) {
+      if (!myUnversionedTracker.isUnversioned(path) && !myUnversionedTracker.isIgnored(path)) {
+        VirtualFile file = path.getVirtualFile();
+        if (file == null) {
+          LOG.warn("file is null for %s".formatted(path.getPath()));
+          continue;
+        }
+
+        if (!creator.reportedChanges.contains(file)) {
+          Boolean alwaysWritable = myAlwaysWritable.get(file);
+          if (alwaysWritable == Boolean.FALSE) {
+            logDebug("reportModifiedWithoutCheckout, hijacked file = " + path);
+            builder.processModifiedWithoutCheckout(file);
+          } else if (alwaysWritable == null) {
+            logDebug("reportModifiedWithoutCheckout, unknown file = " + path);
+            unknown.add(file);
+          }
         }
       }
     }
 
-    logDebug("P4 collectWritables first stage took %d s".formatted(sw.elapsed().toSeconds()));
+    logDebug("P4 reportModifiedWithoutCheckout first stage took %d s".formatted(sw.elapsed().toSeconds()));
 
     if (!unknown.isEmpty() && SystemProperties.getBooleanProperty("perforce.always.writable.check.enabled", true)) {
       MultiMap<P4Connection, VirtualFile> map = FileGrouper.distributeFilesByConnection(unknown, myProject);
@@ -241,14 +250,15 @@ public class PerforceChangeProvider implements ChangeProvider {
     return filtered;
   }
 
-  static Set<VirtualFile> collectWritableFiles(VcsDirtyScope dirtyScope, boolean withIgnored) {
+  static Set<FilePath> collectWritableFiles(VcsDirtyScope dirtyScope, boolean withIgnored) {
     Stopwatch sw = Stopwatch.createStarted();
-    final Set<VirtualFile> writableFiles = new HashSet<>();
+    final Set<FilePath> writableFiles = new HashSet<>();
     dirtyScope.iterateExistingInsideScope(vf -> {
       ApplicationManager.getApplication().runReadAction(() -> {
         if (vf.isValid() && !vf.isDirectory() && vf.isWritable() && !vf.is(VFileProperty.SYMLINK)) {
-          if (withIgnored || !ChangeListManager.getInstance(dirtyScope.getProject()).isIgnoredFile(vf)) {
-            writableFiles.add(vf);
+          FilePath path = VcsUtil.getFilePath(vf);
+          if (withIgnored || !ChangeListManager.getInstance(dirtyScope.getProject()).isIgnoredFile(path)) {
+            writableFiles.add(path);
           }
         }
       });

@@ -120,22 +120,22 @@ class PerforceDirtyFilesHandler(private val myProject: Project,
     }
   }
 
-  fun reportRecheck(file: VirtualFile?) {
+  fun reportRecheck(file: VirtualFile) {
     myUnversionedTracker.markUnknown(file)
-    if (addDirtyFile(VcsUtil.getFilePath(file!!))) {
+    if (addDirtyFile(VcsUtil.getFilePath(file))) {
       myDirtyScopeManager.fileDirty(file)
     }
   }
 
-  fun reportDelete(file: VirtualFile?) {
-    if (addDirtyFile(VcsUtil.getFilePath(file!!))) {
+  fun reportDelete(file: VirtualFile) {
+    if (addDirtyFile(VcsUtil.getFilePath(file))) {
       myDirtyScopeManager.fileDirty(file)
     }
   }
 
-  fun reportRecheck(targets: Set<VirtualFile?>) {
+  fun reportRecheck(targets: Set<VirtualFile>) {
     for (target in targets) {
-      if (!addDirtyFile(VcsUtil.getFilePath(target!!))) {
+      if (!addDirtyFile(VcsUtil.getFilePath(target))) {
         return
       }
     }

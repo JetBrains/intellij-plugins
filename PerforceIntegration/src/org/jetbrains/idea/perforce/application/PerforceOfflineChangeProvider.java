@@ -56,11 +56,11 @@ public class PerforceOfflineChangeProvider implements ChangeProvider {
 
     ChangeListManager clm = ChangeListManager.getInstance(dirtyScope.getProject());
 
-    Set<VirtualFile> writable = PerforceChangeProvider.collectWritableFiles(dirtyScope, true);
+    Set<FilePath> writable = PerforceChangeProvider.collectWritableFiles(dirtyScope, true);
 
-    Iterator<VirtualFile> iterator = writable.iterator();
+    Iterator<FilePath> iterator = writable.iterator();
     while (iterator.hasNext()) {
-      VirtualFile file = iterator.next();
+      FilePath file = iterator.next();
       if (clm.isIgnoredFile(file)) {
         builder.processIgnoredFile(file);
         iterator.remove();
@@ -96,7 +96,7 @@ public class PerforceOfflineChangeProvider implements ChangeProvider {
             }
             if (afterPath != null) {
               afterRevision = CurrentContentRevision.create(afterPath);
-              writable.remove(afterPath.getVirtualFile());
+              writable.remove(afterPath);
             }
             builder.processChangeInList(new Change(beforeRevision, afterRevision), changeListName, PerforceVcs.getKey());
           }
@@ -111,19 +111,20 @@ public class PerforceOfflineChangeProvider implements ChangeProvider {
         FilePath afterPath = ChangesUtil.getAfterPath(c);
         if (isInScope(dirtyScope, ChangesUtil.getBeforePath(c), afterPath)) {
           if (afterPath != null) {
-            writable.remove(afterPath.getVirtualFile());
+            writable.remove(afterPath);
           }
           builder.processChangeInList(c, op.getChangeList(), PerforceVcs.getKey());
         }
       }
     }
 
-    for (VirtualFile file : writable) {
+    for (FilePath path : writable) {
+      VirtualFile file = path.getVirtualFile();
       if (LastUnchangedContentTracker.hasSavedContent(file)) {
         builder.processModifiedWithoutCheckout(file);
       }
       else {
-        builder.processUnversionedFile(file);
+        builder.processUnversionedFile(path);
       }
     }
   }
