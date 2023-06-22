@@ -27,8 +27,8 @@ public final class PerforceReadOnlyFileStateManager {
   private static final Logger LOG = Logger.getInstance(PerforceReadOnlyFileStateManager.class);
 
   private final Project myProject;
+  private final PerforceDirtyFilesHandler myDirtyFilesHandler;
   private final ProjectLevelVcsManager myVcsManager;
-  private final PerforceUnversionedTracker myUnversionedTracker;
   private final Object myLock = new Object();
   private final ApplicationActivationListener myFrameStateListener = new ApplicationActivationListener() {
     @Override
@@ -38,13 +38,12 @@ public final class PerforceReadOnlyFileStateManager {
   };
   private final Set<VirtualFile> myPreviousAddedSnapshot = new HashSet<>();
 
-  private volatile boolean myPreviousRescanProblem;
   private volatile boolean myHasLostFocus;
 
-  public PerforceReadOnlyFileStateManager(Project project, PerforceUnversionedTracker unversionedTracker) {
+  public PerforceReadOnlyFileStateManager(Project project, PerforceDirtyFilesHandler dirtyFilesHandler) {
     myProject = project;
+    myDirtyFilesHandler = dirtyFilesHandler;
     myVcsManager = ProjectLevelVcsManager.getInstance(myProject);
-    myUnversionedTracker = unversionedTracker;
   }
 
   public void activate(@NotNull Disposable parentDisposable) {
@@ -67,35 +66,13 @@ public final class PerforceReadOnlyFileStateManager {
       progress.checkCanceled();
       recheckPreviouslyAddedFiles(newAdded);
       recheckWhatUnversionedRefreshNeeded(dirtyScope);
-
-      scanner = myUnversionedTracker.createScanner();
     }
 
-    progress.checkCanceled();
-    UnversionedScopeScanner.ScanResult result = rescan(scanner);
-    progress.checkCanceled();
+    Set<String> missingFiles = myDirtyFilesHandler.scanAndGetMissingFiles(progress);
 
-    myUnversionedTracker.markUnknown(result.allLocalFiles);
-    myUnversionedTracker.markUnversioned(result.localOnly);
-
-    Set<String> locallyDeleted = findLocallyDeletedMissingFiles(addGate, result.missingFiles);
+    Set<String> locallyDeleted = findLocallyDeletedMissingFiles(addGate, missingFiles);
     for (String path : locallyDeleted) {
       builder.processLocallyDeletedFile(VcsUtil.getFilePath(path, false));
-    }
-
-    myUnversionedTracker.scheduleUpdate();
-  }
-
-  private UnversionedScopeScanner.ScanResult rescan(final ThrowableComputable<UnversionedScopeScanner.ScanResult, VcsException> scanner)
-    throws VcsException {
-    myUnversionedTracker.isActive = true;
-    myPreviousRescanProblem = false;
-    try {
-      return scanner.compute();
-    }
-    catch (VcsException e) {
-      myPreviousRescanProblem = true;
-      throw e;
     }
   }
 
@@ -119,9 +96,7 @@ public final class PerforceReadOnlyFileStateManager {
     if (myHasLostFocus && dirtyScope.wasEveryThingDirty()) {
       LOG.info("--- recheck missing");
       myHasLostFocus = false;
-      if (myPreviousRescanProblem) {
-        myUnversionedTracker.scheduleTotalRescan();
-      }
+      myDirtyFilesHandler.rescanIfProblems();
     }
   }
 
@@ -131,7 +106,7 @@ public final class PerforceReadOnlyFileStateManager {
     myPreviousAddedSnapshot.clear();
     myPreviousAddedSnapshot.addAll(newAdded);
     if (!copy.isEmpty()) {
-      myUnversionedTracker.reportRecheck(copy);
+      myDirtyFilesHandler.reportRecheck(copy);
     }
   }
 
@@ -150,7 +125,7 @@ public final class PerforceReadOnlyFileStateManager {
   }
 
   public void discardUnversioned() {
-    myUnversionedTracker.scheduleTotalRescan();
+    myDirtyFilesHandler.scheduleTotalRescan();
   }
 
   private class MyVfsListener implements VirtualFileListener {
@@ -159,7 +134,7 @@ public final class PerforceReadOnlyFileStateManager {
     public void propertyChanged(@NotNull VirtualFilePropertyEvent event) {
       VirtualFile file = event.getFile();
       if (fileIsUnderP4Root(file) && VirtualFile.PROP_WRITABLE.equals(event.getPropertyName())) {
-        myUnversionedTracker.reportRecheck(file);
+        myDirtyFilesHandler.reportRecheck(file);
       }
     }
 
@@ -167,38 +142,38 @@ public final class PerforceReadOnlyFileStateManager {
     public void contentsChanged(@NotNull VirtualFileEvent event) {
       VirtualFile file = event.getFile();
       if (fileIsUnderP4Root(file) && !file.isWritable()) {
-        myUnversionedTracker.reportRecheck(file);
+        myDirtyFilesHandler.reportRecheck(file);
       }
     }
 
     @Override
     public void fileCreated(@NotNull final VirtualFileEvent event) {
       if (!fileIsUnderP4Root(event.getFile())) return;
-      myUnversionedTracker.reportRecheck(event.getFile());
+      myDirtyFilesHandler.reportRecheck(event.getFile());
     }
 
     @Override
     public void fileMoved(@NotNull VirtualFileMoveEvent event) {
       if (!fileIsUnderP4Root(event.getFile())) return;
-      myUnversionedTracker.reportRecheck(event.getFile());
+      myDirtyFilesHandler.reportRecheck(event.getFile());
     }
 
     @Override
     public void fileCopied(@NotNull VirtualFileCopyEvent event) {
       if (!fileIsUnderP4Root(event.getFile())) return;
-      myUnversionedTracker.reportRecheck(event.getFile());
+      myDirtyFilesHandler.reportRecheck(event.getFile());
     }
 
     @Override
     public void beforeFileDeletion(@NotNull VirtualFileEvent event) {
       if (!fileIsUnderP4Root(event.getFile())) return;
-      myUnversionedTracker.reportDelete(event.getFile());
+      myDirtyFilesHandler.reportDelete(event.getFile());
     }
 
     @Override
     public void beforeFileMovement(@NotNull VirtualFileMoveEvent event) {
       if (!fileIsUnderP4Root(event.getFile())) return;
-      myUnversionedTracker.reportDelete(event.getFile());
+      myDirtyFilesHandler.reportDelete(event.getFile());
     }
   }
 

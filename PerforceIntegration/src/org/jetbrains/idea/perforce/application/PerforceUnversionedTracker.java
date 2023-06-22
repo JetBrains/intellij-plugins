@@ -6,28 +6,26 @@ import com.intellij.dvcs.ignore.IgnoredToExcludedSynchronizer;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.advanced.AdvancedSettings;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.util.BackgroundTaskUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vcs.FilePath;
 import com.intellij.openapi.vcs.LocalFilePath;
-import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vcs.VcsException;
-import com.intellij.openapi.vcs.changes.*;
+import com.intellij.openapi.vcs.changes.ChangeListManagerImpl;
+import com.intellij.openapi.vcs.changes.VcsIgnoreManager;
+import com.intellij.openapi.vcs.changes.VcsIgnoreManagerImpl;
+import com.intellij.openapi.vcs.changes.VcsManagedFilesHolder;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.JBIterable;
 import com.intellij.util.containers.MultiMap;
-import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.update.ComparableObject;
 import com.intellij.util.ui.update.DisposableUpdate;
 import com.intellij.util.ui.update.MergingUpdateQueue;
-import com.intellij.vcsUtil.VcsUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.perforce.PerforceBundle;
@@ -48,35 +46,14 @@ public class PerforceUnversionedTracker implements Disposable {
   private final Set<VirtualFile> myIgnoredFiles = ConcurrentCollectionFactory.createConcurrentSet();
 
   private final Project myProject;
-  private final static int ourFilesThreshold = 200;
-
-  private boolean myTotalRescanThresholdPassed = true;
-  private final Set<VirtualFile> myLocalDirtyFiles = new HashSet<>();
-  private final Set<FilePath> myDirtyFiles = new HashSet<>();
-  private final Object myScannerLock = new Object();
-  private final VcsDirtyScopeManager myDirtyScopeManager;
-  volatile boolean isActive;
+  private final Set<VirtualFile> myDirtyFiles = new HashSet<>();
 
   private final MergingUpdateQueue myQueue;
   private boolean myInUpdate;
 
   public PerforceUnversionedTracker(Project project) {
     myProject = project;
-    myDirtyScopeManager = VcsDirtyScopeManager.getInstance(myProject);
-    myDirtyScopeManager.markEverythingDirty();
-
     myQueue = VcsIgnoreManagerImpl.getInstanceImpl(myProject).getIgnoreRefreshQueue();
-  }
-
-  public void activate(@NotNull Disposable parentDisposable) {
-    MessageBusConnection connection = myProject.getMessageBus().connect(parentDisposable);
-    connection.subscribe(ProjectLevelVcsManager.VCS_CONFIGURATION_CHANGED, this::cancelAndRescheduleTotalRescan);
-    connection.subscribe(PerforceSettings.OFFLINE_MODE_EXITED, this::cancelAndRescheduleTotalRescan);
-  }
-
-  public void cancelAndRescheduleTotalRescan() {
-    isActive = false;
-    scheduleTotalRescan();
   }
 
   public boolean isUnversioned(@NotNull VirtualFile file) {
@@ -105,7 +82,7 @@ public class PerforceUnversionedTracker implements Disposable {
 
   public void scheduleUpdate() {
     synchronized (LOCK) {
-      if (myLocalDirtyFiles.isEmpty()) return;
+      if (myDirtyFiles.isEmpty()) return;
       myInUpdate = true;
     }
     BackgroundTaskUtil.syncPublisher(myProject, VcsManagedFilesHolder.TOPIC).updatingModeChanged();
@@ -115,14 +92,14 @@ public class PerforceUnversionedTracker implements Disposable {
   private void update() {
     MultiMap<P4Connection, VirtualFile> map;
     synchronized (LOCK) {
-      LOG.debug("update: " + myLocalDirtyFiles);
-      if (myLocalDirtyFiles.size() == 0) {
+      LOG.debug("update: " + myDirtyFiles);
+      if (myDirtyFiles.size() == 0) {
         myInUpdate = false;
         return;
       }
 
-      map = FileGrouper.distributeFilesByConnection(myLocalDirtyFiles, myProject);
-      myLocalDirtyFiles.clear();
+      map = FileGrouper.distributeFilesByConnection(myDirtyFiles, myProject);
+      myDirtyFiles.clear();
     }
 
     Set<VirtualFile> ignoredSet = new HashSet<>();
@@ -131,8 +108,8 @@ public class PerforceUnversionedTracker implements Disposable {
         ignoredSet.addAll(getFilesOutsideClientSpec(myProject, connection, map.get(connection)));
       }
     }
-    catch (VcsException ignored) {
-
+    catch (VcsException e) {
+      LOG.warn("Failed to get ignored files", e);
     }
 
     for (VirtualFile file : map.values()) {
@@ -157,8 +134,8 @@ public class PerforceUnversionedTracker implements Disposable {
 
   public void markUnversioned(List<VirtualFile> files) {
     synchronized (LOCK) {
-      myLocalDirtyFiles.clear();
-      myLocalDirtyFiles.addAll(files);
+      myDirtyFiles.clear();
+      myDirtyFiles.addAll(files);
     }
   }
 
@@ -183,7 +160,7 @@ public class PerforceUnversionedTracker implements Disposable {
     synchronized (LOCK) {
       myUnversionedFiles.clear();
       myIgnoredFiles.clear();
-      myLocalDirtyFiles.clear();
+      myDirtyFiles.clear();
     }
   }
 
@@ -292,74 +269,6 @@ public class PerforceUnversionedTracker implements Disposable {
     Set<VirtualFile> result = new LinkedHashSet<>(excluded);
     result.addAll(getIgnoredFiles(project, connection, ContainerUtil.filter(files, f -> !excluded.contains(f))));
     return result;
-  }
-
-  ThrowableComputable<UnversionedScopeScanner.ScanResult, VcsException> createScanner() {
-    final UnversionedScopeScanner scanner = new UnversionedScopeScanner(myProject) {
-      @Override
-      protected void checkCanceled() {
-        if (!isActive) {
-          throw new ProcessCanceledException();
-        }
-      }
-    };
-    synchronized (myScannerLock) {
-      if (myTotalRescanThresholdPassed) {
-        myTotalRescanThresholdPassed = false;
-        return () -> scanner.doRescan(UnversionedScopeScanner.createEverythingDirtyScope(myProject), true);
-      }
-      else {
-        final Set<FilePath> dirtyFiles = new HashSet<>(myDirtyFiles);
-        myDirtyFiles.clear();
-        return () -> scanner.doRescan(dirtyFiles, false);
-      }
-    }
-  }
-
-  public void scheduleTotalRescan() {
-    LOG.debug("totalRescan scheduled");
-    synchronized (myScannerLock) {
-      myTotalRescanThresholdPassed = true;
-      myDirtyFiles.clear();
-      myDirtyScopeManager.markEverythingDirty();
-    }
-  }
-
-  private boolean addDirtyFile(FilePath holder) {
-    synchronized (myScannerLock) {
-      if (myTotalRescanThresholdPassed) {
-        return false;
-      }
-      LOG.debug("addDirtyFile: " + holder);
-      myDirtyFiles.add(holder);
-      if (myDirtyFiles.size() > ourFilesThreshold) {
-        scheduleTotalRescan();
-        return false;
-      }
-      return true;
-    }
-  }
-
-  void reportRecheck(final VirtualFile file) {
-    markUnknown(file);
-    if (addDirtyFile(VcsUtil.getFilePath(file))) {
-      myDirtyScopeManager.fileDirty(file);
-    }
-  }
-
-  void reportDelete(final VirtualFile file) {
-    if (addDirtyFile(VcsUtil.getFilePath(file))) {
-      myDirtyScopeManager.fileDirty(file);
-    }
-  }
-
-  void reportRecheck(Set<VirtualFile> targets) {
-    for (VirtualFile target : targets) {
-      if (!addDirtyFile(VcsUtil.getFilePath(target))) {
-        return;
-      }
-    }
-    myDirtyScopeManager.filesDirty(targets, null);
   }
 
   private boolean isPotentiallyIgnoredFile(VirtualFile file) {
