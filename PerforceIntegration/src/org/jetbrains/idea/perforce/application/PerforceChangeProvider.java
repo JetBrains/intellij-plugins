@@ -1,5 +1,6 @@
 package org.jetbrains.idea.perforce.application;
 
+import com.google.common.base.Stopwatch;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
@@ -59,9 +60,13 @@ public class PerforceChangeProvider implements ChangeProvider {
   @Override
   public void getChanges(@NotNull final VcsDirtyScope dirtyScope, @NotNull final ChangelistBuilder builder, @NotNull final ProgressIndicator progress,
                          @NotNull final ChangeListManagerGate addGate) throws VcsException {
+    logDebug("P4 getChanges started");
+    Stopwatch sw = Stopwatch.createStarted();
     try (AccessToken ignored = myVcs.readLockP4()) {
       doGetChanges(dirtyScope, builder, progress, addGate);
     }
+    sw.stop();
+    logDebug("P4 getChanges took %d s".formatted(sw.elapsed().toSeconds()));
   }
 
   private void doGetChanges(@NotNull VcsDirtyScope dirtyScope,
@@ -105,6 +110,7 @@ public class PerforceChangeProvider implements ChangeProvider {
   private void reportModifiedWithoutCheckout(ChangelistBuilder builder, ChangeCreator creator, Set<VirtualFile> writableFiles) throws VcsException {
     List<VirtualFile> unknown = new ArrayList<>();
 
+    Stopwatch sw = Stopwatch.createStarted();
     for (VirtualFile file : writableFiles) {
       PerforceUnversionedTracker tracker = myPerforceReadOnlyFileStateManager.getUnversionedTracker();
       if (!creator.reportedChanges.contains(file) && !tracker.isUnversioned(file) && !tracker.isIgnored(file)) {
@@ -119,6 +125,8 @@ public class PerforceChangeProvider implements ChangeProvider {
       }
     }
 
+    logDebug("P4 collectWritables first stage took %d s".formatted(sw.elapsed().toSeconds()));
+
     if (!unknown.isEmpty() && SystemProperties.getBooleanProperty("perforce.always.writable.check.enabled", true)) {
       MultiMap<P4Connection, VirtualFile> map = FileGrouper.distributeFilesByConnection(unknown, myProject);
       for (P4Connection connection : map.keySet()) {
@@ -127,6 +135,9 @@ public class PerforceChangeProvider implements ChangeProvider {
         }
       }
     }
+
+    sw.stop();
+    logDebug("P4 reportModifiedWithoutCheckout took %d s".formatted(sw.elapsed().toSeconds()));
   }
 
   private List<VirtualFile> getHijackedFiles(MultiMap<P4Connection, VirtualFile> map, P4Connection connection) throws VcsException {
@@ -222,6 +233,7 @@ public class PerforceChangeProvider implements ChangeProvider {
   }
 
   static Set<VirtualFile> collectWritableFiles(VcsDirtyScope dirtyScope, boolean withIgnored) {
+    Stopwatch sw = Stopwatch.createStarted();
     final Set<VirtualFile> writableFiles = new HashSet<>();
     dirtyScope.iterateExistingInsideScope(vf -> {
       ApplicationManager.getApplication().runReadAction(() -> {
@@ -233,6 +245,10 @@ public class PerforceChangeProvider implements ChangeProvider {
       });
       return true;
     });
+
+    sw.stop();
+    logDebug("P4 collectWritables took %d s".formatted(sw.elapsed().toSeconds()));
+
     return writableFiles;
   }
 
