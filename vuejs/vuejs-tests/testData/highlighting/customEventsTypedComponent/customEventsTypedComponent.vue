@@ -13,6 +13,6 @@ function handleEventInvalid(message: { error: { text: string } }) {
 <template>
   <div>
     <MyComponent @custom="handleEvent"></MyComponent>
-    <MyComponent @custom="<error descr="Type (message: {    error: {        text: string    }}) => void is not assignable to type  (message: string) => void ">handleEventInvalid</error>"></MyComponent>
+    <MyComponent @custom="<error descr="Type  (message: { error: { text: string } }) => void  is not assignable to type  (message: string) => void ">handleEventInvalid</error>"></MyComponent>
   </div>
 </template>

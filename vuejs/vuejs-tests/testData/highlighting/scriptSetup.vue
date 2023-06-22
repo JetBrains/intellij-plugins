@@ -12,7 +12,7 @@
 import {ref} from "vue";
 import FooBar from "fooBar.vue"
 import FooBard from "fooBar.vue"
-<warning descr="Unused import FooBars from \"fooBar.vue\"">import FooBars from "fooBar.vue"</warning>
+<warning descr="Unused  import FooBars from \"fooBar.vue\" ">import FooBars from "fooBar.vue"</warning>
 import {directive as vClickOutside } from 'v-click-outside'
 <warning descr="Unused import {directive as vClickOutsides } from 'v-click-outside'">import {directive as vClickOutsides } from 'v-click-outside'</warning>
 

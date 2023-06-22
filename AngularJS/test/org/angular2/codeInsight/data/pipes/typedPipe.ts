@@ -17,7 +17,7 @@ export class MyCustomPipe implements PipeTransform {
     template: `
     <p>
       Start editing to see some magic happen :)
-      {{ 123 | numberFormat : <error descr="Argument type  { yes: boolean }  is not assignable to parameter type {    formatOptions: Intl.NumberFormatOptions}">{ yes: true }</error> }}
+      {{ 123 | numberFormat : <error descr="Argument type  { yes: boolean }  is not assignable to parameter type  { formatOptions: Intl.NumberFormatOptions } ">{ yes: true }</error> }}
     </p>`,
 })
 export class AppComponent  {
