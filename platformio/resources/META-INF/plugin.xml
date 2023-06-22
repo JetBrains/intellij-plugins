@@ -5,22 +5,20 @@
   <category>Embedded Development</category>
 
   <description><![CDATA[
-<a href="https://platformio.org/">PlatformIO.org</a> plugin for CLion integration
-<br>
-<p>PlatformIO is Professional collaborative platform for embedded development</p>
-<br>
-
+<p>Provides support for <a href="https://platformio.org/">PlatformIO</a> projects in CLion:</p>
 <ul>
-  <li>Open source, maximum permissive Apache 2.0 license</li>
-  <li>Cross-platform IDE and Unified Debugger</li>
-  <li>Static Code Analyzer and Remote Unit Testing</li>
-  <li>Multi-platform and Multi-architecture Build System</li>
+<li>Creating and opening PlatformIO projects</li>
+<li>Integrated PlatformIO commands</li>
+<li>Dedicated configuration for upload</li>
+<li>Debugging with .svd files loaded automatically</li>
 </ul>
+<!-- todo enable when updated
+<p>Documentation links:</p>
 
-<!-- todo uncomment when updated
-<h3>How it works</h3>
-<a href="https://docs.platformio.org/en/latest/ide/clion.html">Documentation</a>]]>
-    -->
+<p><a href="https://docs.platformio.org/en/latest/integration/ide/clion.html">PlatformIO CLion guide</a></p>
+<p><a href="https://www.jetbrains.com/help/clion/platformio.html">CLion web help guide</a></p>
+-->
+]]>
   </description>
 
   <depends>com.intellij.cidr.base</depends>
