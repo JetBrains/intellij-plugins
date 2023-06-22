@@ -82,7 +82,14 @@ class PlatformioService(val project: Project) : PersistentStateComponentWithModi
   var targets: List<PlatformioTargetData> = emptyList()
     set(value) {
       field = value
-      project.messageBus.syncPublisher(PLATFORMIO_UPDATES_TOPIC).targetsChanged(value)
+      project.messageBus.syncPublisher(PLATFORMIO_UPDATES_TOPIC).targetsChanged()
+    }
+
+  @Volatile
+  var projectStatus: PlatformioProjectStatus = PlatformioProjectStatus.NONE
+    set(value) {
+      field = value
+      project.messageBus.syncPublisher(PLATFORMIO_UPDATES_TOPIC).projectStateChanged()
     }
 
   override fun getState(): PlatformioState {
@@ -140,9 +147,15 @@ class PlatformioState {
 @Topic.ProjectLevel
 val PLATFORMIO_UPDATES_TOPIC: Topic<PlatformioUpdatesNotifier> = Topic.create("custom name", PlatformioUpdatesNotifier::class.java)
 
+enum class PlatformioProjectStatus {
+  NONE,
+  PARSING,
+  PARSED,
+  PARSE_FAILED,
+  UTILITY_FAILED
+}
+
 interface PlatformioUpdatesNotifier {
-  fun targetsChanged(newTargets: List<PlatformioTargetData>) {}
-  fun reparseStarted() {}
-  fun reparseSuccess() {}
-  fun reparseFailed(pioStartFailed: Boolean) {}
+  fun targetsChanged() {}
+  fun projectStateChanged() {}
 }
