@@ -30,5 +30,7 @@
     <orderEntry type="module" module-name="intellij.platform.codeStyle.impl" />
     <orderEntry type="module" module-name="intellij.css" />
     <orderEntry type="module" module-name="intellij.postcss" />
+    <orderEntry type="module" module-name="intellij.platform.lsp" />
+    <orderEntry type="library" name="eclipse.lsp4j" level="project" />
   </component>
 </module>

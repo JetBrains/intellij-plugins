@@ -81,9 +81,13 @@
                      implementationClass="org.jetbrains.astro.inspections.AstroMissingComponentImportInspection"
                      key="astro.inspection.display.name.missing.component.import" bundle="messages.AstroBundle"/>
 
+    <platform.lsp.serverSupportProvider implementation="org.jetbrains.astro.service.AstroLspServerSupportProvider" />
+    <registryKey key="astro.enable.lsp" defaultValue="false" description="Enable Astro Language Tools service"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
+    <languageServiceProvider implementation="org.jetbrains.astro.service.AstroLanguageServiceProvider" order="first"/>
+
     <indexedFileTypeProvider implementation="org.jetbrains.astro.lang.AstroIndexedFileTypeProvider"/>
     <dialectSpecificHandlersFactory language="Astro" implementationClass="org.jetbrains.astro.codeInsight.AstroSpecificHandlersFactory"/>
     <dialectSpecificHandlersFactory language="AstroFrontmatter" implementationClass="org.jetbrains.astro.codeInsight.AstroSpecificHandlersFactory"/>
