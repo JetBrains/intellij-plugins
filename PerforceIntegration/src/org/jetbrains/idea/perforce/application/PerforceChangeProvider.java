@@ -7,7 +7,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -44,6 +43,8 @@ public class PerforceChangeProvider implements ChangeProvider {
   private final LastSuccessfulUpdateTracker myLastSuccessfulUpdateTracker;
   private final PerforceNumberNameSynchronizer mySynchronizer;
   private final PerforceReadOnlyFileStateManager myPerforceReadOnlyFileStateManager;
+
+  private final PerforceDirtyFilesHandler myDirtyFilesHandler;
   private final PerforceUnversionedTracker myUnversionedTracker;
   private final Map<VirtualFile, Boolean> myAlwaysWritable = new ConcurrentHashMap<>();
   private final PerforceShelf myShelf;
@@ -56,14 +57,14 @@ public class PerforceChangeProvider implements ChangeProvider {
     myLastSuccessfulUpdateTracker = LastSuccessfulUpdateTracker.getInstance(myProject);
     mySynchronizer = PerforceNumberNameSynchronizer.getInstance(myProject);
     myUnversionedTracker = new PerforceUnversionedTracker(myProject);
-    myPerforceReadOnlyFileStateManager = new PerforceReadOnlyFileStateManager(myProject, myUnversionedTracker);
+    myDirtyFilesHandler = new PerforceDirtyFilesHandler(myProject, myUnversionedTracker);
+    myPerforceReadOnlyFileStateManager = new PerforceReadOnlyFileStateManager(myProject, myDirtyFilesHandler);
     myShelf = PerforceManager.getInstance(myProject).getShelf();
   }
 
   public void activate(@NotNull Disposable parentDisposable) {
-    Disposer.register(parentDisposable, () -> myUnversionedTracker.isActive = false);
     myPerforceReadOnlyFileStateManager.activate(parentDisposable);
-    myUnversionedTracker.activate(parentDisposable);
+    myDirtyFilesHandler.activate(parentDisposable);
   }
 
   @Override
@@ -350,6 +351,6 @@ public class PerforceChangeProvider implements ChangeProvider {
   }
 
   public void clearUnversionedStatus(@NotNull VirtualFile file) {
-    myUnversionedTracker.reportRecheck(file);
+    myDirtyFilesHandler.reportRecheck(file);
   }
 }
