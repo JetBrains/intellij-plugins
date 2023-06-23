@@ -7,7 +7,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.vcs.AbstractVcs;
 import com.intellij.openapi.vcs.FileStatus;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
@@ -60,8 +59,7 @@ public final class PerforceReadOnlyFileStateManager {
 
   public void getChanges(final VcsDirtyScope dirtyScope, final ChangelistBuilder builder, final ProgressIndicator progress,
                          final ChangeListManagerGate addGate) throws VcsException {
-    final Set<VirtualFile> newAdded = getAddedFilesInCurrentChangesView(addGate); // todo: check perf here?
-    ThrowableComputable<UnversionedScopeScanner.ScanResult, VcsException> scanner;
+    final Set<VirtualFile> newAdded = getAddedFilesInCurrentChangesView(addGate);
     synchronized (myLock) {
       progress.checkCanceled();
       recheckPreviouslyAddedFiles(newAdded);
