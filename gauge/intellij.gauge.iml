@@ -19,6 +19,26 @@
     <orderEntry type="module-library">
       <library name="com.thoughtworks.gauge:gauge-java" type="repository">
         <properties maven-id="com.thoughtworks.gauge:gauge-java:0.7.3">
+          <verification>
+            <artifact url="file://$MAVEN_REPOSITORY$/com/thoughtworks/gauge/gauge-java/0.7.3/gauge-java-0.7.3.jar">
+              <sha256sum>76a0ca92276fcbcd544c5fed80758bddf81f53d196e13be22b8b4cd330727a80</sha256sum>
+            </artifact>
+            <artifact url="file://$MAVEN_REPOSITORY$/org/reflections/reflections/0.9.11/reflections-0.9.11.jar">
+              <sha256sum>cca88428f8a8919df885105833d45ff07bd26f985f96ee55690551216b58b4a1</sha256sum>
+            </artifact>
+            <artifact url="file://$MAVEN_REPOSITORY$/org/javassist/javassist/3.21.0-GA/javassist-3.21.0-GA.jar">
+              <sha256sum>7aa59e031f941984af07dacc6ca85e6dc9bd3a485e9aa2494cbc034efa1225d0</sha256sum>
+            </artifact>
+            <artifact url="file://$MAVEN_REPOSITORY$/com/github/javaparser/javaparser-core/2.5.1/javaparser-core-2.5.1.jar">
+              <sha256sum>76d7072067534bea86b60e9c9735bbd01d0d25c7b8ac4139ddd3d63af43bd971</sha256sum>
+            </artifact>
+            <artifact url="file://$MAVEN_REPOSITORY$/commons-lang/commons-lang/2.6/commons-lang-2.6.jar">
+              <sha256sum>50f11b09f877c294d56f24463f47d28f929cf5044f648661c0f0cfbae9a2f49c</sha256sum>
+            </artifact>
+            <artifact url="file://$MAVEN_REPOSITORY$/org/json/json/20190722/json-20190722.jar">
+              <sha256sum>e35b3830de02a8992ca8beb6936f52ee80e509753d64469c8f0dde93e17a880b</sha256sum>
+            </artifact>
+          </verification>
           <exclude>
             <dependency maven-id="org.assertj:assertj-core" />
             <dependency maven-id="com.google.guava:guava" />
