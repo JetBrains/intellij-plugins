@@ -20,6 +20,10 @@ import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioTargetData
 import com.jetbrains.cidr.cpp.execution.manager.CLionRunConfigurationManager
 import com.jetbrains.cidr.external.system.model.ExternalModule
 import com.jetbrains.cidr.lang.CLanguageKind
+import com.jetbrains.cidr.lang.OCLanguageKind
+import com.jetbrains.cidr.lang.workspace.compiler.GCCCompilerKind
+import junit.framework.TestCase
+import junit.framework.TestCase.assertTrue
 import org.jetbrains.annotations.NonNls
 import java.nio.file.Paths
 
@@ -58,10 +62,14 @@ class TestProjectResolve : LightPlatformTestCase() {
     }
   }
 
-  fun testScanFiles() {
+  fun testScanFiles() = doTestScanFiles()
+
+  fun testScanFiles2023() = doTestScanFiles("-2023")
+
+  private fun doTestScanFiles(suffix: String = "") {
     val taskId: ExternalSystemTaskId = ExternalSystemTaskId.create(ID, ExternalSystemTaskType.RESOLVE_PROJECT, project)
     val testListener = TaskNotificationListerForTest()
-    val projectNode = PlatformioProjectResolverForTest().resolveProjectInfo(
+    val projectNode = PlatformioProjectResolverForTest(suffix).resolveProjectInfo(
       id = taskId,
       projectPath = projectPath,
       isPreviewMode = true,
@@ -86,13 +94,36 @@ class TestProjectResolve : LightPlatformTestCase() {
       PlatformioTargetData("upload", "Upload", null, "Platform"),
       PlatformioTargetData("uploadfs", "Upload Filesystem Image", null, "Platform"),
       PlatformioTargetData("uploadfsota", "Upload Filesystem Image OTA", null, "Platform"),
-      PlatformioTargetData("erase_upload", "Erase Flash and Upload", null, "Platform"),
       PlatformioTargetData("erase", "Erase Flash", null, "Platform")
     ), service.targets)
 
     verifyIniFiles(projectDir)
 
     verifySources(projectNode!!)
+
+    val commonSwitches = listOf("-DESP_PLATFORM", "-ggdb",
+                                "-IC:\\Users\\user\\.platformio\\packages\\framework-arduinoespressif32\\libraries\\Wire\\src")
+    val cSwitches = listOf("-std=gnu99")
+    val cppSwitches = listOf("-std=gnu++11")
+
+    verifySwitches(projectNode, CLanguageKind.CPP, commonSwitches + cppSwitches, cSwitches)
+    verifySwitches(projectNode, CLanguageKind.C, commonSwitches + cSwitches, cppSwitches)
+  }
+
+  private fun verifySwitches(projectNode: DataNode<ProjectData>,
+                             langKind: OCLanguageKind,
+                             mandatorySwitches: List<String>,
+                             undesiredSwitches: List<String>) {
+    val languageConfig = (projectNode.children.first().children.first().data as ExternalModule)
+      .resolveConfigurations.first()
+      .languageConfigurations.first { it.languageKind == langKind }!!
+    assertEquals(GCCCompilerKind, languageConfig.compilerKind)
+    val switches = languageConfig.compilerSwitches.toSet()
+    val missingSwitches = mandatorySwitches - switches
+    assertTrue("Missing switches for ${langKind.displayName}: ${missingSwitches.joinToString()}", missingSwitches.isEmpty())
+    val unexpectedSwitches = switches.intersect(undesiredSwitches)
+    assertTrue("Unexpected switches for ${langKind.displayName}: ${unexpectedSwitches.joinToString()}", unexpectedSwitches.isEmpty())
+
   }
 
   private fun verifySources(projectNode: DataNode<ProjectData>) {
@@ -114,7 +145,7 @@ class TestProjectResolve : LightPlatformTestCase() {
     assertEquals("Detected config files", expectedFiles, activeIniFiles)
   }
 
-  inner class PlatformioProjectResolverForTest : PlatformioProjectResolver() {
+  inner class PlatformioProjectResolverForTest(private val suffix: String) : PlatformioProjectResolver() {
 
     /**
      * Mock data is loaded from file pio-project-config.json
@@ -138,7 +169,7 @@ class TestProjectResolve : LightPlatformTestCase() {
                                    project: Project,
                                    activeEnvName: String,
                                    listener: ExternalSystemTaskNotificationListener): String {
-      return projectDir.findChild("pio-project-metadata-esp-wrover-kit.json")!!.readText()
+      return projectDir.findChild("pio-project-metadata-esp-wrover-kit${suffix}.json")!!.readText()
     }
 
     override fun createRunConfigurationIfRequired(project: Project) {}

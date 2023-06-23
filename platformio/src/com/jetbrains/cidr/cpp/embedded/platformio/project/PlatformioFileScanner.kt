@@ -91,7 +91,11 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
     val compilerKind: OCCompilerKind = if (jsonConfig["compiler_type"] == "gcc") GCCCompilerKind else UnknownCompilerKind
 
     fun extractCompilerSwitches(key: String, includeSwitches: List<String>, defineSwitches: List<String>): MutableList<String> {
-      val switches = jsonConfig[key].asSafely<String>()?.split(" ") ?: emptyList()
+      val switches = when (val rawSwitches = jsonConfig[key]) {
+        is String -> rawSwitches.split(' ')
+        is List<*> -> rawSwitches.map { it.toString() }.toList()
+        else -> emptyList()
+      }
       return switches.toMutableList().apply { addAll(includeSwitches); addAll(defineSwitches) }
     }
 
