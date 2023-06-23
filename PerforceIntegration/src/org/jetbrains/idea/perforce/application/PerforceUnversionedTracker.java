@@ -249,7 +249,7 @@ public class PerforceUnversionedTracker implements Disposable {
 
   @NotNull
   private static Set<VirtualFile> getIgnoredFilesByIgnores(Project project, P4Connection connection, List<VirtualFile> toCheckIgnored) {
-    var sw = Stopwatch.createStarted();
+    Stopwatch sw = Stopwatch.createStarted();
     Set<VirtualFile> ignored = new LinkedHashSet<>();
     // 'p4 ignores' doesn't support '-x argfile', so we split manually
     for (List<VirtualFile> group : JBIterable.from(toCheckIgnored).split(100).map(JBIterable::toList)) {

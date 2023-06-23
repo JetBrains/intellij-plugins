@@ -33,6 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class PerforceChangeProvider implements ChangeProvider {
   private static final Logger LOG = Logger.getInstance(PerforceChangeProvider.class);
+  private static final Logger REFRESH_LOG = Logger.getInstance("#PerforceRefresh");
 
   public PerforceUnversionedTracker getUnversionedTracker() {
     return myUnversionedTracker;
@@ -75,14 +76,14 @@ public class PerforceChangeProvider implements ChangeProvider {
       doGetChanges(dirtyScope, builder, progress, addGate);
     }
     sw.stop();
-    LOG.info("getChanges took %d s".formatted(sw.elapsed().toSeconds()));
+    REFRESH_LOG.info("getChanges took %d s".formatted(sw.elapsed().toSeconds()));
   }
 
   private void doGetChanges(@NotNull VcsDirtyScope dirtyScope,
                             @NotNull ChangelistBuilder builder,
                             @NotNull ProgressIndicator progress,
                             @NotNull ChangeListManagerGate addGate) throws VcsException {
-    logDebug("getting changes for scope " + dirtyScope);
+    logRefreshDebug("getting changes for scope " + dirtyScope);
 
     myLastSuccessfulUpdateTracker.updateStarted();
     myShelf.clearShelf();
@@ -103,7 +104,11 @@ public class PerforceChangeProvider implements ChangeProvider {
       }
     }
 
+    Stopwatch sw = Stopwatch.createStarted();
     myPerforceReadOnlyFileStateManager.getChanges(dirtyScope, builder, progress, addGate);
+    sw.stop();
+    logRefreshDebug("readOnlyFileStateManager.getChanges took %d s".formatted(sw.elapsed().toSeconds()));
+
     final Set<VirtualFile> writableFiles = collectWritableFiles(dirtyScope, false);
 
     for (VirtualFile file : PerforceVcs.getInstance(myProject).getAsyncEditedFiles()) {
@@ -117,6 +122,8 @@ public class PerforceChangeProvider implements ChangeProvider {
   }
 
   private void reportModifiedWithoutCheckout(ChangelistBuilder builder, ChangeCreator creator, Set<VirtualFile> writableFiles) throws VcsException {
+    Stopwatch sw = Stopwatch.createStarted();
+
     List<VirtualFile> unknown = new ArrayList<>();
     for (VirtualFile file : writableFiles) {
       if (!myUnversionedTracker.isLocalOnly(file)) {
@@ -141,6 +148,9 @@ public class PerforceChangeProvider implements ChangeProvider {
         }
       }
     }
+
+    sw.stop();
+    logRefreshDebug("reportModifiedWithoutCheckout took %d".formatted(sw.elapsed().toSeconds()));
   }
 
   private List<VirtualFile> getHijackedFiles(MultiMap<P4Connection, VirtualFile> map, P4Connection connection) throws VcsException {
@@ -182,6 +192,10 @@ public class PerforceChangeProvider implements ChangeProvider {
 
   private static void logDebug(final String message) {
     LOG.debug(message);
+  }
+
+  private static void logRefreshDebug(final String message) {
+    REFRESH_LOG.debug(message);
   }
 
   private MultiMap<ConnectionKey, VirtualFile> getAffectedRoots(VcsDirtyScope dirtyScope) throws VcsException {
@@ -236,6 +250,7 @@ public class PerforceChangeProvider implements ChangeProvider {
   }
 
   static Set<VirtualFile> collectWritableFiles(VcsDirtyScope dirtyScope, boolean withIgnored) {
+    Stopwatch sw = Stopwatch.createStarted();
     final Set<VirtualFile> writableFiles = new HashSet<>();
     dirtyScope.iterateExistingInsideScope(vf -> {
       ApplicationManager.getApplication().runReadAction(() -> {
@@ -248,6 +263,8 @@ public class PerforceChangeProvider implements ChangeProvider {
       return true;
     });
 
+    sw.stop();
+    logRefreshDebug("collected %d writable files in %d seconds".formatted(writableFiles.size(), sw.elapsed().toSeconds()));
     return writableFiles;
   }
 
@@ -277,6 +294,7 @@ public class PerforceChangeProvider implements ChangeProvider {
                                  final VcsDirtyScope dirtyScope,
                                  PerforceChangeCache changeCache, ChangeCreator changeCreator) throws VcsException {
     progress.checkCanceled();
+    Stopwatch sw = Stopwatch.createStarted();
 
     final LocalPathsSet resolvedWithConflictsMap = myRunner.getResolvedWithConflictsMap(connection, roots);
     final ResolvedFilesWrapper resolvedFilesWrapper = new ResolvedFilesWrapper(myRunner.getResolvedFiles(connection, roots));
@@ -292,6 +310,9 @@ public class PerforceChangeProvider implements ChangeProvider {
       new OpenedResultProcessor(connection, changeCreator, builder, resolvedWithConflictsMap, resolvedFilesWrapper,
                                 changeListCalculator);
     processor.process(changes);
+
+    sw.stop();
+    logRefreshDebug("processConnection %s took %d s".formatted(connection.getConnectionKey(), sw.elapsed().toSeconds()));
   }
 
   @Override
