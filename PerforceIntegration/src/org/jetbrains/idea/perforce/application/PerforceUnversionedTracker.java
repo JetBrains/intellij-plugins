@@ -99,8 +99,9 @@ public class PerforceUnversionedTracker implements Disposable {
 
   private void update() {
     MultiMap<P4Connection, VirtualFile> map;
+    Stopwatch sw = Stopwatch.createStarted();
+    LOG.debug("update started for " + myDirtyLocalFiles.size() + " files");
     synchronized (LOCK) {
-      LOG.debug("update started for " + myDirtyLocalFiles.size() + " files");
       if (myDirtyLocalFiles.size() == 0) {
         myInUpdate = false;
         return;
@@ -132,6 +133,9 @@ public class PerforceUnversionedTracker implements Disposable {
       myDirtyLocalFiles.clear();
       myInUpdate = false;
     }
+
+    sw.stop();
+    LOG.debug("update finished in %d seconds", sw.elapsed());
 
     // todo: check if needed
     BackgroundTaskUtil.syncPublisher(myProject, VcsManagedFilesHolder.TOPIC).updatingModeChanged();
@@ -214,6 +218,7 @@ public class PerforceUnversionedTracker implements Disposable {
   @NotNull
   private static Set<VirtualFile> getIgnoredFilesByPreviewAdd(Project project, P4Connection connection, List<VirtualFile> toCheckIgnored)
     throws VcsException {
+    Stopwatch sw = Stopwatch.createStarted();
     ExecResult execResult = PerforceRunner.getInstance(project).previewAdd(connection, toCheckIgnored);
 
     Set<VirtualFile> ignored = new LinkedHashSet<>();
@@ -235,12 +240,16 @@ public class PerforceUnversionedTracker implements Disposable {
       }
       ContainerUtil.addIfNotNull(ignored, VfsUtil.findFileByIoFile(new File(path), false));
     }
+
+    sw.stop();
+    LOG.debug("checking %d ignored files by add preview took %d s".formatted(toCheckIgnored.size(), sw.elapsed().toSeconds()));
+
     return ignored;
   }
 
   @NotNull
   private static Set<VirtualFile> getIgnoredFilesByIgnores(Project project, P4Connection connection, List<VirtualFile> toCheckIgnored) {
-    var stopwatch = Stopwatch.createStarted();
+    var sw = Stopwatch.createStarted();
     Set<VirtualFile> ignored = new LinkedHashSet<>();
     // 'p4 ignores' doesn't support '-x argfile', so we split manually
     for (List<VirtualFile> group : JBIterable.from(toCheckIgnored).split(100).map(JBIterable::toList)) {
@@ -260,9 +269,8 @@ public class PerforceUnversionedTracker implements Disposable {
       }
     }
 
-
-    stopwatch.stop();
-    LOG.debug("P4 getChanges by ignores took %d s".formatted(stopwatch.elapsed().toSeconds()));
+    sw.stop();
+    LOG.debug("checking %d ignored files by p4 ignores took %d s".formatted(toCheckIgnored.size(), sw.elapsed().toSeconds()));
     return ignored;
   }
 
