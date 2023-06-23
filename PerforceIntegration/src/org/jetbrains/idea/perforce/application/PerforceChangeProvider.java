@@ -105,38 +105,31 @@ public class PerforceChangeProvider implements ChangeProvider {
     }
 
     myPerforceReadOnlyFileStateManager.getChanges(dirtyScope, builder, progress, addGate);
-    final Set<FilePath> writableFiles = collectWritableFiles(dirtyScope, false);
+    final Set<VirtualFile> writableFiles = collectWritableFiles(dirtyScope, false);
 
     for (VirtualFile file : PerforceVcs.getInstance(myProject).getAsyncEditedFiles()) {
-      FilePath path = VcsUtil.getFilePath(file);
-      if (writableFiles.contains(path)) {
+      if (writableFiles.contains(file)) {
         processAsyncEdit(file, builder, creator);
-        writableFiles.remove(path);
+        writableFiles.remove(file);
       }
     }
     reportModifiedWithoutCheckout(builder, creator, writableFiles);
     myLastSuccessfulUpdateTracker.updateSuccessful();
   }
 
-  private void reportModifiedWithoutCheckout(ChangelistBuilder builder, ChangeCreator creator, Set<FilePath> writableFiles) throws VcsException {
+  private void reportModifiedWithoutCheckout(ChangelistBuilder builder, ChangeCreator creator, Set<VirtualFile> writableFiles) throws VcsException {
     List<VirtualFile> unknown = new ArrayList<>();
 
     Stopwatch sw = Stopwatch.createStarted();
-    for (FilePath path : writableFiles) {
-      if (!myUnversionedTracker.isUnversioned(path) && !myUnversionedTracker.isIgnored(path)) {
-        VirtualFile file = path.getVirtualFile();
-        if (file == null) {
-          LOG.warn("file is null for %s".formatted(path.getPath()));
-          continue;
-        }
-
+    for (VirtualFile file : writableFiles) {
+      if (!myUnversionedTracker.isLocalOnly(file)) {
         if (!creator.reportedChanges.contains(file)) {
           Boolean alwaysWritable = myAlwaysWritable.get(file);
           if (alwaysWritable == Boolean.FALSE) {
-            logDebug("reportModifiedWithoutCheckout, hijacked file = " + path);
+            logDebug("reportModifiedWithoutCheckout, hijacked file = " + file);
             builder.processModifiedWithoutCheckout(file);
           } else if (alwaysWritable == null) {
-            logDebug("reportModifiedWithoutCheckout, unknown file = " + path);
+            logDebug("reportModifiedWithoutCheckout, unknown file = " + file);
             unknown.add(file);
           }
         }
@@ -250,15 +243,14 @@ public class PerforceChangeProvider implements ChangeProvider {
     return filtered;
   }
 
-  static Set<FilePath> collectWritableFiles(VcsDirtyScope dirtyScope, boolean withIgnored) {
+  static Set<VirtualFile> collectWritableFiles(VcsDirtyScope dirtyScope, boolean withIgnored) {
     Stopwatch sw = Stopwatch.createStarted();
-    final Set<FilePath> writableFiles = new HashSet<>();
+    final Set<VirtualFile> writableFiles = new HashSet<>();
     dirtyScope.iterateExistingInsideScope(vf -> {
       ApplicationManager.getApplication().runReadAction(() -> {
         if (vf.isValid() && !vf.isDirectory() && vf.isWritable() && !vf.is(VFileProperty.SYMLINK)) {
-          FilePath path = VcsUtil.getFilePath(vf);
-          if (withIgnored || !ChangeListManager.getInstance(dirtyScope.getProject()).isIgnoredFile(path)) {
-            writableFiles.add(path);
+          if (withIgnored || !ChangeListManager.getInstance(dirtyScope.getProject()).isIgnoredFile(vf)) {
+            writableFiles.add(vf);
           }
         }
       });

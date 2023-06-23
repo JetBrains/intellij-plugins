@@ -45,9 +45,9 @@ public class PerforceUnversionedTracker implements Disposable {
   private static final Logger LOG = Logger.getInstance(PerforceUnversionedTracker.class);
   private final Set<FilePath> myUnversionedFiles = ConcurrentCollectionFactory.createConcurrentSet();
   private final Set<FilePath> myIgnoredFiles = ConcurrentCollectionFactory.createConcurrentSet();
+  private final Set<VirtualFile> myDirtyLocalFiles = ConcurrentCollectionFactory.createConcurrentSet();
 
   private final Project myProject;
-  private final Set<VirtualFile> myDirtyFiles = new HashSet<>();
 
   private final MergingUpdateQueue myQueue;
   private boolean myInUpdate;
@@ -55,6 +55,13 @@ public class PerforceUnversionedTracker implements Disposable {
   public PerforceUnversionedTracker(Project project) {
     myProject = project;
     myQueue = VcsIgnoreManagerImpl.getInstanceImpl(myProject).getIgnoreRefreshQueue();
+  }
+
+  public boolean isLocalOnly(@NotNull VirtualFile file) {
+    if (myDirtyLocalFiles.contains(file))
+      return true;
+    FilePath path = VcsUtil.getFilePath(file);
+    return isUnversioned(path) || isIgnored(path);
   }
 
   public boolean isUnversioned(@NotNull FilePath file) {
@@ -83,7 +90,7 @@ public class PerforceUnversionedTracker implements Disposable {
 
   public void scheduleUpdate() {
     synchronized (LOCK) {
-      if (myDirtyFiles.isEmpty()) return;
+      if (myDirtyLocalFiles.isEmpty()) return;
       myInUpdate = true;
     }
     BackgroundTaskUtil.syncPublisher(myProject, VcsManagedFilesHolder.TOPIC).updatingModeChanged();
@@ -93,14 +100,13 @@ public class PerforceUnversionedTracker implements Disposable {
   private void update() {
     MultiMap<P4Connection, VirtualFile> map;
     synchronized (LOCK) {
-      LOG.debug("update: " + myDirtyFiles);
-      if (myDirtyFiles.size() == 0) {
+      LOG.debug("update started for " + myDirtyLocalFiles.size() + " files");
+      if (myDirtyLocalFiles.size() == 0) {
         myInUpdate = false;
         return;
       }
 
-      map = FileGrouper.distributeFilesByConnection(myDirtyFiles, myProject);
-      myDirtyFiles.clear();
+      map = FileGrouper.distributeFilesByConnection(myDirtyLocalFiles, myProject);
     }
 
     Set<VirtualFile> ignoredSet = new HashSet<>();
@@ -123,6 +129,7 @@ public class PerforceUnversionedTracker implements Disposable {
     }
 
     synchronized (LOCK) {
+      myDirtyLocalFiles.clear();
       myInUpdate = false;
     }
 
@@ -135,29 +142,22 @@ public class PerforceUnversionedTracker implements Disposable {
   }
 
   public void markUnversioned(List<VirtualFile> files) {
-    synchronized (LOCK) {
-      myDirtyFiles.clear();
-      myDirtyFiles.addAll(files);
-    }
+    myDirtyLocalFiles.addAll(files);
   }
 
   public void markUnknown(@NotNull Set<VirtualFile> files) {
-    synchronized (LOCK) {
-      files.forEach(file -> {
-        FilePath path = VcsUtil.getFilePath(file);
-        myUnversionedFiles.remove(path);
-        myIgnoredFiles.remove(path);
-      });
-    }
+    files.forEach(file -> {
+      FilePath path = VcsUtil.getFilePath(file);
+      myUnversionedFiles.remove(path);
+      myIgnoredFiles.remove(path);
+    });
   }
 
   public void markUnknown(@Nullable VirtualFile file) {
     if (file != null) {
-      synchronized (LOCK) {
-        FilePath path = VcsUtil.getFilePath(file);
-        myUnversionedFiles.remove(path);
-        myIgnoredFiles.remove(path);
-      }
+      FilePath path = VcsUtil.getFilePath(file);
+      myUnversionedFiles.remove(path);
+      myIgnoredFiles.remove(path);
     }
   }
 
@@ -166,7 +166,7 @@ public class PerforceUnversionedTracker implements Disposable {
     synchronized (LOCK) {
       myUnversionedFiles.clear();
       myIgnoredFiles.clear();
-      myDirtyFiles.clear();
+      myDirtyLocalFiles.clear();
     }
   }
 
