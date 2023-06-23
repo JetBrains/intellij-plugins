@@ -9,6 +9,7 @@ import com.intellij.openapi.vcs.changes.*;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.JBColor;
+import com.intellij.vcsUtil.VcsUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.perforce.PerforceBundle;
@@ -56,13 +57,14 @@ public class PerforceOfflineChangeProvider implements ChangeProvider {
 
     ChangeListManager clm = ChangeListManager.getInstance(dirtyScope.getProject());
 
-    Set<FilePath> writable = PerforceChangeProvider.collectWritableFiles(dirtyScope, true);
+    Set<VirtualFile> writable = PerforceChangeProvider.collectWritableFiles(dirtyScope, true);
 
-    Iterator<FilePath> iterator = writable.iterator();
+    Iterator<VirtualFile> iterator = writable.iterator();
     while (iterator.hasNext()) {
-      FilePath file = iterator.next();
+      VirtualFile file = iterator.next();
       if (clm.isIgnoredFile(file)) {
-        builder.processIgnoredFile(file);
+        FilePath path = VcsUtil.getFilePath(file);
+        builder.processIgnoredFile(path);
         iterator.remove();
       }
     }
@@ -96,7 +98,7 @@ public class PerforceOfflineChangeProvider implements ChangeProvider {
             }
             if (afterPath != null) {
               afterRevision = CurrentContentRevision.create(afterPath);
-              writable.remove(afterPath);
+              writable.remove(afterPath.getVirtualFile());
             }
             builder.processChangeInList(new Change(beforeRevision, afterRevision), changeListName, PerforceVcs.getKey());
           }
@@ -111,19 +113,19 @@ public class PerforceOfflineChangeProvider implements ChangeProvider {
         FilePath afterPath = ChangesUtil.getAfterPath(c);
         if (isInScope(dirtyScope, ChangesUtil.getBeforePath(c), afterPath)) {
           if (afterPath != null) {
-            writable.remove(afterPath);
+            writable.remove(afterPath.getVirtualFile());
           }
           builder.processChangeInList(c, op.getChangeList(), PerforceVcs.getKey());
         }
       }
     }
 
-    for (FilePath path : writable) {
-      VirtualFile file = path.getVirtualFile();
+    for (VirtualFile file : writable) {
       if (LastUnchangedContentTracker.hasSavedContent(file)) {
         builder.processModifiedWithoutCheckout(file);
       }
       else {
+        FilePath path = VcsUtil.getFilePath(file);
         builder.processUnversionedFile(path);
       }
     }
