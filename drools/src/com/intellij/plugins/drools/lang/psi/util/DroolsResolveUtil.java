@@ -582,7 +582,7 @@ public final class DroolsResolveUtil {
   public static Set<PsiClass> getPatternOOPathBindType(@NotNull List<DroolsLhsOOPSegment> oopSegments) {
     Set<PsiClass> psiClasses = new HashSet<>();
     for (DroolsLhsOOPSegment lhsPattern : oopSegments) {
-      psiClasses.addAll(resolveOOPathBoundVariableType(lhsPattern));
+      ContainerUtil.addAllNotNull(psiClasses, resolveOOPathBoundVariableType(lhsPattern));
     }
     return psiClasses;
   }
