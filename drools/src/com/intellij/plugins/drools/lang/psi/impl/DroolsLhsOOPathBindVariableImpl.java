@@ -6,6 +6,7 @@ import com.intellij.plugins.drools.lang.psi.DroolsLhsOOPathBind;
 import com.intellij.plugins.drools.lang.psi.DroolsNameId;
 import com.intellij.plugins.drools.lang.psi.util.DroolsResolveUtil;
 import com.intellij.psi.*;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -24,8 +25,8 @@ public abstract class DroolsLhsOOPathBindVariableImpl extends DroolsAbstractVari
   @NotNull
   @Override
   public PsiType getType() {
-    final Set<PsiClass> psiClasses = DroolsResolveUtil.getPatternOOPathBindType(this.getLhsOOPSegmentList());
-    return psiClasses.size() == 0 ? (PsiPrimitiveType)PsiTypes.nullType()
-                                  : JavaPsiFacade.getElementFactory(getProject()).createType(psiClasses.iterator().next());
+    final Set<PsiClass> psiClasses = ContainerUtil.addAllNotNull(DroolsResolveUtil.getPatternOOPathBindType(this.getLhsOOPSegmentList()));
+    return psiClasses.isEmpty() ? (PsiPrimitiveType)PsiTypes.nullType()
+                                : JavaPsiFacade.getElementFactory(getProject()).createType(psiClasses.iterator().next());
   }
 }
