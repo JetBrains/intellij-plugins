@@ -59,6 +59,8 @@ public class DroolsHighlightingTest extends DroolsLightTestCase {
   }
 
   public void testOOPaths() {
+    myFixture.addClass("package org.drools.ruleunits.api;\n" +
+                       "public interface DataStore<T> extends DataSource<T> {}");
     myFixture.copyFileToProject("examples/kogito/LoanUnit.java");
     myFixture.copyFileToProject("examples/kogito/Applicant.java");
     myFixture.copyFileToProject("examples/kogito/LoanApplication.java");

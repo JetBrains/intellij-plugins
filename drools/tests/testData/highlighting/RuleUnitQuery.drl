@@ -2,7 +2,7 @@ package examples.kogito;
 unit LoanUnit;
 
 import examples.kogito.LoanApplication
-import static examples.kogito..Applicant.THIS_IS_A_CONSTANT
+import static examples.kogito.Applicant.THIS_IS_A_CONSTANT
 
 rule SmallDepositApprove when
     $l: /loanApplications[ applicant.age >= 20, deposit < 1000, amount <= 2000 ]
@@ -13,13 +13,13 @@ end
 
 rule SmallDepositReject when
     $l: /loanApplications[ applicant.age >= 20, deposit < 1000, amount > 2000]
-    /accessorKeyDataStore   [fieldName  == ""]
+    /accessorKeyDataStore   [<error descr="Cannot resolve">fieldName</error>  == ""]
 then
     modify($l) {  setApproved(true ) };
 end
 
 rule LargeDepositApprove when
-    $l: /loanApplications[ applicant.age >= 20, deposit >= 1000, amount <= maxAmount, name == THIS_IS_A_CONSTANT ]
+    $l: /loanApplications[ applicant.age >= 20, deposit >= 1000, amount <= maxAmount, <error descr="Cannot resolve">name</error> == THIS_IS_A_CONSTANT ]
 then
     String f = "f";
     String a = THIS_IS_A_CONSTANT;

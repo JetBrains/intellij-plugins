@@ -1,32 +1,35 @@
 
 package examples.kogito;
 
+
 public class Applicant {
 
-    private String name;
-    private int age;
+  public static final String THIS_IS_A_CONSTANT = "HERE_I_AM";
 
-    public Applicant() {
-    }
+  private String name;
+  private int age;
 
-    public Applicant(String name, int age) {
-        this.name = name;
-        this.age = age;
-    }
+  public Applicant() {
+  }
 
-    public String getName() {
-        return name;
-    }
+  public Applicant(String name, int age) {
+    this.name = name;
+    this.age = age;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public int getAge() {
-        return age;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public void setAge(int age) {
-        this.age = age;
-    }
+  public int getAge() {
+    return age;
+  }
+
+  public void setAge(int age) {
+    this.age = age;
+  }
 }
