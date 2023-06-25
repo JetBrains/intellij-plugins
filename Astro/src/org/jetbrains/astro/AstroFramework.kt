@@ -5,12 +5,13 @@ import com.intellij.javascript.web.WebFramework
 import javax.swing.Icon
 
 class AstroFramework : WebFramework() {
-
   override val displayName: String = "Astro"
-  override val icon: Icon = AstroIcons.Astro
+  override val icon: Icon
+    get() = AstroIcons.Astro
 
   companion object {
-    val instance get() = get(ID)
+    val instance: WebFramework
+      get() = get(ID)
     const val ID = "astro"
   }
 }
