@@ -1,8 +1,6 @@
 package org.jetbrains.idea.perforce.application;
 
 import com.google.common.base.Stopwatch;
-import com.intellij.concurrency.ConcurrentCollectionFactory;
-import com.intellij.dvcs.ignore.IgnoredToExcludedSynchronizer;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.advanced.AdvancedSettings;
@@ -12,7 +10,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vcs.FilePath;
-import com.intellij.openapi.vcs.LocalFilePath;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.changes.ChangeListManagerImpl;
 import com.intellij.openapi.vcs.changes.VcsIgnoreManager;
@@ -39,13 +36,15 @@ import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 
 import java.io.File;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class PerforceUnversionedTracker implements Disposable {
   private static final Logger LOG = Logger.getInstance(PerforceUnversionedTracker.class);
-  private final Set<FilePath> myUnversionedFiles = ConcurrentCollectionFactory.createConcurrentSet();
-  private final Set<FilePath> myIgnoredFiles = ConcurrentCollectionFactory.createConcurrentSet();
-  private final Set<VirtualFile> myDirtyLocalFiles = ConcurrentCollectionFactory.createConcurrentSet();
+
+  private final Object LOCK = new Object();
+
+  private final Set<FilePath> myUnversionedFiles = new HashSet<>();
+  private final Set<FilePath> myIgnoredFiles = new HashSet<>();
+  private final Set<VirtualFile> myDirtyLocalFiles = new HashSet<>();
 
   private final Project myProject;
 
@@ -65,22 +64,31 @@ public class PerforceUnversionedTracker implements Disposable {
   }
 
   public boolean isUnversioned(@NotNull FilePath file) {
-    return myUnversionedFiles.contains(file);
+    synchronized (LOCK) {
+      return myUnversionedFiles.contains(file);
+    }
   }
 
   public boolean isIgnored(@NotNull FilePath file) {
-    return myIgnoredFiles.contains(file) || isPotentiallyIgnoredFile(file);
+    if (isPotentiallyIgnoredFile(file))
+      return true;
+    synchronized (LOCK) {
+      return myIgnoredFiles.contains(file);
+    }
   }
 
   public Collection<FilePath> getIgnoredFiles() {
-    return myIgnoredFiles;
+    synchronized (LOCK) {
+      return new ArrayList<>(myIgnoredFiles);
+    }
   }
 
   public Collection<FilePath> getUnversionedFiles() {
-    return myUnversionedFiles;
+    synchronized (LOCK) {
+      return new ArrayList<>(myUnversionedFiles);
+    }
   }
 
-  private final Object LOCK = new Object();
 
   public boolean isInUpdateMode() {
     synchronized (LOCK) {
@@ -100,8 +108,8 @@ public class PerforceUnversionedTracker implements Disposable {
   private void update() {
     MultiMap<P4Connection, VirtualFile> map;
     Stopwatch sw = Stopwatch.createStarted();
-    LOG.debug("update started for " + myDirtyLocalFiles.size() + " files");
     synchronized (LOCK) {
+      LOG.debug("update started for " + myDirtyLocalFiles.size() + " files");
       if (myDirtyLocalFiles.size() == 0) {
         myInUpdate = false;
         return;
@@ -120,48 +128,50 @@ public class PerforceUnversionedTracker implements Disposable {
       LOG.warn("Failed to get ignored files", e);
     }
 
-    for (VirtualFile file : map.values()) {
-      FilePath path = VcsUtil.getFilePath(file);
-      if (ignoredSet.contains(file)) {
-        myIgnoredFiles.add(path);
-      } else {
-        myUnversionedFiles.add(path);
-      }
-    }
-
     synchronized (LOCK) {
+      for (VirtualFile file : map.values()) {
+        FilePath path = VcsUtil.getFilePath(file);
+        if (ignoredSet.contains(file)) {
+          myIgnoredFiles.add(path);
+        } else {
+          myUnversionedFiles.add(path);
+        }
+      }
+
       myDirtyLocalFiles.clear();
       myInUpdate = false;
     }
 
     sw.stop();
-    LOG.debug("update finished in %d seconds", sw.elapsed());
+    LOG.debug("update finished in %d seconds".formatted(sw.elapsed().toSeconds()));
 
-    // todo: check if needed
     BackgroundTaskUtil.syncPublisher(myProject, VcsManagedFilesHolder.TOPIC).updatingModeChanged();
     ChangeListManagerImpl.getInstanceImpl(myProject).notifyUnchangedFileStatusChanged();
-    // todo: refactor
-    notifyExcludedSynchronizer(new HashSet<>(), myIgnoredFiles.stream().map(it -> new LocalFilePath(it.getPath(), it.isDirectory())).collect(
-      Collectors.toList()));
   }
 
   public void markUnversioned(List<VirtualFile> files) {
-    myDirtyLocalFiles.addAll(files);
+    synchronized (LOCK) {
+      myDirtyLocalFiles.addAll(files);
+    }
   }
 
   public void markUnknown(@NotNull Set<VirtualFile> files) {
-    files.forEach(file -> {
-      FilePath path = VcsUtil.getFilePath(file);
-      myUnversionedFiles.remove(path);
-      myIgnoredFiles.remove(path);
-    });
+    synchronized (LOCK) {
+      files.forEach(file -> {
+        FilePath path = VcsUtil.getFilePath(file);
+        myUnversionedFiles.remove(path);
+        myIgnoredFiles.remove(path);
+      });
+    }
   }
 
   public void markUnknown(@Nullable VirtualFile file) {
     if (file != null) {
       FilePath path = VcsUtil.getFilePath(file);
-      myUnversionedFiles.remove(path);
-      myIgnoredFiles.remove(path);
+      synchronized (LOCK) {
+        myUnversionedFiles.remove(path);
+        myIgnoredFiles.remove(path);
+      }
     }
   }
 
@@ -287,18 +297,5 @@ public class PerforceUnversionedTracker implements Disposable {
 
   private boolean isPotentiallyIgnoredFile(FilePath file) {
     return (Registry.is("p4.ignore.all.potentially.ignored") && VcsIgnoreManager.getInstance(myProject).isPotentiallyIgnoredFile(file));
-  }
-
-  // todo: check if needed
-  private void notifyExcludedSynchronizer(@NotNull Set<FilePath> oldIgnored, @NotNull List<FilePath> newIgnored) {
-    List<FilePath> addedIgnored = new ArrayList<>();
-    for (FilePath filePath : newIgnored) {
-      if (!oldIgnored.contains(filePath)) {
-        addedIgnored.add(filePath);
-      }
-    }
-    if (!addedIgnored.isEmpty()) {
-      myProject.getService(IgnoredToExcludedSynchronizer.class).ignoredUpdateFinished(addedIgnored);
-    }
   }
 }
