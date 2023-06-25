@@ -1,9 +1,8 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web
 
 import com.intellij.javascript.web.WebFramework
 import com.intellij.javascript.web.html.WebFrameworkHtmlFileType
-import com.intellij.lang.javascript.linter.eslint.service.ESLintLanguageService
 import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.SymbolNamespace
@@ -20,11 +19,14 @@ import java.util.function.Predicate
 import javax.swing.Icon
 
 class VueFramework : WebFramework() {
-
   override val displayName: String = "Vue"
-  override val icon: Icon = VuejsIcons.Vue
-  override val standaloneFileType: WebFrameworkHtmlFileType = VueFileType.INSTANCE
-  override val htmlFileType: WebFrameworkHtmlFileType = VueFileType.INSTANCE
+  override val icon: Icon
+    get() = VuejsIcons.Vue
+
+  override val standaloneFileType: WebFrameworkHtmlFileType
+    get() = VueFileType.INSTANCE
+  override val htmlFileType: WebFrameworkHtmlFileType
+    get() = VueFileType.INSTANCE
 
   override fun getNames(namespace: SymbolNamespace,
                         kind: SymbolKind,
