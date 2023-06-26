@@ -249,23 +249,28 @@ public class PerforceChangeProvider implements ChangeProvider {
     return filtered;
   }
 
-  static Set<VirtualFile> collectWritableFiles(VcsDirtyScope dirtyScope, boolean withIgnored) {
+  public static Set<VirtualFile> collectWritableFiles(VcsDirtyScope dirtyScope, boolean withIgnored) {
     Stopwatch sw = Stopwatch.createStarted();
     final Set<VirtualFile> writableFiles = new HashSet<>();
     dirtyScope.iterateExistingInsideScope(vf -> {
-      ApplicationManager.getApplication().runReadAction(() -> {
-        if (vf.isValid() && !vf.isDirectory() && vf.isWritable() && !vf.is(VFileProperty.SYMLINK)) {
-          if (withIgnored || !ChangeListManager.getInstance(dirtyScope.getProject()).isIgnoredFile(vf)) {
-            writableFiles.add(vf);
-          }
-        }
-      });
+      addFileIfWritable(dirtyScope.getProject(), writableFiles, vf, withIgnored);
       return true;
     });
 
     sw.stop();
     logRefreshDebug("collected %d writable files in %d seconds".formatted(writableFiles.size(), sw.elapsed().toSeconds()));
     return writableFiles;
+  }
+
+  private static void addFileIfWritable(Project project, Set<VirtualFile> collection, VirtualFile vf, boolean withIgnored) {
+    ApplicationManager.getApplication().runReadAction(() -> {
+      if (!vf.isValid() || vf.isDirectory() || !vf.isWritable() || vf.is(VFileProperty.SYMLINK))
+        return;
+
+      if (withIgnored || !ChangeListManager.getInstance(project).isIgnoredFile(vf)) {
+        collection.add(vf);
+      }
+    });
   }
 
   private void processAsyncEdit(VirtualFile file, ChangelistBuilder builder, ChangeCreator changeCreator)

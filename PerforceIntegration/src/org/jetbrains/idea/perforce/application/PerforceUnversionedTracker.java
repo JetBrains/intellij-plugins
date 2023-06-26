@@ -57,10 +57,12 @@ public class PerforceUnversionedTracker implements Disposable {
   }
 
   public boolean isLocalOnly(@NotNull VirtualFile file) {
-    if (myDirtyLocalFiles.contains(file))
-      return true;
-    FilePath path = VcsUtil.getFilePath(file);
-    return isUnversioned(path) || isIgnored(path);
+    synchronized (LOCK) {
+      if (myDirtyLocalFiles.contains(file))
+        return true;
+      FilePath path = VcsUtil.getFilePath(file);
+      return isUnversioned(path) || isIgnored(path);
+    }
   }
 
   public boolean isUnversioned(@NotNull FilePath file) {
@@ -156,12 +158,12 @@ public class PerforceUnversionedTracker implements Disposable {
   }
 
   public void markUnknown(@NotNull Set<VirtualFile> files) {
-    synchronized (LOCK) {
-      files.forEach(file -> {
-        FilePath path = VcsUtil.getFilePath(file);
+    for (VirtualFile file : files) {
+      FilePath path = VcsUtil.getFilePath(file);
+      synchronized (LOCK) {
         myUnversionedFiles.remove(path);
         myIgnoredFiles.remove(path);
-      });
+      }
     }
   }
 
