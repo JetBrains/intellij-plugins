@@ -361,7 +361,7 @@ public class PerforceChangeProvider implements ChangeProvider {
     return result;
   }
 
-  public void clearUnversionedStatus(@NotNull VirtualFile file) {
+  public void clearUnversionedStatus(@NotNull FilePath file) {
     myDirtyFilesHandler.reportRecheck(file);
   }
 }

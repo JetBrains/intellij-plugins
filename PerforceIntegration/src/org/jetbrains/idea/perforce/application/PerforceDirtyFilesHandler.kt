@@ -12,8 +12,6 @@ import com.intellij.openapi.vcs.ProjectLevelVcsManager
 import com.intellij.openapi.vcs.VcsException
 import com.intellij.openapi.vcs.VcsMappingListener
 import com.intellij.openapi.vcs.changes.VcsDirtyScopeManager
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.vcsUtil.VcsUtil
 import org.jetbrains.idea.perforce.perforce.PerforceSettings
 
 class PerforceDirtyFilesHandler(private val myProject: Project,
@@ -120,26 +118,26 @@ class PerforceDirtyFilesHandler(private val myProject: Project,
     }
   }
 
-  fun reportRecheck(file: VirtualFile) {
-    myUnversionedTracker.markUnknown(file)
-    if (addDirtyFile(VcsUtil.getFilePath(file))) {
-      myDirtyScopeManager.fileDirty(file)
+  fun reportRecheck(path: FilePath) {
+    myUnversionedTracker.markUnknown(path)
+    if (addDirtyFile(path)) {
+      myDirtyScopeManager.fileDirty(path)
     }
   }
 
-  fun reportDelete(file: VirtualFile) {
-    if (addDirtyFile(VcsUtil.getFilePath(file))) {
-      myDirtyScopeManager.fileDirty(file)
+  fun reportDelete(path: FilePath) {
+    if (addDirtyFile(path)) {
+      myDirtyScopeManager.fileDirty(path)
     }
   }
 
-  fun reportRecheck(targets: Set<VirtualFile>) {
+  fun reportRecheck(targets: Set<FilePath>) {
     for (target in targets) {
-      if (!addDirtyFile(VcsUtil.getFilePath(target))) {
+      if (!addDirtyFile(target)) {
         return
       }
     }
-    myDirtyScopeManager.filesDirty(targets, null)
+    myDirtyScopeManager.filePathsDirty(targets, null)
   }
 
   private fun addDirtyFile(holder: FilePath): Boolean {
