@@ -220,6 +220,11 @@ public class PerforceUnversionedTracker implements Disposable {
     ServerVersion serverVersion = PerforceManager.getInstance(project).getServerVersion(connection);
 
     if (serverVersion != null && serverVersion.supportsIgnoresCommand()) {
+      PerforceSettings settings = PerforceSettings.getSettings(project);
+      if (settings.USE_PATTERN_MATCHING_IGNORE) {
+        return getIgnoredByPatterns(project, connection, toCheckIgnored);
+      }
+
       return getIgnoredFilesByIgnores(project, connection, toCheckIgnored);
     }
 
