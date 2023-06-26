@@ -165,9 +165,8 @@ public class PerforceUnversionedTracker implements Disposable {
     }
   }
 
-  public void markUnknown(@Nullable VirtualFile file) {
-    if (file != null) {
-      FilePath path = VcsUtil.getFilePath(file);
+  public void markUnknown(@Nullable FilePath path) {
+    if (path != null) {
       synchronized (LOCK) {
         myUnversionedFiles.remove(path);
         myIgnoredFiles.remove(path);

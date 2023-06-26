@@ -1,6 +1,7 @@
 package org.jetbrains.idea.perforce.operations;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vcs.FilePath;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.changes.ChangeListManagerGate;
@@ -56,10 +57,8 @@ public class P4AddOperation extends VcsOperationOnPath {
       runner.add(p4File, changeListNumber);
     }
 
-    VirtualFile file = getFilePath().getVirtualFile();
-    if (file != null) {
-      ((PerforceChangeProvider) PerforceVcs.getInstance(project).getChangeProvider()).clearUnversionedStatus(file);
-    }
+    FilePath path = getFilePath();
+    ((PerforceChangeProvider) PerforceVcs.getInstance(project).getChangeProvider()).clearUnversionedStatus(path);
 
     p4File.clearCache();
     VcsUtil.markFileAsDirty(project, myPath);

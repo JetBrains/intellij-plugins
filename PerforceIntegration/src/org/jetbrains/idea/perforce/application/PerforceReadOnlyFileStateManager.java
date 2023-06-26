@@ -7,10 +7,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.vcs.AbstractVcs;
-import com.intellij.openapi.vcs.FileStatus;
-import com.intellij.openapi.vcs.ProjectLevelVcsManager;
-import com.intellij.openapi.vcs.VcsException;
+import com.intellij.openapi.vcs.*;
 import com.intellij.openapi.vcs.changes.*;
 import com.intellij.openapi.vfs.*;
 import com.intellij.openapi.wm.IdeFrame;
@@ -35,7 +32,7 @@ public final class PerforceReadOnlyFileStateManager {
       processFocusLost();
     }
   };
-  private final Set<VirtualFile> myPreviousAddedSnapshot = new HashSet<>();
+  private final Set<FilePath> myPreviousAddedSnapshot = new HashSet<>();
 
   private volatile boolean myHasLostFocus;
 
@@ -59,7 +56,7 @@ public final class PerforceReadOnlyFileStateManager {
 
   public void getChanges(final VcsDirtyScope dirtyScope, final ChangelistBuilder builder, final ProgressIndicator progress,
                          final ChangeListManagerGate addGate) throws VcsException {
-    final Set<VirtualFile> newAdded = getAddedFilesInCurrentChangesView(addGate);
+    final Set<FilePath> newAdded = getAddedFilesInCurrentChangesView(addGate);
     synchronized (myLock) {
       progress.checkCanceled();
       recheckPreviouslyAddedFiles(newAdded);
@@ -74,14 +71,14 @@ public final class PerforceReadOnlyFileStateManager {
     }
   }
 
-  private Set<VirtualFile> getAddedFilesInCurrentChangesView(ChangeListManagerGate addGate) {
-    final Set<VirtualFile> set = new HashSet<>();
+  private Set<FilePath> getAddedFilesInCurrentChangesView(ChangeListManagerGate addGate) {
+    final Set<FilePath> set = new HashSet<>();
     for (LocalChangeList list : addGate.getListsCopy()) {
       for (Change change : list.getChanges()) {
         ContentRevision afterRevision = change.getAfterRevision();
         if (FileStatus.ADDED.equals(change.getFileStatus()) && afterRevision != null) {
-          final VirtualFile file = afterRevision.getFile().getVirtualFile();
-          if (file != null && fileIsUnderP4Root(file)) {
+          final FilePath file = afterRevision.getFile();
+          if (fileIsUnderP4Root(file)) {
             set.add(file);
           }
         }
@@ -98,8 +95,8 @@ public final class PerforceReadOnlyFileStateManager {
     }
   }
 
-  private void recheckPreviouslyAddedFiles(Set<VirtualFile> newAdded) {
-    final HashSet<VirtualFile> copy = new HashSet<>(myPreviousAddedSnapshot);
+  private void recheckPreviouslyAddedFiles(Set<FilePath> newAdded) {
+    final HashSet<FilePath> copy = new HashSet<>(myPreviousAddedSnapshot);
     copy.removeAll(newAdded);
     myPreviousAddedSnapshot.clear();
     myPreviousAddedSnapshot.addAll(newAdded);
@@ -131,51 +128,63 @@ public final class PerforceReadOnlyFileStateManager {
     @Override
     public void propertyChanged(@NotNull VirtualFilePropertyEvent event) {
       VirtualFile file = event.getFile();
-      if (fileIsUnderP4Root(file) && VirtualFile.PROP_WRITABLE.equals(event.getPropertyName())) {
-        myDirtyFilesHandler.reportRecheck(file);
+      FilePath path = VcsUtil.getFilePath(file);
+      if (fileIsUnderP4Root(path) && VirtualFile.PROP_WRITABLE.equals(event.getPropertyName())) {
+        myDirtyFilesHandler.reportRecheck(path);
       }
     }
 
     @Override
     public void contentsChanged(@NotNull VirtualFileEvent event) {
       VirtualFile file = event.getFile();
-      if (fileIsUnderP4Root(file) && !file.isWritable()) {
-        myDirtyFilesHandler.reportRecheck(file);
+      FilePath path = VcsUtil.getFilePath(file);
+      if (fileIsUnderP4Root(path) && !file.isWritable()) {
+        myDirtyFilesHandler.reportRecheck(path);
       }
     }
 
     @Override
     public void fileCreated(@NotNull final VirtualFileEvent event) {
-      if (!fileIsUnderP4Root(event.getFile())) return;
-      myDirtyFilesHandler.reportRecheck(event.getFile());
+      VirtualFile file = event.getFile();
+      FilePath path = VcsUtil.getFilePath(file);
+      if (!fileIsUnderP4Root(path)) return;
+      myDirtyFilesHandler.reportRecheck(path);
     }
 
     @Override
     public void fileMoved(@NotNull VirtualFileMoveEvent event) {
-      if (!fileIsUnderP4Root(event.getFile())) return;
-      myDirtyFilesHandler.reportRecheck(event.getFile());
+      VirtualFile file = event.getFile();
+      FilePath path = VcsUtil.getFilePath(file);
+      if (!fileIsUnderP4Root(path)) return;
+      myDirtyFilesHandler.reportRecheck(path);
     }
 
     @Override
     public void fileCopied(@NotNull VirtualFileCopyEvent event) {
-      if (!fileIsUnderP4Root(event.getFile())) return;
-      myDirtyFilesHandler.reportRecheck(event.getFile());
+      VirtualFile file = event.getFile();
+      FilePath path = VcsUtil.getFilePath(file);
+      if (!fileIsUnderP4Root(path)) return;
+      myDirtyFilesHandler.reportRecheck(path);
     }
 
     @Override
     public void beforeFileDeletion(@NotNull VirtualFileEvent event) {
-      if (!fileIsUnderP4Root(event.getFile())) return;
-      myDirtyFilesHandler.reportDelete(event.getFile());
+      VirtualFile file = event.getFile();
+      FilePath path = VcsUtil.getFilePath(file);
+      if (!fileIsUnderP4Root(path)) return;
+      myDirtyFilesHandler.reportDelete(path);
     }
 
     @Override
     public void beforeFileMovement(@NotNull VirtualFileMoveEvent event) {
-      if (!fileIsUnderP4Root(event.getFile())) return;
-      myDirtyFilesHandler.reportDelete(event.getFile());
+      VirtualFile file = event.getFile();
+      FilePath path = VcsUtil.getFilePath(file);
+      if (!fileIsUnderP4Root(path)) return;
+      myDirtyFilesHandler.reportDelete(path);
     }
   }
 
-  private boolean fileIsUnderP4Root(final VirtualFile file) {
+  private boolean fileIsUnderP4Root(final FilePath file) {
     if (myProject.isDisposed()) {
       return false;
     }
