@@ -101,6 +101,7 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
   public int SERVER_TIMEOUT = 20000;
   public boolean USE_PERFORCE_JOBS = false;
   public boolean SHOW_INTEGRATED_IN_COMMITTED_CHANGES = true;
+  public boolean USE_PATTERN_MATCHING_IGNORE = false;
 
   //
   // public PerforceSettings methods
