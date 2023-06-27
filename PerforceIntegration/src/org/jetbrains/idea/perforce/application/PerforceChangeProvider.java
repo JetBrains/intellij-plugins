@@ -66,6 +66,7 @@ public class PerforceChangeProvider implements ChangeProvider {
   public void activate(@NotNull Disposable parentDisposable) {
     myPerforceReadOnlyFileStateManager.activate(parentDisposable);
     myDirtyFilesHandler.activate(parentDisposable);
+    myUnversionedTracker.activate(parentDisposable);
   }
 
   @Override
