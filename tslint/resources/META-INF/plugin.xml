@@ -51,14 +51,16 @@
     <json.jsonStandardComplianceProvider implementation="com.intellij.lang.javascript.linter.tslint.TslintJsonStandardComplianceProvider"/>
     <registryKey key="tslint.service.node.arguments" description="Command line options for TSLint service process"/>
     <statistics.projectUsagesCollector implementation="com.intellij.lang.javascript.linter.tslint.config.TslintOptionsUsageCollector"/>
-    <lang.typescript.languageService.extension implementation="com.intellij.lang.javascript.linter.tslint.typescript.TslintTypeScriptExtension"/>
     <tslint.configDetector implementation="com.intellij.lang.javascript.linter.tslint.config.TsLintConfigDefaultDetector"
                            id="default"
                            order="last"/>
+
   </extensions>
-  <extensions defaultExtensionNs="JavaScript.JsonSchema">
-    <ProviderFactory implementation="com.intellij.lang.javascript.linter.tslint.schema.TsLintJsonSchemaProviderFactory"/>
+  <extensions defaultExtensionNs="JavaScript">
+    <JsonSchema.ProviderFactory implementation="com.intellij.lang.javascript.linter.tslint.schema.TsLintJsonSchemaProviderFactory"/>
+    <tsServiceExtension implementation="com.intellij.lang.javascript.linter.tslint.typescript.TslintTypeScriptExtension"/>
   </extensions>
+
   <actions>
     <action class="com.intellij.lang.javascript.linter.tslint.fix.TsLintFileFixAction" id="TsLintFileFixAction">
       <add-to-group group-id="EditorPopupMenu" anchor="after" relative-to-action="Javascript.Linters.EsLint.Fix"/>

@@ -6,32 +6,19 @@ import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageS
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServiceExtension;
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfig;
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
-import java.util.Set;
+import org.jetbrains.annotations.Nullable;
 
 public class TslintTypeScriptExtension implements TypeScriptServiceExtension {
-  @NotNull
+
   @Override
-  public Set<VirtualFile> getConfigFilesToWatch(@NotNull PsiFile fileToHighlight) {
-    if (!hasTslint(fileToHighlight)) {
-      return Collections.emptySet();
-    }
-    VirtualFile virtualFile = fileToHighlight.getVirtualFile();
-    if (virtualFile != null) {
-      VirtualFile tslintJson = TslintUtil.lookupConfig(fileToHighlight.getProject(), virtualFile);
-      if (tslintJson != null) {
-        return ContainerUtil.newHashSet(tslintJson);
-      }
-    }
-    return Collections.emptySet();
+  public boolean isConfigFile(@NotNull PsiFile configCandidate, @NotNull PsiElement context) {
+    VirtualFile file = configCandidate.getVirtualFile();
+    return file != null && TslintUtil.isConfigFile(file) && hasTslint(context.getContainingFile());
   }
 
   @Override
@@ -39,12 +26,7 @@ public class TslintTypeScriptExtension implements TypeScriptServiceExtension {
     return !StringUtil.equals(result.getSource(), "tslint");
   }
 
-  private static boolean hasTslint(@NotNull Project project, @NotNull VirtualFile virtualFile) {
-    PsiFile psi = PsiManager.getInstance(project).findFile(virtualFile);
-    return psi != null && hasTslint(psi);
-  }
-
-  private static boolean hasTslint(@NotNull PsiFile fileToHighlight) {
+  private static boolean hasTslint(@Nullable PsiFile fileToHighlight) {
     TypeScriptConfig config = TypeScriptConfigUtil.getConfigForPsiFile(fileToHighlight);
     return config != null &&
            (config.getPlugins().contains(TslintUtil.TYPESCRIPT_PLUGIN_PACKAGE_NAME)
