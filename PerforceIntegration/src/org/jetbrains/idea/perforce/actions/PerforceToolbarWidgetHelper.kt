@@ -46,7 +46,7 @@ class PerforceToolbarWidgetHelper {
       return builder.toString()
     }
 
-    fun getDescription(@Nls workspace: String?, isNoConnections: Boolean, isOnline: Boolean): @NlsSafe String {
+    fun getDescription(@NlsSafe workspace: String?, isNoConnections: Boolean, isOnline: Boolean): @NlsSafe String {
       if (!isOnline)
         return PerforceBundle.message("connection.cannot.connect")
       if (isNoConnections)
@@ -67,7 +67,7 @@ class PerforceToolbarWidgetHelper {
       return AllIcons.Vcs.Branch
     }
 
-    private fun getWorkspaceLabel(workspace: String, workspaceDir: String) : String {
+    private fun getWorkspaceLabel(@NlsSafe workspace: String, @NlsSafe workspaceDir: String) : @NlsSafe String {
       val color = ColorUtil.toHex(JBColor.GRAY)
       val builder = HtmlBuilder().append(
         HtmlChunk.html().addText("$workspace ").child(HtmlChunk.font(color)

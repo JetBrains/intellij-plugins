@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.ex.ComboBoxAction
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.text.HtmlBuilder
 import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.ui.ColorUtil
@@ -52,7 +53,7 @@ class PerforceWorkspaceComboBoxAction : ComboBoxAction(), DumbAware {
     }
   }
 
-  private fun getDescription(workspace: String?, isNoConnections: Boolean, isOnline: Boolean) : String {
+  private fun getDescription(workspace: String?, isNoConnections: Boolean, isOnline: Boolean) : @NlsSafe String {
     if (!isOnline && !isNoConnections) {
       val color = ColorUtil.toHex(UIUtil.getInactiveTextColor())
       val builder = HtmlBuilder()
