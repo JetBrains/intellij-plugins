@@ -23,6 +23,9 @@ import java.util.concurrent.atomic.AtomicLong
 class PlatformioService(val project: Project) : PersistentStateComponentWithModificationTracker<PlatformioState> {
 
   @Volatile
+  var librariesPaths: Map<String, @NlsSafe String> = emptyMap()
+
+  @Volatile
   var visibleActions: Set<String> = emptySet()
   private var state: PlatformioState = PlatformioState()
   private val stateModCounter = AtomicLong(1)

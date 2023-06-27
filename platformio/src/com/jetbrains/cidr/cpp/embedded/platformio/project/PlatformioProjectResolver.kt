@@ -11,7 +11,7 @@ import com.intellij.openapi.externalSystem.importing.ProjectResolverPolicy
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ExternalSystemException
 import com.intellij.openapi.externalSystem.model.ProjectKeys
-import com.intellij.openapi.externalSystem.model.project.ProjectData
+import com.intellij.openapi.externalSystem.model.project.*
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener
 import com.intellij.openapi.externalSystem.model.task.event.*
@@ -43,7 +43,6 @@ import java.util.*
 open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioExecutionSettings> {
 
   //todo (low priority) leave *.ini files in the project node even if platformio.ini is broken
-  //todo (low priority) roots generator
 
   @Volatile
   private var cancelled = false
@@ -163,7 +162,7 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
         val confBuilder = ExternalResolveConfigurationBuilder(id = name, configName = "PlatformIO", buildWorkingDir = buildWorkingDir)
           .withVariants(name)
 
-        scanner.parseResolveConfig(confBuilder, pioActiveMetadata, srcFolder, buildSrcFilter)
+        platformioService.librariesPaths = scanner.parseResolveConfig(confBuilder, pioActiveMetadata, srcFolder, buildSrcFilter)
         val module = ExternalModuleImpl(mutableSetOf(confBuilder.invoke()))
         val cppModuleNode = DataNode(ExternalModule.OC_MODULE_KEY, module, null)
         projectNode = DataNode(ProjectKeys.PROJECT, projectData, null)
