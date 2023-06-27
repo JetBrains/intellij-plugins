@@ -92,6 +92,7 @@ public class ConfigPanel {
   private JLabel myIgnoreLabel;
   private JRadioButton myUseIgnoreSettingsRadioButton;
   private TextFieldWithBrowseButton m_pathToIgnore;
+  private JCheckBox myCheckIgnoredUsingP4;
 
   @NlsSafe private static final String CHARSET_ISO8859_1 = "iso8859-1";
   @NlsSafe private static final String CHARSET_ISO8859_15 = "iso8859-15";
@@ -315,6 +316,7 @@ public class ConfigPanel {
     myUsePerforceJobs.setSelected(settings.USE_PERFORCE_JOBS);
     mySwitchToOffline.setSelected(settings.myCanGoOffline);
     myShowIntegratedChangelistsInCheckBox.setSelected(settings.SHOW_INTEGRATED_IN_COMMITTED_CHANGES);
+    myCheckIgnoredUsingP4.setSelected(!settings.USE_PATTERN_MATCHING_IGNORE);
 
     myCharset.removeAllItems();
     myCharset.addItem(PerforceSettings.getCharsetNone());
@@ -373,6 +375,7 @@ public class ConfigPanel {
     settings.USE_PERFORCE_JOBS = myUsePerforceJobs.isSelected();
     settings.myCanGoOffline = mySwitchToOffline.isSelected();
     settings.SHOW_INTEGRATED_IN_COMMITTED_CHANGES = myShowIntegratedChangelistsInCheckBox.isSelected();
+    settings.USE_PATTERN_MATCHING_IGNORE = !myCheckIgnoredUsingP4.isSelected();
   }
 
   public boolean equalsToSettings(PerforceSettings settings) {
@@ -388,6 +391,7 @@ public class ConfigPanel {
     if (!Objects.equals(settings.PATH_TO_P4VC, myP4VCPathField.getText().trim())) return false;
     if (! Comparing.equal(settings.USE_PERFORCE_JOBS, myUsePerforceJobs.isSelected())) return false;
     if (! Comparing.equal(settings.myCanGoOffline, mySwitchToOffline.isSelected())) return false;
+    if (! Comparing.equal(settings.USE_PATTERN_MATCHING_IGNORE, !myCheckIgnoredUsingP4.isSelected())) return false;
     if (! Comparing.equal(settings.SHOW_INTEGRATED_IN_COMMITTED_CHANGES, myShowIntegratedChangelistsInCheckBox.isSelected())) return false;
     return Comparing.equal(settings.CHARSET, myCharset.getSelectedItem());
   }
