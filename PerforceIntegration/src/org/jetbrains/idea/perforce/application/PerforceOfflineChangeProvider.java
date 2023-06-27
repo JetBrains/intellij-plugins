@@ -57,7 +57,9 @@ public class PerforceOfflineChangeProvider implements ChangeProvider {
 
     ChangeListManager clm = ChangeListManager.getInstance(dirtyScope.getProject());
 
-    Set<VirtualFile> writable = PerforceChangeProvider.collectWritableFiles(dirtyScope, true);
+    Set<VirtualFile> writable = PerforceChangeProvider.collectWritableFiles(
+      PerforceVcs.getInstance(myProject).getOnlineChangeProvider().getReadOnlyFileStateManager(),
+      dirtyScope, true);
 
     Iterator<VirtualFile> iterator = writable.iterator();
     while (iterator.hasNext()) {

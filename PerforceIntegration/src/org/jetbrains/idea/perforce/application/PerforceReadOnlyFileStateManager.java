@@ -16,8 +16,7 @@ import com.intellij.vcsUtil.VcsUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public final class PerforceReadOnlyFileStateManager {
   private static final Logger LOG = Logger.getInstance(PerforceReadOnlyFileStateManager.class);
@@ -33,6 +32,8 @@ public final class PerforceReadOnlyFileStateManager {
     }
   };
   private final Set<FilePath> myPreviousAddedSnapshot = new HashSet<>();
+
+  private final Map<VirtualFile, Set<VirtualFile>> myWritableFiles = new HashMap<>();
 
   private volatile boolean myHasLostFocus;
 
@@ -52,6 +53,37 @@ public final class PerforceReadOnlyFileStateManager {
 
   private void deactivate() {
     myHasLostFocus = true;
+  }
+
+  public void addWritableFiles(VirtualFile root, Collection<VirtualFile> writableFiles, boolean withIgnored) {
+    if (!myWritableFiles.containsKey(root)) {
+      initializeWritableFiles(root);
+    }
+
+    Set<VirtualFile> writablesUnderRoot = myWritableFiles.get(root);
+    for (VirtualFile vf : writablesUnderRoot) {
+      if (withIgnored || !ChangeListManager.getInstance(myProject).isIgnoredFile(vf)) {
+        writableFiles.add(vf);
+      }
+    }
+  }
+
+  private void initializeWritableFiles(VirtualFile root) {
+    Set<VirtualFile> newWritableFiles = new HashSet<>();
+    myVcsManager.iterateVfUnderVcsRoot(root, vf -> {
+      addFileIfWritable(newWritableFiles, vf);
+      return true;
+    });
+    myWritableFiles.put(root, newWritableFiles);
+  }
+
+  private static void addFileIfWritable(Set<VirtualFile> collection, VirtualFile vf) {
+    ApplicationManager.getApplication().runReadAction(() -> {
+      if (!vf.isValid() || vf.isDirectory() || !vf.isWritable() || vf.is(VFileProperty.SYMLINK))
+        return;
+
+      collection.add(vf);
+    });
   }
 
   public void getChanges(final VcsDirtyScope dirtyScope, final ChangelistBuilder builder, final ProgressIndicator progress,
@@ -131,6 +163,17 @@ public final class PerforceReadOnlyFileStateManager {
       FilePath path = VcsUtil.getFilePath(file);
       if (fileIsUnderP4Root(path) && VirtualFile.PROP_WRITABLE.equals(event.getPropertyName())) {
         myDirtyFilesHandler.reportRecheck(path);
+
+        VirtualFile root = myVcsManager.getVcsRootFor(path);
+        if (myWritableFiles.containsKey(root)) {
+          Set<VirtualFile> writableFiles = myWritableFiles.get(root);
+          if ((boolean)event.getNewValue()) {
+            writableFiles.add(file);
+          }
+          else {
+            writableFiles.remove(file);
+          }
+        }
       }
     }
 
