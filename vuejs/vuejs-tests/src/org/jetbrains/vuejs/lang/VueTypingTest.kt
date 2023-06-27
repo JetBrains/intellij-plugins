@@ -171,6 +171,10 @@ class VueTypingTest: BasePlatformTestCase() {
     }
   }
 
+  fun testInjectedJsonEnterHandler() {
+    doTest("{\n\"foo\":12\n")
+  }
+
   // WEB-61505
   fun testAutoStringInterpolation() {
     doTest("{")
