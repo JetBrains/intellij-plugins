@@ -3,7 +3,6 @@ package org.jetbrains.idea.perforce.application;
 import com.google.common.base.Stopwatch;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.AccessToken;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
@@ -14,7 +13,6 @@ import com.intellij.openapi.vcs.FilePath;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.actions.VcsContextFactory;
 import com.intellij.openapi.vcs.changes.*;
-import com.intellij.openapi.vfs.VFileProperty;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
@@ -38,12 +36,15 @@ public class PerforceChangeProvider implements ChangeProvider {
   public PerforceUnversionedTracker getUnversionedTracker() {
     return myUnversionedTracker;
   }
+  public PerforceReadOnlyFileStateManager getReadOnlyFileStateManager() {
+    return myReadOnlyFileStateManager;
+  }
 
   private final Project myProject;
   private final PerforceRunner myRunner;
   private final LastSuccessfulUpdateTracker myLastSuccessfulUpdateTracker;
   private final PerforceNumberNameSynchronizer mySynchronizer;
-  private final PerforceReadOnlyFileStateManager myPerforceReadOnlyFileStateManager;
+  private final PerforceReadOnlyFileStateManager myReadOnlyFileStateManager;
 
   private final PerforceDirtyFilesHandler myDirtyFilesHandler;
   private final PerforceUnversionedTracker myUnversionedTracker;
@@ -59,12 +60,12 @@ public class PerforceChangeProvider implements ChangeProvider {
     mySynchronizer = PerforceNumberNameSynchronizer.getInstance(myProject);
     myUnversionedTracker = new PerforceUnversionedTracker(myProject);
     myDirtyFilesHandler = new PerforceDirtyFilesHandler(myProject, myUnversionedTracker);
-    myPerforceReadOnlyFileStateManager = new PerforceReadOnlyFileStateManager(myProject, myDirtyFilesHandler);
+    myReadOnlyFileStateManager = new PerforceReadOnlyFileStateManager(myProject, myDirtyFilesHandler);
     myShelf = PerforceManager.getInstance(myProject).getShelf();
   }
 
   public void activate(@NotNull Disposable parentDisposable) {
-    myPerforceReadOnlyFileStateManager.activate(parentDisposable);
+    myReadOnlyFileStateManager.activate(parentDisposable);
     myDirtyFilesHandler.activate(parentDisposable);
     myUnversionedTracker.activate(parentDisposable);
   }
@@ -106,12 +107,11 @@ public class PerforceChangeProvider implements ChangeProvider {
     }
 
     Stopwatch sw = Stopwatch.createStarted();
-    myPerforceReadOnlyFileStateManager.getChanges(dirtyScope, builder, progress, addGate);
+    myReadOnlyFileStateManager.getChanges(dirtyScope, builder, progress, addGate);
     sw.stop();
     logRefreshDebug("readOnlyFileStateManager.getChanges took %d s".formatted(sw.elapsed().toSeconds()));
 
-    final Set<VirtualFile> writableFiles = collectWritableFiles(dirtyScope, false);
-
+    final Set<VirtualFile> writableFiles = collectWritableFiles(myReadOnlyFileStateManager, dirtyScope, false);
     for (VirtualFile file : PerforceVcs.getInstance(myProject).getAsyncEditedFiles()) {
       if (writableFiles.contains(file)) {
         processAsyncEdit(file, builder, creator);
@@ -250,28 +250,18 @@ public class PerforceChangeProvider implements ChangeProvider {
     return filtered;
   }
 
-  public static Set<VirtualFile> collectWritableFiles(VcsDirtyScope dirtyScope, boolean withIgnored) {
+  public static Set<VirtualFile> collectWritableFiles(PerforceReadOnlyFileStateManager readOnlyFileStateManager, VcsDirtyScope dirtyScope,
+                                                      boolean withIgnored) {
     Stopwatch sw = Stopwatch.createStarted();
-    final Set<VirtualFile> writableFiles = new HashSet<>();
-    dirtyScope.iterateExistingInsideScope(vf -> {
-      addFileIfWritable(dirtyScope.getProject(), writableFiles, vf, withIgnored);
-      return true;
-    });
+    Collection<VirtualFile> dirtyRoots = dirtyScope.getAffectedContentRoots();
+    Set<VirtualFile> writableFiles = new HashSet<>();
+    for (VirtualFile root : dirtyRoots) {
+      readOnlyFileStateManager.addWritableFiles(root, writableFiles, withIgnored);
+    }
 
     sw.stop();
     logRefreshDebug("collected %d writable files in %d seconds".formatted(writableFiles.size(), sw.elapsed().toSeconds()));
     return writableFiles;
-  }
-
-  private static void addFileIfWritable(Project project, Set<VirtualFile> collection, VirtualFile vf, boolean withIgnored) {
-    ApplicationManager.getApplication().runReadAction(() -> {
-      if (!vf.isValid() || vf.isDirectory() || !vf.isWritable() || vf.is(VFileProperty.SYMLINK))
-        return;
-
-      if (withIgnored || !ChangeListManager.getInstance(project).isIgnoredFile(vf)) {
-        collection.add(vf);
-      }
-    });
   }
 
   private void processAsyncEdit(VirtualFile file, ChangelistBuilder builder, ChangeCreator changeCreator)
@@ -327,13 +317,13 @@ public class PerforceChangeProvider implements ChangeProvider {
   }
 
   public void discardCache() {
-    myPerforceReadOnlyFileStateManager.discardUnversioned();
+    myReadOnlyFileStateManager.discardUnversioned();
     myAlwaysWritable.clear();
   }
 
   @TestOnly
   public void imitateLostFocus() {
-    myPerforceReadOnlyFileStateManager.processFocusLost();
+    myReadOnlyFileStateManager.processFocusLost();
   }
 
   private List<PerforceChange> getChangesUnder(final P4Connection connection, @NotNull final VirtualFile root,
