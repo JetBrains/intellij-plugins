@@ -122,6 +122,7 @@ object TerraformProvidersMetadataBuilder {
       else {
         schemaFile.delete()
         val failureDir = File(failures, name).apply { mkdirs() }
+        File(tfgendir, "versions.tf").copyTo(File(failureDir, "versions.tf"))
         File(failureDir, "init.err").writeText(initError)
         File(failureDir, "schema.err").writeText(schemaError)
       }
