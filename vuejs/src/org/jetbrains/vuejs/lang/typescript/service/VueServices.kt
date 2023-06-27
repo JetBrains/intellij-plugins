@@ -2,12 +2,10 @@
 package org.jetbrains.vuejs.lang.typescript.service
 
 import com.intellij.javascript.nodejs.PackageJsonData
-import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerState
 import com.intellij.lang.typescript.library.TypeScriptLibraryProvider
 import com.intellij.lang.typescript.lsp.getTypeScriptServiceDirectory
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.vuejs.context.isVueContext

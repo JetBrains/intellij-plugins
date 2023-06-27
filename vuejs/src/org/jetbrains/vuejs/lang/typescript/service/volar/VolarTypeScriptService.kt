@@ -18,6 +18,7 @@ import com.intellij.platform.lsp.util.convertMarkupContentToHtml
 import com.intellij.psi.PsiFile
 import com.intellij.util.text.SemVer
 import org.eclipse.lsp4j.MarkupContent
+import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.typescript.service.isVolarEnabledAndAvailable
 import org.jetbrains.vuejs.lang.typescript.service.isVolarFileTypeAcceptable
 import org.jetbrains.vuejs.options.VueServiceSettings
@@ -26,7 +27,10 @@ import org.jetbrains.vuejs.options.getVueSettings
 class VolarTypeScriptService(project: Project) : JSFrameworkLspTypeScriptService(project) {
   override fun getProviderClass(): Class<out LspServerSupportProvider> = VolarSupportProvider::class.java
 
-  override val name = "Volar"
+  override val name: String
+    get() = VueBundle.message("vue.service.name")
+  override val prefix: String
+    get() = VueBundle.message("vue.service.prefix")
   override val serverVersion: SemVer
     get() = calculateVersion()
 
