@@ -13,8 +13,8 @@ import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.vuejs.lang.typescript.service.isVolarEnabledAndAvailable
 import org.jetbrains.vuejs.options.getVueSettings
 
-val defaultVolarVersion: SemVer = SemVer.parseFromText("1.6.5")!!
-const val volarPackage = "@volar/vue-language-server"
+val defaultVolarVersion: SemVer = SemVer.parseFromText("1.8.2")!!
+const val volarPackage = "@vue/language-server"
 private const val packageRelativePath = "/bin/vue-language-server.js"
 val serverPackageName = TypeScriptPackageName(volarPackage, defaultVolarVersion)
 

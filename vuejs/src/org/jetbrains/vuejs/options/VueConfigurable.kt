@@ -1,4 +1,6 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+@file:Suppress("DialogTitleCapitalization")
+
 package org.jetbrains.vuejs.options
 
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
@@ -8,6 +10,7 @@ import com.intellij.lang.typescript.lsp.JSExternalDefinitionsPackageResolver
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.UiDslUnnamedConfigurable
 import com.intellij.openapi.project.Project
+import com.intellij.ui.ContextHelpLabel
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.Panel
 import com.intellij.ui.dsl.builder.bind
@@ -35,24 +38,23 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
       buttonsGroup {
         row {
           radioButton(VueBundle.message("vue.configurable.service.disabled"), VueServiceSettings.DISABLED)
-          contextHelp(VueBundle.message("vue.configurable.service.disabled.help"))
+            .comment(VueBundle.message("vue.configurable.service.disabled.help"))
         }
         row {
           radioButton(VueBundle.message("vue.configurable.service.auto"), VueServiceSettings.AUTO)
-          contextHelp(VueBundle.message("vue.configurable.service.auto.help"))
+            .comment(VueBundle.message("vue.configurable.service.auto.help"))
         }
         row {
           radioButton(VueBundle.message("vue.configurable.service.volar"), VueServiceSettings.VOLAR)
-          contextHelp(VueBundle.message("vue.configurable.service.volar.help"))
+            .comment(VueBundle.message("vue.configurable.service.volar.help"))
         }
         row {
           radioButton(VueBundle.message("vue.configurable.service.ts"), VueServiceSettings.TS_SERVICE)
-          contextHelp(VueBundle.message("vue.configurable.service.ts.help"))
+            .comment(VueBundle.message("vue.configurable.service.ts.help"))
         }
       }.bind(settings::serviceType)
     }
   }
-
 
 
   override fun getDisplayName() = VueBundle.message("vue.configurable.title")
