@@ -6,6 +6,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.advanced.AdvancedSettings;
 import com.intellij.openapi.progress.util.BackgroundTaskUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
@@ -50,10 +51,25 @@ public class PerforceUnversionedTracker implements Disposable {
 
   private final MergingUpdateQueue myQueue;
   private boolean myInUpdate;
+  private Disposable myParentDisposable;
 
   public PerforceUnversionedTracker(Project project) {
     myProject = project;
     myQueue = VcsIgnoreManagerImpl.getInstanceImpl(myProject).getIgnoreRefreshQueue();
+  }
+
+  public void activate(Disposable parentDisposable) {
+    Disposer.register(parentDisposable, this);
+    myParentDisposable = parentDisposable;
+  }
+
+  @Override
+  public void dispose() {
+    synchronized (LOCK) {
+      myUnversionedFiles.clear();
+      myIgnoredFiles.clear();
+      myDirtyLocalFiles.clear();
+    }
   }
 
   public boolean isLocalOnly(@NotNull VirtualFile file) {
@@ -104,7 +120,7 @@ public class PerforceUnversionedTracker implements Disposable {
       myInUpdate = true;
     }
     BackgroundTaskUtil.syncPublisher(myProject, VcsManagedFilesHolder.TOPIC).updatingModeChanged();
-    myQueue.queue(DisposableUpdate.createDisposable(this, new ComparableObject.Impl(this, "update"), this::update));
+    myQueue.queue(DisposableUpdate.createDisposable(myParentDisposable, new ComparableObject.Impl(this, "update"), this::update));
   }
 
   private void update() {
@@ -173,15 +189,6 @@ public class PerforceUnversionedTracker implements Disposable {
         myUnversionedFiles.remove(path);
         myIgnoredFiles.remove(path);
       }
-    }
-  }
-
-  @Override
-  public void dispose() {
-    synchronized (LOCK) {
-      myUnversionedFiles.clear();
-      myIgnoredFiles.clear();
-      myDirtyLocalFiles.clear();
     }
   }
 
