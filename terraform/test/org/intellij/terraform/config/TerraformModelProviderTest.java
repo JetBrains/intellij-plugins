@@ -223,6 +223,15 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
       if (pt.equals("gaia")) {
         continue; // it is known to have types with no common prefixes
       }
+      if (pt.equals("aws-4-49-0")) {
+        pt = "aws";
+      }
+      if (pt.equals("data-platform-kafka")) {
+        pt = "kafkamanager";
+      }
+      if (pt.equals("skysql-beta")) {
+        pt = "skysql";
+      }
       if (rt.equals(pt)) continue;
       if (rt.startsWith(pt + '_')) continue;
       failedResources.add(block);
@@ -314,6 +323,18 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
       }  
       if (pt.equals("awsutils")) {
         continue; // it is known to have types with no common prefixes
+      }
+      if (pt.equals("aws-4-49-0")) {
+        pt = "aws";
+      }
+      if (pt.equals("data-platform-kafka")) {
+        pt = "kafkamanager";
+      }
+      if (pt.equals("skysql-beta")) {
+        pt = "skysql";
+      }
+      if (pt.equals("hash-sum")) {
+        pt = "hashsum";
       }
       if (rt.equals(pt)) continue;
       if (rt.startsWith(pt + '_')) continue;
