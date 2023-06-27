@@ -84,7 +84,7 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
     confBuilder: ExternalResolveConfigurationBuilder,
     jsonConfig: Map<String, Any>,
     srcFolder: VirtualFile,
-    buildSrcFilter: PlatformioSrcFilters) {
+    buildSrcFilter: PlatformioSrcFilters): Map<String, String> {
 
     val scanFilesEventId = publishMessage(ClionEmbeddedPlatformioBundle.message("build.event.message.scanning.source.files"))
 
@@ -121,6 +121,7 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
     confBuilder.withLanguageConfiguration(cxxLanguageConfiguration)
     checkCancelled.run()
     val fileList = mutableListOf<String>()
+
     fun addSources(srcFolder: VirtualFile, buildSrcFilter: PlatformioSrcFilters) =
       scanSources(srcFolder, buildSrcFilter).forEach {
         if (OCFileTypeHelpers.isSourceFile(it.name)) {
@@ -140,7 +141,7 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
                    parentEventId = scanFilesEventId,
                    details = fileList.joinToString("\n"))
     val scanLibId = publishMessage(ClionEmbeddedPlatformioBundle.message("build.event.message.scanning.libraries"))
-    val parsedLibraries = mutableListOf<String>()
+    val parsedLibPaths = mutableMapOf<String, String>()
     jsonConfig["libsource_dirs"].asSafely<List<String>>()?.forEach { libSource ->
 
       val librariesDir = VfsUtil.findFile(projectDir.toNioPath().resolve(Path.of(libSource)), true)
@@ -149,10 +150,10 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
         try {
           val manifest = libDir.findFile("library.json")?.readText()?.let { Gson().fromJson<Map<String, Any>>(it, Map::class.java) }
           libName = manifest?.get("name").asSafely<String>() ?: libName
-          parsedLibraries.add(libName)
           val manifestBuildPart = manifest?.get("build").asSafely<Map<String, String>>() ?: emptyMap()
 
           val libSrcFolder = manifestBuildPart["srcDir"]?.let { VfsUtil.findRelativeFile(libDir, it) } ?: libDir
+          parsedLibPaths[libDir.path] = libName
           val libSrcFilter = createSrcFilter(manifestBuildPart["srcFilter"])
           addSources(libSrcFolder, libSrcFilter)
         }
@@ -164,9 +165,10 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
         }
       }
     }
-    publishMessage(message = ClionEmbeddedPlatformioBundle.message("build.event.message.parsed.libraries", parsedLibraries.size),
-                   details = parsedLibraries.joinToString("\n"),
+    publishMessage(message = ClionEmbeddedPlatformioBundle.message("build.event.message.parsed.libraries", parsedLibPaths.size),
+                   details = parsedLibPaths.values.joinToString("\n"),
                    parentEventId = scanLibId)
+    return parsedLibPaths
   }
 
   private fun scanSources(srcFolder: VirtualFile, buildSrcFilter: PlatformioSrcFilters): List<File> {

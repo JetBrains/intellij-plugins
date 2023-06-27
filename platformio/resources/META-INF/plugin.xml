@@ -64,6 +64,8 @@
     <project.converterProvider
       implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.migration.PlatformioProjectMigrationProvider"
       id="clion.platformio.experimental.convert"/>
+    <treeStructureProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioSourcesStructureProvider"/>
+    <projectViewNodeDecorator implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioLibraryPathNodeDecorator"/>
   </extensions>
 
   <extensions defaultExtensionNs="clion">
