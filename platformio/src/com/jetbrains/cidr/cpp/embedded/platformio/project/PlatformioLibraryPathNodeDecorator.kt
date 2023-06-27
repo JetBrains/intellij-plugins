@@ -14,7 +14,7 @@ class PlatformioLibraryPathNodeDecorator : ProjectViewNodeDecorator {
       val path = node.virtualFile?.path
       if (path != null) {
         val librariesPaths = node.project.service<PlatformioService>().librariesPaths
-        val libName = librariesPaths.entries.firstOrNull { path.startsWith(it.key) }?.value
+        val libName = librariesPaths[path]
         if (!libName.isNullOrBlank()) {
           data.locationString = path
           data.presentableText = libName
