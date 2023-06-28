@@ -18,25 +18,27 @@ class PlatformioSourcesStructureProvider : TreeStructureProvider {
                       settings: ViewSettings?): MutableCollection<AbstractTreeNode<*>> {
     if (parent is ProjectViewModuleNode) {
       val project = parent.project
-      val librariesPaths = project.service<PlatformioService>().librariesPaths
-      val result = mutableListOf<AbstractTreeNode<*>>()
-      val libNodes = mutableMapOf<String, LibraryNode>()
-      children.forEach { child ->
-        var libName: String? = null
-        val path = child.asSafely<PsiDirectoryNode>()?.virtualFile?.path
-        if (path != null) {
-          libName = librariesPaths.entries.firstOrNull { path.startsWith(it.key) }?.value
+      if (project.service<PlatformioWorkspace>().isInitialized) {
+        val librariesPaths = project.service<PlatformioService>().librariesPaths
+        val result = mutableListOf<AbstractTreeNode<*>>()
+        val libNodes = mutableMapOf<String, LibraryNode>()
+        children.forEach { child ->
+          var libName: String? = null
+          val path = child.asSafely<PsiDirectoryNode>()?.virtualFile?.path
+          if (path != null) {
+            libName = librariesPaths.entries.firstOrNull { path.startsWith(it.key) }?.value
+          }
+          if (libName != null) {
+            val libNode = libNodes.getOrPut(libName) { LibraryNode(project, libName) }
+            libNode.children.add(child)
+            result.add(libNode)
+          }
+          else {
+            result.add(child)
+          }
         }
-        if (libName != null) {
-          val libNode = libNodes.getOrPut(libName) { LibraryNode(project, libName) }
-          libNode.children.add(child)
-          result.add(libNode)
-        }
-        else {
-          result.add(child)
-        }
+        return result
       }
-      return result
     }
     return children
   }
