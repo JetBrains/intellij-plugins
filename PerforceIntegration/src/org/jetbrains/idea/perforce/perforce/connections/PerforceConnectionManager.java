@@ -41,6 +41,12 @@ public class PerforceConnectionManager implements PerforceConnectionManagerI {
     myProject = project;
   }
 
+  public boolean isInitialized() {
+    synchronized (myLock) {
+      return myConnectionMapper != null;
+    }
+  }
+
   @NotNull
   private PerforceConnectionMapper getConnectionMapper() {
     synchronized (myLock) {

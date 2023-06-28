@@ -13,6 +13,7 @@ import com.intellij.openapi.wm.impl.ToolbarComboWidget
 import org.jetbrains.idea.perforce.PerforceBundle
 import org.jetbrains.idea.perforce.application.PerforceManager
 import org.jetbrains.idea.perforce.perforce.PerforceSettings
+import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager
 import java.util.function.Function
 import javax.swing.JComponent
 import javax.swing.ListCellRenderer
@@ -61,7 +62,7 @@ class PerforceToolbarWidgetAction : ExpandableComboAction() {
   override fun update(e: AnActionEvent) {
     val project = e.project
 
-    if (project == null || !PerforceManager.getInstance(project).isActive) {
+    if (project == null || !PerforceManager.getInstance(project).isActive || !PerforceConnectionManager.getInstance(project).isInitialized) {
       e.presentation.isEnabledAndVisible = false
       return
     }
