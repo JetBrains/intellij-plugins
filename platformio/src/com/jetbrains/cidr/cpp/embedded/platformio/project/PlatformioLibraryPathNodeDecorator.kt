@@ -11,14 +11,17 @@ import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
 class PlatformioLibraryPathNodeDecorator : ProjectViewNodeDecorator {
   override fun decorate(node: ProjectViewNode<*>, data: PresentationData) {
     if (node is PsiDirectoryNode) {
-      val path = node.virtualFile?.path
-      if (path != null) {
-        val librariesPaths = node.project.service<PlatformioService>().librariesPaths
-        val libName = librariesPaths[path]
-        if (!libName.isNullOrBlank()) {
-          data.locationString = path
-          data.presentableText = libName
-          data.setIcon(PlatformIcons.LIBRARY_ICON)
+      val project = node.project
+      if (project.service<PlatformioWorkspace>().isInitialized) {
+        val path = node.virtualFile?.path
+        if (path != null) {
+          val librariesPaths = project.service<PlatformioService>().librariesPaths
+          val libName = librariesPaths[path]
+          if (!libName.isNullOrBlank()) {
+            data.locationString = path
+            data.presentableText = libName
+            data.setIcon(PlatformIcons.LIBRARY_ICON)
+          }
         }
       }
     }
