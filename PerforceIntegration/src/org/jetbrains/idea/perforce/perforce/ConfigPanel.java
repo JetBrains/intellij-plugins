@@ -105,6 +105,7 @@ public class ConfigPanel {
   public ConfigPanel(final Project project) {
     myProject  = project;
     myP4EnvHelper = P4EnvHelper.getConfigHelper(myProject);
+    myP4EnvHelper.reset();
 
     final ButtonGroup bg = new ButtonGroup();
     bg.add(myUseConnectionParametersRadioButton);

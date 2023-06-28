@@ -13,6 +13,8 @@ import com.intellij.openapi.vcs.VcsException
 import com.intellij.openapi.vcs.VcsMappingListener
 import com.intellij.openapi.vcs.changes.VcsDirtyScopeManager
 import org.jetbrains.idea.perforce.perforce.PerforceSettings
+import org.jetbrains.idea.perforce.perforce.connections.P4EnvHelper
+import org.jetbrains.idea.perforce.perforce.connections.P4EnvHelper.P4EnvListener
 
 class PerforceDirtyFilesHandler(private val myProject: Project,
                                 private val myUnversionedTracker: PerforceUnversionedTracker) {
@@ -41,6 +43,7 @@ class PerforceDirtyFilesHandler(private val myProject: Project,
     myProject.messageBus.connect(parentDisposable).apply {
       subscribe(ProjectLevelVcsManager.VCS_CONFIGURATION_CHANGED, VcsMappingListener { cancelAndRescheduleTotalRescan() })
       subscribe(PerforceSettings.OFFLINE_MODE_EXITED, Runnable { cancelAndRescheduleTotalRescan() })
+      subscribe(P4EnvHelper.P4_ENV_CHANGED, P4EnvListener { cancelAndRescheduleTotalRescan() })
     }
   }
 

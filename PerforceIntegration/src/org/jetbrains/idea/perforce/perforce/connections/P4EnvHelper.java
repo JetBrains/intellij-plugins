@@ -1,11 +1,14 @@
 package org.jetbrains.idea.perforce.perforce.connections;
 
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.util.BackgroundTaskUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.EnvironmentUtil;
 import com.intellij.util.SystemProperties;
+import com.intellij.util.messages.Topic;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.perforce.application.PerforceVcs;
 import org.jetbrains.idea.perforce.perforce.PerforcePhysicalConnectionParametersI;
@@ -18,6 +21,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class P4EnvHelper {
+  @Topic.ProjectLevel
+  public static final Topic<P4EnvListener> P4_ENV_CHANGED = new Topic<>(P4EnvListener.class);
+
+  public interface P4EnvListener {
+    void environmentChanged();
+  }
+
+  private static final Logger LOG = Logger.getInstance(P4EnvHelper.class);
   private static final List<String> ENV_CONFIGS = List.of(P4ConfigFields.P4PORT.getName(), P4ConfigFields.P4CLIENT.getName(),
                                                           P4ConfigFields.P4USER.getName(), P4ConfigFields.P4PASSWD.getName(),
                                                           P4ConfigFields.P4CONFIG.getName(), P4ConfigFields.P4IGNORE.getName());
@@ -54,6 +65,7 @@ public class P4EnvHelper {
     P4ParamsCalculator calculator = new P4ParamsCalculator(project);
 
     synchronized (this) {
+      Map<String, String> oldMap = new HashMap<>(myDefaultParamsMap);
       myDefaultParamsMap.clear();
       myDefaultParams = new P4ConnectionParameters();
       P4ConnectionParameters params = calculator.runSetOnFile(physicalParameters, myDefaultParams, SystemProperties.getUserHome());
@@ -77,6 +89,11 @@ public class P4EnvHelper {
       tryToPutVariable(P4ConfigFields.P4CONFIG.getName(), myDefaultParams.getConfigFileName());
       tryToPutVariable(P4ConfigFields.P4IGNORE.getName(), myDefaultParams.getIgnoreFileName());
       tryToPutVariable(P4ConfigFields.P4CHARSET.getName(), myDefaultParams.getCharset());
+
+      if (!oldMap.isEmpty() && !myDefaultParamsMap.equals(oldMap)) {
+        LOG.info("Environment has changed: was %s now %s".formatted(oldMap.toString(), myDefaultParamsMap.toString()));
+        BackgroundTaskUtil.syncPublisher(myProject, P4_ENV_CHANGED).environmentChanged();
+      }
     }
   }
 
