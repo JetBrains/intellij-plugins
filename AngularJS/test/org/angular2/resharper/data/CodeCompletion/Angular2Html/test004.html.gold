@@ -220,6 +220,7 @@
 + font-synthesis-style
 + font-synthesis-weight
 + font-variant
++ font-variant-alternates
 + font-variant-caps
 + font-variant-east-asian
 + font-variant-emoji
@@ -270,7 +271,6 @@
 + ideographic
 + image-orientation
 + image-rendering
-+ image-resolution
 + initial-letter
 + initial-letter-align
 + initial-letter-wrap
@@ -340,7 +340,6 @@
 + marquee-style
 + mask
 + mask-border
-+ mask-border-mode
 + mask-border-outset
 + mask-border-repeat
 + mask-border-slice
