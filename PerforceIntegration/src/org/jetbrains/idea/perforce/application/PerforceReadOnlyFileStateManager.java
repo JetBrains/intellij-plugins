@@ -161,7 +161,7 @@ public final class PerforceReadOnlyFileStateManager {
     public void propertyChanged(@NotNull VirtualFilePropertyEvent event) {
       VirtualFile file = event.getFile();
       FilePath path = VcsUtil.getFilePath(file);
-      if (fileIsUnderP4Root(path) && VirtualFile.PROP_WRITABLE.equals(event.getPropertyName())) {
+      if (VirtualFile.PROP_WRITABLE.equals(event.getPropertyName()) && fileIsUnderP4Root(path)) {
         myDirtyFilesHandler.reportRecheck(path);
 
         VirtualFile root = myVcsManager.getVcsRootFor(path);
@@ -181,7 +181,7 @@ public final class PerforceReadOnlyFileStateManager {
     public void contentsChanged(@NotNull VirtualFileEvent event) {
       VirtualFile file = event.getFile();
       FilePath path = VcsUtil.getFilePath(file);
-      if (fileIsUnderP4Root(path) && !file.isWritable()) {
+      if (!file.isWritable() && fileIsUnderP4Root(path)) {
         myDirtyFilesHandler.reportRecheck(path);
       }
     }

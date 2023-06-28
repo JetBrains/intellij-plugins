@@ -38,7 +38,7 @@ import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import java.io.File;
 import java.util.*;
 
-public class PerforceUnversionedTracker implements Disposable {
+public class PerforceUnversionedTracker {
   private static final Logger LOG = Logger.getInstance(PerforceUnversionedTracker.class);
 
   private final Object LOCK = new Object();
@@ -59,12 +59,11 @@ public class PerforceUnversionedTracker implements Disposable {
   }
 
   public void activate(Disposable parentDisposable) {
-    Disposer.register(parentDisposable, this);
+    Disposer.register(parentDisposable, this::deactivate);
     myParentDisposable = parentDisposable;
   }
 
-  @Override
-  public void dispose() {
+  public void deactivate() {
     synchronized (LOCK) {
       myUnversionedFiles.clear();
       myIgnoredFiles.clear();
@@ -240,7 +239,7 @@ public class PerforceUnversionedTracker implements Disposable {
 
   private static Set<VirtualFile> getIgnoredByPatterns(Project project, P4Connection connection, List<VirtualFile> toCheckIgnored) {
     Stopwatch sw = Stopwatch.createStarted();
-    P4IgnoresMappingsHelper mappingsHelper = new P4IgnoresMappingsHelper(project, connection);
+    P4IgnoresMappingsHelper mappingsHelper = P4IgnoresMappingsHelper.create(project, connection);
     Set<VirtualFile> ignoredFiles = new HashSet<>();
     for (VirtualFile file : toCheckIgnored) {
       if (mappingsHelper.isIgnored(file)) {
