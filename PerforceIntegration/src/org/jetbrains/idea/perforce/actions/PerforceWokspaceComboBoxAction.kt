@@ -14,6 +14,7 @@ import com.intellij.util.ui.UIUtil
 import org.jetbrains.idea.perforce.PerforceBundle
 import org.jetbrains.idea.perforce.application.PerforceManager
 import org.jetbrains.idea.perforce.perforce.PerforceSettings
+import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager
 import java.awt.event.ActionEvent
 import javax.swing.JComponent
 
@@ -31,7 +32,8 @@ class PerforceWorkspaceComboBoxAction : ComboBoxAction(), DumbAware {
     val project = e.project
     val presentation = e.presentation
     if (project == null || !ToolbarSettings.getInstance().isAvailable ||
-        !PerforceManager.getInstance(project).isActive) {
+        !PerforceManager.getInstance(project).isActive ||
+        !PerforceConnectionManager.getInstance(project).isInitialized) {
       presentation.isEnabledAndVisible = false
       return
     }

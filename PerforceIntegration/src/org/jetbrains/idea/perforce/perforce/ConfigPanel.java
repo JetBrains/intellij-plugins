@@ -560,5 +560,10 @@ public class ConfigPanel {
     public boolean isUnderProjectConnections(@NotNull File file) {
       return true;
     }
+
+    @Override
+    public boolean isInitialized() {
+      return true;
+    }
   }
 }

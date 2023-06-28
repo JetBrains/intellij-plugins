@@ -23,4 +23,5 @@ public interface PerforceConnectionManagerI {
   void updateConnections();
 
   boolean isUnderProjectConnections(@NotNull File file);
+  boolean isInitialized();
 }
