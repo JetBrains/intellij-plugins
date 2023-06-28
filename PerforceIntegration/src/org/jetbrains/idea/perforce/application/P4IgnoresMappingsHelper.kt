@@ -7,24 +7,25 @@ import org.jetbrains.idea.perforce.perforce.connections.P4Connection
 import java.nio.file.FileSystems
 import java.nio.file.PathMatcher
 
-class P4IgnoresMappingsHelper(project : Project, connection: P4Connection) {
-  private val mappings : Array<MappingEntry>
+class P4IgnoresMappingsHelper private constructor(private val mappings : Array<MappingEntry>) {
+  companion object {
+    @JvmStatic
+    fun create(project: Project, connection: P4Connection): P4IgnoresMappingsHelper {
+      val perforceRunner = PerforceRunner.getInstance(project)
+      val result = perforceRunner.ignores(connection)
+      val mappingsList = ArrayList<MappingEntry>()
+      for (line in result.stdout.split("\n".toRegex())) {
+        if (line.isEmpty())
+          continue
+        val excluded = line[0] == '!'
+        val trimmedLine = line.removePrefix("!")
 
-  init {
-    val perforceRunner = PerforceRunner.getInstance(project);
-    val result = perforceRunner.ignores(connection)
-    val mappingsList = ArrayList<MappingEntry>()
-    for (line in result.stdout.split("\n".toRegex())) {
-      if (line.isEmpty())
-        continue
-      val excluded = line[0] == '!'
-      val trimmedLine = line.removePrefix("!")
+        val entry = MappingEntry(trimmedLine.replace("...", "**"), excluded)
+        mappingsList.add(entry)
+      }
 
-      val entry = MappingEntry(trimmedLine.replace("...", "**"), excluded)
-      mappingsList.add(entry)
+      return P4IgnoresMappingsHelper(mappingsList.toTypedArray())
     }
-
-    mappings = mappingsList.toTypedArray()
   }
 
   fun isIgnored(file: VirtualFile): Boolean {
