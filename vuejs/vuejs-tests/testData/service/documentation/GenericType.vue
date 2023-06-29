@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import {ref} from "vue";
 
-let <error>dummyErrorToSatisfyTestFramework</error>: string = 1;
-
 /**
  * docs have to be removed!
  */
