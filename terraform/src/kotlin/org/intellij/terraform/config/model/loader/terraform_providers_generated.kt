@@ -65,7 +65,7 @@ Sensitive           bool            `json:"sensitive,omitempty"`
 
     val additional = context.model.external[fqn]
 
-    if (type is SetType) {
+    if (type is SetType && (type.elements is ObjectType || type.elements == null)) {
       return BlockType(
         name.pool(context),
         description = description?.pool(context),
