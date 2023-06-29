@@ -92,6 +92,19 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
     assertInstanceOf(ingress, BlockType.class);
   }
 
+  public void test_aws_instance_security_groups() {
+    final TypeModel model = TypeModelProvider.Companion.getModel(getProject());
+    assertNotNull(model);
+
+    final ResourceType aws_security_group = model.getResourceType("aws_instance");
+    assertNotNull(aws_security_group);
+    final Map<String, PropertyOrBlockType> properties = aws_security_group.getProperties();
+
+    final PropertyOrBlockType ingress = findProperty(properties, "security_groups");
+    assertNotNull(ingress);
+    assertInstanceOf(ingress, PropertyType.class);
+  }
+
   // Have dynamic attributes
   public void test_external_result() {
     final TypeModel model = TypeModelProvider.Companion.getModel(getProject());
