@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.service
 
 import com.intellij.lang.javascript.JSAbstractDocumentationTest
 import com.intellij.openapi.util.registry.RegistryManager
-import com.intellij.platform.lsp.tests.checkLspHighlighting
+import com.intellij.platform.lsp.tests.waitUntilFileOpenedByLspServer
 import org.jetbrains.vuejs.lang.VueInspectionsProvider
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
@@ -45,7 +45,7 @@ class VolarServiceDocumentationTest : VolarServiceTestBase() {
 
     myFixture.addFileToProject("tsconfig.json", tsconfig)
     myFixture.configureByFile(getTestName(false) + "." + extension)
-    myFixture.checkLspHighlighting()
+    waitUntilFileOpenedByLspServer(project, file.virtualFile)
     assertCorrectService()
 
     val doc = JSAbstractDocumentationTest.getQuickNavigateText(myFixture)

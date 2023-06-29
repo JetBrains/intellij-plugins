@@ -1,5 +1,4 @@
 <script setup lang="ts">
-let <error>dummyErrorToSatisfyTestFramework</error>: string = 1;
 
 /**
  * docs have to be removed!
