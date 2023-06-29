@@ -14,7 +14,6 @@ import com.intellij.lang.javascript.service.JSLanguageServiceProvider
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
 import com.intellij.lang.typescript.compiler.TypeScriptService.CompletionMergeStrategy
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
-import com.intellij.lang.typescript.compiler.languageService.TypeScriptMessageBus
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
 import com.intellij.lang.typescript.library.TypeScriptLibraryProvider
 import com.intellij.lang.typescript.lsp.BaseLspTypeScriptService
@@ -23,8 +22,6 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.HtmlBuilder
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.platform.lsp.api.LspServer
-import com.intellij.platform.lsp.api.LspServerManager
 import com.intellij.platform.lsp.util.convertMarkupContentToHtml
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -42,13 +39,10 @@ class DenoTypeScriptServiceProvider(val project: Project) : JSLanguageServicePro
 }
 
 @Service(Service.Level.PROJECT)
-class DenoTypeScriptService(project: Project) : BaseLspTypeScriptService(project) {
+class DenoTypeScriptService(project: Project) : BaseLspTypeScriptService(project, DenoLspSupportProvider::class.java) {
   companion object {
     fun getInstance(project: Project): DenoTypeScriptService = project.getService(DenoTypeScriptService::class.java)
   }
-
-  override fun getLspServers(): Collection<LspServer> =
-    LspServerManager.getInstance(project).getServersForProvider(DenoLspSupportProvider::class.java)
 
   override val name: String
     get() = "Deno LSP"
@@ -95,9 +89,4 @@ class DenoTypeScriptService(project: Project) : BaseLspTypeScriptService(project
     !JSCorePredefinedLibrariesProvider.isCoreLibraryFile(file) &&
     !DenoTypings.getInstance(project).isDenoTypings(file) &&
     !TypeScriptLibraryProvider.isLibraryOrBundledLibraryFile(project, file)
-
-  override fun restart(recreateToolWindow: Boolean) {
-    LspServerManager.getInstance(project).stopAndRestartIfNeeded(DenoLspSupportProvider::class.java)
-    TypeScriptMessageBus.get(project).changed()
-  }
 }

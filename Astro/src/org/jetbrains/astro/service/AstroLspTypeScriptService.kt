@@ -4,21 +4,16 @@ package org.jetbrains.astro.service
 import com.intellij.lang.javascript.ecmascript6.TypeScriptAnnotatorCheckerProvider
 import com.intellij.lang.typescript.compiler.TypeScriptLanguageServiceAnnotatorCheckerProvider
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
-import com.intellij.lang.typescript.lsp.JSFrameworkLspTypeScriptService
+import com.intellij.lang.typescript.lsp.BaseLspTypeScriptService
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.util.text.HtmlBuilder
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.platform.lsp.api.LspServerDescriptor
-import com.intellij.platform.lsp.api.LspServerSupportProvider
 import com.intellij.platform.lsp.util.convertMarkupContentToHtml
 import com.intellij.psi.PsiFile
 import org.eclipse.lsp4j.MarkupContent
 
-class AstroLspTypeScriptService(project: Project) : JSFrameworkLspTypeScriptService(project) {
-  override fun getProviderClass(): Class<out LspServerSupportProvider> = AstroLspServerSupportProvider::class.java
-
+class AstroLspTypeScriptService(project: Project) : BaseLspTypeScriptService(project, AstroLspServerSupportProvider::class.java) {
   override val name = "Astro LSP"
   override val prefix = "Astro"
   override val serverVersion = astroLanguageToolsVersion
@@ -38,8 +33,4 @@ class AstroLspTypeScriptService(project: Project) : JSFrameworkLspTypeScriptServ
   }
 
   override fun isAcceptable(file: VirtualFile): Boolean = isServiceEnabledAndAvailable(project, file)
-
-  override fun isServiceEnabledBySettings(project: Project): Boolean = Registry.`is`("astro.enable.lsp", false)
-
-  override fun getLspServerDescriptor(project: Project, file: VirtualFile): LspServerDescriptor? = getAstroServerDescriptor(project, file)
 }

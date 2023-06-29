@@ -27,7 +27,7 @@ internal class VueLanguageServiceProvider(project: Project) : JSLanguageServiceP
   }
 }
 
-@Service
+@Service(Service.Level.PROJECT)
 private class ServiceWrapper(project: Project) : Disposable {
   val service = VueTypeScriptService(project)
 
@@ -36,7 +36,7 @@ private class ServiceWrapper(project: Project) : Disposable {
   }
 }
 
-@Service
+@Service(Service.Level.PROJECT)
 private class VolarServiceWrapper(project: Project) : Disposable {
   val service = VolarTypeScriptService(project)
 
