@@ -65,7 +65,7 @@ Sensitive           bool            `json:"sensitive,omitempty"`
 
     val additional = context.model.external[fqn]
 
-    if (type is SetType && (type.elements is ObjectType || type.elements == null)) {
+    if (isAttributeAsBlock(type)) {
       return BlockType(
         name.pool(context),
         description = description?.pool(context),
@@ -90,6 +90,12 @@ Sensitive           bool            `json:"sensitive,omitempty"`
     ).pool(context)
   }
 
+  // https://developer.hashicorp.com/terraform/language/attr-as-blocks
+  private fun isAttributeAsBlock(type: Type): Boolean {
+    if (type !is ContainerType<*>) return false
+    if (type !is SetType && type !is ListType) return false
+    return type.elements is ObjectType || type.elements == null
+  }
 
   /*
     type blockType struct {

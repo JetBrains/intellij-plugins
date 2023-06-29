@@ -22,16 +22,19 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
     final ResourceType google_compute_instance = model.getResourceType("google_compute_instance");
     assertNotNull(google_compute_instance);
     final Map<String, PropertyOrBlockType> properties = google_compute_instance.getProperties();
-    final PropertyOrBlockType network_interface = findProperty(properties, "network_interface");
+    final PropertyOrBlockType network_interface = properties.get("network_interface");
     assertNotNull(network_interface);
     final BlockType network_interfaceBlock = (BlockType)network_interface;
     assertNotNull(network_interfaceBlock);
-    final PropertyOrBlockType access_config = findProperty(network_interfaceBlock.getProperties(), "access_config");
+    Map<String, PropertyOrBlockType> properties3 = network_interfaceBlock.getProperties();
+    final PropertyOrBlockType access_config = properties3.get("access_config");
     assertNotNull(access_config);
     final BlockType access_configBlock = (BlockType)access_config;
     assertNotNull(access_configBlock);
-    assertNotNull(findProperty(access_configBlock.getProperties(), "network_tier"));
-    assertNotNull(findProperty(access_configBlock.getProperties(), "nat_ip"));
+    Map<String, PropertyOrBlockType> properties2 = access_configBlock.getProperties();
+    assertNotNull(properties2.get("network_tier"));
+    Map<String, PropertyOrBlockType> properties1 = access_configBlock.getProperties();
+    assertNotNull(properties1.get("nat_ip"));
   }
 
   // Test for #67
@@ -43,21 +46,24 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
     assertNotNull(aws_cloudfront_distribution);
     final Map<String, PropertyOrBlockType> properties = aws_cloudfront_distribution.getProperties();
 
-    final PropertyOrBlockType default_cache_behavior = findProperty(properties, "default_cache_behavior");
+    final PropertyOrBlockType default_cache_behavior = properties.get("default_cache_behavior");
     assertNotNull(default_cache_behavior);
     final BlockType default_cache_behavior_block = (BlockType)default_cache_behavior;
     assertNotNull(default_cache_behavior_block);
 
-    final PropertyOrBlockType forwarded_values = findProperty(default_cache_behavior_block.getProperties(), "forwarded_values");
+    Map<String, PropertyOrBlockType> properties3 = default_cache_behavior_block.getProperties();
+    final PropertyOrBlockType forwarded_values = properties3.get("forwarded_values");
     assertNotNull(forwarded_values);
     final BlockType forwarded_values_block = (BlockType)forwarded_values;
     assertNotNull(forwarded_values_block);
 
-    PropertyOrBlockType query_string = findProperty(forwarded_values_block.getProperties(), "query_string");
+    Map<String, PropertyOrBlockType> properties2 = forwarded_values_block.getProperties();
+    PropertyOrBlockType query_string = properties2.get("query_string");
     assertTrue(query_string.getRequired());
     assertNotNull(query_string);
 
-    PropertyOrBlockType cookies = findProperty(forwarded_values_block.getProperties(), "cookies");
+    Map<String, PropertyOrBlockType> properties1 = forwarded_values_block.getProperties();
+    PropertyOrBlockType cookies = properties1.get("cookies");
     assertNotNull(cookies);
   }
 
@@ -69,7 +75,7 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
     assertNotNull(aws_kms_ciphertext);
     final Map<String, PropertyOrBlockType> properties = aws_kms_ciphertext.getProperties();
 
-    final PropertyOrBlockType context = findProperty(properties, "context");
+    final PropertyOrBlockType context = properties.get("context");
     assertNotNull(context);
     assertInstanceOf(context, PropertyType.class);
 
@@ -87,22 +93,17 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
     assertNotNull(aws_security_group);
     final Map<String, PropertyOrBlockType> properties = aws_security_group.getProperties();
 
-    final PropertyOrBlockType ingress = findProperty(properties, "ingress");
+    final PropertyOrBlockType ingress = properties.get("ingress");
     assertNotNull(ingress);
     assertInstanceOf(ingress, BlockType.class);
   }
 
-  public void test_aws_instance_security_groups() {
+  public void test_containers_as_block_type_if_non_scalar_typed() {
     final TypeModel model = TypeModelProvider.Companion.getModel(getProject());
     assertNotNull(model);
 
-    final ResourceType aws_security_group = model.getResourceType("aws_instance");
-    assertNotNull(aws_security_group);
-    final Map<String, PropertyOrBlockType> properties = aws_security_group.getProperties();
-
-    final PropertyOrBlockType ingress = findProperty(properties, "security_groups");
-    assertNotNull(ingress);
-    assertInstanceOf(ingress, PropertyType.class);
+    assertInstanceOf(model.getResourceType("aws_instance").getProperties().get("security_groups"), PropertyType.class);
+    assertInstanceOf(model.getResourceType("azurerm_key_vault").getProperties().get("access_policy"), BlockType.class);
   }
 
   // Have dynamic attributes
@@ -114,7 +115,7 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
     assertNotNull(external);
     final Map<String, PropertyOrBlockType> properties = external.getProperties();
 
-    final PropertyOrBlockType result = findProperty(properties, "result");
+    final PropertyOrBlockType result = properties.get("result");
     assertNotNull(result);
 
     assertInstanceOf(result, PropertyType.class);
@@ -354,9 +355,5 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
       failedDataSources.add(block);
     }
     then(failedDataSources).isEmpty();
-  }
-
-  private PropertyOrBlockType findProperty(Map<String, PropertyOrBlockType> properties, String name) {
-    return properties.get(name);
   }
 }
