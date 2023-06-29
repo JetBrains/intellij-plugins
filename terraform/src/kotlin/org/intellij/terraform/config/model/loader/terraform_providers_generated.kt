@@ -4,6 +4,7 @@ package org.intellij.terraform.config.model.loader
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
+import com.intellij.util.asSafely
 import org.intellij.terraform.config.Constants
 import org.intellij.terraform.config.model.*
 
@@ -74,6 +75,8 @@ Sensitive           bool            `json:"sensitive,omitempty"`
         required = required,
         computed = computed,
         deprecated = if (deprecated) "DEPRECATED" else null,
+        properties = type.asSafely<ContainerType<*>>()?.elements
+          ?.asSafely<ObjectType>()?.elements?.mapValues { (k, v) -> PropertyType(k, type = v ?: Types.Any) }.orEmpty()
       ).pool(context)
     }
 

@@ -103,7 +103,12 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
     assertNotNull(model);
 
     assertInstanceOf(model.getResourceType("aws_instance").getProperties().get("security_groups"), PropertyType.class);
-    assertInstanceOf(model.getResourceType("azurerm_key_vault").getProperties().get("access_policy"), BlockType.class);
+    PropertyOrBlockType accessPolicyBlockType = model.getResourceType("azurerm_key_vault").getProperties().get("access_policy");
+    assertInstanceOf(accessPolicyBlockType, BlockType.class);
+    assertContainsElements(((BlockType)accessPolicyBlockType).getProperties().keySet(),
+                           "application_id", "certificate_permissions", "key_permissions", "object_id", "secret_permissions",
+                           "storage_permissions", "tenant_id");
+
   }
 
   // Have dynamic attributes
