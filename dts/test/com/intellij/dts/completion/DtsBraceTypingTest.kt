@@ -1,6 +1,6 @@
 package com.intellij.dts.completion
 
-class DtsBraceTypingTest : DtsTypingTest() {
+class DtsBraceTypingTest : DtsCompletionTest() {
     fun testRootNode() = doTypeTest(
         "{",
         "/ <caret>",

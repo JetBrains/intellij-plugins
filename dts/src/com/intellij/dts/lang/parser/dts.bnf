@@ -21,15 +21,14 @@
   implements("subNode")="com.intellij.dts.lang.psi.DtsNode.Sub"
   mixin("subNode")="com.intellij.dts.lang.psi.mixin.DtsSubNodeMixin"
 
+  implements("nodeContent")="com.intellij.dts.lang.psi.DtsContainer"
+  mixin("nodeContent")="com.intellij.dts.lang.psi.mixin.DtsNodeContentMixin"
+
   implements("property")="com.intellij.dts.lang.psi.DtsStatement.Property"
   mixin("property")="com.intellij.dts.lang.psi.mixin.DtsPropertyMixin"
 
   implements("compilerDirective")="com.intellij.dts.lang.psi.DtsStatement.CompilerDirective"
   mixin("compilerDirective")="com.intellij.dts.lang.psi.mixin.DtsCompilerDirectiveMixin"
-
-  implements("content")="com.intellij.dts.lang.psi.mixin.IDtsContent"
-  mixin("content")="com.intellij.dts.lang.psi.mixin.DtsContentMixin"
-  mixin("nodeContent")="com.intellij.dts.lang.psi.mixin.DtsNodeContentMixin"
 
   implements("entry")="com.intellij.dts.lang.psi.mixin.IDtsEntry"
   mixin("entry")="com.intellij.dts.lang.psi.mixin.DtsEntryMixin"
@@ -45,13 +44,15 @@
   implements("cellArrayBits")="com.intellij.dts.lang.psi.mixin.IDtsCellArrayBits"
   mixin("cellArrayBits")="com.intellij.dts.lang.psi.mixin.DtsCellArrayBitsMixin"
 
-  implements("byte|char|string|pHandle|cellArray|byteArray|exprValue|ppMacro")="com.intellij.dts.lang.psi.DtsValue.Untyped"
+  implements("byte|char|pHandle|cellArray|byteArray|exprValue|ppMacro")="com.intellij.dts.lang.psi.DtsValue.Untyped"
 
   implements("int")="com.intellij.dts.lang.psi.DtsValue.Int"
   mixin("int")="com.intellij.dts.lang.psi.mixin.DtsIntMixin"
 
+  implements("string")="com.intellij.dts.lang.psi.DtsValue.String"
+  mixin("string")="com.intellij.dts.lang.psi.mixin.DtsStringMixin"
+
   extends(".*Expr")=expr
-  extends("nodeContent")=content
 
   tokens=[
     COMMENT_EOL="COMMENT_EOL"
@@ -62,39 +63,38 @@
   ]
 }
 
-private dtsFile ::= nodeContent | content
+file ::= entries*
 
-content ::= (
-    <<entry rootNode>> |
-    <<compilerDirectiveEntry V1 ()>> |
-    <<compilerDirectiveEntry PLUGIN ()>> |
-    <<compilerDirectiveEntry (LABEL* MEMRESERVE) (cell cell)>> |
-    <<compilerDirectiveEntry OMIT_NODE pHandle>> |
-    <<compilerDirectiveEntry DELETE_NODE pHandle>> |
-    invalidEntry
-)*
-
-nodeContent ::= (
-    <<compilerDirectiveEntry DELETE_PROP NAME>> |
-    // only pin on delete and valid name
-    <<compilerDirectiveEntry (DELETE_NODE NAME) ()>> |
-    <<entry subNode>> |
-    <<entry property>>
-)+
+private entries ::=
+        <<compilerDirectiveEntry V1 ()>> |
+        <<compilerDirectiveEntry PLUGIN ()>> |
+        <<compilerDirectiveEntry (LABEL* MEMRESERVE) (cell cell)>> |
+        <<compilerDirectiveEntry DELETE_NODE (pHandle | NAME)>> |
+        <<compilerDirectiveEntry DELETE_PROP NAME>> |
+        <<entry rootNode>> |
+        <<entry subNode>> |
+        <<entry property>> |
+        // omit can also be a prefix of a sub node
+        <<compilerDirectiveEntry OMIT_NODE pHandle>> |
+        invalidEntry
 
 external invalidEntry ::= parseInvalidEntry
 
-rootNode ::= LABEL* (SLASH | pHandle) LBRACE nodeContent? RBRACE {pin=3 recoverWhile="rootNodeRecover"}
+rootNode ::= (SLASH | (LABEL*  pHandle)) LBRACE nodeContent? RBRACE {pin=2 recoverWhile="rootNodeRecover"}
 private rootNodeRecover ::= !(SEMICOLON | RBRACE | afterLineBreak)
 
 subNode ::= LABEL* OMIT_NODE? LABEL* NAME LBRACE nodeContent? RBRACE {pin=5 recoverWhile="subNodeRecover"}
 private subNodeRecover ::= !(SEMICOLON | RBRACE | NAME | afterLineBreak)
 
-property ::= LABEL* NAME propertyAssignment?
+nodeContent ::= entries+
+
+property ::= LABEL* propertyName propertyAssignment?
 private propertyAssignment ::= ASSIGN propertyContent {pin=1}
 propertyContent ::= propertyValue (COMMA propertyValue)* {recoverWhile="propertyRecover"}
 private propertyValue ::= <<value (string | pHandle | cellArray | byteArray | ppMacro)>>
 private propertyRecover ::= !(SEMICOLON | RBRACE | NAME | afterLineBreak)
+
+external propertyName ::= parsePropertyName
 
 cellArray ::= cellArrayBits? LANGL cellArrayContent RANGL {pin=2}
 private cellArrayContent ::= cellArrayValue* {recoverWhile="cellArrayRecover"}
@@ -112,7 +112,7 @@ private byteArrayRecover ::= !(SEMICOLON | RBRACE | COMMA | RBRAC | RPAREN)
 pHandle ::= HANDLE (NAME | pHandlePath) {pin=1}
 private pHandlePath ::= LBRACE path RBRACE {pin=1}
 private path ::= PATH {recoverWhile="pathRecover"}
-private pathRecover ::= !(SEMICOLON | RANGL | RBRACE)
+private pathRecover ::= !(SEMICOLON | RANGL | RBRACE | afterLineBreak)
 
 meta entry ::= <<arg>> SEMICOLON {pin=1}
 private meta value ::= LABEL* <<arg>> LABEL*
@@ -127,9 +127,6 @@ byte ::= BYTE_VALUE
 int ::= INT_VALUE
 string ::= DQUOTE STRING_VALUE? DQUOTE {pin=1}
 char ::= SQUOTE CHAR_VALUE* SQUOTE {pin=1}
-
-ppMacro ::= parserPpMacro
-external parserPpMacro ::= parsePpMacro
 
 external afterLineBreak ::= parseAfterLineBreak
 
@@ -192,4 +189,8 @@ intExpr ::= int
 charExpr ::= char
 parenExpr ::= LPAREN expr RPAREN
 
-includeDirective ::= () INCLUDE string { pin=1 }
+includeStatement ::= () INCLUDE string { pin=1 }
+
+// fallback to handle unknown identifiers like macros
+ppMacro ::= parserPpMacro
+external parserPpMacro ::= parsePpMacro

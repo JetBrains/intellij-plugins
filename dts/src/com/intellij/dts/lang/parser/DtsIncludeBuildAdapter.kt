@@ -12,7 +12,7 @@ class DtsIncludeBuildAdapter(
     private fun preprocess() {
         while (super.getTokenType() == DtsTypes.INCLUDE) {
             val builder = GeneratedParserUtilBase.Builder(delegate, GeneratedParserUtilBase.ErrorState(), parser)
-            DtsParser.includeDirective(builder, 1)
+            DtsParser.includeStatement(builder, 1)
         }
     }
 

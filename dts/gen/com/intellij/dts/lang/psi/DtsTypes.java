@@ -15,7 +15,6 @@ public interface DtsTypes {
   com.intellij.psi.tree.IElementType CHAR = new com.intellij.dts.lang.DtsElementType("CHAR");
   com.intellij.psi.tree.IElementType CHAR_EXPR = new com.intellij.dts.lang.DtsElementType("CHAR_EXPR");
   com.intellij.psi.tree.IElementType COMPILER_DIRECTIVE = new com.intellij.dts.lang.DtsElementType("COMPILER_DIRECTIVE");
-  com.intellij.psi.tree.IElementType CONTENT = new com.intellij.dts.lang.DtsElementType("CONTENT");
   com.intellij.psi.tree.IElementType DIV_EXPR = new com.intellij.dts.lang.DtsElementType("DIV_EXPR");
   com.intellij.psi.tree.IElementType ENTRY = new com.intellij.dts.lang.DtsElementType("ENTRY");
   com.intellij.psi.tree.IElementType EQ_EXPR = new com.intellij.dts.lang.DtsElementType("EQ_EXPR");
@@ -23,7 +22,7 @@ public interface DtsTypes {
   com.intellij.psi.tree.IElementType EXPR_VALUE = new com.intellij.dts.lang.DtsElementType("EXPR_VALUE");
   com.intellij.psi.tree.IElementType GEQ_EXPR = new com.intellij.dts.lang.DtsElementType("GEQ_EXPR");
   com.intellij.psi.tree.IElementType GRT_EXPR = new com.intellij.dts.lang.DtsElementType("GRT_EXPR");
-  com.intellij.psi.tree.IElementType INCLUDE_DIRECTIVE = new com.intellij.dts.lang.DtsElementType("INCLUDE_DIRECTIVE");
+  com.intellij.psi.tree.IElementType INCLUDE_STATEMENT = new com.intellij.dts.lang.DtsElementType("INCLUDE_STATEMENT");
   com.intellij.psi.tree.IElementType INT = new com.intellij.dts.lang.DtsElementType("INT");
   com.intellij.psi.tree.IElementType INT_EXPR = new com.intellij.dts.lang.DtsElementType("INT_EXPR");
   com.intellij.psi.tree.IElementType LEQ_EXPR = new com.intellij.dts.lang.DtsElementType("LEQ_EXPR");
@@ -144,9 +143,6 @@ public interface DtsTypes {
       else if (type == COMPILER_DIRECTIVE) {
         return new com.intellij.dts.lang.psi.impl.DtsCompilerDirectiveImpl(node);
       }
-      else if (type == CONTENT) {
-        return new com.intellij.dts.lang.psi.impl.DtsContentImpl(node);
-      }
       else if (type == DIV_EXPR) {
         return new com.intellij.dts.lang.psi.impl.DtsDivExprImpl(node);
       }
@@ -165,8 +161,8 @@ public interface DtsTypes {
       else if (type == GRT_EXPR) {
         return new com.intellij.dts.lang.psi.impl.DtsGrtExprImpl(node);
       }
-      else if (type == INCLUDE_DIRECTIVE) {
-        return new com.intellij.dts.lang.psi.impl.DtsIncludeDirectiveImpl(node);
+      else if (type == INCLUDE_STATEMENT) {
+        return new com.intellij.dts.lang.psi.impl.DtsIncludeStatementImpl(node);
       }
       else if (type == INT) {
         return new com.intellij.dts.lang.psi.impl.DtsIntImpl(node);

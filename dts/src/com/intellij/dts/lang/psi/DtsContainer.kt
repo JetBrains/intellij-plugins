@@ -1,12 +1,15 @@
 package com.intellij.dts.lang.psi
 
+import com.intellij.dts.lang.DtsAffiliation
 import com.intellij.psi.PsiElement
 
 interface DtsContainer : PsiElement {
-    /**
-     * Whether this container is the root container of the file.
-     */
+    val dtsAffiliation: DtsAffiliation
+
     val isDtsRootContainer: Boolean
 
-    val dtsContent: DtsContent?
+    val dtsEntries: List<DtsEntry>
+
+    val dtsStatements: List<DtsStatement>
+        get() = dtsEntries.map { it.dtsStatement }
 }

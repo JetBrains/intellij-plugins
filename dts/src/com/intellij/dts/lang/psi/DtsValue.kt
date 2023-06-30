@@ -8,5 +8,9 @@ sealed interface DtsValue : PsiElement {
         fun dtsParse(): kotlin.Int?
     }
 
+    interface String : DtsValue {
+        fun dtsParse(): kotlin.String
+    }
+
     interface Untyped : DtsValue
 }

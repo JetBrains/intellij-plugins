@@ -1,7 +1,7 @@
 package com.intellij.dts.inspections
 
-class DtsNodeContentOrderInspectionTest : DtsInspectionTest(DtsNodeContentOrderInspection::class) {
-    override fun getBasePath(): String = "nodeContentOrder"
+class DtsStatementOrderInspectionTest : DtsInspectionTest(DtsStatementOrderInspection::class) {
+    override fun getBasePath(): String = "statementOrder"
 
     fun testInvalidProperty() = doTestHighlighting()
 

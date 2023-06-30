@@ -55,6 +55,6 @@ object DtsUtil {
 
         // add preprocessor statements
 
-        return type != TokenType.WHITE_SPACE && type !in DtsTokenSets.comments && type != DtsTypes.INCLUDE_DIRECTIVE
+        return type != TokenType.WHITE_SPACE && type !in DtsTokenSets.comments && type != DtsTypes.INCLUDE_STATEMENT
     }
 }

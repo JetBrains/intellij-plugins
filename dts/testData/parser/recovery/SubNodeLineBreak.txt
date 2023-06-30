@@ -1,17 +1,16 @@
 DTSI file
-  DtsNodeContentImpl(NODE_CONTENT)
-    DtsEntryImpl(ENTRY)
-      DtsSubNodeImpl(SUB_NODE)
-        PsiElement(name)('name')
-        PsiWhiteSpace(' ')
-        PsiElement({)('{')
-        PsiElement(})('}')
-      PsiErrorElement:';' expected, got '/delete-node/'
-        <empty list>
-    PsiWhiteSpace('\n\n')
-    DtsEntryImpl(ENTRY)
-      DtsCompilerDirectiveImpl(COMPILER_DIRECTIVE)
-        PsiElement(/delete-node/)('/delete-node/')
-        PsiWhiteSpace(' ')
-        PsiElement(name)('name')
-      PsiElement(;)(';')
+  DtsEntryImpl(ENTRY)
+    DtsSubNodeImpl(SUB_NODE)
+      PsiElement(name)('name')
+      PsiWhiteSpace(' ')
+      PsiElement({)('{')
+      PsiElement(})('}')
+    PsiErrorElement:';' expected, got '/delete-node/'
+      <empty list>
+  PsiWhiteSpace('\n\n')
+  DtsEntryImpl(ENTRY)
+    DtsCompilerDirectiveImpl(COMPILER_DIRECTIVE)
+      PsiElement(/delete-node/)('/delete-node/')
+      PsiWhiteSpace(' ')
+      PsiElement(name)('name')
+    PsiElement(;)(';')

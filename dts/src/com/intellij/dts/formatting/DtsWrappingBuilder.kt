@@ -14,8 +14,12 @@ abstract class DtsWrappingBuilder(protected val settings: DtsCodeStyleSettings) 
             Null(settings.getCustomSettings(DtsCodeStyleSettings::class.java))
 
         fun childBuilder(parent: Block?, current: DtsWrappingBuilder): DtsWrappingBuilder {
+            val element = ASTBlock.getPsiElement(parent)
+            if (element is DtsContainer) {
+                return Container(current.settings)
+            }
+
             return when (ASTBlock.getElementType(parent)) {
-                DtsTypes.NODE_CONTENT -> NodeContent(current.settings)
                 DtsTypes.PROPERTY_CONTENT -> PropertyContent(current.settings)
                 DtsTypes.CELL_ARRAY, DtsTypes.BYTE_ARRAY -> Array(current.settings)
                 else -> current
@@ -46,8 +50,8 @@ abstract class DtsWrappingBuilder(protected val settings: DtsCodeStyleSettings) 
         override fun getAlignment(parent: PsiElement?, child: PsiElement): Alignment? = null
     }
 
-    // handles wrapping for entries in side of nodes and the alignment for property assignments
-    private class NodeContent(settings: DtsCodeStyleSettings) : DtsWrappingBuilder(settings) {
+    // handles wrapping for entries and the alignment for property assignments
+    private class Container(settings: DtsCodeStyleSettings) : DtsWrappingBuilder(settings) {
         private val wrap = Wrap.createWrap(WrapType.ALWAYS, true)
         private val alignment = Alignment.createAlignment(true, Alignment.Anchor.LEFT)
 

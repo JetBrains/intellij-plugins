@@ -1,13 +1,23 @@
 package com.intellij.dts.lang.parser
 
+import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.PsiBuilderUtil
-import com.intellij.lang.parser.GeneratedParserUtilBase
 import com.intellij.psi.TokenType
 import com.intellij.psi.tree.TokenSet
-import com.intellij.dts.lang.psi.DtsTypes
 
 object DtsParserUtil : DtsJavaParserUtil() {
+    private val invalidEntryEndTokens = TokenSet.create(
+        DtsTypes.SEMICOLON,
+        DtsTypes.RBRACE,
+    )
+
+
+    private val propertyNameFollowSet = TokenSet.create(
+        DtsTypes.SEMICOLON,
+        DtsTypes.ASSIGN,
+    )
+
     private fun lookUpLineBrake(builder: PsiBuilder, steps: Int): Boolean {
         if (builder.rawLookup(steps) != TokenType.WHITE_SPACE) return false
 
@@ -19,20 +29,17 @@ object DtsParserUtil : DtsJavaParserUtil() {
     fun parseInvalidEntry(builder: PsiBuilder, level: Int): Boolean {
         if (builder.eof()) return false
 
-        val endTokens = TokenSet.create(
-            DtsTypes.SEMICOLON,
-            DtsTypes.RBRACE,
-        )
+        if (builder.tokenType in invalidEntryEndTokens) return false
 
         val marker = builder.mark()
 
-        while (!builder.eof()) {
+        consume@ while (!builder.eof()) {
             while (builder.tokenType == DtsTypes.HANDLE && DtsParser.pHandle(builder, level + 1)) {
-                if (builder.eof() || lookUpLineBrake(builder, -1)) break
+                if (builder.eof() || lookUpLineBrake(builder, -1)) break@consume
             }
 
             val nexLineBrake = lookUpLineBrake(builder, 1)
-            val endToken = endTokens.contains(builder.tokenType)
+            val endToken = builder.tokenType in invalidEntryEndTokens
 
             builder.advanceLexer()
 
@@ -83,7 +90,14 @@ object DtsParserUtil : DtsJavaParserUtil() {
     }
 
     @JvmStatic
-    fun parseAfterLineBreak(builder: PsiBuilder, level: Int): Boolean {
+    fun parseAfterLineBreak(builder: PsiBuilder, @Suppress("UNUSED_PARAMETER") level: Int): Boolean {
         return lookUpLineBrake(builder, -1)
+    }
+
+    @JvmStatic
+    fun parsePropertyName(builder: PsiBuilder, @Suppress("UNUSED_PARAMETER") level: Int): Boolean {
+        if (!consumeToken(builder, DtsTypes.NAME)) return false
+
+        return builder.tokenType in propertyNameFollowSet
     }
 }

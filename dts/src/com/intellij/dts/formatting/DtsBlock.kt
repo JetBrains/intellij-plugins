@@ -13,6 +13,12 @@ class DtsBlock(
 ) : AbstractBlock(node, wrappingBuilder.getWrap(parent, node), wrappingBuilder.getAlignment(parent, node)) {
     companion object {
         private val indentingBuilder = DtsIndentingBuilder()
+
+        fun isValidForBlock(node: ASTNode): Boolean {
+            if (node.elementType == TokenType.WHITE_SPACE) return false
+
+            return !node.textRange.isEmpty
+        }
     }
 
     override fun getSpacing(child1: Block?, child2: Block): Spacing? = spacingBuilder.getSpacing(this, child1, child2)
@@ -27,12 +33,6 @@ class DtsBlock(
     override fun getDebugName(): String = "Dts${if (isLeaf) "Leaf" else ""}Block(${node.elementType})"
 
     override fun isLeaf(): Boolean = node.firstChildNode == null
-
-    private fun isValidForBlock(node: ASTNode): Boolean {
-        if (node.elementType == TokenType.WHITE_SPACE) return false
-
-        return !node.textRange.isEmpty
-    }
 
     override fun buildChildren(): MutableList<Block> {
         val childWrappingBuilder = DtsWrappingBuilder.childBuilder(this, wrappingBuilder)

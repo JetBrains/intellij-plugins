@@ -1,6 +1,6 @@
 package com.intellij.dts.completion
 
-class DtsSemicolonTypingTest : DtsTypingTest() {
+class DtsSemicolonTypingTest : DtsCompletionTest() {
     fun testValidProperty() = doEnterTest(
         "prop = <><caret>",
         "prop = <>;\n<caret>",
@@ -9,7 +9,7 @@ class DtsSemicolonTypingTest : DtsTypingTest() {
 
     fun testValidEmptyProperty() = doEnterTest(
         "prop <caret>",
-        "prop; \n<caret>",
+        "prop \n<caret>",
         useNodeContentVariations = true,
     )
 

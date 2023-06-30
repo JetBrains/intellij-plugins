@@ -1,7 +1,7 @@
 package com.intellij.dts.lang
 
 import com.intellij.dts.lang.psi.DtsContainer
-import com.intellij.dts.lang.psi.DtsContent
+import com.intellij.dts.lang.psi.DtsEntry
 import com.intellij.extapi.psi.PsiFileBase
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.FileViewProvider
@@ -9,16 +9,24 @@ import com.intellij.psi.FileViewProvider
 sealed class DtsFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, DtsLanguage), DtsContainer {
     override fun getFileType(): FileType = DtsFileType
 
-    override val isDtsRootContainer: Boolean = true
+    override val dtsEntries: List<DtsEntry>
+        get() = findChildrenByClass(DtsEntry::class.java).toList()
 
-    override val dtsContent: DtsContent?
-        get() = findChildByClass(DtsContent::class.java)
+    override val isDtsRootContainer: Boolean
+        get() = true
 
     class Source(viewProvider: FileViewProvider) : DtsFile(viewProvider) {
         override fun toString(): String = "DTS file"
+
+        override val dtsAffiliation: DtsAffiliation
+            get() = DtsAffiliation.ROOT
     }
 
     class Include(viewProvider: FileViewProvider) : DtsFile(viewProvider) {
         override fun toString(): String = "DTSI file"
+
+        override val dtsAffiliation: DtsAffiliation
+            get() = dtsEntries.map { it.dtsStatement.dtsAffiliation }.firstOrNull { it != DtsAffiliation.UNKNOWN }
+                ?: DtsAffiliation.UNKNOWN
     }
 }

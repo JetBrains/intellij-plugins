@@ -2,11 +2,11 @@ package com.intellij.dts.completion
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
-abstract class DtsTypingTest : BasePlatformTestCase() {
+abstract class DtsCompletionTest : BasePlatformTestCase() {
     companion object {
         private val nodeContentVariations = listOf(
             "node {};",
-            "label: node {};",
+            "variations-label: node {};",
             "/omit-if-no-ref/ node {};",
             "// comment",
             "/include/ \"file.dtsi\"",
@@ -18,7 +18,7 @@ abstract class DtsTypingTest : BasePlatformTestCase() {
         private val rootContentVariations = listOf(
             "/ {};",
             "&handel {};",
-            "label: &handel {};",
+            "variations-label: &handel {};",
             "// comment",
             "/include/ \"file.dtsi\"",
             "/delete-node/ &handel;",
@@ -29,10 +29,30 @@ abstract class DtsTypingTest : BasePlatformTestCase() {
         )
     }
 
-    private fun doTest(character: String, input: String, after: String) {
-        myFixture.configureByText("test.dtsi", input)
-        myFixture.type(character)
-        myFixture.checkResult(after)
+    fun configureByText(text: String) {
+        myFixture.configureByText("${text.hashCode()}.dtsi", text)
+    }
+
+    fun applyVariations(
+        useRootContentVariations: Boolean,
+        useNodeContentVariations: Boolean,
+        callback: ((String) -> String) -> Unit
+    ) {
+        callback { it }
+
+        if (useRootContentVariations) {
+            for (variation in rootContentVariations) {
+                callback { "$variation\n$it" }
+                callback { "$it\n$variation" }
+            }
+        }
+
+        if (useNodeContentVariations) {
+            for (variation in nodeContentVariations) {
+                callback { "$variation\n$it" }
+                callback { "$it\n$variation" }
+            }
+        }
     }
 
     fun doTypeTest(
@@ -46,20 +66,11 @@ abstract class DtsTypingTest : BasePlatformTestCase() {
             "Test input and after must contain \"<caret>\" to indicate caret position"
         }
 
-        doTest(character, input, after)
+        applyVariations(useRootContentVariations, useNodeContentVariations) { apply ->
+            configureByText(apply(input))
 
-        if (useRootContentVariations) {
-            for (variation in rootContentVariations) {
-                doTest(character, "$variation\n$input", "$variation\n$after")
-                doTest(character, "$input\n$variation", "$after\n$variation")
-            }
-        }
-
-        if (useNodeContentVariations) {
-            for (variation in nodeContentVariations) {
-                doTest(character, "$variation\n$input", "$variation\n$after")
-                doTest(character, "$input\n$variation", "$after\n$variation")
-            }
+            myFixture.type(character)
+            myFixture.checkResult(apply(after))
         }
     }
 

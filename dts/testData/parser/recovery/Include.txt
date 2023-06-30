@@ -1,14 +1,13 @@
 DTS file
-  DtsIncludeDirectiveImpl(INCLUDE_DIRECTIVE)
-    PsiElement(DtsTokenType.INCLUDE)('/include/')
-    PsiErrorElement:DtsTokenType.DQUOTE expected, got '/'
+  DtsIncludeStatementImpl(INCLUDE_STATEMENT)
+    PsiElement(/include/)('/include/')
+    PsiErrorElement:'"' expected, got '/'
       <empty list>
   PsiWhiteSpace('\n\n')
-  DtsContentImpl(CONTENT)
-    DtsEntryImpl(ENTRY)
-      DtsRootNodeImpl(ROOT_NODE)
-        PsiElement(DtsTokenType.SLASH)('/')
-        PsiWhiteSpace(' ')
-        PsiElement(DtsTokenType.LBRACE)('{')
-        PsiElement(DtsTokenType.RBRACE)('}')
-      PsiElement(DtsTokenType.SEMICOLON)(';')
+  DtsEntryImpl(ENTRY)
+    DtsRootNodeImpl(ROOT_NODE)
+      PsiElement(/)('/')
+      PsiWhiteSpace(' ')
+      PsiElement({)('{')
+      PsiElement(})('}')
+    PsiElement(;)(';')

@@ -59,16 +59,16 @@
         <!-- inspections -->
         <localInspection
                 language="DTS"
-                bundle="messages.DtsBundle" key="inspections.dts_content.display_name" groupKey="inspections.group"
+                bundle="messages.DtsBundle" key="inspections.container.display_name" groupKey="inspections.group"
                 enabledByDefault="true"
                 level="ERROR"
-                implementationClass="com.intellij.dts.inspections.DtsContentInspection"/>
+                implementationClass="com.intellij.dts.inspections.DtsContainerInspection"/>
         <localInspection
                 language="DTS"
-                bundle="messages.DtsBundle" key="inspections.node_content_order.display_name" groupKey="inspections.group"
+                bundle="messages.DtsBundle" key="inspections.statement_order.display_name" groupKey="inspections.group"
                 enabledByDefault="true"
                 level="ERROR"
-                implementationClass="com.intellij.dts.inspections.DtsNodeContentOrderInspection"/>
+                implementationClass="com.intellij.dts.inspections.DtsStatementOrderInspection"/>
         <localInspection
                 language="DTS"
                 bundle="messages.DtsBundle" key="inspections.label_name.display_name" groupKey="inspections.group"
