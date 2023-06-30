@@ -1,0 +1,5 @@
+#include \
+"header"
+#define SYMBOL \
+VALUE \
+VALUE

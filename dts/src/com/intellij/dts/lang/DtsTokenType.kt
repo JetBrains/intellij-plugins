@@ -69,6 +69,22 @@ class DtsTokenType(debugName: String) : IElementType(debugName, DtsLanguage) {
             DtsTypes.COLON -> ":"
             DtsTypes.TERNARY -> "?"
 
+            // c preprocessor
+            DtsTypes.PP_INCLUDE -> "#include"
+            DtsTypes.PP_IFDEF -> "#ifdef"
+            DtsTypes.PP_IFNDEF -> "#ifndef"
+            DtsTypes.PP_ENDIF -> "#endif"
+            DtsTypes.PP_DEFINE -> "#define"
+            DtsTypes.PP_UNDEF -> "#undef"
+
+            DtsTypes.PP_SYMBOL -> "identifier"
+            DtsTypes.PP_PATH -> "path"
+            DtsTypes.PP_DEFINE_VALUE -> "value"
+
+            DtsTypes.PP_LANGLE -> "<"
+            DtsTypes.PP_RANGLE -> ">"
+            DtsTypes.PP_DQUOTE -> "\""
+
             else -> super.toString()
         }
     }

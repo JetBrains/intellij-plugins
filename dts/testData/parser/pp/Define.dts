@@ -1,0 +1,3 @@
+#define SYMBOL
+#define SYMBOL VALUE
+#define SYMBOL 42000 "string"

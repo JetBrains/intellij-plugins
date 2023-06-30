@@ -7,9 +7,6 @@ object DtsTokenSets {
     val comments = TokenSet.create(
         DtsTypes.COMMENT_EOL,
         DtsTypes.COMMENT_C,
-
-        // temporarily treat pp statements as comments
-        DtsTypes.PP_STATEMENT
     )
 
     val strings = TokenSet.create(
@@ -26,6 +23,25 @@ object DtsTokenSets {
         DtsTypes.MEMRESERVE,
         DtsTypes.BITS,
         DtsTypes.INCLUDE,
+    )
+
+    val ppDirectives = TokenSet.create(
+        DtsTypes.PP_DEFINE,
+        DtsTypes.PP_INCLUDE,
+        DtsTypes.PP_IFDEF,
+        DtsTypes.PP_IFNDEF,
+        DtsTypes.PP_ENDIF,
+        DtsTypes.PP_UNDEF,
+    )
+
+    val preprocessorStatements = TokenSet.create(
+        DtsTypes.INCLUDE_STATEMENT,
+        DtsTypes.PP_DEFINE_STATEMENT,
+        DtsTypes.PP_INCLUDE_STATEMENT,
+        DtsTypes.PP_IFDEF_STATEMENT,
+        DtsTypes.PP_IFNDEF_STATEMENT,
+        DtsTypes.PP_ENDIF_STATEMENT,
+        DtsTypes.PP_UNDEF_STATEMENT,
     )
 
     val operators = TokenSet.create(

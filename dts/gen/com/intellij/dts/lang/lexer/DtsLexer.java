@@ -1338,7 +1338,7 @@ class DtsLexer implements FlexLexer {
             // fall through
           case 128: break;
           case 61: 
-            { return DtsTypes.PP_STATEMENT;
+            { return DtsTypes.PP_STATEMENT_MARKER;
             } 
             // fall through
           case 129: break;

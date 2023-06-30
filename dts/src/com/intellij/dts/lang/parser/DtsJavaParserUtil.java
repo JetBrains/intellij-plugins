@@ -11,6 +11,6 @@ public class DtsJavaParserUtil extends GeneratedParserUtilBase {
         ErrorState state = new ErrorState();
         ErrorState.initState(state, builder, root, extendsSets);
 
-        return new DtsIncludeBuildAdapter(builder, state, parser);
+        return new DtsBuildAdapter(builder, state, parser);
     }
 }

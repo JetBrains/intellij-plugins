@@ -54,12 +54,13 @@
 
   extends(".*Expr")=expr
 
+  // c preprocessor rules
+
   tokens=[
     COMMENT_EOL="COMMENT_EOL"
     COMMENT_C="COMMENT_C"
-    PP_STATEMENT="PP_STATEMENT"
+    PP_STATEMENT_MARKER="PP_STATEMENT_MARKER"
     PP_MACRO_ARG="PP_MACRO_ARG"
-    INCLUDE="INCLUDE"
   ]
 }
 
@@ -194,3 +195,26 @@ includeStatement ::= () INCLUDE string { pin=1 }
 // fallback to handle unknown identifiers like macros
 ppMacro ::= parserPpMacro
 external parserPpMacro ::= parsePpMacro
+
+// c preprocessor rules
+private ppStatement ::= () (ppStatements) PP_STATEMENT_END { pin=1 }
+
+private ppStatements ::=
+    ppIncludeStatement |
+    ppIfdefStatement |
+    ppIfndefStatement |
+    ppEndifStatement |
+    ppDefineStatement |
+    ppUndefStatement
+{ recoverWhile="pp_statementRecover" }
+
+private pp_statementRecover ::= !(PP_STATEMENT_END)
+
+ppIncludeStatement ::= PP_INCLUDE ppHeader { pin=1 }
+ppHeader ::= PP_LANGLE PP_PATH PP_RANGLE | PP_DQUOTE PP_PATH PP_DQUOTE { pin=1 }
+
+ppIfdefStatement ::= PP_IFDEF PP_SYMBOL { pin=1 }
+ppIfndefStatement ::= PP_IFNDEF PP_SYMBOL { pin=1 }
+ppEndifStatement ::= PP_ENDIF
+ppDefineStatement ::= PP_DEFINE PP_SYMBOL PP_DEFINE_VALUE? { pin=1 }
+ppUndefStatement ::= PP_UNDEF PP_SYMBOL { pin=1 }

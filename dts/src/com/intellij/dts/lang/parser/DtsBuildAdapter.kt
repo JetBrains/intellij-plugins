@@ -1,63 +1,73 @@
 package com.intellij.dts.lang.parser
 
+import com.intellij.dts.lang.DtsTokenSets
 import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.PsiParser
 import com.intellij.lang.parser.GeneratedParserUtilBase
 import com.intellij.psi.tree.IElementType
 
-class DtsIncludeBuildAdapter(
+class DtsBuildAdapter(
     delegate: PsiBuilder, state: GeneratedParserUtilBase.ErrorState, parser: PsiParser
 ) : FixedGeneratedBuilder(delegate, state, parser) {
-    private fun preprocess() {
-        while (super.getTokenType() == DtsTypes.INCLUDE) {
-            val builder = GeneratedParserUtilBase.Builder(delegate, GeneratedParserUtilBase.ErrorState(), parser)
-            DtsParser.includeStatement(builder, 1)
+    private fun parseStatement() {
+        while (true) {
+            when (super.getTokenType()) {
+                DtsTypes.INCLUDE -> {
+                    val builder = GeneratedParserUtilBase.Builder(delegate, GeneratedParserUtilBase.ErrorState(), parser)
+                    DtsParser.includeStatement(builder, 1)
+                }
+                in DtsTokenSets.ppDirectives -> {
+                    val builder = GeneratedParserUtilBase.Builder(delegate, GeneratedParserUtilBase.ErrorState(), parser)
+                    DtsParser.ppStatement(builder, 1)
+                }
+                else -> break
+            }
         }
     }
 
     override fun getTokenType(): IElementType? {
-        preprocess()
+        parseStatement()
         return super.getTokenType()
     }
 
     override fun advanceLexer() {
-        preprocess()
+        parseStatement()
         super.advanceLexer()
     }
 
     override fun getTokenText(): String? {
-        preprocess()
+        parseStatement()
         return super.getTokenText()
     }
 
     override fun eof(): Boolean {
-        preprocess()
+        parseStatement()
         return super.eof()
     }
 
     override fun getCurrentOffset(): Int {
-        preprocess()
+        parseStatement()
         return super.getCurrentOffset()
     }
 
     override fun lookAhead(steps: Int): IElementType? {
-        preprocess()
+        parseStatement()
         return super.lookAhead(steps)
     }
 
     override fun rawTokenIndex(): Int {
-        preprocess()
+        parseStatement()
         return super.rawTokenIndex()
     }
 
     override fun rawLookup(steps: Int): IElementType? {
-        preprocess()
+        parseStatement()
         return super.rawLookup(steps)
     }
 
     override fun rawTokenTypeStart(steps: Int): Int {
-        preprocess()
+        parseStatement()
         return super.rawTokenTypeStart(steps)
     }
 }

@@ -33,6 +33,7 @@ class DtsSyntaxHighlighter : SyntaxHighlighterBase() {
         if (tokenType in DtsTokenSets.strings) return pack(DtsTextAttributes.STRING)
         if (tokenType in DtsTokenSets.operators) return pack(DtsTextAttributes.OPERATOR)
         if (tokenType in DtsTokenSets.compilerDirectives) return pack(DtsTextAttributes.COMPILER_DIRECTIVE)
+        if (tokenType in DtsTokenSets.ppDirectives) return pack(DtsTextAttributes.COMPILER_DIRECTIVE)
 
         return when (tokenType) {
             DtsTypes.LBRACE, DtsTypes.RBRACE -> pack(DtsTextAttributes.BRACES)
@@ -42,6 +43,8 @@ class DtsSyntaxHighlighter : SyntaxHighlighterBase() {
             DtsTypes.SEMICOLON -> pack(DtsTextAttributes.SEMICOLON)
             DtsTypes.COMMA -> pack(DtsTextAttributes.COMMA)
             TokenType.BAD_CHARACTER -> pack(DtsTextAttributes.BAD_CHARACTER)
+            DtsTypes.PP_DQUOTE, DtsTypes.PP_RANGLE, DtsTypes.PP_LANGLE, DtsTypes.PP_PATH -> pack(DtsTextAttributes.STRING)
+
             else -> pack(null)
         }
     }

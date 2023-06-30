@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.grammarkit.tasks.GenerateLexerTask
 
 plugins {
     id("java")
@@ -32,6 +33,14 @@ sourceSets {
     }
 }
 
+val generatePpLexer = task<GenerateLexerTask>("generatePpLexer") {
+    sourceFile.set(File("src/com/intellij/dts/lang/lexer/pp.flex"))
+
+    targetDir.set("gen/com/intellij/dts/lang/lexer")
+    targetClass.set("PpLexer")
+    purgeOldFiles.set(true)
+}
+
 tasks {
     // Set the JVM compatibility versions
     withType<JavaCompile> {
@@ -40,14 +49,14 @@ tasks {
     }
 
     withType<KotlinCompile> {
-        dependsOn(generateLexer)
         dependsOn(generateParser)
 
         kotlinOptions.jvmTarget = "17"
+        kotlinOptions.freeCompilerArgs += "-Xjvm-default=all"
     }
 
     generateLexer {
-        group = "generate"
+        dependsOn(generatePpLexer)
 
         sourceFile.set(File("src/com/intellij/dts/lang/lexer/dts.flex"))
 
@@ -57,7 +66,7 @@ tasks {
     }
 
     generateParser {
-        group = "generate"
+        dependsOn(generateLexer)
 
         sourceFile.set(File("src/com/intellij/dts/lang/parser/dts.bnf"))
 

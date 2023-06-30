@@ -562,12 +562,172 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   /* ********************************************************** */
+  // PP_DEFINE PP_SYMBOL PP_DEFINE_VALUE?
+  public static boolean ppDefineStatement(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "ppDefineStatement")) return false;
+    if (!nextTokenIs(builder_, PP_DEFINE)) return false;
+    boolean result_, pinned_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_, PP_DEFINE_STATEMENT, null);
+    result_ = consumeTokens(builder_, 1, PP_DEFINE, PP_SYMBOL);
+    pinned_ = result_; // pin = 1
+    result_ = result_ && ppDefineStatement_2(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, result_, pinned_, null);
+    return result_ || pinned_;
+  }
+
+  // PP_DEFINE_VALUE?
+  private static boolean ppDefineStatement_2(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "ppDefineStatement_2")) return false;
+    consumeToken(builder_, PP_DEFINE_VALUE);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // PP_ENDIF
+  public static boolean ppEndifStatement(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "ppEndifStatement")) return false;
+    if (!nextTokenIs(builder_, PP_ENDIF)) return false;
+    boolean result_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, PP_ENDIF);
+    exit_section_(builder_, marker_, PP_ENDIF_STATEMENT, result_);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // PP_LANGLE PP_PATH PP_RANGLE | PP_DQUOTE PP_PATH PP_DQUOTE
+  public static boolean ppHeader(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "ppHeader")) return false;
+    if (!nextTokenIs(builder_, "<pp header>", PP_DQUOTE, PP_LANGLE)) return false;
+    boolean result_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_, PP_HEADER, "<pp header>");
+    result_ = parseTokens(builder_, 0, PP_LANGLE, PP_PATH, PP_RANGLE);
+    if (!result_) result_ = parseTokens(builder_, 0, PP_DQUOTE, PP_PATH, PP_DQUOTE);
+    exit_section_(builder_, level_, marker_, result_, false, null);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // PP_IFDEF PP_SYMBOL
+  public static boolean ppIfdefStatement(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "ppIfdefStatement")) return false;
+    if (!nextTokenIs(builder_, PP_IFDEF)) return false;
+    boolean result_, pinned_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_, PP_IFDEF_STATEMENT, null);
+    result_ = consumeTokens(builder_, 1, PP_IFDEF, PP_SYMBOL);
+    pinned_ = result_; // pin = 1
+    exit_section_(builder_, level_, marker_, result_, pinned_, null);
+    return result_ || pinned_;
+  }
+
+  /* ********************************************************** */
+  // PP_IFNDEF PP_SYMBOL
+  public static boolean ppIfndefStatement(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "ppIfndefStatement")) return false;
+    if (!nextTokenIs(builder_, PP_IFNDEF)) return false;
+    boolean result_, pinned_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_, PP_IFNDEF_STATEMENT, null);
+    result_ = consumeTokens(builder_, 1, PP_IFNDEF, PP_SYMBOL);
+    pinned_ = result_; // pin = 1
+    exit_section_(builder_, level_, marker_, result_, pinned_, null);
+    return result_ || pinned_;
+  }
+
+  /* ********************************************************** */
+  // PP_INCLUDE ppHeader
+  public static boolean ppIncludeStatement(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "ppIncludeStatement")) return false;
+    if (!nextTokenIs(builder_, PP_INCLUDE)) return false;
+    boolean result_, pinned_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_, PP_INCLUDE_STATEMENT, null);
+    result_ = consumeToken(builder_, PP_INCLUDE);
+    pinned_ = result_; // pin = 1
+    result_ = result_ && ppHeader(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, result_, pinned_, null);
+    return result_ || pinned_;
+  }
+
+  /* ********************************************************** */
   // parserPpMacro
   public static boolean ppMacro(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "ppMacro")) return false;
     boolean result_;
     com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_, PP_MACRO, "<pp macro>");
     result_ = parsePpMacro(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, result_, false, null);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // () (ppStatements) PP_STATEMENT_END
+  static boolean ppStatement(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "ppStatement")) return false;
+    boolean result_, pinned_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_);
+    result_ = ppStatement_0(builder_, level_ + 1);
+    pinned_ = result_; // pin = 1
+    result_ = result_ && report_error_(builder_, ppStatement_1(builder_, level_ + 1));
+    result_ = pinned_ && consumeToken(builder_, PP_STATEMENT_END) && result_;
+    exit_section_(builder_, level_, marker_, result_, pinned_, null);
+    return result_ || pinned_;
+  }
+
+  // ()
+  private static boolean ppStatement_0(com.intellij.lang.PsiBuilder builder_, int level_) {
+    return true;
+  }
+
+  // (ppStatements)
+  private static boolean ppStatement_1(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "ppStatement_1")) return false;
+    boolean result_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
+    result_ = ppStatements(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // ppIncludeStatement |
+  //     ppIfdefStatement |
+  //     ppIfndefStatement |
+  //     ppEndifStatement |
+  //     ppDefineStatement |
+  //     ppUndefStatement
+  static boolean ppStatements(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "ppStatements")) return false;
+    boolean result_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_);
+    result_ = ppIncludeStatement(builder_, level_ + 1);
+    if (!result_) result_ = ppIfdefStatement(builder_, level_ + 1);
+    if (!result_) result_ = ppIfndefStatement(builder_, level_ + 1);
+    if (!result_) result_ = ppEndifStatement(builder_, level_ + 1);
+    if (!result_) result_ = ppDefineStatement(builder_, level_ + 1);
+    if (!result_) result_ = ppUndefStatement(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, result_, false, DtsParser::pp_statementRecover);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // PP_UNDEF PP_SYMBOL
+  public static boolean ppUndefStatement(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "ppUndefStatement")) return false;
+    if (!nextTokenIs(builder_, PP_UNDEF)) return false;
+    boolean result_, pinned_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_, PP_UNDEF_STATEMENT, null);
+    result_ = consumeTokens(builder_, 1, PP_UNDEF, PP_SYMBOL);
+    pinned_ = result_; // pin = 1
+    exit_section_(builder_, level_, marker_, result_, pinned_, null);
+    return result_ || pinned_;
+  }
+
+  /* ********************************************************** */
+  // !(PP_STATEMENT_END)
+  static boolean pp_statementRecover(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "pp_statementRecover")) return false;
+    boolean result_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NOT_);
+    result_ = !consumeToken(builder_, PP_STATEMENT_END);
     exit_section_(builder_, level_, marker_, result_, false, null);
     return result_;
   }
