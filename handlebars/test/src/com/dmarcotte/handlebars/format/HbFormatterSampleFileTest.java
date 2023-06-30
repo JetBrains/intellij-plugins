@@ -19,6 +19,11 @@ public class HbFormatterSampleFileTest extends HbFormatterTest {
     doFileBasedTest();
   }
 
+  public void testHbScript()
+    throws Exception {
+    doFileBasedTest();
+  }
+
   /**
    * Test out formatting with a non-HTML template data language
    *
