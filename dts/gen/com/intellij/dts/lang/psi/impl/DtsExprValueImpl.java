@@ -12,7 +12,7 @@ public class DtsExprValueImpl extends com.intellij.extapi.psi.ASTWrapperPsiEleme
   @java.lang.Override
   @org.jetbrains.annotations.Nullable
   public com.intellij.dts.lang.psi.DtsExpr getExpr() {
-    return findChildByClass(com.intellij.dts.lang.psi.DtsExpr.class);
+    return com.intellij.psi.util.PsiTreeUtil.getChildOfType(this, com.intellij.dts.lang.psi.DtsExpr.class);
   }
 
 }

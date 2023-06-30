@@ -18,8 +18,13 @@
 
   implements("rootNode")="com.intellij.dts.lang.psi.DtsNode.Root"
   mixin("rootNode")="com.intellij.dts.lang.psi.mixin.DtsRootNodeMixin"
+  stubClass("rootNode")="com.intellij.dts.lang.stubs.DtsRootNodeStub"
+  elementTypeFactory("rootNode")="com.intellij.dts.lang.stubs.DtsStubElementTypes.Companion.factory"
+
   implements("subNode")="com.intellij.dts.lang.psi.DtsNode.Sub"
   mixin("subNode")="com.intellij.dts.lang.psi.mixin.DtsSubNodeMixin"
+  stubClass("subNode")="com.intellij.dts.lang.stubs.DtsSubNodeStub"
+  elementTypeFactory("subNode")="com.intellij.dts.lang.stubs.DtsStubElementTypes.Companion.factory"
 
   implements("nodeContent")="com.intellij.dts.lang.psi.DtsContainer"
   mixin("nodeContent")="com.intellij.dts.lang.psi.mixin.DtsNodeContentMixin"

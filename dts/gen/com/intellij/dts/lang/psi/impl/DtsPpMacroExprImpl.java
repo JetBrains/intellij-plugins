@@ -12,7 +12,7 @@ public class DtsPpMacroExprImpl extends com.intellij.dts.lang.psi.impl.DtsExprIm
   @java.lang.Override
   @org.jetbrains.annotations.NotNull
   public com.intellij.dts.lang.psi.DtsPpMacro getPpMacro() {
-    return findNotNullChildByClass(com.intellij.dts.lang.psi.DtsPpMacro.class);
+    return notNullChild(com.intellij.psi.util.PsiTreeUtil.getChildOfType(this, com.intellij.dts.lang.psi.DtsPpMacro.class));
   }
 
 }

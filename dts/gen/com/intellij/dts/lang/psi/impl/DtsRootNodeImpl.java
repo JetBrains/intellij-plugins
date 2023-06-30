@@ -9,16 +9,20 @@ public class DtsRootNodeImpl extends com.intellij.dts.lang.psi.mixin.DtsRootNode
     super(node);
   }
 
+  public DtsRootNodeImpl(com.intellij.dts.lang.stubs.DtsRootNodeStub stub, com.intellij.psi.stubs.IStubElementType stubType) {
+    super(stub, stubType);
+  }
+
   @java.lang.Override
   @org.jetbrains.annotations.Nullable
   public com.intellij.dts.lang.psi.DtsNodeContent getNodeContent() {
-    return findChildByClass(com.intellij.dts.lang.psi.DtsNodeContent.class);
+    return com.intellij.psi.util.PsiTreeUtil.getChildOfType(this, com.intellij.dts.lang.psi.DtsNodeContent.class);
   }
 
   @java.lang.Override
   @org.jetbrains.annotations.Nullable
   public com.intellij.dts.lang.psi.DtsPHandle getPHandle() {
-    return findChildByClass(com.intellij.dts.lang.psi.DtsPHandle.class);
+    return com.intellij.psi.util.PsiTreeUtil.getChildOfType(this, com.intellij.dts.lang.psi.DtsPHandle.class);
   }
 
 }

@@ -12,7 +12,7 @@ public class DtsIntExprImpl extends com.intellij.dts.lang.psi.impl.DtsExprImpl i
   @java.lang.Override
   @org.jetbrains.annotations.NotNull
   public com.intellij.dts.lang.psi.DtsInt getInt() {
-    return findNotNullChildByClass(com.intellij.dts.lang.psi.DtsInt.class);
+    return notNullChild(com.intellij.psi.util.PsiTreeUtil.getChildOfType(this, com.intellij.dts.lang.psi.DtsInt.class));
   }
 
 }

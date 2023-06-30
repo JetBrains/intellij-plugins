@@ -12,13 +12,13 @@ public class DtsCellArrayBitsImpl extends com.intellij.dts.lang.psi.mixin.DtsCel
   @java.lang.Override
   @org.jetbrains.annotations.Nullable
   public com.intellij.dts.lang.psi.DtsInt getInt() {
-    return findChildByClass(com.intellij.dts.lang.psi.DtsInt.class);
+    return com.intellij.psi.util.PsiTreeUtil.getChildOfType(this, com.intellij.dts.lang.psi.DtsInt.class);
   }
 
   @java.lang.Override
   @org.jetbrains.annotations.Nullable
   public com.intellij.dts.lang.psi.DtsPpMacro getPpMacro() {
-    return findChildByClass(com.intellij.dts.lang.psi.DtsPpMacro.class);
+    return com.intellij.psi.util.PsiTreeUtil.getChildOfType(this, com.intellij.dts.lang.psi.DtsPpMacro.class);
   }
 
 }

@@ -18,6 +18,13 @@
         <lang.parserDefinition
                 language="DTS"
                 implementationClass="com.intellij.dts.lang.parser.DtsParserDefinition"/>
+        <stubElementTypeHolder
+                externalIdPrefix="dts."
+                class="com.intellij.dts.lang.stubs.DtsStubElementTypes"/>
+
+        <!-- indices -->
+        <stubIndex
+                implementation="com.intellij.dts.lang.stubs.DtsNodeLabelIndex"/>
 
         <!-- syntax highlighting -->
         <lang.syntaxHighlighterFactory

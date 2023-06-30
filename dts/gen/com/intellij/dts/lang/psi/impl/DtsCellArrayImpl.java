@@ -12,7 +12,7 @@ public class DtsCellArrayImpl extends com.intellij.dts.lang.psi.mixin.DtsCellArr
   @java.lang.Override
   @org.jetbrains.annotations.Nullable
   public com.intellij.dts.lang.psi.DtsCellArrayBits getCellArrayBits() {
-    return findChildByClass(com.intellij.dts.lang.psi.DtsCellArrayBits.class);
+    return com.intellij.psi.util.PsiTreeUtil.getChildOfType(this, com.intellij.dts.lang.psi.DtsCellArrayBits.class);
   }
 
   @java.lang.Override

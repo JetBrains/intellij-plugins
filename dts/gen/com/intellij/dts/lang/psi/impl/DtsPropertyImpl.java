@@ -12,7 +12,7 @@ public class DtsPropertyImpl extends com.intellij.dts.lang.psi.mixin.DtsProperty
   @java.lang.Override
   @org.jetbrains.annotations.Nullable
   public com.intellij.dts.lang.psi.DtsPropertyContent getPropertyContent() {
-    return findChildByClass(com.intellij.dts.lang.psi.DtsPropertyContent.class);
+    return com.intellij.psi.util.PsiTreeUtil.getChildOfType(this, com.intellij.dts.lang.psi.DtsPropertyContent.class);
   }
 
 }

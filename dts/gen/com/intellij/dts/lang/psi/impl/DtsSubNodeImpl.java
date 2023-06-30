@@ -9,10 +9,14 @@ public class DtsSubNodeImpl extends com.intellij.dts.lang.psi.mixin.DtsSubNodeMi
     super(node);
   }
 
+  public DtsSubNodeImpl(com.intellij.dts.lang.stubs.DtsSubNodeStub stub, com.intellij.psi.stubs.IStubElementType stubType) {
+    super(stub, stubType);
+  }
+
   @java.lang.Override
   @org.jetbrains.annotations.Nullable
   public com.intellij.dts.lang.psi.DtsNodeContent getNodeContent() {
-    return findChildByClass(com.intellij.dts.lang.psi.DtsNodeContent.class);
+    return com.intellij.psi.util.PsiTreeUtil.getChildOfType(this, com.intellij.dts.lang.psi.DtsNodeContent.class);
   }
 
 }

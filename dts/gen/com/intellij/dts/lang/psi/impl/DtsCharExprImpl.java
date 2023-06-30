@@ -12,7 +12,7 @@ public class DtsCharExprImpl extends com.intellij.dts.lang.psi.impl.DtsExprImpl 
   @java.lang.Override
   @org.jetbrains.annotations.NotNull
   public com.intellij.dts.lang.psi.DtsChar getChar() {
-    return findNotNullChildByClass(com.intellij.dts.lang.psi.DtsChar.class);
+    return notNullChild(com.intellij.psi.util.PsiTreeUtil.getChildOfType(this, com.intellij.dts.lang.psi.DtsChar.class));
   }
 
 }

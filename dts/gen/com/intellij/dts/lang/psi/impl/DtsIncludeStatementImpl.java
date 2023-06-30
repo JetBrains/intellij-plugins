@@ -12,7 +12,7 @@ public class DtsIncludeStatementImpl extends com.intellij.dts.lang.psi.mixin.Dts
   @java.lang.Override
   @org.jetbrains.annotations.Nullable
   public com.intellij.dts.lang.psi.DtsString getString() {
-    return findChildByClass(com.intellij.dts.lang.psi.DtsString.class);
+    return com.intellij.psi.util.PsiTreeUtil.getChildOfType(this, com.intellij.dts.lang.psi.DtsString.class);
   }
 
 }
