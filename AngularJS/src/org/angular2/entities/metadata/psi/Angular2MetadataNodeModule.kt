@@ -18,8 +18,8 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.ObjectUtils.tryCast
 import com.intellij.util.asSafely
-import org.angular2.entities.metadata.Angular2MetadataFileType.Companion.D_TS_SUFFIX
-import org.angular2.entities.metadata.Angular2MetadataFileType.Companion.METADATA_SUFFIX
+import org.angular2.entities.metadata.Angular2MetadataFileType.D_TS_SUFFIX
+import org.angular2.entities.metadata.Angular2MetadataFileType.METADATA_SUFFIX
 import org.angular2.entities.metadata.stubs.Angular2MetadataModuleExportStub
 import org.angular2.entities.metadata.stubs.Angular2MetadataNodeModuleStub
 import org.angular2.lang.metadata.psi.MetadataElement

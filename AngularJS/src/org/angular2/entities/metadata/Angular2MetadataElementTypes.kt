@@ -13,7 +13,7 @@ interface Angular2MetadataElementTypes {
     @NonNls debugName: String,
     stubConstructor: MetadataStubConstructor<out Stub>,
     psiConstructor: MetadataElementConstructor<Stub>
-  ) : MetadataElementType<Stub>(debugName, MetadataJsonLanguage.INSTANCE, stubConstructor, psiConstructor) {
+  ) : MetadataElementType<Stub>(debugName, MetadataJsonLanguage, stubConstructor, psiConstructor) {
 
     @NonNls
     override fun toString(): String {

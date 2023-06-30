@@ -4,9 +4,4 @@ package org.angular2.lang.metadata
 import com.intellij.lang.DependentLanguage
 import com.intellij.lang.Language
 
-class MetadataJsonLanguage private constructor() : Language("Metadata JSON", "application/json"), DependentLanguage {
-  companion object {
-    @JvmStatic
-    val INSTANCE = MetadataJsonLanguage()
-  }
-}
+object MetadataJsonLanguage : Language("Metadata JSON", "application/json"), DependentLanguage

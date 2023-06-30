@@ -35,7 +35,7 @@ class MetadataFileImpl(fileViewProvider: FileViewProvider, private val myFileTyp
   }
 
   override fun getLanguage(): Language {
-    return MetadataJsonLanguage.INSTANCE
+    return MetadataJsonLanguage
   }
 
   override fun getChildren(): Array<PsiElement> {

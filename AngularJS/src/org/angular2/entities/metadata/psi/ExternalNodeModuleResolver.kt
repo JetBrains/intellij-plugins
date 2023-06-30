@@ -8,7 +8,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.MultiMap
-import org.angular2.entities.metadata.Angular2MetadataFileType.Companion.METADATA_SUFFIX
+import org.angular2.entities.metadata.Angular2MetadataFileType.METADATA_SUFFIX
 import org.angular2.index.Angular2MetadataNodeModuleIndex
 import org.jetbrains.annotations.NonNls
 

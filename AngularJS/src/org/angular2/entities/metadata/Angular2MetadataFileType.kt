@@ -13,7 +13,7 @@ import org.angular2.lang.metadata.stubs.MetadataFileStubImpl
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 
-class Angular2MetadataFileType private constructor() : MetadataJsonFileType() {
+object Angular2MetadataFileType : MetadataJsonFileType() {
 
   override fun isMyFileType(file: VirtualFile): Boolean {
     val fileName = file.nameSequence
@@ -42,19 +42,15 @@ class Angular2MetadataFileType private constructor() : MetadataJsonFileType() {
     Angular2MetadataNodeModuleStub(fileStub, jsonRoot)
   }
 
-  companion object {
-    @JvmField
-    val INSTANCE = Angular2MetadataFileType()
-    private val FILE = object : MetadataStubFileElementType(MetadataJsonLanguage.INSTANCE) {
-      override fun getStubVersion(): Int {
-        return Angular2MetadataElementTypes.STUB_VERSION
-      }
+  private val FILE = object : MetadataStubFileElementType(MetadataJsonLanguage) {
+    override fun getStubVersion(): Int {
+      return Angular2MetadataElementTypes.STUB_VERSION
     }
-
-    @NonNls
-    const val METADATA_SUFFIX = ".metadata.json"
-
-    @NonNls
-    const val D_TS_SUFFIX = ".d.ts"
   }
+
+  @NonNls
+  internal val METADATA_SUFFIX = ".metadata.json"
+
+  @NonNls
+  internal val D_TS_SUFFIX = ".d.ts"
 }

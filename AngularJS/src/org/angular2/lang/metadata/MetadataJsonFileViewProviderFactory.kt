@@ -20,7 +20,7 @@ class MetadataJsonFileViewProviderFactory : FileViewProviderFactory {
   class MetadataFileViewProvider internal constructor(manager: PsiManager,
                                                       file: VirtualFile,
                                                       eventSystemEnabled: Boolean)
-    : SingleRootFileViewProvider(manager, file, eventSystemEnabled, MetadataJsonLanguage.INSTANCE) {
+    : SingleRootFileViewProvider(manager, file, eventSystemEnabled, MetadataJsonLanguage) {
     init {
       assert(file.fileType is MetadataJsonFileType)
     }

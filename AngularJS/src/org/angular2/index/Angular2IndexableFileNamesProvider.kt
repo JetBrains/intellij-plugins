@@ -3,7 +3,7 @@ package org.angular2.index
 
 import com.intellij.lang.javascript.modules.NodeModulesIndexableFileNamesProvider
 
-import org.angular2.entities.metadata.Angular2MetadataFileType.Companion.METADATA_SUFFIX
+import org.angular2.entities.metadata.Angular2MetadataFileType.METADATA_SUFFIX
 
 class Angular2IndexableFileNamesProvider : NodeModulesIndexableFileNamesProvider() {
   override fun getIndexableExtensions(kind: DependencyKind): List<String> {
