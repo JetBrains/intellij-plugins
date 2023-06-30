@@ -16,4 +16,6 @@ interface VueLexer {
   val project: Project?
 
   val interpolationConfig: Pair<String, String>?
+
+  val htmlCompatMode: Boolean
 }

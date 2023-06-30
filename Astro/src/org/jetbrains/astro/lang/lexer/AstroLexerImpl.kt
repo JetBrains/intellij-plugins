@@ -29,6 +29,10 @@ class AstroLexerImpl(val project: Project?, private val lexJsFragment: Boolean =
                 if (initialState == 0 && lexJsFragment) _AstroLexer.EXPRESSION_INITIAL else initialState)
   }
 
+  override fun isPossiblyComponentTag(tagName: CharSequence): Boolean {
+    return Companion.isPossiblyComponentTag(tagName)
+  }
+
   override fun getState(): Int {
     return super.getState() or (if (frontmatterScriptLexer != null) HAS_NON_RESTARTABLE_STATE else 0)
   }
@@ -85,6 +89,9 @@ class AstroLexerImpl(val project: Project?, private val lexJsFragment: Boolean =
     internal val TAG_TOKENS = TokenSet.create(FRONTMATTER_SCRIPT)
 
     const val HAS_NON_RESTARTABLE_STATE = 1 shl (BASE_STATE_SHIFT + 3)
+
+    fun isPossiblyComponentTag(tagName: CharSequence): Boolean =
+      tagName.isNotEmpty() && tagName[0].isUpperCase()
 
   }
 

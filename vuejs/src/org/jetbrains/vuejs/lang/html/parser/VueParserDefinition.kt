@@ -22,17 +22,20 @@ import org.jetbrains.vuejs.lang.html.psi.impl.VueFileImpl
 class VueParserDefinition : HTMLParserDefinition() {
 
   companion object {
-    fun createLexer(project: Project, interpolationConfig: Pair<String, String>?, parentLangMode: LangMode? = null): Lexer {
+    fun createLexer(project: Project,
+                    interpolationConfig: Pair<String, String>?,
+                    htmlCompatMode: Boolean,
+                    parentLangMode: LangMode? = null): Lexer {
       val level = JSRootConfiguration.getInstance(project).languageLevel
       return VueParsingLexer(
-        VueLexerImpl(if (level.isES6Compatible) level else JSLanguageLevel.ES6, project, interpolationConfig),
+        VueLexerImpl(if (level.isES6Compatible) level else JSLanguageLevel.ES6, project, interpolationConfig, htmlCompatMode),
         parentLangMode
       )
     }
   }
 
   override fun createLexer(project: Project): Lexer {
-    return Companion.createLexer(project, null)
+    return Companion.createLexer(project, null, true)
   }
 
   override fun getFileNodeType(): IFileElementType {

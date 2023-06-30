@@ -1,0 +1,51 @@
+AstroFile:test.astro
+  AstroContentRoot:ASTRO:CONTENT_ROOT
+    PsiElement(XML_PROLOG)
+      <empty list>
+    AstroTag:head
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('head')
+      XmlToken:XML_TAG_END('>')
+      AstroTag:title
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('title')
+        XmlToken:XML_TAG_END('>')
+        HtmlRawText
+          XmlToken:XML_DATA_CHARACTERS('This')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('is')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('<std>title</std>')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_NAME('title')
+        XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n')
+      AstroTag:div
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('div')
+        XmlToken:XML_TAG_END('>')
+        AstroTag:Title
+          XmlToken:XML_START_TAG_START('<')
+          XmlToken:XML_NAME('Title')
+          XmlToken:XML_TAG_END('>')
+          XmlText
+            XmlToken:XML_DATA_CHARACTERS('This')
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('is')
+            PsiWhiteSpace(' ')
+          AstroTag:custom
+            XmlToken:XML_START_TAG_START('<')
+            XmlToken:XML_NAME('custom')
+            XmlToken:XML_TAG_END('>')
+            XmlText
+              XmlToken:XML_DATA_CHARACTERS('title')
+            XmlToken:XML_END_TAG_START('</')
+            XmlToken:XML_NAME('custom')
+            XmlToken:XML_TAG_END('>')
+          XmlToken:XML_END_TAG_START('</')
+          XmlToken:XML_NAME('Title')
+          XmlToken:XML_TAG_END('>')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_NAME('div')
+        XmlToken:XML_TAG_END('>')

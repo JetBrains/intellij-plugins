@@ -90,6 +90,7 @@ class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedConte
 
   private val languageLevel get() = (lexer as VueLexer).languageLevel
   private val langMode get() = (lexer as VueLexer).langMode
+  private val htmlCompatMode get() = (lexer as VueLexer).htmlCompatMode
   private val project get() = (lexer as VueLexer).project
   private val interpolationConfig get() = (lexer as VueLexer).interpolationConfig
 
@@ -204,7 +205,7 @@ class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedConte
       HTML_EMBEDDED_CONTENT -> object : HtmlEmbedmentInfo {
         override fun getElementType(): IElementType = VueElementTypes.VUE_EMBEDDED_CONTENT
         override fun createHighlightingLexer(): Lexer =
-          VueHighlightingLexer(languageLevel, langMode, project, interpolationConfig)
+          VueHighlightingLexer(languageLevel, langMode, project, interpolationConfig, htmlCompatMode)
       }
       null -> HtmlEmbeddedContentProvider.RAW_TEXT_EMBEDMENT
       else -> object : HtmlEmbedmentInfo {

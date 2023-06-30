@@ -519,6 +519,13 @@ class AstroParserTest : HtmlParsingTest("", "astro",
     """)
   }
 
+  fun testTitleHtml() {
+    doTestAstro("""
+      <head><title>This is <std>title</std></title>
+      <div><Title>This is <custom>title</custom></Title></div>
+    """)
+  }
+
   override fun setUp() {
     super.setUp()
 

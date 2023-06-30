@@ -15,7 +15,8 @@ import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION
 
 class VueLexerImpl(override val languageLevel: JSLanguageLevel,
                    override val project: Project?,
-                   override val interpolationConfig: Pair<String, String>?)
+                   override val interpolationConfig: Pair<String, String>?,
+                   override val htmlCompatMode: Boolean)
   : HtmlLexer(VueMergingLexer(FlexAdapter(_VueLexer(interpolationConfig))), true), VueLexer {
 
   override val langMode: LangMode = LangMode.PENDING
@@ -37,9 +38,22 @@ class VueLexerImpl(override val languageLevel: JSLanguageLevel,
     return TokenSet.orSet(super.createTagEmbedmentStartTokenSet(), TAG_TOKENS)
   }
 
+  override fun isPossiblyComponentTag(tagName: CharSequence): Boolean {
+    return !htmlCompatMode && Companion.isPossiblyComponentTag(tagName)
+  }
+
   companion object {
     internal val ATTRIBUTE_TOKENS = TokenSet.create(INTERPOLATION_START, INTERPOLATION_EXPR, INTERPOLATION_END)
     internal val TAG_TOKENS = TokenSet.create(INTERPOLATION_START)
+
+    // There are heavily-used Vue components called like 'Col', 'Input' or 'Title'.
+    // Unlike HTML tags <col> and <input> Vue components do have closing tags and <Title> component can have content.
+    // This condition is a little bit hacky but it's rather tricky to solve the problem in a better way at parser level.
+    fun isPossiblyComponentTag(tagName: CharSequence): Boolean =
+      tagName.length >= 3
+      && tagName[0].isUpperCase()
+      && !tagName.all { it.isUpperCase() }
+
   }
 
   open class VueMergingLexer(original: FlexAdapter) : MergingLexerAdapterBase(original) {

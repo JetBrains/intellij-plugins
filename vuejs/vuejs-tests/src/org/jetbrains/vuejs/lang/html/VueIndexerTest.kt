@@ -11,6 +11,6 @@ import org.jetbrains.vuejs.lang.html.index.VueFilterLexer
 class VueIndexerTest : VueHighlightingLexerTest() {
   override fun createLexer(): Lexer {
     return VueFilterLexer(OccurrenceConsumer(null, false),
-                          VueHighlightingLexer(JSLanguageLevel.ES6, LangMode.DEFAULT, null, interpolationConfig))
+                          VueHighlightingLexer(JSLanguageLevel.ES6, LangMode.DEFAULT, null, interpolationConfig, false))
   }
 }
