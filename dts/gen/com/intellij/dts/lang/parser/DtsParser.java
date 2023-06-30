@@ -595,14 +595,14 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   /* ********************************************************** */
-  // PP_LANGLE PP_PATH PP_RANGLE | PP_DQUOTE PP_PATH PP_DQUOTE
+  // ppSystemHeader | ppUserHeader
   public static boolean ppHeader(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "ppHeader")) return false;
     if (!nextTokenIs(builder_, "<pp header>", PP_DQUOTE, PP_LANGLE)) return false;
     boolean result_;
     com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_, PP_HEADER, "<pp header>");
-    result_ = parseTokens(builder_, 0, PP_LANGLE, PP_PATH, PP_RANGLE);
-    if (!result_) result_ = parseTokens(builder_, 0, PP_DQUOTE, PP_PATH, PP_DQUOTE);
+    result_ = ppSystemHeader(builder_, level_ + 1);
+    if (!result_) result_ = ppUserHeader(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, result_, false, null);
     return result_;
   }
@@ -709,6 +709,19 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   /* ********************************************************** */
+  // PP_LANGLE PP_PATH PP_RANGLE
+  static boolean ppSystemHeader(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "ppSystemHeader")) return false;
+    if (!nextTokenIs(builder_, PP_LANGLE)) return false;
+    boolean result_, pinned_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_);
+    result_ = consumeTokens(builder_, 1, PP_LANGLE, PP_PATH, PP_RANGLE);
+    pinned_ = result_; // pin = 1
+    exit_section_(builder_, level_, marker_, result_, pinned_, null);
+    return result_ || pinned_;
+  }
+
+  /* ********************************************************** */
   // PP_UNDEF PP_SYMBOL
   public static boolean ppUndefStatement(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "ppUndefStatement")) return false;
@@ -716,6 +729,19 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
     boolean result_, pinned_;
     com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_, PP_UNDEF_STATEMENT, null);
     result_ = consumeTokens(builder_, 1, PP_UNDEF, PP_SYMBOL);
+    pinned_ = result_; // pin = 1
+    exit_section_(builder_, level_, marker_, result_, pinned_, null);
+    return result_ || pinned_;
+  }
+
+  /* ********************************************************** */
+  // PP_DQUOTE PP_PATH PP_DQUOTE
+  static boolean ppUserHeader(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "ppUserHeader")) return false;
+    if (!nextTokenIs(builder_, PP_DQUOTE)) return false;
+    boolean result_, pinned_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_);
+    result_ = consumeTokens(builder_, 1, PP_DQUOTE, PP_PATH, PP_DQUOTE);
     pinned_ = result_; // pin = 1
     exit_section_(builder_, level_, marker_, result_, pinned_, null);
     return result_ || pinned_;
@@ -1031,7 +1057,7 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   /* ********************************************************** */
-  // LABEL* <<arg>> LABEL*
+  // LABEL* <<arg>> trailingLabels?
   static boolean value(com.intellij.lang.PsiBuilder builder_, int level_, Parser arg) {
     if (!recursion_guard_(builder_, level_, "value")) return false;
     boolean result_;
@@ -1054,14 +1080,10 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
     return true;
   }
 
-  // LABEL*
+  // trailingLabels?
   private static boolean value_2(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "value_2")) return false;
-    while (true) {
-      int pos_ = current_position_(builder_);
-      if (!consumeToken(builder_, LABEL)) break;
-      if (!empty_element_parsed_guard_(builder_, "value_2", pos_)) break;
-    }
+    parseTrailingLabels(builder_, level_ + 1);
     return true;
   }
 

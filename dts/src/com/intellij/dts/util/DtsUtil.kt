@@ -50,7 +50,7 @@ object DtsUtil {
      * - whit space
      * - any kind of preprocessor statement
      */
-    fun isProductiveElement(type: IElementType?): Boolean {
+    private fun isProductiveElement(type: IElementType?): Boolean {
         if (type == null) return false
 
         return type != TokenType.WHITE_SPACE && type !in DtsTokenSets.comments && type !in DtsTokenSets.preprocessorStatements

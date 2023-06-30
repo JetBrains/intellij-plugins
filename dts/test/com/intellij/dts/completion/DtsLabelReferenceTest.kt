@@ -32,6 +32,14 @@ class DtsLabelReferenceTest : DtsCompletionTest() {
         useNodeContentVariations = true,
     )
 
+    fun testLabelBelowValue() = doTest(
+        "prop = &<caret>",
+        listOf("label"),
+        prefix = "/ { ",
+        suffix = "label: node {}; };",
+        useNodeContentVariations = true,
+    )
+
     fun testIncludeLabel() = doTest(
         "&<caret>",
         listOf("labelA"),
@@ -83,7 +91,7 @@ class DtsLabelReferenceTest : DtsCompletionTest() {
 
             val lookups = myFixture.complete(CompletionType.BASIC)
                 .map { it.lookupString }
-                .filter { it != "variations-label" }
+                .filter { it != "variations_label" }
 
             if (labels.isEmpty()) {
                 assertEmpty(lookups)

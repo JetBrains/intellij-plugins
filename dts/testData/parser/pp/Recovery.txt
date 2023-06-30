@@ -12,10 +12,11 @@ DTS file
   DtsPpIncludeStatementImpl(PP_INCLUDE_STATEMENT)
     PsiElement(#include)('#include')
     PsiWhiteSpace(' ')
-    PsiElement(")('"')
-    PsiElement(path)('header')
-    PsiErrorElement:'"' expected
-      <empty list>
+    DtsPpHeaderImpl(PP_HEADER)
+      PsiElement(")('"')
+      PsiElement(path)('header')
+      PsiErrorElement:'"' expected
+        <empty list>
   PsiWhiteSpace('\n')
   DtsEntryImpl(ENTRY)
     DtsCompilerDirectiveImpl(COMPILER_DIRECTIVE)

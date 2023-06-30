@@ -7,6 +7,12 @@ class DtsSemicolonTypingTest : DtsCompletionTest() {
         useNodeContentVariations = true,
     )
 
+    fun testValidPropertyWithLabel() = doEnterTest(
+        "prop = <> label:<caret>",
+        "prop = <> label:;\n<caret>",
+        useNodeContentVariations = true,
+    )
+
     fun testValidEmptyProperty() = doEnterTest(
         "prop <caret>",
         "prop \n<caret>",

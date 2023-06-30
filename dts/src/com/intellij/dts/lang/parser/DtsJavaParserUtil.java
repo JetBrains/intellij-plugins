@@ -13,4 +13,16 @@ public class DtsJavaParserUtil extends GeneratedParserUtilBase {
 
         return new DtsBuildAdapter(builder, state, parser);
     }
+
+    public static void exit_section_(PsiBuilder builder, int level, PsiBuilder.Marker marker, boolean result, boolean pinned, Parser eatMore) {
+        exit_section_(builder, level, marker, null, result, pinned, eatMore);
+    }
+
+    public static void exit_section_(PsiBuilder builder, int level, PsiBuilder.Marker marker, IElementType elementType, boolean result, boolean pinned, Parser eatMore) {
+        if (!result && pinned && DtsParserUtil.INSTANCE.couldContainPreprocessorStatement(builder, marker)) {
+            DtsParserUtil.INSTANCE.rollbackPreprocessorStatements(builder, marker);
+        }
+
+        GeneratedParserUtilBase.exit_section_(builder, level, marker, elementType, result, pinned, eatMore);
+    }
 }

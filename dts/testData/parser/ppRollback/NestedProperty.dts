@@ -1,0 +1,7 @@
+/ {
+    node {
+        node {
+            prop = "value"
+
+            <pp-statement>
+};

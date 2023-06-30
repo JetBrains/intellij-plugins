@@ -6,7 +6,7 @@ abstract class DtsCompletionTest : BasePlatformTestCase() {
     companion object {
         private val nodeContentVariations = listOf(
             "node {};",
-            "variations-label: node {};",
+            "variations_label: node {};",
             "/omit-if-no-ref/ node {};",
             "// comment",
             "/include/ \"file.dtsi\"",
@@ -18,7 +18,7 @@ abstract class DtsCompletionTest : BasePlatformTestCase() {
         private val rootContentVariations = listOf(
             "/ {};",
             "&handel {};",
-            "variations-label: &handel {};",
+            "variations_label: &handel {};",
             "// comment",
             "/include/ \"file.dtsi\"",
             "/delete-node/ &handel;",
