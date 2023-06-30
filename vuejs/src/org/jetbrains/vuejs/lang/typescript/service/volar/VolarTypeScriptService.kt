@@ -39,10 +39,18 @@ class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(projec
     return TypeScriptQuickInfoResponse().apply {
       val content = HtmlBuilder().appendRaw(convertMarkupContentToHtml(markupContent)).toString()
       val index = content.indexOf("<p>")
+      val hrIndex = content.indexOf("<hr />")
 
       val firstPart: String
       val secondPart: String?
-      if (index > -1) {
+      if (hrIndex > -1) {
+        // it has been proved that @vue/language-server@1.8.2 sometimes returns a duplicated symbol definition joined by a Markdown "---";
+        // let's guard against this case by throwing away everything below it;
+        // otherwise, our TypeScriptServiceQuickInfoParser can't deal with that, especially with possible generics inside.
+        firstPart = content.substring(0, hrIndex)
+        secondPart = null
+      }
+      else if (index > -1) {
         firstPart = content.substring(0, index)
         secondPart = content.substring(index)
       }
