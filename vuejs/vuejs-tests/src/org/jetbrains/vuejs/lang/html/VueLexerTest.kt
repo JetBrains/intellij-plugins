@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang.html
 
-import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lexer.Lexer
 import com.intellij.testFramework.LexerTestCase
 import com.intellij.testFramework.LightProjectDescriptor
@@ -17,7 +16,7 @@ open class VueLexerTest : LexerTestCase() {
 
   protected var interpolationConfig: Pair<String, String>? = null
 
-  override fun createLexer(): Lexer = VueParserDefinition.createLexer(fixture.project, interpolationConfig)
+  override fun createLexer(): Lexer = VueParserDefinition.createLexer(fixture.project, interpolationConfig, false)
 
   override fun getDirPath() = "html/lexer"
 
@@ -447,6 +446,10 @@ open class VueLexerTest : LexerTestCase() {
 
   fun testTextarea() {
     doTest("<textarea>with { some } {{wierd}} <stuff> in it</textarea>")
+  }
+
+  fun testTitleComponent(){
+    doTest("<head><title>This is <std>title</std></title><div><Title>This is <custom>title</custom></Title></div>")
   }
 
   override fun doTest(@NonNls text: String) {

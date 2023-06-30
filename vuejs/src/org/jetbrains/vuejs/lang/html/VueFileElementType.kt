@@ -73,11 +73,12 @@ class VueFileElementType : IStubFileElementType<VueFileStubImpl>("vue", VueLangu
     // TODO support for custom delimiters - port to Angular and merge
     if (languageForParser === VueLanguage.INSTANCE) {
       val project = psi.project
-      val lexer = VueParserDefinition.createLexer(project, delimiters)
+      val htmlCompatMode = !psi.containingFile.isDotVueFile
+      val lexer = VueParserDefinition.createLexer(project, delimiters, htmlCompatMode)
       val builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, lexer, languageForParser, chameleon.chars)
       lexer as VueParsingLexer
       builder.putUserData(VueScriptLangs.LANG_MODE, lexer.lexedLangMode) // read in VueParsing
-      builder.putUserData(VueParsing.HTML_COMPAT_MODE, !psi.containingFile.isDotVueFile)
+      builder.putUserData(VueParsing.HTML_COMPAT_MODE, htmlCompatMode)
       psi.putUserData(VueScriptLangs.LANG_MODE, lexer.lexedLangMode) // read in VueElementTypes
       val parser = LanguageParserDefinitions.INSTANCE.forLanguage(languageForParser)!!.createParser(project)
       val node = parser.parse(this, builder)

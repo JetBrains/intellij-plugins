@@ -1,0 +1,54 @@
+HtmlFile:test.vue
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    HtmlTag:head
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('head')
+      XmlToken:XML_TAG_END('>')
+      HtmlTag:title
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('title')
+        XmlToken:XML_TAG_END('>')
+        HtmlRawText
+          XmlToken:XML_DATA_CHARACTERS('This')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('is')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('<std>title</std>')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_NAME('title')
+        XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n')
+      HtmlTag:div
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('div')
+        XmlToken:XML_TAG_END('>')
+        HtmlTag:Title
+          XmlToken:XML_START_TAG_START('<')
+          XmlToken:XML_NAME('Title')
+          XmlToken:XML_TAG_END('>')
+          XmlText
+            XmlToken:XML_DATA_CHARACTERS('This')
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('is')
+            PsiWhiteSpace(' ')
+          HtmlTag:custom
+            XmlToken:XML_START_TAG_START('<')
+            XmlToken:XML_NAME('custom')
+            XmlToken:XML_TAG_END('>')
+            XmlText
+              XmlToken:XML_DATA_CHARACTERS('title')
+            XmlToken:XML_END_TAG_START('</')
+            XmlToken:XML_NAME('custom')
+            XmlToken:XML_TAG_END('>')
+          XmlToken:XML_END_TAG_START('</')
+          XmlToken:XML_NAME('Title')
+          XmlToken:XML_TAG_END('>')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_NAME('div')
+        XmlToken:XML_TAG_END('>')
+      PsiErrorElement:Element head is not closed
+        <empty list>
+  PsiElement(VUE_LANG_MODE_NO_TS)('')

@@ -20,7 +20,8 @@ import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION
 internal class VueFileHighlighter(private val languageLevel: JSLanguageLevel,
                                   private val langMode: LangMode,
                                   private val project: Project?,
-                                  private val myInterpolationConfig: Pair<String, String>?) : HtmlFileHighlighter() {
+                                  private val interpolationConfig: Pair<String, String>?,
+                                  private val htmlCompatMode: Boolean) : HtmlFileHighlighter() {
 
   override fun getTokenHighlights(tokenType: IElementType): Array<TextAttributesKey> {
     keys[tokenType]?.let { return it }
@@ -28,7 +29,7 @@ internal class VueFileHighlighter(private val languageLevel: JSLanguageLevel,
   }
 
   override fun getHighlightingLexer(): Lexer {
-    return VueHighlightingLexer(languageLevel, langMode, project, myInterpolationConfig)
+    return VueHighlightingLexer(languageLevel, langMode, project, interpolationConfig, htmlCompatMode)
   }
 
   companion object {

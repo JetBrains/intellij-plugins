@@ -17,6 +17,7 @@ import org.jetbrains.vuejs.lang.LangMode
 import org.jetbrains.vuejs.lang.VueScriptLangs
 import org.jetbrains.vuejs.lang.expr.parser.VueJSEmbeddedExprTokenType
 import org.jetbrains.vuejs.lang.html.lexer.VueLangModeMarkerElementType
+import org.jetbrains.vuejs.lang.html.lexer.VueLexerImpl
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_END
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_START
 import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes.SCRIPT_SETUP_JS_EMBEDDED_CONTENT
@@ -27,19 +28,6 @@ import java.util.*
 class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
   private val langMode: LangMode = builder.getUserData(VueScriptLangs.LANG_MODE) ?: LangMode.DEFAULT
   private val htmlCompatMode: Boolean = HTML_COMPAT_MODE.get(builder)
-
-  override fun isSingleTag(tagInfo: HtmlTagInfo): Boolean {
-    // There are heavily-used Vue components called like 'Col' or 'Input'. Unlike HTML tags <col> and <input> Vue components do have closing tags.
-    // The following 'if' is a little bit hacky but it's rather tricky to solve the problem in a better way at parser level.
-    val normalizedTagName = tagInfo.normalizedName
-    val originalTagName = tagInfo.originalName
-    if (normalizedTagName.length >= 3
-        && normalizedTagName != originalTagName
-        && !originalTagName.all { it.isUpperCase() }) {
-      return false
-    }
-    return super.isSingleTag(tagInfo)
-  }
 
   override fun hasCustomTagContent(): Boolean {
     return token() === INTERPOLATION_START
@@ -161,6 +149,11 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
 
   override fun createHtmlTagInfo(originalTagName: String, startMarker: PsiBuilder.Marker): HtmlTagInfoImpl {
     return VueHtmlTagInfo(normalizeTagName(originalTagName), originalTagName, startMarker, inVPreContext())
+  }
+
+  override fun isSingleTag(tagInfo: HtmlTagInfo): Boolean {
+    return (htmlCompatMode || !VueLexerImpl.isPossiblyComponentTag(tagInfo.originalName))
+           && super.isSingleTag(tagInfo)
   }
 
   override fun isEndTagRequired(tagInfo: HtmlTagInfo): Boolean =

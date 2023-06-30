@@ -428,6 +428,20 @@ class VueParserTest : HtmlParsingTest("", "vue",
     """.trimIndent())
   }
 
+  fun testTitleVue() {
+    doTestVue("""
+      <head><title>This is <std>title</std></title>
+      <div><Title>This is <custom>title</custom></Title></div>
+    """.trimIndent())
+  }
+
+  fun testTitleHtml() {
+    super.doTest("""
+      <head><title>This is <std>title</std></title>
+      <div><Title>This is <custom>title</custom></Title></div>
+    """.trimIndent(), "test.html")
+  }
+
   fun testLangReparse() {
     val baseText = """
       <script lang="js">

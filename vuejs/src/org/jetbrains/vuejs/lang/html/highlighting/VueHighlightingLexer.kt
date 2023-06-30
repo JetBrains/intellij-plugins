@@ -22,7 +22,8 @@ import org.jetbrains.vuejs.lang.html.lexer._VueLexer
 class VueHighlightingLexer(override val languageLevel: JSLanguageLevel,
                            override val langMode: LangMode,
                            override val project: Project?,
-                           override val interpolationConfig: Pair<String, String>?)
+                           override val interpolationConfig: Pair<String, String>?,
+                           override val htmlCompatMode: Boolean)
   : HtmlHighlightingLexer(VueHighlightingMergingLexer(FlexAdapter(_VueLexer(interpolationConfig))),
                           true, null), VueLexer {
 
@@ -42,6 +43,10 @@ class VueHighlightingLexer(override val languageLevel: JSLanguageLevel,
 
   override fun createTagEmbedmentStartTokenSet(): TokenSet {
     return TokenSet.orSet(super.createTagEmbedmentStartTokenSet(), VueLexerImpl.TAG_TOKENS)
+  }
+
+  override fun isPossiblyComponentTag(tagName: CharSequence): Boolean {
+    return !htmlCompatMode && VueLexerImpl.isPossiblyComponentTag(tagName)
   }
 
   override fun getTokenType(): IElementType? {
