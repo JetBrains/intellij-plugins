@@ -26,6 +26,8 @@ public class PostCssSyntaxHighlighter extends CssHighlighter {
   public static final TextAttributesKey PROPERTY_NAME = createTextAttributesKey("POST_CSS_PROPERTY_NAME", CssHighlighter.CSS_PROPERTY_NAME);
   public static final TextAttributesKey PROPERTY_VALUE =
     createTextAttributesKey("POST_CSS_PROPERTY_VALUE", CssHighlighter.CSS_PROPERTY_VALUE);
+  public static final TextAttributesKey UNIT =
+    createTextAttributesKey("POST_CSS_UNIT", CssHighlighter.CSS_UNIT);
   public static final TextAttributesKey FUNCTION = createTextAttributesKey("POST_CSS_FUNCTION", CssHighlighter.CSS_FUNCTION);
   public static final TextAttributesKey URL = createTextAttributesKey("POST_CSS_URL", CssHighlighter.CSS_URL);
   public static final TextAttributesKey NUMBER = createTextAttributesKey("POST_CSS_NUMBER", CssHighlighter.CSS_NUMBER);
@@ -46,6 +48,7 @@ public class PostCssSyntaxHighlighter extends CssHighlighter {
   public static final TextAttributesKey COMMA = createTextAttributesKey("POST_CSS_COMMA", CssHighlighter.CSS_COMMA);
   public static final TextAttributesKey OPERATORS = createTextAttributesKey("POST_CSS_OPERATORS", CssHighlighter.CSS_OPERATORS);
   public static final TextAttributesKey BAD_CHARACTER = createTextAttributesKey("POST_CSS_BAD_CHARACTER", CssHighlighter.CSS_BAD_CHARACTER);
+  public static final TextAttributesKey AMPERSAND = createTextAttributesKey("POST_CSS_AMPERSAND", CssHighlighter.CSS_AMPERSAND_SELECTOR);
 
   static {
     mapping = new HashMap<>();
@@ -58,6 +61,7 @@ public class PostCssSyntaxHighlighter extends CssHighlighter {
     mapping.put(CssElementTypes.CSS_IMPORTANT, IMPORTANT);
     mapping.put(CssElementTypes.CSS_PROPERTY_NAME, PROPERTY_NAME);
     mapping.put(CssElementTypes.CSS_PROPERTY_VALUE, PROPERTY_VALUE);
+    mapping.put(CssElementTypes.CSS_UNIT, UNIT);
     mapping.put(CssElementTypes.CSS_TAG_NAME, TAG_NAME);
     mapping.put(CssElementTypes.CSS_FUNCTION_TOKEN, FUNCTION);
     mapping.put(CssElementTypes.CSS_URI_START, FUNCTION);
@@ -77,6 +81,7 @@ public class PostCssSyntaxHighlighter extends CssHighlighter {
     mapping.put(CssElementTypes.CSS_SEMICOLON, SEMICOLON);
     mapping.put(CssElementTypes.CSS_BAD_CHARACTER, BAD_CHARACTER);
     mapping.put(CssElementTypes.CSS_KEYWORD, KEYWORD);
+    mapping.put(PostCssTokenTypes.AMPERSAND, AMPERSAND);
     for (IElementType type : PostCssTokenTypes.POST_CSS_COMMENTS.getTypes()) {
       mapping.put(type, COMMENT);
     }

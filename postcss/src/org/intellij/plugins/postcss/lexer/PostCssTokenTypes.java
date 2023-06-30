@@ -17,6 +17,6 @@ public interface PostCssTokenTypes {
   IElementType POST_CSS_SIMPLE_VARIABLE_TOKEN = new PostCssElementType("POST_CSS_SIMPLE_VARIABLE_TOKEN");
 
   TokenSet KEYWORDS = TokenSet.create(POST_CSS_NEST_SYM, POST_CSS_CUSTOM_SELECTOR_SYM, POST_CSS_CUSTOM_MEDIA_SYM);
-  TokenSet IDENTIFIERS = TokenSet.create(AMPERSAND, HASH_SIGN);
+  TokenSet IDENTIFIERS = TokenSet.create(HASH_SIGN);
   TokenSet POST_CSS_COMMENTS = TokenSet.orSet(CssElementTypes.COMMENTS, TokenSet.create(POST_CSS_COMMENT));
 }

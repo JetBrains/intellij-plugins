@@ -6,7 +6,6 @@ import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
 import com.intellij.psi.css.CssBundle;
-import com.intellij.psi.css.impl.util.CssHighlighter;
 import org.intellij.plugins.postcss.PostCssBundle;
 import org.intellij.plugins.postcss.PostCssIcons;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +15,7 @@ import javax.swing.*;
 import java.util.Map;
 
 public class PostCssColorsPage implements ColorSettingsPage {
-  private static final Map<String, TextAttributesKey> ADDITIONAL_ATTRIBUTES_KEY_MAP = Map.of("tag", PostCssSyntaxHighlighter.TAG_NAME, "id", CssHighlighter.CSS_ID_SELECTOR, "class", CssHighlighter.CSS_CLASS_NAME, "attr", CssHighlighter.CSS_ATTRIBUTE_NAME);
+  private static final Map<String, TextAttributesKey> ADDITIONAL_ATTRIBUTES_KEY_MAP = Map.of("tag", PostCssSyntaxHighlighter.TAG_NAME, "class", PostCssSyntaxHighlighter.CLASS_NAME, "attr", PostCssSyntaxHighlighter.ATTRIBUTE_NAME);
   private static final String DEMO_TEXT = """
     @import "manual.css";
 
@@ -25,27 +24,35 @@ public class PostCssColorsPage implements ColorSettingsPage {
       src: url(DroidSans.ttf);
       unicode-range: U+000-5FF, U+1e00-1fff, U+2000-2300;
     }
-
-    @media (500px < width <= 1200px) and (height >= 400px){
-      color: red;
+    
+    :root {
+      --primary-color: #FFA500;
     }
 
-    <tag>h1</tag>.<class>mystyle</class>:lang(en) {
-      color:blue; /* TODO: change THIS to yellow for next version! */
-      border:rgb(255,0,0);
-      background-color: #FAFAFA;
-      background:url(hello.jpg) !important;
-      @nest span &, #&-id {
-        color: yellow;
+    @media (500px < width <= 1200px) and (height >= 400px) {
+      color: rgb(255, 0, 0);
+    }
+    
+    <tag>h2</tag>.<class>special-title</class>:lang(en) {
+      color: blue; /* comment */
+
+      @nest #hero &, &:hover {
+        color: var(--primary-color, red);
       }
     }
 
-    <tag>div</tag> > <tag>p</tag>, <tag>p</tag> ~ <tag>ul</tag>, <tag>input</tag> [<attr>type</attr>="radio"] {
-      width: 80%;
+    <tag>a</tag>[<attr>type</attr>$=".pdf"]:after {
+      content: '(' url(pdf.svg) attr(data-size) ')';
     }
 
-    <id>#header</id>:after {
-      color: red;
+    <tag>div</tag> > <tag>p</tag>,
+    <tag>p</tag> ~ <tag>ul</tag>,
+    <tag>p</tag> + <tag>blockquote</tag> {
+      width: 80% !important;
+    }
+    
+    * {
+      box-sizing: border-box;
     }
 
     !""";
@@ -71,12 +78,14 @@ public class PostCssColorsPage implements ColorSettingsPage {
     new AttributesDescriptor(CssBundle.message("css.parenthesis"), PostCssSyntaxHighlighter.PARENTHESES),
     new AttributesDescriptor(CssBundle.message("css.property.name"), PostCssSyntaxHighlighter.PROPERTY_NAME),
     new AttributesDescriptor(CssBundle.message("css.property.value"), PostCssSyntaxHighlighter.PROPERTY_VALUE),
+    new AttributesDescriptor(CssBundle.message("css.unit"), PostCssSyntaxHighlighter.UNIT),
     new AttributesDescriptor(CssBundle.message("css.pseudo.selector"), PostCssSyntaxHighlighter.PSEUDO),
     new AttributesDescriptor(CssBundle.message("css.semicolon"), PostCssSyntaxHighlighter.SEMICOLON),
     new AttributesDescriptor(CssBundle.message("css.string"), PostCssSyntaxHighlighter.STRING),
     new AttributesDescriptor(CssBundle.message("css.tag.name"), PostCssSyntaxHighlighter.TAG_NAME),
     new AttributesDescriptor(CssBundle.message("css.unicode.range"), PostCssSyntaxHighlighter.UNICODE_RANGE),
     new AttributesDescriptor(CssBundle.message("css.url"), PostCssSyntaxHighlighter.URL),
+    new AttributesDescriptor(PostCssBundle.message("postcss.ampersand"), PostCssSyntaxHighlighter.AMPERSAND),
   };
 
   @Override
