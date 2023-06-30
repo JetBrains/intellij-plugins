@@ -80,4 +80,29 @@ abstract class DtsCompletionTest : BasePlatformTestCase() {
         useRootContentVariations: Boolean = false,
         useNodeContentVariations: Boolean = false,
     ) = doTypeTest("\n", input, after, useRootContentVariations, useNodeContentVariations)
+
+    private fun doCompletion(lookupString: String) {
+        val items = myFixture.completeBasic() ?: return
+        val lookupItem = items.find { it.lookupString == lookupString } ?: return
+        myFixture.lookup.currentItem = lookupItem
+        myFixture.type('\n')
+    }
+
+    fun doCompletionTest(
+        lookupString: String,
+        input: String,
+        after: String,
+        useRootContentVariations: Boolean = false,
+        useNodeContentVariations: Boolean = false,
+    ) {
+        require(input.contains("<caret>") && after.contains("<caret>")) {
+            "Test input and after must contain \"<caret>\" to indicate caret position"
+        }
+
+        applyVariations(useRootContentVariations, useNodeContentVariations) { apply ->
+            configureByText(apply(input))
+            doCompletion(lookupString)
+            myFixture.checkResult(apply(after))
+        }
+    }
 }

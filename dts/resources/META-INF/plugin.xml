@@ -58,10 +58,19 @@
                 language="DTS"
                 implementationClass="com.intellij.dts.completion.DtsBraceMatcher"/>
 
-        <enterHandlerDelegate implementation="com.intellij.dts.completion.DtsSemicolonEnterHandler"/>
+        <enterHandlerDelegate
+                implementation="com.intellij.dts.completion.DtsSemicolonEnterHandler"/>
 
-        <typedHandler implementation="com.intellij.dts.completion.DtsAngularBraceTypedHandler"/>
-        <backspaceHandlerDelegate implementation="com.intellij.dts.completion.DtsAngularBraceBackspaceHandler"/>
+        <typedHandler
+                implementation="com.intellij.dts.completion.DtsAngularBraceTypedHandler"/>
+        <backspaceHandlerDelegate
+                implementation="com.intellij.dts.completion.DtsAngularBraceBackspaceHandler"/>
+
+        <completion.contributor
+                language="DTS"
+                implementationClass="com.intellij.dts.completion.DtsCompilerDirectiveCompletionContributor"/>
+        <typedHandler
+                implementation="com.intellij.dts.completion.DtsCompilerDirectiveCompletionContributor$AutoPopup"/>
 
         <!-- inspections -->
         <localInspection
