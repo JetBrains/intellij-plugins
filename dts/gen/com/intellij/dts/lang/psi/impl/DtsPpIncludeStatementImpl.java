@@ -3,9 +3,9 @@ package com.intellij.dts.lang.psi.impl;
 
 import static com.intellij.dts.lang.psi.DtsTypes.*;
 
-public class DtsPpIncludeStatementImpl extends com.intellij.extapi.psi.ASTWrapperPsiElement implements com.intellij.dts.lang.psi.DtsPpIncludeStatement {
+public class DtsPpIncludeStatementImpl extends com.intellij.dts.lang.psi.mixin.PpIncludeStatementMixin implements com.intellij.dts.lang.psi.DtsPpIncludeStatement {
 
-  public DtsPpIncludeStatementImpl(@org.jetbrains.annotations.NotNull com.intellij.lang.ASTNode node) {
+  public DtsPpIncludeStatementImpl(com.intellij.lang.ASTNode node) {
     super(node);
   }
 

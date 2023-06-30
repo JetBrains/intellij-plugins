@@ -52,9 +52,15 @@
   implements("string")="com.intellij.dts.lang.psi.DtsValue.String"
   mixin("string")="com.intellij.dts.lang.psi.mixin.DtsStringMixin"
 
+  implements("includeStatement")="com.intellij.dts.lang.psi.FileInclude"
+  mixin("includeStatement")="com.intellij.dts.lang.psi.mixin.DtsIncludeStatementMixin"
+
   extends(".*Expr")=expr
 
   // c preprocessor rules
+
+  implements("ppIncludeStatement")="com.intellij.dts.lang.psi.FileInclude"
+  mixin("ppIncludeStatement")="com.intellij.dts.lang.psi.mixin.PpIncludeStatementMixin"
 
   tokens=[
     COMMENT_EOL="COMMENT_EOL"

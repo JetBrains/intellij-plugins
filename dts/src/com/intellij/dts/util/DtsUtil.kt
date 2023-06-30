@@ -2,6 +2,7 @@ package com.intellij.dts.util
 
 import com.intellij.dts.lang.DtsTokenSets
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.elementType
@@ -53,5 +54,17 @@ object DtsUtil {
         if (type == null) return false
 
         return type != TokenType.WHITE_SPACE && type !in DtsTokenSets.comments && type !in DtsTokenSets.preprocessorStatements
+    }
+
+    fun resolveRelativeFile(anchor: PsiFile, path: String): PsiFile? {
+        val context = anchor.originalFile.virtualFile
+        if (!context.isValid) return null
+
+        val file = context.parent?.findFileByRelativePath(path) ?: return null
+        val psiFile = anchor.manager.findFile(file) ?: return null
+
+        if (!psiFile.isValid) return null
+
+        return psiFile
     }
 }

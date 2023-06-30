@@ -2,7 +2,7 @@
 package com.intellij.dts.lang.psi;
 
 
-public interface DtsIncludeStatement extends com.intellij.psi.PsiElement {
+public interface DtsIncludeStatement extends com.intellij.dts.lang.psi.FileInclude {
 
   @org.jetbrains.annotations.Nullable
   com.intellij.dts.lang.psi.DtsString getString();
