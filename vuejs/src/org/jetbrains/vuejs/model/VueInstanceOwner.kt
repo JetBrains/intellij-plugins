@@ -126,7 +126,7 @@ private fun contributeComponentProperties(instance: VueInstanceOwner,
       }
 
       override fun visitInject(inject: VueInject, proximity: Proximity): Boolean {
-        if (inject is VueScriptSetupInfoProvider.VueScriptSetupInject) return true
+        if (inject is VueCallInject) return true
 
         val sourceElement = inject.source ?: return true
         val defaultValue = inject.defaultValue

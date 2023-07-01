@@ -22,7 +22,6 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
@@ -322,26 +321,6 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
         .asSafely<JSCallExpression>()
         ?.takeIf { VueFrameworkHandler.getFunctionNameFromVueIndex(it) == DEFINE_PROPS_FUN }
 
-    private fun analyzeProvide(call: JSCallExpression): VueProvide? {
-      val referenceName = VueFrameworkHandler.getFunctionImplicitElement(call)?.userStringData
-      val literal = call.stubSafeCallArguments.getOrNull(0).asSafely<JSLiteralExpression>()
-      return when {
-        referenceName != null -> JSStubBasedPsiTreeUtil.resolveLocally(referenceName, call).asSafely<PsiNamedElement>()
-          ?.let { VueSourceProvide(referenceName, call, it) }
-        literal != null -> getLiteralValue(literal)?.let { VueSourceProvide(it, literal) }
-        else -> null
-      }
-    }
-
-    private fun analyzeInject(call: JSCallExpression): VueInject? {
-      val arguments = call.stubSafeCallArguments
-      val injectionKey = arguments.getOrNull(0)
-      if (injectionKey is JSLiteralExpression) {
-        return getLiteralValue(injectionKey)?.let { VueScriptSetupInject(it, injectionKey) }
-      }
-      return null
-    }
-
     private fun getLiteralValue(literal: JSLiteralExpression): String? =
       literal.significantValue
         ?.let { unquoteWithoutUnescapingStringLiteralValue(it) }
@@ -439,8 +418,5 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
     override val hasStrictSignature: Boolean = true
   }
-
-  class VueScriptSetupInject(override val name: String,
-                             override val source: PsiElement) : VueInject
 
 }
