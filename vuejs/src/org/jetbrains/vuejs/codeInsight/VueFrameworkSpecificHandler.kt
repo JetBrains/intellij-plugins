@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.html.webSymbols.attributes.WebSymbolAttributeDescriptor
 import com.intellij.javascript.webSymbols.jsType
+import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.frameworks.JSFrameworkSpecificHandler
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
@@ -11,14 +12,26 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.context.hasPinia
+import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.lang.expr.VueExprMetaLanguage
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
+import org.jetbrains.vuejs.model.VueModelManager
+import org.jetbrains.vuejs.model.evaluateInjectedType
+import org.jetbrains.vuejs.model.findInjectForCall
+import org.jetbrains.vuejs.model.provides
+import org.jetbrains.vuejs.model.source.INJECT_FUN
 
 class VueFrameworkSpecificHandler : JSFrameworkSpecificHandler {
   override fun useMoreAccurateEvaluation(context: PsiElement): Boolean =
     hasPinia(context)
 
   override fun findExpectedType(element: PsiElement, parent: PsiElement?, expectedTypeKind: JSExpectedTypeKind): JSType? {
+    if (DialectDetector.isJavaScript(element) &&
+        element is JSCallExpression &&
+        VueFrameworkHandler.getFunctionNameFromVueIndex(element) == INJECT_FUN) {
+      return getInjectType(element)
+    }
+
     if (isTopmostVueExpression(element, parent)) {
       val attribute = element.parentOfTypeInAttribute<XmlAttribute>() ?: return null
       val attributeInfo = VueAttributeNameParser.parse(attribute.name, attribute.parent)
@@ -30,6 +43,12 @@ class VueFrameworkSpecificHandler : JSFrameworkSpecificHandler {
     }
 
     return null
+  }
+
+  private fun getInjectType(call: JSCallExpression): JSType? {
+    val component = VueModelManager.findEnclosingComponent(call) ?: return null
+    val inject = findInjectForCall(call, component) ?: return null
+    return evaluateInjectedType(inject, component.global.provides)
   }
 
   private fun isTopmostVueExpression(element: PsiElement, parent: PsiElement?) =

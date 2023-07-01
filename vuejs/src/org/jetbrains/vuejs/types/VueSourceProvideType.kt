@@ -43,12 +43,6 @@ class VueSourceProvideType private constructor(typeSource: JSTypeSource,
            }?.let { VueUnwrapRefType(it, element) } ?: JSUnknownType.TS_INSTANCE
   }
 
-  private fun inferTypeFromCallExpr(element: JSCallExpression?): JSType? =
-    element
-      ?.arguments
-      ?.getOrNull(1)
-      ?.let { JSCodeBasedTypeFactory.getCodeBasedType(it, true, false) }
-
   override fun hashCodeImpl(): Int = Objects.hash(element, symbolSource)
 
   override fun buildTypeTextImpl(format: JSType.TypeTextFormat, builder: JSTypeTextBuilder) {
@@ -57,6 +51,14 @@ class VueSourceProvideType private constructor(typeSource: JSTypeSource,
       return
     }
     substitute().buildTypeText(format, builder)
+  }
+
+  companion object {
+    fun inferTypeFromCallExpr(element: JSCallExpression?): JSType? =
+      element
+        ?.arguments
+        ?.getOrNull(1)
+        ?.let { JSCodeBasedTypeFactory.getCodeBasedType(it, true, false) }
   }
 
 }
