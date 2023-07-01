@@ -324,6 +324,9 @@
     <vuejs.containerInfoProvider implementation="org.jetbrains.vuejs.model.source.VueScriptSetupInfoProvider"
                                  id="scriptSetup"
                                  order="after default, before decoratedComponent"/>
+    <vuejs.containerInfoProvider implementation="org.jetbrains.vuejs.model.source.VueSetupMethodInfoProvider"
+                                 id="setupMethod"
+                                 order="after default, before decoratedComponent"/>
     <vuejs.containerInfoProvider implementation="org.jetbrains.vuejs.libraries.componentDecorator.VueDecoratedComponentInfoProvider"
                                  id="decoratedComponent"
                                  order="after default"/>
