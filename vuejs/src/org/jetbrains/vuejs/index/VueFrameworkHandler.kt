@@ -569,7 +569,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
         .setUserStringWithData(
           vueFrameworkHandler,
           METHOD_NAME_USER_STRING,
-          if (referenceName == PROVIDE_FUN) {
+          if (referenceName == PROVIDE_FUN || referenceName == INJECT_FUN) {
             callExpression.arguments
               .getOrNull(0)
               .asSafely<JSReferenceExpression>()

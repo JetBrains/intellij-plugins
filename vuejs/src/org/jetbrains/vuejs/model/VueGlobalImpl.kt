@@ -164,34 +164,35 @@ internal class VueGlobalImpl(override val project: Project, override val package
   }
 }
 
-fun VueGlobal?.collectProvides(): List<VueProvideEntry> {
-  if (this == null) return emptyList()
+val VueGlobal?.provides: List<VueProvideEntry>
+  get() {
+    if (this == null) return emptyList()
 
-  val provides = mutableListOf<VueProvideEntry>()
-  val visited = mutableSetOf<VueScopeElement>()
+    val entries = mutableListOf<VueProvideEntry>()
+    val visited = mutableSetOf<VueScopeElement>()
 
-  fun acceptElement(element: VueScopeElement?) {
-    if (element == null || !visited.add(element)) return
+    fun acceptElement(element: VueScopeElement?) {
+      if (element == null || !visited.add(element)) return
 
-    if (element is VueContainer) {
-      element.provides.forEach {
-        provides.add(VueProvideEntry(it, element))
+      if (element is VueContainer) {
+        element.provides.forEach {
+          entries.add(VueProvideEntry(it, element))
+        }
+      }
+
+      if (element is VueGlobal) {
+        element.apps.forEach {
+          acceptElement(it)
+        }
+        element.unregistered.components.values.forEach {
+          acceptElement(it)
+        }
       }
     }
 
-    if (element is VueGlobal) {
-      element.apps.forEach {
-        acceptElement(it)
-      }
-      element.unregistered.components.values.forEach {
-        acceptElement(it)
-      }
-    }
+    acceptElement(this)
+
+    return entries
   }
-
-  acceptElement(this)
-
-  return provides
-}
 
 data class VueProvideEntry(val provide: VueProvide, val owner: VueContainer)

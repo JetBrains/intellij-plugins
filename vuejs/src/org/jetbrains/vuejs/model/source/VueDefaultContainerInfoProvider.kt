@@ -331,5 +331,11 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
         else -> null
       }
     }
+
+    private fun getInjectDefaultType(expression: JSExpression?): JSType? =
+      when (val defaultType = getDefaultTypeFromPropOptions(expression)) {
+        is JSFunctionType -> defaultType.returnType?.substitute()
+        else -> defaultType
+      }
   }
 }

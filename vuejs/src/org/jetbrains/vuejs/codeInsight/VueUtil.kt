@@ -16,7 +16,6 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptAsExpression
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.resolve.QualifiedItemProcessor
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
@@ -24,7 +23,6 @@ import com.intellij.lang.javascript.psi.types.evaluable.JSApplyNewType
 import com.intellij.lang.javascript.psi.types.evaluable.JSReturnedExpressionType
 import com.intellij.lang.javascript.psi.types.primitives.JSBooleanType
 import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveType
-import com.intellij.lang.javascript.psi.types.primitives.JSSymbolType
 import com.intellij.lang.javascript.psi.types.primitives.JSUndefinedType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.psi.util.stubSafeStringValue
@@ -353,28 +351,6 @@ fun getDefaultTypeFromPropOptions(expression: JSExpression?): JSType? =
     ?.findProperty(PROPS_DEFAULT_PROP)
     ?.jsType
     ?.substitute()
-
-fun resolveInjectionSymbol(element: PsiElement?): JSFieldVariable? {
-  val declaration =
-    when (element) {
-      is JSReferenceExpression -> element.resolve().asSafely<JSFieldVariable>()
-      is JSPsiNamedElementBase -> element.resolveIfImportSpecifier()
-      else -> null
-    } as? JSFieldVariable ?: return null
-
-  val symbolType = JSResolveUtil.getElementJSType(declaration)?.substitute()
-  return if (isInjectionSymbolType(symbolType)) declaration else null
-}
-
-fun isInjectionSymbolType(symbolType: JSType?): Boolean =
-  symbolType is JSSymbolType ||
-  (symbolType is JSGenericTypeImpl && symbolType.type.asSafely<JSTypeImpl>()?.typeText == "InjectionKey")
-
-fun getInjectDefaultType(expression: JSExpression?): JSType? =
-  when (val defaultType = getDefaultTypeFromPropOptions(expression)) {
-    is JSFunctionType -> defaultType.returnType?.substitute()
-    else -> defaultType
-  }
 
 inline fun <reified T : JSExpression> XmlAttributeValue.findJSExpression(): T? {
   return findVueJSEmbeddedExpressionContent()?.firstChild as? T

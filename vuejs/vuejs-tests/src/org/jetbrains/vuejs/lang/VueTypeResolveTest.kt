@@ -212,6 +212,17 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
+  fun testInjectCallTypeEvaluation() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.copyDirectoryToProject(getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+
+    doTest(
+      "stringInject" to "string",
+      "keyInject" to "boolean",
+    )
+  }
+
   private fun testVFor(vararg testCases: Triple<String, String, String>, iterations: Int = 3) {
     for (test in testCases) {
       for (i in 1..iterations) {

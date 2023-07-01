@@ -18,7 +18,7 @@ import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory.createSymbolRef
 import com.intellij.webSymbols.patterns.WebSymbolsPatternReferenceResolver
 import com.intellij.webSymbols.patterns.WebSymbolsPatternReferenceResolver.Reference
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
-import org.jetbrains.vuejs.model.collectProvides
+import org.jetbrains.vuejs.model.provides
 import org.jetbrains.vuejs.model.source.VueSourceComponent
 import org.jetbrains.vuejs.web.VueFramework
 import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.KIND_VUE_PROVIDES
@@ -30,7 +30,7 @@ class VueInjectSymbolsScope(private val enclosingComponent: VueSourceComponent)
 
   override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     val origin = VueScopeElementOrigin(enclosingComponent)
-    val provides = enclosingComponent.global.collectProvides()
+    val provides = enclosingComponent.global.provides
 
     provides.forEach { (provide, container) ->
       consumer(VueProvideSymbol(provide, container, origin))
