@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.html.webSymbols.attributes.WebSymbolAttributeDescriptor
+import com.intellij.javascript.nodejs.NodeModuleSearchUtil
 import com.intellij.javascript.webSymbols.jsType
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.frameworks.JSFrameworkSpecificHandler
@@ -28,7 +29,7 @@ class VueFrameworkSpecificHandler : JSFrameworkSpecificHandler {
   override fun findExpectedType(element: PsiElement, parent: PsiElement?, expectedTypeKind: JSExpectedTypeKind): JSType? {
     if (DialectDetector.isJavaScript(element) &&
         element is JSCallExpression &&
-        VueFrameworkHandler.getFunctionNameFromVueIndex(element) == INJECT_FUN) {
+        isInjectCall(element)) {
       return getInjectType(element)
     }
 
@@ -44,6 +45,16 @@ class VueFrameworkSpecificHandler : JSFrameworkSpecificHandler {
 
     return null
   }
+
+  private fun isInjectCall(element: JSCallExpression): Boolean =
+    element
+      .takeIf { VueFrameworkHandler.getFunctionNameFromVueIndex(it) == INJECT_FUN }
+      ?.methodExpression.asSafely<JSReferenceExpression>()
+      ?.resolve()
+      ?.containingFile?.virtualFile
+      ?.let { NodeModuleSearchUtil.findDependencyRoot(it) }
+      ?.let { it.name == "vue" || it.parent?.name == "@vue" }
+    ?: false
 
   private fun getInjectType(call: JSCallExpression): JSType? {
     val component = VueModelManager.findEnclosingComponent(call) ?: return null

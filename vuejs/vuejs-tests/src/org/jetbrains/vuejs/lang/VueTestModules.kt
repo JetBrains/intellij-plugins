@@ -62,6 +62,7 @@ enum class VueTestModule(val folder: String, vararg packageNames: String) {
   SHARDS_VUE_1_0_5("shards-vue", "@shards/vue"),
   VUE_2_5_3("vue/2.5.3", "vue"),
   VUE_2_6_10("vue/2.6.10", "vue"),
+  VUE_2_7_14("vue/2.7.14", "vue"),
   VUE_3_0_0("vue/3.0.0", "vue"),
   VUE_3_1_0("vue/3.1.0", "vue"),
   VUE_3_2_2("vue/3.2.2", "vue"),
