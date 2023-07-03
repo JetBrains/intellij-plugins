@@ -449,7 +449,7 @@ open class VueLexerTest : LexerTestCase() {
   }
 
   fun testTitleComponent(){
-    doTest("<head><title>This is <std>title</std></title><div><Title>This is <custom>title</custom></Title></div>")
+    doTest("<head><title>This is <std>title</std></title></head><div><Title>This is <custom>title</custom></Title></div>")
   }
 
   override fun doTest(@NonNls text: String) {

@@ -29,8 +29,8 @@ class AstroLexerImpl(val project: Project?, private val lexJsFragment: Boolean =
                 if (initialState == 0 && lexJsFragment) _AstroLexer.EXPRESSION_INITIAL else initialState)
   }
 
-  override fun isPossiblyComponentTag(tagName: CharSequence): Boolean {
-    return Companion.isPossiblyComponentTag(tagName)
+  override fun isPossiblyCustomTagName(tagName: CharSequence): Boolean {
+    return isPossiblyComponentTag(tagName)
   }
 
   override fun getState(): Int {

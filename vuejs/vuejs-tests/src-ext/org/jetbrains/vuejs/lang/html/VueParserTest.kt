@@ -431,14 +431,14 @@ class VueParserTest : HtmlParsingTest("", "vue",
   fun testTitleVue() {
     doTestVue("""
       <head><title>This is <std>title</std></title>
-      <div><Title>This is <custom>title</custom></Title></div>
+      <div @click="clicked()"><Title>This is <custom>title</custom></Title></div>
     """.trimIndent())
   }
 
   fun testTitleHtml() {
     super.doTest("""
       <head><title>This is <std>title</std></title>
-      <div><Title>This is <custom>title</custom></Title></div>
+      <div @click="clicked()"><Title>This is <custom>title</custom></Title></div>
     """.trimIndent(), "test.html")
   }
 
