@@ -1,3 +1,4 @@
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.refactoring.moveClass;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -140,11 +141,6 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
     // TODO module conflicts
     //JSRefactoringConflictsUtil.analyzeModuleConflicts(myProject, myElements, usages, myTargetDirectory, conflicts);
     return conflicts;
-  }
-
-  @Override
-  protected boolean canPerformRefactoringInBranch() {
-    return true;
   }
 
   @Override
