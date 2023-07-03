@@ -13,7 +13,8 @@ public class PostCssCssInspectionTest extends PostCssFixtureTestCase {
     myFixture.enableInspections(CssInvalidImportInspection.class,
                                 CssInvalidPseudoSelectorInspection.class,
                                 CssInvalidMediaFeatureInspection.class,
-                                CssInvalidAtRuleInspection.class);
+                                CssInvalidAtRuleInspection.class,
+                                CssInvalidNestedSelectorInspection.class);
   }
 
   public void testImportEverywhere() {
