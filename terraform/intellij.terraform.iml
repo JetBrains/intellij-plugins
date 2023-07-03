@@ -22,7 +22,13 @@
     <orderEntry type="library" name="jackson-databind" level="project" />
     <orderEntry type="module-library">
       <library name="terraform-metadata" type="repository">
-        <properties maven-id="org.intellij.plugins.hcl.terraform:terraform-metadata:2023.2.1" />
+        <properties maven-id="org.intellij.plugins.hcl.terraform:terraform-metadata:2023.2.1">
+          <verification>
+            <artifact url="file://$MAVEN_REPOSITORY$/org/intellij/plugins/hcl/terraform/terraform-metadata/2023.2.1/terraform-metadata-2023.2.1.jar">
+              <sha256sum>7075cd51d02d302fc922f265d9e4d0cf18ba714218a3efd75f268f045a1c09cf</sha256sum>
+            </artifact>
+          </verification>
+        </properties>
         <CLASSES>
           <root url="jar://$MAVEN_REPOSITORY$/org/intellij/plugins/hcl/terraform/terraform-metadata/2023.2.1/terraform-metadata-2023.2.1.jar!/" />
         </CLASSES>

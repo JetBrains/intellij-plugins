@@ -29,7 +29,13 @@
     <orderEntry type="module" module-name="intellij.javascript.intentions" scope="TEST" />
     <orderEntry type="module-library" scope="TEST">
       <library name="oleaster-matcher" type="repository">
-        <properties include-transitive-deps="false" maven-id="com.mscharhag.oleaster:oleaster-matcher:0.2.0" />
+        <properties include-transitive-deps="false" maven-id="com.mscharhag.oleaster:oleaster-matcher:0.2.0">
+          <verification>
+            <artifact url="file://$MAVEN_REPOSITORY$/com/mscharhag/oleaster/oleaster-matcher/0.2.0/oleaster-matcher-0.2.0.jar">
+              <sha256sum>cd48639040cf962886a0ed84849be7ce9071b16dacb1d20c3f4ff03c3999f8ed</sha256sum>
+            </artifact>
+          </verification>
+        </properties>
         <CLASSES>
           <root url="jar://$MAVEN_REPOSITORY$/com/mscharhag/oleaster/oleaster-matcher/0.2.0/oleaster-matcher-0.2.0.jar!/" />
         </CLASSES>
@@ -41,7 +47,13 @@
     </orderEntry>
     <orderEntry type="module-library" scope="TEST">
       <library name="oleaster-runner" type="repository">
-        <properties include-transitive-deps="false" maven-id="com.mscharhag.oleaster:oleaster-runner:0.2.0" />
+        <properties include-transitive-deps="false" maven-id="com.mscharhag.oleaster:oleaster-runner:0.2.0">
+          <verification>
+            <artifact url="file://$MAVEN_REPOSITORY$/com/mscharhag/oleaster/oleaster-runner/0.2.0/oleaster-runner-0.2.0.jar">
+              <sha256sum>039a992d5b3e336a1003f3a7b4ce75c2791f6d211a3202e3b296375a10c368f1</sha256sum>
+            </artifact>
+          </verification>
+        </properties>
         <CLASSES>
           <root url="jar://$MAVEN_REPOSITORY$/com/mscharhag/oleaster/oleaster-runner/0.2.0/oleaster-runner-0.2.0.jar!/" />
         </CLASSES>

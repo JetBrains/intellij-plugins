@@ -22,7 +22,13 @@
     <orderEntry type="library" scope="TEST" name="commons-lang" level="project" />
     <orderEntry type="module-library">
       <library name="intellij.aws.cloudformation.meta" type="repository">
-        <properties include-transitive-deps="false" maven-id="com.intellij.aws:cloudformation-meta:2022.3.3" />
+        <properties include-transitive-deps="false" maven-id="com.intellij.aws:cloudformation-meta:2022.3.3">
+          <verification>
+            <artifact url="file://$MAVEN_REPOSITORY$/com/intellij/aws/cloudformation-meta/2022.3.3/cloudformation-meta-2022.3.3.jar">
+              <sha256sum>ef6eb699ec9337d9e25700267b638e1e6dddbfb6f8e7d23154a56b4a984ca348</sha256sum>
+            </artifact>
+          </verification>
+        </properties>
         <CLASSES>
           <root url="jar://$MAVEN_REPOSITORY$/com/intellij/aws/cloudformation-meta/2022.3.3/cloudformation-meta-2022.3.3.jar!/" />
         </CLASSES>

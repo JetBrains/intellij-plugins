@@ -20,7 +20,13 @@
     <orderEntry type="module" module-name="intellij.java.testFramework" scope="TEST" />
     <orderEntry type="module-library">
       <library name="cucumber-groovy" type="repository">
-        <properties include-transitive-deps="false" maven-id="info.cukes:cucumber-groovy:1.2.4" />
+        <properties include-transitive-deps="false" maven-id="info.cukes:cucumber-groovy:1.2.4">
+          <verification>
+            <artifact url="file://$MAVEN_REPOSITORY$/info/cukes/cucumber-groovy/1.2.4/cucumber-groovy-1.2.4.jar">
+              <sha256sum>5fb3e76ca3623178cf938c9c9507a5c5a0460e8506086e0fdaa04cc408fe97d6</sha256sum>
+            </artifact>
+          </verification>
+        </properties>
         <CLASSES>
           <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-groovy/1.2.4/cucumber-groovy-1.2.4.jar!/" />
         </CLASSES>
