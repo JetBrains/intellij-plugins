@@ -45,7 +45,7 @@ class VueHighlightingLexer(override val languageLevel: JSLanguageLevel,
     return TokenSet.orSet(super.createTagEmbedmentStartTokenSet(), VueLexerImpl.TAG_TOKENS)
   }
 
-  override fun isPossiblyComponentTag(tagName: CharSequence): Boolean {
+  override fun isPossiblyCustomTagName(tagName: CharSequence): Boolean {
     return !htmlCompatMode && VueLexerImpl.isPossiblyComponentTag(tagName)
   }
 

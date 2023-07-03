@@ -38,17 +38,19 @@ class VueLexerImpl(override val languageLevel: JSLanguageLevel,
     return TokenSet.orSet(super.createTagEmbedmentStartTokenSet(), TAG_TOKENS)
   }
 
-  override fun isPossiblyComponentTag(tagName: CharSequence): Boolean {
-    return !htmlCompatMode && Companion.isPossiblyComponentTag(tagName)
+  override fun isPossiblyCustomTagName(tagName: CharSequence): Boolean {
+    return !htmlCompatMode && isPossiblyComponentTag(tagName)
   }
 
   companion object {
     internal val ATTRIBUTE_TOKENS = TokenSet.create(INTERPOLATION_START, INTERPOLATION_EXPR, INTERPOLATION_END)
     internal val TAG_TOKENS = TokenSet.create(INTERPOLATION_START)
 
-    // There are heavily-used Vue components called like 'Col', 'Input' or 'Title'.
-    // Unlike HTML tags <col> and <input> Vue components do have closing tags and <Title> component can have content.
-    // This condition is a little bit hacky but it's rather tricky to solve the problem in a better way at parser level.
+    /**
+    There are heavily-used Vue components called like 'Col', 'Input' or 'Title'.
+    Unlike HTML tags <col> and <input> Vue components do have closing tags and <Title> component can have content.
+    This condition is a little bit hacky but it's rather tricky to solve the problem in a better way at parser level.
+     */
     fun isPossiblyComponentTag(tagName: CharSequence): Boolean =
       tagName.length >= 3
       && tagName[0].isUpperCase()

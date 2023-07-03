@@ -29,7 +29,7 @@ class AstroHighlightingLexer(styleFileType: FileType?)
     super.start(buffer, startOffset, endOffset, initialState)
   }
 
-  override fun isPossiblyComponentTag(tagName: CharSequence): Boolean {
+  override fun isPossiblyCustomTagName(tagName: CharSequence): Boolean {
     return AstroLexerImpl.isPossiblyComponentTag(tagName)
   }
 

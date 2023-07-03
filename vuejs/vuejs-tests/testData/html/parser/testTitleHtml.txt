@@ -24,6 +24,22 @@ HtmlFile:test.html
       HtmlTag:div
         XmlToken:XML_START_TAG_START('<')
         XmlToken:XML_NAME('div')
+        PsiWhiteSpace(' ')
+        PsiElement(XML_ATTRIBUTE)
+          XmlToken:XML_NAME('@click')
+          XmlToken:XML_EQ('=')
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+            ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR_VueJS)
+              VueJSEmbeddedExpressionContent(VueJS)
+                JSExpressionStatement
+                  JSCallExpression
+                    JSReferenceExpression
+                      PsiElement(JS:IDENTIFIER)('clicked')
+                    JSArgumentList
+                      PsiElement(JS:LPAR)('(')
+                      PsiElement(JS:RPAR)(')')
+            XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
         XmlToken:XML_TAG_END('>')
         HtmlTag:Title
           XmlToken:XML_START_TAG_START('<')
