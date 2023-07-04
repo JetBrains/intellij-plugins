@@ -58,6 +58,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
@@ -118,7 +119,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
     isIncludeContentRootsCheckbox.setSelected(settings.isIncludeContentRoots());
     isIndexBasedResolveEnabledCheckbox.setSelected(settings.isIndexBasedResolveEnabled());
     descriptorPathField.setSelectedItem(settings.getDescriptorPath());
-    importPathModel.setItems(new ArrayList<>());
+    importPathModel.setItems(new CopyOnWriteArrayList<>());
     importPathModel.addRows(ContainerUtil.map(settings.getImportPathEntries(), ImportPath::new));
   }
 
@@ -296,8 +297,11 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
         PbIdeBundle.message("settings.language.import.paths"), false));
 
     importPathModel = new ListTableModel<>(
-      new LocationColumn(PbIdeBundle.message("location")),
-      new PrefixColumn(PbIdeBundle.message("prefix"))
+      new ColumnInfo[]{
+        new LocationColumn(PbIdeBundle.message("location")),
+        new PrefixColumn(PbIdeBundle.message("prefix"))
+      },
+      new CopyOnWriteArrayList<>()
     );
     TableView<ImportPath> importPathTable = new TableView<>(importPathModel);
     importPathTable.setStriped(true);
