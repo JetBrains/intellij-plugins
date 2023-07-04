@@ -17,7 +17,6 @@ import org.dartlang.analysis.server.protocol.RequestError;
 import org.jetbrains.annotations.NotNull;
 
 public class AnalysisServerDiagnosticsAction extends DumbAwareAction {
-  private static final String GROUP_DISPLAY_ID = "Dart Analysis Server";
 
   public AnalysisServerDiagnosticsAction() {
     super(DartBundle.messagePointer("analysis.server.show.diagnostics.text"));
@@ -59,7 +58,7 @@ public class AnalysisServerDiagnosticsAction extends DumbAwareAction {
       public void onError(RequestError requestError) {
         String title = DartBundle.message("analysis.server.show.diagnostics.error");
         @NlsSafe String message = requestError.getMessage();
-        Notification notification = new Notification(GROUP_DISPLAY_ID, title, message, NotificationType.ERROR);
+        Notification notification = new Notification("Dart Analysis Server", title, message, NotificationType.ERROR);
         Notifications.Bus.notify(notification);
       }
     });
