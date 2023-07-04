@@ -2123,7 +2123,7 @@ public final class DartAnalysisServerService implements Disposable {
       myServerSocket.setClientId(getClientId());
       myServerSocket.setClientVersion(getClientVersion());
 
-      final RemoteAnalysisServerImpl startedServer = new RemoteAnalysisServerImpl(myServerSocket);
+      final RemoteAnalysisServerImpl startedServer = new DartAnalysisServerImpl(myProject, myServerSocket);
 
       try {
         startedServer.start();
@@ -2172,7 +2172,8 @@ public final class DartAnalysisServerService implements Disposable {
         mySdkVersion = sdk.getVersion();
         //myDoEnableMLBasedCodeCompletion = doEnableMLBasedCodeCompletion;
 
-        startedServer.analysis_updateOptions(new AnalysisOptions(true, true, true, true, true, false, true, false));
+        startedServer.analysis_updateOptions(new AnalysisOptions(true, true, true, true, false, true, false));
+        startedServer.server_setClientCapabilities(List.of("openUrlRequest", "showMessageRequest"));
 
         myServer = startedServer;
 
