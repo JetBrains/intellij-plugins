@@ -101,7 +101,7 @@ private fun contributeComponentProperties(instance: VueInstanceOwner,
   val methods = mutableMapOf<String, JSRecordType.PropertySignature>()
   val injects = mutableMapOf<String, JSRecordType.PropertySignature>()
 
-  val provides = instance.global.provides
+  val provides = lazy(LazyThreadSafetyMode.NONE) { instance.global.provides }
 
   instance.asSafely<VueEntitiesContainer>()
     ?.acceptPropertiesAndMethods(object : VueModelProximityVisitor() {
@@ -130,7 +130,7 @@ private fun contributeComponentProperties(instance: VueInstanceOwner,
         if (inject is VueCallInject) return true
 
         val sourceElement = inject.source ?: return true
-        val type = evaluateInjectedType(inject, provides)
+        val type = evaluateInjectedType(inject, provides.value)
         val implicitElement = VueImplicitElement(inject.name, type, sourceElement, JSImplicitElement.Type.Property, true)
         process(inject, proximity, injects, true, type, implicitElement)
         return true

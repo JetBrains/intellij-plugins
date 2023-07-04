@@ -50,26 +50,43 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
   class VueScriptSetupInfo(val module: JSExecutionScope) : VueContainerInfoProvider.VueContainerInfo {
 
     override val components: Map<String, VueComponent>
+      get() = structure.components
+
     override val directives: Map<String, VueDirective>
+      get() = structure.directives
 
     override val props: List<VueInputProperty>
-    override val emits: List<VueEmitCall>
+      get() = structure.props
 
-    override val provides: List<VueProvide>
-    override val injects: List<VueInject>
+    override val emits: List<VueEmitCall>
+      get() = structure.emits
 
     override val computed: List<VueComputedProperty>
-      get() = rawBindings.filterIsInstance(VueComputedProperty::class.java)
+      get() = structure.rawBindings.filterIsInstance(VueComputedProperty::class.java)
 
     override val data: List<VueDataProperty>
-      get() = rawBindings.filterIsInstance(VueDataProperty::class.java)
+      get() = structure.rawBindings.filterIsInstance(VueDataProperty::class.java)
 
     override val methods: List<VueMethod>
-      get() = rawBindings.filterIsInstance(VueMethod::class.java)
+      get() = structure.rawBindings.filterIsInstance(VueMethod::class.java)
 
-    private val rawBindings: List<VueNamedSymbol>
+    override val provides: List<VueProvide>
+      get() = injectionCalls.filterIsInstance(VueProvide::class.java)
 
-    init {
+    override val injects: List<VueInject>
+      get() = injectionCalls.filterIsInstance(VueInject::class.java)
+
+    private val structure: VueScriptSetupStructure
+      get() = CachedValuesManager.getCachedValue(module) {
+        CachedValueProvider.Result.create(analyzeModule(module), PsiModificationTracker.MODIFICATION_COUNT)
+      }
+
+    private val injectionCalls: List<VueNamedSymbol>
+      get() = CachedValuesManager.getCachedValue(module) {
+        CachedValueProvider.Result.create(getInjectionCalls(module), PsiModificationTracker.MODIFICATION_COUNT)
+      }
+
+    private fun analyzeModule(module: JSExecutionScope): VueScriptSetupStructure {
       val components = mutableMapOf<String, VueComponent>()
       val directives = mutableMapOf<String, VueDirective>()
 
@@ -94,16 +111,10 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
         components.putIfAbsent(StringUtil.capitalize(fileName), component)
       }
 
-      this.components = components
-      this.directives = directives
-
-
       var props: List<VueInputProperty> = emptyList()
       var emits: List<VueEmitCall> = emptyList()
       var rawBindings: List<VueNamedSymbol> = emptyList()
       val modelDecls: MutableMap<String, VueModelDecl> = mutableMapOf()
-      val provides: MutableList<VueProvide> = mutableListOf()
-      val injects: MutableList<VueInject> = mutableListOf()
 
       module.getStubSafeDefineCalls().forEach { call ->
         when (VueFrameworkHandler.getFunctionNameFromVueIndex(call)) {
@@ -149,8 +160,6 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
           }
           DEFINE_MODEL_FUN -> analyzeDefineModel(call)?.let { modelDecls[it.name] = it }
-          PROVIDE_FUN -> analyzeProvide(call)?.let { provides.add(it) }
-          INJECT_FUN -> analyzeInject(call)?.let { injects.add(it) }
         }
       }
 
@@ -167,11 +176,20 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
         emits = emits + modelEmits
       }
 
-      this.props = props
-      this.emits = emits
-      this.rawBindings = rawBindings
-      this.provides = provides
-      this.injects = injects
+      return VueScriptSetupStructure(components, directives, props, emits, rawBindings)
+    }
+
+    private fun getInjectionCalls(module: JSExecutionScope): List<VueNamedSymbol> {
+      val symbols: MutableList<VueNamedSymbol> = mutableListOf()
+
+      module.getStubSafeDefineCalls().forEach { call ->
+        when (VueFrameworkHandler.getFunctionNameFromVueIndex(call)) {
+          PROVIDE_FUN -> analyzeProvide(call)?.let { symbols.add(it) }
+          INJECT_FUN -> analyzeInject(call)?.let { symbols.add(it) }
+        }
+      }
+
+      return symbols
     }
 
     private fun analyzeDefineProps(call: JSCallExpression, defaults: List<@NlsSafe String>): List<VueInputProperty> {
@@ -325,6 +343,11 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       literal.significantValue
         ?.let { unquoteWithoutUnescapingStringLiteralValue(it) }
         ?.takeIf { it.isNotBlank() }
+
+    override fun equals(other: Any?): Boolean =
+      (other as? VueScriptSetupInfo)?.module == module
+
+    override fun hashCode(): Int = module.hashCode()
   }
 
   private class VueScriptSetupInputProperty(private val propertySignature: JSRecordType.PropertySignature,
@@ -418,5 +441,13 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
     override val hasStrictSignature: Boolean = true
   }
+
+  private data class VueScriptSetupStructure(
+    val components: Map<String, VueComponent>,
+    val directives: Map<String, VueDirective>,
+    val props: List<VueInputProperty>,
+    val emits: List<VueEmitCall>,
+    val rawBindings: List<VueNamedSymbol>,
+  )
 
 }
