@@ -27,7 +27,6 @@ import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiFile
 import com.intellij.psi.css.CssElementDescriptorProvider
 import com.intellij.psi.css.CssEmbeddedTokenTypesProvider
@@ -444,10 +443,10 @@ class VueParserTest : HtmlParsingTest("", "vue",
   }
 
   fun testStyleReparse() {
-    testReparse("<style scoped></styl\n", "<style scoped></style\n")
-    testReparse("<style scoped></styl\n", "<style scoped></style><div\n")
-    testReparse("<style scoped>.foo { }</styl\n", "<style scoped>.foo { }</style\n")
-    testReparse("<style scoped>.foo { }</styl\n", "<style scoped>.foo { }</style><div\n")
+    doReparseTest("<style scoped></styl\n", "<style scoped></style\n")
+    doReparseTest("<style scoped></styl\n", "<style scoped></style><div\n")
+    doReparseTest("<style scoped>.foo { }</styl\n", "<style scoped>.foo { }</style\n")
+    doReparseTest("<style scoped>.foo { }</styl\n", "<style scoped>.foo { }</style><div\n")
   }
 
   fun testLangReparse() {
@@ -464,31 +463,7 @@ class VueParserTest : HtmlParsingTest("", "vue",
         <div v-text="class {}"></div>
       </template>
     """.trimIndent()
-    testReparse(baseText, baseText.replace("js", "ts"))
-  }
-
-  private fun testReparse(textBefore: String, textAfter: String) {
-    val file = createFile("test.vue", textBefore)
-    val fileAfter = createFile("test.vue", textAfter)
-
-    val rangeStart = StringUtil.commonPrefixLength(textBefore, textAfter)
-    val rangeEnd = textBefore.length - StringUtil.commonSuffixLength(textBefore, textAfter)
-
-    assert(rangeStart <= rangeEnd)
-
-    val psiToStringDefault = DebugUtil.psiToString(fileAfter, true, false)
-    DebugUtil.performPsiModification<RuntimeException>("ensureCorrectReparse") {
-      val fileText = file.text
-      val diffLog = BlockSupportImpl().reparseRange(
-        file,
-        file.node,
-        TextRange(rangeStart, rangeEnd),
-        fileAfter.text,
-        EmptyProgressIndicator(),
-        fileText)
-      diffLog.performActualPsiChange(file)
-    }
-    assertEquals(psiToStringDefault, DebugUtil.psiToString(file, true, false))
+    doReparseTest(baseText, baseText.replace("js", "ts"))
   }
 
   private class MockJSRootConfiguration(project: Project) : JSRootConfigurationBase(project) {
