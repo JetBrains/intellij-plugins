@@ -33,27 +33,30 @@ class VueCompositionInfoProvider : VueContainerInfoProvider {
   class VueCompositionInfo(val initializer: JSObjectLiteralExpression) : VueContainerInfo {
 
     override val computed: List<VueComputedProperty>
-      get() = symbols.filterIsInstance(VueComputedProperty::class.java)
+      get() = rawBindings.filterIsInstance(VueComputedProperty::class.java)
 
     override val data: List<VueDataProperty>
-      get() = symbols.filterIsInstance(VueDataProperty::class.java)
+      get() = rawBindings.filterIsInstance(VueDataProperty::class.java)
 
     override val methods: List<VueMethod>
-      get() = symbols.filterIsInstance(VueMethod::class.java)
+      get() = rawBindings.filterIsInstance(VueMethod::class.java)
 
     override val provides: List<VueProvide>
-      get() = symbols.filterIsInstance(VueProvide::class.java)
+      get() = methodCalls.filterIsInstance(VueProvide::class.java)
 
     override val injects: List<VueInject>
-      get() = symbols.filterIsInstance(VueInject::class.java)
+      get() = methodCalls.filterIsInstance(VueInject::class.java)
 
-    private val symbols: List<VueNamedSymbol>
+    private val rawBindings: List<VueNamedSymbol>
       get() = CachedValuesManager.getCachedValue(initializer) {
-        val rawBindings = VueCompositionInfoHelper.createRawBindings(
+        CachedValueProvider.Result.create(VueCompositionInfoHelper.createRawBindings(
           initializer, getSetupFunctionType(initializer)
-        )
-        val methodCalls = getSetupCalls(initializer)
-        CachedValueProvider.Result.create(rawBindings + methodCalls, PsiModificationTracker.MODIFICATION_COUNT)
+        ), PsiModificationTracker.MODIFICATION_COUNT)
+      }
+
+    private val methodCalls: List<VueNamedSymbol>
+      get() = CachedValuesManager.getCachedValue(initializer) {
+        CachedValueProvider.Result.create(getSetupCalls(initializer), PsiModificationTracker.MODIFICATION_COUNT)
       }
 
     private fun getSetupFunctionType(initializer: JSObjectLiteralExpression): JSType? =
