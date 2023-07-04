@@ -2,6 +2,8 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlFormInputWithoutLabelInspection
+import com.intellij.htmltools.codeInspection.htmlInspections.HtmlRequiredAltAttributeInspection
+import com.intellij.htmltools.codeInspection.htmlInspections.HtmlRequiredTitleElementInspection
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.JSTestUtils.testWithinLanguageLevel
 import com.intellij.lang.javascript.JavaScriptBundle
@@ -657,6 +659,11 @@ const props = {seeMe: {}}
 
   fun testGenericComponentUsage() {
     doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_3_0_ALPHA5))
+  }
+
+  fun testStdTagsInspections() {
+    myFixture.enableInspections(HtmlRequiredTitleElementInspection(), HtmlRequiredAltAttributeInspection())
+    doTest()
   }
 
 }
