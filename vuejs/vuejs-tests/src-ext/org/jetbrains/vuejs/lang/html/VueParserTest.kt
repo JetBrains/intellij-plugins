@@ -27,6 +27,7 @@ import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiFile
 import com.intellij.psi.css.CssElementDescriptorProvider
 import com.intellij.psi.css.CssEmbeddedTokenTypesProvider
@@ -442,6 +443,13 @@ class VueParserTest : HtmlParsingTest("", "vue",
     """.trimIndent(), "test.html")
   }
 
+  fun testStyleReparse() {
+    testReparse("<style scoped></styl\n", "<style scoped></style\n")
+    testReparse("<style scoped></styl\n", "<style scoped></style><div\n")
+    testReparse("<style scoped>.foo { }</styl\n", "<style scoped>.foo { }</style\n")
+    testReparse("<style scoped>.foo { }</styl\n", "<style scoped>.foo { }</style><div\n")
+  }
+
   fun testLangReparse() {
     val baseText = """
       <script lang="js">
@@ -456,10 +464,17 @@ class VueParserTest : HtmlParsingTest("", "vue",
         <div v-text="class {}"></div>
       </template>
     """.trimIndent()
-    val changedText = baseText.replace("js", "ts")
+    testReparse(baseText, baseText.replace("js", "ts"))
+  }
 
-    val file = createFile("test.vue", baseText)
-    val fileAfter = createFile("test.vue", changedText)
+  private fun testReparse(textBefore: String, textAfter: String) {
+    val file = createFile("test.vue", textBefore)
+    val fileAfter = createFile("test.vue", textAfter)
+
+    val rangeStart = StringUtil.commonPrefixLength(textBefore, textAfter)
+    val rangeEnd = textBefore.length - StringUtil.commonSuffixLength(textBefore, textAfter)
+
+    assert(rangeStart <= rangeEnd)
 
     val psiToStringDefault = DebugUtil.psiToString(fileAfter, true, false)
     DebugUtil.performPsiModification<RuntimeException>("ensureCorrectReparse") {
@@ -467,7 +482,7 @@ class VueParserTest : HtmlParsingTest("", "vue",
       val diffLog = BlockSupportImpl().reparseRange(
         file,
         file.node,
-        TextRange.allOf(fileText),
+        TextRange(rangeStart, rangeEnd),
         fileAfter.text,
         EmptyProgressIndicator(),
         fileText)
@@ -476,7 +491,7 @@ class VueParserTest : HtmlParsingTest("", "vue",
     assertEquals(psiToStringDefault, DebugUtil.psiToString(file, true, false))
   }
 
-  private class MockJSRootConfiguration constructor(project: Project) : JSRootConfigurationBase(project) {
+  private class MockJSRootConfiguration(project: Project) : JSRootConfigurationBase(project) {
 
     override fun storeLanguageLevelAndUpdateCaches(languageLevel: JSLanguageLevel?) {
       if (myState == null) myState = State()
