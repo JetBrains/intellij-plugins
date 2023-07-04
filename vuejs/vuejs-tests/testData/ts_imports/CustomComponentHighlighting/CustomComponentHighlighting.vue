@@ -1,4 +1,4 @@
-<template>
+<<symbolName descr="Custom tag name">template</symbolName>>
  <div>
     <<symbolName descr="Custom tag name">CustomComponentHighlighting_2</symbolName> />
     <<symbolName descr="Custom tag name">Button</symbolName> />
@@ -7,10 +7,14 @@
       hello
       <div>test</div>
     </<symbolName descr="Custom tag name">CustomComponentHighlighting_2</symbolName>>
+    <script>
+      function <info descr="local function">foo</info>() {
+      }
+    </script>
  </div>
-</template>
+</<symbolName descr="Custom tag name">template</symbolName>>
 
-<script>
+<<symbolName descr="Custom tag name">script</symbolName>>
   import <info descr="exported variable">CustomComponentHighlighting_2</info> <info descr="null">from</info> './CustomComponentHighlighting_2.vue'
   import <info descr="exported variable">Button</info> <info descr="null">from</info> './Button.vue'
   export default {
@@ -20,4 +24,4 @@
       <info descr="exported variable">Button</info>
     }
   }
-</script>
+</<symbolName descr="Custom tag name">script</symbolName>>
