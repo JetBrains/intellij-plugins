@@ -45,7 +45,7 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * @coverage dart.server.remote
  */
-public class RemoteAnalysisServerImpl implements AnalysisServer {
+public abstract class RemoteAnalysisServerImpl implements AnalysisServer {
   public static final String SERVER_NOTIFICATION_ERROR = "server.error";
 
   /**
@@ -368,13 +368,16 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
-  public void edit_bulkFixes(List<String> included, boolean inTestMode, BulkFixesConsumer consumer) { }
+  public void edit_bulkFixes(List<String> included, boolean inTestMode, List<String> codes, BulkFixesConsumer consumer) { }
 
   @Override
   public void edit_format(String file, int selectionOffset, int selectionLength, int lineLength, FormatConsumer consumer) {
     String id = generateUniqueId();
     sendRequestToServer(id, RequestUtilities.generateEditFormat(id, file, selectionOffset, selectionLength, lineLength), consumer);
   }
+
+  @Override
+  public void edit_formatIfEnabled(List<String> directories, FormatConsumer consumer) {}
 
   @Override
   public void edit_getAssists(String file, int offset, int length, GetAssistsConsumer consumer) {
@@ -505,10 +508,6 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
-  public void kythe_getKytheEntries(String file, GetKytheEntriesConsumer consumer) {
-  }
-
-  @Override
   public void removeAnalysisServerListener(AnalysisServerListener listener) {
     this.listener.removeListener(listener);
   }
@@ -577,6 +576,15 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
       subscriptions = StringUtilities.EMPTY_LIST;
     }
     sendRequestToServer(id, RequestUtilities.generateServerSetSubscriptions(id, subscriptions));
+  }
+
+  @Override
+  public void server_setClientCapabilities(List<String> requests) {
+    String id = generateUniqueId();
+    if (requests == null) {
+      requests = StringUtilities.EMPTY_LIST;
+    }
+    sendRequestToServer(id, RequestUtilities.generateClientCapabilities(id, requests));
   }
 
   @Override
@@ -715,6 +723,54 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     return true;
   }
 
+  /**
+   * Attempts to handle the given {@link JsonObject} as a request from the server.
+   * Return {@code true} if it was handled, otherwise {@code false} is returned.
+   */
+  private boolean processRequests(final JsonObject response, final String idString) throws Exception {
+    // prepare notification kind
+    JsonElement methodElement = response.get("method");
+    if (methodElement == null || !methodElement.isJsonPrimitive()) {
+      return false;
+    }
+
+    String method = methodElement.getAsString();
+    if (method.equals("server.openUrlRequest")) {
+      // server.showMessageRequest
+      JsonObject paramsObject = response.get("params").getAsJsonObject();
+      final String url = paramsObject.get("url").getAsString();
+      server_openUrlRequest(url);
+    }
+    else if (method.equals("server.showMessageRequest")) {
+      // server.showMessageRequest
+      JsonObject paramsObject = response.get("params").getAsJsonObject();
+      final String type = paramsObject.get("type").getAsString();
+      final String message = paramsObject.get("message").getAsString();
+      final List<JsonElement> actionJsonElements = paramsObject.get("actions").getAsJsonArray().asList();
+      final List<MessageAction> messageActions = new ArrayList<>(actionJsonElements.size());
+      for (JsonElement actionJsonElement : actionJsonElements) {
+        messageActions.add(new MessageAction(actionJsonElement.getAsJsonObject().get("label").getAsString()));
+      }
+
+      ShowMessageRequestConsumer consumer = new ShowMessageRequestConsumer() {
+        @Override
+        public void computedMessageActions(String action) {
+          sendResponseToServer(RequestUtilities.generateShowMessageRequestResponse(idString, action));
+        }
+
+        @Override
+        public void onError(RequestError requestError) {
+          sendResponseToServer(requestError.toJson());
+        }
+      };
+
+      server_showMessageRequest(type, message, messageActions, consumer);
+    }
+
+    // it is a request from the server, even if we did not handle it
+    return true;
+  }
+
   private void processResponse(JsonObject response) throws Exception {
     notifyResponseListeners(response);
     // handle notification
@@ -727,6 +783,12 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
       return;
     }
     String idString = idJsonPrimitive.getAsString();
+
+    // handle requests from the server
+    if (processRequests(response, idString)) {
+      return;
+    }
+
     // prepare consumer
     Consumer consumer;
     synchronized (consumerMapLock) {
@@ -916,6 +978,12 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     lastRequestTime.set(System.currentTimeMillis());
     synchronized (requestSinkLock) {
       requestSink.add(request);
+    }
+  }
+
+  public void sendResponseToServer(JsonObject response) {
+    synchronized (requestSinkLock) {
+      requestSink.add(response);
     }
   }
 
