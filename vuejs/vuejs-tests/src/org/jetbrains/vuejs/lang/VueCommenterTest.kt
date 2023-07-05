@@ -19,6 +19,8 @@ class VueCommenterTest : BasePlatformTestCase() {
   fun testBindingLineComment() = doTest()
   fun testBindingBlockComment() = doTest(false)
 
+  fun testWholeStyleLineComment() = doTest()
+
   fun testCommentHtmlByLineComment() = JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) {
     val htmlSettings = it.getCommonSettings(HTMLLanguage.INSTANCE)
     htmlSettings.BLOCK_COMMENT_AT_FIRST_COLUMN = false
