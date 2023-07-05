@@ -5,6 +5,7 @@ import com.intellij.javascript.nodejs.library.node_modules.NodeModulesDirectoryM
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.FileIndexFacade
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.vfs.VFileProperty
 import com.intellij.openapi.vfs.VirtualFile
@@ -59,7 +60,8 @@ class VueSourcePlugin constructor(private val project: Project,
         val scope = GlobalSearchScopesCore.directoryScope(psiDirectory.project, directoryFile, true)
         val globalize = PACKAGES_WITH_GLOBAL_COMPONENTS.contains(psiDirectory.name)
 
-        if (directoryFile.`is`(VFileProperty.SYMLINK)) {
+        if (directoryFile.`is`(VFileProperty.SYMLINK)
+            && FileIndexFacade.getInstance(project).isInContent(directoryFile.canonicalFile ?: directoryFile)) {
           // Track modifications in plugins ASTs only if they are possibly local
           dependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
         }
