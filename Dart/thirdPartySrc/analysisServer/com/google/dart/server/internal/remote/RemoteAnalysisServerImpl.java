@@ -26,6 +26,7 @@ import com.google.dart.server.utilities.general.StringUtilities;
 import com.google.dart.server.utilities.instrumentation.Instrumentation;
 import com.google.dart.server.utilities.instrumentation.InstrumentationBuilder;
 import com.google.dart.server.utilities.logging.Logging;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -746,7 +747,7 @@ public abstract class RemoteAnalysisServerImpl implements AnalysisServer {
       JsonObject paramsObject = response.get("params").getAsJsonObject();
       final String type = paramsObject.get("type").getAsString();
       final String message = paramsObject.get("message").getAsString();
-      final List<JsonElement> actionJsonElements = paramsObject.get("actions").getAsJsonArray().asList();
+      final JsonArray actionJsonElements = paramsObject.get("actions").getAsJsonArray();
       final List<MessageAction> messageActions = new ArrayList<>(actionJsonElements.size());
       for (JsonElement actionJsonElement : actionJsonElements) {
         messageActions.add(new MessageAction(actionJsonElement.getAsJsonObject().get("label").getAsString()));
