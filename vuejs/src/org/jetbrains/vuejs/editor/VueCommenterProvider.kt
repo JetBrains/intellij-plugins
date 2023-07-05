@@ -33,9 +33,8 @@ class VueCommenterProvider : MultipleLangCommentProvider {
              ?.takeIf { it != VueLanguage.INSTANCE }
              ?.let { elementLanguage ->
                var xmlParent: XmlElement? = null
-               // If we have caret within attribute value expression and we are commenting line, adjust language
-               if (elementLanguage.isKindOf(JavascriptLanguage.INSTANCE)
-                   && lineStartLanguage == VueLanguage.INSTANCE
+               // If we have caret within attribute value expression or style attribute and we are commenting line, adjust language
+               if (lineStartLanguage == VueLanguage.INSTANCE
                    && PsiTreeUtil.getParentOfType(minimalElement, XmlAttributeValue::class.java, XmlTag::class.java)
                      ?.takeIf { it is XmlAttributeValue }
                      ?.also { xmlParent = it } != null
@@ -48,7 +47,8 @@ class VueCommenterProvider : MultipleLangCommentProvider {
              ?.let {
                if (it == PostCssLanguage.INSTANCE)
                  PostCssCommentProvider().getLineCommenter(file, editor, lineStartLanguage, lineEndLanguage)
-               else LanguageCommenters.INSTANCE.forLanguage(it)
+               else
+                 LanguageCommenters.INSTANCE.forLanguage(it)
              }
            ?: if (lineStartLanguage == VueLanguage.INSTANCE) {
              CodeStyle.getLanguageSettings(file, HTMLLanguage.INSTANCE).let { styleSettings ->

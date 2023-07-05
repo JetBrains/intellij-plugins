@@ -6,18 +6,23 @@ import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.intellij.plugins.postcss.settings.PostCssCodeStyleSettings
+import org.jetbrains.vuejs.lang.VueCommenterTest.CommentStyle.BLOCK
+import org.jetbrains.vuejs.lang.VueCommenterTest.CommentStyle.LINE
 
 class VueCommenterTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = getVueTestDataPath() + "/commenter/"
 
-  fun testCss() = doTest()
-  fun testSass() = doTest()
-  fun testScss() = doTest()
-  fun testLess() = doTest()
-  fun testStylus() = doTest()
+  fun testCss() = doTest(LINE)
+  fun testSass() = doTest(LINE)
+  fun testScss() = doTest(LINE)
+  fun testLess() = doTest(LINE)
+  fun testStylus() = doTest(LINE)
 
-  fun testBindingLineComment() = doTest()
-  fun testBindingBlockComment() = doTest(false)
+  fun testBindingLineComment() = doTest(LINE)
+  fun testBindingBlockComment() = doTest(BLOCK)
+
+  fun testStyleAttrLineComment() = doTest(LINE)
+  fun testStyleAttrBlockComment() = doTest(BLOCK)
 
   fun testCommentHtmlByLineComment() = JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) {
     val htmlSettings = it.getCommonSettings(HTMLLanguage.INSTANCE)
@@ -109,10 +114,10 @@ class VueCommenterTest : BasePlatformTestCase() {
     doTest(1, "CommentByBlockComment")
   }
 
-  fun doTest(lineCommenter: Boolean = true) {
+  private fun doTest(commentStyle: CommentStyle) {
     val name = getTestName(true)
     myFixture.configureByFile("$name.vue")
-    myFixture.performEditorAction(if (lineCommenter) "CommentByLineComment" else "CommentByBlockComment")
+    myFixture.performEditorAction(if (commentStyle == LINE) "CommentByLineComment" else "CommentByBlockComment")
     myFixture.checkResultByFile("${name}_after.vue")
   }
 
@@ -126,6 +131,11 @@ class VueCommenterTest : BasePlatformTestCase() {
     finally {
       myFixture.configureByFile("$testName.vue")
     }
+  }
+
+  private enum class CommentStyle {
+    LINE,
+    BLOCK
   }
 
 }
