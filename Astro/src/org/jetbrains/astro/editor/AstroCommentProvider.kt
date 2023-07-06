@@ -11,6 +11,7 @@ import com.intellij.lang.xml.XmlCommenter
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.FileViewProvider
 import com.intellij.psi.PsiFile
+import com.intellij.psi.css.impl.util.editor.CssCommenter
 import com.intellij.psi.templateLanguages.MultipleLangCommentProvider
 import org.jetbrains.astro.lang.AstroLanguage
 import org.jetbrains.astro.lang.frontmatter.AstroFrontmatterLanguage
@@ -19,12 +20,12 @@ import org.jetbrains.astro.lang.psi.AstroContentRoot
 class AstroCommentProvider : MultipleLangCommentProvider {
   override fun getLineCommenter(file: PsiFile, editor: Editor, lineStartLanguage: Language, lineEndLanguage: Language): Commenter {
     val element = file.findElementAt(editor.caretModel.offset)
-    return if (
+    return if (element?.language?.isKindOf(CSSLanguage.INSTANCE) == true) CssCommenter()
+    else if (
       lineStartLanguage == AstroFrontmatterLanguage.INSTANCE ||
       lineStartLanguage.baseLanguage == JavascriptLanguage.INSTANCE ||
       element?.language == JavascriptLanguage.INSTANCE ||
       (element?.parent is JSEmbeddedContent && element.parent !is AstroContentRoot) ||
-      (element?.language == CSSLanguage.INSTANCE || element?.language?.baseLanguage == CSSLanguage.INSTANCE) ||
       // Used for block comments because their language suddenly changes to Astro
       element?.parent?.language == AstroFrontmatterLanguage.INSTANCE) JavascriptCommenter()
     else XmlCommenter()

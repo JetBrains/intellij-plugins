@@ -1,7 +1,14 @@
 ---
 ---
 <style lang="scss">
-  .foo {
-    padd<caret>ing: 2px;
-  }
+  .foo {<caret>}
+</style>
+<style lang="sass">
+  $foo: 'b<caret>ar'
+</style>
+<style lang="less">
+  @some-color: #12<caret>3456;
+</style>
+<style>
+  .foo {<caret>}
 </style>

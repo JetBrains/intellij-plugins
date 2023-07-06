@@ -1,7 +1,14 @@
 ---
 ---
 <style lang="scss">
-  .foo {
-    padd/*<caret>*/ing: 2px;
-  }
+  <selection>/*<caret>.foo {}*/</selection>
+</style>
+<style lang="sass">
+  <selection>/*<caret>$foo: 'bar'*/</selection>
+</style>
+<style lang="less">
+  <selection>/*<caret>@some-color: #123456;*/</selection>
+</style>
+<style>
+  <selection>/*<caret>.foo {}*/</selection>
 </style>
