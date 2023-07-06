@@ -526,6 +526,12 @@ class AstroParserTest : HtmlParsingTest("", "astro",
     """)
   }
 
+  fun testSingleTagOverride() {
+    doTestAstro("""
+      <Link>This should not throw an error</Link>      
+    """)
+  }
+
   override fun setUp() {
     super.setUp()
 

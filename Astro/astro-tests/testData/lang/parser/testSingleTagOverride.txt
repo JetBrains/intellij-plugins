@@ -1,0 +1,24 @@
+AstroFile:test.astro
+  AstroContentRoot:ASTRO:CONTENT_ROOT
+    PsiElement(XML_PROLOG)
+      <empty list>
+    AstroTag:Link
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('Link')
+      XmlToken:XML_TAG_END('>')
+      XmlText
+        XmlToken:XML_DATA_CHARACTERS('This')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('should')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('not')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('throw')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('an')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('error')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('Link')
+      XmlToken:XML_TAG_END('>')
+    PsiWhiteSpace('      ')
