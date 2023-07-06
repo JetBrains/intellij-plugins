@@ -267,6 +267,9 @@
     <webSymbols.declarationProvider implementation="org.jetbrains.vuejs.web.VueSymbolDeclarationProvider"/>
     <vetoRenameCondition implementation="org.jetbrains.vuejs.web.VueRenameHandlerVeto"/>
 
+    <lang.elementManipulator forClass="org.jetbrains.vuejs.model.VueFakeSrcAttributeValue"
+                             implementationClass="org.jetbrains.vuejs.model.VueFakeScrAttributeValueManipulator"/>
+
     <webSymbols.framework id="vue" implementation="org.jetbrains.vuejs.web.VueFramework"/>
     <webSymbols.context kind="framework" name="vue" implementation="org.jetbrains.vuejs.context.VueFileContext"
                         id="vue.file"/>
