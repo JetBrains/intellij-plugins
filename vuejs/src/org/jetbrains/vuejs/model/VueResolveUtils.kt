@@ -3,11 +3,10 @@ package org.jetbrains.vuejs.model
 
 import com.intellij.lang.javascript.psi.StubSafe
 import com.intellij.lang.javascript.psi.util.stubSafeGetAttribute
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiReference
-import com.intellij.psi.StubBasedPsiElement
+import com.intellij.openapi.util.TextRange
+import com.intellij.psi.*
 import com.intellij.psi.impl.FakePsiElement
+import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ProcessingContext
 import com.intellij.util.asSafely
@@ -24,7 +23,7 @@ fun XmlTag.tryResolveSrcReference(): PsiElement? {
   val attrReferences: Array<PsiReference>? =
     if ((attribute as? StubBasedPsiElement<*>)?.stub != null)
       attribute.value?.let {
-        BASIC_REF_PROVIDER.getReferencesByElement(FakeAttributeValue(attribute, it), ProcessingContext())
+        BASIC_REF_PROVIDER.getReferencesByElement(VueFakeSrcAttributeValue(attribute, it), ProcessingContext())
       }
     else
       attribute.valueElement?.let {
@@ -32,11 +31,19 @@ fun XmlTag.tryResolveSrcReference(): PsiElement? {
       }
   return attrReferences
     ?.asSequence()
+    ?.flatMap { if (it is PsiReferencesWrapper) it.references else listOf(it) }
+    ?.filterIsInstance<FileReference>()
     ?.mapNotNull { it.resolve()?.asSafely<PsiFile>() }
     ?.firstOrNull()
 }
 
-private class FakeAttributeValue constructor(private val myParent: PsiElement, value: String) : FakePsiElement() {
+class VueFakeScrAttributeValueManipulator : AbstractElementManipulator<VueFakeSrcAttributeValue>() {
+  override fun handleContentChange(element: VueFakeSrcAttributeValue, range: TextRange, newContent: String): VueFakeSrcAttributeValue =
+    VueFakeSrcAttributeValue(element.parent, range.replace(element.text, newContent))
+
+}
+
+class VueFakeSrcAttributeValue(private val myParent: PsiElement, value: String) : FakePsiElement() {
 
   private val myValue: String = value
 
