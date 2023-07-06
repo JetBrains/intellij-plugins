@@ -119,9 +119,10 @@ class VueComponentTemplateInfoProvider : VueContainerInfoProvider {
       StubIndex.getInstance().processElements(VueUrlIndex.KEY, name, source.project,
                                               GlobalSearchScope.projectScope(source.project), PsiElement::class.java) { element ->
         if (element is XmlAttribute
-            && element.context?.let { it is XmlTag && it.name == HtmlUtil.SCRIPT_TAG_NAME } == true
-            && element.valueElement?.references
-              ?.any { it.resolve()?.containingFile == source.containingFile } == true) {
+            && element.context?.asSafely<XmlTag>()
+              ?.takeIf { it.name == HtmlUtil.SCRIPT_TAG_NAME }
+              ?.tryResolveSrcReference() == source.containingFile
+        ) {
           result = CachedValueProvider.Result.create(
             element.containingFile
               ?.asSafely<XmlFile>()
