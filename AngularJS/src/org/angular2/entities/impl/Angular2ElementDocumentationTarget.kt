@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.documentation.*
 import com.intellij.lang.javascript.highlighting.TypeScriptHighlighter
 import com.intellij.lang.javascript.psi.JSFunctionItem
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.jsdoc.JSDocBlockTags
 import com.intellij.lang.javascript.psi.jsdoc.JSDocComment
 import com.intellij.lang.typescript.documentation.TypeScriptDocumentationProvider
 import com.intellij.model.Pointer
@@ -43,9 +44,46 @@ class Angular2ElementDocumentationTarget private constructor(
   }
 
   @Suppress("HardCodedStringLiteral")
-  override fun computeDocumentation(): DocumentationResult =
-    elements.joinToString("\n<hr>\n") { Angular2ElementDocumentation(it).build() }
-      .let { DocumentationResult.documentation(it) }
+  override fun computeDocumentation(): DocumentationResult {
+    if (elements.size == 1)
+      return DocumentationResult.documentation(Angular2ElementDocumentation(elements[0]).build())
+    val result = StringBuilder()
+    var module: String? = null
+    for (i in elements.indices) {
+      val doc = Angular2ElementDocumentation(elements[i]).build()
+      if (i + 1 < elements.size) {
+        moduleRegex.find(doc)?.value?.let { module = it }
+        val adjustedSections = doc
+          .replace(moduleRegex, "")
+          .replace("<table class='sections'></table>", "")
+        val addSeparator = adjustedSections.contains("<div class='content")
+                           || adjustedSections.contains(DocumentationMarkup.SECTIONS_START)
+        if (addSeparator) result.append("<div class='separated'>")
+        result.append(adjustedSections)
+        if (addSeparator) result.append("</div>")
+      }
+      else {
+        result.append(doc)
+        if (!moduleRegex.containsMatchIn(doc) && module != null) {
+          result.append(DocumentationMarkup.SECTIONS_START)
+          result.append(module)
+          result.append(DocumentationMarkup.SECTIONS_END)
+        }
+      }
+      result.append("\n")
+    }
+    if (!result.contains(DocumentationMarkup.SECTIONS_START) && !result.contains(DocumentationMarkup.CONTENT_START)) {
+      var prevIndex = result.lastIndexOf(DocumentationMarkup.DEFINITION_START)
+      var curIndex = result.lastIndexOf(DocumentationMarkup.DEFINITION_START, prevIndex - 1)
+      while (curIndex >= 0) {
+        result.insert(prevIndex, "</div>")
+        result.insert(curIndex, "<div class='separated'>")
+        prevIndex = curIndex
+        curIndex = result.lastIndexOf(DocumentationMarkup.DEFINITION_START, prevIndex - 1)
+      }
+    }
+    return DocumentationResult.documentation(result.toString())
+  }
 
   private data class Angular2ElementDocumentation(val element: Angular2Element) {
 
@@ -140,9 +178,9 @@ class Angular2ElementDocumentationTarget private constructor(
     }
 
     override fun createMethodInfoPrinter(target: JSDocMethodInfoBuilder,
-                                            functionItem: JSFunctionItem,
-                                            element: PsiElement,
-                                            contextElement: PsiElement?): JSDocSimpleInfoPrinter<*> {
+                                         functionItem: JSFunctionItem,
+                                         element: PsiElement,
+                                         contextElement: PsiElement?): JSDocSimpleInfoPrinter<*> {
       return Angular2SymbolInfoPrinter(target, element, contextElement, true)
     }
 
@@ -160,6 +198,10 @@ class Angular2ElementDocumentationTarget private constructor(
 
   companion object {
 
+    private val moduleRegex = Regex("<tr><td valign='top'( colspan='2')?><icon src='JavaScriptPsiIcons\\.FileTypes\\.[^']+'/>[^<]+</td>")
+
+    private val docsPrivate = JSDocBlockTags.definitionFor("docs-private")
+
     fun create(name: String, vararg elements: Angular2Element?): Angular2ElementDocumentationTarget? {
       return Angular2ElementDocumentationTarget(
         name, elements.mapNotNull { it }.ifEmpty { return null })
@@ -167,7 +209,7 @@ class Angular2ElementDocumentationTarget private constructor(
 
     private fun hasNonPrivateDocComment(element: PsiElement): Boolean {
       val comment = JSDocumentationUtils.findDocComment(element)
-      return comment is JSDocComment && comment.tags.none { tag -> "docs-private" == tag.name }
+      return comment is JSDocComment && comment.findTags(docsPrivate).isEmpty()
     }
   }
 
