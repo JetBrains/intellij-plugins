@@ -18,7 +18,7 @@ class VueExtractComponentIntention : JavaScriptIntention() {
   }
 
   override fun getText(): String {
-    return VueBundle.message("vue.template.intention.extract.component")
+    return VueBundle.message("action.VueExtractComponentAction.text")
   }
 
   override fun isAvailable(project: Project, editor: Editor?, element: PsiElement): Boolean {

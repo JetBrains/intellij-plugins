@@ -10,18 +10,10 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiUtilBase
 import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.refactoring.actions.BaseRefactoringAction
-import org.jetbrains.vuejs.VueBundle
-import org.jetbrains.vuejs.VuejsIcons
 import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
-class VueExtractComponentAction : BaseRefactoringAction() {
-  init {
-    templatePresentation.text = VueBundle.message("vue.template.intention.extract.component")
-    templatePresentation.description = VueBundle.message("vue.template.intention.extract.component.description")
-    templatePresentation.icon = VuejsIcons.Vue
-  }
-
+internal class VueExtractComponentAction : BaseRefactoringAction() {
   override fun isAvailableInEditorOnly(): Boolean = true
 
   override fun isEnabledOnElements(elements: Array<out PsiElement>): Boolean = true

@@ -24,12 +24,13 @@
       <li>Create new projects from the IDE Welcome screen using Vue CLI</li>
     </ul>
 
-
     Learn more about Vue.js support in the <a href="https://www.jetbrains.com/help/webstorm/vue-js.html">IDE
       documentation</a>.
     ]]></description>
   <vendor>JetBrains</vendor>
   <category>JavaScript Frameworks and Tools</category>
+
+  <resource-bundle>messages.VueBundle</resource-bundle>
 
   <content>
     <module name="intellij.vuejs/prettier"/>
@@ -354,7 +355,9 @@
     <action class="org.jetbrains.vuejs.CreateVueSingleFileComponentAction" id="CreateVueSingleFileComp">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
     </action>
-    <action class="org.jetbrains.vuejs.intentions.extractComponent.VueExtractComponentAction" id="VueExtractComponentAction">
+    <action id="VueExtractComponentAction"
+            class="org.jetbrains.vuejs.intentions.extractComponent.VueExtractComponentAction"
+            icon="org.jetbrains.vuejs.VuejsIcons.Vue">
       <add-to-group group-id="IntroduceActionsGroup" anchor="last"/>
     </action>
   </actions>
