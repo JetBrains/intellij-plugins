@@ -44,7 +44,7 @@ class PbExportSettingsAsCliCommandAction : AnActionButton(
 
       val argumentWithWhiteSpaces = " $pathArgumentName "
       return retrieveUnescapedImportPaths(project)
-        .joinToString(prefix = argumentWithWhiteSpaces, separator = argumentWithWhiteSpaces, transform = ParametersListUtil::escape)
+        .joinToString(prefix = argumentWithWhiteSpaces, separator = argumentWithWhiteSpaces)
     }
 
     private fun retrieveImportUrls(project: Project): Sequence<String> {
@@ -56,8 +56,10 @@ class PbExportSettingsAsCliCommandAction : AnActionButton(
     private fun retrieveUnescapedImportPaths(project: Project): Sequence<String> {
       return retrieveImportUrls(project)
         .map(URLUtil::extractPath)
+        .map { if (it.endsWith("!/")) it else it.trim('/') }
         .map(FileUtil::toSystemDependentName)
-        .map { it.trim('/') }
+        .map(ParametersListUtil::escape)
+        .distinct()
     }
   }
 }
