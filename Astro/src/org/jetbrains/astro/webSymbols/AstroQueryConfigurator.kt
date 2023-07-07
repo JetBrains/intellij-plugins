@@ -14,9 +14,9 @@ import org.jetbrains.astro.webSymbols.scope.AstroFrontmatterScope
 class AstroQueryConfigurator : WebSymbolsQueryConfigurator {
 
   companion object {
+    const val KIND_ASTRO_COMPONENT = "astro-components"
 
     const val PROP_ASTRO_PROXIMITY = "x-astro-proximity"
-
   }
 
   override fun getScope(project: Project,

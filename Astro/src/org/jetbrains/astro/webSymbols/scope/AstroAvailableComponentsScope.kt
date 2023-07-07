@@ -2,6 +2,7 @@
 package org.jetbrains.astro.webSymbols.scope
 
 import com.intellij.model.Pointer
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -20,14 +21,15 @@ class AstroAvailableComponentsScope(project: Project) : WebSymbolsScopeWithCache
 
   override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     val psiManager = PsiManager.getInstance(project)
-    FileBasedIndexImpl.disableUpToDateCheckIn<Collection<VirtualFile>, Exception> {
+    val files = if (ApplicationManager.getApplication().isUnitTestMode)
       FileTypeIndex.getFiles(AstroFileType.INSTANCE, GlobalSearchScope.projectScope(project))
-    }
-      .asSequence()
-      .mapNotNull { psiManager.findFile(it) }
-      .forEach {
-        consumer(AstroComponent(it))
+    else
+      FileBasedIndexImpl.disableUpToDateCheckIn<Collection<VirtualFile>, Exception> {
+        FileTypeIndex.getFiles(AstroFileType.INSTANCE, GlobalSearchScope.projectScope(project))
       }
+    files.forEach { vf ->
+      psiManager.findFile(vf)?.let { consumer(AstroComponent(it)) }
+    }
     cacheDependencies.add(VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
     cacheDependencies.add(DumbService.getInstance(project))
   }

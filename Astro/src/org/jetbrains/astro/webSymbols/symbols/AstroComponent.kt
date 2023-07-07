@@ -8,7 +8,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.WebSymbol.Companion.KIND_HTML_ELEMENTS
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.utils.psiModificationCount
 import org.jetbrains.astro.AstroFramework
@@ -28,7 +27,7 @@ class AstroComponent(file: PsiFile)
     get() = NAMESPACE_HTML
 
   override val kind: SymbolKind
-    get() = KIND_HTML_ELEMENTS
+    get() = AstroQueryConfigurator.KIND_ASTRO_COMPONENT
 
   override val name: String
     get() = StringUtil.capitalize(FileUtil.getNameWithoutExtension(dataHolder.name))

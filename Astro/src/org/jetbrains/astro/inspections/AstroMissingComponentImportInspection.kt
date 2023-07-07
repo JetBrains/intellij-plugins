@@ -27,7 +27,6 @@ class AstroMissingComponentImportInspection : LocalInspectionTool() {
 
         val symbol = descriptor.symbol
         if (symbol !is PsiSourcedWebSymbol
-            || tag.localName != symbol.name
             || symbol.properties[AstroQueryConfigurator.PROP_ASTRO_PROXIMITY] != AstroProximity.OUT_OF_SCOPE)
           return
 
