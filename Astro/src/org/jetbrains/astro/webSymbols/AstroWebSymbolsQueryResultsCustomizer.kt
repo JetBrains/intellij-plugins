@@ -25,19 +25,22 @@ class AstroWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : W
                      strict: Boolean,
                      namespace: SymbolNamespace?,
                      kind: SymbolKind,
-                     name: String?): List<WebSymbol> {
-    if (namespace != WebSymbol.NAMESPACE_HTML && kind != WebSymbol.KIND_HTML_ELEMENTS)
-      return matches
-    return matches.filter { symbol ->
-      symbol.asSafely<AstroComponent>()?.source != context.containingFile.originalFile
-      && (!strict || symbol.properties[PROP_ASTRO_PROXIMITY].let {
-        it == null || it == AstroProximity.LOCAL
-      })
-    }
-  }
+                     name: String?): List<WebSymbol> =
+    if (namespace != WebSymbol.NAMESPACE_HTML || kind != AstroQueryConfigurator.KIND_ASTRO_COMPONENT)
+      matches
+    else if (HTML_TAGS.contains(name))
+      emptyList()
+    else
+      matches.filter { symbol ->
+        symbol.asSafely<AstroComponent>()?.source != context.containingFile.originalFile
+        && (!strict || symbol.properties[PROP_ASTRO_PROXIMITY].let {
+          it == null || it == AstroProximity.LOCAL
+        })
+      }
 
   override fun apply(item: WebSymbolCodeCompletionItem, namespace: SymbolNamespace?, kind: SymbolKind): WebSymbolCodeCompletionItem? {
-    if (namespace == WebSymbol.NAMESPACE_HTML || kind == WebSymbol.KIND_HTML_ELEMENTS) {
+    if (namespace == WebSymbol.NAMESPACE_HTML && kind == AstroQueryConfigurator.KIND_ASTRO_COMPONENT) {
+      if (HTML_TAGS.contains(item.name)) return null
       val proximity = item.symbol?.properties?.get(PROP_ASTRO_PROXIMITY)
       val element = (item.symbol as? PsiSourcedWebSymbol)?.source
       if (proximity == AstroProximity.OUT_OF_SCOPE && element is AstroFileImpl) {
@@ -74,3 +77,125 @@ class AstroWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : W
 
   }
 }
+
+// https://developer.mozilla.org/en-US/docs/Web/HTML/Element
+internal val HTML_TAGS: Set<String> = setOf(
+  "html",
+  "base",
+  "head",
+  "link",
+  "meta",
+  "style",
+  "title",
+  "body",
+  "address",
+  "article",
+  "aside",
+  "footer",
+  "header",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "hgroup",
+  "main",
+  "nav",
+  "section",
+  "blockquote",
+  "dd",
+  "dir",
+  "div",
+  "dl",
+  "dt",
+  "figcaption",
+  "figure",
+  "hr",
+  "li",
+  "ol",
+  "p",
+  "pre",
+  "ul",
+  "a",
+  "abbr",
+  "b",
+  "bdi",
+  "bdo",
+  "br",
+  "cite",
+  "code",
+  "data",
+  "dfn",
+  "em",
+  "i",
+  "kbd",
+  "mark",
+  "q",
+  "rb",
+  "rp",
+  "rt",
+  "rtc",
+  "ruby",
+  "s",
+  "samp",
+  "small",
+  "span",
+  "strong",
+  "sub",
+  "sup",
+  "time",
+  "tt",
+  "u",
+  "var",
+  "wbr",
+  "area",
+  "audio",
+  "img",
+  "map",
+  "track",
+  "video",
+  "embed",
+  "iframe",
+  "object",
+  "param",
+  "picture",
+  "source",
+  "canvas",
+  "noscript",
+  "script",
+  "del",
+  "ins",
+  "caption",
+  "col",
+  "colgroup",
+  "table",
+  "tbody",
+  "td",
+  "tfoot",
+  "th",
+  "thead",
+  "tr",
+  "button",
+  "datalist",
+  "fieldset",
+  "form",
+  "input",
+  "label",
+  "legend",
+  "meter",
+  "optgroup",
+  "option",
+  "output",
+  "progress",
+  "select",
+  "textarea",
+  "details",
+  "dialog",
+  "menu",
+  "menuitem",
+  "summary",
+  "content",
+  "slot",
+  "template"
+)

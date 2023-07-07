@@ -7,7 +7,6 @@ import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.WebSymbol.Companion.KIND_HTML_ATTRIBUTES
-import com.intellij.webSymbols.WebSymbol.Companion.KIND_HTML_ELEMENTS
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import org.jetbrains.astro.webSymbols.AstroProximity
@@ -37,7 +36,7 @@ class AstroLocalComponent(override val name: String,
     get() = NAMESPACE_HTML
 
   override val kind: SymbolKind
-    get() = KIND_HTML_ELEMENTS
+    get() = AstroQueryConfigurator.KIND_ASTRO_COMPONENT
 
   override val properties: Map<String, Any>
     get() = mapOf(Pair(AstroQueryConfigurator.PROP_ASTRO_PROXIMITY, AstroProximity.LOCAL))
