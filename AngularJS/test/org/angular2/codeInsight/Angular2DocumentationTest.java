@@ -78,6 +78,26 @@ public class Angular2DocumentationTest extends Angular2CodeInsightFixtureTestCas
     doTest();
   }
 
+  public void testDirectiveInputNoDoc() {
+    myFixture.configureByFiles(getTestName(true) + ".ts", "package.json");
+    checkDocumentationAtCaret(myFixture);
+  }
+
+  public void testDirectiveInOutNoDoc() {
+    myFixture.configureByFiles(getTestName(true) + ".ts", "package.json");
+    checkDocumentationAtCaret(myFixture);
+  }
+
+  public void testDirectiveNoDocInOutDoc() {
+    myFixture.configureByFiles(getTestName(true) + ".ts", "package.json");
+    checkDocumentationAtCaret(myFixture);
+  }
+
+  public void testDirectiveInOutMixedDoc() {
+    myFixture.configureByFiles(getTestName(true) + ".ts", "package.json");
+    checkDocumentationAtCaret(myFixture);
+  }
+
   private void doTest() {
     myFixture.configureByFiles(getTestName(true) + ".html",
                                "package.json", "deps/list-item.component.ts", "deps/ng_for_of.ts", "deps/ng_if.ts", "deps/dir.ts",
