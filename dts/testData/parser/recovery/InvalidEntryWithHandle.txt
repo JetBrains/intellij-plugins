@@ -1,17 +1,17 @@
 DTS file
-  PsiErrorElement:Invalid entry
+  PsiErrorElement:Not a valid entry
     DtsPHandleImpl(P_HANDLE)
       PsiElement(&)('&')
       PsiElement(name)('label')
   PsiWhiteSpace('\n\n')
-  PsiErrorElement:Invalid entry
+  PsiErrorElement:Not a valid entry
     DtsPHandleImpl(P_HANDLE)
       PsiElement(&)('&')
       PsiElement({)('{')
       PsiElement(path)('/path')
       PsiElement(})('}')
   PsiWhiteSpace('\n\n')
-  PsiErrorElement:Invalid entry
+  PsiErrorElement:Not a valid entry
     PsiElement(name)('a')
     PsiWhiteSpace(' ')
     PsiElement(name)('b')

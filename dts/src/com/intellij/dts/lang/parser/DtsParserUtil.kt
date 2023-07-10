@@ -1,5 +1,6 @@
 package com.intellij.dts.lang.parser
 
+import com.intellij.dts.DtsBundle
 import com.intellij.dts.lang.DtsTokenSets
 import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.lang.LighterASTNode
@@ -167,7 +168,6 @@ object DtsParserUtil : DtsJavaParserUtil() {
     @JvmStatic
     fun parseInvalidEntry(builder: PsiBuilder, level: Int): Boolean {
         if (builder.eof()) return false
-
         if (builder.tokenType in invalidEntryEndTokens) return false
 
         val marker = builder.mark()
@@ -177,15 +177,16 @@ object DtsParserUtil : DtsJavaParserUtil() {
                 if (builder.eof() || lookUpLineBrake(builder, -1)) break@consume
             }
 
-            val nexLineBrake = lookUpLineBrake(builder, 1)
+            val nextLineBrake = lookUpLineBrake(builder, 1)
             val endToken = builder.tokenType in invalidEntryEndTokens
 
             builder.advanceLexer()
 
-            if (nexLineBrake || endToken) break
+            if (nextLineBrake || endToken) break
         }
 
-        marker.error("Invalid entry")
+        rollbackPreprocessorStatements(builder, marker)
+        marker.error(DtsBundle.message("parser.invalid_entry"))
 
         return true
     }

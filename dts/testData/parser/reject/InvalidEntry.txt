@@ -7,5 +7,5 @@ DTS file
       PsiElement(})('}')
     PsiElement(;)(';')
   PsiWhiteSpace('\n\n')
-  PsiErrorElement:Invalid entry
+  PsiErrorElement:Not a valid entry
     PsiElement(name)('invalid')

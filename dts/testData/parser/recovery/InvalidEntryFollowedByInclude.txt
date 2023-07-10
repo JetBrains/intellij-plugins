@@ -1,0 +1,11 @@
+DTS file
+  PsiErrorElement:Not a valid entry
+    PsiElement(name)('invalid')
+  PsiWhiteSpace('\n\n')
+  DtsIncludeStatementImpl(INCLUDE_STATEMENT)
+    PsiElement(/include/)('/include/')
+    PsiWhiteSpace(' ')
+    DtsStringImpl(STRING)
+      PsiElement(")('"')
+      PsiElement(string)('file')
+      PsiElement(")('"')
