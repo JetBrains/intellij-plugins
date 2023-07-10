@@ -18,7 +18,6 @@ import com.intellij.psi.tree.IElementType
 import org.intellij.terraform.hcl.HCLSyntaxHighlighterFactory
 import org.intellij.terraform.hil.HILElementTypes.*
 import org.intellij.terraform.hil.psi.HILLexer
-import java.util.*
 
 class HILSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
 
@@ -48,7 +47,7 @@ class HILSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
   }
 
   object HILSyntaxHighlighter : SyntaxHighlighterBase() {
-    private val ourAttributes: Map<IElementType, TextAttributesKey> = HashMap()
+    private val ourAttributes: MutableMap<IElementType, TextAttributesKey> = HashMap()
 
     init {
       fillMap(ourAttributes, HILTokenTypes.TIL_BRACES, TIL_BRACES)

@@ -15,7 +15,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.StringEscapesTokenTypes
 import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
-import java.util.*
 
 open class HCLSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
 
@@ -48,7 +47,7 @@ open class HCLSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
 
 
   open class MySyntaxHighlighter(val lexer: HCLLexer) : SyntaxHighlighterBase() {
-    private val ourAttributes: Map<IElementType, TextAttributesKey> = HashMap()
+    private val ourAttributes: MutableMap<IElementType, TextAttributesKey> = HashMap()
 
 
     init {
