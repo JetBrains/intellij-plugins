@@ -10,7 +10,7 @@ DTSI file
           DtsCellArrayBitsImpl(CELL_ARRAY_BITS)
             PsiElement(/bits/)('/bits/')
             PsiWhiteSpace(' ')
-            PsiErrorElement:integer or name expected, got '$'
+            PsiErrorElement:integer expected, got '$'
               PsiElement(BAD_CHARACTER)('$')
             PsiWhiteSpace(' ')
             PsiElement(BAD_CHARACTER)('$')

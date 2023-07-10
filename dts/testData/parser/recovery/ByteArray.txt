@@ -27,7 +27,7 @@ DTSI file
           DtsByteImpl(BYTE)
             PsiElement(byte)('00')
           PsiWhiteSpace(' ')
-          PsiErrorElement:byte, label or name expected, got '$'
+          PsiErrorElement:byte or label expected, got '$'
             PsiElement(BAD_CHARACTER)('$')
           PsiWhiteSpace(' ')
           PsiElement(BAD_CHARACTER)('$')

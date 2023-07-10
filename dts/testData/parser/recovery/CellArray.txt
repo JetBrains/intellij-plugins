@@ -27,7 +27,7 @@ DTSI file
           DtsIntImpl(INT)
             PsiElement(integer)('00')
           PsiWhiteSpace(' ')
-          PsiErrorElement:'&', ''', '(', integer, label or name expected, got '$'
+          PsiErrorElement:'&', ''', '(', integer or label expected, got '$'
             PsiElement(BAD_CHARACTER)('$')
           PsiWhiteSpace(' ')
           PsiElement(BAD_CHARACTER)('$')

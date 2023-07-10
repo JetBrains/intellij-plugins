@@ -15,7 +15,7 @@ DTSI file
               PsiElement(BAD_CHARACTER)('$')
             PsiElement(})('}')
           PsiWhiteSpace(' ')
-          DtsPpMacroImpl(PP_MACRO)
+          PsiErrorElement:'&', ''', '(', integer or label expected, got '0'
             PsiElement(name)('0')
           PsiElement(>)('>')
     PsiElement(;)(';')

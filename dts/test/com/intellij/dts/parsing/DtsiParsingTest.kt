@@ -71,5 +71,7 @@ abstract class DtsiParsingTest(dataPath: String) : DtsParsingTestBase(dataPath, 
         fun testCharInByteArray() = doTest()
 
         fun testLabelAfterBits() = doTest()
+
+        fun testInvalidMacroNames() = doTest()
     }
 }

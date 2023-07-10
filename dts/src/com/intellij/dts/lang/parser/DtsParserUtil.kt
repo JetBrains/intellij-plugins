@@ -29,6 +29,8 @@ object DtsParserUtil : DtsJavaParserUtil() {
         DtsTypes.OMIT_NODE,
     )
 
+    private val ppMacroNameRx = Regex("[a-zA-Z_][0-9a-zA-Z_]*")
+
     /**
      * Rolls back all trailing preprocessor statements. Therefore, this function
      * considers all trailing children of the last production and all consecutive
@@ -191,9 +193,19 @@ object DtsParserUtil : DtsJavaParserUtil() {
         return true
     }
 
+    private fun consumePpMacroName(builder: PsiBuilder): Boolean {
+        if (builder.tokenType != DtsTypes.NAME) return false
+
+        val text = builder.tokenText ?: return false
+        if (!ppMacroNameRx.matches(text)) return false
+
+        builder.advanceLexer()
+        return true
+    }
+
     @JvmStatic
     fun parsePpMacro(builder: PsiBuilder, level: Int): Boolean {
-        if (!consumeToken(builder, DtsTypes.NAME)) return false
+        if (!consumePpMacroName(builder)) return false
 
         val validTokens = TokenSet.create(
             DtsTypes.LPAREN,

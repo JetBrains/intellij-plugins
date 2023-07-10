@@ -8,7 +8,7 @@ DTSI file
       DtsPropertyContentImpl(PROPERTY_CONTENT)
         DtsByteArrayImpl(BYTE_ARRAY)
           PsiElement([)('[')
-          PsiErrorElement:byte, label or name expected, got '''
+          PsiErrorElement:byte or label expected, got '''
             PsiElement(BAD_CHARACTER)(''')
           PsiElement(name)('a')
           PsiElement(BAD_CHARACTER)(''')

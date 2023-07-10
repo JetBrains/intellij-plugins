@@ -1,0 +1,39 @@
+DTSI file
+  DtsEntryImpl(ENTRY)
+    DtsPropertyImpl(PROPERTY)
+      PsiElement(name)('prop')
+      PsiWhiteSpace(' ')
+      PsiElement(=)('=')
+      PsiErrorElement:<property content> expected, got '+NAME'
+        <empty list>
+  PsiWhiteSpace(' ')
+  DtsEntryImpl(ENTRY)
+    DtsPropertyImpl(PROPERTY)
+      PsiElement(name)('+NAME')
+    PsiElement(;)(';')
+  PsiWhiteSpace('\n')
+  DtsEntryImpl(ENTRY)
+    DtsPropertyImpl(PROPERTY)
+      PsiElement(name)('prop')
+      PsiWhiteSpace(' ')
+      PsiElement(=)('=')
+      PsiErrorElement:<property content> expected, got '0NAME'
+        <empty list>
+  PsiWhiteSpace(' ')
+  DtsEntryImpl(ENTRY)
+    DtsPropertyImpl(PROPERTY)
+      PsiElement(name)('0NAME')
+    PsiElement(;)(';')
+  PsiWhiteSpace('\n')
+  DtsEntryImpl(ENTRY)
+    DtsPropertyImpl(PROPERTY)
+      PsiElement(name)('prop')
+      PsiWhiteSpace(' ')
+      PsiElement(=)('=')
+      PsiErrorElement:<property content> expected, got '-NAME'
+        <empty list>
+  PsiWhiteSpace(' ')
+  DtsEntryImpl(ENTRY)
+    DtsPropertyImpl(PROPERTY)
+      PsiElement(name)('-NAME')
+    PsiElement(;)(';')

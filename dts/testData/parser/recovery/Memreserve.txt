@@ -5,7 +5,7 @@ DTS file
       PsiWhiteSpace(' ')
       PsiElement(integer)('00')
       PsiWhiteSpace(' ')
-      PsiErrorElement:''', '(', integer or name expected, got '$'
+      PsiErrorElement:''', '(' or integer expected, got '$'
         PsiElement(BAD_CHARACTER)('$')
       PsiWhiteSpace(' ')
       PsiElement(BAD_CHARACTER)('$')
