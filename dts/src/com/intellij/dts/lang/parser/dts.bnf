@@ -61,6 +61,7 @@
   mixin("includeStatement")="com.intellij.dts.lang.psi.mixin.DtsIncludeStatementMixin"
 
   extends(".*Expr")=expr
+  consumeTokenMethod(".*Recover")="consumeTokenFast"
 
   // c preprocessor rules
 
@@ -78,24 +79,23 @@
 file ::= entries*
 
 private entries ::=
-        <<compilerDirectiveEntry V1 ()>> |
-        <<compilerDirectiveEntry PLUGIN ()>> |
-        <<compilerDirectiveEntry (LABEL* MEMRESERVE) (cell cell)>> |
-        <<compilerDirectiveEntry DELETE_NODE (pHandle | NAME)>> |
-        <<compilerDirectiveEntry DELETE_PROP NAME>> |
-        <<entry rootNode>> |
-        <<entry subNode>> |
-        <<entry property>> |
-        // omit can also be a prefix of a sub node
-        <<compilerDirectiveEntry OMIT_NODE pHandle>> |
+        <<quickLookahead 'V1'>>                 <<compilerDirectiveEntry V1 ()>> |
+        <<quickLookahead 'PLUGIN'>>             <<compilerDirectiveEntry PLUGIN ()>> |
+        <<labelLookahead 'MEMRESERVE'>>         <<compilerDirectiveEntry (LABEL* MEMRESERVE) (cell cell)>> |
+        <<quickLookahead 'DELETE_NODE'>>        <<compilerDirectiveEntry DELETE_NODE (pHandle | NAME)>> |
+        <<quickLookahead 'DELETE_PROP'>>        <<compilerDirectiveEntry DELETE_PROP NAME>> |
+        <<labelLookahead 'SLASH' 'HANDLE'>>     <<entry rootNode>> |
+        <<labelLookahead 'OMIT_NODE' 'NAME'>>   <<entry subNode>> |
+        <<labelLookahead 'NAME'>>               <<entry property>> |
+        <<quickLookahead 'OMIT_NODE'>>          <<compilerDirectiveEntry OMIT_NODE pHandle>> |
         invalidEntry
 
 external invalidEntry ::= parseInvalidEntry
 
-rootNode ::= (SLASH | (LABEL*  pHandle)) LBRACE nodeContent? RBRACE {pin=2 recoverWhile="rootNodeRecover"}
+rootNode ::= (SLASH | (LABEL*  pHandle)) LBRACE (!RBRACE nodeContent)? RBRACE {pin=2 recoverWhile="rootNodeRecover"}
 private rootNodeRecover ::= !(SEMICOLON | RBRACE | afterLineBreak)
 
-subNode ::= LABEL* OMIT_NODE? LABEL* NAME LBRACE nodeContent? RBRACE {pin=5 recoverWhile="subNodeRecover"}
+subNode ::= LABEL* OMIT_NODE? LABEL* NAME LBRACE (!RBRACE nodeContent)? RBRACE {pin=5 recoverWhile="subNodeRecover"}
 private subNodeRecover ::= !(SEMICOLON | RBRACE | NAME | afterLineBreak)
 
 nodeContent ::= entries+
@@ -141,8 +141,6 @@ byte ::= BYTE_VALUE
 int ::= INT_VALUE
 string ::= DQUOTE STRING_VALUE? DQUOTE {pin=1}
 char ::= SQUOTE CHAR_VALUE* SQUOTE {pin=1}
-
-external afterLineBreak ::= parseAfterLineBreak
 
 exprValue ::= LPAREN expr RPAREN {pin=1}
 
@@ -204,6 +202,11 @@ charExpr ::= char
 parenExpr ::= LPAREN expr RPAREN
 
 includeStatement ::= () INCLUDE string { pin=1 }
+
+// util rules for recovery and lookaheads
+external afterLineBreak ::= parseAfterLineBreak
+private meta external quickLookahead ::= quickLookaheadImpl
+private meta external labelLookahead ::= labelLookaheadImpl
 
 // fallback to handle unknown identifiers like macros
 ppMacro ::= parserPpMacro

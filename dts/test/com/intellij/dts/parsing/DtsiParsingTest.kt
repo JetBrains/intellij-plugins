@@ -1,20 +1,6 @@
 package com.intellij.dts.parsing
 
-import com.intellij.dts.completion.DtsBraceMatcher
-import com.intellij.testFramework.ParsingTestCase
-import com.intellij.dts.lang.parser.DtsParserDefinition
-import com.intellij.lang.LanguageBraceMatching
-
-abstract class DtsiParsingTest(dataPath: String) : ParsingTestCase(dataPath, "dtsi", DtsParserDefinition()) {
-    override fun getTestDataPath(): String = "testData/parser"
-
-    override fun setUp() {
-        super.setUp()
-
-        // fixes issue when parser tests run before typing tests
-        addExplicitExtension(LanguageBraceMatching.INSTANCE, myLanguage, DtsBraceMatcher())
-    }
-
+abstract class DtsiParsingTest(dataPath: String) : DtsParsingTestBase(dataPath, "dtsi") {
     class Dtsi : DtsiParsingTest("dtsi") {
         fun testDeleteNode() = doTest(true, true)
 

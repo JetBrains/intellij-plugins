@@ -94,11 +94,11 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   private static boolean byteArrayRecover_0(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "byteArrayRecover_0")) return false;
     boolean result_;
-    result_ = consumeToken(builder_, SEMICOLON);
-    if (!result_) result_ = consumeToken(builder_, RBRACE);
-    if (!result_) result_ = consumeToken(builder_, COMMA);
-    if (!result_) result_ = consumeToken(builder_, RBRAC);
-    if (!result_) result_ = consumeToken(builder_, RPAREN);
+    result_ = consumeTokenFast(builder_, SEMICOLON);
+    if (!result_) result_ = consumeTokenFast(builder_, RBRACE);
+    if (!result_) result_ = consumeTokenFast(builder_, COMMA);
+    if (!result_) result_ = consumeTokenFast(builder_, RBRAC);
+    if (!result_) result_ = consumeTokenFast(builder_, RPAREN);
     return result_;
   }
 
@@ -189,9 +189,9 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   private static boolean cellArrayBitsRecover_0(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "cellArrayBitsRecover_0")) return false;
     boolean result_;
-    result_ = consumeToken(builder_, SEMICOLON);
-    if (!result_) result_ = consumeToken(builder_, RBRACE);
-    if (!result_) result_ = consumeToken(builder_, LANGL);
+    result_ = consumeTokenFast(builder_, SEMICOLON);
+    if (!result_) result_ = consumeTokenFast(builder_, RBRACE);
+    if (!result_) result_ = consumeTokenFast(builder_, LANGL);
     return result_;
   }
 
@@ -224,11 +224,11 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   private static boolean cellArrayRecover_0(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "cellArrayRecover_0")) return false;
     boolean result_;
-    result_ = consumeToken(builder_, SEMICOLON);
-    if (!result_) result_ = consumeToken(builder_, RBRACE);
-    if (!result_) result_ = consumeToken(builder_, COMMA);
-    if (!result_) result_ = consumeToken(builder_, RANGL);
-    if (!result_) result_ = consumeToken(builder_, RPAREN);
+    result_ = consumeTokenFast(builder_, SEMICOLON);
+    if (!result_) result_ = consumeTokenFast(builder_, RBRACE);
+    if (!result_) result_ = consumeTokenFast(builder_, COMMA);
+    if (!result_) result_ = consumeTokenFast(builder_, RANGL);
+    if (!result_) result_ = consumeTokenFast(builder_, RPAREN);
     return result_;
   }
 
@@ -312,78 +312,110 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
     if (!recursion_guard_(builder_, level_, "compilerDirectiveRecover_0")) return false;
     boolean result_;
     com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, SEMICOLON);
-    if (!result_) result_ = consumeToken(builder_, RBRACE);
+    result_ = consumeTokenFast(builder_, SEMICOLON);
+    if (!result_) result_ = consumeTokenFast(builder_, RBRACE);
     if (!result_) result_ = parseAfterLineBreak(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
   /* ********************************************************** */
-  // <<compilerDirectiveEntry V1 ()>> |
-  //         <<compilerDirectiveEntry PLUGIN ()>> |
-  //         <<compilerDirectiveEntry (LABEL* MEMRESERVE) (cell cell)>> |
-  //         <<compilerDirectiveEntry DELETE_NODE (pHandle | NAME)>> |
-  //         <<compilerDirectiveEntry DELETE_PROP NAME>> |
-  //         <<entry rootNode>> |
-  //         <<entry subNode>> |
-  //         <<entry property>> |
-  //         // omit can also be a prefix of a sub node
-  //         <<compilerDirectiveEntry OMIT_NODE pHandle>> |
+  // <<fastLookahead 'V1'>>                  <<compilerDirectiveEntry V1 ()>> |
+  //         <<fastLookahead 'PLUGIN'>>              <<compilerDirectiveEntry PLUGIN ()>> |
+  //         <<labelLookahead 'MEMRESERVE'>>         <<compilerDirectiveEntry (LABEL* MEMRESERVE) (cell cell)>> |
+  //         <<fastLookahead 'DELETE_NODE'>>         <<compilerDirectiveEntry DELETE_NODE (pHandle | NAME)>> |
+  //         <<fastLookahead 'DELETE_PROP'>>         <<compilerDirectiveEntry DELETE_PROP NAME>> |
+  //         <<labelLookahead 'SLASH' 'HANDLE'>>     <<entry rootNode>> |
+  //         <<labelLookahead 'OMIT_NODE' 'NAME'>>   <<entry subNode>> |
+  //         <<labelLookahead 'NAME'>>               <<entry property>> |
+  //         <<fastLookahead 'OMIT_NODE'>>           <<compilerDirectiveEntry OMIT_NODE pHandle>> |
   //         invalidEntry
   static boolean entries(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "entries")) return false;
     boolean result_;
     com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
-    result_ = compilerDirectiveEntry(builder_, level_ + 1, V1_parser_, DtsParser::entries_0_1);
-    if (!result_) result_ = compilerDirectiveEntry(builder_, level_ + 1, PLUGIN_parser_, DtsParser::entries_1_1);
-    if (!result_) result_ = compilerDirectiveEntry(builder_, level_ + 1, DtsParser::entries_2_0, DtsParser::entries_2_1);
-    if (!result_) result_ = compilerDirectiveEntry(builder_, level_ + 1, DELETE_NODE_parser_, DtsParser::entries_3_1);
-    if (!result_) result_ = compilerDirectiveEntry(builder_, level_ + 1, DELETE_PROP_parser_, NAME_parser_);
-    if (!result_) result_ = entry(builder_, level_ + 1, DtsParser::rootNode);
-    if (!result_) result_ = entry(builder_, level_ + 1, DtsParser::subNode);
-    if (!result_) result_ = entry(builder_, level_ + 1, DtsParser::property);
-    if (!result_) result_ = compilerDirectiveEntry(builder_, level_ + 1, OMIT_NODE_parser_, DtsParser::pHandle);
+    result_ = entries_0(builder_, level_ + 1);
+    if (!result_) result_ = entries_1(builder_, level_ + 1);
+    if (!result_) result_ = entries_2(builder_, level_ + 1);
+    if (!result_) result_ = entries_3(builder_, level_ + 1);
+    if (!result_) result_ = entries_4(builder_, level_ + 1);
+    if (!result_) result_ = entries_5(builder_, level_ + 1);
+    if (!result_) result_ = entries_6(builder_, level_ + 1);
+    if (!result_) result_ = entries_7(builder_, level_ + 1);
+    if (!result_) result_ = entries_8(builder_, level_ + 1);
     if (!result_) result_ = parseInvalidEntry(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
-  // ()
-  private static boolean entries_0_1(com.intellij.lang.PsiBuilder builder_, int level_) {
-    return true;
+  // <<fastLookahead 'V1'>>                  <<compilerDirectiveEntry V1 ()>>
+  private static boolean entries_0(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "entries_0")) return false;
+    boolean result_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
+    result_ = quickLookaheadImpl(builder_, level_ + 1, V1);
+    result_ = result_ && compilerDirectiveEntry(builder_, level_ + 1, V1_parser_, DtsParser::entries_0_1_1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
   }
 
   // ()
-  private static boolean entries_1_1(com.intellij.lang.PsiBuilder builder_, int level_) {
+  private static boolean entries_0_1_1(com.intellij.lang.PsiBuilder builder_, int level_) {
     return true;
+  }
+
+  // <<fastLookahead 'PLUGIN'>>              <<compilerDirectiveEntry PLUGIN ()>>
+  private static boolean entries_1(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "entries_1")) return false;
+    boolean result_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
+    result_ = quickLookaheadImpl(builder_, level_ + 1, PLUGIN);
+    result_ = result_ && compilerDirectiveEntry(builder_, level_ + 1, PLUGIN_parser_, DtsParser::entries_1_1_1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // ()
+  private static boolean entries_1_1_1(com.intellij.lang.PsiBuilder builder_, int level_) {
+    return true;
+  }
+
+  // <<labelLookahead 'MEMRESERVE'>>         <<compilerDirectiveEntry (LABEL* MEMRESERVE) (cell cell)>>
+  private static boolean entries_2(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "entries_2")) return false;
+    boolean result_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
+    result_ = labelLookaheadImpl(builder_, level_ + 1, MEMRESERVE);
+    result_ = result_ && compilerDirectiveEntry(builder_, level_ + 1, DtsParser::entries_2_1_0, DtsParser::entries_2_1_1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
   }
 
   // LABEL* MEMRESERVE
-  private static boolean entries_2_0(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "entries_2_0")) return false;
+  private static boolean entries_2_1_0(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "entries_2_1_0")) return false;
     boolean result_;
     com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
-    result_ = entries_2_0_0(builder_, level_ + 1);
+    result_ = entries_2_1_0_0(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, MEMRESERVE);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
   // LABEL*
-  private static boolean entries_2_0_0(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "entries_2_0_0")) return false;
+  private static boolean entries_2_1_0_0(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "entries_2_1_0_0")) return false;
     while (true) {
       int pos_ = current_position_(builder_);
       if (!consumeToken(builder_, LABEL)) break;
-      if (!empty_element_parsed_guard_(builder_, "entries_2_0_0", pos_)) break;
+      if (!empty_element_parsed_guard_(builder_, "entries_2_1_0_0", pos_)) break;
     }
     return true;
   }
 
   // cell cell
-  private static boolean entries_2_1(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "entries_2_1")) return false;
+  private static boolean entries_2_1_1(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "entries_2_1_1")) return false;
     boolean result_;
     com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
     result_ = cell(builder_, level_ + 1);
@@ -392,12 +424,78 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
     return result_;
   }
 
+  // <<fastLookahead 'DELETE_NODE'>>         <<compilerDirectiveEntry DELETE_NODE (pHandle | NAME)>>
+  private static boolean entries_3(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "entries_3")) return false;
+    boolean result_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
+    result_ = quickLookaheadImpl(builder_, level_ + 1, DELETE_NODE);
+    result_ = result_ && compilerDirectiveEntry(builder_, level_ + 1, DELETE_NODE_parser_, DtsParser::entries_3_1_1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
   // pHandle | NAME
-  private static boolean entries_3_1(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "entries_3_1")) return false;
+  private static boolean entries_3_1_1(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "entries_3_1_1")) return false;
     boolean result_;
     result_ = pHandle(builder_, level_ + 1);
     if (!result_) result_ = consumeToken(builder_, NAME);
+    return result_;
+  }
+
+  // <<fastLookahead 'DELETE_PROP'>>         <<compilerDirectiveEntry DELETE_PROP NAME>>
+  private static boolean entries_4(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "entries_4")) return false;
+    boolean result_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
+    result_ = quickLookaheadImpl(builder_, level_ + 1, DELETE_PROP);
+    result_ = result_ && compilerDirectiveEntry(builder_, level_ + 1, DELETE_PROP_parser_, NAME_parser_);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // <<labelLookahead 'SLASH' 'HANDLE'>>     <<entry rootNode>>
+  private static boolean entries_5(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "entries_5")) return false;
+    boolean result_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
+    result_ = labelLookaheadImpl(builder_, level_ + 1, SLASH, HANDLE);
+    result_ = result_ && entry(builder_, level_ + 1, DtsParser::rootNode);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // <<labelLookahead 'OMIT_NODE' 'NAME'>>   <<entry subNode>>
+  private static boolean entries_6(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "entries_6")) return false;
+    boolean result_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
+    result_ = labelLookaheadImpl(builder_, level_ + 1, OMIT_NODE, NAME);
+    result_ = result_ && entry(builder_, level_ + 1, DtsParser::subNode);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // <<labelLookahead 'NAME'>>               <<entry property>>
+  private static boolean entries_7(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "entries_7")) return false;
+    boolean result_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
+    result_ = labelLookaheadImpl(builder_, level_ + 1, NAME);
+    result_ = result_ && entry(builder_, level_ + 1, DtsParser::property);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // <<fastLookahead 'OMIT_NODE'>>           <<compilerDirectiveEntry OMIT_NODE pHandle>>
+  private static boolean entries_8(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "entries_8")) return false;
+    boolean result_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
+    result_ = quickLookaheadImpl(builder_, level_ + 1, OMIT_NODE);
+    result_ = result_ && compilerDirectiveEntry(builder_, level_ + 1, OMIT_NODE_parser_, DtsParser::pHandle);
+    exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
@@ -553,9 +651,9 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
     if (!recursion_guard_(builder_, level_, "pathRecover_0")) return false;
     boolean result_;
     com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, SEMICOLON);
-    if (!result_) result_ = consumeToken(builder_, RANGL);
-    if (!result_) result_ = consumeToken(builder_, RBRACE);
+    result_ = consumeTokenFast(builder_, SEMICOLON);
+    if (!result_) result_ = consumeTokenFast(builder_, RANGL);
+    if (!result_) result_ = consumeTokenFast(builder_, RBRACE);
     if (!result_) result_ = parseAfterLineBreak(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
@@ -753,8 +851,18 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
     if (!recursion_guard_(builder_, level_, "pp_statementRecover")) return false;
     boolean result_;
     com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NOT_);
-    result_ = !consumeToken(builder_, PP_STATEMENT_END);
+    result_ = !pp_statementRecover_0(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, result_, false, null);
+    return result_;
+  }
+
+  // (PP_STATEMENT_END)
+  private static boolean pp_statementRecover_0(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "pp_statementRecover_0")) return false;
+    boolean result_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
+    result_ = consumeTokenFast(builder_, PP_STATEMENT_END);
+    exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
@@ -853,9 +961,9 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
     if (!recursion_guard_(builder_, level_, "propertyRecover_0")) return false;
     boolean result_;
     com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, SEMICOLON);
-    if (!result_) result_ = consumeToken(builder_, RBRACE);
-    if (!result_) result_ = consumeToken(builder_, NAME);
+    result_ = consumeTokenFast(builder_, SEMICOLON);
+    if (!result_) result_ = consumeTokenFast(builder_, RBRACE);
+    if (!result_) result_ = consumeTokenFast(builder_, NAME);
     if (!result_) result_ = parseAfterLineBreak(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
@@ -880,7 +988,7 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   /* ********************************************************** */
-  // (SLASH | (LABEL*  pHandle)) LBRACE nodeContent? RBRACE
+  // (SLASH | (LABEL*  pHandle)) LBRACE (!RBRACE nodeContent)? RBRACE
   public static boolean rootNode(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "rootNode")) return false;
     boolean result_, pinned_;
@@ -927,11 +1035,32 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
     return true;
   }
 
-  // nodeContent?
+  // (!RBRACE nodeContent)?
   private static boolean rootNode_2(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "rootNode_2")) return false;
-    nodeContent(builder_, level_ + 1);
+    rootNode_2_0(builder_, level_ + 1);
     return true;
+  }
+
+  // !RBRACE nodeContent
+  private static boolean rootNode_2_0(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "rootNode_2_0")) return false;
+    boolean result_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
+    result_ = rootNode_2_0_0(builder_, level_ + 1);
+    result_ = result_ && nodeContent(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // !RBRACE
+  private static boolean rootNode_2_0_0(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "rootNode_2_0_0")) return false;
+    boolean result_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NOT_);
+    result_ = !consumeToken(builder_, RBRACE);
+    exit_section_(builder_, level_, marker_, result_, false, null);
+    return result_;
   }
 
   /* ********************************************************** */
@@ -950,8 +1079,8 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
     if (!recursion_guard_(builder_, level_, "rootNodeRecover_0")) return false;
     boolean result_;
     com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, SEMICOLON);
-    if (!result_) result_ = consumeToken(builder_, RBRACE);
+    result_ = consumeTokenFast(builder_, SEMICOLON);
+    if (!result_) result_ = consumeTokenFast(builder_, RBRACE);
     if (!result_) result_ = parseAfterLineBreak(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
@@ -980,7 +1109,7 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   /* ********************************************************** */
-  // LABEL* OMIT_NODE? LABEL* NAME LBRACE nodeContent? RBRACE
+  // LABEL* OMIT_NODE? LABEL* NAME LBRACE (!RBRACE nodeContent)? RBRACE
   public static boolean subNode(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "subNode")) return false;
     boolean result_, pinned_;
@@ -1025,11 +1154,32 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
     return true;
   }
 
-  // nodeContent?
+  // (!RBRACE nodeContent)?
   private static boolean subNode_5(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "subNode_5")) return false;
-    nodeContent(builder_, level_ + 1);
+    subNode_5_0(builder_, level_ + 1);
     return true;
+  }
+
+  // !RBRACE nodeContent
+  private static boolean subNode_5_0(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "subNode_5_0")) return false;
+    boolean result_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
+    result_ = subNode_5_0_0(builder_, level_ + 1);
+    result_ = result_ && nodeContent(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // !RBRACE
+  private static boolean subNode_5_0_0(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "subNode_5_0_0")) return false;
+    boolean result_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NOT_);
+    result_ = !consumeToken(builder_, RBRACE);
+    exit_section_(builder_, level_, marker_, result_, false, null);
+    return result_;
   }
 
   /* ********************************************************** */
@@ -1048,9 +1198,9 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
     if (!recursion_guard_(builder_, level_, "subNodeRecover_0")) return false;
     boolean result_;
     com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, SEMICOLON);
-    if (!result_) result_ = consumeToken(builder_, RBRACE);
-    if (!result_) result_ = consumeToken(builder_, NAME);
+    result_ = consumeTokenFast(builder_, SEMICOLON);
+    if (!result_) result_ = consumeTokenFast(builder_, RBRACE);
+    if (!result_) result_ = consumeTokenFast(builder_, NAME);
     if (!result_) result_ = parseAfterLineBreak(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;

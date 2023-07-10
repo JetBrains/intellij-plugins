@@ -277,4 +277,30 @@ object DtsParserUtil : DtsJavaParserUtil() {
 
         return true
     }
+
+    @JvmStatic
+    fun quickLookaheadImpl(builder: PsiBuilder, @Suppress("UNUSED_PARAMETER") level: Int, vararg lookahead: IElementType): Boolean {
+        return builder.tokenType in lookahead
+    }
+
+    /**
+     * Performs a lookahead but also skips labels.
+     */
+    @JvmStatic
+    fun labelLookaheadImpl(builder: PsiBuilder, @Suppress("UNUSED_PARAMETER") level: Int, vararg lookahead: IElementType): Boolean {
+        if (builder.tokenType != DtsTypes.LABEL) {
+            return builder.tokenType in lookahead
+        }
+
+        val marker = builder.mark()
+
+        while (builder.tokenType == DtsTypes.LABEL) {
+            builder.advanceLexer()
+        }
+        val result = builder.tokenType in lookahead
+
+        marker.rollbackTo()
+
+        return result
+    }
 }

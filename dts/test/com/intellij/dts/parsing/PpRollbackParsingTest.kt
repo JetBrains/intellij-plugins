@@ -1,10 +1,7 @@
 package com.intellij.dts.parsing
 
-import com.intellij.dts.completion.DtsBraceMatcher
-import com.intellij.dts.lang.parser.DtsParserDefinition
 import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.lang.ASTNode
-import com.intellij.lang.LanguageBraceMatching
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
@@ -16,7 +13,6 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.prevLeaf
-import com.intellij.testFramework.ParsingTestCase
 
 private class TreeToBuffer(private val buffer: Appendable, private val ignore: TokenSet) : RecursiveTreeElementWalkingVisitor() {
     private var indent = 0
@@ -32,8 +28,7 @@ private class TreeToBuffer(private val buffer: Appendable, private val ignore: T
 
         if (root is CompositeElement) {
             buffer.append(root.toString())
-        }
-        else {
+        } else {
             val text = fixWhiteSpaces(root.text)
             buffer.append(root.toString()).append("('").append(text).append("')")
         }
@@ -56,21 +51,12 @@ private class TreeToBuffer(private val buffer: Appendable, private val ignore: T
     }
 }
 
-class PpRollbackParsingTest : ParsingTestCase("ppRollback", "dts", DtsParserDefinition()) {
+class PpRollbackParsingTest : DtsParsingTestBase("ppRollback", "dts") {
     private val variants = mapOf(
         DtsTypes.INCLUDE_STATEMENT to "/include/ \"file\"",
         DtsTypes.PP_INCLUDE_STATEMENT to "#include <file>",
         DtsTypes.PP_DEFINE_STATEMENT to "#define VALUE value \\\nvalue",
     )
-
-    override fun getTestDataPath(): String = "testData/parser"
-
-    override fun setUp() {
-        super.setUp()
-
-        // fixes issue when parser tests run before typing tests
-        addExplicitExtension(LanguageBraceMatching.INSTANCE, myLanguage, DtsBraceMatcher())
-    }
 
     private fun psiToString(element: PsiElement, ignore: TokenSet): String {
         val buffer = StringBuilder()
