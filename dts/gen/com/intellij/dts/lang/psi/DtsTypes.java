@@ -49,11 +49,11 @@ public interface DtsTypes {
   com.intellij.psi.tree.IElementType PROPERTY = new com.intellij.dts.lang.DtsElementType("PROPERTY");
   com.intellij.psi.tree.IElementType PROPERTY_CONTENT = new com.intellij.dts.lang.DtsElementType("PROPERTY_CONTENT");
   com.intellij.psi.tree.IElementType P_HANDLE = new com.intellij.dts.lang.DtsElementType("P_HANDLE");
-  com.intellij.psi.tree.IElementType ROOT_NODE = com.intellij.dts.lang.stubs.DtsStubElementTypes.Companion.factory("ROOT_NODE");
+  com.intellij.psi.tree.IElementType ROOT_NODE = com.intellij.dts.lang.stubs.DtsStubElementTypes.factory("ROOT_NODE");
   com.intellij.psi.tree.IElementType RSH_EXPR = new com.intellij.dts.lang.DtsElementType("RSH_EXPR");
   com.intellij.psi.tree.IElementType STRING = new com.intellij.dts.lang.DtsElementType("STRING");
   com.intellij.psi.tree.IElementType SUB_EXPR = new com.intellij.dts.lang.DtsElementType("SUB_EXPR");
-  com.intellij.psi.tree.IElementType SUB_NODE = com.intellij.dts.lang.stubs.DtsStubElementTypes.Companion.factory("SUB_NODE");
+  com.intellij.psi.tree.IElementType SUB_NODE = com.intellij.dts.lang.stubs.DtsStubElementTypes.factory("SUB_NODE");
   com.intellij.psi.tree.IElementType TERNARY_EXPR = new com.intellij.dts.lang.DtsElementType("TERNARY_EXPR");
   com.intellij.psi.tree.IElementType XOR_EXPR = new com.intellij.dts.lang.DtsElementType("XOR_EXPR");
 

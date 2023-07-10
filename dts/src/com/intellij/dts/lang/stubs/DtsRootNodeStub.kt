@@ -2,8 +2,6 @@ package com.intellij.dts.lang.stubs
 
 import com.intellij.dts.lang.psi.DtsRootNode
 import com.intellij.dts.lang.psi.impl.DtsRootNodeImpl
-import com.intellij.lang.ASTNode
-import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.*
 
 class DtsRootNodeStub(
@@ -13,8 +11,6 @@ class DtsRootNodeStub(
 ) : StubBase<DtsRootNode>(parent, elementType) {
     class Type(debugName: String) : DtsStubElementType<DtsRootNodeStub, DtsRootNode>(debugName) {
         override fun createPsi(stub: DtsRootNodeStub): DtsRootNode = DtsRootNodeImpl(stub, this)
-
-        override fun createElement(node: ASTNode?): PsiElement = DtsRootNodeImpl(node)
 
         override fun createStub(psi: DtsRootNode, parentStub: StubElement<*>?): DtsRootNodeStub {
             return DtsRootNodeStub(parentStub, this, psi.dtsLabels)

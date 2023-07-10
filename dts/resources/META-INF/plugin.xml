@@ -19,7 +19,7 @@
                 language="DTS"
                 implementationClass="com.intellij.dts.lang.parser.DtsParserDefinition"/>
         <stubElementTypeHolder
-                externalIdPrefix="dts."
+                externalIdPrefix="DTS."
                 class="com.intellij.dts.lang.stubs.DtsStubElementTypes"/>
 
         <!-- indices -->
