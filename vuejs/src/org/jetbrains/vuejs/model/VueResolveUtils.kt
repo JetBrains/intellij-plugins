@@ -11,7 +11,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ProcessingContext
 import com.intellij.util.asSafely
 import com.intellij.xml.util.HtmlUtil.SRC_ATTRIBUTE_NAME
-import org.jetbrains.vuejs.codeInsight.refs.VueReferenceContributor.Companion.BASIC_REF_PROVIDER
+import org.jetbrains.vuejs.codeInsight.refs.VueReferenceContributor.Companion.STATIC_FILE_REF_PROVIDER
 
 fun XmlTag.hasSrcReference(): Boolean =
   !stubSafeGetAttribute(SRC_ATTRIBUTE_NAME)?.value.isNullOrBlank()
@@ -23,15 +23,14 @@ fun XmlTag.tryResolveSrcReference(): PsiElement? {
   val attrReferences: Array<PsiReference>? =
     if ((attribute as? StubBasedPsiElement<*>)?.stub != null)
       attribute.value?.let {
-        BASIC_REF_PROVIDER.getReferencesByElement(VueFakeSrcAttributeValue(attribute, it), ProcessingContext())
+        STATIC_FILE_REF_PROVIDER.getReferencesByElement(VueFakeSrcAttributeValue(attribute, it), ProcessingContext())
       }
     else
       attribute.valueElement?.let {
-        BASIC_REF_PROVIDER.getReferencesByElement(it, ProcessingContext())
+        STATIC_FILE_REF_PROVIDER.getReferencesByElement(it, ProcessingContext())
       }
   return attrReferences
     ?.asSequence()
-    ?.flatMap { if (it is PsiReferencesWrapper) it.references else listOf(it) }
     ?.filterIsInstance<FileReference>()
     ?.mapNotNull { it.resolve()?.asSafely<PsiFile>() }
     ?.firstOrNull()

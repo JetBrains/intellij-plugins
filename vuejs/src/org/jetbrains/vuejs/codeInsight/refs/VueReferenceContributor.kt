@@ -1,7 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight.refs
 
-import com.intellij.openapi.paths.PathReferenceManager
+import com.intellij.openapi.fileTypes.FileType
+import com.intellij.openapi.paths.StaticPathReferenceProvider
 import com.intellij.patterns.XmlAttributeValuePattern
 import com.intellij.patterns.XmlPatterns
 import com.intellij.psi.*
@@ -21,7 +22,7 @@ class VueReferenceContributor : PsiReferenceContributor() {
   override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
     registrar.registerReferenceProvider(STYLE_PATTERN, STYLE_REF_PROVIDER)
 
-    registrar.registerReferenceProvider(createSrcAttrValuePattern(TEMPLATE_TAG_NAME), BASIC_REF_PROVIDER)
+    registrar.registerReferenceProvider(createSrcAttrValuePattern(TEMPLATE_TAG_NAME), STATIC_FILE_REF_PROVIDER)
     registrar.registerReferenceProvider(
       XmlPatterns.xmlAttributeValue().withParent(VueRefAttribute::class.java),
       REF_ATTRIBUTE_REF_PROVIDER
@@ -50,7 +51,7 @@ class VueReferenceContributor : PsiReferenceContributor() {
             ?: emptyArray()
 
           val referenceSet = StylesheetFileReferenceSet(element, referenceData.first,
-                                                           referenceData.second, *suitableFileTypes)
+                                                        referenceData.second, *suitableFileTypes)
           @Suppress("UNCHECKED_CAST")
           return referenceSet.allReferences as Array<PsiReference>
         }
@@ -58,9 +59,16 @@ class VueReferenceContributor : PsiReferenceContributor() {
       }
     }
 
-    val BASIC_REF_PROVIDER = object : PsiReferenceProvider() {
-      override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> =
-        PathReferenceManager.getInstance().createReferences(element, false, false, true)
+    val STATIC_FILE_REF_PROVIDER = object : PsiReferenceProvider() {
+      override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
+        val result = mutableListOf<PsiReference>()
+        StaticPathReferenceProvider(FileType.EMPTY_ARRAY).apply {
+          setEndingSlashNotAllowed(false)
+          setRelativePathsAllowed(true)
+          createReferences(element, result, false)
+        }
+        return result.toTypedArray()
+      }
     }
 
     val REF_ATTRIBUTE_REF_PROVIDER = object : PsiReferenceProvider() {
