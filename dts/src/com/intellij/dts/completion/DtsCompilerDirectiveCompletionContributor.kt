@@ -41,10 +41,9 @@ class DtsCompilerDirectiveCompletionContributor : CompletionContributor() {
         override fun checkAutoPopup(c: Char, project: Project, editor: Editor, file: PsiFile): Result {
             if (file !is DtsFile || c != '/') return Result.CONTINUE
 
-            val element = file.findElementAt(editor.caretModel.offset) ?: return Result.CONTINUE
-
-            when (element.parent) {
-                is DtsContainer, is DtsNode -> AutoPopupController.getInstance(project).scheduleAutoPopup(editor, CompletionType.BASIC, null)
+            val element = file.findElementAt(editor.caretModel.offset - 1)
+            if (element == null || element.parent is DtsContainer || element.parent is DtsNode) {
+                AutoPopupController.getInstance(project).scheduleAutoPopup(editor, CompletionType.BASIC, null)
             }
 
             return Result.CONTINUE

@@ -11,6 +11,7 @@ import com.intellij.navigation.ItemPresentation
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.StubBase
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import javax.swing.Icon
 
@@ -21,6 +22,9 @@ abstract class DtsNodeMixin<T : StubBase<*>> : DtsStubBasedElement<T>, DtsStatem
 
     override val dtsStatementKind: DtsStatementKind
         get() = DtsStatementKind.NODE
+
+    override val dtsIsComplete: Boolean
+        get() = !PsiTreeUtil.hasErrorElements(this) && findChildByType<PsiElement>(DtsTypes.RBRACE) != null
 
     override val dtsName: String
         get() = dtsNameElement.text

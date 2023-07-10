@@ -14,6 +14,9 @@ abstract class DtsPropertyMixin(node: ASTNode) : ASTWrapperPsiElement(node), Dts
     override val dtsStatementKind: DtsStatementKind
         get() = DtsStatementKind.PROPERTY
 
+    override val dtsIsComplete: Boolean
+        get() = !PsiTreeUtil.hasErrorElements(this)
+
     override val dtsNameElement: PsiElement
         get() = findNotNullChildByType<PsiElement>(DtsTypes.NAME)
 

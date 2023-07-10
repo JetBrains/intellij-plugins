@@ -23,6 +23,15 @@ sealed interface DtsStatement : PsiElement {
 
     val dtsStatementKind: DtsStatementKind
 
+    /**
+     * If a parser rule has the recoverWhile property set, it could be the case
+     * that errors are not inner nodes if the generated PsiElement. Therefore,
+     * PsiTreeUtil.hasErrorElements is not sufficient to check if a PsiElement
+     * is complete. In this case only relevant to check if a node has a matching
+     * brace.
+     */
+    val dtsIsComplete: Boolean
+
     interface Node : DtsStatement {
         val dtsName: String
 

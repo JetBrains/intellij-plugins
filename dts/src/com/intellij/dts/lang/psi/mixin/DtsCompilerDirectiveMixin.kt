@@ -10,6 +10,7 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 
 abstract class DtsCompilerDirectiveMixin(node: ASTNode) : ASTWrapperPsiElement(node), DtsCompilerDirective {
@@ -18,6 +19,9 @@ abstract class DtsCompilerDirectiveMixin(node: ASTNode) : ASTWrapperPsiElement(n
 
     override val dtsAnnotationTarget: PsiElement
         get() = getDirective()
+
+    override val dtsIsComplete: Boolean
+        get() = !PsiTreeUtil.hasErrorElements(this)
 
     private fun getDirective(): PsiElement {
         return DtsUtil.children(this).first { DtsTokenSets.compilerDirectives.contains(it.elementType) }
