@@ -76,11 +76,11 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
       Result.create(getDirectiveKindNoCache(typeScriptClass), classModificationDependencies)
     }
 
-  override val exportAsList: List<String>
+  override val exportAs: Map<String, Angular2Directive>
     get() = getCachedValue {
       val exportAsString = Angular2DecoratorUtil.getPropertyStringValue(decorator, Angular2DecoratorUtil.EXPORT_AS_PROP)
-      Result.create(if (exportAsString == null) emptyList() else StringUtil.split(exportAsString, ","), decorator)
-    }
+      Result.create(if (exportAsString == null) emptyMap() else StringUtil.split(exportAsString, ",").associateWith { this }, decorator)
+    } + hostDirectives.flatMap { it.exportAs.entries }.associate { Pair(it.key, it.value) }
 
   override val attributes: Collection<Angular2DirectiveAttribute>
     get() = getCachedValue {

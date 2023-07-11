@@ -36,8 +36,9 @@ open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
       ?: Angular2DirectiveSelectorImpl(myEntityDef.field, null, null)
     }
 
-  override val exportAsList: List<String>
-    get() = getLazyValue(IVY_EXPORT_AS) { myEntityDef.exportAsList }
+  override val exportAs: Map<String, Angular2Directive>
+    get() = getLazyValue(IVY_EXPORT_AS) { myEntityDef.exportAsList.associateWith { this } } +
+            hostDirectives.flatMap { it.exportAs.entries }.associate { Pair(it.key, it.value) }
 
   override val attributes: Collection<Angular2DirectiveAttribute>
     get() = getAttributes(myEntityDef)
@@ -119,7 +120,7 @@ open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
   companion object {
 
     private val IVY_SELECTOR = Key<Angular2DirectiveSelector>("ng.ivy.selector")
-    private val IVY_EXPORT_AS = Key<List<String>>("ng.ivy.export-as")
+    private val IVY_EXPORT_AS = Key<Map<String, Angular2Directive>>("ng.ivy.export-as")
 
     private fun getAttributes(entityDef: Angular2IvySymbolDef.Directive): Collection<Angular2DirectiveAttribute> =
       CachedValuesManager.getCachedValue(entityDef.field) {
@@ -169,14 +170,16 @@ open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
         val field = entityDef.field
         if (hostDirectiveDefs.isEmpty())
           return@getCachedValue Angular2ResolvedSymbolsSet.createResult(emptySet(), true, field)
-        val dependencies = mutableSetOf(field.containingFile, NodeModulesDirectoryManager.getInstance(field.project).nodeModulesDirChangeTracker)
+        val dependencies = mutableSetOf(field.containingFile,
+                                        NodeModulesDirectoryManager.getInstance(field.project).nodeModulesDirChangeTracker)
         val hostDirectives = mutableSetOf<Angular2HostDirective>()
         var fullyResolved = true
         for (hostDirectiveDef in hostDirectiveDefs) {
           val directive = resolveTypeofTypeToEntity(hostDirectiveDef.directive, Angular2Directive::class.java, dependencies)
           if (directive == null) {
             fullyResolved = false
-          } else {
+          }
+          else {
             hostDirectives.add(Angular2IvyHostDirective(directive, hostDirectiveDef.inputs, hostDirectiveDef.outputs))
           }
         }

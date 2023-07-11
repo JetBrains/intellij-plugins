@@ -152,7 +152,7 @@ object Angular2FixesFactory {
             if (exportName.isNullOrEmpty()) {
               return MultiMap.empty()
             }
-            filter = { declaration -> declaration is Angular2Directive && declaration.exportAsList.contains(exportName) }
+            filter = { declaration -> declaration is Angular2Directive && declaration.exportAs.contains(exportName) }
           }
           else -> return MultiMap.empty()
         }

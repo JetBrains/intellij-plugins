@@ -161,9 +161,9 @@ object Angular2EntityUtils {
         result.append("; ngContentSelectors=")
         result.append(element.ngContentSelectors)
       }
-      if (!element.exportAsList.isEmpty()) {
+      if (!element.exportAs.isEmpty()) {
         result.append("; exportAs=")
-          .append(StringUtil.join(element.exportAsList, ","))
+          .append(StringUtil.join(element.exportAs.mapNotNull { (key, value) -> key.takeIf { value === element } }, ","))
       }
       result.append("; inputs=")
         .append(element.inputs.toString())
@@ -175,6 +175,10 @@ object Angular2EntityUtils {
       if (!element.attributes.isEmpty()) {
         result.append("; attributes=")
           .append(element.attributes)
+      }
+      if (!element.hostDirectives.isEmpty()) {
+        result.append("; hostDirectives=")
+          .append(element.hostDirectives.mapNotNull { it.directive }.render())
       }
 
       return result.toString()

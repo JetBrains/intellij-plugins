@@ -5,6 +5,10 @@ AppModule: Angular2SourceModule
       standalone: false
       selector: app-test
       kind: REGULAR
+      exportAs:
+        boldDir: BoldDirective
+        fooDir: <this>
+        mouse: MouseenterDirective
       inputs:
         underlineColor
       outputs:
@@ -19,6 +23,9 @@ AppModule: Angular2SourceModule
             standalone: true
             selector: [appMouseenter]
             kind: REGULAR
+            exportAs:
+              boldDir: BoldDirective
+              mouse: <this>
             inputs:
               underlineColor
             outputs:
@@ -41,6 +48,8 @@ AppModule: Angular2SourceModule
                   standalone: true
                   selector: [appBold]
                   kind: REGULAR
+                  exportAs:
+                    boldDir: <this>
                   outputs:
                     hover
                   host directives fully resolved: true

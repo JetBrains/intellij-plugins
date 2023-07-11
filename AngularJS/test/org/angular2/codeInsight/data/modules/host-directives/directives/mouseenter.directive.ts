@@ -5,6 +5,7 @@ import {UnderlineDirective} from "./underline.directive";
 @Directive({
     selector: '[appMouseenter]',
     standalone: true,
+    exportAs: "mouse,boldDir",
     hostDirectives: [{
         directive: BoldDirective,
         outputs: ['hover']

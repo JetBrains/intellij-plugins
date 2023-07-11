@@ -15,9 +15,9 @@ abstract class Angular2MetadataDirectiveBase<Stub : Angular2MetadataDirectiveStu
   private val myExportAsList = NotNullLazyValue.lazy {
     val exportAsString = stub.exportAs
     if (exportAsString == null)
-      emptyList()
+      emptyMap()
     else
-      StringUtil.split(exportAsString, ",")
+      StringUtil.split(exportAsString, ",").associateWith { this }
   }
   private val mySelector = NotNullLazyValue.lazy<Angular2DirectiveSelector> { Angular2DirectiveSelectorImpl(this, stub.selector, null) }
   private val myAttributes = NotNullLazyValue.lazy { this.buildAttributes() }
@@ -25,7 +25,7 @@ abstract class Angular2MetadataDirectiveBase<Stub : Angular2MetadataDirectiveStu
   override val selector: Angular2DirectiveSelector
     get() = mySelector.value
 
-  override val exportAsList: List<String>
+  override val exportAs: Map<String, Angular2Directive>
     get() = myExportAsList.value
 
   override val attributes: Collection<Angular2DirectiveAttribute>

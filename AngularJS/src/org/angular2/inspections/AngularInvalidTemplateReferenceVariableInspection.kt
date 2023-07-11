@@ -25,7 +25,7 @@ class AngularInvalidTemplateReferenceVariableInspection : AngularHtmlLikeTemplat
       val exportName = attribute.value
       if (!exportName.isNullOrEmpty()) {
         val matchedDirectives = Angular2ApplicableDirectivesProvider(attribute.parent).matched
-        val allMatching = matchedDirectives.filter { dir -> dir.exportAsList.contains(exportName) }
+        val allMatching = matchedDirectives.filter { dir -> dir.exportAs.contains(exportName) }
         val scope = Angular2DeclarationsScope(attribute)
         val matching = allMatching.filter { d -> scope.contains(d) }
         val range = TextRange(0, info.name.length)
