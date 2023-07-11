@@ -3,11 +3,9 @@ package org.angular2.entities.ivy
 
 import com.intellij.javascript.nodejs.library.node_modules.NodeModulesDirectoryManager
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
-import com.intellij.lang.javascript.psi.types.TypeScriptTypeOfJSTypeImpl.getTypeOfResultElements
 import com.intellij.model.Pointer
 import com.intellij.psi.util.CachedValueProvider.Result
 import org.angular2.entities.*
-import org.angular2.entities.Angular2ModuleResolver.ResolvedEntitiesList
 
 class Angular2IvyModule(entityDef: Angular2IvySymbolDef.Module)
   : Angular2IvyEntity<Angular2IvySymbolDef.Module>(entityDef), Angular2Module {
@@ -52,17 +50,17 @@ class Angular2IvyModule(entityDef: Angular2IvySymbolDef.Module)
     private val symbolCollector = object : Angular2ModuleResolver.SymbolCollector<TypeScriptField> {
       override fun <U : Angular2Entity> collect(source: TypeScriptField,
                                                 propertyName: String,
-                                                symbolClazz: Class<U>): Result<ResolvedEntitiesList<U>> =
+                                                symbolClazz: Class<U>): Result<Angular2ResolvedSymbolsSet<U>> =
         collectSymbols(source, propertyName, symbolClazz)
     }
 
     private fun <T : Angular2Entity> collectSymbols(fieldDef: TypeScriptField,
                                                     propertyName: String,
-                                                    symbolClazz: Class<T>): Result<ResolvedEntitiesList<T>> {
+                                                    symbolClazz: Class<T>): Result<Angular2ResolvedSymbolsSet<T>> {
       val moduleDef = Angular2IvySymbolDef.get(fieldDef, false) as? Angular2IvySymbolDef.Module
       val types = moduleDef?.getTypesList(propertyName) ?: emptyList()
       if (types.isEmpty()) {
-        return ResolvedEntitiesList.createResult(emptySet(), true, fieldDef)
+        return Angular2ResolvedSymbolsSet.createResult(emptySet(), true, fieldDef)
       }
       val entities = HashSet<T>()
       var fullyResolved = true
@@ -74,17 +72,7 @@ class Angular2IvyModule(entityDef: Angular2IvySymbolDef.Module)
       dependencies.add(fieldDef.containingFile)
       dependencies.add(NodeModulesDirectoryManager.getInstance(fieldDef.project).nodeModulesDirChangeTracker)
       for (typeOfType in types) {
-        val reference = typeOfType.referenceText
-        if (reference == null) {
-          fullyResolved = false
-          continue
-        }
-        val resolvedTypes = getTypeOfResultElements(typeOfType, reference)
-        resolvedTypes.forEach { type -> dependencies.add(type.containingFile) }
-        val entity = resolvedTypes
-          .map { el -> Angular2EntitiesProvider.getEntity(el) }
-          .filterIsInstance(symbolClazz)
-          .firstOrNull()
+        val entity = resolveTypeofTypeToEntity(typeOfType, symbolClazz, dependencies)
         if (entity == null) {
           fullyResolved = false
         }
@@ -92,7 +80,7 @@ class Angular2IvyModule(entityDef: Angular2IvySymbolDef.Module)
           entities.add(entity)
         }
       }
-      return ResolvedEntitiesList.createResult(entities, fullyResolved, dependencies)
+      return Angular2ResolvedSymbolsSet.createResult(entities, fullyResolved, dependencies)
     }
   }
 }

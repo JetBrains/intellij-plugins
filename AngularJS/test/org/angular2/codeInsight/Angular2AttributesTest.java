@@ -1234,4 +1234,10 @@ public class Angular2AttributesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFiles("typeMismatchErrorWithOptionalInputs.ts", "package.json", "tsconfig.json");
     myFixture.checkHighlighting();
   }
+
+  public void testHostDirectives() {
+    myFixture.configureByFiles("hostDirectives.component.html", "hostDirectives.component.ts", "package.json");
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.checkHighlighting();
+  }
 }

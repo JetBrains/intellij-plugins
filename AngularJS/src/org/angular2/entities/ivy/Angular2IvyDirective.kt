@@ -1,6 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.ivy
 
+import com.intellij.javascript.nodejs.library.node_modules.NodeModulesDirectoryManager
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptStringLiteralType
@@ -43,60 +44,66 @@ open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
 
   override val directiveKind: Angular2DirectiveKind
     get() = getCachedValue {
-      create(
-        getDirectiveKindNoCache(typeScriptClass), classModificationDependencies)
+      create(getDirectiveKindNoCache(typeScriptClass), classModificationDependencies)
     }
 
   override val bindings: Angular2DirectiveProperties
     get() = getCachedValue {
-      create(propertiesNoCache, classModificationDependencies)
+      create(getPropertiesNoCache(), classModificationDependencies)
     }
 
-  private val propertiesNoCache: Angular2DirectiveProperties
-    get() {
-      val inputs = LinkedHashMap<String, Angular2DirectiveProperty>()
-      val outputs = LinkedHashMap<String, Angular2DirectiveProperty>()
+  override val hostDirectives: Collection<Angular2HostDirective>
+    get() = getHostDirectives(myEntityDef).symbols
 
-      val inputMap = LinkedHashMap<String, Angular2PropertyInfo>()
-      val outputMap = LinkedHashMap<String, Angular2PropertyInfo>()
-
-      val clazz = typeScriptClass
-
-      JSClassUtils.processClassesInHierarchy(clazz, false) { aClass, _, _ ->
-        if (aClass is TypeScriptClass) {
-          val entityDef = Angular2IvySymbolDef.get(aClass, true)
-          if (entityDef is Angular2IvySymbolDef.Directive) {
-            readMappingsInto(entityDef, Angular2DecoratorUtil.INPUTS_PROP, inputMap)
-            readMappingsInto(entityDef, Angular2DecoratorUtil.OUTPUTS_PROP, outputMap)
-          }
-        }
-        true
-      }
-
-      hackCoreDirectiveRequiredInputStatus(this, inputMap)
-
-      TypeScriptTypeParser
-        .buildTypeFromClass(clazz, false)
-        .properties
-        .forEach { prop ->
-          if (prop.memberSource.singleElement != null) {
-            processProperty(clazz, prop, inputMap, KIND_NG_DIRECTIVE_INPUTS, inputs)
-            processProperty(clazz, prop, outputMap, KIND_NG_DIRECTIVE_OUTPUTS, outputs)
-          }
-        }
-
-      hackIonicComponentOutputs(this)
-        .forEach { outputMap[it.key] = Angular2PropertyInfo(it.value, false) }
-
-      inputMap.values.forEach { input ->
-        inputs[input.alias] = Angular2SourceDirectiveVirtualProperty(clazz, input.alias, KIND_NG_DIRECTIVE_INPUTS, input.required)
-      }
-      outputMap.values.forEach { output ->
-        outputs[output.alias] = Angular2SourceDirectiveVirtualProperty(clazz, output.alias, KIND_NG_DIRECTIVE_OUTPUTS, output.required)
-      }
-
-      return Angular2DirectiveProperties(inputs.values, outputs.values)
+  override fun areHostDirectivesFullyResolved(): Boolean =
+    getHostDirectives(myEntityDef).let { set ->
+      set.isFullyResolved && set.symbols.none { it.directive?.areHostDirectivesFullyResolved() != true }
     }
+
+  private fun getPropertiesNoCache(): Angular2DirectiveProperties {
+    val inputs = LinkedHashMap<String, Angular2DirectiveProperty>()
+    val outputs = LinkedHashMap<String, Angular2DirectiveProperty>()
+
+    val inputMap = LinkedHashMap<String, Angular2PropertyInfo>()
+    val outputMap = LinkedHashMap<String, Angular2PropertyInfo>()
+
+    val clazz = typeScriptClass
+
+    JSClassUtils.processClassesInHierarchy(clazz, false) { aClass, _, _ ->
+      if (aClass is TypeScriptClass) {
+        val entityDef = Angular2IvySymbolDef.get(aClass, true)
+        if (entityDef is Angular2IvySymbolDef.Directive) {
+          readMappingsInto(entityDef, Angular2DecoratorUtil.INPUTS_PROP, inputMap)
+          readMappingsInto(entityDef, Angular2DecoratorUtil.OUTPUTS_PROP, outputMap)
+        }
+      }
+      true
+    }
+
+    hackCoreDirectiveRequiredInputStatus(this, inputMap)
+
+    TypeScriptTypeParser
+      .buildTypeFromClass(clazz, false)
+      .properties
+      .forEach { prop ->
+        if (prop.memberSource.singleElement != null) {
+          processProperty(clazz, prop, inputMap, KIND_NG_DIRECTIVE_INPUTS, inputs)
+          processProperty(clazz, prop, outputMap, KIND_NG_DIRECTIVE_OUTPUTS, outputs)
+        }
+      }
+
+    hackIonicComponentOutputs(this)
+      .forEach { outputMap[it.key] = Angular2PropertyInfo(it.value, false) }
+
+    inputMap.values.forEach { input ->
+      inputs[input.alias] = Angular2SourceDirectiveVirtualProperty(clazz, input.alias, KIND_NG_DIRECTIVE_INPUTS, input.required)
+    }
+    outputMap.values.forEach { output ->
+      outputs[output.alias] = Angular2SourceDirectiveVirtualProperty(clazz, output.alias, KIND_NG_DIRECTIVE_OUTPUTS, output.required)
+    }
+
+    return Angular2DirectiveProperties(inputs.values, outputs.values)
+  }
 
   override fun createPointer(): Pointer<out Angular2Directive> {
     val entityDef = myEntityDef.createPointer()
@@ -114,8 +121,8 @@ open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
     private val IVY_SELECTOR = Key<Angular2DirectiveSelector>("ng.ivy.selector")
     private val IVY_EXPORT_AS = Key<List<String>>("ng.ivy.export-as")
 
-    private fun getAttributes(entityDef: Angular2IvySymbolDef.Directive): Collection<Angular2DirectiveAttribute> {
-      return CachedValuesManager.getCachedValue(entityDef.field) {
+    private fun getAttributes(entityDef: Angular2IvySymbolDef.Directive): Collection<Angular2DirectiveAttribute> =
+      CachedValuesManager.getCachedValue(entityDef.field) {
         val cls = entityDef.contextClass
         if (cls == null) {
           return@getCachedValue create(emptyList(), entityDef.field)
@@ -155,7 +162,26 @@ open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
         }
         create(metadataDirective.attributes, cls, metadataDirective)
       }
-    }
+
+    private fun getHostDirectives(entityDef: Angular2IvySymbolDef.Directive): Angular2ResolvedSymbolsSet<Angular2HostDirective> =
+      CachedValuesManager.getCachedValue(entityDef.field) {
+        val hostDirectiveDefs = entityDef.hostDirectives
+        val field = entityDef.field
+        if (hostDirectiveDefs.isEmpty())
+          return@getCachedValue Angular2ResolvedSymbolsSet.createResult(emptySet(), true, field)
+        val dependencies = mutableSetOf(field.containingFile, NodeModulesDirectoryManager.getInstance(field.project).nodeModulesDirChangeTracker)
+        val hostDirectives = mutableSetOf<Angular2HostDirective>()
+        var fullyResolved = true
+        for (hostDirectiveDef in hostDirectiveDefs) {
+          val directive = resolveTypeofTypeToEntity(hostDirectiveDef.directive, Angular2Directive::class.java, dependencies)
+          if (directive == null) {
+            fullyResolved = false
+          } else {
+            hostDirectives.add(Angular2IvyHostDirective(directive, hostDirectiveDef.inputs, hostDirectiveDef.outputs))
+          }
+        }
+        Angular2ResolvedSymbolsSet.createResult(hostDirectives, fullyResolved, dependencies)
+      }
 
     @JvmStatic
     protected fun getMetadataDirective(clazz: TypeScriptClass): Angular2Directive? {

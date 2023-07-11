@@ -44,6 +44,7 @@ class AngularUndefinedBindingInspection : AngularHtmlLikeTemplateLocalInspection
     }
     val scope = Angular2DeclarationsScope(attribute)
     val proximity: DeclarationProximity
+    val matchedDirectives = Angular2ApplicableDirectivesProvider(attribute.parent).matched
     if (descriptor.hasErrorSymbols) {
       proximity = NOT_REACHABLE
     }
@@ -56,8 +57,6 @@ class AngularUndefinedBindingInspection : AngularHtmlLikeTemplateLocalInspection
       }
     }
     else {
-      val matchedDirectives = HashSet(Angular2ApplicableDirectivesProvider(
-        attribute.parent).matched)
       proximity = scope.getDeclarationsProximity(
         descriptor.sourceDirectives.filter { matchedDirectives.contains(it) })
     }
@@ -69,7 +68,7 @@ class AngularUndefinedBindingInspection : AngularHtmlLikeTemplateLocalInspection
       Angular2FixesFactory.addUnresolvedDeclarationFixes(attribute, quickFixes)
     }
     quickFixes.add(RemoveAttributeIntentionFix(attribute.name))
-    var severity = Angular2InspectionUtils.getBaseProblemHighlightType(scope)
+    var severity = Angular2InspectionUtils.getBaseProblemHighlightType(scope, matchedDirectives)
     @PropertyKey(resourceBundle = BUNDLE) val messageKey: String =
       when (info.type) {
         EVENT -> {
@@ -132,7 +131,7 @@ class AngularUndefinedBindingInspection : AngularHtmlLikeTemplateLocalInspection
           holder.registerProblem(element,
                                  Angular2Bundle.message("angular.inspection.undefined-binding.message.embedded.property-not-provided",
                                                         binding.key),
-                                 Angular2InspectionUtils.getBaseProblemHighlightType(scope),
+                                 Angular2InspectionUtils.getBaseProblemHighlightType(scope, matched),
                                  *fixes.toTypedArray<LocalQuickFix>())
         }
       }

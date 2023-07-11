@@ -13,13 +13,13 @@ interface Angular2Directive : Angular2Declaration {
   val exportAsList: List<String>
 
   val inputs: Collection<Angular2DirectiveProperty>
-    get() = bindings.inputs
+    get() = bindings.inputs + hostDirectives.flatMap { it.inputs }
 
   val outputs: Collection<Angular2DirectiveProperty>
-    get() = bindings.outputs
+    get() = bindings.outputs + hostDirectives.flatMap { it.outputs }
 
   val inOuts: List<Angular2Symbol>
-    get() = bindings.inOuts
+    get() = bindings.inOuts + hostDirectives.flatMap { it.inOuts }
 
   val bindings: Angular2DirectiveProperties
 
@@ -27,11 +27,15 @@ interface Angular2Directive : Angular2Declaration {
 
   val directiveKind: Angular2DirectiveKind
 
+  val hostDirectives: Collection<Angular2HostDirective>
+
   val isComponent: Boolean
     get() = false
 
   val apiStatus: WebSymbolApiStatus
     get() = typeScriptClass?.apiStatus ?: WebSymbolApiStatus.Stable
+
+  fun areHostDirectivesFullyResolved(): Boolean
 
   override fun createPointer(): Pointer<out Angular2Directive>
 

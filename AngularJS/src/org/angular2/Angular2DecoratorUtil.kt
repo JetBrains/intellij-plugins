@@ -23,90 +23,37 @@ import org.angular2.index.Angular2IndexingHandler
 import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.Angular2LangUtil.ANGULAR_CORE_PACKAGE
 import org.angularjs.index.AngularJSIndexingHandler
-import org.jetbrains.annotations.NonNls
 
 object Angular2DecoratorUtil {
-
-  @NonNls
   const val DIRECTIVE_DEC = "Directive"
-
-  @NonNls
   const val COMPONENT_DEC = "Component"
-
-  @NonNls
   const val PIPE_DEC = "Pipe"
-
-  @NonNls
   const val MODULE_DEC = "NgModule"
-
-  @NonNls
   const val INPUT_DEC = "Input"
-
-  @NonNls
   const val OUTPUT_DEC = "Output"
-
-  @NonNls
   const val ATTRIBUTE_DEC = "Attribute"
-
-  @NonNls
   const val VIEW_CHILD_DEC = "ViewChild"
-
-  @NonNls
   const val VIEW_CHILDREN_DEC = "ViewChildren"
-
-  @NonNls
   const val VIEW_DEC = "View"
-
-  @NonNls
   const val NAME_PROP = "name"
-
-  @NonNls
   const val SELECTOR_PROP = "selector"
-
-  @NonNls
   const val EXPORT_AS_PROP = "exportAs"
-
-  @NonNls
   const val INPUTS_PROP = "inputs"
-
-  @NonNls
   const val OUTPUTS_PROP = "outputs"
-
-  @NonNls
   const val STANDALONE_PROP = "standalone"
-
-  @NonNls
   const val IMPORTS_PROP = "imports"
-
-  @NonNls
   const val EXPORTS_PROP = "exports"
-
-  @NonNls
   const val DECLARATIONS_PROP = "declarations"
-
-  @NonNls
   const val ENTRY_COMPONENTS_PROP = "entryComponents"
-
-  @NonNls
+  const val HOST_DIRECTIVES_PROP = "hostDirectives"
   const val BOOTSTRAP_PROP = "bootstrap"
-
-  @NonNls
   const val TEMPLATE_URL_PROP = "templateUrl"
-
-  @NonNls
   const val TEMPLATE_PROP = "template"
-
-  @NonNls
   const val STYLE_URLS_PROP = "styleUrls"
-
-  @NonNls
   const val STYLES_PROP = "styles"
-
-  @NonNls
   const val REQUIRED_PROP = "required"
-
-  @NonNls
   const val ALIAS_PROP = "alias"
+  const val DIRECTIVE_PROP = "directive"
 
   @JvmStatic
   fun isLiteralInNgDecorator(element: PsiElement?, propertyName: String, vararg decoratorNames: String): Boolean {

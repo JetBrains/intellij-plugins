@@ -82,6 +82,8 @@ abstract class Angular2SourceEntityListProcessor<T : Angular2Entity>(private val
           AstLoadingFilter.forceAllowTreeLoading<RuntimeException>(node.containingFile) {
             addIfNotNull(result, node.findProperty(NG_MODULE_PROP)?.value)
           }
+        } else {
+          super.visitJSObjectLiteralExpression(node)
         }
       }
 

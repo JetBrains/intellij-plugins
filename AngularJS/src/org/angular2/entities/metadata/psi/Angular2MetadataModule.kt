@@ -10,7 +10,7 @@ import org.angular2.entities.Angular2Declaration
 import org.angular2.entities.Angular2Entity
 import org.angular2.entities.Angular2Module
 import org.angular2.entities.Angular2ModuleResolver
-import org.angular2.entities.Angular2ModuleResolver.ResolvedEntitiesList
+import org.angular2.entities.Angular2ResolvedSymbolsSet
 import org.angular2.entities.metadata.stubs.Angular2MetadataModuleStub
 
 class Angular2MetadataModule(element: Angular2MetadataModuleStub) : Angular2MetadataEntity<Angular2MetadataModuleStub>(
@@ -53,15 +53,15 @@ class Angular2MetadataModule(element: Angular2MetadataModuleStub) : Angular2Meta
     private val symbolCollector = object : Angular2ModuleResolver.SymbolCollector<Angular2MetadataModule> {
       override fun <U : Angular2Entity> collect(source: Angular2MetadataModule,
                                                 propertyName: String,
-                                                symbolClazz: Class<U>): Result<ResolvedEntitiesList<U>> =
+                                                symbolClazz: Class<U>): Result<Angular2ResolvedSymbolsSet<U>> =
         collectSymbols(source, propertyName, symbolClazz)
     }
 
     private fun <T : Angular2Entity> collectSymbols(source: Angular2MetadataModule,
                                                     propertyName: String,
-                                                    entityClass: Class<T>): Result<ResolvedEntitiesList<T>> {
+                                                    entityClass: Class<T>): Result<Angular2ResolvedSymbolsSet<T>> {
       val propertyStub = source.stub.getDecoratorFieldValueStub(propertyName)
-                         ?: return ResolvedEntitiesList.createResult(emptySet(), true, source)
+                         ?: return Angular2ResolvedSymbolsSet.createResult(emptySet(), true, source)
       val allResolved = Ref(true)
       val result = HashSet<T>()
       val cacheDependencies = HashSet<PsiElement>()
@@ -73,7 +73,7 @@ class Angular2MetadataModule(element: Angular2MetadataModuleStub) : Angular2Meta
           allResolved.set(false)
         }
       }, cacheDependencies)
-      return ResolvedEntitiesList.createResult(result, allResolved.get(), cacheDependencies)
+      return Angular2ResolvedSymbolsSet.createResult(result, allResolved.get(), cacheDependencies)
     }
   }
 }
