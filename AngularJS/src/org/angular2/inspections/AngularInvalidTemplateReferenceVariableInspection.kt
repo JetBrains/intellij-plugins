@@ -24,8 +24,8 @@ class AngularInvalidTemplateReferenceVariableInspection : AngularHtmlLikeTemplat
     if (info.type == Angular2AttributeType.REFERENCE) {
       val exportName = attribute.value
       if (!exportName.isNullOrEmpty()) {
-        val allMatching = Angular2ApplicableDirectivesProvider(attribute.parent)
-          .matched.filter { dir -> dir.exportAsList.contains(exportName) }
+        val matchedDirectives = Angular2ApplicableDirectivesProvider(attribute.parent).matched
+        val allMatching = matchedDirectives.filter { dir -> dir.exportAsList.contains(exportName) }
         val scope = Angular2DeclarationsScope(attribute)
         val matching = allMatching.filter { d -> scope.contains(d) }
         val range = TextRange(0, info.name.length)
@@ -39,7 +39,7 @@ class AngularInvalidTemplateReferenceVariableInspection : AngularHtmlLikeTemplat
           quickFixes.add(RemoveAttributeIntentionFix(attribute.name))
           holder.registerProblem(attribute.nameElement,
                                  Angular2Bundle.message("angular.inspection.invalid-template-ref-var.message.unbound", exportName),
-                                 Angular2InspectionUtils.getBaseProblemHighlightType(scope),
+                                 Angular2InspectionUtils.getBaseProblemHighlightType(scope, matchedDirectives),
                                  range,
                                  *quickFixes.toTypedArray<LocalQuickFix>())
         }

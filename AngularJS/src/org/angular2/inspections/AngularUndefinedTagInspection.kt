@@ -22,8 +22,8 @@ class AngularUndefinedTagInspection : AngularHtmlLikeTemplateLocalInspectionTool
       return
     }
     val scope = Angular2DeclarationsScope(tag)
-    val provider = Angular2ApplicableDirectivesProvider(tag, true)
-    val proximity = scope.getDeclarationsProximity(provider.matched)
+    val matchedDirectives = Angular2ApplicableDirectivesProvider(tag, true).matched
+    val proximity = scope.getDeclarationsProximity(matchedDirectives)
     if (proximity == IN_SCOPE) {
       return
     }
@@ -34,7 +34,7 @@ class AngularUndefinedTagInspection : AngularHtmlLikeTemplateLocalInspectionTool
     }
     holder.registerProblem(tagName,
                            Angular2Bundle.message("angular.inspection.undefined-tag.message.out-of-scope", tagName.text),
-                           Angular2InspectionUtils.getBaseProblemHighlightType(scope),
+                           Angular2InspectionUtils.getBaseProblemHighlightType(scope, matchedDirectives),
                            *quickFixes.toTypedArray<LocalQuickFix>())
   }
 }

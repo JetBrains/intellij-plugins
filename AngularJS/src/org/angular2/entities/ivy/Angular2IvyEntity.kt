@@ -4,8 +4,12 @@ package org.angular2.entities.ivy
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeofType
+import com.intellij.lang.javascript.psi.types.TypeScriptTypeOfJSTypeImpl
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.angular2.entities.Angular2EntitiesProvider
+import org.angular2.entities.Angular2Entity
 import org.angular2.entities.source.Angular2SourceEntityBase
 import java.util.*
 
@@ -30,5 +34,23 @@ abstract class Angular2IvyEntity<T : Angular2IvySymbolDef.Entity> protected cons
 
   override fun hashCode(): Int {
     return Objects.hash(field, typeScriptClass)
+  }
+
+  companion object {
+    @JvmStatic
+    protected fun <T : Angular2Entity> resolveTypeofTypeToEntity(typeOfType: TypeScriptTypeofType,
+                                                                 symbolClazz: Class<T>,
+                                                                 dependencies: MutableSet<Any>): T? {
+      val reference = typeOfType.referenceText
+      if (reference == null) {
+        return null
+      }
+      val resolvedTypes = TypeScriptTypeOfJSTypeImpl.getTypeOfResultElements(typeOfType, reference)
+      resolvedTypes.forEach { type -> dependencies.add(type.containingFile) }
+      return resolvedTypes
+        .map { el -> Angular2EntitiesProvider.getEntity(el) }
+        .filterIsInstance(symbolClazz)
+        .firstOrNull()
+    }
   }
 }

@@ -1,0 +1,18 @@
+<resolved
+        [underlineColor]="<error descr="Type  12  is not assignable to type  string ">12</error>"
+        (hover)="$event"
+        <error descr="Property colr is not provided by any applicable directives nor by resolved element">[colr]</error>="12"
+        <error descr="Event hovr is not emitted by any applicable directives nor by resolved element">(<warning descr="Unrecognized event">hovr</warning>)</error>="$event"
+></resolved>
+<unresolved
+        [underlineColor]="<error descr="Type  12  is not assignable to type  string ">12</error>"
+        (hover)="$event"
+        <weak_warning descr="Property colr is not provided by any applicable directives nor by unresolved element">[colr]</weak_warning>="12"
+        <weak_warning descr="Event hovr is not emitted by any applicable directives nor by unresolved element">(<warning descr="Unrecognized event">hovr</warning>)</weak_warning>="$event"
+></unresolved>
+<app-test
+        <error descr="Property underlineColor is not provided by any applicable directives nor by app-test element">[underlineColor]</error>="12"
+        <error descr="Event hover is not emitted by any applicable directives nor by app-test element">(hover)</error>="$event"
+        <warning descr="Directive that provides attribute appBold is out of scope of the current template">appBold</warning>
+        <warning descr="Directive that provides attribute appUnderline is out of scope of the current template">appUnderline</warning>
+></app-test>

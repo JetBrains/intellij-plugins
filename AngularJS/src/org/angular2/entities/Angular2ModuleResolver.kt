@@ -25,13 +25,13 @@ class Angular2ModuleResolver<T : PsiElement>(private val mySourceSupplier: () ->
                                              private val mySymbolCollector: SymbolCollector<T>) {
 
   val declarations: Set<Angular2Declaration>
-    get() = getResolvedModuleList(DECLARATIONS_KEY).entities
+    get() = getResolvedModuleList(DECLARATIONS_KEY).symbols
 
   val imports: Set<Angular2Entity>
-    get() = getResolvedModuleList(IMPORTS_KEY).entities
+    get() = getResolvedModuleList(IMPORTS_KEY).symbols
 
   val exports: Set<Angular2Entity>
-    get() = getResolvedModuleList(EXPORTS_KEY).entities
+    get() = getResolvedModuleList(EXPORTS_KEY).symbols
 
   val isScopeFullyResolved: Boolean
     get() {
@@ -40,7 +40,7 @@ class Angular2ModuleResolver<T : PsiElement>(private val mySourceSupplier: () ->
       }
       val imports = getResolvedModuleList(IMPORTS_KEY)
       return imports.isFullyResolved &&
-             imports.entities.all { e -> e !is Angular2Module || e.areExportsFullyResolved() } &&
+             imports.symbols.all { e -> e !is Angular2Module || e.areExportsFullyResolved() } &&
              areExportsFullyResolved()
     }
 
@@ -69,18 +69,18 @@ class Angular2ModuleResolver<T : PsiElement>(private val mySourceSupplier: () ->
 
   fun areExportsFullyResolved(): Boolean {
     val exports = getResolvedModuleList(EXPORTS_KEY)
-    return exports.isFullyResolved && exports.entities.all { e -> e !is Angular2Module || e.areExportsFullyResolved() }
+    return exports.isFullyResolved && exports.symbols.all { e -> e !is Angular2Module || e.areExportsFullyResolved() }
   }
 
   fun areDeclarationsFullyResolved(): Boolean {
     return getResolvedModuleList(DECLARATIONS_KEY).isFullyResolved
   }
 
-  private inline fun <reified U : Angular2Entity> getResolvedModuleList(key: Key<CachedValue<ResolvedEntitiesList<U>>>): ResolvedEntitiesList<U> =
+  private inline fun <reified U : Angular2Entity> getResolvedModuleList(key: Key<CachedValue<Angular2ResolvedSymbolsSet<U>>>): Angular2ResolvedSymbolsSet<U> =
     getResolvedModuleList(key, U::class.java)
 
-  private fun <U : Angular2Entity> getResolvedModuleList(key: Key<CachedValue<ResolvedEntitiesList<U>>>,
-                                                         entityClass: Class<U>): ResolvedEntitiesList<U> {
+  private fun <U : Angular2Entity> getResolvedModuleList(key: Key<CachedValue<Angular2ResolvedSymbolsSet<U>>>,
+                                                         entityClass: Class<U>): Angular2ResolvedSymbolsSet<U> {
     val source = mySourceSupplier()
     val symbolCollector = mySymbolCollector
     return CachedValuesManager.getCachedValue(source, key) {
@@ -94,26 +94,7 @@ class Angular2ModuleResolver<T : PsiElement>(private val mySourceSupplier: () ->
   interface SymbolCollector<T> {
     fun <U : Angular2Entity> collect(source: T,
                                      propertyName: String,
-                                     symbolClazz: Class<U>): Result<ResolvedEntitiesList<U>>
-  }
-
-  class ResolvedEntitiesList<T : Angular2Entity> private constructor(entities: Set<T>, internal val isFullyResolved: Boolean) {
-    internal val entities: Set<T> = Collections.unmodifiableSet(entities)
-
-    companion object {
-
-      fun <T : Angular2Entity> createResult(entities: Set<T>,
-                                            isFullyResolved: Boolean,
-                                            dependency: Any): Result<ResolvedEntitiesList<T>> {
-        return Result.createSingleDependency(ResolvedEntitiesList(entities, isFullyResolved), dependency)
-      }
-
-      fun <T : Angular2Entity> createResult(entities: Set<T>,
-                                            isFullyResolved: Boolean,
-                                            dependencies: Collection<*>): Result<ResolvedEntitiesList<T>> {
-        return Result.create(ResolvedEntitiesList(entities, isFullyResolved), dependencies)
-      }
-    }
+                                     symbolClazz: Class<U>): Result<Angular2ResolvedSymbolsSet<U>>
   }
 
   companion object {
@@ -129,8 +110,8 @@ class Angular2ModuleResolver<T : PsiElement>(private val mySourceSupplier: () ->
 
     @NonNls
     private val KEYS_PREFIX = "angular.moduleResolver."
-    private val DECLARATIONS_KEY = Key<CachedValue<ResolvedEntitiesList<Angular2Declaration>>>(KEYS_PREFIX + DECLARATIONS_PROP)
-    private val IMPORTS_KEY = Key<CachedValue<ResolvedEntitiesList<Angular2Entity>>>(KEYS_PREFIX + IMPORTS_PROP)
-    private val EXPORTS_KEY = Key<CachedValue<ResolvedEntitiesList<Angular2Entity>>>(KEYS_PREFIX + EXPORTS_PROP)
+    private val DECLARATIONS_KEY = Key<CachedValue<Angular2ResolvedSymbolsSet<Angular2Declaration>>>(KEYS_PREFIX + DECLARATIONS_PROP)
+    private val IMPORTS_KEY = Key<CachedValue<Angular2ResolvedSymbolsSet<Angular2Entity>>>(KEYS_PREFIX + IMPORTS_PROP)
+    private val EXPORTS_KEY = Key<CachedValue<Angular2ResolvedSymbolsSet<Angular2Entity>>>(KEYS_PREFIX + EXPORTS_PROP)
   }
 }

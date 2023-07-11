@@ -15,6 +15,7 @@ import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
 import org.angular2.Angular2DecoratorUtil.ALIAS_PROP
 import org.angular2.Angular2DecoratorUtil.DECLARATIONS_PROP
+import org.angular2.Angular2DecoratorUtil.DIRECTIVE_PROP
 import org.angular2.Angular2DecoratorUtil.EXPORTS_PROP
 import org.angular2.Angular2DecoratorUtil.IMPORTS_PROP
 import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
@@ -92,6 +93,10 @@ abstract class Angular2IvySymbolDef private constructor(private val myFieldOrStu
     val exportAsList: List<String>
       get() = processTupleArgument(2, TypeScriptStringLiteralType::class,
                                    { it.innerText }, false)!!
+
+    val hostDirectives: List<HostDirectiveDef>
+      get() = processTupleArgument(8, TypeScriptObjectType::class,
+                                   { createHostDirectiveDef(it) }, false)!!
 
     override val defTypeNames: List<String>
       get() = TYPE_DIRECTIVE_DEFS
@@ -288,23 +293,12 @@ abstract class Angular2IvySymbolDef private constructor(private val myFieldOrStu
 
   protected fun <T : JSTypeDeclaration, R> processObjectArgument(index: Int,
                                                                  valueClass: KClass<T>,
-                                                                 valueMapper: (T, String) -> R?): Map<String, R> {
-    val `object` = getDefFieldArgument(index)
-    if (`object` !is TypeScriptObjectType) {
-      return emptyMap()
-    }
-    val result = LinkedHashMap<String, R>()
-    for (child in `object`.typeMembers) {
-      val prop = child as? TypeScriptPropertySignature
-      val propName = prop?.name
-      if (propName != null) {
-        valueClass.safeCast(prop.typeDeclaration)
-          ?.let { valueMapper(it, propName) }
-          ?.let { value -> result[propName] = value }
-      }
-    }
-    return result
-  }
+                                                                 valueMapper: (T, String) -> R?): Map<String, R> =
+    processObjectArgument(getDefFieldArgument(index) as? TypeScriptObjectType, valueClass, valueMapper)
+
+  data class HostDirectiveDef(val directive: TypeScriptTypeofType,
+                              val inputs: Map<String, String>,
+                              val outputs: Map<String, String>)
 
   @Suppress("NonAsciiCharacters")
   companion object {
@@ -482,6 +476,36 @@ abstract class Angular2IvySymbolDef private constructor(private val myFieldOrStu
         }
       }
       return null
+    }
+
+    private fun <T : JSTypeDeclaration, R> processObjectArgument(`object`: TypeScriptObjectType?,
+                                                                 valueClass: KClass<T>,
+                                                                 valueMapper: (T, String) -> R?): Map<String, R> {
+      if (`object` == null) return emptyMap()
+      val result = LinkedHashMap<String, R>()
+      for (child in `object`.typeMembers) {
+        val prop = child as? TypeScriptPropertySignature
+        val propName = prop?.name
+        if (propName != null) {
+          valueClass.safeCast(prop.typeDeclaration)
+            ?.let { valueMapper(it, propName) }
+            ?.let { value -> result[propName] = value }
+        }
+      }
+      return result
+    }
+
+    private fun createHostDirectiveDef(obj: TypeScriptObjectType): HostDirectiveDef? {
+      val members = obj.typeMembers.filterIsInstance<TypeScriptPropertySignature>()
+      val directive = members.find { it.name == DIRECTIVE_PROP }?.typeDeclaration?.asSafely<TypeScriptTypeofType>()
+                      ?: return null
+      val inputs = members.find { it.name == INPUTS_PROP }?.typeDeclaration?.asSafely<TypeScriptObjectType>()
+      val outputs = members.find { it.name == OUTPUTS_PROP }?.typeDeclaration?.asSafely<TypeScriptObjectType>()
+      return HostDirectiveDef(
+        directive,
+        processObjectArgument(inputs, TypeScriptStringLiteralType::class) { str, _ -> str.innerText },
+        processObjectArgument(outputs, TypeScriptStringLiteralType::class) { str, _ -> str.innerText }
+      )
     }
   }
 }

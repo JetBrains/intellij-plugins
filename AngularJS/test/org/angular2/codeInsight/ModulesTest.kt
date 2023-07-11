@@ -205,6 +205,17 @@ class ModulesTest : Angular2CodeInsightFixtureTestCase() {
                      true, Angular2TestModule.ANGULAR_CORE_16_0_0_NEXT_4, Angular2TestModule.ANGULAR_COMMON_16_0_0_NEXT_4)
   }
 
+  fun testHostDirectives() {
+    doResolutionTest(
+      "host-directives",
+      "app.module.ts",
+      "export class App<caret>Module {",
+      "check.txt",
+      true,
+      Angular2TestModule.ANGULAR_CORE_16_0_0_NEXT_4, Angular2TestModule.ANGULAR_COMMON_16_0_0_NEXT_4
+    )
+  }
+
   private fun doResolutionTest(directory: String,
                                moduleFile: String,
                                signature: String,
@@ -266,6 +277,7 @@ class ModulesTest : Angular2CodeInsightFixtureTestCase() {
         is Angular2Module -> builder.printNgModule(level, value)
         is Angular2Directive -> builder.printNgDirective(level, value)
         is Angular2Pipe -> builder.printNgPipe(level, value)
+        is Angular2HostDirective -> builder.printNgHostDirective(level, value)
         is Collection<*> -> super.printValueImpl(builder, level, when (value.firstOrNull()) {
           is Angular2Symbol -> (value as Collection<Angular2Symbol>).sortedBy { it.name }
           is Angular2Entity -> (value as Collection<Angular2Entity>).sortedBy { it.getName() }
@@ -304,6 +316,8 @@ class ModulesTest : Angular2CodeInsightFixtureTestCase() {
           printProperty(level, "outputs", directive.outputs.takeIf { it.isNotEmpty() })
           printProperty(level, "inOuts", directive.inOuts.takeIf { it.isNotEmpty() })
           printProperty(level, "attributes", directive.attributes.takeIf { it.isNotEmpty() })
+          printProperty(level, "host directives", directive.hostDirectives.takeIf { it.isNotEmpty() })
+          printProperty(level, "host directives fully resolved", directive.areHostDirectivesFullyResolved())
         }
         if (directive.isStandalone && directive is Angular2ImportsOwner) {
           printProperty(level, "imports", directive.imports)
@@ -314,6 +328,19 @@ class ModulesTest : Angular2CodeInsightFixtureTestCase() {
 
     private fun StringBuilder.printNgPipe(topLevel: Int, pipe: Angular2Pipe): StringBuilder =
       printEntity(topLevel, pipe) {}
+
+    private fun StringBuilder.printNgHostDirective(level: Int, directive: Angular2HostDirective): StringBuilder {
+      directive.directive?.apply {
+        append(getName())
+          .append('\n')
+      } ?: append("<unresolved>")
+
+      printProperty(level + 1, "host-inputs", directive.inputs.takeIf { it.isNotEmpty() })
+      printProperty(level + 1, "host-outputs", directive.outputs.takeIf { it.isNotEmpty() })
+      indent(level + 1)
+      directive.directive?.let { printNgDirective(level + 1, it) }
+      return this
+    }
 
     private fun StringBuilder.printEntity(level: Int,
                                           entity: Angular2Entity,

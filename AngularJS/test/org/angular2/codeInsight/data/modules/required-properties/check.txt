@@ -8,6 +8,7 @@ AppModule: Angular2SourceModule
         ngForOf <required>
         ngForTemplate
         ngForTrackBy
+      host directives fully resolved: true
     NgIf: Angular2IvyDirective
       standalone: true
       selector: [ngIf]
@@ -16,6 +17,7 @@ AppModule: Angular2SourceModule
         ngIf <required>
         ngIfElse
         ngIfThen
+      host directives fully resolved: true
   declarations:
     AppComponent: Angular2SourceComponent
       standalone: true
@@ -27,6 +29,7 @@ AppModule: Angular2SourceModule
         notRequiredInput
         oldName
         requiredInput <required>
+      host directives fully resolved: true
       imports:
       scope:
         AppComponent: Angular2SourceComponent

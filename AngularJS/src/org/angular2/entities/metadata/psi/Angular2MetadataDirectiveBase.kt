@@ -45,6 +45,12 @@ abstract class Angular2MetadataDirectiveBase<Stub : Angular2MetadataDirectiveStu
     return Result.create(result, cacheDependencies)
   }
 
+  override val hostDirectives: Collection<Angular2HostDirective>
+    get() = emptyList()
+
+  override fun areHostDirectivesFullyResolved(): Boolean =
+    true
+
   private fun buildAttributes(): Collection<Angular2DirectiveAttribute> {
     return stub.attributes.map { (name, index) -> Angular2MetadataDirectiveAttribute(this, index, name) }
   }

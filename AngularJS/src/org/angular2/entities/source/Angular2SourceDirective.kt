@@ -21,10 +21,12 @@ import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider.Result
+import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.AstLoadingFilter
 import com.intellij.util.asSafely
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2DecoratorUtil.ALIAS_PROP
+import org.angular2.Angular2DecoratorUtil.HOST_DIRECTIVES_PROP
 import org.angular2.Angular2DecoratorUtil.REQUIRED_PROP
 import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver
 import org.angular2.entities.*
@@ -71,8 +73,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
 
   override val directiveKind: Angular2DirectiveKind
     get() = getCachedValue {
-      Result.create(
-        getDirectiveKindNoCache(typeScriptClass), classModificationDependencies)
+      Result.create(getDirectiveKindNoCache(typeScriptClass), classModificationDependencies)
     }
 
   override val exportAsList: List<String>
@@ -83,77 +84,20 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
 
   override val attributes: Collection<Angular2DirectiveAttribute>
     get() = getCachedValue {
-      Result.create(attributeParameters, classModificationDependencies)
+      Result.create(getAttributesNoCache(), classModificationDependencies)
     }
 
   override val bindings: Angular2DirectiveProperties
     get() = getCachedValue {
-      Result.create(propertiesNoCache, classModificationDependencies)
+      Result.create(getPropertiesNoCache(), classModificationDependencies)
     }
 
-  private val propertiesNoCache: Angular2DirectiveProperties
-    get() {
-      val inputs = LinkedHashMap<String, Angular2DirectiveProperty>()
-      val outputs = LinkedHashMap<String, Angular2DirectiveProperty>()
+  override val hostDirectives: Collection<Angular2HostDirective>
+    get() = getResolvedHostDirectivesSet().symbols
 
-      val inputMap = readPropertyMappings(Angular2DecoratorUtil.INPUTS_PROP)
-      val outputMap = readPropertyMappings(Angular2DecoratorUtil.OUTPUTS_PROP)
-
-      val clazz = typeScriptClass
-
-      TypeScriptTypeParser
-        .buildTypeFromClass(clazz, false)
-        .properties
-        .forEach { prop ->
-          for (el in getPropertySources(prop.memberSource.singleElement)) {
-            processProperty(clazz, prop, el, inputMap, Angular2DecoratorUtil.INPUT_DEC, KIND_NG_DIRECTIVE_INPUTS, inputs)
-            processProperty(clazz, prop, el, outputMap, Angular2DecoratorUtil.OUTPUT_DEC, KIND_NG_DIRECTIVE_OUTPUTS, outputs)
-          }
-        }
-
-      inputMap.values.forEach { input ->
-        inputs[input] = Angular2SourceDirectiveVirtualProperty(clazz, input, KIND_NG_DIRECTIVE_INPUTS, false)
-      }
-      outputMap.values.forEach { output ->
-        outputs[output] = Angular2SourceDirectiveVirtualProperty(clazz, output, KIND_NG_DIRECTIVE_OUTPUTS, false)
-      }
-
-      val inheritedProperties = Ref<Angular2DirectiveProperties>()
-      JSClassUtils.processClassesInHierarchy(clazz, false) { aClass, _, _ ->
-        if (aClass is TypeScriptClass && Angular2EntitiesProvider.isDeclaredClass(aClass)) {
-          val props = withJsonMetadataFallback(
-            aClass,
-            { getIvyEntity(it, true).asSafely<Angular2Directive>()?.bindings },
-            { Angular2MetadataUtil.getMetadataClassDirectiveProperties(it) }
-          )
-          if (props != null) {
-            inheritedProperties.set(props)
-            return@processClassesInHierarchy false
-          }
-        }
-        true
-      }
-
-      if (!inheritedProperties.isNull) {
-        inheritedProperties.get().inputs.forEach { prop ->
-          inputs.putIfAbsent(prop.name, prop)
-        }
-        inheritedProperties.get().outputs.forEach { prop ->
-          outputs.putIfAbsent(prop.name, prop)
-        }
-      }
-      return Angular2DirectiveProperties(inputs.values, outputs.values)
-    }
-
-  private val attributeParameters: Collection<Angular2DirectiveAttribute>
-    get() {
-      val constructors = typeScriptClass.constructors
-      return if (constructors.size == 1)
-        processCtorParameters(constructors[0])
-      else
-        constructors.firstOrNull { it.isOverloadImplementation }
-          ?.let { processCtorParameters(it) }
-        ?: emptyList()
+  override fun areHostDirectivesFullyResolved(): Boolean =
+    getResolvedHostDirectivesSet().let { set ->
+      set.isFullyResolved && set.symbols.none { it.directive?.areHostDirectivesFullyResolved() != true }
     }
 
   override fun createPointer(): Pointer<out Angular2Directive> {
@@ -162,33 +106,128 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
     }
   }
 
-  private fun readPropertyMappings(source: String): MutableMap<String, String> {
-    val prop = Angular2DecoratorUtil.getProperty(decorator, source)
-               ?: return LinkedHashMap()
-    val stub = (prop as JSPropertyImpl).stub
-    val seq: Sequence<String>
-    if (stub != null) {
-      seq = stub.childrenStubs.asSequence().mapNotNull {
-        it.psi.asSafely<JSLiteralExpression>()?.significantValue
-          ?.let { str -> unquoteWithoutUnescapingStringLiteralValue(str) }
+  private fun getPropertiesNoCache(): Angular2DirectiveProperties {
+    val inputs = LinkedHashMap<String, Angular2DirectiveProperty>()
+    val outputs = LinkedHashMap<String, Angular2DirectiveProperty>()
+
+    val inputMap = readPropertyMappings(Angular2DecoratorUtil.INPUTS_PROP)
+    val outputMap = readPropertyMappings(Angular2DecoratorUtil.OUTPUTS_PROP)
+
+    val clazz = typeScriptClass
+
+    TypeScriptTypeParser
+      .buildTypeFromClass(clazz, false)
+      .properties
+      .forEach { prop ->
+        for (el in getPropertySources(prop.memberSource.singleElement)) {
+          processProperty(clazz, prop, el, inputMap, Angular2DecoratorUtil.INPUT_DEC, KIND_NG_DIRECTIVE_INPUTS, inputs)
+          processProperty(clazz, prop, el, outputMap, Angular2DecoratorUtil.OUTPUT_DEC, KIND_NG_DIRECTIVE_OUTPUTS, outputs)
+        }
+      }
+
+    inputMap.values.forEach { input ->
+      inputs[input] = Angular2SourceDirectiveVirtualProperty(clazz, input, KIND_NG_DIRECTIVE_INPUTS, false)
+    }
+    outputMap.values.forEach { output ->
+      outputs[output] = Angular2SourceDirectiveVirtualProperty(clazz, output, KIND_NG_DIRECTIVE_OUTPUTS, false)
+    }
+
+    val inheritedProperties = Ref<Angular2DirectiveProperties>()
+    JSClassUtils.processClassesInHierarchy(clazz, false) { aClass, _, _ ->
+      if (aClass is TypeScriptClass && Angular2EntitiesProvider.isDeclaredClass(aClass)) {
+        val props = withJsonMetadataFallback(
+          aClass,
+          { getIvyEntity(it, true).asSafely<Angular2Directive>()?.bindings },
+          { Angular2MetadataUtil.getMetadataClassDirectiveProperties(it) }
+        )
+        if (props != null) {
+          inheritedProperties.set(props)
+          return@processClassesInHierarchy false
+        }
+      }
+      true
+    }
+
+    if (!inheritedProperties.isNull) {
+      inheritedProperties.get().inputs.forEach { prop ->
+        inputs.putIfAbsent(prop.name, prop)
+      }
+      inheritedProperties.get().outputs.forEach { prop ->
+        outputs.putIfAbsent(prop.name, prop)
       }
     }
-    else {
-      seq = prop.value
-              .asSafely<JSArrayLiteralExpression>()
-              ?.expressions
-              ?.asSequence()
-              ?.mapNotNull { expr ->
-                expr.asSafely<JSLiteralExpression>()?.takeIf { it.isQuotedLiteral }?.stringValue
-              }
-            ?: emptySequence()
+    return Angular2DirectiveProperties(inputs.values, outputs.values)
+  }
+
+  private fun getAttributesNoCache(): Collection<Angular2DirectiveAttribute> {
+    val constructors = typeScriptClass.constructors
+    return if (constructors.size == 1)
+      processCtorParameters(constructors[0])
+    else
+      constructors.firstOrNull { it.isOverloadImplementation }
+        ?.let { processCtorParameters(it) }
+      ?: emptyList()
+  }
+
+  private fun getResolvedHostDirectivesSet(): Angular2ResolvedSymbolsSet<Angular2HostDirective> =
+    decorator.let { dec ->
+      CachedValuesManager.getCachedValue(dec) {
+        HostDirectivesCollector(dec).collect(Angular2DecoratorUtil.getProperty(dec, HOST_DIRECTIVES_PROP))
+      }
     }
-    return seq
-      .map { property -> Angular2EntityUtils.parsePropertyMapping(property) }
-      .toMap(LinkedHashMap())
+
+  private fun readPropertyMappings(source: String): MutableMap<String, String> =
+    readDirectivePropertyMappings(Angular2DecoratorUtil.getProperty(decorator, source))
+
+  private class HostDirectivesCollector(decorator: ES6Decorator)
+    : Angular2SourceSymbolCollectorBase<Angular2Directive, Angular2ResolvedSymbolsSet<Angular2HostDirective>>(
+    Angular2Directive::class.java, decorator) {
+
+    private val result = mutableSetOf<Angular2HostDirective>()
+
+    override fun createResult(isFullyResolved: Boolean, dependencies: Set<PsiElement>)
+      : Result<Angular2ResolvedSymbolsSet<Angular2HostDirective>> =
+      Angular2ResolvedSymbolsSet.createResult(result, isFullyResolved, dependencies)
+
+    override fun processAnyElement(node: JSElement) {
+      if (node is JSObjectLiteralExpression)
+        result.add(Angular2SourceHostDirectiveWithMappings(node))
+      else
+        super.processAnyElement(node)
+    }
+
+    override fun processAcceptableEntity(entity: Angular2Directive) {
+      result.add(Angular2SourceHostDirective(entity))
+    }
   }
 
   companion object {
+
+    @JvmStatic
+    internal fun readDirectivePropertyMappings(jsProperty: JSProperty?): MutableMap<String, String> {
+      if (jsProperty == null) return LinkedHashMap()
+      val stub = (jsProperty as JSPropertyImpl).stub
+      val seq: Sequence<String>
+      if (stub != null) {
+        seq = stub.childrenStubs.asSequence().mapNotNull {
+          it.psi.asSafely<JSLiteralExpression>()?.significantValue
+            ?.let { str -> unquoteWithoutUnescapingStringLiteralValue(str) }
+        }
+      }
+      else {
+        seq = jsProperty.value
+                .asSafely<JSArrayLiteralExpression>()
+                ?.expressions
+                ?.asSequence()
+                ?.mapNotNull { expr ->
+                  expr.asSafely<JSLiteralExpression>()?.takeIf { it.isQuotedLiteral }?.stringValue
+                }
+              ?: emptySequence()
+      }
+      return seq
+        .map { property -> Angular2EntityUtils.parsePropertyMapping(property) }
+        .toMap(LinkedHashMap())
+    }
 
     @JvmStatic
     internal fun getPropertySources(property: PsiElement?): List<JSAttributeListOwner> {

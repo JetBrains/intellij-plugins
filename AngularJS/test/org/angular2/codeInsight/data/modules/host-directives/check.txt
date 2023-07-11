@@ -1,0 +1,90 @@
+AppModule: Angular2SourceModule
+  imports:
+  declarations:
+    SourceComponent: Angular2SourceComponent
+      standalone: false
+      selector: app-test
+      kind: REGULAR
+      inputs:
+        underlineColor
+      outputs:
+        hover
+      host directives:
+        MouseenterDirective
+          host-inputs:
+            underlineColor
+          host-outputs:
+            hover
+          MouseenterDirective: Angular2SourceDirective
+            standalone: true
+            selector: [appMouseenter]
+            kind: REGULAR
+            inputs:
+              underlineColor
+            outputs:
+              hover
+            host directives:
+              UnderlineDirective
+                host-inputs:
+                  underlineColor
+                UnderlineDirective: Angular2SourceDirective
+                  standalone: true
+                  selector: [appUnderline]
+                  kind: REGULAR
+                  inputs:
+                    color
+                  host directives fully resolved: true
+              BoldDirective
+                host-outputs:
+                  hover
+                BoldDirective: Angular2SourceDirective
+                  standalone: true
+                  selector: [appBold]
+                  kind: REGULAR
+                  outputs:
+                    hover
+                  host directives fully resolved: true
+            host directives fully resolved: false
+      host directives fully resolved: false
+    TestComponent: Angular2IvyComponent
+      standalone: false
+      selector: lib-test
+      kind: REGULAR
+      inputs:
+        bbb <required>
+        ngIfElse
+      host directives:
+        NgIf
+          host-inputs:
+            bbb <required>
+            ngIfElse
+          NgIf: Angular2IvyDirective
+            standalone: true
+            selector: [ngIf]
+            kind: STRUCTURAL
+            inputs:
+              ngIf <required>
+              ngIfElse
+              ngIfThen
+            host directives fully resolved: true
+        NgForOf
+          NgForOf: Angular2IvyDirective
+            standalone: true
+            selector: [ngFor]
+            kind: STRUCTURAL
+            inputs:
+              ngForOf <required>
+              ngForTemplate
+              ngForTrackBy
+            host directives fully resolved: true
+      host directives fully resolved: true
+  exports:
+  all-exported-declarations:
+  scope:
+    SourceComponent: Angular2SourceComponent
+      <printed above>
+    TestComponent: Angular2IvyComponent
+      <printed above>
+  scope fully resolved: true
+  exports fully resolved: true
+  declarations fully resolved: true
