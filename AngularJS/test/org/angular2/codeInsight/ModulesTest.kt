@@ -4,6 +4,7 @@ package org.angular2.codeInsight
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.ContainerUtil
+import com.intellij.webSymbols.DebugOutputPrinter
 import one.util.streamex.StreamEx
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.entities.*
@@ -13,7 +14,6 @@ import org.angular2.modules.Angular2TestModule
 import org.angular2.web.Angular2Symbol
 import org.angularjs.AngularTestUtil
 import java.util.*
-import kotlin.math.max
 
 class ModulesTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
@@ -226,9 +226,8 @@ class ModulesTest : Angular2CodeInsightFixtureTestCase() {
     val el = myFixture.getFile().findElementAt(moduleOffset)!!
     val moduleClass = PsiTreeUtil.getParentOfType(el, TypeScriptClass::class.java)!!
     val module = getModule(moduleClass)!!
-    val result = StringBuilder()
-    printEntity(0, module, result, printDirectives, HashSet())
-    myFixture.configureByText("__my-check.txt", result.toString())
+    val result = Angular2EntitiesDebugOutputPrinter(printDirectives).printValue(module)
+    myFixture.configureByText("__my-check.txt", result)
     myFixture.checkResultByFile("$directory/$checkFile", true)
   }
 
@@ -253,112 +252,108 @@ class ModulesTest : Angular2CodeInsightFixtureTestCase() {
                    .toList())
   }
 
-  companion object {
-    private fun printEntity(level: Int,
-                            entity: Angular2Entity,
-                            result: StringBuilder,
-                            printDirectives: Boolean,
-                            printed: MutableSet<Angular2Entity>) {
-      var level = level
-      withIndent(level, result)
-        .append(entity.getName())
+  private class Angular2EntitiesDebugOutputPrinter(val printDirectives: Boolean) : DebugOutputPrinter() {
+
+    private val printedEntities = mutableSetOf<Angular2Entity>()
+
+    init {
+      indent = "  "
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun printValueImpl(builder: StringBuilder, level: Int, value: Any?): StringBuilder =
+      when (value) {
+        is Angular2Module -> builder.printNgModule(level, value)
+        is Angular2Directive -> builder.printNgDirective(level, value)
+        is Angular2Pipe -> builder.printNgPipe(level, value)
+        is Collection<*> -> super.printValueImpl(builder, level, when (value.firstOrNull()) {
+          is Angular2Symbol -> (value as Collection<Angular2Symbol>).sortedBy { it.name }
+          is Angular2Entity -> (value as Collection<Angular2Entity>).sortedBy { it.getName() }
+          else -> value.toList()
+        })
+        else -> super.printValueImpl(builder, level, value)
+      }
+
+    override fun printRecursiveValue(builder: StringBuilder, level: Int, value: Any): java.lang.StringBuilder =
+      if (value is Angular2Entity || value is Collection<*>)
+        printValueImpl(builder, level, value)
+      else
+        super.printRecursiveValue(builder, level, value)
+
+    private fun StringBuilder.printNgModule(topLevel: Int, module: Angular2Module): StringBuilder =
+      printEntity(topLevel, module) { level ->
+        printProperty(level, "imports", module.imports)
+        printProperty(level, "declarations", module.declarations)
+        printProperty(level, "exports", module.exports)
+        printProperty(level, "all-exported-declarations", module.allExportedDeclarations)
+        printProperty(level, "scope", module.declarationsInScope)
+        printProperty(level, "scope fully resolved", module.isScopeFullyResolved)
+        printProperty(level, "exports fully resolved", module.areExportsFullyResolved())
+        printProperty(level, "declarations fully resolved", module.areDeclarationsFullyResolved())
+      }
+
+
+    private fun StringBuilder.printNgDirective(topLevel: Int, directive: Angular2Directive): StringBuilder =
+      printEntity(topLevel, directive) { level ->
+        if (printDirectives) {
+          printProperty(level, "standalone", directive.isStandalone)
+          printProperty(level, "selector", directive.selector)
+          printProperty(level, "kind", directive.directiveKind)
+          printProperty(level, "exportAs list", directive.exportAsList.takeIf { it.isNotEmpty() })
+          printProperty(level, "inputs", directive.inputs.takeIf { it.isNotEmpty() })
+          printProperty(level, "outputs", directive.outputs.takeIf { it.isNotEmpty() })
+          printProperty(level, "inOuts", directive.inOuts.takeIf { it.isNotEmpty() })
+          printProperty(level, "attributes", directive.attributes.takeIf { it.isNotEmpty() })
+        }
+        if (directive.isStandalone && directive is Angular2ImportsOwner) {
+          printProperty(level, "imports", directive.imports)
+          printProperty(level, "scope", directive.declarationsInScope)
+          printProperty(level, "scope fully resolved", directive.isScopeFullyResolved)
+        }
+      }
+
+    private fun StringBuilder.printNgPipe(topLevel: Int, pipe: Angular2Pipe): StringBuilder =
+      printEntity(topLevel, pipe) {}
+
+    private fun StringBuilder.printEntity(level: Int,
+                                          entity: Angular2Entity,
+                                          printer: (level: Int) -> Unit): StringBuilder {
+      append(entity.getName())
         .append(": ")
         .append(entity.javaClass.getSimpleName())
         .append('\n')
-      if (entity is Angular2Module) {
-        if (!printed.add(entity)) {
-          withIndent(level + 1, result)
-            .append("<printed above>\n")
-          return
-        }
-        level++
-        printEntityList(level, "imports", entity.imports, printDirectives, result, printed)
-        printEntityList(level, "declarations", entity.declarations, printDirectives, result, printed)
-        printEntityList(level, "exports", entity.exports, printDirectives, result, printed)
-        printEntityList(level, "all-exported-declarations", entity.allExportedDeclarations, printDirectives, result, printed)
-        printEntityList(level, "scope", entity.declarationsInScope, printDirectives, result, printed)
-        withIndent(level, result)
-          .append("scope fully resolved: ")
-          .append(entity.isScopeFullyResolved)
-          .append('\n')
-        withIndent(level, result)
-          .append("exports fully resolved: ")
-          .append(entity.areExportsFullyResolved())
-          .append('\n')
-        withIndent(level, result)
-          .append("declarations fully resolved: ")
-          .append(entity.areDeclarationsFullyResolved())
-          .append('\n')
-      }
-      else if (entity is Angular2Directive) {
-        if ((printDirectives || entity.isStandalone) && !printed.add(entity)) {
-          withIndent(level + 1, result)
-            .append("<printed above>\n")
-          return
-        }
-        if (printDirectives) {
-          level++
-          withIndent(level, result)
-            .append("standalone: ")
-            .append(entity.isStandalone)
-            .append("\n")
-          withIndent(level, result)
-            .append("selector: ")
-            .append(entity.selector)
-            .append("\n")
-          withIndent(level, result)
-            .append("kind: ")
-            .append(entity.directiveKind)
-            .append("\n")
-          if (!entity.exportAsList.isEmpty()) {
-            withIndent(level, result)
-              .append("exportAs list: ")
-              .append(entity.exportAsList)
-              .append("\n")
-          }
-          printSymbolList(level, "inputs", entity.inputs, result)
-          printSymbolList(level, "outputs", entity.outputs, result)
-          printSymbolList(level, "inOuts", entity.inOuts, result)
-          printSymbolList(level, "attributes", entity.attributes, result)
-        }
-        if (entity.isStandalone && entity is Angular2ImportsOwner) {
-          printEntityList(level, "imports", entity.imports, printDirectives, result, printed)
-          printEntityList(level, "scope", entity.declarationsInScope, printDirectives, result, printed)
-          withIndent(level, result)
-            .append("scope fully resolved: ")
-            .append(entity.isScopeFullyResolved)
-            .append('\n')
+      if (!printedEntities.add(entity)) {
+        if (entity !is Angular2Pipe
+            && (entity !is Angular2Directive || printDirectives || (entity.isStandalone && entity is Angular2ImportsOwner))) {
+          indent(level + 1).append("<printed above>\n")
         }
       }
+      else {
+        printer(level + 1)
+      }
+      return this
     }
 
-    private fun printEntityList(level: Int,
-                                name: String,
-                                entities: Set<Angular2Entity>,
-                                printDirectives: Boolean,
-                                result: StringBuilder,
-                                printed: MutableSet<Angular2Entity>) {
-      withIndent(level, result)
-        .append(name)
-        .append(":\n")
-      ContainerUtil.sorted(entities, Comparator.comparing { obj: Angular2Entity -> obj.getName() })
-        .forEach { m: Angular2Entity -> printEntity(level + 1, m, result, printDirectives, printed) }
+    override fun StringBuilder.printList(level: Int, list: List<*>): StringBuilder {
+      append('\n')
+      list.forEach {
+        indent(level + 1).printValue(level + 1, it)
+        if (!endsWith('\n'))
+          append("\n")
+      }
+      return this
     }
 
-    private fun printSymbolList(level: Int,
-                                name: String,
-                                symbols: Collection<Angular2Symbol?>,
-                                result: StringBuilder) {
-      if (symbols.isEmpty()) return
-      withIndent(level, result)
-        .append(name)
-        .append(":\n")
-      ContainerUtil.sorted(symbols, Comparator.comparing(Angular2Symbol::name))
-        .forEach { m: Angular2Symbol? -> withIndent(level + 1, result).append(m).append("\n") }
+    override fun StringBuilder.printProperty(level: Int, name: String, value: Any?): StringBuilder {
+      if (value == null) return this
+      indent(level).append(name).append(": ")
+        .printValue(level, value)
+      if (!endsWith('\n')) {
+        append("\n")
+      }
+      return this
     }
 
-    private fun withIndent(level: Int, result: StringBuilder): StringBuilder {
-      return result.append("  ".repeat(max(0.0, level.toDouble()).toInt()))
-    }
   }
+
 }
