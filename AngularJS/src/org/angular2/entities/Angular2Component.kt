@@ -16,9 +16,6 @@ interface Angular2Component : Angular2Directive, Angular2ImportsOwner {
   override val isComponent: Boolean
     get() = true
 
-  override val imports: Set<Angular2Entity>
-    get() = emptySet()
-
   override val declarationsInScope: Set<Angular2Declaration>
     get() {
       val result = HashSet<Angular2Declaration>()
@@ -30,9 +27,6 @@ interface Angular2Component : Angular2Directive, Angular2ImportsOwner {
       )
       return result
     }
-
-  override val isScopeFullyResolved: Boolean
-    get() = true
 
   override fun createPointer(): Pointer<out Angular2Component>
 }

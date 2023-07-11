@@ -7,6 +7,7 @@ import com.intellij.psi.PsiFile
 import org.angular2.entities.Angular2Component
 import org.angular2.entities.Angular2DirectiveKind
 import org.angular2.entities.Angular2DirectiveSelector
+import org.angular2.entities.Angular2Entity
 
 class Angular2IvyComponent(entityDef: Angular2IvySymbolDef.Component) : Angular2IvyDirective(entityDef), Angular2Component {
 
@@ -18,6 +19,12 @@ class Angular2IvyComponent(entityDef: Angular2IvySymbolDef.Component) : Angular2
 
   override val cssFiles: List<PsiFile>
     get() = emptyList()
+
+  override val imports: Set<Angular2Entity>
+    get() = emptySet() // We don't really need standalone scope for Ivy components
+
+  override val isScopeFullyResolved: Boolean
+    get() = true // We don't really need standalone scope for Ivy components
 
   // Try to fallback to metadata JSON information - Angular 9.0.x case
   override val ngContentSelectors: List<Angular2DirectiveSelector>

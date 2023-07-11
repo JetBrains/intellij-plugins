@@ -6,10 +6,7 @@ import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.refactoring.suggested.createSmartPointer
-import org.angular2.entities.Angular2Component
-import org.angular2.entities.Angular2DirectiveKind
-import org.angular2.entities.Angular2DirectiveSelector
-import org.angular2.entities.Angular2DirectiveSelectorImpl
+import org.angular2.entities.*
 import org.angular2.entities.metadata.stubs.Angular2MetadataComponentStub
 
 class Angular2MetadataComponent(element: Angular2MetadataComponentStub)
@@ -32,6 +29,12 @@ class Angular2MetadataComponent(element: Angular2MetadataComponentStub)
 
   override val directiveKind: Angular2DirectiveKind
     get() = Angular2DirectiveKind.REGULAR
+
+  override val imports: Set<Angular2Entity>
+    get() = emptySet()
+
+  override val isScopeFullyResolved: Boolean
+    get() = true
 
   override fun createPointer(): Pointer<out Angular2Component> {
     return this.createSmartPointer()
