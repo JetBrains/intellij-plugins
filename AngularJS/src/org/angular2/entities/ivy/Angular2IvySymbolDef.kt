@@ -81,10 +81,7 @@ abstract class Angular2IvySymbolDef private constructor(private val myFieldOrStu
   open class Directive internal constructor(fieldStubOrPsi: Any) : Entity(fieldStubOrPsi) {
 
     override val isStandalone: Boolean
-      get() {
-        val type = getDefFieldArgument(7)
-        return type is TypeScriptBooleanLiteralType && type.value
-      }
+      get() = getBooleanParam(7)
 
     val selector: String?
       get() = getStringGenericParam(1)
@@ -163,10 +160,7 @@ abstract class Angular2IvySymbolDef private constructor(private val myFieldOrStu
   class Pipe internal constructor(fieldStubOrPsi: Any) : Entity(fieldStubOrPsi) {
 
     override val isStandalone: Boolean
-      get() {
-        val type = getDefFieldArgument(2)
-        return type is TypeScriptBooleanLiteralType && type.value
-      }
+      get() = getBooleanParam(2)
 
     val name: String?
       get() = getStringGenericParam(1)
@@ -267,6 +261,11 @@ abstract class Angular2IvySymbolDef private constructor(private val myFieldOrStu
       declaration.innerText
     }
     else null
+  }
+
+  protected fun getBooleanParam(index: Int): Boolean {
+    val type = getDefFieldArgument(index)
+    return type is TypeScriptBooleanLiteralType && type.value
   }
 
   @OptIn(ExperimentalContracts::class)
