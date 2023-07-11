@@ -2,7 +2,8 @@ import {Directive, ElementRef, EventEmitter, HostListener, Output} from '@angula
 
 @Directive({
   selector: '[appBold]',
-  standalone: true
+  standalone: true,
+  exportAs: "boldDir"
 })
 export class BoldDirective {
   @Output() hover = new EventEmitter()

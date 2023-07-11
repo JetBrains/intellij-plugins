@@ -92,12 +92,11 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
     val hasExport = !exportName.isNullOrEmpty()
 
     for ((directive, instanceSubstitutor) in directiveInstances) {
-      val isApplicable = if (hasExport)
-        directive.exportAsList.contains(exportName)
-      else
-        directive.isComponent
-      if (!isApplicable) continue
-      val cls = directive.typeScriptClass ?: continue
+      val cls = when {
+        hasExport -> directive.exportAs[exportName]?.typeScriptClass
+        directive.isComponent -> directive.typeScriptClass
+        else -> null
+      } ?: continue
 
       val genericParameters = cls.typeParameters.mapTo(HashSet()) { it.genericId }
       val genericConstructorReturnType = if (genericParameters.isNotEmpty())

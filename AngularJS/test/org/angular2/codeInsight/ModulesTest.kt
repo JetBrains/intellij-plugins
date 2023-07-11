@@ -283,6 +283,7 @@ class ModulesTest : Angular2CodeInsightFixtureTestCase() {
           is Angular2Entity -> (value as Collection<Angular2Entity>).sortedBy { it.getName() }
           else -> value.toList()
         })
+        is Map<*, *> -> super.printValueImpl(builder, level, value.toSortedMap(Comparator.comparing { it.toString() }))
         else -> super.printValueImpl(builder, level, value)
       }
 
@@ -311,7 +312,10 @@ class ModulesTest : Angular2CodeInsightFixtureTestCase() {
           printProperty(level, "standalone", directive.isStandalone)
           printProperty(level, "selector", directive.selector)
           printProperty(level, "kind", directive.directiveKind)
-          printProperty(level, "exportAs list", directive.exportAsList.takeIf { it.isNotEmpty() })
+          printProperty(level, "exportAs",
+                        directive.exportAs.mapValues { (_, value) ->
+                          Identifier(if (value === directive) "<this>" else value.getName())
+                        }.takeIf { it.isNotEmpty() })
           printProperty(level, "inputs", directive.inputs.takeIf { it.isNotEmpty() })
           printProperty(level, "outputs", directive.outputs.takeIf { it.isNotEmpty() })
           printProperty(level, "inOuts", directive.inOuts.takeIf { it.isNotEmpty() })
@@ -361,6 +365,14 @@ class ModulesTest : Angular2CodeInsightFixtureTestCase() {
       return this
     }
 
+    override fun StringBuilder.printMap(level: Int, map: Map<*, *>): StringBuilder {
+      append("\n")
+      for (entry in map) {
+        printProperty(level + 1, entry.key.toString(), entry.value)
+      }
+      return this
+    }
+
     override fun StringBuilder.printList(level: Int, list: List<*>): StringBuilder {
       append('\n')
       list.forEach {
@@ -379,6 +391,11 @@ class ModulesTest : Angular2CodeInsightFixtureTestCase() {
         append("\n")
       }
       return this
+    }
+
+    private class Identifier(val identifier: String) {
+      override fun toString(): String =
+        identifier
     }
 
   }

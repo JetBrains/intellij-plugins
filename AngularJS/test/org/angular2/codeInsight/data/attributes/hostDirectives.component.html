@@ -3,16 +3,29 @@
         (hover)="$event"
         <error descr="Property colr is not provided by any applicable directives nor by resolved element">[colr]</error>="12"
         <error descr="Event hovr is not emitted by any applicable directives nor by resolved element">(<warning descr="Unrecognized event">hovr</warning>)</error>="$event"
+        ref-a="boldDir"
+        ref-a2="fooDir"
+        ref-a3="mouseDir"
+        ref-<error descr="There is no directive with 'exportAs' set to bldDir">b</error>="bldDir"
 ></resolved>
 <unresolved
         [underlineColor]="<error descr="Type  12  is not assignable to type  string ">12</error>"
         (hover)="$event"
         <weak_warning descr="Property colr is not provided by any applicable directives nor by unresolved element">[colr]</weak_warning>="12"
         <weak_warning descr="Event hovr is not emitted by any applicable directives nor by unresolved element">(<warning descr="Unrecognized event">hovr</warning>)</weak_warning>="$event"
+        ref-c="boldDir"
+        ref-<weak_warning descr="There is no directive with 'exportAs' set to bldDir">d</weak_warning>="bldDir"
 ></unresolved>
 <app-test
         <error descr="Property underlineColor is not provided by any applicable directives nor by app-test element">[underlineColor]</error>="12"
-        <error descr="Event hover is not emitted by any applicable directives nor by app-test element">(hover)</error>="$event"
-        <warning descr="Directive that provides attribute appBold is out of scope of the current template">appBold</warning>
-        <warning descr="Directive that provides attribute appUnderline is out of scope of the current template">appUnderline</warning>
+        (hover)="$event"
+        appBold
+        appUnderline
+        ref-e="boldDir"
+        ref-<error descr="There is no directive with 'exportAs' set to bldDir">f</error>="bldDir"
 ></app-test>
+<!-- priority in exportAs resolve goes to the topmost host directive -->
+{{ a.<error descr="Unresolved variable title">title</error> }}
+{{ a2.title }}
+{{ a3.title }}
+{{a + b + c + d + e + f}}

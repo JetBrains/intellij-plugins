@@ -5,6 +5,7 @@ import {MouseenterDirective} from "./directives/mouseenter.directive";
   selector: 'app-test',
   templateUrl: './test.component.html',
   styleUrls: ['./test.component.css'],
+  exportAs: "boldDir,fooDir",
   hostDirectives: [MouseenterDirective ]
 })
 export class SourceComponent implements OnInit {
