@@ -36,8 +36,8 @@ open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
       ?: Angular2DirectiveSelectorImpl(myEntityDef.field, null, null)
     }
 
-  override val exportAs: Map<String, Angular2Directive>
-    get() = getLazyValue(IVY_EXPORT_AS) { myEntityDef.exportAsList.associateWith { this } } +
+  override val exportAs: Map<String, Angular2DirectiveExportAs>
+    get() = getLazyValue(IVY_EXPORT_AS) { myEntityDef.exportAsList.associateWith { Angular2DirectiveExportAs(it, this) } } +
             hostDirectives.flatMap { it.exportAs.entries }.associate { Pair(it.key, it.value) }
 
   override val attributes: Collection<Angular2DirectiveAttribute>
@@ -120,7 +120,7 @@ open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
   companion object {
 
     private val IVY_SELECTOR = Key<Angular2DirectiveSelector>("ng.ivy.selector")
-    private val IVY_EXPORT_AS = Key<Map<String, Angular2Directive>>("ng.ivy.export-as")
+    private val IVY_EXPORT_AS = Key<Map<String, Angular2DirectiveExportAs>>("ng.ivy.export-as")
 
     private fun getAttributes(entityDef: Angular2IvySymbolDef.Directive): Collection<Angular2DirectiveAttribute> =
       CachedValuesManager.getCachedValue(entityDef.field) {

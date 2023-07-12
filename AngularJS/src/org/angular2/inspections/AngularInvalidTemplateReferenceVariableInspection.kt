@@ -4,8 +4,8 @@ package org.angular2.inspections
 import com.intellij.codeInsight.daemon.impl.analysis.RemoveAttributeIntentionFix
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemsHolder
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.xml.XmlAttribute
+import com.intellij.refactoring.suggested.startOffset
 import com.intellij.util.SmartList
 import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
@@ -22,14 +22,14 @@ class AngularInvalidTemplateReferenceVariableInspection : AngularHtmlLikeTemplat
                                      descriptor: Angular2AttributeDescriptor) {
     val info = descriptor.info
     if (info.type == Angular2AttributeType.REFERENCE) {
-      val exportName = attribute.value
+      val valueElement = attribute.valueElement
+      val exportName = valueElement?.value
       if (!exportName.isNullOrEmpty()) {
+        val range = valueElement.valueTextRange.shiftLeft(valueElement.startOffset)
         val matchedDirectives = Angular2ApplicableDirectivesProvider(attribute.parent).matched
         val allMatching = matchedDirectives.filter { dir -> dir.exportAs.contains(exportName) }
         val scope = Angular2DeclarationsScope(attribute)
         val matching = allMatching.filter { d -> scope.contains(d) }
-        val range = TextRange(0, info.name.length)
-          .shiftRight(attribute.name.length - info.name.length)
         if (matching.isEmpty()) {
           val quickFixes = SmartList<LocalQuickFix>()
           val proximity = scope.getDeclarationsProximity(allMatching)
@@ -37,14 +37,14 @@ class AngularInvalidTemplateReferenceVariableInspection : AngularHtmlLikeTemplat
             Angular2FixesFactory.addUnresolvedDeclarationFixes(attribute, quickFixes)
           }
           quickFixes.add(RemoveAttributeIntentionFix(attribute.name))
-          holder.registerProblem(attribute.nameElement,
+          holder.registerProblem(valueElement,
                                  Angular2Bundle.message("angular.inspection.invalid-template-ref-var.message.unbound", exportName),
                                  Angular2InspectionUtils.getBaseProblemHighlightType(scope, matchedDirectives),
                                  range,
                                  *quickFixes.toTypedArray<LocalQuickFix>())
         }
         else if (matching.size > 1) {
-          holder.registerProblem(attribute.nameElement,
+          holder.registerProblem(valueElement,
                                  range,
                                  Angular2Bundle.message("angular.inspection.invalid-template-ref-var.message.ambiguous-name", exportName,
                                                         Angular2EntityUtils.renderEntityList(matching)))

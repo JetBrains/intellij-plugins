@@ -1,5 +1,5 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.codeInsight.refs
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.web.references
 
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.model.Symbol
@@ -92,11 +92,11 @@ abstract class Angular2SelectorReferencesProvider : PsiSymbolReferenceProvider {
   private class HtmlSelectorReference(private val mySelectorSymbol: Angular2DirectiveSelectorSymbol) : WebSymbolReference {
 
     override fun getElement(): PsiElement {
-      return mySelectorSymbol.source
+      return mySelectorSymbol.sourceElement
     }
 
     override fun getRangeInElement(): TextRange {
-      return mySelectorSymbol.textRangeInSource
+      return mySelectorSymbol.textRangeInSourceElement
     }
 
     override fun resolveReference(): Collection<WebSymbol> {

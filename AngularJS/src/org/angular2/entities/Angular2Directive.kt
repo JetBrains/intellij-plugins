@@ -10,7 +10,7 @@ interface Angular2Directive : Angular2Declaration {
 
   val selector: Angular2DirectiveSelector
 
-  val exportAs: Map<String, Angular2Directive>
+  val exportAs: Map<String, Angular2DirectiveExportAs>
 
   val inputs: Collection<Angular2DirectiveProperty>
     get() = bindings.inputs + hostDirectives.flatMap { it.inputs }
