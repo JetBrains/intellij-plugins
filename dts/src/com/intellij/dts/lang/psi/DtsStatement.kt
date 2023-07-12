@@ -40,6 +40,8 @@ sealed interface DtsStatement : PsiElement {
         val dtsContent: DtsNodeContent?
 
         val dtsLabels: List<String>
+
+        val dtsIsEmpty: Boolean
     }
 
     interface Property : DtsStatement {

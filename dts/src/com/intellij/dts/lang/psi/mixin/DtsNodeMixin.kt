@@ -38,6 +38,12 @@ abstract class DtsNodeMixin<T : StubBase<*>> : DtsStubBasedElement<T>, DtsStatem
     override val dtsLabels: List<String>
         get() = findChildrenByType<PsiElement>(DtsTypes.LABEL).map { it.text.trimEnd(':') }
 
+    override val dtsIsEmpty: Boolean
+        get() {
+            val content = dtsContent ?: return true
+            return  content.dtsEntries.isEmpty()
+        }
+
     override fun getTextOffset(): Int = dtsNameElement.textOffset
 
     override fun getPresentation(): ItemPresentation {

@@ -26,6 +26,11 @@
         <stubIndex
                 implementation="com.intellij.dts.lang.stubs.DtsNodeLabelIndex"/>
 
+        <!-- ide features -->
+        <lang.foldingBuilder
+                language="DTS"
+                implementationClass="com.intellij.dts.ide.DtsFoldingBuilder" />
+
         <!-- syntax highlighting -->
         <lang.syntaxHighlighterFactory
                 language="DTS"
