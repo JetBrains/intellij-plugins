@@ -8,6 +8,7 @@ import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.typescript.inspection.TypeScriptExplicitMemberTypeInspection
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
+import com.intellij.webSymbols.moveToOffsetBySignature
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.codeInsight.InspectionsTest
 import org.angular2.modules.Angular2TestModule
@@ -232,7 +233,7 @@ class Angular2TemplateInspectionsTest : Angular2CodeInsightFixtureTestCase() {
     if (location == null || quickFixName == null) {
       return
     }
-    AngularTestUtil.moveToOffsetBySignature(location, myFixture)
+    myFixture.moveToOffsetBySignature(location)
     myFixture.launchAction(myFixture.findSingleIntention(quickFixName))
     val lastDot = files[0].lastIndexOf('.')
     myFixture.checkResultByFile(files[0].substring(0, lastDot) + ".after" + testNr + files[0].substring(lastDot))

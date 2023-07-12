@@ -3,6 +3,7 @@ package org.angular2.svg
 
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.webSymbols.checkListByFile
+import com.intellij.webSymbols.moveToOffsetBySignature
 import com.intellij.webSymbols.renderLookupItems
 import one.util.streamex.StreamEx
 import org.angular2.Angular2CodeInsightFixtureTestCase
@@ -25,7 +26,7 @@ class AngularSvgTest : Angular2CodeInsightFixtureTestCase() {
   fun testCompletion() {
     Angular2TestModule.configureLink(myFixture, Angular2TestModule.ANGULAR_COMMON_4_0_0, Angular2TestModule.ANGULAR_CORE_4_0_0)
     myFixture.configureByFiles("svg-completion.component.svg", "svg-completion.component.ts")
-    AngularTestUtil.moveToOffsetBySignature("<<caret>paths></paths>", myFixture)
+    myFixture.moveToOffsetBySignature("<<caret>paths></paths>")
     myFixture.completeBasic()
     myFixture.checkListByFile(myFixture.renderLookupItems(true, true), "svg-completion.component.txt", false)
   }
@@ -34,7 +35,7 @@ class AngularSvgTest : Angular2CodeInsightFixtureTestCase() {
     Angular2TestModule.configureCopy(myFixture, Angular2TestModule.ANGULAR_COMMON_4_0_0, Angular2TestModule.ANGULAR_CORE_4_0_0)
     myFixture.copyDirectoryToProject(".", ".")
     myFixture.configureByFiles("svg-completion.component.svg", "svg-completion.component.ts")
-    AngularTestUtil.moveToOffsetBySignature("{{<caret>item.height}}", myFixture)
+    myFixture.moveToOffsetBySignature("{{<caret>item.height}}")
     myFixture.completeBasic()
     assertEquals(StreamEx.of(
       "!\$any#any#4", "!height#number#101", "!item#null#101", "!items#null#101"
@@ -46,7 +47,7 @@ class AngularSvgTest : Angular2CodeInsightFixtureTestCase() {
     Angular2TestModule.configureCopy(myFixture, Angular2TestModule.ANGULAR_COMMON_4_0_0, Angular2TestModule.ANGULAR_CORE_4_0_0)
     myFixture.copyDirectoryToProject(".", ".")
     myFixture.configureByFiles("svg-completion.component.svg", "svg-completion.component.ts")
-    AngularTestUtil.moveToOffsetBySignature("{{item.<caret>height}}", myFixture)
+    myFixture.moveToOffsetBySignature("{{item.<caret>height}}")
     myFixture.completeBasic()
     assertEquals(StreamEx.of(
       "!foo#string#101", "!width#number#101", "constructor#Function#98", "hasOwnProperty#boolean#98", "isPrototypeOf#boolean#98",

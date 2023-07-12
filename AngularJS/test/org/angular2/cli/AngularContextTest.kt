@@ -7,6 +7,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.psi.css.inspections.invalid.CssUnknownTargetInspection
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.webSymbols.moveToOffsetBySignature
 import org.angularjs.AngularTestUtil
 
 class AngularContextTest : BasePlatformTestCase() {
@@ -23,7 +24,7 @@ class AngularContextTest : BasePlatformTestCase() {
       myFixture.getEditor().getDocument().setText("<img src=''/>")
       FileDocumentManager.getInstance().saveAllDocuments()
     }
-    AngularTestUtil.moveToOffsetBySignature("<img src='<caret>'/>", myFixture)
+    myFixture.moveToOffsetBySignature("<img src='<caret>'/>")
     myFixture.completeBasic()
     UsefulTestCase.assertContainsElements(myFixture.getLookupElementStrings()!!, "favicon.ico", "image.png")
   }
@@ -37,7 +38,7 @@ class AngularContextTest : BasePlatformTestCase() {
       myFixture.getEditor().getDocument().setText("div {\nbackground-image=url('')\n}")
       FileDocumentManager.getInstance().saveAllDocuments()
     }
-    AngularTestUtil.moveToOffsetBySignature("url('<caret>')", myFixture)
+    myFixture.moveToOffsetBySignature("url('<caret>')")
     myFixture.completeBasic()
     UsefulTestCase.assertContainsElements(myFixture.getLookupElementStrings()!!, "favicon.ico", "image.png")
   }

@@ -9,6 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.presentation.java.SymbolPresentationUtil
+import com.intellij.webSymbols.moveToOffsetBySignature
 import one.util.streamex.StreamEx
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angularjs.AngularTestUtil
@@ -48,7 +49,7 @@ class GotoRelatedTest : Angular2CodeInsightFixtureTestCase() {
           assert(!input.isEmpty())
           myFixture.configureFromTempProjectFile(input[0])
           if (input.size > 1) {
-            AngularTestUtil.moveToOffsetBySignature(input[1].replace("{caret}", "<caret>"), myFixture)
+            myFixture.moveToOffsetBySignature(input[1].replace("{caret}", "<caret>"))
           }
           stringifiedRelatedItems.mapTo(result) { " $it" }
         }

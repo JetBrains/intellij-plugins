@@ -3,6 +3,7 @@ package org.angular2.codeInsight
 
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
+import com.intellij.webSymbols.moveToOffsetBySignature
 import org.angular2.Angular2MultiFileFixtureTestCase
 import org.angularjs.AngularTestUtil
 
@@ -45,7 +46,7 @@ class MultiFileIntentionsTest : Angular2MultiFileFixtureTestCase() {
         TypeScriptUnresolvedReferenceInspection::class.java)
       myFixture.configureFromTempProjectFile("template.html")
       myFixture.setCaresAboutInjection(false)
-      AngularTestUtil.moveToOffsetBySignature("f<caret>oo", myFixture)
+      myFixture.moveToOffsetBySignature("f<caret>oo")
       myFixture.launchAction(myFixture.findSingleIntention(intentionHint))
     }
   }

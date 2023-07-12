@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.inspections.JSOctalIntegerInspection
 import com.intellij.testFramework.ExpectedHighlightingData
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
+import com.intellij.webSymbols.moveToOffsetBySignature
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angularjs.AngularTestUtil
 
@@ -19,7 +20,7 @@ class Angular2SuppressionsTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.configureByFiles("template.html", "template.after.html", "package.json")
     for (location in mutableListOf("test1", "007", "pipe1")) {
       try {
-        AngularTestUtil.moveToOffsetBySignature(location[0].toString() + "<caret>" + location.substring(1), myFixture)
+        myFixture.moveToOffsetBySignature(location[0].toString() + "<caret>" + location.substring(1))
         myFixture.launchAction(myFixture.findSingleIntention("Suppress for expression"))
       }
       catch (err: AssertionError) {
@@ -28,7 +29,7 @@ class Angular2SuppressionsTest : Angular2CodeInsightFixtureTestCase() {
     }
     for (location in mutableListOf("foo1", "var1")) {
       try {
-        AngularTestUtil.moveToOffsetBySignature(location[0].toString() + "<caret>" + location.substring(1), myFixture)
+        myFixture.moveToOffsetBySignature(location[0].toString() + "<caret>" + location.substring(1))
         UsefulTestCase.assertEmpty(myFixture.filterAvailableIntentions("Suppress for expression"))
         myFixture.launchAction(myFixture.findSingleIntention("Suppress for tag"))
       }

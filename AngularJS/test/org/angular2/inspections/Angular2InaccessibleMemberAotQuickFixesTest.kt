@@ -3,6 +3,7 @@ package org.angular2.inspections
 
 import com.intellij.codeInsight.intention.IntentionActionDelegate
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.webSymbols.moveToOffsetBySignature
 import org.angular2.Angular2MultiFileFixtureTestCase
 import org.angular2.inspections.AngularInaccessibleComponentMemberInAotModeInspection
 import org.angular2.inspections.quickfixes.AngularMakePublicQuickFix
@@ -46,7 +47,7 @@ class Angular2InaccessibleMemberAotQuickFixesTest : Angular2MultiFileFixtureTest
       myFixture.enableInspections(AngularInaccessibleComponentMemberInAotModeInspection::class.java)
       myFixture.configureFromTempProjectFile(fileName)
       myFixture.setCaresAboutInjection(false)
-      AngularTestUtil.moveToOffsetBySignature(signature, myFixture)
+      myFixture.moveToOffsetBySignature(signature)
       val intentionAction = myFixture.filterAvailableIntentions("Make 'public'")
         .find { IntentionActionDelegate.unwrap(it) is AngularMakePublicQuickFix }!!
       myFixture.launchAction(intentionAction)

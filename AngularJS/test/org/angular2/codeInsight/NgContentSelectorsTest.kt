@@ -5,6 +5,7 @@ import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspectio
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection
 import com.intellij.psi.html.HtmlTag
 import com.intellij.testFramework.UsefulTestCase
+import com.intellij.webSymbols.resolveReference
 import com.intellij.webSymbols.resolveWebSymbolReference
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.inspections.AngularUndefinedBindingInspection
@@ -61,8 +62,8 @@ class NgContentSelectorsTest : Angular2CodeInsightFixtureTestCase() {
         throw AssertionError("Failed with signature: " + test.first, error)
       }
     }
-    UsefulTestCase.assertInstanceOf(AngularTestUtil.resolveReference("<fo<caret>o a>", myFixture), HtmlTag::class.java)
-    UsefulTestCase.assertInstanceOf(AngularTestUtil.resolveReference("<go<caret>o", myFixture), HtmlTag::class.java)
+    UsefulTestCase.assertInstanceOf(myFixture.resolveReference("<fo<caret>o a>"), HtmlTag::class.java)
+    UsefulTestCase.assertInstanceOf(myFixture.resolveReference("<go<caret>o"), HtmlTag::class.java)
     AngularTestUtil.assertUnresolvedReference("<div f<caret>oo", myFixture)
   }
 }

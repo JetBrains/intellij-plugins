@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.ui.NodeModuleNamesUtil
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
 import com.intellij.openapi.application.WriteAction
 import com.intellij.util.ArrayUtil
+import com.intellij.webSymbols.moveToOffsetBySignature
 import org.angular2.Angular2MultiFileFixtureTestCase
 import org.angular2.inspections.quickfixes.Angular2FixesFactory
 import org.angular2.modules.Angular2TestModule
@@ -353,7 +354,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
                        Angular2TestModule.ANGULAR_PLATFORM_BROWSER_4_0_0)))
     myFixture.configureFromTempProjectFile(mainFile)
     if (signature != null) {
-      AngularTestUtil.moveToOffsetBySignature(signature, myFixture)
+      myFixture.moveToOffsetBySignature(signature)
     }
     if (importName != null) {
       myFixture.getEditor().putUserData(JSImportAction.NAME_TO_IMPORT, importName)
