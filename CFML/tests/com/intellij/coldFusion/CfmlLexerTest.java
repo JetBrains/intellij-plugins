@@ -81,7 +81,7 @@ public class CfmlLexerTest extends LexerTestCase {
     String charSequence = "component name=\"Foo\" {}";
     CfmlLexer lexer = new CfmlLexer(true, null);
     lexer.start(charSequence);
-    
+
     IElementType tokenType = lexer.getTokenType();
     lexer.advance();
     lexer.start(charSequence);
@@ -89,12 +89,12 @@ public class CfmlLexerTest extends LexerTestCase {
   }
 
   @Override
-  protected Lexer createLexer() {
+  protected @NotNull Lexer createLexer() {
     return new CfmlLexer(true, null);
   }
 
   @Override
-  protected String getDirPath() {
+  protected @NotNull String getDirPath() {
     return "contrib/CFML/tests/testData/lexer";
   }
 

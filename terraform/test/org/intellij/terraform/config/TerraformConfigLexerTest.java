@@ -3,13 +3,14 @@ package org.intellij.terraform.config;
 
 import com.intellij.lexer.Lexer;
 import org.intellij.terraform.hcl.HCLElementTypes;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class TerraformConfigLexerTest extends HCLLexerTest {
   @Override
-  protected Lexer createLexer() {
+  protected @NotNull Lexer createLexer() {
     return TerraformParserDefinition.createLexer();
   }
 

@@ -9,7 +9,7 @@ class DtsLexerTest : LexerTestCase() {
 
     override fun getDirPath(): String = "testData/lexer"
 
-    override fun getPathToTestDataFile(extension: String?): String {
+    override fun getPathToTestDataFile(extension: String): String {
         return "$dirPath/${getTestName(false)}$extension"
     }
 

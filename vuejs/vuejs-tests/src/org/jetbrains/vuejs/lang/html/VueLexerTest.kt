@@ -20,7 +20,7 @@ open class VueLexerTest : LexerTestCase() {
 
   override fun getDirPath() = "html/lexer"
 
-  override fun getPathToTestDataFile(extension: String?): String = getVueTestDataPath() + "/$dirPath/" + getTestName(true) + extension
+  override fun getPathToTestDataFile(extension: String): String = getVueTestDataPath() + "/$dirPath/" + getTestName(true) + extension
 
   override fun setUp() {
     super.setUp()

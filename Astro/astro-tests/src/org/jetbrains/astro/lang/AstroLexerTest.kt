@@ -523,7 +523,7 @@ open class AstroLexerTest : LexerTestCase() {
 
   override fun getDirPath() = "lang/lexer"
 
-  override fun getPathToTestDataFile(extension: String?): String = getAstroTestDataPath() + "/$dirPath/" + getTestName(true) + extension
+  override fun getPathToTestDataFile(extension: String): String = getAstroTestDataPath() + "/$dirPath/" + getTestName(true) + extension
 
   override fun doTest(@NonNls text: String) {
     val withoutMargin = text.trimMargin()

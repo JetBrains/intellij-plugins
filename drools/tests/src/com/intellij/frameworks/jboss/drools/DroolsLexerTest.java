@@ -5,15 +5,16 @@ import com.intellij.lexer.Lexer;
 import com.intellij.plugins.drools.lang.lexer.DroolsLexer;
 import com.intellij.testFramework.LexerTestCase;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 public class DroolsLexerTest extends LexerTestCase {
   @Override
-  protected Lexer createLexer() {
+  protected @NotNull Lexer createLexer() {
     return new DroolsLexer();
   }
 
   @Override
-  protected String getDirPath() {
+  protected @NotNull String getDirPath() {
     return "contrib/drools/tests/testData/lexer/";
   }
 
@@ -228,7 +229,7 @@ public class DroolsLexerTest extends LexerTestCase {
   }
 
   @Override
-  protected void doTest(@NonNls String text) {
+  protected void doTest(@NonNls @NotNull String text) {
     super.doTest(text);
     checkCorrectRestart(text);
   }

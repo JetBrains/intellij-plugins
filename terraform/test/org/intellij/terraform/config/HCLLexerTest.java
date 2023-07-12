@@ -15,12 +15,12 @@ import java.util.List;
 
 public class HCLLexerTest extends BaseLexerTestCase {
   @Override
-  protected Lexer createLexer() {
+  protected @NotNull Lexer createLexer() {
     return HCLParserDefinition.createLexer();
   }
 
   @Override
-  protected String getDirPath() {
+  protected @NotNull String getDirPath() {
     return "data/hcl/lexer";
   }
 

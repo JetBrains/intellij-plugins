@@ -4,15 +4,16 @@ package org.intellij.terraform.hil;
 import com.intellij.lexer.Lexer;
 import org.intellij.terraform.BaseLexerTestCase;
 import org.intellij.terraform.hil.psi.HILLexer;
+import org.jetbrains.annotations.NotNull;
 
 public class HILLexerTest extends BaseLexerTestCase {
   @Override
-  protected Lexer createLexer() {
+  protected @NotNull Lexer createLexer() {
     return new HILLexer();
   }
 
   @Override
-  protected String getDirPath() {
+  protected @NotNull String getDirPath() {
     return "data/hil/lexer";
   }
 

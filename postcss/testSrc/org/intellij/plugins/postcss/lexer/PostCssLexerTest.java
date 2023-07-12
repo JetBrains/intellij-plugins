@@ -4,6 +4,7 @@ import com.intellij.lexer.Lexer;
 import com.intellij.testFramework.LexerTestCase;
 import com.intellij.testFramework.TestDataPath;
 import org.intellij.plugins.postcss.PostCssTestUtils;
+import org.jetbrains.annotations.NotNull;
 
 @TestDataPath("$CONTENT_ROOT/testData/lexer/")
 public class PostCssLexerTest extends LexerTestCase {
@@ -48,12 +49,12 @@ public class PostCssLexerTest extends LexerTestCase {
   }
 
   @Override
-  protected Lexer createLexer() {
+  protected @NotNull Lexer createLexer() {
     return new PostCssLexer();
   }
 
   @Override
-  protected String getDirPath() {
+  protected @NotNull String getDirPath() {
     return PostCssTestUtils.getTestDataBasePath(getClass());
   }
 }

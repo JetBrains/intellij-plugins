@@ -2,11 +2,12 @@
 package org.intellij.terraform;
 
 import com.intellij.testFramework.LexerTestCase;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseLexerTestCase extends LexerTestCase {
   @Override
-  protected void doTest(String text, @Nullable String expected) {
+  protected void doTest(@NotNull String text, @Nullable String expected) {
     super.doTest(text, expected);
     checkCorrectRestart(text);
   }

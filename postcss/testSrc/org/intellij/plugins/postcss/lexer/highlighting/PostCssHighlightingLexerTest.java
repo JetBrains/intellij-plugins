@@ -6,6 +6,7 @@ import com.intellij.testFramework.LexerTestCase;
 import com.intellij.testFramework.TestDataPath;
 import org.intellij.plugins.postcss.PostCssTestUtils;
 import org.intellij.plugins.postcss.lexer.PostCssHighlightingLexer;
+import org.jetbrains.annotations.NotNull;
 
 @TestDataPath("$CONTENT_ROOT/testData/lexer/highlighting/")
 public class PostCssHighlightingLexerTest extends LexerTestCase {
@@ -86,12 +87,12 @@ public class PostCssHighlightingLexerTest extends LexerTestCase {
   }
 
   @Override
-  protected Lexer createLexer() {
+  protected @NotNull Lexer createLexer() {
     return new PostCssHighlightingLexer(CssHighlighterLexer.Lazy.DEFAULT_PROPERTY_VALUES);
   }
 
   @Override
-  protected String getDirPath() {
+  protected @NotNull String getDirPath() {
     return PostCssTestUtils.getTestDataBasePath(getClass());
   }
 }
