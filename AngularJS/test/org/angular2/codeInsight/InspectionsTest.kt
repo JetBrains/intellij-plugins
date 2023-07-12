@@ -15,6 +15,7 @@ import com.intellij.psi.SyntaxTraverser
 import com.intellij.testFramework.EdtTestUtil
 import com.intellij.testFramework.ExpectedHighlightingData
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
+import com.intellij.webSymbols.moveToOffsetBySignature
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.inspections.Angular2DecoratorInspectionsTest
 import org.angular2.inspections.Angular2TemplateInspectionsProvider
@@ -65,7 +66,7 @@ class InspectionsTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.configureByFiles("unusedReference.html", "unusedReference.ts", "package.json")
     myFixture.checkHighlighting()
     for (attrToRemove in mutableListOf("notUsedRef", "anotherNotUsedRef", "notUsedRefWithAttr", "anotherNotUsedRefWithAttr")) {
-      AngularTestUtil.moveToOffsetBySignature("<caret>$attrToRemove", myFixture)
+      myFixture.moveToOffsetBySignature("<caret>$attrToRemove")
       myFixture.launchAction(myFixture.findSingleIntention("Remove unused variable '$attrToRemove'"))
     }
     myFixture.checkResultByFile("unusedReference.after.html")

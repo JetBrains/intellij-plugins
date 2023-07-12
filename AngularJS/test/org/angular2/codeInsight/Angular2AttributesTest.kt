@@ -88,7 +88,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.configureByFiles("event.html", "custom.ts", "package.json")
     myFixture.completeBasic()
     UsefulTestCase.assertContainsElements(myFixture.getLookupElementStrings()!!, "(mouseover)")
-    AngularTestUtil.moveToOffsetBySignature("<some-tag <caret>>", myFixture)
+    myFixture.moveToOffsetBySignature("<some-tag <caret>>")
     myFixture.completeBasic()
     UsefulTestCase.assertContainsElements(myFixture.getLookupElementStrings()!!, "(mouseover)")
   }
@@ -200,7 +200,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
                  component.outputs.mapTo(HashSet(), Angular2DirectiveProperty::name))
     assertEquals(ContainerUtil.newHashSet("testAttrOne", "testAttrTwo", "testAttrThree"),
                  component.attributes.mapTo(HashSet(), Angular2DirectiveAttribute::name))
-    AngularTestUtil.moveToOffsetBySignature("[model]=\"\"<caret>", myFixture)
+    myFixture.moveToOffsetBySignature("[model]=\"\"<caret>")
     myFixture.type(' ')
     myFixture.completeBasic()
     UsefulTestCase.assertContainsElements(myFixture.getLookupElementStrings()!!, "testAttrOne", "testAttrTwo", "testAttrThree")
@@ -634,7 +634,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     Registry.get("ide.completion.variant.limit").setValue(10000, testRootDisposable)
     myFixture.configureByFiles("exportAsMultipleNames.ts", "package.json")
     for (name in mutableListOf("r", "f", "g")) {
-      AngularTestUtil.moveToOffsetBySignature("{{ $name.<caret> }}", myFixture)
+      myFixture.moveToOffsetBySignature("{{ $name.<caret> }}")
       myFixture.completeBasic()
       if (name == "g") {
         UsefulTestCase.assertContainsElements(myFixture.getLookupElementStrings()!!, "length", "type")
@@ -936,10 +936,10 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
   fun testTypeAttrWithFormsCompletion() {
     configureLink(myFixture, Angular2TestModule.ANGULAR_COMMON_4_0_0, Angular2TestModule.ANGULAR_FORMS_4_0_0)
     myFixture.configureByFiles("typeAttrWithForms.html", "typeAttrWithForms.ts")
-    AngularTestUtil.moveToOffsetBySignature("<button <caret>>", myFixture)
+    myFixture.moveToOffsetBySignature("<button <caret>>")
     myFixture.completeBasic()
     UsefulTestCase.assertContainsElements(myFixture.getLookupElementStrings()!!, "type")
-    AngularTestUtil.moveToOffsetBySignature("<input <caret>/>", myFixture)
+    myFixture.moveToOffsetBySignature("<input <caret>/>")
     myFixture.completeBasic()
     UsefulTestCase.assertContainsElements(myFixture.getLookupElementStrings()!!, "type")
   }
@@ -1032,7 +1032,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
     myFixture.configureByFiles("svg-test.html", "svg-test.ts", "package.json")
     myFixture.checkHighlighting()
-    AngularTestUtil.moveToOffsetBySignature("<svg:clipPath id=\"clip\"><caret>", myFixture)
+    myFixture.moveToOffsetBySignature("<svg:clipPath id=\"clip\"><caret>")
     myFixture.type("<svg:circle [attr.")
     myFixture.completeBasic()
     UsefulTestCase.assertContainsElements(myFixture.getLookupElementStrings()!!, "cx]", "cy]", "visibility]", "text-rendering]")

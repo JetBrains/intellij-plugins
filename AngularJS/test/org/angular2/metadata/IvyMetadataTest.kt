@@ -5,6 +5,7 @@ import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspectio
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection
 import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.util.containers.ContainerUtil
+import com.intellij.webSymbols.moveToOffsetBySignature
 import com.intellij.webSymbols.webSymbolAtCaret
 import com.intellij.webSymbols.webSymbolSourceAtCaret
 import org.angular2.Angular2CodeInsightFixtureTestCase
@@ -39,10 +40,10 @@ class IvyMetadataTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
     myFixture.configureFromTempProjectFile("module.ts")
     myFixture.checkHighlighting()
-    AngularTestUtil.moveToOffsetBySignature("mat-form<caret>-field", myFixture)
+    myFixture.moveToOffsetBySignature("mat-form<caret>-field")
     assertEquals("form-field.d.ts",
                  myFixture.webSymbolAtCaret()!!.psiContext!!.getContainingFile().getName())
-    AngularTestUtil.moveToOffsetBySignature("mat-tab<caret>-group", myFixture)
+    myFixture.moveToOffsetBySignature("mat-tab<caret>-group")
     assertEquals("tab-group.d.ts",
                  myFixture.webSymbolAtCaret()!!.psiContext!!.getContainingFile().getName())
   }
@@ -57,7 +58,7 @@ class IvyMetadataTest : Angular2CodeInsightFixtureTestCase() {
                                 HtmlUnknownAttributeInspection::class.java)
     myFixture.configureFromTempProjectFile("tab1.page.html")
     myFixture.checkHighlighting()
-    AngularTestUtil.moveToOffsetBySignature("ion-card-<caret>subtitle", myFixture)
+    myFixture.moveToOffsetBySignature("ion-card-<caret>subtitle")
     assertEquals("proxies.d.ts",
                  myFixture.webSymbolAtCaret()!!.psiContext!!.getContainingFile().getName())
   }

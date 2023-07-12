@@ -19,6 +19,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.containers.ContainerUtil
+import com.intellij.webSymbols.resolveReference
 import com.intellij.xml.util.CheckDtdReferencesInspection
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.inspections.Angular2TemplateInspectionsProvider
@@ -30,7 +31,7 @@ class ContextTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   private fun resolveReference(signature: String): PsiElement {
-    return AngularTestUtil.resolveReference(signature, myFixture)
+    return myFixture.resolveReference(signature)
   }
 
   fun testInlineTemplateCompletion2TypeScript() {
@@ -242,7 +243,7 @@ class ContextTest : Angular2CodeInsightFixtureTestCase() {
                      someValue: number;
                    }
                    """.trimIndent(),
-                 AngularTestUtil.resolveReference("item.some<caret>Name", myFixture).getParent().getText())
+                 myFixture.resolveReference("item.some<caret>Name").getParent().getText())
   }
 
   fun testUnionsWithoutTypeGuardSupport() {

@@ -2,6 +2,7 @@
 package org.angular2.inspections
 
 import com.intellij.codeInspection.LocalInspectionTool
+import com.intellij.webSymbols.moveToOffsetBySignature
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.codeInsight.InspectionsTest
 import org.angularjs.AngularTestUtil
@@ -112,7 +113,7 @@ class Angular2DecoratorInspectionsTest : Angular2CodeInsightFixtureTestCase() {
     if (location == null || quickFixName == null) {
       return
     }
-    AngularTestUtil.moveToOffsetBySignature(location, myFixture)
+    myFixture.moveToOffsetBySignature(location)
     myFixture.launchAction(myFixture.findSingleIntention(quickFixName))
     val lastDot = files[0].lastIndexOf('.')
     myFixture.checkResultByFile(files[0].substring(0, lastDot) + ".after" + testNr + files[0].substring(lastDot))

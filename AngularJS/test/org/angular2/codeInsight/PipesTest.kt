@@ -7,6 +7,8 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.containers.ContainerUtil
+import com.intellij.webSymbols.moveToOffsetBySignature
+import com.intellij.webSymbols.resolveReference
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.inspections.Angular2TemplateInspectionsProvider
 import org.angular2.modules.Angular2TestModule
@@ -23,15 +25,15 @@ class PipesTest : Angular2CodeInsightFixtureTestCase() {
     configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14,
                   Angular2TestModule.RXJS_6_4_0)
     myFixture.configureByFiles("asyncPipe.html", "asyncPipe.ts")
-    var transformMethod = AngularTestUtil.resolveReference("makeObservable() | as<caret>ync", myFixture)
+    var transformMethod = myFixture.resolveReference("makeObservable() | as<caret>ync")
     assertEquals("common.d.ts", transformMethod.getContainingFile().getName())
     assertEquals("transform<T>(obj: Observable<T> | null | undefined): T | null;", transformMethod.getText())
-    transformMethod = AngularTestUtil.resolveReference("makePromise() | as<caret>ync", myFixture)
+    transformMethod = myFixture.resolveReference("makePromise() | as<caret>ync")
     assertEquals("common.d.ts", transformMethod.getContainingFile().getName())
     assertEquals("transform<T>(obj: Promise<T> | null | undefined): T | null;", transformMethod.getText())
-    val contactField = AngularTestUtil.resolveReference("contact.crea<caret>ted_at", myFixture)
+    val contactField = myFixture.resolveReference("contact.crea<caret>ted_at")
     assertEquals("asyncPipe.ts", contactField.getContainingFile().getName())
-    val contactFieldOptional = AngularTestUtil.resolveReference("(makeObservable() | async)?.leng<caret>th", myFixture)
+    val contactFieldOptional = myFixture.resolveReference("(makeObservable() | async)?.leng<caret>th")
     assertEquals("lib.es5.d.ts", contactFieldOptional.getContainingFile().getName())
   }
 
@@ -44,7 +46,7 @@ class PipesTest : Angular2CodeInsightFixtureTestCase() {
 
   fun testPipeResolve() {
     myFixture.configureByFiles("pipeCustom.resolve.html", "package.json", "custom.ts")
-    val resolve = AngularTestUtil.resolveReference("fil<caret>ta", myFixture)
+    val resolve = myFixture.resolveReference("fil<caret>ta")
     assertEquals("custom.ts", resolve.getContainingFile().getName())
     UsefulTestCase.assertInstanceOf(resolve, TypeScriptFunction::class.java)
     UsefulTestCase.assertInstanceOf(resolve.getParent(), TypeScriptClass::class.java)
@@ -143,7 +145,7 @@ class PipesTest : Angular2CodeInsightFixtureTestCase() {
         "json#[<any> | json] : <string>#101",
         "async#[<Observable<T>> | async] : <T>#101"))
     )) {
-      AngularTestUtil.moveToOffsetBySignature(check.first.replace("|", "|<caret>"), myFixture)
+      myFixture.moveToOffsetBySignature(check.first.replace("|", "|<caret>"))
       myFixture.completeBasic()
       assertEquals("Issue when checking: " + check.first, ContainerUtil.sorted(check.second),
                    AngularTestUtil.renderLookupItems(myFixture, true, true)

@@ -28,6 +28,8 @@ import com.intellij.util.ui.UIUtil
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.context.WebSymbolsContextProvider
 import com.intellij.webSymbols.context.impl.WebSymbolsContextProviderExtensionPoint
+import com.intellij.webSymbols.moveToOffsetBySignature
+import com.intellij.webSymbols.resolveReference
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.lang.Angular2LangUtil.isAngular2Context
 import org.angular2.lang.expr.Angular2Language
@@ -215,7 +217,7 @@ class InjectionsTest : Angular2CodeInsightFixtureTestCase() {
         myFixture.getTempDirFixture().getFile("dist/my-common-ui-lib/package.json")!!))
     }
     myFixture.configureFromTempProjectFile("src/app/home.component.html")
-    val transform = AngularTestUtil.resolveReference("| trans<caret>late", myFixture)
+    val transform = myFixture.resolveReference("| trans<caret>late")
     assertEquals("translate.pipe.d.ts", transform.getContainingFile().getName())
     UsefulTestCase.assertInstanceOf(transform, TypeScriptFunction::class.java)
   }
@@ -271,7 +273,7 @@ class InjectionsTest : Angular2CodeInsightFixtureTestCase() {
       Pair("dir", ContainerUtil.prepend(defaultProps, "myDirectiveProp")),
       Pair("template", ContainerUtil.prepend(defaultProps, "createEmbeddedView", "elementRef"))
     )) {
-      AngularTestUtil.moveToOffsetBySignature(check.first + "Ref.<caret>", myFixture)
+      myFixture.moveToOffsetBySignature(check.first + "Ref.<caret>")
       myFixture.completeBasic()
       assertEquals("Issue with " + check.first,
                    ContainerUtil.sorted(check.second),

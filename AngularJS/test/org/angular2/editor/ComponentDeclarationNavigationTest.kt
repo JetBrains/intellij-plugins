@@ -11,6 +11,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.moveToOffsetBySignature
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angularjs.AngularTestUtil
 import org.junit.Test
@@ -75,7 +76,7 @@ class ComponentDeclarationNavigationTest : Angular2CodeInsightFixtureTestCase() 
                      targetFile: String?,
                      elementText: String?) {
     myFixture.configureByFiles(testFile, "custom.html", "custom.ts", "package.json")
-    AngularTestUtil.moveToOffsetBySignature(location, myFixture)
+    myFixture.moveToOffsetBySignature(location)
     val result = myFixture.testAction(action)
     assertEquals(actionLabel, result.text)
     val focusedEditor = FileEditorManager.getInstance(myFixture.getProject()).getSelectedTextEditor()

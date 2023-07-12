@@ -5,6 +5,8 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.containers.ContainerUtil
+import com.intellij.webSymbols.moveToOffsetBySignature
+import com.intellij.webSymbols.resolveReference
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.modules.Angular2TestModule
 import org.angular2.modules.Angular2TestModule.Companion.configureLink
@@ -15,39 +17,35 @@ class CssClassTest : Angular2CodeInsightFixtureTestCase() {
     return AngularTestUtil.getBaseTestDataPath(javaClass) + "clazz"
   }
 
-  private fun resolveReference(signature: String): PsiElement {
-    return AngularTestUtil.resolveReference(signature, myFixture)
-  }
-
   fun testExternalReference() {
     myFixture.configureByFiles("cssExtRef.ts", "package.json", "css.css")
-    val resolve = resolveReference("inDa<caret>Class")
+    val resolve = myFixture.resolveReference("inDa<caret>Class")
     assertEquals("css.css", resolve.getContainingFile().getName())
   }
 
   fun testInternalReference() {
     myFixture.configureByFiles("cssIntRef.ts", "package.json")
-    resolveReference("inDa<caret>Class")
+    myFixture.resolveReference("inDa<caret>Class")
   }
 
   fun testInternalReferenceWithHtmlTag() {
     myFixture.configureByFiles("cssIntRefHtmlTag.ts", "package.json")
-    resolveReference("inDa<caret>Class")
+    myFixture.resolveReference("inDa<caret>Class")
   }
 
   fun testInternalReferenceExternalTemplate() {
     myFixture.configureByFiles("extTemplateRef.html", "extTemplateRef.ts", "package.json")
-    resolveReference("inDa<caret>Class")
+    myFixture.resolveReference("inDa<caret>Class")
   }
 
   fun testInternalReferenceExternalTemplateHtmlTag() {
     myFixture.configureByFiles("extTemplateRefHtmlTag.html", "extTemplateRefHtmlTag.ts", "package.json")
-    resolveReference("inDa<caret>Class")
+    myFixture.resolveReference("inDa<caret>Class")
   }
 
   fun testNonCliComplexScopeCodeCompletion() {
     myFixture.configureByFiles("complex.html", "complex.ts", "complex-global.css", "complex-internal.css", "package.json")
-    AngularTestUtil.moveToOffsetBySignature("<div class=\"<caret>\">", myFixture)
+    myFixture.moveToOffsetBySignature("<div class=\"<caret>\">")
     myFixture.completeBasic()
     UsefulTestCase.assertSameElements(myFixture.getLookupElementStrings()!!,
                                       "global-class",
@@ -59,7 +57,7 @@ class CssClassTest : Angular2CodeInsightFixtureTestCase() {
 
   fun testNonCliComplexScopeCodeCompletionInline() {
     myFixture.configureByFiles("complex.ts", "complex-global.css", "complex-internal.css", "package.json")
-    AngularTestUtil.moveToOffsetBySignature("<div class=\"<caret>\">", myFixture)
+    myFixture.moveToOffsetBySignature("<div class=\"<caret>\">")
     myFixture.completeBasic()
     UsefulTestCase.assertSameElements(myFixture.getLookupElementStrings()!!,
                                       "global-class",
@@ -73,7 +71,7 @@ class CssClassTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.configureByFiles("complex.html", "complex.ts", "complex-global.css", "complex-internal.css",
                                "complex-cli.css", "complex-cli-index.html", "complex-cli-index.css",
                                "angular.json", "package.json")
-    AngularTestUtil.moveToOffsetBySignature("<div class=\"<caret>\">", myFixture)
+    myFixture.moveToOffsetBySignature("<div class=\"<caret>\">")
     myFixture.completeBasic()
     UsefulTestCase.assertSameElements(myFixture.getLookupElementStrings()!!,
                                       "cli-class",
@@ -88,7 +86,7 @@ class CssClassTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.configureByFiles("complex.ts", "complex-global.css", "complex-internal.css",
                                "complex-cli.css", "complex-cli-index.html", "complex-cli-index.css",
                                "angular.json", "package.json")
-    AngularTestUtil.moveToOffsetBySignature("<div class=\"<caret>\">", myFixture)
+    myFixture.moveToOffsetBySignature("<div class=\"<caret>\">")
     myFixture.completeBasic()
     assertEquals(listOf("cli-class",
                         "index-html-link-class",
@@ -102,11 +100,11 @@ class CssClassTest : Angular2CodeInsightFixtureTestCase() {
   fun testNgClassCodeCompletion() {
     myFixture.configureByFiles("ngClass.html", "ngClass.css", "package.json")
     for (prefix in mutableListOf("{", "[", "")) {
-      AngularTestUtil.moveToOffsetBySignature("=\"$prefix'foo1 b<caret>'", myFixture)
+      myFixture.moveToOffsetBySignature("=\"$prefix'foo1 b<caret>'")
       myFixture.completeBasic()
       UsefulTestCase.assertSameElements(myFixture.getLookupElementStrings()!!, "bar", "boo")
     }
-    AngularTestUtil.moveToOffsetBySignature(", foo1: true<caret>}\"", myFixture)
+    myFixture.moveToOffsetBySignature(", foo1: true<caret>}\"")
     myFixture.type(",")
     myFixture.completeBasic()
     UsefulTestCase.assertSameElements(myFixture.getLookupElementStrings()!!, "bar", "boo", "foo")
@@ -115,12 +113,12 @@ class CssClassTest : Angular2CodeInsightFixtureTestCase() {
   fun testNgClassReferences() {
     myFixture.configureByFiles("ngClass.html", "ngClass.css", "package.json")
     for (prefix in mutableListOf("{", "[", "")) {
-      AngularTestUtil.resolveReference("=\"$prefix'fo<caret>o b", myFixture)
-      AngularTestUtil.resolveReference("=\"$prefix'foo b<caret>ar", myFixture)
+      myFixture.resolveReference("=\"$prefix'fo<caret>o b")
+      myFixture.resolveReference("=\"$prefix'foo b<caret>ar")
       AngularTestUtil.assertUnresolvedReference("=\"$prefix'f<caret>oo1 ", myFixture)
       AngularTestUtil.assertUnresolvedReference("=\"$prefix'foo1 b<caret>", myFixture)
     }
-    AngularTestUtil.resolveReference(", b<caret>ar: true}\"", myFixture)
+    myFixture.resolveReference(", b<caret>ar: true}\"")
     AngularTestUtil.assertUnresolvedReference(", f<caret>oo1: true}\"", myFixture)
   }
 
@@ -129,7 +127,7 @@ class CssClassTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.configureByFiles("complex.html", "complex.ts", "complex-global.css", "complex-internal.css",
                                "complex-cli.css", "complex-cli-index.html", "complex-cli-index.css",
                                "angular.json")
-    AngularTestUtil.moveToOffsetBySignature("<div class=\"\"<caret>></div>", myFixture)
+    myFixture.moveToOffsetBySignature("<div class=\"\"<caret>></div>")
     myFixture.completeBasic()
     UsefulTestCase.assertContainsElements(myFixture.getLookupElementStrings()!!, "[class.")
     myFixture.type("[class.")
@@ -150,7 +148,7 @@ class CssClassTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.configureByFiles("complex.html", "complex.ts", "complex-global.css", "complex-internal.css",
                                "complex-cli.css", "complex-cli-index.html", "complex-cli-index.css",
                                "angular.json")
-    AngularTestUtil.moveToOffsetBySignature("<div class=\"\"<caret>></div>", myFixture)
+    myFixture.moveToOffsetBySignature("<div class=\"\"<caret>></div>")
     myFixture.completeBasic()
     UsefulTestCase.assertContainsElements(myFixture.getLookupElementStrings()!!, "[class.")
     myFixture.type("bind-")
@@ -173,14 +171,14 @@ class CssClassTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.configureByFiles("complex.html", "complex.ts", "complex-global.css", "complex-internal.css",
                                "complex-cli.css", "complex-cli-index.html", "complex-cli-index.css",
                                "angular.json")
-    AngularTestUtil.moveToOffsetBySignature("<div class=\"<caret>\">", myFixture)
+    myFixture.moveToOffsetBySignature("<div class=\"<caret>\">")
     myFixture.completeBasic()
     myFixture.type("indexlc\n")
-    AngularTestUtil.moveToOffsetBySignature("<div class=\"index-html-link-class\"<caret>>", myFixture)
+    myFixture.moveToOffsetBySignature("<div class=\"index-html-link-class\"<caret>>")
     myFixture.type(" ")
     myFixture.completeBasic()
     myFixture.type("cla.\nintecl\ntrue")
-    AngularTestUtil.moveToOffsetBySignature("[class.internal-class]=\"true\"<caret>>", myFixture)
+    myFixture.moveToOffsetBySignature("[class.internal-class]=\"true\"<caret>>")
     myFixture.type(" ")
     myFixture.completeBasic()
     UsefulTestCase.assertContainsElements(myFixture.getLookupElementStrings()!!, "[ngClass]")

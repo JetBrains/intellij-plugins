@@ -3,6 +3,7 @@ package org.angular2.css
 
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.containers.ContainerUtil
+import com.intellij.webSymbols.moveToOffsetBySignature
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angularjs.AngularTestUtil
 
@@ -13,22 +14,22 @@ class CssCompletionTest : Angular2CodeInsightFixtureTestCase() {
 
   fun testLocalCssCompletionHtml() {
     myFixture.configureByFiles("local-stylesheet-ext.html", "local-stylesheet-ext.ts", "local-stylesheet-ext.css", "package.json")
-    AngularTestUtil.moveToOffsetBySignature("class=\"<caret>\"", myFixture)
+    myFixture.moveToOffsetBySignature("class=\"<caret>\"")
     myFixture.completeBasic()
     assertEquals(mutableListOf("", "local-class-ext", "local-class-int"), ContainerUtil.sorted(myFixture.getLookupElementStrings()!!))
     myFixture.type('\n')
-    AngularTestUtil.moveToOffsetBySignature("id=\"<caret>\"", myFixture)
+    myFixture.moveToOffsetBySignature("id=\"<caret>\"")
     myFixture.completeBasic()
     assertEquals(mutableListOf("local-id-ext", "local-id-int"), ContainerUtil.sorted(myFixture.getLookupElementStrings()!!))
   }
 
   fun testLocalCssCompletionLocalCss() {
     myFixture.configureByFiles("local-stylesheet-ext.ts", "local-stylesheet-ext.css", "local-stylesheet-ext.html", "package.json")
-    AngularTestUtil.moveToOffsetBySignature(".<caret> {", myFixture)
+    myFixture.moveToOffsetBySignature(".<caret> {")
     myFixture.completeBasic()
     assertEquals(mutableListOf("class-in-html", "local-class-ext"), ContainerUtil.sorted(myFixture.getLookupElementStrings()!!))
     myFixture.type('\n')
-    AngularTestUtil.moveToOffsetBySignature("#<caret> {", myFixture)
+    myFixture.moveToOffsetBySignature("#<caret> {")
     myFixture.completeBasic()
     assertEquals(mutableListOf("id-in-html", "local-id-ext"), ContainerUtil.sorted(myFixture.getLookupElementStrings()!!))
   }

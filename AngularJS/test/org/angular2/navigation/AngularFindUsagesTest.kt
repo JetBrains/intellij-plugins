@@ -6,6 +6,7 @@ import com.intellij.javascript.web.usagesAtCaret
 import com.intellij.openapi.editor.ex.RangeHighlighterEx
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.webSymbols.checkGTDUOutcome
+import com.intellij.webSymbols.moveToOffsetBySignature
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angularjs.AngularTestUtil
 import java.util.*
@@ -64,14 +65,14 @@ class AngularFindUsagesTest : Angular2CodeInsightFixtureTestCase() {
 
   fun testComponentStandardElementSelector() {
     myFixture.configureByFiles("standardSelectors.ts", "package.json")
-    AngularTestUtil.moveToOffsetBySignature("\"di<caret>v,", myFixture)
+    myFixture.moveToOffsetBySignature("\"di<caret>v,")
     // Cannot find usages of standard tags and attributes, just check outcome
     myFixture.checkGTDUOutcome(GotoDeclarationOrUsageHandler2.GTDUOutcome.GTD)
   }
 
   fun testComponentStandardAttributeSelector() {
     myFixture.configureByFiles("standardSelectors.ts", "package.json")
-    AngularTestUtil.moveToOffsetBySignature(",[cl<caret>ass]", myFixture)
+    myFixture.moveToOffsetBySignature(",[cl<caret>ass]")
     // Cannot find usages of standard tags and attributes, just check outcome
     myFixture.checkGTDUOutcome(GotoDeclarationOrUsageHandler2.GTDUOutcome.GTD)
   }

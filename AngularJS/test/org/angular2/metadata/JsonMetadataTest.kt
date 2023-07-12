@@ -8,6 +8,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.*
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.testFramework.UsefulTestCase
+import com.intellij.webSymbols.moveToOffsetBySignature
 import com.intellij.webSymbols.resolveWebSymbolReference
 import com.intellij.webSymbols.webSymbolAtCaret
 import com.intellij.webSymbols.webSymbolSourceAtCaret
@@ -139,7 +140,7 @@ class JsonMetadataTest : Angular2CodeInsightFixtureTestCase() {
                                 AngularUndefinedTagInspection::class.java)
     myFixture.configureByFile("material/module.ts")
     myFixture.checkHighlighting()
-    AngularTestUtil.moveToOffsetBySignature("mat-form<caret>-field", myFixture)
+    myFixture.moveToOffsetBySignature("mat-form<caret>-field")
     assertEquals("form-field.d.ts",
                  myFixture.webSymbolAtCaret()!!.psiContext!!.getContainingFile().getName())
   }
@@ -179,7 +180,7 @@ class JsonMetadataTest : Angular2CodeInsightFixtureTestCase() {
                                 HtmlUnknownAttributeInspection::class.java)
     myFixture.configureFromTempProjectFile("tab1.page.html")
     myFixture.checkHighlighting()
-    AngularTestUtil.moveToOffsetBySignature("ion-card-<caret>subtitle", myFixture)
+    myFixture.moveToOffsetBySignature("ion-card-<caret>subtitle")
     assertEquals("proxies.d.ts",
                  myFixture.webSymbolAtCaret()!!.psiContext!!.getContainingFile().getName())
   }
