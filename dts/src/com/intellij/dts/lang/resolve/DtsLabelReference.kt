@@ -4,7 +4,6 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.dts.lang.DtsFile
 import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.stubs.DTS_NODE_LABEL_INDEX
-import com.intellij.dts.util.DtsUtil
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
@@ -50,10 +49,9 @@ class DtsLabelReference(
         if (file !is DtsFile) return
 
         for (include in file.dtsTopLevelIncludes) {
-            if (maxOffset != null && include.textOffset > maxOffset) continue
+            if (maxOffset != null && include.offset > maxOffset) continue
 
-            val includePath = include.fileIncludePath ?: continue
-            val includeFile = DtsUtil.resolveRelativeFile(file, includePath) ?: continue
+            val includeFile = include.resolve(file) ?: continue
 
             if (collection.add(includeFile.originalFile.virtualFile)) {
                 collectFiles(collection, includeFile, null)

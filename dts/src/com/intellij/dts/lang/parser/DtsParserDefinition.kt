@@ -30,10 +30,10 @@ open class DtsParserDefinition : ParserDefinition {
     override fun createElement(node: ASTNode?): PsiElement = DtsTypes.Factory.createElement(node)
 
     override fun createFile(viewProvider: FileViewProvider): PsiFile {
-        return if (viewProvider.virtualFile.extension == "dtsi") {
-            DtsFile.Include(viewProvider)
-        } else {
-            DtsFile.Source(viewProvider)
+        return when (viewProvider.virtualFile.extension) {
+            "overlay" -> DtsFile.Overlay(viewProvider)
+            "dtsi" -> DtsFile.Include(viewProvider)
+            else -> DtsFile.Source(viewProvider)
         }
     }
 }

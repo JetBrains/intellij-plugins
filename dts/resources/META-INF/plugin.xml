@@ -14,7 +14,7 @@
                 language="DTS"
                 name="DTS"
                 implementationClass="com.intellij.dts.lang.DtsFileType"
-                extensions="dts;dtsi"/>
+                extensions="dts;dtsi;overlay"/>
         <lang.parserDefinition
                 language="DTS"
                 implementationClass="com.intellij.dts.lang.parser.DtsParserDefinition"/>

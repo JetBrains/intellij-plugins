@@ -3,8 +3,10 @@ package com.intellij.dts.lang.psi.mixin
 import com.intellij.dts.lang.psi.DtsInt
 import com.intellij.dts.lang.psi.DtsString
 import com.intellij.dts.lang.psi.DtsTypes
+import com.intellij.dts.util.DtsUtil
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 
 abstract class DtsIntMixin(node: ASTNode) : ASTWrapperPsiElement(node), DtsInt {
@@ -20,9 +22,11 @@ abstract class DtsIntMixin(node: ASTNode) : ASTWrapperPsiElement(node), DtsInt {
 }
 
 abstract class DtsStringMixin(node: ASTNode): ASTWrapperPsiElement(node), DtsString {
-    override fun dtsParse(): String {
-        val value = findChildByType<PsiElement>(DtsTypes.STRING_VALUE) ?: return ""
+    private val value: PsiElement?
+        get() = findChildByType(DtsTypes.STRING_VALUE)
 
-        return value.text
-    }
+    override val dtsValueRange: TextRange
+        get() = value?.textRange ?: DtsUtil.trimEnds(textRange)
+
+    override fun dtsParse(): String = value?.text ?: ""
 }

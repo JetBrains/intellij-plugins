@@ -1,8 +1,8 @@
 package com.intellij.dts.util
 
 import com.intellij.dts.lang.DtsTokenSets
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.elementType
@@ -56,15 +56,13 @@ object DtsUtil {
         return type != TokenType.WHITE_SPACE && type !in DtsTokenSets.comments && type !in DtsTokenSets.preprocessorStatements
     }
 
-    fun resolveRelativeFile(anchor: PsiFile, path: String): PsiFile? {
-        val context = anchor.originalFile.virtualFile
-        if (!context.isValid) return null
+    /**
+     * Used to trim the ends of text range, like for string values to remove the
+     * trailing "...".
+     */
+    fun trimEnds(range: TextRange): TextRange {
+        if (range.length < 2) return range
 
-        val file = context.parent?.findFileByRelativePath(path) ?: return null
-        val psiFile = anchor.manager.findFile(file) ?: return null
-
-        if (!psiFile.isValid) return null
-
-        return psiFile
+        return range.grown(-2).shiftRight(1)
     }
 }

@@ -320,15 +320,15 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   /* ********************************************************** */
-  // <<fastLookahead 'V1'>>                  <<compilerDirectiveEntry V1 ()>> |
-  //         <<fastLookahead 'PLUGIN'>>              <<compilerDirectiveEntry PLUGIN ()>> |
+  // <<quickLookahead 'V1'>>                 <<compilerDirectiveEntry V1 ()>> |
+  //         <<quickLookahead 'PLUGIN'>>             <<compilerDirectiveEntry PLUGIN ()>> |
   //         <<labelLookahead 'MEMRESERVE'>>         <<compilerDirectiveEntry (LABEL* MEMRESERVE) (cell cell)>> |
-  //         <<fastLookahead 'DELETE_NODE'>>         <<compilerDirectiveEntry DELETE_NODE (pHandle | NAME)>> |
-  //         <<fastLookahead 'DELETE_PROP'>>         <<compilerDirectiveEntry DELETE_PROP NAME>> |
+  //         <<quickLookahead 'DELETE_NODE'>>        <<compilerDirectiveEntry DELETE_NODE (pHandle | NAME)>> |
+  //         <<quickLookahead 'DELETE_PROP'>>        <<compilerDirectiveEntry DELETE_PROP NAME>> |
   //         <<labelLookahead 'SLASH' 'HANDLE'>>     <<entry rootNode>> |
   //         <<labelLookahead 'OMIT_NODE' 'NAME'>>   <<entry subNode>> |
   //         <<labelLookahead 'NAME'>>               <<entry property>> |
-  //         <<fastLookahead 'OMIT_NODE'>>           <<compilerDirectiveEntry OMIT_NODE pHandle>> |
+  //         <<quickLookahead 'OMIT_NODE'>>          <<compilerDirectiveEntry OMIT_NODE pHandle>> |
   //         invalidEntry
   static boolean entries(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "entries")) return false;
@@ -348,7 +348,7 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
     return result_;
   }
 
-  // <<fastLookahead 'V1'>>                  <<compilerDirectiveEntry V1 ()>>
+  // <<quickLookahead 'V1'>>                 <<compilerDirectiveEntry V1 ()>>
   private static boolean entries_0(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "entries_0")) return false;
     boolean result_;
@@ -364,7 +364,7 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
     return true;
   }
 
-  // <<fastLookahead 'PLUGIN'>>              <<compilerDirectiveEntry PLUGIN ()>>
+  // <<quickLookahead 'PLUGIN'>>             <<compilerDirectiveEntry PLUGIN ()>>
   private static boolean entries_1(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "entries_1")) return false;
     boolean result_;
@@ -424,7 +424,7 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
     return result_;
   }
 
-  // <<fastLookahead 'DELETE_NODE'>>         <<compilerDirectiveEntry DELETE_NODE (pHandle | NAME)>>
+  // <<quickLookahead 'DELETE_NODE'>>        <<compilerDirectiveEntry DELETE_NODE (pHandle | NAME)>>
   private static boolean entries_3(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "entries_3")) return false;
     boolean result_;
@@ -444,7 +444,7 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
     return result_;
   }
 
-  // <<fastLookahead 'DELETE_PROP'>>         <<compilerDirectiveEntry DELETE_PROP NAME>>
+  // <<quickLookahead 'DELETE_PROP'>>        <<compilerDirectiveEntry DELETE_PROP NAME>>
   private static boolean entries_4(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "entries_4")) return false;
     boolean result_;
@@ -488,7 +488,7 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
     return result_;
   }
 
-  // <<fastLookahead 'OMIT_NODE'>>           <<compilerDirectiveEntry OMIT_NODE pHandle>>
+  // <<quickLookahead 'OMIT_NODE'>>          <<compilerDirectiveEntry OMIT_NODE pHandle>>
   private static boolean entries_8(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "entries_8")) return false;
     boolean result_;
