@@ -1,9 +1,8 @@
 package com.intellij.dts.inspections
 
 class DtsUnitNameInspectionTest : DtsInspectionTest(DtsUnitNameInspection::class) {
-    override fun getBasePath(): String = "unitName"
+    override fun getBasePath(): String = "inspections/unitName"
 
-    fun testLeading0s() = doTestHighlighting()
-
-    fun testLeading0x() = doTestHighlighting()
+    fun `test leading 0s`() = doTest()
+    fun `test leading 0x`() = doTest()
 }

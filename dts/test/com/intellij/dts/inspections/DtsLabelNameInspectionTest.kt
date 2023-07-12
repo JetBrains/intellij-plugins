@@ -1,9 +1,8 @@
 package com.intellij.dts.inspections
 
 class DtsLabelNameInspectionTest : DtsInspectionTest(DtsLabelNameInspection::class) {
-    override fun getBasePath(): String = "labelName"
+    override fun getBasePath(): String = "inspections/labelName"
 
-    fun testInvalidStart() = doTestHighlighting()
-
-    fun testInvalid() = doTestHighlighting()
+    fun `test invalid start`() = doTest()
+    fun `test invalid`() = doTest()
 }

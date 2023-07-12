@@ -1,22 +1,17 @@
 package com.intellij.dts.inspections
 
 import com.intellij.codeInspection.LocalInspectionTool
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.dts.DtsTestBase
 import kotlin.reflect.KClass
 
-abstract class DtsInspectionTest(private val inspectionClass: KClass<out LocalInspectionTool>) : BasePlatformTestCase() {
-    override fun getTestDataPath(): String = "testData/inspections"
-
+abstract class DtsInspectionTest(private val inspectionClass: KClass<out LocalInspectionTool>) : DtsTestBase() {
     override fun setUp() {
         super.setUp()
-
         myFixture.enableInspections(inspectionClass.java)
     }
 
-    protected fun doTestHighlighting(extension: String = "dtsi") {
-        val path = "${basePath}/${getTestName(false)}.${extension}"
-
-        myFixture.configureByFile(path)
+    protected fun doTest() {
+        myFixture.configureByFile(testFile)
         myFixture.checkHighlighting()
     }
 }

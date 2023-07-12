@@ -8,7 +8,10 @@ abstract class DtsTestBase : BasePlatformTestCase() {
         get() = getTestName(false).toPascalCase()
 
     protected val testFile: String
-        get() = "$testDataPath/$testName.${getTestFileExtension()}"
+        get() = "$testName.${getTestFileExtension()}"
+
+    protected val testFilePath: String
+        get() = "$testDataPath/$testFile"
 
     open fun getTestFileExtension(): String = "dtsi"
 

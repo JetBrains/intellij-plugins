@@ -11,5 +11,5 @@ class DtsFoldingBuilderTest : DtsTestBase() {
     fun `test empty root node`() = doTest()
     fun `test nested node`() = doTest()
 
-    private fun doTest() = myFixture.testFolding(testFile)
+    private fun doTest() = myFixture.testFolding(testFilePath)
 }

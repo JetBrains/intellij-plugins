@@ -1,9 +1,8 @@
 package com.intellij.dts.inspections
 
 class DtsBitsInspectionTest : DtsInspectionTest(DtsBitsInspection::class) {
-    override fun getBasePath(): String = "bits"
+    override fun getBasePath(): String = "inspections/bits"
 
-    fun testValid() = doTestHighlighting()
-
-    fun testInvalid() = doTestHighlighting()
+    fun `test valid`() = doTest()
+    fun `test invalid`() = doTest()
 }

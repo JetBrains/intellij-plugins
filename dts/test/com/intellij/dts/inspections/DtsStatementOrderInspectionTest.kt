@@ -1,11 +1,9 @@
 package com.intellij.dts.inspections
 
 class DtsStatementOrderInspectionTest : DtsInspectionTest(DtsStatementOrderInspection::class) {
-    override fun getBasePath(): String = "statementOrder"
+    override fun getBasePath(): String = "inspections/statementOrder"
 
-    fun testInvalidProperty() = doTestHighlighting()
-
-    fun testInvalidDeleteProperty() = doTestHighlighting()
-
-    fun testAfterDeleteNode() = doTestHighlighting()
+    fun `test invalid property`() = doTest()
+    fun `test invalid delete property`() = doTest()
+    fun `test after delete node`() = doTest()
 }
