@@ -72,7 +72,7 @@ public abstract class JavaTestFrameworkIntegrationTest extends HeavyPlatformTest
     UIUtil.invokeAndWaitIfNeeded(() -> {
       mavenProjectsManager.waitForReadingCompletion();
     });
-    MavenImportingTestCaseKt.importMavenProjectsSync(mavenProjectsManager, pomFiles);
+    MavenImportingTestCaseKt.importMavenProjects(mavenProjectsManager, pomFiles);
 
     Module module = ReadAction.compute(() -> ModuleManager.getInstance(myProject).findModuleByName("test-project-sample"));
     ModuleRootModificationUtil.updateModel(module, model -> {
