@@ -1,23 +1,18 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.modules;
+package org.angular2.modules
 
-import com.intellij.lang.javascript.JSTestUtils;
-import com.intellij.lang.resharper.ReSharperTestUtil;
-import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.io.FileUtilRt;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.testFramework.PsiTestUtil;
-import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
-import one.util.streamex.StreamEx;
-import org.angularjs.AngularTestUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.javascript.JSTestUtils
+import com.intellij.lang.javascript.ui.NodeModuleNamesUtil
+import com.intellij.lang.resharper.ReSharperTestUtil
+import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.testFramework.PsiTestUtil
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture
+import one.util.streamex.StreamEx
+import org.angularjs.AngularTestUtil
 
-import static com.intellij.lang.javascript.ui.NodeModuleNamesUtil.PACKAGE_JSON;
-
-public enum Angular2TestModule {
-
+enum class Angular2TestModule(private val myPackageName: String, private val myVersion: String) {
   AGM_CORE_1_0_0_BETA_5("@agm/core", "1.0.0-beta.5"),
   ANGULAR_CDK_14_2_0("@angular/cdk", "14.2.0"),
   ANGULAR_COMMON_4_0_0("@angular/common", "4.0.0"),
@@ -51,59 +46,51 @@ public enum Angular2TestModule {
   NGXS_STORE_3_6_2("@ngxs/store", "3.6.2"),
   NGXS_STORE_3_6_2_MIXED("@ngxs/store", "3.6.2-mixed"),
   NG_ZORRO_ANTD_8_5_0_IVY("ng-zorro-antd", "8.5.0-ivy"),
-  RXJS_6_4_0("rxjs", "6.4.0"),
-  ;
-  private static final String DATA_DIR = FileUtilRt.toCanonicalPath(
-    AngularTestUtil.getBaseTestDataPath(Angular2TestModule.class) + "../node_modules/", '/', false);
+  RXJS_6_4_0("rxjs", "6.4.0");
 
-  private final String myPackageName;
-  private final String myVersion;
+  val location: String
+    get() = DATA_DIR + myPackageName.replace('/', '#') + "/" + myVersion + "/"
 
-  Angular2TestModule(String packageName, String version) {
-    myPackageName = packageName;
-    myVersion = version;
-  }
+  companion object {
+    private val DATA_DIR = FileUtilRt.toCanonicalPath(
+      AngularTestUtil.getBaseTestDataPath(Angular2TestModule::class.java) + "../node_modules/", '/', false)
 
-  public String getLocation() {
-    return DATA_DIR + myPackageName.replace('/', '#') + "/" + myVersion + "/";
-  }
-
-  public static void configureCopy(@NotNull CodeInsightTestFixture fixture, @NotNull Angular2TestModule @NotNull ... modules) {
-    configure(fixture, false, null, modules);
-  }
-
-  public static void configureLink(@NotNull CodeInsightTestFixture fixture, @NotNull Angular2TestModule @NotNull ... modules) {
-    configure(fixture, true, null, modules);
-  }
-
-  public static void configure(@NotNull CodeInsightTestFixture fixture,
-                               boolean linkSourceRoot,
-                               @Nullable String targetRoot,
-                               @NotNull Angular2TestModule @NotNull ... modules) {
-    if (targetRoot == null) {
-      targetRoot = ".";
+    @JvmStatic
+    fun configureCopy(fixture: CodeInsightTestFixture, vararg modules: Angular2TestModule) {
+      configure(fixture, false, modules = modules)
     }
-    if (modules.length > 0) {
-      if (linkSourceRoot) {
-        WriteAction.runAndWait(() -> {
-          for (Angular2TestModule module : modules) {
-            VirtualFile nodeModules = ReSharperTestUtil.fetchVirtualFile("", module.getLocation() + "node_modules",
-                                                                         fixture.getTestRootDisposable());
-            PsiTestUtil.addSourceContentToRoots(fixture.getModule(), nodeModules);
-            Disposer.register(fixture.getTestRootDisposable(),
-                              () -> PsiTestUtil.removeContentEntry(fixture.getModule(), nodeModules));
+
+    @JvmStatic
+    fun configureLink(fixture: CodeInsightTestFixture, vararg modules: Angular2TestModule) {
+      configure(fixture, true, modules = modules)
+    }
+
+    @JvmStatic
+    fun configure(fixture: CodeInsightTestFixture,
+                  linkSourceRoot: Boolean,
+                  vararg modules: Angular2TestModule) {
+      if (modules.isNotEmpty()) {
+        if (linkSourceRoot) {
+          WriteAction.runAndWait<RuntimeException> {
+            for (module in modules) {
+              val nodeModules = ReSharperTestUtil.fetchVirtualFile("", module.location + "node_modules",
+                                                                   fixture.testRootDisposable)
+              PsiTestUtil.addSourceContentToRoots(fixture.getModule(), nodeModules)
+              Disposer.register(fixture.testRootDisposable
+              ) { PsiTestUtil.removeContentEntry(fixture.getModule(), nodeModules) }
+            }
           }
-        });
-      }
-      else {
-        for (Angular2TestModule module : modules) {
-          fixture.getTempDirFixture().copyAll(module.getLocation(), targetRoot);
+        }
+        else {
+          for (module in modules) {
+            fixture.getTempDirFixture().copyAll(module.location, ".")
+          }
         }
       }
-    }
-    if (fixture.getTempDirFixture().getFile(PACKAGE_JSON) == null) {
-      JSTestUtils.addPackageJson(fixture, StreamEx.of(modules).map(module -> module.myPackageName)
-        .append("@angular/core").distinct().toArray(String.class));
+      if (fixture.getTempDirFixture().getFile(NodeModuleNamesUtil.PACKAGE_JSON) == null) {
+        JSTestUtils.addPackageJson(fixture, *StreamEx.of(*modules).map { module: Angular2TestModule -> module.myPackageName }
+          .append("@angular/core").distinct().toArray(String::class.java))
+      }
     }
   }
 }

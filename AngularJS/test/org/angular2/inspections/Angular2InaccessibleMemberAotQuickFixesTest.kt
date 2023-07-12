@@ -1,63 +1,55 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.inspections;
+package org.angular2.inspections
 
-import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.codeInsight.intention.IntentionActionDelegate;
-import com.intellij.util.containers.ContainerUtil;
-import org.angular2.Angular2MultiFileFixtureTestCase;
-import org.angular2.inspections.quickfixes.AngularMakePublicQuickFix;
-import org.angularjs.AngularTestUtil;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.codeInsight.intention.IntentionActionDelegate
+import com.intellij.openapi.vfs.VirtualFile
+import org.angular2.Angular2MultiFileFixtureTestCase
+import org.angular2.inspections.AngularInaccessibleComponentMemberInAotModeInspection
+import org.angular2.inspections.quickfixes.AngularMakePublicQuickFix
+import org.angularjs.AngularTestUtil
 
-public class Angular2InaccessibleMemberAotQuickFixesTest extends Angular2MultiFileFixtureTestCase {
-
-  @Override
-  protected String getTestDataPath() {
-    return AngularTestUtil.getBaseTestDataPath(getClass()) + "aot";
+class Angular2InaccessibleMemberAotQuickFixesTest : Angular2MultiFileFixtureTestCase() {
+  override fun getTestDataPath(): String {
+    return AngularTestUtil.getBaseTestDataPath(javaClass) + "aot"
   }
 
-  @NotNull
-  @Override
-  protected String getTestRoot() {
-    return "/";
+  override fun getTestRoot(): String {
+    return "/"
   }
 
-  public void testPrivateFieldFix() {
-    doMultiFileTest("private.html", "private<caret>Used");
+  fun testPrivateFieldFix() {
+    doMultiFileTest("private.html", "private<caret>Used")
   }
 
-  public void testPrivateFieldInlineFix() {
-    doMultiFileTest("private-inline.ts", "private<caret>Used");
+  fun testPrivateFieldInlineFix() {
+    doMultiFileTest("private-inline.ts", "private<caret>Used")
   }
 
-  public void testPrivateGetterFix() {
-    doMultiFileTest("private.html", "private<caret>UsedGet");
+  fun testPrivateGetterFix() {
+    doMultiFileTest("private.html", "private<caret>UsedGet")
   }
 
-  public void testPrivateConstructorFieldFix() {
-    doMultiFileTest("private.ts", "private<caret>Field");
+  fun testPrivateConstructorFieldFix() {
+    doMultiFileTest("private.ts", "private<caret>Field")
   }
 
-  public void testPrivateConstructorDecoratedFieldFix() {
-    doMultiFileTest("private.ts", "private<caret>Field");
+  fun testPrivateConstructorDecoratedFieldFix() {
+    doMultiFileTest("private.ts", "private<caret>Field")
   }
 
-  public void testPrivateConstructorDecoratedFieldFix2() {
-    doMultiFileTest("private.html", "private<caret>Field");
+  fun testPrivateConstructorDecoratedFieldFix2() {
+    doMultiFileTest("private.html", "private<caret>Field")
   }
 
-  private void doMultiFileTest(String fileName, @NotNull String signature) {
-    doTest((rootDir, rootAfter) -> {
-      myFixture.enableInspections(AngularInaccessibleComponentMemberInAotModeInspection.class);
-      myFixture.configureFromTempProjectFile(fileName);
-      myFixture.setCaresAboutInjection(false);
-      AngularTestUtil.moveToOffsetBySignature(signature, myFixture);
-      IntentionAction intentionAction = ContainerUtil.find(
-        myFixture.filterAvailableIntentions("Make 'public'"),
-        intention -> IntentionActionDelegate.unwrap(intention) instanceof AngularMakePublicQuickFix
-      );
-      assert intentionAction != null;
-      myFixture.launchAction(intentionAction);
-    });
+  private fun doMultiFileTest(fileName: String, signature: String) {
+    doTest { _: VirtualFile?, _: VirtualFile? ->
+      myFixture.enableInspections(AngularInaccessibleComponentMemberInAotModeInspection::class.java)
+      myFixture.configureFromTempProjectFile(fileName)
+      myFixture.setCaresAboutInjection(false)
+      AngularTestUtil.moveToOffsetBySignature(signature, myFixture)
+      val intentionAction = myFixture.filterAvailableIntentions("Make 'public'")
+        .find { IntentionActionDelegate.unwrap(it) is AngularMakePublicQuickFix }!!
+      myFixture.launchAction(intentionAction)
+    }
   }
 }

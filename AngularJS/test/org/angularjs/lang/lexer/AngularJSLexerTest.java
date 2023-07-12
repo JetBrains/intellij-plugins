@@ -4,6 +4,7 @@ import com.intellij.lexer.Lexer;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.testFramework.LexerTestCase;
 import org.angularjs.AngularTestUtil;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Dennis.Ushakov
@@ -34,12 +35,12 @@ public class AngularJSLexerTest extends LexerTestCase {
   }
 
   @Override
-  protected Lexer createLexer() {
+  protected @NotNull Lexer createLexer() {
     return new AngularJSLexer();
   }
 
   @Override
-  protected String getDirPath() {
+  protected @NotNull String getDirPath() {
     return AngularTestUtil.getBaseTestDataPath(AngularJSLexerTest.class).substring(PathManager.getHomePath().length());
   }
 }

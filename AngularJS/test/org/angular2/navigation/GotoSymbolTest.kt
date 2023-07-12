@@ -1,66 +1,57 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.navigation;
+package org.angular2.navigation
 
-import com.intellij.ide.util.gotoByName.GotoSymbolModel2;
-import com.intellij.navigation.ItemPresentation;
-import com.intellij.navigation.NavigationItem;
-import com.intellij.openapi.vfs.VirtualFileFilter;
-import com.intellij.psi.impl.PsiManagerEx;
-import org.angular2.Angular2CodeInsightFixtureTestCase;
-import org.angularjs.AngularTestUtil;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.ide.util.gotoByName.GotoSymbolModel2
+import com.intellij.navigation.NavigationItem
+import com.intellij.openapi.vfs.VirtualFileFilter
+import com.intellij.psi.impl.PsiManagerEx
+import com.intellij.testFramework.UsefulTestCase
+import org.angular2.Angular2CodeInsightFixtureTestCase
+import org.angularjs.AngularTestUtil
 
-import java.util.ArrayList;
-
-import static java.util.Arrays.asList;
-
-public class GotoSymbolTest extends Angular2CodeInsightFixtureTestCase {
-
-  @Override
-  protected String getTestDataPath() {
-    return AngularTestUtil.getBaseTestDataPath(getClass()) + "symbol/" + getTestName(true);
+class GotoSymbolTest : Angular2CodeInsightFixtureTestCase() {
+  override fun getTestDataPath(): String {
+    return AngularTestUtil.getBaseTestDataPath(javaClass) + "symbol/" + getTestName(true)
   }
 
-  public void testElementSelector() {
-    myFixture.configureByFiles("my-table.component.ts", "package.json");
+  fun testElementSelector() {
+    myFixture.configureByFiles("my-table.component.ts", "package.json")
     doTest("app-my-table", true,
-           "app-my-table (MyTableComponent, my-table.component.ts) - my-table.component.ts [342]");
+           "app-my-table (MyTableComponent, my-table.component.ts) - my-table.component.ts [342]")
   }
 
-  public void testAttributeSelector() {
-    myFixture.configureByFiles("my-table.component.ts", "package.json");
+  fun testAttributeSelector() {
+    myFixture.configureByFiles("my-table.component.ts", "package.json")
     doTest("app-my-table", true,
-           "app-my-table (MyTableComponent, my-table.component.ts) - my-table.component.ts [343]");
+           "app-my-table (MyTableComponent, my-table.component.ts) - my-table.component.ts [343]")
   }
 
-  public void testAttrAndElementSelector() {
-    myFixture.configureByFiles("my-table.component.ts", "package.json");
+  fun testAttrAndElementSelector() {
+    myFixture.configureByFiles("my-table.component.ts", "package.json")
     doTest("app-my-table", true,
            "app-my-table (MyTableComponent, my-table.component.ts) - my-table.component.ts [342]",
-           "app-my-table (MyTableComponent, my-table.component.ts) - my-table.component.ts [355]");
+           "app-my-table (MyTableComponent, my-table.component.ts) - my-table.component.ts [355]")
   }
 
-  public void testPipe() {
-    myFixture.configureByFiles("foo.pipe.ts", "package.json");
+  fun testPipe() {
+    myFixture.configureByFiles("foo.pipe.ts", "package.json")
     doTest("foo", false,
-           "foo (foo.pipe.ts)");
+           "foo (foo.pipe.ts)")
   }
 
-  private void doTest(@NotNull String name, boolean detailed, String @NotNull ... expectedItems) {
-    ((PsiManagerEx)myFixture.getPsiManager()).setAssertOnFileLoadingFilter(VirtualFileFilter.ALL, myFixture.getTestRootDisposable());
-
-    GotoSymbolModel2 model = new GotoSymbolModel2(myFixture.getProject(), myFixture.getTestRootDisposable());
-
-    assertContainsElements(asList(model.getNames(false)), name);
-    final ArrayList<String> actual = new ArrayList<>();
-    for (Object o : model.getElementsByName(name, false, "")) {
-      if (o instanceof NavigationItem) {
-        final ItemPresentation presentation = ((NavigationItem)o).getPresentation();
-        assertNotNull(presentation);
-        actual.add(presentation.getPresentableText() + " " + presentation.getLocationString() +
-                   (detailed ? " - " + o : ""));
+  private fun doTest(name: String, detailed: Boolean, vararg expectedItems: String) {
+    (myFixture.getPsiManager() as PsiManagerEx).setAssertOnFileLoadingFilter(VirtualFileFilter.ALL, myFixture.testRootDisposable)
+    val model = GotoSymbolModel2(myFixture.getProject(), myFixture.testRootDisposable)
+    UsefulTestCase.assertContainsElements(listOf(*model.getNames(false)), name)
+    val actual = ArrayList<String>()
+    for (o in model.getElementsByName(name, false, "")) {
+      if (o is NavigationItem) {
+        val presentation = o.getPresentation()
+        assertNotNull(presentation)
+        actual.add(presentation!!.getPresentableText() + " " + presentation.locationString +
+                   if (detailed) " - $o" else "")
       }
     }
-    assertSameElements(actual, expectedItems);
+    UsefulTestCase.assertSameElements(actual, *expectedItems)
   }
 }

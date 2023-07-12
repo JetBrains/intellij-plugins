@@ -1,46 +1,45 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.editor;
+package org.angular2.editor
 
-import com.intellij.javascript.JSFunctionWithSubstitutor;
-import com.intellij.javascript.JSParameterInfoHandler;
-import com.intellij.lang.javascript.psi.JSFunctionType;
-import com.intellij.lang.parameterInfo.CreateParameterInfoContext;
-import com.intellij.lang.typescript.hint.TypeScriptParameterInfoHandler;
-import com.intellij.psi.PsiElement;
-import com.intellij.testFramework.utils.parameterInfo.MockCreateParameterInfoContext;
-import com.intellij.testFramework.utils.parameterInfo.MockParameterInfoUIContext;
-import com.intellij.util.containers.ContainerUtil;
-import org.angular2.Angular2CodeInsightFixtureTestCase;
-import org.angularjs.AngularTestUtil;
+import com.intellij.javascript.JSParameterInfoHandler
+import com.intellij.lang.javascript.psi.JSFunctionType
+import com.intellij.lang.parameterInfo.CreateParameterInfoContext
+import com.intellij.lang.typescript.hint.TypeScriptParameterInfoHandler
+import com.intellij.psi.PsiElement
+import com.intellij.testFramework.UsefulTestCase
+import com.intellij.testFramework.utils.parameterInfo.MockCreateParameterInfoContext
+import com.intellij.testFramework.utils.parameterInfo.MockParameterInfoUIContext
+import org.angular2.Angular2CodeInsightFixtureTestCase
+import org.angularjs.AngularTestUtil
 
-public class Angular2PipeParameterInfoTest extends Angular2CodeInsightFixtureTestCase {
-  @Override
-  protected String getTestDataPath() {
-    return AngularTestUtil.getBaseTestDataPath(getClass());
+class Angular2PipeParameterInfoTest : Angular2CodeInsightFixtureTestCase() {
+  override fun getTestDataPath(): String {
+    return AngularTestUtil.getBaseTestDataPath(javaClass)
   }
 
-  public void testPipeParameterInfo() {
-    doTest("value: number, exponent: string");
+  fun testPipeParameterInfo() {
+    doTest("value: number, exponent: string")
   }
 
-  @SuppressWarnings("SameParameterValue")
-  private void doTest(String expected) {
-    myFixture.configureByFiles(getTestName(false) + ".ts", "package.json");
-    final CreateParameterInfoContext parameterInfoContext = new MockCreateParameterInfoContext(myFixture.getEditor(), myFixture.getFile());
-    final Object list = new TypeScriptParameterInfoHandler().findElementForParameterInfo(parameterInfoContext);
-    assertNotNull(list);
-    Object[] items = parameterInfoContext.getItemsToShow();
-    String[] strings = ContainerUtil.map2Array(items, String.class, Angular2PipeParameterInfoTest::getPresentation);
-    assertSize(1, strings);
-    assertEquals(expected, strings[0]);
+  private fun doTest(expected: String) {
+    myFixture.configureByFiles(getTestName(false) + ".ts", "package.json")
+    val parameterInfoContext: CreateParameterInfoContext = MockCreateParameterInfoContext(myFixture.getEditor(), myFixture.getFile())
+    val list = TypeScriptParameterInfoHandler().findElementForParameterInfo(parameterInfoContext)
+    assertNotNull(list)
+    val items = parameterInfoContext.getItemsToShow()!!
+    val strings = items.map { getPresentation(it) }
+    UsefulTestCase.assertSize(1, strings)
+    assertEquals(expected, strings[0])
   }
 
-  private static String getPresentation(Object parameterInfoElement) {
-    assertTrue(parameterInfoElement instanceof JSFunctionType);
-    final JSFunctionType jsFunctionType = (JSFunctionType)parameterInfoElement;
-    final JSParameterInfoHandler parameterInfoHandler = new JSParameterInfoHandler();
-    MockParameterInfoUIContext<PsiElement> context = new MockParameterInfoUIContext<>(jsFunctionType.getSourceFunctionItem());
-    parameterInfoHandler.updateUI(jsFunctionType, context);
-    return context.getText();
+  companion object {
+    private fun getPresentation(parameterInfoElement: Any): String {
+      assertTrue(parameterInfoElement is JSFunctionType)
+      val jsFunctionType = parameterInfoElement as JSFunctionType
+      val parameterInfoHandler = JSParameterInfoHandler()
+      val context = MockParameterInfoUIContext<PsiElement?>(jsFunctionType.getSourceFunctionItem())
+      parameterInfoHandler.updateUI(jsFunctionType, context)
+      return context.text
+    }
   }
 }

@@ -11,52 +11,49 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.angular2.lang.expr.lexer;
+package org.angular2.lang.expr.lexer
 
-import com.intellij.lexer.Lexer;
-import com.intellij.openapi.application.PathManager;
-import com.intellij.testFramework.LexerTestCase;
-import org.angularjs.AngularTestUtil;
-import org.jetbrains.annotations.NonNls;
+import com.intellij.lexer.Lexer
+import com.intellij.openapi.application.PathManager
+import com.intellij.testFramework.LexerTestCase
+import org.angularjs.AngularTestUtil
+import org.jetbrains.annotations.NonNls
 
-public class Angular2LexerTest extends LexerTestCase {
-  public void testIdent() {
-    doFileTest("js");
+class Angular2LexerTest : LexerTestCase() {
+  fun testIdent() {
+    doFileTest("js")
   }
 
-  public void testKey_value() {
-    doFileTest("js");
+  fun testKey_value() {
+    doFileTest("js")
   }
 
-  public void testExpr() {
-    doFileTest("js");
+  fun testExpr() {
+    doFileTest("js")
   }
 
-  public void testKeyword() {
-    doFileTest("js");
+  fun testKeyword() {
+    doFileTest("js")
   }
 
-  public void testNumber() {
-    doFileTest("js");
+  fun testNumber() {
+    doFileTest("js")
   }
 
-  public void testString() {
-    doFileTest("js");
+  fun testString() {
+    doFileTest("js")
   }
 
-  @Override
-  protected Lexer createLexer() {
-    return new Angular2Lexer();
+  override fun createLexer(): Lexer {
+    return Angular2Lexer()
   }
 
-  @Override
-  protected String getDirPath() {
-    return AngularTestUtil.getBaseTestDataPath(Angular2LexerTest.class).substring(PathManager.getHomePath().length());
+  override fun getDirPath(): String {
+    return AngularTestUtil.getBaseTestDataPath(Angular2LexerTest::class.java).substring(PathManager.getHomePath().length)
   }
 
-  @Override
-  protected void doTest(@NonNls String text) {
-    super.doTest(text);
-    checkCorrectRestart(text);
+  override fun doTest(text: @NonNls String) {
+    super.doTest(text)
+    checkCorrectRestart(text)
   }
 }
