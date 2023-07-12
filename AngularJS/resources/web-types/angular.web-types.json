@@ -398,7 +398,24 @@
           },
           "value": {
             "required": false,
-            "kind": "expression"
+            "kind": "plain",
+            "type": "symbol"
+          },
+          "values": {
+            "pattern": {
+              "items": "/js/ng-directive-exports-as"
+            }
+          },
+          "js": {
+            "ng-directive-exports-as": [
+              {
+                "name": "Unknown directive exportAs identifier",
+                "priority": "lowest",
+                "pattern": ".+",
+                "doc-hide-pattern": true,
+                "ng-error-symbol": true
+              }
+            ]
           }
         },
         {

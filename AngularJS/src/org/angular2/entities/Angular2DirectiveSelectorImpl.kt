@@ -152,7 +152,7 @@ class Angular2DirectiveSelectorImpl(private val myElement: PsiElement,
       return myAttributes
         .plus(myNotSelectors.flatMap { it.attributes })
         .plus(element)
-        .firstOrNull { it?.textRangeInSource?.contains(offset) == true }
+        .firstOrNull { it?.textRangeInSourceElement?.contains(offset) == true }
     }
   }
 }

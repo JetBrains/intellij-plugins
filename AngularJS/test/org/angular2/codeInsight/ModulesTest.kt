@@ -314,7 +314,7 @@ class ModulesTest : Angular2CodeInsightFixtureTestCase() {
           printProperty(level, "kind", directive.directiveKind)
           printProperty(level, "exportAs",
                         directive.exportAs.mapValues { (_, value) ->
-                          Identifier(if (value === directive) "<this>" else value.getName())
+                          Identifier(if (value.directive === directive) "<this>" else value.directive.getName())
                         }.takeIf { it.isNotEmpty() })
           printProperty(level, "inputs", directive.inputs.takeIf { it.isNotEmpty() })
           printProperty(level, "outputs", directive.outputs.takeIf { it.isNotEmpty() })

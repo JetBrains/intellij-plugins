@@ -163,7 +163,7 @@ object Angular2EntityUtils {
       }
       if (!element.exportAs.isEmpty()) {
         result.append("; exportAs=")
-          .append(StringUtil.join(element.exportAs.mapNotNull { (key, value) -> key.takeIf { value === element } }, ","))
+          .append(StringUtil.join(element.exportAs.mapNotNull { (key, value) -> key.takeIf { value.directive === element } }, ","))
       }
       result.append("; inputs=")
         .append(element.inputs.toString())

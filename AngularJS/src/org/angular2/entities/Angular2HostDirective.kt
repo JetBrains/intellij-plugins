@@ -21,7 +21,7 @@ interface Angular2HostDirective {
 
   val bindings: Angular2DirectiveProperties
 
-  val exportAs: Map<String, Angular2Directive>
+  val exportAs: Map<String, Angular2DirectiveExportAs>
     get() = directive?.let { directive ->
       CachedValuesManager.getManager(directive.sourceElement.project).getCachedValue(directive as UserDataHolder) {
         CachedValueProvider.Result.create(directive.exportAs, PsiModificationTracker.MODIFICATION_COUNT)

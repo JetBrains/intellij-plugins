@@ -72,12 +72,12 @@ public class Angular2TemplateInspectionsTest extends Angular2CodeInsightFixtureT
   }
 
   public void testTemplateReferenceVariable() {
-    doTest(1, "#a<caret>bc=\"foo\"", "Remove attribute #abc", AngularInvalidTemplateReferenceVariableInspection.class,
+    doTest(1, "#abc=\"fo<caret>o\"", "Remove attribute #abc", AngularInvalidTemplateReferenceVariableInspection.class,
            "template-reference-variable.html", "component.ts");
   }
 
   public void testTemplateReferenceVariableWithModule() {
-    doTest(1, "#a<caret>bc=\"foo\"", "Remove attribute #abc", AngularInvalidTemplateReferenceVariableInspection.class,
+    doTest(1, "#abc=\"fo<caret>o\"", "Remove attribute #abc", AngularInvalidTemplateReferenceVariableInspection.class,
            "template-reference-variable-with-module.html", "component.ts", "template-reference-variable-module.ts", "forms.d.ts");
   }
 

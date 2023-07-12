@@ -29,6 +29,7 @@ class MatchedDirectivesScope(tag: XmlTag)
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
     Angular2ApplicableDirectivesProvider(dataHolder)
       .matched.forEach { directive ->
+        directive.exportAs.forEach { consumer(it.value) }
         collectSymbols(directive) { symbol ->
           consumer(Angular2DirectiveSymbolWrapper.create(directive, symbol, WebSymbol.Priority.HIGHEST))
         }

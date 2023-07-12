@@ -1,5 +1,5 @@
 <my-comp ref-a="foo" ref-b="bar" ref-c></my-comp>
-<my-comp foo-comp ref-<error descr="There are multiple directives with 'exportAs' set to foo: MyComponent (my-comp) and MyComponent2 ([foo-comp])">a</error>="foo"></my-comp>
-<my-comp foo-dir #<error descr="There are multiple directives with 'exportAs' set to foo: MyComponent (my-comp) and MyDirective ([foo-dir])">a</error>="foo"></my-comp>
-<div #<weak_warning descr="There is no directive with 'exportAs' set to foo">abc</weak_warning>="foo"></div>
-<div foo-dir ref-<weak_warning descr="There is no directive with 'exportAs' set to bar">a</weak_warning>="bar"></div>
+<my-comp foo-comp ref-a="<error descr="There are multiple directives with 'exportAs' set to foo: MyComponent (my-comp) and MyComponent2 ([foo-comp])">foo</error>"></my-comp>
+<my-comp foo-dir #a="<error descr="There are multiple directives with 'exportAs' set to foo: MyComponent (my-comp) and MyDirective ([foo-dir])">foo</error>"></my-comp>
+<div #abc="<weak_warning descr="There is no directive with 'exportAs' set to foo">foo</weak_warning>"></div>
+<div foo-dir ref-a="<weak_warning descr="There is no directive with 'exportAs' set to bar">bar</weak_warning>"></div>

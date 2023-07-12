@@ -18,6 +18,7 @@ import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
 import com.intellij.lang.javascript.psi.util.stubSafeStringValue
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.Ref
+import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider.Result
@@ -76,11 +77,32 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
       Result.create(getDirectiveKindNoCache(typeScriptClass), classModificationDependencies)
     }
 
-  override val exportAs: Map<String, Angular2Directive>
-    get() = getCachedValue {
-      val exportAsString = Angular2DecoratorUtil.getPropertyStringValue(decorator, Angular2DecoratorUtil.EXPORT_AS_PROP)
-      Result.create(if (exportAsString == null) emptyMap() else StringUtil.split(exportAsString, ",").associateWith { this }, decorator)
-    } + hostDirectives.flatMap { it.exportAs.entries }.associate { Pair(it.key, it.value) }
+  override val exportAs: Map<String, Angular2DirectiveExportAs>
+    get() = getCachedValue { Result.create(getExportAsNoCache(), decorator) } +
+            hostDirectives.flatMap { it.exportAs.entries }.associate { Pair(it.key, it.value) }
+
+  private fun getExportAsNoCache(): Map<String, Angular2DirectiveExportAs> =
+    AstLoadingFilter.forceAllowTreeLoading<Map<String, Angular2DirectiveExportAs>, Throwable>(decorator.containingFile) {
+      val propertyValue = Angular2DecoratorUtil.getProperty(decorator, Angular2DecoratorUtil.EXPORT_AS_PROP)?.value
+      if (propertyValue is JSLiteralExpression && propertyValue.isQuotedLiteral) {
+        val text = propertyValue.stringValue ?: return@forceAllowTreeLoading emptyMap()
+        val split = text.split(',')
+        var offset = 1
+        val result = mutableMapOf<String, Angular2DirectiveExportAs>()
+        split.forEach { name ->
+          result[name] = Angular2DirectiveExportAs(name, this, propertyValue, TextRange(offset, offset + name.length))
+          offset += name.length + 1
+        }
+        result.toMap()
+      }
+      else {
+        val exportAsString = Angular2DecoratorUtil.getExpressionStringValue(propertyValue)
+        if (exportAsString == null) emptyMap()
+        else StringUtil.split(exportAsString, ",").associateWith {
+          Angular2DirectiveExportAs(it, this)
+        }
+      }
+    }
 
   override val attributes: Collection<Angular2DirectiveAttribute>
     get() = getCachedValue {
