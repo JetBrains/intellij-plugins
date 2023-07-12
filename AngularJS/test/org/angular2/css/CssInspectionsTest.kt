@@ -1,94 +1,94 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.css;
+package org.angular2.css
 
-import com.intellij.codeInspection.InspectionProfileEntry;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.css.inspections.CssUnknownPropertyInspection;
-import com.intellij.psi.css.inspections.CssUnusedSymbolInspection;
-import com.intellij.psi.css.inspections.invalid.CssUnknownTargetInspection;
-import com.intellij.testFramework.fixtures.BasePlatformTestCase;
-import org.angular2.Angular2CodeInsightFixtureTestCase;
-import org.angularjs.AngularTestUtil;
-import org.jetbrains.plugins.scss.inspections.SassScssUnresolvedMixinInspection;
+import com.intellij.codeInspection.InspectionProfileEntry
+import com.intellij.psi.css.inspections.CssUnknownPropertyInspection
+import com.intellij.psi.css.inspections.CssUnusedSymbolInspection
+import com.intellij.psi.css.inspections.invalid.CssUnknownTargetInspection
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import org.angularjs.AngularTestUtil
+import org.jetbrains.plugins.scss.inspections.SassScssUnresolvedMixinInspection
 
-public class CssInspectionsTest extends BasePlatformTestCase {
-
-  @Override
-  protected String getTestDataPath() {
-    return AngularTestUtil.getBaseTestDataPath(getClass()) + "inspections";
+class CssInspectionsTest : BasePlatformTestCase() {
+  override fun getTestDataPath(): String {
+    return AngularTestUtil.getBaseTestDataPath(javaClass) + "inspections"
   }
 
-  public void testLocalStylesheet() {
-    doTest(new CssUnusedSymbolInspection(), () -> {
-      myFixture.configureByFiles("local-stylesheet.ts", "package.json");
-      myFixture.checkHighlighting();
-    });
+  fun testLocalStylesheet() {
+    doTest(CssUnusedSymbolInspection()) {
+      myFixture.configureByFiles("local-stylesheet.ts", "package.json")
+      myFixture.checkHighlighting()
+    }
   }
 
-  public void testLocalStylesheetExtUsage() {
-    doTest(new CssUnusedSymbolInspection(), () -> {
-      myFixture.configureByFiles("local-stylesheet-ext.ts", "local-stylesheet-ext.html", "local-stylesheet-ext.css", "package.json");
-      myFixture.checkHighlighting();
-    });
+  fun testLocalStylesheetExtUsage() {
+    doTest(CssUnusedSymbolInspection()) {
+      myFixture.configureByFiles("local-stylesheet-ext.ts", "local-stylesheet-ext.html", "local-stylesheet-ext.css", "package.json")
+      myFixture.checkHighlighting()
+    }
   }
 
-  public void testUnknownProperty() {
-    doTest(new CssUnknownPropertyInspection(), () -> {
-      myFixture.configureByFiles("unknownCssProperty.html", "package.json");
-      myFixture.checkHighlighting();
-    });
+  fun testUnknownProperty() {
+    doTest(CssUnknownPropertyInspection()) {
+      myFixture.configureByFiles("unknownCssProperty.html", "package.json")
+      myFixture.checkHighlighting()
+    }
   }
 
-  public void testPreprocessorIncludePaths() {
-    doTest(new CssUnknownTargetInspection(), () -> {
+  fun testPreprocessorIncludePaths() {
+    doTest(CssUnknownTargetInspection()) {
       myFixture.addFileToProject(".angular-cli.json",
                                  """
                                    {"projects": {"foo": { "root": "foo"}, "sassy3": { "root": "",
                                          "architect": {"build": {"builder": "z", "options": {"outputPath": "dist/sassy3",
                                                "stylePreprocessorOptions": {"includePaths": ["src/assets/styles"]}}}}}}}
-                                   """);
-      myFixture.addFileToProject("src/assets/styles/moofoo.sass", "");
+                                   
+                                   """.trimIndent())
+      myFixture.addFileToProject("src/assets/styles/moofoo.sass", "")
       myFixture.configureByText("main.scss", """
         @import "moofoo";
         @import "moofoo.sass";
         @import '<error>incorrect</error>';
-        """);
-      myFixture.checkHighlighting();
-    });
+        
+        """.trimIndent())
+      myFixture.checkHighlighting()
+    }
   }
 
-  public void testRelativeToAngularCliFolder() {
-    doTest(new CssUnknownTargetInspection(), () -> {
-      myFixture.addFileToProject("package.json", "");
-      myFixture.addFileToProject(".angular-cli.json", "{\"projects\": {\"foo\": { \"root\": \"foo\"}}}\n");
-      myFixture.addFileToProject("foo/bar/_inFooBar.scss", "");
-      PsiFile file = myFixture.addFileToProject("foo/src/main.scss", """
+  fun testRelativeToAngularCliFolder() {
+    doTest(CssUnknownTargetInspection()) {
+      myFixture.addFileToProject("package.json", "")
+      myFixture.addFileToProject(".angular-cli.json", "{\"projects\": {\"foo\": { \"root\": \"foo\"}}}\n")
+      myFixture.addFileToProject("foo/bar/_inFooBar.scss", "")
+      val file = myFixture.addFileToProject("foo/src/main.scss", """
         @import 'foo/bar/inFooBar';
         @import 'foo/bar/inFooBar.scss';
         @import 'foo/bar/_inFooBar';
         @import 'foo/bar/_inFooBar.scss';
         @import '<error>bar</error>/<error>_inFooBar.scss</error>';
         @import '<error>_inFooBar.scss</error>';
-        """);
-      myFixture.openFileInEditor(file.getVirtualFile());
-      myFixture.checkHighlighting();
-    });
+        
+        """.trimIndent())
+      myFixture.openFileInEditor(file.getVirtualFile())
+      myFixture.checkHighlighting()
+    }
   }
 
-  public void testBaseURLPriority() {
-    doTest(new CssUnknownTargetInspection(), () -> {
-      myFixture.addFileToProject("package.json", "");
-      myFixture.addFileToProject("tsconfig.json", "{\"compilerOptions\": {\"baseUrl\": \"./\"}}");
+  fun testBaseURLPriority() {
+    doTest(CssUnknownTargetInspection()) {
+      myFixture.addFileToProject("package.json", "")
+      myFixture.addFileToProject("tsconfig.json", "{\"compilerOptions\": {\"baseUrl\": \"./\"}}")
       myFixture.addFileToProject(".angular-cli.json",
                                  """
                                    {"projects": {"foo": { "root": "foo",
                                          "architect": {"build": {"builder": "z", "options": {"outputPath": "dist/sassy3",
                                                "tsConfig":"tsconfig.json","stylePreprocessorOptions": {"includePaths": ["foo/bar"]}}}}}}}
-                                   """);
-      myFixture.addFileToProject("baz/inBaz.scss", "");
-      myFixture.addFileToProject("foo/bar/_inFooBar.scss", "");
-      myFixture.addFileToProject("foo/foo/bar/_inFooFooBar.scss", "");
-      PsiFile file = myFixture.addFileToProject("foo/src/main.scss", """
+                                   
+                                   """.trimIndent())
+      myFixture.addFileToProject("baz/inBaz.scss", "")
+      myFixture.addFileToProject("foo/bar/_inFooBar.scss", "")
+      myFixture.addFileToProject("foo/foo/bar/_inFooFooBar.scss", "")
+      val file = myFixture.addFileToProject("foo/src/main.scss", """
         @import 'inFooBar';
         @import '_inFooBar.scss';
         @import '<error>~bar</error>/<error>_inFooBar.scss</error>';
@@ -96,25 +96,27 @@ public class CssInspectionsTest extends BasePlatformTestCase {
         @import 'baz/inBaz';
         @import '<error>inBaz.scss</error>';
         @import '<error>inFooFooBar</error>';
-        """);
-      myFixture.openFileInEditor(file.getVirtualFile());
-      myFixture.checkHighlighting();
-    });
+        
+        """.trimIndent())
+      myFixture.openFileInEditor(file.getVirtualFile())
+      myFixture.checkHighlighting()
+    }
   }
 
-  public void testIncludedPathsRelativeToCliFolder() {
-    doTest(new CssUnknownTargetInspection(), () -> {
-      myFixture.addFileToProject("package.json", "");
+  fun testIncludedPathsRelativeToCliFolder() {
+    doTest(CssUnknownTargetInspection()) {
+      myFixture.addFileToProject("package.json", "")
       myFixture.addFileToProject(".angular-cli.json",
                                  """
                                    {"projects": {"foo": { "root": "foo",
                                          "architect": {"build": {"builder": "z", "options": {"outputPath": "dist/sassy3",
                                                "stylePreprocessorOptions": {"includePaths": ["foo/bar"]}}}}}}}
-                                   """);
-      myFixture.addFileToProject("baz/inBaz.scss", "");
-      myFixture.addFileToProject("foo/bar/_inFooBar.scss", "");
-      myFixture.addFileToProject("foo/foo/bar/_inFooFooBar.scss", "");
-      PsiFile file = myFixture.addFileToProject("foo/src/main.scss", """
+                                   
+                                   """.trimIndent())
+      myFixture.addFileToProject("baz/inBaz.scss", "")
+      myFixture.addFileToProject("foo/bar/_inFooBar.scss", "")
+      myFixture.addFileToProject("foo/foo/bar/_inFooFooBar.scss", "")
+      val file = myFixture.addFileToProject("foo/src/main.scss", """
         @import 'inFooBar';
         @import 'inFooBar.scss';
         @import '_inFooBar';
@@ -128,24 +130,26 @@ public class CssInspectionsTest extends BasePlatformTestCase {
         @import '<error>inFooFooBar.scss</error>';
         @import '<error>_inFooFooBar</error>';
         @import '<error>_inFooFooBar.scss</error>';
-        """);
-      myFixture.openFileInEditor(file.getVirtualFile());
-      myFixture.checkHighlighting();
-    });
+        
+        """.trimIndent())
+      myFixture.openFileInEditor(file.getVirtualFile())
+      myFixture.checkHighlighting()
+    }
   }
 
-  public void testLegacyPreprocessorIncludePaths() {
-    doTest(new CssUnknownTargetInspection(), () -> {
+  fun testLegacyPreprocessorIncludePaths() {
+    doTest(CssUnknownTargetInspection()) {
       myFixture.addFileToProject(".angular-cli.json",
                                  """
                                    { "project": {"name": "scss-imports"},
                                              "apps": [
                                                 { "root": "", "appRoot": "src", "assets": ["assets"]},
                                                 { "stylePreprocessorOptions": {"includePaths": ["baz/qux"]}, "root": "foo/bar"}
-                                   ]}""");
-      myFixture.addFileToProject("src/sass/_var1.scss", "");
-      myFixture.addFileToProject("foo/bar/baz/qux/_var2.scss", "");
-      myFixture.addFileToProject("foo/bar/baz/qux/quux/_var3.scss", "");
+                                   ]}
+                                   """.trimIndent())
+      myFixture.addFileToProject("src/sass/_var1.scss", "")
+      myFixture.addFileToProject("foo/bar/baz/qux/_var2.scss", "")
+      myFixture.addFileToProject("foo/bar/baz/qux/quux/_var3.scss", "")
       myFixture.configureByText("main.scss", """
         @import '<error>~sass</error>/<error>var1</error>';
         @import '<error>sass</error>/<error>var1</error>';
@@ -154,35 +158,35 @@ public class CssInspectionsTest extends BasePlatformTestCase {
         @import '<error>~qux</error>/<error>var2</error>';
         @import 'quux/var3';
         @import '<error>~quux</error>/<error>var3</error>';
-        """);
-      myFixture.checkHighlighting();
-    });
+        
+        """.trimIndent())
+      myFixture.checkHighlighting()
+    }
   }
 
-  public void testRelativePathWithAngularRoot() {
-    myFixture.enableInspections(new SassScssUnresolvedMixinInspection(), new CssUnknownTargetInspection());
+  fun testRelativePathWithAngularRoot() {
+    myFixture.enableInspections(SassScssUnresolvedMixinInspection(), CssUnknownTargetInspection())
     //css doesn't have stubs
-
-    myFixture.copyDirectoryToProject(getTestName(false), "");
-    myFixture.configureFromTempProjectFile("dir/usage.scss");
-    myFixture.checkHighlighting();
+    myFixture.copyDirectoryToProject(getTestName(false), "")
+    myFixture.configureFromTempProjectFile("dir/usage.scss")
+    myFixture.checkHighlighting()
   }
 
-  private void doTest(InspectionProfileEntry inspection, Runnable testRunnable) {
-    doTest(new InspectionProfileEntry[]{inspection}, testRunnable);
+  private fun doTest(inspection: InspectionProfileEntry, testRunnable: Runnable) {
+    doTest(arrayOf(inspection), testRunnable)
   }
 
-  private void doTest(InspectionProfileEntry[] inspections, Runnable testRunnable) {
-    myFixture.enableInspections(inspections);
+  private fun doTest(inspections: Array<InspectionProfileEntry>, testRunnable: Runnable) {
+    myFixture.enableInspections(*inspections)
     try {
-      testRunnable.run();
+      testRunnable.run()
     }
     finally {
       try {
-        myFixture.disableInspections(inspections);
+        myFixture.disableInspections(*inspections)
       }
-      catch (Exception e) {
-        addSuppressedException(e);
+      catch (e: Exception) {
+        addSuppressedException(e)
       }
     }
   }

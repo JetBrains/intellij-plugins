@@ -1,383 +1,375 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.inspections;
+package org.angular2.inspections
 
-import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection;
-import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ArrayUtil;
-import org.angular2.Angular2MultiFileFixtureTestCase;
-import org.angular2.inspections.quickfixes.Angular2FixesFactory;
-import org.angular2.modules.Angular2TestModule;
-import org.angularjs.AngularTestUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
-
-import static com.intellij.lang.javascript.modules.imports.JSImportAction.NAME_TO_IMPORT;
-import static com.intellij.lang.javascript.ui.NodeModuleNamesUtil.PACKAGE_JSON;
+import com.intellij.lang.javascript.modules.imports.JSImportAction
+import com.intellij.lang.javascript.ui.NodeModuleNamesUtil
+import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
+import com.intellij.openapi.application.WriteAction
+import com.intellij.util.ArrayUtil
+import org.angular2.Angular2MultiFileFixtureTestCase
+import org.angular2.inspections.quickfixes.Angular2FixesFactory
+import org.angular2.modules.Angular2TestModule
+import org.angular2.modules.Angular2TestModule.Companion.configureLink
+import org.angularjs.AngularTestUtil
+import java.io.IOException
 
 /**
  * Also tests completion InsertHandlers.
  */
-public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtureTestCase {
-
-  @Override
-  protected String getTestDataPath() {
-    return AngularTestUtil.getBaseTestDataPath(getClass());
+class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() {
+  override fun getTestDataPath(): String {
+    return AngularTestUtil.getBaseTestDataPath(javaClass)
   }
 
-  @NotNull
-  @Override
-  protected String getTestRoot() {
-    return "ngModuleImport/";
+  override fun getTestRoot(): String {
+    return "ngModuleImport/"
   }
 
-  public void testNgFor() {
+  fun testNgFor() {
     doMultiFileTest("angular-commons",
                     "test.html",
                     "*ng<caret>For",
                     "Import Angular entity...",
-                    "CommonModule - \"@angular/common\"");
+                    "CommonModule - \"@angular/common\"")
   }
 
-  public void testNgForCompletion() {
+  fun testNgForCompletion() {
     doCompletionTest("angular-commons",
                      "test.html",
                      "*ngFor=\"let item of items\"",
                      "*ngFo\nlet item of items",
-                     "CommonModule - \"@angular/common\"");
+                     "CommonModule - \"@angular/common\"")
   }
 
-  public void testNgClass() {
+  fun testNgClass() {
     doMultiFileTest("angular-commons",
                     "test.html",
                     "[ng<caret>Class]",
                     "Import Angular entity...",
-                    "CommonModule - \"@angular/common\"");
+                    "CommonModule - \"@angular/common\"")
   }
 
-  public void testNgClassCompletion() {
+  fun testNgClassCompletion() {
     doCompletionTest("angular-commons",
                      "test.html",
                      "[ngClass]=\"'my'\"",
                      "[ngCl\n'my'",
-                     "CommonModule - \"@angular/common\"");
+                     "CommonModule - \"@angular/common\"")
   }
 
-  public void testLowercasePipe() {
+  fun testLowercasePipe() {
     doMultiFileTest("angular-commons",
                     "test.html",
                     "lower<caret>case",
                     "Import Angular entity...",
-                    "CommonModule - \"@angular/common\"");
+                    "CommonModule - \"@angular/common\"")
   }
 
-  public void testLowercasePipeCompletion() {
+  fun testLowercasePipeCompletion() {
     doCompletionTest("angular-commons",
                      "test.html",
                      "lowercase",
                      "lo\n",
-                     "CommonModule - \"@angular/common\"");
+                     "CommonModule - \"@angular/common\"")
   }
 
-  public void testImportDirective() {
+  fun testImportDirective() {
     doMultiFileTest("test.html",
-                    "Import Module2");
+                    "Import Module2")
   }
 
-  public void testImportDirectiveCompletion() {
-    doTagCompletionTest("test.html", "Module2 - \"./module2\"");
+  fun testImportDirectiveCompletion() {
+    doTagCompletionTest("test.html", "Module2 - \"./module2\"")
   }
 
-  public void testUndeclaredDirective() {
+  fun testUndeclaredDirective() {
     doMultiFileTest("test.html",
-                    "Declare MyDirective in MyModule");
+                    "Declare MyDirective in MyModule")
   }
 
-  public void testUndeclaredDirectiveCompletion() {
-    doTagCompletionTest("test.html", "MyModule - \"./module\"");
+  fun testUndeclaredDirectiveCompletion() {
+    doTagCompletionTest("test.html", "MyModule - \"./module\"")
   }
 
-  public void testUndeclaredDirectiveDifferentModule() {
+  fun testUndeclaredDirectiveDifferentModule() {
     doMultiFileTest("test.html",
                     "Declare MyDirective in Angular module",
-                    "Module2 - \"./module2\"");
+                    "Module2 - \"./module2\"")
   }
 
-  public void testUndeclaredDirectiveDifferentModuleCompletion() {
+  fun testUndeclaredDirectiveDifferentModuleCompletion() {
     doTagCompletionTest("test.html",
-                        "Module2 - \"./module2\"");
+                        "Module2 - \"./module2\"")
   }
 
-  public void testNotExportedDirectiveNoModuleImport() {
+  fun testNotExportedDirectiveNoModuleImport() {
     doMultiFileTest("test.html",
-                    "Export MyDirective");
+                    "Export MyDirective")
   }
 
-  public void testNotExportedDirectiveNoModuleImportCompletion() {
-    doTagCompletionTest("test.html", null);
+  fun testNotExportedDirectiveNoModuleImportCompletion() {
+    doTagCompletionTest("test.html", null)
   }
 
-  public void testNotExportedDirectiveSingleModuleImport() {
+  fun testNotExportedDirectiveSingleModuleImport() {
     doMultiFileTest("test.html",
-                    "Export MyDirective");
+                    "Export MyDirective")
   }
 
-  public void testNotExportedDirectiveSingleModuleImportCompletion() {
-    doTagCompletionTest("test.html", "Module2 - \"./module2\"");
+  fun testNotExportedDirectiveSingleModuleImportCompletion() {
+    doTagCompletionTest("test.html", "Module2 - \"./module2\"")
   }
 
-  public void testNotExportedDirectiveMultiModuleImport() {
+  fun testNotExportedDirectiveMultiModuleImport() {
     doMultiFileTest("test.html",
                     "Export MyDirective",
-                    "Module3 - \"./module3\"");
+                    "Module3 - \"./module3\"")
   }
 
-  public void testNotExportedDirectiveMultiModuleImportCompletion() {
+  fun testNotExportedDirectiveMultiModuleImportCompletion() {
     doTagCompletionTest("test.html",
-                        "Module3 - \"./module3\"");
+                        "Module3 - \"./module3\"")
   }
 
-  public void testInlineTemplate() {
+  fun testInlineTemplate() {
     doMultiFileTest("component.ts",
-                    "Declare MyDirective in MyModule");
+                    "Declare MyDirective in MyModule")
   }
 
-  public void testInlineTemplateCompletion() {
-    doTagCompletionTest("component.ts", "MyModule - \"./module\"");
+  fun testInlineTemplateCompletion() {
+    doTagCompletionTest("component.ts", "MyModule - \"./module\"")
   }
 
-  public void testFormsModule1() {
+  fun testFormsModule1() {
     doMultiFileTest("formsModule",
                     "test.html",
                     "[ngValue<caret>]",
                     "Import Angular entity...",
                     "FormsModule - \"@angular/forms\"",
-                    Angular2TestModule.ANGULAR_FORMS_8_2_14);
+                    Angular2TestModule.ANGULAR_FORMS_8_2_14)
   }
 
-  public void testFormsModule2() {
+  fun testFormsModule2() {
     doMultiFileTest("formsModule",
                     "test.html",
                     "ng<caret>Model",
                     "Import Angular entity...",
                     "FormsModule - \"@angular/forms\"",
-                    Angular2TestModule.ANGULAR_FORMS_8_2_14);
+                    Angular2TestModule.ANGULAR_FORMS_8_2_14)
   }
 
-  public void testFormsModule3() {
+  fun testFormsModule3() {
     doMultiFileTest("formsModule",
                     "test.html",
                     "[ng<caret>Model]",
                     "Import FormsModule",
                     null,
-                    Angular2TestModule.ANGULAR_FORMS_8_2_14);
+                    Angular2TestModule.ANGULAR_FORMS_8_2_14)
   }
 
-  public void testFormsModule4() {
+  fun testFormsModule4() {
     doMultiFileTest("formsModule",
                     "test.html",
                     "[(ng<caret>Model)]",
                     "Import FormsModule",
                     null,
-                    Angular2TestModule.ANGULAR_FORMS_8_2_14);
+                    Angular2TestModule.ANGULAR_FORMS_8_2_14)
   }
 
-  public void testFormsModuleCompletion1() {
+  fun testFormsModuleCompletion1() {
     doCompletionTest("formsModule",
                      "test.html",
                      "[ngValue]=\"foo\"",
                      "[ngVal\nfoo",
                      "FormsModule - \"@angular/forms\"",
-                     Angular2TestModule.ANGULAR_FORMS_8_2_14);
+                     Angular2TestModule.ANGULAR_FORMS_8_2_14)
   }
 
-  public void testFormsModuleCompletion2() {
+  fun testFormsModuleCompletion2() {
     doCompletionTest("formsModule",
                      "test.html",
                      "ngModel ",
                      "ngMod\n ",
                      "FormsModule - \"@angular/forms\"",
-                     Angular2TestModule.ANGULAR_FORMS_8_2_14);
+                     Angular2TestModule.ANGULAR_FORMS_8_2_14)
   }
 
-  public void testFormsModuleCompletion3() {
+  fun testFormsModuleCompletion3() {
     doCompletionTest("formsModule",
                      "test.html",
                      "[ngModel]=\"foo\"",
                      "[ngMod\nfoo",
                      "FormsModule - \"@angular/forms\"",
-                     Angular2TestModule.ANGULAR_FORMS_8_2_14);
+                     Angular2TestModule.ANGULAR_FORMS_8_2_14)
   }
 
-  public void testFormsModuleCompletion4() {
+  fun testFormsModuleCompletion4() {
     doCompletionTest("formsModule",
                      "test.html",
                      "[(ngModel)]=\"foo\"",
                      "[(ngMod\nfoo",
                      "FormsModule - \"@angular/forms\"",
-                     Angular2TestModule.ANGULAR_FORMS_8_2_14);
+                     Angular2TestModule.ANGULAR_FORMS_8_2_14)
   }
 
-  public void testReactiveFormsModule1() {
+  fun testReactiveFormsModule1() {
     doMultiFileTest("reactiveFormsModule",
                     "test.html",
                     "[ngValue<caret>]",
                     "Import Angular entity...",
                     "ReactiveFormsModule - \"@angular/forms\"",
-                    Angular2TestModule.ANGULAR_FORMS_8_2_14);
+                    Angular2TestModule.ANGULAR_FORMS_8_2_14)
   }
 
-  public void testReactiveFormsModule2() {
+  fun testReactiveFormsModule2() {
     doMultiFileTest("reactiveFormsModule",
                     "test.html",
                     "ng<caret>Model",
                     "Import Angular entity...",
                     "ReactiveFormsModule - \"@angular/forms\"",
-                    Angular2TestModule.ANGULAR_FORMS_8_2_14);
+                    Angular2TestModule.ANGULAR_FORMS_8_2_14)
   }
 
-  public void testReactiveFormsModuleCompletion1() {
+  fun testReactiveFormsModuleCompletion1() {
     doCompletionTest("reactiveFormsModule",
                      "test.html",
                      "[ngValue]=\"foo\"",
                      "[ngVal\nfoo",
                      "ReactiveFormsModule - \"@angular/forms\"",
-                     Angular2TestModule.ANGULAR_FORMS_8_2_14);
+                     Angular2TestModule.ANGULAR_FORMS_8_2_14)
   }
 
-  public void testReactiveFormsModuleCompletion2() {
+  fun testReactiveFormsModuleCompletion2() {
     doCompletionTest("reactiveFormsModule",
                      "test.html",
                      "ngModel ",
                      "ngMod\n ",
                      "ReactiveFormsModule - \"@angular/forms\"",
-                     Angular2TestModule.ANGULAR_FORMS_8_2_14);
+                     Angular2TestModule.ANGULAR_FORMS_8_2_14)
   }
 
-  public void testLocalLib() {
+  fun testLocalLib() {
     doMultiFileTest("src/app/app.component.html",
-                    "Import MyLibModule");
+                    "Import MyLibModule")
   }
 
-  public void testLocalLibCompletion() {
+  fun testLocalLibCompletion() {
     doCompletionTest("localLib", "src/app/app.component.html",
                      "lib-my-lib", "lib-my-l\n",
-                     "MyLibModule - \"my-lib\"");
+                     "MyLibModule - \"my-lib\"")
   }
 
-  public void testImportStandaloneComponentToStandaloneComponent() {
+  fun testImportStandaloneComponentToStandaloneComponent() {
     doMultiFileTest("standaloneComponent",
                     "test.ts",
                     "app-<caret>standalone",
                     "Import StandaloneComponent",
-                    "StandaloneComponent - \"./standalone.component\"");
+                    "StandaloneComponent - \"./standalone.component\"")
   }
 
-  public void testImportStandalonePipeToStandaloneComponent() {
+  fun testImportStandalonePipeToStandaloneComponent() {
     doMultiFileTest("standalonePipe",
                     "test.ts",
                     "stand<caret>alone",
                     "Import StandalonePipe",
-                    "StandalonePipe - \"./standalone.pipe\"");
+                    "StandalonePipe - \"./standalone.pipe\"")
   }
 
-  public void testImportStandaloneComponentToModule() {
+  fun testImportStandaloneComponentToModule() {
     doMultiFileTest("standaloneComponentToModule",
                     "test.ts",
                     "app-<caret>standalone",
                     "Import StandaloneComponent",
-                    "StandaloneComponent - \"./standalone.component\"");
+                    "StandaloneComponent - \"./standalone.component\"")
   }
 
-  public void testImportStandaloneComponentImportModule() {
+  fun testImportStandaloneComponentImportModule() {
     doMultiFileTest("standaloneComponentImportModule",
                     "test.ts",
                     "app-<caret>classic",
                     "Import ClassicModule",
-                    "ClassicModule - \"./classic\"");
+                    "ClassicModule - \"./classic\"")
   }
 
-  public void testLocalLibraryWithAlias() {
+  fun testLocalLibraryWithAlias() {
     doMultiFileTest("projects/demo/src/app/app.component.html",
                     "Import Lib1Module"
-    );
+    )
   }
 
-  private void doMultiFileTest(@NotNull String mainFile,
-                               @NotNull String intention) {
-    doMultiFileTest(mainFile, intention, null);
-  }
-
-  private void doMultiFileTest(@NotNull String mainFile,
-                               @NotNull String intention,
-                               @Nullable String importName) {
+  private fun doMultiFileTest(mainFile: String,
+                              intention: String,
+                              importName: String? = null) {
     doMultiFileTest(getTestName(true), mainFile, null,
-                    intention, importName);
+                    intention, importName)
   }
 
-  private void doMultiFileTest(@NotNull String testName,
-                               @NotNull String mainFile,
-                               @Nullable String signature,
-                               @NotNull String intention,
-                               @Nullable String importName,
-                               @NotNull Angular2TestModule @NotNull ... modules) {
-    initInspections();
-    doTest((rootDir, rootAfter) -> configureTestAndRun(mainFile, signature, importName, modules, () -> {
-      myFixture.launchAction(myFixture.findSingleIntention(intention));
-    }), testName);
+  private fun doMultiFileTest(testName: String,
+                              mainFile: String,
+                              signature: String?,
+                              intention: String,
+                              importName: String?,
+                              vararg modules: Angular2TestModule) {
+    initInspections()
+    doTest(
+      { _, _ ->
+        configureTestAndRun(mainFile, signature, importName, modules, Runnable {
+          myFixture.launchAction(myFixture.findSingleIntention(intention))
+        })
+      }, testName)
   }
 
-  private void doTagCompletionTest(@NotNull String mainFile,
-                                   @Nullable String importToSelect) {
-    doCompletionTest(StringUtil.trimEnd(getTestName(true), "Completion"),
-                     mainFile, "foo", "foo\n", importToSelect);
+  private fun doTagCompletionTest(mainFile: String,
+                                  importToSelect: String?) {
+    doCompletionTest(getTestName(true).removeSuffix("Completion"),
+                     mainFile, "foo", "foo\n", importToSelect)
   }
 
-  private void doCompletionTest(@NotNull String testName,
-                                @NotNull String mainFile,
-                                @NotNull String toRemove,
-                                @NotNull String toType,
-                                @Nullable String importToSelect,
-                                @NotNull Angular2TestModule @NotNull ... modules) {
-    doTest((rootDir, rootAfter) -> configureTestAndRun(mainFile, "<caret>" + toRemove, importToSelect, modules, () -> {
-      myFixture.getEditor().putUserData(Angular2FixesFactory.DECLARATION_TO_CHOOSE, "MyDirective");
-      myFixture.getEditor().getSelectionModel().setSelection(myFixture.getCaretOffset(),
-                                                             myFixture.getCaretOffset() + toRemove.length());
-      myFixture.type("\b");
-      myFixture.completeBasic();
-      myFixture.type(toType);
-    }), testName);
+  private fun doCompletionTest(testName: String,
+                               mainFile: String,
+                               toRemove: String,
+                               toType: String,
+                               importToSelect: String?,
+                               vararg modules: Angular2TestModule) {
+    doTest(
+      { _, _ ->
+        configureTestAndRun(mainFile, "<caret>$toRemove", importToSelect, modules, Runnable {
+          myFixture.getEditor().putUserData(Angular2FixesFactory.DECLARATION_TO_CHOOSE, "MyDirective")
+          myFixture.getEditor().getSelectionModel().setSelection(myFixture.getCaretOffset(),
+                                                                 myFixture.getCaretOffset() + toRemove.length)
+          myFixture.type("\b")
+          myFixture.completeBasic()
+          myFixture.type(toType)
+        })
+      }, testName)
   }
 
-  private void configureTestAndRun(@NotNull String mainFile, @Nullable String signature, @Nullable String importName,
-                                   @NotNull Angular2TestModule @NotNull [] modules, Runnable runnable) throws IOException {
-    boolean hasPkgJson = myFixture.getTempDirFixture().getFile(PACKAGE_JSON) != null;
-    Angular2TestModule.configureLink(myFixture, ArrayUtil.mergeArrays(
-      modules, new Angular2TestModule[]{Angular2TestModule.ANGULAR_CORE_4_0_0, Angular2TestModule.ANGULAR_COMMON_4_0_0,
-        Angular2TestModule.ANGULAR_PLATFORM_BROWSER_4_0_0}));
-    myFixture.configureFromTempProjectFile(mainFile);
+  @Throws(IOException::class)
+  private fun configureTestAndRun(mainFile: String, signature: String?, importName: String?,
+                                  modules: Array<out Angular2TestModule>, runnable: Runnable) {
+    val hasPkgJson = myFixture.getTempDirFixture().getFile(NodeModuleNamesUtil.PACKAGE_JSON) != null
+    configureLink(myFixture, *ArrayUtil.mergeArrays(
+      modules, arrayOf(Angular2TestModule.ANGULAR_CORE_4_0_0, Angular2TestModule.ANGULAR_COMMON_4_0_0,
+                       Angular2TestModule.ANGULAR_PLATFORM_BROWSER_4_0_0)))
+    myFixture.configureFromTempProjectFile(mainFile)
     if (signature != null) {
-      AngularTestUtil.moveToOffsetBySignature(signature, myFixture);
+      AngularTestUtil.moveToOffsetBySignature(signature, myFixture)
     }
     if (importName != null) {
-      myFixture.getEditor().putUserData(NAME_TO_IMPORT, importName);
+      myFixture.getEditor().putUserData(JSImportAction.NAME_TO_IMPORT, importName)
     }
-    runnable.run();
+    runnable.run()
     if (!hasPkgJson) {
-      WriteAction.runAndWait(() -> {
-        myFixture.getTempDirFixture().getFile(PACKAGE_JSON).delete(null);
-      });
+      WriteAction.runAndWait<IOException> { myFixture.getTempDirFixture().getFile(NodeModuleNamesUtil.PACKAGE_JSON)!!.delete(null) }
     }
   }
 
-  private void initInspections() {
+  private fun initInspections() {
     myFixture.enableInspections(
-      AngularUndefinedBindingInspection.class,
-      AngularUndefinedTagInspection.class,
-      AngularInvalidTemplateReferenceVariableInspection.class,
-      TypeScriptUnresolvedReferenceInspection.class
-    );
+      AngularUndefinedBindingInspection::class.java,
+      AngularUndefinedTagInspection::class.java,
+      AngularInvalidTemplateReferenceVariableInspection::class.java,
+      TypeScriptUnresolvedReferenceInspection::class.java
+    )
   }
 }

@@ -1,38 +1,37 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.editor;
+package org.angular2.editor
 
-import com.intellij.codeInsight.hints.settings.ParameterNameHintsSettings;
-import org.angular2.Angular2CodeInsightFixtureTestCase;
-import org.angularjs.AngularTestUtil;
+import com.intellij.codeInsight.hints.settings.ParameterNameHintsSettings
+import com.intellij.codeInsight.hints.settings.ParameterNameHintsSettings.Companion.getInstance
+import org.angular2.Angular2CodeInsightFixtureTestCase
+import org.angularjs.AngularTestUtil
 
-public class Angular2ParameterHintsTest extends Angular2CodeInsightFixtureTestCase {
-
-  @Override
-  protected void tearDown() throws Exception {
+class Angular2ParameterHintsTest : Angular2CodeInsightFixtureTestCase() {
+  @Throws(Exception::class)
+  override fun tearDown() {
     try {
-      ParameterNameHintsSettings def = new ParameterNameHintsSettings();
-      ParameterNameHintsSettings.getInstance().loadState(def.getState());
+      val def = ParameterNameHintsSettings()
+      getInstance().loadState(def.getState())
     }
-    catch (Throwable e) {
-      addSuppressedException(e);
+    catch (e: Throwable) {
+      addSuppressedException(e)
     }
     finally {
-      super.tearDown();
+      super.tearDown()
     }
   }
 
-  void doTest() {
-    String testName = getTestName(false);
-    myFixture.configureByFiles(testName + ".html", testName + ".ts", "package.json");
-    myFixture.testInlays();
+  fun doTest() {
+    val testName = getTestName(false)
+    myFixture.configureByFiles("$testName.html", "$testName.ts", "package.json")
+    myFixture.testInlays()
   }
 
-  @Override
-  protected String getTestDataPath() {
-    return AngularTestUtil.getBaseTestDataPath(getClass());
+  override fun getTestDataPath(): String {
+    return AngularTestUtil.getBaseTestDataPath(javaClass)
   }
 
-  public void testParameterHintsInHtml() {
-    doTest();
+  fun testParameterHintsInHtml() {
+    doTest()
   }
 }

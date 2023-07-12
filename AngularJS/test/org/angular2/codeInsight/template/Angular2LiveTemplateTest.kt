@@ -1,54 +1,50 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.codeInsight.template;
+package org.angular2.codeInsight.template
 
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.template.impl.LiveTemplateCompletionContributor;
-import org.angular2.Angular2CodeInsightFixtureTestCase;
+import com.intellij.codeInsight.template.impl.LiveTemplateCompletionContributor
+import com.intellij.lang.javascript.BaseJSCompletionTestCase
+import org.angular2.Angular2CodeInsightFixtureTestCase
 
-import static com.intellij.lang.javascript.BaseJSCompletionTestCase.checkNoCompletion;
-import static com.intellij.lang.javascript.BaseJSCompletionTestCase.checkWeHaveInCompletion;
-
-public class Angular2LiveTemplateTest extends Angular2CodeInsightFixtureTestCase {
-
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-    LiveTemplateCompletionContributor.setShowTemplatesInTests(true, getTestRootDisposable());
+class Angular2LiveTemplateTest : Angular2CodeInsightFixtureTestCase() {
+  @Throws(Exception::class)
+  override fun setUp() {
+    super.setUp()
+    LiveTemplateCompletionContributor.setShowTemplatesInTests(true, testRootDisposable)
   }
 
-  public void testComponent() {
-    myFixture.configureByText("foo.ts", "a-comp<caret>");
-    LookupElement[] elements = myFixture.completeBasic();
-    checkWeHaveInCompletion(elements, "a-component");
+  fun testComponent() {
+    myFixture.configureByText("foo.ts", "a-comp<caret>")
+    val elements = myFixture.completeBasic()
+    BaseJSCompletionTestCase.checkWeHaveInCompletion(elements, "a-component")
   }
 
-  public void testRxjsOperatorImport() {
-    myFixture.configureByText("foo.ts", "a-rxjs-operator-imp<caret>");
-    LookupElement[] elements = myFixture.completeBasic();
-    checkWeHaveInCompletion(elements, "a-rxjs-operator-import");
+  fun testRxjsOperatorImport() {
+    myFixture.configureByText("foo.ts", "a-rxjs-operator-imp<caret>")
+    val elements = myFixture.completeBasic()
+    BaseJSCompletionTestCase.checkWeHaveInCompletion(elements, "a-rxjs-operator-import")
   }
 
-  public void testComponentNoCompletion() {
-    myFixture.configureByText("foo.ts", "var a = a-comp<caret>");
-    LookupElement[] elements = myFixture.completeBasic();
-    checkNoCompletion(elements, "a-component");
-  }
-  
-  public void testOutputEvent() {
-    myFixture.configureByText("foo.ts", "class Foo {\na-outp<caret>\n}");
-    LookupElement[] elements = myFixture.completeBasic();
-    checkWeHaveInCompletion(elements, "a-output-event");
+  fun testComponentNoCompletion() {
+    myFixture.configureByText("foo.ts", "var a = a-comp<caret>")
+    val elements = myFixture.completeBasic()
+    BaseJSCompletionTestCase.checkNoCompletion(elements, "a-component")
   }
 
-  public void testOutputEventLastPart() {
-    myFixture.configureByText("foo.ts", "class Foo {\na-output-ev<caret>\n}");
-    LookupElement[] elements = myFixture.completeBasic();
-    checkWeHaveInCompletion(elements, "a-output-event");
+  fun testOutputEvent() {
+    myFixture.configureByText("foo.ts", "class Foo {\na-outp<caret>\n}")
+    val elements = myFixture.completeBasic()
+    BaseJSCompletionTestCase.checkWeHaveInCompletion(elements, "a-output-event")
   }
 
-  public void testRoutePath404() {
-    myFixture.configureByText("foo.ts", "var z = [a-rou<caret>]");
-    LookupElement[] elements = myFixture.completeBasic();
-    checkWeHaveInCompletion(elements, "a-route-path-404");
+  fun testOutputEventLastPart() {
+    myFixture.configureByText("foo.ts", "class Foo {\na-output-ev<caret>\n}")
+    val elements = myFixture.completeBasic()
+    BaseJSCompletionTestCase.checkWeHaveInCompletion(elements, "a-output-event")
+  }
+
+  fun testRoutePath404() {
+    myFixture.configureByText("foo.ts", "var z = [a-rou<caret>]")
+    val elements = myFixture.completeBasic()
+    BaseJSCompletionTestCase.checkWeHaveInCompletion(elements, "a-route-path-404")
   }
 }

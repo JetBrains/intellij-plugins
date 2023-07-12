@@ -1,96 +1,90 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.codeInsight;
+package org.angular2.codeInsight
 
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.util.containers.ContainerUtil;
-import org.angular2.Angular2CodeInsightFixtureTestCase;
-import org.angular2.entities.*;
-import org.angular2.inspections.Angular2TemplateInspectionsProvider;
-import org.angular2.inspections.AngularMissingOrInvalidDeclarationInModuleInspection;
-import org.angularjs.AngularTestUtil;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.openapi.util.Disposer
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiManager
+import com.intellij.testFramework.UsefulTestCase
+import com.intellij.util.containers.ContainerUtil
+import org.angular2.Angular2CodeInsightFixtureTestCase
+import org.angular2.entities.Angular2Component
+import org.angular2.entities.Angular2ComponentLocator.findComponentClasses
+import org.angular2.entities.Angular2ComponentLocator.findComponentClassesInFile
+import org.angular2.entities.Angular2Declaration
+import org.angular2.entities.Angular2FrameworkHandler
+import org.angular2.entities.Angular2Module
+import org.angular2.inspections.Angular2TemplateInspectionsProvider
+import org.angular2.inspections.AngularMissingOrInvalidDeclarationInModuleInspection
+import org.angularjs.AngularTestUtil
 
-import java.util.Collection;
-import java.util.List;
-
-import static org.angularjs.AngularTestUtil.renderLookupItems;
-
-public class FrameworkHandlerTest extends Angular2CodeInsightFixtureTestCase {
-  @Override
-  protected String getTestDataPath() {
-    return AngularTestUtil.getBaseTestDataPath(getClass()) + "frameworkHandler";
+class FrameworkHandlerTest : Angular2CodeInsightFixtureTestCase() {
+  override fun getTestDataPath(): String {
+    return AngularTestUtil.getBaseTestDataPath(javaClass) + "frameworkHandler"
   }
 
-  public void testAdditionalComponentClasses() {
-    Disposable disposable = Disposer.newDisposable();
-    Disposer.register(myFixture.getTestRootDisposable(), disposable);
-    Angular2FrameworkHandler.EP_NAME.getPoint().registerExtension(new Angular2FrameworkHandler() {
-      @Override
-      public @NotNull List<TypeScriptClass> findAdditionalComponentClasses(@NotNull PsiFile context) {
-        PsiFile componentsFile = PsiManager.getInstance(getProject()).findFile(myFixture.findFileInTempDir("components.ts"));
-        return Angular2ComponentLocator.findComponentClassesInFile(componentsFile, (cls, dec) -> "FooComponent".equals(cls.getName()));
+  fun testAdditionalComponentClasses() {
+    val disposable = Disposer.newDisposable()
+    Disposer.register(myFixture.testRootDisposable, disposable)
+    Angular2FrameworkHandler.EP_NAME.point.registerExtension(object : Angular2FrameworkHandler {
+      override fun findAdditionalComponentClasses(context: PsiFile): List<TypeScriptClass> {
+        val componentsFile = PsiManager.getInstance(project).findFile(myFixture.findFileInTempDir("components.ts"))
+        return findComponentClassesInFile(
+          componentsFile!!) { cls: TypeScriptClass, dec: ES6Decorator? -> "FooComponent" == cls.getName() }
       }
-    }, disposable);
-
-    myFixture.configureByFiles("components.ts", "package.json");
-    myFixture.configureByText("test.html", "{{ <caret> }}");
-    assertSize(1, Angular2ComponentLocator.findComponentClasses(myFixture.getFile()));
-    myFixture.completeBasic();
-    assertOrderedEquals(ContainerUtil.sorted(renderLookupItems(myFixture,false, false, true)),
-                        "$any", "fooField1", "fooField2");
-
-    Disposer.dispose(disposable);
-    assertSize(0, Angular2ComponentLocator.findComponentClasses(myFixture.getFile()));
-    myFixture.completeBasic();
-    assertOrderedEquals(ContainerUtil.sorted(renderLookupItems(myFixture,false, false, true)),
-                        "$any");
+    }, disposable)
+    myFixture.configureByFiles("components.ts", "package.json")
+    myFixture.configureByText("test.html", "{{ <caret> }}")
+    UsefulTestCase.assertSize(1, findComponentClasses(myFixture.getFile()))
+    myFixture.completeBasic()
+    UsefulTestCase.assertOrderedEquals(ContainerUtil.sorted(AngularTestUtil.renderLookupItems(myFixture, false, false, true)),
+                                       "\$any", "fooField1", "fooField2")
+    Disposer.dispose(disposable)
+    UsefulTestCase.assertSize(0, findComponentClasses(myFixture.getFile()))
+    myFixture.completeBasic()
+    UsefulTestCase.assertOrderedEquals(ContainerUtil.sorted(AngularTestUtil.renderLookupItems(myFixture, false, false, true)),
+                                       "\$any")
   }
 
-  public void testSelectModuleForDeclarationsScope() {
-    Disposable disposable = Disposer.newDisposable();
-    Disposer.register(myFixture.getTestRootDisposable(), disposable);
-    Angular2FrameworkHandler.EP_NAME.getPoint().registerExtension(new Angular2FrameworkHandler() {
-      @Override
-      public @NotNull Angular2Module selectModuleForDeclarationsScope(@NotNull Collection<? extends @NotNull Angular2Module> modules,
-                                                                      @NotNull Angular2Component component,
-                                                                      @NotNull PsiFile context) {
-        return ContainerUtil.find(modules, module -> module.getName().equals("FooModule"));
+  fun testSelectModuleForDeclarationsScope() {
+    val disposable = Disposer.newDisposable()
+    Disposer.register(myFixture.testRootDisposable, disposable)
+    Angular2FrameworkHandler.EP_NAME.point.registerExtension(object : Angular2FrameworkHandler {
+      override fun selectModuleForDeclarationsScope(modules: Collection<Angular2Module>,
+                                                    component: Angular2Component,
+                                                    context: PsiFile): Angular2Module {
+        return modules.first { it.getName() == "FooModule" }
       }
-    }, disposable);
-
-    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
-    myFixture.configureByFiles("multi-module.ts", "package.json");
+    }, disposable)
+    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
+    myFixture.configureByFiles("multi-module.ts", "package.json")
     myFixture.configureByText("template.html",
                               """
                                 <app-foo></app-foo>
                                 <<error descr="Component or directive matching app-bar element is out of scope of the current template">app-bar</error>></app-bar>
-                                <<warning descr="Unknown html tag foobar">foobar</warning>></<warning descr="Unknown html tag foobar">foobar</warning>>""");
-    myFixture.checkHighlighting();
-
-    Disposer.dispose(disposable);
+                                <<warning descr="Unknown html tag foobar">foobar</warning>></<warning descr="Unknown html tag foobar">foobar</warning>>
+                                """.trimIndent())
+    myFixture.checkHighlighting()
+    Disposer.dispose(disposable)
     myFixture.configureByText("template.html",
                               """
                                 <<error descr="Component or directive matching app-foo element is out of scope of the current template">app-foo</error>></app-foo>
                                 <app-bar></app-bar>
-                                <<warning descr="Unknown html tag foobar">foobar</warning>></<warning descr="Unknown html tag foobar">foobar</warning>>""");
-    myFixture.checkHighlighting();
+                                <<warning descr="Unknown html tag foobar">foobar</warning>></<warning descr="Unknown html tag foobar">foobar</warning>>
+                                """.trimIndent())
+    myFixture.checkHighlighting()
   }
 
-  public void testSuppressModuleInspectionErrors() {
-    Angular2FrameworkHandler.EP_NAME.getPoint().registerExtension(new Angular2FrameworkHandler() {
-      @Override
-      public boolean suppressModuleInspectionErrors(@NotNull Collection<? extends @NotNull Angular2Module> modules,
-                                                    @NotNull Angular2Declaration declaration) {
-        return "FooComponent".equals(declaration.getName());
+  fun testSuppressModuleInspectionErrors() {
+    Angular2FrameworkHandler.EP_NAME.point.registerExtension(object : Angular2FrameworkHandler {
+      override fun suppressModuleInspectionErrors(modules: Collection<Angular2Module>,
+                                                  declaration: Angular2Declaration): Boolean {
+        return "FooComponent" == declaration.getName()
       }
-    }, myFixture.getTestRootDisposable());
-
-    myFixture.enableInspections(new AngularMissingOrInvalidDeclarationInModuleInspection());
-    myFixture.configureByFiles("multi-module-errors.ts", "package.json");
-    myFixture.checkHighlighting();
+    }, myFixture.testRootDisposable)
+    myFixture.enableInspections(AngularMissingOrInvalidDeclarationInModuleInspection())
+    myFixture.configureByFiles("multi-module-errors.ts", "package.json")
+    myFixture.checkHighlighting()
   }
 }

@@ -1,86 +1,77 @@
 // Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.refactoring;
+package org.angular2.refactoring
 
-import com.intellij.refactoring.util.CommonRefactoringUtil;
-import com.intellij.testFramework.fixtures.IdeaTestExecutionPolicy;
-import com.intellij.testFramework.fixtures.TempDirTestFixture;
-import com.intellij.testFramework.fixtures.impl.LightTempDirTestFixtureImpl;
-import org.angular2.Angular2MultiFileFixtureTestCase;
-import org.angularjs.AngularTestUtil;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.refactoring.util.CommonRefactoringUtil.RefactoringErrorHintException
+import com.intellij.testFramework.UsefulTestCase
+import com.intellij.testFramework.fixtures.IdeaTestExecutionPolicy
+import com.intellij.testFramework.fixtures.TempDirTestFixture
+import com.intellij.testFramework.fixtures.impl.LightTempDirTestFixtureImpl
+import org.angular2.Angular2MultiFileFixtureTestCase
+import org.angularjs.AngularTestUtil
 
-public class Angular2ExtractComponentTest extends Angular2MultiFileFixtureTestCase {
-  @Override
-  protected String getTestDataPath() {
-    return AngularTestUtil.getBaseTestDataPath(getClass()) + "extractComponent";
+class Angular2ExtractComponentTest : Angular2MultiFileFixtureTestCase() {
+  override fun getTestDataPath(): String {
+    return AngularTestUtil.getBaseTestDataPath(javaClass) + "extractComponent"
   }
 
-  public void testSingleElementMultiLineFromCaret() {
-    doMultiFileTest();
+  fun testSingleElementMultiLineFromCaret() {
+    doMultiFileTest()
   }
 
-  public void testSingleElementSingleLine() {
-    doMultiFileTest();
+  fun testSingleElementSingleLine() {
+    doMultiFileTest()
   }
 
-  public void testMultiElement() {
-    doMultiFileTest();
+  fun testMultiElement() {
+    doMultiFileTest()
   }
 
-  public void testNoElement() {
-    doMultiFileTest();
+  fun testNoElement() {
+    doMultiFileTest()
   }
 
-  public void testNameClashes() {
-    doMultiFileTest();
+  fun testNameClashes() {
+    doMultiFileTest()
   }
 
-  public void testExtractFromInlineTemplate() {
-    doMultiFileTest("src/app/app.component.ts");
+  fun testExtractFromInlineTemplate() {
+    doMultiFileTest("src/app/app.component.ts")
   }
 
-  public void testUnsupportedSelection() {
-    doFailedTest();
+  fun testUnsupportedSelection() {
+    doFailedTest()
   }
 
-  public void testUnsupportedSelection2() {
-    doFailedTest();
+  fun testUnsupportedSelection2() {
+    doFailedTest()
   }
 
-  public void testUnsupportedSelection3() {
-    doFailedTest();
+  fun testUnsupportedSelection3() {
+    doFailedTest()
   }
 
-  public void testUnsupportedSelection4() {
-    doFailedTest();
+  fun testUnsupportedSelection4() {
+    doFailedTest()
   }
 
-  private void doMultiFileTest() {
-    doMultiFileTest("src/app/app.component.html");
+  private fun doMultiFileTest(source: String = "src/app/app.component.html") {
+    doTest { rootDir: VirtualFile?, rootAfter: VirtualFile? ->
+      myFixture.configureFromTempProjectFile(source)
+      myFixture.performEditorAction("Angular2ExtractComponentAction")
+    }
   }
 
-  private void doMultiFileTest(String source) {
-    doTest((rootDir, rootAfter) -> {
-      myFixture.configureFromTempProjectFile(source);
-      myFixture.performEditorAction("Angular2ExtractComponentAction");
-    });
+  private fun doFailedTest() {
+    UsefulTestCase.assertThrows(RefactoringErrorHintException::class.java) { doMultiFileTest() }
   }
 
-  private void doFailedTest() {
-    assertThrows(CommonRefactoringUtil.RefactoringErrorHintException.class, () -> doMultiFileTest());
+  override fun getTestRoot(): String {
+    return "/"
   }
 
-  @NotNull
-  @Override
-  protected String getTestRoot() {
-    return "/";
-  }
-
-  @Override
-  protected TempDirTestFixture createTempDirTestFixture() {
-    IdeaTestExecutionPolicy policy = IdeaTestExecutionPolicy.current();
-    return policy != null
-           ? policy.createTempDirTestFixture()
-           : new LightTempDirTestFixtureImpl(false);
+  override fun createTempDirTestFixture(): TempDirTestFixture {
+    val policy = IdeaTestExecutionPolicy.current()
+    return if (policy != null) policy.createTempDirTestFixture() else LightTempDirTestFixtureImpl(false)
   }
 }

@@ -1,107 +1,107 @@
-package org.angular2.codeInsight;
+package org.angular2.codeInsight
 
-import org.angular2.Angular2CodeInsightFixtureTestCase;
-import org.angularjs.AngularTestUtil;
+import com.intellij.webSymbols.checkDocumentationAtCaret
+import org.angular2.Angular2CodeInsightFixtureTestCase
+import org.angular2.modules.Angular2TestModule
+import org.angular2.modules.Angular2TestModule.Companion.configureCopy
+import org.angular2.modules.Angular2TestModule.Companion.configureLink
+import org.angularjs.AngularTestUtil
 
-import static com.intellij.webSymbols.WebTestUtil.checkDocumentationAtCaret;
-import static org.angular2.modules.Angular2TestModule.*;
-
-public class Angular2DocumentationTest extends Angular2CodeInsightFixtureTestCase {
-  @Override
-  protected String getTestDataPath() {
-    return AngularTestUtil.getBaseTestDataPath(getClass()) + "documentation";
+class Angular2DocumentationTest : Angular2CodeInsightFixtureTestCase() {
+  override fun getTestDataPath(): String {
+    return AngularTestUtil.getBaseTestDataPath(javaClass) + "documentation"
   }
 
-  public void testTagName() {
-    doTest();
+  fun testTagName() {
+    doTest()
   }
 
-  public void testSimpleInput() {
-    doTest();
+  fun testSimpleInput() {
+    doTest()
   }
 
-  public void testSimpleInputBinding() {
-    doTest();
+  fun testSimpleInputBinding() {
+    doTest()
   }
 
-  public void testSimpleOutputBinding() {
-    doTest();
+  fun testSimpleOutputBinding() {
+    doTest()
   }
 
-  public void testSimpleBananaBox() {
-    doTest();
+  fun testSimpleBananaBox() {
+    doTest()
   }
 
-  public void testDirectiveWithMatchingInput() {
-    doTest();
+  fun testDirectiveWithMatchingInput() {
+    doTest()
   }
 
-  public void testDirectiveWithoutMatchingInput() {
-    doTest();
+  fun testDirectiveWithoutMatchingInput() {
+    doTest()
   }
 
-  public void testGlobalAttribute() {
-    doTest();
+  fun testGlobalAttribute() {
+    doTest()
   }
 
-  public void testFieldWithoutDocs() {
-    doTest();
+  fun testFieldWithoutDocs() {
+    doTest()
   }
 
-  public void testFieldWithDocsPrivate() {
-    doTest();
+  fun testFieldWithDocsPrivate() {
+    doTest()
   }
 
-  public void testExtendedEventKey() {
-    doTest();
+  fun testExtendedEventKey() {
+    doTest()
   }
 
-  public void testCdkNoDataRow() {
-    configureLink(myFixture, ANGULAR_CDK_14_2_0);
-    myFixture.configureByFile(getTestName(true) + ".html");
-    checkDocumentationAtCaret(myFixture);
+  fun testCdkNoDataRow() {
+    configureLink(myFixture, Angular2TestModule.ANGULAR_CDK_14_2_0)
+    myFixture.configureByFile(getTestName(true) + ".html")
+    myFixture.checkDocumentationAtCaret()
   }
 
-  public void testCdkNoDataRowNotImported() {
-    configureCopy(myFixture, ANGULAR_CDK_14_2_0);
-    myFixture.configureByFiles(getTestName(true) + ".html", getTestName(true) + ".ts");
-    checkDocumentationAtCaret(myFixture);
+  fun testCdkNoDataRowNotImported() {
+    configureCopy(myFixture, Angular2TestModule.ANGULAR_CDK_14_2_0)
+    myFixture.configureByFiles(getTestName(true) + ".html", getTestName(true) + ".ts")
+    myFixture.checkDocumentationAtCaret()
   }
 
-  public void testComponentDecorator() {
-    configureCopy(myFixture, ANGULAR_CORE_16_0_0_NEXT_4);
-    myFixture.configureByFiles(getTestName(true) + ".ts");
-    checkDocumentationAtCaret(myFixture);
+  fun testComponentDecorator() {
+    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_16_0_0_NEXT_4)
+    myFixture.configureByFiles(getTestName(true) + ".ts")
+    myFixture.checkDocumentationAtCaret()
   }
 
-  public void testUnknownDirective() {
-    doTest();
+  fun testUnknownDirective() {
+    doTest()
   }
 
-  public void testDirectiveInputNoDoc() {
-    myFixture.configureByFiles(getTestName(true) + ".ts", "package.json");
-    checkDocumentationAtCaret(myFixture);
+  fun testDirectiveInputNoDoc() {
+    myFixture.configureByFiles(getTestName(true) + ".ts", "package.json")
+    myFixture.checkDocumentationAtCaret()
   }
 
-  public void testDirectiveInOutNoDoc() {
-    myFixture.configureByFiles(getTestName(true) + ".ts", "package.json");
-    checkDocumentationAtCaret(myFixture);
+  fun testDirectiveInOutNoDoc() {
+    myFixture.configureByFiles(getTestName(true) + ".ts", "package.json")
+    myFixture.checkDocumentationAtCaret()
   }
 
-  public void testDirectiveNoDocInOutDoc() {
-    myFixture.configureByFiles(getTestName(true) + ".ts", "package.json");
-    checkDocumentationAtCaret(myFixture);
+  fun testDirectiveNoDocInOutDoc() {
+    myFixture.configureByFiles(getTestName(true) + ".ts", "package.json")
+    myFixture.checkDocumentationAtCaret()
   }
 
-  public void testDirectiveInOutMixedDoc() {
-    myFixture.configureByFiles(getTestName(true) + ".ts", "package.json");
-    checkDocumentationAtCaret(myFixture);
+  fun testDirectiveInOutMixedDoc() {
+    myFixture.configureByFiles(getTestName(true) + ".ts", "package.json")
+    myFixture.checkDocumentationAtCaret()
   }
 
-  private void doTest() {
+  private fun doTest() {
     myFixture.configureByFiles(getTestName(true) + ".html",
                                "package.json", "deps/list-item.component.ts", "deps/ng_for_of.ts", "deps/ng_if.ts", "deps/dir.ts",
-                               "deps/ng_plural.ts");
-    checkDocumentationAtCaret(myFixture);
+                               "deps/ng_plural.ts")
+    myFixture.checkDocumentationAtCaret()
   }
 }

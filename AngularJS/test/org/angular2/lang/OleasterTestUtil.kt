@@ -1,48 +1,43 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang;
+package org.angular2.lang
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.util.Ref;
-import com.intellij.testFramework.LightPlatformTestCase;
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.util.Ref
+import com.intellij.testFramework.LightPlatformTestCase
+import com.mscharhag.oleaster.runner.StaticRunnerSupport
 
-import static com.mscharhag.oleaster.runner.StaticRunnerSupport.after;
-import static com.mscharhag.oleaster.runner.StaticRunnerSupport.before;
-
-public final class OleasterTestUtil {
-  public static void bootstrapLightPlatform() {
-    Ref<OleasterLightPlatformTestCase> testCase = new Ref<>();
-    before(() -> testCase.set(new OleasterLightPlatformTestCase()));
-    after(() -> testCase.get().tearDown());
+object OleasterTestUtil {
+  @JvmStatic
+  fun bootstrapLightPlatform() {
+    val testCase = Ref<OleasterLightPlatformTestCase>()
+    StaticRunnerSupport.before { testCase.set(OleasterLightPlatformTestCase()) }
+    StaticRunnerSupport.after { testCase.get().tearDown() }
   }
 
-  @SuppressWarnings({"JUnitTestCaseWithNoTests", "NewClassNamingConvention"})
-  private static class OleasterLightPlatformTestCase extends LightPlatformTestCase {
-    @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
-    private OleasterLightPlatformTestCase() throws Exception {
-      setUp();
+  @Suppress("JUnitMalformedDeclaration")
+  private class OleasterLightPlatformTestCase : LightPlatformTestCase() {
+    init {
+      setUp()
     }
 
-    @Override
-    protected boolean shouldContainTempFiles() {
-      return false;
+    override fun shouldContainTempFiles(): Boolean {
+      return false
     }
 
-    @Override
-    public String getName() {
-      return "testOleaster";
+    override fun getName(): String {
+      return "testOleaster"
     }
 
-    @Override
-    public void tearDown() {
-      ApplicationManager.getApplication().invokeAndWait(() -> {
+    public override fun tearDown() {
+      ApplicationManager.getApplication().invokeAndWait {
         try {
-          super.tearDown();
+          super.tearDown()
         }
-        catch (Exception e) {
-          e.printStackTrace();
-          throw new RuntimeException(e);
+        catch (e: Exception) {
+          e.printStackTrace()
+          throw RuntimeException(e)
         }
-      });
+      }
     }
   }
 }

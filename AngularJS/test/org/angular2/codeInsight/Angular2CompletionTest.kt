@@ -8,7 +8,8 @@ import com.intellij.webSymbols.moveToOffsetBySignature
 import com.intellij.webSymbols.renderLookupItems
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.modules.Angular2TestModule
-import org.angular2.modules.Angular2TestModule.*
+import org.angular2.modules.Angular2TestModule.ANGULAR_CDK_14_2_0
+import org.angular2.modules.Angular2TestModule.ANGULAR_CORE_13_3_5
 import org.angularjs.AngularTestUtil
 
 class Angular2CompletionTest : Angular2CodeInsightFixtureTestCase() {
@@ -19,7 +20,7 @@ class Angular2CompletionTest : Angular2CodeInsightFixtureTestCase() {
   override fun setUp() {
     super.setUp()
     // Let's ensure we don't get WebSymbols registry stack overflows randomly
-    this.enableIdempotenceChecksOnEveryCache();
+    this.enableIdempotenceChecksOnEveryCache()
   }
 
   fun testCompletionInExpression() {
@@ -68,7 +69,7 @@ class Angular2CompletionTest : Angular2CodeInsightFixtureTestCase() {
         myFixture.copyDirectoryToProject(getTestName(true), ".")
       }
       if (modules.isNotEmpty()) {
-        configure(myFixture, linkModules, null, *modules)
+        Angular2TestModule.configure(myFixture, linkModules, *modules)
       }
       if (fileContents != null) {
         myFixture.configureByText(getTestName(true) + ".$extension", fileContents)
