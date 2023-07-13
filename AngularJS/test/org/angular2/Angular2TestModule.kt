@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2
 
+import com.intellij.javascript.web.WebFrameworkTestModule
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.ui.NodeModuleNamesUtil
 import com.intellij.lang.resharper.ReSharperTestUtil
@@ -12,7 +13,7 @@ import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import one.util.streamex.StreamEx
 import org.angularjs.AngularTestUtil
 
-enum class Angular2TestModule(private val myPackageName: String, private val myVersion: String) {
+enum class Angular2TestModule(private val myPackageName: String, private val myVersion: String) : WebFrameworkTestModule {
   AGM_CORE_1_0_0_BETA_5("@agm/core", "1.0.0-beta.5"),
   ANGULAR_CDK_14_2_0("@angular/cdk", "14.2.0"),
   ANGULAR_COMMON_4_0_0("@angular/common", "4.0.0"),
@@ -48,12 +49,15 @@ enum class Angular2TestModule(private val myPackageName: String, private val myV
   NG_ZORRO_ANTD_8_5_0_IVY("ng-zorro-antd", "8.5.0-ivy"),
   RXJS_6_4_0("rxjs", "6.4.0");
 
+  override val packageNames: List<String> = listOf(myPackageName)
+  override val folder: String = myPackageName.replace('/', '#') + "/" + myVersion + "/node_modules"
+
   val location: String
     get() = DATA_DIR + myPackageName.replace('/', '#') + "/" + myVersion + "/"
 
   companion object {
     private val DATA_DIR = FileUtilRt.toCanonicalPath(
-      AngularTestUtil.getBaseTestDataPath() + "modules/", '/', false)
+      AngularTestUtil.getBaseTestDataPath() + "node_modules/", '/', false)
 
     @JvmStatic
     fun configureCopy(fixture: CodeInsightTestFixture, vararg modules: Angular2TestModule) {

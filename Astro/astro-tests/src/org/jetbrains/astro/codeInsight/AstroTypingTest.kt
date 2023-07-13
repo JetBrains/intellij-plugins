@@ -3,7 +3,7 @@ package org.jetbrains.astro.codeInsight
 import com.intellij.lang.javascript.JSTestUtils
 import org.jetbrains.astro.AstroCodeInsightTestCase
 
-class AstroTypingTest : AstroCodeInsightTestCase() {
+class AstroTypingTest : AstroCodeInsightTestCase("codeInsight/typing") {
 
   fun testBracesInExpressions() = doTest("{([{")
 
@@ -34,10 +34,6 @@ class AstroTypingTest : AstroCodeInsightTestCase() {
   fun testHtmlEndTagElementCompletion() = doTest(">")
 
   //region Test configuration and helper methods
-  override fun getBasePath(): String {
-    return "codeInsight/typing"
-  }
-
   private fun doTest(textToType: String) {
     configure()
     myFixture.type(textToType)

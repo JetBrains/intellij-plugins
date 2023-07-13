@@ -1,13 +1,10 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.codeInsight.documentation.DocumentationManager
-import com.intellij.webSymbols.checkDocumentationAtCaret
-import com.intellij.webSymbols.checkLookupElementDocumentationAtCaret
-import com.intellij.webSymbols.checkNoDocumentationAtCaret
-import com.intellij.webSymbols.moveToOffsetBySignature
 import com.intellij.lang.documentation.ExternalDocumentationProvider
 import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.webSymbols.*
 import junit.framework.TestCase
 
 class VueDocumentationTest : BasePlatformTestCase() {
@@ -90,7 +87,7 @@ class VueDocumentationTest : BasePlatformTestCase() {
   fun testMergedWebTypesComponents() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2, VueTestModule.NAIVE_UI_2_33_2_PATCHED)
     myFixture.configureByFile("${getTestName(false)}.vue")
-    myFixture.checkLookupElementDocumentationAtCaret(renderPriority = true) {
+    myFixture.checkLookupItems(renderPriority = true, checkDocumentation = true) {
       it.lookupString in setOf("n-affix", "n-bar", "n-a", "n-button", "n-alert")
     }
   }
@@ -99,7 +96,7 @@ class VueDocumentationTest : BasePlatformTestCase() {
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2, VueTestModule.NAIVE_UI_2_33_2_PATCHED)
     myFixture.configureByFile("${getTestName(false)}.vue")
-    myFixture.checkLookupElementDocumentationAtCaret(renderPriority = true, renderTypeText = true) {
+    myFixture.checkLookupItems(renderPriority = true, renderTypeText = true, checkDocumentation = true) {
       it.lookupString in setOf("bottom", "offset-top", "position", "trigger-bottom")
     }
   }
@@ -108,7 +105,7 @@ class VueDocumentationTest : BasePlatformTestCase() {
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2, VueTestModule.NAIVE_UI_2_33_2_PATCHED)
     myFixture.configureByFile("${getTestName(false)}.vue")
-    myFixture.checkLookupElementDocumentationAtCaret(renderPriority = true, renderTypeText = true) {
+    myFixture.checkLookupItems(renderPriority = true, renderTypeText = true, checkDocumentation = true) {
       it.lookupString in setOf("bottom", "offset-top", "position", "trigger-bottom")
     }
   }
@@ -116,17 +113,17 @@ class VueDocumentationTest : BasePlatformTestCase() {
   fun testMergedWebTypesSlots() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2, VueTestModule.NAIVE_UI_2_33_2_PATCHED)
     myFixture.configureByFile("${getTestName(false)}.vue")
-    myFixture.checkLookupElementDocumentationAtCaret(renderPriority = true)
+    myFixture.checkLookupItems(renderPriority = true, checkDocumentation = true)
   }
 
   fun testMergedWebTypesPropsSource() {
     myFixture.copyDirectoryToProject(getTestName(true), ".")
     myFixture.configureFromTempProjectFile("src/MergedWebTypesPropsSource.vue")
-    myFixture.checkLookupElementDocumentationAtCaret(renderPriority = true, renderTypeText = true) {
+    myFixture.checkLookupItems(renderPriority = true, renderTypeText = true, checkDocumentation = true, expectedDataLocation = "") {
       it.lookupString in setOf("test-prop-two", "test-prop")
     }
     myFixture.configureFromTempProjectFile("src/MergedWebTypesPropsScriptSource.vue")
-    myFixture.checkLookupElementDocumentationAtCaret(renderPriority = true, renderTypeText = true) {
+    myFixture.checkLookupItems(renderPriority = true, renderTypeText = true, checkDocumentation = true, expectedDataLocation = "") {
       it.lookupString in setOf("test-prop-two", "test-prop")
     }
   }
@@ -134,12 +131,12 @@ class VueDocumentationTest : BasePlatformTestCase() {
   fun testPrimeVueMergedProps() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2, VueTestModule.PRIMEVUE_3_8_2)
     myFixture.configureByFile("${getTestName(false)}.vue")
-    myFixture.checkLookupElementDocumentationAtCaret(renderPriority = true, renderTypeText = true,
-                                                     fileName = "PrimeVueMergedPropsElement") {
+    myFixture.checkLookupItems(renderPriority = true, renderTypeText = true, checkDocumentation = true,
+                               fileName = "PrimeVueMergedPropsElement") {
       it.lookupString in setOf("Avatar", "BlockUI")
     }
     myFixture.moveToOffsetBySignature("Avatar <caret>>")
-    myFixture.checkLookupElementDocumentationAtCaret(renderPriority = true, renderTypeText = true) {
+    myFixture.checkLookupItems(renderPriority = true, renderTypeText = true, checkDocumentation = true) {
       it.lookupString in setOf("icon", "size")
     }
   }
