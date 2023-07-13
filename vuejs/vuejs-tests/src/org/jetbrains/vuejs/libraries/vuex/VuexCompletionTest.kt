@@ -10,7 +10,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
-import org.jetbrains.vuejs.lang.createPackageJsonWithVueDependency
+import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.getVueTestDataPath
 import java.io.File
 
@@ -19,35 +19,35 @@ class VuexCompletionTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = getVueTestDataPath() + "/libraries/vuex/completion"
 
   fun testBasicGettersCompletion() {
-    createPackageJsonWithVueDependency(myFixture, "\"vuex\": \"^3.0.1\"")
+    myFixture.configureVueDependencies("vuex" to "^3.0.1")
     myFixture.configureByFiles("basicGetter.vue", "basicGetter.js")
     myFixture.completeBasic()
     assertContainsElements(myFixture.lookupElementStrings!!, "getter1", "getter_2")
   }
 
   fun testBasicMutationsCompletion() {
-    createPackageJsonWithVueDependency(myFixture, "\"vuex\": \"^3.0.1\"")
+    myFixture.configureVueDependencies("vuex" to "^3.0.1")
     myFixture.configureByFiles("basicMutations.vue", "basicMutations.js")
     myFixture.completeBasic()
     assertContainsElements(myFixture.lookupElementStrings!!, "mutation1")
   }
 
   fun testBasicMutations2Completion() {
-    createPackageJsonWithVueDependency(myFixture, "\"vuex\": \"^3.0.1\"")
+    myFixture.configureVueDependencies("vuex" to "^3.0.1")
     myFixture.configureByFiles("basicMutations2.js")
     myFixture.completeBasic()
     assertContainsElements(myFixture.lookupElementStrings!!, "mutation1")
   }
 
   fun testBasicActionsCompletion() {
-    createPackageJsonWithVueDependency(myFixture, "\"vuex\": \"^3.0.1\"")
+    myFixture.configureVueDependencies("vuex" to "^3.0.1")
     myFixture.configureByFiles("basicActions.vue", "basicActions.js")
     myFixture.completeBasic()
     assertContainsElements(myFixture.lookupElementStrings!!, "action1", "action_2")
   }
 
   fun testVuexActions2Completion() {
-    createPackageJsonWithVueDependency(myFixture, "\"vuex\": \"^3.0.1\"")
+    myFixture.configureVueDependencies("vuex" to "^3.0.1")
     myFixture.configureByFiles("basicActions2.vue", "basicActions2.ts")
     myFixture.completeBasic()
     assertContainsElements(myFixture.lookupElementStrings!!, "action1", "action_2")

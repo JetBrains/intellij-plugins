@@ -26,7 +26,7 @@ class VueTemplateInjectionsTest : BasePlatformTestCase() {
 
   @Test
   fun doSingleTest() {
-    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureVueDependencies()
     myFixture.configureByFile(myFileName!!)
 
     val injectedLanguageManager = InjectedLanguageManager.getInstance(project)

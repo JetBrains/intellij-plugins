@@ -39,7 +39,7 @@ class VueHighlightingTest : BasePlatformTestCase() {
     myFixture.enableInspections(VueInspectionsProvider())
   }
 
-  private fun doTest(packageJsonDependencies: String? = null,
+  private fun doTest(packageJsonDependencies: Map<String, String> = emptyMap(),
                      addNodeModules: List<VueTestModule> = emptyList(),
                      extension: String = "vue",
                      vararg files: String) {
@@ -47,21 +47,19 @@ class VueHighlightingTest : BasePlatformTestCase() {
     myFixture.checkHighlighting()
   }
 
-  private fun configureTestProject(packageJsonDependencies: String? = null,
+  private fun configureTestProject(packageJsonDependencies: Map<String, String> = emptyMap(),
                                    addNodeModules: List<VueTestModule> = emptyList(),
                                    extension: String = "vue",
                                    vararg files: String): PsiFile {
-    if (packageJsonDependencies != null) {
-      createPackageJsonWithVueDependency(myFixture, packageJsonDependencies)
-    }
-    if (addNodeModules.isNotEmpty()) {
-      myFixture.configureVueDependencies(*addNodeModules.toTypedArray())
-    }
+    myFixture.configureVueDependencies(*addNodeModules.toTypedArray(),
+                                       additionalDependencies = packageJsonDependencies)
     myFixture.configureByFiles(*files)
     return myFixture.configureByFile(getTestName(true) + "." + extension)
   }
 
-  private fun doDirTest(addNodeModules: List<VueTestModule> = emptyList(), fileName: String? = null, vararg additionalFilesToCheck: String) {
+  private fun doDirTest(addNodeModules: List<VueTestModule> = emptyList(),
+                        fileName: String? = null,
+                        vararg additionalFilesToCheck: String) {
     val testName = getTestName(true)
     if (addNodeModules.isNotEmpty()) {
       myFixture.configureVueDependencies(*addNodeModules.toTypedArray())
@@ -132,9 +130,9 @@ const props = {seeMe: {}}
     doTest()
   }
 
-  fun testCompRequiredAttributesTest() = doTest("")
+  fun testCompRequiredAttributesTest() = doTest()
 
-  fun testCompRequiredAttributesTestTS() = doTest("")
+  fun testCompRequiredAttributesTestTS() = doTest()
 
   fun testRequiredAttributeWithModifierTest() = doDirTest()
 
@@ -269,13 +267,13 @@ const props = {seeMe: {}}
   fun testComponentsNamedLikeHtmlTags() = doTest()
 
   fun testClassComponentAnnotationWithLocalComponent() {
-    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureVueDependencies()
     createTwoClassComponents(myFixture)
     doTest()
   }
 
   fun testClassComponentAnnotationWithLocalComponentTs() {
-    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureVueDependencies()
     myFixture.configureByText("vue.d.ts", "export interface Vue {};export class Vue {}")
     createTwoClassComponents(myFixture, true)
     doTest()
@@ -368,10 +366,10 @@ const props = {seeMe: {}}
 
   fun testPropsWithOptions() = doDirTest()
 
-  fun testFilters() = doTest("")
+  fun testFilters() = doTest()
 
   fun testEmptyTags() {
-    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureVueDependencies()
     myFixture.enableInspections(CheckTagEmptyBodyInspection())
     myFixture.copyDirectoryToProject("emptyTags", ".")
     for (file in listOf("test.vue", "test-html.html", "test-reg.html")) {
@@ -380,7 +378,7 @@ const props = {seeMe: {}}
     }
   }
 
-  fun testComputedPropType() = doTest("")
+  fun testComputedPropType() = doTest()
 
   fun testPseudoSelectors() {
     myFixture.enableInspections(CssInvalidPseudoSelectorInspection::class.java)
@@ -392,9 +390,9 @@ const props = {seeMe: {}}
     doTest()
   }
 
-  fun testMultipleScriptTagsInHTML() = doTest("", extension = "html")
+  fun testMultipleScriptTagsInHTML() = doTest(extension = "html")
 
-  fun testMultipleScriptTagsInVue() = doTest("")
+  fun testMultipleScriptTagsInVue() = doTest()
 
   fun testCompositionApiBasic_0_4_0() {
     myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10, VueTestModule.COMPOSITION_API_0_4_0)
@@ -419,7 +417,7 @@ const props = {seeMe: {}}
     }
   }
 
-  fun testCommonJSSupport() = doTest(""" "vuex":"*" """)
+  fun testCommonJSSupport() = doTest(mapOf("vuex" to "*"))
 
   fun testComputedTypeTS() = doTest(addNodeModules = listOf(VueTestModule.VUE_2_6_10))
 

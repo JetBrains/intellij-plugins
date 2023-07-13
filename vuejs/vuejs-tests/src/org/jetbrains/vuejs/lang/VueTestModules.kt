@@ -1,42 +1,20 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.javascript.nodejs.library.node_modules.NodeModulesDirectoryManager
-import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
-import com.intellij.openapi.project.Project
+import com.intellij.javascript.web.WebFrameworkTestModule
+import com.intellij.javascript.web.configureDependencies
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 
-fun createPackageJsonWithVueDependency(fixture: CodeInsightTestFixture,
-                                       additionalDependencies: String = "") {
-  fixture.configureByText(PackageJsonUtil.FILE_NAME, """
-    {
-      "name": "test",
-      "version": "0.0.1",
-      "dependencies": {
-        "vue": "2.5.3" ${if (additionalDependencies.isBlank()) "" else ", $additionalDependencies"}
-      }
-    }
-  """.trimIndent())
+fun CodeInsightTestFixture.configureVueDependencies(vararg additionalDependencies: Pair<String, String>) {
+  configureVueDependencies(additionalDependencies = additionalDependencies.toMap())
 }
 
-fun CodeInsightTestFixture.configureVueDependencies(vararg modules: VueTestModule) {
-  createPackageJsonWithVueDependency(
-    this, modules.asSequence()
-    .filter { it.folder != "vue" }
-    .flatMap { it.packageNames.asSequence() }
-    .joinToString { "\"${it}\": \"*\"" })
-  for (module in modules) {
-    tempDirFixture.copyAll("${getVueTestDataPath()}/modules/${module.folder}/node_modules", "node_modules")
-  }
-  forceReloadProjectRoots(project)
+fun CodeInsightTestFixture.configureVueDependencies(vararg modules: VueTestModule,
+                                                    additionalDependencies: Map<String, String> = emptyMap()) {
+  configureDependencies(getVueTestDataPath(), mapOf("vue" to "*") + additionalDependencies, *modules)
 }
 
-internal fun forceReloadProjectRoots(project: Project) {
-  // TODO - this shouldn't be needed, something's wrong with how roots are set within tests - check RootIndex#myRootInfos
-  NodeModulesDirectoryManager.getInstance(project).requestLibrariesUpdate()
-}
-
-enum class VueTestModule(val folder: String, vararg packageNames: String) {
+enum class VueTestModule(private val location: String, vararg packageNames: String) : WebFrameworkTestModule {
   BOOTSTRAP_VUE_2_0_0_RC_11("bootstrap-vue"),
   BUEFY_0_6_2("buefy"),
   COMPOSITION_API_0_4_0("composition-api/0.4.0", "@vue/composition-api"),
@@ -76,14 +54,7 @@ enum class VueTestModule(val folder: String, vararg packageNames: String) {
   VUEX_3_1_0("vuex/3.1.0", "vuex"),
   VUEX_4_0_0("vuex/4.0.0", "vuex");
 
-  val packageNames: List<String>
-
-  init {
-    if (packageNames.isEmpty()) {
-      this.packageNames = listOf(folder)
-    }
-    else {
-      this.packageNames = packageNames.toList()
-    }
-  }
+  override val packageNames: List<String> = if (packageNames.isEmpty()) listOf(location) else packageNames.toList()
+  override val folder: String
+    get() = "$location/node_modules"
 }

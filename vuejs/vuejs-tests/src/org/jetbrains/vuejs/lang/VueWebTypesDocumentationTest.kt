@@ -19,7 +19,7 @@ class VueWebTypesDocumentationTest : BasePlatformTestCase() {
 
   @Before
   fun before() {
-    createPackageJsonWithVueDependency(myFixture, """"test-lib":"0.0.0"""")
+    myFixture.configureVueDependencies("test-lib" to "0.0.0")
     myFixture.copyDirectoryToProject("node_modules", "node_modules")
   }
 

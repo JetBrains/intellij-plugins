@@ -61,7 +61,7 @@ class VueExternalFilesLinkingTest : BasePlatformTestCase() {
     val testName = getTestName(true)
     val targetText = if (testName.endsWith("Decorators")) "@Prop foo" else "\"foo\""
     myFixture.copyDirectoryToProject(getTestName(true), ".")
-    createPackageJsonWithVueDependency(myFixture, "")
+    myFixture.configureVueDependencies()
     myFixture.configureFromTempProjectFile(mainFile)
     val element = myFixture.resolveReference("{{ <caret>foo }}")
     assertEquals(targetFile, element.containingFile.name)
