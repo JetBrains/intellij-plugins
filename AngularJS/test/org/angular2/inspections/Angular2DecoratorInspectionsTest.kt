@@ -4,11 +4,11 @@ package org.angular2.inspections
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.webSymbols.moveToOffsetBySignature
 import org.angular2.Angular2CodeInsightFixtureTestCase
-import org.angular2.codeInsight.InspectionsTest
+import org.angular2.codeInsight.Angular2InspectionsTest
 import org.angularjs.AngularTestUtil
 
 /**
- * @see InspectionsTest
+ * @see Angular2InspectionsTest
  *
  * @see Angular2TemplateInspectionsTest
  */
