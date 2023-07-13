@@ -21,7 +21,7 @@ import org.angularjs.AngularTestUtil
 @Deprecated("Use test appropriate for IDE feature being tested - e.g. completion/resolve/highlighting ")
 class Angular2IvyMetadataTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/deprecated/metadata-ivy"
+    return AngularTestUtil.getBaseTestDataPath() + "deprecated/metadata-ivy"
   }
 
   fun testInterModuleExtends() {

@@ -125,7 +125,7 @@
 
     <projectService serviceInterface="org.angular2.refactoring.extractComponent.Angular2CliComponentGenerator"
                     serviceImplementation="org.angular2.refactoring.extractComponent.Angular2CliComponentGeneratorImpl"
-                    testServiceImplementation="org.angular2.refactoring.Angular2CliComponentGeneratorMockImpl"
+                    testServiceImplementation="org.angular2.codeInsight.refactoring.Angular2CliComponentGeneratorMockImpl"
     />
     <platform.backend.documentation.psiTargetProvider implementation="org.angular2.entities.impl.Angular2ElementDocumentationTargetFactory"/>
 

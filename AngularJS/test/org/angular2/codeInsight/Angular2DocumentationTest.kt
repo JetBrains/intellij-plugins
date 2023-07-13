@@ -9,7 +9,7 @@ import org.angularjs.AngularTestUtil
 
 class Angular2DocumentationTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/documentation"
+    return AngularTestUtil.getBaseTestDataPath() + "documentation"
   }
 
   fun testTagName() {

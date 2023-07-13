@@ -15,7 +15,7 @@ import org.angularjs.AngularTestUtil
 @Deprecated("Use test appropriate for IDE feature being tested - e.g. completion/resolve/highlighting ")
 class Angular2TagsTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/deprecated/tags"
+    return AngularTestUtil.getBaseTestDataPath() + "deprecated/tags"
   }
 
   fun testCustomTagsCompletion20TypeScript() {

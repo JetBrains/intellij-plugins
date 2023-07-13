@@ -14,7 +14,7 @@ import org.angularjs.AngularTestUtil
 @Deprecated("Use test appropriate for IDE feature being tested - e.g. completion/resolve/highlighting ")
 class Angular2SvgTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/deprecated/svg"
+    return AngularTestUtil.getBaseTestDataPath() + "deprecated/svg"
   }
 
   fun testHighlighting() {
