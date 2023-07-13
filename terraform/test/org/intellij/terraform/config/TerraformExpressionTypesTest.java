@@ -10,6 +10,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.CompositeElement;
 import com.intellij.psi.impl.source.tree.RecursiveTreeElementWalkingVisitor;
 import com.intellij.psi.impl.source.tree.TreeElement;
+import com.intellij.psi.impl.source.tree.injected.InjectedTestUtil;
 import com.intellij.testFramework.ParsingTestCase;
 import com.intellij.testFramework.TestDataFile;
 import com.intellij.testFramework.TestDataPath;
@@ -73,7 +74,8 @@ public abstract class TerraformExpressionTypesTest extends ParsingTestCase {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    registerMockInjectedLanguageManager();
+    InjectedTestUtil.registerMockInjectedLanguageManager(getApplication(), getProject(), getPluginDescriptor());
+
     //registerExtensionPoint(PsiReferenceContributor.EP_NAME, PsiReferenceContributor.class);
     registerExtension(PsiReferenceContributor.EP_NAME, new MyPsiReferenceContributor("HCL", new ILReferenceContributor(), new TerraformReferenceContributor()));
     registerExtension(PsiReferenceContributor.EP_NAME, new MyPsiReferenceContributor("HIL", new ILReferenceContributor()));
