@@ -7,13 +7,13 @@ import com.intellij.webSymbols.moveToOffsetBySignature
 import com.intellij.webSymbols.renderLookupItems
 import one.util.streamex.StreamEx
 import org.angular2.Angular2CodeInsightFixtureTestCase
-import org.angular2.inspections.Angular2TemplateInspectionsProvider
-import org.angular2.modules.Angular2TestModule
+import org.angular2.Angular2TemplateInspectionsProvider
+import org.angular2.Angular2TestModule
 import org.angularjs.AngularTestUtil
 
 class AngularSvgTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass)
+    return AngularTestUtil.getBaseTestDataPath() + "svg"
   }
 
   fun testHighlighting() {

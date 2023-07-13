@@ -7,15 +7,15 @@ import com.intellij.webSymbols.enableIdempotenceChecksOnEveryCache
 import com.intellij.webSymbols.moveToOffsetBySignature
 import com.intellij.webSymbols.renderLookupItems
 import org.angular2.Angular2CodeInsightFixtureTestCase
-import org.angular2.modules.Angular2TestModule
-import org.angular2.modules.Angular2TestModule.ANGULAR_CDK_14_2_0
-import org.angular2.modules.Angular2TestModule.ANGULAR_CORE_13_3_5
+import org.angular2.Angular2TestModule
+import org.angular2.Angular2TestModule.ANGULAR_CDK_14_2_0
+import org.angular2.Angular2TestModule.ANGULAR_CORE_13_3_5
 import org.angularjs.AngularTestUtil
 
 class Angular2CompletionTest : Angular2CodeInsightFixtureTestCase() {
 
   override fun getTestDataPath(): String =
-    AngularTestUtil.getBaseTestDataPath(javaClass) + "completion"
+    AngularTestUtil.getBaseTestDataPath() + "codeInsight/completion"
 
   override fun setUp() {
     super.setUp()

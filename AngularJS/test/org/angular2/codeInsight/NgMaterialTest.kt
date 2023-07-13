@@ -9,7 +9,7 @@ import org.angularjs.AngularTestUtil
 
 class NgMaterialTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "ngMaterial"
+    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/ngMaterial"
   }
 
   fun testTemplatesWithSuperConstructors() {

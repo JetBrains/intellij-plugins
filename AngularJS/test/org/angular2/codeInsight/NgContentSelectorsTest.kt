@@ -13,7 +13,7 @@ import org.angularjs.AngularTestUtil
 
 class NgContentSelectorsTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "ngContentSelectors"
+    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/ngContentSelectors"
   }
 
   fun testHighlightingSource() {

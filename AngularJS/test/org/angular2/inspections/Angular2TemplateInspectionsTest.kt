@@ -10,9 +10,9 @@ import com.intellij.lang.typescript.inspection.TypeScriptExplicitMemberTypeInspe
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
 import com.intellij.webSymbols.moveToOffsetBySignature
 import org.angular2.Angular2CodeInsightFixtureTestCase
+import org.angular2.Angular2TestModule
+import org.angular2.Angular2TestModule.Companion.configureCopy
 import org.angular2.codeInsight.InspectionsTest
-import org.angular2.modules.Angular2TestModule
-import org.angular2.modules.Angular2TestModule.Companion.configureCopy
 import org.angularjs.AngularTestUtil
 
 /**
@@ -22,7 +22,7 @@ import org.angularjs.AngularTestUtil
  */
 class Angular2TemplateInspectionsTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "template"
+    return AngularTestUtil.getBaseTestDataPath() + "inspections/template"
   }
 
   fun testEmptyEventBinding1() {

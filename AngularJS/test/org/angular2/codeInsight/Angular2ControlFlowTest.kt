@@ -5,13 +5,13 @@ import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.controlflow.BaseJSControlFlowTest
 import com.intellij.lang.javascript.psi.JSControlFlowScope
 import com.intellij.lang.javascript.psi.controlflow.JSControlFlowBuilder
+import org.angular2.Angular2TemplateInspectionsProvider
+import org.angular2.Angular2TestModule
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder
-import org.angular2.inspections.Angular2TemplateInspectionsProvider
-import org.angular2.modules.Angular2TestModule
 import org.angularjs.AngularTestUtil
 
 class Angular2ControlFlowTest : BaseJSControlFlowTest() {
-  override fun getTestDataPath(): String = AngularTestUtil.getBaseTestDataPath(javaClass) + "controlflow/"
+  override fun getTestDataPath(): String = AngularTestUtil.getBaseTestDataPath() + "codeInsight/controlflow/"
 
   override fun setUp() {
     super.setUp()

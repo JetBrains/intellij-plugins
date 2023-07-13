@@ -110,8 +110,7 @@ class Angular2EntitiesRenameTest : ReSharperParameterizedTestCase() {
     @JvmStatic
     @Suppress("unused")
     fun findTestData(klass: Class<*>): String {
-      return (AngularTestUtil.getBaseTestDataPath(klass)
-              + "/Refactorings/Rename/Angular2")
+      return AngularTestUtil.getBaseTestDataPath() + "resharper/Refactorings/Rename/Angular2"
     }
   }
 }

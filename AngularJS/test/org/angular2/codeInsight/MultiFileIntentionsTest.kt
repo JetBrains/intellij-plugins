@@ -9,7 +9,7 @@ import org.angularjs.AngularTestUtil
 
 class MultiFileIntentionsTest : Angular2MultiFileFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "intentions"
+    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/intentions"
   }
 
   override fun getTestRoot(): String {

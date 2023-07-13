@@ -6,14 +6,14 @@ import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.containers.ContainerUtil
 import org.angular2.Angular2CodeInsightFixtureTestCase
-import org.angular2.inspections.Angular2TemplateInspectionsProvider
-import org.angular2.modules.Angular2TestModule
-import org.angular2.modules.Angular2TestModule.Companion.configure
+import org.angular2.Angular2TemplateInspectionsProvider
+import org.angular2.Angular2TestModule
+import org.angular2.Angular2TestModule.Companion.configure
 import org.angularjs.AngularTestUtil
 
 class NgForTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "ngFor"
+    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/ngFor"
   }
 
   fun testNgFor() {

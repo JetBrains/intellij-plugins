@@ -9,7 +9,7 @@ import org.angularjs.AngularTestUtil
 
 class AngularChangeSignatureTest : JSChangeSignatureTestBase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass)
+    return AngularTestUtil.getBaseTestDataPath() + "refactoring/"
   }
 
   override fun getActiveFileNames(): Array<String> {

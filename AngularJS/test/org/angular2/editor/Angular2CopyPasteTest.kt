@@ -5,14 +5,15 @@ import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import org.angular2.Angular2CodeInsightFixtureTestCase
-import org.angular2.modules.Angular2TestModule
+import org.angular2.Angular2TestModule
 import org.angularjs.AngularTestUtil
 
 class Angular2CopyPasteTest : Angular2CodeInsightFixtureTestCase() {
   override fun getBasePath(): String = ""
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "copyPaste"
+    return AngularTestUtil.getBaseTestDataPath() + "editor/copyPaste"
   }
+
   private fun doTest(srcExt: String, destExt: String) {
     myFixture.copyDirectoryToProject(getTestName(false), ".")
     Angular2TestModule.configureCopy(myFixture,

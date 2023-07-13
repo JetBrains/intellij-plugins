@@ -7,7 +7,7 @@ import org.angularjs.AngularTestUtil
 
 class Angular2InaccessibleMemberAotInspectionTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "aot"
+    return AngularTestUtil.getBaseTestDataPath() + "inspections/aot"
   }
 
   fun testAotInaccessibleMemberTs() {

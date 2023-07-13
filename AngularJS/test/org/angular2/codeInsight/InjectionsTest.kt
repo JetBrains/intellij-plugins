@@ -31,17 +31,17 @@ import com.intellij.webSymbols.context.impl.WebSymbolsContextProviderExtensionPo
 import com.intellij.webSymbols.moveToOffsetBySignature
 import com.intellij.webSymbols.resolveReference
 import org.angular2.Angular2CodeInsightFixtureTestCase
+import org.angular2.Angular2TestModule
+import org.angular2.Angular2TestModule.Companion.configureCopy
 import org.angular2.lang.Angular2LangUtil.isAngular2Context
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.html.Angular2HtmlLanguage
 import org.angular2.lang.html.psi.Angular2HtmlTemplateBindings
-import org.angular2.modules.Angular2TestModule
-import org.angular2.modules.Angular2TestModule.Companion.configureCopy
 import org.angularjs.AngularTestUtil
 
 class InjectionsTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "injections"
+    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/injections"
   }
 
   fun testAngular2EmptyInterpolation() {

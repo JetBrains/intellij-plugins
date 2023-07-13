@@ -26,7 +26,7 @@ class AngularConfigTest : BasePlatformTestCase() {
   var myDirName: String? = null
 
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(AngularConfigTest::class.java) + "config"
+    return AngularTestUtil.getBaseTestDataPath() + "cli/config"
   }
 
   @Test
@@ -77,7 +77,7 @@ class AngularConfigTest : BasePlatformTestCase() {
     @Suppress("unused")
     @JvmStatic
     fun testNames(klass: Class<*>): List<String> {
-      val testData = File(AngularTestUtil.getBaseTestDataPath(klass) + "config")
+      val testData = File(AngularTestUtil.getBaseTestDataPath() + "cli/config")
       return StreamEx.of(*testData.listFiles())
         .filter { file: File -> file.isDirectory() }
         .map { file: File -> file.getName() }

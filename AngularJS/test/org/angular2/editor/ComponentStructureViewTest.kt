@@ -7,11 +7,11 @@ import org.angularjs.AngularTestUtil
 
 class ComponentStructureViewTest : JSAbstractStructureViewTest() {
   override fun getBasePath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass)
+    return AngularTestUtil.getBaseTestDataPath() + "editor"
   }
 
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass)
+    return AngularTestUtil.getBaseTestDataPath()
   }
 
   fun testStructure() {

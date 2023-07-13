@@ -8,9 +8,9 @@ import com.intellij.openapi.application.WriteAction
 import com.intellij.util.ArrayUtil
 import com.intellij.webSymbols.moveToOffsetBySignature
 import org.angular2.Angular2MultiFileFixtureTestCase
+import org.angular2.Angular2TestModule
+import org.angular2.Angular2TestModule.Companion.configureLink
 import org.angular2.inspections.quickfixes.Angular2FixesFactory
-import org.angular2.modules.Angular2TestModule
-import org.angular2.modules.Angular2TestModule.Companion.configureLink
 import org.angularjs.AngularTestUtil
 import java.io.IOException
 
@@ -19,7 +19,7 @@ import java.io.IOException
  */
 class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass)
+    return AngularTestUtil.getBaseTestDataPath() + "inspections/"
   }
 
   override fun getTestRoot(): String {

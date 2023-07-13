@@ -7,7 +7,7 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.testFramework.TestDataPath
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.webSymbols.WebSymbol
-import org.angular2.modules.Angular2TestModule
+import org.angular2.Angular2TestModule
 
 @TestDataPath("\$R#_COMPLETION_TEST_ROOT/Angular2")
 class Angular2CodeCompletionTest : Angular2ReSharperCompletionTestBase() {

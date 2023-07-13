@@ -1,5 +1,5 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.angular2.inspections
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2
 
 import com.intellij.codeInspection.InspectionToolProvider
 import com.intellij.codeInspection.LocalInspectionTool
@@ -16,6 +16,7 @@ import com.intellij.lang.typescript.inspections.TypeScriptValidateJSTypesInspect
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection
 import com.intellij.xml.util.CheckEmptyTagInspection
 import com.sixrr.inspectjs.validity.ThisExpressionReferencesGlobalObjectJSInspection
+import org.angular2.inspections.*
 
 class Angular2TemplateInspectionsProvider(private val strict: Boolean = false) : InspectionToolProvider {
   override fun getInspectionClasses(): Array<Class<out LocalInspectionTool>> {

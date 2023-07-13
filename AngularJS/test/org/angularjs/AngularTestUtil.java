@@ -30,9 +30,13 @@ public final class AngularTestUtil {
     return contribPath + "/AngularJS/test/" + clazz.getPackage().getName().replace('.', '/') + "/data/";
   }
 
-  public static String getBaseTestExDataPath(Class<?> clazz) {
+  public static String getBaseTestDataPath() {
     String contribPath = getContribPath();
-    return contribPath + "/AngularJS/test-ex/" + clazz.getPackage().getName().replace('.', '/') + "/data/";
+    return contribPath + "/AngularJS/testData/";
+  }
+
+  public static String getLexerTestDirPath() {
+    return getBaseTestDataPath().substring(IdeaTestExecutionPolicy.getHomePathWithPolicy().length());
   }
 
   private static String getContribPath() {

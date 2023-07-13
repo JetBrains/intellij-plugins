@@ -14,7 +14,7 @@ import org.angularjs.AngularTestUtil
  */
 class Angular2DecoratorInspectionsTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "decorator"
+    return AngularTestUtil.getBaseTestDataPath() + "inspections/decorator"
   }
 
   fun testComponentTemplateProperty1() {

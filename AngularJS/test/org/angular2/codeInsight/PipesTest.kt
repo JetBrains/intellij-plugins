@@ -10,15 +10,15 @@ import com.intellij.util.containers.ContainerUtil
 import com.intellij.webSymbols.moveToOffsetBySignature
 import com.intellij.webSymbols.resolveReference
 import org.angular2.Angular2CodeInsightFixtureTestCase
-import org.angular2.inspections.Angular2TemplateInspectionsProvider
-import org.angular2.modules.Angular2TestModule
-import org.angular2.modules.Angular2TestModule.Companion.configureCopy
-import org.angular2.modules.Angular2TestModule.Companion.configureLink
+import org.angular2.Angular2TemplateInspectionsProvider
+import org.angular2.Angular2TestModule
+import org.angular2.Angular2TestModule.Companion.configureCopy
+import org.angular2.Angular2TestModule.Companion.configureLink
 import org.angularjs.AngularTestUtil
 
 class PipesTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "pipes"
+    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/pipes"
   }
 
   private fun doTestAsyncPipeResolution() {

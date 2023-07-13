@@ -8,7 +8,7 @@ import org.intellij.idea.lang.javascript.intention.JSIntentionBundle
 
 class IntentionsTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "intentions"
+    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/intentions"
   }
 
   fun testComputeConstantInTemplate() {

@@ -1,5 +1,5 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang.html.lexer
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.lang.html
 
 import com.intellij.openapi.util.Pair
 import com.intellij.psi.TokenType
@@ -13,6 +13,8 @@ import com.mscharhag.oleaster.runner.StaticRunnerSupport.describe
 import com.mscharhag.oleaster.runner.StaticRunnerSupport.it
 import org.angular2.lang.OleasterTestUtil.bootstrapLightPlatform
 import org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType
+import org.angular2.lang.html.lexer.Angular2HtmlLexer
+import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 import org.junit.runner.RunWith
 
 @RunWith(OleasterRunner::class)

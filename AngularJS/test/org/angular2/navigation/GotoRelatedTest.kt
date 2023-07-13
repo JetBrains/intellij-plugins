@@ -28,7 +28,7 @@ class GotoRelatedTest : Angular2CodeInsightFixtureTestCase() {
   @JvmField
   var myTestDir: String? = null
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "related/" + myTestDir
+    return AngularTestUtil.getBaseTestDataPath() + "navigation/related/" + myTestDir
   }
 
   @Test
@@ -85,7 +85,7 @@ class GotoRelatedTest : Angular2CodeInsightFixtureTestCase() {
     @JvmStatic
     @Suppress("unused")
     fun testNames(klass: Class<*>): List<String> {
-      return StreamEx.of(*File(AngularTestUtil.getBaseTestDataPath(klass), "related").listFiles())
+      return StreamEx.of(*File(AngularTestUtil.getBaseTestDataPath(), "navigation/related").listFiles())
         .map { obj: File -> obj.getName() }
         .sorted()
         .toList()

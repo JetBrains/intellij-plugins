@@ -8,13 +8,13 @@ import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspecti
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.webSymbols.resolveWebSymbolReference
 import org.angular2.Angular2CodeInsightFixtureTestCase
-import org.angular2.inspections.Angular2TemplateInspectionsProvider
+import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.inspections.AngularUndefinedBindingInspection
 import org.angularjs.AngularTestUtil
 
 class TagsTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "tags"
+    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/tags"
   }
 
   fun testCustomTagsCompletion20TypeScript() {

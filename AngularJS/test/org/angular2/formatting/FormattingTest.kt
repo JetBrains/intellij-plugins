@@ -13,7 +13,7 @@ import org.angularjs.AngularTestUtil
 
 class FormattingTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass)
+    return AngularTestUtil.getBaseTestDataPath() + "formatting"
   }
 
   fun testStyles() {
