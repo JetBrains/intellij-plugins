@@ -1,8 +1,50 @@
 <html>
 <body>
 <p>Reports duplicate providers.</p>
+<p>
+  <em>Terraform relies on plugins called providers to interact with cloud providers, SaaS providers, and other APIs.</em>:
+  <a href="https://developer.hashicorp.com/terraform/language/providers">Learn more</a>
+</p>
 
-<p>If multiple configurations are required, set the <code>alias</code> argument for alternative configurations.</p>
+<p>Example of a problem:</p>
+<pre><code>
+  provider "aws" {
+    region  = "eu-west-1"
+  }
 
+  provider "aws" {
+    region  = "eu-west-2"
+  }</code>
+</pre>
+<p>
+  One of the ways to solve this problem is to add an <b>alias</b> and explicitly specify it when creating resources in the required provider.
+</p>
+
+<p>Example of correction:</p>
+<pre><code>
+  provider "aws" {
+    region  = "eu-west-1"
+    profile = "default"
+  }
+
+  provider "aws" {
+    region  = "eu-west-2"
+    alias = "eu-west-2"
+  }
+
+  //Example of creating a resource in a specific provider. For the default provider, it's not required to specify the name.
+  resource "aws_vpc" "example" {
+    cidr_block = "10.0.0.0/16"
+      //The default provider is used.
+  }
+
+  //For the provider alias, we specify the provider's name explicitly.
+  resource "aws_vpc" "example" {
+    cidr_block = "10.0.0.0/16"
+    provider = "aws.eu-west-2"
+  }</code>
+</pre>
+
+<em>Powered by</em>: <a href="https://plugins.jetbrains.com/plugin/7808-terraform-and-hcl">Terraform and HCL plugin</a>
 </body>
 </html>
