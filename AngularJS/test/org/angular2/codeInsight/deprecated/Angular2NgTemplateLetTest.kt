@@ -11,7 +11,7 @@ import org.angularjs.AngularTestUtil
 @Deprecated("Use test appropriate for IDE feature being tested - e.g. completion/resolve/highlighting ")
 class Angular2NgTemplateLetTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/deprecated/ngTemplateLet"
+    return AngularTestUtil.getBaseTestDataPath() + "deprecated/ngTemplateLet"
   }
 
   fun testNgFor() {

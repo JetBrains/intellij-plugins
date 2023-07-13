@@ -17,7 +17,7 @@ import java.util.*
 
 class Angular2ModelStructureTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/modelStructure"
+    return AngularTestUtil.getBaseTestDataPath() + "modelStructure"
   }
 
   fun testCommonModuleResolution() {

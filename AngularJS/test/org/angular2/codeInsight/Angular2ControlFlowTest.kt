@@ -11,7 +11,7 @@ import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder
 import org.angularjs.AngularTestUtil
 
 class Angular2ControlFlowTest : BaseJSControlFlowTest() {
-  override fun getTestDataPath(): String = AngularTestUtil.getBaseTestDataPath() + "codeInsight/controlflow/"
+  override fun getTestDataPath(): String = AngularTestUtil.getBaseTestDataPath() + "controlflow/"
 
   override fun setUp() {
     super.setUp()

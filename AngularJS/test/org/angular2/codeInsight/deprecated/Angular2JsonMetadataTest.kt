@@ -33,7 +33,7 @@ class Angular2JsonMetadataTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/deprecated/metadata-json"
+    return AngularTestUtil.getBaseTestDataPath() + "deprecated/metadata-json"
   }
 
   fun testMetadataJsonFileTypeBinary() {

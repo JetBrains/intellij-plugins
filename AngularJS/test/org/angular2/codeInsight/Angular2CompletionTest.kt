@@ -15,7 +15,7 @@ import org.angularjs.AngularTestUtil
 class Angular2CompletionTest : Angular2CodeInsightFixtureTestCase() {
 
   override fun getTestDataPath(): String =
-    AngularTestUtil.getBaseTestDataPath() + "codeInsight/completion"
+    AngularTestUtil.getBaseTestDataPath() + "completion"
 
   override fun setUp() {
     super.setUp()

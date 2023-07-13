@@ -19,7 +19,7 @@ import org.angularjs.AngularTestUtil
 @Deprecated("Use test appropriate for IDE feature being tested - e.g. completion/resolve/highlighting ")
 class Angular2PipesTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/deprecated/pipes"
+    return AngularTestUtil.getBaseTestDataPath() + "deprecated/pipes"
   }
 
   private fun doTestAsyncPipeResolution() {

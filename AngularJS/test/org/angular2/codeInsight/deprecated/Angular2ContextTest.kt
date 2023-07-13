@@ -28,7 +28,7 @@ import org.angularjs.AngularTestUtil
 @Deprecated("Use test appropriate for IDE feature being tested - e.g. completion/resolve/highlighting ")
 class Angular2ContextTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/deprecated/context"
+    return AngularTestUtil.getBaseTestDataPath() + "deprecated/context"
   }
 
   private fun resolveReference(signature: String): PsiElement {

@@ -34,7 +34,7 @@ import org.angular2.entities.Angular2DirectiveAttribute
 import org.angular2.entities.Angular2DirectiveProperty
 import org.angular2.entities.Angular2DirectiveSelectorSymbol
 import org.angular2.entities.Angular2EntitiesProvider.getComponent
-import org.angular2.inspections.Angular2ExpressionTypesInspectionTest
+import org.angular2.codeInsight.inspections.Angular2ExpressionTypesInspectionTest
 import org.angular2.inspections.AngularUndefinedBindingInspection
 import org.angular2.lang.html.psi.Angular2HtmlAttrVariable
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator
@@ -50,7 +50,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/deprecated/attributes"
+    return AngularTestUtil.getBaseTestDataPath() + "deprecated/attributes"
   }
 
   private fun resolveReference(signature: String): PsiElement {

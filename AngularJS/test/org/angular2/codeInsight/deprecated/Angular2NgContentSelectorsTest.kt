@@ -14,7 +14,7 @@ import org.angularjs.AngularTestUtil
 @Deprecated("Use test appropriate for IDE feature being tested - e.g. completion/resolve/highlighting ")
 class Angular2NgContentSelectorsTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/deprecated/ngContentSelectors"
+    return AngularTestUtil.getBaseTestDataPath() + "deprecated/ngContentSelectors"
   }
 
   fun testHighlightingSource() {
