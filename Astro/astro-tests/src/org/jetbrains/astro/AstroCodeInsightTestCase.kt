@@ -1,43 +1,16 @@
 package org.jetbrains.astro
 
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.intellij.webSymbols.enableAstLoadingFilter
+import com.intellij.javascript.web.WebFrameworkTestCase
 
-abstract class AstroCodeInsightTestCase : BasePlatformTestCase() {
-  @Throws(Exception::class)
-  override fun setUp() {
-    super.setUp()
-    enableAstLoadingFilter()
-  }
+abstract class AstroCodeInsightTestCase(override val testCasePath: String) : WebFrameworkTestCase() {
 
-  override fun getTestDataPath(): String = getAstroTestDataPath() + "/" + basePath
+  override val testDataRoot: String
+    get() = getAstroTestDataPath()
 
-  protected fun configure(fileContents: String? = null,
-                          dir: Boolean = false,
-                          additionalFiles: List<String> = emptyList(),
-                          vararg modules: AstroTestModule) {
-    if (dir) {
-      myFixture.copyDirectoryToProject(getTestName(true), ".")
-    }
-    else if (additionalFiles.isNotEmpty()) {
-      myFixture.configureByFiles(*additionalFiles.toTypedArray())
-    }
-    if (modules.isNotEmpty()) {
-      myFixture.configureAstroDependencies(*modules)
-    }
-    if (fileContents != null) {
-      myFixture.configureByText(getTestName(true) + ".astro", fileContents)
-    }
-    else if (dir) {
-      myFixture.configureFromTempProjectFile(getTestName(true) + ".astro")
-    }
-    else {
-      myFixture.configureByFile(getTestName(true) + ".astro")
-    }
-  }
+  override val defaultDependencies: Map<String, String> =
+    mapOf("astro" to "1.9.0")
 
-  protected fun checkResult() {
-    myFixture.checkResultByFile(getTestName(true) + "_after.astro")
-  }
+  override val defaultExtension: String
+    get() = "astro"
 
 }

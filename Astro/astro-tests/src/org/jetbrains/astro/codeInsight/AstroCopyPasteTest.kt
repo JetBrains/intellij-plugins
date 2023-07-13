@@ -1,9 +1,8 @@
 package org.jetbrains.astro.codeInsight
 
-import com.intellij.openapi.actionSystem.IdeActions
 import org.jetbrains.astro.AstroCodeInsightTestCase
 
-class AstroCopyPasteTest: AstroCodeInsightTestCase() {
+class AstroCopyPasteTest : AstroCodeInsightTestCase("codeInsight/copyPaste") {
 
   fun testBasic() {
     doTest()
@@ -14,16 +13,10 @@ class AstroCopyPasteTest: AstroCodeInsightTestCase() {
   }
 
   //region Test configuration and helper methods
-  override fun getBasePath(): String {
-    return "codeInsight/copyPaste"
-  }
   private fun doTest() {
-    myFixture.copyDirectoryToProject(getTestName(true), ".")
-    myFixture.configureFromTempProjectFile("Source.astro")
-    myFixture.performEditorAction(IdeActions.ACTION_EDITOR_COPY)
-    myFixture.configureFromTempProjectFile("Destination.astro")
-    myFixture.performEditorAction(IdeActions.ACTION_EDITOR_PASTE)
-    myFixture.checkResultByFile(getTestName(true) + "/Destination_after.astro")
+    configure(dir = true, configureFile = false)
+    performCopyPaste("Source.astro", "Destination.astro")
+    myFixture.checkResultByFile("$testName/Destination_after.astro")
   }
   //endregion
 

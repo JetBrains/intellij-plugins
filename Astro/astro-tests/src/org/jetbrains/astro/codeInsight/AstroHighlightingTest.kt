@@ -2,7 +2,7 @@ package org.jetbrains.astro.codeInsight
 
 import org.jetbrains.astro.AstroCodeInsightTestCase
 
-class AstroHighlightingTest : AstroCodeInsightTestCase() {
+class AstroHighlightingTest : AstroCodeInsightTestCase("codeInsight/highlighting") {
 
   fun testCharEntityResolution() = doTest()
 
@@ -13,8 +13,6 @@ class AstroHighlightingTest : AstroCodeInsightTestCase() {
   fun testUnusedImportFalsePositive() = doTest()
 
   //region Test configuration and helper methods
-
-  override fun getBasePath(): String = "codeInsight/highlighting"
 
   override fun setUp() {
     super.setUp()

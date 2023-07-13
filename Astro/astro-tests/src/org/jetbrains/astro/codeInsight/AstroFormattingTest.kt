@@ -5,7 +5,7 @@ import com.intellij.openapi.command.CommandProcessor
 import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.astro.AstroCodeInsightTestCase
 
-class AstroFormattingTest : AstroCodeInsightTestCase() {
+class AstroFormattingTest : AstroCodeInsightTestCase("codeInsight/formatting") {
 
   fun testBasic() = doTest()
 
@@ -14,21 +14,8 @@ class AstroFormattingTest : AstroCodeInsightTestCase() {
   fun testScriptTag() = doTest()
 
   //region Test configuration and helper methods
-  override fun getBasePath(): String {
-    return "codeInsight/formatting"
-  }
-
   private fun doTest() {
-    configure()
-    val codeStyleManager = CodeStyleManager.getInstance(project)
-    CommandProcessor.getInstance().executeCommand(
-      project,
-      {
-        WriteAction.run<RuntimeException> {
-          codeStyleManager.reformat(myFixture.file)
-        }
-      }, null, null)
-    checkResult()
+    doFormattingTest()
   }
   //endregion
 }

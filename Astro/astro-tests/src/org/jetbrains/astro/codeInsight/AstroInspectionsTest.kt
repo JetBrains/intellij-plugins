@@ -9,7 +9,7 @@ import org.jetbrains.astro.AstroCodeInsightTestCase
 import org.jetbrains.astro.inspections.AstroMissingComponentImportInspection
 import kotlin.reflect.KClass
 
-class AstroInspectionsTest : AstroCodeInsightTestCase() {
+class AstroInspectionsTest : AstroCodeInsightTestCase("codeInsight/inspections") {
 
   fun testMissingComponentImport() = doTest(AstroMissingComponentImportInspection::class,
                                             AstroBundle.message("astro.quickfix.import.component.name", "Component"),
@@ -47,8 +47,6 @@ class AstroInspectionsTest : AstroCodeInsightTestCase() {
                                                JavaScriptBundle.message("js.replace.string.concatenation.with.es6.template.fix.text"))
 
   //region Test configuration and helper methods
-
-  override fun getBasePath(): String = "codeInsight/inspections"
 
   private fun doTest(inspection: KClass<out LocalInspectionTool>,
                      quickFixName: String? = null,
