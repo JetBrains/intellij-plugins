@@ -7,7 +7,7 @@ import org.angularjs.AngularTestUtil
 
 class DirectiveRenameTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "rename"
+    return AngularTestUtil.getBaseTestDataPath() + "refactoring/rename"
   }
 
   fun testTag2() {

@@ -36,7 +36,7 @@ class ComponentDeclarationNavigationTest : Angular2CodeInsightFixtureTestCase() 
   @JvmField
   var myElementText: String? = null
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass)
+    return AngularTestUtil.getBaseTestDataPath() + "editor/"
   }
 
   @Test

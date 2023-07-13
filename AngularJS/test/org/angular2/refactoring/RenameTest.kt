@@ -18,7 +18,7 @@ import org.angularjs.AngularTestUtil
 
 class RenameTest : Angular2MultiFileFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "rename"
+    return AngularTestUtil.getBaseTestDataPath() + "refactoring/rename"
   }
 
   @Throws(Exception::class)

@@ -9,7 +9,7 @@ import org.angularjs.AngularTestUtil
 
 class CssCompletionTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "completion"
+    return AngularTestUtil.getBaseTestDataPath() + "css/completion"
   }
 
   fun testLocalCssCompletionHtml() {

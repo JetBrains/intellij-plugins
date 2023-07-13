@@ -6,7 +6,7 @@ import org.angularjs.AngularTestUtil
 
 class ScopesTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "scopes"
+    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/scopes"
   }
 
   fun testReferencesAndVariablesScopes() {

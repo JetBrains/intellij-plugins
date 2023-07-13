@@ -13,16 +13,16 @@ import com.intellij.webSymbols.resolveWebSymbolReference
 import com.intellij.webSymbols.webSymbolAtCaret
 import com.intellij.webSymbols.webSymbolSourceAtCaret
 import org.angular2.Angular2CodeInsightFixtureTestCase
+import org.angular2.Angular2TemplateInspectionsProvider
+import org.angular2.Angular2TestModule
+import org.angular2.Angular2TestModule.Companion.configureCopy
 import org.angular2.entities.metadata.psi.Angular2MetadataNodeModule
 import org.angular2.entities.metadata.psi.Angular2MetadataReference
-import org.angular2.inspections.Angular2TemplateInspectionsProvider
 import org.angular2.inspections.AngularAmbiguousComponentTagInspection
 import org.angular2.inspections.AngularUndefinedBindingInspection
 import org.angular2.inspections.AngularUndefinedTagInspection
 import org.angular2.lang.metadata.MetadataJsonFileViewProviderFactory.MetadataFileViewProvider
 import org.angular2.lang.metadata.psi.MetadataFileImpl
-import org.angular2.modules.Angular2TestModule
-import org.angular2.modules.Angular2TestModule.Companion.configureCopy
 import org.angularjs.AngularTestUtil
 import java.io.File
 
@@ -32,7 +32,7 @@ class JsonMetadataTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "/json"
+    return AngularTestUtil.getBaseTestDataPath() + "metadata/json"
   }
 
   fun testMetadataJsonFileTypeBinary() {

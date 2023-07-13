@@ -12,7 +12,7 @@ import org.angularjs.AngularTestUtil
 
 class Angular2ExtractComponentTest : Angular2MultiFileFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "extractComponent"
+    return AngularTestUtil.getBaseTestDataPath() + "refactoring/extractComponent"
   }
 
   fun testSingleElementMultiLineFromCaret() {

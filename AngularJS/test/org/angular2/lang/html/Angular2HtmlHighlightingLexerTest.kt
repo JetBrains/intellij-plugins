@@ -1,10 +1,11 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang.html.highlighting
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.lang.html
 
 import com.intellij.lexer.Lexer
-import org.angular2.lang.html.lexer.Angular2HtmlLexerTest
+import org.angular2.lang.html.highlighting.Angular2HtmlHighlightingLexer
+import org.angularjs.AngularTestUtil
 
-open class Angular2HtmlHighlightingTest : Angular2HtmlLexerTest() {
+open class Angular2HtmlHighlightingLexerTest : Angular2HtmlLexerTest() {
   override fun createLexer(): Lexer {
     return Angular2HtmlHighlightingLexer(true, null, null)
   }
@@ -31,5 +32,9 @@ open class Angular2HtmlHighlightingTest : Angular2HtmlLexerTest() {
                <button (click)='damage(card)'> Damage </button>
              </div>
              """.trimIndent())
+  }
+
+  override fun getDirPath(): String {
+    return AngularTestUtil.getLexerTestDirPath() + "html/highlightingLexer"
   }
 }

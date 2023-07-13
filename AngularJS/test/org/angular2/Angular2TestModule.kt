@@ -1,5 +1,5 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.modules
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2
 
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.ui.NodeModuleNamesUtil
@@ -53,7 +53,7 @@ enum class Angular2TestModule(private val myPackageName: String, private val myV
 
   companion object {
     private val DATA_DIR = FileUtilRt.toCanonicalPath(
-      AngularTestUtil.getBaseTestDataPath(Angular2TestModule::class.java) + "../node_modules/", '/', false)
+      AngularTestUtil.getBaseTestDataPath() + "modules/", '/', false)
 
     @JvmStatic
     fun configureCopy(fixture: CodeInsightTestFixture, vararg modules: Angular2TestModule) {

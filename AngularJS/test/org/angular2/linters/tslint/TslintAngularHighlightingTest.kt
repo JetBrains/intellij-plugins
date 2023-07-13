@@ -16,7 +16,7 @@ class TslintAngularHighlightingTest : LinterHighlightingTest() {
   @Throws(Exception::class)
   override fun setUp() {
     super.setUp()
-    myFixture.setTestDataPath(AngularTestUtil.getBaseTestDataPath(javaClass))
+    myFixture.setTestDataPath(AngularTestUtil.getBaseTestDataPath() + "linters/tslint")
   }
 
   override fun getInspection(): InspectionProfileEntry {

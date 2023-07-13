@@ -18,7 +18,7 @@ class Angular2BananaFixTest : ReSharperIntentionTestCase() {
     @Suppress("unused")
     @JvmStatic
     fun findTestData(klass: Class<*>): String {
-      return AngularTestUtil.getBaseTestDataPath(klass) + "Intentions/Angular2Html/QuickFixes"
+      return AngularTestUtil.getBaseTestDataPath() + "resharper/Intentions/Angular2Html/QuickFixes"
     }
   }
 }

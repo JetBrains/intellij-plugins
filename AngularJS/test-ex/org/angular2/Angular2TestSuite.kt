@@ -4,7 +4,6 @@ package org.angular2
 import org.angular2.cli.AngularConfigTest
 import org.angular2.cli.BlueprintListTest
 import org.angular2.codeInsight.*
-import org.angular2.codeInsight.template.Angular2LiveTemplateTest
 import org.angular2.css.CssClassTest
 import org.angular2.css.CssCompletionTest
 import org.angular2.css.CssInspectionsTest
@@ -14,15 +13,11 @@ import org.angular2.editor.Angular2PipeParameterInfoTest
 import org.angular2.editor.ComponentDeclarationNavigationTest
 import org.angular2.formatting.FormattingTest
 import org.angular2.inspections.*
-import org.angular2.lang.expr.lexer.Angular2LexerSpecTest
-import org.angular2.lang.expr.lexer.Angular2LexerTest
-import org.angular2.lang.expr.parser.Angular2ParserSpecTest
-import org.angular2.lang.expr.parser.Angular2ParserTest
-import org.angular2.lang.html.highlighting.Angular2HtmlHighlightingTest
-import org.angular2.lang.html.index.Angular2HtmlIndexerTest
-import org.angular2.lang.html.lexer.Angular2HtmlLexerSpecTest
-import org.angular2.lang.html.lexer.Angular2HtmlLexerTest
-import org.angular2.lang.html.parser.Angular2HtmlParsingTest
+import org.angular2.lang.expr.Angular2LexerSpecTest
+import org.angular2.lang.expr.Angular2LexerTest
+import org.angular2.lang.expr.Angular2ParserSpecTest
+import org.angular2.lang.expr.Angular2ParserTest
+import org.angular2.lang.html.*
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelectorSpecTest
 import org.angular2.metadata.IvyMetadataTest
 import org.angular2.metadata.JsonMetadataTest
@@ -44,7 +39,7 @@ import org.junit.runners.Suite
   Angular2ParserTest::class,
   Angular2HtmlLexerSpecTest::class,
   Angular2HtmlLexerTest::class,
-  Angular2HtmlHighlightingTest::class,
+  Angular2HtmlHighlightingLexerTest::class,
   Angular2HtmlIndexerTest::class,
   Angular2HtmlParsingTest::class,
   Angular2DirectiveSimpleSelectorSpecTest::class,

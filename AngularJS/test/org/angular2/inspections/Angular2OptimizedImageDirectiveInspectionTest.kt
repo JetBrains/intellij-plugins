@@ -3,14 +3,14 @@ package org.angular2.inspections
 
 import com.intellij.xml.analysis.XmlAnalysisBundle
 import org.angular2.Angular2MultiFileFixtureTestCase
+import org.angular2.Angular2TestModule
 import org.angular2.lang.Angular2Bundle
-import org.angular2.modules.Angular2TestModule
 import org.angularjs.AngularTestUtil
 
 class Angular2OptimizedImageDirectiveInspectionTest : Angular2MultiFileFixtureTestCase() {
 
   override fun getTestDataPath(): String? {
-    return AngularTestUtil.getBaseTestDataPath(javaClass)
+    return AngularTestUtil.getBaseTestDataPath() + "inspections/"
   }
 
   override fun getTestRoot(): String {

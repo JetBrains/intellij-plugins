@@ -12,7 +12,7 @@ import java.io.IOException
 
 class MoveTest : Angular2MultiFileFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "move"
+    return AngularTestUtil.getBaseTestDataPath() + "refactoring/move"
   }
 
   override fun getTestRoot(): String {

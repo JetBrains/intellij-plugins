@@ -1,5 +1,5 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang.html.parser
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.lang.html
 
 import com.intellij.html.HtmlParsingTest
 import com.intellij.html.embedding.HtmlEmbeddedContentSupport.Companion.register
@@ -27,6 +27,7 @@ import com.intellij.psi.impl.DebugUtil
 import com.intellij.testFramework.UsefulTestCase
 import org.angular2.lang.expr.parser.Angular2ParserDefinition
 import org.angular2.lang.html.lexer.Angular2HtmlEmbeddedContentSupport
+import org.angular2.lang.html.parser.Angular2HtmlParserDefinition
 import org.angularjs.AngularTestUtil
 
 class Angular2HtmlParsingTest : HtmlParsingTest("", "html",
@@ -58,7 +59,7 @@ class Angular2HtmlParsingTest : HtmlParsingTest("", "html",
   }
 
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestExDataPath(Angular2HtmlParsingTest::class.java)
+    return AngularTestUtil.getBaseTestDataPath() + "html/parser"
   }
 
   fun testNgParseElementsInsideNgTemplate() {

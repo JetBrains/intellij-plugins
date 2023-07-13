@@ -1,5 +1,5 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang.expr.parser
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.lang.expr
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
@@ -20,7 +20,8 @@ import com.mscharhag.oleaster.runner.StaticRunnerSupport.describe
 import com.mscharhag.oleaster.runner.StaticRunnerSupport.it
 import junit.framework.AssertionFailedError
 import org.angular2.lang.OleasterTestUtil.bootstrapLightPlatform
-import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.expr.parser.Angular2ElementTypes
+import org.angular2.lang.expr.parser.Angular2PsiParser
 import org.angular2.lang.expr.psi.*
 import org.junit.runner.RunWith
 

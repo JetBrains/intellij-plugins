@@ -11,7 +11,7 @@ import org.angularjs.AngularTestUtil
 
 class GotoSymbolTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "symbol/" + getTestName(true)
+    return AngularTestUtil.getBaseTestDataPath() + "navigation/symbol/" + getTestName(true)
   }
 
   fun testElementSelector() {

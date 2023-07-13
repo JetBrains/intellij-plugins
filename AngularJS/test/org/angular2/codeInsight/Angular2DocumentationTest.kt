@@ -2,14 +2,14 @@ package org.angular2.codeInsight
 
 import com.intellij.webSymbols.checkDocumentationAtCaret
 import org.angular2.Angular2CodeInsightFixtureTestCase
-import org.angular2.modules.Angular2TestModule
-import org.angular2.modules.Angular2TestModule.Companion.configureCopy
-import org.angular2.modules.Angular2TestModule.Companion.configureLink
+import org.angular2.Angular2TestModule
+import org.angular2.Angular2TestModule.Companion.configureCopy
+import org.angular2.Angular2TestModule.Companion.configureLink
 import org.angularjs.AngularTestUtil
 
 class Angular2DocumentationTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "documentation"
+    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/documentation"
   }
 
   fun testTagName() {

@@ -25,18 +25,18 @@ import com.intellij.webSymbols.*
 import com.intellij.webSymbols.WebSymbolDelegate.Companion.unwrapAllDelegates
 import com.intellij.xml.util.XmlInvalidIdInspection
 import org.angular2.Angular2CodeInsightFixtureTestCase
+import org.angular2.Angular2TemplateInspectionsProvider
+import org.angular2.Angular2TestModule
+import org.angular2.Angular2TestModule.Companion.configureCopy
+import org.angular2.Angular2TestModule.Companion.configureLink
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2DirectiveAttribute
 import org.angular2.entities.Angular2DirectiveProperty
 import org.angular2.entities.Angular2DirectiveSelectorSymbol
 import org.angular2.entities.Angular2EntitiesProvider.getComponent
 import org.angular2.inspections.Angular2ExpressionTypesInspectionTest
-import org.angular2.inspections.Angular2TemplateInspectionsProvider
 import org.angular2.inspections.AngularUndefinedBindingInspection
 import org.angular2.lang.html.psi.Angular2HtmlAttrVariable
-import org.angular2.modules.Angular2TestModule
-import org.angular2.modules.Angular2TestModule.Companion.configureCopy
-import org.angular2.modules.Angular2TestModule.Companion.configureLink
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator
 import org.angularjs.AngularTestUtil
 
@@ -49,7 +49,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "attributes"
+    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/attributes"
   }
 
   private fun resolveReference(signature: String): PsiElement {

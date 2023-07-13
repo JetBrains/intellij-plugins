@@ -3,14 +3,14 @@ package org.angular2.codeInsight
 
 import com.intellij.testFramework.UsefulTestCase
 import org.angular2.Angular2CodeInsightFixtureTestCase
-import org.angular2.inspections.Angular2TemplateInspectionsProvider
-import org.angular2.modules.Angular2TestModule
-import org.angular2.modules.Angular2TestModule.Companion.configureCopy
+import org.angular2.Angular2TemplateInspectionsProvider
+import org.angular2.Angular2TestModule
+import org.angular2.Angular2TestModule.Companion.configureCopy
 import org.angularjs.AngularTestUtil
 
 class NgTemplateLetTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "ngTemplateLet"
+    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/ngTemplateLet"
   }
 
   fun testNgFor() {

@@ -1,12 +1,12 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang.html.lexer
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.lang.html
 
 import com.intellij.lexer.Lexer
-import com.intellij.openapi.application.PathManager
 import com.intellij.testFramework.LexerTestCase
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory
+import org.angular2.lang.html.lexer.Angular2HtmlLexer
 import org.angularjs.AngularTestUtil
 import org.jetbrains.annotations.NonNls
 
@@ -273,6 +273,6 @@ open class Angular2HtmlLexerTest : LexerTestCase() {
   }
 
   override fun getDirPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass).substring(PathManager.getHomePath().length)
+    return AngularTestUtil.getLexerTestDirPath() + "html/lexer"
   }
 }

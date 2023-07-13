@@ -46,8 +46,8 @@ abstract class Angular2ReSharperCompletionTestBase : TypeScriptReSharperCompleti
     @JvmStatic
     @Suppress("unused")
     fun findTestData(klass: Class<*>): String {
-      return (AngularTestUtil.getBaseTestDataPath(klass)
-              + "/CodeCompletion/"
+      return (AngularTestUtil.getBaseTestDataPath()
+              + "resharper/CodeCompletion/"
               + klass.getAnnotation(TestDataPath::class.java).value.removePrefix("\$R#_COMPLETION_TEST_ROOT"))
     }
   }

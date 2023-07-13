@@ -11,7 +11,7 @@ import org.jetbrains.plugins.scss.inspections.SassScssUnresolvedMixinInspection
 
 class CssInspectionsTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "inspections"
+    return AngularTestUtil.getBaseTestDataPath() + "css/inspections"
   }
 
   fun testLocalStylesheet() {

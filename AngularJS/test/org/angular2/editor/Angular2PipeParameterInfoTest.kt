@@ -14,7 +14,7 @@ import org.angularjs.AngularTestUtil
 
 class Angular2PipeParameterInfoTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass)
+    return AngularTestUtil.getBaseTestDataPath() + "editor/"
   }
 
   fun testPipeParameterInfo() {

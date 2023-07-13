@@ -7,17 +7,17 @@ import com.intellij.util.containers.ContainerUtil
 import com.intellij.webSymbols.DebugOutputPrinter
 import one.util.streamex.StreamEx
 import org.angular2.Angular2CodeInsightFixtureTestCase
+import org.angular2.Angular2TestModule
 import org.angular2.entities.*
 import org.angular2.entities.Angular2EntitiesProvider.getEntity
 import org.angular2.entities.Angular2EntitiesProvider.getModule
-import org.angular2.modules.Angular2TestModule
 import org.angular2.web.Angular2Symbol
 import org.angularjs.AngularTestUtil
 import java.util.*
 
 class ModulesTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "modules"
+    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/modules"
   }
 
   fun testCommonModuleResolution() {

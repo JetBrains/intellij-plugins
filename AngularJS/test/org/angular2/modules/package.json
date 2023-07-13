@@ -1,5 +1,0 @@
-{
-  "dependencies": {
-    "this file is here to exclude node_modules from indexing": ""
-  }
-}

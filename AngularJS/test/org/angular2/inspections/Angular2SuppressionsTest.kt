@@ -7,11 +7,12 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.webSymbols.moveToOffsetBySignature
 import org.angular2.Angular2CodeInsightFixtureTestCase
+import org.angular2.Angular2TemplateInspectionsProvider
 import org.angularjs.AngularTestUtil
 
 class Angular2SuppressionsTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "suppressions"
+    return AngularTestUtil.getBaseTestDataPath() + "inspections/suppressions"
   }
 
   fun testTemplateSuppressions() {

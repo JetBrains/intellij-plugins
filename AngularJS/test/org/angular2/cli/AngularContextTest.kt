@@ -12,7 +12,7 @@ import org.angularjs.AngularTestUtil
 
 class AngularContextTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(AngularConfigTest::class.java) + "context"
+    return AngularTestUtil.getBaseTestDataPath() + "cli/context"
   }
 
   fun testAngular9() {

@@ -28,7 +28,7 @@ class Angular2ParameterHintsTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass)
+    return AngularTestUtil.getBaseTestDataPath() + "editor"
   }
 
   fun testParameterHintsInHtml() {

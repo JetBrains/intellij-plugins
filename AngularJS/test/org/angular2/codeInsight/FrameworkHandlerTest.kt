@@ -9,19 +9,19 @@ import com.intellij.psi.PsiManager
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.containers.ContainerUtil
 import org.angular2.Angular2CodeInsightFixtureTestCase
+import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.entities.Angular2Component
 import org.angular2.entities.Angular2ComponentLocator.findComponentClasses
 import org.angular2.entities.Angular2ComponentLocator.findComponentClassesInFile
 import org.angular2.entities.Angular2Declaration
 import org.angular2.entities.Angular2FrameworkHandler
 import org.angular2.entities.Angular2Module
-import org.angular2.inspections.Angular2TemplateInspectionsProvider
 import org.angular2.inspections.AngularMissingOrInvalidDeclarationInModuleInspection
 import org.angularjs.AngularTestUtil
 
 class FrameworkHandlerTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "frameworkHandler"
+    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/frameworkHandler"
   }
 
   fun testAdditionalComponentClasses() {

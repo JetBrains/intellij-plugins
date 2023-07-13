@@ -2,19 +2,18 @@
 package org.angular2.css
 
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiElement
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.webSymbols.moveToOffsetBySignature
 import com.intellij.webSymbols.resolveReference
 import org.angular2.Angular2CodeInsightFixtureTestCase
-import org.angular2.modules.Angular2TestModule
-import org.angular2.modules.Angular2TestModule.Companion.configureLink
+import org.angular2.Angular2TestModule
+import org.angular2.Angular2TestModule.Companion.configureLink
 import org.angularjs.AngularTestUtil
 
 class CssClassTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "clazz"
+    return AngularTestUtil.getBaseTestDataPath() + "css/clazz"
   }
 
   fun testExternalReference() {

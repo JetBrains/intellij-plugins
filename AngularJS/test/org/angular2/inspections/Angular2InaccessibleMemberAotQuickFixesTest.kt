@@ -5,13 +5,12 @@ import com.intellij.codeInsight.intention.IntentionActionDelegate
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.webSymbols.moveToOffsetBySignature
 import org.angular2.Angular2MultiFileFixtureTestCase
-import org.angular2.inspections.AngularInaccessibleComponentMemberInAotModeInspection
 import org.angular2.inspections.quickfixes.AngularMakePublicQuickFix
 import org.angularjs.AngularTestUtil
 
 class Angular2InaccessibleMemberAotQuickFixesTest : Angular2MultiFileFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "aot"
+    return AngularTestUtil.getBaseTestDataPath() + "inspections/aot"
   }
 
   override fun getTestRoot(): String {

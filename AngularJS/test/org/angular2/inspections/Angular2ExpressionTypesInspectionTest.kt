@@ -3,15 +3,16 @@ package org.angular2.inspections
 
 import com.intellij.lang.javascript.TypeScriptTestUtil
 import org.angular2.Angular2CodeInsightFixtureTestCase
+import org.angular2.Angular2TemplateInspectionsProvider
+import org.angular2.Angular2TestModule
+import org.angular2.Angular2TestModule.Companion.configureCopy
+import org.angular2.Angular2TestModule.Companion.configureLink
 import org.angular2.codeInsight.Angular2AttributesTest
-import org.angular2.modules.Angular2TestModule
-import org.angular2.modules.Angular2TestModule.Companion.configureCopy
-import org.angular2.modules.Angular2TestModule.Companion.configureLink
 import org.angularjs.AngularTestUtil
 
 class Angular2ExpressionTypesInspectionTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "expressionType"
+    return AngularTestUtil.getBaseTestDataPath() + "inspections/expressionType"
   }
 
   @Throws(Exception::class)

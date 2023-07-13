@@ -9,18 +9,18 @@ import com.intellij.webSymbols.moveToOffsetBySignature
 import com.intellij.webSymbols.webSymbolAtCaret
 import com.intellij.webSymbols.webSymbolSourceAtCaret
 import org.angular2.Angular2CodeInsightFixtureTestCase
-import org.angular2.inspections.Angular2TemplateInspectionsProvider
+import org.angular2.Angular2TemplateInspectionsProvider
+import org.angular2.Angular2TestModule
+import org.angular2.Angular2TestModule.Companion.configureCopy
+import org.angular2.Angular2TestModule.Companion.configureLink
 import org.angular2.inspections.AngularAmbiguousComponentTagInspection
 import org.angular2.inspections.AngularUndefinedBindingInspection
 import org.angular2.inspections.AngularUndefinedTagInspection
-import org.angular2.modules.Angular2TestModule
-import org.angular2.modules.Angular2TestModule.Companion.configureCopy
-import org.angular2.modules.Angular2TestModule.Companion.configureLink
 import org.angularjs.AngularTestUtil
 
 class IvyMetadataTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "/ivy"
+    return AngularTestUtil.getBaseTestDataPath() + "metadata/ivy"
   }
 
   fun testInterModuleExtends() {

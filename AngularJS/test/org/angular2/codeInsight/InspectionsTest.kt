@@ -17,8 +17,8 @@ import com.intellij.testFramework.ExpectedHighlightingData
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.webSymbols.moveToOffsetBySignature
 import org.angular2.Angular2CodeInsightFixtureTestCase
+import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.inspections.Angular2DecoratorInspectionsTest
-import org.angular2.inspections.Angular2TemplateInspectionsProvider
 import org.angular2.inspections.Angular2TemplateInspectionsTest
 import org.angularjs.AngularTestUtil
 import java.util.function.Consumer
@@ -29,7 +29,7 @@ import java.util.function.Consumer
  */
 class InspectionsTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath(javaClass) + "inspections"
+    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/inspections"
   }
 
   fun testUnusedSymbol() {
