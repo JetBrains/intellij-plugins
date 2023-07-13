@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.libraries.vuex
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.openapi.project.Project
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import org.jetbrains.vuejs.lang.createPackageJsonWithVueDependency
+import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.getVueTestDataPath
 
 class VuexMappersTest : BasePlatformTestCase() {
@@ -12,31 +12,31 @@ class VuexMappersTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = getVueTestDataPath() + "/libraries/vuex/mappers"
 
   fun testBasicVue() {
-    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureVueDependencies()
     myFixture.configureByFile("basicVue.vue")
     checkBasic()
   }
 
   fun testBasicExternal() {
-    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureVueDependencies()
     myFixture.configureByFiles("basicExternal.vue", "basicExternal.js")
     checkBasic()
   }
 
   fun testBasicInline() {
-    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureVueDependencies()
     myFixture.configureByFile("basicInline.js")
     checkBasic()
   }
 
   fun testDecoratedVue() {
-    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureVueDependencies()
     myFixture.configureByFile("decoratedVue.vue")
     checkDecorated()
   }
 
   fun testDecoratedExternal() {
-    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureVueDependencies()
     myFixture.configureByFiles("decoratedExternal.vue", "decoratedExternal.js")
     checkDecorated()
   }

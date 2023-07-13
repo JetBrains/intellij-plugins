@@ -81,7 +81,7 @@ class VueLiveTemplatesTest : BasePlatformTestCase() {
   }
 
   fun testInsideComponentDescriptorApplicable() {
-    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureVueDependencies()
     val cases = listOf(
       Triple(false, "", ".vue"),
       Triple(false, "<template><caret></template>", ".vue"),

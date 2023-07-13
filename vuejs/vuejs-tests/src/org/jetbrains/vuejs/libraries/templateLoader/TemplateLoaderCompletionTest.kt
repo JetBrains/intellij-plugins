@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.libraries.templateLoader
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import org.jetbrains.vuejs.lang.createPackageJsonWithVueDependency
+import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.getVueTestDataPath
 
 class TemplateLoaderCompletionTest : BasePlatformTestCase() {
@@ -22,7 +22,7 @@ class TemplateLoaderCompletionTest : BasePlatformTestCase() {
   }
 
   private fun doTest(name: String) {
-    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureVueDependencies()
     myFixture.configureByFiles("$name.html", "$name.js")
     myFixture.completeBasic()
     assertContainsElements(myFixture.lookupElementStrings!!, "text", "fooBar")

@@ -54,7 +54,7 @@ class VueCompletionTest : BasePlatformTestCase() {
   }
 
   fun testCompleteAttributesWithVueInPackageJson() {
-    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureVueDependencies()
     myFixture.configureByText("index.html", "<html <caret>></html>")
     myFixture.completeBasic()
     UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "v-bind", "v-else")
@@ -682,7 +682,7 @@ export default {
 
   fun testCustomDirectivesLinkedFilesInCompletion() {
     myFixture.copyDirectoryToProject("../common/customDirectivesLinkedFiles", ".")
-    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureVueDependencies()
     myFixture.configureFromTempProjectFile("CustomDirectives.html")
     val attribute = myFixture.findElementByText("style", XmlAttribute::class.java)
     TestCase.assertNotNull(attribute)
@@ -993,8 +993,8 @@ $script""")
   }
 
   fun testComponentInsertion() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
-    createPackageJsonWithVueDependency(myFixture, """"$VUE_CLASS_COMPONENT": "*"""")
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10,
+                                       additionalDependencies = mapOf(VUE_CLASS_COMPONENT to "*"))
     val data = listOf(
       Pair("""<template>
   <Sho<caret>
@@ -1538,7 +1538,7 @@ export default class ComponentInsertion extends Vue {
   }
 
   fun testSlotNameCompletion() {
-    createPackageJsonWithVueDependency(myFixture, "\"some_lib\": \"0.0.0\"")
+    myFixture.configureVueDependencies("some_lib" to "0.0.0")
     myFixture.copyDirectoryToProject("slotNames", ".")
     myFixture.configureByFile("test.vue")
 
@@ -1559,7 +1559,7 @@ export default class ComponentInsertion extends Vue {
   }
 
   fun testFilters() {
-    createPackageJsonWithVueDependency(myFixture, "\"some_lib\": \"0.0.0\"")
+    myFixture.configureVueDependencies("some_lib" to "0.0.0")
     doLookupTest(dir = true, renderTypeText = false, renderPriority = false)
   }
 
@@ -1569,7 +1569,7 @@ export default class ComponentInsertion extends Vue {
   }
 
   fun testTopLevelTagsNoI18n() {
-    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureVueDependencies()
 
     myFixture.configureByText("test.vue", "<<caret>")
     myFixture.completeBasic()
@@ -1577,7 +1577,7 @@ export default class ComponentInsertion extends Vue {
   }
 
   fun testTopLevelTags() {
-    createPackageJsonWithVueDependency(myFixture, """ "vue-i18n": "*" """)
+    myFixture.configureVueDependencies("vue-i18n" to "*")
     val toTest = listOf(
       Pair("i18n", listOf("lang")),
       Pair("template", listOf("lang", "src", "functional")),
@@ -1638,7 +1638,7 @@ export default class ComponentInsertion extends Vue {
   }
 
   fun testCustomModifiers() {
-    createPackageJsonWithVueDependency(myFixture, """"test-lib":"0.0.0"""")
+    myFixture.configureVueDependencies("test-lib" to "0.0.0")
     doLookupTest(dir = true, renderPriority = false, renderTypeText = false)
   }
 

@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.libraries.i18n
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.jetbrains.vuejs.lang.VueInspectionsProvider
-import org.jetbrains.vuejs.lang.createPackageJsonWithVueDependency
+import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.getVueTestDataPath
 
 class I18nTest : BasePlatformTestCase() {
@@ -11,7 +11,7 @@ class I18nTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = getVueTestDataPath() + "/libraries/i18n"
 
   fun testHighlighting() {
-    createPackageJsonWithVueDependency(myFixture, """ "vue-i18n": "*" """)
+    myFixture.configureVueDependencies("vue-i18n" to "*")
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.configureByFiles("highlighting.vue")
     myFixture.checkHighlighting()

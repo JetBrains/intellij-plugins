@@ -22,7 +22,7 @@ import com.intellij.util.ui.UIUtil
 class VueParameterInfoTest : BasePlatformTestCase() {
 
   fun testTypeScriptParametersHint() {
-    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureVueDependencies()
     myFixture.addFileToProject("api.vue", "<script lang='ts'>\n" +
                                           "    export function isApiResponse(s:String,b:boolean){}\n" +
                                           "</script>")

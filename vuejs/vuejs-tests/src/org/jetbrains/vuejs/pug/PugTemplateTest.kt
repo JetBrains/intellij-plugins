@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.pug
 
 import com.intellij.lang.javascript.inspections.JSIncompatibleTypesComparisonInspection
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import org.jetbrains.vuejs.lang.createPackageJsonWithVueDependency
+import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.getVueTestDataPath
 
 class PugTemplateTest : BasePlatformTestCase() {
@@ -11,14 +11,14 @@ class PugTemplateTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = getVueTestDataPath() + "/pug/"
 
   fun testJadeExtendsResolve() {
-    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureVueDependencies()
     myFixture.copyDirectoryToProject("jadeExtends", ".")
     myFixture.configureFromTempProjectFile("test.vue")
     myFixture.checkHighlighting()
   }
 
   fun testPugExtendsResolve() {
-    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureVueDependencies()
     myFixture.copyDirectoryToProject("pugExtends", ".")
     myFixture.configureFromTempProjectFile("test.vue")
     myFixture.checkHighlighting()

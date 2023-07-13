@@ -10,7 +10,6 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.configureVueDependencies
-import org.jetbrains.vuejs.lang.createPackageJsonWithVueDependency
 import org.jetbrains.vuejs.lang.getVueTestDataPath
 
 class VuexResolveTest : BasePlatformTestCase() {
@@ -243,7 +242,7 @@ class VuexResolveTest : BasePlatformTestCase() {
   }
 
   fun testRootNamespacedAction() {
-    createPackageJsonWithVueDependency(myFixture, "\"vuex\": \"^3.0.1\"")
+    myFixture.configureVueDependencies("vuex" to "^3.0.1")
     myFixture.configureByFiles("root-namespaced-module.ts")
     doTest(false,
            "'root<caret>Action'" to "src/root-namespaced-module.ts:164:JSProperty",
@@ -261,7 +260,7 @@ class VuexResolveTest : BasePlatformTestCase() {
   }
 
   fun testRootNamespacedActionJS() {
-    createPackageJsonWithVueDependency(myFixture, "\"vuex\": \"^3.0.1\"")
+    myFixture.configureVueDependencies("vuex" to "^3.0.1")
     myFixture.configureByFiles("root-namespaced-module.js")
     doTest(false,
            "'root<caret>Action'" to "src/root-namespaced-module.js:164:JSProperty",
@@ -438,7 +437,7 @@ class VuexResolveTest : BasePlatformTestCase() {
   fun testStoreModuleCaching() {
     val constFragment = "const counterModule"
 
-    createPackageJsonWithVueDependency(myFixture, """ "vuex":"*" """)
+    myFixture.configureVueDependencies("vuex" to "*")
     val storeModuleFile = myFixture.configureByFile("storeModuleCaching/store/counter/index.js")
     myFixture.configureByFile("storeModuleCaching/store/index.js")
     val appFile = myFixture.configureByFile("storeModuleCaching/App.vue")

@@ -19,7 +19,7 @@ class VueDocumentationTest : BasePlatformTestCase() {
   }
 
   fun testTSLibraryElement() {
-    createPackageJsonWithVueDependency(myFixture, "")
+    myFixture.configureVueDependencies()
     myFixture.configureByFile("TSLibraryElement.vue")
     val element = myFixture.file.findElementAt(myFixture.caretOffset)
     val elementAtCaret = myFixture.elementAtCaret

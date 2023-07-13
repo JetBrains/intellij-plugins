@@ -581,7 +581,7 @@ export default {
   }
 
   fun testIntoVForVarInHtml() {
-    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureVueDependencies()
     myFixture.configureByText("IntoVForVarInHtml.html", """
 <html>
   <ul>
@@ -655,7 +655,7 @@ export default {
   }
 
   fun testKeyIntoForResolveHtml() {
-    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureVueDependencies()
     myFixture.configureByText("KeyIntoForResolveHtml.html", """
 <html>
   <li id="id123" v-for="(item1, index1) in items1" :key="<caret>item1" v-if="item1 > 0">
@@ -673,7 +673,7 @@ export default {
   }
 
   fun testResolveByMountedVueInstanceInData() {
-    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureVueDependencies()
     myFixture.configureByText("ResolveByMountedVueInstanceInData.js", """
 new Vue({
   el: '#ResolveByMountedVueInstanceInData',
@@ -702,7 +702,7 @@ new Vue({
   }
 
   fun testResolveByMountedVueInstanceInProps() {
-    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureVueDependencies()
     myFixture.configureByText("ResolveByMountedVueInstanceInProps.js", """
 new Vue({
   el: '#ResolveByMountedVueInstanceInProps',
@@ -730,7 +730,7 @@ new Vue({
   }
 
   fun testResolveVForIterableByMountedVueInstance() {
-    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureVueDependencies()
     myFixture.configureByText("ResolveVForIterableByMountedVueInstance.js", """
 new Vue({
   el: '#ResolveVForIterableByMountedVueInstance',
@@ -1337,7 +1337,7 @@ const props = {seeMe: {}}
 
   fun testResolveLocalCustomDirectiveLinkedFiles() {
     myFixture.copyDirectoryToProject("../common/customDirectivesLinkedFiles", ".")
-    createPackageJsonWithVueDependency(myFixture, "")
+    myFixture.configureVueDependencies()
     myFixture.configureFromTempProjectFile("CustomDirectives.html")
 
     arrayOf(Trinity("v-local-directive", "localDirective", "CustomDirectives.js"),
@@ -1679,7 +1679,7 @@ export default class UsageComponent extends Vue {
   }
 
   fun testResolveWithClassComponentTs() {
-    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureVueDependencies()
     createTwoClassComponents(myFixture, true)
     myFixture.configureByText("ResolveWithClassComponentTs.vue",
                               """
@@ -1872,7 +1872,7 @@ export default class UsageComponent extends Vue {
   }
 
   fun testSlotName() {
-    createPackageJsonWithVueDependency(myFixture, "\"some_lib\":\"0.0.0\"")
+    myFixture.configureVueDependencies("some_lib" to "0.0.0")
     myFixture.copyDirectoryToProject("../completion/slotNames", ".")
     myFixture.copyFileToProject("slotNames/test2.vue", "test2.vue")
     myFixture.configureFromTempProjectFile("test2.vue")
@@ -1894,7 +1894,7 @@ export default class UsageComponent extends Vue {
   }
 
   fun testFilters() {
-    createPackageJsonWithVueDependency(myFixture, "\"some_lib\":\"0.0.0\"")
+    myFixture.configureVueDependencies("some_lib" to "0.0.0")
     myFixture.copyDirectoryToProject("filters/", ".")
     myFixture.configureFromTempProjectFile("App.vue")
     for ((filterName, resolvedItemText) in listOf(
@@ -1912,7 +1912,7 @@ export default class UsageComponent extends Vue {
   }
 
   fun testImportedProps() {
-    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureVueDependencies()
     myFixture.copyDirectoryToProject("props-import-resolve", ".")
     myFixture.configureFromTempProjectFile("main.vue")
     val element = myFixture.resolveReference("\"user<caret>Id\"")

@@ -50,7 +50,7 @@ class VueInjectionTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = getVueTestDataPath() + "/injection/"
 
   fun testSimpleInterpolationInHtml() {
-    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureVueDependencies()
     myFixture.configureByText("SimpleInterpolationInHtml.html", """<!DOCTYPE html>
 <html>
   <head>
@@ -67,7 +67,7 @@ class VueInjectionTest : BasePlatformTestCase() {
   }
 
   fun testSimpleInterpolationInVue() {
-    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureVueDependencies()
     myFixture.configureByText("SimpleInterpolationInVue.vue", """<template>
     <div>
       {{ 1 + <caret>2 }}
@@ -138,7 +138,7 @@ new Vue({
   }
 
   fun testCustomDelimitersInterpolationInHtml() {
-    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureVueDependencies()
     myFixture.configureByText("CustomDelimitersInterpolationInHtml.html", """<!DOCTYPE html>
 <html>
   <head>
@@ -177,7 +177,7 @@ new Vue({
   }
 
   fun testCustomDelimitersOldDoNotWorkInHtml() {
-    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureVueDependencies()
     myFixture.configureByText("CustomDelimitersOldDoNotWorkInHtml.html", """<!DOCTYPE html>
 <html>
   <head>
@@ -282,7 +282,7 @@ Vue.options.delimiters = ['<%', '%>']
   }
 
   fun testForbiddenVueContext() {
-    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureVueDependencies()
 
     myFixture.configureByFile(getTestName(false) + ".html")
     checkParseTree(".off")
@@ -319,7 +319,7 @@ Vue.options.delimiters = ['<%', '%>']
   }
 
   fun testCompletionInsideInjectedI18NContents() {
-    createPackageJsonWithVueDependency(myFixture, """ "vue-i18n": "*" """)
+    myFixture.configureVueDependencies("vue-i18n" to "*")
     myFixture.configureByText("Test.vue", """
       <i18n lang="yaml">
       keep-a<caret>
