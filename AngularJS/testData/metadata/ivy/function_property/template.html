@@ -1,9 +1,9 @@
 <lib-my-lib [predicate<caret>]="foo"></lib-my-lib>
-<lib-my-lib [predicate]="<error descr="Type (test: number) => boolean is not assignable to type (arg: string) => boolean  Type string is not assignable to type number">bar</error>"></lib-my-lib>
-<lib-my-lib [predicate]="<error descr="Type 12 is not assignable to type (arg: string) => boolean">12</error>"></lib-my-lib>
+<lib-my-lib [predicate]="<error descr="Type  (test: number) => boolean  is not assignable to type  (arg: string) => boolean   Type  string  is not assignable to type  number ">bar</error>"></lib-my-lib>
+<lib-my-lib [predicate]="<error descr="Type  12  is not assignable to type  (arg: string) => boolean ">12</error>"></lib-my-lib>
 
-<lib-my-lib [withSetter]="<error descr="Type 12 is not assignable to type boolean">12</error>"></lib-my-lib>
+<lib-my-lib [withSetter]="<error descr="Type  12  is not assignable to type  boolean ">12</error>"></lib-my-lib>
 <lib-my-lib [withSetter]="true"></lib-my-lib>
 
 <lib-my-lib (withGetter)="setEvent($event)"></lib-my-lib>
-<lib-my-lib (withGetter)="setEvent2(<error descr="Argument type string is not assignable to parameter type boolean">$event</error>)"></lib-my-lib>
+<lib-my-lib (withGetter)="setEvent2(<error descr="Argument type  string  is not assignable to parameter type  boolean ">$event</error>)"></lib-my-lib>
