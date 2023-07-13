@@ -15,9 +15,9 @@ import org.angular2.web.Angular2Symbol
 import org.angularjs.AngularTestUtil
 import java.util.*
 
-class Angular2ModulesTest : Angular2CodeInsightFixtureTestCase() {
+class Angular2ModelStructureTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/modules"
+    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/modelStructure"
   }
 
   fun testCommonModuleResolution() {

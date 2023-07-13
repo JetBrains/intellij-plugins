@@ -1,5 +1,5 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.codeInsight
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.codeInsight.deprecated
 
 import com.intellij.lang.css.CSSLanguage
 import com.intellij.lang.html.HTMLLanguage
@@ -39,9 +39,10 @@ import org.angular2.lang.html.Angular2HtmlLanguage
 import org.angular2.lang.html.psi.Angular2HtmlTemplateBindings
 import org.angularjs.AngularTestUtil
 
+@Deprecated("Use test appropriate for IDE feature being tested - e.g. completion/resolve/highlighting ")
 class Angular2InjectionsTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/injections"
+    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/deprecated/injections"
   }
 
   fun testAngular2EmptyInterpolation() {

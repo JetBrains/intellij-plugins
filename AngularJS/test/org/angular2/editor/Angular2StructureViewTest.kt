@@ -5,13 +5,13 @@ import com.intellij.lang.javascript.JSAbstractStructureViewTest
 import com.intellij.lang.javascript.StructureViewTestUtil
 import org.angularjs.AngularTestUtil
 
-class Angular2ComponentStructureViewTest : JSAbstractStructureViewTest() {
+class Angular2StructureViewTest : JSAbstractStructureViewTest() {
   override fun getBasePath(): String {
     return AngularTestUtil.getBaseTestDataPath() + "editor"
   }
 
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath()
+    return AngularTestUtil.getBaseTestDataPath() + "editor"
   }
 
   fun testStructure() {
