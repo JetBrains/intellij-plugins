@@ -7,7 +7,7 @@ import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.Companion.configureCopy
 import org.angular2.Angular2TestModule.Companion.configureLink
-import org.angular2.codeInsight.Angular2AttributesTest
+import org.angular2.codeInsight.deprecated.Angular2AttributesTest
 import org.angularjs.AngularTestUtil
 
 class Angular2ExpressionTypesInspectionTest : Angular2CodeInsightFixtureTestCase() {

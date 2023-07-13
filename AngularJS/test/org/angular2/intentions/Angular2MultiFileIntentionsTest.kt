@@ -1,5 +1,5 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.codeInsight
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.intentions
 
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
@@ -9,7 +9,7 @@ import org.angularjs.AngularTestUtil
 
 class Angular2MultiFileIntentionsTest : Angular2MultiFileFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/intentions"
+    return AngularTestUtil.getBaseTestDataPath() + "intentions"
   }
 
   override fun getTestRoot(): String {

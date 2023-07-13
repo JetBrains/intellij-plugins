@@ -1,5 +1,5 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.metadata
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.codeInsight.deprecated
 
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection
@@ -26,13 +26,14 @@ import org.angular2.lang.metadata.psi.MetadataFileImpl
 import org.angularjs.AngularTestUtil
 import java.io.File
 
+@Deprecated("Use test appropriate for IDE feature being tested - e.g. completion/resolve/highlighting ")
 class Angular2JsonMetadataTest : Angular2CodeInsightFixtureTestCase() {
   private fun resolveToWebSymbolSourceContext(signature: String): PsiElement {
     return myFixture.resolveWebSymbolReference(signature).psiContext!!
   }
 
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath() + "metadata/json"
+    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/deprecated/metadata-json"
   }
 
   fun testMetadataJsonFileTypeBinary() {

@@ -1,5 +1,5 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.codeInsight
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.inspections
 
 import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection
@@ -18,8 +18,6 @@ import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.webSymbols.moveToOffsetBySignature
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TemplateInspectionsProvider
-import org.angular2.inspections.Angular2DecoratorInspectionsTest
-import org.angular2.inspections.Angular2TemplateInspectionsTest
 import org.angularjs.AngularTestUtil
 import java.util.function.Consumer
 
@@ -27,9 +25,9 @@ import java.util.function.Consumer
  * @see Angular2DecoratorInspectionsTest
  * @see Angular2TemplateInspectionsTest
  */
-class Angular2InspectionsTest : Angular2CodeInsightFixtureTestCase() {
+class Angular2TsInspectionsTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/inspections"
+    return AngularTestUtil.getBaseTestDataPath() + "inspections/ts"
   }
 
   fun testUnusedSymbol() {

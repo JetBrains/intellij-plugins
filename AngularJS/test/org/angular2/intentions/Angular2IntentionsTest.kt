@@ -1,5 +1,5 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.codeInsight
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.intentions
 
 import com.intellij.openapi.util.text.StringUtil
 import org.angular2.Angular2CodeInsightFixtureTestCase
@@ -8,7 +8,7 @@ import org.intellij.idea.lang.javascript.intention.JSIntentionBundle
 
 class Angular2IntentionsTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/intentions"
+    return AngularTestUtil.getBaseTestDataPath() + "intentions"
   }
 
   fun testComputeConstantInTemplate() {

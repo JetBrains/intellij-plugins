@@ -12,11 +12,10 @@ import com.intellij.webSymbols.moveToOffsetBySignature
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.Companion.configureCopy
-import org.angular2.codeInsight.Angular2InspectionsTest
 import org.angularjs.AngularTestUtil
 
 /**
- * @see Angular2InspectionsTest
+ * @see Angular2TsInspectionsTest
  *
  * @see Angular2DecoratorInspectionsTest
  */

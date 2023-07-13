@@ -1,5 +1,5 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.svg
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.codeInsight.deprecated
 
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.webSymbols.checkListByFile
@@ -11,9 +11,10 @@ import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestModule
 import org.angularjs.AngularTestUtil
 
+@Deprecated("Use test appropriate for IDE feature being tested - e.g. completion/resolve/highlighting ")
 class Angular2SvgTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath() + "svg"
+    return AngularTestUtil.getBaseTestDataPath() + "codeInsight/deprecated/svg"
   }
 
   fun testHighlighting() {
