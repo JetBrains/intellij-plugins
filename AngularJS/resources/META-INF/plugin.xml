@@ -174,7 +174,8 @@
     <stubIndex implementation="org.angular2.index.Angular2IvyDirectiveIndex"/>
     <stubIndex implementation="org.angular2.index.Angular2IvyModuleIndex"/>
     <findUsagesHandlerFactory implementation="org.angularjs.findUsages.AngularJSFindUsagesHandlerFactory" order="before JavaScript"/>
-    <psi.referenceContributor implementation="org.angular2.codeInsight.refs.Angular2ReferencesContributor"/>
+    <psi.referenceContributor language="TypeScript" implementation="org.angular2.codeInsight.refs.Angular2TSReferencesContributor"/>
+    <psi.referenceContributor language="HtmlCompatible" implementation="org.angular2.codeInsight.refs.Angular2HtmlReferencesContributor"/>
     <psi.symbolReferenceProvider hostElementClass="org.angular2.lang.html.psi.Angular2HtmlNgContentSelector"
                                  hostLanguage="Angular2Html"
                                  referenceClass="com.intellij.webSymbols.references.WebSymbolReference"
