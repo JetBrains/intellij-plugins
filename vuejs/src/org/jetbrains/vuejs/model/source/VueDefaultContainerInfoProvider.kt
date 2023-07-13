@@ -307,15 +307,15 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
   private class VueSourceInject(override val name: String, override val source: PsiElement?) : VueInject {
 
-    private val keyType = lazy(LazyThreadSafetyMode.NONE) {
+    private val keyType: VueInjectKey? by lazy(LazyThreadSafetyMode.PUBLICATION) {
       getInjectionKeyType(source.asSafely<JSProperty>()?.initializerOrStub)
     }
 
     override val from: String?
-      get() = keyType.value?.name
+      get() = keyType?.name
 
     override val injectionKey: PsiNamedElement?
-      get() = keyType.value?.symbol
+      get() = keyType?.symbol
 
     override val defaultValue: JSType?
       get() = getInjectDefaultType(source.asSafely<JSProperty>()?.initializerOrStub)
