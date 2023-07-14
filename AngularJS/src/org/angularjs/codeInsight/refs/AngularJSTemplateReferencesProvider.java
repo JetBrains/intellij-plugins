@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angularjs.codeInsight.refs;
 
 import com.intellij.javascript.JSFileReference;
@@ -6,8 +6,6 @@ import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil;
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil;
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
 import com.intellij.lang.typescript.modules.resolver.TypeScriptFileReferenceContext;
-import com.intellij.model.ModelBranch;
-import com.intellij.model.ModelBranchUtil;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -52,9 +50,9 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
     }
 
     public static void decodeTemplateReferenceData(@Nullable PsiFile file) {
-      if (file == null) return;
-      Map<String, Angular2TemplateReferenceData> map = ModelBranchUtil.getAndResetCopyableUserData(file, TEMPLATE_REFERENCE_DATA_KEY);
+      Map<String, Angular2TemplateReferenceData> map = file != null ? file.getCopyableUserData(TEMPLATE_REFERENCE_DATA_KEY) : null;
       if (map != null) {
+        file.putCopyableUserData(TEMPLATE_REFERENCE_DATA_KEY, null);
         decodeTemplateReferenceData(file, map);
       }
     }
@@ -64,10 +62,6 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
       visitFile(file, fileReferenceSet -> {
         Angular2TemplateReferenceData referenceData = dataMap.get(fileReferenceSet.getPathString());
         if (referenceData != null) {
-          ModelBranch branch = ModelBranch.getPsiBranch(file);
-          if (branch != null) {
-            referenceData = referenceData.branched(branch);
-          }
           fileReferenceSet.decodeTemplateReferenceData(referenceData);
         }
       });
@@ -196,11 +190,6 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
     private Angular2TemplateReferenceData(VirtualFile targetFile, @Nullable Collection<VirtualFile> contexts) {
       this.targetFile = targetFile;
       this.contexts = contexts;
-    }
-
-    public @NotNull Angular2TemplateReferenceData branched(@NotNull ModelBranch branch) {
-      return new Angular2TemplateReferenceData(branch.findFileCopy(targetFile),
-                                               contexts == null ? null : ContainerUtil.map(contexts, branch::findFileCopy));
     }
 
     private @Nullable PsiFileSystemItem getTargetFile(@NotNull PsiManager manager) {
