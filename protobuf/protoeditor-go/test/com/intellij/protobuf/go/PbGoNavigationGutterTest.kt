@@ -2,13 +2,13 @@ package com.intellij.protobuf.go
 
 import com.goide.GoCodeInsightFixtureTestCase
 import com.goide.psi.GoTypeSpec
+import com.intellij.protobuf.ProtoeditorCoreIcons
 import com.intellij.protobuf.ide.gutter.findImplementations
 import com.intellij.protobuf.ide.gutter.findProtoDefinitions
 import com.intellij.protobuf.lang.psi.PbElement
 import com.intellij.protobuf.lang.psi.PbMessageDefinition
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.util.parentOfType
-import icons.ProtoeditorCoreIcons
 import org.junit.Assert
 
 class PbGoNavigationGutterTest : GoCodeInsightFixtureTestCase() {

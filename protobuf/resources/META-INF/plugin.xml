@@ -23,6 +23,7 @@
     <module name="intellij.protoeditor.python"/>
     <module name="intellij.protoeditor.jvm"/>
   </content>
+
   <dependencies>
     <plugin id="com.intellij.modules.lang"/>
   </dependencies>
@@ -159,6 +160,8 @@
       implementation="com.intellij.protobuf.ide.template.PbLanguageContext$OneofBody"/>
     <liveTemplateContext contextId="PROTO_SERVICE" baseContextId="PROTO"
       implementation="com.intellij.protobuf.ide.template.PbLanguageContext$ServiceBody"/>
+
+    <iconMapper mappingFile="ProtobufIconMappings.json"/>
   </extensions>
 
   <!-- Text format extensions -->
