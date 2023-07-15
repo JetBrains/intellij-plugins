@@ -16,7 +16,7 @@
 package com.intellij.protobuf.ide.util;
 
 import com.intellij.icons.AllIcons;
-import com.intellij.openapi.util.IconLoader;
+import com.intellij.protobuf.ProtoeditorCoreIcons;
 import com.intellij.ui.IconManager;
 import com.intellij.util.PlatformIcons;
 
@@ -27,14 +27,12 @@ public interface PbIcons {
   Icon ENUM_VALUE = IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Field);
   Icon EXTEND = PlatformIcons.EXPORT_ICON;
   Icon FIELD = IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Field);
-  Icon FILE = IconLoader.getIcon("protoFile.png", PbIcons.class.getClassLoader());
+  Icon FILE = ProtoeditorCoreIcons.ProtoFile;
   Icon GROUP_FIELD = PlatformIcons.ANONYMOUS_CLASS_ICON;
-  Icon MESSAGE = IconLoader.getIcon("protoMessage.png", PbIcons.class.getClassLoader());
+  Icon MESSAGE = ProtoeditorCoreIcons.ProtoMessage;
   Icon ONEOF = IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Class);
   Icon PACKAGE = AllIcons.Nodes.Package;
   Icon SERVICE = PlatformIcons.INTERFACE_ICON;
   Icon SERVICE_METHOD = IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Method);
-
-  // TODO(volkman): find a better icon.
-  Icon TEXT_FILE = IconLoader.getIcon("protoFile.png", PbIcons.class.getClassLoader());
+  Icon TEXT_FILE = ProtoeditorCoreIcons.ProtoFile;
 }

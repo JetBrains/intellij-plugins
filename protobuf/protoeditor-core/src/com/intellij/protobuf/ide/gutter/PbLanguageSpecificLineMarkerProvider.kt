@@ -5,10 +5,10 @@ import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.util.NotNullLazyValue
+import com.intellij.protobuf.ProtoeditorCoreIcons
 import com.intellij.protobuf.ide.PbIdeBundle
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
-import icons.ProtoeditorCoreIcons
 
 abstract class PbLanguageSpecificLineMarkerProvider : RelatedItemLineMarkerProvider() {
 

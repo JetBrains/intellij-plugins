@@ -1,0 +1,8 @@
+{
+  "icons": {
+    "newui": {
+      "protoFile.svg": "icons/protoFile.png",
+      "protoMessage.svg": "icons/protoMessage.png"
+    }
+  }
+}
