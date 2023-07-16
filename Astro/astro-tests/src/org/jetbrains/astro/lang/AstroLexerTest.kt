@@ -519,6 +519,10 @@ open class AstroLexerTest : LexerTestCase() {
     doTest("<head><title>This is <std>title</std></title></head><div><Title>This is <custom>title</custom></Title></div>")
   }
 
+  fun testLexerStateLoss() = doTest("""
+    |{<div style="font-face: serif;"></div>}
+  """.trimIndent())
+
   override fun createLexer(): Lexer = AstroLexerImpl(fixture.project)
 
   override fun getDirPath() = "lang/lexer"
