@@ -75,9 +75,10 @@ public class PerforceUnversionedTracker {
     synchronized (LOCK) {
       if (myDirtyLocalFiles.contains(file))
         return true;
-      FilePath path = VcsUtil.getFilePath(file);
-      return isUnversioned(path) || isIgnored(path);
     }
+
+    FilePath path = VcsUtil.getFilePath(file);
+    return isUnversioned(path) || isIgnored(path);
   }
 
   public boolean isUnversioned(@NotNull FilePath file) {
@@ -125,6 +126,7 @@ public class PerforceUnversionedTracker {
   private void update() {
     MultiMap<P4Connection, VirtualFile> map;
     Stopwatch sw = Stopwatch.createStarted();
+    List<VirtualFile> dirtyFiles;
     synchronized (LOCK) {
       LOG.debug("update started for " + myDirtyLocalFiles.size() + " files");
       if (myDirtyLocalFiles.size() == 0) {
@@ -132,9 +134,10 @@ public class PerforceUnversionedTracker {
         return;
       }
 
-      map = FileGrouper.distributeFilesByConnection(myDirtyLocalFiles, myProject);
+      dirtyFiles = new ArrayList<>(myDirtyLocalFiles);
     }
 
+    map = FileGrouper.distributeFilesByConnection(dirtyFiles, myProject);
     Set<VirtualFile> ignoredSet = new HashSet<>();
     try {
       for (P4Connection connection : map.keySet()) {
