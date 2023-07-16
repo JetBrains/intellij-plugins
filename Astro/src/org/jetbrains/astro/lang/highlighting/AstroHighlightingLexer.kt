@@ -11,6 +11,7 @@ import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.xml.XmlTokenType
+import com.intellij.util.containers.Stack
 import org.jetbrains.astro.lang.lexer.AstroLexerImpl
 import org.jetbrains.astro.lang.lexer.AstroLexerImpl.Companion.HAS_NON_RESTARTABLE_STATE
 import org.jetbrains.astro.lang.lexer.AstroTokenTypes
@@ -81,6 +82,22 @@ class AstroHighlightingLexer(styleFileType: FileType?)
     return frontmatterScriptLexer?.tokenEnd ?: super.getTokenEnd()
   }
 
+  override fun restartAfterEmbedment(offset: Int, baseLexerState: Int) {
+    ((myDelegate as? AstroLexerImpl.AstroMergingLexer)?.delegate as? AstroLexerImpl.AstroFlexAdapter)
+      ?.let {
+        val flex = it.flex as _AstroLexer
+        val (expressionStack, elementNameStack) = flex.run {
+          @Suppress("UNCHECKED_CAST")
+          Pair(expressionStack.clone(), elementNameStack.clone() as Stack<String>)
+        }
+        super.restartAfterEmbedment(offset, baseLexerState)
+        flex.apply {
+          this.expressionStack = expressionStack.clone()
+          this.elementNameStack = Stack(elementNameStack)
+        }
+      }
+    ?: super.restartAfterEmbedment(offset, baseLexerState)
+  }
 
   private class AstroHighlightingMergingLexer(original: FlexAdapter) : AstroLexerImpl.AstroMergingLexer(original) {
     override fun merge(type: IElementType?, originalLexer: Lexer): IElementType? {

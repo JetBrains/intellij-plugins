@@ -85,6 +85,23 @@ class AstroLexerImpl(val project: Project?, private val lexJsFragment: Boolean =
     return frontmatterScriptLexer?.tokenEnd ?: super.getTokenEnd()
   }
 
+  override fun restartAfterEmbedment(offset: Int, baseLexerState: Int) {
+    ((myDelegate as? AstroMergingLexer)?.delegate as? AstroFlexAdapter)
+      ?.let {
+        val flex = it.flex as _AstroLexer
+        val (expressionStack, elementNameStack) = flex.run {
+          @Suppress("UNCHECKED_CAST")
+          Pair(expressionStack.clone(), elementNameStack.clone() as Stack<String>)
+        }
+        super.restartAfterEmbedment(offset, baseLexerState)
+        flex.apply {
+          this.expressionStack = expressionStack.clone()
+          this.elementNameStack = Stack(elementNameStack)
+        }
+      }
+    ?: super.restartAfterEmbedment(offset, baseLexerState)
+  }
+
   companion object {
     internal val TAG_TOKENS = TokenSet.create(FRONTMATTER_SCRIPT)
 
@@ -111,13 +128,13 @@ class AstroLexerImpl(val project: Project?, private val lexJsFragment: Boolean =
     }
 
     override fun getCurrentPosition(): LexerPosition {
-      return AstroFlexAdapterPosition(tokenStart, state, flex.expressionStack.clone(), Stack(flex.elementNameStack))
+      return AstroFlexAdapterPosition(tokenStart, super.getState(), flex.expressionStack.clone(), Stack(flex.elementNameStack))
     }
 
     override fun restore(position: LexerPosition) {
       flex.expressionStack = (position as AstroFlexAdapterPosition).expressionStack.clone()
       flex.elementNameStack = Stack(position.elementNameStack)
-      super.start(bufferSequence, position.offset, bufferEnd, position.state and HAS_NON_RESTARTABLE_STATE.inv())
+      super.start(bufferSequence, position.offset, bufferEnd, position.state)
     }
 
     private class AstroFlexAdapterPosition(private val offset: Int,
