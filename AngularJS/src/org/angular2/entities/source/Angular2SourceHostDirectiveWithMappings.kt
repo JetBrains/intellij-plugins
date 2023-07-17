@@ -51,12 +51,8 @@ class Angular2SourceHostDirectiveWithMappings(private val definition: JSObjectLi
         return Angular2DirectiveProperties(emptyList(), emptyList())
       val originalBindings = directive.bindings
       return Angular2DirectiveProperties(
-        originalBindings.inputs.mapNotNull {
-          createHostProperty(directive, it, inputsMap)
-        } + directive.hostDirectives.flatMap { it.inputs },
-        originalBindings.outputs.mapNotNull {
-          createHostProperty(directive, it, outputsMap)
-        } + directive.hostDirectives.flatMap { it.outputs }
+        originalBindings.inputs.mapNotNull { createHostProperty(directive, it, inputsMap) },
+        originalBindings.outputs.mapNotNull { createHostProperty(directive, it, outputsMap) }
       )
     }
 

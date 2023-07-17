@@ -193,7 +193,8 @@ class Angular2ElementDocumentationTarget private constructor(
         }
       }
       else if (element is WebSymbol) {
-        result.append(TypeScriptHighlighter.TS_INSTANCE_MEMBER_VARIABLE, element.name)
+        result.append(TypeScriptHighlighter.TS_INSTANCE_MEMBER_VARIABLE,
+                      (element as? Angular2AliasedDirectiveProperty)?.originalName ?: element.name)
         val jsType = bindingsTypeResolver?.substituteTypeForDocumentation(directive, element.jsType)
                      ?: element.jsType
         jsType?.let {

@@ -265,7 +265,7 @@ class Angular2ModelStructureTest : Angular2CodeInsightFixtureTestCase() {
 
   private class Angular2EntitiesDebugOutputPrinter(val printDirectives: Boolean) : DebugOutputPrinter() {
 
-    private val printedEntities = mutableSetOf<Angular2Entity>()
+    private val printedElements = mutableSetOf<Any>()
 
     init {
       indent = "  "
@@ -339,10 +339,14 @@ class Angular2ModelStructureTest : Angular2CodeInsightFixtureTestCase() {
           .append('\n')
       } ?: append("<unresolved>")
 
-      printProperty(level + 1, "host-inputs", directive.inputs.takeIf { it.isNotEmpty() })
-      printProperty(level + 1, "host-outputs", directive.outputs.takeIf { it.isNotEmpty() })
-      indent(level + 1)
-      directive.directive?.let { printNgDirective(level + 1, it) }
+      if (!printedElements.add(directive)) {
+        indent(level + 1).append("<printed above>\n")
+      } else {
+        printProperty(level + 1, "host-inputs", directive.inputs)
+        printProperty(level + 1, "host-outputs", directive.outputs)
+        indent(level + 1)
+        directive.directive?.let { printNgDirective(level + 1, it) }
+      }
       return this
     }
 
@@ -353,7 +357,7 @@ class Angular2ModelStructureTest : Angular2CodeInsightFixtureTestCase() {
         .append(": ")
         .append(entity.javaClass.getSimpleName())
         .append('\n')
-      if (!printedEntities.add(entity)) {
+      if (!printedElements.add(entity)) {
         if (entity !is Angular2Pipe
             && (entity !is Angular2Directive || printDirectives || (entity.isStandalone && entity is Angular2ImportsOwner))) {
           indent(level + 1).append("<printed above>\n")

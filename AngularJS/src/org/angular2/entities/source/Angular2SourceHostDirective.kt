@@ -15,10 +15,7 @@ class Angular2SourceHostDirective(override val directive: Angular2Directive) : A
     get() = CachedValuesManager.getManager(directive.sourceElement.project)
       .getCachedValue(directive as UserDataHolder) {
         CachedValueProvider.Result.create(
-          Angular2DirectiveProperties(
-            directive.hostDirectives.flatMap { it.inputs },
-            directive.hostDirectives.flatMap { it.outputs }
-          ),
+          Angular2DirectiveProperties(emptyList(), emptyList()),
           PsiModificationTracker.MODIFICATION_COUNT
         )
       }

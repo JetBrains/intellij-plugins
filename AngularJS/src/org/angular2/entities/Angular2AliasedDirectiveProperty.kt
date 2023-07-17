@@ -43,8 +43,12 @@ class Angular2AliasedDirectiveProperty(
 
   override val kind: SymbolKind
     get() = delegate.kind
+
   override val sourceElement: PsiElement
     get() = delegate.sourceElement
+
+  val originalName
+    get() = delegate.name
 
   override fun createPointer(): Pointer<out Angular2DirectiveProperty> {
     val delegatePtr = delegate.createPointer()

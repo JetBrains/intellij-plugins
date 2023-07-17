@@ -29,6 +29,9 @@ import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DI
 open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
   : Angular2IvyDeclaration<Angular2IvySymbolDef.Directive>(entityDef), Angular2Directive {
 
+  @Suppress("LeakingThis")
+  private val hostDirectivesResolver = Angular2HostDirectivesResolver(this)
+
   override val selector: Angular2DirectiveSelector
     get() = getLazyValue(IVY_SELECTOR) {
       myEntityDef.selectorElement
@@ -37,8 +40,7 @@ open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
     }
 
   override val exportAs: Map<String, Angular2DirectiveExportAs>
-    get() = getLazyValue(IVY_EXPORT_AS) { myEntityDef.exportAsList.associateWith { Angular2DirectiveExportAs(it, this) } } +
-            hostDirectives.flatMap { it.exportAs.entries }.associate { Pair(it.key, it.value) }
+    get() = hostDirectivesResolver.exportAs
 
   override val attributes: Collection<Angular2DirectiveAttribute>
     get() = getAttributes(myEntityDef)
@@ -54,12 +56,16 @@ open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
     }
 
   override val hostDirectives: Collection<Angular2HostDirective>
-    get() = getHostDirectives(myEntityDef).symbols
+    get() = hostDirectivesResolver.hostDirectives
 
   override fun areHostDirectivesFullyResolved(): Boolean =
-    getHostDirectives(myEntityDef).let { set ->
-      set.isFullyResolved && set.symbols.none { it.directive?.areHostDirectivesFullyResolved() != true }
-    }
+    hostDirectivesResolver.hostDirectivesFullyResolved
+
+  internal val directExportAs: Map<String, Angular2DirectiveExportAs>
+    get() = getLazyValue(IVY_EXPORT_AS) { myEntityDef.exportAsList.associateWith { Angular2DirectiveExportAs(it, this) } }
+
+  internal val directHostDirectivesSet: Angular2ResolvedSymbolsSet<Angular2HostDirective>
+    get() = getHostDirectives(myEntityDef)
 
   private fun getPropertiesNoCache(): Angular2DirectiveProperties {
     val inputs = LinkedHashMap<String, Angular2DirectiveProperty>()

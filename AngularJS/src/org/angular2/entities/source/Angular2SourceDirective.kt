@@ -44,6 +44,9 @@ import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DI
 open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSImplicitElement)
   : Angular2SourceDeclaration(decorator, implicitElement), Angular2Directive {
 
+  @Suppress("LeakingThis")
+  private val hostDirectivesResolver = Angular2HostDirectivesResolver(this)
+
   override val selector: Angular2DirectiveSelector
     get() = getCachedValue {
       val property = Angular2DecoratorUtil.getProperty(decorator, Angular2DecoratorUtil.SELECTOR_PROP)
@@ -78,8 +81,39 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
     }
 
   override val exportAs: Map<String, Angular2DirectiveExportAs>
-    get() = getCachedValue { Result.create(getExportAsNoCache(), decorator) } +
-            hostDirectives.flatMap { it.exportAs.entries }.associate { Pair(it.key, it.value) }
+    get() = hostDirectivesResolver.exportAs
+
+  override val attributes: Collection<Angular2DirectiveAttribute>
+    get() = getCachedValue {
+      Result.create(getAttributesNoCache(), classModificationDependencies)
+    }
+
+  override val bindings: Angular2DirectiveProperties
+    get() = getCachedValue {
+      Result.create(getPropertiesNoCache(), classModificationDependencies)
+    }
+
+  override val hostDirectives: Collection<Angular2HostDirective>
+    get() = hostDirectivesResolver.hostDirectives
+
+  override fun areHostDirectivesFullyResolved(): Boolean =
+    hostDirectivesResolver.hostDirectivesFullyResolved
+
+  override fun createPointer(): Pointer<out Angular2Directive> {
+    return createPointer { decorator, implicitElement ->
+      Angular2SourceDirective(decorator, implicitElement)
+    }
+  }
+
+  internal val directHostDirectivesSet: Angular2ResolvedSymbolsSet<Angular2HostDirective>
+    get() = decorator.let { dec ->
+      CachedValuesManager.getCachedValue(dec) {
+        HostDirectivesCollector(dec).collect(Angular2DecoratorUtil.getProperty(dec, HOST_DIRECTIVES_PROP))
+      }
+    }
+
+  internal val directExportAs: Map<String, Angular2DirectiveExportAs>
+    get() = getCachedValue { Result.create(getExportAsNoCache(), decorator) }
 
   private fun getExportAsNoCache(): Map<String, Angular2DirectiveExportAs> =
     AstLoadingFilter.forceAllowTreeLoading<Map<String, Angular2DirectiveExportAs>, Throwable>(decorator.containingFile) {
@@ -103,30 +137,6 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
         }
       }
     }
-
-  override val attributes: Collection<Angular2DirectiveAttribute>
-    get() = getCachedValue {
-      Result.create(getAttributesNoCache(), classModificationDependencies)
-    }
-
-  override val bindings: Angular2DirectiveProperties
-    get() = getCachedValue {
-      Result.create(getPropertiesNoCache(), classModificationDependencies)
-    }
-
-  override val hostDirectives: Collection<Angular2HostDirective>
-    get() = getResolvedHostDirectivesSet().symbols
-
-  override fun areHostDirectivesFullyResolved(): Boolean =
-    getResolvedHostDirectivesSet().let { set ->
-      set.isFullyResolved && set.symbols.none { it.directive?.areHostDirectivesFullyResolved() != true }
-    }
-
-  override fun createPointer(): Pointer<out Angular2Directive> {
-    return createPointer { decorator, implicitElement ->
-      Angular2SourceDirective(decorator, implicitElement)
-    }
-  }
 
   private fun getPropertiesNoCache(): Angular2DirectiveProperties {
     val inputs = LinkedHashMap<String, Angular2DirectiveProperty>()
@@ -190,13 +200,6 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
         ?.let { processCtorParameters(it) }
       ?: emptyList()
   }
-
-  private fun getResolvedHostDirectivesSet(): Angular2ResolvedSymbolsSet<Angular2HostDirective> =
-    decorator.let { dec ->
-      CachedValuesManager.getCachedValue(dec) {
-        HostDirectivesCollector(dec).collect(Angular2DecoratorUtil.getProperty(dec, HOST_DIRECTIVES_PROP))
-      }
-    }
 
   private fun readPropertyMappings(source: String): MutableMap<String, String> =
     readDirectivePropertyMappings(Angular2DecoratorUtil.getProperty(decorator, source))
