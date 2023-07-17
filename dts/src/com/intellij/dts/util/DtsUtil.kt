@@ -1,7 +1,7 @@
 package com.intellij.dts.util
 
 import com.intellij.dts.lang.DtsTokenSets
-import com.intellij.openapi.util.TextRange
+import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.psi.PsiElement
 import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
@@ -53,6 +53,9 @@ object DtsUtil {
     private fun isProductiveElement(type: IElementType?): Boolean {
         if (type == null) return false
 
-        return type != TokenType.WHITE_SPACE && type !in DtsTokenSets.comments && type !in DtsTokenSets.preprocessorStatements
+        return type != TokenType.WHITE_SPACE &&
+               type !in DtsTokenSets.comments &&
+               type != DtsTypes.INCLUDE_STATEMENT &&
+               type !in DtsTokenSets.ppStatements
     }
 }

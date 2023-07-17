@@ -1,38 +1,39 @@
-package com.intellij.dts.lang.parser
+package com.intellij.pp.lang.parser
 
-import com.intellij.dts.lang.DtsTokenSets
-import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.lang.PsiBuilder
-import com.intellij.lang.PsiBuilder.Marker
 import com.intellij.lang.PsiParser
 import com.intellij.lang.parser.GeneratedParserUtilBase
-import com.intellij.openapi.util.Key
+import com.intellij.pp.lang.PpTokenTypes
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.tree.TokenSet
 
-class DtsBuildAdapter(
-    delegate: PsiBuilder, state: GeneratedParserUtilBase.ErrorState, parser: PsiParser
+/**
+ * Can be added to a parser to support parsing of preprocessor statements.
+ * Statement parsers should implement [PpStatementParser].
+ */
+class PpBuildAdapter(
+    delegate: PsiBuilder,
+    state: GeneratedParserUtilBase.ErrorState,
+    parser: PsiParser,
+    tokenTypes: PpTokenTypes,
+    private val parsers: List<PpStatementParser>,
 ) : FixedGeneratedBuilder(delegate, state, parser) {
-    companion object {
-        val lastParsedStatementIndex = Key.create<Int>("dts.lastParsedStatementIndex")
+    val ppScopeSet = tokenTypes.createScopeSet()
+    val ppStatementsSet = TokenSet.orSet(*parsers.map { it.getStatementTokens() }.toTypedArray())
+
+    private fun builderFactory(): PsiBuilder {
+        return FixedGeneratedBuilder(delegate,  GeneratedParserUtilBase.ErrorState(), parser)
     }
 
     private fun parseStatement() {
-        while (true) {
-            when (super.getTokenType()) {
-                DtsTypes.INCLUDE -> {
-                    val builder = GeneratedParserUtilBase.Builder(delegate, GeneratedParserUtilBase.ErrorState(), parser)
-                    DtsParser.includeStatement(builder, 1)
+        parse@ while (true) {
+            val token = super.getTokenType() ?: return
 
-                    putUserData(lastParsedStatementIndex, rawTokenIndex())
-                }
-                in DtsTokenSets.ppDirectives -> {
-                    val builder = GeneratedParserUtilBase.Builder(delegate, GeneratedParserUtilBase.ErrorState(), parser)
-                    DtsParser.ppStatement(builder, 1)
-
-                    putUserData(lastParsedStatementIndex, rawTokenIndex())
-                }
-                else -> break
+            for (statementParser in parsers) {
+                if (statementParser.parseStatement(token, ::builderFactory)) continue@parse
             }
+
+            break
         }
     }
 
@@ -41,8 +42,8 @@ class DtsBuildAdapter(
         while (true) {
             val latest = latestDoneMarker
 
-            if (latest !is Marker || latest != productions.last()) break
-            if (latest.tokenType !in DtsTokenSets.preprocessorStatements) break
+            if (latest !is PsiBuilder.Marker || latest != productions.last()) break
+            if (latest.tokenType !in ppStatementsSet) break
 
             latest.rollbackTo()
             rollback = true
@@ -50,7 +51,7 @@ class DtsBuildAdapter(
 
         val latest = latestDoneMarker
         if (rollback && latest == productions.last()) {
-            val backup = DtsParserUtil.backupMarker(latest)
+            val backup = PpParserUtil.backupMarker(latest)
             super.error(messageText)
             backup?.let { (marker, type) -> marker.done(type) }
         } else {

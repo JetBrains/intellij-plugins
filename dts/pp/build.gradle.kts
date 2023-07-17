@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.grammarkit.tasks.GenerateLexerTask
 
 plugins {
     id("java")
@@ -8,8 +7,8 @@ plugins {
     id("org.jetbrains.grammarkit") version "2022.3.1"
 }
 
-group = "com.jetbrains"
-version = "0.5"
+group = "com.intellij"
+version = "0.1"
 
 repositories {
     mavenCentral()
@@ -33,10 +32,6 @@ sourceSets {
     }
 }
 
-dependencies {
-    implementation(project(":pp"))
-}
-
 tasks {
     // Set the JVM compatibility versions
     withType<JavaCompile> {
@@ -52,28 +47,10 @@ tasks {
     }
 
     generateLexer {
-        dependsOn("pp:generateLexer")
+        sourceFile.set(File("src/com/intellij/pp/lang/lexer/pp.flex"))
 
-        sourceFile.set(File("src/com/intellij/dts/lang/lexer/dts.flex"))
-
-        targetDir.set("gen/com/intellij/dts/lang/lexer")
-        targetClass.set("DtsLexer")
+        targetDir.set("gen/com/intellij/pp/lang/lexer")
+        targetClass.set("PpLexer")
         purgeOldFiles.set(true)
-    }
-
-    generateParser {
-        dependsOn(generateLexer)
-
-        sourceFile.set(File("src/com/intellij/dts/lang/parser/dts.bnf"))
-
-        targetRoot.set("gen")
-        pathToParser.set("com/intellij/dts/lang/parser/DtsParser.java")
-        pathToPsiRoot.set("com/intellij/dts/lang/psi")
-        purgeOldFiles.set(true)
-    }
-
-    patchPluginXml {
-        sinceBuild.set("221")
-        untilBuild.set("232.*")
     }
 }

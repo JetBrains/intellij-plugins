@@ -1,15 +1,15 @@
-package com.intellij.dts.lang.lexer
+package com.intellij.pp.lang.lexer
 
-import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.lexer.Lexer
 import com.intellij.lexer.LexerUtil
 import com.intellij.lexer.LookAheadLexer
+import com.intellij.pp.lang.PpTokenTypes
 
-open class PpLexerAdapter(baseLexer: Lexer) : LookAheadLexer(baseLexer) {
-    private val ppLexer = PpLexer(null)
+open class PpLexerAdapter(private val tokenTypes: PpTokenTypes, baseLexer: Lexer) : LookAheadLexer(baseLexer) {
+    private val ppLexer = PpLexer(null, tokenTypes)
 
     override fun lookAhead(baseLexer: Lexer) {
-        if (baseLexer.tokenType != DtsTypes.PP_STATEMENT_MARKER) {
+        if (baseLexer.tokenType != tokenTypes.statementMarker) {
             advanceLexer(baseLexer)
             return
         }
@@ -29,6 +29,6 @@ open class PpLexerAdapter(baseLexer: Lexer) : LookAheadLexer(baseLexer) {
             addToken(baseLexer.tokenStart + ppLexer.tokenEnd, token)
         }
 
-        addToken(baseLexer.tokenEnd, DtsTypes.PP_STATEMENT_END)
+        addToken(baseLexer.tokenEnd, tokenTypes.statementEnd)
     }
 }

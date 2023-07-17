@@ -25,25 +25,6 @@ object DtsTokenSets {
         DtsTypes.INCLUDE,
     )
 
-    val ppDirectives = TokenSet.create(
-        DtsTypes.PP_DEFINE,
-        DtsTypes.PP_INCLUDE,
-        DtsTypes.PP_IFDEF,
-        DtsTypes.PP_IFNDEF,
-        DtsTypes.PP_ENDIF,
-        DtsTypes.PP_UNDEF,
-    )
-
-    val preprocessorStatements = TokenSet.create(
-        DtsTypes.INCLUDE_STATEMENT,
-        DtsTypes.PP_DEFINE_STATEMENT,
-        DtsTypes.PP_INCLUDE_STATEMENT,
-        DtsTypes.PP_IFDEF_STATEMENT,
-        DtsTypes.PP_IFNDEF_STATEMENT,
-        DtsTypes.PP_ENDIF_STATEMENT,
-        DtsTypes.PP_UNDEF_STATEMENT,
-    )
-
     val operators = TokenSet.create(
         DtsTypes.ADD,
         DtsTypes.SUB,
@@ -69,4 +50,8 @@ object DtsTokenSets {
         DtsTypes.EQ,
         DtsTypes.NEQ,
     )
+
+    val ppDirectives = DtsPpTokenTypes.createDirectivesSet()
+
+    val ppStatements = DtsPpTokenTypes.createStatementSet()
 }

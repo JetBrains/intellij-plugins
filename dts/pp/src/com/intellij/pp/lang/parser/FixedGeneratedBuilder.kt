@@ -1,4 +1,4 @@
-package com.intellij.dts.lang.parser
+package com.intellij.pp.lang.parser
 
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.PsiParser
