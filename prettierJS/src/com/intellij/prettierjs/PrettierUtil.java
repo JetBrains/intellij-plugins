@@ -14,7 +14,6 @@ import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -41,19 +40,24 @@ public final class PrettierUtil {
 
   public static final Icon ICON = null;
   public static final String PACKAGE_NAME = "prettier";
-  public static final List<String> CONFIG_FILE_EXTENSIONS = List.of(".yaml", ".yml", ".json", ".js", ".toml");
   public static final String RC_FILE_NAME = ".prettierrc";
   private static final String IGNORE_FILE_NAME = ".prettierignore";
-  public static final String JS_CONFIG_FILE_NAME = "prettier.config.js";
-  public static final Key<ParameterizedCachedValue<PrettierConfig, PsiFile>> CACHE_KEY = new Key<>(PrettierUtil.class.getName() + ".config");
+  private static final Key<ParameterizedCachedValue<PrettierConfig, PsiFile>> CACHE_KEY =
+    new Key<>(PrettierUtil.class.getName() + ".config");
 
-  public static final List<String> CONFIG_FILE_NAMES =
-    ContainerUtil.append(
-      ContainerUtil.map(CONFIG_FILE_EXTENSIONS, ext -> RC_FILE_NAME + ext),
-      JS_CONFIG_FILE_NAME, RC_FILE_NAME
-    );
+  /**
+   * <a href="https://github.com/prettier/prettier/blob/main/docs/configuration.md">github.com/prettier/prettier/blob/main/docs/configuration.md</a>
+   */
+  private static final List<String> CONFIG_FILE_NAMES = List.of(
+    ".prettierrc",
+    ".prettierrc.json", ".prettierrc.yml", ".prettierrc.yaml", ".prettierrc.json5",
+    ".prettierrc.js", "prettier.config.js",
+    ".prettierrc.mjs", "prettier.config.mjs",
+    ".prettierrc.cjs", "prettier.config.cjs",
+    ".prettierrc.toml"
+  );
 
-  public static final List<String> CONFIG_FILE_NAMES_WITH_PACKAGE_JSON =
+  private static final List<String> CONFIG_FILE_NAMES_WITH_PACKAGE_JSON =
     ContainerUtil.append(CONFIG_FILE_NAMES, PackageJsonUtil.FILE_NAME);
 
   public static final SemVer MIN_VERSION = new SemVer("1.13.0", 1, 13, 0);
@@ -89,23 +93,7 @@ public final class PrettierUtil {
 
   @Contract("null -> false")
   public static boolean isConfigFile(@Nullable VirtualFile virtualFile) {
-    if (virtualFile == null) {
-      return false;
-    }
-    CharSequence name = virtualFile.getNameSequence();
-    if (StringUtil.equals(name, JS_CONFIG_FILE_NAME)
-        || StringUtil.equals(name, RC_FILE_NAME)) {
-      return true;
-    }
-
-    if (StringUtil.startsWith(name, RC_FILE_NAME)) {
-      for (String ext : CONFIG_FILE_EXTENSIONS) {
-        if (name.length() == RC_FILE_NAME.length() + ext.length() && StringUtil.endsWith(name, ext)) {
-          return true;
-        }
-      }
-    }
-    return false;
+    return virtualFile != null && CONFIG_FILE_NAMES.contains(virtualFile.getName());
   }
 
   @Nullable
