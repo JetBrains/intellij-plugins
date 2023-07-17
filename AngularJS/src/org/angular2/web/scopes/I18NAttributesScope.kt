@@ -73,7 +73,7 @@ class I18NAttributesScope(private val tag: XmlTag) : WebSymbolsScope {
     override val name: String
       get() = attribute.name
 
-    override val nameSegments: List<WebSymbolNameSegment> by lazy(LazyThreadSafetyMode.NONE) {
+    override val nameSegments: List<WebSymbolNameSegment> by lazy(LazyThreadSafetyMode.PUBLICATION) {
       (attribute.descriptor as? WebSymbolAttributeDescriptor)?.symbol?.nameSegments
       ?: listOf(WebSymbolNameSegment(this))
     }

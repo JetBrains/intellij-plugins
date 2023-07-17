@@ -26,7 +26,7 @@ import org.jetbrains.vuejs.web.symbols.VueWebTypesMergedSymbol
 
 class VueWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : WebSymbolsQueryResultsCustomizer {
 
-  private val scriptLanguage by lazy(LazyThreadSafetyMode.NONE) {
+  private val scriptLanguage by lazy(LazyThreadSafetyMode.PUBLICATION) {
     detectVueScriptLanguage(context.containingFile)
   }
 

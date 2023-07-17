@@ -14,6 +14,6 @@ class Angular2ElementDescriptor(info: WebSymbolHtmlElementInfo, tag: XmlTag) : W
 
   val sourceDirectives: List<Angular2Directive> get() = tagInfoProvider.directives
 
-  private val tagInfoProvider by lazy(LazyThreadSafetyMode.NONE) { Angular2DescriptorSymbolsProvider(this.symbol) }
+  private val tagInfoProvider by lazy(LazyThreadSafetyMode.PUBLICATION) { Angular2DescriptorSymbolsProvider(this.symbol) }
 
 }
