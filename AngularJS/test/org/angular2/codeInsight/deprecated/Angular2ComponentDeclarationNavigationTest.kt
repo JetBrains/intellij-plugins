@@ -1,5 +1,5 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.angular2.codeInsight.navigation
+package org.angular2.codeInsight.deprecated
 
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction
 import com.intellij.codeInsight.navigation.actions.GotoTypeDeclarationAction
@@ -18,6 +18,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
+@Deprecated("Use test appropriate for IDE feature being tested - e.g. go to declaration")
 @RunWith(Parameterized::class)
 class Angular2ComponentDeclarationNavigationTest : Angular2CodeInsightFixtureTestCase() {
   @Parameterized.Parameter
@@ -36,7 +37,7 @@ class Angular2ComponentDeclarationNavigationTest : Angular2CodeInsightFixtureTes
   @JvmField
   var myElementText: String? = null
   override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath() + "navigation/component"
+    return AngularTestUtil.getBaseTestDataPath() + "deprecated/component-navigation"
   }
 
   @Test
