@@ -1,0 +1,4 @@
+bold#BoldDirective#0
+mouseenter#MouseenterDirective<any>#0
+test#TestComponent#0
+underline#UnderlineDirective<number>#0

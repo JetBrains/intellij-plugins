@@ -14,6 +14,15 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     this.enableIdempotenceChecksOnEveryCache()
   }
 
+  fun testExportAs() =
+    doLookupTest(checkDocumentation = true)
+
+  fun testRecursiveHostDirective() =
+    doLookupTest(locations = listOf("ref-a=\"<caret>\"", " [we<caret>]>"))
+
+  fun testHostDirectivesProperties() =
+    doLookupTest(renderedItemFilter = { it.endsWith("#100") })
+
   fun testCompletionInExpression() {
     doLookupTest(ANGULAR_CORE_13_3_5, ANGULAR_CDK_14_2_0, dir = true)
 

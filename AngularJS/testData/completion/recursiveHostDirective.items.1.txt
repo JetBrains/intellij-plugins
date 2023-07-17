@@ -1,0 +1,3 @@
+bold#BoldDirective#0
+mouseenter#MouseenterDirective#0
+mydir#MyDirective#0

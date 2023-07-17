@@ -16,9 +16,7 @@ AppModule: Angular2SourceModule
       host directives:
         MouseenterDirective
           host-inputs:
-            underlineColor
           host-outputs:
-            hover
           MouseenterDirective: Angular2SourceDirective
             standalone: true
             selector: [appMouseenter]
@@ -34,6 +32,7 @@ AppModule: Angular2SourceModule
               UnderlineDirective
                 host-inputs:
                   underlineColor
+                host-outputs:
                 UnderlineDirective: Angular2SourceDirective
                   standalone: true
                   selector: [appUnderline]
@@ -42,6 +41,7 @@ AppModule: Angular2SourceModule
                     color
                   host directives fully resolved: true
               BoldDirective
+                host-inputs:
                 host-outputs:
                   hover
                 BoldDirective: Angular2SourceDirective
@@ -54,6 +54,10 @@ AppModule: Angular2SourceModule
                     hover
                   host directives fully resolved: true
             host directives fully resolved: false
+        UnderlineDirective
+          <printed above>
+        BoldDirective
+          <printed above>
       host directives fully resolved: false
     TestComponent: Angular2IvyComponent
       standalone: false
@@ -67,6 +71,7 @@ AppModule: Angular2SourceModule
           host-inputs:
             bbb <required>
             ngIfElse
+          host-outputs:
           NgIf: Angular2IvyDirective
             standalone: true
             selector: [ngIf]
@@ -77,6 +82,8 @@ AppModule: Angular2SourceModule
               ngIfThen
             host directives fully resolved: true
         NgForOf
+          host-inputs:
+          host-outputs:
           NgForOf: Angular2IvyDirective
             standalone: true
             selector: [ngFor]
