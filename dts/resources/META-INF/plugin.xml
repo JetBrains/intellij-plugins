@@ -29,7 +29,10 @@
         <!-- ide features -->
         <lang.foldingBuilder
                 language="DTS"
-                implementationClass="com.intellij.dts.ide.DtsFoldingBuilder" />
+                implementationClass="com.intellij.dts.ide.DtsFoldingBuilder"/>
+        <lang.psiStructureViewFactory
+                language="DTS"
+                implementationClass="com.intellij.dts.ide.DtsStructureViewFactory"/>
 
         <!-- syntax highlighting -->
         <lang.syntaxHighlighterFactory

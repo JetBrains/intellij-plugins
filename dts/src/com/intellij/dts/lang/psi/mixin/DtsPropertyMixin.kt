@@ -1,11 +1,13 @@
 package com.intellij.dts.lang.psi.mixin
 
+import com.intellij.dts.DtsIcons
 import com.intellij.dts.lang.DtsAffiliation
 import com.intellij.dts.lang.psi.*
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import javax.swing.Icon
 
 abstract class DtsPropertyMixin(node: ASTNode) : ASTWrapperPsiElement(node), DtsProperty {
     override val dtsAffiliation: DtsAffiliation
@@ -33,4 +35,6 @@ abstract class DtsPropertyMixin(node: ASTNode) : ASTWrapperPsiElement(node), Dts
         }
 
     override fun getTextOffset(): Int = dtsNameElement.textOffset
+
+    override fun getIcon(flags: Int): Icon = DtsIcons.Property
 }

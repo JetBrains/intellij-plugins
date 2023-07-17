@@ -1,5 +1,6 @@
 package com.intellij.dts.lang.psi.mixin
 
+import com.intellij.dts.DtsIcons
 import com.intellij.dts.lang.DtsAffiliation
 import com.intellij.dts.lang.psi.*
 import com.intellij.dts.lang.psi.impl.DtsStubBasedElement
@@ -46,11 +47,13 @@ abstract class DtsNodeMixin<T : StubBase<*>> : DtsStubBasedElement<T>, DtsStatem
 
     override fun getTextOffset(): Int = dtsNameElement.textOffset
 
+    override fun getIcon(flags: Int): Icon = DtsIcons.Node
+
     override fun getPresentation(): ItemPresentation {
         return object : ItemPresentation {
             override fun getPresentableText(): String = dtsName
 
-            override fun getIcon(unused: Boolean): Icon? = null
+            override fun getIcon(unused: Boolean): Icon = DtsIcons.Node
 
             override fun getLocationString(): String? = containingFile.originalFile.virtualFile?.presentableName
         }
