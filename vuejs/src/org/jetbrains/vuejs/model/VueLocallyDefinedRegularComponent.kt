@@ -25,7 +25,7 @@ private constructor(override val delegate: VueRegularComponent, source: PsiEleme
   override val nameElement: PsiElement
     get() = if (mySource is JSPsiNamedElementBase) source else mySource
 
-  override val source: PsiElement by lazy(LazyThreadSafetyMode.NONE) {
+  override val source: PsiElement by lazy(LazyThreadSafetyMode.PUBLICATION) {
     if (mySource is JSPsiNamedElementBase)
       mySource.resolveIfImportSpecifier()
     else

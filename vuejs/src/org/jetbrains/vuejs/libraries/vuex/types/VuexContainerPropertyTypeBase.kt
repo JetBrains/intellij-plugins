@@ -37,7 +37,7 @@ abstract class VuexContainerPropertyTypeBase(source: JSTypeSource,
 
   abstract val kind: String
 
-  private val resolvedNamespace: String by lazy(LazyThreadSafetyMode.NONE) {
+  private val resolvedNamespace: String by lazy(LazyThreadSafetyMode.PUBLICATION) {
     baseNamespace.get(element)
   }
 

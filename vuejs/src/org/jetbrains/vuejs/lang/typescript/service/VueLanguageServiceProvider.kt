@@ -14,8 +14,8 @@ import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
 import org.jetbrains.vuejs.lang.typescript.service.volar.VolarTypeScriptService
 
 internal class VueLanguageServiceProvider(project: Project) : JSLanguageServiceProvider {
-  private val tsLanguageService by lazy(LazyThreadSafetyMode.NONE) { project.service<ServiceWrapper>() }
-  private val volarLanguageService by lazy(LazyThreadSafetyMode.NONE) { project.service<VolarServiceWrapper>() }
+  private val tsLanguageService by lazy(LazyThreadSafetyMode.PUBLICATION) { project.service<ServiceWrapper>() }
+  private val volarLanguageService by lazy(LazyThreadSafetyMode.PUBLICATION) { project.service<VolarServiceWrapper>() }
 
   override fun getAllServices(): List<JSLanguageService> = listOf(tsLanguageService.service, volarLanguageService.service)
 

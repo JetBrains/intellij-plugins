@@ -13,7 +13,7 @@ import org.jetbrains.vuejs.web.VueFramework
 
 class VueScopeElementOrigin(private val item: VueScopeElement) : WebSymbolOrigin {
 
-  private val info: Pair<String?, String?>? by lazy(LazyThreadSafetyMode.NONE) {
+  private val info: Pair<String?, String?>? by lazy(LazyThreadSafetyMode.PUBLICATION) {
     item.parents
       .takeIf { it.size == 1 }
       ?.get(0)

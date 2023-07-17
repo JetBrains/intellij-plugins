@@ -29,7 +29,7 @@ class Angular2AttributeDescriptor(info: WebSymbolHtmlAttributeInfo, tag: XmlTag?
 
   val info: Angular2AttributeNameParser.AttributeInfo = Angular2AttributeNameParser.parse(name, tag)
 
-  private val bindingInfoProvider by lazy(LazyThreadSafetyMode.NONE) { Angular2DescriptorSymbolsProvider(this.symbol) }
+  private val bindingInfoProvider by lazy(LazyThreadSafetyMode.PUBLICATION) { Angular2DescriptorSymbolsProvider(this.symbol) }
 
   companion object {
     @JvmStatic

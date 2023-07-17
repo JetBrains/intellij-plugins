@@ -12,7 +12,7 @@ import javax.swing.Icon
 
 class Angular2SymbolOrigin(private val mySymbol: Angular2Symbol) : WebSymbolOrigin {
 
-  private val versionAndName: Pair<String, String> by lazy(LazyThreadSafetyMode.NONE) {
+  private val versionAndName: Pair<String, String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
     val source = if (mySymbol is PsiSourcedWebSymbol)
       (mySymbol as PsiSourcedWebSymbol).source
     else
