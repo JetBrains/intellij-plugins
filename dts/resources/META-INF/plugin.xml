@@ -33,6 +33,8 @@
         <lang.psiStructureViewFactory
                 language="DTS"
                 implementationClass="com.intellij.dts.ide.DtsStructureViewFactory"/>
+        <breadcrumbsInfoProvider
+                implementation="com.intellij.dts.ide.DtsBreadcrumbsProvider"/>
 
         <!-- syntax highlighting -->
         <lang.syntaxHighlighterFactory
