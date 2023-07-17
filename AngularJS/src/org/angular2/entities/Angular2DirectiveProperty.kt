@@ -8,12 +8,12 @@ import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.contextOfType
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolApiStatus
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
+import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
 import org.angular2.entities.Angular2EntityUtils.jsTypeFromAcceptInputType
-import org.angular2.entities.impl.Angular2ElementDocumentationTarget
 import org.angular2.lang.types.Angular2TypeUtils
 import org.angular2.web.Angular2PsiSourcedSymbol
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_OUTPUTS
@@ -64,6 +64,7 @@ interface Angular2DirectiveProperty : Angular2PsiSourcedSymbol, Angular2Element 
 
   override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget =
     Angular2ElementDocumentationTarget.create(
-      name, this, Angular2EntitiesProvider.getEntity(PsiTreeUtil.getContextOfType(source, TypeScriptClass::class.java, false)))
+      name, location, this,
+      Angular2EntitiesProvider.getEntity(sourceElement.contextOfType<TypeScriptClass>(true)))
     ?: super.getDocumentationTarget(location)
 }

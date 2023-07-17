@@ -4,6 +4,7 @@ package org.angular2.web
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.openapi.project.Project
+import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.rename.api.RenameTarget
@@ -11,12 +12,14 @@ import com.intellij.refactoring.rename.symbol.RenameableSymbol
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import com.intellij.webSymbols.utils.coalesceWith
+import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
+import org.angular2.entities.Angular2AliasedDirectiveProperty
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2DirectiveSelectorSymbol
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.PROP_SYMBOL_DIRECTIVE
 import java.util.*
 
-open class Angular2DirectiveSymbolWrapper private constructor(private val directive: Angular2Directive,
+open class Angular2DirectiveSymbolWrapper private constructor(val directive: Angular2Directive,
                                                               delegate: Angular2Symbol,
                                                               private val forcedPriority: WebSymbol.Priority? = null)
   : Angular2SymbolDelegate<Angular2Symbol>(delegate) {
@@ -61,6 +64,14 @@ open class Angular2DirectiveSymbolWrapper private constructor(private val direct
   override fun isEquivalentTo(symbol: Symbol): Boolean {
     return this == symbol || delegate.isEquivalentTo(symbol)
   }
+
+  override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget =
+    super.getDocumentationTarget(location).let {
+      if (it is Angular2ElementDocumentationTarget)
+        it.withDirective((delegate as? Angular2AliasedDirectiveProperty)?.directive ?: directive)
+      else
+        it
+    }
 
   override fun equals(other: Any?): Boolean =
     other === this ||

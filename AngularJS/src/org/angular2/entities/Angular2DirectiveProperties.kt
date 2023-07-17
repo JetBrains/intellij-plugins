@@ -6,11 +6,11 @@ import com.intellij.model.Pointer
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.contextOfType
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolApiStatus
 import com.intellij.webSymbols.utils.coalesceWith
-import org.angular2.entities.impl.Angular2ElementDocumentationTarget
+import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
 import org.angular2.lang.Angular2LangUtil.OUTPUT_CHANGE_SUFFIX
 import org.angular2.web.Angular2PsiSourcedSymbolDelegate
 import org.angular2.web.Angular2Symbol
@@ -95,8 +95,8 @@ class Angular2DirectiveProperties(inputs: Collection<Angular2DirectiveProperty>,
 
     override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget =
       Angular2ElementDocumentationTarget.create(
-        name, delegate, myOutput,
-        Angular2EntitiesProvider.getEntity(PsiTreeUtil.getContextOfType(source, TypeScriptClass::class.java, false)))
+        name, location, delegate, myOutput,
+        Angular2EntitiesProvider.getEntity(source.contextOfType<TypeScriptClass>(true)))
       ?: super.getDocumentationTarget(location)
   }
 

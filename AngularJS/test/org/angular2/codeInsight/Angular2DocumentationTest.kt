@@ -45,6 +45,11 @@ class Angular2DocumentationTest : Angular2TestCase("documentation") {
 
   fun testDirectiveInOutMixedDoc() = doTest()
 
+  fun testDirectiveWithGenerics() = doTest()
+
+  fun testStructuralDirectiveWithGenerics() = doTest(Angular2TestModule.ANGULAR_CORE_15_1_5,
+                                                     Angular2TestModule.ANGULAR_COMMON_15_1_5)
+
   private fun doTestWithDeps() {
     configure(additionalFiles = listOf("deps/list-item.component.ts", "deps/ng_for_of.ts", "deps/ng_if.ts", "deps/dir.ts",
                                        "deps/ng_plural.ts"),

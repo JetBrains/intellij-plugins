@@ -8,8 +8,24 @@ import com.intellij.psi.PsiElement
 import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.WebSymbolApiStatus
 
-class Angular2AliasedDirectiveProperty(private val delegate: Angular2DirectiveProperty,
-                                       override val name: String): Angular2DirectiveProperty {
+class Angular2AliasedDirectiveProperty(
+  directive: Angular2Directive,
+  delegate: Angular2DirectiveProperty,
+  override val name: String
+) : Angular2DirectiveProperty {
+
+  private val delegate: Angular2DirectiveProperty =
+    if (delegate is Angular2AliasedDirectiveProperty)
+      delegate.delegate
+    else
+      delegate
+
+  val directive: Angular2Directive =
+    if (delegate is Angular2AliasedDirectiveProperty)
+      delegate.directive
+    else
+      directive
+
   override val required: Boolean
     get() = delegate.required
 
@@ -32,9 +48,12 @@ class Angular2AliasedDirectiveProperty(private val delegate: Angular2DirectivePr
 
   override fun createPointer(): Pointer<out Angular2DirectiveProperty> {
     val delegatePtr = delegate.createPointer()
+    val directivePtr = directive.createPointer()
     val name = name
     return Pointer {
-      delegatePtr.dereference()?.let { Angular2AliasedDirectiveProperty(it, name) }
+      val delegate = delegatePtr.dereference() ?: return@Pointer null
+      val directive = directivePtr.dereference() ?: return@Pointer null
+      Angular2AliasedDirectiveProperty(directive, delegate, name)
     }
   }
 
