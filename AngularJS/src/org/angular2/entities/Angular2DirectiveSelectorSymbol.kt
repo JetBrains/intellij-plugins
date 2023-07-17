@@ -12,7 +12,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.contextOfType
 import com.intellij.refactoring.rename.api.RenameTarget
 import com.intellij.refactoring.rename.api.RenameValidationResult
 import com.intellij.refactoring.rename.api.RenameValidator
@@ -20,7 +20,7 @@ import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.utils.WebSymbolDeclaredInPsi
 import com.intellij.xml.XmlElementDescriptor
 import org.angular2.Angular2DecoratorUtil.getClassForDecoratorElement
-import org.angular2.entities.impl.Angular2ElementDocumentationTarget
+import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
 import org.angular2.web.Angular2Symbol
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_ELEMENT_SELECTORS
@@ -103,7 +103,8 @@ class Angular2DirectiveSelectorSymbol(private val myParent: Angular2DirectiveSel
 
   override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget =
     Angular2ElementDocumentationTarget.create(
-      name, Angular2EntitiesProvider.getEntity(PsiTreeUtil.getContextOfType(sourceElement, TypeScriptClass::class.java, false)))
+      name, location,
+      Angular2EntitiesProvider.getEntity(sourceElement.contextOfType<TypeScriptClass>(true)))
     ?: super<Angular2Symbol>.getDocumentationTarget(location)
 
   override fun createPointer(): Pointer<Angular2DirectiveSelectorSymbol> {

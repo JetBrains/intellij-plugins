@@ -1,4 +1,4 @@
-<div class='definition'><pre><span style='color: #000080'>directive</span> <span style='color: #000000'>NgForOf</span></pre></div><div class='content'><p>The <code>NgForOf</code> directive instantiates a template once per item from an iterable. The context
+<div class='definition'><pre><span style='color: #000080'>directive</span> <span style='color: #000000'><span style="">NgForOf&lt;T,&#32;S&gt;</span></span></pre></div><div class='content'><p>The <code>NgForOf</code> directive instantiates a template once per item from an iterable. The context
 for each instantiated template inherits from the outer context with the given loop variable
 set to the current item from the iterable.<h3>Usage Notes</h3>
 <h3>Local Variables</h3><p><code>NgForOf</code> provides several exported values that can be aliased to local variables:<ul><li><code>$implicit: T</code>: The value of the individual items in the iterable (<code>ngForOf</code>).</li><li><code>ngForOf: NgIterable&lt;T&gt;</code>: The value of the iterable expression. Useful when the expression is
@@ -21,4 +21,4 @@ If <code>trackBy</code> is given, Angular tracks changes by the return value of 
   &lt;li&gt;...&lt;/li&gt;
 &lt;/ng-template&gt;
 </pre><h3>Example</h3><p>See a <a href="http://plnkr.co/edit/KVuXxDp0qinGDyo307QW?p=preview">live demo</a> for a more detailed
-example.</div><table class='sections'><tr><td valign='top'><icon src='JavaScriptPsiIcons.FileTypes.TypeScriptFile'/>&nbsp;deps/ng_for_of.ts</td></table>
+example.</div><table class='sections'><tr><td valign='top' class='section'><p>Selectors:</td><td valign='top'><p><pre><span style="">[</span><span style="color:#000080;">ngFor</span><span style="">][</span><span style="color:#000080;">ngForOf</span><span style="">]</span></pre></td><tr><td valign='top' colspan='2'><icon src='JavaScriptPsiIcons.FileTypes.TypeScriptFile'/>&nbsp;deps/ng_for_of.ts</td></table>

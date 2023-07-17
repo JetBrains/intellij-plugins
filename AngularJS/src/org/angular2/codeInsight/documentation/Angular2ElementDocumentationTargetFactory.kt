@@ -1,5 +1,5 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.angular2.entities.impl
+package org.angular2.codeInsight.documentation
 
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.documentation.PsiDocumentationTargetProvider
@@ -19,7 +19,7 @@ class Angular2ElementDocumentationTargetFactory : PsiDocumentationTargetProvider
         .plus(originalElement.prevLeafs.firstOrNull { it !is PsiWhiteSpace }?.parents(true) ?: emptySequence())
         .any { it is Angular2PipeExpression }
     ) {
-      Angular2EntitiesProvider.getPipe(element)?.let { Angular2ElementDocumentationTarget.create(it.getName(), it) }
+      Angular2EntitiesProvider.getPipe(element)?.let { Angular2ElementDocumentationTarget.create(it.getName(), originalElement, it) }
     }
     else null
 }

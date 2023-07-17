@@ -127,7 +127,7 @@
                     serviceImplementation="org.angular2.refactoring.extractComponent.Angular2CliComponentGeneratorImpl"
                     testServiceImplementation="org.angular2.codeInsight.refactoring.Angular2CliComponentGeneratorMockImpl"
     />
-    <platform.backend.documentation.psiTargetProvider implementation="org.angular2.entities.impl.Angular2ElementDocumentationTargetFactory"/>
+    <platform.backend.documentation.psiTargetProvider implementation="org.angular2.codeInsight.documentation.Angular2ElementDocumentationTargetFactory"/>
 
     <!--suppress PluginXmlValidity -->
     <javascript.rename.extension implementation="org.angular2.refactoring.Angular2RenameExtension"/>
@@ -262,6 +262,7 @@
     <html.embeddedContentSupport implementation="org.angular2.lang.html.lexer.Angular2HtmlEmbeddedContentSupport"/>
     <copyPastePostProcessor implementation="org.angular2.codeInsight.imports.Angular2DeclarationsCopyPasteProcessor"/>
     <copyPastePostProcessor implementation="org.angular2.codeInsight.imports.Angular2ExpressionsCopyPasteProcessor"/>
+    <platform.backend.documentation.linkHandler implementation="org.angular2.codeInsight.documentation.Angular2DocumentationLinkHandler"/>
 
     <webSymbols.webTypes enableByDefault="true" source="web-types/angular.web-types.json"/>
     <webSymbols.webTypes enableByDefault="true" source="web-types/angular-hacks.web-types.json"/>
