@@ -13,7 +13,7 @@ import org.angular2.codeInsight.Angular2FormattingTest
 import org.angular2.codeInsight.Angular2IntentionsTest
 import org.angular2.codeInsight.Angular2MultiFileIntentionsTest
 import org.angular2.codeInsight.inspections.*
-import org.angular2.codeInsight.navigation.Angular2ComponentDeclarationNavigationTest
+import org.angular2.codeInsight.deprecated.Angular2ComponentDeclarationNavigationTest
 import org.angular2.lang.expr.Angular2LexerSpecTest
 import org.angular2.lang.expr.Angular2LexerTest
 import org.angular2.lang.expr.Angular2ParserSpecTest
