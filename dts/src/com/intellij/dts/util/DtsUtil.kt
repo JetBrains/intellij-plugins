@@ -55,14 +55,4 @@ object DtsUtil {
 
         return type != TokenType.WHITE_SPACE && type !in DtsTokenSets.comments && type !in DtsTokenSets.preprocessorStatements
     }
-
-    /**
-     * Used to trim the ends of text range, like for string values to remove the
-     * trailing "...".
-     */
-    fun trimEnds(range: TextRange): TextRange {
-        if (range.length < 2) return range
-
-        return range.grown(-2).shiftRight(1)
-    }
 }

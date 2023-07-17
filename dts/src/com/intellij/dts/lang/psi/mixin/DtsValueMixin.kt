@@ -3,7 +3,7 @@ package com.intellij.dts.lang.psi.mixin
 import com.intellij.dts.lang.psi.DtsInt
 import com.intellij.dts.lang.psi.DtsString
 import com.intellij.dts.lang.psi.DtsTypes
-import com.intellij.dts.util.DtsUtil
+import com.intellij.dts.util.trimEnds
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.TextRange
@@ -26,7 +26,7 @@ abstract class DtsStringMixin(node: ASTNode): ASTWrapperPsiElement(node), DtsStr
         get() = findChildByType(DtsTypes.STRING_VALUE)
 
     override val dtsValueRange: TextRange
-        get() = value?.textRange ?: DtsUtil.trimEnds(textRange)
+        get() = value?.textRange ?: textRange.trimEnds()
 
     override fun dtsParse(): String = value?.text ?: ""
 }

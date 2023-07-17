@@ -2,7 +2,7 @@ package com.intellij.dts.lang.psi.mixin
 
 import com.intellij.dts.lang.psi.DtsPpHeader
 import com.intellij.dts.lang.psi.DtsTypes
-import com.intellij.dts.util.DtsUtil
+import com.intellij.dts.util.trimEnds
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.TextRange
@@ -22,5 +22,5 @@ abstract class PpHeaderMixin(node: ASTNode) : ASTWrapperPsiElement(node), DtsPpH
         get() = path?.text ?: ""
 
     override val ppPathRange: TextRange
-        get() = path?.textRange ?: DtsUtil.trimEnds(textRange)
+        get() = path?.textRange ?: textRange.trimEnds()
 }
