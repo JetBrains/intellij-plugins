@@ -1,0 +1,2 @@
+app-my-table (MyTableComponent, attrAndElementSelector.ts) - attrAndElementSelector.ts [342]
+app-my-table (MyTableComponent, attrAndElementSelector.ts) - attrAndElementSelector.ts [355]
