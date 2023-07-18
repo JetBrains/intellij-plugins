@@ -10,6 +10,7 @@ import com.intellij.platform.lsp.api.LspServerSupportProvider.LspServerStarter
 import com.intellij.util.text.SemVer
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.vuejs.lang.typescript.service.isVolarEnabledAndAvailable
+import org.jetbrains.vuejs.lang.typescript.service.isVolarFileTypeAcceptable
 import org.jetbrains.vuejs.options.getVueSettings
 
 val defaultVolarVersion: SemVer = SemVer.parseFromText("1.8.2")!!
@@ -29,9 +30,7 @@ class VolarServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(p
   override val relativeScriptPath = packageRelativePath
   override val npmPackage = serverPackageName
 
-  override fun isSupportedFile(file: VirtualFile): Boolean {
-    return isVolarEnabledAndAvailable(project, file) // circular JSFrameworkLspServerDescriptor.isSupportedFile && getVolarServerDescriptor
-  }
+  override fun isSupportedFile(file: VirtualFile): Boolean = isVolarFileTypeAcceptable(file)
 }
 
 @ApiStatus.Experimental
