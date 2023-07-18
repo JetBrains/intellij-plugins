@@ -2,19 +2,10 @@
 import {Component} from "@angular/core"
 
 @Component({
-  templateUrl: "./private.html"
+  templateUrl: "./privateComponentMethod.html"
 })
 export class MyComponent {
-  private foo: string;
-
-  constructor(private fooBar: boolean) {
-
-  }
-
-  private bar() {
-    this.foo = "";
+  private b<caret>ar() {
     this.bar();
-    this.fooBar = false;
   }
-
 }

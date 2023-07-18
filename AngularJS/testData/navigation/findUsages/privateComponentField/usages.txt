@@ -1,0 +1,3 @@
+<privateComponentField.html:(28,31):(0,3)>	foo
+<privateComponentField.html:(3,6):(0,3)>	foo
+<privateComponentField.ts:(317,325):(5,8)>	this.foo

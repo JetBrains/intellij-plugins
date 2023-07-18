@@ -1,0 +1,3 @@
+<privateComponentMethod.html:(26,29):(0,3)>	bar()
+<privateComponentMethod.html:(3,6):(0,3)>	bar()
+<privateComponentMethod.ts:(294,302):(5,8)>	this.bar()

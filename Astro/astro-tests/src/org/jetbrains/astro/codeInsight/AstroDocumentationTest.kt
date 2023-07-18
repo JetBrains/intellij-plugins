@@ -23,15 +23,17 @@ class AstroDocumentationTest : AstroCodeInsightTestCase("codeInsight/documentati
 
   //region Test configuration and helper methods
   private fun doTest() {
-    configure()
-    myFixture.checkDocumentationAtCaret()
+    doConfiguredTest {
+      checkDocumentationAtCaret()
+    }
   }
 
   private fun doLookupTest(
     lookupFilter: (item: LookupElement) -> Boolean = { true }
   ) {
-    configure()
-    myFixture.checkLookupItems(renderPriority = true, renderTypeText = true, checkDocumentation = true, lookupItemFilter = lookupFilter)
+    doConfiguredTest {
+      checkLookupItems(renderPriority = true, renderTypeText = true, checkDocumentation = true, lookupItemFilter = lookupFilter)
+    }
   }
   //endregion
 

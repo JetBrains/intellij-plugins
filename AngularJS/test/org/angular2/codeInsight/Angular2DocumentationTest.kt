@@ -53,14 +53,16 @@ class Angular2DocumentationTest : Angular2TestCase("documentation") {
   fun testHostDirectiveMappedInput() = doTest()
 
   private fun doTestWithDeps() {
-    configure(additionalFiles = listOf("deps/list-item.component.ts", "deps/ng_for_of.ts", "deps/ng_if.ts", "deps/dir.ts",
-                                       "deps/ng_plural.ts"),
-              extension = "html")
-    myFixture.checkDocumentationAtCaret()
+    doConfiguredTest(additionalFiles = listOf("deps/list-item.component.ts", "deps/ng_for_of.ts", "deps/ng_if.ts", "deps/dir.ts",
+                                              "deps/ng_plural.ts"),
+                     extension = "html") {
+      checkDocumentationAtCaret()
+    }
   }
 
   private fun doTest(vararg modules: Angular2TestModule, ext: String = "ts", additionalFiles: List<String> = emptyList()) {
-    configure(modules = modules, extension = ext, additionalFiles = additionalFiles)
-    myFixture.checkDocumentationAtCaret()
+    doConfiguredTest(modules = modules, extension = ext, additionalFiles = additionalFiles) {
+      checkDocumentationAtCaret()
+    }
   }
 }
