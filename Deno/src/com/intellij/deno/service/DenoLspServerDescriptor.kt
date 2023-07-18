@@ -8,6 +8,7 @@ import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.util.ExecUtil
 import com.intellij.lang.javascript.TypeScriptFileType
+import com.intellij.lang.javascript.TypeScriptJSXFileType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PathMacroManager
 import com.intellij.openapi.project.Project
@@ -30,7 +31,7 @@ class DenoLspSupportProvider : LspServerSupportProvider {
 
 class DenoLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor(project, "Deno") {
 
-  override fun isSupportedFile(file: VirtualFile) = file.fileType == TypeScriptFileType.INSTANCE
+  override fun isSupportedFile(file: VirtualFile) = file.fileType in arrayOf(TypeScriptFileType.INSTANCE, TypeScriptJSXFileType.INSTANCE)
 
   override fun createCommandLine(): GeneralCommandLine {
     return DenoSettings.getService(project).getDenoPath().ifEmpty { null }?.let {
