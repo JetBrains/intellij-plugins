@@ -167,7 +167,7 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
   @Test
   fun testScriptSetupGeneric() {
     myFixture.enableInspections(VueInspectionsProvider())
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_0_ALPHA5)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
     myFixture.configureByFile("tsconfig.json")
     // Required to load global declarations (defineProps) by the service
     myFixture.configureByText("import.ts", "import * from 'vue'")

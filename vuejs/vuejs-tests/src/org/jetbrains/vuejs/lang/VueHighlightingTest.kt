@@ -652,11 +652,11 @@ const props = {seeMe: {}}
   }
 
   fun testScriptSetupGeneric() {
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_0_ALPHA5))
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_2))
   }
 
   fun testGenericComponentUsage() {
-    doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_3_0_ALPHA5))
+    doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_3_2))
   }
 
   fun testStdTagsInspections() {
