@@ -30,7 +30,7 @@ class AstroLspServerDescriptor(project: Project) : JSFrameworkLspServerDescripto
   override val relativeScriptPath = packageRelativePath
   override val npmPackage = serverPackageName
 
-  override fun isSupportedFile(file: VirtualFile): Boolean = isServiceEnabledAndAvailable(project, file)
+  override fun isSupportedFile(file: VirtualFile): Boolean = isFileAcceptableForService(file)
 }
 
 @ApiStatus.Experimental
