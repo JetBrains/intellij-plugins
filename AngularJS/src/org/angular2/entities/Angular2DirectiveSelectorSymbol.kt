@@ -17,6 +17,7 @@ import com.intellij.refactoring.rename.api.RenameTarget
 import com.intellij.refactoring.rename.api.RenameValidationResult
 import com.intellij.refactoring.rename.api.RenameValidator
 import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.declarations.WebSymbolDeclaration
 import com.intellij.webSymbols.utils.WebSymbolDeclaredInPsi
 import com.intellij.xml.XmlElementDescriptor
 import org.angular2.Angular2DecoratorUtil.getClassForDecoratorElement
@@ -51,6 +52,9 @@ class Angular2DirectiveSelectorSymbol(private val myParent: Angular2DirectiveSel
 
   override val kind: String
     get() = if (isElementSelector) KIND_NG_DIRECTIVE_ELEMENT_SELECTORS else KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS
+
+  override val declaration: WebSymbolDeclaration?
+    get() = super.declaration.takeIf { isDeclaration }
 
   val isDeclaration: Boolean
     get() = referencedSymbols.all { it is Angular2Symbol }

@@ -131,6 +131,9 @@ class Angular2DirectiveSelectorImpl(private val myElement: PsiElement,
     override val notSelectors: List<SimpleSelectorWithPsi>
       get() = myNotSelectors
 
+    override val allSymbols: List<Angular2DirectiveSelectorSymbol>
+      get() = listOfNotNull(element) + myAttributes + myNotSelectors.flatMap { it.allSymbols }
+
     init {
       var myElementName: String? = null
       if (selectorWithRanges.elementRange != null) {
