@@ -53,10 +53,9 @@ class AstroCompletionTest : AstroCodeInsightTestCase("codeInsight/completion") {
   private fun doTypingTest(textToType: String,
                            additionalFiles: List<String> = emptyList(),
                            vararg modules: AstroTestModule) {
-    doConfiguredTest(additionalFiles = additionalFiles, modules = modules) {
+    doConfiguredTest(additionalFiles = additionalFiles, modules = modules, checkResult = true) {
       completeBasic()
       type(textToType)
-      checkResult()
     }
   }
 

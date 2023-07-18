@@ -20,9 +20,8 @@ class AstroTypingTest : AstroCodeInsightTestCase("codeInsight/typing") {
   fun testParensInHtmlCode() = doTest("(")
 
   fun testEmmetExpressions() {
-    doConfiguredTest {
+    doConfiguredTest(checkResult = true) {
       JSTestUtils.runEmmetTemplate(myFixture)
-      checkResult()
     }
   }
 
@@ -36,9 +35,8 @@ class AstroTypingTest : AstroCodeInsightTestCase("codeInsight/typing") {
 
   //region Test configuration and helper methods
   private fun doTest(textToType: String) {
-    doConfiguredTest {
+    doConfiguredTest(checkResult = true) {
       type(textToType)
-      checkResult()
     }
   }
   //endregion

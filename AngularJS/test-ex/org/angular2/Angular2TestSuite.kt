@@ -14,7 +14,10 @@ import org.angular2.codeInsight.inspections.*
 import org.angular2.codeInsight.navigation.Angular2FindUsagesTest
 import org.angular2.codeInsight.navigation.Angular2GotoRelatedTest
 import org.angular2.codeInsight.navigation.Angular2GotoSymbolTest
-import org.angular2.codeInsight.refactoring.*
+import org.angular2.codeInsight.refactoring.Angular2ChangeSignatureTest
+import org.angular2.codeInsight.refactoring.Angular2ExtractComponentTest
+import org.angular2.codeInsight.refactoring.Angular2MoveTest
+import org.angular2.codeInsight.refactoring.Angular2RenameTest
 import org.angular2.css.Angular2CssClassTest
 import org.angular2.css.Angular2CssCompletionTest
 import org.angular2.css.Angular2CssInspectionsTest
@@ -62,7 +65,6 @@ import org.junit.runners.Suite
   Angular2MultiFileIntentionsTest::class,
   Angular2CopyPasteTest::class,
   Angular2FindUsagesTest::class,
-  Angular2DirectiveRenameTest::class,
   Angular2UsageHighlightingTest::class,
   Angular2MoveTest::class,
   Angular2RenameTest::class,
