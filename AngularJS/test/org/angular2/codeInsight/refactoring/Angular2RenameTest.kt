@@ -1,151 +1,93 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight.refactoring
 
-import com.intellij.codeInsight.TargetElementUtil
-import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings
 import com.intellij.openapi.ui.TestDialog
-import com.intellij.openapi.ui.TestDialogManager
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.codeStyle.CodeStyleSettings
-import com.intellij.refactoring.rename.RenameProcessor
-import com.intellij.refactoring.rename.RenamePsiElementProcessor
-import com.intellij.webSymbols.canRenameWebSymbolAtCaret
-import com.intellij.webSymbols.renameWebSymbol
-import org.angular2.Angular2MultiFileFixtureTestCase
-import org.angularjs.AngularTestUtil
+import org.angular2.Angular2TestCase
 
-class Angular2RenameTest : Angular2MultiFileFixtureTestCase() {
-  override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath() + "refactoring/rename"
-  }
+class Angular2RenameTest : Angular2TestCase("refactoring/rename") {
 
-  @Throws(Exception::class)
-  override fun tearDown() {
-    try {
-      TestDialogManager.setTestDialog(TestDialog.DEFAULT)
-    }
-    catch (e: Throwable) {
-      addSuppressedException(e)
-    }
-    finally {
-      super.tearDown()
-    }
-  }
+  fun testRenameComponentFromStringUsage() =
+    checkSymbolRename("newName", "test.component.ts")
 
-  fun testRenameComponentFromStringUsage() {
-    doMultiFileTest("test.component.ts", "newName")
-  }
+  fun testComponentFieldFromTemplate() =
+    checkSymbolRename("newName", "test.component.html")
 
-  fun testComponentFieldFromTemplate() {
-    doMultiFileTest("test.component.html", "newName")
-  }
+  fun testI18nAttribute() =
+    checkSymbolRename("new-name", "directive.ts")
 
-  fun testI18nAttribute() {
-    doMultiFileTest("directive.ts", "new-name")
-  }
+  fun testLocalInTemplate() =
+    checkSymbolRename("newName", "test.component.html")
 
-  fun testLocalInTemplate() {
-    doMultiFileTest("test.component.html", "newName")
-  }
+  fun testReferenceFromTS() =
+    checkSymbolRename("newReference", "test.component.ts")
 
-  fun testReferenceFromTS() {
-    doMultiFileTest("test.component.ts", "newReference")
-  }
+  fun testReferenceFromHTML() =
+    checkSymbolRename("newReference", "test.component.html")
 
-  fun testReferenceFromHTML() {
-    doMultiFileTest("test.component.html", "newReference")
-  }
+  fun testReferenceFromTSNoStrings() =
+    checkSymbolRename("newReference", "test.component.ts", searchCommentsAndText = false)
 
-  fun testReferenceFromTSNoStrings() {
-    doMultiFileTest("test.component.ts", "newReference", false)
-  }
+  fun testReferenceFromHTMLNoStrings() =
+    checkSymbolRename("newReference", "test.component.html", searchCommentsAndText = false)
 
-  fun testReferenceFromHTMLNoStrings() {
-    doMultiFileTest("test.component.html", "newReference", false)
-  }
+  fun testPipeFromHTML() =
+    checkSymbolRename("bar", "test.component.html")
 
-  fun testPipeFromHTML() {
-    doMultiFileTest("test.component.html", "bar")
-  }
+  fun testPipeFromHTMLNoStrings() =
+    checkSymbolRename("bar", "test.component.html", searchCommentsAndText = false)
 
-  fun testPipeFromHTMLNoStrings() {
-    doMultiFileTest("test.component.html", "bar", false)
-  }
+  fun testPipeFromTS() =
+    checkSymbolRename("bar", "foo.pipe.ts")
 
-  fun testPipeFromTS() {
-    doMultiFileTest("foo.pipe.ts", "bar")
-  }
+  fun testPipeFromTS2() =
+    checkSymbolRename("bar", "foo.pipe.ts")
 
-  fun testPipeFromTS2() {
-    doMultiFileTest("foo.pipe.ts", "bar")
-  }
+  fun testPipeFromTS2NoStrings() =
+    checkSymbolRename("bar", "foo.pipe.ts", searchCommentsAndText = false)
 
-  fun testPipeFromTS2NoStrings() {
-    doMultiFileTest("foo.pipe.ts", "bar", false)
-  }
-
-  fun testComponentWithRelatedFiles() {
-    TestDialogManager.setTestDialog(TestDialog.OK)
-    JSTestUtils.testWithTempCodeStyleSettings<RuntimeException>(project) { t: CodeStyleSettings ->
+  fun testComponentWithRelatedFiles() =
+    withTempCodeStyleSettings { t: CodeStyleSettings ->
       t.getCustomSettings(TypeScriptCodeStyleSettings::class.java).FILE_NAME_STYLE = JSCodeStyleSettings.JSFileNameStyle.PASCAL_CASE
-      doMultiFileTest("foo-bar.component.ts", "NewNameComponent")
+      checkSymbolRename("NewNameComponent", "foo-bar.component.ts", testDialog = TestDialog.OK)
     }
-  }
 
-  fun testComponentFile() {
-    TestDialogManager.setTestDialog(TestDialog.OK)
-    doFileRename("foo-bar.component.ts", "new-name.component.ts", true)
-  }
+  fun testComponentFile() =
+    checkFileRename("new-name.component.ts", "foo-bar.component.ts", testDialog = TestDialog.OK)
 
-  fun testComponentToNonComponentName() {
-    TestDialogManager.setTestDialog(TestDialog.OK)
-    doMultiFileTest("foo-bar.component.ts", "NewNameSomething")
-  }
+  fun testComponentToNonComponentName() =
+    checkSymbolRename("NewNameSomething", "foo-bar.component.ts", testDialog = TestDialog.OK)
 
-  fun testModuleToNameWithoutPrefix() {
-    TestDialogManager.setTestDialog(TestDialog.OK)
-    doMultiFileTest("foo.module.ts", "Module")
-  }
+  fun testModuleToNameWithoutPrefix() =
+    checkSymbolRename("Module", "foo.module.ts", testDialog = TestDialog.OK)
 
-  fun testInjectionReparse() {
-    TestDialogManager.setTestDialog(TestDialog.OK)
-    doMultiFileTest("foo.component.html", "product")
-  }
+  fun testInjectionReparse() =
+    checkSymbolRename("product", "foo.component.html", testDialog = TestDialog.OK)
 
-  fun testNgContentSelector() {
-    doMultiFileTest("slots.component.ts", "new-tag")
-  }
+  fun testNgContentSelector() =
+    checkSymbolRename("new-tag", "slots.component.ts")
 
-  private fun doMultiFileTest(mainFile: String, newName: String, searchCommentsAndText: Boolean = true) {
-    doTest { rootDir: VirtualFile?, rootAfter: VirtualFile? ->
-      myFixture.configureFromTempProjectFile(mainFile)
-      if (myFixture.canRenameWebSymbolAtCaret()) {
-        myFixture.renameWebSymbol(newName)
-      }
-      else {
-        var targetElement = TargetElementUtil.findTargetElement(
-          myFixture.getEditor(),
-          TargetElementUtil.ELEMENT_NAME_ACCEPTED or TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED)
-        targetElement = RenamePsiElementProcessor.forElement(targetElement!!).substituteElementToRename(targetElement,
-                                                                                                        myFixture.getEditor())
-        val renameProcessor = RenameProcessor(myFixture.getProject(), targetElement!!, newName, searchCommentsAndText,
-                                              searchCommentsAndText)
-        renameProcessor.run()
-      }
-    }
-  }
+  fun testDirectiveTag() =
+    checkSymbolRename("foo-bar2", "tag.html")
 
-  private fun doFileRename(mainFile: String, newName: String, searchCommentsAndText: Boolean) {
-    doTest { rootDir: VirtualFile?, rootAfter: VirtualFile? ->
-      val file = myFixture.configureFromTempProjectFile(mainFile)
-      val renameProcessor = RenameProcessor(myFixture.getProject(), file, newName, searchCommentsAndText, searchCommentsAndText)
-      renameProcessor.run()
-    }
-  }
+  fun testDirectiveTagNormalized() =
+    checkSymbolRename("fooBar2", "tag.html")
 
-  override fun getTestRoot(): String {
-    return "/"
-  }
+  fun testDirectiveAttribute() =
+    checkSymbolRename("foo-bar2", "attribute2.html")
+
+  fun testDirectiveAttributeNormalized() =
+    checkSymbolRename("fooBar2", "attribute2.html")
+
+  fun testDirectiveBinding() =
+    checkSymbolRename("model2", "binding.html")
+
+  fun testDirective() =
+    checkSymbolRename("foo-bar2", "directive2.ts")
+
+  fun testDirectiveEventHandler() =
+    checkSymbolRename("complete2", "event.html")
+
 }

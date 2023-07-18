@@ -4,6 +4,7 @@ package org.angular2
 import com.intellij.lang.javascript.LightPlatformMultiFileFixtureTestCase
 import org.angularjs.AngularTestUtil
 
+@Deprecated("Use Angular2TestCase")
 abstract class Angular2MultiFileFixtureTestCase : LightPlatformMultiFileFixtureTestCase() {
 
   @Throws(Exception::class)

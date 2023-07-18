@@ -51,14 +51,13 @@ class AstroInspectionsTest : AstroCodeInsightTestCase("codeInsight/inspections")
   private fun doTest(inspection: KClass<out LocalInspectionTool>,
                      quickFixName: String? = null,
                      additionalFiles: List<String> = emptyList()) {
-    myFixture.enableInspections(inspection.java)
-    doConfiguredTest(additionalFiles = additionalFiles) {
+    doConfiguredTest(additionalFiles = additionalFiles, checkResult = quickFixName != null) {
+      enableInspections(inspection.java)
       checkHighlighting()
       if (quickFixName == null) {
         return@doConfiguredTest
       }
       launchAction(findSingleIntention(quickFixName))
-      checkResult()
     }
   }
 

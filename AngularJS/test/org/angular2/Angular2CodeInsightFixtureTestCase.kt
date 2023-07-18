@@ -4,6 +4,7 @@ package org.angular2
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.angularjs.AngularTestUtil
 
+@Deprecated("Use Angular2TestCase")
 abstract class Angular2CodeInsightFixtureTestCase : BasePlatformTestCase() {
 
   @Throws(Exception::class)
