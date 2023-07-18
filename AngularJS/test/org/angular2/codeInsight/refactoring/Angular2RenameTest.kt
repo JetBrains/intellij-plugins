@@ -90,4 +90,7 @@ class Angular2RenameTest : Angular2TestCase("refactoring/rename") {
   fun testDirectiveEventHandler() =
     checkSymbolRename("complete2", "event.html")
 
+  fun testExportAs() =
+    checkSymbolRename("bolder", "app.component.html")
+
 }
