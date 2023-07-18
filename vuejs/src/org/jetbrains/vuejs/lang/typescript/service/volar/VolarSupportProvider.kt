@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.library.typings.TypeScriptPackageName
 import com.intellij.lang.typescript.lsp.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.platform.lsp.api.LspServerDescriptor
 import com.intellij.platform.lsp.api.LspServerSupportProvider
 import com.intellij.platform.lsp.api.LspServerSupportProvider.LspServerStarter
 import com.intellij.util.text.SemVer
@@ -20,13 +19,10 @@ val serverPackageName = TypeScriptPackageName(volarPackage, defaultVolarVersion)
 
 class VolarSupportProvider : LspServerSupportProvider {
   override fun fileOpened(project: Project, file: VirtualFile, serverStarter: LspServerStarter) {
-    getVolarServerDescriptor(project, file)?.let { serverStarter.ensureServerStarted(it) }
+    if (isVolarEnabledAndAvailable(project, file)) {
+      serverStarter.ensureServerStarted(VolarServerDescriptor(project))
+    }
   }
-}
-
-fun getVolarServerDescriptor(project: Project, file: VirtualFile): LspServerDescriptor? {
-  if (!isVolarEnabledAndAvailable(project, file)) return null
-  return VolarServerDescriptor(project)
 }
 
 class VolarServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, "Vue") {
