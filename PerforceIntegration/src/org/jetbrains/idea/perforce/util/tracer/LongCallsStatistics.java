@@ -41,7 +41,7 @@ class LongCallsStatistics<Kind extends Enum>
       myMap = new TreeMap<>();
     }
 
-    protected void accept(final Data<Kind> kindData) {
+    public void accept(final Data<Kind> kindData) {
       final long interval = kindData.getInterval();
 
       if ((! myMap.isEmpty()) && (myMap.firstKey() > interval)) return;
