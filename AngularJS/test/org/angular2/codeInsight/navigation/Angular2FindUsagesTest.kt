@@ -18,4 +18,7 @@ class Angular2FindUsagesTest : Angular2TestCase("navigation/findUsages") {
   fun testSlotComponentAttributeSelector() = checkUsages()
 
   fun testAttrVariable() = checkUsages(extension = "html")
+
+  fun testExportAs() = checkUsages()
+
 }

@@ -17,21 +17,22 @@ import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector
 class Angular2SelectorDeclarationProvider : WebSymbolDeclarationProvider {
 
   override fun getDeclarations(element: PsiElement, offsetInElement: Int): Collection<WebSymbolDeclaration> {
-    val directiveSelector: Angular2DirectiveSelector = when {
-                                                         element is Angular2HtmlNgContentSelector ->
-                                                           element.selector
-                                                         isLiteralInNgDecorator(element, SELECTOR_PROP, COMPONENT_DEC, DIRECTIVE_DEC) ->
-                                                           Angular2EntitiesProvider.getDirective(
-                                                             PsiTreeUtil.getParentOfType(element, ES6Decorator::class.java))?.selector
-                                                         else -> null
-                                                       } ?: return emptyList()
-
+    val directiveSelector: Angular2DirectiveSelector =
+      when {
+        element is Angular2HtmlNgContentSelector ->
+          element.selector
+        isLiteralInNgDecorator(element, SELECTOR_PROP, COMPONENT_DEC, DIRECTIVE_DEC) ->
+          Angular2EntitiesProvider.getDirective(
+            PsiTreeUtil.getParentOfType(element, ES6Decorator::class.java))?.selector
+        else -> null
+      } ?: return emptyList()
+    if (offsetInElement < 0)
+      return directiveSelector.simpleSelectorsWithPsi.flatMap { it.allSymbols }.mapNotNull { it.declaration }
     for (selector in directiveSelector.simpleSelectorsWithPsi) {
       val selectorPart = selector.getElementAt(offsetInElement)
       if (selectorPart != null) {
-        if (selectorPart.isDeclaration) {
-          selectorPart.declaration?.let { return setOf(it) }
-        }
+        selectorPart.declaration
+          ?.let { return setOf(it) }
         break
       }
     }

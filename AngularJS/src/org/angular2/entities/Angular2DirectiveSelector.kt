@@ -21,6 +21,8 @@ interface Angular2DirectiveSelector {
 
     val notSelectors: List<SimpleSelectorWithPsi>
 
+    val allSymbols: List<Angular2DirectiveSelectorSymbol>
+
     fun getElementAt(offset: Int): Angular2DirectiveSelectorSymbol?
   }
 }

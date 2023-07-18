@@ -16,9 +16,14 @@ class Angular2DirectiveExportAsDeclarationProvider : WebSymbolDeclarationProvide
       Angular2EntitiesProvider.getDirective(PsiTreeUtil.getParentOfType(element, ES6Decorator::class.java))
         ?.exportAs
         ?.values
-        ?.find { it.sourceElement == element && it.textRangeInSourceElement?.contains(offsetInElement) == true }
-        ?.declaration
-        ?.let { listOf(it) }
+        ?.let { exports ->
+          if (offsetInElement < 0)
+            exports.mapNotNull { it.declaration }
+          else
+            exports.find { it.sourceElement == element && it.textRangeInSourceElement?.contains(offsetInElement) == true }
+              ?.declaration
+              ?.let { listOf(it) }
+        }
       ?: emptyList()
     else
       emptyList()

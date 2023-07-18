@@ -121,11 +121,8 @@ class Angular2TagsTest : Angular2CodeInsightFixtureTestCase() {
 
   fun testNoNormalizedResolve20() {
     myFixture.configureByFiles("noNormalized.ts", "package.json")
-    val offsetBySignature = AngularTestUtil.findOffsetBySignature("app_<caret>hello", myFixture.getFile())
-    val ref = myFixture.getFile().findReferenceAt(offsetBySignature)
-    assertNotNull(ref)
-    val resolve = ref!!.resolve()
-    assertNull(resolve)
+    val symbol = myFixture.resolveWebSymbolReference("<app_<caret>hello")
+    assertNotNull(symbol)
   }
 
   fun testTagClassTypes() {
