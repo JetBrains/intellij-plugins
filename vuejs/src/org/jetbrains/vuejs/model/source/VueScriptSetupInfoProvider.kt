@@ -355,8 +355,10 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
     override val name: String
       get() = propertySignature.memberName
 
-    override val source: PsiElement?
-      get() = propertySignature.memberSource.singleElement
+    override val source: PsiElement? = propertySignature.memberSource.singleElement?.let { sourceElement ->
+      VueImplicitElement(name, propertySignature.jsType?.optionalIf(isOptional),
+                         sourceElement, JSImplicitElement.Type.Property, true)
+    }
 
     override val required: Boolean
       get() {
@@ -368,6 +370,9 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
     override val jsType: JSType?
       get() = propertySignature.jsTypeWithOptionality
+
+    private val isOptional: Boolean
+      get() = if (hasOuterDefault) false else propertySignature.isOptional
 
     override fun toString(): String {
       return "VueScriptSetupInputProperty(name='$name', required=$required, jsType=$jsType)"

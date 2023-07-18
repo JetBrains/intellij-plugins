@@ -93,6 +93,14 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
+  fun testPropsWithDefaultScriptSetupTS() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
+    myFixture.configureByFile("propsWithDefaultScriptSetup-ts.vue")
+
+    doTest("msg" to "string")
+  }
+
   fun testModelPropsTS() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
