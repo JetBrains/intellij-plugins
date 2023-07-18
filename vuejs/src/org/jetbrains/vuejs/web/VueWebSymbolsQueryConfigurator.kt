@@ -113,7 +113,7 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
   }
 
   private fun isInjectedAsArrayLiteral(element: JSElement) =
-    element is JSLiteralExpression &&
+    (element is JSLiteralExpression || element is JSReferenceExpression && !element.hasQualifier()) &&
     element.context is JSArrayLiteralExpression &&
     element.context?.context?.asSafely<JSProperty>()?.name == INJECT_PROP
 
