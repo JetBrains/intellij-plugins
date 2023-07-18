@@ -1,7 +1,7 @@
 !'a'#null#103
 !'b'#null#103
 !'c'#null#103
-!bar#"a" | "b" | "c" | undefined#101
+!bar#"a" | "b" | "c"#101
 !props#null#101
 !$#ComponentInternalInstance#100
 !$attrs#null#100
