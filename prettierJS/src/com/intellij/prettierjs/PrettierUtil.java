@@ -14,6 +14,7 @@ import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -21,6 +22,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.ParameterizedCachedValue;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.SemVer;
@@ -83,12 +85,12 @@ public final class PrettierUtil {
 
   @Contract("null -> false")
   public static boolean isJSConfigFile(@Nullable VirtualFile virtualFile) {
-    return virtualFile != null && "js".equals(virtualFile.getExtension()) && isConfigFile(virtualFile);
+    return isConfigFile(virtualFile) && ArrayUtil.contains(StringUtil.toLowerCase(virtualFile.getExtension()), "js", "mjs", "cjs");
   }
 
   @Contract("null -> false")
   public static boolean isNonJSConfigFile(@Nullable VirtualFile virtualFile) {
-    return virtualFile != null && !"js".equals(virtualFile.getExtension()) && isConfigFile(virtualFile);
+    return isConfigFile(virtualFile) && !ArrayUtil.contains(StringUtil.toLowerCase(virtualFile.getExtension()), "js", "mjs", "cjs");
   }
 
   @Contract("null -> false")
