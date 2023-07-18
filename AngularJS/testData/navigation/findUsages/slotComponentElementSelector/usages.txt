@@ -1,0 +1,2 @@
+<slots.test.component.html:(0,145):(21,29)>	tag-slot
+<slots.test.component.html:(0,145):(51,59)>	tag-slot

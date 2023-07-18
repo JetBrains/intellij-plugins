@@ -1,5 +1,6 @@
 package org.jetbrains.astro.codeInsight
 
+import com.intellij.webSymbols.performCopyPaste
 import org.jetbrains.astro.AstroCodeInsightTestCase
 
 class AstroCopyPasteTest : AstroCodeInsightTestCase("codeInsight/copyPaste") {
@@ -14,9 +15,10 @@ class AstroCopyPasteTest : AstroCodeInsightTestCase("codeInsight/copyPaste") {
 
   //region Test configuration and helper methods
   private fun doTest() {
-    configure(dir = true, configureFile = false)
-    performCopyPaste("Source.astro", "Destination.astro")
-    myFixture.checkResultByFile("$testName/Destination_after.astro")
+    doConfiguredTest(dir = true, configureFile = false) {
+      performCopyPaste("Source.astro", "Destination.astro")
+      checkResultByFile("$testName/Destination_after.astro")
+    }
   }
   //endregion
 

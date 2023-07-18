@@ -53,10 +53,11 @@ class AstroCompletionTest : AstroCodeInsightTestCase("codeInsight/completion") {
   private fun doTypingTest(textToType: String,
                            additionalFiles: List<String> = emptyList(),
                            vararg modules: AstroTestModule) {
-    configure(additionalFiles = additionalFiles, modules = modules)
-    myFixture.completeBasic()
-    myFixture.type(textToType)
-    checkResult()
+    doConfiguredTest(additionalFiles = additionalFiles, modules = modules) {
+      completeBasic()
+      type(textToType)
+      checkResult()
+    }
   }
 
   //endregion

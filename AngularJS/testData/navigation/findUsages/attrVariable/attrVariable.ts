@@ -3,7 +3,7 @@ import {Component, ElementRef, ViewChild} from '@angular/core';
 
 @Component({
              selector: 'app-root',
-             templateUrl: './attr-variable.html'
+             templateUrl: './attrVariable.html'
            })
 export class AttrVariable {
   title = 'untitled15';

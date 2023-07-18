@@ -20,8 +20,9 @@ class AstroHighlightingTest : AstroCodeInsightTestCase("codeInsight/highlighting
   }
 
   private fun doTest(additionalFiles: List<String> = emptyList()) {
-    configure(additionalFiles = additionalFiles)
-    myFixture.checkHighlighting()
+    doConfiguredTest(additionalFiles = additionalFiles) {
+      checkHighlighting()
+    }
   }
 
   //endregion

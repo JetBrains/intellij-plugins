@@ -1,0 +1,3 @@
+<privateConstructorField.html:(3,9):(0,6)>	fooBar
+<privateConstructorField.html:(52,58):(0,6)>	foo + fooBar
+<privateConstructorField.ts:(342,353):(5,11)>	this.fooBar
