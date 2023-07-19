@@ -13,6 +13,7 @@ import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizer
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizerFactory
+import com.intellij.xml.util.Html5TagAndAttributeNamesProvider
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.codeInsight.completion.AstroImportInsertHandler
 import org.jetbrains.astro.lang.AstroFileImpl
@@ -28,7 +29,7 @@ class AstroWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : W
                      name: String?): List<WebSymbol> =
     if (namespace != WebSymbol.NAMESPACE_HTML || kind != AstroQueryConfigurator.KIND_ASTRO_COMPONENT)
       matches
-    else if (HTML_TAGS.contains(name))
+    else if (isHtmlTagName(name))
       emptyList()
     else
       matches.filter { symbol ->
@@ -40,7 +41,7 @@ class AstroWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : W
 
   override fun apply(item: WebSymbolCodeCompletionItem, namespace: SymbolNamespace?, kind: SymbolKind): WebSymbolCodeCompletionItem? {
     if (namespace == WebSymbol.NAMESPACE_HTML && kind == AstroQueryConfigurator.KIND_ASTRO_COMPONENT) {
-      if (HTML_TAGS.contains(item.name)) return null
+      if (isHtmlTagName(item.name)) return null
       val proximity = item.symbol?.properties?.get(PROP_ASTRO_PROXIMITY)
       val element = (item.symbol as? PsiSourcedWebSymbol)?.source
       if (proximity == AstroProximity.OUT_OF_SCOPE && element is AstroFileImpl) {
@@ -68,6 +69,9 @@ class AstroWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : W
   override fun hashCode(): Int =
     context.hashCode()
 
+  private fun isHtmlTagName(name: String?) =
+    name?.getOrNull(0)?.isLowerCase() == true
+    && Html5TagAndAttributeNamesProvider.getTags(Html5TagAndAttributeNamesProvider.Namespace.HTML, false).contains(name)
 
   class Provider : WebSymbolsQueryResultsCustomizerFactory {
     override fun create(location: PsiElement, context: WebSymbolsContext): WebSymbolsQueryResultsCustomizer? =
@@ -77,125 +81,3 @@ class AstroWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : W
 
   }
 }
-
-// https://developer.mozilla.org/en-US/docs/Web/HTML/Element
-internal val HTML_TAGS: Set<String> = setOf(
-  "html",
-  "base",
-  "head",
-  "link",
-  "meta",
-  "style",
-  "title",
-  "body",
-  "address",
-  "article",
-  "aside",
-  "footer",
-  "header",
-  "h1",
-  "h2",
-  "h3",
-  "h4",
-  "h5",
-  "h6",
-  "hgroup",
-  "main",
-  "nav",
-  "section",
-  "blockquote",
-  "dd",
-  "dir",
-  "div",
-  "dl",
-  "dt",
-  "figcaption",
-  "figure",
-  "hr",
-  "li",
-  "ol",
-  "p",
-  "pre",
-  "ul",
-  "a",
-  "abbr",
-  "b",
-  "bdi",
-  "bdo",
-  "br",
-  "cite",
-  "code",
-  "data",
-  "dfn",
-  "em",
-  "i",
-  "kbd",
-  "mark",
-  "q",
-  "rb",
-  "rp",
-  "rt",
-  "rtc",
-  "ruby",
-  "s",
-  "samp",
-  "small",
-  "span",
-  "strong",
-  "sub",
-  "sup",
-  "time",
-  "tt",
-  "u",
-  "var",
-  "wbr",
-  "area",
-  "audio",
-  "img",
-  "map",
-  "track",
-  "video",
-  "embed",
-  "iframe",
-  "object",
-  "param",
-  "picture",
-  "source",
-  "canvas",
-  "noscript",
-  "script",
-  "del",
-  "ins",
-  "caption",
-  "col",
-  "colgroup",
-  "table",
-  "tbody",
-  "td",
-  "tfoot",
-  "th",
-  "thead",
-  "tr",
-  "button",
-  "datalist",
-  "fieldset",
-  "form",
-  "input",
-  "label",
-  "legend",
-  "meter",
-  "optgroup",
-  "option",
-  "output",
-  "progress",
-  "select",
-  "textarea",
-  "details",
-  "dialog",
-  "menu",
-  "menuitem",
-  "summary",
-  "content",
-  "slot",
-  "template"
-)
