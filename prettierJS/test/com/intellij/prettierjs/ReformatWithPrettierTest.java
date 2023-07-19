@@ -16,6 +16,7 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.util.LineSeparator;
 import com.intellij.util.ThrowableRunnable;
@@ -148,6 +149,7 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
       VirtualFile file = myFixture.findFileInTempDir("toReformat.js");
       VirtualFile root = file.getParent();
       NodePackage yarnPkg = AbstractYarnPnpIntegrationTest.installYarnGlobally(getNodeJsAppRule());
+      VfsRootAccess.allowRootAccess(getTestRootDisposable(), yarnPkg.getSystemIndependentPath());
       AbstractYarnPnpIntegrationTest.configureYarnBerryAndRunYarnInstall(getProject(), yarnPkg, getNodeJsAppRule(), root);
       configureYarnPrettierPackage(root);
     });
