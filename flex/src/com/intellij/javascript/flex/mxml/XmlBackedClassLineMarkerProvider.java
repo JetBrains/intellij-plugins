@@ -1,9 +1,10 @@
 package com.intellij.javascript.flex.mxml;
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
-import com.intellij.codeInsight.daemon.LineMarkerProvider;
+import com.intellij.codeInsight.daemon.LineMarkerProviderDescriptor;
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.highlighting.JavaScriptLineMarkerProvider;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClass;
@@ -19,10 +20,11 @@ import com.intellij.util.Query;
 import com.intellij.xml.util.XmlTagUtil;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.Collection;
 import java.util.List;
 
-public class XmlBackedClassLineMarkerProvider implements LineMarkerProvider {
+public class XmlBackedClassLineMarkerProvider extends LineMarkerProviderDescriptor {
 
   @Override
   public LineMarkerInfo<?> getLineMarkerInfo(@NotNull PsiElement element) {
@@ -52,4 +54,13 @@ public class XmlBackedClassLineMarkerProvider implements LineMarkerProvider {
     }
   }
 
+  @Override
+  public String getName() {
+    return FlexBundle.message("gutter.name.flex.subclass");
+  }
+
+  @Override
+  public Icon getIcon() {
+    return AllIcons.Gutter.OverridenMethod;
+  }
 }
