@@ -196,6 +196,13 @@
     <gotoRelatedProvider implementation="org.angular2.navigation.Angular2GotoRelatedProvider"/>
     <typedHandler implementation="org.angular2.editor.Angular2BracesInterpolationTypedHandler"/>
     <moveFileHandler implementation="org.angular2.refactoring.Angular2MoveFileHandler" order="first"/>
+
+    <liveTemplateContext contextId="Angular" implementation="org.angular2.liveTemplate.Angular2BaseLiveTemplateContextType" />
+    <liveTemplateContext contextId="ANGULAR_TOP_LEVEL_STATEMENT" baseContextId="Angular" implementation="org.angular2.liveTemplate.Angular2TopLevelStatementContextType" />
+    <liveTemplateContext contextId="ANGULAR_EXPRESSION" baseContextId="Angular" implementation="org.angular2.liveTemplate.Angular2ExpressionContextType" />
+    <liveTemplateContext contextId="ANGULAR_CLASS" baseContextId="Angular" implementation="org.angular2.liveTemplate.Angular2ClassContextType" />
+    <liveTemplateContext contextId="ANGULAR_STATEMENT" baseContextId="Angular" implementation="org.angular2.liveTemplate.Angular2StatementContextType" />
+    <liveTemplateContext contextId="ANGULAR_TEMPLATE" baseContextId="Angular" implementation="org.angular2.liveTemplate.Angular2TemplateContextType" />
     <defaultLiveTemplates file="liveTemplates/Angular2"/>
 
     <!-- Angular 2 HTML template contributions -->
