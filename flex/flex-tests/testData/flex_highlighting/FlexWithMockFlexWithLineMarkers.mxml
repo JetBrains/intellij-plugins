@@ -2,11 +2,11 @@
 
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" mouseDown="<inject descr="null"><info descr="instance method">copy</info>()</inject>" mouseUp="<inject descr="null"><info descr="instance method">copy</info>()</inject>">
 
-    <mx:Script><inject descr="null">public override function <lineMarker descr="Overrides method 'removeEventListener' in flash.events.EventDispatcher"><info descr="instance method">removeEventListener</info></lineMarker>(<info descr="parameter">type</info>:<info descr="class">String</info>, <info descr="parameter">listener</info>:<info descr="class">Function</info>, <info descr="parameter">useCapture</info>:<info descr="class">Boolean</info> = false):void {}
+    <mx:Script><inject descr="null">public override function <lineMarker descr="Overrides method 'removeEventListener' in flash.events.EventDispatcher"><info descr="instance method">removeEventListener</info></lineMarker>(<info descr="identifiers//parameter">type</info>:<info descr="classes//class name">String</info>, <info descr="identifiers//parameter">listener</info>:<info descr="classes//class name">Function</info>, <info descr="identifiers//parameter">useCapture</info>:<info descr="classes//class name">Boolean</info> = false):void {}
 
     function <info descr="instance method">copy</info>() {
         <info descr="instance field">destination</info>.<info descr="instance method">text</info>=<info descr="instance field">source</info>.<info descr="instance method">text</info> = ' '
-        var <info descr="local function">aaa</info>:<info>Function</info> = <info descr="instance method">copy_</info>
+        var <info descr="identifiers//local function">aaa</info>:<info descr="classes//class name">Function</info> = <info descr="instance method">copy_</info>
     }
 
     function <info descr="instance method">copy_</info>() {

@@ -2,7 +2,7 @@
 
 <x:OverridingMarkers_2 xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:x="*">
   <mx:Script><inject descr="null">
-    public override function <lineMarker descr="Overrides method 'addEventListener' in flash.events.EventDispatcher"><info descr="instance method">add<caret>EventListener</info></lineMarker>(<info descr="parameter">type</info>:<info>String</info>, <info descr="parameter">listener</info>:<info>Function</info>, <info descr="parameter">useCapture</info>:<info>Boolean</info> = false, <info descr="parameter">priority</info>:int = 0, <info descr="parameter">useWeakReference</info>:<info>Boolean</info> = false):void {}
+    public override function <lineMarker descr="Overrides method 'addEventListener' in flash.events.EventDispatcher"><info descr="instance method">add<caret>EventListener</info></lineMarker>(<info descr="identifiers//parameter">type</info>:<info descr="classes//class name">String</info>, <info descr="identifiers//parameter">listener</info>:<info descr="classes//class name">Function</info>, <info descr="identifiers//parameter">useCapture</info>:<info descr="classes//class name">Boolean</info> = false, <info descr="identifiers//parameter">priority</info>:int = 0, <info descr="identifiers//parameter">useWeakReference</info>:<info descr="classes//class name">Boolean</info> = false):void {}
     override public function get <lineMarker descr="Overrides property 'height' in mx.core.UIComponent"><info descr="instance method">height</info></lineMarker>():uint {
         return 1;
     }

@@ -23,7 +23,7 @@ class VueTypeScriptLineMarkersTest : TypeScriptLineMarkersTest() {
     Pair("typeGuardNarrowedHighlighting", listOf("assertNever", "q")),
     Pair("typeGuardHighlightingWithImplicit", listOf("foo")),
     Pair("typeGuardsHighlightingOptionals", listOf("foo", "zoo", "goo")),
-    Pair("genericsMarker", listOf("funcGenerics"))
+    Pair("genericsMarker", listOf("funcGenerics", "funcGeneric"))
   )
 
   override fun doTestFor(checkWeakWarnings: Boolean,
@@ -42,8 +42,8 @@ class VueTypeScriptLineMarkersTest : TypeScriptLineMarkersTest() {
     var text: String = StringUtil.convertLineSeparators(VfsUtil.loadText(tsFile!!))
 
     val testName = getTestName(true)
-    localVarsMap[testName]?.forEach { text = text.replace("<info descr=\"global variable\">$it", "<info descr=\"local variable\">$it") }
-    localFunsMap[testName]?.forEach { text = text.replace("<info descr=\"global function\">$it", "<info descr=\"local function\">$it") }
+    localVarsMap[testName]?.forEach { text = text.replace("<info descr=\"identifiers//global variable\">$it", "<info descr=\"identifiers//local variable\">$it") }
+    localFunsMap[testName]?.forEach { text = text.replace("<info descr=\"identifiers//global function\">$it", "<info descr=\"identifiers//local function\">$it") }
 
     myFixture.configureByText(VueFileType.INSTANCE, surroundWithScriptTag(text))
   }

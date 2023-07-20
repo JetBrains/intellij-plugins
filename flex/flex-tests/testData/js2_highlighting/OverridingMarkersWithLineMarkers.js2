@@ -1,13 +1,13 @@
-class <lineMarker descr="Has subclasses"><info>AAA</info></lineMarker> {
+class <lineMarker descr="Has subclasses"><info descr="classes//class name">AAA</info></lineMarker> {
   function <lineMarker descr="Is overridden"><info descr="instance method">bbb</info></lineMarker>() {}
-  function <lineMarker descr="Is overridden"><info descr="instance method">bbb2</info></lineMarker>(<info descr="parameter">x</info>) {  }
+  function <lineMarker descr="Is overridden"><info descr="instance method">bbb2</info></lineMarker>(<info descr="identifiers//parameter">x</info>) {  }
   private function <info descr="instance method">bbb3</info>() {}
   public static function <info descr="static method">instance</info>() {}
 }
 
-class <info>BBB</info> extends <info>AAA</info> {
+class <info descr="classes//class name">BBB</info> extends <info descr="classes//class name">AAA</info> {
   override function <lineMarker descr="Overrides method 'bbb' in AAA"><info descr="instance method">b<caret>bb</info></lineMarker>() {}
-  override function <lineMarker descr="Overrides method 'bbb2' in AAA"><info descr="instance method">bbb2</info></lineMarker>(<info descr="parameter">x</info>) {  }
+  override function <lineMarker descr="Overrides method 'bbb2' in AAA"><info descr="instance method">bbb2</info></lineMarker>(<info descr="identifiers//parameter">x</info>) {  }
   function <info descr="instance method">bbb3</info>() {}
   public static function <info descr="static method">instance</info>() {}
 }

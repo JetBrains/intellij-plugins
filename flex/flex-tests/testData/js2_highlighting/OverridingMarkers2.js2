@@ -1,13 +1,13 @@
-interface <lineMarker descr="Has implementations"><info>IAAA</info></lineMarker> {
+interface <lineMarker descr="Has implementations"><info descr="interface">IAAA</info></lineMarker> {
   function get <lineMarker descr="Is implemented"><info descr="instance method">bbb</info></lineMarker>():int
-  function set <lineMarker descr="Is implemented"><info descr="instance method">bbb</info></lineMarker>(<info descr="parameter">v</info>:int):void
+  function set <lineMarker descr="Is implemented"><info descr="instance method">bbb</info></lineMarker>(<info descr="identifiers//parameter">v</info>:int):void
 }
-class <lineMarker descr="Has subclasses"><info>AAA</info></lineMarker> implements <info>IAAA</info> {
+class <lineMarker descr="Has subclasses"><info descr="classes//class name">AAA</info></lineMarker> implements <info descr="interface">IAAA</info> {
   public function get <lineMarker descr="Is overridden"><lineMarker descr="Implements property 'bbb' in IAAA"><info descr="instance method">bbb</info></lineMarker></lineMarker>():int {}
-  public function set <lineMarker descr="Is overridden"><lineMarker descr="Implements property 'bbb' in IAAA"><info descr="instance method">bbb</info></lineMarker></lineMarker>(<info descr="parameter">v</info>:int):void {}
+  public function set <lineMarker descr="Is overridden"><lineMarker descr="Implements property 'bbb' in IAAA"><info descr="instance method">bbb</info></lineMarker></lineMarker>(<info descr="identifiers//parameter">v</info>:int):void {}
 }
 
-class <info>BBB</info> extends <info>AAA</info> {
-  public override function set <lineMarker descr="Overrides property 'bbb' in AAA"><info descr="instance method">b<caret>bb</info></lineMarker>(<info descr="parameter">x</info>:int):void {}
+class <info descr="classes//class name">BBB</info> extends <info descr="classes//class name">AAA</info> {
+  public override function set <lineMarker descr="Overrides property 'bbb' in AAA"><info descr="instance method">b<caret>bb</info></lineMarker>(<info descr="identifiers//parameter">x</info>:int):void {}
   public override function get <lineMarker descr="Overrides property 'bbb' in AAA"><info descr="instance method">bbb</info></lineMarker>():int {}
 }

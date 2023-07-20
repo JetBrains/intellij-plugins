@@ -1,13 +1,13 @@
 package {
-public class <info descr="class">SemanticHighlighting</info> {
+public class <info descr="classes//class name">SemanticHighlighting</info> {
 
     private function <info descr="instance method">foo</info>():void {
-        if (<info descr="class">Math</info>.<info descr="static method">random</info>() > 0.5) {
+        if (<info descr="classes//class name">Math</info>.<info descr="static method">random</info>() > 0.5) {
             <info descr="null">goto</info> <info descr="label">myLabel</info>;
         }
         else {
             <info descr="label">myLabel</info>:
-            <info descr="global function">eval</info>("")
+            <info descr="identifiers//global function">eval</info>("")
         }
     }
 

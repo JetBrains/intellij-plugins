@@ -4,4 +4,4 @@ package {
       var <info descr="instance field">foo</info>;
   }
 }
-var <info descr="global variable">a</info>:<info descr="class">Vector</info>.<int> = null;
+var <info descr="identifiers//global variable">a</info>:<info descr="classes//class name">Vector</info>.<int> = null;
