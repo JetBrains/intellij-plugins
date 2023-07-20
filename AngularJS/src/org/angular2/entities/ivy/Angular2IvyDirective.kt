@@ -100,13 +100,13 @@ open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
       }
 
     hackIonicComponentOutputs(this)
-      .forEach { outputMap[it.key] = Angular2PropertyInfo(it.value, false) }
+      .forEach { outputMap[it.key] = Angular2PropertyInfo(it.value, false, null, null) }
 
-    inputMap.values.forEach { input ->
-      inputs[input.alias] = Angular2SourceDirectiveVirtualProperty(clazz, input.alias, KIND_NG_DIRECTIVE_INPUTS, input.required)
+    inputMap.values.forEach { info ->
+      inputs[info.name] = Angular2SourceDirectiveVirtualProperty(clazz, KIND_NG_DIRECTIVE_INPUTS, info)
     }
-    outputMap.values.forEach { output ->
-      outputs[output.alias] = Angular2SourceDirectiveVirtualProperty(clazz, output.alias, KIND_NG_DIRECTIVE_OUTPUTS, output.required)
+    outputMap.values.forEach { info ->
+      outputs[info.name] = Angular2SourceDirectiveVirtualProperty(clazz, KIND_NG_DIRECTIVE_OUTPUTS, info)
     }
 
     return Angular2DirectiveProperties(inputs.values, outputs.values)
@@ -217,7 +217,7 @@ open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
                                 result: MutableMap<String, Angular2DirectiveProperty>) {
       val info = mappings.remove(property.memberName)
       if (info != null) {
-        result.putIfAbsent(info.alias, Angular2SourceDirectiveProperty(clazz, property, kind, info.alias, info.required))
+        result.putIfAbsent(info.name, Angular2SourceDirectiveProperty.create(clazz, property, kind, info))
       }
     }
   }

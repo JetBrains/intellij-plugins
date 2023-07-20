@@ -12,8 +12,8 @@ import com.intellij.webSymbols.WebSymbolApiStatus
 import com.intellij.webSymbols.utils.coalesceWith
 import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
 import org.angular2.lang.Angular2LangUtil.OUTPUT_CHANGE_SUFFIX
-import org.angular2.web.Angular2PsiSourcedSymbolDelegate
 import org.angular2.web.Angular2Symbol
+import org.angular2.web.Angular2SymbolDelegate
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_IN_OUTS
 import java.util.*
 
@@ -53,10 +53,7 @@ class Angular2DirectiveProperties(inputs: Collection<Angular2DirectiveProperty>,
   }
 
   private class InOutDirectiveProperty(input: Angular2DirectiveProperty, private val myOutput: Angular2DirectiveProperty)
-    : Angular2PsiSourcedSymbolDelegate<Angular2DirectiveProperty>(input) {
-
-    override val source: PsiElement
-      get() = myOutput.source
+    : Angular2SymbolDelegate<Angular2DirectiveProperty>(input) {
 
     override val namespace: String
       get() = WebSymbol.NAMESPACE_JS
@@ -68,7 +65,7 @@ class Angular2DirectiveProperties(inputs: Collection<Angular2DirectiveProperty>,
     override val apiStatus: WebSymbolApiStatus
       get() = delegate.apiStatus.coalesceWith(myOutput.apiStatus)
 
-    override fun createPointer(): Pointer<out Angular2PsiSourcedSymbolDelegate<Angular2DirectiveProperty>> {
+    override fun createPointer(): Pointer<out InOutDirectiveProperty> {
       val input = delegate.createPointer()
       val output = myOutput.createPointer()
       return Pointer {
@@ -96,7 +93,7 @@ class Angular2DirectiveProperties(inputs: Collection<Angular2DirectiveProperty>,
     override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget =
       Angular2ElementDocumentationTarget.create(
         name, location, delegate, myOutput,
-        Angular2EntitiesProvider.getEntity(source.contextOfType<TypeScriptClass>(true)))
+        Angular2EntitiesProvider.getEntity(delegate.sourceElement.contextOfType<TypeScriptClass>(true)))
       ?: super.getDocumentationTarget(location)
   }
 

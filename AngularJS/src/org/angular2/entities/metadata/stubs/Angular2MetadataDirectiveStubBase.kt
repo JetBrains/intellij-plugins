@@ -101,8 +101,8 @@ abstract class Angular2MetadataDirectiveStubBase<Psi : PsiElement> : Angular2Met
     if (list != null && list.valueList.all { it is JsonStringLiteral }) {
       for (v in list.valueList) {
         val value = (v as JsonStringLiteral).value
-        val p = Angular2EntityUtils.parsePropertyMapping(value)
-        mappings.putIfAbsent(p.first, p.second)
+        val p = Angular2EntityUtils.parsePropertyMapping(value, v)
+        mappings.putIfAbsent(p.first, p.second.name)
       }
     }
     else {

@@ -1,14 +1,22 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities
 
-import com.intellij.lang.javascript.psi.JSElement
-import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunctionSignature
+import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.contextOfType
+import com.intellij.psi.util.parentOfType
+import com.intellij.util.asSafely
+import org.angular2.Angular2DecoratorUtil
+import org.angular2.Angular2DecoratorUtil.DIRECTIVE_PROP
+import org.angular2.Angular2DecoratorUtil.HOST_DIRECTIVES_PROP
 import org.angular2.entities.ivy.Angular2IvyEntity
 import org.angular2.entities.metadata.psi.Angular2MetadataEntity
+import org.angular2.entities.source.Angular2PropertyInfo
 import org.angular2.entities.source.Angular2SourceEntity
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector
@@ -48,12 +56,84 @@ object Angular2EntityUtils {
       }
 
   @JvmStatic
-  fun parsePropertyMapping(property: String): Pair<String, String> {
+  fun parsePropertyMapping(property: String, element: PsiElement?): Pair<String, Angular2PropertyInfo> {
     val ind = property.indexOf(':')
     return if (ind > 0) {
-      Pair(property.substring(0, ind).trim { it <= ' ' }, property.substring(ind + 1).trim { it <= ' ' })
+      val startIndex = StringUtil.skipWhitespaceForward(property, ind + 1)
+      val endIndex = StringUtil.skipWhitespaceBackward(property, property.length)
+      Pair(
+        property.substring(0, ind).trim(),
+        Angular2PropertyInfo(property.substring(startIndex, endIndex), false, element,
+                             if (element == null) null else TextRange(1 + startIndex, 1 + endIndex))
+      )
     }
-    else Pair(property.trim { it <= ' ' }, property.trim { it <= ' ' })
+    else
+      Pair(property.trim { it <= ' ' }, Angular2PropertyInfo(property.trim { it <= ' ' }, false, element, null))
+  }
+
+  @JvmStatic
+  fun getPropertyDeclarationOrReferenceKindAndDirective(element: JSLiteralExpression,
+                                                        declaration: Boolean): PropertyDeclarationOrReferenceInfo? {
+    val ownerProp = if (declaration) Angular2DecoratorUtil.ALIAS_PROP else Angular2DecoratorUtil.NAME_PROP
+    val parent = element.parent.let { parent ->
+      if (parent is JSProperty)
+        parent.takeIf { property -> property.name == ownerProp }?.parent?.parent
+      else
+        parent
+    }
+
+    val kind: String?
+    val directiveDef: PsiElement?
+    val hostDirective: Boolean
+    when (parent) {
+      is JSArgumentList -> {
+        if (!declaration && element.parent == parent) return null
+        val propertyDecorator = parent.parent?.parent?.asSafely<ES6Decorator>()
+        kind = propertyDecorator?.decoratorName?.let {
+          when (it) {
+            Angular2DecoratorUtil.INPUT_DEC -> Angular2DecoratorUtil.INPUTS_PROP
+            Angular2DecoratorUtil.OUTPUT_DEC -> Angular2DecoratorUtil.OUTPUTS_PROP
+            else -> null
+          }
+        }
+        directiveDef = propertyDecorator?.contextOfType<TypeScriptClass>(false)
+        hostDirective = false
+      }
+      is JSArrayLiteralExpression -> {
+        val property = parent.parent?.asSafely<JSProperty>()
+        kind = property?.name?.takeIf { it == Angular2DecoratorUtil.INPUTS_PROP || it == Angular2DecoratorUtil.OUTPUTS_PROP }
+               ?: return null
+        val literal = property.parent?.asSafely<JSObjectLiteralExpression>()
+        when (val literalContext = literal?.parent) {
+          is JSArgumentList -> {
+            directiveDef = literalContext.parent?.parent?.asSafely<ES6Decorator>()
+            hostDirective = false
+          }
+          is JSArrayLiteralExpression -> {
+            hostDirective = true
+            val outerProperty = literalContext.parent?.asSafely<JSProperty>()?.takeIf { it.name == HOST_DIRECTIVES_PROP }
+                                ?: return null
+            if (declaration) {
+              directiveDef = outerProperty.parentOfType<ES6Decorator>()
+            }
+            else {
+              directiveDef = literal.findProperty(DIRECTIVE_PROP)
+                ?.jsType
+                ?.substitute()
+                ?.sourceElement
+                ?.asSafely<TypeScriptClass>()
+            }
+          }
+          else -> return null
+        }
+      }
+      else -> return null
+    }
+    return PropertyDeclarationOrReferenceInfo(
+      kind ?: return null,
+      Angular2EntitiesProvider.getDirective(directiveDef) ?: return null,
+      hostDirective
+    )
   }
 
   @JvmStatic
@@ -284,4 +364,11 @@ object Angular2EntityUtils {
 
   private fun Collection<Angular2Entity>.render(): String =
     this.asSequence().map { it.getName() }.sorted().joinToString(", ")
+
+  data class PropertyDeclarationOrReferenceInfo(
+    val kind: String,
+    val directive: Angular2Directive,
+    val hostDirective: Boolean,
+  )
+
 }

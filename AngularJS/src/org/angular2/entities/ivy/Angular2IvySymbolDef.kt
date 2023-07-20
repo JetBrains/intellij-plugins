@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.psi.stubs.TypeScriptClassStub
 import com.intellij.lang.javascript.psi.stubs.TypeScriptFieldStub
 import com.intellij.lang.typescript.TypeScriptStubElementTypes
 import com.intellij.model.Pointer
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
@@ -116,23 +117,23 @@ abstract class Angular2IvySymbolDef private constructor(private val myFieldOrStu
       when (kind) {
         INPUTS_PROP -> processObjectArgument(3, TypeScriptType::class) { type, defaultName ->
           when (type) {
-            is TypeScriptStringLiteralType -> type.innerText?.let { Angular2PropertyInfo(it, false) }
+            is TypeScriptStringLiteralType -> type.innerText?.let { Angular2PropertyInfo(it, false, type) }
             is TypeScriptObjectType -> {
-              val name = type.typeMembers
+              val nameType = type.typeMembers
                 .firstNotNullOfOrNull { member -> (member as? TypeScriptPropertySignature)?.takeIf { it.name == ALIAS_PROP }?.typeDeclaration }
                 ?.asSafely<TypeScriptStringLiteralType>()
-                ?.innerText
+              val name = nameType?.innerText
               val required = type.typeMembers
                                .firstNotNullOfOrNull { member -> (member as? TypeScriptPropertySignature)?.takeIf { it.name == REQUIRED_PROP }?.typeDeclaration }
                                ?.asSafely<TypeScriptBooleanLiteralType>()
                                ?.value ?: false
-              Angular2PropertyInfo(name ?: defaultName, required)
+              Angular2PropertyInfo(name ?: defaultName, required, nameType, if (name != null) TextRange(1, 1 + name.length) else null)
             }
             else -> null
           }
         }
-        OUTPUTS_PROP -> processObjectArgument(4, TypeScriptStringLiteralType::class) { type, defaultName ->
-          Angular2PropertyInfo(type.innerText ?: defaultName, false)
+        OUTPUTS_PROP -> processObjectArgument(4, TypeScriptStringLiteralType::class) { type, _ ->
+          type.innerText?.let { Angular2PropertyInfo(it, false, type) }
         }
         else -> emptyMap()
       }
@@ -297,8 +298,8 @@ abstract class Angular2IvySymbolDef private constructor(private val myFieldOrStu
     processObjectArgument(getDefFieldArgument(index) as? TypeScriptObjectType, valueClass, valueMapper)
 
   data class HostDirectiveDef(val directive: TypeScriptTypeofType,
-                              val inputs: Map<String, String>,
-                              val outputs: Map<String, String>)
+                              val inputs: Map<String, Angular2PropertyInfo>,
+                              val outputs: Map<String, Angular2PropertyInfo>)
 
   @Suppress("NonAsciiCharacters")
   companion object {
@@ -503,8 +504,12 @@ abstract class Angular2IvySymbolDef private constructor(private val myFieldOrStu
       val outputs = members.find { it.name == OUTPUTS_PROP }?.typeDeclaration?.asSafely<TypeScriptObjectType>()
       return HostDirectiveDef(
         directive,
-        processObjectArgument(inputs, TypeScriptStringLiteralType::class) { str, _ -> str.innerText },
-        processObjectArgument(outputs, TypeScriptStringLiteralType::class) { str, _ -> str.innerText }
+        processObjectArgument(inputs, TypeScriptStringLiteralType::class) { type, _ ->
+          type.innerText?.let { Angular2PropertyInfo(it, false, type) }
+        },
+        processObjectArgument(outputs, TypeScriptStringLiteralType::class) { type, _ ->
+          type.innerText?.let { Angular2PropertyInfo(it, false, type) }
+        }
       )
     }
   }

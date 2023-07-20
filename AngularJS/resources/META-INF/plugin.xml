@@ -186,8 +186,14 @@
                                  referenceClass="com.intellij.webSymbols.references.WebSymbolReference"
                                  implementationClass="org.angular2.web.references.Angular2SelectorReferencesProvider$NgDecoratorSelectorProvider"
                                  targetClass="com.intellij.webSymbols.WebSymbol"/>
+    <psi.symbolReferenceProvider hostElementClass="com.intellij.lang.javascript.psi.JSLiteralExpression"
+                                 hostLanguage="TypeScript"
+                                 referenceClass="com.intellij.webSymbols.references.WebSymbolReference"
+                                 implementationClass="org.angular2.web.references.Angular2DirectivePropertyLiteralReferencesProvider"
+                                 targetClass="com.intellij.webSymbols.WebSymbol"/>
     <webSymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2SelectorDeclarationProvider"/>
     <webSymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2DirectiveExportAsDeclarationProvider"/>
+    <webSymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2DirectivePropertyDeclarationProvider"/>
     <elementDescriptionProvider
       order="first"
       implementation="org.angular2.refactoring.Angular2ElementDescriptionProvider"/>
@@ -335,7 +341,7 @@
     <dialectSpecificHandlersFactory language="Angular2Html" implementationClass="org.angular2.codeInsight.Angular2SpecificHandlersFactory"/>
 
     <!-- Angular 2 Expression language contributions -->
-    <frameworkIndexingHandler implementation="org.angular2.index.Angular2IndexingHandler" version="14"/>
+    <frameworkIndexingHandler implementation="org.angular2.index.Angular2IndexingHandler" version="15"/>
     <frameworkSpecificHandler language="" implementationClass="org.angular2.lang.expr.Angular2JSFrameworkSpecificHandler"/>
     <elementScopeProvider implementation="org.angular2.codeInsight.Angular2ResolveScopeProvider"/>
     <dialectSpecificHandlersFactory language="Angular2" implementationClass="org.angular2.codeInsight.Angular2SpecificHandlersFactory"/>
