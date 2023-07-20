@@ -4,6 +4,7 @@ package org.angular2.lang
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import org.angular2.Angular2Framework.Companion.instance
 
 object Angular2LangUtil {
@@ -24,5 +25,10 @@ object Angular2LangUtil {
   @JvmStatic
   fun isAngular2Context(project: Project, context: VirtualFile): Boolean {
     return instance.isInContext(context, project)
+  }
+
+  @JvmStatic
+  fun isAngular2Context(file: PsiFile, offset: Int): Boolean {
+    return file.findElementAt(offset)?.let { instance.isInContext(it) } ?: false
   }
 }
