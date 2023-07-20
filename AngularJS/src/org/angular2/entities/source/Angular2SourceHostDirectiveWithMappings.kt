@@ -45,8 +45,8 @@ class Angular2SourceHostDirectiveWithMappings(private val definition: JSObjectLi
   companion object {
 
     fun createHostDirectiveProperties(directive: Angular2Directive?,
-                                      inputsMap: Map<String, String>,
-                                      outputsMap: Map<String, String>): Angular2DirectiveProperties {
+                                      inputsMap: Map<String, Angular2PropertyInfo>,
+                                      outputsMap: Map<String, Angular2PropertyInfo>): Angular2DirectiveProperties {
       if (directive == null)
         return Angular2DirectiveProperties(emptyList(), emptyList())
       val originalBindings = directive.bindings
@@ -64,10 +64,12 @@ class Angular2SourceHostDirectiveWithMappings(private val definition: JSObjectLi
 
     private fun createHostProperty(directive: Angular2Directive,
                                    property: Angular2DirectiveProperty,
-                                   map: Map<String, String>): Angular2DirectiveProperty? {
-      val mappedName = map[property.name] ?: return null
-      if (mappedName == property.name) return property
-      return Angular2AliasedDirectiveProperty(directive, property, mappedName)
+                                   map: Map<String, Angular2PropertyInfo>): Angular2DirectiveProperty? {
+      val mapping = map[property.name] ?: return null
+      if (mapping.name == property.name && mapping.declarationRange == null)
+        return property
+      return Angular2AliasedDirectiveProperty(directive, property, mapping.name,
+                                              mapping.declaringElement ?: directive.sourceElement, mapping.declarationRange)
     }
   }
 }

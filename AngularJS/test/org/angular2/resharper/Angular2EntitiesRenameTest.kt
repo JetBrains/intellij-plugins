@@ -82,11 +82,8 @@ class Angular2EntitiesRenameTest : ReSharperParameterizedTestCase() {
       "test025",  //insufficient input/output refactoring support
       "test026",  //insufficient input/output refactoring support
       "test027",  //insufficient input/output refactoring support
-      "test028",  //insufficient input/output refactoring support
-      "test029",  //insufficient input/output refactoring support
       "test030",  //insufficient input/output refactoring support
       "test031",  //insufficient input/output refactoring support
-      "test032",  //insufficient input/output refactoring support
       "test039",  //insufficient input/output refactoring support
       "test041",  //insufficient input/output refactoring support
       "test043" //insufficient input/output refactoring support
@@ -108,7 +105,7 @@ class Angular2EntitiesRenameTest : ReSharperParameterizedTestCase() {
     }
 
     @JvmStatic
-    @Suppress("unused")
+    @Suppress("unused", "UNUSED_PARAMETER")
     fun findTestData(klass: Class<*>): String {
       return AngularTestUtil.getBaseTestDataPath() + "resharper/Refactorings/Rename/Angular2"
     }

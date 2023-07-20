@@ -15,10 +15,10 @@ import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
 import org.angular2.entities.Angular2EntityUtils.jsTypeFromAcceptInputType
 import org.angular2.lang.types.Angular2TypeUtils
-import org.angular2.web.Angular2PsiSourcedSymbol
+import org.angular2.web.Angular2Symbol
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_OUTPUTS
 
-interface Angular2DirectiveProperty : Angular2PsiSourcedSymbol, Angular2Element {
+interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element {
 
   override val name: String
 
@@ -27,9 +27,6 @@ interface Angular2DirectiveProperty : Angular2PsiSourcedSymbol, Angular2Element 
   val rawJsType: JSType?
 
   val virtualProperty: Boolean
-
-  override val source: PsiElement
-    get() = sourceElement
 
   override val project: Project
     get() = sourceElement.project

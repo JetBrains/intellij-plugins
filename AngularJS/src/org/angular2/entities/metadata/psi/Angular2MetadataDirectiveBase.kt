@@ -38,8 +38,8 @@ abstract class Angular2MetadataDirectiveBase<Stub : Angular2MetadataDirectiveStu
     val cacheDependencies = HashSet<PsiElement>()
     collectReferencedElements(propertyStub.psi, { element ->
       if (element is Angular2MetadataString) {
-        val p = Angular2EntityUtils.parsePropertyMapping(element.value)
-        result.putIfAbsent(p.first, p.second)
+        val p = Angular2EntityUtils.parsePropertyMapping(element.value, element)
+        result.putIfAbsent(p.first, p.second.name)
       }
     }, cacheDependencies)
     return Result.create(result, cacheDependencies)

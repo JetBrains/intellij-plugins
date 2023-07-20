@@ -11,7 +11,6 @@ import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.impl.JSPropertyImpl
-import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.lang.javascript.psi.stubs.JSClassStub
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure
@@ -29,6 +28,7 @@ import com.intellij.util.SmartList
 import com.intellij.util.asSafely
 import com.intellij.util.containers.ContainerUtil
 import org.angular2.Angular2DecoratorUtil
+import org.angular2.Angular2DecoratorUtil.ALIAS_PROP
 import org.angular2.Angular2DecoratorUtil.ATTRIBUTE_DEC
 import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
 import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
@@ -59,10 +59,6 @@ import java.util.function.Predicate
 
 class Angular2IndexingHandler : FrameworkIndexingHandler() {
 
-  override fun shouldCreateStubForLiteral(node: ASTNode): Boolean {
-    return checkIsInterestingPropertyValue(node.treeParent)
-  }
-
   override fun shouldCreateStubForCallExpression(node: ASTNode): Boolean {
     val parent = node.treeParent
     if (parent != null && parent.elementType === JSStubElementTypes.ES6_DECORATOR) {
@@ -76,24 +72,34 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
     return false
   }
 
-  private fun checkIsInterestingPropertyValue(parent: ASTNode?): Boolean {
-    if (parent == null) return false
-    if (parent.elementType === JSElementTypes.ARGUMENT_LIST) {
-      val grandParent = parent.treeParent
+  override fun shouldCreateStubForLiteral(node: ASTNode): Boolean {
+    val parent = node.treeParent ?: return false
+    val parentPropName = getPropertyName(parent)
+    val container = if (parentPropName == NAME_PROP || parentPropName == ALIAS_PROP) {
+      parent.treeParent.takeIf { it.elementType === JSStubElementTypes.OBJECT_LITERAL_EXPRESSION }
+        ?.treeParent
+      ?: return false
+    }
+    else parent
+
+    if (container.elementType === JSElementTypes.ARGUMENT_LIST) {
+      val grandParent = container.treeParent
       return (grandParent != null
               && grandParent.elementType === JSStubElementTypes.CALL_EXPRESSION
               && shouldCreateStubForCallExpression(grandParent))
     }
-    val property = if (parent.elementType === JSElementTypes.ARRAY_LITERAL_EXPRESSION) {
-      parent.treeParent
+    val property = if (container.elementType === JSElementTypes.ARRAY_LITERAL_EXPRESSION) {
+      container.treeParent
     }
-    else parent
-    if (property != null && property.elementType === JSStubElementTypes.PROPERTY) {
-      val identifier = JSPropertyImpl.findNameIdentifier(property)
-      val propName = if (identifier != null) JSStringUtil.unquoteWithoutUnescapingStringLiteralValue(identifier.text) else null
-      return propName != null && STUBBED_PROPERTIES.contains(propName)
-    }
-    return false
+    else container
+    val propName = getPropertyName(property)
+    return propName != null && STUBBED_PROPERTIES.contains(propName)
+  }
+
+  private fun getPropertyName(property: ASTNode): String? {
+    if (property.elementType !== JSStubElementTypes.PROPERTY) return null
+    val identifier = JSPropertyImpl.findNameIdentifier(property)
+    return if (identifier != null) JSStringUtil.unquoteWithoutUnescapingStringLiteralValue(identifier.text) else null
   }
 
   override fun hasSignificantValue(expression: JSLiteralExpression): Boolean {
