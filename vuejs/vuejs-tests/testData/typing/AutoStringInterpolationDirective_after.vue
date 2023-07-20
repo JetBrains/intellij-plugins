@@ -1,4 +1,4 @@
 <template>
-  <div v-text='"Foo${<caret>"'>
+  <div v-text='`Foo${<caret>}`'>
   </div>
 </template>
