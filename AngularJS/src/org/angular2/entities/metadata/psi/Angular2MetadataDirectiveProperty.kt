@@ -13,6 +13,7 @@ import com.intellij.openapi.util.NullableLazyValue.lazyNullable
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
+import com.intellij.webSymbols.PsiSourcedWebSymbol
 import com.intellij.webSymbols.WebSymbolApiStatus
 import com.intellij.webSymbols.utils.coalesceApiStatus
 import com.intellij.webSymbols.utils.coalesceWith
@@ -21,10 +22,12 @@ import org.angular2.entities.Angular2DirectiveProperty
 import org.angular2.entities.Angular2EntityUtils
 import java.util.*
 
-class Angular2MetadataDirectiveProperty internal constructor(private val myOwner: Angular2MetadataClassBase<*>,
-                                                             private val myFieldName: String,
-                                                             override val name: String,
-                                                             override val kind: String) : Angular2DirectiveProperty {
+class Angular2MetadataDirectiveProperty internal constructor(
+  private val myOwner: Angular2MetadataClassBase<*>,
+  private val myFieldName: String,
+  override val name: String,
+  override val kind: String
+) : Angular2DirectiveProperty, PsiSourcedWebSymbol {
 
   private val mySignature: NullableLazyValue<JSRecordType.PropertySignature> =
     lazyNullable { myOwner.getPropertySignature(myFieldName) }
@@ -38,6 +41,9 @@ class Angular2MetadataDirectiveProperty internal constructor(private val myOwner
   override val apiStatus: WebSymbolApiStatus
     get() = coalesceApiStatus(mySignature.value?.memberSource?.allSourceElements) { (it as? JSElementBase)?.apiStatus }
       .coalesceWith(myOwner.sourceElement.asSafely<JSElementBase>()?.apiStatus)
+
+  override val source: PsiElement
+    get() = sourceElement
 
   override val sourceElement: PsiElement
     get() = mySignature.value?.memberSource?.singleElement ?: myOwner.sourceElement

@@ -1,7 +1,6 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities
 
-import com.intellij.find.usages.api.SearchTarget
 import com.intellij.html.webSymbols.WebSymbolsHtmlQueryConfigurator
 import com.intellij.html.webSymbols.WebSymbolsHtmlQueryConfigurator.Companion.getHtmlNSDescriptor
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
@@ -13,7 +12,6 @@ import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.contextOfType
-import com.intellij.refactoring.rename.api.RenameTarget
 import com.intellij.refactoring.rename.api.RenameValidationResult
 import com.intellij.refactoring.rename.api.RenameValidator
 import com.intellij.webSymbols.WebSymbol
@@ -29,11 +27,13 @@ import org.angularjs.AngularJSBundle
 import java.util.*
 import java.util.regex.Pattern
 
-class Angular2DirectiveSelectorSymbol(private val myParent: Angular2DirectiveSelectorImpl,
-                                      override val textRangeInSourceElement: TextRange,
-                                      override val name: @NlsSafe String,
-                                      private val myElementSelector: String?,
-                                      val isElementSelector: Boolean) : Angular2Symbol, SearchTarget, RenameTarget, WebSymbolDeclaredInPsi {
+class Angular2DirectiveSelectorSymbol(
+  private val myParent: Angular2DirectiveSelectorImpl,
+  override val textRangeInSourceElement: TextRange,
+  override val name: @NlsSafe String,
+  private val myElementSelector: String?,
+  val isElementSelector: Boolean
+) : Angular2Symbol, WebSymbolDeclaredInPsi {
 
   override val priority: WebSymbol.Priority
     get() = WebSymbol.Priority.LOWEST
