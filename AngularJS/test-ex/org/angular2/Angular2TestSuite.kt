@@ -12,6 +12,7 @@ import org.angular2.codeInsight.deprecated.*
 import org.angular2.codeInsight.deprecated.Angular2ComponentDeclarationNavigationTest
 import org.angular2.codeInsight.inspections.*
 import org.angular2.codeInsight.navigation.Angular2FindUsagesTest
+import org.angular2.codeInsight.navigation.Angular2GotoDeclarationTest
 import org.angular2.codeInsight.navigation.Angular2GotoRelatedTest
 import org.angular2.codeInsight.navigation.Angular2GotoSymbolTest
 import org.angular2.codeInsight.refactoring.Angular2ChangeSignatureTest
@@ -75,6 +76,7 @@ import org.junit.runners.Suite
   Angular2StructureViewTest::class,
   Angular2GotoSymbolTest::class,
   Angular2GotoRelatedTest::class,
+  Angular2GotoDeclarationTest::class,
   Angular2CssClassTest::class,
   Angular2CssCompletionTest::class,
   Angular2CssInspectionsTest::class,

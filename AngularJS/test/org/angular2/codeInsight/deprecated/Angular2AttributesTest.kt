@@ -7,9 +7,8 @@ import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection
 import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.lang.javascript.inspections.JSUnresolvedReferenceInspection
 import com.intellij.lang.javascript.psi.*
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.resolve.JSSimpleTypeProcessor
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator
 import com.intellij.lang.javascript.psi.types.JSNamedType
@@ -24,6 +23,7 @@ import com.intellij.util.containers.ContainerUtil
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.WebSymbolDelegate.Companion.unwrapAllDelegates
 import com.intellij.xml.util.XmlInvalidIdInspection
+import junit.framework.TestCase
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestModule
@@ -35,6 +35,7 @@ import org.angular2.entities.Angular2DirectiveProperty
 import org.angular2.entities.Angular2DirectiveSelectorSymbol
 import org.angular2.entities.Angular2EntitiesProvider.getComponent
 import org.angular2.codeInsight.inspections.Angular2ExpressionTypesInspectionTest
+import org.angular2.entities.source.Angular2SourceDirectiveVirtualProperty
 import org.angular2.inspections.AngularUndefinedBindingInspection
 import org.angular2.lang.html.psi.Angular2HtmlAttrVariable
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator
@@ -190,11 +191,12 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
   fun testBindingResolve2TypeScriptInputInDecorator() {
     myFixture.copyFileToProject("object_in_dec.ts")
     myFixture.configureByFiles("object_binding.after.html", "package.json")
-    val resolve = resolveToWebSymbolSource("[mod<caret>el]")
-    assertEquals("object_in_dec.ts", resolve.getContainingFile().getName())
-    UsefulTestCase.assertInstanceOf(resolve, JSField::class.java)
-    val cls = PsiTreeUtil.getContextOfType(resolve, TypeScriptClass::class.java)!!
-    val component: Angular2Directive = getComponent(cls)!!
+    val resolve = myFixture.resolveWebSymbolReference("[mod<caret>el]").psiContext
+    TestCase.assertNotNull(resolve)
+    assertEquals("object_in_dec.ts", resolve!!.getContainingFile().getName())
+    UsefulTestCase.assertInstanceOf(resolve, JSLiteralExpression::class.java)
+    val dec = PsiTreeUtil.getContextOfType(resolve, ES6Decorator::class.java)!!
+    val component: Angular2Directive = getComponent(dec)!!
     assertEquals(ContainerUtil.newHashSet("model", "id", "oneTime", "oneTimeList"),
                  component.inputs.mapTo(HashSet(), Angular2DirectiveProperty::name))
     assertEquals(setOf("complete"),
@@ -233,13 +235,6 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.checkResultByFile("object_binding.after.html")
   }
 
-  fun testBindingOverrideResolve2TypeScript() {
-    myFixture.configureByFiles("object_binding.after.html", "package.json", "objectOverride.ts")
-    val resolve = resolveToWebSymbolSource("[mod<caret>el]")
-    assertEquals("objectOverride.ts", resolve.getContainingFile().getName())
-    UsefulTestCase.assertInstanceOf(resolve, JSField::class.java)
-  }
-
   fun testBindingAttributeCompletion2TypeScript() {
     myFixture.configureByFiles("attribute_binding.html", "package.json", "object.ts")
     myFixture.completeBasic()
@@ -271,16 +266,6 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     val resolve = resolveToWebSymbolSource("one<caret>TimeList")
     assertEquals("object.ts", resolve.getContainingFile().getName())
     UsefulTestCase.assertInstanceOf(resolve, JSField::class.java)
-  }
-
-  fun testOneTimeBindingAttributeResolve2JavaScript() {
-    configureLink(myFixture, Angular2TestModule.ANGULAR_MATERIAL_7_2_1)
-    myFixture.configureByFiles("compiled_binding.after.html")
-    val resolve = resolveToWebSymbolSource("col<caret>or")
-    assertEquals("color.d.ts", resolve.getContainingFile().getName())
-    UsefulTestCase.assertInstanceOf(resolve, TypeScriptPropertySignature::class.java)
-    assertEquals("""/** Theme color palette for the component. */
-    color: ThemePalette""", resolve.getText())
   }
 
   fun testOneTimeBindingAttributeCompletion2JavaScript() {
@@ -328,13 +313,6 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.configureByFiles("object_event.html", "package.json", "objectOverride.ts")
     myFixture.completeBasic()
     myFixture.checkResultByFile("object_event.after.html")
-  }
-
-  fun testEventHandlerOverrideResolve2TypeScript() {
-    myFixture.configureByFiles("object_event.after.html", "package.json", "objectOverride.ts")
-    val resolve = resolveToWebSymbolSource("(co<caret>mplete)")
-    assertEquals("objectOverride.ts", resolve.getContainingFile().getName())
-    UsefulTestCase.assertInstanceOf(resolve, JSField::class.java)
   }
 
   fun testForCompletion2TypeScript() {
@@ -574,8 +552,8 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
       "myOutput", "xxpx",
       "myInOut", "ppxp",
       "myInOutChange", "xxpx",
-      "fake", "ccxc",
-      "fakeChange", "sxcx")) {
+      "fake", "vvxv",
+      "fakeChange", "sxvx")) {
       for (i in attrWrap.indices) {
         val wrap = attrWrap[i]
         val ref = myFixture.multiResolveWebSymbolReference(wrap.first + "<caret>" + name + wrap.second + "=")
@@ -603,11 +581,16 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
               ref
             }
           }
-          'c' -> {
+          'v' -> {
             assertNotNull("$messageStart should have reference", ref)
             assert(
-              sources.all { TypeScriptClass::class.java.isInstance(it) }) {
-              messageStart + " should resolve to Angular2DirectiveSelectorElement instead of " +
+              ref.all { it.unwrapAllDelegates() is Angular2SourceDirectiveVirtualProperty }) {
+              messageStart + " should resolve to Angular2SourceDirectiveVirtualProperty instead of " +
+              ref
+            }
+            assert(
+              sources.all { JSLiteralExpression::class.java.isInstance(it) }) {
+              messageStart + " should resolve to JSLiteralExpression instead of " +
               sources
             }
           }

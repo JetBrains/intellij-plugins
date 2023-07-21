@@ -3,14 +3,14 @@ package org.angular2.codeInsight.navigation
 
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationOrUsageHandler2
 import com.intellij.webSymbols.checkGTDUOutcome
-import com.intellij.webSymbols.checkGotoDeclaration
 import org.angular2.Angular2TestCase
+import org.angular2.Angular2TestModule
 
 class Angular2GotoDeclarationTest : Angular2TestCase("navigation/declaration") {
 
-  fun testExportAs() = doTest(92)
+  fun testExportAs() = checkGotoDeclaration(92)
 
-  fun testExportAsHostDirectives() = doTest(186)
+  fun testExportAsHostDirectives() = checkGotoDeclaration(186)
 
   fun testComponentStandardElementSelector() = doConfiguredTest {
     checkGTDUOutcome(GotoDeclarationOrUsageHandler2.GTDUOutcome.GTD)
@@ -20,10 +20,13 @@ class Angular2GotoDeclarationTest : Angular2TestCase("navigation/declaration") {
     checkGTDUOutcome(GotoDeclarationOrUsageHandler2.GTDUOutcome.GTD)
   }
 
-  private fun doTest(expectedOffset: Int) {
-    doConfiguredTest {
-      checkGotoDeclaration(expectedOffset)
-    }
-  }
+  fun testEventHandlerOverride() = checkGotoDeclaration(
+    284, extension = "html", dir = true, targetFileName = "comp.ts")
+
+  fun testBindingOverride() = checkGotoDeclaration(
+    283, extension = "html", dir = true, targetFileName = "comp.ts")
+
+  fun testOneTimeBindingAttribute() = checkGotoDeclaration(
+    394, Angular2TestModule.ANGULAR_MATERIAL_7_2_1, extension = "html", targetFileName = "color.d.ts")
 
 }
