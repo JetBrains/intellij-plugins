@@ -12,7 +12,6 @@ import com.intellij.psi.impl.source.PostprocessReformattingAspect
 import com.intellij.refactoring.rename.RenameProcessor
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import com.intellij.testFramework.Parameterized
-import com.intellij.util.containers.ContainerUtil
 import com.intellij.webSymbols.canRenameWebSymbolAtCaret
 import com.intellij.webSymbols.renameWebSymbol
 import org.angularjs.AngularTestUtil
@@ -26,10 +25,6 @@ class Angular2EntitiesRenameTest : ReSharperParameterizedTestCase() {
   public override fun setUp() {
     super.setUp()
     AngularTestUtil.enableAstLoadingFilter(this)
-  }
-
-  override fun isExcluded(): Boolean {
-    return TESTS_TO_SKIP.contains(name)
   }
 
   override fun doSingleTest(testFile: String, path: String) {
@@ -76,19 +71,6 @@ class Angular2EntitiesRenameTest : ReSharperParameterizedTestCase() {
   }
 
   companion object {
-    private val TESTS_TO_SKIP: Set<String> = ContainerUtil.newHashSet(
-      "test023",  //insufficient input/output refactoring support
-      "test024",  //insufficient input/output refactoring support
-      "test025",  //insufficient input/output refactoring support
-      "test026",  //insufficient input/output refactoring support
-      "test027",  //insufficient input/output refactoring support
-      "test030",  //insufficient input/output refactoring support
-      "test031",  //insufficient input/output refactoring support
-      "test039",  //insufficient input/output refactoring support
-      "test041",  //insufficient input/output refactoring support
-      "test043" //insufficient input/output refactoring support
-    )
-
     @Parameterized.Parameters(name = "{0}")
     @Throws(Exception::class)
     @JvmStatic
