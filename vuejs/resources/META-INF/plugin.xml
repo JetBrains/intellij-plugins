@@ -264,7 +264,6 @@
                                  implementationClass="org.jetbrains.vuejs.web.VueDeprecatedSlotAttributeReferenceProvider"
                                  referenceClass="com.intellij.webSymbols.references.WebSymbolReference"
                                  targetClass="com.intellij.webSymbols.WebSymbol"/>
-    <rename.symbolRenameTargetFactory implementation="org.jetbrains.vuejs.web.VueSymbolRenameTargetFactory"/>
     <webSymbols.declarationProvider implementation="org.jetbrains.vuejs.web.VueSymbolDeclarationProvider"/>
     <vetoRenameCondition implementation="org.jetbrains.vuejs.web.VueRenameHandlerVeto"/>
 
