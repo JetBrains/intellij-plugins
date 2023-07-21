@@ -11,7 +11,6 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.webSymbols.moveToOffsetBySignature
 import com.intellij.webSymbols.resolveWebSymbolReference
 import com.intellij.webSymbols.webSymbolAtCaret
-import com.intellij.webSymbols.webSymbolSourceAtCaret
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestModule
@@ -192,7 +191,7 @@ class Angular2JsonMetadataTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.configureFromTempProjectFile("template.html")
     myFixture.checkHighlighting()
     assertEquals("my-lib.component.d.ts",
-                 myFixture.webSymbolSourceAtCaret()!!.getContainingFile().getName())
+                 myFixture.webSymbolAtCaret()!!.psiContext!!.getContainingFile().getName())
   }
 
   fun testMultipleNodeModulesResolution() {

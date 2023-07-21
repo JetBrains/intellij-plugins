@@ -7,7 +7,6 @@ import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.webSymbols.moveToOffsetBySignature
 import com.intellij.webSymbols.webSymbolAtCaret
-import com.intellij.webSymbols.webSymbolSourceAtCaret
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestModule
@@ -70,7 +69,7 @@ class Angular2IvyMetadataTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.configureFromTempProjectFile("template.html")
     myFixture.checkHighlighting()
     assertEquals("my-lib.component.d.ts",
-                 myFixture.webSymbolSourceAtCaret()!!.getContainingFile().getName())
+                 myFixture.webSymbolAtCaret()!!.psiContext!!.getContainingFile().getName())
   }
 
   fun testPriority() {
