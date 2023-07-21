@@ -1,11 +1,11 @@
 plugins {
-    id("org.jetbrains.intellij") version "1.13.3"
-    id("org.jetbrains.kotlin.jvm") version "1.7.21"
+    id("org.jetbrains.intellij") version "1.15.0"
+    id("org.jetbrains.kotlin.jvm") version "1.9.0"
     id("org.jetbrains.grammarkit") version "2022.3"
 }
 
 group = "org.jetbrains.webstorm"
-version = "1.4.231"
+version = "1.4.232"
 
 repositories {
     mavenCentral()
@@ -36,7 +36,7 @@ tasks {
 
 tasks {
     patchPluginXml {
-        sinceBuild.set("231.0")
-        untilBuild.set("231.*")
+        sinceBuild.set("232.0")
+        untilBuild.set("232.*")
     }
 }
