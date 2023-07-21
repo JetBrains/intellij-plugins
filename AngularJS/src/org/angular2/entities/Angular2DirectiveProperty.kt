@@ -12,13 +12,15 @@ import com.intellij.psi.util.contextOfType
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolApiStatus
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
+import com.intellij.webSymbols.search.SearchTargetWebSymbol
+import com.intellij.webSymbols.search.WebSymbolSearchTarget
 import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
 import org.angular2.entities.Angular2EntityUtils.jsTypeFromAcceptInputType
 import org.angular2.lang.types.Angular2TypeUtils
 import org.angular2.web.Angular2Symbol
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_OUTPUTS
 
-interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element {
+interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element, SearchTargetWebSymbol {
 
   override val name: String
 
@@ -27,6 +29,9 @@ interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element {
   val rawJsType: JSType?
 
   val virtualProperty: Boolean
+
+  override val searchTarget: WebSymbolSearchTarget?
+    get() = WebSymbolSearchTarget.create(this)
 
   override val project: Project
     get() = sourceElement.project
@@ -63,5 +68,5 @@ interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element {
     Angular2ElementDocumentationTarget.create(
       name, location, this,
       Angular2EntitiesProvider.getEntity(sourceElement.contextOfType<TypeScriptClass>(true)))
-    ?: super.getDocumentationTarget(location)
+    ?: super<Angular2Symbol>.getDocumentationTarget(location)
 }

@@ -1,7 +1,6 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities
 
-import com.intellij.find.usages.api.SearchTarget
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
@@ -9,7 +8,6 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.psi.PsiElement
-import com.intellij.refactoring.rename.api.RenameTarget
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.SymbolNamespace
@@ -26,7 +24,7 @@ class Angular2DirectiveExportAs(
   val directive: Angular2Directive,
   override val sourceElement: PsiElement = directive.sourceElement,
   override val textRangeInSourceElement: TextRange? = null,
-) : Angular2Symbol, Angular2Element, SearchTarget, RenameTarget, WebSymbolDeclaredInPsi {
+) : Angular2Symbol, Angular2Element, WebSymbolDeclaredInPsi {
 
   override val psiContext: PsiElement
     get() = sourceElement
