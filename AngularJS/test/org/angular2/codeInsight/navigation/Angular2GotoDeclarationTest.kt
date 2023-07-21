@@ -8,9 +8,9 @@ import org.angular2.Angular2TestModule
 
 class Angular2GotoDeclarationTest : Angular2TestCase("navigation/declaration") {
 
-  fun testExportAs() = checkGotoDeclaration(92)
+  fun testExportAs() = checkGotoDeclaration("exportAs: \"<caret>test\"")
 
-  fun testExportAsHostDirectives() = checkGotoDeclaration(186)
+  fun testExportAsHostDirectives() = checkGotoDeclaration("exportAs: \"<caret>bold\"")
 
   fun testComponentStandardElementSelector() = doConfiguredTest {
     checkGTDUOutcome(GotoDeclarationOrUsageHandler2.GTDUOutcome.GTD)
@@ -21,12 +21,12 @@ class Angular2GotoDeclarationTest : Angular2TestCase("navigation/declaration") {
   }
 
   fun testEventHandlerOverride() = checkGotoDeclaration(
-    284, extension = "html", dir = true, targetFileName = "comp.ts")
+    "@Output(\"<caret>complete\")", extension = "html", dir = true, expectedFileName = "comp.ts")
 
   fun testBindingOverride() = checkGotoDeclaration(
-    283, extension = "html", dir = true, targetFileName = "comp.ts")
+    "@Input(\"<caret>model\")", extension = "html", dir = true, expectedFileName = "comp.ts")
 
   fun testOneTimeBindingAttribute() = checkGotoDeclaration(
-    394, Angular2TestModule.ANGULAR_MATERIAL_7_2_1, extension = "html", targetFileName = "color.d.ts")
+    "<caret>color: ThemePalette", Angular2TestModule.ANGULAR_MATERIAL_7_2_1, extension = "html", expectedFileName = "color.d.ts")
 
 }

@@ -1675,7 +1675,7 @@ export default class UsageComponent extends Vue {
 }
 </script>
 """)
-    myFixture.checkGotoDeclaration("<Short<caret>Vue", 107, "ShortComponent.vue")
+    myFixture.checkGotoDeclaration("<Short<caret>Vue", "default class <caret>ShortComponent", "ShortComponent.vue")
   }
 
   fun testResolveWithClassComponentTs() {
@@ -1705,7 +1705,7 @@ export default class UsageComponent extends Vue {
     val target = myFixture.resolveToWebSymbolSource("<<caret>LongComponent/>")
     TestCase.assertEquals("ResolveWithClassComponentTs.vue", target.containingFile.name)
     assertInstanceOf(target, ES6Property::class.java)
-    myFixture.checkGotoDeclaration("<<caret>LongComponent/>", 145, "LongComponent.vue")
+    myFixture.checkGotoDeclaration("<<caret>LongComponent/>", "export default class <caret>LongComponent", "LongComponent.vue")
   }
 
   fun testLocalComponentsExtendsResolve() {
@@ -1729,13 +1729,13 @@ export default class UsageComponent extends Vue {
           <<caret>HiddenComponent/>
         </template>
       """)
-    myFixture.checkGotoDeclaration("<Hidden<caret>Component/>", 33, "hidden-component.vue")
+    myFixture.checkGotoDeclaration("<Hidden<caret>Component/>", "export default <caret>{", "hidden-component.vue")
     myFixture.configureByText("ResolveWithRecursiveMixins2.vue", """
         <template>
           <<caret>OneMoreComponent/>
         </template>
       """)
-    myFixture.checkGotoDeclaration("<One<caret>MoreComponent/>", 214, "OneMoreComponent.vue")
+    myFixture.checkGotoDeclaration("<One<caret>MoreComponent/>", "default class <caret>Kuku extends", "OneMoreComponent.vue")
   }
 
   fun testCssClassInPug() {
@@ -1764,7 +1764,7 @@ export default class UsageComponent extends Vue {
         export default app;
         const app = { name: 'app', components: { HelloWorld } };
       </script>""")
-    myFixture.checkGotoDeclaration("<Hello<caret>World", 43,
+    myFixture.checkGotoDeclaration("<Hello<caret>World", "HelloWorld = <caret>{ name:",
                                    "HelloWorld.vue")
   }
 
@@ -1968,33 +1968,33 @@ export default class UsageComponent extends Vue {
   fun testGotoDeclarationTS() {
     myFixture.configureByFile("gotoDeclarationTS.vue")
     for (check in listOf("base", "watch", "computed", "methods")) {
-      myFixture.checkGotoDeclaration("fetch<caret>Tracks/*$check*/()", 554)
+      myFixture.checkGotoDeclaration("fetch<caret>Tracks/*$check*/()", "async <caret>fetchTracks()")
     }
   }
 
   fun testNoScriptSection() {
     myFixture.copyDirectoryToProject("noScriptSection", ".")
     myFixture.configureFromTempProjectFile("test.vue")
-    myFixture.checkGotoDeclaration("<no-script<caret>-section>", 0, "noScriptSection.vue")
+    myFixture.checkGotoDeclaration("<no-script<caret>-section>", "<caret><template>", "noScriptSection.vue")
   }
 
   fun testLazyLoaded() {
     myFixture.configureByFiles("lazyLoaded/main.vue", "lazyLoaded/index.vue")
-    myFixture.checkGotoDeclaration("<Hello<caret>World", 24, "index.vue")
+    myFixture.checkGotoDeclaration("<Hello<caret>World", "export default <caret>{", "index.vue")
   }
 
   fun testScriptSetupTagNavigation() {
     myFixture.copyDirectoryToProject("scriptSetupTagNavigation", ".")
     myFixture.configureFromTempProjectFile("HelloWorld.vue")
-    myFixture.checkGotoDeclaration("<Sam<caret>ple/>", 0, "Sample.vue")
+    myFixture.checkGotoDeclaration("<Sam<caret>ple/>", "<caret><template>", "Sample.vue")
   }
 
   fun testScriptSetupRef() {
     myFixture.configureByFiles("scriptSetupRef.vue")
     for (check in listOf(
-      Pair("ref='f<caret>oo2'", 167),
-      Pair("\$refs.fo<caret>o2 ", 167),
-      Pair("\$refs.fo<caret>o ", 48))) {
+      Pair("ref='f<caret>oo2'", "const <caret>foo2 = ref("),
+      Pair("\$refs.fo<caret>o2 ", "const <caret>foo2 = ref("),
+      Pair("\$refs.fo<caret>o ", "<div ref='<caret>foo'>"))) {
 
       myFixture.checkGotoDeclaration(check.first, check.second)
     }
@@ -2003,7 +2003,7 @@ export default class UsageComponent extends Vue {
   fun testScriptSetupPropShadowing() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     myFixture.configureByFiles("scriptSetupPropShadowing.vue")
-    myFixture.checkGotoDeclaration("{{<caret>foo}}", 31)
+    myFixture.checkGotoDeclaration("{{<caret>foo}}", "const <caret>foo = 2")
   }
 
   fun testCreateApp() {
@@ -2011,10 +2011,10 @@ export default class UsageComponent extends Vue {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     sequenceOf(
       Triple("<B<caret>oo>", null, null),
-      Triple("<B<caret>ar>", 128, "foo.vue"),
-      Triple("<C<caret>ar>", 0, "TheComponent.vue"),
-      Triple("v-f<caret>oo", 175, "main.ts"),
-      Triple("<NonCha<caret>in>", 379, "main.ts"),
+      Triple("<B<caret>ar>", "export default <caret>{", "foo.vue"),
+      Triple("<C<caret>ar>", "<caret><template>", "TheComponent.vue"),
+      Triple("v-f<caret>oo", ".directive(<caret>\"foo\"", "main.ts"),
+      Triple("<NonCha<caret>in>", "(\"NonChain\", <caret>{})", "main.ts"),
       Triple("<B<caret>oo>", null, null),
       Triple("w<B<caret>ar>", null, null),
       Triple("w<C<caret>ar>", null, null),
@@ -2035,7 +2035,7 @@ export default class UsageComponent extends Vue {
     myFixture.copyDirectoryToProject("../common/createApp", ".")
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     myFixture.configureByText("AppUnlinked.vue", "<template>\n<Bar/>\n</template>")
-    myFixture.checkGotoDeclaration("<B<caret>ar/>", 128, "foo.vue")
+    myFixture.checkGotoDeclaration("<B<caret>ar/>", "export default <caret>{", "foo.vue")
   }
 
   fun testSameMixinsViaStubsAndViaPsi() {
@@ -2071,9 +2071,9 @@ export default class UsageComponent extends Vue {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     myFixture.configureByFile("${getTestName(true)}.vue")
     sequenceOf(
-      "@<caret>add" to 105,
-      "@ch<caret>ange" to 114,
-      "v-on:re<caret>move" to 161
+      "@<caret>add" to "<caret>add,\n",
+      "@ch<caret>ange" to "<caret>change(ctx) {\n",
+      "v-on:re<caret>move" to "<caret>remove: (ctx)"
     ).forEach { (signature, offset) ->
       myFixture.checkGotoDeclaration(signature, offset)
     }
@@ -2083,9 +2083,9 @@ export default class UsageComponent extends Vue {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     myFixture.configureByFile("${getTestName(true)}.vue")
     sequenceOf(
-      "m<caret>sg=\"You did it!\"" to 452,
-      "auto<caret>focus :value" to 283,
-      "autofocus :va<caret>lue" to 147,
+      "m<caret>sg=\"You did it!\"" to "<caret>msg: {type:",
+      "auto<caret>focus :value" to "<caret>autofocus: Boolean",
+      "autofocus :va<caret>lue" to "<caret>value: {} as",
     ).forEach { (signature, offset) ->
       myFixture.checkGotoDeclaration(signature, offset)
     }
@@ -2103,7 +2103,7 @@ export default class UsageComponent extends Vue {
         {{message}}
       </template>
     """.trimIndent())
-    myFixture.checkGotoDeclaration("{{me<caret>ssage}}", 37)
+    myFixture.checkGotoDeclaration("{{me<caret>ssage}}", "inject: [<caret>'message']", )
   }
 
   fun testInjectPropertyLocal() {
@@ -2121,7 +2121,7 @@ export default class UsageComponent extends Vue {
         {{message}}
       </template>
     """.trimIndent())
-    myFixture.checkGotoDeclaration("{{mes<caret>sage}}", 42)
+    myFixture.checkGotoDeclaration("{{mes<caret>sage}}", "<caret>message: {")
   }
 
   fun testInjectAliasedLocal() {
@@ -2140,49 +2140,49 @@ export default class UsageComponent extends Vue {
         {{localMessage}}
       </template>
     """.trimIndent())
-    myFixture.checkGotoDeclaration("{{loc<caret>alMessage}}", 42)
+    myFixture.checkGotoDeclaration("{{loc<caret>alMessage}}", "<caret>localMessage: {", )
   }
 
   fun testInjectLiteral() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
-    myFixture.checkGotoDeclaration("'me<caret>ssage'", 123, "Provide.vue")
+    myFixture.checkGotoDeclaration("'me<caret>ssage'", "<caret>message: 'hello", "Provide.vue")
   }
 
   fun testInjectLiteralProvidedInApp() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
-    myFixture.checkGotoDeclaration("'me<caret>ssage'", 162, "App.vue")
+    myFixture.checkGotoDeclaration("'me<caret>ssage'", "<caret>message: 'hello", "App.vue")
   }
 
   fun testInjectAlias() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
-    myFixture.checkGotoDeclaration("'me<caret>ssage'", 133, "Provide.vue")
+    myFixture.checkGotoDeclaration("'me<caret>ssage'", "<caret>message: 'msg'", "Provide.vue")
   }
 
   fun testInjectAliasDuplicatedName() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
-    myFixture.checkGotoDeclaration("'me<caret>ssage'", 175, "Provide.vue")
+    myFixture.checkGotoDeclaration("'me<caret>ssage'", "<caret>message: 'msg'", "Provide.vue")
   }
 
   fun testInjectProperty() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
-    myFixture.checkGotoDeclaration("m<caret>essage", 142, "Provide.vue")
+    myFixture.checkGotoDeclaration("m<caret>essage", "<caret>message: 'msg'", "Provide.vue")
   }
 
   fun testInjectDeepNested() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
-    myFixture.checkGotoDeclaration("'provide<caret>Deep'", 129, "ProvideB.vue")
+    myFixture.checkGotoDeclaration("'provide<caret>Deep'", "<caret>provideDeep: 12", "ProvideB.vue")
   }
 
   fun testInjectScriptSetup() {
@@ -2191,21 +2191,21 @@ export default class UsageComponent extends Vue {
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.checkHighlighting()
-    myFixture.checkGotoDeclaration("'provided<caret>InCall'", 108, "Provide.vue")
+    myFixture.checkGotoDeclaration("'provided<caret>InCall'", "provide(<caret>'providedInCall", "Provide.vue")
   }
 
   fun testInjectAppGlobal() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
-    myFixture.checkGotoDeclaration("'global<caret>Provide'", 97, "main.js")
+    myFixture.checkGotoDeclaration("'global<caret>Provide'", "app.provide(<caret>'globalProvide'", "main.js")
   }
 
   fun testInjectSetup() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
-    myFixture.checkGotoDeclaration("'inject<caret>Setup'", 172, "Provide.vue")
+    myFixture.checkGotoDeclaration("'inject<caret>Setup'", "provide(<caret>'injectSetup'", "Provide.vue")
   }
 }
 
