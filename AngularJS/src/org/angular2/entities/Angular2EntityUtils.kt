@@ -22,6 +22,7 @@ import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector.ParseException
 import org.jetbrains.annotations.NonNls
+import kotlin.math.max
 
 object Angular2EntityUtils {
 
@@ -60,7 +61,7 @@ object Angular2EntityUtils {
     val ind = property.indexOf(':')
     return if (ind > 0) {
       val startIndex = StringUtil.skipWhitespaceForward(property, ind + 1)
-      val endIndex = StringUtil.skipWhitespaceBackward(property, property.length)
+      val endIndex = max(startIndex, StringUtil.skipWhitespaceBackward(property, property.length))
       Pair(
         property.substring(0, ind).trim(),
         Angular2PropertyInfo(property.substring(startIndex, endIndex), false, element,
