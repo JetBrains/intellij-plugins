@@ -8,7 +8,6 @@ import com.intellij.openapi.vcs.changes.ChangeListManagerGate;
 import com.intellij.openapi.vcs.changes.CurrentContentRevision;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ProcessingContext;
-import com.intellij.vcsUtil.VcsUtil;
 import org.jetbrains.idea.perforce.application.PerforceChangeProvider;
 import org.jetbrains.idea.perforce.application.PerforceVcs;
 import org.jetbrains.idea.perforce.perforce.FStat;
@@ -61,12 +60,12 @@ public class P4AddOperation extends VcsOperationOnPath {
     ((PerforceChangeProvider) PerforceVcs.getInstance(project).getChangeProvider()).clearUnversionedStatus(path);
 
     p4File.clearCache();
-    VcsUtil.markFileAsDirty(project, myPath);
+    markFileAsDirty(project, myPath);
   }
 
   @Override
   public void prepareOffline(Project project) {
-    VcsUtil.markFileAsDirty(project, myPath);
+    markFileAsDirty(project, myPath);
   }
 
   @Override

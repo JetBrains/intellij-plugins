@@ -1,7 +1,10 @@
 package org.jetbrains.idea.perforce.operations;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FilePath;
 import com.intellij.openapi.vcs.actions.VcsContextFactory;
+import com.intellij.openapi.vcs.changes.VcsDirtyScopeManager;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -48,5 +51,10 @@ public abstract class VcsOperationOnPath extends VcsOperation {
   @Override
   public List<String> getAffectedPaths() {
     return Collections.singletonList(myPath);
+  }
+
+  public static void markFileAsDirty(final Project project, @NonNls String path) {
+    final FilePath filePath = VcsContextFactory.getInstance().createFilePathOn(new File(path));
+    VcsDirtyScopeManager.getInstance(project).fileDirty(filePath);
   }
 }

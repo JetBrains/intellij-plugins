@@ -6,7 +6,6 @@ import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ProcessingContext;
 import com.intellij.vcsUtil.ActionWithTempFile;
-import com.intellij.vcsUtil.VcsUtil;
 import org.jetbrains.idea.perforce.perforce.FStat;
 import org.jetbrains.idea.perforce.perforce.P4File;
 import org.jetbrains.idea.perforce.perforce.PerforceRunner;
@@ -58,7 +57,7 @@ public class P4CopyOperation extends VcsOperationOnPath {
             runner.edit(targetFile);
           }
         }.execute();
-        VcsUtil.markFileAsDirty(project, myPath);
+        markFileAsDirty(project, myPath);
         return;
       }
     }

@@ -9,7 +9,6 @@ import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.changes.ChangeListManagerGate;
 import com.intellij.openapi.vcs.changes.ContentRevision;
 import com.intellij.util.ProcessingContext;
-import com.intellij.vcsUtil.VcsUtil;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.perforce.perforce.P4File;
 import org.jetbrains.idea.perforce.perforce.PerforceCachingContentRevision;
@@ -32,7 +31,7 @@ public class P4DeleteOperation extends VcsOperationOnPath {
     final P4File p4File = P4File.createInefficientFromLocalPath(myPath);
     final long list = getPerforceChangeList(project, p4File, context);
     PerforceRunner.getInstance(project).assureDel(p4File, list);
-    VcsUtil.markFileAsDirty(project, myPath);
+    markFileAsDirty(project, myPath);
   }
 
   @Override
