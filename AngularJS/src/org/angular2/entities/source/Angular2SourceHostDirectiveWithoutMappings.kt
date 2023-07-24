@@ -9,7 +9,7 @@ import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2DirectiveProperties
 import org.angular2.entities.Angular2HostDirective
 
-class Angular2SourceHostDirective(override val directive: Angular2Directive) : Angular2HostDirective {
+class Angular2SourceHostDirectiveWithoutMappings(override val directive: Angular2Directive) : Angular2HostDirective {
 
   override val bindings: Angular2DirectiveProperties
     get() = CachedValuesManager.getManager(directive.sourceElement.project)
@@ -22,7 +22,7 @@ class Angular2SourceHostDirective(override val directive: Angular2Directive) : A
 
   override fun equals(other: Any?): Boolean =
     other === this
-    || (other is Angular2SourceHostDirective
+    || (other is Angular2SourceHostDirectiveWithoutMappings
         && other.directive == directive)
 
   override fun hashCode(): Int =

@@ -226,7 +226,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
     }
 
     override fun processAcceptableEntity(entity: Angular2Directive) {
-      result.add(Angular2SourceHostDirective(entity))
+      result.add(Angular2SourceHostDirectiveWithoutMappings(entity))
     }
   }
 
