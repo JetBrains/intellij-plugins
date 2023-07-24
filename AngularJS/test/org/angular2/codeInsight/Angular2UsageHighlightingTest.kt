@@ -13,17 +13,14 @@ class Angular2UsageHighlightingTest : Angular2TestCase("usageHighlighting") {
 
   fun testDirectiveInputFromMapping() = checkUsageHighlighting()
 
-  // TODO platform - no usage highlighting outside of injection - com.intellij.codeInsight.highlighting.getSymbolUsageRanges()
-  fun _testDirectiveInputFromTemplate() = checkUsageHighlighting()
+  fun testDirectiveInputFromTemplate() = checkUsageHighlighting()
 
   fun testDirectiveSelectorFromDefinition() = checkUsageHighlighting()
 
-  // TODO platform - no usage highlighting outside of injection - com.intellij.codeInsight.highlighting.getSymbolUsageRanges()
-  fun _testDirectiveSelectorFromUsage() = checkUsageHighlighting()
+  fun testDirectiveSelectorFromUsage() = checkUsageHighlighting()
 
   fun testDirectiveExportAsFromDefinition() = checkUsageHighlighting()
 
-  // TODO platform - no usage highlighting outside of injection - com.intellij.codeInsight.highlighting.getSymbolUsageRanges()
-  fun _testDirectiveExportAsFromUsage() = checkUsageHighlighting()
+  fun testDirectiveExportAsFromUsage() = checkUsageHighlighting()
 
 }
