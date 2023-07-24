@@ -1,0 +1,4 @@
+alias1#String
+alias3#Number
+field4#String
+virtual#null
