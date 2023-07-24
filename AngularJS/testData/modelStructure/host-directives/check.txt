@@ -14,9 +14,9 @@ AppModule: Angular2SourceModule
       outputs:
         hover
       host directives:
-        MouseenterDirective
-          host-inputs:
-          host-outputs:
+        host directive MouseenterDirective
+          inputs:
+          outputs:
           MouseenterDirective: Angular2SourceDirective
             standalone: true
             selector: [appMouseenter]
@@ -29,10 +29,10 @@ AppModule: Angular2SourceModule
             outputs:
               hover
             host directives:
-              UnderlineDirective
-                host-inputs:
+              host directive UnderlineDirective
+                inputs:
                   underlineColor
-                host-outputs:
+                outputs:
                 UnderlineDirective: Angular2SourceDirective
                   standalone: true
                   selector: [appUnderline]
@@ -40,9 +40,9 @@ AppModule: Angular2SourceModule
                   inputs:
                     color
                   host directives fully resolved: true
-              BoldDirective
-                host-inputs:
-                host-outputs:
+              host directive BoldDirective
+                inputs:
+                outputs:
                   hover
                 BoldDirective: Angular2SourceDirective
                   standalone: true
@@ -54,9 +54,9 @@ AppModule: Angular2SourceModule
                     hover
                   host directives fully resolved: true
             host directives fully resolved: false
-        UnderlineDirective
+        host directive UnderlineDirective
           <printed above>
-        BoldDirective
+        host directive BoldDirective
           <printed above>
       host directives fully resolved: false
     TestComponent: Angular2IvyComponent
@@ -67,11 +67,11 @@ AppModule: Angular2SourceModule
         bbb <required>
         ngIfElse
       host directives:
-        NgIf
-          host-inputs:
+        host directive NgIf
+          inputs:
             bbb <required>
             ngIfElse
-          host-outputs:
+          outputs:
           NgIf: Angular2IvyDirective
             standalone: true
             selector: [ngIf]
@@ -81,9 +81,9 @@ AppModule: Angular2SourceModule
               ngIfElse
               ngIfThen
             host directives fully resolved: true
-        NgForOf
-          host-inputs:
-          host-outputs:
+        host directive NgForOf
+          inputs:
+          outputs:
           NgForOf: Angular2IvyDirective
             standalone: true
             selector: [ngFor]

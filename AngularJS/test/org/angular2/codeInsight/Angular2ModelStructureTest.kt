@@ -332,6 +332,7 @@ class Angular2ModelStructureTest : Angular2CodeInsightFixtureTestCase() {
       printEntity(topLevel, pipe) {}
 
     private fun StringBuilder.printNgHostDirective(level: Int, directive: Angular2HostDirective): StringBuilder {
+      append("host directive ")
       directive.directive?.apply {
         append(getName())
           .append('\n')
@@ -340,8 +341,8 @@ class Angular2ModelStructureTest : Angular2CodeInsightFixtureTestCase() {
       if (!printedElements.add(directive)) {
         indent(level + 1).append("<printed above>\n")
       } else {
-        printProperty(level + 1, "host-inputs", directive.inputs)
-        printProperty(level + 1, "host-outputs", directive.outputs)
+        printProperty(level + 1, "inputs", directive.inputs)
+        printProperty(level + 1, "outputs", directive.outputs)
         indent(level + 1)
         directive.directive?.let { printNgDirective(level + 1, it) }
       }
