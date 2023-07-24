@@ -18,7 +18,7 @@ import org.angular2.inspections.AngularUndefinedTagInspection
 import org.angularjs.AngularTestUtil
 
 @Deprecated("Use test appropriate for IDE feature being tested - e.g. completion/resolve/highlighting ")
-class Angular2IvyMetadataTest : Angular2CodeInsightFixtureTestCase() {
+class Angular2IvyModelTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
     return AngularTestUtil.getBaseTestDataPath() + "deprecated/metadata-ivy"
   }

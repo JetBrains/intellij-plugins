@@ -8,7 +8,7 @@ import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.Companion.configureCopy
 import org.angularjs.AngularTestUtil
 
-class Angular2SemanticsHighlightingTest : Angular2CodeInsightFixtureTestCase() {
+class Angular2SemanticHighlightingTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
     return AngularTestUtil.getBaseTestDataPath() + "html/semantics"
   }
