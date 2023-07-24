@@ -16,7 +16,7 @@ class Angular2IvyHostDirective(override val directive: Angular2Directive,
                                private val outputsMap: Map<String, Angular2PropertyInfo>) : UserDataHolderBase(), Angular2HostDirective {
   override val bindings: Angular2DirectiveProperties
     get() = CachedValuesManager.getManager(directive.sourceElement.project).getCachedValue(this) {
-      CachedValueProvider.Result.create(createHostDirectiveProperties(directive, inputsMap, outputsMap),
+      CachedValueProvider.Result.create(createHostDirectiveProperties(directive, inputsMap.toMutableMap(), outputsMap.toMutableMap()),
                                         PsiModificationTracker.MODIFICATION_COUNT)
     }
 

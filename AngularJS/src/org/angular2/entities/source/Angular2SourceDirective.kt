@@ -253,6 +253,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
             else -> null
           }
         }
+        .filter { it.second.name.isNotBlank() }
         .toMap(LinkedHashMap())
     }
 

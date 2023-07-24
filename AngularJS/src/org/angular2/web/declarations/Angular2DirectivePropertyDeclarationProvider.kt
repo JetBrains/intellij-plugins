@@ -24,7 +24,7 @@ class Angular2DirectivePropertyDeclarationProvider : WebSymbolDeclarationProvide
     return (if (kind == INPUTS_PROP) directive.inputs else directive.outputs)
       .asSequence()
       .mapNotNull { property -> (property as? WebSymbolDeclaredInPsi)?.takeIf { it.name == name }?.declaration }
-      .filter { it.declaringElement == element && it.rangeInDeclaringElement.contains(offsetInElement) }
+      .filter { it.declaringElement == element && (offsetInElement == -1 || it.rangeInDeclaringElement.contains(offsetInElement)) }
       .toList()
   }
 }
