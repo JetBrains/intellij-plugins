@@ -23,6 +23,12 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
   fun testHostDirectivesProperties() =
     doLookupTest(renderedItemFilter = { it.endsWith("#100") })
 
+  fun testHostDirectiveInputMapping() =
+    doLookupTest(renderTypeText = true, renderPriority = false)
+
+  fun testHostDirectiveOutputMapping() =
+    doLookupTest(ANGULAR_CORE_13_3_5, renderTypeText = true, renderPriority = false)
+
   fun testCompletionInExpression() {
     doLookupTest(ANGULAR_CORE_13_3_5, ANGULAR_CDK_14_2_0, dir = true)
 

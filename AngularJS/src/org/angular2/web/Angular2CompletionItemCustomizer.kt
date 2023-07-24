@@ -72,6 +72,8 @@ class Angular2CompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {
           ?: item
         else -> item
       }
+    else if (namespace == WebSymbol.NAMESPACE_JS && typedKinds.contains(kind))
+      item.decorateWithSymbolType(item.symbol)
     else
       item
 

@@ -6,6 +6,8 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.javascript.web.css.CssInBindingExpressionCompletionProvider
 import com.intellij.lang.Language
+import com.intellij.lang.javascript.JSTokenTypes
+import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lang.javascript.completion.*
 import com.intellij.lang.javascript.completion.JSImportCompletionUtil.IMPORT_PRIORITY
 import com.intellij.lang.javascript.completion.JSLookupPriority.*
@@ -41,6 +43,7 @@ import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.psi.Angular2PipeExpression
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression
+import org.angular2.web.codeCompletion.Angular2HostDirectivePropertyMappingCompletionProvider
 import org.jetbrains.annotations.NonNls
 
 class Angular2CompletionContributor : CompletionContributor() {
@@ -53,6 +56,10 @@ class Angular2CompletionContributor : CompletionContributor() {
     extend(CompletionType.BASIC,
            psiElement().with(language(Angular2Language.INSTANCE)),
            TemplateExpressionCompletionProvider())
+
+    extend(CompletionType.BASIC,
+           psiElement(JSTokenTypes.STRING_LITERAL).with(language(JavaScriptSupportLoader.TYPESCRIPT)),
+           Angular2HostDirectivePropertyMappingCompletionProvider())
   }
 
   private class TemplateExpressionCompletionProvider : CompletionProvider<CompletionParameters>() {
