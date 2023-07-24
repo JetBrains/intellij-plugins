@@ -26,7 +26,7 @@ import org.angularjs.AngularTestUtil
 import java.io.File
 
 @Deprecated("Use test appropriate for IDE feature being tested - e.g. completion/resolve/highlighting ")
-class Angular2JsonMetadataTest : Angular2CodeInsightFixtureTestCase() {
+class Angular2JsonModelTest : Angular2CodeInsightFixtureTestCase() {
   private fun resolveToWebSymbolSourceContext(signature: String): PsiElement {
     return myFixture.resolveWebSymbolReference(signature).psiContext!!
   }
