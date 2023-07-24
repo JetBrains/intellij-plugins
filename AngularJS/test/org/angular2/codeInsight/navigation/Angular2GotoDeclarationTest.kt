@@ -10,6 +10,8 @@ class Angular2GotoDeclarationTest : Angular2TestCase("navigation/declaration") {
 
   fun testExportAs() = checkGotoDeclaration("exportAs: \"<caret>test\"")
 
+  fun testExportAsWithSpaces() = checkGotoDeclaration("exportAs: \"foo, <caret>test \"")
+
   fun testExportAsHostDirectives() = checkGotoDeclaration("exportAs: \"<caret>bold\"")
 
   fun testComponentStandardElementSelector() = doConfiguredTest {

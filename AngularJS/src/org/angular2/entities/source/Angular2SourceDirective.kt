@@ -124,7 +124,11 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
         var offset = 1
         val result = mutableMapOf<String, Angular2DirectiveExportAs>()
         split.forEach { name ->
-          result[name] = Angular2DirectiveExportAs(name, this, propertyValue, TextRange(offset, offset + name.length))
+          val startOffset = StringUtil.skipWhitespaceForward(name, 0)
+          val endOffset = StringUtil.skipWhitespaceBackward(name, name.length)
+          val trimmedName = name.substring(startOffset, endOffset)
+          result[trimmedName] = Angular2DirectiveExportAs(
+            trimmedName, this, propertyValue, TextRange(offset + startOffset, offset + endOffset))
           offset += name.length + 1
         }
         result.toMap()
@@ -132,7 +136,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
       else {
         val exportAsString = Angular2DecoratorUtil.getExpressionStringValue(propertyValue)
         if (exportAsString == null) emptyMap()
-        else StringUtil.split(exportAsString, ",").associateWith {
+        else StringUtil.split(exportAsString, ",").map { it.trim() }.associateWith {
           Angular2DirectiveExportAs(it, this)
         }
       }
