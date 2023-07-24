@@ -10,87 +10,87 @@ import org.angular2.Angular2TestCase
 class Angular2RenameTest : Angular2TestCase("refactoring/rename") {
 
   fun testRenameComponentFromStringUsage() =
-    checkSymbolRename("newName", "test.component.ts")
+    checkSymbolRename("test.component.ts", "newName")
 
   fun testComponentFieldFromTemplate() =
-    checkSymbolRename("newName", "test.component.html")
+    checkSymbolRename("test.component.html", "newName")
 
   fun testI18nAttribute() =
-    checkSymbolRename("new-name", "directive.ts")
+    checkSymbolRename("directive.ts", "new-name")
 
   fun testLocalInTemplate() =
-    checkSymbolRename("newName", "test.component.html")
+    checkSymbolRename("test.component.html", "newName")
 
   fun testReferenceFromTS() =
-    checkSymbolRename("newReference", "test.component.ts")
+    checkSymbolRename("test.component.ts", "newReference")
 
   fun testReferenceFromHTML() =
-    checkSymbolRename("newReference", "test.component.html")
+    checkSymbolRename("test.component.html", "newReference")
 
   fun testReferenceFromTSNoStrings() =
-    checkSymbolRename("newReference", "test.component.ts", searchCommentsAndText = false)
+    checkSymbolRename("test.component.ts", "newReference", searchCommentsAndText = false)
 
   fun testReferenceFromHTMLNoStrings() =
-    checkSymbolRename("newReference", "test.component.html", searchCommentsAndText = false)
+    checkSymbolRename("test.component.html", "newReference", searchCommentsAndText = false)
 
   fun testPipeFromHTML() =
-    checkSymbolRename("bar", "test.component.html")
+    checkSymbolRename("test.component.html", "bar")
 
   fun testPipeFromHTMLNoStrings() =
-    checkSymbolRename("bar", "test.component.html", searchCommentsAndText = false)
+    checkSymbolRename("test.component.html", "bar", searchCommentsAndText = false)
 
   fun testPipeFromTS() =
-    checkSymbolRename("bar", "foo.pipe.ts")
+    checkSymbolRename("foo.pipe.ts", "bar")
 
   fun testPipeFromTS2() =
-    checkSymbolRename("bar", "foo.pipe.ts")
+    checkSymbolRename("foo.pipe.ts", "bar")
 
   fun testPipeFromTS2NoStrings() =
-    checkSymbolRename("bar", "foo.pipe.ts", searchCommentsAndText = false)
+    checkSymbolRename("foo.pipe.ts", "bar", searchCommentsAndText = false)
 
   fun testComponentWithRelatedFiles() =
     withTempCodeStyleSettings { t: CodeStyleSettings ->
       t.getCustomSettings(TypeScriptCodeStyleSettings::class.java).FILE_NAME_STYLE = JSCodeStyleSettings.JSFileNameStyle.PASCAL_CASE
-      checkSymbolRename("NewNameComponent", "foo-bar.component.ts", testDialog = TestDialog.OK)
+      checkSymbolRename("foo-bar.component.ts", "NewNameComponent", testDialog = TestDialog.OK)
     }
 
   fun testComponentFile() =
     checkFileRename("new-name.component.ts", "foo-bar.component.ts", testDialog = TestDialog.OK)
 
   fun testComponentToNonComponentName() =
-    checkSymbolRename("NewNameSomething", "foo-bar.component.ts", testDialog = TestDialog.OK)
+    checkSymbolRename("foo-bar.component.ts", "NewNameSomething", testDialog = TestDialog.OK)
 
   fun testModuleToNameWithoutPrefix() =
-    checkSymbolRename("Module", "foo.module.ts", testDialog = TestDialog.OK)
+    checkSymbolRename("foo.module.ts", "Module", testDialog = TestDialog.OK)
 
   fun testInjectionReparse() =
-    checkSymbolRename("product", "foo.component.html", testDialog = TestDialog.OK)
+    checkSymbolRename("foo.component.html", "product", testDialog = TestDialog.OK)
 
   fun testNgContentSelector() =
-    checkSymbolRename("new-tag", "slots.component.ts")
+    checkSymbolRename("slots.component.ts", "new-tag")
 
   fun testDirectiveTag() =
-    checkSymbolRename("foo-bar2", "tag.html")
+    checkSymbolRename("tag.html", "foo-bar2")
 
   fun testDirectiveTagNormalized() =
-    checkSymbolRename("fooBar2", "tag.html")
+    checkSymbolRename("tag.html", "fooBar2")
 
   fun testDirectiveAttribute() =
-    checkSymbolRename("foo-bar2", "attribute2.html")
+    checkSymbolRename("attribute2.html", "foo-bar2")
 
   fun testDirectiveAttributeNormalized() =
-    checkSymbolRename("fooBar2", "attribute2.html")
+    checkSymbolRename("attribute2.html", "fooBar2")
 
   fun testDirectiveBinding() =
-    checkSymbolRename("model2", "binding.html")
+    checkSymbolRename("binding.html", "model2")
 
   fun testDirective() =
-    checkSymbolRename("foo-bar2", "directive2.ts")
+    checkSymbolRename("directive2.ts", "foo-bar2")
 
   fun testDirectiveEventHandler() =
-    checkSymbolRename("complete2", "event.html")
+    checkSymbolRename("event.html", "complete2")
 
   fun testExportAs() =
-    checkSymbolRename("bolder", "app.component.html")
+    checkSymbolRename("app.component.html", "bolder")
 
 }
