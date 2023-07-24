@@ -15,15 +15,23 @@ import org.angular2.entities.Angular2EntityUtils
 import java.util.*
 
 class Angular2SourceDirectiveVirtualProperty(
-  override val owner: TypeScriptClass,
+  override val owner: TypeScriptClass?,
   override val kind: String,
-  info: Angular2PropertyInfo
+  override val name: String,
+  override val required: Boolean,
+  override val sourceElement: PsiElement,
+  override val textRangeInSourceElement: TextRange?
 ) : Angular2DirectiveProperty, WebSymbolDeclaredInPsi {
 
-  override val name: String = info.name
-  override val required: Boolean = info.required
-  override val sourceElement: PsiElement = info.declaringElement ?: owner
-  override val textRangeInSourceElement: TextRange? = if (info.declaringElement != null) TextRange(1, 1 + info.name.length) else null
+  constructor(owner: TypeScriptClass, kind: String, info: Angular2PropertyInfo)
+    : this(owner, kind, info.name, info.required, info.declaringElement ?: owner,
+           when {
+             info.declarationRange != null -> info.declarationRange
+             info.declaringElement != null -> TextRange(1, 1 + info.name.length)
+             else -> null
+           }
+  )
+
 
   override val rawJsType: JSType?
     get() = null
@@ -32,7 +40,7 @@ class Angular2SourceDirectiveVirtualProperty(
     get() = true
 
   override val apiStatus: WebSymbolApiStatus
-    get() = owner.apiStatus
+    get() = owner?.apiStatus ?: WebSymbolApiStatus.Stable
 
   override fun toString(): String {
     return Angular2EntityUtils.toString(this)
@@ -55,14 +63,14 @@ class Angular2SourceDirectiveVirtualProperty(
   override fun createPointer(): Pointer<Angular2SourceDirectiveVirtualProperty> {
     val name = this.name
     val kind = this.kind
-    val ownerPtr = owner.createSmartPointer()
+    val ownerPtr = owner?.createSmartPointer()
     val required = this.required
     val sourceElementPtr = sourceElement.createSmartPointer()
     val textRangeInSourceElement = textRangeInSourceElement
     return Pointer {
-      val owner = ownerPtr.dereference() ?: return@Pointer null
+      val owner = ownerPtr?.let { it.dereference() ?: return@Pointer null }
       val sourceElement = sourceElementPtr.dereference() ?: return@Pointer null
-      Angular2SourceDirectiveVirtualProperty(owner, kind, Angular2PropertyInfo(name, required, sourceElement, textRangeInSourceElement))
+      Angular2SourceDirectiveVirtualProperty(owner, kind, name, required, sourceElement, textRangeInSourceElement)
     }
   }
 }

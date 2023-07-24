@@ -29,6 +29,13 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
   fun testHostDirectiveOutputMapping() =
     doLookupTest(ANGULAR_CORE_13_3_5, renderTypeText = true, renderPriority = false)
 
+  fun testHostDirectiveInputMappingWithReplace() {
+    doConfiguredTest(checkResult = true) {
+      completeBasic()
+      type("vir\t")
+    }
+  }
+
   fun testCompletionInExpression() {
     doLookupTest(ANGULAR_CORE_13_3_5, ANGULAR_CDK_14_2_0, dir = true)
 

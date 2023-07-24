@@ -102,11 +102,15 @@ class Angular2RenameTest : Angular2TestCase("refactoring/rename") {
 
   fun testDirectiveInputForwardedString() = checkSymbolRename("newInput", dir = false)
 
+  fun testDirectiveInputMappedStringNoField() = checkSymbolRename("newInput", dir = false)
+
   fun testHostDirectiveInputForwarded() = checkSymbolRename("newInput", dir = false)
 
   fun testHostDirectiveInputMappedSource() = checkSymbolRename("newInput", dir = false)
 
   fun testHostDirectiveInputMappedTarget() = checkSymbolRename("newInput", dir = false)
+
+  fun testHostDirectiveInputMappedTargetBadSource() = checkSymbolRename("newInput", dir = false)
 
   fun testHostDirectiveOutputForwarded() = checkSymbolRename("newOutput", dir = false)
 

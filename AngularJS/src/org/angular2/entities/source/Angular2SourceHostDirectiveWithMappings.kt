@@ -8,8 +8,12 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
 import org.angular2.Angular2DecoratorUtil
+import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
+import org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP
 import org.angular2.entities.*
 import org.angular2.entities.source.Angular2SourceDirective.Companion.readDirectivePropertyMappings
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_INPUTS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_OUTPUTS
 
 class Angular2SourceHostDirectiveWithMappings(private val definition: JSObjectLiteralExpression) : Angular2HostDirective {
   override val directive: Angular2Directive?
@@ -45,27 +49,38 @@ class Angular2SourceHostDirectiveWithMappings(private val definition: JSObjectLi
   companion object {
 
     fun createHostDirectiveProperties(directive: Angular2Directive?,
-                                      inputsMap: Map<String, Angular2PropertyInfo>,
-                                      outputsMap: Map<String, Angular2PropertyInfo>): Angular2DirectiveProperties {
-      if (directive == null)
-        return Angular2DirectiveProperties(emptyList(), emptyList())
-      val originalBindings = directive.bindings
-      return Angular2DirectiveProperties(
-        originalBindings.inputs.mapNotNull { createHostProperty(directive, it, inputsMap) },
-        originalBindings.outputs.mapNotNull { createHostProperty(directive, it, outputsMap) }
-      )
+                                      inputsMap: MutableMap<String, Angular2PropertyInfo>,
+                                      outputsMap: MutableMap<String, Angular2PropertyInfo>): Angular2DirectiveProperties {
+      val originalBindings = directive?.bindings
+
+      val inputs = originalBindings?.inputs?.mapNotNullTo(mutableListOf()) { createHostProperty(directive, it, inputsMap) }
+                   ?: mutableListOf()
+      val outputs = originalBindings?.outputs?.mapNotNullTo(mutableListOf()) { createHostProperty(directive, it, outputsMap) }
+                    ?: mutableListOf()
+
+      inputsMap.mapNotNullTo(inputs) {(_, info) ->
+        Angular2SourceDirectiveVirtualProperty(directive?.typeScriptClass, KIND_NG_DIRECTIVE_INPUTS, info.name,
+                                               info.required, info.declaringElement ?: return@mapNotNullTo null,
+                                               info.declarationRange)
+      }
+      outputsMap.mapNotNullTo(outputs) {(_, info) ->
+        Angular2SourceDirectiveVirtualProperty(directive?.typeScriptClass, KIND_NG_DIRECTIVE_OUTPUTS, info.name,
+                                               info.required, info.declaringElement ?: return@mapNotNullTo null,
+                                               info.declarationRange)
+      }
+      return Angular2DirectiveProperties(inputs.toList(), outputs.toList())
     }
 
     private fun calculateProperties(directive: Angular2Directive?, def: JSObjectLiteralExpression): Angular2DirectiveProperties {
-      val inputMap = readDirectivePropertyMappings(def.findProperty(Angular2DecoratorUtil.INPUTS_PROP))
-      val outputMap = readDirectivePropertyMappings(def.findProperty(Angular2DecoratorUtil.OUTPUTS_PROP))
+      val inputMap = readDirectivePropertyMappings(def.findProperty(INPUTS_PROP))
+      val outputMap = readDirectivePropertyMappings(def.findProperty(OUTPUTS_PROP))
       return createHostDirectiveProperties(directive, inputMap, outputMap)
     }
 
     private fun createHostProperty(directive: Angular2Directive,
                                    property: Angular2DirectiveProperty,
-                                   map: Map<String, Angular2PropertyInfo>): Angular2DirectiveProperty? {
-      val mapping = map[property.name] ?: return null
+                                   map: MutableMap<String, Angular2PropertyInfo>): Angular2DirectiveProperty? {
+      val mapping = map.remove(property.name) ?: return null
       if (mapping.name == property.name && mapping.declarationRange == null)
         return property
       return Angular2AliasedDirectiveProperty(directive, property, mapping.name,
