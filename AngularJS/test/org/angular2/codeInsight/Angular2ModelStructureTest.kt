@@ -267,9 +267,7 @@ class Angular2ModelStructureTest : Angular2CodeInsightFixtureTestCase() {
 
     private val printedElements = mutableSetOf<Any>()
 
-    init {
-      indent = "  "
-    }
+    override val indent: String get() = "  "
 
     @Suppress("UNCHECKED_CAST")
     override fun printValueImpl(builder: StringBuilder, level: Int, value: Any?): StringBuilder =
