@@ -14,10 +14,16 @@ import com.intellij.platform.backend.documentation.DocumentationLinkHandler
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.documentation.LinkResolveResult
 import com.intellij.platform.backend.presentation.TargetPresentation
+import com.intellij.psi.PsiElement
 import org.angular2.entities.Angular2EntitiesProvider
 
+/**
+ * Customizes handling of URLs in Angular 2 projects.
+ *
+ * - for [PsiElement]s from core Angular libraries, it prepends `https://angular.io/` to relative URLs
+ * - allows to navigate to [PsiElement]s from [Angular2ElementDocumentationTarget]
+ */
 class Angular2DocumentationLinkHandler : DocumentationLinkHandler {
-
   override fun resolveLink(target: DocumentationTarget, url: String): LinkResolveResult? {
     if (url.none { it == ':' }) {
       val sourceElement = (target as? PsiElementDocumentationTarget)?.targetElement
