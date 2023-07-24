@@ -93,6 +93,9 @@ class Angular2RenameTest : Angular2TestCase("refactoring/rename") {
   fun testExportAs() =
     checkSymbolRename("app.component.html", "bolder")
 
+  fun testExportAsWithSpaces() =
+    checkSymbolRename("app.component.html", "bolder")
+
   fun testDirectiveInputFieldDecoratorObject() = checkSymbolRename("newInput", dir = false)
 
   fun testDirectiveInputMappedObject() = checkSymbolRename("newInput", dir = false)
