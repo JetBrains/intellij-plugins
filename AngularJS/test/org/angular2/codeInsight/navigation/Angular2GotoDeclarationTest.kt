@@ -29,4 +29,36 @@ class Angular2GotoDeclarationTest : Angular2TestCase("navigation/declaration") {
   fun testOneTimeBindingAttribute() = checkGotoDeclaration(
     "<caret>color: ThemePalette", Angular2TestModule.ANGULAR_MATERIAL_7_2_1, extension = "html", expectedFileName = "color.d.ts")
 
+  fun testDirectiveInputDecoratedField() = checkGotoDeclaration("<caret>input: string")
+
+  fun testDirectiveInputFieldDecoratorString() = checkGotoDeclaration("@Input(\"<caret>aliased\")")
+
+  fun testDirectiveInputFieldDecoratorObject() = checkGotoDeclaration("alias: \"<caret>aliased\"")
+
+  fun testDirectiveInputForwarded() = checkGotoDeclaration("<caret>input: string")
+
+  fun testDirectiveInputMappedString() = checkGotoDeclaration("\"input: <caret>aliased\"")
+
+  fun testDirectiveInputMappedObject() = checkGotoDeclaration("alias: \"<caret>aliased\"")
+
+  fun testDirectiveInputVirtual() = checkGotoDeclaration("<caret>virtual")
+
+  fun testDirectiveOutputDecoratedField() = checkGotoDeclaration("<caret>output: EventEmitter<String>")
+
+  fun testDirectiveOutputFieldDecorator() = checkGotoDeclaration("@Output(\"<caret>aliased\")")
+
+  fun testDirectiveOutputForwarded() = checkGotoDeclaration("<caret>output: EventEmitter<String>")
+
+  fun testDirectiveOutputMapped() = checkGotoDeclaration("outputs: [\"output : <caret>aliased\"]")
+
+  fun testDirectiveOutputVirtual() = checkGotoDeclaration("outputs: [\"<caret>virtual\"],")
+
+  fun testHostDirectiveInputForwarded() = checkGotoDeclaration("@Input(\"<caret>aliased\")")
+
+  fun testHostDirectiveInputMapped() = checkGotoDeclaration("inputs: [\"aliased: <caret>aliasedTwice\"]")
+
+  fun testHostDirectiveOutputForwarded() = checkGotoDeclaration("@Output(\"<caret>aliased\")")
+
+  fun testHostDirectiveOutputMapped() = checkGotoDeclaration("outputs: [\"aliased: <caret>aliasedTwice\"]")
+
 }
