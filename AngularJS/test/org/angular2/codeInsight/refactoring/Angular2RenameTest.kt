@@ -93,4 +93,22 @@ class Angular2RenameTest : Angular2TestCase("refactoring/rename") {
   fun testExportAs() =
     checkSymbolRename("app.component.html", "bolder")
 
+  fun testDirectiveInputFieldDecoratorObject() = checkSymbolRename("newInput", dir = false)
+
+  fun testDirectiveInputMappedObject() = checkSymbolRename("newInput", dir = false)
+
+  fun testDirectiveInputForwardedString() = checkSymbolRename("newInput", dir = false)
+
+  fun testHostDirectiveInputForwarded() = checkSymbolRename("newInput", dir = false)
+
+  fun testHostDirectiveInputMappedSource() = checkSymbolRename("newInput", dir = false)
+
+  fun testHostDirectiveInputMappedTarget() = checkSymbolRename("newInput", dir = false)
+
+  fun testHostDirectiveOutputForwarded() = checkSymbolRename("newOutput", dir = false)
+
+  fun testHostDirectiveOutputMappedSource() = checkSymbolRename("newOutput", dir = false)
+
+  fun testHostDirectiveOutputMappedTarget() = checkSymbolRename("newOutput", dir = false)
+
 }
