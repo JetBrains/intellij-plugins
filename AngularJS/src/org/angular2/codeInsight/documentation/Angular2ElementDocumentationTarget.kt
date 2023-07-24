@@ -29,8 +29,6 @@ import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileFactory
-import com.intellij.psi.util.parentOfType
-import com.intellij.psi.xml.XmlTag
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.ui.ColorUtil
 import com.intellij.util.applyIf
@@ -133,9 +131,6 @@ class Angular2ElementDocumentationTarget private constructor(
       val result = mutableListOf<Pair<String, String>>()
       when (val element = element) {
         is Angular2Directive -> {
-          if (element.isStandalone) {
-            result.add("Standalone" to "")
-          }
           element.selector.simpleSelectors.mapTo(result) {
             Pair("Selectors",
                  SyntaxPrinter(element.sourceElement)
@@ -177,7 +172,12 @@ class Angular2ElementDocumentationTarget private constructor(
       }
       val result = SyntaxPrinter(element.sourceElement)
       result.appendRaw(DocumentationMarkup.DEFINITION_START)
-        .append(TypeScriptHighlighter.TS_KEYWORD, kindName)
+
+      if (element is Angular2Declaration && element.isStandalone) {
+        result.append(TypeScriptHighlighter.TS_KEYWORD, "standalone")
+          .appendRaw(" ")
+      }
+      result.append(TypeScriptHighlighter.TS_KEYWORD, kindName)
         .appendRaw(" ")
 
       val bindingsTypeResolver: BindingsTypeResolver? = BindingsTypeResolver.get(location)
