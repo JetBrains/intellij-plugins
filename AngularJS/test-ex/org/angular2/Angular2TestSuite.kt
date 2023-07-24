@@ -81,6 +81,9 @@ import org.junit.runners.Suite
   Angular2CssClassTest::class,
   Angular2CssCompletionTest::class,
   Angular2CssInspectionsTest::class,
+  Angular2ReSharperTestSuite::class,
+
+  // Deprecated tests follow
   Angular2AttributesTest::class,
   Angular2InjectionsTest::class,
   Angular2NgForTest::class,
@@ -95,6 +98,5 @@ import org.junit.runners.Suite
   Angular2IvyModelTest::class,
   Angular2NgMaterialTest::class,
   Angular2SvgTest::class,
-  Angular2ReSharperTestSuite::class,
 )
 class Angular2TestSuite
