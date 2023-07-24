@@ -1,8 +1,8 @@
 package com.intellij.dts.lang.resolve.files
 
 import com.intellij.dts.lang.psi.FileInclude
-import com.intellij.openapi.project.modules
-import com.intellij.openapi.project.rootManager
+import com.intellij.dts.util.DtsZephyrUtil
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 
@@ -17,15 +17,18 @@ object DtsOverlayFile : FileInclude {
         if (context == null || !context.isValid) return null
 
         val name = "${context.nameWithoutExtension}.dts"
+        val boards = DtsZephyrUtil.getBoardDir(anchor.project) ?: return null
 
         val candidates = mutableListOf<VirtualFile>()
-        for (module in anchor.project.modules) {
-            module.rootManager.fileIndex.iterateContent(candidates::add) {
-                it.name == name
+        VfsUtilCore.processFilesRecursively(boards) {
+            if (it.name == name) {
+                candidates.add(it)
             }
+
+            true
         }
 
-        // TODO: actually filter the candidates to remove non zephyr files
+        // TODO: filter for best matching candidate
 
         return candidates.asSequence().map { anchor.manager.findFile(it) }.firstOrNull()
     }
