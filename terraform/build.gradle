@@ -31,12 +31,12 @@ intellij {
   type = 'IU'
 
   if (ideaPath == null) {
-    version = '231-EAP-SNAPSHOT'
+    version = '2023.1'
   } else {
     localPath = ideaPath
   }
 
-  plugins = ['com.intellij.plugins.watcher:231.7665.28']
+  plugins = ['com.intellij.plugins.watcher:231.8109.2']
 }
 
 patchPluginXml {
