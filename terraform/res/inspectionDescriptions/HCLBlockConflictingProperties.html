@@ -1,8 +1,24 @@
 <html>
 <body>
-Reports block properties conflicting with each other
+<p>Reports conflicting properties in an HCL block.</p>
+<p>Example of a problem:</p>
+<pre><code>
+provider "kubernetes" {
+  version = "~> 1.25"
+  config_path = "~/.kube/config"
+  version = "~> 1.24"
+}
+</code></pre>
 <p>
-    <!-- tooltip end -->
-<p>
+  In this example, the version property is declared twice in the Kubernetes provider block, which is an error.
+</p>
+<p>Example of correction:</p>
+<pre><code>
+provider "kubernetes" {
+  version = "~> 1.25"
+  config_path = "~/.kube/config"
+}
+</code></pre>
+<em>Powered by</em>: <a href="https://plugins.jetbrains.com/plugin/7808-terraform-and-hcl">Terraform and HCL plugin</a>
 </body>
 </html>
