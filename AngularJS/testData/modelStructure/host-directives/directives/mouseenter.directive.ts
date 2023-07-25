@@ -11,7 +11,7 @@ import {UnderlineDirective} from "./underline.directive";
         outputs: ['hover']
     }, {
         directive: UnderlineDirective,
-        inputs: ['color: underlineColor']
+        inputs: ['color: underlineColor', 'shade : ']
     }, Foo]
 })
 export class MouseenterDirective {
