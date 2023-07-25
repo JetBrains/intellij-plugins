@@ -47,6 +47,7 @@ import org.junit.runners.Suite
   Angular2SemanticHighlightingTest::class,
   Angular2DirectiveSimpleSelectorSpecTest::class,
   Angular2DocumentationTest::class,
+  Angular2HighlightingTest::class,
   Angular2CompletionTest::class,
   Angular2ContextTest::class,
   Angular2TsInspectionsTest::class,
