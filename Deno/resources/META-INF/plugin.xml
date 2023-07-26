@@ -30,15 +30,9 @@ To learn more about how to get started with Deno, check out <a href="https://blo
     <editorTabTitleProvider implementation="com.intellij.deno.editor.DenoEditorTabTitleProvider"/>
 
     <workspaceModel.fileIndexContributor implementation="com.intellij.deno.roots.DenoWorkspaceFileIndexContributor"/>
-    <customEntityProjectModelInfoProvider implementation="com.intellij.deno.roots.DenoCustomEntityProjectModelInfoProvider"/>
     <projectView.externalLibraries.workspaceModelNodesProvider
       implementation="com.intellij.deno.roots.DenoExternalLibrariesWorkspaceModelNodesProvider"/>
     <postStartupActivity implementation="com.intellij.deno.DenoStartupActivity"/>
-    <indexableEntityProvider implementation="com.intellij.deno.roots.DenoIndexableEntityProvider"/>
-    <indexableIteratorBuilderHandler implementation="com.intellij.deno.roots.DenoIndexableIteratorBuilderHandler"/>
-    <registryKey key="deno.use.workspace.file.index.contributor.api" defaultValue="true"
-                 description="Use new WorkspaceFileIndexContributor API for custom entities in Deno plugin.
-                 The flag is temporary, legacy API will be removed in the future."/>
 
     <!-- WIP Please take a look at WM-CR-25 review before turning this on -->
     <!-- https://jetbrains.team/im/review/PVGJ115BwTp?message=9NaUW0SkJLM&channel=4DbgBf4gBMiD -->
