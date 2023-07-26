@@ -1,6 +1,7 @@
 package com.intellij.dts.lang.psi
 
 import com.intellij.dts.lang.DtsAffiliation
+import com.intellij.openapi.util.Iconable
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 
@@ -17,8 +18,6 @@ enum class DtsStatementKind {
 }
 
 sealed interface DtsStatement : PsiElement {
-    val dtsAnnotationTarget: PsiElement
-
     val dtsAffiliation: DtsAffiliation
 
     val dtsStatementKind: DtsStatementKind
@@ -32,19 +31,15 @@ sealed interface DtsStatement : PsiElement {
      */
     val dtsIsComplete: Boolean
 
-    interface Node : DtsStatement {
-        val dtsName: String
-
-        val dtsNameElement: PsiElement
-
+    interface Node : DtsStatement, Iconable {
         val dtsContent: DtsNodeContent?
 
-        val dtsLabels: List<String>
-
         val dtsIsEmpty: Boolean
+
+        val dtsProperties: List<DtsProperty>
     }
 
-    interface Property : DtsStatement {
+    interface Property : DtsStatement, Iconable {
         val dtsName: String
 
         val dtsNameElement: PsiElement
@@ -53,6 +48,8 @@ sealed interface DtsStatement : PsiElement {
     }
 
     interface CompilerDirective : DtsStatement {
+        val dtsDirective: PsiElement
+
         val dtsDirectiveType: IElementType
     }
 }

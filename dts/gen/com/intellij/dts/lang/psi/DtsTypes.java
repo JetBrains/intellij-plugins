@@ -2,6 +2,8 @@
 package com.intellij.dts.lang.psi;
 
 
+import com.intellij.dts.lang.stubs.DtsStubElementTypes;
+
 public interface DtsTypes {
 
   com.intellij.psi.tree.IElementType ADD_EXPR = new com.intellij.dts.lang.DtsElementType("ADD_EXPR");
@@ -49,11 +51,12 @@ public interface DtsTypes {
   com.intellij.psi.tree.IElementType PROPERTY = new com.intellij.dts.lang.DtsElementType("PROPERTY");
   com.intellij.psi.tree.IElementType PROPERTY_CONTENT = new com.intellij.dts.lang.DtsElementType("PROPERTY_CONTENT");
   com.intellij.psi.tree.IElementType P_HANDLE = new com.intellij.dts.lang.DtsElementType("P_HANDLE");
-  com.intellij.psi.tree.IElementType ROOT_NODE = com.intellij.dts.lang.stubs.DtsStubElementTypes.factory("ROOT_NODE");
+  com.intellij.psi.tree.IElementType REF_NODE = DtsStubElementTypes.factory("REF_NODE");
+  com.intellij.psi.tree.IElementType ROOT_NODE = DtsStubElementTypes.factory("ROOT_NODE");
   com.intellij.psi.tree.IElementType RSH_EXPR = new com.intellij.dts.lang.DtsElementType("RSH_EXPR");
   com.intellij.psi.tree.IElementType STRING = new com.intellij.dts.lang.DtsElementType("STRING");
   com.intellij.psi.tree.IElementType SUB_EXPR = new com.intellij.dts.lang.DtsElementType("SUB_EXPR");
-  com.intellij.psi.tree.IElementType SUB_NODE = com.intellij.dts.lang.stubs.DtsStubElementTypes.factory("SUB_NODE");
+  com.intellij.psi.tree.IElementType SUB_NODE = DtsStubElementTypes.factory("SUB_NODE");
   com.intellij.psi.tree.IElementType TERNARY_EXPR = new com.intellij.dts.lang.DtsElementType("TERNARY_EXPR");
   com.intellij.psi.tree.IElementType XOR_EXPR = new com.intellij.dts.lang.DtsElementType("XOR_EXPR");
 
@@ -261,6 +264,9 @@ public interface DtsTypes {
       }
       else if (type == P_HANDLE) {
         return new com.intellij.dts.lang.psi.impl.DtsPHandleImpl(node);
+      }
+      else if (type == REF_NODE) {
+        return new com.intellij.dts.lang.psi.impl.DtsRefNodeImpl(node);
       }
       else if (type == ROOT_NODE) {
         return new com.intellij.dts.lang.psi.impl.DtsRootNodeImpl(node);

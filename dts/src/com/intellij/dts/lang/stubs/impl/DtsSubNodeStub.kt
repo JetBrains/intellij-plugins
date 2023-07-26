@@ -1,7 +1,11 @@
-package com.intellij.dts.lang.stubs
+package com.intellij.dts.lang.stubs.impl
 
 import com.intellij.dts.lang.psi.DtsSubNode
 import com.intellij.dts.lang.psi.impl.DtsSubNodeImpl
+import com.intellij.dts.lang.stubs.DTS_NODE_LABEL_INDEX
+import com.intellij.dts.lang.stubs.DtsStubElementType
+import com.intellij.dts.lang.stubs.readUTFList
+import com.intellij.dts.lang.stubs.writeUTFList
 import com.intellij.psi.stubs.*
 
 class DtsSubNodeStub(

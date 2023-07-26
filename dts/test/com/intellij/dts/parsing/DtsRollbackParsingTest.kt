@@ -102,7 +102,7 @@ class DtsRollbackParsingTest : DtsParsingTestBase("", "dtsi") {
 
     fun testSubNode() = doRollbackTest(3, "node {};")
 
-    fun testRootNode() = doRollbackTest(4, "/ {};")
+    fun testRootNode() = doRollbackTest(6, "/ {};")
 
     fun testPropertyRecovery() = doRollbackWithRecoveryTest(1, "prop = <>")
 

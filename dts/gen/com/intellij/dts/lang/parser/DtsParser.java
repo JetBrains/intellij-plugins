@@ -343,6 +343,7 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   /* ********************************************************** */
   // <<entry property>> |
   //         <<entry subNode>> |
+  //         <<entry refNode>> |
   //         <<entry rootNode>> |
   //         <<compilerDirectiveEntry V1 ()>> |
   //         <<compilerDirectiveEntry PLUGIN ()>> |
@@ -357,11 +358,12 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
     com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
     result_ = entry(builder_, level_ + 1, DtsParser::property);
     if (!result_) result_ = entry(builder_, level_ + 1, DtsParser::subNode);
+    if (!result_) result_ = entry(builder_, level_ + 1, DtsParser::refNode);
     if (!result_) result_ = entry(builder_, level_ + 1, DtsParser::rootNode);
-    if (!result_) result_ = compilerDirectiveEntry(builder_, level_ + 1, V1_parser_, DtsParser::entries_3_1);
-    if (!result_) result_ = compilerDirectiveEntry(builder_, level_ + 1, PLUGIN_parser_, DtsParser::entries_4_1);
-    if (!result_) result_ = compilerDirectiveEntry(builder_, level_ + 1, DtsParser::entries_5_0, DtsParser::entries_5_1);
-    if (!result_) result_ = compilerDirectiveEntry(builder_, level_ + 1, DELETE_NODE_parser_, DtsParser::entries_6_1);
+    if (!result_) result_ = compilerDirectiveEntry(builder_, level_ + 1, V1_parser_, DtsParser::entries_4_1);
+    if (!result_) result_ = compilerDirectiveEntry(builder_, level_ + 1, PLUGIN_parser_, DtsParser::entries_5_1);
+    if (!result_) result_ = compilerDirectiveEntry(builder_, level_ + 1, DtsParser::entries_6_0, DtsParser::entries_6_1);
+    if (!result_) result_ = compilerDirectiveEntry(builder_, level_ + 1, DELETE_NODE_parser_, DtsParser::entries_7_1);
     if (!result_) result_ = compilerDirectiveEntry(builder_, level_ + 1, DELETE_PROP_parser_, NAME_parser_);
     if (!result_) result_ = compilerDirectiveEntry(builder_, level_ + 1, OMIT_NODE_parser_, DtsParser::pHandle);
     if (!result_) result_ = parseInvalidEntry(builder_, level_ + 1);
@@ -370,40 +372,40 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   // ()
-  private static boolean entries_3_1(com.intellij.lang.PsiBuilder builder_, int level_) {
-    return true;
-  }
-
-  // ()
   private static boolean entries_4_1(com.intellij.lang.PsiBuilder builder_, int level_) {
     return true;
   }
 
+  // ()
+  private static boolean entries_5_1(com.intellij.lang.PsiBuilder builder_, int level_) {
+    return true;
+  }
+
   // LABEL* MEMRESERVE
-  private static boolean entries_5_0(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "entries_5_0")) return false;
+  private static boolean entries_6_0(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "entries_6_0")) return false;
     boolean result_;
     com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
-    result_ = entries_5_0_0(builder_, level_ + 1);
+    result_ = entries_6_0_0(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, MEMRESERVE);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
   // LABEL*
-  private static boolean entries_5_0_0(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "entries_5_0_0")) return false;
+  private static boolean entries_6_0_0(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "entries_6_0_0")) return false;
     while (true) {
       int pos_ = current_position_(builder_);
       if (!consumeToken(builder_, LABEL)) break;
-      if (!empty_element_parsed_guard_(builder_, "entries_5_0_0", pos_)) break;
+      if (!empty_element_parsed_guard_(builder_, "entries_6_0_0", pos_)) break;
     }
     return true;
   }
 
   // cell cell
-  private static boolean entries_5_1(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "entries_5_1")) return false;
+  private static boolean entries_6_1(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "entries_6_1")) return false;
     boolean result_;
     com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
     result_ = cell(builder_, level_ + 1);
@@ -413,8 +415,8 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   // pHandle | NAME
-  private static boolean entries_6_1(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "entries_6_1")) return false;
+  private static boolean entries_7_1(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "entries_7_1")) return false;
     boolean result_;
     result_ = pHandle(builder_, level_ + 1);
     if (!result_) result_ = consumeToken(builder_, NAME);
@@ -910,51 +912,72 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   /* ********************************************************** */
-  // (SLASH | (LABEL*  pHandle)) LBRACE (!RBRACE nodeContent)? RBRACE
-  public static boolean rootNode(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "rootNode")) return false;
+  // LABEL* pHandle LBRACE (!RBRACE nodeContent)? RBRACE
+  public static boolean refNode(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "refNode")) return false;
     boolean result_, pinned_;
-    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_, ROOT_NODE, "<root node>");
-    result_ = rootNode_0(builder_, level_ + 1);
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_, REF_NODE, "<ref node>");
+    result_ = refNode_0(builder_, level_ + 1);
+    result_ = result_ && pHandle(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, LBRACE);
-    pinned_ = result_; // pin = 2
-    result_ = result_ && report_error_(builder_, rootNode_2(builder_, level_ + 1));
+    pinned_ = result_; // pin = 3
+    result_ = result_ && report_error_(builder_, refNode_3(builder_, level_ + 1));
     result_ = pinned_ && consumeToken(builder_, RBRACE) && result_;
     exit_section_(builder_, level_, marker_, result_, pinned_, DtsParser::rootNodeRecover);
     return result_ || pinned_;
   }
 
-  // SLASH | (LABEL*  pHandle)
-  private static boolean rootNode_0(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "rootNode_0")) return false;
-    boolean result_;
-    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, SLASH);
-    if (!result_) result_ = rootNode_0_1(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // LABEL*  pHandle
-  private static boolean rootNode_0_1(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "rootNode_0_1")) return false;
-    boolean result_;
-    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
-    result_ = rootNode_0_1_0(builder_, level_ + 1);
-    result_ = result_ && pHandle(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
   // LABEL*
-  private static boolean rootNode_0_1_0(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "rootNode_0_1_0")) return false;
+  private static boolean refNode_0(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "refNode_0")) return false;
     while (true) {
       int pos_ = current_position_(builder_);
       if (!consumeToken(builder_, LABEL)) break;
-      if (!empty_element_parsed_guard_(builder_, "rootNode_0_1_0", pos_)) break;
+      if (!empty_element_parsed_guard_(builder_, "refNode_0", pos_)) break;
     }
     return true;
+  }
+
+  // (!RBRACE nodeContent)?
+  private static boolean refNode_3(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "refNode_3")) return false;
+    refNode_3_0(builder_, level_ + 1);
+    return true;
+  }
+
+  // !RBRACE nodeContent
+  private static boolean refNode_3_0(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "refNode_3_0")) return false;
+    boolean result_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
+    result_ = refNode_3_0_0(builder_, level_ + 1);
+    result_ = result_ && nodeContent(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // !RBRACE
+  private static boolean refNode_3_0_0(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "refNode_3_0_0")) return false;
+    boolean result_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NOT_);
+    result_ = !consumeToken(builder_, RBRACE);
+    exit_section_(builder_, level_, marker_, result_, false, null);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // SLASH LBRACE (!RBRACE nodeContent)? RBRACE
+  public static boolean rootNode(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "rootNode")) return false;
+    boolean result_, pinned_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_, ROOT_NODE, "<root node>");
+    result_ = consumeTokens(builder_, 2, SLASH, LBRACE);
+    pinned_ = result_; // pin = 2
+    result_ = result_ && report_error_(builder_, rootNode_2(builder_, level_ + 1));
+    result_ = pinned_ && consumeToken(builder_, RBRACE) && result_;
+    exit_section_(builder_, level_, marker_, result_, pinned_, DtsParser::rootNodeRecover);
+    return result_ || pinned_;
   }
 
   // (!RBRACE nodeContent)?
@@ -986,7 +1009,7 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   /* ********************************************************** */
-  // !(SEMICOLON | RBRACE | afterLineBreak)
+  // !(SEMICOLON | RBRACE | HANDLE | afterLineBreak)
   static boolean rootNodeRecover(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "rootNodeRecover")) return false;
     boolean result_;
@@ -996,13 +1019,14 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
     return result_;
   }
 
-  // SEMICOLON | RBRACE | afterLineBreak
+  // SEMICOLON | RBRACE | HANDLE | afterLineBreak
   private static boolean rootNodeRecover_0(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "rootNodeRecover_0")) return false;
     boolean result_;
     com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
     result_ = consumeTokenFast(builder_, SEMICOLON);
     if (!result_) result_ = consumeTokenFast(builder_, RBRACE);
+    if (!result_) result_ = consumeTokenFast(builder_, HANDLE);
     if (!result_) result_ = parseAfterLineBreak(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;

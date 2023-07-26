@@ -148,7 +148,7 @@ DTS file
     PsiElement(;)(';')
   PsiWhiteSpace('\n\n')
   DtsEntryImpl(ENTRY)
-    DtsRootNodeImpl(ROOT_NODE)
+    DtsRefNodeImpl(REF_NODE)
       PsiElement(label)('l:')
       PsiWhiteSpace(' ')
       PsiElement(label)('l:')

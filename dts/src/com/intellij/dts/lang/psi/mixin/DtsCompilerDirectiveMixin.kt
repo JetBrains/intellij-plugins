@@ -14,25 +14,14 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 
 abstract class DtsCompilerDirectiveMixin(node: ASTNode) : ASTWrapperPsiElement(node), DtsCompilerDirective {
-    override val dtsDirectiveType: IElementType
-        get() = getDirective().node.elementType
+    override val dtsDirective: PsiElement
+        get() = DtsUtil.children(this).first { DtsTokenSets.compilerDirectives.contains(it.elementType) }
 
-    override val dtsAnnotationTarget: PsiElement
-        get() = getDirective()
+    override val dtsDirectiveType: IElementType
+        get() = dtsDirective.node.elementType
 
     override val dtsIsComplete: Boolean
         get() = !PsiTreeUtil.hasErrorElements(this)
-
-    private fun getDirective(): PsiElement {
-        return DtsUtil.children(this).first { DtsTokenSets.compilerDirectives.contains(it.elementType) }
-    }
-
-    private fun getArgs(): List<PsiElement> {
-        return DtsUtil.children(this)
-            .dropWhile { !DtsTokenSets.compilerDirectives.contains(it.elementType) }
-            .drop(1)
-            .toList()
-    }
 
     override val dtsStatementKind: DtsStatementKind
         get() {
@@ -42,6 +31,13 @@ abstract class DtsCompilerDirectiveMixin(node: ASTNode) : ASTWrapperPsiElement(n
                 else -> DtsStatementKind.UNKNOWN
             }
         }
+
+    private fun getArgs(): List<PsiElement> {
+        return DtsUtil.children(this)
+            .dropWhile { !DtsTokenSets.compilerDirectives.contains(it.elementType) }
+            .drop(1)
+            .toList()
+    }
 
     override val dtsAffiliation: DtsAffiliation
         get() {

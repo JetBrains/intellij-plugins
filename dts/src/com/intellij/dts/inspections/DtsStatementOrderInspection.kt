@@ -31,7 +31,7 @@ class DtsStatementOrderInspection : LocalInspectionTool() {
 
             if (kind.isProperty() && nodeDefinition) {
                 holder.registerProblem(
-                    statement.dtsAnnotationTarget,
+                    statement.getDtsAnnotationTarget(),
                     DtsBundle.message("inspections.statement_order.message"),
                 )
 

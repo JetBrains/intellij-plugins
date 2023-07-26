@@ -1,6 +1,6 @@
 DTS file
   DtsEntryImpl(ENTRY)
-    DtsRootNodeImpl(ROOT_NODE)
+    DtsRefNodeImpl(REF_NODE)
       DtsPHandleImpl(P_HANDLE)
         PsiElement(&)('&')
         PsiElement({)('{')

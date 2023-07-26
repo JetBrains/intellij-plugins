@@ -21,7 +21,7 @@ abstract class DtsIntMixin(node: ASTNode) : ASTWrapperPsiElement(node), DtsInt {
     }
 }
 
-abstract class DtsStringMixin(node: ASTNode): ASTWrapperPsiElement(node), DtsString {
+abstract class DtsStringMixin(node: ASTNode) : ASTWrapperPsiElement(node), DtsString {
     private val value: PsiElement?
         get() = findChildByType(DtsTypes.STRING_VALUE)
 

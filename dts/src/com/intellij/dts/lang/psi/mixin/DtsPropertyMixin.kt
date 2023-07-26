@@ -25,9 +25,6 @@ abstract class DtsPropertyMixin(node: ASTNode) : ASTWrapperPsiElement(node), Dts
     override val dtsName: String
         get() = dtsNameElement.text
 
-    override val dtsAnnotationTarget: PsiElement
-        get() = dtsNameElement
-
     override val dtsValues: List<DtsValue>
         get() {
             val content = findChildByClass(DtsPropertyContent::class.java) ?: return emptyList()

@@ -10,12 +10,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.util.PsiTreeUtil
 
-interface IDtsPHandle : PsiElement {
-    val dtsPHandleLabel: PsiElement?
-
-    val dtsPHandlePath: PsiElement?
-}
-
 abstract class DtsPHandleMixin(node: ASTNode) : ASTWrapperPsiElement(node), DtsPHandle {
     override val dtsPHandleLabel: PsiElement?
         get() = findChildByType(DtsTypes.NAME)

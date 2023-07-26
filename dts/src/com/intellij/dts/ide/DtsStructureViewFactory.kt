@@ -3,6 +3,7 @@ package com.intellij.dts.ide
 import com.intellij.dts.lang.DtsFile
 import com.intellij.dts.lang.psi.DtsContainer
 import com.intellij.dts.lang.psi.DtsStatement
+import com.intellij.dts.lang.psi.getDtsPresentableText
 import com.intellij.ide.structureView.*
 import com.intellij.ide.structureView.impl.common.PsiTreeElementBase
 import com.intellij.ide.util.treeView.smartTree.Sorter
@@ -62,7 +63,7 @@ private class NodeElement(element: DtsStatement.Node) : ContainerElement<DtsStat
     override val dtsContainer: DtsContainer?
         get() = element?.dtsContent
 
-    override fun getPresentableText(): String? = element?.dtsName
+    override fun getPresentableText(): String? = element?.getDtsPresentableText()
 }
 
 private class PropertyElement(element: DtsStatement.Property) : PsiTreeElementBase<DtsStatement.Property>(element) {

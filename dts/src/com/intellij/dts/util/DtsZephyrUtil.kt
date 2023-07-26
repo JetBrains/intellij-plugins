@@ -86,4 +86,9 @@ object DtsZephyrUtil {
 
         return includes.mapNotNull { getSubDir(project, settings, it) }.toList()
     }
+
+    fun getBindingsDir(project: Project): VirtualFile? {
+        val settings = DtsZephyrSettings.of(project)
+        return getSubDir(project, settings, bindingsPath)
+    }
 }

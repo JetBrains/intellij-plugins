@@ -18,12 +18,17 @@
 
   implements("rootNode")="com.intellij.dts.lang.psi.DtsNode.Root"
   mixin("rootNode")="com.intellij.dts.lang.psi.mixin.DtsRootNodeMixin"
-  stubClass("rootNode")="com.intellij.dts.lang.stubs.DtsRootNodeStub"
+  stubClass("rootNode")="com.intellij.dts.lang.stubs.impl.DtsRootNodeStub"
   elementTypeFactory("rootNode")="com.intellij.dts.lang.stubs.DtsStubElementTypes.factory"
+
+  implements("refNode")="com.intellij.dts.lang.psi.DtsNode.Ref"
+  mixin("refNode")="com.intellij.dts.lang.psi.mixin.DtsRefNodeMixin"
+  stubClass("refNode")="com.intellij.dts.lang.stubs.impl.DtsRefNodeStub"
+  elementTypeFactory("refNode")="com.intellij.dts.lang.stubs.DtsStubElementTypes.factory"
 
   implements("subNode")="com.intellij.dts.lang.psi.DtsNode.Sub"
   mixin("subNode")="com.intellij.dts.lang.psi.mixin.DtsSubNodeMixin"
-  stubClass("subNode")="com.intellij.dts.lang.stubs.DtsSubNodeStub"
+  stubClass("subNode")="com.intellij.dts.lang.stubs.impl.DtsSubNodeStub"
   elementTypeFactory("subNode")="com.intellij.dts.lang.stubs.DtsStubElementTypes.factory"
 
   implements("nodeContent")="com.intellij.dts.lang.psi.DtsContainer"
@@ -38,9 +43,6 @@
   implements("entry")="com.intellij.dts.lang.psi.mixin.IDtsEntry"
   mixin("entry")="com.intellij.dts.lang.psi.mixin.DtsEntryMixin"
 
-  implements("pHandle")="com.intellij.dts.lang.psi.mixin.IDtsPHandle"
-  mixin("pHandle")="com.intellij.dts.lang.psi.mixin.DtsPHandleMixin"
-
   implements("cellArray")="com.intellij.dts.lang.psi.DtsArray.Cell"
   mixin("cellArray")="com.intellij.dts.lang.psi.mixin.DtsCellArrayMixin"
 
@@ -49,13 +51,16 @@
   implements("cellArrayBits")="com.intellij.dts.lang.psi.mixin.IDtsCellArrayBits"
   mixin("cellArrayBits")="com.intellij.dts.lang.psi.mixin.DtsCellArrayBitsMixin"
 
-  implements("byte|char|pHandle|cellArray|byteArray|exprValue|ppMacro")="com.intellij.dts.lang.psi.DtsValue.Untyped"
+  implements("byte|char|cellArray|byteArray|exprValue|ppMacro")="com.intellij.dts.lang.psi.DtsValue.Untyped"
 
   implements("int")="com.intellij.dts.lang.psi.DtsValue.Int"
   mixin("int")="com.intellij.dts.lang.psi.mixin.DtsIntMixin"
 
   implements("string")="com.intellij.dts.lang.psi.DtsValue.String"
   mixin("string")="com.intellij.dts.lang.psi.mixin.DtsStringMixin"
+
+  implements("pHandle")="com.intellij.dts.lang.psi.DtsValue.PHandle"
+  mixin("pHandle")="com.intellij.dts.lang.psi.mixin.DtsPHandleMixin"
 
   implements("includeStatement")="com.intellij.dts.lang.psi.PsiFileInclude"
   mixin("includeStatement")="com.intellij.dts.lang.psi.mixin.DtsIncludeStatementMixin"
@@ -84,6 +89,7 @@ file ::= entries*
 private entries ::=
         <<entry property>> |
         <<entry subNode>> |
+        <<entry refNode>> |
         <<entry rootNode>> |
         <<compilerDirectiveEntry V1 ()>> |
         <<compilerDirectiveEntry PLUGIN ()>> |
@@ -95,8 +101,10 @@ private entries ::=
 
 external invalidEntry ::= parseInvalidEntry
 
-rootNode ::= (SLASH | (LABEL*  pHandle)) LBRACE (!RBRACE nodeContent)? RBRACE {pin=2 recoverWhile="rootNodeRecover"}
-private rootNodeRecover ::= !(SEMICOLON | RBRACE | afterLineBreak)
+rootNode ::= SLASH LBRACE (!RBRACE nodeContent)? RBRACE {pin=2 recoverWhile="rootNodeRecover"}
+private rootNodeRecover ::= !(SEMICOLON | RBRACE | HANDLE | afterLineBreak)
+
+refNode ::= LABEL* pHandle LBRACE (!RBRACE nodeContent)? RBRACE {pin=3 recoverWhile="rootNodeRecover"}
 
 subNode ::= LABEL* OMIT_NODE? LABEL* NAME LBRACE (!RBRACE nodeContent)? RBRACE {pin=5 recoverWhile="subNodeRecover"}
 private subNodeRecover ::= !(SEMICOLON | RBRACE | NAME | afterLineBreak)

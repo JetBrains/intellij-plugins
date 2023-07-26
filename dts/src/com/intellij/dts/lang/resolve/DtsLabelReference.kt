@@ -3,6 +3,7 @@ package com.intellij.dts.lang.resolve
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.dts.lang.DtsFile
 import com.intellij.dts.lang.psi.DtsNode
+import com.intellij.dts.lang.psi.getDtsPresentableText
 import com.intellij.dts.lang.stubs.DTS_NODE_LABEL_INDEX
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
@@ -120,7 +121,7 @@ class DtsLabelReference(
             // filter all labels after the reference
             if (!value && localScope.contains(node.containingFile.virtualFile) && node.startOffset > element.startOffset) continue
 
-            variants.add(LookupElementBuilder.create(key).withTypeText(node.dtsName))
+            variants.add(LookupElementBuilder.create(key).withTypeText(node.getDtsPresentableText()))
         }
 
         return variants.toTypedArray()

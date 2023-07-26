@@ -1,7 +1,7 @@
 // This is a generated file. Not intended for manual editing.
 package com.intellij.dts.lang.psi.impl;
 
-import static com.intellij.dts.lang.psi.DtsTypes.*;
+import com.intellij.dts.lang.stubs.impl.DtsSubNodeStub;
 
 public class DtsSubNodeImpl extends com.intellij.dts.lang.psi.mixin.DtsSubNodeMixin implements com.intellij.dts.lang.psi.DtsSubNode {
 
@@ -9,7 +9,7 @@ public class DtsSubNodeImpl extends com.intellij.dts.lang.psi.mixin.DtsSubNodeMi
     super(node);
   }
 
-  public DtsSubNodeImpl(com.intellij.dts.lang.stubs.DtsSubNodeStub stub, com.intellij.psi.stubs.IStubElementType stubType) {
+  public DtsSubNodeImpl(DtsSubNodeStub stub, com.intellij.psi.stubs.IStubElementType stubType) {
     super(stub, stubType);
   }
 

@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.dts.DtsBundle
 import com.intellij.dts.lang.psi.DtsContainer
 import com.intellij.dts.lang.psi.dtsVisitor
+import com.intellij.dts.lang.psi.getDtsAnnotationTarget
 
 class DtsContainerInspection : LocalInspectionTool() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = dtsVisitor(DtsContainer::class) {
@@ -20,7 +21,7 @@ class DtsContainerInspection : LocalInspectionTool() {
             if (statement.dtsAffiliation.isRoot() || statement.dtsAffiliation.isUnknown()) continue
 
             holder.registerProblem(
-                statement.dtsAnnotationTarget,
+                statement.getDtsAnnotationTarget(),
                 DtsBundle.message("inspections.container.message_root"),
             )
 
@@ -33,7 +34,7 @@ class DtsContainerInspection : LocalInspectionTool() {
             if (!statement.dtsAffiliation.isRoot()) continue
 
             holder.registerProblem(
-                statement.dtsAnnotationTarget,
+                statement.getDtsAnnotationTarget(),
                 DtsBundle.message("inspections.container.message_node"),
             )
 

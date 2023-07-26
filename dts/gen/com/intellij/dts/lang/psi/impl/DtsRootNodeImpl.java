@@ -1,7 +1,7 @@
 // This is a generated file. Not intended for manual editing.
 package com.intellij.dts.lang.psi.impl;
 
-import static com.intellij.dts.lang.psi.DtsTypes.*;
+import com.intellij.dts.lang.stubs.impl.DtsRootNodeStub;
 
 public class DtsRootNodeImpl extends com.intellij.dts.lang.psi.mixin.DtsRootNodeMixin implements com.intellij.dts.lang.psi.DtsRootNode {
 
@@ -9,7 +9,7 @@ public class DtsRootNodeImpl extends com.intellij.dts.lang.psi.mixin.DtsRootNode
     super(node);
   }
 
-  public DtsRootNodeImpl(com.intellij.dts.lang.stubs.DtsRootNodeStub stub, com.intellij.psi.stubs.IStubElementType stubType) {
+  public DtsRootNodeImpl(DtsRootNodeStub stub, com.intellij.psi.stubs.IStubElementType stubType) {
     super(stub, stubType);
   }
 
@@ -17,12 +17,6 @@ public class DtsRootNodeImpl extends com.intellij.dts.lang.psi.mixin.DtsRootNode
   @org.jetbrains.annotations.Nullable
   public com.intellij.dts.lang.psi.DtsNodeContent getNodeContent() {
     return com.intellij.psi.util.PsiTreeUtil.getChildOfType(this, com.intellij.dts.lang.psi.DtsNodeContent.class);
-  }
-
-  @java.lang.Override
-  @org.jetbrains.annotations.Nullable
-  public com.intellij.dts.lang.psi.DtsPHandle getPHandle() {
-    return com.intellij.psi.util.PsiTreeUtil.getChildOfType(this, com.intellij.dts.lang.psi.DtsPHandle.class);
   }
 
 }

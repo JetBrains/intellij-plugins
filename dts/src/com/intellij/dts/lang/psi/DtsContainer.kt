@@ -12,4 +12,10 @@ interface DtsContainer : PsiElement {
 
     val dtsStatements: List<DtsStatement>
         get() = dtsEntries.map { it.dtsStatement }
+
+    val dtsProperties: List<DtsProperty>
+        get() = dtsStatements.filterIsInstance<DtsProperty>()
+
+    val dtsNodes: List<DtsNode>
+        get() = dtsStatements.filterIsInstance<DtsNode>()
 }
