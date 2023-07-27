@@ -26,11 +26,11 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathsList;
 import com.intellij.util.SystemProperties;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.idea.maven.execution.MavenExternalParameters;
 import org.jetbrains.idea.maven.importing.MavenRootModelAdapter;
 import org.jetbrains.idea.maven.importing.MavenRootModelAdapterLegacyImpl;
 import org.jetbrains.idea.maven.model.MavenId;
 import org.jetbrains.idea.maven.project.*;
-import org.jetbrains.idea.maven.server.MavenDistributionsCache;
 import org.jetbrains.idea.maven.utils.MavenProcessCanceledException;
 import org.jetbrains.idea.maven.utils.MavenProgressIndicator;
 import org.jetbrains.idea.maven.utils.MavenUtil;
@@ -39,12 +39,10 @@ import org.jetbrains.jps.model.java.JavaSourceRootType;
 import javax.swing.event.HyperlinkEvent;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.jetbrains.idea.maven.project.MavenHomeKt.staticOrBundled;
 import static org.jetbrains.idea.maven.utils.MavenLog.LOG;
 
 class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
@@ -167,19 +165,14 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
     final MavenGeneralSettings mavenGeneralSettings = mavenProjectsManager.getGeneralSettings();
     final ParametersList programParametersList = params.getProgramParametersList();
 
-    programParametersList.add(
-      getSettingsFilePath(MavenUtil.resolveGlobalSettingsFile(staticOrBundled(mavenGeneralSettings.getMavenHomeType()))));
-    programParametersList.add(getSettingsFilePath(MavenUtil.resolveUserSettingsFile(mavenGeneralSettings.getUserSettingsFile())));
+    programParametersList.add(getSettingsFilePath(mavenGeneralSettings.getEffectiveGlobalSettingsIoFile()));
+    programParametersList.add(getSettingsFilePath(mavenGeneralSettings.getEffectiveUserSettingsIoFile()));
 
-    programParametersList.add(getSettingsFilePath(MavenUtil.resolveLocalRepository(
-      mavenGeneralSettings.getLocalRepository(),
-      staticOrBundled(mavenGeneralSettings.getMavenHomeType()),
-      mavenGeneralSettings.getUserSettingsFile()
-    )));
+    programParametersList.add(mavenGeneralSettings.getEffectiveLocalRepository().getAbsolutePath());
     programParametersList.add(mavenGeneralSettings.isWorkOffline() ? "t" : "f");
     programParametersList.add(project.getBasePath() + "/.idea/flexmojos");
 
-    configureMavenClassPath(project, mavenGeneralSettings, params.getClassPath());
+    configureMavenClassPath(mavenGeneralSettings, params.getClassPath());
 
     final File userVmP = new File(SystemProperties.getUserHome(), "fcg-vmp");
     if (userVmP.exists()) {
@@ -381,10 +374,9 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
     objectOutputStream.flush();
   }
 
-  private static void configureMavenClassPath(Project project, MavenGeneralSettings mavenGeneralSettings, PathsList classPath)
-    throws ExecutionException {
-    Path mavenHome = MavenDistributionsCache.getInstance(project).getSettingsDistribution().getMavenHome();
-    String version = MavenUtil.getMavenVersion(mavenHome.toFile());
+  private static void configureMavenClassPath(MavenGeneralSettings mavenGeneralSettings, PathsList classPath) throws ExecutionException {
+    String mavenHome = MavenExternalParameters.resolveMavenHome(mavenGeneralSettings);
+    String version = MavenUtil.getMavenVersion(mavenHome);
     String pathToBundledJar = FlexCommonUtils.getPathToBundledJar(StringUtil.compareVersionNumbers(version, "3.1") >= 0
                                                                   ? "flexmojos-flex-configs-generator-server-31.jar"
                                                                   : "flexmojos-flex-configs-generator-server.jar");
