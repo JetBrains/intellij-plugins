@@ -31,6 +31,8 @@ private class Model(file: DtsFile, editor: Editor?) : StructureViewModelBase(
     override fun isAlwaysShowsPlus(element: StructureViewTreeElement?): Boolean = false
 
     override fun isAlwaysLeaf(element: StructureViewTreeElement?): Boolean = false
+
+    override fun getSuitableClasses(): Array<Class<*>> = arrayOf(DtsStatement::class.java)
 }
 
 private abstract class ContainerElement<T : PsiElement>(element: T) : PsiTreeElementBase<T>(element) {
