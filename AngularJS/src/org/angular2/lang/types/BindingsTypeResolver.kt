@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.types
 
-import com.intellij.javascript.web.js.WebJSTypesUtil.jsGenericType
 import com.intellij.lang.javascript.evaluation.JSExpressionTypeFactory
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
@@ -11,6 +10,7 @@ import com.intellij.lang.javascript.psi.resolve.generic.JSTypeSubstitutorImpl
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory.createIntersectionType
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory.createUnionType
+import com.intellij.lang.javascript.psi.types.JSTypeSubstitutor.EMPTY
 import com.intellij.lang.javascript.psi.types.JSTypeSubstitutor.JSTypeGenericId
 import com.intellij.lang.javascript.psi.types.JSUnionOrIntersectionType.OptimizedKind
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyCallType
@@ -44,6 +44,7 @@ import org.angular2.lang.expr.psi.Angular2TemplateBinding
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.psi.Angular2HtmlTemplateBindings
+import org.angular2.lang.types.Angular2TypeUtils.possiblyGenericJsType
 import java.util.function.BiFunction
 import java.util.function.Predicate
 
@@ -119,13 +120,13 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
       }
 
       return if (instanceSubstitutor != null)
-        JSTypeUtils.applyGenericArguments(cls.jsGenericType, instanceSubstitutor)
+        JSTypeUtils.applyGenericArguments(cls.possiblyGenericJsType, instanceSubstitutor)
       else {
         // In the case of references, it may happen that some generic params are not substituted.
         // Let's be permissive here and replace each generic param from directive definition
         // with `any` type to avoid type checking errors in such situation.
         val genericParameters = cls.typeParameters.mapTo(HashSet()) { it.genericId }
-        postprocessTypes(listOf(cls.jsGenericType))?.transformTypeHierarchy {
+        postprocessTypes(listOf(cls.possiblyGenericJsType))?.transformTypeHierarchy {
           if (it is JSGenericParameterType && genericParameters.contains(it.genericId))
             JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS, false)
           else it
@@ -272,16 +273,24 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
           .copyWithNewLanguage(JSTypeSource.SourceLanguage.TS) // sometimes we get the <ng-template> element, so we need to force TS
         val classTypeSource = cls.staticJSType.source
 
-        val genericConstructorReturnType = JSTypeUtils.createNotSubstitutedGenericType(cls, cls.jsType)
-        val typeSubstitutor = calculateDirectiveTypeSubstitutor(classTypeSource, directiveInputs, element, elementTypeSource)
+        val genericConstructorReturnType = cls.possiblyGenericJsType
+        val typeSubstitutor: JSTypeSubstitutor
+        if (genericConstructorReturnType is JSGenericTypeImpl) {
+          typeSubstitutor = calculateDirectiveTypeSubstitutor(classTypeSource, directiveInputs, element, elementTypeSource)
 
-        strictSubstitutors[directive] = typeSubstitutor
-        substitutors[directive] = JSTypeSubstitutorImpl(typeSubstitutor).also {
-          cls.typeParameters.forEach { typeParameter ->
-            if (!it.containsId(typeParameter.genericId)) {
-              it.put(typeParameter.genericId, JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS, false))
+          strictSubstitutors[directive] = typeSubstitutor
+          substitutors[directive] = JSTypeSubstitutorImpl(typeSubstitutor).also {
+            cls.typeParameters.forEach { typeParameter ->
+              if (!it.containsId(typeParameter.genericId)) {
+                it.put(typeParameter.genericId, JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS, false))
+              }
             }
           }
+        }
+        else {
+          typeSubstitutor = EMPTY
+          strictSubstitutors[directive] = EMPTY
+          substitutors[directive] = EMPTY
         }
 
         val guardElement = cls.findFunctionByName(NG_TEMPLATE_CONTEXT_GUARD)

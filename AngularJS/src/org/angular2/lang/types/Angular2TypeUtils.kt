@@ -4,6 +4,7 @@ package org.angular2.lang.types
 import com.intellij.lang.javascript.psi.JSFunctionType
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSTypeUtils
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.primitives.TypeScriptNeverJSTypeImpl
 import com.intellij.psi.PsiElement
@@ -77,4 +78,10 @@ object Angular2TypeUtils {
     // covered by an `on*` method
     return JSNamedTypeFactory.createType(HTML_ELEMENT_EVENT_MAP_INTERFACE_NAME, typeSource, JSContext.INSTANCE)
   }
+
+  val TypeScriptClass.possiblyGenericJsType
+    get() = if (typeParameters.isNotEmpty())
+      JSTypeUtils.createNotSubstitutedGenericType(this, jsType)
+    else
+      jsType
 }
