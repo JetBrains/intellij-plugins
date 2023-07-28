@@ -4,7 +4,7 @@ IDEA-Handlebars adds support for [Handlebars](http://handlebarsjs.com/) and [Mus
 
 ![Handlebars/Mustache editing screenshot](https://raw.github.com/JetBrains/intellij-plugins/master/handlebars/markdown_images/editor.png "Handlebars/Mustache editing")
 
-[JetBrains plugin repository page](http://plugins.intellij.net/plugin/?idea&pluginId=6884)
+[JetBrains Marketplace](https://plugins.jetbrains.com/plugin/6884-handlebars-mustache)
 
 ## Installing
 To install the latest release (and get automatic updates), install this plugin using your IDE's plugin manager:

@@ -10,7 +10,7 @@ Latest stable version
 
 Install plugin from IDE: File -> Settings -> Plugins -> Browse Repositories -> search for CloudFormation
 
-See IntelliJ IDEA plugin repository:
+See JetBrains Marketplace:
 https://plugins.jetbrains.com/plugin/7371
 
 Quick Start

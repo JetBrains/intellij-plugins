@@ -4,7 +4,7 @@ Provides [HCL language](https://github.com/hashicorp/hcl) and [Terraform](https:
 
 The HCL format is used for [Nomad](https://www.nomadproject.io/)(`.nomad` files).
 
-[Plugin page](https://plugins.jetbrains.com/plugin/7808) in [IntelliJ platform plugin repository](https://plugins.jetbrains.com).
+[Plugin page](https://plugins.jetbrains.com/plugin/7808) in [JetBrains Marketplace](https://plugins.jetbrains.com).
 
 ### Features:
 

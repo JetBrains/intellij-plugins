@@ -1,7 +1,7 @@
 Makefile support for IntelliJ-based IDEs
 ========================================
 
-Get it from plugin repository: https://plugins.jetbrains.com/plugin/9333-makefile-support
+Get it from JetBrains Marketplace: https://plugins.jetbrains.com/plugin/9333-makefile-support
 
 This plugin was originally developed there: https://github.com/kropp/intellij-makefile
 
