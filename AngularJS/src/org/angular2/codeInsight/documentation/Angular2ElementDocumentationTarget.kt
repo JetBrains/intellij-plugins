@@ -3,7 +3,6 @@ package org.angular2.codeInsight.documentation
 
 import com.intellij.codeInsight.completion.CompletionUtilCore
 import com.intellij.codeInsight.documentation.DocumentationManagerProtocol
-import com.intellij.javascript.web.js.WebJSTypesUtil.jsGenericType
 import com.intellij.javascript.webSymbols.jsType
 import com.intellij.lang.Language
 import com.intellij.lang.css.CSSLanguage
@@ -39,6 +38,7 @@ import com.intellij.util.ui.UIUtil
 import com.intellij.webSymbols.WebSymbol
 import org.angular2.entities.*
 import org.angular2.entities.source.Angular2SourceDirectiveProperty
+import org.angular2.lang.types.Angular2TypeUtils.possiblyGenericJsType
 import org.angular2.lang.types.BindingsTypeResolver
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator
 import org.jetbrains.annotations.Nls
@@ -182,7 +182,7 @@ class Angular2ElementDocumentationTarget private constructor(
 
       val bindingsTypeResolver: BindingsTypeResolver? = BindingsTypeResolver.get(location)
       if (element is Angular2Entity) {
-        val jsType = element.typeScriptClass?.jsGenericType?.let {
+        val jsType = element.typeScriptClass?.possiblyGenericJsType?.let {
           bindingsTypeResolver?.substituteTypeForDocumentation(directive, it) ?: it
         }
         if (jsType != null) {
