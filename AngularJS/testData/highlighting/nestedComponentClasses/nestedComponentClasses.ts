@@ -3,7 +3,7 @@ import {Component} from '@angular/core';
 
 @Component({
   selector: 'app-root',
-  templateUrl: "./nested-classes.html"
+  templateUrl: "./nestedComponentClasses.html"
 })
 export default class AppComponent {
   foo: string

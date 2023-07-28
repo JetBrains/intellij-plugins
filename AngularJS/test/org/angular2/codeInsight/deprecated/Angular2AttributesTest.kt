@@ -34,7 +34,6 @@ import org.angular2.entities.Angular2DirectiveAttribute
 import org.angular2.entities.Angular2DirectiveProperty
 import org.angular2.entities.Angular2DirectiveSelectorSymbol
 import org.angular2.entities.Angular2EntitiesProvider.getComponent
-import org.angular2.codeInsight.inspections.Angular2ExpressionTypesInspectionTest
 import org.angular2.entities.source.Angular2SourceDirectiveVirtualProperty
 import org.angular2.inspections.AngularUndefinedBindingInspection
 import org.angular2.lang.html.psi.Angular2HtmlAttrVariable
@@ -207,13 +206,6 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.type(' ')
     myFixture.completeBasic()
     UsefulTestCase.assertContainsElements(myFixture.getLookupElementStrings()!!, "testAttrOne", "testAttrTwo", "testAttrThree")
-  }
-
-  fun testStaticAttributes() {
-    myFixture.copyFileToProject("object_in_dec.ts")
-    myFixture.configureByFiles("static_attributes.html", "package.json")
-    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
-    myFixture.checkHighlighting()
   }
 
   fun testBindingCompletionViaBase2TypeScript() {
@@ -505,13 +497,6 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
                  myFixture.getCompletionVariants("viewChildrenReferenceHTML.ts", "viewChildrenReferenceHTML.html", "package.json"))
   }
 
-  fun testI18NAttr() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_MATERIAL_8_2_3_MIXED)
-    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
-    myFixture.configureByFiles("i18n.html")
-    myFixture.checkHighlighting(true, false, true)
-  }
-
   fun testNgNoValidateReference() {
     myFixture.configureByFiles("ngNoValidate.html", "ng_no_validate_directive.ts", "package.json")
     val resolve = resolveWebSymbolReference("ng<caret>NativeValidate")
@@ -600,12 +585,6 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     }
   }
 
-  fun testRequiredInputs() {
-    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
-    myFixture.configureByFiles("requiredInputs.ts", "package.json")
-    myFixture.checkHighlighting()
-  }
-
   fun testExportAs() {
     myFixture.enableInspections(TypeScriptUnresolvedReferenceInspection::class.java,
                                 JSUnresolvedReferenceInspection::class.java,
@@ -684,18 +663,6 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.configureByFiles("ngIfAs.ts", "package.json")
     myFixture.completeBasic()
     myFixture.checkResultByFile("ngIfAs.after.ts")
-  }
-
-  /**
-   * Tests an older version of library
-   *
-   * @see Angular2ExpressionTypesInspectionTest.testNgrxLetContextGuard
-   */
-  fun testNgrxLetAsContextGuard() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_COMMON_13_3_5)
-    myFixture.configureByFiles("ngrxLetAs.ts", "ngrxLet.ts", "package.json", "tsconfig.json")
-    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
-    myFixture.checkHighlighting(true, false, true)
   }
 
   fun testCodeCompletionItemsTypes() {
@@ -892,12 +859,6 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.checkHighlighting(true, false, true)
   }
 
-  fun testAnimationCallbacks() {
-    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
-    myFixture.configureByFiles("animationCallbacks.html", "animationCallbacks.ts", "package.json")
-    myFixture.checkHighlighting()
-  }
-
   fun testAttributeNameMapping() {
     myFixture.enableInspections(HtmlUnknownAttributeInspection::class.java,
                                 AngularUndefinedBindingInspection::class.java)
@@ -999,19 +960,6 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     UsefulTestCase.assertDoesntContain(myFixture.getLookupElementStrings()!!, "[bar]", "foo", "[foo]")
   }
 
-  fun testNgNonBindable() {
-    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
-    myFixture.configureByFiles("ngNonBindable.html", "package.json")
-    myFixture.checkHighlighting()
-  }
-
-  fun testIonicAttributes() {
-    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
-    configureLink(myFixture, Angular2TestModule.IONIC_ANGULAR_4_1_1)
-    myFixture.configureByFiles("ionicAttributes.html")
-    myFixture.checkHighlighting()
-  }
-
   fun testSvgAttributes() {
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
     myFixture.configureByFiles("svg-test.html", "svg-test.ts", "package.json")
@@ -1020,12 +968,6 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.type("<svg:circle [attr.")
     myFixture.completeBasic()
     UsefulTestCase.assertContainsElements(myFixture.getLookupElementStrings()!!, "cx]", "cy]", "visibility]", "text-rendering]")
-  }
-
-  fun testCustomDataAttributes() {
-    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
-    myFixture.configureByFiles("data-attributes.html", "object.ts", "package.json")
-    myFixture.checkHighlighting()
   }
 
   fun testInputTypeCompletion() {
@@ -1086,40 +1028,6 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.checkHighlighting()
   }
 
-  fun testElementShims() {
-    myFixture.copyDirectoryToProject("element_shims", ".")
-    myFixture.configureFromTempProjectFile("selectChangeEvent.html")
-    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
-    myFixture.checkHighlighting()
-  }
-
-  fun testCustomUserEvents() {
-    myFixture.copyDirectoryToProject("custom-user-events", ".")
-    myFixture.configureFromTempProjectFile("customEvents.html")
-    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
-    myFixture.checkHighlighting()
-  }
-
-  fun testFxLayout() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_9_1_1_MIXED, Angular2TestModule.ANGULAR_FLEX_LAYOUT_13_0_0)
-    myFixture.configureByFiles("fxLayout.html", "package.json")
-    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
-    myFixture.checkHighlighting()
-  }
-
-  fun testHtmlAttributesInspections() {
-    myFixture.configureByFiles("htmlAttributesInspections.html", "package.json")
-    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
-    myFixture.checkHighlighting()
-  }
-
-  fun testCdkDirectivesHighlighting() {
-    myFixture.configureByFiles("cdkDirectives.html", "cdkDirectives.ts")
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CDK_14_2_0)
-    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
-    myFixture.checkHighlighting()
-  }
-
   fun testCdkDirectivesCompletion() {
     configureCopy(myFixture, Angular2TestModule.ANGULAR_CDK_14_2_0)
     myFixture.configureByFile(getTestName(true) + ".html")
@@ -1132,59 +1040,4 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     doCompletionItemsTest(myFixture, "styleUnitLengthCompletion.html", false, false)
   }
 
-  fun testStyleUnitLengthHighlighting() {
-    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
-    myFixture.configureByFiles("styleUnitLengthCompletionHighlighting.html", "package.json")
-    myFixture.checkHighlighting()
-  }
-
-  fun testMatSortHeader() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_MATERIAL_14_2_5_MIXED)
-    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
-    myFixture.configureByFiles("matSortHeader.html")
-    myFixture.checkHighlighting()
-  }
-
-  fun testImgSrcWithNg15() {
-    configureLink(myFixture, Angular2TestModule.ANGULAR_CORE_15_1_5, Angular2TestModule.ANGULAR_COMMON_15_1_5)
-    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
-    myFixture.configureByFile("imgSrcWithNg15.html")
-    myFixture.checkHighlighting()
-  }
-
-  fun testNoRequiredBindingsWithoutModuleScope() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_16_0_0_NEXT_4, Angular2TestModule.ANGULAR_COMMON_16_0_0_NEXT_4,
-                  Angular2TestModule.ANGULAR_FORMS_16_0_0_NEXT_4)
-    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
-    myFixture.configureByFile("noRequiredBindings.html")
-    myFixture.checkHighlighting()
-  }
-
-  fun testUnknownTagsAttributesInlineTemplate() {
-    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
-    myFixture.configureByFiles("unknownTagsAttributesInlineTemplate.ts", "package.json")
-    myFixture.checkHighlighting()
-  }
-
-  fun testNgAcceptInputTypeOverride() {
-    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
-    myFixture.configureByFiles("ngAcceptInputTypeOverride.ts", "package.json")
-    myFixture.checkHighlighting()
-  }
-
-  /**
-   * @see Angular2ExpressionTypesInspectionTest.testNullChecks
-   * @see Angular2ExpressionTypesInspectionTest.testNullChecksInline
-   */
-  fun testTypeMismatchErrorWithOptionalInputs() {
-    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
-    myFixture.configureByFiles("typeMismatchErrorWithOptionalInputs.ts", "package.json", "tsconfig.json")
-    myFixture.checkHighlighting()
-  }
-
-  fun testHostDirectives() {
-    myFixture.configureByFiles("hostDirectives.component.html", "hostDirectives.component.ts", "package.json")
-    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
-    myFixture.checkHighlighting()
-  }
 }

@@ -8,7 +8,6 @@ import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspecti
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.webSymbols.resolveWebSymbolReference
 import org.angular2.Angular2CodeInsightFixtureTestCase
-import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.inspections.AngularUndefinedBindingInspection
 import org.angularjs.AngularTestUtil
 
@@ -150,10 +149,4 @@ class Angular2TagsTest : Angular2CodeInsightFixtureTestCase() {
     }
   }
 
-  fun testSelfClosedTags() {
-    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
-    myFixture.copyDirectoryToProject("selfClosedTags", ".")
-    myFixture.configureFromTempProjectFile("app.component.html")
-    myFixture.checkHighlighting()
-  }
 }
