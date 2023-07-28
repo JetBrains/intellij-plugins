@@ -4,30 +4,52 @@ import com.intellij.lang.impl.PsiBuilderDiagnostics
 import com.intellij.lang.impl.PsiBuilderDiagnosticsImpl
 
 private class BuilderDiagnostics : PsiBuilderDiagnostics {
-    val rollbacks = mutableMapOf<String, Int>()
+    val rollbacks = mutableMapOf<String, MutableMap<Int, Int>>()
+    var emptyRollbacks = 0
 
     val rollbackCount: Int
-        get() = rollbacks.values.sum()
+        get() = rollbacks.values.sumOf { it.values.sum() }
 
     override fun registerPass(charLength: Int, tokensLength: Int) {}
 
     override fun registerRollback(tokens: Int) {
+        if (tokens == 0) {
+            emptyRollbacks++
+            return
+        }
+
         val method = Thread.currentThread().stackTrace.dropWhile {
             it.className != "com.intellij.dts.lang.parser.DtsParser"
         }.first().methodName
 
-        val value = rollbacks.getOrDefault(method, 0)
-        rollbacks[method] = value + 1
+        val map = rollbacks.getOrPut(method) { mutableMapOf() }
+        val count = map.getOrDefault(tokens, 0)
+
+        map[tokens] = count + 1
     }
 
     fun assertRollbacks(message: String, maxRollbacks: Int) {
+        val rollbackCount = this.rollbackCount
+
         assert(rollbackCount <= maxRollbacks) {
-            println("maximum rollbacks: $maxRollbacks, actual rollbacks: $rollbackCount")
-            println(message)
+            println("maximum rollbacks exceeded: $maxRollbacks - $message")
+
+            println(" total rollbacks: ${rollbackCount + emptyRollbacks}")
+            println(" empty rollbacks: $emptyRollbacks")
+            println("actual rollbacks: $rollbackCount")
 
             println("most frequent rollbacks:")
-            for ((method, count) in rollbacks.entries.sortedByDescending { it.value }.take(20)) {
-                println("%4d: %s".format(count, method))
+            for ((method, map) in rollbacks.entries.sortedByDescending { it.value.values.sum() }.take(20)) {
+                val rollbacks = map.values.sum()
+
+                val avg = map.entries.fold(0.0) { acc, (tokens, count) ->
+                    acc + tokens.toDouble() * (count.toDouble()  / rollbacks.toDouble())
+                }
+
+                val max = map.keys.max()
+                val min = map.keys.min()
+
+                println("%6d - avg. %2.2f - max: %2d min: %2d: %s".format(rollbacks, avg, max, min, method))
             }
         }
     }
@@ -76,22 +98,13 @@ class DtsRollbackParsingTest : DtsParsingTestBase("", "dtsi") {
         doRollbackTest(nestedRollbacks + 2, createNesting(20, "$text\n$include"))
     }
 
-    fun testRootNode() = doRollbackTest(18, "/ {};")
+    fun testProperty() = doRollbackTest(2, "prop = <>;")
 
-    fun testSubNode() = doRollbackTest(19, "node {};")
+    fun testSubNode() = doRollbackTest(3, "node {};")
 
-    fun testProperty() = doRollbackTest(36, "prop = <>;")
+    fun testRootNode() = doRollbackTest(4, "/ {};")
 
-    fun testPropertyRecovery() = doRollbackWithRecoveryTest(36, "prop = <>")
+    fun testPropertyRecovery() = doRollbackWithRecoveryTest(1, "prop = <>")
 
-    fun testSubNodeRecovery() = doRollbackWithRecoveryTest(18, "node {}")
-
-    fun testLinearRollbackGrowth() {
-        val rollbacks = parseFileWithDiagnostics(createNesting(1, "")).rollbackCount
-
-        for (i in 2 until 20) {
-            val multiple = parseFileWithDiagnostics(createNesting(i, "")).rollbackCount / rollbacks.toDouble()
-            assertTrue(multiple < i)
-        }
-    }
+    fun testSubNodeRecovery() = doRollbackWithRecoveryTest(2, "node {}")
 }

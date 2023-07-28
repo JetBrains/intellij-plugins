@@ -82,15 +82,15 @@
 file ::= entries*
 
 private entries ::=
-        <<quickLookahead 'V1'>>                 <<compilerDirectiveEntry V1 ()>> |
-        <<quickLookahead 'PLUGIN'>>             <<compilerDirectiveEntry PLUGIN ()>> |
-        <<labelLookahead 'MEMRESERVE'>>         <<compilerDirectiveEntry (LABEL* MEMRESERVE) (cell cell)>> |
-        <<quickLookahead 'DELETE_NODE'>>        <<compilerDirectiveEntry DELETE_NODE (pHandle | NAME)>> |
-        <<quickLookahead 'DELETE_PROP'>>        <<compilerDirectiveEntry DELETE_PROP NAME>> |
-        <<labelLookahead 'SLASH' 'HANDLE'>>     <<entry rootNode>> |
-        <<labelLookahead 'OMIT_NODE' 'NAME'>>   <<entry subNode>> |
-        <<labelLookahead 'NAME'>>               <<entry property>> |
-        <<quickLookahead 'OMIT_NODE'>>          <<compilerDirectiveEntry OMIT_NODE pHandle>> |
+        <<entry property>> |
+        <<entry subNode>> |
+        <<entry rootNode>> |
+        <<compilerDirectiveEntry V1 ()>> |
+        <<compilerDirectiveEntry PLUGIN ()>> |
+        <<compilerDirectiveEntry (LABEL* MEMRESERVE) (cell cell)>> |
+        <<compilerDirectiveEntry DELETE_NODE (pHandle | NAME)>> |
+        <<compilerDirectiveEntry DELETE_PROP NAME>> |
+        <<compilerDirectiveEntry OMIT_NODE pHandle>> |
         invalidEntry
 
 external invalidEntry ::= parseInvalidEntry
@@ -111,7 +111,7 @@ private propertyRecover ::= !(SEMICOLON | RBRACE | NAME | afterLineBreak)
 
 external propertyName ::= parsePropertyName
 
-cellArray ::= cellArrayBits? LANGL cellArrayContent RANGL {pin=2}
+cellArray ::= (&BITS cellArrayBits)? LANGL cellArrayContent RANGL {pin=2}
 private cellArrayContent ::= cellArrayValue* {recoverWhile="cellArrayRecover"}
 private cellArrayValue ::= <<value (pHandle | cell)>>
 private cellArrayRecover ::= !(SEMICOLON | RBRACE | COMMA | RANGL | RPAREN)
@@ -206,10 +206,7 @@ parenExpr ::= LPAREN expr RPAREN
 
 includeStatement ::= () INCLUDE string { pin=1 }
 
-// util rules for recovery and lookaheads
 external afterLineBreak ::= parseAfterLineBreak
-private meta external quickLookahead ::= quickLookaheadImpl
-private meta external labelLookahead ::= labelLookaheadImpl
 
 // fallback to handle unknown identifiers like macros
 ppMacro ::= parserPpMacro

@@ -34,7 +34,7 @@ DTSI file
       PsiElement(name)('node')
       PsiWhiteSpace(' ')
       PsiElement({)('{')
-      PsiErrorElement:'}' expected
+      PsiErrorElement:<node content> or '}' expected
         <empty list>
   PsiWhiteSpace('\n\n')
   DtsIncludeStatementImpl(INCLUDE_STATEMENT)
