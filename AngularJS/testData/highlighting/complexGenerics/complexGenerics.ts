@@ -58,7 +58,7 @@ const defaultFormState: FormStateControlBase = {
 };
 @Component({
   selector: 'app-root',
-  templateUrl: "./complex-generics.html"
+  templateUrl: "./complexGenerics.html"
 })
 export class AppComponent {
   wrappedProperties: PropertyWrapper<Person> = {

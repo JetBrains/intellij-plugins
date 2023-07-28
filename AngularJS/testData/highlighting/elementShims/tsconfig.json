@@ -19,7 +19,7 @@
     ]
   },
   "files": [
-    "selectChangeEvent.ts"
+    "elementShims.ts"
   ],
   "include": [
     "*.d.ts"

@@ -108,7 +108,7 @@ export class UnResolvedComponent implements OnInit {
 @Component({
     standalone: true,
     selector: 'app-test',
-    templateUrl: './hostDirectives.component.html',
+    templateUrl: './hostDirectives.html',
     styleUrls: ['./test.component.css'],
     imports: [
         ResolvedComponent,

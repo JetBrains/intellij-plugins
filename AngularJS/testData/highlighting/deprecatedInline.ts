@@ -67,23 +67,8 @@ export class FooBarDirective {
 }
 
 @Component({
-  standalone: true,
-  selector: 'app-test',
-  imports: [
-    FooComponent,
-    BarComponent,
-    BarDirective,
-    FooBarDirective
-  ],
-  templateUrl: "./deprecated.html",
-})
-export class TestComponent {
-
-}
-
-@Component({
  standalone: true,
- selector: 'app-test2',
+ selector: 'app-test',
  imports: [
    FooComponent,
    BarComponent,

@@ -3,7 +3,7 @@
 import {Component} from "@angular/core"
 
 @Component({
-  templateUrl: "./top-level-this.html"
+  templateUrl: "./globalThis.html"
 })
 export class MyComponent {
 

@@ -4,22 +4,12 @@ package org.angular2.codeInsight.inspections
 import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlFormInputWithoutLabelInspection
-import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.inspections.*
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
-import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiLanguageInjectionHost
-import com.intellij.psi.SyntaxTraverser
-import com.intellij.testFramework.EdtTestUtil
-import com.intellij.testFramework.ExpectedHighlightingData
-import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.webSymbols.moveToOffsetBySignature
 import org.angular2.Angular2CodeInsightFixtureTestCase
-import org.angular2.Angular2TemplateInspectionsProvider
 import org.angularjs.AngularTestUtil
-import java.util.function.Consumer
 
 /**
  * @see Angular2DecoratorInspectionsTest
@@ -89,18 +79,6 @@ class Angular2TsInspectionsTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.checkHighlighting()
   }
 
-  fun testGlobalThisInspection() {
-    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
-    myFixture.configureByFiles("top-level-this.html", "top-level-this.ts", "package.json")
-    myFixture.checkHighlighting()
-  }
-
-  fun testComplexGenerics() {
-    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
-    myFixture.configureByFiles("complex-generics.html", "complex-generics.ts", "package.json")
-    myFixture.checkHighlighting()
-  }
-
   fun testDuplicateDeclarationOff() {
     myFixture.enableInspections(JSDuplicatedDeclarationInspection())
     myFixture.configureByFiles("duplicateDeclarationOff.html", "duplicateDeclarationOff.ts", "package.json")
@@ -110,12 +88,6 @@ class Angular2TsInspectionsTest : Angular2CodeInsightFixtureTestCase() {
   fun testDuplicateDeclarationOffTemplate() {
     myFixture.enableInspections(JSDuplicatedDeclarationInspection())
     myFixture.configureByFiles("duplicateDeclarationOffLocalTemplate.ts", "package.json")
-    myFixture.checkHighlighting()
-  }
-
-  fun testNestedComponentClasses() {
-    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
-    myFixture.configureByFiles("nested-classes.html", "nested-classes.ts", "package.json")
     myFixture.checkHighlighting()
   }
 
@@ -130,36 +102,5 @@ class Angular2TsInspectionsTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.enableInspections(HtmlFormInputWithoutLabelInspection())
     myFixture.configureByFiles("missingLabelSuppressed.html", "missingLabelSuppressed.ts", "package.json")
     myFixture.checkHighlighting()
-  }
-
-  fun testDeprecated() {
-    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
-    myFixture.configureByFiles("deprecated.html", "deprecated.ts", "package.json")
-    myFixture.checkHighlighting()
-  }
-
-  fun testDeprecatedInline() {
-    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
-    myFixture.configureByFiles("deprecated.ts", "package.json")
-    loadInjectionsAndCheckHighlighting()
-  }
-
-  fun testNgAcceptInputType() {
-    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
-    myFixture.configureByFiles("ngAcceptInputType.ts", "package.json")
-    myFixture.checkHighlighting()
-  }
-
-  private fun loadInjectionsAndCheckHighlighting() {
-    val data = ExpectedHighlightingData(
-      myFixture.getEditor().getDocument(), true, true, false, true)
-    data.init()
-    EdtTestUtil.runInEdtAndWait<RuntimeException> { PsiDocumentManager.getInstance(myFixture.getProject()).commitAllDocuments() }
-    val injectedLanguageManager = InjectedLanguageManager.getInstance(myFixture.getProject())
-    // We need to ensure that injections are cached before we check deprecated highlighting
-    SyntaxTraverser.psiTraverser(myFixture.getFile())
-      .forEach(
-        Consumer { it: PsiElement? -> if (it is PsiLanguageInjectionHost) injectedLanguageManager.getInjectedPsiFiles(it) })
-    (myFixture as CodeInsightTestFixtureImpl).collectAndCheckHighlighting(data)
   }
 }

@@ -3,7 +3,7 @@ import {Component} from '@angular/core';
 
 @Component({
     selector: 'select-change',
-    templateUrl: "./selectChangeEvent.html"
+    templateUrl: "./elementShims.html"
 })
 export class SelectChangeEventComponent {
 }
