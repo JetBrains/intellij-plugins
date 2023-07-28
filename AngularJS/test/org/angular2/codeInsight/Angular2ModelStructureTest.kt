@@ -376,7 +376,7 @@ class Angular2ModelStructureTest : Angular2CodeInsightFixtureTestCase() {
       return this
     }
 
-    override fun StringBuilder.printList(level: Int, list: List<*>): StringBuilder {
+    override fun StringBuilder.printCollection(level: Int, list: Collection<*>): StringBuilder {
       append('\n')
       list.forEach {
         indent(level + 1).printValue(level + 1, it)
