@@ -7,8 +7,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.psi.PsiElement
-import com.intellij.refactoring.rename.api.RenameTarget
-import com.intellij.refactoring.rename.symbol.RenameableSymbol
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import com.intellij.webSymbols.utils.coalesceWith
@@ -31,8 +29,6 @@ open class Angular2DirectiveSymbolWrapper private constructor(val directive: Ang
                forcedPriority: WebSymbol.Priority? = null): Angular2DirectiveSymbolWrapper =
       when (delegate) {
         is PsiSourcedWebSymbol -> Angular2PsiSourcedDirectiveSymbolWrapper(directive, delegate, forcedPriority)
-        is RenameableSymbol,
-        is RenameTarget -> Angular2RenameableDirectiveSymbolWrapper(directive, delegate, forcedPriority)
         else -> Angular2DirectiveSymbolWrapper(directive, delegate, forcedPriority)
       }
   }
@@ -116,18 +112,6 @@ open class Angular2DirectiveSymbolWrapper private constructor(val directive: Ang
 
     override val psiContext: PsiElement?
       get() = super<Angular2DirectiveSymbolWrapper>.psiContext
-  }
-
-  private class Angular2RenameableDirectiveSymbolWrapper(directive: Angular2Directive,
-                                                         delegate: Angular2Symbol,
-                                                         forcedPriority: WebSymbol.Priority?)
-    : Angular2DirectiveSymbolWrapper(directive, delegate, forcedPriority), RenameableSymbol {
-    override val renameTarget: RenameTarget
-      get() = renameTargetFromDelegate()
-
-    override fun createPointer(): Pointer<out Angular2SymbolDelegate<Angular2Symbol>> =
-      createPointer(::Angular2DirectiveSymbolWrapper)
-
   }
 
 }

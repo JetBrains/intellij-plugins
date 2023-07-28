@@ -12,7 +12,6 @@ import com.intellij.psi.util.contextOfType
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolApiStatus
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
-import com.intellij.webSymbols.search.SearchTargetWebSymbol
 import com.intellij.webSymbols.search.WebSymbolSearchTarget
 import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
 import org.angular2.entities.Angular2EntityUtils.jsTypeFromAcceptInputType
@@ -20,7 +19,7 @@ import org.angular2.lang.types.Angular2TypeUtils
 import org.angular2.web.Angular2Symbol
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_OUTPUTS
 
-interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element, SearchTargetWebSymbol {
+interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element {
 
   override val name: String
 

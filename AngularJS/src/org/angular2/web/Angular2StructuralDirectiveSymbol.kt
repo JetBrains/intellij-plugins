@@ -5,8 +5,6 @@ import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.psi.PsiElement
-import com.intellij.refactoring.rename.api.RenameTarget
-import com.intellij.refactoring.rename.symbol.RenameableSymbol
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import com.intellij.webSymbols.utils.coalesceWith
@@ -25,8 +23,6 @@ open class Angular2StructuralDirectiveSymbol private constructor(private val dir
       when (sourceSymbol) {
         is PsiSourcedWebSymbol ->
           Angular2PsiSourcedStructuralDirectiveSymbol(directive, sourceSymbol, hasInputsToBind)
-        is RenameableSymbol, is RenameTarget ->
-          Angular2RenameableStructuralDirectiveSymbol(directive, sourceSymbol, hasInputsToBind)
         else -> Angular2StructuralDirectiveSymbol(directive, sourceSymbol, hasInputsToBind)
       }
   }
@@ -93,13 +89,5 @@ open class Angular2StructuralDirectiveSymbol private constructor(private val dir
 
     override fun createPointer(): Pointer<Angular2PsiSourcedStructuralDirectiveSymbol> =
       createPointer(::Angular2PsiSourcedStructuralDirectiveSymbol)
-  }
-
-  private class Angular2RenameableStructuralDirectiveSymbol(directive: Angular2Directive,
-                                                            sourceSymbol: Angular2Symbol,
-                                                            hasInputsToBind: Boolean)
-    : Angular2StructuralDirectiveSymbol(directive, sourceSymbol, hasInputsToBind), RenameableSymbol {
-    override val renameTarget: RenameTarget
-      get() = renameTargetFromDelegate()
   }
 }
