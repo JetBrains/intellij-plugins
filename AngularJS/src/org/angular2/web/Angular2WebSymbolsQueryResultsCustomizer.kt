@@ -9,8 +9,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
-import com.intellij.refactoring.rename.api.RenameTarget
-import com.intellij.refactoring.rename.symbol.RenameableSymbol
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.*
@@ -167,8 +165,6 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
                  scopeProximity: DeclarationProximity): Angular2ScopedSymbol =
         when (symbol) {
           is PsiSourcedWebSymbol -> Angular2PsiSourcedScopedSymbol(symbol, scopeProximity)
-          is RenameableSymbol,
-          is RenameTarget -> Angular2RenameableScopedSymbol(symbol, scopeProximity)
           else -> Angular2ScopedSymbol(symbol, scopeProximity)
         }
 
@@ -207,17 +203,6 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
 
     override val properties: Map<String, Any>
       get() = super.properties + Pair(PROP_SCOPE_PROXIMITY, scopeProximity)
-
-
-    private class Angular2RenameableScopedSymbol(symbol: WebSymbol,
-                                                 scopeProximity: DeclarationProximity)
-      : Angular2ScopedSymbol(symbol, scopeProximity), RenameableSymbol {
-      override val renameTarget: RenameTarget
-        get() = renameTargetFromDelegate()
-
-      override fun createPointer(): Pointer<Angular2RenameableScopedSymbol> =
-        createPointer(::Angular2RenameableScopedSymbol)
-    }
 
     private class Angular2PsiSourcedScopedSymbol(symbol: WebSymbol,
                                                  scopeProximity: DeclarationProximity)
