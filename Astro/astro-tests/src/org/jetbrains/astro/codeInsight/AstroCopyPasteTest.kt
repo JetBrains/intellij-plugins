@@ -1,6 +1,6 @@
 package org.jetbrains.astro.codeInsight
 
-import com.intellij.webSymbols.performCopyPaste
+import com.intellij.webSymbols.configureAndCopyPaste
 import org.jetbrains.astro.AstroCodeInsightTestCase
 
 class AstroCopyPasteTest : AstroCodeInsightTestCase("codeInsight/copyPaste") {
@@ -16,7 +16,7 @@ class AstroCopyPasteTest : AstroCodeInsightTestCase("codeInsight/copyPaste") {
   //region Test configuration and helper methods
   private fun doTest() {
     doConfiguredTest(dir = true, configureFile = false) {
-      performCopyPaste("Source.astro", "Destination.astro")
+      configureAndCopyPaste("Source.astro", "Destination.astro")
       checkResultByFile("$testName/Destination_after.astro")
     }
   }
