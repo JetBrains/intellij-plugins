@@ -10,14 +10,8 @@ import com.intellij.webSymbols.WebSymbol.Companion.KIND_JS_PROPERTIES
 import com.intellij.webSymbols.WebSymbol.Companion.KIND_JS_STRING_LITERALS
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
-import com.intellij.webSymbols.patterns.ComplexPatternOptions
-import com.intellij.webSymbols.patterns.WebSymbolsPattern
-import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory.createComplexPattern
-import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory.createPatternSequence
-import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory.createSymbolReferencePlaceholder
-import com.intellij.webSymbols.patterns.WebSymbolsPatternReferenceResolver
-import com.intellij.webSymbols.patterns.WebSymbolsPatternReferenceResolver.Reference
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
+import com.intellij.webSymbols.utils.ReferencingWebSymbol
 import org.jetbrains.vuejs.model.provides
 import org.jetbrains.vuejs.model.source.VueSourceComponent
 import org.jetbrains.vuejs.web.VueFramework
@@ -36,8 +30,8 @@ class VueInjectSymbolsScope(private val enclosingComponent: VueSourceComponent)
       consumer(VueProvideSymbol(provide, container, origin))
     }
 
-    consumer(VueInjectStringSymbol)
-    consumer(VueInjectPropertySymbol)
+    consumer(vueInjectStringSymbol)
+    consumer(vueInjectPropertySymbol)
 
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
   }
@@ -62,45 +56,25 @@ class VueInjectSymbolsScope(private val enclosingComponent: VueSourceComponent)
   override fun getModificationCount(): Long =
     PsiModificationTracker.getInstance(enclosingComponent.source.project).modificationCount
 
-  private abstract class VueInjectSymbol : WebSymbol {
-
-    override val namespace: SymbolNamespace
-      get() = NAMESPACE_JS
-
-    override val pattern: WebSymbolsPattern =
-      createComplexPattern(
-        ComplexPatternOptions(symbolsResolver = WebSymbolsPatternReferenceResolver(
-          Reference(qualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, KIND_VUE_PROVIDES))
-        )), false,
-        createPatternSequence(
-          createSymbolReferencePlaceholder(),
-        )
-      )
-
-    override val origin: WebSymbolOrigin = object : WebSymbolOrigin {
-      override val framework: FrameworkId
-        get() = VueFramework.ID
-    }
-
-    override fun createPointer(): Pointer<out WebSymbol> =
-      Pointer.hardPointer(this)
+  private object VueInjectSymbolOrigin : WebSymbolOrigin {
+    override val framework: FrameworkId
+      get() = VueFramework.ID
   }
 
-  private object VueInjectStringSymbol : VueInjectSymbol() {
-    override val kind: SymbolKind
-      get() = KIND_JS_STRING_LITERALS
+  private val vueInjectStringSymbol = ReferencingWebSymbol(
+    NAMESPACE_JS,
+    KIND_JS_STRING_LITERALS,
+    "Vue Inject String",
+    VueInjectSymbolOrigin,
+    WebSymbolQualifiedKind(NAMESPACE_JS, KIND_VUE_PROVIDES)
+  )
 
-    override val name: String
-      get() = "Vue Inject String"
-  }
-
-  private object VueInjectPropertySymbol : VueInjectSymbol() {
-
-    override val kind: SymbolKind
-      get() = KIND_JS_PROPERTIES
-
-    override val name: String
-      get() = "Vue Inject Property"
-  }
+  private val vueInjectPropertySymbol = ReferencingWebSymbol(
+    NAMESPACE_JS,
+    KIND_JS_PROPERTIES,
+    "Vue Inject Property",
+    VueInjectSymbolOrigin,
+    WebSymbolQualifiedKind(NAMESPACE_JS, KIND_VUE_PROVIDES)
+  )
 
 }
