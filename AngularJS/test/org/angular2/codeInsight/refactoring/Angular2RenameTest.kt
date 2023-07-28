@@ -91,20 +91,24 @@ class Angular2RenameTest : Angular2TestCase("refactoring/rename") {
     checkSymbolRename("event.html", "complete2")
 
   fun testExportAs() =
-    checkSymbolRename("app.component.html", "bolder")
+    checkSymbolRename("directives/bold.directive.ts", "bolder")
 
-  fun testExportAsWithSpaces() =
+  fun testExportAsFromUsage() =
     checkSymbolRename("app.component.html", "bolder")
 
   fun testDirectiveInputFieldDecoratorObject() = checkSymbolRename("newInput", dir = false)
 
   fun testDirectiveInputMappedObject() = checkSymbolRename("newInput", dir = false)
 
+  fun testDirectiveInputMappedObjectFromUsage() = checkSymbolRename("newInput", dir = false)
+
   fun testDirectiveInputForwardedString() = checkSymbolRename("newInput", dir = false)
 
   fun testDirectiveInputMappedStringNoField() = checkSymbolRename("newInput", dir = false)
 
   fun testHostDirectiveInputForwarded() = checkSymbolRename("newInput", dir = false)
+
+  fun testHostDirectiveInputForwardedFromUsage() = checkSymbolRename("newInput", dir = false)
 
   fun testHostDirectiveInputMappedSource() = checkSymbolRename("newInput", dir = false)
 
@@ -116,6 +120,10 @@ class Angular2RenameTest : Angular2TestCase("refactoring/rename") {
 
   fun testHostDirectiveOutputMappedSource() = checkSymbolRename("newOutput", dir = false)
 
+  fun testHostDirectiveOutputMappedSourceFromUsage() = checkSymbolRename("newOutput", dir = false)
+
   fun testHostDirectiveOutputMappedTarget() = checkSymbolRename("newOutput", dir = false)
+
+  fun testHostDirectiveOutputMappedTargetFromUsage() = checkSymbolRename("newOutput", dir = false)
 
 }
