@@ -242,10 +242,26 @@ public class SerialMonitorDuplexConsoleView extends DuplexConsoleView<ConsoleVie
     }
   }
 
+  private byte lastByte = '\0';
+
   public void append(byte[] dataChunk) {
-    //    todo  quick and dirty fix for https://bitbucket.org/dmitry_cherkas/intellij-serial-monitor/issues/1
-    //todo crlf
-    String text = new String(dataChunk, getCharset()).replaceAll("\r", "");
+    Charset charset = getCharset();
+    StringBuilder sb = new StringBuilder();
+
+    // handle the case where \r\n is split across chunks
+    if (lastByte == '\r' && dataChunk.length > 0 && dataChunk[0] == '\n') {
+      sb.append(new String(dataChunk, 1, dataChunk.length - 1, charset));
+    }
+    else {
+      sb.append(new String(dataChunk, charset));
+    }
+
+    // update the last byte of the chunk
+    if (dataChunk.length > 0) {
+      lastByte = dataChunk[dataChunk.length - 1];
+    }
+
+    String text = sb.toString().replaceAll("\r\n?", "\n");
     getPrimaryConsoleView().print(text, ConsoleViewContentType.NORMAL_OUTPUT);
     getSecondaryConsoleView().output(dataChunk);
   }
