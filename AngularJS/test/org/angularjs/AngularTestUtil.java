@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs;
 
-import com.intellij.lang.javascript.completion.JSCompletionUtil;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.psi.PsiElement;
@@ -106,11 +105,11 @@ public final class AngularTestUtil {
                                                boolean renderTailText,
                                                boolean filterOutGlobalSymbols) {
     return WebTestUtil.renderLookupItems(fixture, renderPriority,
-                                         renderTypeText, renderTailText, false, false, lookupElement -> {
-        if (!filterOutGlobalSymbols || "$any".equals(lookupElement.getLookupString())) {
+                                         renderTypeText, renderTailText, false, false, lookupElementInfo -> {
+        if (!filterOutGlobalSymbols || "$any".equals(lookupElementInfo.getLookupString())) {
           return true;
         }
-        var priority = (int)JSCompletionUtil.getLookupElementPriority(lookupElement);
+        var priority = (int)lookupElementInfo.getPriority();
         return priority != NON_CONTEXT_KEYWORDS_PRIORITY.getPriorityValue()
                && priority != KEYWORDS_PRIORITY.getPriorityValue()
                && priority != TOP_LEVEL_SYMBOLS_FROM_OTHER_FILES.getPriorityValue()

@@ -899,7 +899,7 @@ $script""")
 
   fun testIview3Completion() {
     doLookupTest(VueTestModule.IVIEW_3_5_4, locations = listOf("v-bind:<caret>", "v-on:<caret>")) {
-      !it.startsWith("aria-")
+      !it.lookupString.startsWith("aria-")
     }
   }
 
@@ -1403,13 +1403,13 @@ export default class ComponentInsertion extends Vue {
 
   fun testBindProposalsPriority() {
     doLookupTest(VueTestModule.VUETIFY_1_2_10, VueTestModule.VUE_2_6_10, renderTypeText = false, renderProximity = true) {
-      !it.contains("aria-") && !it.startsWith("on")
+      !it.lookupString.contains("aria-") && !it.lookupString.startsWith("on")
     }
   }
 
   fun testBindProposalsStdTag() {
     doLookupTest(VueTestModule.VUE_2_6_10, renderPriority = false, renderTypeText = false) {
-      !it.contains("aria-")
+      !it.lookupString.contains("aria-")
     }
   }
 
@@ -1422,7 +1422,7 @@ export default class ComponentInsertion extends Vue {
       """.trimIndent(),
                  renderTypeText = false,
                  renderProximity = true) {
-      !it.contains("aria-") && !it.startsWith("on")
+      !it.lookupString.contains("aria-") && !it.lookupString.startsWith("on")
     }
   }
 
@@ -1509,9 +1509,8 @@ export default class ComponentInsertion extends Vue {
 
   fun testSlotProps() {
     doLookupTest(renderPriority = true, renderTypeText = false) {
-      // Ignore global objects
-      item ->
-      !item.endsWith("#1")
+      // Ignore global objects and keywords
+      it.priority > 10
     }
   }
 
@@ -1520,9 +1519,8 @@ export default class ComponentInsertion extends Vue {
       "v-on:click=\"<caret>\"",
       "v-bind:about=\"<caret>\""
     )) {
-      // Ignore global objects
-      item ->
-      !item.endsWith("#1")
+      // Ignore global objects and keywords
+      it.priority > 10
     }
   }
 
@@ -1633,7 +1631,7 @@ export default class ComponentInsertion extends Vue {
       "this.<caret>msg\"",
       "= this.<caret>userInput"
     )) {
-      !it.startsWith("\$")
+      !it.lookupString.startsWith("\$")
     }
   }
 
@@ -1648,9 +1646,8 @@ export default class ComponentInsertion extends Vue {
       "{{foo.<caret>}}",
       "{{state.<caret>count}}"
     )) {
-      // Ignore global objects
-      item ->
-      !item.endsWith("#1")
+      // Ignore global objects and keywords
+      it.priority > 10
     }
   }
 
@@ -1664,9 +1661,8 @@ export default class ComponentInsertion extends Vue {
       "{{foo.<caret>}}",
       "{{state.<caret>count}}"
     )) {
-      // Ignore global objects
-      item ->
-      !item.endsWith("#1")
+      // Ignore global objects and keywords
+      it.priority > 10
     }
   }
 
@@ -1778,8 +1774,10 @@ export default {
                    ":<caret>foo=",
                    "<<caret>Foo",
                  ),
-                 lookupFilter = nonHtmlLookupFilter) {
-      !it.startsWith("aria-") && !it.startsWith("on") && !it.startsWith(":aria-")
+    ) { info ->
+      nonHtmlLookupFilter(info) && info.lookupString.let {
+        !it.startsWith("aria-") && !it.startsWith("on") && !it.startsWith(":aria-")
+      }
     }
   }
 
@@ -1792,17 +1790,17 @@ export default {
                    " v<caret>/>",
                    ":<caret>foo=",
                    "<<caret>Foo",
-                 ),
-                 lookupFilter = nonHtmlLookupFilter) {
-      !it.startsWith("aria-") && !it.startsWith("on") && !it.startsWith(":aria-")
+                 )) { info ->
+      nonHtmlLookupFilter(info) && info.lookupString.let {
+        !it.startsWith("aria-") && !it.startsWith("on") && !it.startsWith(":aria-")
+      }
     }
   }
 
   fun testExpression() {
     doLookupTest(VueTestModule.VUE_2_6_10) {
       // Ignore global objects
-      item ->
-      !item.endsWith("#1")
+      it.priority > 1
     }
   }
 
@@ -1812,9 +1810,8 @@ export default {
 
   fun testEnum() {
     doLookupTest(VueTestModule.VUE_3_2_2) {
-      // Ignore global objects
-      item ->
-      !item.endsWith("#1")
+      // Ignore global objects and keywords
+      it.priority > 10
     }
   }
 
@@ -1875,7 +1872,7 @@ export default {
                  VueTestModule.ELEMENT_PLUS_2_1_11_NO_WEB_TYPES,
                  locations = listOf("Dialog v-bind:<caret>", "Dialog v-on:<caret>",
                                     "el-affix v-bind:<caret>", "el-affix v-on:<caret>")) {
-      !it.startsWith("aria-")
+      !it.lookupString.startsWith("aria-")
     }
   }
 
@@ -1995,8 +1992,9 @@ export default {
   fun testComponentEmitsDefinitions() {
     doLookupTest(VueTestModule.VUE_3_2_2, dir = true, renderPriority = true, renderTypeText = false,
                  locations = listOf("define-emits @<caret>", "define-component @<caret>", "export-component @<caret>",
-                                    "define-emits-with-type @<caret>"),
-                 filter = { it.startsWith("!") })
+                                    "define-emits-with-type @<caret>")) {
+      it.isItemTextBold
+    }
   }
 
   fun testExternalSymbolsImport() {
@@ -2100,7 +2098,9 @@ export default {
   }
 
   fun testVueTscComponent() {
-    doLookupTest(VueTestModule.VUE_3_2_2, dir = true, renderPriority = true, filter = { it.startsWith("!") })
+    doLookupTest(VueTestModule.VUE_3_2_2, dir = true, renderPriority = true) {
+      it.isItemTextBold
+    }
   }
 
   fun testWatchProperty() {
@@ -2243,8 +2243,7 @@ export default {
                            containsCheck: Boolean = false,
                            renderProximity: Boolean = false,
                            renderPresentedText: Boolean = false,
-                           lookupFilter: (item: LookupElement) -> Boolean = { true },
-                           filter: (item: String) -> Boolean = { true }) {
+                           lookupFilter: (item: LookupElementInfo) -> Boolean = { true }) {
     if (!noConfigure) {
       if (dir) {
         myFixture.copyDirectoryToProject(getTestName(true), ".")
@@ -2265,8 +2264,7 @@ export default {
     if (locations.isEmpty()) {
       myFixture.completeBasic()
       myFixture.checkListByFile(
-        myFixture.renderLookupItems(renderPriority, renderTypeText, renderTailText, renderProximity, renderPresentedText, lookupFilter)
-          .filter(filter),
+        myFixture.renderLookupItems(renderPriority, renderTypeText, renderTailText, renderProximity, renderPresentedText, lookupFilter),
         getTestName(true) + ".txt",
         containsCheck
       )
@@ -2276,8 +2274,7 @@ export default {
         myFixture.moveToOffsetBySignature(location)
         myFixture.completeBasic()
         myFixture.checkListByFile(
-          myFixture.renderLookupItems(renderPriority, renderTypeText, renderTailText, renderProximity, renderPresentedText, lookupFilter)
-            .filter(filter),
+          myFixture.renderLookupItems(renderPriority, renderTypeText, renderTailText, renderProximity, renderPresentedText, lookupFilter),
           getTestName(true) + ".${index + 1}.txt",
           containsCheck
         )

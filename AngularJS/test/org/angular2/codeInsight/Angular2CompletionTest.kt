@@ -21,7 +21,9 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     doLookupTest(locations = listOf("ref-a=\"<caret>\"", " [we<caret>]>"))
 
   fun testHostDirectivesProperties() =
-    doLookupTest(renderedItemFilter = { it.endsWith("#100") })
+    doLookupTest {
+      it.priority == 100.0
+    }
 
   fun testHostDirectiveInputMapping() =
     doLookupTest(renderTypeText = true, renderPriority = false)

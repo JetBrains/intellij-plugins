@@ -29,16 +29,3 @@
 !$ssrContext#100
 !$vnode#100
 !$watch#100
-!false#6
-!function#6
-!function#6
-!new#6
-!null#6
-!this#6
-!true#6
-!typeof#6
-!async#5
-!await#5
-!delete#5
-!undefined#5
-!void#5
