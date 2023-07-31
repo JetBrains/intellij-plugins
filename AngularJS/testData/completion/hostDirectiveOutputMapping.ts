@@ -21,7 +21,7 @@ export class BoldDirective {
    standalone: true,
    hostDirectives: [{
      directive: BoldDirective,
-     outputs: ['<caret>']
+     outputs: ["alias3", '<caret>alias1']
    }]
  })
 export class MouseenterDirective {

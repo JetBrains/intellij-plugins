@@ -4,7 +4,7 @@ package org.angular2.entities.source
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 
-data class Angular2PropertyInfo constructor(
+data class Angular2PropertyInfo(
   val name: String,
   val required: Boolean,
   val declaringElement: PsiElement?,

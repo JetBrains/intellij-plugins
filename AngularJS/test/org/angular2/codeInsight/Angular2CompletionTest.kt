@@ -28,6 +28,11 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
   fun testHostDirectiveInputMapping() =
     doLookupTest(renderTypeText = true, renderPriority = false)
 
+  fun testHostDirectiveInputMappingOutsideLiteral() =
+    doLookupTest(renderTypeText = true, renderPriority = false, renderPresentedText = true) {
+      it.priority >= 100
+    }
+
   fun testHostDirectiveOutputMapping() =
     doLookupTest(ANGULAR_CORE_13_3_5, renderTypeText = true, renderPriority = false)
 
@@ -37,6 +42,32 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
       type("vir\t")
     }
   }
+
+  fun testDirectiveInputMappingLiteralWithReplace() {
+    doConfiguredTest(checkResult = true) {
+      completeBasic()
+      type("ie\t")
+    }
+  }
+
+  fun testDirectiveInputMappingLiteral() =
+    doLookupTest()
+
+  fun testDirectiveInputMappingOutsideLiteral() =
+    doLookupTest(renderPresentedText = true) {
+      it.priority >= 100
+    }
+
+  fun testDirectiveInputMappingObject() =
+    doLookupTest()
+
+  fun testDirectiveInputMappingOutsideObject() =
+    doLookupTest(renderPresentedText = true) {
+      it.priority >= 100
+    }
+
+  fun testDirectiveOutputMapping() =
+    doLookupTest(ANGULAR_CORE_13_3_5)
 
   fun testCompletionInExpression() {
     doLookupTest(ANGULAR_CORE_13_3_5, ANGULAR_CDK_14_2_0, dir = true)

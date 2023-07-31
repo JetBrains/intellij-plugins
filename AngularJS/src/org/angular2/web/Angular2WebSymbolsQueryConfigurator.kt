@@ -1,9 +1,14 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web
 
+import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.JSLiteralExpression
+import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.psi.css.CssElement
 import com.intellij.psi.xml.XmlAttribute
+import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.WebSymbolsScope
 import com.intellij.webSymbols.context.WebSymbolsContext
@@ -21,24 +26,43 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
                         context: WebSymbolsContext,
                         allowResolve: Boolean): List<WebSymbolsScope> =
     if (context.framework == Angular2Framework.ID && element != null) {
-      val result = mutableListOf(DirectiveElementSelectorsScope(element.project),
-                                 DirectiveAttributeSelectorsScope(element.project))
-      ((element as? XmlAttribute)?.parent ?: element as? XmlTag)?.let {
-        result.addAll(listOf(
-          OneTimeBindingsProvider(),
-          StandardPropertyAndEventsScope(it.containingFile),
-          NgContentSelectorsScope(it),
-          MatchedDirectivesScope(it),
-          I18NAttributesScope(it),
-        ))
+      when (element) {
+        is JSElement -> calculateJavaScriptScopes(element)
+        is XmlElement -> calculateHtmlScopes(element)
+        is CssElement -> calculateCssScopes(element)
+        else -> emptyList()
       }
-      if (element is Angular2HtmlPropertyBinding
-          && Angular2AttributeNameParser.parse(element.name).type == Angular2AttributeType.REGULAR) {
-        result.add(AttributeWithInterpolationsScope)
-      }
-      result
     }
     else emptyList()
+
+  private fun calculateHtmlScopes(element: XmlElement): MutableList<WebSymbolsScope> {
+    val result = mutableListOf(DirectiveElementSelectorsScope(element.project),
+                               DirectiveAttributeSelectorsScope(element.project))
+    ((element as? XmlAttribute)?.parent ?: element as? XmlTag)?.let {
+      result.addAll(listOf(
+        OneTimeBindingsProvider(),
+        StandardPropertyAndEventsScope(it.containingFile),
+        NgContentSelectorsScope(it),
+        MatchedDirectivesScope(it),
+        I18NAttributesScope(it),
+      ))
+    }
+    if (element is Angular2HtmlPropertyBinding
+        && Angular2AttributeNameParser.parse(element.name).type == Angular2AttributeType.REGULAR) {
+      result.add(AttributeWithInterpolationsScope)
+    }
+    return result
+  }
+
+  private fun calculateCssScopes(element: CssElement): List<WebSymbolsScope> =
+    listOf(DirectiveElementSelectorsScope(element.project),
+           DirectiveAttributeSelectorsScope(element.project))
+
+  private fun calculateJavaScriptScopes(element: JSElement): List<WebSymbolsScope> =
+    if (element is JSReferenceExpression || element is JSLiteralExpression)
+      listOf(DirectivePropertyMappingCompletionScope(element))
+    else
+      emptyList()
 
   companion object {
     const val PROP_BINDING_PATTERN = "ng-binding-pattern"

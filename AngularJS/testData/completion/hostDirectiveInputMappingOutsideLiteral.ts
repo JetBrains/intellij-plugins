@@ -1,5 +1,6 @@
 
 
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 import {Directive, Input} from '@angular/core';
 
 @Directive({
@@ -29,7 +30,7 @@ export class BoldDirective {
    standalone: true,
    hostDirectives: [{
      directive: BoldDirective,
-     inputs: ['<caret>', "alias2"]
+     inputs: [<caret>, 'foobar']
    }]
  })
 export class MouseenterDirective {
