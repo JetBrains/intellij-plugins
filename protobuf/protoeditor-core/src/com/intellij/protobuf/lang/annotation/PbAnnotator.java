@@ -23,6 +23,7 @@ import com.intellij.lang.annotation.Annotator;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.protobuf.ide.highlighter.PbSyntaxHighlighter;
+import com.intellij.protobuf.ide.settings.PbProjectSettings;
 import com.intellij.protobuf.lang.PbLangBundle;
 import com.intellij.protobuf.lang.annotation.OptionOccurrenceTracker.Occurrence;
 import com.intellij.protobuf.lang.intentions.PbAddImportPathIntention;
@@ -588,9 +589,14 @@ public class PbAnnotator implements Annotator {
       return;
     }
     switch (SharedAnnotations.getReferenceState(name.getReference())) {
-      case AMBIGUOUS -> holder.newAnnotation(HighlightSeverity.ERROR, PbLangBundle.message("ambiguous.import", path))
-        .range(range)
-        .create();
+      case AMBIGUOUS -> {
+        if (PbProjectSettings.getInstance(name.getProject()).isIndexBasedResolveEnabled()) {
+          return;
+        }
+        holder.newAnnotation(HighlightSeverity.ERROR, PbLangBundle.message("ambiguous.import", path))
+          .range(range)
+          .create();
+      }
       case VALID, NULL -> { }
       default -> holder.newAnnotation(HighlightSeverity.ERROR, PbLangBundle.message("cannot.resolve.import", path))
         .range(range)

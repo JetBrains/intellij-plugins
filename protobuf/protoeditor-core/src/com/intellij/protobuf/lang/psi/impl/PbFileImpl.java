@@ -23,6 +23,7 @@ import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.protobuf.ide.PbCompositeModificationTracker;
+import com.intellij.protobuf.ide.settings.PbProjectSettings;
 import com.intellij.protobuf.lang.PbFileType;
 import com.intellij.protobuf.lang.PbLanguage;
 import com.intellij.protobuf.lang.descriptor.Descriptor;
@@ -30,10 +31,7 @@ import com.intellij.protobuf.lang.descriptor.DescriptorOptionType;
 import com.intellij.protobuf.lang.psi.*;
 import com.intellij.protobuf.lang.psi.util.PbPsiImplUtil;
 import com.intellij.protobuf.lang.psi.util.PbPsiUtil;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.ResolveState;
+import com.intellij.psi.*;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.CachedValueProvider.Result;
 import com.intellij.psi.util.CachedValuesManager;
@@ -334,7 +332,16 @@ public class PbFileImpl extends PsiFileBase implements PbFile {
       if (ref == null) {
         continue;
       }
-      PsiElement possibleFile = ref.resolve();
+      PsiElement possibleFile;
+      if (PbProjectSettings.getInstance(file.getProject()).isIndexBasedResolveEnabled() && ref instanceof PsiPolyVariantReference) {
+        possibleFile = Arrays.stream(((PsiPolyVariantReference)ref).multiResolve(false))
+          .map(it -> it.getElement())
+          .filter(it -> it instanceof PbFile)
+          .findFirst().orElse(null);
+      }
+      else {
+        possibleFile = ref.resolve();
+      }
       if (possibleFile instanceof PbFile importedFile) {
         if (imports.contains(importedFile)) {
           // TODO(volkman): do something with dependency cycle?

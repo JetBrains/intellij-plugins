@@ -3,6 +3,7 @@ package com.intellij.protobuf.lang.resolve
 import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase
 import com.intellij.protobuf.ide.settings.PbProjectSettings
 import com.intellij.protobuf.lang.psi.PbImportName
+import com.intellij.psi.PsiPolyVariantReference
 import com.intellij.psi.util.parentOfType
 import org.junit.Assert
 import org.junit.Before
@@ -72,5 +73,41 @@ class PbImportPathResolverTest : PbCodeInsightFixtureTestCase() {
     val reference = myFixture.file.findElementAt(myFixture.editor.caretModel.offset)!!.parentOfType<PbImportName>()?.reference
     Assert.assertTrue(reference is PbImportReference)
     Assert.assertEquals(importedFile, reference!!.resolve())
+  }
+
+  @Test
+  fun `test ambiguous import is not highlighted when index search is enabled`() {
+    PbProjectSettings.getInstance(myFixture.project).isIndexBasedResolveEnabled = true
+
+    myFixture.addFileToProject("/testroot/google/protobuf/wrappers.proto", """
+      message Test {}
+    """.trimIndent())
+    myFixture.configureByText("main.proto", """
+      import "google/protobuf/wrap<caret>pers.proto";
+    """.trimIndent())
+    myFixture.checkHighlighting(true, true, true)
+    val reference = myFixture.getReferenceAtCaretPosition("main.proto")
+    Assert.assertEquals(2, (reference as PsiPolyVariantReference).multiResolve(false).size)
+  }
+
+  @Test
+  fun `test symbol path with ambiguous target can be resolved`() {
+    PbProjectSettings.getInstance(myFixture.project).isIndexBasedResolveEnabled = true
+
+    myFixture.addFileToProject("/testroot/google/protobuf/wrappers.proto", """
+      package google.protobuf;
+      message DoubleValue {}
+    """.trimIndent())
+    myFixture.configureByText("main.proto", """
+      syntax = "proto3";
+      import "google/protobuf/wrappers.proto";
+      
+      message Test {
+        google.protobuf.Double<caret>Value value = 1;
+      }
+    """.trimIndent())
+    myFixture.checkHighlighting(true, true, true)
+    val reference = myFixture.getReferenceAtCaretPosition("main.proto")
+    Assert.assertEquals(1, (reference as PsiPolyVariantReference).multiResolve(false).size)
   }
 }
