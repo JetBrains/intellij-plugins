@@ -19,7 +19,7 @@ internal class PbIndexBasedFileResolveProvider : FileResolveProvider {
   override fun findFile(path: String, module: Module): VirtualFile? {
     if (!isEnabled(module.project) || !path.endsWith(".proto")) return null
     val searchedFileName = path.substringAfterLast('/').let(FileUtilRt::getNameWithoutExtension)
-    val searchScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module)
+    val searchScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module).uniteWith(module.getModuleContentWithDependenciesScope())
     return findFileByImportPath(searchedFileName, searchScope, path)
   }
 
