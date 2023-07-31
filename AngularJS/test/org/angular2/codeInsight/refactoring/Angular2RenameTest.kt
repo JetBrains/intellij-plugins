@@ -6,11 +6,12 @@ import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings
 import com.intellij.openapi.ui.TestDialog
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import org.angular2.Angular2TestCase
+import org.angular2.Angular2TestModule
 
 class Angular2RenameTest : Angular2TestCase("refactoring/rename") {
 
   fun testRenameComponentFromStringUsage() =
-    checkSymbolRename("test.component.ts", "newName")
+    checkSymbolRename("test.component.ts", "newName", searchCommentsAndText = true)
 
   fun testComponentFieldFromTemplate() =
     checkSymbolRename("test.component.html", "newName")
@@ -28,25 +29,25 @@ class Angular2RenameTest : Angular2TestCase("refactoring/rename") {
     checkSymbolRename("test.component.html", "newReference")
 
   fun testReferenceFromTSNoStrings() =
-    checkSymbolRename("test.component.ts", "newReference", searchCommentsAndText = false)
+    checkSymbolRename("test.component.ts", "newReference")
 
   fun testReferenceFromHTMLNoStrings() =
-    checkSymbolRename("test.component.html", "newReference", searchCommentsAndText = false)
+    checkSymbolRename("test.component.html", "newReference")
 
   fun testPipeFromHTML() =
-    checkSymbolRename("test.component.html", "bar")
+    checkSymbolRename("test.component.html", "bar", searchCommentsAndText = true)
 
   fun testPipeFromHTMLNoStrings() =
-    checkSymbolRename("test.component.html", "bar", searchCommentsAndText = false)
+    checkSymbolRename("test.component.html", "bar")
 
   fun testPipeFromTS() =
-    checkSymbolRename("foo.pipe.ts", "bar")
+    checkSymbolRename("foo.pipe.ts", "bar", searchCommentsAndText = true)
 
   fun testPipeFromTS2() =
-    checkSymbolRename("foo.pipe.ts", "bar")
+    checkSymbolRename("foo.pipe.ts", "bar", searchCommentsAndText = true)
 
   fun testPipeFromTS2NoStrings() =
-    checkSymbolRename("foo.pipe.ts", "bar", searchCommentsAndText = false)
+    checkSymbolRename("foo.pipe.ts", "bar")
 
   fun testComponentWithRelatedFiles() =
     withTempCodeStyleSettings { t: CodeStyleSettings ->
@@ -125,5 +126,8 @@ class Angular2RenameTest : Angular2TestCase("refactoring/rename") {
   fun testHostDirectiveOutputMappedTarget() = checkSymbolRename("newOutput", dir = false)
 
   fun testHostDirectiveOutputMappedTargetFromUsage() = checkSymbolRename("newOutput", dir = false)
+
+  fun testHostDirectiveOutputWithJsTextRefToFilterOut() =
+    checkSymbolRename("data-source.directive.ts", "newOutput", Angular2TestModule.ANGULAR_CORE_15_1_5)
 
 }
