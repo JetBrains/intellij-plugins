@@ -73,10 +73,11 @@ object Angular2EntityUtils {
   }
 
   @JvmStatic
-  fun getPropertyDeclarationOrReferenceKindAndDirective(element: JSLiteralExpression,
+  fun getPropertyDeclarationOrReferenceKindAndDirective(context: PsiElement?,
                                                         declaration: Boolean): PropertyDeclarationOrReferenceInfo? {
     val ownerProp = if (declaration) Angular2DecoratorUtil.ALIAS_PROP else Angular2DecoratorUtil.NAME_PROP
-    val parent = element.parent.let { parent ->
+    val contextParent = context?.parent ?: return null
+    val parent = contextParent.let { parent ->
       if (parent is JSProperty)
         parent.takeIf { property -> property.name == ownerProp }?.parent?.parent
       else
@@ -86,9 +87,10 @@ object Angular2EntityUtils {
     val kind: String?
     val directiveDef: PsiElement?
     val hostDirective: Boolean
+    val property: JSProperty?
     when (parent) {
       is JSArgumentList -> {
-        if (!declaration && element.parent == parent) return null
+        if (!declaration && contextParent == parent) return null
         val propertyDecorator = parent.parent?.parent?.asSafely<ES6Decorator>()
         kind = propertyDecorator?.decoratorName?.let {
           when (it) {
@@ -99,9 +101,10 @@ object Angular2EntityUtils {
         }
         directiveDef = propertyDecorator?.contextOfType<TypeScriptClass>(false)
         hostDirective = false
+        property = null
       }
       is JSArrayLiteralExpression -> {
-        val property = parent.parent?.asSafely<JSProperty>()
+        property = parent.parent?.asSafely<JSProperty>()
         kind = property?.name?.takeIf { it == Angular2DecoratorUtil.INPUTS_PROP || it == Angular2DecoratorUtil.OUTPUTS_PROP }
                ?: return null
         val literal = property.parent?.asSafely<JSObjectLiteralExpression>()
@@ -133,7 +136,8 @@ object Angular2EntityUtils {
     return PropertyDeclarationOrReferenceInfo(
       kind ?: return null,
       Angular2EntitiesProvider.getDirective(directiveDef) ?: return null,
-      hostDirective
+      hostDirective,
+      property
     )
   }
 
@@ -370,6 +374,7 @@ object Angular2EntityUtils {
     val kind: String,
     val directive: Angular2Directive,
     val hostDirective: Boolean,
+    val property: JSProperty?
   )
 
 }
