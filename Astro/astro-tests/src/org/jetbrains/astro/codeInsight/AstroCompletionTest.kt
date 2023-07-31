@@ -10,10 +10,14 @@ class AstroCompletionTest : AstroCodeInsightTestCase("codeInsight/completion") {
   fun testCharEntities() = doLookupTest()
 
   fun testScriptTagAttributes() =
-    doLookupTest(renderedItemFilter = { !it.endsWith("#0") })
+    doLookupTest {
+      it.priority > 0
+    }
 
   fun testStyleTagAttributes() =
-    doLookupTest(renderedItemFilter = { !it.endsWith("#0") })
+    doLookupTest {
+      it.priority > 0
+    }
 
   fun testImportedComponent() =
     doLookupTest(additionalFiles = listOf("component.astro"))
@@ -31,8 +35,9 @@ class AstroCompletionTest : AstroCodeInsightTestCase("codeInsight/completion") {
     doTypingTest("getRandomNumber\n", additionalFiles = listOf("functions.ts"))
 
   fun testFrontmatterKeywords() =
-    doLookupTest(additionalFiles = listOf("component.astro"),
-                 renderedItemFilter = { it.endsWith("#6") || it.endsWith("#5") })
+    doLookupTest(additionalFiles = listOf("component.astro")) {
+      it.priority == 5.0 || it.priority == 6.0
+    }
 
   fun testPropsInterface() =
     doLookupTest(AstroTestModule.ASTRO_1_9_0)

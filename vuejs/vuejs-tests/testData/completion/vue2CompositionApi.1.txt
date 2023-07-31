@@ -30,16 +30,3 @@
 !$ssrContext#any#100
 !$vnode#VNode#100
 !$watch#() => void#100
-!false#null#6
-!function#null#6
-!function#null#6
-!new#null#6
-!null#null#6
-!this#null#6
-!true#null#6
-!typeof#null#6
-!async#null#5
-!await#null#5
-!delete#null#5
-!undefined#null#5
-!void#null#5

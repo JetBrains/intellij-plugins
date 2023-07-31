@@ -1,6 +1,7 @@
 package org.jetbrains.astro.codeInsight
 
 import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.webSymbols.LookupElementInfo
 import com.intellij.webSymbols.checkDocumentationAtCaret
 import com.intellij.webSymbols.checkLookupItems
 import org.jetbrains.astro.AstroCodeInsightTestCase
@@ -29,7 +30,7 @@ class AstroDocumentationTest : AstroCodeInsightTestCase("codeInsight/documentati
   }
 
   private fun doLookupTest(
-    lookupFilter: (item: LookupElement) -> Boolean = { true }
+    lookupFilter: (item: LookupElementInfo) -> Boolean = { true }
   ) {
     doConfiguredTest {
       checkLookupItems(renderPriority = true, renderTypeText = true, checkDocumentation = true, lookupItemFilter = lookupFilter)
