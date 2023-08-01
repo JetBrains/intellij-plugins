@@ -68,6 +68,17 @@ val PRISMA_SCHEMA_FIELDS = schema {
       }
     }
     element {
+      label = "directUrl"
+      documentation =
+        "Connection URL for direct connection to the database. [Learn more](https://pris.ly/d/data-proxy-cli)."
+      type = PrimitiveTypes.STRING
+      insertHandler = PrismaInsertHandler.EQUALS
+
+      variant {
+        ref = PrismaSchemaRef(PrismaSchemaKind.FUNCTION, Functions.ENV)
+      }
+    }
+    element {
       label = "relationMode"
       type = PrimitiveTypes.STRING
       datasources = PrismaDatasourceType.except(PrismaDatasourceType.MONGODB)
@@ -87,8 +98,13 @@ val PRISMA_SCHEMA_FIELDS = schema {
     element {
       label = "shadowDatabaseUrl"
       documentation =
-        "Connection URL including authentication info to use for Migrate's [shadow database](https://pris.ly/d/migrate-shadow). Each datasource provider documents the URL syntax. Most providers use the syntax provided by the database."
+        "Connection URL including authentication info to use for Migrate's [shadow database](https://pris.ly/d/migrate-shadow)."
       type = PrimitiveTypes.STRING
+      insertHandler = PrismaInsertHandler.EQUALS
+
+      variant {
+        ref = PrismaSchemaRef(PrismaSchemaKind.FUNCTION, Functions.ENV)
+      }
     }
     element {
       label = "extensions"

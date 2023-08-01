@@ -16,7 +16,7 @@ class PrismaKeyValueCompletionTest : PrismaCompletionTestBase() {
       """.trimIndent(),
       "url"
     )
-    assertSameElements(lookupElements.strings, "provider", "url", "shadowDatabaseUrl", "relationMode", "extensions")
+    assertSameElements(lookupElements.strings, "directUrl", "provider", "url", "shadowDatabaseUrl", "relationMode", "extensions")
     checkLookupDocumentation(lookupElements, "url")
   }
 
@@ -29,7 +29,7 @@ class PrismaKeyValueCompletionTest : PrismaCompletionTestBase() {
           }
       """.trimIndent()
     )
-    assertSameElements(lookupElements.strings, "url", "shadowDatabaseUrl")
+    assertSameElements(lookupElements.strings, "directUrl", "url", "shadowDatabaseUrl")
   }
 
   fun testDatasourceExtensions() {
