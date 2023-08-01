@@ -65,12 +65,12 @@ public class KarmaCoverageEngine extends CoverageEngine {
                                            long lastCoverageTimeStamp,
                                            @Nullable String suiteToMerge,
                                            boolean coverageByTestEnabled,
-                                           boolean tracingEnabled,
+                                           boolean branchCoverage,
                                            boolean trackTestFolders,
                                            Project project) {
     return new KarmaCoverageSuite(covRunner, name, coverageDataFileProvider, lastCoverageTimeStamp,
-                                 coverageByTestEnabled, tracingEnabled,
-                                 trackTestFolders, project, this);
+                                  coverageByTestEnabled, branchCoverage,
+                                  trackTestFolders, project, this);
   }
 
   @Override

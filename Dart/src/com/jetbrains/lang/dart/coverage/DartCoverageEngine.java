@@ -54,7 +54,7 @@ public class DartCoverageEngine extends CoverageEngine {
                                            long lastCoverageTimeStamp,
                                            @Nullable String suiteToMerge,
                                            boolean coverageByTestEnabled,
-                                           boolean tracingEnabled,
+                                           boolean branchCoverage,
                                            boolean trackTestFolders,
                                            Project project) {
     return null;
