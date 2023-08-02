@@ -117,6 +117,8 @@ class Angular2RenameTest : Angular2TestCase("refactoring/rename") {
 
   fun testHostDirectiveInputMappedTargetBadSource() = checkSymbolRename("newInput", dir = false)
 
+  fun testHostDirectiveOneTimeBinding() = checkSymbolRename("newInput", dir = false)
+
   fun testHostDirectiveOutputForwarded() = checkSymbolRename("newOutput", dir = false)
 
   fun testHostDirectiveOutputMappedSource() = checkSymbolRename("newOutput", dir = false)

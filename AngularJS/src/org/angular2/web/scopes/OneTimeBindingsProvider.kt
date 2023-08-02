@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations
 import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveType
 import com.intellij.lang.javascript.psi.types.primitives.JSStringType
 import com.intellij.model.Pointer
+import com.intellij.model.Symbol
 import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.psi.PsiElement
@@ -98,7 +99,6 @@ internal class OneTimeBindingsProvider : WebSymbolsScope {
 
   private class Angular2OneTimeBinding(delegate: WebSymbol, val requiresValue: Boolean)
     : WebSymbolDelegate<WebSymbol>(delegate), PsiSourcedWebSymbol {
-
     override val source: PsiElement?
       get() = (delegate as? PsiSourcedWebSymbol)?.source
 
@@ -140,6 +140,10 @@ internal class OneTimeBindingsProvider : WebSymbolsScope {
         delegatePtr.dereference()?.let { Angular2OneTimeBinding(it, requiresValue) }
       }
     }
+
+    override fun isEquivalentTo(symbol: Symbol): Boolean =
+      super<PsiSourcedWebSymbol>.isEquivalentTo(symbol)
+      || delegate.isEquivalentTo(symbol)
 
     override fun equals(other: Any?): Boolean =
       other is Angular2OneTimeBinding
