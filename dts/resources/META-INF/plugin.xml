@@ -36,6 +36,13 @@
         <breadcrumbsInfoProvider
                 implementation="com.intellij.dts.ide.DtsBreadcrumbsProvider"/>
 
+        <!-- settings -->
+        <projectConfigurable
+                parentId="build"
+                instance="com.intellij.dts.settings.DtsSettingsConfigurable"
+                id="com.intellij.dts.settings.DtsSettingsConfigurable"
+                bundle="messages.DtsBundle" key="settings.name"/>
+
         <!-- documentation -->
         <platform.backend.documentation.targetProvider
                 implementation="com.intellij.dts.documentation.DtsDocumentationProvider"/>

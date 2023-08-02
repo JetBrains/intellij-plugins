@@ -1,6 +1,6 @@
 package com.intellij.dts
 
-import com.intellij.dts.settings.DtsZephyrSettings
+import com.intellij.dts.settings.DtsSettings
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.psi.PsiFile
@@ -44,9 +44,11 @@ abstract class DtsTestBase : BasePlatformTestCase() {
         val manager = ModuleManager.getInstance(project)
         ModuleRootModificationUtil.addContentRoot(manager.modules.first(), zephyr.pathString)
 
-        val settings = DtsZephyrSettings.of(project)
-        settings.board = "esp32"
-        settings.arch = "xtensa"
+        val settings = DtsSettings.of(project)
+        settings.update {
+            zephyrBoard = "esp32"
+            zephyrArch = "xtensa"
+        }
     }
 
     protected fun getTestFixture(extension: String): String {

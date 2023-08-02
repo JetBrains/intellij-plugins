@@ -1,6 +1,6 @@
 package com.intellij.dts.util
 
-import com.intellij.dts.settings.DtsZephyrSettings
+import com.intellij.dts.settings.DtsSettings
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.modules
 import com.intellij.openapi.roots.ModuleRootManager
@@ -49,12 +49,12 @@ object DtsZephyrUtil {
         return candidates.firstOrNull()
     }
 
-    private fun getRootDir(project: Project, settings: DtsZephyrSettings): VirtualFile? {
-        val path = settings.rootPath
+    private fun getRootDir(project: Project, settings: DtsSettings): VirtualFile? {
+        val path = settings.state.zephyrRoot
 
-        return if (path == null) {
+        return if (path.isEmpty()) {
             val result = searchRootDir(project) ?: return null
-            settings.rootPath = result.path
+            settings.update { zephyrRoot = result.path }
 
             result
         } else {
@@ -62,33 +62,33 @@ object DtsZephyrUtil {
         }
     }
 
-    private fun getSubDir(project: Project, settings: DtsZephyrSettings, relativePath: String): VirtualFile? {
+    private fun getSubDir(project: Project, settings: DtsSettings, relativePath: String): VirtualFile? {
         val zephyr = getRootDir(project, settings) ?: return null
         return zephyr.findDirectory(relativePath)
     }
 
     fun getBoardDir(project: Project): VirtualFile? {
-        val settings = DtsZephyrSettings.of(project)
+        val settings = DtsSettings.of(project)
 
-        val board = settings.board ?: return null
-        val arch = settings.arch ?: return null
+        val board = settings.zephyrBoard ?: return null
+        val arch = settings.zephyrArch ?: return null
 
         return getSubDir(project, settings, "$boardsPath/$arch/$board")
     }
 
     fun getIncludeDirs(project: Project): List<VirtualFile> {
-        val settings = DtsZephyrSettings.of(project)
+        val settings = DtsSettings.of(project)
 
         val includes = sequence {
             yieldAll(includePaths)
-            settings.arch?.let { yield("dts/$it") }
+            settings.zephyrArch?.let { yield("dts/$it") }
         }
 
         return includes.mapNotNull { getSubDir(project, settings, it) }.toList()
     }
 
     fun getBindingsDir(project: Project): VirtualFile? {
-        val settings = DtsZephyrSettings.of(project)
+        val settings = DtsSettings.of(project)
         return getSubDir(project, settings, bindingsPath)
     }
 }

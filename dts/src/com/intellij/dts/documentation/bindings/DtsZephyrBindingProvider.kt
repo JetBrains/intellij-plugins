@@ -2,7 +2,7 @@ package com.intellij.dts.documentation.bindings
 
 import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.psi.DtsString
-import com.intellij.dts.settings.DtsZephyrSettings
+import com.intellij.dts.settings.DtsSettings
 import com.intellij.dts.util.DtsTreeUtil
 import com.intellij.dts.util.DtsZephyrUtil
 import com.intellij.openapi.components.Service
@@ -117,15 +117,15 @@ class DtsZephyrBindingProvider(val project: Project) {
     }
 
     private fun getBindings(): Map<String, YamlMap>? {
-        val settings = DtsZephyrSettings.of(project)
-        if (bindings != null && settings.rootPath == zephyrRoot) {
+        val settings = DtsSettings.of(project)
+        if (bindings != null && settings.zephyrRoot == zephyrRoot) {
             return bindings
         }
 
         val dir = DtsZephyrUtil.getBindingsDir(project) ?: return null
         bindings = loadBindings(dir)
 
-        zephyrRoot = settings.rootPath
+        zephyrRoot = settings.zephyrRoot
 
         return bindings
     }
