@@ -239,7 +239,7 @@
                             implementationClass="org.jetbrains.vuejs.libraries.vuex.codeInsight.VuexCompletionContributor"
                             id="VuexCompletionContributor"/>
     <typedHandler implementation="org.jetbrains.vuejs.codeInsight.completion.VueAutoPopupHandler"/>
-    <include.provider implementation="org.jetbrains.vuejs.index.VueES6ModuleFileIncludeProvider"/>
+    <include.provider implementation="org.jetbrains.vuejs.index.VueFileIncludeProvider"/>
 
     <lang.formatter language="Vue" implementationClass="org.jetbrains.vuejs.lang.html.psi.formatter.VueFormattingModelBuilder"/>
     <lang.formatter language="VueExpr" implementationClass="org.jetbrains.vuejs.lang.expr.psi.formatter.VueExprFormattingModelBuilder"/>
