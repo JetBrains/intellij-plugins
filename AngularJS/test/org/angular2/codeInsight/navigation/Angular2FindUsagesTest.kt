@@ -21,4 +21,6 @@ class Angular2FindUsagesTest : Angular2TestCase("navigation/findUsages") {
 
   fun testExportAs() = checkUsages()
 
+  fun testHostDirectiveOneTimeBinding() = checkUsages(fileName = "mouseenter.directive.ts")
+
 }
