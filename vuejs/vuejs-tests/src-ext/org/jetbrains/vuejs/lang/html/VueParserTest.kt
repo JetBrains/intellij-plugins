@@ -449,6 +449,18 @@ class VueParserTest : HtmlParsingTest("", "vue",
     doReparseTest("<style scoped>.foo { }</styl\n", "<style scoped>.foo { }</style><div\n")
   }
 
+  fun testJsxReparse() {
+    doReparseTest("""
+      <script lang="jsx">
+      const dropdown = () => (<div style>a</div>)
+      </script>
+    """.trimIndent(), """
+      <script lang="jsx">
+      const dropdown = () => (<div style="foo">a</div>)
+      </script>
+    """.trimIndent())
+  }
+
   fun testLangReparse() {
     val baseText = """
       <script lang="js">
