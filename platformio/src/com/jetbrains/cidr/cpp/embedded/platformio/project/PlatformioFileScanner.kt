@@ -122,18 +122,31 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
     checkCancelled.run()
     val fileList = mutableListOf<String>()
 
-    fun addSources(srcFolder: VirtualFile, buildSrcFilter: PlatformioSrcFilters) =
+    fun addSources(srcFolder: VirtualFile, buildSrcFilter: PlatformioSrcFilters, additionalFlags: List<String>? = null) {
+      val cCompilerSwitches: MutableList<String>
+      val cxxCompilerSwitches: MutableList<String>
+      if (additionalFlags == null) {
+        cCompilerSwitches = cLanguageConfiguration.compilerSwitches
+        cxxCompilerSwitches = cxxLanguageConfiguration.compilerSwitches
+      }
+      else {
+        cCompilerSwitches = cLanguageConfiguration.compilerSwitches.toMutableList()
+        cCompilerSwitches.addAll(additionalFlags)
+        cxxCompilerSwitches = cxxLanguageConfiguration.compilerSwitches.toMutableList()
+        cxxCompilerSwitches.addAll(additionalFlags)
+      }
       scanSources(srcFolder, buildSrcFilter).forEach {
         if (OCFileTypeHelpers.isSourceFile(it.name)) {
           fileList.add(it.absolutePath)
           when (val kind = OCFileTypeHelpers.getLanguageKind(it.name)) {
             CLanguageKind.CPP -> confBuilder.withFileConfiguration(
-              ExternalFileConfigurationImpl(it, kind, cxxLanguageConfiguration.compilerSwitches))
+              ExternalFileConfigurationImpl(it, kind, cxxCompilerSwitches))
             CLanguageKind.C -> confBuilder.withFileConfiguration(
-              ExternalFileConfigurationImpl(it, kind, cLanguageConfiguration.compilerSwitches))
+              ExternalFileConfigurationImpl(it, kind, cCompilerSwitches))
           }
         }
       }
+    }
 
     addSources(srcFolder, buildSrcFilter)
 
@@ -150,12 +163,18 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
         try {
           val manifest = libDir.findFile("library.json")?.readText()?.let { Gson().fromJson<Map<String, Any>>(it, Map::class.java) }
           libName = manifest?.get("name").asSafely<String>() ?: libName
-          val manifestBuildPart = manifest?.get("build").asSafely<Map<String, String>>() ?: emptyMap()
+          val manifestBuildPart = manifest?.get("build").asSafely<Map<String, Any>>() ?: emptyMap()
 
-          val libSrcFolder = manifestBuildPart["srcDir"]?.let { VfsUtil.findRelativeFile(libDir, it) } ?: libDir
+          var libSrcFolder = manifestBuildPart["srcDir"].asSafely<String>()?.let {
+            VfsUtil.findRelativeFile(libDir, *it.split('/', '\\').toTypedArray())
+          }
+          if (libSrcFolder == null) {
+            libSrcFolder = VfsUtil.findRelativeFile(libDir, "src")
+          }
           parsedLibPaths[libDir.path] = libName
-          val libSrcFilter = createSrcFilter(manifestBuildPart["srcFilter"])
-          addSources(libSrcFolder, libSrcFilter)
+          val libSrcFilter = createSrcFilter(manifestBuildPart["srcFilter"].asSafely<String>())
+          val libFlags = manifestBuildPart["flags"].asSafely<List<String>>()
+          addSources(libSrcFolder ?: libDir, libSrcFilter, libFlags)
         }
         catch (e: Throwable) {
           LOG.warn(e)

@@ -1,0 +1,9 @@
+{
+  "name": "Confusing Named Library",
+  "build": {
+    "flags": [
+      "-DMANDATORY_DEFINE_B1",
+      "-D MANDATORY_DEFINE_B2"
+    ]
+  }
+}

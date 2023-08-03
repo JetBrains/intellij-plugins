@@ -1,0 +1,27 @@
+[
+  [
+    "env:esp32",
+    [
+      [
+        "platform",
+        "espressif32"
+      ],
+      [
+        "board",
+        "esp-wrover-kit"
+      ],
+      [
+        "framework",
+        [
+          "arduino"
+        ]
+      ],
+      [
+        "lib_deps",
+        [
+          "SD SD_MMC"
+        ]
+      ]
+    ]
+  ]
+]
