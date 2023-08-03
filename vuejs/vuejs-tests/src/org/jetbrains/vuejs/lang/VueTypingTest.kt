@@ -4,7 +4,9 @@ package org.jetbrains.vuejs.lang
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.JavascriptLanguage
+import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.webSymbols.moveToOffsetBySignature
 import com.jetbrains.plugins.jade.JadeLanguage
 import org.jetbrains.plugins.sass.SASSLanguage
 import org.jetbrains.plugins.scss.SCSSLanguage
@@ -12,7 +14,7 @@ import org.jetbrains.plugins.stylus.StylusLanguage
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.lang.html.psi.formatter.VueCodeStyleSettings
 
-class VueTypingTest: BasePlatformTestCase() {
+class VueTypingTest : BasePlatformTestCase() {
 
   override fun getTestDataPath(): String = getVueTestDataPath() + "/typing"
 
@@ -90,7 +92,7 @@ class VueTypingTest: BasePlatformTestCase() {
       styleSettings.getLanguageIndentOptions(StylusLanguage.INSTANCE).INDENT_SIZE = 5
       styleSettings.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 2
       styleSettings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 5
-      doTest("StylusBackspace","\b\b")
+      doTest("StylusBackspace", "\b\b")
     }
   }
 
@@ -116,7 +118,7 @@ class VueTypingTest: BasePlatformTestCase() {
       styleSettings.getLanguageIndentOptions(JadeLanguage.INSTANCE).INDENT_SIZE = 5
       styleSettings.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 2
       styleSettings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 5
-      doTest("PugBackspace","\b\b")
+      doTest("PugBackspace", "\b\b")
     }
   }
 
@@ -182,6 +184,24 @@ class VueTypingTest: BasePlatformTestCase() {
 
   fun testAutoStringInterpolationDirective() {
     doTest("{")
+  }
+
+  fun testPasteIntoJsxFreshlyTypedAttr() {
+    myFixture.configureByText("test.vue", """
+      <script lang="jsx">
+      const <selection>drop</selection>down = () => (<div style="foo">a</div>)
+      </script>
+    """.trimIndent())
+    myFixture.performEditorAction(IdeActions.ACTION_EDITOR_COPY)
+    myFixture.editor.caretModel.primaryCaret.setSelection(0, 0)
+    myFixture.moveToOffsetBySignature("\"foo\"<caret>>")
+    myFixture.type(" title=\"")
+    myFixture.performEditorAction(IdeActions.ACTION_EDITOR_PASTE)
+    myFixture.checkResult("""
+      <script lang="jsx">
+      const dropdown = () => (<div style="foo" title="drop">a</div>)
+      </script>
+    """.trimIndent())
   }
 
   private fun doTest(toType: String) {
