@@ -8,7 +8,7 @@ import javax.swing.Icon
 object DtsFileType : LanguageFileType(DtsLanguage) {
     override fun getName(): String = DtsLanguage.id
 
-    override fun getDescription(): String = DtsBundle.message("file.description")
+    override fun getDescription(): String = DtsBundle.message("language.file_name")
 
     override fun getDefaultExtension(): String = "dts"
 
