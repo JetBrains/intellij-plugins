@@ -8,11 +8,18 @@ import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode
 import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.util.PlatformIcons
 import com.intellij.util.asSafely
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
 
 class PlatformioSourcesStructureProvider : TreeStructureProvider {
+
+  private fun detectSubfolder(folder: String, subfolder: String): Boolean {
+    if (folder == subfolder) return true
+    return subfolder.substringAfter(folder).startsWith('/')
+  }
+
   override fun modify(parent: AbstractTreeNode<*>,
                       children: MutableCollection<AbstractTreeNode<*>>,
                       settings: ViewSettings?): MutableCollection<AbstractTreeNode<*>> {
@@ -26,7 +33,7 @@ class PlatformioSourcesStructureProvider : TreeStructureProvider {
           var libName: String? = null
           val path = child.asSafely<PsiDirectoryNode>()?.virtualFile?.path
           if (path != null) {
-            libName = librariesPaths.entries.firstOrNull { path.startsWith(it.key) }?.value
+            libName = librariesPaths.entries.firstOrNull { detectSubfolder(it.key, path) }?.value
           }
           if (libName != null) {
             val libNode = libNodes.getOrPut(libName) { LibraryNode(project, libName) }

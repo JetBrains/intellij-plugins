@@ -22,13 +22,13 @@ import com.jetbrains.cidr.external.system.model.ExternalModule
 import com.jetbrains.cidr.lang.CLanguageKind
 import com.jetbrains.cidr.lang.OCLanguageKind
 import com.jetbrains.cidr.lang.workspace.compiler.GCCCompilerKind
-import junit.framework.TestCase
-import junit.framework.TestCase.assertTrue
 import org.jetbrains.annotations.NonNls
+import java.nio.file.Path
 import java.nio.file.Paths
 
+val BASE_TEST_DATA_PATH: Path = Paths.get(PathManager.getHomePath(), "contrib", "platformio", "testData")
+
 class TestProjectResolve : LightPlatformTestCase() {
-  private val BASE_TEST_DATA_PATH: String = PathManager.getHomePath() + "/contrib/platformio/testData"
   private val EXPECTED_ACTIVE_INI_FILES = listOf(
     "platformio.ini",
     "pio_included_by_name.ini",
@@ -55,7 +55,7 @@ class TestProjectResolve : LightPlatformTestCase() {
 
   override fun setUp() {
     super.setUp()
-    projectPath = "$BASE_TEST_DATA_PATH/project1"
+    projectPath = BASE_TEST_DATA_PATH.resolve("project1").toString()
     projectDir = VfsUtil.findFile(Paths.get(projectPath), true)!!
     WriteAction.run<Throwable> {
       CLionRunConfigurationManager.getInstance(project).updateRunConfigurations(PlatformioRunConfigurationManagerHelper)

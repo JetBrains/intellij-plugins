@@ -1,0 +1,7 @@
+{
+  "name": "Confusing Named Library",
+  "build": {
+    "includeDir": "main/inc",
+    "srcDir": "main/src"
+  }
+}
