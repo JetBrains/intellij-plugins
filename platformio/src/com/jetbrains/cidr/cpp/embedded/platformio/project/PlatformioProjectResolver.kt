@@ -157,9 +157,10 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
         val srcFolder: VirtualFile = VfsUtil.findFile(srcFolderPath, false) ?: throw ExternalSystemException(
           ClionEmbeddedPlatformioBundle.message("source.folder.not.found", srcFolderPath))
 
-        val buildWorkingDir = File(VfsUtil.virtualToIoFile(projectDir), ".pio")
+        val buildDirectory: File = calcBuildDir(projectDir, platformioSection)
+        platformioService.buildDirectory = buildDirectory.toPath()
         val name = pioActiveMetadata["env_name"] as String
-        val confBuilder = ExternalResolveConfigurationBuilder(id = name, configName = "PlatformIO", buildWorkingDir = buildWorkingDir)
+        val confBuilder = ExternalResolveConfigurationBuilder(id = name, configName = "PlatformIO", buildWorkingDir = buildDirectory)
           .withVariants(name)
 
         platformioService.librariesPaths = scanner.parseResolveConfig(confBuilder, pioActiveMetadata, srcFolder, buildSrcFilter)
@@ -191,6 +192,16 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
       LOG.error(e)
       throw ExternalSystemException(e)
     }
+  }
+
+  private fun calcBuildDir(projectDir: VirtualFile, platformioSection: Map<String, Any>): File {
+    val buildDirName = platformioSection["build_dir"].asSafely<String>()
+
+    if (buildDirName != null) {
+      return projectDir.toNioPath().resolve(buildDirName).toFile()
+    }
+    val workspaceDirName = platformioSection["workspace_dir"].asSafely<String>() ?: ".pio"
+    return projectDir.toNioPath().resolve(workspaceDirName).resolve("build").toFile()
   }
 
   private fun cliGenerateProject(project: Project,

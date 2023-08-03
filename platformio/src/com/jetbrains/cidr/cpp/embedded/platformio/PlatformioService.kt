@@ -16,6 +16,7 @@ import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioExecutionTar
 import com.jetbrains.cidr.cpp.embedded.platformio.project.builds.PlatformioBuildTarget
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioProjectResolvePolicy
 import org.jetbrains.annotations.Nls
+import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicLong
 
 @Service(Service.Level.PROJECT)
@@ -24,6 +25,9 @@ class PlatformioService(val project: Project) : PersistentStateComponentWithModi
 
   @Volatile
   var librariesPaths: Map<String, @NlsSafe String> = emptyMap()
+
+  @Volatile
+  var buildDirectory: Path? = null
 
   @Volatile
   var visibleActions: Set<String> = emptySet()
