@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.util.PlatformIcons
 import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle
+import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionBase.Companion.pioIcon
 import com.jetbrains.cidr.cpp.toolchains.CPPEnvironment
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
@@ -23,6 +24,7 @@ import com.jetbrains.cidr.toolchains.EnvironmentProblems
 import icons.ClionEmbeddedPlatformioIcons
 import java.io.File
 import javax.swing.Icon
+import kotlin.io.path.isDirectory
 
 @State(name = "PlatformIOWorkspace")
 @Service(Service.Level.PROJECT)
@@ -72,8 +74,8 @@ class PlatformioWorkspace(project: Project) : ExternalWorkspace(project), Worksp
 
   override fun collectExcludeRoots(contentRoot: File?): List<File> {
     if (isInitialized) {
-      val build = projectPath.resolve(".pio").resolve("build").toFile()
-      if (build.isDirectory) return listOf(build)
+      val buildDirectory = project.service<PlatformioService>().buildDirectory
+      if (buildDirectory?.isDirectory() == true) return listOf(buildDirectory.toFile())
     }
     return emptyList<File>()
 
