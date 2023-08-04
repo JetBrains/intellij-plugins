@@ -65,7 +65,7 @@ public class PlatformioLauncher extends CLionLauncher {
 
   @NotNull
   @Override
-  protected Pair<File, CPPEnvironment> getRunFileAndEnvironment() {
+  public Pair<File, CPPEnvironment> getRunFileAndEnvironment() {
     throw new UnsupportedOperationException();
   }
 
