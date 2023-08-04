@@ -11,7 +11,9 @@ import com.intellij.openapi.vcs.FilePath
 import com.intellij.openapi.vcs.ProjectLevelVcsManager
 import com.intellij.openapi.vcs.VcsException
 import com.intellij.openapi.vcs.VcsMappingListener
+import com.intellij.openapi.vcs.changes.ChangeListManagerGate
 import com.intellij.openapi.vcs.changes.VcsDirtyScopeManager
+import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.idea.perforce.perforce.PerforceSettings
 import org.jetbrains.idea.perforce.perforce.connections.P4EnvHelper
 import org.jetbrains.idea.perforce.perforce.connections.P4EnvHelper.P4EnvListener
@@ -71,7 +73,7 @@ class PerforceDirtyFilesHandler(private val myProject: Project,
     }
   }
 
-  fun scanAndGetMissingFiles(progress: ProgressIndicator): Set<String> {
+  fun scanAndGetMissingFiles(addGate: ChangeListManagerGate, progress: ProgressIndicator): Set<String> {
     val scanner = createScanner()
 
     progress.checkCanceled()
@@ -79,10 +81,18 @@ class PerforceDirtyFilesHandler(private val myProject: Project,
     progress.checkCanceled()
 
     myUnversionedTracker.markUnknown(result.allLocalFiles)
-    myUnversionedTracker.markUnversioned(result.localOnly)
+    myUnversionedTracker.markUnversioned(result.localOnly.filter { !isKnownToPerforce(addGate, it) })
 
     myUnversionedTracker.scheduleUpdate()
     return result.missingFiles
+  }
+
+  private fun isKnownToPerforce(addGate: ChangeListManagerGate, file: VirtualFile): Boolean {
+    val status = addGate.getStatus(file)
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("status $status for $file")
+    }
+    return status != null
   }
 
   private fun createScanner(): ThrowableComputable<UnversionedScopeScanner.ScanResult, VcsException> {

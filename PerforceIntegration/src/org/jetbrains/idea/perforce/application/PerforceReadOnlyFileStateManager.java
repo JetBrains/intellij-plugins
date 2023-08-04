@@ -95,7 +95,7 @@ public final class PerforceReadOnlyFileStateManager {
       recheckWhatUnversionedRefreshNeeded(dirtyScope);
     }
 
-    Set<String> missingFiles = myDirtyFilesHandler.scanAndGetMissingFiles(progress);
+    Set<String> missingFiles = myDirtyFilesHandler.scanAndGetMissingFiles(addGate, progress);
 
     Set<String> locallyDeleted = findLocallyDeletedMissingFiles(addGate, missingFiles);
     for (String path : locallyDeleted) {
