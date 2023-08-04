@@ -199,11 +199,11 @@ class DtsZephyrBindingProvider(val project: Project) {
         }
 
         yaml.readMap("child-binding")?.let { binding ->
-            doBuildBinding(builder.getChild(), binding)
+            doBuildBinding(builder.getChildBuilder(), binding)
 
             // child bindings can have includes
             iterateBindings(getIncludes(binding)) {
-                doBuildBinding(builder.getChild(), it)
+                doBuildBinding(builder.getChildBuilder(), it)
             }
         }
     }
@@ -212,6 +212,7 @@ class DtsZephyrBindingProvider(val project: Project) {
         val property = node.dtsProperties.firstOrNull { it.dtsName == "compatible" } ?: return emptyList()
         return property.dtsValues.filterIsInstance<DtsString>().map { it.dtsParse() }
     }
+
 
     /**
      * Builds a binding for a specific node.
@@ -232,5 +233,15 @@ class DtsZephyrBindingProvider(val project: Project) {
             val parentBinding = DtsTreeUtil.findParentNode(node)?.let(::buildBinding)
             parentBinding?.child
         }
+    }
+
+    /**
+     * Builds the default binding.
+     */
+    fun buildDefaultBinding(): DtsZephyrBinding {
+        val builder = DtsZephyrBinding.Builder("default")
+        doBuildBinding(builder, defaultBinding)
+
+        return builder.build()
     }
 }

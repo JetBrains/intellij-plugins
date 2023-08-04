@@ -36,6 +36,10 @@
         <breadcrumbsInfoProvider
                 implementation="com.intellij.dts.ide.DtsBreadcrumbsProvider"/>
 
+        <!-- documentation -->
+        <platform.backend.documentation.targetProvider
+                implementation="com.intellij.dts.documentation.DtsDocumentationProvider"/>
+
         <!-- syntax highlighting -->
         <lang.syntaxHighlighterFactory
                 language="DTS"

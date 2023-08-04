@@ -7,7 +7,6 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.ExternallyAnnotated
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.elementType
-import com.intellij.refactoring.suggested.endOffset
 import com.intellij.refactoring.suggested.startOffset
 import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.psi.DtsPHandle
@@ -36,23 +35,26 @@ class DtsHighlightAnnotator : Annotator {
         }
     }
 
+    private fun annotateNodeName(nodeName: String, startOffset: Int, holder: AnnotationHolder) {
+        val (name, addr) = DtsUtil.splitName(nodeName)
+
+        if (name.isNotEmpty()) {
+            val nameRange = TextRange.from(startOffset, name.length)
+            highlight(holder, nameRange, DtsTextAttributes.NODE_NAME)
+        }
+
+        if (!addr.isNullOrEmpty()) {
+            val addrRange = TextRange.from(startOffset + name.length + 1, addr.length)
+            highlight(holder, addrRange, DtsTextAttributes.NODE_UNIT_ADDR)
+        }
+    }
+
     private fun annotateName(element: PsiElement, holder: AnnotationHolder) {
         if (element.parent is DtsProperty) {
             highlight(holder, element.textRange, DtsTextAttributes.PROPERTY_NAME)
         }
-        else if (element.parent is DtsNode) {
-            val (name, addr) = DtsUtil.splitName(element.text)
-
-            if (name.isNotEmpty()) {
-                val nameRange = TextRange.from(element.startOffset, name.length)
-                highlight(holder, nameRange, DtsTextAttributes.NODE_NAME)
-            }
-
-            if (addr != null) {
-                val addrStart = element.startOffset + name.length + 1
-                val addrRange = TextRange(addrStart, element.endOffset)
-                highlight(holder, addrRange, DtsTextAttributes.NODE_UNIT_ADDR)
-            }
+        else if (element.parent is DtsNode.Sub) {
+            annotateNodeName(element.text, element.startOffset, holder)
         }
     }
 
@@ -62,8 +64,16 @@ class DtsHighlightAnnotator : Annotator {
     }
 
     private fun annotatePHandle(element: DtsPHandle, holder: AnnotationHolder) {
-        val label = element.dtsPHandleLabel ?: return
-        highlight(holder, label.textRange, DtsTextAttributes.LABEL)
+        element.dtsPHandleLabel?.let {
+            highlight(holder, it.textRange, DtsTextAttributes.LABEL)
+        }
+        element.dtsPHandlePath?.let {
+            var offset = it.startOffset + 1
+            for (segment in it.text.removePrefix("/").split("/")) {
+                annotateNodeName(segment, offset, holder)
+                offset += segment.length + 1
+            }
+        }
     }
 
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
