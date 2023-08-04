@@ -1,8 +1,6 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.service.volar
 
-import com.intellij.javascript.nodejs.PackageJsonData
-import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.ecmascript6.TypeScriptAnnotatorCheckerProvider
 import com.intellij.lang.typescript.compiler.TypeScriptLanguageServiceAnnotatorCheckerProvider
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
@@ -10,7 +8,6 @@ import com.intellij.lang.typescript.lsp.BaseLspTypeScriptService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.HtmlBuilder
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.util.convertMarkupContentToHtml
 import com.intellij.psi.PsiFile
@@ -26,14 +23,7 @@ class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(projec
   override val prefix: String
     get() = VueBundle.message("vue.service.prefix")
   override val serverVersion: SemVer
-    get() = calculateVersion()
-
-  private fun calculateVersion(): SemVer {
-    return VolarExecutableDownloader.getExecutable(project)
-             ?.let { LocalFileSystem.getInstance().findFileByPath(it) }
-             ?.let { PackageJsonUtil.findUpPackageJson(it) }
-             ?.let { PackageJsonData.getOrCreate(it).version } ?: volarLspServerPackageDescriptor.defaultSemVer
-  }
+    get() = VolarExecutableDownloader.calculateVersion(project)
 
   override fun createQuickInfoResponse(markupContent: MarkupContent): TypeScriptQuickInfoResponse {
     return TypeScriptQuickInfoResponse().apply {
