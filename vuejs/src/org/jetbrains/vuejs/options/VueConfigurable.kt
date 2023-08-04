@@ -10,13 +10,12 @@ import com.intellij.lang.typescript.lsp.JSExternalDefinitionsPackageResolver
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.UiDslUnnamedConfigurable
 import com.intellij.openapi.project.Project
-import com.intellij.ui.ContextHelpLabel
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.Panel
 import com.intellij.ui.dsl.builder.bind
 import com.intellij.ui.dsl.builder.toMutableProperty
 import org.jetbrains.vuejs.VueBundle
-import org.jetbrains.vuejs.lang.typescript.service.volar.serverPackageName
+import org.jetbrains.vuejs.lang.typescript.service.volar.volarLspServerPackageDescriptor
 
 class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.Simple(), Configurable {
   private val settings = getVueSettings(project)
@@ -24,8 +23,10 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
   override fun Panel.createContent() {
     group(VueBundle.message("vue.configurable.service.group")) {
       row(VueBundle.message("vue.configurable.service.volar.package")) {
-        val volarNodeDescriptor = JSExternalDefinitionsNodeDescriptor(serverPackageName)
-        val packageField = NodePackageField(project, volarNodeDescriptor, { NodeJsInterpreterManager.getInstance(project).interpreter },
+        val volarNodeDescriptor = JSExternalDefinitionsNodeDescriptor(volarLspServerPackageDescriptor.serverPackageName)
+        val packageField = NodePackageField(project,
+                                            volarNodeDescriptor,
+                                            { NodeJsInterpreterManager.getInstance(project).interpreter },
                                             JSExternalDefinitionsPackageResolver(project, volarNodeDescriptor))
 
         cell(packageField)
