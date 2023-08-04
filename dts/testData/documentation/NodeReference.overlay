@@ -1,0 +1,7 @@
+/ {
+    label: node {
+        compatible = "espressif,esp32-eth";
+    };
+};
+
+&label/*caret*/ { };
