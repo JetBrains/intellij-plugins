@@ -32,7 +32,7 @@ class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(projec
     return VolarExecutableDownloader.getExecutable(project)
              ?.let { LocalFileSystem.getInstance().findFileByPath(it) }
              ?.let { PackageJsonUtil.findUpPackageJson(it) }
-             ?.let { PackageJsonData.getOrCreate(it).version } ?: defaultVolarVersion
+             ?.let { PackageJsonData.getOrCreate(it).version } ?: volarLspServerPackageDescriptor.defaultSemVer
   }
 
   override fun createQuickInfoResponse(markupContent: MarkupContent): TypeScriptQuickInfoResponse {
