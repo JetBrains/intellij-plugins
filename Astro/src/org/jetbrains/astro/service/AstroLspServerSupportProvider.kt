@@ -20,22 +20,19 @@ class AstroLspServerSupportProvider : LspServerSupportProvider {
   }
 }
 
-class AstroLspServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, "Astro") {
-  override val relativeScriptPath = astroLspServerPackageDescriptor.packageRelativePath
-  override val npmPackage = astroLspServerPackageDescriptor.serverPackageName
-
+class AstroLspServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, astroLspServerPackageDescriptor, "Astro") {
   override fun isSupportedFile(file: VirtualFile): Boolean = isFileAcceptableForService(file)
 }
 
 @ApiStatus.Experimental
 object AstroLspExecutableDownloader : LspServerDownloader {
-  override fun getExecutable(project: Project): String? = getLspServerExecutablePath(astroLspServerPackageDescriptor.serverPackageName,
+  override fun getExecutable(project: Project): String? = getLspServerExecutablePath(astroLspServerPackageDescriptor.serverPackage,
                                                                                      astroLspServerPackageDescriptor.packageRelativePath)
 
   override fun getExecutableOrRefresh(project: Project): String? {
     val executable = getExecutable(project)
     if (executable != null) return executable
-    scheduleLspServerDownloading(project, astroLspServerPackageDescriptor.serverPackageName)
+    scheduleLspServerDownloading(project, astroLspServerPackageDescriptor.serverPackage)
     return null
   }
 }

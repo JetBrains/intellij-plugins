@@ -23,7 +23,7 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
   override fun Panel.createContent() {
     group(VueBundle.message("vue.configurable.service.group")) {
       row(VueBundle.message("vue.configurable.service.volar.package")) {
-        val volarNodeDescriptor = JSExternalDefinitionsNodeDescriptor(volarLspServerPackageDescriptor.serverPackageName)
+        val volarNodeDescriptor = JSExternalDefinitionsNodeDescriptor(volarLspServerPackageDescriptor.serverPackage)
         val packageField = NodePackageField(project,
                                             volarNodeDescriptor,
                                             { NodeJsInterpreterManager.getInstance(project).interpreter },

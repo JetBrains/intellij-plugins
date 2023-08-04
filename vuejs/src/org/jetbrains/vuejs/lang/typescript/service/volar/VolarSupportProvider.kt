@@ -23,10 +23,7 @@ class VolarSupportProvider : LspServerSupportProvider {
   }
 }
 
-class VolarServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, "Vue") {
-  override val relativeScriptPath = volarLspServerPackageDescriptor.packageRelativePath
-  override val npmPackage = volarLspServerPackageDescriptor.serverPackageName
-
+class VolarServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, volarLspServerPackageDescriptor, "Vue") {
   override fun isSupportedFile(file: VirtualFile): Boolean = isVolarFileTypeAcceptable(file)
 }
 
@@ -36,7 +33,7 @@ object VolarExecutableDownloader : LspServerDownloader {
     val packageRef = getVueSettings(project).packageRef
     val ref = extractRefText(packageRef)
     if (ref == defaultPackageKey) {
-      return getLspServerExecutablePath(volarLspServerPackageDescriptor.serverPackageName,
+      return getLspServerExecutablePath(volarLspServerPackageDescriptor.serverPackage,
                                         volarLspServerPackageDescriptor.packageRelativePath)
     }
 
@@ -46,7 +43,7 @@ object VolarExecutableDownloader : LspServerDownloader {
   override fun getExecutableOrRefresh(project: Project): String? {
     val executable = getExecutable(project)
     if (executable != null) return executable
-    scheduleLspServerDownloading(project, volarLspServerPackageDescriptor.serverPackageName)
+    scheduleLspServerDownloading(project, volarLspServerPackageDescriptor.serverPackage)
     return null
   }
 }
