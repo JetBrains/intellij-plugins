@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.service.volar
 
+import com.intellij.javascript.nodejs.util.NodePackageRef
 import com.intellij.lang.typescript.lsp.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -28,22 +29,8 @@ class VolarServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(p
 }
 
 @ApiStatus.Experimental
-object VolarExecutableDownloader : LspServerDownloader {
-  override fun getExecutable(project: Project): String? {
-    val packageRef = getVueSettings(project).packageRef
-    val ref = extractRefText(packageRef)
-    if (ref == defaultPackageKey) {
-      return getLspServerExecutablePath(volarLspServerPackageDescriptor.serverPackage,
-                                        volarLspServerPackageDescriptor.packageRelativePath)
-    }
-
-    return ref
-  }
-
-  override fun getExecutableOrRefresh(project: Project): String? {
-    val executable = getExecutable(project)
-    if (executable != null) return executable
-    scheduleLspServerDownloading(project, volarLspServerPackageDescriptor.serverPackage)
-    return null
+object VolarExecutableDownloader : LspServerDownloader(volarLspServerPackageDescriptor) {
+  override fun getSelectedPackageRef(project: Project): NodePackageRef {
+    return getVueSettings(project).packageRef
   }
 }

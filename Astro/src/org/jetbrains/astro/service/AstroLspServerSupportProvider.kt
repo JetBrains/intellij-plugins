@@ -25,14 +25,4 @@ class AstroLspServerDescriptor(project: Project) : JSFrameworkLspServerDescripto
 }
 
 @ApiStatus.Experimental
-object AstroLspExecutableDownloader : LspServerDownloader {
-  override fun getExecutable(project: Project): String? = getLspServerExecutablePath(astroLspServerPackageDescriptor.serverPackage,
-                                                                                     astroLspServerPackageDescriptor.packageRelativePath)
-
-  override fun getExecutableOrRefresh(project: Project): String? {
-    val executable = getExecutable(project)
-    if (executable != null) return executable
-    scheduleLspServerDownloading(project, astroLspServerPackageDescriptor.serverPackage)
-    return null
-  }
-}
+object AstroLspExecutableDownloader : LspServerDownloader(astroLspServerPackageDescriptor)
