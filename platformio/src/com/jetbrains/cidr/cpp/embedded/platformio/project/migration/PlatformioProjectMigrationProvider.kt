@@ -3,12 +3,12 @@ package com.jetbrains.cidr.cpp.embedded.platformio.project.migration
 import com.intellij.conversion.*
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.io.delete
-import com.intellij.util.io.isDirectory
 import com.intellij.util.io.write
 import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioFileType
 import java.nio.file.Path
 import kotlin.io.path.extension
+import kotlin.io.path.isDirectory
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
 

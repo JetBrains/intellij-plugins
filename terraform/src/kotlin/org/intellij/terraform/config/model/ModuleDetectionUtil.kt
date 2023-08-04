@@ -24,7 +24,6 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.applyIf
-import com.intellij.util.io.encodeUrlQueryParameter
 import org.intellij.terraform.config.model.version.MalformedConstraintException
 import org.intellij.terraform.config.model.version.Version
 import org.intellij.terraform.config.model.version.VersionConstraint
@@ -32,6 +31,7 @@ import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLStringLiteral
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 import org.intellij.terraform.nullize
+import java.net.URLEncoder
 import java.util.*
 
 object ModuleDetectionUtil {
@@ -133,7 +133,7 @@ object ModuleDetectionUtil {
             remaining = remaining.subSequence(p1 + 1, remaining.length)
           }
 
-          result[key] = value.toString().applyIf(encode, String::encodeUrlQueryParameter)
+          result[key] = value.toString().applyIf(encode) { URLEncoder.encode(this, Charsets.UTF_8)!! }
         }
 
         return result
