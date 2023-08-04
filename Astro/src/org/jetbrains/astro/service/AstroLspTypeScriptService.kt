@@ -16,7 +16,8 @@ import org.eclipse.lsp4j.MarkupContent
 class AstroLspTypeScriptService(project: Project) : BaseLspTypeScriptService(project, AstroLspServerSupportProvider::class.java) {
   override val name = "Astro LSP"
   override val prefix = "Astro"
-  override val serverVersion = astroLspServerPackageDescriptor.defaultSemVer
+  override val serverVersion
+    get() = AstroLspExecutableDownloader.calculateVersion(project)
 
   override fun createQuickInfoResponse(markupContent: MarkupContent): TypeScriptQuickInfoResponse {
     return TypeScriptQuickInfoResponse().apply {
