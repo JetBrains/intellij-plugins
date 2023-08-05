@@ -2,9 +2,11 @@
 
 package com.intellij.protobuf.ide.settings
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -23,7 +25,7 @@ import com.intellij.util.asSafely
 import java.util.stream.Stream
 import kotlin.streams.asStream
 
-fun computeDeterministicImportPathsStream(project: Project, pbSettings: PbProjectSettings): Stream<ImportPathEntry> {
+internal fun computeDeterministicImportPathsStream(project: Project, pbSettings: PbProjectSettings): Stream<ImportPathEntry> {
   return computeDeterministicImportPaths(project, pbSettings).asStream()
 }
 
@@ -40,12 +42,12 @@ fun computeDeterministicImportPaths(project: Project, pbSettings: PbProjectSetti
 }
 
 internal fun projectContentRoots(project: Project): List<ImportPathEntry> {
-  return runReadAction {
-    ProjectRootManager.getInstance(project).let {
-      it.contentRoots.map { ImportPathEntry(it.url, "") } +
-      it.contentSourceRoots.map { ImportPathEntry(it.url, "") }
+  return ApplicationManager.getApplication().runReadAction(Computable {
+    ProjectRootManager.getInstance(project).let { rootManager ->
+      rootManager.contentRoots.map { ImportPathEntry(it.url, "") } +
+      rootManager.contentSourceRoots.map { ImportPathEntry(it.url, "") }
     }
-  }
+  })
 }
 
 private fun configuredImportPaths(project: Project): List<ImportPathEntry> {
@@ -63,22 +65,25 @@ internal fun thirdPartyImportPaths(project: Project): List<ImportPathEntry> {
 }
 
 internal fun standardProtoDirectories(project: Project): List<ImportPathEntry> {
-  return CachedValuesManager.getManager(project)
-    .getCachedValue(project) {
-      val protoDirectories = runReadAction {
-        Plow.of { processor ->
-          FilenameIndex.processFilesByNames(setOf("proto", "protobuf"), true, GlobalSearchScope.projectScope(project), null, processor)
-        }.filter { file -> file.isDirectory }
-          .map { directory -> ImportPathEntry(directory.url, "") }
-          .toList()
-      }
+  if (project.isDefault) {
+    return emptyList()
+  }
 
-      CachedValueProvider.Result(
-        protoDirectories,
-        ProjectRootManager.getInstance(project),
-        PbCompositeModificationTracker.getInstance(project)
-      )
+  return CachedValuesManager.getManager(project).getCachedValue(project) {
+    val protoDirectories = runReadAction {
+      Plow.of { processor ->
+        FilenameIndex.processFilesByNames(setOf("proto", "protobuf"), true, GlobalSearchScope.projectScope(project), null, processor)
+      }.filter { file -> file.isDirectory }
+        .map { directory -> ImportPathEntry(directory.url, "") }
+        .toList()
     }
+
+    CachedValueProvider.Result(
+      protoDirectories,
+      ProjectRootManager.getInstance(project),
+      PbCompositeModificationTracker.getInstance(project)
+    )
+  }
 }
 
 internal fun getDescriptorPathSuggestions(project: Project): Collection<String> {
@@ -87,7 +92,7 @@ internal fun getDescriptorPathSuggestions(project: Project): Collection<String> 
            .toSet() + BUNDLED_DESCRIPTOR
 }
 
-internal const val BUNDLED_DESCRIPTOR = "google/protobuf/descriptor.proto"
+internal const val BUNDLED_DESCRIPTOR: String = "google/protobuf/descriptor.proto"
 
 internal fun getBuiltInIncludeEntry(): ImportPathEntry? {
   val includedDescriptorsDirectoryUrl = PbProjectSettings::class.java.classLoader.getResource("include") ?: return null
@@ -95,7 +100,9 @@ internal fun getBuiltInIncludeEntry(): ImportPathEntry? {
   return if (descriptorsDirectory == null || !descriptorsDirectory.isDirectory) {
     null
   }
-  else ImportPathEntry(descriptorsDirectory.url, "")
+  else {
+    ImportPathEntry(descriptorsDirectory.url, "")
+  }
 }
 
 internal fun findFileByImportPath(searchedFileName: String,
@@ -126,18 +133,18 @@ internal fun computeImportPathsForAllImportStatements(project: Project): List<St
   val psiManager = PsiManager.getInstance(project)
 
   val importStatements = allProtoFiles.flatMap { virtualFile ->
-    runReadAction {
+    ApplicationManager.getApplication().runReadAction(Computable {
       psiManager.findFile(virtualFile)?.asSafely<PbFile>()
         ?.importStatements
         ?.flatMap { importStatement -> importStatement.importName?.stringValue?.stringParts.orEmpty() }
         ?.mapNotNull { singleImport -> singleImport.text?.let(StringUtil::unquoteString) }
         .orEmpty()
-    }
+    })
   }
     .filter(String::isNotBlank)
     .toSet()
 
-  val allProtoFileUrls = runReadAction { allProtoFiles.map(VirtualFile::getUrl) }
+  val allProtoFileUrls = ApplicationManager.getApplication().runReadAction(Computable { allProtoFiles.map(VirtualFile::getUrl) })
 
   return allProtoFileUrls.asSequence()
     .flatMap { fileUrl ->

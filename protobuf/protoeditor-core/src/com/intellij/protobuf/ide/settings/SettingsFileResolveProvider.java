@@ -30,22 +30,19 @@ import java.util.*;
 import static com.intellij.protobuf.ide.settings.PbImportPathsConfiguration.BUNDLED_DESCRIPTOR;
 import static com.intellij.protobuf.ide.settings.PbImportPathsConfiguration.computeDeterministicImportPathsStream;
 
-
 /** {@link FileResolveProvider} implementation that uses settings from {@link PbProjectSettings}. */
-public class SettingsFileResolveProvider implements FileResolveProvider {
+public final class SettingsFileResolveProvider implements FileResolveProvider {
 
   /** No-op constructor. Settings will be resolved by looking up the PbProjectSettings service. */
   public SettingsFileResolveProvider() { }
 
-  @Nullable
   @Override
-  public VirtualFile findFile(@NotNull String path, @NotNull Project project) {
+  public @Nullable VirtualFile findFile(@NotNull String path, @NotNull Project project) {
     return findFileWithSettings(path, project, PbProjectSettings.getInstance(project));
   }
 
-  @NotNull
   @Override
-  public Collection<ChildEntry> getChildEntries(@NotNull String path, @NotNull Project project) {
+  public @NotNull Collection<ChildEntry> getChildEntries(@NotNull String path, @NotNull Project project) {
     Set<ChildEntry> results = new HashSet<>();
     for (ImportPathEntry entry : getImportPaths(project, PbProjectSettings.getInstance(project))) {
       String prefix = normalizePath(entry.getPrefix());
@@ -83,15 +80,13 @@ public class SettingsFileResolveProvider implements FileResolveProvider {
     return results;
   }
 
-  @Nullable
   @Override
-  public VirtualFile getDescriptorFile(@NotNull Project project) {
+  public @Nullable VirtualFile getDescriptorFile(@NotNull Project project) {
     return findFile(BUNDLED_DESCRIPTOR, project);
   }
 
-  @NotNull
   @Override
-  public GlobalSearchScope getSearchScope(@NotNull Project project) {
+  public @NotNull GlobalSearchScope getSearchScope(@NotNull Project project) {
     VirtualFile[] roots =
       computeDeterministicImportPathsStream(project, PbProjectSettings.getInstance(project))
         .map(ImportPathEntry::getLocation)
