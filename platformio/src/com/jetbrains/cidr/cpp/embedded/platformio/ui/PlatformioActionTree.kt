@@ -124,14 +124,14 @@ internal class PlatformioActionTree(private val project: Project, private val me
     fun tryReparseControl() =
       messageHolder.appendLine(ClionEmbeddedPlatformioBundle.message("parse.again"),
                                LINK_ATTRIBUTES) { _ ->
-        val action = ActionManager.getInstance().getAction(PlatformioRefreshAction::class.java.name)
+        val action = ActionManager.getInstance().getAction(PlatformioRefreshAction::class.java.simpleName)
         ActionUtil.invokeAction(action, SimpleDataContext.getProjectContext(project), ActionPlaces.UNKNOWN, null, null)
       }
 
     if (pioStartFailed) {
       messageHolder.setText(ClionEmbeddedPlatformioBundle.message("status.text.pio.not.started"),
                             SimpleTextAttributes.DARK_TEXT)
-      messageHolder.appendLine(ClionEmbeddedPlatformioBundle.message("install.guide"),
+      messageHolder.appendLine(AllIcons.General.ContextHelp, ClionEmbeddedPlatformioBundle.message("install.guide"),
                                LINK_ATTRIBUTES, OpenInstallGuide)
       messageHolder.appendLine(ClionEmbeddedPlatformioBundle.message("open.settings.link"),
                                LINK_ATTRIBUTES, OpenSettings(project))
