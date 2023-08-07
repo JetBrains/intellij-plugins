@@ -24,8 +24,7 @@ import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManage
 import javax.swing.*;
 
 public class PerforceConfigurable implements Configurable {
-
-  private ConfigPanel myPanel = null;
+  private PerforceConfigPanel myPanel = null;
   private final Project myProject;
 
 
@@ -45,7 +44,7 @@ public class PerforceConfigurable implements Configurable {
 
   @Override
   public JComponent createComponent() {
-    myPanel = new ConfigPanel(myProject);
+    myPanel = new PerforceConfigPanel(myProject);
     return myPanel.getPanel();
   }
 
