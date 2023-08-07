@@ -2,6 +2,7 @@ package com.jetbrains.cidr.cpp.embedded.platformio.project
 
 import com.intellij.execution.process.CapturingProcessHandler
 import com.intellij.execution.process.CapturingProcessRunner
+import com.intellij.icons.AllIcons
 import com.intellij.ide.util.projectWizard.AbstractNewProjectStep
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Ref
@@ -69,7 +70,8 @@ class PlatformioProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<
         myTree.emptyText
           .appendLine(ClionEmbeddedPlatformioBundle.message("open.settings.link"), SimpleTextAttributes.LINK_ATTRIBUTES,
                       OpenSettings(null))
-          .appendLine(ClionEmbeddedPlatformioBundle.message("install.guide"), SimpleTextAttributes.LINK_ATTRIBUTES, OpenInstallGuide)
+          .appendLine(AllIcons.General.ContextHelp, ClionEmbeddedPlatformioBundle.message("install.guide"),
+                      SimpleTextAttributes.LINK_ATTRIBUTES, OpenInstallGuide)
         myTree.model = EMPTY_TREE_MODEL
       }
       Presense.UNKNOWN -> {
@@ -110,6 +112,8 @@ class PlatformioProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<
               }
               else {
                 myTree.model = newModel
+                myTree.clearSelection()
+                checkValid()
                 myTree.setPaintBusy(false)
               }
             }
@@ -145,6 +149,10 @@ class PlatformioProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<
 
   override fun checkValid(): Boolean {
     if (!super.checkValid()) return false
+    if (platformioPresent.get() != Presense.YES) {
+      setErrorText(null)
+      return false
+    }
     val parameters = peer.settings.get().asSafely<BoardInfo>()?.parameters
     if (parameters.isNullOrEmpty()) {
       setWarningText(ClionEmbeddedPlatformioBundle.message("please.select.target"))
