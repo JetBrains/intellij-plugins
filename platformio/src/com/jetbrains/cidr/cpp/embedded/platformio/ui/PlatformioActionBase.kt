@@ -5,6 +5,7 @@ import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.BaseOSProcessHandler
 import com.intellij.execution.process.OSProcessHandler
 import com.intellij.execution.ui.RunContentManager
+import com.intellij.icons.AllIcons
 import com.intellij.ide.BrowserUtil
 import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationGroupManager
@@ -131,6 +132,7 @@ fun notifyPlatformioNotFound(project: Project?) {
                         ClionEmbeddedPlatformioBundle.message("platformio.not.found"), NotificationType.ERROR)
     .addAction(
       NotificationAction.createSimple(ClionEmbeddedPlatformioBundle.message("install.guide"), OpenInstallGuide))
+    .apply { icon = AllIcons.General.ContextHelp }
     .addAction(
       NotificationAction.createSimpleExpiring(ClionEmbeddedPlatformioBundle.message("open.settings.link"), OpenSettings(project)))
     .notify(project)

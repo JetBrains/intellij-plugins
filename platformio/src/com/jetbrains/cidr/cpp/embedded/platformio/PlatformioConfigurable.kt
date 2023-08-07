@@ -64,7 +64,7 @@ class PlatformioConfigurable : SearchableConfigurable {
              OpenInstallGuide::actionPerformed)
           .applyToComponent {
             font = FontUtil.minusOne(font)
-            setExternalLinkIcon()
+            setContextHelpIcon()
           }
       }
     }
