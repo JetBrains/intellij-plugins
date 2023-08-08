@@ -36,7 +36,6 @@ import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout
 import java.io.File
-import java.util.function.Function
 import java.util.regex.Pattern
 import javax.swing.Icon
 import javax.swing.JCheckBox
@@ -235,7 +234,7 @@ class AngularCliProjectGenerator : NpmPackageProjectGenerator() {
                     val list = ArrayList(schematic.options)
                     list.add(createOption("verbose", "Boolean", false, "Adds more details to output logging."))
                     list.add(createOption("collection", "String", null, "Schematics collection to use"))
-                    list.sortWith(Comparator.comparing(Function<Option, String> { it.name }))
+                    list.sortBy { it.name }
                     list
                   }
                 ?: emptyList()
