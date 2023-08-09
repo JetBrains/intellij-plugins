@@ -23,7 +23,7 @@ object PlatformioWorkspaceInitializationUtil {
       .waitForInitialization(service<PlatformioWorkspace>())
   }
 
-  private class PlatformioWorkspaceInitializationWaiter(block: () -> Unit, project: Project) : InitializationWaiter<PlatformioWorkspace>(
+  private class PlatformioWorkspaceInitializationWaiter(block: () -> Unit, project: Project) : InitializationWaiter(
     block,
     project) {
     override fun isInitialized(): Boolean =
