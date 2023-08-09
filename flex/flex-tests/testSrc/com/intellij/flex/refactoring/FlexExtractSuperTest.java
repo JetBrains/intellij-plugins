@@ -7,6 +7,7 @@ import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.ide.DataManager;
 import com.intellij.javascript.flex.refactoring.extractSuper.FlexExtractSuperProcessor;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.LightPlatformMultiFileFixtureTestCase;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
@@ -312,6 +313,8 @@ public class FlexExtractSuperTest extends LightPlatformMultiFileFixtureTestCase 
     AnAction action = ActionManager.getInstance().getAction(actionId);
     AnActionEvent e = TestActionEvent.createTestEvent(
       action, DataManager.getInstance().getDataContext(myFixture.getEditor().getComponent()));
+    // warm up injections
+    InjectedLanguageManager.getInstance(getProject()).findInjectedElementAt(myFixture.getFile(), myFixture.getCaretOffset());
     ActionUtil.lastUpdateAndCheckDumb(action, e, false);
     assertEquals("Action " + actionId + " should be " + (enabled ? "enabled" : "disabled") + " at position " + pos, enabled,
                  e.getPresentation().isEnabled());
