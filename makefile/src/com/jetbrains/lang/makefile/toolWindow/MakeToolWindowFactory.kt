@@ -61,7 +61,9 @@ class MakeToolWindowFactory : ToolWindowFactory {
           if (PSI_ELEMENT.`is`(dataId)) {
             if (selectedNodes.any()) {
               val selected = selectedNodes.first()
-              return MakefileTargetIndex.getInstance().get(selected.name, project, GlobalSearchScope.fileScope(selected.parent.psiFile)).firstOrNull()
+              return MakefileTargetIndex.getInstance().getTargets(selected.name, project,
+                                                                          GlobalSearchScope.fileScope(
+                                                                            selected.parent.psiFile)).firstOrNull()
             }
           }
           return null

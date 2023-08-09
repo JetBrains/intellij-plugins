@@ -15,13 +15,19 @@ class MakefileTargetIndex : StringStubIndexExtension<MakefileTarget>() {
   fun allTargets(project: Project): List<MakefileTarget> {
     val allTargets = mutableSetOf<String>()
     processAllKeys(project, CommonProcessors.CollectProcessor(allTargets))
-    return allTargets.flatMap { get(it, project, GlobalSearchScope.projectScope(project)) }
+    return allTargets.flatMap {
+      getTargets(it, project, GlobalSearchScope.projectScope(project))
+    }
   }
 
   override fun getKey(): StubIndexKey<String, MakefileTarget> = TARGET_INDEX_KEY
 
+  @Deprecated("Base method is deprecated", ReplaceWith("getTargets(key, project, scope)"))
   override fun get(key: String, project: Project, scope: GlobalSearchScope): Collection<MakefileTarget> =
-      StubIndex.getElements(TARGET_INDEX_KEY, key, project, scope, MakefileTarget::class.java)
+    getTargets(key, project, scope)
+
+  fun getTargets(key: String, project: Project, scope: GlobalSearchScope): Collection<MakefileTarget> =
+    StubIndex.getElements(TARGET_INDEX_KEY, key, project, scope, MakefileTarget::class.java)
 
   companion object {
     fun getInstance(): MakefileTargetIndex {
