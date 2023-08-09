@@ -15,8 +15,10 @@
  */
 package org.jetbrains.idea.perforce.perforce;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vcs.changes.VcsDirtyScopeManager;
 import org.jetbrains.idea.perforce.application.PerforceVcs;
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager;
@@ -26,7 +28,7 @@ import javax.swing.*;
 public class PerforceConfigurable implements Configurable {
   private PerforceConfigPanel myPanel = null;
   private final Project myProject;
-
+  private Disposable myDisposable;
 
   public PerforceConfigurable(Project project) {
     myProject = project;
@@ -44,7 +46,8 @@ public class PerforceConfigurable implements Configurable {
 
   @Override
   public JComponent createComponent() {
-    myPanel = new PerforceConfigPanel(myProject);
+    myDisposable = Disposer.newDisposable();
+    myPanel = new PerforceConfigPanel(myProject, myDisposable);
     return myPanel.getPanel();
   }
 
@@ -83,6 +86,8 @@ public class PerforceConfigurable implements Configurable {
   @Override
   public void disposeUIResources() {
     myPanel = null;
+    Disposer.dispose(myDisposable);
+    myDisposable = null;
   }
 
 }
