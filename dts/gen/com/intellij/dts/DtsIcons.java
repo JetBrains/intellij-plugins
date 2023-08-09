@@ -13,7 +13,7 @@ public final class DtsIcons {
   private static @NotNull Icon load(@NotNull String path, int cacheKey, int flags) {
     return IconManager.getInstance().loadRasterizedIcon(path, DtsIcons.class.getClassLoader(), cacheKey, flags);
   }
-  /** 16x16 */ public static final @NotNull Icon Dts = load("icons/dts.svg", 1026133190, 0);
-  /** 16x16 */ public static final @NotNull Icon Node = load("icons/node.svg", 796926569, 0);
-  /** 16x16 */ public static final @NotNull Icon Property = load("icons/property.svg", -295577412, 0);
+  /** 16x16 */ public static final @NotNull Icon Dts = load("icons/dts.svg", -1341853400, 0);
+  /** 16x16 */ public static final @NotNull Icon Node = load("icons/node.svg", -1973420690, 0);
+  /** 16x16 */ public static final @NotNull Icon Property = load("icons/property.svg", 2074391394, 0);
 }

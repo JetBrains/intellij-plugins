@@ -13,7 +13,7 @@ public final class PostCssIcons {
   private static @NotNull Icon load(@NotNull String path, int cacheKey, int flags) {
     return IconManager.getInstance().loadRasterizedIcon(path, PostCssIcons.class.getClassLoader(), cacheKey, flags);
   }
-  /** 16x16 */ public static final @NotNull Icon Custom_media = load("icons/custom_media.svg", 513123351, 0);
-  /** 16x16 */ public static final @NotNull Icon Custom_selectors = load("icons/custom_selectors.svg", -436204519, 0);
-  /** 16x16 */ public static final @NotNull Icon Postcss = load("icons/postcss.svg", 1281056787, 0);
+  /** 16x16 */ public static final @NotNull Icon Custom_media = load("icons/custom_media.svg", -847102815, 0);
+  /** 16x16 */ public static final @NotNull Icon Custom_selectors = load("icons/custom_selectors.svg", 620450852, 0);
+  /** 16x16 */ public static final @NotNull Icon Postcss = load("icons/postcss.svg", -788788522, 0);
 }

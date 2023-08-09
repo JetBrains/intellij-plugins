@@ -13,5 +13,5 @@ public final class MeteorIcons {
   private static @NotNull Icon load(@NotNull String path, int cacheKey, int flags) {
     return IconManager.getInstance().loadRasterizedIcon(path, MeteorIcons.class.getClassLoader(), cacheKey, flags);
   }
-  /** 16x16 */ public static final @NotNull Icon Meteor2 = load("icons/Meteor2.svg", 865675875, 0);
+  /** 16x16 */ public static final @NotNull Icon Meteor2 = load("icons/Meteor2.svg", 155701229, 0);
 }

@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 
 package icons;
 
@@ -15,5 +15,5 @@ public final class KarmaIcons {
   private static @NotNull Icon load(@NotNull String path, int cacheKey, int flags) {
     return IconManager.getInstance().loadRasterizedIcon(path, KarmaIcons.class.getClassLoader(), cacheKey, flags);
   }
-  /** 16x16 */ public static final @NotNull Icon Karma2 = load("icons/karma2.svg", -1123822461, 0);
+  /** 16x16 */ public static final @NotNull Icon Karma2 = load("icons/karma2.svg", -1381642315, 0);
 }
