@@ -35,19 +35,19 @@ import javax.swing.Icon
 import javax.swing.JButton
 import javax.swing.JComponent
 
-class SerialMonitor(private val project: Project, private val myStatusIcon: Consumer<Icon>,
-                    name: @NlsSafe String,
-                    private val portProfile: SerialPortProfile) : Disposable {
-  private val mySerialService: JsscSerialService = JsscSerialService.getInstance()
-  private val myPanel: JBLoadingPanel = JBLoadingPanel(GridLayoutManager(2, 4, JBUI.insets(5), -1, -1), this, 300)
-  private val mySend: JButton
-  private val myCommand: CommandsComboBox
-  private val myLineEnd: JBCheckBox
-  private var myConsoleView: SerialMonitorDuplexConsoleView?
+internal class SerialMonitor(private val project: Project, private val myStatusIcon: Consumer<Icon>,
+                             name: @NlsSafe String,
+                             private val portProfile: SerialPortProfile) : Disposable {
+  private val serialService: JsscSerialService = JsscSerialService.getInstance()
+  private val panel = JBLoadingPanel(GridLayoutManager(2, 4, JBUI.insets(5), -1, -1), this, 300)
+  private val send: JButton
+  private val command: CommandsComboBox
+  private val lineEnd: JBCheckBox
+  private var consoleView: SerialMonitorDuplexConsoleView?
 
   private fun updateConnectionStatus(status: PortStatus) {
-    myCommand.isEnabled = status == PortStatus.CONNECTED
-    mySend.isEnabled = status == PortStatus.CONNECTED
+    command.isEnabled = status == PortStatus.CONNECTED
+    send.isEnabled = status == PortStatus.CONNECTED
     val icon = when (status) {
       PortStatus.CONNECTED, PortStatus.CONNECTING -> ConnectedSerial
       PortStatus.DISCONNECTED -> DisconnectedSerial
@@ -58,16 +58,16 @@ class SerialMonitor(private val project: Project, private val myStatusIcon: Cons
 
   private fun send(txt: String) {
     var s = txt
-    if (myLineEnd.isSelected) {
+    if (lineEnd.isSelected) {
       s += portProfile.newLine.value
     }
 
     if (s.isNotEmpty()) {
-      myConsoleView?.apply {
+      consoleView?.apply {
         val bytes = s.toByteArray(this.charset)
         ApplicationManager.getApplication().executeOnPooledThread {
           try {
-            mySerialService.write(portProfile.portName, bytes)
+            serialService.write(portProfile.portName, bytes)
           }
           catch (sme: SerialMonitorException) {
             errorNotification((sme.message)!!, project)
@@ -78,67 +78,67 @@ class SerialMonitor(private val project: Project, private val myStatusIcon: Cons
   }
 
   val component: JComponent
-    get() = myPanel
+    get() = panel
 
   override fun dispose() {
-    if (myConsoleView != null) {
-      Disposer.dispose(myConsoleView!!)
-      myConsoleView = null
+    if (consoleView != null) {
+      Disposer.dispose(consoleView!!)
+      consoleView = null
     }
-    mySerialService.close(portProfile.portName)
+    serialService.close(portProfile.portName)
   }
 
   fun connect() {
-    myConsoleView?.openConnectionTab(true)
+    consoleView?.openConnectionTab(true)
   }
 
   init {
-    myPanel.setLoadingText(SerialMonitorBundle.message("connecting"))
-    myConsoleView = SerialMonitorDuplexConsoleView(project, name, portProfile, myPanel)
-    val consoleComponent = myConsoleView!!.component
-    myConsoleView!!.border = BorderFactory.createEtchedBorder()
+    panel.setLoadingText(SerialMonitorBundle.message("connecting"))
+    consoleView = SerialMonitorDuplexConsoleView(project, name, portProfile, panel)
+    val consoleComponent = consoleView!!.component
+    consoleView!!.border = BorderFactory.createEtchedBorder()
     val toolbarActions = DefaultActionGroup()
     val toolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.TOOLBAR, toolbarActions, false)
-    toolbarActions.addAll(*myConsoleView!!.createConsoleActions())
+    toolbarActions.addAll(*consoleView!!.createConsoleActions())
     toolbar.targetComponent = consoleComponent
-    myCommand = CommandsComboBox()
-    myCommand.isEnabled = false
-    myCommand.setProject(project)
-    myLineEnd = JBCheckBox(SerialMonitorBundle.message("checkbox.send.eol"), true)
-    mySend = JButton(SerialMonitorBundle.message("send.title"))
-    mySend.isEnabled = false
-    myCommand.setHistorySize(10)
-    myCommand.addKeyboardListener(object : KeyAdapter() {
+    command = CommandsComboBox()
+    command.isEnabled = false
+    command.setProject(project)
+    lineEnd = JBCheckBox(SerialMonitorBundle.message("checkbox.send.eol"), true)
+    send = JButton(SerialMonitorBundle.message("send.title"))
+    send.isEnabled = false
+    command.setHistorySize(10)
+    command.addKeyboardListener(object : KeyAdapter() {
       override fun keyPressed(e: KeyEvent) {
         // send on CTRL + ENTER
         if (e.isControlDown && e.keyChar.code == KeyEvent.VK_ENTER) {
-          myCommand.hidePopup()
-          mySend.doClick()
+          command.hidePopup()
+          send.doClick()
         }
       }
     })
-    mySend.addActionListener(ActionListener {
-      send(myCommand.text)
-      myCommand.addCurrentTextToHistory()
-      myCommand.text = ""
+    send.addActionListener(ActionListener {
+      send(command.text)
+      command.addCurrentTextToHistory()
+      command.text = ""
     })
 
-    myConsoleView!!.setPortStateListener(this::updateConnectionStatus)
-    myPanel.add(toolbar.component,
-                GridConstraints(0, 0, 2, 1, ANCHOR_NORTH, FILL_VERTICAL, SIZEPOLICY_FIXED, SIZE_POLICY_RESIZEABLE, null, null, null))
-    myPanel.add(myCommand,
-                GridConstraints(0, 1, 1, 1, ANCHOR_NORTHWEST, FILL_HORIZONTAL, SIZE_POLICY_RESIZEABLE, SIZEPOLICY_FIXED, null, null, null))
-    myPanel.add(myLineEnd, GridConstraints(0, 2, 1, 1, ANCHOR_CENTER, FILL_NONE, SIZEPOLICY_FIXED,
-                                           SIZEPOLICY_FIXED, null, null, null))
-    myPanel.add(mySend,
-                GridConstraints(0, 3, 1, 1, ANCHOR_NORTHEAST, FILL_NONE, SIZEPOLICY_FIXED, SIZEPOLICY_FIXED, null, null, null))
-    myPanel.add(consoleComponent,
-                GridConstraints(1, 1, 1, 3, ANCHOR_NORTHWEST, FILL_BOTH, SIZE_POLICY_RESIZEABLE, SIZE_POLICY_RESIZEABLE, null, null, null))
+    consoleView!!.setPortStateListener(this::updateConnectionStatus)
+    panel.add(toolbar.component,
+              GridConstraints(0, 0, 2, 1, ANCHOR_NORTH, FILL_VERTICAL, SIZEPOLICY_FIXED, SIZE_POLICY_RESIZEABLE, null, null, null))
+    panel.add(command,
+              GridConstraints(0, 1, 1, 1, ANCHOR_NORTHWEST, FILL_HORIZONTAL, SIZE_POLICY_RESIZEABLE, SIZEPOLICY_FIXED, null, null, null))
+    panel.add(lineEnd, GridConstraints(0, 2, 1, 1, ANCHOR_CENTER, FILL_NONE, SIZEPOLICY_FIXED,
+                                       SIZEPOLICY_FIXED, null, null, null))
+    panel.add(send,
+              GridConstraints(0, 3, 1, 1, ANCHOR_NORTHEAST, FILL_NONE, SIZEPOLICY_FIXED, SIZEPOLICY_FIXED, null, null, null))
+    panel.add(consoleComponent,
+              GridConstraints(1, 1, 1, 3, ANCHOR_NORTHWEST, FILL_BOTH, SIZE_POLICY_RESIZEABLE, SIZE_POLICY_RESIZEABLE, null, null, null))
   }
 
   companion object {
-    private val CONNECT_ERROR_ICON = LayeredIcon.create(DisconnectedSerial, AllIcons.Nodes.ErrorMark)
-    private val SERIAL_NOTIFICATION_GROUP = NotificationGroupManager.getInstance().getNotificationGroup("Serial Monitor Notification")
+    private val CONNECT_ERROR_ICON by lazy { LayeredIcon.create(DisconnectedSerial, AllIcons.Nodes.ErrorMark) }
+    private val SERIAL_NOTIFICATION_GROUP by lazy { NotificationGroupManager.getInstance().getNotificationGroup("Serial Monitor Notification") }
 
     private const val SIZE_POLICY_RESIZEABLE = SIZEPOLICY_CAN_GROW + SIZEPOLICY_CAN_SHRINK + SIZEPOLICY_WANT_GROW
 
