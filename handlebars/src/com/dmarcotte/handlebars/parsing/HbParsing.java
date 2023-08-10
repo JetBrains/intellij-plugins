@@ -460,8 +460,10 @@ public class HbParsing {
   protected void parseMustache(PsiBuilder builder, IElementType openStache, IElementType closeStache) {
     PsiBuilder.Marker mustacheMarker = builder.mark();
     parseLeafToken(builder, openStache);
-    if (parseHelperName(builder)) {
+    if (parseSexpr(builder) || parseHelperName(builder)) {
       parseParamsStartHashQuestion(builder);
+    } else {
+      parseSexpr(builder);
     }
     parseLeafTokenGreedy(builder, closeStache);
     mustacheMarker.done(MUSTACHE);
@@ -489,7 +491,7 @@ public class HbParsing {
    */
   private boolean parsePartialName(PsiBuilder builder) {
     PsiBuilder.Marker partialNameMark = builder.mark();
-    if (parseHelperName(builder) || parseSexpr(builder)) {
+    if (parseSexpr(builder) || parseHelperName(builder)) {
       partialNameMark.done(PARTIAL_NAME);
       return true;
     }
@@ -804,6 +806,26 @@ public class HbParsing {
     }
     else {
       booleanMarker.rollbackTo();
+    }
+
+    PsiBuilder.Marker nullMarker = builder.mark();
+    if (parseLeafToken(builder, NULL)) {
+      nullMarker.drop();
+      helperNameMarker.done(MUSTACHE_NAME);
+      return true;
+    }
+    else {
+      nullMarker.rollbackTo();
+    }
+
+    PsiBuilder.Marker undefinedMarker = builder.mark();
+    if (parseLeafToken(builder, UNDEFINED)) {
+      undefinedMarker.drop();
+      helperNameMarker.done(MUSTACHE_NAME);
+      return true;
+    }
+    else {
+      undefinedMarker.rollbackTo();
     }
 
     helperNameMarker.error(HbBundle.message("hb.parsing.expected.path.or.data"));

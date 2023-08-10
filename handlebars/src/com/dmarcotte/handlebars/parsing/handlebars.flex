@@ -163,6 +163,8 @@ WhiteSpace = {LineTerminator} | [ \t\f]
   "else"/[}\)\t \n\x0B\f\r] { return HbTokenTypes.ELSE; } // create a custom token for "else" so that we can highlight it independently of the "{{" but still parse it as an inverse operator
   "true"/[}\)\t \n\x0B\f\r] { return HbTokenTypes.BOOLEAN; }
   "false"/[}\)\t \n\x0B\f\r] { return HbTokenTypes.BOOLEAN; }
+  "null"/[}\)\t \n\x0B\f\r] { return HbTokenTypes.NULL; }
+  "undefined"/[}\)\t \n\x0B\f\r] { return HbTokenTypes.UNDEFINED; }
   \-?[0-9]+(\.[0-9]+)?/[}\)\t \n\x0B\f\r]  { return HbTokenTypes.NUMBER; }
   "as"[\t \n\x0B\f\r]+"|" { return HbTokenTypes.OPEN_BLOCK_PARAMS; }
   "|" { return HbTokenTypes.CLOSE_BLOCK_PARAMS; }

@@ -25,3 +25,4 @@ public class HbLanguage extends Language implements TemplateLanguage, Injectable
     super(baseLanguage, ID, mimeTypes);
   }
 }
+
