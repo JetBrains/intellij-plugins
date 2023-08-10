@@ -32,7 +32,6 @@ import com.intellij.ui.dsl.gridLayout.UnscaledGaps
 import com.intellij.ui.layout.*
 import org.jetbrains.idea.perforce.PerforceBundle
 import org.jetbrains.idea.perforce.application.*
-import org.jetbrains.idea.perforce.perforce.ConfigPanel.*
 import org.jetbrains.idea.perforce.perforce.connections.*
 import org.jetbrains.idea.perforce.perforce.login.LoginPerformerImpl
 import org.jetbrains.idea.perforce.perforce.login.LoginSupport
