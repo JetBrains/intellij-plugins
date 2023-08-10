@@ -18,8 +18,9 @@ import javax.swing.*;
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
 public final class DartIconProvider extends IconProvider {
-  public static final Icon FOLDER_SYMLINK_ICON = LayeredIcon.create(AllIcons.Nodes.Folder, AllIcons.Nodes.Symlink);
-  public static final Icon EXCLUDED_FOLDER_SYMLINK_ICON = LayeredIcon.create(AllIcons.Modules.ExcludeRoot, AllIcons.Nodes.Symlink);
+  private static final Icon FOLDER_SYMLINK_ICON = LayeredIcon.layeredIcon(() -> new Icon[]{AllIcons.Nodes.Folder, AllIcons.Nodes.Symlink});
+  static final Icon EXCLUDED_FOLDER_SYMLINK_ICON =
+    LayeredIcon.layeredIcon(() -> new Icon[]{AllIcons.Modules.ExcludeRoot, AllIcons.Nodes.Symlink});
 
   @Override
   public @Nullable Icon getIcon(final @NotNull PsiElement element, @Iconable.IconFlags final int flags) {
