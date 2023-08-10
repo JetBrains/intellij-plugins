@@ -46,7 +46,7 @@ public class HbParserSpecTest extends HbParserTest {
     doTest(true);
   }
 
-  public void testMustachesWithBooleanParameters() {
+  public void testMustachesWithKeywords() {
     doTest(true);
   }
 
@@ -69,6 +69,7 @@ public class HbParserSpecTest extends HbParserTest {
   public void testPartialWithContext() {
     doTest(true);
   }
+  public void testPartialWithParenthesis() { doTest(true);  }
 
   public void testParsesPartialWithHash() {
     doTest(true);
