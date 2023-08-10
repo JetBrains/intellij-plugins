@@ -68,13 +68,13 @@ internal class PerforceConfigurable(val myProject: Project) :
       settings.disable(true)
     }
   })
-  private val cdSwitchToOffline = CheckboxDescriptor(PerforceBundle.message("checkbox.switch.offline"), { settings.myCanGoOffline }, { settings.myCanGoOffline = it })
-  private val cdShowCmds = CheckboxDescriptor(PerforceBundle.message("checkbox.configure.perforce.log.commands"), { settings.showCmds }, { settings.showCmds = it })
-  private val cdUseLogin = CheckboxDescriptor(PerforceBundle.message("checkbox.configure.perforce.use.login.authentication"), { settings.USE_LOGIN }, { settings.USE_LOGIN = it })
-  private val cdShowBranchingHistory = CheckboxDescriptor(PerforceBundle.message("checkbox.configure.perforce.show.branching.history"), { settings.SHOW_BRANCHES_HISTORY }, { settings.SHOW_BRANCHES_HISTORY = it })
-  private val cdShowIntegratedChangelists = CheckboxDescriptor(PerforceBundle.message("checkbox.configure.perforce.show.integrated.changelists"), { settings.SHOW_INTEGRATED_IN_COMMITTED_CHANGES }, { settings.SHOW_INTEGRATED_IN_COMMITTED_CHANGES = it })
-  private val cdUsePerforceJobs = CheckboxDescriptor(PerforceBundle.message("perforce.use.perforce.jobs"), { settings.USE_PERFORCE_JOBS }, { settings.USE_PERFORCE_JOBS = it })
-  private val cdUseP4ForIgnore = CheckboxDescriptor(PerforceBundle.message("label.configure.perforce.use.p4.for.ignore"), { !settings.USE_PATTERN_MATCHING_IGNORE }, { settings.USE_PATTERN_MATCHING_IGNORE = !it })
+  private val cdSwitchToOffline = CheckboxDescriptor(PerforceBundle.message("checkbox.switch.offline"), settings::myCanGoOffline)
+  private val cdShowCmds = CheckboxDescriptor(PerforceBundle.message("checkbox.configure.perforce.log.commands"), settings::showCmds)
+  private val cdUseLogin = CheckboxDescriptor(PerforceBundle.message("checkbox.configure.perforce.use.login.authentication"), settings::USE_LOGIN)
+  private val cdShowBranchingHistory = CheckboxDescriptor(PerforceBundle.message("checkbox.configure.perforce.show.branching.history"), settings::SHOW_BRANCHES_HISTORY)
+  private val cdShowIntegratedChangelists = CheckboxDescriptor(PerforceBundle.message("checkbox.configure.perforce.show.integrated.changelists"), settings::SHOW_INTEGRATED_IN_COMMITTED_CHANGES)
+  private val cdUsePerforceJobs = CheckboxDescriptor(PerforceBundle.message("perforce.use.perforce.jobs"), settings::USE_PERFORCE_JOBS)
+  private val cdUseP4ForIgnore = CheckboxDescriptor(PerforceBundle.message("label.configure.perforce.use.p4.for.ignore"), settings::SHOW_BRANCHES_HISTORY)
 
   private lateinit var myUseP4ConfigRadioButton : JBRadioButton
   private lateinit var myUseP4IgnoreRadioButton : JBRadioButton
@@ -212,24 +212,24 @@ internal class PerforceConfigurable(val myProject: Project) :
             }
             row(PerforceBundle.message("label.configure.perforce.user")) {
               myUser = textField().align(AlignX.FILL)
-                .bindText({ settings.user }, { settings.user = it }).component
+                .bindText(settings::user).component
             }
           }.resizableColumn()
           panel {
             row(PerforceBundle.message("label.configure.perforce.client")) {
               myClient = textField().align(AlignX.FILL)
-                .bindText({ settings.client }, { settings.client = it }).component
+                .bindText(settings::client).component
             }
             row(PerforceBundle.message("combobox.configure.perforce.charset")) {
               myCharset = comboBox(charsetValues, listCellRenderer<String> { it ->
                 text = if (it == CHARSET_NONE) PerforceBundle.message("none.charset.presentation") else it
               }).align(AlignX.FILL)
-                .bindItem({ settings.CHARSET }, { settings.CHARSET = it }).component
+                .bindItem(settings::CHARSET).component
             }
           }.resizableColumn()
         }.enabledIf(myUseP4ConfigRadioButton.selected.not())
       }
-    }.bind({ settings.useP4CONFIG }, { settings.useP4CONFIG = it })
+    }.bind(settings::useP4CONFIG)
   }
 
   private fun Panel.ignorePanel(): Row = group(myIgnorePanelLabel) {
@@ -254,7 +254,7 @@ internal class PerforceConfigurable(val myProject: Project) :
             .bindText({ settings.pathToIgnore }, { settings.pathToIgnore = it.trim() })
         }.enabledIf(myUseP4IgnoreRadioButton.selected.not())
       }
-    }.bind({ settings.useP4IGNORE }, { settings.useP4IGNORE = it })
+    }.bind(settings::useP4IGNORE)
   }
 
   private fun Row.outputHyperLink() = cell(HyperlinkLabel().apply {
