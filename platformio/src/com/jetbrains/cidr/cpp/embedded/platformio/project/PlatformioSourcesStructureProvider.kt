@@ -8,7 +8,6 @@ import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode
 import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.util.PlatformIcons
 import com.intellij.util.asSafely
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
@@ -17,7 +16,7 @@ class PlatformioSourcesStructureProvider : TreeStructureProvider {
 
   private fun detectSubfolder(folder: String, subfolder: String): Boolean {
     if (folder == subfolder) return true
-    return subfolder.substringAfter(folder).startsWith('/')
+    return subfolder.substringAfter(folder, "").startsWith('/')
   }
 
   override fun modify(parent: AbstractTreeNode<*>,
