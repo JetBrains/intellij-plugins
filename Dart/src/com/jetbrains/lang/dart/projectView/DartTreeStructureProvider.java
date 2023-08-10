@@ -29,13 +29,11 @@ import java.util.Collections;
 import static com.jetbrains.lang.dart.util.DartUrlResolver.PACKAGES_FOLDER_NAME;
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
-public class DartTreeStructureProvider implements TreeStructureProvider, DumbAware {
-
+final class DartTreeStructureProvider implements TreeStructureProvider, DumbAware {
   @Override
-  @NotNull
-  public Collection<AbstractTreeNode<?>> modify(final @NotNull AbstractTreeNode<?> parentNode,
-                                             final @NotNull Collection<AbstractTreeNode<?>> children,
-                                             final ViewSettings settings) {
+  public @NotNull Collection<AbstractTreeNode<?>> modify(final @NotNull AbstractTreeNode<?> parentNode,
+                                                         final @NotNull Collection<AbstractTreeNode<?>> children,
+                                                         final ViewSettings settings) {
     if (parentNode instanceof ExternalLibrariesNode) {
       return ContainerUtil.map(children, node -> {
         if (node instanceof NamedLibraryElementNode &&
@@ -117,8 +115,7 @@ public class DartTreeStructureProvider implements TreeStructureProvider, DumbAwa
     return children;
   }
 
-  @Nullable
-  private static AbstractTreeNode getFolderNode(final @NotNull Collection<AbstractTreeNode<?>> nodes, final @NotNull VirtualFile folder) {
+  private static @Nullable AbstractTreeNode getFolderNode(final @NotNull Collection<AbstractTreeNode<?>> nodes, final @NotNull VirtualFile folder) {
     for (AbstractTreeNode node : nodes) {
       if (node instanceof PsiDirectoryNode && folder.equals(((PsiDirectoryNode)node).getVirtualFile())) {
         return node;
@@ -127,7 +124,7 @@ public class DartTreeStructureProvider implements TreeStructureProvider, DumbAwa
     return null;
   }
 
-  private static String getPackageLocationString(@NotNull final VirtualFile packageDir) {
+  private static String getPackageLocationString(final @NotNull VirtualFile packageDir) {
     final String path = packageDir.getPath();
     final int lastSlashIndex = path.lastIndexOf("/");
     final int prevSlashIndex = lastSlashIndex == -1 ? -1 : path.substring(0, lastSlashIndex).lastIndexOf("/");
@@ -135,7 +132,7 @@ public class DartTreeStructureProvider implements TreeStructureProvider, DumbAwa
   }
 
   private static class SymlinkToLivePackageNode extends AbstractTreeNode<String> {
-    @NotNull private final String mySymlinkPath;
+    private final @NotNull String mySymlinkPath;
 
     SymlinkToLivePackageNode(final @NotNull Project project,
                                     final @NotNull String packageName,
@@ -147,13 +144,12 @@ public class DartTreeStructureProvider implements TreeStructureProvider, DumbAwa
     }
 
     @Override
-    @NotNull
-    public Collection<? extends AbstractTreeNode<?>> getChildren() {
+    public @NotNull Collection<? extends AbstractTreeNode<?>> getChildren() {
       return Collections.emptyList();
     }
 
     @Override
-    protected void update(@NotNull final PresentationData presentation) {
+    protected void update(final @NotNull PresentationData presentation) {
       presentation.setIcon(getIcon());
       presentation.setPresentableText(myName);
       presentation.setLocationString(mySymlinkPath);
@@ -181,7 +177,7 @@ public class DartTreeStructureProvider implements TreeStructureProvider, DumbAwa
     }
 
     @Override
-    protected void updateImpl(@NotNull final PresentationData data) {
+    protected void updateImpl(final @NotNull PresentationData data) {
       super.updateImpl(data);
 
       final VirtualFile dir = getVirtualFile();

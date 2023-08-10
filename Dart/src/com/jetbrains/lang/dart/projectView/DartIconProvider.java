@@ -22,8 +22,7 @@ public final class DartIconProvider extends IconProvider {
   public static final Icon EXCLUDED_FOLDER_SYMLINK_ICON = LayeredIcon.create(AllIcons.Modules.ExcludeRoot, AllIcons.Nodes.Symlink);
 
   @Override
-  @Nullable
-  public Icon getIcon(@NotNull final PsiElement element, @Iconable.IconFlags final int flags) {
+  public @Nullable Icon getIcon(final @NotNull PsiElement element, @Iconable.IconFlags final int flags) {
     if (element instanceof PsiDirectory) {
       final VirtualFile folder = ((PsiDirectory)element).getVirtualFile();
 
@@ -45,7 +44,7 @@ public final class DartIconProvider extends IconProvider {
     return null;
   }
 
-  public static boolean isFolderNearPubspecYaml(final @Nullable VirtualFile folder, final @NotNull String folderName) {
+  public static boolean isFolderNearPubspecYaml(@Nullable VirtualFile folder, @NotNull String folderName) {
     if (folder != null && folder.isDirectory() && folder.isInLocalFileSystem() && folderName.equals(folder.getName())) {
       final VirtualFile parentFolder = folder.getParent();
       final VirtualFile pubspecYamlFile = parentFolder != null ? parentFolder.findChild(PUBSPEC_YAML) : null;
