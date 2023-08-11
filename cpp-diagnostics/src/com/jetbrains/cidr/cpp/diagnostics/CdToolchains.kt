@@ -3,8 +3,8 @@ package com.jetbrains.cidr.cpp.diagnostics
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.ProcessOutput
+import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.application.ApplicationNamesInfo
-import com.intellij.openapi.application.impl.ApplicationInfoImpl
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SystemInfo
@@ -46,7 +46,7 @@ fun collectToolchains(project: Project?): String {
 }
 
 fun processSystemInfo(log: CdIndenter) {
-  val appInfo = ApplicationInfoImpl.getInstance()
+  val appInfo = ApplicationInfo.getInstance()
   val namesInfo = ApplicationNamesInfo.getInstance()
   log.put("IDE: ${namesInfo.fullProductName} (build #${appInfo.build.asString()})")
   log.put("OS: ${SystemInfo.OS_NAME} (${SystemInfo.OS_VERSION}, ${SystemInfo.OS_ARCH})")
