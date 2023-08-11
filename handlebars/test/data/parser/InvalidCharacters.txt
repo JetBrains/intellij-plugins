@@ -3,7 +3,7 @@ HbFile:InvalidCharacters.hbs
     HbSimpleMustacheImpl(MUSTACHE)
       HbPsiElementImpl([Hb] OPEN)
         PsiElement([Hb] OPEN)('{{')
-      PsiErrorElement:Expected a path, String, Number, Boolean or @data
+      PsiErrorElement:Expected a path, String, Number, Boolean, Null, Undefined or @data
         <empty list>
       PsiErrorElement:Expected Close "}}"
         PsiElement([Hb] INVALID)('t')
