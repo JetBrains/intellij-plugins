@@ -1,6 +1,8 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.service
 
+import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
+import com.intellij.openapi.Disposable
 import com.intellij.platform.lsp.tests.checkLspHighlighting
 import org.jetbrains.vuejs.lang.VueInspectionsProvider
 import org.jetbrains.vuejs.lang.VueTestModule
@@ -30,6 +32,49 @@ class VolarServiceTest : VolarServiceTestBase() {
         <div>{{acceptNumber(<error descr="Argument type  true  is not assignable to parameter type  number "><error descr="Vue: Argument of type 'boolean' is not assignable to parameter of type 'number'.">true</error></error>)}}</div>
       </template>
     """)
+    myFixture.checkLspHighlighting()
+    assertCorrectService()
+  }
+
+  @Test
+  fun testEnableSuggestions() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
+    myFixture.configureByText("tsconfig.json", tsconfig)
+    myFixture.configureByText("Simple.vue", """
+      <script setup lang="ts">
+      export function hello(<weak_warning descr="Vue: 'p' is declared but its value is never read." textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES">p</weak_warning>: number, p2: number) {
+          console.log(p2);
+      }
+      let <error descr="Vue: Type 'number' is not assignable to type 'string'.">a</error>: string = 1;
+      </script>
+      
+      <template>
+      </template>
+    """)
+    myFixture.doHighlighting()
+    myFixture.checkLspHighlighting()
+    assertCorrectService()
+  }
+
+  @Test
+  fun testDisableSuggestions() {
+    val settings = TypeScriptCompilerSettings.getSettings(project)
+    settings.isShowSuggestions = false
+    disposeOnTearDown(Disposable { settings.isShowSuggestions = true })
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
+    myFixture.configureByText("tsconfig.json", tsconfig)
+    myFixture.configureByText("Simple.vue", """
+      <script setup lang="ts">
+      export function hello(p: number, p2: number) {
+          console.log(p2);
+      }
+      let <error descr="Vue: Type 'number' is not assignable to type 'string'.">a</error>: string = 1;
+      </script>
+      
+      <template>
+      </template>
+    """)
+    myFixture.doHighlighting()
     myFixture.checkLspHighlighting()
     assertCorrectService()
   }
