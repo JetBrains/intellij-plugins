@@ -28,14 +28,16 @@ import java.util.Objects;
 // XValue.calculateEvaluationExpression() in order to support evaluate expression in variable values.
 // See https://youtrack.jetbrains.com/issue/WEB-17629.
 
-public class DartVmServiceValue extends XNamedValue {
-
-  private static final LayeredIcon FINAL_FIELD_ICON = new LayeredIcon(AllIcons.Nodes.Field, IconManager.getInstance().getPlatformIcon(
-    PlatformIcons.FinalMark));
-  private static final LayeredIcon STATIC_FIELD_ICON = new LayeredIcon(AllIcons.Nodes.Field, IconManager.getInstance().getPlatformIcon(
-    PlatformIcons.StaticMark));
-  private static final LayeredIcon STATIC_FINAL_FIELD_ICON =
-    new LayeredIcon(AllIcons.Nodes.Field, IconManager.getInstance().getPlatformIcon(PlatformIcons.StaticMark), IconManager.getInstance().getPlatformIcon(PlatformIcons.FinalMark));
+public final class DartVmServiceValue extends XNamedValue {
+  private static final LayeredIcon FINAL_FIELD_ICON = LayeredIcon.layeredIcon(() -> {
+    return new Icon[]{AllIcons.Nodes.Field, IconManager.getInstance().getPlatformIcon(PlatformIcons.FinalMark)};
+  });
+  private static final LayeredIcon STATIC_FIELD_ICON = LayeredIcon.layeredIcon(() -> {
+    return new Icon[]{AllIcons.Nodes.Field, IconManager.getInstance().getPlatformIcon(PlatformIcons.StaticMark)};
+  });
+  private static final LayeredIcon STATIC_FINAL_FIELD_ICON = LayeredIcon.layeredIcon(() -> {
+    return new Icon[]{AllIcons.Nodes.Field, IconManager.getInstance().getPlatformIcon(PlatformIcons.StaticMark), IconManager.getInstance().getPlatformIcon(PlatformIcons.FinalMark)};
+  });
 
   private final @NotNull DartVmServiceDebugProcess myDebugProcess;
   private final @NotNull String myIsolateId;

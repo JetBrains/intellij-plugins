@@ -1,3 +1,4 @@
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.presentation;
 
 import com.intellij.ide.IconProvider;
@@ -19,11 +20,9 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class FlexIconProvider extends IconProvider {
-
+final class FlexIconProvider extends IconProvider {
   @Override
   public Icon getIcon(@NotNull PsiElement element, int flags) {
-
     Icon icon = null;
 
     if (element instanceof XmlFile) {
@@ -47,7 +46,7 @@ public class FlexIconProvider extends IconProvider {
       final VirtualFile vFile = psiFile == null ? null : psiFile.getVirtualFile();
       CompilerManager compilerManager = CompilerManager.getInstance(element.getProject());
       if (vFile != null && compilerManager != null && compilerManager.isExcludedFromCompilation(vFile)) {
-        icon = new LayeredIcon(icon, PlatformIcons.EXCLUDED_FROM_COMPILE_ICON);
+        icon = LayeredIcon.layeredIcon(new Icon[]{icon, PlatformIcons.EXCLUDED_FROM_COMPILE_ICON});
       }
     }
 

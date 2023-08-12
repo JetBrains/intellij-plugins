@@ -32,17 +32,25 @@ import java.util.Collections;
 import static com.intellij.icons.AllIcons.Nodes.*;
 
 final class DartStructureViewElement extends PsiTreeElementBase<PsiElement> {
-  private static final LayeredIcon STATIC_FINAL_FIELD_ICON = new LayeredIcon(IconManager.getInstance().getPlatformIcon(PlatformIcons.Field), IconManager.getInstance().getPlatformIcon(PlatformIcons.StaticMark), IconManager.getInstance().getPlatformIcon(
-    PlatformIcons.FinalMark));
-  private static final LayeredIcon FINAL_FIELD_ICON = new LayeredIcon(Field, IconManager.getInstance().getPlatformIcon(PlatformIcons.FinalMark));
-  private static final LayeredIcon STATIC_FIELD_ICON = new LayeredIcon(Field, IconManager.getInstance().getPlatformIcon(PlatformIcons.StaticMark));
-  private static final LayeredIcon STATIC_METHOD_ICON = new LayeredIcon(Method, IconManager.getInstance().getPlatformIcon(PlatformIcons.StaticMark));
-  private static final LayeredIcon TOP_LEVEL_FUNCTION_ICON = new LayeredIcon(Lambda, IconManager.getInstance().getPlatformIcon(PlatformIcons.StaticMark));
-  private static final LayeredIcon TOP_LEVEL_VAR_ICON = new LayeredIcon(Variable, IconManager.getInstance().getPlatformIcon(PlatformIcons.StaticMark));
-  private static final LayeredIcon CONSTRUCTOR_INVOCATION_ICON = new LayeredIcon(IconManager.getInstance().getPlatformIcon(PlatformIcons.Class), TabPin);
-  private static final LayeredIcon FUNCTION_INVOCATION_ICON = new LayeredIcon(Method, TabPin);
-  private static final LayeredIcon TOP_LEVEL_CONST_ICON = new LayeredIcon(Variable, IconManager.getInstance().getPlatformIcon(PlatformIcons.StaticMark), IconManager.getInstance().getPlatformIcon(
-    PlatformIcons.FinalMark));
+  private static final LayeredIcon STATIC_FINAL_FIELD_ICON = LayeredIcon.layeredIcon(() -> {
+    IconManager iconManager = IconManager.getInstance();
+    return new Icon[]{
+      iconManager.getPlatformIcon(PlatformIcons.Field),
+      iconManager.getPlatformIcon(PlatformIcons.StaticMark),
+      iconManager.getPlatformIcon(PlatformIcons.FinalMark)
+    };
+  });
+  private static final LayeredIcon FINAL_FIELD_ICON = LayeredIcon.layeredIcon(() -> new Icon[]{Field, IconManager.getInstance().getPlatformIcon(PlatformIcons.FinalMark)});
+  private static final LayeredIcon STATIC_FIELD_ICON = LayeredIcon.layeredIcon(() -> new Icon[]{Field, IconManager.getInstance().getPlatformIcon(PlatformIcons.StaticMark)});
+  private static final LayeredIcon STATIC_METHOD_ICON = LayeredIcon.layeredIcon(() -> new Icon[]{Method, IconManager.getInstance().getPlatformIcon(PlatformIcons.StaticMark)});
+  private static final LayeredIcon TOP_LEVEL_FUNCTION_ICON = LayeredIcon.layeredIcon(() -> new Icon[]{Lambda, IconManager.getInstance().getPlatformIcon(PlatformIcons.StaticMark)});
+  private static final LayeredIcon TOP_LEVEL_VAR_ICON = LayeredIcon.layeredIcon(() -> new Icon[]{Variable, IconManager.getInstance().getPlatformIcon(PlatformIcons.StaticMark)});
+  private static final LayeredIcon CONSTRUCTOR_INVOCATION_ICON = LayeredIcon.layeredIcon(() -> new Icon[]{IconManager.getInstance().getPlatformIcon(PlatformIcons.Class), TabPin});
+  private static final LayeredIcon FUNCTION_INVOCATION_ICON = LayeredIcon.layeredIcon(() -> new Icon[]{Method, TabPin});
+  private static final LayeredIcon TOP_LEVEL_CONST_ICON = LayeredIcon.layeredIcon(() -> {
+    IconManager iconManager = IconManager.getInstance();
+    return new Icon[]{Variable, iconManager.getPlatformIcon(PlatformIcons.StaticMark), iconManager.getPlatformIcon(PlatformIcons.FinalMark)};
+  });
 
   @NotNull private final PsiFile myPsiFile;
   @NotNull private final Outline myOutline;
