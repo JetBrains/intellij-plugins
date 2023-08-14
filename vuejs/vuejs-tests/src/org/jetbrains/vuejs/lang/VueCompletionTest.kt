@@ -2207,6 +2207,23 @@ export default {
     myFixture.checkResultByFile("${getTestName(true)}/${getTestName(false)}.after.vue")
   }
 
+  fun testInjectInScriptSetupLiteralsUnquoted() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.copyDirectoryToProject(getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+    myFixture.completeBasic()
+    assertContainsElements(
+      myFixture.lookupElementStrings!!,
+      "provideGlobal",
+      "provideInApp",
+      "provideLiteral",
+    )
+
+    myFixture.type("provideG")
+    myFixture.completeBasic()
+    myFixture.checkResultByFile("${getTestName(true)}/${getTestName(false)}.after.vue")
+  }
+
   fun testInjectInProperties() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
     myFixture.copyDirectoryToProject(getTestName(true), "")

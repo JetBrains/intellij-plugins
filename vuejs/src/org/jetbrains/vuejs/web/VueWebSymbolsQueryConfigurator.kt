@@ -129,7 +129,10 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
   }
 
   private fun isInjectedAsMacroCall(element: JSElement): Boolean =
-    element.asSafely<JSLiteralExpression>()?.let { JSPsiImplUtils.isArgumentOfCallWithName(it, 0, INJECT_PROP) } ?: false
+    element.asSafely<JSExpression>()
+      ?.takeIf { it is JSLiteralExpression || it is JSReferenceExpression && !it.hasQualifier() }
+      ?.let { JSPsiImplUtils.isArgumentOfCallWithName(it, 0, INJECT_PROP) }
+    ?: false
 
   private fun addEntityContainers(element: PsiElement,
                                   fileContext: PsiFile,
