@@ -129,6 +129,8 @@ private class PerforceConfigPanel(private val myProject: Project, private val my
         if (dumpFile.exists())
           link(dumpFile.absolutePath) {
             RevealFileAction.openFile(PerforceRunner.getDumpFile())
+          }.apply {
+            component.autoHideOnDisable = false
           }
         else
           label("'${dumpFile.absolutePath}'")
@@ -163,7 +165,7 @@ private class PerforceConfigPanel(private val myProject: Project, private val my
         .gap(RightGap.SMALL).component
       label(PerforceBundle.message("configure.perforce.timeout.seconds"))
     }
-    row { checkBox(PerforceBundle.message("perforce.use.perforce.jobs")).bindSelected(mySettings::USE_PERFORCE_JOBS).component }
+    row { checkBox(PerforceBundle.message("perforce.use.perforce.jobs")).bindSelected(mySettings::USE_PERFORCE_JOBS) }
     row {
       checkBox(PerforceBundle.message("label.configure.perforce.use.p4.for.ignore"))
         .bindSelected({ !mySettings.USE_PATTERN_MATCHING_IGNORE }, { mySettings.USE_PATTERN_MATCHING_IGNORE = !it })
