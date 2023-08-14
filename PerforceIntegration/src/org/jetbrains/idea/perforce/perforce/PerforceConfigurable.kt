@@ -1,34 +1,27 @@
 package org.jetbrains.idea.perforce.perforce
 
-import com.intellij.application.options.editor.CheckboxDescriptor
-import com.intellij.application.options.editor.checkBox
 import com.intellij.ide.actions.RevealFileAction
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.ComboBox
+import com.intellij.openapi.ui.*
 import com.intellij.openapi.ui.ComponentWithBrowseButton.BrowseFolderActionListener
-import com.intellij.openapi.ui.DialogPanel
-import com.intellij.openapi.ui.TextComponentAccessor
-import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.vcs.ProjectLevelVcsManager
 import com.intellij.openapi.vcs.VcsException
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.ui.HyperlinkLabel
-import com.intellij.ui.RelativeFont
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBRadioButton
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.dsl.builder.*
+import com.intellij.ui.dsl.builder.Cell
 import com.intellij.ui.dsl.builder.Row
 import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.dsl.gridLayout.UnscaledGaps
 import com.intellij.ui.layout.*
 import org.jetbrains.idea.perforce.PerforceBundle
 import org.jetbrains.idea.perforce.application.*
@@ -37,9 +30,8 @@ import org.jetbrains.idea.perforce.perforce.login.LoginPerformerImpl
 import org.jetbrains.idea.perforce.perforce.login.LoginSupport
 import org.jetbrains.idea.perforce.perforce.login.PerforceLoginManager
 import java.io.File
-import javax.swing.JLabel
+import javax.swing.JEditorPane
 import javax.swing.JTextField
-import javax.swing.event.HyperlinkEvent
 
 private const val CHARSET_NONE: @NlsSafe String = "none"
 private const val CHARSET_ISO8859_1: @NlsSafe String = "iso8859-1"
@@ -53,28 +45,9 @@ private const val CHARSET_utf8: @NlsSafe String = "utf8"
 private val charsetValues = listOf(CHARSET_NONE, CHARSET_ISO8859_1, CHARSET_ISO8859_15, CHARSET_eucjp,
                                    CHARSET_eucjp, CHARSET_shiftjis, CHARSET_winansi, CHARSET_macosroman, CHARSET_utf8)
 
-
-internal class PerforceConfigurable(val myProject: Project) :
-  BoundConfigurable(PerforceVcs.NAME, "project.propVCSSupport.VCSs.Perforce") {
-
+private class PerforceConfigPanel(private val myProject: Project, private val myDisposable: Disposable) {
   private val myP4EnvHelper = P4EnvHelper.getConfigHelper(myProject)
-  private val settings get() = PerforceSettings.getSettings(myProject)
-
-  private val cdIsEnabled = CheckboxDescriptor(PerforceBundle.message("checkbox.configure.perforce.is.enabled"), { settings.ENABLED }, {
-    if (it) {
-      settings.enable()
-    }
-    else {
-      settings.disable(true)
-    }
-  })
-  private val cdSwitchToOffline = CheckboxDescriptor(PerforceBundle.message("checkbox.switch.offline"), settings::myCanGoOffline)
-  private val cdShowCmds = CheckboxDescriptor(PerforceBundle.message("checkbox.configure.perforce.log.commands"), settings::showCmds)
-  private val cdUseLogin = CheckboxDescriptor(PerforceBundle.message("checkbox.configure.perforce.use.login.authentication"), settings::USE_LOGIN)
-  private val cdShowBranchingHistory = CheckboxDescriptor(PerforceBundle.message("checkbox.configure.perforce.show.branching.history"), settings::SHOW_BRANCHES_HISTORY)
-  private val cdShowIntegratedChangelists = CheckboxDescriptor(PerforceBundle.message("checkbox.configure.perforce.show.integrated.changelists"), settings::SHOW_INTEGRATED_IN_COMMITTED_CHANGES)
-  private val cdUsePerforceJobs = CheckboxDescriptor(PerforceBundle.message("perforce.use.perforce.jobs"), settings::USE_PERFORCE_JOBS)
-  private val cdUseP4ForIgnore = CheckboxDescriptor(PerforceBundle.message("label.configure.perforce.use.p4.for.ignore"), settings::SHOW_BRANCHES_HISTORY)
+  private val mySettings = PerforceSettings.getSettings(myProject)
 
   private lateinit var myUseP4ConfigRadioButton : JBRadioButton
   private lateinit var myUseP4IgnoreRadioButton : JBRadioButton
@@ -88,8 +61,8 @@ internal class PerforceConfigurable(val myProject: Project) :
 
   private lateinit var myServerTimeoutField : JBTextField
 
-  private lateinit var myConfigEnvWarning : JLabel
-  private lateinit var myIgnoreEnvWarning : JLabel
+  private lateinit var myConfigEnvWarning : JEditorPane
+  private lateinit var myIgnoreEnvWarning : JEditorPane
 
   private val myIgnorePanelLabel = JBLabel(PerforceBundle.message("border.configure.ignore.settings"))
 
@@ -103,9 +76,9 @@ internal class PerforceConfigurable(val myProject: Project) :
 
   private val myPathToP4 = TextFieldWithBrowseButton().apply {
     addBrowseFolderListener(PerforceBundle.message("dialog.title.path.to.p4.exe"),
-                             PerforceBundle.message("dialog.description.path.to.p4.exe"),
-                             myProject,
-                             FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor())
+                            PerforceBundle.message("dialog.description.path.to.p4.exe"),
+                            myProject,
+                            FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor())
   }
 
   private val myPathToP4V = TextFieldWithBrowseButton().apply {
@@ -115,47 +88,64 @@ internal class PerforceConfigurable(val myProject: Project) :
       this, myProject,
       FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor(),
       TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT) {
-        override fun getInitialFile(): VirtualFile? {
-          val file = super.getInitialFile()
-          return if (file == null && SystemInfo.isMac) {
-            LocalFileSystem.getInstance().refreshAndFindFileByPath("/Applications/p4vc")
-          }
-          else file
+      override fun getInitialFile(): VirtualFile? {
+        val file = super.getInitialFile()
+        return if (file == null && SystemInfo.isMac) {
+          LocalFileSystem.getInstance().refreshAndFindFileByPath("/Applications/p4vc")
         }
+        else file
+      }
     })
   }
 
-
-  override fun createPanel(): DialogPanel = panel {
+  fun createPanel(): DialogPanel = panel {
     if (!myProject.isDefault) {
-      row { checkBox(cdIsEnabled) }
+      row { checkBox(PerforceBundle.message("checkbox.configure.perforce.is.enabled"))
+        .bindSelected({ mySettings.ENABLED }, {
+        if (it) {
+          mySettings.enable()
+        }
+        else {
+          mySettings.disable(true)
+        }
+      }) }
     }
 
-    row { checkBox(cdSwitchToOffline) }
+    row { checkBox(PerforceBundle.message("checkbox.switch.offline")).bindSelected(mySettings::myCanGoOffline) }
     if (!myProject.isDefault) {
       configPanel()
       ignorePanel()
-        .enabledIf(HasIgnoreFileFromEnv(myProject, disposable!!).not()
+        .enabledIf(HasIgnoreFileFromEnv(myProject, myDisposable).not()
                      .or(myUseP4ConfigRadioButton.selected.not()))
     }
 
-    row { myShowCmds = checkBox(cdShowCmds).component }
+    row {
+      myShowCmds = checkBox(PerforceBundle.message("checkbox.configure.perforce.log.commands"))
+        .bindSelected(mySettings::showCmds).component
+    }
     indent {
       row(PerforceBundle.message("checkbox.configure.perforce.log.commands.output")) {
-        outputHyperLink()
+        val dumpFile = PerforceRunner.getDumpFile()
+        if (dumpFile.exists())
+          link(dumpFile.absolutePath) {
+            RevealFileAction.openFile(PerforceRunner.getDumpFile())
+          }
+        else
+          label("'${dumpFile.absolutePath}'")
       }.layout(RowLayout.INDEPENDENT).enabledIf(myShowCmds.selected)
     }
     row {
-      myUseLogin = checkBox(cdUseLogin).component
+      myUseLogin = checkBox(PerforceBundle.message("checkbox.configure.perforce.use.login.authentication"))
+        .bindSelected(mySettings::USE_LOGIN).component
       button(PerforceBundle.message("button.text.test.connection")) { testConnection() }
         .align(AlignX.RIGHT).visible(!myProject.isDefault)
     }
     row(PerforceBundle.message("label.configure.perforce.path.to.p4.exe")) {
       cell(myPathToP4).align(AlignX.FILL)
-        .bindText({ settings.pathToExec }, {
+        .bindText({ mySettings.pathToExec }, {
           val newText = it.trim()
-          val execChanged = settings.pathToExec != newText
-          settings.pathToExec = newText
+          val execChanged = mySettings.pathToExec != newText
+          mySettings.pathToExec = newText
           if (execChanged) {
             PerforceManager.getInstance(myProject).resetClientVersion()
           }
@@ -163,18 +153,21 @@ internal class PerforceConfigurable(val myProject: Project) :
     }
     row(PerforceBundle.message("label.configure.perforce.path.to.p4vc.exe")) {
       cell(myPathToP4V).align(AlignX.FILL)
-        .bindText({ settings.PATH_TO_P4VC }, { settings.PATH_TO_P4VC = it.trim() })
+        .bindText({ mySettings.PATH_TO_P4VC }, { mySettings.PATH_TO_P4VC = it.trim() })
     }
-    row { checkBox(cdShowBranchingHistory) }
-    row { checkBox(cdShowIntegratedChangelists) }
+    row { checkBox(PerforceBundle.message("checkbox.configure.perforce.show.branching.history")).bindSelected(mySettings::SHOW_BRANCHES_HISTORY) }
+    row { checkBox(PerforceBundle.message("checkbox.configure.perforce.show.integrated.changelists")).bindSelected(mySettings::SHOW_INTEGRATED_IN_COMMITTED_CHANGES) }
     row {
-      label(PerforceBundle.message("server.timeout")).customize(UnscaledGaps(right = 5))
-      myServerTimeoutField = intTextField().bindIntText({ settings.SERVER_TIMEOUT / 1000 }, { settings.SERVER_TIMEOUT = it * 1000 })
-        .customize(UnscaledGaps(right = 5)).component
+      label(PerforceBundle.message("server.timeout")).gap(RightGap.SMALL)
+      myServerTimeoutField = intTextField().bindIntText({ mySettings.SERVER_TIMEOUT / 1000 }, { mySettings.SERVER_TIMEOUT = it * 1000 })
+        .gap(RightGap.SMALL).component
       label(PerforceBundle.message("configure.perforce.timeout.seconds"))
     }
-    row { checkBox(cdUsePerforceJobs).component }
-    row { checkBox(cdUseP4ForIgnore) }
+    row { checkBox(PerforceBundle.message("perforce.use.perforce.jobs")).bindSelected(mySettings::USE_PERFORCE_JOBS).component }
+    row {
+      checkBox(PerforceBundle.message("label.configure.perforce.use.p4.for.ignore"))
+        .bindSelected({ !mySettings.USE_PATTERN_MATCHING_IGNORE }, { mySettings.USE_PATTERN_MATCHING_IGNORE = !it })
+    }
 
     onReset {
       myP4EnvHelper.reset()
@@ -191,115 +184,97 @@ internal class PerforceConfigurable(val myProject: Project) :
     buttonsGroup {
       row {
         myUseP4ConfigRadioButton = radioButton(PerforceBundle.message("checkbox.configure.perforce.use.p4config"), true)
-          .component.apply { addActionListener { updateIgnorePanelHeader() } }
-      }
-      indent {
-        row {
-          myConfigEnvWarning = label("")
-            .component.apply { RelativeFont.SMALL.install(this) }
-        }
+          .configWarningComment().onChanged { updateIgnorePanelHeader() }.component
       }
       row {
-        radioButton(PerforceBundle.message("connection.params"), false)
-          .component.apply { addActionListener { updateIgnorePanelHeader() } }
+        radioButton(PerforceBundle.message("connection.params"), false).onChanged { updateIgnorePanelHeader() }
       }
       indent {
-        row {
-          panel {
-            row(PerforceBundle.message("label.configure.perforce.port")) {
-              myPort = textField().align(AlignX.FILL)
-                .bindText({ settings.port }, { settings.port = it.trim() }).component
-            }
-            row(PerforceBundle.message("label.configure.perforce.user")) {
-              myUser = textField().align(AlignX.FILL)
-                .bindText(settings::user).component
-            }
-          }.resizableColumn()
-          panel {
-            row(PerforceBundle.message("label.configure.perforce.client")) {
-              myClient = textField().align(AlignX.FILL)
-                .bindText(settings::client).component
-            }
-            row(PerforceBundle.message("combobox.configure.perforce.charset")) {
-              myCharset = comboBox(charsetValues, listCellRenderer<String> { it ->
-                text = if (it == CHARSET_NONE) PerforceBundle.message("none.charset.presentation") else it
-              }).align(AlignX.FILL)
-                .bindItem(settings::CHARSET).component
-            }
-          }.resizableColumn()
-        }.enabledIf(myUseP4ConfigRadioButton.selected.not())
-      }
-    }.bind(settings::useP4CONFIG)
+        row(PerforceBundle.message("label.configure.perforce.port")) {
+          myPort = textField().align(AlignX.FILL)
+            .bindText({ mySettings.port }, { mySettings.port = it.trim() }).component
+        }
+        row(PerforceBundle.message("label.configure.perforce.user")) {
+          myUser = textField().align(AlignX.FILL)
+            .bindText(mySettings::user).component
+        }
+        row(PerforceBundle.message("label.configure.perforce.client")) {
+          myClient = textField().align(AlignX.FILL)
+            .bindText(mySettings::client).component
+        }
+        row(PerforceBundle.message("combobox.configure.perforce.charset")) {
+          myCharset = comboBox(charsetValues, listCellRenderer<String> { it ->
+            text = if (it == CHARSET_NONE) PerforceBundle.message("none.charset.presentation") else it
+          }).align(AlignX.FILL)
+            .bindItem(mySettings::CHARSET).component
+        }
+      }.enabledIf(myUseP4ConfigRadioButton.selected.not())
+    }.bind(mySettings::useP4CONFIG)
   }
 
   private fun Panel.ignorePanel(): Row = group(myIgnorePanelLabel) {
     buttonsGroup {
       row {
         myUseP4IgnoreRadioButton = radioButton(PerforceBundle.message("checkbox.configure.ignore.use.p4ignore"), true)
-          .component.apply { addActionListener { updateIgnorePanelHeader() } }
-      }
-      indent {
-        row {
-          myIgnoreEnvWarning = label(PerforceBundle.message("radio.no.p4ignore.env"))
-            .component.apply { RelativeFont.SMALL.install(this) }
-        }
+          .ignoreWarningComment().onChanged { updateIgnorePanelHeader() }.component
       }
       row {
-        radioButton(PerforceBundle.message("ignore.settings"), false)
-          .component.apply { addActionListener { updateIgnorePanelHeader() } }
+        radioButton(PerforceBundle.message("ignore.settings"), false).onChanged { updateIgnorePanelHeader() }
       }
       indent {
         row(PerforceBundle.message("ignore.path.to.file")) {
           cell(myPathToIgnore).align(AlignX.FILL)
-            .bindText({ settings.pathToIgnore }, { settings.pathToIgnore = it.trim() })
+            .bindText({ mySettings.pathToIgnore }, { mySettings.pathToIgnore = it.trim() })
         }.enabledIf(myUseP4IgnoreRadioButton.selected.not())
       }
-    }.bind(settings::useP4IGNORE)
+    }.bind(mySettings::useP4IGNORE)
   }
 
-  private fun Row.outputHyperLink() = cell(HyperlinkLabel().apply {
-    val dumpFile = PerforceRunner.getDumpFile()
-    if (dumpFile.exists()) {
-      setHyperlinkText(dumpFile.absolutePath)
-    }
-    else {
-      setText("'" + dumpFile.absolutePath + "'")
-    }
-    addHyperlinkListener { e ->
-      if (e.eventType == HyperlinkEvent.EventType.ACTIVATED) {
-        RevealFileAction.openFile(dumpFile)
-      }
-    }
-  })
+  private fun Cell<JBRadioButton>.configWarningComment(): Cell<JBRadioButton> {
+    myConfigEnvWarning = comment(PerforceBundle.message("radio.no.p4config.env", "")).comment!!
+    return this
+  }
+
+  private fun Cell<JBRadioButton>.ignoreWarningComment(): Cell<JBRadioButton> {
+    myIgnoreEnvWarning = comment(PerforceBundle.message("radio.no.p4ignore.env")).comment!!
+    return this
+  }
 
   private fun testConnection() {
     val isEmpty = PerforceLoginManager.getInstance(myProject).notifier.isEmpty
 
-    val settings = PerforceSettings(myProject)
-    settings.setCanGoOffline(false)
-    applyImpl(settings)
-
+    val settings = createTestConnectionSettings()
     val connectionManager = TestPerforceConnectionManager(myProject, !settings.useP4CONFIG)
     val testLoginManager = TestLoginManager(myProject, settings, connectionManager)
     val runner = PerforceRunner(connectionManager, settings, testLoginManager)
     if (settings.useP4CONFIG) {
       val connectionTestDataProvider = ConnectionTestDataProvider(myProject, connectionManager, runner)
-      ProgressManager.getInstance().runProcessWithProgressSynchronously({ connectionTestDataProvider.refresh() },
-                                                                        PerforceBundle.message("connection.test"), false, myProject)
-      val dialog = P4ConfigConnectionDiagnoseDialog(myProject, connectionTestDataProvider)
-      dialog.show()
+      val isSuccess = ProgressManager.getInstance().runProcessWithProgressSynchronously(
+        { connectionTestDataProvider.refresh() }, PerforceBundle.message("connection.test"), true, myProject)
+      if (!isSuccess) {
+        showCancelledConnectionDialog()
+      }
+      else {
+        val dialog = P4ConfigConnectionDiagnoseDialog(myProject, connectionTestDataProvider)
+        dialog.show()
+      }
     }
     else {
       connectionManager.setSingletonConnection(SingletonConnection(myProject, settings))
-      val checker = arrayOfNulls<PerforceClientRootsChecker>(1)
-      ProgressManager.getInstance()
+      var checker : PerforceClientRootsChecker? = null
+      val isSuccess = ProgressManager.getInstance()
         .runProcessWithProgressSynchronously({
                                                val allConnections = connectionManager.getAllConnections()
                                                val cache = ClientRootsCache.getClientRootsCache(myProject)
                                                val info = PerforceInfoAndClient.calculateInfos(allConnections.values, runner, cache)
-                                               checker[0] = PerforceClientRootsChecker(info, allConnections)
-                                             }, PerforceBundle.message("connection.test"), false, myProject)
-      PerforceConnectionProblemsNotifier.showSingleConnectionState(myProject, checker[0])
+                                               checker = PerforceClientRootsChecker(info, allConnections)
+                                             }, PerforceBundle.message("connection.test"), true, myProject)
+      if (!isSuccess) {
+        showCancelledConnectionDialog()
+      }
+      else {
+        PerforceConnectionProblemsNotifier.showSingleConnectionState(myProject, checker)
+      }
     }
 
     // +-, can do better
@@ -311,7 +286,14 @@ internal class PerforceConfigurable(val myProject: Project) :
     updateLabels()
   }
 
-  private fun applyImpl(settings: PerforceSettings) {
+  private fun showCancelledConnectionDialog() {
+    Messages.showMessageDialog(myProject, PerforceBundle.message("connection.cancelled"),
+                               PerforceBundle.message("connection.state.title"), Messages.getErrorIcon())
+  }
+
+  private fun createTestConnectionSettings(): PerforceSettings {
+    val settings = PerforceSettings(myProject)
+    settings.setCanGoOffline(false)
     settings.useP4CONFIG = myUseP4ConfigRadioButton.isSelected
     settings.useP4IGNORE = myUseP4IgnoreRadioButton.isSelected
     settings.port = myPort.text
@@ -327,12 +309,10 @@ internal class PerforceConfigurable(val myProject: Project) :
     }
     settings.PATH_TO_P4VC = myPathToP4V.text
     settings.USE_LOGIN = myUseLogin.isSelected
-    try {
-      settings.SERVER_TIMEOUT = myServerTimeoutField.text.toInt() * 1000
-    }
-    catch (ex: NumberFormatException) {
-      // ignore
-    }
+
+    val seconds = myServerTimeoutField.text.toIntOrNull() ?: return settings
+    settings.SERVER_TIMEOUT = seconds * 1000
+    return settings
   }
 
   private fun updateLabels() {
@@ -371,7 +351,7 @@ internal class PerforceConfigurable(val myProject: Project) :
     return false
   }
 
-  inner class HasIgnoreFileFromEnv(val myProject: Project, val disposable: Disposable) : ComponentPredicate() {
+  private inner class HasIgnoreFileFromEnv(val myProject: Project, val disposable: Disposable) : ComponentPredicate() {
     override fun addListener(listener: (Boolean) -> Unit) {
       myProject.messageBus.connect(disposable).subscribe(P4EnvHelper.P4_ENV_CHANGED, P4EnvHelper.P4EnvListener {
         listener(invoke())
@@ -488,4 +468,10 @@ internal class PerforceConfigurable(val myProject: Project) :
     override fun isUnderProjectConnections(file: File) = true
     override fun isInitialized() = true
   }
+}
+
+internal class PerforceConfigurable(val myProject: Project) :
+  BoundConfigurable(PerforceVcs.NAME, "project.propVCSSupport.VCSs.Perforce") {
+
+  override fun createPanel(): DialogPanel = PerforceConfigPanel(myProject, disposable!!).createPanel()
 }
