@@ -16,6 +16,7 @@ class NextJsImplicitUsageProvider : ImplicitUsageProvider {
   override fun isImplicitUsage(element: PsiElement): Boolean =
     isInNextJsContext(element) && (
       isKnownFunctionName(element)
+        || isKnownObjectName(element)
         || isExportDefault(element)
         || isInAppDir(element) && isRouteSegmentOption(element)
         || isHttpMethod(element)
@@ -35,6 +36,11 @@ class NextJsImplicitUsageProvider : ImplicitUsageProvider {
     "getServerSideProps", "getStaticPaths", "getStaticProps",
     "generateStaticParams", "generateMetadata", "generateImageMetadata"
   )
+
+  private fun isKnownObjectName(element: PsiElement): Boolean =
+    (element is JSVariable)
+      && element.isExported
+      && element.name == "metadata"
 
   private fun isExportDefault(element: PsiElement): Boolean = element is ES6ExportDefaultAssignment
 
