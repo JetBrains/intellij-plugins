@@ -211,7 +211,11 @@ public final class FlexTestUtils {
 
       VfsRootAccess.allowRootAccess(parent, flexSdkRootPath);
       final FlexSdkType2 sdkType = FlexSdkType2.getInstance();
-      final Sdk sdk1 = new ProjectJdkImpl(sdkType.suggestSdkName(null, flexSdkRootPath), sdkType, flexSdkRootPath, "");
+
+      final Sdk sdk1 = projectJdkTable.createSdk(sdkType.suggestSdkName(null, flexSdkRootPath), sdkType);
+      SdkModificator sdkModificator = sdk1.getSdkModificator();
+      sdkModificator.setHomePath(flexSdkRootPath);
+      sdkModificator.commitChanges();
       sdkType.setupSdkPaths(sdk1);
       if (registerSdk) {
         projectJdkTable.addJdk(sdk1, parent);
@@ -227,7 +231,7 @@ public final class FlexTestUtils {
       throw new IllegalArgumentException("Could not find a Flex SDK at " + flexSdkRootPath);
     }
     modificator.addRoot(sdk.getHomeDirectory(), OrderRootType.CLASSES);
-    modificator.commitChanges();
+    ApplicationManager.getApplication().runWriteAction(() -> modificator.commitChanges());
     return sdk;
   }
 

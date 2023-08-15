@@ -19,11 +19,10 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.projectRoots.*;
+import com.intellij.openapi.projectRoots.ProjectJdkTable;
+import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.RootProvider;
-import com.intellij.openapi.roots.impl.RootProviderBaseImpl;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -31,6 +30,7 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.testFramework.HeavyPlatformTestCase;
+import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NonNls;
@@ -46,7 +46,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 public class FlexCompilerConfigTest extends HeavyPlatformTestCase {
 
@@ -231,7 +230,28 @@ public class FlexCompilerConfigTest extends HeavyPlatformTestCase {
   }
 
   private static Sdk createTestSdk(final String sdkVersion) {
-    return new MySdk(sdkVersion);
+    Sdk sdk = ProjectJdkTable.getInstance().createSdk(TEST_FLEX_SDK_NAME, FlexSdkType2.getInstance());
+    SdkModificator sdkModificator = sdk.getSdkModificator();
+    sdkModificator.setVersionString(sdkVersion);
+
+    String additionalPath = sdkVersion.startsWith("AIR SDK ") ? "air_sdk" : "flex_sdk_" + sdkVersion.substring(0, "0.0.0".length());
+    String homePath = getTestDataPath() + additionalPath;
+    sdkModificator.setHomePath(homePath);
+
+    String[] relPaths = sdkVersion.startsWith("AIR SDK ")
+                              ? AIR_SDK_ROOTS
+                              : sdkVersion.startsWith("4.6")
+                                ? SDK_46_ROOTS
+                                : sdkVersion.startsWith("4.5")
+                                  ? SDK_45_ROOTS
+                                  : sdkVersion.startsWith("4")
+                                    ? SDK_40_ROOTS
+                                    : SDK_3_ROOTS;
+    for (String path : relPaths) {
+      sdkModificator.addRoot(new LightVirtualFile(homePath.substring(1) + path), OrderRootType.CLASSES);
+    }
+    sdkModificator.commitChanges();
+    return sdk;
   }
 
   private static Map<String, String> createMap(String... keysAndValues) {
@@ -426,105 +446,5 @@ public class FlexCompilerConfigTest extends HeavyPlatformTestCase {
 
   public void testAirSdk() throws Exception {
     doTest("AIR SDK 3.6.0.5990", createBuildConfiguration(TargetPlatform.Web, true, OutputType.Application, "11.6"));
-  }
-
-  private static class MySdk implements Sdk {
-    private final String mySdkVersion;
-
-    private MySdk(String sdkVersion) { mySdkVersion = sdkVersion; }
-
-    @Override
-    @NotNull
-    public SdkType getSdkType() {
-      return FlexSdkType2.getInstance();
-    }
-
-    @Override
-    @NotNull
-    public String getName() {
-      return TEST_FLEX_SDK_NAME;
-    }
-
-    @Override
-    public String getVersionString() {
-      return mySdkVersion;
-    }
-
-    @Override
-    public String getHomePath() {
-      return getTestDataPath() +
-             (mySdkVersion.startsWith("AIR SDK ") ? "air_sdk" : "flex_sdk_" + mySdkVersion.substring(0, "0.0.0".length()));
-    }
-
-    @Override
-    public VirtualFile getHomeDirectory() {
-      return null;
-    }
-
-    @Override
-    @NotNull
-    public RootProvider getRootProvider() {
-      return new MyRootProvider(mySdkVersion);
-    }
-
-    @Override
-    @NotNull
-    public SdkModificator getSdkModificator() {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public SdkAdditionalData getSdkAdditionalData() {
-      return null;
-    }
-
-    @Override
-    public <T> T getUserData(@NotNull final Key<T> key) {
-      return null;
-    }
-
-    @Override
-    public <T> void putUserData(@NotNull final Key<T> key, @Nullable final T value) {
-    }
-
-    @Override
-    @NotNull
-    public Object clone() throws CloneNotSupportedException {
-      return super.clone();
-    }
-
-    class MyRootProvider extends RootProviderBaseImpl implements Supplier<Sdk> {
-      private final String mySdkVersion;
-
-      private MyRootProvider(String sdkVersion) { mySdkVersion = sdkVersion; }
-
-      @Override
-      public String @NotNull [] getUrls(@NotNull final OrderRootType rootType) {
-        final String[] relPaths = mySdkVersion.startsWith("AIR SDK ")
-                                  ? AIR_SDK_ROOTS
-                                  : mySdkVersion.startsWith("4.6")
-                                    ? SDK_46_ROOTS
-                                    : mySdkVersion.startsWith("4.5")
-                                      ? SDK_45_ROOTS
-                                      : mySdkVersion.startsWith("4")
-                                        ? SDK_40_ROOTS
-                                        : SDK_3_ROOTS;
-        final String[] urls = new String[relPaths.length];
-        for (int i = 0; i < relPaths.length; i++) {
-          urls[i] = getHomePath() + relPaths[i];
-        }
-        return urls;
-      }
-
-      @Override
-      public VirtualFile @NotNull [] getFiles(@NotNull final OrderRootType rootType) {
-        return VirtualFile.EMPTY_ARRAY;
-      }
-
-      @Override
-      public Sdk get() {
-        return MySdk.this;
-      }
-    }
   }
 }
