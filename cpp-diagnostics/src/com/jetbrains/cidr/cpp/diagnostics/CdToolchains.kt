@@ -142,6 +142,15 @@ private fun processCPPEnvironment(log: CdIndenter, environment: CPPEnvironment) 
 private fun processGeneralToolchainInfo(log: CdIndenter, toolchain: CPPToolchains.Toolchain) {
   log.put("OS: ${toolchain.osType}")
   log.put("Kind: ${toolchain.toolSetKind}")
+  log.put("Path: ${toolchain.toolSetPath}")
+
+  val options = toolchain.toolSetOptions
+  if (options.isNotEmpty()) {
+    log.put("Options:")
+    log.scope {
+      options.forEach { log.put(it.uniqueID) }
+    }
+  }
 
   toolchain.customCCompilerPath?.let { log.put("c: ${it}") }
   toolchain.customCXXCompilerPath?.let { log.put("cxx: ${it}") }
