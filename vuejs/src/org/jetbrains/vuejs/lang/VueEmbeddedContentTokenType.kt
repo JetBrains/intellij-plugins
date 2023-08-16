@@ -37,9 +37,8 @@ abstract class VueEmbeddedContentTokenType protected constructor(@NonNls debugNa
   }
 
   private fun doParseContents(chameleon: ASTNode): PsiBuilder {
-    val project: Project
     val psi = chameleon.psi
-    project = psi.project
+    val project = psi.project
 
     val chars = chameleon.chars
 

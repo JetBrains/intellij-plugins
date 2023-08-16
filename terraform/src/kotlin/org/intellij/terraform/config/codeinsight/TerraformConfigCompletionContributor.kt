@@ -619,8 +619,7 @@ object ModelHelper {
     if (block.parent !is PsiFile) {
       return getModelBlockProperties(block, type)
     }
-    val props: Map<String, PropertyOrBlockType>
-    props = when (type) {
+    val props: Map<String, PropertyOrBlockType> = when (type) {
       "provider" -> getProviderProperties(block)
       "resource" -> getResourceProperties(block)
       "data" -> getDataSourceProperties(block)

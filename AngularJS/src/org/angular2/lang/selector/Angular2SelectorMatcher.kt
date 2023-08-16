@@ -165,17 +165,9 @@ class Angular2SelectorMatcher<T : Any> {
 
   // Store context to pass back selector and context when a selector is matched
   private class SelectorContext<T : Any>(val selector: Angular2DirectiveSimpleSelector,
-                                         context: T?,
-                                         listContext: SelectorListContext?) {
-    val notSelectors: List<Angular2DirectiveSimpleSelector>
-    val context: T?
-    val listContext: SelectorListContext?
-
-    init {
-      notSelectors = selector.notSelectors
-      this.context = context
-      this.listContext = listContext
-    }
+                                         val context: T?,
+                                         val listContext: SelectorListContext?) {
+    val notSelectors: List<Angular2DirectiveSimpleSelector> = selector.notSelectors
 
     fun finalize(cssSelector: Angular2DirectiveSimpleSelector,
                  callback: ((Angular2DirectiveSimpleSelector, T?) -> Unit)?): Boolean {

@@ -41,13 +41,10 @@ class HCLHeredocContentManipulator : AbstractElementManipulator<HCLHeredocConten
       r
     }
 
-    val startString: Int
-    val endString: Int
-
     val linesToChange = ranges.indices.filter { ranges[it].intersects(range) }
     assert(linesToChange.isNotEmpty())
-    startString = linesToChange.first()
-    endString = linesToChange.last()
+    val startString: Int = linesToChange.first()
+    val endString: Int = linesToChange.last()
 
     val node = element.node as TreeElement
 

@@ -31,9 +31,8 @@ class MdxFormattingModelBuilder : TemplateLanguageFormattingModelBuilder() {
 
   override fun createModel(element: PsiElement, settings: CodeStyleSettings): FormattingModel {
     val file = element.containingFile
-    val rootBlock: Block
     val node = element.node
-    rootBlock = if (node.elementType === MdxTokenTypes.OUTER_ELEMENT_TYPE) {
+    val rootBlock = if (node.elementType === MdxTokenTypes.OUTER_ELEMENT_TYPE) {
       return SimpleTemplateLanguageFormattingModelBuilder().createModel(element, settings)
     }
     else {

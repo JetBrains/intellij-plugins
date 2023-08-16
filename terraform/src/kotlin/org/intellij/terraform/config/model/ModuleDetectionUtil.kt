@@ -183,7 +183,6 @@ object ModuleDetectionUtil {
               .filter { sourceMatch(it.source, source) })
           }
           else {
-            val keyPrefix: String
             val pair = getKeyPrefix(directory, dotTerraform, manifest, name, source)
             if (pair.first == null) {
               val relativeModule = findRelativeModule(directory, moduleBlock, source)
@@ -191,7 +190,7 @@ object ModuleDetectionUtil {
                                                                    ?: "Can't determine key prefix"), moduleBlock, dotTerraform,
                                                 manifestFile, *getModuleFiles(relativeModule))
             }
-            keyPrefix = pair.first!!
+            val keyPrefix = pair.first!!
 
             LOG.debug("Searching for module with source '$source' and keyPrefix '$keyPrefix'")
             module = manifest.modules.find {
