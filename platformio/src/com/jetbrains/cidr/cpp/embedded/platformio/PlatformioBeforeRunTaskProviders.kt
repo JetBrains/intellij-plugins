@@ -39,7 +39,7 @@ abstract class PlatformioBeforeRunTaskProvider : BeforeRunTaskProvider<Platformi
       .blockingGet(EXECUTION_TIMEOUT_MS)
 
     if (result == null || result.isAborted || result.hasErrors()) {
-      ModalityUiUtil.invokeLaterIfNeeded(ModalityState.NON_MODAL) {
+      ModalityUiUtil.invokeLaterIfNeeded(ModalityState.nonModal()) {
         CidrBuild.showBuildNotification(configuration.project, MessageType.ERROR,
                                         ClionEmbeddedPlatformioBundle.message("platformio.clean.failed"))
       }
