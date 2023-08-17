@@ -17,6 +17,7 @@ import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.ReferenceSupport;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -740,7 +741,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     final VirtualFile swcFile =
       LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + "/" + testName + ".swc");
     sdkModificator.addRoot(JarFileSystem.getInstance().getJarRootForLocalFile(swcFile), OrderRootType.CLASSES);
-    sdkModificator.commitChanges();
+    ApplicationManager.getApplication().runWriteAction(() -> sdkModificator.commitChanges());
 
     doTest("", "as");
     doTest("", "mxml");
@@ -780,7 +781,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     final Sdk flexSdk = FlexUtils.getSdkForActiveBC(getModule());
     final SdkModificator modificator = flexSdk.getSdkModificator();
     modificator.addRoot(srcFile, OrderRootType.SOURCES);
-    modificator.commitChanges();
+    ApplicationManager.getApplication().runWriteAction(() -> modificator.commitChanges());
 
     assertEmpty(doTest("_1", MXML_EXTENSION));
     assertEmpty(doTest("_2", MXML_EXTENSION));
