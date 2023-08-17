@@ -88,8 +88,7 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     enableDetailedLogs();
     doReformatFile("toReformat", "js", () -> JSTestUtils.ensureLineSeparators(myFixture.getFile(), LineSeparator.CRLF));
     FileDocumentManager.getInstance().saveAllDocuments();
-    // Default Prettier behavior starting from v2.0.0 is 'lf'. See https://prettier.io/docs/en/options.html#end-of-line
-    assertEquals(LineSeparator.LF, StringUtil.detectSeparators(VfsUtilCore.loadText(getFile().getVirtualFile())));
+    assertEquals(LineSeparator.CRLF, StringUtil.detectSeparators(VfsUtilCore.loadText(getFile().getVirtualFile())));
   }
 
   public void testWithUpdatingLfToCrlf() throws IOException {
