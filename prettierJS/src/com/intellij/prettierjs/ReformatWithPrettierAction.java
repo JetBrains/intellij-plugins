@@ -395,7 +395,8 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       // PsiFile might be not committed at this point, take text from document
       Document document = PsiDocumentManager.getInstance(project).getDocument(currentFile);
       if (document == null) return;
-      text.set(document.getText());
+      CharSequence content = document.getImmutableCharSequence();
+      text.set(JSLanguageServiceUtil.convertLineSeparatorsToFileOriginal(project, content, currentVFile).toString());
       VirtualFile ignoreVFile = PrettierUtil.findIgnoreFile(currentVFile, project);
       if (ignoreVFile != null) {
         ignoreFilePath.set(ignoreVFile.getPath());
