@@ -411,7 +411,7 @@ public final class DartServerCompletionContributor extends CompletionContributor
 
   private static Icon applyOverlay(Icon base, boolean condition, Icon overlay) {
     if (condition) {
-      return new LayeredIcon(base, overlay);
+      return LayeredIcon.layeredIcon(new Icon[]{base, overlay});
     }
     return base;
   }
