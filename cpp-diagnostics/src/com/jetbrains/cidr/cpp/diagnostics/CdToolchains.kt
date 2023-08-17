@@ -5,6 +5,7 @@ import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.ProcessOutput
 import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.application.ApplicationNamesInfo
+import com.intellij.openapi.components.serviceOrNull
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SystemInfo
@@ -127,14 +128,16 @@ private fun processCPPEnvironment(log: CdIndenter, environment: CPPEnvironment) 
       }
     }
 
-    var rootPath = RemoteDeploymentHelper.getRootPath(hostMachine.hostId)
-    if (rootPath.isEmpty()) {
-      rootPath = "not specified"
-    }
-    log.put("Root Path: ${rootPath}")
+    if (serviceOrNull<RemoteDeployment>() != null) {
+      var rootPath = RemoteDeploymentHelper.getRootPath(hostMachine.hostId)
+      if (rootPath.isEmpty()) {
+        rootPath = "not specified"
+      }
+      log.put("Root Path: ${rootPath}")
 
-    if (hostMachine is RemoteHost) {
-      log.put("Header-roots cache: ${hostMachine.cacheDirectory.absolutePath}")
+      if (hostMachine is RemoteHost) {
+        log.put("Header-roots cache: ${hostMachine.cacheDirectory.absolutePath}")
+      }
     }
   }
 }
