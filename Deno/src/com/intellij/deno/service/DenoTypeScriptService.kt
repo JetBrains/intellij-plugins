@@ -48,7 +48,6 @@ class DenoTypeScriptService(project: Project) : BaseLspTypeScriptService(project
     get() = "Deno LSP"
   override val prefix: String
     get() = "Deno"
-  override val serverVersion: SemVer? = null
 
   override fun getStatusText() = withServer {
     // TODO use super method (& display serverVersion)
@@ -89,4 +88,6 @@ class DenoTypeScriptService(project: Project) : BaseLspTypeScriptService(project
     !JSCorePredefinedLibrariesProvider.isCoreLibraryFile(file) &&
     !DenoTypings.getInstance(project).isDenoTypings(file) &&
     !TypeScriptLibraryProvider.isLibraryOrBundledLibraryFile(project, file)
+
+  override fun getServiceId(): String = "deno"
 }

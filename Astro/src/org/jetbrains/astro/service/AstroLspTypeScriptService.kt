@@ -11,13 +11,16 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.util.convertMarkupContentToHtml
 import com.intellij.psi.PsiFile
+import com.intellij.util.text.SemVer
 import org.eclipse.lsp4j.MarkupContent
 
 class AstroLspTypeScriptService(project: Project) : BaseLspTypeScriptService(project, AstroLspServerSupportProvider::class.java) {
   override val name = "Astro LSP"
   override val prefix = "Astro"
-  override val serverVersion
-    get() = AstroLspExecutableDownloader.calculateVersion(project)
+
+  override fun getServiceVersion(): SemVer {
+    return AstroLspExecutableDownloader.calculateVersion(project)
+  }
 
   override fun createQuickInfoResponse(markupContent: MarkupContent): TypeScriptQuickInfoResponse {
     return TypeScriptQuickInfoResponse().apply {
@@ -34,4 +37,6 @@ class AstroLspTypeScriptService(project: Project) : BaseLspTypeScriptService(pro
   }
 
   override fun isAcceptable(file: VirtualFile): Boolean = isServiceEnabledAndAvailable(project, file)
+
+  override fun getServiceId(): String = "astro"
 }
