@@ -22,8 +22,10 @@ class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(projec
     get() = VueBundle.message("vue.service.name")
   override val prefix: String
     get() = VueBundle.message("vue.service.prefix")
-  override val serverVersion: SemVer
-    get() = VolarExecutableDownloader.calculateVersion(project)
+
+  override fun getServiceVersion(): SemVer {
+    return VolarExecutableDownloader.calculateVersion(project)
+  }
 
   override fun createQuickInfoResponse(markupContent: MarkupContent): TypeScriptQuickInfoResponse {
     return TypeScriptQuickInfoResponse().apply {
@@ -68,4 +70,6 @@ class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(projec
   }
 
   override fun isAcceptable(file: VirtualFile) = isVolarEnabledAndAvailable(project, file)
+
+  override fun getServiceId(): String = "vue"
 }
