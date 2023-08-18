@@ -16,6 +16,7 @@ import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.SmartList;
+import com.intellij.util.system.CpuArch;
 import com.jetbrains.lang.dart.DartBundle;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -78,7 +79,8 @@ public final class DartSdkUtil {
     if (getItemFromCombo(dartSdkPathComponent.getComboBox()).isEmpty()) {
       // Suggest default path according to https://dart.dev/get-dart.
       // No need to check folder presence here; even if it doesn't exist - that's the best we can suggest
-      @NlsSafe String path = SystemInfo.isMac ? "/usr/local/opt/dart/libexec"
+      @NlsSafe String path = SystemInfo.isMac ? CpuArch.isArm64() ? "/opt/homebrew/opt/dart/libexec"
+                                                                  : "/usr/local/opt/dart/libexec"
                                               : SystemInfo.isWindows ? "C:\\tools\\dart-sdk"
                                                                      : SystemInfo.isLinux ? "/usr/lib/dart"
                                                                                           : null;
