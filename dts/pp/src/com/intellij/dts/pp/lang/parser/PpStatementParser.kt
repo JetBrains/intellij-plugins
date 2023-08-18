@@ -1,4 +1,4 @@
-package com.intellij.pp.lang.parser
+package com.intellij.dts.pp.lang.parser
 
 import com.intellij.lang.PsiBuilder
 import com.intellij.psi.tree.IElementType

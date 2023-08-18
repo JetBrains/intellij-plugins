@@ -1,9 +1,9 @@
-package com.intellij.pp.lang.parser
+package com.intellij.dts.pp.lang.parser
 
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.PsiParser
 import com.intellij.lang.parser.GeneratedParserUtilBase
-import com.intellij.pp.lang.PpTokenTypes
+import com.intellij.dts.pp.lang.PpTokenTypes
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 
@@ -12,11 +12,11 @@ import com.intellij.psi.tree.TokenSet
  * Statement parsers should implement [PpStatementParser].
  */
 class PpBuildAdapter(
-    delegate: PsiBuilder,
-    state: GeneratedParserUtilBase.ErrorState,
-    parser: PsiParser,
-    tokenTypes: PpTokenTypes,
-    private val parsers: List<PpStatementParser>,
+  delegate: PsiBuilder,
+  state: GeneratedParserUtilBase.ErrorState,
+  parser: PsiParser,
+  tokenTypes: PpTokenTypes,
+  private val parsers: List<PpStatementParser>,
 ) : FixedGeneratedBuilder(delegate, state, parser) {
     val ppScopeSet = tokenTypes.createScopeSet()
     val ppStatementsSet = TokenSet.orSet(*parsers.map { it.getStatementTokens() }.toTypedArray())

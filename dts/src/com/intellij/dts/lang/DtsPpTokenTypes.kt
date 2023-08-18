@@ -1,7 +1,7 @@
 package com.intellij.dts.lang
 
 import com.intellij.dts.lang.psi.DtsTypes
-import com.intellij.pp.lang.PpTokenTypes
+import com.intellij.dts.pp.lang.PpTokenTypes
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 

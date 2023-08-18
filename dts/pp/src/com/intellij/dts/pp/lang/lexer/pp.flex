@@ -1,10 +1,10 @@
-package com.intellij.pp.lang.lexer;
+package com.intellij.dts.pp.lang.lexer;
 
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.TokenType;
 
-import com.intellij.pp.lang.PpTokenTypes;
+import com.intellij.dts.pp.lang.PpTokenTypes;
 
 %%
 

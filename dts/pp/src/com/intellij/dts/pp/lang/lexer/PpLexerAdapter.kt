@@ -1,9 +1,9 @@
-package com.intellij.pp.lang.lexer
+package com.intellij.dts.pp.lang.lexer
 
 import com.intellij.lexer.Lexer
 import com.intellij.lexer.LexerUtil
 import com.intellij.lexer.LookAheadLexer
-import com.intellij.pp.lang.PpTokenTypes
+import com.intellij.dts.pp.lang.PpTokenTypes
 
 open class PpLexerAdapter(private val tokenTypes: PpTokenTypes, baseLexer: Lexer) : LookAheadLexer(baseLexer) {
     private val ppLexer = PpLexer(null, tokenTypes)

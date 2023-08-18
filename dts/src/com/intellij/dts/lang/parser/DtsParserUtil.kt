@@ -5,8 +5,8 @@ import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.PsiBuilder.Marker
 import com.intellij.lang.PsiBuilderUtil
-import com.intellij.pp.lang.parser.PpBuildAdapter
-import com.intellij.pp.lang.parser.PpParserUtil
+import com.intellij.dts.pp.lang.parser.PpBuildAdapter
+import com.intellij.dts.pp.lang.parser.PpParserUtil
 import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet

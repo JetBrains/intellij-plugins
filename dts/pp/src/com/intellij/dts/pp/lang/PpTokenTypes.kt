@@ -1,4 +1,4 @@
-package com.intellij.pp.lang
+package com.intellij.dts.pp.lang
 
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet

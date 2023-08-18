@@ -1,4 +1,4 @@
-package com.intellij.pp.lang.parser
+package com.intellij.dts.pp.lang.parser
 
 import com.intellij.lang.LighterASTNode
 import com.intellij.lang.PsiBuilder

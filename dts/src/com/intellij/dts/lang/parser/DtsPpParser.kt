@@ -2,7 +2,7 @@ package com.intellij.dts.lang.parser
 
 import com.intellij.dts.lang.DtsTokenSets
 import com.intellij.lang.PsiBuilder
-import com.intellij.pp.lang.parser.PpStatementParser
+import com.intellij.dts.pp.lang.parser.PpStatementParser
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 

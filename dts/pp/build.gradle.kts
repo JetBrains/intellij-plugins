@@ -47,9 +47,9 @@ tasks {
     }
 
     generateLexer {
-        sourceFile.set(File("src/com/intellij/pp/lang/lexer/pp.flex"))
+        sourceFile.set(File("src/com/intellij/dts/pp/lang/lexer/pp.flex"))
 
-        targetDir.set("gen/com/intellij/pp/lang/lexer")
+        targetDir.set("gen/com/intellij/dts/pp/lang/lexer")
         targetClass.set("PpLexer")
         purgeOldFiles.set(true)
     }

@@ -4,8 +4,8 @@ import com.intellij.dts.lang.DtsPpTokenTypes;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
 import com.intellij.lang.parser.GeneratedParserUtilBase;
-import com.intellij.pp.lang.parser.PpBuildAdapter;
-import com.intellij.pp.lang.parser.PpParserUtilBase;
+import com.intellij.dts.pp.lang.parser.PpBuildAdapter;
+import com.intellij.dts.pp.lang.parser.PpParserUtilBase;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 
