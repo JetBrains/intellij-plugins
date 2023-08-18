@@ -2,7 +2,7 @@
 =====
 
 Requirements:
- * PlatformIO 6.9+
+ * PlatformIO 6.1.9+
 
 Supports
 ---
