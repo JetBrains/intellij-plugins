@@ -69,6 +69,8 @@
 
     <gotoSymbolContributor implementation="org.intellij.plugins.postcss.PostCssGotoSymbolContributor"/>
 
+    <inspection.basicVisitor class="org.intellij.plugins.postcss.psi.impl.PostCssElementVisitor"/>
+
     <localInspection language="PostCSS" bundle="messages.PostCssBundle"
                      key="inspections.nesting.problems.name"
                      groupKey="inspections.group.name" enabledByDefault="false" level="WARNING"
