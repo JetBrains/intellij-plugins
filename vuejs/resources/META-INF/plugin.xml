@@ -82,6 +82,9 @@
     <useScopeEnlarger implementation="org.jetbrains.vuejs.findUsages.VueUseScopeEnlarger"/>
     <implicitUsageProvider implementation="org.jetbrains.vuejs.codeInsight.refs.VueImplicitUsageProvider"/>
     <platform.lsp.serverSupportProvider implementation="org.jetbrains.vuejs.lang.typescript.service.volar.VolarSupportProvider"/>
+    <vfs.asyncListener implementation="org.jetbrains.vuejs.lang.typescript.service.volar.VolarRestartServiceListener" />
+    <registryKey defaultValue="true" description="Restarts Vue (Volar) service on file system structure changes"
+                 key="volar.restart.service"/>
 
     <!--suppress PluginXmlValidity -->
     <quoteHandler className="com.intellij.codeInsight.editorActions.HtmlQuoteHandler" fileType="Vue.js"/>
