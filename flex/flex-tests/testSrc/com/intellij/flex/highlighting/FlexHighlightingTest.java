@@ -1894,19 +1894,14 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   @SuppressWarnings("ConstantConditions")
   public void testDumbMode() throws Exception {
-    DumbServiceImpl.getInstance(getProject()).setDumb(true);
-    ((DaemonCodeAnalyzerImpl)DaemonCodeAnalyzer.getInstance(getProject())).mustWaitForSmartMode(false, getTestRootDisposable());
-    XmlNSDescriptor nsDescriptor;
-    try {
+    DumbServiceImpl.getInstance(getProject()).runInDumbModeSynchronously(() -> {
+      ((DaemonCodeAnalyzerImpl)DaemonCodeAnalyzer.getInstance(getProject())).mustWaitForSmartMode(false, getTestRootDisposable());
       assertTrue(DumbService.isDumb(getProject()));
       configureByFile(getBasePath() + "/dumbMode.mxml");
-      nsDescriptor = ((XmlFile)getFile()).getDocument().getRootTagNSDescriptor();
+      XmlNSDescriptor nsDescriptor = ((XmlFile)getFile()).getDocument().getRootTagNSDescriptor();
       assertTrue(nsDescriptor.toString(), nsDescriptor instanceof FlexMxmlNSDescriptor);
-    }
-    finally {
-      DumbServiceImpl.getInstance(getProject()).setDumb(false);
-    }
-    nsDescriptor = ((XmlFile)getFile()).getDocument().getRootTagNSDescriptor();
+    });
+    XmlNSDescriptor nsDescriptor = ((XmlFile)getFile()).getDocument().getRootTagNSDescriptor();
     assertTrue(nsDescriptor.toString(), nsDescriptor instanceof FlexMxmlNSDescriptor);
     doDoTest(true, true);
   }
