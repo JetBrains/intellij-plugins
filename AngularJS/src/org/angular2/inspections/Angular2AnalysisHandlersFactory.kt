@@ -99,11 +99,7 @@ class Angular2AnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
   private class CreateComponentFieldIntentionAction(referenceExpression: JSReferenceExpression)
     : CreateJSVariableIntentionAction(referenceExpression.referenceName, true, false, false) {
 
-    private val myRefExpressionPointer: SmartPsiElementPointer<JSReferenceExpression>
-
-    init {
-      myRefExpressionPointer = createPointerFor(referenceExpression)
-    }
+    private val myRefExpressionPointer: SmartPsiElementPointer<JSReferenceExpression> = createPointerFor(referenceExpression)
 
     override fun applyFix(project: Project, psiElement: PsiElement, file: PsiFile, editor: Editor?) {
       val componentClass = Angular2ComponentLocator.findComponentClass(psiElement)!!
@@ -136,11 +132,7 @@ class Angular2AnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
   private class CreateComponentMethodIntentionAction(methodExpression: JSReferenceExpression)
     : CreateJSFunctionIntentionAction(methodExpression.referenceName, true, false) {
 
-    private val myRefExpressionPointer: SmartPsiElementPointer<JSReferenceExpression>
-
-    init {
-      myRefExpressionPointer = createPointerFor(methodExpression)
-    }
+    private val myRefExpressionPointer: SmartPsiElementPointer<JSReferenceExpression> = createPointerFor(methodExpression)
 
     override fun applyFix(project: Project, psiElement: PsiElement, file: PsiFile, editor: Editor?) {
       val componentClass = Angular2ComponentLocator.findComponentClass(psiElement)!!

@@ -27,12 +27,11 @@ import java.util.*
 class AddNgModuleDeclarationQuickFix private constructor(context: PsiElement, declaration: Angular2SourceDeclaration)
   : LocalQuickFixAndIntentionActionOnPsiElement(context) {
 
-  private val myDeclarationName: String
+  private val myDeclarationName: String = declaration.typeScriptClass.name!!
   private val myDeclarationDecorator: SmartPsiElementPointer<ES6Decorator> = SmartPointerManager.createPointer(declaration.decorator)
   private val myModuleName: String?
 
   init {
-    myDeclarationName = declaration.typeScriptClass.name!!
     val candidates = getCandidateModules(context)
     if (candidates.size == 1) {
       myModuleName = candidates[0].getName()

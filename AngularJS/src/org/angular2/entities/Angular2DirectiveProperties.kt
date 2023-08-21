@@ -20,8 +20,8 @@ import java.util.*
 class Angular2DirectiveProperties(inputs: Collection<Angular2DirectiveProperty>,
                                   outputs: Collection<Angular2DirectiveProperty>) {
 
-  val inputs: Collection<Angular2DirectiveProperty>
-  val outputs: Collection<Angular2DirectiveProperty>
+  val inputs: Collection<Angular2DirectiveProperty> = Collections.unmodifiableCollection(inputs)
+  val outputs: Collection<Angular2DirectiveProperty> = Collections.unmodifiableCollection(outputs)
 
   private val myInOuts = NotNullLazyValue.createValue<List<Angular2Symbol>> {
     if (inputs.isEmpty() || outputs.isEmpty()) {
@@ -46,11 +46,6 @@ class Angular2DirectiveProperties(inputs: Collection<Angular2DirectiveProperty>,
 
   val inOuts: List<Angular2Symbol>
     get() = myInOuts.value
-
-  init {
-    this.inputs = Collections.unmodifiableCollection(inputs)
-    this.outputs = Collections.unmodifiableCollection(outputs)
-  }
 
   private class InOutDirectiveProperty(input: Angular2DirectiveProperty, private val myOutput: Angular2DirectiveProperty)
     : Angular2SymbolDelegate<Angular2DirectiveProperty>(input) {

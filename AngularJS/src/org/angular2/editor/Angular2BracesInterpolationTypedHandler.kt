@@ -2,7 +2,7 @@
 package org.angular2.editor
 
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate
-import com.intellij.lang.javascript.JSInjectionBracesUtil
+import com.intellij.lang.javascript.JSInjectionBracesUtil.InterpolationBracesCompleter
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.project.Project
@@ -12,10 +12,8 @@ import org.angular2.lang.html.Angular2HtmlLanguage
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 
 class Angular2BracesInterpolationTypedHandler : TypedHandlerDelegate() {
-  private val myBracesCompleter: JSInjectionBracesUtil.InterpolationBracesCompleter
-
-  init {
-    myBracesCompleter = object : JSInjectionBracesUtil.InterpolationBracesCompleter(Angular2Injector.Holder.BRACES_FACTORY) {
+  private val myBracesCompleter: InterpolationBracesCompleter =
+    object : InterpolationBracesCompleter(Angular2Injector.Holder.BRACES_FACTORY) {
       override fun checkTypingContext(editor: Editor, file: PsiFile): Boolean {
         val atCaret = getContextElement(editor, file)
         return (atCaret == null
@@ -23,7 +21,6 @@ class Angular2BracesInterpolationTypedHandler : TypedHandlerDelegate() {
                 || atCaret.node.elementType === Angular2HtmlTokenTypes.INTERPOLATION_END)
       }
     }
-  }
 
   override fun beforeCharTyped(c: Char,
                                project: Project,

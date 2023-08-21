@@ -22,13 +22,8 @@ class ExportNgModuleDeclarationQuickFix private constructor(context: PsiElement,
                                                             declaration: Angular2SourceDeclaration)
   : LocalQuickFixAndIntentionActionOnPsiElement(context) {
 
-  private val myDeclarationName: String
-  private val myDeclarationDecorator: SmartPsiElementPointer<ES6Decorator>
-
-  init {
-    myDeclarationName = declaration.typeScriptClass.name!!
-    myDeclarationDecorator = SmartPointerManager.createPointer(declaration.decorator)
-  }
+  private val myDeclarationName: String = declaration.typeScriptClass.name!!
+  private val myDeclarationDecorator: SmartPsiElementPointer<ES6Decorator> = SmartPointerManager.createPointer(declaration.decorator)
 
   override fun getText(): String {
     return Angular2Bundle.message("angular.quickfix.ngmodule.export.name", myDeclarationName)

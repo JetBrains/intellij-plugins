@@ -49,11 +49,9 @@ class Angular2TemplateElementsScopeProvider : Angular2TemplateScopesProvider() {
     : Angular2TemplateScope(parent) {
 
     private val elements = ArrayList<JSPsiElementBase>()
-
-    private val myRange: TextRange
+    private val myRange = root.textRange
 
     init {
-      myRange = root.textRange
       if (parent != null) {
         assert(parent.myRange.contains(myRange))
       }
