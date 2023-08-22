@@ -14,11 +14,7 @@ import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.ProjectJdkTable;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkAdditionalData;
-import com.intellij.openapi.projectRoots.SdkType;
-import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl;
+import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.roots.ui.configuration.ClasspathEditor;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
@@ -133,7 +129,11 @@ public final class FlexSdkUtils {
     return WriteAction.computeAndWait(() -> {
       final ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance();
       final String sdkName = SdkConfigurationUtil.createUniqueSdkName(sdkType, sdkHomePath, projectJdkTable.getSdksOfType(sdkType));
-      final Sdk sdk = new ProjectJdkImpl(sdkName, sdkType, sdkHomePath, "");
+      final Sdk sdk = projectJdkTable.createSdk(sdkName, sdkType);
+      SdkModificator sdkModificator = sdk.getSdkModificator();
+      sdkModificator.setVersionString("");
+      sdkModificator.setHomePath(sdkHomePath);
+      sdkModificator.commitChanges();
       sdkType.setupSdkPaths(sdk);
       projectJdkTable.addJdk(sdk);
       return sdk;
