@@ -5,7 +5,6 @@ import com.intellij.ide.impl.ProjectUtil
 import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.EDT
-import com.intellij.openapi.application.readAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
@@ -22,13 +21,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@Service
-class VolarCoroutineScope(val cs: CoroutineScope) {
-  companion object {
-    @JvmStatic
-    fun get() = service<VolarCoroutineScope>().cs
-  }
-}
 
 class VolarRestartServiceListener : AsyncFileListener {
   override fun prepareChange(events: List<VFileEvent>): AsyncFileListener.ChangeApplier? {
@@ -41,7 +33,6 @@ class VolarRestartServiceListener : AsyncFileListener {
       }
     }
     else null
-
   }
 
 
@@ -56,48 +47,53 @@ class VolarRestartServiceListener : AsyncFileListener {
 }
 
 @Service
-class VolarRestartService : Disposable {
+class VolarRestartService(val cs: CoroutineScope) : Disposable {
   private val queue: MergingUpdateQueue = MergingUpdateQueue("Volar restart service",
                                                              1000, true, null, this, null,
                                                              Alarm.ThreadToUse.POOLED_THREAD)
 
   fun schedule(events: List<VFileEvent>) {
-    queue.queue(Update.create(this) {
-      VolarCoroutineScope.get().launch(Dispatchers.EDT) {
-        restartVolarServices(events)
-      }
-    })
+    val projects = extractRelatedProjects(events)
+    projects.forEach {
+      val basePath = it.basePath ?: return@forEach
+
+      queue.queue(Update.create(basePath) {
+        cs.launch(Dispatchers.EDT) {
+          restartVolarServices(basePath)
+        }
+      })
+    }
   }
 
-  private suspend fun restartVolarServices(events: List<VFileEvent>) {
-    val projects = readAction {
-      getVolarProjects().filter {
-        val fileIndex = ProjectFileIndex.getInstance(it)
-        for (event in events) {
-          val file = event.file
-          if (file != null && file.isValid && fileIndex.isInProject(file) ||
-              (file == null || file.isValid) && event is VFileDeleteEvent && hasProjectPath(it, event.path)) return@filter true
-        }
-        return@filter false
+  private fun extractRelatedProjects(events: List<VFileEvent>): List<Project> {
+    return getVolarProjects().filter {
+      val fileIndex = ProjectFileIndex.getInstance(it)
+      for (event in events) {
+        val file = event.file
+        if (file != null && file.isValid && fileIndex.isInProject(file) ||
+            (file == null || file.isValid) && (event is VFileCopyEvent || event is VFileCreateEvent) &&
+            hasProjectPath(it, event.path)) return@filter true
       }
+      return@filter false
     }
+  }
 
-    projects.forEach { project ->
-      if (project.isOpen) {
+  private fun restartVolarServices(basePath: String) {
+    ProjectUtil.getOpenProjects().forEach { project ->
+      if (project.isOpen && project.basePath == basePath) {
         getVolarService(project)?.restart(false)
       }
     }
   }
 
-  private fun hasProjectPath(project: Project, path: String) = project.basePath?.let { FileUtil.isAncestor(it, path, false) } ?: false
-
+  private fun hasProjectPath(project: Project, path: String) =
+    project.basePath?.let { FileUtil.isAncestor(it, path, false) } ?: false
 
   override fun dispose() {}
 }
 
 private fun getVolarProjects() =
-  ProjectUtil.getOpenProjects()
-    .mapNotNull { if (hasVolarService(it)) it else null }
+  ProjectUtil.getOpenProjects().mapNotNull { if (hasVolarService(it)) it else null }
 
 private fun hasVolarService(project: Project) = getVolarService(project) != null
 
