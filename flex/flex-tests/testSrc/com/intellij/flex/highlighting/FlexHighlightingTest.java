@@ -1201,7 +1201,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     final SdkModificator sdkModificator = FlexTestUtils.getFlexSdkModificator(getModule());
     final VirtualFile swcFile = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + "/" + getBasePath() + "/" + name + ".swc");
     sdkModificator.addRoot(JarFileSystem.getInstance().getJarRootForLocalFile(swcFile), OrderRootType.CLASSES);
-    sdkModificator.commitChanges();
+    ApplicationManager.getApplication().runWriteAction(() -> sdkModificator.commitChanges());
 
     doTestFor(true, name + ".mxml");
   }
@@ -1242,7 +1242,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
       LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "/" + testName + ".swc");
     final SdkModificator modificator = FlexTestUtils.getFlexSdkModificator(getModule());
     modificator.addRoot(JarFileSystem.getInstance().getJarRootForLocalFile(swcFile), OrderRootType.CLASSES);
-    modificator.commitChanges();
+    ApplicationManager.getApplication().runWriteAction(() -> modificator.commitChanges());
 
     final Module dependentModule = doCreateRealModule("dependent");
     final VirtualFile contentRoot =
@@ -1365,7 +1365,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
     final SdkModificator modificator = FlexTestUtils.getFlexSdkModificator(myModule);
     modificator.addRoot(srcFile, OrderRootType.SOURCES);
-    modificator.commitChanges();
+    ApplicationManager.getApplication().runWriteAction(() -> modificator.commitChanges());
 
     doTestFor(true, testName + "/" + testName + ".mxml");
   }
