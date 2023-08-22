@@ -1,16 +1,12 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.service
 
-import com.intellij.javascript.debugger.com.intellij.lang.javascript.waitCoroutinesBlocking
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.components.service
 import com.intellij.platform.lsp.tests.checkLspHighlighting
 import org.jetbrains.vuejs.lang.VueInspectionsProvider
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
-import org.jetbrains.vuejs.lang.typescript.service.volar.VolarCoroutineScope
-import org.jetbrains.vuejs.lang.typescript.service.volar.VolarRestartService
 import org.junit.Test
 
 class VolarServiceTest : VolarServiceTestBase() {
@@ -104,12 +100,10 @@ class VolarServiceTest : VolarServiceTestBase() {
       </template>
     """)
 
-    myFixture.doHighlighting()
     myFixture.checkLspHighlighting()
     myFixture.renameElement(fileToRename, "Usage2.vue")
 
     //no errors
-    myFixture.doHighlighting()
     myFixture.checkLspHighlighting()
 
 
