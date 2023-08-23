@@ -61,7 +61,7 @@ class MetadataFileImpl(fileViewProvider: FileViewProvider, private val myFileTyp
       myStub?.get()?.let { return it }
 
       val fileStub = newStubTree.root as PsiFileStubImpl<PsiFile>
-      fileStub.setPsi(this)
+      fileStub.psi = this
 
       myStub = SoftReference(newStubTree)
       return newStubTree
