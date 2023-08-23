@@ -22,10 +22,10 @@ import org.jetbrains.vuejs.index.VUETIFY_MODULE
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.typed.VueTypedEntitiesProvider
 
-class VueSourcePlugin constructor(private val project: Project,
-                                  override val moduleName: String?,
-                                  override val moduleVersion: String?,
-                                  private val packageJsonFile: VirtualFile) : UserDataHolderBase(), VuePlugin {
+class VueSourcePlugin(private val project: Project,
+                      override val moduleName: String?,
+                      override val moduleVersion: String?,
+                      private val packageJsonFile: VirtualFile) : UserDataHolderBase(), VuePlugin {
 
   override val parents: List<VueEntitiesContainer> = emptyList()
 

@@ -75,7 +75,7 @@ class AngularJSFrameworkDetector : FrameworkDetector(AngularJSFramework.ID) {
     return AngularJSFramework.INSTANCE
   }
 
-  private inner class AngularCLIFrameworkDescription constructor(private val myNewFiles: Collection<VirtualFile>) : DetectedFrameworkDescription() {
+  private inner class AngularCLIFrameworkDescription(private val myNewFiles: Collection<VirtualFile>) : DetectedFrameworkDescription() {
 
     override fun getRelatedFiles(): Collection<VirtualFile> {
       return myNewFiles

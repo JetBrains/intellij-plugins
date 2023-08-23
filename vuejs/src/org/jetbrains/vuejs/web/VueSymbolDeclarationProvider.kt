@@ -64,8 +64,8 @@ class VueSymbolDeclarationProvider : WebSymbolDeclarationProvider {
            ?: emptyList()
   }
 
-  private class VueSymbolDeclaration constructor(private val symbol: WebSymbol,
-                                                 private val literal: JSLiteralExpression) : WebSymbolDeclaration {
+  private class VueSymbolDeclaration(private val symbol: WebSymbol,
+                                     private val literal: JSLiteralExpression) : WebSymbolDeclaration {
 
     override fun getDeclaringElement(): PsiElement =
       literal

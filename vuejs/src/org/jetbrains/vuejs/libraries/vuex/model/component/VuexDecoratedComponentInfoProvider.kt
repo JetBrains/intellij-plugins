@@ -19,7 +19,7 @@ import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInf
 
 class VuexDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedContainerInfoProvider(::VuexDecoratedComponentInfo) {
 
-  private class VuexDecoratedComponentInfo constructor(clazz: JSClass) : VueContainerInfo {
+  private class VuexDecoratedComponentInfo(clazz: JSClass) : VueContainerInfo {
     override val computed: List<VueComputedProperty>
     override val methods: List<VueMethod>
 

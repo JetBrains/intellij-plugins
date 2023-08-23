@@ -248,7 +248,7 @@ class VueCodeModelSymbolsScope<K> private constructor(private val container: Vue
     return WebTypesSymbolLocation(packageName.lowercase(Locale.US), symbolName, kind)
   }
 
-  private data class WebTypesSymbolLocation constructor(
+  private data class WebTypesSymbolLocation(
     val moduleName: String,
     val symbolName: String,
     val symbolKind: String,

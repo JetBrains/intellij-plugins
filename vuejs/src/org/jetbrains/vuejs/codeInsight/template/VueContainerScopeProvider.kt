@@ -16,7 +16,7 @@ class VueContainerScopeProvider : VueTemplateScopesProvider() {
            ?: emptyList()
   }
 
-  private class VueContainerScope constructor(private val myEntitiesContainer: VueEntitiesContainer)
+  private class VueContainerScope(private val myEntitiesContainer: VueEntitiesContainer)
     : VueTemplateScope(null) {
 
     override fun resolve(consumer: Consumer<in ResolveResult>) {

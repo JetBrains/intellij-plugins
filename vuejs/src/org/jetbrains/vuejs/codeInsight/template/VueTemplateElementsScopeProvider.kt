@@ -36,8 +36,8 @@ class VueTemplateElementsScopeProvider : VueTemplateScopesProvider() {
     return listOf(templateRootScope.findBestMatchingTemplateScope(notNull(hostElement, element))!!)
   }
 
-  private class VueTemplateElementScope constructor(root: PsiElement,
-                                                    parent: VueTemplateElementScope?) : VueTemplateScope(parent) {
+  private class VueTemplateElementScope(root: PsiElement,
+                                        parent: VueTemplateElementScope?) : VueTemplateScope(parent) {
 
     private val elements = ArrayList<JSPsiNamedElementBase>()
 
@@ -77,7 +77,7 @@ class VueTemplateElementsScopeProvider : VueTemplateScopesProvider() {
     }
   }
 
-  private open class VueBaseScopeBuilder constructor(private val myTemplateFile: PsiFile) : XmlRecursiveElementVisitor() {
+  private open class VueBaseScopeBuilder(private val myTemplateFile: PsiFile) : XmlRecursiveElementVisitor() {
     private val scopes = Stack<VueTemplateElementScope>()
 
     val topLevelScope: VueTemplateElementScope
@@ -108,7 +108,7 @@ class VueTemplateElementsScopeProvider : VueTemplateScopesProvider() {
     }
   }
 
-  private class VueTemplateScopeBuilder constructor(templateFile: PsiFile) : VueBaseScopeBuilder(templateFile) {
+  private class VueTemplateScopeBuilder(templateFile: PsiFile) : VueBaseScopeBuilder(templateFile) {
 
     override fun visitXmlTag(tag: XmlTag) {
       val tagHasVariables = tag.attributes

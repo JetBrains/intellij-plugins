@@ -58,7 +58,7 @@ class VueHighlightingLexer(override val languageLevel: JSLanguageLevel,
     return type
   }
 
-  private class VueHighlightingMergingLexer constructor(original: FlexAdapter)
+  private class VueHighlightingMergingLexer(original: FlexAdapter)
     : VueLexerImpl.VueMergingLexer(original) {
 
     override fun merge(type: IElementType?, originalLexer: Lexer): IElementType? {
