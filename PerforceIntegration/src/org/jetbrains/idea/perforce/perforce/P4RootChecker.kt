@@ -4,7 +4,6 @@ package org.jetbrains.idea.perforce.perforce
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vcs.VcsException
 import com.intellij.openapi.vcs.VcsKey
 import com.intellij.openapi.vcs.VcsRootChecker
@@ -31,26 +30,20 @@ internal class P4RootChecker : VcsRootChecker() {
   override fun detectProjectMappings(project: Project,
                                      projectRoots: Collection<VirtualFile>,
                                      mappedDirs: Set<VirtualFile>): Collection<VirtualFile> {
-    if (!Registry.`is`("p4.new.project.mappings.handling")) {
-      // emulate 'needsLegacyDefaultMappings=true' mode
-      // leave checking to P4ConnectionCalculator
-      return projectRoots
-    }
-
-    try {
+    return try {
       val connectionManager = PerforceConnectionManager.getInstance(project)
       if (connectionManager.isSingletonConnectionUsed) {
         LOG.debug("detecting for singleton connection")
-        return detectSingletonConnectionMappings(project, projectRoots, mappedDirs)
+        detectSingletonConnectionMappings(project, projectRoots, mappedDirs)
       }
       else {
         LOG.debug("detecting for context connection")
-        return detectContextConnectionMappings(project, projectRoots, mappedDirs)
+        detectContextConnectionMappings(project, projectRoots, mappedDirs)
       }
     }
     catch (e: VcsException) {
       LOG.warn(e)
-      return emptyList()
+      emptyList()
     }
   }
 
@@ -93,6 +86,7 @@ internal class P4RootChecker : VcsRootChecker() {
     return parameters
   }
 
+  // todo: use p4 clients?
   private fun detectMappingsForConnection(connection: P4Connection,
                                           settings: PerforceSettings,
                                           unmappedRoots: List<VirtualFile>): List<VirtualFile> {

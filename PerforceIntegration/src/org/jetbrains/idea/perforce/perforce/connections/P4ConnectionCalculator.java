@@ -5,7 +5,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.diff.impl.patch.formove.FilePathComparator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vcs.AbstractFilterChildren;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -35,9 +34,7 @@ public class P4ConnectionCalculator {
     final String p4ConfigFileName = p4EnvHelper.getP4Config();
     LOG.debug("Using p4config file name: " + p4ConfigFileName);
 
-    final List<VirtualFile> detailedVcsMappings = Registry.is("p4.new.project.mappings.handling")
-                                                  ? new ArrayList<>(Arrays.asList(vcsManager.getRootsUnderVcs(vcs)))
-                                                  : vcsManager.getDetailedVcsMappings(vcs);
+    final List<VirtualFile> detailedVcsMappings = new ArrayList<>(Arrays.asList(vcsManager.getRootsUnderVcs(vcs)));
 
     final Map<VirtualFile, File> configsMap = p4ConfigFileName == null ? Collections.emptyMap()
                                                                        : fillConfigsMap(detailedVcsMappings, p4ConfigFileName);

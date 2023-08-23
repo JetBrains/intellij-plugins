@@ -3,7 +3,6 @@ package org.jetbrains.idea.perforce.perforce.connections;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.util.BackgroundTaskUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.EnvironmentUtil;
@@ -59,9 +58,7 @@ public class P4EnvHelper {
   private void initializeP4SetVariables(Project project, PerforcePhysicalConnectionParametersI physicalParameters) {
     final ProjectLevelVcsManager vcsManager = ProjectLevelVcsManager.getInstance(myProject);
     final PerforceVcs vcs = PerforceVcs.getInstance(myProject);
-    final List<VirtualFile> detailedVcsMappings = Registry.is("p4.new.project.mappings.handling")
-                                                  ? Arrays.asList(vcsManager.getRootsUnderVcs(vcs))
-                                                  : vcsManager.getDetailedVcsMappings(vcs);
+    final List<VirtualFile> detailedVcsMappings = Arrays.asList(vcsManager.getRootsUnderVcs(vcs));
     P4ParamsCalculator calculator = new P4ParamsCalculator(project);
 
     synchronized (this) {
