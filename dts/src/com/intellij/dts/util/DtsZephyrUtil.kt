@@ -17,20 +17,27 @@ object DtsZephyrUtil {
         "dts/common",
     )
 
-    private fun searchRootDir(project: Project): VirtualFile? {
+    fun validateRoot(root: VirtualFile): Boolean {
+        if (!root.isDirectory) return false
+
+        // check if directories exist
+        for (expectedDirectory in listOf(boardsPath, bindingsPath) + includePaths) {
+            val directory = root.findDirectory(expectedDirectory)
+            if (directory == null || !directory.exists() || directory.children.isEmpty()) return false
+        }
+
+        return true
+    }
+
+    fun searchRootDir(project: Project): VirtualFile? {
         val candidates = mutableListOf<VirtualFile>()
 
         val visitor = object : VirtualFileVisitor<Any>(limit(2)) {
             override fun visitFile(file: VirtualFile): Boolean {
-                if (!file.isDirectory) return true
-
-                // check if directories exist
-                for (dirPath in listOf(boardsPath, bindingsPath) + includePaths) {
-                    val dir = file.findDirectory(dirPath)
-                    if (dir == null || !dir.exists() || dir.children.isEmpty()) return true
+                if (validateRoot(file)) {
+                    candidates.add(file)
+                    return false
                 }
-
-                candidates.add(file)
 
                 return true
             }

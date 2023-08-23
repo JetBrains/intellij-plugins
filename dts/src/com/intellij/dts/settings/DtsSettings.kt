@@ -14,9 +14,20 @@ class DtsSettings : PersistentStateComponent<DtsSettings.State> {
 
     private val state = State("", "", "")
 
-    val zephyrRoot  get() = state.zephyrRoot.nullIfEmpty()
-    val zephyrArch  get() = state.zephyrArch.nullIfEmpty()
-    val zephyrBoard get() = state.zephyrBoard.nullIfEmpty()
+    /**
+     * The path to the zephyr root. Also called the Zephyr base in the
+     * settings.
+     *
+     * If empty the path should be detected automatically.
+     */
+    val zephyrRoot: String?
+        get() = state.zephyrRoot.nullIfBlank()
+
+    val zephyrArch: String?
+        get() = state.zephyrArch.nullIfBlank()
+
+    val zephyrBoard: String?
+        get() = state.zephyrBoard.nullIfBlank()
 
     override fun getState(): State = state
 
@@ -34,4 +45,4 @@ class DtsSettings : PersistentStateComponent<DtsSettings.State> {
     )
 }
 
-private fun String.nullIfEmpty() = this.ifEmpty { null }
+private fun String.nullIfBlank() = this.ifBlank { null }
