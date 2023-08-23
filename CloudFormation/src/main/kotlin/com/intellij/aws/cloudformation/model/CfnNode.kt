@@ -1,3 +1,3 @@
 package com.intellij.aws.cloudformation.model
 
-abstract class CfnNode()
+abstract class CfnNode
