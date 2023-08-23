@@ -9,7 +9,7 @@ import com.intellij.openapi.ui.popup.ListPopupStep
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.wm.impl.ExpandableComboAction
-import com.intellij.openapi.wm.impl.ToolbarComboWidget
+import com.intellij.openapi.wm.impl.ToolbarComboButton
 import org.jetbrains.idea.perforce.PerforceBundle
 import org.jetbrains.idea.perforce.application.PerforceManager
 import org.jetbrains.idea.perforce.perforce.PerforceSettings
@@ -44,12 +44,12 @@ class PerforceToolbarWidgetAction : ExpandableComboAction() {
     }
 
     val popupFactory = JBPopupFactory.getInstance()
-    val widget = event.getData(PlatformCoreDataKeys.CONTEXT_COMPONENT) as? ToolbarComboWidget?
+    val widget = event.getData(PlatformCoreDataKeys.CONTEXT_COMPONENT) as? ToolbarComboButton?
     val step = createStep(popupFactory, widget, group, event.dataContext)
     return createPopup(project, popupFactory, step)
   }
 
-  private fun createStep(popupFactory: JBPopupFactory, widget: ToolbarComboWidget?, actionGroup: ActionGroup, context: DataContext): ListPopupStep<Any> {
+  private fun createStep(popupFactory: JBPopupFactory, widget: ToolbarComboButton?, actionGroup: ActionGroup, context: DataContext): ListPopupStep<Any> {
     return popupFactory.createActionsStep(actionGroup, context, ActionPlaces.PROJECT_WIDGET_POPUP, false, true,
                                           null, widget, false, 0, false)
   }
@@ -84,14 +84,14 @@ class PerforceToolbarWidgetAction : ExpandableComboAction() {
   }
 
   override fun updateCustomComponent(component: JComponent, presentation: Presentation) {
-    val widget = component as? ToolbarComboWidget ?: return
+    val widget = component as? ToolbarComboButton ?: return
 
     val isConnected = presentation.getClientProperty(isConnectedKey) ?: false
     val workspace = presentation.getClientProperty(workspaceKey)
     val isOnline = presentation.getClientProperty(statusKey) ?: false
     val text = PerforceToolbarWidgetHelper.getText(workspace, !isConnected, isOnline)
 
-    widget.isExpandable = isConnected
+    widget.isEnabled = isConnected
     widget.text = text
     widget.toolTipText = presentation.description
     widget.leftIcons = listOfNotNull(presentation.icon)
