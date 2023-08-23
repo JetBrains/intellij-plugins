@@ -222,13 +222,11 @@ public final class FlexCommonUtils {
         if (token.startsWith("-" + option + "=") || token.startsWith("-" + option + "+=")) {
           result.addAll(StringUtil.split(token.substring(token.indexOf("=") + 1), ","));
         }
-        else if (token.equals("-" + option) && tokenizer.countTokens() > 0) {
-          if (tokenizer.countTokens() > 0) {
-            String nextToken;
-            while (tokenizer.hasMoreTokens() && canBeCompilerOptionValue(nextToken = tokenizer.peekNextToken())) {
-              tokenizer.nextToken(); // advance tokenizer position
-              result.add(nextToken);
-            }
+        else if (token.equals("-" + option) && tokenizer.hasMoreTokens()) {
+          String nextToken;
+          while (tokenizer.hasMoreTokens() && canBeCompilerOptionValue(nextToken = tokenizer.peekNextToken())) {
+            tokenizer.nextToken(); // advance tokenizer position
+            result.add(nextToken);
           }
         }
       }
@@ -781,13 +779,13 @@ public final class FlexCommonUtils {
         properties.load(inputStream);
 
         final String configuredJavaHome = properties.getProperty("java.home");
-        if (configuredJavaHome != null && configuredJavaHome.trim().length() > 0) {
+        if (configuredJavaHome != null && !configuredJavaHome.trim().isEmpty()) {
           javaHome = configuredJavaHome;
           customJavaHomeSet = true;
         }
 
         final String javaArgs = properties.getProperty("java.args");
-        if (javaArgs != null && javaArgs.trim().length() > 0) {
+        if (javaArgs != null && !javaArgs.trim().isEmpty()) {
           additionalJavaArgs = javaArgs;
           final Matcher matcher = XMX_PATTERN.matcher(javaArgs);
           if (matcher.matches()) {
@@ -799,7 +797,7 @@ public final class FlexCommonUtils {
         }
 
         final String classpathFromJvmConfig = properties.getProperty("java.class.path");
-        if (classpathFromJvmConfig != null && classpathFromJvmConfig.trim().length() > 0) {
+        if (classpathFromJvmConfig != null && !classpathFromJvmConfig.trim().isEmpty()) {
           classpath = (StringUtil.isEmpty(classpath) ? "" : (classpath + File.pathSeparator)) + classpathFromJvmConfig;
         }
         //jvm.config also has properties which are not handled here: 'env' and 'java.library.path'; though not sure that there's any sense in them
