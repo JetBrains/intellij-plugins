@@ -1,10 +1,8 @@
-package com.intellij.dts.documentation.bindings
+package com.intellij.dts.zephyr
 
 import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.psi.DtsString
-import com.intellij.dts.settings.DtsSettings
 import com.intellij.dts.util.DtsTreeUtil
-import com.intellij.dts.util.DtsZephyrUtil
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
@@ -19,8 +17,6 @@ import org.yaml.snakeyaml.constructor.SafeConstructor
 import org.yaml.snakeyaml.error.YAMLException
 import java.io.IOException
 import java.util.*
-
-private val logger = Logger.getInstance(DtsZephyrUtil.javaClass)
 
 @JvmInline
 private value class YamlMap(private val map: Map<*, *>) {
@@ -62,17 +58,19 @@ class DtsZephyrBindingProvider(val project: Project) {
     companion object {
         fun of(project: Project): DtsZephyrBindingProvider = project.service()
 
-        private const val defaultBindingPath = "bindings/zephyr.yaml"
+        private const val DEFAULT_BINDING_PATH = "bindings/zephyr.yaml"
+
+        private val logger = Logger.getInstance(DtsZephyrBindingProvider::class.java)
     }
 
     private val yaml = Yaml(SafeConstructor(LoaderOptions()))
 
-    private var zephyrRoot: String? = null
+    private var bindingsHash: Int? = null
     private var bindings: Map<String, YamlMap>? = null
 
     private val defaultBinding: YamlMap by lazy {
         try {
-            val stream = javaClass.classLoader.getResourceAsStream(defaultBindingPath)
+            val stream = javaClass.classLoader.getResourceAsStream(DEFAULT_BINDING_PATH)
                 ?: throw IOException("resource stream was null")
 
             val text = stream.bufferedReader().use { it.readText() }
@@ -117,15 +115,11 @@ class DtsZephyrBindingProvider(val project: Project) {
     }
 
     private fun getBindings(): Map<String, YamlMap>? {
-        val settings = DtsSettings.of(project)
-        if (bindings != null && settings.zephyrRoot == zephyrRoot) {
-            return bindings
+        val zephyrProvider = DtsZephyrProvider.of(project)
+
+        if (bindingsHash != zephyrProvider.modificationHash) {
+            bindings = zephyrProvider.getBindingsDir()?.let(::loadBindings)
         }
-
-        val dir = DtsZephyrUtil.getBindingsDir(project) ?: return null
-        bindings = loadBindings(dir)
-
-        zephyrRoot = settings.zephyrRoot
 
         return bindings
     }

@@ -1,8 +1,8 @@
 package com.intellij.dts.settings
 
 import com.intellij.dts.DtsBundle
-import com.intellij.dts.util.DtsZephyrUtil
 import com.intellij.dts.util.Either
+import com.intellij.dts.zephyr.DtsZephyrProvider
 import com.intellij.ide.util.BrowseFilesListener
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
@@ -34,8 +34,10 @@ class DtsSettingsConfigurable(private val project: Project) : BoundConfigurable(
     }
 
     private fun validateRoot(path: String): Result<String> {
+        val provider = DtsZephyrProvider.of(project)
+
         if (path.isBlank()) {
-            val root = DtsZephyrUtil.searchRootDir(project)
+            val root = provider.searchRoot()
                 ?: return Either.Left(DtsBundle.message("settings.zephyr.root.not_found"))
 
             return Either.Right(root.path)
@@ -43,7 +45,7 @@ class DtsSettingsConfigurable(private val project: Project) : BoundConfigurable(
             val root = LocalFileSystem.getInstance().findFileByNioFile(Path.of(path))
                 ?: return Either.Left(DtsBundle.message("settings.zephyr.root.not_found"))
 
-            if (!DtsZephyrUtil.validateRoot(root)) {
+            if (!provider.validateRoot(root)) {
                 return Either.Left(DtsBundle.message("settings.zephyr.root.invalid"))
             }
 

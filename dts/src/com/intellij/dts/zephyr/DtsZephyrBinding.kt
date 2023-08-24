@@ -1,4 +1,4 @@
-package com.intellij.dts.documentation.bindings
+package com.intellij.dts.zephyr
 
 data class DtsZephyrBinding(
     val compatible: String,

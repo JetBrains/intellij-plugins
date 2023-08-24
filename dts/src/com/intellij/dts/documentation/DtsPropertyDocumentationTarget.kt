@@ -1,6 +1,6 @@
 package com.intellij.dts.documentation
 
-import com.intellij.dts.documentation.bindings.DtsZephyrBindingProvider
+import com.intellij.dts.zephyr.DtsZephyrBindingProvider
 import com.intellij.dts.lang.psi.DtsProperty
 import com.intellij.dts.util.DtsHtmlChunk
 import com.intellij.dts.util.DtsTreeUtil
