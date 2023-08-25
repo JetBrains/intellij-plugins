@@ -1,14 +1,16 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.editor
 
-import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclaration
+import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclaration.ImportExportPrefixKind
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.psi.impl.ES6CreateImportUtil
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil
+import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil.CreateImportExportInfo
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
+import com.intellij.lang.javascript.modules.imports.JSSimpleImportDescriptor
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil
@@ -105,17 +107,17 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
   fun insertComponentImport(name: String,
                             elementToImport: PsiElement) {
     val capitalizedName = toAsset(name, true)
-
-    val info = if (elementToImport is PsiFile) {
-      ES6ImportPsiUtil.CreateImportExportInfo(capitalizedName, capitalizedName, ES6ImportPsiUtil.ImportExportType.DEFAULT,
-                                              ES6ImportExportDeclaration.ImportExportPrefixKind.IMPORT)
-    }
-    else {
-      ES6ImportPsiUtil.CreateImportExportInfo(null, capitalizedName, ES6ImportPsiUtil.ImportExportType.SPECIFIER,
-                                              ES6ImportExportDeclaration.ImportExportPrefixKind.IMPORT)
-    }
-
     val scriptScope = getOrCreateScriptScope() ?: return
+
+    var info = ES6CreateImportUtil.getImportDescriptor(
+      capitalizedName, elementToImport, elementToImport.containingFile.virtualFile, scriptScope, true
+    ) ?: return
+
+    if (info.importType.isBare) {
+      val createInfo = CreateImportExportInfo(
+        capitalizedName, capitalizedName, ES6ImportPsiUtil.ImportExportType.DEFAULT, ImportExportPrefixKind.IMPORT)
+      info = JSSimpleImportDescriptor(info.moduleDescriptor, createInfo)
+    }
 
     if (isScriptSetup() || addClassicPropertyReference(COMPONENTS_PROP, capitalizedName)) {
       ES6ImportPsiUtil.insertJSImport(scriptScope, info, elementToImport)
