@@ -7,7 +7,7 @@ import com.intellij.util.xmlb.XmlSerializerUtil
 
 @Service(Service.Level.PROJECT)
 @State(name = "com.intellij.dts.settings.DtsSettings", storages = [Storage("dtsSettings.xml")])
-class DtsSettings : PersistentStateComponent<DtsSettings.State> {
+class DtsSettings(private val project: Project) : PersistentStateComponent<DtsSettings.State> {
     companion object {
         fun of(project: Project): DtsSettings = project.service()
     }
@@ -35,7 +35,19 @@ class DtsSettings : PersistentStateComponent<DtsSettings.State> {
 
     @Synchronized
     fun update(block: State.() -> Unit) {
+        val publisher = project.messageBus.syncPublisher(ChangeListener.TOPIC)
         block(state)
+        publisher.settingsChanged(this)
+    }
+
+    interface ChangeListener {
+        companion object {
+            @Topic.ProjectLevel
+            @JvmField
+            val TOPIC = Topic("DtsSettingsChanged", ChangeListener::class.java, Topic.BroadcastDirection.NONE)
+        }
+
+        fun settingsChanged(settings: DtsSettings)
     }
 
     data class State(

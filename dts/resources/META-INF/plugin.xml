@@ -35,6 +35,8 @@
                 implementationClass="com.intellij.dts.ide.DtsStructureViewFactory"/>
         <breadcrumbsInfoProvider
                 implementation="com.intellij.dts.ide.DtsBreadcrumbsProvider"/>
+        <projectViewNodeDecorator
+                implementation="com.intellij.dts.ide.DtsProjectViewDecorator"/>
 
         <!-- settings -->
         <projectConfigurable
