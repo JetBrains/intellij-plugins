@@ -3,6 +3,7 @@ package com.intellij.dts.zephyr
 import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.psi.DtsString
 import com.intellij.dts.util.DtsTreeUtil
+import com.intellij.dts.util.cached
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
@@ -65,8 +66,15 @@ class DtsZephyrBindingProvider(val project: Project) {
 
     private val yaml = Yaml(SafeConstructor(LoaderOptions()))
 
-    private var bindingsHash: Int? = null
-    private var bindings: Map<String, YamlMap>? = null
+    private val provider: DtsZephyrProvider by lazy { DtsZephyrProvider.of(project) }
+
+    private val bindings: MutableMap<String, DtsZephyrBinding> by cached(provider::modificationCount) {
+        mutableMapOf()
+    }
+
+    private val bindingsYaml: Map<String, YamlMap> by cached(provider::modificationCount) {
+        provider.getBindingsDir()?.let(::loadBindings) ?: emptyMap()
+    }
 
     private val defaultBinding: YamlMap by lazy {
         try {
@@ -114,21 +122,9 @@ class DtsZephyrBindingProvider(val project: Project) {
         return bindings
     }
 
-    private fun getBindings(): Map<String, YamlMap>? {
-        val zephyrProvider = DtsZephyrProvider.of(project)
-
-        if (bindingsHash != zephyrProvider.modificationHash) {
-            bindings = zephyrProvider.getBindingsDir()?.let(::loadBindings)
-        }
-
-        return bindings
-    }
-
     private fun getBinding(name: String): YamlMap? {
-        val bindings = getBindings() ?: return null
         val key = name.removeSuffix(".yaml")
-
-        return bindings[key]
+        return bindingsYaml[key]
     }
 
     /**
@@ -219,10 +215,12 @@ class DtsZephyrBindingProvider(val project: Project) {
         val compatible = getCompatibleStrings(node).firstOrNull { getBinding(it) != null }
 
         return if (compatible != null) {
-            val builder = DtsZephyrBinding.Builder(compatible)
-            iterateBindings(listOf(compatible)) { doBuildBinding(builder, it) }
+            bindings.computeIfAbsent(compatible) {
+                val builder = DtsZephyrBinding.Builder(compatible)
+                iterateBindings(listOf(compatible)) { doBuildBinding(builder, it) }
 
-            builder.build()
+                builder.build()
+            }
         } else {
             val parentBinding = DtsTreeUtil.findParentNode(node)?.let(::buildBinding)
             parentBinding?.child
