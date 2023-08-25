@@ -63,7 +63,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.project.DumbService;
-import com.intellij.openapi.project.DumbServiceImpl;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.roots.*;
@@ -93,6 +92,7 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.refactoring.rename.RenameProcessor;
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
 import com.intellij.spellchecker.quickfixes.RenameTo;
+import com.intellij.testFramework.DumbModeTestUtils;
 import com.intellij.testFramework.ExpectedHighlightingData;
 import com.intellij.testFramework.ExtensionTestUtil;
 import com.intellij.testFramework.PsiTestUtil;
@@ -1894,7 +1894,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   @SuppressWarnings("ConstantConditions")
   public void testDumbMode() throws Exception {
-    DumbServiceImpl.getInstance(getProject()).runInDumbModeSynchronously(() -> {
+    DumbModeTestUtils.runInDumbModeSynchronously(getProject(), () -> {
       ((DaemonCodeAnalyzerImpl)DaemonCodeAnalyzer.getInstance(getProject())).mustWaitForSmartMode(false, getTestRootDisposable());
       assertTrue(DumbService.isDumb(getProject()));
       configureByFile(getBasePath() + "/dumbMode.mxml");
