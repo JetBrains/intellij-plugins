@@ -257,6 +257,8 @@
                        bundle="messages.DartBundle" key="notification.group.dart.pub.tool"/>
     <notificationGroup id="Dart analysis issue" displayType="NONE"
                        bundle="messages.DartBundle" key="notification.group.dart.analysis.issue"/>
+
+    <iconMapper mappingFile="DartIconMappings.json"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains">

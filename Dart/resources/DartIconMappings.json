@@ -1,0 +1,17 @@
+{
+  "icons": {
+    "expui": {
+      "dart.svg": [
+        "icons/dart_16.svg",
+        "icons/dart_file.svg"
+      ],
+      "dartRemote.svg": "icons/dart_remote.svg",
+      "dartTest.svg": "icons/dart_test.svg",
+      "dartWeb.svg": "icons/dartWeb.svg",
+      "observatory.svg": "icons/observatory.svg",
+      "toolWindowDart.svg": "icons/dart_13.svg",
+      "toolWindowPubServe.svg": "icons/pubServeToolWindow.svg",
+      "warningPoint.svg": "icons/warning_point.svg"
+    }
+  }
+}
