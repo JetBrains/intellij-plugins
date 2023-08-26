@@ -2,16 +2,18 @@
 package org.angular2.entities.metadata
 
 import com.intellij.json.psi.JsonValue
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.tree.IStubFileElementType
 import org.angular2.entities.metadata.stubs.Angular2MetadataNodeModuleStub
-import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.metadata.MetadataJsonFileType
 import org.angular2.lang.metadata.MetadataJsonLanguage
 import org.angular2.lang.metadata.psi.MetadataStubFileElementType
 import org.angular2.lang.metadata.stubs.MetadataFileStubImpl
-import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
+
+@NlsSafe
+private const val ANGULAR_METADATA_LANGUAGE_NAME = "Angular Metadata JSON"
 
 object Angular2MetadataFileType : MetadataJsonFileType() {
 
@@ -22,18 +24,9 @@ object Angular2MetadataFileType : MetadataJsonFileType() {
       ?.findChild(fileName.subSequence(0, fileName.length - METADATA_SUFFIX.length).toString() + D_TS_SUFFIX) != null
   }
 
-  override fun getName(): String {
-    return "Angular Metadata JSON"
-  }
-
-  override fun getDescription(): String {
-    return Angular2Bundle.message("filetype.angular-metadata-json.description")
-  }
-
-  @Nls
-  override fun getDisplayName(): String {
-    return Angular2Bundle.message("filetype.angular-metadata-json.display.name")
-  }
+  override fun getName(): String = ANGULAR_METADATA_LANGUAGE_NAME
+  override fun getDescription(): String = ANGULAR_METADATA_LANGUAGE_NAME
+  override fun getDisplayName(): String = ANGULAR_METADATA_LANGUAGE_NAME
 
   override val fileElementType: IStubFileElementType<*>
     get() = FILE
