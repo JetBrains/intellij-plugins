@@ -57,6 +57,7 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
     }
   }
 
+  override fun getHelpTopic(): String = "settings.vue"
 
   override fun getDisplayName() = VueBundle.message("vue.configurable.title")
 }
