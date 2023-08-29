@@ -83,19 +83,22 @@ class PlatformioTaskRunner : CidrTaskRunner {
     }
 
     try {
-      val compilerCommandLine = PlatfromioCliBuilder(project, true).withParams("run")
+      val compilerCommandLine = PlatfromioCliBuilder(project, true)
 
       @Nls val title: String
       when (task) {
         is CidrCleanTask -> {
-          compilerCommandLine.withParams("-t", "clean")
+          compilerCommandLine.withParams("run", "-t", "clean")
           title = ClionEmbeddedPlatformioBundle.message("platformio.clean")
         }
         is PlatformioTargetTask -> {
           compilerCommandLine.withParams(*task.args)
           title = task.presentableName
         }
-        else -> title = ClionEmbeddedPlatformioBundle.message("platformio.build")
+        else -> {
+          title = ClionEmbeddedPlatformioBundle.message("platformio.build")
+          compilerCommandLine.withParams("run")
+        }
       }
 
       val processHandler = CapturingProcessHandler(compilerCommandLine.build())
