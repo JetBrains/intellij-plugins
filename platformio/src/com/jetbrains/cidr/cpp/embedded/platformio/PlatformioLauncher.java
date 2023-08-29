@@ -14,19 +14,17 @@ import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.ui.content.Content;
 import com.intellij.xdebugger.XDebugSession;
-import com.intellij.xdebugger.XDebuggerManager;
 import com.intellij.xdebugger.ui.XDebugTabLayouter;
 import com.jetbrains.cidr.ArchitectureType;
-import com.jetbrains.cidr.cpp.embedded.EmbeddedBundle;
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatfromioCliBuilder;
 import com.jetbrains.cidr.cpp.execution.CLionLauncher;
 import com.jetbrains.cidr.cpp.execution.debugger.TrivialNativeToolchain;
 import com.jetbrains.cidr.cpp.execution.debugger.backend.CLionGDBDriverConfiguration;
+import com.jetbrains.cidr.cpp.execution.debugger.embedded.custom.McuResetActionKt;
 import com.jetbrains.cidr.cpp.execution.debugger.embedded.svd.SvdPanel;
 import com.jetbrains.cidr.cpp.toolchains.CPPDebugger;
 import com.jetbrains.cidr.cpp.toolchains.CPPEnvironment;
@@ -36,9 +34,7 @@ import com.jetbrains.cidr.execution.TrivialRunParameters;
 import com.jetbrains.cidr.execution.debugger.CidrDebugProcess;
 import com.jetbrains.cidr.execution.debugger.backend.DebuggerDriver;
 import com.jetbrains.cidr.execution.debugger.backend.DebuggerDriverConfiguration;
-import com.jetbrains.cidr.execution.debugger.backend.gdb.GDBDriver;
 import com.jetbrains.cidr.toolchains.OSType;
-import icons.CLionEmbeddedIcons;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.SystemIndependent;
@@ -189,20 +185,8 @@ public class PlatformioLauncher extends CLionLauncher {
                                           @NotNull ProcessHandler processHandler,
                                           @NotNull ExecutionConsole console,
                                           @NotNull List<? super AnAction> actions) throws ExecutionException {
-
-    //noinspection DialogTitleCapitalization
-    actions.add(
-      new AnAction(() -> EmbeddedBundle.message("mcu.reset.action.title"), () -> EmbeddedBundle.message("mcu.reset.action.description"),
-                   CLionEmbeddedIcons.ResetMcu) {
-        @Override
-        public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
-          XDebugSession session = XDebuggerManager.getInstance(getProject()).getDebugSession(console);
-          if (session != null) {
-            ((CidrDebugProcess)session.getDebugProcess()).postCommand(
-              drv -> ((GDBDriver)drv).interruptAndExecuteConsole("pio_reset_halt_target")
-            );
-          }
-        }
-      });
+    super.collectAdditionalActions(state, processHandler, console, actions);
+    actions.add(ActionManager.getInstance().getAction("intellij.clion.embedded.mcu.reset"));
+    processHandler.putUserData(McuResetActionKt.RESET_COMMAND, "pio_reset_halt_target");
   }
 }
