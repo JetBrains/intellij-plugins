@@ -10,6 +10,7 @@ import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.injected.editor.EditorWindow;
+import com.intellij.javascript.debugger.com.intellij.lang.javascript.JSCompletionTestHelperSimple;
 import com.intellij.javascript.flex.mxml.schema.AnnotationBackedDescriptorImpl;
 import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.flex.FlexUtils;
@@ -36,6 +37,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.performancePlugin.yourkit.YourKitProfilerHandler;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -78,7 +80,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     super.setUp();
     FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "");
     CamelHumpMatcher.forceStartMatching(myFixture.getTestRootDisposable());
-    myCompletionPerformer = () -> super.complete();
+    myCompletionPerformer = () -> helper().superComplete();
     setUpJdk();
   }
 
@@ -96,19 +98,40 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   }
 
   @Override
+  protected FlexJSCompletionTestHelper helper() {
+    return new FlexJSCompletionTestHelper();
+  }
+
+  protected class FlexJSCompletionTestHelper extends JSCompletionTestHelperSimple {
+    FlexJSCompletionTestHelper() {
+      super(FlexCompletionTest.this.getTestName(false),
+            myFixture,
+            getExtension(),
+            useAssertOnRecursionPreventionByDefault(),
+            FlexCompletionTest.this.getClass(),
+            getTestDataPath(),
+            mySmartCompletionTests);
+    }
+
+    @Override
+    public LookupElement @Nullable [] complete() {
+      if (myCompletionPerformer != null) {
+        myCompletionPerformer.run();
+      }
+
+      return myFixture.getLookupElements();
+    }
+
+    void superComplete() {
+      super.complete();
+    }
+  }
+
+  @Override
   protected LightProjectDescriptor getProjectDescriptor() {
     return needsJavaModule() ?
            JAVA_1_7 :
            FlexProjectDescriptor.DESCRIPTOR;
-  }
-
-  @Override
-  protected LookupElement[] complete() {
-    if (myCompletionPerformer != null) {
-      myCompletionPerformer.run();
-    }
-    
-    return myFixture.getLookupElements();
   }
 
   private Runnable createMultiCompletionPerformerWithVariantsCheck() {
@@ -121,7 +144,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
       for (Map.Entry<Integer, String> entry : map.entrySet()) {
         myFixture.getEditor().getCaretModel().moveToOffset(entry.getKey());
 
-        super.complete();
+        helper().superComplete();
 
         final String[] expected = entry.getValue().length() == 0 ? ArrayUtil.EMPTY_STRING_ARRAY : entry.getValue().split(",");
 
@@ -830,8 +853,8 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testTwoCompletions() {
     myCompletionPerformer = () -> {
-      super.complete();
-      super.complete();
+      helper().superComplete();
+      helper().superComplete();
     };
     mxmlTest();
   }
@@ -841,7 +864,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     myCompletionPerformer = () -> {
       final int offset = myFixture.getEditor().getCaretModel().getOffset();
 
-      super.complete();
+      helper().superComplete();
 
       assertEquals("""
 
@@ -854,7 +877,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
 
       myFixture.getEditor().getCaretModel().moveToOffset(offset);
 
-      super.complete();
+      helper().superComplete();
     };
     mxmlTest();
   }
@@ -934,7 +957,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
       final LinkedHashMap<Integer, String> map = JSTestUtils.extractPositionMarkers(getProject(), myFixture.getEditor().getDocument());
       for (Map.Entry<Integer, String> entry : map.entrySet()) {
         myFixture.getEditor().getCaretModel().moveToOffset(entry.getKey());
-        super.complete();
+        helper().superComplete();
         assertEmpty(myFixture.getLookupElements());
       }
     };
