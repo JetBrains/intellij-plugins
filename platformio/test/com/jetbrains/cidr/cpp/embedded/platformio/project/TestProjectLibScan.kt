@@ -52,7 +52,8 @@ class TestProjectLibScan : LightPlatformTestCase() {
       }
     assertEquals("Source file", expectedSourceFiles, actualSourceFiles.keys)
     val switchesWithDefines = actualSourceFiles["/lib/confusing-name-no-src/confusing-name-no-src.cpp"]!!.compilerSwitches
-    assertTrue("MANDATORY_DEFINE_B1", switchesWithDefines.contains("-DMANDATORY_DEFINE_B1"))
+    assertNotNull(switchesWithDefines)
+    assertTrue("MANDATORY_DEFINE_B1", switchesWithDefines!!.contains("-DMANDATORY_DEFINE_B1"))
     assertTrue("MANDATORY_DEFINE_B2", switchesWithDefines.contains("-D MANDATORY_DEFINE_B2"))
   }
 

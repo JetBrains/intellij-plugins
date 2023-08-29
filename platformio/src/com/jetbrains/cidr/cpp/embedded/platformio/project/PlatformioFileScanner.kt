@@ -126,13 +126,13 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
       val cCompilerSwitches: MutableList<String>
       val cxxCompilerSwitches: MutableList<String>
       if (additionalFlags == null) {
-        cCompilerSwitches = cLanguageConfiguration.compilerSwitches
-        cxxCompilerSwitches = cxxLanguageConfiguration.compilerSwitches
+        cCompilerSwitches = cLanguageConfiguration.compilerSwitches ?: mutableListOf()
+        cxxCompilerSwitches = cxxLanguageConfiguration.compilerSwitches ?: mutableListOf()
       }
       else {
-        cCompilerSwitches = cLanguageConfiguration.compilerSwitches.toMutableList()
+        cCompilerSwitches = cLanguageConfiguration.compilerSwitches?.toMutableList() ?: mutableListOf()
         cCompilerSwitches.addAll(additionalFlags)
-        cxxCompilerSwitches = cxxLanguageConfiguration.compilerSwitches.toMutableList()
+        cxxCompilerSwitches = cxxLanguageConfiguration.compilerSwitches?.toMutableList() ?: mutableListOf()
         cxxCompilerSwitches.addAll(additionalFlags)
       }
       scanSources(srcFolder, buildSrcFilter).forEach {

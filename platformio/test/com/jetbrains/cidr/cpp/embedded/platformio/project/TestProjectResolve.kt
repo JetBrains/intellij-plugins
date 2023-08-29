@@ -118,7 +118,7 @@ class TestProjectResolve : LightPlatformTestCase() {
       .resolveConfigurations.first()
       .languageConfigurations.first { it.languageKind == langKind }!!
     assertEquals(GCCCompilerKind, languageConfig.compilerKind)
-    val switches = languageConfig.compilerSwitches.toSet()
+    val switches = languageConfig.compilerSwitches?.toSet() ?: emptySet()
     val missingSwitches = mandatorySwitches - switches
     assertTrue("Missing switches for ${langKind.displayName}: ${missingSwitches.joinToString()}", missingSwitches.isEmpty())
     val unexpectedSwitches = switches.intersect(undesiredSwitches)
