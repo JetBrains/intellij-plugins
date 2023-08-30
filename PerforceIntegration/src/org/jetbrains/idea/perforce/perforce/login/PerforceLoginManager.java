@@ -27,7 +27,7 @@ import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManage
 
 import java.util.*;
 
-@Service
+@Service(Service.Level.PROJECT)
 public final class PerforceLoginManager implements LoginSupport {
   private final static Logger LOG = Logger.getInstance(PerforceLoginManager.class);
   private final Notifier myAuthNotifier;
@@ -160,23 +160,22 @@ public final class PerforceLoginManager implements LoginSupport {
       }
     }
 
-    // try to login with the saved password
-    String password = mySettings.getPasswd();
-    if (StringUtil.isNotEmpty(password)) {
-      final LoginState newLoginState = loginUnderProgress(machine, password);
-      if (newLoginState == null) {
-        return false;
+    // try to log in with the saved password
+    return runUnderProgress(PerforceBundle.message("login.getting.credentials"), () -> {
+      String password = mySettings.getPasswd();
+      if (StringUtil.isNotEmpty(password)) {
+        final LoginState newLoginState = loginUnderProgress(machine, password);
+        if (newLoginState == null) {
+          return false;
+        }
+
+        if (checkLoginState(newLoginState, connection)) {
+          return true;
+        }
       }
 
-      if (newLoginState.isSuccess()) {
-        myAuthNotifier.showPasswordWasOk(true);
-        myAuthNotifier.removeLazyNotification(connection);
-        myConnectionManager.updateConnections();
-        return true;
-      }
-    }
-
-    return askUserForPassword(connection, machine);
+      return askUserForPassword(connection, machine);
+    });
   }
 
   private boolean askUserForPassword(P4Connection connection, final AttemptsStateMachine machine) {
@@ -197,10 +196,7 @@ public final class PerforceLoginManager implements LoginSupport {
       if (newLoginState == null) {
         return false;
       }
-      if (newLoginState.isSuccess()) {
-        myAuthNotifier.showPasswordWasOk(true);
-        myAuthNotifier.removeLazyNotification(connection);
-        myConnectionManager.updateConnections();
+      if (checkLoginState(newLoginState, connection)) {
         return true;
       }
       if (reportConnectionError(newLoginState)) {
@@ -208,6 +204,17 @@ public final class PerforceLoginManager implements LoginSupport {
         return false;
       }
     }
+  }
+
+  private boolean checkLoginState(LoginState newLoginState, P4Connection connection) {
+    if (newLoginState.isSuccess()) {
+      myAuthNotifier.showPasswordWasOk(true);
+      myAuthNotifier.removeLazyNotification(connection);
+      myConnectionManager.updateConnections();
+      return true;
+    }
+
+    return false;
   }
 
   @Nullable
