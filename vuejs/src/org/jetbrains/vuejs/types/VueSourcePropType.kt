@@ -1,10 +1,8 @@
 // Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.types
 
-import com.intellij.lang.javascript.psi.JSProperty
-import com.intellij.lang.javascript.psi.JSType
-import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext
-import com.intellij.lang.javascript.psi.JSTypeTextBuilder
+import com.intellij.lang.javascript.documentation.JSDocumentationUtils
+import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.stubs.TypeScriptMergedTypeImplicitElement
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.psi.PsiNamedElement
@@ -25,15 +23,27 @@ class VueSourcePropType private constructor(typeSource: JSTypeSource, private va
     (type is VueSourcePropType && type.element == element)
 
   override fun substituteImpl(context: JSTypeSubstitutionContext): JSType =
-    when (element) {
+    computeType(element)
+      ?.substitute(context)
+      ?.fixPrimitiveTypes()
+    ?: JSAnyType.get(source)
+
+  private fun computeType(element: PsiNamedElement): JSType? {
+    val jsDocType = JSDocumentationUtils.findType(element as? JSNamedElement)
+      ?.let { JSTypeParser.createTypeFromJSDoc(element.getProject(), it, JSTypeSourceFactory.createTypeSource(element, true)) }
+      ?.let { getPropTypeFromGenericType(it) ?: it }
+
+    if (jsDocType != null) {
+      return jsDocType
+    }
+
+    return when (element) {
       is JSProperty -> getJSTypeFromPropOptions(element.value)
       is TypeScriptMergedTypeImplicitElement ->
         getPropTypeFromGenericType(element.jsType) ?: getJSTypeFromPropOptions((element.explicitElement as? JSProperty)?.value)
       else -> null
     }
-      ?.substitute(context)
-      ?.fixPrimitiveTypes()
-    ?: JSAnyType.get(source)
+  }
 
   override fun hashCodeImpl(): Int = element.name.hashCode()
 

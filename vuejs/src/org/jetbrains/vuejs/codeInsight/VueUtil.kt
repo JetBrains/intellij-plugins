@@ -316,7 +316,13 @@ private val PROPS_CONTAINER_TYPES = setOf("PropType", "PropOptions")
 fun getPropTypeFromGenericType(jsType: JSType?): JSType? =
   jsType
     ?.asSafely<JSGenericTypeImpl>()
-    ?.takeIf { (it.type as? JSTypeImpl)?.typeText in PROPS_CONTAINER_TYPES }
+    ?.takeIf {
+      when (val innerType = it.type) {
+        is JSImportType -> innerType.qualifiedName.name
+        is JSTypeImpl -> innerType.typeText
+        else -> null
+      } in PROPS_CONTAINER_TYPES
+    }
     ?.arguments?.getOrNull(0)
     ?.asCompleteType()
 

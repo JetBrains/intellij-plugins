@@ -242,6 +242,25 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
+  fun testPropsWithJsDoc() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.copyDirectoryToProject(getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+
+    doTest(
+      "prop1" to "{strVar: (string | string[])}",
+      "prop1.str<caret>Var" to "string | string[]",
+      "prop2" to "Prop2",
+      "prop2.strV<caret>ar2" to "string | string[]",
+      "prop1Obj" to "{strVar: (string | string[])}",
+      "prop1Obj.str<caret>Var" to "string | string[]",
+      "prop2Obj" to "Prop2",
+      "prop2Obj.strVa<caret>r2" to "string | string[]",
+      "prop1Val" to "string | string[]",
+      "prop2Val" to "string | string[]",
+    )
+  }
+
   private fun testVFor(vararg testCases: Triple<String, String, String>, iterations: Int = 3) {
     for (test in testCases) {
       for (i in 1..iterations) {
