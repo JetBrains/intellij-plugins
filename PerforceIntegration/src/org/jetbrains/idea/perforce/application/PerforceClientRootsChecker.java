@@ -21,7 +21,7 @@ public class PerforceClientRootsChecker implements P4RootsInformation {
   private static final Logger LOG = Logger.getInstance(PerforceClientRootsChecker.class);
   private final Map<P4Connection, WrongRoots> myMap = new HashMap<>();
   private final MultiMap<P4Connection, VcsException> myErrors = new MultiMap<>();
-  private final Set<P4Connection> myNotAuthorized = new HashSet<>();
+  private final Map<P4Connection, PerforceAuthenticationException> myNotAuthorized = new HashMap<>();
 
   public PerforceClientRootsChecker() {}
 
@@ -37,7 +37,7 @@ public class PerforceClientRootsChecker implements P4RootsInformation {
       try {
         clientRoots = getClientRoots(connection, infoAndClient);
       } catch (PerforceAuthenticationException e) {
-        myNotAuthorized.add(connection);
+        myNotAuthorized.put(connection, e);
         continue;
       } catch (VcsException e) {
         myErrors.putValue(connection, e);
@@ -128,7 +128,7 @@ public class PerforceClientRootsChecker implements P4RootsInformation {
   }
 
   @Override
-  public Set<P4Connection> getNotAuthorized() {
+  public Map<P4Connection, PerforceAuthenticationException> getNotAuthorized() {
     return myNotAuthorized;
   }
 

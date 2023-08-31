@@ -2,19 +2,19 @@ package org.jetbrains.idea.perforce.application;
 
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.util.containers.MultiMap;
+import org.jetbrains.idea.perforce.perforce.PerforceAuthenticationException;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class P4RootsInformationHolder implements P4RootsInformation {
   private final MultiMap<P4Connection, VcsException> myExceptions;
   private final Map<P4Connection, PerforceClientRootsChecker.WrongRoots> myWrongRootsMap;
-  private final Set<P4Connection> myNotAuthorized;
+  private final Map<P4Connection, PerforceAuthenticationException> myNotAuthorized;
 
   public P4RootsInformationHolder(MultiMap<P4Connection, VcsException> exceptions,
-                                  Map<P4Connection, PerforceClientRootsChecker.WrongRoots> wrongRootsMap, Set<P4Connection> notAuthorized) {
+                                  Map<P4Connection, PerforceClientRootsChecker.WrongRoots> wrongRootsMap, Map<P4Connection, PerforceAuthenticationException> notAuthorized) {
     myNotAuthorized = notAuthorized;
     myExceptions = new MultiMap<>();
     myExceptions.putAllValues(exceptions);
@@ -42,7 +42,7 @@ public class P4RootsInformationHolder implements P4RootsInformation {
   }
 
   @Override
-  public Set<P4Connection> getNotAuthorized() {
+  public Map<P4Connection, PerforceAuthenticationException> getNotAuthorized() {
     return myNotAuthorized;
   }
 }

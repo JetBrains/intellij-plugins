@@ -15,6 +15,7 @@
  */
 package org.jetbrains.idea.perforce.perforce;
 
+import com.intellij.credentialStore.CredentialAttributes;
 import com.intellij.credentialStore.CredentialPromptDialog;
 import com.intellij.ide.passwordSafe.PasswordSafe;
 import com.intellij.openapi.application.ApplicationManager;
@@ -49,13 +50,14 @@ import org.jetbrains.idea.perforce.operations.VcsOperationLog;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import org.jetbrains.idea.perforce.perforce.connections.P4EnvHelper;
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager;
+import org.jetbrains.idea.perforce.perforce.login.AttemptsStateMachine;
 import org.jetbrains.idea.perforce.perforce.login.PerforceLoginManager;
 import org.jetbrains.idea.perforce.perforce.login.PerforceOfflineNotification;
 
 import java.io.File;
 import java.util.*;
 
-import static com.intellij.credentialStore.CredentialAttributesKt.CredentialAttributes;
+import static org.jetbrains.idea.perforce.application.UpdatePasswordKt.askUpdatePassword;
 
 @State(name = "PerforceDirect.Settings", storages = @Storage(StoragePathMacros.WORKSPACE_FILE), reportStatistic = false)
 public final class PerforceSettings implements PersistentStateComponent<PerforceSettings>,
@@ -185,7 +187,7 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
   @Nullable
   @Transient
   public String getPasswd() {
-    return PasswordSafe.getInstance().getPassword(CredentialAttributes(getClass(), PERFORCE_SETTINGS_PASSWORD_KEY));
+    return PasswordSafe.getInstance().getPassword(new CredentialAttributes(getClass().getName(), PERFORCE_SETTINGS_PASSWORD_KEY));
   }
 
   @Nullable
@@ -194,7 +196,12 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
                ? PerforceBundle.message("message.text.perforce.command.failed.enter.password.v2")
                : PerforceBundle.message("message.text.perforce.command.failed.withdir.enter.password.v2", connection.getWorkingDir());
     String title = PerforceBundle.message("dialog.title.perforce.login");
-    return CredentialPromptDialog.askPassword(myProject, title, prompt, CredentialAttributes(getClass(), PERFORCE_SETTINGS_PASSWORD_KEY), true);
+    return CredentialPromptDialog.askPassword(myProject, title, prompt, new CredentialAttributes(getClass().getName(), PERFORCE_SETTINGS_PASSWORD_KEY), true);
+  }
+
+  public boolean requestForPasswordUpdate(AttemptsStateMachine attemptsMachine) {
+    assert myProject != null;
+    return askUpdatePassword(myProject, attemptsMachine, new CredentialAttributes(getClass().getName(), PERFORCE_SETTINGS_PASSWORD_KEY));
   }
 
   public long getServerVersion(@Nullable final P4Connection connection) throws VcsException {

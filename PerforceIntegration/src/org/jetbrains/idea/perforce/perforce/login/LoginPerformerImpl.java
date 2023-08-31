@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.idea.perforce.perforce.ExecResult;
+import org.jetbrains.idea.perforce.perforce.PerforceRunner;
 import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 import org.jetbrains.idea.perforce.perforce.PerforceTimeoutException;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
@@ -47,7 +48,7 @@ public class LoginPerformerImpl implements LoginPerformer {
       final ExecResult result = myConnection.runP4CommandLine(mySettings, new String[]{"login", "-s"}, null);
       if (result.getExitCode() != 0) {
         final String stdErr = result.getStderr();
-        if (stdErr.contains(CONNECT_FAILED) || stdErr.contains(CONNECTION_REFUSED) || stdErr.contains("No route to host")) {
+        if (stdErr.contains(CONNECT_FAILED) || stdErr.contains(CONNECTION_REFUSED) || stdErr.contains(PerforceRunner.PASSWORD_EXPIRED) || stdErr.contains("No route to host")) {
           return new LoginState(false, -1, stdErr);
         }
         if (StringUtil.isEmpty(stdErr)) {
@@ -148,6 +149,41 @@ public class LoginPerformerImpl implements LoginPerformer {
   @Override
   public P4Connection getMyConnection() {
     return myConnection;
+  }
+
+  @Override
+  public LoginState changePassword(String oldPass, String password) {
+    try {
+      final StringBuffer data = new StringBuffer();
+      if (!oldPass.isEmpty()) {
+        data.append(oldPass);
+        data.append('\n');
+      }
+
+      data.append(password);
+      data.append('\n');
+      data.append(password);
+      final ExecResult loginResult = myConnection.runP4CommandLine(mySettings, new String[]{"passwd"}, data);
+      String stdOut = loginResult.getStdout();
+      String stdErr = loginResult.getStderr();
+      if ((!stdErr.isEmpty() && !stdErr.contains(NAVIGATE_MESSAGE)) ||
+          !(stdOut.contains("Password deleted")
+          || stdOut.contains("Password updated"))) {
+        String message = stdErr;
+        if (StringUtil.isEmptyOrSpaces(message) && loginResult.getException() != null) {
+          message = loginResult.getException().getMessage();
+        }
+        LOG.debug("Change pass failed, stdOut: %s, stdErr: %s".formatted(stdOut, stdErr));
+        return new LoginState(false, -1, message);
+      }
+      myConnectionManager.updateConnections();
+      return new LoginState(true, -1, null);
+    } catch (VcsException e) {
+      if (e.getCause() instanceof PerforceTimeoutException) {
+        return new LoginState(false, -1, e.getMessage());
+      }
+      return new LoginState(false, -1, null);
+    }
   }
 
   private boolean isSSOAuthRequired() {

@@ -98,6 +98,7 @@ public final class PerforceRunner implements PerforceRunnerI {
   @NonNls static final String PASSWORD_INVALID_MESSAGE = "Perforce password (P4PASSWD) invalid or unset";
   @NlsSafe public static final String PASSWORD_INVALID_MESSAGE2 = "Password invalid.";
   @NonNls private static final String SESSION_EXPIRED_MESSAGE = "Your session has expired";
+  @NonNls public static final String PASSWORD_EXPIRED = "Your password has expired";
   @NonNls public static final String FILES_UP_TO_DATE = "file(s) up-to-date.";
   @NonNls private static final String PASSWORD_NOT_ALLOWED_MESSAGE = "Password not allowed at this server security level";
   @NonNls public static final String NO_SUCH_FILE_MESSAGE = " - no such file(s)";
@@ -1701,7 +1702,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     }
 
     if (!mySettings.USE_LOGIN &&
-        (retVal.getStderr().contains(PASSWORD_INVALID_MESSAGE) || retVal.getStderr().contains(PASSWORD_NOT_ALLOWED_MESSAGE))) {
+        (retVal.getStderr().contains(PASSWORD_INVALID_MESSAGE) || retVal.getStderr().contains(PASSWORD_NOT_ALLOWED_MESSAGE) || retVal.getStderr().contains(PASSWORD_EXPIRED))) {
       myLoginManager.notLogged(ctx.connection);
     }
 
@@ -1756,7 +1757,7 @@ public final class PerforceRunner implements PerforceRunnerI {
         return new PerforcePasswordNotAllowedException(settings.USE_LOGIN && settings.useP4CONFIG ? createPasswordNotAllowedButSetMessage(connection) : stderr,
                                                        settings.getProject(), connection);
       }
-      if (stderr.contains(PASSWORD_INVALID_MESSAGE) || stderr.contains(PASSWORD_INVALID_MESSAGE2) || stderr.contains(SESSION_EXPIRED_MESSAGE)) {
+      if (stderr.contains(PASSWORD_INVALID_MESSAGE) || stderr.contains(PASSWORD_INVALID_MESSAGE2) || stderr.contains(SESSION_EXPIRED_MESSAGE) || stderr.contains(PASSWORD_EXPIRED)) {
         return new PerforceAuthenticationException(stderr, connection, settings.getProject());
       }
     }

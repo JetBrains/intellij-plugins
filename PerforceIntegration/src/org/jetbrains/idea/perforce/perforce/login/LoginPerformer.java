@@ -10,4 +10,5 @@ public interface LoginPerformer {
   LoginState login(@NotNull String password);
   LoginState loginWithStoredPassword();
   P4Connection getMyConnection();
+  LoginState changePassword(String oldPass, String password);
 }

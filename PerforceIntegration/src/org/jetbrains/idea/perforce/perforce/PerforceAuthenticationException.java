@@ -7,7 +7,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.vcs.VcsConnectionProblem;
-import com.intellij.openapi.vcs.VcsException;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.perforce.PerforceBundle;
@@ -59,7 +58,7 @@ public class PerforceAuthenticationException extends VcsConnectionProblem {
           PerforceLoginManager.getInstance(myProject).check(myConnection, true);
         }
         catch (VcsConnectionProblem e) {
-          PerforceLoginManager.getInstance(myProject).getNotifier().ensureNotify(myConnection);
+          PerforceLoginManager.getInstance(myProject).getNotifier().ensureNotify(myConnection, e);
         }
       });
 

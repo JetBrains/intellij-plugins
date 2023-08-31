@@ -7,6 +7,7 @@ import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.idea.perforce.perforce.PerforceAuthenticationException;
 import org.jetbrains.idea.perforce.perforce.PerforceRunner;
 import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
@@ -117,8 +118,8 @@ public final class PerforceBaseInfoWorker {
       myNotifier.setProblems(false, checker.hasAnyErrors() || refreshInfo.hasAnyErrorsBesidesAuthentication);
     }
     if (checker.hasNotAuthorized()) {
-      for (P4Connection connection : checker.getNotAuthorized()) {
-        myLoginManager.getNotifier().ensureNotify(connection);
+      for (Map.Entry<P4Connection, PerforceAuthenticationException> connection : checker.getNotAuthorized().entrySet()) {
+        myLoginManager.getNotifier().ensureNotify(connection.getKey(), connection.getValue());
       }
     }
   }

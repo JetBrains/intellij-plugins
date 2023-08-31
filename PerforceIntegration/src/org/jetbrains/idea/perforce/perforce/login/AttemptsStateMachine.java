@@ -172,4 +172,8 @@ public final class AttemptsStateMachine {
     LOG.debug("Reported: " + (success ? "logged" : "not logged") + ", time: " + myRecentTime);
   }
 
+  public LoginState changePass(String oldPass, String password) {
+    LOG.debug("change pass called");
+    return executeUnderLock(() -> myPerformer.changePassword(oldPass, password));
+  }
 }

@@ -163,7 +163,7 @@ public class P4ConfigConnectionDiagnoseDialog extends DialogWrapper {
 
   private boolean addRootError(@NotNull final P4Connection connection, final BaseNode fileNode) {
     boolean somethingAdded = false;
-    if (myChecker.getNotAuthorized().contains(connection)) {
+    if (myChecker.getNotAuthorized().containsKey(connection)) {
       addNode(fileNode, new ErrorNode(PerforceBundle.message("login.not.logged.in")));
       somethingAdded = true;
     }

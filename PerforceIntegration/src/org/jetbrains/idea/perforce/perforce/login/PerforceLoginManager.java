@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.perforce.PerforceBundle;
 import org.jetbrains.idea.perforce.perforce.PerforceAuthenticationException;
+import org.jetbrains.idea.perforce.perforce.PerforceRunner;
 import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManagerI;
@@ -176,6 +177,37 @@ public final class PerforceLoginManager implements LoginSupport {
 
       return askUserForPassword(connection, machine);
     });
+  }
+
+  public boolean checkPasswordExpirationAndRepair(final P4Connection connection) {
+    ApplicationManager.getApplication().assertIsDispatchThread();
+
+    if (!loginPingAllowed()) {
+      return true;
+    }
+
+    final AttemptsStateMachine machine = getOrCreate(connection);
+    final LoginState state = runUnderProgress(PerforceBundle.message("login.checking.auth.state"), () -> machine.ensure(true));
+    if (state.getError() != null && state.getError().contains(PerforceRunner.PASSWORD_EXPIRED)) {
+      if (!mySettings.requestForPasswordUpdate(machine)) {
+        return false;
+      }
+
+      final LoginState newLoginState = runUnderProgress(PerforceBundle.message("login.checking.auth.state"), () -> machine.ensure(true));
+      if (newLoginState == null) {
+        return false;
+      }
+
+      if (checkLoginState(newLoginState, connection)) {
+        return true;
+      }
+      if (reportConnectionError(newLoginState)) {
+        myAuthNotifier.showPasswordWasOk(false);
+        return false;
+      }
+    }
+
+    return checkAndRepair(connection);
   }
 
   private boolean askUserForPassword(P4Connection connection, final AttemptsStateMachine machine) {
