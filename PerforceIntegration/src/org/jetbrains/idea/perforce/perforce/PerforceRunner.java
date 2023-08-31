@@ -85,7 +85,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Service
+@Service(Service.Level.PROJECT)
 public final class PerforceRunner implements PerforceRunnerI {
   private final Project myProject;
   private final PerforceConnectionManagerI myConnectionManager;

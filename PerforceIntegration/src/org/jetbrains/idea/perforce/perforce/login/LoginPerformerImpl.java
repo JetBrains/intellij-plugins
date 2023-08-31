@@ -27,6 +27,8 @@ public class LoginPerformerImpl implements LoginPerformer {
   @NonNls private final static String CONNECTION_REFUSED = "Connection refused";
   @NonNls private final static String SSO_REQUIRED = "ssoAuth required";
   @NonNls private final static String SSO_OPTIONAL = "ssoAuth optional";
+  @NonNls private final static String PASSWORD_DELETED = "Password deleted";
+  @NonNls private final static String PASSWORD_UPDATED = "Password updated";
 
   private final P4Connection myConnection;
   private final PerforceSettings mySettings;
@@ -113,7 +115,7 @@ public class LoginPerformerImpl implements LoginPerformer {
       final ExecResult loginResult = myConnection.runP4CommandLine(mySettings, new String[]{"login"}, data);
       String stdOut = loginResult.getStdout();
       String stdErr = loginResult.getStderr();
-      if ((stdErr.length() > 0 && !stdErr.contains(NAVIGATE_MESSAGE)) || !stdOut.contains(LOGGED_IN_MESSAGE)) {
+      if ((!stdErr.isEmpty() && !stdErr.contains(NAVIGATE_MESSAGE)) || !stdOut.contains(LOGGED_IN_MESSAGE)) {
         String message = !stdOut.isEmpty() && !stdErr.isEmpty() ? stdOut + "\n" + stdErr : stdOut + stdErr;
         if (StringUtil.isEmptyOrSpaces(message) && loginResult.getException() != null) {
           message = loginResult.getException().getMessage();
@@ -167,8 +169,8 @@ public class LoginPerformerImpl implements LoginPerformer {
       String stdOut = loginResult.getStdout();
       String stdErr = loginResult.getStderr();
       if ((!stdErr.isEmpty() && !stdErr.contains(NAVIGATE_MESSAGE)) ||
-          !(stdOut.contains("Password deleted")
-          || stdOut.contains("Password updated"))) {
+          !(stdOut.contains(PASSWORD_DELETED)
+          || stdOut.contains(PASSWORD_UPDATED))) {
         String message = stdErr;
         if (StringUtil.isEmptyOrSpaces(message) && loginResult.getException() != null) {
           message = loginResult.getException().getMessage();

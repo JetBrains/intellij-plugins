@@ -23,7 +23,7 @@ import java.util.WeakHashMap;
 /**
  * Either synchronous or queued
  */
-@Service
+@Service(Service.Level.PROJECT)
 public final class PerforceBaseInfoWorker {
   private final static Logger LOG = Logger.getInstance(PerforceBaseInfoWorker.class);
 

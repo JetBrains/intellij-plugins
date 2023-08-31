@@ -24,7 +24,7 @@ import org.jetbrains.idea.perforce.perforce.login.PerforceLoginManager;
 
 import java.util.Map;
 
-@Service
+@Service(Service.Level.PROJECT)
 public final class PerforceConnectionProblemsNotifier extends GenericNotifierImpl<Object, Object> {
   private static final char NEW_LINE_CHAR = '\n';
   private boolean myConnectionProblems;

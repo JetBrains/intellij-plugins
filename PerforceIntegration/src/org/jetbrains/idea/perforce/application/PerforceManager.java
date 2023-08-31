@@ -49,7 +49,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 
-@Service
+@Service(Service.Level.PROJECT)
 public final class PerforceManager  {
   private final Project myProject;
   private final PerforceLoginManager myLoginManager;
