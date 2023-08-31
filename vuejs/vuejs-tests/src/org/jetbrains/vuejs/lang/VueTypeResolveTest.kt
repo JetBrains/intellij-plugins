@@ -261,6 +261,16 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
+  fun testPropsVue2WithJsDoc() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_7_14)
+    myFixture.configureByFile("${getTestName(true)}.vue")
+
+    doTest(
+      "barProp" to "{userName: string, password: string}",
+      "barProp.user<caret>Name" to "string",
+    )
+  }
+
   private fun testVFor(vararg testCases: Triple<String, String, String>, iterations: Int = 3) {
     for (test in testCases) {
       for (i in 1..iterations) {

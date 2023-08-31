@@ -160,6 +160,11 @@ class VueDocumentationTest : BasePlatformTestCase() {
     defaultTest()
   }
 
+  fun testPropRefJsDoc() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    defaultTest()
+  }
+
   fun testDataPropJsDoc() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     defaultTest()

@@ -9,7 +9,7 @@ export default {
   },
   data() {
     return {
-      prop1Obj: this.pr<caret>op1,
+      prop1Obj: this.prop1.str<caret>Var,
     }
   },
 }
