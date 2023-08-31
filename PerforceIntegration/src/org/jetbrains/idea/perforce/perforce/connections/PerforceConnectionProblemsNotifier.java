@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.perforce.PerforceBundle;
 import org.jetbrains.idea.perforce.application.*;
 import org.jetbrains.idea.perforce.perforce.PerforceSettings;
-import org.jetbrains.idea.perforce.perforce.login.Notifier;
+import org.jetbrains.idea.perforce.perforce.login.AuthNotifier;
 import org.jetbrains.idea.perforce.perforce.login.PerforceLoginManager;
 
 import java.util.Map;
@@ -39,15 +39,15 @@ public final class PerforceConnectionProblemsNotifier extends GenericNotifierImp
 
   @Override
   protected boolean ask(Object obj, String description) {
-    if (Notifier.INSPECT.equals(description)) {
+    if (AuthNotifier.INSPECT.equals(description)) {
       showConnectionState(myProject, false);
       return false;
     }
-    else if (Notifier.OFFLINE.equals(description)) {
+    else if (AuthNotifier.OFFLINE.equals(description)) {
       mySettings.disable(true);
       return true;
     }
-    else if (Notifier.RETRY.equals(description)) {
+    else if (AuthNotifier.RETRY.equals(description)) {
       return PerforceLoginManager.getInstance(myProject).checkAndRepairAll();
     }
     return false;
@@ -186,8 +186,8 @@ public final class PerforceConnectionProblemsNotifier extends GenericNotifierImp
   @NlsContexts.NotificationContent
   protected String getNotificationContent(Object obj) {
     if (myConnectionProblems) {
-      return PerforceBundle.message("connection.server.not.available", Notifier.INSPECT, Notifier.RETRY, Notifier.OFFLINE);
+      return PerforceBundle.message("connection.server.not.available", AuthNotifier.INSPECT, AuthNotifier.RETRY, AuthNotifier.OFFLINE);
     }
-    return PerforceBundle.message("connection.server.not.available.inspect", Notifier.INSPECT);
+    return PerforceBundle.message("connection.server.not.available.inspect", AuthNotifier.INSPECT);
   }
 }

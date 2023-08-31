@@ -13,12 +13,12 @@ import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager;
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionProblemsNotifier;
 
-class LoginNotifier extends GenericNotifierImpl<P4Connection, ConnectionId> {
-  private static final String INSPECT = Notifier.INSPECT;
-  private static final String FIX = Notifier.FIX;
+class DisabledLoginNotifier extends GenericNotifierImpl<P4Connection, ConnectionId> {
+  private static final String INSPECT = AuthNotifier.INSPECT;
+  private static final String FIX = AuthNotifier.FIX;
   private final PerforceLoginManager myLoginManager;
 
-  LoginNotifier(final Project project, final PerforceLoginManager loginManager) {
+  DisabledLoginNotifier(final Project project, final PerforceLoginManager loginManager) {
     super(project, PerforceVcs.NAME, PerforceBundle.message("connection.problems"), NotificationType.ERROR);
     myLoginManager = loginManager;
   }

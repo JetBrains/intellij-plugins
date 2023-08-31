@@ -31,8 +31,8 @@ import java.util.*;
 @Service(Service.Level.PROJECT)
 public final class PerforceLoginManager implements LoginSupport {
   private final static Logger LOG = Logger.getInstance(PerforceLoginManager.class);
-  private final Notifier myAuthNotifier;
-  private final LoginNotifier myLoginNotifier;
+  private final AuthNotifier myAuthNotifier;
+  private final DisabledLoginNotifier myDisabledLoginNotifier;
 
   private final Object myMapLock = new Object();
   private final Map<P4Connection, AttemptsStateMachine> myState = new HashMap<>();
@@ -47,14 +47,14 @@ public final class PerforceLoginManager implements LoginSupport {
     myConnectionManager = project.getService(PerforceConnectionManagerI.class);
 
     mySettings = PerforceSettings.getSettings(project);
-    myAuthNotifier = new Notifier(myProject, this, mySettings);
-    myLoginNotifier = new LoginNotifier(project, this);
+    myAuthNotifier = new AuthNotifier(myProject, this, mySettings);
+    myDisabledLoginNotifier = new DisabledLoginNotifier(project, this);
     myLoginStateListener = new LoginStateListener() {
       @Override
       protected void notifyListeners(Set<P4Connection> connections) {
         for (P4Connection connection : connections) {
           myAuthNotifier.removeLazyNotification(connection);
-          myLoginNotifier.removeLazyNotification(connection);
+          myDisabledLoginNotifier.removeLazyNotification(connection);
         }
         VcsDirtyScopeManager.getInstance(project).markEverythingDirty();
         for (Runnable listener : mySuccessfulLoginListeners) {
@@ -272,7 +272,7 @@ public final class PerforceLoginManager implements LoginSupport {
   }
 
   public void ensureNotifyAboutDisabledLogin(P4Connection connection) {
-    myLoginNotifier.ensureNotify(connection);
+    myDisabledLoginNotifier.ensureNotify(connection);
   }
 
   private <T> T runUnderProgress(@NlsContexts.ProgressTitle String progressTitle, final Computable<T> computable) {
@@ -328,7 +328,7 @@ public final class PerforceLoginManager implements LoginSupport {
     }
   }
 
-  public Notifier getNotifier() {
+  public AuthNotifier getNotifier() {
     return myAuthNotifier;
   }
 }

@@ -20,7 +20,7 @@ import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionProblemsNotifier;
 
-public class Notifier {
+public class AuthNotifier {
   @NonNls public static final String INSPECT = "inspect";
   @NonNls public static final String FIX = "fix";
   @NonNls public static final String RETRY = "retry";
@@ -29,13 +29,13 @@ public class Notifier {
   private final Project myProject;
   private final PerforceSettings mySettings;
 
-  private final MyInnerNotifier myInnerNotifier;
+  private final MyLoginNotifier myLoginNotifier;
   private final MyPasswordNotifier myPasswordNotifier;
 
-  public Notifier(final Project project, final PerforceLoginManager loginManager, final PerforceSettings perforceSettings) {
+  public AuthNotifier(final Project project, final PerforceLoginManager loginManager, final PerforceSettings perforceSettings) {
     myProject = project;
     mySettings = perforceSettings;
-    myInnerNotifier = new MyInnerNotifier(myProject, loginManager);
+    myLoginNotifier = new MyLoginNotifier(myProject, loginManager);
     myPasswordNotifier = new MyPasswordNotifier(myProject, loginManager);
   }
 
@@ -79,10 +79,10 @@ public class Notifier {
     }
   }
 
-  private static final class MyInnerNotifier extends GenericNotifierImpl<P4Connection, ConnectionId> {
+  private static final class MyLoginNotifier extends GenericNotifierImpl<P4Connection, ConnectionId> {
     private final PerforceLoginManager myLoginManager;
 
-    private MyInnerNotifier(final Project project, final PerforceLoginManager loginManager) {
+    private MyLoginNotifier(final Project project, final PerforceLoginManager loginManager) {
       super(project, PerforceVcs.NAME, PerforceBundle.message("login.not.logged.in.title"), NotificationType.ERROR);
       myLoginManager = loginManager;
     }
@@ -129,12 +129,12 @@ public class Notifier {
       myPasswordNotifier.ensureNotify(connection);
     }
     else {
-      myInnerNotifier.ensureNotify(connection);
+      myLoginNotifier.ensureNotify(connection);
     }
   }
 
   public void removeLazyNotification(final P4Connection connection) {
-    myInnerNotifier.removeLazyNotification(connection);
+    myLoginNotifier.removeLazyNotification(connection);
   }
 
   public void showPasswordWasOk(final boolean value) {
@@ -146,10 +146,11 @@ public class Notifier {
   }
 
   public boolean isEmpty() {
-    return myInnerNotifier.isEmpty();
+    return myLoginNotifier.isEmpty();
   }
 
   public void clear() {
-    myInnerNotifier.clear();
+    myLoginNotifier.clear();
+    myPasswordNotifier.clear();
   }
 }
