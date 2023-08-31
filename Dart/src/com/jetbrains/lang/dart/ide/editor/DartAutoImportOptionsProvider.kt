@@ -7,8 +7,8 @@ import com.intellij.openapi.application.ApplicationBundle
 import com.intellij.openapi.options.UiDslUnnamedConfigurable
 import com.intellij.ui.dsl.builder.Panel
 import com.intellij.ui.dsl.builder.bindItem
-import com.intellij.ui.dsl.builder.listCellRenderer
 import com.intellij.ui.dsl.builder.toNullableProperty
+import com.intellij.ui.dsl.listCellRenderer.textListCellRenderer
 import com.jetbrains.lang.dart.DartBundle
 import com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings
 
@@ -23,8 +23,8 @@ class DartAutoImportOptionsProvider : UiDslUnnamedConfigurable.Simple(), AutoImp
         }
 
         comboBox(values,
-                 listCellRenderer {
-                   text = when (it) {
+                 textListCellRenderer {
+                   when (it) {
                      CodeInsightSettings.YES -> ApplicationBundle.message("combobox.insert.imports.all")
                      CodeInsightSettings.NO -> ApplicationBundle.message("combobox.insert.imports.none")
                      CodeInsightSettings.ASK -> ApplicationBundle.message("combobox.insert.imports.ask")

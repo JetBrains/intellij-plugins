@@ -22,6 +22,7 @@ import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.dsl.builder.Cell
 import com.intellij.ui.dsl.builder.Row
 import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.listCellRenderer.textListCellRenderer
 import com.intellij.ui.layout.*
 import org.jetbrains.idea.perforce.PerforceBundle
 import org.jetbrains.idea.perforce.application.*
@@ -205,8 +206,8 @@ private class PerforceConfigPanel(private val myProject: Project, private val my
             .bindText(mySettings::client).component
         }
         row(PerforceBundle.message("combobox.configure.perforce.charset")) {
-          myCharset = comboBox(charsetValues, listCellRenderer<String> { it ->
-            text = if (it == CHARSET_NONE) PerforceBundle.message("none.charset.presentation") else it
+          myCharset = comboBox(charsetValues, textListCellRenderer {
+            if (it == CHARSET_NONE) PerforceBundle.message("none.charset.presentation") else it
           }).align(AlignX.FILL)
             .bindItem(mySettings::CHARSET).component
         }
