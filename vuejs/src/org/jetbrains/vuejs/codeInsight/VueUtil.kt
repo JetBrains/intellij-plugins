@@ -9,6 +9,7 @@ import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JSStubElementTypes
+import com.intellij.lang.javascript.documentation.JSDocumentationUtils
 import com.intellij.lang.javascript.index.JSSymbolUtil
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.JSComputedPropertyNameOwner
@@ -30,10 +31,7 @@ import com.intellij.notification.NotificationGroup
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiFileFactory
-import com.intellij.psi.PsiPolyVariantReference
+import com.intellij.psi.*
 import com.intellij.psi.impl.source.resolve.FileContextUtil
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
@@ -280,23 +278,30 @@ fun processJSTypeMembers(type: JSType?): List<Pair<String, JSElement>> =
     }
   ?: emptyList()
 
-fun getJSTypeFromPropOptions(expression: JSExpression?): JSType? =
+fun getPropTypeFromPropOptions(expression: JSExpression?): JSType? =
   when (expression) {
     is JSArrayLiteralExpression -> JSCompositeTypeImpl.getCommonType(
-      expression.expressions.map { getJSTypeFromConstructor(it) },
+      expression.expressions.map { getPropTypeFromConstructor(it) },
       JSTypeSource.EXPLICITLY_DECLARED, false
     )
     is JSObjectLiteralExpression -> expression.findProperty(PROPS_TYPE_PROP)
-      ?.value
-      ?.let {
-        when (it) {
-          is JSArrayLiteralExpression -> getJSTypeFromPropOptions(it)
-          else -> getJSTypeFromConstructor(it)
+      ?.let { typeProp ->
+        getPropTypeFromDocComment(typeProp)
+        ?: typeProp.value?.let { typeExpr ->
+          when (typeExpr) {
+            is JSArrayLiteralExpression -> getPropTypeFromPropOptions(typeExpr)
+            else -> getPropTypeFromConstructor(typeExpr)
+          }
         }
       }
     null -> null
-    else -> getJSTypeFromConstructor(expression)
+    else -> getPropTypeFromConstructor(expression)
   }
+
+fun getPropTypeFromDocComment(element: PsiNamedElement): JSType? =
+  JSDocumentationUtils.findType(element as? JSNamedElement)
+    ?.let { JSTypeParser.createTypeFromJSDoc(element.getProject(), it, JSTypeSourceFactory.createTypeSource(element, true)) }
+    ?.let { getPropTypeFromGenericType(it) ?: it }
 
 fun JSType.fixPrimitiveTypes(): JSType =
   transformTypeHierarchy {
@@ -305,13 +310,13 @@ fun JSType.fixPrimitiveTypes(): JSType =
     else it
   }
 
-private fun getJSTypeFromConstructor(expression: JSExpression): JSType {
+private fun getPropTypeFromConstructor(expression: JSExpression): JSType {
   return getPropTypeFromGenericType((expression as? TypeScriptAsExpression)?.type?.jsType)
          ?: JSApplyNewType(JSTypeofTypeImpl(expression, JSTypeSourceFactory.createTypeSource(expression, false)),
                            JSTypeSourceFactory.createTypeSource(expression.containingFile, false))
 }
 
-private val PROPS_CONTAINER_TYPES = setOf("PropType", "PropOptions")
+private val PROPS_CONTAINER_TYPES = setOf("PropType", "PropOptions", "Prop")
 
 fun getPropTypeFromGenericType(jsType: JSType?): JSType? =
   jsType
@@ -346,7 +351,7 @@ private fun getBooleanFromPropOptions(expression: JSExpression?, propName: Strin
 
 fun getPropOptionality(options: JSExpression?, required: Boolean): Boolean =
   when (val defaultType = getDefaultTypeFromPropOptions(options)) {
-    null -> if (required) false else getJSTypeFromPropOptions(options)?.substitute() !is JSBooleanType
+    null -> if (required) false else getPropTypeFromPropOptions(options)?.substitute() !is JSBooleanType
     is JSUndefinedType -> true
     is JSFunctionType -> defaultType.returnType?.substitute() is JSUndefinedType
     else -> false

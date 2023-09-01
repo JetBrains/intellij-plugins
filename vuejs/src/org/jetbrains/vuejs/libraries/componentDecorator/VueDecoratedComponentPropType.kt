@@ -10,7 +10,7 @@ import com.intellij.lang.javascript.psi.types.*
 import com.intellij.util.ProcessingContext
 import org.jetbrains.vuejs.codeInsight.fixPrimitiveTypes
 import org.jetbrains.vuejs.codeInsight.getDecoratorArgument
-import org.jetbrains.vuejs.codeInsight.getJSTypeFromPropOptions
+import org.jetbrains.vuejs.codeInsight.getPropTypeFromPropOptions
 
 class VueDecoratedComponentPropType private constructor(typeSource: JSTypeSource,
                                                         private val member: JSRecordType.PropertySignature,
@@ -32,7 +32,7 @@ class VueDecoratedComponentPropType private constructor(typeSource: JSTypeSource
      && type.decoratorArgumentIndex == decoratorArgumentIndex)
 
   override fun substituteImpl(context: JSTypeSubstitutionContext): JSType =
-    getJSTypeFromPropOptions(getDecoratorArgument(decorator, decoratorArgumentIndex))
+    getPropTypeFromPropOptions(getDecoratorArgument(decorator, decoratorArgumentIndex))
       ?.substitute(context)
       ?.fixPrimitiveTypes()
     ?: member.jsType

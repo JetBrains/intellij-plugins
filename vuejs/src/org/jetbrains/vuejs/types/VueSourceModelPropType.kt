@@ -8,7 +8,7 @@ import com.intellij.lang.javascript.psi.JSTypeTextBuilder
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.util.ProcessingContext
 import org.jetbrains.vuejs.codeInsight.fixPrimitiveTypes
-import org.jetbrains.vuejs.codeInsight.getJSTypeFromPropOptions
+import org.jetbrains.vuejs.codeInsight.getPropTypeFromPropOptions
 
 class VueSourceModelPropType private constructor(
   typeSource: JSTypeSource,
@@ -26,7 +26,7 @@ class VueSourceModelPropType private constructor(
     (type is VueSourceModelPropType && type.name == name && type.options == options)
 
   override fun substituteImpl(context: JSTypeSubstitutionContext): JSType =
-    getJSTypeFromPropOptions(options)
+    getPropTypeFromPropOptions(options)
       ?.substitute(context)
       ?.fixPrimitiveTypes()
     ?: JSAnyType.get(source)

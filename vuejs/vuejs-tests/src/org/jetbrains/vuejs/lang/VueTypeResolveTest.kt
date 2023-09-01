@@ -258,6 +258,10 @@ class VueTypeResolveTest : BasePlatformTestCase() {
       "prop2Obj.strVa<caret>r2" to "string | string[]",
       "prop1Val" to "string | string[]",
       "prop2Val" to "string | string[]",
+      "barProp" to "{userName: string, password: string}",
+      "barProp.user<caret>Name" to "string",
+      "barProp1" to "{userName: string, password: string}",
+      "barProp1.passwo<caret>rd" to "string",
     )
   }
 
