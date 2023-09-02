@@ -27,10 +27,3 @@ $vnode#VNode
 $watch#() => void
 annualReportPeriodId#12
 callMe#void
-constructor#Function
-hasOwnProperty#boolean
-isPrototypeOf#boolean
-propertyIsEnumerable#boolean
-toLocaleString#string
-toString#string
-valueOf#Object

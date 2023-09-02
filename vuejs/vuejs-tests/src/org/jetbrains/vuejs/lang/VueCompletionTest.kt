@@ -714,7 +714,7 @@ export default {
       assertNotNull(item)
       val presentation = renderReal(item!!)
       assertEquals("number", presentation.typeText)
-      assertEquals("(aaa, bbb)" + getLocationPresentation("default.methods", "PrettyLookup.vue"), presentation.tailText)
+      assertEquals("(aaa, bbb)" + getLocationPresentation(null, "PrettyLookup.vue"), presentation.tailText)
     }
   }
 

@@ -1949,13 +1949,15 @@ export default class UsageComponent extends Vue {
     myFixture.moveToOffsetBySignature("\"show<caret>1\"")
     myFixture.completeBasic()
     assertContainsElements(myFixture.renderLookupItems(true, true, true),
-                           "!show2%() (methods, component.vue)#void#101", "!show1%() (test.methods, mixin.ts)#void#101",
-                           "!show5%() (methods, mixin2.ts)#void#101")
+                           "!show1%() (test.methods, mixin.ts)#void#101",
+                           "!show2%() (component.vue)#void#101",
+                           "!show5%() (mixin2.ts)#void#101")
     myFixture.moveToOffsetBySignature("this.<caret>show2()")
     myFixture.completeBasic()
     assertContainsElements(myFixture.renderLookupItems(true, true, true),
-                           "!show2%() (methods, component.vue)#void#99", "!show1%() (test.methods, mixin.ts)#void#99",
-                           "!show5%() (methods, mixin2.ts)#void#99")
+                           "!show1%() (test.methods, mixin.ts)#void#99",
+                           "!show2%() (component.vue)#void#99",
+                           "!show5%() (mixin2.ts)#void#99")
 
   }
 

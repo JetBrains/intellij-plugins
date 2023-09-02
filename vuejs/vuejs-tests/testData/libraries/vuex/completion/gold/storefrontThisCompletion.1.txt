@@ -8,7 +8,7 @@
 !cartMutFun%() (storefront-mappers-TS.ts)#12#99
 !catAction%(arg) (storefront-mappers-TS.ts)#any#99
 !category/bar% (storefront-mappers-TS.ts)#null#99
-!check%() (methods, storefront-mappers-TS.ts)#void#99
+!check%() (storefront-mappers-TS.ts)#void#99
 !configItem%(arg) (storefront-mappers-TS.ts)#any#99
 !configItemMap%({ product, configuration }: {product: any, configuration: any}) (itemActions.ts)#void#99
 !configItemN%(arg) (storefront-mappers-TS.ts)#any#99
