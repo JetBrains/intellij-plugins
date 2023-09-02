@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.inspections.ES6UnusedImportsInspection
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection
+import com.intellij.lang.javascript.inspections.JSValidateTypesInspection
 import com.intellij.lang.javascript.library.JSCorePredefinedLibrariesProvider
 import com.intellij.psi.PsiFile
 import com.intellij.psi.css.inspections.invalid.CssInvalidFunctionInspection
@@ -664,6 +665,10 @@ const props = {seeMe: {}}
     doTest()
   }
 
+  fun testPropTypeJsDoc() {
+    myFixture.enableInspections(JSValidateTypesInspection())
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_2))
+  }
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {
