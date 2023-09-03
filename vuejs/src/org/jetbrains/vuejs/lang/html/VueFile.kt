@@ -2,10 +2,11 @@
 package org.jetbrains.vuejs.lang.html
 
 import com.intellij.lang.html.HtmlCompatibleFile
+import com.intellij.lang.javascript.psi.JSExternalModule
 import com.intellij.psi.xml.XmlFile
 import org.jetbrains.vuejs.lang.LangMode
 
-interface VueFile : HtmlCompatibleFile, XmlFile {
+interface VueFile : HtmlCompatibleFile, XmlFile, JSExternalModule {
 
   val langMode: LangMode
 

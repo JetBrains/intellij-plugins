@@ -1,10 +1,11 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.html.psi.impl
 
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.FileViewProvider
 import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.util.elementType
-import com.intellij.psi.xml.XmlFile
+import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.lang.LangMode
 import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.html.VueFileElementType
@@ -24,5 +25,7 @@ class VueFileImpl(viewProvider: FileViewProvider) : HtmlFileImpl(viewProvider, V
       val astMarker = lastChild?.elementType
       return if (astMarker is VueLangModeMarkerElementType) astMarker.langMode else LangMode.DEFAULT
     }
+
+  override fun getDefaultExportedName(): String = toAsset(FileUtil.getNameWithoutExtension(name), true)
 
 }
