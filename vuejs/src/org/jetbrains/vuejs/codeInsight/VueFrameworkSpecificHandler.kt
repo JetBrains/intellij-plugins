@@ -27,13 +27,12 @@ import org.jetbrains.vuejs.model.source.INJECT_FUN
 
 class VueFrameworkSpecificHandler : JSFrameworkSpecificHandler {
   override fun useMoreAccurateEvaluation(context: PsiElement): Boolean {
-    // JSThisType is not resolved to a Vue Component in JS
-    if (context is JSProperty &&
-        DialectDetector.isJavaScript(context) &&
-        isVueContext(context) &&
-        PsiTreeUtil.getContextOfType(context, true, JSProperty::class.java)?.name == DATA_PROP &&
-        VueModelManager.findEnclosingComponent(context) != null) {
-      return true
+    if (context is JSProperty) {
+      // JSThisType is not resolved to a Vue Component in JS
+      return DialectDetector.isJavaScript(context) &&
+             isVueContext(context) &&
+             PsiTreeUtil.getContextOfType(context, true, JSProperty::class.java)?.name == DATA_PROP &&
+             VueModelManager.findEnclosingComponent(context) != null
     }
 
     return hasPinia(context)
