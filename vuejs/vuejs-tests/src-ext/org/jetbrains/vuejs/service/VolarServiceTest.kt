@@ -1,9 +1,13 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.service
 
+import com.intellij.codeInsight.lookup.LookupElementPresentation
+import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase.checkHighlightingByText
+import com.intellij.lang.javascript.typescript.service.TypeScriptServiceTestBase.assertHasServiceItems
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
 import com.intellij.openapi.Disposable
 import com.intellij.platform.lsp.tests.checkLspHighlighting
+import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.VueInspectionsProvider
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
@@ -109,4 +113,51 @@ class VolarServiceTest : VolarServiceTestBase() {
     assertCorrectService()
   }
 
+  @Test
+  fun testOptionalPropertyInTSFileCompletion() { // WEB-61886
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
+    myFixture.addFileToProject("tsconfig.json", tsconfig)
+
+    myFixture.addFileToProject("api.ts", """
+      export interface Config {
+        base?: string;
+      }
+      
+      export function applyDefaults(config: Config): Config {
+        return config;
+      }      
+    """.trimIndent())
+
+    myFixture.configureByText("config.ts", """
+      import {applyDefaults} from "./api";
+      
+      applyDefaults({
+        <caret>
+      })
+    """.trimIndent())
+
+    myFixture.checkLspHighlighting()
+    assertCorrectService()
+
+    val elements = myFixture.completeBasic();
+    myFixture.type('\n')
+
+    checkHighlightingByText(myFixture, """
+      import {applyDefaults} from "./api";
+      
+      applyDefaults({
+        base
+      })
+    """.trimIndent(), true)
+
+    val presentationTexts = elements.map { element ->
+      val presentation = LookupElementPresentation()
+      element.renderElement(presentation)
+      presentation.itemText
+    }
+
+    // duplicated question mark is definitely unwanted, but for now, this is what we get from Volar, so let's encode it in test
+    TestCase.assertTrue("Lookup element presentation must match expected", presentationTexts.contains("base??"))
+    assertHasServiceItems(elements, true)
+  }
 }
