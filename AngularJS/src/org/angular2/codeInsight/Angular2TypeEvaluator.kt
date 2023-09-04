@@ -39,7 +39,7 @@ class Angular2TypeEvaluator(context: JSEvaluateContext) : TypeScriptTypeEvaluato
   override fun processThisQualifierInExecutionScope(thisQualifier: JSThisExpression, thisScope: PsiElement) {
     if (thisScope is Angular2EmbeddedExpression) {
       addType(Angular2ComponentLocator.findComponentClass(thisQualifier)?.jsType
-              ?: JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS, true))
+              ?: JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS))
       return
     }
     super.processThisQualifierInExecutionScope(thisQualifier, thisScope)

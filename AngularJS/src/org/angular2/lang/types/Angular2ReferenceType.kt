@@ -89,7 +89,7 @@ class Angular2ReferenceType : Angular2BaseType<Angular2HtmlAttrVariableImpl> {
         create(null, PsiModificationTracker.MODIFICATION_COUNT)
       }?.let { templateRefClass ->
         val baseType = templateRefClass.jsType
-        JSGenericTypeImpl(baseType.source, baseType, contextType ?: JSAnyType.get(templateRefClass, true))
+        JSGenericTypeImpl(baseType.source, baseType, contextType ?: JSAnyType.get(templateRefClass))
       }
     }
   }

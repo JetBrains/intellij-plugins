@@ -329,7 +329,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
         else -> null
       } as? JSObjectLiteralExpression
 
-      val jsType = typeArgs.firstOrNull()?.jsType ?: options?.let { VueSourceModelPropType(name, it) } ?: JSAnyType.get(call, true)
+      val jsType = typeArgs.firstOrNull()?.jsType ?: options?.let { VueSourceModelPropType(name, it) } ?: JSAnyType.get(call)
       return VueScriptSetupModelDecl(name, jsType, options, nameElement ?: call)
     }
 

@@ -49,7 +49,7 @@ class VueTypedComponent(override val source: PsiElement,
             }
           },
         PsiModificationTracker.MODIFICATION_COUNT)
-    } ?: JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS, false)
+    } ?: JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS)
 
   private fun getFromVueFile(type: JSType): JSRecordType? {
     if (type is TypeScriptIndexedAccessJSTypeImpl

@@ -41,6 +41,6 @@ class VueSourceSlotBindingType private constructor(typeSource: JSTypeSource,
       attribute.valueElement
         ?.findJSExpression<JSExpression>()
         ?.let { JSResolveUtil.getElementJSType(it) }
-      ?: JSAnyType.get(attribute, false)
+      ?: JSAnyType.get(attribute)
     }
 }

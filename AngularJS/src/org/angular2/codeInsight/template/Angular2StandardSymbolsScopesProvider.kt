@@ -66,7 +66,7 @@ class Angular2StandardSymbolsScopesProvider : Angular2TemplateScopesProvider() {
 
     init {
       `$any` = JSImplicitElementImpl.Builder(`$ANY`, context)
-        .setJSType(JSAnyType.get(context, true))
+        .setJSType(JSAnyType.get(context))
         .setParameters(listOf(JSImplicitParameterStructure("arg", "*", false, false, true)))
         .setType(JSImplicitElement.Type.Function)
         .toImplicitElement()

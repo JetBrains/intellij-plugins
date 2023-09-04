@@ -36,7 +36,7 @@ interface VueInstanceOwner : VueScopeElement {
           buildInstanceType(this)
         }, PsiModificationTracker.MODIFICATION_COUNT)
       }
-    } ?: JSAnyType.get(source, false)
+    } ?: JSAnyType.get(source)
 }
 
 fun getDefaultVueComponentInstanceType(context: PsiElement?): JSType? =

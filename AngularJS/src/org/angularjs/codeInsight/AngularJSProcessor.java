@@ -168,7 +168,7 @@ public final class AngularJSProcessor {
     if (bindingsProperty != null && (bindingsProperty.getValue() instanceof JSObjectLiteralExpression bindings)) {
       for (JSProperty binding : bindings.getProperties()) {
         if (binding.getName() != null) {
-          processor.accept(new JSRecordTypeImpl.PropertySignatureImpl(binding.getName(), JSAnyType.get(bindings, true), true, false));
+          processor.accept(new JSRecordTypeImpl.PropertySignatureImpl(binding.getName(), JSAnyType.get(bindings), true, false));
         }
       }
     }

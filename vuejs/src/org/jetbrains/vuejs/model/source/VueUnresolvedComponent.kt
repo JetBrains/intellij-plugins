@@ -23,7 +23,7 @@ class VueUnresolvedComponent(private val context: PsiElement,
   override val parents: List<VueEntitiesContainer> = emptyList()
 
   override val thisType: JSType
-    get() = getDefaultVueComponentInstanceType(context) ?: JSAnyType.get(context, false)
+    get() = getDefaultVueComponentInstanceType(context) ?: JSAnyType.get(context)
 
   override fun createPointer(): Pointer<VueUnresolvedComponent> {
     val context = this.context.createSmartPointer()

@@ -99,7 +99,7 @@ abstract class VuexContainerPropertyTypeBase(source: JSTypeSource,
   override fun substituteCompletely(): JSType {
     return VuexModelManager.getVuexStoreContext(element)
              ?.let { createStateRecord(it, VuexStoreContext.appendSegment(resolvedNamespace, "")) }
-           ?: JSAnyType.getWithLanguage(source.language, false)
+           ?: JSAnyType.getWithLanguage(source.language)
   }
 
   abstract fun createStateRecord(context: VuexStoreContext, baseNamespace: String): JSRecordType?

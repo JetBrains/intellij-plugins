@@ -128,7 +128,7 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
         val genericParameters = cls.typeParameters.mapTo(HashSet()) { it.genericId }
         postprocessTypes(listOf(cls.possiblyGenericJsType))?.transformTypeHierarchy {
           if (it is JSGenericParameterType && genericParameters.contains(it.genericId))
-            JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS, false)
+            JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS)
           else it
         }
       }
@@ -282,7 +282,7 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
           substitutors[directive] = JSTypeSubstitutorImpl(typeSubstitutor).also {
             cls.typeParameters.forEach { typeParameter ->
               if (!it.containsId(typeParameter.genericId)) {
-                it.put(typeParameter.genericId, JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS, false))
+                it.put(typeParameter.genericId, JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS))
               }
             }
           }
@@ -331,7 +331,7 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
       val directiveFactoryCall = WebJSSyntheticFunctionCall(element, directiveInputs.size) { typeFactory ->
         directiveInputs.map { (_, expression) ->
           when (expression) {
-            null -> JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS, false)
+            null -> JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS)
             is JSEmptyExpression -> JSUndefinedType(elementTypeSource)
             else -> typeFactory.evaluate(expression)
           }
