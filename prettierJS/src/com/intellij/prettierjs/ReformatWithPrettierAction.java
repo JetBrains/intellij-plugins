@@ -166,7 +166,18 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     return true;
   }
 
+  public static boolean isAvailable(@NotNull Project project, @NotNull Editor editor, @NotNull ErrorHandler errorHandler) {
+    PrettierConfiguration configuration = PrettierConfiguration.getInstance(project);
+    PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
+    if (file == null) {
+      return false;
+    }
+    NodePackage nodePackage = configuration.getPackage(file);
+    return checkNodeAndPackage(project, editor, configuration.getInterpreterRef(), nodePackage, errorHandler);
+  }
+
   public static void processFileInEditor(@NotNull Project project, @NotNull Editor editor, @NotNull ErrorHandler errorHandler) {
+    if (!isAvailable(project, editor, errorHandler)) return;
     PrettierConfiguration configuration = PrettierConfiguration.getInstance(project);
     PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
     if (file == null) {
