@@ -36,7 +36,6 @@ class VolarServiceTest : VolarServiceTestBase() {
         <div>{{acceptNumber(<error descr="Argument type  true  is not assignable to parameter type  number "><error descr="Vue: Argument of type 'boolean' is not assignable to parameter of type 'number'.">true</error></error>)}}</div>
       </template>
     """)
-    myFixture.doHighlighting()
     myFixture.checkLspHighlighting()
     assertCorrectService()
   }
@@ -56,7 +55,6 @@ class VolarServiceTest : VolarServiceTestBase() {
       <template>
       </template>
     """)
-    myFixture.doHighlighting()
     myFixture.checkLspHighlighting()
     assertCorrectService()
   }
@@ -79,7 +77,6 @@ class VolarServiceTest : VolarServiceTestBase() {
       <template>
       </template>
     """)
-    myFixture.doHighlighting()
     myFixture.checkLspHighlighting()
     assertCorrectService()
   }
@@ -110,7 +107,6 @@ class VolarServiceTest : VolarServiceTestBase() {
     //no errors
     myFixture.checkLspHighlighting()
 
-
     assertCorrectService()
   }
 
@@ -140,7 +136,7 @@ class VolarServiceTest : VolarServiceTestBase() {
     myFixture.checkLspHighlighting()
     assertCorrectService()
 
-    val elements = myFixture.completeBasic();
+    val elements = myFixture.completeBasic()
     myFixture.type('\n')
 
     checkHighlightingByText(myFixture, """
