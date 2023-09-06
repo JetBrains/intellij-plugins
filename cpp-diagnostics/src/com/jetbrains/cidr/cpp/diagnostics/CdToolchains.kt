@@ -18,7 +18,6 @@ import com.intellij.ssh.rsync.RSyncOptions
 import com.intellij.util.PathMapper
 import com.intellij.util.PathMappingSettings
 import com.intellij.util.io.delete
-import com.intellij.util.io.readText
 import com.intellij.util.io.write
 import com.jetbrains.cidr.cpp.toolchains.CPPEnvironment
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
@@ -34,6 +33,7 @@ import java.io.IOException
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.nio.file.Files
+import kotlin.io.path.readText
 
 fun collectToolchains(project: Project?): String {
   val log = CdIndenter(indentSize = 4)
