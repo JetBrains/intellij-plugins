@@ -1,6 +1,7 @@
 package com.intellij.dts.lang.resolve
 
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.dts.DtsIcons
 import com.intellij.dts.lang.DtsFile
 import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.psi.getDtsPresentableText
@@ -121,7 +122,12 @@ class DtsLabelReference(
             // filter all labels after the reference
             if (!value && localScope.contains(node.containingFile.virtualFile) && node.startOffset > element.startOffset) continue
 
-            variants.add(LookupElementBuilder.create(key).withTypeText(node.getDtsPresentableText()))
+            val lookup = LookupElementBuilder.create(key)
+                .withTypeText(node.getDtsPresentableText())
+                .withPsiElement(node)
+                .withIcon(DtsIcons.Node)
+
+            variants.add(lookup)
         }
 
         return variants.toTypedArray()

@@ -48,6 +48,8 @@
         <!-- documentation -->
         <platform.backend.documentation.targetProvider
                 implementation="com.intellij.dts.documentation.DtsDocumentationProvider"/>
+        <platform.backend.documentation.psiTargetProvider
+                implementation="com.intellij.dts.documentation.DtsDocumentationProvider"/>
 
         <!-- syntax highlighting -->
         <lang.syntaxHighlighterFactory
