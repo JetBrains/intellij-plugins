@@ -112,7 +112,7 @@ public final class ActiveBuildConfigurationWidget {
     private MyWidget(@NotNull Project project) {
       super(project);
       Disposer.register(project, this);
-      project.getMessageBus().connect(this).subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
+      project.getMessageBus().connect(this).subscribe(ModuleRootListener.TOPIC, new ModuleRootListener() {
         @Override
         public void rootsChanged(final @NotNull ModuleRootEvent event) {
           update();
