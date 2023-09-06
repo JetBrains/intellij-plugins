@@ -16,6 +16,7 @@ import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiFile
@@ -36,26 +37,28 @@ private val nodeDirectives = setOf(
     "/omit-if-no-ref/",
 )
 
+private fun findContainer(position: PsiElement): DtsContainer? {
+    if (position is PsiComment) return null
+
+    return when (val parent = position.parent) {
+        is DtsContainer -> parent
+        is DtsNode -> parent.dtsContent
+        is PsiErrorElement -> parent.parent as? DtsContainer
+        else -> null
+    }
+}
+
 class DtsCompilerDirectiveCompletionContributor : CompletionContributor() {
     class AutoPopup : TypedHandlerDelegate() {
         override fun checkAutoPopup(c: Char, project: Project, editor: Editor, file: PsiFile): Result {
             if (file !is DtsFile || c != '/') return Result.CONTINUE
 
             val element = file.findElementAt(editor.caretModel.offset - 1)
-            if (element == null || element.parent is DtsContainer || element.parent is DtsNode) {
+            if (element == null || findContainer(element) != null) {
                 AutoPopupController.getInstance(project).scheduleAutoPopup(editor, CompletionType.BASIC, null)
             }
 
             return Result.CONTINUE
-        }
-    }
-
-    private fun findContainer(position: PsiElement): DtsContainer? {
-        return when (val parent = position.parent) {
-            is DtsContainer -> parent
-            is DtsNode -> parent.dtsContent
-            is PsiErrorElement -> parent.parent as? DtsContainer
-            else -> null
         }
     }
 
