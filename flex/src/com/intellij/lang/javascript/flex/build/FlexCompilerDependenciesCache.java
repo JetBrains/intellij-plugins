@@ -1,7 +1,6 @@
 // Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.build;
 
-import com.intellij.ProjectTopics;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
@@ -43,7 +42,7 @@ public class FlexCompilerDependenciesCache {
   public FlexCompilerDependenciesCache(final Project project) {
     myProject = project;
 
-    project.getMessageBus().connect().subscribe(ProjectTopics.MODULES, new ModuleListener() {
+    project.getMessageBus().connect().subscribe(ModuleListener.TOPIC, new ModuleListener() {
       @Override
       public void moduleRemoved(@NotNull final Project project, @NotNull final Module module) {
         myCache.remove(module);

@@ -1,7 +1,6 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
-import com.intellij.ProjectTopics;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -45,7 +44,7 @@ public final class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurat
     myModuleLevelCompilerOptions = module == null ? new CompilerOptionsImpl() : new CompilerOptionsImpl(module.getProject(), true);
 
     if (myModule != null) {
-      myModule.getProject().getMessageBus().connect(myModule).subscribe(ProjectTopics.MODULES, new ModuleListener() {
+      myModule.getProject().getMessageBus().connect(myModule).subscribe(ModuleListener.TOPIC, new ModuleListener() {
         @Override
         public void beforeModuleRemoved(@NotNull Project project, @NotNull Module module) {
           if (module != myModule) {

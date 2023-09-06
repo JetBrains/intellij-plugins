@@ -1,7 +1,6 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
-import com.intellij.ProjectTopics;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -53,7 +52,7 @@ public final class ActiveBuildConfigurationWidget {
   public ActiveBuildConfigurationWidget(final Project project) {
     myProject = project;
 
-    myProject.getMessageBus().connect(myProject).subscribe(ProjectTopics.MODULES, new ModuleListener() {
+    myProject.getMessageBus().connect(myProject).subscribe(ModuleListener.TOPIC, new ModuleListener() {
       @Override
       public void modulesAdded(@NotNull Project project, @NotNull List<? extends Module> modules) {
         showOrHideWidget(false);

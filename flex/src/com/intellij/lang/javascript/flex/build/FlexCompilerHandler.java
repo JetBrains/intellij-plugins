@@ -1,7 +1,6 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.build;
 
-import com.intellij.ProjectTopics;
 import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.RunConfiguration;
@@ -34,7 +33,7 @@ public class FlexCompilerHandler implements ProjectComponent {
     myProject = project;
     MessageBusConnection connection = project.getMessageBus().connect();
 
-    connection.subscribe(ProjectTopics.MODULES, new ModuleListener() {
+    connection.subscribe(ModuleListener.TOPIC, new ModuleListener() {
       @Override
       public void modulesRenamed(@NotNull Project project, @NotNull List<? extends Module> modules, @NotNull Function<? super Module, String> oldNameProvider) {
         for (RunnerAndConfigurationSettings settings : RunManager.getInstance(project).getAllSettings()) {
