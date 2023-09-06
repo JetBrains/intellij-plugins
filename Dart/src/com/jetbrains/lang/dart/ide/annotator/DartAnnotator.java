@@ -409,7 +409,7 @@ public final class DartAnnotator implements Annotator {
             final String textInBrackets = text.substring(currentIndex, closingBraceIndex);
             currentIndex = closingBraceIndex + 1;
 
-            final boolean valid = textInBrackets.length() > 0 && textInBrackets.length() <= 6 && isHexString(textInBrackets);
+            final boolean valid = !textInBrackets.isEmpty() && textInBrackets.length() <= 6 && isHexString(textInBrackets);
             result.add(Pair.create(new TextRange(startIndex, currentIndex), valid));
           }
         }
