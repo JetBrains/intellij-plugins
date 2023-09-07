@@ -1,7 +1,7 @@
 package org.jetbrains.idea.perforce.perforce.connections;
 
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.vcs.impl.projectlevelman.VirtualFileMapping;
+import com.intellij.openapi.vcs.util.paths.VirtualFileMapping;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
