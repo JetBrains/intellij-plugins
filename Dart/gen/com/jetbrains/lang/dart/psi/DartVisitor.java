@@ -160,6 +160,10 @@ public class DartVisitor extends PsiElementVisitor {
     visitPsiCompositeElement(o);
   }
 
+  public void visitExtensionTypeDeclaration(@NotNull DartExtensionTypeDeclaration o) {
+    visitPsiCompositeElement(o);
+  }
+
   public void visitFactoryConstructorDeclaration(@NotNull DartFactoryConstructorDeclaration o) {
     visitComponent(o);
   }
