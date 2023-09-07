@@ -2161,6 +2161,47 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // 'extension' <<typeForExtensionType>> 'const'? <<nonStrictID>> typeParameters? representationDeclaration interfaces? classBody
+  public static boolean extensionTypeDeclaration(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "extensionTypeDeclaration")) return false;
+    if (!nextTokenIs(b, EXTENSION)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, EXTENSION_TYPE_DECLARATION, null);
+    r = consumeToken(b, EXTENSION);
+    r = r && typeForExtensionType(b, l + 1);
+    r = r && extensionTypeDeclaration_2(b, l + 1);
+    r = r && nonStrictID(b, l + 1);
+    p = r; // pin = 4
+    r = r && report_error_(b, extensionTypeDeclaration_4(b, l + 1));
+    r = p && report_error_(b, representationDeclaration(b, l + 1)) && r;
+    r = p && report_error_(b, extensionTypeDeclaration_6(b, l + 1)) && r;
+    r = p && classBody(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // 'const'?
+  private static boolean extensionTypeDeclaration_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "extensionTypeDeclaration_2")) return false;
+    consumeToken(b, CONST);
+    return true;
+  }
+
+  // typeParameters?
+  private static boolean extensionTypeDeclaration_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "extensionTypeDeclaration_4")) return false;
+    typeParameters(b, l + 1);
+    return true;
+  }
+
+  // interfaces?
+  private static boolean extensionTypeDeclaration_6(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "extensionTypeDeclaration_6")) return false;
+    interfaces(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
   // metadata* ('external' | 'const')* 'factory' componentName ('.' componentName)? formalParameterList factoryTail?
   public static boolean factoryConstructorDeclaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "factoryConstructorDeclaration")) return false;
@@ -7016,6 +7057,63 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // ('.' (<<nonStrictID>> | 'new'))? '(' metadata* type <<nonStrictID>> ')'
+  static boolean representationDeclaration(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "representationDeclaration")) return false;
+    if (!nextTokenIs(b, "", DOT, LPAREN)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = representationDeclaration_0(b, l + 1);
+    r = r && consumeToken(b, LPAREN);
+    r = r && representationDeclaration_2(b, l + 1);
+    r = r && type(b, l + 1);
+    r = r && nonStrictID(b, l + 1);
+    r = r && consumeToken(b, RPAREN);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ('.' (<<nonStrictID>> | 'new'))?
+  private static boolean representationDeclaration_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "representationDeclaration_0")) return false;
+    representationDeclaration_0_0(b, l + 1);
+    return true;
+  }
+
+  // '.' (<<nonStrictID>> | 'new')
+  private static boolean representationDeclaration_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "representationDeclaration_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, DOT);
+    r = r && representationDeclaration_0_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // <<nonStrictID>> | 'new'
+  private static boolean representationDeclaration_0_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "representationDeclaration_0_0_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = nonStrictID(b, l + 1);
+    if (!r) r = consumeToken(b, NEW);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // metadata*
+  private static boolean representationDeclaration_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "representationDeclaration_2")) return false;
+    while (true) {
+      int c = current_position_(b);
+      if (!metadata(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "representationDeclaration_2", c)) break;
+    }
+    return true;
+  }
+
+  /* ********************************************************** */
   // '...' pattern?
   public static boolean restPattern(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "restPattern")) return false;
@@ -8185,6 +8283,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   //                              | classDefinition
   //                              | mixinDeclaration
   //                              | enumDefinition
+  //                              | extensionTypeDeclaration
   //                              | extensionDeclaration
   //                              | functionTypeAlias
   //                              | getterOrSetterDeclaration
@@ -8203,6 +8302,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = classDefinition(b, l + 1);
     if (!r) r = mixinDeclaration(b, l + 1);
     if (!r) r = enumDefinition(b, l + 1);
+    if (!r) r = extensionTypeDeclaration(b, l + 1);
     if (!r) r = extensionDeclaration(b, l + 1);
     if (!r) r = functionTypeAlias(b, l + 1);
     if (!r) r = getterOrSetterDeclaration(b, l + 1);

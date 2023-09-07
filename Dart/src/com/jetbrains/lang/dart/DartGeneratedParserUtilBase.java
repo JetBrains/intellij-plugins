@@ -127,6 +127,20 @@ public class DartGeneratedParserUtilBase extends GeneratedParserUtilBase {
     return false;
   }
 
+  public static boolean typeForExtensionType(PsiBuilder builder_, int level_) {
+    if (!"type".equals(builder_.getTokenText())) return false;
+
+    final PsiBuilder.Marker marker_ = builder_.mark();
+    final boolean result_ = consumeToken(builder_, IDENTIFIER);
+    if (result_) {
+      marker_.done(ID);
+      return true;
+    }
+
+    marker_.rollbackTo();
+    return false;
+  }
+
   public static boolean lazyParseableBlockImpl(PsiBuilder builder, int level) {
     return PsiBuilderUtil.parseBlockLazy(builder, LBRACE, RBRACE, LAZY_PARSEABLE_BLOCK) != null;
   }

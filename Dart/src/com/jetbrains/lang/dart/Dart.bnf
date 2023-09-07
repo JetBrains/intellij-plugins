@@ -170,6 +170,7 @@ private topLevelDefinition ::= libraryStatement
                              | classDefinition
                              | mixinDeclaration
                              | enumDefinition
+                             | extensionTypeDeclaration
                              | extensionDeclaration
                              | functionTypeAlias
                              | getterOrSetterDeclaration
@@ -277,6 +278,9 @@ enumConstantDeclaration ::= metadata* componentName typeArguments? '.' component
 
 extensionDeclaration ::= 'extension' typeParameters? 'on' type '?'? classBody |
                          'extension' <<nonStrictID>> typeParameters? 'on' type '?'? classBody
+
+extensionTypeDeclaration ::= 'extension' <<typeForExtensionType>> 'const'? <<nonStrictID>> typeParameters? representationDeclaration interfaces? classBody {pin=4}
+private representationDeclaration ::=  ('.' (<<nonStrictID>> | 'new'))? '(' metadata* type <<nonStrictID>> ')'
 
 mixinApplication ::= '=' type mixins? interfaces? ';' {pin = 1}
 private standardClassDeclarationTail ::= superclass? mixins? interfaces? ('native' stringLiteralExpression?)? classBody?
