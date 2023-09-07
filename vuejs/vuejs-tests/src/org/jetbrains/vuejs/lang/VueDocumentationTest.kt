@@ -151,7 +151,7 @@ class VueDocumentationTest : BasePlatformTestCase() {
   }
 
   fun testGenericComponentProp() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     defaultTest()
   }
 
@@ -172,6 +172,11 @@ class VueDocumentationTest : BasePlatformTestCase() {
 
   fun testDataPropRefJsDoc() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    defaultTest()
+  }
+
+  fun testPropWithDefaults() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     defaultTest()
   }
 

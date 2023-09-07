@@ -102,7 +102,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
   }
 
   fun testModelPropsTS() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
     myFixture.configureByFile("modelProps-ts.vue")
 
@@ -136,7 +136,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
   }
 
   fun testInject() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
 
@@ -154,7 +154,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
   }
 
   fun testInjectStrictNullChecks() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
@@ -165,7 +165,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
   }
 
   fun testInjectWithDefault() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
@@ -176,7 +176,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
   }
 
   fun testInjectSymbol() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
 
@@ -187,7 +187,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
   }
 
   fun testInjectSymbolTs() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
 
@@ -198,7 +198,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
   }
 
   fun testInjectSymbolProvideInCall() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
 
@@ -209,7 +209,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
   }
 
   fun testInjectSymbolProvideInApp() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
 
@@ -221,7 +221,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
   }
 
   fun testInjectCallTypeEvaluation() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
 
@@ -243,7 +243,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
   }
 
   fun testPropsWithJsDoc() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
 

@@ -153,12 +153,12 @@ class VueRenameTest : BasePlatformTestCase() {
   }
 
   fun testModelDeclaration() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     doTest("alignment")
   }
 
   fun testModelDeclarationWithVar() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     doTest("alignment")
   }
 
@@ -173,17 +173,17 @@ class VueRenameTest : BasePlatformTestCase() {
   }
 
   fun testDefinePropsRecordType() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     doTest("alignment")
   }
 
   fun testDefinePropsArrayLiteral() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     doTest("alignment")
   }
 
   fun testInjectLiteral() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     doTestDir("newName", true)
   }
 

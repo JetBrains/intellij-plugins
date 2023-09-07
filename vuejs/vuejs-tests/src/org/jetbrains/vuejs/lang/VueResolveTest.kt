@@ -2146,49 +2146,49 @@ export default class UsageComponent extends Vue {
   }
 
   fun testInjectLiteral() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
     myFixture.checkGotoDeclaration("'me<caret>ssage'", "<caret>message: 'hello", "Provide.vue")
   }
 
   fun testInjectLiteralProvidedInApp() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
     myFixture.checkGotoDeclaration("'me<caret>ssage'", "<caret>message: 'hello", "App.vue")
   }
 
   fun testInjectAlias() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
     myFixture.checkGotoDeclaration("'me<caret>ssage'", "<caret>message: 'msg'", "Provide.vue")
   }
 
   fun testInjectAliasDuplicatedName() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
     myFixture.checkGotoDeclaration("'me<caret>ssage'", "<caret>message: 'msg'", "Provide.vue")
   }
 
   fun testInjectProperty() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
     myFixture.checkGotoDeclaration("m<caret>essage", "<caret>message: 'msg'", "Provide.vue")
   }
 
   fun testInjectDeepNested() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
     myFixture.checkGotoDeclaration("'provide<caret>Deep'", "<caret>provideDeep: 12", "ProvideB.vue")
   }
 
   fun testInjectScriptSetup() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
     myFixture.enableInspections(VueInspectionsProvider())
@@ -2197,14 +2197,14 @@ export default class UsageComponent extends Vue {
   }
 
   fun testInjectAppGlobal() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
     myFixture.checkGotoDeclaration("'global<caret>Provide'", "app.provide(<caret>'globalProvide'", "main.js")
   }
 
   fun testInjectSetup() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
     myFixture.checkGotoDeclaration("'inject<caret>Setup'", "provide(<caret>'injectSetup'", "Provide.vue")

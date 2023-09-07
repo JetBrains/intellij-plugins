@@ -7,6 +7,7 @@ import com.intellij.javascript.webSymbols.jsType
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.frameworks.JSFrameworkSpecificHandler
 import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.types.JSTypeImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
@@ -36,6 +37,10 @@ class VueFrameworkSpecificHandler : JSFrameworkSpecificHandler {
     }
 
     return hasPinia(context)
+  }
+
+  override fun shouldPreserveAlias(type: JSType): Boolean {
+    return type is JSTypeImpl && type.getTypeText() == "DefineProps"
   }
 
   override fun findExpectedType(element: PsiElement, parent: PsiElement?, expectedTypeKind: JSExpectedTypeKind): JSType? {

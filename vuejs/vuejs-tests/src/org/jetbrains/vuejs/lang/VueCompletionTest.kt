@@ -2156,12 +2156,12 @@ export default {
   }
 
   fun testScriptSetupGeneric() {
-    doLookupTest(VueTestModule.VUE_3_3_2, locations = listOf(
+    doLookupTest(VueTestModule.VUE_3_3_4, locations = listOf(
       "clearable.<caret>", "value.<caret>", "Clearable).<caret>\">", "Clearable).<caret> }}", "foo.<caret>;"))
   }
 
   fun testDefineModelAttribute() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     myFixture.configureByText("FooBar.vue", """
       <script setup lang="ts">
       let count = defineModel<number>('count', {default: 0})
@@ -2177,7 +2177,7 @@ export default {
   }
 
   fun testInjectInLiterals() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
     myFixture.completeBasic()
@@ -2196,7 +2196,7 @@ export default {
   }
 
   fun testInjectInLiteralsUnique() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
     myFixture.completeBasic()
@@ -2210,7 +2210,7 @@ export default {
   }
 
   fun testInjectInLiteralsUnquoted() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
     myFixture.completeBasic()
@@ -2228,7 +2228,7 @@ export default {
   }
 
   fun testInjectInScriptSetupLiteralsUnquoted() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
     myFixture.completeBasic()
@@ -2245,7 +2245,7 @@ export default {
   }
 
   fun testInjectInProperties() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
     myFixture.completeBasic()

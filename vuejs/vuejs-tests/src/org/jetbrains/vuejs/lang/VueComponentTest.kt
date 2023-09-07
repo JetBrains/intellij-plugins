@@ -102,17 +102,17 @@ class VueComponentTest : BasePlatformTestCase() {
 
   fun testDefineComponentWithEmits() = doTest()
 
-  fun testScriptSetupGeneric() = doTest(true, addNodeModules = listOf(VueTestModule.VUE_3_3_2))
+  fun testScriptSetupGeneric() = doTest(true, addNodeModules = listOf(VueTestModule.VUE_3_3_4))
 
   fun testPropsConstructorsAndGenerics() = doTest(true)
 
   fun testDecoratedComponentEmitsTS() = doTest(addNodeModules = listOf(VueTestModule.VUE_2_6_10))
 
-  fun testDefineModels() = doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_2))
+  fun testDefineModels() = doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_4))
 
-  fun testDefineModelsTS() = doTest(true, addNodeModules = listOf(VueTestModule.VUE_3_3_2))
+  fun testDefineModelsTS() = doTest(true, addNodeModules = listOf(VueTestModule.VUE_3_3_4))
 
-  fun testDefineModelsOverride() = doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_2))
+  fun testDefineModelsOverride() = doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_4))
 
   /**
    * Runs `doTestInner` twice: once for default TS config, once for strict TS config

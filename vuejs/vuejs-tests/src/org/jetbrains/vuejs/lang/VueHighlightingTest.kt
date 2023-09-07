@@ -7,6 +7,7 @@ import com.intellij.htmltools.codeInspection.htmlInspections.HtmlRequiredTitleEl
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.JSTestUtils.testWithinLanguageLevel
 import com.intellij.lang.javascript.JavaScriptBundle
+import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.inspections.ES6UnusedImportsInspection
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection
@@ -653,11 +654,11 @@ const props = {seeMe: {}}
   }
 
   fun testScriptSetupGeneric() {
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_2))
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_4))
   }
 
   fun testGenericComponentUsage() {
-    doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_3_2))
+    doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_3_4))
   }
 
   fun testStdTagsInspections() {
@@ -667,7 +668,19 @@ const props = {seeMe: {}}
 
   fun testPropTypeJsDoc() {
     myFixture.enableInspections(JSValidateTypesInspection())
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_2))
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_4))
+  }
+
+  fun testPropsWithDefaults() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    TypeScriptTestUtil.forceDefaultTsConfig(project, testRootDisposable)
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_4))
+  }
+
+  fun testPropsWithDefaultsInTs() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    TypeScriptTestUtil.forceDefaultTsConfig(project, testRootDisposable)
+    doTest(extension = "ts")
   }
 }
 
