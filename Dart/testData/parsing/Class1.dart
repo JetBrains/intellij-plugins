@@ -119,3 +119,8 @@ base mixin A{}
 interface mixin	A{}
 final mixin	A{}
 sealed mixin A{}
+
+extension type A<T>.named(int it) implements num {}
+extension type A.new(int it) implements num, int {}
+extension type const A(int it) implements num, int {}
+extension type A<T>.dynamic(int it) {  @a foo()  var a; }
