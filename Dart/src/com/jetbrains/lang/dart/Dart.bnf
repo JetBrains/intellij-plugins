@@ -279,8 +279,8 @@ enumConstantDeclaration ::= metadata* componentName typeArguments? '.' component
 extensionDeclaration ::= 'extension' typeParameters? 'on' type '?'? classBody |
                          'extension' <<nonStrictID>> typeParameters? 'on' type '?'? classBody
 
-extensionTypeDeclaration ::= 'extension' <<typeForExtensionType>> 'const'? <<nonStrictID>> typeParameters? representationDeclaration interfaces? classBody {pin=4}
-private representationDeclaration ::=  ('.' (<<nonStrictID>> | 'new'))? '(' metadata* type <<nonStrictID>> ')'
+extensionTypeDeclaration ::= 'extension' <<typeForExtensionType>> 'const'? componentName typeParameters? representationDeclaration interfaces? classBody {pin=4}
+private representationDeclaration ::=  ('.' (componentName | 'new'))? '(' metadata* type componentName ')'
 
 mixinApplication ::= '=' type mixins? interfaces? ';' {pin = 1}
 private standardClassDeclarationTail ::= superclass? mixins? interfaces? ('native' stringLiteralExpression?)? classBody?

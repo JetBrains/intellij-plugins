@@ -2129,8 +2129,9 @@ Dart File
     PsiElement(extension)('extension')
     ID
       PsiElement(IDENTIFIER)('type')
-    ID
-      PsiElement(IDENTIFIER)('A')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('A')
     TYPE_PARAMETERS
       PsiElement(<)('<')
       TYPE_PARAMETER
@@ -2139,16 +2140,18 @@ Dart File
             PsiElement(IDENTIFIER)('T')
       PsiElement(>)('>')
     PsiElement(.)('.')
-    ID
-      PsiElement(IDENTIFIER)('named')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('named')
     PsiElement(()('(')
     TYPE
       SIMPLE_TYPE
         REFERENCE_EXPRESSION
           ID
             PsiElement(IDENTIFIER)('int')
-    ID
-      PsiElement(IDENTIFIER)('it')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('it')
     PsiElement())(')')
     INTERFACES
       PsiElement(implements)('implements')
@@ -2167,8 +2170,9 @@ Dart File
     PsiElement(extension)('extension')
     ID
       PsiElement(IDENTIFIER)('type')
-    ID
-      PsiElement(IDENTIFIER)('A')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('A')
     PsiElement(.)('.')
     PsiElement(new)('new')
     PsiElement(()('(')
@@ -2177,8 +2181,9 @@ Dart File
         REFERENCE_EXPRESSION
           ID
             PsiElement(IDENTIFIER)('int')
-    ID
-      PsiElement(IDENTIFIER)('it')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('it')
     PsiElement())(')')
     INTERFACES
       PsiElement(implements)('implements')
@@ -2204,16 +2209,18 @@ Dart File
     ID
       PsiElement(IDENTIFIER)('type')
     PsiElement(const)('const')
-    ID
-      PsiElement(IDENTIFIER)('A')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('A')
     PsiElement(()('(')
     TYPE
       SIMPLE_TYPE
         REFERENCE_EXPRESSION
           ID
             PsiElement(IDENTIFIER)('int')
-    ID
-      PsiElement(IDENTIFIER)('it')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('it')
     PsiElement())(')')
     INTERFACES
       PsiElement(implements)('implements')
@@ -2238,8 +2245,9 @@ Dart File
     PsiElement(extension)('extension')
     ID
       PsiElement(IDENTIFIER)('type')
-    ID
-      PsiElement(IDENTIFIER)('A')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('A')
     TYPE_PARAMETERS
       PsiElement(<)('<')
       TYPE_PARAMETER
@@ -2248,16 +2256,18 @@ Dart File
             PsiElement(IDENTIFIER)('T')
       PsiElement(>)('>')
     PsiElement(.)('.')
-    ID
-      PsiElement(IDENTIFIER)('dynamic')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('dynamic')
     PsiElement(()('(')
     TYPE
       SIMPLE_TYPE
         REFERENCE_EXPRESSION
           ID
             PsiElement(IDENTIFIER)('int')
-    ID
-      PsiElement(IDENTIFIER)('it')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('it')
     PsiElement())(')')
     CLASS_BODY
       PsiElement({)('{')

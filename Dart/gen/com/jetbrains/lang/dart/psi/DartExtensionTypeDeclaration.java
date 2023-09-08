@@ -10,6 +10,9 @@ public interface DartExtensionTypeDeclaration extends DartPsiCompositeElement {
   @Nullable
   DartClassBody getClassBody();
 
+  @NotNull
+  List<DartComponentName> getComponentNameList();
+
   @Nullable
   DartInterfaces getInterfaces();
 
