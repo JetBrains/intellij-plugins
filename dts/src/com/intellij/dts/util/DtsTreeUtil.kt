@@ -83,8 +83,8 @@ object DtsTreeUtil {
 
     }
 
-    private fun <T> search(file: PsiFile, path: DtsPath, maxOffset: Int?, callback: (DtsNode) -> T?): T? {
-        if (file !is DtsFile) return null
+    private fun <T> search(file: PsiFile, path: DtsPath, maxOffset: Int?, visitedFiles: MutableSet<PsiFile>, callback: (DtsNode) -> T?): T? {
+        if (file !is DtsFile || !visitedFiles.add(file) || !path.absolut) return null
 
         var includes = file.dtsTopLevelIncludes.sortedBy { it.offset }
         var statements = file.dtsStatements.sortedBy { it.startOffset }
@@ -105,7 +105,7 @@ object DtsTreeUtil {
                 val ref = includes[includesIndex--].resolve(file) as? DtsFile
 
                 if (ref != null) {
-                    search(ref, path, null, callback)
+                    search(ref, path, null, visitedFiles, callback)
                 } else null
             } else {
                 val root = statements[statementsIndex--] as? DtsNode
@@ -120,7 +120,7 @@ object DtsTreeUtil {
 
         for (i in includesIndex downTo 0) {
             val ref = includes[i].resolve(file) as? DtsFile ?: continue
-            val result = search(ref, path, null, callback)
+            val result = search(ref, path, null, visitedFiles, callback)
 
             if (result != null) return result
         }
@@ -138,9 +138,22 @@ object DtsTreeUtil {
     /**
      * Searches through all appearances of this node including the one passed
      * in. This contains all declarations and references using labels.
+     *
+     * Returns the first non-null value returned by the callback.
      */
     fun <T> search(file: PsiFile, node: DtsNode, callback: (DtsNode) -> T?): T? {
         val path = DtsPath.absolut(node) ?: return null
         return search(file, path, node.startOffset, callback)
+    }
+
+    /**
+     * Searches through all appearances of nodes with the specified path. If the
+     * [offset] is not null, only nodes above the offset are taken into
+     * consideration.
+     *
+     * Returns the first non-null value returned by the callback.
+     */
+    fun <T> search(file: PsiFile, path: DtsPath, offset: Int?, callback: (DtsNode) -> T?): T? {
+        return search(file, path, offset, mutableSetOf(), callback)
     }
 }

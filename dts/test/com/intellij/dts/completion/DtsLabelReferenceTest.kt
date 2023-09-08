@@ -66,18 +66,6 @@ class DtsLabelReferenceTest : DtsCompletionTest() {
         )
     }
 
-    fun testIncludeRecursive() {
-        myFixture.addFileToProject("1.dtsi", "/include/ \"2.dtsi\"")
-        myFixture.addFileToProject("2.dtsi", "/include/ \"3.dtsi\"")
-        myFixture.addFileToProject("3.dtsi", "/include/ \"1.dtsi\" / { l3: n3 {}; };")
-
-        doTest(
-            "&<caret>",
-            listOf("l3"),
-            prefix = "/include/ \"1.dtsi\"",
-        )
-    }
-
     private fun doTest(
         input: String,
         labels: List<String>,

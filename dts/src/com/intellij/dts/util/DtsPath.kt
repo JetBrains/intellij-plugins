@@ -10,6 +10,13 @@ import com.intellij.dts.lang.psi.getDtsReferenceTarget
  */
 data class DtsPath(val absolut: Boolean, val segments: List<String>) {
     companion object {
+        fun from(path: String): DtsPath {
+            return DtsPath(
+                path.startsWith('/'),
+                path.trim('/').split('/').filter { it.isNotEmpty() },
+            )
+        }
+
         fun absolut(to: DtsNode): DtsPath? {
             val pathSegments = mutableListOf<String>()
 
@@ -39,6 +46,10 @@ data class DtsPath(val absolut: Boolean, val segments: List<String>) {
         }
 
         return DtsPath(false, other.segments.slice(segments.size until other.segments.size))
+    }
+
+    fun parent(): DtsPath {
+        return DtsPath(absolut, segments.dropLast(1))
     }
 
     override fun toString(): String {

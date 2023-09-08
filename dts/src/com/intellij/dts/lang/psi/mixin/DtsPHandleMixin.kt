@@ -4,6 +4,8 @@ import com.intellij.dts.lang.psi.DtsPHandle
 import com.intellij.dts.lang.psi.DtsPropertyContent
 import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.dts.lang.resolve.DtsLabelReference
+import com.intellij.dts.lang.resolve.DtsPathReference
+import com.intellij.dts.util.DtsPath
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
@@ -19,14 +21,26 @@ abstract class DtsPHandleMixin(node: ASTNode) : ASTWrapperPsiElement(node), DtsP
 
     override fun getReference(): PsiReference? {
         val propertyContent = PsiTreeUtil.findFirstParent(this) { it is DtsPropertyContent }
+        val isValue = propertyContent != null
 
-        return dtsPHandleLabel?.let {
-            DtsLabelReference(
+        dtsPHandleLabel?.let {
+            return DtsLabelReference(
                 this,
                 it.textRangeInParent,
                 it.text,
-                propertyContent != null
+                isValue,
             )
         }
+
+        dtsPHandlePath?.let {
+            return DtsPathReference(
+                this,
+                it.textRangeInParent,
+                DtsPath.from(it.text),
+                isValue,
+            )
+        }
+
+        return null
     }
 }
