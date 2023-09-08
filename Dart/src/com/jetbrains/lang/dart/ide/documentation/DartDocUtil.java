@@ -252,7 +252,7 @@ public final class DartDocUtil {
     if (element instanceof DartComponent) {
       final StringBuilder sb = new StringBuilder();
       appendSignature((DartComponent)element, sb);
-      if (sb.length() > 0) return sb.toString();
+      if (!sb.isEmpty()) return sb.toString();
     }
     return null;
   }
@@ -269,7 +269,10 @@ public final class DartDocUtil {
       appendFunctionSignature(builder, namedComponent, ((DartFunctionTypeAlias)namedComponent).getReturnType());
     }
     else if (namedComponent.isConstructor()) {
-      appendConstructorSignature(builder, namedComponent, PsiTreeUtil.getParentOfType(namedComponent, DartClass.class));
+      DartClass dartClass = PsiTreeUtil.getParentOfType(namedComponent, DartClass.class);
+      if (dartClass != null) {
+        appendConstructorSignature(builder, namedComponent, dartClass);
+      }
     }
     else if (namedComponent instanceof DartMethodDeclaration) {
       appendFunctionSignature(builder, namedComponent, ((DartMethodDeclaration)namedComponent).getReturnType());
