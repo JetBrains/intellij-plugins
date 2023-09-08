@@ -26,12 +26,8 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
              <code><b>test.dart</b><br>class&nbsp;A<br><br></code>
              <p>doc1
              doc2
-              doc3</p>
-
-             <p>   doc4</p>
-
-             <pre><code>    code</code></pre>""",
-
+              doc3</p><p>doc4</p><pre><code>code
+             </code></pre>""",
            """
              /** 1 */
              /**
@@ -178,10 +174,8 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
   public void testFunctionDoc2() {
     doTest("""
              <code><b>test.dart</b><br>void&nbsp;foo(int&nbsp;x)<br><br></code>
-             <p>Good for:</p>
-
-             <ul><li>this</li>
-             <li>that</li></ul>""", """
+             <p>Good for:</p><ul><li>this</li><li>that</li></ul>""",
+           """
              /** Good for:
 
               * * this
@@ -252,7 +246,7 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
   }
 
   public void testFunctionSig5() {
-    doTest("<code><b>test.dart</b><br>dynamic&nbsp;x(List&lt;dynamic&gt;&nbsp;e)<br><br></code>", "E <caret>x(List<E> e) { }");
+    doTest("<code><b>test.dart</b><br>InvalidType&nbsp;x(List&lt;InvalidType&gt;&nbsp;e)<br><br></code>", "E <caret>x(List<E> e) { }");
   }
 
   public void testFunctionSig6() {
@@ -295,12 +289,8 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
              <code><b>test.dart</b><br>dynamic&nbsp;foo()<br><br><b>Containing class:</b> A<br><br></code>
              <p>doc1
              doc2
-              doc3</p>
-
-             <p>   doc4</p>
-
-             <pre><code>    code</code></pre>""",
-
+              doc3</p><p>doc4</p><pre><code>code
+             </code></pre>""",
            """
              class A{
              /** 1 */
