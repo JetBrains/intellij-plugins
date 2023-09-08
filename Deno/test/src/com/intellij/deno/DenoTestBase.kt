@@ -6,7 +6,7 @@ import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.util.EmptyRunnable
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
-open class DenoTestBase : BasePlatformTestCase() {
+abstract class DenoTestBase : BasePlatformTestCase() {
   private var before = false
 
   override fun setUp() {
