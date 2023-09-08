@@ -34,6 +34,12 @@ public class DartExtensionTypeDeclarationImpl extends DartPsiCompositeElementImp
   }
 
   @Override
+  @NotNull
+  public List<DartComponentName> getComponentNameList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartComponentName.class);
+  }
+
+  @Override
   @Nullable
   public DartInterfaces getInterfaces() {
     return findChildByClass(DartInterfaces.class);
