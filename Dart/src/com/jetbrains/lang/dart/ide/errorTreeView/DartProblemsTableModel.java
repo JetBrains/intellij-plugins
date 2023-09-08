@@ -3,15 +3,10 @@ package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.ListTableModel;
 import com.jetbrains.lang.dart.DartBundle;
-import org.dartlang.analysis.server.protocol.AnalysisError;
 import org.dartlang.analysis.server.protocol.AnalysisErrorSeverity;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -60,7 +55,6 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
     }
   };
 
-  private final @NotNull Project myProject;
   private final @NotNull DartProblemsPresentationHelper myPresentationHelper;
 
   // Kind of hack to keep a reference to the live collection used in a super class, but it allows improving performance greatly.
@@ -80,15 +74,13 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
   private final Comparator<DartProblem> myDescriptionComparator = new DartProblemsComparator(DartProblemsComparator.MESSAGE_COLUMN_ID);
   private final Comparator<DartProblem> myLocationComparator = new DartProblemsComparator(DartProblemsComparator.LOCATION_COLUMN_ID);
 
-  DartProblemsTableModel(@NotNull Project project, @NotNull DartProblemsPresentationHelper presentationHelper) {
-    this(project, presentationHelper, new ArrayList<>());
+  DartProblemsTableModel(@NotNull DartProblemsPresentationHelper presentationHelper) {
+    this(presentationHelper, new ArrayList<>());
   }
 
-  private DartProblemsTableModel(@NotNull Project project,
-                                 @NotNull DartProblemsPresentationHelper presentationHelper,
+  private DartProblemsTableModel(@NotNull DartProblemsPresentationHelper presentationHelper,
                                  @NotNull ArrayList<DartProblem> items) {
     super(ColumnInfo.EMPTY_ARRAY, items, 0, SortOrder.ASCENDING);
-    myProject = project;
     myPresentationHelper = presentationHelper;
     myItems = items;
     setColumnInfos(new ColumnInfo[]{createDescriptionColumn(), createLocationColumn()});
@@ -188,10 +180,10 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
    * so that the caller could update selected row in the table
    */
   @Nullable
-  DartProblem setProblemsAndReturnReplacementForSelection(@NotNull Map<String, List<? extends AnalysisError>> filePathToErrors,
+  DartProblem setProblemsAndReturnReplacementForSelection(@NotNull Map<String, List<DartProblem>> filePathToDartProblems,
                                                           @Nullable DartProblem selectedProblem) {
-    boolean selectedProblemRemoved = removeRowsForFilesInSet(filePathToErrors.keySet(), selectedProblem);
-    return addErrorsAndReturnReplacementForSelection(filePathToErrors, selectedProblemRemoved ? selectedProblem : null);
+    boolean selectedProblemRemoved = removeRowsForFilesInSet(filePathToDartProblems.keySet(), selectedProblem);
+    return addErrorsAndReturnReplacementForSelection(filePathToDartProblems, selectedProblemRemoved ? selectedProblem : null);
   }
 
   private boolean removeRowsForFilesInSet(@NotNull Set<String> filePaths, @Nullable DartProblem selectedProblem) {
@@ -261,21 +253,15 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
     return selectedProblemRemoved;
   }
 
-  private @Nullable DartProblem addErrorsAndReturnReplacementForSelection(@NotNull Map<String, List<? extends AnalysisError>> filePathToErrors,
+  private @Nullable DartProblem addErrorsAndReturnReplacementForSelection(@NotNull Map<String, List<DartProblem>> filePathToDartProblems,
                                                                           @Nullable DartProblem oldSelectedProblem) {
     DartProblem newSelectedProblem = null;
-    DartProblemsViewSettings.ScopedAnalysisMode scopedAnalysisMode = myPresentationHelper.getScopedAnalysisMode();
 
     List<DartProblem> problemsToAdd = new ArrayList<>();
-    for (Map.Entry<String, List<? extends AnalysisError>> entry : filePathToErrors.entrySet()) {
-      String filePath = entry.getKey();
-      VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(filePath);
-      boolean fileOk = vFile != null && (scopedAnalysisMode != DartProblemsViewSettings.ScopedAnalysisMode.All ||
-                                         ProjectFileIndex.getInstance(myProject).isInContent(vFile));
-      List<? extends AnalysisError> errors = fileOk ? entry.getValue() : AnalysisError.EMPTY_LIST;
+    for (Map.Entry<String, List<DartProblem>> entry : filePathToDartProblems.entrySet()) {
+      List<DartProblem> dartProblems = entry.getValue();
 
-      for (AnalysisError analysisError : errors) {
-        DartProblem problem = new DartProblem(myProject, analysisError);
+      for (DartProblem problem : dartProblems) {
         problemsToAdd.add(problem);
 
         if (oldSelectedProblem != null &&

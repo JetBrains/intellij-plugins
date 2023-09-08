@@ -79,7 +79,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
   }
 
   private @NotNull TableView<DartProblem> createTable() {
-    TableView<DartProblem> table = new TableView<>(new DartProblemsTableModel(myProject, myPresentationHelper));
+    TableView<DartProblem> table = new TableView<>(new DartProblemsTableModel(myPresentationHelper));
 
     EditSourceOnDoubleClickHandler.install(table);
     EditSourceOnEnterKeyHandler.install(table);
@@ -397,11 +397,11 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     return null;
   }
 
-  public void setErrors(@NotNull Map<String, List<? extends AnalysisError>> filePathToErrors) {
+  public void setErrors(@NotNull Map<String, List<DartProblem>> filePathToDartProblems) {
     DartProblemsTableModel model = (DartProblemsTableModel)myTable.getModel();
     DartProblem oldSelectedProblem = myTable.getSelectedObject();
 
-    DartProblem updatedSelectedProblem = model.setProblemsAndReturnReplacementForSelection(filePathToErrors, oldSelectedProblem);
+    DartProblem updatedSelectedProblem = model.setProblemsAndReturnReplacementForSelection(filePathToDartProblems, oldSelectedProblem);
 
     if (updatedSelectedProblem != null) {
       myTable.setSelection(Collections.singletonList(updatedSelectedProblem));
