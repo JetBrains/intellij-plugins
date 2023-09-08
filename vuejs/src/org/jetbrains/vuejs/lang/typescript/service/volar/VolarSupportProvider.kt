@@ -9,7 +9,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspServerSupportProvider
 import com.intellij.platform.lsp.api.LspServerSupportProvider.LspServerStarter
-import org.eclipse.lsp4j.DidChangeWatchedFilesCapabilities
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.vuejs.lang.typescript.service.isVolarEnabledAndAvailable
 import org.jetbrains.vuejs.lang.typescript.service.isVolarFileTypeAcceptable
@@ -29,12 +28,6 @@ class VolarSupportProvider : LspServerSupportProvider {
 
 class VolarServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, volarLspServerPackageDescriptor, "Vue") {
   override fun isSupportedFile(file: VirtualFile): Boolean = isVolarFileTypeAcceptable(file)
-
-  override val clientCapabilities = super.clientCapabilities.apply {
-    workspace.didChangeWatchedFiles = DidChangeWatchedFilesCapabilities(true).apply {
-      relativePatternSupport = true
-    }
-  }
 }
 
 @ApiStatus.Experimental
