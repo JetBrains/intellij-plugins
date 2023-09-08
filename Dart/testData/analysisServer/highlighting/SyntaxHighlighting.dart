@@ -7,7 +7,7 @@
     <warning descr="The name document is shown, but isn't used." textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES"><info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">document</info></warning>,
     <warning descr="The name EventListener is shown, but isn't used." textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES"><info textAttributesKey="DART_FUNCTION_TYPE_ALIAS">EventListener</info></warning>,
     <warning descr="'CDataSection' is deprecated and shouldn't be used." textAttributesKey="DEPRECATED_ATTRIBUTES"><warning descr="The name CDataSection is shown, but isn't used." textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES"><info textAttributesKey="DART_CLASS">CDataSection</info></warning></warning>,
-    <weak_warning descr="The library 'dart:html' doesn't export a member with the shown name 'incorrect'." textAttributesKey="DART_HINT"><info textAttributesKey="DART_IDENTIFIER">incorrect</info></weak_warning>;
+    <warning descr="The library 'dart:html' doesn't export a member with the shown name 'incorrect'." textAttributesKey="DART_WARNING"><info textAttributesKey="DART_IDENTIFIER">incorrect</info></warning>;
 
 <info textAttributesKey="DART_KEYWORD">get</info> <info textAttributesKey="DART_TOP_LEVEL_GETTER_DECLARATION">topLevelGetter</info> {
   <info textAttributesKey="DART_KEYWORD">return</info> <info textAttributesKey="DART_TOP_LEVEL_GETTER_REFERENCE">topLevelGetter</info>;
@@ -64,7 +64,6 @@
 
 <info textAttributesKey="DART_KEYWORD">abstract</info> <info textAttributesKey="DART_KEYWORD">class</info> <info textAttributesKey="DART_CLASS">Bar</info>
     <info textAttributesKey="DART_KEYWORD">extends</info> <info textAttributesKey="DART_CLASS">Object</info>
-    <info textAttributesKey="DART_KEYWORD">with</info> <info textAttributesKey="DART_CLASS">Foo1</info>
     <info textAttributesKey="DART_KEYWORD">implements</info> <info textAttributesKey="DART_CLASS">Foo</info> {
 
   <info textAttributesKey="DART_KEYWORD">static</info> <info textAttributesKey="DART_KEYWORD">const</info> <info textAttributesKey="DART_STATIC_FIELD_DECLARATION">staticConst</info> = 1;
