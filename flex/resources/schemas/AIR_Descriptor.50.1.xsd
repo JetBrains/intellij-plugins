@@ -113,7 +113,7 @@
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
-              
+
               <!-- Default is false -->
               <xs:element name="depthAndStencil" type="xs:boolean" minOccurs="0" />
 
@@ -249,8 +249,8 @@
                   </xs:simpleContent>
                 </xs:complexType>
               </xs:element>
-              
-              <!-- In standard packaging mode, this tag prevents external swfs to be packaged 
+
+              <!-- In standard packaging mode, this tag prevents external swfs to be packaged
                    inside the application and outputs the stripped swfs to externalStrippedSwfs folder-->
               <xs:element name="externalSwfs" minOccurs="0" maxOccurs="1">
                 <xs:simpleType>
@@ -274,7 +274,7 @@
               <xs:element name="manifestAdditions" type="xs:string" minOccurs="0" maxOccurs="1"/>
               <!-- Prior to AIR 3, 16-bit color is always used on Android.
               In AIR 3, 32-bit color is used by default.-->
-               <xs:element name="colorDepth" minOccurs="0" maxOccurs="1">
+              <xs:element name="colorDepth" minOccurs="0" maxOccurs="1">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
                     <xs:enumeration value="16bit"/>
@@ -282,14 +282,14 @@
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
-              
+
               <!-- default is false -->
               <xs:element name="containsVideo" type="xs:boolean" minOccurs="0"/>
-              
+
               <!-- default is false -->
               <xs:element name="webContentsDebuggingEnabled" type="xs:boolean" minOccurs="0"/>
 
-               <!-- default is false -->
+              <!-- default is false -->
               <xs:element name="disableMediaCodec" type="xs:boolean" minOccurs="0"/>
 
               <xs:element name="buildLegacyAPK" type="xs:boolean" minOccurs="0" />
@@ -323,7 +323,7 @@
                   </xs:sequence>
                 </xs:complexType>
               </xs:element>
-              
+
             </xs:all>
           </xs:complexType>
         </xs:element>
@@ -410,22 +410,35 @@
       <xs:element name="image29x29"       type="xs:anyURI" minOccurs="0" />
       <xs:element name="image32x32"       type="xs:anyURI" minOccurs="0" />
       <xs:element name="image36x36"       type="xs:anyURI" minOccurs="0" />
+      <xs:element name="image40x40"       type="xs:anyURI" minOccurs="0" />
+      <xs:element name="image44x44"       type="xs:anyURI" minOccurs="0" />
       <xs:element name="image48x48"       type="xs:anyURI" minOccurs="0" />
       <xs:element name="image50x50"       type="xs:anyURI" minOccurs="0" />
       <!-- 57x57 is never used by file icons -->
       <xs:element name="image57x57"       type="xs:anyURI" minOccurs="0" />
       <xs:element name="image58x58"       type="xs:anyURI" minOccurs="0" />
+      <xs:element name="image60x60"       type="xs:anyURI" minOccurs="0" />
+      <xs:element name="image66x66"       type="xs:anyURI" minOccurs="0" />
       <xs:element name="image72x72"       type="xs:anyURI" minOccurs="0" />
+      <xs:element name="image75x75"       type="xs:anyURI" minOccurs="0" />
+      <xs:element name="image76x76"       type="xs:anyURI" minOccurs="0" />
+      <xs:element name="image80x80"       type="xs:anyURI" minOccurs="0" />
+      <xs:element name="image87x87"       type="xs:anyURI" minOccurs="0" />
       <xs:element name="image96x96"       type="xs:anyURI" minOccurs="0" />
       <xs:element name="image100x100"     type="xs:anyURI" minOccurs="0" />
       <xs:element name="image114x114"     type="xs:anyURI" minOccurs="0" />
+      <xs:element name="image120x120"     type="xs:anyURI" minOccurs="0" />
       <xs:element name="image128x128"     type="xs:anyURI" minOccurs="0" />
-      <xs:element name="image144x144"     type="xs:anyURI" minOccurs="0" />  
+      <xs:element name="image144x144"     type="xs:anyURI" minOccurs="0" />
+      <xs:element name="image152x152"     type="xs:anyURI" minOccurs="0" />
+      <xs:element name="image167x167"     type="xs:anyURI" minOccurs="0" />
+      <xs:element name="image180x180"     type="xs:anyURI" minOccurs="0" />
+      <xs:element name="image192x192"     type="xs:anyURI" minOccurs="0" />
       <xs:element name="image256x256"     type="xs:anyURI" minOccurs="0" />
       <xs:element name="image512x512"     type="xs:anyURI" minOccurs="0" />
       <xs:element name="image732x412"     type="xs:anyURI" minOccurs="0" />
       <xs:element name="image1024x1024"   type="xs:anyURI" minOccurs="0" />
-  </xs:all>
+    </xs:all>
   </xs:complexType>
   <xs:simpleType name="UnsignedIntListType">
     <xs:list itemType="xs:unsignedInt" />
