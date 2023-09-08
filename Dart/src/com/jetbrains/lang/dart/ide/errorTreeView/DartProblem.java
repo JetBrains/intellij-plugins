@@ -12,6 +12,8 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
+import com.intellij.util.concurrency.annotations.RequiresBackgroundThread;
+import com.intellij.util.concurrency.annotations.RequiresReadLock;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.*;
 import com.jetbrains.lang.dart.util.DartBuildFileUtil;
@@ -39,9 +41,12 @@ public class DartProblem {
   private @Nullable VirtualFile myContentRoot;
   private String myPresentableLocationWithoutLineNumber;
 
+  @RequiresBackgroundThread
+  @RequiresReadLock
   public DartProblem(@NotNull Project project, @NotNull AnalysisError error) {
     myProject = project;
     myAnalysisError = error;
+    initialize();
   }
 
   public @NotNull @NlsSafe String getErrorMessage() {
@@ -87,7 +92,9 @@ public class DartProblem {
     return mySystemIndependentPath;
   }
 
-  private void ensureInitialized() {
+  @RequiresBackgroundThread
+  @RequiresReadLock
+  private void initialize() {
     if (myPresentableLocationWithoutLineNumber != null) return;
 
     // temporary final vars guarantee that vars are initialized before this method exits
@@ -150,7 +157,6 @@ public class DartProblem {
    * File path is returned as failover.
    */
   public @NotNull String getPresentableLocationWithoutLineNumber() {
-    ensureInitialized();
     return myPresentableLocationWithoutLineNumber;
   }
 
@@ -159,17 +165,14 @@ public class DartProblem {
   }
 
   public @Nullable VirtualFile getFile() {
-    ensureInitialized();
     return myFile;
   }
 
   public @Nullable VirtualFile getPackageRoot() {
-    ensureInitialized();
     return myPackageRoot;
   }
 
   public @Nullable VirtualFile getContentRoot() {
-    ensureInitialized();
     return myContentRoot;
   }
 

@@ -8,22 +8,27 @@ import com.intellij.notification.*;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.NlsContexts.TabTitle;
 import com.intellij.openapi.util.text.HtmlBuilder;
 import com.intellij.openapi.util.text.HtmlChunk;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.util.Alarm;
 import com.intellij.util.ModalityUiUtil;
+import com.intellij.util.concurrency.AppExecutorUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerMessages;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
@@ -35,6 +40,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,9 +90,35 @@ public final class DartProblemsView implements PersistentStateComponent<DartProb
       }
 
       DartProblemsViewPanel panel = getProblemsViewPanel();
-      if (panel != null) {
-        panel.setErrors(filePathToErrors);
+      if (panel == null) {
+        return;
       }
+
+      ReadAction.nonBlocking(() -> {
+          DartProblemsViewSettings.ScopedAnalysisMode scopedAnalysisMode =
+            getInstance(myProject).myPresentationHelper.getScopedAnalysisMode();
+          Map<String, List<DartProblem>> filePathToDartProblems = new HashMap<>();
+
+          for (Map.Entry<String, List<? extends AnalysisError>> entry : filePathToErrors.entrySet()) {
+            String filePath = entry.getKey();
+            List<? extends AnalysisError> analysisErrors = entry.getValue();
+
+            VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(filePath);
+            boolean fileOk = vFile != null && (scopedAnalysisMode != DartProblemsViewSettings.ScopedAnalysisMode.All ||
+                                               ProjectFileIndex.getInstance(myProject).isInContent(vFile));
+            List<DartProblem> dartProblems = fileOk
+                                             ? ContainerUtil.map(analysisErrors, analysisError -> new DartProblem(myProject, analysisError))
+                                             : Collections.emptyList();
+            filePathToDartProblems.put(filePath, dartProblems);
+          }
+
+          return filePathToDartProblems;
+        })
+        .expireWith(getInstance(myProject))
+        .finishOnUiThread(ModalityState.nonModal(), filePathToDartProblems -> {
+          panel.setErrors(filePathToDartProblems);
+        })
+        .submit(AppExecutorUtil.getAppExecutorService());
     }
   };
 
