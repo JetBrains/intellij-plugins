@@ -1,6 +1,7 @@
 package com.intellij.plugins.serialmonitor.ui.console;
 
 import com.intellij.execution.ExecutionBundle;
+import com.intellij.execution.console.DuplexConsoleView;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.Disposable;
@@ -15,10 +16,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.plugins.serialmonitor.SerialMonitorException;
 import com.intellij.plugins.serialmonitor.SerialPortProfile;
-import com.intellij.plugins.serialmonitor.SerialProfileService;
-import com.intellij.plugins.serialmonitor.service.JsscSerialService;
-import com.intellij.plugins.serialmonitor.service.SerialConnectionListener;
-import com.intellij.plugins.serialmonitor.service.SerialSettingsChangeListener;
+import com.intellij.plugins.serialmonitor.service.PortStatus;
+import com.intellij.plugins.serialmonitor.service.SerialPortService;
+import com.intellij.plugins.serialmonitor.service.SerialPortsListener;
 import com.intellij.plugins.serialmonitor.ui.SerialMonitor;
 import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle;
 import com.intellij.plugins.serialmonitor.ui.actions.ConnectDisconnectAction;
@@ -30,61 +30,69 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
+
 /**
  * @author Dmitry_Cherkas, Ilia Motornyi
  */
-public class JeditermSerialMonitorDuplexConsoleView extends SerialConnectable<JeditermConsoleView>
-  implements Disposable, SerialSettingsChangeListener, SerialConnectionListener {
+public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<JeditermConsoleView, HexConsoleView>
+  implements Disposable, SerialPortsListener {
 
   private static final String STATE_STORAGE_KEY = "SerialMonitorDuplexConsoleViewState";
-  private final @NotNull Project myProject;
 
-  @NotNull private SerialPortProfile myPortProfile;
-  @NotNull private final String myName;
+  @NotNull private final SerialPortService.SerialConnection myConnection;
+  @NotNull private final SerialPortProfile myPortProfile;
+  @NotNull @NlsSafe private final String myName;
   @NotNull private final ToggleAction mySwitchConsoleAction;
   @NotNull private final JBLoadingPanel myLoadingPanel;
-  private SerialConnectionListener myListener;
   private Charset myCharset = StandardCharsets.US_ASCII;
-  private PortStatus myStatus = PortStatus.DISCONNECTED;
+  public SerialPortService.@NotNull SerialConnection getConnection() {
+    return myConnection;
+  }
 
   @Override
-  public void updateStatus(@NotNull PortStatus status) {
-    if (myListener != null) myListener.updateStatus(status);
-    myStatus = status;
+  public void portsStatusChanged() {
+
   }
-  //todo TTY parameters:
-  //todo * echo
-  //todo front page
-  //todo front page - available ports
-  //todo front page always visible
-  //todo detachable window
+
   //todo auto reconnect while build
   //todo interoperability with other plugins
-  //todo fix reconnect behaviour
+  //todo hw lines control
 
-  private static JeditermConsoleView createPlainConsole(Project project, @NotNull SerialPortProfile portProfile) {
-
-    return new JeditermConsoleView(project, portProfile.getPortName());
+  public static JeditermSerialMonitorDuplexConsoleView create(@NotNull Project project,
+                                                              @NlsSafe @NotNull final String name,
+                                                              @NotNull SerialPortProfile portProfile,
+                                                              @NotNull JBLoadingPanel loadingPanel) {
+    SerialPortService.SerialConnection connection =
+      ApplicationManager.getApplication().getService(SerialPortService.class)
+        .connection(portProfile.getPortName());
+    JeditermConsoleView textConsoleView = new JeditermConsoleView(project, connection);
+    HexConsoleView hexConsoleView = new HexConsoleView(project, true);
+    JeditermSerialMonitorDuplexConsoleView consoleView =
+      new JeditermSerialMonitorDuplexConsoleView(connection,
+                                                 textConsoleView,
+                                                 hexConsoleView,
+                                                 name,
+                                                 portProfile,
+                                                 loadingPanel);
+    connection.setDataListener(consoleView::append);
+    connection.setConnListener(consoleView);
+    ApplicationManager.getApplication().getMessageBus().connect().subscribe(SerialPortsListener.getSERIAL_PORTS_TOPIC(), consoleView);
+    return consoleView;
   }
 
-  public JeditermSerialMonitorDuplexConsoleView(@NotNull Project project,
-                                                @NlsSafe @NotNull final String name,
-                                                @NotNull SerialPortProfile portProfile,
-                                                @NotNull JBLoadingPanel loadingPanel) {
-    super(
-      createPlainConsole(project, portProfile),
-      new HexConsoleView(project, true), STATE_STORAGE_KEY);
-    myProject = project;
+  private JeditermSerialMonitorDuplexConsoleView(
+    SerialPortService.@NotNull SerialConnection connection,
+    JeditermConsoleView textConsoleView,
+    HexConsoleView hexConsoleView,
+    @NlsSafe @NotNull final String name,
+    @NotNull SerialPortProfile portProfile,
+    @NotNull JBLoadingPanel loadingPanel) {
+    super(textConsoleView, hexConsoleView, STATE_STORAGE_KEY);
     mySwitchConsoleAction = new SwitchConsoleViewAction();
     myLoadingPanel = loadingPanel;
     myName = name;
     myPortProfile = portProfile;
-    ApplicationManager.getApplication().getMessageBus().connect(this).subscribe(SerialSettingsChangeListener.TOPIC, this);
-  }
-
-  @Override
-  public void setPortStateListener(SerialConnectionListener stateListener) {
-    myListener = stateListener;
+    myConnection = connection;
   }
 
   @Override
@@ -117,17 +125,14 @@ public class JeditermSerialMonitorDuplexConsoleView extends SerialConnectable<Je
       new MyScrollToTheEndToolbarAction(getSecondaryConsoleView().getEditor()),
       new SerialPauseAction(),
       new ClearAllAction(),
-      new EditSettingsAction(myName, this)}; //todo simplify when switched to Jediterm
+      new EditSettingsAction(myName, this)};
   }
 
-  @Override
-  public boolean isConnected() {
-    return myStatus == PortStatus.CONNECTED;
+  public PortStatus getStatus() {
+    return myConnection.getStatus();
   }
 
-
-  @Override
-  public synchronized void openConnectionTab(boolean doConnect) {
+  public synchronized void connect(boolean doConnect) {
     myLoadingPanel.startLoading();
     ApplicationManager.getApplication().executeOnPooledThread(
       () -> {
@@ -140,40 +145,31 @@ public class JeditermSerialMonitorDuplexConsoleView extends SerialConnectable<Je
   private void performConnect(boolean doConnect) {
     try {
       if (doConnect) {
-        try {
-          myCharset = Charset.forName(myPortProfile.getEncoding());
-        }
-        catch (Throwable e) {
-          myCharset = StandardCharsets.US_ASCII;
-        }
-
-        if (isPortValid()) {
+        myCharset = Charset.availableCharsets().getOrDefault(myPortProfile.getEncoding(), StandardCharsets.US_ASCII);
+        if (myConnection.getStatus() == PortStatus.DISCONNECTED) {
           // try to connect only when settings are known to be valid
-          getPrimaryConsoleView().reconnect(getCharset(), myPortProfile.getNewLine());
-          serialService().connect(myPortProfile, this::append, this);
-          updateStatus(PortStatus.CONNECTED);
+          getPrimaryConsoleView().reconnect(getCharset(), myPortProfile.getNewLine(), myPortProfile.getLocalEcho());
+          myConnection.connect(myPortProfile.getBaudRate(), myPortProfile.getBits(), myPortProfile.getStopBits(),
+                               myPortProfile.getParity());
         }
         else {
           throw new SerialMonitorException(SerialMonitorBundle.message("serial.port.not.found", myName));
         }
       }
       else {
-        serialService().close(myPortProfile.getPortName());
+        myConnection.close();
       }
     }
     catch (SerialMonitorException sme) {
-      SerialMonitor.Companion.errorNotification(sme.getMessage(), myProject);
-      updateStatus(PortStatus.FAILURE);
+      SerialMonitor.Companion.errorNotification(sme.getMessage(), this);
     }
   }
 
-  @Override
   @NotNull
   public SerialPortProfile getPortProfile() {
     return myPortProfile;
   }
 
-  @Override
   public void reconnect() {
     myLoadingPanel.startLoading();
     ApplicationManager.getApplication().executeOnPooledThread(
@@ -189,25 +185,13 @@ public class JeditermSerialMonitorDuplexConsoleView extends SerialConnectable<Je
     );
   }
 
-  @Override
   @NotNull
   public Charset getCharset() {
     return myCharset;
   }
 
-  @NotNull
-  private static JsscSerialService serialService() {
-    return JsscSerialService.getInstance();
-  }
-
-  @Override
   public boolean isLoading() {
     return myLoadingPanel.isLoading();
-  }
-
-  @Override
-  public boolean isPortValid() {
-    return serialService().isPortValid(myPortProfile.getPortName());
   }
 
   private class SwitchConsoleViewAction extends ToggleAction implements DumbAware {
@@ -313,21 +297,12 @@ public class JeditermSerialMonitorDuplexConsoleView extends SerialConnectable<Je
   }
 
   @Override
-  public void settingsChanged() {
-    SerialPortProfile savedProfile = SerialProfileService.getInstance().getProfiles().get(myName);
-    if (savedProfile != null && !myPortProfile.equals(savedProfile)) {
-      myPortProfile = savedProfile;
-      reconnect();
-    }
-  }
-
-  @Override
   public void dispose() {
     super.dispose();
     Application application = ApplicationManager.getApplication();
     application.executeOnPooledThread(() -> {
       try {
-        serialService().close(myPortProfile.getPortName());
+        myConnection.close();
       }
       catch (SerialMonitorException ignored) {
       }

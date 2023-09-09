@@ -13,31 +13,62 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ToggleAction
 import com.intellij.openapi.project.Project
 import com.intellij.plugins.serialmonitor.SerialProfileService.NewLine
+import com.intellij.plugins.serialmonitor.service.SerialPortService
 import com.intellij.terminal.JBTerminalSystemSettingsProviderBase
 import com.intellij.terminal.JBTerminalWidget
 import com.jediterm.terminal.*
 import com.jediterm.terminal.emulator.JediEmulator
 import com.jediterm.terminal.model.JediTerminal
-import java.io.*
+import org.apache.commons.io.input.buffer.CircularByteBuffer
+import java.io.InputStream
+import java.io.InputStreamReader
+import java.io.Reader
 import java.nio.charset.Charset
 import javax.swing.JComponent
+import kotlin.math.min
 
-class JeditermConsoleView(project: Project, val portName: String) : ConsoleView {
+private const val BUFFER_SIZE = 100000
+
+class JeditermConsoleView(project: Project, connection: SerialPortService.SerialConnection) : ConsoleView {
 
   private val widget: JBTerminalWidget
 
-  private val serialConnector = SerialTtyConnector(this)
+  private val serialConnector = SerialTtyConnector(this, connection)
 
   private var emulator: CustomJeditermEmulator? = null
 
-  @Volatile
-  private var inPipe: PipedOutputStream? = null
+  private val bytesBuffer = CircularByteBuffer(BUFFER_SIZE)
+  private val lock = Object()
 
   @Volatile
-  private var outPipe: Reader? = null
+  private var bufferReader: Reader? = null
 
   @Volatile
   var paused: Boolean = false
+
+
+  private val bytesStream = object : InputStream() {
+    override fun read(): Int {
+      synchronized(lock) {
+        return if (bytesBuffer.hasBytes()) bytesBuffer.read().toInt() else -1
+      }
+    }
+
+    override fun read(buffer: ByteArray, offset: Int, length: Int): Int {
+      synchronized(lock) {
+        val toRead =  min(length, bytesBuffer.currentNumberOfBytes)
+        bytesBuffer.read(buffer,offset,toRead)
+        return toRead
+      }
+    }
+
+    override fun available(): Int {
+      synchronized(lock) {
+        return bytesBuffer.currentNumberOfBytes
+      }
+    }
+  }
+
 
   init {
     widget = object : JBTerminalWidget(project, JBTerminalSystemSettingsProviderBase(), this) {
@@ -46,7 +77,7 @@ class JeditermConsoleView(project: Project, val portName: String) : ConsoleView 
                                  TtyBasedArrayDataStream(connector) { typeAheadManager.onTerminalStateChanged() },
                                  typeAheadManager, getExecutorServiceManager()) {
           override fun createEmulator(dataStream: TerminalDataStream, terminal: Terminal): JediEmulator =
-             CustomJeditermEmulator(dataStream, terminal).apply { emulator=this }
+            CustomJeditermEmulator(dataStream, terminal).apply { emulator = this }
         }
     }
     widget.start(serialConnector)
@@ -113,39 +144,36 @@ class JeditermConsoleView(project: Project, val portName: String) : ConsoleView 
   override fun allowHeavyFilters() {}
 
   fun output(dataChunk: ByteArray) {
-    try {
-      inPipe?.write(dataChunk)
-      inPipe?.flush()
-    }
-    catch (_: IOException) {
-    }
-  }
-
-  fun reconnect(charset: Charset, newLine: NewLine) {
-    emulator?.newLine = newLine
-    inPipe = PipedOutputStream()
-    outPipe = InputStreamReader(PipedInputStream(inPipe), charset)
-  }
-
-  fun isReady(): Boolean {
-    try {
-      return outPipe?.ready() ?: false
-    } catch (_:IOException) {
-      return false
-    }
-  }
-
-  fun readBytes(buf: CharArray, offset: Int, length: Int): Int {
-    while (true) {
-      with(outPipe) {
-        if (this != null && !paused) try {
-          return read(buf, offset, length)
+    if (!paused) {
+      synchronized(lock) {
+        val length = min(dataChunk.size, bytesBuffer.space)
+        if (length > 0) {
+          bytesBuffer.add(dataChunk, 0, length)
+          lock.notify()
         }
-        catch (_: Throwable) {
-        }
-        Thread.sleep(20);
       }
+    }
+  }
 
+  fun reconnect(charset: Charset, newLine: NewLine, localEcho:Boolean) {
+    emulator?.newLine = newLine
+    serialConnector.charset = charset
+    serialConnector.localEcho = localEcho
+    synchronized(lock) {
+      bytesBuffer.clear()
+      bufferReader = InputStreamReader(bytesStream, charset)
+    }
+  }
+
+  fun readChars(buf: CharArray, offset: Int, length: Int): Int {
+    synchronized(lock) {
+      while (true) {
+        val currentReader = bufferReader
+        if (currentReader?.ready() == true) {
+          return currentReader.read(buf, offset, length)
+        }
+        lock.wait()
+      }
     }
   }
 

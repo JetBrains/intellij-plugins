@@ -23,8 +23,6 @@ public final class CommandsComboBox extends TextFieldWithHistory {
   @Override
   public void addCurrentTextToHistory() {
     super.addCurrentTextToHistory();
-    //todo use list
-    //todo cache intersession
     PropertiesComponent.getInstance(myProject).setValue(HISTORY_KEY, StringUtil.join(getHistory(), "\n"));
   }
 
@@ -32,8 +30,6 @@ public final class CommandsComboBox extends TextFieldWithHistory {
     final PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(myProject);
     final String history = propertiesComponent.getValue(HISTORY_KEY);
     if (history != null) {
-      //todo use list
-      //todo cache intersession
       final String[] items = history.split("\n");
       ArrayList<String> result = new ArrayList<>();
       for (String item : items) {

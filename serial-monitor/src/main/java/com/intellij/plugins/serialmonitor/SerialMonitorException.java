@@ -1,9 +1,10 @@
 package com.intellij.plugins.serialmonitor;
 
+import jssc.SerialPortException;
 import org.jetbrains.annotations.Nls;
 
 /**
- * @author Dmitry_Cherkas
+ * @author Dmitry_Cherkas, Ilia Motornyi
  */
 public class SerialMonitorException extends Exception {
 
@@ -12,6 +13,6 @@ public class SerialMonitorException extends Exception {
   }
 
   public SerialMonitorException(@Nls String message, Throwable cause) {
-    super(message, cause);
+    super(message + ": " + cause.getLocalizedMessage(), cause);
   }
 }

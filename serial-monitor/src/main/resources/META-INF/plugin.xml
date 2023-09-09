@@ -24,29 +24,16 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <toolWindow id="Serial Monitor" anchor="bottom" icon="SerialMonitorIcons.DisconnectedSerial"
-                doNotActivateOnStart="true"
+                doNotActivateOnStart="false"
+                largeStripeAnchor="bottom"
                 factoryClass="com.intellij.plugins.serialmonitor.SerialMonitorToolWindowFactory"
                 canCloseContents="true" secondary="false"/>
 
     <notificationGroup id="Serial Monitor Notification" toolWindowId="Serial Monitor" displayType="TOOL_WINDOW"
                        bundle="messages.SerialMonitorBundle" key="notification.group.serial.monitor.notification"/>
 
-    <applicationService serviceImplementation="com.intellij.plugins.serialmonitor.service.JsscSerialService"/>
-    <applicationConfigurable groupId="tools" id="serialmonitor.settings"
-                             provider="com.intellij.plugins.serialmonitor.ui.SerialSettingsConfigurableProvider"
-                             bundle="messages.SerialMonitorBundle" key="settings.display.name"/>
     <statistics.counterUsagesCollector implementationClass="com.intellij.plugins.serialmonitor.SerialMonitorConnectCollector"/>
     <statistics.applicationUsagesCollector implementation="com.intellij.plugins.serialmonitor.SerialMonitorNumProfilesCollector"/>
-    <registryKey key="serial.monitor.jediterm"
-                 defaultValue="false"
-                 restartRequired="false"
-                 description="Use JediTerm as a terminal"/>
   </extensions>
-  <actions>
-    <group id="com.intellij.plugins.serialmonitor.connect" class="com.intellij.plugins.serialmonitor.ui.actions.ConnectActionGroup"
-           searchable="true" popup="true" icon="AllIcons.Nodes.Plugin">
-      <add-to-group group-id="ToolsMenu" anchor="after" relative-to-action="RemoteExternalToolsGroup"/>
-    </group>
-  </actions>
   <resource-bundle>messages.SerialMonitorBundle</resource-bundle>
 </idea-plugin>

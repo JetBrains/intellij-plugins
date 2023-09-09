@@ -20,5 +20,6 @@
     <orderEntry type="module" module-name="intellij.platform.statistics" />
     <orderEntry type="library" name="jediterm-core" level="project" />
     <orderEntry type="library" name="jediterm-ui" level="project" />
+    <orderEntry type="library" name="commons-io" level="project" />
   </component>
 </module>

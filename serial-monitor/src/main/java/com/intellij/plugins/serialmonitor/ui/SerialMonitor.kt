@@ -1,6 +1,7 @@
 package com.intellij.plugins.serialmonitor.ui
 
 import com.intellij.icons.AllIcons
+import com.intellij.ide.impl.ProjectUtil
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.Disposable
@@ -12,14 +13,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.util.NlsSafe
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.plugins.serialmonitor.SerialMonitorException
 import com.intellij.plugins.serialmonitor.SerialPortProfile
-import com.intellij.plugins.serialmonitor.service.JsscSerialService
-import com.intellij.plugins.serialmonitor.service.SerialConnectionListener.PortStatus
+import com.intellij.plugins.serialmonitor.service.PortStatus
+import com.intellij.plugins.serialmonitor.service.SerialPortsListener
 import com.intellij.plugins.serialmonitor.ui.console.JeditermSerialMonitorDuplexConsoleView
-import com.intellij.plugins.serialmonitor.ui.console.SerialConnectable
-import com.intellij.plugins.serialmonitor.ui.console.SerialMonitorDuplexConsoleView
 import com.intellij.ui.LayeredIcon
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBLoadingPanel
@@ -27,36 +25,29 @@ import com.intellij.uiDesigner.core.GridConstraints
 import com.intellij.uiDesigner.core.GridConstraints.*
 import com.intellij.uiDesigner.core.GridLayoutManager
 import com.intellij.util.ui.JBUI
-import icons.SerialMonitorIcons.ConnectedSerial
 import icons.SerialMonitorIcons.DisconnectedSerial
+import java.awt.Component
 import java.awt.event.ActionListener
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
-import java.util.function.Consumer
 import javax.swing.BorderFactory
-import javax.swing.Icon
 import javax.swing.JButton
 import javax.swing.JComponent
 
-class SerialMonitor(private val project: Project, private val myStatusIcon: Consumer<Icon>,
+class SerialMonitor(private val project: Project,
                     name: @NlsSafe String,
-                    private val portProfile: SerialPortProfile) : Disposable {
-  private val mySerialService: JsscSerialService = JsscSerialService.getInstance()
+                    private val portProfile: SerialPortProfile) : Disposable, SerialPortsListener {
   private val myPanel: JBLoadingPanel = JBLoadingPanel(GridLayoutManager(2, 4, JBUI.insets(5), -1, -1), this, 300)
   private val mySend: JButton
   private val myCommand: CommandsComboBox
   private val myLineEnd: JBCheckBox
-  private var myConnectable: SerialConnectable<*>?
+  private var duplexConsoleView: JeditermSerialMonitorDuplexConsoleView?
 
-  private fun updateConnectionStatus(status: PortStatus) {
-    myCommand.isEnabled = status == PortStatus.CONNECTED
-    mySend.isEnabled = status == PortStatus.CONNECTED
-    val icon = when (status) {
-      PortStatus.CONNECTED, PortStatus.CONNECTING -> ConnectedSerial
-      PortStatus.DISCONNECTED -> DisconnectedSerial
-      else -> CONNECT_ERROR_ICON
-    }
-    myStatusIcon.accept(icon)
+  val status: PortStatus
+    get() = duplexConsoleView?.status ?: PortStatus.MISSING
+
+  override fun portsStatusChanged() {
+    mySend.isEnabled = duplexConsoleView?.status == PortStatus.CONNECTED
   }
 
   private fun send(txt: String) {
@@ -66,11 +57,11 @@ class SerialMonitor(private val project: Project, private val myStatusIcon: Cons
     }
 
     if (s.isNotEmpty()) {
-      myConnectable?.apply {
+      duplexConsoleView?.apply {
         val bytes = s.toByteArray(this.charset)
         ApplicationManager.getApplication().executeOnPooledThread {
           try {
-            mySerialService.write(portProfile.portName, bytes)
+            this.connection.write(bytes)
           }
           catch (sme: SerialMonitorException) {
             errorNotification((sme.message)!!, project)
@@ -83,38 +74,31 @@ class SerialMonitor(private val project: Project, private val myStatusIcon: Cons
   val component: JComponent
     get() = myPanel
 
+
+  fun disconnect() {
+    duplexConsoleView?.connect(false)
+  }
   override fun dispose() {
-    if (myConnectable != null) {
-      Disposer.dispose(myConnectable!!)
-      myConnectable = null
+    if (duplexConsoleView != null) {
+      Disposer.dispose(duplexConsoleView!!)
+      duplexConsoleView = null
     }
-    mySerialService.close(portProfile.portName)
   }
 
   fun connect() {
-    myConnectable?.openConnectionTab(true)
+    duplexConsoleView?.connect(true)
   }
-
-  private val legacySendControl: Boolean //todo remove when migrated to JediTerm
 
   init {
     myPanel.setLoadingText(SerialMonitorBundle.message("connecting"))
-    if (Registry.`is`("serial.monitor.jediterm")) {
-      legacySendControl = false
-      myConnectable = JeditermSerialMonitorDuplexConsoleView(project, name, portProfile, myPanel)
-    }
-    else {
-      legacySendControl = true
-      myConnectable = SerialMonitorDuplexConsoleView(project, name, portProfile, myPanel)
-    }
-    val consoleComponent = myConnectable!!.component
-    myConnectable!!.component.border = BorderFactory.createEtchedBorder()
+    duplexConsoleView = JeditermSerialMonitorDuplexConsoleView.create(project, name, portProfile, myPanel)
+    val consoleComponent = duplexConsoleView!!.component
+    duplexConsoleView!!.component.border = BorderFactory.createEtchedBorder()
     val toolbarActions = DefaultActionGroup()
     val toolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.TOOLBAR, toolbarActions, false)
-    toolbarActions.addAll(*myConnectable!!.createConsoleActions())
+    toolbarActions.addAll(*duplexConsoleView!!.createConsoleActions())
     toolbar.targetComponent = consoleComponent
     myCommand = CommandsComboBox()
-    myCommand.isEnabled = false
     myCommand.setProject(project)
     myLineEnd = JBCheckBox(SerialMonitorBundle.message("checkbox.send.eol"), true)
     mySend = JButton(SerialMonitorBundle.message("send.title"))
@@ -135,7 +119,7 @@ class SerialMonitor(private val project: Project, private val myStatusIcon: Cons
       myCommand.text = ""
     })
 
-    myConnectable!!.setPortStateListener(this::updateConnectionStatus)
+    ApplicationManager.getApplication().messageBus.connect().subscribe(SerialPortsListener.SERIAL_PORTS_TOPIC, this)
     myPanel.add(toolbar.component,
                 GridConstraints(0, 0, 2, 1, ANCHOR_NORTH, FILL_VERTICAL, SIZEPOLICY_FIXED, SIZE_POLICY_RESIZEABLE, null, null, null))
     myPanel.add(myCommand,
@@ -146,14 +130,14 @@ class SerialMonitor(private val project: Project, private val myStatusIcon: Cons
                 GridConstraints(0, 3, 1, 1, ANCHOR_NORTHEAST, FILL_NONE, SIZEPOLICY_FIXED, SIZEPOLICY_FIXED, null, null, null))
     myPanel.add(consoleComponent,
                 GridConstraints(1, 1, 1, 3, ANCHOR_NORTHWEST, FILL_BOTH, SIZE_POLICY_RESIZEABLE, SIZE_POLICY_RESIZEABLE, null, null, null))
-    myConnectable!!.addSwitchListener(this::hideSendControls, this)
-    hideSendControls(true)
+    duplexConsoleView!!.addSwitchListener(this::hideSendControls, this)
+    hideSendControls(duplexConsoleView!!.isPrimaryConsoleEnabled)
   }
 
   private fun hideSendControls(q: Boolean) {
-    mySend.isVisible = legacySendControl || !q
-    myCommand.isVisible = legacySendControl || !q
-    myLineEnd.isVisible = legacySendControl || !q
+    mySend.isVisible = !q
+    myCommand.isVisible = !q
+    myLineEnd.isVisible = !q
   }
 
   companion object {
@@ -164,6 +148,10 @@ class SerialMonitor(private val project: Project, private val myStatusIcon: Cons
 
     fun errorNotification(content: @NlsContexts.NotificationContent String, project: Project?) {
       return SERIAL_NOTIFICATION_GROUP.createNotification(content, NotificationType.ERROR).notify(project)
+    }
+
+    fun errorNotification(content: @NlsContexts.NotificationContent String, component: Component) {
+      errorNotification(content, ProjectUtil.getProjectForComponent(component))
     }
   }
 }
