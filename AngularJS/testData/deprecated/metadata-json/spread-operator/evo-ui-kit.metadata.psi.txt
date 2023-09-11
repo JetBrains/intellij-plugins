@@ -12,7 +12,7 @@ MetadataFile:evo-ui-kit.metadata.json
     EvoUiClassDirective <metadata directive>: selector=[evoUiClass]; inputs=[evoUiClass]; outputs=[]; inOuts=[]
       #ext: @no-res-angular/common#NgClass <metadata reference>('')
     EvoAlertComponent <metadata component>: selector=evo-alert; inputs=[size, closable, iconSrc, icon, type, version]; outputs=[close]; inOuts=[]('')
-    EvoButtonComponent <metadata component>: selector=evo-button, button[evo-button]; inputs=[disabled, color, size, loading]; outputs=[]; inOuts=[]('')
+    EvoButtonComponent <metadata component>: selector=evo-button, button[evo-button]; inputs=[color, size, disabled, loading]; outputs=[]; inOuts=[]('')
     EvoButtonStyles <metadata object>
       lined: lined <metadata string>('')
       darkblue: darkblue <metadata string>('')
@@ -22,10 +22,10 @@ MetadataFile:evo-ui-kit.metadata.json
       purple: purple <metadata string>('')
     EvoCheckboxComponent <metadata component>: selector=evo-checkbox; inputs=[errorsMessages, state]; outputs=[]; inOuts=[]
       #ext: EvoBaseControl <metadata reference>('')
-    EvoControlErrorComponent <metadata component>: selector=evo-control-error; inputs=[showCount, errors, errorsMessages]; outputs=[]; inOuts=[]('')
-    EvoInputComponent <metadata component>: selector=evo-input; ngContentSelectors=[[tooltip]]; inputs=[autocomplete, data-cp, prefix, icon, tooltip, autoFocus, type, errorsMessages, value, disabled, state, placeholder, mask]; outputs=[blur]; inOuts=[]
+    EvoControlErrorComponent <metadata component>: selector=evo-control-error; inputs=[showCount, errorsMessages, errors]; outputs=[]; inOuts=[]('')
+    EvoInputComponent <metadata component>: selector=evo-input; ngContentSelectors=[[tooltip]]; inputs=[errorsMessages, state, autocomplete, data-cp, prefix, icon, tooltip, value, disabled, autoFocus, placeholder, type, mask]; outputs=[blur]; inOuts=[]
       #ext: EvoBaseControl <metadata reference>('')
-    EvoBannerComponent <metadata component>: selector=evo-banner; inputs=[type, banner]; outputs=[bannerClick]; inOuts=[]('')
+    EvoBannerComponent <metadata component>: selector=evo-banner; inputs=[banner, type]; outputs=[bannerClick]; inOuts=[]('')
     EvoBanner <metadata class>
       #ext: ɵf <metadata reference>('')
     EvoBannerLocations <metadata object>
@@ -39,28 +39,28 @@ MetadataFile:evo-ui-kit.metadata.json
     EvoSidebarCloseTargets <metadata object>
       background: background <metadata string>('')
       button: button <metadata string>('')
-    EvoRadioGroupComponent <metadata component>: selector=evo-radio-group; inputs=[options, value, theme, state, errorsMessages, direction]; outputs=[]; inOuts=[]
+    EvoRadioGroupComponent <metadata component>: selector=evo-radio-group; inputs=[errorsMessages, state, options, value, theme, direction]; outputs=[]; inOuts=[]
       #ext: EvoBaseControl <metadata reference>('')
-    EvoAutoCompleteComponent <metadata component>: selector=evo-auto-complete; inputs=[type, errorsMessages, state]; outputs=[]; inOuts=[]
+    EvoAutoCompleteComponent <metadata component>: selector=evo-auto-complete; inputs=[errorsMessages, state, type]; outputs=[]; inOuts=[]
       #ext: EvoBaseControl <metadata reference>('')
     EvoControlLabelComponent <metadata component>: selector=evo-control-label; inputs=[label]; outputs=[]; inOuts=[]('')
-    EvoTableComponent <metadata component>: selector=evo-table; inputs=[stripe, data, showHeader]; outputs=[rowClick]; inOuts=[]('')
+    EvoTableComponent <metadata component>: selector=evo-table; inputs=[data, showHeader, stripe]; outputs=[rowClick]; inOuts=[]('')
     EvoTableRowClickEvent <metadata class>('')
-    EvoTableColumnComponent <metadata component>: selector=evo-table-column; inputs=[formatter, label, prop]; outputs=[]; inOuts=[]('')
+    EvoTableColumnComponent <metadata component>: selector=evo-table-column; inputs=[formatter, prop, label]; outputs=[]; inOuts=[]('')
     EvoSelectComponent <metadata component>: selector=evo-select; inputs=[style, label]; outputs=[]; inOuts=[]('')
     EvoTabsComponent <metadata component>: selector=evo-tabs; inputs=[selectedIndex]; outputs=[]; inOuts=[]('')
     EvoSegmentedBarComponent <metadata component>: selector=evo-segmented-bar; inputs=[labelShort, label]; outputs=[]; inOuts=[]('')
-    EvoSegmentedBarButtonComponent <metadata component>: selector=evo-segmented-bar-button; inputs=[name, state, color, value, errorsMessages]; outputs=[]; inOuts=[]
+    EvoSegmentedBarButtonComponent <metadata component>: selector=evo-segmented-bar-button; inputs=[errorsMessages, state, color, name, value]; outputs=[]; inOuts=[]
       #ext: EvoBaseControl <metadata reference>('')
     EvoDatepickerComponent <metadata component>: selector=evo-datepicker; inputs=[setDate, placeholder, config]; outputs=[]; inOuts=[]('')
-    EvoPopoverComponent <metadata component>: selector=evo-popover; ngContentSelectors=[[popover-body]]; inputs=[media-tablet-position, position]; outputs=[]; inOuts=[]('')
-    EvoRadioComponent <metadata component>: selector=evo-radio; inputs=[name, state, value, errorsMessages]; outputs=[]; inOuts=[]
+    EvoPopoverComponent <metadata component>: selector=evo-popover; ngContentSelectors=[[popover-body]]; inputs=[position, media-tablet-position]; outputs=[]; inOuts=[]('')
+    EvoRadioComponent <metadata component>: selector=evo-radio; inputs=[errorsMessages, state, name, value]; outputs=[]; inOuts=[]
       #ext: EvoBaseControl <metadata reference>('')
     EvoModalComponent <metadata component>: selector=evo-modal; inputs=[acceptText, id, declineText, type]; outputs=[]; inOuts=[]('')
     EvoModalTypes <metadata object>
       warning: warning <metadata string>('')
-    EvoSubmenuComponent <metadata component>: selector=evo-submenu; inputs=[items, offsetLeft]; outputs=[]; inOuts=[]('')
-    EvoPlusMinusComponent <metadata component>: selector=evo-plus-minus; inputs=[disabledMinus, id, disabledPlus]; outputs=[increase, decrease]; inOuts=[]('')
+    EvoSubmenuComponent <metadata component>: selector=evo-submenu; inputs=[offsetLeft, items]; outputs=[]; inOuts=[]('')
+    EvoPlusMinusComponent <metadata component>: selector=evo-plus-minus; inputs=[disabledMinus, disabledPlus, id]; outputs=[increase, decrease]; inOuts=[]('')
     EvoLoaderComponent <metadata component>: selector=evo-loader; inputs=[color]; outputs=[]; inOuts=[]('')
     EvoLoaderStyles <metadata object>
       darkblue: darkblue <metadata string>('')
@@ -175,7 +175,7 @@ MetadataFile:evo-ui-kit.metadata.json
         @no-res-angular/forms#FormsModule <metadata reference>('')
         @no-res-angular/forms#ReactiveFormsModule <metadata reference>('')
     ɵm <metadata component>: selector=evo-date-picker; inputs=[settings, style, label, constraints]; outputs=[onDateSelect, onOpen]; inOuts=[]('')
-    ɵn <metadata component>: selector=evo-date-picker-range; inputs=[value, style, state, errorsMessages]; outputs=[]; inOuts=[]
+    ɵn <metadata component>: selector=evo-date-picker-range; inputs=[errorsMessages, state, value, style]; outputs=[]; inOuts=[]
       #ext: EvoBaseControl <metadata reference>('')
     dateLocale <metadata pipe>('')
     dateEuroFormat <metadata pipe>('')

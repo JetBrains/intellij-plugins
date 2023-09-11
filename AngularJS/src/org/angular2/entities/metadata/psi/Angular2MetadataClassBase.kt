@@ -77,8 +77,8 @@ abstract class Angular2MetadataClassBase<Stub : Angular2MetadataClassStubBase<*>
 
   private val allMappings: Result<Pair<Map<String, String>, Map<String, String>>>
     get() {
-      val inputs = HashMap<String, String>()
-      val outputs = HashMap<String, String>()
+      val inputs = LinkedHashMap<String, String>()
+      val outputs = LinkedHashMap<String, String>()
       val classes = Stack<Angular2MetadataClassBase<out Angular2MetadataClassStubBase<*>>>()
       var current: Angular2MetadataClassBase<out Angular2MetadataClassStubBase<*>>? = this
       while (current != null) {

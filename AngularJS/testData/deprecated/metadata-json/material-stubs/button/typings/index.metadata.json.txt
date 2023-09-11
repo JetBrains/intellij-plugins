@@ -17,8 +17,8 @@ MetadataFile:index.metadata.json
       #expression: @angular/material/core#mixinColor <metadata reference>('')
     MatButton <metadata component>: selector=button[mat-button], button[mat-raised-button], button[mat-icon-button],
              button[mat-fab], button[mat-mini-fab], button[mat-stroked-button],
-             button[mat-flat-button]; exportAs=matButton; inputs=[disabled, disableRipple, color]; outputs=[]; inOuts=[]
+             button[mat-flat-button]; exportAs=matButton; inputs=[disableRipple, color, disabled]; outputs=[]; inOuts=[]
       #ext: _MatButtonMixinBase <metadata reference>('')
     MatAnchor <metadata component>: selector=a[mat-button], a[mat-raised-button], a[mat-icon-button], a[mat-fab],
-             a[mat-mini-fab], a[mat-stroked-button], a[mat-flat-button]; exportAs=matButton, matAnchor; inputs=[disabled, tabIndex, disableRipple, color]; outputs=[]; inOuts=[]
+             a[mat-mini-fab], a[mat-stroked-button], a[mat-flat-button]; exportAs=matButton, matAnchor; inputs=[disableRipple, color, disabled, tabIndex]; outputs=[]; inOuts=[]
       #ext: MatButton <metadata reference>('')

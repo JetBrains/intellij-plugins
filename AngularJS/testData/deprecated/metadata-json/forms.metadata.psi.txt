@@ -57,7 +57,7 @@ MetadataFile:forms.metadata.json
     ɵangular_packages_forms_forms_r <metadata object>
       provide: NG_VALUE_ACCESSOR <metadata reference>('')
       useExisting: SelectMultipleControlValueAccessor <metadata reference>('')
-    ɵangular_packages_forms_forms_s <metadata directive>: selector=option; inputs=[value, ngValue]; outputs=[]; inOuts=[]('')
+    ɵangular_packages_forms_forms_s <metadata directive>: selector=option; inputs=[ngValue, value]; outputs=[]; inOuts=[]('')
     ɵangular_packages_forms_forms_t <metadata object>
       provide: NG_VALIDATORS <metadata reference>('')
       useExisting: RequiredValidator <metadata reference>('')
@@ -97,7 +97,7 @@ MetadataFile:forms.metadata.json
     NgModelGroup <metadata directive>: selector=[ngModelGroup]; exportAs=ngModelGroup; inputs=[ngModelGroup]; outputs=[]; inOuts=[]
       #ext: AbstractFormGroupDirective <metadata reference>('')
     RadioControlValueAccessor <metadata directive>: selector=input[type=radio][formControlName],input[type=radio][formControl],input[type=radio][ngModel]; inputs=[name, formControlName, value]; outputs=[]; inOuts=[]('')
-    FormControlDirective <metadata directive>: selector=[formControl]; exportAs=ngForm; inputs=[ngModel, disabled, formControl]; outputs=[ngModelChange]; inOuts=[<ngModel,ngModelChange>]
+    FormControlDirective <metadata directive>: selector=[formControl]; exportAs=ngForm; inputs=[formControl, ngModel, disabled]; outputs=[ngModelChange]; inOuts=[<ngModel,ngModelChange>]
       #ext: NgControl <metadata reference>('')
     FormControlName <metadata directive>: selector=[formControlName]; inputs=[formControlName, ngModel, disabled]; outputs=[ngModelChange]; inOuts=[<ngModel,ngModelChange>]
       #ext: NgControl <metadata reference>('')
@@ -107,7 +107,7 @@ MetadataFile:forms.metadata.json
       #ext: ControlContainer <metadata reference>('')
     FormGroupName <metadata directive>: selector=[formGroupName]; inputs=[formGroupName]; outputs=[]; inOuts=[]
       #ext: AbstractFormGroupDirective <metadata reference>('')
-    NgSelectOption <metadata directive>: selector=option; inputs=[value, ngValue]; outputs=[]; inOuts=[]('')
+    NgSelectOption <metadata directive>: selector=option; inputs=[ngValue, value]; outputs=[]; inOuts=[]('')
     SelectControlValueAccessor <metadata directive>: selector=select:not([multiple])[formControlName],select:not([multiple])[formControl],select:not([multiple])[ngModel]; inputs=[compareWith]; outputs=[]; inOuts=[]('')
     SelectMultipleControlValueAccessor <metadata directive>: selector=select[multiple][formControlName],select[multiple][formControl],select[multiple][ngModel]; inputs=[compareWith]; outputs=[]; inOuts=[]('')
     CheckboxRequiredValidator <metadata directive>: selector=input[type=checkbox][required][formControlName],input[type=checkbox][required][formControl],input[type=checkbox][required][ngModel]; inputs=[required]; outputs=[]; inOuts=[]
