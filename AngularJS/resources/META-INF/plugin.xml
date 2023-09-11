@@ -204,10 +204,10 @@
     <moveFileHandler implementation="org.angular2.refactoring.Angular2MoveFileHandler" order="first"/>
 
     <liveTemplateContext contextId="Angular" implementation="org.angular2.liveTemplate.Angular2BaseLiveTemplateContextType" />
-    <liveTemplateContext contextId="ANGULAR_TOP_LEVEL_STATEMENT" baseContextId="Angular" implementation="org.angular2.liveTemplate.Angular2TopLevelStatementContextType" />
-    <liveTemplateContext contextId="ANGULAR_EXPRESSION" baseContextId="Angular" implementation="org.angular2.liveTemplate.Angular2ExpressionContextType" />
-    <liveTemplateContext contextId="ANGULAR_CLASS" baseContextId="Angular" implementation="org.angular2.liveTemplate.Angular2ClassContextType" />
-    <liveTemplateContext contextId="ANGULAR_STATEMENT" baseContextId="Angular" implementation="org.angular2.liveTemplate.Angular2StatementContextType" />
+    <liveTemplateContext contextId="ANGULAR_TOP_LEVEL_STATEMENT" baseContextId="Angular" implementation="com.intellij.lang.javascript.liveTemplates.typescript.TypeScriptTopLevelStatementContextType" />
+    <liveTemplateContext contextId="ANGULAR_EXPRESSION" baseContextId="Angular" implementation="com.intellij.lang.javascript.liveTemplates.typescript.TSExpressionContextType" />
+    <liveTemplateContext contextId="ANGULAR_CLASS" baseContextId="Angular" implementation="com.intellij.lang.javascript.liveTemplates.typescript.TSClassContextType" />
+    <liveTemplateContext contextId="ANGULAR_STATEMENT" baseContextId="Angular" implementation="com.intellij.lang.javascript.liveTemplates.typescript.TSStatementContextType" />
     <liveTemplateContext contextId="ANGULAR_TEMPLATE" baseContextId="Angular" implementation="org.angular2.liveTemplate.Angular2TemplateContextType" />
     <defaultLiveTemplates file="liveTemplates/Angular2"/>
 

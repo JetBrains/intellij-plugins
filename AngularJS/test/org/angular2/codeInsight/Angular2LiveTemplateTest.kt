@@ -1,7 +1,13 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight
 
+import com.intellij.codeInsight.template.Template
+import com.intellij.codeInsight.template.TemplateManager
+import com.intellij.codeInsight.template.impl.InvokeTemplateAction
 import com.intellij.codeInsight.template.impl.LiveTemplateCompletionContributor
+import com.intellij.codeInsight.template.impl.TemplateImpl
+import com.intellij.javascript.debugger.com.intellij.lang.javascript.waitCoroutinesBlocking
+import com.intellij.lang.ecmascript6.psi.impl.JSImportsCoroutineScope
 import com.intellij.lang.javascript.BaseJSCompletionTestCase
 import org.angular2.Angular2TestCase
 import org.angular2.codeInsight.Angular2LiveTemplateTest.TestMode.*
@@ -45,6 +51,23 @@ class Angular2LiveTemplateTest : Angular2TestCase("liveTemplate") {
 
   fun testClassNoCompletion() =
     doTest("a-route<caret>", "a-router-events", testMode = NO_COMPLETION)
+
+  fun testUnambiguousAutoImportEnabled() {
+    val template = TemplateManager.getInstance(project).createTemplate("", "", "injectable: Injectable;\$END\$")
+    template.setValue(Template.Property.USE_STATIC_IMPORT_IF_POSSIBLE, true)
+    doConfiguredTest(checkResult = true, additionalFiles = listOf("injectable.ts")) {
+      InvokeTemplateAction(template as TemplateImpl?, myFixture.editor, project, HashSet()).perform()
+      waitCoroutinesBlocking(JSImportsCoroutineScope.get())
+    }
+  }
+
+  fun testUnambiguousAutoImportDisabled() {
+    val template = TemplateManager.getInstance(project).createTemplate("", "", "injectable: Injectable;\$END\$")
+    doConfiguredTest(checkResult = true, additionalFiles = listOf("injectable.ts")) {
+      InvokeTemplateAction(template as TemplateImpl?, myFixture.editor, project, HashSet()).perform()
+      waitCoroutinesBlocking(JSImportsCoroutineScope.get())
+    }
+  }
 
   private fun doTest(fileContents: String, variant: String, testMode: TestMode = WITH_COMPLETION, extension: String = defaultExtension) =
     doConfiguredTest(fileContents = fileContents, extension = extension) {

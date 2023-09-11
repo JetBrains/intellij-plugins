@@ -326,7 +326,7 @@
       <option name="ANGULAR_TOP_LEVEL_STATEMENT" value="true" />
     </context>
   </template>
-  <template name="a-ctor-skip-self" value="constructor( @Optional() @SkipSelf() parentModule: $ModuleName$ {&#10;	if (parentModule) {&#10;		const msg = `$ModuleName$ has already been loaded. &#10;			Import $ModuleName$ once, only, in the root AppModule.`;&#10;		throw new Error(msg);&#10;	}&#10;}" 
+  <template name="a-ctor-skip-self" value="constructor( @Optional() @SkipSelf() parentModule: $ModuleName$ ) {&#10;	if (parentModule) {&#10;		const msg = `$ModuleName$ has already been loaded. &#10;			Import $ModuleName$ once, only, in the root AppModule.`;&#10;		throw new Error(msg);&#10;	}&#10;}"
             description="" 
             resource-bundle="messages.Angular2Bundle" key="livetemplate.description.angular2.a-ctor-skip-self"
             toReformat="true" toShortenFQNames="true">
