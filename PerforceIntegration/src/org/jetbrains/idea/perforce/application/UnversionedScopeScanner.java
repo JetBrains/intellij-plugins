@@ -10,6 +10,7 @@ import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vcs.changes.VcsDirtyScopeImpl;
 import com.intellij.openapi.vcs.changes.VcsIgnoreManager;
+import com.intellij.openapi.vcs.impl.VcsRootIterator;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.MultiMap;
@@ -42,7 +43,7 @@ public abstract class UnversionedScopeScanner {
     if (LOG.isDebugEnabled()) {
       LOG.debug("scope=" + dirtyFiles);
     }
-    MultiMap<P4Connection,FilePath> map = FileGrouper.distributePathsByConnection(dirtyFiles, myProject);
+    MultiMap<P4Connection, FilePath> map = FileGrouper.distributePathsByConnection(dirtyFiles, myProject);
     for (P4Connection connection : map.keySet()) {
       Collection<FilePath> files = map.get(connection);
 
@@ -137,10 +138,11 @@ public abstract class UnversionedScopeScanner {
     }
 
     final Set<VirtualFile> localFiles = new HashSet<>();
-    scope.iterateExistingInsideScope(file -> {
+    VcsRootIterator.iterateExistingInsideScope(scope, file -> {
       if (!file.isDirectory() && !skipPotentiallyIgnored(file)) {
         localFiles.add(file);
-      } else {
+      }
+      else {
         checkCanceled();
       }
       return true;
@@ -151,5 +153,4 @@ public abstract class UnversionedScopeScanner {
   private boolean skipPotentiallyIgnored(VirtualFile file) {
     return Registry.is("p4.ignore.all.potentially.ignored") && VcsIgnoreManager.getInstance(myProject).isPotentiallyIgnoredFile(file);
   }
-
 }
