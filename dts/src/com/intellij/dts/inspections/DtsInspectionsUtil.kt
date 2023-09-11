@@ -1,6 +1,7 @@
 package com.intellij.dts.inspections
 
 import com.intellij.codeInspection.InspectionManager
+import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.dts.DtsBundle
@@ -25,14 +26,16 @@ fun ProblemsHolder.registerError(
     bundleKey: @PropertyKey(resourceBundle = DtsBundle.BUNDLE) String,
     bundleParam: Any? = null,
     rangeInElement: TextRange? = null,
-) = registerProblem(this, ProblemHighlightType.GENERIC_ERROR, element, bundleKey, bundleParam, rangeInElement)
+    fix: LocalQuickFix? = null,
+) = registerProblem(this, ProblemHighlightType.GENERIC_ERROR, element, bundleKey, bundleParam, rangeInElement, fix)
 
 fun ProblemsHolder.registerWarning(
     element: PsiElement,
     bundleKey: @PropertyKey(resourceBundle = DtsBundle.BUNDLE) String,
     bundleParam: Any? = null,
     rangeInElement: TextRange? = null,
-) = registerProblem(this, ProblemHighlightType.WARNING, element, bundleKey, bundleParam, rangeInElement)
+    fix: LocalQuickFix? = null,
+) = registerProblem(this, ProblemHighlightType.WARNING, element, bundleKey, bundleParam, rangeInElement, fix)
 
 private fun registerProblem(
     holder: ProblemsHolder,
@@ -41,12 +44,14 @@ private fun registerProblem(
     bundleKey: @PropertyKey(resourceBundle = DtsBundle.BUNDLE) String,
     bundleParam: Any?,
     rangeInElement: TextRange?,
+    fix: LocalQuickFix?
 ) {
     val manager = InspectionManager.getInstance(element.project)
     val params = bundleParam?.let { arrayOf(it) } ?: emptyArray<Any>()
+    val fixes = fix?.let { arrayOf(it) } ?: emptyArray()
 
     val descriptor = manager.createProblemDescriptor(
-        element, rangeInElement, DtsBundle.message(bundleKey, *params), highlightType, holder.isOnTheFly
+        element, rangeInElement, DtsBundle.message(bundleKey, *params), highlightType, holder.isOnTheFly, *fixes
     )
 
     holder.registerProblem(descriptor)

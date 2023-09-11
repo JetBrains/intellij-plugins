@@ -32,7 +32,7 @@ object DtsUtil {
      * unproductive elements will be skipped (see isProductiveElement).
      */
     fun children(element: PsiElement, forward: Boolean = true, unfiltered: Boolean = false): Sequence<PsiElement> {
-        val start = if (forward) element.firstChild else element.lastChild
+        val start = if (forward) element.firstChild else element.lastChild ?: return emptySequence()
 
         val siblings = start.siblings(forward = forward)
         if (unfiltered) return siblings

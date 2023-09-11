@@ -150,7 +150,9 @@ COMMENT_C         = "/*"([^*]|"*"[^/])*"*/"
     {IDENTIFIER}                                    { popState(); return DtsTypes.NAME; }
     {PATH}                                          { return DtsTypes.PATH; }
 
-    {NAME}":" | [^]                                 { popState(); yypushback(yylength()); }
+    {LINE_WS}                                       { return TokenType.WHITE_SPACE; }
+
+    [^]                                             { popState(); yypushback(1); }
 }
 
 <WAITING_CELL> {

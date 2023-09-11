@@ -1,0 +1,4 @@
+&<error descr="Unexpected whitespace">   </error>label {
+    prop = &<error descr="Unexpected whitespace"> </error>label;
+};
+

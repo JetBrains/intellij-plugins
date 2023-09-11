@@ -2,9 +2,7 @@
 package com.intellij.dts.lang.psi;
 
 
-import com.intellij.dts.lang.stubs.impl.DtsRefNodeStub;
-
-public interface DtsRefNode extends com.intellij.dts.lang.psi.DtsNode.Ref, com.intellij.psi.StubBasedPsiElement<DtsRefNodeStub> {
+public interface DtsRefNode extends com.intellij.dts.lang.psi.DtsNode.Ref, com.intellij.psi.StubBasedPsiElement<com.intellij.dts.lang.stubs.impl.DtsRefNodeStub> {
 
   @org.jetbrains.annotations.Nullable
   com.intellij.dts.lang.psi.DtsNodeContent getNodeContent();

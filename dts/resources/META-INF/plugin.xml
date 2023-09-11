@@ -143,6 +143,12 @@
                 enabledByDefault="true"
                 level="ERROR"
                 implementationClass="com.intellij.dts.inspections.DtsBitsInspection"/>
+        <localInspection
+                language="DTS"
+                bundle="messages.DtsBundle" key="inspections.phandle_whitespace.display_name" groupKey="inspections.group"
+                enabledByDefault="true"
+                level="ERROR"
+                implementationClass="com.intellij.dts.inspections.DtsPHandleWhitespaceInspection"/>
 
         <!-- registry keys -->
         <registryKey

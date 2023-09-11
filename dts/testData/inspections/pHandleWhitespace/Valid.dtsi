@@ -1,0 +1,7 @@
+&label {
+    prop = &label;
+};
+
+&{/path/to/node} {
+    prop = &{/path/to/node};
+};
