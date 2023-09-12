@@ -1,16 +1,16 @@
 package com.intellij.aws.cloudformation.tests
 
-import org.apache.commons.lang.SystemUtils
-import org.apache.commons.lang.builder.ReflectionToStringBuilder
-import org.apache.commons.lang.builder.ToStringStyle
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder
+import org.apache.commons.lang3.builder.ToStringStyle
 
-class MyToStringStyle private constructor(internal var offset: Int, val excludedFields: Array<String>) : ToStringStyle() {
+
+class MyToStringStyle private constructor(private var offset: Int, private val excludedFields: Array<String>) : ToStringStyle() {
   private val indent = "  "
-  private val linesep = SystemUtils.LINE_SEPARATOR
+  private val linesep = System.lineSeparator()
 
   companion object {
     fun toString(obj: Any?, excludedFields: Array<String>, offset: Int = 0): String =
-        ReflectionToStringBuilder(obj, MyToStringStyle(offset, excludedFields)).setExcludeFieldNames(excludedFields).toString()
+        ReflectionToStringBuilder(obj, MyToStringStyle(offset, excludedFields)).setExcludeFieldNames(*excludedFields).toString()
   }
 
   init {

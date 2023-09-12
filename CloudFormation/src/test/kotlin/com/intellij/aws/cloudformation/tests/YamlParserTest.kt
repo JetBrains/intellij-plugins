@@ -2,7 +2,6 @@ package com.intellij.aws.cloudformation.tests
 
 import com.intellij.aws.cloudformation.CloudFormationParser
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
-import org.apache.commons.lang.SystemUtils
 import java.io.File
 
 class YamlParserTest : LightPlatformCodeInsightTestCase() {
@@ -19,7 +18,7 @@ class YamlParserTest : LightPlatformCodeInsightTestCase() {
     val parsed = CloudFormationParser.parse(file)
     TestUtil.checkContent(
         File(testDataPath, "$name.expected"),
-        TestUtil.renderProblems(file, parsed.problems) + SystemUtils.LINE_SEPARATOR + TestUtil.nodeToString(parsed.root)
+        TestUtil.renderProblems(file, parsed.problems) + System.lineSeparator() + TestUtil.nodeToString(parsed.root)
     )
   }
 
