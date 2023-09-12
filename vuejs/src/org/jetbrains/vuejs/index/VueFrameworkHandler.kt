@@ -49,6 +49,7 @@ import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 import org.jetbrains.vuejs.codeInsight.toAsset
+import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
 import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes
@@ -593,6 +594,16 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     return check(referenceName, hasQualifier)
   }
 
+  override fun useMoreAccurateTypes(element: PsiElement): Boolean {
+    if (element is JSProperty) {
+      // JSThisType is not resolved to a Vue Component in JS
+      return DialectDetector.isJavaScript(element) &&
+             isVueContext(element) &&
+             PsiTreeUtil.getContextOfType(element, true, JSProperty::class.java)?.name == DATA_PROP
+    }
+
+    return super.useMoreAccurateTypes(element)
+  }
 }
 
 //region UTILS

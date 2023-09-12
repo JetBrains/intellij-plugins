@@ -10,12 +10,10 @@ import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.types.JSTypeImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.context.hasPinia
-import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.lang.expr.VueExprMetaLanguage
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
@@ -23,21 +21,10 @@ import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.evaluateInjectedType
 import org.jetbrains.vuejs.model.findInjectForCall
 import org.jetbrains.vuejs.model.provides
-import org.jetbrains.vuejs.model.source.DATA_PROP
 import org.jetbrains.vuejs.model.source.INJECT_FUN
 
 class VueFrameworkSpecificHandler : JSFrameworkSpecificHandler {
-  override fun useMoreAccurateEvaluation(context: PsiElement): Boolean {
-    if (context is JSProperty) {
-      // JSThisType is not resolved to a Vue Component in JS
-      return DialectDetector.isJavaScript(context) &&
-             isVueContext(context) &&
-             PsiTreeUtil.getContextOfType(context, true, JSProperty::class.java)?.name == DATA_PROP &&
-             VueModelManager.findEnclosingComponent(context) != null
-    }
-
-    return hasPinia(context)
-  }
+  override fun useMoreAccurateEvaluation(context: PsiElement): Boolean = hasPinia(context)
 
   override fun shouldPreserveAlias(type: JSType): Boolean {
     return type is JSTypeImpl && type.getTypeText() == "DefineProps"
