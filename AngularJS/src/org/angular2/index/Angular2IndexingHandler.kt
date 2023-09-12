@@ -220,6 +220,7 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
       indexNames = Angular2EntityUtils.getDirectiveIndexNames(selector.trim { it <= ' ' })
     }
     val directive = JSImplicitElementImpl.Builder(directiveClass.name ?: selector ?: "<null>", directiveClass)
+      .forbidAstAccess()
       .setType(JSImplicitElement.Type.Class)
       .setUserStringWithData(this, ANGULAR2_DIRECTIVE_INDEX_USER_STRING, DIRECTIVE_TYPE + StringUtil.join(indexNames, "/"))
       .toImplicitElement()
