@@ -100,7 +100,7 @@
   </extensions>
   <actions>
     <action class="org.jetbrains.astro.CreateAstroComponentAction" id="CreateAstroComponent">
-      <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
+      <add-to-group group-id="NewWebDevelopment" anchor="before" relative-to-action="NewJavaScriptFile"/>
     </action>
   </actions>
 
