@@ -1,12 +1,9 @@
 
 CfnRootNode{
-  metadataNode=<null>
-  transformNode=<null>
-  parametersNode=<null>
-  mappingsNode=<null>
   conditionsNode=<null>
-  resourcesNode=<null>
   globalsNode=<null>
+  mappingsNode=<null>
+  metadataNode=<null>
   outputsNode=CfnOutputsNode{
     properties=[
       CfnOutputNode{
@@ -14,9 +11,6 @@ CfnRootNode{
           properties=[
             CfnNameValueNode{
               value=CfnFunctionNode{
-                name=CfnScalarValueNode{
-                  value=If
-                }
                 args=[
                   CfnScalarValueNode{
                     value=CreateProdResources
@@ -25,9 +19,6 @@ CfnRootNode{
                     value=c1.xlarge
                   },
                   CfnFunctionNode{
-                    name=CfnScalarValueNode{
-                      value=If
-                    }
                     args=[
                       CfnScalarValueNode{
                         value=CreateDevResources
@@ -39,8 +30,14 @@ CfnRootNode{
                         value=m1.small
                       }
                     ]
+                    name=CfnScalarValueNode{
+                      value=If
+                    }
                   }
                 ]
+                name=CfnScalarValueNode{
+                  value=If
+                }
               }
               name=CfnScalarValueNode{
                 value=Value
@@ -57,4 +54,7 @@ CfnRootNode{
       value=Outputs
     }
   }
+  parametersNode=<null>
+  resourcesNode=<null>
+  transformNode=<null>
 }

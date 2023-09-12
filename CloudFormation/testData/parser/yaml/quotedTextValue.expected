@@ -22,13 +22,10 @@ Outputs:
 0: Too many values
 
 CfnRootNode{
-  metadataNode=<null>
-  transformNode=<null>
-  parametersNode=<null>
-  mappingsNode=<null>
   conditionsNode=<null>
-  resourcesNode=<null>
   globalsNode=<null>
+  mappingsNode=<null>
+  metadataNode=<null>
   outputsNode=CfnOutputsNode{
     properties=[
       CfnOutputNode{
@@ -54,15 +51,15 @@ to a line feed, or 	 	non-content
           properties=[
             CfnNameValueNode{
               value=CfnFunctionNode{
-                name=CfnScalarValueNode{
-                  value=Sub
-                }
                 args=[
                   CfnScalarValueNode{
                     value=folded "to a space,
 to a line feed, or 	 	non-content
                   }
                 ]
+                name=CfnScalarValueNode{
+                  value=Sub
+                }
               }
               name=CfnScalarValueNode{
                 value=Value
@@ -79,14 +76,14 @@ to a line feed, or 	 	non-content
           properties=[
             CfnNameValueNode{
               value=CfnFunctionNode{
-                name=CfnScalarValueNode{
-                  value=Sub
-                }
                 args=[
                   CfnScalarValueNode{
                     value=aaa
                   }
                 ]
+                name=CfnScalarValueNode{
+                  value=Sub
+                }
               }
               name=CfnScalarValueNode{
                 value=Value
@@ -103,14 +100,14 @@ to a line feed, or 	 	non-content
           properties=[
             CfnNameValueNode{
               value=CfnFunctionNode{
-                name=CfnScalarValueNode{
-                  value=Sub
-                }
                 args=[
                   CfnScalarValueNode{
                     value=http://${WebServer.PublicDnsName}/wordpress
                   }
                 ]
+                name=CfnScalarValueNode{
+                  value=Sub
+                }
               }
               name=CfnScalarValueNode{
                 value=Value
@@ -144,14 +141,14 @@ to a line feed, or 	 	non-content
           properties=[
             CfnNameValueNode{
               value=CfnFunctionNode{
-                name=CfnScalarValueNode{
-                  value=Sub
-                }
                 args=[
                   CfnScalarValueNode{
                     value=ABC
                   }
                 ]
+                name=CfnScalarValueNode{
+                  value=Sub
+                }
               }
               name=CfnScalarValueNode{
                 value=Value
@@ -168,4 +165,7 @@ to a line feed, or 	 	non-content
       value=Outputs
     }
   }
+  parametersNode=<null>
+  resourcesNode=<null>
+  transformNode=<null>
 }

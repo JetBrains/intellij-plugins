@@ -1,50 +1,45 @@
 
 CfnRootNode{
-  metadataNode=<null>
-  transformNode=<null>
-  parametersNode=<null>
-  mappingsNode=<null>
   conditionsNode=<null>
+  globalsNode=<null>
+  mappingsNode=<null>
+  metadataNode=<null>
+  outputsNode=<null>
+  parametersNode=<null>
   resourcesNode=CfnResourcesNode{
     resources=[
       CfnResourceNode{
-        type=CfnResourceTypeNode{
-          value=CfnScalarValueNode{
-            value=AWS::EC2::Subnet
-          }
-          name=CfnScalarValueNode{
-            value=Type
-          }
-        }
+        condition=<null>
+        dependsOn=<null>
         properties=CfnResourcePropertiesNode{
           properties=[
             CfnResourcePropertyNode{
               value=CfnFunctionNode{
-                name=CfnScalarValueNode{
-                  value=Select
-                }
                 args=[
                   CfnScalarValueNode{
                     value=0
                   },
                   CfnFunctionNode{
-                    name=CfnScalarValueNode{
-                      value=GetAZs
-                    }
                     args=[
                       CfnFunctionNode{
-                        name=CfnScalarValueNode{
-                          value=Ref
-                        }
                         args=[
                           CfnScalarValueNode{
                             value=AWS::Region
                           }
                         ]
+                        name=CfnScalarValueNode{
+                          value=Ref
+                        }
                       }
                     ]
+                    name=CfnScalarValueNode{
+                      value=GetAZs
+                    }
                   }
                 ]
+                name=CfnScalarValueNode{
+                  value=Select
+                }
               }
               name=CfnScalarValueNode{
                 value=AvailabilityZone
@@ -55,8 +50,14 @@ CfnRootNode{
             value=Properties
           }
         }
-        condition=<null>
-        dependsOn=<null>
+        type=CfnResourceTypeNode{
+          value=CfnScalarValueNode{
+            value=AWS::EC2::Subnet
+          }
+          name=CfnScalarValueNode{
+            value=Type
+          }
+        }
         name=CfnScalarValueNode{
           value=Subnet
         }
@@ -66,6 +67,5 @@ CfnRootNode{
       value=Resources
     }
   }
-  globalsNode=<null>
-  outputsNode=<null>
+  transformNode=<null>
 }

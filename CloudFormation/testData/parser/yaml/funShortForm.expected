@@ -1,34 +1,9 @@
 
 CfnRootNode{
-  metadataNode=<null>
-  transformNode=<null>
-  parametersNode=<null>
-  mappingsNode=<null>
   conditionsNode=<null>
-  resourcesNode=CfnResourcesNode{
-    resources=[
-      CfnResourceNode{
-        type=CfnResourceTypeNode{
-          value=CfnScalarValueNode{
-            value=AWS::EC2::Instance
-          }
-          name=CfnScalarValueNode{
-            value=Type
-          }
-        }
-        properties=<null>
-        condition=<null>
-        dependsOn=<null>
-        name=CfnScalarValueNode{
-          value=WebServer
-        }
-      }
-    ]
-    name=CfnScalarValueNode{
-      value=Resources
-    }
-  }
   globalsNode=<null>
+  mappingsNode=<null>
+  metadataNode=<null>
   outputsNode=CfnOutputsNode{
     properties=[
       CfnOutputNode{
@@ -44,14 +19,14 @@ CfnRootNode{
             },
             CfnNameValueNode{
               value=CfnFunctionNode{
-                name=CfnScalarValueNode{
-                  value=GetAtt
-                }
                 args=[
                   CfnScalarValueNode{
                     value=WebServer.PublicIp
                   }
                 ]
+                name=CfnScalarValueNode{
+                  value=GetAtt
+                }
               }
               name=CfnScalarValueNode{
                 value=Value
@@ -76,21 +51,21 @@ CfnRootNode{
             },
             CfnNameValueNode{
               value=CfnFunctionNode{
-                name=CfnScalarValueNode{
-                  value=Base64
-                }
                 args=[
                   CfnFunctionNode{
-                    name=CfnScalarValueNode{
-                      value=Fn::Sub
-                    }
                     args=[
                       CfnScalarValueNode{
                         value=string
                       }
                     ]
+                    name=CfnScalarValueNode{
+                      value=Fn::Sub
+                    }
                   }
                 ]
+                name=CfnScalarValueNode{
+                  value=Base64
+                }
               }
               name=CfnScalarValueNode{
                 value=Value
@@ -115,21 +90,21 @@ CfnRootNode{
             },
             CfnNameValueNode{
               value=CfnFunctionNode{
-                name=CfnScalarValueNode{
-                  value=Fn::Base64
-                }
                 args=[
                   CfnFunctionNode{
-                    name=CfnScalarValueNode{
-                      value=Sub
-                    }
                     args=[
                       CfnScalarValueNode{
                         value=string
                       }
                     ]
+                    name=CfnScalarValueNode{
+                      value=Sub
+                    }
                   }
                 ]
+                name=CfnScalarValueNode{
+                  value=Fn::Base64
+                }
               }
               name=CfnScalarValueNode{
                 value=Value
@@ -154,14 +129,14 @@ CfnRootNode{
             },
             CfnNameValueNode{
               value=CfnFunctionNode{
-                name=CfnScalarValueNode{
-                  value=Sub
-                }
                 args=[
                   CfnScalarValueNode{
                     value=http://${WebServer.PublicDnsName}/wordpress
                   }
                 ]
+                name=CfnScalarValueNode{
+                  value=Sub
+                }
               }
               name=CfnScalarValueNode{
                 value=Value
@@ -178,4 +153,29 @@ CfnRootNode{
       value=Outputs
     }
   }
+  parametersNode=<null>
+  resourcesNode=CfnResourcesNode{
+    resources=[
+      CfnResourceNode{
+        condition=<null>
+        dependsOn=<null>
+        properties=<null>
+        type=CfnResourceTypeNode{
+          value=CfnScalarValueNode{
+            value=AWS::EC2::Instance
+          }
+          name=CfnScalarValueNode{
+            value=Type
+          }
+        }
+        name=CfnScalarValueNode{
+          value=WebServer
+        }
+      }
+    ]
+    name=CfnScalarValueNode{
+      value=Resources
+    }
+  }
+  transformNode=<null>
 }

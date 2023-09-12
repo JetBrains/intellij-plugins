@@ -1,33 +1,22 @@
 
 CfnRootNode{
-  metadataNode=<null>
-  transformNode=<null>
-  parametersNode=<null>
-  mappingsNode=<null>
   conditionsNode=<null>
+  globalsNode=<null>
+  mappingsNode=<null>
+  metadataNode=<null>
+  outputsNode=<null>
+  parametersNode=<null>
   resourcesNode=CfnResourcesNode{
     resources=[
       CfnResourceNode{
-        type=CfnResourceTypeNode{
-          value=CfnScalarValueNode{
-            value=AWS::EC2::Subnet
-          }
-          name=CfnScalarValueNode{
-            value=Type
-          }
-        }
+        condition=<null>
+        dependsOn=<null>
         properties=CfnResourcePropertiesNode{
           properties=[
             CfnResourcePropertyNode{
               value=CfnFunctionNode{
-                name=CfnScalarValueNode{
-                  value=Fn::Base64
-                }
                 args=[
                   CfnFunctionNode{
-                    name=CfnScalarValueNode{
-                      value=Sub
-                    }
                     args=[
                       CfnScalarValueNode{
                         value={
@@ -47,8 +36,14 @@ CfnRootNode{
                         ]
                       }
                     ]
+                    name=CfnScalarValueNode{
+                      value=Sub
+                    }
                   }
                 ]
+                name=CfnScalarValueNode{
+                  value=Fn::Base64
+                }
               }
               name=CfnScalarValueNode{
                 value=AvailabilityZone
@@ -59,8 +54,14 @@ CfnRootNode{
             value=Properties
           }
         }
-        condition=<null>
-        dependsOn=<null>
+        type=CfnResourceTypeNode{
+          value=CfnScalarValueNode{
+            value=AWS::EC2::Subnet
+          }
+          name=CfnScalarValueNode{
+            value=Type
+          }
+        }
         name=CfnScalarValueNode{
           value=Subnet
         }
@@ -70,6 +71,5 @@ CfnRootNode{
       value=Resources
     }
   }
-  globalsNode=<null>
-  outputsNode=<null>
+  transformNode=<null>
 }

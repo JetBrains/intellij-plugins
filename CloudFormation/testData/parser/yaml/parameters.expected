@@ -1,7 +1,10 @@
 
 CfnRootNode{
+  conditionsNode=<null>
+  globalsNode=<null>
+  mappingsNode=<null>
   metadataNode=<null>
-  transformNode=<null>
+  outputsNode=<null>
   parametersNode=CfnParametersNode{
     parameters=[
       CfnParameterNode{
@@ -58,9 +61,6 @@ CfnRootNode{
       value=Parameters
     }
   }
-  mappingsNode=<null>
-  conditionsNode=<null>
   resourcesNode=<null>
-  globalsNode=<null>
-  outputsNode=<null>
+  transformNode=<null>
 }
