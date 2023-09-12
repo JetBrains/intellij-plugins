@@ -1,4 +1,4 @@
-!as#null#5
-!in#null#5
-!instanceof#null#5
-!satisfies#null#5
+as (typeText=null; priority=5.0; bold)
+in (typeText=null; priority=5.0; bold)
+instanceof (typeText=null; priority=5.0; bold)
+satisfies (typeText=null; priority=5.0; bold)

@@ -39,7 +39,10 @@ class Angular2SvgTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.moveToOffsetBySignature("{{<caret>item.height}}")
     myFixture.completeBasic()
     assertEquals(StreamEx.of(
-      "!\$any#any#4", "!height#number#101", "!item#null#101", "!items#null#101"
+      "\$any (typeText='any'; priority=4.0; bold)",
+      "height (typeText='number'; priority=101.0; bold)",
+      "item (typeText=null; priority=101.0; bold)",
+      "items (typeText=null; priority=101.0; bold)"
     ).sorted().toList(),
                  ContainerUtil.sorted(AngularTestUtil.renderLookupItems(myFixture, true, true, true)))
   }
@@ -50,10 +53,16 @@ class Angular2SvgTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.configureByFiles("svg-completion.component.svg", "svg-completion.component.ts")
     myFixture.moveToOffsetBySignature("{{item.<caret>height}}")
     myFixture.completeBasic()
-    assertEquals(StreamEx.of(
-      "!foo#string#101", "!width#number#101", "constructor#Function#98", "hasOwnProperty#boolean#98", "isPrototypeOf#boolean#98",
-      "propertyIsEnumerable#boolean#98", "toLocaleString#string#98", "toString#string#98", "valueOf#Object#98"
-    ).sorted().toList(),
-                 ContainerUtil.sorted(AngularTestUtil.renderLookupItems(myFixture, true, true, false)))
+    assertEquals(listOf(
+      "foo (typeText='string'; priority=101.0; bold)",
+      "width (typeText='number'; priority=101.0; bold)",
+      "constructor (typeText='Function'; priority=98.0)",
+      "hasOwnProperty (typeText='boolean'; priority=98.0)",
+      "isPrototypeOf (typeText='boolean'; priority=98.0)",
+      "propertyIsEnumerable (typeText='boolean'; priority=98.0)",
+      "toLocaleString (typeText='string'; priority=98.0)",
+      "toString (typeText='string'; priority=98.0)",
+      "valueOf (typeText='Object'; priority=98.0)"
+    ).sorted(), AngularTestUtil.renderLookupItems(myFixture, true, true, false).sorted())
   }
 }

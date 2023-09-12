@@ -1,58 +1,58 @@
-cart/addItem#null
-cart/addItems#null
-cart/applyCoupon#null
-cart/authorize#null
-cart/breadcrumbs/set#null
-cart/checkProductStatus#null
-cart/clear#null
-cart/configureItem#null
-cart/connect#null
-cart/disconnect#null
-cart/findProductOption#null
-cart/getItem#null
-cart/getProductVariant#null
-cart/getTotals#null
-cart/load#null
-cart/merge#null
-cart/mergeClientItem#null
-cart/mergeClientItems#null
-cart/mergeServerItem#null
-cart/mergeServerItems#null
-cart/overrideServerTotals#null
-cart/pullMethods#null
-cart/refreshTotals#null
-cart/removeCoupon#null
-cart/removeItem#null
-cart/restoreQuantity#null
-cart/serverPull#null
-cart/setDefaultCheckoutMethods#null
-cart/stockSync#null
-cart/sync#null
-cart/syncPaymentMethods#null
-cart/syncShippingMethods#null
-cart/syncTotals#null
-cart/synchronizeCart#null
-cart/synchronizeServerItem#null
-cart/toggleMicrocart#null
-cart/updateClientItem#null
-cart/updateItem#null
-cart/updateQuantity#null
-cart/updateServerItem#null
-cart/updateShippingMethods#null
-cart/updateTotalsAfterMerge#null
-category/cacheProducts#null
-category/changeRouterFilterParameters#null
-category/configureProducts#null
-category/findCategories#null
-category/loadAvailableFiltersFrom#null
-category/loadCategories#null
-category/loadCategory#null
-category/loadCategoryBreadcrumbs#null
-category/loadCategoryFilters#null
-category/loadCategoryProducts#null
-category/loadMoreCategoryProducts#null
-category/processCategoryProducts#null
-category/registerCategoryProductsMapping#null
-category/switchSearchFilters#null
-resetSearchFilters#null
-resetUserInvalidateLock#null
+cart/addItem (typeText=null; priority=103.0; bold)
+cart/addItems (typeText=null; priority=103.0; bold)
+cart/applyCoupon (typeText=null; priority=103.0; bold)
+cart/authorize (typeText=null; priority=103.0; bold)
+cart/breadcrumbs/set (typeText=null; priority=103.0; bold)
+cart/checkProductStatus (typeText=null; priority=103.0; bold)
+cart/clear (typeText=null; priority=103.0; bold)
+cart/configureItem (typeText=null; priority=103.0; bold)
+cart/connect (typeText=null; priority=103.0; bold)
+cart/disconnect (typeText=null; priority=103.0; bold)
+cart/findProductOption (typeText=null; priority=103.0; bold)
+cart/getItem (typeText=null; priority=103.0; bold)
+cart/getProductVariant (typeText=null; priority=103.0; bold)
+cart/getTotals (typeText=null; priority=103.0; bold)
+cart/load (typeText=null; priority=103.0; bold)
+cart/merge (typeText=null; priority=103.0; bold)
+cart/mergeClientItem (typeText=null; priority=103.0; bold)
+cart/mergeClientItems (typeText=null; priority=103.0; bold)
+cart/mergeServerItem (typeText=null; priority=103.0; bold)
+cart/mergeServerItems (typeText=null; priority=103.0; bold)
+cart/overrideServerTotals (typeText=null; priority=103.0; bold)
+cart/pullMethods (typeText=null; priority=103.0; bold)
+cart/refreshTotals (typeText=null; priority=103.0; bold)
+cart/removeCoupon (typeText=null; priority=103.0; bold)
+cart/removeItem (typeText=null; priority=103.0; bold)
+cart/restoreQuantity (typeText=null; priority=103.0; bold)
+cart/serverPull (typeText=null; priority=103.0; bold)
+cart/setDefaultCheckoutMethods (typeText=null; priority=103.0; bold)
+cart/stockSync (typeText=null; priority=103.0; bold)
+cart/sync (typeText=null; priority=103.0; bold)
+cart/syncPaymentMethods (typeText=null; priority=103.0; bold)
+cart/syncShippingMethods (typeText=null; priority=103.0; bold)
+cart/syncTotals (typeText=null; priority=103.0; bold)
+cart/synchronizeCart (typeText=null; priority=103.0; bold)
+cart/synchronizeServerItem (typeText=null; priority=103.0; bold)
+cart/toggleMicrocart (typeText=null; priority=103.0; bold)
+cart/updateClientItem (typeText=null; priority=103.0; bold)
+cart/updateItem (typeText=null; priority=103.0; bold)
+cart/updateQuantity (typeText=null; priority=103.0; bold)
+cart/updateServerItem (typeText=null; priority=103.0; bold)
+cart/updateShippingMethods (typeText=null; priority=103.0; bold)
+cart/updateTotalsAfterMerge (typeText=null; priority=103.0; bold)
+category/cacheProducts (typeText=null; priority=103.0; bold)
+category/changeRouterFilterParameters (typeText=null; priority=103.0; bold)
+category/configureProducts (typeText=null; priority=103.0; bold)
+category/findCategories (typeText=null; priority=103.0; bold)
+category/loadAvailableFiltersFrom (typeText=null; priority=103.0; bold)
+category/loadCategories (typeText=null; priority=103.0; bold)
+category/loadCategory (typeText=null; priority=103.0; bold)
+category/loadCategoryBreadcrumbs (typeText=null; priority=103.0; bold)
+category/loadCategoryFilters (typeText=null; priority=103.0; bold)
+category/loadCategoryProducts (typeText=null; priority=103.0; bold)
+category/loadMoreCategoryProducts (typeText=null; priority=103.0; bold)
+category/processCategoryProducts (typeText=null; priority=103.0; bold)
+category/registerCategoryProductsMapping (typeText=null; priority=103.0; bold)
+category/switchSearchFilters (typeText=null; priority=103.0; bold)
+resetSearchFilters (typeText=null; priority=103.0; bold)
+resetUserInvalidateLock (typeText=null; priority=103.0; bold)

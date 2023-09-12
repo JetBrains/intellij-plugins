@@ -1,14 +1,14 @@
-cacheProducts#null
-changeRouterFilterParameters#null
-configureProducts#null
-findCategories#null
-loadAvailableFiltersFrom#null
-loadCategories#null
-loadCategory#null
-loadCategoryBreadcrumbs#null
-loadCategoryFilters#null
-loadCategoryProducts#null
-loadMoreCategoryProducts#null
-processCategoryProducts#null
-registerCategoryProductsMapping#null
-switchSearchFilters#null
+cacheProducts (typeText=null; priority=103.0; bold)
+changeRouterFilterParameters (typeText=null; priority=103.0; bold)
+configureProducts (typeText=null; priority=103.0; bold)
+findCategories (typeText=null; priority=103.0; bold)
+loadAvailableFiltersFrom (typeText=null; priority=103.0; bold)
+loadCategories (typeText=null; priority=103.0; bold)
+loadCategory (typeText=null; priority=103.0; bold)
+loadCategoryBreadcrumbs (typeText=null; priority=103.0; bold)
+loadCategoryFilters (typeText=null; priority=103.0; bold)
+loadCategoryProducts (typeText=null; priority=103.0; bold)
+loadMoreCategoryProducts (typeText=null; priority=103.0; bold)
+processCategoryProducts (typeText=null; priority=103.0; bold)
+registerCategoryProductsMapping (typeText=null; priority=103.0; bold)
+switchSearchFilters (typeText=null; priority=103.0; bold)

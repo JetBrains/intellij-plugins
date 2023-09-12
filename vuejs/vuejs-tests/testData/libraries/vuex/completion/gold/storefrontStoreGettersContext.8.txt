@@ -1,53 +1,53 @@
-!"cart/breadcrumbs/getBreadcrumbsCurrent"#null#98
-!"cart/breadcrumbs/getBreadcrumbsRoutes"#null#98
-!"cart/bypassCounter"#null#98
-!"cart/canSyncTotals"#null#98
-!"cart/canUpdateMethods"#null#98
-!"cart/getCartItems"#null#98
-!"cart/getCartToken"#null#98
-!"cart/getCoupon"#null#98
-!"cart/getCurrentCartHash"#null#98
-!"cart/getFirstPaymentMethod"#null#98
-!"cart/getFirstShippingMethod"#null#98
-!"cart/getIsAdding"#null#98
-!"cart/getIsMicroCartOpen"#null#98
-!"cart/getItemsTotalQuantity"#null#98
-!"cart/getLastCartHash"#null#98
-!"cart/getLastSyncDate"#null#98
-!"cart/getLastTotalsSyncDate"#null#98
-!"cart/getPaymentMethod"#null#98
-!"cart/getPaymentMethodCode"#null#98
-!"cart/getShippingMethod"#null#98
-!"cart/getShippingMethod2"#null#98
-!"cart/getShippingMethodCode"#null#98
-!"cart/getTotals"#null#98
-!"cart/isCartConnected"#null#98
-!"cart/isCartEmpty"#null#98
-!"cart/isCartHashChanged"#null#98
-!"cart/isCartHashChanged2"#null#98
-!"cart/isCartHashEmptyOrChanged"#null#98
-!"cart/isCartSyncEnabled"#null#98
-!"cart/isSyncRequired"#null#98
-!"cart/isTotalsSyncEnabled"#null#98
-!"cart/isTotalsSyncRequired"#null#98
-!"cart/isVirtualCart"#null#98
-!"category/getAvailableFilters"#null#98
-!"category/getAvailableFiltersFrom"#null#98
-!"category/getBreadcrumbs"#null#98
-!"category/getBreadcrumbsFor"#null#98
-!"category/getCategories"#null#98
-!"category/getCategoriesMap"#null#98
-!"category/getCategoryByParams"#null#98
-!"category/getCategoryFrom"#null#98
-!"category/getCategoryProducts"#null#98
-!"category/getCategoryProductsTotal"#null#98
-!"category/getCategorySearchProductsStats"#null#98
-!"category/getCurrentCategory"#null#98
-!"category/getCurrentFilters"#null#98
-!"category/getCurrentFiltersFrom"#null#98
-!"category/getCurrentSearchQuery"#null#98
-!"category/getFiltersMap"#null#98
-!"category/getNotFoundCategoryIds"#null#98
-!"category/getSystemFilterNames"#null#98
-!"category/hasActiveFilters"#null#98
-!getCurrentStoreView#null#101
+getCurrentStoreView (typeText=null; priority=101.0; bold)
+"cart/breadcrumbs/getBreadcrumbsCurrent" (typeText=null; priority=98.0; bold)
+"cart/breadcrumbs/getBreadcrumbsRoutes" (typeText=null; priority=98.0; bold)
+"cart/bypassCounter" (typeText=null; priority=98.0; bold)
+"cart/canSyncTotals" (typeText=null; priority=98.0; bold)
+"cart/canUpdateMethods" (typeText=null; priority=98.0; bold)
+"cart/getCartItems" (typeText=null; priority=98.0; bold)
+"cart/getCartToken" (typeText=null; priority=98.0; bold)
+"cart/getCoupon" (typeText=null; priority=98.0; bold)
+"cart/getCurrentCartHash" (typeText=null; priority=98.0; bold)
+"cart/getFirstPaymentMethod" (typeText=null; priority=98.0; bold)
+"cart/getFirstShippingMethod" (typeText=null; priority=98.0; bold)
+"cart/getIsAdding" (typeText=null; priority=98.0; bold)
+"cart/getIsMicroCartOpen" (typeText=null; priority=98.0; bold)
+"cart/getItemsTotalQuantity" (typeText=null; priority=98.0; bold)
+"cart/getLastCartHash" (typeText=null; priority=98.0; bold)
+"cart/getLastSyncDate" (typeText=null; priority=98.0; bold)
+"cart/getLastTotalsSyncDate" (typeText=null; priority=98.0; bold)
+"cart/getPaymentMethod" (typeText=null; priority=98.0; bold)
+"cart/getPaymentMethodCode" (typeText=null; priority=98.0; bold)
+"cart/getShippingMethod" (typeText=null; priority=98.0; bold)
+"cart/getShippingMethod2" (typeText=null; priority=98.0; bold)
+"cart/getShippingMethodCode" (typeText=null; priority=98.0; bold)
+"cart/getTotals" (typeText=null; priority=98.0; bold)
+"cart/isCartConnected" (typeText=null; priority=98.0; bold)
+"cart/isCartEmpty" (typeText=null; priority=98.0; bold)
+"cart/isCartHashChanged" (typeText=null; priority=98.0; bold)
+"cart/isCartHashChanged2" (typeText=null; priority=98.0; bold)
+"cart/isCartHashEmptyOrChanged" (typeText=null; priority=98.0; bold)
+"cart/isCartSyncEnabled" (typeText=null; priority=98.0; bold)
+"cart/isSyncRequired" (typeText=null; priority=98.0; bold)
+"cart/isTotalsSyncEnabled" (typeText=null; priority=98.0; bold)
+"cart/isTotalsSyncRequired" (typeText=null; priority=98.0; bold)
+"cart/isVirtualCart" (typeText=null; priority=98.0; bold)
+"category/getAvailableFilters" (typeText=null; priority=98.0; bold)
+"category/getAvailableFiltersFrom" (typeText=null; priority=98.0; bold)
+"category/getBreadcrumbs" (typeText=null; priority=98.0; bold)
+"category/getBreadcrumbsFor" (typeText=null; priority=98.0; bold)
+"category/getCategories" (typeText=null; priority=98.0; bold)
+"category/getCategoriesMap" (typeText=null; priority=98.0; bold)
+"category/getCategoryByParams" (typeText=null; priority=98.0; bold)
+"category/getCategoryFrom" (typeText=null; priority=98.0; bold)
+"category/getCategoryProducts" (typeText=null; priority=98.0; bold)
+"category/getCategoryProductsTotal" (typeText=null; priority=98.0; bold)
+"category/getCategorySearchProductsStats" (typeText=null; priority=98.0; bold)
+"category/getCurrentCategory" (typeText=null; priority=98.0; bold)
+"category/getCurrentFilters" (typeText=null; priority=98.0; bold)
+"category/getCurrentFiltersFrom" (typeText=null; priority=98.0; bold)
+"category/getCurrentSearchQuery" (typeText=null; priority=98.0; bold)
+"category/getFiltersMap" (typeText=null; priority=98.0; bold)
+"category/getNotFoundCategoryIds" (typeText=null; priority=98.0; bold)
+"category/getSystemFilterNames" (typeText=null; priority=98.0; bold)
+"category/hasActiveFilters" (typeText=null; priority=98.0; bold)

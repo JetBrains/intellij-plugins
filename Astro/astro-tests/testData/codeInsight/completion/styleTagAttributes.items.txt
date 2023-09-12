@@ -1,10 +1,10 @@
-media#null#50
-type#null#50
-define:vars#null#10
-is:inline#null#10
-is:global#null#10
-class:list#null#10
-client:#null#10
-set:html#null#10
-set:text#null#10
-is:raw#null#1
+media (typeText=null; priority=50.0)
+type (typeText=null; priority=50.0)
+define:vars (typeText=null; priority=10.0; typeGreyed)
+is:inline (typeText=null; priority=10.0; typeGreyed)
+is:global (typeText=null; priority=10.0; typeGreyed)
+class:list (typeText=null; priority=10.0; typeGreyed)
+client: (typeText=null; priority=10.0; typeGreyed)
+set:html (typeText=null; priority=10.0; typeGreyed)
+set:text (typeText=null; priority=10.0; typeGreyed)
+is:raw (typeText=null; priority=1.0; typeGreyed)

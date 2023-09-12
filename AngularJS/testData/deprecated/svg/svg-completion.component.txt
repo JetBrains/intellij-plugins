@@ -1,47 +1,47 @@
-ng-container#@angular/core#10
-ng-template#@angular/core#10
-a#null#1
-altGlyphDef#null#1
-animate#null#1
-animateColor#null#1
-animateMotion#null#1
-animateTransform#null#1
-arc#null#1
-circle#null#1
-clipPath#null#1
-color-profile#null#1
-cursor#null#1
-defs#null#1
-desc#null#1
-ellipse#null#1
-extended#null#1
-filter#null#1
-font#null#1
-font-face#null#1
-foreignObject#null#1
-g#null#1
-image#null#1
-line#null#1
-linearGradient#null#1
-locator#null#1
-marker#null#1
-mask#null#1
-metadata#null#1
-path#null#1
-pattern#null#1
-polygon#null#1
-polyline#null#1
-radialGradient#null#1
-rect#null#1
-resource#null#1
-script#null#1
-set#null#1
-simple#null#1
-style#null#1
-svg#null#1
-switch#null#1
-symbol#null#1
-text#null#1
-title#null#1
-use#null#1
-view#null#1
+ng-container (typeText='@angular/core'; priority=10.0; typeGreyed)
+ng-template (typeText='@angular/core'; priority=10.0; typeGreyed)
+a (typeText=null; priority=1.0)
+altGlyphDef (typeText=null; priority=1.0)
+animate (typeText=null; priority=1.0)
+animateColor (typeText=null; priority=1.0)
+animateMotion (typeText=null; priority=1.0)
+animateTransform (typeText=null; priority=1.0)
+arc (typeText=null; priority=1.0)
+circle (typeText=null; priority=1.0)
+clipPath (typeText=null; priority=1.0)
+color-profile (typeText=null; priority=1.0)
+cursor (typeText=null; priority=1.0)
+defs (typeText=null; priority=1.0)
+desc (typeText=null; priority=1.0)
+ellipse (typeText=null; priority=1.0)
+extended (typeText=null; priority=1.0)
+filter (typeText=null; priority=1.0)
+font (typeText=null; priority=1.0)
+font-face (typeText=null; priority=1.0)
+foreignObject (typeText=null; priority=1.0)
+g (typeText=null; priority=1.0)
+image (typeText=null; priority=1.0)
+line (typeText=null; priority=1.0)
+linearGradient (typeText=null; priority=1.0)
+locator (typeText=null; priority=1.0)
+marker (typeText=null; priority=1.0)
+mask (typeText=null; priority=1.0)
+metadata (typeText=null; priority=1.0)
+path (typeText=null; priority=1.0)
+pattern (typeText=null; priority=1.0)
+polygon (typeText=null; priority=1.0)
+polyline (typeText=null; priority=1.0)
+radialGradient (typeText=null; priority=1.0)
+rect (typeText=null; priority=1.0)
+resource (typeText=null; priority=1.0)
+script (typeText=null; priority=1.0)
+set (typeText=null; priority=1.0)
+simple (typeText=null; priority=1.0)
+style (typeText=null; priority=1.0)
+svg (typeText=null; priority=1.0)
+switch (typeText=null; priority=1.0)
+symbol (typeText=null; priority=1.0)
+text (typeText=null; priority=1.0)
+title (typeText=null; priority=1.0)
+use (typeText=null; priority=1.0)
+view (typeText=null; priority=1.0)

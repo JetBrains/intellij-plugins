@@ -1,19 +1,19 @@
-getAvailableFilters#null
-getAvailableFiltersFrom#null
-getBreadcrumbs#null
-getBreadcrumbsFor#null
-getCategories#null
-getCategoriesMap#null
-getCategoryByParams#null
-getCategoryFrom#null
-getCategoryProducts#null
-getCategoryProductsTotal#null
-getCategorySearchProductsStats#null
-getCurrentCategory#null
-getCurrentFilters#null
-getCurrentFiltersFrom#null
-getCurrentSearchQuery#null
-getFiltersMap#null
-getNotFoundCategoryIds#null
-getSystemFilterNames#null
-hasActiveFilters#null
+getAvailableFilters (typeText=null)
+getAvailableFiltersFrom (typeText=null)
+getBreadcrumbs (typeText=null)
+getBreadcrumbsFor (typeText=null)
+getCategories (typeText=null)
+getCategoriesMap (typeText=null)
+getCategoryByParams (typeText=null)
+getCategoryFrom (typeText=null)
+getCategoryProducts (typeText=null)
+getCategoryProductsTotal (typeText=null)
+getCategorySearchProductsStats (typeText=null)
+getCurrentCategory (typeText=null)
+getCurrentFilters (typeText=null)
+getCurrentFiltersFrom (typeText=null)
+getCurrentSearchQuery (typeText=null)
+getFiltersMap (typeText=null)
+getNotFoundCategoryIds (typeText=null)
+getSystemFilterNames (typeText=null)
+hasActiveFilters (typeText=null)

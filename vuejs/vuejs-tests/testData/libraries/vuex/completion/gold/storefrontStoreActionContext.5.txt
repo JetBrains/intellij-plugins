@@ -1,19 +1,19 @@
-getAvailableFilters#null
-getAvailableFiltersFrom#null
-getBreadcrumbs#null
-getBreadcrumbsFor#null
-getCategories#null
-getCategoriesMap#null
-getCategoryByParams#null
-getCategoryFrom#null
-getCategoryProducts#null
-getCategoryProductsTotal#null
-getCategorySearchProductsStats#null
-getCurrentCategory#null
-getCurrentFilters#null
-getCurrentFiltersFrom#null
-getCurrentSearchQuery#null
-getFiltersMap#null
-getNotFoundCategoryIds#null
-getSystemFilterNames#null
-hasActiveFilters#null
+getAvailableFilters (typeText=null; priority=103.0; bold)
+getAvailableFiltersFrom (typeText=null; priority=103.0; bold)
+getBreadcrumbs (typeText=null; priority=103.0; bold)
+getBreadcrumbsFor (typeText=null; priority=103.0; bold)
+getCategories (typeText=null; priority=103.0; bold)
+getCategoriesMap (typeText=null; priority=103.0; bold)
+getCategoryByParams (typeText=null; priority=103.0; bold)
+getCategoryFrom (typeText=null; priority=103.0; bold)
+getCategoryProducts (typeText=null; priority=103.0; bold)
+getCategoryProductsTotal (typeText=null; priority=103.0; bold)
+getCategorySearchProductsStats (typeText=null; priority=103.0; bold)
+getCurrentCategory (typeText=null; priority=103.0; bold)
+getCurrentFilters (typeText=null; priority=103.0; bold)
+getCurrentFiltersFrom (typeText=null; priority=103.0; bold)
+getCurrentSearchQuery (typeText=null; priority=103.0; bold)
+getFiltersMap (typeText=null; priority=103.0; bold)
+getNotFoundCategoryIds (typeText=null; priority=103.0; bold)
+getSystemFilterNames (typeText=null; priority=103.0; bold)
+hasActiveFilters (typeText=null; priority=103.0; bold)

@@ -6,7 +6,7 @@ package org.angular2
 
 import org.angular2.cli.Angular2BlueprintListTest
 import org.angular2.cli.Angular2ConfigTest
-import org.angular2.cli.Angular2ContextTest
+import org.angular2.cli.Angular2CliContextTest
 import org.angular2.codeInsight.*
 import org.angular2.codeInsight.deprecated.*
 import org.angular2.codeInsight.deprecated.Angular2ComponentDeclarationNavigationTest
@@ -72,7 +72,7 @@ import org.junit.runners.Suite
   Angular2MoveTest::class,
   Angular2RenameTest::class,
   Angular2ConfigTest::class,
-  Angular2ContextTest::class,
+  Angular2CliContextTest::class,
   Angular2LiveTemplateTest::class,
   Angular2ExtractComponentTest::class,
   Angular2StructureViewTest::class,

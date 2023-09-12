@@ -1,42 +1,42 @@
-!"addItem"#null#103
-!"addItems"#null#103
-!"applyCoupon"#null#103
-!"authorize"#null#103
-!"breadcrumbs/set"#null#103
-!"checkProductStatus"#null#103
-!"clear"#null#103
-!"configureItem"#null#103
-!"connect"#null#103
-!"disconnect"#null#103
-!"findProductOption"#null#103
-!"getItem"#null#103
-!"getProductVariant"#null#103
-!"getTotals"#null#103
-!"load"#null#103
-!"merge"#null#103
-!"mergeClientItem"#null#103
-!"mergeClientItems"#null#103
-!"mergeServerItem"#null#103
-!"mergeServerItems"#null#103
-!"overrideServerTotals"#null#103
-!"pullMethods"#null#103
-!"refreshTotals"#null#103
-!"removeCoupon"#null#103
-!"removeItem"#null#103
-!"restoreQuantity"#null#103
-!"serverPull"#null#103
-!"setDefaultCheckoutMethods"#null#103
-!"stockSync"#null#103
-!"sync"#null#103
-!"syncPaymentMethods"#null#103
-!"syncShippingMethods"#null#103
-!"syncTotals"#null#103
-!"synchronizeCart"#null#103
-!"synchronizeServerItem"#null#103
-!"toggleMicrocart"#null#103
-!"updateClientItem"#null#103
-!"updateItem"#null#103
-!"updateQuantity"#null#103
-!"updateServerItem"#null#103
-!"updateShippingMethods"#null#103
-!"updateTotalsAfterMerge"#null#103
+"addItem" (typeText=null; priority=103.0; bold)
+"addItems" (typeText=null; priority=103.0; bold)
+"applyCoupon" (typeText=null; priority=103.0; bold)
+"authorize" (typeText=null; priority=103.0; bold)
+"breadcrumbs/set" (typeText=null; priority=103.0; bold)
+"checkProductStatus" (typeText=null; priority=103.0; bold)
+"clear" (typeText=null; priority=103.0; bold)
+"configureItem" (typeText=null; priority=103.0; bold)
+"connect" (typeText=null; priority=103.0; bold)
+"disconnect" (typeText=null; priority=103.0; bold)
+"findProductOption" (typeText=null; priority=103.0; bold)
+"getItem" (typeText=null; priority=103.0; bold)
+"getProductVariant" (typeText=null; priority=103.0; bold)
+"getTotals" (typeText=null; priority=103.0; bold)
+"load" (typeText=null; priority=103.0; bold)
+"merge" (typeText=null; priority=103.0; bold)
+"mergeClientItem" (typeText=null; priority=103.0; bold)
+"mergeClientItems" (typeText=null; priority=103.0; bold)
+"mergeServerItem" (typeText=null; priority=103.0; bold)
+"mergeServerItems" (typeText=null; priority=103.0; bold)
+"overrideServerTotals" (typeText=null; priority=103.0; bold)
+"pullMethods" (typeText=null; priority=103.0; bold)
+"refreshTotals" (typeText=null; priority=103.0; bold)
+"removeCoupon" (typeText=null; priority=103.0; bold)
+"removeItem" (typeText=null; priority=103.0; bold)
+"restoreQuantity" (typeText=null; priority=103.0; bold)
+"serverPull" (typeText=null; priority=103.0; bold)
+"setDefaultCheckoutMethods" (typeText=null; priority=103.0; bold)
+"stockSync" (typeText=null; priority=103.0; bold)
+"sync" (typeText=null; priority=103.0; bold)
+"syncPaymentMethods" (typeText=null; priority=103.0; bold)
+"syncShippingMethods" (typeText=null; priority=103.0; bold)
+"syncTotals" (typeText=null; priority=103.0; bold)
+"synchronizeCart" (typeText=null; priority=103.0; bold)
+"synchronizeServerItem" (typeText=null; priority=103.0; bold)
+"toggleMicrocart" (typeText=null; priority=103.0; bold)
+"updateClientItem" (typeText=null; priority=103.0; bold)
+"updateItem" (typeText=null; priority=103.0; bold)
+"updateQuantity" (typeText=null; priority=103.0; bold)
+"updateServerItem" (typeText=null; priority=103.0; bold)
+"updateShippingMethods" (typeText=null; priority=103.0; bold)
+"updateTotalsAfterMerge" (typeText=null; priority=103.0; bold)

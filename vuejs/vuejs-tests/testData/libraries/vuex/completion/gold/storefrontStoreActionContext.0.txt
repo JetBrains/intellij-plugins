@@ -1,6 +1,6 @@
-!getters#null#101
-!rootGetters#null#101
-!rootState#null#101
-!state#null#101
-!dispatch#Dispatch#101
-!commit#Commit#101
+commit (typeText='Commit'; priority=101.0; bold)
+dispatch (typeText='Dispatch'; priority=101.0; bold)
+getters (typeText=null; priority=101.0; bold)
+rootGetters (typeText=null; priority=101.0; bold)
+rootState (typeText=null; priority=101.0; bold)
+state (typeText=null; priority=101.0; bold)

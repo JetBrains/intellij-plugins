@@ -1,53 +1,53 @@
-cart/breadcrumbs/getBreadcrumbsCurrent#null
-cart/breadcrumbs/getBreadcrumbsRoutes#null
-cart/bypassCounter#null
-cart/canSyncTotals#null
-cart/canUpdateMethods#null
-cart/getCartItems#null
-cart/getCartToken#null
-cart/getCoupon#null
-cart/getCurrentCartHash#null
-cart/getFirstPaymentMethod#null
-cart/getFirstShippingMethod#null
-cart/getIsAdding#null
-cart/getIsMicroCartOpen#null
-cart/getItemsTotalQuantity#null
-cart/getLastCartHash#null
-cart/getLastSyncDate#null
-cart/getLastTotalsSyncDate#null
-cart/getPaymentMethod#null
-cart/getPaymentMethodCode#null
-cart/getShippingMethod#null
-cart/getShippingMethod2#null
-cart/getShippingMethodCode#null
-cart/getTotals#null
-cart/isCartConnected#null
-cart/isCartEmpty#null
-cart/isCartHashChanged#null
-cart/isCartHashChanged2#null
-cart/isCartHashEmptyOrChanged#null
-cart/isCartSyncEnabled#null
-cart/isSyncRequired#null
-cart/isTotalsSyncEnabled#null
-cart/isTotalsSyncRequired#null
-cart/isVirtualCart#null
-category/getAvailableFilters#null
-category/getAvailableFiltersFrom#null
-category/getBreadcrumbs#null
-category/getBreadcrumbsFor#null
-category/getCategories#null
-category/getCategoriesMap#null
-category/getCategoryByParams#null
-category/getCategoryFrom#null
-category/getCategoryProducts#null
-category/getCategoryProductsTotal#null
-category/getCategorySearchProductsStats#null
-category/getCurrentCategory#null
-category/getCurrentFilters#null
-category/getCurrentFiltersFrom#null
-category/getCurrentSearchQuery#null
-category/getFiltersMap#null
-category/getNotFoundCategoryIds#null
-category/getSystemFilterNames#null
-category/hasActiveFilters#null
-getCurrentStoreView#null
+cart/breadcrumbs/getBreadcrumbsCurrent (typeText=null)
+cart/breadcrumbs/getBreadcrumbsRoutes (typeText=null)
+cart/bypassCounter (typeText=null)
+cart/canSyncTotals (typeText=null)
+cart/canUpdateMethods (typeText=null)
+cart/getCartItems (typeText=null)
+cart/getCartToken (typeText=null)
+cart/getCoupon (typeText=null)
+cart/getCurrentCartHash (typeText=null)
+cart/getFirstPaymentMethod (typeText=null)
+cart/getFirstShippingMethod (typeText=null)
+cart/getIsAdding (typeText=null)
+cart/getIsMicroCartOpen (typeText=null)
+cart/getItemsTotalQuantity (typeText=null)
+cart/getLastCartHash (typeText=null)
+cart/getLastSyncDate (typeText=null)
+cart/getLastTotalsSyncDate (typeText=null)
+cart/getPaymentMethod (typeText=null)
+cart/getPaymentMethodCode (typeText=null)
+cart/getShippingMethod (typeText=null)
+cart/getShippingMethod2 (typeText=null)
+cart/getShippingMethodCode (typeText=null)
+cart/getTotals (typeText=null)
+cart/isCartConnected (typeText=null)
+cart/isCartEmpty (typeText=null)
+cart/isCartHashChanged (typeText=null)
+cart/isCartHashChanged2 (typeText=null)
+cart/isCartHashEmptyOrChanged (typeText=null)
+cart/isCartSyncEnabled (typeText=null)
+cart/isSyncRequired (typeText=null)
+cart/isTotalsSyncEnabled (typeText=null)
+cart/isTotalsSyncRequired (typeText=null)
+cart/isVirtualCart (typeText=null)
+category/getAvailableFilters (typeText=null)
+category/getAvailableFiltersFrom (typeText=null)
+category/getBreadcrumbs (typeText=null)
+category/getBreadcrumbsFor (typeText=null)
+category/getCategories (typeText=null)
+category/getCategoriesMap (typeText=null)
+category/getCategoryByParams (typeText=null)
+category/getCategoryFrom (typeText=null)
+category/getCategoryProducts (typeText=null)
+category/getCategoryProductsTotal (typeText=null)
+category/getCategorySearchProductsStats (typeText=null)
+category/getCurrentCategory (typeText=null)
+category/getCurrentFilters (typeText=null)
+category/getCurrentFiltersFrom (typeText=null)
+category/getCurrentSearchQuery (typeText=null)
+category/getFiltersMap (typeText=null)
+category/getNotFoundCategoryIds (typeText=null)
+category/getSystemFilterNames (typeText=null)
+category/hasActiveFilters (typeText=null)
+getCurrentStoreView (typeText=null)

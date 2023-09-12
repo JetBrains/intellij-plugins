@@ -1,2 +1,2 @@
-!addProductToCart#null#103
-!checkout#null#103
+addProductToCart (typeText=null; priority=103.0; bold)
+checkout (typeText=null; priority=103.0; bold)

@@ -1,3 +1,3 @@
-cart#null
-cart/breadcrumbs#null
-category#null
+cart (typeText=null)
+cart/breadcrumbs (typeText=null)
+category (typeText=null)

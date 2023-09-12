@@ -1,1 +1,1 @@
-myVuexModule/setProp1#null
+myVuexModule/setProp1 (typeText=null)

@@ -1,19 +1,19 @@
-!getAvailableFilters#null#101
-!getAvailableFiltersFrom#null#101
-!getBreadcrumbs#null#101
-!getBreadcrumbsFor#null#101
-!getCategories#null#101
-!getCategoriesMap#null#101
-!getCategoryByParams#null#101
-!getCategoryFrom#null#101
-!getCategoryProducts#null#101
-!getCategoryProductsTotal#null#101
-!getCategorySearchProductsStats#null#101
-!getCurrentCategory#null#101
-!getCurrentFilters#null#101
-!getCurrentFiltersFrom#null#101
-!getCurrentSearchQuery#null#101
-!getFiltersMap#null#101
-!getNotFoundCategoryIds#null#101
-!getSystemFilterNames#null#101
-!hasActiveFilters#null#101
+getAvailableFilters (typeText=null; priority=101.0; bold)
+getAvailableFiltersFrom (typeText=null; priority=101.0; bold)
+getBreadcrumbs (typeText=null; priority=101.0; bold)
+getBreadcrumbsFor (typeText=null; priority=101.0; bold)
+getCategories (typeText=null; priority=101.0; bold)
+getCategoriesMap (typeText=null; priority=101.0; bold)
+getCategoryByParams (typeText=null; priority=101.0; bold)
+getCategoryFrom (typeText=null; priority=101.0; bold)
+getCategoryProducts (typeText=null; priority=101.0; bold)
+getCategoryProductsTotal (typeText=null; priority=101.0; bold)
+getCategorySearchProductsStats (typeText=null; priority=101.0; bold)
+getCurrentCategory (typeText=null; priority=101.0; bold)
+getCurrentFilters (typeText=null; priority=101.0; bold)
+getCurrentFiltersFrom (typeText=null; priority=101.0; bold)
+getCurrentSearchQuery (typeText=null; priority=101.0; bold)
+getFiltersMap (typeText=null; priority=101.0; bold)
+getNotFoundCategoryIds (typeText=null; priority=101.0; bold)
+getSystemFilterNames (typeText=null; priority=101.0; bold)
+hasActiveFilters (typeText=null; priority=101.0; bold)

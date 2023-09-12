@@ -1,1 +1,1 @@
-setProp1#null
+setProp1 (typeText=null; priority=103.0; bold)

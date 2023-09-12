@@ -1,10 +1,10 @@
-!body#string#101
-!href#string#101
-!title#string#101
-constructor#Function#98
-hasOwnProperty#boolean#98
-isPrototypeOf#boolean#98
-propertyIsEnumerable#boolean#98
-toLocaleString#string#98
-toString#string#98
-valueOf#Object#98
+body (typeText='string'; priority=101.0; bold)
+href (typeText='string'; priority=101.0; bold)
+title (typeText='string'; priority=101.0; bold)
+constructor (typeText='Function'; priority=98.0)
+hasOwnProperty (typeText='boolean'; priority=98.0)
+isPrototypeOf (typeText='boolean'; priority=98.0)
+propertyIsEnumerable (typeText='boolean'; priority=98.0)
+toLocaleString (typeText='string'; priority=98.0)
+toString (typeText='string'; priority=98.0)
+valueOf (typeText='Object'; priority=98.0)

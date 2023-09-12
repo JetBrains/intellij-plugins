@@ -1,45 +1,45 @@
-!"__DEMO_MODE__"#false#103
-!"attribute"#null#103
-!"cart"#null#103
-!"cart/breadcrumbs"#null#103
-!"cart/breadcrumbs/current"#null#103
-!"cart/breadcrumbs/routes"#any[]#103
-!"cart/cartIsLoaded"#false#103
-!"cart/cartItems"#any[]#103
-!"cart/cartItemsHash"#""#103
-!"cart/cartServerLastSyncDate"#0#103
-!"cart/cartServerLastTotalsSyncDate"#0#103
-!"cart/cartServerToken"#""#103
-!"cart/connectBypassCount"#0#103
-!"cart/isAddingToCart"#false#103
-!"cart/isMicrocartOpen"#false#103
-!"cart/itemsAfterPlatformTotals"#null#103
-!"cart/payment"#any[]#103
-!"cart/platformTotalSegments"#null#103
-!"cart/platformTotals"#null#103
-!"cart/shipping"#any[]#103
-!"category"#null#103
-!"category/categoriesMap"#null#103
-!"category/filtersMap"#null#103
-!"category/notFoundCategoryIds"#any[]#103
-!"category/products"#any[]#103
-!"category/searchProductsStats"#null#103
-!"checkout"#null#103
-!"cms"#null#103
-!"compare"#null#103
-!"config"#null#103
-!"newsletter"#null#103
-!"product"#null#103
-!"shipping"#null#103
-!"stock"#null#103
-!"storeView"#null#103
-!"twoStageCachingDelta1"#0#103
-!"twoStageCachingDelta2"#0#103
-!"twoStageCachingDisabled"#false#103
-!"ui"#null#103
-!"user"#null#103
-!"userTokenInvalidateAttemptsCount"#0#103
-!"userTokenInvalidateLock"#0#103
-!"userTokenInvalidated"#null#103
-!"version"#""#103
-!"wishlist"#null#103
+"__DEMO_MODE__" (typeText='false'; priority=103.0; bold)
+"attribute" (typeText=null; priority=103.0; bold)
+"cart" (typeText=null; priority=103.0; bold)
+"cart/breadcrumbs" (typeText=null; priority=103.0; bold)
+"cart/breadcrumbs/current" (typeText='null'; priority=103.0; bold)
+"cart/breadcrumbs/routes" (typeText='any[]'; priority=103.0; bold)
+"cart/cartIsLoaded" (typeText='false'; priority=103.0; bold)
+"cart/cartItems" (typeText='any[]'; priority=103.0; bold)
+"cart/cartItemsHash" (typeText='""'; priority=103.0; bold)
+"cart/cartServerLastSyncDate" (typeText='0'; priority=103.0; bold)
+"cart/cartServerLastTotalsSyncDate" (typeText='0'; priority=103.0; bold)
+"cart/cartServerToken" (typeText='""'; priority=103.0; bold)
+"cart/connectBypassCount" (typeText='0'; priority=103.0; bold)
+"cart/isAddingToCart" (typeText='false'; priority=103.0; bold)
+"cart/isMicrocartOpen" (typeText='false'; priority=103.0; bold)
+"cart/itemsAfterPlatformTotals" (typeText=null; priority=103.0; bold)
+"cart/payment" (typeText='any[]'; priority=103.0; bold)
+"cart/platformTotalSegments" (typeText='null'; priority=103.0; bold)
+"cart/platformTotals" (typeText='null'; priority=103.0; bold)
+"cart/shipping" (typeText='any[]'; priority=103.0; bold)
+"category" (typeText=null; priority=103.0; bold)
+"category/categoriesMap" (typeText=null; priority=103.0; bold)
+"category/filtersMap" (typeText=null; priority=103.0; bold)
+"category/notFoundCategoryIds" (typeText='any[]'; priority=103.0; bold)
+"category/products" (typeText='any[]'; priority=103.0; bold)
+"category/searchProductsStats" (typeText=null; priority=103.0; bold)
+"checkout" (typeText=null; priority=103.0; bold)
+"cms" (typeText=null; priority=103.0; bold)
+"compare" (typeText=null; priority=103.0; bold)
+"config" (typeText=null; priority=103.0; bold)
+"newsletter" (typeText=null; priority=103.0; bold)
+"product" (typeText=null; priority=103.0; bold)
+"shipping" (typeText=null; priority=103.0; bold)
+"stock" (typeText=null; priority=103.0; bold)
+"storeView" (typeText=null; priority=103.0; bold)
+"twoStageCachingDelta1" (typeText='0'; priority=103.0; bold)
+"twoStageCachingDelta2" (typeText='0'; priority=103.0; bold)
+"twoStageCachingDisabled" (typeText='false'; priority=103.0; bold)
+"ui" (typeText=null; priority=103.0; bold)
+"user" (typeText=null; priority=103.0; bold)
+"userTokenInvalidateAttemptsCount" (typeText='0'; priority=103.0; bold)
+"userTokenInvalidateLock" (typeText='0'; priority=103.0; bold)
+"userTokenInvalidated" (typeText='null'; priority=103.0; bold)
+"version" (typeText='""'; priority=103.0; bold)
+"wishlist" (typeText=null; priority=103.0; bold)

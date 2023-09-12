@@ -670,19 +670,19 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.completeBasic()
     UsefulTestCase.assertContainsElements(
       AngularTestUtil.renderLookupItems(myFixture, false, true),
-      "plainBoolean#boolean",
-      "[plainBoolean]#boolean",
-      "simpleStringEnum#MyType",
-      "[simpleStringEnum]#MyType",
-      "(my-event)#MyEvent",
-      "(problematicOutput)#T",
-      "(complex-event)#MyEvent | MouseEvent",
-      "(click)#MouseEvent",
-      "(blur)#FocusEvent",
-      "(focusin)#FocusEvent",
-      "(copy)#ClipboardEvent",
-      "(transitionend)#TransitionEvent",
-      "[innerHTML]#string"
+      "plainBoolean (typeText='boolean')",
+      "[plainBoolean] (typeText='boolean')",
+      "simpleStringEnum (typeText='MyType')",
+      "[simpleStringEnum] (typeText='MyType')",
+      "(my-event) (typeText='MyEvent')",
+      "(problematicOutput) (typeText='T')",
+      "(complex-event) (typeText='MyEvent | MouseEvent')",
+      "(click) (typeText='MouseEvent')",
+      "(blur) (typeText='FocusEvent')",
+      "(focusin) (typeText='FocusEvent')",
+      "(copy) (typeText='ClipboardEvent')",
+      "(transitionend) (typeText='TransitionEvent')",
+      "[innerHTML] (typeText='string')"
     )
   }
 
@@ -692,20 +692,20 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.completeBasic()
     UsefulTestCase.assertContainsElements(
       AngularTestUtil.renderLookupItems(myFixture, true, false),
-      "!plainBoolean#100",
-      "![plainBoolean]#100",
-      "!simpleStringEnum#100",
-      "![simpleStringEnum]#100",
-      "!(my-event)#100",
-      "!(ngModelChange)#100",
-      "![fooInput]#100",
-      "![disabled]#100",
-      "[bar]#50",
-      "(click)#50",
-      "(blur)#50",
-      "[innerHTML]#50",
-      "*ngIf#50",
-      "[attr.#0"
+      "plainBoolean (priority=100.0; bold)",
+      "[plainBoolean] (priority=100.0; bold)",
+      "simpleStringEnum (priority=100.0; bold)",
+      "[simpleStringEnum] (priority=100.0; bold)",
+      "(my-event) (priority=100.0; bold)",
+      "(ngModelChange) (priority=100.0; bold)",
+      "[fooInput] (priority=100.0; bold)",
+      "[disabled] (priority=100.0; bold)",
+      "[bar] (priority=50.0)",
+      "(click) (priority=50.0)",
+      "(blur) (priority=50.0)",
+      "[innerHTML] (priority=50.0)",
+      "*ngIf (priority=50.0)",
+      "[attr. (priority=0.0)"
     )
     UsefulTestCase.assertDoesntContain(myFixture.getLookupElementStrings()!!, "[ngModel]", "ngModel", "[matchedPlainBoolean]")
   }
@@ -1007,8 +1007,12 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.configureByText("hammer.html", "<div <caret>")
     myFixture.completeBasic()
     myFixture.type("(")
-    UsefulTestCase.assertContainsElements(AngularTestUtil.renderLookupItems(myFixture, false, true),
-                                          "(pan)#HammerInput", "(panstart)#HammerInput", "(pinch)#HammerInput", "(tap)#HammerInput")
+    UsefulTestCase.assertContainsElements(
+      AngularTestUtil.renderLookupItems(myFixture, false, true),
+      "(pan) (typeText='HammerInput')",
+      "(panstart) (typeText='HammerInput')",
+      "(pinch) (typeText='HammerInput')",
+      "(tap) (typeText='HammerInput')")
     myFixture.type("pan\n\" on-")
     myFixture.completeBasic()
     UsefulTestCase.assertDoesntContain(myFixture.getLookupElementStrings()!!, "pan")

@@ -1,2 +1,2 @@
-aaaCount#number
-aaaFoo#string
+aaaCount (typeText='number')
+aaaFoo (typeText='string')

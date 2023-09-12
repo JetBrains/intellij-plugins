@@ -1,5 +1,6 @@
 package org.jetbrains.astro.codeInsight
 
+import com.intellij.lang.javascript.completion.JSLookupPriority
 import org.jetbrains.astro.AstroCodeInsightTestCase
 import org.jetbrains.astro.AstroTestModule
 
@@ -36,7 +37,8 @@ class AstroCompletionTest : AstroCodeInsightTestCase("codeInsight/completion") {
 
   fun testFrontmatterKeywords() =
     doLookupTest(additionalFiles = listOf("component.astro")) {
-      it.priority == 5.0 || it.priority == 6.0
+      it.priority.toInt() == JSLookupPriority.KEYWORDS_PRIORITY.priorityValue
+      || it.priority.toInt() == JSLookupPriority.NON_CONTEXT_KEYWORDS_PRIORITY.priorityValue
     }
 
   fun testPropsInterface() =

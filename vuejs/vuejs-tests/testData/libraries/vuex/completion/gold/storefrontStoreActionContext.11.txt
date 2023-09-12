@@ -1,58 +1,58 @@
-!"cart/addItem"#null#103
-!"cart/addItems"#null#103
-!"cart/applyCoupon"#null#103
-!"cart/authorize"#null#103
-!"cart/breadcrumbs/set"#null#103
-!"cart/checkProductStatus"#null#103
-!"cart/clear"#null#103
-!"cart/configureItem"#null#103
-!"cart/connect"#null#103
-!"cart/disconnect"#null#103
-!"cart/findProductOption"#null#103
-!"cart/getItem"#null#103
-!"cart/getProductVariant"#null#103
-!"cart/getTotals"#null#103
-!"cart/load"#null#103
-!"cart/merge"#null#103
-!"cart/mergeClientItem"#null#103
-!"cart/mergeClientItems"#null#103
-!"cart/mergeServerItem"#null#103
-!"cart/mergeServerItems"#null#103
-!"cart/overrideServerTotals"#null#103
-!"cart/pullMethods"#null#103
-!"cart/refreshTotals"#null#103
-!"cart/removeCoupon"#null#103
-!"cart/removeItem"#null#103
-!"cart/restoreQuantity"#null#103
-!"cart/serverPull"#null#103
-!"cart/setDefaultCheckoutMethods"#null#103
-!"cart/stockSync"#null#103
-!"cart/sync"#null#103
-!"cart/synchronizeCart"#null#103
-!"cart/synchronizeServerItem"#null#103
-!"cart/syncPaymentMethods"#null#103
-!"cart/syncShippingMethods"#null#103
-!"cart/syncTotals"#null#103
-!"cart/toggleMicrocart"#null#103
-!"cart/updateClientItem"#null#103
-!"cart/updateItem"#null#103
-!"cart/updateQuantity"#null#103
-!"cart/updateServerItem"#null#103
-!"cart/updateShippingMethods"#null#103
-!"cart/updateTotalsAfterMerge"#null#103
-!"category/cacheProducts"#null#103
-!"category/changeRouterFilterParameters"#null#103
-!"category/configureProducts"#null#103
-!"category/findCategories"#null#103
-!"category/loadAvailableFiltersFrom"#null#103
-!"category/loadCategories"#null#103
-!"category/loadCategory"#null#103
-!"category/loadCategoryBreadcrumbs"#null#103
-!"category/loadCategoryFilters"#null#103
-!"category/loadCategoryProducts"#null#103
-!"category/loadMoreCategoryProducts"#null#103
-!"category/processCategoryProducts"#null#103
-!"category/registerCategoryProductsMapping"#null#103
-!"category/switchSearchFilters"#null#103
-!"resetSearchFilters"#null#103
-!"resetUserInvalidateLock"#null#103
+"cart/addItem" (typeText=null; priority=103.0; bold)
+"cart/addItems" (typeText=null; priority=103.0; bold)
+"cart/applyCoupon" (typeText=null; priority=103.0; bold)
+"cart/authorize" (typeText=null; priority=103.0; bold)
+"cart/breadcrumbs/set" (typeText=null; priority=103.0; bold)
+"cart/checkProductStatus" (typeText=null; priority=103.0; bold)
+"cart/clear" (typeText=null; priority=103.0; bold)
+"cart/configureItem" (typeText=null; priority=103.0; bold)
+"cart/connect" (typeText=null; priority=103.0; bold)
+"cart/disconnect" (typeText=null; priority=103.0; bold)
+"cart/findProductOption" (typeText=null; priority=103.0; bold)
+"cart/getItem" (typeText=null; priority=103.0; bold)
+"cart/getProductVariant" (typeText=null; priority=103.0; bold)
+"cart/getTotals" (typeText=null; priority=103.0; bold)
+"cart/load" (typeText=null; priority=103.0; bold)
+"cart/merge" (typeText=null; priority=103.0; bold)
+"cart/mergeClientItem" (typeText=null; priority=103.0; bold)
+"cart/mergeClientItems" (typeText=null; priority=103.0; bold)
+"cart/mergeServerItem" (typeText=null; priority=103.0; bold)
+"cart/mergeServerItems" (typeText=null; priority=103.0; bold)
+"cart/overrideServerTotals" (typeText=null; priority=103.0; bold)
+"cart/pullMethods" (typeText=null; priority=103.0; bold)
+"cart/refreshTotals" (typeText=null; priority=103.0; bold)
+"cart/removeCoupon" (typeText=null; priority=103.0; bold)
+"cart/removeItem" (typeText=null; priority=103.0; bold)
+"cart/restoreQuantity" (typeText=null; priority=103.0; bold)
+"cart/serverPull" (typeText=null; priority=103.0; bold)
+"cart/setDefaultCheckoutMethods" (typeText=null; priority=103.0; bold)
+"cart/stockSync" (typeText=null; priority=103.0; bold)
+"cart/sync" (typeText=null; priority=103.0; bold)
+"cart/syncPaymentMethods" (typeText=null; priority=103.0; bold)
+"cart/syncShippingMethods" (typeText=null; priority=103.0; bold)
+"cart/syncTotals" (typeText=null; priority=103.0; bold)
+"cart/synchronizeCart" (typeText=null; priority=103.0; bold)
+"cart/synchronizeServerItem" (typeText=null; priority=103.0; bold)
+"cart/toggleMicrocart" (typeText=null; priority=103.0; bold)
+"cart/updateClientItem" (typeText=null; priority=103.0; bold)
+"cart/updateItem" (typeText=null; priority=103.0; bold)
+"cart/updateQuantity" (typeText=null; priority=103.0; bold)
+"cart/updateServerItem" (typeText=null; priority=103.0; bold)
+"cart/updateShippingMethods" (typeText=null; priority=103.0; bold)
+"cart/updateTotalsAfterMerge" (typeText=null; priority=103.0; bold)
+"category/cacheProducts" (typeText=null; priority=103.0; bold)
+"category/changeRouterFilterParameters" (typeText=null; priority=103.0; bold)
+"category/configureProducts" (typeText=null; priority=103.0; bold)
+"category/findCategories" (typeText=null; priority=103.0; bold)
+"category/loadAvailableFiltersFrom" (typeText=null; priority=103.0; bold)
+"category/loadCategories" (typeText=null; priority=103.0; bold)
+"category/loadCategory" (typeText=null; priority=103.0; bold)
+"category/loadCategoryBreadcrumbs" (typeText=null; priority=103.0; bold)
+"category/loadCategoryFilters" (typeText=null; priority=103.0; bold)
+"category/loadCategoryProducts" (typeText=null; priority=103.0; bold)
+"category/loadMoreCategoryProducts" (typeText=null; priority=103.0; bold)
+"category/processCategoryProducts" (typeText=null; priority=103.0; bold)
+"category/registerCategoryProductsMapping" (typeText=null; priority=103.0; bold)
+"category/switchSearchFilters" (typeText=null; priority=103.0; bold)
+"resetSearchFilters" (typeText=null; priority=103.0; bold)
+"resetUserInvalidateLock" (typeText=null; priority=103.0; bold)

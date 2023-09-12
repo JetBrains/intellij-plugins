@@ -1930,7 +1930,9 @@ export default class UsageComponent extends Vue {
     myFixture.moveToOffsetBySignature("\"<caret>classes\"")
     myFixture.completeBasic()
     assertContainsElements(myFixture.renderLookupItems(true, true, true),
-                           "!classes% (mixin.ts)#null#101", "!style% (test.vue)#null#101")
+                           "classes (tailText=' (mixin.ts)'; typeText=null; priority=101.0; bold)",
+                           "style (tailText=' (test.vue)'; typeText=null; priority=101.0; bold)"
+    )
     TestCase.assertEquals(
       "mixin.ts",
       myFixture.resolveReference("{{ class<caret>es }}").containingFile.name)
@@ -1949,15 +1951,15 @@ export default class UsageComponent extends Vue {
     myFixture.moveToOffsetBySignature("\"show<caret>1\"")
     myFixture.completeBasic()
     assertContainsElements(myFixture.renderLookupItems(true, true, true),
-                           "!show1%() (test.methods, mixin.ts)#void#101",
-                           "!show2%() (component.vue)#void#101",
-                           "!show5%() (mixin2.ts)#void#101")
+                           "show1 (tailText='() (test.methods, mixin.ts)'; typeText='void'; priority=101.0; bold)",
+                           "show2 (tailText='() (component.vue)'; typeText='void'; priority=101.0; bold)",
+                           "show5 (tailText='() (mixin2.ts)'; typeText='void'; priority=101.0; bold)")
     myFixture.moveToOffsetBySignature("this.<caret>show2()")
     myFixture.completeBasic()
     assertContainsElements(myFixture.renderLookupItems(true, true, true),
-                           "!show1%() (test.methods, mixin.ts)#void#99",
-                           "!show2%() (component.vue)#void#99",
-                           "!show5%() (mixin2.ts)#void#99")
+                           "show1 (tailText='() (test.methods, mixin.ts)'; typeText='void'; priority=99.0; bold)",
+                           "show2 (tailText='() (component.vue)'; typeText='void'; priority=99.0; bold)",
+                           "show5 (tailText='() (mixin2.ts)'; typeText='void'; priority=99.0; bold)")
 
   }
 
@@ -2105,7 +2107,7 @@ export default class UsageComponent extends Vue {
         {{message}}
       </template>
     """.trimIndent())
-    myFixture.checkGotoDeclaration("{{me<caret>ssage}}", "inject: [<caret>'message']", )
+    myFixture.checkGotoDeclaration("{{me<caret>ssage}}", "inject: [<caret>'message']")
   }
 
   fun testInjectPropertyLocal() {
@@ -2142,7 +2144,7 @@ export default class UsageComponent extends Vue {
         {{localMessage}}
       </template>
     """.trimIndent())
-    myFixture.checkGotoDeclaration("{{loc<caret>alMessage}}", "<caret>localMessage: {", )
+    myFixture.checkGotoDeclaration("{{loc<caret>alMessage}}", "<caret>localMessage: {")
   }
 
   fun testInjectLiteral() {

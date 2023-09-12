@@ -1,238 +1,238 @@
-(abort)%null#UIEvent#50
-(animationcancel)%null#AnimationEvent#50
-(animationend)%null#AnimationEvent#50
-(animationiteration)%null#AnimationEvent#50
-(animationstart)%null#AnimationEvent#50
-(auxclick)%null#MouseEvent#50
-(beforecopy)%null#null#50
-(beforecut)%null#null#50
-(beforeinput)%null#InputEvent#50
-(beforepaste)%null#null#50
-(blur)%null#FocusEvent#50
-(cancel)%null#Event#50
-(canplay)%null#Event#50
-(canplaythrough)%null#Event#50
-(change)%null#Event#50
-(click)%null#MouseEvent#50
-(close)%null#Event#50
-(compositionend)%null#CompositionEvent#50
-(compositionstart)%null#CompositionEvent#50
-(compositionupdate)%null#CompositionEvent#50
-(contextmenu)%null#MouseEvent#50
-(copy)%null#ClipboardEvent#50
-(cuechange)%null#Event#50
-(cut)%null#ClipboardEvent#50
-(dblclick)%null#MouseEvent#50
-(drag)%null#DragEvent#50
-(dragend)%null#DragEvent#50
-(dragenter)%null#DragEvent#50
-(dragleave)%null#DragEvent#50
-(dragover)%null#DragEvent#50
-(dragstart)%null#DragEvent#50
-(drop)%null#DragEvent#50
-(durationchange)%null#Event#50
-(emptied)%null#Event#50
-(ended)%null#Event#50
-(error)%null#ErrorEvent#50
-(focus)%null#FocusEvent#50
-(focusin)%null#FocusEvent#50
-(focusout)%null#FocusEvent#50
-(formdata)%null#FormDataEvent#50
-(fullscreenchange)%null#Event#50
-(fullscreenerror)%null#Event#50
-(gotpointercapture)%null#PointerEvent#50
-(input)%null#Event#50
-(invalid)%null#Event#50
-(keydown)%null#KeyboardEvent#50
-(keyup)%null#KeyboardEvent#50
-(load)%null#Event#50
-(loadeddata)%null#Event#50
-(loadedmetadata)%null#Event#50
-(loadstart)%null#Event#50
-(lostpointercapture)%null#PointerEvent#50
-(message)%null#null#50
-(mousedown)%null#MouseEvent#50
-(mouseenter)%null#MouseEvent#50
-(mouseleave)%null#MouseEvent#50
-(mousemove)%null#MouseEvent#50
-(mouseout)%null#MouseEvent#50
-(mouseover)%null#MouseEvent#50
-(mouseup)%null#MouseEvent#50
-(mozfullscreenchange)%null#null#50
-(mozfullscreenerror)%null#null#50
-(mozpointerlockchange)%null#null#50
-(mozpointerlockerror)%null#null#50
-(paste)%null#ClipboardEvent#50
-(pause)%null#Event#50
-(play)%null#Event#50
-(playing)%null#Event#50
-(pointercancel)%null#PointerEvent#50
-(pointerdown)%null#PointerEvent#50
-(pointerenter)%null#PointerEvent#50
-(pointerleave)%null#PointerEvent#50
-(pointermove)%null#PointerEvent#50
-(pointerout)%null#PointerEvent#50
-(pointerover)%null#PointerEvent#50
-(pointerup)%null#PointerEvent#50
-(progress)%null#ProgressEvent#50
-(ratechange)%null#Event#50
-(reset)%null#Event#50
-(resize)%null#UIEvent#50
-(scroll)%null#Event#50
-(search)%null#null#50
-(securitypolicyviolation)%null#SecurityPolicyViolationEvent#50
-(seeked)%null#Event#50
-(seeking)%null#Event#50
-(select)%null#Event#50
-(selectionchange)%null#Event#50
-(selectstart)%null#Event#50
-(slotchange)%null#Event#50
-(stalled)%null#Event#50
-(submit)%null#SubmitEvent#50
-(suspend)%null#Event#50
-(timeupdate)%null#Event#50
-(toggle)%null#Event#50
-(touchcancel)%null#TouchEvent#50
-(touchend)%null#TouchEvent#50
-(touchmove)%null#TouchEvent#50
-(touchstart)%null#TouchEvent#50
-(transitioncancel)%null#TransitionEvent#50
-(transitionend)%null#TransitionEvent#50
-(transitionrun)%null#TransitionEvent#50
-(transitionstart)%null#TransitionEvent#50
-(volumechange)%null#Event#50
-(waiting)%null#Event#50
-(webglcontextcreationerror)%null#null#50
-(webglcontextlost)%null#null#50
-(webglcontextrestored)%null#null#50
-(webkitanimationend)%null#Event#50
-(webkitanimationiteration)%null#Event#50
-(webkitanimationstart)%null#Event#50
-(webkitfullscreenchange)%null#null#50
-(webkitfullscreenerror)%null#null#50
-(webkittransitionend)%null#Event#50
-(wheel)%null#WheelEvent#50
-(beforematch)%null#null#50
-(contextlost)%null#null#50
-(contextrestored)%null#null#50
-(pointerrawupdate)%null#null#50
-(scrollend)%null#null#50
-(pan)%null#HammerInput#50
-(pancancel)%null#HammerInput#50
-(pandown)%null#HammerInput#50
-(panend)%null#HammerInput#50
-(panleft)%null#HammerInput#50
-(panmove)%null#HammerInput#50
-(panright)%null#HammerInput#50
-(panstart)%null#HammerInput#50
-(panup)%null#HammerInput#50
-(pinch)%null#HammerInput#50
-(pinchcancel)%null#HammerInput#50
-(pinchend)%null#HammerInput#50
-(pinchin)%null#HammerInput#50
-(pinchmove)%null#HammerInput#50
-(pinchout)%null#HammerInput#50
-(pinchstart)%null#HammerInput#50
-(press)%null#HammerInput#50
-(pressup)%null#HammerInput#50
-(rotate)%null#HammerInput#50
-(rotatecancel)%null#HammerInput#50
-(rotateend)%null#HammerInput#50
-(rotatemove)%null#HammerInput#50
-(rotatestart)%null#HammerInput#50
-(swipe)%null#HammerInput#50
-(swipedown)%null#HammerInput#50
-(swipeleft)%null#HammerInput#50
-(swiperight)%null#HammerInput#50
-(swipeup)%null#HammerInput#50
-(tap)%null#HammerInput#50
-[accessKey]%null#string#50
-[classList]%null#null#50
-[className]%null#string#50
-[class]%null#string#50
-[contentEditable]%null#string#50
-[dir]%null#string#50
-[draggable]%null#boolean#50
-[hidden]%null#boolean#50
-[id]%null#string#50
-[innerHTML]%null#string#50
-[innerHtml]%null#string#50
-[innerText]%null#string#50
-[lang]%null#string#50
-[outerHTML]%null#string#50
-[outerText]%null#string#50
-[scrollLeft]%null#number#50
-[scrollTop]%null#number#50
-[slot]%null#string#50
-[spellcheck]%null#boolean#50
-[style]%null#null#50
-[tabIndex]%null#number#50
-[tabindex]%null#number#50
-[textContent]%null#string | null#50
-[title]%null#string#50
-[translate]%null#boolean#50
-i18n%null#null#50
-my-customer%null#null#50
-ngNonBindable%null#null#50
-ngProjectAs%null#null#50
-(@%null#null#10
-(keydown.%null#null#10
-(keyup.%null#null#10
-i18n-%null#null#10
-~(keypress)%null#KeyboardEvent#0
-~(mousewheel)%null#null#0
-~(show)%null#null#0
-#%null#null#0
-[attr.%null#null#0
-[class.%null#null#0
-[style.%null#null#0
-about%null#null#0
-accesskey%null#null#0
-align%null#null#0
-autocapitalize%null#null#0
-autofocus%null#null#0
-bind-%null#null#0
-bindon-%null#null#0
-class%null#null#0
-content%null#null#0
-contenteditable%null#null#0
-data-%null#null#0
-datafld%null#null#0
-dataformatas%null#null#0
-datasrc%null#null#0
-datatype%null#null#0
-dir%null#null#0
-draggable%null#null#0
-enterkeyhint%null#null#0
-hidden%null#null#0
-id%null#null#0
-inert%null#null#0
-inlist%null#null#0
-inputmode%null#null#0
-is%null#null#0
-itemid%null#null#0
-itemprop%null#null#0
-itemref%null#null#0
-itemscope%null#null#0
-itemtype%null#null#0
-lang%null#null#0
-nonce%null#null#0
-on-%null#null#0
-prefix%null#null#0
-property%null#null#0
-ref-%null#null#0
-rel%null#null#0
-resource%null#null#0
-rev%null#null#0
-role%null#null#0
-slot%null#null#0
-spellcheck%null#null#0
-style%null#null#0
-tabindex%null#null#0
-title%null#null#0
-translate%null#null#0
-typeof%null#null#0
-vocab%null#null#0
-xml:base%null#null#0
-xml:lang%null#null#0
-xml:space%null#null#0
+(abort) (tailText=null; typeText='UIEvent'; priority=50.0; typeGreyed)
+(animationcancel) (tailText=null; typeText='AnimationEvent'; priority=50.0; typeGreyed)
+(animationend) (tailText=null; typeText='AnimationEvent'; priority=50.0; typeGreyed)
+(animationiteration) (tailText=null; typeText='AnimationEvent'; priority=50.0; typeGreyed)
+(animationstart) (tailText=null; typeText='AnimationEvent'; priority=50.0; typeGreyed)
+(auxclick) (tailText=null; typeText='MouseEvent'; priority=50.0; typeGreyed)
+(beforecopy) (tailText=null; typeText=null; priority=50.0; typeGreyed)
+(beforecut) (tailText=null; typeText=null; priority=50.0; typeGreyed)
+(beforeinput) (tailText=null; typeText='InputEvent'; priority=50.0; typeGreyed)
+(beforepaste) (tailText=null; typeText=null; priority=50.0; typeGreyed)
+(blur) (tailText=null; typeText='FocusEvent'; priority=50.0; typeGreyed)
+(cancel) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(canplay) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(canplaythrough) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(change) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(click) (tailText=null; typeText='MouseEvent'; priority=50.0; typeGreyed)
+(close) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(compositionend) (tailText=null; typeText='CompositionEvent'; priority=50.0; typeGreyed)
+(compositionstart) (tailText=null; typeText='CompositionEvent'; priority=50.0; typeGreyed)
+(compositionupdate) (tailText=null; typeText='CompositionEvent'; priority=50.0; typeGreyed)
+(contextmenu) (tailText=null; typeText='MouseEvent'; priority=50.0; typeGreyed)
+(copy) (tailText=null; typeText='ClipboardEvent'; priority=50.0; typeGreyed)
+(cuechange) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(cut) (tailText=null; typeText='ClipboardEvent'; priority=50.0; typeGreyed)
+(dblclick) (tailText=null; typeText='MouseEvent'; priority=50.0; typeGreyed)
+(drag) (tailText=null; typeText='DragEvent'; priority=50.0; typeGreyed)
+(dragend) (tailText=null; typeText='DragEvent'; priority=50.0; typeGreyed)
+(dragenter) (tailText=null; typeText='DragEvent'; priority=50.0; typeGreyed)
+(dragleave) (tailText=null; typeText='DragEvent'; priority=50.0; typeGreyed)
+(dragover) (tailText=null; typeText='DragEvent'; priority=50.0; typeGreyed)
+(dragstart) (tailText=null; typeText='DragEvent'; priority=50.0; typeGreyed)
+(drop) (tailText=null; typeText='DragEvent'; priority=50.0; typeGreyed)
+(durationchange) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(emptied) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(ended) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(error) (tailText=null; typeText='ErrorEvent'; priority=50.0; typeGreyed)
+(focus) (tailText=null; typeText='FocusEvent'; priority=50.0; typeGreyed)
+(focusin) (tailText=null; typeText='FocusEvent'; priority=50.0; typeGreyed)
+(focusout) (tailText=null; typeText='FocusEvent'; priority=50.0; typeGreyed)
+(formdata) (tailText=null; typeText='FormDataEvent'; priority=50.0; typeGreyed)
+(fullscreenchange) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(fullscreenerror) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(gotpointercapture) (tailText=null; typeText='PointerEvent'; priority=50.0; typeGreyed)
+(input) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(invalid) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(keydown) (tailText=null; typeText='KeyboardEvent'; priority=50.0; typeGreyed)
+(keyup) (tailText=null; typeText='KeyboardEvent'; priority=50.0; typeGreyed)
+(load) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(loadeddata) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(loadedmetadata) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(loadstart) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(lostpointercapture) (tailText=null; typeText='PointerEvent'; priority=50.0; typeGreyed)
+(message) (tailText=null; typeText=null; priority=50.0; typeGreyed)
+(mousedown) (tailText=null; typeText='MouseEvent'; priority=50.0; typeGreyed)
+(mouseenter) (tailText=null; typeText='MouseEvent'; priority=50.0; typeGreyed)
+(mouseleave) (tailText=null; typeText='MouseEvent'; priority=50.0; typeGreyed)
+(mousemove) (tailText=null; typeText='MouseEvent'; priority=50.0; typeGreyed)
+(mouseout) (tailText=null; typeText='MouseEvent'; priority=50.0; typeGreyed)
+(mouseover) (tailText=null; typeText='MouseEvent'; priority=50.0; typeGreyed)
+(mouseup) (tailText=null; typeText='MouseEvent'; priority=50.0; typeGreyed)
+(mozfullscreenchange) (tailText=null; typeText=null; priority=50.0; typeGreyed)
+(mozfullscreenerror) (tailText=null; typeText=null; priority=50.0; typeGreyed)
+(mozpointerlockchange) (tailText=null; typeText=null; priority=50.0; typeGreyed)
+(mozpointerlockerror) (tailText=null; typeText=null; priority=50.0; typeGreyed)
+(paste) (tailText=null; typeText='ClipboardEvent'; priority=50.0; typeGreyed)
+(pause) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(play) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(playing) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(pointercancel) (tailText=null; typeText='PointerEvent'; priority=50.0; typeGreyed)
+(pointerdown) (tailText=null; typeText='PointerEvent'; priority=50.0; typeGreyed)
+(pointerenter) (tailText=null; typeText='PointerEvent'; priority=50.0; typeGreyed)
+(pointerleave) (tailText=null; typeText='PointerEvent'; priority=50.0; typeGreyed)
+(pointermove) (tailText=null; typeText='PointerEvent'; priority=50.0; typeGreyed)
+(pointerout) (tailText=null; typeText='PointerEvent'; priority=50.0; typeGreyed)
+(pointerover) (tailText=null; typeText='PointerEvent'; priority=50.0; typeGreyed)
+(pointerup) (tailText=null; typeText='PointerEvent'; priority=50.0; typeGreyed)
+(progress) (tailText=null; typeText='ProgressEvent'; priority=50.0; typeGreyed)
+(ratechange) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(reset) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(resize) (tailText=null; typeText='UIEvent'; priority=50.0; typeGreyed)
+(scroll) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(search) (tailText=null; typeText=null; priority=50.0; typeGreyed)
+(securitypolicyviolation) (tailText=null; typeText='SecurityPolicyViolationEvent'; priority=50.0; typeGreyed)
+(seeked) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(seeking) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(select) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(selectionchange) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(selectstart) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(slotchange) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(stalled) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(submit) (tailText=null; typeText='SubmitEvent'; priority=50.0; typeGreyed)
+(suspend) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(timeupdate) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(toggle) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(touchcancel) (tailText=null; typeText='TouchEvent'; priority=50.0; typeGreyed)
+(touchend) (tailText=null; typeText='TouchEvent'; priority=50.0; typeGreyed)
+(touchmove) (tailText=null; typeText='TouchEvent'; priority=50.0; typeGreyed)
+(touchstart) (tailText=null; typeText='TouchEvent'; priority=50.0; typeGreyed)
+(transitioncancel) (tailText=null; typeText='TransitionEvent'; priority=50.0; typeGreyed)
+(transitionend) (tailText=null; typeText='TransitionEvent'; priority=50.0; typeGreyed)
+(transitionrun) (tailText=null; typeText='TransitionEvent'; priority=50.0; typeGreyed)
+(transitionstart) (tailText=null; typeText='TransitionEvent'; priority=50.0; typeGreyed)
+(volumechange) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(waiting) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(webglcontextcreationerror) (tailText=null; typeText=null; priority=50.0; typeGreyed)
+(webglcontextlost) (tailText=null; typeText=null; priority=50.0; typeGreyed)
+(webglcontextrestored) (tailText=null; typeText=null; priority=50.0; typeGreyed)
+(webkitanimationend) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(webkitanimationiteration) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(webkitanimationstart) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(webkitfullscreenchange) (tailText=null; typeText=null; priority=50.0; typeGreyed)
+(webkitfullscreenerror) (tailText=null; typeText=null; priority=50.0; typeGreyed)
+(webkittransitionend) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
+(wheel) (tailText=null; typeText='WheelEvent'; priority=50.0; typeGreyed)
+(beforematch) (tailText=null; typeText=null; priority=50.0; typeGreyed)
+(contextlost) (tailText=null; typeText=null; priority=50.0; typeGreyed)
+(contextrestored) (tailText=null; typeText=null; priority=50.0; typeGreyed)
+(pointerrawupdate) (tailText=null; typeText=null; priority=50.0; typeGreyed)
+(scrollend) (tailText=null; typeText=null; priority=50.0; typeGreyed)
+(pan) (tailText=null; typeText='HammerInput'; priority=50.0; typeGreyed)
+(pancancel) (tailText=null; typeText='HammerInput'; priority=50.0; typeGreyed)
+(pandown) (tailText=null; typeText='HammerInput'; priority=50.0; typeGreyed)
+(panend) (tailText=null; typeText='HammerInput'; priority=50.0; typeGreyed)
+(panleft) (tailText=null; typeText='HammerInput'; priority=50.0; typeGreyed)
+(panmove) (tailText=null; typeText='HammerInput'; priority=50.0; typeGreyed)
+(panright) (tailText=null; typeText='HammerInput'; priority=50.0; typeGreyed)
+(panstart) (tailText=null; typeText='HammerInput'; priority=50.0; typeGreyed)
+(panup) (tailText=null; typeText='HammerInput'; priority=50.0; typeGreyed)
+(pinch) (tailText=null; typeText='HammerInput'; priority=50.0; typeGreyed)
+(pinchcancel) (tailText=null; typeText='HammerInput'; priority=50.0; typeGreyed)
+(pinchend) (tailText=null; typeText='HammerInput'; priority=50.0; typeGreyed)
+(pinchin) (tailText=null; typeText='HammerInput'; priority=50.0; typeGreyed)
+(pinchmove) (tailText=null; typeText='HammerInput'; priority=50.0; typeGreyed)
+(pinchout) (tailText=null; typeText='HammerInput'; priority=50.0; typeGreyed)
+(pinchstart) (tailText=null; typeText='HammerInput'; priority=50.0; typeGreyed)
+(press) (tailText=null; typeText='HammerInput'; priority=50.0; typeGreyed)
+(pressup) (tailText=null; typeText='HammerInput'; priority=50.0; typeGreyed)
+(rotate) (tailText=null; typeText='HammerInput'; priority=50.0; typeGreyed)
+(rotatecancel) (tailText=null; typeText='HammerInput'; priority=50.0; typeGreyed)
+(rotateend) (tailText=null; typeText='HammerInput'; priority=50.0; typeGreyed)
+(rotatemove) (tailText=null; typeText='HammerInput'; priority=50.0; typeGreyed)
+(rotatestart) (tailText=null; typeText='HammerInput'; priority=50.0; typeGreyed)
+(swipe) (tailText=null; typeText='HammerInput'; priority=50.0; typeGreyed)
+(swipedown) (tailText=null; typeText='HammerInput'; priority=50.0; typeGreyed)
+(swipeleft) (tailText=null; typeText='HammerInput'; priority=50.0; typeGreyed)
+(swiperight) (tailText=null; typeText='HammerInput'; priority=50.0; typeGreyed)
+(swipeup) (tailText=null; typeText='HammerInput'; priority=50.0; typeGreyed)
+(tap) (tailText=null; typeText='HammerInput'; priority=50.0; typeGreyed)
+[accessKey] (tailText=null; typeText='string'; priority=50.0; typeGreyed)
+[classList] (tailText=null; typeText=null; priority=50.0; typeGreyed)
+[className] (tailText=null; typeText='string'; priority=50.0; typeGreyed)
+[class] (tailText=null; typeText='string'; priority=50.0; typeGreyed)
+[contentEditable] (tailText=null; typeText='string'; priority=50.0; typeGreyed)
+[dir] (tailText=null; typeText='string'; priority=50.0; typeGreyed)
+[draggable] (tailText=null; typeText='boolean'; priority=50.0; typeGreyed)
+[hidden] (tailText=null; typeText='boolean'; priority=50.0; typeGreyed)
+[id] (tailText=null; typeText='string'; priority=50.0; typeGreyed)
+[innerHTML] (tailText=null; typeText='string'; priority=50.0; typeGreyed)
+[innerHtml] (tailText=null; typeText='string'; priority=50.0; typeGreyed)
+[innerText] (tailText=null; typeText='string'; priority=50.0; typeGreyed)
+[lang] (tailText=null; typeText='string'; priority=50.0; typeGreyed)
+[outerHTML] (tailText=null; typeText='string'; priority=50.0; typeGreyed)
+[outerText] (tailText=null; typeText='string'; priority=50.0; typeGreyed)
+[scrollLeft] (tailText=null; typeText='number'; priority=50.0; typeGreyed)
+[scrollTop] (tailText=null; typeText='number'; priority=50.0; typeGreyed)
+[slot] (tailText=null; typeText='string'; priority=50.0; typeGreyed)
+[spellcheck] (tailText=null; typeText='boolean'; priority=50.0; typeGreyed)
+[style] (tailText=null; typeText=null; priority=50.0; typeGreyed)
+[tabIndex] (tailText=null; typeText='number'; priority=50.0; typeGreyed)
+[tabindex] (tailText=null; typeText='number'; priority=50.0; typeGreyed)
+[textContent] (tailText=null; typeText='string | null'; priority=50.0; typeGreyed)
+[title] (tailText=null; typeText='string'; priority=50.0; typeGreyed)
+[translate] (tailText=null; typeText='boolean'; priority=50.0; typeGreyed)
+i18n (tailText=null; typeText=null; priority=50.0; typeGreyed)
+my-customer (tailText=null; typeText=null; priority=50.0; typeGreyed)
+ngNonBindable (tailText=null; typeText=null; priority=50.0; typeGreyed)
+ngProjectAs (tailText=null; typeText=null; priority=50.0; typeGreyed)
+(@ (tailText=null; typeText=null; priority=10.0; typeGreyed)
+(keydown. (tailText=null; typeText=null; priority=10.0; typeGreyed)
+(keyup. (tailText=null; typeText=null; priority=10.0; typeGreyed)
+i18n- (tailText=null; typeText=null; priority=10.0; typeGreyed)
+(keypress) (tailText=null; typeText='KeyboardEvent'; priority=0.0; strikeout; typeGreyed)
+(mousewheel) (tailText=null; typeText=null; priority=0.0; strikeout; typeGreyed)
+(show) (tailText=null; typeText=null; priority=0.0; strikeout; typeGreyed)
+# (tailText=null; typeText=null; priority=0.0; typeGreyed)
+[attr. (tailText=null; typeText=null; priority=0.0; typeGreyed)
+[class. (tailText=null; typeText=null; priority=0.0; typeGreyed)
+[style. (tailText=null; typeText=null; priority=0.0; typeGreyed)
+about (tailText=null; typeText=null; priority=0.0)
+accesskey (tailText=null; typeText=null; priority=0.0)
+align (tailText=null; typeText=null; priority=0.0)
+autocapitalize (tailText=null; typeText=null; priority=0.0)
+autofocus (tailText=null; typeText=null; priority=0.0)
+bind- (tailText=null; typeText=null; priority=0.0; typeGreyed)
+bindon- (tailText=null; typeText=null; priority=0.0; typeGreyed)
+class (tailText=null; typeText=null; priority=0.0)
+content (tailText=null; typeText=null; priority=0.0)
+contenteditable (tailText=null; typeText=null; priority=0.0)
+data- (tailText=null; typeText=null; priority=0.0; typeGreyed)
+datafld (tailText=null; typeText=null; priority=0.0)
+dataformatas (tailText=null; typeText=null; priority=0.0)
+datasrc (tailText=null; typeText=null; priority=0.0)
+datatype (tailText=null; typeText=null; priority=0.0)
+dir (tailText=null; typeText=null; priority=0.0)
+draggable (tailText=null; typeText=null; priority=0.0)
+enterkeyhint (tailText=null; typeText=null; priority=0.0)
+hidden (tailText=null; typeText=null; priority=0.0)
+id (tailText=null; typeText=null; priority=0.0)
+inert (tailText=null; typeText=null; priority=0.0)
+inlist (tailText=null; typeText=null; priority=0.0)
+inputmode (tailText=null; typeText=null; priority=0.0)
+is (tailText=null; typeText=null; priority=0.0)
+itemid (tailText=null; typeText=null; priority=0.0)
+itemprop (tailText=null; typeText=null; priority=0.0)
+itemref (tailText=null; typeText=null; priority=0.0)
+itemscope (tailText=null; typeText=null; priority=0.0)
+itemtype (tailText=null; typeText=null; priority=0.0)
+lang (tailText=null; typeText=null; priority=0.0)
+nonce (tailText=null; typeText=null; priority=0.0)
+on- (tailText=null; typeText=null; priority=0.0; typeGreyed)
+prefix (tailText=null; typeText=null; priority=0.0)
+property (tailText=null; typeText=null; priority=0.0)
+ref- (tailText=null; typeText=null; priority=0.0; typeGreyed)
+rel (tailText=null; typeText=null; priority=0.0)
+resource (tailText=null; typeText=null; priority=0.0)
+rev (tailText=null; typeText=null; priority=0.0)
+role (tailText=null; typeText=null; priority=0.0)
+slot (tailText=null; typeText=null; priority=0.0)
+spellcheck (tailText=null; typeText=null; priority=0.0)
+style (tailText=null; typeText=null; priority=0.0)
+tabindex (tailText=null; typeText=null; priority=0.0)
+title (tailText=null; typeText=null; priority=0.0)
+translate (tailText=null; typeText=null; priority=0.0)
+typeof (tailText=null; typeText=null; priority=0.0)
+vocab (tailText=null; typeText=null; priority=0.0)
+xml:base (tailText=null; typeText=null; priority=0.0)
+xml:lang (tailText=null; typeText=null; priority=0.0)
+xml:space (tailText=null; typeText=null; priority=0.0)

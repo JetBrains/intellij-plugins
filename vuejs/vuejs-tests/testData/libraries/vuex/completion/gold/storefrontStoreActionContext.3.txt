@@ -1,23 +1,45 @@
-__DEMO_MODE__#false
-attribute#null
-cart#null
-category#null
-checkout#null
-cms#null
-compare#null
-config#null
-newsletter#null
-product#null
-shipping#null
-stock#null
-storeView#null
-twoStageCachingDelta1#0
-twoStageCachingDelta2#0
-twoStageCachingDisabled#false
-ui#null
-user#null
-userTokenInvalidateAttemptsCount#0
-userTokenInvalidateLock#0
-userTokenInvalidated#null
-version#""
-wishlist#null
+__DEMO_MODE__ (typeText='false'; priority=101.0; bold)
+attribute (typeText=null; priority=101.0; bold)
+cart (typeText=null; priority=101.0; bold)
+category (typeText=null; priority=101.0; bold)
+checkout (typeText=null; priority=101.0; bold)
+cms (typeText=null; priority=101.0; bold)
+compare (typeText=null; priority=101.0; bold)
+config (typeText=null; priority=101.0; bold)
+newsletter (typeText=null; priority=101.0; bold)
+product (typeText=null; priority=101.0; bold)
+shipping (typeText=null; priority=101.0; bold)
+stock (typeText=null; priority=101.0; bold)
+storeView (typeText=null; priority=101.0; bold)
+twoStageCachingDelta1 (typeText='0'; priority=101.0; bold)
+twoStageCachingDelta2 (typeText='0'; priority=101.0; bold)
+twoStageCachingDisabled (typeText='false'; priority=101.0; bold)
+ui (typeText=null; priority=101.0; bold)
+user (typeText=null; priority=101.0; bold)
+userTokenInvalidateAttemptsCount (typeText='0'; priority=101.0; bold)
+userTokenInvalidateLock (typeText='0'; priority=101.0; bold)
+userTokenInvalidated (typeText='null'; priority=101.0; bold)
+version (typeText='""'; priority=101.0; bold)
+wishlist (typeText=null; priority=101.0; bold)
+"cart/breadcrumbs" (typeText=null; priority=98.0; bold)
+"cart/breadcrumbs/current" (typeText='null'; priority=98.0; bold)
+"cart/breadcrumbs/routes" (typeText='any[]'; priority=98.0; bold)
+"cart/cartIsLoaded" (typeText='false'; priority=98.0; bold)
+"cart/cartItems" (typeText='any[]'; priority=98.0; bold)
+"cart/cartItemsHash" (typeText='""'; priority=98.0; bold)
+"cart/cartServerLastSyncDate" (typeText='0'; priority=98.0; bold)
+"cart/cartServerLastTotalsSyncDate" (typeText='0'; priority=98.0; bold)
+"cart/cartServerToken" (typeText='""'; priority=98.0; bold)
+"cart/connectBypassCount" (typeText='0'; priority=98.0; bold)
+"cart/isAddingToCart" (typeText='false'; priority=98.0; bold)
+"cart/isMicrocartOpen" (typeText='false'; priority=98.0; bold)
+"cart/itemsAfterPlatformTotals" (typeText=null; priority=98.0; bold)
+"cart/payment" (typeText='any[]'; priority=98.0; bold)
+"cart/platformTotalSegments" (typeText='null'; priority=98.0; bold)
+"cart/platformTotals" (typeText='null'; priority=98.0; bold)
+"cart/shipping" (typeText='any[]'; priority=98.0; bold)
+"category/categoriesMap" (typeText=null; priority=98.0; bold)
+"category/filtersMap" (typeText=null; priority=98.0; bold)
+"category/notFoundCategoryIds" (typeText='any[]'; priority=98.0; bold)
+"category/products" (typeText='any[]'; priority=98.0; bold)
+"category/searchProductsStats" (typeText=null; priority=98.0; bold)

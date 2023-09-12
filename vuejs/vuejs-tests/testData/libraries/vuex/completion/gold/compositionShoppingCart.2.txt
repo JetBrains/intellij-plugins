@@ -1,3 +1,3 @@
-!cart/addProductToCart#null#103
-!cart/checkout#null#103
-!products/getAllProducts#null#103
+cart/addProductToCart (typeText=null; priority=103.0; bold)
+cart/checkout (typeText=null; priority=103.0; bold)
+products/getAllProducts (typeText=null; priority=103.0; bold)

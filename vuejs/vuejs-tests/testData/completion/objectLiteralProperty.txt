@@ -1,2 +1,2 @@
-!afo#number#7
-!boo#string#7
+afo (typeText='number'; priority=7.0; bold)
+boo (typeText='string'; priority=7.0; bold)

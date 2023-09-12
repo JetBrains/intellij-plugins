@@ -212,11 +212,11 @@ class Angular2ContextTest : Angular2CodeInsightFixtureTestCase() {
   fun testOverriddenMethods() {
     myFixture.configureByFiles("overriddenMethods.ts", "package.json")
     myFixture.completeBasic()
-    assertEquals(listOf("\$any%(arg: any)" + BaseJSCompletionTestCase.getLocationPresentation(null, "overriddenMethods.ts") + "#any",
-                        "bar%()#string",
-                        "bar%(test: boolean)#string",
-                        "bar%(test: string)#string",
-                        "foo%null#string"),
+    assertEquals(listOf("\$any (tailText='(arg: any)" + BaseJSCompletionTestCase.getLocationPresentation(null, "overriddenMethods.ts") + "'; typeText='any')",
+                        "bar (tailText='()'; typeText='string')" ,
+                        "bar (tailText='(test: boolean)'; typeText='string')" ,
+                        "bar (tailText='(test: string)'; typeText='string')" ,
+                        "foo (tailText=null; typeText='string')"),
                  ContainerUtil.sorted(AngularTestUtil.renderLookupItems(myFixture, false, true, true, true)))
   }
 

@@ -1,17 +1,17 @@
-breadcrumbs#null
-breadcrumbs/current#null
-breadcrumbs/routes#any[]
-cartIsLoaded#false
-cartItems#any[]
-cartItemsHash#""
-cartServerLastSyncDate#0
-cartServerLastTotalsSyncDate#0
-cartServerToken#""
-connectBypassCount#0
-isAddingToCart#false
-isMicrocartOpen#false
-itemsAfterPlatformTotals#null
-payment#any[]
-platformTotalSegments#null
-platformTotals#null
-shipping#any[]
+breadcrumbs (typeText=null)
+breadcrumbs/current (typeText='null')
+breadcrumbs/routes (typeText='any[]')
+cartIsLoaded (typeText='false')
+cartItems (typeText='any[]')
+cartItemsHash (typeText='""')
+cartServerLastSyncDate (typeText='0')
+cartServerLastTotalsSyncDate (typeText='0')
+cartServerToken (typeText='""')
+connectBypassCount (typeText='0')
+isAddingToCart (typeText='false')
+isMicrocartOpen (typeText='false')
+itemsAfterPlatformTotals (typeText=null)
+payment (typeText='any[]')
+platformTotalSegments (typeText='null')
+platformTotals (typeText='null')
+shipping (typeText='any[]')

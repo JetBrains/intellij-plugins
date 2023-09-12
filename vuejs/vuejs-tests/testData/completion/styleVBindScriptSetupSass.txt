@@ -1,88 +1,88 @@
-aaaCount#number
-aaaFoo#string
-abs#sass_functions.scss:904
-adjust-color#sass_functions.scss:430
-adjust-hue#sass_functions.scss:378
-alpha#sass_functions.scss:203
-append#sass_functions.scss:1059
-blue#sass_functions.scss:141
-call#sass_functions.scss:1285
-ceil#sass_functions.scss:878
-change-color#sass_functions.scss:510
-comparable#sass_functions.scss:839
-complement#sass_functions.scss:560
-content-exists#sass_functions.scss:1402
-counter#sass_functions.scss:1298
-counters#sass_functions.scss:1311
-darken#sass_functions.scss:324
-desaturate#sass_functions.scss:360
-fade-in#sass_functions.scss:251
-fade-out#sass_functions.scss:288
-feature-exists#sass_functions.scss:772
-floor#sass_functions.scss:891
-function-exists#sass_functions.scss:1368
-get-function#sass_functions.scss:793
-global-variable-exists#sass_functions.scss:1352
-grayscale#sass_functions.scss:548
-green#sass_functions.scss:127
-hsl#sass_functions.scss:76
-hsla#sass_functions.scss:99
-hue#sass_functions.scss:157
-ie-hex-str#sass_functions.scss:393
-if#sass_functions.scss:1257
-index#sass_functions.scss:1097
-inspect#sass_functions.scss:1412
-invert#sass_functions.scss:576
-is-bracketed#sass_functions.scss:1123
-is-superselector#sass_functions.scss:1635
-join#sass_functions.scss:1034
-keywords#sass_functions.scss:1240
-length#sass_functions.scss:949
-lighten#sass_functions.scss:306
-lightness#sass_functions.scss:189
-list-separator#sass_functions.scss:1111
-map-get#sass_functions.scss:1140
-map-has-key#sass_functions.scss:1222
-map-keys#sass_functions.scss:1194
-map-merge#sass_functions.scss:1164
-map-remove#sass_functions.scss:1182
-map-values#sass_functions.scss:1208
-max#sass_functions.scss:934
-min#sass_functions.scss:919
-mix#sass_functions.scss:536
-mixin-exists#sass_functions.scss:1384
-nth#sass_functions.scss:998
-opacify#sass_functions.scss:232
-opacity#sass_functions.scss:214
-percentage#sass_functions.scss:852
-quote#sass_functions.scss:606
-random#sass_functions.scss:1425
-red#sass_functions.scss:113
-rgb#sass_functions.scss:21
-rgba#sass_functions.scss:56
-round#sass_functions.scss:865
-saturate#sass_functions.scss:342
-saturation#sass_functions.scss:173
-scale-color#sass_functions.scss:473
-selector-append#sass_functions.scss:1490
-selector-extend#sass_functions.scss:1521
-selector-nest#sass_functions.scss:1467
-selector-parse#sass_functions.scss:1442
-selector-replace#sass_functions.scss:1553
-selector-unify#sass_functions.scss:1588
-set-nth#sass_functions.scss:973
-simple-selectors#sass_functions.scss:1611
-str-index#sass_functions.scss:663
-str-insert#sass_functions.scss:642
-str-length#sass_functions.scss:618
-str-slice#sass_functions.scss:689
-to-lower-case#sass_functions.scss:715
-to-upper-case#sass_functions.scss:702
-transparentize#sass_functions.scss:269
-type-of#sass_functions.scss:737
-unique-id#sass_functions.scss:1267
-unit#sass_functions.scss:811
-unitless#sass_functions.scss:824
-unquote#sass_functions.scss:591
-variable-exists#sass_functions.scss:1330
-zip#sass_functions.scss:1076
+aaaCount (typeText='number')
+aaaFoo (typeText='string')
+abs (typeText='sass_functions.scss:904')
+adjust-color (typeText='sass_functions.scss:430')
+adjust-hue (typeText='sass_functions.scss:378')
+alpha (typeText='sass_functions.scss:203')
+append (typeText='sass_functions.scss:1059')
+blue (typeText='sass_functions.scss:141')
+call (typeText='sass_functions.scss:1285')
+ceil (typeText='sass_functions.scss:878')
+change-color (typeText='sass_functions.scss:510')
+comparable (typeText='sass_functions.scss:839')
+complement (typeText='sass_functions.scss:560')
+content-exists (typeText='sass_functions.scss:1402')
+counter (typeText='sass_functions.scss:1298')
+counters (typeText='sass_functions.scss:1311')
+darken (typeText='sass_functions.scss:324')
+desaturate (typeText='sass_functions.scss:360')
+fade-in (typeText='sass_functions.scss:251')
+fade-out (typeText='sass_functions.scss:288')
+feature-exists (typeText='sass_functions.scss:772')
+floor (typeText='sass_functions.scss:891')
+function-exists (typeText='sass_functions.scss:1368')
+get-function (typeText='sass_functions.scss:793')
+global-variable-exists (typeText='sass_functions.scss:1352')
+grayscale (typeText='sass_functions.scss:548')
+green (typeText='sass_functions.scss:127')
+hsl (typeText='sass_functions.scss:76')
+hsla (typeText='sass_functions.scss:99')
+hue (typeText='sass_functions.scss:157')
+ie-hex-str (typeText='sass_functions.scss:393')
+if (typeText='sass_functions.scss:1257')
+index (typeText='sass_functions.scss:1097')
+inspect (typeText='sass_functions.scss:1412')
+invert (typeText='sass_functions.scss:576')
+is-bracketed (typeText='sass_functions.scss:1123')
+is-superselector (typeText='sass_functions.scss:1635')
+join (typeText='sass_functions.scss:1034')
+keywords (typeText='sass_functions.scss:1240')
+length (typeText='sass_functions.scss:949')
+lighten (typeText='sass_functions.scss:306')
+lightness (typeText='sass_functions.scss:189')
+list-separator (typeText='sass_functions.scss:1111')
+map-get (typeText='sass_functions.scss:1140')
+map-has-key (typeText='sass_functions.scss:1222')
+map-keys (typeText='sass_functions.scss:1194')
+map-merge (typeText='sass_functions.scss:1164')
+map-remove (typeText='sass_functions.scss:1182')
+map-values (typeText='sass_functions.scss:1208')
+max (typeText='sass_functions.scss:934')
+min (typeText='sass_functions.scss:919')
+mix (typeText='sass_functions.scss:536')
+mixin-exists (typeText='sass_functions.scss:1384')
+nth (typeText='sass_functions.scss:998')
+opacify (typeText='sass_functions.scss:232')
+opacity (typeText='sass_functions.scss:214')
+percentage (typeText='sass_functions.scss:852')
+quote (typeText='sass_functions.scss:606')
+random (typeText='sass_functions.scss:1425')
+red (typeText='sass_functions.scss:113')
+rgb (typeText='sass_functions.scss:21')
+rgba (typeText='sass_functions.scss:56')
+round (typeText='sass_functions.scss:865')
+saturate (typeText='sass_functions.scss:342')
+saturation (typeText='sass_functions.scss:173')
+scale-color (typeText='sass_functions.scss:473')
+selector-append (typeText='sass_functions.scss:1490')
+selector-extend (typeText='sass_functions.scss:1521')
+selector-nest (typeText='sass_functions.scss:1467')
+selector-parse (typeText='sass_functions.scss:1442')
+selector-replace (typeText='sass_functions.scss:1553')
+selector-unify (typeText='sass_functions.scss:1588')
+set-nth (typeText='sass_functions.scss:973')
+simple-selectors (typeText='sass_functions.scss:1611')
+str-index (typeText='sass_functions.scss:663')
+str-insert (typeText='sass_functions.scss:642')
+str-length (typeText='sass_functions.scss:618')
+str-slice (typeText='sass_functions.scss:689')
+to-lower-case (typeText='sass_functions.scss:715')
+to-upper-case (typeText='sass_functions.scss:702')
+transparentize (typeText='sass_functions.scss:269')
+type-of (typeText='sass_functions.scss:737')
+unique-id (typeText='sass_functions.scss:1267')
+unit (typeText='sass_functions.scss:811')
+unitless (typeText='sass_functions.scss:824')
+unquote (typeText='sass_functions.scss:591')
+variable-exists (typeText='sass_functions.scss:1330')
+zip (typeText='sass_functions.scss:1076')

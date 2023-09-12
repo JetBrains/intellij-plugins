@@ -1,20 +1,20 @@
-__trClass#string
-color#string
-cols#any
-colsMap#any
-dark#boolean
-dense#boolean
-expand#boolean
-key#any
-pageIndex#number
-row#any
-rowIndex#number
-selected#boolean
-sort#void
-constructor#Function
-hasOwnProperty#boolean
-isPrototypeOf#boolean
-propertyIsEnumerable#boolean
-toLocaleString#string
-toString#string
-valueOf#Object
+__trClass (typeText='string')
+color (typeText='string')
+cols (typeText='any')
+colsMap (typeText='any')
+dark (typeText='boolean')
+dense (typeText='boolean')
+expand (typeText='boolean')
+key (typeText='any')
+pageIndex (typeText='number')
+row (typeText='any')
+rowIndex (typeText='number')
+selected (typeText='boolean')
+sort (typeText='void')
+constructor (typeText='Function')
+hasOwnProperty (typeText='boolean')
+isPrototypeOf (typeText='boolean')
+propertyIsEnumerable (typeText='boolean')
+toLocaleString (typeText='string')
+toString (typeText='string')
+valueOf (typeText='Object')

@@ -1,2 +1,2 @@
-!block#boolean#100
-!icon#string#100
+block (typeText='boolean'; priority=100.0; bold; typeGreyed)
+icon (typeText='string'; priority=100.0; bold; typeGreyed)

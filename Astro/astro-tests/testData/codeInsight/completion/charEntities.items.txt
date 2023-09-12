@@ -1,270 +1,270 @@
-AElig#Æ#0
-AMP#&#0
-Aacute#Á#0
-Abreve#Ă#0
-Acirc#Â#0
-Acy#А#0
-Afr#프#0
-Agrave#À#0
-Alpha#Α#0
-Amacr#Ā#0
-And#⩓#0
-Aogon#Ą#0
-Aopf#픸#0
-ApplyFunction#⁡#0
-Aring#Å#0
-Ascr#풜#0
-Assign#≔#0
-Atilde#Ã#0
-Auml#Ä#0
-Backslash#∖#0
-Barv#⫧#0
-Barwed#⌆#0
-Because#∵#0
-Beta#Β#0
-Cacute#Ć#0
-Cap#⋒#0
-CapitalDifferentialD#ⅅ#0
-Cayleys#ℭ#0
-Ccaron#Č#0
-Cedilla#¸#0
-ClockwiseContourIntegral#∲#0
-ContourIntegral#∮#0
-CounterClockwiseContourIntegral#∳#0
-CupCap#≍#0
-DDotrahd#⤑#0
-Dagger#‡#0
-Darr#↡#0
-Dashv#⫤#0
-Dcaron#Ď#0
-Delta#Δ#0
-DiacriticalAcute#´#0
-DiacriticalDot#˙#0
-DiacriticalDoubleAcute#˝#0
-DiacriticalGrave#`#0
-DiacriticalTilde#˜#0
-Diamond#⋄#0
-DifferentialD#ⅆ#0
-DotEqual#≐#0
-DoubleContourIntegral#∯#0
-DoubleDownArrow#⇓#0
-DoubleLeftArrow#⇐#0
-DoubleLeftRightArrow#⇔#0
-DoubleLongLeftArrow#⟸#0
-DoubleLongLeftRightArrow#⟺#0
-DoubleLongRightArrow#⟹#0
-DoubleRightArrow#⇒#0
-DoubleUpArrow#⇑#0
-DoubleUpDownArrow#⇕#0
-DoubleVerticalBar#∥#0
-DownArrow#↓#0
-DownArrowBar#⤓#0
-DownArrowUpArrow#⇵#0
-DownLeftVectorBar#⥖#0
-DownRightVectorBar#⥗#0
-DownTeeArrow#↧#0
-Downarrow#⇓#0
-Eacute#É#0
-Ecaron#Ě#0
-Egrave#È#0
-Emacr#Ē#0
-EmptySmallSquare#◻#0
-EmptyVerySmallSquare#▫#0
-Equal#⩵#0
-EqualTilde#≂#0
-Eta#Η#0
-ExponentialE#ⅇ#0
-FilledSmallSquare#◼#0
-FilledVerySmallSquare#▪#0
-ForAll#∀#0
-Gamma#Γ#0
-Gammad#Ϝ#0
-GreaterEqual#≥#0
-GreaterEqualLess#⋛#0
-GreaterFullEqual#≧#0
-GreaterGreater#⪢#0
-GreaterLess#≷#0
-GreaterSlantEqual#⩾#0
-GreaterTilde#≳#0
-HARDcy#Ъ#0
-Hacek#ˇ#0
-Hat#^#0
-HilbertSpace#ℋ#0
-HorizontalLine#─#0
-HumpEqual#≏#0
-Iacute#Í#0
-Igrave#Ì#0
-Imacr#Ī#0
-ImaginaryI#ⅈ#0
-Integral#∫#0
-InvisibleComma#⁣#0
-Iota#Ι#0
-Kappa#Κ#0
-Lacute#Ĺ#0
-Lambda#Λ#0
-Lang#⟪#0
-Laplacetrf#ℒ#0
-Larr#↞#0
-Lcaron#Ľ#0
-LeftAngleBracket#⟨#0
-LeftArrow#←#0
-LeftArrowBar#⇤#0
-LeftArrowRightArrow#⇆#0
-LeftDoubleBracket#⟦#0
-LeftDownVectorBar#⥙#0
-LeftRightArrow#↔#0
-LeftTeeArrow#↤#0
-LeftTriangle#⊲#0
-LeftTriangleBar#⧏#0
-LeftTriangleEqual#⊴#0
-LeftUpVectorBar#⥘#0
-LeftVectorBar#⥒#0
-Leftarrow#⇐#0
-Leftrightarrow#⇔#0
-LessEqualGreater#⋚#0
-LessFullEqual#≦#0
-LessGreater#≶#0
-LessSlantEqual#⩽#0
-Lleftarrow#⇚#0
-LongLeftArrow#⟵#0
-LongLeftRightArrow#⟷#0
-LongRightArrow#⟶#0
-Longleftarrow#⟸#0
-Longleftrightarrow#⟺#0
-Longrightarrow#⟹#0
-LowerLeftArrow#↙#0
-LowerRightArrow#↘#0
-Map#⤅#0
-MediumSpace# #0
-Nacute#Ń#0
-Ncaron#Ň#0
-NegativeMediumSpace#​#0
-NegativeThickSpace#​#0
-NegativeThinSpace#​#0
-NegativeVeryThinSpace#​#0
-NestedGreaterGreater#≫#0
-NoBreak#⁠#0
-NonBreakingSpace# #0
-NotCupCap#≭#0
-NotDoubleVerticalBar#∦#0
-NotEqual#≠#0
-NotGreater#≯#0
-NotGreaterEqual#≱#0
-NotGreaterLess#≹#0
-NotGreaterTilde#≵#0
-NotLeftTriangle#⋪#0
-NotLeftTriangleEqual#⋬#0
-NotLessEqual#≰#0
-NotLessGreater#≸#0
-NotPrecedesSlantEqual#⋠#0
-NotRightTriangle#⋫#0
-NotRightTriangleEqual#⋭#0
-NotSquareSubsetEqual#⋢#0
-NotSquareSupersetEqual#⋣#0
-NotSubsetEqual#⊈#0
-NotSucceedsSlantEqual#⋡#0
-NotSupersetEqual#⊉#0
-NotTildeEqual#≄#0
-NotTildeFullEqual#≇#0
-NotVerticalBar#∤#0
-Oacute#Ó#0
-Odblac#Ő#0
-Ograve#Ò#0
-Omacr#Ō#0
-Omega#Ω#0
-Oslash#Ø#0
-OverBar#¯#0
-OverBrace#⏞#0
-OverBracket#⎴#0
-OverParenthesis#⏜#0
-PartialD#∂#0
-Poincareplane#ℌ#0
-PrecedesEqual#⪯#0
-PrecedesSlantEqual#≼#0
-Proportional#∝#0
-RBarr#⤐#0
-Racute#Ŕ#0
-Rang#⟫#0
-Rarr#↠#0
-Rarrtl#⤖#0
-Rcaron#Ř#0
-RightAngleBracket#⟩#0
-RightArrow#→#0
-RightArrowBar#⇥#0
-RightArrowLeftArrow#⇄#0
-RightDoubleBracket#⟧#0
-RightDownVectorBar#⥕#0
-RightTeeArrow#↦#0
-RightTriangle#⊳#0
-RightTriangleBar#⧐#0
-RightTriangleEqual#⊵#0
-RightUpVectorBar#⥔#0
-RightVectorBar#⥓#0
-Rightarrow#⇒#0
-Rrightarrow#⇛#0
-RuleDelayed#⧴#0
-Sacute#Ś#0
-Scaron#Š#0
-ShortDownArrow#↓#0
-ShortLeftArrow#←#0
-ShortRightArrow#→#0
-ShortUpArrow#↑#0
-Sigma#Σ#0
-SmallCircle#∘#0
-Square#□#0
-SquareIntersection#⊓#0
-SquareSubset#⊏#0
-SquareSubsetEqual#⊑#0
-SquareSuperset#⊐#0
-SquareSupersetEqual#⊒#0
-SquareUnion#⊔#0
-Star#⋆#0
-SubsetEqual#⊆#0
-SucceedsEqual#⪰#0
-SucceedsSlantEqual#≽#0
-SuchThat#∋#0
-SupersetEqual#⊇#0
-TRADE#™#0
-Tab#	#0
-Tau#Τ#0
-Tcaron#Ť#0
-Theta#Θ#0
-ThinSpace# #0
-TildeEqual#≃#0
-TildeFullEqual#≅#0
-Uacute#Ú#0
-Uarr#↟#0
-Uarrocir#⥉#0
-Udblac#Ű#0
-Ugrave#Ù#0
-Umacr#Ū#0
-UnderBar#̲#0
-UnderBrace#⏟#0
-UnderBracket#⎵#0
-UnderParenthesis#⏝#0
-UpArrow#↑#0
-UpArrowBar#⤒#0
-UpArrowDownArrow#⇅#0
-UpDownArrow#↕#0
-UpTeeArrow#↥#0
-Uparrow#⇑#0
-Updownarrow#⇕#0
-UpperLeftArrow#↖#0
-UpperRightArrow#↗#0
-VDash#⊫#0
-Vbar#⫫#0
-Vdash#⊩#0
-Vdashl#⫦#0
-Verbar#‖#0
-VerticalBar#∣#0
-VerticalLine#|#0
-VerticalSeparator#❘#0
-VerticalTilde#≀#0
-VeryThinSpace# #0
-Vvdash#⊪#0
-YAcy#Я#0
-Yacute#Ý#0
-Zacute#Ź#0
-Zcaron#Ž#0
-ZeroWidthSpace#​#0
-Zeta#Ζ#0
+AElig (typeText='Æ'; priority=0.0)
+AMP (typeText='&'; priority=0.0)
+Aacute (typeText='Á'; priority=0.0)
+Abreve (typeText='Ă'; priority=0.0)
+Acirc (typeText='Â'; priority=0.0)
+Acy (typeText='А'; priority=0.0)
+Afr (typeText='프'; priority=0.0)
+Agrave (typeText='À'; priority=0.0)
+Alpha (typeText='Α'; priority=0.0)
+Amacr (typeText='Ā'; priority=0.0)
+And (typeText='⩓'; priority=0.0)
+Aogon (typeText='Ą'; priority=0.0)
+Aopf (typeText='픸'; priority=0.0)
+ApplyFunction (typeText='⁡'; priority=0.0)
+Aring (typeText='Å'; priority=0.0)
+Ascr (typeText='풜'; priority=0.0)
+Assign (typeText='≔'; priority=0.0)
+Atilde (typeText='Ã'; priority=0.0)
+Auml (typeText='Ä'; priority=0.0)
+Backslash (typeText='∖'; priority=0.0)
+Barv (typeText='⫧'; priority=0.0)
+Barwed (typeText='⌆'; priority=0.0)
+Because (typeText='∵'; priority=0.0)
+Beta (typeText='Β'; priority=0.0)
+Cacute (typeText='Ć'; priority=0.0)
+Cap (typeText='⋒'; priority=0.0)
+CapitalDifferentialD (typeText='ⅅ'; priority=0.0)
+Cayleys (typeText='ℭ'; priority=0.0)
+Ccaron (typeText='Č'; priority=0.0)
+Cedilla (typeText='¸'; priority=0.0)
+ClockwiseContourIntegral (typeText='∲'; priority=0.0)
+ContourIntegral (typeText='∮'; priority=0.0)
+CounterClockwiseContourIntegral (typeText='∳'; priority=0.0)
+CupCap (typeText='≍'; priority=0.0)
+DDotrahd (typeText='⤑'; priority=0.0)
+Dagger (typeText='‡'; priority=0.0)
+Darr (typeText='↡'; priority=0.0)
+Dashv (typeText='⫤'; priority=0.0)
+Dcaron (typeText='Ď'; priority=0.0)
+Delta (typeText='Δ'; priority=0.0)
+DiacriticalAcute (typeText='´'; priority=0.0)
+DiacriticalDot (typeText='˙'; priority=0.0)
+DiacriticalDoubleAcute (typeText='˝'; priority=0.0)
+DiacriticalGrave (typeText='`'; priority=0.0)
+DiacriticalTilde (typeText='˜'; priority=0.0)
+Diamond (typeText='⋄'; priority=0.0)
+DifferentialD (typeText='ⅆ'; priority=0.0)
+DotEqual (typeText='≐'; priority=0.0)
+DoubleContourIntegral (typeText='∯'; priority=0.0)
+DoubleDownArrow (typeText='⇓'; priority=0.0)
+DoubleLeftArrow (typeText='⇐'; priority=0.0)
+DoubleLeftRightArrow (typeText='⇔'; priority=0.0)
+DoubleLongLeftArrow (typeText='⟸'; priority=0.0)
+DoubleLongLeftRightArrow (typeText='⟺'; priority=0.0)
+DoubleLongRightArrow (typeText='⟹'; priority=0.0)
+DoubleRightArrow (typeText='⇒'; priority=0.0)
+DoubleUpArrow (typeText='⇑'; priority=0.0)
+DoubleUpDownArrow (typeText='⇕'; priority=0.0)
+DoubleVerticalBar (typeText='∥'; priority=0.0)
+DownArrow (typeText='↓'; priority=0.0)
+DownArrowBar (typeText='⤓'; priority=0.0)
+DownArrowUpArrow (typeText='⇵'; priority=0.0)
+DownLeftVectorBar (typeText='⥖'; priority=0.0)
+DownRightVectorBar (typeText='⥗'; priority=0.0)
+DownTeeArrow (typeText='↧'; priority=0.0)
+Downarrow (typeText='⇓'; priority=0.0)
+Eacute (typeText='É'; priority=0.0)
+Ecaron (typeText='Ě'; priority=0.0)
+Egrave (typeText='È'; priority=0.0)
+Emacr (typeText='Ē'; priority=0.0)
+EmptySmallSquare (typeText='◻'; priority=0.0)
+EmptyVerySmallSquare (typeText='▫'; priority=0.0)
+Equal (typeText='⩵'; priority=0.0)
+EqualTilde (typeText='≂'; priority=0.0)
+Eta (typeText='Η'; priority=0.0)
+ExponentialE (typeText='ⅇ'; priority=0.0)
+FilledSmallSquare (typeText='◼'; priority=0.0)
+FilledVerySmallSquare (typeText='▪'; priority=0.0)
+ForAll (typeText='∀'; priority=0.0)
+Gamma (typeText='Γ'; priority=0.0)
+Gammad (typeText='Ϝ'; priority=0.0)
+GreaterEqual (typeText='≥'; priority=0.0)
+GreaterEqualLess (typeText='⋛'; priority=0.0)
+GreaterFullEqual (typeText='≧'; priority=0.0)
+GreaterGreater (typeText='⪢'; priority=0.0)
+GreaterLess (typeText='≷'; priority=0.0)
+GreaterSlantEqual (typeText='⩾'; priority=0.0)
+GreaterTilde (typeText='≳'; priority=0.0)
+HARDcy (typeText='Ъ'; priority=0.0)
+Hacek (typeText='ˇ'; priority=0.0)
+Hat (typeText='^'; priority=0.0)
+HilbertSpace (typeText='ℋ'; priority=0.0)
+HorizontalLine (typeText='─'; priority=0.0)
+HumpEqual (typeText='≏'; priority=0.0)
+Iacute (typeText='Í'; priority=0.0)
+Igrave (typeText='Ì'; priority=0.0)
+Imacr (typeText='Ī'; priority=0.0)
+ImaginaryI (typeText='ⅈ'; priority=0.0)
+Integral (typeText='∫'; priority=0.0)
+InvisibleComma (typeText='⁣'; priority=0.0)
+Iota (typeText='Ι'; priority=0.0)
+Kappa (typeText='Κ'; priority=0.0)
+Lacute (typeText='Ĺ'; priority=0.0)
+Lambda (typeText='Λ'; priority=0.0)
+Lang (typeText='⟪'; priority=0.0)
+Laplacetrf (typeText='ℒ'; priority=0.0)
+Larr (typeText='↞'; priority=0.0)
+Lcaron (typeText='Ľ'; priority=0.0)
+LeftAngleBracket (typeText='⟨'; priority=0.0)
+LeftArrow (typeText='←'; priority=0.0)
+LeftArrowBar (typeText='⇤'; priority=0.0)
+LeftArrowRightArrow (typeText='⇆'; priority=0.0)
+LeftDoubleBracket (typeText='⟦'; priority=0.0)
+LeftDownVectorBar (typeText='⥙'; priority=0.0)
+LeftRightArrow (typeText='↔'; priority=0.0)
+LeftTeeArrow (typeText='↤'; priority=0.0)
+LeftTriangle (typeText='⊲'; priority=0.0)
+LeftTriangleBar (typeText='⧏'; priority=0.0)
+LeftTriangleEqual (typeText='⊴'; priority=0.0)
+LeftUpVectorBar (typeText='⥘'; priority=0.0)
+LeftVectorBar (typeText='⥒'; priority=0.0)
+Leftarrow (typeText='⇐'; priority=0.0)
+Leftrightarrow (typeText='⇔'; priority=0.0)
+LessEqualGreater (typeText='⋚'; priority=0.0)
+LessFullEqual (typeText='≦'; priority=0.0)
+LessGreater (typeText='≶'; priority=0.0)
+LessSlantEqual (typeText='⩽'; priority=0.0)
+Lleftarrow (typeText='⇚'; priority=0.0)
+LongLeftArrow (typeText='⟵'; priority=0.0)
+LongLeftRightArrow (typeText='⟷'; priority=0.0)
+LongRightArrow (typeText='⟶'; priority=0.0)
+Longleftarrow (typeText='⟸'; priority=0.0)
+Longleftrightarrow (typeText='⟺'; priority=0.0)
+Longrightarrow (typeText='⟹'; priority=0.0)
+LowerLeftArrow (typeText='↙'; priority=0.0)
+LowerRightArrow (typeText='↘'; priority=0.0)
+Map (typeText='⤅'; priority=0.0)
+MediumSpace (typeText=' '; priority=0.0)
+Nacute (typeText='Ń'; priority=0.0)
+Ncaron (typeText='Ň'; priority=0.0)
+NegativeMediumSpace (typeText='​'; priority=0.0)
+NegativeThickSpace (typeText='​'; priority=0.0)
+NegativeThinSpace (typeText='​'; priority=0.0)
+NegativeVeryThinSpace (typeText='​'; priority=0.0)
+NestedGreaterGreater (typeText='≫'; priority=0.0)
+NoBreak (typeText='⁠'; priority=0.0)
+NonBreakingSpace (typeText=' '; priority=0.0)
+NotCupCap (typeText='≭'; priority=0.0)
+NotDoubleVerticalBar (typeText='∦'; priority=0.0)
+NotEqual (typeText='≠'; priority=0.0)
+NotGreater (typeText='≯'; priority=0.0)
+NotGreaterEqual (typeText='≱'; priority=0.0)
+NotGreaterLess (typeText='≹'; priority=0.0)
+NotGreaterTilde (typeText='≵'; priority=0.0)
+NotLeftTriangle (typeText='⋪'; priority=0.0)
+NotLeftTriangleEqual (typeText='⋬'; priority=0.0)
+NotLessEqual (typeText='≰'; priority=0.0)
+NotLessGreater (typeText='≸'; priority=0.0)
+NotPrecedesSlantEqual (typeText='⋠'; priority=0.0)
+NotRightTriangle (typeText='⋫'; priority=0.0)
+NotRightTriangleEqual (typeText='⋭'; priority=0.0)
+NotSquareSubsetEqual (typeText='⋢'; priority=0.0)
+NotSquareSupersetEqual (typeText='⋣'; priority=0.0)
+NotSubsetEqual (typeText='⊈'; priority=0.0)
+NotSucceedsSlantEqual (typeText='⋡'; priority=0.0)
+NotSupersetEqual (typeText='⊉'; priority=0.0)
+NotTildeEqual (typeText='≄'; priority=0.0)
+NotTildeFullEqual (typeText='≇'; priority=0.0)
+NotVerticalBar (typeText='∤'; priority=0.0)
+Oacute (typeText='Ó'; priority=0.0)
+Odblac (typeText='Ő'; priority=0.0)
+Ograve (typeText='Ò'; priority=0.0)
+Omacr (typeText='Ō'; priority=0.0)
+Omega (typeText='Ω'; priority=0.0)
+Oslash (typeText='Ø'; priority=0.0)
+OverBar (typeText='¯'; priority=0.0)
+OverBrace (typeText='⏞'; priority=0.0)
+OverBracket (typeText='⎴'; priority=0.0)
+OverParenthesis (typeText='⏜'; priority=0.0)
+PartialD (typeText='∂'; priority=0.0)
+Poincareplane (typeText='ℌ'; priority=0.0)
+PrecedesEqual (typeText='⪯'; priority=0.0)
+PrecedesSlantEqual (typeText='≼'; priority=0.0)
+Proportional (typeText='∝'; priority=0.0)
+RBarr (typeText='⤐'; priority=0.0)
+Racute (typeText='Ŕ'; priority=0.0)
+Rang (typeText='⟫'; priority=0.0)
+Rarr (typeText='↠'; priority=0.0)
+Rarrtl (typeText='⤖'; priority=0.0)
+Rcaron (typeText='Ř'; priority=0.0)
+RightAngleBracket (typeText='⟩'; priority=0.0)
+RightArrow (typeText='→'; priority=0.0)
+RightArrowBar (typeText='⇥'; priority=0.0)
+RightArrowLeftArrow (typeText='⇄'; priority=0.0)
+RightDoubleBracket (typeText='⟧'; priority=0.0)
+RightDownVectorBar (typeText='⥕'; priority=0.0)
+RightTeeArrow (typeText='↦'; priority=0.0)
+RightTriangle (typeText='⊳'; priority=0.0)
+RightTriangleBar (typeText='⧐'; priority=0.0)
+RightTriangleEqual (typeText='⊵'; priority=0.0)
+RightUpVectorBar (typeText='⥔'; priority=0.0)
+RightVectorBar (typeText='⥓'; priority=0.0)
+Rightarrow (typeText='⇒'; priority=0.0)
+Rrightarrow (typeText='⇛'; priority=0.0)
+RuleDelayed (typeText='⧴'; priority=0.0)
+Sacute (typeText='Ś'; priority=0.0)
+Scaron (typeText='Š'; priority=0.0)
+ShortDownArrow (typeText='↓'; priority=0.0)
+ShortLeftArrow (typeText='←'; priority=0.0)
+ShortRightArrow (typeText='→'; priority=0.0)
+ShortUpArrow (typeText='↑'; priority=0.0)
+Sigma (typeText='Σ'; priority=0.0)
+SmallCircle (typeText='∘'; priority=0.0)
+Square (typeText='□'; priority=0.0)
+SquareIntersection (typeText='⊓'; priority=0.0)
+SquareSubset (typeText='⊏'; priority=0.0)
+SquareSubsetEqual (typeText='⊑'; priority=0.0)
+SquareSuperset (typeText='⊐'; priority=0.0)
+SquareSupersetEqual (typeText='⊒'; priority=0.0)
+SquareUnion (typeText='⊔'; priority=0.0)
+Star (typeText='⋆'; priority=0.0)
+SubsetEqual (typeText='⊆'; priority=0.0)
+SucceedsEqual (typeText='⪰'; priority=0.0)
+SucceedsSlantEqual (typeText='≽'; priority=0.0)
+SuchThat (typeText='∋'; priority=0.0)
+SupersetEqual (typeText='⊇'; priority=0.0)
+TRADE (typeText='™'; priority=0.0)
+Tab (typeText='	'; priority=0.0)
+Tau (typeText='Τ'; priority=0.0)
+Tcaron (typeText='Ť'; priority=0.0)
+Theta (typeText='Θ'; priority=0.0)
+ThinSpace (typeText=' '; priority=0.0)
+TildeEqual (typeText='≃'; priority=0.0)
+TildeFullEqual (typeText='≅'; priority=0.0)
+Uacute (typeText='Ú'; priority=0.0)
+Uarr (typeText='↟'; priority=0.0)
+Uarrocir (typeText='⥉'; priority=0.0)
+Udblac (typeText='Ű'; priority=0.0)
+Ugrave (typeText='Ù'; priority=0.0)
+Umacr (typeText='Ū'; priority=0.0)
+UnderBar (typeText='̲'; priority=0.0)
+UnderBrace (typeText='⏟'; priority=0.0)
+UnderBracket (typeText='⎵'; priority=0.0)
+UnderParenthesis (typeText='⏝'; priority=0.0)
+UpArrow (typeText='↑'; priority=0.0)
+UpArrowBar (typeText='⤒'; priority=0.0)
+UpArrowDownArrow (typeText='⇅'; priority=0.0)
+UpDownArrow (typeText='↕'; priority=0.0)
+UpTeeArrow (typeText='↥'; priority=0.0)
+Uparrow (typeText='⇑'; priority=0.0)
+Updownarrow (typeText='⇕'; priority=0.0)
+UpperLeftArrow (typeText='↖'; priority=0.0)
+UpperRightArrow (typeText='↗'; priority=0.0)
+VDash (typeText='⊫'; priority=0.0)
+Vbar (typeText='⫫'; priority=0.0)
+Vdash (typeText='⊩'; priority=0.0)
+Vdashl (typeText='⫦'; priority=0.0)
+Verbar (typeText='‖'; priority=0.0)
+VerticalBar (typeText='∣'; priority=0.0)
+VerticalLine (typeText='|'; priority=0.0)
+VerticalSeparator (typeText='❘'; priority=0.0)
+VerticalTilde (typeText='≀'; priority=0.0)
+VeryThinSpace (typeText=' '; priority=0.0)
+Vvdash (typeText='⊪'; priority=0.0)
+YAcy (typeText='Я'; priority=0.0)
+Yacute (typeText='Ý'; priority=0.0)
+Zacute (typeText='Ź'; priority=0.0)
+Zcaron (typeText='Ž'; priority=0.0)
+ZeroWidthSpace (typeText='​'; priority=0.0)
+Zeta (typeText='Ζ'; priority=0.0)

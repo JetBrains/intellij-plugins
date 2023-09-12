@@ -1,23 +1,23 @@
-#body[#body]#null
-#body.append[#body.append]#null
-#body.prepend[#body.prepend]#null
-#expanded-item[#expanded-item]#null
-#foot[#foot]#null
-#footer[#footer]#null
-#footer.page-text[#footer.page-text]#null
-#footer.prepend[#footer.prepend]#null
-#group[#group]#null
-#group.header[#group.header]#null
-#group.summary[#group.summary]#null
-#header[#header]#null
-#header.[#header.…]#null
-#header.data-table-select[#header.data-table-select]#null
-#item[#item]#null
-#item.[#item.…]#null
-#item.data-table-expand[#item.data-table-expand]#null
-#item.data-table-select[#item.data-table-select]#null
-#loading[#loading]#null
-#no-data[#no-data]#null
-#no-results[#no-results]#null
-#progress[#progress]#null
-#top[#top]#null
+#body (displayText='#body'; typeText=null)
+#body.append (displayText='#body.append'; typeText=null)
+#body.prepend (displayText='#body.prepend'; typeText=null)
+#expanded-item (displayText='#expanded-item'; typeText=null)
+#foot (displayText='#foot'; typeText=null)
+#footer (displayText='#footer'; typeText=null)
+#footer.page-text (displayText='#footer.page-text'; typeText=null)
+#footer.prepend (displayText='#footer.prepend'; typeText=null)
+#group (displayText='#group'; typeText=null)
+#group.header (displayText='#group.header'; typeText=null)
+#group.summary (displayText='#group.summary'; typeText=null)
+#header (displayText='#header'; typeText=null)
+#header. (displayText='#header.…'; typeText=null)
+#header.data-table-select (displayText='#header.data-table-select'; typeText=null)
+#item (displayText='#item'; typeText=null)
+#item. (displayText='#item.…'; typeText=null)
+#item.data-table-expand (displayText='#item.data-table-expand'; typeText=null)
+#item.data-table-select (displayText='#item.data-table-select'; typeText=null)
+#loading (displayText='#loading'; typeText=null)
+#no-data (displayText='#no-data'; typeText=null)
+#no-results (displayText='#no-results'; typeText=null)
+#progress (displayText='#progress'; typeText=null)
+#top (displayText='#top'; typeText=null)

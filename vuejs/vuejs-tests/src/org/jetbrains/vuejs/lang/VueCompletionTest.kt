@@ -4,12 +4,13 @@ package org.jetbrains.vuejs.lang
 import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.impl.LookupImpl
-import com.intellij.javascript.web.nonHtmlLookupFilter
+import com.intellij.javascript.web.filterOutStandardHtmlSymbols
 import com.intellij.lang.javascript.BaseJSCompletionTestCase.*
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.JavaScriptFormatterTestBase
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.TypeScriptTestUtil
+import com.intellij.lang.javascript.completion.JSLookupPriority
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.openapi.application.WriteAction
@@ -1379,11 +1380,11 @@ export default class ComponentInsertion extends Vue {
   }
 
   fun testCompletionPriorityAndHints() {
-    doLookupTest(VueTestModule.VUETIFY_1_2_10, VueTestModule.SHARDS_VUE_1_0_5, dir = true, lookupFilter = nonHtmlLookupFilter)
+    doLookupTest(VueTestModule.VUETIFY_1_2_10, VueTestModule.SHARDS_VUE_1_0_5, dir = true, lookupFilter = filterOutStandardHtmlSymbols)
   }
 
   fun testCompletionPriorityAndHintsBuiltInTags() {
-    doLookupTest(VueTestModule.VUE_2_5_3, lookupFilter = nonHtmlLookupFilter)
+    doLookupTest(VueTestModule.VUE_2_5_3, lookupFilter = filterOutStandardHtmlSymbols)
   }
 
   fun testDirectiveCompletionOnComponent() {
@@ -1528,7 +1529,10 @@ export default class ComponentInsertion extends Vue {
     doLookupTest(locations = listOf(
       "v-on:click=\"<caret>\"",
       "v-bind:about=\"<caret>\""
-    ))
+    )) { info ->
+      info.priority >= JSLookupPriority.NON_CONTEXT_KEYWORDS_PRIORITY.priorityValue
+      || info.lookupString.startsWith("A") // Check also if we have some global symbols, but don't list all of them
+    }
   }
 
   fun testSlotTag() {
@@ -1668,7 +1672,7 @@ export default class ComponentInsertion extends Vue {
 
   fun testDefineComponent() {
     doLookupTest(VueTestModule.VUE_2_5_3, VueTestModule.COMPOSITION_API_0_4_0,
-                 dir = true, fileContents = """<template><<caret></template>""", lookupFilter = nonHtmlLookupFilter)
+                 dir = true, fileContents = """<template><<caret></template>""", lookupFilter = filterOutStandardHtmlSymbols)
   }
 
   fun testNoDuplicateCompletionProposals() {
@@ -1688,11 +1692,13 @@ export default class ComponentInsertion extends Vue {
     myFixture.configureByFile("propsDataOptionsJS.vue")
     for ((tests, results) in listOf(
       Pair(listOf("{{this.\$props.<caret>", "{{\$props.<caret>", "this.\$props.<caret>foo"),
-           listOf("!mixinProp#null#101", "!aProp#null#101")),
+           listOf("mixinProp (typeText=null; priority=101.0; bold)", "aProp (typeText=null; priority=101.0; bold)")),
       Pair(listOf("{{this.\$data.<caret>", "{{\$data.<caret>", "this.\$data.<caret>foo"),
-           listOf("!mixinData#string#101", "!foo#number#101", "!\$foo#number#101")),
+           listOf("mixinData (typeText='string'; priority=101.0; bold)", "foo (typeText='number'; priority=101.0; bold)",
+                  "\$foo (typeText='number'; priority=101.0; bold)")),
       Pair(listOf("{{this.\$options.<caret>", "{{\$options.<caret>", "this.\$options.<caret>foo"),
-           listOf("!customOption#string#101", "!customStuff#number#101", "!props#null#101", "!name#string#101"))
+           listOf("customOption (typeText='string'; priority=101.0; bold)", "customStuff (typeText='number'; priority=101.0; bold)",
+                  "props (typeText=null; priority=101.0; bold)", "name (typeText='string'; priority=101.0; bold)"))
     )) {
       for (test in tests) {
         try {
@@ -1711,9 +1717,9 @@ export default class ComponentInsertion extends Vue {
     }
     myFixture.moveToOffsetBySignature("this.<caret>\$options.foo")
     myFixture.completeBasic()
-    myFixture.renderLookupItems(true, true).let {
-      assertContainsElements(it, "!foo#number#99")
-      assertDoesntContain(it, "!\$foo#number#99")
+    myFixture.renderLookupItems(false, true).let {
+      assertContainsElements(it, "foo (typeText='number')")
+      assertDoesntContain(it, "\$foo (typeText='number')")
     }
   }
 
@@ -1766,35 +1772,36 @@ export default {
   }
 
   fun testScriptSetup() {
-    doLookupTest(VueTestModule.VUE_3_2_2,
-                 renderPriority = false,
-                 locations = listOf(
-                   ":count=\"<caret>count\"",
-                   " v<caret>/>",
-                   ":<caret>foo=",
-                   "<<caret>Foo",
-                 ),
-    ) { info ->
-      nonHtmlLookupFilter(info) && info.lookupString.let {
-        !it.startsWith("aria-") && !it.startsWith("on") && !it.startsWith(":aria-")
-      }
-    }
+    doLookupTest(
+      VueTestModule.VUE_3_2_2,
+      renderPriority = false,
+      locations = listOf(
+        ":count=\"<caret>count\"",
+        " v<caret>/>",
+        ":<caret>foo=",
+        "<<caret>Foo",
+      ),
+      lookupFilter = filterOutStandardHtmlSymbols
+        and filterOutMostOfGlobalJSSymbolsInVue
+        and { info -> info.lookupString.let { !it.startsWith("aria-") && !it.startsWith("on") && !it.startsWith(":aria-") } }
+    )
   }
 
   fun testScriptSetupTs() {
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
-    doLookupTest(VueTestModule.VUE_3_2_2,
-                 renderPriority = false,
-                 locations = listOf(
-                   ":count=\"<caret>count\"",
-                   " v<caret>/>",
-                   ":<caret>foo=",
-                   "<<caret>Foo",
-                 )) { info ->
-      nonHtmlLookupFilter(info) && info.lookupString.let {
-        !it.startsWith("aria-") && !it.startsWith("on") && !it.startsWith(":aria-")
-      }
-    }
+    doLookupTest(
+      VueTestModule.VUE_3_2_2,
+      renderPriority = false,
+      locations = listOf(
+        ":count=\"<caret>count\"",
+        " v<caret>/>",
+        ":<caret>foo=",
+        "<<caret>Foo",
+      ),
+      lookupFilter = filterOutStandardHtmlSymbols
+        and filterOutMostOfGlobalJSSymbolsInVue
+        and { info -> info.lookupString.let { !it.startsWith("aria-") && !it.startsWith("on") && !it.startsWith(":aria-") } }
+    )
   }
 
   fun testExpression() {
@@ -1881,7 +1888,8 @@ export default {
                  VueTestModule.HEADLESS_UI_1_4_1,
                  VueTestModule.NAIVE_UI_2_19_11_NO_WEB_TYPES,
                  VueTestModule.ELEMENT_PLUS_2_1_11_NO_WEB_TYPES,
-                 fileContents = """<template><<caret></template>""", lookupFilter = nonHtmlLookupFilter)
+                 fileContents = """<template><<caret></template>""",
+                 lookupFilter = filterOutStandardHtmlSymbols)
   }
 
   fun testStyleVBind() {
@@ -1909,7 +1917,7 @@ export default {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     myFixture.configureFromTempProjectFile("index.html")
     doLookupTest(renderPriority = true, noConfigure = true, locations = listOf("<<caret>Boo", "<div v-<caret>"),
-                 lookupFilter = nonHtmlLookupFilter)
+                 lookupFilter = filterOutStandardHtmlSymbols)
     myFixture.moveToOffsetBySignature("w<<caret>")
     myFixture.completeBasic()
     assertDoesntContain(myFixture.lookupElementStrings!!, "Car", "Bar", "foo-bar")
@@ -1920,7 +1928,7 @@ export default {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     myFixture.configureFromTempProjectFile("foo.vue")
     doLookupTest(renderPriority = true, noConfigure = true, locations = listOf("<<caret>Boo", "<div v-<caret>"),
-                 lookupFilter = nonHtmlLookupFilter)
+                 lookupFilter = filterOutStandardHtmlSymbols)
   }
 
   fun testCreateAppRootComponent() {
@@ -1928,7 +1936,7 @@ export default {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     myFixture.configureFromTempProjectFile("App.vue")
     doLookupTest(renderPriority = true, noConfigure = true, locations = listOf("<<caret>Boo", "<div v-<caret>"),
-                 lookupFilter = nonHtmlLookupFilter)
+                 lookupFilter = filterOutStandardHtmlSymbols)
   }
 
   fun testCreateAppImportedByRootComponent() {
@@ -1936,7 +1944,7 @@ export default {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     myFixture.configureFromTempProjectFile("ImportedByRoot.vue")
     myFixture.moveToOffsetBySignature("<<caret>div")
-    doLookupTest(renderPriority = true, noConfigure = true, lookupFilter = nonHtmlLookupFilter)
+    doLookupTest(renderPriority = true, noConfigure = true, lookupFilter = filterOutStandardHtmlSymbols)
   }
 
   fun testCreateAppNotImported() {
@@ -1944,11 +1952,11 @@ export default {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     myFixture.configureFromTempProjectFile("NotImported.vue")
     myFixture.moveToOffsetBySignature("<<caret>div")
-    doLookupTest(renderPriority = true, noConfigure = true, lookupFilter = nonHtmlLookupFilter)
+    doLookupTest(renderPriority = true, noConfigure = true, lookupFilter = filterOutStandardHtmlSymbols)
   }
 
   fun testSlotsWithPatterns() {
-    doLookupTest(dir = true, renderPriority = false, renderPresentedText = true, locations = listOf("<template #<caret>"))
+    doLookupTest(dir = true, renderPriority = false, renderDisplayText = true, locations = listOf("<template #<caret>"))
   }
 
   fun testSlotTypes() {
@@ -1966,11 +1974,15 @@ export default {
   }
 
   fun testScriptKeywordsJS() {
-    doLookupTest(VueTestModule.VUE_3_2_2)
+    doLookupTest(VueTestModule.VUE_3_2_2) {
+      it.priority >= JSLookupPriority.NON_CONTEXT_KEYWORDS_PRIORITY.priorityValue
+    }
   }
 
   fun testScriptKeywordsTS() {
-    doLookupTest(VueTestModule.VUE_3_2_2)
+    doLookupTest(VueTestModule.VUE_3_2_2) {
+      it.priority >= JSLookupPriority.NON_CONTEXT_KEYWORDS_PRIORITY.priorityValue
+    }
   }
 
   fun testExpressionOperationKeywordsJS() {
@@ -2279,7 +2291,8 @@ export default {
                            renderTailText: Boolean = false,
                            containsCheck: Boolean = false,
                            renderProximity: Boolean = false,
-                           renderPresentedText: Boolean = false,
+                           renderDisplayText: Boolean = false,
+                           renderDisplayEffects: Boolean = renderPriority,
                            lookupFilter: (item: LookupElementInfo) -> Boolean = { true }) {
     if (!noConfigure) {
       if (dir) {
@@ -2301,7 +2314,9 @@ export default {
     if (locations.isEmpty()) {
       myFixture.completeBasic()
       myFixture.checkListByFile(
-        myFixture.renderLookupItems(renderPriority, renderTypeText, renderTailText, renderProximity, renderPresentedText, lookupFilter),
+        myFixture.renderLookupItems(renderPriority, renderTypeText, renderTailText, renderProximity, renderDisplayText,
+                                    renderDisplayEffects,
+                                    lookupFilter),
         getTestName(true) + ".txt",
         containsCheck
       )
@@ -2311,7 +2326,9 @@ export default {
         myFixture.moveToOffsetBySignature(location)
         myFixture.completeBasic()
         myFixture.checkListByFile(
-          myFixture.renderLookupItems(renderPriority, renderTypeText, renderTailText, renderProximity, renderPresentedText, lookupFilter),
+          myFixture.renderLookupItems(renderPriority, renderTypeText, renderTailText, renderProximity, renderDisplayText,
+                                      renderDisplayEffects,
+                                      lookupFilter),
           getTestName(true) + ".${index + 1}.txt",
           containsCheck
         )

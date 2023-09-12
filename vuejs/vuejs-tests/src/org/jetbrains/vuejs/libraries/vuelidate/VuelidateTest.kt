@@ -1,12 +1,15 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.vuelidate
 
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.webSymbols.moveToOffsetBySignature
 import com.intellij.webSymbols.renderLookupItems
 import com.intellij.webSymbols.resolveReference
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
-import org.jetbrains.vuejs.lang.*
+import org.jetbrains.vuejs.lang.VueInspectionsProvider
+import org.jetbrains.vuejs.lang.VueTestModule
+import org.jetbrains.vuejs.lang.configureVueDependencies
+import org.jetbrains.vuejs.lang.getVueTestDataPath
 
 class VuelidateTest : BasePlatformTestCase() {
 
@@ -22,18 +25,24 @@ class VuelidateTest : BasePlatformTestCase() {
     myFixture.moveToOffsetBySignature("v-if=\"!\$v.<caret>")
     myFixture.completeBasic()
     assertContainsElements(myFixture.renderLookupItems(true, true),
-                           "!typed#null#101", "!name#null#101", "!age#null#101")
+                           "typed (typeText=null; priority=101.0; bold)",
+                           "name (typeText=null; priority=101.0; bold)",
+                           "age (typeText=null; priority=101.0; bold)")
 
     myFixture.moveToOffsetBySignature("{{\$v.<caret>")
     myFixture.completeBasic()
     assertContainsElements(myFixture.renderLookupItems(true, true),
-                           "!typed#null#101", "!name#null#101", "!age#null#101")
+                           "typed (typeText=null; priority=101.0; bold)",
+                           "name (typeText=null; priority=101.0; bold)",
+                           "age (typeText=null; priority=101.0; bold)")
 
 
     myFixture.moveToOffsetBySignature("this.\$v.name.\$<caret>")
     myFixture.completeBasic()
     assertContainsElements(myFixture.renderLookupItems(true, true),
-                           "!\$touch#void#101", "!\$error#boolean#101", "!\$invalid#boolean#101")
+                           "\$touch (typeText='void'; priority=101.0; bold)",
+                           "\$error (typeText='boolean'; priority=101.0; bold)",
+                           "\$invalid (typeText='boolean'; priority=101.0; bold)")
   }
 
   fun testResolve() {

@@ -1,53 +1,53 @@
-cart/breadcrumbs/getBreadcrumbsCurrent#null
-cart/breadcrumbs/getBreadcrumbsRoutes#null
-cart/bypassCounter#null
-cart/canSyncTotals#null
-cart/canUpdateMethods#null
-cart/getCartItems#null
-cart/getCartToken#null
-cart/getCoupon#null
-cart/getCurrentCartHash#null
-cart/getFirstPaymentMethod#null
-cart/getFirstShippingMethod#null
-cart/getIsAdding#null
-cart/getIsMicroCartOpen#null
-cart/getItemsTotalQuantity#null
-cart/getLastCartHash#null
-cart/getLastSyncDate#null
-cart/getLastTotalsSyncDate#null
-cart/getPaymentMethod#null
-cart/getPaymentMethodCode#null
-cart/getShippingMethod#null
-cart/getShippingMethod2#null
-cart/getShippingMethodCode#null
-cart/getTotals#null
-cart/isCartConnected#null
-cart/isCartEmpty#null
-cart/isCartHashChanged#null
-cart/isCartHashChanged2#null
-cart/isCartHashEmptyOrChanged#null
-cart/isCartSyncEnabled#null
-cart/isSyncRequired#null
-cart/isTotalsSyncEnabled#null
-cart/isTotalsSyncRequired#null
-cart/isVirtualCart#null
-category/getAvailableFilters#null
-category/getAvailableFiltersFrom#null
-category/getBreadcrumbs#null
-category/getBreadcrumbsFor#null
-category/getCategories#null
-category/getCategoriesMap#null
-category/getCategoryByParams#null
-category/getCategoryFrom#null
-category/getCategoryProducts#null
-category/getCategoryProductsTotal#null
-category/getCategorySearchProductsStats#null
-category/getCurrentCategory#null
-category/getCurrentFilters#null
-category/getCurrentFiltersFrom#null
-category/getCurrentSearchQuery#null
-category/getFiltersMap#null
-category/getNotFoundCategoryIds#null
-category/getSystemFilterNames#null
-category/hasActiveFilters#null
-getCurrentStoreView#null
+cart/breadcrumbs/getBreadcrumbsCurrent (typeText=null; priority=103.0; bold)
+cart/breadcrumbs/getBreadcrumbsRoutes (typeText=null; priority=103.0; bold)
+cart/bypassCounter (typeText=null; priority=103.0; bold)
+cart/canSyncTotals (typeText=null; priority=103.0; bold)
+cart/canUpdateMethods (typeText=null; priority=103.0; bold)
+cart/getCartItems (typeText=null; priority=103.0; bold)
+cart/getCartToken (typeText=null; priority=103.0; bold)
+cart/getCoupon (typeText=null; priority=103.0; bold)
+cart/getCurrentCartHash (typeText=null; priority=103.0; bold)
+cart/getFirstPaymentMethod (typeText=null; priority=103.0; bold)
+cart/getFirstShippingMethod (typeText=null; priority=103.0; bold)
+cart/getIsAdding (typeText=null; priority=103.0; bold)
+cart/getIsMicroCartOpen (typeText=null; priority=103.0; bold)
+cart/getItemsTotalQuantity (typeText=null; priority=103.0; bold)
+cart/getLastCartHash (typeText=null; priority=103.0; bold)
+cart/getLastSyncDate (typeText=null; priority=103.0; bold)
+cart/getLastTotalsSyncDate (typeText=null; priority=103.0; bold)
+cart/getPaymentMethod (typeText=null; priority=103.0; bold)
+cart/getPaymentMethodCode (typeText=null; priority=103.0; bold)
+cart/getShippingMethod (typeText=null; priority=103.0; bold)
+cart/getShippingMethod2 (typeText=null; priority=103.0; bold)
+cart/getShippingMethodCode (typeText=null; priority=103.0; bold)
+cart/getTotals (typeText=null; priority=103.0; bold)
+cart/isCartConnected (typeText=null; priority=103.0; bold)
+cart/isCartEmpty (typeText=null; priority=103.0; bold)
+cart/isCartHashChanged (typeText=null; priority=103.0; bold)
+cart/isCartHashChanged2 (typeText=null; priority=103.0; bold)
+cart/isCartHashEmptyOrChanged (typeText=null; priority=103.0; bold)
+cart/isCartSyncEnabled (typeText=null; priority=103.0; bold)
+cart/isSyncRequired (typeText=null; priority=103.0; bold)
+cart/isTotalsSyncEnabled (typeText=null; priority=103.0; bold)
+cart/isTotalsSyncRequired (typeText=null; priority=103.0; bold)
+cart/isVirtualCart (typeText=null; priority=103.0; bold)
+category/getAvailableFilters (typeText=null; priority=103.0; bold)
+category/getAvailableFiltersFrom (typeText=null; priority=103.0; bold)
+category/getBreadcrumbs (typeText=null; priority=103.0; bold)
+category/getBreadcrumbsFor (typeText=null; priority=103.0; bold)
+category/getCategories (typeText=null; priority=103.0; bold)
+category/getCategoriesMap (typeText=null; priority=103.0; bold)
+category/getCategoryByParams (typeText=null; priority=103.0; bold)
+category/getCategoryFrom (typeText=null; priority=103.0; bold)
+category/getCategoryProducts (typeText=null; priority=103.0; bold)
+category/getCategoryProductsTotal (typeText=null; priority=103.0; bold)
+category/getCategorySearchProductsStats (typeText=null; priority=103.0; bold)
+category/getCurrentCategory (typeText=null; priority=103.0; bold)
+category/getCurrentFilters (typeText=null; priority=103.0; bold)
+category/getCurrentFiltersFrom (typeText=null; priority=103.0; bold)
+category/getCurrentSearchQuery (typeText=null; priority=103.0; bold)
+category/getFiltersMap (typeText=null; priority=103.0; bold)
+category/getNotFoundCategoryIds (typeText=null; priority=103.0; bold)
+category/getSystemFilterNames (typeText=null; priority=103.0; bold)
+category/hasActiveFilters (typeText=null; priority=103.0; bold)
+getCurrentStoreView (typeText=null; priority=103.0; bold)

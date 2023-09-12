@@ -1,21 +1,21 @@
-!v-foo#null#100
-v-bind:#null#10
-v-model:#null#10
-v-on:#null#10
-v-slot:#null#10
-v-bind#null#10
-v-cloak#null#10
-v-else#null#10
-v-else-if#null#10
-v-for#null#10
-v-html#null#10
-v-if#null#10
-v-memo#null#10
-v-model#null#10
-v-on#null#10
-v-once#null#10
-v-pre#null#10
-v-show#null#10
-v-slot#null#10
-v-text#null#10
-~v-is#null#0
+v-foo (typeText=null; priority=100.0; bold; typeGreyed)
+v-bind: (typeText=null; priority=10.0; typeGreyed)
+v-model: (typeText=null; priority=10.0; typeGreyed)
+v-on: (typeText=null; priority=10.0; typeGreyed)
+v-slot: (typeText=null; priority=10.0; typeGreyed)
+v-bind (typeText=null; priority=10.0; typeGreyed)
+v-cloak (typeText=null; priority=10.0; typeGreyed)
+v-else (typeText=null; priority=10.0; typeGreyed)
+v-else-if (typeText=null; priority=10.0; typeGreyed)
+v-for (typeText=null; priority=10.0; typeGreyed)
+v-html (typeText=null; priority=10.0; typeGreyed)
+v-if (typeText=null; priority=10.0; typeGreyed)
+v-memo (typeText=null; priority=10.0; typeGreyed)
+v-model (typeText=null; priority=10.0; typeGreyed)
+v-on (typeText=null; priority=10.0; typeGreyed)
+v-once (typeText=null; priority=10.0; typeGreyed)
+v-pre (typeText=null; priority=10.0; typeGreyed)
+v-show (typeText=null; priority=10.0; typeGreyed)
+v-slot (typeText=null; priority=10.0; typeGreyed)
+v-text (typeText=null; priority=10.0; typeGreyed)
+v-is (typeText=null; priority=0.0; strikeout; typeGreyed)

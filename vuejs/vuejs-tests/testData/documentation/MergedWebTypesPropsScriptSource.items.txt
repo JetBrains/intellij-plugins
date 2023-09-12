@@ -1,2 +1,2 @@
-!test-prop#string#100
-!test-prop-two#string | undefined#100
+test-prop (typeText='string'; priority=100.0; bold; typeGreyed)
+test-prop-two (typeText='string | undefined'; priority=100.0; bold; typeGreyed)

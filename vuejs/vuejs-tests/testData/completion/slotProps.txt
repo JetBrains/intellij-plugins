@@ -1,31 +1,31 @@
-!bar#101
-!foo#101
-!headerProps#101
-!vFor#101
-!$attrs#100
-!$children#100
-!$createElement#100
-!$data#100
-!$delete#100
-!$destroy#100
-!$el#100
-!$emit#100
-!$forceUpdate#100
-!$isServer#100
-!$listeners#100
-!$mount#100
-!$nextTick#100
-!$off#100
-!$on#100
-!$once#100
-!$options#100
-!$parent#100
-!$props#100
-!$refs#100
-!$root#100
-!$scopedSlots#100
-!$set#100
-!$slots#100
-!$ssrContext#100
-!$vnode#100
-!$watch#100
+bar (priority=101.0; bold)
+foo (priority=101.0; bold)
+headerProps (priority=101.0; bold)
+vFor (priority=101.0; bold)
+$attrs (priority=100.0; bold)
+$children (priority=100.0; bold)
+$createElement (priority=100.0; bold)
+$data (priority=100.0; bold)
+$delete (priority=100.0; bold)
+$destroy (priority=100.0; bold)
+$el (priority=100.0; bold)
+$emit (priority=100.0; bold)
+$forceUpdate (priority=100.0; bold)
+$isServer (priority=100.0; bold)
+$listeners (priority=100.0; bold)
+$mount (priority=100.0; bold)
+$nextTick (priority=100.0; bold)
+$off (priority=100.0; bold)
+$on (priority=100.0; bold)
+$once (priority=100.0; bold)
+$options (priority=100.0; bold)
+$parent (priority=100.0; bold)
+$props (priority=100.0; bold)
+$refs (priority=100.0; bold)
+$root (priority=100.0; bold)
+$scopedSlots (priority=100.0; bold)
+$set (priority=100.0; bold)
+$slots (priority=100.0; bold)
+$ssrContext (priority=100.0; bold)
+$vnode (priority=100.0; bold)
+$watch (priority=100.0; bold)

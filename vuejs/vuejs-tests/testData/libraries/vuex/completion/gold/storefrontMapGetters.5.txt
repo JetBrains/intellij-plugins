@@ -1,33 +1,33 @@
-breadcrumbs/getBreadcrumbsCurrent#null
-breadcrumbs/getBreadcrumbsRoutes#null
-bypassCounter#null
-canSyncTotals#null
-canUpdateMethods#null
-getCartItems#null
-getCartToken#null
-getCoupon#null
-getCurrentCartHash#null
-getFirstPaymentMethod#null
-getFirstShippingMethod#null
-getIsAdding#null
-getIsMicroCartOpen#null
-getItemsTotalQuantity#null
-getLastCartHash#null
-getLastSyncDate#null
-getLastTotalsSyncDate#null
-getPaymentMethod#null
-getPaymentMethodCode#null
-getShippingMethod#null
-getShippingMethod2#null
-getShippingMethodCode#null
-getTotals#null
-isCartConnected#null
-isCartEmpty#null
-isCartHashChanged#null
-isCartHashChanged2#null
-isCartHashEmptyOrChanged#null
-isCartSyncEnabled#null
-isSyncRequired#null
-isTotalsSyncEnabled#null
-isTotalsSyncRequired#null
-isVirtualCart#null
+breadcrumbs/getBreadcrumbsCurrent (typeText=null)
+breadcrumbs/getBreadcrumbsRoutes (typeText=null)
+bypassCounter (typeText=null)
+canSyncTotals (typeText=null)
+canUpdateMethods (typeText=null)
+getCartItems (typeText=null)
+getCartToken (typeText=null)
+getCoupon (typeText=null)
+getCurrentCartHash (typeText=null)
+getFirstPaymentMethod (typeText=null)
+getFirstShippingMethod (typeText=null)
+getIsAdding (typeText=null)
+getIsMicroCartOpen (typeText=null)
+getItemsTotalQuantity (typeText=null)
+getLastCartHash (typeText=null)
+getLastSyncDate (typeText=null)
+getLastTotalsSyncDate (typeText=null)
+getPaymentMethod (typeText=null)
+getPaymentMethodCode (typeText=null)
+getShippingMethod (typeText=null)
+getShippingMethod2 (typeText=null)
+getShippingMethodCode (typeText=null)
+getTotals (typeText=null)
+isCartConnected (typeText=null)
+isCartEmpty (typeText=null)
+isCartHashChanged (typeText=null)
+isCartHashChanged2 (typeText=null)
+isCartHashEmptyOrChanged (typeText=null)
+isCartSyncEnabled (typeText=null)
+isSyncRequired (typeText=null)
+isTotalsSyncEnabled (typeText=null)
+isTotalsSyncRequired (typeText=null)
+isVirtualCart (typeText=null)

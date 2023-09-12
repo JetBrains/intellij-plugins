@@ -1,15 +1,15 @@
-!HW#null#100
-HelloApp#null#50
-HeyWorld#null#10
-DCardHeader#@shards/vue#10
-VBottomSheet#vuetify#10
-VBottomSheetTransition#vuetify#10
-VCheckbox#vuetify#10
-VChip#vuetify#10
-VDatePickerHeader#vuetify#10
-VDatePickerMonthTable#vuetify#10
-VHover#vuetify#10
-VStepperHeader#vuetify#10
-VSubheader#vuetify#10
-VSwitch#vuetify#10
-HelloWorld#null#1
+HW (typeText=null; priority=100.0; bold; typeGreyed)
+HelloApp (typeText=null; priority=50.0; typeGreyed)
+HeyWorld (typeText=null; priority=10.0; typeGreyed)
+DCardHeader (typeText='@shards/vue'; priority=10.0; typeGreyed)
+VBottomSheet (typeText='vuetify'; priority=10.0; typeGreyed)
+VBottomSheetTransition (typeText='vuetify'; priority=10.0; typeGreyed)
+VCheckbox (typeText='vuetify'; priority=10.0; typeGreyed)
+VChip (typeText='vuetify'; priority=10.0; typeGreyed)
+VDatePickerHeader (typeText='vuetify'; priority=10.0; typeGreyed)
+VDatePickerMonthTable (typeText='vuetify'; priority=10.0; typeGreyed)
+VHover (typeText='vuetify'; priority=10.0; typeGreyed)
+VStepperHeader (typeText='vuetify'; priority=10.0; typeGreyed)
+VSubheader (typeText='vuetify'; priority=10.0; typeGreyed)
+VSwitch (typeText='vuetify'; priority=10.0; typeGreyed)
+HelloWorld (typeText=null; priority=1.0; typeGreyed)

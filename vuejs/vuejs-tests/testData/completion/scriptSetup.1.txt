@@ -1,537 +1,61 @@
-Foo#null
-count#number
-foo#null
-fooBar#null
-inc#function(): void
-props#Readonly<{foo?: unknown} & {foo?: InferPropType<String | StringConstructor>}>
-recursive1#UnwrapRef<{recursive2: Ref<UnwrapRef<{recursive1: Ref<...<...>>}>>}>
-recursive2#UnwrapRef<{recursive1: Ref<UnwrapRef<{recursive2: Ref<...<...>>}>>}>
-ref#<T extends object>(value: T) => ToRef<T>
-vClickOutside#null
-$#ComponentInternalInstance
-$attrs#null
-$data#null
-$el#any
-$emit#(event: string, ...args: any[]) => void
-$forceUpdate#void
-$nextTick#Promise<void>
-$options#null
-$parent#null
-$props#null
-$refs#null
-$root#null
-$slots#null
-$watch#() => void
-false#null
-function#null
-function#null
-new#null
-null#null
-this#null
-true#null
-typeof#null
-async#null
-delete#null
-undefined#null
-void#null
-AbortController#AbortController
-AbortSignal#AbortSignal
-AbstractRange#AbstractRange
-AnalyserNode#AnalyserNode
-Animation#Animation
-AnimationEffect#AnimationEffect
-AnimationEvent#AnimationEvent
-AnimationPlaybackEvent#AnimationPlaybackEvent
-AnimationTimeline#AnimationTimeline
-Attr#Attr
-AudioBuffer#AudioBuffer
-AudioBufferSourceNode#AudioBufferSourceNode
-AudioContext#AudioContext
-AudioDestinationNode#AudioDestinationNode
-AudioListener#AudioListener
-AudioNode#AudioNode
-AudioParam#AudioParam
-AudioParamMap#AudioParamMap
-AudioProcessingEvent#AudioProcessingEvent
-AudioScheduledSourceNode#AudioScheduledSourceNode
-AudioWorklet#AudioWorklet
-AudioWorkletNode#AudioWorkletNode
-AuthenticatorAssertionResponse#AuthenticatorAssertionResponse
-AuthenticatorAttestationResponse#AuthenticatorAttestationResponse
-AuthenticatorResponse#AuthenticatorResponse
-BarProp#BarProp
-BaseAudioContext#BaseAudioContext
-BeforeUnloadEvent#BeforeUnloadEvent
-BiquadFilterNode#BiquadFilterNode
-Blob#Blob
-BlobEvent#BlobEvent
-BroadcastChannel#BroadcastChannel
-ByteLengthQueuingStrategy#ByteLengthQueuingStrategy
-CDATASection#CDATASection
-CSSAnimation#CSSAnimation
-CSSConditionRule#CSSConditionRule
-CSSContainerRule#CSSContainerRule
-CSSCounterStyleRule#CSSCounterStyleRule
-CSSFontFaceRule#CSSFontFaceRule
-CSSFontFeatureValuesRule#CSSFontFeatureValuesRule
-CSSFontPaletteValuesRule#CSSFontPaletteValuesRule
-CSSGroupingRule#CSSGroupingRule
-CSSImageValue#CSSImageValue
-CSSImportRule#CSSImportRule
-CSSKeyframeRule#CSSKeyframeRule
-CSSKeyframesRule#CSSKeyframesRule
-CSSKeywordValue#CSSKeywordValue
-CSSLayerBlockRule#CSSLayerBlockRule
-CSSLayerStatementRule#CSSLayerStatementRule
-CSSMathClamp#CSSMathClamp
-CSSMathInvert#CSSMathInvert
-CSSMathMax#CSSMathMax
-CSSMathMin#CSSMathMin
-CSSMathNegate#CSSMathNegate
-CSSMathProduct#CSSMathProduct
-CSSMathSum#CSSMathSum
-CSSMathValue#CSSMathValue
-CSSMatrixComponent#CSSMatrixComponent
-CSSMediaRule#CSSMediaRule
-CSSNamespaceRule#CSSNamespaceRule
-CSSNumericArray#CSSNumericArray
-CSSNumericValue#CSSNumericValue
-CSSPageRule#CSSPageRule
-CSSPerspective#CSSPerspective
-CSSPropertyRule#CSSPropertyRule
-CSSRotate#null
-CSSRule#CSSRule
-CSSRuleList#CSSRuleList
-CSSScale#CSSScale
-CSSSkew#CSSSkew
-CSSSkewX#CSSSkewX
-CSSSkewY#CSSSkewY
-CSSStyleDeclaration#CSSStyleDeclaration
-CSSStyleRule#CSSStyleRule
-CSSStyleSheet#CSSStyleSheet
-CSSStyleValue#CSSStyleValue
-CSSSupportsRule#CSSSupportsRule
-CSSTransformComponent#CSSTransformComponent
-CSSTransformValue#CSSTransformValue
-CSSTransition#CSSTransition
-CSSTranslate#CSSTranslate
-CSSUnitValue#CSSUnitValue
-CSSUnparsedValue#CSSUnparsedValue
-CSSVariableReferenceValue#CSSVariableReferenceValue
-Cache#Cache
-CacheStorage#CacheStorage
-CanvasCaptureMediaStreamTrack#CanvasCaptureMediaStreamTrack
-CanvasGradient#CanvasGradient
-CanvasPattern#CanvasPattern
-CanvasRenderingContext2D#CanvasRenderingContext2D
-ChannelMergerNode#ChannelMergerNode
-ChannelSplitterNode#ChannelSplitterNode
-CharacterData#CharacterData
-Clipboard#Clipboard
-ClipboardEvent#ClipboardEvent
-ClipboardItem#ClipboardItem
-CloseEvent#CloseEvent
-Comment#Comment
-CompositionEvent#CompositionEvent
-CompressionStream#CompressionStream
-ConstantSourceNode#ConstantSourceNode
-ConvolverNode#ConvolverNode
-CountQueuingStrategy#CountQueuingStrategy
-Credential#Credential
-CredentialsContainer#CredentialsContainer
-Crypto#Crypto
-CryptoKey#CryptoKey
-CustomElementRegistry#CustomElementRegistry
-CustomEvent#CustomEvent<T>
-DOMException#DOMException
-DOMImplementation#DOMImplementation
-DOMMatrix#DOMMatrix
-DOMMatrixReadOnly#DOMMatrixReadOnly
-DOMParser#DOMParser
-DOMPoint#DOMPoint
-DOMPointReadOnly#DOMPointReadOnly
-DOMQuad#DOMQuad
-DOMRect#DOMRect
-DOMRectList#DOMRectList
-DOMRectReadOnly#DOMRectReadOnly
-DOMStringList#DOMStringList
-DOMStringMap#DOMStringMap
-DOMTokenList#DOMTokenList
-DataTransfer#DataTransfer
-DataTransferItem#DataTransferItem
-DataTransferItemList#DataTransferItemList
-DecompressionStream#DecompressionStream
-DelayNode#DelayNode
-DeviceMotionEvent#DeviceMotionEvent
-DeviceOrientationEvent#DeviceOrientationEvent
-Document#Document
-DocumentFragment#DocumentFragment
-DocumentTimeline#DocumentTimeline
-DocumentType#DocumentType
-DragEvent#DragEvent
-DynamicsCompressorNode#DynamicsCompressorNode
-Element#Element
-ElementInternals#ElementInternals
-EncodedVideoChunk#EncodedVideoChunk
-ErrorEvent#ErrorEvent
-Event#Event
-EventCounts#EventCounts
-EventSource#EventSource
-EventTarget#EventTarget
-External#External
-File#File
-FileList#FileList
-FileReader#FileReader
-FileSystem#FileSystem
-FileSystemDirectoryEntry#FileSystemDirectoryEntry
-FileSystemDirectoryHandle#FileSystemDirectoryHandle
-FileSystemDirectoryReader#FileSystemDirectoryReader
-FileSystemEntry#FileSystemEntry
-FileSystemFileEntry#FileSystemFileEntry
-FileSystemFileHandle#FileSystemFileHandle
-FileSystemHandle#FileSystemHandle
-FileSystemWritableFileStream#FileSystemWritableFileStream
-FocusEvent#FocusEvent
-FontFace#FontFace
-FontFaceSet#FontFaceSet
-FontFaceSetLoadEvent#FontFaceSetLoadEvent
-FormData#FormData
-FormDataEvent#FormDataEvent
-GainNode#GainNode
-Gamepad#Gamepad
-GamepadButton#GamepadButton
-GamepadEvent#GamepadEvent
-GamepadHapticActuator#GamepadHapticActuator
-Geolocation#Geolocation
-GeolocationCoordinates#GeolocationCoordinates
-GeolocationPosition#GeolocationPosition
-GeolocationPositionError#GeolocationPositionError
-HTMLAllCollection#HTMLAllCollection
-HTMLAnchorElement#HTMLAnchorElement
-HTMLAreaElement#HTMLAreaElement
-HTMLAudioElement#HTMLAudioElement
-HTMLBRElement#HTMLBRElement
-HTMLBaseElement#HTMLBaseElement
-HTMLBodyElement#HTMLBodyElement
-HTMLButtonElement#HTMLButtonElement
-HTMLCanvasElement#HTMLCanvasElement
-HTMLCollection#HTMLCollection
-HTMLDListElement#HTMLDListElement
-HTMLDataElement#HTMLDataElement
-HTMLDataListElement#HTMLDataListElement
-HTMLDetailsElement#HTMLDetailsElement
-HTMLDialogElement#HTMLDialogElement
-HTMLDirectoryElement#HTMLDirectoryElement
-HTMLDivElement#HTMLDivElement
-HTMLDocument#HTMLDocument
-HTMLElement#HTMLElement
-HTMLEmbedElement#HTMLEmbedElement
-HTMLFieldSetElement#HTMLFieldSetElement
-HTMLFontElement#HTMLFontElement
-HTMLFormControlsCollection#HTMLFormControlsCollection
-HTMLFormElement#HTMLFormElement
-HTMLFrameElement#HTMLFrameElement
-HTMLFrameSetElement#HTMLFrameSetElement
-HTMLHRElement#HTMLHRElement
-HTMLHeadElement#HTMLHeadElement
-HTMLHeadingElement#HTMLHeadingElement
-HTMLHtmlElement#HTMLHtmlElement
-HTMLIFrameElement#HTMLIFrameElement
-HTMLImageElement#HTMLImageElement
-HTMLInputElement#HTMLInputElement
-HTMLLIElement#HTMLLIElement
-HTMLLabelElement#HTMLLabelElement
-HTMLLegendElement#HTMLLegendElement
-HTMLLinkElement#HTMLLinkElement
-HTMLMapElement#HTMLMapElement
-HTMLMarqueeElement#HTMLMarqueeElement
-HTMLMediaElement#HTMLMediaElement
-HTMLMenuElement#HTMLMenuElement
-HTMLMetaElement#HTMLMetaElement
-HTMLMeterElement#HTMLMeterElement
-HTMLModElement#HTMLModElement
-HTMLOListElement#HTMLOListElement
-HTMLObjectElement#HTMLObjectElement
-HTMLOptGroupElement#HTMLOptGroupElement
-HTMLOptionElement#HTMLOptionElement
-HTMLOptionsCollection#HTMLOptionsCollection
-HTMLOutputElement#HTMLOutputElement
-HTMLParagraphElement#HTMLParagraphElement
-HTMLParamElement#HTMLParamElement
-HTMLPictureElement#HTMLPictureElement
-HTMLPreElement#HTMLPreElement
-HTMLProgressElement#HTMLProgressElement
-HTMLQuoteElement#HTMLQuoteElement
-HTMLScriptElement#HTMLScriptElement
-HTMLSelectElement#HTMLSelectElement
-HTMLSlotElement#HTMLSlotElement
-HTMLSourceElement#HTMLSourceElement
-HTMLSpanElement#HTMLSpanElement
-HTMLStyleElement#HTMLStyleElement
-HTMLTableCaptionElement#HTMLTableCaptionElement
-HTMLTableCellElement#HTMLTableCellElement
-HTMLTableColElement#HTMLTableColElement
-HTMLTableElement#HTMLTableElement
-HTMLTableRowElement#HTMLTableRowElement
-HTMLTableSectionElement#HTMLTableSectionElement
-HTMLTemplateElement#HTMLTemplateElement
-HTMLTextAreaElement#HTMLTextAreaElement
-HTMLTimeElement#HTMLTimeElement
-HTMLTitleElement#HTMLTitleElement
-HTMLTrackElement#HTMLTrackElement
-HTMLUListElement#HTMLUListElement
-HTMLUnknownElement#HTMLUnknownElement
-HTMLVideoElement#HTMLVideoElement
-HashChangeEvent#HashChangeEvent
-Headers#Headers
-History#History
-IDBCursor#IDBCursor
-IDBCursorWithValue#IDBCursorWithValue
-IDBDatabase#IDBDatabase
-IDBFactory#IDBFactory
-IDBIndex#IDBIndex
-IDBKeyRange#IDBKeyRange
-IDBObjectStore#IDBObjectStore
-IDBOpenDBRequest#IDBOpenDBRequest
-IDBRequest#IDBRequest<any>
-IDBTransaction#IDBTransaction
-IDBVersionChangeEvent#IDBVersionChangeEvent
-IIRFilterNode#IIRFilterNode
-IdleDeadline#IdleDeadline
-ImageBitmap#ImageBitmap
-ImageBitmapRenderingContext#ImageBitmapRenderingContext
-ImageData#null
-InputDeviceInfo#InputDeviceInfo
-InputEvent#InputEvent
-IntersectionObserver#IntersectionObserver
-IntersectionObserverEntry#IntersectionObserverEntry
-KeyboardEvent#KeyboardEvent
-KeyframeEffect#null
-Location#Location
-Lock#Lock
-LockManager#LockManager
-MIDIAccess#MIDIAccess
-MIDIConnectionEvent#MIDIConnectionEvent
-MIDIInput#MIDIInput
-MIDIInputMap#MIDIInputMap
-MIDIMessageEvent#MIDIMessageEvent
-MIDIOutput#MIDIOutput
-MIDIOutputMap#MIDIOutputMap
-MIDIPort#MIDIPort
-MathMLElement#MathMLElement
-MediaCapabilities#MediaCapabilities
-MediaDeviceInfo#MediaDeviceInfo
-MediaDevices#MediaDevices
-MediaElementAudioSourceNode#MediaElementAudioSourceNode
-MediaEncryptedEvent#MediaEncryptedEvent
-MediaError#MediaError
-MediaKeyMessageEvent#MediaKeyMessageEvent
-MediaKeySession#MediaKeySession
-MediaKeyStatusMap#MediaKeyStatusMap
-MediaKeySystemAccess#MediaKeySystemAccess
-MediaKeys#MediaKeys
-MediaList#MediaList
-MediaMetadata#MediaMetadata
-MediaQueryList#MediaQueryList
-MediaQueryListEvent#MediaQueryListEvent
-MediaRecorder#MediaRecorder
-MediaSession#MediaSession
-MediaSource#MediaSource
-MediaStream#null
-MediaStreamAudioDestinationNode#MediaStreamAudioDestinationNode
-MediaStreamAudioSourceNode#MediaStreamAudioSourceNode
-MediaStreamTrack#MediaStreamTrack
-MediaStreamTrackEvent#MediaStreamTrackEvent
-MessageChannel#MessageChannel
-MessageEvent#MessageEvent<T>
-MessagePort#MessagePort
-MimeType#MimeType
-MimeTypeArray#MimeTypeArray
-MouseEvent#MouseEvent
-MutationEvent#MutationEvent
-MutationObserver#MutationObserver
-MutationRecord#MutationRecord
-NamedNodeMap#NamedNodeMap
-NavigationPreloadManager#NavigationPreloadManager
-Navigator#Navigator
-Node#Node
-NodeFilter#null
-NodeIterator#NodeIterator
-NodeList#NodeList
-Notification#Notification
-OfflineAudioCompletionEvent#OfflineAudioCompletionEvent
-OfflineAudioContext#null
-OffscreenCanvas#OffscreenCanvas
-OffscreenCanvasRenderingContext2D#OffscreenCanvasRenderingContext2D
-OscillatorNode#OscillatorNode
-OverconstrainedError#OverconstrainedError
-PageTransitionEvent#PageTransitionEvent
-PannerNode#PannerNode
-Path2D#Path2D
-PaymentMethodChangeEvent#PaymentMethodChangeEvent
-PaymentRequest#PaymentRequest
-PaymentRequestUpdateEvent#PaymentRequestUpdateEvent
-PaymentResponse#PaymentResponse
-Performance#Performance
-PerformanceEntry#PerformanceEntry
-PerformanceEventTiming#PerformanceEventTiming
-PerformanceMark#PerformanceMark
-PerformanceMeasure#PerformanceMeasure
-PerformanceNavigation#PerformanceNavigation
-PerformanceNavigationTiming#PerformanceNavigationTiming
-PerformanceObserver#PerformanceObserver
-PerformanceObserverEntryList#PerformanceObserverEntryList
-PerformancePaintTiming#PerformancePaintTiming
-PerformanceResourceTiming#PerformanceResourceTiming
-PerformanceServerTiming#PerformanceServerTiming
-PerformanceTiming#PerformanceTiming
-PeriodicWave#PeriodicWave
-PermissionStatus#PermissionStatus
-Permissions#Permissions
-PictureInPictureEvent#PictureInPictureEvent
-PictureInPictureWindow#PictureInPictureWindow
-Plugin#Plugin
-PluginArray#PluginArray
-PointerEvent#PointerEvent
-PopStateEvent#PopStateEvent
-ProcessingInstruction#ProcessingInstruction
-ProgressEvent#ProgressEvent<EventTarget>
-PromiseRejectionEvent#PromiseRejectionEvent
-PublicKeyCredential#PublicKeyCredential
-PushManager#PushManager
-PushSubscription#PushSubscription
-PushSubscriptionOptions#PushSubscriptionOptions
-RTCCertificate#RTCCertificate
-RTCDTMFSender#RTCDTMFSender
-RTCDTMFToneChangeEvent#RTCDTMFToneChangeEvent
-RTCDataChannel#RTCDataChannel
-RTCDataChannelEvent#RTCDataChannelEvent
-RTCDtlsTransport#RTCDtlsTransport
-RTCEncodedAudioFrame#RTCEncodedAudioFrame
-RTCEncodedVideoFrame#RTCEncodedVideoFrame
-RTCError#RTCError
-RTCErrorEvent#RTCErrorEvent
-RTCIceCandidate#RTCIceCandidate
-RTCIceTransport#RTCIceTransport
-RTCPeerConnection#RTCPeerConnection
-RTCPeerConnectionIceErrorEvent#RTCPeerConnectionIceErrorEvent
-RTCPeerConnectionIceEvent#RTCPeerConnectionIceEvent
-RTCRtpReceiver#RTCRtpReceiver
-RTCRtpSender#RTCRtpSender
-RTCRtpTransceiver#RTCRtpTransceiver
-RTCSctpTransport#RTCSctpTransport
-RTCSessionDescription#RTCSessionDescription
-RTCStatsReport#RTCStatsReport
-RTCTrackEvent#RTCTrackEvent
-RadioNodeList#RadioNodeList
-Range#Range
-ReadableByteStreamController#ReadableByteStreamController
-ReadableStream#null
-ReadableStreamBYOBReader#ReadableStreamBYOBReader
-ReadableStreamBYOBRequest#ReadableStreamBYOBRequest
-ReadableStreamDefaultController#ReadableStreamDefaultController<any>
-ReadableStreamDefaultReader#ReadableStreamDefaultReader<R>
-RemotePlayback#RemotePlayback
-Report#Report
-ReportBody#ReportBody
-ReportingObserver#ReportingObserver
-Request#Request
-ResizeObserver#ResizeObserver
-ResizeObserverEntry#ResizeObserverEntry
-ResizeObserverSize#ResizeObserverSize
-Response#Response
-SVGAElement#SVGAElement
-SVGAngle#SVGAngle
-SVGAnimateElement#SVGAnimateElement
-SVGAnimateMotionElement#SVGAnimateMotionElement
-SVGAnimateTransformElement#SVGAnimateTransformElement
-SVGAnimatedAngle#SVGAnimatedAngle
-SVGAnimatedBoolean#SVGAnimatedBoolean
-SVGAnimatedEnumeration#SVGAnimatedEnumeration
-SVGAnimatedInteger#SVGAnimatedInteger
-SVGAnimatedLength#SVGAnimatedLength
-SVGAnimatedLengthList#SVGAnimatedLengthList
-SVGAnimatedNumber#SVGAnimatedNumber
-SVGAnimatedNumberList#SVGAnimatedNumberList
-SVGAnimatedPreserveAspectRatio#SVGAnimatedPreserveAspectRatio
-SVGAnimatedRect#SVGAnimatedRect
-SVGAnimatedString#SVGAnimatedString
-SVGAnimatedTransformList#SVGAnimatedTransformList
-SVGAnimationElement#SVGAnimationElement
-SVGCircleElement#SVGCircleElement
-SVGClipPathElement#SVGClipPathElement
-SVGComponentTransferFunctionElement#SVGComponentTransferFunctionElement
-SVGDefsElement#SVGDefsElement
-SVGDescElement#SVGDescElement
-SVGElement#SVGElement
-SVGEllipseElement#SVGEllipseElement
-SVGFEBlendElement#SVGFEBlendElement
-SVGFEColorMatrixElement#SVGFEColorMatrixElement
-SVGFEComponentTransferElement#SVGFEComponentTransferElement
-SVGFECompositeElement#SVGFECompositeElement
-SVGFEConvolveMatrixElement#SVGFEConvolveMatrixElement
-SVGFEDiffuseLightingElement#SVGFEDiffuseLightingElement
-SVGFEDisplacementMapElement#SVGFEDisplacementMapElement
-SVGFEDistantLightElement#SVGFEDistantLightElement
-SVGFEDropShadowElement#SVGFEDropShadowElement
-SVGFEFloodElement#SVGFEFloodElement
-SVGFEFuncAElement#SVGFEFuncAElement
-SVGFEFuncBElement#SVGFEFuncBElement
-SVGFEFuncGElement#SVGFEFuncGElement
-SVGFEFuncRElement#SVGFEFuncRElement
-SVGFEGaussianBlurElement#SVGFEGaussianBlurElement
-SVGFEImageElement#SVGFEImageElement
-SVGFEMergeElement#SVGFEMergeElement
-SVGFEMergeNodeElement#SVGFEMergeNodeElement
-SVGFEMorphologyElement#SVGFEMorphologyElement
-SVGFEOffsetElement#SVGFEOffsetElement
-SVGFEPointLightElement#SVGFEPointLightElement
-SVGFESpecularLightingElement#SVGFESpecularLightingElement
-SVGFESpotLightElement#SVGFESpotLightElement
-SVGFETileElement#SVGFETileElement
-SVGFETurbulenceElement#SVGFETurbulenceElement
-SVGFilterElement#SVGFilterElement
-SVGForeignObjectElement#SVGForeignObjectElement
-SVGGElement#SVGGElement
-SVGGeometryElement#SVGGeometryElement
-SVGGradientElement#SVGGradientElement
-SVGGraphicsElement#SVGGraphicsElement
-SVGImageElement#SVGImageElement
-SVGLength#SVGLength
-SVGLengthList#SVGLengthList
-SVGLineElement#SVGLineElement
-SVGLinearGradientElement#SVGLinearGradientElement
-SVGMPathElement#SVGMPathElement
-SVGMarkerElement#SVGMarkerElement
-SVGMaskElement#SVGMaskElement
-SVGMatrix#DOMMatrix
-SVGMetadataElement#SVGMetadataElement
-SVGNumber#SVGNumber
-SVGNumberList#SVGNumberList
-SVGPathElement#SVGPathElement
-SVGPatternElement#SVGPatternElement
-SVGPoint#DOMPoint
-SVGPointList#SVGPointList
-SVGPolygonElement#SVGPolygonElement
-SVGPolylineElement#SVGPolylineElement
-SVGPreserveAspectRatio#SVGPreserveAspectRatio
-SVGRadialGradientElement#SVGRadialGradientElement
-SVGRect#DOMRect
-SVGRectElement#SVGRectElement
-SVGSVGElement#SVGSVGElement
-SVGScriptElement#SVGScriptElement
-SVGSetElement#SVGSetElement
-SVGStopElement#SVGStopElement
-SVGStringList#SVGStringList
-SVGStyleElement#SVGStyleElement
-SVGSwitchElement#SVGSwitchElement
-SVGSymbolElement#SVGSymbolElement
-SVGTSpanElement#SVGTSpanElement
-SVGTextContentElement#SVGTextContentElement
-SVGTextElement#SVGTextElement
-SVGTextPathElement#SVGTextPathElement
-SVGTextPositioningElement#SVGTextPositioningElement
-SVGTitleElement#SVGTitleElement
-SVGTransform#SVGTransform
-SVGTransformList#SVGTransformList
-WebKitCSSMatrix#DOMMatrix
+Foo (typeText=null)
+count (typeText='number')
+foo (typeText=null)
+fooBar (typeText=null)
+inc (typeText='function(): void')
+props (typeText='Readonly<{foo?: unknown} & {foo?: InferPropType<String | StringConstructor>}>')
+recursive1 (typeText='UnwrapRef<{recursive2: Ref<UnwrapRef<{recursive1: Ref<...<...>>}>>}>')
+recursive2 (typeText='UnwrapRef<{recursive1: Ref<UnwrapRef<{recursive2: Ref<...<...>>}>>}>')
+ref (typeText='<T extends object>(value: T) => ToRef<T>')
+vClickOutside (typeText=null)
+$ (typeText='ComponentInternalInstance')
+$attrs (typeText=null)
+$data (typeText=null)
+$el (typeText='any')
+$emit (typeText='(event: string, ...args: any[]) => void')
+$forceUpdate (typeText='void')
+$nextTick (typeText='Promise<void>')
+$options (typeText=null)
+$parent (typeText=null)
+$props (typeText=null)
+$refs (typeText=null)
+$root (typeText=null)
+$slots (typeText=null)
+$watch (typeText='() => void')
+false (typeText=null)
+function (typeText=null)
+function (typeText=null)
+new (typeText=null)
+null (typeText=null)
+this (typeText=null)
+true (typeText=null)
+typeof (typeText=null)
+async (typeText=null)
+delete (typeText=null)
+undefined (typeText=null)
+void (typeText=null)
+AbortController (typeText='AbortController')
+AbortSignal (typeText='AbortSignal')
+AbstractRange (typeText='AbstractRange')
+AnalyserNode (typeText='AnalyserNode')
+Animation (typeText='Animation')
+AnimationEffect (typeText='AnimationEffect')
+AnimationEvent (typeText='AnimationEvent')
+AnimationPlaybackEvent (typeText='AnimationPlaybackEvent')
+AnimationTimeline (typeText='AnimationTimeline')
+Attr (typeText='Attr')
+AudioBuffer (typeText='AudioBuffer')
+AudioBufferSourceNode (typeText='AudioBufferSourceNode')
+AudioContext (typeText='AudioContext')
+AudioDestinationNode (typeText='AudioDestinationNode')
+AudioListener (typeText='AudioListener')
+AudioNode (typeText='AudioNode')
+AudioParam (typeText='AudioParam')
+AudioParamMap (typeText='AudioParamMap')
+AudioProcessingEvent (typeText='AudioProcessingEvent')
+AudioScheduledSourceNode (typeText='AudioScheduledSourceNode')
+AudioWorklet (typeText='AudioWorklet')
+AudioWorkletNode (typeText='AudioWorkletNode')
+AuthenticatorAssertionResponse (typeText='AuthenticatorAssertionResponse')
+AuthenticatorAttestationResponse (typeText='AuthenticatorAttestationResponse')
+AuthenticatorResponse (typeText='AuthenticatorResponse')

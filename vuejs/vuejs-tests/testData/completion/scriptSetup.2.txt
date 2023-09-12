@@ -1,23 +1,23 @@
-v-click-outside#null
-v-bind:#null
-v-model:#null
-v-on:#null
-v-slot:#null
-v-bind#null
-v-cloak#null
-v-else#null
-v-else-if#null
-v-for#null
-v-html#null
-v-if#null
-v-memo#null
-v-model#null
-v-on#null
-v-once#null
-v-pre#null
-v-show#null
-v-slot#null
-v-text#null
-rev#null
-v-is#null
-vocab#null
+v-click-outside (typeText=null)
+v-bind: (typeText=null)
+v-model: (typeText=null)
+v-on: (typeText=null)
+v-slot: (typeText=null)
+v-bind (typeText=null)
+v-cloak (typeText=null)
+v-else (typeText=null)
+v-else-if (typeText=null)
+v-for (typeText=null)
+v-html (typeText=null)
+v-if (typeText=null)
+v-memo (typeText=null)
+v-model (typeText=null)
+v-on (typeText=null)
+v-once (typeText=null)
+v-pre (typeText=null)
+v-show (typeText=null)
+v-slot (typeText=null)
+v-text (typeText=null)
+rev (typeText=null)
+v-is (typeText=null)
+vocab (typeText=null)

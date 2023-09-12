@@ -1,5 +1,5 @@
-!n-affix#100
-!n-bar#100
-n-a#10
-n-alert#10
-n-button#10
+n-affix (priority=100.0; bold)
+n-bar (priority=100.0; bold)
+n-a (priority=10.0)
+n-alert (priority=10.0)
+n-button (priority=10.0)

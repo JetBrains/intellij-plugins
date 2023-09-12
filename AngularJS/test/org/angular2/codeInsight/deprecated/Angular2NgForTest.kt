@@ -58,6 +58,6 @@ class Angular2NgForTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.type('.')
     myFixture.complete(CompletionType.BASIC)
     UsefulTestCase.assertOrderedEquals(ContainerUtil.getFirstItems(AngularTestUtil.renderLookupItems(myFixture, false, true, true), 2),
-                                       "key#string", "value#null")
+                                       "key (typeText='string')", "value (typeText=null)")
   }
 }

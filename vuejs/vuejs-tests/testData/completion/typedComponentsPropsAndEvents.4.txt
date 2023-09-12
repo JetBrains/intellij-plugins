@@ -1,87 +1,87 @@
-!change#(fixed: boolean) => void#100
-!scroll#({scrollTop, fixed}: {scrollTop: number, fixed: boolean}) => void#100
-abort#null#1
-auxclick#null#1
-beforeinput#null#1
-beforematch#null#1
-blur#null#1
-cancel#null#1
-canplay#null#1
-canplaythrough#null#1
-click#null#1
-close#null#1
-contextlost#null#1
-contextmenu#null#1
-contextrestored#null#1
-copy#null#1
-cuechange#null#1
-cut#null#1
-dblclick#null#1
-drag#null#1
-dragend#null#1
-dragenter#null#1
-dragleave#null#1
-dragover#null#1
-dragstart#null#1
-drop#null#1
-durationchange#null#1
-emptied#null#1
-ended#null#1
-error#null#1
-focus#null#1
-focusin#null#1
-focusout#null#1
-formdata#null#1
-gotpointercapture#null#1
-input#null#1
-invalid#null#1
-keydown#null#1
-keyup#null#1
-load#null#1
-loadeddata#null#1
-loadedmetadata#null#1
-loadstart#null#1
-lostpointercapture#null#1
-mousedown#null#1
-mouseenter#null#1
-mouseleave#null#1
-mousemove#null#1
-mouseout#null#1
-mouseover#null#1
-mouseup#null#1
-paste#null#1
-pause#null#1
-play#null#1
-playing#null#1
-pointercancel#null#1
-pointerdown#null#1
-pointerenter#null#1
-pointerleave#null#1
-pointermove#null#1
-pointerout#null#1
-pointerover#null#1
-pointerrawupdate#null#1
-pointerup#null#1
-progress#null#1
-ratechange#null#1
-reset#null#1
-resize#null#1
-scrollend#null#1
-securitypolicyviolation#null#1
-seeked#null#1
-seeking#null#1
-select#null#1
-slotchange#null#1
-stalled#null#1
-submit#null#1
-suspend#null#1
-timeupdate#null#1
-toggle#null#1
-transitioncancel#null#1
-transitionend#null#1
-transitionrun#null#1
-transitionstart#null#1
-volumechange#null#1
-waiting#null#1
-wheel#null#1
-~keypress#null#0
+change (typeText='(fixed: boolean) => void'; priority=100.0; bold; typeGreyed)
+scroll (typeText='({scrollTop, fixed}: {scrollTop: number, fixed: boolean}) => void'; priority=100.0; bold; typeGreyed)
+abort (typeText=null; priority=1.0; typeGreyed)
+auxclick (typeText=null; priority=1.0; typeGreyed)
+beforeinput (typeText=null; priority=1.0; typeGreyed)
+beforematch (typeText=null; priority=1.0; typeGreyed)
+blur (typeText=null; priority=1.0; typeGreyed)
+cancel (typeText=null; priority=1.0; typeGreyed)
+canplay (typeText=null; priority=1.0; typeGreyed)
+canplaythrough (typeText=null; priority=1.0; typeGreyed)
+click (typeText=null; priority=1.0; typeGreyed)
+close (typeText=null; priority=1.0; typeGreyed)
+contextlost (typeText=null; priority=1.0; typeGreyed)
+contextmenu (typeText=null; priority=1.0; typeGreyed)
+contextrestored (typeText=null; priority=1.0; typeGreyed)
+copy (typeText=null; priority=1.0; typeGreyed)
+cuechange (typeText=null; priority=1.0; typeGreyed)
+cut (typeText=null; priority=1.0; typeGreyed)
+dblclick (typeText=null; priority=1.0; typeGreyed)
+drag (typeText=null; priority=1.0; typeGreyed)
+dragend (typeText=null; priority=1.0; typeGreyed)
+dragenter (typeText=null; priority=1.0; typeGreyed)
+dragleave (typeText=null; priority=1.0; typeGreyed)
+dragover (typeText=null; priority=1.0; typeGreyed)
+dragstart (typeText=null; priority=1.0; typeGreyed)
+drop (typeText=null; priority=1.0; typeGreyed)
+durationchange (typeText=null; priority=1.0; typeGreyed)
+emptied (typeText=null; priority=1.0; typeGreyed)
+ended (typeText=null; priority=1.0; typeGreyed)
+error (typeText=null; priority=1.0; typeGreyed)
+focus (typeText=null; priority=1.0; typeGreyed)
+focusin (typeText=null; priority=1.0; typeGreyed)
+focusout (typeText=null; priority=1.0; typeGreyed)
+formdata (typeText=null; priority=1.0; typeGreyed)
+gotpointercapture (typeText=null; priority=1.0; typeGreyed)
+input (typeText=null; priority=1.0; typeGreyed)
+invalid (typeText=null; priority=1.0; typeGreyed)
+keydown (typeText=null; priority=1.0; typeGreyed)
+keyup (typeText=null; priority=1.0; typeGreyed)
+load (typeText=null; priority=1.0; typeGreyed)
+loadeddata (typeText=null; priority=1.0; typeGreyed)
+loadedmetadata (typeText=null; priority=1.0; typeGreyed)
+loadstart (typeText=null; priority=1.0; typeGreyed)
+lostpointercapture (typeText=null; priority=1.0; typeGreyed)
+mousedown (typeText=null; priority=1.0; typeGreyed)
+mouseenter (typeText=null; priority=1.0; typeGreyed)
+mouseleave (typeText=null; priority=1.0; typeGreyed)
+mousemove (typeText=null; priority=1.0; typeGreyed)
+mouseout (typeText=null; priority=1.0; typeGreyed)
+mouseover (typeText=null; priority=1.0; typeGreyed)
+mouseup (typeText=null; priority=1.0; typeGreyed)
+paste (typeText=null; priority=1.0; typeGreyed)
+pause (typeText=null; priority=1.0; typeGreyed)
+play (typeText=null; priority=1.0; typeGreyed)
+playing (typeText=null; priority=1.0; typeGreyed)
+pointercancel (typeText=null; priority=1.0; typeGreyed)
+pointerdown (typeText=null; priority=1.0; typeGreyed)
+pointerenter (typeText=null; priority=1.0; typeGreyed)
+pointerleave (typeText=null; priority=1.0; typeGreyed)
+pointermove (typeText=null; priority=1.0; typeGreyed)
+pointerout (typeText=null; priority=1.0; typeGreyed)
+pointerover (typeText=null; priority=1.0; typeGreyed)
+pointerrawupdate (typeText=null; priority=1.0; typeGreyed)
+pointerup (typeText=null; priority=1.0; typeGreyed)
+progress (typeText=null; priority=1.0; typeGreyed)
+ratechange (typeText=null; priority=1.0; typeGreyed)
+reset (typeText=null; priority=1.0; typeGreyed)
+resize (typeText=null; priority=1.0; typeGreyed)
+scrollend (typeText=null; priority=1.0; typeGreyed)
+securitypolicyviolation (typeText=null; priority=1.0; typeGreyed)
+seeked (typeText=null; priority=1.0; typeGreyed)
+seeking (typeText=null; priority=1.0; typeGreyed)
+select (typeText=null; priority=1.0; typeGreyed)
+slotchange (typeText=null; priority=1.0; typeGreyed)
+stalled (typeText=null; priority=1.0; typeGreyed)
+submit (typeText=null; priority=1.0; typeGreyed)
+suspend (typeText=null; priority=1.0; typeGreyed)
+timeupdate (typeText=null; priority=1.0; typeGreyed)
+toggle (typeText=null; priority=1.0; typeGreyed)
+transitioncancel (typeText=null; priority=1.0; typeGreyed)
+transitionend (typeText=null; priority=1.0; typeGreyed)
+transitionrun (typeText=null; priority=1.0; typeGreyed)
+transitionstart (typeText=null; priority=1.0; typeGreyed)
+volumechange (typeText=null; priority=1.0; typeGreyed)
+waiting (typeText=null; priority=1.0; typeGreyed)
+wheel (typeText=null; priority=1.0; typeGreyed)
+keypress (typeText=null; priority=0.0; strikeout; typeGreyed)

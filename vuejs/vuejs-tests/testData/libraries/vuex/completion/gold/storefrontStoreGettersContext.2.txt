@@ -1,15 +1,15 @@
-breadcrumbs#null
-cartIsLoaded#false
-cartItems#any[]
-cartItemsHash#""
-cartServerLastSyncDate#0
-cartServerLastTotalsSyncDate#0
-cartServerToken#""
-connectBypassCount#0
-isAddingToCart#false
-isMicrocartOpen#false
-itemsAfterPlatformTotals#null
-payment#any[]
-platformTotalSegments#null
-platformTotals#null
-shipping#any[]
+breadcrumbs (typeText=null; priority=103.0; bold)
+cartIsLoaded (typeText='false'; priority=103.0; bold)
+cartItems (typeText='any[]'; priority=103.0; bold)
+cartItemsHash (typeText='""'; priority=103.0; bold)
+cartServerLastSyncDate (typeText='0'; priority=103.0; bold)
+cartServerLastTotalsSyncDate (typeText='0'; priority=103.0; bold)
+cartServerToken (typeText='""'; priority=103.0; bold)
+connectBypassCount (typeText='0'; priority=103.0; bold)
+isAddingToCart (typeText='false'; priority=103.0; bold)
+isMicrocartOpen (typeText='false'; priority=103.0; bold)
+itemsAfterPlatformTotals (typeText=null; priority=103.0; bold)
+payment (typeText='any[]'; priority=103.0; bold)
+platformTotalSegments (typeText='null'; priority=103.0; bold)
+platformTotals (typeText='null'; priority=103.0; bold)
+shipping (typeText='any[]'; priority=103.0; bold)

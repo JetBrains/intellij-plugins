@@ -1,10 +1,10 @@
-!newAppVersion#null#103
-!nonceOutdated#boolean#103
-!replenish#null#103
-!replenish/index#number#103
-!replenish/loading#boolean#103
-!replenish/replenish#[]#103
-!showNewVersion#boolean#103
-!sour#null#103
-!sour/loading#boolean#103
-!sour/tasks#[]#103
+newAppVersion (typeText='null'; priority=103.0; bold)
+nonceOutdated (typeText='boolean'; priority=103.0; bold)
+replenish (typeText=null; priority=103.0; bold)
+replenish/index (typeText='number'; priority=103.0; bold)
+replenish/loading (typeText='boolean'; priority=103.0; bold)
+replenish/replenish (typeText='[]'; priority=103.0; bold)
+showNewVersion (typeText='boolean'; priority=103.0; bold)
+sour (typeText=null; priority=103.0; bold)
+sour/loading (typeText='boolean'; priority=103.0; bold)
+sour/tasks (typeText='[]'; priority=103.0; bold)

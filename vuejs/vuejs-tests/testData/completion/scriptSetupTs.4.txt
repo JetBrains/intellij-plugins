@@ -1,19 +1,19 @@
-Foo#null
-FooBar#null
-ScriptSetupTs#null
-foo#null
-foo-bar#null
-script-setup-ts#null
-Component#vue
-KeepAlive#vue
-Suspense#vue
-Teleport#vue
-Transition#vue
-TransitionGroup#vue
-component#vue
-keep-alive#vue
-slot#vue
-suspense#vue
-teleport#vue
-transition#vue
-transition-group#vue
+Foo (typeText=null)
+FooBar (typeText=null)
+ScriptSetupTs (typeText=null)
+foo (typeText=null)
+foo-bar (typeText=null)
+script-setup-ts (typeText=null)
+Component (typeText='vue')
+KeepAlive (typeText='vue')
+Suspense (typeText='vue')
+Teleport (typeText='vue')
+Transition (typeText='vue')
+TransitionGroup (typeText='vue')
+component (typeText='vue')
+keep-alive (typeText='vue')
+slot (typeText='vue')
+suspense (typeText='vue')
+teleport (typeText='vue')
+transition (typeText='vue')
+transition-group (typeText='vue')

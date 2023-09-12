@@ -1,19 +1,19 @@
-!'a'#null#103
-!'b'#null#103
-!'c'#null#103
-!bar#"a" | "b" | "c"#101
-!props#null#101
-!$#ComponentInternalInstance#100
-!$attrs#null#100
-!$data#null#100
-!$el#any#100
-!$emit#(event: string, ...args: any[]) => void#100
-!$forceUpdate#void#100
-!$nextTick#Promise<void>#100
-!$options#null#100
-!$parent#null#100
-!$props#null#100
-!$refs#null#100
-!$root#null#100
-!$slots#null#100
-!$watch#() => void#100
+'a' (typeText=null; priority=103.0; bold)
+'b' (typeText=null; priority=103.0; bold)
+'c' (typeText=null; priority=103.0; bold)
+bar (typeText='"a" | "b" | "c"'; priority=101.0; bold)
+props (typeText=null; priority=101.0; bold)
+$ (typeText='ComponentInternalInstance'; priority=100.0; bold)
+$attrs (typeText=null; priority=100.0; bold)
+$data (typeText=null; priority=100.0; bold)
+$el (typeText='any'; priority=100.0; bold)
+$emit (typeText='(event: string, ...args: any[]) => void'; priority=100.0; bold)
+$forceUpdate (typeText='void'; priority=100.0; bold)
+$nextTick (typeText='Promise<void>'; priority=100.0; bold)
+$options (typeText=null; priority=100.0; bold)
+$parent (typeText=null; priority=100.0; bold)
+$props (typeText=null; priority=100.0; bold)
+$refs (typeText=null; priority=100.0; bold)
+$root (typeText=null; priority=100.0; bold)
+$slots (typeText=null; priority=100.0; bold)
+$watch (typeText='() => void'; priority=100.0; bold)

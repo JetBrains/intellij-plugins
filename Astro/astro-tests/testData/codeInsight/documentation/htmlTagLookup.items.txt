@@ -1,2 +1,2 @@
-div#null#1
-table#null#1
+div (typeText=null; priority=1.0)
+table (typeText=null; priority=1.0)

@@ -1,2 +1,2 @@
-transparent#50
-transparentize#0
+transparent (priority=50.0)
+transparentize (priority=0.0)

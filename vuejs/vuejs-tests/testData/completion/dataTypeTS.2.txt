@@ -1,4 +1,4 @@
-addItemToList#void
-msg#number
-tasks#string[]
-userInput#string
+addItemToList (typeText='void')
+msg (typeText='number')
+tasks (typeText='string[]')
+userInput (typeText='string')

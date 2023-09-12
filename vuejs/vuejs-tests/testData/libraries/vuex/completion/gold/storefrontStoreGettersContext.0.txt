@@ -1,15 +1,17 @@
-!breadcrumbs#null#101
-!cartIsLoaded#false#101
-!cartItems#any[]#101
-!cartItemsHash#""#101
-!cartServerLastSyncDate#0#101
-!cartServerLastTotalsSyncDate#0#101
-!cartServerToken#""#101
-!connectBypassCount#0#101
-!isAddingToCart#false#101
-!isMicrocartOpen#false#101
-!itemsAfterPlatformTotals#null#101
-!payment#any[]#101
-!platformTotalSegments#null#101
-!platformTotals#null#101
-!shipping#any[]#101
+breadcrumbs (typeText=null; priority=101.0; bold)
+cartIsLoaded (typeText='false'; priority=101.0; bold)
+cartItems (typeText='any[]'; priority=101.0; bold)
+cartItemsHash (typeText='""'; priority=101.0; bold)
+cartServerLastSyncDate (typeText='0'; priority=101.0; bold)
+cartServerLastTotalsSyncDate (typeText='0'; priority=101.0; bold)
+cartServerToken (typeText='""'; priority=101.0; bold)
+connectBypassCount (typeText='0'; priority=101.0; bold)
+isAddingToCart (typeText='false'; priority=101.0; bold)
+isMicrocartOpen (typeText='false'; priority=101.0; bold)
+itemsAfterPlatformTotals (typeText=null; priority=101.0; bold)
+payment (typeText='any[]'; priority=101.0; bold)
+platformTotalSegments (typeText='null'; priority=101.0; bold)
+platformTotals (typeText='null'; priority=101.0; bold)
+shipping (typeText='any[]'; priority=101.0; bold)
+"breadcrumbs/current" (typeText='null'; priority=98.0; bold)
+"breadcrumbs/routes" (typeText='any[]'; priority=98.0; bold)

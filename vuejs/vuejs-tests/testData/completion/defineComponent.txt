@@ -1,18 +1,18 @@
-Component#vue#10
-KeepAlive#vue#10
-Slot#vue#10
-Transition#vue#10
-TransitionGroup#vue#10
-component#vue#10
-keep-alive#vue#10
-slot#vue#10
-transition#vue#10
-transition-group#vue#10
-Component1#null#1
-Component2#null#1
-Component4#null#1
-ComponentThree#null#1
-component-three#null#1
-component1#null#1
-component2#null#1
-component4#null#1
+Component (typeText='vue'; priority=10.0; typeGreyed)
+KeepAlive (typeText='vue'; priority=10.0; typeGreyed)
+Slot (typeText='vue'; priority=10.0; typeGreyed)
+Transition (typeText='vue'; priority=10.0; typeGreyed)
+TransitionGroup (typeText='vue'; priority=10.0; typeGreyed)
+component (typeText='vue'; priority=10.0; typeGreyed)
+keep-alive (typeText='vue'; priority=10.0; typeGreyed)
+slot (typeText='vue'; priority=10.0; typeGreyed)
+transition (typeText='vue'; priority=10.0; typeGreyed)
+transition-group (typeText='vue'; priority=10.0; typeGreyed)
+Component1 (typeText=null; priority=1.0; typeGreyed)
+Component2 (typeText=null; priority=1.0; typeGreyed)
+Component4 (typeText=null; priority=1.0; typeGreyed)
+ComponentThree (typeText=null; priority=1.0; typeGreyed)
+component-three (typeText=null; priority=1.0; typeGreyed)
+component1 (typeText=null; priority=1.0; typeGreyed)
+component2 (typeText=null; priority=1.0; typeGreyed)
+component4 (typeText=null; priority=1.0; typeGreyed)

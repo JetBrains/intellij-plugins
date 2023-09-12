@@ -1,3 +1,3 @@
-!sour/uniqueStatuses#null#103
-!userFirstName#null#103
-!userLoggedIn#null#103
+sour/uniqueStatuses (typeText=null; priority=103.0; bold)
+userFirstName (typeText=null; priority=103.0; bold)
+userLoggedIn (typeText=null; priority=103.0; bold)

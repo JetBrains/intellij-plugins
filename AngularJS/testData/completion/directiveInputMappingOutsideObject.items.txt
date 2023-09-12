@@ -1,8 +1,8 @@
-!BoldDirective[BoldDirective]#null#101
-!Directive[Directive]#null#101
-!Input[Input]#null#101
-!Output[Output]#null#101
-!field1["field1"]#string#100
-!field2["field2"]#string#100
-!field3["field3"]#string#100
-!title["title"]#string#100
+BoldDirective (displayText='BoldDirective'; typeText=null; priority=101.0; bold)
+Directive (displayText='Directive'; typeText=null; priority=101.0; bold)
+Input (displayText='Input'; typeText=null; priority=101.0; bold)
+Output (displayText='Output'; typeText=null; priority=101.0; bold)
+field1 (displayText='"field1"'; typeText='string'; priority=100.0; bold; typeGreyed)
+field2 (displayText='"field2"'; typeText='string'; priority=100.0; bold; typeGreyed)
+field3 (displayText='"field3"'; typeText='string'; priority=100.0; bold; typeGreyed)
+title (displayText='"title"'; typeText='string'; priority=100.0; bold; typeGreyed)

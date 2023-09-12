@@ -1,2 +1,2 @@
-!in#null#5
-!instanceof#null#5
+in (typeText=null; priority=5.0; bold)
+instanceof (typeText=null; priority=5.0; bold)

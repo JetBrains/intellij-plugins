@@ -1,2 +1,2 @@
-!field1#String#100
-!field2#String#100
+field1 (typeText='String'; priority=100.0; bold; typeGreyed)
+field2 (typeText='String'; priority=100.0; bold; typeGreyed)

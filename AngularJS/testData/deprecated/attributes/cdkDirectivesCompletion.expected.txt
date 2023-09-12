@@ -1,28 +1,28 @@
-*cdk-connected-overlay#null#50
-*cdkCellDef#null#50
-*cdkCellOutlet#null#50
-*cdkConnectedOverlay#null#50
-*cdkDrag#null#50
-*cdkDragPlaceholder#null#50
-*cdkDragPreview#null#50
-*cdkFooterCellDef#null#50
-*cdkFooterRowDef#null#50
-*cdkHeaderCellDef#null#50
-*cdkHeaderRowDef#null#50
-*cdkNoDataRow#null#50
-*cdkPortal#null#50
-*cdkPortalOutlet#null#50
-*cdkRowDef#null#50
-*cdkStepLabel#null#50
-*cdkTreeNodeDef#null#50
-*cdkTreeNodeOutlet#null#50
-*cdkVirtualFor#null#50
-*connected-overlay#null#50
-*footerRowOutlet#null#50
-*headerRowOutlet#null#50
-*noDataRowOutlet#null#50
-*rowOutlet#null#50
-~*cdk-portal#null#0
-~*cdkPortalHost#null#0
-~*portal#null#0
-~*portalHost#null#0
+*cdk-connected-overlay (typeText=null; priority=50.0; typeGreyed)
+*cdkCellDef (typeText=null; priority=50.0; typeGreyed)
+*cdkCellOutlet (typeText=null; priority=50.0; typeGreyed)
+*cdkConnectedOverlay (typeText=null; priority=50.0; typeGreyed)
+*cdkDrag (typeText=null; priority=50.0; typeGreyed)
+*cdkDragPlaceholder (typeText=null; priority=50.0; typeGreyed)
+*cdkDragPreview (typeText=null; priority=50.0; typeGreyed)
+*cdkFooterCellDef (typeText=null; priority=50.0; typeGreyed)
+*cdkFooterRowDef (typeText=null; priority=50.0; typeGreyed)
+*cdkHeaderCellDef (typeText=null; priority=50.0; typeGreyed)
+*cdkHeaderRowDef (typeText=null; priority=50.0; typeGreyed)
+*cdkNoDataRow (typeText=null; priority=50.0; typeGreyed)
+*cdkPortal (typeText=null; priority=50.0; typeGreyed)
+*cdkPortalOutlet (typeText=null; priority=50.0; typeGreyed)
+*cdkRowDef (typeText=null; priority=50.0; typeGreyed)
+*cdkStepLabel (typeText=null; priority=50.0; typeGreyed)
+*cdkTreeNodeDef (typeText=null; priority=50.0; typeGreyed)
+*cdkTreeNodeOutlet (typeText=null; priority=50.0; typeGreyed)
+*cdkVirtualFor (typeText=null; priority=50.0; typeGreyed)
+*connected-overlay (typeText=null; priority=50.0; typeGreyed)
+*footerRowOutlet (typeText=null; priority=50.0; typeGreyed)
+*headerRowOutlet (typeText=null; priority=50.0; typeGreyed)
+*noDataRowOutlet (typeText=null; priority=50.0; typeGreyed)
+*rowOutlet (typeText=null; priority=50.0; typeGreyed)
+*cdk-portal (typeText=null; priority=0.0; strikeout; typeGreyed)
+*cdkPortalHost (typeText=null; priority=0.0; strikeout; typeGreyed)
+*portal (typeText=null; priority=0.0; strikeout; typeGreyed)
+*portalHost (typeText=null; priority=0.0; strikeout; typeGreyed)

@@ -1,147 +1,147 @@
-Component#vue#10
-KeepAlive#vue#10
-Suspense#vue#10
-Teleport#vue#10
-Transition#vue#10
-TransitionGroup#vue#10
-component#vue#10
-keep-alive#vue#10
-slot#vue#10
-suspense#vue#10
-teleport#vue#10
-transition#vue#10
-transition-group#vue#10
-NAffix#naive-ui#1
-NAlert#naive-ui#1
-NAnchor#naive-ui#1
-NAnchorLink#naive-ui#1
-NAutoComplete#naive-ui#1
-NAvatar#naive-ui#1
-NBackTop#naive-ui#1
-NBadge#naive-ui#1
-NBreadcrumb#naive-ui#1
-NBreadcrumbItem#naive-ui#1
-NButton#naive-ui#1
-NButtonGroup#naive-ui#1
-NCalendar#naive-ui#1
-NCard#naive-ui#1
-NCarousel#naive-ui#1
-n-affix#naive-ui#1
-n-alert#naive-ui#1
-n-anchor#naive-ui#1
-n-anchor-link#naive-ui#1
-n-auto-complete#naive-ui#1
-n-avatar#naive-ui#1
-n-back-top#naive-ui#1
-n-badge#naive-ui#1
-n-breadcrumb#naive-ui#1
-n-breadcrumb-item#naive-ui#1
-n-button#naive-ui#1
-n-button-group#naive-ui#1
-n-calendar#naive-ui#1
-n-card#naive-ui#1
-n-carousel#naive-ui#1
-ElAffix#element-plus#1
-ElAlert#element-plus#1
-ElAutocomplete#element-plus#1
-ElAvatar#element-plus#1
-ElBacktop#element-plus#1
-ElBadge#element-plus#1
-ElBreadcrumb#element-plus#1
-ElBreadcrumbItem#element-plus#1
-ElButton#element-plus#1
-ElButtonGroup#element-plus#1
-ElCalendar#element-plus#1
-ElCard#element-plus#1
-ElCarousel#element-plus#1
-ElCarouselItem#element-plus#1
-el-affix#element-plus#1
-el-alert#element-plus#1
-el-autocomplete#element-plus#1
-el-avatar#element-plus#1
-el-backtop#element-plus#1
-el-badge#element-plus#1
-el-breadcrumb#element-plus#1
-el-breadcrumb-item#element-plus#1
-el-button#element-plus#1
-el-button-group#element-plus#1
-el-calendar#element-plus#1
-el-card#element-plus#1
-el-carousel#element-plus#1
-el-carousel-item#element-plus#1
-Dialog#@headlessui/vue#1
-DialogDescription#@headlessui/vue#1
-DialogOverlay#@headlessui/vue#1
-DialogTitle#@headlessui/vue#1
-Disclosure#@headlessui/vue#1
-DisclosureButton#@headlessui/vue#1
-DisclosurePanel#@headlessui/vue#1
-FocusTrap#@headlessui/vue#1
-Listbox#@headlessui/vue#1
-ListboxButton#@headlessui/vue#1
-ListboxLabel#@headlessui/vue#1
-ListboxOption#@headlessui/vue#1
-ListboxOptions#@headlessui/vue#1
-Menu#@headlessui/vue#1
-MenuButton#@headlessui/vue#1
-MenuItem#@headlessui/vue#1
-MenuItems#@headlessui/vue#1
-Popover#@headlessui/vue#1
-PopoverButton#@headlessui/vue#1
-PopoverGroup#@headlessui/vue#1
-PopoverOverlay#@headlessui/vue#1
-PopoverPanel#@headlessui/vue#1
-Portal#@headlessui/vue#1
-PortalGroup#@headlessui/vue#1
-RadioGroup#@headlessui/vue#1
-RadioGroupDescription#@headlessui/vue#1
-RadioGroupLabel#@headlessui/vue#1
-RadioGroupOption#@headlessui/vue#1
-Switch#@headlessui/vue#1
-SwitchDescription#@headlessui/vue#1
-SwitchGroup#@headlessui/vue#1
-SwitchLabel#@headlessui/vue#1
-Tab#@headlessui/vue#1
-TabGroup#@headlessui/vue#1
-TabList#@headlessui/vue#1
-TabPanel#@headlessui/vue#1
-TabPanels#@headlessui/vue#1
-TransitionChild#@headlessui/vue#1
-TransitionRoot#@headlessui/vue#1
-dialog-description#@headlessui/vue#1
-dialog-overlay#@headlessui/vue#1
-dialog-title#@headlessui/vue#1
-disclosure#@headlessui/vue#1
-disclosure-button#@headlessui/vue#1
-disclosure-panel#@headlessui/vue#1
-focus-trap#@headlessui/vue#1
-listbox#@headlessui/vue#1
-listbox-button#@headlessui/vue#1
-listbox-label#@headlessui/vue#1
-listbox-option#@headlessui/vue#1
-listbox-options#@headlessui/vue#1
-menu-button#@headlessui/vue#1
-menu-item#@headlessui/vue#1
-menu-items#@headlessui/vue#1
-popover#@headlessui/vue#1
-popover-button#@headlessui/vue#1
-popover-group#@headlessui/vue#1
-popover-overlay#@headlessui/vue#1
-popover-panel#@headlessui/vue#1
-portal#@headlessui/vue#1
-portal-group#@headlessui/vue#1
-radio-group#@headlessui/vue#1
-radio-group-description#@headlessui/vue#1
-radio-group-label#@headlessui/vue#1
-radio-group-option#@headlessui/vue#1
-switch#@headlessui/vue#1
-switch-description#@headlessui/vue#1
-switch-group#@headlessui/vue#1
-switch-label#@headlessui/vue#1
-tab#@headlessui/vue#1
-tab-group#@headlessui/vue#1
-tab-list#@headlessui/vue#1
-tab-panel#@headlessui/vue#1
-tab-panels#@headlessui/vue#1
-transition-child#@headlessui/vue#1
-transition-root#@headlessui/vue#1
+Component (typeText='vue'; priority=10.0; typeGreyed)
+KeepAlive (typeText='vue'; priority=10.0; typeGreyed)
+Suspense (typeText='vue'; priority=10.0; typeGreyed)
+Teleport (typeText='vue'; priority=10.0; typeGreyed)
+Transition (typeText='vue'; priority=10.0; typeGreyed)
+TransitionGroup (typeText='vue'; priority=10.0; typeGreyed)
+component (typeText='vue'; priority=10.0; typeGreyed)
+keep-alive (typeText='vue'; priority=10.0; typeGreyed)
+slot (typeText='vue'; priority=10.0; typeGreyed)
+suspense (typeText='vue'; priority=10.0; typeGreyed)
+teleport (typeText='vue'; priority=10.0; typeGreyed)
+transition (typeText='vue'; priority=10.0; typeGreyed)
+transition-group (typeText='vue'; priority=10.0; typeGreyed)
+NAffix (typeText='naive-ui'; priority=1.0; typeGreyed)
+NAlert (typeText='naive-ui'; priority=1.0; typeGreyed)
+NAnchor (typeText='naive-ui'; priority=1.0; typeGreyed)
+NAnchorLink (typeText='naive-ui'; priority=1.0; typeGreyed)
+NAutoComplete (typeText='naive-ui'; priority=1.0; typeGreyed)
+NAvatar (typeText='naive-ui'; priority=1.0; typeGreyed)
+NBackTop (typeText='naive-ui'; priority=1.0; typeGreyed)
+NBadge (typeText='naive-ui'; priority=1.0; typeGreyed)
+NBreadcrumb (typeText='naive-ui'; priority=1.0; typeGreyed)
+NBreadcrumbItem (typeText='naive-ui'; priority=1.0; typeGreyed)
+NButton (typeText='naive-ui'; priority=1.0; typeGreyed)
+NButtonGroup (typeText='naive-ui'; priority=1.0; typeGreyed)
+NCalendar (typeText='naive-ui'; priority=1.0; typeGreyed)
+NCard (typeText='naive-ui'; priority=1.0; typeGreyed)
+NCarousel (typeText='naive-ui'; priority=1.0; typeGreyed)
+n-affix (typeText='naive-ui'; priority=1.0; typeGreyed)
+n-alert (typeText='naive-ui'; priority=1.0; typeGreyed)
+n-anchor (typeText='naive-ui'; priority=1.0; typeGreyed)
+n-anchor-link (typeText='naive-ui'; priority=1.0; typeGreyed)
+n-auto-complete (typeText='naive-ui'; priority=1.0; typeGreyed)
+n-avatar (typeText='naive-ui'; priority=1.0; typeGreyed)
+n-back-top (typeText='naive-ui'; priority=1.0; typeGreyed)
+n-badge (typeText='naive-ui'; priority=1.0; typeGreyed)
+n-breadcrumb (typeText='naive-ui'; priority=1.0; typeGreyed)
+n-breadcrumb-item (typeText='naive-ui'; priority=1.0; typeGreyed)
+n-button (typeText='naive-ui'; priority=1.0; typeGreyed)
+n-button-group (typeText='naive-ui'; priority=1.0; typeGreyed)
+n-calendar (typeText='naive-ui'; priority=1.0; typeGreyed)
+n-card (typeText='naive-ui'; priority=1.0; typeGreyed)
+n-carousel (typeText='naive-ui'; priority=1.0; typeGreyed)
+ElAffix (typeText='element-plus'; priority=1.0; typeGreyed)
+ElAlert (typeText='element-plus'; priority=1.0; typeGreyed)
+ElAutocomplete (typeText='element-plus'; priority=1.0; typeGreyed)
+ElAvatar (typeText='element-plus'; priority=1.0; typeGreyed)
+ElBacktop (typeText='element-plus'; priority=1.0; typeGreyed)
+ElBadge (typeText='element-plus'; priority=1.0; typeGreyed)
+ElBreadcrumb (typeText='element-plus'; priority=1.0; typeGreyed)
+ElBreadcrumbItem (typeText='element-plus'; priority=1.0; typeGreyed)
+ElButton (typeText='element-plus'; priority=1.0; typeGreyed)
+ElButtonGroup (typeText='element-plus'; priority=1.0; typeGreyed)
+ElCalendar (typeText='element-plus'; priority=1.0; typeGreyed)
+ElCard (typeText='element-plus'; priority=1.0; typeGreyed)
+ElCarousel (typeText='element-plus'; priority=1.0; typeGreyed)
+ElCarouselItem (typeText='element-plus'; priority=1.0; typeGreyed)
+el-affix (typeText='element-plus'; priority=1.0; typeGreyed)
+el-alert (typeText='element-plus'; priority=1.0; typeGreyed)
+el-autocomplete (typeText='element-plus'; priority=1.0; typeGreyed)
+el-avatar (typeText='element-plus'; priority=1.0; typeGreyed)
+el-backtop (typeText='element-plus'; priority=1.0; typeGreyed)
+el-badge (typeText='element-plus'; priority=1.0; typeGreyed)
+el-breadcrumb (typeText='element-plus'; priority=1.0; typeGreyed)
+el-breadcrumb-item (typeText='element-plus'; priority=1.0; typeGreyed)
+el-button (typeText='element-plus'; priority=1.0; typeGreyed)
+el-button-group (typeText='element-plus'; priority=1.0; typeGreyed)
+el-calendar (typeText='element-plus'; priority=1.0; typeGreyed)
+el-card (typeText='element-plus'; priority=1.0; typeGreyed)
+el-carousel (typeText='element-plus'; priority=1.0; typeGreyed)
+el-carousel-item (typeText='element-plus'; priority=1.0; typeGreyed)
+Dialog (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+DialogDescription (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+DialogOverlay (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+DialogTitle (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+Disclosure (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+DisclosureButton (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+DisclosurePanel (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+FocusTrap (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+Listbox (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+ListboxButton (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+ListboxLabel (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+ListboxOption (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+ListboxOptions (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+Menu (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+MenuButton (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+MenuItem (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+MenuItems (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+Popover (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+PopoverButton (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+PopoverGroup (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+PopoverOverlay (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+PopoverPanel (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+Portal (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+PortalGroup (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+RadioGroup (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+RadioGroupDescription (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+RadioGroupLabel (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+RadioGroupOption (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+Switch (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+SwitchDescription (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+SwitchGroup (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+SwitchLabel (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+Tab (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+TabGroup (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+TabList (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+TabPanel (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+TabPanels (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+TransitionChild (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+TransitionRoot (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+dialog-description (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+dialog-overlay (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+dialog-title (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+disclosure (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+disclosure-button (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+disclosure-panel (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+focus-trap (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+listbox (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+listbox-button (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+listbox-label (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+listbox-option (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+listbox-options (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+menu-button (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+menu-item (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+menu-items (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+popover (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+popover-button (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+popover-group (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+popover-overlay (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+popover-panel (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+portal (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+portal-group (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+radio-group (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+radio-group-description (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+radio-group-label (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+radio-group-option (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+switch (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+switch-description (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+switch-group (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+switch-label (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+tab (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+tab-group (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+tab-list (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+tab-panel (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+tab-panels (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+transition-child (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+transition-root (typeText='@headlessui/vue'; priority=1.0; typeGreyed)

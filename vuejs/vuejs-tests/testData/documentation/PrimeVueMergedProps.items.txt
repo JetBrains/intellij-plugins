@@ -1,2 +1,2 @@
-!icon#string#100
-!size#string#100
+icon (typeText='string'; priority=100.0; bold; typeGreyed)
+size (typeText='string'; priority=100.0; bold; typeGreyed)

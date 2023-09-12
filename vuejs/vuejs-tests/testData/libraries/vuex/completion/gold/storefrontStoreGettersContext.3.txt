@@ -1,33 +1,33 @@
-!"breadcrumbs/getBreadcrumbsCurrent"#null#98
-!"breadcrumbs/getBreadcrumbsRoutes"#null#98
-!bypassCounter#null#101
-!canSyncTotals#null#101
-!canUpdateMethods#null#101
-!getCartItems#null#101
-!getCartToken#null#101
-!getCoupon#null#101
-!getCurrentCartHash#null#101
-!getFirstPaymentMethod#null#101
-!getFirstShippingMethod#null#101
-!getIsAdding#null#101
-!getIsMicroCartOpen#null#101
-!getItemsTotalQuantity#null#101
-!getLastCartHash#null#101
-!getLastSyncDate#null#101
-!getLastTotalsSyncDate#null#101
-!getPaymentMethod#null#101
-!getPaymentMethodCode#null#101
-!getShippingMethod#null#101
-!getShippingMethod2#null#101
-!getShippingMethodCode#null#101
-!getTotals#null#101
-!isCartConnected#null#101
-!isCartEmpty#null#101
-!isCartHashChanged#null#101
-!isCartHashChanged2#null#101
-!isCartHashEmptyOrChanged#null#101
-!isCartSyncEnabled#null#101
-!isSyncRequired#null#101
-!isTotalsSyncEnabled#null#101
-!isTotalsSyncRequired#null#101
-!isVirtualCart#null#101
+bypassCounter (typeText=null; priority=101.0; bold)
+canSyncTotals (typeText=null; priority=101.0; bold)
+canUpdateMethods (typeText=null; priority=101.0; bold)
+getCartItems (typeText=null; priority=101.0; bold)
+getCartToken (typeText=null; priority=101.0; bold)
+getCoupon (typeText=null; priority=101.0; bold)
+getCurrentCartHash (typeText=null; priority=101.0; bold)
+getFirstPaymentMethod (typeText=null; priority=101.0; bold)
+getFirstShippingMethod (typeText=null; priority=101.0; bold)
+getIsAdding (typeText=null; priority=101.0; bold)
+getIsMicroCartOpen (typeText=null; priority=101.0; bold)
+getItemsTotalQuantity (typeText=null; priority=101.0; bold)
+getLastCartHash (typeText=null; priority=101.0; bold)
+getLastSyncDate (typeText=null; priority=101.0; bold)
+getLastTotalsSyncDate (typeText=null; priority=101.0; bold)
+getPaymentMethod (typeText=null; priority=101.0; bold)
+getPaymentMethodCode (typeText=null; priority=101.0; bold)
+getShippingMethod (typeText=null; priority=101.0; bold)
+getShippingMethod2 (typeText=null; priority=101.0; bold)
+getShippingMethodCode (typeText=null; priority=101.0; bold)
+getTotals (typeText=null; priority=101.0; bold)
+isCartConnected (typeText=null; priority=101.0; bold)
+isCartEmpty (typeText=null; priority=101.0; bold)
+isCartHashChanged (typeText=null; priority=101.0; bold)
+isCartHashChanged2 (typeText=null; priority=101.0; bold)
+isCartHashEmptyOrChanged (typeText=null; priority=101.0; bold)
+isCartSyncEnabled (typeText=null; priority=101.0; bold)
+isSyncRequired (typeText=null; priority=101.0; bold)
+isTotalsSyncEnabled (typeText=null; priority=101.0; bold)
+isTotalsSyncRequired (typeText=null; priority=101.0; bold)
+isVirtualCart (typeText=null; priority=101.0; bold)
+"breadcrumbs/getBreadcrumbsCurrent" (typeText=null; priority=98.0; bold)
+"breadcrumbs/getBreadcrumbsRoutes" (typeText=null; priority=98.0; bold)

@@ -1,5 +1,5 @@
-!categoriesMap#null#101
-!filtersMap#null#101
-!notFoundCategoryIds#any[]#101
-!products#any[]#101
-!searchProductsStats#null#101
+categoriesMap (typeText=null; priority=101.0; bold)
+filtersMap (typeText=null; priority=101.0; bold)
+notFoundCategoryIds (typeText='any[]'; priority=101.0; bold)
+products (typeText='any[]'; priority=101.0; bold)
+searchProductsStats (typeText=null; priority=101.0; bold)

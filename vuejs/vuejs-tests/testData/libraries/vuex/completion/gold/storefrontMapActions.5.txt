@@ -1,42 +1,42 @@
-addItem#null
-addItems#null
-applyCoupon#null
-authorize#null
-breadcrumbs/set#null
-checkProductStatus#null
-clear#null
-configureItem#null
-connect#null
-disconnect#null
-findProductOption#null
-getItem#null
-getProductVariant#null
-getTotals#null
-load#null
-merge#null
-mergeClientItem#null
-mergeClientItems#null
-mergeServerItem#null
-mergeServerItems#null
-overrideServerTotals#null
-pullMethods#null
-refreshTotals#null
-removeCoupon#null
-removeItem#null
-restoreQuantity#null
-serverPull#null
-setDefaultCheckoutMethods#null
-stockSync#null
-sync#null
-syncPaymentMethods#null
-syncShippingMethods#null
-syncTotals#null
-synchronizeCart#null
-synchronizeServerItem#null
-toggleMicrocart#null
-updateClientItem#null
-updateItem#null
-updateQuantity#null
-updateServerItem#null
-updateShippingMethods#null
-updateTotalsAfterMerge#null
+addItem (typeText=null)
+addItems (typeText=null)
+applyCoupon (typeText=null)
+authorize (typeText=null)
+breadcrumbs/set (typeText=null)
+checkProductStatus (typeText=null)
+clear (typeText=null)
+configureItem (typeText=null)
+connect (typeText=null)
+disconnect (typeText=null)
+findProductOption (typeText=null)
+getItem (typeText=null)
+getProductVariant (typeText=null)
+getTotals (typeText=null)
+load (typeText=null)
+merge (typeText=null)
+mergeClientItem (typeText=null)
+mergeClientItems (typeText=null)
+mergeServerItem (typeText=null)
+mergeServerItems (typeText=null)
+overrideServerTotals (typeText=null)
+pullMethods (typeText=null)
+refreshTotals (typeText=null)
+removeCoupon (typeText=null)
+removeItem (typeText=null)
+restoreQuantity (typeText=null)
+serverPull (typeText=null)
+setDefaultCheckoutMethods (typeText=null)
+stockSync (typeText=null)
+sync (typeText=null)
+syncPaymentMethods (typeText=null)
+syncShippingMethods (typeText=null)
+syncTotals (typeText=null)
+synchronizeCart (typeText=null)
+synchronizeServerItem (typeText=null)
+toggleMicrocart (typeText=null)
+updateClientItem (typeText=null)
+updateItem (typeText=null)
+updateQuantity (typeText=null)
+updateServerItem (typeText=null)
+updateShippingMethods (typeText=null)
+updateTotalsAfterMerge (typeText=null)

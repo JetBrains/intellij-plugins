@@ -1,5 +1,5 @@
-alias1#string
-alias4#number
-alias5#number
-field6#string
-virtual#null
+alias1 (typeText='string')
+alias4 (typeText='number')
+alias5 (typeText='number')
+field6 (typeText='string')
+virtual (typeText=null)

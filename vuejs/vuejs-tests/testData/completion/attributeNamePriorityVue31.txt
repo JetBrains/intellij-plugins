@@ -1,78 +1,78 @@
-!color#100+7
-!dismissible#100+7
-!icon#100+7
-!mode#100+7
-!origin#100+7
-!outline#100+7
-!transition#100+7
-!type#100+7
-!value#100+7
-##10+10
-:#10+10
-@#10+10
-v-bind:#10+5
-v-model:#10+5
-v-on:#10+5
-v-slot:#10+5
-v-bind#10+0
-v-cloak#10+0
-v-else#10+0
-v-else-if#10+0
-v-for#10+0
-v-html#10+0
-v-if#10+0
-v-model#10+0
-v-on#10+0
-v-once#10+0
-v-pre#10+0
-v-show#10+0
-v-slot#10+0
-v-text#10+0
-is#1+10
-key#1+10
-ref#1+10
-about#0+0
-accesskey#0+0
-align#0+0
-autocapitalize#0+0
-autofocus#0+0
-class#0+0
-content#0+0
-contenteditable#0+0
-datafld#0+0
-dataformatas#0+0
-datasrc#0+0
-datatype#0+0
-dir#0+0
-draggable#0+0
-enterkeyhint#0+0
-hidden#0+0
-id#0+0
-inert#0+0
-inlist#0+0
-inputmode#0+0
-itemid#0+0
-itemprop#0+0
-itemref#0+0
-itemscope#0+0
-itemtype#0+0
-lang#0+0
-nonce#0+0
-prefix#0+0
-property#0+0
-rel#0+0
-resource#0+0
-rev#0+0
-role#0+0
-slot#0+0
-spellcheck#0+0
-style#0+0
-tabindex#0+0
-title#0+0
-translate#0+0
-typeof#0+0
-~v-is#0+0
-vocab#0+0
-xml:base#0+0
-xml:lang#0+0
-xml:space#0+0
+color (priority=100.0; proximity=7; bold)
+dismissible (priority=100.0; proximity=7; bold)
+icon (priority=100.0; proximity=7; bold)
+mode (priority=100.0; proximity=7; bold)
+origin (priority=100.0; proximity=7; bold)
+outline (priority=100.0; proximity=7; bold)
+transition (priority=100.0; proximity=7; bold)
+type (priority=100.0; proximity=7; bold)
+value (priority=100.0; proximity=7; bold)
+# (priority=10.0; proximity=10)
+: (priority=10.0; proximity=10)
+@ (priority=10.0; proximity=10)
+v-bind: (priority=10.0; proximity=5)
+v-model: (priority=10.0; proximity=5)
+v-on: (priority=10.0; proximity=5)
+v-slot: (priority=10.0; proximity=5)
+v-bind (priority=10.0; proximity=0)
+v-cloak (priority=10.0; proximity=0)
+v-else (priority=10.0; proximity=0)
+v-else-if (priority=10.0; proximity=0)
+v-for (priority=10.0; proximity=0)
+v-html (priority=10.0; proximity=0)
+v-if (priority=10.0; proximity=0)
+v-model (priority=10.0; proximity=0)
+v-on (priority=10.0; proximity=0)
+v-once (priority=10.0; proximity=0)
+v-pre (priority=10.0; proximity=0)
+v-show (priority=10.0; proximity=0)
+v-slot (priority=10.0; proximity=0)
+v-text (priority=10.0; proximity=0)
+is (priority=1.0; proximity=10)
+key (priority=1.0; proximity=10)
+ref (priority=1.0; proximity=10)
+about (priority=0.0; proximity=null)
+accesskey (priority=0.0; proximity=null)
+align (priority=0.0; proximity=null)
+autocapitalize (priority=0.0; proximity=null)
+autofocus (priority=0.0; proximity=null)
+class (priority=0.0; proximity=null)
+content (priority=0.0; proximity=null)
+contenteditable (priority=0.0; proximity=null)
+datafld (priority=0.0; proximity=null)
+dataformatas (priority=0.0; proximity=null)
+datasrc (priority=0.0; proximity=null)
+datatype (priority=0.0; proximity=null)
+dir (priority=0.0; proximity=null)
+draggable (priority=0.0; proximity=null)
+enterkeyhint (priority=0.0; proximity=null)
+hidden (priority=0.0; proximity=null)
+id (priority=0.0; proximity=null)
+inert (priority=0.0; proximity=null)
+inlist (priority=0.0; proximity=null)
+inputmode (priority=0.0; proximity=null)
+itemid (priority=0.0; proximity=null)
+itemprop (priority=0.0; proximity=null)
+itemref (priority=0.0; proximity=null)
+itemscope (priority=0.0; proximity=null)
+itemtype (priority=0.0; proximity=null)
+lang (priority=0.0; proximity=null)
+nonce (priority=0.0; proximity=null)
+prefix (priority=0.0; proximity=null)
+property (priority=0.0; proximity=null)
+rel (priority=0.0; proximity=null)
+resource (priority=0.0; proximity=null)
+rev (priority=0.0; proximity=null)
+role (priority=0.0; proximity=null)
+slot (priority=0.0; proximity=null)
+spellcheck (priority=0.0; proximity=null)
+style (priority=0.0; proximity=null)
+tabindex (priority=0.0; proximity=null)
+title (priority=0.0; proximity=null)
+translate (priority=0.0; proximity=null)
+typeof (priority=0.0; proximity=null)
+v-is (priority=0.0; proximity=0; strikeout)
+vocab (priority=0.0; proximity=null)
+xml:base (priority=0.0; proximity=null)
+xml:lang (priority=0.0; proximity=null)
+xml:space (priority=0.0; proximity=null)

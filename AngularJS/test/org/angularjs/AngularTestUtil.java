@@ -105,7 +105,7 @@ public final class AngularTestUtil {
                                                boolean renderTailText,
                                                boolean filterOutGlobalSymbols) {
     return WebTestUtil.renderLookupItems(fixture, renderPriority,
-                                         renderTypeText, renderTailText, false, false, lookupElementInfo -> {
+                                         renderTypeText, renderTailText, false, false, renderPriority, lookupElementInfo -> {
         if (!filterOutGlobalSymbols || "$any".equals(lookupElementInfo.getLookupString())) {
           return true;
         }

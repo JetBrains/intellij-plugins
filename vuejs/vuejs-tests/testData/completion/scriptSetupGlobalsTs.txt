@@ -1,7 +1,7 @@
-!defineEmits#TypeEmit#4
-!defineExpose#void#4
-!defineProps#null#4
-!defineAsyncComponent#T#0
-!defineComponent#null#0
-!defineCustomElement#null#0
-!defineSSRCustomElement#null#0
+defineEmits (typeText='TypeEmit'; priority=4.0; bold)
+defineExpose (typeText='void'; priority=4.0; bold)
+defineProps (typeText=null; priority=4.0; bold)
+defineAsyncComponent (typeText='T'; priority=0.0; bold)
+defineComponent (typeText=null; priority=0.0; bold)
+defineCustomElement (typeText=null; priority=0.0; bold)
+defineSSRCustomElement (typeText=null; priority=0.0; bold)

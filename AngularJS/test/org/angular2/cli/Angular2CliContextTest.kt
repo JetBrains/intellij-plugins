@@ -10,7 +10,7 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.webSymbols.moveToOffsetBySignature
 import org.angularjs.AngularTestUtil
 
-class Angular2ContextTest : BasePlatformTestCase() {
+class Angular2CliContextTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String {
     return AngularTestUtil.getBaseTestDataPath() + "cli/context"
   }

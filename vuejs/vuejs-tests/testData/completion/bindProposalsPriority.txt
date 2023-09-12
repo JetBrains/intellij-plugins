@@ -1,53 +1,53 @@
-!color#100+12
-!dismissible#100+12
-!icon#100+12
-!mode#100+12
-!origin#100+12
-!outline#100+12
-!transition#100+12
-!type#100+12
-!value#100+12
-is#1+15
-key#1+15
-ref#1+15
-about#1+11
-accesskey#1+11
-align#1+11
-autocapitalize#1+11
-autofocus#1+11
-class#1+11
-content#1+11
-contenteditable#1+11
-datafld#1+11
-dataformatas#1+11
-datasrc#1+11
-datatype#1+11
-dir#1+11
-draggable#1+11
-enterkeyhint#1+11
-hidden#1+11
-id#1+11
-inert#1+11
-inlist#1+11
-inputmode#1+11
-itemid#1+11
-itemprop#1+11
-itemref#1+11
-itemscope#1+11
-itemtype#1+11
-lang#1+11
-nonce#1+11
-prefix#1+11
-property#1+11
-rel#1+11
-resource#1+11
-rev#1+11
-role#1+11
-spellcheck#1+11
-style#1+11
-tabindex#1+11
-title#1+11
-translate#1+11
-typeof#1+11
-vocab#1+11
-~slot#0+5
+color (priority=100.0; proximity=12; bold)
+dismissible (priority=100.0; proximity=12; bold)
+icon (priority=100.0; proximity=12; bold)
+mode (priority=100.0; proximity=12; bold)
+origin (priority=100.0; proximity=12; bold)
+outline (priority=100.0; proximity=12; bold)
+transition (priority=100.0; proximity=12; bold)
+type (priority=100.0; proximity=12; bold)
+value (priority=100.0; proximity=12; bold)
+is (priority=1.0; proximity=15)
+key (priority=1.0; proximity=15)
+ref (priority=1.0; proximity=15)
+about (priority=1.0; proximity=11)
+accesskey (priority=1.0; proximity=11)
+align (priority=1.0; proximity=11)
+autocapitalize (priority=1.0; proximity=11)
+autofocus (priority=1.0; proximity=11)
+class (priority=1.0; proximity=11)
+content (priority=1.0; proximity=11)
+contenteditable (priority=1.0; proximity=11)
+datafld (priority=1.0; proximity=11)
+dataformatas (priority=1.0; proximity=11)
+datasrc (priority=1.0; proximity=11)
+datatype (priority=1.0; proximity=11)
+dir (priority=1.0; proximity=11)
+draggable (priority=1.0; proximity=11)
+enterkeyhint (priority=1.0; proximity=11)
+hidden (priority=1.0; proximity=11)
+id (priority=1.0; proximity=11)
+inert (priority=1.0; proximity=11)
+inlist (priority=1.0; proximity=11)
+inputmode (priority=1.0; proximity=11)
+itemid (priority=1.0; proximity=11)
+itemprop (priority=1.0; proximity=11)
+itemref (priority=1.0; proximity=11)
+itemscope (priority=1.0; proximity=11)
+itemtype (priority=1.0; proximity=11)
+lang (priority=1.0; proximity=11)
+nonce (priority=1.0; proximity=11)
+prefix (priority=1.0; proximity=11)
+property (priority=1.0; proximity=11)
+rel (priority=1.0; proximity=11)
+resource (priority=1.0; proximity=11)
+rev (priority=1.0; proximity=11)
+role (priority=1.0; proximity=11)
+spellcheck (priority=1.0; proximity=11)
+style (priority=1.0; proximity=11)
+tabindex (priority=1.0; proximity=11)
+title (priority=1.0; proximity=11)
+translate (priority=1.0; proximity=11)
+typeof (priority=1.0; proximity=11)
+vocab (priority=1.0; proximity=11)
+slot (priority=0.0; proximity=5; strikeout)

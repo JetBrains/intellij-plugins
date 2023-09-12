@@ -1,5 +1,5 @@
-categoriesMap#null
-filtersMap#null
-notFoundCategoryIds#any[]
-products#any[]
-searchProductsStats#null
+categoriesMap (typeText=null)
+filtersMap (typeText=null)
+notFoundCategoryIds (typeText='any[]')
+products (typeText='any[]')
+searchProductsStats (typeText=null)

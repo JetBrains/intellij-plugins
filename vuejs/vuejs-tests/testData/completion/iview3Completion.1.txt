@@ -1,47 +1,47 @@
-!closable#boolean#100
-!show-icon#boolean#100
-!type#"info" | "success" | "warning" | "error"#100
-is#null#1
-key#null#1
-ref#null#1
-about#null#1
-accesskey#null#1
-align#null#1
-autocapitalize#null#1
-autofocus#null#1
-class#null#1
-content#null#1
-contenteditable#null#1
-datafld#null#1
-dataformatas#null#1
-datasrc#null#1
-datatype#null#1
-dir#null#1
-draggable#null#1
-enterkeyhint#null#1
-hidden#null#1
-id#null#1
-inert#null#1
-inlist#null#1
-inputmode#null#1
-itemid#null#1
-itemprop#null#1
-itemref#null#1
-itemscope#null#1
-itemtype#null#1
-lang#null#1
-nonce#null#1
-prefix#null#1
-property#null#1
-rel#null#1
-resource#null#1
-rev#null#1
-role#null#1
-slot#null#1
-spellcheck#null#1
-style#null#1
-tabindex#null#1
-title#null#1
-translate#null#1
-typeof#null#1
-vocab#null#1
+closable (typeText='boolean'; priority=100.0; bold; typeGreyed)
+show-icon (typeText='boolean'; priority=100.0; bold; typeGreyed)
+type (typeText='"info" | "success" | "warning" | "error"'; priority=100.0; bold; typeGreyed)
+is (typeText=null; priority=1.0; typeGreyed)
+key (typeText=null; priority=1.0; typeGreyed)
+ref (typeText=null; priority=1.0; typeGreyed)
+about (typeText=null; priority=1.0; typeGreyed)
+accesskey (typeText=null; priority=1.0; typeGreyed)
+align (typeText=null; priority=1.0; typeGreyed)
+autocapitalize (typeText=null; priority=1.0; typeGreyed)
+autofocus (typeText=null; priority=1.0; typeGreyed)
+class (typeText=null; priority=1.0; typeGreyed)
+content (typeText=null; priority=1.0; typeGreyed)
+contenteditable (typeText=null; priority=1.0; typeGreyed)
+datafld (typeText=null; priority=1.0; typeGreyed)
+dataformatas (typeText=null; priority=1.0; typeGreyed)
+datasrc (typeText=null; priority=1.0; typeGreyed)
+datatype (typeText=null; priority=1.0; typeGreyed)
+dir (typeText=null; priority=1.0; typeGreyed)
+draggable (typeText=null; priority=1.0; typeGreyed)
+enterkeyhint (typeText=null; priority=1.0; typeGreyed)
+hidden (typeText=null; priority=1.0; typeGreyed)
+id (typeText=null; priority=1.0; typeGreyed)
+inert (typeText=null; priority=1.0; typeGreyed)
+inlist (typeText=null; priority=1.0; typeGreyed)
+inputmode (typeText=null; priority=1.0; typeGreyed)
+itemid (typeText=null; priority=1.0; typeGreyed)
+itemprop (typeText=null; priority=1.0; typeGreyed)
+itemref (typeText=null; priority=1.0; typeGreyed)
+itemscope (typeText=null; priority=1.0; typeGreyed)
+itemtype (typeText=null; priority=1.0; typeGreyed)
+lang (typeText=null; priority=1.0; typeGreyed)
+nonce (typeText=null; priority=1.0; typeGreyed)
+prefix (typeText=null; priority=1.0; typeGreyed)
+property (typeText=null; priority=1.0; typeGreyed)
+rel (typeText=null; priority=1.0; typeGreyed)
+resource (typeText=null; priority=1.0; typeGreyed)
+rev (typeText=null; priority=1.0; typeGreyed)
+role (typeText=null; priority=1.0; typeGreyed)
+slot (typeText=null; priority=1.0; typeGreyed)
+spellcheck (typeText=null; priority=1.0; typeGreyed)
+style (typeText=null; priority=1.0; typeGreyed)
+tabindex (typeText=null; priority=1.0; typeGreyed)
+title (typeText=null; priority=1.0; typeGreyed)
+translate (typeText=null; priority=1.0; typeGreyed)
+typeof (typeText=null; priority=1.0; typeGreyed)
+vocab (typeText=null; priority=1.0; typeGreyed)

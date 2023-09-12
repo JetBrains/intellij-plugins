@@ -1,24 +1,24 @@
-addItem#null
-addItems#null
-applyCoupon#null
-authorize#null
-breadcrumbs/set#null
-checkProductStatus#null
-clear#null
-getProductVariant#null
-getTotals#null
-load#null
-overrideServerTotals#null
-refreshTotals#null
-restoreQuantity#null
-setDefaultCheckoutMethods#null
-syncPaymentMethods#null
-syncTotals#null
-synchronizeCart#null
-toggleMicrocart#null
-updateClientItem#null
-updateItem#null
-updateQuantity#null
-updateServerItem#null
-updateShippingMethods#null
-updateTotalsAfterMerge#null
+addItem (typeText=null)
+addItems (typeText=null)
+applyCoupon (typeText=null)
+authorize (typeText=null)
+breadcrumbs/set (typeText=null)
+checkProductStatus (typeText=null)
+clear (typeText=null)
+getProductVariant (typeText=null)
+getTotals (typeText=null)
+load (typeText=null)
+overrideServerTotals (typeText=null)
+refreshTotals (typeText=null)
+restoreQuantity (typeText=null)
+setDefaultCheckoutMethods (typeText=null)
+syncPaymentMethods (typeText=null)
+syncTotals (typeText=null)
+synchronizeCart (typeText=null)
+toggleMicrocart (typeText=null)
+updateClientItem (typeText=null)
+updateItem (typeText=null)
+updateQuantity (typeText=null)
+updateServerItem (typeText=null)
+updateShippingMethods (typeText=null)
+updateTotalsAfterMerge (typeText=null)

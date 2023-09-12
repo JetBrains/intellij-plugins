@@ -1,58 +1,58 @@
-cart/addItem#null
-cart/addItems#null
-cart/applyCoupon#null
-cart/authorize#null
-cart/breadcrumbs/set#null
-cart/checkProductStatus#null
-cart/clear#null
-cart/configureItem#null
-cart/connect#null
-cart/disconnect#null
-cart/findProductOption#null
-cart/getItem#null
-cart/getProductVariant#null
-cart/getTotals#null
-cart/load#null
-cart/merge#null
-cart/mergeClientItem#null
-cart/mergeClientItems#null
-cart/mergeServerItem#null
-cart/mergeServerItems#null
-cart/overrideServerTotals#null
-cart/pullMethods#null
-cart/refreshTotals#null
-cart/removeCoupon#null
-cart/removeItem#null
-cart/restoreQuantity#null
-cart/serverPull#null
-cart/setDefaultCheckoutMethods#null
-cart/stockSync#null
-cart/sync#null
-cart/syncPaymentMethods#null
-cart/syncShippingMethods#null
-cart/syncTotals#null
-cart/synchronizeCart#null
-cart/synchronizeServerItem#null
-cart/toggleMicrocart#null
-cart/updateClientItem#null
-cart/updateItem#null
-cart/updateQuantity#null
-cart/updateServerItem#null
-cart/updateShippingMethods#null
-cart/updateTotalsAfterMerge#null
-category/cacheProducts#null
-category/changeRouterFilterParameters#null
-category/configureProducts#null
-category/findCategories#null
-category/loadAvailableFiltersFrom#null
-category/loadCategories#null
-category/loadCategory#null
-category/loadCategoryBreadcrumbs#null
-category/loadCategoryFilters#null
-category/loadCategoryProducts#null
-category/loadMoreCategoryProducts#null
-category/processCategoryProducts#null
-category/registerCategoryProductsMapping#null
-category/switchSearchFilters#null
-resetSearchFilters#null
-resetUserInvalidateLock#null
+cart/addItem (typeText=null)
+cart/addItems (typeText=null)
+cart/applyCoupon (typeText=null)
+cart/authorize (typeText=null)
+cart/breadcrumbs/set (typeText=null)
+cart/checkProductStatus (typeText=null)
+cart/clear (typeText=null)
+cart/configureItem (typeText=null)
+cart/connect (typeText=null)
+cart/disconnect (typeText=null)
+cart/findProductOption (typeText=null)
+cart/getItem (typeText=null)
+cart/getProductVariant (typeText=null)
+cart/getTotals (typeText=null)
+cart/load (typeText=null)
+cart/merge (typeText=null)
+cart/mergeClientItem (typeText=null)
+cart/mergeClientItems (typeText=null)
+cart/mergeServerItem (typeText=null)
+cart/mergeServerItems (typeText=null)
+cart/overrideServerTotals (typeText=null)
+cart/pullMethods (typeText=null)
+cart/refreshTotals (typeText=null)
+cart/removeCoupon (typeText=null)
+cart/removeItem (typeText=null)
+cart/restoreQuantity (typeText=null)
+cart/serverPull (typeText=null)
+cart/setDefaultCheckoutMethods (typeText=null)
+cart/stockSync (typeText=null)
+cart/sync (typeText=null)
+cart/syncPaymentMethods (typeText=null)
+cart/syncShippingMethods (typeText=null)
+cart/syncTotals (typeText=null)
+cart/synchronizeCart (typeText=null)
+cart/synchronizeServerItem (typeText=null)
+cart/toggleMicrocart (typeText=null)
+cart/updateClientItem (typeText=null)
+cart/updateItem (typeText=null)
+cart/updateQuantity (typeText=null)
+cart/updateServerItem (typeText=null)
+cart/updateShippingMethods (typeText=null)
+cart/updateTotalsAfterMerge (typeText=null)
+category/cacheProducts (typeText=null)
+category/changeRouterFilterParameters (typeText=null)
+category/configureProducts (typeText=null)
+category/findCategories (typeText=null)
+category/loadAvailableFiltersFrom (typeText=null)
+category/loadCategories (typeText=null)
+category/loadCategory (typeText=null)
+category/loadCategoryBreadcrumbs (typeText=null)
+category/loadCategoryFilters (typeText=null)
+category/loadCategoryProducts (typeText=null)
+category/loadMoreCategoryProducts (typeText=null)
+category/processCategoryProducts (typeText=null)
+category/registerCategoryProductsMapping (typeText=null)
+category/switchSearchFilters (typeText=null)
+resetSearchFilters (typeText=null)
+resetUserInvalidateLock (typeText=null)

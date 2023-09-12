@@ -132,19 +132,19 @@ class Angular2PipesTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.configureByFiles("context-aware.html", "context-aware.ts")
     for (check in listOf(
       Pair("{{ 12 | }}", mutableListOf(
-        "json#[<any> | json] : <string>#101",
-        "i18nPlural#[<number> | i18nPlural:<{[p: string]: string}>:<s…#101")),
+        "json (typeText='[<any> | json] : <string>'; priority=101.0; typeGreyed)",
+        "i18nPlural (typeText='[<number> | i18nPlural:<{[p: string]: string}>:<s…'; priority=101.0; typeGreyed)")),
       Pair("{{ \"test\" | }}", mutableListOf(
-        "json#[<any> | json] : <string>#101",
-        "lowercase#[<string> | lowercase] : <string>#101",
-        "titlecase#[<string> | titlecase] : <string>#101",
-        "uppercase#[<string> | uppercase] : <string>#101")),
+        "json (typeText='[<any> | json] : <string>'; priority=101.0; typeGreyed)",
+        "lowercase (typeText='[<string> | lowercase] : <string>'; priority=101.0; typeGreyed)",
+        "titlecase (typeText='[<string> | titlecase] : <string>'; priority=101.0; typeGreyed)",
+        "uppercase (typeText='[<string> | uppercase] : <string>'; priority=101.0; typeGreyed)")),
       Pair("{{ makePromise() | }}", mutableListOf(
-        "json#[<any> | json] : <string>#101",
-        "async#[<Promise<T>> | async] : <T>#101")),
+        "json (typeText='[<any> | json] : <string>'; priority=101.0; typeGreyed)",
+        "async (typeText='[<Promise<T>> | async] : <T>'; priority=101.0; typeGreyed)")),
       Pair("{{ makeObservable() | }}", mutableListOf(
-        "json#[<any> | json] : <string>#101",
-        "async#[<Observable<T>> | async] : <T>#101"))
+        "json (typeText='[<any> | json] : <string>'; priority=101.0; typeGreyed)",
+        "async (typeText='[<Observable<T>> | async] : <T>'; priority=101.0; typeGreyed)"))
     )) {
       myFixture.moveToOffsetBySignature(check.first.replace("|", "|<caret>"))
       myFixture.completeBasic()

@@ -1,4 +1,4 @@
-bold#BoldDirective#0
-mouseenter#MouseenterDirective<any>#0
-test#TestComponent#0
-underline#UnderlineDirective<number>#0
+bold (typeText='BoldDirective'; priority=0.0; typeGreyed)
+mouseenter (typeText='MouseenterDirective<any>'; priority=0.0; typeGreyed)
+test (typeText='TestComponent'; priority=0.0; typeGreyed)
+underline (typeText='UnderlineDirective<number>'; priority=0.0; typeGreyed)
