@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.css.refs
 
 import com.intellij.javascript.web.css.CssClassInJSLiteralOrIdentifierReferenceProvider
@@ -18,7 +18,7 @@ import com.intellij.psi.css.impl.CssElementTypes
 import com.intellij.psi.css.reference.CssReference
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiPolyVariantCachingReference
 import com.intellij.util.ProcessingContext
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.jetbrains.vuejs.codeInsight.attributes.VueCustomAttributeValueProvider.Companion.isVBindClassAttribute
 import org.jetbrains.vuejs.codeInsight.template.VueTemplateScopesResolver
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
