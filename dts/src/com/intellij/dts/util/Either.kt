@@ -16,4 +16,14 @@ sealed class Either<out L, out R> {
         is Left<L> -> onLeft(value)
         is Right<R> -> onRight(value)
     }
+
+    fun <S> mapRight(mapping: (R) -> S): Either<L, S> = when (this) {
+        is Left<L> -> this
+        is Right<R> -> Right(mapping(value))
+    }
+
+    fun <S> mapLeft(mapping: (L) -> S): Either<S, R> = when (this) {
+        is Left<L> -> Left(mapping(value))
+        is Right<R> -> this
+    }
 }
