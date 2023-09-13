@@ -18,7 +18,7 @@ import com.intellij.psi.css.impl.CssElementTypes
 import com.intellij.psi.css.reference.CssReference
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiPolyVariantCachingReference
 import com.intellij.util.ProcessingContext
-import org.apache.commons.lang3.StringUtils
+import org.apache.commons.text.WordUtils
 import org.jetbrains.vuejs.codeInsight.attributes.VueCustomAttributeValueProvider.Companion.isVBindClassAttribute
 import org.jetbrains.vuejs.codeInsight.template.VueTemplateScopesResolver
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
@@ -64,7 +64,7 @@ class VueCssReferencesContributor : PsiReferenceContributor() {
       val name = canonicalText
       VueTemplateScopesResolver.resolve(myElement) {
         val element = it.element as? JSPsiNamedElementBase
-        if (element != null && name == StringUtils.uncapitalize(element.name)) {
+        if (element != null && name == WordUtils.uncapitalize(element.name)) {
           result.add(it)
           return@resolve false
         }
