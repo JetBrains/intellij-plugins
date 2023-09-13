@@ -368,11 +368,11 @@
   <actions resource-bundle="messages.Angular2Bundle">
     <action class="org.angular2.cli.actions.AngularCliGenerateAction" id="angularCliGenerate"
             icon="/icons/angular2.svg">
-      <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewDir"/>
+      <add-to-group group-id="NewWebDevelopment" anchor="before" relative-to-action="NewJavaScriptFile"/>
     </action>
     <action class="org.angular2.cli.actions.AngularCliAddDependencyAction" id="angularCliAdd"
             icon="/icons/angular2.svg">
-      <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewDir"/>
+      <add-to-group group-id="NewWebDevelopment" anchor="before" relative-to-action="NewJavaScriptFile"/>
     </action>
     <action id="Angular2ExtractComponentAction"
             icon="/icons/angular2.svg"
