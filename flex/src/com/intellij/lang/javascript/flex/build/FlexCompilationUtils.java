@@ -23,7 +23,7 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.io.ZipUtil;
+import com.intellij.util.io.Decompressor;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -114,7 +114,7 @@ public final class FlexCompilationUtils {
       }
 
       try {
-        ZipUtil.extract(new File(file.getPath()), subDir, null, true);
+        new Decompressor.Zip(new File(file.getPath())).withZipExtensions().overwrite(true).extract(subDir);
       }
       catch (IOException e) {
         Logger.getLogger(FlexCompilationUtils.class.getName()).warning("Failed to unzip " + file.getPath() + " to " + baseDir.getPath());
