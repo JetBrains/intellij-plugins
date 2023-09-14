@@ -5,7 +5,6 @@ import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiLanguageInjectionHost
 import com.intellij.psi.SyntaxTraverser
-import com.intellij.testFramework.EdtTestUtil
 import com.intellij.testFramework.ExpectedHighlightingData
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.testFramework.runInEdtAndWait
@@ -30,7 +29,6 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
   fun testGlobalThis() = checkHighlighting(dir = true)
 
   fun testComplexGenerics() = checkHighlighting(dir = true)
-
 
   fun testUnknownTagsAttributesInlineTemplate() = checkHighlighting(extension = "ts")
 
@@ -80,12 +78,15 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
    */
   fun testNgrxLetAsContextGuard() = checkHighlighting(ANGULAR_COMMON_13_3_5, dir = true, extension = "ts")
 
-
   fun testRequiredInputs() = checkHighlighting(extension = "ts")
 
   fun testStaticAttributes() = checkHighlighting(dir = true)
 
   fun testSelfClosedTags() = checkHighlighting(dir = true)
+
+  fun testTrUnderTemplate() = checkHighlighting(ANGULAR_CDK_14_2_0, dir = true)
+
+  fun testDivUnderButton() = checkHighlighting(ANGULAR_MATERIAL_16_0_0_NEXT_6, dir = true)
 
   override fun setUp() {
     super.setUp()
