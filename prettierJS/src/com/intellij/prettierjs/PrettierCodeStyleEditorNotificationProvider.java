@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.psi.util.JSProjectUtil;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.extensions.ExtensionPointUtil;
 import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -44,7 +43,7 @@ public final class PrettierCodeStyleEditorNotificationProvider implements Editor
 
   private void dismissNotification() {
     PropertiesComponent.getInstance(myProject).setValue(NOTIFICATION_DISMISSED_PROPERTY, true);
-    EditorNotifications.getInstance(myProject).updateAllNotifications();
+    EditorNotifications.getInstance(myProject).updateNotifications(this);
   }
 
   @Override
@@ -73,7 +72,8 @@ public final class PrettierCodeStyleEditorNotificationProvider implements Editor
     if (config.isInstalled(project)) return null;
 
     return fileEditor -> {
-      final EditorNotificationPanel panel = new EditorNotificationPanel(EditorColors.GUTTER_BACKGROUND, EditorNotificationPanel.Status.Info);
+      final EditorNotificationPanel panel =
+        new EditorNotificationPanel(EditorColors.GUTTER_BACKGROUND, EditorNotificationPanel.Status.Info);
       panel.setText(PrettierBundle.message("editor.notification.title"));
 
       panel.createActionLabel(PrettierBundle.message("editor.notification.yes.text"), PrettierImportCodeStyleAction.ACTION_ID, false);
