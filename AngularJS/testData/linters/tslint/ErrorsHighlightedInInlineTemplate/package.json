@@ -1,7 +1,0 @@
-{
-  "name": "ErrorsHighlightedInInlineTemplate",
-  "version": "1.0.0",
-  "dependencies": {
-    "@angular/core": "invalid"
-  }
-}

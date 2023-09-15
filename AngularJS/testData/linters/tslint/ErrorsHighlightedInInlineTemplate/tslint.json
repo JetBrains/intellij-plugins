@@ -1,7 +1,0 @@
-{
-  "rulesDirectory": "<RULES_DIRECTORY_TO_PATCH>",
-  "rules": {
-    "quotemark": [true, "single"],
-    "template-i18n": [true, "check-id", "check-text"]
-  }
-}

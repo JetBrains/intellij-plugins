@@ -43,10 +43,6 @@ class Angular2TslintHighlightingTest : LinterHighlightingTest() {
     doEditorHighlightingTest<RuntimeException>("app.component.ts") { patchAdditionalRulesDir() }
   }
 
-  fun testErrorsHighlightedInInlineTemplate() {
-    doEditorHighlightingTest<RuntimeException>("app.component.ts") { patchAdditionalRulesDir() }
-  }
-
   private fun patchAdditionalRulesDir() {
     val tslintJsonVFile = myFixture.findFileInTempDir("tslint.json")
     try {
