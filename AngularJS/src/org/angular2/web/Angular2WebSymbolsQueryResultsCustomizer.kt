@@ -48,9 +48,9 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
 
   override fun apply(matches: List<WebSymbol>,
                      strict: Boolean,
-                     namespace: SymbolNamespace?,
+                     namespace: SymbolNamespace,
                      kind: SymbolKind,
-                     name: String?): List<WebSymbol> =
+                     name: String): List<WebSymbol> =
     if (namespace == NAMESPACE_JS && kinds.contains(kind)) {
       if (strict) {
         matches.filter { symbol ->
@@ -59,32 +59,25 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
         }
       }
       else {
-        val byName = if (name == null)
-          matches.groupBy { it.name }
-        else
-          mapOf(Pair(name, matches))
-
-        byName.flatMap { (_, list) ->
-          val proximityMap = list.groupBy {
-            val directive = it.properties[PROP_SYMBOL_DIRECTIVE] as? Angular2Directive
-            if (directive != null)
-              scope.getDeclarationProximity(directive)
-            else if (it.properties[PROP_ERROR_SYMBOL] == true)
-              DeclarationProximity.NOT_REACHABLE
-            else
-              DeclarationProximity.IN_SCOPE
-          }
-          DeclarationProximity.values().firstNotNullOfOrNull { proximity ->
-            proximityMap[proximity]?.takeIf { it.isNotEmpty() }?.map { Angular2ScopedSymbol.create(it, proximity) }
-          }
-          ?: emptyList()
+        val proximityMap = matches.groupBy {
+          val directive = it.properties[PROP_SYMBOL_DIRECTIVE] as? Angular2Directive
+          if (directive != null)
+            scope.getDeclarationProximity(directive)
+          else if (it.properties[PROP_ERROR_SYMBOL] == true)
+            DeclarationProximity.NOT_REACHABLE
+          else
+            DeclarationProximity.IN_SCOPE
         }
+        DeclarationProximity.values().firstNotNullOfOrNull { proximity ->
+          proximityMap[proximity]?.takeIf { it.isNotEmpty() }?.map { Angular2ScopedSymbol.create(it, proximity) }
+        }
+        ?: emptyList()
       }
     }
     else matches
 
   override fun apply(item: WebSymbolCodeCompletionItem,
-                     namespace: SymbolNamespace?,
+                     namespace: SymbolNamespace,
                      kind: SymbolKind): WebSymbolCodeCompletionItem? {
     // In svg context, only standard SVG elements, ng-container and ng-template works in the browser,
     // remove everything else from completion

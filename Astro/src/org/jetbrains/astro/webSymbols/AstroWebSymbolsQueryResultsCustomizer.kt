@@ -24,9 +24,9 @@ class AstroWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : W
 
   override fun apply(matches: List<WebSymbol>,
                      strict: Boolean,
-                     namespace: SymbolNamespace?,
+                     namespace: SymbolNamespace,
                      kind: SymbolKind,
-                     name: String?): List<WebSymbol> =
+                     name: String): List<WebSymbol> =
     if (namespace != WebSymbol.NAMESPACE_HTML || kind != AstroQueryConfigurator.KIND_ASTRO_COMPONENT)
       matches
     else if (isHtmlTagName(name))
@@ -39,7 +39,7 @@ class AstroWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : W
         })
       }
 
-  override fun apply(item: WebSymbolCodeCompletionItem, namespace: SymbolNamespace?, kind: SymbolKind): WebSymbolCodeCompletionItem? {
+  override fun apply(item: WebSymbolCodeCompletionItem, namespace: SymbolNamespace, kind: SymbolKind): WebSymbolCodeCompletionItem? {
     if (namespace == WebSymbol.NAMESPACE_HTML && kind == AstroQueryConfigurator.KIND_ASTRO_COMPONENT) {
       if (isHtmlTagName(item.name)) return null
       val proximity = item.symbol?.properties?.get(PROP_ASTRO_PROXIMITY)

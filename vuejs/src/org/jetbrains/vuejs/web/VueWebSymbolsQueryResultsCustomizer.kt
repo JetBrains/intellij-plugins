@@ -39,14 +39,14 @@ class VueWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : Web
 
   override fun apply(matches: List<WebSymbol>,
                      strict: Boolean,
-                     namespace: SymbolNamespace?,
+                     namespace: SymbolNamespace,
                      kind: SymbolKind,
-                     name: String?): List<WebSymbol> {
+                     name: String): List<WebSymbol> {
     if (namespace != WebSymbol.NAMESPACE_HTML) return matches
 
     var result = matches
     if (kind == VueWebSymbolsQueryConfigurator.KIND_VUE_COMPONENTS) {
-      if (name != null && result.size > 1) {
+      if (result.size > 1) {
         val mergedSymbol = result.find { it is VueWebTypesMergedSymbol } as? VueWebTypesMergedSymbol
         if (mergedSymbol != null) {
           val mergedWebTypes = mergedSymbol.webTypesSymbols
@@ -71,7 +71,7 @@ class VueWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : Web
   }
 
   override fun apply(item: WebSymbolCodeCompletionItem,
-                     namespace: SymbolNamespace?,
+                     namespace: SymbolNamespace,
                      kind: SymbolKind): WebSymbolCodeCompletionItem {
     if (namespace == WebSymbol.NAMESPACE_HTML
         && kind == VueWebSymbolsQueryConfigurator.KIND_VUE_COMPONENTS) {
