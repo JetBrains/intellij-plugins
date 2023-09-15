@@ -10,6 +10,7 @@ import com.intellij.webSymbols.WebSymbolsScope
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolMatch
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
+import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.utils.nameSegments
 import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
@@ -18,12 +19,29 @@ object VueTopLevelElementsScope : WebSymbolsScope {
 
   override fun getSymbols(namespace: SymbolNamespace,
                           kind: SymbolKind,
-                          name: String?,
-                          params: WebSymbolsNameMatchQueryParams,
+                          params: WebSymbolsListSymbolsQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
     if (namespace == WebSymbol.NAMESPACE_HTML && kind == WebSymbol.KIND_HTML_ELEMENTS)
+      params.queryExecutor.runListSymbolsQuery(
+        WebSymbol.NAMESPACE_HTML, VueWebSymbolsQueryConfigurator.KIND_VUE_TOP_LEVEL_ELEMENTS,
+        scope = scope,
+        virtualSymbols = params.virtualSymbols,
+        strictScope = params.strictScope,
+        abstractSymbols = params.abstractSymbols,
+      )
+        .map {
+          WebSymbolMatch.create(it.name, it.nameSegments, WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_ELEMENTS, it.origin)
+        }
+    else emptyList()
+
+  override fun getMatchingSymbols(namespace: SymbolNamespace,
+                                  kind: SymbolKind,
+                                  name: String,
+                                  params: WebSymbolsNameMatchQueryParams,
+                                  scope: Stack<WebSymbolsScope>): List<WebSymbol> =
+    if (namespace == WebSymbol.NAMESPACE_HTML && kind == WebSymbol.KIND_HTML_ELEMENTS)
       params.queryExecutor.runNameMatchQuery(
-        WebSymbol.NAMESPACE_HTML, VueWebSymbolsQueryConfigurator.KIND_VUE_TOP_LEVEL_ELEMENTS, name ?: "",
+        WebSymbol.NAMESPACE_HTML, VueWebSymbolsQueryConfigurator.KIND_VUE_TOP_LEVEL_ELEMENTS, name,
         scope = scope,
         virtualSymbols = params.virtualSymbols,
         strictScope = params.strictScope,

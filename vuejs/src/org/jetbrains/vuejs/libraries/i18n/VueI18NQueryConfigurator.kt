@@ -12,7 +12,7 @@ import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.context.WebSymbolsContext
-import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
+import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
 import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.lang.html.VueFileType
@@ -53,8 +53,7 @@ class VueI18NQueryConfigurator : WebSymbolsQueryConfigurator {
 
     override fun getSymbols(namespace: SymbolNamespace,
                             kind: SymbolKind,
-                            name: String?,
-                            params: WebSymbolsNameMatchQueryParams,
+                            params: WebSymbolsListSymbolsQueryParams,
                             scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> {
       if (kind == VueWebSymbolsQueryConfigurator.KIND_VUE_TOP_LEVEL_ELEMENTS
           && namespace == WebSymbol.NAMESPACE_HTML) {

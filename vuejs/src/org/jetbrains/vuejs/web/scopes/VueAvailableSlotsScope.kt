@@ -5,9 +5,13 @@ import com.intellij.model.Pointer
 import com.intellij.psi.xml.XmlTag
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.containers.Stack
-import com.intellij.webSymbols.*
+import com.intellij.webSymbols.SymbolKind
+import com.intellij.webSymbols.SymbolNamespace
+import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbolsScope
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
+import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import org.jetbrains.vuejs.model.getAvailableSlots
 import org.jetbrains.vuejs.model.getAvailableSlotsCompletions
@@ -23,15 +27,25 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : WebSymbolsScope {
 
   override fun getModificationCount(): Long = tag.containingFile.modificationStamp
 
-  override fun getSymbols(namespace: SymbolNamespace,
-                          kind: SymbolKind,
-                          name: String?,
-                          params: WebSymbolsNameMatchQueryParams,
-                          scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
+  override fun getMatchingSymbols(namespace: SymbolNamespace,
+                                  kind: SymbolKind,
+                                  name: String,
+                                  params: WebSymbolsNameMatchQueryParams,
+                                  scope: Stack<WebSymbolsScope>): List<WebSymbol> =
     if (namespace == WebSymbol.NAMESPACE_HTML
         && kind == VueWebSymbolsQueryConfigurator.KIND_VUE_AVAILABLE_SLOTS
         && params.queryExecutor.allowResolve)
       getAvailableSlots(tag, name, true)
+    else emptyList()
+
+  override fun getSymbols(namespace: SymbolNamespace,
+                          kind: SymbolKind,
+                          params: WebSymbolsListSymbolsQueryParams,
+                          scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
+    if (namespace == WebSymbol.NAMESPACE_HTML
+        && kind == VueWebSymbolsQueryConfigurator.KIND_VUE_AVAILABLE_SLOTS
+        && params.queryExecutor.allowResolve)
+      getAvailableSlots(tag, null, true)
     else emptyList()
 
   override fun getCodeCompletions(namespace: SymbolNamespace,

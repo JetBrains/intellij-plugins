@@ -29,7 +29,7 @@ fun getAvailableSlots(tag: XmlTag, name: String?, newApi: Boolean): List<WebSymb
     (tag.descriptor as? WebSymbolElementDescriptor)?.getSlots(name)
       ?.filter { it.name == DEFAULT_SLOT_NAME } ?: emptyList()
 
-fun getAvailableSlotsCompletions(tag: XmlTag, name: String?, position: Int, newApi: Boolean): List<WebSymbolCodeCompletionItem> =
+fun getAvailableSlotsCompletions(tag: XmlTag, name: String, position: Int, newApi: Boolean): List<WebSymbolCodeCompletionItem> =
   if (!newApi || tag.name == TEMPLATE_TAG_NAME)
     (tag.parentTag?.descriptor as? WebSymbolElementDescriptor)?.getSlotsCompletions(name, position) ?: emptyList()
   else
@@ -51,7 +51,10 @@ fun getSlotTypeFromContext(context: PsiElement): JSType? =
     ?.asCompleteType()
 
 private fun WebSymbolElementDescriptor.getSlots(name: String?): List<WebSymbol> =
-  runNameMatchQuery(WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_SLOTS, name ?:"")
+  if (name == null)
+    runListSymbolsQuery(WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_SLOTS)
+  else
+    runNameMatchQuery(WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_SLOTS, name)
 
-private fun WebSymbolElementDescriptor.getSlotsCompletions(name: String?, position: Int): List<WebSymbolCodeCompletionItem> =
-  runCodeCompletionQuery(WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_SLOTS, name ?: "", position)
+private fun WebSymbolElementDescriptor.getSlotsCompletions(name: String, position: Int): List<WebSymbolCodeCompletionItem> =
+  runCodeCompletionQuery(WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_SLOTS, name, position)

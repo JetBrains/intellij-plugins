@@ -33,12 +33,12 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
 
   override fun getModificationCount(): Long = templateFile.project.psiModificationCount
 
-  override fun getSymbols(namespace: SymbolNamespace,
-                          kind: SymbolKind,
-                          name: String?,
-                          params: WebSymbolsNameMatchQueryParams,
-                          scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
-    if (namespace == NAMESPACE_HTML && kind == WebSymbol.KIND_HTML_ELEMENTS && name != null) {
+  override fun getMatchingSymbols(namespace: SymbolNamespace,
+                                  kind: SymbolKind,
+                                  name: String,
+                                  params: WebSymbolsNameMatchQueryParams,
+                                  scope: Stack<WebSymbolsScope>): List<WebSymbol> =
+    if (namespace == NAMESPACE_HTML && kind == WebSymbol.KIND_HTML_ELEMENTS) {
       listOf(HtmlElementStandardPropertyAndEventsExtension(templateFile, "", name))
     }
     else emptyList()

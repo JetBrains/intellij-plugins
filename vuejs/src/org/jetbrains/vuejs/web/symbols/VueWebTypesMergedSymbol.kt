@@ -16,6 +16,7 @@ import com.intellij.webSymbols.documentation.WebSymbolDocumentation
 import com.intellij.webSymbols.documentation.WebSymbolDocumentationTarget
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
+import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.utils.coalesceApiStatus
 import com.intellij.webSymbols.utils.merge
@@ -102,14 +103,32 @@ class VueWebTypesMergedSymbol(override val name: String,
   override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget =
     VueMergedSymbolDocumentationTarget(this, location, originalName ?: name)
 
+  override fun getMatchingSymbols(namespace: SymbolNamespace,
+                                  kind: SymbolKind,
+                                  name: String,
+                                  params: WebSymbolsNameMatchQueryParams,
+                                  scope: Stack<WebSymbolsScope>): List<WebSymbol> =
+    symbols
+      .flatMap {
+        it.getMatchingSymbols(namespace, kind, name, params, scope)
+      }
+      .let { list ->
+        val psiSourcedWebSymbol = list.firstNotNullOfOrNull { it as? PsiSourcedWebSymbol }
+        if (psiSourcedWebSymbol != null) {
+          listOf(VueWebTypesMergedSymbol(psiSourcedWebSymbol.name, psiSourcedWebSymbol, list))
+        }
+        else {
+          list
+        }
+      }
+
   override fun getSymbols(namespace: SymbolNamespace,
                           kind: SymbolKind,
-                          name: String?,
-                          params: WebSymbolsNameMatchQueryParams,
+                          params: WebSymbolsListSymbolsQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
     symbols
       .flatMap {
-        it.getSymbols(namespace, kind, name, params, scope)
+        it.getSymbols(namespace, kind, params, scope)
       }
       .takeIf { it.isNotEmpty() }
       ?.let { list ->

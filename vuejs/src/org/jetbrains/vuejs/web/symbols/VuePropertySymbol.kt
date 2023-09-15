@@ -1,10 +1,12 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web.symbols
 
-import com.intellij.javascript.webSymbols.symbols.tryGetJSPropertySymbols
+import com.intellij.javascript.webSymbols.symbols.getJSPropertySymbols
+import com.intellij.javascript.webSymbols.symbols.getMatchingJSPropertySymbols
 import com.intellij.model.Pointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
+import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueProperty
@@ -16,11 +18,17 @@ abstract class VuePropertySymbol<T : VueProperty>(item: T, owner: VueComponent, 
   override fun isExclusiveFor(namespace: SymbolNamespace, kind: SymbolKind): Boolean =
     namespace == WebSymbol.NAMESPACE_JS && kind == WebSymbol.KIND_JS_PROPERTIES
 
+  override fun getMatchingSymbols(namespace: SymbolNamespace,
+                                  kind: SymbolKind,
+                                  name: String,
+                                  params: WebSymbolsNameMatchQueryParams,
+                                  scope: Stack<WebSymbolsScope>): List<WebSymbol> =
+    getMatchingJSPropertySymbols(namespace, kind, name)
+
   override fun getSymbols(namespace: SymbolNamespace,
                           kind: SymbolKind,
-                          name: String?,
-                          params: WebSymbolsNameMatchQueryParams,
+                          params: WebSymbolsListSymbolsQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
-    tryGetJSPropertySymbols(namespace, kind, name) ?: emptyList()
+    getJSPropertySymbols(namespace, kind)
 
 }

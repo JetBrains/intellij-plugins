@@ -2,7 +2,7 @@
 package org.angular2.web.references
 
 import com.intellij.javascript.webSymbols.symbols.asWebSymbol
-import com.intellij.javascript.webSymbols.symbols.getJSPropertySymbols
+import com.intellij.javascript.webSymbols.symbols.getMatchingJSPropertySymbols
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
 import com.intellij.lang.javascript.psi.util.stubSafeStringValue
@@ -41,7 +41,7 @@ class Angular2DirectivePropertyLiteralReferencesProvider : WebSymbolReferencePro
     else {
       val symbol = directive.typeScriptClass
                      ?.asWebSymbol()
-                     ?.getJSPropertySymbols(name)
+                     ?.getMatchingJSPropertySymbols(name)
                      ?.find { it.source is JSAttributeListOwner }
                    ?: return emptyMap()
       return mapOf(startOffset + 1 to symbol)

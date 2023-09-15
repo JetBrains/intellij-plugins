@@ -1,7 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web.symbols
 
-import com.intellij.javascript.webSymbols.symbols.getJSPropertySymbols
+import com.intellij.javascript.webSymbols.symbols.getMatchingJSPropertySymbols
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
@@ -62,13 +62,13 @@ class VueComponentNamespaceSymbol(
   override fun isExclusiveFor(namespace: SymbolNamespace, kind: SymbolKind): Boolean =
     isNamespacedKind(namespace, kind)
 
-  override fun getSymbols(namespace: SymbolNamespace,
-                          kind: SymbolKind,
-                          name: String?,
-                          params: WebSymbolsNameMatchQueryParams,
-                          scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
-    if (isNamespacedKind(namespace, kind) && name?.getOrNull(0)?.isUpperCase() != false) {
-      getJSPropertySymbols(name).mapNotNull { symbol ->
+  override fun getMatchingSymbols(namespace: SymbolNamespace,
+                                  kind: SymbolKind,
+                                  name: String,
+                                  params: WebSymbolsNameMatchQueryParams,
+                                  scope: Stack<WebSymbolsScope>): List<WebSymbol> =
+    if (isNamespacedKind(namespace, kind) && name.getOrNull(0)?.isUpperCase() != false) {
+      getMatchingJSPropertySymbols(name).mapNotNull { symbol ->
         val source = symbol.source as? JSPsiNamedElementBase ?: return@mapNotNull null
         val component = VueModelManager.getComponent(source) as? VueRegularComponent
         if (component != null && kind == KIND_VUE_COMPONENTS) {
@@ -108,13 +108,13 @@ class VueComponentNamespaceSymbol(
     override val queryScope: List<WebSymbolsScope>
       get() = listOf(this)
 
-    override fun getSymbols(namespace: SymbolNamespace,
-                            kind: SymbolKind,
-                            name: String?,
-                            params: WebSymbolsNameMatchQueryParams,
-                            scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
-      namespaceSymbol.getSymbols(namespace, kind, name, params, scope) +
-      super.getSymbols(namespace, kind, name, params, scope)
+    override fun getMatchingSymbols(namespace: SymbolNamespace,
+                                    kind: SymbolKind,
+                                    name: String,
+                                    params: WebSymbolsNameMatchQueryParams,
+                                    scope: Stack<WebSymbolsScope>): List<WebSymbol> =
+      namespaceSymbol.getMatchingSymbols(namespace, kind, name, params, scope) +
+      super.getMatchingSymbols(namespace, kind, name, params, scope)
 
     override fun getCodeCompletions(namespace: SymbolNamespace,
                                     kind: SymbolKind,

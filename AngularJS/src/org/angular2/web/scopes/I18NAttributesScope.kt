@@ -10,7 +10,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.CompositeWebSymbol
+import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.utils.nameSegments
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
@@ -21,16 +21,31 @@ import org.jetbrains.annotations.NonNls
 
 class I18NAttributesScope(private val tag: XmlTag) : WebSymbolsScope {
 
+  override fun getMatchingSymbols(namespace: SymbolNamespace,
+                                  kind: SymbolKind,
+                                  name: String,
+                                  params: WebSymbolsNameMatchQueryParams,
+                                  scope: Stack<WebSymbolsScope>): List<WebSymbol> =
+    if (namespace == WebSymbol.NAMESPACE_HTML && kind == KIND_NG_I18N_ATTRIBUTES) {
+      tag.attributes
+        .mapNotNull { attr ->
+          val info = Angular2AttributeNameParser.parse(attr.name, tag)
+          if (isI18nCandidate(info) && name.equals(info.name, true))
+            Angular2I18nAttributeSymbol(attr)
+          else null
+        }
+    }
+    else emptyList()
+
   override fun getSymbols(namespace: SymbolNamespace,
                           kind: SymbolKind,
-                          name: String?,
-                          params: WebSymbolsNameMatchQueryParams,
+                          params: WebSymbolsListSymbolsQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
     if (namespace == WebSymbol.NAMESPACE_HTML && kind == KIND_NG_I18N_ATTRIBUTES) {
       tag.attributes
         .mapNotNull { attr ->
           val info = Angular2AttributeNameParser.parse(attr.name, tag)
-          if (isI18nCandidate(info) && (name == null || name.equals(info.name, true)))
+          if (isI18nCandidate(info))
             Angular2I18nAttributeSymbol(attr)
           else null
         }

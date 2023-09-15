@@ -21,6 +21,7 @@ import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.WebSymbol.Companion.KIND_JS_STRING_LITERALS
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
+import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.utils.ReferencingWebSymbol
 import org.angular2.Angular2DecoratorUtil
@@ -77,7 +78,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
             KIND_NG_DIRECTIVE_OUTPUTS
           directive.typeScriptClass
             ?.asWebSymbol()
-            ?.getJSPropertySymbols(null)
+            ?.getJSPropertySymbols()
             ?.filter { property ->
               val sources = Angular2SourceDirective.getPropertySources(property.source)
               sources.isNotEmpty()
@@ -92,10 +93,17 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
   }
 
+  override fun getMatchingSymbols(namespace: SymbolNamespace,
+                                  kind: SymbolKind,
+                                  name: String,
+                                  params: WebSymbolsNameMatchQueryParams,
+                                  scope: Stack<WebSymbolsScope>): List<WebSymbol> =
+    /* Do not support reference resolution */
+    emptyList()
+
   override fun getSymbols(namespace: SymbolNamespace,
                           kind: SymbolKind,
-                          name: String?,
-                          params: WebSymbolsNameMatchQueryParams,
+                          params: WebSymbolsListSymbolsQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
     /* Do not support reference resolution */
     emptyList()

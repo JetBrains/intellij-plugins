@@ -23,15 +23,14 @@ object AttributeWithInterpolationsScope : WebSymbolsScope {
 
   override fun getModificationCount(): Long = 0
 
-  override fun getSymbols(namespace: SymbolNamespace,
-                          kind: SymbolKind,
-                          name: String?,
-                          params: WebSymbolsNameMatchQueryParams,
-                          scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
+  override fun getMatchingSymbols(namespace: SymbolNamespace,
+                                  kind: SymbolKind,
+                                  name: String,
+                                  params: WebSymbolsNameMatchQueryParams,
+                                  scope: Stack<WebSymbolsScope>): List<WebSymbol> =
     if (namespace == WebSymbol.NAMESPACE_HTML
-        && kind == WebSymbol.KIND_HTML_ATTRIBUTES
-        && name != null) {
-      AttributeWithInterpolationsSymbol.match(name, scope, params)
+        && kind == WebSymbol.KIND_HTML_ATTRIBUTES) {
+      AttributeWithInterpolationsSymbol.match(name, params, scope)
     }
     else emptyList()
 

@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.query.WebSymbolMatch
+import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueCompositionApp
@@ -18,7 +19,6 @@ import org.jetbrains.vuejs.model.source.VueUnresolvedComponent
 import org.jetbrains.vuejs.web.VueComponentSourceNavigationTarget
 import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
 import org.jetbrains.vuejs.web.asWebSymbolPriority
-import org.jetbrains.vuejs.web.mapWithNameFilter
 
 class VueComponentSymbol(name: String, component: VueComponent, private val vueProximity: VueModelVisitor.Proximity) :
   VueScopeElementSymbol<VueComponent>(name, component) {
@@ -56,10 +56,22 @@ class VueComponentSymbol(name: String, component: VueComponent, private val vueP
     get() = mapOf(Pair(VueWebSymbolsQueryConfigurator.PROP_VUE_PROXIMITY, vueProximity), Pair(
       VueWebSymbolsQueryConfigurator.PROP_VUE_COMPOSITION_COMPONENT, isCompositionComponent))
 
+  override fun getMatchingSymbols(namespace: SymbolNamespace,
+                                  kind: SymbolKind,
+                                  name: String,
+                                  params: WebSymbolsNameMatchQueryParams,
+                                  scope: Stack<WebSymbolsScope>): List<WebSymbol> =
+    if (namespace == WebSymbol.NAMESPACE_HTML
+        && kind == WebSymbol.KIND_HTML_SLOTS
+        && item is VueUnresolvedComponent)
+      listOf(WebSymbolMatch.create(name, listOf(WebSymbolNameSegment(0, name.length)), WebSymbol.NAMESPACE_HTML,
+                                   WebSymbol.KIND_HTML_SLOTS, this.origin))
+    else
+      super.getMatchingSymbols(namespace, kind, name, params, scope)
+
   override fun getSymbols(namespace: SymbolNamespace,
-                          kind: String,
-                          name: String?,
-                          params: WebSymbolsNameMatchQueryParams,
+                          kind: SymbolKind,
+                          params: WebSymbolsListSymbolsQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
     if (namespace == WebSymbol.NAMESPACE_HTML)
       when (kind) {
@@ -71,7 +83,7 @@ class VueComponentSymbol(name: String, component: VueComponent, private val vueP
               return true
             }
           })
-          props.mapWithNameFilter(name, params, scope) { VueInputPropSymbol(it, item, this.origin) }
+          props.map { VueInputPropSymbol(it, item, this.origin) }
         }
         VueWebSymbolsQueryConfigurator.KIND_VUE_COMPONENT_DATA_PROPERTIES -> {
           val props = mutableListOf<VueDataProperty>()
@@ -81,7 +93,7 @@ class VueComponentSymbol(name: String, component: VueComponent, private val vueP
               return true
             }
           }, onlyPublic = false)
-          props.mapWithNameFilter(name, params, scope) { VueDataPropertySymbol(it, item, this.origin) }
+          props.map { VueDataPropertySymbol(it, item, this.origin) }
         }
         VueWebSymbolsQueryConfigurator.KIND_VUE_COMPONENT_COMPUTED_PROPERTIES -> {
           val props = mutableListOf<VueComputedProperty>()
@@ -91,19 +103,13 @@ class VueComponentSymbol(name: String, component: VueComponent, private val vueP
               return true
             }
           }, onlyPublic = false)
-          props.mapWithNameFilter(name, params, scope) { VueComputedPropertySymbol(it, item, this.origin) }
+          props.map { VueComputedPropertySymbol(it, item, this.origin) }
         }
         WebSymbol.KIND_HTML_SLOTS -> {
           (item as? VueContainer)
             ?.slots
-            ?.mapWithNameFilter(name, params, scope) { VueSlotSymbol(it, item, this.origin) }
-          ?: if (!name.isNullOrEmpty()
-                 && ((item is VueContainer && item.template == null)
-                     || item is VueUnresolvedComponent)) {
-            listOf(WebSymbolMatch.create(name, listOf(WebSymbolNameSegment(0, name.length)), WebSymbol.NAMESPACE_HTML,
-                                         WebSymbol.KIND_HTML_SLOTS, this.origin))
-          }
-          else emptyList()
+            ?.map { VueSlotSymbol(it, item, this.origin) }
+          ?: emptyList()
         }
         VueWebSymbolsQueryConfigurator.KIND_VUE_MODEL -> {
           (item as? VueContainer)
@@ -117,7 +123,7 @@ class VueComponentSymbol(name: String, component: VueComponent, private val vueP
     else if (namespace == WebSymbol.NAMESPACE_JS && kind == WebSymbol.KIND_JS_EVENTS) {
       (item as? VueContainer)
         ?.emits
-        ?.mapWithNameFilter(name, params, scope) { VueEmitCallSymbol(it, item, this.origin) }
+        ?.map { VueEmitCallSymbol(it, item, this.origin) }
       ?: emptyList()
     }
     else emptyList()

@@ -11,6 +11,7 @@ import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
+import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import org.jetbrains.vuejs.index.findScriptTag
 import java.util.*
@@ -21,12 +22,19 @@ import java.util.*
 class VueIncorrectlySelfReferredComponentFilteringScope(private val delegate: WebSymbolsScope,
                                                         private val file: PsiFile) : WebSymbolsScope {
 
+  override fun getMatchingSymbols(namespace: SymbolNamespace,
+                                  kind: SymbolKind,
+                                  name: String,
+                                  params: WebSymbolsNameMatchQueryParams,
+                                  scope: Stack<WebSymbolsScope>): List<WebSymbol> =
+    delegate.getMatchingSymbols(namespace, kind, name, params, scope)
+      .filter { isNotIncorrectlySelfReferred(it) }
+
   override fun getSymbols(namespace: SymbolNamespace,
                           kind: SymbolKind,
-                          name: String?,
-                          params: WebSymbolsNameMatchQueryParams,
+                          params: WebSymbolsListSymbolsQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
-    delegate.getSymbols(namespace, kind, name, params, scope)
+    delegate.getSymbols(namespace, kind, params, scope)
       .filter { isNotIncorrectlySelfReferred(it) }
 
   override fun getCodeCompletions(namespace: SymbolNamespace,

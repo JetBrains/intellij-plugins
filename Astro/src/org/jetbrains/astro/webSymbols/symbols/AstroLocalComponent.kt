@@ -8,6 +8,7 @@ import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.WebSymbol.Companion.KIND_HTML_ATTRIBUTES
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
+import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import org.jetbrains.astro.webSymbols.AstroProximity
 import org.jetbrains.astro.webSymbols.AstroQueryConfigurator
@@ -16,18 +17,24 @@ class AstroLocalComponent(override val name: String,
                           override val source: PsiElement,
                           override val priority: WebSymbol.Priority = WebSymbol.Priority.HIGH) : PsiSourcedWebSymbol {
 
+  override fun getMatchingSymbols(namespace: SymbolNamespace,
+                                  kind: SymbolKind,
+                                  name: String,
+                                  params: WebSymbolsNameMatchQueryParams,
+                                  scope: Stack<WebSymbolsScope>): List<WebSymbol> =
+    if (namespace == NAMESPACE_HTML && kind == KIND_HTML_ATTRIBUTES && name.contains(":"))
+      emptyList()
+    else
+      super.getMatchingSymbols(namespace, kind, name, params, scope)
+
   override fun getSymbols(namespace: SymbolNamespace,
                           kind: SymbolKind,
-                          name: String?,
-                          params: WebSymbolsNameMatchQueryParams,
-                          scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> {
-    return if (namespace == NAMESPACE_HTML && kind == KIND_HTML_ATTRIBUTES) {
-      if (name?.contains(":") == true) emptyList()
-      else listOf(AstroComponentWildcardAttribute)
-    }
+                          params: WebSymbolsListSymbolsQueryParams,
+                          scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
+    if (namespace == NAMESPACE_HTML && kind == KIND_HTML_ATTRIBUTES)
+      listOf(AstroComponentWildcardAttribute)
     else
-      super.getSymbols(namespace, kind, name, params, scope)
-  }
+      emptyList()
 
   override val origin: WebSymbolOrigin
     get() = AstroProjectSymbolOrigin
