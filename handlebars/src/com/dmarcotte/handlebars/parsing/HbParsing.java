@@ -462,8 +462,6 @@ public class HbParsing {
     parseLeafToken(builder, openStache);
     if (parseSexpr(builder) || parseHelperName(builder)) {
       parseParamsStartHashQuestion(builder);
-    } else {
-      parseSexpr(builder);
     }
     parseLeafTokenGreedy(builder, closeStache);
     mustacheMarker.done(MUSTACHE);
