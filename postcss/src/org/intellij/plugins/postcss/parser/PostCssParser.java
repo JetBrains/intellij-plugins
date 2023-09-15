@@ -145,6 +145,7 @@ public class PostCssParser extends CssParser2 {
         parseKeyframesRuleset() ||
         parseCustomSelectorAtRule() ||
         parseCustomMediaAtRule() ||
+        parseCustomProperty() ||
         parseAtRuleNesting() ||
         parseGenericAtRule() ||
         tryToParseRuleset()) {
