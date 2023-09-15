@@ -140,7 +140,7 @@ class VueWebTypesMergedSymbol(override val name: String,
 
   override fun getCodeCompletions(namespace: SymbolNamespace,
                                   kind: SymbolKind,
-                                  name: String?,
+                                  name: String,
                                   params: WebSymbolsCodeCompletionQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbolCodeCompletionItem> =
     symbols.asSequence()

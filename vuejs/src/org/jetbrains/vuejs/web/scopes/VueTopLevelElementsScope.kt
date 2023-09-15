@@ -36,12 +36,12 @@ object VueTopLevelElementsScope : WebSymbolsScope {
 
   override fun getCodeCompletions(namespace: SymbolNamespace,
                                   kind: SymbolKind,
-                                  name: String?,
+                                  name: String,
                                   params: WebSymbolsCodeCompletionQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbolCodeCompletionItem> =
     if (namespace == WebSymbol.NAMESPACE_HTML && kind == WebSymbol.KIND_HTML_ELEMENTS)
       params.queryExecutor.runCodeCompletionQuery(
-        WebSymbol.NAMESPACE_HTML, VueWebSymbolsQueryConfigurator.KIND_VUE_TOP_LEVEL_ELEMENTS, name ?: "",
+        WebSymbol.NAMESPACE_HTML, VueWebSymbolsQueryConfigurator.KIND_VUE_TOP_LEVEL_ELEMENTS, name,
         scope = scope,
         position = params.position,
         virtualSymbols = params.virtualSymbols,

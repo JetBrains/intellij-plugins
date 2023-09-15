@@ -59,7 +59,7 @@ class VueWatchSymbolsScope(private val enclosingComponent: VueSourceComponent)
 
   override fun getCodeCompletions(namespace: SymbolNamespace,
                                   kind: SymbolKind,
-                                  name: String?,
+                                  name: String,
                                   params: WebSymbolsCodeCompletionQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbolCodeCompletionItem> =
     super.getCodeCompletions(namespace, kind, name, params, scope)
