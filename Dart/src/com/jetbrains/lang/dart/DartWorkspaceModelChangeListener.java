@@ -46,7 +46,7 @@ public class DartWorkspaceModelChangeListener implements WorkspaceModelChangeLis
   }
 
   private static void onDartRootsChanged(@NotNull Project project) {
-    if (DartSdk.getDartSdk(project) == null) return;
+    if (!project.isInitialized() || DartSdk.getDartSdk(project) == null) return;
 
     DartFileListener.scheduleDartPackageRootsUpdate(project);
     DartAnalysisServerService.getInstance(project).ensureAnalysisRootsUpToDate();

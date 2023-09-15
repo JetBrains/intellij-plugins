@@ -5,6 +5,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -54,7 +55,7 @@ import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
  * @see DartWorkspaceModelChangeListener
  */
 public class DartFileListener implements AsyncFileListener {
-
+  private static final Logger LOG = Logger.getInstance(DartFileListener.class);
   private static final Object DART_PACKAGE_ROOTS_UPDATE_COALESCE = new Object();
 
   @Nullable
@@ -103,6 +104,10 @@ public class DartFileListener implements AsyncFileListener {
 
   public static void scheduleDartPackageRootsUpdate(@NotNull final Project project) {
     if (Registry.is("dart.projects.without.pubspec", false)) return;
+    if (!project.isInitialized()) {
+      LOG.error("Method is called too early for project " + project);
+      return;
+    }
 
     ReadAction.nonBlocking(() -> collectPackagesLibraryRoots(project))
       .coalesceBy(DART_PACKAGE_ROOTS_UPDATE_COALESCE)
