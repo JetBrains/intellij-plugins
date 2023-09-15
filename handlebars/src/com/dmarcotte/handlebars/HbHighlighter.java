@@ -90,6 +90,8 @@ public class HbHighlighter extends SyntaxHighlighterBase {
     keys1.put(HbTokenTypes.NUMBER, VALUES);
     keys1.put(HbTokenTypes.ELSE, IDENTIFIERS);
     keys1.put(HbTokenTypes.BOOLEAN, VALUES);
+    keys1.put(HbTokenTypes.NULL, VALUES);
+    keys1.put(HbTokenTypes.UNDEFINED, VALUES);
     keys1.put(HbTokenTypes.STRING, STRINGS);
     keys1.put(HbTokenTypes.DATA_PREFIX, DATA_PREFIX);
     keys1.put(HbTokenTypes.ESCAPE_CHAR, ESCAPE);
@@ -116,3 +118,4 @@ public class HbHighlighter extends SyntaxHighlighterBase {
     DISPLAY_NAMES.put(ESCAPE, new Pair<>(HbBundle.message("hb.page.colors.descriptor.escape.key"), null));
   }
 }
+
