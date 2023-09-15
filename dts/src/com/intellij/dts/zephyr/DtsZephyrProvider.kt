@@ -13,6 +13,7 @@ import com.intellij.openapi.util.SimpleModificationTracker
 import com.intellij.openapi.vfs.*
 import com.intellij.openapi.vfs.impl.BulkVirtualFileListenerAdapter
 import java.io.File
+import java.nio.file.Path
 
 @Service(Service.Level.PROJECT)
 class DtsZephyrProvider(val project: Project) : Disposable {
@@ -60,7 +61,8 @@ class DtsZephyrProvider(val project: Project) : Disposable {
 
     init {
         val messageBus = project.messageBus.connect(this)
-        messageBus.subscribe(VirtualFileManager.VFS_CHANGES, BulkVirtualFileListenerAdapter(object : VirtualFileListener {
+        messageBus.subscribe(
+            VirtualFileManager.VFS_CHANGES, BulkVirtualFileListenerAdapter(object : VirtualFileListener {
                 override fun fileCreated(event: VirtualFileEvent) = fileSystemTracker.incModificationCount()
 
                 override fun fileDeleted(event: VirtualFileEvent) = fileSystemTracker.incModificationCount()
@@ -96,6 +98,7 @@ class DtsZephyrProvider(val project: Project) : Disposable {
             }
         }
 
+        // search project roots
         for (module in project.modules) {
             val rootManger = ModuleRootManager.getInstance(module)
 
@@ -104,7 +107,16 @@ class DtsZephyrProvider(val project: Project) : Disposable {
             }
         }
 
-        // TODO: search for best match zephyr directory
+        // search default installation directory ~/zephyrproject/zephyr
+        if (candidates.isEmpty()) {
+            val localFileSystem = LocalFileSystem.getInstance()
+            val path = Path.of(System.getProperty("user.home"), "zephyrproject/zephyr")
+            val file = localFileSystem.findFileByNioFile(path)
+
+            if (file != null && validateRoot(file)) {
+                candidates.add(file)
+            }
+        }
 
         return candidates.firstOrNull()
     }
