@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.osgi.jps
 
 import org.jetbrains.jps.model.module.JpsModule
@@ -22,7 +22,11 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     buildAllModules().assertSuccessful()
 
     assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class"))
-    assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
+    assertManifest(myModule, setOf("Bundle-Name=main",
+                                   "Bundle-SymbolicName=main",
+                                   "Bundle-Version=1.0.0",
+                                   "Export-Package=main;version=\"1.0.0\"",
+                                   "Import-Package=java.lang"))
   }
 
   fun testBndProjectWithoutPackages() {
@@ -44,7 +48,11 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     buildAllModules().assertSuccessful()
 
     assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class", "OSGI-OPT/src/main/Main.java"))
-    assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
+    assertManifest(myModule, setOf("Bundle-Name=main",
+                                   "Bundle-SymbolicName=main",
+                                   "Bundle-Version=1.0.0",
+                                   "Export-Package=main;version=\"1.0.0\"",
+                                   "Import-Package=java.lang"))
   }
 
   fun testIdeaProjectSimple() {
@@ -56,7 +64,11 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     buildAllModules().assertSuccessful()
 
     assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class", "util/Util.class"))
-    assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
+    assertManifest(myModule, setOf("Bundle-Name=main",
+                                   "Bundle-SymbolicName=main",
+                                   "Bundle-Version=1.0.0",
+                                   "Export-Package=main;version=\"1.0.0\"",
+                                   "Import-Package=java.lang"))
   }
 
   fun testIdeaProjectNotSpecified() {
@@ -67,8 +79,11 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     buildAllModules().assertSuccessful()
 
     assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class", "util/Util.class"))
-    assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0",
-        "Export-Package=main;version=\"1.0.0\",util;version=\"1.0.0\"", "Import-Package=util"))
+    assertManifest(myModule, setOf("Bundle-Name=main",
+                                   "Bundle-SymbolicName=main",
+                                   "Bundle-Version=1.0.0",
+                                   "Export-Package=main;version=\"1.0.0\",util;version=\"1.0.0\"",
+                                   "Import-Package=java.lang,util"))
   }
 
   fun testAdditionalContent() {
@@ -79,7 +94,11 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     buildAllModules().assertSuccessful()
 
     assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class", "readme.txt"))
-    assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
+    assertManifest(myModule, setOf("Bundle-Name=main",
+                                   "Bundle-SymbolicName=main",
+                                   "Bundle-Version=1.0.0",
+                                   "Export-Package=main;version=\"1.0.0\"",
+                                   "Import-Package=java.lang"))
   }
 
   fun testMavenResources() {
@@ -91,7 +110,11 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     buildAllModules().assertSuccessful()
 
     assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class", "included.txt"))
-    assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
+    assertManifest(myModule, setOf("Bundle-Name=main",
+                                   "Bundle-SymbolicName=main",
+                                   "Bundle-Version=1.0.0",
+                                   "Export-Package=main;version=\"1.0.0\"",
+                                   "Import-Package=java.lang"))
   }
 
   fun testCompositeBundle() {
@@ -105,7 +128,11 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     buildAllModules().assertSuccessful()
 
     assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class", "util/Util.class"))
-    assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Private-Package=main,util"))
+    assertManifest(myModule, setOf("Bundle-Name=main",
+                                   "Bundle-SymbolicName=main",
+                                   "Bundle-Version=1.0.0",
+                                   "Private-Package=main,util",
+                                   "Import-Package=java.lang"))
   }
 
   fun testRebuild() {
@@ -200,9 +227,17 @@ class OsgiBuildTest : OsgiBuildTestCase() {
 
     assertFalse(File(extension(myModule).jarFileLocation).exists())
     assertJar(myModule, "main.a.jar", setOf("META-INF/MANIFEST.MF", "OSGI-OPT/src/main/a/A.java", "main/a/A.class"))
-    assertManifest(myModule, "main.a.jar", setOf("Bundle-Name=main.a", "Bundle-SymbolicName=main.a", "Bundle-Version=1.0.0", "Export-Package=main.a;version=\"1.0.0\""))
+    assertManifest(myModule, "main.a.jar", setOf("Bundle-Name=main.a",
+                                                 "Bundle-SymbolicName=main.a",
+                                                 "Bundle-Version=1.0.0",
+                                                 "Export-Package=main.a;version=\"1.0.0\"",
+                                                 "Import-Package=java.lang"))
     assertJar(myModule, "main.b.jar", setOf("META-INF/MANIFEST.MF", "OSGI-OPT/src/main/b/B.java", "main/b/B.class"))
-    assertManifest(myModule, "main.b.jar", setOf("Bundle-Name=main.b", "Bundle-SymbolicName=main.b", "Bundle-Version=1.0.1", "Export-Package=main.b;version=\"1.0.1\""))
+    assertManifest(myModule, "main.b.jar", setOf("Bundle-Name=main.b",
+                                                 "Bundle-SymbolicName=main.b",
+                                                 "Bundle-Version=1.0.1",
+                                                 "Export-Package=main.b;version=\"1.0.1\"",
+                                                 "Import-Package=java.lang"))
   }
 
   fun testSubBundles() {
@@ -216,8 +251,16 @@ class OsgiBuildTest : OsgiBuildTestCase() {
 
     assertFalse(File(extension(myModule).jarFileLocation).exists())
     assertJar(myModule, "main.a.jar", setOf("META-INF/MANIFEST.MF", "main/a/A.class"))
-    assertManifest(myModule, "main.a.jar", setOf("Bundle-Name=main.a", "Bundle-SymbolicName=main.a", "Bundle-Version=1.0.0", "Export-Package=main.a;version=\"1.0.0\""))
+    assertManifest(myModule, "main.a.jar", setOf("Bundle-Name=main.a",
+                                                 "Bundle-SymbolicName=main.a",
+                                                 "Bundle-Version=1.0.0",
+                                                 "Export-Package=main.a;version=\"1.0.0\"",
+                                                 "Import-Package=java.lang"))
     assertJar(myModule, "main.b.jar", setOf("META-INF/MANIFEST.MF", "main/b/B.class"))
-    assertManifest(myModule, "main.b.jar", setOf("Bundle-Name=main.b", "Bundle-SymbolicName=main.b", "Bundle-Version=1.0.1", "Export-Package=main.b;version=\"1.0.1\""))
+    assertManifest(myModule, "main.b.jar", setOf("Bundle-Name=main.b",
+                                                 "Bundle-SymbolicName=main.b",
+                                                 "Bundle-Version=1.0.1",
+                                                 "Export-Package=main.b;version=\"1.0.1\"",
+                                                 "Import-Package=java.lang"))
   }
 }

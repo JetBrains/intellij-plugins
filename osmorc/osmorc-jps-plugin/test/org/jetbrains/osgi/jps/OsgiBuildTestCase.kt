@@ -1,6 +1,7 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.osgi.jps
 
+import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.jps.builders.BuildResult
 import org.jetbrains.jps.builders.JpsBuildTestCase
 import org.jetbrains.jps.model.java.JavaResourceRootType
@@ -91,6 +92,6 @@ abstract class OsgiBuildTestCase : JpsBuildTestCase() {
         .map { "${it.first}=${if (it.first in needSorting) it.second.split(',').sorted().joinToString(",") else it.second}" }
         .toSet()
     }
-    assertEquals(expected, actual)
+    assertThat(actual).isEqualTo(expected)
   }
 }
