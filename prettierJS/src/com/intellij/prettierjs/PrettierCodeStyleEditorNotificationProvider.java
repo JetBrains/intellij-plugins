@@ -10,7 +10,6 @@ import com.intellij.openapi.extensions.ExtensionPointUtil;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.prettierjs.codeStyle.PrettierCodeStyleInstaller;
 import com.intellij.ui.EditorNotificationPanel;
@@ -30,7 +29,6 @@ public final class PrettierCodeStyleEditorNotificationProvider implements Editor
   public PrettierCodeStyleEditorNotificationProvider(@NotNull Project project) {
     myProject = project;
     var extensionDisposable = ExtensionPointUtil.createExtensionDisposable(this, EditorNotificationProvider.EP_NAME.getPoint(myProject));
-    Disposer.register(project, extensionDisposable);
     PrettierCodeStyleInstaller.EP_NAME.addChangeListener(() -> {
       EditorNotifications.getInstance(myProject).updateNotifications(this);
     }, extensionDisposable);
