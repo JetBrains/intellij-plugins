@@ -13,7 +13,6 @@ import com.intellij.lang.javascript.linter.JSLinterConfigLangSubstitutor;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -21,7 +20,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.ParameterizedCachedValue;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
@@ -44,8 +42,6 @@ public final class PrettierUtil {
   public static final String PACKAGE_NAME = "prettier";
   public static final String RC_FILE_NAME = ".prettierrc";
   private static final String IGNORE_FILE_NAME = ".prettierignore";
-  private static final Key<ParameterizedCachedValue<PrettierConfig, PsiFile>> CACHE_KEY =
-    new Key<>(PrettierUtil.class.getName() + ".config");
 
   /**
    * <a href="https://github.com/prettier/prettier/blob/main/docs/configuration.md">github.com/prettier/prettier/blob/main/docs/configuration.md</a>
@@ -168,16 +164,14 @@ public final class PrettierUtil {
       if (psiFile == null) {
         return null;
       }
-      return CachedValuesManager.getManager(project).getParameterizedCachedValue(psiFile, CACHE_KEY, param ->
-        CachedValueProvider.Result.create(parseConfigInternal(param.getVirtualFile(), param), param), false, psiFile);
+      return CachedValuesManager.getCachedValue(psiFile, () -> CachedValueProvider.Result.create(parseConfigInternal(psiFile), psiFile));
     });
   }
 
-  @Nullable
-  private static PrettierConfig parseConfigInternal(@NotNull VirtualFile virtualFile, @NotNull PsiFile file) {
+  private static @Nullable PrettierConfig parseConfigInternal(@NotNull PsiFile file) {
     try {
       if (PackageJsonUtil.isPackageJsonFile(file)) {
-        PackageJsonData packageJsonData = PackageJsonData.getOrCreate(virtualFile);
+        PackageJsonData packageJsonData = PackageJsonData.getOrCreate(file.getVirtualFile());
         if (!packageJsonData.isDependencyOfAnyType(PACKAGE_NAME)) {
           return null;
         }
