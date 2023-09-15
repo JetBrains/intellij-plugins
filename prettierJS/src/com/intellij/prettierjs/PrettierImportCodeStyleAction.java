@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import com.intellij.ui.EditorNotificationProvider;
 import com.intellij.ui.EditorNotifications;
 import org.jetbrains.annotations.NotNull;
 
@@ -54,6 +55,14 @@ public class PrettierImportCodeStyleAction extends AnAction {
       return;
     }
     new PrettierCodeStyleImporter(false).importConfigFile(psiFile);
-    EditorNotifications.getInstance(project).updateAllNotifications();
+    updateEditorNotifications(project);
+  }
+
+  private static void updateEditorNotifications(Project project) {
+    PrettierCodeStyleEditorNotificationProvider provider =
+      EditorNotificationProvider.EP_NAME.findExtension(PrettierCodeStyleEditorNotificationProvider.class, project);
+    if (provider != null) {
+      EditorNotifications.getInstance(project).updateNotifications(provider);
+    }
   }
 }
