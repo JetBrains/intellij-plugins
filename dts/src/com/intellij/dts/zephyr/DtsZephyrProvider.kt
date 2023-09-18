@@ -6,23 +6,15 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.modules
-import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.SimpleModificationTracker
 import com.intellij.openapi.vfs.*
 import com.intellij.openapi.vfs.impl.BulkVirtualFileListenerAdapter
 import java.io.File
-import java.nio.file.Path
 
 @Service(Service.Level.PROJECT)
-class DtsZephyrProvider(val project: Project) : Disposable {
+class DtsZephyrProvider(val project: Project) : Disposable.Default {
     companion object {
-        private val boardsPath = "boards"
-        private val bindingsPath = "dts/bindings"
-
-        private val includePaths = listOf("include", "dts", "dts/common")
-
         fun of(project: Project): DtsZephyrProvider = project.service()
     }
 
@@ -72,55 +64,6 @@ class DtsZephyrProvider(val project: Project) : Disposable {
         )
     }
 
-    fun validateRoot(root: VirtualFile): Boolean {
-        if (!root.isDirectory) return false
-
-        // check if all expected directories exist
-        for (expectedDirectory in listOf(boardsPath, bindingsPath) + includePaths) {
-            val directory = root.findDirectory(expectedDirectory)
-            if (directory == null || !directory.exists() || directory.children.isEmpty()) return false
-        }
-
-        return true
-    }
-
-    fun searchRoot(): VirtualFile? {
-        val candidates = mutableListOf<VirtualFile>()
-
-        val visitor = object : VirtualFileVisitor<Any>(limit(2)) {
-            override fun visitFile(file: VirtualFile): Boolean {
-                if (validateRoot(file)) {
-                    candidates.add(file)
-                    return false
-                }
-
-                return true
-            }
-        }
-
-        // search project roots
-        for (module in project.modules) {
-            val rootManger = ModuleRootManager.getInstance(module)
-
-            for (root in rootManger.contentRoots) {
-                VfsUtilCore.visitChildrenRecursively(root, visitor)
-            }
-        }
-
-        // search default installation directory ~/zephyrproject/zephyr
-        if (candidates.isEmpty()) {
-            val localFileSystem = LocalFileSystem.getInstance()
-            val path = Path.of(System.getProperty("user.home"), "zephyrproject/zephyr")
-            val file = localFileSystem.findFileByNioFile(path)
-
-            if (file != null && validateRoot(file)) {
-                candidates.add(file)
-            }
-        }
-
-        return candidates.firstOrNull()
-    }
-
     private fun getRootSource(): Either<String, Pair<Long, Long>> {
         val path = settings.zephyrRoot
 
@@ -138,10 +81,9 @@ class DtsZephyrProvider(val project: Project) : Disposable {
         rootSource = source
 
         val newRoot = source.fold({ path ->
-            // TODO: add folder as module root if the folder is currently not part of the project
             LocalFileSystem.getInstance().findFileByIoFile(File(path))
         }, {
-            searchRoot()
+            DtsZephyrRoot.searchForRoot(project)
         })
 
         if (newRoot != root) {
@@ -152,30 +94,9 @@ class DtsZephyrProvider(val project: Project) : Disposable {
         return root
     }
 
-    private fun getSubDir(path: String): VirtualFile? {
-        val zephyr = getRootDir() ?: return null
-        return zephyr.findDirectory(path)
-    }
+    fun getBoardDir(): VirtualFile? = DtsZephyrRoot.getBoardDir(getRootDir(), settings.zephyrBoard)
 
-    fun getBoardDir(): VirtualFile? {
-        val board = settings.zephyrBoard ?: return null
-        val arch = settings.zephyrArch ?: return null
+    fun getBindingsDir(): VirtualFile? = DtsZephyrRoot.getBindingsDir(getRootDir())
 
-        return getSubDir("$boardsPath/$arch/$board")
-    }
-
-    fun getIncludeDirs(): List<VirtualFile> {
-        val includes = sequence {
-            yieldAll(includePaths)
-            settings.zephyrArch?.let { yield("dts/$it") }
-        }
-
-        return includes.mapNotNull(::getSubDir).toList()
-    }
-
-    fun getBindingsDir(): VirtualFile? {
-        return getSubDir(bindingsPath)
-    }
-
-    override fun dispose() {}
+    fun getIncludeDirs(): List<VirtualFile> = DtsZephyrRoot.getIncludeDirs(getRootDir(), settings.zephyrBoard)
 }

@@ -23,7 +23,7 @@ class DtsProjectViewDecorator(private val project: Project, parentScope: Corouti
         val file = node?.virtualFile ?: return
 
         val board = DtsSettings.of(project).zephyrBoard ?: return
-        if (file.nameWithoutExtension != board) return
+        if (file.nameWithoutExtension != board.name) return
 
         val icon = data?.getIcon(false) ?: return
         val layeredIcon = LayeredIcon.create(icon, AllIcons.Modules.SourceRootFileLayer)

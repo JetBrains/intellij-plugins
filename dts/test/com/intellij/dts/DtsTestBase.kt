@@ -46,8 +46,7 @@ abstract class DtsTestBase : BasePlatformTestCase() {
 
         val settings = DtsSettings.of(project)
         settings.update {
-            zephyrBoard = "esp32"
-            zephyrArch = "xtensa"
+            zephyrBoard = "xtensa/esp32"
         }
     }
 

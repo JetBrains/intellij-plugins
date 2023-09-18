@@ -2,7 +2,7 @@ package com.intellij.dts.settings
 
 import com.intellij.dts.DtsBundle
 import com.intellij.dts.util.Either
-import com.intellij.dts.zephyr.DtsZephyrProvider
+import com.intellij.dts.zephyr.DtsZephyrRoot
 import com.intellij.ide.util.BrowseFilesListener
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
@@ -11,11 +11,13 @@ import com.intellij.openapi.observable.util.whenTextChanged
 import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
+import com.intellij.openapi.ui.ComponentValidator
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.ui.CollectionComboBoxModel
 import com.intellij.ui.SimpleListCellRenderer
+import com.intellij.ui.components.JBTextField
 import com.intellij.ui.components.fields.ExtendableTextField
 import com.intellij.ui.dsl.builder.*
 import org.jetbrains.annotations.Nls
@@ -23,40 +25,24 @@ import java.awt.event.ActionEvent
 import java.awt.event.FocusEvent
 import java.awt.event.FocusListener
 import java.nio.file.Path
+import java.util.function.Supplier
 import javax.swing.JTextField
 import javax.swing.plaf.basic.BasicComboBoxEditor
-import kotlin.io.path.*
 
 class DtsSettingsConfigurable(private val project: Project) : BoundConfigurable(DtsBundle.message("settings.name")) {
     private val state: DtsSettings.State = DtsSettings.of(project).state
 
-    private fun getBoardPath(): String? {
-        if (state.zephyrArch.isBlank() || state.zephyrBoard.isBlank()) return null
-
-        val path = Path.of(state.zephyrArch, state.zephyrBoard)
-        return path.pathString
-    }
-
-    private fun setBoardPath(pathStr: String?) {
-        if (pathStr == null) return
-        val path = Path.of(pathStr)
-
-        state.zephyrArch = path.parent.name
-        state.zephyrBoard = path.name
-    }
-
     private fun validateRoot(path: String): Result<String> {
-        val provider = DtsZephyrProvider.of(project)
-
         if (path.isBlank()) {
-            val root = provider.searchRoot() ?: return Either.Left(DtsBundle.message("settings.zephyr.root.not_found"))
+            val root = DtsZephyrRoot.searchForRoot(project)
+                ?: return Either.Left(DtsBundle.message("settings.zephyr.root.not_found"))
 
             return Either.Right(root.path)
         } else {
             val root = LocalFileSystem.getInstance().findFileByNioFile(Path.of(path))
                 ?: return Either.Left(DtsBundle.message("settings.zephyr.root.not_found"))
 
-            if (!provider.validateRoot(root)) {
+            if (!DtsZephyrRoot.isValid(root)) {
                 return Either.Left(DtsBundle.message("settings.zephyr.root.invalid"))
             }
 
@@ -66,15 +52,13 @@ class DtsSettingsConfigurable(private val project: Project) : BoundConfigurable(
 
     override fun createPanel(): DialogPanel = panel {
         val rootInput = RootComboBox(disposable)
-
-        val boardInput = ComboBox<String>()
-        val boardModel = CollectionComboBoxModel<String>(mutableListOf(), getBoardPath())
-
-        boardInput.renderer = SimpleListCellRenderer.create(DtsBundle.message("settings.zephyr.board.empty")) { it }
-        boardInput.model = boardModel
-        boardInput.isSwingPopup = false
+        val boardInput = BoardComboBox(disposable, state.zephyrBoard)
 
         val rootStatus = object : DtsSettingsInputStatus<String, String>(disposable) {
+            init {
+                isEnabled = false
+            }
+
             override fun readState(): String {
                 val state = rootInput.text
 
@@ -105,32 +89,18 @@ class DtsSettingsConfigurable(private val project: Project) : BoundConfigurable(
         val boardStatus = object : DtsSettingsInputStatus<String, List<String>>(disposable) {
             override fun readState(): String = rootInput.text
 
-            override fun performCheck(state: String): Result<List<String>> = validateRoot(state).mapRight { root ->
-                val results = mutableListOf<String>()
-
-                val boards = Path.of(root, "boards")
-                if (!boards.isDirectory()) return@mapRight results
-
-                for (arch in boards.listDirectoryEntries()) {
-                    if (!arch.isDirectory() || arch.name == "common") continue
-
-                    for (board in arch.listDirectoryEntries()) {
-                        if (!arch.isDirectory() || !board.resolve("board.cmake").exists()) continue
-
-                        results.add(boards.relativize(board).pathString)
-                    }
-                }
-
-                results
+            override fun performCheck(state: String): Result<List<String>> = validateRoot(state).mapRight { rootPath ->
+                val root = LocalFileSystem.getInstance().findFileByPath(rootPath)
+                DtsZephyrRoot.getAllBoards(root).map { board -> board.marshal() }.toList()
             }
 
             override fun evaluate(state: String, result: Result<List<String>>): ValidationInfo? {
                 result.fold({
                     boardInput.isEnabled = false
-                    boardModel.removeAll()
-                }, {
+                    boardInput.clearBoards()
+                }, { boards ->
                     boardInput.isEnabled = true
-                    boardModel.replaceAll(it)
+                    boardInput.setBoards(boards)
                 })
 
                 return super.evaluate(state, result)
@@ -146,19 +116,19 @@ class DtsSettingsConfigurable(private val project: Project) : BoundConfigurable(
                 )
             }
             row(DtsBundle.message("settings.zephyr.board") + ":") {
-                cell(boardInput).columns(COLUMNS_MEDIUM).bindItem(
-                    ::getBoardPath,
-                    ::setBoardPath,
+                cell(boardInput).columns(COLUMNS_MEDIUM).bind(
+                    { input -> input.text },
+                    { input, value -> input.text = value },
+                    state::zephyrBoard.toMutableProperty(),
                 )
             }
         }
 
         rootStatus.installOn(rootInput)
+        rootInput.onTextChanged(rootStatus::check)
+        rootInput.onFocusLost(rootStatus::enableAndCheck)
 
-        rootInput.onFocusLost(rootStatus::check)
         rootInput.onTextChanged(boardStatus::check)
-
-        rootStatus.check()
         boardStatus.check()
     }
 
@@ -219,4 +189,64 @@ private class RootComboBox(private val disposable: Disposable?) : ComboBox<Any>(
             textField.removeFocusListener(listener)
         }
     }
+}
+
+private class BoardComboBox(disposable: Disposable?, initialValue: String) : ComboBox<String>() {
+    companion object {
+        private val boardStringRx = Regex("[^/]+/[^/]+")
+    }
+
+    private val collectionModel = CollectionComboBoxModel<String>(mutableListOf(), initialValue.ifBlank { null })
+    private val textField = JBTextField()
+
+    var text: String by textField::text
+
+    init {
+        isSwingPopup = false
+        renderer = SimpleListCellRenderer.create("") { it }
+        model = collectionModel
+
+        val editor = object : BasicComboBoxEditor() {
+            override fun createEditorComponent(): JTextField {
+                textField.border = null
+                return textField
+            }
+
+            override fun setItem(obj: Any?) {
+                // do not update text if item is deselected
+                if (obj == null) return
+                super.setItem(obj)
+            }
+        }
+
+        isEditable = true
+        setEditor(editor)
+
+        // deselect item if text is edited
+        textField.document.whenTextChanged(disposable) {
+            selectedItem = null
+        }
+
+        if (disposable != null) {
+            ComponentValidator(disposable)
+                .withValidator(Supplier { validateTextField() })
+                .installOn(textField)
+                .andRegisterOnDocumentListener(textField)
+                .andStartOnFocusLost()
+        }
+
+        textField.emptyText.text = DtsBundle.message("settings.zephyr.board.empty")
+    }
+
+    private fun validateTextField(): ValidationInfo? {
+        if (text.isEmpty() || text.matches(boardStringRx)) {
+            return null
+        } else {
+            return ValidationInfo(DtsBundle.message("settings.zephyr.board.invalid"), this)
+        }
+    }
+
+    fun clearBoards() = collectionModel.removeAll()
+
+    fun setBoards(boards: List<String>) = collectionModel.replaceAll(boards)
 }

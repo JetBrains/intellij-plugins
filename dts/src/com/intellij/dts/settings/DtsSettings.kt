@@ -1,5 +1,6 @@
 package com.intellij.dts.settings
 
+import com.intellij.dts.zephyr.ZephyrBoard
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
 import com.intellij.util.messages.Topic
@@ -12,7 +13,7 @@ class DtsSettings(private val project: Project) : PersistentStateComponent<DtsSe
         fun of(project: Project): DtsSettings = project.service()
     }
 
-    private val state = State("", "", "")
+    private val state = State()
 
     /**
      * The path to the zephyr root. Also called the Zephyr base in the
@@ -21,13 +22,10 @@ class DtsSettings(private val project: Project) : PersistentStateComponent<DtsSe
      * If empty the path should be detected automatically.
      */
     val zephyrRoot: String?
-        get() = state.zephyrRoot.nullIfBlank()
+        get() = state.zephyrRoot.ifBlank { null }
 
-    val zephyrArch: String?
-        get() = state.zephyrArch.nullIfBlank()
-
-    val zephyrBoard: String?
-        get() = state.zephyrBoard.nullIfBlank()
+    val zephyrBoard: ZephyrBoard?
+        get() = ZephyrBoard.unmarshal(state.zephyrBoard)
 
     override fun getState(): State = state
 
@@ -52,9 +50,6 @@ class DtsSettings(private val project: Project) : PersistentStateComponent<DtsSe
 
     data class State(
         var zephyrRoot: String = "",
-        var zephyrArch: String = "",
         var zephyrBoard: String = "",
     )
 }
-
-private fun String.nullIfBlank() = this.ifBlank { null }
