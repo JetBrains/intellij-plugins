@@ -77,6 +77,9 @@ object AttributeWithInterpolationsScope : WebSymbolsScope {
                                 queryExecutor: WebSymbolsQueryExecutor): List<WebSymbolCodeCompletionItem> =
       emptyList()
 
+    override fun listSymbols(scopeStack: Stack<WebSymbolsScope>, queryExecutor: WebSymbolsQueryExecutor): List<WebSymbol> =
+      emptyList()
+
     override fun matchName(name: String,
                            scopeStack: Stack<WebSymbolsScope>,
                            queryExecutor: WebSymbolsQueryExecutor): List<WebSymbol> =
