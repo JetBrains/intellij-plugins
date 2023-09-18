@@ -20,9 +20,12 @@ class DtsProjectViewDecorator(private val project: Project, parentScope: Corouti
     }
 
     override fun decorate(node: ProjectViewNode<*>?, data: PresentationData?) {
-        val file = node?.virtualFile ?: return
+        val settings = DtsSettings.of(project)
+        if (settings.zephyrCMakeSync) return
 
-        val board = DtsSettings.of(project).zephyrBoard ?: return
+        val board = settings.zephyrBoard ?: return
+
+        val file = node?.virtualFile ?: return
         if (file.nameWithoutExtension != board.name) return
 
         val icon = data?.getIcon(false) ?: return

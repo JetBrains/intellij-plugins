@@ -16,6 +16,7 @@ repositories {
 }
 
 intellij {
+    plugins.set(listOf("com.intellij.clion"))
     version.set("LATEST-EAP-SNAPSHOT")
     type.set("CL")
 }

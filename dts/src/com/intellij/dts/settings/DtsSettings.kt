@@ -27,6 +27,13 @@ class DtsSettings(private val project: Project) : PersistentStateComponent<DtsSe
     val zephyrBoard: ZephyrBoard?
         get() = ZephyrBoard.unmarshal(state.zephyrBoard)
 
+    /**
+     * Whether to load zephyr settings from cmake. If set to true all zephyr
+     * settings will be overwritten by cmake.
+      */
+    val zephyrCMakeSync: Boolean
+        get() = state.zephyrCMakeSync
+
     override fun getState(): State = state
 
     override fun loadState(state: State) = XmlSerializerUtil.copyBean(state, this.state)
@@ -51,5 +58,6 @@ class DtsSettings(private val project: Project) : PersistentStateComponent<DtsSe
     data class State(
         var zephyrRoot: String = "",
         var zephyrBoard: String = "",
+        var zephyrCMakeSync: Boolean = false,
     )
 }

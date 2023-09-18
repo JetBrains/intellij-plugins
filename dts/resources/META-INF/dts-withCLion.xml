@@ -1,0 +1,13 @@
+<idea-plugin>
+    <projectListeners>
+        <listener
+                class="com.intellij.dts.zephyr.DtsZephyrCMakeSync"
+                topic="com.jetbrains.cidr.cpp.cmake.CMakeSettingsListener"/>
+        <listener
+                class="com.intellij.dts.zephyr.DtsZephyrCMakeSync"
+                topic="com.intellij.dts.settings.DtsSettings$ChangeListener"/>
+        <listener
+                class="com.intellij.dts.zephyr.DtsZephyrCMakeSync"
+                topic="com.intellij.execution.ExecutionTargetListener"/>
+    </projectListeners>
+</idea-plugin>

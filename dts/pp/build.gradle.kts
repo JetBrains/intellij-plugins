@@ -53,4 +53,8 @@ tasks {
         targetClass.set("PpLexer")
         purgeOldFiles.set(true)
     }
+
+    runIde {
+        enabled = false
+    }
 }

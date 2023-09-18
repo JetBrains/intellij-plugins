@@ -1,10 +1,12 @@
 package com.intellij.dts.settings
 
 import com.intellij.dts.DtsBundle
+import com.intellij.dts.util.DtsUtil
 import com.intellij.dts.util.Either
 import com.intellij.dts.zephyr.DtsZephyrRoot
 import com.intellij.ide.util.BrowseFilesListener
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.observable.util.whenDisposed
 import com.intellij.openapi.observable.util.whenTextChanged
@@ -17,6 +19,7 @@ import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.ui.CollectionComboBoxModel
 import com.intellij.ui.SimpleListCellRenderer
+import com.intellij.ui.components.CheckBox
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.components.fields.ExtendableTextField
 import com.intellij.ui.dsl.builder.*
@@ -34,9 +37,7 @@ class DtsSettingsConfigurable(private val project: Project) : BoundConfigurable(
 
     private fun validateRoot(path: String): Result<String> {
         if (path.isBlank()) {
-            val root = DtsZephyrRoot.searchForRoot(project)
-                ?: return Either.Left(DtsBundle.message("settings.zephyr.root.not_found"))
-
+            val root = DtsZephyrRoot.searchForRoot(project) ?: return Either.Left(DtsBundle.message("settings.zephyr.root.not_found"))
             return Either.Right(root.path)
         } else {
             val root = LocalFileSystem.getInstance().findFileByNioFile(Path.of(path))
@@ -51,6 +52,9 @@ class DtsSettingsConfigurable(private val project: Project) : BoundConfigurable(
     }
 
     override fun createPanel(): DialogPanel = panel {
+        val syncInput = CheckBox(DtsBundle.message("settings.zephyr.sync_with_cmake"))
+        syncInput.isEnabled = DtsUtil.hasCLion()
+
         val rootInput = RootComboBox(disposable)
         val boardInput = BoardComboBox(disposable, state.zephyrBoard)
 
@@ -99,7 +103,7 @@ class DtsSettingsConfigurable(private val project: Project) : BoundConfigurable(
                     boardInput.isEnabled = false
                     boardInput.clearBoards()
                 }, { boards ->
-                    boardInput.isEnabled = true
+                    boardInput.isEnabled = !syncInput.isSelected
                     boardInput.setBoards(boards)
                 })
 
@@ -108,6 +112,13 @@ class DtsSettingsConfigurable(private val project: Project) : BoundConfigurable(
         }
 
         group(DtsBundle.message("settings.zephyr.group")) {
+            row {
+                cell(syncInput).bind(
+                    { input -> input.isSelected },
+                    { input, value -> input.isSelected = value && DtsUtil.hasCLion() },
+                    state::zephyrCMakeSync.toMutableProperty()
+                )
+            }
             row(DtsBundle.message("settings.zephyr.root") + ":") {
                 cell(rootInput).columns(COLUMNS_LARGE).bind(
                     { input -> input.text },
@@ -124,12 +135,32 @@ class DtsSettingsConfigurable(private val project: Project) : BoundConfigurable(
             }
         }
 
+        // add validation listener
         rootStatus.installOn(rootInput)
         rootInput.onTextChanged(rootStatus::check)
         rootInput.onFocusLost(rootStatus::enableAndCheck)
 
         rootInput.onTextChanged(boardStatus::check)
-        boardStatus.check()
+
+        syncInput.addChangeListener {
+            if (syncInput.isSelected) {
+                rootInput.isEnabled = false
+                boardInput.isEnabled = false
+            } else {
+                rootInput.isEnabled = !syncInput.isSelected
+
+                // boardInput cannot simply be enabled, need to check for root first
+                boardStatus.check()
+            }
+        }
+
+        // run initial validation
+        rootStatus.check()
+
+        if (syncInput.isSelected) {
+            rootInput.isEnabled = false
+            boardInput.isEnabled = false
+        }
     }
 
     override fun apply() {
@@ -164,7 +195,9 @@ private class RootComboBox(private val disposable: Disposable?) : ComboBox<Any>(
         setEditor(editor)
 
         model = CollectionComboBoxModel(listOf(""))
-        renderer = SimpleListCellRenderer.create("") { DtsBundle.message("settings.zephyr.root.auto_detect") }
+        renderer = SimpleListCellRenderer.create("") {
+            DtsBundle.message("settings.zephyr.root.auto_detect", ApplicationInfo.getInstance().versionName)
+        }
 
         textField.border = null
     }

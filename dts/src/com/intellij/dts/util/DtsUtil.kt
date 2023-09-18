@@ -2,6 +2,8 @@ package com.intellij.dts.util
 
 import com.intellij.dts.lang.DtsTokenSets
 import com.intellij.dts.lang.psi.DtsTypes
+import com.intellij.ide.plugins.PluginManagerCore
+import com.intellij.openapi.extensions.PluginId
 import com.intellij.psi.PsiElement
 import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
@@ -9,6 +11,11 @@ import com.intellij.psi.util.elementType
 import com.intellij.psi.util.siblings
 
 object DtsUtil {
+    private val clionModuleId = PluginId.getId("com.intellij.modules.clion")
+
+    // copied from PluginUtils to avoid additional dependencies
+    fun hasCLion(): Boolean = PluginManagerCore.getPluginSet().isPluginEnabled(clionModuleId)
+
     /**
      * Splits the name of a node into node and unit address part. If the name
      * does not contain a unit address null will be returned. If the name
@@ -58,4 +65,5 @@ object DtsUtil {
                type != DtsTypes.INCLUDE_STATEMENT &&
                type !in DtsTokenSets.ppStatements
     }
+
 }
