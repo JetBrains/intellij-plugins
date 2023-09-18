@@ -31,7 +31,7 @@ class AstroLocalComponent(override val name: String,
                           kind: SymbolKind,
                           params: WebSymbolsListSymbolsQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
-    if (namespace == NAMESPACE_HTML && kind == KIND_HTML_ATTRIBUTES)
+    if (namespace == NAMESPACE_HTML && kind == KIND_HTML_ATTRIBUTES && !params.expandPatterns)
       listOf(AstroComponentWildcardAttribute)
     else
       emptyList()

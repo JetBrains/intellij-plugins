@@ -7,7 +7,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.refactoring.suggested.startOffset
 import org.jetbrains.vuejs.model.DEPRECATED_SLOT_ATTRIBUTE
-import org.jetbrains.vuejs.model.getAvailableSlots
+import org.jetbrains.vuejs.model.getMatchingAvailableSlots
 
 class VueDeprecatedSlotAttributeReferenceProvider : WebSymbolReferenceProvider<XmlAttributeValue>() {
 
@@ -19,7 +19,7 @@ class VueDeprecatedSlotAttributeReferenceProvider : WebSymbolReferenceProvider<X
       val value = psiElement.value
       if (value.isNotEmpty()) {
         return (psiElement.parent as? XmlAttribute)
-          ?.let { getAvailableSlots(it.parent, value, false) }
+          ?.let { getMatchingAvailableSlots(it.parent, value, false) }
           ?.firstOrNull()
       }
     }

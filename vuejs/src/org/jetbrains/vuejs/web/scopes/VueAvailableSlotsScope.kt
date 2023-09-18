@@ -14,6 +14,7 @@ import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import org.jetbrains.vuejs.model.getAvailableSlots
+import org.jetbrains.vuejs.model.getMatchingAvailableSlots
 import org.jetbrains.vuejs.model.getAvailableSlotsCompletions
 import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
 
@@ -35,7 +36,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : WebSymbolsScope {
     if (namespace == WebSymbol.NAMESPACE_HTML
         && kind == VueWebSymbolsQueryConfigurator.KIND_VUE_AVAILABLE_SLOTS
         && params.queryExecutor.allowResolve)
-      getAvailableSlots(tag, name, true)
+      getMatchingAvailableSlots(tag, name, true)
     else emptyList()
 
   override fun getSymbols(namespace: SymbolNamespace,
@@ -45,7 +46,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : WebSymbolsScope {
     if (namespace == WebSymbol.NAMESPACE_HTML
         && kind == VueWebSymbolsQueryConfigurator.KIND_VUE_AVAILABLE_SLOTS
         && params.queryExecutor.allowResolve)
-      getAvailableSlots(tag, null, true)
+      getAvailableSlots(tag, params.expandPatterns, true)
     else emptyList()
 
   override fun getCodeCompletions(namespace: SymbolNamespace,

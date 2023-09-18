@@ -48,7 +48,8 @@ class VueScriptSetupLocalDirectiveSymbol(directive: VueScriptSetupLocalDirective
                           params: WebSymbolsListSymbolsQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbol> =
     if (namespace == WebSymbol.NAMESPACE_HTML
-        && kind == VueWebSymbolsQueryConfigurator.KIND_VUE_DIRECTIVE_ARGUMENT) {
+        && kind == VueWebSymbolsQueryConfigurator.KIND_VUE_DIRECTIVE_ARGUMENT
+        && !params.expandPatterns) {
       listOf(VueAnySymbol(this.origin, WebSymbol.NAMESPACE_HTML, kind, "Vue directive argument"))
     }
     else emptyList()

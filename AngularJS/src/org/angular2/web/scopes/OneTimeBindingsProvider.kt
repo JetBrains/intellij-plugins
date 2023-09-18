@@ -67,13 +67,14 @@ internal class OneTimeBindingsProvider : WebSymbolsScope {
         && params.queryExecutor.allowResolve) {
       // Avoid any conflicts with attribute selectors over the attribute value
       val attributeSelectors = params.queryExecutor
-        .runListSymbolsQuery(WebSymbol.NAMESPACE_JS, KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS, scope = scope.toList())
+        .runListSymbolsQuery(WebSymbol.NAMESPACE_JS, KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS,
+                             expandPatterns = true, scope = scope.toList())
         .filter { it.attributeValue?.required == false }
         .mapSmartSet { it.name }
 
       params.queryExecutor
         .runListSymbolsQuery(
-          WebSymbol.NAMESPACE_JS, KIND_NG_DIRECTIVE_INPUTS, scope = scope.toList())
+          WebSymbol.NAMESPACE_JS, KIND_NG_DIRECTIVE_INPUTS, expandPatterns = true, scope = scope.toList())
         .asSequence()
         .filter { isOneTimeBindingProperty(it) }
         .map { Angular2OneTimeBinding(it, !attributeSelectors.contains(it.name)) }
