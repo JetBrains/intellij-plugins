@@ -10,9 +10,9 @@ import com.intellij.platform.workspace.storage.MutableEntityStorage
 import com.intellij.platform.workspace.storage.WorkspaceEntity
 import com.intellij.platform.workspace.storage.impl.ConnectionId
 import com.intellij.platform.workspace.storage.impl.ModifiableWorkspaceEntityBase
-import com.intellij.platform.workspace.storage.impl.UsedClassesCollector
 import com.intellij.platform.workspace.storage.impl.WorkspaceEntityBase
 import com.intellij.platform.workspace.storage.impl.WorkspaceEntityData
+import com.intellij.platform.workspace.storage.metadata.model.EntityMetadata
 import com.intellij.platform.workspace.storage.url.VirtualFileUrl
 import kotlin.jvm.JvmName
 import kotlin.jvm.JvmOverloads
@@ -20,12 +20,12 @@ import kotlin.jvm.JvmStatic
 
 @GeneratedCodeApiVersion(2)
 @GeneratedCodeImplVersion(2)
-open class DenoEntityImpl(val dataSource: DenoEntityData) : DenoEntity, WorkspaceEntityBase() {
+open class DenoEntityImpl(private val dataSource: DenoEntityData) : DenoEntity, WorkspaceEntityBase(dataSource) {
 
-  companion object {
+  private companion object {
 
 
-    val connections = listOf<ConnectionId>(
+    private val connections = listOf<ConnectionId>(
     )
 
   }
@@ -42,6 +42,7 @@ open class DenoEntityImpl(val dataSource: DenoEntityData) : DenoEntity, Workspac
   override fun connectionIdList(): List<ConnectionId> {
     return connections
   }
+
 
   class Builder(result: DenoEntityData?) : ModifiableWorkspaceEntityBase<DenoEntity, DenoEntityData>(result), DenoEntity.Builder {
     constructor() : this(DenoEntityData())
@@ -72,7 +73,7 @@ open class DenoEntityImpl(val dataSource: DenoEntityData) : DenoEntity, Workspac
       checkInitialization() // TODO uncomment and check failed tests
     }
 
-    fun checkInitialization() {
+    private fun checkInitialization() {
       val _diff = diff
       if (!getEntityData().isEntitySourceInitialized()) {
         error("Field WorkspaceEntity#entitySource should be initialized")
@@ -148,6 +149,10 @@ class DenoEntityData : WorkspaceEntityData<DenoEntity>() {
     }
   }
 
+  override fun getMetadata(): EntityMetadata {
+    return MetadataStorageImpl.getMetadataByTypeFqn("com.intellij.deno.entities.DenoEntity") as EntityMetadata
+  }
+
   override fun getEntityInterface(): Class<out WorkspaceEntity> {
     return DenoEntity::class.java
   }
@@ -205,11 +210,5 @@ class DenoEntityData : WorkspaceEntityData<DenoEntity>() {
     result = 31 * result + depsFile.hashCode()
     result = 31 * result + denoTypes.hashCode()
     return result
-  }
-
-  override fun collectClassUsagesData(collector: UsedClassesCollector) {
-    this.depsFile?.let { collector.add(it::class.java) }
-    this.denoTypes?.let { collector.add(it::class.java) }
-    collector.sameForAllEntities = false
   }
 }

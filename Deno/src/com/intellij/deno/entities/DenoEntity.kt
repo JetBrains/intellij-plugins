@@ -39,6 +39,6 @@ interface DenoEntity : WorkspaceEntity {
 }
 
 //region generated code
-fun MutableEntityStorage.modifyEntity(entity: DenoEntity, modification: DenoEntity.Builder.() -> Unit) = modifyEntity(
+fun MutableEntityStorage.modifyEntity(entity: DenoEntity, modification: DenoEntity.Builder.() -> Unit): DenoEntity = modifyEntity(
   DenoEntity.Builder::class.java, entity, modification)
 //endregion

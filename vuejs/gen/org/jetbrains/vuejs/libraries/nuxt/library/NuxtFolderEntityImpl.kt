@@ -12,21 +12,21 @@ import com.intellij.platform.workspace.storage.MutableEntityStorage
 import com.intellij.platform.workspace.storage.WorkspaceEntity
 import com.intellij.platform.workspace.storage.impl.ConnectionId
 import com.intellij.platform.workspace.storage.impl.ModifiableWorkspaceEntityBase
-import com.intellij.platform.workspace.storage.impl.UsedClassesCollector
 import com.intellij.platform.workspace.storage.impl.WorkspaceEntityBase
 import com.intellij.platform.workspace.storage.impl.WorkspaceEntityData
 import com.intellij.platform.workspace.storage.impl.containers.MutableWorkspaceList
 import com.intellij.platform.workspace.storage.impl.containers.toMutableWorkspaceList
+import com.intellij.platform.workspace.storage.metadata.model.EntityMetadata
 import com.intellij.platform.workspace.storage.url.VirtualFileUrl
 
 @GeneratedCodeApiVersion(2)
 @GeneratedCodeImplVersion(2)
-open class NuxtFolderEntityImpl(val dataSource: NuxtFolderEntityData) : NuxtFolderEntity, WorkspaceEntityBase() {
+open class NuxtFolderEntityImpl(private val dataSource: NuxtFolderEntityData) : NuxtFolderEntity, WorkspaceEntityBase(dataSource) {
 
-  companion object {
+  private companion object {
 
 
-    val connections = listOf<ConnectionId>(
+    private val connections = listOf<ConnectionId>(
     )
 
   }
@@ -43,6 +43,7 @@ open class NuxtFolderEntityImpl(val dataSource: NuxtFolderEntityData) : NuxtFold
   override fun connectionIdList(): List<ConnectionId> {
     return connections
   }
+
 
   class Builder(result: NuxtFolderEntityData?) : ModifiableWorkspaceEntityBase<NuxtFolderEntity, NuxtFolderEntityData>(
     result), NuxtFolderEntity.Builder {
@@ -74,7 +75,7 @@ open class NuxtFolderEntityImpl(val dataSource: NuxtFolderEntityData) : NuxtFold
       checkInitialization() // TODO uncomment and check failed tests
     }
 
-    fun checkInitialization() {
+    private fun checkInitialization() {
       val _diff = diff
       if (!getEntityData().isEntitySourceInitialized()) {
         error("Field WorkspaceEntity#entitySource should be initialized")
@@ -158,8 +159,8 @@ class NuxtFolderEntityData : WorkspaceEntityData<NuxtFolderEntity>() {
   lateinit var nuxtFolderUrl: VirtualFileUrl
   lateinit var libraryFileUrls: MutableList<VirtualFileUrl>
 
-  fun isNuxtFolderUrlInitialized(): Boolean = ::nuxtFolderUrl.isInitialized
-  fun isLibraryFileUrlsInitialized(): Boolean = ::libraryFileUrls.isInitialized
+  internal fun isNuxtFolderUrlInitialized(): Boolean = ::nuxtFolderUrl.isInitialized
+  internal fun isLibraryFileUrlsInitialized(): Boolean = ::libraryFileUrls.isInitialized
 
   override fun wrapAsModifiable(diff: MutableEntityStorage): WorkspaceEntity.Builder<NuxtFolderEntity> {
     val modifiable = NuxtFolderEntityImpl.Builder(null)
@@ -176,6 +177,10 @@ class NuxtFolderEntityData : WorkspaceEntityData<NuxtFolderEntity>() {
       entity.id = createEntityId()
       entity
     }
+  }
+
+  override fun getMetadata(): EntityMetadata {
+    return MetadataStorageImpl.getMetadataByTypeFqn("org.jetbrains.vuejs.libraries.nuxt.library.NuxtFolderEntity") as EntityMetadata
   }
 
   override fun clone(): NuxtFolderEntityData {
@@ -240,11 +245,5 @@ class NuxtFolderEntityData : WorkspaceEntityData<NuxtFolderEntity>() {
     result = 31 * result + nuxtFolderUrl.hashCode()
     result = 31 * result + libraryFileUrls.hashCode()
     return result
-  }
-
-  override fun collectClassUsagesData(collector: UsedClassesCollector) {
-    this.nuxtFolderUrl?.let { collector.add(it::class.java) }
-    this.libraryFileUrls?.let { collector.add(it::class.java) }
-    collector.sameForAllEntities = false
   }
 }
