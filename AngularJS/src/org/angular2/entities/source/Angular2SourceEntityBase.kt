@@ -45,7 +45,7 @@ abstract class Angular2SourceEntityBase protected constructor(override val typeS
   /**
    * Since Ivy entities are cached on TypeScriptClass dependencies, we can avoid caching for values depending solely on class contents.
    */
-  protected fun <T> getNullableLazyValue(key: Key<T>, provider: () -> T?): T? {
+  protected fun <T : Any> getNullableLazyValue(key: Key<T>, provider: () -> T?): T? {
     var result = getUserData(key)
     if (result === NULL_MARK) {
       return null
@@ -53,7 +53,7 @@ abstract class Angular2SourceEntityBase protected constructor(override val typeS
     if (result == null) {
       result = provider()
       if (result == null) {
-        @Suppress("UNCHECKED_CAST", "NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER")
+        @Suppress("UNCHECKED_CAST")
         putUserDataIfAbsent(key, NULL_MARK as T)
       }
       else {

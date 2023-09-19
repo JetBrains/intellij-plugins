@@ -50,6 +50,6 @@ class Angular2IvyComponent(entityDef: Angular2IvySymbolDef.Component) : Angular2
 
   companion object {
 
-    private val IVY_NG_CONTENT_SELECTORS = Key<List<Angular2DirectiveSelector>?>("ng.ivy.content-selectors")
+    private val IVY_NG_CONTENT_SELECTORS = Key<List<Angular2DirectiveSelector>>("ng.ivy.content-selectors")
   }
 }
