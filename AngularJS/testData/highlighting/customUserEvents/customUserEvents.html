@@ -4,5 +4,5 @@
   (click.prevent)="$event.<error descr="Unresolved function or method subarray()">subarray</error>()"
   (click.prevent.<warning descr="Unrecognized modifier">foo</warning>)="$event.<error descr="Unresolved function or method subarray()">subarray</error>()"
   (<warning descr="Unrecognized event">clicked</warning>.prevent)="$event.subarray()"
-  (<warning descr="Unrecognized event">clicked</warning>.prevent<warning descr="Duplicated name">.<warning descr="Duplicated name"></warning></warning><warning descr="Duplicated modifier">prevent</warning>)="$event.subarray()"
+  (<warning descr="Unrecognized event">clicked</warning>.prevent<warning descr="Duplicated event">.<warning descr="Duplicated name"></warning></warning><warning descr="Duplicated modifier">prevent</warning>)="$event.subarray()"
 ></div>

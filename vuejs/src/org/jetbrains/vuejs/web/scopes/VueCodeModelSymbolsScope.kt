@@ -117,8 +117,8 @@ class VueCodeModelSymbolsScope<K> private constructor(private val container: Vue
                      ?.let { WebSymbolsQueryExecutorFactory.create(it, false) }
                    ?: WebSymbolsQueryExecutorFactory.getInstance(project).create(null, false)
     val result = MultiMap.createLinkedSet<WebTypesSymbolLocation, WebSymbol>()
-    registry.runNameMatchQuery(NAMESPACE_HTML, KIND_VUE_COMPONENTS, "", virtualSymbols = false)
-      .asSequence().plus(registry.runNameMatchQuery(NAMESPACE_HTML, KIND_VUE_DIRECTIVES, "", virtualSymbols = false))
+    registry.runListSymbolsQuery(NAMESPACE_HTML, KIND_VUE_COMPONENTS, false, virtualSymbols = false)
+      .asSequence().plus(registry.runListSymbolsQuery(NAMESPACE_HTML, KIND_VUE_DIRECTIVES, false, virtualSymbols = false))
       .filterIsInstance<WebTypesSymbol>()
       .forEach { symbol ->
         when (val location = symbol.location) {

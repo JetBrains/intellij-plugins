@@ -24,8 +24,8 @@ class VueBindFilter : WebSymbolsFilter {
   private fun <T> List<T>.filterHtmlEventAttributes(queryExecutor: WebSymbolsQueryExecutor,
                                                     scope: List<WebSymbolsScope>,
                                                     getName: T.() -> String): List<T> {
-    val props = queryExecutor.runNameMatchQuery(WebSymbol.NAMESPACE_HTML, KIND_VUE_COMPONENT_PROPS, "",
-                                                scope = scope).mapTo(HashSet()) { it.name }
+    val props = queryExecutor.runListSymbolsQuery(WebSymbol.NAMESPACE_HTML, KIND_VUE_COMPONENT_PROPS, true, scope = scope)
+      .mapTo(HashSet()) { it.name }
     return filter {
       val name = it.getName()
       !name.startsWith("on") || name.startsWith("on-") || name == "on" || props.contains(name)

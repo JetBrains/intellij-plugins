@@ -15,7 +15,7 @@ import org.jetbrains.vuejs.web.symbols.VueDirectiveSymbol
 import org.jetbrains.vuejs.web.symbols.VueScriptSetupLocalDirectiveSymbol
 
 fun WebSymbolElementDescriptor.getModel(): VueModelDirectiveProperties =
-  runNameMatchQuery(NAMESPACE_HTML, KIND_VUE_MODEL, "").firstOrNull()
+  runListSymbolsQuery(NAMESPACE_HTML, KIND_VUE_MODEL, true).firstOrNull()
     ?.let {
       VueModelDirectiveProperties(prop = it.properties[PROP_VUE_MODEL_PROP] as? String,
                                   event = it.properties[PROP_VUE_MODEL_EVENT] as? String)

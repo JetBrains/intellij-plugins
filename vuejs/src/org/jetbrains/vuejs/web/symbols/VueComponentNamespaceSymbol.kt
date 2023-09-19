@@ -1,6 +1,8 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web.symbols
 
+import com.intellij.javascript.webSymbols.symbols.JSPropertySymbol
+import com.intellij.javascript.webSymbols.symbols.getJSPropertySymbols
 import com.intellij.javascript.webSymbols.symbols.getMatchingJSPropertySymbols
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
@@ -14,6 +16,7 @@ import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
+import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import org.jetbrains.vuejs.model.VueLocallyDefinedRegularComponent
 import org.jetbrains.vuejs.model.VueModelManager
@@ -67,21 +70,33 @@ class VueComponentNamespaceSymbol(
                                   name: String,
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbol> =
-    if (isNamespacedKind(namespace, kind) && name.getOrNull(0)?.isUpperCase() != false) {
-      getMatchingJSPropertySymbols(name).mapNotNull { symbol ->
-        val source = symbol.source as? JSPsiNamedElementBase ?: return@mapNotNull null
-        val component = VueModelManager.getComponent(source) as? VueRegularComponent
-        if (component != null && kind == KIND_VUE_COMPONENTS) {
-          VueNamespacedComponent(
-            VueComponentSymbol(symbol.name, VueLocallyDefinedRegularComponent(component, source), VueModelVisitor.Proximity.LOCAL))
-        }
-        else if (component == null && kind == KIND_VUE_COMPONENT_NAMESPACES) {
-          VueComponentNamespaceSymbol(symbol.name, source)
-        }
-        else null
+    if (isNamespacedKind(namespace, kind) && name.getOrNull(0)?.isUpperCase() != false)
+      getMatchingJSPropertySymbols(name).adaptToNamespaceComponents(kind)
+    else
+      emptyList()
+
+  override fun getSymbols(namespace: SymbolNamespace,
+                          kind: SymbolKind,
+                          params: WebSymbolsListSymbolsQueryParams,
+                          scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
+    if (isNamespacedKind(namespace, kind))
+      getJSPropertySymbols().adaptToNamespaceComponents(kind)
+    else
+      emptyList()
+
+  private fun List<JSPropertySymbol>.adaptToNamespaceComponents(kind: SymbolKind) =
+    mapNotNull { symbol ->
+      val source = symbol.source as? JSPsiNamedElementBase ?: return@mapNotNull null
+      val component = VueModelManager.getComponent(source) as? VueRegularComponent
+      if (component != null && kind == KIND_VUE_COMPONENTS) {
+        VueNamespacedComponent(
+          VueComponentSymbol(symbol.name, VueLocallyDefinedRegularComponent(component, source), VueModelVisitor.Proximity.LOCAL))
       }
+      else if (component == null && kind == KIND_VUE_COMPONENT_NAMESPACES) {
+        VueComponentNamespaceSymbol(symbol.name, source)
+      }
+      else null
     }
-    else emptyList()
 
   override fun equals(other: Any?): Boolean =
     other is VueComponentNamespaceSymbol
@@ -115,6 +130,13 @@ class VueComponentNamespaceSymbol(
                                     scope: Stack<WebSymbolsScope>): List<WebSymbol> =
       namespaceSymbol.getMatchingSymbols(namespace, kind, name, params, scope) +
       super.getMatchingSymbols(namespace, kind, name, params, scope)
+
+    override fun getSymbols(namespace: SymbolNamespace,
+                            kind: SymbolKind,
+                            params: WebSymbolsListSymbolsQueryParams,
+                            scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
+      namespaceSymbol.getSymbols(namespace, kind, params, scope) +
+      super.getSymbols(namespace, kind, params, scope)
 
     override fun getCodeCompletions(namespace: SymbolNamespace,
                                     kind: SymbolKind,

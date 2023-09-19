@@ -22,7 +22,10 @@ object VueTopLevelElementsScope : WebSymbolsScope {
                           kind: SymbolKind,
                           params: WebSymbolsListSymbolsQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
-    listOf(referencingSymbol)
+    if (namespace == WebSymbol.NAMESPACE_HTML && kind == WebSymbol.KIND_HTML_ELEMENTS)
+      listOf(referencingSymbol)
+    else
+      emptyList()
 
   override fun createPointer(): Pointer<out WebSymbolsScope> = Pointer.hardPointer(this)
 

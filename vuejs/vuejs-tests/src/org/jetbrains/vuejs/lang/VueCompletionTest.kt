@@ -1187,7 +1187,7 @@ export default class ComponentInsertion extends Vue {
       myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
       myFixture.checkResult("""
         <template>
-          <HiddenComponent from-hidden="" from-d=""<caret>
+          <HiddenComponent from-d="" from-hidden=""<caret>
         </template>
       """)
     }
