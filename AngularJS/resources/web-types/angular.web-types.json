@@ -581,10 +581,11 @@
           "pattern": {
             "or": [
               {
-                "items": [
-                  "/js/properties",
-                  "/js/ng-directive-inputs"
-                ],
+                "items": "/js/properties",
+                "priority": "high"
+              },
+              {
+                "items": "/js/ng-directive-inputs",
                 "priority": "high"
               },
               {
