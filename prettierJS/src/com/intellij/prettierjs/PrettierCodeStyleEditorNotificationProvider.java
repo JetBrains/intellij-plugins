@@ -2,9 +2,6 @@
 package com.intellij.prettierjs;
 
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
-import com.intellij.lang.javascript.library.JSLibraryUtil;
-import com.intellij.lang.javascript.psi.util.JSProjectUtil;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAware;
@@ -34,26 +31,10 @@ public final class PrettierCodeStyleEditorNotificationProvider implements Editor
   @Override
   public @Nullable Function<? super @NotNull FileEditor, ? extends @Nullable JComponent> collectNotificationData(@NotNull Project project,
                                                                                                                  @NotNull VirtualFile file) {
-    if (JSProjectUtil.isInLibrary(file, project)) return null;
-
-    if (!file.isWritable() || JSLibraryUtil.isProbableLibraryFile(file)) return null;
     if (isNotificationDismissed(project)) return null;
-    if (!PrettierUtil.isConfigFileOrPackageJson(file)) return null;
+    if (!PrettierImportCodeStyleAction.canImportPrettierConfigurationFromThisFile(project, file)) return null;
 
-    PrettierConfig config = null;
-    if (PrettierUtil.isConfigFile(file)) {
-      config = PrettierUtil.parseConfig(project, file);
-    }
-    if (PackageJsonUtil.isPackageJsonFile(file)) {
-      //if package.json is currently opened, but there is a neighboring config file
-      VirtualFile configVFile = PrettierUtil.findSingleConfigInDirectory(file.getParent());
-      if (configVFile != null) {
-        config = PrettierUtil.parseConfig(project, configVFile);
-      }
-      else {
-        config = PrettierUtil.parseConfig(project, file);
-      }
-    }
+    PrettierConfig config = PrettierUtil.parseConfig(project, file);
     if (config == null) return null;
     if (config.isInstalled(project)) return null;
 
