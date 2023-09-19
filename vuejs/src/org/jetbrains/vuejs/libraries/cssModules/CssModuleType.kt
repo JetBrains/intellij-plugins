@@ -32,7 +32,7 @@ class CssModuleType private constructor(val container: PsiElement, source: JSTyp
     return JSRecordTypeImpl(source, allClasses.entrySet().map { (name, sources) ->
       val source = JSRecordMemberSourceFactory.createSource(
         sources.map { VueImplicitElement(name, propertyType, it, JSImplicitElement.Type.Property, true) },
-        JSRecordType.MemberSourceKind.Union)
+        JSRecordType.MemberSourceKind.Union, true)
       JSRecordTypeImpl.PropertySignatureImpl(name, propertyType, false, true, source)
     })
   }

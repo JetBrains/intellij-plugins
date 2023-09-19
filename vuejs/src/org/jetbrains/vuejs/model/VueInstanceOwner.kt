@@ -274,7 +274,7 @@ private fun mergeSignatures(existing: JSRecordType.PropertySignature,
     existing.memberName, type, existing.isOptional && updated.isOptional,
     false, JSRecordMemberSourceFactory.createSource(existing.memberSource.allSourceElements +
                                                     updated.memberSource.allSourceElements,
-                                                    JSRecordType.MemberSourceKind.Union))
+                                                    JSRecordType.MemberSourceKind.Union, true))
 }
 
 private fun mergePut(result: MutableMap<String, JSRecordType.PropertySignature>,
