@@ -84,6 +84,8 @@
         <lang.braceMatcher
                 language="DTS"
                 implementationClass="com.intellij.dts.completion.DtsBraceMatcher"/>
+        <lookup.charFilter
+                implementation="com.intellij.dts.completion.DtsCharFilter"/>
 
         <enterHandlerDelegate
                 implementation="com.intellij.dts.completion.DtsSemicolonEnterHandler"/>
@@ -101,6 +103,10 @@
 
         <typedHandler
                 implementation="com.intellij.dts.lang.resolve.DtsPathReference$AutoPopup"/>
+
+        <completion.contributor
+                language="DTS"
+                implementationClass="com.intellij.dts.completion.DtsPropertyNameCompletionContributor"/>
 
         <!-- inspections -->
         <localInspection

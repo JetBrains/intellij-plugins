@@ -76,8 +76,8 @@ class DtsCompilerDirectiveCompletionTest : DtsCompletionTest() {
                 lookupString,
                 input.replace("<caret>", "$variation<caret>"),
                 input.replace("<caret>", "$lookupString<caret>"),
-                useRootContentVariations,
-                useNodeContentVariations
+                useRootContentVariations = useRootContentVariations,
+                useNodeContentVariations =  useNodeContentVariations,
             )
         }
     }

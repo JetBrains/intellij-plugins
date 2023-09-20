@@ -1,8 +1,8 @@
 package com.intellij.dts.completion
 
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.dts.DtsTestBase
 
-abstract class DtsCompletionTest : BasePlatformTestCase() {
+abstract class DtsCompletionTest : DtsTestBase() {
     companion object {
         private val nodeContentVariations = listOf(
             "node {};",
@@ -27,10 +27,6 @@ abstract class DtsCompletionTest : BasePlatformTestCase() {
             "/memreserve/ 10 10;",
             "/omit-if-no-ref/ &handel;",
         )
-    }
-
-    fun configureByText(text: String) {
-        myFixture.configureByText("${text.hashCode()}.dtsi", text)
     }
 
     fun applyVariations(
@@ -92,17 +88,24 @@ abstract class DtsCompletionTest : BasePlatformTestCase() {
         lookupString: String,
         input: String,
         after: String,
+        surrounding: String = "<embed>",
         useRootContentVariations: Boolean = false,
         useNodeContentVariations: Boolean = false,
     ) {
         require(input.contains("<caret>") && after.contains("<caret>")) {
             "Test input and after must contain \"<caret>\" to indicate caret position"
         }
+        require(surrounding.contains("<embed>")) {
+            "Surrounding must contain \"<embed>\" to indicate the input position"
+        }
 
         applyVariations(useRootContentVariations, useNodeContentVariations) { apply ->
-            configureByText(apply(input))
+            val embeddedInput = surrounding.replace("<embed>", apply(input))
+            val embeddedAfter = surrounding.replace("<embed>", apply(after))
+
+            configureByText(embeddedInput)
             doCompletion(lookupString)
-            myFixture.checkResult(apply(after))
+            myFixture.checkResult(embeddedAfter)
         }
     }
 }
