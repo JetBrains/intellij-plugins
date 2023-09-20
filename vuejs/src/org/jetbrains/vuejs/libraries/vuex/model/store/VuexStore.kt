@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
-import com.intellij.lang.javascript.psi.types.JSRecordTypeImpl
+import com.intellij.lang.javascript.psi.types.recordImpl.PropertySignatureImpl
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.model.VueImplicitElement
 
@@ -49,7 +49,8 @@ interface VuexModule : VuexContainer, VuexNamedSymbol {
 interface VuexStateProperty : VuexNamedSymbol {
   fun getPropertySignature(namespace: String, qualifiedName: String): JSRecordType.PropertySignature =
     getResolveTarget(namespace, qualifiedName).let {
-      JSRecordTypeImpl.PropertySignatureImpl(qualifiedName.substring(namespace.length), it.jsType, false, false, it)
+      PropertySignatureImpl(qualifiedName.substring(namespace.length),
+                            it.jsType, false, false, it)
     }
 }
 
@@ -66,7 +67,8 @@ interface VuexAction : VuexNamedSymbol {
 interface VuexGetter : VuexNamedSymbol {
   fun getPropertySignature(namespace: String, qualifiedName: String): JSRecordType.PropertySignature =
     getResolveTarget(namespace, qualifiedName).let {
-      JSRecordTypeImpl.PropertySignatureImpl(qualifiedName.substring(namespace.length), it.jsType, false, false, it)
+      PropertySignatureImpl(qualifiedName.substring(namespace.length),
+                            it.jsType, false, false, it)
     }
 }
 

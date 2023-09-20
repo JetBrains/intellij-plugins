@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.types
 
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.types.*
+import com.intellij.lang.javascript.psi.types.recordImpl.PropertySignatureImpl
 import com.intellij.util.ProcessingContext
 import org.jetbrains.vuejs.codeInsight.REF_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.index.findAttribute
@@ -44,7 +45,9 @@ class VueRefsType(source: JSTypeSource,
         ?.let {
           if (it is JSTypeOwner) {
             // For multiple elements with the same ref name, the last one is taken by Vue engine
-            members[it.name] = JSRecordTypeImpl.PropertySignatureImpl(it.name, it.jsType, false, true, it)
+            members[it.name] = PropertySignatureImpl(it.name,
+                                                     it.jsType, false,
+                                                     true, it)
           }
         }
     }

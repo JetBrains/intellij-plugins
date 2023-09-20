@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.primitives.JSStringType
+import com.intellij.lang.javascript.psi.types.recordImpl.PropertySignatureImpl
 import com.intellij.psi.PsiElement
 import com.intellij.psi.css.*
 import com.intellij.psi.impl.source.PsiFileWithStubSupport
@@ -33,7 +34,7 @@ class CssModuleType private constructor(val container: PsiElement, source: JSTyp
       val source = JSRecordMemberSourceFactory.createSource(
         sources.map { VueImplicitElement(name, propertyType, it, JSImplicitElement.Type.Property, true) },
         JSRecordType.MemberSourceKind.Union, true)
-      JSRecordTypeImpl.PropertySignatureImpl(name, propertyType, false, true, source)
+      PropertySignatureImpl(name, propertyType, false, true, source)
     })
   }
 

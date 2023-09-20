@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext
 import com.intellij.lang.javascript.psi.JSTypeTextBuilder
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
-import com.intellij.lang.javascript.psi.types.JSRecordTypeImpl.PropertySignatureImpl
+import com.intellij.lang.javascript.psi.types.recordImpl.PropertySignatureImpl
 import com.intellij.lang.javascript.psi.util.stubSafeAttributes
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ProcessingContext
@@ -47,7 +47,9 @@ class VueSourceSlotScopeType private constructor(typeSource: JSTypeSource, priva
         if (!bindingName.isNullOrBlank() && bindingName != SLOT_NAME_ATTRIBUTE && !attr.value.isNullOrBlank()) {
           val type = VueSourceSlotBindingType(attr, bindingName)
           PropertySignatureImpl(bindingName, type, false, true,
-                                VueImplicitElement(bindingName, type, attr, JSImplicitElement.Type.Property))
+                                VueImplicitElement(bindingName, type,
+                                                   attr,
+                                                   JSImplicitElement.Type.Property))
         }
         else null
       }

@@ -9,7 +9,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
 import com.intellij.lang.javascript.psi.types.*
-import com.intellij.lang.javascript.psi.types.JSRecordTypeImpl.PropertySignatureImpl
+import com.intellij.lang.javascript.psi.types.recordImpl.PropertySignatureImpl
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyCallType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.text.StringUtil

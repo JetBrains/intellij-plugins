@@ -11,7 +11,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
-import com.intellij.lang.javascript.psi.types.JSRecordTypeImpl.PropertySignatureImpl
+import com.intellij.lang.javascript.psi.types.recordImpl.PropertySignatureImpl
 import com.intellij.openapi.util.RecursionManager
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.psi.PsiElement
@@ -145,7 +145,9 @@ private fun contributeComponentProperties(instance: VueInstanceOwner,
         if ((proximityMap.putIfAbsent(symbol.name, proximity) ?: proximity) >= proximity) {
           val jsType = type ?: symbol.asSafely<VueProperty>()?.jsType
           dest.merge(symbol.name,
-                     PropertySignatureImpl(symbol.name, jsType, false, isReadOnly, source ?: symbol.source),
+                     PropertySignatureImpl(symbol.name, jsType, false,
+                                           isReadOnly,
+                                           source ?: symbol.source),
                      ::mergeSignatures)
         }
       }
@@ -290,5 +292,7 @@ fun createImplicitPropertySignature(name: String,
                                     isReadOnly: Boolean = false,
                                     kind: JSImplicitElement.Type = JSImplicitElement.Type.Property): JSRecordType.PropertySignature {
   return PropertySignatureImpl(name, type, false, isReadOnly,
-                               VueImplicitElement(name, type, source, kind, equivalentToSource))
+                                                                                                    VueImplicitElement(name, type, source,
+                                                                                                                       kind,
+                                                                                                                       equivalentToSource))
 }

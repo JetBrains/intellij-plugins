@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
 import com.intellij.lang.javascript.psi.types.*
+import com.intellij.lang.javascript.psi.types.recordImpl.PropertySignatureImpl
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
@@ -59,7 +60,7 @@ class VueFrameworkInsideScriptSpecificHandler : JSFrameworkSpecificHandler {
     val propertiesWithThisType =
       if (thisType != null)
         JSRecordTypeImpl(thisType.source, sequenceOf(COMPUTED_PROP, METHODS_PROP, WATCH_PROP)
-          .map { JSRecordTypeImpl.PropertySignatureImpl(it, thisType, true, false) }
+          .map { PropertySignatureImpl(it, thisType, true, false) }
           .toList()
         )
       else null

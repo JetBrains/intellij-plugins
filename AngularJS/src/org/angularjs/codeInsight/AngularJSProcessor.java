@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.types.*;
+import com.intellij.lang.javascript.psi.types.recordImpl.PropertySignatureImpl;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
@@ -168,7 +169,7 @@ public final class AngularJSProcessor {
     if (bindingsProperty != null && (bindingsProperty.getValue() instanceof JSObjectLiteralExpression bindings)) {
       for (JSProperty binding : bindings.getProperties()) {
         if (binding.getName() != null) {
-          processor.accept(new JSRecordTypeImpl.PropertySignatureImpl(binding.getName(), JSAnyType.get(bindings), true, false));
+          processor.accept(new PropertySignatureImpl(binding.getName(), JSAnyType.get(bindings), true, false));
         }
       }
     }
@@ -214,7 +215,7 @@ public final class AngularJSProcessor {
           .findNamespaceMembers(namespace.getQualifiedName().getQualifiedName(), controller.getResolveScope())
           .stream()
           .filter(el -> el.getName() != null)
-          .map(el -> new JSRecordTypeImpl.PropertySignatureImpl(
+          .map(el -> new PropertySignatureImpl(
             el.getName(), JSResolveUtil.getElementJSType(el),
             true, false, el))
           .forEach(processor);

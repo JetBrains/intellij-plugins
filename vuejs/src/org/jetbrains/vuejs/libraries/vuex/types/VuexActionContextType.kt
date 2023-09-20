@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.JSTypeWithIncompleteSubstitution
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
+import com.intellij.lang.javascript.psi.types.recordImpl.PropertySignatureImpl
 import com.intellij.psi.PsiElement
 import com.intellij.util.ProcessingContext
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.COMMIT
@@ -53,7 +54,7 @@ class VuexActionContextType private constructor(source: JSTypeSource,
     val result = mutableListOf<JSRecordType.TypeMember>()
 
     fun addProperty(name: String, type: JSType?) {
-      result.add(JSRecordTypeImpl.PropertySignatureImpl(
+      result.add(PropertySignatureImpl(
         name, type, false, true,
         VueImplicitElement(name, type, element, JSImplicitElement.Type.Property)))
     }
