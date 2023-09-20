@@ -6,9 +6,9 @@ import com.intellij.execution.lineMarker.RunLineMarkerContributor
 import com.intellij.icons.AllIcons
 import com.intellij.psi.PsiElement
 import com.intellij.util.Function
+import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.psi.HCLBlock
-import org.intellij.terraform.config.patterns.TerraformPatterns
 
 class TerraformRunLineMarkerContributor : RunLineMarkerContributor() {
   override fun getInfo(leaf: PsiElement): Info? {
@@ -25,10 +25,8 @@ class TerraformRunLineMarkerContributor : RunLineMarkerContributor() {
     TerraformResourceConfigurationProducer.getResourceTarget(block) ?: return null
 
     val actions = ExecutorAction.getActions(0)
-    val tooltipProvider: Function<PsiElement, String> = Function { psiElement ->
-      @Suppress("UselessCallOnCollection")
-      actions.filterNotNull().mapNotNull { getText(it, psiElement) }.joinToString("\n")
-    }
+    val event = createActionEvent(leaf)
+    val tooltipProvider = Function<PsiElement, String?> { actions.mapNotNull { getText(it, event) }.joinToString("\n") }
     return Info(AllIcons.RunConfigurations.TestState.Run, tooltipProvider, *actions)
   }
 }
