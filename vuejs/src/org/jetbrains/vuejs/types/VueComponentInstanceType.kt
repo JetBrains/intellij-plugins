@@ -14,7 +14,7 @@ import java.util.*
 class VueComponentInstanceType(source: JSTypeSource,
                                private val instanceOwner: VueInstanceOwner,
                                typeMembers: List<PropertySignature>)
-  : JSSimpleTypeBaseImpl(source), JSCodeBasedType, JSTypeWithIncompleteSubstitution {
+  : JSTypeBaseImpl(source), JSCodeBasedType, JSTypeWithIncompleteSubstitution {
 
   private val typeMembers = typeMembers.toList()
   private val membersNames = typeMembers.map { it.memberName }

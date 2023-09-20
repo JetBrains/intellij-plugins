@@ -16,7 +16,7 @@ class VueDecoratedComponentPropType private constructor(typeSource: JSTypeSource
                                                         private val member: JSRecordType.PropertySignature,
                                                         private val decorator: ES6Decorator?,
                                                         private val decoratorArgumentIndex: Int)
-  : JSSimpleTypeBaseImpl(typeSource), JSCodeBasedType {
+  : JSTypeBaseImpl(typeSource), JSCodeBasedType {
 
   constructor(member: JSRecordType.PropertySignature, decorator: ES6Decorator?, decoratorArgumentIndex: Int)
     : this(JSTypeSourceFactory.createTypeSource(member.memberSource.singleElement!!, false),

@@ -15,7 +15,7 @@ import org.jetbrains.vuejs.codeInsight.findJSExpression
 class VueSourceSlotBindingType private constructor(typeSource: JSTypeSource,
                                                    private val attribute: XmlAttribute,
                                                    private val bindingName: String)
-  : JSSimpleTypeBaseImpl(typeSource), JSCodeBasedType {
+  : JSTypeBaseImpl(typeSource), JSCodeBasedType {
 
   constructor(attribute: XmlAttribute, bindingName: String) :
     this(JSTypeSourceFactory.createTypeSource(attribute, true), attribute, bindingName)

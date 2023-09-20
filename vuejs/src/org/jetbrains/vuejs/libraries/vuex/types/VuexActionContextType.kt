@@ -24,7 +24,7 @@ import java.util.*
 
 class VuexActionContextType private constructor(source: JSTypeSource,
                                                 private val element: PsiElement)
-  : JSSimpleTypeBaseImpl(source), JSCodeBasedType, JSTypeWithIncompleteSubstitution {
+  : JSTypeBaseImpl(source), JSCodeBasedType, JSTypeWithIncompleteSubstitution {
 
   constructor(element: PsiElement)
     : this(JSTypeSource(element, JSTypeSource.SourceLanguage.TS, true), element)

@@ -3,15 +3,12 @@ package org.jetbrains.vuejs.libraries.vuex.types
 
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.JSType.TypeTextFormat
-import com.intellij.lang.javascript.psi.types.JSAnyType
-import com.intellij.lang.javascript.psi.types.JSCodeBasedType
-import com.intellij.lang.javascript.psi.types.JSSimpleTypeBaseImpl
-import com.intellij.lang.javascript.psi.types.JSTypeSource
+import com.intellij.lang.javascript.psi.types.*
 import com.intellij.util.ProcessingContext
 
 class VuexGetterType(source: JSTypeSource,
                      private val element: JSTypeOwner)
-  : JSSimpleTypeBaseImpl(source), JSCodeBasedType, JSTypeWithIncompleteSubstitution {
+  : JSTypeBaseImpl(source), JSCodeBasedType, JSTypeWithIncompleteSubstitution {
 
   override fun copyWithNewSource(source: JSTypeSource): JSType {
     return VuexGetterType(source, element)

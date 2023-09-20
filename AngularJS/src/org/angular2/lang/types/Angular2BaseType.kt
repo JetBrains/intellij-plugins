@@ -6,15 +6,12 @@ import com.intellij.lang.javascript.psi.JSType.TypeTextFormat
 import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext
 import com.intellij.lang.javascript.psi.JSTypeTextBuilder
 import com.intellij.lang.javascript.psi.JSTypeWithIncompleteSubstitution
-import com.intellij.lang.javascript.psi.types.JSCodeBasedType
-import com.intellij.lang.javascript.psi.types.JSSimpleTypeBaseImpl
-import com.intellij.lang.javascript.psi.types.JSTypeSource
-import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
+import com.intellij.lang.javascript.psi.types.*
 import com.intellij.psi.PsiElement
 import com.intellij.util.ProcessingContext
 
 abstract class Angular2BaseType<T : PsiElement?> protected constructor(source: JSTypeSource, sourceClass: Class<T>)
-  : JSSimpleTypeBaseImpl(source), JSCodeBasedType, JSTypeWithIncompleteSubstitution {
+  : JSTypeBaseImpl(source), JSCodeBasedType, JSTypeWithIncompleteSubstitution {
   protected constructor(source: T, sourceClass: Class<T>) : this(JSTypeSourceFactory.createTypeSource(source, true), sourceClass)
 
   init {
@@ -25,7 +22,7 @@ abstract class Angular2BaseType<T : PsiElement?> protected constructor(source: J
   protected abstract fun resolveType(context: JSTypeSubstitutionContext): JSType?
   override fun getSourceElement(): T {
     @Suppress("UNCHECKED_CAST")
-    return super<JSSimpleTypeBaseImpl>.getSourceElement()!! as T
+    return super<JSTypeBaseImpl>.getSourceElement()!! as T
   }
 
   override fun substituteImpl(context: JSTypeSubstitutionContext): JSType? {

@@ -16,7 +16,7 @@ import org.jetbrains.astro.codeInsight.propsInterface
 
 class AstroGlobalType(source: JSTypeSource,
                       private val file: PsiFile)
-  : JSSimpleTypeBaseImpl(source), JSCodeBasedType {
+  : JSTypeBaseImpl(source), JSCodeBasedType {
 
   constructor(file: PsiFile) : this(JSTypeSource(file.frontmatterScript() ?: file, JSTypeSource.SourceLanguage.TS, true), file)
 

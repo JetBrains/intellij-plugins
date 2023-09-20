@@ -15,7 +15,7 @@ import java.util.*
 class VueSourceProvideType private constructor(typeSource: JSTypeSource,
                                                private val element: PsiElement,
                                                private val symbolSource: PsiNamedElement?)
-  : JSSimpleTypeBaseImpl(typeSource), JSCodeBasedType {
+  : JSTypeBaseImpl(typeSource), JSCodeBasedType {
 
   constructor(element: PsiElement, symbolSource: PsiNamedElement?) :
     this(JSTypeSourceFactory.createTypeSource(element, true), element, symbolSource)

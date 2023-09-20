@@ -23,7 +23,7 @@ import org.jetbrains.vuejs.index.COMPOSITION_API_MODULE
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.model.source.VueCompositionInfoHelper
 
-class VueUnwrapRefType private constructor(private val typeToUnwrap: JSType, source: JSTypeSource) : JSSimpleTypeBaseImpl(source) {
+class VueUnwrapRefType private constructor(private val typeToUnwrap: JSType, source: JSTypeSource) : JSTypeBaseImpl(source) {
 
   constructor (typeToUnwrap: JSType, context: PsiElement) : this(typeToUnwrap, JSTypeSourceFactory.createTypeSource(context, true))
 

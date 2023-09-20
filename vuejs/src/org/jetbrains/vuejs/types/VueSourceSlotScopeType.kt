@@ -16,7 +16,7 @@ import org.jetbrains.vuejs.model.SLOT_TAG_NAME
 import org.jetbrains.vuejs.model.VueImplicitElement
 
 class VueSourceSlotScopeType private constructor(typeSource: JSTypeSource, private val tag: XmlTag, private val slotName: String)
-  : JSSimpleTypeBaseImpl(typeSource), JSCodeBasedType {
+  : JSTypeBaseImpl(typeSource), JSCodeBasedType {
 
   constructor(tag: XmlTag, slotName: String) : this(JSTypeSourceFactory.createTypeSource(tag, true), tag, slotName)
 

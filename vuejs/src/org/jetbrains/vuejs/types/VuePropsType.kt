@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext
 import com.intellij.lang.javascript.psi.JSTypeTextBuilder
 import com.intellij.lang.javascript.psi.types.JSCodeBasedType
-import com.intellij.lang.javascript.psi.types.JSSimpleTypeBaseImpl
+import com.intellij.lang.javascript.psi.types.JSTypeBaseImpl
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.util.ProcessingContext
 import org.jetbrains.vuejs.model.VueInstanceOwner
@@ -14,7 +14,7 @@ import org.jetbrains.vuejs.model.source.INSTANCE_PROPS_PROP
 
 class VuePropsType(source: JSTypeSource,
                    private val instanceOwner: VueInstanceOwner)
-  : JSSimpleTypeBaseImpl(source), JSCodeBasedType, VueCompleteType {
+  : JSTypeBaseImpl(source), JSCodeBasedType, VueCompleteType {
 
   constructor(instanceOwner: VueInstanceOwner) : this(createStrictTypeSource(instanceOwner.source), instanceOwner)
 

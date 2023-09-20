@@ -14,7 +14,7 @@ class VueSourceModelPropType private constructor(
   typeSource: JSTypeSource,
   private val name: String,
   private val options: JSObjectLiteralExpression,
-) : JSSimpleTypeBaseImpl(typeSource), JSCodeBasedType {
+) : JSTypeBaseImpl(typeSource), JSCodeBasedType {
 
   constructor(name: String, options: JSObjectLiteralExpression) :
     this(JSTypeSourceFactory.createTypeSource(options, true), name, options)

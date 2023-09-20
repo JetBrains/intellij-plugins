@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext
 import com.intellij.lang.javascript.psi.JSTypeTextBuilder
 import com.intellij.lang.javascript.psi.types.JSRecursiveTypeVisitor
-import com.intellij.lang.javascript.psi.types.JSSimpleTypeBaseImpl
+import com.intellij.lang.javascript.psi.types.JSTypeBaseImpl
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.psi.PsiElement
 import com.intellij.util.ProcessingContext
@@ -18,7 +18,7 @@ fun createStrictTypeSource(element: PsiElement?) =
 fun JSType.asCompleteType(): VueCompleteType =
   this as? VueCompleteType ?: VueCompleteTypeImpl(this)
 
-private class VueCompleteTypeImpl(private val baseType: JSType, source: JSTypeSource) : JSSimpleTypeBaseImpl(source), VueCompleteType {
+private class VueCompleteTypeImpl(private val baseType: JSType, source: JSTypeSource) : JSTypeBaseImpl(source), VueCompleteType {
 
   constructor(baseType: JSType) : this(baseType, baseType.source)
 
