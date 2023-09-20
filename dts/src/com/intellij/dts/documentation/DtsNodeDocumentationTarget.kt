@@ -48,8 +48,7 @@ class DtsNodeDocumentationTarget(private val node: DtsNode) : DocumentationTarge
             )
         }
 
-        val provider = DtsZephyrBindingProvider.of(node.project)
-        val binding = DtsTreeUtil.search(node.containingFile, node, provider::buildBinding) ?: return
+        val binding = DtsZephyrBindingProvider.bindingFor(node, fallbackToDefault = false) ?: return
 
         // write: [Child of] compatible: <<compatible>>
         html.definition(

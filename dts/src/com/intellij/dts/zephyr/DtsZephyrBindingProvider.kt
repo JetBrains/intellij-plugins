@@ -1,7 +1,9 @@
 package com.intellij.dts.zephyr
 
 import com.intellij.dts.lang.psi.DtsNode
+import com.intellij.dts.lang.psi.DtsRefNode
 import com.intellij.dts.lang.psi.DtsString
+import com.intellij.dts.lang.psi.getDtsReferenceTarget
 import com.intellij.dts.util.DtsTreeUtil
 import com.intellij.dts.util.cached
 import com.intellij.openapi.components.Service
@@ -58,6 +60,15 @@ private val emptyYaml = YamlMap(emptyMap<Any, Any>())
 class DtsZephyrBindingProvider(val project: Project) {
     companion object {
         fun of(project: Project): DtsZephyrBindingProvider = project.service()
+
+        fun bindingFor(node: DtsNode, fallbackToDefault: Boolean = true): DtsZephyrBinding? {
+            val provider = of(node.project)
+
+            val nodeBinding = DtsTreeUtil.search(node.containingFile, node, provider::buildBinding)
+            if (nodeBinding != null || !fallbackToDefault) return nodeBinding
+
+            return provider.buildDefaultBinding()
+        }
 
         private const val DEFAULT_BINDING_PATH = "bindings/zephyr.yaml"
 
@@ -179,12 +190,17 @@ class DtsZephyrBindingProvider(val project: Project) {
         }
     }
 
+    private fun doBuildPropertyBinding(builder: DtsZephyrPropertyBinding.Builder, yaml: YamlMap) {
+        yaml.readString("description")?.let(builder::setDescription)
+        yaml.readString("type")?.let(builder::setType)
+    }
+
     private fun doBuildBinding(builder: DtsZephyrBinding.Builder, yaml: YamlMap) {
         yaml.readString("description")?.let(builder::setDescription)
 
         yaml.readMap("properties")?.let { properties ->
             for ((name, property) in properties.iterateMap()) {
-                property.readString("description")?.let { builder.setPropertyDescription(name, it) }
+                doBuildPropertyBinding(builder.getPropertyBuilder(name), property)
             }
         }
 
@@ -210,8 +226,14 @@ class DtsZephyrBindingProvider(val project: Project) {
      * If the node has a compatible property the binding will be built for the
      * matching string. If there is no matching binding this method searches
      * the parents of the node for matching child bindings.
+     *
+     * Resolves references automatically.
      */
     fun buildBinding(node: DtsNode): DtsZephyrBinding? {
+        if (node is DtsRefNode) {
+            return node.getDtsReferenceTarget()?.let(::buildBinding)
+        }
+
         val compatible = getCompatibleStrings(node).firstOrNull { getBinding(it) != null }
 
         return if (compatible != null) {

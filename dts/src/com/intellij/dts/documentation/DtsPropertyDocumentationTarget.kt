@@ -47,11 +47,19 @@ class DtsPropertyDocumentationTarget(private val property: DtsProperty) : Docume
             HtmlChunk.text(" (${parent.containingFile.name})").wrapWith(DocumentationMarkup.GRAYED_ELEMENT),
         )
 
-        val provider = DtsZephyrBindingProvider.of(property.project)
-        val binding = DtsTreeUtil.search(parent.containingFile, parent, provider::buildBinding)
-            ?: provider.buildDefaultBinding()
+        val binding = DtsZephyrBindingProvider.bindingFor(parent) ?: return
+        val propertyBinding = binding.properties[property.dtsName] ?: return
 
-        binding.propertyDescriptions[property.dtsName]?.let {
+        // write: Type: <<property type>>
+        html.definition(
+            HtmlChunk.fragment(
+                DtsHtmlChunk.bundle("documentation.property_type"),
+                HtmlChunk.text(": "),
+            ).bold(),
+            HtmlChunk.text(propertyBinding.type.typeName),
+        )
+
+        propertyBinding.description?.let {
             html.content(DtsHtmlChunk.binding(property.project, it))
         }
     }

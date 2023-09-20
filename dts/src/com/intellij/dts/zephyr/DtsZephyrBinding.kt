@@ -3,7 +3,7 @@ package com.intellij.dts.zephyr
 data class DtsZephyrBinding(
     val compatible: String,
     val description: String?,
-    val propertyDescriptions: Map<String, String>,
+    val properties: Map<String, DtsZephyrPropertyBinding>,
     val child: DtsZephyrBinding?,
     val isChild: Boolean,
 ) {
@@ -12,7 +12,7 @@ data class DtsZephyrBinding(
         private val isChild: Boolean = false,
     ) {
         private var description: String? = null
-        private var propertyDescriptions: MutableMap<String, String> = mutableMapOf()
+        private var properties: MutableMap<String, DtsZephyrPropertyBinding.Builder> = mutableMapOf()
         private var child: Builder? = null
 
         fun setDescription(value: String): Builder {
@@ -20,9 +20,8 @@ data class DtsZephyrBinding(
             return this
         }
 
-        fun setPropertyDescription(name: String, value: String): Builder {
-            propertyDescriptions.putIfAbsent(name, value)
-            return this
+        fun getPropertyBuilder(name: String): DtsZephyrPropertyBinding.Builder {
+           return properties.getOrPut(name) { DtsZephyrPropertyBinding.Builder(name) }
         }
 
         fun getChildBuilder(): Builder {
@@ -30,14 +29,39 @@ data class DtsZephyrBinding(
             return Builder(compatible, isChild = true).also { child = it }
         }
 
-        fun build(): DtsZephyrBinding {
-            return DtsZephyrBinding(
-                compatible,
-                description,
-                propertyDescriptions,
-                child?.build(),
-                isChild,
-            )
+        fun build(): DtsZephyrBinding = DtsZephyrBinding(
+            compatible,
+            description,
+            properties.mapValues { (_, builder) -> builder.build() },
+            child?.build(),
+            isChild,
+        )
+    }
+}
+
+data class DtsZephyrPropertyBinding(
+    val name: String,
+    val description: String?,
+    val type: DtsZephyrPropertyType,
+) {
+    class Builder(private val name: String) {
+        private var description: String? = null
+        private var type: DtsZephyrPropertyType? = null
+
+        fun setDescription(value: String): Builder {
+            if (description == null) description = value
+            return this
         }
+
+        fun setType(value: String): Builder {
+            if (type == null) type = DtsZephyrPropertyType.fromZephyr(value)
+            return this
+        }
+
+        fun build(): DtsZephyrPropertyBinding = DtsZephyrPropertyBinding(
+            name,
+            description,
+            type ?: DtsZephyrPropertyType.Compound,
+        )
     }
 }

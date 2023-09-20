@@ -14,6 +14,8 @@ class DtsZephyrDocumentationTest : DtsTestBase() {
 
     fun `test property binding`() = doTest()
 
+    fun `test property binding with ref`() = doTest()
+
     fun `test property default binding`() = doTest()
 
     fun `test property inherited binding`() = doTest()
