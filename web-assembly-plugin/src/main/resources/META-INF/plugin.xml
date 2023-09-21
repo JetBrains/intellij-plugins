@@ -1,10 +1,14 @@
 <idea-plugin package="com.intellij.webassembly">
-    <id>com.jetbrains.webstorm.web-assembly-plugin</id>
-    <name>WebAssembly</name>
-    <vendor>JetBrains</vendor>
+  <id>com.jetbrains.webstorm.web-assembly-plugin</id>
+  <name>WebAssembly</name>
+  <vendor>JetBrains</vendor>
 
-    <description>
-        <![CDATA[
+  <dependencies>
+    <plugin id="com.intellij.modules.lang"/>
+  </dependencies>
+
+  <description>
+    <![CDATA[
         The plugin supports the WebAssembly language. The following features are available for wat-files:
         <br>
         <ul>
@@ -15,45 +19,45 @@
             <li>Features of the new release (bulk instructions, reference types)</li>
         </ul>
         ]]>
-    </description>
+  </description>
 
-    <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
-         on how to target different products -->
+  <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+       on how to target different products -->
 
-    <extensions defaultExtensionNs="com.intellij">
-        <fileType name="WebAssembly file"
-                  implementationClass="com.intellij.webassembly.lang.psi.WebAssemblyFileType"
-                  fieldName="INSTANCE"
-                  language="WebAssembly"
-                  extensions="wat;wast"/>
+  <extensions defaultExtensionNs="com.intellij">
+    <fileType name="WebAssembly file"
+              implementationClass="com.intellij.webassembly.lang.psi.WebAssemblyFileType"
+              fieldName="INSTANCE"
+              language="WebAssembly"
+              extensions="wat;wast"/>
 
-        <lang.parserDefinition language="WebAssembly"
-                               implementationClass="com.intellij.webassembly.lang.parser.WebAssemblyParserDefinition"/>
+    <lang.parserDefinition language="WebAssembly"
+                           implementationClass="com.intellij.webassembly.lang.parser.WebAssemblyParserDefinition"/>
 
-        <lang.syntaxHighlighterFactory language="WebAssembly"
-                                       implementationClass="com.intellij.webassembly.ide.WebAssemblySyntaxHighlighterFactory"/>
+    <lang.syntaxHighlighterFactory language="WebAssembly"
+                                   implementationClass="com.intellij.webassembly.ide.WebAssemblySyntaxHighlighterFactory"/>
 
-        <colorSettingsPage implementation="com.intellij.webassembly.ide.colors.WebAssemblyColorSettingPage"/>
+    <colorSettingsPage implementation="com.intellij.webassembly.ide.colors.WebAssemblyColorSettingPage"/>
 
-        <!-- Matcher -->
-        <lang.braceMatcher language="WebAssembly"
-                           implementationClass="com.intellij.webassembly.ide.WebAssemblyBraceMatcher"/>
+    <!-- Matcher -->
+    <lang.braceMatcher language="WebAssembly"
+                       implementationClass="com.intellij.webassembly.ide.WebAssemblyBraceMatcher"/>
 
-        <!-- Commenter -->
-        <lang.commenter language="WebAssembly"
-                        implementationClass="com.intellij.webassembly.lang.WebAssemblyCommenter"/>
+    <!-- Commenter -->
+    <lang.commenter language="WebAssembly"
+                    implementationClass="com.intellij.webassembly.lang.WebAssemblyCommenter"/>
 
-        <!-- Folding -->
-        <lang.foldingBuilder language="WebAssembly"
-                             implementationClass="com.intellij.webassembly.lang.WebAssemblyFoldingBuilder"/>
+    <!-- Folding -->
+    <lang.foldingBuilder language="WebAssembly"
+                         implementationClass="com.intellij.webassembly.lang.WebAssemblyFoldingBuilder"/>
 
-        <!-- Completion -->
-        <completion.contributor language="WebAssembly"
-                                implementationClass="com.intellij.webassembly.lang.WebAssemblyKeywordCompletionContributor"/>
+    <!-- Completion -->
+    <completion.contributor language="WebAssembly"
+                            implementationClass="com.intellij.webassembly.lang.WebAssemblyKeywordCompletionContributor"/>
 
-    </extensions>
+  </extensions>
 
-    <actions>
-        <!-- Add your actions here -->
-    </actions>
+  <actions>
+    <!-- Add your actions here -->
+  </actions>
 </idea-plugin>
