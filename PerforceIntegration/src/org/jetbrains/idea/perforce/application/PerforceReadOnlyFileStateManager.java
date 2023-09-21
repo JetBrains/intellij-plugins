@@ -56,11 +56,15 @@ public final class PerforceReadOnlyFileStateManager {
   }
 
   public void addWritableFiles(VirtualFile root, Collection<VirtualFile> writableFiles, boolean withIgnored) {
-    if (!myWritableFiles.containsKey(root)) {
-      initializeWritableFiles(root);
+    Set<VirtualFile> writablesUnderRoot;
+    synchronized (myWritableFiles) {
+      if (!myWritableFiles.containsKey(root)) {
+        initializeWritableFiles(root);
+      }
+
+      writablesUnderRoot = new HashSet<>(myWritableFiles.get(root));
     }
 
-    Set<VirtualFile> writablesUnderRoot = myWritableFiles.get(root);
     for (VirtualFile vf : writablesUnderRoot) {
       if (withIgnored || !ChangeListManager.getInstance(myProject).isIgnoredFile(vf)) {
         writableFiles.add(vf);
@@ -165,13 +169,15 @@ public final class PerforceReadOnlyFileStateManager {
         myDirtyFilesHandler.reportRecheck(path);
 
         VirtualFile root = myVcsManager.getVcsRootFor(path);
-        if (myWritableFiles.containsKey(root)) {
-          Set<VirtualFile> writableFiles = myWritableFiles.get(root);
-          if ((boolean)event.getNewValue()) {
-            writableFiles.add(file);
-          }
-          else {
-            writableFiles.remove(file);
+        synchronized (myWritableFiles) {
+          if (myWritableFiles.containsKey(root)) {
+            Set<VirtualFile> writableFiles = myWritableFiles.get(root);
+            if ((boolean)event.getNewValue()) {
+              writableFiles.add(file);
+            }
+            else {
+              writableFiles.remove(file);
+            }
           }
         }
       }
