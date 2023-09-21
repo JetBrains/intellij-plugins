@@ -1,9 +1,9 @@
 package jetbrains.plugins.yeoman.projectGenerator.ui.run;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.concurrency.ThreadingAssertions;
 import com.intellij.util.ui.UIUtil;
 import jetbrains.plugins.yeoman.YeomanBundle;
 import jetbrains.plugins.yeoman.generators.YeomanInstalledGeneratorInfo;
@@ -31,7 +31,7 @@ public class YeomanRunGeneratorDialog extends DialogWrapper {
 
 
   public YeomanRunGeneratorForm getForm() {
-    ApplicationManager.getApplication().assertIsDispatchThread();
+    ThreadingAssertions.assertEventDispatchThread();
     return myForm;
   }
 
@@ -48,12 +48,12 @@ public class YeomanRunGeneratorDialog extends DialogWrapper {
   @Nullable
   @Override
   protected JComponent createCenterPanel() {
-    ApplicationManager.getApplication().assertIsDispatchThread();
+    ThreadingAssertions.assertEventDispatchThread();
     final YeomanRunGeneratorForm.EventHandler close = new YeomanRunGeneratorForm.EventHandler() {
       @Override
       public void handleEvent(final YeomanRunGeneratorForm.EventTypes event) {
         UIUtil.invokeLaterIfNeeded(() -> {
-          ApplicationManager.getApplication().assertIsDispatchThread();
+          ThreadingAssertions.assertEventDispatchThread();
           switch (event) {
             case RENDERED -> getOKAction().setEnabled(true);
             case TERMINATED_OK, TERMINATED_ERROR -> {
@@ -85,13 +85,13 @@ public class YeomanRunGeneratorDialog extends DialogWrapper {
 
   @Override
   protected void createDefaultActions() {
-    ApplicationManager.getApplication().assertIsDispatchThread();
+    ThreadingAssertions.assertEventDispatchThread();
     super.createDefaultActions();
     myRealOkAction = myOKAction;
     myOKAction = new AbstractAction(YeomanBundle.message("yeoman.generator.run.action.next")) {
       @Override
       public void actionPerformed(ActionEvent e) {
-        ApplicationManager.getApplication().assertIsDispatchThread();
+        ThreadingAssertions.assertEventDispatchThread();
         if (myToClose) {
           myRealOkAction.actionPerformed(e);
           myToProcess.refresh(true, true);

@@ -1,3 +1,4 @@
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.linter.tslint.config;
 
 import com.intellij.javascript.nodejs.PackageJsonData;
@@ -7,11 +8,11 @@ import com.intellij.lang.javascript.linter.JSLinterGuesser;
 import com.intellij.lang.javascript.linter.tslint.TsLintBundle;
 import com.intellij.lang.javascript.linter.tslint.TslintUtil;
 import com.intellij.lang.javascript.linter.tslint.codestyle.TsLintCodeStyleImporter;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.util.concurrency.ThreadingAssertions;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -57,7 +58,7 @@ public final class TsLintDescriptor extends JSLinterDescriptor {
 
   @Override
   public void importSettings(@NotNull Project project, @NotNull JSLinterGuesser.EnableCase enableCase) {
-    ApplicationManager.getApplication().assertIsDispatchThread();
+    ThreadingAssertions.assertEventDispatchThread();
     VirtualFile config = findDistinctConfigInContentRoots(project, Arrays.asList(TslintUtil.CONFIG_FILE_NAMES));
     if (config == null) return;
 

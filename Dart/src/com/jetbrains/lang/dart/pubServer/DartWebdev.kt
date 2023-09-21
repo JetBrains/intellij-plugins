@@ -4,12 +4,12 @@ package com.jetbrains.lang.dart.pubServer
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.CapturingProcessHandler
 import com.intellij.execution.process.ProcessOutput
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.util.concurrency.ThreadingAssertions
 import com.jetbrains.lang.dart.DartBundle
 import com.jetbrains.lang.dart.ide.actions.DartPubActionBase
 import com.jetbrains.lang.dart.sdk.DartSdk
@@ -30,7 +30,7 @@ object DartWebdev {
    * @return `false` only if explicitly cancelled by user
    */
   fun ensureWebdevActivated(project: Project): Boolean {
-    ApplicationManager.getApplication().assertIsDispatchThread()
+    ThreadingAssertions.assertEventDispatchThread()
 
     if (activated) return true
 

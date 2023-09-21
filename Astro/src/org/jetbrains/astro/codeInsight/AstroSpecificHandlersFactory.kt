@@ -13,6 +13,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.TokenType
 import com.intellij.psi.impl.source.resolve.ResolveCache
 import com.intellij.psi.util.parents
+import com.intellij.util.concurrency.ThreadingAssertions
 import org.jetbrains.astro.codeInsight.refs.AstroReferenceExpressionResolver
 import org.jetbrains.astro.editor.AstroComponentSourceEdit
 import org.jetbrains.astro.lang.AstroFileImpl
@@ -63,7 +64,7 @@ class AstroSpecificHandlersFactory : TypeScriptSpecificHandlersFactory() {
         // Cannot create frontmatter script
         return scope
       }
-      ApplicationManager.getApplication().assertIsDispatchThread()
+      ThreadingAssertions.assertEventDispatchThread()
       ApplicationManager.getApplication().runWriteAction {
         val commandProcessor = CommandProcessor.getInstance()
         val runnable = Runnable {

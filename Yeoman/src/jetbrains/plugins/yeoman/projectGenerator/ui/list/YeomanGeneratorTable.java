@@ -1,10 +1,10 @@
 package jetbrains.plugins.yeoman.projectGenerator.ui.list;
 
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.ui.TableUtil;
 import com.intellij.ui.table.JBTable;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.concurrency.ThreadingAssertions;
 import com.intellij.util.ui.ColumnInfo;
 import jetbrains.plugins.yeoman.generators.YeomanGeneratorInfo;
 
@@ -47,7 +47,7 @@ public class YeomanGeneratorTable extends JBTable {
   }
 
   public void select(YeomanGeneratorInfo... descriptors) {
-    ApplicationManager.getApplication().assertIsDispatchThread();
+    ThreadingAssertions.assertEventDispatchThread();
 
     YeomanGeneratorTableModel tableModel = (YeomanGeneratorTableModel)getModel();
     getSelectionModel().clearSelection();

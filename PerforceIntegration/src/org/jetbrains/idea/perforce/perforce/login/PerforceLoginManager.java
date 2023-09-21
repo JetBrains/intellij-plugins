@@ -15,6 +15,7 @@ import com.intellij.openapi.vcs.VcsConnectionProblem;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.changes.VcsDirtyScopeManager;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.util.concurrency.ThreadingAssertions;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -134,7 +135,7 @@ public final class PerforceLoginManager implements LoginSupport {
   }
 
   public boolean checkAndRepair(final P4Connection connection) {
-    ApplicationManager.getApplication().assertIsDispatchThread();
+    ThreadingAssertions.assertEventDispatchThread();
 
     if (!loginPingAllowed()) {
       return true;

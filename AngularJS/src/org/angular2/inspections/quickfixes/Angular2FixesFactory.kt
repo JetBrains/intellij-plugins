@@ -24,6 +24,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.SmartList
 import com.intellij.util.asSafely
+import com.intellij.util.concurrency.ThreadingAssertions
 import com.intellij.util.containers.ContainerUtil.emptyList
 import com.intellij.util.containers.ContainerUtil.map2SetNotNull
 import com.intellij.util.containers.MultiMap
@@ -307,7 +308,7 @@ object Angular2FixesFactory {
       return
     }
 
-    ApplicationManager.getApplication().assertIsDispatchThread()
+    ThreadingAssertions.assertEventDispatchThread()
     val elementMap = declarations
       .mapNotNull { it.typeScriptClass?.let { cls -> Pair(cls, it) } }
       .toMap()

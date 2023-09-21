@@ -6,7 +6,6 @@ import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.ProjectViewPane;
 import com.intellij.notification.*;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -28,6 +27,7 @@ import com.intellij.ui.content.Content;
 import com.intellij.util.Alarm;
 import com.intellij.util.ModalityUiUtil;
 import com.intellij.util.concurrency.AppExecutorUtil;
+import com.intellij.util.concurrency.ThreadingAssertions;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerMessages;
@@ -304,7 +304,7 @@ public final class DartProblemsView implements PersistentStateComponent<DartProb
   }
 
   public void setCurrentFile(@Nullable final VirtualFile file) {
-    ApplicationManager.getApplication().assertIsDispatchThread();
+    ThreadingAssertions.assertEventDispatchThread();
 
     // Calling getProblemsViewPanel() here also ensures that the tool window contents becomes visible when Analysis server starts
     DartProblemsViewPanel panel = getProblemsViewPanel();
@@ -330,7 +330,7 @@ public final class DartProblemsView implements PersistentStateComponent<DartProb
   }
 
   public void clearAll() {
-    ApplicationManager.getApplication().assertIsDispatchThread();
+    ThreadingAssertions.assertEventDispatchThread();
 
     ProjectView.getInstance(myProject).refresh(); // refresh red waves managed by com.jetbrains.lang.dart.projectView.DartNodeDecorator
 

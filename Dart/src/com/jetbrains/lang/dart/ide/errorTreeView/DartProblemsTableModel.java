@@ -2,8 +2,8 @@
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.icons.AllIcons;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.concurrency.ThreadingAssertions;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.ListTableModel;
 import com.jetbrains.lang.dart.DartBundle;
@@ -306,7 +306,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
   }
 
   void onFilterChanged() {
-    ApplicationManager.getApplication().assertIsDispatchThread();
+    ThreadingAssertions.assertEventDispatchThread();
     if (myPresentationHelper.areFiltersApplied()) {
       myErrorCountAfterFilter = 0;
       myWarningCountAfterFilter = 0;

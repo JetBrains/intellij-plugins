@@ -10,6 +10,7 @@ import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.util.CatchingConsumer;
+import com.intellij.util.concurrency.ThreadingAssertions;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.webcore.packaging.InstalledPackage;
 import com.intellij.webcore.packaging.PackageManagementServiceEx;
@@ -154,7 +155,7 @@ public class PhoneGapPackageManagementService extends PackageManagementServiceEx
   }
 
   private static void scheduleFileSystemRefresh() {
-    ApplicationManager.getApplication().assertIsDispatchThread();
+    ThreadingAssertions.assertEventDispatchThread();
     LocalFileSystem.getInstance().refresh(true);
   }
 

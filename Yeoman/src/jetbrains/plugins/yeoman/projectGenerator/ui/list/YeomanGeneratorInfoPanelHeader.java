@@ -2,7 +2,6 @@ package jetbrains.plugins.yeoman.projectGenerator.ui.list;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.ui.RoundedActionButton;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.*;
@@ -10,6 +9,7 @@ import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBPanel;
 import com.intellij.ui.components.panels.HorizontalLayout;
 import com.intellij.ui.components.panels.VerticalLayout;
+import com.intellij.util.concurrency.ThreadingAssertions;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.StartupUiUtil;
 import com.intellij.util.ui.UIUtil;
@@ -177,7 +177,7 @@ public class YeomanGeneratorInfoPanelHeader {
   }
 
   public void updateInfo(YeomanGeneratorInfo info) {
-    ApplicationManager.getApplication().assertIsDispatchThread();
+    ThreadingAssertions.assertEventDispatchThread();
 
     myInfo = info;
     myRootPanel.setVisible(true);

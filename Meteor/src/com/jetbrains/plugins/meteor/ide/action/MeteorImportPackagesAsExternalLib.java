@@ -6,7 +6,6 @@ import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.util.ExecUtil;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationGroup;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -17,6 +16,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.util.concurrency.ThreadingAssertions;
 import com.jetbrains.plugins.meteor.MeteorBundle;
 import com.jetbrains.plugins.meteor.settings.MeteorSettings;
 import org.jetbrains.annotations.NotNull;
@@ -97,7 +97,7 @@ public class MeteorImportPackagesAsExternalLib {
   }
 
   public void run(@NotNull VirtualFile virtualFile, Project project) {
-    ApplicationManager.getApplication().assertIsDispatchThread();
+    ThreadingAssertions.assertEventDispatchThread();
 
     PsiFile baseFile = PsiManager.getInstance(project).findFile(virtualFile);
     if (baseFile == null) return;

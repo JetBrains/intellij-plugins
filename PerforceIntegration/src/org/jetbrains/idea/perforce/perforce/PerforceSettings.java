@@ -33,6 +33,7 @@ import com.intellij.openapi.vcs.changes.*;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.impl.DebugUtil;
 import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.concurrency.ThreadingAssertions;
 import com.intellij.util.messages.Topic;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.MapAnnotation;
@@ -45,8 +46,8 @@ import org.jetbrains.idea.perforce.ServerVersion;
 import org.jetbrains.idea.perforce.application.ConnectionKey;
 import org.jetbrains.idea.perforce.application.PerforceManager;
 import org.jetbrains.idea.perforce.operations.VcsOperationLog;
-import org.jetbrains.idea.perforce.perforce.connections.P4EnvHelper;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
+import org.jetbrains.idea.perforce.perforce.connections.P4EnvHelper;
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager;
 import org.jetbrains.idea.perforce.perforce.login.PerforceLoginManager;
 import org.jetbrains.idea.perforce.perforce.login.PerforceOfflineNotification;
@@ -247,7 +248,7 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
   }
 
   private void saveUnchangedContentsForModifiedFiles() {
-    ApplicationManager.getApplication().assertIsDispatchThread();
+    ThreadingAssertions.assertEventDispatchThread();
     ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
       for (LocalChangeList list : ChangeListManager.getInstance(myProject).getChangeLists()) {
         for (Change change : list.getChanges()) {

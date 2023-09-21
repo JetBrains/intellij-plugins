@@ -5,13 +5,13 @@ import com.intellij.codeInsight.hint.QuestionAction
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil
 import com.intellij.lang.javascript.modules.imports.JSImportCandidate
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
 import com.intellij.psi.SmartPsiElementPointer
+import com.intellij.util.concurrency.ThreadingAssertions
 import org.angular2.Angular2DecoratorUtil.EXPORTS_PROP
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.entities.Angular2EntityUtils
@@ -40,7 +40,7 @@ class ExportNgModuleDeclarationAction internal constructor(private val myEditor:
   }
 
   protected fun addExport(): Boolean {
-    ApplicationManager.getApplication().assertIsDispatchThread()
+    ThreadingAssertions.assertEventDispatchThread()
 
     val element = myDecorator.element
     var result = false

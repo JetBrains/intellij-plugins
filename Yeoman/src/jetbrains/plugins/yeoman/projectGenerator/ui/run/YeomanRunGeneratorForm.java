@@ -12,7 +12,6 @@ import com.intellij.javascript.nodejs.NodePackageVersion;
 import com.intellij.javascript.nodejs.NodePackageVersionUtil;
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DefaultProjectFactory;
 import com.intellij.openapi.project.Project;
@@ -25,6 +24,7 @@ import com.intellij.ui.GuiUtils;
 import com.intellij.ui.HideableDecorator;
 import com.intellij.ui.RelativeFont;
 import com.intellij.ui.ScrollPaneFactory;
+import com.intellij.util.concurrency.ThreadingAssertions;
 import com.intellij.util.text.SemVer;
 import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.util.ui.FormBuilder;
@@ -183,7 +183,7 @@ public class YeomanRunGeneratorForm implements Disposable {
 
   public void renderStepForm(final String text) {
     UIUtil.invokeLaterIfNeeded(() -> {
-      ApplicationManager.getApplication().assertIsDispatchThread();
+      ThreadingAssertions.assertEventDispatchThread();
       myCurrentControl = myRenderer.render(text);
       assert myInfo != null;
 
@@ -268,7 +268,7 @@ public class YeomanRunGeneratorForm implements Disposable {
   }
 
   public void next() {
-    ApplicationManager.getApplication().assertIsDispatchThread();
+    ThreadingAssertions.assertEventDispatchThread();
     myAsyncProcessIcon.setVisible(true);
     if (myCurrentControl != null) {
       send(myCurrentControl.getSelectedValue());
@@ -288,7 +288,7 @@ public class YeomanRunGeneratorForm implements Disposable {
   }
 
   private void done() {
-    ApplicationManager.getApplication().assertIsDispatchThread();
+    ThreadingAssertions.assertEventDispatchThread();
     myGeneratorTitle.setText(YeomanBundle.message("label.text.complete.0.generator", myInfo.getYoName()));
     myAsyncProcessIcon.setVisible(false);
     myScrollPane.setViewportView(new JPanel(new BorderLayout()));

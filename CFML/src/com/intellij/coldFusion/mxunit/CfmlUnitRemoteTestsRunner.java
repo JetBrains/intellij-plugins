@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ResourceUtil;
+import com.intellij.util.concurrency.ThreadingAssertions;
 import com.intellij.util.io.HttpRequests;
 
 import java.io.BufferedReader;
@@ -94,7 +95,7 @@ public final class CfmlUnitRemoteTestsRunner {
                                    final ProcessHandler processHandler*/) throws ExecutionException {
     final Ref<ExecutionException> ref = new Ref<>();
 
-    ApplicationManager.getApplication().assertIsDispatchThread();
+    ThreadingAssertions.assertEventDispatchThread();
 
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
       try {

@@ -4,7 +4,6 @@ import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;
 import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.*;
 import com.intellij.openapi.options.ConfigurationException;
@@ -14,6 +13,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.concurrency.ThreadingAssertions;
 import icons.YeomanIcons;
 import jetbrains.plugins.yeoman.YeomanBundle;
 import jetbrains.plugins.yeoman.projectGenerator.template.YeomanProjectGenerator;
@@ -84,7 +84,7 @@ public class YeomanModuleBuilder extends ModuleBuilder {
   @Nullable
   @Override
   public Module commitModule(@NotNull Project project, @Nullable ModifiableModuleModel model) {
-    ApplicationManager.getApplication().assertIsDispatchThread();
+    ThreadingAssertions.assertEventDispatchThread();
     Module module = super.commitModule(project, model);
     if (module != null) {
       ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
