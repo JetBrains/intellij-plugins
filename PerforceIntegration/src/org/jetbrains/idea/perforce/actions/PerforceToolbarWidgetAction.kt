@@ -33,14 +33,17 @@ class PerforceToolbarWidgetAction : ExpandableComboAction() {
 
     val group = DefaultActionGroup()
     group.addAll(toolbarActions)
-    group.addSeparator(PerforceBundle.message("action.Perforce.Toolbar.workspaces.label"))
 
     val perforceSettings = PerforceSettings.getSettings(project)
     val allConnections = perforceSettings.allConnections
 
-    for (connection in allConnections) {
-      val action = PerforceToolbarWidgetHelper.WorkspaceAction(connection.connectionKey.client, connection.workingDir)
-      group.add(action)
+    if (allConnections.size > 1) {
+      group.addSeparator(PerforceBundle.message("action.Perforce.Toolbar.workspaces.label"))
+
+      for (connection in allConnections) {
+        val action = PerforceToolbarWidgetHelper.WorkspaceAction(connection.connectionKey.client, connection.workingDir)
+        group.add(action)
+      }
     }
 
     val popupFactory = JBPopupFactory.getInstance()
