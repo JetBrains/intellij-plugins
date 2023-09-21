@@ -52,6 +52,7 @@ class PerforceWorkspaceComboBoxAction : ComboBoxAction(), DumbAware {
       setText(text, false)
 
       putClientProperty(multipleWorkspacesKey, perforceSettings.allConnections.count() > 1)
+      putClientProperty(isConnectedKey, connection?.isConnected ?: perforceSettings.ENABLED)
     }
   }
 
