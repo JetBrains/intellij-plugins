@@ -1,4 +1,4 @@
-<idea-plugin on-demand="true">
+<idea-plugin>
   <id>cucumber-groovy</id>
   <name>Cucumber for Groovy</name>
   <category>Test Tools</category>
