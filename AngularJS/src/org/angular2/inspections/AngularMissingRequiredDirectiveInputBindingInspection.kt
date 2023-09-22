@@ -17,7 +17,7 @@ import org.angular2.lang.expr.psi.Angular2TemplateBindings
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.lang.html.psi.PropertyBindingType
-import org.angular2.web.scopes.OneTimeBindingsProvider
+import org.angular2.web.scopes.OneTimeBindingsScope
 
 class AngularMissingRequiredDirectiveInputBindingInspection : AngularHtmlLikeTemplateLocalInspectionTool() {
 
@@ -45,7 +45,7 @@ class AngularMissingRequiredDirectiveInputBindingInspection : AngularHtmlLikeTem
     inputsToMatch.filter { !provided.contains(it.first.name) }
       .forEach { (property, directive) ->
         val fixes = mutableListOf<LocalQuickFix>(CreateAttributeQuickFix("[" + property.name + "]"))
-        if (OneTimeBindingsProvider.isOneTimeBindingProperty(property)) {
+        if (OneTimeBindingsScope.isOneTimeBindingProperty(property)) {
           fixes.add(CreateAttributeQuickFix(property.name))
         }
         holder.registerProblem(tag, startTag,

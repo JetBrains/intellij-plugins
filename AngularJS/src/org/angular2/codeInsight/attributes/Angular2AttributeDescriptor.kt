@@ -3,15 +3,27 @@ package org.angular2.codeInsight.attributes
 
 import com.intellij.html.webSymbols.attributes.WebSymbolAttributeDescriptor
 import com.intellij.html.webSymbols.attributes.WebSymbolHtmlAttributeInfo
+import com.intellij.javascript.webSymbols.jsType
+import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
+import com.intellij.lang.javascript.psi.types.JSTypeSource
+import com.intellij.lang.javascript.validation.JSTypeChecker
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
+import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
-import com.intellij.webSymbols.*
+import com.intellij.webSymbols.SymbolKind
+import com.intellij.webSymbols.SymbolNamespace
+import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbolOrigin
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
+import com.intellij.webSymbols.utils.unwrapMatchedSymbols
 import org.angular2.Angular2Framework
+import org.angular2.codeInsight.config.isStrictTemplates
 import org.angular2.entities.Angular2Directive
+import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.web.Angular2DescriptorSymbolsProvider
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator
 import javax.swing.Icon
 
 class Angular2AttributeDescriptor(info: WebSymbolHtmlAttributeInfo, tag: XmlTag?)
@@ -28,6 +40,19 @@ class Angular2AttributeDescriptor(info: WebSymbolHtmlAttributeInfo, tag: XmlTag?
     get() = bindingInfoProvider.nonDirectiveSymbols.isNotEmpty()
 
   val info: Angular2AttributeNameParser.AttributeInfo = Angular2AttributeNameParser.parse(name, tag)
+
+  override fun validateValue(context: XmlElement?, value: String?): String? {
+    val isOneTimeBinding = symbol.unwrapMatchedSymbols()
+      .any { it.kind == Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS }
+    if (value != null && context != null && isOneTimeBinding && isStrictTemplates(context)) {
+      val valueType = JSStringLiteralTypeImpl(value, false, JSTypeSource.EXPLICITLY_DECLARED)
+      val symbolType = symbol.jsType
+      JSTypeChecker.getErrorMessageIfTypeNotAssignableToType(context, symbolType, valueType, Angular2Language.INSTANCE.optionHolder,
+                                                             "javascript.type.is.not.assignable.to.type")
+        ?.let { return it }
+    }
+    return super.validateValue(context, value)
+  }
 
   private val bindingInfoProvider by lazy(LazyThreadSafetyMode.PUBLICATION) { Angular2DescriptorSymbolsProvider(this.symbol) }
 

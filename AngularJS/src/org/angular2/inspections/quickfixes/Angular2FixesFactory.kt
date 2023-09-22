@@ -44,7 +44,7 @@ import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.lang.html.psi.Angular2HtmlEvent
 import org.angular2.lang.html.psi.PropertyBindingType
-import org.angular2.web.scopes.OneTimeBindingsProvider
+import org.angular2.web.scopes.OneTimeBindingsScope
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.TestOnly
@@ -144,7 +144,7 @@ object Angular2FixesFactory {
           Angular2AttributeType.REGULAR -> {
             filter = { declaration ->
               declaration is Angular2Directive
-              && (declaration.inputs.any { input -> info.name == input.name && OneTimeBindingsProvider.isOneTimeBindingProperty(input) }
+              && (declaration.inputs.any { input -> info.name == input.name && OneTimeBindingsScope.isOneTimeBindingProperty(input) }
                   || declaration.selector.simpleSelectors.any { selector -> selector.attrNames.any { info.name == it } })
             }
           }

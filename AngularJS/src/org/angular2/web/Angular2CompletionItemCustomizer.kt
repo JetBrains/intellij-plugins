@@ -22,7 +22,7 @@ import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DI
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_IN_OUTS
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_OUTPUTS
-import org.angular2.web.scopes.OneTimeBindingsProvider
+import org.angular2.web.scopes.OneTimeBindingsScope
 
 
 private val typedKinds = setOf(WebSymbol.KIND_JS_EVENTS,
@@ -59,7 +59,7 @@ class Angular2CompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {
                   item
                     .decorateWithSymbolType(symbol)
                     .withPriority(
-                      symbol.properties[OneTimeBindingsProvider.PROP_DELEGATE_PRIORITY] as WebSymbol.Priority?
+                      symbol.properties[OneTimeBindingsScope.PROP_DELEGATE_PRIORITY] as WebSymbol.Priority?
                       ?: WebSymbol.Priority.HIGH
                     )
 

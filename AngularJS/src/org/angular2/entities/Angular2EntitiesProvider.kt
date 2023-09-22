@@ -155,6 +155,7 @@ object Angular2EntitiesProvider {
     return CachedValuesManager.getManager(project).getCachedValue(project) {
       create(
         findDirectivesCandidates(project, anyElementDirectiveIndexName)
+          .distinct()
           .flatMap { directive ->
             val result = SmartList<Pair<String, Angular2Directive>>()
             val selectorProcessor = { sel: Angular2DirectiveSimpleSelector ->

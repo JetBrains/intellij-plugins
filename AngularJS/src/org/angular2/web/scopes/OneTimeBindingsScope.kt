@@ -1,9 +1,11 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.web.scopes
 
+import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
 import com.intellij.javascript.webSymbols.jsType
 import com.intellij.javascript.webSymbols.types.TypeScriptSymbolTypeSupport
 import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations
 import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveType
@@ -16,13 +18,17 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.util.containers.Stack
+import com.intellij.psi.xml.XmlTag
+import com.intellij.refactoring.suggested.createSmartPointer
+import com.intellij.util.ThreeState
+import com.intellij.util.asSafely
 import com.intellij.util.containers.mapSmartSet
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
-import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
-import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
+import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
+import org.angular2.Angular2Framework
 import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider
+import org.angular2.codeInsight.config.isStrictTemplates
 import org.angular2.entities.Angular2DirectiveProperty
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_INPUTS
@@ -30,67 +36,37 @@ import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DI
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-internal class OneTimeBindingsProvider : WebSymbolsScope {
+internal class OneTimeBindingsScope(tag: XmlTag) : WebSymbolsScopeWithCache<XmlTag, Unit>(Angular2Framework.ID, tag.project, tag, Unit) {
 
-  override fun getMatchingSymbols(namespace: SymbolNamespace,
-                                  kind: SymbolKind,
-                                  name: String,
-                                  params: WebSymbolsNameMatchQueryParams,
-                                  scope: Stack<WebSymbolsScope>): List<WebSymbol> =
-    if (namespace == WebSymbol.NAMESPACE_JS
-        && kind == KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS
-        && params.queryExecutor.allowResolve) {
-      // Avoid any conflicts with attribute selectors over the attribute value
-      val attributeSelectors = params.queryExecutor
-        .runNameMatchQuery(WebSymbol.NAMESPACE_JS, KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS, name,
-                           scope = scope.toList())
-        .filter { it.attributeValue?.required == false }
-        .mapSmartSet { it.name }
+  override fun provides(namespace: SymbolNamespace, kind: SymbolKind): Boolean =
+    namespace == WebSymbol.NAMESPACE_JS && kind == KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS
 
-      params.queryExecutor
-        .runNameMatchQuery(
-          WebSymbol.NAMESPACE_JS, KIND_NG_DIRECTIVE_INPUTS, name,
-          scope = scope.toList())
-        .asSequence()
-        .filter { isOneTimeBindingProperty(it) }
-        .map { Angular2OneTimeBinding(it, !attributeSelectors.contains(it.name)) }
-        .toList()
+  override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
+    val queryExecutor = WebSymbolsQueryExecutorFactory.create(dataHolder)
+    val scope = dataHolder.descriptor?.asSafely<WebSymbolElementDescriptor>()
+                  ?.symbol?.let { listOf(it) }
+                ?: emptyList()
+    val attributeSelectors = queryExecutor
+      .runListSymbolsQuery(WebSymbol.NAMESPACE_JS, KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS, expandPatterns = true, scope = scope)
+      .filter { it.attributeValue?.required == false }
+      .mapSmartSet { it.name }
+
+    queryExecutor
+      .runListSymbolsQuery(WebSymbol.NAMESPACE_JS, KIND_NG_DIRECTIVE_INPUTS, expandPatterns = false, scope = scope)
+      .asSequence()
+      .filter { isOneTimeBindingProperty(it) }
+      .map { Angular2OneTimeBinding(it, !attributeSelectors.contains(it.name)) }
+      .forEach(consumer)
+
+    cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
+  }
+
+  override fun createPointer(): Pointer<out WebSymbolsScopeWithCache<XmlTag, Unit>> {
+    val tagPtr = dataHolder.createSmartPointer()
+    return Pointer {
+      tagPtr.dereference()?.let { OneTimeBindingsScope(it) }
     }
-    else emptyList()
-
-  override fun getSymbols(namespace: SymbolNamespace,
-                          kind: SymbolKind,
-                          params: WebSymbolsListSymbolsQueryParams,
-                          scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
-    if (namespace == WebSymbol.NAMESPACE_JS
-        && kind == KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS
-        && params.queryExecutor.allowResolve) {
-      // Avoid any conflicts with attribute selectors over the attribute value
-      val attributeSelectors = params.queryExecutor
-        .runListSymbolsQuery(WebSymbol.NAMESPACE_JS, KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS,
-                             expandPatterns = true, scope = scope.toList())
-        .filter { it.attributeValue?.required == false }
-        .mapSmartSet { it.name }
-
-      params.queryExecutor
-        .runListSymbolsQuery(
-          WebSymbol.NAMESPACE_JS, KIND_NG_DIRECTIVE_INPUTS, expandPatterns = true, scope = scope.toList())
-        .asSequence()
-        .filter { isOneTimeBindingProperty(it) }
-        .map { Angular2OneTimeBinding(it, !attributeSelectors.contains(it.name)) }
-        .toList()
-    }
-    else emptyList()
-
-  override fun createPointer(): Pointer<out WebSymbolsScope> =
-    Pointer.hardPointer(this)
-
-  override fun getModificationCount(): Long = 0
-
-  override fun equals(other: Any?): Boolean =
-    other is OneTimeBindingsProvider
-
-  override fun hashCode(): Int = 0
+  }
 
   companion object {
 
@@ -118,8 +94,8 @@ internal class OneTimeBindingsProvider : WebSymbolsScope {
     }
 
     private fun expandStringLiteralTypes(type: JSType): JSType =
-      TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(
-        type).transformTypeHierarchy { toApply -> if (toApply is JSPrimitiveType) STRING_TYPE else toApply }
+      TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(type)
+        .transformTypeHierarchy { toApply -> if (toApply is JSPrimitiveType) STRING_TYPE else toApply }
   }
 
   private class Angular2OneTimeBinding(delegate: WebSymbol, val requiresValue: Boolean)
@@ -142,21 +118,41 @@ internal class OneTimeBindingsProvider : WebSymbolsScope {
     override val required: Boolean
       get() = false
 
-    override val attributeValue: WebSymbolHtmlAttributeValue?
-      get() = if (TypeScriptSymbolTypeSupport.isBoolean(jsType)) {
-        WebSymbolHtmlAttributeValue.create(WebSymbolHtmlAttributeValue.Kind.PLAIN,
-                                           WebSymbolHtmlAttributeValue.Type.COMPLEX, false,
-                                           null,
-                                           JSCompositeTypeFactory.createUnionType(
-                                             JSTypeSource.EXPLICITLY_DECLARED,
-                                             JSStringLiteralTypeImpl(name, false, JSTypeSource.EXPLICITLY_DECLARED),
-                                             JSStringLiteralTypeImpl("true", false, JSTypeSource.EXPLICITLY_DECLARED),
-                                             JSStringLiteralTypeImpl("false", false, JSTypeSource.EXPLICITLY_DECLARED)
-                                           ))
+    override val attributeValue: WebSymbolHtmlAttributeValue? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      if (isStrictTemplates(this.source)) {
+        WebSymbolHtmlAttributeValue.create(
+          WebSymbolHtmlAttributeValue.Kind.PLAIN,
+          WebSymbolHtmlAttributeValue.Type.COMPLEX,
+          !JSResolveUtil.isAssignableJSType(
+            jsType, JSStringLiteralTypeImpl("", false, JSTypeSource.EXPLICITLY_DECLARED), null),
+          null,
+          TypeScriptSymbolTypeSupport.extractEnumLikeType(jsType)
+        )
       }
-      else if (!requiresValue)
-        WebSymbolHtmlAttributeValue.create(required = false)
-      else null
+      else {
+        val isBoolean = TypeScriptSymbolTypeSupport.isBoolean(jsType)
+        when {
+          isBoolean != ThreeState.NO -> {
+            WebSymbolHtmlAttributeValue.create(
+              WebSymbolHtmlAttributeValue.Kind.PLAIN,
+              WebSymbolHtmlAttributeValue.Type.COMPLEX, false,
+              null,
+              JSCompositeTypeFactory.createUnionType(
+                JSTypeSource.EXPLICITLY_DECLARED,
+                if (isBoolean == ThreeState.UNSURE)
+                  TypeScriptSymbolTypeSupport.extractEnumLikeType(jsType)
+                else
+                  null,
+                JSStringLiteralTypeImpl(name, false, JSTypeSource.EXPLICITLY_DECLARED),
+                JSStringLiteralTypeImpl("true", false, JSTypeSource.EXPLICITLY_DECLARED),
+                JSStringLiteralTypeImpl("false", false, JSTypeSource.EXPLICITLY_DECLARED)
+              ))
+          }
+          !requiresValue -> WebSymbolHtmlAttributeValue.create(required = false)
+          else -> null
+        }
+      }
+    }
 
     override fun createPointer(): Pointer<Angular2OneTimeBinding> {
       val delegatePtr = this.delegate.createPointer()

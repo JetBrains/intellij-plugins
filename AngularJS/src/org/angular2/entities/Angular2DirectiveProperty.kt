@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.contextOfType
+import com.intellij.util.ThreeState
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolApiStatus
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
@@ -52,7 +53,7 @@ interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element {
   val owner: TypeScriptClass?
 
   override val attributeValue: WebSymbolHtmlAttributeValue?
-    get() = if (TypeScriptSymbolTypeSupport.isBoolean(type)) {
+    get() = if (TypeScriptSymbolTypeSupport.isBoolean(type) != ThreeState.NO) {
       WebSymbolHtmlAttributeValue.create(null, null, false, null, null)
     }
     else {

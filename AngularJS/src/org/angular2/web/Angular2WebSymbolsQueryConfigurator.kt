@@ -40,7 +40,7 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
                                DirectiveAttributeSelectorsScope(element.project))
     ((element as? XmlAttribute)?.parent ?: element as? XmlTag)?.let {
       result.addAll(listOf(
-        OneTimeBindingsProvider(),
+        OneTimeBindingsScope(it),
         StandardPropertyAndEventsScope(it.containingFile),
         NgContentSelectorsScope(it),
         MatchedDirectivesScope(it),
