@@ -323,12 +323,12 @@ public class FlexRenameTest extends JSAbstractRenameTest {
     final String name = getTestName(false);
     myFixture.configureByFiles(name + "/mytest/boo/" + name + ".js2", name + "/mytest/foo/" + name + "_2.js2");
     int referencesCount = findRenamedRefsToReferencedElementAtCaret().length;
-    performDialogRename(defaultParameters().withName(name + "_3"));
+    performDialogRename(helper().defaultParameters().withName(name + "_3"));
     myFixture.checkResultByFile(getBasePath() + name + "_after.js2");
 
     assertEquals(referencesCount, findRenamedRefsToReferencedElementAtCaret().length);
 
-    performDialogRename(defaultParameters().withName(name + "_4"));
+    performDialogRename(helper().defaultParameters().withName(name + "_4"));
     myFixture.checkResultByFile(name + "_after2.js2");
     PsiReference[] refs = findRenamedRefsToReferencedElementAtCaret();
     assertEquals(referencesCount, refs.length);
@@ -576,7 +576,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   }
 
   protected void doTest(final String newName, boolean substituteElement, String... fileNames) {
-    doTest(defaultParameters().withName(newName).substitute(substituteElement).withFiles(fileNames));
+    doTest(helper().defaultParameters().withName(newName).substitute(substituteElement).withFiles(fileNames));
   }
 
   protected void doTest(final String newName, String fileNameAfter, boolean substituteElement, String... fileNames) {
@@ -590,7 +590,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
                         final boolean searchForTextOccurrences, //false by default
                         final String... fileNames) {
     myFixture.configureByFiles(fileNames);
-    performDialogRename(defaultParameters()
+    performDialogRename(helper().defaultParameters()
                           .withName(newName)
                           .substitute(substituteElement)
                           .searchForTextOccurrences(searchForTextOccurrences)
