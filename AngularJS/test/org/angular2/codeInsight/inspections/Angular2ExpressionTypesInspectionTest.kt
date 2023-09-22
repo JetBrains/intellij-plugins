@@ -48,6 +48,12 @@ class Angular2ExpressionTypesInspectionTest : Angular2CodeInsightFixtureTestCase
     myFixture.checkHighlighting()
   }
 
+  fun testGenericsValidationStrict() {
+    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_16_0_0_NEXT_4, Angular2TestModule.ANGULAR_COMMON_16_0_0_NEXT_4)
+    myFixture.configureByFiles("generics-strict.ts", "tsconfig.app.json", "tsconfig.json")
+    myFixture.checkHighlighting()
+  }
+
   fun testNgForOfAnyTypeNonStrictTemplates() {
     TypeScriptTestUtil.forceDefaultTsConfig(project, testRootDisposable)
     configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14)

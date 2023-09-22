@@ -50,18 +50,18 @@ import java.util.function.Predicate
 
 internal class BindingsTypeResolver private constructor(val element: PsiElement,
                                                         provider: Angular2ApplicableDirectivesProvider,
-                                                        oneTimeBindingsProvider: () -> Sequence<Pair<String, String>>,
-                                                        inputExpressionsProvider: () -> Sequence<Pair<String, JSExpression?>>) {
+                                                        inputWeightProvider: () -> Map<String, Int>,
+                                                        plainAttributesProvider: () -> Map<String, String>,
+                                                        inputExpressionsProvider: () -> Map<String, JSExpression?>) {
   private val analysisResult: AnalysisResult?
 
   init {
     val declarationsScope = Angular2DeclarationsScope(element)
     val directives = provider.matched.filter { declarationsScope.contains(it) }
-    if (directives.isEmpty()) {
-      analysisResult = AnalysisResult.EMPTY
-    }
-    else {
-      analysisResult = analyze(directives, element, oneTimeBindingsProvider, inputExpressionsProvider)
+    analysisResult = when {
+      directives.isEmpty() -> AnalysisResult.EMPTY
+      isStrictTemplates(element) -> analyzeStrictTemplates(directives, element, inputWeightProvider(), plainAttributesProvider(), inputExpressionsProvider())
+      else -> analyzeNonStrict(directives, element, inputExpressionsProvider())
     }
   }
 
@@ -199,12 +199,23 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
       BindingsTypeResolver(
         bindings, Angular2ApplicableDirectivesProvider(bindings),
         {
-          sequenceOf(bindings.templateName to "")
+          bindings.bindings.asSequence()
+            .mapIndexed { ind, binding ->
+              binding.key to ind
+            }
+            .plus(bindings.templateName to -1)
+            .distinctBy { it.first }
+            .toMap()
+        },
+        {
+          mapOf(bindings.templateName to "")
         }, {
           bindings.bindings
             .asSequence()
             .filter { binding: Angular2TemplateBinding -> !binding.keyIsVar() }
             .mapNotNull { Pair(it.key, it.expression ?: return@mapNotNull null) }
+            .distinctBy { it.first }
+            .toMap()
         })
 
     private fun create(tag: XmlTag) =
@@ -213,11 +224,24 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
         {
           tag.attributes
             .asSequence()
+            .mapIndexedNotNull { index, attr ->
+              Angular2AttributeNameParser.parse(attr.name, attr.parent)
+                .takeIf { Angular2PropertyBindingType.isPropertyBindingAttribute(it) || it.type == Angular2AttributeType.REGULAR }
+                ?.let { it.name to index }
+            }
+            .distinctBy { it.first }
+            .toMap()
+        },
+        {
+          tag.attributes
+            .asSequence()
             .mapNotNull { attr ->
               if (Angular2AttributeNameParser.parse(attr.name, attr.parent).type == Angular2AttributeType.REGULAR)
                 attr.name to (attr.value ?: "")
               else null
             }
+            .distinctBy { it.first }
+            .toMap()
         }, {
           tag.attributes
             .asSequence()
@@ -228,6 +252,8 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
                          ?: return@mapNotNull null
               Pair(name, Angular2Binding.get(attr)?.expression)
             }
+            .distinctBy { it.first }
+            .toMap()
         })
 
     data class AnalysisResult(
@@ -242,27 +268,9 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
       }
     }
 
-    private fun analyze(directives: List<Angular2Directive>,
-                        element: PsiElement,
-                        oneTimeBindingsProvider: () -> Sequence<Pair<String, String>>,
-                        inputExpressionsProvider: () -> Sequence<Pair<String, JSExpression?>>): AnalysisResult {
-
-      val inputsMap = inputExpressionsProvider()
-        .distinctBy { it.first }
-        .toMap()
-
-      return if (isStrictTemplates(element)) {
-        val attrsMap = oneTimeBindingsProvider()
-          .distinctBy { it.first }
-          .toMap()
-        analyzeStrictTemplates(directives, element, attrsMap, inputsMap)
-      }
-      else
-        analyzeNonStrict(directives, element, inputsMap)
-    }
-
     private fun analyzeStrictTemplates(directives: List<Angular2Directive>,
                                        element: PsiElement,
+                                       weightMap: Map<String, Int>,
                                        attrsMap: Map<String, String>,
                                        inputsMap: Map<String, JSExpression?>): AnalysisResult {
       val substitutors = mutableMapOf<Angular2Directive, JSTypeSubstitutor?>()
@@ -275,12 +283,16 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
         directives2inputs.computeIfAbsent(it) { mutableListOf() }
         it.inputs.forEach { input ->
           val directive = (input as? Angular2AliasedDirectiveProperty)?.directive ?: it
-          val inputExpression = inputsMap[input.name]
+          val inputName = input.name
           val propertyType = input.type
 
           if (propertyType != null) {
             directives2inputs.computeIfAbsent(directive) { mutableListOf() }
-              .add(DirectiveInput(propertyType, inputsMap.containsKey(input.name), inputExpression, attrsMap[input.name]))
+              .add(DirectiveInput(propertyType,
+                                  inputsMap.containsKey(inputName),
+                                  inputsMap[inputName],
+                                  attrsMap[inputName],
+                                  weightMap[inputName] ?: 0))
           }
         }
       }
@@ -295,7 +307,8 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
         val genericConstructorReturnType = cls.possiblyGenericJsType
         val typeSubstitutor: JSTypeSubstitutor
         if (genericConstructorReturnType is JSGenericTypeImpl) {
-          typeSubstitutor = calculateDirectiveTypeSubstitutor(classTypeSource, directiveInputs, element, elementTypeSource)
+          typeSubstitutor = calculateDirectiveTypeSubstitutor(
+            classTypeSource, directiveInputs.sortedBy { it.weight }, element, elementTypeSource)
 
           strictSubstitutors[directive] = typeSubstitutor
           substitutors[directive] = JSTypeSubstitutorImpl(typeSubstitutor).also {
@@ -343,7 +356,7 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
       // conceptually: const Directive = (...) => {...}, it misses the type arguments <...> part, so we patch that later
       val directiveFactoryType = JSFunctionTypeImpl(
         classTypeSource,
-        directiveInputs.map { (expectedType, _, _) -> JSParameterTypeDecoratorImpl(expectedType, false, false, true) },
+        directiveInputs.map { (expectedType) -> JSParameterTypeDecoratorImpl(expectedType, false, false, true) },
         null // can pass null because we currently don't use JSApplyCallType anyway
       )
 
@@ -488,8 +501,11 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
     override fun getArgumentSize() = argSize
   }
 
-  private data class DirectiveInput(val expectedType: JSType?,
-                                    val isBindingPresent: Boolean,
-                                    val bindingExpression: JSExpression?,
-                                    val attributeValue: String?)
+  private data class DirectiveInput(
+    val expectedType: JSType?,
+    val isBindingPresent: Boolean,
+    val bindingExpression: JSExpression?,
+    val attributeValue: String?,
+    val weight: Int,
+  )
 }

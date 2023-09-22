@@ -1,0 +1,142 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+import {Component, Directive, EventEmitter, Input, Output} from '@angular/core';
+
+@Directive({
+    selector: "[gen]",
+    standalone: true,
+})
+export class GenericsDirective<T, S> {
+
+    @Input()
+    input1: T;
+
+    @Input()
+    input2: T;
+
+    @Input()
+    input3: S;
+
+    @Output()
+    output1: EventEmitter<T>
+
+    @Output()
+    output3: EventEmitter<S>
+
+}
+
+@Directive({
+    selector: "[gen2]",
+    standalone: true,
+})
+export class GenericsDirective2<T> {
+
+    @Input()
+    input1: T;
+
+    @Input()
+    input2: string;
+
+}
+
+@Component({
+    selector: "app-test",
+    template: `
+    <div gen 
+         [input1]="12"
+         [input2]="20" 
+         [input3]="'foo'" 
+         (output1)="useNumber($event)" 
+         (output3)="useString($event)">
+    </div>
+            
+    <div gen 
+         [input1]="true" 
+         [input2]="<error descr="Type  \"20\"  is not assignable to type  boolean ">'20'</error>" 
+         [input3]="12" 
+         (output1)="useNumber(<error descr="Argument type  boolean  is not assignable to parameter type  number ">$event</error>)" 
+         (output3)="useString(<error descr="Argument type  number  is not assignable to parameter type  string ">$event</error>)">
+    </div>
+         
+    <div gen
+         [input1]="12"
+         [input2]="<error descr="Type  \"20\"  is not assignable to type  number ">'20'</error>"
+         [input3]="'bar'"
+         (output1)="useNumber($event)" 
+         (output3)="useString($event)">
+    </div>
+         
+    <div gen 
+         [input1]="[1,2,3]" 
+         [input2]="[4,5]" 
+         (output1)="useNumber($event[0])">
+    </div>
+         
+    <div gen 
+         [input1]="[1,2,3]" 
+         [input2]="[4,5]" 
+         (output1)="useNumber(<error descr="Argument type  number[]  is not assignable to parameter type  number ">$event</error>)">
+    </div>
+    
+    <div gen
+         <warning descr="Attribute input1 is not allowed here">input1</warning>
+         (output1)="useNumber($event)">
+    </div>
+
+    <div gen
+         <warning descr="Attribute input1 is not allowed here">input1</warning>
+         <warning descr="Attribute input2 is not allowed here">input2</warning>
+         (output1)="useNumber(<error descr="Argument type  string  is not assignable to parameter type  number ">$event</error>)">
+    </div>
+
+    <div gen
+         <warning descr="[input1] requires value">[input1]</warning>
+         (output1)="useString($event)">
+    </div>
+    
+    <div gen
+         [input1]=""
+         <warning descr="Attribute input2 is not allowed here">input2</warning>
+         (output1)="useNumber(<error descr="Argument type  string  is not assignable to parameter type  number ">$event</error>) && useString($event)">
+    </div><!-- TODO $event - WebStorm string, Angular string | undefined -->
+
+    <div gen
+         <warning descr="Attribute input1 is not allowed here">input1</warning>
+         [input2]=""
+         (output1)="useNumber(<error descr="Argument type  string  is not assignable to parameter type  number ">$event</error>)">
+    </div><!-- TODO $event - WebStorm string, Angular string | undefined -->
+    
+    <div gen gen2 
+         [input1]="12" 
+         [input2]="<error descr="Type  12  is not assignable to type  never ">12</error>">
+    </div>
+         
+    <div gen gen2 
+         [input1]="'foo'" 
+         [input2]="<error descr="Type  12  is not assignable to type  string ">12</error>">
+    </div>
+    
+    <div gen gen2 
+         [input1]="12" 
+         [input2]="<error descr="Type  \"foo\"  is not assignable to type  never ">'foo'</error>">
+    </div>
+    
+    <div gen gen2 
+         [input1]="'foo'" 
+         [input2]="'foo'">
+    </div>
+    
+    `,
+    standalone: true,
+    imports: [GenericsDirective, GenericsDirective2]
+})
+export class TestComponent {
+
+    useNumber(<warning descr="Unused parameter val">val</warning>: number) {
+
+    }
+
+    useString(<warning descr="Unused parameter val">val</warning>: string) {
+
+    }
+
+}
