@@ -2,59 +2,11 @@
 import {Component, Directive, Input, TemplateRef, ViewContainerRef} from "@angular/core";
 import {CommonModule} from "@angular/common";
 
-@Component({
-  selector: 'app-test',
-  imports: [CommonModule, HelloDirective, HelloConstrainedDirective],
-  standalone: true,
-  template: `
-    <div *appHello="as person"> <!-- any in WebStorm, string in Angular -->
-      {{expectNumber(person)}}
-    </div>
-    <div *appHello="let person"> <!-- any in WebStorm, string in Angular -->
-      {{expectNumber(person)}}
-    </div>
-    <ng-template appHello let-person> <!-- any in WebStorm, string in Angular -->
-      {{expectNumber(person)}}
-    </ng-template>
-    <ng-template <warning descr="[appHello] requires value">[appHello]</warning> let-person> <!-- any in WebStorm, undefined in Angular -->
-      {{expectNumber(person)}}
-    </ng-template>
-    <ng-template [appHello]="" let-person> <!-- undefined -->
-      {{expectNumber(<error descr="Argument type  undefined  is not assignable to parameter type  number ">person</error>) }}
-    </ng-template>
-
-    <div *appHelloConstrained="as person"> <!-- any in WebStorm, number in Angular --> <!-- todo missing assignment type error -->
-      {{expectNumber(person)}}
-    </div>
-    <div *appHelloConstrained="let person"> <!-- any in WebStorm, number in Angular --> <!-- todo missing assignment type error -->
-      {{expectNumber(person)}}
-    </div>
-    <ng-template appHelloConstrained let-person> <!-- any in WebStorm, number in Angular --> <!-- todo missing assignment type error -->
-      {{expectNumber(person)}}
-    </ng-template>
-    <ng-template <warning descr="[appHelloConstrained] requires value">[appHelloConstrained]</warning> let-person> <!-- any in WebStorm, number in Angular --> <!-- todo missing assignment type error -->
-      {{expectNumber(person)}}
-    </ng-template>
-    <ng-template [appHelloConstrained]="" let-person> <!-- any in WebStorm, number in Angular --> <!-- todo missing assignment type error -->
-      {{expectNumber(person) }}
-    </ng-template>
-  `,
-})
-export class TestComponent {
-  expectNumber(num: number): number {
-    return num;
-  }
-}
-
-interface HelloContext<T> {
-  $implicit: T;
-  appHello: T;
-}
 
 @Directive({
-  selector: '[appHello]',
-  standalone: true
-})
+             selector: '[appHello]',
+             standalone: true
+           })
 export class HelloDirective<T> {
   constructor(_viewContainer: ViewContainerRef, _templateRef: TemplateRef<any>) {
   }
@@ -66,15 +18,10 @@ export class HelloDirective<T> {
   }
 }
 
-interface HelloConstrainedContext<T> {
-  $implicit: T;
-  appHelloConstrained: T;
-}
-
 @Directive({
-  selector: '[appHelloConstrained]',
-  standalone: true
-})
+             selector: '[appHelloConstrained]',
+             standalone: true
+           })
 export class HelloConstrainedDirective<T extends number> {
   constructor(_viewContainer: ViewContainerRef, _templateRef: TemplateRef<any>) {
   }
@@ -84,4 +31,71 @@ export class HelloConstrainedDirective<T extends number> {
   static ngTemplateContextGuard<T extends number>(dir: HelloConstrainedDirective<T>, ctx: unknown): ctx is HelloConstrainedContext<T> {
     return true;
   }
+}
+
+@Component({
+  selector: 'app-test',
+  imports: [CommonModule, HelloDirective, HelloConstrainedDirective],
+  standalone: true,
+  template: `
+    <div *appHello="as person"> <!-- any in WebStorm, string in Angular -->
+      {{expectNumber(<error descr="Argument type  string  is not assignable to parameter type  number ">person</error>)}}
+      {{expectString(person)}}
+    </div>
+    <div *appHello="let person"> <!-- string -->
+      {{expectNumber(<error descr="Argument type  string  is not assignable to parameter type  number ">person</error>)}}
+      {{expectString(person)}}
+    </div>
+    <ng-template appHello let-person> <!-- string -->
+      {{expectNumber(<error descr="Argument type  string  is not assignable to parameter type  number ">person</error>)}}
+      {{expectString(person)}}
+    </ng-template>
+    <ng-template <warning descr="[appHello] requires value">[appHello]</warning> let-person> <!-- undefined -->
+      {{expectNumber(<error descr="Argument type  undefined  is not assignable to parameter type  number ">person</error>)}}
+      {{expectString(<error descr="Argument type  undefined  is not assignable to parameter type  string ">person</error>)}}
+    </ng-template>
+    <ng-template [appHello]="" let-person> <!-- undefined -->
+      {{expectNumber(<error descr="Argument type  undefined  is not assignable to parameter type  number ">person</error>) }}
+      {{expectString(<error descr="Argument type  undefined  is not assignable to parameter type  string ">person</error>)}}
+    </ng-template>
+
+    <div *appHelloConstrained="as person"> <!-- number --> <!-- todo missing assignment type error -->
+      {{expectNumber(person)}}
+      {{expectString(<error descr="Argument type  number  is not assignable to parameter type  string ">person</error>)}}
+    </div>
+    <div *appHelloConstrained="let person"> <!-- number --> <!-- todo missing assignment type error -->
+      {{expectNumber(person)}}
+      {{expectString(<error descr="Argument type  number  is not assignable to parameter type  string ">person</error>)}}
+    </div>
+    <ng-template <warning descr="appHelloConstrained requires value">appHelloConstrained</warning> let-person> <!-- number --> <!-- todo missing assignment type error -->
+      {{expectNumber(person)}}
+      {{expectString(<error descr="Argument type  number  is not assignable to parameter type  string ">person</error>)}}
+    </ng-template>
+    <ng-template <warning descr="[appHelloConstrained] requires value">[appHelloConstrained]</warning> let-person> <!-- number --> <!-- todo missing assignment type error -->
+      {{expectNumber(person)}}
+      {{expectString(<error descr="Argument type  number  is not assignable to parameter type  string ">person</error>)}}
+    </ng-template>
+    <ng-template [appHelloConstrained]="" let-person> <!-- number --> <!-- todo missing assignment type error -->
+      {{expectNumber(person) }}
+      {{expectString(<error descr="Argument type  number  is not assignable to parameter type  string ">person</error>)}}
+    </ng-template>
+  `,
+})
+export class TestComponent {
+  expectNumber(num: number): number {
+    return num;
+  }
+  expectString(str: string): string {
+    return str;
+  }
+}
+
+interface HelloContext<T> {
+  $implicit: T;
+  appHello: T;
+}
+
+interface HelloConstrainedContext<T> {
+  $implicit: T;
+  appHelloConstrained: T;
 }
