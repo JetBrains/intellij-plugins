@@ -102,6 +102,8 @@
                 implementation="com.intellij.dts.completion.DtsCompilerDirectiveCompletionContributor$AutoPopup"/>
 
         <typedHandler
+                implementation="com.intellij.dts.lang.resolve.DtsLabelReference$AutoPopup"/>
+        <typedHandler
                 implementation="com.intellij.dts.lang.resolve.DtsPathReference$AutoPopup"/>
 
         <completion.contributor

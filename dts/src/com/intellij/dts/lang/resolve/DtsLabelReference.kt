@@ -1,18 +1,35 @@
 package com.intellij.dts.lang.resolve
 
+import com.intellij.codeInsight.AutoPopupController
+import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.codeInsight.editorActions.TypedHandlerDelegate
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.dts.DtsIcons
 import com.intellij.dts.lang.DtsFile
 import com.intellij.dts.lang.psi.DtsNode
+import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.dts.lang.psi.getDtsPresentableText
 import com.intellij.dts.lang.stubs.DTS_NODE_LABEL_INDEX
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
+import com.intellij.psi.tree.TokenSet
+import com.intellij.psi.util.elementType
 import com.intellij.refactoring.suggested.startOffset
 import com.intellij.util.Processors
+
+private val refFollowSet = TokenSet.create(
+    TokenType.WHITE_SPACE,
+    DtsTypes.RANGL,         // end of cell array
+    DtsTypes.LBRACE,        // start of node
+    DtsTypes.LPAREN,        // start of expression
+    DtsTypes.SEMICOLON,     // property end
+    DtsTypes.COMMA,         // list delimiter
+)
 
 /**
  * Represents a reference to a label in a DTS file. If the reference is not used
@@ -42,6 +59,19 @@ class DtsLabelReference(
     private val label: String,
     private val value: Boolean,
 ) : PsiPolyVariantReferenceBase<PsiElement>(element, rangeInElement, false) {
+    class AutoPopup : TypedHandlerDelegate() {
+        override fun checkAutoPopup(c: Char, project: Project, editor: Editor, file: PsiFile): Result {
+            if (file !is DtsFile || c != '&') return Result.CONTINUE
+
+            val element = file.findElementAt(editor.caretModel.offset)
+            if (element.elementType in refFollowSet) {
+                AutoPopupController.getInstance(project).scheduleAutoPopup(editor, CompletionType.BASIC, null)
+            }
+
+            return Result.CONTINUE
+        }
+    }
+
     /**
      * Recursively collects all included files from the given PsiFile. Only
      * considers includes before the maxOffset. Can also deal with recursive

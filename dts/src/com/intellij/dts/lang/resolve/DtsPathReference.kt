@@ -17,6 +17,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.refactoring.suggested.startOffset
+import kotlin.math.max
 
 /**
  * Same as [DtsLabelReference] but for path references.
@@ -33,7 +34,7 @@ class DtsPathReference(
         override fun checkAutoPopup(c: Char, project: Project, editor: Editor, file: PsiFile): Result {
             if (file !is DtsFile || c != '/') return Result.CONTINUE
 
-            val element = file.findElementAt(editor.caretModel.offset - 1)
+            val element = file.findElementAt(max(editor.caretModel.offset - 1, 0))
             if (element?.parent is DtsPHandle) {
                 AutoPopupController.getInstance(project).scheduleAutoPopup(editor, CompletionType.BASIC, null)
             }
