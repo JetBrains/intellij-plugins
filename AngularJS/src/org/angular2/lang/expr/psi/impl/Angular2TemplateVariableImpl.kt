@@ -9,12 +9,11 @@ import com.intellij.lang.javascript.psi.impl.JSVariableImpl
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.stubs.JSVariableStub
 import com.intellij.lang.javascript.psi.types.JSAnyType
-import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
-import org.angular2.codeInsight.Angular2TypeScriptConfigCustomizer
+import org.angular2.codeInsight.config.isStrictTemplates
 import org.angular2.lang.expr.parser.Angular2StubElementTypes
 import org.angular2.lang.expr.psi.Angular2TemplateBinding
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
@@ -38,8 +37,7 @@ class Angular2TemplateVariableImpl : JSVariableImpl<JSVariableStub<in JSVariable
       propertyType = signature?.jsType
     }
     if (propertyType == null || propertyType is JSAnyType) {
-      val config = TypeScriptConfigUtil.getConfigForPsiFile(containingFile)
-      if (!Angular2TypeScriptConfigCustomizer.isStrictTemplates(config)) {
+      if (!isStrictTemplates(this)) {
         for (candidate in bindings.bindings) {
           if (candidate !== binding && !candidate.keyIsVar() && propertyName == candidate.key) {
             propertyType = JSResolveUtil.getExpressionJSType(candidate.expression)

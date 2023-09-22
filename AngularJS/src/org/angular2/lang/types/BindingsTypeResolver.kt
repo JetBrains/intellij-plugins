@@ -17,7 +17,6 @@ import com.intellij.lang.javascript.psi.types.evaluable.JSApplyCallType
 import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations
 import com.intellij.lang.javascript.psi.types.primitives.JSUndefinedType
 import com.intellij.lang.typescript.resolve.TypeScriptGenericTypesEvaluator
-import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -30,10 +29,10 @@ import com.intellij.util.SmartList
 import com.intellij.util.containers.MultiMap
 import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.Angular2LibrariesHacks.hackNgModelChangeType
-import org.angular2.codeInsight.Angular2TypeScriptConfigCustomizer
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder.Companion.NG_TEMPLATE_CONTEXT_GUARD
+import org.angular2.codeInsight.config.isStrictTemplates
 import org.angular2.entities.Angular2AliasedDirectiveProperty
 import org.angular2.entities.Angular2ComponentLocator.findComponentClass
 import org.angular2.entities.Angular2Directive
@@ -234,13 +233,10 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
         .distinctBy { it.first }
         .toMap()
 
-      val config = TypeScriptConfigUtil.getConfigForPsiFile(element.containingFile)
-      if (Angular2TypeScriptConfigCustomizer.isStrictTemplates(config)) {
-        return analyzeStrictTemplates(directives, element, inputsMap)
-      }
-      else {
-        return analyzeNonStrict(directives, element, inputsMap)
-      }
+      return if (isStrictTemplates(element))
+        analyzeStrictTemplates(directives, element, inputsMap)
+      else
+        analyzeNonStrict(directives, element, inputsMap)
     }
 
     private fun analyzeStrictTemplates(directives: List<Angular2Directive>,
