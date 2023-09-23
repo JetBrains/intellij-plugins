@@ -85,9 +85,10 @@
     <action id="Perforce.Toolbar.WorkspaceAction" class="org.jetbrains.idea.perforce.actions.PerforceWorkspaceComboBoxAction">
       <add-to-group group-id="SegmentedVcsActionsBarGroup" anchor="first"/>
     </action>
-    <action id="Perforce.Toolbar.PerforceToolbarWidgetAction" class="org.jetbrains.idea.perforce.actions.PerforceToolbarWidgetAction">
-      <add-to-group group-id="MainToolbarLeft"/>
-    </action>
+    <group id="MainToolbarPerforceVCSGroup">
+      <action id="Perforce.Toolbar.PerforceToolbarWidgetAction" class="org.jetbrains.idea.perforce.actions.PerforceToolbarWidgetAction"/>
+      <add-to-group group-id="MainToolbarLeft" relative-to-action="MainToolbarGeneralActionsGroup" anchor="before"/>
+    </group>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
