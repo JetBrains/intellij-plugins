@@ -8,7 +8,7 @@ import com.intellij.ide.actions.SendFeedbackAction;
 import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.application.ex.ApplicationInfoEx;
+import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
@@ -59,7 +59,7 @@ public class AnalysisServerFeedbackAction extends DumbAwareAction {
   }
 
   private void sendFeedback(@NotNull final Project project) {
-    final ApplicationInfoEx appInfo = ApplicationInfoEx.getInstanceEx();
+    final ApplicationInfo appInfo = ApplicationInfo.getInstance();
     final boolean isEAP = appInfo.isEAP();
     final String intellijBuild = isEAP ? appInfo.getBuild().asStringWithoutProductCode() : appInfo.getBuild().asString();
     final String sdkVersion = getSdkVersion(project);
