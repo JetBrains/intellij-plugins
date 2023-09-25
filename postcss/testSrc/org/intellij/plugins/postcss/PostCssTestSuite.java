@@ -7,6 +7,7 @@ import org.intellij.plugins.postcss.editor.PostCssCommenterTest;
 import org.intellij.plugins.postcss.editor.PostCssCopyrightTest;
 import org.intellij.plugins.postcss.editor.breadcrumbs.PostCssBreadcrumbsTest;
 import org.intellij.plugins.postcss.fileStructure.PostCssFileStructureTest;
+import org.intellij.plugins.postcss.formatter.PostCssFormatterTest;
 import org.intellij.plugins.postcss.inspections.*;
 import org.intellij.plugins.postcss.lexer.PostCssLexerTest;
 import org.intellij.plugins.postcss.lexer.highlighting.PostCssHighlightingLexerTest;
@@ -18,7 +19,7 @@ import org.intellij.plugins.postcss.resolve.PostCssSimpleVarsTest;
 import org.intellij.plugins.postcss.smartEnter.PostCssSmartEnterTest;
 import org.intellij.plugins.postcss.usages.PostCssFindUsagesTest;
 
-@SuppressWarnings({"JUnitTestClassNamingConvention"})
+@SuppressWarnings("JUnitTestClassNamingConvention")
 public final class PostCssTestSuite {
   public static Test suite() {
     TestSuite testSuite = new TestSuite("All PostCSS");
@@ -104,6 +105,7 @@ public final class PostCssTestSuite {
   public static final class Other {
     public static Test suite() {
       TestSuite suite = new TestSuite("Other PostCSS");
+      suite.addTestSuite(PostCssFormatterTest.class);
       suite.addTestSuite(PostCssBreadcrumbsTest.class);
       suite.addTestSuite(PostCssFileStructureTest.class);
       suite.addTestSuite(PostCssSmartEnterTest.class);

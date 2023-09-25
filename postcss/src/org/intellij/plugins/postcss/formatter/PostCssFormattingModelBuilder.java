@@ -8,6 +8,7 @@ import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.css.codeStyle.CssCodeStyleSettings;
 import com.intellij.psi.css.impl.util.editor.CssFormattingModelBuilder;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.intellij.plugins.postcss.PostCssElementTypes;
 import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
@@ -50,6 +51,16 @@ public class PostCssFormattingModelBuilder extends CssFormattingModelBuilder {
                                                 @Nullable Alignment alignment,
                                                 Alignment childAlignment) {
       return new PostCssPropertyBlock(_node, indent, extension, alignment, childAlignment);
+    }
+
+    @Override
+    public boolean isComment(IElementType elementType) {
+      return PostCssTokenTypes.POST_CSS_COMMENTS.contains(elementType);
+    }
+
+    @Override
+    public boolean isLineComment(IElementType elementType) {
+      return elementType == PostCssTokenTypes.POST_CSS_COMMENT || super.isLineComment(elementType);
     }
   }
 

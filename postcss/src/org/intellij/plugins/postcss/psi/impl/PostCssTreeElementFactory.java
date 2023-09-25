@@ -4,9 +4,15 @@ import com.intellij.psi.css.impl.CssTreeElementFactory;
 import com.intellij.psi.impl.source.tree.CompositeElement;
 import com.intellij.psi.tree.IElementType;
 import org.intellij.plugins.postcss.PostCssElementTypes;
+import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
 public class PostCssTreeElementFactory extends CssTreeElementFactory {
+
+  @Override
+  protected boolean isComment(IElementType type) {
+    return PostCssTokenTypes.POST_CSS_COMMENTS.contains(type);
+  }
 
   @Override
   @NotNull
