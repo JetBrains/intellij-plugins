@@ -315,6 +315,7 @@
     <variable name="arg" expression="" defaultValue="&quot;arg&quot;" alwaysStopAt="true"/>
     <context>
       <option name="JS_STATEMENT" value="true"/>
+      <option name="TS_STATEMENT" value="true"/>
       <option name="VUE_SCRIPT" value="true"/>
     </context>
   </template>
@@ -611,6 +612,7 @@
     <variable name="mixinName" expression="" defaultValue="&quot;mixinName&quot;" alwaysStopAt="true"/>
     <context>
       <option name="JS_STATEMENT" value="true"/>
+      <option name="TS_STATEMENT" value="true"/>
     </context>
   </template>
 

@@ -20,6 +20,7 @@
     "vc-direct": {
       "context": [
         "JS_STATEMENT",
+        "TS_STATEMENT",
         "VUE_SCRIPT"
       ]
     },
@@ -59,7 +60,8 @@
     },
     "vmixin": {
       "context": [
-        "JS_STATEMENT"
+        "JS_STATEMENT",
+        "TS_STATEMENT"
       ]
     },
     "vmixin-use": {
