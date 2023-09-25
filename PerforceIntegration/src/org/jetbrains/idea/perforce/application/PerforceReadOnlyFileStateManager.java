@@ -56,13 +56,22 @@ public final class PerforceReadOnlyFileStateManager {
   }
 
   public void addWritableFiles(VirtualFile root, Collection<VirtualFile> writableFiles, boolean withIgnored) {
-    Set<VirtualFile> writablesUnderRoot;
+    Set<VirtualFile> writablesUnderRoot = new HashSet<>();
+    boolean needInit = false;
     synchronized (myWritableFiles) {
+      // do not collect init files under lock
       if (!myWritableFiles.containsKey(root)) {
-        initializeWritableFiles(root);
+        needInit = true;
       }
 
-      writablesUnderRoot = new HashSet<>(myWritableFiles.get(root));
+      Set<VirtualFile> currentFilesUnderRoot = myWritableFiles.get(root);
+      if (currentFilesUnderRoot != null) {
+        writablesUnderRoot = new HashSet<>(currentFilesUnderRoot);
+      }
+    }
+
+    if (needInit) {
+      writablesUnderRoot = initializeWritableFiles(root);
     }
 
     for (VirtualFile vf : writablesUnderRoot) {
@@ -72,13 +81,18 @@ public final class PerforceReadOnlyFileStateManager {
     }
   }
 
-  private void initializeWritableFiles(VirtualFile root) {
+  private Set<VirtualFile> initializeWritableFiles(VirtualFile root) {
     Set<VirtualFile> newWritableFiles = new HashSet<>();
     myVcsManager.iterateVfUnderVcsRoot(root, vf -> {
       addFileIfWritable(newWritableFiles, vf);
       return true;
     });
-    myWritableFiles.put(root, newWritableFiles);
+    synchronized (myWritableFiles) {
+      if (!myWritableFiles.containsKey(root)) {
+        myWritableFiles.put(root, newWritableFiles);
+      }
+      return new HashSet<>(myWritableFiles.get(root));
+    }
   }
 
   private static void addFileIfWritable(Set<VirtualFile> collection, VirtualFile vf) {
