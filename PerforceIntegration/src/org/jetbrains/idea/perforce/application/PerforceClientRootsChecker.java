@@ -22,6 +22,7 @@ public class PerforceClientRootsChecker implements P4RootsInformation {
   private final Map<P4Connection, WrongRoots> myMap = new HashMap<>();
   private final MultiMap<P4Connection, VcsException> myErrors = new MultiMap<>();
   private final Map<P4Connection, PerforceAuthenticationException> myNotAuthorized = new HashMap<>();
+  private boolean myHasNoConnections = false;
 
   public PerforceClientRootsChecker() {}
 
@@ -30,6 +31,7 @@ public class PerforceClientRootsChecker implements P4RootsInformation {
       LOG.info("Null root: " + new LinkedHashMap<>(map));
     }
 
+    myHasNoConnections = map.isEmpty();
     final MultiMap<P4Connection, VirtualFile> inverse = invertConnectionMap(map);
     for (P4Connection connection : inverse.keySet()) {
       final Collection<VirtualFile> roots = inverse.get(connection);
@@ -136,6 +138,9 @@ public class PerforceClientRootsChecker implements P4RootsInformation {
   public Map<P4Connection, WrongRoots> getMap() {
     return myMap;
   }
+
+  @Override
+  public boolean hasNoConnections() { return myHasNoConnections; }
 
   // needed only for reporting
   public static class WrongRoots {

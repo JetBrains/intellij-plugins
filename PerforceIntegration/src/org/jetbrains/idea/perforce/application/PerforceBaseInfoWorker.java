@@ -218,7 +218,7 @@ public final class PerforceBaseInfoWorker {
 
   public P4RootsInformation getCheckerResults() {
     synchronized (myInfoLock) {
-      return new P4RootsInformationHolder(myChecker.getErrors(), myChecker.getMap(), myChecker.getNotAuthorized());
+      return new P4RootsInformationHolder(myChecker.getErrors(), myChecker.getMap(), myChecker.getNotAuthorized(), myChecker.hasNoConnections());
     }
   }
 }

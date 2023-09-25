@@ -125,6 +125,9 @@ public class P4ConfigConnectionDiagnoseDialog extends DialogWrapper {
               new BaseNode(PerforceBundle.message("connection.env", envP4Config), NodeType.info));
     }
 
+    if (myChecker.hasNoConnections()) {
+      addNode(myRoot, new ErrorNode(PerforceBundle.message("connection.no.valid.connections.short")));
+    }
     // common errors
     addGenericErrors(myRoot, defaultParameters);
     if (containNoConfigs) {

@@ -130,11 +130,14 @@ public final class PerforceConnectionProblemsNotifier extends GenericNotifierImp
   }
 
   public static void showSingleConnectionState(Project project, final P4RootsInformation checkerResults) {
-    if (! checkerResults.hasAnyErrors() && ! checkerResults.hasNotAuthorized()) {
+    if (!checkerResults.hasAnyErrors() && !checkerResults.hasNotAuthorized() && !checkerResults.hasNoConnections()) {
       Messages.showMessageDialog(project, PerforceBundle.message("connection.successful"), PerforceBundle.message("connection.state.title"), Messages.getInformationIcon());
     } else {
       final @Nls StringBuilder sb = new StringBuilder(PerforceBundle.message("connection.problems.message")).append(NEW_LINE_CHAR);
       final MultiMap<P4Connection, VcsException> errors = checkerResults.getErrors();
+      if (checkerResults.hasNoConnections()) {
+        sb.append(PerforceBundle.message("connection.no.valid.connections")).append(NEW_LINE_CHAR);
+      }
       for (VcsException exception : errors.values()) {
         sb.append(exception.getMessage()).append(NEW_LINE_CHAR);
       }

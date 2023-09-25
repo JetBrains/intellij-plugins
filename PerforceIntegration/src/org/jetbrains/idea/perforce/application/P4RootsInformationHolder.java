@@ -9,16 +9,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class P4RootsInformationHolder implements P4RootsInformation {
+  private final boolean myHasNoConnections;
   private final MultiMap<P4Connection, VcsException> myExceptions;
   private final Map<P4Connection, PerforceClientRootsChecker.WrongRoots> myWrongRootsMap;
   private final Map<P4Connection, PerforceAuthenticationException> myNotAuthorized;
 
   public P4RootsInformationHolder(MultiMap<P4Connection, VcsException> exceptions,
-                                  Map<P4Connection, PerforceClientRootsChecker.WrongRoots> wrongRootsMap, Map<P4Connection, PerforceAuthenticationException> notAuthorized) {
+                                  Map<P4Connection, PerforceClientRootsChecker.WrongRoots> wrongRootsMap,
+                                  Map<P4Connection, PerforceAuthenticationException> notAuthorized,
+                                  boolean hasNoConnections) {
     myNotAuthorized = notAuthorized;
     myExceptions = new MultiMap<>();
     myExceptions.putAllValues(exceptions);
     myWrongRootsMap = new HashMap<>(wrongRootsMap);
+    myHasNoConnections = hasNoConnections;
   }
 
   @Override
@@ -35,6 +39,9 @@ public class P4RootsInformationHolder implements P4RootsInformation {
   public boolean hasNotAuthorized() {
     return ! myNotAuthorized.isEmpty();
   }
+
+  @Override
+  public boolean hasNoConnections() { return myHasNoConnections; }
 
   @Override
   public Map<P4Connection, PerforceClientRootsChecker.WrongRoots> getMap() {
