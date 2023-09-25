@@ -205,7 +205,7 @@ fun <T : PsiElement> resolveElementTo(element: PsiElement?, vararg classes: KCla
             // Try extract reference name from type
             ?: JSPsiImplUtils.getInitializerReference(cur)?.let { JSStubBasedPsiTreeUtil.resolveLocally(it, cur) }
             // Most expensive solution through substitution, works with function calls
-            ?: (cur as? JSTypeOwner)?.jsType?.substitute()?.sourceElement
+            ?: getFromType(cur)
           )?.let { queue.addLast(it) }
         }
         is PsiPolyVariantReference -> cur.multiResolve(false)
@@ -235,6 +235,17 @@ fun <T : PsiElement> resolveElementTo(element: PsiElement?, vararg classes: KCla
     }
   }
   return null
+}
+
+private fun getFromType(cur: PsiElement?): PsiElement? {
+  val jsType = (cur as? JSTypeOwner)?.jsType?.substitute() ?: return null
+  val sourceElement = jsType.sourceElement
+  return when {
+    jsType is JSFunctionType -> sourceElement
+    jsType is JSFreshObjectLiteralType -> sourceElement
+    sourceElement is ES6ImportCall -> sourceElement
+    else -> null
+  }
 }
 
 fun collectMembers(element: JSObjectLiteralExpression, includeComputed: Boolean = false): List<Pair<String, JSElement>> {
