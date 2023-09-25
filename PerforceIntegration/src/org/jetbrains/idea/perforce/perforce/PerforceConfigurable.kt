@@ -12,6 +12,7 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.vcs.ProjectLevelVcsManager
 import com.intellij.openapi.vcs.VcsException
+import com.intellij.openapi.vcs.ex.ProjectLevelVcsManagerEx
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.components.JBCheckBox
@@ -179,6 +180,7 @@ private class PerforceConfigPanel(private val myProject: Project, private val my
 
     onApply {
       myP4EnvHelper.reset()
+      ProjectLevelVcsManagerEx.getInstanceEx(myProject).scheduleMappedRootsUpdate()
       updateLabels()
     }
   }
