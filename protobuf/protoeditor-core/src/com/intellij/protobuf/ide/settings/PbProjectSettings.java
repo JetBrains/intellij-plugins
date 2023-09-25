@@ -239,7 +239,7 @@ public final class PbProjectSettings implements PersistentStateComponent<PbProje
     public boolean includeContentRoots = true;
     public boolean includeProtoDirectories = true;
 
-    public boolean indexBasedResolveEnabled = true;
+    public boolean indexBasedResolveEnabled = false;
     public List<ImportPathEntry> importPathEntries = new SmartList<>();
     @NlsSafe
     public String descriptorPath = "";
