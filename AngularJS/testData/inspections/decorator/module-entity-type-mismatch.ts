@@ -101,6 +101,9 @@ class Module1 {
         Component1,
         Directive1,
         Pipe1,
+        <error descr="Component ComponentStandalone is standalone, and cannot be declared in an Angular module. Did you mean to import it instead?" textAttributesKey="ERRORS_ATTRIBUTES">ComponentStandalone</error>, // move
+        <error descr="Directive DirectiveStandalone is standalone, and cannot be declared in an Angular module. Did you mean to import it instead?" textAttributesKey="ERRORS_ATTRIBUTES">DirectiveStandalone</error>, // move
+        <error descr="Pipe PipeStandalone is standalone, and cannot be declared in an Angular module. Did you mean to import it instead?" textAttributesKey="ERRORS_ATTRIBUTES">PipeStandalone</error>, // move
     ],
     exports: [
         Component2,

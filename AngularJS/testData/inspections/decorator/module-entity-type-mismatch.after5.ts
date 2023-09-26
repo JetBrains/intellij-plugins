@@ -13,9 +13,7 @@ class Component2 {
 class Component3 {
 }
 
-@Directive({
-    standalone: true
-})
+@Directive({})
 class Directive1 {
 }
 
@@ -97,14 +95,15 @@ class Module1 {
 
 @NgModule({
     imports: [
-        Module1
+        Module1,
+        DirectiveStandalone
     ],
     declarations: [
         Component1,
         Directive1,
         Pipe1,
         ComponentStandalone, // move
-        DirectiveStandalone, // move
+        // move
         PipeStandalone, // move
     ],
     exports: [

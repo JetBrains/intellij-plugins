@@ -92,6 +92,21 @@ class Angular2DecoratorInspectionsTest : Angular2CodeInsightFixtureTestCase() {
            "module-entity-type-mismatch.ts")
   }
 
+  fun testModuleEntityTypeMismatch4() {
+    doTest(4, "Com<caret>ponentStandalone, // move", "Import ComponentStandalone instead", AngularInvalidImportedOrDeclaredSymbolInspection::class.java,
+           "module-entity-type-mismatch.ts")
+  }
+
+  fun testModuleEntityTypeMismatch5() {
+    doTest(5, "Dir<caret>ectiveStandalone, // move", "Import DirectiveStandalone instead", AngularInvalidImportedOrDeclaredSymbolInspection::class.java,
+           "module-entity-type-mismatch.ts")
+  }
+
+  fun testModuleEntityTypeMismatch6() {
+    doTest(6, "Pi<caret>peStandalone, // move", "Import PipeStandalone instead", AngularInvalidImportedOrDeclaredSymbolInspection::class.java,
+           "module-entity-type-mismatch.ts")
+  }
+
   fun testRecursiveImportExport() {
     doTest(AngularRecursiveModuleImportExportInspection::class.java,
            "recursive-import-export.a.ts", "recursive-import-export.b.ts")

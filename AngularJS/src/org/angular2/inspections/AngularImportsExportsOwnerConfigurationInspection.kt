@@ -23,6 +23,7 @@ import org.angular2.Angular2DecoratorUtil.isAngularEntityDecorator
 import org.angular2.entities.*
 import org.angular2.inspections.Angular2SourceEntityListValidator.ValidationResults
 import org.angular2.inspections.quickfixes.ConvertToStandaloneQuickFix
+import org.angular2.inspections.quickfixes.MoveDeclarationOfStandaloneToImportsQuickFix
 import org.angular2.lang.Angular2Bundle
 
 abstract class AngularImportsExportsOwnerConfigurationInspection protected constructor(private val myProblemType: ProblemType) : LocalInspectionTool() {
@@ -48,8 +49,11 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
 
     override fun processAcceptableEntity(entity: Angular2Declaration) {
       if (entity.isStandalone) {
-        registerProblem(ProblemType.ENTITY_WITH_MISMATCHED_TYPE,
-                        Angular2Bundle.message("angular.inspection.wrong-entity-type.message.standalone-declarable", entity.label))
+        registerProblem(
+          ProblemType.ENTITY_WITH_MISMATCHED_TYPE,
+          Angular2Bundle.message("angular.inspection.wrong-entity-type.message.standalone-declarable", entity.label),
+          MoveDeclarationOfStandaloneToImportsQuickFix(entity.className)
+        )
       }
     }
 

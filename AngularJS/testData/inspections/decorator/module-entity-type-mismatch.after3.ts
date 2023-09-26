@@ -103,6 +103,9 @@ class Module1 {
         Component1,
         Directive1,
         Pipe1,
+        ComponentStandalone, // move
+        DirectiveStandalone, // move
+        PipeStandalone, // move
     ],
     exports: [
         Component2,
