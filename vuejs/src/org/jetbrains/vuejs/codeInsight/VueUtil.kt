@@ -291,7 +291,7 @@ fun processJSTypeMembers(type: JSType?): List<Pair<String, JSElement>> =
 
 fun getPropTypeFromPropOptions(expression: JSExpression?): JSType? =
   when (expression) {
-    is JSArrayLiteralExpression -> JSCompositeTypeImpl.getCommonType(
+    is JSArrayLiteralExpression -> JSCompositeTypeFactory.getCommonType(
       expression.expressions.map { getPropTypeFromConstructor(it) },
       JSTypeSource.EXPLICITLY_DECLARED, false
     )

@@ -168,7 +168,10 @@ class VueUnwrapRefType private constructor(private val typeToUnwrap: JSType, sou
     transformTypeHierarchy(object : JSCacheableTypeTransformerBase() {
       override fun `fun`(type: JSType): JSType {
         var result = type.unwrapAliases()
-          .let { JSCompositeTypeImpl.optimizeTypeIfComposite(it, JSUnionOrIntersectionType.OptimizedKind.OPTIMIZED_SIMPLE) }
+          .let {
+            JSCompositeTypeFactory.optimizeTypeIfComposite(it,
+                                                                                                                     JSUnionOrIntersectionType.OptimizedKind.OPTIMIZED_SIMPLE)
+          }
         // Expand only generics with "Unwrap" in the type name
         if (result is JSGenericTypeImpl
             && result.type
@@ -176,7 +179,10 @@ class VueUnwrapRefType private constructor(private val typeToUnwrap: JSType, sou
               ?.getTypeText(JSType.TypeTextFormat.SIMPLE)
               ?.contains("Unwrap") == true) {
           result = result.substitute()
-            .let { JSCompositeTypeImpl.optimizeTypeIfComposite(it, JSUnionOrIntersectionType.OptimizedKind.OPTIMIZED_SIMPLE) }
+            .let {
+              JSCompositeTypeFactory.optimizeTypeIfComposite(it,
+                                                                                                                       JSUnionOrIntersectionType.OptimizedKind.OPTIMIZED_SIMPLE)
+            }
         }
         // In JS context `unknown` doesn't work properly in conditionals,
         // so we need to ensure that we are not left with huge list of expanded conditionals,

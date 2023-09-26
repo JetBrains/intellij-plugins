@@ -48,7 +48,7 @@ object Angular2TypeUtils {
     return if (result.isEmpty()) {
       null
     }
-    else JSCompositeTypeImpl.getCommonType(result, type.source, false)
+    else JSCompositeTypeFactory.getCommonType(result, type.source, false)
   }
 
   fun getTemplateBindingsContextType(bindings: Angular2TemplateBindings): JSType? {

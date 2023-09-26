@@ -456,7 +456,8 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
 
     private fun merge(source: JSTypeSource, types: List<JSType?>, union: Boolean): JSType {
       val type = if (union) createUnionType(source, types) else createIntersectionType(types, source)
-      return JSCompositeTypeImpl.optimizeTypeIfComposite(type, OptimizedKind.OPTIMIZED_SIMPLE)
+      return JSCompositeTypeFactory.optimizeTypeIfComposite(type,
+                                                                                                                      OptimizedKind.OPTIMIZED_SIMPLE)
     }
 
     private fun getTypeSource(element: PsiElement,
