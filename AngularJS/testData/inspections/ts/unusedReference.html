@@ -5,11 +5,11 @@
 {{ refUsedLocally }}
 <div ref-anotherRefUsed></div>
 {{ anotherRefUsed }}
-<div #<warning descr="Unused variable notUsedRef">notUsedRef</warning>></div>
-<div ref-<warning descr="Unused variable anotherNotUsedRef">anotherNotUsedRef</warning>></div>
+<div #<warning descr="Unused constant notUsedRef" textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES">notUsedRef</warning>></div>
+<div ref-<warning descr="Unused constant anotherNotUsedRef" textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES">anotherNotUsedRef</warning>></div>
 
-<div #<warning descr="Unused variable notUsedRefWithAttr">notUsedRefWithAttr</warning>='fooo'></div>
-<div ref-<warning descr="Unused variable anotherNotUsedRefWithAttr">anotherNotUsedRefWithAttr</warning>='fooo'></div>
+<div #<warning descr="Unused constant notUsedRefWithAttr" textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES">notUsedRefWithAttr</warning>='fooo'></div>
+<div ref-<warning descr="Unused constant anotherNotUsedRefWithAttr" textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES">anotherNotUsedRefWithAttr</warning>='fooo'></div>
 
 <div *ngIf="true"> First <a #innerRef/> </div>
-<div *ngIf="true"> Second <a #<warning descr="Unused variable innerRef">innerRef</warning>/> </div>
+<div *ngIf="true"> Second <a #<warning descr="Unused constant innerRef" textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES">innerRef</warning>/> </div>

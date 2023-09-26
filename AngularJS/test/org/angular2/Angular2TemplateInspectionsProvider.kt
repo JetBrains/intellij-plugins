@@ -6,6 +6,7 @@ import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.htmlInspections.*
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedAttributeInspection
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedTagInspection
+import com.intellij.lang.javascript.inspections.JSConstantReassignmentInspection
 import com.intellij.lang.javascript.inspections.JSUnresolvedReferenceInspection
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection
@@ -44,6 +45,7 @@ class Angular2TemplateInspectionsProvider(private val strict: Boolean = false) :
       JSUnusedLocalSymbolsInspection::class.java,
       JSUnresolvedReferenceInspection::class.java,
       JSValidateTypesInspection::class.java,
+      JSConstantReassignmentInspection::class.java,
       // HTML
       HtmlUnknownAttributeInspection::class.java,
       HtmlUnknownTagInspection::class.java,

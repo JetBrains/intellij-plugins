@@ -47,6 +47,14 @@ class Angular2HtmlAttrVariableImpl : JSVariableImpl<JSVariableStub<JSVariable>, 
     return true
   }
 
+  override fun isConst(): Boolean {
+    return true
+  }
+
+  override fun hasInitializer(): Boolean {
+    return true
+  }
+
   override fun getUseScope(): SearchScope {
     return when (kind) {
       Angular2HtmlAttrVariable.Kind.REFERENCE -> Angular2ReferenceType.getUseScope(this)

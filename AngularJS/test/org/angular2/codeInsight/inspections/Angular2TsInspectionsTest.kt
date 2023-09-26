@@ -55,7 +55,13 @@ class Angular2TsInspectionsTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.checkHighlighting()
     for (attrToRemove in mutableListOf("notUsedRef", "anotherNotUsedRef", "notUsedRefWithAttr", "anotherNotUsedRefWithAttr")) {
       myFixture.moveToOffsetBySignature("<caret>$attrToRemove")
-      myFixture.launchAction(myFixture.findSingleIntention("Remove unused variable '$attrToRemove'"))
+      myFixture.launchAction(
+        try {
+          myFixture.findSingleIntention("Remove unused variable '$attrToRemove'")
+        }
+        catch (e: AssertionError) {
+          myFixture.findSingleIntention("Remove unused constant '$attrToRemove'")
+        })
     }
     myFixture.checkResultByFile("unusedReference.after.html")
   }

@@ -88,6 +88,8 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
   fun testDivUnderButton() = checkHighlighting(ANGULAR_MATERIAL_16_0_0_NEXT_6, dir = true)
 
+  fun testReadOnlyTemplateVariables() = checkHighlighting(ANGULAR_CORE_16_0_0_NEXT_4, ANGULAR_COMMON_16_0_0_NEXT_4, extension = "ts")
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())

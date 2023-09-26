@@ -60,6 +60,14 @@ class Angular2TemplateVariableImpl : JSVariableImpl<JSVariableStub<in JSVariable
     return true
   }
 
+  override fun isConst(): Boolean {
+    return true
+  }
+
+  override fun hasInitializer(): Boolean {
+    return true
+  }
+
   override fun calcAccessType(): JSAttributeList.AccessType {
     return JSAttributeList.AccessType.PUBLIC
   }
