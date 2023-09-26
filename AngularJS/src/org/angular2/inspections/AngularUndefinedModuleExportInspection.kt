@@ -2,4 +2,4 @@
 package org.angular2.inspections
 
 class AngularUndefinedModuleExportInspection
-  : AngularModuleConfigurationInspection(ProblemType.UNDECLARED_EXPORT)
+  : AngularImportsExportsOwnerConfigurationInspection(ProblemType.UNDECLARED_EXPORT)

@@ -20,6 +20,7 @@ import org.angular2.entities.Angular2EntityUtils
 import org.angular2.entities.Angular2EntityUtils.renderEntityList
 import org.angular2.entities.Angular2FrameworkHandler
 import org.angular2.entities.source.Angular2SourceModule
+import org.angular2.inspections.quickfixes.ConvertToStandaloneQuickFix
 import org.angular2.lang.Angular2Bundle
 
 class AngularMissingOrInvalidDeclarationInModuleInspection : LocalInspectionTool() {
@@ -42,13 +43,16 @@ class AngularMissingOrInvalidDeclarationInModuleInspection : LocalInspectionTool
             }
             val classIdentifier = getClassForDecoratorElement(decorator)?.nameIdentifier ?: decorator
             if (modules.isEmpty()) {
+              val className = Angular2EntityUtils.getEntityClassName(decorator)
               holder.registerProblem(classIdentifier,
                                      Angular2Bundle.message("angular.inspection.invalid-declaration-in-module.message.not-declared",
-                                                            Angular2EntityUtils.getEntityClassName(decorator)),
+                                                            className),
                                      if (allSourceDeclarationsResolved(decorator.project))
                                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                                      else
-                                       ProblemHighlightType.WEAK_WARNING)
+                                       ProblemHighlightType.WEAK_WARNING,
+                                     ConvertToStandaloneQuickFix(className)
+              )
             }
             else if (modules.size > 1) {
               holder.registerProblem(classIdentifier,

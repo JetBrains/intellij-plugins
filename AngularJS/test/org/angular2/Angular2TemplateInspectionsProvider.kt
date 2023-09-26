@@ -35,6 +35,7 @@ class Angular2TemplateInspectionsProvider(private val strict: Boolean = false) :
       AngularUndefinedTagInspection::class.java,
       AngularAmbiguousComponentTagInspection::class.java,
       AngularNgOptimizedImageInspection::class.java,
+      AngularNonStandaloneComponentImportsInspection::class.java,
       // TS
       TypeScriptUnresolvedReferenceInspection::class.java,
       TypeScriptValidateTypesInspection::class.java,

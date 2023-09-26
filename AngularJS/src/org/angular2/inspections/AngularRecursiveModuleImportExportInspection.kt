@@ -2,4 +2,4 @@
 package org.angular2.inspections
 
 class AngularRecursiveModuleImportExportInspection
-  : AngularModuleConfigurationInspection(ProblemType.RECURSIVE_IMPORT_EXPORT)
+  : AngularImportsExportsOwnerConfigurationInspection(ProblemType.RECURSIVE_IMPORT_EXPORT)

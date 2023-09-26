@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.NlsSafe
 import org.angular2.lang.Angular2Bundle
+import org.jetbrains.annotations.Nls
 
 interface Angular2Entity : Angular2Element {
 
@@ -18,6 +19,15 @@ interface Angular2Entity : Angular2Element {
   val decorator: ES6Decorator?
 
   val typeScriptClass: TypeScriptClass?
+
+  val label: @Nls String get() =
+    Angular2Bundle.message(when(this) {
+      is Angular2Module -> "angular.entity.module"
+      is Angular2Component -> "angular.entity.component"
+      is Angular2Directive -> "angular.entity.directive"
+      is Angular2Pipe -> "angular.entity.pipe"
+      else -> throw IllegalStateException(this.javaClass.name)
+    }) + " " + className
 
   override fun createPointer(): Pointer<out Angular2Entity>
 }

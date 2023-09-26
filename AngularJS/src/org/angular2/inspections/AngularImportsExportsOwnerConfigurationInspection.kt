@@ -12,18 +12,20 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.SmartList
+import com.intellij.util.asSafely
 import com.intellij.util.containers.Stack
+import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
 import org.angular2.Angular2DecoratorUtil.DECLARATIONS_PROP
 import org.angular2.Angular2DecoratorUtil.EXPORTS_PROP
 import org.angular2.Angular2DecoratorUtil.IMPORTS_PROP
 import org.angular2.Angular2DecoratorUtil.MODULE_DEC
 import org.angular2.Angular2DecoratorUtil.isAngularEntityDecorator
 import org.angular2.entities.*
-import org.angular2.entities.Angular2EntityUtils.forEachModule
 import org.angular2.inspections.Angular2SourceEntityListValidator.ValidationResults
+import org.angular2.inspections.quickfixes.ConvertToStandaloneQuickFix
 import org.angular2.lang.Angular2Bundle
 
-abstract class AngularModuleConfigurationInspection protected constructor(private val myProblemType: ProblemType) : LocalInspectionTool() {
+abstract class AngularImportsExportsOwnerConfigurationInspection protected constructor(private val myProblemType: ProblemType) : LocalInspectionTool() {
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
     return object : JSElementVisitor() {
@@ -45,10 +47,9 @@ abstract class AngularModuleConfigurationInspection protected constructor(privat
     decorator, results, Angular2Declaration::class.java, DECLARATIONS_PROP) {
 
     override fun processAcceptableEntity(entity: Angular2Declaration) {
-      val aClass = entity.typeScriptClass
-      if (entity.isStandalone && aClass != null) {
+      if (entity.isStandalone) {
         registerProblem(ProblemType.ENTITY_WITH_MISMATCHED_TYPE,
-                        Angular2Bundle.message("angular.inspection.wrong-entity-type.message.standalone-declarable", aClass.name!!))
+                        Angular2Bundle.message("angular.inspection.wrong-entity-type.message.standalone-declarable", entity.label))
       }
     }
 
@@ -58,21 +59,21 @@ abstract class AngularModuleConfigurationInspection protected constructor(privat
     }
   }
 
-  private abstract class ImportExportValidator<T : Angular2Entity>
-  protected constructor(decorator: ES6Decorator,
-                        results: ValidationResults<ProblemType>,
-                        entityClass: Class<T>,
-                        propertyName: String,
-                        protected val module: Angular2Module)
-    : Angular2SourceEntityListValidator<T, ProblemType>(decorator, results, entityClass, propertyName) {
+  private abstract class ImportExportValidator<T : Angular2Entity> protected constructor(
+    decorator: ES6Decorator,
+    results: ValidationResults<ProblemType>,
+    entityClass: Class<T>,
+    propertyName: String,
+    protected val importsOwner: Angular2ImportsOwner
+  ) : Angular2SourceEntityListValidator<T, ProblemType>(decorator, results, entityClass, propertyName) {
 
-    protected fun checkCyclicDependencies(module: Angular2Module) {
-      val cycleTrack = Stack<Angular2Module>()
-      val processedModules = HashSet<Angular2Module>()
-      val dfsStack = Stack<MutableList<Angular2Module>>()
+    protected fun checkCyclicDependencies(owner: Angular2ImportsOwner) {
+      val cycleTrack = Stack<Angular2ImportsOwner>()
+      val processedContainers = HashSet<Angular2ImportsOwner>()
+      val dfsStack = Stack<MutableList<Angular2ImportsOwner>>()
 
-      cycleTrack.push(this.module)
-      dfsStack.push(SmartList(module))
+      cycleTrack.push(this.importsOwner)
+      dfsStack.push(SmartList(owner))
       while (!dfsStack.isEmpty()) {
         val curNode = dfsStack.peek()
         if (curNode.isEmpty()) {
@@ -81,20 +82,21 @@ abstract class AngularModuleConfigurationInspection protected constructor(privat
         }
         else {
           val toProcess = curNode.removeAt(curNode.size - 1)
-          if (toProcess === this.module) {
-            cycleTrack.push(this.module)
+          if (toProcess === this.importsOwner) {
+            cycleTrack.push(this.importsOwner)
             registerProblem(ProblemType.RECURSIVE_IMPORT_EXPORT, Angular2Bundle.message(
               "angular.inspection.cyclic-module-dependency.message.cycle",
               cycleTrack.joinToString(
-                " " + Angular2Bundle.message("angular.inspection.cyclic-module-dependency.message.separator") + " ") { it.getName() }
+                " " + Angular2Bundle.message("angular.inspection.cyclic-module-dependency.message.separator") + " ") { it.className }
             ))
             return
           }
-          if (processedModules.add(toProcess)) {
+          if (processedContainers.add(toProcess)) {
             cycleTrack.push(toProcess)
-            val dependencies = ArrayList<Angular2Module>()
-            forEachModule(toProcess.exports) { dependencies.add(it) }
-            forEachModule(toProcess.imports) { dependencies.add(it) }
+            val dependencies = ArrayList<Angular2ImportsOwner>()
+            toProcess.asSafely<Angular2Module>()
+              ?.exports?.filterIsInstance<Angular2ImportsOwner>()?.forEach { dependencies.add(it) }
+            toProcess.imports.filterIsInstance<Angular2ImportsOwner>().forEach { dependencies.add(it) }
             dfsStack.push(dependencies)
           }
         }
@@ -104,32 +106,29 @@ abstract class AngularModuleConfigurationInspection protected constructor(privat
 
   private class ImportsValidator(decorator: ES6Decorator,
                                  results: ValidationResults<ProblemType>,
-                                 module: Angular2Module)
-    : ImportExportValidator<Angular2Entity>(decorator, results, Angular2Entity::class.java, IMPORTS_PROP, module) {
+                                 importsOwner: Angular2ImportsOwner)
+    : ImportExportValidator<Angular2Entity>(decorator, results, Angular2Entity::class.java, IMPORTS_PROP, importsOwner) {
 
     override fun processNonAcceptableEntityClass(aClass: JSClass) {
-      reportMismatchedType(aClass)
+      registerProblem(ProblemType.ENTITY_WITH_MISMATCHED_TYPE,
+                      Angular2Bundle.message("angular.inspection.wrong-entity-type.message.not-importable", aClass.name!!))
     }
 
     override fun processAcceptableEntity(entity: Angular2Entity) {
-      if (entity == module) {
+      if (entity == importsOwner) {
         registerProblem(ProblemType.RECURSIVE_IMPORT_EXPORT,
-                        Angular2Bundle.message("angular.inspection.cyclic-module-dependency.message.self-import", entity.getName()))
+                        Angular2Bundle.message("angular.inspection.cyclic-module-dependency.message.self-import", entity.label))
       }
-      else if (entity is Angular2Module) {
-        checkCyclicDependencies(entity)
+      else if (entity is Angular2Module || (entity is Angular2Component && entity.isStandalone)) {
+        checkCyclicDependencies(entity as Angular2ImportsOwner)
       }
       else if (!Angular2EntityUtils.isImportableEntity(entity)) {
-        val aClass = entity.typeScriptClass
-        if (aClass != null) {
-          reportMismatchedType(aClass)
-        }
+        registerProblem(
+          ProblemType.ENTITY_WITH_MISMATCHED_TYPE,
+          Angular2Bundle.message("angular.inspection.wrong-entity-type.message.not-standalone", entity.label),
+          ConvertToStandaloneQuickFix(entity.className)
+        )
       }
-    }
-
-    private fun reportMismatchedType(aClass: JSClass) {
-      registerProblem(ProblemType.ENTITY_WITH_MISMATCHED_TYPE,
-                      Angular2Bundle.message("angular.inspection.wrong-entity-type.message.not-importable", aClass.name!!))
     }
   }
 
@@ -141,7 +140,7 @@ abstract class AngularModuleConfigurationInspection protected constructor(privat
     override fun processNonAcceptableEntityClass(aClass: JSClass) {
       registerProblem(ProblemType.ENTITY_WITH_MISMATCHED_TYPE,
                       Angular2Bundle.message("angular.inspection.wrong-entity-type.message.not-entity", aClass.name!!),
-                      if (module.isScopeFullyResolved)
+                      if (importsOwner.isScopeFullyResolved)
                         ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                       else
                         ProblemHighlightType.WEAK_WARNING)
@@ -149,21 +148,21 @@ abstract class AngularModuleConfigurationInspection protected constructor(privat
 
     override fun processAcceptableEntity(entity: Angular2Entity) {
       if (entity is Angular2Module) {
-        if (entity == module) {
+        if (entity == importsOwner) {
           registerProblem(ProblemType.RECURSIVE_IMPORT_EXPORT,
-                          Angular2Bundle.message("angular.inspection.cyclic-module-dependency.message.self-export", entity.getName()))
+                          Angular2Bundle.message("angular.inspection.cyclic-module-dependency.message.self-export", entity.label))
         }
         else {
           checkCyclicDependencies(entity)
         }
       }
       else if (entity is Angular2Declaration) {
-        if (!module.declarationsInScope.contains(entity)) {
+        if (!importsOwner.declarationsInScope.contains(entity)) {
           registerProblem(ProblemType.UNDECLARED_EXPORT,
                           Angular2Bundle.message("angular.inspection.undefined-export.message",
                                                  entity.typeScriptClass?.name ?: entity.getName(),
-                                                 module.getName()),
-                          if (module.isScopeFullyResolved)
+                                                 importsOwner.getName()),
+                          if (importsOwner.isScopeFullyResolved)
                             ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                           else
                             ProblemHighlightType.WEAK_WARNING
@@ -179,7 +178,7 @@ abstract class AngularModuleConfigurationInspection protected constructor(privat
   companion object {
 
     private fun getValidationResults(decorator: ES6Decorator): ValidationResults<ProblemType> {
-      return if (isAngularEntityDecorator(decorator, MODULE_DEC))
+      return if (isAngularEntityDecorator(decorator, MODULE_DEC, COMPONENT_DEC))
         CachedValuesManager.getCachedValue(decorator) {
           CachedValueProvider.Result.create(
             validate(decorator),
@@ -190,12 +189,13 @@ abstract class AngularModuleConfigurationInspection protected constructor(privat
     }
 
     private fun validate(decorator: ES6Decorator): ValidationResults<ProblemType> {
-      val module = Angular2EntitiesProvider.getModule(decorator) ?: return ValidationResults.empty()
+      val importsOwner = Angular2EntitiesProvider.getEntity(decorator).asSafely<Angular2ImportsOwner>()
+                         ?: return ValidationResults.empty()
       val results = ValidationResults<ProblemType>()
 
-      for (validator in listOf(ImportsValidator(decorator, results, module),
-                               DeclarationsValidator(decorator, results),
-                               ExportsValidator(decorator, results, module))) {
+      for (validator in listOfNotNull(ImportsValidator(decorator, results, importsOwner),
+                                      DeclarationsValidator(decorator, results),
+                                      importsOwner.asSafely<Angular2Module>()?.let { ExportsValidator(decorator, results, it) })) {
         validator.validate()
       }
       return results

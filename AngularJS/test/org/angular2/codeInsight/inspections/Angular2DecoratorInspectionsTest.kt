@@ -48,7 +48,7 @@ class Angular2DecoratorInspectionsTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testDeclarationMembershipInModule2() {
-    doTest(AngularMissingOrInvalidDeclarationInModuleInspection::class.java,
+    doTest(1, "Com<caret>ponent2", "Make Component2 standalone", AngularMissingOrInvalidDeclarationInModuleInspection::class.java,
            "declaration-membership-in-module.2a.ts", "declaration-membership-in-module.2b.ts")
   }
 
@@ -59,6 +59,36 @@ class Angular2DecoratorInspectionsTest : Angular2CodeInsightFixtureTestCase() {
 
   fun testModuleEntityTypeMismatch() {
     doTest(AngularInvalidImportedOrDeclaredSymbolInspection::class.java,
+           "module-entity-type-mismatch.ts")
+  }
+
+  fun testModuleEntityTypeMismatch1a() {
+    doTest(1, "Com<caret>ponent1, //import a", "Make Component1 standalone", AngularInvalidImportedOrDeclaredSymbolInspection::class.java,
+           "module-entity-type-mismatch.ts")
+  }
+
+  fun testModuleEntityTypeMismatch1b() {
+    doTest(1, "Com<caret>ponent1, //import b", "Make Component1 standalone", AngularInvalidImportedOrDeclaredSymbolInspection::class.java,
+           "module-entity-type-mismatch.ts")
+  }
+
+  fun testModuleEntityTypeMismatch2a() {
+    doTest(2, "Dir<caret>ective1, //import a", "Make Directive1 standalone", AngularInvalidImportedOrDeclaredSymbolInspection::class.java,
+           "module-entity-type-mismatch.ts")
+  }
+
+  fun testModuleEntityTypeMismatch2b() {
+    doTest(2, "Dir<caret>ective1, //import b", "Make Directive1 standalone", AngularInvalidImportedOrDeclaredSymbolInspection::class.java,
+           "module-entity-type-mismatch.ts")
+  }
+
+  fun testModuleEntityTypeMismatch3a() {
+    doTest(3, "Pi<caret>pe1, //import a", "Make Pipe1 standalone", AngularInvalidImportedOrDeclaredSymbolInspection::class.java,
+           "module-entity-type-mismatch.ts")
+  }
+
+  fun testModuleEntityTypeMismatch3b() {
+    doTest(3, "Pi<caret>pe1, //import b", "Make Pipe1 standalone", AngularInvalidImportedOrDeclaredSymbolInspection::class.java,
            "module-entity-type-mismatch.ts")
   }
 
@@ -83,6 +113,11 @@ class Angular2DecoratorInspectionsTest : Angular2CodeInsightFixtureTestCase() {
            "not-module-same-line-other-file.b.ts")
   }
 
+  fun testImportsInNonStandaloneComponent() {
+    doTest(1, "impo<caret>rts: [", "Make Component standalone", AngularNonStandaloneComponentImportsInspection::class.java,
+           "non-standalone-component-imports-inspections.ts")
+  }
+
   fun testInspectionsNonAngular() {
     myFixture.enableInspections(AngularIncorrectTemplateDefinitionInspection::class.java,
                                 AngularInvalidSelectorInspection::class.java,
@@ -91,6 +126,7 @@ class Angular2DecoratorInspectionsTest : Angular2CodeInsightFixtureTestCase() {
                                 AngularRecursiveModuleImportExportInspection::class.java,
                                 AngularUndefinedModuleExportInspection::class.java,
                                 AngularInvalidEntryComponentInspection::class.java,
+                                AngularNonStandaloneComponentImportsInspection::class.java,
                                 AngularInvalidImportedOrDeclaredSymbolInspection::class.java)
     myFixture.configureByFiles("non-angular.a.ts", "non-angular.b.ts", "package.json")
     myFixture.checkHighlighting()

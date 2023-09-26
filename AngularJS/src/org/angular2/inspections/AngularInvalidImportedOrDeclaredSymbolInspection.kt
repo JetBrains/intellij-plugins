@@ -2,4 +2,4 @@
 package org.angular2.inspections
 
 class AngularInvalidImportedOrDeclaredSymbolInspection
-  : AngularModuleConfigurationInspection(ProblemType.ENTITY_WITH_MISMATCHED_TYPE)
+  : AngularImportsExportsOwnerConfigurationInspection(ProblemType.ENTITY_WITH_MISMATCHED_TYPE)
