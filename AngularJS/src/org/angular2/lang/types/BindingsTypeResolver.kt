@@ -4,6 +4,7 @@ package org.angular2.lang.types
 import com.intellij.lang.javascript.evaluation.JSExpressionTypeFactory
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameter
 import com.intellij.lang.javascript.psi.resolve.JSGenericMappings
 import com.intellij.lang.javascript.psi.resolve.JSGenericTypesEvaluatorBase
 import com.intellij.lang.javascript.psi.resolve.generic.JSTypeSubstitutorImpl
@@ -60,7 +61,8 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
     val directives = provider.matched.filter { declarationsScope.contains(it) }
     analysisResult = when {
       directives.isEmpty() -> AnalysisResult.EMPTY
-      isStrictTemplates(element) -> analyzeStrictTemplates(directives, element, inputWeightProvider(), plainAttributesProvider(), inputExpressionsProvider())
+      isStrictTemplates(element) -> analyzeStrictTemplates(
+        directives, element, inputWeightProvider(), plainAttributesProvider(), inputExpressionsProvider())
       else -> analyzeNonStrict(directives, element, inputExpressionsProvider())
     }
   }
@@ -142,6 +144,10 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
     // substitutor is null in strictTemplates, substitution happens earlier
     return JSTypeUtils.applyGenericArguments(analysisResult?.templateContextType, analysisResult?.mergedSubstitutor)
   }
+
+  fun substituteType(directive: Angular2Directive?, jsType: JSType?): JSType? =
+    JSTypeUtils.applyGenericArguments(jsType, analysisResult?.substitutors?.get(directive)
+                                              ?: analysisResult?.mergedSubstitutor)
 
   fun substituteTypeForDocumentation(directive: Angular2Directive?, jsType: JSType?): JSType? =
     JSTypeUtils.applyGenericArguments(jsType, analysisResult?.strictSubstitutors?.get(directive)
@@ -307,13 +313,15 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
         val genericConstructorReturnType = cls.possiblyGenericJsType
         val typeSubstitutor: JSTypeSubstitutor
         if (genericConstructorReturnType is JSGenericTypeImpl) {
+          val clsTypeParams = cls.typeParameters
           typeSubstitutor = calculateDirectiveTypeSubstitutor(
-            classTypeSource, directiveInputs.sortedBy { it.weight }, element, elementTypeSource)
+            classTypeSource, clsTypeParams, directiveInputs.sortedBy { it.weight }, element, elementTypeSource)
 
           strictSubstitutors[directive] = typeSubstitutor
           substitutors[directive] = JSTypeSubstitutorImpl(typeSubstitutor).also {
-            cls.typeParameters.forEach { typeParameter ->
-              if (!it.containsId(typeParameter.genericId)) {
+            clsTypeParams.forEach { typeParameter ->
+              if (it.get(typeParameter.genericId) is JSUnknownType
+                  || !it.containsId(typeParameter.genericId)) {
                 it.put(typeParameter.genericId, JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS))
               }
             }
@@ -350,21 +358,22 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
     }
 
     private fun calculateDirectiveTypeSubstitutor(classTypeSource: JSTypeSource,
+                                                  clsTypeParams: Array<TypeScriptTypeParameter>,
                                                   directiveInputs: List<DirectiveInput>,
                                                   element: PsiElement,
                                                   elementTypeSource: JSTypeSource): JSTypeSubstitutor {
-      // conceptually: const Directive = (...) => {...}, it misses the type arguments <...> part, so we patch that later
-      val directiveFactoryType = JSFunctionTypeImpl(
+      val directiveFactoryType = TypeScriptJSFunctionTypeImpl(
         classTypeSource,
+        TypeScriptGenericTypesEvaluator.buildGenericParameterDeclarations(clsTypeParams),
         directiveInputs.map { (expectedType) -> JSParameterTypeDecoratorImpl(expectedType, false, false, true) },
-        null // can pass null because we currently don't use JSApplyCallType anyway
+        null, null,
       )
 
       val directiveFactoryCall = WebJSSyntheticFunctionCall(element, directiveInputs.size) { typeFactory ->
         directiveInputs.map { (_, isBindingPresent, bindingExpression, attrValue) ->
           when (bindingExpression) {
             null -> when {
-              attrValue != null -> JSStringLiteralTypeImpl(attrValue, true, JSTypeSource.EXPLICITLY_DECLARED)
+              attrValue != null -> JSStringLiteralTypeImpl(attrValue, true, elementTypeSource)
               isBindingPresent -> JSUndefinedType(elementTypeSource)
               else -> JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS)
             }
@@ -374,8 +383,6 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
         }
       }
 
-      // JSApplyCallType accepting TypeScriptJSFunctionTypeImpl would be the cleanest solution,
-      // but we use base JSFunctionTypeImpl that doesn't contain List<TypeScriptGenericDeclarationTypeImpl>
       return TypeScriptGenericTypesEvaluator.getInstance()
         .getTypeSubstitutorForCallItem(directiveFactoryType, directiveFactoryCall, null)
     }

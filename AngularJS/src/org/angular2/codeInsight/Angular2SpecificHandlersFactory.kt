@@ -2,20 +2,21 @@
 package org.angular2.codeInsight
 
 import com.intellij.codeInsight.controlflow.ControlFlow
+import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.JavaScriptSpecificHandlersFactory
 import com.intellij.lang.javascript.ecmascript6.TypeScriptQualifiedItemProcessor
 import com.intellij.lang.javascript.findUsages.JSDialectSpecificReadWriteAccessDetector
-import com.intellij.lang.javascript.psi.JSControlFlowScope
-import com.intellij.lang.javascript.psi.JSElement
-import com.intellij.lang.javascript.psi.JSFile
+import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.*
 import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeGuard
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.typescript.resolve.TypeScriptTypeHelper
+import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiPolyVariantReference
 import com.intellij.psi.impl.source.resolve.ResolveCache.PolyVariantResolver
@@ -23,6 +24,7 @@ import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder
 import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver
 import org.angular2.entities.Angular2ComponentLocator
 import org.angular2.findUsages.Angular2ReadWriteAccessDetector
+import org.angular2.lang.types.Angular2AdditionalTypeInspectionVisitor
 
 class Angular2SpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
   override fun createReferenceExpressionResolver(
@@ -70,6 +72,11 @@ class Angular2SpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
     return TypeScriptTypeHelper.getInstance()
   }
 
+  override fun newExpectedTypeEvaluator(parent: PsiElement,
+                                        expectedTypeKind: JSExpectedTypeKind): ExpectedTypeEvaluator {
+    return TypeScriptExpectedTypeEvaluator(parent, expectedTypeKind)
+  }
+
   override fun getExportScope(element: PsiElement): JSElement? =
     if (element is PsiFile)
       null
@@ -84,5 +91,12 @@ class Angular2SpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
              JSStubBasedPsiTreeUtil.resolveLocally(referenceName, it, false)
            }
   }
+
+  override fun createAdditionalTypeInspectionVisitor(holder: ProblemsHolder): PsiElementVisitor =
+    Angular2AdditionalTypeInspectionVisitor(holder)
+
+  override fun strictNullChecks(context: PsiElement): Boolean =
+    TypeScriptConfigUtil.getConfigForPsiFile(context.getContainingFile())?.strictNullChecks()
+    ?: false
 
 }

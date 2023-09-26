@@ -2,6 +2,7 @@
 package org.angular2.lang.html.psi.impl
 
 import com.intellij.lang.ASTNode
+import com.intellij.lang.Language
 import com.intellij.lang.javascript.presentable.JSFormatUtil
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
@@ -12,6 +13,7 @@ import com.intellij.psi.*
 import com.intellij.psi.search.*
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.IncorrectOperationException
+import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.html.psi.Angular2HtmlAttrVariable
 import org.angular2.lang.html.psi.Angular2HtmlReference
 import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes
@@ -31,6 +33,10 @@ class Angular2HtmlAttrVariableImpl : JSVariableImpl<JSVariableStub<JSVariable>, 
       Angular2HtmlAttrVariable.Kind.REFERENCE -> Angular2ReferenceType(this)
       Angular2HtmlAttrVariable.Kind.LET -> Angular2LetType(this)
     }
+  }
+
+  override fun getLanguage(): Language {
+    return Angular2Language.INSTANCE
   }
 
   override fun isLocal(): Boolean {

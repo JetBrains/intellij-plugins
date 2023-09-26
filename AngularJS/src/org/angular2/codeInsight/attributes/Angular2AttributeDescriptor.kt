@@ -41,19 +41,6 @@ class Angular2AttributeDescriptor(info: WebSymbolHtmlAttributeInfo, tag: XmlTag?
 
   val info: Angular2AttributeNameParser.AttributeInfo = Angular2AttributeNameParser.parse(name, tag)
 
-  override fun validateValue(context: XmlElement?, value: String?): String? {
-    val isOneTimeBinding = symbol.unwrapMatchedSymbols()
-      .any { it.kind == Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS }
-    if (value != null && context != null && isOneTimeBinding && isStrictTemplates(context)) {
-      val valueType = JSStringLiteralTypeImpl(value, false, JSTypeSource.EXPLICITLY_DECLARED)
-      val symbolType = symbol.jsType
-      JSTypeChecker.getErrorMessageIfTypeNotAssignableToType(context, symbolType, valueType, Angular2Language.INSTANCE.optionHolder,
-                                                             "javascript.type.is.not.assignable.to.type")
-        ?.let { return it }
-    }
-    return super.validateValue(context, value)
-  }
-
   private val bindingInfoProvider by lazy(LazyThreadSafetyMode.PUBLICATION) { Angular2DescriptorSymbolsProvider(this.symbol) }
 
   companion object {
