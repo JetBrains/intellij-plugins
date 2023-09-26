@@ -52,6 +52,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -65,7 +66,7 @@ public abstract class AbstractP4Connection implements P4Connection {
   public static final int TIMEOUT_EXIT_CODE = -2;
   public static final String CONNECT_REFUSED = "Connect to server failed";
   private volatile boolean myNotConnected = false;
-  private static Map<String, String> ourTestEnvironment = Collections.emptyMap();
+  private static Map<String, String> ourTestEnvironment = new HashMap<>();
   private static Consumer<? super String> ourCommandCallback = EmptyConsumer.getInstance();
 
   @Override
@@ -234,7 +235,7 @@ public abstract class AbstractP4Connection implements P4Connection {
       return;
     }
 
-    ourTestEnvironment = env;
+    ourTestEnvironment = new HashMap<>(env);
     Disposer.register(parentDisposable, new Disposable() {
       @Override
       public void dispose() {
