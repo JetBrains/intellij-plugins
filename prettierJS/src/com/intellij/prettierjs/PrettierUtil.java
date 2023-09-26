@@ -135,7 +135,7 @@ public final class PrettierUtil {
     return JSLinterConfigFileUtil.findDistinctConfigInContentRoots(project, CONFIG_FILE_NAMES_WITH_PACKAGE_JSON, file -> {
       if (PackageJsonUtil.isPackageJsonFile(file)) {
         PackageJsonData data = PackageJsonData.getOrCreate(file);
-        return data.isDependencyOfAnyType(PACKAGE_NAME) || data.getTopLevelProperties().contains(CONFIG_SECTION_NAME);
+        return data.getTopLevelProperties().contains(CONFIG_SECTION_NAME);
       }
       return true;
     });
