@@ -109,7 +109,7 @@ class VueRefAttributeImpl : XmlStubBasedAttributeBase<VueRefAttributeStubImpl>, 
     override fun isEquivalentTo(another: PsiElement?): Boolean =
       when (another) {
         is VueRefDeclarationImpl -> equals(another)
-        is TypeScriptMergedTypeImplicitElement -> equals(another.explicitElement)
+        is JSImplicitElement -> equals(another.parent)
         else -> false
       }
 

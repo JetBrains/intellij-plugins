@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext
 import com.intellij.lang.javascript.psi.JSTypeTextBuilder
-import com.intellij.lang.javascript.psi.stubs.TypeScriptMergedTypeImplicitElement
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.psi.PsiNamedElement
 import com.intellij.util.ProcessingContext
@@ -39,8 +39,8 @@ class VueSourcePropType private constructor(typeSource: JSTypeSource, private va
 
     return when (element) {
       is JSProperty -> getPropTypeFromPropOptions(element.value)
-      is TypeScriptMergedTypeImplicitElement ->
-        getPropTypeFromGenericType(element.jsType) ?: getPropTypeFromPropOptions((element.explicitElement as? JSProperty)?.value)
+      is JSImplicitElement ->
+        getPropTypeFromGenericType(element.jsType) ?: getPropTypeFromPropOptions((element.parent as? JSProperty)?.value)
       else -> null
     }
   }

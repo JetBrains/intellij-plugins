@@ -277,17 +277,20 @@ fun collectMembers(element: JSObjectLiteralExpression, includeComputed: Boolean 
   return result
 }
 
-fun processJSTypeMembers(type: JSType?): List<Pair<String, JSElement>> =
-  type?.asRecordType()
-    ?.properties
-    ?.filter { it.hasValidName() }
-    ?.flatMap { prop ->
-      QualifiedItemProcessor
-        .getElementsForTypeMember(prop, null, false)
-        .filterIsInstance<JSElement>()
-        .map { Pair(prop.memberName, it) }
-    }
-  ?: emptyList()
+fun processJSTypeMembers(type: JSType?): List<Pair<String, JSElement>> {
+  val jsRecordType = type?.asRecordType()
+  val isSimpleRecordWithDefinedSource = jsRecordType is JSSimpleRecordTypeImpl && jsRecordType.sourceElement != null
+  return jsRecordType
+           ?.properties
+           ?.filter { it.hasValidName() }
+           ?.flatMap { prop ->
+             QualifiedItemProcessor
+               .getElementsForTypeMember(prop, null, !isSimpleRecordWithDefinedSource)
+               .filterIsInstance<JSElement>()
+               .map { Pair(prop.memberName, it) }
+           }
+         ?: emptyList()
+}
 
 fun getPropTypeFromPropOptions(expression: JSExpression?): JSType? =
   when (expression) {

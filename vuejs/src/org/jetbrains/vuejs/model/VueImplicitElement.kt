@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
-import com.intellij.lang.javascript.psi.stubs.TypeScriptMergedTypeImplicitElement
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.ElementManipulators
@@ -48,7 +47,7 @@ class VueImplicitElement(name: String, jsType: JSType?, provider: PsiElement, ki
   override fun isEquivalentTo(another: PsiElement?): Boolean =
     when (another) {
       is VueImplicitElement -> equals(another)
-      is TypeScriptMergedTypeImplicitElement -> equals(another.explicitElement)
+      is JSImplicitElement -> equals(another.parent)
       else -> equivalentToProvider && this.myProvider!! == another
     }
 

@@ -1387,7 +1387,7 @@ const props = {seeMe: {}}
     val target = reference!!.resolve()
     TestCase.assertNotNull(target)
     TestCase.assertEquals("options.d.ts", target!!.containingFile.name)
-    TestCase.assertTrue(target.parent is TypeScriptPropertySignature)
+    TestCase.assertTrue(target is TypeScriptPropertySignature)
   }
 
   fun testResolveElementUiComponent() {
