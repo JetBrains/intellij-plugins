@@ -1,5 +1,6 @@
 package com.jetbrains.lang.makefile.toolWindow
 
+import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -13,13 +14,13 @@ class MakefileCellRenderer(private val project: Project) : ColoredTreeCellRender
   override fun customizeCellRenderer(tree: JTree, value: Any, selected: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean) {
     value as MakefileTreeNode
     icon = value.icon
-    if (value is MakefileTargetNode && value.target.isSpecialTarget) {
+    if (value is MakefileTargetNode && ReadAction.compute<Boolean, Exception> { value.target.isSpecialTarget }) {
       append(value.name, SimpleTextAttributes.REGULAR_ITALIC_ATTRIBUTES)
     }
     else {
       append(value.name)
       if (value is MakefileFileNode && !project.isDisposed) {
-        val file = value.psiFile.containingDirectory?.virtualFile ?: return
+        val file = ReadAction.compute<VirtualFile, Exception> { value.psiFile.containingDirectory?.virtualFile } ?: return
         if (rootDir != null) {
           val relativePath = VfsUtilCore.getRelativePath(file, rootDir) ?: file.path
           if (relativePath.isBlank()) {
