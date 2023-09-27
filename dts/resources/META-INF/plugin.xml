@@ -52,6 +52,8 @@
                 implementation="com.intellij.dts.documentation.DtsDocumentationProvider"/>
         <platform.backend.documentation.psiTargetProvider
                 implementation="com.intellij.dts.documentation.DtsDocumentationProvider"/>
+        <platform.backend.documentation.symbolTargetProvider
+                implementation="com.intellij.dts.documentation.DtsDocumentationSymbol$Provider"/>
 
         <!-- syntax highlighting -->
         <lang.syntaxHighlighterFactory
@@ -108,7 +110,7 @@
 
         <completion.contributor
                 language="DTS"
-                implementationClass="com.intellij.dts.completion.DtsPropertyNameCompletionContributor"/>
+                implementationClass="com.intellij.dts.completion.DtsPropertyCompletionContributor"/>
 
         <!-- inspections -->
         <localInspection

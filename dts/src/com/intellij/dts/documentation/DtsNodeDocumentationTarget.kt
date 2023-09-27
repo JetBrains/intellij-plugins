@@ -1,10 +1,10 @@
 package com.intellij.dts.documentation
 
-import com.intellij.dts.zephyr.DtsZephyrBindingProvider
 import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.psi.getDtsPresentableText
 import com.intellij.dts.util.DtsHtmlChunk
 import com.intellij.dts.util.DtsTreeUtil
+import com.intellij.dts.zephyr.DtsZephyrBindingProvider
 import com.intellij.lang.documentation.DocumentationMarkup
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.text.HtmlChunk
@@ -51,20 +51,22 @@ class DtsNodeDocumentationTarget(private val node: DtsNode) : DocumentationTarge
         val binding = DtsZephyrBindingProvider.bindingFor(node, fallbackToDefault = false) ?: return
 
         // write: [Child of] compatible: <<compatible>>
-        html.definition(
-            HtmlChunk.fragment(
-                if (binding.isChild) {
-                    DtsHtmlChunk.bundle("documentation.compatible_child")
-                } else {
-                    DtsHtmlChunk.bundle("documentation.compatible")
-                },
-                HtmlChunk.text(": "),
-            ).bold(),
-            DtsHtmlChunk.string(binding.compatible),
-        )
+        binding.compatible?.let { compatible ->
+            html.definition(
+                HtmlChunk.fragment(
+                    if (binding.isChild) {
+                        DtsHtmlChunk.bundle("documentation.compatible_child")
+                    } else {
+                        DtsHtmlChunk.bundle("documentation.compatible")
+                    },
+                    HtmlChunk.text(": "),
+                ).bold(),
+                DtsHtmlChunk.string(compatible),
+            )
+        }
 
-        binding.description?.let {
-            html.content(DtsHtmlChunk.binding(node.project, it))
+        binding.description?.let { description ->
+            html.content(DtsHtmlChunk.binding(node.project, description))
         }
     }
 

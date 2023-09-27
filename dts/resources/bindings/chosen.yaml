@@ -1,0 +1,33 @@
+description: |
+    The chosen node does not represent a real device in the system but describes 
+    parameters chosen or specified by the system firmware at run time. It shall 
+    be a child of the root node. For example:
+    
+    chosen {
+        bootargs = "root=/dev/nfs rw nfsroot=192.168.1.1 ...";
+    };
+
+properties:
+    bootargs:
+        type: string
+        description: |
+            A string that specifies the boot arguments for the client program. 
+            The value could potentially be a null string if no boot arguments 
+            are required.
+
+    stdout-path:
+        type: string
+        description: |
+            A string that specifies the full path to the node representing the 
+            device to be used for boot console output. If the character ":" is 
+            present in the value it terminates the path. The value may be an 
+            alias. If the stdin-path property is not specified, stdout-path 
+            should be assumed to define the input device.
+
+    stdin-path:
+        type: string
+        description: |
+            A string that specifies the full path to the node representing the 
+            device to be used for boot console input. If the character ":" is 
+            present in the value it terminates the path. The value may be an 
+            alias.

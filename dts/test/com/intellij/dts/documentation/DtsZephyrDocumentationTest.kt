@@ -1,11 +1,7 @@
 package com.intellij.dts.documentation
 
-import com.intellij.dts.DtsTestBase
-import com.intellij.lang.documentation.ide.IdeDocumentationTargetProvider
-import com.intellij.platform.backend.documentation.impl.computeDocumentationBlocking
-
-class DtsZephyrDocumentationTest : DtsTestBase() {
-    override fun getBasePath(): String = "documentation"
+class DtsZephyrDocumentationTest : DtsDocumentationTest() {
+    override fun getBasePath(): String = "documentation/zephyr"
 
     override fun setUp() {
         super.setUp()
@@ -31,25 +27,4 @@ class DtsZephyrDocumentationTest : DtsTestBase() {
     fun `test node default`() = doTest()
 
     fun `test dts code`() = doTest()
-
-    private fun doTest() {
-        val content = getTestFixture("overlay")
-        val fixture = getTestFixture("html")
-
-        myFixture.configureByText("esp32.overlay", content)
-
-        val documentations = IdeDocumentationTargetProvider
-            .getInstance(project)
-            .documentationTargets(myFixture.editor, myFixture.file, myFixture.caretOffset - 1)
-            .mapNotNull { computeDocumentationBlocking(it.createPointer())?.html }
-
-        assertOneElement(documentations)
-        assertEquals(formatHtml(fixture), formatHtml(documentations.first()))
-    }
-
-    private fun formatHtml(text: String): String {
-        return text
-            .replace(Regex("\\s*\\n\\s*"), "")
-            .replace(Regex("(<[^>]+>(?=\\s*<))"), "$0\n")
-    }
 }

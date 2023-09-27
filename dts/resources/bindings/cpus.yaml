@@ -1,0 +1,360 @@
+description: |
+    A cpus node is required for all devicetrees. It does not represent a real 
+    device in the system, but acts as a container for child cpu nodes which 
+    represent the systems CPUs.
+    
+    The cpus node may contain properties that are common across cpu nodes. 
+    
+    Here is an example of a cpus node with one child cpu node:
+     
+    cpus {
+        #address-cells = <1>; 
+        #size-cells = <0>; 
+        cpu@0 {
+            device_type = "cpu";
+            reg = <0>;
+            d-cache-block-size = <32>; 
+            i-cache-block-size = <32>; 
+            d-cache-size = <0x8000>;
+            i-cache-size = <0x8000>;
+            timebase-frequency = <82500000>;
+            clock-frequency = <825000000>;
+        }; 
+    };
+
+properties:
+    "#address-cells":
+        required: true
+        type: int
+        description: |
+            The value specifies how many cells each element of the reg property 
+            array takes in children of this node.
+            
+    "#size-cells":
+        required: true
+        type: int
+        const: 0
+        description: |
+            Value shall be 0. Specifies that no size is required in the reg 
+            property in children of this node.
+
+child-binding:
+    description: |
+        A cpu node represents a hardware execution block that is sufficiently 
+        independent that it is capable of running an operating system without 
+        interfering with other CPUs possibly running other operating systems.
+        
+        Hardware threads that share an MMU would generally be represented under 
+        one cpu node. If other more complex CPU topographies are designed, the 
+        binding for the CPU must describe the topography (e.g. threads that 
+        don't share an MMU).
+        
+        CPUs and threads are numbered through a unified number-space that should 
+        match as closely as possible the interrupt controller's numbering of 
+        CPUs/threads.
+        
+        Properties that have identical values across cpu nodes may be placed in 
+        the cpus node instead. A client program must first examine a specific 
+        cpu node, but if an expected property is not found then it should look 
+        at the parent cpus node. This results in a less verbose representation 
+        of properties which are identical across all CPUs.
+        
+        The node name for every CPU node should be cpu.
+
+    properties:
+        device_type:
+            required: true
+            type: string
+            const: "cpu"
+            description: |
+                Value shall be "cpu".
+                
+        reg:
+            required: true
+            type: array
+            description: |
+                The value of reg defines a unique CPU/thread id for the 
+                CPU/threads represented by the CPU node.
+                
+                If a CPU supports more than one thread (i.e. multiple streams 
+                of execution) the reg property is an array with 1 element per 
+                thread. The #address-cells on the cpus node specifies how many 
+                cells each element of the array takes. Software can determine 
+                the number of threads by dividing the size of reg by the parent 
+                node's #address-cells.
+                
+                If a CPU/thread can be the target of an external interrupt the 
+                reg property value must be a unique CPU/thread id that is 
+                addressable by the interrupt controller.
+                
+                If a CPU/thread cannot be the target of an external interrupt, 
+                then reg must be unique and out of bounds of the range addressed 
+                by the interrupt controller.
+                
+                If a CPU/thread's PIR (pending interrupt register) is 
+                modifiable, a client program should modify PIR to match the reg 
+                property value. If PIR cannot be modified and the PIR value is 
+                distinct from the interrupt controller number space, the CPUs 
+                binding may define a binding- specific representation of PIR 
+                values if desired.
+
+        clock-frequency:
+            type: array
+            description: |
+                !!html
+                Specifies the clock speed of the CPU in Hertz, if that is  
+                constant. The value is in one of two forms:
+                <ul>
+                    <li>
+                    A 32-bit integer represented as a &lt;u32&gt; specifying the  
+                    frequency.
+                    </li>
+                    <li>
+                    A 64-bit integer represented as a &lt;u64&gt; specifying the 
+                    frequency.
+                    </li>
+                </ul>
+
+        timebase-frequency:
+            type: array
+            description: |
+                !!html
+                Specifies the current frequency at which the timebase and 
+                decrementer registers are updated (in Hertz). The value is in 
+                one of two forms:
+                <ul>
+                    <li>
+                    A 32-bit integer represented as a &lt;u32&gt; specifying the 
+                    frequency.
+                    </li>
+                    <li>
+                    A 64-bit integer represented as a &lt;u64&gt; specifying the 
+                    frequency.
+                    </li>
+                </ul>
+                
+        status:
+            type: string
+            description: |
+                !!html
+                A standard property describing the state of a CPU. This property 
+                shall be present for nodes representing CPUs in a symmetric 
+                multiprocessing (SMP) configuration. For a CPU node the meaning 
+                of the "okay", "disabled" and "fail" values are as follows:
+                <ul>
+                    <li>
+                    <b>"okay"</b>: The CPU is running.
+                    </li>
+                    <li>
+                    <b>"disabled"</b>: The CPU is in a quiescent state.
+                    </li>
+                    <li>
+                    <b>"fail"</b>: The CPU is not operational or does not exist.
+                    </li>
+                <ul>
+                
+                A quiescent CPU is in a state where it can- not interfere with 
+                the normal operation of other CPUs, nor can its state be 
+                affected by the normal operation of other running CPUs, except 
+                by an explicit method for enabling or reenabling the quiescent 
+                CPU (see the enable-method property).
+                
+                In particular, a running CPU shall be able to issue broadcast 
+                TLB invalidates without affect- ing a quiescent CPU.
+                
+                Examples: A quiescent CPU could be in a spin loop, held in 
+                reset, and electrically isolated from the system bus or in 
+                another implementation dependent state.
+                
+                A CPU with "fail" status does not affect the system in any way. 
+                The status is assigned to nodes for which no corresponding CPU 
+                exists.
+
+        enable-method:
+            type: string-array
+            description: |
+                !!html
+                Describes the method by which a CPU in a disabled state is 
+                enabled. This property is required for CPUs with a status 
+                property with a value of "disabled". The value consists of one 
+                or more strings that define the method to release this CPU. If 
+                a client program recognizes any of the methods, it may use it. 
+                The value shall be one of the following: 
+                <ul>
+                    <li>
+                    <b>"spin-table"</b>: The CPU is enabled with the spin table 
+                    method defined in the DTSpec.
+                    </li>
+                    <li>
+                    <b>"[vendor],[method]"</b>: Implementation dependent string 
+                    that describes the method by which a CPU is released from a 
+                    "disabled" state. The required format is: 
+                    "[vendor], [method]", where vendor is a string describing 
+                    the name of the manufacturer and method is a string 
+                    describing the vendor specific mechanism.
+                    <br>
+                    Example: "fsl,MPC8572DS"
+                    </li>
+                </ul>
+
+        cpu-release-addr:
+            type: array
+            description: |
+                The cpu-release-addr property is required for cpu nodes that 
+                have an enable-method property value of "spin-table". The value 
+                specifies the physical address of a spin table entry that 
+                releases a secondary CPU from its spin loop.
+
+        power-isa-version:
+            type: string
+            description: |
+                A string that specifies the numerical portion of the Power ISA 
+                version string. For example, for an implementation complying 
+                with Power ISA Version 2.06, the value of this property would be 
+                "2.06".
+                
+        # power-isa-* - cannot be represented in zephyr binding
+
+        cache-op-block-size:
+            type: int
+            description: |
+                Specifies the block size in bytes upon which cache block 
+                instructions operate (e.g. dcbz). Required if different than 
+                the L1 cache block size.
+
+        reservation-granule-siz:
+            type: int
+            description: |
+                Specifies the reservation granule size sup- ported by this 
+                processor in bytes.
+                
+        tlb-split:
+            type: boolean
+            description: |
+                If present specifies that the TLB has a split configuration, 
+                with separate TLBs for instructions and data. If absent, 
+                specifies that the TLB has a unified configuration. Required for 
+                a CPU with a TLB in a split configuration.
+                
+        tbl-size:
+            type: int
+            description: |
+                Specifies the number of entries in the TLB. Required for a CPU 
+                with a unified TLB for instruction and data addresses.
+                
+        tlb-sets:
+            type: int
+            description: |
+                Specifies the number of associativity sets in the TLB. Required 
+                for a CPU with a unified TLB for instruction and data addresses.
+
+        d-tlb-size:
+            type: int
+            description: |
+                Specifies the number of entries in the data TLB. Required for a 
+                CPU with a split TLB configuration.
+                
+        d-tlb-sets:
+            type: int
+            description: |
+                Specifies the number of associativity sets in the data TLB. 
+                Required for a CPU with a split TLB configuration.
+                
+        i-tlb-size:
+            type: int
+            description: |
+                Specifies the number of entries in the instruction TLB. Required
+                for a CPU with a split TLB configuration.
+                
+        i-tlb-sets:
+            type: int
+            description: |
+                Specifies the number of associativity sets in the instruction 
+                TLB. Required for a CPU with a split TLB configuration.
+                
+        cache-unified:
+            type: boolean
+            description: |
+                If present, specifies the cache has a unified organization. If 
+                not present, specifies that the cache has a Harvard architecture
+                with separate caches for instructions and data.
+                
+        cache-size:
+            type: int
+            description: |
+                Specifies the size in bytes of a unified cache. Required if the 
+                cache is unified (combined instructions and data).
+                
+        cache-sets:
+            type: int
+            description: |
+                Specifies the number of associativity sets in a unified cache. 
+                Required if the cache is unified (combined instructions and data)
+                
+        cache-block-size:
+            type: int
+            description: |
+                Specifies the block size in bytes of a unified cache. Required 
+                if the processor has a unified cache (combined instructions and 
+                data)
+                
+        cache-line-size:
+            type: int
+            description: |
+                Specifies the line size in bytes of a unified cache, if 
+                different than the cache block size Required if the processor 
+                has a unified cache (combined instructions and data).
+                
+        i-cache-size:
+            type: int
+            description: |
+                Specifies the size in bytes of the instruction cache. Required 
+                if the cpu has a separate cache for instructions.
+                
+        i-cache-sets:
+            type: int
+            description: |
+                Specifies the number of associativity sets in the instruction 
+                cache. Required if the cpu has a separate cache for instructions.
+                
+        i-cache-block-size:
+            type: int
+            description: |
+                Specifies the block size in bytes of the instruction cache. 
+                Required if the cpu has a separate cache for instructions.
+                
+        i-cache-line-size:
+            type: int
+            description: |
+                Specifies the line size in bytes of the instruction cache, if 
+                different than the cache block size. Required if the cpu has a 
+                separate cache for instructions.
+                
+        d-cache-size:
+            type: int
+            description: |
+                Specifies the size in bytes of the data cache. Required if the 
+                cpu has a separate cache for data.
+                
+        d-cache-sets:
+            type: int
+            description: |
+                Specifies the number of associativity sets in the data cache. 
+                Required if the cpu has a separate cache for data.
+                
+        d-cache-block-size:
+            type: int
+            description: |
+                Specifies the block size in bytes of the data cache. Required if
+                the cpu has a separate cache for data.
+
+        d-cache-line-size:
+            type: int
+            description: |
+                Specifies the line size in bytes of the data cache, if different
+                than the cache block size. Required if the cpu has a separate 
+                cache for data.
+                
+        next-level-cache:
+            type: phandle
+            description: |

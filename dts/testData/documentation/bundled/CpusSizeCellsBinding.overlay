@@ -1,0 +1,5 @@
+/ {
+    cpus {
+        #size-cells/*caret*/ = "value";
+    };
+};

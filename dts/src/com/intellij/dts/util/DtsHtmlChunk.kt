@@ -29,8 +29,11 @@ import com.intellij.refactoring.suggested.startOffset
 import org.jetbrains.annotations.PropertyKey
 
 object DtsHtmlChunk {
-    private val bindingHtmlTag = "!!html\n"
-    private val bindingLineBrakeRx = Regex("\\n\\s*\\n")
+    private const val BINDING_HTML_TAG = "!!html"
+    private const val BINDING_PARAGRAPH_HTML_TAG = "!!phtml"
+
+    private val bindingEndOfLineRx = Regex("\\s*\\n\\s*")
+    private val bindingLineBrakeRx = Regex("\\s*\\n\\s*\\n")
 
     private val highlightAnnotator = DtsHighlightAnnotator()
 
@@ -174,18 +177,24 @@ object DtsHtmlChunk {
     }
 
     private fun bindingHtml(project: Project, text: String): @NlsSafe String {
-        if (text.startsWith(bindingHtmlTag)) return text.removePrefix(bindingHtmlTag).trim()
+        if (text.startsWith(BINDING_HTML_TAG)) {
+            return text.removePrefix(BINDING_HTML_TAG).trim()
+        }
 
         val paragraphs = text.trim().split(bindingLineBrakeRx)
 
         val html = paragraphs.map { paragraph ->
+            if (paragraph.startsWith(BINDING_PARAGRAPH_HTML_TAG)) {
+                return@map paragraph.removePrefix(BINDING_PARAGRAPH_HTML_TAG).trim().replace(bindingEndOfLineRx, " ")
+            }
+
             val couldBeDtsCode = paragraph.contains(";") || dtsKeywords.any { paragraph.contains(it) }
             if (couldBeDtsCode) {
                 val html = tryParseDtsToHtml(project, paragraph)
                 if (html != null) return@map html
             }
 
-            StringUtil.escapeXmlEntities(paragraph.replace("\n", " "))
+            StringUtil.escapeXmlEntities(paragraph.replace(bindingEndOfLineRx, " "))
         }
 
         return html.joinToString("<br/><br/>")
@@ -197,7 +206,7 @@ object DtsHtmlChunk {
      * text is split into consecutive paragraphs and separated by two line
      * breaks. If a paragraph can be successfully parsed by the dts parser, it
      * is considered as dts code and will be colored and formatted accordingly.
-     * Useful if the binding contains an example.
+     * If a paragraph starts with "!!phtml" it will be loaded as raw html.
      */
     fun binding(project: Project, text: @NlsSafe String): HtmlChunk {
         return HtmlChunk.raw(bindingHtml(project, text))

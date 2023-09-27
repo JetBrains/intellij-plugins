@@ -52,6 +52,15 @@ data class DtsPath(val absolut: Boolean, val segments: List<String>) {
         return DtsPath(absolut, segments.dropLast(1))
     }
 
+    fun name(): String? {
+        return segments.lastOrNull()
+    }
+
+    fun nameWithoutUnit(): String? {
+        val name = name() ?: return null
+        return DtsUtil.splitName(name).first
+    }
+
     override fun toString(): String {
         return segments.joinToString(separator = "/", prefix = if (absolut) "/" else "")
     }

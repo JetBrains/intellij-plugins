@@ -1,0 +1,60 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "description": {
+            "type": "string"
+        },
+        "child-binding": {
+            "$ref": "#"
+        },
+        "properties": {
+            "type": "object",
+            "additionalProperties": false,
+            "patternProperties": {
+                "^[#a-zA-Z0-9_-]+$": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "enum": [
+                                "string",
+                                "int",
+                                "boolean",
+                                "array",
+                                "uint8-array",
+                                "string-array",
+                                "phandle",
+                                "phandles",
+                                "phandle-array",
+                                "path",
+                                "compound"
+                            ]
+                        },
+                        "required": {
+                            "type": "boolean"
+                        },
+                        "deprecated": {
+                            "type": "boolean"
+                        },
+                        "enum": {
+                            "type": "array"
+                        },
+                        "const": {
+                            "type": ["integer", "string"]
+                        },
+                        "description": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "type",
+                        "description"
+                    ]
+                }
+            }
+        }
+    }
+}

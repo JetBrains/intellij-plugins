@@ -1,14 +1,20 @@
 package com.intellij.dts.zephyr
 
+import com.intellij.openapi.util.NlsSafe
+
 data class DtsZephyrBinding(
-    val compatible: String,
-    val description: String?,
+    val compatible: String?,
+    val description: @NlsSafe String?,
     val properties: Map<String, DtsZephyrPropertyBinding>,
     val child: DtsZephyrBinding?,
     val isChild: Boolean,
 ) {
+    companion object{
+        val empty = Builder(null).build()
+    }
+
     class Builder(
-        private val compatible: String,
+        private val compatible: String?,
         private val isChild: Boolean = false,
     ) {
         private var description: String? = null
@@ -40,8 +46,8 @@ data class DtsZephyrBinding(
 }
 
 data class DtsZephyrPropertyBinding(
-    val name: String,
-    val description: String?,
+    val name: @NlsSafe String,
+    val description: @NlsSafe String?,
     val type: DtsZephyrPropertyType,
 ) {
     class Builder(private val name: String) {

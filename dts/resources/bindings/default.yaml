@@ -109,7 +109,7 @@ properties:
             represent the size of nodes that are children of this node.
             
             The serial device reg property necessarily follows this 
-            specification set in the parent (soc) node—the address is 
+            specification set in the parent (soc) node - the address is 
             represented by a single cell (0x4600), and the size is represented 
             by a single cell (0x100).
 
@@ -144,7 +144,7 @@ properties:
             represent the size of nodes that are children of this node.
             
             The serial device reg property necessarily follows this 
-            specification set in the parent (soc) node—the address is 
+            specification set in the parent (soc) node - the address is 
             represented by a single cell (0x4600), and the size is represented 
             by a single cell (0x100).
 
@@ -294,7 +294,7 @@ properties:
             device's FCode programming model. Because DTSpec does not have 
             FCode, new use of the property is deprecated, and it should be 
             included only on cpu and memory nodes for compatibility with IEEE 
-            1275–derived devicetrees.
+            1275-derived devicetrees.
 
     interrupts:
         type: array
@@ -345,7 +345,7 @@ properties:
                 The child-interrupt-specifier is the interrupt specifier of the 
                 child node being mapped. The number of 32-bit cells required to 
                 specify this component is described by the #interrupt-cells 
-                property of this node—the nexus node containing the interrupt-map 
+                property of this node - the nexus node containing the interrupt-map 
                 property.
                 </li>
                 <li>

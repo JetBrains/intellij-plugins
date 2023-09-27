@@ -8,13 +8,12 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
-import kotlin.io.path.absolute
-import kotlin.io.path.pathString
+import kotlin.io.path.*
 
 abstract class DtsTestBase : BasePlatformTestCase() {
     protected val testName: String
         get() = getTestName(false)
-            .replace(Regex("[_.,-]+"), " ")
+            .replace(Regex("[#@_.,-]+"), " ")
             .toPascalCase()
 
     protected val testFile: String
@@ -50,8 +49,23 @@ abstract class DtsTestBase : BasePlatformTestCase() {
         }
     }
 
+    protected fun getFixture(path: String): String {
+       return Files.readString(Path.of("testData", path))
+    }
+
     protected fun getTestFixture(extension: String): String {
         return Files.readString(Path.of(testDataPath, "$testName.$extension")).replaceCaret()
+    }
+
+    protected fun compareWithFixture(extension: String, actual: String) {
+        val path = Path.of(testDataPath, "$testName.$extension")
+
+        if (path.exists()) {
+           assertEquals(path.readText().replaceCaret(), actual)
+        } else {
+            path.writeText(actual)
+            fail("File ${path.pathString} did not exist. Created new fixture.")
+        }
     }
 }
 
