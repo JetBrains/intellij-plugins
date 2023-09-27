@@ -2,17 +2,20 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
+import com.intellij.javascript.debugger.com.intellij.lang.javascript.FromInterfacesRunner
 import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase
 import com.intellij.lang.javascript.JSTestUtils
-import com.intellij.lang.javascript.typescript.TypeScriptHighlightingTest
+import com.intellij.lang.javascript.typescript.TypeScriptHighlightingWithoutServerTest
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.util.Function
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
+import org.junit.runner.RunWith
 
-class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
+@RunWith(FromInterfacesRunner::class)
+class VueTypeScriptHighlightingTest : TypeScriptHighlightingWithoutServerTest() {
   private val toFix = setOf(
     "SemanticKeywords", //different visibility
     "NodeDefTypes153",
