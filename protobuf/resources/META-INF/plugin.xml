@@ -90,6 +90,7 @@
     <lang.psiStructureViewFactory language="protobuf" implementationClass="com.intellij.protobuf.ide.views.PbStructureViewFactory"/>
 
     <!-- Formatting and code style -->
+    <copyPastePostProcessor implementation="com.intellij.protobuf.lang.refactoring.PbJsonCopyPasteProcessor"/>
     <lang.formatter language="protobuf" implementationClass="com.intellij.protobuf.ide.formatter.PbFormattingModelBuilder"/>
     <codeStyleSettingsProvider implementation="com.intellij.protobuf.ide.style.PbCodeStyleSettingsProvider"/>
     <langCodeStyleSettingsProvider implementation="com.intellij.protobuf.ide.style.PbLanguageCodeStyleSettingsProvider"/>
