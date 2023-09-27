@@ -15,6 +15,7 @@ import com.intellij.lang.javascript.flex.flexunit.FlexUnitPrecompileTask;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.module.Module;
@@ -23,15 +24,17 @@ import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.testFramework.HeavyPlatformTestCase;
-import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.testFramework.PsiTestUtil;
+import com.intellij.testFramework.VfsTestUtil;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -232,11 +235,11 @@ public class FlexCompilerConfigTest extends HeavyPlatformTestCase {
   private static Sdk createTestSdk(final String sdkVersion) {
     Sdk sdk = ProjectJdkTable.getInstance().createSdk(TEST_FLEX_SDK_NAME, FlexSdkType2.getInstance());
     SdkModificator sdkModificator = sdk.getSdkModificator();
-    sdkModificator.setVersionString(sdkVersion);
 
     String additionalPath = sdkVersion.startsWith("AIR SDK ") ? "air_sdk" : "flex_sdk_" + sdkVersion.substring(0, "0.0.0".length());
     String homePath = getTestDataPath() + additionalPath;
     sdkModificator.setHomePath(homePath);
+    sdkModificator.setVersionString(sdkVersion);
 
     String[] relPaths = sdkVersion.startsWith("AIR SDK ")
                               ? AIR_SDK_ROOTS
@@ -247,8 +250,11 @@ public class FlexCompilerConfigTest extends HeavyPlatformTestCase {
                                   : sdkVersion.startsWith("4")
                                     ? SDK_40_ROOTS
                                     : SDK_3_ROOTS;
+    var virtualFileManager = VirtualFileManager.getInstance();
     for (String path : relPaths) {
-      sdkModificator.addRoot(new LightVirtualFile(homePath.substring(1) + path), OrderRootType.CLASSES);
+      var tmpVirtualFile = virtualFileManager.findFileByUrl("temp:///");
+      VirtualFile virtualFile = VfsTestUtil.createFile(tmpVirtualFile, homePath.substring(1) + path);
+      sdkModificator.addRoot(virtualFile, OrderRootType.CLASSES);
     }
     sdkModificator.commitChanges();
     return sdk;
@@ -360,9 +366,13 @@ public class FlexCompilerConfigTest extends HeavyPlatformTestCase {
     ApplicationManager.getApplication().runWriteAction(() -> {
       VirtualFile additionalConfigFile;
       try {
+        Sdk testSdk = createTestSdk(sdkVersion);
         additionalConfigFile = FlexUtils.addFileWithContent(f.getName(),
-                                                            replaceMacros(VfsUtilCore.loadText(f), createTestSdk(sdkVersion), null),
+                                                            replaceMacros(VfsUtilCore.loadText(f), testSdk, null),
                                                             LocalFileSystem.getInstance().refreshAndFindFileByNioFile(myModule.getModuleNioFile().getParent()));
+        if (testSdk instanceof Disposable disposableSdk) {
+          Disposer.dispose(disposableSdk);
+        }
       }
       catch (IOException e) {
         throw new RuntimeException(e);
