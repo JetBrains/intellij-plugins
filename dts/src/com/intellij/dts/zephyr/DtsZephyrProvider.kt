@@ -55,12 +55,12 @@ class DtsZephyrProvider(val project: Project) : Disposable.Default {
         val messageBus = project.messageBus.connect(this)
         messageBus.subscribe(
             VirtualFileManager.VFS_CHANGES, BulkVirtualFileListenerAdapter(object : VirtualFileListener {
-                override fun fileCreated(event: VirtualFileEvent) = fileSystemTracker.incModificationCount()
+            override fun fileCreated(event: VirtualFileEvent) = fileSystemTracker.incModificationCount()
 
-                override fun fileDeleted(event: VirtualFileEvent) = fileSystemTracker.incModificationCount()
+            override fun fileDeleted(event: VirtualFileEvent) = fileSystemTracker.incModificationCount()
 
-                override fun fileMoved(event: VirtualFileMoveEvent) = fileSystemTracker.incModificationCount()
-            })
+            override fun fileMoved(event: VirtualFileMoveEvent) = fileSystemTracker.incModificationCount()
+        })
         )
     }
 
@@ -94,7 +94,7 @@ class DtsZephyrProvider(val project: Project) : Disposable.Default {
         return root
     }
 
-    fun getBoardDir(): VirtualFile? = DtsZephyrRoot.getBoardDir(getRootDir(), settings.zephyrBoard)
+    fun getBoardDir(): VirtualFile? = settings.zephyrBoard?.virtualFile
 
     fun getBindingsDir(): VirtualFile? = DtsZephyrRoot.getBindingsDir(getRootDir())
 

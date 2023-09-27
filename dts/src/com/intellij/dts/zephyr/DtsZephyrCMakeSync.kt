@@ -4,94 +4,86 @@ import com.intellij.dts.settings.DtsSettings
 import com.intellij.execution.ExecutionTarget
 import com.intellij.execution.ExecutionTargetListener
 import com.intellij.execution.ExecutionTargetManager
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.LocalFileSystem
-import com.jetbrains.cidr.cpp.cmake.CMakeSettings
-import com.jetbrains.cidr.cpp.cmake.CMakeSettingsListener
+import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace
+import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspaceListener
 import com.jetbrains.cidr.cpp.execution.CMakeBuildProfileExecutionTarget
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
-class DtsZephyrCMakeSync(val project: Project) : CMakeSettingsListener, DtsSettings.ChangeListener, ExecutionTargetListener {
+@FlowPreview
+class DtsZephyrCMakeSync(
+    val project: Project,
+    parentScope: CoroutineScope,
+) : CMakeWorkspaceListener, DtsSettings.ChangeListener, ExecutionTargetListener {
     companion object {
-        private const val zephyrRootFlagName = "-DZEPHYR_BASE:PATH"
-        private const val zephyrBoardFlagName = "-DBOARD"
+        private const val ZEPHYR_BOARD_PATH_VARIABLE = "BOARD_DIR"
+        private const val ZEPHYR_ROOT_PATH_VARIABLE = "ZEPHYR_BASE"
+
+        private val logger = Logger.getInstance(DtsZephyrCMakeSync::class.java)
     }
 
-    private fun getFlagValue(options: List<String>, name: String): String? {
-        val index = CMakeSettings.findFlagIndex(options, name)
-        if (index < 0) return null
+    private val alarm = MutableSharedFlow<Unit>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
-        return CMakeSettings.getFlagValue(options[index])
-    }
-
-    private fun findBoard(rootPath: String?, boardName: String?): ZephyrBoard? {
-        if (rootPath == null || boardName == null) return null
-
-        val root = LocalFileSystem.getInstance().findFileByPath(rootPath)
-        for (board in DtsZephyrRoot.getAllBoards(root)) {
-            if (board.name == boardName) return board
-        }
-
-        return null
-    }
-
-    private fun findActiveProfile(
-        profiles: List<CMakeSettings.Profile>,
-        target: ExecutionTarget
-    ): CMakeSettings.Profile? {
-        val enabled = profiles.filter { it.enabled }
-
-        return if (target is CMakeBuildProfileExecutionTarget) {
-            enabled.firstOrNull { it.name == target.profileName }
-        } else {
-            enabled.firstOrNull()
-        }
-    }
-
-    private fun syncSettings(settings: DtsSettings, profile: CMakeSettings.Profile) {
-        if (!settings.zephyrCMakeSync) return
-
-        val options = CMakeSettings.getOptionsList(profile.generationOptions)
-
-        val rootPath = getFlagValue(options, zephyrRootFlagName)
-        val boardName = getFlagValue(options, zephyrBoardFlagName)
-        val board = findBoard(rootPath, boardName)
-
-        // do not update settings if nothing changed, prevents infinite loop
-        if (settings.zephyrRoot == rootPath && settings.zephyrBoard == board) return
-
-        ApplicationManager.getApplication().invokeLater {
-            settings.update {
-                if (rootPath != null) zephyrRoot = rootPath
-                if (board != null) zephyrBoard = board.marshal()
+    init {
+        parentScope.launch(Dispatchers.IO) {
+            alarm.debounce(300.milliseconds).collectLatest {
+                syncSettings()
             }
         }
     }
 
-    override fun profilesChanged(old: List<CMakeSettings.Profile>, current: List<CMakeSettings.Profile>) {
-        val profile = findActiveProfile(
-            current,
-            ExecutionTargetManager.getActiveTarget(project),
-        ) ?: return
+    private fun syncSettings() {
+        val settings = DtsSettings.of(project)
+        if (!settings.zephyrCMakeSync) return
 
-        syncSettings(DtsSettings.of(project), profile)
+        val target = ExecutionTargetManager.getInstance(project).activeTarget
+        if (target !is CMakeBuildProfileExecutionTarget) return
+
+        val workspace = CMakeWorkspace.getInstance(project)
+        if (!workspace.isInitialized) return
+
+        val configs = workspace.model?.configurationData ?: return
+        val activeConfig = configs.firstOrNull { it.configName == target.profileName } ?: return
+
+        val cache = try {
+            activeConfig.getCacheConfigurator()
+        } catch (e: Exception) {
+            logger.debug("failed to get cmake cache configurator", e)
+            return
+        }
+
+        val boardPath = cache.findVariable(ZEPHYR_BOARD_PATH_VARIABLE)?.value
+        val rootPath = cache.findVariable(ZEPHYR_ROOT_PATH_VARIABLE)?.value
+
+        // do not update settings if nothing changed, prevents infinite loop
+        if (settings.zephyrRoot == rootPath && settings.zephyrBoard?.path == boardPath) return
+
+        settings.update {
+            zephyrRoot = rootPath ?: ""
+            zephyrBoard = boardPath ?: ""
+        }
+    }
+
+    override fun reloadingFinished(canceled: Boolean) {
+        if (canceled) return
+
+        alarm.tryEmit(Unit)
     }
 
     override fun settingsChanged(settings: DtsSettings) {
-        val profile = findActiveProfile(
-            CMakeSettings.getInstance(project).profiles,
-            ExecutionTargetManager.getActiveTarget(project),
-        ) ?: return
-
-        syncSettings(settings, profile)
+        alarm.tryEmit(Unit)
     }
 
     override fun activeTargetChanged(newTarget: ExecutionTarget) {
-        val profile = findActiveProfile(
-            CMakeSettings.getInstance(project).profiles,
-            newTarget,
-        ) ?: return
-
-        syncSettings(DtsSettings.of(project), profile)
+        alarm.tryEmit(Unit)
     }
 }

@@ -1,6 +1,6 @@
 package com.intellij.dts.settings
 
-import com.intellij.dts.zephyr.ZephyrBoard
+import com.intellij.dts.zephyr.DtsZephyrBoard
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
 import com.intellij.util.messages.Topic
@@ -24,8 +24,8 @@ class DtsSettings(private val project: Project) : PersistentStateComponent<DtsSe
     val zephyrRoot: String?
         get() = state.zephyrRoot.ifBlank { null }
 
-    val zephyrBoard: ZephyrBoard?
-        get() = ZephyrBoard.unmarshal(state.zephyrBoard)
+    val zephyrBoard: DtsZephyrBoard?
+        get() = state.zephyrBoard.ifBlank { null }?.let { DtsZephyrBoard(it) }
 
     /**
      * Whether to load zephyr settings from cmake. If set to true all zephyr

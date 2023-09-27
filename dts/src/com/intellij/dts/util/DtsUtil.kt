@@ -14,7 +14,7 @@ object DtsUtil {
     private val clionModuleId = PluginId.getId("com.intellij.modules.clion")
 
     // copied from PluginUtils to avoid additional dependencies
-    fun hasCLion(): Boolean = PluginManagerCore.getPluginSet().isPluginEnabled(clionModuleId)
+    fun hasCLion(): Boolean = PluginManagerCore.getPlugin(clionModuleId)?.isEnabled == true
 
     /**
      * Splits the name of a node into node and unit address part. If the name

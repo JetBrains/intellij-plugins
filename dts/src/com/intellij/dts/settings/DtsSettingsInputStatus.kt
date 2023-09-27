@@ -18,7 +18,7 @@ abstract class DtsSettingsInputStatus<State, T>(private val disposable: Disposab
     private val listeners = mutableListOf<(ValidationInfo?) -> Unit>()
     private val alarm = Alarm(Alarm.ThreadToUse.POOLED_THREAD, disposable)
 
-    var isEnabled = true
+    protected var isEnabled = true
 
     /**
      * Executed on UI thread.
@@ -51,8 +51,6 @@ abstract class DtsSettingsInputStatus<State, T>(private val disposable: Disposab
     protected fun cancel(): Nothing = throw CancellationException()
 
     fun check() {
-        if (!isEnabled) return
-
         alarm.cancelAllRequests()
 
         val state = readState()

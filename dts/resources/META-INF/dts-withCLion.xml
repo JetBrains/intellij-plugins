@@ -2,7 +2,7 @@
     <projectListeners>
         <listener
                 class="com.intellij.dts.zephyr.DtsZephyrCMakeSync"
-                topic="com.jetbrains.cidr.cpp.cmake.CMakeSettingsListener"/>
+                topic="com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspaceListener"/>
         <listener
                 class="com.intellij.dts.zephyr.DtsZephyrCMakeSync"
                 topic="com.intellij.dts.settings.DtsSettings$ChangeListener"/>

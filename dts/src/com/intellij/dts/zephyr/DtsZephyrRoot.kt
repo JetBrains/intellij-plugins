@@ -6,22 +6,6 @@ import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.vfs.*
 import java.nio.file.Path
 
-data class ZephyrBoard(val arch: String, val name: String) {
-   companion object {
-      fun unmarshal(marshalled: String): ZephyrBoard? {
-         val split = marshalled.split('/')
-         if (split.size != 2) return null
-
-          val (arch, name) = split
-          if (arch.isBlank() || name.isBlank()) return null
-
-          return ZephyrBoard(arch, name)
-      }
-   }
-
-    fun marshal(): String = "$arch/$name"
-}
-
 object DtsZephyrRoot {
     private const val BOARDS_PATH = "boards"
     private const val BINDINGS_PATH = "dts/bindings"
@@ -66,9 +50,8 @@ object DtsZephyrRoot {
 
         // search default installation directory
         if (candidates.isEmpty()) {
-            val localFileSystem = LocalFileSystem.getInstance()
             val path = Path.of(System.getProperty("user.home"), DEFAULT_PATH)
-            val file = localFileSystem.findFileByNioFile(path)
+            val file = VfsUtil.findFile(path, true)
 
             if (file != null && isValid(file)) {
                 candidates.add(file)
@@ -82,7 +65,7 @@ object DtsZephyrRoot {
         return root?.findDirectory(BOARDS_PATH)
     }
 
-    fun getAllBoards(root: VirtualFile?): Sequence<ZephyrBoard> {
+    fun getAllBoardDirs(root: VirtualFile?): Sequence<String> {
         val boards = getBoardsDir(root)
         if (boards == null) return emptySequence()
 
@@ -93,7 +76,7 @@ object DtsZephyrRoot {
                 for (board in arch.children.filter { it.isDirectory }) {
                     if (board.findChild("board.cmake") == null) continue
 
-                    yield(ZephyrBoard(arch.name, board.name))
+                    yield(board.path)
                 }
             }
         }
@@ -103,19 +86,12 @@ object DtsZephyrRoot {
         return root?.findDirectory(BINDINGS_PATH)
     }
 
-    fun getBoardDir(root: VirtualFile?, board: ZephyrBoard?): VirtualFile? {
-        if (board == null) return null
-
-        val boards = getBoardsDir(root) ?: return null
-        return boards.findDirectory("${board.arch}/${board.name}")
-    }
-
-    fun getIncludeDirs(root: VirtualFile?, board: ZephyrBoard?): List<VirtualFile> {
+    fun getIncludeDirs(root: VirtualFile?, board: DtsZephyrBoard?): List<VirtualFile> {
         if (root == null) return emptyList()
 
         val includes = sequence {
             yieldAll(includePaths)
-            board?.let { yield("dts/${it.arch}") }
+            board?.arch?.let { yield("dts/$it") }
         }
 
         return includes.mapNotNull(root::findDirectory).toList()
