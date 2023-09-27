@@ -11,21 +11,25 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.ui.EditorNotificationProvider;
 import com.intellij.ui.EditorNotifications;
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread;
 import com.intellij.util.concurrency.annotations.RequiresReadLock;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class PrettierImportCodeStyleAction extends AnAction {
   public static final String ACTION_ID = "PrettierImportCodeStyleAction";
 
   @Override
   public void update(@NotNull AnActionEvent e) {
-    PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
-    VirtualFile file = psiFile != null ? psiFile.getVirtualFile() : null;
-    e.getPresentation().setEnabledAndVisible(file != null && canImportPrettierConfigurationFromThisFile(psiFile.getProject(), file));
+    Project project = e.getProject();
+    VirtualFile contextFile = e.getData(CommonDataKeys.VIRTUAL_FILE);
+    boolean enabled = project != null && contextFile != null &&
+                      (getFileWithPrettierConfiguration(project, contextFile) != null ||
+                       isPackageJsonWithDependencyOnPrettier(contextFile));
+    e.getPresentation().setEnabledAndVisible(enabled);
   }
 
   @Override
@@ -35,43 +39,39 @@ public class PrettierImportCodeStyleAction extends AnAction {
 
   @RequiresBackgroundThread
   @RequiresReadLock
-  static boolean canImportPrettierConfigurationFromThisFile(@NotNull Project project, @NotNull VirtualFile file) {
-    if (!PrettierUtil.isConfigFileOrPackageJson(file)) {
-      return false;
-    }
+  static @Nullable VirtualFile getFileWithPrettierConfiguration(@NotNull Project project, @NotNull VirtualFile contextFile) {
+    if (!PrettierUtil.isConfigFileOrPackageJson(contextFile)) return null;
+    if (!ProjectFileIndex.getInstance(project).isInContent(contextFile)) return null;
 
-    if (!ProjectFileIndex.getInstance(project).isInContent(file)) {
-      return false;
-    }
+    if (PrettierUtil.isConfigFile(contextFile)) return contextFile;
 
-    if (!PackageJsonUtil.isPackageJsonFile(file)) {
-      return true; // prettier config file
-    }
+    // Just having a dependency in package.json but no config is not enough for this method.
+    // See also isPackageJsonWithDependencyOnPrettier()
+    PackageJsonData data = PackageJsonData.getOrCreate(contextFile);
+    if (data.getTopLevelProperties().contains(PrettierUtil.CONFIG_SECTION_NAME)) return contextFile;
+
+    return PrettierUtil.findSingleConfigInDirectory(contextFile.getParent());
+  }
+
+  private static boolean isPackageJsonWithDependencyOnPrettier(@NotNull VirtualFile file) {
+    if (!PackageJsonUtil.isPackageJsonFile(file)) return false;
 
     PackageJsonData data = PackageJsonData.getOrCreate(file);
-    if (data.getTopLevelProperties().contains(PrettierUtil.PACKAGE_NAME)) {
-      return true;
-    }
-
-    if (data.containsOneOfDependencyOfAnyType(PrettierUtil.PACKAGE_NAME)) {
-      // This package.json file contains a dependency on the 'prettier' package but doesn't contain a customized prettier configuration.
-      // Still, it makes sense to import the default prettier configuration, but only if there's no other config file nearby.
-      boolean prettierRcFileExistsNearby = ContainerUtil.exists(file.getParent().getChildren(), f -> PrettierUtil.isConfigFile(f));
-      if (!prettierRcFileExistsNearby) {
-        return true;
-      }
-    }
-
-    return false;
+    return data.isDependencyOfAnyType(PrettierUtil.PACKAGE_NAME);
   }
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
-    PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
-    VirtualFile virtualFile = psiFile != null ? psiFile.getVirtualFile() : null;
-    if (virtualFile == null) {
-      return;
+    Project project = e.getProject();
+    VirtualFile contextFile = e.getData(CommonDataKeys.VIRTUAL_FILE);
+    if (project == null || contextFile == null) return;
+
+    VirtualFile file = getFileWithPrettierConfiguration(project, contextFile);
+    if (file == null && isPackageJsonWithDependencyOnPrettier(contextFile)) {
+      file = contextFile;
     }
+    PsiFile psiFile = file != null ? PsiManager.getInstance(project).findFile(file) : null;
+    if (psiFile == null) return;
 
     new PrettierCodeStyleImporter(false).importConfigFile(psiFile);
     updateEditorNotifications(psiFile.getProject());

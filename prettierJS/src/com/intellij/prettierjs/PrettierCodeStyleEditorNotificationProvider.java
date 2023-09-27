@@ -30,9 +30,15 @@ public final class PrettierCodeStyleEditorNotificationProvider implements Editor
 
   @Override
   public @Nullable Function<? super @NotNull FileEditor, ? extends @Nullable JComponent> collectNotificationData(@NotNull Project project,
-                                                                                                                 @NotNull VirtualFile file) {
+                                                                                                                 @NotNull VirtualFile contextFile) {
     if (isNotificationDismissed(project)) return null;
-    if (!PrettierImportCodeStyleAction.canImportPrettierConfigurationFromThisFile(project, file)) return null;
+
+    VirtualFile file = PrettierImportCodeStyleAction.getFileWithPrettierConfiguration(project, contextFile);
+    if (file == null) return null;
+
+    // In order not to bother user when we are not sure,
+    // we don't show editor notification in case of isPackageJsonWithDependencyOnPrettier().
+    // In such case, PrettierImportCodeStyleAction is available anyway in the context menu.
 
     PrettierConfig config = PrettierUtil.parseConfig(project, file);
     if (config == null) return null;
