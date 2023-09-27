@@ -321,6 +321,9 @@ fun JSType.fixPrimitiveTypes(): JSType =
   transformTypeHierarchy {
     if (it is JSPrimitiveType && !it.isPrimitive)
       JSNamedTypeFactory.createType(it.primitiveTypeText, it.source, it.typeContext)
+    else if (it is JSTypeImpl && JSCommonTypeNames.WRAPPER_TO_PRIMITIVE_MAP.containsKey(it.typeText)) {
+      JSNamedTypeFactory.createType(JSCommonTypeNames.WRAPPER_TO_PRIMITIVE_MAP[it.typeText]!!, it.source, it.typeContext)
+    }
     else it
   }
 
@@ -365,7 +368,7 @@ private fun getBooleanFromPropOptions(expression: JSExpression?, propName: Strin
 
 fun getPropOptionality(options: JSExpression?, required: Boolean): Boolean =
   when (val defaultType = getDefaultTypeFromPropOptions(options)) {
-    null -> if (required) false else getPropTypeFromPropOptions(options)?.substitute() !is JSBooleanType
+    null -> if (required) false else getPropTypeFromPropOptions(options)?.substitute()?.fixPrimitiveTypes() !is JSBooleanType
     is JSUndefinedType -> true
     is JSFunctionType -> defaultType.returnType?.substitute() is JSUndefinedType
     else -> false

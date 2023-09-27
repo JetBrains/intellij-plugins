@@ -123,4 +123,9 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
       }
     }
   }
+
+  @Override
+  protected @NotNull JSType createBooleanType() {
+    return createNamedType(JSCommonTypeNames.BOOLEAN_CLASS_NAME, myParent);
+  }
 }
