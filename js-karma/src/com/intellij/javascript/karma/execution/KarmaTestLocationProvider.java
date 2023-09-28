@@ -11,7 +11,9 @@ import com.intellij.javascript.testFramework.qunit.DefaultQUnitModuleStructure;
 import com.intellij.javascript.testFramework.qunit.QUnitFileStructure;
 import com.intellij.javascript.testFramework.qunit.QUnitFileStructureBuilder;
 import com.intellij.javascript.testFramework.util.EscapeUtils;
+import com.intellij.javascript.testFramework.util.JsTestFqn;
 import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.lang.javascript.psi.JSTestFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -119,12 +121,13 @@ public class KarmaTestLocationProvider implements SMTestLocator {
     GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
     List<VirtualFile> jsTestVirtualFiles = JsTestFileByTestNameIndex.findFilesByKey(key, scope);
 
+    JsTestFqn fqn = new JsTestFqn(JSTestFileType.QUNIT, List.of(moduleName), testName);
     QUnitFileStructureBuilder builder = QUnitFileStructureBuilder.getInstance();
     for (VirtualFile file : jsTestVirtualFiles) {
       PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
       if (psiFile instanceof JSFile) {
         QUnitFileStructure qunitFileStructure = builder.fetchCachedTestFileStructure((JSFile)psiFile);
-        PsiElement element = qunitFileStructure.findPsiElement(moduleName, testName);
+        PsiElement element = qunitFileStructure.findPsiElement(fqn);
         if (element != null && element.isValid()) {
           return element;
         }
