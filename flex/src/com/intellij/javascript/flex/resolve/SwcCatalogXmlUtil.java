@@ -161,7 +161,7 @@ public final class SwcCatalogXmlUtil {
     }
 
     final Object2LongMap<String> qnameWithTimestampMap = modStampAndSwfNameToQnameWithTimestampMap.second.get(swfFile.getName());
-    final long timestamp = qnameWithTimestampMap == null ? -1 : qnameWithTimestampMap.get(qName);
+    final long timestamp = qnameWithTimestampMap == null ? -1 : qnameWithTimestampMap.getOrDefault(qName, -1);
     psiElement.putUserData(TIMESTAMP_IN_CATALOG_XML, timestamp);
 
     return timestamp;
