@@ -12,6 +12,7 @@ import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.*
+import org.angular2.Angular2TsConfigFile
 import org.angular2.codeInsight.inspections.Angular2ExpressionTypesInspectionTest
 
 class Angular2HighlightingTest : Angular2TestCase("highlighting") {
@@ -90,6 +91,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
   fun testReadOnlyTemplateVariables() = checkHighlighting(ANGULAR_CORE_16_0_0_NEXT_4, ANGULAR_COMMON_16_0_0_NEXT_4, extension = "ts")
 
+  fun testDirectiveWithStandardAttrSelector() = checkHighlighting(ANGULAR_CORE_16_0_0_NEXT_4, ANGULAR_COMMON_16_0_0_NEXT_4,
+                                                                  strictTemplates = true, extension = "ts")
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
@@ -99,9 +103,12 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     vararg modules: Angular2TestModule,
     dir: Boolean = false,
     checkInjections: Boolean = false,
+    strictTemplates: Boolean = false,
     extension: String = "html",
   ) {
-    doConfiguredTest(*modules, dir = dir, extension = extension) {
+    doConfiguredTest(*modules, dir = dir, extension = extension,
+                     configFiles = if (strictTemplates) listOf(Angular2TsConfigFile.withStrictTemplates) else emptyList()
+    ) {
       if (checkInjections)
         loadInjectionsAndCheckHighlighting()
       else

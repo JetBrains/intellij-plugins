@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.web
 
+import com.intellij.html.webSymbols.WebSymbolsHtmlQueryConfigurator
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.openapi.project.Project
@@ -68,11 +69,20 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
           else
             DeclarationProximity.IN_SCOPE
         }
-        DeclarationProximity.values().firstNotNullOfOrNull { proximity ->
+        DeclarationProximity.entries.firstNotNullOfOrNull { proximity ->
           proximityMap[proximity]?.takeIf { it.isNotEmpty() }?.map { Angular2ScopedSymbol.create(it, proximity) }
         }
         ?: emptyList()
       }
+    }
+    else if (namespace == NAMESPACE_HTML) {
+      if (matches.any { it is WebSymbolsHtmlQueryConfigurator.StandardHtmlSymbol })
+        matches.filter { match ->
+          match.properties[PROP_SCOPE_PROXIMITY].asSafely<DeclarationProximity>()
+            .let { it == null || it == DeclarationProximity.IN_SCOPE }
+        }
+      else
+        matches
     }
     else matches
 
