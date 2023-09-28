@@ -5,8 +5,8 @@
 package org.angular2
 
 import org.angular2.cli.Angular2BlueprintListTest
-import org.angular2.cli.Angular2ConfigTest
 import org.angular2.cli.Angular2CliContextTest
+import org.angular2.cli.Angular2ConfigTest
 import org.angular2.codeInsight.*
 import org.angular2.codeInsight.deprecated.*
 import org.angular2.codeInsight.deprecated.Angular2ComponentDeclarationNavigationTest
@@ -63,7 +63,6 @@ import org.junit.runners.Suite
   Angular2NgModuleImportQuickFixesTest::class,
   Angular2ChangeSignatureTest::class,
   Angular2InaccessibleMemberAotQuickFixesTest::class,
-  Angular2InaccessibleMemberAotInspectionTest::class,
   Angular2ControlFlowTest::class,
   Angular2MultiFileIntentionsTest::class,
   Angular2CopyPasteTest::class,

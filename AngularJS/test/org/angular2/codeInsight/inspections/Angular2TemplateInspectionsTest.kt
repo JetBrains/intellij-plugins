@@ -5,6 +5,7 @@ import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownBooleanAttributeInspection
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection
+import com.intellij.javascript.web.configure
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.typescript.inspection.TypeScriptExplicitMemberTypeInspection
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
@@ -12,6 +13,7 @@ import com.intellij.webSymbols.moveToOffsetBySignature
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.Companion.configureCopy
+import org.angular2.Angular2TsConfigFile
 import org.angular2.inspections.*
 import org.angularjs.AngularTestUtil
 
@@ -200,6 +202,22 @@ class Angular2TemplateInspectionsTest : Angular2CodeInsightFixtureTestCase() {
     doTestNoFix("no-introduce-variable.html",
                 null,
                 JavaScriptBundle.message("javascript.introduce.variable.title.local"))
+  }
+
+  fun testInaccessibleSymbolHtmlAot() {
+    doTest(AngularInaccessibleSymbolInspection::class.java,
+           "private-html.html", "private-html.ts")
+  }
+
+  fun testInaccessibleSymbolInlineAot() {
+    doTest(AngularInaccessibleSymbolInspection::class.java,
+           "private-inline.ts")
+  }
+
+  fun testInaccessibleSymbolStrict() {
+    myFixture.configure(Angular2TsConfigFile.withStrictTemplates)
+    doTest(AngularInaccessibleSymbolInspection::class.java,
+           "inaccessibleSymbolStrict.ts")
   }
 
   private fun doTestNoFix(location: String,
