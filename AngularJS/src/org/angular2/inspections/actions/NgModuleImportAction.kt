@@ -2,7 +2,6 @@
 package org.angular2.inspections.actions
 
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil
-import com.intellij.lang.javascript.modules.imports.ES6ImportCandidate
 import com.intellij.lang.javascript.modules.imports.JSImportCandidate
 import com.intellij.lang.javascript.modules.imports.JSImportCandidateWithExecutor
 import com.intellij.openapi.application.WriteAction
@@ -13,6 +12,7 @@ import com.intellij.util.containers.MultiMap
 import one.util.streamex.IntStreamEx
 import org.angular2.Angular2DecoratorUtil.IMPORTS_PROP
 import org.angular2.codeInsight.Angular2DeclarationsScope
+import org.angular2.codeInsight.imports.Angular2ModuleImportCandidate
 import org.angular2.entities.Angular2Declaration
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.entities.Angular2Entity
@@ -73,7 +73,7 @@ class NgModuleImportAction internal constructor(editor: Editor?,
     @Internal
     fun declarationsToModuleImports(context: PsiElement,
                                     declarations: Collection<Angular2Declaration>,
-                                    scope: Angular2DeclarationsScope): List<ES6ImportCandidate> {
+                                    scope: Angular2DeclarationsScope): List<Angular2ModuleImportCandidate> {
       val distanceCalculator = DistanceCalculator()
       val moduleToDeclarationDistances = MultiMap<Angular2Module, Int>()
       declarations.forEach { declaration ->
@@ -101,7 +101,7 @@ class NgModuleImportAction internal constructor(editor: Editor?,
         .mapNotNull {
           val cls = it.typeScriptClass ?: return@mapNotNull null
           val name = detectName(cls) ?: return@mapNotNull null
-          ES6ImportCandidate(name, cls, context)
+          Angular2ModuleImportCandidate(name, cls, context)
         }
         .toList()
     }

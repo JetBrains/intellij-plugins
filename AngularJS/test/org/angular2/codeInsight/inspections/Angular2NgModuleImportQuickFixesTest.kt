@@ -301,6 +301,12 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
     )
   }
 
+  fun testSameFileStandaloneDirectiveToComponent() {
+    doMultiFileTest("test.ts",
+                    "Import TestDir"
+    )
+  }
+
   private fun doMultiFileTest(mainFile: String,
                               intention: String,
                               importName: String? = null) {
