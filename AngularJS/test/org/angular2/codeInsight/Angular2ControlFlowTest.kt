@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.JSControlFlowScope
 import com.intellij.lang.javascript.psi.controlflow.JSControlFlowBuilder
 import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestModule
+import org.angular2.Angular2TsConfigFile
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder
 import org.angularjs.AngularTestUtil
 
@@ -45,8 +46,7 @@ class Angular2ControlFlowTest : BaseJSControlFlowTest() {
   fun doTest(signature: String, skipTSConfig: Boolean = false) {
     Angular2TestModule.configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_15_1_5, Angular2TestModule.ANGULAR_COMMON_15_1_5)
     if (!skipTSConfig) {
-      myFixture.configureByFile("tsconfig.json")
-      myFixture.configureByFile("tsconfig.app.json")
+      Angular2TsConfigFile.withStrictTemplates.configure(myFixture)
     }
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
 

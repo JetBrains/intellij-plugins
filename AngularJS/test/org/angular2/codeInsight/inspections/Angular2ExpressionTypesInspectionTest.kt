@@ -7,6 +7,7 @@ import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.Companion.configureCopy
 import org.angular2.Angular2TestModule.Companion.configureLink
+import org.angular2.Angular2TsConfigFile
 import org.angular2.codeInsight.deprecated.Angular2AttributesTest
 import org.angularjs.AngularTestUtil
 
@@ -50,7 +51,8 @@ class Angular2ExpressionTypesInspectionTest : Angular2CodeInsightFixtureTestCase
 
   fun testGenericsValidationStrict() {
     configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_16_0_0_NEXT_4, Angular2TestModule.ANGULAR_COMMON_16_0_0_NEXT_4)
-    myFixture.configureByFiles("generics-strict.ts", "tsconfig.app.json", "tsconfig.json")
+    Angular2TsConfigFile.withStrictTemplates.configure(myFixture)
+    myFixture.configureByFiles("generics-strict.ts")
     myFixture.checkHighlighting()
   }
 
@@ -227,8 +229,7 @@ class Angular2ExpressionTypesInspectionTest : Angular2CodeInsightFixtureTestCase
   fun testGenericDirectiveReferenceStrictTemplates() {
     configureCopy(myFixture, Angular2TestModule.ANGULAR_MATERIAL_16_0_0_NEXT_6, Angular2TestModule.ANGULAR_CORE_16_0_0_NEXT_4,
                   Angular2TestModule.ANGULAR_COMMON_16_0_0_NEXT_4, Angular2TestModule.ANGULAR_FORMS_16_0_0_NEXT_4)
-    myFixture.configureByFile("tsconfig.json")
-    myFixture.configureByFile("tsconfig.app.json")
+    Angular2TsConfigFile.withStrictTemplates.configure(myFixture)
     myFixture.configureByFile("genericDirectiveReference.ts")
     myFixture.checkHighlighting()
   }
@@ -242,7 +243,6 @@ class Angular2ExpressionTypesInspectionTest : Angular2CodeInsightFixtureTestCase
   private fun configureCommonFiles() {
     configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_15_1_5, Angular2TestModule.ANGULAR_COMMON_15_1_5,
                   Angular2TestModule.RXJS_6_4_0)
-    myFixture.configureByFile("tsconfig.json")
-    myFixture.configureByFile("tsconfig.app.json")
+    Angular2TsConfigFile.withStrictTemplates.configure(myFixture)
   }
 }

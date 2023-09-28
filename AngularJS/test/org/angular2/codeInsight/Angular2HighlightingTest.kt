@@ -48,7 +48,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
    * @see Angular2ExpressionTypesInspectionTest.testNullChecks
    * @see Angular2ExpressionTypesInspectionTest.testNullChecksInline
    */
-  fun testTypeMismatchErrorWithOptionalInputs() = checkHighlighting(dir = true, extension = "ts")
+  fun testTypeMismatchErrorWithOptionalInputs() = checkHighlighting(dir = true, extension = "ts", strictTemplates = true)
 
   fun testHostDirectives() = checkHighlighting(dir = true)
 
@@ -77,7 +77,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
    *
    * @see Angular2ExpressionTypesInspectionTest.testNgrxLetContextGuard
    */
-  fun testNgrxLetAsContextGuard() = checkHighlighting(ANGULAR_COMMON_13_3_5, dir = true, extension = "ts")
+  fun testNgrxLetAsContextGuard() = checkHighlighting(ANGULAR_COMMON_13_3_5, dir = true, extension = "ts", strictTemplates = true)
 
   fun testRequiredInputs() = checkHighlighting(extension = "ts")
 
@@ -107,7 +107,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     extension: String = "html",
   ) {
     doConfiguredTest(*modules, dir = dir, extension = extension,
-                     configFiles = if (strictTemplates) listOf(Angular2TsConfigFile.withStrictTemplates) else emptyList()
+                     configurators = if (strictTemplates) listOf(Angular2TsConfigFile.withStrictTemplates) else emptyList()
     ) {
       if (checkInjections)
         loadInjectionsAndCheckHighlighting()
