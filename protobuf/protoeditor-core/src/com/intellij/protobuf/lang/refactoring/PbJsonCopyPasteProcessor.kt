@@ -1,8 +1,8 @@
 package com.intellij.protobuf.lang.refactoring
 
 import com.google.protobuf.Struct
-import com.google.protobuf.Value
 import com.google.protobuf.util.JsonFormat
+import com.intellij.codeInsight.actions.ReformatCodeProcessor
 import com.intellij.codeInsight.editorActions.CopyPastePostProcessor
 import com.intellij.codeInsight.editorActions.TextBlockTransferableData
 import com.intellij.openapi.application.ApplicationManager
@@ -47,13 +47,24 @@ internal class PbJsonCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
     if (editor.virtualFile.fileType != PbFileType.INSTANCE) return
     val pbFile = PsiManager.getInstance(project).findFile(editor.virtualFile).asSafely<PbFile>() ?: return
     val data = values.filterIsInstance<PbJsonTransferableData>().singleOrNull() ?: return
+    val parsedJsonStruct = tryBuildStructFromJson(data.maybeJson) ?: return
     val namesScope = collectExistingNames(pbFile, caretOffset) ?: return
-    val protobufStructure = tryBuildStructFromJson(data.maybeJson, namesScope) ?: return
+
+    val nameSuggester = PbNameSuggester(namesScope)
+    val initialMetadata = StructMetadata(parsedJsonStruct, DEFAULT_MESSAGE_NAME, nameSuggester.generateUniqueName(DEFAULT_MESSAGE_NAME))
+    // write names
+    val flattenStructs = collectPastedStructs(parentStruct = initialMetadata, nameSuggester = nameSuggester)
+    //read names
+    val protobufStructure = collectPastedEntities(flattenStructs, nameSuggester)
+      .joinToString(transform = PbPastedEntity::render, separator = "\n")
+
+
     val document = editor.document
     PsiDocumentManager.getInstance(project).commitDocument(document)
 
     ApplicationManager.getApplication().runWriteAction {
       document.replaceString(bounds.startOffset, bounds.endOffset, protobufStructure)
+      ReformatCodeProcessor(pbFile, true).run()
     }
   }
 
@@ -82,58 +93,60 @@ internal class PbJsonCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
     return content.startsWith("{") && content.endsWith("}")
   }
 
-  private fun tryBuildStructFromJson(jsonContent: String, namesScope: List<String>): String? {
+  private fun tryBuildStructFromJson(jsonContent: String): Struct? {
     return runCatching {
-      val dynamicStruct = Struct.newBuilder()
+      Struct.newBuilder()
         .apply {
           JsonFormat.parser().merge(jsonContent, this)
         }.build()
-
-      renderStruct(null, PbNameSuggester(namesScope), dynamicStruct)
     }.onFailure {
       thisLogger().warn("Error during JSON to Protobuf conversion", it)
     }.getOrNull()
   }
 
-  private fun renderStruct(nameCandidate: String?, nameSuggester: PbNameSuggester, struct: Struct): String {
-    return buildString {
-      append("message", " ")
-      append(nameSuggester.uniqueNameFor(nameCandidate))
-      append(" ", "{", "\n")
-
-      val nestedNameSuggester = PbNameSuggester(struct.allFields.map { it.key.name })
-      struct.fieldsMap.entries.forEachIndexed { index, (key, value) ->
-        if (value.hasStructValue()) {
-          append(renderStruct(key, nestedNameSuggester, value.structValue))
-        }
-        else {
-          append(renderField(name = key, value = value, index = index + 1))
-        }
-      }
-      append("}", "\n")
+  private fun collectPastedEntities(structs: List<StructMetadata>, nameSuggester: PbNameSuggester): List<PbPastedEntity.PbStruct> {
+    return structs.map { structMetadata ->
+      PbPastedEntity.PbStruct(
+        nameSuggester.mappingFor(structMetadata.fqn),
+        mapStructFields(structMetadata, nameSuggester)
+      )
     }
   }
 
-  private fun renderField(name: String, value: Value, index: Int): String {
-    return buildString {
-      append(getTypeQualifiers(value).joinToString(separator = " ", postfix = " "))
-      append(name)
-      append(" = $index;")
-      append("\n")
-    }
-  }
-
-  private fun getTypeQualifiers(value: Value): List<String> {
-    return buildList {
-      if (value.hasListValue()) add("repeated")
-      val pbType = when {
-        value.hasBoolValue() -> "bool"
-        value.hasStringValue() -> "string"
-        value.hasNumberValue() -> "uint32"
+  private fun mapStructFields(structMetadata: StructMetadata, nameSuggester: PbNameSuggester): List<PbPastedEntity.PbField> {
+    return structMetadata.struct.fieldsMap.entries.mapIndexed { index, (fieldName, fieldValue) ->
+      val type = when {
+        fieldValue.hasBoolValue() -> "bool"
+        fieldValue.hasStringValue() -> "string"
+        fieldValue.hasNumberValue() -> "uint32"
+        fieldValue.hasStructValue() -> nameSuggester.mappingFor(structMetadata.fqn + "." + StringUtil.capitalize(fieldName))
         else -> "string"
       }
-      add(pbType)
+      PbPastedEntity.PbField(fieldName, fieldValue.hasListValue(), type, index + 1)
     }
+  }
+
+  private fun collectPastedStructs(parentStruct: StructMetadata, nameSuggester: PbNameSuggester): List<StructMetadata> {
+    val children = findChildrenStructs(parentStruct, nameSuggester)
+    return listOf(parentStruct) +
+           children.flatMap { childStruct -> collectPastedStructs(childStruct, nameSuggester) }
+  }
+
+  private data class StructMetadata(
+    val struct: Struct,
+    val fqn: String,
+    val generatedUniqueName: String
+  )
+
+  private fun findChildrenStructs(parent: StructMetadata, nameSuggester: PbNameSuggester): List<StructMetadata> {
+    return parent.struct.fieldsMap
+      .entries.asSequence()
+      .filter { it.value.hasStructValue() }
+      .map { (childName, childStruct) ->
+        val fqn = parent.fqn + "." + StringUtil.capitalize(childName)
+        StructMetadata(childStruct.structValue, fqn, nameSuggester.generateUniqueName(fqn))
+      }
+      .toList()
   }
 }
 
@@ -145,17 +158,56 @@ private class PbJsonTransferableData(val maybeJson: String) : TextBlockTransfera
 
 private class PbNameSuggester(existingNames: Collection<String>) {
   private val names = existingNames.toMutableSet()
+  private val mappings = mutableMapOf<String, String>()
 
-  fun uniqueNameFor(nameCandidate: String?): String {
-    val effectiveNameCandidate = nameCandidate ?: DEFAULT_MESSAGE_NAME
-    val capitalizedNameCandidate = StringUtil.capitalize(effectiveNameCandidate)
-    return if (names.add(capitalizedNameCandidate)) {
-      capitalizedNameCandidate
+  fun generateUniqueName(jsonFqn: String): String {
+    val shortenedName = jsonFqn.substringAfterLast('.')
+
+    val uniqueName =
+      if (names.add(shortenedName)) {
+        shortenedName
+      }
+      else {
+        generateSequence(1, Int::inc)
+          .map { index -> "$shortenedName$index" }
+          .first(names::add)
+      }
+
+    mappings[jsonFqn] = uniqueName
+    return uniqueName
+  }
+
+  fun mappingFor(name: String): String {
+    return mappings[name] ?: name
+  }
+}
+
+private sealed class PbPastedEntity {
+  abstract fun render(): String
+
+  data class PbStruct(
+    val name: String,
+    val fields: List<PbField>
+  ) : PbPastedEntity() {
+    override fun render(): String {
+      return """
+        message $name {
+          ${fields.joinToString(separator = "\n") { it.render() }}
+        }
+      """.trimIndent()
     }
-    else {
-      generateSequence(1, Int::inc)
-        .map { index -> "$capitalizedNameCandidate$index" }
-        .first(names::add)
+  }
+
+  data class PbField(
+    val name: String,
+    val isRepeated: Boolean,
+    val type: String,
+    val order: Int
+  ) : PbPastedEntity() {
+    override fun render(): String {
+      return """
+        ${if (isRepeated) "repeated" else ""} $type $name = $order;
+      """.trimIndent()
     }
   }
 }
