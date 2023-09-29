@@ -215,7 +215,7 @@ class Angular2TemplateInspectionsTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testInaccessibleSymbolStrict() {
-    myFixture.configure(Angular2TsConfigFile.withStrictTemplates)
+    myFixture.configure(Angular2TsConfigFile())
     doTest(AngularInaccessibleSymbolInspection::class.java,
            "inaccessibleSymbolStrict.ts")
   }

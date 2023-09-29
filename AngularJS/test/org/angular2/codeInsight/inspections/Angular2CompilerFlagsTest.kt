@@ -1,0 +1,35 @@
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.codeInsight.inspections
+
+import org.angular2.Angular2TemplateInspectionsProvider
+import org.angular2.Angular2TestCase
+import org.angular2.Angular2TestModule
+import org.angular2.Angular2TsConfigFile
+
+class Angular2CompilerFlagsTest : Angular2TestCase("inspections/compilerFlags") {
+
+  override fun setUp() {
+    super.setUp()
+    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
+  }
+
+  fun testStrictNullInputTypesOn() {
+    doFlagTest(Angular2TsConfigFile(strictNullInputTypes = true, strictNullChecks = true))
+  }
+
+  fun testStrictNullInputTypesOnStrictNullChecksOff() {
+    doFlagTest(Angular2TsConfigFile(strictNullInputTypes = true, strictNullChecks = false))
+  }
+
+  fun testStrictNullInputTypesOff() {
+    doFlagTest(Angular2TsConfigFile(strictNullInputTypes = false, strictNullChecks = true))
+  }
+
+  private fun doFlagTest(test: Angular2TsConfigFile) {
+    doConfiguredTest(Angular2TestModule.ANGULAR_CORE_16_0_0_NEXT_4, Angular2TestModule.ANGULAR_COMMON_16_0_0_NEXT_4,
+                     extension = "ts", configurators = listOf(test)) {
+      checkHighlighting()
+    }
+  }
+
+}

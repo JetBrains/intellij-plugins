@@ -13,7 +13,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
-import org.angular2.codeInsight.config.isStrictTemplates
+import org.angular2.codeInsight.config.Angular2Compiler.isStrictTemplates
 import org.angular2.lang.expr.parser.Angular2StubElementTypes
 import org.angular2.lang.expr.psi.Angular2TemplateBinding
 import org.angular2.lang.expr.psi.Angular2TemplateBindings

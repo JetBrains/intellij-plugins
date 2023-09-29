@@ -46,12 +46,12 @@ class Angular2InaccessibleMemberAotQuickFixesTest : Angular2MultiFileFixtureTest
   }
 
   fun testPrivateInputFix() {
-    myFixture.configure(Angular2TsConfigFile.withStrictTemplates)
+    myFixture.configure(Angular2TsConfigFile())
     doMultiFileTest("private-input.ts", "[private<caret>Field]", "public")
   }
 
   fun testProtectedInputFix() {
-    myFixture.configure(Angular2TsConfigFile.withStrictTemplates)
+    myFixture.configure(Angular2TsConfigFile())
     doMultiFileTest("protected-input.ts", "[protected<caret>Field]", "public")
   }
 

@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight.inspections
 
+import com.intellij.javascript.web.configure
 import com.intellij.lang.javascript.TypeScriptTestUtil
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TemplateInspectionsProvider
@@ -51,7 +52,7 @@ class Angular2ExpressionTypesInspectionTest : Angular2CodeInsightFixtureTestCase
 
   fun testGenericsValidationStrict() {
     configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_16_0_0_NEXT_4, Angular2TestModule.ANGULAR_COMMON_16_0_0_NEXT_4)
-    Angular2TsConfigFile.withStrictTemplates.configure(myFixture)
+    myFixture.configure(Angular2TsConfigFile())
     myFixture.configureByFiles("generics-strict.ts")
     myFixture.checkHighlighting()
   }
@@ -229,7 +230,7 @@ class Angular2ExpressionTypesInspectionTest : Angular2CodeInsightFixtureTestCase
   fun testGenericDirectiveReferenceStrictTemplates() {
     configureCopy(myFixture, Angular2TestModule.ANGULAR_MATERIAL_16_0_0_NEXT_6, Angular2TestModule.ANGULAR_CORE_16_0_0_NEXT_4,
                   Angular2TestModule.ANGULAR_COMMON_16_0_0_NEXT_4, Angular2TestModule.ANGULAR_FORMS_16_0_0_NEXT_4)
-    Angular2TsConfigFile.withStrictTemplates.configure(myFixture)
+    myFixture.configure(Angular2TsConfigFile())
     myFixture.configureByFile("genericDirectiveReference.ts")
     myFixture.checkHighlighting()
   }
@@ -243,6 +244,6 @@ class Angular2ExpressionTypesInspectionTest : Angular2CodeInsightFixtureTestCase
   private fun configureCommonFiles() {
     configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_15_1_5, Angular2TestModule.ANGULAR_COMMON_15_1_5,
                   Angular2TestModule.RXJS_6_4_0)
-    Angular2TsConfigFile.withStrictTemplates.configure(myFixture)
+    myFixture.configure(Angular2TsConfigFile())
   }
 }

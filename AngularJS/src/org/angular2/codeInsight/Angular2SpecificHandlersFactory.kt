@@ -18,10 +18,14 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiPolyVariantReference
 import com.intellij.psi.impl.source.resolve.ResolveCache.PolyVariantResolver
+import org.angular2.codeInsight.config.Angular2Compiler.isStrictNullInputTypes
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder
 import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver
 import org.angular2.entities.Angular2ComponentLocator
 import org.angular2.findUsages.Angular2ReadWriteAccessDetector
+import org.angular2.lang.expr.psi.Angular2Binding
+import org.angular2.lang.expr.psi.Angular2TemplateBinding
+import org.angular2.lang.html.psi.Angular2HtmlBoundAttribute
 
 class Angular2SpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
   override fun createReferenceExpressionResolver(
@@ -89,8 +93,14 @@ class Angular2SpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
            }
   }
 
-  override fun strictNullChecks(context: PsiElement): Boolean =
-    TypeScriptConfigUtil.getConfigForPsiFile(context.getContainingFile())?.strictNullChecks()
-    ?: false
+  override fun strictNullChecks(context: PsiElement): Boolean {
+    if ((context.context.let { it is Angular2Binding || it is Angular2TemplateBinding }
+         || context is Angular2HtmlBoundAttribute)
+        && !isStrictNullInputTypes(context)
+    ) {
+      return false
+    }
+    return TypeScriptConfigUtil.getConfigForPsiFile(context.getContainingFile())?.strictNullChecks() == true
+  }
 
 }

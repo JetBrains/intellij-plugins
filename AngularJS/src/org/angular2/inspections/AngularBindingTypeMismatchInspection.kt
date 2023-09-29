@@ -12,7 +12,7 @@ import com.intellij.lang.javascript.validation.JSTypeChecker
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.webSymbols.utils.unwrapMatchedSymbols
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
-import org.angular2.codeInsight.config.isStrictTemplates
+import org.angular2.codeInsight.config.Angular2Compiler.isStrictTemplates
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.psi.Angular2Binding
 import org.angular2.lang.expr.psi.Angular2TemplateBindings

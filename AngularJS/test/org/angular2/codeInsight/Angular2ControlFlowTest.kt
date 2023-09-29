@@ -1,6 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight
 
+import com.intellij.javascript.web.configure
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.controlflow.BaseJSControlFlowTest
 import com.intellij.lang.javascript.psi.JSControlFlowScope
@@ -46,7 +47,7 @@ class Angular2ControlFlowTest : BaseJSControlFlowTest() {
   fun doTest(signature: String, skipTSConfig: Boolean = false) {
     Angular2TestModule.configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_15_1_5, Angular2TestModule.ANGULAR_COMMON_15_1_5)
     if (!skipTSConfig) {
-      Angular2TsConfigFile.withStrictTemplates.configure(myFixture)
+      myFixture.configure(Angular2TsConfigFile())
     }
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
 

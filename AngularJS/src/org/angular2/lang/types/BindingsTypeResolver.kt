@@ -32,7 +32,7 @@ import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.Angular2LibrariesHacks.hackNgModelChangeType
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
-import org.angular2.codeInsight.config.isStrictTemplates
+import org.angular2.codeInsight.config.Angular2Compiler.isStrictTemplates
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder.Companion.NG_TEMPLATE_CONTEXT_GUARD
 import org.angular2.entities.Angular2AliasedDirectiveProperty
 import org.angular2.entities.Angular2ComponentLocator.findComponentClass

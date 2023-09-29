@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.psi.types.JSUnionType
 import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations
 import com.intellij.lang.typescript.resolve.TypeScriptTypeGuardEvaluator
 import com.intellij.psi.PsiElement
-import org.angular2.codeInsight.config.isStrictTemplates
+import org.angular2.codeInsight.config.Angular2Compiler.isStrictTemplates
 
 object Angular2TypeGuardEvaluator : TypeScriptTypeGuardEvaluator() {
 

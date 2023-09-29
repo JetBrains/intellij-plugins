@@ -28,7 +28,7 @@ import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider
-import org.angular2.codeInsight.config.isStrictTemplates
+import org.angular2.codeInsight.config.Angular2Compiler.isStrictTemplates
 import org.angular2.entities.Angular2DirectiveProperty
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_INPUTS

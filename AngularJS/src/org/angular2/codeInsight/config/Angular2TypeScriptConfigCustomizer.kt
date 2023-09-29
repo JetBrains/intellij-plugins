@@ -6,36 +6,87 @@ import com.intellij.lang.typescript.tsconfig.TypeScriptConfigCustomizer
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigParsingUtil.getObjectOfProperty
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
 import com.intellij.openapi.util.Key
-import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
 
+private val STRICT_INJECTION_PARAMETERS = Key.create<Boolean>("angularCompilerOptions.strictInjectionParameters")
 private val STRICT_TEMPLATES = Key.create<Boolean>("angularCompilerOptions.strictTemplates")
+private val STRICT_INPUT_TYPES = Key.create<Boolean>("angularCompilerOptions.strictInputTypes")
+private val STRICT_INPUT_ACCESS_MODIFIERS = Key.create<Boolean>("angularCompilerOptions.strictInputAccessModifiers")
 private val STRICT_NULL_INPUT_TYPES = Key.create<Boolean>("angularCompilerOptions.strictNullInputTypes")
+private val STRICT_ATTRIBUTE_TYPES = Key.create<Boolean>("angularCompilerOptions.strictAttributeTypes")
+private val STRICT_SAFE_NAVIGATION_TYPES = Key.create<Boolean>("angularCompilerOptions.strictSafeNavigationTypes")
+private val STRICT_DOM_LOCAL_REF_TYPES = Key.create<Boolean>("angularCompilerOptions.strictDomLocalRefTypes")
+private val STRICT_OUTPUT_EVENT_TYPES = Key.create<Boolean>("angularCompilerOptions.strictOutputEventTypes")
+private val STRICT_DOM_EVENT_TYPES = Key.create<Boolean>("angularCompilerOptions.strictDomEventTypes")
+private val STRICT_CONTEXT_GENERICS = Key.create<Boolean>("angularCompilerOptions.strictContextGenerics")
+private val STRICT_LITERAL_TYPES = Key.create<Boolean>("angularCompilerOptions.strictLiteralTypes")
 
-fun isStrictTemplates(psi: PsiElement?): Boolean =
-  psi?.containingFile?.let { file ->
-    CachedValuesManager.getCachedValue(file) {
-      val config = TypeScriptConfigUtil.getConfigForPsiFile(file)
-      if (config == null) {
-        CachedValueProvider.Result.create(
-          false,
-          PsiModificationTracker.MODIFICATION_COUNT,
-          VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS
-        )
-      }
-      else {
-        CachedValueProvider.Result.create(
-          config.getCustomOption(STRICT_TEMPLATES),
-          config.configFile,
-          PsiModificationTracker.MODIFICATION_COUNT,
-          VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS
-        )
-      }
-    }
-  } == true
+object Angular2Compiler {
+
+  // https://angular.io/guide/angular-compiler-options#strictinjectionparameters
+  fun isStrictInjectionParameters(psi: PsiElement?): Boolean =
+    TypeScriptConfigUtil.getConfigForPsiFile(psi?.containingFile)
+      ?.getCustomOption(STRICT_INJECTION_PARAMETERS) == true
+
+  // https://angular.io/guide/angular-compiler-options#strictinjectionparameters
+  fun isStrictTemplates(psi: PsiElement?): Boolean =
+    TypeScriptConfigUtil.getConfigForPsiFile(psi?.containingFile)
+      ?.getCustomOption(STRICT_TEMPLATES) == true
+
+  // Following flags: https://angular.io/guide/template-typecheck#troubleshooting-template-errors
+  fun isStrictInputTypes(psi: PsiElement?): Boolean =
+    TypeScriptConfigUtil.getConfigForPsiFile(psi?.containingFile)
+      ?.let {
+        it.getCustomOption(STRICT_INPUT_TYPES) ?: it.getCustomOption(STRICT_TEMPLATES)
+      } == true
+
+  fun isStrictInputAccessModifiers(psi: PsiElement?): Boolean =
+    TypeScriptConfigUtil.getConfigForPsiFile(psi?.containingFile)
+      ?.getCustomOption(STRICT_INPUT_ACCESS_MODIFIERS) == true
+
+  fun isStrictNullInputTypes(psi: PsiElement?): Boolean =
+    TypeScriptConfigUtil.getConfigForPsiFile(psi?.containingFile)
+      ?.let {
+        it.getCustomOption(STRICT_NULL_INPUT_TYPES) ?: it.getCustomOption(STRICT_TEMPLATES)
+      } == true
+
+  fun isStrictAttributeTypes(psi: PsiElement?): Boolean =
+    TypeScriptConfigUtil.getConfigForPsiFile(psi?.containingFile)
+      ?.let {
+        it.getCustomOption(STRICT_ATTRIBUTE_TYPES) ?: it.getCustomOption(STRICT_TEMPLATES)
+      } == true
+
+  fun isStrictSafeNavigationTypes(psi: PsiElement?): Boolean =
+    TypeScriptConfigUtil.getConfigForPsiFile(psi?.containingFile)
+      ?.let {
+        it.getCustomOption(STRICT_SAFE_NAVIGATION_TYPES) ?: it.getCustomOption(STRICT_TEMPLATES)
+      } == true
+
+  fun isStrictDomLocalRefTypes(psi: PsiElement?): Boolean =
+    TypeScriptConfigUtil.getConfigForPsiFile(psi?.containingFile)
+      ?.let {
+        it.getCustomOption(STRICT_DOM_LOCAL_REF_TYPES) ?: it.getCustomOption(STRICT_TEMPLATES)
+      } == true
+
+  fun isStrictDomEventTypes(psi: PsiElement?): Boolean =
+    TypeScriptConfigUtil.getConfigForPsiFile(psi?.containingFile)
+      ?.let {
+        it.getCustomOption(STRICT_DOM_EVENT_TYPES) ?: it.getCustomOption(STRICT_TEMPLATES)
+      } == true
+
+  fun isStrictContextGenerics(psi: PsiElement?): Boolean =
+    TypeScriptConfigUtil.getConfigForPsiFile(psi?.containingFile)
+      ?.let {
+        it.getCustomOption(STRICT_CONTEXT_GENERICS) ?: it.getCustomOption(STRICT_TEMPLATES)
+      } == true
+
+  fun isStrictLiteralTypes(psi: PsiElement?): Boolean =
+    TypeScriptConfigUtil.getConfigForPsiFile(psi?.containingFile)
+      ?.let {
+        it.getCustomOption(STRICT_LITERAL_TYPES) ?: it.getCustomOption(STRICT_TEMPLATES)
+      } == true
+
+}
 
 class Angular2TypeScriptConfigCustomizer : TypeScriptConfigCustomizer {
   override fun parseJsonObject(jsonObject: JsonObject): Map<Key<*>, Any>? {
@@ -44,9 +95,14 @@ class Angular2TypeScriptConfigCustomizer : TypeScriptConfigCustomizer {
     compilerOptions ?: return null
 
     val result = mutableMapOf<Key<*>, Any>()
-    getBooleanValue(compilerOptions, "strictTemplates")?.let { result.put(STRICT_TEMPLATES, it) }
-    getBooleanValue(compilerOptions, "strictNullInputTypes")?.let { result.put(STRICT_NULL_INPUT_TYPES, it) }
 
+    for (key in sequenceOf(
+      STRICT_INJECTION_PARAMETERS, STRICT_TEMPLATES, STRICT_INPUT_TYPES, STRICT_INPUT_ACCESS_MODIFIERS, STRICT_NULL_INPUT_TYPES,
+      STRICT_ATTRIBUTE_TYPES, STRICT_SAFE_NAVIGATION_TYPES, STRICT_DOM_LOCAL_REF_TYPES, STRICT_OUTPUT_EVENT_TYPES, STRICT_DOM_EVENT_TYPES,
+      STRICT_CONTEXT_GENERICS, STRICT_LITERAL_TYPES,
+    )) {
+      getBooleanValue(compilerOptions, key.toString().removePrefix("angularCompilerOptions."))?.let { result.put(key, it) }
+    }
     return result
   }
 

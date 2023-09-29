@@ -29,7 +29,7 @@ import org.angular2.codeInsight.Angular2HighlightingUtils.htmlName
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.codeInsight.Angular2HighlightingUtils.withNameColor
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
-import org.angular2.codeInsight.config.isStrictTemplates
+import org.angular2.codeInsight.config.Angular2Compiler.isStrictTemplates
 import org.angular2.entities.Angular2ComponentLocator
 import org.angular2.inspections.quickfixes.AngularChangeModifierQuickFix
 import org.angular2.lang.Angular2Bundle

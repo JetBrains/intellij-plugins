@@ -107,7 +107,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     extension: String = "html",
   ) {
     doConfiguredTest(*modules, dir = dir, extension = extension,
-                     configurators = if (strictTemplates) listOf(Angular2TsConfigFile.withStrictTemplates) else emptyList()
+                     configurators = listOf(Angular2TsConfigFile(strictTemplates = strictTemplates))
     ) {
       if (checkInjections)
         loadInjectionsAndCheckHighlighting()
