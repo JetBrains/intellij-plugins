@@ -669,7 +669,7 @@ left callExpression ::= typeArguments? ('.' 'new')? <<argumentsWrapper>>
 left arrayAccessExpression ::= arrayAccess
 {mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
-private arrayAccess ::= !('?' '[' elements? ']' ':') ('?.' | '?')? '[' expression? ']' {pin=3}
+private arrayAccess ::= !('?' '[' elements? ']' callOrArrayAccessOrQualifiedRefExpression ':') ('?.' | '?')? '[' expression? ']' {pin=3}
 
 libraryComponentReferenceExpression ::= << nonStrictID >>
 {mixin="com.jetbrains.lang.dart.psi.impl.DartLibraryComponentReferenceExpressionBase" implements="com.jetbrains.lang.dart.psi.DartReference"}

@@ -1,4 +1,6 @@
 var a = b ? [5] : [6];
+var a = b ? [3, 2, 1, 0].contains("") : [6];
+var a = b ? [3, 2, 1, 0].contains("")[1].foo().bar()[2][3]<T>! : [6];
 var a = b ? [] : {};
 var a = b ? {} : {};
 var a = b ? {} : [];
