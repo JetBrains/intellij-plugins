@@ -1,4 +1,4 @@
-package com.intellij.protobuf.lang.refactoring
+package com.intellij.protobuf.lang.refactoring.json
 
 import com.google.protobuf.Struct
 import com.google.protobuf.util.JsonFormat
@@ -11,7 +11,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.RangeMarker
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.protobuf.lang.PbFileType
 import com.intellij.protobuf.lang.psi.PbFile
 import com.intellij.protobuf.lang.psi.PbMessageBody
@@ -65,7 +64,7 @@ internal class PbJsonCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
   }
 
   private fun assembleProtobufFile(namesScope: List<String>, parsedJsonStruct: Struct): String {
-    return with(JsonStructTransformer(namesScope)) {
+    return with(PbJsonStructTransformer(namesScope)) {
       flattenNestedStructs(parsedJsonStruct)
         .mapNotNull(::rememberUniqueStructOrNull)
         .map { struct ->
@@ -138,71 +137,6 @@ internal class PbJsonCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
   }
 }
 
-private data class PbStructInJson(
-  val jsonNodeName: String,
-  val struct: Struct
-)
-
-private class JsonStructTransformer(existingNames: Collection<String>) {
-  private val knownNames = existingNames.toMutableSet()
-  private val structToShortNameMappings = mutableMapOf<Struct, String>()
-
-  fun rememberUniqueStructOrNull(structInJson: PbStructInJson): Struct? {
-    val existingStructMapping = structToShortNameMappings[structInJson.struct]
-    if (existingStructMapping != null) {
-      return null
-    }
-
-    val shortenedName = StringUtil.capitalize(structInJson.jsonNodeName)
-    val uniqueName =
-      if (knownNames.add(shortenedName)) {
-        shortenedName
-      }
-      else {
-        generateSequence(1, Int::inc)
-          .map { index -> "$shortenedName$index" }
-          .first(knownNames::add)
-      }
-
-    structToShortNameMappings[structInJson.struct] = uniqueName
-    return structInJson.struct
-  }
-
-  fun getUniqueName(struct: Struct): String {
-    return structToShortNameMappings[struct] ?: "Unknown"
-  }
-}
-
-private sealed class PbPastedEntity {
-  abstract fun render(): String
-
-  data class PbStruct(
-    val name: String,
-    val fields: List<PbField>
-  ) : PbPastedEntity() {
-    override fun render(): String {
-      return """
-        message $name {
-          ${fields.joinToString(separator = "\n") { it.render() }}
-        }
-      """.trimIndent()
-    }
-  }
-
-  data class PbField(
-    val name: String,
-    val isRepeated: Boolean,
-    val type: String,
-    val order: Int
-  ) : PbPastedEntity() {
-    override fun render(): String {
-      return """
-        ${if (isRepeated) "repeated" else ""} $type $name = $order;
-      """.trimIndent()
-    }
-  }
-}
-
 private class PbJsonTransferableData(val maybeJson: String) : TextBlockTransferableData {
   override fun getFlavor(): DataFlavor {
     return PROTOBUF_JSON_DATA_FLAVOR
@@ -210,5 +144,7 @@ private class PbJsonTransferableData(val maybeJson: String) : TextBlockTransfera
 }
 
 private const val DEFAULT_MESSAGE_NAME = "PastedObject"
-private val PROTOBUF_JSON_DATA_FLAVOR = DataFlavor(PbJsonCopyPasteProcessor::class.java,
-                                                   "JSON to Protobuf converter")
+private val PROTOBUF_JSON_DATA_FLAVOR = DataFlavor(
+  PbJsonCopyPasteProcessor::class.java,
+  "JSON to Protobuf converter"
+)
