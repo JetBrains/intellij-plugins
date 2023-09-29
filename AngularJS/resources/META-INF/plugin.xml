@@ -265,6 +265,9 @@
     <localInspection implementationClass="org.angular2.inspections.AngularUndefinedTagInspection"
                      groupKey="angular.inspection.group.name" enabledByDefault="true" language="HtmlCompatible"
                      level="ERROR" key="angular.inspection.undefined-tag.name" bundle="messages.Angular2Bundle"/>
+    <localInspection implementationClass="org.angular2.inspections.AngularBindingTypeMismatchInspection"
+                     groupKey="angular.inspection.group.name" enabledByDefault="true" language="HtmlCompatible"
+                     level="ERROR" key="angular.inspection.invalid-binding-type.name" bundle="messages.Angular2Bundle"/>
     <idIndexer filetype="Angular2Html" implementationClass="org.angular2.lang.html.index.Angular2HtmlIdIndexer"/>
     <todoIndexer filetype="Angular2Html" implementationClass="org.angular2.lang.html.index.Angular2HtmlTodoIndexer"/>
     <stubElementTypeHolder class="org.angular2.lang.html.stub.Angular2HtmlStubElementTypes" externalIdPrefix="NG-HTML:"/>
