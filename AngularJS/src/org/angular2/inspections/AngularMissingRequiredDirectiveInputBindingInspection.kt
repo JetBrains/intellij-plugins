@@ -8,6 +8,9 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.XmlTagUtil
 import org.angular2.codeInsight.Angular2DeclarationsScope
+import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.NG_INPUT
+import org.angular2.codeInsight.Angular2HighlightingUtils.htmlClassName
+import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.Companion.isTemplateTag
@@ -49,10 +52,10 @@ class AngularMissingRequiredDirectiveInputBindingInspection : AngularHtmlLikeTem
           fixes.add(CreateAttributeQuickFix(property.name))
         }
         holder.registerProblem(tag, startTag,
-                               Angular2Bundle.message(
+                               Angular2Bundle.htmlMessage(
                                  if (directive.isComponent) "angular.inspection.missing-required-directive-input-binding.message.component"
                                  else "angular.inspection.missing-required-directive-input-binding.message",
-                                 property.name, directive.getName()),
+                                 property.name.withColor(NG_INPUT, tag), directive.htmlClassName),
                                *fixes.toTypedArray())
       }
 
@@ -74,8 +77,8 @@ class AngularMissingRequiredDirectiveInputBindingInspection : AngularHtmlLikeTem
       inputsToMatch.filter { !provided.contains(it.first.name) }
         .forEach {
           holder.registerProblem(attribute, attribute.nameElement.textRangeInParent,
-                                 Angular2Bundle.message("angular.inspection.missing-required-directive-input-binding.message",
-                                                        it.first.name, it.second.getName()))
+                                 Angular2Bundle.htmlMessage("angular.inspection.missing-required-directive-input-binding.message",
+                                                            it.first.name.withColor(NG_INPUT, attribute), it.second.htmlClassName))
         }
     }
   }

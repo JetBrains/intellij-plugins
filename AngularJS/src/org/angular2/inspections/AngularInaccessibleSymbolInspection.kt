@@ -24,6 +24,10 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.PsiSourcedWebSymbol
 import com.intellij.webSymbols.utils.unwrapMatchedSymbols
+import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.TS_KEYWORD
+import org.angular2.codeInsight.Angular2HighlightingUtils.htmlName
+import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
+import org.angular2.codeInsight.Angular2HighlightingUtils.withNameColor
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.config.isStrictTemplates
 import org.angular2.entities.Angular2ComponentLocator
@@ -60,12 +64,12 @@ class AngularInaccessibleSymbolInspection : LocalInspectionTool() {
             if (clazz != null && resolved is JSElement && !isAccessible(resolved, AccessType.PROTECTED)) {
               holder.registerProblem(
                 node.referenceNameElement ?: node,
-                capitalize(Angular2Bundle.message(
+                Angular2Bundle.htmlMessage(
                   if (isStrictTemplates(clazz))
                     "angular.inspection.inaccessible-symbol.strict.private.message"
                   else
                     "angular.inspection.inaccessible-symbol.aot.message",
-                  getKind(resolved), getName(resolved), getAccessModifier(resolved), clazz.name ?: "<unknown>")
+                  capitalize(getKind(resolved)), getHtmlName(resolved), getHtmlAccessModifier(resolved), clazz.htmlName
                 ),
                 AngularChangeModifierQuickFix(AccessType.PROTECTED))
             }
@@ -85,22 +89,22 @@ class AngularInaccessibleSymbolInspection : LocalInspectionTool() {
                 if (!isStrictTemplates(element)) return
                 holder.registerProblem(
                   element.nameElement,
-                  capitalize(Angular2Bundle.message(
+                  Angular2Bundle.htmlMessage(
                     if (accessType == AccessType.PRIVATE)
                       "angular.inspection.inaccessible-symbol.strict.private.message"
                     else
                       "angular.inspection.inaccessible-symbol.strict.protected.message",
-                    getKind(input), getName(input), getAccessModifier(input), inputOwner.name ?: "<unknown>")
+                    capitalize(getKind(input)), getHtmlName(input), getHtmlAccessModifier(input), inputOwner.htmlName
                   ),
                   AngularChangeModifierQuickFix(minAccessType, inputOwner.name))
               }
               else if (input.attributeList?.hasModifier(JSAttributeList.ModifierType.READONLY) == true) {
                 holder.registerProblem(
                   element.nameElement,
-                  capitalize(Angular2Bundle.message(
+                  Angular2Bundle.htmlMessage(
                     "angular.inspection.inaccessible-symbol.strict.read-only.message",
-                    getKind(input), getName(input), getAccessModifier(input), inputOwner.name ?: "<unknown>")
-                  ))
+                    getHtmlName(input), getHtmlAccessModifier(input), inputOwner.htmlName)
+                )
               }
             }
           }
@@ -144,11 +148,11 @@ private fun getKind(member: PsiElement): String {
   return JSNamedElementPresenter(member).describeElementKind()
 }
 
-private fun getAccessModifier(member: JSElement): String {
-  return getPresentableAccessModifier(member)?.text ?: ""
+private fun getHtmlAccessModifier(member: JSElement): String {
+  return (getPresentableAccessModifier(member)?.text ?: "").withColor(TS_KEYWORD, member)
 }
 
-private fun getName(member: PsiElement): String {
-  return member.asSafely<PsiNamedElement>()?.name
-         ?: JSFormatUtil.getAnonymousElementPresentation()
+private fun getHtmlName(member: PsiElement): String {
+  return (member.asSafely<PsiNamedElement>()?.name
+          ?: JSFormatUtil.getAnonymousElementPresentation()).withNameColor(member)
 }

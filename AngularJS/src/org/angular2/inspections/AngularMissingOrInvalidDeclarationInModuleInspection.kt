@@ -14,10 +14,10 @@ import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
 import org.angular2.Angular2DecoratorUtil.PIPE_DEC
 import org.angular2.Angular2DecoratorUtil.getClassForDecoratorElement
 import org.angular2.Angular2DecoratorUtil.isAngularEntityDecorator
+import org.angular2.codeInsight.Angular2HighlightingUtils.htmlClassName
+import org.angular2.codeInsight.Angular2HighlightingUtils.renderEntityList
 import org.angular2.entities.Angular2Declaration
 import org.angular2.entities.Angular2EntitiesProvider
-import org.angular2.entities.Angular2EntityUtils
-import org.angular2.entities.Angular2EntityUtils.renderEntityList
 import org.angular2.entities.Angular2FrameworkHandler
 import org.angular2.entities.source.Angular2SourceModule
 import org.angular2.inspections.quickfixes.ConvertToStandaloneQuickFix
@@ -41,24 +41,25 @@ class AngularMissingOrInvalidDeclarationInModuleInspection : LocalInspectionTool
                 .any { h -> h.suppressModuleInspectionErrors(modules, declaration) }) {
               return
             }
+            val entity = Angular2EntitiesProvider.getEntity(decorator) ?: return
             val classIdentifier = getClassForDecoratorElement(decorator)?.nameIdentifier ?: decorator
             if (modules.isEmpty()) {
-              val className = Angular2EntityUtils.getEntityClassName(decorator)
               holder.registerProblem(classIdentifier,
-                                     Angular2Bundle.message("angular.inspection.invalid-declaration-in-module.message.not-declared",
-                                                            className),
+                                     Angular2Bundle.htmlMessage("angular.inspection.invalid-declaration-in-module.message.not-declared",
+                                                                entity.htmlClassName),
                                      if (allSourceDeclarationsResolved(decorator.project))
                                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                                      else
                                        ProblemHighlightType.WEAK_WARNING,
-                                     ConvertToStandaloneQuickFix(className)
+                                     ConvertToStandaloneQuickFix(entity.className)
               )
             }
             else if (modules.size > 1) {
-              holder.registerProblem(classIdentifier,
-                                     Angular2Bundle.message("angular.inspection.invalid-declaration-in-module.message.declared-in-many",
-                                                            Angular2EntityUtils.getEntityClassName(decorator),
-                                                            renderEntityList(modules)))
+              holder.registerProblem(
+                classIdentifier,
+                Angular2Bundle.htmlMessage("angular.inspection.invalid-declaration-in-module.message.declared-in-many",
+                                           entity.htmlClassName,
+                                           renderEntityList(modules)))
             }
           }
         }

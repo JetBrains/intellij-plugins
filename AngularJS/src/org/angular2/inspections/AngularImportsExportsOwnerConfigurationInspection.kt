@@ -20,6 +20,9 @@ import org.angular2.Angular2DecoratorUtil.EXPORTS_PROP
 import org.angular2.Angular2DecoratorUtil.IMPORTS_PROP
 import org.angular2.Angular2DecoratorUtil.MODULE_DEC
 import org.angular2.Angular2DecoratorUtil.isAngularEntityDecorator
+import org.angular2.codeInsight.Angular2HighlightingUtils.htmlClassName
+import org.angular2.codeInsight.Angular2HighlightingUtils.htmlLabel
+import org.angular2.codeInsight.Angular2HighlightingUtils.htmlName
 import org.angular2.entities.*
 import org.angular2.inspections.Angular2SourceEntityListValidator.ValidationResults
 import org.angular2.inspections.quickfixes.ConvertToStandaloneQuickFix
@@ -51,7 +54,7 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
       if (entity.isStandalone) {
         registerProblem(
           ProblemType.ENTITY_WITH_MISMATCHED_TYPE,
-          Angular2Bundle.message("angular.inspection.wrong-entity-type.message.standalone-declarable", entity.label),
+          Angular2Bundle.htmlMessage("angular.inspection.wrong-entity-type.message.standalone-declarable", entity.htmlLabel),
           MoveDeclarationOfStandaloneToImportsQuickFix(entity.className)
         )
       }
@@ -59,7 +62,7 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
 
     override fun processNonAcceptableEntityClass(aClass: JSClass) {
       registerProblem(ProblemType.ENTITY_WITH_MISMATCHED_TYPE,
-                      Angular2Bundle.message("angular.inspection.wrong-entity-type.message.not-declarable", aClass.name!!))
+                      Angular2Bundle.htmlMessage("angular.inspection.wrong-entity-type.message.not-declarable", aClass.htmlName))
     }
   }
 
@@ -88,10 +91,11 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
           val toProcess = curNode.removeAt(curNode.size - 1)
           if (toProcess === this.importsOwner) {
             cycleTrack.push(this.importsOwner)
-            registerProblem(ProblemType.RECURSIVE_IMPORT_EXPORT, Angular2Bundle.message(
+            registerProblem(ProblemType.RECURSIVE_IMPORT_EXPORT, Angular2Bundle.htmlMessage(
               "angular.inspection.cyclic-module-dependency.message.cycle",
               cycleTrack.joinToString(
-                " " + Angular2Bundle.message("angular.inspection.cyclic-module-dependency.message.separator") + " ") { it.className }
+                " " + Angular2Bundle.htmlMessage(
+                  "angular.inspection.cyclic-module-dependency.message.separator") + " ") { it.htmlClassName }
             ))
             return
           }
@@ -115,13 +119,13 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
 
     override fun processNonAcceptableEntityClass(aClass: JSClass) {
       registerProblem(ProblemType.ENTITY_WITH_MISMATCHED_TYPE,
-                      Angular2Bundle.message("angular.inspection.wrong-entity-type.message.not-importable", aClass.name!!))
+                      Angular2Bundle.htmlMessage("angular.inspection.wrong-entity-type.message.not-importable", aClass.htmlName))
     }
 
     override fun processAcceptableEntity(entity: Angular2Entity) {
       if (entity == importsOwner) {
         registerProblem(ProblemType.RECURSIVE_IMPORT_EXPORT,
-                        Angular2Bundle.message("angular.inspection.cyclic-module-dependency.message.self-import", entity.label))
+                        Angular2Bundle.htmlMessage("angular.inspection.cyclic-module-dependency.message.self-import", entity.htmlLabel))
       }
       else if (entity is Angular2Module || (entity is Angular2Component && entity.isStandalone)) {
         checkCyclicDependencies(entity as Angular2ImportsOwner)
@@ -129,7 +133,7 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
       else if (!Angular2EntityUtils.isImportableEntity(entity)) {
         registerProblem(
           ProblemType.ENTITY_WITH_MISMATCHED_TYPE,
-          Angular2Bundle.message("angular.inspection.wrong-entity-type.message.not-standalone", entity.label),
+          Angular2Bundle.htmlMessage("angular.inspection.wrong-entity-type.message.not-standalone", entity.htmlLabel),
           ConvertToStandaloneQuickFix(entity.className)
         )
       }
@@ -143,7 +147,7 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
 
     override fun processNonAcceptableEntityClass(aClass: JSClass) {
       registerProblem(ProblemType.ENTITY_WITH_MISMATCHED_TYPE,
-                      Angular2Bundle.message("angular.inspection.wrong-entity-type.message.not-entity", aClass.name!!),
+                      Angular2Bundle.htmlMessage("angular.inspection.wrong-entity-type.message.not-entity", aClass.htmlName),
                       if (importsOwner.isScopeFullyResolved)
                         ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                       else
@@ -154,7 +158,7 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
       if (entity is Angular2Module) {
         if (entity == importsOwner) {
           registerProblem(ProblemType.RECURSIVE_IMPORT_EXPORT,
-                          Angular2Bundle.message("angular.inspection.cyclic-module-dependency.message.self-export", entity.label))
+                          Angular2Bundle.htmlMessage("angular.inspection.cyclic-module-dependency.message.self-export", entity.htmlLabel))
         }
         else {
           checkCyclicDependencies(entity)
@@ -163,9 +167,8 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
       else if (entity is Angular2Declaration) {
         if (!importsOwner.declarationsInScope.contains(entity)) {
           registerProblem(ProblemType.UNDECLARED_EXPORT,
-                          Angular2Bundle.message("angular.inspection.undefined-export.message",
-                                                 entity.typeScriptClass?.name ?: entity.getName(),
-                                                 importsOwner.getName()),
+                          Angular2Bundle.htmlMessage("angular.inspection.undefined-export.message",
+                                                     entity.htmlClassName, importsOwner.htmlClassName),
                           if (importsOwner.isScopeFullyResolved)
                             ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                           else

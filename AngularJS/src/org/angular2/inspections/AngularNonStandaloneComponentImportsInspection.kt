@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.psi.PsiElementVisitor
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.entities.Angular2EntitiesProvider
-import org.angular2.entities.Angular2EntityUtils
 import org.angular2.inspections.quickfixes.ConvertToStandaloneQuickFix
 import org.angular2.lang.Angular2Bundle
 
@@ -24,7 +23,7 @@ class AngularNonStandaloneComponentImportsInspection : LocalInspectionTool() {
           if (!component.isStandalone) {
             holder.registerProblem(importsProperty.nameIdentifier ?: importsProperty,
                                    Angular2Bundle.message("angular.inspection.non-standalone-component-imports.message"),
-                                   ConvertToStandaloneQuickFix(Angular2EntityUtils.getEntityClassName(decorator)))
+                                   ConvertToStandaloneQuickFix(component.className))
           }
         }
       }

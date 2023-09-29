@@ -19,6 +19,9 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
 import org.angular2.codeInsight.Angular2DeclarationsScope
+import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.HTML_ATTRIBUTE
+import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.NG_DIRECTIVE
+import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider.Companion.IMG_TAG
 import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider.Companion.NG_SRC_ATTR
 import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider.Companion.SRC_ATTR
@@ -38,6 +41,12 @@ class AngularNgOptimizedImageInspection : LocalInspectionTool() {
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
     return if (holder.file is HtmlCompatibleFile && Angular2LangUtil.isAngular2Context(holder.file)) {
       object : XmlElementVisitor() {
+
+        val ngSrcAttr get() = NG_SRC_ATTR.withColor(NG_DIRECTIVE, holder.file)
+        val fillAttr get() = FILL_ATTR.withColor(HTML_ATTRIBUTE, holder.file)
+        val widthAttr get() = WIDTH_ATTR.withColor(HTML_ATTRIBUTE, holder.file)
+        val heightAttr get() = HEIGHT_ATTR.withColor(HTML_ATTRIBUTE, holder.file)
+
         override fun visitXmlAttribute(attribute: XmlAttribute) {
           val tag = attribute.parent
           if (tag != null
@@ -47,63 +56,82 @@ class AngularNgOptimizedImageInspection : LocalInspectionTool() {
             if (directive == null) return
             val nameElement = attribute.nameElement ?: return
             val info = Angular2AttributeNameParser.parse(attribute.localName, tag)
+
             if (info.isRegularOrBinding(SRC_ATTR)
                 && attribute.value.let { it != null && !it.startsWith("data:") }) {
               holder.registerProblem(
                 nameElement,
-                Angular2Bundle.message("angular.inspection.ng-optimized-image.message.use-ngsrc"),
+                Angular2Bundle.htmlMessage("angular.inspection.ng-optimized-image.message.use-ngsrc",
+                                           ngSrcAttr,
+                                           "NgOptimizedImage".withColor(NG_DIRECTIVE, nameElement)),
                 ConvertToNgSrcAttributeFix()
               )
             }
-            else if (isNgSrcAttribute(info)) {
-              val attrsInfo = ngSrcAttrsInfo(tag)
-              if (!attrsInfo.hasFill && !attrsInfo.hasHeight && !attrsInfo.hasWidth) {
-                if (directive.inputs.any { it.name == FILL_ATTR }) {
-                  holder.registerProblem(
-                    nameElement,
-                    Angular2Bundle.message("angular.inspection.ng-optimized-image.message.ngsrc.requires.width.height.or.fill.attributes"),
-                    CreateWidthAndHeightAttributesQuickFix(false, false),
-                    CreateAttributeQuickFix(FILL_ATTR)
-                  )
-                }
-                else {
-                  holder.registerProblem(
-                    nameElement,
-                    Angular2Bundle.message("angular.inspection.ng-optimized-image.message.ngsrc.requires.width.height.attributes"),
-                    CreateWidthAndHeightAttributesQuickFix(false, false),
-                  )
+            else {
+              if (isNgSrcAttribute(info)) {
+                val attrsInfo = ngSrcAttrsInfo(tag)
+                if (!attrsInfo.hasFill && !attrsInfo.hasHeight && !attrsInfo.hasWidth) {
+                  if (directive.inputs.any { it.name == FILL_ATTR }) {
+                    holder.registerProblem(
+                      nameElement,
+                      Angular2Bundle.htmlMessage(
+                        "angular.inspection.ng-optimized-image.message.ngsrc.requires.width.height.or.fill.attributes",
+                        ngSrcAttr, widthAttr, heightAttr, fillAttr,
+                      ),
+                      CreateWidthAndHeightAttributesQuickFix(false, false),
+                      CreateAttributeQuickFix(FILL_ATTR)
+                    )
+                  }
+                  else {
+                    holder.registerProblem(
+                      nameElement,
+                      Angular2Bundle.htmlMessage(
+                        "angular.inspection.ng-optimized-image.message.ngsrc.requires.width.height.attributes",
+                        ngSrcAttr, widthAttr, heightAttr,
+                      ),
+                      CreateWidthAndHeightAttributesQuickFix(false, false),
+                    )
+                  }
                 }
               }
-            }
-            else if (info.isRegularOrBinding(WIDTH_ATTR)
-                     || info.isRegularOrBinding(HEIGHT_ATTR)) {
-              val attrsInfo = ngSrcAttrsInfo(tag)
-              if (attrsInfo.hasNgSrc) {
-                if (attrsInfo.hasFill) {
+              else if (info.isRegularOrBinding(WIDTH_ATTR)
+                       || info.isRegularOrBinding(HEIGHT_ATTR)) {
+                val attrsInfo = ngSrcAttrsInfo(tag)
+                if (attrsInfo.hasNgSrc) {
+                  if (attrsInfo.hasFill) {
+                    holder.registerProblem(
+                      nameElement,
+                      Angular2Bundle.htmlMessage(
+                        "angular.inspection.ng-optimized-image.message.both.fill.attributes.not.allowed",
+                        fillAttr, attribute.name.withColor(HTML_ATTRIBUTE, nameElement), ngSrcAttr,
+                      ),
+                      RemoveAttributeIntentionFix(attribute.name)
+                    )
+                  }
+                  else if (attrsInfo.hasHeight xor attrsInfo.hasWidth) {
+                    holder.registerProblem(
+                      nameElement,
+                      Angular2Bundle.htmlMessage(
+                        "angular.inspection.ng-optimized-image.message.both.width.height.attributes.required",
+                        widthAttr, heightAttr, ngSrcAttr,
+                      ),
+                      CreateWidthAndHeightAttributesQuickFix(attrsInfo.hasWidth, attrsInfo.hasHeight),
+                    )
+                  }
+                }
+              }
+              else if (info.isRegularOrBinding(FILL_ATTR)) {
+                val attrsInfo = ngSrcAttrsInfo(tag)
+                if ((attrsInfo.hasHeight || attrsInfo.hasWidth) && attrsInfo.hasNgSrc) {
                   holder.registerProblem(
                     nameElement,
-                    Angular2Bundle.message("angular.inspection.ng-optimized-image.message.both.fill.attributes.not.allowed",
-                                           attribute.name),
+                    Angular2Bundle.htmlMessage(
+                      "angular.inspection.ng-optimized-image.message.both.fill.width.or.height.attributes.not.allowed",
+                      fillAttr, widthAttr, heightAttr, ngSrcAttr,
+                    ),
                     RemoveAttributeIntentionFix(attribute.name)
                   )
                 }
-                else if (attrsInfo.hasHeight xor attrsInfo.hasWidth) {
-                  holder.registerProblem(
-                    nameElement,
-                    Angular2Bundle.message("angular.inspection.ng-optimized-image.message.both.width.height.attributes.required"),
-                    CreateWidthAndHeightAttributesQuickFix(attrsInfo.hasWidth, attrsInfo.hasHeight),
-                  )
-                }
-              }
-            }
-            else if (info.isRegularOrBinding(FILL_ATTR)) {
-              val attrsInfo = ngSrcAttrsInfo(tag)
-              if ((attrsInfo.hasHeight || attrsInfo.hasWidth) && attrsInfo.hasNgSrc) {
-                holder.registerProblem(
-                  nameElement,
-                  Angular2Bundle.message("angular.inspection.ng-optimized-image.message.both.fill.width.or.height.attributes.not.allowed"),
-                  RemoveAttributeIntentionFix(attribute.name)
-                )
               }
             }
           }

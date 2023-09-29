@@ -12,6 +12,8 @@ import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity.IN_SCOPE
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity.NOT_REACHABLE
+import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.*
+import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.Companion.isTemplateTag
@@ -20,6 +22,7 @@ import org.angular2.inspections.quickfixes.Angular2FixesFactory
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.Angular2Bundle.Companion.BUNDLE
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
+import org.angular2.lang.html.Angular2HtmlLanguage
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.PropertyBindingInfo
 import org.angular2.lang.html.parser.Angular2AttributeType.*
 import org.angular2.lang.html.psi.PropertyBindingType
@@ -69,34 +72,44 @@ class AngularUndefinedBindingInspection : AngularHtmlLikeTemplateLocalInspection
     }
     quickFixes.add(RemoveAttributeIntentionFix(attribute.name))
     var severity = Angular2InspectionUtils.getBaseProblemHighlightType(scope, matchedDirectives)
-    @PropertyKey(resourceBundle = BUNDLE) val messageKey: String =
-      when (info.type) {
-        EVENT -> {
-          if (templateTag)
-            "angular.inspection.undefined-binding.message.embedded.event-not-emitted"
-          else
-            "angular.inspection.undefined-binding.message.event-not-emitted"
-        }
-        PROPERTY_BINDING -> {
-          if (templateTag)
-            "angular.inspection.undefined-binding.message.embedded.property-not-provided"
-          else
-            "angular.inspection.undefined-binding.message.property-not-provided"
-        }
-        BANANA_BOX_BINDING ->
-          "angular.inspection.undefined-binding.message.banana-box-binding-not-provided"
-        REGULAR -> {
-          severity = ProblemHighlightType.WARNING
-          if (proximity === NOT_REACHABLE)
-            "angular.inspection.undefined-binding.message.unknown-attribute"
-          else
-            "angular.inspection.undefined-binding.message.attribute-directive-out-of-scope"
-        }
-        else -> return
+
+    @PropertyKey(resourceBundle = BUNDLE)
+    val messageKey: String = when (info.type) {
+      EVENT -> {
+        if (templateTag)
+          "angular.inspection.undefined-binding.message.embedded.event-not-emitted"
+        else
+          "angular.inspection.undefined-binding.message.event-not-emitted"
       }
+      PROPERTY_BINDING -> {
+        if (templateTag)
+          "angular.inspection.undefined-binding.message.embedded.property-not-provided"
+        else
+          "angular.inspection.undefined-binding.message.property-not-provided"
+      }
+      BANANA_BOX_BINDING ->
+        "angular.inspection.undefined-binding.message.banana-box-binding-not-provided"
+      REGULAR -> {
+        severity = ProblemHighlightType.WARNING
+        if (proximity === NOT_REACHABLE)
+          "angular.inspection.undefined-binding.message.unknown-attribute"
+        else
+          "angular.inspection.undefined-binding.message.attribute-directive-out-of-scope"
+      }
+      else -> return
+    }
+    val htmlName = when (info.type) {
+      EVENT -> info.name.withColor(NG_OUTPUT, attribute)
+      PROPERTY_BINDING -> info.name.withColor(NG_INPUT, attribute)
+      BANANA_BOX_BINDING -> info.fullName.withColor(NG_IN_OUT, attribute)
+      REGULAR -> info.name.withColor(HTML_ATTRIBUTE, attribute)
+      else -> return
+    }
     // TODO register error on the symbols themselves
     holder.registerProblem(attribute.nameElement,
-                           Angular2Bundle.message(messageKey, info.name, attribute.parent.name),
+                           Angular2Bundle.htmlMessage(
+                             messageKey, htmlName,
+                             "<${attribute.parent.name}>".withColor(Angular2HtmlLanguage.INSTANCE, attribute)),
                            severity,
                            *quickFixes.toTypedArray<LocalQuickFix>())
   }
@@ -111,8 +124,10 @@ class AngularUndefinedBindingInspection : AngularHtmlLikeTemplateLocalInspection
       val fixes = SmartList<LocalQuickFix>()
       Angular2FixesFactory.addUnresolvedDeclarationFixes(bindings, fixes)
       holder.registerProblem(attribute.nameElement,
-                             Angular2Bundle.message("angular.inspection.undefined-binding.message.embedded.no-directive-matched",
-                                                    bindings.templateName),
+                             Angular2Bundle.htmlMessage(
+                               "angular.inspection.undefined-binding.message.embedded.no-directive-matched",
+                               bindings.templateName.withColor(Angular2HtmlLanguage.INSTANCE, attribute)
+                             ),
                              ProblemHighlightType.WEAK_WARNING,
                              *fixes.toTypedArray<LocalQuickFix>())
       return
@@ -129,8 +144,10 @@ class AngularUndefinedBindingInspection : AngularHtmlLikeTemplateLocalInspection
           val fixes = SmartList<LocalQuickFix>()
           Angular2FixesFactory.addUnresolvedDeclarationFixes(binding, fixes)
           holder.registerProblem(element,
-                                 Angular2Bundle.message("angular.inspection.undefined-binding.message.embedded.property-not-provided",
-                                                        binding.key),
+                                 Angular2Bundle.htmlMessage(
+                                   "angular.inspection.undefined-binding.message.embedded.property-not-provided",
+                                   binding.key.withColor(NG_INPUT, attribute)
+                                 ),
                                  Angular2InspectionUtils.getBaseProblemHighlightType(scope, matched),
                                  *fixes.toTypedArray<LocalQuickFix>())
         }

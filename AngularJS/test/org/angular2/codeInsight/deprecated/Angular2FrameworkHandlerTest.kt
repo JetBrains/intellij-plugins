@@ -63,14 +63,14 @@ class Angular2FrameworkHandlerTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.configureByText("template.html",
                               """
                                 <app-foo></app-foo>
-                                <<error descr="Component or directive matching app-bar element is out of scope of the current template">app-bar</error>></app-bar>
+                                <<error descr="Component or directive matching  app-bar  element is out of scope of the current template">app-bar</error>></app-bar>
                                 <<warning descr="Unknown html tag foobar">foobar</warning>></<warning descr="Unknown html tag foobar">foobar</warning>>
                                 """.trimIndent())
     myFixture.checkHighlighting()
     Disposer.dispose(disposable)
     myFixture.configureByText("template.html",
                               """
-                                <<error descr="Component or directive matching app-foo element is out of scope of the current template">app-foo</error>></app-foo>
+                                <<error descr="Component or directive matching  app-foo  element is out of scope of the current template">app-foo</error>></app-foo>
                                 <app-bar></app-bar>
                                 <<warning descr="Unknown html tag foobar">foobar</warning>></<warning descr="Unknown html tag foobar">foobar</warning>>
                                 """.trimIndent())

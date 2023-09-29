@@ -19,6 +19,11 @@ class Angular2Bundle : DynamicBundle(BUNDLE) {
     }
 
     @JvmStatic
+    fun htmlMessage(key: @PropertyKey(resourceBundle = BUNDLE) String, vararg params: Any): @Nls String {
+      return "<html>" + INSTANCE.getMessage(key, *params) + "</html>"
+    }
+
+    @JvmStatic
     fun messagePointer(key: @PropertyKey(resourceBundle = BUNDLE) String,
                        vararg params: Any): Supplier<String> {
       return INSTANCE.getLazyMessage(key, *params)

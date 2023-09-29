@@ -2,13 +2,13 @@
 <my-comp foo-comp foo-dir></my-comp>
 <my-comp foo-comp fooComp2 foo-dir></my-comp>
 
-<div <error descr="Components on an embedded template: MyComponent2 ([foo-comp])">*foo-comp="a"</error>
-  <error descr="Components on an embedded template: MyComponent3 ([fooComp2])">*fooComp2=
+<div <error descr="Components on an embedded template:  MyComponent2  ( [foo-comp] )">*foo-comp="a"</error>
+  <error descr="Components on an embedded template:  MyComponent3  ( [fooComp2] )">*fooComp2=
 </error>></div>
 
-<div <error descr="Components on an embedded template: MyComponent3 ([fooComp2])">*foo="a; Comp2: a"</error>></div>
+<div <error descr="Components on an embedded template:  MyComponent3  ( [fooComp2] )">*foo="a; Comp2: a"</error>></div>
 
-<div <error descr="Components on an embedded template: MyComponent3 ([fooComp2])">*fooComp2</error>></div>
+<div <error descr="Components on an embedded template:  MyComponent3  ( [fooComp2] )">*fooComp2</error>></div>
 <ng-template *fooComp2></ng-template>
 <ng-template #fooComp2></ng-template>
 <ng-template ref-fooComp2></ng-template>

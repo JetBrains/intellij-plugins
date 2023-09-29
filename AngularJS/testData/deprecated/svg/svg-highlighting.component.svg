@@ -17,7 +17,7 @@
       <feBlend in="SourceGraphic" in2="floodFill" mode="multiply"/>
     </filter>
   </defs>
-  <g *ngFor="let item of items; <weak_warning descr="Property ngForFoo is not provided by any applicable directive on an embedded template">foo</weak_warning>: 12">
+  <g *ngFor="let item of items; <weak_warning descr="Property  ngForFoo  is not provided by any applicable directive on an embedded template">foo</weak_warning>: 12">
     <rect class="cls-1"
           [attr.width]="item.width"
           height="{{item.<error descr="Unresolved variable height">height</error>}}"/>
@@ -27,5 +27,5 @@
   <<warning descr="Element feBlend doesn't have required attribute in2"><warning descr="Element feBlend is not allowed here">feBlend</warning></warning>></<warning descr="Element feBlend doesn't have required attribute in2"><warning descr="Element feBlend is not allowed here">feBlend</warning></warning>>
   <<warning descr="Unknown html tag paths">paths</warning>></<warning descr="Unknown html tag paths">paths</warning>>
   <<warning descr="Element rect doesn't have required attribute height"><warning descr="Element rect doesn't have required attribute width">rect</warning></warning> class="cls-3"
-     <weak_warning descr="No directive is matched on attribute foo">*foo</weak_warning>="12"/>
+     <weak_warning descr="No directive is matched on attribute  foo ">*foo</weak_warning>="12"/>
 </svg>

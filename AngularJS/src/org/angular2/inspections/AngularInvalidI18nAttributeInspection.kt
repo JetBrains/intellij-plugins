@@ -6,6 +6,8 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.text.EditDistance
+import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.HTML_ATTRIBUTE
+import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.inspections.quickfixes.CreateAttributeQuickFix
 import org.angular2.inspections.quickfixes.RenameAttributeQuickFix
@@ -42,7 +44,10 @@ class AngularInvalidI18nAttributeInspection : AngularHtmlLikeTemplateLocalInspec
 
         @Suppress("DialogTitleCapitalization")
         holder.registerProblem(attribute, range,
-                               Angular2Bundle.message("angular.inspection.i18n.message.empty"),
+                               Angular2Bundle.htmlMessage(
+                                 "angular.inspection.i18n.message.empty",
+                                 "i18n-".withColor(HTML_ATTRIBUTE, attribute)
+                               ),
                                *quickFixes)
       }
       else if (descriptor.hasErrorSymbols) {
@@ -54,7 +59,8 @@ class AngularInvalidI18nAttributeInspection : AngularHtmlLikeTemplateLocalInspec
           .toTypedArray<LocalQuickFix>()
 
         holder.registerProblem(attribute, TextRange(range.startOffset + 5, range.endOffset),
-                               Angular2Bundle.message("angular.inspection.i18n.message.not-matching", i18nedAttrName),
+                               Angular2Bundle.htmlMessage("angular.inspection.i18n.message.not-matching",
+                                                          i18nedAttrName.withColor(HTML_ATTRIBUTE, attribute)),
                                *quickFixes)
       }
     }

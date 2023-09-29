@@ -13,6 +13,7 @@ import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
 import org.angular2.Angular2DecoratorUtil.ENTRY_COMPONENTS_PROP
 import org.angular2.Angular2DecoratorUtil.MODULE_DEC
 import org.angular2.Angular2DecoratorUtil.isAngularEntityDecorator
+import org.angular2.codeInsight.Angular2HighlightingUtils.htmlName
 import org.angular2.entities.Angular2Component
 import org.angular2.inspections.Angular2SourceEntityListValidator.ValidationResults
 import org.angular2.lang.Angular2Bundle
@@ -44,8 +45,8 @@ class AngularInvalidEntryComponentInspection : LocalInspectionTool() {
 
     override fun processNonAcceptableEntityClass(aClass: JSClass) {
       registerProblem(ProblemType.INVALID_ENTRY_COMPONENT,
-                      Angular2Bundle.message("angular.inspection.invalid-entry-component.message.not-component",
-                                             aClass.name!!))
+                      Angular2Bundle.htmlMessage("angular.inspection.invalid-entry-component.message.not-component",
+                                                 aClass.htmlName))
     }
   }
 
@@ -55,8 +56,8 @@ class AngularInvalidEntryComponentInspection : LocalInspectionTool() {
 
     override fun processNonAcceptableEntityClass(aClass: JSClass) {
       registerProblem(ProblemType.INVALID_ENTRY_COMPONENT,
-                      Angular2Bundle.message("angular.inspection.invalid-entry-component.message.not-component",
-                                             aClass.name!!))
+                      Angular2Bundle.htmlMessage("angular.inspection.invalid-entry-component.message.not-component",
+                                                 aClass.htmlName))
     }
 
     override fun processAnyElement(node: JSElement) {

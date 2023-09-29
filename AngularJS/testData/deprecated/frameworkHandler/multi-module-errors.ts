@@ -10,7 +10,7 @@ export class FooComponent  {
 @Component({
   selector: 'app-bar'
 })
-export class <error descr="BarComponent is declared in multiple Angular modules: BarModule and FooModule">BarComponent</error>  {
+export class <error descr=" BarComponent  is declared in multiple Angular modules:  BarModule  and  FooModule ">BarComponent</error>  {
 }
 
 @NgModule({

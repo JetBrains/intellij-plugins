@@ -4,7 +4,7 @@ import {Component1} from "./not-module-same-line-other-file.b";
 
 @NgModule({
     imports: [
-        <error descr="Component Component1 is not standalone and cannot be imported directly. It must be imported via an NgModule." textAttributesKey="ERRORS_ATTRIBUTES">Component1</error>
+        <error descr="Component  Component1  is not standalone and cannot be imported directly. It must be imported via an NgModule.">Component1</error>
     ]
 })
 class Module1 {

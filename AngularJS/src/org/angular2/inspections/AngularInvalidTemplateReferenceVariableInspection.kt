@@ -7,10 +7,14 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.refactoring.suggested.startOffset
 import com.intellij.util.SmartList
+import org.angular2.Angular2DecoratorUtil.EXPORT_AS_PROP
 import org.angular2.codeInsight.Angular2DeclarationsScope
+import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.NG_EXPORT_AS
+import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.TS_PROPERTY
+import org.angular2.codeInsight.Angular2HighlightingUtils.renderEntityList
+import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
-import org.angular2.entities.Angular2EntityUtils
 import org.angular2.inspections.quickfixes.Angular2FixesFactory
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.html.parser.Angular2AttributeType
@@ -38,16 +42,20 @@ class AngularInvalidTemplateReferenceVariableInspection : AngularHtmlLikeTemplat
           }
           quickFixes.add(RemoveAttributeIntentionFix(attribute.name))
           holder.registerProblem(valueElement,
-                                 Angular2Bundle.message("angular.inspection.invalid-template-ref-var.message.unbound", exportName),
+                                 Angular2Bundle.htmlMessage("angular.inspection.invalid-template-ref-var.message.unbound",
+                                                            EXPORT_AS_PROP.withColor(NG_EXPORT_AS, attribute),
+                                                            exportName.withColor(TS_PROPERTY, attribute)),
                                  Angular2InspectionUtils.getBaseProblemHighlightType(scope, matchedDirectives),
                                  range,
                                  *quickFixes.toTypedArray<LocalQuickFix>())
         }
         else if (matching.size > 1) {
-          holder.registerProblem(valueElement,
-                                 range,
-                                 Angular2Bundle.message("angular.inspection.invalid-template-ref-var.message.ambiguous-name", exportName,
-                                                        Angular2EntityUtils.renderEntityList(matching)))
+          holder.registerProblem(
+            valueElement, range,
+            Angular2Bundle.htmlMessage("angular.inspection.invalid-template-ref-var.message.ambiguous-name",
+                                       EXPORT_AS_PROP.withColor(NG_EXPORT_AS, attribute),
+                                       exportName.withColor(TS_PROPERTY, attribute),
+                                       renderEntityList(matching)))
         }
       }
     }

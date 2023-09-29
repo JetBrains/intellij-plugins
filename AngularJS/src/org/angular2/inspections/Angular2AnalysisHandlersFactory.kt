@@ -25,6 +25,8 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.ResolveResult
 import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.refactoring.suggested.createSmartPointer
+import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.NG_PIPE
+import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.entities.Angular2ComponentLocator
 import org.angular2.inspections.quickfixes.Angular2FixesFactory
 import org.angular2.lang.Angular2Bundle
@@ -60,7 +62,10 @@ class Angular2AnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
       @InspectionMessage
       override fun createUnresolvedCallReferenceMessage(methodExpression: JSReferenceExpression, isNewExpression: Boolean): String {
         return if (methodExpression is Angular2PipeReferenceExpression) {
-          Angular2Bundle.message("angular.inspection.unresolved-pipe.message", methodExpression.getReferenceName()!!)
+          Angular2Bundle.htmlMessage(
+            "angular.inspection.unresolved-pipe.message",
+            methodExpression.getReferenceName()!!.withColor(NG_PIPE, methodExpression)
+          )
         }
         else super.createUnresolvedCallReferenceMessage(methodExpression, isNewExpression)
       }

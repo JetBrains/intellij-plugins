@@ -16,6 +16,8 @@ import org.angular2.Angular2DecoratorUtil.SELECTOR_PROP
 import org.angular2.Angular2DecoratorUtil.getExpressionStringValue
 import org.angular2.Angular2DecoratorUtil.getObjectLiteralInitializer
 import org.angular2.Angular2DecoratorUtil.isAngularEntityDecorator
+import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.TS_PROPERTY
+import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.inspections.quickfixes.AddJSPropertyQuickFix
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.Angular2LangUtil
@@ -54,7 +56,10 @@ class AngularInvalidSelectorInspection : LocalInspectionTool() {
             if (selector == null) {
               if (DIRECTIVE_DEC == decorator.decoratorName) {
                 holder.registerProblem(initializer,
-                                       Angular2Bundle.message("angular.inspection.invalid-directive-selector.message.missing"),
+                                       Angular2Bundle.htmlMessage(
+                                         "angular.inspection.invalid-directive-selector.message.missing",
+                                         SELECTOR_PROP.withColor(TS_PROPERTY, decorator)
+                                       ),
                                        AddJSPropertyQuickFix(initializer, SELECTOR_PROP, "", 0, false))
               }
             }

@@ -12,6 +12,9 @@ import org.angular2.Angular2DecoratorUtil.TEMPLATE_PROP
 import org.angular2.Angular2DecoratorUtil.TEMPLATE_URL_PROP
 import org.angular2.Angular2DecoratorUtil.getObjectLiteralInitializer
 import org.angular2.Angular2DecoratorUtil.isAngularEntityDecorator
+import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.TS_PROPERTY
+import org.angular2.codeInsight.Angular2HighlightingUtils.htmlClassName
+import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.inspections.quickfixes.AddJSPropertyQuickFix
 import org.angular2.inspections.quickfixes.RemoveJSProperty
@@ -28,20 +31,20 @@ class AngularIncorrectTemplateDefinitionInspection : LocalInspectionTool() {
           val templateUrl = initializer.findProperty(TEMPLATE_URL_PROP)
           val template = initializer.findProperty(TEMPLATE_PROP)
           if (template == null && templateUrl == null) {
-            val component = Angular2EntitiesProvider.getComponent(decorator)
-            val name = component?.typeScriptClass?.name
-            if (name != null) {
-              holder.registerProblem(initializer,
-                                     Angular2Bundle.message("angular.inspection.invalid-template-definition.message.missing", name),
-                                     AddJSPropertyQuickFix(initializer, TEMPLATE_PROP, "\n\n", 1, true),
-                                     AddJSPropertyQuickFix(initializer, TEMPLATE_URL_PROP, "./", 2, false))
-            }
+            val component = Angular2EntitiesProvider.getComponent(decorator) ?: return
+            holder.registerProblem(initializer,
+                                   Angular2Bundle.htmlMessage("angular.inspection.invalid-template-definition.message.missing",
+                                                              component.htmlClassName),
+                                   AddJSPropertyQuickFix(initializer, TEMPLATE_PROP, "\n\n", 1, true),
+                                   AddJSPropertyQuickFix(initializer, TEMPLATE_URL_PROP, "./", 2, false))
           }
           else if (template != null && templateUrl != null) {
             listOfNotNull(template.nameIdentifier, templateUrl.nameIdentifier)
               .forEach { id ->
                 holder.registerProblem(
-                  id, Angular2Bundle.message("angular.inspection.invalid-template-definition.message.duplicated"),
+                  id, Angular2Bundle.htmlMessage("angular.inspection.invalid-template-definition.message.duplicated",
+                                                 TEMPLATE_PROP.withColor(TS_PROPERTY, decorator),
+                                                 TEMPLATE_URL_PROP.withColor(TS_PROPERTY, decorator)),
                   RemoveJSProperty(StringUtil.unquoteString(id.text)))
               }
           }

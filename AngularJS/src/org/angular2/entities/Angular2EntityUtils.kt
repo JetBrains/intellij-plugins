@@ -18,7 +18,6 @@ import org.angular2.entities.ivy.Angular2IvyEntity
 import org.angular2.entities.metadata.psi.Angular2MetadataEntity
 import org.angular2.entities.source.Angular2PropertyInfo
 import org.angular2.entities.source.Angular2SourceEntity
-import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector.ParseException
 import org.jetbrains.annotations.NonNls
@@ -281,50 +280,6 @@ object Angular2EntityUtils {
                            "exportsFullyResolved=" + element.areExportsFullyResolved()
       else -> element.javaClass.name + "@" + Integer.toHexString(element.hashCode())
     }
-  }
-
-  @JvmStatic
-  fun <T : Angular2Entity> renderEntityList(entities: Collection<T>): String {
-    val result = StringBuilder()
-    var i = -1
-    for (entity in entities) {
-      if (++i > 0) {
-        if (i == entities.size - 1) {
-          result.append(' ')
-          result.append(Angular2Bundle.message("angular.description.and-separator"))
-          result.append(' ')
-        }
-        else {
-          result.append(", ")
-        }
-      }
-      result.append(getEntityClassName(entity))
-      if (entity is Angular2Pipe) {
-        result.append(" (")
-        result.append(entity.getName())
-        result.append(")")
-      }
-      else if (entity is Angular2Directive) {
-        result.append(" (")
-        result.append((entity as Angular2Directive).selector.text)
-        result.append(')')
-      }
-    }
-    return result.toString()
-  }
-
-  @JvmStatic
-  fun getEntityClassName(entity: Angular2Entity): String {
-    return if (entity is Angular2Pipe) {
-      entity.typeScriptClass?.name ?: Angular2Bundle.message("angular.description.unknown-class")
-    }
-    else entity.getName()
-  }
-
-  @JvmStatic
-  fun getEntityClassName(decorator: ES6Decorator): String {
-    val entity = Angular2EntitiesProvider.getEntity(decorator) ?: return Angular2Bundle.message("angular.description.unknown-class")
-    return getEntityClassName(entity)
   }
 
   @JvmStatic

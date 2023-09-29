@@ -5,6 +5,9 @@ import com.intellij.codeInsight.daemon.impl.analysis.RemoveAttributeIntentionFix
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.xml.XmlAttribute
 import org.angular2.codeInsight.Angular2DeclarationsScope
+import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.HTML_ATTRIBUTE
+import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.NG_INPUT
+import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.inspections.quickfixes.ConvertToEventQuickFix
 import org.angular2.lang.Angular2Bundle
@@ -24,16 +27,18 @@ class AngularInsecureBindingToEventInspection : AngularHtmlLikeTemplateLocalInsp
       val propertyName = info.name
       if (propertyName.startsWith(EVENT_ATTR_PREFIX)) {
         when ((info as Angular2AttributeNameParser.PropertyBindingInfo).bindingType) {
-          ATTRIBUTE -> holder.registerProblem(attribute.nameElement,
-                                              Angular2Bundle.message("angular.inspection.insecure-binding-to-event.message.attribute",
-                                                                     propertyName),
-                                              ConvertToEventQuickFix(propertyName.substring(2)),
-                                              RemoveAttributeIntentionFix(attribute.name))
+          ATTRIBUTE -> holder.registerProblem(
+            attribute.nameElement,
+            Angular2Bundle.htmlMessage("angular.inspection.insecure-binding-to-event.message.attribute",
+                                       propertyName.withColor(HTML_ATTRIBUTE, attribute)),
+            ConvertToEventQuickFix(propertyName.substring(2)),
+            RemoveAttributeIntentionFix(attribute.name))
           PROPERTY -> {
             val scope = Angular2DeclarationsScope(attribute)
             if (descriptor.sourceDirectives.find { scope.contains(it) } == null) {
               holder.registerProblem(attribute.nameElement,
-                                     Angular2Bundle.message("angular.inspection.insecure-binding-to-event.message.property", propertyName),
+                                     Angular2Bundle.htmlMessage("angular.inspection.insecure-binding-to-event.message.property",
+                                                                propertyName.withColor(NG_INPUT, attribute)),
                                      ConvertToEventQuickFix(propertyName.substring(2)),
                                      RemoveAttributeIntentionFix(attribute.name))
             }

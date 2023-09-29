@@ -36,6 +36,7 @@ import com.intellij.util.containers.toMultiMap
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.intellij.webSymbols.WebSymbol
+import org.angular2.codeInsight.Angular2HighlightingUtils
 import org.angular2.entities.*
 import org.angular2.entities.source.Angular2SourceDirectiveProperty
 import org.angular2.lang.types.Angular2TypeUtils.possiblyGenericJsType
@@ -142,7 +143,7 @@ class Angular2ElementDocumentationTarget private constructor(
             .filter { it.directive == element }
             .mapTo(result) {
               Pair("Export as", SyntaxPrinter(element.sourceElement).withPre {
-                append(TypeScriptHighlighter.TS_INSTANCE_MEMBER_VARIABLE, it.name)
+                append(Angular2HighlightingUtils.NG_EXPORT_AS_KEY, it.name)
               }.toString())
             }
           element.hostDirectives.mapNotNullTo(result) { hostDirective ->

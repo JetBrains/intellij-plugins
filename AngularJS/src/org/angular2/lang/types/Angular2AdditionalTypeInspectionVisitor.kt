@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.lang.types
 
+import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.javascript.webSymbols.jsType
 import com.intellij.lang.javascript.psi.JSEmptyExpression
@@ -62,7 +63,7 @@ class Angular2AdditionalTypeInspectionVisitor(private val holder: ProblemsHolder
 
   private fun checkTypes(attribute: XmlAttribute, descriptor: Angular2AttributeDescriptor,
                          value: String?, bindingsTypeResolver: BindingsTypeResolver, reportOnValue: Boolean) {
-    val valueType = if (value != null )
+    val valueType = if (value != null)
       JSStringLiteralTypeImpl(value, true, JSTypeSource.EMPTY_TS_EXPLICITLY_DECLARED)
     else
       JSUndefinedType(JSTypeSource.EMPTY_TS_EXPLICITLY_DECLARED)
@@ -73,7 +74,8 @@ class Angular2AdditionalTypeInspectionVisitor(private val holder: ProblemsHolder
     JSTypeChecker.getErrorMessageIfTypeNotAssignableToType(attribute, symbolType, valueType, Angular2Language.INSTANCE.optionHolder,
                                                            "javascript.type.is.not.assignable.to.type")
       ?.let {
-        holder.registerProblem(attribute.valueElement?.takeIf { reportOnValue } ?: attribute.nameElement ?: attribute, it)
+        holder.registerProblem(attribute.valueElement?.takeIf { reportOnValue } ?: attribute.nameElement ?: attribute, it,
+                               ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
       }
   }
 

@@ -6,7 +6,7 @@ import {NgModule, Component} from "@angular/core";
 
 
 @NgModule({
-    exports: [<error descr="Cyclic dependency between: MyModule3 -> MyModule1 -> MyComponent1 -> MyModule2 -> MyModule3" textAttributesKey="ERRORS_ATTRIBUTES">MyModule1</error>]
+    exports: [<error descr="Cyclic dependency between:  MyModule3  ->  MyModule1  ->  MyComponent1  ->  MyModule2  ->  MyModule3 ">MyModule1</error>]
 })
 export class MyModule3 {
 
@@ -18,8 +18,8 @@ const THE_IMPORT = [
 
 @NgModule({
     imports: [
-        <error descr="Cyclic dependency between: MyModule2 -> MyModule3 -> MyModule1 -> MyComponent1 -> MyModule2" textAttributesKey="ERRORS_ATTRIBUTES">THE_IMPORT</error>,
-        <error descr="Module MyModule2 imports itself" textAttributesKey="ERRORS_ATTRIBUTES">MyModule2</error>
+        <error descr="Cyclic dependency between:  MyModule2  ->  MyModule3  ->  MyModule1  ->  MyComponent1  ->  MyModule2 ">THE_IMPORT</error>,
+        <error descr="Module  MyModule2  imports itself">MyModule2</error>
     ]
 })
 export class MyModule2 {
@@ -29,8 +29,8 @@ export class MyModule2 {
 @Component({
   standalone: true,
   imports: [
-    <error descr="Cyclic dependency between: MyComponent2 -> MyComponent1 -> MyComponent2" textAttributesKey="ERRORS_ATTRIBUTES">MyComponent1</error>,
-    <error descr="Component MyComponent2 imports itself" textAttributesKey="ERRORS_ATTRIBUTES">MyComponent2</error>
+    <error descr="Cyclic dependency between:  MyComponent2  ->  MyComponent1  ->  MyComponent2 ">MyComponent1</error>,
+    <error descr="Component  MyComponent2  imports itself">MyComponent2</error>
   ]
 })
 export class MyComponent2 {
@@ -43,7 +43,7 @@ export const MY_IMPORTS = [
 
 @NgModule({
     imports: [MyModule3],
-    exports: [<error descr="Module MyModule4 exports itself" textAttributesKey="ERRORS_ATTRIBUTES">MyModule4</error>]
+    exports: [<error descr="Module  MyModule4  exports itself">MyModule4</error>]
 })
 export class MyModule4 {
 }
