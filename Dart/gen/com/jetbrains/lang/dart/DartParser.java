@@ -211,7 +211,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // !('?' '[' elements? ']' ':') ('?.' | '?')? '[' expression? ']'
+  // !('?' '[' elements? ']' callOrArrayAccessOrQualifiedRefExpression ':') ('?.' | '?')? '[' expression? ']'
   static boolean arrayAccess(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "arrayAccess")) return false;
     if (!nextTokenIs(b, "", LBRACKET, QUEST, QUEST_DOT)) return false;
@@ -227,7 +227,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // !('?' '[' elements? ']' ':')
+  // !('?' '[' elements? ']' callOrArrayAccessOrQualifiedRefExpression ':')
   private static boolean arrayAccess_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "arrayAccess_0")) return false;
     boolean r;
@@ -237,14 +237,16 @@ public class DartParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // '?' '[' elements? ']' ':'
+  // '?' '[' elements? ']' callOrArrayAccessOrQualifiedRefExpression ':'
   private static boolean arrayAccess_0_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "arrayAccess_0_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeTokens(b, 0, QUEST, LBRACKET);
     r = r && arrayAccess_0_0_2(b, l + 1);
-    r = r && consumeTokens(b, 0, RBRACKET, COLON);
+    r = r && consumeToken(b, RBRACKET);
+    r = r && callOrArrayAccessOrQualifiedRefExpression(b, l + 1);
+    r = r && consumeToken(b, COLON);
     exit_section_(b, m, null, r);
     return r;
   }
