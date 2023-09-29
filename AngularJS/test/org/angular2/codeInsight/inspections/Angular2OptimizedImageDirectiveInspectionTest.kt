@@ -2,21 +2,12 @@
 package org.angular2.codeInsight.inspections
 
 import com.intellij.xml.analysis.XmlAnalysisBundle
-import org.angular2.Angular2MultiFileFixtureTestCase
+import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.inspections.AngularNgOptimizedImageInspection
 import org.angular2.lang.Angular2Bundle
-import org.angularjs.AngularTestUtil
 
-class Angular2OptimizedImageDirectiveInspectionTest : Angular2MultiFileFixtureTestCase() {
-
-  override fun getTestDataPath(): String? {
-    return AngularTestUtil.getBaseTestDataPath() + "inspections/"
-  }
-
-  override fun getTestRoot(): String {
-    return "ngSrc/"
-  }
+class Angular2OptimizedImageDirectiveInspectionTest : Angular2TestCase("inspections/ngSrc") {
 
   override fun setUp() {
     super.setUp()
@@ -44,9 +35,8 @@ class Angular2OptimizedImageDirectiveInspectionTest : Angular2MultiFileFixtureTe
   }
 
   private fun doMultiFileTest(intention: String) {
-    doTest { _, _ ->
-      Angular2TestModule.configureLink(myFixture, Angular2TestModule.ANGULAR_CORE_15_1_5, Angular2TestModule.ANGULAR_COMMON_15_1_5)
-      myFixture.configureFromTempProjectFile("main.component.html")
+    doConfiguredTest(Angular2TestModule.ANGULAR_CORE_15_1_5, Angular2TestModule.ANGULAR_COMMON_15_1_5, dir = true,
+                     configureFileName = "main.component.html", checkResult = true) {
       myFixture.checkHighlighting()
       myFixture.launchAction(myFixture.findSingleIntention(intention))
     }

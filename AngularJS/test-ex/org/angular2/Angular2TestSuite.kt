@@ -59,6 +59,7 @@ import org.junit.runners.Suite
   Angular2PipeParameterInfoTest::class,
   Angular2ParameterHintsTest::class,
   Angular2ExpressionTypesInspectionTest::class,
+  Angular2OptimizedImageDirectiveInspectionTest::class,
   Angular2SuppressionsTest::class,
   Angular2NgModuleImportQuickFixesTest::class,
   Angular2ChangeSignatureTest::class,
