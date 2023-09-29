@@ -25,6 +25,10 @@ import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.Transferable
 
 internal class PbJsonCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferableData?>() {
+  override fun requiresAllDocumentsToBeCommitted(editor: Editor, project: Project): Boolean {
+    return false
+  }
+
   override fun collectTransferableData(file: PsiFile,
                                        editor: Editor,
                                        startOffsets: IntArray,
@@ -47,31 +51,37 @@ internal class PbJsonCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
     if (editor.virtualFile.fileType != PbFileType.INSTANCE) return
     val pbFile = PsiManager.getInstance(project).findFile(editor.virtualFile).asSafely<PbFile>() ?: return
     val data = values.filterIsInstance<PbJsonTransferableData>().singleOrNull() ?: return
-    val parsedJsonStruct = tryBuildStructFromJson(data.maybeJson) ?: return
-    val namesScope = collectExistingNames(pbFile, caretOffset) ?: return
 
-    val nameSuggester = PbNameSuggester(namesScope)
-    val initialMetadata = StructMetadata(parsedJsonStruct, nameSuggester.rememberFqn(DEFAULT_MESSAGE_NAME, parsedJsonStruct))
-    // write names
-    val flattenStructs = collectPastedStructs(parentStruct = initialMetadata, nameSuggester = nameSuggester)
-    //read names
-    val protobufStructure = collectPastedEntities(flattenStructs, nameSuggester)
-      .joinToString(transform = PbPastedEntity::render, separator = "\n")
+    val parsedJsonStruct = tryBuildStructFromJson(data.maybeJson) ?: return
+    val namesScope = collectExistingNamesScope(pbFile, caretOffset) ?: return
+    val protobufToInsert = assembleProtobufFile(namesScope, parsedJsonStruct)
 
     val document = editor.document
     PsiDocumentManager.getInstance(project).commitDocument(document)
-
     ApplicationManager.getApplication().runWriteAction {
-      document.replaceString(bounds.startOffset, bounds.endOffset, protobufStructure)
+      document.replaceString(bounds.startOffset, bounds.endOffset, protobufToInsert)
       ReformatCodeProcessor(pbFile, true).run()
     }
   }
 
-  override fun requiresAllDocumentsToBeCommitted(editor: Editor, project: Project): Boolean {
-    return false
+  private fun assembleProtobufFile(namesScope: List<String>, parsedJsonStruct: Struct): String {
+    return with(JsonStructTransformer(namesScope)) {
+      flattenNestedStructs(parsedJsonStruct)
+        .mapNotNull(::rememberUniqueStructOrNull)
+        .map { struct ->
+          PbPastedEntity.PbStruct(
+            getUniqueName(struct),
+            mapStructFields(struct, ::getUniqueName)
+          )
+        }.joinToString(transform = PbPastedEntity::render, separator = "\n")
+    }
   }
 
-  private fun collectExistingNames(containingFile: PbFile, caretOffset: Int): List<String>? {
+  private fun flattenNestedStructs(seed: Struct): List<PbStructInJson> {
+    return collectPastedStructs(PbStructInJson(DEFAULT_MESSAGE_NAME, seed)).toList()
+  }
+
+  private fun collectExistingNamesScope(containingFile: PbFile, caretOffset: Int): List<String>? {
     val containingElement =
       containingFile.elementsAtOffsetUp(caretOffset)
         .asSequence()
@@ -103,90 +113,63 @@ internal class PbJsonCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
     }.getOrNull()
   }
 
-  private fun collectPastedEntities(structs: Collection<StructMetadata>, nameSuggester: PbNameSuggester): List<PbPastedEntity.PbStruct> {
-    return structs.distinctBy { it.struct }
-      .map { structMetadata ->
-        PbPastedEntity.PbStruct(
-          nameSuggester.getUniqueName(structMetadata.struct),
-          mapStructFields(structMetadata, nameSuggester)
-        )
-      }
-  }
-
-  private fun mapStructFields(structMetadata: StructMetadata, nameSuggester: PbNameSuggester): List<PbPastedEntity.PbField> {
-    return structMetadata.struct.fieldsMap.entries.mapIndexed { index, (fieldName, fieldValue) ->
+  private fun mapStructFields(struct: Struct, structNameGetter: (Struct) -> String): List<PbPastedEntity.PbField> {
+    return struct.fieldsMap.entries.mapIndexed { zeroBasedIndex, (fieldName, fieldValue) ->
       val type = when {
         fieldValue.hasBoolValue() -> "bool"
         fieldValue.hasStringValue() -> "string"
         fieldValue.hasNumberValue() -> "uint32"
-        fieldValue.hasStructValue() -> nameSuggester.getUniqueName(fieldValue.structValue)
-        //nameSuggester.getUniqueName(structMetadata.fqn + "." + StringUtil.capitalize(fieldName))
+        fieldValue.hasStructValue() -> structNameGetter(fieldValue.structValue)
         else -> "string"
       }
-      PbPastedEntity.PbField(fieldName, fieldValue.hasListValue(), type, index + 1)
+      PbPastedEntity.PbField(fieldName, fieldValue.hasListValue(), type, zeroBasedIndex + 1)
     }
   }
 
-  private fun collectPastedStructs(parentStruct: StructMetadata, nameSuggester: PbNameSuggester): List<StructMetadata> {
-    val children = findChildrenStructs(parentStruct, nameSuggester)
-    return listOf(parentStruct) +
-           children.flatMap { childStruct -> collectPastedStructs(childStruct, nameSuggester) }
+  private fun collectPastedStructs(parentStruct: PbStructInJson): Sequence<PbStructInJson> {
+    return sequenceOf(parentStruct) + findChildrenStructs(parentStruct).flatMap(::collectPastedStructs)
   }
 
-  private class StructMetadata(
-    val struct: Struct,
-    val fqn: String
-  ) {
-
-  }
-
-  private fun findChildrenStructs(parent: StructMetadata, nameSuggester: PbNameSuggester): List<StructMetadata> {
+  private fun findChildrenStructs(parent: PbStructInJson): Sequence<PbStructInJson> {
     return parent.struct.fieldsMap
       .entries.asSequence()
       .filter { it.value.hasStructValue() }
-      .map { (childName, childStruct) ->
-        val fqn = parent.fqn + "." + StringUtil.capitalize(childName)
-        nameSuggester.rememberFqn(fqn, childStruct.structValue)
-        StructMetadata(childStruct.structValue, fqn)
-      }
-      .toList()
+      .map { (childName, childBody) -> PbStructInJson(childName, childBody.structValue) }
   }
 }
 
-private class PbJsonTransferableData(val maybeJson: String) : TextBlockTransferableData {
-  override fun getFlavor(): DataFlavor {
-    return PROTOBUF_JSON_DATA_FLAVOR
-  }
-}
+private data class PbStructInJson(
+  val jsonNodeName: String,
+  val struct: Struct
+)
 
-private class PbNameSuggester(existingNames: Collection<String>) {
-  private val names = existingNames.toMutableSet()
-  private val structToShortName = mutableMapOf<Struct, String>()
+private class JsonStructTransformer(existingNames: Collection<String>) {
+  private val knownNames = existingNames.toMutableSet()
+  private val structToShortNameMappings = mutableMapOf<Struct, String>()
 
-  fun rememberFqn(jsonFqn: String, struct: Struct): String {
-    val existingStructMapping = structToShortName[struct]
+  fun rememberUniqueStructOrNull(structInJson: PbStructInJson): Struct? {
+    val existingStructMapping = structToShortNameMappings[structInJson.struct]
     if (existingStructMapping != null) {
-      return existingStructMapping
+      return null
     }
 
-    val shortenedName = jsonFqn.substringAfterLast('.')
-
+    val shortenedName = StringUtil.capitalize(structInJson.jsonNodeName)
     val uniqueName =
-      if (names.add(shortenedName)) {
+      if (knownNames.add(shortenedName)) {
         shortenedName
       }
       else {
         generateSequence(1, Int::inc)
           .map { index -> "$shortenedName$index" }
-          .first(names::add)
+          .first(knownNames::add)
       }
 
-    structToShortName[struct] = uniqueName
-    return uniqueName
+    structToShortNameMappings[structInJson.struct] = uniqueName
+    return structInJson.struct
   }
 
   fun getUniqueName(struct: Struct): String {
-    return structToShortName[struct] ?: "Unknown"
+    return structToShortNameMappings[struct] ?: "Unknown"
   }
 }
 
@@ -217,6 +200,12 @@ private sealed class PbPastedEntity {
         ${if (isRepeated) "repeated" else ""} $type $name = $order;
       """.trimIndent()
     }
+  }
+}
+
+private class PbJsonTransferableData(val maybeJson: String) : TextBlockTransferableData {
+  override fun getFlavor(): DataFlavor {
+    return PROTOBUF_JSON_DATA_FLAVOR
   }
 }
 
