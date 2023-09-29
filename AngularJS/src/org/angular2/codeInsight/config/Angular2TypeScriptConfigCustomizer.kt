@@ -2,6 +2,7 @@
 package org.angular2.codeInsight.config
 
 import com.intellij.json.psi.JsonObject
+import com.intellij.lang.typescript.tsconfig.TypeScriptConfig
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigCustomizer
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigParsingUtil.getObjectOfProperty
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
@@ -34,57 +35,44 @@ object Angular2Compiler {
       ?.getCustomOption(STRICT_TEMPLATES) == true
 
   // Following flags: https://angular.io/guide/template-typecheck#troubleshooting-template-errors
-  fun isStrictInputTypes(psi: PsiElement?): Boolean =
-    TypeScriptConfigUtil.getConfigForPsiFile(psi?.containingFile)
-      ?.let {
-        it.getCustomOption(STRICT_INPUT_TYPES) ?: it.getCustomOption(STRICT_TEMPLATES)
-      } == true
-
   fun isStrictInputAccessModifiers(psi: PsiElement?): Boolean =
     TypeScriptConfigUtil.getConfigForPsiFile(psi?.containingFile)
       ?.getCustomOption(STRICT_INPUT_ACCESS_MODIFIERS) == true
 
+  fun isStrictInputTypes(psi: PsiElement?): Boolean =
+    TypeScriptConfigUtil.getConfigForPsiFile(psi?.containingFile)
+      .isStrictTemplateOption(STRICT_INPUT_TYPES)
+
   fun isStrictNullInputTypes(psi: PsiElement?): Boolean =
     TypeScriptConfigUtil.getConfigForPsiFile(psi?.containingFile)
-      ?.let {
-        it.getCustomOption(STRICT_NULL_INPUT_TYPES) ?: it.getCustomOption(STRICT_TEMPLATES)
-      } == true
+      .isStrictTemplateOption(STRICT_NULL_INPUT_TYPES)
 
   fun isStrictAttributeTypes(psi: PsiElement?): Boolean =
     TypeScriptConfigUtil.getConfigForPsiFile(psi?.containingFile)
-      ?.let {
-        it.getCustomOption(STRICT_ATTRIBUTE_TYPES) ?: it.getCustomOption(STRICT_TEMPLATES)
-      } == true
+      .isStrictTemplateOption(STRICT_ATTRIBUTE_TYPES)
 
   fun isStrictSafeNavigationTypes(psi: PsiElement?): Boolean =
     TypeScriptConfigUtil.getConfigForPsiFile(psi?.containingFile)
-      ?.let {
-        it.getCustomOption(STRICT_SAFE_NAVIGATION_TYPES) ?: it.getCustomOption(STRICT_TEMPLATES)
-      } == true
+      .isStrictTemplateOption(STRICT_SAFE_NAVIGATION_TYPES)
 
   fun isStrictDomLocalRefTypes(psi: PsiElement?): Boolean =
     TypeScriptConfigUtil.getConfigForPsiFile(psi?.containingFile)
-      ?.let {
-        it.getCustomOption(STRICT_DOM_LOCAL_REF_TYPES) ?: it.getCustomOption(STRICT_TEMPLATES)
-      } == true
+      .isStrictTemplateOption(STRICT_DOM_LOCAL_REF_TYPES)
 
   fun isStrictDomEventTypes(psi: PsiElement?): Boolean =
     TypeScriptConfigUtil.getConfigForPsiFile(psi?.containingFile)
-      ?.let {
-        it.getCustomOption(STRICT_DOM_EVENT_TYPES) ?: it.getCustomOption(STRICT_TEMPLATES)
-      } == true
+      .isStrictTemplateOption(STRICT_DOM_EVENT_TYPES)
 
   fun isStrictContextGenerics(psi: PsiElement?): Boolean =
     TypeScriptConfigUtil.getConfigForPsiFile(psi?.containingFile)
-      ?.let {
-        it.getCustomOption(STRICT_CONTEXT_GENERICS) ?: it.getCustomOption(STRICT_TEMPLATES)
-      } == true
+      .isStrictTemplateOption(STRICT_CONTEXT_GENERICS)
 
   fun isStrictLiteralTypes(psi: PsiElement?): Boolean =
     TypeScriptConfigUtil.getConfigForPsiFile(psi?.containingFile)
-      ?.let {
-        it.getCustomOption(STRICT_LITERAL_TYPES) ?: it.getCustomOption(STRICT_TEMPLATES)
-      } == true
+      .isStrictTemplateOption(STRICT_LITERAL_TYPES)
+
+  private fun TypeScriptConfig?.isStrictTemplateOption(key: Key<Boolean>) =
+    this != null && getCustomOption(STRICT_TEMPLATES) == true && getCustomOption(key) != false
 
 }
 

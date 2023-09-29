@@ -12,8 +12,8 @@ import {Component} from '@angular/core';
 })
 export class AppComponent {
 
-  private item: any;
-  private items: any[] = [{myBar: 'test', fooBar: 12}];
+  protected item: any;
+  protected items: any[] = [{myBar: 'test', fooBar: 12}];
 
   test() {
     // noinspection JSUnusedLocalSymbols

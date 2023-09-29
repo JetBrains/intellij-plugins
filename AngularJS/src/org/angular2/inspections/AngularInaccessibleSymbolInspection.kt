@@ -29,6 +29,7 @@ import org.angular2.codeInsight.Angular2HighlightingUtils.htmlName
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.codeInsight.Angular2HighlightingUtils.withNameColor
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
+import org.angular2.codeInsight.config.Angular2Compiler
 import org.angular2.codeInsight.config.Angular2Compiler.isStrictTemplates
 import org.angular2.entities.Angular2ComponentLocator
 import org.angular2.inspections.quickfixes.AngularChangeModifierQuickFix
@@ -78,6 +79,7 @@ class AngularInaccessibleSymbolInspection : LocalInspectionTool() {
 
         private fun checkPropertyBinding(element: Angular2HtmlPropertyBinding) {
           if (element.bindingType == PropertyBindingType.PROPERTY) {
+            if (!Angular2Compiler.isStrictInputAccessModifiers(element)) return
             val inputElements = getInputSourceElements(element)
             val owner = Angular2ComponentLocator.findComponentClass(element)
                         ?: return
@@ -86,7 +88,6 @@ class AngularInaccessibleSymbolInspection : LocalInspectionTool() {
               val inputOwner = input.parentOfType<TypeScriptClass>() ?: return
               val minAccessType = if (inputOwner == owner) AccessType.PROTECTED else AccessType.PUBLIC
               if (!isAccessible(input, minAccessType)) {
-                if (!isStrictTemplates(element)) return
                 holder.registerProblem(
                   element.nameElement,
                   Angular2Bundle.htmlMessage(

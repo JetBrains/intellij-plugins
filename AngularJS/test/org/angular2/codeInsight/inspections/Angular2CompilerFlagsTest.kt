@@ -22,7 +22,27 @@ class Angular2CompilerFlagsTest : Angular2TestCase("inspections/compilerFlags") 
   }
 
   fun testStrictNullInputTypesOff() {
-    doFlagTest(Angular2TsConfigFile(strictNullInputTypes = false, strictNullChecks = true))
+    doFlagTest(Angular2TsConfigFile(strictNullInputTypes = false, strictTemplates = false, strictNullChecks = true))
+  }
+
+  fun testStrictNullInputTypesOnStrictTemplatesOff() {
+    doFlagTest(Angular2TsConfigFile(strictNullInputTypes = true, strictTemplates = false, strictNullChecks = true))
+  }
+
+  fun testStrictNullInputTypesAbsentOn() {
+    doFlagTest(Angular2TsConfigFile(strictNullChecks = true, strictTemplates = true))
+  }
+
+  fun testStrictInputAccessModifiersOn() {
+    doFlagTest(Angular2TsConfigFile(strictTemplates = false, strictInputAccessModifiers = true))
+  }
+
+  fun testStrictInputAccessModifiersOff() {
+    doFlagTest(Angular2TsConfigFile(strictTemplates = true, strictInputAccessModifiers = false))
+  }
+
+  fun testStrictInputAccessModifiersAbsent() {
+    doFlagTest(Angular2TsConfigFile(strictTemplates = true, strictInputAccessModifiers = null))
   }
 
   private fun doFlagTest(test: Angular2TsConfigFile) {
