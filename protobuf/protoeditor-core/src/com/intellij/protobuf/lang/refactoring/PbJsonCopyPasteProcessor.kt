@@ -51,13 +51,12 @@ internal class PbJsonCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
     val namesScope = collectExistingNames(pbFile, caretOffset) ?: return
 
     val nameSuggester = PbNameSuggester(namesScope)
-    val initialMetadata = StructMetadata(parsedJsonStruct, DEFAULT_MESSAGE_NAME, nameSuggester.generateUniqueName(DEFAULT_MESSAGE_NAME))
+    val initialMetadata = StructMetadata(parsedJsonStruct, nameSuggester.rememberFqn(DEFAULT_MESSAGE_NAME, parsedJsonStruct))
     // write names
     val flattenStructs = collectPastedStructs(parentStruct = initialMetadata, nameSuggester = nameSuggester)
     //read names
     val protobufStructure = collectPastedEntities(flattenStructs, nameSuggester)
       .joinToString(transform = PbPastedEntity::render, separator = "\n")
-
 
     val document = editor.document
     PsiDocumentManager.getInstance(project).commitDocument(document)
@@ -104,13 +103,14 @@ internal class PbJsonCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
     }.getOrNull()
   }
 
-  private fun collectPastedEntities(structs: List<StructMetadata>, nameSuggester: PbNameSuggester): List<PbPastedEntity.PbStruct> {
-    return structs.map { structMetadata ->
-      PbPastedEntity.PbStruct(
-        nameSuggester.mappingFor(structMetadata.fqn),
-        mapStructFields(structMetadata, nameSuggester)
-      )
-    }
+  private fun collectPastedEntities(structs: Collection<StructMetadata>, nameSuggester: PbNameSuggester): List<PbPastedEntity.PbStruct> {
+    return structs.distinctBy { it.struct }
+      .map { structMetadata ->
+        PbPastedEntity.PbStruct(
+          nameSuggester.getUniqueName(structMetadata.struct),
+          mapStructFields(structMetadata, nameSuggester)
+        )
+      }
   }
 
   private fun mapStructFields(structMetadata: StructMetadata, nameSuggester: PbNameSuggester): List<PbPastedEntity.PbField> {
@@ -119,7 +119,8 @@ internal class PbJsonCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
         fieldValue.hasBoolValue() -> "bool"
         fieldValue.hasStringValue() -> "string"
         fieldValue.hasNumberValue() -> "uint32"
-        fieldValue.hasStructValue() -> nameSuggester.mappingFor(structMetadata.fqn + "." + StringUtil.capitalize(fieldName))
+        fieldValue.hasStructValue() -> nameSuggester.getUniqueName(fieldValue.structValue)
+        //nameSuggester.getUniqueName(structMetadata.fqn + "." + StringUtil.capitalize(fieldName))
         else -> "string"
       }
       PbPastedEntity.PbField(fieldName, fieldValue.hasListValue(), type, index + 1)
@@ -132,11 +133,12 @@ internal class PbJsonCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
            children.flatMap { childStruct -> collectPastedStructs(childStruct, nameSuggester) }
   }
 
-  private data class StructMetadata(
+  private class StructMetadata(
     val struct: Struct,
-    val fqn: String,
-    val generatedUniqueName: String
-  )
+    val fqn: String
+  ) {
+
+  }
 
   private fun findChildrenStructs(parent: StructMetadata, nameSuggester: PbNameSuggester): List<StructMetadata> {
     return parent.struct.fieldsMap
@@ -144,7 +146,8 @@ internal class PbJsonCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
       .filter { it.value.hasStructValue() }
       .map { (childName, childStruct) ->
         val fqn = parent.fqn + "." + StringUtil.capitalize(childName)
-        StructMetadata(childStruct.structValue, fqn, nameSuggester.generateUniqueName(fqn))
+        nameSuggester.rememberFqn(fqn, childStruct.structValue)
+        StructMetadata(childStruct.structValue, fqn)
       }
       .toList()
   }
@@ -158,9 +161,14 @@ private class PbJsonTransferableData(val maybeJson: String) : TextBlockTransfera
 
 private class PbNameSuggester(existingNames: Collection<String>) {
   private val names = existingNames.toMutableSet()
-  private val mappings = mutableMapOf<String, String>()
+  private val structToShortName = mutableMapOf<Struct, String>()
 
-  fun generateUniqueName(jsonFqn: String): String {
+  fun rememberFqn(jsonFqn: String, struct: Struct): String {
+    val existingStructMapping = structToShortName[struct]
+    if (existingStructMapping != null) {
+      return existingStructMapping
+    }
+
     val shortenedName = jsonFqn.substringAfterLast('.')
 
     val uniqueName =
@@ -173,12 +181,12 @@ private class PbNameSuggester(existingNames: Collection<String>) {
           .first(names::add)
       }
 
-    mappings[jsonFqn] = uniqueName
+    structToShortName[struct] = uniqueName
     return uniqueName
   }
 
-  fun mappingFor(name: String): String {
-    return mappings[name] ?: name
+  fun getUniqueName(struct: Struct): String {
+    return structToShortName[struct] ?: "Unknown"
   }
 }
 
