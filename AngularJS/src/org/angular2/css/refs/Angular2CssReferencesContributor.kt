@@ -2,7 +2,7 @@
 package org.angular2.css.refs
 
 import com.intellij.javascript.web.css.CssClassInJSLiteralOrIdentifierReferenceProvider
-import com.intellij.patterns.PlatformPatterns
+import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReferenceContributor
 import com.intellij.psi.PsiReferenceRegistrar
@@ -16,19 +16,12 @@ import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
 import org.angular2.lang.html.psi.PropertyBindingType
 
-class Angular2CssReferencesContributor : PsiReferenceContributor() {
-
+internal class Angular2CssReferencesContributor : PsiReferenceContributor() {
   override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
-    CssClassInJSLiteralOrIdentifierReferenceProvider.register(registrar, Angular2Language.INSTANCE, Angular2Binding::class.java) {
-      Angular2AttributeValueProvider.isNgClassAttribute(it)
-    }
-    registrar.registerReferenceProvider(CSS_CLASS_PATTERN_IN_ATTRIBUTE, Angular2CssClassInAttributeReferenceProvider())
-  }
-
-  companion object {
-
-    private val CSS_CLASS_PATTERN_IN_ATTRIBUTE = PlatformPatterns.psiElement(XmlAttribute::class.java)
+    val cssClassInAttributePattern = psiElement(XmlAttribute::class.java)
       .and(FilterPattern(object : ElementFilter {
+        override fun isClassAcceptable(hintClass: Class<*>): Boolean = true
+
         override fun isAcceptable(element: Any, context: PsiElement?): Boolean {
           val info: Angular2AttributeNameParser.AttributeInfo
           if (context is Angular2HtmlPropertyBinding || context is XmlAttribute && !context.language.`is`(Angular2Language.INSTANCE)) {
@@ -37,10 +30,11 @@ class Angular2CssReferencesContributor : PsiReferenceContributor() {
           }
           return false
         }
-
-        override fun isClassAcceptable(hintClass: Class<*>): Boolean {
-          return true
-        }
       }))
+
+    CssClassInJSLiteralOrIdentifierReferenceProvider.register(registrar, Angular2Language.INSTANCE, Angular2Binding::class.java) {
+      Angular2AttributeValueProvider.isNgClassAttribute(it)
+    }
+    registrar.registerReferenceProvider(cssClassInAttributePattern, Angular2CssClassInAttributeReferenceProvider())
   }
 }
