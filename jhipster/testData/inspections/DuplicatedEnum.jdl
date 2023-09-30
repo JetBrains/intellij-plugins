@@ -1,0 +1,19 @@
+entity Mission {
+  name String required
+  description String
+}
+
+enum <error descr="Duplicated enum SpaceEventType">SpaceEventType</error> {
+  LAUNCH,
+  LANDING
+}
+
+entity Mars {
+  description TextBlob required
+  photo ImageBlob required
+}
+
+enum <error descr="Duplicated enum SpaceEventType">SpaceEventType</error> {
+  NO,
+  YES
+}

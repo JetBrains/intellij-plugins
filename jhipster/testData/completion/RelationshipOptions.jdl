@@ -1,0 +1,18 @@
+application {
+  config {
+    baseName space
+  }
+  entities *
+}
+
+entity SpaceEvent {
+  name String required
+}
+
+entity Mission {
+  name String required
+}
+
+relationship OneToOne {
+  SpaceEvent{mission(name)} to @<caret> Mission
+}

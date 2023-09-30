@@ -1,0 +1,21 @@
+application {
+  config {
+    baseName blog
+    packageName com.okta.developer.blog
+  }
+  entities Blog
+}
+
+entity Blog {
+  publisher PublisherType
+}
+
+enum PublisherType {
+  COMPANY,
+  BLOGGER
+}
+
+enum <warning descr="Unused enum SpaceType">SpaceType</warning> {
+  TEMPORARY,
+  PERMANENT
+}

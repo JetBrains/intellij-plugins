@@ -1,0 +1,14 @@
+application {
+  config {
+    baseName basicApplication
+    <weak_warning descr="Unknown option optionDoesNotExists">optionDoesNotExists</weak_warning> true
+  }
+}
+
+deployment {
+  deploymentType docker-compose
+  <weak_warning descr="Unknown option fantasyOption">fantasyOption</weak_warning> [gateway, store, blog, notification]
+  dockerRepositoryName "hipsters"
+  monitoring no
+  serviceDiscoveryType eureka
+}

@@ -1,0 +1,345 @@
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+{
+  parserClass="com.intellij.jhipster.parser.JdlParser"
+
+  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+  psiClassPrefix="Jdl"
+  psiImplClassSuffix="Impl"
+  psiPackage="com.intellij.jhipster.psi"
+  psiImplPackage="com.intellij.jhipster.psi.impl"
+
+  elementTypeHolderClass="com.intellij.jhipster.psi.JdlTokenTypes"
+  elementTypeClass="com.intellij.jhipster.psi.JdlElementType"
+  tokenTypeClass="com.intellij.jhipster.psi.JdlTokenType"
+  psiImplUtilClass="com.intellij.jhipster.psi.JdlPsiUtils"
+  tokens = [
+    LINE_COMMENT='regexp://.*'
+    BLOCK_COMMENT='regexp:/\*([^*]|\*+[^*/])*(\*+/)?'
+    LBRACE='{'
+    RBRACE='}'
+    LBRACKET='['
+    RBRACKET=']'
+    LPARENTH='('
+    RPARENTH=')'
+    COMMA=','
+    COLON=':'
+    TRUE='true'
+    FALSE='false'
+    WILDCARD='*'
+    STRUDEL='@'
+    ASSIGN='='
+    NEWLINE='regexp:/\r\n|[\r\n]'
+
+    APPLICATION_KEYWORD='application'
+    ENTITY_KEYWORD='entity'
+    ENUM_KEYWORD='enum'
+    WITH_KEYWORD='with'
+    EXCEPT_KEYWORD='except'
+    DEPLOYMENT_KEYWORD='deployment'
+    RELATIONSHIP_KEYWORD='relationship'
+    TO_KEYWORD='to'
+    USE_KEYWORD='use'
+    FOR_KEYWORD='for'
+  ]
+
+  implements("entity")=[
+    "com.intellij.psi.PsiNameIdentifierOwner"
+  ]
+  implements("enum")=[
+    "com.intellij.psi.PsiNameIdentifierOwner"
+  ]
+  implements("constant")=[
+    "com.intellij.psi.PsiNameIdentifierOwner"
+  ]
+}
+
+root ::= (NEWLINE | application | entity | enum | relationshipGroup
+          | deployment | constant | useConfigurationOption | configurationOption)*
+
+application ::= APPLICATION_KEYWORD NEWLINE* LBRACE NEWLINE* applicationContent NEWLINE* RBRACE {
+    pin = 1
+    methods = [
+        getName
+        getPresentation
+    ]
+}
+
+private applicationContent ::= (NEWLINE | configBlock | useConfigurationOption | configurationOption)*
+
+configBlock ::= configKeyword NEWLINE* LBRACE (NEWLINE | configElement)* RBRACE {
+    pin = 1
+    methods = [
+        getPresentation
+    ]
+}
+
+configKeyword ::= "config"
+
+private configElement ::= optionNameValue (COMMA|&NEWLINE) {
+    pin = 1
+    recoverWhile = notRBraceOrNextOption
+}
+
+optionNameValue ::= optionName value? {
+    pin = 1
+    name = "option"
+    methods = [
+        getName
+        getNameElement
+        getPresentation
+    ]
+}
+
+optionName ::= IDENTIFIER {
+    name="option name"
+}
+
+value ::= id | booleanLiteral | stringLiteral | numberLiteral | arrayLiteral | regexLiteral
+
+exceptEntities ::= EXCEPT_KEYWORD entitiesList {
+    pin = 1
+}
+
+entitiesList ::= id entityIdItem* {
+    pin = 1
+}
+
+private entityIdItem ::= COMMA id {
+    pin = 1
+}
+
+private withOption ::= WITH_KEYWORD withOptionValue {
+    pin = 1
+}
+
+withOptionValue ::= IDENTIFIER
+
+constant ::= constantName ASSIGN value {
+    pin = 2
+    mixin="com.intellij.jhipster.psi.JdlConstantMixin"
+}
+
+constantName ::= IDENTIFIER
+
+configurationOption ::= configurationOptionName (wildcardLiteral | entitiesList) withOption? exceptEntities? {
+    pin = 1
+    methods = [
+        getName
+        getNameElement
+        getPresentation
+    ]
+}
+
+configurationOptionName ::= IDENTIFIER {
+    name = "configuration option"
+}
+
+useConfigurationOption ::= USE_KEYWORD configurationOptionValues FOR_KEYWORD (wildcardLiteral | entitiesList) {
+    pin = 1
+}
+
+configurationOptionValues ::= withOptionValue withOptionValueItem* {
+    pin = 1
+}
+
+private withOptionValueItem ::= COMMA withOptionValue {
+    pin = 1
+}
+
+wildcardLiteral ::= ("all" | WILDCARD) {
+    name = "*"
+}
+
+entity ::= annotations ENTITY_KEYWORD NEWLINE* entityId NEWLINE* entityTableDeclaration? entityBody? {
+    pin = 2
+    mixin="com.intellij.jhipster.psi.JdlEntityMixin"
+}
+
+entityId ::= IDENTIFIER {
+    name = "entity identifier"
+}
+
+private annotations ::= (NEWLINE | annotation)*
+
+annotationValue ::= withOptionValue | stringLiteral | numberLiteral
+
+annotation ::= STRUDEL annotationId (LPARENTH annotationValue RPARENTH)? {
+    pin = 1
+}
+
+annotationId ::= IDENTIFIER {
+    name = "annotation identifier"
+}
+
+private entityBody ::= NEWLINE* LBRACE (NEWLINE | entityElement)* RBRACE {
+    pin = 2
+}
+
+private entityTableDeclaration ::= LPARENTH NEWLINE* entityTableName NEWLINE* RPARENTH {
+    pin = 1
+}
+
+entityTableName ::= IDENTIFIER {
+    name = "table name"
+}
+
+private entityElement ::= entityFieldMapping (COMMA|&NEWLINE) {
+    pin = 1
+    recoverWhile = notRBraceOrNextOption
+}
+
+entityFieldMapping ::= annotations fieldName fieldType fieldConstraint* {
+    pin = 2
+    methods = [
+        getName
+        getType
+        getNameElement
+        getPresentation
+        isRequired
+    ]
+}
+
+fieldConstraint ::= fieldConstraintId fieldConstraintParameters?
+
+fieldConstraintId ::= IDENTIFIER
+
+fieldConstraintParameters ::= LPARENTH fieldConstraintParameterValue* RPARENTH {
+    pin = 1
+}
+
+private fieldConstraintParameterValue ::= value (COMMA|&RPARENTH) {
+    pin = 1
+    recoverWhile = notRParenthOrNextValue
+}
+
+enum ::= ENUM_KEYWORD NEWLINE* enumId NEWLINE* LBRACE (NEWLINE | enumElement)* RBRACE {
+    pin = 1
+    mixin="com.intellij.jhipster.psi.JdlEnumMixin"
+}
+
+enumId ::= IDENTIFIER {
+    name = "enum name"
+}
+
+private enumElement ::= enumValue (COMMA|&NEWLINE) {
+    pin = 1
+    recoverWhile = notRBraceOrNextOption
+}
+
+enumValue ::= enumKey explicitEnumMapping? {
+    pin = 1
+    methods = [
+        getName
+        getNameElement
+        getPresentation
+    ]
+}
+
+explicitEnumMapping ::= LPARENTH (id | stringLiteral) RPARENTH {
+    pin = 1
+}
+
+enumKey ::= IDENTIFIER {
+    name = "enum key"
+}
+
+fieldName ::= IDENTIFIER {
+    name = "field name"
+}
+
+fieldType ::= IDENTIFIER {
+    name = "field type"
+    methods = [
+        getTypeName
+    ]
+    mixin="com.intellij.jhipster.psi.JdlFieldTypeMixin"
+}
+
+id ::= IDENTIFIER {
+    name = "identifier"
+    extends = value
+    mixin="com.intellij.jhipster.psi.JdlIdMixin"
+}
+
+relationshipGroup ::= RELATIONSHIP_KEYWORD relationshipType NEWLINE* LBRACE (NEWLINE | relationshipElement)* RBRACE {
+    pin = 1
+    methods = [
+        getType
+        getPresentation
+    ]
+}
+
+relationshipType ::= IDENTIFIER
+
+private relationshipElement ::= relationshipMapping (COMMA|&NEWLINE) {
+    pin = 1
+    recoverWhile = notRBraceOrNextOption
+}
+
+relationshipMapping ::= relationshipEntity NEWLINE* TO_KEYWORD NEWLINE* relationshipEntity withOption? {
+    pin = 1
+}
+
+relationshipEntity ::= relationshipOption? id relationshipDetails? {
+    pin = 2
+}
+
+relationshipOptionId ::= IDENTIFIER
+
+relationshipOption ::= STRUDEL relationshipOptionId (LPARENTH stringLiteral RPARENTH)? {
+    pin = 1
+}
+
+relationshipDetails ::= LBRACE fieldNameRef (LPARENTH fieldNameRef RPARENTH)? fieldConstraint? RBRACE
+
+fieldNameRef ::= IDENTIFIER {
+    name = "field reference"
+}
+
+deployment ::= DEPLOYMENT_KEYWORD NEWLINE* LBRACE (NEWLINE | deploymentElement)* RBRACE {
+    pin = 1
+    methods = [
+        getPresentation
+    ]
+}
+
+private deploymentElement ::= optionNameValue (COMMA|&NEWLINE) {
+    pin = 1
+    recoverWhile = notRBraceOrNextOption
+}
+
+booleanLiteral ::= TRUE | FALSE {
+    extends = value
+}
+
+numberLiteral ::= DOUBLE_NUMBER | INTEGER_NUMBER {
+    extends = value
+}
+
+stringLiteral ::= DOUBLE_QUOTED_STRING {
+    extends = value
+    methods=[
+        getTextFragments
+    ]
+    mixin="com.intellij.jhipster.psi.JdlStringLiteralMixin"
+}
+
+arrayLiteral ::= LBRACKET (arrayElement | NEWLINE)* RBRACKET {
+    pin = 1
+    extends = value
+}
+
+private arrayElement ::= value (COMMA|&RBRACKET) {
+    pin = 1
+    recoverWhile = notBracketOrNextValue
+}
+
+private notBracketOrNextValue ::= !(RBRACKET|value)
+private notRParenthOrNextValue ::= !(RPARENTH|value)
+private notRBraceOrNextOption ::= !(RBRACE|NEWLINE|IDENTIFIER)
+
+regexLiteral ::= REGEX_STRING {
+    name = "regex literal"
+    extends = value
+}

@@ -1,0 +1,4 @@
+deployment {
+  monitoring no
+  serviceDiscoveryType <caret>
+}

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright © 2023 Yuriy Artamonov
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+  ~ and associated documentation files (the "Software"), to deal in the Software without
+  ~ restriction, including without limitation the rights to use, copy, modify, merge, publish,
+  ~ distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
+  ~ Software is furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in all copies
+  ~ or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+  ~ BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+  ~ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+  ~ DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  ~ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  -->
+
+<templateSet group="JHipster">
+    <template description="JHipster JDL application" name="jh-app" toReformat="true"
+              value="application {&#10;    config {&#10;        baseName $NAME$&#10;        packageName $PACKAGE_NAME$&#10;        applicationType $TYPE$&#10;        $END$&#10;    }&#10;}"
+              shortcut="TAB">
+        <variable name="NAME" defaultValue="&quot;demo&quot;" alwaysStopAt="true"/>
+        <variable name="PACKAGE_NAME" defaultValue="&quot;com.demo&quot;" alwaysStopAt="true"/>
+        <variable name="TYPE" expression="complete()" defaultValue="&quot;monolith&quot;" alwaysStopAt="true"/>
+        <context>
+            <option name="JDL" value="true"/>
+        </context>
+    </template>
+
+    <template description="JHipster JDL entity" name="jh-entity" toReformat="true"
+              value="entity $NAME$ {&#10;    $END$&#10;}" shortcut="TAB">
+        <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true"/>
+        <context>
+            <option name="JDL" value="true"/>
+        </context>
+    </template>
+
+    <template description="JHipster JDL enum" name="jh-enum" toReformat="true"
+              value="enum $NAME$ {&#10;    $END$&#10;}" shortcut="TAB">
+        <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true"/>
+        <context>
+            <option name="JDL" value="true"/>
+        </context>
+    </template>
+
+    <template description="JHipster JDL relationship" name="jh-rel" toReformat="true"
+              value="relationship $TYPE$ {&#10;    $END$&#10;}" shortcut="TAB">
+        <variable name="TYPE" expression="complete()" defaultValue="" alwaysStopAt="true"/>
+        <context>
+            <option name="JDL" value="true"/>
+        </context>
+    </template>
+
+    <template description="JHipster JDL deployment" name="jh-deploy" toReformat="true"
+              value="deployment {&#10;    $END$&#10;}" shortcut="TAB">
+        <context>
+            <option name="JDL" value="true"/>
+        </context>
+    </template>
+</templateSet>

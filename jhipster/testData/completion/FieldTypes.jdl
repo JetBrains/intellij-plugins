@@ -1,0 +1,13 @@
+entity Invoice {
+  id Integer required,
+  type <caret>,
+  dueDate Instant,
+  tax BigDecimal,
+  shipping BigDecimal,
+  amountDue BigDecimal
+}
+
+enum SpaceEventType {
+  LAUNCH,
+  LANDING
+}

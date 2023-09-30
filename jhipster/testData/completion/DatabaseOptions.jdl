@@ -1,0 +1,5 @@
+application {
+  config {
+    prodDatabaseType <caret>
+  }
+}

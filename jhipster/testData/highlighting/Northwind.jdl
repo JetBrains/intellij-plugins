@@ -1,0 +1,224 @@
+/*
+northwind-jdl.jh is a JHipster jdl file based on classic Northwind Database.
+Will add relationships soon.
+3/6/2020
+*/
+
+application {
+  config {
+    prodDatabaseType postgresql,
+  }
+}
+
+entity Customer {
+  id Integer required,
+  company String maxlength(50),
+  lastName String maxlength(50),
+  firstName String maxlength(50),
+  emailAddress String maxlength(50),
+  jobTitle String maxlength(50),
+  businessPhone String maxlength(25),
+  homePhone String maxlength(25),
+  mobilePhone String maxlength(25),
+  faxNumber String maxlength(25),
+  address TextBlob,
+  city String maxlength(50),
+  stateProvince String maxlength(50),
+  zipPostalCode String maxlength(15),
+  countryRegion String maxlength(50),
+  webPage TextBlob,
+  notes TextBlob,
+  attachments Blob
+}
+
+entity Employee {
+  id Integer required,
+  company String maxlength(50),
+  lastName String maxlength(50),
+  firstName String maxlength(50),
+  emailAddress String maxlength(50),
+  jobTitle String maxlength(50),
+  businessPhone String maxlength(25),
+  homePhone String maxlength(25),
+  mobilePhone String maxlength(25),
+  faxNumber String maxlength(25),
+  address TextBlob,
+  city String maxlength(50),
+  stateProvince String maxlength(50),
+  zipPostalCode String maxlength(15),
+  countryRegion String maxlength(50),
+  webPage TextBlob,
+  notes TextBlob,
+  attachments Blob
+}
+
+entity InventoryTransactionType {
+  id Boolean required,
+  typeName String required maxlength(50)
+}
+
+entity InventoryTransaction {
+  id Integer required,
+  transactionCreatedDate Instant,
+  transactionModifiedDate Instant,
+  quantity Integer required,
+  comments String maxlength(255)
+}
+
+entity Invoice {
+  id Integer required,
+  invoiceDate Instant,
+  dueDate Instant,
+  tax BigDecimal,
+  shipping BigDecimal,
+  amountDue BigDecimal
+}
+
+entity OrderDetailer {
+  id Integer required,
+  quantity BigDecimal required,
+  unitPrice BigDecimal,
+  discount Double required,
+  dateAllocated Instant,
+  purchaseOrderId Integer,
+  inventoryId Integer
+}
+
+entity OrderDetailStatu {
+  id Integer required,
+  statusName String required maxlength(50)
+}
+
+entity Nworder {
+  id Integer required,
+  orderDate Instant,
+  shippedDate Instant,
+  shipName String maxlength(50),
+  shipAddress TextBlob,
+  shipCity String maxlength(50),
+  shipStateProvince String maxlength(50),
+  shipZipPostalCode String maxlength(50),
+  shipCountryRegion String maxlength(50),
+  shippingFee BigDecimal,
+  taxes BigDecimal,
+  paymentType String maxlength(50),
+  paidDate Instant,
+  notes TextBlob,
+  taxRate Double
+}
+
+entity OrderStatu {
+  id Boolean required,
+  statusName String required maxlength(50)
+}
+
+entity OrderTaxStatu {
+  id Boolean required,
+  taxStatusName String required maxlength(50)
+}
+
+entity Privilege {
+  id Integer required,
+  privilegeName String maxlength(50)
+}
+
+entity Product {
+  supplierIds TextBlob,
+  id Integer required,
+  productCode String maxlength(25),
+  productName String maxlength(50),
+  description TextBlob,
+  standardCost BigDecimal,
+  listPrice BigDecimal required,
+  reorderLevel Integer,
+  targetLevel Integer,
+  quantityPerUnit String maxlength(50),
+  discontinued Boolean required,
+  minimumReorderQuantity Integer,
+  category String maxlength(50),
+  attachments Blob
+}
+
+entity PurchaseOrderDetailer {
+  id Integer required,
+  quantity BigDecimal required,
+  unitCost BigDecimal required,
+  dateReceived Instant,
+  postedToInventory Boolean required
+}
+
+entity PurchaseOrderStatu {
+  id Integer required,
+  status String maxlength(50)
+}
+
+entity PurchaseOrder {
+  id Integer required,
+  submittedDate Instant,
+  creationDate Instant,
+  expectedDate Instant,
+  shippingFee BigDecimal required,
+  taxes BigDecimal required,
+  paymentDate Instant,
+  paymentAmount BigDecimal,
+  paymentMethod String maxlength(50),
+  notes TextBlob,
+  approvedBy Integer,
+  approvedDate Instant,
+  submittedBy Integer
+}
+
+entity SalesReport {
+  groupBy String required maxlength(50),
+  display String maxlength(50),
+  title String maxlength(50),
+  filterRowSource TextBlob,
+  defaultFlag Boolean required
+}
+
+entity Shipper {
+  id Integer required,
+  company String maxlength(50),
+  lastName String maxlength(50),
+  firstName String maxlength(50),
+  emailAddress String maxlength(50),
+  jobTitle String maxlength(50),
+  businessPhone String maxlength(25),
+  homePhone String maxlength(25),
+  mobilePhone String maxlength(25),
+  faxNumber String maxlength(25),
+  address TextBlob,
+  city String maxlength(50),
+  stateProvince String maxlength(50),
+  zipPostalCode String maxlength(15),
+  countryRegion String maxlength(50),
+  webPage TextBlob,
+  notes TextBlob,
+  attachments Blob
+}
+
+entity Strings {
+  stringId Integer required,
+  stringData String maxlength(255)
+}
+
+entity Supplier {
+  id Integer required,
+  company String maxlength(50),
+  lastName String maxlength(50),
+  firstName String maxlength(50),
+  emailAddress String maxlength(50),
+  jobTitle String maxlength(50),
+  businessPhone String maxlength(25),
+  homePhone String maxlength(25),
+  mobilePhone String maxlength(25),
+  faxNumber String maxlength(25),
+  address TextBlob,
+  city String maxlength(50),
+  stateProvince String maxlength(50),
+  zipPostalCode String maxlength(15),
+  countryRegion String maxlength(50),
+  webPage TextBlob,
+  notes TextBlob,
+  attachments Blob
+}

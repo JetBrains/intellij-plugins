@@ -1,0 +1,13 @@
+application {
+  config {
+    baseName blog
+    packageName com.okta.developer.blog
+  }
+  entities Blog, Space
+}
+
+entity Blog
+
+entity <warning descr="Unused entity Post">Post</warning>
+
+entity Space

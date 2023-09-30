@@ -1,0 +1,20 @@
+entity SpaceEvent {
+  name String required
+  date LocalDate required
+  type SpaceEventType required
+}
+
+entity <error descr="Duplicated entity Mission">Mission</error> {
+  name String required
+  description String
+}
+
+enum SpaceEventType {
+  LAUNCH,
+  LANDING
+}
+
+entity <error descr="Duplicated entity Mission">Mission</error> {
+  description TextBlob required
+  photo ImageBlob required
+}

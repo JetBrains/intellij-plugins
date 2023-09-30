@@ -1,0 +1,4 @@
+entity Invoice {
+  id Integer <caret>,
+  amountDue BigDecimal
+}
