@@ -1,6 +1,7 @@
 package com.intellij.protobuf.lang.refactoring.json
 
 import com.google.protobuf.Struct
+import com.google.protobuf.Value
 import com.google.protobuf.util.JsonFormat
 import com.intellij.codeInsight.actions.ReformatCodeProcessor
 import com.intellij.codeInsight.editorActions.CopyPastePostProcessor
@@ -114,15 +115,22 @@ internal class PbJsonCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
 
   private fun mapStructFields(struct: Struct, structNameGetter: (Struct) -> String): List<PbPastedEntity.PbField> {
     return struct.fieldsMap.entries.mapIndexed { zeroBasedIndex, (fieldName, fieldValue) ->
-      val type = when {
-        fieldValue.hasBoolValue() -> "bool"
-        fieldValue.hasStringValue() -> "string"
-        fieldValue.hasNumberValue() -> "uint32"
-        fieldValue.hasStructValue() -> structNameGetter(fieldValue.structValue)
-        else -> "string"
-      }
-      PbPastedEntity.PbField(fieldName, fieldValue.hasListValue(), type, zeroBasedIndex + 1)
+      PbPastedEntity.PbField(name = fieldName,
+                             isRepeated = fieldValue.hasListValue(),
+                             type = mapFieldType(fieldValue, structNameGetter),
+                             order = zeroBasedIndex + 1)
     }
+  }
+
+  private fun mapFieldType(fieldValue: Value, structNameGetter: (Struct) -> String): String {
+    return when {
+       fieldValue.hasBoolValue() -> "bool"
+       fieldValue.hasStringValue() -> "string"
+       fieldValue.hasNumberValue() -> "uint32"
+       fieldValue.hasStructValue() -> structNameGetter(fieldValue.structValue)
+       fieldValue.hasListValue() -> getFirstStructInArrayOrNull(fieldValue)?.let(structNameGetter)
+       else -> null
+     } ?: FALLBACK_FIELD_TYPE
   }
 
   private fun collectPastedStructs(parentStruct: PbStructInJson): Sequence<PbStructInJson> {
@@ -132,8 +140,28 @@ internal class PbJsonCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
   private fun findChildrenStructs(parent: PbStructInJson): Sequence<PbStructInJson> {
     return parent.struct.fieldsMap
       .entries.asSequence()
-      .filter { it.value.hasStructValue() }
-      .map { (childName, childBody) -> PbStructInJson(childName, childBody.structValue) }
+      .mapNotNull { (childName, childBody) ->
+        when {
+          childBody.hasStructValue() -> {
+            PbStructInJson(childName, childBody.structValue)
+          }
+          childBody.hasListValue() -> {
+            val maybeStruct = getFirstStructInArrayOrNull(childBody) ?: return@mapNotNull null
+            PbStructInJson(childName, maybeStruct)
+          }
+          else -> {
+            null
+          }
+        }
+      }
+  }
+
+  private fun getFirstStructInArrayOrNull(anything: Value): Struct? {
+    return anything.listValue.allFields.entries
+      .asSequence()
+      .flatMap { (_, maybeCollection) -> maybeCollection.asSafely<Collection<Value>>() ?: emptyList() }
+      .firstOrNull(Value::hasStructValue)
+      ?.structValue
   }
 }
 
@@ -144,6 +172,7 @@ private class PbJsonTransferableData(val maybeJson: String) : TextBlockTransfera
 }
 
 private const val DEFAULT_MESSAGE_NAME = "PastedObject"
+private const val FALLBACK_FIELD_TYPE = "string"
 private val PROTOBUF_JSON_DATA_FLAVOR = DataFlavor(
   PbJsonCopyPasteProcessor::class.java,
   "JSON to Protobuf converter"
