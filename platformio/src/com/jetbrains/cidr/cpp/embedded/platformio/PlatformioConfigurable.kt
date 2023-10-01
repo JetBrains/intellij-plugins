@@ -10,7 +10,6 @@ import com.intellij.openapi.ui.validation.validationErrorIf
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.util.SystemInfo
-import com.intellij.openapi.util.io.toNioPath
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.dsl.builder.*
 import com.intellij.util.FontUtil
@@ -123,7 +122,7 @@ class PlatformioConfigurable : SearchableConfigurable {
     }
 
     private fun pioBinFolderPath(): Pair<Boolean, Path> {
-      val path = PathEnvironmentVariableUtil.findExecutableInPathOnAnyOS("pio")?.parent?.toNioPath()
+      val path = PathEnvironmentVariableUtil.findExecutableInPathOnAnyOS("pio")?.parent?.let { Path.of(it) }
       if (path != null) {
         return Pair(true, path)
       }
