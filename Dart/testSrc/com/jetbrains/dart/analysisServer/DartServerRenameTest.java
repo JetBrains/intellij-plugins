@@ -4,6 +4,7 @@ package com.jetbrains.dart.analysisServer;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -21,35 +22,20 @@ import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatus;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.dartlang.analysis.server.protocol.SourceChange;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Set;
 
 public class DartServerRenameTest extends CodeInsightFixtureTestCase {
 
-  private static class DataContextForTest implements DataContext {
-    private final Editor myEditor;
-    private final VirtualFile myVirtualFile;
-    private final PsiFile myPsiFile;
-    private final PsiElement myPsiElement;
 
-    DataContextForTest(Editor editor, VirtualFile virtualFile, PsiFile psiFile, PsiElement psiElement) {
-      myEditor = editor;
-      myVirtualFile = virtualFile;
-      myPsiFile = psiFile;
-      myPsiElement = psiElement;
-    }
-
-    @Nullable
-    @Override
-    public Object getData(@NotNull String dataId) {
-      if (CommonDataKeys.EDITOR.is(dataId)) return myEditor;
-      if (CommonDataKeys.VIRTUAL_FILE.is(dataId)) return myVirtualFile;
-      if (CommonDataKeys.PSI_FILE.is(dataId)) return myPsiFile;
-      if (CommonDataKeys.PSI_ELEMENT.is(dataId)) return myPsiElement;
-      return null;
-    }
+  private static DataContext createDataContext(Editor editor, VirtualFile virtualFile, PsiFile psiFile, PsiElement psiElement) {
+    return SimpleDataContext.builder()
+      .add(CommonDataKeys.EDITOR, editor)
+      .add(CommonDataKeys.VIRTUAL_FILE, virtualFile)
+      .add(CommonDataKeys.PSI_FILE, psiFile)
+      .add(CommonDataKeys.PSI_ELEMENT, psiElement)
+      .build();
   }
 
   @Override
@@ -120,16 +106,16 @@ public class DartServerRenameTest extends CodeInsightFixtureTestCase {
 
     final DartServerRenameHandler handler = new DartServerRenameHandler();
 
-    assertFalse("no editor", handler.isRenaming(new DataContextForTest(null, htmlVirtualFile, htmlPsiFile, null)));
-    assertFalse("html element at caret", handler.isRenaming(new DataContextForTest(getEditor(), htmlVirtualFile, htmlPsiFile, htmlTag)));
+    assertFalse("no editor", handler.isRenaming(createDataContext(null, htmlVirtualFile, htmlPsiFile, null)));
+    assertFalse("html element at caret", handler.isRenaming(createDataContext(getEditor(), htmlVirtualFile, htmlPsiFile, htmlTag)));
     assertTrue("dart element in html file at caret",
-               handler.isRenaming(new DataContextForTest(getEditor(), htmlVirtualFile, htmlPsiFile, null)));
+               handler.isRenaming(createDataContext(getEditor(), htmlVirtualFile, htmlPsiFile, null)));
     assertTrue("dart element in html file",
-               handler.isRenaming(new DataContextForTest(getEditor(), htmlVirtualFile, htmlPsiFile, dartElementInHtmlFile)));
+               handler.isRenaming(createDataContext(getEditor(), htmlVirtualFile, htmlPsiFile, dartElementInHtmlFile)));
 
     myFixture.openFileInEditor(dartVirtualFile);
-    assertTrue("dart comment at caret", handler.isRenaming(new DataContextForTest(getEditor(), dartVirtualFile, dartPsiFile, null)));
-    assertTrue("dart comment at caret", handler.isRenaming(new DataContextForTest(getEditor(), dartVirtualFile, dartPsiFile, dartElement)));
+    assertTrue("dart comment at caret", handler.isRenaming(createDataContext(getEditor(), dartVirtualFile, dartPsiFile, null)));
+    assertTrue("dart comment at caret", handler.isRenaming(createDataContext(getEditor(), dartVirtualFile, dartPsiFile, dartElement)));
   }
 
   public void testCheckFinalConditionsNameFatalError() {
