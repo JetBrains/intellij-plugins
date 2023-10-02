@@ -90,8 +90,8 @@ object DtsTreeUtil {
         var statements = file.dtsStatements.sortedBy { it.startOffset }
 
         if (maxOffset != null) {
-            includes = includes.filter { it.offset <= maxOffset }
-            statements = statements.filter { it.startOffset <= maxOffset }
+            includes = includes.filter { it.before(maxOffset) }
+            statements = statements.filter { it.startOffset < maxOffset }
         }
 
         var includesIndex = includes.size - 1
@@ -101,7 +101,7 @@ object DtsTreeUtil {
             val includeOffset = includes[includesIndex].offset
             val statementOffset = statements[statementsIndex].startOffset
 
-            val result = if (includeOffset > statementOffset) {
+            val result = if (includeOffset != null && includeOffset > statementOffset) {
                 val ref = includes[includesIndex--].resolve(file) as? DtsFile
 
                 if (ref != null) {
@@ -143,13 +143,13 @@ object DtsTreeUtil {
      */
     fun <T> search(file: PsiFile, node: DtsNode, callback: (DtsNode) -> T?): T? {
         val path = DtsPath.absolut(node) ?: return null
-        return search(file, path, node.startOffset, callback)
+        return search(file, path, node.startOffset + 1, callback)
     }
 
     /**
      * Searches through all appearances of nodes with the specified path. If the
-     * [offset] is not null, only nodes above the offset are taken into
-     * consideration.
+     * [offset] is not null, only nodes and includes before (inclusive) the
+     * offset are taken into consideration.
      *
      * Returns the first non-null value returned by the callback.
      */

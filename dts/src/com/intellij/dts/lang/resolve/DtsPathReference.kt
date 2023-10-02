@@ -44,7 +44,7 @@ class DtsPathReference(
     }
 
     private fun search(path: DtsPath, callback: (DtsNode) -> Unit) {
-        val offset = if (value) null else element.startOffset - 1
+        val offset = if (value) null else element.startOffset
 
         DtsTreeUtil.search(element.containingFile, path, offset) { node ->
             callback(node)

@@ -10,7 +10,7 @@ import com.intellij.psi.PsiFile
  * Resolves references to the source file from an overlay file.
  */
 object DtsOverlayFile : FileInclude {
-    override val offset: Int = 0
+    override val offset: Int? = null
 
     override fun resolve(anchor: PsiFile): PsiFile? {
         val context = anchor.originalFile.virtualFile

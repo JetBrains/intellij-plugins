@@ -45,7 +45,7 @@ abstract class DtsTestBase : BasePlatformTestCase() {
 
         val settings = DtsSettings.of(project)
         settings.update {
-            zephyrBoard = "xtensa/esp32"
+            zephyrBoard = Path.of("testData/zephyr/boards/xtensa/esp32").absolute().pathString
         }
     }
 

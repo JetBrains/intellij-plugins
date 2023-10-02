@@ -28,6 +28,13 @@ class DtsPathReferenceTest : DtsCompletionTest() {
         useRootContentVariations = true,
     )
 
+    fun testEmptyOverlay() {
+        addZephyr()
+        myFixture.configureByText("esp32.overlay", "&{/<caret>}")
+
+        assertSize(10, myFixture.completeBasic())
+    }
+
     private fun doTest(
         input: String,
         paths: List<String>,

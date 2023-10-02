@@ -8,6 +8,7 @@ import com.intellij.dts.DtsIcons
 import com.intellij.dts.lang.DtsFile
 import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.psi.DtsTypes
+import com.intellij.dts.lang.psi.before
 import com.intellij.dts.lang.psi.getDtsPresentableText
 import com.intellij.dts.lang.stubs.DTS_NODE_LABEL_INDEX
 import com.intellij.openapi.editor.Editor
@@ -64,7 +65,7 @@ class DtsLabelReference(
             if (file !is DtsFile || c != '&') return Result.CONTINUE
 
             val element = file.findElementAt(editor.caretModel.offset)
-            if (element.elementType in refFollowSet) {
+            if (element == null || element.elementType in refFollowSet) {
                 AutoPopupController.getInstance(project).scheduleAutoPopup(editor, CompletionType.BASIC, null)
             }
 
@@ -80,9 +81,7 @@ class DtsLabelReference(
     private fun collectFiles(collection: MutableSet<VirtualFile>, file: PsiFile, maxOffset: Int?) {
         if (file !is DtsFile) return
 
-        for (include in file.dtsTopLevelIncludes) {
-            if (maxOffset != null && include.offset > maxOffset) continue
-
+        for (include in file.dtsTopLevelIncludes.filter { it.before(maxOffset) }) {
             val includeFile = include.resolve(file) ?: continue
 
             if (collection.add(includeFile.originalFile.virtualFile)) {

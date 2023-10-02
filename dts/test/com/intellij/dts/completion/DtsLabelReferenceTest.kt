@@ -66,6 +66,13 @@ class DtsLabelReferenceTest : DtsCompletionTest() {
         )
     }
 
+    fun testEmptyOverlay() {
+        addZephyr()
+        myFixture.configureByText("esp32.overlay", "&<caret>")
+
+        assertSize(56, myFixture.completeBasic())
+    }
+
     private fun doTest(
         input: String,
         labels: List<String>,
