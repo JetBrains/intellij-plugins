@@ -20,6 +20,7 @@ object Angular2HighlightingUtils {
 
   enum class TextAttributesKind(val key: TextAttributesKey) {
     TS_PROPERTY(TypeScriptHighlighter.TS_INSTANCE_MEMBER_VARIABLE),
+    TS_FUNCTION(TypeScriptHighlighter.TS_EXPORTED_FUNCTION),
     TS_KEYWORD(TypeScriptHighlighter.TS_KEYWORD),
     HTML_TAG(XmlHighlighterColors.HTML_TAG_NAME),
     HTML_ATTRIBUTE(XmlHighlighterColors.HTML_ATTRIBUTE_NAME),

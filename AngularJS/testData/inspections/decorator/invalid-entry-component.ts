@@ -8,6 +8,13 @@ export class MyComp2 {
 
 }
 
+@Component({
+  standalone: true
+})
+export class MyComp3 {
+
+}
+
 class Foo {
 
 }
@@ -33,6 +40,7 @@ const LIST2 = [
 @Component({
     entryComponents: [
         MyComp1,
+        MyComp3,
         <error descr="Class  MyDir1  is not an Angular component">MyDir1</error>,
         <error descr="Class  Foo  is not an Angular component">Foo</error>,
         LIST1,
@@ -66,6 +74,7 @@ export class MyComp1 {
     bootstrap: [
         <error descr="Class  MyDir1  is not an Angular component">MyDir1</error>,
         MyComp1,
+        <error descr="Component  MyComp3  is standalone and cannot be used in the  @NgModule.bootstrap  array. Use the  bootstrapApplication  function for bootstrap instead.">MyComp3</error>,
         <error descr="Expression does not resolve to an array of class types or a class type">LIST1</error>,
         LIST2,
         [
