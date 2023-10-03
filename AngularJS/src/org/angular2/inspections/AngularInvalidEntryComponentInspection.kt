@@ -84,9 +84,9 @@ class AngularInvalidEntryComponentInspection : LocalInspectionTool() {
 
     private fun ngModuleBootstrapHtml(project: Project) =
       project.service<JSTooltipWithHtmlHighlighter>().let {
-        val html = it.applyAttributes("@NgModule", TypeScriptHighlighter.TS_DECORATOR) +
-                   it.applyAttributes(".", TypeScriptHighlighter.TS_DOT) +
-                   it.applyAttributes(BOOTSTRAP_PROP, TypeScriptHighlighter.TS_INSTANCE_MEMBER_VARIABLE)
+        val html = it.applyAttributes("@NgModule", TypeScriptHighlighter.TS_DECORATOR, false) +
+                   it.applyAttributes(".", TypeScriptHighlighter.TS_DOT, false) +
+                   it.applyAttributes(BOOTSTRAP_PROP, TypeScriptHighlighter.TS_INSTANCE_MEMBER_VARIABLE, false)
         it.wrapWithCodeTag(html, false)
       }
   }

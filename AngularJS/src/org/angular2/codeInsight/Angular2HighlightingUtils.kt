@@ -48,13 +48,13 @@ object Angular2HighlightingUtils {
 
 
   val Angular2Entity.htmlClassName: String
-    get() = highlightName(className, typeScriptClass ?: sourceElement)
+    get() = highlightName(typeScriptClass ?: sourceElement, className)
 
   val JSClass.htmlName: String
-    get() = highlightName(name ?: Angular2Bundle.message("angular.description.unknown-class"), this)
+    get() = highlightName(this, name ?: Angular2Bundle.message("angular.description.unknown-class"))
 
   fun String.withNameColor(element: PsiElement) =
-    highlightName(this, element)
+    highlightName(element, this)
 
   fun String.withColor(attributes: TextAttributesKind, context: PsiElement) =
     applyAttributes(context.project, this, attributes.key)
