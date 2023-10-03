@@ -2,6 +2,7 @@
 package org.angular2.codeInsight
 
 import com.intellij.webSymbols.configureAndCopyPaste
+import com.intellij.webSymbols.performCopyPaste
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 
@@ -51,17 +52,8 @@ class Angular2CopyPasteTest : Angular2TestCase("copyPaste") {
     doConfiguredTest(Angular2TestModule.ANGULAR_CORE_13_3_5,
                      Angular2TestModule.ANGULAR_COMMON_13_3_5,
                      Angular2TestModule.ANGULAR_CDK_14_2_0,
-                     configureFile = false, dir = true) {
+                     configureFile = false, dir = true, checkResult = true) {
       configureAndCopyPaste("source.component.$srcExt", "destination.component.$destExt")
-      checkResultByFile("$testName/destination.component.$destExt.after")
-      if (destExt != "ts") {
-        configureFromTempProjectFile("destination.component.ts")
-        checkResultByFile("$testName/destination.component.ts.after")
-      }
-      if (tempDirFixture.getFile("destination.module.ts") != null) {
-        configureFromTempProjectFile("destination.module.ts")
-        checkResultByFile("$testName/destination.module.ts.after")
-      }
     }
   }
 

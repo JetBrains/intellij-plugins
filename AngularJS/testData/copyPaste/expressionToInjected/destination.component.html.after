@@ -1,3 +1,0 @@
-<div>
-    {{eval('12') | currency}}
-</div>
