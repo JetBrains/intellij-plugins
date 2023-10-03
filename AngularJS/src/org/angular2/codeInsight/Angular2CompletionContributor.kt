@@ -256,7 +256,7 @@ class Angular2CompletionContributor : CompletionContributor() {
                ?.asSafely<LookupElementBuilder>()
                ?.let {
                  it.withInsertHandler(JSImportCompletionUtil.createInsertHandler(
-                   Angular2GlobalImportCandidate(it.lookupString, place)
+                   Angular2GlobalImportCandidate(it.lookupString, it.lookupString, place)
                  ))
                }
                ?.let { JSCompletionUtil.withJSLookupPriority(it, IMPORT_PRIORITY) }

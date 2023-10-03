@@ -4,6 +4,7 @@ package org.angular2.codeInsight.imports
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.Language
 import com.intellij.lang.ecmascript6.editor.ES6CopyPasteProcessorBase
+import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclaration.ImportExportPrefixKind
 import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclarationPart
 import com.intellij.lang.ecmascript6.psi.impl.ES6CreateImportUtil
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil
@@ -104,7 +105,9 @@ class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2
     if (isExpressionContext(pasteContext) != data.isExpressionContext) return
     val globalImports = data.importedElements.mapNotNull {
       if (it.myInfo.importType == ImportExportType.BARE && it.myPath == "")
-        Angular2GlobalImportCandidate(it.myInfo.importedName ?: return@mapNotNull null, pasteContext)
+        Angular2GlobalImportCandidate(it.myInfo.exportedName ?: return@mapNotNull null,
+                                      it.myInfo.importedName ?: return@mapNotNull null,
+                                      pasteContext)
       else
         null
     }
@@ -125,24 +128,31 @@ class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2
     val imports = mutableListOf<Pair<String, ES6ImportExportDeclarationPart>>()
     for (expressionsInfo in expressions) {
       for (localElement in expressionsInfo.localReferencedElements) {
+        val fieldName = localElement
+                          .asSafely<TypeScriptField>()
+                          ?.name ?: continue
         val referenceName = localElement
           .asSafely<TypeScriptField>()
           ?.initializerOrStub
           ?.asSafely<JSReferenceExpression>()
           ?.takeIf { it.qualifier == null }
           ?.referenceName
+
+        if (referenceName == "undefined") continue
+
         val resolved = JSStubBasedPsiTreeUtil.resolveLocally(
           referenceName ?: continue,
           localElement.contextOfType<TypeScriptClass>()?.context ?: continue,
           false
         )
         if (resolved is ES6ImportExportDeclarationPart) {
-          imports.add(Pair(referenceName, resolved))
+          imports.add(Pair(fieldName, resolved))
         }
         else if (resolved == null) {
           // This is most likely a global import
           result.add(ImportedElement(
-            "", ES6ImportPsiUtil.CreateImportExportInfo(referenceName, ImportExportType.BARE), true))
+            "", ES6ImportPsiUtil.CreateImportExportInfo(
+            referenceName, fieldName, ImportExportType.BARE, ImportExportPrefixKind.IMPORT), true))
         }
       }
     }
