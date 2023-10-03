@@ -15,6 +15,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList.AccessType
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil.getPresentableAccessModifier
+import com.intellij.lang.javascript.validation.fixes.JSRemoveReadonlyModifierFix
 import com.intellij.openapi.util.text.StringUtil.capitalize
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
@@ -104,7 +105,8 @@ class AngularInaccessibleSymbolInspection : LocalInspectionTool() {
                   element.nameElement,
                   Angular2Bundle.htmlMessage(
                     "angular.inspection.inaccessible-symbol.strict.read-only.message",
-                    getHtmlName(input), getHtmlAccessModifier(input), inputOwner.htmlName)
+                    getHtmlName(input), getHtmlAccessModifier(input), inputOwner.htmlName),
+                  JSRemoveReadonlyModifierFix(input)
                 )
               }
             }

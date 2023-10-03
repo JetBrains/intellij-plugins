@@ -1,7 +1,6 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight.inspections
 
-import com.intellij.codeInsight.intention.IntentionActionDelegate
 import com.intellij.javascript.web.configure
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.vfs.VirtualFile
@@ -9,7 +8,6 @@ import com.intellij.webSymbols.moveToOffsetBySignature
 import org.angular2.Angular2MultiFileFixtureTestCase
 import org.angular2.Angular2TsConfigFile
 import org.angular2.inspections.AngularInaccessibleSymbolInspection
-import org.angular2.inspections.quickfixes.AngularChangeModifierQuickFix
 import org.angularjs.AngularTestUtil
 
 class Angular2InaccessibleMemberAotQuickFixesTest : Angular2MultiFileFixtureTestCase() {
@@ -55,15 +53,20 @@ class Angular2InaccessibleMemberAotQuickFixesTest : Angular2MultiFileFixtureTest
     doMultiFileTest("protected-input.ts", "[protected<caret>Field]", "public")
   }
 
-  private fun doMultiFileTest(fileName: String, signature: String, accessType: String = "protected") {
+  fun testReadonlyInputFix() {
+    myFixture.configure(Angular2TsConfigFile())
+    doMultiFileTest("readonly-input.ts", "[readonly<caret>Field]", hint = "Remove readonly modifier")
+  }
+
+  private fun doMultiFileTest(fileName: String, signature: String, accessType: String = "protected", hint: String = "Make '$accessType'") {
     doTest { _: VirtualFile?, _: VirtualFile? ->
       myFixture.enableInspections(AngularInaccessibleSymbolInspection::class.java)
       myFixture.configureFromTempProjectFile(fileName)
       myFixture.setCaresAboutInjection(false)
       myFixture.moveToOffsetBySignature(signature)
-      val intentionAction = myFixture.filterAvailableIntentions("Make '$accessType'")
-                              .find { IntentionActionDelegate.unwrap(it) is AngularChangeModifierQuickFix }
-                            ?: throw IllegalStateException("\"Make '$accessType'\" not in " + myFixture.availableIntentions.map { it.text })
+      val intentionAction = myFixture.filterAvailableIntentions(hint)
+                              .firstOrNull()
+                            ?: throw IllegalStateException("\"$hint\" not in " + myFixture.availableIntentions.map { it.text })
       myFixture.launchAction(intentionAction)
       WriteAction.run<Throwable> {
         myFixture.tempDirFixture.getFile("tsconfig.json")

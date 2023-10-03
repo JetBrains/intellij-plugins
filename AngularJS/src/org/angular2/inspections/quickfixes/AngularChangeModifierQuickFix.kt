@@ -4,7 +4,6 @@ package org.angular2.inspections.quickfixes
 import com.intellij.codeInsight.intention.PriorityAction
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
-import com.intellij.ide.util.PsiNavigationSupport
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.javascript.intentions.JSChangeModifierIntentionBase
 import com.intellij.lang.javascript.psi.JSFunction
@@ -54,12 +53,6 @@ class AngularChangeModifierQuickFix(private val newModifier: JSAttributeList.Acc
     }
 
     val member = locateMemberToEdit(element) ?: return
-    if (editor != null) {
-      PsiNavigationSupport.getInstance()
-        .createNavigatable(project, member.containingFile.virtualFile, member.textOffset)
-        .navigate(true)
-    }
-
     super.invoke(project, editor, member.targetIntentionElement)
   }
 
