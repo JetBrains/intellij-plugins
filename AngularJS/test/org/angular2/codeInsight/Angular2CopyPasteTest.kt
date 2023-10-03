@@ -48,6 +48,28 @@ class Angular2CopyPasteTest : Angular2TestCase("copyPaste") {
     doTest("html", "html")
   }
 
+  fun testSelf() {
+    doSameFileTest("html", "</div >\n<caret>")
+  }
+
+  fun testUndefined() {
+    doTest("html", "html")
+  }
+
+  fun testAliased() {
+    doTest("html", "html")
+  }
+
+  private fun doSameFileTest(ext: String, pasteSignature: String) {
+    doConfiguredTest(Angular2TestModule.ANGULAR_CORE_13_3_5,
+                     Angular2TestModule.ANGULAR_COMMON_13_3_5,
+                     Angular2TestModule.ANGULAR_CDK_14_2_0,
+                     configureFile = true, dir = true,
+                     configureFileName = "source.component.$ext", checkResult = true) {
+      performCopyPaste(pasteSignature)
+    }
+  }
+
   private fun doTest(srcExt: String, destExt: String) {
     doConfiguredTest(Angular2TestModule.ANGULAR_CORE_13_3_5,
                      Angular2TestModule.ANGULAR_COMMON_13_3_5,
