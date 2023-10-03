@@ -3,10 +3,6 @@
 
 package org.jetbrains.vuejs.options
 
-import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
-import com.intellij.javascript.nodejs.util.NodePackageField
-import com.intellij.lang.typescript.lsp.JSExternalDefinitionsNodeDescriptor
-import com.intellij.lang.typescript.lsp.JSExternalDefinitionsPackageResolver
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.UiDslUnnamedConfigurable
 import com.intellij.openapi.project.Project
@@ -15,7 +11,7 @@ import com.intellij.ui.dsl.builder.Panel
 import com.intellij.ui.dsl.builder.bind
 import com.intellij.ui.dsl.builder.toMutableProperty
 import org.jetbrains.vuejs.VueBundle
-import org.jetbrains.vuejs.lang.typescript.service.volar.volarLspServerPackageDescriptor
+import org.jetbrains.vuejs.lang.typescript.service.volar.VolarExecutableDownloader
 
 class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.Simple(), Configurable {
   private val settings = getVueSettings(project)
@@ -23,16 +19,10 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
   override fun Panel.createContent() {
     group(VueBundle.message("vue.configurable.service.group")) {
       row(VueBundle.message("vue.configurable.service.volar.package")) {
-        val volarNodeDescriptor = JSExternalDefinitionsNodeDescriptor(volarLspServerPackageDescriptor.serverPackage)
-        val packageField = NodePackageField(project,
-                                            volarNodeDescriptor,
-                                            { NodeJsInterpreterManager.getInstance(project).interpreter },
-                                            JSExternalDefinitionsPackageResolver(project, volarNodeDescriptor))
-
-        cell(packageField)
+        cell(VolarExecutableDownloader.createNodePackageField(project))
           .align(AlignX.FILL)
-          .bind({ it.selectedRef },
-                { nodePackageField, nodePackageRef -> nodePackageField.selectedRef = nodePackageRef },
+          .bind({ field -> field.selectedRef },
+                { field, value -> field.selectedRef = value },
                 settings::packageRef.toMutableProperty())
       }
 
