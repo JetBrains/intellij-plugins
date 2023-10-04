@@ -224,14 +224,16 @@ public final class PerforceVFSListener extends VcsVFSListener {
   }
 
   @Override
-  protected void beforeContentsChange(@NotNull VFileContentChangeEvent event) {
-    VirtualFile file = event.getFile();
-    updateLastUnchangedContent(file, myChangeListManager);
+  protected void beforeContentsChange(@NotNull List<VFileContentChangeEvent> events) {
+    for (VFileContentChangeEvent event : events) {
+      VirtualFile file = event.getFile();
+      updateLastUnchangedContent(file, myChangeListManager);
 
-    if (!event.isFromRefresh() && myChangeListManager.getStatus(file) == FileStatus.NOT_CHANGED) {
-      final P4Connection connection = PerforceConnectionManager.getInstance(myProject).getConnectionForFile(file);
-      if (connection != null && PerforceChangeProvider.isAllWriteWorkspace(connection, myProject)) {
-        asyncEdit(file);
+      if (!event.isFromRefresh() && myChangeListManager.getStatus(file) == FileStatus.NOT_CHANGED) {
+        final P4Connection connection = PerforceConnectionManager.getInstance(myProject).getConnectionForFile(file);
+        if (connection != null && PerforceChangeProvider.isAllWriteWorkspace(connection, myProject)) {
+          asyncEdit(file);
+        }
       }
     }
   }
