@@ -21,12 +21,12 @@ class VueComponentImportCandidatesProvider(private val placeInfo: JSImportPlaceI
       .keys.asSequence().map { toAsset(it, true) }
       .filter { keyFilter.test(it) }.toSet()
 
-  override fun processCandidates(ref: String, processor: JSCandidatesProcessor) {
-    val component = VueModelManager.getGlobal(placeInfo.place).unregistered.components[fromAsset(ref)]
+  override fun processCandidates(name: String, processor: JSCandidatesProcessor) {
+    val component = VueModelManager.getGlobal(placeInfo.place).unregistered.components[fromAsset(name)]
     if (component != null && component is VueSourceComponent) {
       val source = component.descriptor.source
       if (source is PsiFile) {
-        processor.processCandidate(ES6ImportCandidate(ref, source, placeInfo.place))
+        processor.processCandidate(ES6ImportCandidate(name, source, placeInfo.place))
       }
     }
   }

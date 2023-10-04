@@ -15,10 +15,10 @@ class Angular2GlobalImportCandidatesProvider(private val placeInfo: JSImportPlac
     // Provided by Angular2CompletionContributor
     emptySet()
 
-  override fun processCandidates(ref: String, processor: JSCandidatesProcessor) {
-    TypeScriptClassResolver.getInstance().findGlobalElementsByQName(ref, placeInfo.place)
+  override fun processCandidates(name: String, processor: JSCandidatesProcessor) {
+    TypeScriptClassResolver.getInstance().findGlobalElementsByQName(name, placeInfo.place)
       .firstOrNull()
-      ?.let { processor.processCandidate(Angular2GlobalImportCandidate(ref, ref, placeInfo.place)) }
+      ?.let { processor.processCandidate(Angular2GlobalImportCandidate(name, name, placeInfo.place)) }
   }
 
   class Factory : JSImportCandidatesProvider.CandidatesFactory {
