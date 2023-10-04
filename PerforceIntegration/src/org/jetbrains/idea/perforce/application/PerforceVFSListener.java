@@ -70,8 +70,8 @@ public final class PerforceVFSListener extends VcsVFSListener {
   }
 
   @Override
-  protected boolean filterOutUnknownFiles() {
-    return false;
+  protected boolean filterOutByStatus(@NotNull FileStatus status) {
+    return status == FileStatus.IGNORED;
   }
 
   @Override
