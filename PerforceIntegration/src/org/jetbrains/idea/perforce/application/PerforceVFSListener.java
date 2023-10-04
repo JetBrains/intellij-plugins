@@ -85,10 +85,9 @@ public final class PerforceVFSListener extends VcsVFSListener {
                              (notIgnoredAddedFiles, copiedFilesMap) -> super.executeAdd(notIgnoredAddedFiles, copiedFilesMap));
   }
 
-  @Override
-  protected void executeAddWithoutIgnores(@NotNull List<VirtualFile> addedFiles,
-                                          @NotNull Map<VirtualFile, VirtualFile> copiedFiles,
-                                          @NotNull ExecuteAddCallback executeAddCallback) {
+  private void executeAddWithoutIgnores(@NotNull List<VirtualFile> addedFiles,
+                                        @NotNull Map<VirtualFile, VirtualFile> copiedFiles,
+                                        @NotNull ExecuteAddCallback executeAddCallback) {
     saveUnsavedVcsIgnoreFiles();
 
     if (ApplicationManager.getApplication().isUnitTestMode()) {
