@@ -1,24 +1,26 @@
 package com.intellij.dts.documentation
 
 import com.intellij.dts.DtsIcons
-import com.intellij.dts.zephyr.DtsZephyrPropertyBinding
+import com.intellij.dts.zephyr.DtsZephyrBinding
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
+import org.jetbrains.annotations.Nls
 
-class DtsPropertyBindingDocumentationTarget(
+class DtsNodeBindingDocumentationTarget(
     project: Project,
-    private val binding: DtsZephyrPropertyBinding,
+    private val name: @Nls String,
+    private val binding: DtsZephyrBinding,
 ) : DtsDocumentationTarget(project) {
     override fun createPointer(): Pointer<out DocumentationTarget> = Pointer { this }
 
     override fun computePresentation(): TargetPresentation {
-        return TargetPresentation.builder(binding.name).icon(DtsIcons.Property).presentation()
+        return TargetPresentation.builder(name).icon(DtsIcons.Node).presentation()
     }
 
     override fun buildDocumentation(html: DtsDocumentationHtmlBuilder) {
-        buildPropertyName(html, binding.name)
-        buildPropertyBinding(html, binding)
+        buildNodeName(html, name)
+        buildNodeBinding(html, binding)
     }
 }

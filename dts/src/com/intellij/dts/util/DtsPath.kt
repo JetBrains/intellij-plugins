@@ -1,8 +1,5 @@
 package com.intellij.dts.util
 
-import com.intellij.dts.lang.psi.DtsNode
-import com.intellij.dts.lang.psi.getDtsReferenceTarget
-
 /**
  * Represents a path to a node in the devicetree. If the path is absolut it
  * starts from a root node. If the path is no absolut it is considered relative
@@ -15,26 +12,6 @@ data class DtsPath(val absolut: Boolean, val segments: List<String>) {
                 path.startsWith('/'),
                 path.trim('/').split('/').filter { it.isNotEmpty() },
             )
-        }
-
-        fun absolut(to: DtsNode): DtsPath? {
-            val pathSegments = mutableListOf<String>()
-
-            var node: DtsNode? = to
-            while (node != null) {
-                node = when (node) {
-                    is DtsNode.Root -> null
-                    is DtsNode.Ref -> node.getDtsReferenceTarget() ?: return null
-                    is DtsNode.Sub -> {
-                        pathSegments.add(node.dtsName)
-                        DtsTreeUtil.parentNode(node)
-                    }
-                }
-            }
-
-            if (pathSegments.isEmpty()) return null
-
-            return DtsPath(true, pathSegments.reversed())
         }
     }
 

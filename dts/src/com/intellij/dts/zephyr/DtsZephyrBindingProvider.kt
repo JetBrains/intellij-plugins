@@ -1,10 +1,10 @@
 package com.intellij.dts.zephyr
 
+import com.intellij.dts.documentation.DtsBundledBindings
 import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.psi.DtsRefNode
 import com.intellij.dts.lang.psi.DtsString
 import com.intellij.dts.lang.psi.getDtsReferenceTarget
-import com.intellij.dts.util.DtsPath
 import com.intellij.dts.util.DtsTreeUtil
 import com.intellij.dts.util.cached
 import com.intellij.openapi.components.Service
@@ -245,15 +245,6 @@ class DtsZephyrBindingProvider(val project: Project) {
         }
     }
 
-    private fun buildBundledBinding(name: String): DtsZephyrBinding = bundledBindings.computeIfAbsent(name) {
-        val binding = bundledBindingsYaml[name] ?: return@computeIfAbsent DtsZephyrBinding.empty
-
-        val builder = DtsZephyrBinding.Builder(null)
-        doBuildBinding(builder, binding, resolveChildIncludes = false)
-
-        builder.build()
-    }
-
     private fun getCompatibleStrings(node: DtsNode): List<String> {
         val property = node.dtsProperties.firstOrNull { it.dtsName == "compatible" } ?: return emptyList()
         return property.dtsValues.filterIsInstance<DtsString>().map { it.dtsParse() }
@@ -288,19 +279,26 @@ class DtsZephyrBindingProvider(val project: Project) {
             }
         }
 
-        val bundledBinding = when (DtsPath.absolut(node)?.nameWithoutUnit()) {
-            "chosen" -> buildBundledBinding("chosen")
-            "aliases" -> buildBundledBinding("aliases")
-            "cpus" -> buildBundledBinding("cpus")
-            "memory" -> buildBundledBinding("memory")
-            "reserved-memory" -> buildBundledBinding("reserved-memory")
-            else -> null
-        }
-        if (bundledBinding != null) return bundledBinding
+        val bundledBinding = DtsBundledBindings.findBindingForNode(node)
+        if (bundledBinding != null) return buildBundledBinding(bundledBinding)
 
         val parentBinding = DtsTreeUtil.findParentNode(node)?.let(::buildBinding)
         return parentBinding?.child
     }
+
+    private fun buildBundledBinding(name: String): DtsZephyrBinding = bundledBindings.computeIfAbsent(name) {
+        val binding = bundledBindingsYaml[name] ?: return@computeIfAbsent DtsZephyrBinding.empty
+
+        val builder = DtsZephyrBinding.Builder(null)
+        doBuildBinding(builder, binding, resolveChildIncludes = false)
+
+        builder.build()
+    }
+
+    /**
+     * Builds a bundled binding.
+     */
+    fun buildBundledBinding(binding: DtsBundledBindings): DtsZephyrBinding = buildBundledBinding(binding.nodeName)
 
     /**
      * Builds the default binding which contains the standard documentation from

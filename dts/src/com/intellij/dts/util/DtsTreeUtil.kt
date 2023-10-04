@@ -71,7 +71,7 @@ object DtsTreeUtil {
 
         return when (node) {
             is DtsNode.Ref -> {
-                val refPath = DtsPath.absolut(node) ?: return null
+                val refPath = node.getDtsPath() ?: return null
                 val relativePath = refPath.relativize(path) ?: return null
 
                 findNode(node, relativePath.segments)
@@ -80,7 +80,6 @@ object DtsTreeUtil {
             is DtsNode.Root -> findNode(node, path.segments)
             is DtsNode.Sub -> null
         }
-
     }
 
     private fun <T> search(file: PsiFile, path: DtsPath, maxOffset: Int?, visitedFiles: MutableSet<PsiFile>, callback: (DtsNode) -> T?): T? {
@@ -142,7 +141,7 @@ object DtsTreeUtil {
      * Returns the first non-null value returned by the callback.
      */
     fun <T> search(file: PsiFile, node: DtsNode, callback: (DtsNode) -> T?): T? {
-        val path = DtsPath.absolut(node) ?: return null
+        val path = node.getDtsPath() ?: return null
         return search(file, path, node.startOffset + 1, callback)
     }
 

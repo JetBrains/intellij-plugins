@@ -1,6 +1,6 @@
 package com.intellij.dts.completion
 
-class DtsPropertyNameCompletionTest : DtsCompletionTest() {
+class DtsPropertyCompletionTest : DtsCompletionTest() {
     fun `test new property (compatible)`() = doTest(
         listOf("c", "pati"),
        "compatible",

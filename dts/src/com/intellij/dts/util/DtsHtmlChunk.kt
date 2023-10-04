@@ -6,7 +6,6 @@ import com.intellij.dts.highlighting.DtsTextAttributes
 import com.intellij.dts.lang.DtsLanguage
 import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.psi.DtsPHandle
-import com.intellij.dts.lang.psi.DtsProperty
 import com.intellij.dts.lang.psi.DtsRootNode
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.EditorColorsScheme
@@ -48,11 +47,15 @@ object DtsHtmlChunk {
     /**
      * Generates the colored html for a property name.
      */
-    fun property(element: DtsProperty): HtmlChunk {
-        return HtmlChunk.raw(styledSpan(DtsTextAttributes.PROPERTY_NAME, element.dtsName))
+    fun propertyName(name: String): HtmlChunk {
+        return HtmlChunk.raw(styledSpan(DtsTextAttributes.PROPERTY_NAME, name))
     }
 
-    private fun nodeName(nodeName: String): HtmlChunk {
+    /**
+     * Generates the colored html for a node name. If possible prefer [node]
+     * which can handle more cases.
+     */
+    fun nodeName(nodeName: String): HtmlChunk {
         val (name, addr) = DtsUtil.splitName(nodeName)
         if (addr == null) return HtmlChunk.raw(styledSpan(DtsTextAttributes.NODE_NAME, name))
 
@@ -82,6 +85,10 @@ object DtsHtmlChunk {
                 builder.append(nodeName(segment))
             }
 
+            if (segments.isEmpty()) {
+                builder.append("/")
+            }
+
             builder.append("}")
         }
 
@@ -89,7 +96,8 @@ object DtsHtmlChunk {
     }
 
     /**
-     * Generates the colored html for a subnode or root node name.
+     * Generates the colored html for a node name. Can also handle references
+     * and root nodes.
      */
     fun node(element: DtsNode): HtmlChunk {
         return when (element) {

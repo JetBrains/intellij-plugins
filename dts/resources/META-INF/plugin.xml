@@ -108,7 +108,7 @@
 
         <completion.contributor
                 language="DTS"
-                implementationClass="com.intellij.dts.completion.DtsPropertyCompletionContributor"/>
+                implementationClass="com.intellij.dts.completion.DtsCompletionContributor"/>
 
         <!-- inspections -->
         <localInspection

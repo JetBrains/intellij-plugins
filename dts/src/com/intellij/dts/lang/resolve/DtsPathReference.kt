@@ -6,10 +6,7 @@ import com.intellij.codeInsight.editorActions.TypedHandlerDelegate
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.dts.DtsIcons
 import com.intellij.dts.lang.DtsFile
-import com.intellij.dts.lang.psi.DtsNode
-import com.intellij.dts.lang.psi.DtsPHandle
-import com.intellij.dts.lang.psi.DtsRefNode
-import com.intellij.dts.lang.psi.getDtsPresentableText
+import com.intellij.dts.lang.psi.*
 import com.intellij.dts.util.DtsPath
 import com.intellij.dts.util.DtsTreeUtil
 import com.intellij.openapi.editor.Editor
@@ -69,7 +66,7 @@ class DtsPathReference(
         val variants = mutableListOf<LookupElementBuilder>()
         search(path.parent()) { node ->
             for (subNode in node.dtsSubNodes) {
-                val path = DtsPath.absolut(subNode) ?: continue
+                val path = subNode.getDtsPath() ?: continue
 
                 val lookup = LookupElementBuilder.create(path)
                     .withTypeText(subNode.getDtsPresentableText())
