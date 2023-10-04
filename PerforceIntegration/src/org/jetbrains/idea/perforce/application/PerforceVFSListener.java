@@ -163,10 +163,9 @@ public final class PerforceVFSListener extends VcsVFSListener {
     return PerforceBundle.message("add.select.files");
   }
 
-  @NotNull
   @Override
-  protected VcsDeleteType needConfirmDeletion(@NotNull final VirtualFile file) {
-    return ChangeListManager.getInstance(myProject).isUnversioned(file) ? VcsDeleteType.IGNORE : VcsDeleteType.CONFIRM;
+  protected boolean shouldIgnoreDeletion(@NotNull final VirtualFile file) {
+    return ChangeListManager.getInstance(myProject).isUnversioned(file);
   }
 
   @Override
