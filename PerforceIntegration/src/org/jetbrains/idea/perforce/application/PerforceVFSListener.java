@@ -18,7 +18,6 @@ import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFileCreateEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
-import com.intellij.ui.AppUIUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.vcsUtil.VcsUtil;
@@ -93,7 +92,7 @@ public final class PerforceVFSListener extends VcsVFSListener {
       return;
     }
     if (!PerforceSettings.getSettings(myProject).ENABLED) {
-      AppUIUtil.invokeLaterIfProjectAlive(myProject, () -> performAddingWithConfirmation(addedFiles, copiedFiles));
+      performAddingWithConfirmation(addedFiles, copiedFiles);
       return;
     }
 
@@ -111,7 +110,7 @@ public final class PerforceVFSListener extends VcsVFSListener {
             AbstractVcsHelper.getInstance(myProject).showError(e, PerforceBundle.message("perforce.error"));
           }
         }
-        AppUIUtil.invokeLaterIfProjectAlive(myProject, () -> performAddingWithConfirmation(addedFiles, copiedFiles));
+        performAddingWithConfirmation(addedFiles, copiedFiles);
       }
     });
   }
