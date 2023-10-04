@@ -3,13 +3,13 @@
 
 package org.jetbrains.vuejs.options
 
+import com.intellij.lang.typescript.lsp.bind
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.UiDslUnnamedConfigurable
 import com.intellij.openapi.project.Project
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.Panel
 import com.intellij.ui.dsl.builder.bind
-import com.intellij.ui.dsl.builder.toMutableProperty
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.typescript.service.volar.VolarExecutableDownloader
 
@@ -21,9 +21,7 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
       row(VueBundle.message("vue.configurable.service.volar.package")) {
         cell(VolarExecutableDownloader.createNodePackageField(project))
           .align(AlignX.FILL)
-          .bind({ field -> field.selectedRef },
-                { field, value -> field.selectedRef = value },
-                settings::packageRef.toMutableProperty())
+          .bind(settings::packageRef)
       }
 
       buttonsGroup {
