@@ -120,7 +120,8 @@ public final class PerforceVFSListener extends VcsVFSListener {
   }
 
   @Override
-  protected void performAdding(@NotNull final Collection<VirtualFile> addedFiles, @NotNull final Map<VirtualFile, VirtualFile> copyFromMap) {
+  protected void performAdding(@NotNull final Collection<VirtualFile> addedFiles,
+                               @NotNull final Map<VirtualFile, VirtualFile> copyFromMap) {
 
     final String title = PerforceBundle.message("progress.title.running.perforce.commands");
     List<VcsOperation> operations = createOperations(addedFiles, copyFromMap);
