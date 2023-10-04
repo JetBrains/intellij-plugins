@@ -197,7 +197,6 @@ public final class PerforceVFSListener extends VcsVFSListener {
     updateLastUnchangedContent(file, myChangeListManager);
     PerforceCachingContentRevision.removeCachedContent(file);
     P4File.invalidateFstat(file);
-    super.processMovedFile(file, newParentPath, newName);
   }
 
   @Override
