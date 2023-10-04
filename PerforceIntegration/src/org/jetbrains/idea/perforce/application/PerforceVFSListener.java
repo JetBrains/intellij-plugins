@@ -86,21 +86,14 @@ public final class PerforceVFSListener extends VcsVFSListener {
 
   @Override
   protected void executeAdd(@NotNull final List<VirtualFile> addedFiles, @NotNull final Map<VirtualFile, VirtualFile> copiedFiles) {
-    executeAddWithoutIgnores(addedFiles, copiedFiles,
-                             (notIgnoredAddedFiles, copiedFilesMap) -> super.executeAdd(notIgnoredAddedFiles, copiedFilesMap));
-  }
-
-  private void executeAddWithoutIgnores(@NotNull List<VirtualFile> addedFiles,
-                                        @NotNull Map<VirtualFile, VirtualFile> copiedFiles,
-                                        @NotNull ExecuteAddCallback executeAddCallback) {
     saveUnsavedVcsIgnoreFiles();
 
     if (ApplicationManager.getApplication().isUnitTestMode()) {
-      super.executeAdd(addedFiles, copiedFiles);
+      originalExecuteAdd(addedFiles, copiedFiles);
       return;
     }
     if (!PerforceSettings.getSettings(myProject).ENABLED) {
-      AppUIUtil.invokeLaterIfProjectAlive(myProject, () -> super.executeAdd(addedFiles, copiedFiles));
+      AppUIUtil.invokeLaterIfProjectAlive(myProject, () -> originalExecuteAdd(addedFiles, copiedFiles));
       return;
     }
 
@@ -118,9 +111,13 @@ public final class PerforceVFSListener extends VcsVFSListener {
             AbstractVcsHelper.getInstance(myProject).showError(e, PerforceBundle.message("perforce.error"));
           }
         }
-        AppUIUtil.invokeLaterIfProjectAlive(myProject, () -> executeAddCallback.executeAdd(addedFiles, copiedFiles));
+        AppUIUtil.invokeLaterIfProjectAlive(myProject, () -> originalExecuteAdd(addedFiles, copiedFiles));
       }
     });
+  }
+
+  private void originalExecuteAdd(List<VirtualFile> addedFiles, final Map<VirtualFile, VirtualFile> copiedFiles) {
+    super.executeAdd(addedFiles, copiedFiles);
   }
 
   @Override
