@@ -17,7 +17,7 @@ import org.angular2.codeInsight.inspections.Angular2ExpressionTypesInspectionTes
 
 class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
-  fun testSvgTags() = checkHighlighting(ANGULAR_COMMON_16_0_0_NEXT_4, extension = "ts")
+  fun testSvgTags() = checkHighlighting(ANGULAR_COMMON_16_2_8, extension = "ts")
 
   fun testDeprecated() = checkHighlighting(dir = true)
 
@@ -40,7 +40,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
   fun testImgSrcWithNg15() = checkHighlighting(ANGULAR_CORE_15_1_5, ANGULAR_COMMON_15_1_5)
 
   fun testNoRequiredBindingsWithoutModuleScope() =
-    checkHighlighting(ANGULAR_CORE_16_0_0_NEXT_4, ANGULAR_COMMON_16_0_0_NEXT_4, ANGULAR_FORMS_16_0_0_NEXT_4)
+    checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, ANGULAR_FORMS_16_2_8)
 
   fun testNgAcceptInputTypeOverride() = checkHighlighting(extension = "ts")
 
@@ -87,11 +87,11 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
   fun testTrUnderTemplate() = checkHighlighting(ANGULAR_CDK_14_2_0, dir = true)
 
-  fun testDivUnderButton() = checkHighlighting(ANGULAR_MATERIAL_16_0_0_NEXT_6, dir = true)
+  fun testDivUnderButton() = checkHighlighting(ANGULAR_MATERIAL_16_2_8, dir = true)
 
-  fun testReadOnlyTemplateVariables() = checkHighlighting(ANGULAR_CORE_16_0_0_NEXT_4, ANGULAR_COMMON_16_0_0_NEXT_4, extension = "ts")
+  fun testReadOnlyTemplateVariables() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, extension = "ts")
 
-  fun testDirectiveWithStandardAttrSelector() = checkHighlighting(ANGULAR_CORE_16_0_0_NEXT_4, ANGULAR_COMMON_16_0_0_NEXT_4,
+  fun testDirectiveWithStandardAttrSelector() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8,
                                                                   strictTemplates = true, extension = "ts")
 
   override fun setUp() {

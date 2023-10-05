@@ -160,8 +160,8 @@ class Angular2TemplateInspectionsTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testMissingRequiredInputBinding1() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_16_0_0_NEXT_4,
-                  Angular2TestModule.ANGULAR_COMMON_16_0_0_NEXT_4)
+    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_16_2_8,
+                  Angular2TestModule.ANGULAR_COMMON_16_2_8)
     myFixture.enableInspections(HtmlUnknownBooleanAttributeInspection::class.java)
     doTest(1, "<ng-<caret>template", "Create '[ngForOf]' attribute",
            AngularMissingRequiredDirectiveInputBindingInspection::class.java,
@@ -169,8 +169,8 @@ class Angular2TemplateInspectionsTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testMissingRequiredInputBinding2() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_16_0_0_NEXT_4,
-                  Angular2TestModule.ANGULAR_COMMON_16_0_0_NEXT_4)
+    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_16_2_8,
+                  Angular2TestModule.ANGULAR_COMMON_16_2_8)
     myFixture.enableInspections(HtmlUnknownBooleanAttributeInspection::class.java)
     doTest(2, "<d<caret>iv appFooBar>", "Create '[appFooBar2]' attribute",
            AngularMissingRequiredDirectiveInputBindingInspection::class.java,
@@ -178,8 +178,8 @@ class Angular2TemplateInspectionsTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testMissingRequiredInputBinding3() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_16_0_0_NEXT_4,
-                  Angular2TestModule.ANGULAR_COMMON_16_0_0_NEXT_4)
+    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_16_2_8,
+                  Angular2TestModule.ANGULAR_COMMON_16_2_8)
     myFixture.enableInspections(HtmlUnknownBooleanAttributeInspection::class.java)
     doTest(3, "<d<caret>iv appFooBar=\"foo\"", "Create 'appFooBar2' attribute",
            AngularMissingRequiredDirectiveInputBindingInspection::class.java,

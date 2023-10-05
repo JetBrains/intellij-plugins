@@ -51,7 +51,7 @@ class Angular2ExpressionTypesInspectionTest : Angular2CodeInsightFixtureTestCase
   }
 
   fun testGenericsValidationStrict() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_16_0_0_NEXT_4, Angular2TestModule.ANGULAR_COMMON_16_0_0_NEXT_4)
+    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8)
     myFixture.configure(Angular2TsConfigFile())
     myFixture.configureByFiles("generics-strict.ts")
     myFixture.checkHighlighting()
@@ -221,15 +221,15 @@ class Angular2ExpressionTypesInspectionTest : Angular2CodeInsightFixtureTestCase
   }
 
   fun testGenericDirectiveReferenceNonStrict() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_MATERIAL_16_0_0_NEXT_6, Angular2TestModule.ANGULAR_CORE_16_0_0_NEXT_4,
-                  Angular2TestModule.ANGULAR_COMMON_16_0_0_NEXT_4, Angular2TestModule.ANGULAR_FORMS_16_0_0_NEXT_4)
+    configureCopy(myFixture, Angular2TestModule.ANGULAR_MATERIAL_16_2_8, Angular2TestModule.ANGULAR_CORE_16_2_8,
+                  Angular2TestModule.ANGULAR_COMMON_16_2_8, Angular2TestModule.ANGULAR_FORMS_16_2_8)
     myFixture.configureByFile("genericDirectiveReference.ts")
     myFixture.checkHighlighting()
   }
 
   fun testGenericDirectiveReferenceStrictTemplates() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_MATERIAL_16_0_0_NEXT_6, Angular2TestModule.ANGULAR_CORE_16_0_0_NEXT_4,
-                  Angular2TestModule.ANGULAR_COMMON_16_0_0_NEXT_4, Angular2TestModule.ANGULAR_FORMS_16_0_0_NEXT_4)
+    configureCopy(myFixture, Angular2TestModule.ANGULAR_MATERIAL_16_2_8, Angular2TestModule.ANGULAR_CORE_16_2_8,
+                  Angular2TestModule.ANGULAR_COMMON_16_2_8, Angular2TestModule.ANGULAR_FORMS_16_2_8)
     myFixture.configure(Angular2TsConfigFile())
     myFixture.configureByFile("genericDirectiveReference.ts")
     myFixture.checkHighlighting()

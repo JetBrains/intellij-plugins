@@ -417,7 +417,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testTemplatesCompletion2() {
-    configureLink(myFixture, Angular2TestModule.ANGULAR_COMMON_16_0_0_NEXT_4)
+    configureLink(myFixture, Angular2TestModule.ANGULAR_COMMON_16_2_8)
     myFixture.configureByFiles("templates_completion2.html")
     myFixture.completeBasic()
     assertEquals(

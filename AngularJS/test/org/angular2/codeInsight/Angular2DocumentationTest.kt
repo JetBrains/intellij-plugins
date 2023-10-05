@@ -33,7 +33,7 @@ class Angular2DocumentationTest : Angular2TestCase("documentation") {
   fun testCdkNoDataRowNotImported() = doTest(Angular2TestModule.ANGULAR_CDK_14_2_0, ext = "html",
                                              additionalFiles = listOf("${testName}.ts"))
 
-  fun testComponentDecorator() = doTest(Angular2TestModule.ANGULAR_CORE_16_0_0_NEXT_4)
+  fun testComponentDecorator() = doTest(Angular2TestModule.ANGULAR_CORE_16_2_8)
 
   fun testUnknownDirective() = doTestWithDeps()
 
@@ -52,17 +52,17 @@ class Angular2DocumentationTest : Angular2TestCase("documentation") {
 
   fun testHostDirectiveMappedInput() = doTest()
 
-  fun testWritableSignal() = doTest(Angular2TestModule.ANGULAR_CORE_16_0_0_NEXT_4,
-                                    Angular2TestModule.ANGULAR_COMMON_16_0_0_NEXT_4)
+  fun testWritableSignal() = doTest(Angular2TestModule.ANGULAR_CORE_16_2_8,
+                                    Angular2TestModule.ANGULAR_COMMON_16_2_8)
 
-  fun testWritableSignalCall() = doTest(Angular2TestModule.ANGULAR_CORE_16_0_0_NEXT_4,
-                                        Angular2TestModule.ANGULAR_COMMON_16_0_0_NEXT_4)
+  fun testWritableSignalCall() = doTest(Angular2TestModule.ANGULAR_CORE_16_2_8,
+                                        Angular2TestModule.ANGULAR_COMMON_16_2_8)
 
-  fun testSignal() = doTest(Angular2TestModule.ANGULAR_CORE_16_0_0_NEXT_4,
-                            Angular2TestModule.ANGULAR_COMMON_16_0_0_NEXT_4)
+  fun testSignal() = doTest(Angular2TestModule.ANGULAR_CORE_16_2_8,
+                            Angular2TestModule.ANGULAR_COMMON_16_2_8)
 
-  fun testSignalCall() = doTest(Angular2TestModule.ANGULAR_CORE_16_0_0_NEXT_4,
-                                Angular2TestModule.ANGULAR_COMMON_16_0_0_NEXT_4)
+  fun testSignalCall() = doTest(Angular2TestModule.ANGULAR_CORE_16_2_8,
+                                Angular2TestModule.ANGULAR_COMMON_16_2_8)
 
   private fun doTestWithDeps() {
     doConfiguredTest(additionalFiles = listOf("deps/list-item.component.ts", "deps/ng_for_of.ts", "deps/ng_if.ts", "deps/dir.ts",

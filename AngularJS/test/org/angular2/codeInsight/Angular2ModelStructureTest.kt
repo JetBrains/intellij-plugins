@@ -202,7 +202,7 @@ class Angular2ModelStructureTest : Angular2CodeInsightFixtureTestCase() {
                      "app.module.ts",
                      "export class App<caret>Module {",
                      "check.txt",
-                     true, Angular2TestModule.ANGULAR_CORE_16_0_0_NEXT_4, Angular2TestModule.ANGULAR_COMMON_16_0_0_NEXT_4)
+                     true, Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8)
   }
 
   fun testHostDirectives() {
@@ -212,7 +212,7 @@ class Angular2ModelStructureTest : Angular2CodeInsightFixtureTestCase() {
       "export class App<caret>Module {",
       "check.txt",
       true,
-      Angular2TestModule.ANGULAR_CORE_16_0_0_NEXT_4, Angular2TestModule.ANGULAR_COMMON_16_0_0_NEXT_4
+      Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8
     )
   }
 

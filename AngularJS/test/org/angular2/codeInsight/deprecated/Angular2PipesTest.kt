@@ -122,7 +122,7 @@ class Angular2PipesTest : Angular2CodeInsightFixtureTestCase() {
 
   fun testMixinPipes() {
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_16_0_0_NEXT_4, Angular2TestModule.ANGULAR_COMMON_16_0_0_NEXT_4)
+    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8)
     myFixture.configureByFiles("mixinPipes.ts")
     myFixture.checkHighlighting()
   }
@@ -160,7 +160,7 @@ class Angular2PipesTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testTypedPipe() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_COMMON_16_0_0_NEXT_4, Angular2TestModule.ANGULAR_CORE_16_0_0_NEXT_4)
+    configureCopy(myFixture, Angular2TestModule.ANGULAR_COMMON_16_2_8, Angular2TestModule.ANGULAR_CORE_16_2_8)
     myFixture.configureByFile("typedPipe.ts")
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
     myFixture.checkHighlighting()
