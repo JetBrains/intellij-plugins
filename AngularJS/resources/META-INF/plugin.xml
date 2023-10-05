@@ -348,7 +348,7 @@
 
     <!-- Angular 2 Expression language contributions -->
     <frameworkIndexingHandler implementation="org.angular2.index.Angular2IndexingHandler" version="15"/>
-    <frameworkSpecificHandler language="" implementationClass="org.angular2.lang.expr.Angular2JSFrameworkSpecificHandler"/>
+    <frameworkSpecificHandler language="Angular2" implementationClass="org.angular2.lang.expr.Angular2JSFrameworkSpecificHandler"/>
     <elementScopeProvider implementation="org.angular2.codeInsight.Angular2ResolveScopeProvider"/>
     <dialectSpecificHandlersFactory language="Angular2" implementationClass="org.angular2.codeInsight.Angular2SpecificHandlersFactory"/>
     <analysisHandlersFactory language="Angular2" implementationClass="org.angular2.inspections.Angular2AnalysisHandlersFactory"/>
@@ -360,6 +360,9 @@
     <!-- Angular2 metadata JSON contributions -->
     <nodeModulesIndexableFileNamesProvider implementation="org.angular2.index.Angular2IndexableFileNamesProvider"/>
     <scanningFileListenerContributor implementation="org.angular2.Angular2ExcludeContributor"/>
+
+    <!-- Angular2 TypeScript contributions -->
+    <frameworkSpecificHandler language="TypeScript" implementationClass="org.angular2.lang.Angular2TSFrameworkSpecificHandler"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.angular2">
