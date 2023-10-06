@@ -3,9 +3,12 @@ package org.angular2.entities.source
 
 import com.intellij.javascript.webSymbols.apiStatus
 import com.intellij.lang.javascript.psi.JSElementBase
+import com.intellij.lang.javascript.psi.JSFunctionItem
+import com.intellij.lang.javascript.psi.JSFunctionType
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser
 import com.intellij.model.Pointer
 import com.intellij.navigation.SymbolNavigationService
@@ -14,6 +17,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.createSmartPointer
+import com.intellij.util.asSafely
 import com.intellij.webSymbols.PsiSourcedWebSymbol
 import com.intellij.webSymbols.WebSymbolApiStatus
 import com.intellij.webSymbols.utils.WebSymbolDeclaredInPsi
@@ -29,7 +33,8 @@ abstract class Angular2SourceDirectiveProperty(
   protected val signature: JSRecordType.PropertySignature,
   override val kind: String,
   override val name: String,
-  override val required: Boolean
+  override val required: Boolean,
+  protected val transformFunction: JSFunctionItem?,
 ) : Angular2DirectiveProperty {
 
   companion object {
@@ -38,15 +43,16 @@ abstract class Angular2SourceDirectiveProperty(
                kind: String,
                info: Angular2PropertyInfo): Angular2SourceDirectiveProperty =
       if (info.declarationRange == null || info.declaringElement == null)
-        Angular2SourceFieldDirectiveProperty(owner, signature, kind, info.name, info.required)
+        Angular2SourceFieldDirectiveProperty(owner, signature, kind, info.name, info.required, info.transform)
       else
         Angular2SourceMappedDirectiveProperty(
-          owner, signature, kind, info.name, info.required, info.declaringElement, info.declarationRange
+          owner, signature, kind, info.name, info.required, info.transform, info.declaringElement, info.declarationRange
         )
   }
 
   override val rawJsType: JSType?
-    get() = signature.jsTypeWithOptionality
+    get() = JSResolveUtil.getElementJSType(transformFunction)?.asSafely<JSFunctionType>()?.parameters?.getOrNull(0)?.inferredType
+            ?: signature.jsTypeWithOptionality
 
   override val virtualProperty: Boolean
     get() = false
@@ -91,7 +97,8 @@ abstract class Angular2SourceDirectiveProperty(
     kind: String,
     name: String,
     required: Boolean,
-  ) : Angular2SourceDirectiveProperty(owner, signature, kind, name, required), PsiSourcedWebSymbol {
+    transformFunction: JSFunctionItem?,
+  ) : Angular2SourceDirectiveProperty(owner, signature, kind, name, required, transformFunction), PsiSourcedWebSymbol {
     override val sourceElement: PsiElement
       get() = sources[0]
 
@@ -109,14 +116,16 @@ abstract class Angular2SourceDirectiveProperty(
       val name = this.name
       val kind = this.kind
       val required = this.required
+      val transformFunctionPtr = transformFunction?.createSmartPointer()
       return Pointer {
         val source = sourcePtr.dereference()
                      ?: return@Pointer null
+        val transformFunction = transformFunctionPtr?.let { it.dereference() ?: return@Pointer null}
         val propertySignature = TypeScriptTypeParser
                                   .buildTypeFromClass(source, false)
                                   .findPropertySignature(propertyName)
                                 ?: return@Pointer null
-        Angular2SourceFieldDirectiveProperty(source, propertySignature, kind, name, required)
+        Angular2SourceFieldDirectiveProperty(source, propertySignature, kind, name, required, transformFunction)
       }
     }
 
@@ -136,9 +145,10 @@ abstract class Angular2SourceDirectiveProperty(
     kind: String,
     name: String,
     required: Boolean,
+    transformFunction: JSFunctionItem?,
     override val sourceElement: PsiElement,
     override val textRangeInSourceElement: TextRange,
-  ) : Angular2SourceDirectiveProperty(owner, signature, kind, name, required), WebSymbolDeclaredInPsi {
+  ) : Angular2SourceDirectiveProperty(owner, signature, kind, name, required, transformFunction), WebSymbolDeclaredInPsi {
 
     override fun createPointer(): Pointer<Angular2SourceMappedDirectiveProperty> {
       val ownerPtr = owner.createSmartPointer()
@@ -147,17 +157,19 @@ abstract class Angular2SourceDirectiveProperty(
       val name = name
       val kind = kind
       val required = required
+      val transformFunctionPtr = transformFunction?.createSmartPointer()
       val textRangeInSourceElement = textRangeInSourceElement
       return Pointer {
         val owner = ownerPtr.dereference()
                     ?: return@Pointer null
         val sourceElement = sourceElementPtr.dereference()
                             ?: return@Pointer null
+        val transformFunction = transformFunctionPtr?.let { it.dereference() ?: return@Pointer null}
         val propertySignature = TypeScriptTypeParser
                                   .buildTypeFromClass(owner, false)
                                   .findPropertySignature(propertyName)
                                 ?: return@Pointer null
-        Angular2SourceMappedDirectiveProperty(owner, propertySignature, kind, name, required, sourceElement, textRangeInSourceElement)
+        Angular2SourceMappedDirectiveProperty(owner, propertySignature, kind, name, required, transformFunction, sourceElement, textRangeInSourceElement)
       }
     }
 

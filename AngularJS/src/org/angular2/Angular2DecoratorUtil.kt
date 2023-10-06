@@ -53,6 +53,7 @@ object Angular2DecoratorUtil {
   const val STYLES_PROP = "styles"
   const val REQUIRED_PROP = "required"
   const val ALIAS_PROP = "alias"
+  const val TRANSFORM_PROP = "transform"
   const val DIRECTIVE_PROP = "directive"
 
   @JvmStatic

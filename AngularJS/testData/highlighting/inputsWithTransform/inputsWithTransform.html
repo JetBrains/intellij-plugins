@@ -1,0 +1,52 @@
+<app-test
+        [nope]="'true'"
+        [alsoNo]="'true'"
+        [strict]="'true'"
+        [obj]="{foo: 12}"
+></app-test>
+<app-test
+        [nope]="'false'"
+        [alsoNo]="'false'"
+        [strict]="'false'"
+        [obj]="<error descr="Type  { bar: 13, foo: 12 }  is not assignable to type  { foo: number }   Object literal may only specify known properties, but the following are extra:  'bar' ">{foo: 12, bar: 13}</error>"
+        [obj_virtual]="{foo: 12, bar: 13}"
+></app-test>
+<app-test
+        [nope]="'foo'"
+        [alsoNo]="'foo'"
+        [strict]="<error descr="Type  \"foo\"  is not assignable to type  \"true\" | \"false\" ...  Type  \"foo\"  is not assignable to type  \"false\" ">'foo'</error>"
+        [obj]="<error descr="Type  { bar: 13 }  is not assignable to type  { foo: number } ">{bar: 13}</error>"
+></app-test>
+<app-test
+        [nope]="true"
+        [alsoNo]="<error descr="Type  true  is not assignable to type  string ">true</error>"
+        [strict]="<error descr="Type  true  is not assignable to type  \"true\" | \"false\" ...  Type  true  is not assignable to type  \"false\" ">true</error>"
+></app-test>
+<app-test
+        [nope]="false"
+        [alsoNo]="<error descr="Type  false  is not assignable to type  string ">false</error>"
+        [strict]="<error descr="Type  false  is not assignable to type  \"true\" | \"false\" ...  Type  false  is not assignable to type  \"false\" ">false</error>"
+></app-test>
+<app-test
+        [nope]="null"
+        [alsoNo]="<error descr="Type  null  is not assignable to type  string ">null</error>"
+        [strict]="<error descr="Type  null  is not assignable to type  \"true\" | \"false\" ...  Type  null  is not assignable to type  \"false\" ">null</error>"
+        [obj]="<error descr="Type  null  is not assignable to type  { foo: number } ">null</error>"
+></app-test>
+<!-- TODO should report error on obj -->
+<app-test
+        nope="true"
+        alsoNo="true"
+        strict="true"
+        <warning descr="Attribute obj is not allowed here">obj</warning>="null"
+></app-test>
+<app-test
+        nope="false"
+        alsoNo="false"
+        strict="false"
+></app-test>
+<app-test
+        nope="foo"
+        alsoNo="foo"
+        strict=<error descr="Type  \"foo\"  is not assignable to type  \"true\" | \"false\" ...  Type  \"foo\"  is not assignable to type  \"false\" "><warning descr="foo is not a valid value for strict. Expected: true or false">"foo"</warning></error>
+></app-test>

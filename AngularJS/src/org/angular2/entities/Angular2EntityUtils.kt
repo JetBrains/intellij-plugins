@@ -63,12 +63,12 @@ object Angular2EntityUtils {
       val endIndex = max(startIndex, StringUtil.skipWhitespaceBackward(property, property.length))
       Pair(
         property.substring(0, ind).trim(),
-        Angular2PropertyInfo(property.substring(startIndex, endIndex), false, element,
+        Angular2PropertyInfo(property.substring(startIndex, endIndex), false, null, element,
                              if (element == null) null else TextRange(1 + startIndex, 1 + endIndex))
       )
     }
     else
-      Pair(property.trim { it <= ' ' }, Angular2PropertyInfo(property.trim { it <= ' ' }, false, element, null))
+      Pair(property.trim { it <= ' ' }, Angular2PropertyInfo(property.trim { it <= ' ' }, false, null, element, null))
   }
 
   @JvmStatic

@@ -29,6 +29,7 @@ import org.angular2.Angular2DecoratorUtil.ALIAS_PROP
 import org.angular2.Angular2DecoratorUtil.HOST_DIRECTIVES_PROP
 import org.angular2.Angular2DecoratorUtil.NAME_PROP
 import org.angular2.Angular2DecoratorUtil.REQUIRED_PROP
+import org.angular2.Angular2DecoratorUtil.TRANSFORM_PROP
 import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver
 import org.angular2.entities.*
 import org.angular2.entities.Angular2EntitiesProvider.withJsonMetadataFallback
@@ -345,9 +346,11 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
     private fun parseInputObjectLiteral(expr: JSObjectLiteralExpression, name: String): Angular2PropertyInfo {
       val aliasLiteral = expr.findProperty(ALIAS_PROP)?.literalExpressionInitializer
       val alias = aliasLiteral?.stubSafeStringValue
+      val transform = expr.findProperty(TRANSFORM_PROP)?.jsType?.substitute()?.asSafely<JSFunctionType>()?.sourceFunctionItem
       return Angular2PropertyInfo(
         alias ?: name,
         expr.findProperty(REQUIRED_PROP)?.jsType?.asSafely<JSBooleanLiteralTypeImpl>()?.literal == true,
+        transform,
         aliasLiteral,
         if (alias != null) TextRange(1, 1 + alias.length) else null
       )
@@ -357,7 +360,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
       when (val param = getDecoratorParamValue(decorator)) {
         is JSObjectLiteralExpression -> parseInputObjectLiteral(param, defaultName)
         is JSLiteralExpression -> param.stubSafeStringValue.let { name ->
-          Angular2PropertyInfo(name ?: defaultName, false, if (name != null) param else null)
+          Angular2PropertyInfo(name ?: defaultName, false, null, if (name != null) param else null)
         }
         else -> Angular2PropertyInfo(defaultName, false, null, null)
       }
