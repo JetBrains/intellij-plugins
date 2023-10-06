@@ -1,8 +1,10 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight
 
+import com.intellij.javascript.web.WebFrameworkTestModule
 import com.intellij.webSymbols.enableIdempotenceChecksOnEveryCache
 import org.angular2.Angular2TestCase
+import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.ANGULAR_CDK_14_2_0
 import org.angular2.Angular2TestModule.ANGULAR_CORE_13_3_5
 
@@ -36,19 +38,11 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
   fun testHostDirectiveOutputMapping() =
     doLookupTest(ANGULAR_CORE_13_3_5, renderTypeText = true, renderPriority = false)
 
-  fun testHostDirectiveInputMappingWithReplace() {
-    doConfiguredTest(checkResult = true) {
-      completeBasic()
-      type("vir\t")
-    }
-  }
+  fun testHostDirectiveInputMappingWithReplace() =
+    doTypingTest("vir\t")
 
-  fun testDirectiveInputMappingLiteralWithReplace() {
-    doConfiguredTest(checkResult = true) {
-      completeBasic()
-      type("ie\t")
-    }
-  }
+  fun testDirectiveInputMappingLiteralWithReplace() =
+    doTypingTest("ie\t")
 
   fun testDirectiveInputMappingLiteral() =
     doLookupTest()
@@ -68,6 +62,15 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
 
   fun testDirectiveOutputMapping() =
     doLookupTest(ANGULAR_CORE_13_3_5)
+
+  fun testSignal() =
+    doBasicCompletionTest(Angular2TestModule.ANGULAR_CORE_16_2_8)
+
+  fun testCustomSignal() =
+    doBasicCompletionTest(Angular2TestModule.ANGULAR_CORE_16_2_8)
+
+  fun testNotSignal() =
+    doBasicCompletionTest(Angular2TestModule.ANGULAR_CORE_16_2_8)
 
   fun testCompletionInExpression() {
     doLookupTest(ANGULAR_CORE_13_3_5, ANGULAR_CDK_14_2_0, dir = true)
@@ -94,6 +97,16 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     myFixture.type("abs\n")
 
     myFixture.checkResultByFile("completionInExpression/completionInExpression.ts.after")
+  }
+
+  private fun doBasicCompletionTest(vararg modules: WebFrameworkTestModule) =
+    doTypingTest(null, *modules)
+
+  private fun doTypingTest(toType: String? = null, vararg modules: WebFrameworkTestModule) {
+    doConfiguredTest(*modules, checkResult = true) {
+      completeBasic()
+      if (toType != null) type(toType)
+    }
   }
 
 }

@@ -5,6 +5,7 @@ import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.javascript.web.css.CssInBindingExpressionCompletionProvider
+import com.intellij.javascript.web.js.WebJSResolveUtil
 import com.intellij.lang.Language
 import com.intellij.lang.javascript.completion.*
 import com.intellij.lang.javascript.completion.JSImportCompletionUtil.IMPORT_PRIORITY
@@ -15,10 +16,15 @@ import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.JSTypeUtils.isNullOrUndefinedType
 import com.intellij.lang.javascript.psi.ecma6.JSTypeDeclaration
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.CompletionResultSink
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
+import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.lang.javascript.psi.types.JSFunctionTypeImpl
+import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl
 import com.intellij.lang.javascript.psi.types.JSPsiBasedTypeOfType
+import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.patterns.PatternCondition
@@ -38,6 +44,8 @@ import org.angular2.codeInsight.template.Angular2TemplateScopesResolver
 import org.angular2.entities.Angular2ComponentLocator
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.Angular2Bundle
+import org.angular2.lang.Angular2LangUtil
+import org.angular2.lang.Angular2LangUtil.SIGNAL_TYPE
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.psi.Angular2PipeExpression
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression
@@ -139,7 +147,24 @@ class Angular2CompletionContributor : CompletionContributor() {
             localNames.add(name)
             result.consume(JSCompletionUtil.withJSLookupPriority(
               JSLookupUtilImpl.createLookupElement(element, name)
-                .withInsertHandler(JSLookupElementInsertHandler(false, null)),
+                .withInsertHandler(object : JSLookupElementInsertHandler(false, null) {
+
+                  override fun handleInsert(context: InsertionContext, item: LookupElement) {
+                    val signalType = WebJSResolveUtil.resolveSymbolFromNodeModule(
+                      ref, Angular2LangUtil.ANGULAR_CORE_PACKAGE, SIGNAL_TYPE,
+                      TypeScriptTypeAlias::class.java
+                    )?.jsType?.let { JSGenericTypeImpl(it.source, it, JSAnyType.get(it.source)) }
+                    if (signalType != null) {
+                      val elementType = TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(
+                        JSResolveUtil.getElementJSType(item.psiElement))
+                      if (elementType != null && signalType.isDirectlyAssignableType(elementType, null)) {
+                        item.putUserData(JSInsertHandler.FORCED_COMPLETE_AS_FUNCTION, true)
+                      }
+                    }
+                    super.handleInsert(context, item)
+                  }
+
+                }),
               calcPriority(element)
             ))
           }
