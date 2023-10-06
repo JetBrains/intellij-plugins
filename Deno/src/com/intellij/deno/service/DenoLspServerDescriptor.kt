@@ -67,6 +67,7 @@ class DenoLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor
   override val lspGoToDefinitionSupport = false
   override val lspCompletionSupport = null
   override val lspDiagnosticsSupport = null
+  override val lspFormattingSupport = null
 
   override val lspCommandsSupport: LspCommandsSupport = object : LspCommandsSupport() {
     override fun executeCommand(server: LspServer, contextFile: VirtualFile, command: Command) {
