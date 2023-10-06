@@ -1,40 +1,40 @@
   // Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.completion;
 
-import com.intellij.codeInsight.TailType;
-import com.intellij.codeInsight.completion.*;
-import com.intellij.codeInsight.lookup.AutoCompletionPolicy;
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.codeInsight.lookup.TailTypeDecorator;
-import com.intellij.codeInsight.template.TemplateBuilder;
-import com.intellij.codeInsight.template.TemplateBuilderFactory;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.patterns.PsiElementPattern;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileSystemItem;
-import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ProcessingContext;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.plugins.cucumber.psi.*;
-import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
-import org.jetbrains.plugins.cucumber.psi.impl.GherkinExamplesBlockImpl;
-import org.jetbrains.plugins.cucumber.psi.impl.GherkinScenarioOutlineImpl;
-import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
-import org.jetbrains.plugins.cucumber.steps.CucumberStepHelper;
+  import com.intellij.codeInsight.TailTypes;
+  import com.intellij.codeInsight.completion.*;
+  import com.intellij.codeInsight.lookup.AutoCompletionPolicy;
+  import com.intellij.codeInsight.lookup.LookupElement;
+  import com.intellij.codeInsight.lookup.LookupElementBuilder;
+  import com.intellij.codeInsight.lookup.TailTypeDecorator;
+  import com.intellij.codeInsight.template.TemplateBuilder;
+  import com.intellij.codeInsight.template.TemplateBuilderFactory;
+  import com.intellij.openapi.application.ApplicationManager;
+  import com.intellij.openapi.module.Module;
+  import com.intellij.openapi.util.Pair;
+  import com.intellij.openapi.util.TextRange;
+  import com.intellij.openapi.util.text.StringUtil;
+  import com.intellij.patterns.PsiElementPattern;
+  import com.intellij.psi.PsiElement;
+  import com.intellij.psi.PsiFile;
+  import com.intellij.psi.PsiFileSystemItem;
+  import com.intellij.psi.PsiWhiteSpace;
+  import com.intellij.psi.util.PsiTreeUtil;
+  import com.intellij.util.ProcessingContext;
+  import org.jetbrains.annotations.NotNull;
+  import org.jetbrains.plugins.cucumber.psi.*;
+  import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
+  import org.jetbrains.plugins.cucumber.psi.impl.GherkinExamplesBlockImpl;
+  import org.jetbrains.plugins.cucumber.psi.impl.GherkinScenarioOutlineImpl;
+  import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
+  import org.jetbrains.plugins.cucumber.steps.CucumberStepHelper;
 
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+  import java.util.*;
+  import java.util.regex.Matcher;
+  import java.util.regex.Pattern;
 
-import static com.intellij.openapi.module.ModuleUtilCore.findModuleForPsiElement;
-import static com.intellij.patterns.PlatformPatterns.psiElement;
+  import static com.intellij.openapi.module.ModuleUtilCore.findModuleForPsiElement;
+  import static com.intellij.patterns.PlatformPatterns.psiElement;
 
 
 public class CucumberCompletionContributor extends CompletionContributor {
@@ -205,7 +205,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
       result = ((LookupElementBuilder)result).withAutoCompletionPolicy(AutoCompletionPolicy.NEVER_AUTOCOMPLETE);
     }
     if (withSpace) {
-      result = TailTypeDecorator.withTail(result, TailType.SPACE);
+      result = TailTypeDecorator.withTail(result, TailTypes.SPACE);
     }
 
     return result;
