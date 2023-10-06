@@ -18,17 +18,12 @@ final class JdlDiagramEntityEdge extends DiagramEdgeBase<JdlNodeData> {
   }
 
   private static DiagramRelationshipInfo toRelationshipInfo(JdlEntityNodeLinkType linkType) {
-    switch (linkType) {
-      case ONE_TO_ONE:
-        return JdlDiagramEntityEdge.ONE_TO_ONE;
-      case MANY_TO_MANY:
-        return JdlDiagramEntityEdge.MANY_TO_MANY;
-      case MANY_TO_ONE:
-        return JdlDiagramEntityEdge.MANY_TO_ONE;
-      case ONE_TO_MANY:
-        return JdlDiagramEntityEdge.ONE_TO_MANY;
-    }
-    return DiagramRelationshipInfo.NO_RELATIONSHIP;
+    return switch (linkType) {
+      case ONE_TO_ONE -> JdlDiagramEntityEdge.ONE_TO_ONE;
+      case MANY_TO_MANY -> JdlDiagramEntityEdge.MANY_TO_MANY;
+      case MANY_TO_ONE -> JdlDiagramEntityEdge.MANY_TO_ONE;
+      case ONE_TO_MANY -> JdlDiagramEntityEdge.ONE_TO_MANY;
+    };
   }
 
   static final DiagramRelationshipInfo ONE_TO_ONE = (new DiagramRelationshipInfoAdapter.Builder()).setName("TO_ONE")

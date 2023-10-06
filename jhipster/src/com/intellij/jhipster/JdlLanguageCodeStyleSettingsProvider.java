@@ -29,26 +29,27 @@ final class JdlLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettin
   @org.intellij.lang.annotations.Language("JDL")
   @Override
   public @NotNull String getCodeSample(@NotNull SettingsType settingsType) {
-    return "application {\n" +
-           "  config {\n" +
-           "    baseName cars\n" +
-           "    serverPort 8080\n" +
-           "    languages [en, fr]\n" +
-           "  }\n" +
-           "  entities Car\n" +
-           "  dto * with mapstruct\n" +
-           "}\n" +
-           "\n" +
-           "// The comment\n" +
-           "entity Car {\n" +
-           "  departmentName String required\n" +
-           "  handle String required\n" +
-           "}\n" +
-           "\n" +
-           "deployment {\n" +
-           "  deploymentType docker-compose\n" +
-           "  dockerRepositoryName \"YourDockerLoginName\"\n" +
-           "}";
+    return """
+      application {
+        config {
+          baseName cars
+          serverPort 8080
+          languages [en, fr]
+        }
+        entities Car
+        dto * with mapstruct
+      }
+
+      // The comment
+      entity Car {
+        departmentName String required
+        handle String required
+      }
+
+      deployment {
+        deploymentType docker-compose
+        dockerRepositoryName "YourDockerLoginName"
+      }""";
   }
 
   @Override

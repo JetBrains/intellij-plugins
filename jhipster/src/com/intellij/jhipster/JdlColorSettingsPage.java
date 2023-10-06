@@ -51,39 +51,40 @@ final class JdlColorSettingsPage implements ColorSettingsPage {
 
   @Override
   public @NonNls @NotNull String getDemoText() {
-    return "application {\n" +
-           "  config {\n" +
-           "    <optionName>baseName</optionName> <baseName>app1</baseName>\n" +
-           "    <optionName>serverPort</optionName> 8080\n" +
-           "    <optionName>languages</optionName> [<enumValue>en</enumValue>, <enumValue>fr</enumValue>]\n" +
-           "  }\n" +
-           "  <keyword>entities</keyword> A, B, C\n" +
-           "  <keyword>dto</keyword> * with <enumValue>mapstruct</enumValue>\n" +
-           "}\n" +
-           "\n" +
-           "<const>DEFAULT_TIMEOUT</const> = 100\n" +
-           "\n" +
-           "application {\n" +
-           "  config {\n" +
-           "    <optionName>baseName</optionName> <baseName>app2</baseName>\n" +
-           "    <optionName>enableTranslation</optionName> true\n" +
-           "  }\n" +
-           "  <keyword>entities</keyword> A, C\n" +
-           "  <keyword>paginate</keyword> * with <enumValue>pagination</enumValue> except A \n" +
-           "}\n" +
-           "\n" +
-           "entity <id>A</id> { }\n" +
-           "/** This comment will be taken into account */\n" +
-           "entity <id>B</id> { }\n" +
-           "// This comment will be ignored\n" +
-           "entity <id>C</id> {\n" +
-           "  <fieldName>departmentName</fieldName> String <fieldConstraint>required</fieldConstraint>\n" +
-           "}\n" +
-           "\n" +
-           "deployment {\n" +
-           "  <optionName>deploymentType</optionName> <enumValue>docker-compose</enumValue>\n" +
-           "  <optionName>dockerRepositoryName</optionName> \"YourDockerLoginName\"\n" +
-           "}";
+    return """
+      application {
+        config {
+          <optionName>baseName</optionName> <baseName>app1</baseName>
+          <optionName>serverPort</optionName> 8080
+          <optionName>languages</optionName> [<enumValue>en</enumValue>, <enumValue>fr</enumValue>]
+        }
+        <keyword>entities</keyword> A, B, C
+        <keyword>dto</keyword> * with <enumValue>mapstruct</enumValue>
+      }
+
+      <const>DEFAULT_TIMEOUT</const> = 100
+
+      application {
+        config {
+          <optionName>baseName</optionName> <baseName>app2</baseName>
+          <optionName>enableTranslation</optionName> true
+        }
+        <keyword>entities</keyword> A, C
+        <keyword>paginate</keyword> * with <enumValue>pagination</enumValue> except A\s
+      }
+
+      entity <id>A</id> { }
+      /** This comment will be taken into account */
+      entity <id>B</id> { }
+      // This comment will be ignored
+      entity <id>C</id> {
+        <fieldName>departmentName</fieldName> String <fieldConstraint>required</fieldConstraint>
+      }
+
+      deployment {
+        <optionName>deploymentType</optionName> <enumValue>docker-compose</enumValue>
+        <optionName>dockerRepositoryName</optionName> "YourDockerLoginName"
+      }""";
   }
 
   @Override
