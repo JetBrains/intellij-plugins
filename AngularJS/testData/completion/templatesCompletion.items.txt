@@ -1,0 +1,3 @@
+*ngIf (typeText=null; priority=50.0; typeGreyed)
+*ngSwitchCase (typeText=null; priority=50.0; typeGreyed)
+*ngSwitchDefault (typeText=null; priority=50.0; typeGreyed)

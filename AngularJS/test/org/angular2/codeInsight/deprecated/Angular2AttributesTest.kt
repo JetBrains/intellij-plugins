@@ -408,23 +408,6 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.checkResultByFile("case.after.html")
   }
 
-  fun testTemplatesCompletion() {
-    configureLink(myFixture, Angular2TestModule.ANGULAR_COMMON_4_0_0)
-    myFixture.configureByFiles("templates_completion.html")
-    myFixture.completeBasic()
-    assertEquals(mutableListOf("*ngIf", "*ngSwitchCase", "*ngSwitchDefault"),
-                 ContainerUtil.sorted(myFixture.getLookupElementStrings()!!))
-  }
-
-  fun testTemplatesCompletion2() {
-    configureLink(myFixture, Angular2TestModule.ANGULAR_COMMON_16_2_8)
-    myFixture.configureByFiles("templates_completion2.html")
-    myFixture.completeBasic()
-    assertEquals(
-      mutableListOf("*ngComponentOutlet", "*ngPluralCase", "*ngSwitchCase", "[ngClass]", "[ngComponentOutlet]", "ngComponentOutlet"),
-      ContainerUtil.sorted(myFixture.getLookupElementStrings()!!))
-  }
-
   fun testMaterialSelectors() {
     configureLink(myFixture, Angular2TestModule.ANGULAR_MATERIAL_7_2_1)
     myFixture.configureByFiles("material.html")
@@ -607,13 +590,6 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
         UsefulTestCase.assertDoesntContain(myFixture.getLookupElementStrings()!!, "split", "length", "type")
       }
     }
-  }
-
-  fun testOneTimeBindingOfPrimitives() {
-    myFixture.configureByFiles("one_time_binding.html", "one_time_binding.ts", "package.json")
-    myFixture.enableInspections(HtmlUnknownAttributeInspection::class.java,
-                                AngularUndefinedBindingInspection::class.java)
-    myFixture.checkHighlighting(true, false, true)
   }
 
   fun testStandardPropertiesOnComponent() {

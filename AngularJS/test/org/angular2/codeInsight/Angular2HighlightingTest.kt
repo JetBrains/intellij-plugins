@@ -96,6 +96,8 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
   fun testInputsWithTransform() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, strictTemplates = true, dir = true)
 
+  fun testOneTimeBindingOfPrimitives() = checkHighlighting(dir = true, configureFileName = "one_time_binding.html")
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
@@ -107,8 +109,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     checkInjections: Boolean = false,
     strictTemplates: Boolean = false,
     extension: String = "html",
+    configureFileName: String = "$testName.$extension",
   ) {
-    doConfiguredTest(*modules, dir = dir, extension = extension,
+    doConfiguredTest(*modules, dir = dir, extension = extension, configureFileName = configureFileName,
                      configurators = listOf(Angular2TsConfigFile(strictTemplates = strictTemplates))
     ) {
       if (checkInjections)

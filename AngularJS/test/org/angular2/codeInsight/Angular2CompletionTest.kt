@@ -72,6 +72,12 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
   fun testNotSignal() =
     doBasicCompletionTest(Angular2TestModule.ANGULAR_CORE_16_2_8)
 
+  fun testTemplatesCompletion() =
+    doLookupTest(Angular2TestModule.ANGULAR_COMMON_4_0_0, extension = "html")
+
+  fun testTemplatesCompletion16() =
+    doLookupTest(Angular2TestModule.ANGULAR_COMMON_16_2_8, extension = "html")
+
   fun testCompletionInExpression() {
     doLookupTest(ANGULAR_CORE_13_3_5, ANGULAR_CDK_14_2_0, dir = true)
 
