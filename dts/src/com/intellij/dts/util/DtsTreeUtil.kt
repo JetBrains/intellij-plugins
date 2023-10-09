@@ -2,6 +2,7 @@ package com.intellij.dts.util
 
 import com.intellij.dts.lang.DtsFile
 import com.intellij.dts.lang.psi.*
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.suggested.startOffset
@@ -9,29 +10,38 @@ import com.intellij.util.containers.headTail
 
 object DtsTreeUtil {
     /**
-     * Gets the immediate parent of the node. Does not resolve references.
+     * Gets the immediate parent node. Does not resolve references.
      */
-    fun parentNode(statement: DtsStatement): DtsNode? {
-        if (statement is DtsRootNode) return null
-        return PsiTreeUtil.findFirstParent(statement, true) { it is DtsNode } as? DtsNode
+    fun parentNode(element: PsiElement): DtsNode? {
+        if (element is DtsRootNode) return null
+        return PsiTreeUtil.findFirstParent(element, true) { it is DtsNode } as? DtsNode
     }
 
     /**
-     * Gets all immediate parents of this node. Does not resolve references.
+     * Gets all immediate parent nodes. Does not resolve references.
      */
-    fun parentNodes(statement: DtsStatement): List<DtsNode> {
-        if (statement is DtsRootNode) return emptyList()
+    fun parentNodes(element: PsiElement): List<DtsNode> {
+        if (element is DtsRootNode) return emptyList()
 
         val parents = mutableListOf<DtsNode>()
 
-        var element = statement.parent
-        while (element != null) {
-            if (element is DtsNode) parents.add(element)
-
-            element = element.parent
+        var parent = element.parent
+        while (parent != null) {
+            if (parent is DtsNode) parents.add(parent)
+            parent = parent.parent
         }
 
         return parents
+    }
+
+    /**
+     * Gets the immediate parent property.
+     */
+    fun parentProperty(element: PsiElement): DtsProperty? {
+        if (element is DtsProperty) return null
+
+        // stop search at next parent node
+        return PsiTreeUtil.findFirstParent(element, true) { it is DtsProperty || it is DtsNode } as? DtsProperty
     }
 
     /**

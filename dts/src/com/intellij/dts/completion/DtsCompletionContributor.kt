@@ -8,7 +8,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.dts.DtsBundle
 import com.intellij.dts.DtsIcons
 import com.intellij.dts.documentation.DtsBundledBindings
-import com.intellij.dts.documentation.DtsDocumentationSymbol
+import com.intellij.dts.lang.symbols.DtsDocumentationSymbol
 import com.intellij.dts.documentation.DtsNodeBindingDocumentationTarget
 import com.intellij.dts.documentation.DtsPropertyBindingDocumentationTarget
 import com.intellij.dts.lang.psi.*
@@ -22,7 +22,7 @@ class DtsCompletionContributor : CompletionContributor() {
         val binding = DtsZephyrBindingProvider.bindingFor(node) ?: return
 
         for (property in binding.properties.values) {
-            val symbol = DtsDocumentationSymbol.of(DtsPropertyBindingDocumentationTarget(node.project, property))
+            val symbol = DtsDocumentationSymbol.from(DtsPropertyBindingDocumentationTarget(node.project, property))
 
             val lookup = LookupElementBuilder.create(symbol, property.name)
                 .withTypeText(property.type.typeName)
@@ -37,7 +37,7 @@ class DtsCompletionContributor : CompletionContributor() {
             val provider = DtsZephyrBindingProvider.of(node.project)
 
             for (binding in DtsBundledBindings.entries) {
-                val symbol = DtsDocumentationSymbol.of(DtsNodeBindingDocumentationTarget(
+                val symbol = DtsDocumentationSymbol.from(DtsNodeBindingDocumentationTarget(
                     node.project,
                     binding.nodeName,
                     provider.buildBundledBinding(binding),

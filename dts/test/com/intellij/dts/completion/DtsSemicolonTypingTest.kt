@@ -2,80 +2,80 @@ package com.intellij.dts.completion
 
 class DtsSemicolonTypingTest : DtsCompletionTest() {
     fun testValidProperty() = doEnterTest(
-        "prop = <><caret>",
-        "prop = <>;\n<caret>",
+        input = "prop = <><caret>",
+        after = "prop = <>;\n<caret>",
         useNodeContentVariations = true,
     )
 
     fun testValidPropertyWithLabel() = doEnterTest(
-        "prop = <> label:<caret>",
-        "prop = <> label:;\n<caret>",
+        input = "prop = <> label:<caret>",
+        after = "prop = <> label:;\n<caret>",
         useNodeContentVariations = true,
     )
 
     fun testValidPropertyWithComment() = doEnterTest(
-        "prop = <> // comment<caret>",
-        "prop = <>; // comment\n<caret>",
+        input = "prop = <> // comment<caret>",
+        after = "prop = <>; // comment\n<caret>",
         useNodeContentVariations = true,
     )
 
     fun testInvalidPropertyAssignment() = doEnterTest(
-        "prop = <caret>",
-        "prop = \n<caret>",
+        input = "prop = <caret>",
+        after = "prop = \n<caret>",
         useNodeContentVariations = true,
     )
 
     fun testInSubNode() = doEnterTest(
-        "name {<caret>}",
-        "name {\n    <caret>\n};",
+        input = "name {<caret>}",
+        after = "name {\n    <caret>\n};",
         useNodeContentVariations = true,
     )
 
     fun testAfterSubNode() = doEnterTest(
-        "name {}<caret>",
-        "name {};\n<caret>",
+        input = "name {}<caret>",
+        after = "name {};\n<caret>",
         useNodeContentVariations = true,
     )
 
     fun testCompilerDirective() = doEnterTest(
-        "/dts-v1/<caret>",
-        "/dts-v1/;\n<caret>",
+        input = "/dts-v1/<caret>",
+        after = "/dts-v1/;\n<caret>",
         useRootContentVariations = true,
     )
 
     fun testRootNode() = doEnterTest(
-        "/ {}<caret>",
-        "/ {};\n<caret>",
+        input = "/ {}<caret>",
+        after = "/ {};\n<caret>",
         useRootContentVariations = true,
     )
 
     fun testHandleNode() = doEnterTest(
-        "&handle {}<caret>",
-        "&handle {};\n<caret>",
+        input = "&handle {}<caret>",
+        after = "&handle {};\n<caret>",
         useRootContentVariations = true,
     )
 
     fun testNodeWithBrace() = doEnterTest(
-        "node {\n    <caret>\n}",
-        "node {\n    \n    <caret>\n};",
+        input = "node {\n    <caret>\n}",
+        after = "node {\n    \n    <caret>\n};",
         useRootContentVariations = true,
     )
 
     fun testNoCompletionNode() = doEnterTest(
-        "node {\n    <caret>",
-        "node {\n    \n    <caret>",
+        input = "node {\n    <caret>",
+        after = "node {\n    \n    <caret>",
         useRootContentVariations = true,
     )
 
     fun testNoCompletionProperty() = doEnterTest(
-        "prop = <>\n<caret>",
-        "prop = <>\n\n<caret>",
+        input = "prop = <>\n<caret>",
+        after = "prop = <>\n\n<caret>",
         useNodeContentVariations = true,
     )
 
     fun testNoCompletionPropertyEmpty() = doEnterTest(
-        "prop <caret>",
-        "prop \n<caret>",
+        input = "prop <caret>",
+        after = "prop \n<caret>",
         useNodeContentVariations = true,
     )
 }

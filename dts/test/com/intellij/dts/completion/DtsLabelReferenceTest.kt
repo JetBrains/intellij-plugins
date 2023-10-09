@@ -11,45 +11,45 @@ class DtsLabelReferenceTest : DtsCompletionTest() {
     }
 
     fun testLabelAbove() = doTest(
-        "&<caret>",
-        listOf("label"),
+        input = "&<caret>",
+        labels = listOf("label"),
         prefix = "/ { label: node {}; };",
         useRootContentVariations = true,
     )
 
     fun testLabelBelow() = doTest(
-        "&<caret>",
-        emptyList(),
+        input = "&<caret>",
+        labels = emptyList(),
         suffix = "/ { label: node {}; };",
         useRootContentVariations = true,
     )
 
     fun testLabelAboveValue() = doTest(
-        "prop = &<caret>",
-        listOf("label"),
+        input = "prop = &<caret>",
+        labels = listOf("label"),
         prefix = "/ { label: node1 {}; node2 {",
         suffix = "}; };",
         useNodeContentVariations = true,
     )
 
     fun testLabelBelowValue() = doTest(
-        "prop = &<caret>",
-        listOf("label"),
+        input = "prop = &<caret>",
+        labels = listOf("label"),
         prefix = "/ { ",
         suffix = "label: node {}; };",
         useNodeContentVariations = true,
     )
 
     fun testIncludeLabel() = doTest(
-        "&<caret>",
-        listOf("labelA"),
+        input = "&<caret>",
+        labels = listOf("labelA"),
         prefix = "/include/ \"a.dtsi\"",
         useRootContentVariations = true,
     )
 
     fun testIncludeLabels() = doTest(
-        "&<caret>",
-        listOf("labelA", "labelB"),
+        input = "&<caret>",
+        labels = listOf("labelA", "labelB"),
         prefix = "/include/ \"a.dtsi\" /include/ \"b.dtsi\"",
         useRootContentVariations = true,
     )

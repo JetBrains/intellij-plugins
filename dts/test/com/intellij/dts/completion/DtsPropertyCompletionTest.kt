@@ -2,27 +2,27 @@ package com.intellij.dts.completion
 
 class DtsPropertyCompletionTest : DtsCompletionTest() {
     fun `test new property (compatible)`() = doTest(
-        listOf("c", "pati"),
-       "compatible",
-        "<caret>",
+        variations = listOf("c", "pati"),
+        lookupString = "compatible",
+        input = "<caret>",
     )
 
     fun `test edit empty property (#size-cells)`() = doTest(
-        listOf("#", "#size", "ize-"),
-        "#size-cells",
-        "<caret>;",
+        variations = listOf("#", "#size", "ize-"),
+        lookupString = "#size-cells",
+        input = "<caret>;",
     )
 
     fun `test edit property with value (device_type)`() = doTest(
-        listOf("d", "vice_", "type"),
-        "device_type",
-        "<caret> = <40>",
+        variations = listOf("d", "vice_", "type"),
+        lookupString = "device_type",
+        input = "<caret> = <40>",
     )
 
     fun `test edit property with label (interrupt-map-mask)`() = doTest(
-       listOf("inter", "-", "-map-", "mask"),
-        "interrupt-map-mask",
-        "label: <caret>;"
+        variations = listOf("inter", "-", "-map-", "mask"),
+        lookupString = "interrupt-map-mask",
+        input = "label: <caret>;"
     )
 
     private fun doTest(
@@ -33,8 +33,8 @@ class DtsPropertyCompletionTest : DtsCompletionTest() {
         for (variation in listOf("", lookupString) + variations) {
             doCompletionTest(
                 lookupString,
-                input.replace("<caret>", "$variation<caret>"),
-                input.replace("<caret>", "$lookupString<caret>"),
+                input = input.replace("<caret>", "$variation<caret>"),
+                after = input.replace("<caret>", "$lookupString<caret>"),
                 surrounding = "/ { <embed> };",
                 useNodeContentVariations = true,
             )

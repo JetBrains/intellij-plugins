@@ -1,5 +1,6 @@
 package com.intellij.dts.documentation
 
+import com.intellij.dts.DtsBundle
 import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.util.DtsHtmlChunk
 import com.intellij.dts.zephyr.DtsZephyrBinding
@@ -9,6 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.platform.backend.documentation.DocumentationResult
 import com.intellij.platform.backend.documentation.DocumentationTarget
+import org.jetbrains.annotations.PropertyKey
 
 abstract class DtsDocumentationTarget(protected val project: Project) : DocumentationTarget {
     protected abstract fun buildDocumentation(html: DtsDocumentationHtmlBuilder)
@@ -21,37 +23,35 @@ abstract class DtsDocumentationTarget(protected val project: Project) : Document
     }
 
     /**
+     * Writes: "<<name>>: <<value>>"
+     */
+    protected fun buildDefinition(html: DtsDocumentationHtmlBuilder, name: @PropertyKey(resourceBundle = DtsBundle.BUNDLE) String, value: HtmlChunk) {
+        html.definition(
+            HtmlChunk.fragment(
+                DtsHtmlChunk.bundle(name),
+                HtmlChunk.text(": "),
+            ).bold(),
+            value,
+        )
+    }
+
+    /**
      * Writes: "Property: <<name>>"
      */
-    protected fun buildPropertyName(html: DtsDocumentationHtmlBuilder, name: String) {
-        html.definition(
-            HtmlChunk.fragment(
-                DtsHtmlChunk.bundle("documentation.property"),
-                HtmlChunk.text(": "),
-            ).bold(),
-            DtsHtmlChunk.propertyName(name),
-        )
-    }
-
-    private fun buildNodeName(html: DtsDocumentationHtmlBuilder, name: HtmlChunk) {
-        html.definition(
-            HtmlChunk.fragment(
-                DtsHtmlChunk.bundle("documentation.node"),
-                HtmlChunk.text(": "),
-            ).bold(),
-            name,
-        )
-    }
+    protected fun buildPropertyName(html: DtsDocumentationHtmlBuilder, name: String) =
+        buildDefinition(html, "documentation.property", DtsHtmlChunk.propertyName(name))
 
     /**
      * Writes: "Node <<name>>"
      */
-    protected fun buildNodeName(html: DtsDocumentationHtmlBuilder, name: String) = buildNodeName(html, DtsHtmlChunk.nodeName(name))
+    protected fun buildNodeName(html: DtsDocumentationHtmlBuilder, name: String) =
+        buildDefinition(html, "documentation.node", DtsHtmlChunk.nodeName(name))
 
     /**
      * Writes: "Node <<name>>"
      */
-    protected fun buildNodeName(html: DtsDocumentationHtmlBuilder, node: DtsNode)= buildNodeName(html, DtsHtmlChunk.node(node))
+    protected fun buildNodeName(html: DtsDocumentationHtmlBuilder, node: DtsNode) =
+        buildDefinition(html, "documentation.node", DtsHtmlChunk.node(node))
 
     /**
      * Writes: "Declared in: <<path>> (<<file>>)"

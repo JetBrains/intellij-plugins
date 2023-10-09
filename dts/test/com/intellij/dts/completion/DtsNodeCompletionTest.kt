@@ -39,8 +39,8 @@ class DtsNodeCompletionTest : DtsCompletionTest() {
         for (variation in listOf("", lookupString) + variations) {
             doCompletionTest(
                 lookupString,
-                input.replace("<caret>", "$variation<caret>"),
-                input.replace("<caret>", "$lookupString<caret>"),
+                input = input.replace("<caret>", "$variation<caret>"),
+                after = input.replace("<caret>", "$lookupString<caret>"),
                 surrounding = "/ { <embed> };",
                 useNodeContentVariations = true,
             )

@@ -3,11 +3,13 @@ package com.intellij.dts.zephyr
 import com.intellij.openapi.util.NlsSafe
 
 data class DtsZephyrBinding(
-    val compatible: String?,
+    val compatible: @NlsSafe String?,
+    val path: @NlsSafe String?,
     val description: @NlsSafe String?,
     val properties: Map<String, DtsZephyrPropertyBinding>,
     val child: DtsZephyrBinding?,
     val isChild: Boolean,
+    val isBundled: Boolean,
 ) {
     companion object{
         val empty = Builder(null).build()
@@ -16,10 +18,17 @@ data class DtsZephyrBinding(
     class Builder(
         private val compatible: String?,
         private val isChild: Boolean = false,
+        private val isBundled: Boolean = false,
     ) {
+        private var path: String? = null
         private var description: String? = null
         private var properties: MutableMap<String, DtsZephyrPropertyBinding.Builder> = mutableMapOf()
         private var child: Builder? = null
+
+        fun setPath(value: String): Builder {
+            if (path == null) path = value
+            return this
+        }
 
         fun setDescription(value: String): Builder {
             if (description == null) description = value
@@ -37,10 +46,12 @@ data class DtsZephyrBinding(
 
         fun build(): DtsZephyrBinding = DtsZephyrBinding(
             compatible,
+            path,
             description,
             properties.mapValues { (_, builder) -> builder.build() },
             child?.build(),
             isChild,
+            isBundled,
         )
     }
 }

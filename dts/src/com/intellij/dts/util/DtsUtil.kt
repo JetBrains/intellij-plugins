@@ -9,6 +9,7 @@ import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.siblings
+import java.util.*
 
 object DtsUtil {
     private val clionModuleId = PluginId.getId("com.intellij.modules.clion")
@@ -66,4 +67,13 @@ object DtsUtil {
                type !in DtsTokenSets.ppStatements
     }
 
+    fun <T> singleResult(callback: () -> T?) : List<T> {
+        val result = callback()
+
+        return if (result == null) {
+            Collections.emptyList<T>()
+        } else {
+            Collections.singletonList(result)
+        }
+    }
 }

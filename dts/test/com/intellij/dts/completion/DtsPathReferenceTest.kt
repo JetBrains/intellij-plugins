@@ -11,20 +11,20 @@ class DtsPathReferenceTest : DtsCompletionTest() {
     }
 
     fun testEmpty() = doTest(
-        "&{<caret>}",
-        emptyList(),
+        input = "&{<caret>}",
+        paths = emptyList(),
         useRootContentVariations = true,
     )
 
     fun testRoot() = doTest(
-        "&{/<caret>}",
-        listOf("/nodeA", "/nodeB"),
+        input = "&{/<caret>}",
+        paths = listOf("/nodeA", "/nodeB"),
         useRootContentVariations = true,
     )
 
     fun testNested() = doTest(
-        "&{/nodeB/<caret>}",
-        listOf("/nodeB/subB", "/nodeB/subA"),
+        input = "&{/nodeB/<caret>}",
+        paths = listOf("/nodeB/subB", "/nodeB/subA"),
         useRootContentVariations = true,
     )
 

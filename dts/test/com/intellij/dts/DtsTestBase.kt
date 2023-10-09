@@ -61,9 +61,9 @@ abstract class DtsTestBase : BasePlatformTestCase() {
         val path = Path.of(testDataPath, "$testName.$extension")
 
         if (path.exists()) {
-           assertEquals(path.readText().replaceCaret(), actual)
+           assertEquals(path.readText().replaceCaret(), actual.replacePath())
         } else {
-            path.writeText(actual)
+            path.writeText(actual.replacePath())
             fail("File ${path.pathString} did not exist. Created new fixture.")
         }
     }
@@ -77,4 +77,9 @@ private fun String.toPascalCase(): String {
 
 private fun String.replaceCaret(): String {
     return replace("/*caret*/", "<caret>")
+}
+
+private fun String.replacePath(): String {
+    val currentDirectory = Path.of("").absolutePathString()
+    return replace(currentDirectory, "WORKING_DIRECTORY")
 }

@@ -108,4 +108,27 @@ abstract class DtsCompletionTest : DtsTestBase() {
             myFixture.checkResult(embeddedAfter)
         }
     }
+
+    fun doNoCompletionTest(
+        input: String,
+        surrounding: String = "<embed>",
+        useRootContentVariations: Boolean = false,
+        useNodeContentVariations: Boolean = false,
+    ) {
+        require(input.contains("<caret>")) {
+            "Test input and after must contain \"<caret>\" to indicate caret position"
+        }
+        require(surrounding.contains("<embed>")) {
+            "Surrounding must contain \"<embed>\" to indicate the input position"
+        }
+
+        applyVariations(useRootContentVariations, useNodeContentVariations) { apply ->
+            val embeddedInput = surrounding.replace("<embed>", apply(input))
+            configureByText(embeddedInput)
+
+            val items = myFixture.completeBasic()
+            assertNotNull(items)
+            assertEmpty(items)
+        }
+    }
 }

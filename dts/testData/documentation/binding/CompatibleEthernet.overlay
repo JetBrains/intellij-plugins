@@ -1,0 +1,5 @@
+/ {
+   node {
+       compatible = "ethernet<caret>";
+   };
+};
