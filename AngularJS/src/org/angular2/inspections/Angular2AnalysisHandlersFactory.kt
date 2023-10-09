@@ -6,17 +6,22 @@ import com.intellij.codeInspection.InspectionSuppressor
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.util.InspectionMessage
 import com.intellij.lang.javascript.DialectDetector
+import com.intellij.lang.javascript.DialectOptionHolder
 import com.intellij.lang.javascript.ecmascript6.TypeScriptAnalysisHandlersFactory
+import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.JSThisExpression
+import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.util.JSClassUtils
 import com.intellij.lang.javascript.validation.JSProblemReporter
 import com.intellij.lang.javascript.validation.JSReferenceChecker
+import com.intellij.lang.javascript.validation.JSTypeChecker
 import com.intellij.lang.javascript.validation.TypeScriptReferenceChecker
 import com.intellij.lang.javascript.validation.fixes.CreateJSFunctionIntentionAction
 import com.intellij.lang.javascript.validation.fixes.CreateJSVariableIntentionAction
 import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings
+import com.intellij.lang.typescript.validation.TypeScriptTypeChecker
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair
@@ -25,12 +30,14 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.ResolveResult
 import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.refactoring.suggested.createSmartPointer
+import com.intellij.util.ProcessingContext
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.NG_PIPE
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.entities.Angular2ComponentLocator
 import org.angular2.inspections.quickfixes.Angular2FixesFactory
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression
+import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
 
 class Angular2AnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
 
@@ -38,8 +45,25 @@ class Angular2AnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
     return Angular2InspectionSuppressor
   }
 
-  override fun getReferenceChecker(reporter: JSProblemReporter<*>): JSReferenceChecker {
-    return object : TypeScriptReferenceChecker(reporter) {
+  override fun <T : Any?> getTypeChecker(problemReporter: JSProblemReporter<T>): JSTypeChecker =
+    object : TypeScriptTypeChecker(problemReporter) {
+
+      override fun getFixes(expr: JSExpression?,
+                            declaredJSType: JSType,
+                            elementToChangeTypeOf: PsiElement?,
+                            expressionJSType: JSType,
+                            context: ProcessingContext?,
+                            holder: DialectOptionHolder?): MutableCollection<LocalQuickFix> {
+        val result = super.getFixes(expr, declaredJSType, elementToChangeTypeOf, expressionJSType, context, holder)
+        if (elementToChangeTypeOf is Angular2HtmlPropertyBinding) {
+          // TODO add quick fixes
+        }
+        return result
+      }
+    }
+
+  override fun getReferenceChecker(reporter: JSProblemReporter<*>): JSReferenceChecker =
+    object : TypeScriptReferenceChecker(reporter) {
       override fun addCreateFromUsageFixesForCall(methodExpression: JSReferenceExpression,
                                                   isNewExpression: Boolean,
                                                   resolveResults: Array<ResolveResult>,
@@ -98,8 +122,8 @@ class Angular2AnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
         }
         return super.addCreateFromUsageFixes(referenceExpression, resolveResults, quickFixes, inTypeContext, ecma)
       }
+
     }
-  }
 
   private class CreateComponentFieldIntentionAction(referenceExpression: JSReferenceExpression)
     : CreateJSVariableIntentionAction(referenceExpression.referenceName, true, false, false) {

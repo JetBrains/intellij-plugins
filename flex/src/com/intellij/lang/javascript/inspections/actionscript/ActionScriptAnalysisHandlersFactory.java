@@ -31,10 +31,9 @@ public class ActionScriptAnalysisHandlersFactory extends JSAnalysisHandlersFacto
     return new ActionScriptReferenceChecker(reporter);
   }
 
-  @NotNull
   @Override
-  public JSTypeChecker getTypeChecker(ProblemsHolder holder) {
-    return new ActionScriptTypeChecker(getProblemReporter(holder));
+  public @NotNull <T> JSTypeChecker getTypeChecker(@NotNull JSProblemReporter<T> problemReporter) {
+    return new ActionScriptTypeChecker(problemReporter);
   }
 
   @NotNull

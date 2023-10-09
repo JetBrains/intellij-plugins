@@ -80,8 +80,8 @@ class VueJSAnalysisHandlersFactory : ES6AnalysisHandlersFactory() {
     }
   }
 
-  override fun getTypeChecker(holder: ProblemsHolder?): JSTypeChecker =
-    object : JSTypeChecker(getProblemReporter(holder)) {
+  override fun <T : Any> getTypeChecker(problemReporter: JSProblemReporter<T>): JSTypeChecker =
+    object : JSTypeChecker(problemReporter) {
 
       override fun getExpressionType(expr: JSExpression?): JSType? =
         super.getExpressionType(expr)?.applyIf(expr?.parent?.elementType is VueJSEmbeddedExpressionContentElementType) {
