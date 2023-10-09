@@ -12,7 +12,10 @@ import com.intellij.lang.javascript.validation.*
 import com.intellij.lang.typescript.validation.TypeScriptFunctionSignatureChecker
 import com.intellij.openapi.util.Trinity
 import com.intellij.psi.ResolveResult
+import com.intellij.psi.util.elementType
+import com.intellij.util.applyIf
 import org.jetbrains.vuejs.VueBundle
+import org.jetbrains.vuejs.lang.expr.parser.VueJSEmbeddedExpressionContentElementType
 import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterExpression
 import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterReferenceExpression
 
@@ -76,6 +79,15 @@ class VueJSAnalysisHandlersFactory : ES6AnalysisHandlersFactory() {
       }
     }
   }
+
+  override fun getTypeChecker(holder: ProblemsHolder?): JSTypeChecker =
+    object : JSTypeChecker(getProblemReporter(holder)) {
+
+      override fun getExpressionType(expr: JSExpression?): JSType? =
+        super.getExpressionType(expr)?.applyIf(expr?.parent?.elementType is VueJSEmbeddedExpressionContentElementType) {
+          copyWithStrict(true)
+        }
+    }
 }
 
 class VueTSAnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {

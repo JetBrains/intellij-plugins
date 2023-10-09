@@ -18,7 +18,7 @@
 ></my-comp>
 
 <my-comp
-    [plainNumber]="<error descr="Type  \"off\" | \"polite\"  is not assignable to type  number   Type  \"off\"  is not assignable to type  number ">true ? 'off' : 'polite'</error>"
+    [plainNumber]="<error descr="Type  string  is not assignable to type  number ">true ? 'off' : 'polite'</error>"
     [simpleStringEnum]="true ? 'off' : 'polite'"
     [setterSimpleStringEnum]="true ? 'off' : 'polite'"
     [dependency]="true ? 'off' : 'polite'"
@@ -63,7 +63,7 @@
 ></my-comp>
 
 <my-comp
-    [obj]="<error descr="Type  { e: \"ddd\", f: \"test\" }  is not assignable to type  { f: string, e: MyType } ...  Type  \"ddd\"  is not assignable to type  MyType     Type  \"ddd\"  is not assignable to type  \"off\" | \"polite\" | \"assertive\"       Type  \"ddd\"  is not assignable to type  \"assertive\" ">{f: 'test', e: 'ddd'}</error>"
+    [obj]="<error descr="Type  { e: \"ddd\", f: string }  is not assignable to type  { f: string, e: MyType } ...  Type  \"ddd\"  is not assignable to type  MyType     Type  \"ddd\"  is not assignable to type  \"off\" | \"polite\" | \"assertive\"       Type  \"ddd\"  is not assignable to type  \"assertive\" ">{f: 'test', e: 'ddd'}</error>"
 ></my-comp>
 
 <input [ngModel]="true" #model="ngModel"/>

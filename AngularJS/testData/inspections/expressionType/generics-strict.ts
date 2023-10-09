@@ -51,7 +51,7 @@ export class GenericsDirective2<T> {
             
     <div gen 
          [input1]="true" 
-         [input2]="<error descr="Type  \"20\"  is not assignable to type  boolean " textAttributesKey="ERRORS_ATTRIBUTES">'20'</error>" 
+         [input2]="<error descr="Type  string  is not assignable to type  boolean " textAttributesKey="ERRORS_ATTRIBUTES">'20'</error>" 
          [input3]="12" 
          (output1)="useNumber(<error descr="Argument type  boolean  is not assignable to parameter type  number " textAttributesKey="ERRORS_ATTRIBUTES">$event</error>)" 
          (output3)="useString(<error descr="Argument type  number  is not assignable to parameter type  string " textAttributesKey="ERRORS_ATTRIBUTES">$event</error>)">
@@ -59,7 +59,7 @@ export class GenericsDirective2<T> {
          
     <div gen
          [input1]="12"
-         [input2]="<error descr="Type  \"20\"  is not assignable to type  number " textAttributesKey="ERRORS_ATTRIBUTES">'20'</error>"
+         [input2]="<error descr="Type  string  is not assignable to type  number " textAttributesKey="ERRORS_ATTRIBUTES">'20'</error>"
          [input3]="'bar'"
          (output1)="useNumber($event)" 
          (output3)="useString($event)">
@@ -107,17 +107,17 @@ export class GenericsDirective2<T> {
     
     <div gen gen2 
          [input1]="12" 
-         [input2]="<error descr="Type  12  is not assignable to type  never " textAttributesKey="ERRORS_ATTRIBUTES">12</error>">
+         [input2]="<error descr="Type  number  is not assignable to type  never " textAttributesKey="ERRORS_ATTRIBUTES">12</error>">
     </div>
          
     <div gen gen2 
          [input1]="'foo'" 
-         [input2]="<error descr="Type  12  is not assignable to type  string " textAttributesKey="ERRORS_ATTRIBUTES">12</error>">
+         [input2]="<error descr="Type  number  is not assignable to type  string " textAttributesKey="ERRORS_ATTRIBUTES">12</error>">
     </div>
     
     <div gen gen2 
          [input1]="12" 
-         [input2]="<error descr="Type  \"foo\"  is not assignable to type  never " textAttributesKey="ERRORS_ATTRIBUTES">'foo'</error>">
+         [input2]="<error descr="Type  string  is not assignable to type  never " textAttributesKey="ERRORS_ATTRIBUTES">'foo'</error>">
     </div>
     
     <div gen gen2 
@@ -131,11 +131,11 @@ export class GenericsDirective2<T> {
 })
 export class TestComponent {
 
-    useNumber(<warning descr="Unused parameter val">val</warning>: number) {
+    useNumber(<warning descr="Unused parameter val" textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES">val</warning>: number) {
 
     }
 
-    useString(<warning descr="Unused parameter val">val</warning>: string) {
+    useString(<warning descr="Unused parameter val" textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES">val</warning>: string) {
 
     }
 
