@@ -51,12 +51,17 @@ internal class OneTimeBindingsScope(tag: XmlTag) : WebSymbolsScopeWithCache<XmlT
       .filter { it.attributeValue?.required == false }
       .mapSmartSet { it.name }
 
-    queryExecutor
-      .runListSymbolsQuery(WebSymbol.NAMESPACE_JS, KIND_NG_DIRECTIVE_INPUTS, expandPatterns = false, scope = scope)
-      .asSequence()
-      .filter { isOneTimeBindingProperty(it) }
-      .map { Angular2OneTimeBinding(it, !attributeSelectors.contains(it.name)) }
-      .forEach(consumer)
+    val isStrictTemplates = isStrictTemplates(dataHolder)
+    for (input in queryExecutor
+      .runListSymbolsQuery(WebSymbol.NAMESPACE_JS, KIND_NG_DIRECTIVE_INPUTS, expandPatterns = false, scope = scope)) {
+      val isOneTimeBinding = isOneTimeBindingProperty(input)
+      if (isStrictTemplates) {
+        consumer(Angular2OneTimeBinding(input, !attributeSelectors.contains(input.name), !isOneTimeBinding))
+      }
+      else if (isOneTimeBinding) {
+        consumer(Angular2OneTimeBinding(input, !attributeSelectors.contains(input.name)))
+      }
+    }
 
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
   }
@@ -98,7 +103,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : WebSymbolsScopeWithCache<XmlT
         .transformTypeHierarchy { toApply -> if (toApply is JSPrimitiveType) STRING_TYPE else toApply }
   }
 
-  private class Angular2OneTimeBinding(delegate: WebSymbol, val requiresValue: Boolean)
+  private class Angular2OneTimeBinding(delegate: WebSymbol, val requiresValue: Boolean, val resolveOnly: Boolean = false)
     : WebSymbolDelegate<WebSymbol>(delegate), PsiSourcedWebSymbol {
     override val source: PsiElement?
       get() = (delegate as? PsiSourcedWebSymbol)?.source
@@ -109,9 +114,11 @@ internal class OneTimeBindingsScope(tag: XmlTag) : WebSymbolsScopeWithCache<XmlT
       get() = WebSymbol.Priority.LOW
 
     override val properties: Map<String, Any>
-      get() = super<WebSymbolDelegate>.priority
-                ?.let { super<WebSymbolDelegate>.properties + Pair(PROP_DELEGATE_PRIORITY, it) }
-              ?: super<WebSymbolDelegate>.properties
+      get() = super<WebSymbolDelegate>.properties +
+              sequenceOf(
+                super<WebSymbolDelegate>.priority?.let { Pair(PROP_DELEGATE_PRIORITY, it) },
+                if (resolveOnly) Pair(WebSymbol.PROP_HIDE_FROM_COMPLETION, true) else null
+              ).filterNotNull()
 
     // Even though an input property might be required,
     // we need to do the check through AngularMissingRequiredDirectiveInputBindingInspection
@@ -123,7 +130,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : WebSymbolsScopeWithCache<XmlT
         WebSymbolHtmlAttributeValue.create(
           WebSymbolHtmlAttributeValue.Kind.PLAIN,
           WebSymbolHtmlAttributeValue.Type.COMPLEX,
-          !JSResolveUtil.isAssignableJSType(
+          !resolveOnly && !JSResolveUtil.isAssignableJSType(
             jsType, JSStringLiteralTypeImpl("", false, JSTypeSource.EXPLICITLY_DECLARED), null),
           null,
           TypeScriptSymbolTypeSupport.extractEnumLikeType(jsType)

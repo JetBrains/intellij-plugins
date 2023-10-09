@@ -78,13 +78,13 @@ export class GenericsDirective2<T> {
     </div>
     
     <div gen
-         <warning descr="Attribute input1 is not allowed here" textAttributesKey="WARNING_ATTRIBUTES">input1</warning>
+         input1
          (output1)="useNumber($event)">
     </div>
 
     <div gen
-         <warning descr="Attribute input1 is not allowed here" textAttributesKey="WARNING_ATTRIBUTES">input1</warning>
-         <warning descr="Attribute input2 is not allowed here" textAttributesKey="WARNING_ATTRIBUTES">input2</warning>
+         input1
+         input2
          (output1)="useNumber(<error descr="Argument type  string  is not assignable to parameter type  number " textAttributesKey="ERRORS_ATTRIBUTES">$event</error>)">
     </div>
 
@@ -95,12 +95,12 @@ export class GenericsDirective2<T> {
     
     <div gen
          [input1]=""
-         <warning descr="Attribute input2 is not allowed here" textAttributesKey="WARNING_ATTRIBUTES">input2</warning>
+         input2
          (output1)="useNumber(<error descr="Argument type  string | undefined  is not assignable to parameter type  number   Type  string  is not assignable to type  number " textAttributesKey="ERRORS_ATTRIBUTES">$event</error>) && useString(<error descr="Argument type  string | undefined  is not assignable to parameter type  string   Type  undefined  is not assignable to type  string " textAttributesKey="ERRORS_ATTRIBUTES">$event</error>)">
     </div>
 
     <div gen
-         <warning descr="Attribute input1 is not allowed here" textAttributesKey="WARNING_ATTRIBUTES">input1</warning>
+         input1
          [input2]=""
          (output1)="useNumber(<error descr="Argument type  string | undefined  is not assignable to parameter type  number   Type  string  is not assignable to type  number " textAttributesKey="ERRORS_ATTRIBUTES">$event</error>)">
     </div>

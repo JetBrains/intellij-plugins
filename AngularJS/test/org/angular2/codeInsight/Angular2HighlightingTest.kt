@@ -98,6 +98,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
   fun testOneTimeBindingOfPrimitives() = checkHighlighting(dir = true, configureFileName = "one_time_binding.html")
 
+  fun testOneTimeBindingOfPrimitivesStrict() = checkHighlighting(dir = true, configureFileName = "one_time_binding.html",
+                                                                 strictTemplates = true)
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())

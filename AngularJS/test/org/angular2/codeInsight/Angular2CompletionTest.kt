@@ -7,6 +7,7 @@ import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.ANGULAR_CDK_14_2_0
 import org.angular2.Angular2TestModule.ANGULAR_CORE_13_3_5
+import org.angular2.Angular2TsConfigFile
 
 class Angular2CompletionTest : Angular2TestCase("completion") {
 
@@ -77,6 +78,9 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
 
   fun testTemplatesCompletion16() =
     doLookupTest(Angular2TestModule.ANGULAR_COMMON_16_2_8, extension = "html")
+
+  fun testTemplatesCompletion16Strict() =
+    doLookupTest(Angular2TestModule.ANGULAR_COMMON_16_2_8, extension = "html", configurators = listOf(Angular2TsConfigFile()))
 
   fun testCompletionInExpression() {
     doLookupTest(ANGULAR_CORE_13_3_5, ANGULAR_CDK_14_2_0, dir = true)

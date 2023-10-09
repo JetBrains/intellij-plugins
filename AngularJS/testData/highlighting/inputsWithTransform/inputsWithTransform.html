@@ -33,12 +33,11 @@
         [strict]="<error descr="Type  null  is not assignable to type  \"true\" | \"false\" ...  Type  null  is not assignable to type  \"false\" ">null</error>"
         [obj]="<error descr="Type  null  is not assignable to type  { foo: number } ">null</error>"
 ></app-test>
-<!-- TODO should report error on obj -->
 <app-test
         nope="true"
         alsoNo="true"
         strict="true"
-        <warning descr="Attribute obj is not allowed here">obj</warning>="null"
+        obj=<error descr="Type  \"null\"  is not assignable to type  { foo: number } ">"null"</error>
 ></app-test>
 <app-test
         nope="false"

@@ -35,7 +35,7 @@ class Angular2TsConfigFile(
             "forceConsistentCasingInFileNames": true,
             ${
       listOfNotNull(
-        strict?.let { "\"strict\": $it" },
+        strict.let { "\"strict\": $it" },
         strictNullChecks?.let { "\"strictNullChecks\": $it" },
       ).joinToString(",\n" + "            ")
     }
@@ -61,7 +61,7 @@ class Angular2TsConfigFile(
             ${
       listOfNotNull(
         strictInjectionParameters?.let { "\"strictInjectionParameters\": $it" },
-        strictTemplates?.let { "\"strictTemplates\": $it" },
+        strictTemplates.let { "\"strictTemplates\": $it" },
         strictInputTypes?.let { "\"strictInputTypes\": $it" },
         strictInputAccessModifiers?.let { "\"strictInputAccessModifiers\": $it" },
         strictNullInputTypes?.let { "\"strictNullInputTypes\": $it" },

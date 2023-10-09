@@ -1,0 +1,16 @@
+<my-comp numberBinding=<error descr="Type  \"12\"  is not assignable to type  number ">"12"</error>
+         booleanBinding=<error descr="Type  \"false\"  is not assignable to type  boolean ">"false"</error>
+         stringBinding="text"
+         <error descr="Type  \"\"  is not assignable to type  boolean ">booleanBinding2</error>
+         nullBinding="12"
+         anyBinding="false"
+         objectBinding=<error descr="Type  \"foo\"  is not assignable to type  { foo: boolean } ">"foo"</error>>
+</my-comp>
+<my-comp [numberBinding]="12"
+         [booleanBinding]="false"
+         [stringBinding]="'text'"
+         [booleanBinding2]
+         [nullBinding]="false"
+         [anyBinding]="'test'"
+         [objectBinding]="{foo: true}">
+</my-comp>
