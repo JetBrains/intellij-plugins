@@ -1,45 +1,46 @@
-  // Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.completion;
 
-  import com.intellij.codeInsight.TailTypes;
-  import com.intellij.codeInsight.completion.*;
-  import com.intellij.codeInsight.lookup.AutoCompletionPolicy;
-  import com.intellij.codeInsight.lookup.LookupElement;
-  import com.intellij.codeInsight.lookup.LookupElementBuilder;
-  import com.intellij.codeInsight.lookup.TailTypeDecorator;
-  import com.intellij.codeInsight.template.TemplateBuilder;
-  import com.intellij.codeInsight.template.TemplateBuilderFactory;
-  import com.intellij.openapi.application.ApplicationManager;
-  import com.intellij.openapi.module.Module;
-  import com.intellij.openapi.util.Pair;
-  import com.intellij.openapi.util.TextRange;
-  import com.intellij.openapi.util.text.StringUtil;
-  import com.intellij.patterns.PsiElementPattern;
-  import com.intellij.psi.PsiElement;
-  import com.intellij.psi.PsiFile;
-  import com.intellij.psi.PsiFileSystemItem;
-  import com.intellij.psi.PsiWhiteSpace;
-  import com.intellij.psi.util.PsiTreeUtil;
-  import com.intellij.util.ProcessingContext;
-  import org.jetbrains.annotations.NotNull;
-  import org.jetbrains.plugins.cucumber.psi.*;
-  import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
-  import org.jetbrains.plugins.cucumber.psi.impl.GherkinExamplesBlockImpl;
-  import org.jetbrains.plugins.cucumber.psi.impl.GherkinScenarioOutlineImpl;
-  import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
-  import org.jetbrains.plugins.cucumber.steps.CucumberStepHelper;
+import com.intellij.codeInsight.TailTypes;
+import com.intellij.codeInsight.completion.*;
+import com.intellij.codeInsight.lookup.AutoCompletionPolicy;
+import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.codeInsight.lookup.TailTypeDecorator;
+import com.intellij.codeInsight.template.TemplateBuilder;
+import com.intellij.codeInsight.template.TemplateBuilderFactory;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.patterns.PsiElementPattern;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileSystemItem;
+import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.ProcessingContext;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.plugins.cucumber.psi.*;
+import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
+import org.jetbrains.plugins.cucumber.psi.impl.GherkinExamplesBlockImpl;
+import org.jetbrains.plugins.cucumber.psi.impl.GherkinScenarioOutlineImpl;
+import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
+import org.jetbrains.plugins.cucumber.steps.CucumberStepHelper;
 
-  import java.util.*;
-  import java.util.regex.Matcher;
-  import java.util.regex.Pattern;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-  import static com.intellij.openapi.module.ModuleUtilCore.findModuleForPsiElement;
-  import static com.intellij.patterns.PlatformPatterns.psiElement;
+import static com.intellij.openapi.module.ModuleUtilCore.findModuleForPsiElement;
+import static com.intellij.patterns.PlatformPatterns.psiElement;
 
 
 public class CucumberCompletionContributor extends CompletionContributor {
   private static final Map<String, String> GROUP_TYPE_MAP = new HashMap<>();
   private static final Map<String, String> PARAMETERS_MAP = new HashMap<>();
+
   static {
     GROUP_TYPE_MAP.put("(.*)", "<any>");
     GROUP_TYPE_MAP.put("[^\\s]+", "<word>");
@@ -157,7 +158,8 @@ public class CucumberCompletionContributor extends CompletionContributor {
       }
 
       addKeywordsToResult(table.getScenarioOutlineKeywords(), result, !haveColon, SCENARIO_OUTLINE_KEYWORD_PRIORITY, !haveColon);
-    } else {
+    }
+    else {
       addKeywordsToResult(table.getScenarioKeywords(), result, true, SCENARIO_KEYWORD_PRIORITY, true);
       addKeywordsToResult(table.getScenarioOutlineKeywords(), result, true, SCENARIO_OUTLINE_KEYWORD_PRIORITY, true);
     }
@@ -279,69 +281,70 @@ public class CucumberCompletionContributor extends CompletionContributor {
     }
   }
 
-    /**
-     * For example: step = "^(?:user|he|) do something$" when result will be:
-     * {
-     *     "^user do something$"
-     *     "^he do something$"
-     *     "^ do something$"
-     * }
-     * @return set of steps accepted by step definition regexp
-     */
-    private static Set<String> parseVariationsIntoBrackets(@NotNull String cucumberRegex) {
-      List<Pair<String, List<String>>> insertions = new ArrayList<>();
-      Matcher m = ARGS_INTO_BRACKETS_PATTERN.matcher(cucumberRegex);
-      String mainSample = cucumberRegex;
-      int k = 0;
-      while (m.find()) {
-        String values = cucumberRegex.substring(m.start(1), m.end(1));
-        if (values.chars().allMatch(c -> Character.isLetterOrDigit(c) || c == '|')) {
-          String key = "@key=" + k++ + "@";
-          mainSample = mainSample.replace(m.group(), key);
-          insertions.add(Pair.create(key, Arrays.asList(values.split("\\|"))));
-        }
+  /**
+   * For example: step = "^(?:user|he|) do something$" when result will be:
+   * {
+   * "^user do something$"
+   * "^he do something$"
+   * "^ do something$"
+   * }
+   *
+   * @return set of steps accepted by step definition regexp
+   */
+  private static Set<String> parseVariationsIntoBrackets(@NotNull String cucumberRegex) {
+    List<Pair<String, List<String>>> insertions = new ArrayList<>();
+    Matcher m = ARGS_INTO_BRACKETS_PATTERN.matcher(cucumberRegex);
+    String mainSample = cucumberRegex;
+    int k = 0;
+    while (m.find()) {
+      String values = cucumberRegex.substring(m.start(1), m.end(1));
+      if (values.chars().allMatch(c -> Character.isLetterOrDigit(c) || c == '|')) {
+        String key = "@key=" + k++ + "@";
+        mainSample = mainSample.replace(m.group(), key);
+        insertions.add(Pair.create(key, Arrays.asList(values.split("\\|"))));
       }
-
-      // Example: @sampleCounts = [2, 3] when @combinations = [1, 1], [1, 2], [1, 3], [2, 1], [2, 2], [2, 3]
-      int[] sampleCounts = new int[insertions.size()];
-      int combinationCount = 1;
-      for (int i = 0; i < insertions.size(); i++) {
-        sampleCounts[i] = insertions.get(i).getSecond().size();
-        combinationCount *= sampleCounts[i];
-      }
-      List<int[]> combinations = new ArrayList<>();
-      int[] combination = new int[sampleCounts.length];
-
-      for (int i = 0; i < sampleCounts.length; i++) {
-        combination[i] = 1;
-      }
-      combinations.add(combination);
-      for (int j = 0; j < combinationCount; j++) {
-        int[] currentCombination = combination.clone();
-        for (int i = sampleCounts.length - 1; i >= 0; i--) {
-          if (currentCombination[i] != sampleCounts[i]) {
-            currentCombination[i]++;
-            break;
-          }
-          else {
-            currentCombination[i] = 1;
-          }
-        }
-        combinations.add(combination = currentCombination);
-      }
-
-      Set<String> result = new HashSet<>();
-      for (int[] c : combinations) {
-        String stepVar = mainSample;
-        for (int i = 0; i < c.length; i++) {
-          Pair<String, List<String>> insertion = insertions.get(i);
-          String key = insertion.getFirst();
-          stepVar = stepVar.replace(key, insertion.getSecond().get(c[i] - 1));
-        }
-        result.add(stepVar);
-      }
-      return result;
     }
+
+    // Example: @sampleCounts = [2, 3] when @combinations = [1, 1], [1, 2], [1, 3], [2, 1], [2, 2], [2, 3]
+    int[] sampleCounts = new int[insertions.size()];
+    int combinationCount = 1;
+    for (int i = 0; i < insertions.size(); i++) {
+      sampleCounts[i] = insertions.get(i).getSecond().size();
+      combinationCount *= sampleCounts[i];
+    }
+    List<int[]> combinations = new ArrayList<>();
+    int[] combination = new int[sampleCounts.length];
+
+    for (int i = 0; i < sampleCounts.length; i++) {
+      combination[i] = 1;
+    }
+    combinations.add(combination);
+    for (int j = 0; j < combinationCount; j++) {
+      int[] currentCombination = combination.clone();
+      for (int i = sampleCounts.length - 1; i >= 0; i--) {
+        if (currentCombination[i] != sampleCounts[i]) {
+          currentCombination[i]++;
+          break;
+        }
+        else {
+          currentCombination[i] = 1;
+        }
+      }
+      combinations.add(combination = currentCombination);
+    }
+
+    Set<String> result = new HashSet<>();
+    for (int[] c : combinations) {
+      String stepVar = mainSample;
+      for (int i = 0; i < c.length; i++) {
+        Pair<String, List<String>> insertion = insertions.get(i);
+        String key = insertion.getFirst();
+        stepVar = stepVar.replace(key, insertion.getSecond().get(c[i] - 1));
+      }
+      result.add(stepVar);
+    }
+    return result;
+  }
 
   private static final class StepInsertHandler implements InsertHandler<LookupElement> {
     private final List<TextRange> ranges;
