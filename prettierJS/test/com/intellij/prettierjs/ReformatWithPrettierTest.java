@@ -114,19 +114,12 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
   }
 
   private void doTestRunPrettierOnSave(@NotNull String saveActionId) {
-    PrettierConfiguration configuration = PrettierConfiguration.getInstance(getProject());
-    boolean origRunOnSave = configuration.getState().runOnSave;
-    configuration.getState().runOnSave = true;
-    try {
-      myFixture.configureByText("foo.js", "var  a=''");
-      myFixture.type(' ');
-      myFixture.performEditorAction(saveActionId);
-      PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue();
-      myFixture.checkResult("var a = \"\";\n");
-    }
-    finally {
-      configuration.getState().runOnSave = origRunOnSave;
-    }
+    PrettierConfiguration.getInstance(getProject()).getState().runOnSave = true;
+    myFixture.configureByText("foo.js", "var  a=''");
+    myFixture.type(' ');
+    myFixture.performEditorAction(saveActionId);
+    PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue();
+    myFixture.checkResult("var a = \"\";\n");
   }
 
   public void testRunPrettierOnCodeReformat() {
