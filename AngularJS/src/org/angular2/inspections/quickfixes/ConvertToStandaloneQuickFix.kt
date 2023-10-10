@@ -33,9 +33,6 @@ class ConvertToStandaloneQuickFix(private val className: String) : LocalQuickFix
                     }?.decorator ?: return
 
     val objectLiteral = Angular2DecoratorUtil.getObjectLiteralInitializer(decorator) ?: return
-
-    Angular2FixesPsiUtil.reformatJSObjectLiteralProperty(
-      Angular2FixesPsiUtil.insertJSObjectLiteralProperty(objectLiteral, STANDALONE_PROP, "true")
-    )
+    Angular2FixesPsiUtil.insertJSObjectLiteralProperty(objectLiteral, STANDALONE_PROP, "true")
   }
 }

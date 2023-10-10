@@ -10,7 +10,6 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.angular2.inspections.quickfixes.Angular2FixesPsiUtil.insertJSObjectLiteralProperty
-import org.angular2.inspections.quickfixes.Angular2FixesPsiUtil.reformatJSObjectLiteralProperty
 import org.angular2.lang.Angular2Bundle
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
@@ -45,7 +44,7 @@ class AddJSPropertyQuickFix(objectLiteral: JSObjectLiteralExpression,
     else
       quote + myValue.substring(0, myCaretOffset) + CARET_MARKER + myValue.substring(myCaretOffset) + quote
 
-    val added = reformatJSObjectLiteralProperty(insertJSObjectLiteralProperty(objectLiteral, myPropertyName, value))
+    val added = insertJSObjectLiteralProperty(objectLiteral, myPropertyName, value)
     val valueExpression = added.value!!
 
     if (document == null) return

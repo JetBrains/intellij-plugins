@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.JSThisExpression
 import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.JSType.TypeTextFormat.CODE
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.util.JSClassUtils
 import com.intellij.lang.javascript.validation.JSProblemReporter
@@ -53,12 +54,13 @@ class Angular2AnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
                             elementToChangeTypeOf: PsiElement?,
                             expressionJSType: JSType,
                             context: ProcessingContext?,
-                            holder: DialectOptionHolder?): MutableCollection<LocalQuickFix> {
-        val result = super.getFixes(expr, declaredJSType, elementToChangeTypeOf, expressionJSType, context, holder)
+                            holder: DialectOptionHolder?): Collection<LocalQuickFix> {
+        val quickFixes = super.getFixes(expr, declaredJSType, elementToChangeTypeOf, expressionJSType, context, holder)
         if (elementToChangeTypeOf is Angular2HtmlPropertyBinding) {
-          // TODO add quick fixes
+          return Angular2FixesFactory.getCreateInputTransformFixes(elementToChangeTypeOf,
+                                                                   expressionJSType.substitute().getTypeText(CODE)) + quickFixes
         }
-        return result
+        return quickFixes
       }
     }
 

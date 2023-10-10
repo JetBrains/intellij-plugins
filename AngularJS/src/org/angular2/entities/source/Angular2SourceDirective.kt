@@ -346,13 +346,12 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
     private fun parseInputObjectLiteral(expr: JSObjectLiteralExpression, name: String): Angular2PropertyInfo {
       val aliasLiteral = expr.findProperty(ALIAS_PROP)?.literalExpressionInitializer
       val alias = aliasLiteral?.stubSafeStringValue
-      val transform = expr.findProperty(TRANSFORM_PROP)?.jsType?.substitute()?.asSafely<JSFunctionType>()?.sourceFunctionItem
       return Angular2PropertyInfo(
         alias ?: name,
         expr.findProperty(REQUIRED_PROP)?.jsType?.asSafely<JSBooleanLiteralTypeImpl>()?.literal == true,
-        transform,
+        expr,
         aliasLiteral,
-        if (alias != null) TextRange(1, 1 + alias.length) else null
+        declarationRange = if (alias != null) TextRange(1, 1 + alias.length) else null
       )
     }
 
@@ -360,9 +359,9 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
       when (val param = getDecoratorParamValue(decorator)) {
         is JSObjectLiteralExpression -> parseInputObjectLiteral(param, defaultName)
         is JSLiteralExpression -> param.stubSafeStringValue.let { name ->
-          Angular2PropertyInfo(name ?: defaultName, false, null, if (name != null) param else null)
+          Angular2PropertyInfo(name ?: defaultName, false, decorator, declaringElement = if (name != null) param else null)
         }
-        else -> Angular2PropertyInfo(defaultName, false, null, null)
+        else -> Angular2PropertyInfo(defaultName, false,  decorator, declaringElement = null)
       }
 
   }

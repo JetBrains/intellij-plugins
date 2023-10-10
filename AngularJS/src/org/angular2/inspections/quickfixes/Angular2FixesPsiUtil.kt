@@ -2,7 +2,9 @@
 package org.angular2.inspections.quickfixes
 
 import com.intellij.lang.javascript.JSTokenTypes.COMMA
+import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil
 import com.intellij.lang.javascript.refactoring.FormatFixer
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil
@@ -12,21 +14,35 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.SmartPointerManager
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.applyIf
 import com.intellij.util.asSafely
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2InjectionUtils
 import org.angular2.entities.Angular2ImportsOwner
+import org.angular2.entities.source.Angular2SourceDirectiveProperty
 
 object Angular2FixesPsiUtil {
 
+  fun getOrCreateInputObjectLiteral(input: Angular2SourceDirectiveProperty): JSObjectLiteralExpression? =
+    when (val declarationSource = input.declarationSource) {
+      is JSLiteralExpression -> {
+        when (val parent = declarationSource.parent) {
+          is JSArrayLiteralExpression -> replaceInputMappingWithObjectLiteral(declarationSource)
+          is JSProperty -> parent.parent as? JSObjectLiteralExpression
+          else -> null
+        }
+      }
+      is ES6Decorator -> getOrCreateDecoratorInitializer(declarationSource)
+      is JSObjectLiteralExpression -> declarationSource
+      else -> null
+    }
+
   fun insertEntityDecoratorMember(module: Angular2ImportsOwner, propertyName: String, name: String): Boolean {
     val decorator = module.decorator ?: return false
-    val initializer = Angular2DecoratorUtil.getObjectLiteralInitializer(decorator) ?: return false
+    val initializer = getOrCreateDecoratorInitializer(decorator) ?: return false
     var targetListProp = initializer.findProperty(propertyName)
     if (targetListProp == null) {
-      reformatJSObjectLiteralProperty(
-        insertJSObjectLiteralProperty(initializer, propertyName, "[\n$name\n]")
-      )
+      insertJSObjectLiteralProperty(initializer, propertyName, "[\n$name\n]")
     }
     else {
       var propValue = targetListProp.value ?: return false
@@ -41,7 +57,8 @@ object Angular2FixesPsiUtil {
       val newModuleIdent = JSChangeUtil.createExpressionPsiWithContext(name, propValue, JSReferenceExpression::class.java)!!
       insertNewLinesAroundArrayItemIfNeeded(
         propValue.addAfter(newModuleIdent,
-                           ((propValue as JSArrayLiteralExpression).expressions.lastOrNull() ?: propValue.firstChild)) as JSExpression)
+                           ((propValue as JSArrayLiteralExpression).expressions.lastOrNull() ?: propValue.firstChild)) as JSExpression,
+        preferNewLines = true)
       FormatFixer.create(targetListProp, FormatFixer.Mode.Reformat).fixFormat()
     }
     return true
@@ -49,14 +66,16 @@ object Angular2FixesPsiUtil {
 
   fun insertJSObjectLiteralProperty(objectLiteral: JSObjectLiteralExpression,
                                     propertyName: String,
-                                    propertyValue: String): JSProperty {
+                                    propertyValue: String,
+                                    reformat: Boolean = true,
+                                    preferNewLines: Boolean = true): JSProperty {
     val property = JSChangeUtil.createObjectLiteralPropertyFromText("$propertyName: $propertyValue", objectLiteral)
     val added = JSRefactoringUtil.addMemberToMemberHolder(objectLiteral, property, objectLiteral) as JSProperty
-    insertNewLinesAroundPropertyIfNeeded(added)
-    return added
+    insertNewLinesAroundPropertyIfNeeded(added, preferNewLines)
+    return added.applyIf(reformat) { reformatJSObjectLiteralProperty(this) }
   }
 
-  fun reformatJSObjectLiteralProperty(property: JSProperty): JSProperty {
+  private fun reformatJSObjectLiteralProperty(property: JSProperty): JSProperty {
     val propertyPointer = SmartPointerManager.createPointer(property)
     FormatFixer.create(property.parent, FormatFixer.Mode.Reformat).fixFormat()
     val formattedProperty = propertyPointer.element!!
@@ -72,19 +91,48 @@ object Angular2FixesPsiUtil {
     return propertyPointer.element!!
   }
 
-  private fun insertNewLinesAroundArrayItemIfNeeded(expression: JSExpression) {
-    insertNewLinesAroundItemHolderIfNeeded(expression) { (it as JSArrayLiteralExpression).expressions }
+  private fun getOrCreateDecoratorInitializer(decorator: ES6Decorator): JSObjectLiteralExpression? {
+    Angular2DecoratorUtil.getObjectLiteralInitializer(decorator)?.let { return it }
+    val objectLiteral = JSChangeUtil.createExpressionWithContext("{}", decorator)?.psi as? JSObjectLiteralExpression
+                        ?: return null
+    return decorator.expression.asSafely<JSCallExpression>()
+      ?.takeIf { it.argumentSize == 0 }
+      ?.argumentList
+      ?.let { it.addAfter(objectLiteral, it.firstChild) }
+      ?.asSafely<JSObjectLiteralExpression>()
   }
 
-  private fun insertNewLinesAroundPropertyIfNeeded(property: JSProperty) {
-    insertNewLinesAroundItemHolderIfNeeded(property) { (it as JSObjectLiteralExpression).properties }
+  private fun replaceInputMappingWithObjectLiteral(inputMapping: JSLiteralExpression): JSObjectLiteralExpression? {
+    val mappingText = inputMapping.value as? String ?: return null
+    val quote = JSCodeStyleSettings.getQuote(inputMapping)
+    val expression = if (mappingText.contains(':')) {
+      val colon = mappingText.indexOf(':')
+      "{name: $quote${mappingText.substring(0, colon).trim()}$quote, alias: $quote${mappingText.substring(colon + 1).trim()}$quote}"
+    }
+    else {
+      "{name: $quote${mappingText.trim()}$quote}"
+    }
+    val objectLiteral = JSChangeUtil.createExpressionWithContext(expression, inputMapping)
+                          ?.psi as? JSObjectLiteralExpression
+                        ?: return null
+    return inputMapping.replace(objectLiteral) as? JSObjectLiteralExpression
+  }
+
+  private fun insertNewLinesAroundArrayItemIfNeeded(expression: JSExpression, preferNewLines: Boolean) {
+    insertNewLinesAroundItemHolderIfNeeded(expression, preferNewLines) { (it as JSArrayLiteralExpression).expressions }
+  }
+
+  private fun insertNewLinesAroundPropertyIfNeeded(property: JSProperty, preferNewLines: Boolean) {
+    insertNewLinesAroundItemHolderIfNeeded(property, preferNewLines) { (it as JSObjectLiteralExpression).properties }
   }
 
   private fun insertNewLinesAroundItemHolderIfNeeded(item: JSElement,
+                                                     preferNewLines: Boolean,
                                                      getChildren: (PsiElement) -> Array<out JSElement>) {
     val parent = item.parent
     val wrapWithNewLines = item.text.contains("\n")
-                           || getChildren(parent).find { e -> e !== item && !isPrefixedWithNewLine(e) } == null
+                           || (preferNewLines && getChildren(parent).none { e -> e !== item && !isPrefixedWithNewLine(e) })
+                           || (!preferNewLines && getChildren(parent).any { e -> e !== item && isPrefixedWithNewLine(e) })
     if (wrapWithNewLines) {
       if (!isPrefixedWithNewLine(item)) {
         JSChangeUtil.addWs(parent.node, item.node, "\n")

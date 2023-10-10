@@ -11,6 +11,10 @@ import com.intellij.lang.javascript.JSStringUtil.unquoteWithoutUnescapingStringL
 import com.intellij.lang.javascript.ecmascript6.ES6QualifiedNamedElementRenderer
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory
+import com.intellij.lang.javascript.psi.types.JSUnionOrIntersectionType
+import com.intellij.lang.javascript.psi.types.primitives.JSBooleanType
+import com.intellij.lang.javascript.psi.types.primitives.JSNumberType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.Key
@@ -35,7 +39,9 @@ import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.entities.*
+import org.angular2.entities.source.Angular2SourceDirectiveProperty
 import org.angular2.inspections.actions.Angular2ActionFactory
+import org.angular2.inspections.quickfixes.AddInputTransformFunctionQuickFix.TransformKind.*
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression
 import org.angular2.lang.expr.psi.Angular2TemplateBinding
@@ -55,6 +61,29 @@ object Angular2FixesFactory {
   @NonNls
   @JvmField
   val DECLARATION_TO_CHOOSE = Key.create<String>("declaration.to.choose")
+
+  fun getCreateInputTransformFixes(attribute: XmlAttribute, expressionType: String): List<LocalQuickFix> {
+    val descriptor = attribute.descriptor.asSafely<Angular2AttributeDescriptor>() ?: return emptyList()
+    val propertyName = descriptor.info
+                         .takeIf {
+                           it.type == Angular2AttributeType.REGULAR
+                           || it is Angular2AttributeNameParser.PropertyBindingInfo && it.bindingType == PropertyBindingType.PROPERTY
+                         }?.name
+                       ?: return emptyList()
+    val input = descriptor.sourceDirectives.flatMap { it.inputs }.filter { it.name == propertyName }
+      .takeIf { it.size == 1 }?.get(0)?.asSafely<Angular2SourceDirectiveProperty>()
+    if (input == null || input.transformParameterType != null)
+      return emptyList()
+
+    val quickFixes = SmartList<LocalQuickFix>()
+    when (JSCompositeTypeFactory.optimizeTypeIfComposite(input.type,
+                                                         JSUnionOrIntersectionType.OptimizedKind.OPTIMIZED_REMOVED_NULL_UNDEFINED)) {
+      is JSBooleanType -> quickFixes.add(AddInputTransformFunctionQuickFix(BooleanAttribute, propertyName, expressionType, input.owner))
+      is JSNumberType -> quickFixes.add(AddInputTransformFunctionQuickFix(NumberAttribute, propertyName, expressionType, input.owner))
+    }
+    quickFixes.add(AddInputTransformFunctionQuickFix(Custom, propertyName, expressionType, input.owner))
+    return quickFixes
+  }
 
   @JvmStatic
   fun ensureDeclarationResolvedAfterCodeCompletion(element: PsiElement, editor: Editor) {

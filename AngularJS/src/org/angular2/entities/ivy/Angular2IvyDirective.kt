@@ -100,7 +100,7 @@ open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
       }
 
     hackIonicComponentOutputs(this)
-      .forEach { outputMap[it.key] = Angular2PropertyInfo(it.value, false, null, null) }
+      .forEach { outputMap[it.key] = Angular2PropertyInfo(it.value, false, null, declaringElement = null) }
 
     inputMap.values.forEach { info ->
       inputs[info.name] = Angular2SourceDirectiveVirtualProperty(clazz, KIND_NG_DIRECTIVE_INPUTS, info)

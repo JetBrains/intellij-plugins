@@ -1,0 +1,24 @@
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+import {Component, Input, numberAttribute} from '@angular/core';
+
+@Component({
+   selector: 'app-test',
+   standalone: true,
+   template: ``
+ })
+export class TestComponent {
+  @Input({transform: numberAttribute, alias: "alias"}) test1!: number;
+}
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [
+    TestComponent
+  ],
+  template: `
+    <app-test alias="1<caret>2"/>
+   `
+})
+export class AppComponent {
+}

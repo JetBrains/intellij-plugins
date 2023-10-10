@@ -13,6 +13,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.webSymbols.utils.unwrapMatchedSymbols
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.config.Angular2Compiler.isStrictTemplates
+import org.angular2.inspections.quickfixes.Angular2FixesFactory.getCreateInputTransformFixes
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.psi.Angular2Binding
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
@@ -73,7 +74,8 @@ class AngularBindingTypeMismatchInspection : AngularHtmlLikeTemplateLocalInspect
                                                            "javascript.type.is.not.assignable.to.type")
       ?.let {
         holder.registerProblem(attribute.valueElement?.takeIf { reportOnValue } ?: attribute.nameElement ?: attribute, it,
-                               ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
+                               ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                               *getCreateInputTransformFixes(attribute, "string").toTypedArray())
       }
   }
 }

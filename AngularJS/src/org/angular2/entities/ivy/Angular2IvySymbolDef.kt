@@ -117,7 +117,7 @@ abstract class Angular2IvySymbolDef private constructor(private val myFieldOrStu
       when (kind) {
         INPUTS_PROP -> processObjectArgument(3, TypeScriptType::class) { type, defaultName ->
           when (type) {
-            is TypeScriptStringLiteralType -> type.innerText?.let { Angular2PropertyInfo(it, false, null, type) }
+            is TypeScriptStringLiteralType -> type.innerText?.let { Angular2PropertyInfo(it, false, null, declaringElement = type) }
             is TypeScriptObjectType -> {
               val nameType = type.typeMembers
                 .firstNotNullOfOrNull { member -> (member as? TypeScriptPropertySignature)?.takeIf { it.name == ALIAS_PROP }?.typeDeclaration }
@@ -127,13 +127,14 @@ abstract class Angular2IvySymbolDef private constructor(private val myFieldOrStu
                                .firstNotNullOfOrNull { member -> (member as? TypeScriptPropertySignature)?.takeIf { it.name == REQUIRED_PROP }?.typeDeclaration }
                                ?.asSafely<TypeScriptBooleanLiteralType>()
                                ?.value ?: false
-              Angular2PropertyInfo(name ?: defaultName, required, null, nameType, if (name != null) TextRange(1, 1 + name.length) else null)
+              Angular2PropertyInfo(name ?: defaultName, required, null, nameType,
+                                   declarationRange = if (name != null) TextRange(1, 1 + name.length) else null)
             }
             else -> null
           }
         }
         OUTPUTS_PROP -> processObjectArgument(4, TypeScriptStringLiteralType::class) { type, _ ->
-          type.innerText?.let { Angular2PropertyInfo(it, false, null, type) }
+          type.innerText?.let { Angular2PropertyInfo(it, false, null, declaringElement = type) }
         }
         else -> emptyMap()
       }
@@ -505,10 +506,10 @@ abstract class Angular2IvySymbolDef private constructor(private val myFieldOrStu
       return HostDirectiveDef(
         directive,
         processObjectArgument(inputs, TypeScriptStringLiteralType::class) { type, _ ->
-          type.innerText?.let { Angular2PropertyInfo(it, false, null, type) }
+          type.innerText?.let { Angular2PropertyInfo(it, false, null, declaringElement = type) }
         },
         processObjectArgument(outputs, TypeScriptStringLiteralType::class) { type, _ ->
-          type.innerText?.let { Angular2PropertyInfo(it, false, null, type) }
+          type.innerText?.let { Angular2PropertyInfo(it, false, null, declaringElement = type) }
         }
       )
     }
