@@ -1516,7 +1516,7 @@ public class _PostCssLexer implements FlexLexer {
           // fall through
           case 155: break;
           case 72:
-            { return CssElementTypes.CSS_CUSTOM_PROPERTY_SYM;
+            { return CssElementTypes.CSS_CUSTOM_PROPERTY_AT_RULE_SYM;
             }
           // fall through
           case 156: break;
