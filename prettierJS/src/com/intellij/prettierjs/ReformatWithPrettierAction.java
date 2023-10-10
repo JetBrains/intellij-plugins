@@ -91,11 +91,8 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       e.getPresentation().setEnabledAndVisible(false);
       return;
     }
-    var element = e.getData(CommonDataKeys.PSI_ELEMENT);
-    if (element == null) {
-      element = e.getData(CommonDataKeys.PSI_FILE);
-    }
-    NodePackage nodePackage = PrettierConfiguration.getInstance(project).getPackage(element);
+    var psiFile = e.getData(CommonDataKeys.PSI_FILE);
+    NodePackage nodePackage = PrettierConfiguration.getInstance(project).getPackage(psiFile);
     e.getPresentation().setEnabledAndVisible(!nodePackage.isEmptyPath() && isAcceptableFileContext(e));
   }
 
