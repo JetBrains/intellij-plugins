@@ -130,17 +130,10 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
   }
 
   public void testRunPrettierOnCodeReformat() {
-    PrettierConfiguration configuration = PrettierConfiguration.getInstance(getProject());
-    boolean origRunOnReformat = configuration.getState().runOnReformat;
-    configuration.getState().runOnReformat = true;
-    try {
-      myFixture.configureByText("foo.js", "var  a=''");
-      myFixture.performEditorAction(IdeActions.ACTION_EDITOR_REFORMAT);
-      myFixture.checkResult("var a = \"\";\n");
-    }
-    finally {
-      configuration.getState().runOnReformat = origRunOnReformat;
-    }
+    PrettierConfiguration.getInstance(getProject()).getState().runOnReformat = true;
+    myFixture.configureByText("foo.js", "var  a=''");
+    myFixture.performEditorAction(IdeActions.ACTION_EDITOR_REFORMAT);
+    myFixture.checkResult("var a = \"\";\n");
   }
 
   public void testYarnPrettierBasicExample() throws Exception {
@@ -194,6 +187,21 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     myFixture.configureFromExistingVirtualFile(myFixture.findFileInTempDir("ignored.js"));
     runReformatAction();
     myFixture.checkResultByFile(getTestName(true) + "/ignored_after.js");
+  }
+
+  public void testCommentAfterImports() {
+    PrettierConfiguration.getInstance(getProject()).getState().runOnReformat = true;
+    myFixture.configureByText("foo.js", """
+      <selection>import  foo from 'foo'
+       // comment</selection>
+      const   bar =  'bar'
+      """);
+    myFixture.performEditorAction(IdeActions.ACTION_EDITOR_REFORMAT);
+    myFixture.checkResult("""
+                            <selection>import foo from "foo";
+                            // comment</selection>
+                            const   bar =  'bar'
+                            """);
   }
 
   private void configureYarnPrettierPackage(VirtualFile root) {
