@@ -23,7 +23,7 @@ open class Angular2HtmlBoundAttributeImpl(elementType: Angular2HtmlElementTypes.
     else result
   }
 
-  protected val attributeInfo: Angular2AttributeNameParser.AttributeInfo
+  override val attributeInfo: Angular2AttributeNameParser.AttributeInfo
     get() {
       val info = Angular2AttributeNameParser.parseBound(name)
       if (info.type.elementType !== elementType) {

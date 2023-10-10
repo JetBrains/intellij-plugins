@@ -45,6 +45,7 @@ enum class Angular2TestModule(private val myPackageName: String, private val myV
   ANGULAR_PLATFORM_BROWSER_4_0_0("@angular/platform-browser", "4.0.0"),
 
   ANGULAR_ROUTER_4_0_0("@angular/router", "4.0.0"),
+  ANGULAR_ROUTER_16_2_8("@angular/router", "16.2.8"),
 
   ANGULAR_L10N_4_2_0("angular-l10n", "4.2.0"),
   EVO_UI_KIT_1_17_0("@evo/ui-kit", "1.17.0"),

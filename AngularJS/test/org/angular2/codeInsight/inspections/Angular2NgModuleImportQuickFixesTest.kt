@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.modules.imports.JSImportAction
 import com.intellij.lang.javascript.ui.NodeModuleNamesUtil
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
 import com.intellij.openapi.application.WriteAction
-import com.intellij.util.ArrayUtil
 import com.intellij.webSymbols.moveToOffsetBySignature
 import org.angular2.Angular2MultiFileFixtureTestCase
 import org.angular2.Angular2TestModule
@@ -150,7 +149,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
                     "[ngValue<caret>]",
                     "Import Angular entity...",
                     "FormsModule - \"@angular/forms\"",
-                    Angular2TestModule.ANGULAR_FORMS_8_2_14)
+                    ANGULAR_8)
   }
 
   fun testFormsModule2() {
@@ -159,7 +158,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
                     "ng<caret>Model",
                     "Import Angular entity...",
                     "FormsModule - \"@angular/forms\"",
-                    Angular2TestModule.ANGULAR_FORMS_8_2_14)
+                    ANGULAR_8)
   }
 
   fun testFormsModule3() {
@@ -168,7 +167,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
                     "[ng<caret>Model]",
                     "Import FormsModule",
                     null,
-                    Angular2TestModule.ANGULAR_FORMS_8_2_14)
+                    ANGULAR_8)
   }
 
   fun testFormsModule4() {
@@ -177,7 +176,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
                     "[(ng<caret>Model)]",
                     "Import FormsModule",
                     null,
-                    Angular2TestModule.ANGULAR_FORMS_8_2_14)
+                    ANGULAR_8)
   }
 
   fun testFormsModuleCompletion1() {
@@ -186,7 +185,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
                      "[ngValue]=\"foo\"",
                      "[ngVal\nfoo",
                      "FormsModule - \"@angular/forms\"",
-                     Angular2TestModule.ANGULAR_FORMS_8_2_14)
+                     ANGULAR_8)
   }
 
   fun testFormsModuleCompletion2() {
@@ -195,7 +194,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
                      "ngModel ",
                      "ngMod\n ",
                      "FormsModule - \"@angular/forms\"",
-                     Angular2TestModule.ANGULAR_FORMS_8_2_14)
+                     ANGULAR_8)
   }
 
   fun testFormsModuleCompletion3() {
@@ -204,7 +203,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
                      "[ngModel]=\"foo\"",
                      "[ngMod\nfoo",
                      "FormsModule - \"@angular/forms\"",
-                     Angular2TestModule.ANGULAR_FORMS_8_2_14)
+                     ANGULAR_8)
   }
 
   fun testFormsModuleCompletion4() {
@@ -213,7 +212,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
                      "[(ngModel)]=\"foo\"",
                      "[(ngMod\nfoo",
                      "FormsModule - \"@angular/forms\"",
-                     Angular2TestModule.ANGULAR_FORMS_8_2_14)
+                     ANGULAR_8)
   }
 
   fun testReactiveFormsModule1() {
@@ -222,7 +221,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
                     "[ngValue<caret>]",
                     "Import Angular entity...",
                     "ReactiveFormsModule - \"@angular/forms\"",
-                    Angular2TestModule.ANGULAR_FORMS_8_2_14)
+                    ANGULAR_8)
   }
 
   fun testReactiveFormsModule2() {
@@ -231,7 +230,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
                     "ng<caret>Model",
                     "Import Angular entity...",
                     "ReactiveFormsModule - \"@angular/forms\"",
-                    Angular2TestModule.ANGULAR_FORMS_8_2_14)
+                    ANGULAR_8)
   }
 
   fun testReactiveFormsModuleCompletion1() {
@@ -240,7 +239,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
                      "[ngValue]=\"foo\"",
                      "[ngVal\nfoo",
                      "ReactiveFormsModule - \"@angular/forms\"",
-                     Angular2TestModule.ANGULAR_FORMS_8_2_14)
+                     ANGULAR_8)
   }
 
   fun testReactiveFormsModuleCompletion2() {
@@ -249,7 +248,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
                      "ngModel ",
                      "ngMod\n ",
                      "ReactiveFormsModule - \"@angular/forms\"",
-                     Angular2TestModule.ANGULAR_FORMS_8_2_14)
+                     ANGULAR_8)
   }
 
   fun testLocalLib() {
@@ -307,11 +306,19 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
     )
   }
 
+  fun testImportDirectiveFromInterpolationBinding() {
+    doMultiFileTest("hero-search.component.html",
+                    "Import RouterLink",
+                    modules = ANGULAR_16
+    )
+  }
+
   private fun doMultiFileTest(mainFile: String,
                               intention: String,
-                              importName: String? = null) {
+                              importName: String? = null,
+                              modules: Array<out Angular2TestModule> = ANGULAR_4) {
     doMultiFileTest(getTestName(true), mainFile, null,
-                    intention, importName)
+                    intention, importName, modules)
   }
 
   private fun doMultiFileTest(testName: String,
@@ -319,7 +326,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
                               signature: String?,
                               intention: String,
                               importName: String?,
-                              vararg modules: Angular2TestModule) {
+                              modules: Array<out Angular2TestModule> = ANGULAR_4) {
     initInspections()
     doTest(
       { _, _ ->
@@ -340,7 +347,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
                                toRemove: String,
                                toType: String,
                                importToSelect: String?,
-                               vararg modules: Angular2TestModule) {
+                               modules: Array<out Angular2TestModule> = ANGULAR_4) {
     doTest(
       { _, _ ->
         configureTestAndRun(mainFile, "<caret>$toRemove", importToSelect, modules, Runnable {
@@ -358,9 +365,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
   private fun configureTestAndRun(mainFile: String, signature: String?, importName: String?,
                                   modules: Array<out Angular2TestModule>, runnable: Runnable) {
     val hasPkgJson = myFixture.getTempDirFixture().getFile(NodeModuleNamesUtil.PACKAGE_JSON) != null
-    configureLink(myFixture, *ArrayUtil.mergeArrays(
-      modules, arrayOf(Angular2TestModule.ANGULAR_CORE_4_0_0, Angular2TestModule.ANGULAR_COMMON_4_0_0,
-                       Angular2TestModule.ANGULAR_PLATFORM_BROWSER_4_0_0)))
+    configureLink(myFixture, *modules)
     myFixture.configureFromTempProjectFile(mainFile)
     if (signature != null) {
       myFixture.moveToOffsetBySignature(signature)
@@ -381,5 +386,15 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
       AngularInvalidTemplateReferenceVariableInspection::class.java,
       TypeScriptUnresolvedReferenceInspection::class.java
     )
+  }
+
+  companion object {
+    private val ANGULAR_4 = arrayOf(Angular2TestModule.ANGULAR_CORE_4_0_0, Angular2TestModule.ANGULAR_COMMON_4_0_0,
+                                    Angular2TestModule.ANGULAR_PLATFORM_BROWSER_4_0_0)
+    private val ANGULAR_8 = arrayOf(Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14,
+                                    Angular2TestModule.ANGULAR_FORMS_8_2_14)
+    private val ANGULAR_16 = arrayOf(Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8,
+                                     Angular2TestModule.ANGULAR_FORMS_16_2_8, Angular2TestModule.ANGULAR_ROUTER_16_2_8)
+
   }
 }

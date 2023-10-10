@@ -6,6 +6,7 @@ import com.intellij.html.webSymbols.attributes.WebSymbolHtmlAttributeInfo
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlTag
+import com.intellij.util.asSafely
 import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.SymbolNamespace
 import com.intellij.webSymbols.WebSymbol
@@ -14,6 +15,7 @@ import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import org.angular2.Angular2Framework
 import org.angular2.entities.Angular2Directive
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
+import org.angular2.lang.html.psi.Angular2HtmlBoundAttribute
 import org.angular2.web.Angular2DescriptorSymbolsProvider
 import javax.swing.Icon
 
@@ -30,7 +32,10 @@ class Angular2AttributeDescriptor(info: WebSymbolHtmlAttributeInfo, tag: XmlTag?
   val hasNonDirectiveSymbols: Boolean
     get() = bindingInfoProvider.nonDirectiveSymbols.isNotEmpty()
 
-  val info: Angular2AttributeNameParser.AttributeInfo = Angular2AttributeNameParser.parse(name, tag)
+  val info: Angular2AttributeNameParser.AttributeInfo by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    tag?.attributes?.find { it.name == name }?.asSafely<Angular2HtmlBoundAttribute>()?.attributeInfo
+    ?: Angular2AttributeNameParser.parse(name, tag)
+  }
 
   private val bindingInfoProvider by lazy(LazyThreadSafetyMode.PUBLICATION) { Angular2DescriptorSymbolsProvider(this.symbol) }
 

@@ -105,6 +105,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
   fun testNgCspNonceNg16() = checkHighlighting(ANGULAR_CORE_16_2_8)
 
+  fun testUndefinedInterpolationBinding() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_ROUTER_16_2_8, dir = true,
+                                                              configureFileName = "hero-search.component.html")
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())

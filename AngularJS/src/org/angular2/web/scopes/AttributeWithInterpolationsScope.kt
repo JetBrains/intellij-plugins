@@ -15,6 +15,7 @@ import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
 import com.intellij.webSymbols.utils.match
 import org.angular2.Angular2Framework
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.PROP_BINDING_PATTERN
 
 object AttributeWithInterpolationsScope : WebSymbolsScope {
 
@@ -49,6 +50,9 @@ object AttributeWithInterpolationsScope : WebSymbolsScope {
 
     override val name: String
       get() = "Attribute with interpolations"
+
+    override val properties: Map<String, Any>
+      get() = mapOf(PROP_BINDING_PATTERN to true)
 
     override fun createPointer(): Pointer<out WebSymbol> =
       Pointer.hardPointer(this)
