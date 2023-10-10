@@ -207,7 +207,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
       result = ((LookupElementBuilder)result).withAutoCompletionPolicy(AutoCompletionPolicy.NEVER_AUTOCOMPLETE);
     }
     if (withSpace) {
-      result = TailTypeDecorator.withTail(result, TailTypes.SPACE);
+      result = TailTypeDecorator.withTail(result, TailTypes.spaceType());
     }
 
     return result;

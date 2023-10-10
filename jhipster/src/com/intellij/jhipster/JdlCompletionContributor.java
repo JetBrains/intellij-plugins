@@ -195,7 +195,7 @@ final class JdlCompletionContributor extends CompletionContributor {
     private static void addKeywords(@NotNull CompletionResultSet result, List<String> applicationNestedKeywords) {
       for (var topLevelKeyword : applicationNestedKeywords) {
         var element = LookupElementBuilder.create(topLevelKeyword).withBoldness(true);
-        result.addElement(TailTypeDecorator.withTail(element, TailTypes.INSERT_SPACE));
+        result.addElement(TailTypeDecorator.withTail(element, TailTypes.insertSpaceType()));
       }
     }
   }
