@@ -77,14 +77,20 @@ class AngularCliProjectGenerator : NpmPackageProjectGenerator() {
     val result = ArrayList<String>()
     result.add("new")
     result.add(baseDir.name)
-    val tokenizer = CommandLineTokenizer(ngSettings.myOptions)
+    val tokenizer = CommandLineTokenizer(ngSettings.options)
     while (tokenizer.hasMoreTokens()) {
       result.add(tokenizer.nextToken())
     }
 
-    if (isPackageGreaterOrEqual(settings.myPackage, 7, 0, 0) && ngSettings.myUseDefaults) {
+    if (isPackageGreaterOrEqual(settings.myPackage, 7, 0, 0) && ngSettings.useDefaults) {
       if (result.none { param -> param == "--defaults" || param.startsWith("--defaults=") }) {
         result.add("--defaults")
+      }
+    }
+
+    if (isPackageGreaterOrEqual(settings.myPackage, 16, 0, 0) && ngSettings.useStandalone) {
+      if (result.none { param -> param == "--standalone"}) {
+        result.add("--standalone")
       }
     }
 
@@ -141,24 +147,29 @@ class AngularCliProjectGenerator : NpmPackageProjectGenerator() {
 
     private var myContentRoot: TextAccessor? = null
 
-    private var myOptionsTextField: SchematicOptionsTextField? = null
-    private var myUseDefaults: JCheckBox? = null
+    private lateinit var myOptionsTextField: SchematicOptionsTextField
+    private lateinit var myUseDefaults: JCheckBox
+    private lateinit var myUseStandalone: JCheckBox
 
     override fun createPanel(): JPanel {
       val panel = super.createPanel()
 
       myOptionsTextField = SchematicOptionsTextField(ProjectManager.getInstance().defaultProject,
                                                      emptyList(), UNKNOWN_VERSION)
-      myOptionsTextField!!.setVariants(listOf(Option("test")))
+      myOptionsTextField.setVariants(listOf(Option("test")))
 
       val component = LabeledComponent.create(
-        myOptionsTextField!!, Angular2Bundle.message("angular.action.new-project.label-additional-parameters"))
+        myOptionsTextField, Angular2Bundle.message("angular.action.new-project.label-additional-parameters"))
       component.setAnchor(panel.getComponent(0) as JComponent)
       component.labelLocation = BorderLayout.WEST
       panel.add(component)
 
+      myUseStandalone = JCheckBox(Angular2Bundle.message("angular.action.new-project.label-standalone"), true)
+      panel.add(myUseStandalone)
+
       myUseDefaults = JCheckBox(Angular2Bundle.message("angular.action.new-project.label-defaults"), true)
       panel.add(myUseDefaults)
+
 
       return panel
     }
@@ -178,14 +189,15 @@ class AngularCliProjectGenerator : NpmPackageProjectGenerator() {
         }
       }
       settingsStep.addSettingsField(UIUtil.replaceMnemonicAmpersand(
-        Angular2Bundle.message("angular.action.new-project.label-additional-parameters")), myOptionsTextField!!)
-      settingsStep.addSettingsComponent(myUseDefaults!!)
+        Angular2Bundle.message("angular.action.new-project.label-additional-parameters")), myOptionsTextField)
+      settingsStep.addSettingsComponent(myUseStandalone)
+      settingsStep.addSettingsComponent(myUseDefaults)
       packageField.addSelectionListener(Consumer { this.nodePackageChanged(it) })
       nodePackageChanged(packageField.selected)
     }
 
     override fun getSettings(): Settings {
-      return AngularCLIProjectSettings(super.getSettings(), myUseDefaults!!.isSelected, myOptionsTextField!!.text)
+      return AngularCLIProjectSettings(super.getSettings(), myUseDefaults.isSelected, myUseStandalone.isSelected, myOptionsTextField.text)
     }
 
     override fun validate(): ValidationInfo? {
@@ -240,8 +252,7 @@ class AngularCliProjectGenerator : NpmPackageProjectGenerator() {
             }
           }
         }
-
-        ReadAction.run<RuntimeException> { myOptionsTextField!!.setVariants(options.get(), cliVersion.get()) }
+        ReadAction.run<RuntimeException> { myOptionsTextField.setVariants(options.get(), cliVersion.get()) }
       }
     }
 
@@ -255,9 +266,10 @@ class AngularCliProjectGenerator : NpmPackageProjectGenerator() {
   }
 
   private class AngularCLIProjectSettings(settings: Settings,
-                                          val myUseDefaults: Boolean,
-                                          val myOptions: String) : Settings(
-    settings.myInterpreterRef, settings.myPackage)
+                                          val useDefaults: Boolean,
+                                          val useStandalone: Boolean,
+                                          val options: String)
+    : Settings(settings.myInterpreterRef, settings.myPackage)
 
   companion object {
 
