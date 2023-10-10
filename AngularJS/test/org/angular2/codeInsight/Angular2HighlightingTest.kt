@@ -101,6 +101,10 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
   fun testOneTimeBindingOfPrimitivesStrict() = checkHighlighting(dir = true, configureFileName = "one_time_binding.html",
                                                                  strictTemplates = true)
 
+  fun testNgCspNonceNg15() = checkHighlighting(ANGULAR_CORE_15_1_5)
+
+  fun testNgCspNonceNg16() = checkHighlighting(ANGULAR_CORE_16_2_8)
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())

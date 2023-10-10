@@ -283,7 +283,8 @@
     <copyPastePostProcessor implementation="org.angular2.codeInsight.imports.Angular2ExpressionsCopyPasteProcessor"/>
     <platform.backend.documentation.linkHandler implementation="org.angular2.codeInsight.documentation.Angular2DocumentationLinkHandler"/>
 
-    <webSymbols.webTypes enableByDefault="true" source="web-types/angular.web-types.json"/>
+    <webSymbols.webTypes enableByDefault="false" source="web-types/angular@2.0.0.web-types.json"/>
+    <webSymbols.webTypes enableByDefault="true" source="web-types/angular@16.0.0.web-types.json"/>
     <webSymbols.webTypes enableByDefault="true" source="web-types/angular-hacks.web-types.json"/>
     <webSymbols.webTypes enableByDefault="true" source="web-types/hammerjs.web-types.json"/>
     <webSymbols.queryConfigurator implementation="org.angular2.web.Angular2WebSymbolsQueryConfigurator"/>
