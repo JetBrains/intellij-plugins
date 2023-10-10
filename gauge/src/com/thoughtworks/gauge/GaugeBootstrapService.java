@@ -40,7 +40,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import static com.intellij.openapi.command.WriteCommandAction.runWriteCommandAction;
 import static com.intellij.openapi.progress.PerformInBackgroundOption.ALWAYS_BACKGROUND;
 
-@Service
+@Service(Service.Level.PROJECT)
 public final class GaugeBootstrapService implements Disposable {
   private static final Logger LOG = Logger.getInstance(GaugeBootstrapService.class);
 

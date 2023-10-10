@@ -18,7 +18,7 @@ class PrismaAdditionalLibraryRootsProvider : AdditionalLibraryRootsProvider(), J
     listOf(PrismaModulesCache.getInstance(project).library)
 }
 
-@Service
+@Service(Service.Level.PROJECT)
 private class PrismaModulesCache(project: Project) {
   private val directoryManager = NodeModulesDirectoryManager.getInstance(project)
 

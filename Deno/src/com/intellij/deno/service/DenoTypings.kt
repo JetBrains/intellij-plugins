@@ -19,7 +19,7 @@ import java.io.FileNotFoundException
 import java.io.IOException
 
 
-@Service
+@Service(Service.Level.PROJECT)
 class DenoTypings(val project: Project) : Disposable {
 
   companion object {
