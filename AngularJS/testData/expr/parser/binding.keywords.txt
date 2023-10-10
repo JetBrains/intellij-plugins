@@ -10,7 +10,7 @@ JSFile:test.keywords.binding
 ------
 JSFile:test.keywords.binding
   Angular2Binding
-    JSLiteralExpression
+    JSReferenceExpression
       PsiElement(JS:UNDEFINED_KEYWORD)('undefined')
 ------
 JSFile:test.keywords.binding

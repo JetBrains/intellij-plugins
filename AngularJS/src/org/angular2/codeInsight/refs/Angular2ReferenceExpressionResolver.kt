@@ -32,7 +32,10 @@ class Angular2ReferenceExpressionResolver(expression: JSReferenceExpressionImpl,
       return resolvePipeNameReference(expression, incompleteCode)
     }
     else if (myQualifier == null || myQualifier is JSThisExpression) {
-      return resolveTemplateVariable(expression)
+      if (undefinedResolve(null))
+        return dummyResult(myRef)
+      else
+        return resolveTemplateVariable(expression)
     }
     return super.resolve(expression, incompleteCode)
   }

@@ -40,6 +40,8 @@ class Angular2ControlFlowTest : BaseJSControlFlowTest() {
 
   fun testNullChecks() = doTest("<div <caret>*ngFor")
 
+  fun testNullOrUndefinedComparison() = doTest("<div <caret>*ngIf")
+
   override fun createJSControlFlowBuilder(): JSControlFlowBuilder {
     return Angular2ControlFlowBuilder()
   }

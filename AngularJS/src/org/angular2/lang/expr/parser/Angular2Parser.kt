@@ -33,6 +33,10 @@ class Angular2Parser private constructor(builder: PsiBuilder,
     myStatementParser = Angular2StatementParser(this)
   }
 
+  override fun isIdentifierToken(tokenType: IElementType?): Boolean {
+    return JSKeywordSets.TS_IDENTIFIERS_TOKENS_SET.contains(tokenType)
+  }
+
   inner class Angular2StatementParser(parser: Angular2Parser?) : StatementParser<Angular2Parser?>(parser) {
     fun parseChain() {
       assert(!myIsJavaScript)
@@ -306,10 +310,6 @@ class Angular2Parser private constructor(builder: PsiBuilder,
       }
       val text = builder.tokenText
       return text != null && (text == CHAR_ENTITY_QUOT || text == CHAR_ENTITY_APOS)
-    }
-
-    override fun isIdentifierToken(tokenType: IElementType?): Boolean {
-      return !Angular2TokenTypes.KEYWORDS.contains(tokenType) && super.isIdentifierToken(tokenType)
     }
 
     override fun getCurrentBinarySignPriority(allowIn: Boolean, advance: Boolean): Int {
