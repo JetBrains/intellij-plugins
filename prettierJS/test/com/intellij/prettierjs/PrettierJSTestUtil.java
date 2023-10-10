@@ -11,7 +11,7 @@ public final class PrettierJSTestUtil {
   }
 
   public static String getTestDataPath() {
-    return getContribPath() + "/prettierJS/test/data/";
+    return getContribPath() + "/prettierJS/testData/";
   }
 
 
