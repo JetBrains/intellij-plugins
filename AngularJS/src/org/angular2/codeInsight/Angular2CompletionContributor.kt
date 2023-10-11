@@ -24,6 +24,7 @@ import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl
 import com.intellij.lang.javascript.psi.types.JSPsiBasedTypeOfType
 import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.lang.javascript.psi.util.runWithTimeout
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.PlatformPatterns.psiElement
@@ -147,14 +148,16 @@ class Angular2CompletionContributor : CompletionContributor() {
                 .withInsertHandler(object : JSLookupElementInsertHandler(false, null) {
 
                   override fun handleInsert(context: InsertionContext, item: LookupElement) {
-                    val signalType = Angular2SignalUtils.signalTypeAlias(ref)
-                      ?.jsType
-                      ?.let { JSGenericTypeImpl(it.source, it, JSAnyType.get(it.source)) }
-                    if (signalType != null) {
-                      val elementType = TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(
-                        JSResolveUtil.getElementJSType(item.psiElement))
-                      if (elementType != null && signalType.isDirectlyAssignableType(elementType, null)) {
-                        item.putUserData(JSInsertHandler.FORCED_COMPLETE_AS_FUNCTION, true)
+                    runWithTimeout(200) {
+                      val signalType = Angular2SignalUtils.signalTypeAlias(ref)
+                        ?.jsType
+                        ?.let { JSGenericTypeImpl(it.source, it, JSAnyType.get(it.source)) }
+                      if (signalType != null) {
+                        val elementType = TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(
+                          JSResolveUtil.getElementJSType(item.psiElement))
+                        if (elementType != null && signalType.isDirectlyAssignableType(elementType, null)) {
+                          item.putUserData(JSInsertHandler.FORCED_COMPLETE_AS_FUNCTION, true)
+                        }
                       }
                     }
                     super.handleInsert(context, item)
