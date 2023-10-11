@@ -19,6 +19,7 @@ import com.intellij.lang.javascript.validation.TypeScriptReferenceChecker
 import com.intellij.lang.typescript.validation.TypeScriptTypeChecker
 import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveResult
+import com.intellij.psi.util.parentOfType
 import com.intellij.util.ProcessingContext
 import com.intellij.util.asSafely
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.NG_PIPE
@@ -72,7 +73,8 @@ class Angular2AnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
           val componentClass = Angular2ComponentLocator.findComponentClass(methodExpression)
           if (componentClass != null && methodExpression.referenceName != null) {
             quickFixes.add(CreateComponentMethodIntentionAction(methodExpression))
-            if (Angular2SignalUtils.supportsSignals(componentClass)) {
+            if (Angular2SignalUtils.supportsSignals(componentClass)
+                && methodExpression.parentOfType<JSCallExpression>()?.argumentSize == 0) {
               quickFixes.add(CreateComponentSignalIntentionAction(methodExpression))
             }
           }

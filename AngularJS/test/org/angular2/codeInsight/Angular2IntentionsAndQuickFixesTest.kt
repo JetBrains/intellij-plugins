@@ -43,6 +43,10 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
     doTest(Angular2Bundle.message("angular.quickfix.template.create-signal.name", "fooSig"),
            ANGULAR_CORE_16_2_8)
 
+  fun testNoCreateSignalFromUsage() =
+    checkNoIntention(Angular2Bundle.message("angular.quickfix.template.create-signal.name", "fooSig"),
+                     ANGULAR_CORE_16_2_8)
+
   fun testCreateObservablePropertyFromUsage() =
     doTest(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"),
            ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, RXJS_7_8_1, checkCodeCompletion = true)
@@ -96,6 +100,22 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
+  }
+
+  private fun checkNoIntention(intentionName: String,
+                               vararg modules: WebFrameworkTestModule) {
+    doConfiguredTest(*modules,
+                     configurators = listOf(Angular2TsConfigFile())
+    ) {
+      try {
+        findSingleIntention(intentionName)
+        throw AssertionError("Intention action $intentionName is present")
+      }
+      catch (e: AssertionError) {
+        if (e.message.let { it != null && !it.startsWith("\"" + intentionName) })
+          throw e
+      }
+    }
   }
 
   private fun doTest(intentionName: String,
