@@ -1,10 +1,14 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections
 
+import com.intellij.codeInsight.intention.PriorityAction
+import com.intellij.codeInsight.template.Expression
 import com.intellij.codeInsight.template.Template
+import com.intellij.codeInsight.template.impl.ConstantNode
 import com.intellij.codeInspection.InspectionSuppressor
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.util.InspectionMessage
+import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.DialectOptionHolder
 import com.intellij.lang.javascript.ecmascript6.TypeScriptAnalysisHandlersFactory
@@ -39,6 +43,8 @@ import org.angular2.inspections.quickfixes.Angular2FixesFactory
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression
 import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
+import org.angular2.signals.Angular2SignalUtils
+import org.angular2.signals.Angular2SignalUtils.SIGNAL_FUNCTION
 
 class Angular2AnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
 
@@ -79,6 +85,9 @@ class Angular2AnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
           val componentClass = Angular2ComponentLocator.findComponentClass(methodExpression)
           if (componentClass != null && methodExpression.referenceName != null) {
             quickFixes.add(CreateComponentMethodIntentionAction(methodExpression))
+            if (Angular2SignalUtils.supportsSignals(componentClass)) {
+              quickFixes.add(CreateComponentSignalIntentionAction(methodExpression))
+            }
           }
           return
         }
@@ -157,6 +166,72 @@ class Angular2AnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
                                    staticContext: Boolean,
                                    targetClass: JSClass) {
       addClassMemberModifiers(template, staticContext, targetClass)
+    }
+  }
+
+  private class CreateComponentSignalIntentionAction(methodExpression: JSReferenceExpression)
+    : CreateJSVariableIntentionAction(methodExpression.referenceName, true, false, false) {
+
+    private val myRefExpressionPointer: SmartPsiElementPointer<JSReferenceExpression> = createPointerFor(methodExpression)
+
+    override fun applyFix(project: Project, psiElement: PsiElement, file: PsiFile, editor: Editor?) {
+      val componentClass = Angular2ComponentLocator.findComponentClass(psiElement)!!
+      doApplyFix(project, componentClass, componentClass.containingFile, null)
+    }
+
+    override fun getName(): String {
+      return Angular2Bundle.message("angular.quickfix.template.create-signal.name", myReferencedName)
+    }
+
+    override fun getPriority(): PriorityAction.Priority {
+      return PriorityAction.Priority.TOP
+    }
+
+    override fun beforeStartTemplateAction(referenceExpression: JSReferenceExpression,
+                                           editor: Editor,
+                                           anchor: PsiElement,
+                                           isStaticContext: Boolean): JSReferenceExpression {
+      return referenceExpression
+    }
+
+    override fun skipParentIfClass(): Boolean {
+      return false
+    }
+
+    override fun calculateAnchors(psiElement: PsiElement): Pair<JSReferenceExpression, PsiElement> {
+      return Pair.create(myRefExpressionPointer.element, psiElement.lastChild)
+    }
+
+    override fun addAccessModifier(template: Template,
+                                   referenceExpression: JSReferenceExpression,
+                                   staticContext: Boolean,
+                                   targetClass: JSClass) {
+      addClassMemberModifiers(template, staticContext, targetClass)
+    }
+
+    override fun buildTemplate(template: Template,
+                               referenceExpression: JSReferenceExpression?,
+                               isStaticContext: Boolean,
+                               anchorParent: PsiElement) {
+      template.addTextSegment(myReferencedName)
+      template.addTextSegment(" = signal<")
+      val type = guessTypeForExpression(referenceExpression, anchorParent, false)
+      if (type == null) {
+        addCompletionVar(template)
+      }
+      else {
+        val expression: Expression = ConstantNode("$type | null")
+        template.addVariable("\$TYPE$", expression, expression, true)
+      }
+      template.addTextSegment(">(")
+
+      val expression: Expression = ConstantNode("null")
+      template.addVariable("\$INITIAL_VALUE$", expression, expression, true)
+      template.addTextSegment(")")
+      addSemicolonSegment(template, anchorParent)
+
+      ES6ImportPsiUtil.insertJSImport(anchorParent, SIGNAL_FUNCTION,
+                                      Angular2SignalUtils.signalFunction(anchorParent) ?: return, null)
     }
   }
 

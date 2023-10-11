@@ -5,7 +5,6 @@ import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.javascript.web.css.CssInBindingExpressionCompletionProvider
-import com.intellij.javascript.web.js.WebJSResolveUtil
 import com.intellij.lang.Language
 import com.intellij.lang.javascript.completion.*
 import com.intellij.lang.javascript.completion.JSImportCompletionUtil.IMPORT_PRIORITY
@@ -16,7 +15,6 @@ import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.JSTypeUtils.isNullOrUndefinedType
 import com.intellij.lang.javascript.psi.ecma6.JSTypeDeclaration
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.CompletionResultSink
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
@@ -44,11 +42,10 @@ import org.angular2.codeInsight.template.Angular2TemplateScopesResolver
 import org.angular2.entities.Angular2ComponentLocator
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.Angular2Bundle
-import org.angular2.lang.Angular2LangUtil
-import org.angular2.lang.Angular2LangUtil.SIGNAL_TYPE
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.psi.Angular2PipeExpression
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression
+import org.angular2.signals.Angular2SignalUtils
 import org.jetbrains.annotations.NonNls
 
 class Angular2CompletionContributor : CompletionContributor() {
@@ -150,10 +147,9 @@ class Angular2CompletionContributor : CompletionContributor() {
                 .withInsertHandler(object : JSLookupElementInsertHandler(false, null) {
 
                   override fun handleInsert(context: InsertionContext, item: LookupElement) {
-                    val signalType = WebJSResolveUtil.resolveSymbolFromNodeModule(
-                      ref, Angular2LangUtil.ANGULAR_CORE_PACKAGE, SIGNAL_TYPE,
-                      TypeScriptTypeAlias::class.java
-                    )?.jsType?.let { JSGenericTypeImpl(it.source, it, JSAnyType.get(it.source)) }
+                    val signalType = Angular2SignalUtils.signalTypeAlias(ref)
+                      ?.jsType
+                      ?.let { JSGenericTypeImpl(it.source, it, JSAnyType.get(it.source)) }
                     if (signalType != null) {
                       val elementType = TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(
                         JSResolveUtil.getElementJSType(item.psiElement))

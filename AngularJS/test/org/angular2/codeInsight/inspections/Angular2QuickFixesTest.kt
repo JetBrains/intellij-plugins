@@ -27,6 +27,8 @@ class Angular2QuickFixesTest : Angular2TestCase("inspections/quickFixes") {
   fun testCustomTransformBinding() =
     doTest("Create input transformer", Angular2TestModule.ANGULAR_CORE_16_2_8)
 
+  fun testCreateSignalFromUsage() =
+    doTest("Create signal", Angular2TestModule.ANGULAR_CORE_16_2_8)
 
   override fun setUp() {
     super.setUp()

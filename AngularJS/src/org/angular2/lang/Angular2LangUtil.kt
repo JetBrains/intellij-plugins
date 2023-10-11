@@ -15,7 +15,6 @@ object Angular2LangUtil {
   const val `$IMPLICIT`: String = "\$implicit"
   const val EVENT_EMITTER: String = "EventEmitter"
   const val OUTPUT_CHANGE_SUFFIX: String = "Change"
-  const val SIGNAL_TYPE: String = "Signal"
 
   @JvmStatic
   fun isAngular2Context(context: PsiElement): Boolean {
