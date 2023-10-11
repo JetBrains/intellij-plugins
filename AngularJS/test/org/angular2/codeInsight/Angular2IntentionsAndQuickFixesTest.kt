@@ -47,6 +47,10 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
     doTest(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"),
            ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, RXJS_7_8_1, checkCodeCompletion = true)
 
+  fun testCreateObservableMethodFromUsage() =
+    doTest(JavaScriptBundle.message("javascript.create.method.intention.name", "foo"),
+           ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, RXJS_7_8_1)
+
   fun testBasicFieldCreation() {
     doTest(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"),
            dir = true, configureFileName = "template.html")

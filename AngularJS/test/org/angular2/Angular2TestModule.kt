@@ -56,7 +56,9 @@ enum class Angular2TestModule(private val myPackageName: String, private val myV
   NGXS_STORE_3_6_2("@ngxs/store", "3.6.2"),
   NGXS_STORE_3_6_2_MIXED("@ngxs/store", "3.6.2-mixed"),
   NG_ZORRO_ANTD_8_5_0_IVY("ng-zorro-antd", "8.5.0-ivy"),
-  RXJS_6_4_0("rxjs", "6.4.0");
+  RXJS_6_4_0("rxjs", "6.4.0"),
+  RXJS_7_8_1("rxjs", "7.8.1"),
+  ;
 
   override val packageNames: List<String> = listOf(myPackageName)
   override val folder: String = myPackageName.replace('/', '#') + "/" + myVersion + "/node_modules"

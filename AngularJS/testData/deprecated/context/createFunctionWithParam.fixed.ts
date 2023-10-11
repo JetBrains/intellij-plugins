@@ -6,6 +6,6 @@ import {Component} from "@angular/core"
 })
 export class TodoCmp {
     fetchFromApi(number: number, a: string, foobarbaz: any) {
-
+        return "";
     }
 }

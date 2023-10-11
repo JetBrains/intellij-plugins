@@ -5,8 +5,12 @@ import com.intellij.html.webSymbols.attributes.WebSymbolAttributeDescriptor
 import com.intellij.lang.javascript.frameworks.JSFrameworkSpecificHandler
 import com.intellij.lang.javascript.psi.JSExpectedTypeKind
 import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.types.JSTypeContext
+import com.intellij.lang.javascript.psi.types.JSTypeSource
+import com.intellij.lang.javascript.psi.types.primitives.JSStringType
 import com.intellij.psi.PsiElement
 import org.angular2.lang.expr.psi.Angular2Binding
+import org.angular2.lang.expr.psi.Angular2Interpolation
 import org.angular2.lang.expr.psi.Angular2TemplateBinding
 import org.angular2.lang.expr.psi.impl.Angular2BindingImpl
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
@@ -26,6 +30,11 @@ class Angular2JSFrameworkSpecificHandler : JSFrameworkSpecificHandler {
     }
     if (parent is Angular2TemplateBinding && parent.expression == element) {
       return parent.keyJSType
+    }
+    if (parent is Angular2Interpolation && parent.expression == element) {
+      return if (expectedTypeKind != JSExpectedTypeKind.TYPE_CHECKING)
+        JSStringType(true, JSTypeSource.EMPTY, JSTypeContext.INSTANCE)
+      else null
     }
     return null
   }

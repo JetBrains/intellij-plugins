@@ -3,6 +3,7 @@ package org.angular2.inspections
 
 import com.intellij.codeInsight.intention.PriorityAction
 import com.intellij.codeInsight.template.Expression
+import com.intellij.codeInsight.template.Result
 import com.intellij.codeInsight.template.Template
 import com.intellij.codeInsight.template.impl.ConstantNode
 import com.intellij.codeInspection.InspectionSuppressor
@@ -36,6 +37,7 @@ import com.intellij.psi.ResolveResult
 import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.ProcessingContext
+import com.intellij.util.containers.ContainerUtil
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.NG_PIPE
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.entities.Angular2ComponentLocator
@@ -215,13 +217,18 @@ class Angular2AnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
                                anchorParent: PsiElement) {
       template.addTextSegment(myReferencedName)
       template.addTextSegment(" = signal<")
-      val type = guessTypeForExpression(referenceExpression, anchorParent, false)
-      if (type == null) {
+
+      val types = guessTypesForExpression(referenceExpression, anchorParent, false)
+        .map { if (!it.matches(Regex("\\|\\s*null($|\\s*\\|)"))) "$it | null" else it }
+      if (types.isEmpty()) {
         addCompletionVar(template)
       }
       else {
-        val expression: Expression = ConstantNode("$type | null")
-        template.addVariable("\$TYPE$", expression, expression, true)
+        val expression: Expression = if (types.size == 1)
+          ConstantNode(types[0])
+        else
+          ConstantNode(null as Result?).withLookupStrings(types)
+        template.addVariable("__type" + referenceExpression!!.getText(), expression, expression, true)
       }
       template.addTextSegment(">(")
 

@@ -10,6 +10,6 @@ class Bar {
 })
 export class TodoCmp {
     fetchFromApi() {
-
+        return "";
     }
 }
