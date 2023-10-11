@@ -58,6 +58,6 @@ class DtsSettings(private val project: Project) : PersistentStateComponent<DtsSe
     data class State(
         var zephyrRoot: String = "",
         var zephyrBoard: String = "",
-        var zephyrCMakeSync: Boolean = false,
+        var zephyrCMakeSync: Boolean = true,
     )
 }
