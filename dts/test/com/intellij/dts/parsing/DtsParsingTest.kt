@@ -27,6 +27,8 @@ abstract class DtsParsingTest(dataPath: String) : DtsParsingTestBase(dataPath, "
         fun testInclude() = doTest()
 
         fun testInvalidEntryFollowedByInclude() = doTest()
+
+        fun testInvalidEntryFollowedByComment() = doTest()
     }
 
     class Reject : DtsParsingTest("reject") {

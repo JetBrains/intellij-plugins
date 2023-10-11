@@ -1,6 +1,7 @@
 package com.intellij.dts.lang.parser
 
 import com.intellij.dts.DtsBundle
+import com.intellij.dts.lang.DtsTokenSets
 import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.PsiBuilder.Marker
@@ -30,11 +31,21 @@ object DtsParserUtil : DtsJavaParserUtil() {
 
     private val ppMacroNameRx = Regex("[a-zA-Z_][0-9a-zA-Z_]*")
 
-    private fun lookUpLineBrake(builder: PsiBuilder, steps: Int): Boolean {
-        if (builder.rawLookup(steps) != TokenType.WHITE_SPACE) return false
+    private fun lookUpLineBrake(builder: PsiBuilder, forward: Boolean): Boolean {
+        var steps = 0
 
-        val whitespace = PsiBuilderUtil.rawTokenText(builder, steps)
-        return whitespace.contains('\n')
+        var token: IElementType? = null
+        while (token == null || token == TokenType.WHITE_SPACE || token in DtsTokenSets.comments) {
+            steps += if (forward) 1 else -1
+            token = builder.rawLookup(steps) ?: break
+
+            if (token == TokenType.WHITE_SPACE) {
+                val hasLineBreak = PsiBuilderUtil.rawTokenText(builder, steps).contains('\n')
+                if (hasLineBreak) return true
+            }
+        }
+
+        return false
     }
 
     @JvmStatic
@@ -46,10 +57,10 @@ object DtsParserUtil : DtsJavaParserUtil() {
 
         consume@ while (!builder.eof()) {
             while (builder.tokenType == DtsTypes.HANDLE && DtsParser.pHandle(builder, level + 1)) {
-                if (builder.eof() || lookUpLineBrake(builder, -1)) break@consume
+                if (builder.eof() || lookUpLineBrake(builder, forward = false)) break@consume
             }
 
-            val nextLineBrake = lookUpLineBrake(builder, 1)
+            val nextLineBrake = lookUpLineBrake(builder, forward = true)
             val endToken = builder.tokenType in invalidEntryEndTokens
 
             builder.advanceLexer()
@@ -113,7 +124,7 @@ object DtsParserUtil : DtsJavaParserUtil() {
 
     @JvmStatic
     fun parseAfterLineBreak(builder: PsiBuilder, @Suppress("UNUSED_PARAMETER") level: Int): Boolean {
-        return lookUpLineBrake(builder, -1)
+        return lookUpLineBrake(builder, forward = false)
     }
 
     @JvmStatic
@@ -145,7 +156,7 @@ object DtsParserUtil : DtsJavaParserUtil() {
 
         var marker: Marker? = null
         while (builder.tokenType == DtsTypes.LABEL) {
-            if (marker == null && lookUpLineBrake(builder, -1)) {
+            if (marker == null && lookUpLineBrake(builder, forward = false)) {
                 marker = builder.mark()
             }
 

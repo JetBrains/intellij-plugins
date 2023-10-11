@@ -1,0 +1,18 @@
+DTS file
+  PsiErrorElement:Not a valid entry
+    PsiElement(name)('invalid')
+  PsiWhiteSpace('\n\n')
+  PsiComment(COMMENT_EOL)('// comment')
+  PsiWhiteSpace('\n\n')
+  PsiErrorElement:Not a valid entry
+    PsiElement(name)('invliad')
+  PsiWhiteSpace(' ')
+  PsiComment(COMMENT_EOL)('//comment')
+  PsiWhiteSpace('\n\n')
+  DtsEntryImpl(ENTRY)
+    DtsRootNodeImpl(ROOT_NODE)
+      PsiElement(/)('/')
+      PsiWhiteSpace(' ')
+      PsiElement({)('{')
+      PsiElement(})('}')
+    PsiElement(;)(';')
