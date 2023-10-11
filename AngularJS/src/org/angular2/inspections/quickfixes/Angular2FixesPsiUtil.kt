@@ -1,6 +1,8 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections.quickfixes
 
+import com.intellij.javascript.web.js.WebJSResolveUtil
+import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil
 import com.intellij.lang.javascript.JSTokenTypes.COMMA
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.psi.*
@@ -73,6 +75,11 @@ object Angular2FixesPsiUtil {
     val added = JSRefactoringUtil.addMemberToMemberHolder(objectLiteral, property, objectLiteral) as JSProperty
     insertNewLinesAroundPropertyIfNeeded(added, preferNewLines)
     return added.applyIf(reformat) { reformatJSObjectLiteralProperty(this) }
+  }
+
+  fun insertJSImport(scope: PsiElement, module: String, name: String) {
+    WebJSResolveUtil.resolveSymbolFromNodeModule(scope, module, name, PsiElement::class.java)
+      ?.let { ES6ImportPsiUtil.insertJSImport(scope, name, it, null) }
   }
 
   private fun reformatJSObjectLiteralProperty(property: JSProperty): JSProperty {

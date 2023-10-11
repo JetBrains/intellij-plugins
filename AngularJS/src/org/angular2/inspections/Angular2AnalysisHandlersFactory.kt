@@ -6,11 +6,7 @@ import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.util.InspectionMessage
 import com.intellij.lang.javascript.DialectOptionHolder
 import com.intellij.lang.javascript.ecmascript6.TypeScriptAnalysisHandlersFactory
-import com.intellij.lang.javascript.psi.JSCallExpression
-import com.intellij.lang.javascript.psi.JSExpression
-import com.intellij.lang.javascript.psi.JSReferenceExpression
-import com.intellij.lang.javascript.psi.JSThisExpression
-import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.JSType.TypeTextFormat.CODE
 import com.intellij.lang.javascript.validation.JSProblemReporter
 import com.intellij.lang.javascript.validation.JSReferenceChecker
@@ -25,11 +21,10 @@ import com.intellij.util.asSafely
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.NG_PIPE
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.entities.Angular2ComponentLocator
-import org.angular2.inspections.quickfixes.Angular2FixesFactory
-import org.angular2.inspections.quickfixes.CreateComponentFieldIntentionAction
-import org.angular2.inspections.quickfixes.CreateComponentMethodIntentionAction
-import org.angular2.inspections.quickfixes.CreateComponentSignalIntentionAction
+import org.angular2.inspections.quickfixes.*
 import org.angular2.lang.Angular2Bundle
+import org.angular2.lang.expr.psi.Angular2Action
+import org.angular2.lang.expr.psi.Angular2EmbeddedExpression
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression
 import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
 import org.angular2.signals.Angular2SignalUtils
@@ -117,6 +112,18 @@ class Angular2AnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
           val componentClass = Angular2ComponentLocator.findComponentClass(referenceExpression)
           if (componentClass != null && referenceExpression.referenceName != null) {
             quickFixes.add(CreateComponentFieldIntentionAction(referenceExpression))
+            if (referenceExpression.parentOfType<Angular2EmbeddedExpression>() is Angular2Action) {
+              referenceExpression
+                .parent.asSafely<JSReferenceExpression>()
+                ?.takeIf { it.referenceName == "emit" }
+                ?.parent?.asSafely<JSCallExpression>()
+                ?.takeIf { it.argumentSize == 1 }
+                ?.let { callExpression ->
+                  referenceExpression.referenceName?.let {
+                    quickFixes.add(CreateComponentOutputIntentionAction(callExpression, it))
+                  }
+                }
+            }
           }
           return inTypeContext
         }
