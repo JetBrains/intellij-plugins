@@ -14,4 +14,6 @@ class DtsSpacingTest : DtsFormattingTest() {
     fun testReferences() = doFormattingTest()
 
     fun testMacroInValues() = doFormattingTest()
+
+    fun testComments() = doFormattingTest()
 }
