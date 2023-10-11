@@ -236,7 +236,7 @@ private pp_statementRecover ::= !(PP_STATEMENT_END)
 
 ppIncludeStatement ::= PP_INCLUDE ppHeader { pin=1 }
 ppHeader ::= ppSystemHeader | ppUserHeader
-private ppSystemHeader ::= PP_LANGLE PP_PATH PP_RANGLE { pin=1 }
+private ppSystemHeader ::= PP_LANGL PP_PATH PP_RANGL { pin=1 }
 private ppUserHeader ::= PP_DQUOTE PP_PATH PP_DQUOTE { pin=1 }
 
 ppIfdefStatement ::= PP_IFDEF PP_SYMBOL { pin=1 }

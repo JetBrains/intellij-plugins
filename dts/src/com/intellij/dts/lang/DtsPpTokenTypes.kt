@@ -30,8 +30,8 @@ object DtsPpTokenTypes : PpTokenTypes {
     override val path: IElementType = DtsTypes.PP_PATH
 
     override val dQuote: IElementType = DtsTypes.PP_DQUOTE
-    override val lAngle: IElementType = DtsTypes.PP_LANGLE
-    override val rAngle: IElementType = DtsTypes.PP_RANGLE
+    override val lAngl: IElementType = DtsTypes.PP_LANGL
+    override val rAngl: IElementType = DtsTypes.PP_RANGL
 
     override val statementEnd: IElementType = DtsTypes.PP_STATEMENT_END
     override val statementMarker: IElementType = DtsTypes.PP_STATEMENT_MARKER

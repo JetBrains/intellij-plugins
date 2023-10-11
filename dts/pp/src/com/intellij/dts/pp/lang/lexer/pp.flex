@@ -52,8 +52,8 @@ SYMBOL            = [a-zA-Z_][a-zA-Z_0-9]+
 }
 
 <WAITING_HEADER> {
-    "<"                     { return tokenTypes.getLAngle(); }
-    ">"                     { return tokenTypes.getRAngle(); }
+    "<"                     { return tokenTypes.getLAngl(); }
+    ">"                     { return tokenTypes.getRAngl(); }
     "\""                    { return tokenTypes.getDQuote(); }
     [^\ \t<>\"]+            { return tokenTypes.getPath(); }
 }

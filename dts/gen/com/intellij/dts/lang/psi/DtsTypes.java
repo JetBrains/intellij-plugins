@@ -106,10 +106,10 @@ public interface DtsTypes {
   com.intellij.psi.tree.IElementType PP_IFDEF = new com.intellij.dts.lang.DtsTokenType("PP_IFDEF");
   com.intellij.psi.tree.IElementType PP_IFNDEF = new com.intellij.dts.lang.DtsTokenType("PP_IFNDEF");
   com.intellij.psi.tree.IElementType PP_INCLUDE = new com.intellij.dts.lang.DtsTokenType("PP_INCLUDE");
-  com.intellij.psi.tree.IElementType PP_LANGLE = new com.intellij.dts.lang.DtsTokenType("PP_LANGLE");
+  com.intellij.psi.tree.IElementType PP_LANGL = new com.intellij.dts.lang.DtsTokenType("PP_LANGL");
   com.intellij.psi.tree.IElementType PP_MACRO_ARG = new com.intellij.dts.lang.DtsTokenType("PP_MACRO_ARG");
   com.intellij.psi.tree.IElementType PP_PATH = new com.intellij.dts.lang.DtsTokenType("PP_PATH");
-  com.intellij.psi.tree.IElementType PP_RANGLE = new com.intellij.dts.lang.DtsTokenType("PP_RANGLE");
+  com.intellij.psi.tree.IElementType PP_RANGL = new com.intellij.dts.lang.DtsTokenType("PP_RANGL");
   com.intellij.psi.tree.IElementType PP_STATEMENT_END = new com.intellij.dts.lang.DtsTokenType("PP_STATEMENT_END");
   com.intellij.psi.tree.IElementType PP_STATEMENT_MARKER = new com.intellij.dts.lang.DtsTokenType("PP_STATEMENT_MARKER");
   com.intellij.psi.tree.IElementType PP_SYMBOL = new com.intellij.dts.lang.DtsTokenType("PP_SYMBOL");

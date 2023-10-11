@@ -81,8 +81,8 @@ class DtsTokenType(debugName: String) : IElementType(debugName, DtsLanguage) {
             DtsTypes.PP_PATH -> "path"
             DtsTypes.PP_DEFINE_VALUE -> "value"
 
-            DtsTypes.PP_LANGLE -> "<"
-            DtsTypes.PP_RANGLE -> ">"
+            DtsTypes.PP_LANGL -> "<"
+            DtsTypes.PP_RANGL -> ">"
             DtsTypes.PP_DQUOTE -> "\""
 
             else -> super.toString()

@@ -620,7 +620,7 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   // ppSystemHeader | ppUserHeader
   public static boolean ppHeader(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "ppHeader")) return false;
-    if (!nextTokenIs(builder_, "<pp header>", PP_DQUOTE, PP_LANGLE)) return false;
+    if (!nextTokenIs(builder_, "<pp header>", PP_DQUOTE, PP_LANGL)) return false;
     boolean result_;
     com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_, PP_HEADER, "<pp header>");
     result_ = ppSystemHeader(builder_, level_ + 1);
@@ -731,13 +731,13 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   /* ********************************************************** */
-  // PP_LANGLE PP_PATH PP_RANGLE
+  // PP_LANGL PP_PATH PP_RANGL
   static boolean ppSystemHeader(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "ppSystemHeader")) return false;
-    if (!nextTokenIs(builder_, PP_LANGLE)) return false;
+    if (!nextTokenIs(builder_, PP_LANGL)) return false;
     boolean result_, pinned_;
     com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_);
-    result_ = consumeTokens(builder_, 1, PP_LANGLE, PP_PATH, PP_RANGLE);
+    result_ = consumeTokens(builder_, 1, PP_LANGL, PP_PATH, PP_RANGL);
     pinned_ = result_; // pin = 1
     exit_section_(builder_, level_, marker_, result_, pinned_, null);
     return result_ || pinned_;

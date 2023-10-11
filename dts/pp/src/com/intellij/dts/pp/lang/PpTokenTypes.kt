@@ -28,8 +28,8 @@ interface PpTokenTypes {
     val path: IElementType
 
     val dQuote: IElementType
-    val lAngle: IElementType
-    val rAngle: IElementType
+    val lAngl: IElementType
+    val rAngl: IElementType
 
     val statementEnd: IElementType
     val statementMarker: IElementType

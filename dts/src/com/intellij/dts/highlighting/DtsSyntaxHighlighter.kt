@@ -43,7 +43,7 @@ class DtsSyntaxHighlighter : SyntaxHighlighterBase() {
             DtsTypes.SEMICOLON -> pack(DtsTextAttributes.SEMICOLON)
             DtsTypes.COMMA -> pack(DtsTextAttributes.COMMA)
             TokenType.BAD_CHARACTER -> pack(DtsTextAttributes.BAD_CHARACTER)
-            DtsTypes.PP_DQUOTE, DtsTypes.PP_RANGLE, DtsTypes.PP_LANGLE, DtsTypes.PP_PATH -> pack(DtsTextAttributes.STRING)
+            DtsTypes.PP_DQUOTE, DtsTypes.PP_RANGL, DtsTypes.PP_LANGL, DtsTypes.PP_PATH -> pack(DtsTextAttributes.STRING)
 
             else -> pack(null)
         }

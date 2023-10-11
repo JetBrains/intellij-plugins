@@ -26,6 +26,7 @@ abstract class DtsCompletionTest : DtsTestBase() {
             "/plugin/;",
             "/memreserve/ 10 10;",
             "/omit-if-no-ref/ &handel;",
+            "#include \"file.dtsi\"",
         )
     }
 
