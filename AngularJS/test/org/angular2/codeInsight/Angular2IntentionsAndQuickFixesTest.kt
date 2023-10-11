@@ -1,0 +1,120 @@
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.codeInsight
+
+import com.intellij.codeInsight.template.impl.TemplateManagerImpl
+import com.intellij.javascript.web.WebFrameworkTestModule
+import com.intellij.lang.javascript.JavaScriptBundle
+import com.intellij.webSymbols.checkListByFile
+import com.intellij.webSymbols.renderLookupItems
+import org.angular2.Angular2TemplateInspectionsProvider
+import org.angular2.Angular2TestCase
+import org.angular2.Angular2TestModule.*
+import org.angular2.Angular2TsConfigFile
+import org.angular2.lang.Angular2Bundle
+import org.intellij.idea.lang.javascript.intention.JSIntentionBundle
+
+class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuickFixes") {
+
+  fun testBooleanTransformAttr() =
+    doTest(Angular2Bundle.message("angular.quickfix.template.create-input-transformer.std.name", "booleanAttribute"),
+           ANGULAR_CORE_16_2_8)
+
+  fun testBooleanTransformBinding() =
+    doTest(Angular2Bundle.message("angular.quickfix.template.create-input-transformer.std.name", "booleanAttribute"),
+           ANGULAR_CORE_16_2_8)
+
+  fun testNumberTransformAttr() =
+    doTest(Angular2Bundle.message("angular.quickfix.template.create-input-transformer.std.name", "numberAttribute"),
+           ANGULAR_CORE_16_2_8)
+
+  fun testNumberTransformBinding() =
+    doTest(Angular2Bundle.message("angular.quickfix.template.create-input-transformer.std.name", "numberAttribute"),
+           ANGULAR_CORE_16_2_8)
+
+  fun testCustomTransformAttr() =
+    doTest(Angular2Bundle.message("angular.quickfix.template.create-input-transformer.family"),
+           ANGULAR_CORE_16_2_8)
+
+  fun testCustomTransformBinding() =
+    doTest(Angular2Bundle.message("angular.quickfix.template.create-input-transformer.family"),
+           ANGULAR_CORE_16_2_8)
+
+  fun testCreateSignalFromUsage() =
+    doTest(Angular2Bundle.message("angular.quickfix.template.create-signal.name", "fooSig"),
+           ANGULAR_CORE_16_2_8)
+
+  fun testCreateObservablePropertyFromUsage() =
+    doTest(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"),
+           ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, RXJS_7_8_1, checkCodeCompletion = true)
+
+  fun testBasicFieldCreation() {
+    doTest(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"),
+           dir = true, configureFileName = "template.html")
+  }
+
+  fun testThisQualifiedFieldCreation() {
+    doTest(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"),
+           dir = true, configureFileName = "template.html")
+  }
+
+  fun testQualifiedFieldCreation() {
+    doTest(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"),
+           dir = true, configureFileName = "template.html")
+  }
+
+  fun testBasicMethodCreation() {
+    doTest(JavaScriptBundle.message("javascript.create.method.intention.name", "foo"),
+           dir = true, configureFileName = "template.html")
+  }
+
+  fun testThisQualifiedMethodCreation() {
+    doTest(JavaScriptBundle.message("javascript.create.method.intention.name", "foo"),
+           dir = true, configureFileName = "template.html")
+  }
+
+  fun testQualifiedMethodCreation() {
+    doTest(JavaScriptBundle.message("javascript.create.method.intention.name", "foo"),
+           dir = true, configureFileName = "template.html")
+  }
+
+  fun testComputeConstantInTemplate() {
+    doTest(JSIntentionBundle.message("string.join-concatenated-string-literals.display-name"), extension = "html")
+  }
+
+  fun testFlipConditionalInTemplate() {
+    doTest(JSIntentionBundle.message("conditional.flip-conditional.display-name"), extension = "html")
+  }
+
+  fun testDeMorgansLawInTemplate() {
+    doTest(JSIntentionBundle.message("bool.de-morgans-law.display-name.ANDAND"), extension = "html")
+  }
+
+  override fun setUp() {
+    super.setUp()
+    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
+  }
+
+  private fun doTest(intentionName: String,
+                     vararg modules: WebFrameworkTestModule,
+                     dir: Boolean = false,
+                     extension: String = defaultExtension,
+                     configureFileName: String = "$testName.$extension",
+                     checkCodeCompletion: Boolean = false
+  ) {
+    doConfiguredTest(*modules, dir = dir,
+                     checkResult = true,
+                     configureFileName = configureFileName,
+                     configurators = listOf(Angular2TsConfigFile())
+    ) {
+      if (checkCodeCompletion)
+        TemplateManagerImpl.setTemplateTesting(testRootDisposable)
+      launchAction(findSingleIntention(intentionName))
+      if (checkCodeCompletion) {
+        checkListByFile(renderLookupItems(false, false),
+                        if (dir) "${testName}/items.txt" else "${testName}.items.txt", false)
+        type("\n")
+      }
+    }
+  }
+
+}
