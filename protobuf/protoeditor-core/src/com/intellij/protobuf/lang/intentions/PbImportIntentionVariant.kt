@@ -63,7 +63,7 @@ internal sealed class PbImportIntentionVariant {
 
   class AddImportStatementAndPathToSettings(importPathData: ImportPathData) : AddImportPathToSettings(importPathData) {
     override fun invokeAction(project: Project) {
-      val psiManager = project.service<PsiManager>()
+      val psiManager = PsiManager.getInstance(project)
       val (targetPsiFile, importedPsiFile) = runReadAction {
         val targetPsiFile = psiManager.findFile(importPathData.originalPbVirtualFile) ?: return@runReadAction null
         val importedPsiFile = psiManager.findFile(importPathData.importedPbVirtualFile) ?: return@runReadAction null

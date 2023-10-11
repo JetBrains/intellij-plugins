@@ -18,7 +18,7 @@ import java.util.Map;
 * to fix a case when user sets "c:\depot" in his client specification instead of "C:\depot" and
 * we don't want to convert to canonical path/file - for each path reported by P4
 */
-@Service
+@Service(Service.Level.PROJECT)
 public final class ClientRootsCache {
   private static final Logger LOG = Logger.getInstance(ClientRootsCache.class);
   private final Map<String, String> myRawToCanonical = new HashMap<>();

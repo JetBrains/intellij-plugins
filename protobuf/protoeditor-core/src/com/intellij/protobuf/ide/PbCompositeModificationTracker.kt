@@ -17,7 +17,7 @@ internal class PbCompositeModificationTracker(val project: Project) : Modificati
   companion object {
     @JvmStatic
     fun byElement(psiElement: PsiElement): PbCompositeModificationTracker {
-      return psiElement.project.service<PbCompositeModificationTracker>()
+      return getInstance(psiElement.project)
     }
 
     @JvmStatic

@@ -183,7 +183,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase<Element> implemen
     if (framework != null) {
       String name = framework.getAttributeValue(INSTANCE_ATTRIBUTE);
       if (name != null) {
-        ApplicationSettings settings = ApplicationManager.getApplication().getService(ApplicationSettings.class);
+        ApplicationSettings settings = ApplicationSettings.getInstance();
         instanceToUse = settings.getFrameworkInstance(name);
       }
     }

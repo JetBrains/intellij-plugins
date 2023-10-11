@@ -102,7 +102,7 @@ public final class PerforceManager  {
       }
     };
 
-    myClientRootsCache = project.getService(ClientRootsCache.class);
+    myClientRootsCache = ClientRootsCache.getClientRootsCache(project);
     myPerforceBaseInfoWorker = project.getService(PerforceBaseInfoWorker.class);
     if (ourTraceCalls) {
       myTracer = createTracer();

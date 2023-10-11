@@ -3,7 +3,7 @@ package org.angular2.cli
 
 import com.intellij.javascript.nodejs.packageJson.InstalledPackageVersion
 import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 
@@ -64,6 +64,6 @@ abstract class AngularCliSchematicsRegistryService {
 
     @JvmStatic
     val instance: AngularCliSchematicsRegistryService
-      get() = ApplicationManager.getApplication().getService(AngularCliSchematicsRegistryService::class.java)
+      get() = service<AngularCliSchematicsRegistryService>()
   }
 }
