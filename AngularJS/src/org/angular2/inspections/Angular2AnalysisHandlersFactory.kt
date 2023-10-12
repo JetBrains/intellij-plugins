@@ -95,10 +95,6 @@ class Angular2AnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
                                              @InspectionMessage message: String,
                                              isFunction: Boolean,
                                              inTypeContext: Boolean) {
-        if (referenceExpression is Angular2PipeReferenceExpression) {
-          Angular2FixesFactory.addUnresolvedDeclarationFixes(referenceExpression, quickFixes)
-          // todo reject core TS quickFixes
-        }
         super.reportUnresolvedReference(resolveResults, referenceExpression, quickFixes, message, isFunction, inTypeContext)
       }
 

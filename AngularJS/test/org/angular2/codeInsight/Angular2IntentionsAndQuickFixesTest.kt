@@ -2,6 +2,7 @@
 package org.angular2.codeInsight
 
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
+import com.intellij.ide.IdeBundle
 import com.intellij.javascript.web.WebFrameworkTestModule
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.webSymbols.checkListByFile
@@ -62,6 +63,10 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
   fun testNoCreateComponentOutputFromUsage() =
     checkNoIntention(Angular2Bundle.message("angular.quickfix.template.create-output.name", "emitter"),
                      ANGULAR_CORE_16_2_8)
+
+  fun testNoJSImportForPipe() =
+    checkNoIntention(IdeBundle.message("quickfix.text.insert.0", "\"import {async} from 'rxjs'\""),
+                     ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, RXJS_7_8_1)
 
   fun testBasicFieldCreation() {
     doTest(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"),

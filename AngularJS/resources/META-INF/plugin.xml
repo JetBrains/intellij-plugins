@@ -127,7 +127,8 @@
                     serviceImplementation="org.angular2.refactoring.extractComponent.Angular2CliComponentGeneratorImpl"
                     testServiceImplementation="org.angular2.codeInsight.refactoring.Angular2CliComponentGeneratorMockImpl"
     />
-    <platform.backend.documentation.psiTargetProvider implementation="org.angular2.codeInsight.documentation.Angular2ElementDocumentationTargetFactory"/>
+    <platform.backend.documentation.psiTargetProvider
+      implementation="org.angular2.codeInsight.documentation.Angular2ElementDocumentationTargetFactory"/>
 
     <!--suppress PluginXmlValidity -->
     <javascript.rename.extension implementation="org.angular2.refactoring.Angular2RenameExtension"/>
@@ -206,12 +207,17 @@
     <typedHandler implementation="org.angular2.editor.Angular2BracesInterpolationTypedHandler"/>
     <moveFileHandler implementation="org.angular2.refactoring.Angular2MoveFileHandler" order="first"/>
 
-    <liveTemplateContext contextId="Angular" implementation="org.angular2.liveTemplate.Angular2BaseLiveTemplateContextType" />
-    <liveTemplateContext contextId="ANGULAR_TOP_LEVEL_STATEMENT" baseContextId="Angular" implementation="com.intellij.lang.javascript.liveTemplates.typescript.TypeScriptTopLevelStatementContextType" />
-    <liveTemplateContext contextId="ANGULAR_EXPRESSION" baseContextId="Angular" implementation="com.intellij.lang.javascript.liveTemplates.typescript.TSExpressionContextType" />
-    <liveTemplateContext contextId="ANGULAR_CLASS" baseContextId="Angular" implementation="com.intellij.lang.javascript.liveTemplates.typescript.TSClassContextType" />
-    <liveTemplateContext contextId="ANGULAR_STATEMENT" baseContextId="Angular" implementation="com.intellij.lang.javascript.liveTemplates.typescript.TSStatementContextType" />
-    <liveTemplateContext contextId="ANGULAR_TEMPLATE" baseContextId="Angular" implementation="org.angular2.liveTemplate.Angular2TemplateContextType" />
+    <liveTemplateContext contextId="Angular" implementation="org.angular2.liveTemplate.Angular2BaseLiveTemplateContextType"/>
+    <liveTemplateContext contextId="ANGULAR_TOP_LEVEL_STATEMENT" baseContextId="Angular"
+                         implementation="com.intellij.lang.javascript.liveTemplates.typescript.TypeScriptTopLevelStatementContextType"/>
+    <liveTemplateContext contextId="ANGULAR_EXPRESSION" baseContextId="Angular"
+                         implementation="com.intellij.lang.javascript.liveTemplates.typescript.TSExpressionContextType"/>
+    <liveTemplateContext contextId="ANGULAR_CLASS" baseContextId="Angular"
+                         implementation="com.intellij.lang.javascript.liveTemplates.typescript.TSClassContextType"/>
+    <liveTemplateContext contextId="ANGULAR_STATEMENT" baseContextId="Angular"
+                         implementation="com.intellij.lang.javascript.liveTemplates.typescript.TSStatementContextType"/>
+    <liveTemplateContext contextId="ANGULAR_TEMPLATE" baseContextId="Angular"
+                         implementation="org.angular2.liveTemplate.Angular2TemplateContextType"/>
     <defaultLiveTemplates file="liveTemplates/Angular2"/>
 
     <!-- Angular 2 HTML template contributions -->
@@ -357,6 +363,8 @@
                                             implementationClass="org.angular2.codeInsight.Angular2LanguageConfigurableProvider"/>
     <handlersFactory language="Angular2" implementationClass="org.angular2.codeInsight.Angular2HandlersFactory"/>
     <importCandidatesFactory implementation="org.angular2.codeInsight.imports.Angular2GlobalImportCandidatesProvider$Factory"/>
+    <unresolvedReferenceErrorUpdater implementation="org.angular2.inspections.Angular2UnresolvedReferenceErrorUpdater"
+                                     order="last"/>
 
     <!-- Angular2 metadata JSON contributions -->
     <nodeModulesIndexableFileNamesProvider implementation="org.angular2.index.Angular2IndexableFileNamesProvider"/>
