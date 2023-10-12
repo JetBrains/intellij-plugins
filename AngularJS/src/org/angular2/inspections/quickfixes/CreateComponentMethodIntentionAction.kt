@@ -26,10 +26,10 @@ class CreateComponentMethodIntentionAction(methodExpression: JSReferenceExpressi
     doApplyFix(project, componentClass, componentClass.containingFile, null)
   }
 
-  override fun beforeStartTemplateAction(referenceExpression: JSReferenceExpression,
+  override fun beforeStartTemplateAction(referenceExpression: JSReferenceExpression?,
                                          editor: Editor,
                                          anchor: PsiElement,
-                                         isStaticContext: Boolean): JSReferenceExpression {
+                                         isStaticContext: Boolean): JSReferenceExpression? {
     return referenceExpression
   }
 
@@ -37,7 +37,7 @@ class CreateComponentMethodIntentionAction(methodExpression: JSReferenceExpressi
     return false
   }
 
-  override fun calculateAnchors(psiElement: PsiElement): Pair<JSReferenceExpression, PsiElement> {
+  override fun calculateAnchors(psiElement: PsiElement): Pair<JSReferenceExpression?, PsiElement?> {
     return Pair.create(myRefExpressionPointer.element, psiElement.lastChild)
   }
 

@@ -384,7 +384,7 @@ public class ActionScriptCreateClassOrInterfaceFix extends FixAndIntentionAction
       new CreateJSFunctionIntentionAction(jsClass.getName(), true, false) {
         @NotNull
         @Override
-        protected Pair<JSReferenceExpression, PsiElement> calculateAnchors(PsiElement psiElement1) {
+        protected Pair<JSReferenceExpression, PsiElement> calculateAnchors(@NotNull PsiElement psiElement1) {
           return Pair.create(((JSReferenceExpression)myContext), lbrace.getPsi());
         }
 

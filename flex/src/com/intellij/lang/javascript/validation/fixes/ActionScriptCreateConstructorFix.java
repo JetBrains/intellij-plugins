@@ -95,7 +95,7 @@ public final class ActionScriptCreateConstructorFix extends CreateJSFunctionInte
 
   @NotNull
   @Override
-  protected Pair<JSReferenceExpression, PsiElement> calculateAnchors(PsiElement psiElement) {
+  protected Pair<JSReferenceExpression, PsiElement> calculateAnchors(@NotNull PsiElement psiElement) {
     JSClass element = myClass.getElement();
     if (element == null) return Pair.create(null, null);
 
