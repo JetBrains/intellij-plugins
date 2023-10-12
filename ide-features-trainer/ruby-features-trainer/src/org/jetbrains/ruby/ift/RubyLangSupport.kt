@@ -5,6 +5,7 @@ import com.intellij.CommonBundle
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.options.ShowSettingsUtil
+import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootManager
@@ -15,7 +16,7 @@ import org.jetbrains.plugins.ruby.RBundle
 import org.jetbrains.plugins.ruby.ruby.RModuleUtil
 import org.jetbrains.plugins.ruby.ruby.sdk.RubySdkType
 import org.jetbrains.plugins.ruby.ruby.sdk.RubyVersionUtil
-import org.jetbrains.plugins.ruby.version.management.SdkRefresher
+import org.jetbrains.plugins.ruby.version.management.refreshAll
 import training.FeaturesTrainerIcons
 import training.lang.AbstractLangSupport
 import training.learn.LearnBundle
@@ -55,7 +56,9 @@ internal class RubyLangSupport : AbstractLangSupport() {
       super.getSdkForProject(project, selectedSdk)
     }
     catch (e: NoSdkException) {
-      SdkRefresher.refreshAll()
+      runBlockingCancellable {
+        refreshAll()
+      }
       try {
         super.getSdkForProject(project, selectedSdk)
       }
