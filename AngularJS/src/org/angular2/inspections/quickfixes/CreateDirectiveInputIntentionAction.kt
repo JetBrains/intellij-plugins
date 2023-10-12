@@ -2,17 +2,17 @@
 package org.angular2.inspections.quickfixes
 
 import com.intellij.codeInsight.template.Template
-import com.intellij.lang.javascript.JSStringUtil
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlAttribute
+import com.intellij.util.asSafely
 import org.angular2.Angular2DecoratorUtil.INPUT_DEC
+import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.Angular2LangUtil.ANGULAR_CORE_PACKAGE
-import org.angular2.lang.Angular2LangUtil.EVENT_EMITTER
 import org.angular2.lang.expr.psi.Angular2Binding
 
 class CreateDirectiveInputIntentionAction(xmlAttribute: XmlAttribute, referenceName: String)
@@ -32,7 +32,6 @@ class CreateDirectiveInputIntentionAction(xmlAttribute: XmlAttribute, referenceN
     addSemicolonSegment(template, anchorParent)
 
     Angular2FixesPsiUtil.insertJSImport(anchorParent, ANGULAR_CORE_PACKAGE, INPUT_DEC)
-    Angular2FixesPsiUtil.insertJSImport(anchorParent, ANGULAR_CORE_PACKAGE, EVENT_EMITTER)
   }
 
   override fun inferType(context: PsiElement?): JSType? =
@@ -41,4 +40,24 @@ class CreateDirectiveInputIntentionAction(xmlAttribute: XmlAttribute, referenceN
       else -> null
     }
 
+  override fun getTargetClasses(context: XmlAttribute): List<TypeScriptClass> {
+    // Add directive matching the property-related selector
+    val info = context.descriptor.asSafely<Angular2AttributeDescriptor>()?.info?.name
+    return if (info == null)
+      super.getTargetClasses(context)
+    else
+      super.getTargetClasses(context)
+        .asSequence()
+        .plus(
+          context.parent?.descriptor?.getAttributeDescriptor(
+            info,
+            context.parent)
+            ?.asSafely<Angular2AttributeDescriptor>()
+            ?.sourceDirectives
+            ?.mapNotNull { it.typeScriptClass }
+          ?: emptyList()
+        )
+        .distinct()
+        .toList()
+  }
 }

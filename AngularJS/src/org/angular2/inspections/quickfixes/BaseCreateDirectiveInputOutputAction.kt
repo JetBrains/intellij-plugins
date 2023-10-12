@@ -2,31 +2,30 @@
 package org.angular2.inspections.quickfixes
 
 import com.intellij.codeInsight.intention.PriorityAction
+import com.intellij.codeInsight.navigation.PsiTargetNavigator
+import com.intellij.codeInsight.navigation.TargetUpdaterTask
 import com.intellij.codeInsight.navigation.hidePopupIfDumbModeStarts
 import com.intellij.codeInsight.template.Template
 import com.intellij.codeInsight.template.impl.ConstantNode
 import com.intellij.lang.javascript.JSStringUtil
-import com.intellij.lang.javascript.ecmascript6.ES6QualifiedNamedElementRenderer
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.JSType
-import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.util.JSProjectUtil
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.ex.util.EditorUtil
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.search.PsiElementProcessor
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.tags.Angular2ElementDescriptor
 import org.angular2.lang.Angular2Bundle
-import java.util.function.Consumer
 
 abstract class BaseCreateDirectiveInputOutputAction(context: PsiElement, fieldName: String?) : BaseCreateComponentFieldAction(fieldName) {
 
@@ -43,6 +42,7 @@ abstract class BaseCreateDirectiveInputOutputAction(context: PsiElement, fieldNa
       val targetClasses = getTargetClasses(psiElement).ifEmpty { return }
       choose(project, editor, targetClasses) {
         doApplyFix(project, it, it.containingFile, null)
+        false
       }
     }
     else {
@@ -84,7 +84,7 @@ abstract class BaseCreateDirectiveInputOutputAction(context: PsiElement, fieldNa
 
   abstract fun inferType(context: PsiElement?): JSType?
 
-  private fun getTargetClasses(context: XmlAttribute): List<TypeScriptClass> =
+  protected open fun getTargetClasses(context: XmlAttribute): List<TypeScriptClass> =
     context.parent.attributes
       .asSequence()
       .flatMap { it.descriptor.asSafely<Angular2AttributeDescriptor>()?.sourceDirectives ?: emptyList() }
@@ -94,21 +94,25 @@ abstract class BaseCreateDirectiveInputOutputAction(context: PsiElement, fieldNa
       .distinct()
       .toList()
 
-  private fun choose(project: Project, editor: Editor?, targetClasses: List<TypeScriptClass>, processor: Consumer<TypeScriptClass>) =
-    JBPopupFactory.getInstance()
-      .createPopupChooserBuilder(targetClasses)
-      .setFont(EditorUtil.getEditorFont())
-      .setRenderer(ES6QualifiedNamedElementRenderer<TypeScriptClass>())
-      .setNamerForFiltering { el: TypeScriptClass -> el.name }
-      .withHintUpdateSupply()
-      .setTitle(Angular2Bundle.message("angular.quickfix.template.popup.choose-target-class"))
-      .setItemChosenCallback { processor.accept(it) }
-      .createPopup()
-      .also {
-        hidePopupIfDumbModeStarts(it, project)
-        if (editor != null) it.showInBestPositionFor(editor)
-      }
-
+  private fun choose(project: Project,
+                     editor: Editor?,
+                     targetClasses: List<TypeScriptClass>,
+                     processor: PsiElementProcessor<TypeScriptClass>) {
+    if (ApplicationManager.getApplication().isUnitTestMode()) {
+      if (targetClasses.size == 1) processor.execute(targetClasses[0]) else throw RuntimeException("Multiple choices")
+    }
+    else
+      PsiTargetNavigator(targetClasses)
+        // Just to avoid assertion errors in case of a single element to choose
+        .updater(object : TargetUpdaterTask(project, Angular2Bundle.message("angular.description.unnamed")) {
+          override fun getCaption(size: Int): String? = null
+        })
+        .createPopup(project, Angular2Bundle.message("angular.quickfix.template.popup.choose-target-class"), processor)
+        .also {
+          hidePopupIfDumbModeStarts(it, project)
+          if (editor != null) it.showInBestPositionFor(editor)
+        }
+  }
 
 
 }

@@ -110,6 +110,29 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
     doTest(JSIntentionBundle.message("bool.de-morgans-law.display-name.ANDAND"), extension = "html")
   }
 
+  fun testCreateComponentInputBasic() =
+    doTest(Angular2Bundle.message("angular.quickfix.template.create-input.name", "foo"), ANGULAR_CORE_16_2_8)
+
+  fun testCreateDirectiveInputAsSelector() =
+    doTest(Angular2Bundle.message("angular.quickfix.template.create-input.name", "test"), ANGULAR_CORE_16_2_8)
+
+  fun testCreateDirectiveInputWithDash() =
+    doTest(Angular2Bundle.message("angular.quickfix.template.create-input.name", "foo-bar"), ANGULAR_CORE_16_2_8)
+
+  fun testNoCreateLibDirectiveInput() =
+    checkNoIntention(Angular2Bundle.message("angular.quickfix.template.create-input.name", "foo"),
+                     ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, ANGULAR_CDK_14_2_0)
+
+  fun testCreateDirectiveOutputBasic() =
+    doTest(Angular2Bundle.message("angular.quickfix.template.create-output.name", "foo"), ANGULAR_CORE_16_2_8)
+
+  fun testCreateDirectiveOutputWithDash() =
+    doTest(Angular2Bundle.message("angular.quickfix.template.create-output.name", "foo-bar"), ANGULAR_CORE_16_2_8)
+
+  fun testNoCreateLibDirectiveOutput() =
+    checkNoIntention(Angular2Bundle.message("angular.quickfix.template.create-input.name", "foo"),
+                     ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, ANGULAR_CDK_14_2_0)
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
