@@ -26,6 +26,11 @@ public final class PostCssLanguage extends Language implements CssLanguageProper
   }
 
   @Override
+  public @NotNull String getPropertyNameValueSeparator() {
+    return CssConstants.COLON;
+  }
+
+  @Override
   public boolean isIndentBased() {
     return false;
   }
