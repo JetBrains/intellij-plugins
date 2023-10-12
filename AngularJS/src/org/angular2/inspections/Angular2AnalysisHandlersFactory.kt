@@ -116,7 +116,7 @@ class Angular2AnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
                 ?.takeIf { it.argumentSize == 1 }
                 ?.let { callExpression ->
                   referenceExpression.referenceName?.let {
-                    quickFixes.add(CreateComponentOutputIntentionAction(callExpression, it))
+                    quickFixes.add(CreateDirectiveOutputIntentionAction(callExpression, it))
                   }
                 }
             }

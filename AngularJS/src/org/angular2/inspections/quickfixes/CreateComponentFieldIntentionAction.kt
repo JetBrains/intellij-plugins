@@ -15,34 +15,12 @@ import com.intellij.refactoring.suggested.createSmartPointer
 import org.angular2.entities.Angular2ComponentLocator
 
 class CreateComponentFieldIntentionAction(referenceExpression: JSReferenceExpression)
-  : CreateJSVariableIntentionAction(referenceExpression.referenceName, true, false, false) {
+  : BaseCreateComponentFieldAction(referenceExpression.referenceName) {
 
   private val myRefExpressionPointer: SmartPsiElementPointer<JSReferenceExpression> = referenceExpression.createSmartPointer()
 
-  override fun applyFix(project: Project, psiElement: PsiElement, file: PsiFile, editor: Editor?) {
-    val componentClass = Angular2ComponentLocator.findComponentClass(psiElement)!!
-    doApplyFix(project, componentClass, componentClass.containingFile, null)
-  }
-
-  override fun beforeStartTemplateAction(referenceExpression: JSReferenceExpression,
-                                         editor: Editor,
-                                         anchor: PsiElement,
-                                         isStaticContext: Boolean): JSReferenceExpression {
-    return referenceExpression
-  }
-
-  override fun skipParentIfClass(): Boolean {
-    return false
-  }
-
-  override fun calculateAnchors(psiElement: PsiElement): Pair<JSReferenceExpression, PsiElement> {
+  override fun calculateAnchors(psiElement: PsiElement): Pair<JSReferenceExpression?, PsiElement?> {
     return Pair.create(myRefExpressionPointer.element, psiElement.lastChild)
   }
 
-  override fun addAccessModifier(template: Template,
-                                 referenceExpression: JSReferenceExpression,
-                                 staticContext: Boolean,
-                                 targetClass: JSClass) {
-    Angular2FixesTemplateUtil.addClassMemberModifiers(template, staticContext, targetClass)
-  }
 }

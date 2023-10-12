@@ -19,6 +19,8 @@ import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.Companion.isTemplateTag
 import org.angular2.entities.Angular2Directive
 import org.angular2.inspections.quickfixes.Angular2FixesFactory
+import org.angular2.inspections.quickfixes.CreateDirectiveInputIntentionAction
+import org.angular2.inspections.quickfixes.CreateDirectiveOutputIntentionAction
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.Angular2Bundle.Companion.BUNDLE
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
@@ -76,12 +78,14 @@ class AngularUndefinedBindingInspection : AngularHtmlLikeTemplateLocalInspection
     @PropertyKey(resourceBundle = BUNDLE)
     val messageKey: String = when (info.type) {
       EVENT -> {
+        quickFixes.add(CreateDirectiveOutputIntentionAction(attribute, info.name))
         if (templateTag)
           "angular.inspection.undefined-binding.message.embedded.event-not-emitted"
         else
           "angular.inspection.undefined-binding.message.event-not-emitted"
       }
       PROPERTY_BINDING -> {
+        quickFixes.add(CreateDirectiveInputIntentionAction(attribute, info.name))
         if (templateTag)
           "angular.inspection.undefined-binding.message.embedded.property-not-provided"
         else

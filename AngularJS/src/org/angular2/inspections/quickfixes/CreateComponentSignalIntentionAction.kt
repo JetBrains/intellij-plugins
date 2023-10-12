@@ -23,14 +23,9 @@ import org.angular2.lang.Angular2Bundle
 import org.angular2.signals.Angular2SignalUtils
 
 class CreateComponentSignalIntentionAction(methodExpression: JSReferenceExpression)
-  : CreateJSVariableIntentionAction(methodExpression.referenceName, true, false, false) {
+  : BaseCreateComponentFieldAction(methodExpression.referenceName) {
 
   private val myRefExpressionPointer: SmartPsiElementPointer<JSReferenceExpression> = methodExpression.createSmartPointer()
-
-  override fun applyFix(project: Project, psiElement: PsiElement, file: PsiFile, editor: Editor?) {
-    val componentClass = Angular2ComponentLocator.findComponentClass(psiElement)!!
-    doApplyFix(project, componentClass, componentClass.containingFile, null)
-  }
 
   override fun getName(): String {
     return Angular2Bundle.message("angular.quickfix.template.create-signal.name", myReferencedName)
@@ -40,26 +35,8 @@ class CreateComponentSignalIntentionAction(methodExpression: JSReferenceExpressi
     return PriorityAction.Priority.TOP
   }
 
-  override fun beforeStartTemplateAction(referenceExpression: JSReferenceExpression,
-                                         editor: Editor,
-                                         anchor: PsiElement,
-                                         isStaticContext: Boolean): JSReferenceExpression {
-    return referenceExpression
-  }
-
-  override fun skipParentIfClass(): Boolean {
-    return false
-  }
-
-  override fun calculateAnchors(psiElement: PsiElement): Pair<JSReferenceExpression, PsiElement> {
+  override fun calculateAnchors(psiElement: PsiElement): Pair<JSReferenceExpression?, PsiElement?> {
     return Pair.create(myRefExpressionPointer.element, psiElement.lastChild)
-  }
-
-  override fun addAccessModifier(template: Template,
-                                 referenceExpression: JSReferenceExpression,
-                                 staticContext: Boolean,
-                                 targetClass: JSClass) {
-    addClassMemberModifiers(template, staticContext, targetClass)
   }
 
   override fun buildTemplate(template: Template,
