@@ -19,7 +19,7 @@ class AstroReferencesSearch : QueryExecutorBase<PsiReference, SearchParameters>(
     val effectiveSearchScope = queryParameters.effectiveSearchScope
 
     if (effectiveSearchScope !is LocalSearchScope) return
-    effectiveSearchScope.scope.forEach {
+    effectiveSearchScope.scope.filterIsInstance<AstroContentRoot>().forEach {
       queryParameters.optimizer.searchWord(identifier, LocalSearchScope(it.containingFile), UsageSearchContext.IN_CODE, true, element,
                                            AstroSearchProcessor(queryParameters))
     }
