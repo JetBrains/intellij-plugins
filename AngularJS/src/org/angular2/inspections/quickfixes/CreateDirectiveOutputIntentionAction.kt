@@ -7,12 +7,14 @@ import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory
 import com.intellij.lang.javascript.psi.types.JSTypeSource
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.SmartList
 import com.intellij.util.asSafely
-import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2DecoratorUtil.OUTPUT_DEC
 import org.angular2.codeInsight.template.Angular2StandardSymbolsScopesProvider
 import org.angular2.lang.Angular2Bundle
@@ -23,9 +25,13 @@ import org.angular2.lang.expr.psi.Angular2Action
 class CreateDirectiveOutputIntentionAction
   : BaseCreateDirectiveInputOutputAction {
 
-  constructor(emitCallExpression: JSCallExpression, referenceName: String) : super(emitCallExpression, referenceName)
+  constructor(reference: JSReferenceExpression, referenceName: String) : super(reference, referenceName)
 
   constructor(xmlAttribute: XmlAttribute, referenceName: String) : super(xmlAttribute, referenceName)
+
+  override fun isAvailable(project: Project?, element: PsiElement?, editor: Editor?, file: PsiFile?): Boolean =
+    (element !is JSReferenceExpression || findEmitCallExpression(element) != null)
+    && super.isAvailable(project, element, editor, file)
 
   override fun getName(): String {
     return Angular2Bundle.message("angular.quickfix.template.create-output.name", myReferencedName)
@@ -53,7 +59,8 @@ class CreateDirectiveOutputIntentionAction
 
   override fun inferType(context: PsiElement?): JSType? =
     when (context) {
-      is JSCallExpression -> context.arguments.getOrNull(0)
+      is JSReferenceExpression -> findEmitCallExpression(context)
+        ?.arguments?.getOrNull(0)
         ?.let { JSResolveUtil.getElementJSType(it) }
       is XmlAttribute -> SmartList<JSType>().also { result ->
         Angular2Action.get(context)?.acceptChildren(object : JSRecursiveWalkingElementVisitor() {
@@ -69,4 +76,11 @@ class CreateDirectiveOutputIntentionAction
       }.let { JSCompositeTypeFactory.createIntersectionType(it, JSTypeSource.EMPTY_TS_EXPLICITLY_DECLARED) }
       else -> null
     }
+
+  private fun findEmitCallExpression(reference: JSReferenceExpression): JSCallExpression? =
+    reference
+      .parent.asSafely<JSReferenceExpression>()
+      ?.takeIf { it.referenceName == "emit" }
+      ?.parent?.asSafely<JSCallExpression>()
+      ?.takeIf { it.argumentSize == 1 }
 }

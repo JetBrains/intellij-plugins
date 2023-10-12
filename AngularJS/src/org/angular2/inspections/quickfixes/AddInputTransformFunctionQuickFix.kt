@@ -4,14 +4,13 @@ package org.angular2.inspections.quickfixes
 import com.intellij.codeInsight.daemon.impl.quickfix.EmptyExpression
 import com.intellij.codeInsight.intention.PriorityAction
 import com.intellij.codeInsight.template.TemplateManager
-import com.intellij.codeInsight.template.impl.MacroCallNode
 import com.intellij.codeInsight.template.impl.TextExpression
-import com.intellij.codeInsight.template.macro.CompleteMacro
 import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement
 import com.intellij.javascript.web.js.WebJSResolveUtil
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.util.JSProjectUtil
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
@@ -42,6 +41,9 @@ class AddInputTransformFunctionQuickFix(private val kind: TransformKind,
     else
       Angular2Bundle.message("angular.quickfix.template.create-input-transformer.std.name", StringUtil.decapitalize(kind.name))
 
+  override fun isAvailable(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement): Boolean =
+    !JSProjectUtil.isInLibrary(startElement)
+
   override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
     val input = Angular2EntitiesProvider.getDirective(startElement as? TypeScriptClass)
                   ?.inputs
@@ -66,7 +68,7 @@ class AddInputTransformFunctionQuickFix(private val kind: TransformKind,
           .createTemplate("ng_insert_input_transform", "angular", "(value: \$TYPE0\$): \$TYPE1\$ => \$END$")
         template.addVariable("TYPE0", TextExpression(expressionType), TextExpression(expressionType), true, true)
         val inputType = input.rawJsType?.substitute()?.getTypeText(JSType.TypeTextFormat.CODE)
-        template.addVariable("TYPE1", TextExpression(inputType), TextExpression(inputType),true, true)
+        template.addVariable("TYPE1", TextExpression(inputType), TextExpression(inputType), true, true)
         template.addVariable("END", EmptyExpression(), true)
         template.setToReformat(true)
         TemplateManager.getInstance(project).startTemplate(componentEditor, template)

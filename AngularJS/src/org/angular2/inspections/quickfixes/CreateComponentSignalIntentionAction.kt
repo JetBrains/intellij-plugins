@@ -7,18 +7,16 @@ import com.intellij.codeInsight.template.Result
 import com.intellij.codeInsight.template.Template
 import com.intellij.codeInsight.template.impl.ConstantNode
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil
+import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
-import com.intellij.lang.javascript.psi.ecmal4.JSClass
-import com.intellij.lang.javascript.validation.fixes.CreateJSVariableIntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.SmartPsiElementPointer
+import com.intellij.psi.util.parentOfType
 import com.intellij.refactoring.suggested.createSmartPointer
-import org.angular2.entities.Angular2ComponentLocator
-import org.angular2.inspections.quickfixes.Angular2FixesTemplateUtil.addClassMemberModifiers
 import org.angular2.lang.Angular2Bundle
 import org.angular2.signals.Angular2SignalUtils
 
@@ -26,6 +24,10 @@ class CreateComponentSignalIntentionAction(methodExpression: JSReferenceExpressi
   : BaseCreateComponentFieldAction(methodExpression.referenceName) {
 
   private val myRefExpressionPointer: SmartPsiElementPointer<JSReferenceExpression> = methodExpression.createSmartPointer()
+
+  override fun isAvailable(project: Project?, element: PsiElement?, editor: Editor?, file: PsiFile?): Boolean =
+    myRefExpressionPointer.dereference()?.parentOfType<JSCallExpression>()?.argumentSize == 0
+    && super.isAvailable(project, element, editor, file)
 
   override fun getName(): String {
     return Angular2Bundle.message("angular.quickfix.template.create-signal.name", myReferencedName)

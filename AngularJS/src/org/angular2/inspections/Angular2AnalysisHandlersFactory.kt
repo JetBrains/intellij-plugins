@@ -68,8 +68,7 @@ class Angular2AnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
           val componentClass = Angular2ComponentLocator.findComponentClass(methodExpression)
           if (componentClass != null && methodExpression.referenceName != null) {
             quickFixes.add(CreateComponentMethodIntentionAction(methodExpression))
-            if (Angular2SignalUtils.supportsSignals(componentClass)
-                && methodExpression.parentOfType<JSCallExpression>()?.argumentSize == 0) {
+            if (Angular2SignalUtils.supportsSignals(componentClass)) {
               quickFixes.add(CreateComponentSignalIntentionAction(methodExpression))
             }
           }
@@ -109,16 +108,7 @@ class Angular2AnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
           if (componentClass != null && referenceExpression.referenceName != null) {
             quickFixes.add(CreateComponentFieldIntentionAction(referenceExpression))
             if (referenceExpression.parentOfType<Angular2EmbeddedExpression>() is Angular2Action) {
-              referenceExpression
-                .parent.asSafely<JSReferenceExpression>()
-                ?.takeIf { it.referenceName == "emit" }
-                ?.parent?.asSafely<JSCallExpression>()
-                ?.takeIf { it.argumentSize == 1 }
-                ?.let { callExpression ->
-                  referenceExpression.referenceName?.let {
-                    quickFixes.add(CreateDirectiveOutputIntentionAction(callExpression, it))
-                  }
-                }
+              quickFixes.add(CreateDirectiveOutputIntentionAction(referenceExpression, referenceExpression.referenceName!!))
             }
           }
           return inTypeContext
