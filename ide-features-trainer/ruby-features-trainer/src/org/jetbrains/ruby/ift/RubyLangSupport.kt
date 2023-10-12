@@ -5,7 +5,6 @@ import com.intellij.CommonBundle
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.options.ShowSettingsUtil
-import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootManager
@@ -56,9 +55,7 @@ internal class RubyLangSupport : AbstractLangSupport() {
       super.getSdkForProject(project, selectedSdk)
     }
     catch (e: NoSdkException) {
-      runBlockingCancellable {
-        refreshAll()
-      }
+      refreshAll()
       try {
         super.getSdkForProject(project, selectedSdk)
       }
