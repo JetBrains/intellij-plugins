@@ -57,10 +57,7 @@ import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.VueModelProximityVisitor
 import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.model.source.MODEL_LOCAL_PROP
-import org.jetbrains.vuejs.model.source.PROPS_DEFAULT_PROP
-import org.jetbrains.vuejs.model.source.PROPS_REQUIRED_PROP
-import org.jetbrains.vuejs.model.source.PROPS_TYPE_PROP
+import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.types.asCompleteType
 import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
 import java.util.*
@@ -333,10 +330,13 @@ private fun getPropTypeFromConstructor(expression: JSExpression): JSType {
                            JSTypeSourceFactory.createTypeSource(expression.containingFile, false))
 }
 
-private val PROPS_CONTAINER_TYPES = setOf("PropType", "PropOptions", "Prop")
+fun getPropTypeFromGenericType(jsType: JSType?): JSType? {
+  val propType = when (jsType) {
+    is JSRecordType -> jsType.findPropertySignature(PROPS_TYPE_PROP)?.jsType
+    else -> jsType
+  }
 
-fun getPropTypeFromGenericType(jsType: JSType?): JSType? =
-  jsType
+  return propType
     ?.asSafely<JSGenericTypeImpl>()
     ?.takeIf {
       when (val innerType = it.type) {
@@ -347,6 +347,7 @@ fun getPropTypeFromGenericType(jsType: JSType?): JSType? =
     }
     ?.arguments?.getOrNull(0)
     ?.asCompleteType()
+}
 
 fun getRequiredFromPropOptions(expression: JSExpression?): Boolean =
   getBooleanFromPropOptions(expression, PROPS_REQUIRED_PROP)

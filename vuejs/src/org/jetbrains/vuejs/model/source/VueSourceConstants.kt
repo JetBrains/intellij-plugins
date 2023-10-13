@@ -54,3 +54,9 @@ const val INSTANCE_SLOTS_PROP = "\$slots"
 const val INSTANCE_EMIT_METHOD = "\$emit"
 const val INSTANCE_DATA_PROP = "\$data"
 const val INSTANCE_OPTIONS_PROP = "\$options"
+
+const val TYPENAME_PROP_TYPE = "PropType"
+const val TYPENAME_PROP_OPTIONS = "PropOptions"
+const val TYPENAME_PROP = "Prop"
+
+val PROPS_CONTAINER_TYPES = setOf(TYPENAME_PROP_TYPE, TYPENAME_PROP_OPTIONS, TYPENAME_PROP)

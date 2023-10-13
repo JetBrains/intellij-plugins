@@ -16,6 +16,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.impl.JSCallExpressionImpl
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
+import com.intellij.lang.javascript.psi.jsdoc.JSDocComment
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData
@@ -23,6 +24,7 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
+import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.psi.util.stubSafeGetAttribute
 import com.intellij.openapi.util.Condition
@@ -603,6 +605,30 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     }
 
     return super.useMoreAccurateTypes(element)
+  }
+
+  override fun adjustTypeFromJSDoc(definition: PsiElement, comment: JSDocComment?, type: String?): String? {
+    if (type == null || !type.contains(TYPENAME_PROP_TYPE)) return type
+
+    if (definition is JSImplicitElement) {
+      val jsType = definition.jsType
+      if (jsType != null) {
+        return jsType.getTypeText(JSType.TypeTextFormat.CODE)
+      }
+    }
+
+    if (definition is JSProperty && definition.initializerOrStub is JSObjectLiteralExpression) {
+      val jsType = JSTypeParser.createTypeFromJSDoc(definition.getProject(), type, JSTypeSource.EMPTY) as? JSGenericTypeImpl
+      if (jsType != null) {
+        val namedType = jsType.type
+        if ((namedType is JSImportType && namedType.qualifiedName.name == TYPENAME_PROP_TYPE) ||
+            (namedType is JSTypeImpl && JSNamedType.isNamedTypeWithName(namedType, TYPENAME_PROP_TYPE))) {
+          return String.format("{type: %s}", jsType.getTypeText(JSType.TypeTextFormat.CODE))
+        }
+      }
+    }
+
+    return type
   }
 }
 
