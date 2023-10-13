@@ -11,11 +11,11 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.application.ex.ApplicationInfoEx
 import com.intellij.openapi.components.service
-import com.intellij.openapi.progress.withBackgroundProgress
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.wm.ToolWindowManager.Companion.getInstance
+import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.jetbrains.lang.dart.DartBundle
 import com.jetbrains.lang.dart.sdk.DartSdk
 import kotlinx.coroutines.launch
