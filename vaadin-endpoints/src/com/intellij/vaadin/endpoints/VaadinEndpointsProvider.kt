@@ -30,7 +30,7 @@ internal class VaadinEndpointsProvider : EndpointsProvider<VaadinRoute, VaadinRo
     if (filter !is ModuleEndpointsFilter) return emptyList()
     if (!hasVaadinFlow(filter.module)) return emptyList()
 
-    return findVaadinRoutes(project, filter.searchScope)
+    return findVaadinRoutes(project, filter.transitiveSearchScope)
   }
 
   override fun getEndpoints(group: VaadinRoute): Iterable<VaadinRoute> {
