@@ -235,6 +235,8 @@ class VueCodeModelSymbolsScope<K> private constructor(private val container: Vue
     else emptyList()
 
   private fun symbolLocationFromPropertySignature(property: TypeScriptPropertySignature, kind: SymbolKind): WebTypesSymbolLocation? {
+    if (!property.isValid) return null
+
     // TypeScript GlobalComponents definition
     val symbolName = property.memberName.takeIf { it.isNotEmpty() }
                      ?: return null
