@@ -374,10 +374,10 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
           when (bindingExpression) {
             null -> when {
               attrValue != null -> JSStringLiteralTypeImpl(attrValue, true, elementTypeSource)
-              isBindingPresent -> JSUndefinedType(elementTypeSource)
+              isBindingPresent -> JSNamedTypeFactory.createUndefinedType(elementTypeSource)
               else -> JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS)
             }
-            is JSEmptyExpression -> JSUndefinedType(elementTypeSource)
+            is JSEmptyExpression -> JSNamedTypeFactory.createUndefinedType(elementTypeSource)
             else -> typeFactory.evaluate(bindingExpression)
           }
         }

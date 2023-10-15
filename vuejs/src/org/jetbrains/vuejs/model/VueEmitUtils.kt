@@ -42,7 +42,7 @@ fun createEmitEventParam(name: String, source: JSTypeSource) =
   createEmitEventParam(JSStringLiteralTypeImpl(name, false, source))
 
 fun createEmitEventParam(source: JSTypeSource) =
-  createEmitEventParam(JSStringType(true, source, JSTypeContext.INSTANCE))
+  createEmitEventParam(JSNamedTypeFactory.createStringPrimitiveType(source))
 
 fun createEmitEventParam(type: JSType) =
   JSParameterTypeDecoratorImpl(EMIT_METHOD_EVENT_PARAM, type, false, false, true)

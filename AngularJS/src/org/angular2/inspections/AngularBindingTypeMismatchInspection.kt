@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.javascript.webSymbols.jsType
 import com.intellij.lang.javascript.psi.JSEmptyExpression
+import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.lang.javascript.psi.types.primitives.JSUndefinedType
@@ -65,7 +66,7 @@ class AngularBindingTypeMismatchInspection : AngularHtmlLikeTemplateLocalInspect
     val valueType = if (value != null)
       JSStringLiteralTypeImpl(value, true, JSTypeSource.EMPTY_TS_EXPLICITLY_DECLARED)
     else
-      JSUndefinedType(JSTypeSource.EMPTY_TS_EXPLICITLY_DECLARED)
+      JSNamedTypeFactory.createUndefinedType(JSTypeSource.EMPTY_TS_EXPLICITLY_DECLARED)
     val symbolType = bindingsTypeResolver.substituteType(
       descriptor.sourceDirectives.firstOrNull(),
       descriptor.symbol.jsType

@@ -78,7 +78,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : WebSymbolsScopeWithCache<XmlT
     const val PROP_DELEGATE_PRIORITY = "ng-delegate-priority"
 
     private val ONE_TIME_BINDING_EXCLUDES = listOf(Angular2AttributeValueProvider.NG_CLASS_ATTR)
-    private val STRING_TYPE: JSType = JSStringType(true, JSTypeSource.EXPLICITLY_DECLARED, JSTypeContext.INSTANCE)
+    private val STRING_TYPE: JSType = JSStringType.STRING_EMPTY_EXPLICIT_TYPE
 
     @JvmStatic
     fun isOneTimeBindingProperty(property: WebSymbol): Boolean {

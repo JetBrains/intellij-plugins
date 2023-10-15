@@ -28,7 +28,7 @@ class CssModuleType private constructor(val container: PsiElement, source: JSTyp
     stylesheet.rulesets.forEach {
       processSelectors(it, allClasses)
     }
-    val propertyType = JSStringType(true, JSTypeSource.EXPLICITLY_DECLARED, JSTypeContext.INSTANCE)
+    val propertyType = JSStringType.STRING_EMPTY_EXPLICIT_TYPE
 
     return JSRecordTypeImpl(source, allClasses.entrySet().map { (name, sources) ->
       val source = JSRecordMemberSourceFactory.createSource(
