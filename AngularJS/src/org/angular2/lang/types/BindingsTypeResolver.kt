@@ -12,7 +12,7 @@ import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory.createIntersectionType
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory.createUnionType
 import com.intellij.lang.javascript.psi.types.JSTypeSubstitutor.EMPTY
-import com.intellij.lang.javascript.psi.types.JSTypeSubstitutor.JSTypeGenericId
+import com.intellij.lang.javascript.psi.types.JSTypeGenericId
 import com.intellij.lang.javascript.psi.types.JSUnionOrIntersectionType.OptimizedKind
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyCallType
 import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations
