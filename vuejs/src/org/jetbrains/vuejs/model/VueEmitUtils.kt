@@ -5,8 +5,6 @@ import com.intellij.lang.javascript.psi.JSFunctionType
 import com.intellij.lang.javascript.psi.JSParameterTypeDecorator
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.types.*
-import com.intellij.lang.javascript.psi.types.primitives.JSStringType
-import com.intellij.lang.javascript.psi.types.primitives.JSVoidType
 
 const val EMIT_METHOD_EVENT_PARAM = "event"
 const val EMIT_METHOD_REST_PARAM = "args"
@@ -32,11 +30,12 @@ private fun VueEmitCall.createFunctionType(addEventType: Boolean): JSFunctionTyp
   else if (!hasStrictSignature) {
     signatureParameters.add(createEmitRestParam(typeSource))
   }
-  return TypeScriptJSFunctionTypeImpl(typeSource, emptyList(), signatureParameters, null, JSVoidType(typeSource))
+  return TypeScriptJSFunctionTypeImpl(typeSource, emptyList(), signatureParameters, null, JSNamedTypeFactory.createVoidType(typeSource))
 }
 
 fun createDefaultEmitCallSignature(source: JSTypeSource): JSFunctionType =
-  TypeScriptJSFunctionTypeImpl(source, emptyList(), listOf(createEmitEventParam(source), createEmitRestParam(source)), null, JSVoidType(source))
+  TypeScriptJSFunctionTypeImpl(source, emptyList(), listOf(createEmitEventParam(source), createEmitRestParam(source)), null,
+                               JSNamedTypeFactory.createVoidType(source))
 
 fun createEmitEventParam(name: String, source: JSTypeSource) =
   createEmitEventParam(JSStringLiteralTypeImpl(name, false, source))
