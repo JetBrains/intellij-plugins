@@ -161,6 +161,12 @@
                 enabledByDefault="true"
                 level="ERROR"
                 implementationClass="com.intellij.dts.inspections.DtsPHandleWhitespaceInspection"/>
+        <localInspection
+                language="DTS"
+                bundle="messages.DtsBundle" key="inspections.undeclared_property.display_name" groupKey="inspections.group"
+                enabledByDefault="true"
+                level="ERROR"
+                implementationClass="com.intellij.dts.inspections.DtsUndeclaredPropertyInspection"/>
 
         <!-- registry keys -->
         <registryKey

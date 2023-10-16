@@ -1,0 +1,14 @@
+/ {
+    controller {
+        compatible = "espressif,esp32-pinctrl";
+
+        child1 {
+            <error descr="Property is not declared in binding">undeclared</error>;
+        };
+
+        child2 {
+            compatible = "unknown";
+            undeclared;
+        };
+    };
+};

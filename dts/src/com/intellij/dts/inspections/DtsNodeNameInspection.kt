@@ -17,7 +17,7 @@ class DtsNodeNameInspection : LocalInspectionTool() {
 
         val invalidName = firstNotMatching(name, rx) {
             holder.registerError(
-                node.dtsNameElement,
+                node,
                 bundleKey = "inspections.node_name.bad_char",
                 bundleParam = it,
             )
@@ -26,7 +26,7 @@ class DtsNodeNameInspection : LocalInspectionTool() {
 
         if (name.count { it == '@' } > 1) {
             holder.registerError(
-                node.dtsNameElement,
+                node,
                 bundleKey = "inspections.node_name.multiple_at",
             )
         }

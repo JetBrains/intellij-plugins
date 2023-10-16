@@ -2,8 +2,8 @@ package com.intellij.dts.inspections
 
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemsHolder
-import com.intellij.dts.DtsBundle
-import com.intellij.dts.lang.psi.*
+import com.intellij.dts.lang.psi.DtsContainer
+import com.intellij.dts.lang.psi.dtsVisitor
 import com.intellij.psi.util.PsiTreeUtil
 
 class DtsStatementOrderInspection : LocalInspectionTool() {
@@ -30,9 +30,9 @@ class DtsStatementOrderInspection : LocalInspectionTool() {
             }
 
             if (kind.isProperty() && nodeDefinition) {
-                holder.registerProblem(
-                    statement.getDtsAnnotationTarget(),
-                    DtsBundle.message("inspections.statement_order.message"),
+                holder.registerError(
+                    statement,
+                    bundleKey = "inspections.statement_order.message",
                 )
 
                 return

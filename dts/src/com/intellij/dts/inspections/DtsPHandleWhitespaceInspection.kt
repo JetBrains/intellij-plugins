@@ -29,7 +29,7 @@ class DtsPHandleWhitespaceInspection : LocalInspectionTool() {
         for (child in childWhitespace(pHandle)) {
             holder.registerError(
                 pHandle,
-                "inspections.phandle_whitespace.error",
+                bundleKey = "inspections.phandle_whitespace.error",
                 rangeInElement = child.textRange.relativeTo(pHandle.textRange),
                 fix = RemoveWhitespaceFix
             )

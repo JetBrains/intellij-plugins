@@ -17,7 +17,7 @@ class DtsPropertyNameInspection : LocalInspectionTool() {
 
         firstNotMatching(name, rx) {
             holder.registerError(
-                property.dtsNameElement,
+                property,
                 bundleKey = "inspections.property_name.bad_char",
                 bundleParam = it,
             )

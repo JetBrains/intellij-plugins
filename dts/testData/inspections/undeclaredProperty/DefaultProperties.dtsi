@@ -1,0 +1,14 @@
+/ {
+    node {
+        compatible = "none";
+
+        status;
+        ranges;
+        phandle;
+        interrupt-parent;
+        interrupts-extended;
+        device_type;
+
+        <error descr="Property is not declared in binding">undeclared</error>;
+    };
+};
