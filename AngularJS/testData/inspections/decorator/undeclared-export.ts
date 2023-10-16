@@ -63,13 +63,13 @@ class PipeStandalone {
     ],
     exports: [
         Component1,
-        <error descr="Cannot export  Component2  from  Module1  as it is neither declared nor imported in it">Component2</error>,
+        <error descr="Cannot export Component2 from Module1 as it is neither declared nor imported in it">Component2</error>,
         Component3,
         Directive1,
-        <error descr="Cannot export  Directive2  from  Module1  as it is neither declared nor imported in it">Directive2</error>,
+        <error descr="Cannot export Directive2 from Module1 as it is neither declared nor imported in it">Directive2</error>,
         Directive3,
         Pipe1,
-        <error descr="Cannot export  Pipe2  from  Module1  as it is neither declared nor imported in it">Pipe2</error>,
+        <error descr="Cannot export Pipe2 from Module1 as it is neither declared nor imported in it">Pipe2</error>,
         Pipe3,
         ComponentStandalone,
         DirectiveStandalone,
@@ -86,11 +86,11 @@ class Module1 {
     ],
     exports: [
         Component3,
-        <error descr="Cannot export  Directive3  from  Module2  as it is neither declared nor imported in it">Directive3</error>,
+        <error descr="Cannot export Directive3 from Module2 as it is neither declared nor imported in it">Directive3</error>,
         Pipe3,
-        <error descr="Cannot export  ComponentStandalone  from  Module2  as it is neither declared nor imported in it">ComponentStandalone</error>,
-        <error descr="Cannot export  DirectiveStandalone  from  Module2  as it is neither declared nor imported in it">DirectiveStandalone</error>,
-        <error descr="Cannot export  PipeStandalone  from  Module2  as it is neither declared nor imported in it">PipeStandalone</error>,
+        <error descr="Cannot export ComponentStandalone from Module2 as it is neither declared nor imported in it">ComponentStandalone</error>,
+        <error descr="Cannot export DirectiveStandalone from Module2 as it is neither declared nor imported in it">DirectiveStandalone</error>,
+        <error descr="Cannot export PipeStandalone from Module2 as it is neither declared nor imported in it">PipeStandalone</error>,
     ]
 })
 class Module2 {
@@ -114,7 +114,7 @@ class Module3 {
         Foo
     ],
     exports: [
-        <weak_warning descr="Cannot export  Component2  from  Module4  as it is neither declared nor imported in it">Component2</weak_warning>
+        <weak_warning descr="Cannot export Component2 from Module4 as it is neither declared nor imported in it">Component2</weak_warning>
     ]
 })
 class Module4 {

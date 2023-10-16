@@ -17,9 +17,9 @@ export class TestDir {
              selector: 'blah',
              template: `<div foo
                     [publicField]="value"
-                    <error descr="Cannot assign to input  readonlyField  because it is a read-only property.">[readonlyField]</error>="value" 
-                    <error descr="Field  protectedField  is  protected  and only accessible within class  TestDir  and its subclasses">[protectedField]</error>="value"
-                    <error descr="Field  privateField  is  private  and only accessible within class  TestDir ">[privateField]</error>="value"
+                    <error descr="Cannot assign to input readonlyField because it is a read-only property.">[readonlyField]</error>="value" 
+                    <error descr="Field protectedField is protected and only accessible within class TestDir and its subclasses">[protectedField]</error>="value"
+                    <error descr="Field privateField is private and only accessible within class TestDir">[privateField]</error>="value"
                ></div>`,
              standalone: true,
              imports: [

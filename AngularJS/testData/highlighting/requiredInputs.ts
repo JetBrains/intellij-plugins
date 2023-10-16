@@ -73,7 +73,7 @@ export class NgForOf {
     <div
       myRequiredInput="foo"
     ></div>
-    <<error descr="Missing binding for required input  myRequiredInput  of directive  TestDirective ">div</error>
+    <<error descr="Missing binding for required input myRequiredInput of directive TestDirective">div</error>
       mySelector
     ></div>
     <div
@@ -85,7 +85,7 @@ export class NgForOf {
     <div
       myOtherSelector
     ></div>
-    <<error descr="Missing binding for required input  theRequiredInput  of directive  TestDirective3 ">div</error>
+    <<error descr="Missing binding for required input theRequiredInput of directive TestDirective3">div</error>
       myThirdSelector
     ></div>
     <div
@@ -97,7 +97,7 @@ export class NgForOf {
       theRequiredInput="foo"
     ></div>
     <div *ngFor="let a of b"></div>
-    <div <error descr="Missing binding for required input  ngForOf  of directive  NgForOf ">*ngFor</error>="let a"></div>
+    <div <error descr="Missing binding for required input ngForOf of directive NgForOf">*ngFor</error>="let a"></div>
     <div
       <warning descr="Attribute foo is not allowed here">foo</warning>
     ></div>

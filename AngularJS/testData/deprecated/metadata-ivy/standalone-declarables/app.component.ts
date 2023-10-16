@@ -10,7 +10,7 @@ import {ClassicToolbeltComponent} from "toolbelt/lib/classic.component";
       <lib-toolbelt></lib-toolbelt>
       <span libToolbelt></span>
       <span>{{1 | toolbelt}}</span>
-      <<error descr="Component or directive matching  lib-classic-toolbelt  element is out of scope of the current template">lib-classic-toolbelt</error>></lib-classic-toolbelt>
+      <<error descr="Component or directive matching lib-classic-toolbelt element is out of scope of the current template">lib-classic-toolbelt</error>></lib-classic-toolbelt>
     </div>
   `,
   standalone: true,
@@ -28,9 +28,9 @@ export class AppComponent {
   selector: "app-without-imports",
   template: `
     <div>
-      <<error descr="Component or directive matching  lib-toolbelt  element is out of scope of the current template">lib-toolbelt</error>></lib-toolbelt>
-      <span <warning descr="Directive that provides attribute  libToolbelt  is out of scope of the current template">libToolbelt</warning>></span>
-      <span>{{1 | <error descr="Unresolved pipe  toolbelt ">toolbelt</error>}}</span>
+      <<error descr="Component or directive matching lib-toolbelt element is out of scope of the current template">lib-toolbelt</error>></lib-toolbelt>
+      <span <warning descr="Directive that provides attribute libToolbelt is out of scope of the current template">libToolbelt</warning>></span>
+      <span>{{1 | <error descr="Unresolved pipe toolbelt">toolbelt</error>}}</span>
     </div>
   `,
   standalone: true,

@@ -8,9 +8,9 @@ import {CommonModule} from "@angular/common";
   standalone: true,
   template: `
     <!-- todo Angular checks types one by one and reports 1-2 errors separately -->
-    <span [appAmbiguous]="<error descr="Type  string  is not assignable to type  never ">'hello'</error>"></span>
-    <span [appAmbiguous]="<error descr="Type  boolean  is not assignable to type  never ">true</error>"></span>
-    <span [appAmbiguous]="<error descr="Type  number  is not assignable to type  never ">1</error>"></span>
+    <span [appAmbiguous]="<error descr="Type string is not assignable to type never">'hello'</error>"></span>
+    <span [appAmbiguous]="<error descr="Type boolean is not assignable to type never">true</error>"></span>
+    <span [appAmbiguous]="<error descr="Type number is not assignable to type never">1</error>"></span>
   `,
 })
 export class TestComponent {

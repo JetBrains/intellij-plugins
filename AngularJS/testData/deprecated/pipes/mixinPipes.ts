@@ -27,7 +27,7 @@ export function fromFunction<T extends (value: any, ...args: any[]) => any>(
    imports: [FormatDate],
    selector: 'my-app',
    template: `
-     <p>{{ date | <error descr="Unresolved pipe  formatDte ">formatDte</error> }}</p>
+     <p>{{ date | <error descr="Unresolved pipe formatDte">formatDte</error> }}</p>
      <p>{{ date | formatDate }}</p>
      <p>{{ date | formatDate : 'ru-Ru' }}</p>
      <p>{{ date | formatDate : 'en-En': { dateStyle: 'full' } }}</p>

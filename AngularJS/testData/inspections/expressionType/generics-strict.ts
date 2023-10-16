@@ -51,15 +51,15 @@ export class GenericsDirective2<T> {
             
     <div gen 
          [input1]="true" 
-         [input2]="<error descr="Type  string  is not assignable to type  boolean " textAttributesKey="ERRORS_ATTRIBUTES">'20'</error>" 
+         [input2]="<error descr="Type string is not assignable to type boolean" textAttributesKey="ERRORS_ATTRIBUTES">'20'</error>" 
          [input3]="12" 
-         (output1)="useNumber(<error descr="Argument type  boolean  is not assignable to parameter type  number " textAttributesKey="ERRORS_ATTRIBUTES">$event</error>)" 
-         (output3)="useString(<error descr="Argument type  number  is not assignable to parameter type  string " textAttributesKey="ERRORS_ATTRIBUTES">$event</error>)">
+         (output1)="useNumber(<error descr="Argument type boolean is not assignable to parameter type number" textAttributesKey="ERRORS_ATTRIBUTES">$event</error>)" 
+         (output3)="useString(<error descr="Argument type number is not assignable to parameter type string" textAttributesKey="ERRORS_ATTRIBUTES">$event</error>)">
     </div>
          
     <div gen
          [input1]="12"
-         [input2]="<error descr="Type  string  is not assignable to type  number " textAttributesKey="ERRORS_ATTRIBUTES">'20'</error>"
+         [input2]="<error descr="Type string is not assignable to type number" textAttributesKey="ERRORS_ATTRIBUTES">'20'</error>"
          [input3]="'bar'"
          (output1)="useNumber($event)" 
          (output3)="useString($event)">
@@ -74,7 +74,7 @@ export class GenericsDirective2<T> {
     <div gen 
          [input1]="[1,2,3]" 
          [input2]="[4,5]" 
-         (output1)="useNumber(<error descr="Argument type  number[]  is not assignable to parameter type  number " textAttributesKey="ERRORS_ATTRIBUTES">$event</error>)">
+         (output1)="useNumber(<error descr="Argument type number[] is not assignable to parameter type number" textAttributesKey="ERRORS_ATTRIBUTES">$event</error>)">
     </div>
     
     <div gen
@@ -85,7 +85,7 @@ export class GenericsDirective2<T> {
     <div gen
          input1
          input2
-         (output1)="useNumber(<error descr="Argument type  string  is not assignable to parameter type  number " textAttributesKey="ERRORS_ATTRIBUTES">$event</error>)">
+         (output1)="useNumber(<error descr="Argument type string is not assignable to parameter type number" textAttributesKey="ERRORS_ATTRIBUTES">$event</error>)">
     </div>
 
     <div gen
@@ -96,28 +96,28 @@ export class GenericsDirective2<T> {
     <div gen
          [input1]=""
          input2
-         (output1)="useNumber(<error descr="Argument type  string | undefined  is not assignable to parameter type  number   Type  string  is not assignable to type  number " textAttributesKey="ERRORS_ATTRIBUTES">$event</error>) && useString(<error descr="Argument type  string | undefined  is not assignable to parameter type  string   Type  undefined  is not assignable to type  string " textAttributesKey="ERRORS_ATTRIBUTES">$event</error>)">
+         (output1)="useNumber(<error descr="Argument type string | undefined is not assignable to parameter type number  Type string is not assignable to type number" textAttributesKey="ERRORS_ATTRIBUTES">$event</error>) && useString(<error descr="Argument type string | undefined is not assignable to parameter type string  Type undefined is not assignable to type string" textAttributesKey="ERRORS_ATTRIBUTES">$event</error>)">
     </div>
 
     <div gen
          input1
          [input2]=""
-         (output1)="useNumber(<error descr="Argument type  string | undefined  is not assignable to parameter type  number   Type  string  is not assignable to type  number " textAttributesKey="ERRORS_ATTRIBUTES">$event</error>)">
+         (output1)="useNumber(<error descr="Argument type string | undefined is not assignable to parameter type number  Type string is not assignable to type number" textAttributesKey="ERRORS_ATTRIBUTES">$event</error>)">
     </div>
     
     <div gen gen2 
          [input1]="12" 
-         [input2]="<error descr="Type  number  is not assignable to type  never " textAttributesKey="ERRORS_ATTRIBUTES">12</error>">
+         [input2]="<error descr="Type number is not assignable to type never" textAttributesKey="ERRORS_ATTRIBUTES">12</error>">
     </div>
          
     <div gen gen2 
          [input1]="'foo'" 
-         [input2]="<error descr="Type  number  is not assignable to type  string " textAttributesKey="ERRORS_ATTRIBUTES">12</error>">
+         [input2]="<error descr="Type number is not assignable to type string" textAttributesKey="ERRORS_ATTRIBUTES">12</error>">
     </div>
     
     <div gen gen2 
          [input1]="12" 
-         [input2]="<error descr="Type  string  is not assignable to type  never " textAttributesKey="ERRORS_ATTRIBUTES">'foo'</error>">
+         [input2]="<error descr="Type string is not assignable to type never" textAttributesKey="ERRORS_ATTRIBUTES">'foo'</error>">
     </div>
     
     <div gen gen2 

@@ -10,15 +10,15 @@ import {LetDirective} from "./let.directive";
   standalone: true,
   template: `
     <ng-container *ngrxLet="number$ as number">{{number.toFixed()}}</ng-container>
-    <ng-container *ngrxLet="number$OrNot as number">{{number.<error descr="Qualifier of 'toFixed' is possibly undefined" textAttributesKey="WRONG_REFERENCES_ATTRIBUTES">toFixed</error>()}}</ng-container>
-    <ng-container *ngrxLet="numberOrNot$ as number">{{number.<error descr="Qualifier of 'toFixed' is possibly undefined" textAttributesKey="WRONG_REFERENCES_ATTRIBUTES">toFixed</error>()}}</ng-container>
+    <ng-container *ngrxLet="number$OrNot as number">{{number.<error descr="Qualifier of 'toFixed' is possibly undefined">toFixed</error>()}}</ng-container>
+    <ng-container *ngrxLet="numberOrNot$ as number">{{number.<error descr="Qualifier of 'toFixed' is possibly undefined">toFixed</error>()}}</ng-container>
     
     <ng-container *ngrxLet="number$ as n1; let n2; error as e; complete as c">
       {{n1.toFixed()}}
       {{n2.toFixed()}}
       {{acceptBoolean(e)}}
       {{acceptBoolean(c)}}
-      {{acceptBoolean(<error descr="Argument type  number  is not assignable to parameter type  boolean ">n1</error>)}}
+      {{acceptBoolean(<error descr="Argument type number is not assignable to parameter type boolean">n1</error>)}}
     </ng-container>
     
     <ng-container *ngrxLet="{ number1: number$, number2: numberOrNot$ } as vm">

@@ -28,7 +28,7 @@ export class MyComponent {
 
 }
 
-@Directive(<error descr="Directive is missing a required  selector  property">{
+@Directive(<error descr="Directive is missing a required selector property">{
     inputs: ["", ""],
     outputs: [
         "",
@@ -39,7 +39,7 @@ export class MyDirective {
 
 }
 
-@Directive(<error descr="Directive is missing a required  selector  property">{
+@Directive(<error descr="Directive is missing a required selector property">{
     inputs: ["", ""],
     outputs: [
         "",
@@ -78,7 +78,7 @@ export default class MyDirective {
 
 }
 
-@Directive(<error descr="Directive is missing a required  selector  property">{}</error>)
+@Directive(<error descr="Directive is missing a required selector property">{}</error>)
 export class MyDirective {
 
 }

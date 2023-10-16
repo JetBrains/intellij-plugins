@@ -26,7 +26,7 @@ export class FComponent implements OnInit, OnDestroy {
       <g>
         <path class="room-border" [attr.d]="border.d" *ngFor="let border of roomSvg.borders" />
       </g>
-      <<error descr="Component or directive matching  f  element is out of scope of the current template">f</error>></f>
+      <<error descr="Component or directive matching f element is out of scope of the current template">f</error>></f>
     </svg>`,
 })
 export class RoomSelectorComponent implements OnInit, OnDestroy {

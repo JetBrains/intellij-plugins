@@ -15,9 +15,9 @@ export class MyComponent {
    standalone: true,
    imports: [MyComponent],
    template: `
-    <my-component [input]="<error descr="Type  string | null  is not assignable to type  string   Type  null  is not assignable to type  string ">name</error>"></my-component>
-    <my-component <error descr="Type  undefined  is not assignable to type  string ">[input]</error>=""></my-component>
-    <my-component <error descr="Type  undefined  is not assignable to type  string ">[input]</error>></my-component>
+    <my-component [input]="<error descr="Type string | null is not assignable to type string  Type null is not assignable to type string">name</error>"></my-component>
+    <my-component <error descr="Type undefined is not assignable to type string">[input]</error>=""></my-component>
+    <my-component <error descr="Type undefined is not assignable to type string">[input]</error>></my-component>
   `,
 })
 export class AppComponent {

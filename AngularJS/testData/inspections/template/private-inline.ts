@@ -3,19 +3,19 @@ import {Component} from "@angular/core"
 
 @Component({
   template: `
-    {{ <error descr="Field  privateUsed  is  private  and only accessible within class  MyComponent  when using the AOT compiler">privateUsed</error> }}
+    {{ <error descr="Field privateUsed is private and only accessible within class MyComponent when using the AOT compiler">privateUsed</error> }}
     {{ protectedUsed }}
     {{ publicUsed }}
 
-    <div (click)="<error descr="Property  privateUsedSet  is  private  and only accessible within class  MyComponent  when using the AOT compiler">privateUsedSet</error> = 12"></div>
+    <div (click)="<error descr="Property privateUsedSet is private and only accessible within class MyComponent when using the AOT compiler">privateUsedSet</error> = 12"></div>
     <div (click)="protectedUsedSet = 12"></div>
     <div (click)="publicUsedSet = 12"></div>
 
-    {{ <error descr="Property  privateUsedGet  is  private  and only accessible within class  MyComponent  when using the AOT compiler">privateUsedGet</error> }}
+    {{ <error descr="Property privateUsedGet is private and only accessible within class MyComponent when using the AOT compiler">privateUsedGet</error> }}
     {{ protectedUsedGet }}
     {{ publicUsedGet }}
 
-    {{ <error descr="Method  privateUsedFun  is  private  and only accessible within class  MyComponent  when using the AOT compiler">privateUsedFun</error>() }}
+    {{ <error descr="Method privateUsedFun is private and only accessible within class MyComponent when using the AOT compiler">privateUsedFun</error>() }}
     {{ protectedUsedFun() }}
     {{ publicUsedFun() }}
   `

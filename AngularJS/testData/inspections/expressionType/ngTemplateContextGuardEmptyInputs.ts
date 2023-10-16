@@ -39,46 +39,46 @@ export class HelloConstrainedDirective<T extends number> {
   standalone: true,
   template: `
     <div *appHello="as person"> <!-- any in WebStorm, string in Angular -->
-      {{expectNumber(<error descr="Argument type  string  is not assignable to parameter type  number " textAttributesKey="ERRORS_ATTRIBUTES">person</error>)}}
+      {{expectNumber(<error descr="Argument type string is not assignable to parameter type number" textAttributesKey="ERRORS_ATTRIBUTES">person</error>)}}
       {{expectString(person)}}
     </div>
     <div *appHello="let person"> <!-- string -->
-      {{expectNumber(<error descr="Argument type  string  is not assignable to parameter type  number " textAttributesKey="ERRORS_ATTRIBUTES">person</error>)}}
+      {{expectNumber(<error descr="Argument type string is not assignable to parameter type number" textAttributesKey="ERRORS_ATTRIBUTES">person</error>)}}
       {{expectString(person)}}
     </div>
     <ng-template appHello let-person> <!-- string -->
-      {{expectNumber(<error descr="Argument type  string  is not assignable to parameter type  number " textAttributesKey="ERRORS_ATTRIBUTES">person</error>)}}
+      {{expectNumber(<error descr="Argument type string is not assignable to parameter type number" textAttributesKey="ERRORS_ATTRIBUTES">person</error>)}}
       {{expectString(person)}}
     </ng-template>
     <ng-template <warning descr="[appHello] requires value" textAttributesKey="WARNING_ATTRIBUTES">[appHello]</warning> let-person> <!-- undefined -->
-      {{expectNumber(<error descr="Argument type  undefined  is not assignable to parameter type  number " textAttributesKey="ERRORS_ATTRIBUTES">person</error>)}}
-      {{expectString(<error descr="Argument type  undefined  is not assignable to parameter type  string " textAttributesKey="ERRORS_ATTRIBUTES">person</error>)}}
+      {{expectNumber(<error descr="Argument type undefined is not assignable to parameter type number" textAttributesKey="ERRORS_ATTRIBUTES">person</error>)}}
+      {{expectString(<error descr="Argument type undefined is not assignable to parameter type string" textAttributesKey="ERRORS_ATTRIBUTES">person</error>)}}
     </ng-template>
     <ng-template [appHello]="" let-person> <!-- undefined -->
-      {{expectNumber(<error descr="Argument type  undefined  is not assignable to parameter type  number " textAttributesKey="ERRORS_ATTRIBUTES">person</error>) }}
-      {{expectString(<error descr="Argument type  undefined  is not assignable to parameter type  string " textAttributesKey="ERRORS_ATTRIBUTES">person</error>)}}
+      {{expectNumber(<error descr="Argument type undefined is not assignable to parameter type number" textAttributesKey="ERRORS_ATTRIBUTES">person</error>) }}
+      {{expectString(<error descr="Argument type undefined is not assignable to parameter type string" textAttributesKey="ERRORS_ATTRIBUTES">person</error>)}}
     </ng-template>
     
-    <div <error descr="Type  \"\"  is not assignable to type  number " textAttributesKey="ERRORS_ATTRIBUTES">*appHelloConstrained</error>></div>
-    <div <error descr="Type  \"\"  is not assignable to type  number " textAttributesKey="ERRORS_ATTRIBUTES">*appHelloConstrained</error>="as person"> <!-- number -->
+    <div <error descr="Type \"\" is not assignable to type number" textAttributesKey="ERRORS_ATTRIBUTES">*appHelloConstrained</error>></div>
+    <div <error descr="Type \"\" is not assignable to type number" textAttributesKey="ERRORS_ATTRIBUTES">*appHelloConstrained</error>="as person"> <!-- number -->
       {{expectNumber(person)}}
-      {{expectString(<error descr="Argument type  number  is not assignable to parameter type  string " textAttributesKey="ERRORS_ATTRIBUTES">person</error>)}}
+      {{expectString(<error descr="Argument type number is not assignable to parameter type string" textAttributesKey="ERRORS_ATTRIBUTES">person</error>)}}
     </div>
-    <div <error descr="Type  \"\"  is not assignable to type  number " textAttributesKey="ERRORS_ATTRIBUTES">*appHelloConstrained</error>="let person"> <!-- number -->
+    <div <error descr="Type \"\" is not assignable to type number" textAttributesKey="ERRORS_ATTRIBUTES">*appHelloConstrained</error>="let person"> <!-- number -->
       {{expectNumber(person)}}
-      {{expectString(<error descr="Argument type  number  is not assignable to parameter type  string " textAttributesKey="ERRORS_ATTRIBUTES">person</error>)}}
+      {{expectString(<error descr="Argument type number is not assignable to parameter type string" textAttributesKey="ERRORS_ATTRIBUTES">person</error>)}}
     </div>
-    <ng-template <error descr="Type  \"\"  is not assignable to type  number " textAttributesKey="ERRORS_ATTRIBUTES">appHelloConstrained</error> let-person> <!-- number -->
+    <ng-template <error descr="Type \"\" is not assignable to type number" textAttributesKey="ERRORS_ATTRIBUTES">appHelloConstrained</error> let-person> <!-- number -->
       {{expectNumber(person)}}
-      {{expectString(<error descr="Argument type  number  is not assignable to parameter type  string " textAttributesKey="ERRORS_ATTRIBUTES">person</error>)}}
+      {{expectString(<error descr="Argument type number is not assignable to parameter type string" textAttributesKey="ERRORS_ATTRIBUTES">person</error>)}}
     </ng-template>
-    <ng-template <error descr="Type  undefined  is not assignable to type  number " textAttributesKey="ERRORS_ATTRIBUTES">[appHelloConstrained]</error> let-person> <!-- number -->
+    <ng-template <error descr="Type undefined is not assignable to type number" textAttributesKey="ERRORS_ATTRIBUTES">[appHelloConstrained]</error> let-person> <!-- number -->
       {{expectNumber(person)}}
-      {{expectString(<error descr="Argument type  number  is not assignable to parameter type  string " textAttributesKey="ERRORS_ATTRIBUTES">person</error>)}}
+      {{expectString(<error descr="Argument type number is not assignable to parameter type string" textAttributesKey="ERRORS_ATTRIBUTES">person</error>)}}
     </ng-template>
-    <ng-template <error descr="Type  undefined  is not assignable to type  number " textAttributesKey="ERRORS_ATTRIBUTES">[appHelloConstrained]</error>="" let-person> <!-- number -->
+    <ng-template <error descr="Type undefined is not assignable to type number" textAttributesKey="ERRORS_ATTRIBUTES">[appHelloConstrained]</error>="" let-person> <!-- number -->
       {{expectNumber(person) }}
-      {{expectString(<error descr="Argument type  number  is not assignable to parameter type  string " textAttributesKey="ERRORS_ATTRIBUTES">person</error>)}}
+      {{expectString(<error descr="Argument type number is not assignable to parameter type string" textAttributesKey="ERRORS_ATTRIBUTES">person</error>)}}
     </ng-template>
   `,
 })
