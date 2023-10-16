@@ -104,7 +104,7 @@ class VueComponentTest : BasePlatformTestCase() {
 
   fun testScriptSetupGeneric() = doTest(true, addNodeModules = listOf(VueTestModule.VUE_3_3_4))
 
-  fun testPropsConstructorsAndGenerics() = doTest(true)
+  fun testPropsConstructorsAndGenerics() = doTest(true, addNodeModules = listOf(VueTestModule.VUE_3_3_4))
 
   fun testDecoratedComponentEmitsTS() = doTest(addNodeModules = listOf(VueTestModule.VUE_2_6_10))
 

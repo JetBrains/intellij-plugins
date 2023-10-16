@@ -1,9 +1,9 @@
 <script lang="ts">
 import {defineComponent} from "vue";
-import type {PropOptions} from "vue";
+import type {Prop} from "vue";
 
 export const useInputComponentProps = <T>() => ({
-  value: {} as PropOptions<T | undefined>,
+  value: {} as Prop<T | undefined>,
 });
 
 export const useTextFieldComponentProps = <T>() => ({

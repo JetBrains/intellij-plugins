@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext
 import com.intellij.lang.javascript.psi.JSTypeTextBuilder
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
+import com.intellij.lang.javascript.psi.types.evaluable.JSApplyCallType
 import com.intellij.psi.PsiNamedElement
 import com.intellij.util.ProcessingContext
 import org.jetbrains.vuejs.codeInsight.fixPrimitiveTypes
@@ -39,8 +40,9 @@ class VueSourcePropType private constructor(typeSource: JSTypeSource, private va
 
     return when (element) {
       is JSProperty -> getPropTypeFromPropOptions(element.value)
-      is JSImplicitElement ->
-        getPropTypeFromGenericType(element.jsType) ?: getPropTypeFromPropOptions((element.parent as? JSProperty)?.value)
+      is JSImplicitElement -> getPropTypeFromGenericType(element.jsType)
+                              ?: element.jsType?.let { JSApplyCallType(it, it.source) }
+                              ?: getPropTypeFromPropOptions((element.parent as? JSProperty)?.value)
       else -> null
     }
   }
