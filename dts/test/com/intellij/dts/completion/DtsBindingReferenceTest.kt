@@ -6,9 +6,9 @@ class DtsBindingReferenceTest : DtsCompletionTest() {
         addZephyr()
     }
 
-    fun `test compatible ethernet`() = doTest(
-        variations = listOf("e", "net"),
-        lookupString = "ethernet",
+    fun `test compatible espressif,esp32-eth`() = doTest(
+        variations = listOf("espressif", "eth"),
+        lookupString = "espressif,esp32-eth",
     )
 
     fun `test compatible espressif,esp32-pinctrl`() = doTest(

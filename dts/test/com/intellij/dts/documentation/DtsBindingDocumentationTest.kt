@@ -8,7 +8,9 @@ class DtsBindingDocumentationTest : DtsDocumentationTest() {
         addZephyr()
     }
 
-    fun `test compatible ethernet`() = doTest()
+    fun `test compatible espressif,esp32-eth`() = doTest()
 
     fun `test compatible espressif,esp32-pinctrl`() = doTest()
+
+    fun `test compatible espressif,esp32-ledc`() = doTest()
 }

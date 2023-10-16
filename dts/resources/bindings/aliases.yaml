@@ -15,3 +15,5 @@ description: |
     A client program may use an alias property name to refer to a full device 
     path as all or part of its string value. A client program, when considering 
     a string as a device path, shall detect and use the alias.
+
+undeclared-properties: true

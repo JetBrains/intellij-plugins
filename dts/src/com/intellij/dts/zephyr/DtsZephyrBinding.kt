@@ -9,21 +9,22 @@ data class DtsZephyrBinding(
     val properties: Map<String, DtsZephyrPropertyBinding>,
     val child: DtsZephyrBinding?,
     val isChild: Boolean,
-    val isBundled: Boolean,
+    val allowUndeclaredProperties: Boolean,
 ) {
-    companion object{
-        val empty = Builder(null).build()
-    }
-
     class Builder(
-        private val compatible: String?,
         private val isChild: Boolean = false,
-        private val isBundled: Boolean = false,
     ) {
+        private var compatible: String? = null
         private var path: String? = null
         private var description: String? = null
         private var properties: MutableMap<String, DtsZephyrPropertyBinding.Builder> = mutableMapOf()
         private var child: Builder? = null
+        private var allowUndeclaredProperties: Boolean? = null
+
+        fun setCompatible(value: String): Builder {
+            if (compatible == null) compatible = value
+            return this
+        }
 
         fun setPath(value: String): Builder {
             if (path == null) path = value
@@ -35,24 +36,33 @@ data class DtsZephyrBinding(
             return this
         }
 
+        fun setAllowUndeclaredProperties(value: Boolean): Builder {
+            allowUndeclaredProperties = value
+            return this
+        }
+
         fun getPropertyBuilder(name: String): DtsZephyrPropertyBinding.Builder {
            return properties.getOrPut(name) { DtsZephyrPropertyBinding.Builder(name) }
         }
 
         fun getChildBuilder(): Builder {
             child?.let { return it }
-            return Builder(compatible, isChild = true).also { child = it }
+            return Builder(isChild = true).also { child = it }
         }
 
-        fun build(): DtsZephyrBinding = DtsZephyrBinding(
-            compatible,
-            path,
-            description,
-            properties.mapValues { (_, builder) -> builder.build() },
-            child?.build(),
-            isChild,
-            isBundled,
-        )
+        fun build(): DtsZephyrBinding {
+            compatible?.let { child?.setCompatible(it) }
+
+            return DtsZephyrBinding(
+                compatible = compatible,
+                path = path,
+                description = description,
+                properties = properties.mapValues { (_, builder) -> builder.build() },
+                child = child?.build(),
+                isChild = isChild,
+                allowUndeclaredProperties = allowUndeclaredProperties ?: false,
+            )
+        }
     }
 }
 

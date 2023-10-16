@@ -37,10 +37,12 @@ class DtsCompletionContributor : CompletionContributor() {
             val provider = DtsZephyrBindingProvider.of(node.project)
 
             for (binding in DtsBundledBindings.entries) {
+                val build = binding.build(provider) ?: continue
+
                 val symbol = DtsDocumentationSymbol.from(DtsNodeBindingDocumentationTarget(
                     node.project,
                     binding.nodeName,
-                    provider.buildBundledBinding(binding),
+                    build,
                 ))
 
                 val lookup = LookupElementBuilder.create(symbol, binding.nodeName)

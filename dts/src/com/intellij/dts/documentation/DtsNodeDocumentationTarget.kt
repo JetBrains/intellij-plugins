@@ -26,7 +26,7 @@ class DtsNodeDocumentationTarget(private val node: DtsNode) : DtsDocumentationTa
         buildNodeName(html, node)
         DtsTreeUtil.parentNode(node)?.let { parent -> buildDeclaredIn(html, parent) }
 
-        val binding = DtsZephyrBindingProvider.bindingFor(node, fallbackToDefault = false) ?: return
+        val binding = DtsZephyrBindingProvider.bindingFor(node, fallbackBinding = false) ?: return
         buildNodeBinding(html, binding)
     }
 }

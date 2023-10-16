@@ -45,6 +45,20 @@ object DtsTreeUtil {
     }
 
     /**
+     * Get the immediate parent statement.
+     */
+    fun parentStatement(element: PsiElement): DtsStatement? {
+        return PsiTreeUtil.findFirstParent(element, true) { it is DtsStatement } as? DtsStatement
+    }
+
+    /**
+     * Get the immediate parent entry.
+     */
+    fun parentEntry(element: PsiElement): DtsEntry? {
+        return PsiTreeUtil.findFirstParent(element, true) { it is DtsEntry } as? DtsEntry
+    }
+
+    /**
      * Gets the actual parent of a node. If the node is in a ref node. The
      * reference target is considered the parent. If the reference cannot be
      * resolved, null is returned.

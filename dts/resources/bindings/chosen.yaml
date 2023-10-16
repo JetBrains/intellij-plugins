@@ -7,6 +7,8 @@ description: |
         bootargs = "root=/dev/nfs rw nfsroot=192.168.1.1 ...";
     };
 
+undeclared-properties: true
+
 properties:
     bootargs:
         type: string

@@ -75,3 +75,24 @@ fun DtsNode.getDtsPath(): DtsPath? {
 
     return DtsPath(true, pathSegments.reversed())
 }
+
+/**
+ * Reads the string values of the compatible property of this node. If no
+ * compatible strings where found and this node is a reference, this method
+ * tries to read the compatible property from the reference target.
+ */
+fun DtsNode.getDtsCompatibleStrings(): List<String> {
+    val property = dtsProperties.firstOrNull { it.dtsName == "compatible" }
+
+    val string = if (property != null) {
+        property.dtsValues.filterIsInstance<DtsString>().map(DtsString::dtsParse)
+    } else {
+        emptyList()
+    }
+
+    // if compatible strings found use these if not search for reference
+    if (!string.isEmpty() || this !is DtsRefNode) return string
+
+    val target = getDtsReferenceTarget() ?: return emptyList()
+    return target.getDtsCompatibleStrings()
+}

@@ -2,6 +2,8 @@ package com.intellij.dts.documentation
 
 import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.psi.getDtsPath
+import com.intellij.dts.zephyr.DtsZephyrBinding
+import com.intellij.dts.zephyr.DtsZephyrBindingProvider
 import com.intellij.openapi.util.NlsSafe
 
 enum class DtsBundledBindings(val nodeName: @NlsSafe String) {
@@ -10,6 +12,10 @@ enum class DtsBundledBindings(val nodeName: @NlsSafe String) {
     CPUS("cpus"),
     MEMORY("memory"),
     RESERVED_MEMORY("reserved-memory");
+
+    fun build(provider: DtsZephyrBindingProvider): DtsZephyrBinding? {
+        return provider.buildBundledBinding(this)
+    }
 
     companion object {
         fun findBindingForNode(node: DtsNode): DtsBundledBindings? {

@@ -61,7 +61,7 @@ abstract class DtsTestBase : BasePlatformTestCase() {
         val path = Path.of(testDataPath, "$testName.$extension")
 
         if (path.exists()) {
-           assertEquals(path.readText().replaceCaret(), actual.replacePath())
+            assertSameLinesWithFile(path.absolutePathString(), actual.replacePath())
         } else {
             path.writeText(actual.replacePath())
             fail("File ${path.pathString} did not exist. Created new fixture.")
