@@ -2,12 +2,15 @@
 
 package com.intellij.jhipster;
 
-import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.application.ApplicationInfo;
+import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.FUSEventSource;
+import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.PluginAdvertiserService;
+import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.SuggestedIde;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotificationProvider;
@@ -18,9 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.function.Function;
 
-public class JdlUpgradeNotification implements EditorNotificationProvider {
-  private static final String TARGET =
-    "https://www.jetbrains.com/idea/download/?utm_source=product&utm_medium=link&utm_campaign=JHipsterJDL";
+final class JdlUpgradeNotification implements EditorNotificationProvider {
   private static final String KEY = "jhipster.ultimate";
 
   @Override
@@ -37,22 +38,19 @@ public class JdlUpgradeNotification implements EditorNotificationProvider {
   private static JComponent createPanel(Project project, FileEditor fileEditor) {
     var panel = new EditorNotificationPanel(fileEditor, EditorNotificationPanel.Status.Info);
 
-    panel.setText("JHipster JDL plugin provides the best experience with IntelliJ IDEA Ultimate");
+    panel.setText(JdlBundle.message("label.promo"));
 
-    panel.createActionLabel(IdeBundle.message("plugins.advertiser.action.try.ultimate", "IntelliJ IDEA Ultimate"), () ->
-      BrowserUtil.browse(TARGET)
-    );
+    panel.createActionLabel(IdeBundle.message("plugins.advertiser.action.try.ultimate", "IntelliJ IDEA Ultimate"), () -> {
+      SuggestedIde ide = PluginAdvertiserService.Companion.getIdeaUltimate();
+      FUSEventSource.EDITOR.openDownloadPageAndLog(project, ide.getDownloadUrl(), PluginId.getId(""));
+    });
 
-    panel.createActionLabel(IdeBundle.message("plugins.advertiser.action.ignore.ultimate"), () ->
-      dismiss(project)
-    );
+    panel.createActionLabel(IdeBundle.message("plugins.advertiser.action.ignore.ultimate"), () -> {
+      PropertiesComponent.getInstance().setValue(KEY, true);
+      EditorNotifications.getInstance(project).updateAllNotifications();
+    });
 
     return panel;
-  }
-
-  private static void dismiss(Project project) {
-    PropertiesComponent.getInstance().setValue(KEY, true);
-    EditorNotifications.getInstance(project).updateAllNotifications();
   }
 
   private static boolean isDismissed() {
