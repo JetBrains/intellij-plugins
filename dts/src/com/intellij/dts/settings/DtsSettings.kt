@@ -1,6 +1,7 @@
 package com.intellij.dts.settings
 
 import com.intellij.dts.zephyr.DtsZephyrBoard
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
 import com.intellij.util.messages.Topic
@@ -40,9 +41,10 @@ class DtsSettings(private val project: Project) : PersistentStateComponent<DtsSe
 
     @Synchronized
     fun update(block: State.() -> Unit) {
-        val publisher = project.messageBus.syncPublisher(ChangeListener.TOPIC)
-        block(state)
-        publisher.settingsChanged(this)
+        ApplicationManager.getApplication().invokeLater {
+            block(state)
+            project.messageBus.syncPublisher(ChangeListener.TOPIC).settingsChanged(this)
+        }
     }
 
     interface ChangeListener {
