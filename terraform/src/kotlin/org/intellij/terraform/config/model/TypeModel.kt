@@ -156,10 +156,15 @@ class TypeModel(
       AbstractBackend
     ).toMap())
     val Locals: BlockType = BlockType("locals")
+    val Import: BlockType = BlockType("import", properties = listOf(
+      PropertyType("id", Types.String, required = true),
+      PropertyType("to", Types.Identifier, required = true)
+    ).toMap())
 
-    val RootBlocks = listOf(Atlas, Module, Output, Variable, AbstractProvider, AbstractResource, AbstractDataSource, Terraform, Locals,
-                            Moved)
-    val RootBlocksMap = RootBlocks.map { it.literal to it }.toMap()
+    val RootBlocks: List<BlockType> = listOf(Atlas, Module, Output, Variable, AbstractProvider,
+                                             AbstractResource, AbstractDataSource, Terraform,
+                                             Locals, Moved, Import)
+    val RootBlocksMap: Map<String, BlockType> = RootBlocks.associateBy(BlockType::literal)
   }
 
   private fun <T> List<T>.findBinary(elt: String, k: (T) -> String): T? =

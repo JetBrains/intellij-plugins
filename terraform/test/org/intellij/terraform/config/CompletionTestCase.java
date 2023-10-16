@@ -30,6 +30,12 @@ public abstract class CompletionTestCase extends BasePlatformTestCase {
     myCompleteInvocationCount = 1;
   }
 
+  protected void doTheOnlyVariantCompletionTest(String textBefore, String textAfter) {
+    final PsiFile psiFile = myFixture.configureByText(getFileName(), textBefore);
+    assertNull(myFixture.completeBasic());
+    myFixture.checkResult(textAfter);
+  }
+
   protected void doBasicCompletionTest(String text, Collection<String> expected) {
     doBasicCompletionTest(text, expected.size(), ArrayUtil.toStringArray(expected));
   }

@@ -1,0 +1,27 @@
+HCLFile: ImportBlock.hcl
+  HCLBlock
+    HCLIdentifier
+      PsiElement(ID)('import')
+    PsiWhiteSpace(' ')
+    HCLBlockObject
+      PsiElement({)('{')
+      PsiWhiteSpace('\n  ')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('id')
+        PsiWhiteSpace(' ')
+        PsiElement(=)('=')
+        PsiWhiteSpace(' ')
+        HCLStringLiteral
+          PsiElement(DOUBLE_QUOTED_STRING)('"terraform"')
+      PsiWhiteSpace('\n  ')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('to')
+        PsiWhiteSpace(' ')
+        PsiElement(=)('=')
+        PsiWhiteSpace(' ')
+        HCLStringLiteral
+          PsiElement(DOUBLE_QUOTED_STRING)('"github_repository.terraform"')
+      PsiWhiteSpace('\n')
+      PsiElement(})('}')

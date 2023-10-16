@@ -20,4 +20,26 @@ public class TFBackendCompletionTestCase extends TFBaseCompletionTestCase {
   public void testPropertiesInBackend() throws Exception {
     doBasicCompletionTest("terraform{backend \"s3\" {<caret>}}", "bucket", "key");
   }
+
+  public void testImportBlockCompletion() {
+    doTheOnlyVariantCompletionTest("im<caret>",
+                                   """
+                                     import {
+                                       id = ""
+                                       to = ""
+                                     }
+                                     """.trim());
+  }
+
+  public void testImportToCompletion() {
+    doBasicCompletionTest("""
+                           import {
+                             id = "abcdef"
+                             to = aws_instance.<caret>
+                           }
+                           
+                           resource "aws_instance" "a" {}
+                           resource "aws_instance" "b" {}
+                            """, 2, "a", "b");
+  }
 }

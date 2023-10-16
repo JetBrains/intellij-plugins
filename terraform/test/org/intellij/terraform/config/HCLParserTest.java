@@ -187,6 +187,10 @@ public class HCLParserTest extends ParsingTestCase {
     doCodeTest("a=!tobool(\"false\")");
   }
 
+  public void testImportBlock() {
+    doTest();
+  }
+
   // From several 'panic' issues in HCL itself
   public void testBrokenInput() throws Exception {
     doTestNoException("{\"\\0"); // #194
