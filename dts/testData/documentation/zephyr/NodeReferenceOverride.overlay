@@ -1,0 +1,9 @@
+/ {
+    node {
+        compatible = "nordic,nrf-spi";
+    };
+};
+
+&{/node<caret>} {
+    compatible = "nordic,nrf-spis";
+};

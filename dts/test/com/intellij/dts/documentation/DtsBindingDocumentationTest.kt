@@ -13,4 +13,6 @@ class DtsBindingDocumentationTest : DtsDocumentationTest() {
     fun `test compatible espressif,esp32-pinctrl`() = doTest()
 
     fun `test compatible espressif,esp32-ledc`() = doTest()
+
+    fun `test reference override`() = doTest()
 }

@@ -24,6 +24,8 @@ class DtsZephyrDocumentationTest : DtsDocumentationTest() {
 
     fun `test node reference`() = doTest()
 
+    fun `test node reference override`() = doTest()
+
     fun `test node default`() = doTest()
 
     fun `test dts code`() = doTest()

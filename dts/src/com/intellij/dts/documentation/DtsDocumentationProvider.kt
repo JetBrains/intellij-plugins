@@ -1,16 +1,15 @@
 package com.intellij.dts.documentation
 
 import com.intellij.dts.lang.DtsFile
-import com.intellij.dts.lang.psi.DtsNode
-import com.intellij.dts.lang.psi.DtsProperty
-import com.intellij.dts.lang.psi.DtsStatement
-import com.intellij.dts.lang.psi.DtsTypes
+import com.intellij.dts.lang.psi.*
+import com.intellij.dts.util.DtsTreeUtil
+import com.intellij.dts.util.DtsUtil
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.documentation.DocumentationTargetProvider
 import com.intellij.platform.backend.documentation.PsiDocumentationTargetProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.util.elementType
+import com.intellij.psi.util.PsiTreeUtil
 
 /**
  * Implements [DocumentationTargetProvider] because not all psi elements which
@@ -21,16 +20,14 @@ import com.intellij.psi.util.elementType
  * the autocomplete popup.
  */
 class DtsDocumentationProvider : DocumentationTargetProvider, PsiDocumentationTargetProvider {
-    override fun documentationTargets(file: PsiFile, offset: Int): MutableList<out DocumentationTarget> {
-        if (file !is DtsFile) return mutableListOf()
+    override fun documentationTargets(file: PsiFile, offset: Int): List<DocumentationTarget> {
+        return DtsUtil.singleResult {
+            if (file !is DtsFile) return@singleResult null
 
-        val originalElement = file.findElementAt(offset) ?: return mutableListOf()
-        if (originalElement.elementType != DtsTypes.NAME) return mutableListOf()
-
-        val element = findTargetElement(originalElement) ?: return mutableListOf()
-        val documentation = documentationTarget(element, originalElement) ?: return mutableListOf()
-
-        return mutableListOf(documentation)
+            val originalElement = file.findElementAt(offset) ?: return@singleResult null
+            val element = findTargetElement(originalElement) ?: return@singleResult null
+            documentationTarget(element, originalElement)
+        }
     }
 
     override fun documentationTarget(element: PsiElement, originalElement: PsiElement?): DocumentationTarget? {
@@ -42,16 +39,13 @@ class DtsDocumentationProvider : DocumentationTargetProvider, PsiDocumentationTa
     }
 
     private fun findTargetElement(originalElement: PsiElement): PsiElement? {
-        var element: PsiElement? = originalElement
-        while (element != null) {
-            if (element is DtsStatement) return element
+        // annotation targets of statements
+        val statement = DtsTreeUtil.parentStatement(originalElement)
+        val partOfTarget = PsiTreeUtil.isAncestor(statement?.getDtsAnnotationTarget(), originalElement, false)
+        if (partOfTarget) return statement
 
-            val reference = element.reference?.resolve()
-            if (reference != null) return reference
-
-            element = element.getParent()
-        }
-
-        return null
+        // references to statements
+        val referenceHost = PsiTreeUtil.findFirstParent(originalElement, false) { it.reference != null }
+        return referenceHost?.reference?.resolve()
     }
 }
