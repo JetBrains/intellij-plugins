@@ -11,7 +11,7 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.JSParameterTypeDecoratorImpl
 import com.intellij.lang.javascript.psi.types.evaluable.JSUnwrapPromiseType
 import com.intellij.lang.javascript.psi.types.primitives.JSVoidType
-import com.intellij.lang.javascript.psi.types.primitives.TypeScriptNeverJSTypeImpl
+import com.intellij.lang.javascript.psi.types.primitives.TypeScriptNeverType
 import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.*
@@ -177,7 +177,7 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
       override val params: List<JSParameterTypeDecorator> = run {
         val functionType = member.jsType?.asSafely<JSFunctionType>() ?: return@run super.params
         val returnType = functionType.returnType
-        if (returnType != null && returnType !is JSVoidType && returnType !is TypeScriptNeverJSTypeImpl) {
+        if (returnType != null && returnType !is JSVoidType && returnType !is TypeScriptNeverType) {
           buildList {
             add(JSParameterTypeDecoratorImpl("arg", JSUnwrapPromiseType(returnType, returnType.source), false, false, true))
             addAll(functionType.parameters)

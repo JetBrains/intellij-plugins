@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSTypeUtils
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.types.*
-import com.intellij.lang.javascript.psi.types.primitives.TypeScriptNeverJSTypeImpl
+import com.intellij.lang.javascript.psi.types.primitives.TypeScriptNeverType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -58,7 +58,7 @@ object Angular2TypeUtils {
   fun getNgTemplateTagContextType(tag: XmlTag): JSType? {
     return if (isTemplateTag(tag)) CachedValuesManager.getCachedValue(tag) {
       var result: JSType? = BindingsTypeResolver.get(tag).resolveTemplateContextType()
-      if (result is TypeScriptNeverJSTypeImpl) {
+      if (result is TypeScriptNeverType) {
         result = null
       }
       CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT)
