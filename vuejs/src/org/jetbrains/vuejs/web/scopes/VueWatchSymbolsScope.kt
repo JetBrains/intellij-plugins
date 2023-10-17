@@ -57,19 +57,16 @@ class VueWatchSymbolsScope(private val enclosingComponent: VueSourceComponent)
     }
   }
 
-  override fun getCodeCompletions(namespace: SymbolNamespace,
-                                  kind: SymbolKind,
-                                  name: String,
+  override fun getCodeCompletions(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsCodeCompletionQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbolCodeCompletionItem> =
-    super.getCodeCompletions(namespace, kind, name, params, scope)
+    super.getCodeCompletions(qualifiedName, params, scope)
       .let { codeCompletions ->
-        if (namespace == NAMESPACE_HTML && (kind == KIND_VUE_COMPONENT_COMPUTED_PROPERTIES || kind == KIND_VUE_COMPONENT_DATA_PROPERTIES))
+        if (qualifiedName.matches(NAMESPACE_HTML, listOf(KIND_VUE_COMPONENT_COMPUTED_PROPERTIES, KIND_VUE_COMPONENT_DATA_PROPERTIES)))
           codeCompletions.filter { !it.name.startsWith("$") && it.name.length > 1 }
         else
           codeCompletions
       }
-
 
 
   override fun getModificationCount(): Long =

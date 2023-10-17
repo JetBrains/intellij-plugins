@@ -33,13 +33,11 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
 
   override fun getModificationCount(): Long = templateFile.project.psiModificationCount
 
-  override fun getMatchingSymbols(namespace: SymbolNamespace,
-                                  kind: SymbolKind,
-                                  name: String,
+  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbol> =
-    if (namespace == NAMESPACE_HTML && kind == WebSymbol.KIND_HTML_ELEMENTS) {
-      listOf(HtmlElementStandardPropertyAndEventsExtension(templateFile, "", name))
+    if (qualifiedName.matches(NAMESPACE_HTML, WebSymbol.KIND_HTML_ELEMENTS)) {
+      listOf(HtmlElementStandardPropertyAndEventsExtension(templateFile, "", qualifiedName.name))
     }
     else emptyList()
 
@@ -62,8 +60,14 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
     : WebSymbolsScopeWithCache<PsiFile, Pair<String, String>>(Angular2Framework.ID, templateFile.project,
                                                               templateFile, Pair(tagNamespace, tagName)), WebSymbol {
 
-    override fun provides(namespace: SymbolNamespace, kind: SymbolKind): Boolean =
-      namespace == NAMESPACE_JS && (kind == WebSymbol.KIND_JS_PROPERTIES || kind == WebSymbol.KIND_JS_EVENTS)
+    override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+      qualifiedKind.matches(
+        NAMESPACE_JS,
+        listOf(
+          WebSymbol.KIND_JS_PROPERTIES,
+          WebSymbol.KIND_JS_EVENTS
+        )
+      )
 
     override val name: String
       get() = key.second

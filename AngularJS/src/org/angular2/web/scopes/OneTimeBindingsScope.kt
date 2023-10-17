@@ -6,7 +6,10 @@ import com.intellij.javascript.webSymbols.jsType
 import com.intellij.javascript.webSymbols.types.TypeScriptSymbolTypeSupport
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
-import com.intellij.lang.javascript.psi.types.*
+import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory
+import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
+import com.intellij.lang.javascript.psi.types.JSTypeComparingContextService
+import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations
 import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveType
 import com.intellij.lang.javascript.psi.types.primitives.JSStringType
@@ -38,8 +41,8 @@ import java.util.concurrent.ConcurrentHashMap
 
 internal class OneTimeBindingsScope(tag: XmlTag) : WebSymbolsScopeWithCache<XmlTag, Unit>(Angular2Framework.ID, tag.project, tag, Unit) {
 
-  override fun provides(namespace: SymbolNamespace, kind: SymbolKind): Boolean =
-    namespace == WebSymbol.NAMESPACE_JS && kind == KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS
+  override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+    qualifiedKind.matches(WebSymbol.NAMESPACE_JS, KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS)
 
   override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     val queryExecutor = WebSymbolsQueryExecutorFactory.create(dataHolder)

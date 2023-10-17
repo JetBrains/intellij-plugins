@@ -93,16 +93,13 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
   }
 
-  override fun getMatchingSymbols(namespace: SymbolNamespace,
-                                  kind: SymbolKind,
-                                  name: String,
+  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbol> =
     /* Do not support reference resolution */
     emptyList()
 
-  override fun getSymbols(namespace: SymbolNamespace,
-                          kind: SymbolKind,
+  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
                           params: WebSymbolsListSymbolsQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
     /* Do not support reference resolution */
@@ -128,11 +125,15 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
       } == true
 
 
-  override fun provides(namespace: SymbolNamespace, kind: SymbolKind): Boolean =
-    namespace == NAMESPACE_JS && (
-      kind == KIND_JS_STRING_LITERALS
-      || kind == KIND_NG_DIRECTIVE_INPUTS
-      || kind == KIND_NG_DIRECTIVE_OUTPUTS)
+  override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+    qualifiedKind.matches(
+      NAMESPACE_JS,
+      listOf(
+        KIND_JS_STRING_LITERALS,
+        KIND_NG_DIRECTIVE_INPUTS,
+        KIND_NG_DIRECTIVE_OUTPUTS
+      )
+    )
 
   private object AngularEmptyOrigin : WebSymbolOrigin {
     override val framework: FrameworkId =

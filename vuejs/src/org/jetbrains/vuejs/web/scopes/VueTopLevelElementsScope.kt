@@ -3,7 +3,10 @@ package org.jetbrains.vuejs.web.scopes
 
 import com.intellij.model.Pointer
 import com.intellij.util.containers.Stack
-import com.intellij.webSymbols.*
+import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbolOrigin
+import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.WebSymbolsScope
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.utils.ReferencingWebSymbol
 import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
@@ -18,11 +21,10 @@ object VueTopLevelElementsScope : WebSymbolsScope {
     WebSymbolQualifiedKind(WebSymbol.NAMESPACE_HTML, VueWebSymbolsQueryConfigurator.KIND_VUE_TOP_LEVEL_ELEMENTS)
   )
 
-  override fun getSymbols(namespace: SymbolNamespace,
-                          kind: SymbolKind,
+  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
                           params: WebSymbolsListSymbolsQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
-    if (namespace == WebSymbol.NAMESPACE_HTML && kind == WebSymbol.KIND_HTML_ELEMENTS)
+    if (qualifiedKind.matches(WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_ELEMENTS))
       listOf(referencingSymbol)
     else
       emptyList()

@@ -5,10 +5,7 @@ import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.model.psi.PsiSymbolService
 import com.intellij.util.containers.Stack
-import com.intellij.webSymbols.SymbolKind
-import com.intellij.webSymbols.SymbolNamespace
-import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.WebSymbolsScope
+import com.intellij.webSymbols.*
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import org.jetbrains.vuejs.model.VueModelVisitor
@@ -32,25 +29,26 @@ class VueScriptSetupLocalDirectiveSymbol(directive: VueScriptSetupLocalDirective
     return super.isEquivalentTo(symbol)
   }
 
-  override fun getMatchingSymbols(namespace: SymbolNamespace,
-                                  kind: SymbolKind,
-                                  name: String,
+  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbol> =
-    if (namespace == WebSymbol.NAMESPACE_HTML
-        && (kind == VueWebSymbolsQueryConfigurator.KIND_VUE_DIRECTIVE_ARGUMENT || kind == VueWebSymbolsQueryConfigurator.KIND_VUE_DIRECTIVE_MODIFIERS)) {
-      listOf(VueAnySymbol(this.origin, WebSymbol.NAMESPACE_HTML, kind, name))
+    if (qualifiedName.matches(
+        WebSymbol.NAMESPACE_HTML,
+        listOf(
+          VueWebSymbolsQueryConfigurator.KIND_VUE_DIRECTIVE_ARGUMENT,
+          VueWebSymbolsQueryConfigurator.KIND_VUE_DIRECTIVE_MODIFIERS,
+        )
+      )) {
+      listOf(VueAnySymbol(this.origin, WebSymbol.NAMESPACE_HTML, qualifiedName.kind, qualifiedName.name))
     }
     else emptyList()
 
-  override fun getSymbols(namespace: SymbolNamespace,
-                          kind: SymbolKind,
+  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
                           params: WebSymbolsListSymbolsQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbol> =
-    if (namespace == WebSymbol.NAMESPACE_HTML
-        && kind == VueWebSymbolsQueryConfigurator.KIND_VUE_DIRECTIVE_ARGUMENT
+    if (qualifiedKind.matches(WebSymbol.NAMESPACE_HTML, VueWebSymbolsQueryConfigurator.KIND_VUE_DIRECTIVE_ARGUMENT)
         && !params.expandPatterns) {
-      listOf(VueAnySymbol(this.origin, WebSymbol.NAMESPACE_HTML, kind, "Vue directive argument"))
+      listOf(VueAnySymbol(this.origin, WebSymbol.NAMESPACE_HTML, qualifiedKind.kind, "Vue directive argument"))
     }
     else emptyList()
 

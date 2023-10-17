@@ -103,14 +103,12 @@ class VueWebTypesMergedSymbol(override val name: String,
   override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget =
     VueMergedSymbolDocumentationTarget(this, location, originalName ?: name)
 
-  override fun getMatchingSymbols(namespace: SymbolNamespace,
-                                  kind: SymbolKind,
-                                  name: String,
+  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbol> =
     symbols
       .flatMap {
-        it.getMatchingSymbols(namespace, kind, name, params, scope)
+        it.getMatchingSymbols(qualifiedName, params, scope)
       }
       .let { list ->
         val psiSourcedWebSymbol = list.firstNotNullOfOrNull { it as? PsiSourcedWebSymbol }
@@ -122,13 +120,12 @@ class VueWebTypesMergedSymbol(override val name: String,
         }
       }
 
-  override fun getSymbols(namespace: SymbolNamespace,
-                          kind: SymbolKind,
+  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
                           params: WebSymbolsListSymbolsQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
     symbols
       .flatMap {
-        it.getSymbols(namespace, kind, params, scope)
+        it.getSymbols(qualifiedKind, params, scope)
       }
       .takeIf { it.isNotEmpty() }
       ?.let { list ->
@@ -157,13 +154,11 @@ class VueWebTypesMergedSymbol(override val name: String,
       }
     ?: emptyList()
 
-  override fun getCodeCompletions(namespace: SymbolNamespace,
-                                  kind: SymbolKind,
-                                  name: String,
+  override fun getCodeCompletions(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsCodeCompletionQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbolCodeCompletionItem> =
     symbols.asSequence()
-      .flatMap { it.getCodeCompletions(namespace, kind, name, params, scope) }
+      .flatMap { it.getCodeCompletions(qualifiedName, params, scope) }
       .groupBy { it.name }
       .values
       .map { items ->

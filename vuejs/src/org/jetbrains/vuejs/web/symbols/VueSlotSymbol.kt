@@ -29,19 +29,16 @@ class VueSlotSymbol(slot: VueSlot,
   override val type: JSType?
     get() = item.scope
 
-  override fun getSymbols(namespace: SymbolNamespace,
-                          kind: SymbolKind,
+  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
                           params: WebSymbolsListSymbolsQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> {
-    return getJSPropertySymbols(namespace, kind)
+    return getJSPropertySymbols(qualifiedKind)
   }
 
-  override fun getMatchingSymbols(namespace: SymbolNamespace,
-                                  kind: SymbolKind,
-                                  name: String,
+  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbol> {
-    return getMatchingJSPropertySymbols(namespace, kind, name)
+    return getMatchingJSPropertySymbols(qualifiedName)
   }
 
   override fun createPointer(): Pointer<VueSlotSymbol> =

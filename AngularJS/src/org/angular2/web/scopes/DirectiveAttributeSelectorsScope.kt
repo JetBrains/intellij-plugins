@@ -29,13 +29,11 @@ class DirectiveAttributeSelectorsScope(val project: Project) : WebSymbolsScope {
 
   override fun getModificationCount(): Long = 0
 
-  override fun getMatchingSymbols(namespace: SymbolNamespace,
-                                  kind: SymbolKind,
-                                  name: String,
+  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbol> =
-    if (namespace == WebSymbol.NAMESPACE_HTML && kind == WebSymbol.KIND_HTML_ELEMENTS) {
-      listOf(HtmlAttributeDirectiveAttributeSelectorsExtension(project, name))
+    if (qualifiedName.matches(WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_ELEMENTS)) {
+      listOf(HtmlAttributeDirectiveAttributeSelectorsExtension(project, qualifiedName.name))
     }
     else emptyList()
 
@@ -50,8 +48,8 @@ class DirectiveAttributeSelectorsScope(val project: Project) : WebSymbolsScope {
                                                           tagName: String)
     : WebSymbolsScopeWithCache<Project, String>(Angular2Framework.ID, project, project, tagName), WebSymbol {
 
-    override fun provides(namespace: SymbolNamespace, kind: SymbolKind): Boolean =
-      namespace == WebSymbol.NAMESPACE_JS
+    override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+      qualifiedKind.namespace == WebSymbol.NAMESPACE_JS
 
     override val name: String
       get() = key

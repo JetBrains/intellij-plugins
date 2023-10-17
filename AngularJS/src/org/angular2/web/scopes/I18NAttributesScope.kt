@@ -21,27 +21,24 @@ import org.jetbrains.annotations.NonNls
 
 class I18NAttributesScope(private val tag: XmlTag) : WebSymbolsScope {
 
-  override fun getMatchingSymbols(namespace: SymbolNamespace,
-                                  kind: SymbolKind,
-                                  name: String,
+  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbol> =
-    if (namespace == WebSymbol.NAMESPACE_HTML && kind == KIND_NG_I18N_ATTRIBUTES) {
+    if (qualifiedName.matches(WebSymbol.NAMESPACE_HTML, KIND_NG_I18N_ATTRIBUTES)) {
       tag.attributes
         .mapNotNull { attr ->
           val info = Angular2AttributeNameParser.parse(attr.name, tag)
-          if (isI18nCandidate(info) && name.equals(info.name, true))
+          if (isI18nCandidate(info) && qualifiedName.name.equals(info.name, true))
             Angular2I18nAttributeSymbol(attr)
           else null
         }
     }
     else emptyList()
 
-  override fun getSymbols(namespace: SymbolNamespace,
-                          kind: SymbolKind,
+  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
                           params: WebSymbolsListSymbolsQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
-    if (namespace == WebSymbol.NAMESPACE_HTML && kind == KIND_NG_I18N_ATTRIBUTES) {
+    if (qualifiedKind.matches(WebSymbol.NAMESPACE_HTML, KIND_NG_I18N_ATTRIBUTES)) {
       tag.attributes
         .mapNotNull { attr ->
           val info = Angular2AttributeNameParser.parse(attr.name, tag)

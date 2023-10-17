@@ -51,12 +51,10 @@ class VueI18NQueryConfigurator : WebSymbolsQueryConfigurator {
 
     override fun getModificationCount(): Long = tag.containingFile.modificationStamp
 
-    override fun getSymbols(namespace: SymbolNamespace,
-                            kind: SymbolKind,
+    override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
                             params: WebSymbolsListSymbolsQueryParams,
                             scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> {
-      if (kind == VueWebSymbolsQueryConfigurator.KIND_VUE_TOP_LEVEL_ELEMENTS
-          && namespace == WebSymbol.NAMESPACE_HTML) {
+      if (qualifiedKind.matches(WebSymbol.NAMESPACE_HTML, VueWebSymbolsQueryConfigurator.KIND_VUE_TOP_LEVEL_ELEMENTS)) {
         val language = tag.getAttributeValue(LANG_ATTRIBUTE_NAME)
                          ?.let { lang -> Language.getRegisteredLanguages().find { it.id.equals(lang, true) } }
                        ?: if (PsiTreeUtil.getChildOfType(tag, XmlTextImpl::class.java)

@@ -56,25 +56,20 @@ class VueComponentSymbol(name: String, component: VueComponent, private val vueP
     get() = mapOf(Pair(VueWebSymbolsQueryConfigurator.PROP_VUE_PROXIMITY, vueProximity), Pair(
       VueWebSymbolsQueryConfigurator.PROP_VUE_COMPOSITION_COMPONENT, isCompositionComponent))
 
-  override fun getMatchingSymbols(namespace: SymbolNamespace,
-                                  kind: SymbolKind,
-                                  name: String,
+  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbol> =
-    if (namespace == WebSymbol.NAMESPACE_HTML
-        && kind == WebSymbol.KIND_HTML_SLOTS
-        && item is VueUnresolvedComponent)
-      listOf(WebSymbolMatch.create(name, listOf(WebSymbolNameSegment(0, name.length)), WebSymbol.NAMESPACE_HTML,
-                                   WebSymbol.KIND_HTML_SLOTS, this.origin))
+    if (qualifiedName.matches(WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_SLOTS) && item is VueUnresolvedComponent)
+      listOf(WebSymbolMatch.create(qualifiedName.name, listOf(WebSymbolNameSegment(0, qualifiedName.name.length)),
+                                   WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_SLOTS, this.origin))
     else
-      super.getMatchingSymbols(namespace, kind, name, params, scope)
+      super.getMatchingSymbols(qualifiedName, params, scope)
 
-  override fun getSymbols(namespace: SymbolNamespace,
-                          kind: SymbolKind,
+  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
                           params: WebSymbolsListSymbolsQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
-    if (namespace == WebSymbol.NAMESPACE_HTML)
-      when (kind) {
+    if (qualifiedKind.namespace == WebSymbol.NAMESPACE_HTML)
+      when (qualifiedKind.kind) {
         VueWebSymbolsQueryConfigurator.KIND_VUE_COMPONENT_PROPS -> {
           val props = mutableListOf<VueInputProperty>()
           item.acceptPropertiesAndMethods(object : VueModelVisitor() {
@@ -120,7 +115,7 @@ class VueComponentSymbol(name: String, component: VueComponent, private val vueP
         }
         else -> emptyList()
       }
-    else if (namespace == WebSymbol.NAMESPACE_JS && kind == WebSymbol.KIND_JS_EVENTS) {
+    else if (qualifiedKind.matches(WebSymbol.NAMESPACE_JS, WebSymbol.KIND_JS_EVENTS)) {
       (item as? VueContainer)
         ?.emits
         ?.map { VueEmitCallSymbol(it, item, this.origin) }

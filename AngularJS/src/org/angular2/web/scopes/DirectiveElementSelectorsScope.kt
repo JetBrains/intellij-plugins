@@ -4,9 +4,8 @@ package org.angular2.web.scopes
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.webSymbols.SymbolKind
-import com.intellij.webSymbols.SymbolNamespace
 import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScopeWithCache
 import org.angular2.Angular2Framework
 import org.angular2.entities.Angular2EntitiesProvider
@@ -16,8 +15,8 @@ import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DI
 internal class DirectiveElementSelectorsScope(project: Project)
   : WebSymbolsScopeWithCache<Project, Unit>(Angular2Framework.ID, project, project, Unit) {
 
-  override fun provides(namespace: SymbolNamespace, kind: SymbolKind): Boolean =
-    namespace == WebSymbol.NAMESPACE_JS && kind == KIND_NG_DIRECTIVE_ELEMENT_SELECTORS
+  override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+    qualifiedKind.matches(WebSymbol.NAMESPACE_JS, KIND_NG_DIRECTIVE_ELEMENT_SELECTORS)
 
   override fun createPointer(): Pointer<DirectiveElementSelectorsScope> =
     Pointer.hardPointer(this)

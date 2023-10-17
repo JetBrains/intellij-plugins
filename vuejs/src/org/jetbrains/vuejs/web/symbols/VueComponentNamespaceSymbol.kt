@@ -63,24 +63,21 @@ class VueComponentNamespaceSymbol(
     get() = KIND_VUE_COMPONENT_NAMESPACES
 
   override fun isExclusiveFor(namespace: SymbolNamespace, kind: SymbolKind): Boolean =
-    isNamespacedKind(namespace, kind)
+    isNamespacedKind(WebSymbolQualifiedKind(namespace, kind))
 
-  override fun getMatchingSymbols(namespace: SymbolNamespace,
-                                  kind: SymbolKind,
-                                  name: String,
+  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbol> =
-    if (isNamespacedKind(namespace, kind) && name.getOrNull(0)?.isUpperCase() != false)
-      getMatchingJSPropertySymbols(name).adaptToNamespaceComponents(kind)
+    if (isNamespacedKind(qualifiedName.qualifiedKind) && qualifiedName.name.getOrNull(0)?.isUpperCase() != false)
+      getMatchingJSPropertySymbols(qualifiedName.name).adaptToNamespaceComponents(qualifiedName.kind)
     else
       emptyList()
 
-  override fun getSymbols(namespace: SymbolNamespace,
-                          kind: SymbolKind,
+  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
                           params: WebSymbolsListSymbolsQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
-    if (isNamespacedKind(namespace, kind))
-      getJSPropertySymbols().adaptToNamespaceComponents(kind)
+    if (isNamespacedKind(qualifiedKind))
+      getJSPropertySymbols().adaptToNamespaceComponents(qualifiedKind.kind)
     else
       emptyList()
 
@@ -111,7 +108,7 @@ class VueComponentNamespaceSymbol(
     private val namespaceSymbol = VueComponentNamespaceSymbol(delegate.name, delegate.rawSource as JSPsiNamedElementBase)
 
     override fun isExclusiveFor(namespace: SymbolNamespace, kind: SymbolKind): Boolean =
-      isNamespacedKind(namespace, kind) || super.isExclusiveFor(namespace, kind)
+      isNamespacedKind(WebSymbolQualifiedKind(namespace, kind)) || super.isExclusiveFor(namespace, kind)
 
     override fun createPointer(): Pointer<out PsiSourcedWebSymbol> {
       val delegatePtr = delegate.createPointer()
@@ -123,28 +120,23 @@ class VueComponentNamespaceSymbol(
     override val queryScope: List<WebSymbolsScope>
       get() = listOf(this)
 
-    override fun getMatchingSymbols(namespace: SymbolNamespace,
-                                    kind: SymbolKind,
-                                    name: String,
+    override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                     params: WebSymbolsNameMatchQueryParams,
                                     scope: Stack<WebSymbolsScope>): List<WebSymbol> =
-      namespaceSymbol.getMatchingSymbols(namespace, kind, name, params, scope) +
-      super.getMatchingSymbols(namespace, kind, name, params, scope)
+      namespaceSymbol.getMatchingSymbols(qualifiedName, params, scope) +
+      super.getMatchingSymbols(qualifiedName, params, scope)
 
-    override fun getSymbols(namespace: SymbolNamespace,
-                            kind: SymbolKind,
+    override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
                             params: WebSymbolsListSymbolsQueryParams,
                             scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
-      namespaceSymbol.getSymbols(namespace, kind, params, scope) +
-      super.getSymbols(namespace, kind, params, scope)
+      namespaceSymbol.getSymbols(qualifiedKind, params, scope) +
+      super.getSymbols(qualifiedKind, params, scope)
 
-    override fun getCodeCompletions(namespace: SymbolNamespace,
-                                    kind: SymbolKind,
-                                    name: String,
+    override fun getCodeCompletions(qualifiedName: WebSymbolQualifiedName,
                                     params: WebSymbolsCodeCompletionQueryParams,
                                     scope: Stack<WebSymbolsScope>): List<WebSymbolCodeCompletionItem> =
-      namespaceSymbol.getCodeCompletions(namespace, kind, name, params, scope) +
-      super.getCodeCompletions(namespace, kind, name, params, scope)
+      namespaceSymbol.getCodeCompletions(qualifiedName, params, scope) +
+      super.getCodeCompletions(qualifiedName, params, scope)
 
     override fun equals(other: Any?): Boolean =
       other is VueNamespacedComponent && other.delegate == delegate
@@ -155,9 +147,9 @@ class VueComponentNamespaceSymbol(
   }
 
   companion object {
-    private fun isNamespacedKind(namespace: String, kind: String) =
-      (namespace == NAMESPACE_JS && kind == KIND_VUE_COMPONENT_NAMESPACES)
-      || (namespace == NAMESPACE_HTML && kind == KIND_VUE_COMPONENTS)
+    private fun isNamespacedKind(qualifiedKind: WebSymbolQualifiedKind) =
+      qualifiedKind.matches(NAMESPACE_JS, KIND_VUE_COMPONENT_NAMESPACES) ||
+      qualifiedKind.matches(NAMESPACE_HTML, KIND_VUE_COMPONENTS)
   }
 
 }

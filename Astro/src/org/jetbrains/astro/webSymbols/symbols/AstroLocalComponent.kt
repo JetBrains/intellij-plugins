@@ -17,21 +17,18 @@ class AstroLocalComponent(override val name: String,
                           override val source: PsiElement,
                           override val priority: WebSymbol.Priority = WebSymbol.Priority.HIGH) : PsiSourcedWebSymbol {
 
-  override fun getMatchingSymbols(namespace: SymbolNamespace,
-                                  kind: SymbolKind,
-                                  name: String,
+  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbol> =
-    if (namespace == NAMESPACE_HTML && kind == KIND_HTML_ATTRIBUTES && name.contains(":"))
+    if (qualifiedName.matches(NAMESPACE_HTML, KIND_HTML_ATTRIBUTES) && name.contains(":"))
       emptyList()
     else
-      super.getMatchingSymbols(namespace, kind, name, params, scope)
+      super.getMatchingSymbols(qualifiedName, params, scope)
 
-  override fun getSymbols(namespace: SymbolNamespace,
-                          kind: SymbolKind,
+  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
                           params: WebSymbolsListSymbolsQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
-    if (namespace == NAMESPACE_HTML && kind == KIND_HTML_ATTRIBUTES && !params.expandPatterns)
+    if (qualifiedKind.matches(NAMESPACE_HTML, KIND_HTML_ATTRIBUTES) && !params.expandPatterns)
       listOf(AstroComponentWildcardAttribute)
     else
       emptyList()
@@ -46,7 +43,7 @@ class AstroLocalComponent(override val name: String,
     get() = AstroQueryConfigurator.KIND_ASTRO_COMPONENT
 
   override val properties: Map<String, Any>
-    get() = mapOf(Pair(AstroQueryConfigurator.PROP_ASTRO_PROXIMITY, AstroProximity.LOCAL))
+    get() = mapOf(AstroQueryConfigurator.PROP_ASTRO_PROXIMITY to AstroProximity.LOCAL)
 
   override fun createPointer(): Pointer<out PsiSourcedWebSymbol> {
     val name = name

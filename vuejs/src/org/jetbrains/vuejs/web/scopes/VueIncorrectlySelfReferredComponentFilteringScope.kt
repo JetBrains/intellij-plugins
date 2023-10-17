@@ -22,27 +22,22 @@ import java.util.*
 class VueIncorrectlySelfReferredComponentFilteringScope(private val delegate: WebSymbolsScope,
                                                         private val file: PsiFile) : WebSymbolsScope {
 
-  override fun getMatchingSymbols(namespace: SymbolNamespace,
-                                  kind: SymbolKind,
-                                  name: String,
+  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbol> =
-    delegate.getMatchingSymbols(namespace, kind, name, params, scope)
+    delegate.getMatchingSymbols(qualifiedName, params, scope)
       .filter { isNotIncorrectlySelfReferred(it) }
 
-  override fun getSymbols(namespace: SymbolNamespace,
-                          kind: SymbolKind,
+  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
                           params: WebSymbolsListSymbolsQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
-    delegate.getSymbols(namespace, kind, params, scope)
+    delegate.getSymbols(qualifiedKind, params, scope)
       .filter { isNotIncorrectlySelfReferred(it) }
 
-  override fun getCodeCompletions(namespace: SymbolNamespace,
-                                  kind: SymbolKind,
-                                  name: String,
+  override fun getCodeCompletions(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsCodeCompletionQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbolCodeCompletionItem> =
-    delegate.getCodeCompletions(namespace, kind, name, params, scope)
+    delegate.getCodeCompletions(qualifiedName, params, scope)
       .filter { isNotIncorrectlySelfReferred(it.symbol) }
 
   override fun createPointer(): Pointer<out WebSymbolsScope> {

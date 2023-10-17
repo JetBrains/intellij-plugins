@@ -36,12 +36,10 @@ class VueInjectSymbolsScope(private val enclosingComponent: VueSourceComponent)
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
   }
 
-  override fun getCodeCompletions(namespace: SymbolNamespace,
-                                  kind: SymbolKind,
-                                  name: String,
+  override fun getCodeCompletions(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsCodeCompletionQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbolCodeCompletionItem> {
-    return super.getCodeCompletions(namespace, kind, name, params, scope).filter {
+    return super.getCodeCompletions(qualifiedName, params, scope).filter {
       it.symbol.asSafely<VueProvideSymbol>()?.injectionKey == null
     }
   }

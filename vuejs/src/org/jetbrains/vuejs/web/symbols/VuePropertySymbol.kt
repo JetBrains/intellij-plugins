@@ -18,17 +18,14 @@ abstract class VuePropertySymbol<T : VueProperty>(item: T, owner: VueComponent, 
   override fun isExclusiveFor(namespace: SymbolNamespace, kind: SymbolKind): Boolean =
     namespace == WebSymbol.NAMESPACE_JS && kind == WebSymbol.KIND_JS_PROPERTIES
 
-  override fun getMatchingSymbols(namespace: SymbolNamespace,
-                                  kind: SymbolKind,
-                                  name: String,
+  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbol> =
-    getMatchingJSPropertySymbols(namespace, kind, name)
+    getMatchingJSPropertySymbols(qualifiedName)
 
-  override fun getSymbols(namespace: SymbolNamespace,
-                          kind: SymbolKind,
+  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
                           params: WebSymbolsListSymbolsQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
-    getJSPropertySymbols(namespace, kind)
+    getJSPropertySymbols(qualifiedKind)
 
 }

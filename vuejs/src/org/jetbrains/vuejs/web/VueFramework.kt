@@ -4,9 +4,8 @@ package org.jetbrains.vuejs.web
 import com.intellij.javascript.web.WebFramework
 import com.intellij.javascript.web.html.WebFrameworkHtmlFileType
 import com.intellij.psi.xml.XmlTag
-import com.intellij.webSymbols.SymbolKind
-import com.intellij.webSymbols.SymbolNamespace
 import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbolQualifiedName
 import com.intellij.webSymbols.query.WebSymbolNamesProvider
 import com.intellij.webSymbols.query.WebSymbolNamesProvider.Target.*
 import org.jetbrains.vuejs.VuejsIcons
@@ -28,11 +27,10 @@ class VueFramework : WebFramework() {
   override val htmlFileType: WebFrameworkHtmlFileType
     get() = VueFileType.INSTANCE
 
-  override fun getNames(namespace: SymbolNamespace,
-                        kind: SymbolKind,
-                        name: String,
-                        target: WebSymbolNamesProvider.Target): List<String> =
-    when (namespace) {
+  override fun getNames(qualifiedName: WebSymbolQualifiedName, target: WebSymbolNamesProvider.Target): List<String> {
+    val (namespace, kind, name) = qualifiedName
+
+    return when (namespace) {
       WebSymbol.NAMESPACE_HTML -> when (kind) {
         KIND_VUE_COMPONENTS -> when (target) {
           NAMES_QUERY -> listOf(name, fromAsset(name, true))
@@ -64,6 +62,7 @@ class VueFramework : WebFramework() {
       }
       else -> emptyList()
     }
+  }
 
   override fun getAttributeNameCodeCompletionFilter(tag: XmlTag): Predicate<String> =
     VueAttributeNameCodeCompletionFilter(tag)

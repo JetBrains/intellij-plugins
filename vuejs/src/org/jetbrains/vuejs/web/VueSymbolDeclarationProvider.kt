@@ -10,6 +10,7 @@ import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbol.Companion.KIND_JS_EVENTS
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
+import com.intellij.webSymbols.WebSymbolQualifiedName
 import com.intellij.webSymbols.declarations.WebSymbolDeclaration
 import com.intellij.webSymbols.declarations.WebSymbolDeclarationProvider
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
@@ -50,7 +51,7 @@ class VueSymbolDeclarationProvider : WebSymbolDeclarationProvider {
         }
           ?.let { VueModelManager.findEnclosingComponent(it) }
           ?.asWebSymbol("", VueModelVisitor.Proximity.LOCAL)
-          ?.getMatchingSymbols(NAMESPACE_JS, KIND_JS_EVENTS, name,
+          ?.getMatchingSymbols(WebSymbolQualifiedName(NAMESPACE_JS, KIND_JS_EVENTS, name),
                                WebSymbolsNameMatchQueryParams(WebSymbolsQueryExecutorFactory.create(parent, false)),
                                Stack())
           ?.getOrNull(0)
