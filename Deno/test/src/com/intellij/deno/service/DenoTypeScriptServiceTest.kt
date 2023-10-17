@@ -1,10 +1,14 @@
 package com.intellij.deno.service
 
 import com.intellij.deno.DenoSettings
+import com.intellij.lang.javascript.BaseJSCompletionTestCase
 import com.intellij.lang.javascript.modules.JSTempDirWithNodeInterpreterTest
+import com.intellij.lang.javascript.typescript.service.TypeScriptServiceTestBase
+import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.util.Disposer
 import com.intellij.platform.lsp.tests.checkLspHighlighting
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 
@@ -13,6 +17,10 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
     super.setUp()
     DenoSettings.getService(project).setUseDenoAndReload(true)
     (myFixture as CodeInsightTestFixtureImpl).canChangeDocumentDuringHighlighting(true)
+    TypeScriptLanguageServiceUtil.setUseService(true)
+    Disposer.register(testRootDisposable) {
+      TypeScriptLanguageServiceUtil.setUseService(false)
+    }
   }
 
   fun testSimpleDeno() {
@@ -89,5 +97,24 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
     WriteAction.run<Throwable> { myFixture.editor.document.setText(myFixture.editor.document.text.replace("UnknownName", errorWithMarkup)) }
     myFixture.checkLspHighlighting()
     myFixture.checkResult("import { Hello<caret>2 } from '../bar1.ts'\nconst _hi = new Hello2()\nconsole.log(_hi)\nUnknownName")
+  }
+
+  fun testDenoModulePathCompletion() {
+    myFixture.configureByText("main.ts", """
+      import {join} from "https://deno.land/std@0.187.0/<caret>path/mod.ts";
+      
+      join("1", "2");
+    """.trimIndent())
+    myFixture.checkLspHighlighting()
+
+    val lookupElements = myFixture.completeBasic()
+    BaseJSCompletionTestCase.checkWeHaveInCompletion(lookupElements, "https://deno.land/std@0.187.0/path/mod.ts")
+    myFixture.type("\t")
+    myFixture.checkResult("""
+      import {join} from "https://deno.land/std@0.187.0/path/mod.ts";
+      
+      join("1", "2");
+    """.trimIndent())
+    TypeScriptServiceTestBase.assertHasServiceItems(lookupElements, true)
   }
 }
