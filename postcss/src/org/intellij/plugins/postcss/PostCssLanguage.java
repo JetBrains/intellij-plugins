@@ -12,9 +12,8 @@ public final class PostCssLanguage extends Language implements CssLanguageProper
     super(CSSLanguage.INSTANCE, "PostCSS", "text/postcss");
   }
 
-  @NotNull
   @Override
-  public String getDisplayName() {
+  public @NotNull String getDisplayName() {
     return "PostCSS";
   }
 }
