@@ -111,7 +111,7 @@ class VolarServiceTest : VolarServiceTestBase() {
   }
 
   @Test
-  fun testOptionalPropertyInTSFileCompletion() { // WEB-61886
+  fun testOptionalPropertyInsideObjectLiteralInTSFileCompletion() { // WEB-61886
     myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
     myFixture.addFileToProject("tsconfig.json", tsconfig)
 
@@ -157,4 +157,38 @@ class VolarServiceTest : VolarServiceTestBase() {
     TestCase.assertTrue("Lookup element presentation must match expected", presentationTexts.contains("base??"))
     assertHasServiceItems(elements, true)
   }
+
+  @Test
+  fun testOptionalPropertyInsideQualifiedReferenceInTSFileCompletion() { // WEB-63103
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
+    myFixture.addFileToProject("tsconfig.json", tsconfig)
+
+    // Volar reports obscuring errors when there's no reference after dot, but we have to test caret placement directly after it
+    myFixture.configureByText("main.ts", """
+      const foo: Partial<{ bar: string; baz: number; }> = {};
+      foo.<caret><error>b</error>;
+    """.trimIndent())
+
+    myFixture.checkLspHighlighting()
+    assertCorrectService()
+
+    val elements = myFixture.completeBasic()
+    myFixture.type('\t')
+
+    checkHighlightingByText(myFixture, """
+      const foo: Partial<{ bar: string; baz: number; }> = {};
+      foo.bar;
+    """.trimIndent(), true)
+
+    val presentationTexts = elements.map { element ->
+      val presentation = LookupElementPresentation()
+      element.renderElement(presentation)
+      presentation.itemText
+    }
+
+    // duplicated question mark is definitely unwanted, but for now, this is what we get from Volar, so let's encode it in test
+    TestCase.assertTrue("Lookup element presentation must match expected", presentationTexts.contains("bar??"))
+    assertHasServiceItems(elements, true)
+  }
+
 }
