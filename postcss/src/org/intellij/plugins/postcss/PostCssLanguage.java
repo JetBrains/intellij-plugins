@@ -1,6 +1,5 @@
 package org.intellij.plugins.postcss;
 
-import com.intellij.css.util.CssConstants;
 import com.intellij.lang.Language;
 import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.css.CssLanguageProperties;
@@ -17,21 +16,5 @@ public final class PostCssLanguage extends Language implements CssLanguageProper
   @Override
   public String getDisplayName() {
     return "PostCSS";
-  }
-
-  @NotNull
-  @Override
-  public String getDeclarationsTerminator() {
-    return CssConstants.SEMICOLON;
-  }
-
-  @Override
-  public @NotNull String getPropertyNameValueSeparator() {
-    return CssConstants.COLON;
-  }
-
-  @Override
-  public boolean isIndentBased() {
-    return false;
   }
 }
