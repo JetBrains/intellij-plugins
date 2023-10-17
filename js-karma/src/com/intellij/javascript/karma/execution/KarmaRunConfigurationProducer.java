@@ -12,7 +12,7 @@ import com.intellij.javascript.testFramework.interfaces.mochaTdd.MochaTddFileStr
 import com.intellij.javascript.testFramework.interfaces.mochaTdd.MochaTddFileStructureBuilder;
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructure;
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructureBuilder;
-import com.intellij.javascript.testing.JsTestRunConfigurationProducer;
+import com.intellij.javascript.testing.JsPackageDependentTestRunConfigurationProducer;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 
-public final class KarmaRunConfigurationProducer extends JsTestRunConfigurationProducer<KarmaRunConfiguration> {
+public final class KarmaRunConfigurationProducer extends JsPackageDependentTestRunConfigurationProducer<KarmaRunConfiguration> {
   public KarmaRunConfigurationProducer() {
     super(Collections.singletonList(KarmaUtil.KARMA_PACKAGE_NAME));
   }
@@ -46,7 +46,7 @@ public final class KarmaRunConfigurationProducer extends JsTestRunConfigurationP
                                                             @NotNull ConfigurationContext context,
                                                             @NotNull Ref<PsiElement> sourceElement) {
     PsiElement element = context.getPsiLocation();
-    if (element == null || !isTestRunnerPackageAvailableFor(element, context)) {
+    if (element == null || !isTestRunnerAvailableFor(element, context)) {
       return false;
     }
     Pair<KarmaRunSettings, PsiElement> pair = setup(element, configuration.getRunSettings());

@@ -18,7 +18,7 @@ import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.javascript.testFramework.PreferableRunConfiguration;
 import com.intellij.javascript.testFramework.util.JsTestFqn;
-import com.intellij.javascript.testing.JsTestRunConfigurationProducer;
+import com.intellij.javascript.testing.runConfiguration.JsTestRunConfigurationProducer;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
