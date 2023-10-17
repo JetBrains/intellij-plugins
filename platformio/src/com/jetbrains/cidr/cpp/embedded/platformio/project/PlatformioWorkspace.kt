@@ -96,7 +96,9 @@ class PlatformioWorkspaceProvider : CidrWorkspaceProvider {
 
   override fun loadWorkspace(project: Project) {
     runInEdt {
-      project.service<PlatformioWorkspace>().projectOpened()
+      if (!project.isDisposed) {
+        project.service<PlatformioWorkspace>().projectOpened()
+      }
     }
   }
 }
