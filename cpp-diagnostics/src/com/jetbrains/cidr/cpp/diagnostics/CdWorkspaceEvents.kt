@@ -18,7 +18,7 @@ class CdOCWorkspaceEventsListener(private val project: Project) : OCWorkspaceLis
   }
 }
 
-@Service
+@Service(Service.Level.PROJECT)
 class CdWorkspaceEvents {
   private val events = mutableListOf<String>()
   private val isEnabled = Registry.get(ENABLED_KEY).asBoolean()
