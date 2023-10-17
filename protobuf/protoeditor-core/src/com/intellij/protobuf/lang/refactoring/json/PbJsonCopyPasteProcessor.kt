@@ -15,6 +15,7 @@ import com.intellij.openapi.util.Ref
 import com.intellij.protobuf.lang.PbFileType
 import com.intellij.protobuf.lang.psi.PbFile
 import com.intellij.protobuf.lang.psi.PbMessageBody
+import com.intellij.protobuf.lang.psi.SyntaxLevel
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
@@ -50,11 +51,12 @@ internal class PbJsonCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
                                        values: MutableList<out TextBlockTransferableData?>) {
     if (editor.virtualFile.fileType != PbFileType.INSTANCE) return
     val pbFile = PsiManager.getInstance(project).findFile(editor.virtualFile).asSafely<PbFile>() ?: return
+    val syntaxLevel = pbFile.syntaxLevel
     val data = values.filterIsInstance<PbJsonTransferableData>().singleOrNull() ?: return
 
     val parsedJsonStruct = tryBuildStructFromJson(data.maybeJson) ?: return
     val namesScope = collectExistingNamesScope(pbFile, caretOffset) ?: return
-    val protobufToInsert = assembleProtobufFile(namesScope, parsedJsonStruct)
+    val protobufToInsert = assembleProtobufFile(namesScope, parsedJsonStruct, syntaxLevel)
 
     val document = editor.document
     PsiDocumentManager.getInstance(project).commitDocument(document)
@@ -64,14 +66,14 @@ internal class PbJsonCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
     }
   }
 
-  private fun assembleProtobufFile(namesScope: List<String>, parsedJsonStruct: Struct): String {
+  private fun assembleProtobufFile(namesScope: List<String>, parsedJsonStruct: Struct, syntaxLevel: SyntaxLevel): String {
     return with(PbJsonStructTransformer(namesScope)) {
       flattenNestedStructs(parsedJsonStruct)
         .mapNotNull(::rememberUniqueStructOrNull)
         .map { struct ->
           PbPastedEntity.PbStruct(
             getUniqueName(struct),
-            mapStructFields(struct, ::getUniqueName)
+            mapStructFields(struct, syntaxLevel, ::getUniqueName)
           )
         }.joinToString(transform = PbPastedEntity::render, separator = "\n")
     }
@@ -113,10 +115,11 @@ internal class PbJsonCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
     }.getOrNull()
   }
 
-  private fun mapStructFields(struct: Struct, structNameGetter: (Struct) -> String): List<PbPastedEntity.PbField> {
+  private fun mapStructFields(struct: Struct, syntaxLevel: SyntaxLevel, structNameGetter: (Struct) -> String): List<PbPastedEntity.PbField> {
     return struct.fieldsMap.entries.mapIndexed { zeroBasedIndex, (fieldName, fieldValue) ->
       PbPastedEntity.PbField(name = fieldName,
                              isRepeated = fieldValue.hasListValue(),
+                             isOptional = syntaxLevel == SyntaxLevel.PROTO2,
                              type = mapFieldType(fieldValue, structNameGetter),
                              order = zeroBasedIndex + 1)
     }

@@ -21,13 +21,17 @@ internal sealed class PbPastedEntity {
   data class PbField(
     val name: String,
     val isRepeated: Boolean,
+    val isOptional: Boolean,
     val type: String,
     val order: Int
   ) : PbPastedEntity() {
     override fun render(): String {
-      return """
-        ${if (isRepeated) "repeated" else ""} $type $name = $order;
-      """.trimIndent()
+      val label = when {
+        isRepeated -> "repeated"
+        isOptional -> "optional"
+        else -> ""
+      }
+      return "$label $type $name = $order;"
     }
   }
 }
