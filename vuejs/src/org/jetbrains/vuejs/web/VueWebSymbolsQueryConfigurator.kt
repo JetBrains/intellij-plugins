@@ -203,7 +203,7 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
     override val matchNames: Map<WebSymbolQualifiedKind, WebSymbolNameConverter>
       get() = canonicalNames
 
-    override val nameVariants: Map<WebSymbolQualifiedKind, WebSymbolNameConverter>
+    override val completionVariants: Map<WebSymbolQualifiedKind, WebSymbolNameConverter>
       get() = canonicalNames
 
   }

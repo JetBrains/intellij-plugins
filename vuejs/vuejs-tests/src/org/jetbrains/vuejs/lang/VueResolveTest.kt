@@ -2225,7 +2225,7 @@ export default class UsageComponent extends Vue {
       defineSlots<{
         default: (props: { msg: string }) => any
         header?: (props: { pageTitle?: string }) => any
-        footer: (props: { year?: number }) => any
+        footer: (props: { year?: number, dayOfWeek: number }) => any
       }>()
       </script>
       
@@ -2233,6 +2233,7 @@ export default class UsageComponent extends Vue {
         <div class="container">
           <header>
             <slot name="header" pageTitle="Hello!"></slot>
+            <slot name="footer" day-of-week="2"></slot>
           </header>
         </div>
       </template>
@@ -2241,6 +2242,8 @@ export default class UsageComponent extends Vue {
                                    "<caret>header?: (props: { pageTitle?: string }) => any")
     myFixture.checkGotoDeclaration("pageT<caret>itle=\"Hello!\"",
                                    "<caret>pageTitle?: string }")
+    myFixture.checkGotoDeclaration("day-o<caret>f-week=\"2\"",
+                                   "<caret>dayOfWeek: number }")
   }
 }
 

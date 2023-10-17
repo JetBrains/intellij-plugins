@@ -38,7 +38,7 @@ class VueSlotSymbol(slot: VueSlot,
   override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbol> {
-    return getMatchingJSPropertySymbols(qualifiedName)
+    return getMatchingJSPropertySymbols(qualifiedName, params.queryExecutor.namesProvider)
   }
 
   override fun createPointer(): Pointer<VueSlotSymbol> =

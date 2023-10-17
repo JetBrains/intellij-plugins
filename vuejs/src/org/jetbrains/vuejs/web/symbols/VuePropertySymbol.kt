@@ -21,7 +21,7 @@ abstract class VuePropertySymbol<T : VueProperty>(item: T, owner: VueComponent, 
   override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbol> =
-    getMatchingJSPropertySymbols(qualifiedName)
+    getMatchingJSPropertySymbols(qualifiedName, params.queryExecutor.namesProvider)
 
   override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
                           params: WebSymbolsListSymbolsQueryParams,
