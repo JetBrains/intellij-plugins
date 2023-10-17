@@ -20,12 +20,12 @@ import com.intellij.lang.typescript.lsp.BaseLspTypeScriptService
 import com.intellij.lang.typescript.lsp.LspAnnotationError
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.HtmlBuilder
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.util.convertMarkupContentToHtml
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.util.text.SemVer
 import org.eclipse.lsp4j.MarkupContent
 
 class DenoTypeScriptServiceProvider(val project: Project) : JSLanguageServiceProvider {
@@ -68,6 +68,20 @@ class DenoTypeScriptService(project: Project) : BaseLspTypeScriptService(project
     }
 
     return TypeScriptLanguageServiceUtil.getCompletionMergeStrategy(parameters, file, context)
+  }
+
+  override fun getCompletionAlternativePrefix(parameters: CompletionParameters, basePrefix: String): String? {
+    val position = parameters.position
+    val node = position.getNode()
+    if (!JSTokenTypes.STRING_LITERALS.contains(node.getElementType())) return null
+    val startOffset = node.getStartOffset() + 1
+    val endOffset = parameters.offset
+    if (startOffset >= endOffset) return null
+    val candidate = parameters.editor.getDocument().getText(TextRange(startOffset, endOffset))
+    return if (basePrefix != candidate) {
+      candidate
+    }
+    else null
   }
 
   override fun getServiceFixes(file: PsiFile, element: PsiElement?, result: JSAnnotationError): Collection<IntentionAction> {
