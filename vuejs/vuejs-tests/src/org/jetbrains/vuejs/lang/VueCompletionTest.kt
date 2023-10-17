@@ -2276,6 +2276,21 @@ export default {
     assertDoesntContain(myFixture.lookupElementStrings!!, "myInjectionKey")
   }
 
+  fun testDefineSlotsSlotName() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
+    myFixture.configureByFile(getTestName(true) + ".vue")
+    myFixture.completeBasic()
+    assertSameElements(myFixture.lookupElementStrings!!, "default", "header", "footer")
+  }
+
+  fun testDefineSlotsProperties() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
+    myFixture.configureByFile(getTestName(true) + ".vue")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "year", "age", "companyName", "company-name")
+    assertDoesntContain(myFixture.lookupElementStrings!!, "msg", "pageTitle", "page-title")
+  }
+
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()
     assertDoesntContain(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")

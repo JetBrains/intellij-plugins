@@ -61,20 +61,23 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
     override val emits: List<VueEmitCall>
       get() = structure.emits
 
+    override val slots: List<VueSlot>
+      get() = structure.slots
+
     override val computed: List<VueComputedProperty>
-      get() = structure.rawBindings.filterIsInstance(VueComputedProperty::class.java)
+      get() = structure.rawBindings.filterIsInstance<VueComputedProperty>()
 
     override val data: List<VueDataProperty>
-      get() = structure.rawBindings.filterIsInstance(VueDataProperty::class.java)
+      get() = structure.rawBindings.filterIsInstance<VueDataProperty>()
 
     override val methods: List<VueMethod>
-      get() = structure.rawBindings.filterIsInstance(VueMethod::class.java)
+      get() = structure.rawBindings.filterIsInstance<VueMethod>()
 
     override val provides: List<VueProvide>
-      get() = injectionCalls.filterIsInstance(VueProvide::class.java)
+      get() = injectionCalls.filterIsInstance<VueProvide>()
 
     override val injects: List<VueInject>
-      get() = injectionCalls.filterIsInstance(VueInject::class.java)
+      get() = injectionCalls.filterIsInstance<VueInject>()
 
     private val structure: VueScriptSetupStructure
       get() = CachedValuesManager.getCachedValue(module) {
@@ -113,6 +116,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
       var props: List<VueInputProperty> = emptyList()
       var emits: List<VueEmitCall> = emptyList()
+      var slots: List<VueSlot> = emptyList()
       var rawBindings: List<VueNamedSymbol> = emptyList()
       val modelDecls: MutableMap<String, VueModelDecl> = mutableMapOf()
 
@@ -160,6 +164,9 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
           }
           DEFINE_MODEL_FUN -> analyzeDefineModel(call)?.let { modelDecls[it.name] = it }
+          DEFINE_SLOTS_FUN -> {
+            slots = analyzeDefineSlots(call)
+          }
         }
       }
 
@@ -176,7 +183,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
         emits = emits + modelEmits
       }
 
-      return VueScriptSetupStructure(components, directives, props, emits, rawBindings)
+      return VueScriptSetupStructure(components, directives, props, emits, slots, rawBindings)
     }
 
     private fun getInjectionCalls(module: JSExecutionScope): List<VueNamedSymbol> {
@@ -267,7 +274,8 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
         .filterIsInstance<JSCallExpression>()
         .mapNotNull { call ->
           when ((call.methodExpression as? JSReferenceExpression)?.referenceName) {
-            DEFINE_PROPS_FUN, DEFINE_EMITS_FUN, DEFINE_EXPOSE_FUN, WITH_DEFAULTS_FUN, DEFINE_MODEL_FUN, INJECT_FUN, PROVIDE_FUN -> {
+            DEFINE_PROPS_FUN, DEFINE_EMITS_FUN, DEFINE_SLOTS_FUN, DEFINE_EXPOSE_FUN,
+            WITH_DEFAULTS_FUN, DEFINE_MODEL_FUN, INJECT_FUN, PROVIDE_FUN -> {
               call
             }
             else -> null
@@ -311,6 +319,20 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
                    }
                } ?: emptyList()
     }
+
+    private fun analyzeDefineSlots(call: JSCallExpression): List<VueSlot> =
+      call.takeIf { JSStubBasedPsiTreeUtil.isStubBased(it) }
+        ?.typeArguments
+        ?.singleOrNull()
+        ?.jsType?.asRecordType()?.typeMembers
+        ?.asSequence()
+        ?.filterIsInstance<JSRecordType.PropertySignature>()
+        ?.map {
+          val slotType = it.jsType?.asSafely<JSFunctionType>()?.parameters?.firstOrNull()?.inferredType
+          VueScriptSetupSlot(it.memberName, it.memberSource.singleElement, slotType)
+        }
+        ?.toList()
+      ?: emptyList()
 
     private fun analyzeDefineModel(call: JSCallExpression): VueModelDecl? {
       val typeArgs = call.typeArguments
@@ -447,11 +469,16 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
     override val hasStrictSignature: Boolean = true
   }
 
+  private class VueScriptSetupSlot(override val name: String,
+                                   override val source: PsiElement?,
+                                   override val scope: JSType?) : VueSlot
+
   private data class VueScriptSetupStructure(
     val components: Map<String, VueComponent>,
     val directives: Map<String, VueDirective>,
     val props: List<VueInputProperty>,
     val emits: List<VueEmitCall>,
+    val slots: List<VueSlot>,
     val rawBindings: List<VueNamedSymbol>,
   )
 

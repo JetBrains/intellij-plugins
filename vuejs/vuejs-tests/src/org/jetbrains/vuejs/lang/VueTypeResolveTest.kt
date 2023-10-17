@@ -275,6 +275,27 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
+  fun testTypeofImportRef() {
+    // WEB-56524
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.configureByFile("typeof-import-ref.ts")
+    assertEquals("Ref&lt;UnwrapRef&lt;string&gt;&gt;", JSTestUtils.getExpressionTypeFromEditor(myFixture))
+  }
+
+  fun testDefineSlotType() {
+    TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
+    myFixture.copyDirectoryToProject(getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+
+    doTest(
+      "pageTitle" to "string | undefined",
+      "msg" to "string",
+      "footerProps" to "{year?: number}",
+      "footerProps.ye<caret>ar" to "number | undefined",
+    )
+  }
+
   private fun testVFor(vararg testCases: Triple<String, String, String>, iterations: Int = 3) {
     for (test in testCases) {
       for (i in 1..iterations) {
@@ -306,11 +327,4 @@ class VueTypeResolveTest : BasePlatformTestCase() {
   private fun findReferenceBySignature(signature: String) = InjectedLanguageManager.getInstance(project)
     .findInjectedElementAt(myFixture.file, myFixture.file.findOffsetBySignature(signature))
     ?.parentOfType<JSReferenceExpression>()
-
-  fun testTypeofImportRef() {
-    // WEB-56524
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
-    myFixture.configureByFile("typeof-import-ref.ts")
-    assertEquals("Ref&lt;UnwrapRef&lt;string&gt;&gt;", JSTestUtils.getExpressionTypeFromEditor(myFixture))
-  }
 }

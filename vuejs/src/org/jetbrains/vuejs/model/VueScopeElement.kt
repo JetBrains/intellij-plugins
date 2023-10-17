@@ -108,6 +108,7 @@ interface VueScopeElement : VueDocumentedItem {
                        && container.computed.all { visitor.visitComputedProperty(it, proximity) }
                        && container.methods.all { visitor.visitMethod(it, proximity) }
                        && container.injects.all { visitor.visitInject(it, proximity) }
+                       && container.slots.all { visitor.visitSlot(it, proximity) }
                       ))
       }
     }, VueModelVisitor.Proximity.GLOBAL)

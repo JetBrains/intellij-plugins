@@ -12,6 +12,7 @@ const val DEFINE_COMPONENT_FUN = "defineComponent"
 const val DEFINE_NUXT_COMPONENT_FUN = "defineNuxtComponent" // so far, the IDE treats it just as an alias for defineComponent
 const val DEFINE_PROPS_FUN = "defineProps"
 const val DEFINE_EMITS_FUN = "defineEmits"
+const val DEFINE_SLOTS_FUN = "defineSlots"
 const val DEFINE_EXPOSE_FUN = "defineExpose"
 const val DEFINE_MODEL_FUN = "defineModel"
 const val WITH_DEFAULTS_FUN = "withDefaults"

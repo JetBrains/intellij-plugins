@@ -69,6 +69,7 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
     if (allowResolve) {
       addEntityContainers(location, fileContext, result)
       tag?.let { result.add(VueAvailableSlotsScope(it)) }
+      tag?.takeIf { it.name == SLOT_TAG_NAME }?.let { result.add(VueSlotElementScope(it)) }
       findModule(tag, true)?.let {
         result.add(VueScriptSetupNamespacedComponentsScope(it))
       }

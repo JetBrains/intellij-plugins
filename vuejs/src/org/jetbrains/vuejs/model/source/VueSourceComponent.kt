@@ -42,6 +42,9 @@ class VueSourceComponent(sourceElement: JSImplicitElement,
 
   override val slots: List<VueSlot>
     get() {
+      val declaredSlots = super.slots
+      if (declaredSlots.isNotEmpty()) return declaredSlots
+
       val template = template ?: return emptyList()
       return CachedValuesManager.getCachedValue(template.source) {
         create(buildSlotsList(template), template.source)

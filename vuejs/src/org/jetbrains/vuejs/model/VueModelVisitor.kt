@@ -55,6 +55,10 @@ abstract class VueModelVisitor {
     return true
   }
 
+  open fun visitSlot(property: VueSlot, proximity: Proximity): Boolean {
+    return true
+  }
+
   enum class Proximity {
     OUT_OF_SCOPE,
     GLOBAL,

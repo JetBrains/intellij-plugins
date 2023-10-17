@@ -79,6 +79,9 @@ const val VITE_PKG = "vite"
 val VUE_NOTIFICATIONS: NotificationGroup
   get() = NotificationGroupManager.getInstance().getNotificationGroup("Vue")
 
+/**
+ * Convert to hyphen-case.
+ */
 fun fromAsset(name: String, hyphenBeforeDigit: Boolean = false): String {
   val result = StringBuilder()
   for (ch in name) {
@@ -104,6 +107,9 @@ fun fromAsset(name: String, hyphenBeforeDigit: Boolean = false): String {
   return result.toString()
 }
 
+/**
+ * Convert to camel-case.
+ */
 fun toAsset(name: String, capitalized: Boolean = false): String {
   val result = StringBuilder()
   var nextCapitalized = capitalized

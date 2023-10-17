@@ -31,8 +31,10 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
   override val model: VueModelDirectiveProperties? get() = get(MODEL)
 
   override val emits: List<VueEmitCall> get() = get(EMITS)
+
+  override val slots: List<VueSlot> get() = get(SLOTS)
+
   override val template: VueTemplate<*>? get() = if (this is VueRegularComponent) get(TEMPLATE) else null
-  override val slots: List<VueSlot> = emptyList()
 
   override val delimiters: Pair<String, String>? get() = get(DELIMITERS)
   override val extends: List<VueContainer> get() = get(EXTENDS)
@@ -77,6 +79,7 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
     private val METHODS = NamedListAccessor(VueContainerInfo::methods)
 
     private val EMITS = NamedListAccessor(VueContainerInfo::emits)
+    private val SLOTS = NamedListAccessor(VueContainerInfo::slots)
 
     private val MODEL = ModelAccessor(VueContainerInfo::model)
     private val TEMPLATE = TemplateAccessor(VueContainerInfo::template)

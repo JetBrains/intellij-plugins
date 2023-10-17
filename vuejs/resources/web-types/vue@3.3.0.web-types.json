@@ -2,7 +2,7 @@
   "$schema": "../../../../community/platform/webSymbols/web-types-gen/resources/web-types.json",
   "framework": "vue",
   "name": "vue",
-  "version": "3.3.0-alpha.1",
+  "version": "3.3.0",
   "js-types-syntax": "typescript",
   "description-markup": "markdown",
   "default-icon": "icons/vue.svg",
@@ -110,8 +110,16 @@
             {
               "name": "name",
               "description": "Used for named slot.",
+              "priority": "highest",
               "value": {
-                "type": "string"
+                "kind": "plain",
+                "type": "symbol",
+                "required": true
+              },
+              "values": {
+                "pattern": {
+                  "items": "/html/vue-components/$local/slots"
+                }
               }
             }
           ],

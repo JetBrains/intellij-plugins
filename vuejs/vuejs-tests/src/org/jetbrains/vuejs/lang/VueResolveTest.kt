@@ -2218,6 +2218,30 @@ export default class UsageComponent extends Vue {
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
     myFixture.checkGotoDeclaration("items: IT<caret>est[]", "export interface <caret>ITest", "Button.vue")
   }
+
+  fun testDefineSlots() {
+    myFixture.configureByText("DefineSlots.vue", """
+      <script setup lang="ts">
+      defineSlots<{
+        default: (props: { msg: string }) => any
+        header?: (props: { pageTitle?: string }) => any
+        footer: (props: { year?: number }) => any
+      }>()
+      </script>
+      
+      <template>
+        <div class="container">
+          <header>
+            <slot name="header" pageTitle="Hello!"></slot>
+          </header>
+        </div>
+      </template>
+    """.trimIndent())
+    myFixture.checkGotoDeclaration("name=\"hea<caret>der\"",
+                                   "<caret>header?: (props: { pageTitle?: string }) => any")
+    myFixture.checkGotoDeclaration("pageT<caret>itle=\"Hello!\"",
+                                   "<caret>pageTitle?: string }")
+  }
 }
 
 fun globalMixinText(): String {

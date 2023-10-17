@@ -1,13 +1,16 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web.symbols
 
+import com.intellij.javascript.webSymbols.symbols.getJSPropertySymbols
+import com.intellij.javascript.webSymbols.symbols.getMatchingJSPropertySymbols
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
-import com.intellij.webSymbols.SymbolKind
-import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.WebSymbolOrigin
+import com.intellij.util.containers.Stack
+import com.intellij.webSymbols.*
 import com.intellij.webSymbols.patterns.WebSymbolsPattern
 import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
+import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
+import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueContainer
 import org.jetbrains.vuejs.model.VueSlot
@@ -25,6 +28,21 @@ class VueSlotSymbol(slot: VueSlot,
 
   override val type: JSType?
     get() = item.scope
+
+  override fun getSymbols(namespace: SymbolNamespace,
+                          kind: SymbolKind,
+                          params: WebSymbolsListSymbolsQueryParams,
+                          scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> {
+    return getJSPropertySymbols(namespace, kind)
+  }
+
+  override fun getMatchingSymbols(namespace: SymbolNamespace,
+                                  kind: SymbolKind,
+                                  name: String,
+                                  params: WebSymbolsNameMatchQueryParams,
+                                  scope: Stack<WebSymbolsScope>): List<WebSymbol> {
+    return getMatchingJSPropertySymbols(namespace, kind, name)
+  }
 
   override fun createPointer(): Pointer<VueSlotSymbol> =
     object : NamedSymbolPointer<VueSlot, VueSlotSymbol>(this) {
