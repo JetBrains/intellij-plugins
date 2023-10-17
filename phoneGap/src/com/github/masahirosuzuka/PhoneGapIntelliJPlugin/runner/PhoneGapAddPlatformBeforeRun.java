@@ -128,7 +128,7 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
               if (outputContains(stdout, stderr, "Platform " + platform + " already exists") ||
                   outputContains(stdout, stderr, "Platform " + platform + " already added")) {
                 ApplicationManager.getApplication().invokeLater(() -> {
-                  final MessageView messageView = project.getService(MessageView.class);
+                  final MessageView messageView = MessageView.getInstance(project);
                   removeContents(messageView, null, tabText);
                 });
               }
@@ -167,7 +167,7 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
                                           @NotNull @NlsContexts.TabTitle final String tabDisplayName) {
     CommandProcessor commandProcessor = CommandProcessor.getInstance();
     commandProcessor.executeCommand(myProject, () -> {
-      final MessageView messageView = myProject.getService(MessageView.class);
+      final MessageView messageView = MessageView.getInstance(myProject);
       final Content content = ContentFactory.getInstance().createContent(component, tabDisplayName, true);
       messageView.getContentManager().addContent(content);
       messageView.getContentManager().setSelectedContent(content);
