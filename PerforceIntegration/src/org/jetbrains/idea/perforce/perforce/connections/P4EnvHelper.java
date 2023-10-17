@@ -58,7 +58,7 @@ public class P4EnvHelper {
   private void initializeP4SetVariables(Project project, PerforcePhysicalConnectionParametersI physicalParameters) {
     final ProjectLevelVcsManager vcsManager = ProjectLevelVcsManager.getInstance(myProject);
     final PerforceVcs vcs = PerforceVcs.getInstance(myProject);
-    final List<VirtualFile> detailedVcsMappings = Arrays.asList(vcsManager.getRootsUnderVcs(vcs));
+    final VirtualFile[] detailedVcsMappings = vcsManager.getRootsUnderVcs(vcs);
     P4ParamsCalculator calculator = new P4ParamsCalculator(project);
 
     synchronized (this) {
