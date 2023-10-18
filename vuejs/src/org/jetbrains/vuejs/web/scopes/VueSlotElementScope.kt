@@ -32,6 +32,7 @@ import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.web.VueFramework
 import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.KIND_VUE_COMPONENTS
+import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.KIND_VUE_SPECIAL_PROPERTIES
 import org.jetbrains.vuejs.web.asWebSymbol
 
 private const val SLOT_LOCAL_COMPONENT = "\$local"
@@ -49,28 +50,25 @@ class VueSlotElementScope(tag: XmlTag)
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
   }
 
-  private fun getSlotName(): String =
-    dataHolder.stubSafeAttributes
-      .asSequence()
-      .filter { !it.value.isNullOrBlank() }
-      .mapNotNull { attr ->
-        VueAttributeNameParser.parse(attr.name, SLOT_TAG_NAME).let { info ->
-          if (info.kind == VueAttributeNameParser.VueAttributeKind.SLOT_NAME) {
-            attr.value
-          }
-          else if ((info as? VueAttributeNameParser.VueDirectiveInfo)?.directiveKind == VueAttributeNameParser.VueDirectiveKind.BIND
-                   && info.arguments == SLOT_NAME_ATTRIBUTE) {
-            attr.valueElement
-              ?.findJSExpression<JSExpression>()
-              ?.let { JSResolveUtil.getExpressionJSType(it)?.substitute() }
-              ?.asSafely<JSStringLiteralTypeImpl>()
-              ?.literal
-          }
-          else null
-        }
+  private fun getSlotName(): String? {
+    for (attr in dataHolder.stubSafeAttributes) {
+      val info = VueAttributeNameParser.parse(attr.name, SLOT_TAG_NAME)
+
+      if (info.kind == VueAttributeNameParser.VueAttributeKind.SLOT_NAME) {
+        return attr.value
       }
-      .firstOrNull()
-    ?: DEFAULT_SLOT_NAME
+      else if ((info as? VueAttributeNameParser.VueDirectiveInfo)?.directiveKind == VueAttributeNameParser.VueDirectiveKind.BIND
+               && info.arguments == SLOT_NAME_ATTRIBUTE) {
+        return attr.valueElement
+          ?.findJSExpression<JSExpression>()
+          ?.let { JSResolveUtil.getExpressionJSType(it)?.substitute() }
+          ?.asSafely<JSStringLiteralTypeImpl>()
+          ?.literal
+      }
+    }
+
+    return DEFAULT_SLOT_NAME
+  }
 
   override fun createPointer(): Pointer<VueSlotElementScope> {
     val componentPointer = dataHolder.createSmartPointer()
@@ -79,7 +77,7 @@ class VueSlotElementScope(tag: XmlTag)
     }
   }
 
-  private class VueSlotPropertiesSymbol(slotName: String) : WebSymbol {
+  private class VueSlotPropertiesSymbol(slotName: String?) : WebSymbol {
 
     override val namespace: SymbolNamespace
       get() = NAMESPACE_HTML
@@ -96,18 +94,21 @@ class VueSlotElementScope(tag: XmlTag)
     override val pattern: WebSymbolsPattern =
       createComplexPattern(
         ComplexPatternOptions(symbolsResolver = WebSymbolsPatternReferenceResolver(
-          Reference(
-            location = listOf(
-              WebSymbolQualifiedName(NAMESPACE_HTML, KIND_VUE_COMPONENTS, SLOT_LOCAL_COMPONENT),
-              WebSymbolQualifiedName(NAMESPACE_HTML, KIND_HTML_SLOTS, slotName),
-            ),
-            qualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, KIND_JS_PROPERTIES),
-            nameConversionRules = listOf(
-              WebSymbolNameConversionRules.create(WebSymbolQualifiedKind(NAMESPACE_JS, KIND_JS_PROPERTIES)) {
-                listOf(fromAsset(it), toAsset(it))
-              }
+          if (slotName != null)
+            Reference(
+              location = listOf(
+                WebSymbolQualifiedName(NAMESPACE_HTML, KIND_VUE_COMPONENTS, SLOT_LOCAL_COMPONENT),
+                WebSymbolQualifiedName(NAMESPACE_HTML, KIND_HTML_SLOTS, slotName),
+              ),
+              qualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, KIND_JS_PROPERTIES),
+              nameConversionRules = listOf(
+                WebSymbolNameConversionRules.create(WebSymbolQualifiedKind(NAMESPACE_JS, KIND_JS_PROPERTIES)) {
+                  listOf(fromAsset(it), toAsset(it))
+                }
+              )
             )
-          )
+          else
+            Reference(qualifiedKind = WebSymbolQualifiedKind(NAMESPACE_HTML, KIND_VUE_SPECIAL_PROPERTIES))
         )), false,
         createSymbolReferencePlaceholder()
       )

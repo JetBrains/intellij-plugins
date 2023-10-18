@@ -7,7 +7,11 @@ import com.intellij.javascript.webSymbols.jsType
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.frameworks.JSFrameworkSpecificHandler
 import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecma6.JSStringTemplateExpression
+import com.intellij.lang.javascript.psi.types.JSTypeContext
 import com.intellij.lang.javascript.psi.types.JSTypeImpl
+import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
+import com.intellij.lang.javascript.psi.types.primitives.JSStringType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlAttribute
@@ -17,10 +21,7 @@ import org.jetbrains.vuejs.context.hasPinia
 import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.lang.expr.VueExprMetaLanguage
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
-import org.jetbrains.vuejs.model.VueModelManager
-import org.jetbrains.vuejs.model.evaluateInjectedType
-import org.jetbrains.vuejs.model.findInjectForCall
-import org.jetbrains.vuejs.model.provides
+import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.INJECT_FUN
 
 class VueFrameworkSpecificHandler : JSFrameworkSpecificHandler {
@@ -39,11 +40,19 @@ class VueFrameworkSpecificHandler : JSFrameworkSpecificHandler {
 
     if (isTopmostVueExpression(element, parent)) {
       val attribute = element.parentOfTypeInAttribute<XmlAttribute>() ?: return null
-      val attributeInfo = VueAttributeNameParser.parse(attribute.name, attribute.parent)
+      val tag = attribute.parent
+      val attributeInfo = VueAttributeNameParser.parse(attribute.name, tag)
+      val tagName = tag.name
 
       if (attributeInfo is VueAttributeNameParser.VueDirectiveInfo &&
           attributeInfo.directiveKind == VueAttributeNameParser.VueDirectiveKind.ON) {
         return if (isMethodHandler(element)) getWebSymbolType(attribute) else null
+      }
+      if (tagName == SLOT_TAG_NAME &&
+          attributeInfo is VueAttributeNameParser.VueDirectiveInfo &&
+          attributeInfo.directiveKind == VueAttributeNameParser.VueDirectiveKind.BIND &&
+          attributeInfo.arguments == SLOT_NAME_ATTRIBUTE) {
+        return JSStringType(true, JSTypeSourceFactory.createTypeSource(element, true), JSTypeContext.INSTANCE)
       }
     }
 
@@ -68,8 +77,8 @@ class VueFrameworkSpecificHandler : JSFrameworkSpecificHandler {
 
   private fun isTopmostVueExpression(element: PsiElement, parent: PsiElement?) =
     VueExprMetaLanguage.matches(element.language) &&
-    parent is JSExpressionStatement &&
-    JSStubBasedPsiTreeUtil.getParentOrNull(parent) is VueJSEmbeddedExpressionContent
+    ((parent is JSExpressionStatement && JSStubBasedPsiTreeUtil.getParentOrNull(parent) is VueJSEmbeddedExpressionContent) ||
+     (element is JSStringTemplateExpression && parent is VueJSEmbeddedExpressionContent))
 
   private fun isMethodHandler(element: PsiElement): Boolean {
     return element is JSReferenceExpression ||

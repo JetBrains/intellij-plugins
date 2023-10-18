@@ -2220,6 +2220,7 @@ export default class UsageComponent extends Vue {
   }
 
   fun testDefineSlots() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     myFixture.configureByText("DefineSlots.vue", """
       <script setup lang="ts">
       defineSlots<{
@@ -2227,13 +2228,17 @@ export default class UsageComponent extends Vue {
         header?: (props: { pageTitle?: string }) => any
         footer: (props: { year?: number, dayOfWeek: number }) => any
       }>()
+      
+      const dynamicSlotPart = "ault";
       </script>
       
       <template>
         <div class="container">
           <header>
             <slot name="header" pageTitle="Hello!"></slot>
+            <slot :name="'default'" msg="hello"></slot>
             <slot name="footer" day-of-week="2"></slot>
+            <slot :name="`def${"$"}{dynamicSlotPart}`" msg="template"></slot>
           </header>
         </div>
       </template>
@@ -2244,6 +2249,10 @@ export default class UsageComponent extends Vue {
                                    "<caret>pageTitle?: string }")
     myFixture.checkGotoDeclaration("day-o<caret>f-week=\"2\"",
                                    "<caret>dayOfWeek: number }")
+    myFixture.checkGotoDeclaration("m<caret>sg=\"hello\"",
+                                   "<caret>msg: string }")
+    myFixture.checkGotoDeclaration("ms<caret>g=\"template\"",
+                                   "<caret>msg: string }")
   }
 }
 

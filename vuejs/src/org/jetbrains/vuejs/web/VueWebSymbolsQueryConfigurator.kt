@@ -44,6 +44,7 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
     const val KIND_VUE_DIRECTIVE_MODIFIERS = "modifiers"
     const val KIND_VUE_COMPONENT_NAMESPACES = "vue-component-namespaces"
     const val KIND_VUE_PROVIDES = "vue-provides"
+    const val KIND_VUE_SPECIAL_PROPERTIES = "vue-special-properties"
 
     const val PROP_VUE_MODEL_PROP = "prop"
     const val PROP_VUE_MODEL_EVENT = "event"
