@@ -2,30 +2,46 @@
 package org.jetbrains.astro.webSymbols
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
+import com.intellij.psi.css.CssDeclaration
+import com.intellij.psi.css.CssTerm
+import com.intellij.psi.util.parentOfType
+import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.WebSymbolsScope
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
+import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.lang.AstroFileImpl
 import org.jetbrains.astro.webSymbols.scope.AstroAvailableComponentsScope
 import org.jetbrains.astro.webSymbols.scope.AstroFrontmatterScope
+import org.jetbrains.astro.webSymbols.scope.AstroStyleDefineVarsScope
 
 class AstroQueryConfigurator : WebSymbolsQueryConfigurator {
-
   companion object {
     const val KIND_ASTRO_COMPONENT = "astro-components"
 
     const val PROP_ASTRO_PROXIMITY = "x-astro-proximity"
   }
 
-  override fun getScope(project: Project,
-                        location: PsiElement?,
-                        context: WebSymbolsContext,
-                        allowResolve: Boolean): List<WebSymbolsScope> =
-    if (context.framework == AstroFramework.ID
-        && location?.containingFile is AstroFileImpl) {
-      listOf(AstroFrontmatterScope(location.containingFile as AstroFileImpl), AstroAvailableComponentsScope(project))
-    }
-    else emptyList()
+  override fun getScope(project: Project, location: PsiElement?, context: WebSymbolsContext, allowResolve: Boolean): List<WebSymbolsScope> =
+    if (context.framework == AstroFramework.ID && location?.containingFile is AstroFileImpl) {
+      when (location) {
+        is CssTerm, is CssDeclaration -> calculateCssScopes(location)
+        else -> calculateDefaultScopes(location)
+      }
+    } else emptyList()
+
+  private fun calculateCssScopes(location: PsiElement): MutableList<WebSymbolsScope> {
+    val result = calculateDefaultScopes(location)
+    location.parentOfType<XmlTag>()
+      ?.takeIf { StringUtil.equalsIgnoreCase(it.name, HtmlUtil.STYLE_TAG_NAME) }
+      ?.let { result.add(AstroStyleDefineVarsScope(it)) }
+    return result
+  }
+
+  private fun calculateDefaultScopes(location: PsiElement): MutableList<WebSymbolsScope> =
+    mutableListOf(AstroFrontmatterScope(location.containingFile as AstroFileImpl),
+                  AstroAvailableComponentsScope(location.project))
 }

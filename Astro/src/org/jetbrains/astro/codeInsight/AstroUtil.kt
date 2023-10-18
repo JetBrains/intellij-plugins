@@ -16,6 +16,7 @@ const val ASTRO_GLOBAL_INTERFACE = "AstroGlobal"
 const val ASTRO_IMPLICIT_OBJECT = "Astro"
 
 const val ASTRO_INLINE_DIRECTIVE = "is:inline"
+const val ASTRO_DEFINE_VARS_DIRECTIVE = "define:vars"
 
 fun PsiElement.astroContentRoot(): AstroContentRoot? =
   containingFile?.astroContentRoot()
