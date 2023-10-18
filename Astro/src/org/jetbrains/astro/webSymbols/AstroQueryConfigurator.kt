@@ -20,12 +20,12 @@ class AstroQueryConfigurator : WebSymbolsQueryConfigurator {
   }
 
   override fun getScope(project: Project,
-                        element: PsiElement?,
+                        location: PsiElement?,
                         context: WebSymbolsContext,
                         allowResolve: Boolean): List<WebSymbolsScope> =
     if (context.framework == AstroFramework.ID
-        && element?.containingFile is AstroFileImpl) {
-      listOf(AstroFrontmatterScope(element.containingFile as AstroFileImpl), AstroAvailableComponentsScope(project))
+        && location?.containingFile is AstroFileImpl) {
+      listOf(AstroFrontmatterScope(location.containingFile as AstroFileImpl), AstroAvailableComponentsScope(project))
     }
     else emptyList()
 }

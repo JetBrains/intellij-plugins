@@ -22,15 +22,15 @@ import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
 class VueI18NQueryConfigurator : WebSymbolsQueryConfigurator {
 
   override fun getScope(project: Project,
-                        element: PsiElement?,
+                        location: PsiElement?,
                         context: WebSymbolsContext,
                         allowResolve: Boolean): List<WebSymbolsScope> =
     if (context.framework == VueFramework.ID
-        && element is HtmlTag
-        && element.name == "i18n"
-        && element.parentTag == null
-        && element.containingFile?.virtualFile?.fileType == VueFileType.INSTANCE) {
-      listOf(I18nTagInjectionKind(element))
+        && location is HtmlTag
+        && location.name == "i18n"
+        && location.parentTag == null
+        && location.containingFile?.virtualFile?.fileType == VueFileType.INSTANCE) {
+      listOf(I18nTagInjectionKind(location))
     }
     else emptyList()
 

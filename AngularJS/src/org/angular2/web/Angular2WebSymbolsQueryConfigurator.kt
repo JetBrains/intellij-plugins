@@ -22,14 +22,14 @@ import org.angular2.web.scopes.*
 class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
 
   override fun getScope(project: Project,
-                        element: PsiElement?,
+                        location: PsiElement?,
                         context: WebSymbolsContext,
                         allowResolve: Boolean): List<WebSymbolsScope> =
-    if (context.framework == Angular2Framework.ID && element != null) {
-      when (element) {
-        is JSElement -> calculateJavaScriptScopes(element)
-        is XmlElement -> calculateHtmlScopes(element)
-        is CssElement -> calculateCssScopes(element)
+    if (context.framework == Angular2Framework.ID && location != null) {
+      when (location) {
+        is JSElement -> calculateJavaScriptScopes(location)
+        is XmlElement -> calculateHtmlScopes(location)
+        is CssElement -> calculateCssScopes(location)
         else -> emptyList()
       }
     }

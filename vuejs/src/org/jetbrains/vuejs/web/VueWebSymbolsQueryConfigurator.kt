@@ -54,20 +54,20 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
   }
 
   override fun getScope(project: Project,
-                        element: PsiElement?,
+                        location: PsiElement?,
                         context: WebSymbolsContext,
                         allowResolve: Boolean): List<WebSymbolsScope> {
-    if (context.framework != VueFramework.ID || element == null) return emptyList()
+    if (context.framework != VueFramework.ID || location == null) return emptyList()
 
-    if (element is JSElement && element !is XmlElement)
-      return getScopeForJSElement(element, allowResolve)
+    if (location is JSElement && location !is XmlElement)
+      return getScopeForJSElement(location, allowResolve)
 
     val result = SmartList<WebSymbolsScope>()
-    val tag = (element as? XmlAttribute)?.parent ?: element as? XmlTag
-    val fileContext = element.containingFile?.originalFile ?: return emptyList()
+    val tag = (location as? XmlAttribute)?.parent ?: location as? XmlTag
+    val fileContext = location.containingFile?.originalFile ?: return emptyList()
 
     if (allowResolve) {
-      addEntityContainers(element, fileContext, result)
+      addEntityContainers(location, fileContext, result)
       tag?.let { result.add(VueAvailableSlotsScope(it)) }
       findModule(tag, true)?.let {
         result.add(VueScriptSetupNamespacedComponentsScope(it))
