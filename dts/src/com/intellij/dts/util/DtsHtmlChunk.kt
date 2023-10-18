@@ -1,6 +1,5 @@
 package com.intellij.dts.util
 
-import com.intellij.codeInsight.daemon.impl.AnnotationHolderImpl
 import com.intellij.dts.DtsBundle
 import com.intellij.dts.highlighting.DtsHighlightAnnotator
 import com.intellij.dts.highlighting.DtsTextAttributes
@@ -9,15 +8,15 @@ import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.psi.DtsPHandle
 import com.intellij.dts.lang.psi.DtsProperty
 import com.intellij.dts.lang.psi.DtsRootNode
-import com.intellij.lang.annotation.Annotation
-import com.intellij.lang.annotation.AnnotationSession
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.EditorColorsScheme
+import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.editor.richcopy.HtmlSyntaxInfoUtil
 import com.intellij.openapi.editor.richcopy.SyntaxInfoBuilder
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
+import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.HtmlBuilder
 import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.openapi.util.text.StringUtil
@@ -150,13 +149,12 @@ object DtsHtmlChunk {
         // from binding
         CodeStyleManager.getInstance(project).reformat(fakePsiFile, true)
 
-        @Suppress("DEPRECATION")
-        val holder = AnnotationHolderImpl(AnnotationSession(fakePsiFile), false)
+        val holder = AnnotationHolder()
 
         fakePsiFile.accept(object : PsiRecursiveElementWalkingVisitor() {
             override fun visitElement(element: PsiElement) {
                 if (element !is CompositeElement) {
-                    holder.runAnnotatorWithContext(element, highlightAnnotator)
+                    highlightAnnotator.annotate(element, holder)
                 }
 
                 super.visitElement(element)
@@ -167,7 +165,7 @@ object DtsHtmlChunk {
         val content = HtmlSyntaxInfoUtil.getHtmlContent(
             fakePsiFile,
             fakePsiFile.text,
-            AnnotationHolderIterator(holder, scheme),
+            AnnotationHolderIterator(holder.annotations, scheme),
             scheme,
             0,
             fakePsiFile.text.length,
@@ -213,6 +211,20 @@ object DtsHtmlChunk {
     }
 }
 
+private data class Annotation(val range: TextRange, val attribute: TextAttributesKey) {
+    val startOffset = range.startOffset
+
+    val endOffset = range.endOffset
+}
+
+private class AnnotationHolder : DtsHighlightAnnotator.Holder {
+    val annotations = mutableListOf<Annotation>()
+
+    override fun newAnnotation(range: TextRange, attr: DtsTextAttributes) {
+        annotations.add(Annotation(range, attr.attribute))
+    }
+}
+
 private class AnnotationHolderIterator(holder: Iterable<Annotation>, val scheme: EditorColorsScheme) : SyntaxInfoBuilder.RangeIterator {
     private val iterator = holder.iterator()
     private var annotation: Annotation? = null
@@ -232,7 +244,7 @@ private class AnnotationHolderIterator(holder: Iterable<Annotation>, val scheme:
 
     override fun getRangeEnd(): Int = requireAnnotation.endOffset
 
-    override fun getTextAttributes(): TextAttributes = scheme.getAttributes(requireAnnotation.textAttributes)
+    override fun getTextAttributes(): TextAttributes = scheme.getAttributes(requireAnnotation.attribute)
 
     override fun dispose() {}
 }
