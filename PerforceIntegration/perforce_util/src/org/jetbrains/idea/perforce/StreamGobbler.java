@@ -143,13 +143,6 @@ public final class StreamGobbler implements CancellableRunnable {
     }
   }
 
-  @Override
-  protected void finalize() throws Throwable {
-    if (myTempFile != null) {
-      LOG.warn("Stream Gobbler's temp file hadn't been deleted: " + myTempFile.getAbsolutePath());
-    }
-  }
-
   public void deleteTempFile() {
     if (myTempFile != null) {
       FileUtil.delete(myTempFile);
