@@ -11,6 +11,7 @@ import com.intellij.psi.codeStyle.DisplayPriority
 import com.intellij.psi.codeStyle.DisplayPrioritySortable
 import icons.AngularJSIcons
 import org.angular2.lang.Angular2Bundle
+import org.angular2.lang.expr.highlighting.Angular2HighlighterColors
 import org.angular2.lang.html.Angular2HtmlFileType
 import javax.swing.Icon
 
@@ -43,6 +44,8 @@ class Angular2ColorsAndFontsPage : ColorSettingsPage, DisplayPrioritySortable {
           (click)="onSelect(hero)">
         {{hero.name}}
       </li>
+      
+      <div *ngIf="<ng-signal>heroSig</ng-signal>() as hero">{{hero.name}}</div>
 
       {heroes.length, plural, =0 {no heroes} =1 {one hero} other {{{heroes.length}} heroes}} found
 
@@ -52,7 +55,7 @@ class Angular2ColorsAndFontsPage : ColorSettingsPage, DisplayPrioritySortable {
   }
 
   override fun getAdditionalHighlightingTagToDescriptorMap(): Map<String, TextAttributesKey>? {
-    return null
+    return tags
   }
 
   override fun getPriority(): DisplayPriority {
@@ -69,6 +72,8 @@ class Angular2ColorsAndFontsPage : ColorSettingsPage, DisplayPrioritySortable {
                            Angular2HtmlHighlighterColors.NG_PROPERTY_BINDING_ATTR_NAME),
       AttributesDescriptor(Angular2Bundle.message("angular.colors.template-binding"),
                            Angular2HtmlHighlighterColors.NG_TEMPLATE_BINDINGS_ATTR_NAME),
+      AttributesDescriptor(Angular2Bundle.message("angular.colors.signal"),
+                           Angular2HighlighterColors.NG_SIGNAL),
       AttributesDescriptor(Angular2Bundle.message("angular.colors.interpolation-delimiter"),
                            Angular2HtmlHighlighterColors.NG_INTERPOLATION_DELIMITER),
       AttributesDescriptor(Angular2Bundle.message("angular.colors.expansion-form"),
@@ -82,5 +87,8 @@ class Angular2ColorsAndFontsPage : ColorSettingsPage, DisplayPrioritySortable {
       AttributesDescriptor(Angular2Bundle.message("angular.colors.ref-var"),
                            Angular2HtmlHighlighterColors.NG_REFERENCE_ATTR_NAME))
 
+    private val tags = mapOf(
+      "ng-signal" to Angular2HighlighterColors.NG_SIGNAL
+    )
   }
 }

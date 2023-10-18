@@ -114,6 +114,12 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
   fun testComplexFormControls() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, ANGULAR_FORMS_16_2_8,
                                                     extension = "ts", strictTemplates = true)
 
+  fun testSignalsColors() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8,
+                                              extension = "ts", checkInformation = true)
+
+  fun testSignalsColorsHtml() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, dir = true,
+                                              configureFileName = "signalsColors.html", checkInformation = true)
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
@@ -126,20 +132,21 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     strictTemplates: Boolean = false,
     extension: String = "html",
     configureFileName: String = "$testName.$extension",
+    checkInformation: Boolean = false,
   ) {
     doConfiguredTest(*modules, dir = dir, extension = extension, configureFileName = configureFileName,
                      configurators = listOf(Angular2TsConfigFile(strictTemplates = strictTemplates))
     ) {
       if (checkInjections)
-        loadInjectionsAndCheckHighlighting()
+        loadInjectionsAndCheckHighlighting(checkInformation)
       else
-        checkHighlighting()
+        checkHighlighting(true, checkInformation, true)
     }
   }
 
-  private fun loadInjectionsAndCheckHighlighting() {
+  private fun loadInjectionsAndCheckHighlighting(checkInformation: Boolean) {
     val data = ExpectedHighlightingData(
-      myFixture.getEditor().getDocument(), true, true, false, true)
+      myFixture.getEditor().getDocument(), true, true, checkInformation, true)
     data.init()
     runInEdtAndWait { PsiDocumentManager.getInstance(myFixture.getProject()).commitAllDocuments() }
     val injectedLanguageManager = InjectedLanguageManager.getInstance(myFixture.getProject())

@@ -1,0 +1,14 @@
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.lang.expr.highlighting
+
+import com.intellij.lang.javascript.highlighting.TypeScriptHighlighter
+import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
+import com.intellij.openapi.editor.colors.TextAttributesKey
+
+interface Angular2HighlighterColors {
+  companion object {
+    @JvmField
+    val NG_SIGNAL = TextAttributesKey.createTextAttributesKey(
+      "NG.SIGNAL", TypeScriptHighlighter.TS_INSTANCE_MEMBER_VARIABLE)
+  }
+}

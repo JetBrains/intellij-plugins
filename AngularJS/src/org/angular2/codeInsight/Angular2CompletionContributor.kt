@@ -149,15 +149,8 @@ class Angular2CompletionContributor : CompletionContributor() {
 
                   override fun handleInsert(context: InsertionContext, item: LookupElement) {
                     runWithTimeout(200) {
-                      val signalType = Angular2SignalUtils.signalTypeAlias(ref)
-                        ?.jsType
-                        ?.let { JSGenericTypeImpl(it.source, it, JSAnyType.get(it.source)) }
-                      if (signalType != null) {
-                        val elementType = TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(
-                          JSResolveUtil.getElementJSType(item.psiElement))
-                        if (elementType != null && signalType.isDirectlyAssignableType(elementType, null)) {
-                          item.putUserData(JSInsertHandler.FORCED_COMPLETE_AS_FUNCTION, true)
-                        }
+                      if (Angular2SignalUtils.isSignal(item.psiElement)) {
+                        item.putUserData(JSInsertHandler.FORCED_COMPLETE_AS_FUNCTION, true)
                       }
                     }
                     super.handleInsert(context, item)
