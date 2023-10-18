@@ -376,9 +376,9 @@ public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase impl
 
   @Nullable
   private static IXMLElement getChild(IXMLElement parent, String name) {
-    for (Object o : parent.getChildren()) {
-      if (name.equals(((IXMLElement)o).getAttribute("name", null))) {
-        return (IXMLElement)o;
+    for (IXMLElement o : parent.getChildren()) {
+      if (name.equals(o.getAttribute("name", null))) {
+        return o;
       }
     }
     return null;
