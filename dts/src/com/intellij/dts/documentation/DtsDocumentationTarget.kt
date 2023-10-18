@@ -10,7 +10,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.platform.backend.documentation.DocumentationResult
 import com.intellij.platform.backend.documentation.DocumentationTarget
-import org.jetbrains.annotations.PropertyKey
 
 abstract class DtsDocumentationTarget(protected val project: Project) : DocumentationTarget {
     protected abstract fun buildDocumentation(html: DtsDocumentationHtmlBuilder)
@@ -23,63 +22,53 @@ abstract class DtsDocumentationTarget(protected val project: Project) : Document
     }
 
     /**
-     * Writes: "<<name>>: <<value>>"
+     * Writes: "Property: <<name>>"
      */
-    protected fun buildDefinition(html: DtsDocumentationHtmlBuilder, name: @PropertyKey(resourceBundle = DtsBundle.BUNDLE) String, value: HtmlChunk) {
-        html.definition(
-            HtmlChunk.fragment(
-                DtsHtmlChunk.bundle(name),
-                HtmlChunk.text(": "),
-            ).bold(),
-            value,
-        )
+    protected fun buildPropertyName(html: DtsDocumentationHtmlBuilder, name: String) {
+        html.definition(DtsHtmlChunk.definitionName("documentation.property"))
+        html.appendToDefinition(DtsHtmlChunk.propertyName(name))
     }
 
     /**
-     * Writes: "Property: <<name>>"
+     * Writes: "Node <<name>>"
      */
-    protected fun buildPropertyName(html: DtsDocumentationHtmlBuilder, name: String) =
-        buildDefinition(html, "documentation.property", DtsHtmlChunk.propertyName(name))
+    protected fun buildNodeName(html: DtsDocumentationHtmlBuilder, name: String) {
+        html.definition(DtsHtmlChunk.definitionName("documentation.node"))
+        html.appendToDefinition(DtsHtmlChunk.nodeName(name))
+    }
 
     /**
      * Writes: "Node <<name>>"
      */
-    protected fun buildNodeName(html: DtsDocumentationHtmlBuilder, name: String) =
-        buildDefinition(html, "documentation.node", DtsHtmlChunk.nodeName(name))
-
-    /**
-     * Writes: "Node <<name>>"
-     */
-    protected fun buildNodeName(html: DtsDocumentationHtmlBuilder, node: DtsNode) =
-        buildDefinition(html, "documentation.node", DtsHtmlChunk.node(node))
+    protected fun buildNodeName(html: DtsDocumentationHtmlBuilder, node: DtsNode) {
+        html.definition(DtsHtmlChunk.definitionName("documentation.node"))
+        html.appendToDefinition(DtsHtmlChunk.node(node))
+    }
 
     /**
      * Writes: "Declared in: <<path>> (<<file>>)"
      */
     protected fun buildDeclaredIn(html: DtsDocumentationHtmlBuilder, parent: DtsNode) {
-        html.definition(
-            HtmlChunk.fragment(
-                DtsHtmlChunk.bundle("documentation.declared_in"),
-                HtmlChunk.text(": "),
-            ).bold(),
+        html.definition(DtsHtmlChunk.definitionName("documentation.declared_in"))
+        html.appendToDefinition(
             DtsHtmlChunk.path(parent),
             HtmlChunk.text(" (${parent.containingFile.name})").wrapWith(DocumentationMarkup.GRAYED_ELEMENT),
         )
     }
 
     /**
-     * Writes: "Type: <<property type>>"
+     * Writes: "Type: <<property type>> (<<required>>)"
      * And the description.
      */
     protected fun buildPropertyBinding(html: DtsDocumentationHtmlBuilder, binding: DtsZephyrPropertyBinding) {
-        // write: Type: <<property type>>
-        html.definition(
-            HtmlChunk.fragment(
-                DtsHtmlChunk.bundle("documentation.property_type"),
-                HtmlChunk.text(": "),
-            ).bold(),
-            HtmlChunk.text(binding.type.typeName),
-        )
+        html.definition(DtsHtmlChunk.definitionName("documentation.property_type"))
+        html.appendToDefinition(HtmlChunk.text(binding.type.typeName))
+
+        if (binding.required) {
+            html.appendToDefinition(
+                HtmlChunk.text(" (${DtsBundle.message("documentation.required")})").wrapWith(DocumentationMarkup.GRAYED_ELEMENT),
+            )
+        }
 
         binding.description?.let {
             html.content(DtsHtmlChunk.binding(project, it))
@@ -92,17 +81,12 @@ abstract class DtsDocumentationTarget(protected val project: Project) : Document
      */
     protected fun buildNodeBinding(html: DtsDocumentationHtmlBuilder, binding: DtsZephyrBinding) {
         binding.compatible?.let { compatible ->
-            html.definition(
-                HtmlChunk.fragment(
-                    if (binding.isChild) {
-                        DtsHtmlChunk.bundle("documentation.compatible_child")
-                    } else {
-                        DtsHtmlChunk.bundle("documentation.compatible")
-                    },
-                    HtmlChunk.text(": "),
-                ).bold(),
-                DtsHtmlChunk.string(compatible),
-            )
+            if (binding.isChild) {
+                html.definition(DtsHtmlChunk.definitionName("documentation.compatible_child"))
+            } else {
+                html.definition(DtsHtmlChunk.definitionName("documentation.compatible"))
+            }
+            html.appendToDefinition(DtsHtmlChunk.string(compatible))
         }
 
         binding.description?.let { description ->

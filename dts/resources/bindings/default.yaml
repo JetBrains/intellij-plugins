@@ -9,7 +9,6 @@ properties:
 
     compatible:
         type: string-array
-        required: true
         description: |
             The compatible property value consists of one or more strings that 
             define the specific programming model for the device. This list of 

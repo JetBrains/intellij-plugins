@@ -50,7 +50,7 @@ abstract class DtsTestBase : BasePlatformTestCase() {
     }
 
     protected fun getFixture(path: String): String {
-       return Files.readString(Path.of("testData", path))
+        return Files.readString(Path.of("testData", path))
     }
 
     protected fun getTestFixture(extension: String): String {

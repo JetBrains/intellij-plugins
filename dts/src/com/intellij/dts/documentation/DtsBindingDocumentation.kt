@@ -21,10 +21,12 @@ class DtsBindingDocumentation(
 
     override fun buildDocumentation(html: DtsDocumentationHtmlBuilder) {
         binding.compatible?.let { compatible ->
-            buildDefinition(html, "documentation.compatible", HtmlChunk.text(compatible))
+            html.definition(DtsHtmlChunk.definitionName("documentation.compatible"))
+            html.appendToDefinition(HtmlChunk.text(compatible))
         }
         binding.path?.let { path ->
-            buildDefinition(html, "documentation.path", HtmlChunk.text(path))
+            html.definition(DtsHtmlChunk.definitionName("documentation.path"))
+            html.appendToDefinition(HtmlChunk.text(path))
         }
         binding.description?.let { description ->
             html.content(DtsHtmlChunk.binding(project, description))

@@ -11,6 +11,10 @@ class DtsDocumentationHtmlBuilder {
 
     fun definition(vararg chunks: HtmlChunk) {
         if (!definitionBuilder.isEmpty) definitionBuilder.append(HtmlChunk.br())
+        appendToDefinition(*chunks)
+    }
+
+    fun appendToDefinition(vararg chunks: HtmlChunk) {
         chunks.forEach(definitionBuilder::append)
     }
 

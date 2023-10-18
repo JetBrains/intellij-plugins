@@ -45,6 +45,16 @@ object DtsHtmlChunk {
     }
 
     /**
+     * Generates bold definition name.
+     */
+    fun definitionName(key: @PropertyKey(resourceBundle = DtsBundle.BUNDLE) String): HtmlChunk {
+        return HtmlChunk.fragment(
+            bundle(key),
+            HtmlChunk.text(": "),
+        ).bold()
+    }
+
+    /**
      * Generates the colored html for a property name.
      */
     fun propertyName(name: String): HtmlChunk {

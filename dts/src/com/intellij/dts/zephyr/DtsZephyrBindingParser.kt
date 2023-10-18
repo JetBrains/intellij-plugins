@@ -100,6 +100,7 @@ class DtsZephyrBindingParser(
                 val propertyBuilder = builder.getPropertyBuilder(name)
                 readValue<String>(property, "description")?.let(propertyBuilder::setDescription)
                 readValue<String>(property, "type")?.let(propertyBuilder::setType)
+                readValue<Boolean>(property, "required")?.let(propertyBuilder::setRequired)
             }
         }
 

@@ -70,10 +70,12 @@ data class DtsZephyrPropertyBinding(
     val name: @NlsSafe String,
     val description: @NlsSafe String?,
     val type: DtsZephyrPropertyType,
+    val required: Boolean,
 ) {
     class Builder(private val name: String) {
         private var description: String? = null
         private var type: DtsZephyrPropertyType? = null
+        private var required: Boolean? = null
 
         fun setDescription(value: String): Builder {
             if (description == null) description = value
@@ -85,10 +87,16 @@ data class DtsZephyrPropertyBinding(
             return this
         }
 
+        fun setRequired(value: Boolean): Builder {
+            required = value
+            return this
+        }
+
         fun build(): DtsZephyrPropertyBinding = DtsZephyrPropertyBinding(
-            name,
-            description,
-            type ?: DtsZephyrPropertyType.Compound,
+            name = name,
+            description = description,
+            type = type ?: DtsZephyrPropertyType.Compound,
+            required = required ?: false,
         )
     }
 }
