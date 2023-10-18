@@ -1,3 +1,4 @@
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.prisma
 
 import com.intellij.codeInsight.documentation.DocumentationManager
@@ -12,9 +13,9 @@ class PrismaDocumentationTest : PrismaTestCase() {
 
     val colorsManager = EditorColorsManager.getInstance()
     val schemeBefore = colorsManager.globalScheme
-    colorsManager.globalScheme = colorsManager.getScheme("Darcula")
+    colorsManager.setGlobalScheme(colorsManager.getScheme("Darcula"))
     Disposer.register(testRootDisposable) {
-      colorsManager.globalScheme = schemeBefore
+      colorsManager.setGlobalScheme(schemeBefore)
     }
   }
 
