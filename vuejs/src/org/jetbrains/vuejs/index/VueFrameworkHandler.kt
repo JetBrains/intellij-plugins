@@ -105,7 +105,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
     private val SCRIPT_SETUP_MACROS = setOf(
       DEFINE_EXPOSE_FUN, DEFINE_EMITS_FUN, DEFINE_SLOTS_FUN, DEFINE_PROPS_FUN,
-      WITH_DEFAULTS_FUN, DEFINE_MODEL_FUN, INJECT_FUN, PROVIDE_FUN,
+      WITH_DEFAULTS_FUN, DEFINE_MODEL_FUN, INJECT_FUN, PROVIDE_FUN, DEFINE_OPTIONS_FUN
     )
 
     private const val METHOD_NAME_USER_STRING = "vmn"
@@ -557,6 +557,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       (!hasQualifier && referenceName == DEFINE_COMPONENT_FUN)
       || (!hasQualifier && referenceName == DEFINE_NUXT_COMPONENT_FUN)
       || (hasQualifier && referenceName == EXTEND_FUN)
+      || (!hasQualifier && referenceName == DEFINE_OPTIONS_FUN)
     }
 
   private fun isDescendantOfStubbedScriptTag(callNode: ASTNode): Boolean =

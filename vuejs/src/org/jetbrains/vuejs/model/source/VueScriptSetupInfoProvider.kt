@@ -241,48 +241,6 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       return props
     }
 
-    private fun JSExecutionScope.getStubSafeDefineCalls(): Sequence<JSCallExpression> {
-      (this as? JSStubElementImpl<*>)?.stub?.let { moduleStub ->
-        return moduleStub.childrenStubs.asSequence().flatMap { stub ->
-          when (val psi = stub.psi) {
-            is JSCallExpression -> sequenceOf(psi)
-            is JSStatement -> {
-              stub.childrenStubs.asSequence()
-                .filter {
-                  it.stubType == JSStubElementTypes.VARIABLE ||
-                  it.stubType == TypeScriptStubElementTypes.TYPESCRIPT_VARIABLE ||
-                  it.stubType == JSStubElementTypes.DESTRUCTURING_ELEMENT
-                }
-                .flatMap { it.childrenStubs.asSequence() }
-                .filter { it.stubType == JSStubElementTypes.CALL_EXPRESSION }
-                .mapNotNull { it.psi as? JSCallExpression }
-            }
-            else -> emptySequence()
-          }
-        }
-      }
-
-      return this.children.asSequence().filterIsInstance<JSStatement>()
-        .flatMap { it.children.asSequence() }
-        .map {
-          when (it) {
-            is JSVariable -> it.initializer
-            is JSDestructuringElement -> it.initializer
-            else -> it
-          }
-        }
-        .filterIsInstance<JSCallExpression>()
-        .mapNotNull { call ->
-          when ((call.methodExpression as? JSReferenceExpression)?.referenceName) {
-            DEFINE_PROPS_FUN, DEFINE_EMITS_FUN, DEFINE_SLOTS_FUN, DEFINE_EXPOSE_FUN,
-            WITH_DEFAULTS_FUN, DEFINE_MODEL_FUN, INJECT_FUN, PROVIDE_FUN -> {
-              call
-            }
-            else -> null
-          }
-        }
-    }
-
     private fun analyzeDefineEmits(call: JSCallExpression): List<VueEmitCall> {
       val arg = call.stubSafeCallArguments.getOrNull(0)
 
@@ -482,4 +440,46 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
     val rawBindings: List<VueNamedSymbol>,
   )
 
+}
+
+fun JSExecutionScope.getStubSafeDefineCalls(): Sequence<JSCallExpression> {
+  (this as? JSStubElementImpl<*>)?.stub?.let { moduleStub ->
+    return moduleStub.childrenStubs.asSequence().flatMap { stub ->
+      when (val psi = stub.psi) {
+        is JSCallExpression -> sequenceOf(psi)
+        is JSStatement -> {
+          stub.childrenStubs.asSequence()
+            .filter {
+              it.stubType == JSStubElementTypes.VARIABLE ||
+              it.stubType == TypeScriptStubElementTypes.TYPESCRIPT_VARIABLE ||
+              it.stubType == JSStubElementTypes.DESTRUCTURING_ELEMENT
+            }
+            .flatMap { it.childrenStubs.asSequence() }
+            .filter { it.stubType == JSStubElementTypes.CALL_EXPRESSION }
+            .mapNotNull { it.psi as? JSCallExpression }
+        }
+        else -> emptySequence()
+      }
+    }
+  }
+
+  return this.children.asSequence().filterIsInstance<JSStatement>()
+    .flatMap { it.children.asSequence() }
+    .map {
+      when (it) {
+        is JSVariable -> it.initializer
+        is JSDestructuringElement -> it.initializer
+        else -> it
+      }
+    }
+    .filterIsInstance<JSCallExpression>()
+    .mapNotNull { call ->
+      when ((call.methodExpression as? JSReferenceExpression)?.referenceName) {
+        DEFINE_PROPS_FUN, DEFINE_EMITS_FUN, DEFINE_SLOTS_FUN, DEFINE_EXPOSE_FUN,
+        WITH_DEFAULTS_FUN, DEFINE_MODEL_FUN, INJECT_FUN, PROVIDE_FUN, DEFINE_OPTIONS_FUN -> {
+          call
+        }
+        else -> null
+      }
+    }
 }

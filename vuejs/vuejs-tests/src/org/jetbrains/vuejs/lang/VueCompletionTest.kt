@@ -1675,6 +1675,11 @@ export default class ComponentInsertion extends Vue {
                  dir = true, fileContents = """<template><<caret></template>""", lookupFilter = filterOutStandardHtmlSymbols)
   }
 
+  fun testDefineOptions() {
+    doLookupTest(VueTestModule.VUE_3_3_4, dir = true,
+                 fileContents = """<template><<caret></template>""", lookupFilter = filterOutStandardHtmlSymbols)
+  }
+
   fun testNoDuplicateCompletionProposals() {
     myFixture.configureByFile("noDupedAttrs.vue")
     myFixture.completeBasic()
