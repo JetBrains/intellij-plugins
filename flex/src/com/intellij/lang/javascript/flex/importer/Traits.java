@@ -18,7 +18,7 @@ class Traits {
   Multiname base;
   int flags;
   String protectedNs;
-  Multiname interfaces[];
+  Multiname[] interfaces;
   Map<String, MemberInfo> names = new LinkedHashMap<>();
   Map<Integer, SlotInfo> slots = new LinkedHashMap<>();
   Map<Integer, MethodInfo> methods = new LinkedHashMap<>();
