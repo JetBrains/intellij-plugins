@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.service
 
+import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase.checkHighlightingByText
 import com.intellij.lang.javascript.typescript.service.TypeScriptServiceTestBase.assertHasServiceItems
@@ -147,12 +148,7 @@ class VolarServiceTest : VolarServiceTestBase() {
       })
     """.trimIndent(), true)
 
-    val presentationTexts = elements.map { element ->
-      val presentation = LookupElementPresentation()
-      element.renderElement(presentation)
-      presentation.itemText
-    }
-
+    val presentationTexts = getPresentationTexts(elements)
     // duplicated question mark is definitely unwanted, but for now, this is what we get from Volar, so let's encode it in test
     TestCase.assertTrue("Lookup element presentation must match expected", presentationTexts.contains("base??"))
     assertHasServiceItems(elements, true)
@@ -180,15 +176,47 @@ class VolarServiceTest : VolarServiceTestBase() {
       foo.bar;
     """.trimIndent(), true)
 
-    val presentationTexts = elements.map { element ->
-      val presentation = LookupElementPresentation()
-      element.renderElement(presentation)
-      presentation.itemText
-    }
-
+    val presentationTexts = getPresentationTexts(elements)
     // duplicated question mark is definitely unwanted, but for now, this is what we get from Volar, so let's encode it in test
     TestCase.assertTrue("Lookup element presentation must match expected", presentationTexts.contains("bar??"))
     assertHasServiceItems(elements, true)
   }
 
+  @Test
+  fun testOptionalParameterPropertyInTSFileCompletion() { // WEB-63103
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
+    myFixture.addFileToProject("tsconfig.json", tsconfig)
+
+    // Volar reports obscuring errors when there's no reference after dot, but we have to test caret placement directly after it
+    myFixture.configureByText("main.ts", """
+      function test(foo?: { bar?: string; }) {
+        <error>foo</error>.<caret><error>b</error>;
+      }
+    """.trimIndent())
+
+    myFixture.checkLspHighlighting()
+    assertCorrectService()
+
+    val elements = myFixture.completeBasic()
+    myFixture.type('\t')
+
+    checkHighlightingByText(myFixture, """
+      function test(foo?: { bar?: string; }) {
+        foo?.bar;
+      }
+    """.trimIndent(), true)
+
+    val presentationTexts = getPresentationTexts(elements)
+    // duplicated question mark is definitely unwanted, but for now, this is what we get from Volar, so let's encode it in test
+    TestCase.assertTrue("Lookup element presentation must match expected", presentationTexts.contains("bar??"))
+    assertHasServiceItems(elements, true)
+  }
+
+  private fun getPresentationTexts(elements: Array<LookupElement>): List<String?> {
+    return elements.map { element ->
+      val presentation = LookupElementPresentation()
+      element.renderElement(presentation)
+      presentation.itemText
+    }
+  }
 }
