@@ -324,8 +324,8 @@ fun JSType.fixPrimitiveTypes(): JSType =
   transformTypeHierarchy {
     if (it is JSPrimitiveType && !it.isPrimitive)
       JSNamedTypeFactory.createType(it.primitiveTypeText, it.source, it.typeContext)
-    else if (it is JSTypeImpl && JSCommonTypeNames.WRAPPER_TO_PRIMITIVE_MAP.containsKey(it.typeText)) {
-      JSNamedTypeFactory.createType(JSCommonTypeNames.WRAPPER_TO_PRIMITIVE_MAP[it.typeText]!!, it.source, it.typeContext)
+    else if (it is JSTypeImpl && JSCommonTypeNames.WRAPPER_TO_PRIMITIVE_TYPE_MAP.containsKey(it.typeText)) {
+      JSNamedTypeFactory.createType(JSCommonTypeNames.WRAPPER_TO_PRIMITIVE_TYPE_MAP[it.typeText]!!, it.source, it.typeContext)
     }
     else it
   }
