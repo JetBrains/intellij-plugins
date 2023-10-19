@@ -1,6 +1,5 @@
 package com.intellij.plugins.serialmonitor;
 
-import jssc.SerialPortException;
 import org.jetbrains.annotations.Nls;
 
 /**

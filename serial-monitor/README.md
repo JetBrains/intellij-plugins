@@ -35,7 +35,7 @@ This plugin provides the Serial Monitor Tool Window, which allows you to communi
 - **0.5.2**
   - migrated plugin to gradle build
 - **0.5.1**
-  - fixed IDE freezes on Mac OS
+  - fixed IDE freezes on macOS
 - **0.5**
   - possible solution for Mac OS support (https://bitbucket.org/dmitry_cherkas/intellij-serial-monitor/issues/4)
 - **0.4.7**
@@ -69,6 +69,6 @@ This plugin provides the Serial Monitor Tool Window, which allows you to communi
 
 On Linux you may not see you port in available ports dropdown due to lack or permissions.
 
-- To check, that serial port is really there use ```dmesg | grep tty```
+- To check if serial port is really there use ```dmesg | grep tty```
 - To set read and write permission to port, use ```sudo chmod a+rw <your_port_name>```, where **your_port_name** should
   be something similar to _/dev/ttyACM0_, use the output of the above command to check the exact name.

@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle
 import com.intellij.plugins.serialmonitor.ui.console.JeditermSerialMonitorDuplexConsoleView
+import com.intellij.plugins.serialmonitor.ui.serialSettings
 import com.intellij.ui.JBColor
 import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.panel
@@ -23,32 +24,32 @@ class EditSettingsAction(private val myName: @Nls String, private val consoleVie
                   AllIcons.General.Settings) {
   override fun actionPerformed(e: AnActionEvent) {
 
-    //val settingsDialog = SettingsDialog(e.project)
-    //val okClicked: Boolean = settingsDialog.showAndGet()
-    //if (okClicked) {
-    //  consoleView.reconnect()
-    //}
+    val settingsDialog = SettingsDialog(e.project)
+    val okClicked: Boolean = settingsDialog.showAndGet()
+    if (okClicked) {
+      consoleView.reconnect()
+    }
 
   }
 
-  //private inner class SettingsDialog(project: Project?) : DialogWrapper(project, false, IdeModalityType.PROJECT) {
-  //  init {
-  //    title = SerialMonitorBundle.message("dialog.title.serial.port.settings", myName)
-  //    init()
-  //  }
+  private inner class SettingsDialog(project: Project?) : DialogWrapper(project, false, IdeModalityType.PROJECT) {
+    init {
+      title = SerialMonitorBundle.message("dialog.title.serial.port.settings", myName)
+      init()
+    }
 
-  //  override fun createCenterPanel(): JComponent {
-  //    return panel {
-  //      row {
-  //        label(consoleView.portProfile.portName).align(Align.FILL)
-  //          .resizableColumn()
-  //          .label("Port:")
-  //          .applyToComponent {
-  //            border = BorderFactory.createLineBorder(JBColor.border())
-  //          }
-  //      }.layout(com.intellij.ui.dsl.builder.RowLayout.LABEL_ALIGNED)
-  //      serialSettings(disposable, consoleView.portProfile) { }
-  //    }
-  //  }
-  //}
+    override fun createCenterPanel(): JComponent {
+      return panel {
+        row {
+          label(consoleView.portProfile.portName).align(Align.FILL)
+            .resizableColumn()
+            .label(SerialMonitorBundle.message("label.port"))
+            .applyToComponent {
+              border = BorderFactory.createLineBorder(JBColor.border())
+            }
+        }.layout(com.intellij.ui.dsl.builder.RowLayout.LABEL_ALIGNED)
+        serialSettings(disposable, consoleView.portProfile) { }
+      }
+    }
+  }
 }

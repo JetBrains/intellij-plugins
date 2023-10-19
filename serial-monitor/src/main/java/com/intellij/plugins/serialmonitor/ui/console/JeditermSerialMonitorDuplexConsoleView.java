@@ -18,7 +18,6 @@ import com.intellij.plugins.serialmonitor.SerialMonitorException;
 import com.intellij.plugins.serialmonitor.SerialPortProfile;
 import com.intellij.plugins.serialmonitor.service.PortStatus;
 import com.intellij.plugins.serialmonitor.service.SerialPortService;
-import com.intellij.plugins.serialmonitor.service.SerialPortsListener;
 import com.intellij.plugins.serialmonitor.ui.SerialMonitor;
 import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle;
 import com.intellij.plugins.serialmonitor.ui.actions.ConnectDisconnectAction;
@@ -26,6 +25,7 @@ import com.intellij.plugins.serialmonitor.ui.actions.EditSettingsAction;
 import com.intellij.ui.components.JBLoadingPanel;
 import icons.SerialMonitorIcons;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -35,7 +35,7 @@ import java.nio.charset.StandardCharsets;
  * @author Dmitry_Cherkas, Ilia Motornyi
  */
 public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<JeditermConsoleView, HexConsoleView>
-  implements Disposable, SerialPortsListener {
+  implements Disposable {
 
   private static final String STATE_STORAGE_KEY = "SerialMonitorDuplexConsoleViewState";
 
@@ -45,26 +45,23 @@ public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<Je
   @NotNull private final ToggleAction mySwitchConsoleAction;
   @NotNull private final JBLoadingPanel myLoadingPanel;
   private Charset myCharset = StandardCharsets.US_ASCII;
+
   public SerialPortService.@NotNull SerialConnection getConnection() {
     return myConnection;
   }
 
-  @Override
-  public void portsStatusChanged() {
-
-  }
-
   //todo auto reconnect while build
   //todo interoperability with other plugins
-  //todo hw lines control
 
+  @Nullable
   public static JeditermSerialMonitorDuplexConsoleView create(@NotNull Project project,
                                                               @NlsSafe @NotNull final String name,
                                                               @NotNull SerialPortProfile portProfile,
                                                               @NotNull JBLoadingPanel loadingPanel) {
     SerialPortService.SerialConnection connection =
       ApplicationManager.getApplication().getService(SerialPortService.class)
-        .connection(portProfile.getPortName());
+        .newConnection(portProfile.getPortName());
+    if(connection == null) return null;
     JeditermConsoleView textConsoleView = new JeditermConsoleView(project, connection);
     HexConsoleView hexConsoleView = new HexConsoleView(project, true);
     JeditermSerialMonitorDuplexConsoleView consoleView =
@@ -75,8 +72,6 @@ public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<Je
                                                  portProfile,
                                                  loadingPanel);
     connection.setDataListener(consoleView::append);
-    connection.setConnListener(consoleView);
-    ApplicationManager.getApplication().getMessageBus().connect().subscribe(SerialPortsListener.getSERIAL_PORTS_TOPIC(), consoleView);
     return consoleView;
   }
 
@@ -145,19 +140,20 @@ public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<Je
   private void performConnect(boolean doConnect) {
     try {
       if (doConnect) {
+        myConnection.closeSilently(true);
         myCharset = Charset.availableCharsets().getOrDefault(myPortProfile.getEncoding(), StandardCharsets.US_ASCII);
-        if (myConnection.getStatus() == PortStatus.DISCONNECTED) {
+        if (myConnection.getStatus() == PortStatus.DISCONNECTED || myConnection.getStatus() == PortStatus.READY) {
           // try to connect only when settings are known to be valid
           getPrimaryConsoleView().reconnect(getCharset(), myPortProfile.getNewLine(), myPortProfile.getLocalEcho());
           myConnection.connect(myPortProfile.getBaudRate(), myPortProfile.getBits(), myPortProfile.getStopBits(),
-                               myPortProfile.getParity());
+                               myPortProfile.getParity(), myPortProfile.getLocalEcho());
         }
         else {
-          throw new SerialMonitorException(SerialMonitorBundle.message("serial.port.not.found", myName));
+          throw new SerialMonitorException(SerialMonitorBundle.message("serial.port.not.found", myPortProfile.getPortName()));
         }
       }
       else {
-        myConnection.close();
+        myConnection.close(true);
       }
     }
     catch (SerialMonitorException sme) {
@@ -302,7 +298,7 @@ public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<Je
     Application application = ApplicationManager.getApplication();
     application.executeOnPooledThread(() -> {
       try {
-        myConnection.close();
+        myConnection.close(true);
       }
       catch (SerialMonitorException ignored) {
       }

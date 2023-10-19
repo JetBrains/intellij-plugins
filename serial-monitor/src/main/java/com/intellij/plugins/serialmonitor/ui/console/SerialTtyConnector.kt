@@ -20,13 +20,8 @@ class SerialTtyConnector(private val consoleView: JeditermConsoleView,
   override fun write(bytes: ByteArray) =
     connection.write(bytes)
 
-  override fun write(string: String) {
-    val bytes = string.toByteArray(charset)
-    write(bytes)
-    if (localEcho) {
-      consoleView.output(bytes)
-    }
-  }
+  override fun write(string: String) =
+    write(string.toByteArray(charset))
 
   override fun isConnected(): Boolean = true
 

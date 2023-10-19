@@ -1,5 +1,6 @@
 package com.intellij.plugins.serialmonitor.ui
 
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.service
 import com.intellij.openapi.ui.ComboBox
@@ -7,7 +8,6 @@ import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.InputValidatorEx
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.validation.DialogValidation
-import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.NlsContexts.DetailedDescription
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.plugins.serialmonitor.Parity
@@ -18,7 +18,7 @@ import com.intellij.plugins.serialmonitor.StandardBauds
 import com.intellij.plugins.serialmonitor.StopBits
 import com.intellij.plugins.serialmonitor.service.PortStatus
 import com.intellij.plugins.serialmonitor.service.SerialPortService
-import com.intellij.ui.AncestorListenerAdapter
+import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle.*
 import com.intellij.ui.ComboboxSpeedSearch
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.dsl.builder.Cell
@@ -31,7 +31,6 @@ import com.intellij.ui.layout.ValidationInfoBuilder
 import icons.SerialMonitorIcons
 import org.jetbrains.annotations.NonNls
 import java.nio.charset.Charset
-import javax.swing.event.AncestorEvent
 import kotlin.reflect.KMutableProperty1
 
 private val charsets: Collection<String> = Charset.availableCharsets().filter { it.value.canEncode() }.keys
@@ -65,21 +64,21 @@ fun ConnectableList.createNewProfile(oldProfileName: String?, newPortName: Strin
     override fun checkInput(inputString: @NlsSafe String): Boolean = !profiles.containsKey(inputString)
     override fun canClose(inputString: @NlsSafe String): Boolean = checkInput(inputString)
     override fun getErrorText(inputString: @NonNls String): @DetailedDescription String? = if (checkInput(inputString)) null
-    else "Profile already exists"
+    else message("text.profile.already.exists")
   }
-  val finalName = Messages.showInputDialog(this, "Name:", "New profile", null, newName, validator)
+  val finalName = Messages.showInputDialog(this, message("dialog.message.name"), message("dialog.title.new.profile"),
+                                           null, newName, validator)
   if (finalName != null) {
     profiles[finalName] = newProfile
     service.setProfiles(profiles)
-    this.rescanPorts(finalName)
+    this.rescanProfiles(finalName)
   }
-
 }
 
-private fun Panel.serialSettings(disposable: Disposable? = null,
-                                 profile: SerialPortProfile,
-                                 readOnly: Boolean = false,
-                                 save: (SerialPortProfile) -> Unit) {
+fun Panel.serialSettings(disposable: Disposable,
+                         profile: SerialPortProfile,
+                         readOnly: Boolean = false,
+                         save: (SerialPortProfile) -> Unit) {
 
   fun <T> Cell<ComboBox<T>>.speedSearch(): Cell<ComboBox<T>> = this.applyToComponent { ComboboxSpeedSearch.installOn(this) }
 
@@ -110,75 +109,92 @@ private fun Panel.serialSettings(disposable: Disposable? = null,
     comboBox(StandardBauds)
       .changesBind(SerialPortProfile::baudRate)
       .speedSearch()
-      .label(SerialMonitorBundle.message("label.baud"))
+      .label(message("label.baud"))
       .enabled(!readOnly)
       .focused()
     comboBox(SerialBits)
       .changesBind(SerialPortProfile::bits)
       .enabled(!readOnly)
-      .label(SerialMonitorBundle.message("label.bits"))
+      .label(message("label.bits"))
     comboBox(Parity.entries)
       .changesBind(SerialPortProfile::parity)
       .enabled(!readOnly)
-      .label(SerialMonitorBundle.message("label.parity"))
+      .label(message("label.parity"))
     comboBox(StopBits.entries)
       .changesBind(SerialPortProfile::stopBits)
       .enabled(!readOnly)
-      .label(SerialMonitorBundle.message("label.stop.bits"))
+      .label(message("label.stop.bits"))
   }.layout(RowLayout.LABEL_ALIGNED)
   row {
     comboBox(SerialProfileService.NewLine.entries)
       .changesBind(SerialPortProfile::newLine)
       .enabled(!readOnly)
-      .label(SerialMonitorBundle.message("label.new.line"))
+      .label(message("label.new.line"))
     comboBox(charsets)
       .speedSearch()
       .changesBind(SerialPortProfile::encoding)
       .enabled(!readOnly)
-      .label(SerialMonitorBundle.message("label.encoding"))
+      .label(message("label.encoding"))
     checkBox("")
-      .label("Local Echo")
+      .label(message("label.local.echo"))
       .enabled(!readOnly)
       .changesBind(SerialPortProfile::localEcho)
   }.layout(RowLayout.LABEL_ALIGNED)
 }
 
 
-fun portSettings(connectableList: ConnectableList, portName: String, portStatus: PortStatus): DialogPanel {
+fun portSettings(connectableList: ConnectableList, portName: String, disposable: Disposable): DialogPanel {
+  val portStatus = service<SerialPortService>().portStatus(portName)
   return panel {
     row {
-      label("Port $portName").applyToComponent {
-        if (portStatus != PortStatus.DISCONNECTED)
+      label(message("label.port.name", portName)).applyToComponent {
+        if (portStatus == PortStatus.CONNECTED)
           icon = SerialMonitorIcons.ConnectActive
       }
     }
 
     serialSettings(profile = service<SerialProfileService>().copyDefaultProfile(portName),
-                   readOnly = portStatus != PortStatus.DISCONNECTED) {
+                   readOnly = (portStatus != PortStatus.DISCONNECTED) && (portStatus != PortStatus.READY),
+                   disposable = disposable) {
       service<SerialProfileService>().setDefaultProfile(it)
     }
     row {
-      button("Connect") {
-        val profile = service<SerialProfileService>().copyDefaultProfile(portName)
-        connectableList.parent.connectProfile(profile)
+
+      if (portStatus == PortStatus.READY) {
+        button(message("button.connect")) {
+          val profile = service<SerialProfileService>().copyDefaultProfile(portName)
+          connectableList.parent.connectProfile(profile)
+        }
       }
-      link("Create profile...") { connectableList.createNewProfile(null, portName) }
+
+      if (portStatus == PortStatus.CONNECTED) {
+        button(message("button.disconnect")) {
+          connectableList.parent.disconnectPort(portName)
+        }
+      }
+
+      if (portStatus != PortStatus.READY || portStatus != PortStatus.BUSY) {
+        button(message("button.open.console")) {
+          connectableList.parent.openConsole(portName)
+        }
+      }
+      link(message("link.label.create.profile")) { connectableList.createNewProfile(null, portName) }
     }
   }
-
 }
 
-fun profileSettings(connectableList: ConnectableList): DialogPanel? {
-  val (name, profile) = connectableList.getSelectedProfile() ?: (null to null)
-  if (profile != null && name != null) {
+fun profileSettings(connectableList: ConnectableList, disposable: Disposable): DialogPanel? {
+  val (profileName, profile) = connectableList.getSelectedProfile() ?: (null to null)
+  if (profile != null && profileName != null) {
     var portCombobox: ComboBox<String>? = null
-    val portStatus = service<SerialPortService>().portStatus(profile.portName)
-    val disposable = Disposer.newDisposable("Serial Profile Parameters")
+    val status = service<SerialPortService>().portStatus(profile.portName)
     return panel {
       row {
-        label("Profile $name").applyToComponent {
-          if (portStatus != PortStatus.DISCONNECTED)
-            icon = SerialMonitorIcons.ConnectActive
+        label(message("label.profile", profileName)).applyToComponent {
+          icon = if (status == PortStatus.CONNECTED)
+            SerialMonitorIcons.ConnectActive
+          else
+            AllIcons.Nodes.EmptyNode
         }
       }
       row {
@@ -187,14 +203,14 @@ fun profileSettings(connectableList: ConnectableList): DialogPanel? {
           DialogValidation {
             val text = it.editor.item?.toString()
             return@DialogValidation when {
-              text.isNullOrBlank() -> ValidationInfoBuilder(it).error("Please enter port name")
-              !portNames.contains(text) -> ValidationInfoBuilder(it).warning("Port does not exists")
+              text.isNullOrBlank() -> ValidationInfoBuilder(it).error(message("dialog.message.port.profilename"))
+              !portNames.contains(text) -> ValidationInfoBuilder(it).warning(message("dialog.message.port.does.not.exists"))
               else -> null
             }
           }
         }
 
-        comboBox(portNames).label("Port:")
+        comboBox(portNames).label(message("label.port"))
           .validationOnInput(portValidation)
           .applyToComponent {
             isEditable = true
@@ -203,12 +219,46 @@ fun profileSettings(connectableList: ConnectableList): DialogPanel? {
           }
 
       }
-      serialSettings(profile = profile) {
-        TODO()
+      serialSettings(disposable = disposable, profile = profile) {
+        val service = service<SerialProfileService>()
+        val profiles = service.getProfiles().toMutableMap()
+        profiles[profileName] = it
+        service.setProfiles(profiles)
       }
       row {
-        button("Connect") { connectableList.parent.connectProfile(profile, name) }
-        link("Duplicate profile...") { connectableList.createNewProfile(name) }
+        when (status) {
+          PortStatus.DISCONNECTED -> {
+            button(message("button.connect")) {
+              connectableList.parent.connectProfile(profile, profileName)
+            }
+            button(message("button.open.console")) {
+              connectableList.parent.openConsole(profile.portName)
+            }
+          }
+          PortStatus.CONNECTED -> {
+            button(message("button.disconnect")) {
+              connectableList.parent.disconnectPort(profile.portName)
+            }
+            button(message("button.open.console")) {
+              connectableList.parent.openConsole(profile.portName)
+            }
+          }
+          PortStatus.BUSY,
+          PortStatus.CONNECTING,
+          PortStatus.UNAVAILABLE_DISCONNECTED -> {
+            button(message("button.open.console")) {
+              connectableList.parent.openConsole(profile.portName)
+            }
+          }
+          PortStatus.UNAVAILABLE -> {}
+
+          PortStatus.READY -> button(message("button.connect")) {
+            connectableList.parent.connectProfile(profile, profileName)
+          }
+
+        }
+        link(
+          message("link.label.duplicate.profile")) { connectableList.createNewProfile(profileName) }
       }
       onApply { //workaround: editable combobox does not send any  events when the text is changed
         profile.portName = portCombobox?.editor?.item?.toString() ?: ""
@@ -216,11 +266,6 @@ fun profileSettings(connectableList: ConnectableList): DialogPanel? {
 
     }.apply {
       registerValidators(disposable)
-      addAncestorListener(object : AncestorListenerAdapter() {
-        override fun ancestorRemoved(event: AncestorEvent) {
-          Disposer.dispose(disposable)
-        }
-      })
       validateAll()
     }
   }

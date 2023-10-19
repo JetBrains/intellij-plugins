@@ -1,10 +1,11 @@
 package com.intellij.plugins.serialmonitor.ui.actions;
 
-import com.intellij.icons.AllIcons;
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.project.DumbAware;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.NlsContexts;
+import com.intellij.openapi.util.NlsActions;
 import com.intellij.plugins.serialmonitor.service.PortStatus;
 import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle;
 import com.intellij.plugins.serialmonitor.ui.console.JeditermSerialMonitorDuplexConsoleView;
@@ -14,9 +15,9 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 /**
- * @author Dmitry_Cherkas
+ * @author Dmitry_Cherkas, Ilia Motornyi
  */
-public class ConnectDisconnectAction extends ToggleAction implements DumbAware, ActionUpdateThreadAware {
+public class ConnectDisconnectAction extends ToggleAction implements DumbAware {
 
   private final @NotNull JeditermSerialMonitorDuplexConsoleView myConsoleView;
 
@@ -28,7 +29,7 @@ public class ConnectDisconnectAction extends ToggleAction implements DumbAware, 
 
   @Override
   public @NotNull ActionUpdateThread getActionUpdateThread() {
-    return ActionUpdateThread.EDT;
+    return ActionUpdateThread.BGT;
   }
 
   @Override
@@ -50,40 +51,37 @@ public class ConnectDisconnectAction extends ToggleAction implements DumbAware, 
       presentation.setEnabled(false);
       return;
     }
-    Project project = e.getProject();
-    if (project == null) {
-      presentation.setEnabled(false);
-      return;
-    }
-
-    presentation.setEnabled(true);
 
     PortStatus status = myConsoleView.getStatus();
     Icon icon = null;
-    @NlsContexts.HintText String text = null;
-    boolean enabled = true;
+    @NlsActions.ActionText String text = null;
+    boolean enabled = false;
     switch (status) {
-      case MISSING:
+      case UNAVAILABLE_DISCONNECTED:
+      case UNAVAILABLE:
         icon = SerialMonitorIcons.Invalid;
         text = SerialMonitorBundle.message("connect-invalid-settings.title");
         break;
       case BUSY:
         icon = SerialMonitorIcons.Invalid;
         break;
+      case READY:
       case DISCONNECTED:
         icon = SerialMonitorIcons.ConnectActive;
         text = SerialMonitorBundle.message("connect.title");
+        enabled = true;
         break;
       case CONNECTING:
-        icon = PortStatus.CONNECTING.getIcon();
-        enabled = false;
+        icon = PortStatus.BUSY.getIcon();
         break;
       case CONNECTED:
-        icon = SerialMonitorIcons.ConnectPassive;
+        icon = SerialMonitorIcons.ConnectActive;
         text = SerialMonitorBundle.message("disconnect.title");
+        enabled = true;
     }
     presentation.setIcon(icon);
     presentation.setText(text);
     presentation.setEnabled(enabled);
   }
+
 }

@@ -1,5 +1,6 @@
 package com.intellij.plugins.serialmonitor.ui
 
+import com.intellij.ide.ActivityTracker
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
@@ -17,6 +18,7 @@ import com.intellij.plugins.serialmonitor.SerialPortProfile
 import com.intellij.plugins.serialmonitor.service.PortStatus
 import com.intellij.plugins.serialmonitor.service.SerialPortsListener
 import com.intellij.plugins.serialmonitor.ui.console.JeditermSerialMonitorDuplexConsoleView
+import com.intellij.ui.TextFieldWithStoredHistory
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBLoadingPanel
 import com.intellij.uiDesigner.core.GridConstraints
@@ -31,20 +33,22 @@ import javax.swing.BorderFactory
 import javax.swing.JButton
 import javax.swing.JComponent
 
+private const val HISTORY_KEY = "serialMonitor.commands"
+
 class SerialMonitor(private val project: Project,
                     name: @NlsSafe String,
-                    private val portProfile: SerialPortProfile) : Disposable, SerialPortsListener {
+                    val portProfile: SerialPortProfile) : Disposable, SerialPortsListener {
   private val myPanel: JBLoadingPanel = JBLoadingPanel(GridLayoutManager(2, 4, JBUI.insets(5), -1, -1), this, 300)
   private val mySend: JButton
-  private val myCommand: CommandsComboBox
+  private val myCommand: TextFieldWithStoredHistory
   private val myLineEnd: JBCheckBox
   private var duplexConsoleView: JeditermSerialMonitorDuplexConsoleView?
 
-  val status: PortStatus
-    get() = duplexConsoleView?.status ?: PortStatus.MISSING
+  fun getStatus(): PortStatus = duplexConsoleView?.status ?: PortStatus.UNAVAILABLE
 
   override fun portsStatusChanged() {
     mySend.isEnabled = duplexConsoleView?.status == PortStatus.CONNECTED
+    ActivityTracker.getInstance().inc()
   }
 
   private fun send(txt: String) {
@@ -95,8 +99,7 @@ class SerialMonitor(private val project: Project,
     val toolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.TOOLBAR, toolbarActions, false)
     toolbarActions.addAll(*duplexConsoleView!!.createConsoleActions())
     toolbar.targetComponent = consoleComponent
-    myCommand = CommandsComboBox()
-    myCommand.setProject(project)
+    myCommand = TextFieldWithStoredHistory(HISTORY_KEY)
     myLineEnd = JBCheckBox(SerialMonitorBundle.message("checkbox.send.eol"), true)
     mySend = JButton(SerialMonitorBundle.message("send.title"))
     mySend.isEnabled = false

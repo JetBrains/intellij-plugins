@@ -1,16 +1,15 @@
 package com.intellij.plugins.serialmonitor.service
 
 import com.intellij.icons.AllIcons
-import com.intellij.ui.LayeredIcon
 import icons.SerialMonitorIcons
 import javax.swing.Icon
 
 enum class PortStatus(val icon: Icon) {
-  MISSING(SerialMonitorIcons.Invalid),
-  RELEASED(AllIcons.Nodes.EmptyNode),
-  @Suppress("unused")
-  BUSY(SerialMonitorIcons.Invalid), //Reserved for future use
-  DISCONNECTED(AllIcons.Nodes.EmptyNode),
-  CONNECTING(AllIcons.Process.Step_passive),
+  UNAVAILABLE(SerialMonitorIcons.Invalid),
+  UNAVAILABLE_DISCONNECTED(SerialMonitorIcons.Invalid),
+  BUSY(SerialMonitorIcons.Invalid),
+  CONNECTING(SerialMonitorIcons.Invalid),
+  DISCONNECTED(SerialMonitorIcons.ConnectPassive),
+  READY(AllIcons.Nodes.EmptyNode),
   CONNECTED(SerialMonitorIcons.ConnectActive)
 }

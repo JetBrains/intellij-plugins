@@ -6,6 +6,7 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.openapi.wm.impl.content.ToolWindowContentUi;
 import com.intellij.plugins.serialmonitor.ui.ConnectPanel;
+import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +21,7 @@ public class SerialMonitorToolWindowFactory implements ToolWindowFactory, DumbAw
   public void init(@NotNull ToolWindow toolWindow) {
     toolWindow.getComponent().putClientProperty(ToolWindowContentUi.ALLOW_DND_FOR_TABS, true);
     toolWindow.setToHideOnEmptyContent(false);
-    toolWindow.setStripeTitle("Serial Connections");
+    toolWindow.setStripeTitle(SerialMonitorBundle.message("tab.title.serial.connections"));
     toolWindow.setAvailable(true);
   }
 
@@ -28,7 +29,7 @@ public class SerialMonitorToolWindowFactory implements ToolWindowFactory, DumbAw
   public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
     ContentManager manager = toolWindow.getContentManager();
     JPanel portPanel = new ConnectPanel(toolWindow);
-    Content content = manager.getFactory().createContent(portPanel, "Connect", true);
+    Content content = manager.getFactory().createContent(portPanel, SerialMonitorBundle.message("tab.title.connect"), true);
     content.setCloseable(false);
     manager.addContent(content);
   }

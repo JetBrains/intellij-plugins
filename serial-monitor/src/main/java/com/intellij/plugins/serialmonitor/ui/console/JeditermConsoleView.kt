@@ -12,6 +12,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ToggleAction
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.plugins.serialmonitor.SerialProfileService.NewLine
 import com.intellij.plugins.serialmonitor.service.SerialPortService
 import com.intellij.terminal.JBTerminalSystemSettingsProviderBase
@@ -81,6 +82,7 @@ class JeditermConsoleView(project: Project, connection: SerialPortService.Serial
         }
     }
     widget.start(serialConnector)
+    Disposer.register(this,connection)
   }
 
 
@@ -157,6 +159,7 @@ class JeditermConsoleView(project: Project, connection: SerialPortService.Serial
 
   fun reconnect(charset: Charset, newLine: NewLine, localEcho:Boolean) {
     emulator?.newLine = newLine
+    widget.terminal.setAutoNewLine(newLine == NewLine.CRLF) //todo LF mode is not supported due JediTerm limitations
     serialConnector.charset = charset
     serialConnector.localEcho = localEcho
     synchronized(lock) {
@@ -185,6 +188,10 @@ class JeditermConsoleView(project: Project, connection: SerialPortService.Serial
 
     override fun isSelected(e: AnActionEvent): Boolean {
       return widget.terminalPanel.verticalScrollModel.value == 0
+    }
+
+    override fun update(e: AnActionEvent) {
+      e.presentation.isEnabledAndVisible = widget.isShowing
     }
 
     override fun setSelected(e: AnActionEvent, state: Boolean) {
