@@ -21,8 +21,8 @@ class PrettierEslintImportRuleTest : ESLintImportCodeStyleTestBase() {
                    it.getLanguageIndentOptions(JavaScriptSupportLoader.TYPESCRIPT).INDENT_SIZE = 5
                  },
                  {
-                   Assert.assertEquals(it.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_ENFORCE_QUOTES, true)
-                   Assert.assertEquals(it.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_QUOTE_STYLE, QuoteStyle.Double)
+                   Assert.assertEquals(it.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_ENFORCE_QUOTES, false)
+                   Assert.assertEquals(it.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_QUOTE_STYLE, QuoteStyle.Single)
                    Assert.assertEquals(it.getCustomSettings(JSCodeStyleSettings::class.java).FORCE_QUOTE_STYlE, true)
                    Assert.assertEquals(it.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE, 2)
                    Assert.assertEquals(it.getLanguageIndentOptions(JavaScriptSupportLoader.TYPESCRIPT).INDENT_SIZE, 2)
@@ -38,8 +38,8 @@ class PrettierEslintImportRuleTest : ESLintImportCodeStyleTestBase() {
                    it.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 5
                  },
                  {
-                   Assert.assertEquals(it.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_ENFORCE_QUOTES, true)
-                   Assert.assertEquals(it.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_QUOTE_STYLE, QuoteStyle.Single)
+                   Assert.assertEquals(it.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_ENFORCE_QUOTES, false)
+                   Assert.assertEquals(it.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_QUOTE_STYLE, QuoteStyle.Double)
                    it.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 3
                  })
   }
@@ -53,8 +53,8 @@ class PrettierEslintImportRuleTest : ESLintImportCodeStyleTestBase() {
                    it.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 5
                  },
                  {
-                   Assert.assertEquals(it.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_ENFORCE_QUOTES, true)
-                   Assert.assertEquals(it.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_QUOTE_STYLE, QuoteStyle.Double)
+                   Assert.assertEquals(it.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_ENFORCE_QUOTES, false)
+                   Assert.assertEquals(it.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_QUOTE_STYLE, QuoteStyle.Single)
                    it.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 3
                  })
   }
@@ -68,8 +68,8 @@ class PrettierEslintImportRuleTest : ESLintImportCodeStyleTestBase() {
                    it.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 5
                  },
                  {
-                   Assert.assertEquals(it.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_ENFORCE_QUOTES, true)
-                   Assert.assertEquals(it.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_QUOTE_STYLE, QuoteStyle.Double)
+                   Assert.assertEquals(it.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_ENFORCE_QUOTES, false)
+                   Assert.assertEquals(it.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_QUOTE_STYLE, QuoteStyle.Single)
                    it.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 2
                  })
   }
