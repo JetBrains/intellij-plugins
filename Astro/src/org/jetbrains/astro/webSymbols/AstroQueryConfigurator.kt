@@ -1,11 +1,11 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro.webSymbols
 
+import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
-import com.intellij.psi.css.CssDeclaration
-import com.intellij.psi.css.CssTerm
+import com.intellij.psi.css.CssElement
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.WebSymbolsScope
@@ -16,6 +16,7 @@ import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.lang.AstroFileImpl
 import org.jetbrains.astro.webSymbols.scope.AstroAvailableComponentsScope
 import org.jetbrains.astro.webSymbols.scope.AstroFrontmatterScope
+import org.jetbrains.astro.webSymbols.scope.AstroScriptDefineVarsScope
 import org.jetbrains.astro.webSymbols.scope.AstroStyleDefineVarsScope
 
 class AstroQueryConfigurator : WebSymbolsQueryConfigurator {
@@ -28,16 +29,25 @@ class AstroQueryConfigurator : WebSymbolsQueryConfigurator {
   override fun getScope(project: Project, location: PsiElement?, context: WebSymbolsContext, allowResolve: Boolean): List<WebSymbolsScope> =
     if (context.framework == AstroFramework.ID && location?.containingFile is AstroFileImpl) {
       when (location) {
-        is CssTerm, is CssDeclaration -> calculateCssScopes(location)
+        is CssElement -> calculateCssScopes(location)
+        is JSElement -> calculateJsScopes(location)
         else -> calculateDefaultScopes(location)
       }
     } else emptyList()
 
-  private fun calculateCssScopes(location: PsiElement): MutableList<WebSymbolsScope> {
+  private fun calculateCssScopes(location: CssElement): MutableList<WebSymbolsScope> {
     val result = calculateDefaultScopes(location)
     location.parentOfType<XmlTag>()
       ?.takeIf { StringUtil.equalsIgnoreCase(it.name, HtmlUtil.STYLE_TAG_NAME) }
       ?.let { result.add(AstroStyleDefineVarsScope(it)) }
+    return result
+  }
+
+  private fun calculateJsScopes(location: JSElement): MutableList<WebSymbolsScope> {
+    val result = calculateDefaultScopes(location)
+    location.parentOfType<XmlTag>()
+      ?.takeIf { StringUtil.equalsIgnoreCase(it.name, HtmlUtil.SCRIPT_TAG_NAME) }
+      ?.let { result.add(AstroScriptDefineVarsScope(it)) }
     return result
   }
 

@@ -17,8 +17,13 @@ import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
 import com.intellij.webSymbols.patterns.WebSymbolsPatternReferenceResolver
 import org.jetbrains.astro.codeInsight.ASTRO_DEFINE_VARS_DIRECTIVE
 
-class AstroStyleDefineVarsScope(styleTag: XmlTag)
-  : WebSymbolsScopeWithCache<XmlTag, Unit>(null, styleTag.project, styleTag, Unit) {
+interface SymbolProvider {
+  val providedSymbol: WebSymbol?
+    get() = null
+}
+
+abstract class AstroDefineVarsScope(tag: XmlTag)
+  : WebSymbolsScopeWithCache<XmlTag, Unit>(null, tag.project, tag, Unit), SymbolProvider {
   override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
 
@@ -31,24 +36,26 @@ class AstroStyleDefineVarsScope(styleTag: XmlTag)
       ?.firstOrNull()
       ?.let {
         it.asWebSymbol().getJSPropertySymbols().forEach(consumer)
-        consumer(AstroDefinedCssPropertySymbol)
+        providedSymbol?.let(consumer)
       }
   }
+}
 
+class AstroScriptDefineVarsScope(scriptTag: XmlTag) : AstroDefineVarsScope(scriptTag) {
   override fun createPointer(): Pointer<out WebSymbolsScopeWithCache<XmlTag, Unit>> {
     val ptr = dataHolder.createSmartPointer()
-    return Pointer { ptr.dereference()?.let { AstroStyleDefineVarsScope(it) } }
+    return Pointer { ptr.dereference()?.let(::AstroScriptDefineVarsScope) }
   }
 
-  object AstroDefinedCssPropertySymbol : WebSymbol {
+  override val providedSymbol: WebSymbol = object : WebSymbol {
     override val namespace: SymbolNamespace
-      get() = WebSymbol.NAMESPACE_CSS
+      get() = WebSymbol.NAMESPACE_JS
 
     override val kind: SymbolKind
-      get() = WebSymbol.KIND_CSS_PROPERTIES
+      get() = WebSymbol.KIND_JS_SYMBOLS
 
     override val name: String
-      get() = "Astro Defined CSS Property"
+      get() = "Astro Defined Script Variable"
 
     override val pattern: WebSymbolsPattern =
       WebSymbolsPatternFactory.createComplexPattern(
@@ -56,7 +63,45 @@ class AstroStyleDefineVarsScope(styleTag: XmlTag)
           WebSymbolsPatternReferenceResolver.Reference(
             qualifiedKind = WebSymbolQualifiedKind(WebSymbol.NAMESPACE_JS, WebSymbol.KIND_JS_PROPERTIES)),
           )
-        ), false,
+        ),
+        false,
+        WebSymbolsPatternFactory.createPatternSequence(WebSymbolsPatternFactory.createSymbolReferencePlaceholder())
+      )
+
+    override val origin: WebSymbolOrigin = object : WebSymbolOrigin {
+      override val framework: FrameworkId?
+        get() = null
+    }
+
+    override fun createPointer(): Pointer<out WebSymbol> =
+      Pointer.hardPointer(this)
+  }
+}
+
+class AstroStyleDefineVarsScope(styleTag: XmlTag) : AstroDefineVarsScope(styleTag) {
+  override fun createPointer(): Pointer<out WebSymbolsScopeWithCache<XmlTag, Unit>> {
+    val ptr = dataHolder.createSmartPointer()
+    return Pointer { ptr.dereference()?.let(::AstroStyleDefineVarsScope) }
+  }
+
+  override val providedSymbol: WebSymbol = object : WebSymbol {
+    override val namespace: SymbolNamespace
+      get() = WebSymbol.NAMESPACE_CSS
+
+    override val kind: SymbolKind
+      get() = WebSymbol.KIND_CSS_PROPERTIES
+
+    override val name: String
+      get() = "Astro Defined CSS Variable"
+
+    override val pattern: WebSymbolsPattern =
+      WebSymbolsPatternFactory.createComplexPattern(
+        ComplexPatternOptions(symbolsResolver = WebSymbolsPatternReferenceResolver(
+          WebSymbolsPatternReferenceResolver.Reference(
+            qualifiedKind = WebSymbolQualifiedKind(WebSymbol.NAMESPACE_JS, WebSymbol.KIND_JS_PROPERTIES)),
+          )
+        ),
+        false,
         WebSymbolsPatternFactory.createPatternSequence(
           WebSymbolsPatternFactory.createStringMatch("--"),
           WebSymbolsPatternFactory.createSymbolReferencePlaceholder()

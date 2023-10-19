@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lexer.BaseHtmlLexer
 import com.intellij.xml.util.HtmlUtil
 import org.intellij.plugins.postcss.PostCssLanguage
+import org.jetbrains.astro.codeInsight.ASTRO_DEFINE_VARS_DIRECTIVE
 import org.jetbrains.astro.codeInsight.ASTRO_INLINE_DIRECTIVE
 import org.jetbrains.astro.lang.highlighting.AstroHighlightingLexer
 import org.jetbrains.astro.lang.lexer.AstroLexerImpl
@@ -31,8 +32,9 @@ class AstroTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedCon
 
   override fun isInterestedInAttribute(attributeName: CharSequence): Boolean =
     namesEqual(attributeName, "lang") ||
-    (namesEqual(tagName, HtmlUtil.SCRIPT_TAG_NAME) &&
-    (namesEqual(attributeName, ASTRO_INLINE_DIRECTIVE) || namesEqual(attributeName, HtmlUtil.TYPE_ATTRIBUTE_NAME)))
+    (namesEqual(tagName, HtmlUtil.SCRIPT_TAG_NAME) && (namesEqual(attributeName, ASTRO_INLINE_DIRECTIVE) ||
+                                                       namesEqual(attributeName, ASTRO_DEFINE_VARS_DIRECTIVE) ||
+                                                       namesEqual(attributeName, HtmlUtil.TYPE_ATTRIBUTE_NAME)))
 
   override fun createEmbedmentInfo(): HtmlEmbedmentInfo? {
     val tagName = tagName ?: return null
@@ -48,7 +50,7 @@ class AstroTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedCon
   private fun createScriptEmbedmentInfo(): HtmlEmbedmentInfo? {
     val attributeName = attributeName?.trim()
     return when {
-      namesEqual(attributeName, ASTRO_INLINE_DIRECTIVE) ->
+      namesEqual(attributeName, ASTRO_INLINE_DIRECTIVE) || namesEqual(attributeName, ASTRO_DEFINE_VARS_DIRECTIVE) ->
         HtmlEmbeddedContentSupport.getScriptTagEmbedmentInfo(JavaScriptSupportLoader.ECMA_SCRIPT_6)
       namesEqual(attributeName, HtmlUtil.TYPE_ATTRIBUTE_NAME) -> {
         val language = attributeValue?.trim()?.toString() ?: return null
