@@ -3,11 +3,13 @@ package org.angular2.lang.expr
 
 import com.intellij.html.webSymbols.attributes.WebSymbolAttributeDescriptor
 import com.intellij.lang.javascript.frameworks.JSFrameworkSpecificHandler
+import com.intellij.lang.javascript.highlighting.JSHighlightDescriptor
 import com.intellij.lang.javascript.psi.JSExpectedTypeKind
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.psi.PsiElement
+import org.angular2.lang.Angular2HighlightDescriptor
 import org.angular2.lang.expr.psi.Angular2Binding
 import org.angular2.lang.expr.psi.Angular2Interpolation
 import org.angular2.lang.expr.psi.Angular2TemplateBinding
@@ -38,4 +40,7 @@ class Angular2JSFrameworkSpecificHandler : JSFrameworkSpecificHandler {
     }
     return null
   }
+
+  override fun buildHighlightForElement(resolve: PsiElement, place: PsiElement): JSHighlightDescriptor? =
+    Angular2HighlightDescriptor.getFor(resolve, place)
 }
