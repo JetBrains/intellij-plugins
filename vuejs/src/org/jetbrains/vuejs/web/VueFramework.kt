@@ -3,6 +3,8 @@ package org.jetbrains.vuejs.web
 
 import com.intellij.javascript.web.WebFramework
 import com.intellij.javascript.web.html.WebFrameworkHtmlFileType
+import com.intellij.lang.Language
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolQualifiedName
@@ -12,6 +14,7 @@ import org.jetbrains.vuejs.VuejsIcons
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.KIND_VUE_COMPONENTS
 import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.KIND_VUE_COMPONENT_PROPS
 import java.util.function.Predicate
@@ -22,10 +25,14 @@ class VueFramework : WebFramework() {
   override val icon: Icon
     get() = VuejsIcons.Vue
 
-  override val standaloneFileType: WebFrameworkHtmlFileType
-    get() = VueFileType.INSTANCE
-  override val htmlFileType: WebFrameworkHtmlFileType
-    get() = VueFileType.INSTANCE
+  override fun isOwnTemplateLanguage(language: Language): Boolean =
+    language.isKindOf(VueLanguage.INSTANCE)
+
+  override fun getFileType(kind: SourceFileKind, context: VirtualFile): WebFrameworkHtmlFileType? =
+    when (kind) {
+      SourceFileKind.HTML, SourceFileKind.STANDALONE -> VueFileType.INSTANCE
+      else -> null
+    }
 
   override fun getNames(qualifiedName: WebSymbolQualifiedName, target: WebSymbolNamesProvider.Target): List<String> {
     val (namespace, kind, name) = qualifiedName

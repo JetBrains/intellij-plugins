@@ -7,11 +7,14 @@ import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
 import com.intellij.html.webSymbols.elements.WebSymbolHtmlElementInfo
 import com.intellij.javascript.web.WebFramework
 import com.intellij.javascript.web.html.WebFrameworkHtmlFileType
+import com.intellij.lang.Language
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.xml.XmlTag
 import icons.AngularJSIcons
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.tags.Angular2ElementDescriptor
 import org.angular2.lang.html.Angular2HtmlFileType
+import org.angular2.lang.html.Angular2HtmlLanguage
 import org.angular2.lang.svg.Angular2SvgFileType
 import org.angular2.web.Angular2AttributeNameCodeCompletionFilter
 import javax.swing.Icon
@@ -24,11 +27,15 @@ class Angular2Framework : WebFramework() {
   override val displayName: String
     get() = "Angular"
 
-  override val htmlFileType: WebFrameworkHtmlFileType?
-    get() = Angular2HtmlFileType.INSTANCE
+  override fun getFileType(kind: SourceFileKind, context: VirtualFile): WebFrameworkHtmlFileType? =
+    when(kind) {
+      SourceFileKind.HTML -> Angular2HtmlFileType.INSTANCE
+      SourceFileKind.SVG -> Angular2SvgFileType.INSTANCE
+      else -> null
+    }
 
-  override val svgFileType: WebFrameworkHtmlFileType?
-    get() = Angular2SvgFileType.INSTANCE
+  override fun isOwnTemplateLanguage(language: Language): Boolean =
+    language.isKindOf(Angular2HtmlLanguage.INSTANCE)
 
   override fun createHtmlAttributeDescriptor(info: WebSymbolHtmlAttributeInfo,
                                              tag: XmlTag?): WebSymbolAttributeDescriptor =

@@ -2,10 +2,19 @@
 package org.jetbrains.astro
 
 import com.intellij.javascript.web.WebFramework
+import com.intellij.javascript.web.html.WebFrameworkHtmlFileType
+import com.intellij.lang.Language
+import com.intellij.openapi.vfs.VirtualFile
 import javax.swing.Icon
 
 class AstroFramework : WebFramework() {
+
+  override fun isOwnTemplateLanguage(language: Language): Boolean = false
+
+  override fun getFileType(kind: SourceFileKind, context: VirtualFile): WebFrameworkHtmlFileType? = null
+
   override val displayName: String = "Astro"
+
   override val icon: Icon
     get() = AstroIcons.Astro
 
