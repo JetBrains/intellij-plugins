@@ -12,11 +12,9 @@ import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory.createIntersectionType
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory.createUnionType
 import com.intellij.lang.javascript.psi.types.JSTypeSubstitutor.EMPTY
-import com.intellij.lang.javascript.psi.types.JSTypeGenericId
 import com.intellij.lang.javascript.psi.types.JSUnionOrIntersectionType.OptimizedKind
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyCallType
 import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations
-import com.intellij.lang.javascript.psi.types.primitives.JSUndefinedType
 import com.intellij.lang.typescript.resolve.TypeScriptGenericTypesEvaluator
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
@@ -40,7 +38,6 @@ import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2DirectiveProperty
 import org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF
 import org.angular2.lang.expr.psi.Angular2Binding
-import org.angular2.lang.expr.psi.Angular2TemplateBinding
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
@@ -169,6 +166,7 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
   companion object {
 
     fun resolve(attribute: XmlAttribute,
+                expectedTypeKind: JSExpectedTypeKind?,
                 infoValidation: Predicate<Angular2AttributeNameParser.AttributeInfo>,
                 resolveMethod: BiFunction<BindingsTypeResolver, String, JSType?>): JSType? {
       val descriptor = attribute.descriptor as? Angular2AttributeDescriptor
@@ -177,7 +175,24 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
       return if (descriptor == null || tag == null || !infoValidation.test(info)) {
         null
       }
-      else resolveMethod.apply(get(tag), info.name)
+      else {
+        val resolver = if (expectedTypeKind == JSExpectedTypeKind.EXPECTED)
+          create(tag, attribute)
+        else
+          get(tag)
+        resolveMethod.apply(resolver, info.name)
+      }
+    }
+
+    fun resolve(bindings: Angular2TemplateBindings,
+                key: String,
+                expectedTypeKind: JSExpectedTypeKind?,
+                resolveMethod: BiFunction<BindingsTypeResolver, String, JSType?>): JSType? {
+      val resolver = if (expectedTypeKind == JSExpectedTypeKind.EXPECTED)
+        create(bindings, key)
+      else
+        get(bindings)
+      return resolveMethod.apply(resolver, key)
     }
 
     fun get(tag: XmlTag): BindingsTypeResolver =
@@ -201,66 +216,69 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
           }
         }
 
-    private fun create(bindings: Angular2TemplateBindings) =
+    private fun create(bindings: Angular2TemplateBindings, filteredKey: String? = null) =
       BindingsTypeResolver(
         bindings, Angular2ApplicableDirectivesProvider(bindings),
         {
           bindings.bindings.asSequence()
-            .mapIndexed { ind, binding ->
-              binding.key to ind
+            .mapIndexedNotNull { ind, binding ->
+              if (!binding.keyIsVar())
+                binding.key to ind
+              else
+                null
             }
             .plus(bindings.templateName to -1)
             .distinctBy { it.first }
             .toMap()
         },
         {
-          mapOf(bindings.templateName to "")
+          if (bindings.templateName != filteredKey)
+            mapOf(bindings.templateName to "")
+          else
+            emptyMap()
         }, {
           bindings.bindings
             .asSequence()
-            .filter { binding: Angular2TemplateBinding -> !binding.keyIsVar() }
+            .filter { !it.keyIsVar() && it.key != filteredKey }
             .mapNotNull { Pair(it.key, it.expression ?: return@mapNotNull null) }
             .distinctBy { it.first }
             .toMap()
         })
 
-    private fun create(tag: XmlTag) =
+    private fun create(tag: XmlTag, filteredAttribute: XmlAttribute? = null) =
       BindingsTypeResolver(
         tag, Angular2ApplicableDirectivesProvider(tag),
         {
-          tag.attributes
-            .asSequence()
-            .mapIndexedNotNull { index, attr ->
-              Angular2AttributeNameParser.parse(attr.name, attr.parent)
-                .takeIf { Angular2PropertyBindingType.isPropertyBindingAttribute(it) || it.type == Angular2AttributeType.REGULAR }
-                ?.let { it.name to index }
-            }
-            .distinctBy { it.first }
-            .toMap()
+          tag.mapAttrsToMapIndexed(filteredAttribute) { index, attr ->
+            Angular2AttributeNameParser.parse(attr.name, attr.parent)
+              .takeIf { Angular2PropertyBindingType.isPropertyBindingAttribute(it) || it.type == Angular2AttributeType.REGULAR }
+              ?.let { it.name to index }
+          }
         },
         {
-          tag.attributes
-            .asSequence()
-            .mapNotNull { attr ->
-              if (Angular2AttributeNameParser.parse(attr.name, attr.parent).type == Angular2AttributeType.REGULAR)
-                attr.name to (attr.value ?: "")
-              else null
-            }
-            .distinctBy { it.first }
-            .toMap()
+          tag.mapAttrsToMapIndexed(filteredAttribute) { _, attr ->
+            if (Angular2AttributeNameParser.parse(attr.name, attr.parent).type == Angular2AttributeType.REGULAR)
+              attr.name to (attr.value ?: "")
+            else null
+          }
         }, {
-          tag.attributes
-            .asSequence()
-            .mapNotNull { attr ->
-              val name = Angular2AttributeNameParser.parse(attr.name, attr.parent)
-                           .takeIf { Angular2PropertyBindingType.isPropertyBindingAttribute(it) }
-                           ?.name
-                         ?: return@mapNotNull null
-              Pair(name, Angular2Binding.get(attr)?.expression)
-            }
-            .distinctBy { it.first }
-            .toMap()
+          tag.mapAttrsToMapIndexed(filteredAttribute) { _, attr ->
+            val name = Angular2AttributeNameParser.parse(attr.name, attr.parent)
+                         .takeIf { Angular2PropertyBindingType.isPropertyBindingAttribute(it) }
+                         ?.name
+                       ?: return@mapAttrsToMapIndexed null
+            Pair(name, Angular2Binding.get(attr)?.expression)
+          }
         })
+
+    private fun <T> XmlTag.mapAttrsToMapIndexed(filteredAttribute: XmlAttribute?,
+                                                transform: (index: Int, XmlAttribute) -> Pair<String, T>?): Map<String, T> =
+      attributes
+        .asSequence()
+        .filter { it != filteredAttribute }
+        .mapIndexedNotNull(transform)
+        .distinctBy { it.first }
+        .toMap()
 
     data class AnalysisResult(
       val mergedSubstitutor: JSTypeSubstitutor?,
@@ -456,8 +474,7 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
 
     private fun merge(source: JSTypeSource, types: List<JSType?>, union: Boolean): JSType {
       val type = if (union) createUnionType(source, types) else createIntersectionType(types, source)
-      return JSCompositeTypeFactory.optimizeTypeIfComposite(type,
-                                                                                                                      OptimizedKind.OPTIMIZED_SIMPLE)
+      return JSCompositeTypeFactory.optimizeTypeIfComposite(type, OptimizedKind.OPTIMIZED_SIMPLE)
     }
 
     private fun getTypeSource(element: PsiElement,

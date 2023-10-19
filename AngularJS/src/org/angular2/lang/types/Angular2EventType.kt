@@ -29,7 +29,7 @@ class Angular2EventType : Angular2BaseType<XmlAttribute> {
     return if (descriptor != null && ContainerUtil.isEmpty(descriptor.sourceDirectives)) {
       descriptor.symbol.jsType
     }
-    else BindingsTypeResolver.resolve(attribute, { isEventAttribute(it) }, { obj, name -> obj.resolveDirectiveEventType(name) })
+    else BindingsTypeResolver.resolve(attribute, null, { isEventAttribute(it) }, BindingsTypeResolver::resolveDirectiveEventType)
   }
 
   companion object {

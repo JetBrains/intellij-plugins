@@ -70,6 +70,14 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
   fun testCustomSignal() =
     doBasicCompletionTest(Angular2TestModule.ANGULAR_CORE_16_2_8)
 
+  fun testSignalInGenericStructuralDirective() =
+    doBasicCompletionTest(Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8,
+                          dir = true, extension = "html")
+
+  fun testSignalInGenericDirective() =
+    doBasicCompletionTest(Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8,
+                          dir = true, extension = "html")
+
   fun testNotSignal() =
     doBasicCompletionTest(Angular2TestModule.ANGULAR_CORE_16_2_8)
 
@@ -109,11 +117,11 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     myFixture.checkResultByFile("completionInExpression/completionInExpression.ts.after")
   }
 
-  private fun doBasicCompletionTest(vararg modules: WebFrameworkTestModule) =
-    doTypingTest(null, *modules)
+  private fun doBasicCompletionTest(vararg modules: WebFrameworkTestModule, dir: Boolean = false, extension: String = "ts") =
+    doTypingTest(null, *modules, dir = dir, extension = extension)
 
-  private fun doTypingTest(toType: String? = null, vararg modules: WebFrameworkTestModule) {
-    doConfiguredTest(*modules, checkResult = true) {
+  private fun doTypingTest(toType: String? = null, vararg modules: WebFrameworkTestModule, dir: Boolean = false, extension: String = "ts") {
+    doConfiguredTest(*modules, checkResult = true, dir = dir, extension = extension) {
       completeBasic()
       if (toType != null) type(toType)
     }
