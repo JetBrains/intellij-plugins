@@ -94,6 +94,7 @@ class PbCopyPasteHandlerTest : BasePlatformTestCase() {
 
 private val JSON_WITH_DIFFERENT_FIELD_TYPES =
   """
+    
     {
       "title": "Pulp fiction",
       "year": "1994",
@@ -123,4 +124,5 @@ private val JSON_WITH_DIFFERENT_FIELD_TYPES =
         }
       ]
     }
+       
   """.trimIndent()

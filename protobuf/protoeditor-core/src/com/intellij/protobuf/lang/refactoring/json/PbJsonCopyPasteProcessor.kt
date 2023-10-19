@@ -39,8 +39,13 @@ internal class PbJsonCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
 
   override fun extractTransferableData(content: Transferable): List<TextBlockTransferableData> {
     val copiedStringOrNull = content.getTransferData(DataFlavor.stringFlavor)
-    if (copiedStringOrNull !is String || copiedStringOrNull.isBlank() || !fastCheckIsJson(copiedStringOrNull)) return emptyList()
-    return listOf(PbJsonTransferableData(copiedStringOrNull))
+    if (copiedStringOrNull !is String || copiedStringOrNull.isBlank()) return emptyList()
+
+    val trimmedContent = copiedStringOrNull.trim(' ', '\n', '\r', '\t')
+    return if (fastCheckIsJson(trimmedContent))
+      listOf(PbJsonTransferableData(trimmedContent))
+    else
+      emptyList()
   }
 
   override fun processTransferableData(project: Project,
@@ -115,7 +120,9 @@ internal class PbJsonCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
     }.getOrNull()
   }
 
-  private fun mapStructFields(struct: Struct, syntaxLevel: SyntaxLevel, structNameGetter: (Struct) -> String): List<PbPastedEntity.PbField> {
+  private fun mapStructFields(struct: Struct,
+                              syntaxLevel: SyntaxLevel,
+                              structNameGetter: (Struct) -> String): List<PbPastedEntity.PbField> {
     return struct.fieldsMap.entries.mapIndexed { zeroBasedIndex, (fieldName, fieldValue) ->
       PbPastedEntity.PbField(name = fieldName,
                              isRepeated = fieldValue.hasListValue(),
@@ -127,13 +134,13 @@ internal class PbJsonCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
 
   private fun mapFieldType(fieldValue: Value, structNameGetter: (Struct) -> String): String {
     return when {
-       fieldValue.hasBoolValue() -> "bool"
-       fieldValue.hasStringValue() -> "string"
-       fieldValue.hasNumberValue() -> "uint32"
-       fieldValue.hasStructValue() -> structNameGetter(fieldValue.structValue)
-       fieldValue.hasListValue() -> getFirstStructInArrayOrNull(fieldValue)?.let(structNameGetter)
-       else -> null
-     } ?: FALLBACK_FIELD_TYPE
+             fieldValue.hasBoolValue() -> "bool"
+             fieldValue.hasStringValue() -> "string"
+             fieldValue.hasNumberValue() -> "uint32"
+             fieldValue.hasStructValue() -> structNameGetter(fieldValue.structValue)
+             fieldValue.hasListValue() -> getFirstStructInArrayOrNull(fieldValue)?.let(structNameGetter)
+             else -> null
+           } ?: FALLBACK_FIELD_TYPE
   }
 
   private fun collectPastedStructs(parentStruct: PbStructInJson): Sequence<PbStructInJson> {
