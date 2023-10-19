@@ -249,8 +249,8 @@ public class PbFileImpl extends PsiFileBase implements PbFile {
     return builder.build();
   }
 
-  private void addSymbolsRecursively(
-      PbSymbolOwner parent, ImmutableMultimap.Builder<QualifiedName, PbSymbol> builder) {
+  private static void addSymbolsRecursively(
+    PbSymbolOwner parent, ImmutableMultimap.Builder<QualifiedName, PbSymbol> builder) {
     for (PbSymbol symbol : parent.getSymbols()) {
       QualifiedName symbolQualifiedName = symbol.getQualifiedName();
       if (symbolQualifiedName != null) {

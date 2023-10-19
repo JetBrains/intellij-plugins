@@ -117,11 +117,11 @@ public class CordovaBasedExecutor {
     return appendParsedArguments(command, extraArg);
   }
 
-  protected final String @NotNull [] appendParsedArguments(@NotNull Collection<String> commands, @Nullable String extraArgs) {
+  protected static String @NotNull [] appendParsedArguments(@NotNull Collection<String> commands, @Nullable String extraArgs) {
     return ArrayUtil.mergeCollections(commands, parseArgs(extraArgs), String[]::new);
   }
 
-  protected final String @NotNull [] appendParsedArguments(String @NotNull [] commands, @Nullable String extraArgs) {
+  protected static String @NotNull [] appendParsedArguments(String @NotNull [] commands, @Nullable String extraArgs) {
     return ArrayUtil.mergeArrayAndCollection(commands, parseArgs(extraArgs), String[]::new);
   }
 

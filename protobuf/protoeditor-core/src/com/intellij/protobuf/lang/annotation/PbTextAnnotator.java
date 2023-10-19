@@ -101,7 +101,7 @@ public class PbTextAnnotator implements Annotator {
   /*
    * Returns true if the given element is a PbTextField with a reserved name, descends from one.
    */
-  private boolean isReservedFieldOrDescendant(PsiElement element, AnnotationHolder holder) {
+  private static boolean isReservedFieldOrDescendant(PsiElement element, AnnotationHolder holder) {
     if (element == null) {
       return false;
     }
@@ -153,7 +153,7 @@ public class PbTextAnnotator implements Annotator {
     return reserved;
   }
 
-  private boolean fullAnnotation(PsiElement element) {
+  private static boolean fullAnnotation(PsiElement element) {
     PsiFile file = element.getContainingFile();
     if (file instanceof PbFile) {
       return true;
@@ -164,7 +164,7 @@ public class PbTextAnnotator implements Annotator {
     return false;
   }
 
-  private TextAttributesKey getInvalidEscapeAttributes(PsiElement element) {
+  private static TextAttributesKey getInvalidEscapeAttributes(PsiElement element) {
     if (element.getContainingFile() instanceof PbFile) {
       return PbSyntaxHighlighter.INVALID_STRING_ESCAPE;
     } else {

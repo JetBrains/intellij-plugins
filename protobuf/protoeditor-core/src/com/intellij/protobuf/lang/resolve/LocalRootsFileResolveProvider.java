@@ -88,7 +88,7 @@ public class LocalRootsFileResolveProvider implements FileResolveProvider {
         project, /* withSubDirectories= */ true, getProjectRoots(project));
   }
 
-  private List<ChildEntry> getChildEntriesForFile(VirtualFile file) {
+  private static List<ChildEntry> getChildEntriesForFile(VirtualFile file) {
     if (file != null && file.isDirectory()) {
       return VfsUtil.getChildren(file, PROTO_AND_DIRECTORY_FILTER)
           .stream()
@@ -98,7 +98,7 @@ public class LocalRootsFileResolveProvider implements FileResolveProvider {
     return Collections.emptyList();
   }
 
-  private VirtualFile findFileInRoots(String path, VirtualFile[] roots) {
+  private static VirtualFile findFileInRoots(String path, VirtualFile[] roots) {
     for (VirtualFile root : roots) {
       VirtualFile file = root.findFileByRelativePath(path);
       if (file != null && file.exists()) {
@@ -108,11 +108,11 @@ public class LocalRootsFileResolveProvider implements FileResolveProvider {
     return null;
   }
 
-  private VirtualFile[] getProjectRoots(@NotNull Project project) {
+  private static VirtualFile[] getProjectRoots(@NotNull Project project) {
     return ProjectRootManager.getInstance(project).getContentRoots();
   }
 
-  private VirtualFile[] getModuleRoots(@NotNull Module module) {
+  private static VirtualFile[] getModuleRoots(@NotNull Module module) {
     return ModuleRootManager.getInstance(module).getContentRoots();
   }
 }

@@ -72,12 +72,12 @@ abstract class PbNumberValueMixin extends PbElementBase implements PbNumberValue
     return findChildByType(ProtoTokenTypes.MINUS) != null;
   }
 
-  private boolean isInf(ASTNode node) {
+  private static boolean isInf(ASTNode node) {
     return Objects.equals(node.getElementType(), ProtoTokenTypes.IDENTIFIER_LITERAL)
         && "inf".equals(node.getText());
   }
 
-  private boolean isNan(ASTNode node) {
+  private static boolean isNan(ASTNode node) {
     return Objects.equals(node.getElementType(), ProtoTokenTypes.IDENTIFIER_LITERAL)
         && "nan".equals(node.getText());
   }

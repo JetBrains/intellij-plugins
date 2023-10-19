@@ -294,7 +294,7 @@ public class PbJavaFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
       return javaElements;
     }
 
-    private GlobalSearchScope getScope(PsiElement element) {
+    private static GlobalSearchScope getScope(PsiElement element) {
       Module module = ModuleUtilCore.findModuleForPsiElement(element);
       if (module != null) {
         return GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module);

@@ -298,7 +298,7 @@ public class FlexStackFrame extends XStackFrame {
       return CommandOutputProcessingMode.DONE;
     }
 
-    private boolean cannotEvaluateResponse(String s) {
+    private static boolean cannotEvaluateResponse(String s) {
       return s.contains("could not be evaluated");
     }
 
@@ -578,7 +578,7 @@ public class FlexStackFrame extends XStackFrame {
       }
     }
 
-    private String removeTrailingNewLines(final StringBuilder builder) {
+    private static String removeTrailingNewLines(final StringBuilder builder) {
       while (builder.length() > 0 && ((builder.charAt(builder.length() - 1) == '\r') || builder.charAt(builder.length() - 1) == '\n')) {
         builder.deleteCharAt(builder.length() - 1);
       }

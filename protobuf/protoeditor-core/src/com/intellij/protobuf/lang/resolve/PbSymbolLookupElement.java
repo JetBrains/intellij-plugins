@@ -134,7 +134,7 @@ public class PbSymbolLookupElement extends LookupElement {
     }
   }
 
-  private String getTypeTextForField(PbField field) {
+  private static String getTypeTextForField(PbField field) {
     if (field instanceof PbMapField mapField) {
       PbTypeName keyType = mapField.getKeyType();
       PbTypeName valueType = mapField.getValueType();

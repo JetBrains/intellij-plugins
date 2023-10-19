@@ -226,7 +226,7 @@ public class CfscriptParser {
     return false;
   }
 
-  private boolean parseConditionInBrackets(PsiBuilder myBuilder) {
+  private static boolean parseConditionInBrackets(PsiBuilder myBuilder) {
     if (myBuilder.getTokenType() != L_BRACKET) {
       myBuilder.error(CfmlBundle.message("cfml.parsing.close.bracket.expected"));
       return false;
@@ -436,7 +436,7 @@ public class CfscriptParser {
   /**
    * ColdFusion9: [required] [type] name [= default value (constant)], ...
    */
-  private void parseParametersList(PsiBuilder myBuilder) {
+  private static void parseParametersList(PsiBuilder myBuilder) {
     PsiBuilder.Marker argumentMarker = myBuilder.mark();
     // parsing required keyword is present
     if (myBuilder.getTokenType() == REQUIRED_KEYWORD) {
@@ -479,7 +479,7 @@ public class CfscriptParser {
     }
   }
 
-  private void parseParametersListInBrackets(PsiBuilder myBuilder) {
+  private static void parseParametersListInBrackets(PsiBuilder myBuilder) {
     PsiBuilder.Marker argumentsList = myBuilder.mark();
     eatLeftBracket(myBuilder);
     parseParametersList(myBuilder);

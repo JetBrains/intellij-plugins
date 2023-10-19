@@ -190,14 +190,14 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
         return false;
       }
 
-      private boolean acceptablePropertyValue(JSProperty element) {
+      private static boolean acceptablePropertyValue(JSProperty element) {
         return element.getNameIdentifier() != null && StringUtil.isQuotedString(element.getNameIdentifier().getText()) &&
                (element.getValue() instanceof JSObjectLiteralExpression ||
                 element.getValue() instanceof JSReferenceExpression || element.getValue() == null);
       }
 
       @SafeVarargs
-      private PsiElement moveUpChain(final @Nullable PsiElement element, final Class<? extends PsiElement> @NotNull ... clazz) {
+      private static PsiElement moveUpChain(final @Nullable PsiElement element, final Class<? extends PsiElement> @NotNull ... clazz) {
         PsiElement current = element;
         for (Class<? extends PsiElement> aClass : clazz) {
           current = current != null && aClass.isInstance(current.getParent()) ? current.getParent() : current;
@@ -205,7 +205,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
         return current;
       }
 
-      private boolean checkParentViewsObject(final PsiElement mustBeObject) {
+      private static boolean checkParentViewsObject(final PsiElement mustBeObject) {
         if (mustBeObject instanceof JSObjectLiteralExpression) {
           final PsiElement viewsProperty = mustBeObject.getParent();
           if (viewsProperty instanceof JSProperty && "views".equals(((JSProperty)viewsProperty).getName())) {

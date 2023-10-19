@@ -503,7 +503,7 @@ public class HbParsing {
    * an individual token so we can highlight it distinctly.  This method parses {{^}} and {{else}}
    * as a unit to synthesize INVERSE
    */
-  private boolean parseINVERSE(PsiBuilder builder) {
+  private static boolean parseINVERSE(PsiBuilder builder) {
     PsiBuilder.Marker simpleInverseMarker = builder.mark();
     boolean isSimpleInverse;
 
@@ -834,7 +834,7 @@ public class HbParsing {
    * blockParams
    * OPEN_BLOCK_PARAMS ID+ CLOSE_BLOCK_PARAMS
    */
-  private boolean parseBlockParams(PsiBuilder builder) {
+  private static boolean parseBlockParams(PsiBuilder builder) {
     PsiBuilder.Marker blockParamsMarker = builder.mark();
     if (parseLeafToken(builder, OPEN_BLOCK_PARAMS)) {
       blockParamsMarker.drop();
@@ -977,7 +977,7 @@ public class HbParsing {
   /**
    * Tries to parse the given token, marking an error if any other token is found
    */
-  protected boolean parseLeafToken(PsiBuilder builder, IElementType leafTokenType) {
+  protected static boolean parseLeafToken(PsiBuilder builder, IElementType leafTokenType) {
     PsiBuilder.Marker leafTokenMark = builder.mark();
     if (builder.getTokenType() == leafTokenType) {
       builder.advanceLexer();
@@ -1024,7 +1024,7 @@ public class HbParsing {
     }
   }
 
-  private void recordLeafTokenError(IElementType expectedToken, PsiBuilder.Marker unexpectedTokensMarker) {
+  private static void recordLeafTokenError(IElementType expectedToken, PsiBuilder.Marker unexpectedTokensMarker) {
     if (expectedToken instanceof HbElementType) {
       unexpectedTokensMarker.error(((HbElementType)expectedToken).parseExpectedMessage());
     }

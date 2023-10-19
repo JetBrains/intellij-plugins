@@ -63,7 +63,7 @@ abstract class PbMapFieldMixin extends PbFieldBase implements PbMapField {
   }
 
   /** Generate a map entry name for the given field name. Adapted from protoc's parser.cc. */
-  private String mapEntryName(String fieldName) {
+  private static String mapEntryName(String fieldName) {
     if (fieldName == null) {
       return null;
     }

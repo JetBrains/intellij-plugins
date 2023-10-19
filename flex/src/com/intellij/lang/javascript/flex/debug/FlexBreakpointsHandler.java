@@ -150,9 +150,9 @@ public final class FlexBreakpointsHandler {
       return clazz == null || clazz.getContainingFile() instanceof PsiCompiledFile;
     }
 
-    private boolean isInSourcesOfLibraryInScope(final ProjectFileIndex fileIndex,
-                                                final VirtualFile file,
-                                                final GlobalSearchScope scope) {
+    private static boolean isInSourcesOfLibraryInScope(final ProjectFileIndex fileIndex,
+                                                       final VirtualFile file,
+                                                       final GlobalSearchScope scope) {
       if (!fileIndex.isInLibrarySource(file)) {
         return false;
       }

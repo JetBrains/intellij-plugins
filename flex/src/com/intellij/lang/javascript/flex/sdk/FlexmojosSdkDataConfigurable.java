@@ -87,7 +87,7 @@ public class FlexmojosSdkDataConfigurable implements AdditionalDataConfigurable 
                  (file.isDirectory() || (file.getName().startsWith("adl") && isExecutableExtension(file.getExtension())));
         }
 
-        private boolean isExecutableExtension(final String extension) {
+        private static boolean isExecutableExtension(final String extension) {
           return SystemInfo.isWindows ? "exe".equalsIgnoreCase(extension) : extension == null || "uexe".equalsIgnoreCase(extension);
         }
       };

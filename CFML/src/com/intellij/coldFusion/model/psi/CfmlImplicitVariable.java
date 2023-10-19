@@ -32,7 +32,7 @@ public class CfmlImplicitVariable extends RenameableFakePsiElement implements Cf
     myName = cutScope(myText);
   }
 
-  private String cutScope(String name) {
+  private static String cutScope(String name) {
     final int i = name.indexOf(".");
     if (i != -1 && CfmlScopesInfo.getScopeByString(name.substring(0, i)) != CfmlScopesInfo.DEFAULT_SCOPE) {
       return name.substring(i + 1);

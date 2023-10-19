@@ -1272,7 +1272,7 @@ public class FlexDebugProcess extends XDebugProcess {
       return result;
     }
 
-    private boolean isBlank(StringBuilder lastText) {
+    private static boolean isBlank(StringBuilder lastText) {
       for (int i = 0; i < lastText.length(); ++i) {
         if (lastText.charAt(i) != ' ') return false;
       }
@@ -1293,7 +1293,7 @@ public class FlexDebugProcess extends XDebugProcess {
         return getObjectId(value);
       }
 
-      private String getObjectId(final FlexValue value) {
+      private static String getObjectId(final FlexValue value) {
         final String text = value.getResult();
         final String prefix = "[Object ";
         final String suffix = FlexStackFrame.CLASS_MARKER;

@@ -127,11 +127,11 @@ public class PbBlock extends AbstractBlock {
     }
   }
 
-  private boolean isEmpty(ASTNode node) {
+  private static boolean isEmpty(ASTNode node) {
     return node.getElementType() == TokenType.WHITE_SPACE || node.getTextLength() == 0;
   }
 
-  private ASTNode deepestLeaf(ASTNode node) {
+  private static ASTNode deepestLeaf(ASTNode node) {
     // Find the deepest node with the same text range
     while (node.getFirstChildNode() != null
         && node.getTextRange().equals(node.getFirstChildNode().getTextRange())) {

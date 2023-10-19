@@ -37,7 +37,7 @@ public class CfmlEnterHandler extends EnterHandlerDelegateAdapter {
     return Result.Continue;
   }
 
-  private boolean isAfterAndBeforeCurlyBracket(Editor editor, int offset) {
+  private static boolean isAfterAndBeforeCurlyBracket(Editor editor, int offset) {
     CharSequence chars = editor.getDocument().getCharsSequence();
     return offset > 0 && chars.charAt(offset - 1) == '{' && offset < chars.length() && chars.charAt(offset) == '}';
   }

@@ -55,7 +55,7 @@ public class PbBreadcrumbsInfoProvider implements BreadcrumbsProvider {
     return name != null ? String.format("%s <b>%s</b>", getTooltipPrefix(e), name) : null;
   }
 
-  private String getTooltipPrefix(@NotNull PsiElement element) {
+  private static String getTooltipPrefix(@NotNull PsiElement element) {
     if (element instanceof PbMessageDefinition) {
       return "message";
     }

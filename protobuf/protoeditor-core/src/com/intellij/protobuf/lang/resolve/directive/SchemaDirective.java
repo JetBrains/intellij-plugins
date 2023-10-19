@@ -222,7 +222,7 @@ public class SchemaDirective {
     return messageComment.getName();
   }
 
-  private void addFileIfResolved(SchemaComment comment, ImmutableList.Builder<PbFile> builder) {
+  private static void addFileIfResolved(SchemaComment comment, ImmutableList.Builder<PbFile> builder) {
     if (comment == null) {
       return;
     }

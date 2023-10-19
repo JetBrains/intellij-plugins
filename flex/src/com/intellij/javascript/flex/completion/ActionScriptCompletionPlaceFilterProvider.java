@@ -54,7 +54,7 @@ public class ActionScriptCompletionPlaceFilterProvider implements JSCompletionPl
       return true;
     }
 
-    private boolean typeCanBePresentInNew(@Nullable JSType type) {
+    private static boolean typeCanBePresentInNew(@Nullable JSType type) {
       if (type == null || type instanceof JSAnyType) return false;
 
       return JSNamedType.isNamedTypeWithName(type, "Class");

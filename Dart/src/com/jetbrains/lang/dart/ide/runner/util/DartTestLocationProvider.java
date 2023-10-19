@@ -131,7 +131,7 @@ public class DartTestLocationProvider implements SMTestLocator, DumbAware {
         }
 
         @Nullable
-        private DartCallExpression getGroup(final DartCallExpression expression) {
+        private static DartCallExpression getGroup(final DartCallExpression expression) {
           return (DartCallExpression)PsiTreeUtil.findFirstParent(expression, true,
                                                                  element -> element instanceof DartCallExpression &&
                                                                             TestUtil.isGroup((DartCallExpression)element));

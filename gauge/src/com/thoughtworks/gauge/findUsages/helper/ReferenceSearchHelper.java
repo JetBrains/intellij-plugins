@@ -58,7 +58,7 @@ public class ReferenceSearchHelper {
   }
 
   @NotNull
-  public List<PsiElement> getPsiElements(StepCollector collector, PsiElement element) {
+  public static List<PsiElement> getPsiElements(StepCollector collector, PsiElement element) {
     List<PsiElement> elements = new ArrayList<>();
     if (element instanceof ConceptStepImpl) {
       elements = collector.get(getConceptStepText((ConceptStepImpl)element));
@@ -75,16 +75,16 @@ public class ReferenceSearchHelper {
     return elements;
   }
 
-  private String getConceptStepText(ConceptStepImpl element) {
+  private static String getConceptStepText(ConceptStepImpl element) {
     String text = element.getStepValue().getStepText().trim();
     return !text.isEmpty() && text.charAt(0) == '*' || text.charAt(0) == '#' ? text.substring(1).trim() : text;
   }
 
-  private String getStepText(SpecStep elementToSearch) {
+  private static String getStepText(SpecStep elementToSearch) {
     return elementToSearch.getStepValue().getStepText().trim();
   }
 
-  private String getStepText(String text, PsiElement element) {
+  private static String getStepText(String text, PsiElement element) {
     String stepText = text.length() > 0 && text.charAt(0) == '"' ? text.substring(1, text.length() - 1) : text;
     return SpecPsiImplUtil.getStepValueFor(element, stepText, false).getStepText();
   }

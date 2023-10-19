@@ -204,8 +204,8 @@ final class MessageFieldTracker {
       return findPreviousOverlappingRange(extensionFieldNumbers, newRange);
     }
 
-    private Optional<Range<Long>> findPreviousOverlappingRange(
-        RangeSet<Long> ranges, Range<Long> newRange) {
+    private static Optional<Range<Long>> findPreviousOverlappingRange(
+      RangeSet<Long> ranges, Range<Long> newRange) {
       RangeSet<Long> intersection = ranges.subRangeSet(newRange);
       if (intersection.isEmpty()) {
         return Optional.empty();
@@ -346,7 +346,7 @@ final class MessageFieldTracker {
       }
     }
 
-    private long getMaxFieldNumber(PbField field) {
+    private static long getMaxFieldNumber(PbField field) {
       PbMessageType parent;
       PbTypeName extendee = field.getExtendee();
       if (extendee != null) {

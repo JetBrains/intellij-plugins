@@ -114,7 +114,7 @@ public class PbJavaOuterClassIndex extends ScalarIndexExtension<String> {
 
     /** Return all of the java outer class names that can be generated from this proto file. */
     @NotNull
-    private Collection<String> computeOuterClassNames(PbFile file) {
+    private static Collection<String> computeOuterClassNames(PbFile file) {
       List<JavaNameGenerator> nameGenerators = NameGeneratorSelector.selectForFile(file);
       List<String> results = new ArrayList<>();
       for (JavaNameGenerator nameGenerator : nameGenerators) {

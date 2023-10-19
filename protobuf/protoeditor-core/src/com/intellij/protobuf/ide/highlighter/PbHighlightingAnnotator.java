@@ -116,17 +116,17 @@ public class PbHighlightingAnnotator implements Annotator {
         });
   }
 
-  private void highlightNameIdentifier(
-      PsiNameIdentifierOwner parent, PsiElement name, AnnotationHolder holder) {
+  private static void highlightNameIdentifier(
+    PsiNameIdentifierOwner parent, PsiElement name, AnnotationHolder holder) {
     if (parent instanceof PbEnumValue) {
       setHighlighting(name, holder, PbSyntaxHighlighter.ENUM_VALUE);
     }
   }
 
-  private void setHighlighting(
-      @NotNull PsiElement element,
-      @NotNull AnnotationHolder holder,
-      @NotNull TextAttributesKey key) {
+  private static void setHighlighting(
+    @NotNull PsiElement element,
+    @NotNull AnnotationHolder holder,
+    @NotNull TextAttributesKey key) {
     holder.newSilentAnnotation(HighlightInfoType.SYMBOL_TYPE_SEVERITY)
         .range(element.getTextRange())
         .textAttributes(key)

@@ -29,7 +29,7 @@ public class GherkinFoldingBuilder implements FoldingBuilder, DumbAware {
     return descriptors.toArray(FoldingDescriptor.EMPTY_ARRAY);
   }
 
-  private void appendDescriptors(ASTNode node, List<FoldingDescriptor> descriptors) {
+  private static void appendDescriptors(ASTNode node, List<FoldingDescriptor> descriptors) {
     if (BLOCKS_TO_FOLD.contains(node.getElementType()) && node.getTextRange().getLength() >= 2) {
       descriptors.add(new FoldingDescriptor(node, node.getTextRange()));
     }

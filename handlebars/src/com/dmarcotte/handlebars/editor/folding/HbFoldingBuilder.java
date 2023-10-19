@@ -27,7 +27,7 @@ public class HbFoldingBuilder implements FoldingBuilder, DumbAware {
     return descriptors.toArray(FoldingDescriptor.EMPTY_ARRAY);
   }
 
-  private void appendDescriptors(PsiElement psi, List<FoldingDescriptor> descriptors, Document document) {
+  private static void appendDescriptors(PsiElement psi, List<FoldingDescriptor> descriptors, Document document) {
     if (isSingleLine(psi, document)) {
       return;
     }
@@ -80,7 +80,7 @@ public class HbFoldingBuilder implements FoldingBuilder, DumbAware {
    * <p/>
    * Otherwise, returns null.
    */
-  private PsiElement getOpenBlockCloseStacheElement(PsiElement psiElement) {
+  private static PsiElement getOpenBlockCloseStacheElement(PsiElement psiElement) {
     if (!(psiElement instanceof HbOpenBlockMustache)) {
       return null;
     }
@@ -99,7 +99,7 @@ public class HbFoldingBuilder implements FoldingBuilder, DumbAware {
    * <p/>
    * Otherwise, returns null
    */
-  private PsiElement getCloseBlockCloseStacheElement(PsiElement psiElement) {
+  private static PsiElement getCloseBlockCloseStacheElement(PsiElement psiElement) {
     if (!(psiElement instanceof HbCloseBlockMustache)) {
       return null;
     }
