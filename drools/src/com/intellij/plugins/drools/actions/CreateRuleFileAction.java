@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.actions;
 
 import com.intellij.ide.actions.CreateFileAction;
@@ -24,11 +24,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CreateRuleFileAction extends CreateFileAction {
-
   public CreateRuleFileAction() {
     super(DroolsBundle.messagePointer("rule.new.file"),
           DroolsBundle.messagePointer("rule.new.file.description"),
-          JbossDroolsIcons.Drools_16);
+          () -> JbossDroolsIcons.Drools_16);
   }
 
   @Override
