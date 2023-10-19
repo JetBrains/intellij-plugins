@@ -28,7 +28,7 @@ export interface <info descr="interface">Movie</info> {
         <info descr="instance method"><info descr="ng-signal">movieSig</info></info>,
         <info descr="instance method"><info descr="ng-signal">newMovieSig</info></info>
     }}
-    <div *ngIf="<info descr="instance method"><info descr="ng-signal">movieSig</info></info>() as <info descr="identifiers//global variable">movie</info>">{{<info descr="identifiers//global variable"><info descr="ng-signal">movie</info></info>}}</div>
+    <div *ngIf="<info descr="instance method"><info descr="ng-signal">movieSig</info></info>() as <info descr="identifiers//global variable"><info descr="ng-variable">movie</info></info>">{{<info descr="identifiers//global variable"><info descr="ng-variable">movie</info></info>}}</div>
 
    </inject>`,
   <info descr="instance field">imports</info>:[

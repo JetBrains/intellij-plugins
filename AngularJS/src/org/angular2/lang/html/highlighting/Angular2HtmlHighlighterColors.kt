@@ -27,10 +27,6 @@ interface Angular2HtmlHighlighterColors {
       "NG.PROPERTY_BINDING_ATTR_NAME", DefaultLanguageHighlighterColors.INSTANCE_FIELD)
 
     @JvmField
-    val NG_REFERENCE_ATTR_NAME = TextAttributesKey.createTextAttributesKey(
-      "NG.REFERENCE_ATTR_NAME", DefaultLanguageHighlighterColors.LOCAL_VARIABLE)
-
-    @JvmField
     val NG_TEMPLATE_BINDINGS_ATTR_NAME = TextAttributesKey.createTextAttributesKey(
       "NG.TEMPLATE_BINDINGS_ATTR_NAME", DefaultLanguageHighlighterColors.STATIC_FIELD)
 

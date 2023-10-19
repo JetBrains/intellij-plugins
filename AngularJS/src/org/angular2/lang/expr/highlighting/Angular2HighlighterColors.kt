@@ -2,7 +2,6 @@
 package org.angular2.lang.expr.highlighting
 
 import com.intellij.lang.javascript.highlighting.TypeScriptHighlighter
-import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
 
 interface Angular2HighlighterColors {
@@ -10,5 +9,9 @@ interface Angular2HighlighterColors {
     @JvmField
     val NG_SIGNAL = TextAttributesKey.createTextAttributesKey(
       "NG.SIGNAL", TypeScriptHighlighter.TS_INSTANCE_MEMBER_VARIABLE)
+
+    @JvmField
+    val NG_VARIABLE = TextAttributesKey.createTextAttributesKey(
+      "NG.VARIABLE", TypeScriptHighlighter.TS_LOCAL_VARIABLE)
   }
 }

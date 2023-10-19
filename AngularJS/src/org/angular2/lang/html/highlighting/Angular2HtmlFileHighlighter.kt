@@ -16,6 +16,7 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.util.ArrayUtil
 import com.intellij.util.containers.map2Array
 import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.expr.highlighting.Angular2HighlighterColors
 import org.angular2.lang.expr.lexer.Angular2TokenTypes
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes
@@ -79,7 +80,7 @@ internal class Angular2HtmlFileHighlighter(private val myTokenizeExpansionForms:
         Pair(Angular2HtmlElementTypes.PROPERTY_BINDING,
              Angular2HtmlHighlighterColors.NG_PROPERTY_BINDING_ATTR_NAME),
         Pair(Angular2HtmlElementTypes.REFERENCE,
-             Angular2HtmlHighlighterColors.NG_REFERENCE_ATTR_NAME),
+             Angular2HighlighterColors.NG_VARIABLE),
         Pair(Angular2HtmlElementTypes.TEMPLATE_BINDINGS,
              Angular2HtmlHighlighterColors.NG_TEMPLATE_BINDINGS_ATTR_NAME),
         Pair(Angular2HtmlElementTypes.LET,

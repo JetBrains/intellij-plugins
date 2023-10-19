@@ -13,6 +13,8 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.psi.PsiElement
 import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.expr.highlighting.Angular2HighlighterColors
+import org.angular2.lang.expr.psi.impl.Angular2TemplateVariableImpl
+import org.angular2.lang.html.psi.Angular2HtmlAttrVariable
 import org.angular2.signals.Angular2SignalUtils
 
 class Angular2SpecialHighlightingAnnotator : Annotator {
@@ -21,7 +23,7 @@ class Angular2SpecialHighlightingAnnotator : Annotator {
     element.accept(object : JSElementVisitor() {
       override fun visitJSReferenceExpression(node: JSReferenceExpression) {
         if (isAcceptableReferenceForHighlighting(node)) {
-          highlightIfSignal(node, holder)
+          highlight(node, holder)
         }
       }
 
@@ -30,16 +32,21 @@ class Angular2SpecialHighlightingAnnotator : Annotator {
         if (JSKeywordSets.IDENTIFIER_NAMES.contains(elementType)) {
           val namedElement = JSPsiImplUtils.findElementFromNameIdentifier(element)
           if (namedElement is JSVariable || namedElement is JSProperty) {
-            highlightIfSignal(namedElement, holder)
+            highlight(namedElement, holder)
           }
         }
       }
     })
   }
 
-  private fun highlightIfSignal(element: PsiElement, holder: AnnotationHolder) {
+  private fun highlight(element: PsiElement, holder: AnnotationHolder) {
     if (Angular2LangUtil.isAngular2Context(element) && Angular2SignalUtils.isSignal(element)) {
       JSSemanticHighlightingVisitor.lineMarker(element, Angular2HighlighterColors.NG_SIGNAL, "ng-signal", holder)
+    } else {
+      val resolved = (element as? JSReferenceExpression)?.resolve() ?: element
+      if (resolved is Angular2TemplateVariableImpl || resolved is Angular2HtmlAttrVariable) {
+        JSSemanticHighlightingVisitor.lineMarker(element, Angular2HighlighterColors.NG_VARIABLE, "ng-variable", holder)
+      }
     }
   }
 

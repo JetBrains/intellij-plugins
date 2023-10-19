@@ -1,0 +1,18 @@
+<li <warning descr="Attribute attr is not allowed here">attr</warning>="value"
+    *ngFor="let <info descr="identifiers//global variable"><info descr="ng-variable">hero</info></info> of <info descr="instance field">heroes</info> as <info descr="identifiers//global variable"><info descr="ng-variable">test</info></info>"
+    [class.selected]="<info descr="identifiers//global variable"><info descr="ng-variable">hero</info></info> === <info descr="instance field">selectedHero</info>"
+    (click)="<error descr="Unresolved function or method onSelect()">onSelect</error>(<info descr="identifiers//global variable"><info descr="ng-variable">hero</info></info>)">
+  {{<info descr="identifiers//global variable"><info descr="ng-variable">hero</info></info>.<info descr="instance field">name</info>}}
+  {{<info descr="identifiers//global variable"><info descr="ng-variable">test</info></info>}}
+</li>
+{<info descr="instance field">heroes</info>.<info descr="instance field">length</info>, plural, =0 {no heroes} =1 {one hero} other {{{<info descr="instance field">heroes</info>.<info descr="instance field">length</info>}} heroes}} found
+
+{{<info descr="instance method"><info descr="ng-signal">movieSig</info></info>()}}
+
+<input [(ngModel)]="<info descr="instance field">hero</info>.<info descr="instance field">name</info>" #<info descr="identifiers//exported variable"><info descr="ng-variable">model</info></info>="ngModel"/>
+
+{{<info descr="identifiers//exported variable"><info descr="ng-variable">model</info></info>}}
+
+<span *ngIf="true; else <info descr="identifiers//exported variable"><info descr="ng-variable">other</info></info>">Test</span>
+
+<ng-template #<info descr="identifiers//exported variable"><info descr="ng-variable">other</info></info>>Test 2</ng-template>

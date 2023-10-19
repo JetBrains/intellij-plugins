@@ -118,7 +118,10 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
                                               extension = "ts", checkInformation = true)
 
   fun testSignalsColorsHtml() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, dir = true,
-                                              configureFileName = "signalsColors.html", checkInformation = true)
+                                                  configureFileName = "signalsColors.html", checkInformation = true)
+
+  fun testTemplateColorsHtml() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, ANGULAR_FORMS_16_2_8, dir = true,
+                                                   configureFileName = "colors.html", checkInformation = true)
 
   override fun setUp() {
     super.setUp()
