@@ -110,6 +110,11 @@ class Angular2Parser private constructor(builder: PsiBuilder,
       return true
     }
 
+    /*
+       Pseudo-grammar for parsing Template Bindings:
+
+       ('as' {var} | {expression} ('as' {var})?)[;,]? (('let' {var} ':'? ('=' {context-key})? | {context-key} ':'? 'as' {var} | {binding-key} ':'? {expression} ('as' {var})?)[;,]?)*
+     */
     fun parseTemplateBindings(templateKey: String) {
       var firstBinding = true
       do {
