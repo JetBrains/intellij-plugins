@@ -1,5 +1,6 @@
 package com.intellij.plugins.serialmonitor.ui.actions;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
@@ -21,7 +22,7 @@ public class ConnectDisconnectAction extends ToggleAction implements DumbAware, 
 
   public ConnectDisconnectAction(@NotNull JeditermSerialMonitorDuplexConsoleView consoleView) {
     super(SerialMonitorBundle.messagePointer("connect.title"),
-          SerialMonitorBundle.messagePointer("connect.tooltip"), SerialMonitorIcons.ConnectedSerial);
+          SerialMonitorBundle.messagePointer("connect.tooltip"), SerialMonitorIcons.ConnectActive);
     myConsoleView = consoleView;
   }
 
@@ -63,22 +64,22 @@ public class ConnectDisconnectAction extends ToggleAction implements DumbAware, 
     boolean enabled = true;
     switch (status) {
       case MISSING:
-        icon = PortStatus.MISSING.getStatusIcon();
+        icon = SerialMonitorIcons.Invalid;
         text = SerialMonitorBundle.message("connect-invalid-settings.title");
         break;
       case BUSY:
-        icon = PortStatus.CONNECTING.getStatusIcon();
+        icon = SerialMonitorIcons.Invalid;
         break;
       case DISCONNECTED:
-        icon = SerialMonitorIcons.ConnectedSerial;
+        icon = SerialMonitorIcons.ConnectActive;
         text = SerialMonitorBundle.message("connect.title");
         break;
       case CONNECTING:
-        icon = PortStatus.CONNECTING.getActionIcon();
+        icon = PortStatus.CONNECTING.getIcon();
         enabled = false;
         break;
       case CONNECTED:
-        icon = SerialMonitorIcons.DisconnectedSerial;
+        icon = SerialMonitorIcons.ConnectPassive;
         text = SerialMonitorBundle.message("disconnect.title");
     }
     presentation.setIcon(icon);

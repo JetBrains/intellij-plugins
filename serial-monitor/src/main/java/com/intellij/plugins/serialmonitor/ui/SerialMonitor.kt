@@ -1,6 +1,5 @@
 package com.intellij.plugins.serialmonitor.ui
 
-import com.intellij.icons.AllIcons
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
@@ -18,14 +17,12 @@ import com.intellij.plugins.serialmonitor.SerialPortProfile
 import com.intellij.plugins.serialmonitor.service.PortStatus
 import com.intellij.plugins.serialmonitor.service.SerialPortsListener
 import com.intellij.plugins.serialmonitor.ui.console.JeditermSerialMonitorDuplexConsoleView
-import com.intellij.ui.LayeredIcon
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBLoadingPanel
 import com.intellij.uiDesigner.core.GridConstraints
 import com.intellij.uiDesigner.core.GridConstraints.*
 import com.intellij.uiDesigner.core.GridLayoutManager
 import com.intellij.util.ui.JBUI
-import icons.SerialMonitorIcons.DisconnectedSerial
 import java.awt.Component
 import java.awt.event.ActionListener
 import java.awt.event.KeyAdapter
@@ -141,7 +138,6 @@ class SerialMonitor(private val project: Project,
   }
 
   companion object {
-    private val CONNECT_ERROR_ICON = LayeredIcon.create(DisconnectedSerial, AllIcons.Nodes.ErrorMark)
     private val SERIAL_NOTIFICATION_GROUP = NotificationGroupManager.getInstance().getNotificationGroup("Serial Monitor Notification")
 
     private const val SIZE_POLICY_RESIZEABLE = SIZEPOLICY_CAN_GROW + SIZEPOLICY_CAN_SHRINK + SIZEPOLICY_WANT_GROW

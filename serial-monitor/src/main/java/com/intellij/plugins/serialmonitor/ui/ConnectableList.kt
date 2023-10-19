@@ -9,17 +9,24 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.Separator
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.ui.InputValidator
 import com.intellij.openapi.ui.MessageDialogBuilder
+import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.NlsSafe
+import com.intellij.plugins.serialmonitor.SerialPortProfile
 import com.intellij.plugins.serialmonitor.SerialProfileService
 import com.intellij.plugins.serialmonitor.service.PortStatus
 import com.intellij.plugins.serialmonitor.service.SerialPortService
+import com.intellij.ui.ColorUtil
+import com.intellij.ui.JBColor
 import com.intellij.ui.ListSpeedSearch
 import com.intellij.ui.PopupHandler
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBList
 import com.intellij.util.application
 import com.intellij.util.asSafely
+import com.intellij.util.ui.NamedColorUtil
+import icons.SerialMonitorIcons
 import org.jetbrains.annotations.Nls
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -28,7 +35,7 @@ import javax.swing.*
 class ConnectableList(val parent: ConnectPanel) : JBList<Any>() {
 
 
-  abstract inner class Connectable(@NlsSafe val name: String, @Volatile var status: PortStatus) {
+  abstract inner class Connectable(@NlsSafe val entityName: String, @Volatile var status: PortStatus) {
     abstract fun actions(): Array<AnAction>
 
     abstract fun connect()
@@ -46,7 +53,7 @@ class ConnectableList(val parent: ConnectPanel) : JBList<Any>() {
       }
     }
 
-    val connectAction = object : DumbAwareAction("Connect", null, AllIcons.Nodes.Plugin) {
+    val connectAction = object : DumbAwareAction("Connect", null, SerialMonitorIcons.ConnectActive) {
       override fun actionPerformed(e: AnActionEvent) {
         if (status == PortStatus.DISCONNECTED) connect()
       }
@@ -58,46 +65,26 @@ class ConnectableList(val parent: ConnectPanel) : JBList<Any>() {
     }
   }
 
-  inner class ConnectableProfile(@NlsSafe name: String, status: PortStatus) : Connectable(name, status) {
+  inner class ConnectableProfile(@NlsSafe profileName: String, status: PortStatus) : Connectable(profileName, status) {
 
-    override fun portName(): String? = application.service<SerialProfileService>().getProfiles()[name]?.portName
+    override fun portName(): String? = application.service<SerialProfileService>().getProfiles()[entityName]?.portName
 
     override fun connect() {
-      application.service<SerialProfileService>().getProfiles()[name]?.also {
-        parent.connectProfile(it, name)
+      application.service<SerialProfileService>().getProfiles()[entityName]?.also {
+        parent.connectProfile(it, entityName)
       }
     }
 
     private val duplicateProfile = object : DumbAwareAction("Duplicate Profile", null, AllIcons.Actions.Copy) {
-      private val namePattern = Regex("(.+)\\((\\d+)\\)\\s*")
-      override fun actionPerformed(e: AnActionEvent) {
-        val service = application.service<SerialProfileService>()
-        val profiles = service.getProfiles().toMutableMap()
-        val newProfile = profiles.getOrElse(name, service::copyDefaultProfile)
-        var i = 0
-        var nameBase = name
-        var newName = name
-        namePattern.matchEntire(name)?.also {
-          nameBase = it.groupValues[1].trimEnd()
-          i = it.groupValues[2].toInt()
-        }
-        do {
-          i++
-          newName = "$nameBase ($i)"
-        }
-        while (profiles.containsKey(newName))
-        profiles[newName] = newProfile
-        service.setProfiles(profiles)
-        rescanPorts(newName)
-      }
+      override fun actionPerformed(e: AnActionEvent) = createNewProfile(entityName)
     }
 
     private val removeProfile = object : DumbAwareAction("Remove Profile", null, AllIcons.General.Remove) {
       override fun actionPerformed(e: AnActionEvent) {
-        if (MessageDialogBuilder.yesNo("Delete profile $name", "Are you sure").ask(this@ConnectableList)) {
+        if (MessageDialogBuilder.yesNo("Delete profile $entityName", "Are you sure").ask(this@ConnectableList)) {
           with(service<SerialProfileService>()) {
             val newProfiles = getProfiles().toMutableMap()
-            newProfiles.remove(name)
+            newProfiles.remove(entityName)
             clearSelection()
             setProfiles(newProfiles)
             rescanPorts()
@@ -111,29 +98,15 @@ class ConnectableList(val parent: ConnectPanel) : JBList<Any>() {
       else arrayOf(connectAction, duplicateProfile, Separator.getInstance(), removeProfile)
   }
 
-  inner class ConnectablePort(name: String, status: PortStatus) : Connectable(name, status) {
-    override fun portName() = name
+  inner class ConnectablePort(entityName: String, status: PortStatus) : Connectable(entityName, status) {
+    override fun portName() = entityName
 
     override fun connect() {
-      parent.connectProfile(service<SerialProfileService>().copyDefaultProfile(name))
+      parent.connectProfile(service<SerialProfileService>().copyDefaultProfile(entityName))
     }
 
     private val createProfile = object : DumbAwareAction("Create Profile", null, AllIcons.General.Add) {
-      override fun actionPerformed(e: AnActionEvent) {
-        val service = service<SerialProfileService>()
-        val newProfile = service.copyDefaultProfile(name)
-        val profiles = service.getProfiles().toMutableMap()
-        val defaultName = newProfile.defaultName()
-        var newName = defaultName
-        var i = 0
-        while (profiles.contains(newName)) {
-          i++
-          newName = "$defaultName ($i)"
-        }
-        profiles[newName] = newProfile
-        service.setProfiles(profiles)
-        rescanPorts(newName)
-      }
+      override fun actionPerformed(e: AnActionEvent) = createNewProfile(null, portName())
     }
 
     override fun actions(): Array<AnAction> =
@@ -142,7 +115,7 @@ class ConnectableList(val parent: ConnectPanel) : JBList<Any>() {
   }
 
   private val DEFAULT_ACTIONS = arrayOf(
-    object : DumbAwareAction("Connect", null, AllIcons.Nodes.Plugin) {
+    object : DumbAwareAction("Connect", null, SerialMonitorIcons.ConnectPassive) {
       override fun actionPerformed(e: AnActionEvent) {}
       override fun getActionUpdateThread() = ActionUpdateThread.EDT
       override fun update(e: AnActionEvent) {
@@ -191,7 +164,7 @@ class ConnectableList(val parent: ConnectPanel) : JBList<Any>() {
       }
 
       override fun setSelectionInterval(index0: Int, index1: Int) {
-        if (model.getElementAt(index0) is Connectable && index0 >= 0) {
+        if (index0 >= 0 && model.getElementAt(index0) is Connectable ) {
           super.setSelectionInterval(index0, index0)
         }
         else {
@@ -202,11 +175,14 @@ class ConnectableList(val parent: ConnectPanel) : JBList<Any>() {
     installCellRenderer { value ->
       when (value) {
         is Connectable -> {
-          JBLabel(value.name, value.status.actionIcon, JLabel.LEADING)
+          JBLabel(value.entityName, value.status.icon, JLabel.LEADING)
         }
         else -> {
           @NlsSafe val label: String = value.asSafely<String>() ?: ""
-          JBLabel(label).apply { font = font.deriveFont(font.size * 0.7f) }
+          JBLabel(label).apply {
+            font = font.deriveFont(font.size * 0.7f)
+            foreground = NamedColorUtil.getInactiveTextColor()
+          }
         }
       }
 
@@ -229,7 +205,16 @@ class ConnectableList(val parent: ConnectPanel) : JBList<Any>() {
 
       }
     })
-    ListSpeedSearch.installOn(this) { it.asSafely<Connectable>()?.name }
+    ListSpeedSearch.installOn(this) { it.asSafely<Connectable>()?.entityName }
+  }
+
+  @NlsSafe
+  fun getSelectedPortName(): String? = selectedValue.asSafely<ConnectablePort>()?.entityName
+  fun getSelectedProfile(): Pair<String, SerialPortProfile?>? {
+    val profileName = selectedValue.asSafely<ConnectableProfile>()?.entityName
+    return if (profileName != null)
+      profileName to application.service<SerialProfileService>().getProfiles()[profileName]
+    else null
   }
 
 }

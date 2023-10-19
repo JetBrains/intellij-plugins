@@ -221,9 +221,5 @@ class SerialPortService : Disposable {
   }
 
   //todo CR/LF settings do not affect local echo
-  //todo icons to be made :
-  //todo * Connected (green connector)
-  //todo * Connect button (gray connector)
-  //todo * Unavailable(gray crossed circle)
 }
 
