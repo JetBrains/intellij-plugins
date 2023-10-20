@@ -14,6 +14,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair.pair
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.vuejs.lang.LangMode
+import org.jetbrains.vuejs.lang.html.lexer.VueLexer
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_END
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_START
 
@@ -29,7 +30,7 @@ internal class VueFileHighlighter(private val languageLevel: JSLanguageLevel,
   }
 
   override fun getHighlightingLexer(): Lexer {
-    return VueHighlightingLexer(languageLevel, langMode, project, interpolationConfig, htmlCompatMode)
+    return VueLexer(languageLevel, project, interpolationConfig, htmlCompatMode, true, langMode)
   }
 
   companion object {

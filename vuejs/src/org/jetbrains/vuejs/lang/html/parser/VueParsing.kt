@@ -17,7 +17,7 @@ import org.jetbrains.vuejs.lang.LangMode
 import org.jetbrains.vuejs.lang.VueScriptLangs
 import org.jetbrains.vuejs.lang.expr.parser.VueJSEmbeddedExprTokenType
 import org.jetbrains.vuejs.lang.html.lexer.VueLangModeMarkerElementType
-import org.jetbrains.vuejs.lang.html.lexer.VueLexerImpl
+import org.jetbrains.vuejs.lang.html.lexer.VueLexer
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_END
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_START
 import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes.SCRIPT_SETUP_JS_EMBEDDED_CONTENT
@@ -152,7 +152,7 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
   }
 
   override fun isSingleTag(tagInfo: HtmlTagInfo): Boolean {
-    return (htmlCompatMode || !VueLexerImpl.isPossiblyComponentTag(tagInfo.originalName))
+    return (htmlCompatMode || !VueLexer.isPossiblyComponentTag(tagInfo.originalName))
            && super.isSingleTag(tagInfo)
   }
 

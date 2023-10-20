@@ -25,7 +25,6 @@ import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.lang.LangMode
 import org.jetbrains.vuejs.lang.VueScriptLangs
 import org.jetbrains.vuejs.lang.expr.parser.VueJSEmbeddedExprTokenType
-import org.jetbrains.vuejs.lang.html.highlighting.VueHighlightingLexer
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_EXPR
 import org.jetbrains.vuejs.lang.html.parser.VueElementTypes
 
@@ -157,7 +156,7 @@ class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedConte
 
 
   private fun getBoundScriptLangTagInfo(): HtmlEmbedmentInfo {
-    if (lexer is VueLexerImpl) {
+    if (!(lexer as VueLexer).isHighlighting) {
       // we're lexing for parsing
       val langMode = (lexer as VueLexer).lexedLangMode
       return langMode.scriptEmbedmentInfo
@@ -205,7 +204,7 @@ class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedConte
       HTML_EMBEDDED_CONTENT -> object : HtmlEmbedmentInfo {
         override fun getElementType(): IElementType = VueElementTypes.VUE_EMBEDDED_CONTENT
         override fun createHighlightingLexer(): Lexer =
-          VueHighlightingLexer(languageLevel, langMode, project, interpolationConfig, htmlCompatMode)
+          VueLexer(languageLevel, project, interpolationConfig, htmlCompatMode, true, langMode)
       }
       null -> HtmlEmbeddedContentProvider.RAW_TEXT_EMBEDMENT
       else -> object : HtmlEmbedmentInfo {

@@ -4,9 +4,9 @@ package org.jetbrains.vuejs.lang.html
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lexer.Lexer
 import org.jetbrains.vuejs.lang.LangMode
-import org.jetbrains.vuejs.lang.html.highlighting.VueHighlightingLexer
+import org.jetbrains.vuejs.lang.html.lexer.VueLexer
 
 open class VueHighlightingLexerTest : VueLexerTest() {
-  override fun createLexer(): Lexer = VueHighlightingLexer(JSLanguageLevel.ES6, LangMode.DEFAULT, null, interpolationConfig, false)
+  override fun createLexer(): Lexer = VueLexer(JSLanguageLevel.ES6, null, interpolationConfig, false, true, LangMode.DEFAULT)
   override fun getDirPath() = "html/highlightingLexer"
 }

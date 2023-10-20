@@ -14,9 +14,9 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.html.HtmlEmbeddedContentImpl
 import com.intellij.psi.tree.IFileElementType
 import org.jetbrains.vuejs.lang.LangMode
-import org.jetbrains.vuejs.lang.html.lexer.VueLexerImpl
-import org.jetbrains.vuejs.lang.html.lexer.VueParsingLexer
 import org.jetbrains.vuejs.lang.html.VueFileElementType
+import org.jetbrains.vuejs.lang.html.lexer.VueLexer
+import org.jetbrains.vuejs.lang.html.lexer.VueParsingLexer
 import org.jetbrains.vuejs.lang.html.psi.impl.VueFileImpl
 
 class VueParserDefinition : HTMLParserDefinition() {
@@ -28,7 +28,7 @@ class VueParserDefinition : HTMLParserDefinition() {
                     parentLangMode: LangMode? = null): Lexer {
       val level = JSRootConfiguration.getInstance(project).languageLevel
       return VueParsingLexer(
-        VueLexerImpl(if (level.isES6Compatible) level else JSLanguageLevel.ES6, project, interpolationConfig, htmlCompatMode),
+        VueLexer(if (level.isES6Compatible) level else JSLanguageLevel.ES6, project, interpolationConfig, htmlCompatMode, false),
         parentLangMode
       )
     }

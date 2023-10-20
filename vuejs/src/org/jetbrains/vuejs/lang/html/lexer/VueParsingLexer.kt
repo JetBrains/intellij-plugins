@@ -12,7 +12,7 @@ import org.jetbrains.vuejs.lang.html.parser.VueParsing
  * Emits zero-length [VueLangModeMarkerElementType] as a last element of the token stream
  * to be used by [VueParsing] unless [parentLangMode] is not null.
  */
-class VueParsingLexer(private val delegateLexer: VueLexerImpl, private val parentLangMode: LangMode? = null)
+class VueParsingLexer(private val delegateLexer: VueLexer, private val parentLangMode: LangMode? = null)
   : DelegateLexer(delegateLexer), RestartableLexer {
 
   private var additionalState = BASE_LEXING

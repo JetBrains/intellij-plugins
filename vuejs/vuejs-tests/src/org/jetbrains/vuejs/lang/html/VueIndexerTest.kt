@@ -5,12 +5,12 @@ import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lexer.Lexer
 import com.intellij.psi.impl.cache.impl.OccurrenceConsumer
 import org.jetbrains.vuejs.lang.LangMode
-import org.jetbrains.vuejs.lang.html.highlighting.VueHighlightingLexer
 import org.jetbrains.vuejs.lang.html.index.VueFilterLexer
+import org.jetbrains.vuejs.lang.html.lexer.VueLexer
 
 class VueIndexerTest : VueHighlightingLexerTest() {
   override fun createLexer(): Lexer {
     return VueFilterLexer(OccurrenceConsumer(null, false),
-                          VueHighlightingLexer(JSLanguageLevel.ES6, LangMode.DEFAULT, null, interpolationConfig, false))
+                          VueLexer(JSLanguageLevel.ES6, null, interpolationConfig, false, true, LangMode.DEFAULT))
   }
 }
