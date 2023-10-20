@@ -14,11 +14,10 @@ import com.intellij.xml.util.HtmlUtil
 import org.intellij.plugins.postcss.PostCssLanguage
 import org.jetbrains.astro.codeInsight.ASTRO_DEFINE_VARS_DIRECTIVE
 import org.jetbrains.astro.codeInsight.ASTRO_INLINE_DIRECTIVE
-import org.jetbrains.astro.lang.highlighting.AstroHighlightingLexer
-import org.jetbrains.astro.lang.lexer.AstroLexerImpl
+import org.jetbrains.astro.lang.lexer.AstroLexer
 
 class AstroEmbeddedContentSupport : HtmlEmbeddedContentSupport {
-  override fun isEnabled(lexer: BaseHtmlLexer): Boolean = lexer is AstroLexerImpl || lexer is AstroHighlightingLexer
+  override fun isEnabled(lexer: BaseHtmlLexer): Boolean = lexer is AstroLexer
 
   override fun createEmbeddedContentProviders(lexer: BaseHtmlLexer): List<HtmlEmbeddedContentProvider> =
     listOf(AstroTagEmbeddedContentProvider(lexer))

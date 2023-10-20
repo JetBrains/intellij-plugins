@@ -15,8 +15,8 @@ import com.intellij.util.containers.Stack
 import it.unimi.dsi.fastutil.ints.IntArrayList
 import org.jetbrains.astro.lang.lexer.AstroTokenTypes.Companion.FRONTMATTER_SCRIPT
 
-class AstroLexerImpl(val project: Project?, private val lexJsFragment: Boolean = false)
-  : HtmlLexer(AstroMergingLexer(AstroFlexAdapter(false, false)), true) {
+class AstroLexer(val project: Project?, highlightMode: Boolean, private val lexJsFragment: Boolean)
+  : HtmlLexer(AstroMergingLexer(AstroFlexAdapter(highlightMode, false), highlightMode), true, highlightMode) {
 
   private var frontmatterScriptLexer: Lexer? = null
 
@@ -65,7 +65,7 @@ class AstroLexerImpl(val project: Project?, private val lexJsFragment: Boolean =
     if (frontmatterScriptLexer == null) {
       super.advance()
       if (myDelegate.tokenType === FRONTMATTER_SCRIPT) {
-        frontmatterScriptLexer = JSFlexAdapter(JavaScriptSupportLoader.TYPESCRIPT.optionHolder)
+        frontmatterScriptLexer = JSFlexAdapter(JavaScriptSupportLoader.TYPESCRIPT.optionHolder, isHighlighting, false)
           .also {
             it.start(myDelegate.bufferSequence, myDelegate.tokenStart, myDelegate.tokenEnd)
           }
@@ -148,7 +148,8 @@ class AstroLexerImpl(val project: Project?, private val lexJsFragment: Boolean =
     }
   }
 
-  open class AstroMergingLexer(original: FlexAdapter) : MergingLexerAdapterBase(original) {
+  private open class AstroMergingLexer(original: FlexAdapter, private val highlightMode: Boolean) : MergingLexerAdapterBase(original) {
+
     override fun getMergeFunction(): MergeFunction {
       return MergeFunction { type, originalLexer -> this.merge(type, originalLexer) }
     }
@@ -160,15 +161,22 @@ class AstroLexerImpl(val project: Project?, private val lexJsFragment: Boolean =
         result = originalLexer.tokenType
         originalLexer.advance()
       }
-      if (!TOKENS_TO_MERGE.contains(result)) {
-        return result
-      }
-      while (true) {
-        val nextTokenType = originalLexer.tokenType
-        if (nextTokenType !== result) {
-          break
+      if (TOKENS_TO_MERGE.contains(result)) {
+        while (true) {
+          val nextTokenType = originalLexer.tokenType
+          if (nextTokenType !== result) {
+            break
+          }
+          originalLexer.advance()
         }
-        originalLexer.advance()
+      }
+      if (highlightMode && result === XML_CHAR_ENTITY_REF) {
+        while (originalLexer.tokenType === XML_CHAR_ENTITY_REF) {
+          originalLexer.advance()
+        }
+        if (originalLexer.tokenType === XML_ATTRIBUTE_VALUE_TOKEN) {
+          return XML_ATTRIBUTE_VALUE_TOKEN
+        }
       }
       return result
     }

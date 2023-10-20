@@ -18,7 +18,7 @@ import com.intellij.util.containers.Stack
 import com.intellij.xml.psi.XmlPsiBundle
 import org.jetbrains.astro.AstroBundle
 import org.jetbrains.astro.lang.AstroLanguage
-import org.jetbrains.astro.lang.lexer.AstroLexerImpl
+import org.jetbrains.astro.lang.lexer.AstroLexer
 import org.jetbrains.astro.lang.lexer.AstroTokenTypes
 
 class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
@@ -246,7 +246,7 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
   }
 
   override fun isSingleTag(tagInfo: HtmlTagInfo): Boolean {
-    return !AstroLexerImpl.isPossiblyComponentTag(tagInfo.originalName) && super.isSingleTag(tagInfo)
+    return !AstroLexer.isPossiblyComponentTag(tagInfo.originalName) && super.isSingleTag(tagInfo)
   }
 
   private fun parseJsxExpression(supportsNestedTemplateLiterals: Boolean, supportsEmptyExpression: Boolean) {

@@ -26,12 +26,12 @@ import com.intellij.psi.xml.XmlTokenType
 import org.jetbrains.astro.lang.AstroFileElementType
 import org.jetbrains.astro.lang.AstroFileImpl
 import org.jetbrains.astro.lang.AstroLanguage
-import org.jetbrains.astro.lang.lexer.AstroLexerImpl
+import org.jetbrains.astro.lang.lexer.AstroLexer
 import org.jetbrains.astro.lang.psi.AstroHtmlTag
 
 open class AstroParserDefinition : JavascriptParserDefinition() {
   override fun createLexer(project: Project): Lexer {
-    return AstroLexerImpl(project)
+    return AstroLexer(project, false, false)
   }
 
   override fun createParser(project: Project): PsiParser {
@@ -49,7 +49,7 @@ open class AstroParserDefinition : JavascriptParserDefinition() {
         search = search.treeParent
       }
       if (search != null) {
-        return AstroLexerImpl(project, true)
+        return AstroLexer(project, false, true)
       }
       else {
         return JSFlexAdapter(DialectOptionHolder.TS)

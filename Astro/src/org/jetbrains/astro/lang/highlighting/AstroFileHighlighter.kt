@@ -12,6 +12,7 @@ import com.intellij.openapi.util.Pair
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.containers.map2Array
 import org.jetbrains.astro.lang.AstroLanguage
+import org.jetbrains.astro.lang.lexer.AstroLexer
 import org.jetbrains.astro.lang.lexer.AstroTokenTypes
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set
@@ -25,7 +26,7 @@ internal class AstroFileHighlighter : JSHighlighter(AstroLanguage.INSTANCE.optio
   }
 
   override fun getHighlightingLexer(): Lexer {
-    return AstroHighlightingLexer()
+    return AstroLexer(null, true, false)
   }
 
   companion object {

@@ -7,7 +7,7 @@ import com.intellij.testFramework.fixtures.IdeaProjectTestFixture
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.astro.getAstroTestDataPath
-import org.jetbrains.astro.lang.lexer.AstroLexerImpl
+import org.jetbrains.astro.lang.lexer.AstroLexer
 import kotlin.properties.Delegates
 
 open class AstroLexerTest : LexerTestCase() {
@@ -523,7 +523,7 @@ open class AstroLexerTest : LexerTestCase() {
     |{<div style="font-face: serif;"></div>}
   """.trimIndent())
 
-  override fun createLexer(): Lexer = AstroLexerImpl(fixture.project)
+  override fun createLexer(): Lexer = AstroLexer(fixture.project, false, false)
 
   override fun getDirPath() = "lang/lexer"
 
