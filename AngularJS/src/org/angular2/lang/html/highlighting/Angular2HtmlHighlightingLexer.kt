@@ -7,7 +7,6 @@ import com.intellij.lexer.FlexAdapter
 import com.intellij.lexer.HtmlHighlightingLexer
 import com.intellij.lexer.Lexer
 import com.intellij.lexer.TokenIterator
-import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.util.Pair
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlTokenType
@@ -21,11 +20,10 @@ import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 
 class Angular2HtmlHighlightingLexer(tokenizeExpansionForms: Boolean,
-                                    interpolationConfig: Pair<String, String>?,
-                                    styleFileType: FileType?)
+                                    interpolationConfig: Pair<String, String>?)
   : HtmlHighlightingLexer(
   Angular2HtmlHighlightingMergingLexer(FlexAdapter(_Angular2HtmlLexer(tokenizeExpansionForms, interpolationConfig))),
-  true, styleFileType) {
+  true) {
 
   override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int, tokenIterator: TokenIterator?) {
     (delegate as Angular2HtmlMergingLexer).reset()

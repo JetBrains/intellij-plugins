@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.highlighting.TypeScriptHighlighter
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.editor.XmlHighlighterColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
-import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.util.Pair
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.containers.map2Array
@@ -26,7 +25,7 @@ internal class AstroFileHighlighter : JSHighlighter(AstroLanguage.INSTANCE.optio
   }
 
   override fun getHighlightingLexer(): Lexer {
-    return AstroHighlightingLexer(FileTypeRegistry.getInstance().findFileTypeByName("CSS"))
+    return AstroHighlightingLexer()
   }
 
   companion object {

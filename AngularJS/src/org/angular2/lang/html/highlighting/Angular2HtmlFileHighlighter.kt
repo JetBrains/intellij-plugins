@@ -10,7 +10,6 @@ import com.intellij.lang.javascript.highlighting.TypeScriptHighlighter
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.editor.XmlHighlighterColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
-import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.util.Pair
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.ArrayUtil
@@ -39,8 +38,7 @@ internal class Angular2HtmlFileHighlighter(private val myTokenizeExpansionForms:
   }
 
   override fun getHighlightingLexer(): Lexer {
-    return Angular2HtmlHighlightingLexer(myTokenizeExpansionForms, myInterpolationConfig,
-                                         FileTypeRegistry.getInstance().findFileTypeByName("CSS"))
+    return Angular2HtmlHighlightingLexer(myTokenizeExpansionForms, myInterpolationConfig)
   }
 
   companion object {

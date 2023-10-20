@@ -24,8 +24,7 @@ class VueHighlightingLexer(override val languageLevel: JSLanguageLevel,
                            override val project: Project?,
                            override val interpolationConfig: Pair<String, String>?,
                            override val htmlCompatMode: Boolean)
-  : HtmlHighlightingLexer(VueHighlightingMergingLexer(FlexAdapter(_VueLexer(interpolationConfig))),
-                          true, null), VueLexer {
+  : HtmlHighlightingLexer(VueHighlightingMergingLexer(FlexAdapter(_VueLexer(interpolationConfig))), true), VueLexer {
 
   override var lexedLangMode: LangMode = LangMode.PENDING
 

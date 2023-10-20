@@ -7,7 +7,6 @@ import com.intellij.lexer.FlexAdapter
 import com.intellij.lexer.HtmlHighlightingLexer
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.diagnostic.thisLogger
-import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.xml.XmlTokenType
@@ -17,8 +16,8 @@ import org.jetbrains.astro.lang.lexer.AstroLexerImpl.Companion.HAS_NON_RESTARTAB
 import org.jetbrains.astro.lang.lexer.AstroTokenTypes
 import org.jetbrains.astro.lang.lexer._AstroLexer
 
-class AstroHighlightingLexer(styleFileType: FileType?)
-  : HtmlHighlightingLexer(AstroHighlightingMergingLexer(AstroLexerImpl.AstroFlexAdapter(true, false)), true, styleFileType) {
+class AstroHighlightingLexer
+  : HtmlHighlightingLexer(AstroHighlightingMergingLexer(AstroLexerImpl.AstroFlexAdapter(true, false)), true) {
 
   private var frontmatterScriptLexer: Lexer? = null
 
