@@ -12,6 +12,7 @@ var intellijParameters = require('./karma-intellij-parameters')
   , REMOTE_DEBUGGING_PORT = '--remote-debugging-port';
 
 const SOCKET_IO_PING_TIMEOUT_MILLIS = 24 * 60 * 60 * 1000;
+const DEFAULT_DEBUG_PORT = 9222
 exports.SOCKET_IO_PING_TIMEOUT_MILLIS = SOCKET_IO_PING_TIMEOUT_MILLIS
 
 function createPatchedContextHtmlFile() {
@@ -56,6 +57,19 @@ exports.initCustomContextFile = function (config) {
   }
 };
 
+function moveBrowserToCustomLauncherFlags(config, browserName) {
+  if (config.customLaunchers == null) {
+    config.customLaunchers = {}
+  }
+  const newBrowserName = '_INTELLIJ_KARMA_DEBUG_' + browserName
+  config.customLaunchers[newBrowserName] = {
+    base: browserName,
+    flags: [REMOTE_DEBUGGING_PORT + '=' + DEFAULT_DEBUG_PORT]
+  }
+
+  return newBrowserName
+}
+
 function getRemoteDebuggingPortFromCustomLauncherFlags(config, browserName) {
   const customLaunchers = config.customLaunchers;
   if (customLaunchers != null) {
@@ -77,6 +91,12 @@ function getRemoteDebuggingPortFromCustomLauncherFlags(config, browserName) {
   return -1;
 }
 
+function isBrowserConfigurableForDebugging(browserName) {
+  return browserName === 'Chrome' ||
+    browserName === 'ChromeCanary' ||
+    browserName === 'Chromium'
+}
+
 function isBrowserWithPreconfiguredRemoteDebuggingPort(browserName) {
   return browserName === 'ChromeHeadless' ||
          browserName === 'ChromeCanaryHeadless' ||
@@ -93,19 +113,26 @@ exports.configureBrowsers = function (config) {
     newBrowsers = [];
   }
 
-  const headless = newBrowsers.find(browserName => {
-    return isBrowserWithPreconfiguredRemoteDebuggingPort(browserName) ||
+  let debuggableBrowser = newBrowsers.find(browserName => {
+    return isBrowserConfigurableForDebugging(browserName) ||
+      isBrowserWithPreconfiguredRemoteDebuggingPort(browserName) ||
       getRemoteDebuggingPortFromCustomLauncherFlags(config, browserName) > 0;
   });
 
   let remoteDebuggingPort = -1;
-  if (headless != null) {
-    remoteDebuggingPort = getRemoteDebuggingPortFromCustomLauncherFlags(config, headless);
-    if (remoteDebuggingPort < 0 && isBrowserWithPreconfiguredRemoteDebuggingPort(headless)) {
-      remoteDebuggingPort = 9222;
+  if (debuggableBrowser != null) {
+    if (isBrowserWithPreconfiguredRemoteDebuggingPort(debuggableBrowser)) {
+      remoteDebuggingPort = getRemoteDebuggingPortFromCustomLauncherFlags(config, debuggableBrowser)
+      if (remoteDebuggingPort < 0 && isBrowserWithPreconfiguredRemoteDebuggingPort(debuggableBrowser)) {
+        remoteDebuggingPort = DEFAULT_DEBUG_PORT
+      }
+    }
+    else if (isBrowserConfigurableForDebugging(debuggableBrowser) && intellijUtil.isString(debuggableBrowser)) {
+      debuggableBrowser = moveBrowserToCustomLauncherFlags(config, debuggableBrowser)
+      remoteDebuggingPort = DEFAULT_DEBUG_PORT
     }
   }
-  newBrowsers = remoteDebuggingPort > 0 ? [headless] : [];
+  newBrowsers = remoteDebuggingPort > 0 ? [debuggableBrowser] : []
 
   config.browsers = newBrowsers;
   if (config.browsers.length === 0) {
