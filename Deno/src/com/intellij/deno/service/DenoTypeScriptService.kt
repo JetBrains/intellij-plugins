@@ -70,20 +70,6 @@ class DenoTypeScriptService(project: Project) : BaseLspTypeScriptService(project
     return TypeScriptLanguageServiceUtil.getCompletionMergeStrategy(parameters, file, context)
   }
 
-  override fun getCompletionAlternativePrefix(parameters: CompletionParameters, basePrefix: String): String? {
-    val position = parameters.position
-    val node = position.getNode()
-    if (!JSTokenTypes.STRING_LITERALS.contains(node.getElementType())) return null
-    val startOffset = node.getStartOffset() + 1
-    val endOffset = parameters.offset
-    if (startOffset >= endOffset) return null
-    val candidate = parameters.editor.getDocument().getText(TextRange(startOffset, endOffset))
-    return if (basePrefix != candidate) {
-      candidate
-    }
-    else null
-  }
-
   override fun getServiceFixes(file: PsiFile, element: PsiElement?, result: JSAnnotationError): Collection<IntentionAction> {
     return (result as? LspAnnotationError)?.quickFixes ?: emptyList()
   }
