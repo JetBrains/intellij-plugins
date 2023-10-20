@@ -4,7 +4,9 @@ package org.angular2.lang
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
+import com.intellij.webSymbols.context.WebSymbolsContext
 import org.angular2.Angular2Framework.Companion.instance
+import org.angular2.lang.html.Angular2TemplateSyntax
 
 object Angular2LangUtil {
   const val ANGULAR_CORE_PACKAGE: String = "@angular/core"
@@ -22,7 +24,17 @@ object Angular2LangUtil {
   }
 
   @JvmStatic
+  fun getTemplateSyntax(project: Project?, context: VirtualFile?): Angular2TemplateSyntax =
+    if (project == null || context == null)
+      Angular2TemplateSyntax.V_17
+    else when (WebSymbolsContext.get("angular-template-version", context, project)) {
+      "angular17" -> Angular2TemplateSyntax.V_17
+      else -> Angular2TemplateSyntax.V_2
+    }
+
+  @JvmStatic
   fun isAngular2Context(project: Project, context: VirtualFile): Boolean {
     return instance.isInContext(context, project)
   }
+
 }

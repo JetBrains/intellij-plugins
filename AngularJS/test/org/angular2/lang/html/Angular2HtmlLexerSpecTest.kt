@@ -699,7 +699,9 @@ class Angular2HtmlLexerSpecTest {
   private data class Token(val type: IElementType, val contents: String, val start: Int, val end: Int) {
     companion object {
       fun create(input: String, tokenizeExpansionForms: Boolean, interpolationConfig: Pair<String, String>?): List<Token> {
-        val lexer = Angular2HtmlLexer(false, tokenizeExpansionForms, interpolationConfig)
+        val lexer = Angular2HtmlLexer(false,
+                                      if (tokenizeExpansionForms) Angular2TemplateSyntax.V_2 else Angular2TemplateSyntax.V_2_NO_EXPANSION_FORMS,
+                                      interpolationConfig)
         val result: MutableList<Token> = ArrayList()
         lexer.start(input, 0, input.length)
         var tokenType: IElementType = TokenType.WHITE_SPACE

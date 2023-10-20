@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.web
 import com.intellij.javascript.web.WebFramework
 import com.intellij.javascript.web.html.WebFrameworkHtmlFileType
 import com.intellij.lang.Language
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.WebSymbol
@@ -28,7 +29,7 @@ class VueFramework : WebFramework() {
   override fun isOwnTemplateLanguage(language: Language): Boolean =
     language.isKindOf(VueLanguage.INSTANCE)
 
-  override fun getFileType(kind: SourceFileKind, context: VirtualFile): WebFrameworkHtmlFileType? =
+  override fun getFileType(kind: SourceFileKind, context: VirtualFile, project: Project): WebFrameworkHtmlFileType? =
     when (kind) {
       SourceFileKind.HTML, SourceFileKind.STANDALONE -> VueFileType.INSTANCE
       else -> null

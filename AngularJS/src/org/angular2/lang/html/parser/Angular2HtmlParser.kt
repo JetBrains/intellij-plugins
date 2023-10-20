@@ -4,9 +4,10 @@ package org.angular2.lang.html.parser
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.html.HTMLParser
 import com.intellij.lang.html.HtmlParsing
+import org.angular2.lang.html.Angular2TemplateSyntax
 
-class Angular2HtmlParser : HTMLParser() {
+class Angular2HtmlParser(private val templateSyntax: Angular2TemplateSyntax) : HTMLParser() {
   override fun createHtmlParsing(builder: PsiBuilder): HtmlParsing {
-    return Angular2HtmlParsing(builder)
+    return Angular2HtmlParsing(templateSyntax, builder)
   }
 }

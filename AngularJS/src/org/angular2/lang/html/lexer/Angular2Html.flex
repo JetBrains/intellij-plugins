@@ -11,14 +11,18 @@ import org.jetbrains.annotations.Nullable;
 %unicode
 
 %{
+  private boolean tokenizeExpansionForms;
+  private boolean enableBlockSyntax;
+
   private String interpolationStart;
   private String interpolationEnd;
-  private boolean tokenizeExpansionForms;
 
   private int expansionFormNestingLevel;
   private int interpolationStartPos;
 
-  public _Angular2HtmlLexer(boolean tokenizeExpansionForms, @Nullable Pair<String, String> interpolationConfig) {
+  public _Angular2HtmlLexer(boolean tokenizeExpansionForms,
+                            boolean enableBlockSyntax,
+                            @Nullable Pair<String, String> interpolationConfig) {
     this(null);
     if (interpolationConfig == null) {
       interpolationStart = "{{";
@@ -28,6 +32,7 @@ import org.jetbrains.annotations.Nullable;
       interpolationEnd = interpolationConfig.second;
     }
     this.tokenizeExpansionForms = tokenizeExpansionForms;
+    this.enableBlockSyntax = enableBlockSyntax;
   }
 
   private boolean tryConsumeInterpolationBoundary(String boundary) {

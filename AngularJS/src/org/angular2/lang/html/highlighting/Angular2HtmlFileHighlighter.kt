@@ -17,14 +17,15 @@ import com.intellij.util.containers.map2Array
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.highlighting.Angular2HighlighterColors
 import org.angular2.lang.expr.lexer.Angular2TokenTypes
+import org.angular2.lang.html.Angular2TemplateSyntax
 import org.angular2.lang.html.lexer.Angular2HtmlLexer
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set
 
-internal class Angular2HtmlFileHighlighter(private val myTokenizeExpansionForms: Boolean,
-                                           private val myInterpolationConfig: Pair<String, String>?) : HtmlFileHighlighter() {
+internal class Angular2HtmlFileHighlighter(private val templateSyntax: Angular2TemplateSyntax,
+                                           private val interpolationConfig: Pair<String, String>?) : HtmlFileHighlighter() {
   override fun getTokenHighlights(tokenType: IElementType): Array<TextAttributesKey> {
     var result = keys[tokenType]
     if (result != null) {
@@ -39,7 +40,7 @@ internal class Angular2HtmlFileHighlighter(private val myTokenizeExpansionForms:
   }
 
   override fun getHighlightingLexer(): Lexer {
-    return Angular2HtmlLexer(true, myTokenizeExpansionForms, myInterpolationConfig)
+    return Angular2HtmlLexer(true, templateSyntax, interpolationConfig)
   }
 
   companion object {

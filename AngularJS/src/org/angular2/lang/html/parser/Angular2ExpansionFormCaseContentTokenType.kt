@@ -8,16 +8,17 @@ import com.intellij.lang.PsiBuilder
 import com.intellij.lexer.Lexer
 import com.intellij.psi.PsiElement
 import org.angular2.lang.html.Angular2HtmlLanguage
+import org.angular2.lang.html.Angular2TemplateSyntax
 import org.angular2.lang.html.lexer.Angular2HtmlLexer
 
-internal class Angular2ExpansionFormCaseContentTokenType private constructor()
+internal class Angular2ExpansionFormCaseContentTokenType private constructor(private val templateSyntax: Angular2TemplateSyntax)
   : HtmlCustomEmbeddedContentTokenType("NG:EXPANSION_FORM_CASE_CONTENT_TOKEN", Angular2HtmlLanguage.INSTANCE) {
   override fun createLexer(): Lexer {
-    return Angular2HtmlLexer(false, true, null)
+    return Angular2HtmlLexer(false, templateSyntax, null)
   }
 
   override fun parse(builder: PsiBuilder) {
-    Angular2HtmlParsing(builder).parseExpansionFormContent()
+    Angular2HtmlParsing(templateSyntax, builder).parseExpansionFormContent()
   }
 
   override fun createPsi(node: ASTNode): PsiElement {
@@ -25,6 +26,15 @@ internal class Angular2ExpansionFormCaseContentTokenType private constructor()
   }
 
   companion object {
-    val INSTANCE = Angular2ExpansionFormCaseContentTokenType()
+    private val INSTANCE_V_2 = Angular2ExpansionFormCaseContentTokenType(Angular2TemplateSyntax.V_2)
+    private val INSTANCE_V_2_NO_EXPANSION_FORMS = Angular2ExpansionFormCaseContentTokenType(Angular2TemplateSyntax.V_2_NO_EXPANSION_FORMS)
+    private val INSTANCE_V_17 = Angular2ExpansionFormCaseContentTokenType(Angular2TemplateSyntax.V_17)
+
+    fun get(templateSyntaxVersion: Angular2TemplateSyntax): Angular2ExpansionFormCaseContentTokenType =
+      when (templateSyntaxVersion) {
+        Angular2TemplateSyntax.V_2 -> INSTANCE_V_2
+        Angular2TemplateSyntax.V_2_NO_EXPANSION_FORMS -> INSTANCE_V_2_NO_EXPANSION_FORMS
+        Angular2TemplateSyntax.V_17 -> INSTANCE_V_17
+      }
   }
 }

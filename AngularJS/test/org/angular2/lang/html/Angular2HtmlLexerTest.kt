@@ -5,13 +5,18 @@ import com.intellij.lexer.Lexer
 import com.intellij.testFramework.LexerTestCase
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture
+import com.intellij.testFramework.fixtures.IdeaTestExecutionPolicy
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory
 import org.angular2.lang.html.lexer.Angular2HtmlLexer
 import org.angularjs.AngularTestUtil
 import org.jetbrains.annotations.NonNls
+import java.io.File
 
 open class Angular2HtmlLexerTest : LexerTestCase() {
   private var myFixture: IdeaProjectTestFixture? = null
+
+  protected open val templateSyntax: Angular2TemplateSyntax
+    get() = Angular2TemplateSyntax.V_2
 
   @Throws(Exception::class)
   override fun setUp() {
@@ -269,10 +274,21 @@ open class Angular2HtmlLexerTest : LexerTestCase() {
   }
 
   override fun createLexer(): Lexer {
-    return Angular2HtmlLexer(false, true, null)
+    return Angular2HtmlLexer(false, templateSyntax,  null)
   }
 
   override fun getDirPath(): String {
     return AngularTestUtil.getLexerTestDirPath() + "html/lexer"
+  }
+
+  override fun getPathToTestDataFile(extension: String): String {
+    val basePath = IdeaTestExecutionPolicy.getHomePathWithPolicy() + "/" + dirPath
+    val fileName = getTestName(true) + extension
+    if (File("$basePath/$fileName").exists() || templateSyntax == Angular2TemplateSyntax.V_2) {
+      return "$basePath/$fileName"
+    }
+    else {
+      return "${basePath}_$templateSyntax/$fileName"
+    }
   }
 }

@@ -8,13 +8,17 @@ import com.intellij.html.webSymbols.elements.WebSymbolHtmlElementInfo
 import com.intellij.javascript.web.WebFramework
 import com.intellij.javascript.web.html.WebFrameworkHtmlFileType
 import com.intellij.lang.Language
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.xml.XmlTag
 import icons.AngularJSIcons
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.tags.Angular2ElementDescriptor
+import org.angular2.lang.Angular2LangUtil
+import org.angular2.lang.html.Angular17HtmlFileType
 import org.angular2.lang.html.Angular2HtmlFileType
 import org.angular2.lang.html.Angular2HtmlLanguage
+import org.angular2.lang.html.Angular2TemplateSyntax
 import org.angular2.lang.svg.Angular2SvgFileType
 import org.angular2.web.Angular2AttributeNameCodeCompletionFilter
 import javax.swing.Icon
@@ -27,9 +31,12 @@ class Angular2Framework : WebFramework() {
   override val displayName: String
     get() = "Angular"
 
-  override fun getFileType(kind: SourceFileKind, context: VirtualFile): WebFrameworkHtmlFileType? =
-    when(kind) {
-      SourceFileKind.HTML -> Angular2HtmlFileType.INSTANCE
+  override fun getFileType(kind: SourceFileKind, context: VirtualFile, project: Project): WebFrameworkHtmlFileType? =
+    when (kind) {
+      SourceFileKind.HTML -> when (Angular2LangUtil.getTemplateSyntax(project, context)) {
+        Angular2TemplateSyntax.V_2, Angular2TemplateSyntax.V_2_NO_EXPANSION_FORMS -> Angular2HtmlFileType.INSTANCE
+        Angular2TemplateSyntax.V_17 -> Angular17HtmlFileType.INSTANCE
+      }
       SourceFileKind.SVG -> Angular2SvgFileType.INSTANCE
       else -> null
     }

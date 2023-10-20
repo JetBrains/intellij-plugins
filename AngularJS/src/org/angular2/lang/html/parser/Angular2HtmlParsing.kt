@@ -14,11 +14,12 @@ import com.intellij.xml.util.XmlUtil
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType
 import org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType.Companion.createTemplateBindings
+import org.angular2.lang.html.Angular2TemplateSyntax
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator
 
-class Angular2HtmlParsing(builder: PsiBuilder) : HtmlParsing(builder) {
+class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSyntax, builder: PsiBuilder) : HtmlParsing(builder) {
 
   fun parseExpansionFormContent() {
     val expansionFormContent = mark()
@@ -353,7 +354,7 @@ class Angular2HtmlParsing(builder: PsiBuilder) : HtmlParsing(builder) {
       }
       advance()
     }
-    content.collapse(Angular2ExpansionFormCaseContentTokenType.INSTANCE)
+    content.collapse(Angular2ExpansionFormCaseContentTokenType.get(templateSyntax))
     advance()
     expansionFormCase.done(Angular2HtmlElementTypes.EXPANSION_FORM_CASE)
     return true

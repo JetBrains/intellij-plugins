@@ -8,15 +8,18 @@ import com.intellij.openapi.util.Pair
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.xml.XmlTokenType
-import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType
-import org.angular2.lang.html.Angular2HtmlLanguage
+import org.angular2.lang.html.Angular2TemplateSyntax
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 
-class Angular2HtmlLexer(highlightMode: Boolean, tokenizeExpansionForms: Boolean, interpolationConfig: Pair<String, String>?)
-  : HtmlLexer(Angular2HtmlMergingLexer(FlexAdapter(_Angular2HtmlLexer(tokenizeExpansionForms, interpolationConfig)), highlightMode), true,
-              highlightMode) {
+class Angular2HtmlLexer(highlightMode: Boolean,
+                        templateSyntax: Angular2TemplateSyntax,
+                        interpolationConfig: Pair<String, String>?)
+  : HtmlLexer(Angular2HtmlMergingLexer(
+  FlexAdapter(_Angular2HtmlLexer(templateSyntax.tokenizeExpansionForms,
+                                 templateSyntax.enableBlockSyntax, interpolationConfig)),
+  highlightMode), true, highlightMode) {
 
   override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int, tokenIterator: TokenIterator?) {
     (delegate as Angular2HtmlMergingLexer).reset()

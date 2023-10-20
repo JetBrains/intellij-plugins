@@ -6,11 +6,12 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.vfs.VirtualFile
+import org.angular2.lang.Angular2LangUtil
 
 class Angular2HtmlHighlighterFactory : SyntaxHighlighterFactory() {
   override fun getSyntaxHighlighter(project: Project?, virtualFile: VirtualFile?): SyntaxHighlighter {
     //TODO take interpolation setup into account
     val interpolationConfig: Pair<String, String>? = null
-    return Angular2HtmlFileHighlighter(true, interpolationConfig)
+    return Angular2HtmlFileHighlighter(Angular2LangUtil.getTemplateSyntax(project, virtualFile), interpolationConfig)
   }
 }

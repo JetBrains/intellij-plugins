@@ -225,6 +225,8 @@
     <!-- Angular 2 HTML template contributions -->
     <fileType name="Angular2Html" implementationClass="org.angular2.lang.html.Angular2HtmlFileType" fieldName="INSTANCE"
               language="Angular2Html"/>
+    <fileType name="Angular17Html" implementationClass="org.angular2.lang.html.Angular17HtmlFileType" fieldName="INSTANCE"
+              language="Angular17Html"/>
     <!--suppress PluginXmlValidity -->
     <quoteHandler className="com.intellij.codeInsight.editorActions.HtmlQuoteHandler" fileType="Angular2Html"/>
     <multiHostInjector implementation="org.angular2.editor.Angular2Injector" order="after JSCommentInjector, before JSConfigurationInjector"
@@ -232,6 +234,7 @@
     <xml.xmlExtension implementation="org.angular2.codeInsight.Angular2HtmlExtension" order="before html, before web-symbols-react"
                       id="angular2"/>
     <lang.parserDefinition language="Angular2Html" implementationClass="org.angular2.lang.html.parser.Angular2HtmlParserDefinition"/>
+    <lang.parserDefinition language="Angular17Html" implementationClass="org.angular2.lang.html.parser.Angular17HtmlParserDefinition"/>
     <lang.syntaxHighlighterFactory language="Angular2Html"
                                    implementationClass="org.angular2.lang.html.highlighting.Angular2HtmlHighlighterFactory"/>
     <lookup.charFilter implementation="org.angular2.editor.Angular2LookupCharFilter" order="before xml"/>
@@ -293,6 +296,7 @@
 
     <webSymbols.webTypes enableByDefault="false" source="web-types/angular@2.0.0.web-types.json"/>
     <webSymbols.webTypes enableByDefault="true" source="web-types/angular@16.0.0.web-types.json"/>
+    <webSymbols.webTypes enableByDefault="false" source="web-types/angular@17.0.0.web-types.json"/>
     <webSymbols.webTypes enableByDefault="true" source="web-types/angular-hacks.web-types.json"/>
     <webSymbols.webTypes enableByDefault="true" source="web-types/hammerjs.web-types.json"/>
     <webSymbols.queryConfigurator implementation="org.angular2.web.Angular2WebSymbolsQueryConfigurator"/>

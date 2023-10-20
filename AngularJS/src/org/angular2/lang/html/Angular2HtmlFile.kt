@@ -8,10 +8,11 @@ import com.intellij.lang.javascript.config.JSConfigProvider
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
 import com.intellij.psi.FileViewProvider
 import com.intellij.psi.impl.source.html.HtmlFileImpl
+import com.intellij.psi.tree.IFileElementType
 import org.angular2.entities.Angular2ComponentLocator
 
-class Angular2HtmlFile(viewProvider: FileViewProvider) : HtmlFileImpl(viewProvider, Angular2HtmlFileElementType.INSTANCE),
-                                                         JSControlFlowScope, JSConfigProvider {
+class Angular2HtmlFile(viewProvider: FileViewProvider, fileElementType: IFileElementType)
+  : HtmlFileImpl(viewProvider, fileElementType), JSControlFlowScope, JSConfigProvider {
 
   override fun isTopmostControlFlowScope() = true
 

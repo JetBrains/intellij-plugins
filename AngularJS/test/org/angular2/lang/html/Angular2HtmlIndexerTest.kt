@@ -2,16 +2,15 @@
 package org.angular2.lang.html
 
 import com.intellij.lexer.Lexer
-import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.psi.impl.cache.impl.OccurrenceConsumer
 import org.angular2.lang.html.index.Angular2HtmlFilterLexer
 import org.angular2.lang.html.lexer.Angular2HtmlLexer
 import org.angularjs.AngularTestUtil
 
-class Angular2HtmlIndexerTest : Angular2HtmlHighlightingLexerTest() {
+open class Angular2HtmlIndexerTest : Angular2HtmlHighlightingLexerTest() {
   override fun createLexer(): Lexer {
     return Angular2HtmlFilterLexer(OccurrenceConsumer(null, false),
-                                   Angular2HtmlLexer(true, true, null))
+                                   Angular2HtmlLexer(true, templateSyntax, null))
   }
 
   override fun getDirPath(): String {

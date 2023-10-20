@@ -7,7 +7,7 @@ import org.angularjs.AngularTestUtil
 
 open class Angular2HtmlHighlightingLexerTest : Angular2HtmlLexerTest() {
   override fun createLexer(): Lexer {
-    return Angular2HtmlLexer(true, true, null)
+    return Angular2HtmlLexer(true, templateSyntax, null)
   }
 
   fun `testVarWith$`() {
