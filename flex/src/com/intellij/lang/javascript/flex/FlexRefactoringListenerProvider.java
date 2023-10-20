@@ -132,6 +132,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
     private static void packageNameChanged(final @NotNull Module module, final String oldPackageName, final String newPackageName) {
       final String oldPackageWithDot = oldPackageName + ".";
 
+      if (ModuleType.get(module) != FlexModuleType.getInstance()) return;
       for (FlexBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
         if (bc.getOutputType() == OutputType.Application && bc.getMainClass().startsWith(oldPackageWithDot)) {
           final String mainClass = (newPackageName.isEmpty() ? "" : (newPackageName + ".")) +
