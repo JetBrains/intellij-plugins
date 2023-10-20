@@ -13,6 +13,6 @@ class Angular2TSFrameworkSpecificHandler : JSFrameworkSpecificHandler {
     type is JSTypeImpl && type.typeText == "Signal" && type.sourceElement?.let { Angular2LangUtil.isAngular2Context(it) } == true
 
   override fun buildHighlightForElement(resolve: PsiElement, place: PsiElement): JSHighlightDescriptor? =
-    Angular2HighlightDescriptor.getFor(resolve, place)
+    Angular2HighlightDescriptor.getFor(resolve)
 
 }

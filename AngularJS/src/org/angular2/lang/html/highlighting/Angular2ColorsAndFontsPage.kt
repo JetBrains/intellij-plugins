@@ -1,22 +1,24 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.html.highlighting
 
+import com.intellij.lang.Language
 import com.intellij.lang.javascript.highlighting.JSHighlighter
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.fileTypes.SyntaxHighlighter
 import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory
 import com.intellij.openapi.options.colors.AttributesDescriptor
 import com.intellij.openapi.options.colors.ColorDescriptor
-import com.intellij.openapi.options.colors.ColorSettingsPage
+import com.intellij.openapi.options.colors.RainbowColorSettingsPage
 import com.intellij.psi.codeStyle.DisplayPriority
 import com.intellij.psi.codeStyle.DisplayPrioritySortable
 import icons.AngularJSIcons
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.highlighting.Angular2HighlighterColors
 import org.angular2.lang.html.Angular2HtmlFileType
+import org.angular2.lang.html.Angular2HtmlLanguage
 import javax.swing.Icon
 
-class Angular2ColorsAndFontsPage : ColorSettingsPage, DisplayPrioritySortable {
+class Angular2ColorsAndFontsPage : RainbowColorSettingsPage, DisplayPrioritySortable {
   override fun getDisplayName(): String {
     return Angular2Bundle.message("angular.configurable.name.angular.template")
   }
@@ -62,6 +64,17 @@ class Angular2ColorsAndFontsPage : ColorSettingsPage, DisplayPrioritySortable {
   override fun getPriority(): DisplayPriority {
     return DisplayPriority.LANGUAGE_SETTINGS
   }
+
+  override fun isRainbowType(type: TextAttributesKey): Boolean {
+    return JSHighlighter.JS_PARAMETER == type
+           || JSHighlighter.JS_LOCAL_VARIABLE == type
+           || JSHighlighter.JS_INSTANCE_MEMBER_VARIABLE == type
+           || Angular2HighlighterColors.NG_SIGNAL == type
+           || Angular2HighlighterColors.NG_VARIABLE == type
+  }
+
+  override fun getLanguage(): Language =
+    Angular2HtmlLanguage.INSTANCE
 
   companion object {
     private val ATTRS: Array<AttributesDescriptor> = arrayOf(

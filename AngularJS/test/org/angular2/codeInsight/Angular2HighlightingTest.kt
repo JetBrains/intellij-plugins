@@ -2,6 +2,7 @@
 package org.angular2.codeInsight
 
 import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiLanguageInjectionHost
 import com.intellij.psi.SyntaxTraverser
@@ -14,6 +15,7 @@ import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.*
 import org.angular2.Angular2TsConfigFile
 import org.angular2.codeInsight.inspections.Angular2ExpressionTypesInspectionTest
+import java.io.File
 
 class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
@@ -122,6 +124,11 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
   fun testTemplateColorsHtml() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, ANGULAR_FORMS_16_2_8, dir = true,
                                                    configureFileName = "colors.html", checkInformation = true)
+
+  fun testRainbowColorsHtml() = doConfiguredTest(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, ANGULAR_FORMS_16_2_8, dir = true,
+                                                 configureFile = false) {
+    myFixture.testRainbow("colors.html", FileUtil.loadFile(File("$testDataPath/$testName/colors.html")), true, true)
+  }
 
   override fun setUp() {
     super.setUp()

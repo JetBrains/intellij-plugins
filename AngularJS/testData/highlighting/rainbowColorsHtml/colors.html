@@ -1,0 +1,18 @@
+<li attr="value"
+    *ngFor="let <rainbow color='ff000002'><rainbow color='ff000002'>hero</rainbow></rainbow> of <rainbow color='ff000002'>heroes</rainbow> as <rainbow color='ff000003'><rainbow color='ff000003'>test</rainbow></rainbow>"
+    [class.selected]="<rainbow color='ff000002'>hero</rainbow> === <rainbow color='ff000003'>selectedHero</rainbow>"
+    (click)="onSelect(<rainbow color='ff000002'>hero</rainbow>)">
+  {{<rainbow color='ff000002'>hero</rainbow>.name}}
+  {{<rainbow color='ff000003'>test</rainbow>}}
+</li>
+{<rainbow color='ff000002'>heroes</rainbow>.length, plural, =0 {no heroes} =1 {one hero} other {{{<rainbow color='ff000002'>heroes</rainbow>.length}} heroes}} found
+
+{{<rainbow color='ff000001'>movieSig</rainbow>()}}
+
+<input [(ngModel)]="<rainbow color='ff000004'>hero</rainbow>.name" #<rainbow color='ff000004'><rainbow color='ff000004'>model</rainbow></rainbow>="ngModel"/>
+
+{{<rainbow color='ff000004'>model</rainbow>}}
+
+<span *ngIf="true; else <rainbow color='ff000004'>other</rainbow>">Test</span>
+
+<ng-template #<rainbow color='ff000004'><rainbow color='ff000004'>other</rainbow></rainbow>>Test 2</ng-template>
