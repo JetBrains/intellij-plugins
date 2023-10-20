@@ -10,7 +10,7 @@ import com.intellij.coldFusion.model.lexer.CfmlLexer;
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes;
 import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
-import com.intellij.lexer.HtmlHighlightingLexer;
+import com.intellij.lexer.HtmlLexer;
 import com.intellij.lexer.LayeredLexer;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
@@ -29,7 +29,7 @@ public class CfmlIndexPatternBuilder implements IndexPatternBuilder {
     if (file instanceof CfmlFile) {
       Project project = file.getProject();
       LayeredLexer cfmlLayeredLexer = new LayeredLexer(new CfmlLexer(true, project));
-      cfmlLayeredLexer.registerLayer(new HtmlHighlightingLexer(), CfmlElementTypes.TEMPLATE_TEXT);
+      cfmlLayeredLexer.registerLayer(new HtmlLexer(true), CfmlElementTypes.TEMPLATE_TEXT);
 
       return cfmlLayeredLexer;
     }
