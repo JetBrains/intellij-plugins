@@ -4,15 +4,14 @@ package org.angular2.lang.html
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.psi.impl.cache.impl.OccurrenceConsumer
-import org.angular2.lang.html.highlighting.Angular2HtmlHighlightingLexer
 import org.angular2.lang.html.index.Angular2HtmlFilterLexer
+import org.angular2.lang.html.lexer.Angular2HtmlLexer
 import org.angularjs.AngularTestUtil
 
 class Angular2HtmlIndexerTest : Angular2HtmlHighlightingLexerTest() {
   override fun createLexer(): Lexer {
     return Angular2HtmlFilterLexer(OccurrenceConsumer(null, false),
-                                   Angular2HtmlHighlightingLexer(true, null,
-                                                                 FileTypeRegistry.getInstance().findFileTypeByName("CSS")))
+                                   Angular2HtmlLexer(true, true, null))
   }
 
   override fun getDirPath(): String {

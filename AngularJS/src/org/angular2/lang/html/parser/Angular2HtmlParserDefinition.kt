@@ -18,7 +18,7 @@ import org.angular2.lang.html.stub.Angular2HtmlNgContentSelectorElementType
 
 open class Angular2HtmlParserDefinition : HTMLParserDefinition() {
   override fun createLexer(project: Project): Lexer {
-    return Angular2HtmlLexer(true, null)
+    return Angular2HtmlLexer(false, true, null)
   }
 
   override fun createParser(project: Project): PsiParser {

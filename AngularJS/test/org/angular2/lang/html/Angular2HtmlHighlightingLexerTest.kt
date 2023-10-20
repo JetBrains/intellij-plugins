@@ -2,12 +2,12 @@
 package org.angular2.lang.html
 
 import com.intellij.lexer.Lexer
-import org.angular2.lang.html.highlighting.Angular2HtmlHighlightingLexer
+import org.angular2.lang.html.lexer.Angular2HtmlLexer
 import org.angularjs.AngularTestUtil
 
 open class Angular2HtmlHighlightingLexerTest : Angular2HtmlLexerTest() {
   override fun createLexer(): Lexer {
-    return Angular2HtmlHighlightingLexer(true, null, null)
+    return Angular2HtmlLexer(true, true, null)
   }
 
   fun `testVarWith$`() {

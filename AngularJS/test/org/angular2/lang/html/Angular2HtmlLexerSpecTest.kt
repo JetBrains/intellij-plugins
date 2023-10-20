@@ -650,7 +650,7 @@ class Angular2HtmlLexerSpecTest {
 
   private fun tokenizeWithoutErrors(
     input: String, tokenizeExpansionForms: Boolean = false,
-    interpolationConfig: Pair<String?, String?>? = null): List<Token> {
+    interpolationConfig: Pair<String, String>? = null): List<Token> {
 
     //
     //  const tokenizeResult = lex.tokenize(
@@ -667,7 +667,7 @@ class Angular2HtmlLexerSpecTest {
 
   private fun tokenizeAndHumanizeParts(
     input: String, tokenizeExpansionForms: Boolean = false,
-    interpolationConfig: Pair<String?, String?>? = null): List<List<*>?> {
+    interpolationConfig: Pair<String, String>? = null): List<List<*>?> {
     return tokenizeWithoutErrors(input, tokenizeExpansionForms, interpolationConfig)
       .map { (type, contents) -> listOf(type, contents) }
   }
@@ -698,13 +698,13 @@ class Angular2HtmlLexerSpecTest {
   @JvmRecord
   private data class Token(val type: IElementType, val contents: String, val start: Int, val end: Int) {
     companion object {
-      fun create(input: String, tokenizeExpansionForms: Boolean, interpolationConfig: Pair<String?, String?>?): List<Token> {
-        val lexer = Angular2HtmlLexer(tokenizeExpansionForms, interpolationConfig)
+      fun create(input: String, tokenizeExpansionForms: Boolean, interpolationConfig: Pair<String, String>?): List<Token> {
+        val lexer = Angular2HtmlLexer(false, tokenizeExpansionForms, interpolationConfig)
         val result: MutableList<Token> = ArrayList()
         lexer.start(input, 0, input.length)
         var tokenType: IElementType = TokenType.WHITE_SPACE
         while (lexer.getTokenType()?.also { tokenType = it } != null) {
-          result.add(Token(tokenType, lexer.tokenText, lexer.getTokenStart(), lexer.getTokenEnd()))
+          result.add(Token(tokenType, lexer.tokenText, lexer.tokenStart, lexer.tokenEnd))
           lexer.advance()
         }
         return result

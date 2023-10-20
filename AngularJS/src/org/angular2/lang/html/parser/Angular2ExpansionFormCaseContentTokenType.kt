@@ -13,7 +13,7 @@ import org.angular2.lang.html.lexer.Angular2HtmlLexer
 internal class Angular2ExpansionFormCaseContentTokenType private constructor()
   : HtmlCustomEmbeddedContentTokenType("NG:EXPANSION_FORM_CASE_CONTENT_TOKEN", Angular2HtmlLanguage.INSTANCE) {
   override fun createLexer(): Lexer {
-    return Angular2HtmlLexer(true, null)
+    return Angular2HtmlLexer(false, true, null)
   }
 
   override fun parse(builder: PsiBuilder) {

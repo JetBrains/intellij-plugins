@@ -8,9 +8,9 @@ import com.intellij.lexer.Lexer
 import com.intellij.lexer.MergeFunction
 import com.intellij.lexer.MergingLexerAdapterBase
 import com.intellij.psi.tree.IElementType
+import com.intellij.util.asSafely
 import org.angular2.lang.expr.highlighting.Angular2SyntaxHighlighter
 import org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType
-import org.angular2.lang.html.highlighting.Angular2HtmlHighlightingLexer
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 import java.util.*
@@ -23,7 +23,7 @@ class Angular2HtmlEmbeddedContentSupport : HtmlEmbeddedContentSupport {
   }
 
   override fun isEnabled(lexer: BaseHtmlLexer): Boolean {
-    return lexer is Angular2HtmlLexer || lexer is Angular2HtmlHighlightingLexer
+    return lexer is Angular2HtmlLexer
   }
 
   override fun createEmbeddedContentProviders(lexer: BaseHtmlLexer): List<HtmlEmbeddedContentProvider> {
@@ -53,7 +53,7 @@ class Angular2HtmlEmbeddedContentSupport : HtmlEmbeddedContentSupport {
     }
 
     override fun isInterestedInTag(tagName: CharSequence): Boolean {
-      return lexer is Angular2HtmlHighlightingLexer
+      return lexer.asSafely<Angular2HtmlLexer>()?.isHighlighting == true
     }
 
     override fun isInterestedInAttribute(attributeName: CharSequence): Boolean {
@@ -65,7 +65,7 @@ class Angular2HtmlEmbeddedContentSupport : HtmlEmbeddedContentSupport {
     override fun getMergeFunction(): MergeFunction {
       return MergeFunction { type, _ ->
         if (type === JSTokenTypes.WHITE_SPACE)
-          Angular2HtmlHighlightingLexer.EXPRESSION_WHITE_SPACE
+          Angular2HtmlTokenTypes.EXPRESSION_WHITE_SPACE
         else
           type
       }

@@ -269,7 +269,7 @@ open class Angular2HtmlLexerTest : LexerTestCase() {
   }
 
   override fun createLexer(): Lexer {
-    return Angular2HtmlLexer(true, null)
+    return Angular2HtmlLexer(false, true, null)
   }
 
   override fun getDirPath(): String {

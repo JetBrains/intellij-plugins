@@ -17,6 +17,7 @@ import com.intellij.util.containers.map2Array
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.highlighting.Angular2HighlighterColors
 import org.angular2.lang.expr.lexer.Angular2TokenTypes
+import org.angular2.lang.html.lexer.Angular2HtmlLexer
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes
 import java.util.concurrent.ConcurrentHashMap
@@ -38,7 +39,7 @@ internal class Angular2HtmlFileHighlighter(private val myTokenizeExpansionForms:
   }
 
   override fun getHighlightingLexer(): Lexer {
-    return Angular2HtmlHighlightingLexer(myTokenizeExpansionForms, myInterpolationConfig)
+    return Angular2HtmlLexer(true, myTokenizeExpansionForms, myInterpolationConfig)
   }
 
   companion object {
@@ -63,10 +64,10 @@ internal class Angular2HtmlFileHighlighter(private val myTokenizeExpansionForms:
             Angular2HtmlHighlighterColors.NG_EXPANSION_FORM, Angular2HtmlHighlighterColors.NG_EXPANSION_FORM_DELIMITER)
       }
 
-      put(Angular2HtmlHighlightingLexer.EXPANSION_FORM_CONTENT,
+      put(Angular2HtmlTokenTypes.EXPANSION_FORM_CONTENT,
           XmlHighlighterColors.HTML_CODE, Angular2HtmlHighlighterColors.NG_EXPANSION_FORM)
 
-      put(Angular2HtmlHighlightingLexer.EXPANSION_FORM_COMMA,
+      put(Angular2HtmlTokenTypes.EXPANSION_FORM_COMMA,
           XmlHighlighterColors.HTML_CODE, Angular2HtmlHighlighterColors.NG_EXPANSION_FORM,
           Angular2HtmlHighlighterColors.NG_EXPANSION_FORM_COMMA)
 
