@@ -15,6 +15,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModifiableModelsProvider
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.PatternCondition
@@ -48,6 +49,8 @@ class AngularJSFrameworkDetector : FrameworkDetector(AngularJSFramework.ID) {
 
   override fun detect(newFiles: Collection<VirtualFile>,
                       context: FrameworkDetectionContext): List<DetectedFrameworkDescription> {
+    if (!Registry.`is`("angular.detect.cli.configuration")) return emptyList()
+
     return if (newFiles.isNotEmpty() && !isConfigured(newFiles, context.project)) {
       listOf(AngularCLIFrameworkDescription(newFiles))
     }
