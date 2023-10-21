@@ -58,7 +58,7 @@ public final class GaugeReferenceSearch extends QueryExecutorBase<PsiReference, 
     ApplicationManager.getApplication().runReadAction(() -> {
       StepCollector collector = helper.getStepCollector(searchParameters.getElementToSearch());
       collector.collect();
-      List<PsiElement> elements = helper.getPsiElements(collector, searchParameters.getElementToSearch());
+      List<PsiElement> elements = ReferenceSearchHelper.getPsiElements(collector, searchParameters.getElementToSearch());
       for (PsiElement element : elements) {
         processor.process(element.getReference());
       }

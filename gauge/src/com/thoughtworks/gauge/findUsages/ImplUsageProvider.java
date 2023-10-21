@@ -29,11 +29,9 @@ import com.thoughtworks.gauge.util.StepUtil;
 import org.jetbrains.annotations.NotNull;
 
 public final class ImplUsageProvider implements ImplicitUsageProvider {
-  private final ReferenceSearchHelper searchHelper;
   private final ModuleHelper moduleHelper;
 
   public ImplUsageProvider() {
-    this.searchHelper = new ReferenceSearchHelper();
     this.moduleHelper = new ModuleHelper();
   }
 
@@ -56,13 +54,13 @@ public final class ImplUsageProvider implements ImplicitUsageProvider {
     return GaugeUtil.isGaugeElement(element.getDeclarationScope());
   }
 
-  private boolean isElementUsed(PsiElement element) {
+  private static boolean isElementUsed(PsiElement element) {
     if (HookUtil.isHook(element)) return true;
     boolean isGaugeElement = GaugeUtil.isGaugeElement(element);
     if (!isGaugeElement) return false;
     StepCollector collector = new StepCollector(element.getProject());
     collector.collect();
-    return searchHelper.getPsiElements(collector, element).size() > 0;
+    return !ReferenceSearchHelper.getPsiElements(collector, element).isEmpty();
   }
 
   @Override
