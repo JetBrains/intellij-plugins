@@ -9,8 +9,9 @@ import com.intellij.lexer.MergeFunction
 import com.intellij.lexer.MergingLexerAdapterBase
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.asSafely
-import org.angular2.lang.expr.highlighting.Angular2SyntaxHighlighter
+import org.angular2.lang.expr.lexer.Angular2Lexer
 import org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType
+import org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType.Angular2BlockExprTokenType
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 import java.util.*
@@ -28,7 +29,12 @@ class Angular2HtmlEmbeddedContentSupport : HtmlEmbeddedContentSupport {
 
   override fun createEmbeddedContentProviders(lexer: BaseHtmlLexer): List<HtmlEmbeddedContentProvider> {
     return listOf(
-      HtmlTokenEmbeddedContentProvider(lexer, Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR, { Angular2EmbeddedHighlightingLexer() }),
+      HtmlTokenEmbeddedContentProvider(lexer,
+                                       Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR,
+                                       { Angular2EmbeddedHighlightingLexer(Angular2Lexer.RegularBinding) }),
+      HtmlTokenEmbeddedContentProvider(lexer,
+                                       Angular2BlockExprTokenType::class.java,
+                                       { Angular2EmbeddedHighlightingLexer((it as Angular2BlockExprTokenType).lexerConfig) }),
       Angular2AttributeContentProvider(lexer))
   }
 
@@ -41,7 +47,7 @@ class Angular2HtmlEmbeddedContentSupport : HtmlEmbeddedContentSupport {
                  && Holder.NG_EL_ATTRIBUTES.contains(info.type)) {
         object : HtmlEmbedmentInfo {
           override fun createHighlightingLexer(): Lexer {
-            return Angular2EmbeddedHighlightingLexer()
+            return Angular2EmbeddedHighlightingLexer(Angular2Lexer.RegularBinding)
           }
 
           override fun getElementType(): IElementType? {
@@ -61,7 +67,8 @@ class Angular2HtmlEmbeddedContentSupport : HtmlEmbeddedContentSupport {
     }
   }
 
-  class Angular2EmbeddedHighlightingLexer internal constructor() : MergingLexerAdapterBase(Angular2SyntaxHighlighter().highlightingLexer) {
+  class Angular2EmbeddedHighlightingLexer internal constructor(config: Angular2Lexer.Config)
+    : MergingLexerAdapterBase(Angular2Lexer(config)) {
     override fun getMergeFunction(): MergeFunction {
       return MergeFunction { type, _ ->
         if (type === JSTokenTypes.WHITE_SPACE)

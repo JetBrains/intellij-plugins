@@ -21,7 +21,7 @@ HtmlFile:test.html
         XmlToken:XML_EQ('=')
         PsiElement(XML_ATTRIBUTE_VALUE)
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
-          ASTWrapperPsiElement(NG:TEMPLATE_BINDINGS_EXPR)
+          ASTWrapperPsiElement(NG:TEMPLATE_BINDINGS_EXPR (ngIf))
             Angular2TemplateBindings
               Angular2TemplateBinding <ngIf, keyIsVar=false, null>
                 JSReferenceExpression
@@ -40,7 +40,7 @@ HtmlFile:test.html
         XmlToken:XML_EQ('=')
         PsiElement(XML_ATTRIBUTE_VALUE)
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
-          ASTWrapperPsiElement(NG:TEMPLATE_BINDINGS_EXPR)
+          ASTWrapperPsiElement(NG:TEMPLATE_BINDINGS_EXPR (ngIf))
             Angular2TemplateBindings
               Angular2TemplateBinding <ngIf, keyIsVar=false, null>
                 PsiErrorElement:Expression expected
@@ -82,7 +82,7 @@ HtmlFile:test.html
         XmlToken:XML_EQ('=')
         PsiElement(XML_ATTRIBUTE_VALUE)
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
-          ASTWrapperPsiElement(NG:TEMPLATE_BINDINGS_EXPR)
+          ASTWrapperPsiElement(NG:TEMPLATE_BINDINGS_EXPR (ngIf))
             Angular2TemplateBindings
               Angular2TemplateBinding <ngIf, keyIsVar=false, null>
                 <empty list>
@@ -109,7 +109,7 @@ HtmlFile:test.html
         XmlToken:XML_EQ('=')
         PsiElement(XML_ATTRIBUTE_VALUE)
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
-          ASTWrapperPsiElement(NG:TEMPLATE_BINDINGS_EXPR)
+          ASTWrapperPsiElement(NG:TEMPLATE_BINDINGS_EXPR (ngIf))
             Angular2TemplateBindings
               Angular2TemplateBinding <ngIf, keyIsVar=false, null>
                 <empty list>
@@ -136,7 +136,7 @@ HtmlFile:test.html
         XmlToken:XML_EQ('=')
         PsiElement(XML_ATTRIBUTE_VALUE)
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
-          ASTWrapperPsiElement(NG:TEMPLATE_BINDINGS_EXPR)
+          ASTWrapperPsiElement(NG:TEMPLATE_BINDINGS_EXPR (ngIf))
             Angular2TemplateBindings
               Angular2TemplateBinding <ngIf, keyIsVar=false, null>
                 JSReferenceExpression

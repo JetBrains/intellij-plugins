@@ -1,0 +1,4 @@
+NG:BLOCK_NAME ('@if something doesn')
+XML_DATA_CHARACTERS (''t')
+XML_WHITE_SPACE (' ')
+XML_DATA_CHARACTERS ('work')

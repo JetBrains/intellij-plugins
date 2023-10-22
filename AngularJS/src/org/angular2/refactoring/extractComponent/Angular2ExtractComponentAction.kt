@@ -10,6 +10,7 @@ import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.refactoring.actions.BaseRefactoringAction
 import org.angular2.lang.html.Angular2HtmlFileType
 import org.angular2.lang.html.Angular2HtmlLanguage
+import org.angular2.lang.svg.Angular2SvgLanguage
 
 class Angular2ExtractComponentAction : BaseRefactoringAction() {
   init {
@@ -22,7 +23,8 @@ class Angular2ExtractComponentAction : BaseRefactoringAction() {
 
   override fun isAvailableOnElementInEditorAndFile(element: PsiElement, editor: Editor, file: PsiFile, context: DataContext) = true
 
-  override fun isAvailableForLanguage(language: Language?): Boolean = Angular2HtmlLanguage.INSTANCE == language
+  override fun isAvailableForLanguage(language: Language?): Boolean = language?.isKindOf(Angular2HtmlLanguage.INSTANCE) == true
+                                                                      && !language.isKindOf(Angular2SvgLanguage.INSTANCE)
 
   override fun isAvailableForFile(file: PsiFile?): Boolean = Angular2HtmlFileType.INSTANCE == file?.fileType
 

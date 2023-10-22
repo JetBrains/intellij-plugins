@@ -13,62 +13,103 @@ import org.angular2.lang.expr.lexer.Angular2Lexer
 import org.jetbrains.annotations.NonNls
 import java.util.*
 
-class Angular2EmbeddedExprTokenType : HtmlCustomEmbeddedContentTokenType {
+open class Angular2EmbeddedExprTokenType : HtmlCustomEmbeddedContentTokenType {
 
-  private val myExpressionType: ExpressionType
-  private val myTemplateKey: String?
+  protected val expressionType: ExpressionType
+  protected val name: String?
+  protected val index: Int
 
   private constructor(@NonNls debugName: String, expressionType: ExpressionType)
     : super(debugName, Angular2Language.INSTANCE) {
-    myExpressionType = expressionType
-    myTemplateKey = null
+    this.expressionType = expressionType
+    name = null
+    index = -1
   }
 
   private constructor(@NonNls debugName: String, expressionType: ExpressionType, @NonNls templateKey: String?)
-    : super(debugName, Angular2Language.INSTANCE, false) {
-    myExpressionType = expressionType
-    myTemplateKey = templateKey
+    : super("$debugName ($templateKey)", Angular2Language.INSTANCE, false) {
+    this.expressionType = expressionType
+    name = templateKey
+    index = -1
+  }
+
+  private constructor(@NonNls debugName: String, expressionType: ExpressionType, @NonNls blockName: String?, parameterIndex: Int)
+    : super("$debugName ($blockName:$parameterIndex)", Angular2Language.INSTANCE, false) {
+    this.expressionType = expressionType
+    name = blockName
+    index = parameterIndex
   }
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (other == null || javaClass != other.javaClass) return false
     val type = other as Angular2EmbeddedExprTokenType?
-    return myExpressionType == type!!.myExpressionType && myTemplateKey == type.myTemplateKey
+    return expressionType == type!!.expressionType && name == type.name
   }
 
   override fun hashCode(): Int {
-    return Objects.hash(super.hashCode(), myExpressionType, myTemplateKey)
+    return Objects.hash(super.hashCode(), expressionType, name)
   }
 
-  override fun createLexer(): Lexer {
-    return Angular2Lexer()
-  }
+  override fun createLexer(): Lexer =
+    Angular2Lexer(Angular2Lexer.RegularBinding)
 
   override fun parse(builder: PsiBuilder) {
-    myExpressionType.parse(builder, this, myTemplateKey)
+    expressionType.parse(builder, this, name, index)
   }
 
   override fun createPsi(node: ASTNode): PsiElement {
     return XmlASTWrapperPsiElement(node)
   }
 
-  enum class ExpressionType(private val myParseMethod: (PsiBuilder, IElementType) -> Unit) {
-    ACTION({ builder, root -> Angular2Parser.parseAction(builder, root) }),
-    BINDING({ builder, root -> Angular2Parser.parseBinding(builder, root) }),
-    INTERPOLATION({ builder, root -> Angular2Parser.parseInterpolation(builder, root) }),
-    SIMPLE_BINDING({ builder, root -> Angular2Parser.parseSimpleBinding(builder, root) }),
-    TEMPLATE_BINDINGS({ _, _ -> });
+  class Angular2BlockExprTokenType
+  internal constructor(@NonNls debugName: String, expressionType: ExpressionType, @NonNls blockName: String?, parameterIndex: Int)
+    : Angular2EmbeddedExprTokenType(debugName, expressionType, blockName, parameterIndex) {
 
-    fun parse(builder: PsiBuilder, root: IElementType, templateKey: String?) {
-      if (this == TEMPLATE_BINDINGS) {
-        assert(templateKey != null)
-        Angular2Parser.parseTemplateBindings(builder, root, templateKey!!)
+    val lexerConfig: Angular2Lexer.Config =
+      Angular2Lexer.BlockParameter(name!!, index)
+
+    override fun createLexer(): Lexer =
+      Angular2Lexer(lexerConfig)
+  }
+
+  enum class ExpressionType {
+    ACTION {
+      override fun parse(builder: PsiBuilder, root: IElementType, name: String?, index: Int) {
+        Angular2Parser.parseAction(builder, root)
       }
-      else {
-        myParseMethod(builder, root)
+    },
+    BINDING {
+      override fun parse(builder: PsiBuilder, root: IElementType, name: String?, index: Int) {
+        Angular2Parser.parseBinding(builder, root)
+      }
+    },
+    INTERPOLATION {
+      override fun parse(builder: PsiBuilder, root: IElementType, name: String?, index: Int) {
+        Angular2Parser.parseInterpolation(builder, root)
+      }
+    },
+    SIMPLE_BINDING {
+      override fun parse(builder: PsiBuilder, root: IElementType, name: String?, index: Int) {
+        Angular2Parser.parseSimpleBinding(builder, root)
+      }
+    },
+    TEMPLATE_BINDINGS {
+      override fun parse(builder: PsiBuilder, root: IElementType, name: String?, index: Int) {
+        assert(name != null)
+        Angular2Parser.parseTemplateBindings(builder, root, name!!)
+      }
+    },
+    BLOCK_PARAMETER {
+      override fun parse(builder: PsiBuilder, root: IElementType, name: String?, index: Int) {
+        assert(name != null)
+        assert(index >= 0)
+        Angular2Parser.parseBlockParameter(builder, root, name!!, index)
       }
     }
+    ;
+
+    abstract fun parse(builder: PsiBuilder, root: IElementType, name: String?, index: Int)
   }
 
   companion object {
@@ -88,6 +129,15 @@ class Angular2EmbeddedExprTokenType : HtmlCustomEmbeddedContentTokenType {
     @JvmField
     val SIMPLE_BINDING_EXPR = Angular2EmbeddedExprTokenType(
       "NG:SIMPLE_BINDING_EXPR", ExpressionType.SIMPLE_BINDING)
+
+    @JvmField
+    val BLOCK_PARAMETER = Angular2EmbeddedExprTokenType(
+      "NG:BLOCK_PARAMETER", ExpressionType.BLOCK_PARAMETER)
+
+    @JvmStatic
+    fun createBlockParameter(blockName: String, parameterIndex: Int): Angular2EmbeddedExprTokenType {
+      return Angular2BlockExprTokenType("NG:BLOCK_PARAMETER", ExpressionType.BLOCK_PARAMETER, blockName, parameterIndex)
+    }
 
     @JvmStatic
     fun createTemplateBindings(templateKey: String): Angular2EmbeddedExprTokenType {

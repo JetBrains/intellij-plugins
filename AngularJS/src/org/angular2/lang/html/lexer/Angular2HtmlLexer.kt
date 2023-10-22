@@ -35,6 +35,9 @@ class Angular2HtmlLexer(highlightMode: Boolean,
            && (state and IS_WITHIN_EXPANSION_FORM_STATE) == 0
            && state != _Angular2HtmlLexer.EXPANSION_FORM_CONTENT
            && state != _Angular2HtmlLexer.EXPANSION_FORM_CASE_END
+           && state != _Angular2HtmlLexer.BLOCK_NAME
+           && state != _Angular2HtmlLexer.BLOCK_PARAMETER
+           && state != _Angular2HtmlLexer.BLOCK_PARAMETERS_START
   }
 
   override fun isHtmlTagState(state: Int): Boolean {

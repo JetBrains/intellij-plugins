@@ -24,17 +24,26 @@ object Angular2LangUtil {
   }
 
   @JvmStatic
+  fun getTemplateSyntax(context: PsiElement?): Angular2TemplateSyntax =
+    getTemplateSyntax { context?.let { WebSymbolsContext.get("angular-template-syntax", it) } }
+
+  @JvmStatic
   fun getTemplateSyntax(project: Project?, context: VirtualFile?): Angular2TemplateSyntax =
-    if (project == null || context == null)
-      Angular2TemplateSyntax.V_17
-    else when (WebSymbolsContext.get("angular-template-version", context, project)) {
-      "angular17" -> Angular2TemplateSyntax.V_17
-      else -> Angular2TemplateSyntax.V_2
+    getTemplateSyntax {
+      if (project != null && context != null)
+        WebSymbolsContext.get("angular-template-syntax", context, project)
+      else
+        null
     }
 
   @JvmStatic
   fun isAngular2Context(project: Project, context: VirtualFile): Boolean {
     return instance.isInContext(context, project)
   }
+
+  private fun getTemplateSyntax(contextProvider: () -> String?): Angular2TemplateSyntax =
+    contextProvider()
+      ?.let { syntax -> Angular2TemplateSyntax.entries.find { it.name.equals(syntax, true) } }
+    ?: Angular2TemplateSyntax.V_2
 
 }

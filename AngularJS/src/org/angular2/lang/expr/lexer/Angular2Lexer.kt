@@ -6,7 +6,7 @@ import com.intellij.lexer.*
 import com.intellij.psi.tree.IElementType
 import org.angular2.lang.expr.lexer.Angular2TokenTypes.Companion.STRING_PART_SPECIAL_SEQ
 
-class Angular2Lexer : MergingLexerAdapterBase(FlexAdapter(_Angular2Lexer(null))) {
+class Angular2Lexer(config: Config) : MergingLexerAdapterBase(FlexAdapter(_Angular2Lexer(config))) {
 
   private var myMergeFunction: MyMergeFunction? = null
 
@@ -39,6 +39,12 @@ class Angular2Lexer : MergingLexerAdapterBase(FlexAdapter(_Angular2Lexer(null)))
       return original.state
     }
   }
+
+  sealed interface Config
+
+  data object RegularBinding : Config
+
+  data class BlockParameter(val name: String, val index: Int) : Config
 
   private class MyMergeFunction(prevTokenEscapeSequence: Boolean) : MergeFunction {
 

@@ -268,13 +268,59 @@ open class Angular2HtmlLexerTest : LexerTestCase() {
     doTest("<textarea>with { some } {{wierd}} &nbsp; <stuff> in it</textarea>")
   }
 
+  fun testIfBlock() {
+    doTest("""
+      @if ( user.isHuman ) {
+        <human-profile [data]="user" />
+      } @else if 
+      (user.isRobot) 
+      {
+          <robot-profile [data]="user" />
+      } @else {
+        <p>The profile is unknown!
+      }
+    """.trimIndent())
+  }
+
+  fun testIncompleteBlock1() {
+    doTest("""
+      @if something doesn't work
+    """.trimIndent())
+  }
+
+  fun testIncompleteBlock2() {
+    doTest("""
+      @if ( this is not finished
+    """.trimIndent())
+  }
+
+  fun testIncompleteBlock3() {
+    doTest("""
+      @if ( ) this is not finished
+    """.trimIndent())
+  }
+
+  fun testIncompleteBlock4() {
+    doTest("""
+      @if ( ) 
+      {this is not finished
+    """.trimIndent())
+  }
+
+  fun testIncompleteBlock5() {
+    doTest("""
+      @if 
+      else (
+    """.trimIndent())
+  }
+
   override fun doTest(text: @NonNls String) {
     super.doTest(text)
     checkCorrectRestart(text)
   }
 
   override fun createLexer(): Lexer {
-    return Angular2HtmlLexer(false, templateSyntax,  null)
+    return Angular2HtmlLexer(false, templateSyntax, null)
   }
 
   override fun getDirPath(): String {
@@ -284,7 +330,10 @@ open class Angular2HtmlLexerTest : LexerTestCase() {
   override fun getPathToTestDataFile(extension: String): String {
     val basePath = IdeaTestExecutionPolicy.getHomePathWithPolicy() + "/" + dirPath
     val fileName = getTestName(true) + extension
-    if (File("$basePath/$fileName").exists() || templateSyntax == Angular2TemplateSyntax.V_2) {
+    if (File("${basePath}_$templateSyntax/$fileName").exists()) {
+      return "${basePath}_$templateSyntax/$fileName"
+    }
+    else if (File("$basePath/$fileName").exists() || templateSyntax == Angular2TemplateSyntax.V_2) {
       return "$basePath/$fileName"
     }
     else {

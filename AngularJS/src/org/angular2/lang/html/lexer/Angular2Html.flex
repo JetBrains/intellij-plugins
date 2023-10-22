@@ -20,6 +20,10 @@ import org.jetbrains.annotations.Nullable;
   private int expansionFormNestingLevel;
   private int interpolationStartPos;
 
+  private String blockName;
+  private int parameterIndex;
+  private int blockParenLevel;
+
   public _Angular2HtmlLexer(boolean tokenizeExpansionForms,
                             boolean enableBlockSyntax,
                             @Nullable Pair<String, String> interpolationConfig) {
@@ -124,6 +128,13 @@ import org.jetbrains.annotations.Nullable;
 %state UNTERMINATED_INTERPOLATION_DQ
 %state INTERPOLATION_END_SQ
 %state INTERPOLATION_END_DQ
+
+%state BLOCK_NAME
+%state BLOCK_PARAMETERS_START
+%state BLOCK_PARAMETER
+%state BLOCK_PARAMETER_END
+%state BLOCK_PARAMETERS_END
+%state BLOCK_START
 
 ALPHA=[:letter:]
 DIGIT=[0-9]
@@ -337,6 +348,78 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
   return XmlTokenType.XML_BAD_CHARACTER;
 }
 <UNTERMINATED_INTERPOLATION> ([^<&\$# \n\r\t\f]|(\\#)) { return XmlTokenType.XML_DATA_CHARACTERS; }
+
+<YYINITIAL> "@"[a-zA-Z0-9_] {
+  if (enableBlockSyntax) {
+    yypushback(2);
+    yybegin(BLOCK_NAME);
+  } else {
+    return XmlTokenType.XML_DATA_CHARACTERS;
+  }
+}
+<BLOCK_NAME> "@"[a-zA-Z0-9_\t ]+[a-zA-Z0-9_] {
+  blockName = yytext().toString().substring(1);
+  yybegin(BLOCK_PARAMETERS_START);
+  return Angular2HtmlTokenTypes.BLOCK_NAME;
+}
+<BLOCK_PARAMETERS_START, BLOCK_START> {WHITE_SPACE_CHARS} { return XmlTokenType.XML_WHITE_SPACE; }
+
+<BLOCK_PARAMETERS_START> "(" {
+    yybegin(BLOCK_PARAMETER);
+    blockParenLevel = 1;
+    parameterIndex = 0;
+    return Angular2HtmlTokenTypes.BLOCK_PARAMETERS_START;
+}
+<BLOCK_PARAMETERS_START, BLOCK_START> {
+  "{" {
+    yybegin(YYINITIAL);
+    return Angular2HtmlTokenTypes.BLOCK_START;
+  }
+  [^] {
+    yypushback(1);
+    yybegin(YYINITIAL);
+  }
+}
+<BLOCK_PARAMETER> {
+  ")" {
+     if (--blockParenLevel <= 0) {
+       yypushback(1);
+       yybegin(BLOCK_PARAMETERS_END);
+       return Angular2EmbeddedExprTokenType.createBlockParameter(blockName, parameterIndex);
+     }
+  }
+  "(" {
+     blockParenLevel++;
+  }
+  ";" {
+    yypushback(1);
+    blockParenLevel = 1;
+    yybegin(BLOCK_PARAMETER_END);
+    return Angular2EmbeddedExprTokenType.createBlockParameter(blockName, parameterIndex++);
+  }
+  "\\"[^]
+  | "'"([^\\\']|\\[^])*("'"|\\)?
+  | "\""([^\\\"]|\\[^])*("\""|\\)?
+  | "`"([^\\`]|\\[^])*("`"|\\)? {}
+  [^] {}
+  <<EOF>> {
+    yybegin(YYINITIAL);
+    return Angular2EmbeddedExprTokenType.createBlockParameter(blockName, parameterIndex);
+  }
+}
+<BLOCK_PARAMETER_END> {
+  ";" {
+    yybegin(BLOCK_PARAMETER);
+    return Angular2HtmlTokenTypes.BLOCK_SEMICOLON;
+  }
+}
+<BLOCK_PARAMETERS_END> {
+  ")" {
+        yybegin(BLOCK_START);
+        return Angular2HtmlTokenTypes.BLOCK_PARAMETERS_END;
+    }
+}
+
 <YYINITIAL> ([^<&\$# \n\r\t\f]|(\\#)) {
   if (tryConsumeInterpolationBoundary(interpolationStart)) {
     if (inBuffer(interpolationEnd, 1)) {
@@ -356,6 +439,8 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
       if (expansionFormNestingLevel > 0) {
         yybegin(EXPANSION_FORM_CASE_END);
         return Angular2HtmlTokenTypes.EXPANSION_FORM_CASE_END;
+      } else if (enableBlockSyntax) {
+        return Angular2HtmlTokenTypes.BLOCK_END;
       }
   }
   return XmlTokenType.XML_DATA_CHARACTERS;

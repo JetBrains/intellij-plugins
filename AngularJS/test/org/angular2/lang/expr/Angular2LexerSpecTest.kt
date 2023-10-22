@@ -260,7 +260,7 @@ class Angular2LexerSpecTest {
 
   companion object {
     private fun lex(text: String): Array<Token> {
-      return Token.create(Angular2Lexer(), text)
+      return Token.create(Angular2Lexer(Angular2Lexer.RegularBinding), text)
     }
 
     private fun expectToken(token: Token, index: Int) {

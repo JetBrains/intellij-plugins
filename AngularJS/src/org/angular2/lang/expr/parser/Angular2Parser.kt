@@ -513,5 +513,9 @@ class Angular2Parser private constructor(builder: PsiBuilder,
         key.done(Angular2ElementTypes.TEMPLATE_BINDING_KEY)
       }
     }
+
+    fun parseBlockParameter(builder: PsiBuilder, root: IElementType, name: String, index: Int) {
+      TODO("Not yet implemented")
+    }
   }
 }

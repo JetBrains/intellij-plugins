@@ -2,7 +2,7 @@
   "$schema": "../../../../community/platform/webSymbols/web-types-gen/resources/web-types.json",
   "name": "@angular/core",
   "framework": "angular",
-  "version": "17.0.0",
+  "version": "17.0.0-rc.0",
   "description-markup": "markdown",
   "default-icon": "icons/angular2.svg",
   "framework-config": {
@@ -13,8 +13,8 @@
     }
   },
   "contexts-config": {
-    "angular17": {
-      "kind": "angular-template-version",
+    "V_17": {
+      "kind": "angular-template-syntax",
       "enable-when": {
         "node-packages": [
           "@angular/core"

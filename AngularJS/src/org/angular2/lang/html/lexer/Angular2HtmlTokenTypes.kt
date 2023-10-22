@@ -26,6 +26,24 @@ interface Angular2HtmlTokenTypes : XmlTokenType {
     @JvmField
     val EXPANSION_FORM_CASE_END = Angular2HtmlTokenType("NG:EXPANSION_FORM_CASE_END")
 
+    @JvmField
+    val BLOCK_NAME = Angular2HtmlTokenType("NG:BLOCK_NAME")
+
+    @JvmField
+    val BLOCK_START = Angular2HtmlTokenType("NG:BLOCK_START")
+
+    @JvmField
+    val BLOCK_END = Angular2HtmlTokenType("NG:BLOCK_END")
+
+    @JvmField
+    val BLOCK_PARAMETERS_START = Angular2HtmlTokenType("NG:BLOCK_PARAMETERS_START")
+
+    @JvmField
+    val BLOCK_SEMICOLON = Angular2HtmlTokenType("NG:BLOCK_SEMICOLON")
+
+    @JvmField
+    val BLOCK_PARAMETERS_END = Angular2HtmlTokenType("NG:BLOCK_PARAMETERS_END")
+
     // Highlight only tokens
     @JvmField
     val EXPRESSION_WHITE_SPACE: IElementType = IElementType("NG:EXPRESSION_WHITE_SPACE", Angular2Language.INSTANCE)

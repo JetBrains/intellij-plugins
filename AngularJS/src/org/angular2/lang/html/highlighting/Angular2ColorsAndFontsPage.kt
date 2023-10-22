@@ -14,8 +14,8 @@ import com.intellij.psi.codeStyle.DisplayPrioritySortable
 import icons.AngularJSIcons
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.highlighting.Angular2HighlighterColors
+import org.angular2.lang.html.Angular17HtmlLanguage
 import org.angular2.lang.html.Angular2HtmlFileType
-import org.angular2.lang.html.Angular2HtmlLanguage
 import javax.swing.Icon
 
 class Angular2ColorsAndFontsPage : RainbowColorSettingsPage, DisplayPrioritySortable {
@@ -74,7 +74,7 @@ class Angular2ColorsAndFontsPage : RainbowColorSettingsPage, DisplayPrioritySort
   }
 
   override fun getLanguage(): Language =
-    Angular2HtmlLanguage.INSTANCE
+    Angular17HtmlLanguage.INSTANCE
 
   companion object {
     private val ATTRS: Array<AttributesDescriptor> = arrayOf(

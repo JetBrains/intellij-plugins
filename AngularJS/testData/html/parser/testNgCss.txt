@@ -11,7 +11,7 @@ HtmlFile:test.html
         XmlToken:XML_EQ('=')
         PsiElement(XML_ATTRIBUTE_VALUE)
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-          ASTWrapperPsiElement(NG:TEMPLATE_BINDINGS_EXPR)
+          ASTWrapperPsiElement(NG:TEMPLATE_BINDINGS_EXPR (ngFor))
             Angular2TemplateBindings
               Angular2TemplateBinding <ngFor, keyIsVar=false, null>
                 <empty list>

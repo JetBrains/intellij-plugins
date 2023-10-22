@@ -33,7 +33,7 @@ class Angular2LexerTest : LexerTestCase() {
   }
 
   override fun createLexer(): Lexer {
-    return Angular2Lexer()
+    return Angular2Lexer(Angular2Lexer.RegularBinding)
   }
 
   override fun getDirPath(): String {

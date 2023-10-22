@@ -11,6 +11,17 @@ import static com.intellij.psi.TokenType.WHITE_SPACE;
 
 %{
   private char quote;
+
+  private String blockName;
+  private int blockParamIndex;
+
+  public _Angular2Lexer(Angular2Lexer.Config config) {
+    this((java.io.Reader)null);
+    if (config instanceof Angular2Lexer.BlockParameter blockParameter) {
+      blockName = blockParameter.getName();
+      blockParamIndex = blockParameter.getIndex();
+    }
+  }
 %}
 
 %unicode

@@ -18,7 +18,7 @@ import org.angular2.lang.html.parser.Angular2HtmlVarAttrTokenType
 
 class Angular2ParserDefinition : JavascriptParserDefinition() {
   override fun createLexer(project: Project): Lexer {
-    return Angular2Lexer()
+    return Angular2Lexer(Angular2Lexer.RegularBinding)
   }
 
   override fun createParser(project: Project): PsiParser {
