@@ -7,10 +7,15 @@ import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
-import com.intellij.psi.util.parentOfType
+import com.intellij.lang.javascript.psi.types.JSAliasTypeImpl
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.util.parentOfTypes
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.webSymbols.findOffsetBySignature
 import junit.framework.TestCase
+
+private const val PREFIX_INTERPOLATION = "{{ "
 
 class VueTypeResolveTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = getVueTestDataPath() + "/typeResolve/"
@@ -90,6 +95,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
       "boolOptional" to "boolean | undefined",
       "boolDefault" to "boolean",
       "boolNotRequired" to "boolean",
+      prefix = PREFIX_INTERPOLATION,
     )
   }
 
@@ -98,7 +104,10 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
     myFixture.configureByFile("propsWithDefaultScriptSetup-ts.vue")
 
-    doTest("msg" to "string")
+    doTest(
+      "msg" to "string",
+      prefix = PREFIX_INTERPOLATION,
+    )
   }
 
   fun testModelPropsTS() {
@@ -111,6 +120,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
       "numDefault" to "123 | 234",
       "nameRequired" to "string",
       "nameRequiredGeneric" to "string",
+      prefix = PREFIX_INTERPOLATION,
     )
   }
 
@@ -121,6 +131,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
 
     doTest(
       "example" to "RealType",
+      prefix = PREFIX_INTERPOLATION,
     )
   }
 
@@ -132,6 +143,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
       "row.u<caret>id" to "boolean",
       "bag" to "{row: {uid: boolean}}",
       "bag.row.u<caret>id" to "boolean",
+      prefix = PREFIX_INTERPOLATION,
     )
   }
 
@@ -150,6 +162,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
       "scriptSetupRef" to "string",
       "globalProvide" to "number",
       "globalProvideRef" to "number",
+      prefix = PREFIX_INTERPOLATION,
     )
   }
 
@@ -161,6 +174,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
 
     doTest(
       "message" to "\"hello\" | undefined",
+      prefix = PREFIX_INTERPOLATION,
     )
   }
 
@@ -172,6 +186,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
 
     doTest(
       "message" to "\"hello\"",
+      prefix = PREFIX_INTERPOLATION,
     )
   }
 
@@ -183,6 +198,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     doTest(
       "myLocalInject" to "{name: string}",
       "myLocalInject.n<caret>ame" to "string",
+      prefix = PREFIX_INTERPOLATION,
     )
   }
 
@@ -194,6 +210,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     doTest(
       "myLocalInject" to "{name: string}",
       "myLocalInject.n<caret>ame" to "\"bob\"",
+      prefix = PREFIX_INTERPOLATION,
     )
   }
 
@@ -205,6 +222,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     doTest(
       "myLocalInject" to "{name: string}",
       "myLocalInject.n<caret>ame" to "string",
+      prefix = PREFIX_INTERPOLATION,
     )
   }
 
@@ -217,6 +235,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
       "myLocalInject" to "{name?: string, lang?: Lang}",
       "myLocalInject.n<caret>ame" to "string",
       "myLocalInject.la<caret>ng" to "Lang",
+      prefix = PREFIX_INTERPOLATION,
     )
   }
 
@@ -228,6 +247,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     doTest(
       "stringInject" to "string",
       "keyInject" to "boolean",
+      prefix = PREFIX_INTERPOLATION,
     )
   }
 
@@ -239,6 +259,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     doTest(
       "stringInject" to "string",
       "keyInject" to "boolean",
+      prefix = PREFIX_INTERPOLATION,
     )
   }
 
@@ -262,6 +283,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
       "barProp.user<caret>Name" to "string",
       "barProp1" to "{userName: string, password: string}",
       "barProp1.passwo<caret>rd" to "string",
+      prefix = PREFIX_INTERPOLATION,
     )
   }
 
@@ -272,6 +294,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     doTest(
       "barProp" to "{userName: string, password: string}",
       "barProp.user<caret>Name" to "string",
+      prefix = PREFIX_INTERPOLATION,
     )
   }
 
@@ -293,38 +316,59 @@ class VueTypeResolveTest : BasePlatformTestCase() {
       "msg" to "string",
       "footerProps" to "{year?: number}",
       "footerProps.ye<caret>ar" to "number | undefined",
+      prefix = PREFIX_INTERPOLATION,
+    )
+  }
+
+  fun testDefineExpose() {
+    TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
+    myFixture.copyDirectoryToProject(getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+
+    doTest(
+      "type HelloPro<caret>ps" to "{readonly msg: string}",
+      "type HelloProps<caret>PropRef" to "string",
+      "type ShouldBeUn<caret>Refed" to "number",
+      "const resu<caret>lt1" to "number | undefined",
+      "const resu<caret>lt2" to "boolean | undefined",
     )
   }
 
   private fun testVFor(vararg testCases: Triple<String, String, String>, iterations: Int = 3) {
     for (test in testCases) {
       for (i in 1..iterations) {
-        val element = findReferenceBySignature("{{ ${test.first}<caret>$i")
+        val element = findElementBySignature("{{ ${test.first}<caret>$i")
         TestCase.assertNotNull("${test.first}$i", element)
         val type = test.second.split(',').let { if (i == 3) it.last() else it.first() }
         assertEquals("${test.first}$i", type, getElementTypeText(element))
       }
 
-      val index = findReferenceBySignature("${test.first}<caret>2Ind }}")
+      val index = findElementBySignature("${test.first}<caret>2Ind }}")
       TestCase.assertNotNull("${test.first}2Ind", index)
       assertEquals("${test.first}2Ind", test.third, getElementTypeText(index))
     }
   }
 
-  private fun doTest(vararg testCases: Pair<String, String>, prefix: String = "{{ ") {
+  private fun doTest(vararg testCases: Pair<String, String>, prefix: String = "") {
     for (test in testCases) {
       val caretMarker = if (test.first.contains("<caret>")) "" else "<caret>"
-      val element = findReferenceBySignature("$prefix$caretMarker${test.first}")
+      val element = findElementBySignature("$prefix$caretMarker${test.first}")
       TestCase.assertNotNull(test.first, element)
       val expected = test.second
       assertEquals(test.first, expected, getElementTypeText(element))
     }
   }
 
-  private fun getElementTypeText(element: JSReferenceExpression?) =
-    JSResolveUtil.getElementJSType(element)?.getTypeText(JSType.TypeTextFormat.PRESENTABLE) ?: "any"
+  private fun getElementTypeText(element: PsiElement?) =
+    JSResolveUtil.getElementJSType(element)?.substitute()
+      ?.let { if (it is JSAliasTypeImpl) it.originalType.substitute() else it }
+      ?.getTypeText(JSType.TypeTextFormat.PRESENTABLE) ?: "any"
 
-  private fun findReferenceBySignature(signature: String) = InjectedLanguageManager.getInstance(project)
-    .findInjectedElementAt(myFixture.file, myFixture.file.findOffsetBySignature(signature))
-    ?.parentOfType<JSReferenceExpression>()
+  private fun findElementBySignature(signature: String): PsiElement? {
+    val offset = myFixture.file.findOffsetBySignature(signature)
+    val element =
+      InjectedLanguageManager.getInstance(project).findInjectedElementAt(myFixture.file, offset) ?: myFixture.file.findElementAt(offset)
+    return element?.parentOfTypes(JSReferenceExpression::class, PsiNamedElement::class)
+  }
 }

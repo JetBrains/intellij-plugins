@@ -2296,6 +2296,10 @@ export default {
     assertDoesntContain(myFixture.lookupElementStrings!!, "msg", "pageTitle", "page-title")
   }
 
+  fun testDefineExpose() {
+    doLookupTest(VueTestModule.VUE_3_3_4, dir = true)
+  }
+
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()
     assertDoesntContain(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")

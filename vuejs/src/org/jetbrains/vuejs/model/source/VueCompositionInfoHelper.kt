@@ -4,8 +4,11 @@ package org.jetbrains.vuejs.model.source
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
+import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
 import com.intellij.psi.PsiElement
+import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
+import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.types.VueUnwrapRefType
 
@@ -65,7 +68,14 @@ object VueCompositionInfoHelper {
         return VueComposedMethod(name, signature.memberSource.singleElement, signature.jsType)
       }
     }
-    val type = signatureType?.let { VueUnwrapRefType(it, psiContext) }
+
+    val typeSource =
+      psiContext.asSafely<JSCallExpression>()
+        ?.takeIf { VueFrameworkHandler.getFunctionNameFromVueIndex(it) == DEFINE_EXPOSE_FUN }
+        ?.stubSafeCallArguments?.getOrNull(0)
+        ?.asSafely<JSObjectLiteralExpression>()
+      ?: psiContext
+    val type = signatureType?.let { VueUnwrapRefType(it, typeSource) }
     val source = signature.memberSource.singleElement
     val element = source?.let { VueImplicitElement(signature.memberName, type, it, JSImplicitElement.Type.Property, true) }
     return if (isReadOnly) {
