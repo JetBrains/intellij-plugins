@@ -8,10 +8,10 @@ import com.intellij.openapi.util.Pair
 import com.intellij.openapi.vfs.VirtualFile
 import org.angular2.lang.html.Angular2TemplateSyntax
 
-class Angular2HtmlHighlighterFactory : SyntaxHighlighterFactory() {
+class Angular17HtmlHighlighterFactory : SyntaxHighlighterFactory() {
   override fun getSyntaxHighlighter(project: Project?, virtualFile: VirtualFile?): SyntaxHighlighter {
     //TODO take interpolation setup into account
     val interpolationConfig: Pair<String, String>? = null
-    return Angular2HtmlFileHighlighter(Angular2TemplateSyntax.V_2, interpolationConfig)
+    return Angular2HtmlFileHighlighter(Angular2TemplateSyntax.V_17, interpolationConfig)
   }
 }

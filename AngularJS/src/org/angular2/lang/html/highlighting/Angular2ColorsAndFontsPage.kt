@@ -14,8 +14,8 @@ import com.intellij.psi.codeStyle.DisplayPrioritySortable
 import icons.AngularJSIcons
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.highlighting.Angular2HighlighterColors
+import org.angular2.lang.html.Angular17HtmlFileType
 import org.angular2.lang.html.Angular17HtmlLanguage
-import org.angular2.lang.html.Angular2HtmlFileType
 import javax.swing.Icon
 
 class Angular2ColorsAndFontsPage : RainbowColorSettingsPage, DisplayPrioritySortable {
@@ -36,7 +36,7 @@ class Angular2ColorsAndFontsPage : RainbowColorSettingsPage, DisplayPrioritySort
   }
 
   override fun getHighlighter(): SyntaxHighlighter {
-    return SyntaxHighlighterFactory.getSyntaxHighlighter(Angular2HtmlFileType.INSTANCE, null, null)!!
+    return SyntaxHighlighterFactory.getSyntaxHighlighter(Angular17HtmlFileType.INSTANCE, null, null)!!
   }
 
   override fun getDemoText(): String {
@@ -47,6 +47,12 @@ class Angular2ColorsAndFontsPage : RainbowColorSettingsPage, DisplayPrioritySort
           (click)="<instance_method>onSelect</instance_method>(<ng-variable>hero</ng-variable>)">
         {{<ng-variable>hero</ng-variable>.<instance_variable>name</instance_variable>}}
       </li>
+      
+      @for (<ng-variable>hero</ng-variable> of <instance_variable>heroes</instance_variable>; track <instance_variable>heroes</instance_variable>.<instance_variable>name</instance_variable>) {
+        {{<ng-variable>hero</ng-variable>.<instance_variable>name</instance_variable>}}
+      } @empty {
+        <p>No heroes!</p>
+      }
       
       <div *ngIf="<ng-signal>heroSig</ng-signal>() as <ng-variable>hero</ng-variable>">{{<ng-variable>hero</ng-variable>.<instance_variable>name</instance_variable>}}</div>
 
@@ -99,7 +105,14 @@ class Angular2ColorsAndFontsPage : RainbowColorSettingsPage, DisplayPrioritySort
       AttributesDescriptor(Angular2Bundle.message("angular.colors.expansion-form-delimiter"),
                            Angular2HtmlHighlighterColors.NG_EXPANSION_FORM_DELIMITER),
       AttributesDescriptor(Angular2Bundle.message("angular.colors.template-expression"),
-                           Angular2HtmlHighlighterColors.NG_EXPRESSION))
+                           Angular2HtmlHighlighterColors.NG_EXPRESSION),
+      AttributesDescriptor(Angular2Bundle.message("angular.colors.block-name"),
+                           Angular2HtmlHighlighterColors.NG_BLOCK_NAME),
+      AttributesDescriptor(Angular2Bundle.message("angular.colors.block-braces"),
+                           Angular2HtmlHighlighterColors.NG_BLOCK_BRACES),
+      AttributesDescriptor(Angular2Bundle.message("angular.colors.block-parens"),
+                           Angular2HtmlHighlighterColors.NG_BLOCK_PARENS),
+    )
 
     private val tags = mapOf(
       "ng-signal" to Angular2HighlighterColors.NG_SIGNAL,

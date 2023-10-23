@@ -45,5 +45,18 @@ interface Angular2HtmlHighlighterColors {
     @JvmField
     val NG_EXPANSION_FORM_COMMA = TextAttributesKey.createTextAttributesKey(
       "NG.EXPANSION_FORM_COMMA", DefaultLanguageHighlighterColors.COMMA)
+
+    @JvmField
+    val NG_BLOCK_NAME = TextAttributesKey.createTextAttributesKey(
+      "NG.BLOCK_NAME", DefaultLanguageHighlighterColors.METADATA)
+
+    @JvmField
+    val NG_BLOCK_BRACES = TextAttributesKey.createTextAttributesKey(
+      "NG.BLOCK_BRACES", DefaultLanguageHighlighterColors.SEMICOLON)
+
+    @JvmField
+    val NG_BLOCK_PARENS = TextAttributesKey.createTextAttributesKey(
+      "NG.BLOCK_PARENS", DefaultLanguageHighlighterColors.SEMICOLON)
+
   }
 }
