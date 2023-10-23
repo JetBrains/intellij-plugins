@@ -38,6 +38,6 @@ DTSI file
             PsiWhiteSpace(' ')
             PsiElement(name)('name')
           PsiElement(;)(';')
-      PsiWhiteSpace('\n')
+        PsiWhiteSpace('\n')
       PsiElement(})('}')
     PsiElement(;)(';')

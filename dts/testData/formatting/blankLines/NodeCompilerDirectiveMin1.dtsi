@@ -1,0 +1,17 @@
+node {
+    /delete-property/ prop;
+    node { };
+};
+
+node {
+    /delete-property/ prop;
+
+    node { };
+};
+
+node {
+    /delete-property/ prop;
+
+
+    node { };
+};

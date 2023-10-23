@@ -3,7 +3,6 @@ package com.intellij.dts.formatting
 import com.intellij.dts.lang.DtsLanguage
 import com.intellij.dts.lang.DtsTokenSets
 import com.intellij.dts.lang.psi.DtsEntry
-import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.psi.DtsStatement
 import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.dts.settings.DtsCodeStyleSettings
@@ -11,6 +10,7 @@ import com.intellij.formatting.ASTBlock
 import com.intellij.formatting.Block
 import com.intellij.formatting.Spacing
 import com.intellij.formatting.SpacingBuilder
+import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.elementType
@@ -18,6 +18,14 @@ import kotlin.math.max
 import kotlin.math.min
 
 class DtsSpacingBuilder(settings: CodeStyleSettings) {
+    private data class BlankLinesRang(val lineFeeds: Int, val blankLines: Int) {
+        companion object {
+            fun fromSettings(minBlankLines: Int, maxBlankLines: Int) = BlankLinesRang(minBlankLines + 1, maxBlankLines)
+        }
+
+        fun getSpacing(): Spacing = Spacing.createSpacing(0, Int.MAX_VALUE, lineFeeds, true, blankLines)
+    }
+
     private val common = settings.getCommonSettings(DtsLanguage)
     private val custom = settings.getCustomSettings(DtsCodeStyleSettings::class.java)
 
@@ -76,6 +84,7 @@ class DtsSpacingBuilder(settings: CodeStyleSettings) {
             .around(logicalOperators).spaceIf(common.SPACE_AROUND_LOGICAL_OPERATORS)
             .between(DtsTypes.HANDLE, DtsTypes.NAME).none()
             .between(DtsTypes.HANDLE, DtsTypes.LBRACE).none()
+            .between(DtsTypes.NODE_CONTENT, DtsTypes.RBRACE).lineBreakInCode()
             .betweenInside(DtsTypes.BYTE, DtsTypes.BYTE, DtsTypes.BYTE_ARRAY).spaceIf(custom.SPACE_BETWEEN_BYTES)
             .betweenInside(byteArrayValues, byteArrayValues, DtsTypes.BYTE_ARRAY).spaces(1)
             .betweenInside(cellArrayValues, cellArrayValues, DtsTypes.CELL_ARRAY).spaces(1)
@@ -96,55 +105,47 @@ class DtsSpacingBuilder(settings: CodeStyleSettings) {
             .before(DtsTypes.SEMICOLON).lineBreakInCode()
     }
 
-    private fun getStatementLineFeeds(statement: DtsStatement): Pair<Int, Int>? {
-        return when (statement) {
-            is DtsStatement.CompilerDirective -> null
-            is DtsStatement.Node -> return Pair(custom.MIN_BLANK_LINES_AROUND_NODE, custom.MAX_BLANK_LINES_AROUND_NODE)
-            is DtsStatement.Property -> return Pair(custom.MIN_BLANK_LINES_AROUND_PROPERTY, custom.MAX_BLANK_LINES_AROUND_PROPERTY)
+    private fun getEntryLinesRange(element: PsiElement): BlankLinesRang? {
+        if (element !is DtsEntry) return null
+
+        return when (element.dtsStatement) {
+            is DtsStatement.CompilerDirective -> BlankLinesRang(0, common.KEEP_BLANK_LINES_IN_CODE)
+            is DtsStatement.Node -> BlankLinesRang.fromSettings(
+                custom.MIN_BLANK_LINES_AROUND_NODE,
+                custom.MAX_BLANK_LINES_AROUND_NODE,
+            )
+            is DtsStatement.Property -> BlankLinesRang.fromSettings(
+                custom.MIN_BLANK_LINES_AROUND_PROPERTY,
+                custom.MAX_BLANK_LINES_AROUND_PROPERTY,
+            )
         }
     }
 
-    private fun getEntrySpacing(entry1: DtsEntry, entry2: DtsEntry): Spacing {
-        val statement1 = entry1.dtsStatement
-        val statement2 = entry2.dtsStatement
-
-        var minBlankLines = 0
-        var maxBlankLines = common.KEEP_BLANK_LINES_IN_CODE
-
-        val update = { it: Pair<Int, Int> ->
-            minBlankLines = max(minBlankLines, it.first)
-            maxBlankLines = max(minBlankLines, min(maxBlankLines, it.second))
+    private fun getBlankLinesRange(child1: PsiElement, child2: PsiElement): BlankLinesRang? {
+        if (child1.elementType in DtsTokenSets.comments || child2.elementType in DtsTokenSets.comments) {
+            return BlankLinesRang(0, common.KEEP_BLANK_LINES_IN_CODE)
         }
 
-        getStatementLineFeeds(statement1)?.let(update)
-        getStatementLineFeeds(statement2)?.let(update)
+        val range1 = getEntryLinesRange(child1)
+        val range2 = getEntryLinesRange(child2)
 
-        return spacing(minLineFeeds = minBlankLines + 1, maxBlankLines = maxBlankLines)
+        if (range1 == null) return range2
+        if (range2 == null) return range1
+
+        return BlankLinesRang(
+            max(range1.lineFeeds, range2.lineFeeds),
+            min(range1.blankLines, range2.blankLines),
+        )
     }
 
     fun getSpacing(parent: Block?, child1: Block?, child2: Block?): Spacing? {
         val child1Element = ASTBlock.getPsiElement(child1) ?: return null
         val child2Element = ASTBlock.getPsiElement(child2) ?: return null
-        val parentElement = ASTBlock.getPsiElement(parent) ?: return null
 
-        if (child1Element is DtsEntry && child2Element is DtsEntry) {
-            return getEntrySpacing(child1Element, child2Element)
-        }
+        val range = getBlankLinesRange(child1Element, child2Element)
+        if (range != null) return range.getSpacing()
 
-        val type1 = child1Element.elementType
-        val type2 = child2Element.elementType
-
-        return when {
-            type1 in DtsTokenSets.comments || type2 in DtsTokenSets.comments -> null
-            type1 in DtsTokenSets.compilerDirectives && type2 == DtsTypes.SEMICOLON -> spacing()
-            type1 != DtsTypes.LBRACE && type2 == DtsTypes.RBRACE && parentElement is DtsNode -> spacing(minLineFeeds = 1)
-            else -> builder.getSpacing(parent, child1, child2)
-        }
-    }
-
-    private fun spacing(minLineFeeds: Int = 0, maxBlankLines: Int? = null): Spacing {
-        val keepBlankLines = maxBlankLines ?: common.KEEP_BLANK_LINES_IN_CODE
-
-        return Spacing.createSpacing(0, 0, minLineFeeds, common.KEEP_LINE_BREAKS, keepBlankLines)
+        return builder.getSpacing(parent, child1, child2)
     }
 }
+

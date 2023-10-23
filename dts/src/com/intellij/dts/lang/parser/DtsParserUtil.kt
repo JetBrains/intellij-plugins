@@ -3,16 +3,40 @@ package com.intellij.dts.lang.parser
 import com.intellij.dts.DtsBundle
 import com.intellij.dts.lang.DtsTokenSets
 import com.intellij.dts.lang.psi.DtsTypes
+import com.intellij.dts.pp.lang.parser.PpBuildAdapter
+import com.intellij.dts.pp.lang.parser.PpParserUtil
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.PsiBuilder.Marker
 import com.intellij.lang.PsiBuilderUtil
-import com.intellij.dts.pp.lang.parser.PpBuildAdapter
-import com.intellij.dts.pp.lang.parser.PpParserUtil
+import com.intellij.lang.WhitespacesAndCommentsBinder
 import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 
 object DtsParserUtil : DtsJavaParserUtil() {
+    @JvmField
+    val trailingCommentsBinder = object : WhitespacesAndCommentsBinder {
+        val validTokens = TokenSet.create(
+            TokenType.WHITE_SPACE,
+            *DtsTokenSets.comments.types,
+        )
+
+        override fun getEdgePosition(
+            tokens: List<IElementType>,
+            atStreamEdge: Boolean,
+            getter: WhitespacesAndCommentsBinder.TokenTextGetter
+        ): Int {
+            var i = 0
+            while (i < tokens.size) {
+                if (tokens[i] !in validTokens || getter.get(i).contains('\n')) break
+                i++
+            }
+
+            return i
+        }
+
+    }
+
     private val invalidEntryEndTokens = TokenSet.create(
         DtsTypes.SEMICOLON,
         DtsTypes.RBRACE,

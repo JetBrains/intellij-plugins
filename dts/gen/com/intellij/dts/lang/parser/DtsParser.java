@@ -3,6 +3,7 @@ package com.intellij.dts.lang.parser;
 
 import static com.intellij.dts.lang.psi.DtsTypes.*;
 import static com.intellij.dts.lang.parser.DtsParserUtil.*;
+import static com.intellij.lang.WhitespacesBinders.*;
 
 @java.lang.SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
 public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang.LightPsiParser {
@@ -432,6 +433,7 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
     result_ = arg.parse(builder_, level_);
     pinned_ = result_; // pin = 1
     result_ = result_ && consumeToken(builder_, SEMICOLON);
+    register_hook_(builder_, RIGHT_BINDER, trailingCommentsBinder);
     exit_section_(builder_, level_, marker_, result_, pinned_, null);
     return result_ || pinned_;
   }
@@ -495,17 +497,39 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   /* ********************************************************** */
-  // entries+
+  // (!RBRACE entries)+
   public static boolean nodeContent(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "nodeContent")) return false;
     boolean result_;
     com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_, NODE_CONTENT, "<node content>");
-    result_ = entries(builder_, level_ + 1);
+    result_ = nodeContent_0(builder_, level_ + 1);
     while (result_) {
       int pos_ = current_position_(builder_);
-      if (!entries(builder_, level_ + 1)) break;
+      if (!nodeContent_0(builder_, level_ + 1)) break;
       if (!empty_element_parsed_guard_(builder_, "nodeContent", pos_)) break;
     }
+    register_hook_(builder_, RIGHT_BINDER, GREEDY_RIGHT_BINDER);
+    exit_section_(builder_, level_, marker_, result_, false, null);
+    return result_;
+  }
+
+  // !RBRACE entries
+  private static boolean nodeContent_0(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "nodeContent_0")) return false;
+    boolean result_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
+    result_ = nodeContent_0_0(builder_, level_ + 1);
+    result_ = result_ && entries(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // !RBRACE
+  private static boolean nodeContent_0_0(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "nodeContent_0_0")) return false;
+    boolean result_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NOT_);
+    result_ = !consumeToken(builder_, RBRACE);
     exit_section_(builder_, level_, marker_, result_, false, null);
     return result_;
   }
@@ -912,7 +936,7 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   /* ********************************************************** */
-  // LABEL* pHandle LBRACE (!RBRACE nodeContent)? RBRACE
+  // LABEL* pHandle LBRACE nodeContent? RBRACE
   public static boolean refNode(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "refNode")) return false;
     boolean result_, pinned_;
@@ -938,36 +962,15 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
     return true;
   }
 
-  // (!RBRACE nodeContent)?
+  // nodeContent?
   private static boolean refNode_3(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "refNode_3")) return false;
-    refNode_3_0(builder_, level_ + 1);
+    nodeContent(builder_, level_ + 1);
     return true;
   }
 
-  // !RBRACE nodeContent
-  private static boolean refNode_3_0(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "refNode_3_0")) return false;
-    boolean result_;
-    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
-    result_ = refNode_3_0_0(builder_, level_ + 1);
-    result_ = result_ && nodeContent(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // !RBRACE
-  private static boolean refNode_3_0_0(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "refNode_3_0_0")) return false;
-    boolean result_;
-    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NOT_);
-    result_ = !consumeToken(builder_, RBRACE);
-    exit_section_(builder_, level_, marker_, result_, false, null);
-    return result_;
-  }
-
   /* ********************************************************** */
-  // SLASH LBRACE (!RBRACE nodeContent)? RBRACE
+  // SLASH LBRACE nodeContent? RBRACE
   public static boolean rootNode(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "rootNode")) return false;
     boolean result_, pinned_;
@@ -980,32 +983,11 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
     return result_ || pinned_;
   }
 
-  // (!RBRACE nodeContent)?
+  // nodeContent?
   private static boolean rootNode_2(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "rootNode_2")) return false;
-    rootNode_2_0(builder_, level_ + 1);
+    nodeContent(builder_, level_ + 1);
     return true;
-  }
-
-  // !RBRACE nodeContent
-  private static boolean rootNode_2_0(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "rootNode_2_0")) return false;
-    boolean result_;
-    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
-    result_ = rootNode_2_0_0(builder_, level_ + 1);
-    result_ = result_ && nodeContent(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // !RBRACE
-  private static boolean rootNode_2_0_0(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "rootNode_2_0_0")) return false;
-    boolean result_;
-    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NOT_);
-    result_ = !consumeToken(builder_, RBRACE);
-    exit_section_(builder_, level_, marker_, result_, false, null);
-    return result_;
   }
 
   /* ********************************************************** */
@@ -1055,7 +1037,7 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   /* ********************************************************** */
-  // LABEL* OMIT_NODE? LABEL* NAME LBRACE (!RBRACE nodeContent)? RBRACE
+  // LABEL* OMIT_NODE? LABEL* NAME LBRACE nodeContent? RBRACE
   public static boolean subNode(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "subNode")) return false;
     boolean result_, pinned_;
@@ -1100,32 +1082,11 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
     return true;
   }
 
-  // (!RBRACE nodeContent)?
+  // nodeContent?
   private static boolean subNode_5(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "subNode_5")) return false;
-    subNode_5_0(builder_, level_ + 1);
+    nodeContent(builder_, level_ + 1);
     return true;
-  }
-
-  // !RBRACE nodeContent
-  private static boolean subNode_5_0(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "subNode_5_0")) return false;
-    boolean result_;
-    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
-    result_ = subNode_5_0_0(builder_, level_ + 1);
-    result_ = result_ && nodeContent(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // !RBRACE
-  private static boolean subNode_5_0_0(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "subNode_5_0_0")) return false;
-    boolean result_;
-    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NOT_);
-    result_ = !consumeToken(builder_, RBRACE);
-    exit_section_(builder_, level_, marker_, result_, false, null);
-    return result_;
   }
 
   /* ********************************************************** */

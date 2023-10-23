@@ -143,7 +143,7 @@ DTS file
             PsiElement({)('{')
             PsiElement(})('}')
           PsiElement(;)(';')
-      PsiWhiteSpace('\n')
+        PsiWhiteSpace('\n')
       PsiElement(})('}')
     PsiElement(;)(';')
   PsiWhiteSpace('\n\n')

@@ -32,6 +32,6 @@ DTS file
             PsiWhiteSpace(' ')
             PsiElement(name)('node@0')
           PsiElement(;)(';')
-      PsiWhiteSpace('\n')
+        PsiWhiteSpace('\n')
       PsiElement(})('}')
     PsiElement(;)(';')

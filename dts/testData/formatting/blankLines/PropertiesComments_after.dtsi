@@ -1,0 +1,17 @@
+node {
+    prop1 = ""; // comment
+
+    prop2 = ""; // comment
+};
+
+node {
+    prop1 = ""; // comment
+
+    prop2 = ""; // comment
+};
+
+node {
+    prop1 = ""; // comment
+
+    prop2 = ""; // comment
+};

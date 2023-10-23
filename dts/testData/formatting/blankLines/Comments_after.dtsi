@@ -1,0 +1,29 @@
+node {
+    // comment
+};
+
+node { // comment
+    prop = "";
+};
+
+node {
+    prop = "";
+}; // comment
+
+node {
+    // comment
+    prop = "";
+};
+
+node {
+    // comment
+
+    prop = "";
+};
+
+node {
+    // comment
+
+
+    prop = "";
+};
