@@ -1,0 +1,11 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    XmlToken:XML_DATA_CHARACTERS('@if')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('something')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('doesn't')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('work')

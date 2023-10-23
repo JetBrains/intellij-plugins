@@ -29,7 +29,7 @@ class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSyntax, bu
         XmlTokenType.XML_START_TAG_START -> {
           xmlText = terminateText(xmlText)
           parseTag()
-          flushOpenTags()
+          flushOpenItemsWhile { it is HtmlTagInfo }
         }
         XmlTokenType.XML_PI_START -> {
           xmlText = terminateText(xmlText)

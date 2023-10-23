@@ -1,0 +1,17 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    XmlToken:XML_DATA_CHARACTERS('@if')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('(')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS(')')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('this')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('is')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('not')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('finished')
