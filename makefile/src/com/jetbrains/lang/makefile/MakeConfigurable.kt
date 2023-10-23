@@ -50,5 +50,5 @@ class MakeConfigurable(project: Project?) : Configurable {
     cygwinField.isSelected = settings?.settings?.useCygwin ?: false
   }
 
-  override fun getHelpTopic(): String? = null
+  override fun getHelpTopic(): String = "settings.buildtools.make"
 }
