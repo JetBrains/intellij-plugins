@@ -818,6 +818,9 @@ ${'$'}duration = 1.4s
       // TODO fix the refactoring: below should be only 1 blank line!
       """
 
+    &.show
+        animation-play-state running
+
 
 @keyframes rotator
     0%
@@ -1001,6 +1004,15 @@ header {
         line-height: 70px;
         text-align: center;
         color: #fff;
+
+        a.t-btn {
+            position: absolute;
+            right: 10px;
+            top: 22px;
+            width: 30px;
+            height: 26px;
+            cursor: pointer;
+        }
 
         span, span:before, span:after {
             position: absolute;
