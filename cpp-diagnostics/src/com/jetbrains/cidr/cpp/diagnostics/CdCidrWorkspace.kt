@@ -3,7 +3,10 @@ package com.jetbrains.cidr.cpp.diagnostics
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace
+import com.jetbrains.cidr.cpp.toolchains.CPPEnvironment
+import com.jetbrains.cidr.lang.toolchains.CidrToolEnvironment
 import com.jetbrains.cidr.project.workspace.CidrWorkspaceManager
+import com.jetbrains.cidr.project.workspace.WorkspaceWithEnvironment
 
 /**
  * CidrWorkspace represents a buildsystem-specific data, and makes sure IntelliJ project model and OCWorkspace stays in sync with it
@@ -20,6 +23,8 @@ fun collectCidrWorkspaces(project: Project): String {
         log.put("Content root: ${workspace.contentRoot}")
         if (workspace is CMakeWorkspace) {
           describeCMakeWorkspace(workspace, log)
+        } else if (workspace is WorkspaceWithEnvironment) {
+          describeEnvironments(workspace.getEnvironment(), log)
         }
         // todo: describe other build systems
       }
@@ -48,6 +53,15 @@ fun describeCMakeWorkspace(workspace: CMakeWorkspace, log: CdIndenter) {
         log.put("buildOptions: ${profile.buildOptions}")
       }
     }
+  }
+}
+
+fun describeEnvironments(environments: List<CidrToolEnvironment>, log: CdIndenter) {
+  log.put("Toolchains:")
+  log.scope {
+    environments
+      .filterIsInstance<CPPEnvironment>()
+      .forEach { log.put(it.toolchain.name) }
   }
 }
 
