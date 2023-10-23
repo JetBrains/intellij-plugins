@@ -32,16 +32,17 @@ class PerforceWorkspaceComboBoxAction : ComboBoxAction(), DumbAware {
     val project = e.project
     val presentation = e.presentation
     if (project == null || !ToolbarSettings.getInstance().isAvailable ||
-        !PerforceManager.getInstance(project).isActive ||
-        !PerforceConnectionManager.getInstance(project).isInitialized) {
+        !PerforceManager.getInstance(project).isActive) {
       presentation.isEnabledAndVisible = false
       return
     }
 
     val perforceSettings = PerforceSettings.getSettings(e.project)
+    val allConnections = perforceSettings.allConnections
+
     val connection = PerforceToolbarWidgetHelper.getConnection(e, perforceSettings)
     val workspace = connection?.connectionKey?.client
-    val isNoConnections = perforceSettings.allConnections.isEmpty() || perforceSettings.allConnections.size == 1 && workspace.isNullOrEmpty()
+    val isNoConnections = allConnections.isEmpty() || allConnections.size == 1 && workspace.isNullOrEmpty()
 
     with (presentation) {
       isEnabledAndVisible = true

@@ -65,15 +65,17 @@ class PerforceToolbarWidgetAction : ExpandableComboAction() {
   override fun update(e: AnActionEvent) {
     val project = e.project
 
-    if (project == null || !PerforceManager.getInstance(project).isActive || !PerforceConnectionManager.getInstance(project).isInitialized) {
+    if (project == null || !PerforceManager.getInstance(project).isActive) {
       e.presentation.isEnabledAndVisible = false
       return
     }
 
     val perforceSettings = PerforceSettings.getSettings(project)
+    val allConnections = perforceSettings.allConnections
+
     val connection = PerforceToolbarWidgetHelper.getConnection(e, perforceSettings)
     val workspace = connection?.connectionKey?.client
-    val isNoConnections = perforceSettings.allConnections.isEmpty() || perforceSettings.allConnections.size == 1 && workspace.isNullOrEmpty()
+    val isNoConnections = allConnections.isEmpty() || allConnections.size == 1 && workspace.isNullOrEmpty()
 
     with (e.presentation) {
       description = PerforceToolbarWidgetHelper.getDescription(workspace, isNoConnections, perforceSettings.ENABLED)

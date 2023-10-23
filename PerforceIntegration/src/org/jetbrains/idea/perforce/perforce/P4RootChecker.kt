@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.annotations.SystemIndependent
+import org.jetbrains.idea.perforce.application.PerforceManager
 import org.jetbrains.idea.perforce.application.PerforceVcs
 import org.jetbrains.idea.perforce.perforce.connections.*
 
@@ -30,7 +31,7 @@ internal class P4RootChecker : VcsRootChecker() {
   override fun detectProjectMappings(project: Project,
                                      projectRoots: Collection<VirtualFile>,
                                      mappedDirs: Set<VirtualFile>): Collection<VirtualFile> {
-    return try {
+    val mappedRoots = try {
       val connectionManager = PerforceConnectionManager.getInstance(project)
       if (connectionManager.isSingletonConnectionUsed) {
         LOG.debug("detecting for singleton connection")
@@ -45,6 +46,10 @@ internal class P4RootChecker : VcsRootChecker() {
       LOG.warn(e)
       emptyList()
     }
+
+    if (PerforceManager.getInstance(project).isActive)
+      PerforceConnectionManager.getInstance(project).updateConnections()
+    return mappedRoots
   }
 
   private fun detectSingletonConnectionMappings(project: Project,
