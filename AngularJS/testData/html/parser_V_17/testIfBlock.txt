@@ -1,0 +1,95 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    PsiElement(NG:BLOCK)
+      PsiElement(NG:BLOCK_NAME)('@if')
+      PsiWhiteSpace(' ')
+      PsiElement(NG:BLOCK_PARAMETERS)
+        PsiElement(NG:BLOCK_PARAMETERS_START)('(')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (if:0))
+          PsiWhiteSpace(' ')
+          Angular2Binding
+            PsiElement(JS:IDENTIFIER)('user')
+            PsiElement(JS:DOT)('.')
+            PsiElement(JS:IDENTIFIER)('isHuman')
+          PsiWhiteSpace(' ')
+        PsiElement(NG:BLOCK_PARAMETERS_END)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(NG:BLOCK_START)('{')
+      PsiWhiteSpace('\n  ')
+      HtmlTag:human-profile
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('human-profile')
+        PsiWhiteSpace(' ')
+        Angular2HtmlPropertyBinding <data,PROPERTY>
+          XmlToken:XML_NAME('[data]')
+          XmlToken:XML_EQ('=')
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+            ASTWrapperPsiElement(NG:BINDING_EXPR)
+              Angular2Binding
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('user')
+            XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_EMPTY_ELEMENT_END('/>')
+      XmlText
+        PsiWhiteSpace('\n')
+      PsiElement(NG:BLOCK_END)('}')
+    PsiWhiteSpace(' ')
+    PsiElement(NG:BLOCK)
+      PsiElement(NG:BLOCK_NAME)('@else if')
+      PsiWhiteSpace(' \n')
+      PsiElement(NG:BLOCK_PARAMETERS)
+        PsiElement(NG:BLOCK_PARAMETERS_START)('(')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (else if:0))
+          Angular2Binding
+            PsiElement(JS:IDENTIFIER)('user')
+            PsiElement(JS:DOT)('.')
+            PsiElement(JS:IDENTIFIER)('isRobot')
+        PsiElement(NG:BLOCK_PARAMETERS_END)(')')
+      PsiWhiteSpace(' \n')
+      PsiElement(NG:BLOCK_START)('{')
+      XmlText
+        PsiWhiteSpace('\n    ')
+      HtmlTag:robot-profile
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('robot-profile')
+        PsiWhiteSpace(' ')
+        Angular2HtmlPropertyBinding <data,PROPERTY>
+          XmlToken:XML_NAME('[data]')
+          XmlToken:XML_EQ('=')
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+            ASTWrapperPsiElement(NG:BINDING_EXPR)
+              Angular2Binding
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('user')
+            XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_EMPTY_ELEMENT_END('/>')
+      XmlText
+        PsiWhiteSpace('\n')
+      PsiElement(NG:BLOCK_END)('}')
+    PsiWhiteSpace(' ')
+    PsiElement(NG:BLOCK)
+      PsiElement(NG:BLOCK_NAME)('@else')
+      PsiWhiteSpace(' ')
+      PsiElement(NG:BLOCK_START)('{')
+      XmlText
+        PsiWhiteSpace('\n  ')
+      HtmlTag:p
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('p')
+        XmlToken:XML_TAG_END('>')
+        XmlText
+          XmlToken:XML_DATA_CHARACTERS('The')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('profile')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('is')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('unknown!')
+          PsiWhiteSpace('\n')
+        PsiElement(NG:BLOCK_END)('}')

@@ -4,13 +4,18 @@ package org.angular2.lang.html
 import com.intellij.html.HtmlParsingTest
 import com.intellij.html.embedding.HtmlEmbeddedContentSupport.Companion.register
 import com.intellij.javascript.JSHtmlEmbeddedContentSupport
+import com.intellij.javascript.JSScriptContentProvider
 import com.intellij.lang.LanguageASTFactory
+import com.intellij.lang.LanguageHtmlScriptContentProvider
 import com.intellij.lang.css.CSSLanguage
 import com.intellij.lang.css.CSSParserDefinition
 import com.intellij.lang.html.HTMLParserDefinition
+import com.intellij.lang.javascript.JavaScriptSupportLoader
+import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.JavascriptParserDefinition
 import com.intellij.lang.javascript.dialects.ECMA6ParserDefinition
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
+import com.intellij.lang.typescript.TypeScriptContentProvider
 import com.intellij.lexer.EmbeddedTokenTypesProvider
 import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.util.TextRange
@@ -27,30 +32,45 @@ import com.intellij.psi.impl.DebugUtil
 import com.intellij.testFramework.UsefulTestCase
 import org.angular2.lang.expr.parser.Angular2ParserDefinition
 import org.angular2.lang.html.lexer.Angular2HtmlEmbeddedContentSupport
+import org.angular2.lang.html.parser.Angular17HtmlParserDefinition
 import org.angular2.lang.html.parser.Angular2HtmlParserDefinition
 import org.angularjs.AngularTestUtil
+import java.io.File
 
-class Angular2HtmlParsingTest : HtmlParsingTest("", "html",
-                                                Angular2HtmlParserDefinition(),
-                                                Angular2ParserDefinition(),
-                                                JavascriptParserDefinition(),
-                                                HTMLParserDefinition(),
-                                                CSSParserDefinition()) {
+open class Angular2HtmlParsingTest : HtmlParsingTest("", "html") {
+
+  protected open val templateSyntax: Angular2TemplateSyntax = Angular2TemplateSyntax.V_2
+
   override fun setUp() {
     super.setUp()
+
+    configureFromParserDefinition(
+      when (templateSyntax) {
+        Angular2TemplateSyntax.V_17 -> Angular17HtmlParserDefinition()
+        else -> Angular2HtmlParserDefinition()
+      }, "html")
+
     registerExtensions(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, EmbeddedTokenTypesProvider::class.java, listOf(
       CssEmbeddedTokenTypesProvider()))
+
     register(application, getTestRootDisposable(),
              CssHtmlEmbeddedContentSupport::class.java, JSHtmlEmbeddedContentSupport::class.java,
              Angular2HtmlEmbeddedContentSupport::class.java)
     addExplicitExtension(LanguageASTFactory.INSTANCE, CSSLanguage.INSTANCE, CssTreeElementFactory())
+    addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, JavascriptLanguage.INSTANCE, JSScriptContentProvider())
+
     registerExtensionPoint(CssElementDescriptorProvider.EP_NAME, CssElementDescriptorProvider::class.java)
     registerExtension(CssElementDescriptorProvider.EP_NAME, CssElementDescriptorProviderImpl())
     application.registerService(
       CssElementDescriptorFactory2::class.java,
       CssElementDescriptorFactory2("css-parsing-tests.xml"))
     assert(JSLanguageLevel.DEFAULT == JSLanguageLevel.ES6)
-    registerParserDefinition(ECMA6ParserDefinition())
+    sequenceOf(Angular2ParserDefinition(),
+               Angular2HtmlParserDefinition(),
+               JavascriptParserDefinition(),
+               HTMLParserDefinition(),
+               CSSParserDefinition(),
+               ECMA6ParserDefinition()).forEach(::registerParserDefinition)
   }
 
   override fun checkResult(targetDataName: String, file: PsiFile) {
@@ -60,6 +80,22 @@ class Angular2HtmlParsingTest : HtmlParsingTest("", "html",
 
   override fun getTestDataPath(): String {
     return AngularTestUtil.getBaseTestDataPath() + "html/parser"
+  }
+
+  override fun checkResult(fullDataPath: String, targetDataName: String, file: PsiFile) {
+    val dataPathNoSlash = fullDataPath.removeSuffix("/")
+    val adjustedDataPath = when {
+      File("${dataPathNoSlash}_$templateSyntax/$targetDataName.txt").exists() -> {
+        "${dataPathNoSlash}_$templateSyntax/"
+      }
+      File("$fullDataPath$targetDataName.txt").exists() || templateSyntax == Angular2TemplateSyntax.V_2 -> {
+        fullDataPath
+      }
+      else -> {
+        "${dataPathNoSlash}_$templateSyntax/"
+      }
+    }
+    super.checkResult(adjustedDataPath, targetDataName, file)
   }
 
   fun testNgParseElementsInsideNgTemplate() {
@@ -344,6 +380,53 @@ class Angular2HtmlParsingTest : HtmlParsingTest("", "html",
 
   fun testEmptyLetAndRef() {
     doTestHtml("<ng-template let-/><div let-/><div #/><div ref-/>")
+  }
+
+
+  fun testIfBlock() {
+    doTestHtml("""
+      @if ( user.isHuman ) {
+        <human-profile [data]="user" />
+      } @else if 
+      (user.isRobot) 
+      {
+          <robot-profile [data]="user" />
+      } @else {
+        <p>The profile is unknown!
+      }
+    """.trimIndent())
+  }
+
+  fun testIncompleteBlock1() {
+    doTestHtml("""
+      @if something doesn't work
+    """.trimIndent())
+  }
+
+  fun testIncompleteBlock2() {
+    doTestHtml("""
+      @if ( this is not finished
+    """.trimIndent())
+  }
+
+  fun testIncompleteBlock3() {
+    doTestHtml("""
+      @if ( ) this is not finished
+    """.trimIndent())
+  }
+
+  fun testIncompleteBlock4() {
+    doTestHtml("""
+      @if ( ) 
+      {this is not finished
+    """.trimIndent())
+  }
+
+  fun testIncompleteBlock5() {
+    doTestHtml("""
+      @if 
+      else (
+    """.trimIndent())
   }
 
   companion object {

@@ -2,7 +2,9 @@
 package org.angular2.lang.html.parser
 
 import com.intellij.lang.PsiBuilder
+import com.intellij.lang.PsiBuilder.Marker
 import com.intellij.lang.html.HtmlParsing
+import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.psi.tree.ICustomParsingType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.ILazyParseableElementType
@@ -23,7 +25,7 @@ class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSyntax, bu
 
   fun parseExpansionFormContent() {
     val expansionFormContent = mark()
-    var xmlText: PsiBuilder.Marker? = null
+    var xmlText: Marker? = null
     while (!eof()) {
       when (token()) {
         XmlTokenType.XML_START_TAG_START -> {
@@ -91,7 +93,20 @@ class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSyntax, bu
     return CUSTOM_CONTENT.contains(token())
   }
 
-  override fun parseCustomTagContent(xmlText: PsiBuilder.Marker?): PsiBuilder.Marker? {
+  private val topLevelBlock: AngularBlock?
+    get() {
+      var result: AngularBlock? = null
+      processStackItems {
+        if (it is AngularBlock) {
+          result = it
+          false
+        }
+        else true
+      }
+      return result
+    }
+
+  override fun parseCustomTagContent(xmlText: Marker?): Marker? {
     var result = xmlText
     when (token()) {
       Angular2HtmlTokenTypes.INTERPOLATION_START -> {
@@ -139,17 +154,73 @@ class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSyntax, bu
         }
         dataStart.collapse(XmlTokenType.XML_DATA_CHARACTERS)
       }
+      Angular2HtmlTokenTypes.BLOCK_NAME -> {
+        result = terminateText(result)
+        parseBlockStart()
+      }
+      Angular2HtmlTokenTypes.BLOCK_END -> {
+        result = terminateText(result)
+        if (topLevelBlock != null) {
+          advance()
+          flushOpenItemsWhile { it !is AngularBlock }
+          (popItemFromStack() as AngularBlock).done()
+        } else {
+          builder.error(Angular2Bundle.message("angular.parse.template.unexpected-block-closing-rbrace"))
+          advance()
+        }
+      }
     }
     return result
   }
 
-  override fun parseCustomTopLevelContent(error: PsiBuilder.Marker?): PsiBuilder.Marker? {
+  private fun parseBlockStart() {
+    assert(builder.tokenType == Angular2HtmlTokenTypes.BLOCK_NAME)
+    val startMarker = builder.mark()
+    builder.advanceLexer()
+    if (builder.tokenType == Angular2HtmlTokenTypes.BLOCK_PARAMETERS_START) {
+      val parameters = builder.mark()
+      builder.advanceLexer()
+      val parametersContents = builder.mark()
+      while (!builder.eof() && builder.tokenType != Angular2HtmlTokenTypes.BLOCK_PARAMETERS_END) {
+        builder.advanceLexer()
+      }
+      if (builder.eof()) {
+        parameters.errorBefore(JavaScriptBundle.message("javascript.parser.message.missing.rparen"), parametersContents)
+        parametersContents.drop()
+        parameters.precede().done(Angular2HtmlElementTypes.BLOCK_PARAMETERS)
+      }
+      else {
+        builder.advanceLexer()
+        parametersContents.drop()
+        parameters.done(Angular2HtmlElementTypes.BLOCK_PARAMETERS)
+      }
+    }
+    if (builder.tokenType == Angular2HtmlTokenTypes.BLOCK_START) {
+      val errorStartMarker = builder.mark()
+      builder.advanceLexer()
+      val errorEndMarker = builder.mark()
+      pushItemToStack(AngularBlock(startMarker, errorStartMarker, errorEndMarker))
+    }
+    else {
+      builder.error(Angular2Bundle.message("angular.parse.template.missing-block-opening-lbrace"))
+      startMarker.done(Angular2HtmlElementTypes.BLOCK)
+    }
+  }
+
+  override fun autoCloseItem(item: HtmlParserStackItem, beforeMarker: Marker?) {
+    if (item is AngularBlock)
+      item.incomplete()
+    else
+      super.autoCloseItem(item, beforeMarker)
+  }
+
+  override fun parseCustomTopLevelContent(error: Marker?): Marker? {
     val result = flushError(error)
     terminateText(parseCustomTagContent(null))
     return result
   }
 
-  override fun createHtmlTagInfo(originalTagName: String, startMarker: PsiBuilder.Marker): HtmlTagInfoImpl {
+  override fun createHtmlTagInfo(originalTagName: String, startMarker: Marker): HtmlTagInfoImpl {
     return AngularHtmlTagInfo(normalizeTagName(originalTagName), originalTagName, startMarker)
   }
 
@@ -292,7 +363,7 @@ class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSyntax, bu
     expansionForm.done(Angular2HtmlElementTypes.EXPANSION_FORM)
   }
 
-  private fun markCriticalExpansionFormProblem(expansionForm: PsiBuilder.Marker) {
+  private fun markCriticalExpansionFormProblem(expansionForm: Marker) {
     // critical problem, most likely not an expansion form at all
     expansionForm.rollbackTo()
     val errorMarker = mark()
@@ -380,14 +451,34 @@ class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSyntax, bu
 
   private class AngularHtmlTagInfo(normalizedName: String,
                                    originalName: String,
-                                   marker: PsiBuilder.Marker,
+                                   marker: Marker,
                                    var hasNgNonBindable: Boolean = false)
     : HtmlTagInfoImpl(normalizedName, originalName, marker)
+
+  private class AngularBlock(private val startMarker: Marker, private val errorStartMarker: Marker, private val errorEndMarker: Marker)
+    : HtmlParserStackItem {
+
+      fun done() {
+        errorStartMarker.drop()
+        errorEndMarker.drop()
+        startMarker.done(Angular2HtmlElementTypes.BLOCK)
+      }
+
+      fun incomplete() {
+        errorStartMarker.errorBefore(Angular2Bundle.message("angular.parse.template.missing-block-closing-rbrace"), errorEndMarker)
+        errorEndMarker.drop()
+        startMarker.done(Angular2HtmlElementTypes.BLOCK)
+      }
+
+    }
 
   companion object {
     private val CUSTOM_CONTENT = TokenSet.create(Angular2HtmlTokenTypes.EXPANSION_FORM_START,
                                                  Angular2HtmlTokenTypes.INTERPOLATION_START,
-                                                 XmlTokenType.XML_DATA_CHARACTERS, XmlTokenType.XML_COMMA)
+                                                 XmlTokenType.XML_DATA_CHARACTERS,
+                                                 XmlTokenType.XML_COMMA,
+                                                 Angular2HtmlTokenTypes.BLOCK_NAME,
+                                                 Angular2HtmlTokenTypes.BLOCK_END)
     private val DATA_TOKENS = TokenSet.create(XmlTokenType.XML_COMMA, XmlTokenType.XML_DATA_CHARACTERS)
     private fun getAttributeContentType(type: IElementType, name: String): IElementType? =
       when (type) {

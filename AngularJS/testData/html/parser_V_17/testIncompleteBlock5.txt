@@ -1,0 +1,12 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    PsiElement(NG:BLOCK)
+      PsiElement(NG:BLOCK_NAME)('@if')
+      PsiErrorElement:Incomplete block - missing {
+        <empty list>
+    PsiWhiteSpace(' \n')
+    XmlToken:XML_DATA_CHARACTERS('else')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('(')

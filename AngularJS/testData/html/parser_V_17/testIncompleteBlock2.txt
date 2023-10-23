@@ -1,0 +1,22 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    PsiElement(NG:BLOCK)
+      PsiElement(NG:BLOCK_NAME)('@if')
+      PsiWhiteSpace(' ')
+      PsiElement(NG:BLOCK_PARAMETERS)
+        PsiErrorElement:Missing )
+          PsiElement(NG:BLOCK_PARAMETERS_START)('(')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (if:0))
+          PsiWhiteSpace(' ')
+          Angular2Binding
+            PsiElement(JS:THIS_KEYWORD)('this')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:IDENTIFIER)('is')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:IDENTIFIER)('not')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:IDENTIFIER)('finished')
+      PsiErrorElement:Incomplete block - missing {
+        <empty list>

@@ -485,6 +485,14 @@ class Angular2Parser private constructor(builder: PsiBuilder,
       }
     }
 
+    fun parseBlockParameter(builder: PsiBuilder, root: IElementType, blockName: String, parameterIndex: Int) {
+      parseRoot(builder, root, Angular2ElementTypes.BINDING_STATEMENT, false, false) { _ ->
+        // TODO properly parse different kind of block
+        while (!builder.eof())
+          builder.advanceLexer()
+      }
+    }
+
     private fun parseRoot(builder: PsiBuilder,
                           root: IElementType,
                           statementType: IElementType,
@@ -512,10 +520,6 @@ class Angular2Parser private constructor(builder: PsiBuilder,
       else {
         key.done(Angular2ElementTypes.TEMPLATE_BINDING_KEY)
       }
-    }
-
-    fun parseBlockParameter(builder: PsiBuilder, root: IElementType, name: String, index: Int) {
-      TODO("Not yet implemented")
     }
   }
 }

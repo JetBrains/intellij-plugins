@@ -330,14 +330,16 @@ open class Angular2HtmlLexerTest : LexerTestCase() {
   override fun getPathToTestDataFile(extension: String): String {
     val basePath = IdeaTestExecutionPolicy.getHomePathWithPolicy() + "/" + dirPath
     val fileName = getTestName(true) + extension
-    if (File("${basePath}_$templateSyntax/$fileName").exists()) {
-      return "${basePath}_$templateSyntax/$fileName"
-    }
-    else if (File("$basePath/$fileName").exists() || templateSyntax == Angular2TemplateSyntax.V_2) {
-      return "$basePath/$fileName"
-    }
-    else {
-      return "${basePath}_$templateSyntax/$fileName"
+    return when {
+      File("${basePath}_$templateSyntax/$fileName").exists() -> {
+        "${basePath}_$templateSyntax/$fileName"
+      }
+      File("$basePath/$fileName").exists() || templateSyntax == Angular2TemplateSyntax.V_2 -> {
+        "$basePath/$fileName"
+      }
+      else -> {
+        "${basePath}_$templateSyntax/$fileName"
+      }
     }
   }
 }
