@@ -1,4 +1,4 @@
-import prismaFmt from '@prisma/prisma-fmt-wasm'
+import prismaSchema from '@prisma/prisma-schema-wasm'
 
 const EXIT_TIMEOUT = 10000
 
@@ -9,7 +9,7 @@ let timeoutId
 
 function formatSchema() {
   try {
-    const formatted = prismaFmt.format(schema, formattingParams)
+    const formatted = prismaSchema.format(schema, formattingParams)
     console.log(formatted)
   }
   catch (e) {

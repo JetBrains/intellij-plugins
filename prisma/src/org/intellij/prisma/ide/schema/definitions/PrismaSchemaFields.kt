@@ -152,7 +152,7 @@ val PRISMA_SCHEMA_FIELDS = schema {
       documentation = "Enables preview feature flags."
       type = "String[]"
 
-      PrismaPreviewFeature.values().forEach {
+      PrismaPreviewFeature.entries.forEach {
         variant {
           label = it.presentation
           type = PrimitiveTypes.STRING
