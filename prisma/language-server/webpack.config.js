@@ -22,7 +22,7 @@ module.exports = {
       {
         patterns: [
           {
-            from: './node_modules/@prisma/prisma-fmt-wasm/**/*.wasm',
+            from: './node_modules/@prisma/prisma-schema-wasm/**/*.wasm',
             to: '[name][ext]',
           },
         ],

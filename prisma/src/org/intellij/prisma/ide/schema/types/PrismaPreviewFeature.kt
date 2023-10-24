@@ -5,19 +5,14 @@ import com.intellij.openapi.util.text.StringUtil
 
 enum class PrismaPreviewFeature {
   Deno,
-  FullTextSearch,
+  DriverAdapters,
   FullTextIndex,
-  Tracing,
+  FullTextSearch,
   Metrics,
-  OrderByNulls,
-  FilteredRelationCount,
-  FieldReference,
-  PostgresqlExtensions,
-  ExtendedWhereUnique,
-  ClientExtensions,
   MultiSchema,
-  Views,
-  JsonProtocol;
+  PostgresqlExtensions,
+  Tracing,
+  Views;
 
   val presentation: String = StringUtil.decapitalize(name)
 }

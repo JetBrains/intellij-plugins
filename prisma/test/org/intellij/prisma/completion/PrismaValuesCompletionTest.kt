@@ -204,14 +204,14 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase() {
   }
 
   fun testGeneratorPreviewFeaturesNotAfterComma() {
-    val search = PrismaPreviewFeature.FullTextSearch.presentation
-    val relation = PrismaPreviewFeature.FilteredRelationCount.presentation
+    val feature1 = PrismaPreviewFeature.FullTextSearch.presentation
+    val feature2 = PrismaPreviewFeature.MultiSchema.presentation
 
     noCompletion(
       """
           generator client {
             provider = "prisma-client-js"
-            previewFeatures = ["$search", "$relation"<caret>]
+            previewFeatures = ["$feature1", "$feature2"<caret>]
             engineType = "binary"
           }
       """.trimIndent(),
@@ -219,55 +219,55 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase() {
   }
 
   fun testGeneratorPreviewFeaturesBetweenCommaAndValue() {
-    val search = PrismaPreviewFeature.FullTextSearch.presentation
-    val relation = PrismaPreviewFeature.FilteredRelationCount.presentation
-    val index = PrismaPreviewFeature.FullTextIndex.presentation
+    val feature1 = PrismaPreviewFeature.FullTextSearch.presentation
+    val feature2 = PrismaPreviewFeature.MultiSchema.presentation
+    val featureToComplete = PrismaPreviewFeature.FullTextIndex.presentation
 
     completeSelected(
       """
           generator client {
             provider = "prisma-client-js"
-            previewFeatures = ["$search", <caret>"$relation"]
+            previewFeatures = ["$feature1", <caret>"$feature2"]
             engineType = "binary"
           }
       """.trimIndent(),
       """
           generator client {
             provider = "prisma-client-js"
-            previewFeatures = ["$search", "$index""$relation"]
+            previewFeatures = ["$feature1", "$featureToComplete""$feature2"]
             engineType = "binary"
           }
       """.trimIndent(),
-      quoted(index)
+      quoted(featureToComplete)
     )
   }
 
   fun testGeneratorPreviewFeaturesAtStart() {
-    val search = PrismaPreviewFeature.FullTextSearch.presentation
-    val relation = PrismaPreviewFeature.FilteredRelationCount.presentation
-    val index = PrismaPreviewFeature.FullTextIndex.presentation
+    val feature1 = PrismaPreviewFeature.FullTextSearch.presentation
+    val feature2 = PrismaPreviewFeature.MultiSchema.presentation
+    val featureToComplete = PrismaPreviewFeature.FullTextIndex.presentation
 
     val lookupElements = completeSelected(
       """
           generator client {
             provider = "prisma-client-js"
-            previewFeatures = [<caret>"$search", "$relation"]
+            previewFeatures = [<caret>"$feature1", "$feature2"]
             engineType = "binary"
           }
       """.trimIndent(),
       """
           generator client {
             provider = "prisma-client-js"
-            previewFeatures = ["$index""$search", "$relation"]
+            previewFeatures = ["$featureToComplete""$feature1", "$feature2"]
             engineType = "binary"
           }
       """.trimIndent(),
-      quoted(index)
+      quoted(featureToComplete)
     )
     assertDoesntContain(
       lookupElements.strings,
-      quoted(search),
-      quoted(relation)
+      quoted(feature1),
+      quoted(feature2)
     )
   }
 }
