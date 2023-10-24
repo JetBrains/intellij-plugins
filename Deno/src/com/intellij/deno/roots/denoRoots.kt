@@ -4,7 +4,7 @@ import com.intellij.deno.DenoSettings
 import com.intellij.deno.entities.DenoEntity
 import com.intellij.deno.entities.DenoEntitySource
 import com.intellij.deno.service.DenoTypings
-import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.LocalFileSystem
@@ -15,9 +15,11 @@ import com.intellij.platform.workspace.storage.MutableEntityStorage
 import com.intellij.platform.workspace.storage.url.VirtualFileUrlManager
 import com.intellij.workspaceModel.ide.getInstance
 
-
 internal fun createDenoEntity(project: Project) {
-  if (!useWorkspaceModel()) return
+  if (!useWorkspaceModel()) {
+    return
+  }
+
   val (depsVirtualFile, denoTypingsVirtualFile) = getRoots(project)
 
   val virtualFileUrlManager = VirtualFileUrlManager.getInstance(project)
@@ -28,7 +30,7 @@ internal fun createDenoEntity(project: Project) {
     this.depsFile = depsVirtualFile?.toVirtualFileUrl(virtualFileUrlManager)
   }
 
-  runWriteAction {
+  ApplicationManager.getApplication().runWriteAction {
     WorkspaceModel.getInstance(project).updateProjectModel("Create Deno entity") { newBuilder ->
       newBuilder.replaceBySource({ it is DenoEntitySource }, builder)
     }
@@ -36,8 +38,11 @@ internal fun createDenoEntity(project: Project) {
 }
 
 internal fun removeDenoEntity(project: Project) {
-  if (!useWorkspaceModel()) return
-  runWriteAction {
+  if (!useWorkspaceModel()) {
+    return
+  }
+
+  ApplicationManager.getApplication().runWriteAction {
     WorkspaceModel.getInstance(project).updateProjectModel("Remove Deno entity") { builder ->
       builder.entitiesBySource { it is DenoEntitySource }.values.flatMap { it.values }.flatten().forEach { builder.removeEntity(it) }
     }

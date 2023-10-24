@@ -4,15 +4,16 @@ import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.deno.roots.createDenoEntity
 import com.intellij.deno.roots.removeDenoEntity
 import com.intellij.deno.service.DenoLspSupportProvider
-import com.intellij.platform.lsp.api.LspServerManager
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
+import com.intellij.openapi.components.service
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.AdditionalLibraryRootsListener
 import com.intellij.openapi.roots.AdditionalLibraryRootsProvider
+import com.intellij.platform.lsp.api.LspServerManager
 import com.intellij.util.ThrowableRunnable
 
 class DenoState {
@@ -31,11 +32,9 @@ class DenoState {
 }
 
 @State(name = "DenoSettings", storages = [Storage("deno.xml")])
-class DenoSettings(val project: Project) : PersistentStateComponent<DenoState> {
+class DenoSettings(private val project: Project) : PersistentStateComponent<DenoState> {
   companion object {
-    fun getService(project: Project): DenoSettings {
-      return project.getService(DenoSettings::class.java)
-    }
+    fun getService(project: Project): DenoSettings = project.service<DenoSettings>()
   }
 
   private var state = DenoState()
