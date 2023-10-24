@@ -320,6 +320,23 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
+  fun testDefineSlotDefault() {
+    TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
+    myFixture.copyDirectoryToProject(getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+
+    doTest(
+      "fie<caret>ld.class" to "FieldSlotPropText",
+      "field.cla<caret>ss" to "string | string[]",
+      "fi<caret>eld.style" to "FieldSlotPropText",
+      "field.sty<caret>le" to "string | object",
+      "fie<caret>ld.value" to "FieldSlotPropText",
+      "field.valu<caret>e" to "object | (() => object)",
+      prefix = PREFIX_INTERPOLATION,
+    )
+  }
+
   fun testDefineExpose() {
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)

@@ -14,7 +14,9 @@ import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.util.asSafely
 import com.intellij.webSymbols.*
+import com.intellij.webSymbols.utils.asSingleSymbol
 import junit.framework.TestCase
 import org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory
 import org.jetbrains.vuejs.lang.VueTestModule.VUE_2_6_10
@@ -2253,6 +2255,76 @@ export default class UsageComponent extends Vue {
                                    "<caret>msg: string }")
     myFixture.checkGotoDeclaration("ms<caret>g=\"template\"",
                                    "<caret>msg: string }")
+  }
+
+  fun testDefineSlotDefault() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
+    myFixture.copyDirectoryToProject("defineSlotDefault", "")
+    myFixture.configureByText("Component.vue", """
+      <script setup lang='ts'>
+      import TextField from './TextField.vue'
+      </script>
+
+      <template>
+        <TextField v-slot='{ field }'>
+          <span v-bind='field.class'></span>
+        </TextField>
+      </template>
+    """.trimIndent())
+
+    assertEquals(
+      "default?: (props: { field: FieldSlotPropText }) => any",
+      myFixture.multiResolveWebSymbolReference("v-sl<caret>ot='{ field }'").asSingleSymbol()
+        ?.asSafely<PsiSourcedWebSymbol>()?.source?.text
+    )
+  }
+
+  fun testDefineSlotDefaultTemplate() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
+    myFixture.copyDirectoryToProject("defineSlotDefault", "")
+    myFixture.configureByText("Component.vue", """
+      <script setup lang='ts'>
+      import TextField from './TextField.vue'
+      </script>
+
+      <template>
+        <TextField>
+          <template v-slot='{ field }'>
+            {{ field.class }}
+          </template>
+        </TextField>
+      </template>
+    """.trimIndent())
+
+    assertEquals(
+      "default?: (props: { field: FieldSlotPropText }) => any",
+      myFixture.multiResolveWebSymbolReference("v-sl<caret>ot='{ field }'").asSingleSymbol()
+        ?.asSafely<PsiSourcedWebSymbol>()?.source?.text
+    )
+  }
+
+  fun testDefineSlotDefaultNamed() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
+    myFixture.copyDirectoryToProject("defineSlotDefault", "")
+    myFixture.configureByText("Component.vue", """
+      <script setup lang='ts'>
+      import TextField from './TextField.vue'
+      </script>
+
+      <template>
+        <TextField>
+          <template v-slot:default='{ field }'>
+            {{ field.style }}
+          </template>
+        </TextField>
+      </template>
+    """.trimIndent())
+
+    assertEquals(
+      "default?: (props: { field: FieldSlotPropText }) => any",
+      myFixture.multiResolveWebSymbolReference("v-slot:def<caret>ault='{ field }'").asSingleSymbol()
+        ?.asSafely<PsiSourcedWebSymbol>()?.source?.text
+    )
   }
 }
 
