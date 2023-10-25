@@ -51,13 +51,13 @@ internal class OneTimeBindingsScope(tag: XmlTag) : WebSymbolsScopeWithCache<XmlT
                   ?.symbol?.let { listOf(it) }
                 ?: emptyList()
     val attributeSelectors = queryExecutor
-      .runListSymbolsQuery(WebSymbol.NAMESPACE_JS, NG_DIRECTIVE_ATTRIBUTE_SELECTORS.kind, expandPatterns = true, scope = scope)
+      .runListSymbolsQuery(NG_DIRECTIVE_ATTRIBUTE_SELECTORS, expandPatterns = true, scope = scope)
       .filter { it.attributeValue?.required == false }
       .mapSmartSet { it.name }
 
     val isStrictTemplates = isStrictTemplates(dataHolder)
     for (input in queryExecutor
-      .runListSymbolsQuery(WebSymbol.NAMESPACE_JS, NG_DIRECTIVE_INPUTS.kind, expandPatterns = false, scope = scope)) {
+      .runListSymbolsQuery(NG_DIRECTIVE_INPUTS, expandPatterns = false, scope = scope)) {
       val isOneTimeBinding = isOneTimeBindingProperty(input)
       if (isStrictTemplates) {
         consumer(Angular2OneTimeBinding(input, !attributeSelectors.contains(input.name), !isOneTimeBinding))

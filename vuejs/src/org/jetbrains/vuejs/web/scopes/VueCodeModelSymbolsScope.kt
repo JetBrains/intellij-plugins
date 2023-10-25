@@ -24,14 +24,13 @@ import com.intellij.util.asSafely
 import com.intellij.util.containers.MultiMap
 import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.WebSymbolsScopeWithCache
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
 import com.intellij.webSymbols.webTypes.WebTypesSymbol
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.web.VueFramework
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.KIND_VUE_COMPONENTS
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.KIND_VUE_DIRECTIVES
+import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.VUE_COMPONENTS
+import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.VUE_DIRECTIVES
 import org.jetbrains.vuejs.web.asWebSymbol
 import org.jetbrains.vuejs.web.symbols.VueComponentSymbol
 import org.jetbrains.vuejs.web.symbols.VueDocumentedItemSymbol
@@ -117,8 +116,8 @@ class VueCodeModelSymbolsScope<K> private constructor(private val container: Vue
                      ?.let { WebSymbolsQueryExecutorFactory.create(it, false) }
                    ?: WebSymbolsQueryExecutorFactory.getInstance(project).create(null, false)
     val result = MultiMap.createLinkedSet<WebTypesSymbolLocation, WebSymbol>()
-    registry.runListSymbolsQuery(NAMESPACE_HTML, KIND_VUE_COMPONENTS, false, virtualSymbols = false)
-      .asSequence().plus(registry.runListSymbolsQuery(NAMESPACE_HTML, KIND_VUE_DIRECTIVES, false, virtualSymbols = false))
+    registry.runListSymbolsQuery(VUE_COMPONENTS, false, virtualSymbols = false)
+      .asSequence().plus(registry.runListSymbolsQuery(VUE_DIRECTIVES, false, virtualSymbols = false))
       .filterIsInstance<WebTypesSymbol>()
       .forEach { symbol ->
         when (val location = symbol.location) {

@@ -4,14 +4,13 @@ package org.jetbrains.vuejs.web
 import com.intellij.html.webSymbols.attributes.WebSymbolAttributeDescriptor
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
-import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
 import com.intellij.webSymbols.utils.hideFromCompletion
 import org.jetbrains.vuejs.codeInsight.ATTR_ARGUMENT_PREFIX
 import org.jetbrains.vuejs.codeInsight.ATTR_DIRECTIVE_PREFIX
 import org.jetbrains.vuejs.codeInsight.ATTR_SLOT_SHORTHAND
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.KIND_VUE_DIRECTIVE_ARGUMENT
+import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.VUE_DIRECTIVE_ARGUMENT
 import java.util.function.Predicate
 
 class VueAttributeNameCodeCompletionFilter(tag: XmlTag) : Predicate<String> {
@@ -50,7 +49,7 @@ class VueAttributeNameCodeCompletionFilter(tag: XmlTag) : Predicate<String> {
           val symbol = descriptor?.symbol
           if (symbol != null
               && WebSymbolsQueryExecutorFactory.create(attr)
-                .runListSymbolsQuery(NAMESPACE_HTML, KIND_VUE_DIRECTIVE_ARGUMENT, true, scope = listOf(symbol))
+                .runListSymbolsQuery(VUE_DIRECTIVE_ARGUMENT, true, scope = listOf(symbol))
                 .count { !it.hideFromCompletion } == 0
           ) {
             names.add(ATTR_DIRECTIVE_PREFIX + info.name)
