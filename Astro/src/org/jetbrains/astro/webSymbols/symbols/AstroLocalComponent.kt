@@ -40,7 +40,7 @@ class AstroLocalComponent(override val name: String,
     get() = NAMESPACE_HTML
 
   override val kind: SymbolKind
-    get() = AstroQueryConfigurator.KIND_ASTRO_COMPONENT
+    get() = AstroQueryConfigurator.ASTRO_COMPONENTS.kind
 
   override val properties: Map<String, Any>
     get() = mapOf(AstroQueryConfigurator.PROP_ASTRO_PROXIMITY to AstroProximity.LOCAL)
