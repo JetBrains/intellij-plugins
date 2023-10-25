@@ -18,7 +18,7 @@ import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
 import org.angular2.entities.Angular2EntityUtils.jsTypeFromAcceptInputType
 import org.angular2.lang.types.Angular2TypeUtils
 import org.angular2.web.Angular2Symbol
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_OUTPUTS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_OUTPUTS
 
 interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element {
 
@@ -36,14 +36,11 @@ interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element {
   override val project: Project
     get() = sourceElement.project
 
-  override val namespace: String
-    get() = WebSymbol.NAMESPACE_JS
-
   override val priority: WebSymbol.Priority?
     get() = WebSymbol.Priority.LOW
 
   override val type: JSType?
-    get() = if (kind == KIND_NG_DIRECTIVE_OUTPUTS) {
+    get() = if (qualifiedKind == NG_DIRECTIVE_OUTPUTS) {
       Angular2TypeUtils.extractEventVariableType(rawJsType)
     }
     else {

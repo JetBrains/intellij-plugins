@@ -23,6 +23,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbolQualifiedKind
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2DirectiveProperty
 import org.angular2.entities.ivy.Angular2IvyDirective
@@ -180,11 +181,8 @@ object Angular2LibrariesHacks {
 
     override val name: String = input.name.replace("([A-Z])".toRegex(), "-$1").lowercase(Locale.ENGLISH)
 
-    override val namespace: String
-      get() = WebSymbol.NAMESPACE_HTML
-
-    override val kind: String
-      get() = WebSymbol.KIND_HTML_ATTRIBUTES
+    override val qualifiedKind: WebSymbolQualifiedKind
+      get() = WebSymbol.HTML_ATTRIBUTES
 
     override fun createPointer(): Pointer<IonicComponentAttribute> {
       val input = this.delegate.createPointer()

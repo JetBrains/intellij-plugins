@@ -5,10 +5,14 @@ import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.psi.PsiElement
-import com.intellij.webSymbols.*
+import com.intellij.webSymbols.PsiSourcedWebSymbol
+import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbolApiStatus
+import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import com.intellij.webSymbols.utils.coalesceWith
 import org.angular2.entities.Angular2Directive
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_STRUCTURAL_DIRECTIVES
 
 open class Angular2StructuralDirectiveSymbol private constructor(private val directive: Angular2Directive,
                                                                  sourceSymbol: Angular2Symbol,
@@ -35,11 +39,8 @@ open class Angular2StructuralDirectiveSymbol private constructor(private val dir
   override val priority: WebSymbol.Priority?
     get() = WebSymbol.Priority.HIGH
 
-  override val namespace: SymbolNamespace
-    get() = WebSymbol.NAMESPACE_JS
-
-  override val kind: SymbolKind
-    get() = Angular2WebSymbolsQueryConfigurator.KIND_NG_STRUCTURAL_DIRECTIVES
+  override val qualifiedKind: WebSymbolQualifiedKind
+    get() = NG_STRUCTURAL_DIRECTIVES
 
   override val properties: Map<String, Any>
     get() = super.properties + Pair(Angular2WebSymbolsQueryConfigurator.PROP_SYMBOL_DIRECTIVE, directive)

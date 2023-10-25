@@ -14,6 +14,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.containers.Stack
+import com.intellij.webSymbols.WebSymbolQualifiedKind
 import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
 import org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP
 import org.angular2.codeInsight.Angular2LibrariesHacks
@@ -22,8 +23,8 @@ import org.angular2.entities.Angular2DirectiveProperties
 import org.angular2.entities.Angular2DirectiveProperty
 import org.angular2.entities.metadata.stubs.Angular2MetadataClassStubBase
 import org.angular2.lang.Angular2Bundle
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_INPUTS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_OUTPUTS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_INPUTS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_OUTPUTS
 
 abstract class Angular2MetadataClassBase<Stub : Angular2MetadataClassStubBase<*>>(element: Stub)
   : Angular2MetadataElement<Stub>(element) {
@@ -69,8 +70,8 @@ abstract class Angular2MetadataClassBase<Stub : Angular2MetadataClassStubBase<*>
   private val propertiesNoCache: Result<Angular2DirectiveProperties>
     get() {
       val mappings = allMappings
-      val inputs = collectProperties(mappings.value.first, KIND_NG_DIRECTIVE_INPUTS)
-      val outputs = collectProperties(mappings.value.second, KIND_NG_DIRECTIVE_OUTPUTS)
+      val inputs = collectProperties(mappings.value.first, NG_DIRECTIVE_INPUTS)
+      val outputs = collectProperties(mappings.value.second, NG_DIRECTIVE_OUTPUTS)
       return Result.create(Angular2DirectiveProperties(inputs, outputs),
                            *mappings.dependencyItems)
     }
@@ -127,11 +128,12 @@ abstract class Angular2MetadataClassBase<Stub : Angular2MetadataClassStubBase<*>
     }
   }
 
-  private fun collectProperties(mappings: Map<String, String>, kind: String): List<Angular2DirectiveProperty> {
+  private fun collectProperties(mappings: Map<String, String>,
+                                qualifiedKind: WebSymbolQualifiedKind): List<Angular2DirectiveProperty> {
     val result = ArrayList<Angular2DirectiveProperty>()
     mappings.forEach { (fieldName: String, bindingName: String) ->
       result.add(Angular2MetadataDirectiveProperty(
-        this, fieldName, bindingName, kind))
+        this, fieldName, bindingName, qualifiedKind))
     }
     return result
   }

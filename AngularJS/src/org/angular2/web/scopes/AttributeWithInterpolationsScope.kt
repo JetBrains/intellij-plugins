@@ -5,6 +5,7 @@ import com.intellij.javascript.webSymbols.types.TypeScriptSymbolTypeSupport
 import com.intellij.model.Pointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
+import com.intellij.webSymbols.WebSymbol.Companion.JS_PROPERTIES
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.patterns.ComplexPatternOptions
 import com.intellij.webSymbols.patterns.WebSymbolsPattern
@@ -14,7 +15,7 @@ import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
 import com.intellij.webSymbols.utils.match
 import org.angular2.Angular2Framework
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_INPUTS
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.PROP_BINDING_PATTERN
 
 object AttributeWithInterpolationsScope : WebSymbolsScope {
@@ -66,8 +67,7 @@ object AttributeWithInterpolationsScope : WebSymbolsScope {
 
   private object PropertiesResolver : WebSymbolsPatternSymbolsResolver {
     override fun getSymbolKinds(context: WebSymbol?): Set<WebSymbolQualifiedKind> = setOf(
-      WebSymbolQualifiedKind(WebSymbol.NAMESPACE_JS, WebSymbol.KIND_JS_PROPERTIES),
-      WebSymbolQualifiedKind(WebSymbol.NAMESPACE_JS, Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_INPUTS)
+      JS_PROPERTIES, NG_DIRECTIVE_INPUTS
     )
 
     override val delegate: WebSymbol? get() = null
@@ -86,12 +86,8 @@ object AttributeWithInterpolationsScope : WebSymbolsScope {
     override fun matchName(name: String,
                            scopeStack: Stack<WebSymbolsScope>,
                            queryExecutor: WebSymbolsQueryExecutor): List<WebSymbol> =
-      queryExecutor.runNameMatchQuery(
-        WebSymbol.NAMESPACE_JS, WebSymbol.KIND_JS_PROPERTIES, name,
-        scope = scopeStack) +
-      queryExecutor.runNameMatchQuery(
-        WebSymbol.NAMESPACE_JS, Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_INPUTS, name,
-        scope = scopeStack)
+      queryExecutor.runNameMatchQuery(JS_PROPERTIES.withName(name), scope = scopeStack) +
+      queryExecutor.runNameMatchQuery(NG_DIRECTIVE_INPUTS.withName(name), scope = scopeStack)
 
   }
 }

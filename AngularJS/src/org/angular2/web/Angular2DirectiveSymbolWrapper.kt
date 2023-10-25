@@ -7,7 +7,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.psi.PsiElement
-import com.intellij.webSymbols.*
+import com.intellij.webSymbols.PsiSourcedWebSymbol
+import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbolApiStatus
+import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import com.intellij.webSymbols.utils.coalesceWith
 import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
@@ -45,11 +48,8 @@ open class Angular2DirectiveSymbolWrapper private constructor(val directive: Ang
   override fun createPointer(): Pointer<out Angular2SymbolDelegate<Angular2Symbol>> =
     createPointer(::Angular2DirectiveSymbolWrapper)
 
-  override val namespace: SymbolNamespace
-    get() = delegate.namespace
-
-  override val kind: SymbolKind
-    get() = delegate.kind
+  override val qualifiedKind: WebSymbolQualifiedKind
+    get() = delegate.qualifiedKind
 
   override val properties: Map<String, Any>
     get() = super.properties + Pair(PROP_SYMBOL_DIRECTIVE, directive)

@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS
 import com.intellij.psi.util.CachedValueProvider.Result.create
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.webSymbols.WebSymbolQualifiedKind
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.codeInsight.Angular2LibrariesHacks.hackCoreDirectiveRequiredInputStatus
 import org.angular2.codeInsight.Angular2LibrariesHacks.hackIonicComponentOutputs
@@ -23,8 +24,8 @@ import org.angular2.entities.source.Angular2PropertyInfo
 import org.angular2.entities.source.Angular2SourceDirective.Companion.getDirectiveKindNoCache
 import org.angular2.entities.source.Angular2SourceDirectiveProperty
 import org.angular2.entities.source.Angular2SourceDirectiveVirtualProperty
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_INPUTS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_OUTPUTS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_INPUTS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_OUTPUTS
 
 open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
   : Angular2IvyDeclaration<Angular2IvySymbolDef.Directive>(entityDef), Angular2Directive {
@@ -94,8 +95,8 @@ open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
       .properties
       .forEach { prop ->
         if (prop.memberSource.singleElement != null) {
-          processProperty(clazz, prop, inputMap, KIND_NG_DIRECTIVE_INPUTS, inputs)
-          processProperty(clazz, prop, outputMap, KIND_NG_DIRECTIVE_OUTPUTS, outputs)
+          processProperty(clazz, prop, inputMap, NG_DIRECTIVE_INPUTS, inputs)
+          processProperty(clazz, prop, outputMap, NG_DIRECTIVE_OUTPUTS, outputs)
         }
       }
 
@@ -103,10 +104,10 @@ open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
       .forEach { outputMap[it.key] = Angular2PropertyInfo(it.value, false, null, declaringElement = null) }
 
     inputMap.values.forEach { info ->
-      inputs[info.name] = Angular2SourceDirectiveVirtualProperty(clazz, KIND_NG_DIRECTIVE_INPUTS, info)
+      inputs[info.name] = Angular2SourceDirectiveVirtualProperty(clazz, NG_DIRECTIVE_INPUTS, info)
     }
     outputMap.values.forEach { info ->
-      outputs[info.name] = Angular2SourceDirectiveVirtualProperty(clazz, KIND_NG_DIRECTIVE_OUTPUTS, info)
+      outputs[info.name] = Angular2SourceDirectiveVirtualProperty(clazz, NG_DIRECTIVE_OUTPUTS, info)
     }
 
     return Angular2DirectiveProperties(inputs.values, outputs.values)
@@ -213,11 +214,11 @@ open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
     private fun processProperty(clazz: TypeScriptClass,
                                 property: JSRecordType.PropertySignature,
                                 mappings: MutableMap<String, Angular2PropertyInfo>,
-                                kind: String,
+                                qualifiedKind: WebSymbolQualifiedKind,
                                 result: MutableMap<String, Angular2DirectiveProperty>) {
       val info = mappings.remove(property.memberName)
       if (info != null) {
-        result.putIfAbsent(info.name, Angular2SourceDirectiveProperty.create(clazz, property, kind, info))
+        result.putIfAbsent(info.name, Angular2SourceDirectiveProperty.create(clazz, property, qualifiedKind, info))
       }
     }
   }

@@ -16,7 +16,7 @@ import com.intellij.webSymbols.utils.nameSegments
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.web.Angular2PsiSourcedSymbol
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_I18N_ATTRIBUTES
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_I18N_ATTRIBUTES
 import org.jetbrains.annotations.NonNls
 
 class I18NAttributesScope(private val tag: XmlTag) : WebSymbolsScope {
@@ -24,7 +24,7 @@ class I18NAttributesScope(private val tag: XmlTag) : WebSymbolsScope {
   override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbol> =
-    if (qualifiedName.matches(WebSymbol.NAMESPACE_HTML, KIND_NG_I18N_ATTRIBUTES)) {
+    if (qualifiedName.matches(NG_I18N_ATTRIBUTES)) {
       tag.attributes
         .mapNotNull { attr ->
           val info = Angular2AttributeNameParser.parse(attr.name, tag)
@@ -38,7 +38,7 @@ class I18NAttributesScope(private val tag: XmlTag) : WebSymbolsScope {
   override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
                           params: WebSymbolsListSymbolsQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
-    if (qualifiedKind.matches(WebSymbol.NAMESPACE_HTML, KIND_NG_I18N_ATTRIBUTES)) {
+    if (qualifiedKind == NG_I18N_ATTRIBUTES) {
       tag.attributes
         .mapNotNull { attr ->
           val info = Angular2AttributeNameParser.parse(attr.name, tag)
@@ -96,11 +96,8 @@ class I18NAttributesScope(private val tag: XmlTag) : WebSymbolsScope {
     override val project: Project
       get() = attribute.project
 
-    override val namespace: SymbolNamespace
-      get() = WebSymbol.NAMESPACE_HTML
-
-    override val kind: SymbolKind
-      get() = KIND_NG_I18N_ATTRIBUTES
+    override val qualifiedKind: WebSymbolQualifiedKind
+      get() = NG_I18N_ATTRIBUTES
 
     override fun equals(other: Any?): Boolean =
       other === this

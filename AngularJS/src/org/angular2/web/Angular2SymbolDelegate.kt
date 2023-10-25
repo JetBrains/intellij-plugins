@@ -13,9 +13,11 @@ abstract class Angular2SymbolDelegate<T : Angular2Symbol>(delegate: T) : WebSymb
 
   abstract override fun createPointer(): Pointer<out Angular2SymbolDelegate<T>>
 
-  abstract override val namespace: SymbolNamespace
+  override val namespace: SymbolNamespace
+    get() = qualifiedKind.namespace
 
-  abstract override val kind: SymbolKind
+  override val kind: SymbolKind
+    get() = qualifiedKind.kind
 
   override val project: Project
     get() = delegate.project

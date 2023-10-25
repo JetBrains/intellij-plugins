@@ -24,6 +24,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.PsiSourcedWebSymbol
+import com.intellij.webSymbols.utils.qualifiedKind
 import com.intellij.webSymbols.utils.unwrapMatchedSymbols
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.TS_KEYWORD
 import org.angular2.codeInsight.Angular2HighlightingUtils.htmlName
@@ -40,7 +41,7 @@ import org.angular2.lang.expr.psi.Angular2ElementVisitor
 import org.angular2.lang.html.Angular2HtmlLanguage
 import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
 import org.angular2.lang.html.psi.PropertyBindingType
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_INPUTS
 
 class AngularInaccessibleSymbolInspection : LocalInspectionTool() {
 
@@ -122,7 +123,7 @@ class AngularInaccessibleSymbolInspection : LocalInspectionTool() {
 fun getInputSourceElements(element: Angular2HtmlPropertyBinding): List<JSAttributeListOwner> =
   element.descriptor?.asSafely<Angular2AttributeDescriptor>()?.symbol
     ?.unwrapMatchedSymbols()
-    ?.filter { it.kind == Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_INPUTS }
+    ?.filter { it.qualifiedKind == NG_DIRECTIVE_INPUTS }
     ?.filterIsInstance<PsiSourcedWebSymbol>()
     ?.mapNotNull { it.source }
     ?.filterIsInstance<JSAttributeListOwner>()
