@@ -46,6 +46,12 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
     const val KIND_VUE_PROVIDES = "vue-provides"
     const val KIND_VUE_SPECIAL_PROPERTIES = "vue-special-properties"
 
+    val VUE_MODEL = WebSymbolQualifiedKind(NAMESPACE_HTML, KIND_VUE_MODEL)
+    val VUE_COMPONENT_PROPS = WebSymbolQualifiedKind(NAMESPACE_HTML, KIND_VUE_COMPONENT_PROPS)
+    val VUE_COMPONENTS = WebSymbolQualifiedKind(NAMESPACE_HTML, KIND_VUE_COMPONENTS)
+    val VUE_DIRECTIVES = WebSymbolQualifiedKind(NAMESPACE_HTML, KIND_VUE_DIRECTIVES)
+    val VUE_DIRECTIVE_ARGUMENT = WebSymbolQualifiedKind(NAMESPACE_HTML, KIND_VUE_DIRECTIVE_ARGUMENT)
+
     const val PROP_VUE_MODEL_PROP = "prop"
     const val PROP_VUE_MODEL_EVENT = "event"
 

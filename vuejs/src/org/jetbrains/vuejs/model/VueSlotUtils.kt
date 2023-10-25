@@ -29,12 +29,12 @@ fun getMatchingAvailableSlots(tag: XmlTag, name: String, newApi: Boolean): List<
 
 fun getAvailableSlots(tag: XmlTag, expandPatterns: Boolean, newApi: Boolean): List<WebSymbol> =
   processSlots(tag, newApi, WebSymbol::name) {
-    runListSymbolsQuery(WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_SLOTS, expandPatterns)
+    runListSymbolsQuery(WebSymbol.HTML_SLOTS, expandPatterns)
   }
 
 fun getAvailableSlotsCompletions(tag: XmlTag, name: String, position: Int, newApi: Boolean): List<WebSymbolCodeCompletionItem> =
   processSlots(tag, newApi, WebSymbolCodeCompletionItem::name) {
-    runCodeCompletionQuery(WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_SLOTS, name, position)
+    runCodeCompletionQuery(WebSymbol.HTML_SLOTS.withName(name), position)
   }
 
 private fun <T> processSlots(tag: XmlTag,

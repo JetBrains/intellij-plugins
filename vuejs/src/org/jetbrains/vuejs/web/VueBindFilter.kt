@@ -6,7 +6,7 @@ import com.intellij.webSymbols.WebSymbolsScope
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
 import com.intellij.webSymbols.webTypes.filters.WebSymbolsFilter
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.KIND_VUE_COMPONENT_PROPS
+import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.VUE_COMPONENT_PROPS
 
 class VueBindFilter : WebSymbolsFilter {
   override fun filterCodeCompletions(codeCompletions: List<WebSymbolCodeCompletionItem>,
@@ -24,7 +24,7 @@ class VueBindFilter : WebSymbolsFilter {
   private fun <T> List<T>.filterHtmlEventAttributes(queryExecutor: WebSymbolsQueryExecutor,
                                                     scope: List<WebSymbolsScope>,
                                                     getName: T.() -> String): List<T> {
-    val props = queryExecutor.runListSymbolsQuery(WebSymbol.NAMESPACE_HTML, KIND_VUE_COMPONENT_PROPS, true, scope = scope)
+    val props = queryExecutor.runListSymbolsQuery(VUE_COMPONENT_PROPS, true, scope = scope)
       .mapTo(HashSet()) { it.name }
     return filter {
       val name = it.getName()
