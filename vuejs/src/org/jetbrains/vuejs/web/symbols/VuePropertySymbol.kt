@@ -6,6 +6,7 @@ import com.intellij.javascript.webSymbols.symbols.getMatchingJSPropertySymbols
 import com.intellij.model.Pointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
+import com.intellij.webSymbols.WebSymbol.Companion.JS_PROPERTIES
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import org.jetbrains.vuejs.model.VueComponent
@@ -15,8 +16,8 @@ abstract class VuePropertySymbol<T : VueProperty>(item: T, owner: VueComponent, 
   : VueNamedWebSymbol<T>(item, owner, origin) {
   abstract override fun createPointer(): Pointer<out VuePropertySymbol<T>>
 
-  override fun isExclusiveFor(namespace: SymbolNamespace, kind: SymbolKind): Boolean =
-    namespace == WebSymbol.NAMESPACE_JS && kind == WebSymbol.KIND_JS_PROPERTIES
+  override fun isExclusiveFor(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+    qualifiedKind == JS_PROPERTIES
 
   override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,

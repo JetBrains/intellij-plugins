@@ -62,8 +62,8 @@ class VueComponentNamespaceSymbol(
   override val kind: SymbolKind
     get() = KIND_VUE_COMPONENT_NAMESPACES
 
-  override fun isExclusiveFor(namespace: SymbolNamespace, kind: SymbolKind): Boolean =
-    isNamespacedKind(WebSymbolQualifiedKind(namespace, kind))
+  override fun isExclusiveFor(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+    isNamespacedKind(qualifiedKind)
 
   override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
@@ -107,8 +107,8 @@ class VueComponentNamespaceSymbol(
 
     private val namespaceSymbol = VueComponentNamespaceSymbol(delegate.name, delegate.rawSource as JSPsiNamedElementBase)
 
-    override fun isExclusiveFor(namespace: SymbolNamespace, kind: SymbolKind): Boolean =
-      isNamespacedKind(WebSymbolQualifiedKind(namespace, kind)) || super.isExclusiveFor(namespace, kind)
+    override fun isExclusiveFor(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+      isNamespacedKind(qualifiedKind) || super.isExclusiveFor(qualifiedKind)
 
     override fun createPointer(): Pointer<out PsiSourcedWebSymbol> {
       val delegatePtr = delegate.createPointer()
