@@ -30,7 +30,7 @@
     <orderEntry type="module" module-name="intellij.maven.jps" />
     <orderEntry type="module-library" exported="">
       <library name="bndlib" type="repository">
-        <properties jar-repository-id="central-proxy" maven-id="biz.aQute.bnd:biz.aQute.bndlib:5.3.0">
+        <properties maven-id="biz.aQute.bnd:biz.aQute.bndlib:5.3.0">
           <verification>
             <artifact url="file://$MAVEN_REPOSITORY$/biz/aQute/bnd/biz.aQute.bndlib/5.3.0/biz.aQute.bndlib-5.3.0.jar">
               <sha256sum>1f91431b2fa0505658e2cbac63c2fc8236fa4f15d3762050ab11571fee8a09ac</sha256sum>
@@ -54,7 +54,7 @@
     </orderEntry>
     <orderEntry type="module-library" exported="">
       <library name="bndlib-repository" type="repository">
-        <properties jar-repository-id="central-proxy" maven-id="biz.aQute.bnd:biz.aQute.repository:5.3.0">
+        <properties maven-id="biz.aQute.bnd:biz.aQute.repository:5.3.0">
           <verification>
             <artifact url="file://$MAVEN_REPOSITORY$/biz/aQute/bnd/biz.aQute.repository/5.3.0/biz.aQute.repository-5.3.0.jar">
               <sha256sum>934f2aa763884b12cfe385d0516c5c936c1c7530c0b0e26165fc5d08eb0a83f5</sha256sum>
@@ -76,7 +76,7 @@
     </orderEntry>
     <orderEntry type="module-library" exported="">
       <library name="bndlib-resolve" type="repository">
-        <properties jar-repository-id="central-proxy" maven-id="biz.aQute.bnd:biz.aQute.resolve:5.3.0">
+        <properties maven-id="biz.aQute.bnd:biz.aQute.resolve:5.3.0">
           <verification>
             <artifact url="file://$MAVEN_REPOSITORY$/biz/aQute/bnd/biz.aQute.resolve/5.3.0/biz.aQute.resolve-5.3.0.jar">
               <sha256sum>e42ecb1046994b09d1aea6868ec096efa79c8a179cd59cbf209e9da7deb5bc77</sha256sum>
