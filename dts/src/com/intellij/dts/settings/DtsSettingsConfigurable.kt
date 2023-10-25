@@ -7,7 +7,7 @@ import com.intellij.dts.zephyr.DtsZephyrBoard
 import com.intellij.dts.zephyr.DtsZephyrRoot
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationInfo
-import com.intellij.openapi.options.BoundConfigurable
+import com.intellij.openapi.options.BoundSearchableConfigurable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.ValidationInfo
@@ -23,7 +23,11 @@ import org.jetbrains.annotations.Nls
 import java.nio.file.InvalidPathException
 import java.nio.file.Path
 
-class DtsSettingsConfigurable(private val project: Project) : BoundConfigurable(DtsBundle.message("settings.name")) {
+class DtsSettingsConfigurable(private val project: Project) : BoundSearchableConfigurable(
+    displayName = DtsBundle.message("settings.name"),
+    helpTopic = "devitree.zephyr.settings",
+    _id = "com.intellij.dts.settings.DtsSettingsConfigurable",
+) {
     private val state: DtsSettings.State = DtsSettings.of(project).state
 
     private fun validateRoot(path: String): Result<String> {
