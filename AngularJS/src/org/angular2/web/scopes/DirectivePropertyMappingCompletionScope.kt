@@ -19,6 +19,7 @@ import com.intellij.psi.util.siblings
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
+import com.intellij.webSymbols.WebSymbol.Companion.JS_STRING_LITERALS
 import com.intellij.webSymbols.WebSymbol.Companion.KIND_JS_STRING_LITERALS
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
@@ -32,8 +33,8 @@ import org.angular2.entities.Angular2EntityUtils
 import org.angular2.entities.source.Angular2SourceDirective
 import org.angular2.lang.types.Angular2TypeUtils
 import org.angular2.web.Angular2Symbol
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_INPUTS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_OUTPUTS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_INPUTS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_OUTPUTS
 import org.angular2.web.references.Angular2DirectivePropertyLiteralReferencesProvider
 
 /**
@@ -73,9 +74,9 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
         }
         else {
           val symbolKind = if (kind == Angular2DecoratorUtil.INPUTS_PROP)
-            KIND_NG_DIRECTIVE_INPUTS
+            NG_DIRECTIVE_INPUTS
           else
-            KIND_NG_DIRECTIVE_OUTPUTS
+            NG_DIRECTIVE_OUTPUTS
           directive.typeScriptClass
             ?.asWebSymbol()
             ?.getJSPropertySymbols()
@@ -126,14 +127,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
 
 
   override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
-    qualifiedKind.matches(
-      NAMESPACE_JS,
-      listOf(
-        KIND_JS_STRING_LITERALS,
-        KIND_NG_DIRECTIVE_INPUTS,
-        KIND_NG_DIRECTIVE_OUTPUTS
-      )
-    )
+    qualifiedKind in listOf(JS_STRING_LITERALS, NG_DIRECTIVE_INPUTS, NG_DIRECTIVE_OUTPUTS)
 
   private object AngularEmptyOrigin : WebSymbolOrigin {
     override val framework: FrameworkId =
@@ -145,26 +139,29 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
     KIND_JS_STRING_LITERALS,
     "Directive property",
     AngularEmptyOrigin,
-    WebSymbolQualifiedKind(NAMESPACE_JS, KIND_NG_DIRECTIVE_INPUTS),
-    WebSymbolQualifiedKind(NAMESPACE_JS, KIND_NG_DIRECTIVE_OUTPUTS),
+    NG_DIRECTIVE_INPUTS,
+    NG_DIRECTIVE_OUTPUTS,
     priority = WebSymbol.Priority.HIGHEST
   )
 
   private class Angular2FieldPropertySymbol(
     delegate: JSPropertySymbol,
-    override val kind: SymbolKind,
+    override val qualifiedKind: WebSymbolQualifiedKind,
     override val project: Project,
     val owner: TypeScriptClass?,
   ) : WebSymbolDelegate<JSPropertySymbol>(delegate), Angular2Symbol {
 
     override val namespace: SymbolNamespace
-      get() = NAMESPACE_JS
+      get() = super<Angular2Symbol>.namespace
+
+    override val kind: SymbolKind
+      get() = super<Angular2Symbol>.kind
 
     override val origin: WebSymbolOrigin
       get() = super<Angular2Symbol>.origin
 
     override val type: Any?
-      get() = if (kind == KIND_NG_DIRECTIVE_OUTPUTS) {
+      get() = if (qualifiedKind == NG_DIRECTIVE_OUTPUTS) {
         Angular2TypeUtils.extractEventVariableType(super<WebSymbolDelegate>.type as? JSType)
       }
       else {
@@ -173,13 +170,13 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
 
     override fun createPointer(): Pointer<out Angular2FieldPropertySymbol> {
       val delegatePtr = delegate.createPointer()
-      val kind = kind
+      val qualifiedKind = qualifiedKind
       val project = project
       val ownerPtr = owner?.createSmartPointer()
       return Pointer {
         val owner = ownerPtr?.let { it.dereference() ?: return@Pointer null }
         val delegate = delegatePtr.dereference() ?: return@Pointer null
-        Angular2FieldPropertySymbol(delegate, kind, project, owner)
+        Angular2FieldPropertySymbol(delegate, qualifiedKind, project, owner)
       }
     }
 

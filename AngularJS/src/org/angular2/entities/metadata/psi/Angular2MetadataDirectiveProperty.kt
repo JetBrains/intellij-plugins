@@ -15,6 +15,7 @@ import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.PsiSourcedWebSymbol
 import com.intellij.webSymbols.WebSymbolApiStatus
+import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.utils.coalesceApiStatus
 import com.intellij.webSymbols.utils.coalesceWith
 import org.angular2.codeInsight.Angular2LibrariesHacks
@@ -26,7 +27,7 @@ class Angular2MetadataDirectiveProperty internal constructor(
   private val myOwner: Angular2MetadataClassBase<*>,
   private val myFieldName: String,
   override val name: String,
-  override val kind: String
+  override val qualifiedKind: WebSymbolQualifiedKind,
 ) : Angular2DirectiveProperty, PsiSourcedWebSymbol {
 
   private val mySignature: NullableLazyValue<JSRecordType.PropertySignature> =
@@ -58,9 +59,9 @@ class Angular2MetadataDirectiveProperty internal constructor(
     val owner = myOwner.createSmartPointer()
     val name = this.name
     val fieldName = myFieldName
-    val kind = this.kind
+    val qualifiedKind = this.qualifiedKind
     return Pointer {
-      owner.dereference()?.let { Angular2MetadataDirectiveProperty(it, fieldName, name, kind) }
+      owner.dereference()?.let { Angular2MetadataDirectiveProperty(it, fieldName, name, qualifiedKind) }
     }
   }
 

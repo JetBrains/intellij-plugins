@@ -7,14 +7,14 @@ import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.contextOfType
-import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolApiStatus
+import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.utils.coalesceWith
 import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
 import org.angular2.lang.Angular2LangUtil.OUTPUT_CHANGE_SUFFIX
 import org.angular2.web.Angular2Symbol
 import org.angular2.web.Angular2SymbolDelegate
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_IN_OUTS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_IN_OUTS
 import java.util.*
 
 class Angular2DirectiveProperties(inputs: Collection<Angular2DirectiveProperty>,
@@ -50,11 +50,8 @@ class Angular2DirectiveProperties(inputs: Collection<Angular2DirectiveProperty>,
   private class InOutDirectiveProperty(input: Angular2DirectiveProperty, private val myOutput: Angular2DirectiveProperty)
     : Angular2SymbolDelegate<Angular2DirectiveProperty>(input) {
 
-    override val namespace: String
-      get() = WebSymbol.NAMESPACE_JS
-
-    override val kind: String
-      get() = KIND_NG_DIRECTIVE_IN_OUTS
+    override val qualifiedKind: WebSymbolQualifiedKind
+      get() = NG_DIRECTIVE_IN_OUTS
 
 
     override val apiStatus: WebSymbolApiStatus

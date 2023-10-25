@@ -12,8 +12,8 @@ import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
 import org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP
 import org.angular2.entities.*
 import org.angular2.entities.source.Angular2SourceDirective.Companion.readDirectivePropertyMappings
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_INPUTS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_OUTPUTS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_INPUTS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_OUTPUTS
 
 class Angular2SourceHostDirectiveWithMappings(private val definition: JSObjectLiteralExpression) : Angular2HostDirective {
   override val directive: Angular2Directive?
@@ -58,14 +58,14 @@ class Angular2SourceHostDirectiveWithMappings(private val definition: JSObjectLi
       val outputs = originalBindings?.outputs?.mapNotNullTo(mutableListOf()) { createHostProperty(directive, it, outputsMap) }
                     ?: mutableListOf()
 
-      inputsMap.mapNotNullTo(inputs) {(_, info) ->
+      inputsMap.mapNotNullTo(inputs) { (_, info) ->
         if (info.declaringElement == null) return@mapNotNullTo null
-        Angular2SourceDirectiveVirtualProperty(directive?.typeScriptClass, KIND_NG_DIRECTIVE_INPUTS, info.name,
+        Angular2SourceDirectiveVirtualProperty(directive?.typeScriptClass, NG_DIRECTIVE_INPUTS, info.name,
                                                info.required, info.declaringElement, info.declarationRange)
       }
-      outputsMap.mapNotNullTo(outputs) {(_, info) ->
+      outputsMap.mapNotNullTo(outputs) { (_, info) ->
         if (info.declaringElement == null) return@mapNotNullTo null
-        Angular2SourceDirectiveVirtualProperty(directive?.typeScriptClass, KIND_NG_DIRECTIVE_OUTPUTS, info.name,
+        Angular2SourceDirectiveVirtualProperty(directive?.typeScriptClass, NG_DIRECTIVE_OUTPUTS, info.name,
                                                info.required, info.declaringElement, info.declarationRange)
       }
       return Angular2DirectiveProperties(inputs.toList(), outputs.toList())

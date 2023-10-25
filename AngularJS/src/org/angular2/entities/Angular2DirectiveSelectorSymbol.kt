@@ -15,14 +15,15 @@ import com.intellij.psi.util.contextOfType
 import com.intellij.refactoring.rename.api.RenameValidationResult
 import com.intellij.refactoring.rename.api.RenameValidator
 import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.declarations.WebSymbolDeclaration
 import com.intellij.webSymbols.utils.WebSymbolDeclaredInPsi
 import com.intellij.xml.XmlElementDescriptor
 import org.angular2.Angular2DecoratorUtil.getClassForDecoratorElement
 import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
 import org.angular2.web.Angular2Symbol
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_ELEMENT_SELECTORS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_ATTRIBUTE_SELECTORS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_ELEMENT_SELECTORS
 import org.angularjs.AngularJSBundle
 import java.util.*
 import java.util.regex.Pattern
@@ -47,11 +48,8 @@ class Angular2DirectiveSelectorSymbol(
   override val project: Project
     get() = sourceElement.project
 
-  override val namespace: String
-    get() = WebSymbol.NAMESPACE_JS
-
-  override val kind: String
-    get() = if (isElementSelector) KIND_NG_DIRECTIVE_ELEMENT_SELECTORS else KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS
+  override val qualifiedKind: WebSymbolQualifiedKind
+    get() = if (isElementSelector) NG_DIRECTIVE_ELEMENT_SELECTORS else NG_DIRECTIVE_ATTRIBUTE_SELECTORS
 
   override val declaration: WebSymbolDeclaration?
     get() = super.declaration.takeIf { isDeclaration }

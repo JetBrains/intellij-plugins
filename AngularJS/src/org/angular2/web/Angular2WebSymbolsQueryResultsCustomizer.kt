@@ -14,7 +14,6 @@ import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
-import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizer
@@ -29,14 +28,14 @@ import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity
 import org.angular2.entities.Angular2Directive
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_ATTRIBUTES
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_ELEMENT_SELECTORS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_INPUTS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_IN_OUTS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_OUTPUTS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_STRUCTURAL_DIRECTIVES
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_ATTRIBUTES
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_ATTRIBUTE_SELECTORS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_ELEMENT_SELECTORS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_INPUTS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_IN_OUTS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_ONE_TIME_BINDINGS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_OUTPUTS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_STRUCTURAL_DIRECTIVES
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.PROP_ERROR_SYMBOL
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.PROP_SCOPE_PROXIMITY
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.PROP_SYMBOL_DIRECTIVE
@@ -52,7 +51,7 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
                      namespace: SymbolNamespace,
                      kind: SymbolKind,
                      name: String): List<WebSymbol> =
-    if (namespace == NAMESPACE_JS && kinds.contains(kind)) {
+    if (kinds.contains(WebSymbolQualifiedKind(namespace, kind))) {
       if (strict) {
         matches.filter { symbol ->
           symbol.properties[PROP_SYMBOL_DIRECTIVE].asSafely<Angular2Directive>()?.let { scope.contains(it) } != false
@@ -97,7 +96,7 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
         && item.name !in svgAllowedElements)
       return null
     val symbol = item.symbol
-    if (symbol == null || namespace != NAMESPACE_JS || !kinds.contains(kind)) return item
+    if (symbol == null || !kinds.contains(WebSymbolQualifiedKind(namespace, kind))) return item
     val directives = symbol.unwrapMatchedSymbols()
       .mapNotNull { it.properties[PROP_SYMBOL_DIRECTIVE]?.asSafely<Angular2Directive>() }
       .toList()
@@ -113,8 +112,8 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
         wrapWithImportDeclarationModuleHandler(
           Angular2CodeInsightUtils.decorateCodeCompletionItem(item, directives, proximity, scope),
           when (kind) {
-            KIND_NG_DIRECTIVE_ELEMENT_SELECTORS -> XmlTag::class.java
-            KIND_NG_STRUCTURAL_DIRECTIVES -> Angular2TemplateBindings::class.java
+            NG_DIRECTIVE_ELEMENT_SELECTORS.kind -> XmlTag::class.java
+            NG_STRUCTURAL_DIRECTIVES.kind -> Angular2TemplateBindings::class.java
             else -> XmlAttribute::class.java
           })
       }
@@ -125,10 +124,10 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
   companion object {
     private val svgAllowedElements = setOf("ng-container", "ng-template")
 
-    private val kinds = setOf(KIND_NG_STRUCTURAL_DIRECTIVES,
-                              KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS, KIND_NG_DIRECTIVE_ATTRIBUTES,
-                              KIND_NG_DIRECTIVE_INPUTS, KIND_NG_DIRECTIVE_OUTPUTS, KIND_NG_DIRECTIVE_IN_OUTS,
-                              KIND_NG_DIRECTIVE_ELEMENT_SELECTORS, KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS)
+    private val kinds = setOf(NG_STRUCTURAL_DIRECTIVES,
+                              NG_DIRECTIVE_ONE_TIME_BINDINGS, NG_DIRECTIVE_ATTRIBUTES,
+                              NG_DIRECTIVE_INPUTS, NG_DIRECTIVE_OUTPUTS, NG_DIRECTIVE_IN_OUTS,
+                              NG_DIRECTIVE_ELEMENT_SELECTORS, NG_DIRECTIVE_ATTRIBUTE_SELECTORS)
   }
 
   override fun createPointer(): Pointer<out WebSymbolsQueryResultsCustomizer> {

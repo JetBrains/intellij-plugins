@@ -9,6 +9,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.webSymbols.WebSymbolApiStatus
+import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.utils.WebSymbolDeclaredInPsi
 import org.angular2.entities.Angular2DirectiveProperty
 import org.angular2.entities.Angular2EntityUtils
@@ -16,15 +17,15 @@ import java.util.*
 
 class Angular2SourceDirectiveVirtualProperty(
   override val owner: TypeScriptClass?,
-  override val kind: String,
+  override val qualifiedKind: WebSymbolQualifiedKind,
   override val name: String,
   override val required: Boolean,
   override val sourceElement: PsiElement,
   override val textRangeInSourceElement: TextRange?
 ) : Angular2DirectiveProperty, WebSymbolDeclaredInPsi {
 
-  constructor(owner: TypeScriptClass, kind: String, info: Angular2PropertyInfo)
-    : this(owner, kind, info.name, info.required, info.declaringElement ?: owner,
+  constructor(owner: TypeScriptClass, qualifiedKind: WebSymbolQualifiedKind, info: Angular2PropertyInfo)
+    : this(owner, qualifiedKind, info.name, info.required, info.declaringElement ?: owner,
            when {
              info.declarationRange != null -> info.declarationRange
              info.declaringElement != null -> TextRange(1, 1 + info.name.length)
@@ -62,7 +63,7 @@ class Angular2SourceDirectiveVirtualProperty(
 
   override fun createPointer(): Pointer<Angular2SourceDirectiveVirtualProperty> {
     val name = this.name
-    val kind = this.kind
+    val qualifiedKind = this.qualifiedKind
     val ownerPtr = owner?.createSmartPointer()
     val required = this.required
     val sourceElementPtr = sourceElement.createSmartPointer()
@@ -70,7 +71,7 @@ class Angular2SourceDirectiveVirtualProperty(
     return Pointer {
       val owner = ownerPtr?.let { it.dereference() ?: return@Pointer null }
       val sourceElement = sourceElementPtr.dereference() ?: return@Pointer null
-      Angular2SourceDirectiveVirtualProperty(owner, kind, name, required, sourceElement, textRangeInSourceElement)
+      Angular2SourceDirectiveVirtualProperty(owner, qualifiedKind, name, required, sourceElement, textRangeInSourceElement)
     }
   }
 }

@@ -41,7 +41,9 @@ import org.angular2.entities.*
 import org.angular2.entities.source.Angular2SourceDirectiveProperty
 import org.angular2.lang.types.Angular2TypeUtils.possiblyGenericJsType
 import org.angular2.lang.types.BindingsTypeResolver
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_INPUTS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_IN_OUTS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_OUTPUTS
 import org.jetbrains.annotations.Nls
 
 class Angular2ElementDocumentationTarget private constructor(
@@ -159,10 +161,10 @@ class Angular2ElementDocumentationTarget private constructor(
     private fun buildDefinition(): @Nls String {
       val kindName = when (element) {
         is Angular2DirectiveAttribute -> "directive attribute"
-        is Angular2DirectiveProperty -> when (element.kind) {
-          Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_INPUTS -> "directive input"
-          Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_OUTPUTS -> "directive output"
-          Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_IN_OUTS -> "directive inout"
+        is Angular2DirectiveProperty -> when (element.qualifiedKind) {
+          NG_DIRECTIVE_INPUTS -> "directive input"
+          NG_DIRECTIVE_OUTPUTS -> "directive output"
+          NG_DIRECTIVE_IN_OUTS -> "directive inout"
           else -> "directive property"
         }
         is Angular2Component -> "component"

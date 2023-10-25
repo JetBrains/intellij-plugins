@@ -10,6 +10,9 @@ import com.intellij.psi.css.CssElement
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
+import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
+import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
+import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScope
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
@@ -79,21 +82,21 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
     const val ELEMENT_NG_CONTENT = "ng-content"
     const val ELEMENT_NG_TEMPLATE = "ng-template"
 
-    const val KIND_NG_PROPERTY_BINDINGS = "ng-property-bindings"
-    const val KIND_NG_STRUCTURAL_DIRECTIVES = "ng-structural-directives"
+    val NG_PROPERTY_BINDINGS = WebSymbolQualifiedKind(NAMESPACE_HTML, "ng-property-bindings")
+    val NG_STRUCTURAL_DIRECTIVES = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-structural-directives")
 
-    const val KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS = "ng-one-time-bindings"
-    const val KIND_NG_DIRECTIVE_INPUTS = "ng-directive-inputs"
-    const val KIND_NG_DIRECTIVE_OUTPUTS = "ng-directive-outputs"
-    const val KIND_NG_DIRECTIVE_IN_OUTS = "ng-directive-in-outs"
-    const val KIND_NG_DIRECTIVE_ATTRIBUTES = "ng-directive-attributes"
+    val NG_DIRECTIVE_ONE_TIME_BINDINGS = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-one-time-bindings")
+    val NG_DIRECTIVE_INPUTS = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-directive-inputs")
+    val NG_DIRECTIVE_OUTPUTS = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-directive-outputs")
+    val NG_DIRECTIVE_IN_OUTS = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-directive-in-outs")
+    val NG_DIRECTIVE_ATTRIBUTES = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-directive-attributes")
 
-    const val KIND_NG_DIRECTIVE_EXPORTS_AS = "ng-directive-exports-as"
+    val NG_DIRECTIVE_EXPORTS_AS = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-directive-exports-as")
 
-    const val KIND_NG_DIRECTIVE_ELEMENT_SELECTORS = "ng-directive-element-selectors"
-    const val KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS = "ng-directive-attribute-selectors"
+    val NG_DIRECTIVE_ELEMENT_SELECTORS = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-directive-element-selectors")
+    val NG_DIRECTIVE_ATTRIBUTE_SELECTORS = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-directive-attribute-selectors")
 
-    const val KIND_NG_I18N_ATTRIBUTES = "ng-i18n-attributes"
+    val NG_I18N_ATTRIBUTES = WebSymbolQualifiedKind(NAMESPACE_HTML, "ng-i18n-attributes")
 
   }
 

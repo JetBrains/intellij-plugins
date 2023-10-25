@@ -16,6 +16,7 @@ import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.PsiSourcedWebSymbol
 import com.intellij.webSymbols.WebSymbolApiStatus
+import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.utils.WebSymbolDeclaredInPsi
 import com.intellij.webSymbols.utils.coalesceApiStatus
 import com.intellij.webSymbols.utils.coalesceWith
@@ -28,7 +29,7 @@ import java.util.*
 abstract class Angular2SourceDirectiveProperty(
   override val owner: TypeScriptClass,
   protected val signature: JSRecordType.PropertySignature,
-  override val kind: String,
+  override val qualifiedKind: WebSymbolQualifiedKind,
   override val name: String,
   override val required: Boolean,
   val declarationSource: PsiElement?,
@@ -37,16 +38,16 @@ abstract class Angular2SourceDirectiveProperty(
   companion object {
     fun create(owner: TypeScriptClass,
                signature: JSRecordType.PropertySignature,
-               kind: String,
+               qualifiedKind: WebSymbolQualifiedKind,
                info: Angular2PropertyInfo): Angular2SourceDirectiveProperty =
       if (info.declarationRange == null || info.declaringElement == null)
         Angular2SourceFieldDirectiveProperty(
-          owner, signature, kind, info.name, info.required, info.declarationSource?.takeIf { isStubBased(it) }
+          owner, signature, qualifiedKind, info.name, info.required, info.declarationSource?.takeIf { isStubBased(it) }
         )
       else
         Angular2SourceMappedDirectiveProperty(
-          owner, signature, kind, info.name, info.required, info.declarationSource?.takeIf { isStubBased(it) }, info.declaringElement,
-          info.declarationRange
+          owner, signature, qualifiedKind, info.name, info.required, info.declarationSource?.takeIf { isStubBased(it) },
+          info.declaringElement, info.declarationRange
         )
   }
 
@@ -104,11 +105,11 @@ abstract class Angular2SourceDirectiveProperty(
   private class Angular2SourceFieldDirectiveProperty(
     owner: TypeScriptClass,
     signature: JSRecordType.PropertySignature,
-    kind: String,
+    qualifiedKind: WebSymbolQualifiedKind,
     name: String,
     required: Boolean,
     declarationSource: PsiElement?,
-  ) : Angular2SourceDirectiveProperty(owner, signature, kind, name, required, declarationSource), PsiSourcedWebSymbol {
+  ) : Angular2SourceDirectiveProperty(owner, signature, qualifiedKind, name, required, declarationSource), PsiSourcedWebSymbol {
     override val sourceElement: PsiElement
       get() = sources[0]
 
@@ -124,7 +125,7 @@ abstract class Angular2SourceDirectiveProperty(
       val sourcePtr = owner.createSmartPointer()
       val propertyName = signature.memberName
       val name = this.name
-      val kind = this.kind
+      val qualifiedKind = this.qualifiedKind
       val required = this.required
       val declarationSourcePtr = declarationSource?.createSmartPointer()
       return Pointer {
@@ -135,7 +136,7 @@ abstract class Angular2SourceDirectiveProperty(
                                   .buildTypeFromClass(source, false)
                                   .findPropertySignature(propertyName)
                                 ?: return@Pointer null
-        Angular2SourceFieldDirectiveProperty(source, propertySignature, kind, name, required, declarationSource)
+        Angular2SourceFieldDirectiveProperty(source, propertySignature, qualifiedKind, name, required, declarationSource)
       }
     }
 
@@ -152,20 +153,20 @@ abstract class Angular2SourceDirectiveProperty(
   private class Angular2SourceMappedDirectiveProperty(
     owner: TypeScriptClass,
     signature: JSRecordType.PropertySignature,
-    kind: String,
+    qualifiedKind: WebSymbolQualifiedKind,
     name: String,
     required: Boolean,
     declarationSource: PsiElement?,
     override val sourceElement: PsiElement,
     override val textRangeInSourceElement: TextRange,
-  ) : Angular2SourceDirectiveProperty(owner, signature, kind, name, required, declarationSource), WebSymbolDeclaredInPsi {
+  ) : Angular2SourceDirectiveProperty(owner, signature, qualifiedKind, name, required, declarationSource), WebSymbolDeclaredInPsi {
 
     override fun createPointer(): Pointer<Angular2SourceMappedDirectiveProperty> {
       val ownerPtr = owner.createSmartPointer()
       val sourceElementPtr = sourceElement.createSmartPointer()
       val propertyName = signature.memberName
       val name = name
-      val kind = kind
+      val qualifiedKind = qualifiedKind
       val required = required
       val declarationSourcePtr = declarationSource?.createSmartPointer()
       val textRangeInSourceElement = textRangeInSourceElement
@@ -179,7 +180,7 @@ abstract class Angular2SourceDirectiveProperty(
                                   .buildTypeFromClass(owner, false)
                                   .findPropertySignature(propertyName)
                                 ?: return@Pointer null
-        Angular2SourceMappedDirectiveProperty(owner, propertySignature, kind, name, required, declarationSource,
+        Angular2SourceMappedDirectiveProperty(owner, propertySignature, qualifiedKind, name, required, declarationSource,
                                               sourceElement, textRangeInSourceElement)
       }
     }

@@ -29,20 +29,21 @@ import com.intellij.util.containers.mapSmartSet
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
+import com.intellij.webSymbols.utils.qualifiedKind
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider
 import org.angular2.codeInsight.config.Angular2Compiler.isStrictTemplates
 import org.angular2.entities.Angular2DirectiveProperty
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_INPUTS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_ATTRIBUTE_SELECTORS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_INPUTS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_ONE_TIME_BINDINGS
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 internal class OneTimeBindingsScope(tag: XmlTag) : WebSymbolsScopeWithCache<XmlTag, Unit>(Angular2Framework.ID, tag.project, tag, Unit) {
 
   override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
-    qualifiedKind.matches(WebSymbol.NAMESPACE_JS, KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS)
+    qualifiedKind == NG_DIRECTIVE_ONE_TIME_BINDINGS
 
   override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     val queryExecutor = WebSymbolsQueryExecutorFactory.create(dataHolder)
@@ -50,13 +51,13 @@ internal class OneTimeBindingsScope(tag: XmlTag) : WebSymbolsScopeWithCache<XmlT
                   ?.symbol?.let { listOf(it) }
                 ?: emptyList()
     val attributeSelectors = queryExecutor
-      .runListSymbolsQuery(WebSymbol.NAMESPACE_JS, KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS, expandPatterns = true, scope = scope)
+      .runListSymbolsQuery(WebSymbol.NAMESPACE_JS, NG_DIRECTIVE_ATTRIBUTE_SELECTORS.kind, expandPatterns = true, scope = scope)
       .filter { it.attributeValue?.required == false }
       .mapSmartSet { it.name }
 
     val isStrictTemplates = isStrictTemplates(dataHolder)
     for (input in queryExecutor
-      .runListSymbolsQuery(WebSymbol.NAMESPACE_JS, KIND_NG_DIRECTIVE_INPUTS, expandPatterns = false, scope = scope)) {
+      .runListSymbolsQuery(WebSymbol.NAMESPACE_JS, NG_DIRECTIVE_INPUTS.kind, expandPatterns = false, scope = scope)) {
       val isOneTimeBinding = isOneTimeBindingProperty(input)
       if (isStrictTemplates) {
         consumer(Angular2OneTimeBinding(input, !attributeSelectors.contains(input.name), !isOneTimeBinding))
@@ -85,7 +86,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : WebSymbolsScopeWithCache<XmlT
 
     @JvmStatic
     fun isOneTimeBindingProperty(property: WebSymbol): Boolean {
-      if (ONE_TIME_BINDING_EXCLUDES.contains(property.name) || KIND_NG_DIRECTIVE_INPUTS != property.kind) {
+      if (ONE_TIME_BINDING_EXCLUDES.contains(property.name) || NG_DIRECTIVE_INPUTS != property.qualifiedKind) {
         return false
       }
       if ((property as? Angular2DirectiveProperty)?.virtualProperty == true) return true
@@ -111,7 +112,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : WebSymbolsScopeWithCache<XmlT
     override val source: PsiElement?
       get() = (delegate as? PsiSourcedWebSymbol)?.source
 
-    override val kind: SymbolKind get() = KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS
+    override val kind: SymbolKind get() = NG_DIRECTIVE_ONE_TIME_BINDINGS.kind
 
     override val priority: WebSymbol.Priority
       get() = WebSymbol.Priority.LOW

@@ -12,28 +12,29 @@ import com.intellij.webSymbols.SymbolNamespace
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItemCustomizer
+import com.intellij.webSymbols.utils.qualifiedKind
 import org.angular2.Angular2Framework
 import org.angular2.lang.types.BindingsTypeResolver
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_ATTRIBUTES
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_ELEMENT_SELECTORS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_EXPORTS_AS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_INPUTS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_IN_OUTS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_OUTPUTS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_ATTRIBUTES
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_ATTRIBUTE_SELECTORS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_ELEMENT_SELECTORS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_EXPORTS_AS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_INPUTS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_IN_OUTS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_ONE_TIME_BINDINGS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_OUTPUTS
 import org.angular2.web.scopes.OneTimeBindingsScope
 
 
-private val typedKinds = setOf(WebSymbol.KIND_JS_EVENTS,
-                               WebSymbol.KIND_JS_PROPERTIES,
-                               KIND_NG_DIRECTIVE_ATTRIBUTES,
-                               KIND_NG_DIRECTIVE_INPUTS,
-                               KIND_NG_DIRECTIVE_OUTPUTS,
-                               KIND_NG_DIRECTIVE_IN_OUTS)
+private val typedKinds = setOf(WebSymbol.JS_EVENTS,
+                               WebSymbol.JS_PROPERTIES,
+                               NG_DIRECTIVE_ATTRIBUTES,
+                               NG_DIRECTIVE_INPUTS,
+                               NG_DIRECTIVE_OUTPUTS,
+                               NG_DIRECTIVE_IN_OUTS)
 
-private val selectorKinds = setOf(KIND_NG_DIRECTIVE_ELEMENT_SELECTORS,
-                                  KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS)
+private val selectorKinds = setOf(NG_DIRECTIVE_ELEMENT_SELECTORS,
+                                  NG_DIRECTIVE_ATTRIBUTE_SELECTORS)
 
 
 class Angular2CompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {
@@ -48,14 +49,14 @@ class Angular2CompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {
         WebSymbol.KIND_HTML_ATTRIBUTES, WebSymbol.KIND_HTML_ATTRIBUTE_VALUES ->
           item.symbol
             ?.let { symbol ->
-              val symbolKind = symbol.kind
+              val symbolKind = symbol.qualifiedKind
               when {
                 typedKinds.contains(symbolKind) -> item.decorateWithSymbolType(symbol)
                 selectorKinds.contains(symbolKind) -> item.withPriority(WebSymbol.Priority.HIGH)
 
                 // One time bindings and selectors require special handling
                 // to not override standard attributes and elements
-                symbolKind == KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS ->
+                symbolKind == NG_DIRECTIVE_ONE_TIME_BINDINGS ->
                   item
                     .decorateWithSymbolType(symbol)
                     .withPriority(
@@ -63,7 +64,7 @@ class Angular2CompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {
                       ?: WebSymbol.Priority.HIGH
                     )
 
-                symbolKind == KIND_NG_DIRECTIVE_EXPORTS_AS ->
+                symbolKind == NG_DIRECTIVE_EXPORTS_AS ->
                   item.decorateWithJsType(
                     location.parentOfType<XmlTag>()?.let { BindingsTypeResolver.get(it).resolveDirectiveExportAsType(item.name) })
                 else -> item
@@ -74,7 +75,7 @@ class Angular2CompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {
       }
     else if (namespace == WebSymbol.NAMESPACE_JS
              && framework == Angular2Framework.ID
-             && typedKinds.contains(item.symbol?.kind))
+             && typedKinds.contains(item.symbol?.qualifiedKind))
       item.decorateWithSymbolType(item.symbol)
     else
       item

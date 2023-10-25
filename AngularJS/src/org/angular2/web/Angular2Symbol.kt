@@ -3,12 +3,19 @@ package org.angular2.web
 
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
-import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.WebSymbolOrigin
+import com.intellij.webSymbols.*
 
 interface Angular2Symbol : WebSymbol {
 
   val project: Project
+
+  val qualifiedKind: WebSymbolQualifiedKind
+
+  override val kind: SymbolKind
+    get() = qualifiedKind.kind
+
+  override val namespace: SymbolNamespace
+    get() = qualifiedKind.namespace
 
   override val origin: WebSymbolOrigin
     get() = Angular2SymbolOrigin(this)

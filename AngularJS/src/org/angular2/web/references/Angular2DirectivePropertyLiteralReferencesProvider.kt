@@ -11,12 +11,11 @@ import com.intellij.model.search.SearchRequest
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.references.WebSymbolReferenceProvider
 import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
 import org.angular2.entities.Angular2EntityUtils.getPropertyDeclarationOrReferenceKindAndDirective
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_INPUTS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_OUTPUTS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_INPUTS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_OUTPUTS
 
 class Angular2DirectivePropertyLiteralReferencesProvider : WebSymbolReferenceProvider<JSLiteralExpression>() {
 
@@ -35,7 +34,7 @@ class Angular2DirectivePropertyLiteralReferencesProvider : WebSymbolReferencePro
     if (hostDirective) {
       val properties = (if (kind == INPUTS_PROP) directive.inputs else directive.outputs)
       val symbol = properties.find { it.name == name }
-                   ?: unresolvedSymbol(NAMESPACE_JS, if (kind == INPUTS_PROP) KIND_NG_DIRECTIVE_INPUTS else KIND_NG_DIRECTIVE_OUTPUTS, name)
+                   ?: unresolvedSymbol(if (kind == INPUTS_PROP) NG_DIRECTIVE_INPUTS else NG_DIRECTIVE_OUTPUTS, name)
       return mapOf(startOffset + 1 to symbol)
     }
     else {

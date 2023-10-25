@@ -17,6 +17,8 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
+import com.intellij.webSymbols.WebSymbol.Companion.JS_EVENTS
+import com.intellij.webSymbols.WebSymbol.Companion.JS_PROPERTIES
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
@@ -180,11 +182,8 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
     override val type: JSType?
       get() = source?.jsType
 
-    override val namespace: SymbolNamespace
-      get() = NAMESPACE_JS
-
-    override val kind: SymbolKind
-      get() = WebSymbol.KIND_JS_PROPERTIES
+    override val qualifiedKind: WebSymbolQualifiedKind
+      get() = JS_PROPERTIES
 
     override fun equals(other: Any?): Boolean =
       other === this
@@ -229,14 +228,11 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
     override val type: JSType?
       get() = Angular2TypeUtils.extractEventVariableType(mainSource?.jsType) ?: mapSource?.jsType
 
-    override val namespace: SymbolNamespace
-      get() = NAMESPACE_JS
-
     override val priority: WebSymbol.Priority
       get() = WebSymbol.Priority.NORMAL
 
-    override val kind: SymbolKind
-      get() = WebSymbol.KIND_JS_EVENTS
+    override val qualifiedKind: WebSymbolQualifiedKind
+      get() = JS_EVENTS
 
     override fun equals(other: Any?): Boolean =
       other === this

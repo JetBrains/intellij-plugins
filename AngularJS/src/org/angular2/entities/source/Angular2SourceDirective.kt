@@ -24,12 +24,12 @@ import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.AstLoadingFilter
 import com.intellij.util.asSafely
+import com.intellij.webSymbols.WebSymbolQualifiedKind
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2DecoratorUtil.ALIAS_PROP
 import org.angular2.Angular2DecoratorUtil.HOST_DIRECTIVES_PROP
 import org.angular2.Angular2DecoratorUtil.NAME_PROP
 import org.angular2.Angular2DecoratorUtil.REQUIRED_PROP
-import org.angular2.Angular2DecoratorUtil.TRANSFORM_PROP
 import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver
 import org.angular2.entities.*
 import org.angular2.entities.Angular2EntitiesProvider.withJsonMetadataFallback
@@ -39,8 +39,8 @@ import org.angular2.entities.Angular2EntityUtils.VIEW_CONTAINER_REF
 import org.angular2.entities.ivy.Angular2IvyUtil.getIvyEntity
 import org.angular2.entities.metadata.Angular2MetadataUtil
 import org.angular2.index.Angular2IndexingHandler
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_INPUTS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_OUTPUTS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_INPUTS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_OUTPUTS
 
 open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSImplicitElement)
   : Angular2SourceDeclaration(decorator, implicitElement), Angular2Directive {
@@ -157,16 +157,16 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
       .properties
       .forEach { prop ->
         for (el in getPropertySources(prop.memberSource.singleElement)) {
-          processProperty(clazz, prop, el, inputMap, Angular2DecoratorUtil.INPUT_DEC, KIND_NG_DIRECTIVE_INPUTS, inputs)
-          processProperty(clazz, prop, el, outputMap, Angular2DecoratorUtil.OUTPUT_DEC, KIND_NG_DIRECTIVE_OUTPUTS, outputs)
+          processProperty(clazz, prop, el, inputMap, Angular2DecoratorUtil.INPUT_DEC, NG_DIRECTIVE_INPUTS, inputs)
+          processProperty(clazz, prop, el, outputMap, Angular2DecoratorUtil.OUTPUT_DEC, NG_DIRECTIVE_OUTPUTS, outputs)
         }
       }
 
     inputMap.values.forEach { info ->
-      inputs[info.name] = Angular2SourceDirectiveVirtualProperty(clazz, KIND_NG_DIRECTIVE_INPUTS, info)
+      inputs[info.name] = Angular2SourceDirectiveVirtualProperty(clazz, NG_DIRECTIVE_INPUTS, info)
     }
     outputMap.values.forEach { info ->
-      outputs[info.name] = Angular2SourceDirectiveVirtualProperty(clazz, KIND_NG_DIRECTIVE_OUTPUTS, info)
+      outputs[info.name] = Angular2SourceDirectiveVirtualProperty(clazz, NG_DIRECTIVE_OUTPUTS, info)
     }
 
     val inheritedProperties = Ref<Angular2DirectiveProperties>()
@@ -279,7 +279,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
                                 field: JSAttributeListOwner,
                                 mappings: MutableMap<String, Angular2PropertyInfo>,
                                 decorator: String,
-                                kind: String,
+                                qualifiedKind: WebSymbolQualifiedKind,
                                 result: MutableMap<String, Angular2DirectiveProperty>) {
       val info: Angular2PropertyInfo? =
         mappings.remove(property.memberName)
@@ -288,7 +288,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
           ?.firstOrNull { it.decoratorName == decorator }
           ?.let { createPropertyInfo(it, property.memberName) }
       if (info != null) {
-        result.putIfAbsent(info.name, Angular2SourceDirectiveProperty.create(sourceClass, property, kind, info))
+        result.putIfAbsent(info.name, Angular2SourceDirectiveProperty.create(sourceClass, property, qualifiedKind, info))
       }
     }
 
@@ -361,7 +361,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
         is JSLiteralExpression -> param.stubSafeStringValue.let { name ->
           Angular2PropertyInfo(name ?: defaultName, false, decorator, declaringElement = if (name != null) param else null)
         }
-        else -> Angular2PropertyInfo(defaultName, false,  decorator, declaringElement = null)
+        else -> Angular2PropertyInfo(defaultName, false, decorator, declaringElement = null)
       }
 
   }

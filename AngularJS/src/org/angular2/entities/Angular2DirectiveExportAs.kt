@@ -9,14 +9,12 @@ import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.createSmartPointer
-import com.intellij.webSymbols.SymbolKind
-import com.intellij.webSymbols.SymbolNamespace
 import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
+import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.utils.WebSymbolDeclaredInPsi
 import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
 import org.angular2.web.Angular2Symbol
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_EXPORTS_AS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_EXPORTS_AS
 import java.util.*
 
 class Angular2DirectiveExportAs(
@@ -35,11 +33,8 @@ class Angular2DirectiveExportAs(
   override val project: Project
     get() = sourceElement.project
 
-  override val namespace: SymbolNamespace
-    get() = NAMESPACE_JS
-
-  override val kind: SymbolKind
-    get() = KIND_NG_DIRECTIVE_EXPORTS_AS
+  override val qualifiedKind: WebSymbolQualifiedKind
+    get() = NG_DIRECTIVE_EXPORTS_AS
 
   override val type: Any?
     get() = directive.typeScriptClass?.jsType

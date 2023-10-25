@@ -11,19 +11,14 @@ import com.intellij.webSymbols.WebSymbolsScopeWithCache
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.Angular2CodeInsightUtils
 import org.angular2.codeInsight.Angular2DeclarationsScope
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_ATTRIBUTE_SELECTORS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_ELEMENT_SELECTORS
 
 class NgContentSelectorsScope(tag: XmlTag)
   : WebSymbolsScopeWithCache<XmlTag, Unit>(Angular2Framework.ID, tag.project, tag, Unit) {
 
   override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
-    qualifiedKind.matches(
-      WebSymbol.NAMESPACE_JS,
-      listOf(
-        Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_ELEMENT_SELECTORS,
-        Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS,
-      )
-    )
+    qualifiedKind == NG_DIRECTIVE_ELEMENT_SELECTORS || qualifiedKind == NG_DIRECTIVE_ATTRIBUTE_SELECTORS
 
   override fun createPointer(): Pointer<NgContentSelectorsScope> {
     val tag = dataHolder.createSmartPointer()

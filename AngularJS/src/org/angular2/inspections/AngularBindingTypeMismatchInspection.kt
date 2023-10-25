@@ -8,9 +8,9 @@ import com.intellij.lang.javascript.psi.JSEmptyExpression
 import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
 import com.intellij.lang.javascript.psi.types.JSTypeSource
-import com.intellij.lang.javascript.psi.types.primitives.JSUndefinedType
 import com.intellij.lang.javascript.validation.JSTypeChecker
 import com.intellij.psi.xml.XmlAttribute
+import com.intellij.webSymbols.utils.qualifiedKind
 import com.intellij.webSymbols.utils.unwrapMatchedSymbols
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.config.Angular2Compiler.isStrictTemplates
@@ -20,7 +20,7 @@ import org.angular2.lang.expr.psi.Angular2Binding
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.lang.types.BindingsTypeResolver
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_ONE_TIME_BINDINGS
 
 class AngularBindingTypeMismatchInspection : AngularHtmlLikeTemplateLocalInspectionTool() {
 
@@ -39,7 +39,7 @@ class AngularBindingTypeMismatchInspection : AngularHtmlLikeTemplateLocalInspect
   private fun checkOneTimeBindingType(holder: ProblemsHolder, attribute: XmlAttribute, descriptor: Angular2AttributeDescriptor) {
     val value = attribute.valueElement
     val isOneTimeBinding = descriptor.symbol.unwrapMatchedSymbols()
-      .any { it.kind == Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS }
+      .any { it.qualifiedKind == NG_DIRECTIVE_ONE_TIME_BINDINGS }
     if (isOneTimeBinding && isStrictTemplates(attribute)) {
       checkTypes(holder, attribute, descriptor, value?.value ?: "", BindingsTypeResolver.get(attribute.parent), true)
     }
