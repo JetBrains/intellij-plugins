@@ -28,7 +28,7 @@ object AttributeWithInterpolationsScope : WebSymbolsScope {
   override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbol> =
-    if (qualifiedName.matches(WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_ATTRIBUTES)) {
+    if (qualifiedName.matches(WebSymbol.HTML_ATTRIBUTES)) {
       AttributeWithInterpolationsSymbol.match(qualifiedName.name, params, scope)
     }
     else emptyList()

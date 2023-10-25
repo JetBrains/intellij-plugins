@@ -5,13 +5,11 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiNamedElement
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.SymbolKind
-import com.intellij.webSymbols.SymbolNamespace
-import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.WebSymbolOrigin
+import com.intellij.webSymbols.WebSymbolQualifiedKind
 import org.jetbrains.vuejs.model.VueContainer
 import org.jetbrains.vuejs.model.VueProvide
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.KIND_VUE_PROVIDES
+import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.VUE_PROVIDES
 
 class VueProvideSymbol(
   private val provide: VueProvide,
@@ -19,11 +17,8 @@ class VueProvideSymbol(
   override val origin: WebSymbolOrigin,
 ) : VueDocumentedItemSymbol<VueProvide>(provide.name, provide) {
 
-  override val namespace: SymbolNamespace
-    get() = NAMESPACE_JS
-
-  override val kind: SymbolKind
-    get() = KIND_VUE_PROVIDES
+  override val qualifiedKind: WebSymbolQualifiedKind
+    get() = VUE_PROVIDES
 
   override val type: JSType?
     get() = item.jsType

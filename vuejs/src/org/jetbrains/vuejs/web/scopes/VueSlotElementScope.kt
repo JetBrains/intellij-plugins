@@ -11,10 +11,9 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.WebSymbol.Companion.KIND_HTML_SLOTS
-import com.intellij.webSymbols.WebSymbol.Companion.KIND_JS_PROPERTIES
+import com.intellij.webSymbols.WebSymbol.Companion.HTML_SLOTS
+import com.intellij.webSymbols.WebSymbol.Companion.JS_PROPERTIES
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
-import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue.Kind.EXPRESSION
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue.Type.OF_MATCH
@@ -31,8 +30,8 @@ import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.web.VueFramework
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.KIND_VUE_COMPONENTS
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.KIND_VUE_SPECIAL_PROPERTIES
+import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.VUE_COMPONENTS
+import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.VUE_SPECIAL_PROPERTIES
 import org.jetbrains.vuejs.web.asWebSymbol
 
 private const val SLOT_LOCAL_COMPONENT = "\$local"
@@ -97,18 +96,18 @@ class VueSlotElementScope(tag: XmlTag)
           if (slotName != null)
             Reference(
               location = listOf(
-                WebSymbolQualifiedName(NAMESPACE_HTML, KIND_VUE_COMPONENTS, SLOT_LOCAL_COMPONENT),
-                WebSymbolQualifiedName(NAMESPACE_HTML, KIND_HTML_SLOTS, slotName),
+                VUE_COMPONENTS.withName(SLOT_LOCAL_COMPONENT),
+                HTML_SLOTS.withName(slotName),
               ),
-              qualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, KIND_JS_PROPERTIES),
+              qualifiedKind = JS_PROPERTIES,
               nameConversionRules = listOf(
-                WebSymbolNameConversionRules.create(WebSymbolQualifiedKind(NAMESPACE_JS, KIND_JS_PROPERTIES)) {
+                WebSymbolNameConversionRules.create(JS_PROPERTIES) {
                   listOf(fromAsset(it), toAsset(it))
                 }
               )
             )
           else
-            Reference(qualifiedKind = WebSymbolQualifiedKind(NAMESPACE_HTML, KIND_VUE_SPECIAL_PROPERTIES))
+            Reference(qualifiedKind = VUE_SPECIAL_PROPERTIES)
         )), false,
         createSymbolReferencePlaceholder()
       )

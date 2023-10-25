@@ -12,7 +12,6 @@ import com.intellij.model.Pointer
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
@@ -23,8 +22,8 @@ import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.VueRegularComponent
 import org.jetbrains.vuejs.web.VueFramework
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.KIND_VUE_COMPONENTS
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.KIND_VUE_COMPONENT_NAMESPACES
+import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.VUE_COMPONENTS
+import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.VUE_COMPONENT_NAMESPACES
 import java.util.*
 
 class VueComponentNamespaceSymbol(
@@ -60,7 +59,7 @@ class VueComponentNamespaceSymbol(
     get() = NAMESPACE_JS
 
   override val kind: SymbolKind
-    get() = KIND_VUE_COMPONENT_NAMESPACES
+    get() = VUE_COMPONENT_NAMESPACES.kind
 
   override fun isExclusiveFor(qualifiedKind: WebSymbolQualifiedKind): Boolean =
     isNamespacedKind(qualifiedKind)
@@ -85,11 +84,11 @@ class VueComponentNamespaceSymbol(
     mapNotNull { symbol ->
       val source = symbol.source as? JSPsiNamedElementBase ?: return@mapNotNull null
       val component = VueModelManager.getComponent(source) as? VueRegularComponent
-      if (component != null && kind == KIND_VUE_COMPONENTS) {
+      if (component != null && kind == VUE_COMPONENTS.kind) {
         VueNamespacedComponent(
           VueComponentSymbol(symbol.name, VueLocallyDefinedRegularComponent(component, source), VueModelVisitor.Proximity.LOCAL))
       }
-      else if (component == null && kind == KIND_VUE_COMPONENT_NAMESPACES) {
+      else if (component == null && kind == VUE_COMPONENT_NAMESPACES.kind) {
         VueComponentNamespaceSymbol(symbol.name, source)
       }
       else null
@@ -148,8 +147,7 @@ class VueComponentNamespaceSymbol(
 
   companion object {
     private fun isNamespacedKind(qualifiedKind: WebSymbolQualifiedKind) =
-      qualifiedKind.matches(NAMESPACE_JS, KIND_VUE_COMPONENT_NAMESPACES) ||
-      qualifiedKind.matches(NAMESPACE_HTML, KIND_VUE_COMPONENTS)
+      qualifiedKind == VUE_COMPONENT_NAMESPACES || qualifiedKind == VUE_COMPONENTS
   }
 
 }

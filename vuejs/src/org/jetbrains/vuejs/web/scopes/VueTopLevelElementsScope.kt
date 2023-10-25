@@ -18,13 +18,13 @@ object VueTopLevelElementsScope : WebSymbolsScope {
     WebSymbol.KIND_HTML_ELEMENTS,
     "Vue Top Level Element",
     WebSymbolOrigin.empty(),
-    WebSymbolQualifiedKind(WebSymbol.NAMESPACE_HTML, VueWebSymbolsQueryConfigurator.KIND_VUE_TOP_LEVEL_ELEMENTS)
+    VueWebSymbolsQueryConfigurator.VUE_TOP_LEVEL_ELEMENTS
   )
 
   override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
                           params: WebSymbolsListSymbolsQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
-    if (qualifiedKind.matches(WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_ELEMENTS))
+    if (qualifiedKind == WebSymbol.HTML_ELEMENTS)
       listOf(referencingSymbol)
     else
       emptyList()

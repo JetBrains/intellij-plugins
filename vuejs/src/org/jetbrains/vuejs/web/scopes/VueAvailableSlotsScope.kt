@@ -31,7 +31,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : WebSymbolsScope {
   override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbol> =
-    if (qualifiedName.matches(WebSymbol.NAMESPACE_HTML, VueWebSymbolsQueryConfigurator.KIND_VUE_AVAILABLE_SLOTS)
+    if (qualifiedName.matches(VueWebSymbolsQueryConfigurator.VUE_AVAILABLE_SLOTS)
         && params.queryExecutor.allowResolve)
       getMatchingAvailableSlots(tag, qualifiedName.name, true)
     else emptyList()
@@ -39,7 +39,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : WebSymbolsScope {
   override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
                           params: WebSymbolsListSymbolsQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
-    if (qualifiedKind.matches(WebSymbol.NAMESPACE_HTML, VueWebSymbolsQueryConfigurator.KIND_VUE_AVAILABLE_SLOTS)
+    if (qualifiedKind == VueWebSymbolsQueryConfigurator.VUE_AVAILABLE_SLOTS
         && params.queryExecutor.allowResolve)
       getAvailableSlots(tag, params.expandPatterns, true)
     else emptyList()
@@ -47,7 +47,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : WebSymbolsScope {
   override fun getCodeCompletions(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsCodeCompletionQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbolCodeCompletionItem> =
-    if (qualifiedName.matches(WebSymbol.NAMESPACE_HTML, VueWebSymbolsQueryConfigurator.KIND_VUE_AVAILABLE_SLOTS)
+    if (qualifiedName.matches(VueWebSymbolsQueryConfigurator.VUE_AVAILABLE_SLOTS)
         && params.queryExecutor.allowResolve)
       getAvailableSlotsCompletions(tag, qualifiedName.name, params.position, true)
     else emptyList()

@@ -18,7 +18,6 @@ import com.intellij.util.asSafely
 import com.intellij.util.indexing.FileBasedIndexImpl
 import com.intellij.util.text.SemVer
 import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.WebSymbolQualifiedName
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
 import com.intellij.xml.util.HtmlUtil
@@ -30,7 +29,7 @@ import org.jetbrains.vuejs.libraries.*
 import org.jetbrains.vuejs.libraries.componentDecorator.COMPONENT_DEC
 import org.jetbrains.vuejs.libraries.componentDecorator.OPTIONS_DEC
 import org.jetbrains.vuejs.web.VueFramework
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
+import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.VUE_TOP_LEVEL_ELEMENTS
 
 
 fun isVueContext(context: PsiElement): Boolean = VueFramework.instance.isInContext(context)
@@ -79,9 +78,8 @@ fun supportsScriptSetup(context: PsiElement?): Boolean =
   context
     ?.let { WebSymbolsQueryExecutorFactory.create(it, false) }
     ?.takeIf { it.framework == VueFramework.ID }
-    ?.runNameMatchQuery(listOf(WebSymbolQualifiedName(WebSymbol.NAMESPACE_HTML, VueWebSymbolsQueryConfigurator.KIND_VUE_TOP_LEVEL_ELEMENTS,
-                                                      HtmlUtil.SCRIPT_TAG_NAME),
-                               WebSymbolQualifiedName(WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_ATTRIBUTES, SETUP_ATTRIBUTE_NAME)))
+    ?.runNameMatchQuery(listOf(VUE_TOP_LEVEL_ELEMENTS.withName(HtmlUtil.SCRIPT_TAG_NAME),
+                               WebSymbol.HTML_ATTRIBUTES.withName(SETUP_ATTRIBUTE_NAME)))
     ?.firstOrNull() != null
 
 

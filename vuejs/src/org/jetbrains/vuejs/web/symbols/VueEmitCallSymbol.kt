@@ -3,10 +3,9 @@ package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
-import com.intellij.webSymbols.SymbolKind
-import com.intellij.webSymbols.SymbolNamespace
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolOrigin
+import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
 import com.intellij.webSymbols.search.WebSymbolSearchTarget
@@ -22,11 +21,8 @@ class VueEmitCallSymbol(emitCall: VueEmitCall,
                         origin: WebSymbolOrigin)
   : VueNamedWebSymbol<VueEmitCall>(emitCall, origin = origin, owner = owner) {
 
-  override val namespace: SymbolNamespace
-    get() = WebSymbol.NAMESPACE_JS
-
-  override val kind: SymbolKind
-    get() = WebSymbol.KIND_JS_EVENTS
+  override val qualifiedKind: WebSymbolQualifiedKind
+    get() = WebSymbol.JS_EVENTS
 
   override val type: JSType?
     get() = item.eventJSType

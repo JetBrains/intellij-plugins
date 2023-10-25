@@ -10,6 +10,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.documentation.WebSymbolDocumentation
 import com.intellij.webSymbols.documentation.WebSymbolDocumentationCustomizer
+import com.intellij.webSymbols.utils.qualifiedKind
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.expr.psi.impl.VueJSEmbeddedExpressionContentImpl
@@ -39,8 +40,7 @@ class VueDocumentationCustomizer : WebSymbolDocumentationCustomizer {
       }
     }
     else {
-      if (symbol.namespace == WebSymbol.NAMESPACE_HTML
-          && symbol.kind == VueWebSymbolsQueryConfigurator.KIND_VUE_COMPONENT_PROPS) {
+      if (symbol.qualifiedKind == VueWebSymbolsQueryConfigurator.VUE_COMPONENT_PROPS) {
         symbol.renderJsTypeForDocs(Strings.escapeXmlEntities(symbol.name), getTypeSubstitutorFor(location))?.let {
           return documentation.withDefinition(it)
         }

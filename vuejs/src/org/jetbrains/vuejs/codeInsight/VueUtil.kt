@@ -44,6 +44,7 @@ import com.intellij.util.asSafely
 import com.intellij.util.text.SemVer
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
+import com.intellij.webSymbols.utils.qualifiedKind
 import com.intellij.webSymbols.utils.unwrapMatchedSymbols
 import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 import org.jetbrains.vuejs.index.findModule
@@ -459,7 +460,7 @@ fun WebSymbol.extractComponentSymbol(): WebSymbol? =
     ?.toList()
     ?.takeIf { it.size == 2 && it[0].pattern != null }
     ?.get(1)
-    ?.takeIf { it.kind == VueWebSymbolsQueryConfigurator.KIND_VUE_COMPONENTS }
+    ?.takeIf { it.qualifiedKind == VueWebSymbolsQueryConfigurator.VUE_COMPONENTS }
 
 inline fun <reified T : PsiElement> PsiElement.parentOfTypeInAttribute(): T? {
   val host = InjectedLanguageManager.getInstance(project).getInjectionHost(this) ?: this
