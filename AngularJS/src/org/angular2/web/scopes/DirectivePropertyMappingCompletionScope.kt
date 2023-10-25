@@ -113,9 +113,8 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
     }
   }
 
-  override fun isExclusiveFor(namespace: SymbolNamespace, kind: SymbolKind): Boolean =
-    namespace == NAMESPACE_JS && kind == KIND_JS_STRING_LITERALS
-    && dataHolder
+  override fun isExclusiveFor(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+    qualifiedKind == JS_STRING_LITERALS && dataHolder
       .takeIf { it is JSReferenceExpression || it is JSLiteralExpression }
       ?.let { jsElement ->
         CachedValuesManager.getCachedValue(jsElement) {
