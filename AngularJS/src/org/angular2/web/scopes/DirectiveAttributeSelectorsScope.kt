@@ -32,7 +32,7 @@ class DirectiveAttributeSelectorsScope(val project: Project) : WebSymbolsScope {
   override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbol> =
-    if (qualifiedName.matches(WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_ELEMENTS)) {
+    if (qualifiedName.matches(WebSymbol.HTML_ELEMENTS)) {
       listOf(HtmlAttributeDirectiveAttributeSelectorsExtension(project, qualifiedName.name))
     }
     else emptyList()

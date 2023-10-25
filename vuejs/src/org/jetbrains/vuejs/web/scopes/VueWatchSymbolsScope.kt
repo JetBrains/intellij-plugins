@@ -6,7 +6,6 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.WebSymbol.Companion.KIND_JS_PROPERTIES
-import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.patterns.ComplexPatternOptions
@@ -24,8 +23,8 @@ import org.jetbrains.vuejs.model.VueDataProperty
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.source.VueSourceComponent
 import org.jetbrains.vuejs.web.VueFramework
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.KIND_VUE_COMPONENT_COMPUTED_PROPERTIES
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.KIND_VUE_COMPONENT_DATA_PROPERTIES
+import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.VUE_COMPONENT_COMPUTED_PROPERTIES
+import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.VUE_COMPONENT_DATA_PROPERTIES
 import org.jetbrains.vuejs.web.symbols.VueComputedPropertySymbol
 import org.jetbrains.vuejs.web.symbols.VueDataPropertySymbol
 import org.jetbrains.vuejs.web.symbols.VueScopeElementOrigin
@@ -62,7 +61,7 @@ class VueWatchSymbolsScope(private val enclosingComponent: VueSourceComponent)
                                   scope: Stack<WebSymbolsScope>): List<WebSymbolCodeCompletionItem> =
     super.getCodeCompletions(qualifiedName, params, scope)
       .let { codeCompletions ->
-        if (qualifiedName.matches(NAMESPACE_HTML, listOf(KIND_VUE_COMPONENT_COMPUTED_PROPERTIES, KIND_VUE_COMPONENT_DATA_PROPERTIES)))
+        if (qualifiedName.matches(VUE_COMPONENT_COMPUTED_PROPERTIES, VUE_COMPONENT_DATA_PROPERTIES))
           codeCompletions.filter { !it.name.startsWith("$") && it.name.length > 1 }
         else
           codeCompletions
@@ -83,14 +82,14 @@ class VueWatchSymbolsScope(private val enclosingComponent: VueSourceComponent)
     override val pattern: WebSymbolsPattern =
       createComplexPattern(
         ComplexPatternOptions(symbolsResolver = WebSymbolsPatternReferenceResolver(
-          Reference(qualifiedKind = WebSymbolQualifiedKind(NAMESPACE_HTML, KIND_VUE_COMPONENT_DATA_PROPERTIES)),
-          Reference(qualifiedKind = WebSymbolQualifiedKind(NAMESPACE_HTML, KIND_VUE_COMPONENT_COMPUTED_PROPERTIES)))
+          Reference(qualifiedKind = VUE_COMPONENT_DATA_PROPERTIES),
+          Reference(qualifiedKind = VUE_COMPONENT_COMPUTED_PROPERTIES))
         ), false,
         createPatternSequence(
           createSymbolReferencePlaceholder(),
           createComplexPattern(
             ComplexPatternOptions(repeats = true, isRequired = false, symbolsResolver = WebSymbolsPatternReferenceResolver(
-              Reference(qualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, KIND_JS_PROPERTIES))
+              Reference(qualifiedKind = WebSymbol.JS_PROPERTIES)
             )), false,
             createPatternSequence(
               createStringMatch("."),

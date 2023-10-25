@@ -6,10 +6,8 @@ import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.JSStringUtil
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
-import com.intellij.lang.javascript.psi.types.JSTypeSubstitutor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.contextOfType
-import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.FrameworkId
@@ -19,7 +17,6 @@ import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItemCustomizer
 import org.jetbrains.vuejs.index.isScriptSetupTag
-import org.jetbrains.vuejs.lang.expr.psi.impl.VueJSEmbeddedExpressionContentImpl
 import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFileName
 import org.jetbrains.vuejs.web.symbols.VueComponentSymbol
 
@@ -33,7 +30,7 @@ class VueSymbolsCodeCompletionItemCustomizer : WebSymbolCodeCompletionItemCustom
       when (kind) {
         WebSymbol.KIND_HTML_ATTRIBUTES ->
           item.symbol
-            ?.takeIf { it.kind == VueWebSymbolsQueryConfigurator.KIND_VUE_COMPONENT_PROPS || it.kind == WebSymbol.KIND_JS_EVENTS }
+            ?.takeIf { it.kind == VueWebSymbolsQueryConfigurator.VUE_COMPONENT_PROPS.kind || it.kind == WebSymbol.KIND_JS_EVENTS }
             ?.let { item.decorateWithSymbolType(it) }
           ?: item
         WebSymbol.KIND_HTML_ELEMENTS ->

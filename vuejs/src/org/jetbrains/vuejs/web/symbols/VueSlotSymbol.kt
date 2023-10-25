@@ -23,8 +23,8 @@ class VueSlotSymbol(slot: VueSlot,
   override val pattern: WebSymbolsPattern?
     get() = item.pattern?.let { WebSymbolsPatternFactory.createRegExMatch(it, true) }
 
-  override val kind: SymbolKind
-    get() = WebSymbol.KIND_HTML_SLOTS
+  override val qualifiedKind: WebSymbolQualifiedKind
+    get() = WebSymbol.HTML_SLOTS
 
   override val type: JSType?
     get() = item.scope

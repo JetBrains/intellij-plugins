@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.WebSymbol.Companion.KIND_HTML_ATTRIBUTES
+import com.intellij.webSymbols.WebSymbol.Companion.HTML_ATTRIBUTES
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
@@ -20,7 +20,7 @@ class AstroLocalComponent(override val name: String,
   override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbol> =
-    if (qualifiedName.matches(NAMESPACE_HTML, KIND_HTML_ATTRIBUTES) && name.contains(":"))
+    if (qualifiedName.matches(HTML_ATTRIBUTES) && name.contains(":"))
       emptyList()
     else
       super.getMatchingSymbols(qualifiedName, params, scope)
@@ -28,7 +28,7 @@ class AstroLocalComponent(override val name: String,
   override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
                           params: WebSymbolsListSymbolsQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
-    if (qualifiedKind.matches(NAMESPACE_HTML, KIND_HTML_ATTRIBUTES) && !params.expandPatterns)
+    if (qualifiedKind == HTML_ATTRIBUTES && !params.expandPatterns)
       listOf(AstroComponentWildcardAttribute)
     else
       emptyList()

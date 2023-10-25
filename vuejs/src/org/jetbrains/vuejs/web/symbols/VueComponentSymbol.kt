@@ -31,8 +31,8 @@ class VueComponentSymbol(name: String, component: VueComponent, private val vueP
   val typeParameters: List<TypeScriptTypeParameter>
     get() = (item as? VueRegularComponent)?.typeParameters ?: emptyList()
 
-  override val kind: SymbolKind
-    get() = VueWebSymbolsQueryConfigurator.KIND_VUE_COMPONENTS
+  override val qualifiedKind: WebSymbolQualifiedKind
+    get() = VueWebSymbolsQueryConfigurator.VUE_COMPONENTS
 
   // The source field is used for refactoring purposes by Web Symbols framework
   override val source: PsiElement?
@@ -59,7 +59,7 @@ class VueComponentSymbol(name: String, component: VueComponent, private val vueP
   override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbol> =
-    if (qualifiedName.matches(WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_SLOTS) && item is VueUnresolvedComponent)
+    if (qualifiedName.matches(WebSymbol.HTML_SLOTS) && item is VueUnresolvedComponent)
       listOf(WebSymbolMatch.create(qualifiedName.name, listOf(WebSymbolNameSegment(0, qualifiedName.name.length)),
                                    WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_SLOTS, this.origin))
     else
@@ -68,60 +68,58 @@ class VueComponentSymbol(name: String, component: VueComponent, private val vueP
   override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
                           params: WebSymbolsListSymbolsQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
-    if (qualifiedKind.namespace == WebSymbol.NAMESPACE_HTML)
-      when (qualifiedKind.kind) {
-        VueWebSymbolsQueryConfigurator.KIND_VUE_COMPONENT_PROPS -> {
-          val props = mutableListOf<VueInputProperty>()
-          item.acceptPropertiesAndMethods(object : VueModelVisitor() {
-            override fun visitInputProperty(prop: VueInputProperty, proximity: Proximity): Boolean {
-              props.add(prop)
-              return true
-            }
-          })
-          props.map { VueInputPropSymbol(it, item, this.origin) }
-        }
-        VueWebSymbolsQueryConfigurator.KIND_VUE_COMPONENT_DATA_PROPERTIES -> {
-          val props = mutableListOf<VueDataProperty>()
-          item.acceptPropertiesAndMethods(object : VueModelVisitor() {
-            override fun visitDataProperty(dataProperty: VueDataProperty, proximity: Proximity): Boolean {
-              props.add(dataProperty)
-              return true
-            }
-          }, onlyPublic = false)
-          props.map { VueDataPropertySymbol(it, item, this.origin) }
-        }
-        VueWebSymbolsQueryConfigurator.KIND_VUE_COMPONENT_COMPUTED_PROPERTIES -> {
-          val props = mutableListOf<VueComputedProperty>()
-          item.acceptPropertiesAndMethods(object : VueModelVisitor() {
-            override fun visitComputedProperty(computedProperty: VueComputedProperty, proximity: Proximity): Boolean {
-              props.add(computedProperty)
-              return true
-            }
-          }, onlyPublic = false)
-          props.map { VueComputedPropertySymbol(it, item, this.origin) }
-        }
-        WebSymbol.KIND_HTML_SLOTS -> {
-          (item as? VueContainer)
-            ?.slots
-            ?.map { VueSlotSymbol(it, item, this.origin) }
-          ?: emptyList()
-        }
-        VueWebSymbolsQueryConfigurator.KIND_VUE_MODEL -> {
-          (item as? VueContainer)
-            ?.collectModelDirectiveProperties()
-            ?.takeIf { it.prop != null || it.event != null }
-            ?.let { listOf(VueModelSymbol(this.origin, it)) }
-          ?: emptyList()
-        }
-        else -> emptyList()
+    when (qualifiedKind) {
+      VueWebSymbolsQueryConfigurator.VUE_COMPONENT_PROPS -> {
+        val props = mutableListOf<VueInputProperty>()
+        item.acceptPropertiesAndMethods(object : VueModelVisitor() {
+          override fun visitInputProperty(prop: VueInputProperty, proximity: Proximity): Boolean {
+            props.add(prop)
+            return true
+          }
+        })
+        props.map { VueInputPropSymbol(it, item, this.origin) }
       }
-    else if (qualifiedKind.matches(WebSymbol.NAMESPACE_JS, WebSymbol.KIND_JS_EVENTS)) {
-      (item as? VueContainer)
-        ?.emits
-        ?.map { VueEmitCallSymbol(it, item, this.origin) }
-      ?: emptyList()
+      VueWebSymbolsQueryConfigurator.VUE_COMPONENT_DATA_PROPERTIES -> {
+        val props = mutableListOf<VueDataProperty>()
+        item.acceptPropertiesAndMethods(object : VueModelVisitor() {
+          override fun visitDataProperty(dataProperty: VueDataProperty, proximity: Proximity): Boolean {
+            props.add(dataProperty)
+            return true
+          }
+        }, onlyPublic = false)
+        props.map { VueDataPropertySymbol(it, item, this.origin) }
+      }
+      VueWebSymbolsQueryConfigurator.VUE_COMPONENT_COMPUTED_PROPERTIES -> {
+        val props = mutableListOf<VueComputedProperty>()
+        item.acceptPropertiesAndMethods(object : VueModelVisitor() {
+          override fun visitComputedProperty(computedProperty: VueComputedProperty, proximity: Proximity): Boolean {
+            props.add(computedProperty)
+            return true
+          }
+        }, onlyPublic = false)
+        props.map { VueComputedPropertySymbol(it, item, this.origin) }
+      }
+      WebSymbol.HTML_SLOTS -> {
+        (item as? VueContainer)
+          ?.slots
+          ?.map { VueSlotSymbol(it, item, this.origin) }
+        ?: emptyList()
+      }
+      VueWebSymbolsQueryConfigurator.VUE_MODEL -> {
+        (item as? VueContainer)
+          ?.collectModelDirectiveProperties()
+          ?.takeIf { it.prop != null || it.event != null }
+          ?.let { listOf(VueModelSymbol(this.origin, it)) }
+        ?: emptyList()
+      }
+      WebSymbol.JS_EVENTS -> {
+        (item as? VueContainer)
+          ?.emits
+          ?.map { VueEmitCallSymbol(it, item, this.origin) }
+        ?: emptyList()
+      }
+      else -> emptyList()
     }
-    else emptyList()
 
   override fun createPointer(): Pointer<VueComponentSymbol> {
     val component = item.createPointer()

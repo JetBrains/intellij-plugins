@@ -20,7 +20,6 @@ import com.intellij.webSymbols.*
 import com.intellij.webSymbols.WebSymbol.Companion.JS_EVENTS
 import com.intellij.webSymbols.WebSymbol.Companion.JS_PROPERTIES
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
-import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.utils.psiModificationCount
 import org.angular2.Angular2Framework
@@ -38,7 +37,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
   override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbol> =
-    if (qualifiedName.matches(NAMESPACE_HTML, WebSymbol.KIND_HTML_ELEMENTS)) {
+    if (qualifiedName.matches(WebSymbol.HTML_ELEMENTS)) {
       listOf(HtmlElementStandardPropertyAndEventsExtension(templateFile, "", qualifiedName.name))
     }
     else emptyList()
@@ -63,13 +62,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
                                                               templateFile, Pair(tagNamespace, tagName)), WebSymbol {
 
     override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
-      qualifiedKind.matches(
-        NAMESPACE_JS,
-        listOf(
-          WebSymbol.KIND_JS_PROPERTIES,
-          WebSymbol.KIND_JS_EVENTS
-        )
-      )
+      qualifiedKind == JS_PROPERTIES || qualifiedKind == JS_EVENTS
 
     override val name: String
       get() = key.second

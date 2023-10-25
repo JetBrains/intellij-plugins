@@ -8,7 +8,10 @@ import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.createSmartPointer
-import com.intellij.webSymbols.*
+import com.intellij.webSymbols.PsiSourcedWebSymbol
+import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.WebSymbolQualifiedName
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizer
@@ -40,7 +43,7 @@ class VueWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : Web
     if (qualifiedName.namespace != WebSymbol.NAMESPACE_HTML) return matches
 
     var result = matches
-    if (qualifiedName.kind == VueWebSymbolsQueryConfigurator.KIND_VUE_COMPONENTS) {
+    if (qualifiedName.matches(VueWebSymbolsQueryConfigurator.VUE_COMPONENTS)) {
       if (result.size > 1) {
         val mergedSymbol = result.find { it is VueWebTypesMergedSymbol } as? VueWebTypesMergedSymbol
         if (mergedSymbol != null) {
@@ -54,7 +57,7 @@ class VueWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : Web
       }
       if (!strict) return result
     }
-    else if (qualifiedName.kind == WebSymbol.KIND_HTML_ELEMENTS) {
+    else if (qualifiedName.matches(WebSymbol.HTML_ELEMENTS)) {
       val hasStandardHtmlSymbols = result.any { it is WebSymbolsHtmlQueryConfigurator.StandardHtmlSymbol }
       if (!hasStandardHtmlSymbols) return result
     }
@@ -67,8 +70,7 @@ class VueWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : Web
 
   override fun apply(item: WebSymbolCodeCompletionItem,
                      qualifiedKind: WebSymbolQualifiedKind): WebSymbolCodeCompletionItem {
-    if (qualifiedKind.namespace == WebSymbol.NAMESPACE_HTML
-        && qualifiedKind.kind == VueWebSymbolsQueryConfigurator.KIND_VUE_COMPONENTS) {
+    if (qualifiedKind == VueWebSymbolsQueryConfigurator.VUE_COMPONENTS) {
       val proximity = item.symbol?.properties?.get(PROP_VUE_PROXIMITY)
       val element = (item.symbol as? PsiSourcedWebSymbol)?.source
       if (proximity == VueModelVisitor.Proximity.OUT_OF_SCOPE && element != null) {

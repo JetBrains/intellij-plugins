@@ -15,7 +15,7 @@ class VueModelSymbol(override val origin: WebSymbolOrigin,
   override val name: String
     get() = "Vue Model"
   override val namespace: SymbolNamespace get() = WebSymbol.NAMESPACE_HTML
-  override val kind: SymbolKind get() = VueWebSymbolsQueryConfigurator.KIND_VUE_MODEL
+  override val kind: SymbolKind get() = VueWebSymbolsQueryConfigurator.VUE_MODEL.kind
 
   override val properties: Map<String, Any>
     get() {

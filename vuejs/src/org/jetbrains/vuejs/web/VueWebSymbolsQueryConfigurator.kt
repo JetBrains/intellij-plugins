@@ -12,6 +12,7 @@ import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.SmartList
 import com.intellij.util.asSafely
+import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScope
@@ -31,26 +32,20 @@ import org.jetbrains.vuejs.web.scopes.*
 class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
 
   companion object {
-    const val KIND_VUE_TOP_LEVEL_ELEMENTS = "vue-file-top-elements"
-    const val KIND_VUE_COMPONENTS = "vue-components"
-    const val KIND_VUE_COMPONENT_PROPS = "props"
-    const val KIND_VUE_COMPONENT_COMPUTED_PROPERTIES = "computed-properties"
-    const val KIND_VUE_COMPONENT_DATA_PROPERTIES = "data-properties"
-    const val KIND_VUE_DIRECTIVES = "vue-directives"
-    const val KIND_VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES = "vue-script-setup-local-directives"
-    const val KIND_VUE_AVAILABLE_SLOTS = "vue-available-slots"
-    const val KIND_VUE_MODEL = "vue-model"
-    const val KIND_VUE_DIRECTIVE_ARGUMENT = "argument"
-    const val KIND_VUE_DIRECTIVE_MODIFIERS = "modifiers"
-    const val KIND_VUE_COMPONENT_NAMESPACES = "vue-component-namespaces"
-    const val KIND_VUE_PROVIDES = "vue-provides"
-    const val KIND_VUE_SPECIAL_PROPERTIES = "vue-special-properties"
-
-    val VUE_MODEL = WebSymbolQualifiedKind(NAMESPACE_HTML, KIND_VUE_MODEL)
-    val VUE_COMPONENT_PROPS = WebSymbolQualifiedKind(NAMESPACE_HTML, KIND_VUE_COMPONENT_PROPS)
-    val VUE_COMPONENTS = WebSymbolQualifiedKind(NAMESPACE_HTML, KIND_VUE_COMPONENTS)
-    val VUE_DIRECTIVES = WebSymbolQualifiedKind(NAMESPACE_HTML, KIND_VUE_DIRECTIVES)
-    val VUE_DIRECTIVE_ARGUMENT = WebSymbolQualifiedKind(NAMESPACE_HTML, KIND_VUE_DIRECTIVE_ARGUMENT)
+    val VUE_TOP_LEVEL_ELEMENTS = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-file-top-elements")
+    val VUE_COMPONENTS = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-components")
+    val VUE_COMPONENT_PROPS = WebSymbolQualifiedKind(NAMESPACE_HTML, "props")
+    val VUE_COMPONENT_COMPUTED_PROPERTIES = WebSymbolQualifiedKind(NAMESPACE_HTML, "computed-properties")
+    val VUE_COMPONENT_DATA_PROPERTIES = WebSymbolQualifiedKind(NAMESPACE_HTML, "data-properties")
+    val VUE_DIRECTIVES = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-directives")
+    val VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-script-setup-local-directives")
+    val VUE_AVAILABLE_SLOTS = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-available-slots")
+    val VUE_MODEL = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-model")
+    val VUE_DIRECTIVE_ARGUMENT = WebSymbolQualifiedKind(NAMESPACE_HTML, "argument")
+    val VUE_DIRECTIVE_MODIFIERS = WebSymbolQualifiedKind(NAMESPACE_HTML, "modifiers")
+    val VUE_COMPONENT_NAMESPACES = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-component-namespaces")
+    val VUE_PROVIDES = WebSymbolQualifiedKind(WebSymbol.NAMESPACE_JS, "vue-provides")
+    val VUE_SPECIAL_PROPERTIES = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-special-properties")
 
     const val PROP_VUE_MODEL_PROP = "prop"
     const val PROP_VUE_MODEL_EVENT = "event"
@@ -197,7 +192,7 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
     override fun getModificationCount(): Long = 0
 
     override val canonicalNames: Map<WebSymbolQualifiedKind, WebSymbolNameConverter> =
-      mapOf(WebSymbolQualifiedKind(NAMESPACE_HTML, KIND_VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES) to
+      mapOf(VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES to
               WebSymbolNameConverter {
                 listOf(
                   if (isScriptSetupLocalDirectiveName(it))
