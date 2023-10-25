@@ -7,9 +7,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.FrameworkId
-import com.intellij.webSymbols.SymbolKind
-import com.intellij.webSymbols.SymbolNamespace
 import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItemCustomizer
 import com.intellij.webSymbols.utils.qualifiedKind
@@ -36,17 +35,17 @@ private val typedKinds = setOf(WebSymbol.JS_EVENTS,
 private val selectorKinds = setOf(NG_DIRECTIVE_ELEMENT_SELECTORS,
                                   NG_DIRECTIVE_ATTRIBUTE_SELECTORS)
 
-
 class Angular2CompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {
 
   override fun customize(item: WebSymbolCodeCompletionItem,
                          framework: FrameworkId?,
-                         namespace: SymbolNamespace,
-                         kind: SymbolKind,
+                         qualifiedKind: WebSymbolQualifiedKind,
                          location: PsiElement): WebSymbolCodeCompletionItem =
-    if (namespace == WebSymbol.NAMESPACE_HTML && framework == Angular2Framework.ID)
-      when (kind) {
-        WebSymbol.KIND_HTML_ATTRIBUTES, WebSymbol.KIND_HTML_ATTRIBUTE_VALUES ->
+    if (framework != Angular2Framework.ID)
+      item
+    else
+      when (qualifiedKind) {
+        WebSymbol.HTML_ATTRIBUTES, WebSymbol.HTML_ATTRIBUTE_VALUES ->
           item.symbol
             ?.let { symbol ->
               val symbolKind = symbol.qualifiedKind
@@ -71,13 +70,11 @@ class Angular2CompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {
               }
             }
           ?: item
-        else -> item
-      }
-    else if (namespace == WebSymbol.NAMESPACE_JS
-             && framework == Angular2Framework.ID
-             && typedKinds.contains(item.symbol?.qualifiedKind))
-      item.decorateWithSymbolType(item.symbol)
-    else
-      item
+        else -> if (qualifiedKind.namespace == WebSymbol.NAMESPACE_JS
+                    && typedKinds.contains(item.symbol?.qualifiedKind))
+          item.decorateWithSymbolType(item.symbol)
+        else
+          item
 
+      }
 }
