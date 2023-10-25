@@ -3,7 +3,9 @@
     <name>Devicetree</name>
     <vendor>JetBrains</vendor>
 
-    <description>Provides support for Devicetree (*.dts) files and Devicetree Include  (*.dtsi) files</description>
+    <description>
+        Provides support for Devicetree (*.dts) files, Devicetree include (*.dtsi) files and Zephyr (*.overlay) files.
+    </description>
 
     <depends>com.intellij.modules.platform</depends>
 
