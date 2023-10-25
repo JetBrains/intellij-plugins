@@ -8,6 +8,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.css.CssElement
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlTag
+import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
+import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScope
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
@@ -22,6 +24,8 @@ import org.jetbrains.astro.webSymbols.scope.AstroStyleDefineVarsScope
 class AstroQueryConfigurator : WebSymbolsQueryConfigurator {
   companion object {
     const val KIND_ASTRO_COMPONENT = "astro-components"
+
+    val ASTRO_COMPONENTS = WebSymbolQualifiedKind(NAMESPACE_HTML, "astro-components")
 
     const val PROP_ASTRO_PROXIMITY = "x-astro-proximity"
   }

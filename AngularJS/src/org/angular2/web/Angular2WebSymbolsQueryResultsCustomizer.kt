@@ -48,10 +48,8 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
 
   override fun apply(matches: List<WebSymbol>,
                      strict: Boolean,
-                     namespace: SymbolNamespace,
-                     kind: SymbolKind,
-                     name: String): List<WebSymbol> =
-    if (kinds.contains(WebSymbolQualifiedKind(namespace, kind))) {
+                     qualifiedName: WebSymbolQualifiedName): List<WebSymbol> =
+    if (kinds.contains(qualifiedName.qualifiedKind)) {
       if (strict) {
         matches.filter { symbol ->
           symbol.properties[PROP_SYMBOL_DIRECTIVE].asSafely<Angular2Directive>()?.let { scope.contains(it) } != false
@@ -74,7 +72,7 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
         ?: emptyList()
       }
     }
-    else if (namespace == NAMESPACE_HTML) {
+    else if (qualifiedName.namespace == NAMESPACE_HTML) {
       if (matches.any { it is WebSymbolsHtmlQueryConfigurator.StandardHtmlSymbol })
         matches.filter { match ->
           match.properties[PROP_SCOPE_PROXIMITY].asSafely<DeclarationProximity>()
@@ -86,17 +84,15 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
     else matches
 
   override fun apply(item: WebSymbolCodeCompletionItem,
-                     namespace: SymbolNamespace,
-                     kind: SymbolKind): WebSymbolCodeCompletionItem? {
+                     qualifiedKind: WebSymbolQualifiedKind): WebSymbolCodeCompletionItem? {
     // In svg context, only standard SVG elements, ng-container and ng-template works in the browser,
     // remove everything else from completion
     if (svgContext
-        && namespace == NAMESPACE_HTML
-        && kind == WebSymbol.KIND_HTML_ELEMENTS
+        && qualifiedKind == WebSymbol.HTML_ELEMENTS
         && item.name !in svgAllowedElements)
       return null
     val symbol = item.symbol
-    if (symbol == null || !kinds.contains(WebSymbolQualifiedKind(namespace, kind))) return item
+    if (symbol == null || !kinds.contains(qualifiedKind)) return item
     val directives = symbol.unwrapMatchedSymbols()
       .mapNotNull { it.properties[PROP_SYMBOL_DIRECTIVE]?.asSafely<Angular2Directive>() }
       .toList()
@@ -111,9 +107,9 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
       else {
         wrapWithImportDeclarationModuleHandler(
           Angular2CodeInsightUtils.decorateCodeCompletionItem(item, directives, proximity, scope),
-          when (kind) {
-            NG_DIRECTIVE_ELEMENT_SELECTORS.kind -> XmlTag::class.java
-            NG_STRUCTURAL_DIRECTIVES.kind -> Angular2TemplateBindings::class.java
+          when (qualifiedKind) {
+            NG_DIRECTIVE_ELEMENT_SELECTORS -> XmlTag::class.java
+            NG_STRUCTURAL_DIRECTIVES -> Angular2TemplateBindings::class.java
             else -> XmlAttribute::class.java
           })
       }

@@ -27,7 +27,7 @@ class AstroComponent(file: PsiFile)
     get() = NAMESPACE_HTML
 
   override val kind: SymbolKind
-    get() = AstroQueryConfigurator.KIND_ASTRO_COMPONENT
+    get() = AstroQueryConfigurator.ASTRO_COMPONENTS.kind
 
   override val name: String
     get() = StringUtil.capitalize(FileUtil.getNameWithoutExtension(dataHolder.name))

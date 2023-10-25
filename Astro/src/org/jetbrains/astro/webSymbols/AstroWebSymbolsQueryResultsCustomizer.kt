@@ -5,10 +5,7 @@ import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.PsiSourcedWebSymbol
-import com.intellij.webSymbols.SymbolKind
-import com.intellij.webSymbols.SymbolNamespace
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.*
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizer
@@ -24,12 +21,10 @@ class AstroWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : W
 
   override fun apply(matches: List<WebSymbol>,
                      strict: Boolean,
-                     namespace: SymbolNamespace,
-                     kind: SymbolKind,
-                     name: String): List<WebSymbol> =
-    if (namespace != WebSymbol.NAMESPACE_HTML || kind != AstroQueryConfigurator.KIND_ASTRO_COMPONENT)
+                     qualifiedName: WebSymbolQualifiedName): List<WebSymbol> =
+    if (qualifiedName.qualifiedKind != AstroQueryConfigurator.ASTRO_COMPONENTS)
       matches
-    else if (isHtmlTagName(name))
+    else if (isHtmlTagName(qualifiedName.name))
       emptyList()
     else
       matches.filter { symbol ->
@@ -39,8 +34,8 @@ class AstroWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : W
         })
       }
 
-  override fun apply(item: WebSymbolCodeCompletionItem, namespace: SymbolNamespace, kind: SymbolKind): WebSymbolCodeCompletionItem? {
-    if (namespace == WebSymbol.NAMESPACE_HTML && kind == AstroQueryConfigurator.KIND_ASTRO_COMPONENT) {
+  override fun apply(item: WebSymbolCodeCompletionItem, qualifiedKind: WebSymbolQualifiedKind): WebSymbolCodeCompletionItem? {
+    if (qualifiedKind == AstroQueryConfigurator.ASTRO_COMPONENTS) {
       if (isHtmlTagName(item.name)) return null
       val proximity = item.symbol?.properties?.get(PROP_ASTRO_PROXIMITY)
       val element = (item.symbol as? PsiSourcedWebSymbol)?.source
