@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.sdk;
 
 import com.intellij.ide.DataManager;
@@ -37,8 +37,9 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Predicate;
 
-public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
+public final class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
   public interface Listener {
     void stateChanged();
   }
@@ -364,10 +365,10 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
     }
 
     @Override
-    public void createAddActions(@NotNull final DefaultActionGroup group,
-                                 @NotNull final JComponent parent,
-                                 @NotNull final Consumer<? super Sdk> updateTree,
-                                 @Nullable final Condition<? super SdkTypeId> filter) {
+    public void createAddActions(@NotNull DefaultActionGroup group,
+                                 @NotNull JComponent parent,
+                                 @NotNull java.util.function.Consumer<? super Sdk> updateTree,
+                                 @Nullable Predicate<? super SdkTypeId> filter) {
       myOriginal.createAddActions(group, parent, updateTree, filter);
     }
 
@@ -382,7 +383,7 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
     }
 
     @Override
-    public void doAdd(@NotNull final Sdk newSdk, @Nullable final Consumer<? super Sdk> updateTree) {
+    public void doAdd(@NotNull final Sdk newSdk, @Nullable final java.util.function.Consumer<? super Sdk> updateTree) {
       myOriginal.doAdd(newSdk, updateTree);
     }
 
