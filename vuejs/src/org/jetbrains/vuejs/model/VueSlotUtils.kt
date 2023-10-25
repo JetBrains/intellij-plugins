@@ -34,7 +34,7 @@ fun getAvailableSlots(tag: XmlTag, expandPatterns: Boolean, newApi: Boolean): Li
 
 fun getAvailableSlotsCompletions(tag: XmlTag, name: String, position: Int, newApi: Boolean): List<WebSymbolCodeCompletionItem> =
   processSlots(tag, newApi, WebSymbolCodeCompletionItem::name) {
-    runCodeCompletionQuery(WebSymbol.HTML_SLOTS.withName(name), position)
+    runCodeCompletionQuery(WebSymbol.HTML_SLOTS, name, position)
   }
 
 private fun <T> processSlots(tag: XmlTag,

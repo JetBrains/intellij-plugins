@@ -11,9 +11,8 @@ import com.intellij.psi.util.contextOfType
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.FrameworkId
-import com.intellij.webSymbols.SymbolKind
-import com.intellij.webSymbols.SymbolNamespace
 import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItemCustomizer
 import org.jetbrains.vuejs.index.isScriptSetupTag
@@ -23,17 +22,16 @@ import org.jetbrains.vuejs.web.symbols.VueComponentSymbol
 class VueSymbolsCodeCompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {
   override fun customize(item: WebSymbolCodeCompletionItem,
                          framework: FrameworkId?,
-                         namespace: SymbolNamespace,
-                         kind: SymbolKind,
+                         qualifiedKind: WebSymbolQualifiedKind,
                          location: PsiElement): WebSymbolCodeCompletionItem? =
-    if (namespace == WebSymbol.NAMESPACE_HTML && framework == VueFramework.ID)
-      when (kind) {
-        WebSymbol.KIND_HTML_ATTRIBUTES ->
+    if (framework == VueFramework.ID)
+      when (qualifiedKind) {
+        WebSymbol.HTML_ATTRIBUTES ->
           item.symbol
             ?.takeIf { it.kind == VueWebSymbolsQueryConfigurator.VUE_COMPONENT_PROPS.kind || it.kind == WebSymbol.KIND_JS_EVENTS }
             ?.let { item.decorateWithSymbolType(it) }
           ?: item
-        WebSymbol.KIND_HTML_ELEMENTS ->
+        WebSymbol.HTML_ELEMENTS ->
           item.takeIf { !shouldFilterOutLowerCaseScriptSetupIdentifier(it) }
         else -> item
       }

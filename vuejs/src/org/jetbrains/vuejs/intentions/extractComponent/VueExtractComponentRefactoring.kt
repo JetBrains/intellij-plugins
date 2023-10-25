@@ -65,7 +65,7 @@ class VueExtractComponentRefactoring(private val project: Project,
       forbidden = DefaultXmlExtension.DEFAULT_EXTENSION.getAvailableTagNames(context.containingFile as XmlFile, context)
         .map { it.name }.toSet()
       alreadyExisting = WebSymbolsQueryExecutorFactory.create(context)
-        .runCodeCompletionQuery(VUE_COMPONENTS.withName(""), 0)
+        .runCodeCompletionQuery(VUE_COMPONENTS, "", 0)
         .map { fromAsset(it.name) }
         .toSet()
     }
