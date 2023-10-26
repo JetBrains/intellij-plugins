@@ -35,38 +35,53 @@ class Angular2BlocksCodeCompletionProvider : WebSymbolsCompletionProviderBase<Ps
       ?.takeIf { it.hasNestedSecondaryBlocks }
       ?.name
 
+    val prevBlocksCount = context.previousBlocks()
+      .takeWhile { blocksConfig.definitions[it.getName()]?.isPrimary != true }
+      .groupBy { it.getName() }
+      .mapValues { it.value.count() }
+
     val availableBlocks = if (parentPrimaryBlockName != null) {
       blocksConfig.secondaryBlocks[parentPrimaryBlockName] ?: emptyList()
     }
     else {
       val primaryBlockName =
-        context.siblings(false, false)
-          .filter { element ->
-            element.elementType != XmlTokenType.XML_WHITE_SPACE && element != XmlTokenType.XML_REAL_WHITE_SPACE
-            && (element !is XmlText || element.text.all { it.isWhitespace() })
-          }
+        context.previousBlocks()
           .firstOrNull()
           ?.asSafely<Angular2HtmlBlock>()
           ?.let { blocksConfig.definitions[it.getName()] }
+          ?.takeIf { !it.last }
           ?.let {
             if (it.isPrimary) it.name
             else it.primaryBlock
           }
+          ?.takeIf { blocksConfig.definitions[it]?.hasNestedSecondaryBlocks != true }
 
       blocksConfig.primaryBlocks
         .plus(blocksConfig.secondaryBlocks[primaryBlockName] ?: emptyList())
+
     }
 
-    availableBlocks.map { def ->
-      WebSymbolCodeCompletionItem.create("@" + def.name, 0, symbol = def.symbol)
-        .withPriority(if (!def.isPrimary) WebSymbol.Priority.HIGH else WebSymbol.Priority.NORMAL)
-        .withInsertHandlerAdded(Angular2HtmlBlockInsertHandler)
-    }
+    availableBlocks
+      .filter { def -> def.maxCount.let { it == null || it > (prevBlocksCount[def.name] ?: 0) } }
+      .map { def ->
+        WebSymbolCodeCompletionItem.create("@" + def.name, 0, symbol = def.symbol)
+          .withPriority(if (!def.isPrimary) WebSymbol.Priority.HIGH else WebSymbol.Priority.NORMAL)
+          .withInsertHandlerAdded(Angular2HtmlBlockInsertHandler)
+      }
       .forEach {
         it.addToResult(parameters, adjustedResult)
       }
 
   }
+
+  private fun PsiElement.previousBlocks(): Sequence<Angular2HtmlBlock> =
+    siblings(false, false)
+      .filter { element ->
+        element.elementType != XmlTokenType.XML_WHITE_SPACE && element != XmlTokenType.XML_REAL_WHITE_SPACE
+        && (element !is XmlText || element.text.all { it.isWhitespace() })
+      }
+      .takeWhile { it is Angular2HtmlBlock }
+      .filterIsInstance<Angular2HtmlBlock>()
 
   override fun getContext(position: PsiElement): PsiElement? =
     when (position.elementType) {

@@ -26,9 +26,6 @@ class Angular2HtmlBlocksConfig(val definitions: Map<String, Angular2HtmlBlockDef
   val primaryBlocks: List<Angular2HtmlBlockDefinition> by lazy(LazyThreadSafetyMode.PUBLICATION) {
     definitions.values.filter { it.isPrimary }
   }
-  val primaryBlocksNames: Set<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-    definitions.values.asSequence().filter { it.isPrimary }.map { it.name }.toSet()
-  }
 
   val secondaryBlocks: Map<String, List<Angular2HtmlBlockDefinition>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
     definitions.values.filter { !it.isPrimary && it.primaryBlock != null }.groupBy { it.primaryBlock!! }
@@ -55,10 +52,10 @@ class Angular2HtmlBlockDefinition(val symbol: WebSymbol, private val queryExecut
     get() = (symbol.properties["max-count"] as? Number)?.toInt()
 
   val last: Boolean
-    get() = symbol.properties["last"] == true
+    get() = symbol.properties["order"] == "last"
 
   val preferredLast: Boolean
-    get() = symbol.properties["preferred-last"] == true
+    get() = symbol.properties["order"] == "preferred-last"
 
   val hasNestedSecondaryBlocks: Boolean
     get() = symbol.properties["nested-secondary-blocks"] == true
