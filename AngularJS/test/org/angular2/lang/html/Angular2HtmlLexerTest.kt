@@ -330,6 +330,12 @@ open class Angular2HtmlLexerTest : LexerTestCase() {
     """.trimIndent())
   }
 
+  fun testBlockNameCanonicalForm() {
+    doTest("""
+      @block   name with     some spaces and ${'\t'} tabs   (arg)   {}
+    """.trimIndent())
+  }
+
   override fun doTest(text: @NonNls String) {
     super.doTest(text)
     checkCorrectRestart(text)
