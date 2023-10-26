@@ -2,6 +2,7 @@
 package org.angular2.codeInsight
 
 import com.intellij.javascript.web.WebFrameworkTestModule
+import com.intellij.webSymbols.LookupElementInfo
 import com.intellij.webSymbols.enableIdempotenceChecksOnEveryCache
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
@@ -116,6 +117,50 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
 
     myFixture.checkResultByFile("completionInExpression/completionInExpression.ts.after")
   }
+
+  fun testPrimaryBlocks() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html")
+
+  fun testPrimaryBlocksTopLevelText() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html", lookupItemFilter = ::notAnElement)
+
+  fun testPrimaryBlocksNestedText() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html", lookupItemFilter = ::notAnElement)
+
+  fun testIfSecondaryBlocks() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html")
+
+  fun testIfSecondaryBlocksTopLevelText() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html", lookupItemFilter = ::notAnElement)
+
+  fun testIfSecondaryBlocksNestedText() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html", lookupItemFilter = ::notAnElement)
+
+  fun testAfterElseBlock() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html")
+
+  fun testDeferSecondaryBlocks() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html")
+
+  fun testDeferSecondaryBlocksUnique() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html")
+
+  fun testForSecondaryBlocks() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html")
+
+  fun testForSecondaryBlocksUnique() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html")
+
+  fun testSwitchSecondaryBlocks() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html")
+
+  fun testSwitchNoSiblingSecondaryBlocks() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html")
+
+  fun testSwitchSecondaryBlocksUnique() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html")
+
+  private fun notAnElement(it: LookupElementInfo): Boolean = !it.lookupString.startsWith("<")
 
   private fun doBasicCompletionTest(vararg modules: WebFrameworkTestModule, dir: Boolean = false, extension: String = "ts") =
     doTypingTest(null, *modules, dir = dir, extension = extension)

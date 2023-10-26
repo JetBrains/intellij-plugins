@@ -1,0 +1,7 @@
+@error (typeText=null; priority=50.0; typeGreyed)
+@loading (typeText=null; priority=50.0; typeGreyed)
+@placeholder (typeText=null; priority=50.0; typeGreyed)
+@defer (typeText=null; priority=10.0; typeGreyed)
+@for (typeText=null; priority=10.0; typeGreyed)
+@if (typeText=null; priority=10.0; typeGreyed)
+@switch (typeText=null; priority=10.0; typeGreyed)
