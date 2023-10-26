@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
   private String blockName;
   private int parameterIndex;
+  private int parameterStart;
   private int blockParenLevel;
 
   public _Angular2HtmlLexer(boolean tokenizeExpansionForms,
@@ -368,6 +369,7 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
     yybegin(BLOCK_PARAMETER);
     blockParenLevel = 1;
     parameterIndex = 0;
+    parameterStart = zzMarkedPos;
     return Angular2HtmlTokenTypes.BLOCK_PARAMETERS_START;
 }
 <BLOCK_PARAMETERS_START, BLOCK_START> {
@@ -385,7 +387,8 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
      if (--blockParenLevel <= 0) {
        yypushback(1);
        yybegin(BLOCK_PARAMETERS_END);
-       return Angular2EmbeddedExprTokenType.createBlockParameter(blockName, parameterIndex);
+       if (parameterStart < zzMarkedPos)
+          return Angular2EmbeddedExprTokenType.createBlockParameter(blockName, parameterIndex);
      }
   }
   "(" {
@@ -395,7 +398,8 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
     yypushback(1);
     blockParenLevel = 1;
     yybegin(BLOCK_PARAMETER_END);
-    return Angular2EmbeddedExprTokenType.createBlockParameter(blockName, parameterIndex++);
+    if (parameterStart < zzMarkedPos)
+       return Angular2EmbeddedExprTokenType.createBlockParameter(blockName, parameterIndex++);
   }
   "\\"[^]
   | "'"([^\\\']|\\[^])*("'"|\\)?
@@ -404,11 +408,13 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
   [^] {}
   <<EOF>> {
     yybegin(YYINITIAL);
-    return Angular2EmbeddedExprTokenType.createBlockParameter(blockName, parameterIndex);
+    if (parameterStart < zzMarkedPos)
+       return Angular2EmbeddedExprTokenType.createBlockParameter(blockName, parameterIndex);
   }
 }
 <BLOCK_PARAMETER_END> {
   ";" {
+    parameterStart = zzMarkedPos;
     yybegin(BLOCK_PARAMETER);
     return Angular2HtmlTokenTypes.BLOCK_SEMICOLON;
   }
