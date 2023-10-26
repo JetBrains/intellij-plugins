@@ -391,7 +391,8 @@
     <frameworkSpecificHandler language="JavaScript"
                               implementationClass="org.jetbrains.vuejs.libraries.vuex.codeInsight.VuexFrameworkSpecificHandler"/>
     <tsImportResolver implementation="org.jetbrains.vuejs.lang.typescript.VueTypeScriptImportsResolverProvider" order="first"/>
-    <importModulePathStrategy implementation="org.jetbrains.vuejs.lang.VueImportModulePathStrategy"/>
+    <importModulePathStrategy order="after TypeScript"
+                              implementation="org.jetbrains.vuejs.lang.VueImportModulePathStrategy"/>
     <!--suppress PluginXmlValidity -->
     <languageServiceProvider order="first" implementation="org.jetbrains.vuejs.lang.typescript.service.VueLanguageServiceProvider"/>
     <importCandidatesFactory implementation="org.jetbrains.vuejs.codeInsight.imports.VueScriptCandidatesProviderFactory"/>

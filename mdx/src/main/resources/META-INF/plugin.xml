@@ -54,7 +54,8 @@
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
-    <importModulePathStrategy implementation="org.intellij.plugin.mdx.js.MdxImportModulePathStrategy" />
+    <importModulePathStrategy order="after TypeScript"
+                              implementation="org.intellij.plugin.mdx.js.MdxImportModulePathStrategy" />
   </extensions>
 
   <actions>
