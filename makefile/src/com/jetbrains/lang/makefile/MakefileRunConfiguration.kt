@@ -298,7 +298,7 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
     var lastCommand = command
 
     return try {
-      LocalTerminalCustomizer.EP_NAME.extensions.fold(command) { acc, customizer ->
+      LocalTerminalCustomizer.EP_NAME.extensionList.fold(command) { acc, customizer ->
         try {
           customizer.customizeCommandAndEnvironment(project, null, acc, environment)
         }
