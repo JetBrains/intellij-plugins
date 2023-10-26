@@ -4,6 +4,7 @@ import com.intellij.lexer.FlexLexer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.xml.XmlTokenType;
+import org.angular2.codeInsight.blocks.Angular2HtmlBlockUtils;
 import org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType;
 import org.jetbrains.annotations.Nullable;
 %%
@@ -359,7 +360,7 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
   }
 }
 <BLOCK_NAME> "@"[a-zA-Z0-9_\t ]+[a-zA-Z0-9_] {
-  blockName = yytext().toString().substring(1);
+  blockName = Angular2HtmlBlockUtils.INSTANCE.toCanonicalBlockName(yytext().toString());
   yybegin(BLOCK_PARAMETERS_START);
   return Angular2HtmlTokenTypes.BLOCK_NAME;
 }

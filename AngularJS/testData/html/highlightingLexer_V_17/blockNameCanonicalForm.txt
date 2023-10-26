@@ -1,0 +1,8 @@
+NG:BLOCK_NAME ('@block   name with     some spaces and 	 tabs')
+XML_WHITE_SPACE ('   ')
+NG:BLOCK_PARAMETERS_START ('(')
+JS:IDENTIFIER ('arg')
+NG:BLOCK_PARAMETERS_END (')')
+XML_WHITE_SPACE ('   ')
+NG:BLOCK_START ('{')
+NG:BLOCK_END ('}')
