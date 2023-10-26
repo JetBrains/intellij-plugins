@@ -640,43 +640,146 @@
       ],
       "ng-blocks": [
         {
-          "name": "defer"
+          "name": "defer",
+          "is-primary": true,
+          "ng-block-parameters": [
+            {
+              "name": "when",
+              "max-count": 1
+            },
+            {
+              "name": "on",
+              "max-count": 1
+            },
+            {
+              "name": "prefetch when",
+              "max-count": 1
+            },
+            {
+              "name": "prefetch on",
+              "max-count": 1
+            }
+          ]
         },
         {
           "name": "placeholder",
-          "connected-to": "defer"
+          "primary-block": "defer",
+          "max-count": 1,
+          "ng-block-parameters": [
+            {
+              "name": "minimum",
+              "max-count": 1
+            }
+          ]
         },
         {
           "name": "loading",
-          "connected-to": "defer"
+          "primary-block": "defer",
+          "max-count": 1,
+          "ng-block-parameters": [
+            {
+              "name": "minimum",
+              "max-count": 1
+            },
+            {
+              "name": "after",
+              "max-count": 1
+            }
+          ]
         },
         {
           "name": "error",
-          "connected-to": "defer"
+          "primary-block": "defer",
+          "max-count": 1
         },
         {
-          "name": "for"
+          "name": "for",
+          "is-primary": true,
+          "ng-block-parameters": [
+            {
+              "name": "expression",
+              "position": 0,
+              "required": true,
+              "name-as-prefix": false
+            },
+            {
+              "name": "let"
+            },
+            {
+              "name": "trackBy",
+              "max-count": 1
+            }
+          ]
         },
         {
           "name": "empty",
-          "connected-to": "for"
+          "primary-block": "for",
+          "max-count": 1
         },
         {
-          "name": "if"
-        },
-        {
-          "name": "else",
-          "connected-to": [
-            "if",
-            "else if"
+          "name": "if",
+          "is-primary": true,
+          "ng-block-parameters": [
+            {
+              "name": "expression",
+              "position": 0,
+              "required": true,
+              "name-as-prefix": false
+            },
+            {
+              "name": "after",
+              "max-count": 1
+            }
           ]
         },
         {
           "name": "else if",
-          "connected-to": [
-            "if",
-            "else if"
+          "primary-block": "if",
+          "ng-block-parameters": [
+            {
+              "name": "expression",
+              "position": 0,
+              "required": true,
+              "name-as-prefix": false
+            }
           ]
+        },
+        {
+          "name": "else",
+          "primary-block": "if",
+          "order": "last",
+          "max-count": 1
+        },
+        {
+          "name": "switch",
+          "is-primary": true,
+          "nested-secondary-blocks": true,
+          "ng-block-parameters": [
+            {
+              "name": "expression",
+              "position": 0,
+              "required": true,
+              "name-as-prefix": false
+            }
+          ]
+        },
+        {
+          "name": "case",
+          "primary-block": "switch",
+          "ng-block-parameters": [
+            {
+              "name": "expression",
+              "position": 0,
+              "required": true,
+              "name-as-prefix": false
+            }
+          ]
+        },
+        {
+          "name": "default",
+          "primary-block": "switch",
+          "order": "preferred-last",
+          "max-count": 1
         }
       ]
     },

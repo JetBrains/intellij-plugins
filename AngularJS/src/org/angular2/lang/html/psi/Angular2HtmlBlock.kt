@@ -3,4 +3,8 @@ package org.angular2.lang.html.psi
 
 import com.intellij.psi.PsiElement
 
-interface Angular2HtmlBlock : PsiElement
+interface Angular2HtmlBlock : PsiElement {
+
+  fun getName(): String
+
+}

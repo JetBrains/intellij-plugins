@@ -98,6 +98,9 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
 
     val NG_I18N_ATTRIBUTES = WebSymbolQualifiedKind(NAMESPACE_HTML, "ng-i18n-attributes")
 
+    val NG_BLOCKS = WebSymbolQualifiedKind(NAMESPACE_HTML, "ng-blocks")
+    val NG_BLOCK_PARAMETERS = WebSymbolQualifiedKind(NAMESPACE_HTML, "ng-block-parameters")
+
   }
 
 }

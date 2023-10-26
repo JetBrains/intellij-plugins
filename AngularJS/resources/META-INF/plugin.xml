@@ -239,6 +239,8 @@
                                    implementationClass="org.angular2.lang.html.highlighting.Angular2HtmlHighlighterFactory"/>
     <lang.syntaxHighlighterFactory language="Angular17Html"
                                    implementationClass="org.angular2.lang.html.highlighting.Angular17HtmlHighlighterFactory"/>
+    <completion.contributor language="Angular2Html" implementationClass="org.angular2.codeInsight.Angular2HtmlCompletionContributor"
+                            id="Angular2HtmlCompletionContributor"/>
     <lookup.charFilter implementation="org.angular2.editor.Angular2LookupCharFilter" order="before xml"/>
     <localInspection implementationClass="org.angular2.inspections.AngularMissingEventHandlerInspection"
                      groupKey="angular.inspection.group.name" enabledByDefault="true" language="HtmlCompatible"
