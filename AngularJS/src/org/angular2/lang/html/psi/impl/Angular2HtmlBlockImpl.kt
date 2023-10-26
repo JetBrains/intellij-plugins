@@ -3,12 +3,19 @@ package org.angular2.lang.html.psi.impl
 
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.impl.source.tree.CompositePsiElement
+import org.angular2.codeInsight.blocks.Angular2HtmlBlockUtils.toCanonicalBlockName
+import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes
 import org.angular2.lang.html.psi.Angular2HtmlBlock
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor
 
 class Angular2HtmlBlockImpl(type: Angular2HtmlElementTypes.Angular2ElementType)
   : CompositePsiElement(type), Angular2HtmlBlock {
+
+  override fun getName(): String =
+    findChildByType(Angular2HtmlTokenTypes.BLOCK_NAME)
+      ?.text?.toCanonicalBlockName()!!
+
   override fun accept(visitor: PsiElementVisitor) {
     when (visitor) {
       is Angular2HtmlElementVisitor -> {
