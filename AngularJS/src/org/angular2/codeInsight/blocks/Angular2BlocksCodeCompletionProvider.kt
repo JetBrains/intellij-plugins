@@ -3,40 +3,55 @@ package org.angular2.codeInsight.blocks
 
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.codeInsight.completion.HtmlCompletionContributor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.siblings
+import com.intellij.psi.xml.XmlDocument
+import com.intellij.psi.xml.XmlText
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.applyIf
+import com.intellij.util.asSafely
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.completion.WebSymbolsCompletionProviderBase
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
+import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 import org.angular2.lang.html.psi.Angular2HtmlBlock
 
-class Angular2BlocksCodeCompletionProvider : WebSymbolsCompletionProviderBase<Angular2HtmlBlock>() {
+class Angular2BlocksCodeCompletionProvider : WebSymbolsCompletionProviderBase<PsiElement>() {
   override fun addCompletions(parameters: CompletionParameters,
                               result: CompletionResultSet,
                               position: Int,
                               name: String,
                               queryExecutor: WebSymbolsQueryExecutor,
-                              context: Angular2HtmlBlock) {
+                              context: PsiElement) {
     val blocksConfig = getAngular2HtmlBlocksConfig(context)
-    val adjustedResult = result.withPrefixMatcher(name)
+    val adjustedResult = result.withPrefixMatcher(name).applyIf(context !is Angular2HtmlBlock) {
+      HtmlCompletionContributor.patchResultSetForHtmlElementInTextCompletion(this, parameters)
+    }
 
-
-    val parentBlockDefinition = blocksConfig.definitions[(context.parent as? Angular2HtmlBlock)?.getName()]
+    val parentPrimaryBlockName = blocksConfig.definitions[(context.parent as? Angular2HtmlBlock)?.getName()]
       ?.takeIf { it.hasNestedSecondaryBlocks }
+      ?.name
 
-    val availableBlocks = if (parentBlockDefinition != null) {
-      blocksConfig.secondaryBlocks[parentBlockDefinition.name] ?: emptyList()
+    val availableBlocks = if (parentPrimaryBlockName != null) {
+      blocksConfig.secondaryBlocks[parentPrimaryBlockName] ?: emptyList()
     }
     else {
       val primaryBlockName =
         context.siblings(false, false)
-          .filter { it.elementType != XmlTokenType.XML_WHITE_SPACE && it != XmlTokenType.XML_REAL_WHITE_SPACE }
-          .takeWhile { it is Angular2HtmlBlock && blocksConfig.definitions[it.getName()]?.last != true }
-          .firstNotNullOfOrNull { block -> (block as Angular2HtmlBlock).getName().takeIf { blocksConfig.primaryBlocksNames.contains(it) } }
+          .filter { element ->
+            element.elementType != XmlTokenType.XML_WHITE_SPACE && element != XmlTokenType.XML_REAL_WHITE_SPACE
+            && (element !is XmlText || element.text.all { it.isWhitespace() })
+          }
+          .firstOrNull()
+          ?.asSafely<Angular2HtmlBlock>()
+          ?.let { blocksConfig.definitions[it.getName()] }
+          ?.let {
+            if (it.isPrimary) it.name
+            else it.primaryBlock
+          }
 
       blocksConfig.primaryBlocks
         .plus(blocksConfig.secondaryBlocks[primaryBlockName] ?: emptyList())
@@ -44,9 +59,7 @@ class Angular2BlocksCodeCompletionProvider : WebSymbolsCompletionProviderBase<An
 
     availableBlocks.map { def ->
       WebSymbolCodeCompletionItem.create("@" + def.name, 0, symbol = def.symbol)
-        .applyIf(!def.isPrimary) {
-          withPriority(WebSymbol.Priority.HIGH)
-        }
+        .withPriority(if (!def.isPrimary) WebSymbol.Priority.HIGH else WebSymbol.Priority.NORMAL)
         .withInsertHandlerAdded(Angular2HtmlBlockInsertHandler)
     }
       .forEach {
@@ -55,6 +68,10 @@ class Angular2BlocksCodeCompletionProvider : WebSymbolsCompletionProviderBase<An
 
   }
 
-  override fun getContext(position: PsiElement): Angular2HtmlBlock? =
-    position.parent as? Angular2HtmlBlock
+  override fun getContext(position: PsiElement): PsiElement? =
+    when (position.elementType) {
+      Angular2HtmlTokenTypes.BLOCK_NAME -> position.parent as? Angular2HtmlBlock
+      XmlTokenType.XML_DATA_CHARACTERS -> position.parent.takeIf { it !is XmlDocument } ?: position
+      else -> null
+    }
 }
