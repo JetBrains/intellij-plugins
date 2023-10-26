@@ -42,7 +42,8 @@ To learn more about how to get started with Deno, check out <a href="https://blo
   <extensions defaultExtensionNs="JavaScript">
     <languageServiceProvider order="first" implementation="com.intellij.deno.service.DenoTypeScriptServiceProvider"/>
     <moduleReferenceContributor id="deno" implementation="com.intellij.deno.modules.DenoModuleReferenceContributor"/>
-    <importModulePathStrategy implementation="com.intellij.deno.modules.DenoImportModulePathStrategy"/>
+    <importModulePathStrategy order="after TypeScript"
+                              implementation="com.intellij.deno.modules.DenoImportModulePathStrategy"/>
     <tsImportResolver implementation="com.intellij.deno.modules.DenoTypeScriptImportResolverProvider"/>
   </extensions>
 </idea-plugin>
