@@ -621,6 +621,7 @@ public class _Angular2HtmlLexer implements FlexLexer {
 
   private String blockName;
   private int parameterIndex;
+  private int parameterStart;
   private int blockParenLevel;
 
   public _Angular2HtmlLexer(boolean tokenizeExpansionForms,
@@ -935,7 +936,8 @@ public class _Angular2HtmlLexer implements FlexLexer {
             switch (zzLexicalState) {
             case BLOCK_PARAMETER: {
               yybegin(YYINITIAL);
-    return Angular2EmbeddedExprTokenType.createBlockParameter(blockName, parameterIndex);
+    if (parameterStart < zzMarkedPos)
+       return Angular2EmbeddedExprTokenType.createBlockParameter(blockName, parameterIndex);
             }  // fall though
             case 179: break;
             default:
@@ -1222,6 +1224,7 @@ public class _Angular2HtmlLexer implements FlexLexer {
             { yybegin(BLOCK_PARAMETER);
     blockParenLevel = 1;
     parameterIndex = 0;
+    parameterStart = zzMarkedPos;
     return Angular2HtmlTokenTypes.BLOCK_PARAMETERS_START;
             }
           // fall through
@@ -1241,7 +1244,8 @@ public class _Angular2HtmlLexer implements FlexLexer {
             { if (--blockParenLevel <= 0) {
        yypushback(1);
        yybegin(BLOCK_PARAMETERS_END);
-       return Angular2EmbeddedExprTokenType.createBlockParameter(blockName, parameterIndex);
+       if (parameterStart < zzMarkedPos)
+          return Angular2EmbeddedExprTokenType.createBlockParameter(blockName, parameterIndex);
      }
             }
           // fall through
@@ -1250,12 +1254,14 @@ public class _Angular2HtmlLexer implements FlexLexer {
             { yypushback(1);
     blockParenLevel = 1;
     yybegin(BLOCK_PARAMETER_END);
-    return Angular2EmbeddedExprTokenType.createBlockParameter(blockName, parameterIndex++);
+    if (parameterStart < zzMarkedPos)
+       return Angular2EmbeddedExprTokenType.createBlockParameter(blockName, parameterIndex++);
             }
           // fall through
           case 107: break;
           case 45:
-            { yybegin(BLOCK_PARAMETER);
+            { parameterStart = zzMarkedPos;
+    yybegin(BLOCK_PARAMETER);
     return Angular2HtmlTokenTypes.BLOCK_SEMICOLON;
             }
           // fall through

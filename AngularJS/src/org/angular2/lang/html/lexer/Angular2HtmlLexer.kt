@@ -37,6 +37,7 @@ class Angular2HtmlLexer(highlightMode: Boolean,
            && state != _Angular2HtmlLexer.EXPANSION_FORM_CASE_END
            && state != _Angular2HtmlLexer.BLOCK_NAME
            && state != _Angular2HtmlLexer.BLOCK_PARAMETER
+           && state != _Angular2HtmlLexer.BLOCK_PARAMETER_END
            && state != _Angular2HtmlLexer.BLOCK_PARAMETERS_START
   }
 

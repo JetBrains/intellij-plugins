@@ -314,6 +314,22 @@ open class Angular2HtmlLexerTest : LexerTestCase() {
     """.trimIndent())
   }
 
+  fun testEmptyIfBlock() {
+    doTest("""
+      @if () {
+   
+      }
+    """.trimIndent())
+  }
+
+  fun testBlockEmptyParameters() {
+    doTest("""
+      @if (; ;foo;) {
+   
+      }
+    """.trimIndent())
+  }
+
   override fun doTest(text: @NonNls String) {
     super.doTest(text)
     checkCorrectRestart(text)
