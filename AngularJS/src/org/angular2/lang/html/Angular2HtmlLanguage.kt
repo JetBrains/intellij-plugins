@@ -5,10 +5,15 @@ import com.intellij.javascript.web.html.WebFrameworkHtmlDialect
 import org.angularjs.AngularJSBundle
 import org.jetbrains.annotations.Nls
 
-class Angular2HtmlLanguage private constructor() : WebFrameworkHtmlDialect("Angular2Html") {
+class Angular2HtmlLanguage private constructor()
+  : WebFrameworkHtmlDialect("Angular2Html"), Angular2HtmlDialect {
+
   override fun getDisplayName(): @Nls String {
     return AngularJSBundle.message("angular.html.template")
   }
+
+  override val templateSyntax: Angular2TemplateSyntax
+    get() = Angular2TemplateSyntax.V_2
 
   companion object {
     @JvmField

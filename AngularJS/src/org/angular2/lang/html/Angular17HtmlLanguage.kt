@@ -6,10 +6,13 @@ import org.angularjs.AngularJSBundle
 import org.jetbrains.annotations.Nls
 
 class Angular17HtmlLanguage private constructor() : WebFrameworkHtmlDialect(
-  Angular2HtmlLanguage.INSTANCE, "Angular17Html") {
+  Angular2HtmlLanguage.INSTANCE, "Angular17Html"), Angular2HtmlDialect {
   override fun getDisplayName(): @Nls String {
     return AngularJSBundle.message("angular.html.template.17")
   }
+
+  override val templateSyntax: Angular2TemplateSyntax
+    get() = Angular2TemplateSyntax.V_17
 
   companion object {
     @JvmField
