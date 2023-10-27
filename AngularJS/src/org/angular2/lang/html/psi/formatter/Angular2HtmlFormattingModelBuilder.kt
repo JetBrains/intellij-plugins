@@ -15,8 +15,8 @@ class Angular2HtmlFormattingModelBuilder : FormattingModelBuilder {
     val documentModel = FormattingDocumentModelImpl.createOn(psiFile)
     return XmlFormattingModel(
       psiFile,
-      Angular2HtmlBlock(SourceTreeToPsiMap.psiElementToTree(psiFile), null, null,
-                        HtmlPolicy(formattingContext.codeStyleSettings, documentModel), null, null, false),
+      Angular2HtmlFormattingBlock(SourceTreeToPsiMap.psiElementToTree(psiFile), null, null,
+                                  HtmlPolicy(formattingContext.codeStyleSettings, documentModel), null, null, false),
       documentModel)
   }
 }

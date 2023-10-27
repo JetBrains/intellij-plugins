@@ -30,7 +30,7 @@ class Angular2HtmlTagBlock(node: ASTNode,
   }
 
   override fun createSimpleChild(child: ASTNode, indent: Indent?, wrap: Wrap?, alignment: Alignment?, range: TextRange?): XmlBlock {
-    return Angular2HtmlBlock(child, wrap, alignment, myXmlFormattingPolicy, indent, range, isPreserveSpace)
+    return Angular2HtmlFormattingBlock(child, wrap, alignment, myXmlFormattingPolicy, indent, range, isPreserveSpace)
   }
 
   override fun createSyntheticBlock(localResult: ArrayList<Block>, childrenIndent: Indent?): Block {

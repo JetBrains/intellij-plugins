@@ -12,22 +12,33 @@ import com.intellij.psi.formatter.xml.XmlTagBlock
 import com.intellij.psi.tree.IElementType
 import org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType
 import org.angular2.lang.html.Angular2HtmlLanguage
+import org.angular2.lang.html.parser.Angular2HtmlElementTypes
 
-class Angular2HtmlBlock(node: ASTNode?,
-                        wrap: Wrap?,
-                        alignment: Alignment?,
-                        policy: XmlFormattingPolicy?,
-                        indent: Indent?,
-                        textRange: TextRange?,
-                        preserveSpace: Boolean)
+class Angular2HtmlFormattingBlock(node: ASTNode?,
+                                  wrap: Wrap?,
+                                  alignment: Alignment?,
+                                  policy: XmlFormattingPolicy?,
+                                  indent: Indent?,
+                                  textRange: TextRange?,
+                                  preserveSpace: Boolean)
   : XmlBlock(node, wrap, alignment, policy, indent, textRange, preserveSpace) {
-  override fun createTagBlock(child: ASTNode, indent: Indent?, wrap: Wrap?, alignment: Alignment?): XmlTagBlock {
-    return Angular2HtmlTagBlock(child, wrap, alignment, myXmlFormattingPolicy, indent ?: Indent.getNoneIndent(), isPreserveSpace)
+
+    override fun createTagBlock(child: ASTNode, indent: Indent?, wrap: Wrap?, alignment: Alignment?): XmlTagBlock {
+      if (myNode.elementType == Angular2HtmlElementTypes.BLOCK) {
+        return Angular2HtmlTagBlock(child, wrap, alignment, myXmlFormattingPolicy, Indent.getNormalIndent(), isPreserveSpace)
+      } else {
+        return Angular2HtmlTagBlock(child, wrap, alignment, myXmlFormattingPolicy, indent ?: Indent.getNoneIndent(), isPreserveSpace)
+      }
   }
 
   override fun createSimpleChild(child: ASTNode, indent: Indent?,
                                  wrap: Wrap?, alignment: Alignment?, range: TextRange?): XmlBlock {
-    return Angular2HtmlBlock(child, wrap, alignment, myXmlFormattingPolicy, indent, range, isPreserveSpace)
+    if (myNode.elementType == Angular2HtmlElementTypes.BLOCK) {
+      return createAngularBlockChild(child, indent, wrap, alignment, range, myXmlFormattingPolicy, isPreserveSpace)
+    }
+    else {
+      return Angular2HtmlFormattingBlock(child, wrap, alignment, myXmlFormattingPolicy, indent, range, isPreserveSpace)
+    }
   }
 
   override fun useMyFormatter(myLanguage: Language, childLanguage: Language, childPsi: PsiElement): Boolean {
@@ -36,7 +47,8 @@ class Angular2HtmlBlock(node: ASTNode?,
   }
 
   override fun getSpacing(child1: Block?, child2: Block): Spacing? =
-    getSpacingIfInterpolationBorder(child1, child2, myXmlFormattingPolicy, ::getSubBlocks)
+    getSpacingWithinAngularBlock(myNode, child1, child2, myXmlFormattingPolicy)
+    ?: getSpacingIfInterpolationBorder(child1, child2, myXmlFormattingPolicy, ::getSubBlocks)
     ?: super.getSpacing(child1, child2)
 
   override fun isLeaf(): Boolean {
