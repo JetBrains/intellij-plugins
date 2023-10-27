@@ -75,6 +75,7 @@ import org.junit.runners.Suite
   Angular2MoveTest::class,
   Angular2RenameTest::class,
   Angular2ConfigTest::class,
+  Angular2EditorTest::class,
   Angular2CliContextTest::class,
   Angular2LiveTemplateTest::class,
   Angular2ExtractComponentTest::class,

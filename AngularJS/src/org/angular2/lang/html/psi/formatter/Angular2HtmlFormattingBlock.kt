@@ -52,4 +52,8 @@ class Angular2HtmlFormattingBlock(node: ASTNode?,
   override fun isAttributeElementType(elementType: IElementType): Boolean =
     Angular2HtmlFormattingHelper.isAngular2AttributeElementType(elementType)
 
+  override fun getChildAttributes(newChildIndex: Int): ChildAttributes =
+    Angular2HtmlFormattingHelper.getChildAttributes(this)
+    ?: super.getChildAttributes(newChildIndex)
+
 }
