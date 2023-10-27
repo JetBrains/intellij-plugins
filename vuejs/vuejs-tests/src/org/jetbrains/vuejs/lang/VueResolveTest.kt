@@ -2326,6 +2326,39 @@ export default class UsageComponent extends Vue {
         ?.asSafely<PsiSourcedWebSymbol>()?.source?.text
     )
   }
+
+  fun testResolvePropFromComponentWithDefineOptionsAndRegularScript() {
+    myFixture.configureByText("HelloWorld.vue", """
+      <script lang="ts">
+      export const exportedFromScript = 123;
+      </script>
+
+      <script setup lang="ts">
+      defineProps<{ customProperty: string }>()
+
+      defineOptions({
+        name: "BestComponentOfMyLife"
+      })
+      </script>
+      
+      <template></template>
+    """.trimIndent())
+    myFixture.configureByText("ComponentUsage.vue", """
+      <template>
+        <best-component-of-my-life customProperty="Hello!"/>
+      </template>
+
+      <script setup lang="ts">
+      import BestComponentOfMyLife from "./HelloWorld.vue";
+
+      defineOptions({ name: 'SuperComp' });
+      </script>
+    """.trimIndent())
+
+    myFixture.checkGotoDeclaration("customPro<caret>perty=\"Hello!\"",
+                                   "defineProps<{ <caret>customProperty: string }>",
+                                   "HelloWorld.vue")
+  }
 }
 
 fun globalMixinText(): String {
