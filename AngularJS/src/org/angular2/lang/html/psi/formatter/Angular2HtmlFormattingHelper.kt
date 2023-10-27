@@ -83,6 +83,13 @@ internal object Angular2HtmlFormattingHelper {
     ?: getSpacingWithinAngularBlock(parent, child1, child2, xmlFormattingPolicy)
     ?: getSpacingIfInterpolationBorder(child1, child2, xmlFormattingPolicy, subBlocksProvider)
 
+  fun getChildAttributes(block: Angular2HtmlFormattingBlock): ChildAttributes? =
+    if (block.node.elementType == Angular2HtmlElementTypes.BLOCK
+        || block.node.elementType == Angular2HtmlElementTypes.BLOCK_PARAMETERS) {
+      ChildAttributes(Indent.getNormalIndent(), null)
+    }
+    else null
+
   private fun getSpacingBetweenAngularBlockGroups(child1: Block?,
                                                   child2: Block,
                                                   xmlFormattingPolicy: XmlFormattingPolicy): Spacing? =
@@ -198,4 +205,5 @@ internal object Angular2HtmlFormattingHelper {
         Angular2HtmlFormattingBlock(child, null, alignment, xmlFormattingPolicy, Indent.getNoneIndent(), range, false)
       else -> Angular2HtmlFormattingBlock(child, null, alignment, xmlFormattingPolicy, Indent.getNormalIndent(), range, preserveSpace)
     }
+
 }
