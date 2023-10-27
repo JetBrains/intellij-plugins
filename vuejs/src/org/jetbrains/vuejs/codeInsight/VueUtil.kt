@@ -34,9 +34,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.resolve.FileContextUtil
 import com.intellij.psi.tree.TokenSet
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
-import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
@@ -47,13 +45,13 @@ import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.utils.qualifiedKind
 import com.intellij.webSymbols.utils.unwrapMatchedSymbols
 import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
-import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.index.resolveLocally
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
+import org.jetbrains.vuejs.lang.html.psi.impl.VueScriptSetupEmbeddedContentImpl
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.VueModelProximityVisitor
@@ -217,15 +215,18 @@ fun <T : PsiElement> resolveElementTo(element: PsiElement?, vararg classes: KCla
         is ES6ImportCall -> cur.resolveReferencedElements()
           .toCollection(queue)
         is JSEmbeddedContent -> {
-          if (cur.context.let { tag ->
-              tag is XmlTag && PsiTreeUtil.getStubChildrenOfTypeAsList(tag, XmlAttribute::class.java)
-                .find { it.name == SETUP_ATTRIBUTE_NAME } != null
-            }) {
-            val regularScript = findModule(cur, false)
-            if (regularScript != null) {
-              queue.add(regularScript)
+          if (cur is VueScriptSetupEmbeddedContentImpl) {
+            val expectsEmbeddedContent = classes.any { it == JSEmbeddedContent::class }
+            if (expectsEmbeddedContent && cur.getStubSafeDefineCalls().any { VueComponents.isDefineOptionsCall(it) }) {
+              @Suppress("UNCHECKED_CAST")
+              return cur as T
             }
-            else if (classes.any { it == JSEmbeddedContent::class }) {
+
+            val exportScope = cur.contextExportScope
+            if (exportScope != null) {
+              queue.add(exportScope)
+            }
+            else if (expectsEmbeddedContent) {
               @Suppress("UNCHECKED_CAST")
               return cur as T
             }
