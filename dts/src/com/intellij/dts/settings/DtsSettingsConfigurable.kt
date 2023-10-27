@@ -30,6 +30,8 @@ class DtsSettingsConfigurable(private val project: Project) : BoundSearchableCon
 ) {
     private val state: DtsSettings.State = DtsSettings.of(project).state
 
+    private val enableSync = DtsUtil.isCMakeAvailable(project)
+
     private fun validateRoot(path: String): Result<String> {
         if (path.isBlank()) {
             val root = DtsZephyrRoot.searchForRoot(project) ?: return Either.Left(DtsBundle.message("settings.zephyr.root.not_found"))
@@ -59,7 +61,7 @@ class DtsSettingsConfigurable(private val project: Project) : BoundSearchableCon
 
     override fun createPanel(): DialogPanel = panel {
         val syncInput = CheckBox(DtsBundle.message("settings.zephyr.sync_with_cmake"))
-        syncInput.isEnabled = DtsUtil.hasCLion()
+        syncInput.isEnabled = enableSync
 
         val rootInput = RootComboBox(disposable)
         val boardInput = BoardComboBox(disposable, state.zephyrBoard)
@@ -131,7 +133,7 @@ class DtsSettingsConfigurable(private val project: Project) : BoundSearchableCon
             row {
                 cell(syncInput).bind(
                     { input -> input.isSelected },
-                    { input, value -> input.isSelected = value && DtsUtil.hasCLion() },
+                    { input, value -> input.isSelected = value && enableSync },
                     state::zephyrCMakeSync.toMutableProperty()
                 )
             }

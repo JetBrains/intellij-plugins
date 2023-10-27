@@ -1,13 +1,17 @@
 <idea-plugin>
     <projectListeners>
         <listener
-                class="com.intellij.dts.zephyr.DtsZephyrCMakeSync"
+                class="com.intellij.dts.clion.DtsZephyrCMakeSync"
                 topic="com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspaceListener"/>
         <listener
-                class="com.intellij.dts.zephyr.DtsZephyrCMakeSync"
+                class="com.intellij.dts.clion.DtsZephyrCMakeSync"
                 topic="com.intellij.dts.settings.DtsSettings$ChangeListener"/>
         <listener
-                class="com.intellij.dts.zephyr.DtsZephyrCMakeSync"
+                class="com.intellij.dts.clion.DtsZephyrCMakeSync"
                 topic="com.intellij.execution.ExecutionTargetListener"/>
     </projectListeners>
+
+    <extensions defaultExtensionNs="com.intellij.clion">
+        <dtsUtil implementation="com.intellij.dts.clion.impl.DtsClionUtilImpl"/>
+    </extensions>
 </idea-plugin>

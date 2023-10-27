@@ -1,4 +1,4 @@
-package com.intellij.dts.zephyr
+package com.intellij.dts.clion
 
 import com.intellij.dts.settings.DtsSettings
 import com.intellij.execution.ExecutionTarget

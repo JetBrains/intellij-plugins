@@ -11,6 +11,13 @@
 
     <resource-bundle>messages.DtsBundle</resource-bundle>
 
+    <extensionPoints>
+        <extensionPoint
+            qualifiedName="com.intellij.clion.dtsUtil"
+            interface="com.intellij.dts.clion.DtsCLionUtil"
+            dynamic="true"/>
+    </extensionPoints>
+
     <projectListeners>
         <listener
             class="com.intellij.dts.inspections.DtsInspectionsRestarter"
