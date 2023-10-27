@@ -13,9 +13,7 @@ import com.intellij.psi.formatter.xml.XmlBlock
 import com.intellij.psi.formatter.xml.XmlFormattingPolicy
 import com.intellij.psi.formatter.xml.XmlTagBlock
 import com.intellij.psi.tree.IElementType
-import com.intellij.psi.xml.XmlElementType
 import org.angular2.lang.html.Angular2HtmlLanguage
-import org.angular2.lang.html.parser.Angular2HtmlElementTypes
 
 class Angular2HtmlTagBlock(node: ASTNode,
                            wrap: Wrap?,
@@ -24,32 +22,30 @@ class Angular2HtmlTagBlock(node: ASTNode,
                            indent: Indent?,
                            preserveSpace: Boolean)
   : XmlTagBlock(node, wrap, alignment, policy, indent, preserveSpace) {
-  override fun createTagBlock(child: ASTNode, indent: Indent?, wrap: Wrap?, alignment: Alignment?): XmlTagBlock {
-    return Angular2HtmlTagBlock(child, wrap, alignment, myXmlFormattingPolicy,
-                                indent ?: Indent.getNoneIndent(), isPreserveSpace)
-  }
 
-  override fun createSimpleChild(child: ASTNode, indent: Indent?, wrap: Wrap?, alignment: Alignment?, range: TextRange?): XmlBlock {
-    return Angular2HtmlFormattingBlock(child, wrap, alignment, myXmlFormattingPolicy, indent, range, isPreserveSpace)
-  }
+  override fun createTagBlock(child: ASTNode, indent: Indent?, wrap: Wrap?, alignment: Alignment?): XmlTagBlock =
+    Angular2HtmlFormattingHelper.createTagBlock(
+      myNode, child, indent, wrap, alignment, myXmlFormattingPolicy, isPreserveSpace)
+
+  override fun createSimpleChild(child: ASTNode, indent: Indent?, wrap: Wrap?, alignment: Alignment?, range: TextRange?): XmlBlock =
+    Angular2HtmlFormattingHelper.createSimpleChild(
+      myNode, child, indent, wrap, alignment, range, myXmlFormattingPolicy, isPreserveSpace)
 
   override fun createSyntheticBlock(localResult: ArrayList<Block>, childrenIndent: Indent?): Block {
-    return Angular2SyntheticBlock(localResult, this, Indent.getNoneIndent(), myXmlFormattingPolicy, childrenIndent)
+    return Angular2SyntheticBlock(localResult, this, Indent.getNoneIndent(), myXmlFormattingPolicy, childrenIndent, false)
   }
 
-  override fun useMyFormatter(myLanguage: Language, childLanguage: Language, childPsi: PsiElement): Boolean {
-    return childLanguage.isKindOf(Angular2HtmlLanguage.INSTANCE)
-           || super.useMyFormatter(myLanguage, childLanguage, childPsi)
-  }
-
-  override fun isAttributeElementType(elementType: IElementType): Boolean {
-    return isAngular2AttributeElementType(elementType)
-  }
-
-  companion object {
-    fun isAngular2AttributeElementType(elementType: IElementType): Boolean {
-      return elementType === XmlElementType.XML_ATTRIBUTE
-             || Angular2HtmlElementTypes.ALL_ATTRIBUTES.contains(elementType)
+  override fun processChild(result: MutableList<Block>, child: ASTNode, wrap: Wrap?, alignment: Alignment?, indent: Indent?): ASTNode? =
+    Angular2HtmlFormattingHelper.processChild(this, result, child, wrap, alignment, indent,
+                                              myXmlFormattingPolicy, isPreserveSpace) { r, c, w, a, i ->
+      super.processChild(r, c, w, a, i)
     }
-  }
+
+  override fun useMyFormatter(myLanguage: Language, childLanguage: Language, childPsi: PsiElement): Boolean =
+    childLanguage.isKindOf(Angular2HtmlLanguage.INSTANCE)
+    || super.useMyFormatter(myLanguage, childLanguage, childPsi)
+
+  override fun isAttributeElementType(elementType: IElementType): Boolean =
+    Angular2HtmlFormattingHelper.isAngular2AttributeElementType(elementType)
+
 }
