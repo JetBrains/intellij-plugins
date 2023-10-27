@@ -1,9 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.html.psi.formatter
 
-import com.intellij.formatting.Alignment
-import com.intellij.formatting.Indent
-import com.intellij.formatting.Wrap
+import com.intellij.formatting.*
 import com.intellij.lang.ASTNode
 import com.intellij.lang.Language
 import com.intellij.openapi.util.TextRange
@@ -36,6 +34,10 @@ class Angular2HtmlBlock(node: ASTNode?,
     return childLanguage.isKindOf(Angular2HtmlLanguage.INSTANCE)
            || super.useMyFormatter(myLanguage, childLanguage, childPsi)
   }
+
+  override fun getSpacing(child1: Block?, child2: Block): Spacing? =
+    getSpacingIfInterpolationBorder(child1, child2, myXmlFormattingPolicy, ::getSubBlocks)
+    ?: super.getSpacing(child1, child2)
 
   override fun isLeaf(): Boolean {
     return myNode.elementType is Angular2EmbeddedExprTokenType

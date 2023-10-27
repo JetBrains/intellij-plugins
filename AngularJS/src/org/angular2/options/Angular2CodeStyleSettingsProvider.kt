@@ -1,101 +1,86 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.jetbrains.vuejs.options
+package org.angular2.options
 
 import com.intellij.application.options.CodeStyleAbstractConfigurable
 import com.intellij.application.options.CodeStyleAbstractPanel
-import com.intellij.application.options.IndentOptionsEditor
 import com.intellij.lang.Language
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.codeStyle.*
-import org.jetbrains.vuejs.VueBundle
-import org.jetbrains.vuejs.lang.html.VueLanguage
-import org.jetbrains.vuejs.lang.html.psi.formatter.VueCodeStyleSettings
+import org.angular2.lang.html.Angular17HtmlLanguage
+import org.angular2.lang.html.Angular2HtmlLanguage
+import org.angular2.lang.html.psi.formatter.Angular2HtmlCodeStyleSettings
 
-class VueCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
+class Angular2CodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
 
-  override fun getLanguage(): Language = VueLanguage.INSTANCE
+  override fun getLanguage(): Language = Angular2HtmlLanguage.INSTANCE
 
   override fun getCodeSample(settingsType: SettingsType): String = """
-      <template>
-        <div id="app">
-              <img      alt="Vue logo"        
-     src="./assets/logo.png">
-        <HelloWorld  
-     msg =  "Welcome to Your Vue.js App"/></div>
-     <span>{{descr    }}</span>
-     <span>{{ (function (){ alert("Vue is great!"); return "Really great!"} )() }}</span>
-    </template>
+    <human-profile     *ngIf="user.isHuman else robot" 
+    [data]="user"/>
+    <ng-template #robot>
+                <p     *ngIf="user.isRobot"> {{ user . name    }}
+    </ng-template>
+
+    @if      (    user.isHuman    )       {
+          <human-profile   [data]="user"/>
+    } 
     
-     <script>
-        import HelloWorld  from './components/HelloWorld.vue'
-    
-        export  default  {
-      name:    'App'  ,
-         components:     {
-        HelloWorld}
-      }
-    </script>
-    
-      <style>
-           #app      {
-      font-family: Avenir, Helvetica, Arial, sans-serif;
-       text-align: center;   color    : #2c3e50;}
-    </style>
+    @else if 
+    (   user.isRobot  ) 
+    {
+      {{user.    name    
+       }}
+    }  @else      {
+          <p>The profile is unknown!</p>
+    }
   """.trimIndent()
 
   override fun createFileFromText(project: Project, text: String): PsiFile? =
     PsiFileFactory.getInstance(project).createFileFromText(
-      "a.{{.}}.#@injected@#.html", VueLanguage.INSTANCE, text, false, true)
-
-  override fun getIndentOptionsEditor(): IndentOptionsEditor {
-    return VueIndentOptionsEditor()
-  }
+      "angular.html", Angular17HtmlLanguage.INSTANCE, text, false, true)
 
   override fun createConfigurable(baseSettings: CodeStyleSettings, modelSettings: CodeStyleSettings): CodeStyleConfigurable {
     return object : CodeStyleAbstractConfigurable(baseSettings, modelSettings, configurableDisplayName) {
       override fun createPanel(settings: CodeStyleSettings): CodeStyleAbstractPanel {
-        return VueCodeStyleMainPanel(currentSettings, settings)
+        return Angular2CodeStyleMainPanel(currentSettings, settings)
       }
 
       override fun getHelpTopic(): String {
-        return "reference.settingsdialog.IDE.vuecodestyle"
+        return "reference.settingsdialog.IDE.angular2codestyle"
       }
     }
   }
 
   override fun customizeDefaults(commonSettings: CommonCodeStyleSettings, indentOptions: CommonCodeStyleSettings.IndentOptions) {
-    indentOptions.TAB_SIZE = 2
-    indentOptions.INDENT_SIZE = 2
-    indentOptions.CONTINUATION_INDENT_SIZE = 4
   }
 
   override fun createCustomSettings(settings: CodeStyleSettings): CustomCodeStyleSettings {
-    return VueCodeStyleSettings(settings)
+    return Angular2HtmlCodeStyleSettings(settings)
   }
 
   override fun customizeSettings(consumer: CodeStyleSettingsCustomizable, settingsType: SettingsType) {
     when (settingsType) {
       SettingsType.SPACING_SETTINGS -> {
-        consumer.showCustomOption(VueCodeStyleSettings::class.java, "SPACES_WITHIN_INTERPOLATION_EXPRESSIONS",
+        consumer.showCustomOption(Angular2HtmlCodeStyleSettings::class.java, "SPACES_WITHIN_INTERPOLATION_EXPRESSIONS",
                                   JavaScriptBundle.message("javascript.formatting.web.spacing.within.interpolations"),
                                   JavaScriptBundle.message("javascript.formatting.web.spacing.within.group"))
       }
       SettingsType.WRAPPING_AND_BRACES_SETTINGS -> {
 
-        consumer.showCustomOption(VueCodeStyleSettings::class.java,
+        consumer.showCustomOption(Angular2HtmlCodeStyleSettings::class.java,
                                   "INTERPOLATION_WRAP",
                                   JavaScriptBundle.message("javascript.formatting.web.wrapping.interpolations"),
                                   null,
                                   CodeStyleSettingsCustomizableOptions.getInstance().WRAP_OPTIONS,
                                   CodeStyleSettingsCustomizable.WRAP_VALUES)
-        consumer.showCustomOption(VueCodeStyleSettings::class.java,
+        consumer.showCustomOption(Angular2HtmlCodeStyleSettings::class.java,
                                   "INTERPOLATION_NEW_LINE_AFTER_START_DELIMITER",
                                   JavaScriptBundle.message("javascript.formatting.web.wrapping.new-line-after-start-delimiter"),
                                   JavaScriptBundle.message("javascript.formatting.web.wrapping.interpolations"))
-        consumer.showCustomOption(VueCodeStyleSettings::class.java,
+        consumer.showCustomOption(Angular2HtmlCodeStyleSettings::class.java,
                                   "INTERPOLATION_NEW_LINE_BEFORE_END_DELIMITER",
                                   JavaScriptBundle.message("javascript.formatting.web.wrapping.new-line-before-end-delimiter"),
                                   JavaScriptBundle.message("javascript.formatting.web.wrapping.interpolations"))
