@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.intentions.extractComponent
 
 import com.intellij.lang.Language
+import com.intellij.lang.javascript.refactoring.util.beforeRefactoring
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -31,12 +32,17 @@ internal class VueExtractComponentAction : BaseRefactoringAction() {
         editor ?: return
         val element = PsiUtilBase.getElementAtCaret(editor) ?: return
         val context = VueExtractComponentIntention.getContext(editor, element) ?: return
-        VueExtractComponentRefactoring(project, context, editor).perform()
+        beforeRefactoring(project, REFACTORING_ID, *context.toTypedArray())
+        VueExtractComponentRefactoring(project, context, editor).perform(fireRefactoringEvents = true)
       }
 
       override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {
         // available only in editor
       }
     }
+  }
+
+  companion object {
+    const val REFACTORING_ID = "refactoring.javascript.vue.extractComponent"
   }
 }

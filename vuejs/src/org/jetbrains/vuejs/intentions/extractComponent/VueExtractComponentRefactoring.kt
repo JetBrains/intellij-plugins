@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.intentions.extractComponent
 
+import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.command.impl.StartMarkAction
@@ -25,7 +26,7 @@ import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.VUE_COMP
 class VueExtractComponentRefactoring(private val project: Project,
                                      private val list: List<XmlTag>,
                                      private val editor: Editor) {
-  fun perform(defaultName: String? = null) {
+  fun perform(defaultName: String? = null, fireRefactoringEvents: Boolean = false) {
     if (list.isEmpty() ||
         list[0].containingFile == null ||
         list[0].containingFile.parent == null ||
@@ -38,6 +39,9 @@ class VueExtractComponentRefactoring(private val project: Project,
     val refactoringName = VueBundle.message("vue.template.intention.extract.component.command.name")
     val commandProcessor = CommandProcessor.getInstance()
     commandProcessor.executeCommand(project, {
+      if (fireRefactoringEvents)
+        JSRefactoringUtil.registerRefactoringUndo(project, VueExtractComponentAction.REFACTORING_ID)
+
       var newlyAdded: XmlTag? = null
       val validator = TagNameValidator(list[0])
       var startMarkAction: StartMarkAction? = null
@@ -48,7 +52,8 @@ class VueExtractComponentRefactoring(private val project: Project,
       }
       VueComponentInplaceIntroducer(newlyAdded!!, editor, data, oldText,
                                     validator::validate,
-                                    startMarkAction!!).performInplaceRefactoring(linkedSetOf())
+                                    startMarkAction!!,
+                                    fireRefactoringEvents).performInplaceRefactoring(linkedSetOf())
 
     }, refactoringName, GROUP_ID)
   }

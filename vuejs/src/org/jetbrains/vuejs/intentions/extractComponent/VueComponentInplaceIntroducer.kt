@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.intentions.extractComponent
 
 import com.intellij.CommonBundle
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
+import com.intellij.lang.javascript.refactoring.util.afterRefactoring
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.command.CommandProcessor
@@ -16,7 +17,6 @@ import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.tree.TokenSet
@@ -31,13 +31,15 @@ import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler.Companion.reformatElement
+import org.jetbrains.vuejs.intentions.extractComponent.VueExtractComponentAction.Companion.REFACTORING_ID
 
 class VueComponentInplaceIntroducer(elementToRename: XmlTag,
                                     editor: Editor,
                                     private val data: VueExtractComponentDataBuilder,
                                     private val oldText: String,
                                     private val validator: (@NonNls String) -> @Nls String?,
-                                    private val startMarkAction: StartMarkAction) :
+                                    private val startMarkAction: StartMarkAction,
+                                    private val fireRefactoringEvents: Boolean = false) :
   InplaceRefactoring(editor, elementToRename, elementToRename.project) {
 
   private val containingFile = myElementToRename.containingFile
@@ -127,7 +129,7 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
             val insertedName = myInsertedName.trim()
             val virtualFile = data.createNewComponent(insertedName) ?: return@run
             CommandProcessor.getInstance().addAffectedFiles(myProject, virtualFile)
-            newPsiFile = PsiManager.getInstance(containingFile.project).findFile(virtualFile)
+            newPsiFile = containingFile.manager.findFile(virtualFile)
 
             data.modifyCurrentComponent(insertedName, containingFile, newPsiFile!!)
             reformatElement(myElementToRename)
@@ -141,6 +143,9 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
         finally {
           hijackCommand()
           FinishMarkAction.finish(myProject, myEditor, myMarkAction)
+
+          if (fireRefactoringEvents && newPsiFile != null)
+            afterRefactoring(myProject, REFACTORING_ID, myElementToRename, newPsiFile!!)
         }
       }, commandName, getGroupId())
     }
