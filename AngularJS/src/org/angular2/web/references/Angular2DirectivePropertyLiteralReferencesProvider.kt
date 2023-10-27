@@ -40,7 +40,7 @@ class Angular2DirectivePropertyLiteralReferencesProvider : WebSymbolReferencePro
     else {
       val symbol = directive.typeScriptClass
                      ?.asWebSymbol()
-                     ?.getMatchingJSPropertySymbols(name)
+                     ?.getMatchingJSPropertySymbols(name, null)
                      ?.find { it.source is JSAttributeListOwner }
                    ?: return emptyMap()
       return mapOf(startOffset + 1 to symbol)
