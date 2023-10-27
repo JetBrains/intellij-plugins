@@ -68,7 +68,7 @@ class VueComponentNamespaceSymbol(
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbol> =
     if (isNamespacedKind(qualifiedName.qualifiedKind) && qualifiedName.name.getOrNull(0)?.isUpperCase() != false)
-      getMatchingJSPropertySymbols(qualifiedName.name).adaptToNamespaceComponents(qualifiedName.kind)
+      getMatchingJSPropertySymbols(qualifiedName.name, params.queryExecutor.namesProvider).adaptToNamespaceComponents(qualifiedName.kind)
     else
       emptyList()
 
