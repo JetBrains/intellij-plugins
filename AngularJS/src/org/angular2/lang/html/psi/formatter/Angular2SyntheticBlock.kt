@@ -9,14 +9,15 @@ import com.intellij.psi.formatter.xml.XmlFormattingPolicy
 import com.intellij.psi.tree.IElementType
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 
-class Angular2SyntheticBlock(subBlocks: List<Block>, parent: Block, indent: Indent?, policy: XmlFormattingPolicy, childIndent: Indent?)
+class Angular2SyntheticBlock(subBlocks: List<Block>, parent: Block, indent: Indent?, policy: XmlFormattingPolicy, childIndent: Indent?,
+                             val isBlockGroup: Boolean)
   : SyntheticBlock(subBlocks, parent, indent, policy, childIndent) {
-  override fun isAttributeElementType(elementType: IElementType): Boolean {
-    return Angular2HtmlTagBlock.isAngular2AttributeElementType(elementType)
-  }
+
+  override fun isAttributeElementType(elementType: IElementType): Boolean =
+    Angular2HtmlFormattingHelper.isAngular2AttributeElementType(elementType)
 
   override fun getSpacing(child1: Block?, child2: Block): Spacing? =
-    getSpacingIfInterpolationBorder(child1, child2, myXmlFormattingPolicy, ::getSubBlocks)
+    Angular2HtmlFormattingHelper.getSpacing(null, child1, child2, myXmlFormattingPolicy, ::getSubBlocks)
     ?: super.getSpacing(child1, child2)
 
   override fun startsWithText(): Boolean =

@@ -1,0 +1,38 @@
+@if ( foo      ;    as   bar)    {@defer {
+<div>dfdf</div>
+} <div>Bar</div> and some loose text }@else if {
+
+}
+
+
+@else {
+
+}
+
+@switch(foo) {
+        @case (a) {
+
+} @case(b) {
+
+
+
+}
+
+
+
+@default { }
+
+}
+<div>
+  @defer(foo) { <p>bar</p>} @loading {
+  <div>
+    @if (foo) {<div>dfdf</div>} @else {
+    fgfdgdf
+    }</div>}
+
+  @error(when) { @if (foo) {<div>dfdf</div>} @else {
+  fgfdgdf
+  } }
+</div>
+
+

@@ -3,14 +3,13 @@ package org.angular2.codeInsight
 
 import com.intellij.javascript.web.WebFrameworkTestModule
 import com.intellij.lang.html.HTMLLanguage
-import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 import com.intellij.psi.formatter.xml.HtmlCodeStyleSettings
 import org.angular2.Angular2TestCase
-import org.angular2.lang.html.Angular2HtmlLanguage
+import org.angular2.Angular2TestModule
 import org.angular2.lang.html.psi.formatter.Angular2HtmlCodeStyleSettings
 
 class Angular2FormattingTest : Angular2TestCase("formatting") {
@@ -90,6 +89,8 @@ class Angular2FormattingTest : Angular2TestCase("formatting") {
     newLineBeforeEnd = false,
     wrap = CommonCodeStyleSettings.WRAP_AS_NEEDED
   )
+
+  fun testBasicBlocks() = testFormatting(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html")
 
   private fun testFormatting(vararg modules: WebFrameworkTestModule,
                              dir: Boolean = false,
