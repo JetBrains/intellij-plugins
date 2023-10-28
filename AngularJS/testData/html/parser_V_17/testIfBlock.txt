@@ -9,10 +9,12 @@ HtmlFile:test.html
         PsiElement(NG:BLOCK_PARAMETERS_START)('(')
         ASTWrapperPsiElement(NG:BLOCK_PARAMETER (if:0))
           PsiWhiteSpace(' ')
-          Angular2Binding
-            PsiElement(JS:IDENTIFIER)('user')
-            PsiElement(JS:DOT)('.')
-            PsiElement(JS:IDENTIFIER)('isHuman')
+          Angular2BlockParameter
+            JSReferenceExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('user')
+              PsiElement(JS:DOT)('.')
+              PsiElement(JS:IDENTIFIER)('isHuman')
           PsiWhiteSpace(' ')
         PsiElement(NG:BLOCK_PARAMETERS_END)(')')
       PsiWhiteSpace(' ')
@@ -44,10 +46,12 @@ HtmlFile:test.html
       PsiElement(NG:BLOCK_PARAMETERS)
         PsiElement(NG:BLOCK_PARAMETERS_START)('(')
         ASTWrapperPsiElement(NG:BLOCK_PARAMETER (else if:0))
-          Angular2Binding
-            PsiElement(JS:IDENTIFIER)('user')
-            PsiElement(JS:DOT)('.')
-            PsiElement(JS:IDENTIFIER)('isRobot')
+          Angular2BlockParameter
+            JSReferenceExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('user')
+              PsiElement(JS:DOT)('.')
+              PsiElement(JS:IDENTIFIER)('isRobot')
         PsiElement(NG:BLOCK_PARAMETERS_END)(')')
       PsiWhiteSpace(' \n')
       PsiElement(NG:BLOCK_START)('{')

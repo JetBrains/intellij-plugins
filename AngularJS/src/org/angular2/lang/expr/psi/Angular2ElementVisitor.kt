@@ -43,4 +43,8 @@ open class Angular2ElementVisitor : JSElementVisitor() {
   fun visitAngular2TemplateBindings(templateBindings: Angular2TemplateBindings) {
     visitJSSourceElement(templateBindings)
   }
+
+  open fun visitAngular2BlockParameter(parameter: Angular2BlockParameter) {
+    visitJSSourceElement(parameter)
+  }
 }

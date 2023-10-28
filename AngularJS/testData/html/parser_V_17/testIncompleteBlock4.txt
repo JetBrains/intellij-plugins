@@ -9,7 +9,7 @@ HtmlFile:test.html
         PsiElement(NG:BLOCK_PARAMETERS_START)('(')
         ASTWrapperPsiElement(NG:BLOCK_PARAMETER (if:0))
           PsiWhiteSpace(' ')
-          Angular2Binding
+          Angular2BlockParameter
             <empty list>
         PsiElement(NG:BLOCK_PARAMETERS_END)(')')
       PsiWhiteSpace(' \n')

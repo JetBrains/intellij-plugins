@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.psi.JSPsiElementBase
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.ResolveResult
@@ -18,6 +17,8 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.containers.Stack
 import org.angular2.Angular2InjectionUtils
+import org.angular2.lang.expr.psi.Angular2BlockParameter
+import org.angular2.lang.expr.psi.Angular2RecursiveVisitor
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType.*
@@ -110,8 +111,8 @@ class Angular2TemplateElementsScopeProvider : Angular2TemplateScopesProvider() {
       scopes.pop()
     }
 
-    fun pushScope(tag: XmlTag) {
-      scopes.push(Angular2TemplateElementScope(tag, currentScope()))
+    fun pushScope(tagOrBlock: PsiElement) {
+      scopes.push(Angular2TemplateElementScope(tagOrBlock, currentScope()))
     }
 
     fun addElement(element: JSPsiElementBase) {
@@ -162,6 +163,29 @@ class Angular2TemplateElementsScopeProvider : Angular2TemplateScopesProvider() {
           addElement(b.variableDefinition!!)
         }
       }
+    }
+
+    override fun visitBlock(block: Angular2HtmlBlock) {
+      pushScope(block)
+      super.visitBlock(block)
+      if (block.getName() == "for") {
+        sequenceOf("\$index", "\$first", "\$last", "\$even", "\$odd", "\$count").forEach {
+          addElement(createVariable(it, block))
+        }
+      }
+      popScope()
+    }
+
+    override fun visitBlockParameters(blockParameters: Angular2HtmlBlockParameters) {
+      blockParameters.accept(expressionVisitor)
+    }
+
+    private val expressionVisitor = object : Angular2RecursiveVisitor() {
+
+      override fun visitAngular2BlockParameter(parameter: Angular2BlockParameter) {
+        parameter.variable?.let { addElement(it) }
+      }
+
     }
   }
 
@@ -237,7 +261,9 @@ class Angular2TemplateElementsScopeProvider : Angular2TemplateScopesProvider() {
     private fun createVariable(name: String,
                                contributor: PsiElement): JSImplicitElement {
       return JSImplicitElementImpl.Builder(name, contributor)
-        .setType(JSImplicitElement.Type.Variable).toImplicitElement()
+        .setType(JSImplicitElement.Type.Variable)
+        .setProperties(JSImplicitElement.Property.Constant)
+        .toImplicitElement()
     }
   }
 }
