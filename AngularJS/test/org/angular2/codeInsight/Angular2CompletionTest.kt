@@ -160,6 +160,12 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
   fun testSwitchSecondaryBlocksUnique() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html")
 
+  fun testIfBlock() =
+    doTypingTest("if\n", Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0)
+
+  fun testErrorBlock() =
+    doTypingTest("err\n", Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0)
+
   private fun notAnElement(it: LookupElementInfo): Boolean = !it.lookupString.startsWith("<")
 
   private fun doBasicCompletionTest(vararg modules: WebFrameworkTestModule, dir: Boolean = false, extension: String = "ts") =
