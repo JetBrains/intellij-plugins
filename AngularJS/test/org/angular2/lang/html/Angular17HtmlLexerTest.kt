@@ -6,4 +6,8 @@ open class Angular17HtmlLexerTest : Angular2HtmlLexerTest() {
   override val templateSyntax: Angular2TemplateSyntax
     get() = Angular2TemplateSyntax.V_17
 
+  fun testSingleCharBlockName() {
+    doTest("@i")
+  }
+
 }

@@ -1,0 +1,26 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    PsiElement(NG:BLOCK)
+      PsiElement(NG:BLOCK_NAME)('@switch')
+      PsiWhiteSpace(' ')
+      PsiElement(NG:BLOCK_PARAMETERS)
+        PsiElement(NG:BLOCK_PARAMETERS_START)('(')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (switch:0))
+          Angular2BlockParameter
+            JSReferenceExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('user')
+              PsiElement(JS:DOT)('.')
+              PsiElement(JS:IDENTIFIER)('name')
+        PsiElement(NG:BLOCK_PARAMETERS_END)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(NG:BLOCK_START)('{')
+      PsiWhiteSpace('\n    ')
+      PsiElement(NG:BLOCK)
+        PsiElement(NG:BLOCK_NAME)('@c')
+        PsiErrorElement:Incomplete block - missing {
+          <empty list>
+      PsiWhiteSpace('\n')
+      PsiElement(NG:BLOCK_END)('}')

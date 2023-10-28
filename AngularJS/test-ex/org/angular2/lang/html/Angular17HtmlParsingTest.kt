@@ -6,4 +6,12 @@ class Angular17HtmlParsingTest : Angular2HtmlParsingTest() {
   override val templateSyntax: Angular2TemplateSyntax
     get() = Angular2TemplateSyntax.V_17
 
+  fun testIncompleteBlock6() {
+    doTestHtml("""
+      @switch (user.name) {
+          @c
+      }
+    """.trimIndent())
+  }
+
 }

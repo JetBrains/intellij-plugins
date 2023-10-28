@@ -47,6 +47,7 @@ import org.junit.runners.Suite
   Angular17HtmlHighlightingLexerTest::class,
   Angular17HtmlIndexerTest::class,
   Angular2HtmlParsingTest::class,
+  Angular17HtmlParsingTest::class,
   Angular2SemanticHighlightingTest::class,
   Angular2DirectiveSimpleSelectorSpecTest::class,
   Angular2DocumentationTest::class,
