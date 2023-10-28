@@ -130,6 +130,14 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     myFixture.testRainbow("colors.html", FileUtil.loadFile(File("$testDataPath/$testName/colors.html")), true, true)
   }
 
+  fun testBlockDefer() = checkHighlighting(ANGULAR_CORE_17_0_0_RC_0, extension = "ts")
+
+  fun testBlockFor() = checkHighlighting(ANGULAR_CORE_17_0_0_RC_0, extension = "ts")
+
+  fun testBlockIf() = checkHighlighting(ANGULAR_CORE_17_0_0_RC_0, extension = "ts")
+
+  fun testBlockSwitch() = checkHighlighting(ANGULAR_CORE_17_0_0_RC_0, extension = "ts")
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())

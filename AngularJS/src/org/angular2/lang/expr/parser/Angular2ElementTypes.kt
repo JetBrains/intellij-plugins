@@ -103,6 +103,10 @@ interface Angular2ElementTypes : JSElementTypes, Angular2StubElementTypes {
       }
 
     @JvmField
+    val BLOCK_PARAMETER_STATEMENT: IElementType =
+      Angular2ElementType("NG:BLOCK_PARAMETER_STATEMENT") { node -> Angular2BlockParameterImpl(node) }
+
+    @JvmField
     val PROPERTY_NAMES = TokenSet.orSet(IDENTIFIER_NAMES, TokenSet.create(STRING_LITERAL))
 
     @JvmStatic

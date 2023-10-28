@@ -10,13 +10,23 @@ HtmlFile:test.html
           PsiElement(NG:BLOCK_PARAMETERS_START)('(')
         ASTWrapperPsiElement(NG:BLOCK_PARAMETER (if:0))
           PsiWhiteSpace(' ')
-          Angular2Binding
-            PsiElement(JS:THIS_KEYWORD)('this')
+          Angular2BlockParameter
+            JSThisExpression
+              PsiElement(JS:THIS_KEYWORD)('this')
+            PsiErrorElement:Unexpected token 'is'
+              <empty list>
             PsiWhiteSpace(' ')
-            PsiElement(JS:IDENTIFIER)('is')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('is')
+            PsiErrorElement:Unexpected token 'not'
+              <empty list>
             PsiWhiteSpace(' ')
-            PsiElement(JS:IDENTIFIER)('not')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('not')
+            PsiErrorElement:Unexpected token 'finished'
+              <empty list>
             PsiWhiteSpace(' ')
-            PsiElement(JS:IDENTIFIER)('finished')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('finished')
       PsiErrorElement:Incomplete block - missing {
         <empty list>
