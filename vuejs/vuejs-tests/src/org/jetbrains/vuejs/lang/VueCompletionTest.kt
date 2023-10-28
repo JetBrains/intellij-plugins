@@ -2300,6 +2300,37 @@ export default {
     doLookupTest(VueTestModule.VUE_3_3_4, dir = true)
   }
 
+  fun testCompleteComponentWithDefineOptions() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
+    myFixture.configureByText("BestFeature.vue", """
+      <script setup lang="ts">
+      defineOptions({
+        name: "BestComponentEver"
+      })
+      </script>
+      <template></template>
+    """.trimIndent())
+    myFixture.configureByText("Component.vue", """
+      <script setup lang="ts">
+      import Best<caret>
+      </script>
+      <template></template>
+    """.trimIndent())
+
+    noAutoComplete {
+      myFixture.completeBasic()
+      assertContainsElements(myFixture.lookupElementStrings!!, "BestComponentEver")
+      assertDoesntContain(myFixture.lookupElementStrings!!, "BestFeature")
+      myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
+      myFixture.checkResult("""
+        <script setup lang="ts">
+        import BestComponentEver from "./BestFeature.vue";
+        </script>
+        <template></template>
+      """.trimIndent())
+    }
+  }
+
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()
     assertDoesntContain(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")
