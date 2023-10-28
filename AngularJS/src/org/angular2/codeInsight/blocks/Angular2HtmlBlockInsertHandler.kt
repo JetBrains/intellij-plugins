@@ -17,7 +17,7 @@ object Angular2HtmlBlockInsertHandler : InsertHandler<LookupElement> {
     val insertOffset = context.editor.caretModel.offset
     val hasParameters = definition != null && definition.parameters.isNotEmpty()
     if (hasParameters) {
-      context.document.insertString(insertOffset, " () {\n\n}")
+      context.document.insertString(insertOffset, " ()")
       context.editor.caretModel.currentCaret.moveToOffset(insertOffset + 2)
       val autoPopupController = AutoPopupController.getInstance(context.project)
       autoPopupController.scheduleAutoPopup(context.editor)
