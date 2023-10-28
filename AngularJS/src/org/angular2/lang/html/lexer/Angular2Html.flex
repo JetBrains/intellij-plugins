@@ -359,7 +359,7 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
     return XmlTokenType.XML_DATA_CHARACTERS;
   }
 }
-<BLOCK_NAME> "@"[a-zA-Z0-9_\t ]+[a-zA-Z0-9_] {
+<BLOCK_NAME> "@"[a-zA-Z0-9_\t ]*[a-zA-Z0-9_] {
   blockName = Angular2HtmlBlockUtils.INSTANCE.toCanonicalBlockName(yytext().toString());
   yybegin(BLOCK_PARAMETERS_START);
   return Angular2HtmlTokenTypes.BLOCK_NAME;
