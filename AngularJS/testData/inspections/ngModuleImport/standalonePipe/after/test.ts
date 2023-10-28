@@ -4,7 +4,7 @@ import {StandalonePipe} from "./standalone.pipe";
 @Component({
     selector: "app-root",
     template: `
-        <p>{{2 | standalone: 10}}</p>
+        <p>{{ 2 | standalone: 10 }}</p>
     `,
     standalone: true,
     imports: [

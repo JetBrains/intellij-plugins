@@ -1,19 +1,11 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight.refactoring
 
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.refactoring.util.CommonRefactoringUtil.RefactoringErrorHintException
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.testFramework.fixtures.IdeaTestExecutionPolicy
-import com.intellij.testFramework.fixtures.TempDirTestFixture
-import com.intellij.testFramework.fixtures.impl.LightTempDirTestFixtureImpl
-import org.angular2.Angular2MultiFileFixtureTestCase
-import org.angularjs.AngularTestUtil
+import org.angular2.Angular2TestCase
 
-class Angular2ExtractComponentTest : Angular2MultiFileFixtureTestCase() {
-  override fun getTestDataPath(): String {
-    return AngularTestUtil.getBaseTestDataPath() + "refactoring/extractComponent"
-  }
+class Angular2ExtractComponentTest : Angular2TestCase("refactoring/extractComponent") {
 
   fun testSingleElementMultiLineFromCaret() {
     doMultiFileTest()
@@ -56,8 +48,7 @@ class Angular2ExtractComponentTest : Angular2MultiFileFixtureTestCase() {
   }
 
   private fun doMultiFileTest(source: String = "src/app/app.component.html") {
-    doTest { rootDir: VirtualFile?, rootAfter: VirtualFile? ->
-      myFixture.configureFromTempProjectFile(source)
+    doConfiguredTest(dir = true, checkResult = true, configureFileName = source) {
       myFixture.performEditorAction("Angular2ExtractComponentAction")
     }
   }
@@ -66,12 +57,4 @@ class Angular2ExtractComponentTest : Angular2MultiFileFixtureTestCase() {
     UsefulTestCase.assertThrows(RefactoringErrorHintException::class.java) { doMultiFileTest() }
   }
 
-  override fun getTestRoot(): String {
-    return "/"
-  }
-
-  override fun createTempDirTestFixture(): TempDirTestFixture {
-    val policy = IdeaTestExecutionPolicy.current()
-    return if (policy != null) policy.createTempDirTestFixture() else LightTempDirTestFixtureImpl(false)
-  }
 }
