@@ -38,10 +38,12 @@ class Angular2Parser private constructor(builder: PsiBuilder,
   }
 
   inner class Angular2StatementParser(parser: Angular2Parser?) : StatementParser<Angular2Parser?>(parser) {
-    fun parseChain() {
+    fun parseChain(openParens: Int = 0) {
       assert(!myIsJavaScript)
       val chain = builder.mark()
       var count = 0
+      var openParensCount = openParens
+      var parenExpectedReported = false
       while (!builder.eof()) {
         count++
         val expression = builder.mark()
@@ -65,9 +67,21 @@ class Angular2Parser private constructor(builder: PsiBuilder,
             builder.advanceLexer()
           }
         }
-        else if (tokenType != null) {
-          builder.error(Angular2Bundle.message("angular.parse.expression.unexpected-token", builder.tokenText!!))
+        else if (tokenType == JSTokenTypes.RPAR && openParensCount > 0) {
+          builder.advanceLexer()
+          openParensCount--
         }
+        else if (tokenType != null) {
+          if (!parenExpectedReported && openParensCount > 0) {
+            builder.error(JavaScriptBundle.message("javascript.parser.message.expected.rparen", builder.tokenText))
+            parenExpectedReported = true
+          } else {
+            builder.error(Angular2Bundle.message("angular.parse.expression.unexpected-token", builder.tokenText!!))
+          }
+        }
+      }
+      if (openParensCount > 0) {
+        builder.error(JavaScriptBundle.message("javascript.parser.message.missing.rparen"))
       }
       when (count) {
         0 -> {
@@ -590,6 +604,11 @@ class Angular2Parser private constructor(builder: PsiBuilder,
     }
 
     private fun parseForLoopMainExpression(builder: PsiBuilder, parser: Angular2StatementParser) {
+      var parensCount = 0
+      while (builder.tokenType == JSTokenTypes.LPAR) {
+        builder.advanceLexer()
+        parensCount++
+      }
       tryParseParameterVariable(builder)
       if (isSemanticToken(builder, "of")) {
         builder.advanceLexer()
@@ -597,7 +616,7 @@ class Angular2Parser private constructor(builder: PsiBuilder,
       else {
         builder.error(Angular2Bundle.message("angular.parse.expression.expected-of"))
       }
-      parser.parseChain()
+      parser.parseChain(parensCount)
     }
 
     private fun parseForLoopLetOrTrackExpression(builder: PsiBuilder, parser: Angular2StatementParser) {

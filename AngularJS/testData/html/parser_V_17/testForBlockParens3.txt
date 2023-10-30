@@ -1,0 +1,53 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    PsiElement(NG:BLOCK)
+      PsiElement(NG:BLOCK_NAME)('@for')
+      PsiWhiteSpace(' ')
+      PsiElement(NG:BLOCK_PARAMETERS)
+        PsiElement(NG:BLOCK_PARAMETERS_START)('(')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (for:0))
+          Angular2BlockParameter
+            PsiElement(JS:LPAR)('(')
+            PsiElement(JS:LPAR)('(')
+            JSVarStatement
+              Angular2BlockParameterVariable
+                PsiElement(JS:IDENTIFIER)('item')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:IDENTIFIER)('of')
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('items')
+            PsiErrorElement:) expected
+              <empty list>
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('ff')
+            PsiErrorElement:Unexpected token 'bar'
+              <empty list>
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('bar')
+            PsiErrorElement:Unexpected token '12'
+              <empty list>
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('12')
+            PsiElement(JS:RPAR)(')')
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('dd')
+            PsiErrorElement:Missing )
+              <empty list>
+          PsiWhiteSpace(' ')
+        PsiElement(NG:BLOCK_SEMICOLON)(';')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (for:1))
+          PsiWhiteSpace(' ')
+          Angular2BlockParameter
+            <empty list>
+        PsiElement(NG:BLOCK_PARAMETERS_END)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(NG:BLOCK_START)('{')
+      PsiWhiteSpace('\n')
+      PsiElement(NG:BLOCK_END)('}')
