@@ -14,4 +14,25 @@ class Angular17HtmlParsingTest : Angular2HtmlParsingTest() {
     """.trimIndent())
   }
 
+  fun testForBlockParens() {
+    doTestHtml("""
+      @for ((item of items) ; ) {
+      }
+    """.trimIndent())
+  }
+
+  fun testForBlockParens2() {
+    doTestHtml("""
+      @for (((item of items ff bar 12) dd ) ) ff ; ) {
+      }
+    """.trimIndent())
+  }
+
+  fun testForBlockParens3() {
+    doTestHtml("""
+      @for (((item of items ff bar 12) dd ; ) {
+      }
+    """.trimIndent())
+  }
+
 }

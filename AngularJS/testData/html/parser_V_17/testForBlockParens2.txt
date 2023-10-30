@@ -1,0 +1,58 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    PsiElement(NG:BLOCK)
+      PsiElement(NG:BLOCK_NAME)('@for')
+      PsiWhiteSpace(' ')
+      PsiElement(NG:BLOCK_PARAMETERS)
+        PsiElement(NG:BLOCK_PARAMETERS_START)('(')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (for:0))
+          Angular2BlockParameter
+            PsiElement(JS:LPAR)('(')
+            PsiElement(JS:LPAR)('(')
+            JSVarStatement
+              Angular2BlockParameterVariable
+                PsiElement(JS:IDENTIFIER)('item')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:IDENTIFIER)('of')
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('items')
+            PsiErrorElement:) expected
+              <empty list>
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('ff')
+            PsiErrorElement:Unexpected token 'bar'
+              <empty list>
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('bar')
+            PsiErrorElement:Unexpected token '12'
+              <empty list>
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('12')
+            PsiElement(JS:RPAR)(')')
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('dd')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:RPAR)(')')
+          PsiWhiteSpace(' ')
+        PsiElement(NG:BLOCK_PARAMETERS_END)(')')
+      PsiErrorElement:Incomplete block - missing {
+        <empty list>
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('ff')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS(';')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS(')')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Unterminated expansion form. If you have unescaped '{', use '{{ "{" }}' to escape it.
+      PsiElement(NG:EXPANSION_FORM_START)('{')
+    PsiWhiteSpace('\n')
+    PsiErrorElement:Top level element is not completed
+      PsiElement(NG:EXPANSION_FORM_END)('}')
