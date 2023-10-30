@@ -1,0 +1,11 @@
+/include/ "Declaration.dtsi"
+
+&lable {
+    phy-handle = "";
+};
+
+/ {
+    /delete-node/ node;
+};
+
+<error descr="Missing required properties: \"compatible\", \"phy-handle\"">&lable</error> {};
