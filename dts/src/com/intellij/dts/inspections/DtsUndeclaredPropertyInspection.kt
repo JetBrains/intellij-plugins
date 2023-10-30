@@ -5,7 +5,6 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.dts.DtsBundle
 import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.psi.dtsVisitor
-import com.intellij.dts.util.DtsTreeUtil
 import com.intellij.dts.zephyr.DtsZephyrBinding
 import com.intellij.dts.zephyr.DtsZephyrBindingProvider
 import com.intellij.modcommand.ModPsiUpdater
@@ -52,6 +51,6 @@ private object RemovePropertyFix : PsiUpdateModCommandQuickFix() {
     }
 
     override fun applyFix(project: Project, element: PsiElement, updater: ModPsiUpdater) {
-        DtsTreeUtil.parentEntry(element)?.delete()
+        element.parent.delete()
     }
 }

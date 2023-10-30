@@ -7,6 +7,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.dts.DtsBundle
 import com.intellij.dts.lang.psi.DtsStatement
 import com.intellij.dts.lang.psi.getDtsAnnotationTarget
+import com.intellij.dts.util.relativeTo
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.PropertyKey
@@ -39,12 +40,10 @@ fun ProblemsHolder.registerWarning(
     fix: LocalQuickFix? = null,
 ) = registerProblem(this, ProblemHighlightType.WARNING, element, bundleKey, bundleParam, rangeInElement, fix)
 
-private fun elementInspectionTarget(element: PsiElement): PsiElement {
-    return if (element !is DtsStatement) {
-        element
-    } else {
-        element.getDtsAnnotationTarget()
-    }
+private fun elementInspectionRange(element: PsiElement): TextRange? {
+    if (element !is DtsStatement) return null
+
+    return element.getDtsAnnotationTarget().textRange.relativeTo(element.textRange)
 }
 
 private fun registerProblem(
@@ -61,8 +60,8 @@ private fun registerProblem(
     val fixes = fix?.let { arrayOf(it) } ?: emptyArray()
 
     val descriptor = manager.createProblemDescriptor(
-        elementInspectionTarget(element),
-        rangeInElement,
+        element,
+        rangeInElement ?: elementInspectionRange(element),
         DtsBundle.message(bundleKey, *params),
         highlightType,
         holder.isOnTheFly,
