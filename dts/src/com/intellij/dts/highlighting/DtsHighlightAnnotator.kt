@@ -1,5 +1,6 @@
 package com.intellij.dts.highlighting
 
+import com.intellij.dts.lang.psi.DtsCompilerDirective
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
@@ -8,9 +9,9 @@ import com.intellij.psi.ExternallyAnnotated
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.elementType
 import com.intellij.refactoring.suggested.startOffset
-import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.psi.DtsPHandle
 import com.intellij.dts.lang.psi.DtsProperty
+import com.intellij.dts.lang.psi.DtsSubNode
 import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.dts.util.DtsUtil
 
@@ -47,11 +48,13 @@ class DtsHighlightAnnotator : Annotator {
     }
 
     private fun annotateName(element: PsiElement, holder: Holder) {
-        if (element.parent is DtsProperty) {
-            holder.newAnnotation(element.textRange, DtsTextAttributes.PROPERTY_NAME)
-        }
-        else if (element.parent is DtsNode.Sub) {
-            annotateNodeName(element.text, element.startOffset, holder)
+        when (val parent = element.parent) {
+            is DtsProperty -> holder.newAnnotation(element.textRange, DtsTextAttributes.PROPERTY_NAME)
+            is DtsSubNode -> annotateNodeName(element.text, element.startOffset, holder)
+            is DtsCompilerDirective -> when (parent.dtsDirectiveType) {
+                DtsTypes.DELETE_PROP -> holder.newAnnotation(element.textRange, DtsTextAttributes.PROPERTY_NAME)
+                DtsTypes.DELETE_NODE -> annotateNodeName(element.text, element.startOffset, holder)
+            }
         }
     }
 
