@@ -25,19 +25,20 @@ abstract class DtsCompilerDirectiveMixin(node: ASTNode) : ASTWrapperPsiElement(n
 
     override val dtsStatementKind: DtsStatementKind
         get() {
-            return when(dtsDirectiveType) {
+            return when (dtsDirectiveType) {
                 DtsTypes.DELETE_PROP -> DtsStatementKind.PROPERTY
                 DtsTypes.DELETE_NODE -> DtsStatementKind.NODE
                 else -> DtsStatementKind.UNKNOWN
             }
         }
 
-    private fun getArgs(): List<PsiElement> {
-        return DtsUtil.children(this)
-            .dropWhile { !DtsTokenSets.compilerDirectives.contains(it.elementType) }
-            .drop(1)
-            .toList()
-    }
+    override val dtsDirectiveArgs: List<PsiElement>
+        get() {
+            return DtsUtil.children(this)
+                .dropWhile { !DtsTokenSets.compilerDirectives.contains(it.elementType) }
+                .drop(1)
+                .toList()
+        }
 
     override val dtsAffiliation: DtsAffiliation
         get() {
@@ -45,7 +46,7 @@ abstract class DtsCompilerDirectiveMixin(node: ASTNode) : ASTWrapperPsiElement(n
                 DtsTypes.MEMRESERVE, DtsTypes.V1, DtsTypes.PLUGIN, DtsTypes.OMIT_NODE -> DtsAffiliation.ROOT
                 DtsTypes.DELETE_PROP -> DtsAffiliation.NODE
                 DtsTypes.DELETE_NODE -> {
-                    when (getArgs().firstOrNull()?.elementType) {
+                    when (dtsDirectiveArgs.firstOrNull()?.elementType) {
                         DtsTypes.NAME -> DtsAffiliation.NODE
                         DtsTypes.P_HANDLE -> DtsAffiliation.ROOT
                         else -> DtsAffiliation.UNKNOWN

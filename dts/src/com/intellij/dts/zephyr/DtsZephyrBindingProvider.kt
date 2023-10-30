@@ -1,7 +1,9 @@
 package com.intellij.dts.zephyr
 
+import com.intellij.dts.api.dtsSearch
 import com.intellij.dts.documentation.DtsBundledBindings
-import com.intellij.dts.lang.psi.*
+import com.intellij.dts.lang.psi.DtsNode
+import com.intellij.dts.lang.psi.getDtsCompatibleStrings
 import com.intellij.dts.util.DtsTreeUtil
 import com.intellij.dts.util.cached
 import com.intellij.openapi.components.Service
@@ -15,7 +17,6 @@ import org.yaml.snakeyaml.constructor.SafeConstructor
 import org.yaml.snakeyaml.error.YAMLException
 import java.io.IOException
 
-
 @Service(Service.Level.PROJECT)
 class DtsZephyrBindingProvider(val project: Project) {
     companion object {
@@ -24,7 +25,7 @@ class DtsZephyrBindingProvider(val project: Project) {
         fun bindingFor(node: DtsNode, fallbackBinding: Boolean = true): DtsZephyrBinding? {
             val provider = of(node.project)
 
-            val nodeBinding = DtsTreeUtil.search(node.containingFile, node, provider::buildBinding)
+            val nodeBinding = node.dtsSearch(forward = false, callback = provider::buildBinding)
             if (nodeBinding != null || !fallbackBinding) return nodeBinding
 
             return provider.buildFallbackBinding()

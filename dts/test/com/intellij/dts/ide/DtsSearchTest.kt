@@ -110,7 +110,7 @@ class DtsSearchTest : DtsTestBase() {
             };
             ${refNode("/nested")}
         """,
-        expected = listOf("8:/nested"),
+        expected = listOf("23:/nested", "8:/nested"),
     )
 
     fun `test find deeply nested node`() = doTest(

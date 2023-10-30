@@ -1,4 +1,6 @@
-package com.intellij.dts.util
+package com.intellij.dts.api
+
+import com.intellij.dts.util.DtsUtil
 
 /**
  * Represents a path to a node in the devicetree. If the path is absolut it
@@ -7,6 +9,8 @@ package com.intellij.dts.util
  */
 data class DtsPath(val absolut: Boolean, val segments: List<String>) {
     companion object {
+        val root = DtsPath(true,  emptyList())
+
         fun from(path: String): DtsPath {
             return DtsPath(
                 path.startsWith('/'),

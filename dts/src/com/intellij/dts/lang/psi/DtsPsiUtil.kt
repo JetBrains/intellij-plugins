@@ -1,6 +1,6 @@
 package com.intellij.dts.lang.psi
 
-import com.intellij.dts.util.DtsPath
+import com.intellij.dts.api.DtsPath
 import com.intellij.dts.util.DtsTreeUtil
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.psi.PsiElement

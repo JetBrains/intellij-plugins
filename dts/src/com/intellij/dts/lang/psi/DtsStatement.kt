@@ -53,5 +53,7 @@ sealed interface DtsStatement : PsiElement {
         val dtsDirective: PsiElement
 
         val dtsDirectiveType: IElementType
+
+        val dtsDirectiveArgs: List<PsiElement>
     }
 }

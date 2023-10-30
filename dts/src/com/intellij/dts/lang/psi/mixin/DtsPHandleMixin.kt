@@ -5,7 +5,7 @@ import com.intellij.dts.lang.psi.DtsPropertyContent
 import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.dts.lang.resolve.DtsLabelReference
 import com.intellij.dts.lang.resolve.DtsPathReference
-import com.intellij.dts.util.DtsPath
+import com.intellij.dts.api.DtsPath
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement

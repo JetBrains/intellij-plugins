@@ -30,7 +30,7 @@ class DtsPathReferenceTest : DtsCompletionTest() {
 
     fun testEmptyOverlay() {
         addZephyr()
-        myFixture.configureByText("esp32.overlay", "&{/<caret>}")
+        myFixture.configureByText("esp32.overlay", "&{/<caret>} {};")
 
         assertSize(10, myFixture.completeBasic())
     }
