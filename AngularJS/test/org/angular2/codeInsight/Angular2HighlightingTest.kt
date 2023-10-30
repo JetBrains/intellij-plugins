@@ -134,6 +134,8 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
   fun testBlockFor() = checkHighlighting(ANGULAR_CORE_17_0_0_RC_0, extension = "ts")
 
+  fun testBlockForMultiVars() = checkHighlighting(ANGULAR_CORE_17_0_0_RC_0, extension = "ts")
+
   fun testBlockIf() = checkHighlighting(ANGULAR_CORE_17_0_0_RC_0, extension = "ts")
 
   fun testBlockSwitch() = checkHighlighting(ANGULAR_CORE_17_0_0_RC_0, extension = "ts")
