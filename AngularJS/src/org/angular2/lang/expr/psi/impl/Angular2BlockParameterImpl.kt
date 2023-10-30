@@ -23,7 +23,7 @@ class Angular2BlockParameterImpl(elementType: IElementType?) : Angular2EmbeddedE
   override val expression: JSExpression?
     get() = getExpression(this)
 
-  override val variable: JSVariable?
-    get() = children.firstNotNullOfOrNull { it as? JSVarStatement }
-      ?.variables?.firstOrNull()
+  override val variables: List<JSVariable>
+    get() = children.mapNotNull { it as? JSVarStatement }
+      .flatMap { it.variables.asSequence() }
 }

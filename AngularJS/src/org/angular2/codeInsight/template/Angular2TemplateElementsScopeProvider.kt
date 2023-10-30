@@ -183,7 +183,7 @@ class Angular2TemplateElementsScopeProvider : Angular2TemplateScopesProvider() {
     private val expressionVisitor = object : Angular2RecursiveVisitor() {
 
       override fun visitAngular2BlockParameter(parameter: Angular2BlockParameter) {
-        parameter.variable?.let { addElement(it) }
+        parameter.variables.forEach(::addElement)
       }
 
     }

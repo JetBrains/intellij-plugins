@@ -7,6 +7,6 @@ import com.intellij.lang.javascript.psi.JSVariable
 interface Angular2BlockParameter : Angular2EmbeddedExpression {
 
   val expression: JSExpression?
-  val variable: JSVariable?
+  val variables: List<JSVariable>
 
 }
