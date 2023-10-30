@@ -14,8 +14,7 @@ class WebAssemblyElementType(debugName: String) : IElementType(debugName, WebAss
 
 object WebAssemblyFileType : LanguageFileType(WebAssemblyLanguage) {
   override fun getName(): String = "WebAssembly file"
-  override fun getDescription(): String = "WebAssembly language file"
+  override fun getDescription(): String = ""
   override fun getDefaultExtension(): String = "wat"
-
   override fun getIcon(): Icon = WebassemblyIcons.WebAssemblyFiletype
 }
