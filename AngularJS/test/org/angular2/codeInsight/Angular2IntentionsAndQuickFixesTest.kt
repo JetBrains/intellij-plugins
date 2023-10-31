@@ -40,6 +40,10 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
     doTest(Angular2Bundle.message("angular.quickfix.template.create-input-transformer.family"),
            ANGULAR_CORE_16_2_8)
 
+  fun testCustomTransformBindingWithAlias() =
+    doTest(Angular2Bundle.message("angular.quickfix.template.create-input-transformer.family"),
+           ANGULAR_CORE_16_2_8)
+
   fun testCreateSignalFromUsage() =
     doTest(Angular2Bundle.message("angular.quickfix.template.create-signal.name", "fooSig"),
            ANGULAR_CORE_16_2_8)
