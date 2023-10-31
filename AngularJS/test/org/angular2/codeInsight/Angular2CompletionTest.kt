@@ -172,6 +172,12 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
   fun testErrorBlock() =
     doTypingTest("err\n", Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0)
 
+  fun testTagsWithinBlock() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html")
+
+  fun testTagsWithinBlock2() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html")
+
   private fun notAnElement(it: LookupElementInfo): Boolean = !it.lookupString.startsWith("<")
 
   private fun doBasicCompletionTest(vararg modules: WebFrameworkTestModule, dir: Boolean = false, extension: String = "ts") =
