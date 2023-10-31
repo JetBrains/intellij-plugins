@@ -130,6 +130,9 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
   fun testIfSecondaryBlocks() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html")
 
+  fun testIfSecondaryBlocksNested() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html")
+
   fun testIfSecondaryBlocksTopLevelText() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html", lookupItemFilter = ::notAnElement)
 
@@ -146,6 +149,9 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html")
 
   fun testForSecondaryBlocks() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html")
+
+  fun testForSecondaryBlocksNested() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html")
 
   fun testForSecondaryBlocksUnique() =
