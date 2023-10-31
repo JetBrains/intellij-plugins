@@ -78,7 +78,7 @@ class Angular2BlocksCodeCompletionProvider : WebSymbolsCompletionProviderBase<Ps
     siblings(false, false)
       .filter { element ->
         element.elementType != XmlTokenType.XML_WHITE_SPACE && element != XmlTokenType.XML_REAL_WHITE_SPACE
-        && (element !is XmlText || element.text.all { it.isWhitespace() })
+        && (element !is XmlText || !element.text.all { it.isWhitespace() })
       }
       .takeWhile { it is Angular2HtmlBlock }
       .filterIsInstance<Angular2HtmlBlock>()
