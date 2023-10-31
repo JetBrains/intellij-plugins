@@ -29,7 +29,7 @@ object Angular2FixesPsiUtil {
     when (val declarationSource = input.declarationSource) {
       is JSLiteralExpression -> {
         when (val parent = declarationSource.parent) {
-          is JSArrayLiteralExpression -> replaceInputMappingWithObjectLiteral(declarationSource)
+          is JSArrayLiteralExpression, is JSArgumentList -> replaceInputMappingWithObjectLiteral(declarationSource)
           is JSProperty -> parent.parent as? JSObjectLiteralExpression
           else -> null
         }
@@ -112,12 +112,13 @@ object Angular2FixesPsiUtil {
   private fun replaceInputMappingWithObjectLiteral(inputMapping: JSLiteralExpression): JSObjectLiteralExpression? {
     val mappingText = inputMapping.value as? String ?: return null
     val quote = JSCodeStyleSettings.getQuote(inputMapping)
-    val expression = if (mappingText.contains(':')) {
+    val isDecoratorArgument = inputMapping.parent is JSArgumentList
+    val expression = if (!isDecoratorArgument && mappingText.contains(':')) {
       val colon = mappingText.indexOf(':')
       "{name: $quote${mappingText.substring(0, colon).trim()}$quote, alias: $quote${mappingText.substring(colon + 1).trim()}$quote}"
     }
     else {
-      "{name: $quote${mappingText.trim()}$quote}"
+      "{${if (isDecoratorArgument) "alias" else "name"}: $quote${mappingText.trim()}$quote}"
     }
     val objectLiteral = JSChangeUtil.createExpressionWithContext(expression, inputMapping)
                           ?.psi as? JSObjectLiteralExpression

@@ -359,7 +359,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
       when (val param = getDecoratorParamValue(decorator)) {
         is JSObjectLiteralExpression -> parseInputObjectLiteral(param, defaultName)
         is JSLiteralExpression -> param.stubSafeStringValue.let { name ->
-          Angular2PropertyInfo(name ?: defaultName, false, decorator, declaringElement = if (name != null) param else null)
+          Angular2PropertyInfo(name ?: defaultName, false, param, declaringElement = if (name != null) param else null)
         }
         else -> Angular2PropertyInfo(defaultName, false, decorator, declaringElement = null)
       }
