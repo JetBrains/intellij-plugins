@@ -18,13 +18,13 @@ import org.jetbrains.annotations.Nullable;
   private String interpolationStart;
   private String interpolationEnd;
 
-  private int expansionFormNestingLevel;
-  private int interpolationStartPos;
+  public int expansionFormNestingLevel;
+  public int interpolationStartPos;
 
-  private String blockName;
-  private int parameterIndex;
-  private int parameterStart;
-  private int blockParenLevel;
+  public String blockName;
+  public int parameterIndex;
+  public int parameterStart;
+  public int blockParenLevel;
 
   public _Angular2HtmlLexer(boolean tokenizeExpansionForms,
                             boolean enableBlockSyntax,

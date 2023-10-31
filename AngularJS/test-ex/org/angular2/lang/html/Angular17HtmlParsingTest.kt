@@ -35,4 +35,10 @@ class Angular17HtmlParsingTest : Angular2HtmlParsingTest() {
     """.trimIndent())
   }
 
+  fun testForBlockParens4() {
+    doTestHtml("""
+      @for ((item of items); track trackingFn(item, compProp)) {{{item}}}
+    """.trimIndent())
+  }
+
 }

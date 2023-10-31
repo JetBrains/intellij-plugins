@@ -10,4 +10,8 @@ open class Angular17HtmlLexerTest : Angular2HtmlLexerTest() {
     doTest("@i")
   }
 
+  fun testForBlockParens() {
+    doTest("""@for ((item of items); track trackingFn(item, compProp)) {{{item}}}""")
+  }
+
 }
