@@ -17,22 +17,16 @@ import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.gridLayout.UnscaledGaps
 import com.intellij.ui.layout.not
 import com.intellij.ui.layout.selected
-import com.intellij.util.IconUtil
 import com.intellij.util.ui.components.BorderLayoutPanel
 import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioWorkspace
-import icons.ClionEmbeddedPlatformioIcons
 import java.awt.BorderLayout
 import java.awt.event.FocusAdapter
 import java.awt.event.FocusEvent
 import javax.swing.BorderFactory
 
 class PlatformioToolWindowFactory : ToolWindowFactory, DumbAware {
-  override fun init(toolWindow: ToolWindow) {
-    super.init(toolWindow)
-    toolWindow.setIcon(IconUtil.resizeSquared(ClionEmbeddedPlatformioIcons.Platformio, 13))
-  }
 
   override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
     val panel = createPanel(project)
