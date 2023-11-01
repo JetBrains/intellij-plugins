@@ -60,7 +60,7 @@
     <executionTargetProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioExecutionTargetProvider"/>
     <directoryProjectGenerator implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectGenerator"
                                id="jetbrains.cidr.platformio" order="after jetbrains.cidr.stm32cubemx"/>
-    <toolWindow id="PlatformIO" anchor="right"
+    <toolWindow id="PlatformIO" anchor="right" icon="ClionEmbeddedPlatformioIcons.Platformio"
                 factoryClass="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioToolWindowFactory"/>
     <project.converterProvider
       implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.migration.PlatformioProjectMigrationProvider"
