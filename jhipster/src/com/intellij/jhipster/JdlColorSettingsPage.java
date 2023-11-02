@@ -15,23 +15,23 @@ import java.util.Map;
 
 final class JdlColorSettingsPage implements ColorSettingsPage {
   private final AttributesDescriptor[] myAttributesDescriptors = new AttributesDescriptor[]{
-    new AttributesDescriptor("Keyword", JdlSyntaxHighlighter.JDL_KEYWORD),
-    new AttributesDescriptor("Identifier", JdlSyntaxHighlighter.JDL_IDENTIFIER),
-    new AttributesDescriptor("Application base name", JdlSyntaxHighlighter.JDL_BASE_NAME),
-    new AttributesDescriptor("String", JdlSyntaxHighlighter.JDL_STRING),
-    new AttributesDescriptor("Number", JdlSyntaxHighlighter.JDL_NUMBER),
-    new AttributesDescriptor("Boolean", JdlSyntaxHighlighter.JDL_BOOLEAN),
-    new AttributesDescriptor("Enum value", JdlSyntaxHighlighter.JDL_OPTION_ENUM_VALUE),
-    new AttributesDescriptor("Option name", JdlSyntaxHighlighter.JDL_OPTION_NAME),
-    new AttributesDescriptor("Field name", JdlSyntaxHighlighter.JDL_FIELD_NAME),
-    new AttributesDescriptor("Field constraint", JdlSyntaxHighlighter.JDL_FIELD_CONSTRAINT),
-    new AttributesDescriptor("Constant", JdlSyntaxHighlighter.JDL_CONSTANT),
-    new AttributesDescriptor("Comments//Line comment", JdlSyntaxHighlighter.JDL_LINE_COMMENT),
-    new AttributesDescriptor("Comments//Block comment", JdlSyntaxHighlighter.JDL_BLOCK_COMMENT),
-    new AttributesDescriptor("Braces and Operators//Brackets", JdlSyntaxHighlighter.JDL_BRACKETS),
-    new AttributesDescriptor("Braces and Operators//Braces", JdlSyntaxHighlighter.JDL_BRACES),
-    new AttributesDescriptor("Braces and Operators//Parentheses", JdlSyntaxHighlighter.JDL_PARENTHESES),
-    new AttributesDescriptor("Braces and Operators//Comma", JdlSyntaxHighlighter.JDL_COMMA)
+    new AttributesDescriptor(JdlBundle.message("attribute.descriptor.keyword"), JdlSyntaxHighlighter.JDL_KEYWORD),
+    new AttributesDescriptor(JdlBundle.message("attribute.descriptor.identifier"), JdlSyntaxHighlighter.JDL_IDENTIFIER),
+    new AttributesDescriptor(JdlBundle.message("attribute.descriptor.application.base.name"), JdlSyntaxHighlighter.JDL_BASE_NAME),
+    new AttributesDescriptor(JdlBundle.message("attribute.descriptor.string"), JdlSyntaxHighlighter.JDL_STRING),
+    new AttributesDescriptor(JdlBundle.message("attribute.descriptor.number"), JdlSyntaxHighlighter.JDL_NUMBER),
+    new AttributesDescriptor(JdlBundle.message("attribute.descriptor.boolean"), JdlSyntaxHighlighter.JDL_BOOLEAN),
+    new AttributesDescriptor(JdlBundle.message("attribute.descriptor.enum.value"), JdlSyntaxHighlighter.JDL_OPTION_ENUM_VALUE),
+    new AttributesDescriptor(JdlBundle.message("attribute.descriptor.option.name"), JdlSyntaxHighlighter.JDL_OPTION_NAME),
+    new AttributesDescriptor(JdlBundle.message("attribute.descriptor.field.name"), JdlSyntaxHighlighter.JDL_FIELD_NAME),
+    new AttributesDescriptor(JdlBundle.message("attribute.descriptor.field.constraint"), JdlSyntaxHighlighter.JDL_FIELD_CONSTRAINT),
+    new AttributesDescriptor(JdlBundle.message("attribute.descriptor.constant"), JdlSyntaxHighlighter.JDL_CONSTANT),
+    new AttributesDescriptor(JdlBundle.message("attribute.descriptor.comments.line.comment"), JdlSyntaxHighlighter.JDL_LINE_COMMENT),
+    new AttributesDescriptor(JdlBundle.message("attribute.descriptor.comments.block.comment"), JdlSyntaxHighlighter.JDL_BLOCK_COMMENT),
+    new AttributesDescriptor(JdlBundle.message("attribute.descriptor.braces.operators.brackets"), JdlSyntaxHighlighter.JDL_BRACKETS),
+    new AttributesDescriptor(JdlBundle.message("attribute.descriptor.braces.operators.braces"), JdlSyntaxHighlighter.JDL_BRACES),
+    new AttributesDescriptor(JdlBundle.message("attribute.descriptor.braces.operators.parentheses"), JdlSyntaxHighlighter.JDL_PARENTHESES),
+    new AttributesDescriptor(JdlBundle.message("attribute.descriptor.braces.operators.comma"), JdlSyntaxHighlighter.JDL_COMMA)
   };
 
   @Override
@@ -41,7 +41,7 @@ final class JdlColorSettingsPage implements ColorSettingsPage {
 
   @Override
   public @NotNull String getDisplayName() {
-    return "JHipster JDL";
+    return JdlBundle.message("configurable.name.jhipster.jdl");
   }
 
   @Override

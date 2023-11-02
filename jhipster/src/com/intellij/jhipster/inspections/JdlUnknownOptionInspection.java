@@ -4,6 +4,7 @@ package com.intellij.jhipster.inspections;
 
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.jhipster.JdlBundle;
 import com.intellij.jhipster.model.JdlOptionMapping;
 import com.intellij.jhipster.model.JdlOptionModel;
 import com.intellij.jhipster.psi.JdlConfigBlock;
@@ -39,7 +40,7 @@ final class JdlUnknownOptionInspection extends LocalInspectionTool {
         }
 
         if (!options.containsKey(optionName)) {
-          holder.registerProblem(o.getNameElement(), "Unknown option " + optionName);
+          holder.registerProblem(o.getNameElement(), JdlBundle.message("inspection.message.unknown.option", optionName));
         }
       }
     };

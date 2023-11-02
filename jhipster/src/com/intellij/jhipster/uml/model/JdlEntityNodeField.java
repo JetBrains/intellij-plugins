@@ -2,6 +2,7 @@
 
 package com.intellij.jhipster.uml.model;
 
+import com.intellij.openapi.util.NlsSafe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,11 +19,11 @@ public final class JdlEntityNodeField {
     this.required = required;
   }
 
-  public @NotNull String getName() {
+  public @NotNull @NlsSafe String getName() {
     return name;
   }
 
-  public @Nullable String getType() {
+  public @Nullable @NlsSafe String getType() {
     return type;
   }
 

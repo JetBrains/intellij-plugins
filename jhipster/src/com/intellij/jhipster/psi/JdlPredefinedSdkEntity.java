@@ -5,6 +5,7 @@ package com.intellij.jhipster.psi;
 import com.intellij.jhipster.JdlIconsMapping;
 import com.intellij.jhipster.JdlLanguage;
 import com.intellij.lang.Language;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.SyntheticElement;
@@ -24,6 +25,10 @@ import javax.swing.*;
 import java.util.Objects;
 
 public final class JdlPredefinedSdkEntity extends FakePsiElement implements SyntheticElement, PsiMetaOwner, PsiPresentableMetaData {
+
+  @NlsSafe
+  public static final String ENTITY = "entity";
+
   private final PsiElement parent;
   private final String entityName;
 
@@ -68,17 +73,12 @@ public final class JdlPredefinedSdkEntity extends FakePsiElement implements Synt
 
   @Override
   public @Nls @NotNull String getTypeName() {
-    return "entity";
+    return ENTITY;
   }
 
   @Override
   public @Nullable Icon getIcon() {
     return JdlIconsMapping.getEntityIcon();
-  }
-
-  @Override
-  public @NotNull PsiElement getNavigationElement() {
-    return this;
   }
 
   @Override

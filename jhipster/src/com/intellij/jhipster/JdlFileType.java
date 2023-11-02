@@ -22,7 +22,7 @@ public final class JdlFileType extends LanguageFileType {
 
   @Override
   public @NotNull String getDescription() {
-    return "JHipster-specific domain language";
+    return JdlBundle.message("label.jhipster.specific.domain.language");
   }
 
   @Override

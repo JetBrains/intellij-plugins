@@ -2,10 +2,12 @@
 
 package com.intellij.jhipster.uml.model;
 
+import com.intellij.openapi.util.NlsSafe;
+
 import javax.swing.*;
 
 public interface JdlNodeData {
-  String getName();
+  @NlsSafe String getName();
 
   Icon getIcon();
 }

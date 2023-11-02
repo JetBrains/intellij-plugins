@@ -2,6 +2,7 @@
 
 package com.intellij.jhipster.run;
 
+import com.intellij.jhipster.JdlBundle;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.ConfigurationException;
@@ -79,7 +80,7 @@ final class JdlRunSettingsEditor extends SettingsEditor<JdlRunConfiguration> {
     String jdlLocation = jdlLocationField.getText();
     File jdlFile = new File(jdlLocation);
     if (!jdlFile.exists() || !jdlFile.isFile()) {
-      throw new ConfigurationException("JDL file does not exist: '" + jdlLocation + "'");
+      throw new ConfigurationException(JdlBundle.message("dialog.message.jdl.file.does.not.exist", jdlLocation));
     }
 
     options.setJdlLocation(jdlLocation);
@@ -90,9 +91,9 @@ final class JdlRunSettingsEditor extends SettingsEditor<JdlRunConfiguration> {
   @Override
   protected @NotNull JComponent createEditor() {
     return FormBuilder.createFormBuilder()
-      .addLabeledComponent("JDL file:", jdlLocationField)
-      .addLabeledComponent("Output location:", outputLocationField)
-      .addLabeledComponent("JHipster executable:", jhipsterLocationField)
+      .addLabeledComponent(JdlBundle.message("label.jdl.file"), jdlLocationField)
+      .addLabeledComponent(JdlBundle.message("label.output.location"), outputLocationField)
+      .addLabeledComponent(JdlBundle.message("label.jhipster.executable"), jhipsterLocationField)
       .getPanel();
   }
 }

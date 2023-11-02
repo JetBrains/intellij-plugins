@@ -2,6 +2,8 @@
 
 package com.intellij.jhipster.uml.model;
 
+import com.intellij.openapi.util.NlsSafe;
+
 import java.util.Objects;
 
 public final class JdlEnumNodeItem {
@@ -11,7 +13,7 @@ public final class JdlEnumNodeItem {
     this.name = name;
   }
 
-  public String getName() {
+  public @NlsSafe String getName() {
     return name;
   }
 

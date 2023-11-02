@@ -3,6 +3,7 @@
 package com.intellij.jhipster.uml;
 
 import com.intellij.diagram.*;
+import com.intellij.jhipster.JdlBundle;
 import com.intellij.jhipster.uml.model.JdlNodeData;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -26,7 +27,7 @@ final class JdlUmlProvider extends DiagramProvider<JdlNodeData> {
   @SuppressWarnings("DialogTitleCapitalization")
   @Override
   public @NotNull String getPresentableName() {
-    return "JHipster Entities";
+    return JdlBundle.message("label.jhipster.entities");
   }
 
   public JdlUmlProvider() {

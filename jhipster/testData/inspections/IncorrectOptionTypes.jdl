@@ -2,17 +2,17 @@ application {
   config {
     applicationType gateway
     authenticationType jwt
-    enableHibernateCache <warning descr="incorrect value type, expected Boolean">"off"</warning>
+    enableHibernateCache <warning descr="Incorrect value type, expected Boolean">"off"</warning>
     baseName gateway
-    buildTool <warning descr="incorrect value type, expected one of [maven, gradle]">"maven"</warning>
+    buildTool <warning descr="Incorrect value type, expected one of [maven, gradle]">"maven"</warning>
     clientFramework angular
-    creationTimestamp <warning descr="incorrect value type, expected Integer">"1617901618886"</warning>
-    messageBroker <warning descr="incorrect value type, expected one of [false, kafka, pulsar]">rabbitMQ</warning>
+    creationTimestamp <warning descr="Incorrect value type, expected Integer">"1617901618886"</warning>
+    messageBroker <warning descr="Incorrect value type, expected one of [false, kafka, pulsar]">rabbitMQ</warning>
     packageName com.okta.developer.gateway
     prodDatabaseType postgresql
-    serviceDiscoveryType <warning descr="incorrect value type, expected one of [no, eureka, consul]">yes</warning>
+    serviceDiscoveryType <warning descr="Incorrect value type, expected one of [no, eureka, consul]">yes</warning>
     testFrameworks [cypress]
-    microfrontends <warning descr="incorrect value type, expected String[]">"frontend"</warning>
+    microfrontends <warning descr="Incorrect value type, expected String[]">"frontend"</warning>
   }
 }
 
@@ -21,6 +21,6 @@ deployment {
   deploymentType docker-compose
   appsFolders [gateway, store, blog, notification]
   dockerRepositoryName "hipsterslabs"
-  monitoring <warning descr="incorrect value type, expected one of [no, prometheus]">false</warning>
+  monitoring <warning descr="Incorrect value type, expected one of [no, prometheus]">false</warning>
   serviceDiscoveryType eureka
 }

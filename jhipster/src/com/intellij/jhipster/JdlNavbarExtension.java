@@ -55,6 +55,7 @@ final class JdlNavbarExtension extends StructureAwareNavBarModelExtension {
     return null;
   }
 
+  @SuppressWarnings("HardCodedStringLiteral")
   @Override
   public @Nullable String getPresentableText(Object object) {
     if (object instanceof JdlEntity) {

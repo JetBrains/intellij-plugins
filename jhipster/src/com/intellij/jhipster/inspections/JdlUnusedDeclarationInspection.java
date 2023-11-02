@@ -5,6 +5,7 @@ package com.intellij.jhipster.inspections;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.jhipster.JdlBundle;
 import com.intellij.jhipster.JdlInspectionUtil;
 import com.intellij.jhipster.psi.*;
 import com.intellij.psi.PsiElementVisitor;
@@ -25,7 +26,7 @@ final class JdlUnusedDeclarationInspection extends LocalInspectionTool {
 
         Collection<@NotNull JdlEntity> usedEntities = JdlInspectionUtil.getUsedEntities(holder.getFile());
         if (!usedEntities.contains(o)) {
-          holder.registerProblem(entityId, "Unused entity " + o.getName(), ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+          holder.registerProblem(entityId, JdlBundle.message("inspection.message.unused.entity", o.getName()), ProblemHighlightType.LIKE_UNUSED_SYMBOL);
         }
       }
 
@@ -38,7 +39,7 @@ final class JdlUnusedDeclarationInspection extends LocalInspectionTool {
 
         Collection<@NotNull JdlEnum> usedEnums = JdlInspectionUtil.getUsedEnums(holder.getFile());
         if (!usedEnums.contains(o)) {
-          holder.registerProblem(enumId, "Unused enum " + o.getName(), ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+          holder.registerProblem(enumId, JdlBundle.message("inspection.message.unused.enum", o.getName()), ProblemHighlightType.LIKE_UNUSED_SYMBOL);
         }
       }
     };

@@ -6,6 +6,7 @@ import com.intellij.jhipster.psi.*;
 import com.intellij.lang.cacheBuilder.DefaultWordsScanner;
 import com.intellij.lang.cacheBuilder.WordsScanner;
 import com.intellij.lang.findUsages.FindUsagesProvider;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.tree.TokenSet;
@@ -15,6 +16,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 final class JdlFindUsagesProvider implements FindUsagesProvider {
+  @NlsSafe
+  public static final String CONSTANT = "constant";
+  @NlsSafe
+  public static final String ENUM = "enum";
+  @NlsSafe
+  public static final String ENTITY = "entity";
+
   @Override
   public @NotNull WordsScanner getWordsScanner() {
     return new DefaultWordsScanner(new JdlLexer(),
@@ -38,13 +46,13 @@ final class JdlFindUsagesProvider implements FindUsagesProvider {
   @Override
   public @Nls @NotNull String getType(@NotNull PsiElement element) {
     if (element instanceof JdlEntity) {
-      return "entity";
+      return ENTITY;
     }
     if (element instanceof JdlEnum) {
-      return "enum";
+      return ENUM;
     }
     if (element instanceof JdlConstant) {
-      return "constant";
+      return CONSTANT;
     }
     return "";
   }
@@ -52,7 +60,7 @@ final class JdlFindUsagesProvider implements FindUsagesProvider {
   @Override
   public @Nls @NotNull String getDescriptiveName(@NotNull PsiElement element) {
     String name = element instanceof PsiNamedElement ? ((PsiNamedElement)element).getName() : null;
-    return name != null ? name : "<unnamed>";
+    return name != null ? name : JdlBundle.message("unnamed");
   }
 
   @Override

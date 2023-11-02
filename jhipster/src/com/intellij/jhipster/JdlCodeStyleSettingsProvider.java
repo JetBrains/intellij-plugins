@@ -31,7 +31,7 @@ final class JdlCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
   @Override
   public @NotNull CodeStyleConfigurable createConfigurable(@NotNull CodeStyleSettings settings,
                                                            @NotNull CodeStyleSettings originalSettings) {
-    return new CodeStyleAbstractConfigurable(settings, originalSettings, "JHipster JDL") {
+    return new CodeStyleAbstractConfigurable(settings, originalSettings, JdlBundle.message("configurable.name.jhipster.jdl")) {
       @Override
       protected @NotNull CodeStyleAbstractPanel createPanel(@NotNull CodeStyleSettings settings) {
         var language = JdlLanguage.INSTANCE;

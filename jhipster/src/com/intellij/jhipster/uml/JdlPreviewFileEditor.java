@@ -2,6 +2,7 @@
 
 package com.intellij.jhipster.uml;
 
+import com.intellij.jhipster.JdlBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.Document;
@@ -124,7 +125,7 @@ final class JdlPreviewFileEditor extends UserDataHolderBase implements FileEdito
 
   @Override
   public @NotNull String getName() {
-    return "JHipster JDL Preview";
+    return JdlBundle.message("jhipster.jdl.preview");
   }
 
   @Override

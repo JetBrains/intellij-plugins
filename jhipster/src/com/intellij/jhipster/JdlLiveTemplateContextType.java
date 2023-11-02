@@ -5,11 +5,15 @@ package com.intellij.jhipster;
 import com.intellij.codeInsight.template.TemplateActionContext;
 import com.intellij.codeInsight.template.TemplateContextType;
 import com.intellij.jhipster.psi.JdlFile;
+import com.intellij.openapi.util.NlsSafe;
 import org.jetbrains.annotations.NotNull;
 
 final class JdlLiveTemplateContextType extends TemplateContextType {
+  @NlsSafe
+  public static final String JDL = "JDL";
+
   public JdlLiveTemplateContextType() {
-    super("JDL");
+    super(JDL);
   }
 
   @Override

@@ -126,7 +126,7 @@ final class JdlAnnotator implements Annotator, DumbAware {
     if (element instanceof JdlId || element instanceof JdlFieldType) {
       var reference = element.getReference();
       if (reference != null && reference.resolve() == null) {
-        var message = String.format("Cannot resolve symbol '%s'", reference.getCanonicalText());
+        var message = JdlBundle.message("inspection.message.cannot.resolve.symbol.0", reference.getCanonicalText());
         holder.newAnnotation(HighlightSeverity.ERROR, message)
           .highlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL)
           .range(element)

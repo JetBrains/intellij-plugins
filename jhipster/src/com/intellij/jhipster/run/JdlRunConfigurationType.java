@@ -5,6 +5,7 @@ package com.intellij.jhipster.run;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.ConfigurationTypeUtil;
+import com.intellij.jhipster.JdlBundle;
 import com.intellij.jhipster.JdlIconsMapping;
 import com.intellij.openapi.project.DumbAware;
 import org.jetbrains.annotations.Nls;
@@ -23,12 +24,12 @@ final class JdlRunConfigurationType implements ConfigurationType, DumbAware {
 
   @Override
   public @NotNull @Nls(capitalization = Nls.Capitalization.Title) String getDisplayName() {
-    return "JHipster";
+    return JdlBundle.message("jhipster");
   }
 
   @Override
   public String getConfigurationTypeDescription() {
-    return "JHipster JDL generator";
+    return JdlBundle.message("jhipster.jdl.generator");
   }
 
   @Override

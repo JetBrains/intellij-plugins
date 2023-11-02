@@ -10,7 +10,7 @@ import org.jetbrains.annotations.PropertyKey;
 
 import java.util.function.Supplier;
 
-final class JdlBundle extends DynamicBundle {
+public final class JdlBundle extends DynamicBundle {
   @NonNls public static final String BUNDLE = "messages.JdlBundle";
   private static final JdlBundle INSTANCE = new JdlBundle();
 

@@ -2,6 +2,7 @@
 
 package com.intellij.jhipster.uml;
 
+import com.intellij.jhipster.JdlBundle;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.util.Key;
@@ -13,11 +14,11 @@ import java.util.Objects;
 final class JdlEditorWithPreview extends TextEditorWithPreview {
   public static final Key<JdlEditorWithPreview> PARENT_SPLIT_EDITOR_KEY = Key.create("jdl.parentSplit");
 
-  public JdlEditorWithPreview(@NotNull TextEditor editor, @NotNull JdlPreviewFileEditor preview) {
+  JdlEditorWithPreview(@NotNull TextEditor editor, @NotNull JdlPreviewFileEditor preview) {
     super(
       editor,
       preview,
-      "JDL Preview",
+      JdlBundle.message("jdl.preview"),
       Layout.SHOW_EDITOR_AND_PREVIEW,
       false
     );

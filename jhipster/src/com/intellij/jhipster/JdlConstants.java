@@ -2,6 +2,8 @@
 
 package com.intellij.jhipster;
 
+import com.intellij.openapi.util.NlsSafe;
+
 import java.util.List;
 import java.util.Map;
 
@@ -9,10 +11,13 @@ public final class JdlConstants {
   private JdlConstants() {
   }
 
+  @NlsSafe
   public static final String APPLICATION_BASE_NAME = "baseName";
   public static final String APPLICATION_UNNAMED = "<unnamed>";
 
+  @NlsSafe
   public static final String CONFIG_BLOCK_NAME = "config";
+  @NlsSafe
   public static final String DEPLOYMENT_BLOCK_NAME = "deployment";
 
   public static final String TRUE = "true";

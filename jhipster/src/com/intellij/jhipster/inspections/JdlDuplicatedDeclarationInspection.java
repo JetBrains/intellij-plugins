@@ -4,6 +4,7 @@ package com.intellij.jhipster.inspections;
 
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.jhipster.JdlBundle;
 import com.intellij.jhipster.JdlInspectionUtil;
 import com.intellij.jhipster.psi.*;
 import com.intellij.psi.PsiElementVisitor;
@@ -28,7 +29,7 @@ final class JdlDuplicatedDeclarationInspection extends LocalInspectionTool {
         Map<String, List<@NotNull JdlEntity>> map = JdlInspectionUtil.getAllEntities(holder.getFile());
         List<@NotNull JdlEntity> sameNameEntities = map.get(entityName);
         if (sameNameEntities != null && sameNameEntities.size() > 1) {
-          holder.registerProblem(entityId, "Duplicated entity " + entityName);
+          holder.registerProblem(entityId, JdlBundle.message("inspection.message.duplicated.entity", entityName));
         }
       }
 
@@ -44,7 +45,7 @@ final class JdlDuplicatedDeclarationInspection extends LocalInspectionTool {
         Map<String, List<@NotNull JdlEnum>> map = JdlInspectionUtil.getAllEnums(holder.getFile());
         List<@NotNull JdlEnum> sameNameEnums = map.get(entityName);
         if (sameNameEnums != null && sameNameEnums.size() > 1) {
-          holder.registerProblem(enumId, "Duplicated enum " + entityName);
+          holder.registerProblem(enumId, JdlBundle.message("inspection.message.duplicated.enum", entityName));
         }
       }
     };

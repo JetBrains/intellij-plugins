@@ -4,6 +4,7 @@ package com.intellij.jhipster.inspections;
 
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.jhipster.JdlBundle;
 import com.intellij.jhipster.model.*;
 import com.intellij.jhipster.psi.*;
 import com.intellij.psi.PsiElementVisitor;
@@ -64,12 +65,12 @@ final class JdlIncorrectOptionTypeInspection extends LocalInspectionTool {
                     && supportedOptions.contains(actualValue.getText());
 
           if (!matches) {
-            expectedComment = "one of [" + String.join(", ", supportedOptions) + "]";
+            expectedComment = JdlBundle.message("inspection.message.incorrect.value.type.one.of", "[" + String.join(", ", supportedOptions) + "]");
           }
         }
 
         if (!matches) {
-          holder.registerProblem(actualValue, "incorrect value type, expected " + expectedComment);
+          holder.registerProblem(actualValue, JdlBundle.message("inspection.message.incorrect.value.type.expected", expectedComment));
         }
       }
     };
