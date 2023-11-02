@@ -20,6 +20,6 @@ class DtsBitsInspection : LocalInspectionTool() {
         val parsed = bitsValue.dtsParse()
         if (parsed == null || parsed in validBits) return
 
-        holder.registerError(bitsValue, bundleKey = "inspections.bits.bad_size")
+        holder.registerProblem(bitsValue, bundleKey = "inspections.bits.bad_size")
     }
 }

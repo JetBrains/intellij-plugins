@@ -36,7 +36,7 @@ class DtsUndeclaredPropertyInspection : LocalInspectionTool() {
         val undeclaredProperties = node.dtsProperties.filter { property -> isPropertyUndeclared(binding, property.dtsName) }
 
         for (property in undeclaredProperties) {
-            holder.registerError(
+            holder.registerProblem(
                 property,
                 bundleKey = "inspections.undeclared_property.error",
                 fix = if (property.dtsIsComplete) RemovePropertyFix else null

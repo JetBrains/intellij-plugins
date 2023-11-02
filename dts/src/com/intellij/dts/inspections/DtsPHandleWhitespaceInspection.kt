@@ -27,7 +27,7 @@ class DtsPHandleWhitespaceInspection : LocalInspectionTool() {
         if (PsiTreeUtil.hasErrorElements(pHandle)) return
 
         for (child in childWhitespace(pHandle)) {
-            holder.registerError(
+            holder.registerProblem(
                 pHandle,
                 bundleKey = "inspections.phandle_whitespace.error",
                 rangeInElement = child.textRange.relativeTo(pHandle.textRange),

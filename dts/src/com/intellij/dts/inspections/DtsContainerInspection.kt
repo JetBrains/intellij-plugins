@@ -18,7 +18,7 @@ class DtsContainerInspection : LocalInspectionTool() {
         for (statement in container.dtsStatements) {
             if (statement.dtsAffiliation.isRoot() || statement.dtsAffiliation.isUnknown()) continue
 
-            holder.registerError(statement, bundleKey = "inspections.container.message_root")
+            holder.registerProblem(statement, bundleKey = "inspections.container.message_root")
             return
         }
     }
@@ -27,7 +27,7 @@ class DtsContainerInspection : LocalInspectionTool() {
         for (statement in container.dtsStatements) {
             if (!statement.dtsAffiliation.isRoot()) continue
 
-            holder.registerError(statement, bundleKey = "inspections.container.message_node")
+            holder.registerProblem(statement, bundleKey = "inspections.container.message_node")
             return
         }
     }

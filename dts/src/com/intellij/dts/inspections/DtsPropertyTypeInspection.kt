@@ -33,7 +33,7 @@ class DtsPropertyTypeInspection : LocalInspectionTool() {
             val propertyBinding = binding.properties[property.dtsName] ?: continue
             if (property.dtsAssignableTo(propertyBinding.type)) continue
 
-            holder.registerError(
+            holder.registerProblem(
                 property,
                 bundleKey = "inspections.property_type.error",
                 bundleParam = propertyBinding.type.typeName,

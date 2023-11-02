@@ -49,7 +49,7 @@ class DtsRequiredPropertyInspection : LocalInspectionTool() {
         requiredProperties.removeAll { declaredProperties.contains(it.name) }
         if (requiredProperties.isEmpty()) return
 
-        holder.registerError(
+        holder.registerProblem(
             node,
             bundleKey = "inspections.required_property.error",
             bundleParam = requiredProperties.joinToString { "\"${it.name}\"" },

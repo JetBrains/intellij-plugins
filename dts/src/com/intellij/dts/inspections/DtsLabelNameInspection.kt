@@ -19,7 +19,7 @@ class DtsLabelNameInspection : LocalInspectionTool() {
         val name = label.text.trimEnd(':')
 
         if (!startRx.matches(name.substring(0..0))) {
-            holder.registerError(
+            holder.registerProblem(
                 label,
                 bundleKey = "inspections.label_name.bad_first_char",
                 bundleParam = name[0],
@@ -30,7 +30,7 @@ class DtsLabelNameInspection : LocalInspectionTool() {
         }
 
         firstNotMatching(name, rx) {
-            holder.registerError(
+            holder.registerProblem(
                 label,
                 bundleKey = "inspections.label_name.bad_char",
                 bundleParam = it,

@@ -30,7 +30,7 @@ class DtsStatementOrderInspection : LocalInspectionTool() {
             }
 
             if (kind.isProperty() && nodeDefinition) {
-                holder.registerError(
+                holder.registerProblem(
                     statement,
                     bundleKey = "inspections.statement_order.message",
                 )

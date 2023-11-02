@@ -24,36 +24,18 @@ fun firstNotMatching(str: String, rx: Regex, callback: (Char) -> Unit): Boolean 
     return false
 }
 
-fun ProblemsHolder.registerError(
-    element: PsiElement,
-    bundleKey: @PropertyKey(resourceBundle = DtsBundle.BUNDLE) String,
-    bundleParam: Any? = null,
-    rangeInElement: TextRange? = null,
-    fix: LocalQuickFix? = null,
-) = registerProblem(this, ProblemHighlightType.GENERIC_ERROR, element, bundleKey, bundleParam, rangeInElement, fix)
-
-fun ProblemsHolder.registerWarning(
-    element: PsiElement,
-    bundleKey: @PropertyKey(resourceBundle = DtsBundle.BUNDLE) String,
-    bundleParam: Any? = null,
-    rangeInElement: TextRange? = null,
-    fix: LocalQuickFix? = null,
-) = registerProblem(this, ProblemHighlightType.WARNING, element, bundleKey, bundleParam, rangeInElement, fix)
-
 private fun elementInspectionRange(element: PsiElement): TextRange? {
     if (element !is DtsStatement) return null
 
     return element.getDtsAnnotationTarget().textRange.relativeTo(element.textRange)
 }
 
-private fun registerProblem(
-    holder: ProblemsHolder,
-    highlightType: ProblemHighlightType,
+fun ProblemsHolder.registerProblem(
     element: PsiElement,
     bundleKey: @PropertyKey(resourceBundle = DtsBundle.BUNDLE) String,
-    bundleParam: Any?,
-    rangeInElement: TextRange?,
-    fix: LocalQuickFix?
+    bundleParam: Any? = null,
+    rangeInElement: TextRange? = null,
+    fix: LocalQuickFix? = null,
 ) {
     val manager = InspectionManager.getInstance(element.project)
     val params = bundleParam?.let { arrayOf(it) } ?: emptyArray<Any>()
@@ -63,10 +45,10 @@ private fun registerProblem(
         element,
         rangeInElement ?: elementInspectionRange(element),
         DtsBundle.message(bundleKey, *params),
-        highlightType,
-        holder.isOnTheFly,
+        ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+        isOnTheFly,
         *fixes,
     )
 
-    holder.registerProblem(descriptor)
+    registerProblem(descriptor)
 }

@@ -16,7 +16,7 @@ class DtsPropertyNameInspection : LocalInspectionTool() {
         val name = property.dtsName
 
         firstNotMatching(name, rx) {
-            holder.registerError(
+            holder.registerProblem(
                 property,
                 bundleKey = "inspections.property_name.bad_char",
                 bundleParam = it,

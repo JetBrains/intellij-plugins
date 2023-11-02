@@ -19,7 +19,7 @@ class DtsUnitNameInspection : LocalInspectionTool() {
         if (addr == null) return
 
         if (addr.startsWith("0x")) {
-            holder.registerWarning(
+            holder.registerProblem(
                 node,
                 bundleKey = "inspections.unit_name.leading_0x",
                 rangeInElement = TextRange.from(baseName.length + 1, addr.length),
@@ -29,7 +29,7 @@ class DtsUnitNameInspection : LocalInspectionTool() {
         }
 
         if (leading0s.matchesAt(addr, 0)) {
-            holder.registerWarning(
+            holder.registerProblem(
                 node,
                 bundleKey = "inspections.unit_name.leading_0s",
                 rangeInElement = TextRange.from(baseName.length + 1, addr.length),
