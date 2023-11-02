@@ -24,9 +24,11 @@ class DtsDocumentationProvider : DocumentationTargetProvider, PsiDocumentationTa
         return DtsUtil.singleResult {
             if (file !is DtsFile) return@singleResult null
 
-            val originalElement = file.findElementAt(offset) ?: return@singleResult null
-            val element = findTargetElement(originalElement) ?: return@singleResult null
-            documentationTarget(element, originalElement)
+            val (target, original) = findTarget(file, offset)
+                ?: findTarget(file, offset - 1)
+                ?: return@singleResult null
+
+            documentationTarget(target, original)
         }
     }
 
@@ -36,6 +38,15 @@ class DtsDocumentationProvider : DocumentationTargetProvider, PsiDocumentationTa
             is DtsProperty -> DtsPropertyDocumentationTarget(element)
             else -> null
         }
+    }
+
+    private fun findTarget(file: PsiFile, offset: Int): Pair<PsiElement, PsiElement>? {
+        if (offset < 0) return null
+
+        val originalElement = file.findElementAt(offset) ?: return null
+        val targetElement = findTargetElement(originalElement) ?: return null
+
+        return Pair(targetElement, originalElement)
     }
 
     private fun findTargetElement(originalElement: PsiElement): PsiElement? {
