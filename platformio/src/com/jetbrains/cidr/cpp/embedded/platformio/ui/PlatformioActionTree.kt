@@ -13,6 +13,7 @@ import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.SimpleTextAttributes.LINK_ATTRIBUTES
 import com.intellij.ui.render.LabelBasedRenderer
 import com.intellij.ui.treeStructure.Tree
+import com.intellij.util.application
 import com.intellij.util.asSafely
 import com.intellij.util.ui.StatusText
 import com.intellij.util.ui.tree.TreeUtil
