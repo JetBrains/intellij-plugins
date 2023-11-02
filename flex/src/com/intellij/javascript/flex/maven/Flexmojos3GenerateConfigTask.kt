@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfiguration
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.options.ConfigurationException
+import com.intellij.openapi.progress.runBlockingMaybeCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectRootManager
@@ -20,6 +21,9 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.platform.ide.progress.withBackgroundProgress
+import com.intellij.platform.util.progress.rawProgressReporter
+import com.intellij.platform.util.progress.withRawProgressReporter
 import com.intellij.util.ArrayUtil
 import org.jetbrains.idea.maven.model.MavenWorkspaceMap
 import org.jetbrains.idea.maven.project.*
@@ -60,7 +64,13 @@ class Flexmojos3GenerateConfigTask(private val myModule: Module,
                                  ":generate-config-" + myMavenProject.packaging
         val profilesIds = myMavenProject.activatedProfilesIds
         val request = MavenGoalExecutionRequest(File(myMavenProject.path), profilesIds)
-        val result = embedder.executeGoal(java.util.List.of(request), generateConfigGoal, indicator, console)[0]
+        val result = runBlockingMaybeCancellable {
+          withBackgroundProgress(project, MavenProjectBundle.message("maven.updating.folders"), true) {
+            withRawProgressReporter {
+              embedder.executeGoal(listOf(request), generateConfigGoal, rawProgressReporter!!, null, console)[0]
+            }
+          }
+        }
         if (!result.success) {
           myFlexConfigInformer.showFlexConfigWarningIfNeeded(project)
         }
