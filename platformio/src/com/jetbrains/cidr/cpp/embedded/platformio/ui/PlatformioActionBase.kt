@@ -18,6 +18,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.ui.LayeredIcon
 import com.intellij.util.IconUtil
 import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle
@@ -28,19 +29,17 @@ import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatfromioCliBuilder
 import com.jetbrains.cidr.cpp.embedded.platformio.refreshProject
 import com.jetbrains.cidr.execution.CidrPathConsoleFilter
 import icons.ClionEmbeddedPlatformioIcons
-import org.jetbrains.annotations.Nls
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 import java.nio.file.Path
-import java.util.function.Supplier
 import javax.swing.Icon
 import javax.swing.SwingConstants
 
 private const val TIMEOUT_MS = 30000L
 private val NOTIFICATION_GROUP = NotificationGroupManager.getInstance().getNotificationGroup("PlatformIO plugin")
 
-abstract class PlatformioActionBase(private val text: Supplier<@Nls String?>,
-                                    val toolTip: Supplier<@Nls String?>,
+abstract class PlatformioActionBase(private val text: @NlsSafe () -> String?,
+                                    val toolTip: @NlsSafe () -> String?,
                                     icon: Icon?) : DumbAwareAction(text, icon) {
 
   protected fun actionPerformed(e: AnActionEvent,
@@ -76,7 +75,7 @@ abstract class PlatformioActionBase(private val text: Supplier<@Nls String?>,
         .withActivateToolWindow(true)
         .withFilter(CidrPathConsoleFilter(service.project, null, service.project.basePath?.let(Path::of)))
         .withFocusToolWindow(true)
-        .withTitle(text.get())
+        .withTitle(@Suppress("HardCodedStringLiteral") text.invoke())
         .withStop({ processHandler.destroyProcess() }, { with(processHandler) { !isProcessTerminated && !isProcessTerminating } })
         .withAfterCompletion {
           if (reloadProject) runInEdt { refreshProject(service.project, true) }
