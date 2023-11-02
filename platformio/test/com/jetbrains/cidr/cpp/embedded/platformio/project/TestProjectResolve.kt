@@ -16,7 +16,6 @@ import com.intellij.openapi.vfs.readText
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.util.asSafely
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
-import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioTargetData
 import com.jetbrains.cidr.cpp.execution.manager.CLionRunConfigurationManager
 import com.jetbrains.cidr.external.system.model.ExternalModule
 import com.jetbrains.cidr.lang.CLanguageKind
@@ -89,13 +88,14 @@ class TestProjectResolve : LightPlatformTestCase() {
 
     assertEquals("Environments", listOf(PlatformioExecutionTarget("esp-wrover-kit")), service.envs)
     assertEquals("Targets", listOf(
-      PlatformioTargetData("buildfs", "Build Filesystem Image", null, "Platform"),
-      PlatformioTargetData("size", "Program Size", "Calculate program size", "Platform"),
-      PlatformioTargetData("upload", "Upload", null, "Platform"),
-      PlatformioTargetData("uploadfs", "Upload Filesystem Image", null, "Platform"),
-      PlatformioTargetData("uploadfsota", "Upload Filesystem Image OTA", null, "Platform"),
-      PlatformioTargetData("erase", "Erase Flash", null, "Platform")
-    ), service.targets)
+      "target-platformio-buildfs",
+      "target-platformio-size",
+      "target-platformio-upload",
+      "target-platformio-upload-monitor",
+      "target-platformio-uploadfs",
+      "target-platformio-uploadfsota",
+      "target-platformio-erase"),
+                 service.getActiveActionIds().toList())
 
     verifyIniFiles(projectDir)
 

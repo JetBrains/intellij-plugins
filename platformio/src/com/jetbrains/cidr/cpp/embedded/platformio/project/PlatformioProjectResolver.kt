@@ -148,10 +148,11 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
                                 ?: throw ExternalSystemException("Project metadata does not contain expected '${activeEnv}' section")
         platformioService.targetExecutablePath = pioActiveMetadata["prog_path"] as? String
         platformioService.svdPath = pioActiveMetadata["svd_path"] as? String
-        platformioService.targets = (pioActiveMetadata["targets"]?.asSafely<List<Map<String, String?>>>())?.map {
+        val targets = (pioActiveMetadata["targets"]?.asSafely<List<Map<String, String?>>>())?.map {
           val name = it["name"] ?: throw ExternalSystemException("Malformed metadata targets section")
           PlatformioTargetData(name, it["title"], it["description"], it["group"])
-        } ?: emptyList()
+        }
+        platformioService.setTargets(targets ?: emptyList())
 
         val srcFolderPath = projectDir.toNioPath().resolve(platformioSection["src_dir"].asSafely<String>() ?: "src")
         val srcFolder: VirtualFile = VfsUtil.findFile(srcFolderPath, false) ?: throw ExternalSystemException(

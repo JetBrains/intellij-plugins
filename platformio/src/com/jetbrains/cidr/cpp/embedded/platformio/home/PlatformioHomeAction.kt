@@ -14,7 +14,7 @@ import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionBase
 import java.nio.file.Path
 import javax.swing.JComponent
 
-class PlatformioHomeAction : PlatformioActionBase(ClionEmbeddedPlatformioBundle.messagePointer("task.home"), { "pio home" },
+class PlatformioHomeAction : PlatformioActionBase({ ClionEmbeddedPlatformioBundle.message("task.home") }, { "pio home" },
                                                   pioIcon(AllIcons.Nodes.HomeFolder)) {
   override fun actionPerformed(e: AnActionEvent) {
     if (useWebView()) {

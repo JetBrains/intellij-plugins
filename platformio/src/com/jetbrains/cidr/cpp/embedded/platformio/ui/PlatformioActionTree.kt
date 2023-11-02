@@ -8,7 +8,6 @@ import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.NlsSafe
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.SimpleTextAttributes.LINK_ATTRIBUTES
 import com.intellij.ui.render.LabelBasedRenderer
@@ -46,7 +45,8 @@ internal class PlatformioActionTree(private val project: Project, private val me
         val treeCellRendererComponent = super.getTreeCellRendererComponent(tree, labelText, selected, expanded, leaf, row, focused)
         icon = action?.templatePresentation?.icon ?: AllIcons.Nodes.EmptyNode
 
-        treeCellRendererComponent.asSafely<JComponent>()?.toolTipText = action?.asSafely<PlatformioActionBase>()?.toolTip?.get()
+        @Suppress("HardCodedStringLiteral")
+        treeCellRendererComponent.asSafely<JComponent>()?.toolTipText = action?.asSafely<PlatformioActionBase>()?.toolTip?.invoke()
         return treeCellRendererComponent
       }
     })
@@ -95,32 +95,6 @@ internal class PlatformioActionTree(private val project: Project, private val me
     return node
   }
 
-  private fun DefaultMutableTreeNode.addEnvNodes(actionManager: ActionManager,
-                                                 targets: List<PlatformioTargetData> = emptyList()): DefaultMutableTreeNode {
-    val visibleActions = mutableSetOf<String>()
-    targets.forEach { targetData ->
-
-      if (targetData.name != "debug") {
-        val id = "target-platformio-${targetData.name}"
-        var action = actionManager.getAction(id) as PlatformioTargetAction?
-        if (action == null) {
-          @NlsSafe val toolTip = "pio run -t ${targetData.name}"
-          @NlsSafe val text = if (!targetData.title.isNullOrEmpty()) targetData.title else toolTip
-          action = PlatformioTargetAction(targetData.name, { text }, { toolTip })
-          actionManager.registerAction(id, action)
-        }
-        addNode(action)
-        visibleActions.add(targetData.name)
-        if (targetData.name == "upload") {
-          addNode(PlatformioUploadMonitorAction)
-          visibleActions.add(PlatformioUploadMonitorAction.target)
-        }
-      }
-      project.service<PlatformioService>().visibleActions = visibleActions
-    }
-    return this
-  }
-
   private fun reparseFailed(pioStartFailed: Boolean) {
     fun tryReparseControl() =
       messageHolder.appendLine(ClionEmbeddedPlatformioBundle.message("parse.again"),
@@ -159,14 +133,20 @@ internal class PlatformioActionTree(private val project: Project, private val me
   }
 
   override fun targetsChanged() {
-    envNode.userObject = targetName(ExecutionTargetManager.getActiveTarget(project))
-    val envNodeWasEmpty = envNode.childCount == 0
-    val actionManager = ActionManager.getInstance()
-    envNode.removeAllChildren()
-    envNode.addEnvNodes(actionManager, project.service<PlatformioService>().targets)
-    (model as DefaultTreeModel).nodeStructureChanged(envNode)
-    if (envNodeWasEmpty) {
-      expandPath(TreePath(envNode.path))
+    application.invokeLater {
+      if (!project.isDisposed) {
+        envNode.userObject = targetName(ExecutionTargetManager.getActiveTarget(project))
+        val envNodeWasEmpty = envNode.childCount == 0
+        val actionManager = ActionManager.getInstance()
+        envNode.removeAllChildren()
+        project.service<PlatformioService>()
+          .getActiveActionIds()
+          .forEach { envNode.addNode(actionManager.getAction(it)) }
+        (model as DefaultTreeModel).nodeStructureChanged(envNode)
+        if (envNodeWasEmpty) {
+          expandPath(TreePath(envNode.path))
+        }
+      }
     }
   }
 

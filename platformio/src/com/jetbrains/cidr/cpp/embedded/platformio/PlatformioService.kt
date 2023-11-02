@@ -1,5 +1,6 @@
 package com.jetbrains.cidr.cpp.embedded.platformio
 
+import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.components.*
@@ -15,8 +16,10 @@ import com.jetbrains.cidr.cpp.embedded.platformio.project.ID
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioExecutionTarget
 import com.jetbrains.cidr.cpp.embedded.platformio.project.builds.PlatformioBuildTarget
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioProjectResolvePolicy
-import org.jetbrains.annotations.Nls
+import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioTargetAction
+import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioUploadMonitorAction
 import java.nio.file.Path
+import java.util.LinkedHashMap
 import java.util.concurrent.atomic.AtomicLong
 
 @Service(Service.Level.PROJECT)
@@ -29,8 +32,6 @@ class PlatformioService(val project: Project) : PersistentStateComponentWithModi
   @Volatile
   var buildDirectory: Path? = null
 
-  @Volatile
-  var visibleActions: Set<String> = emptySet()
   private var state: PlatformioState = PlatformioState()
   private val stateModCounter = AtomicLong(1)
   var isUploadPortAuto: Boolean
@@ -86,11 +87,34 @@ class PlatformioService(val project: Project) : PersistentStateComponentWithModi
 
   var iniFiles: Set<String> = emptySet()
   var svdPath: String? = null
-  var targets: List<PlatformioTargetData> = emptyList()
-    set(value) {
-      field = value
-      project.messageBus.syncPublisher(PLATFORMIO_UPDATES_TOPIC).targetsChanged()
+
+  @Volatile
+  var activeTargetToActionId: Map<String, String> = emptyMap()
+
+  fun isTargetActive(target: String) = activeTargetToActionId.containsKey(target)
+  fun getActiveActionIds(): Collection<String> = activeTargetToActionId.values
+
+  fun setTargets(targets: List<PlatformioTargetData>) {
+    val targetToActionId = LinkedHashMap<String, String>()
+    val actionManager = service<ActionManager>()
+    targets.forEach {
+      if (it.name != "debug") {
+        val actionId = "target-platformio-${it.name}"
+        targetToActionId[it.name] = actionId
+        if (it.name == "upload") {
+          targetToActionId[PlatformioUploadMonitorAction.target] = "target-platformio-upload-monitor"
+        }
+        if (actionManager.getAction(actionId) == null) {
+          @NlsSafe val toolTip = "pio run -t ${it.name}"
+          @NlsSafe val text = if (!it.title.isNullOrEmpty()) it.title else toolTip
+          val action = PlatformioTargetAction(it.name, { text }, { toolTip })
+          actionManager.registerAction(actionId, action)
+        }
+      }
     }
+    activeTargetToActionId = targetToActionId
+    project.messageBus.syncPublisher(PLATFORMIO_UPDATES_TOPIC).targetsChanged()
+  }
 
   @Volatile
   var projectStatus: PlatformioProjectStatus = PlatformioProjectStatus.NONE
@@ -125,9 +149,9 @@ fun refreshProject(project: Project, cleanCache: Boolean) {
 
 data class PlatformioTargetData(
   @NlsSafe val name: String,
-  @Nls val title: String?,
-  @Nls val description: String?,
-  @Nls val group: String?
+  @NlsSafe val title: String?,
+  @NlsSafe val description: String?,
+  @NlsSafe val group: String?
 )
 
 class PlatformioState {

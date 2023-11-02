@@ -3,37 +3,37 @@ package com.jetbrains.cidr.cpp.embedded.platformio.ui
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.components.service
+import com.intellij.openapi.util.NlsSafe
 import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioWorkspace
 import icons.ClionEmbeddedPlatformioIcons
 import org.jetbrains.annotations.Nls
-import java.util.function.Supplier
 import javax.swing.Icon
 
-abstract class PlatformioAction(text: Supplier<@Nls String?>,
-                                toolTip: Supplier<@Nls String?>,
+abstract class PlatformioAction(text: () -> @Nls String?,
+                                toolTip: () -> @Nls String?,
                                 icon: Icon? = ClionEmbeddedPlatformioIcons.Platformio)
   : PlatformioActionBase(text, toolTip, icon) {
 
   override fun update(e: AnActionEvent) {
-    e.presentation.isEnabled = e.project?.service<PlatformioWorkspace>()?.isInitialized ?: false
+    e.presentation.isEnabled = e.project?.service<PlatformioWorkspace>()?.isInitialized == true
   }
 }
 
-class PlatformioMonitorAction : PlatformioAction(ClionEmbeddedPlatformioBundle.messagePointer("task.monitor"), { "pio device monitor" },
+class PlatformioMonitorAction : PlatformioAction({ ClionEmbeddedPlatformioBundle.message("task.monitor") }, { "pio device monitor" },
                                                  pioIcon(AllIcons.Nodes.Console)) {
   override fun actionPerformed(e: AnActionEvent) =
     actionPerformed(e, false, true, false, "device", "monitor")
 }
 
-class PlatformioPkgUpdateAction : PlatformioAction(ClionEmbeddedPlatformioBundle.messagePointer("platformio.update"), { "pio pkg update" },
+class PlatformioPkgUpdateAction : PlatformioAction({ ClionEmbeddedPlatformioBundle.message("platformio.update") }, { "pio pkg update" },
                                                    pioIcon(AllIcons.Actions.Download)) {
   override fun actionPerformed(e: AnActionEvent) =
     actionPerformed(e, true, false, false, "pkg", "update")
 }
 
-class PlatformioCheckAction : PlatformioAction(ClionEmbeddedPlatformioBundle.messagePointer("task.check"), { "pio check" },
+class PlatformioCheckAction : PlatformioAction({ ClionEmbeddedPlatformioBundle.message("task.check") }, { "pio check" },
                                                pioIcon(AllIcons.Actions.ProjectWideAnalysisOn)) {
   override fun actionPerformed(e: AnActionEvent) =
     actionPerformed(e, false, true, true, "check")
@@ -41,7 +41,7 @@ class PlatformioCheckAction : PlatformioAction(ClionEmbeddedPlatformioBundle.mes
 
 open class PlatformioTargetAction(val target: String,
                                   @Nls text: () -> String,
-                                  toolTip: Supplier<@Nls String?>,
+                                  @Nls toolTip: () -> String?,
                                   icon: Icon? = ClionEmbeddedPlatformioIcons.Platformio)
   : PlatformioAction(text, toolTip, icon) {
 
@@ -53,16 +53,19 @@ open class PlatformioTargetAction(val target: String,
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible =
-      e.project?.service<PlatformioService>()?.visibleActions?.contains(target) ?: false
+      e.project?.service<PlatformioService>()?.isTargetActive(target) == true
   }
 }
+@NlsSafe
+private const val UPLOAD_MONITOR_COMMAND = "pio run -t upload -t monitor"
 
 object PlatformioUploadMonitorAction : PlatformioTargetAction(target = "upload-monitor",
-                                                             text = { ClionEmbeddedPlatformioBundle.message("action.upload.n.monitor") },
-                                                             toolTip = { "pio run -t upload -t monitor" },
-                                                             icon = ClionEmbeddedPlatformioIcons.Platformio) {
+                                                              text = { ClionEmbeddedPlatformioBundle.message("action.upload.n.monitor") },
+                                                              toolTip = { UPLOAD_MONITOR_COMMAND },
+                                                              icon = ClionEmbeddedPlatformioIcons.Platformio) {
 
   override fun actionPerformed(e: AnActionEvent) {
     super.actionPerformed(e, false, true, true, "run", "-t", "upload", "-t", "monitor")
   }
+
 }
