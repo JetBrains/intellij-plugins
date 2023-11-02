@@ -5,6 +5,9 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
 
 abstract class DtsCellArrayMixin(node: ASTNode) : ASTWrapperPsiElement(node), DtsCellArray {
+    override val dtsValues: List<DtsValue>
+        get() = findChildrenByClass(DtsValue::class.java).toList()
+
     override val dtsBits: Int?
         get() {
             // if no bits annotation is present the default value is 32
@@ -18,4 +21,9 @@ abstract class DtsCellArrayMixin(node: ASTNode) : ASTWrapperPsiElement(node), Dt
                 null
             }
         }
+}
+
+abstract class DtsByteArrayMixin(node: ASTNode) : ASTWrapperPsiElement(node), DtsByteArray {
+    override val dtsValues: List<DtsValue>
+        get() = findChildrenByClass(DtsValue::class.java).toList()
 }

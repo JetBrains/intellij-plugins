@@ -1,4 +1,4 @@
-package com.intellij.dts.zephyr
+package com.intellij.dts.zephyr.binding
 
 import com.intellij.util.asSafely
 import java.util.*

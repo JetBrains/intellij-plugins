@@ -13,7 +13,7 @@ import com.intellij.dts.documentation.DtsNodeBindingDocumentationTarget
 import com.intellij.dts.documentation.DtsPropertyBindingDocumentationTarget
 import com.intellij.dts.lang.psi.*
 import com.intellij.dts.util.DtsTreeUtil
-import com.intellij.dts.zephyr.DtsZephyrBindingProvider
+import com.intellij.dts.zephyr.binding.DtsZephyrBindingProvider
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.util.elementType
 

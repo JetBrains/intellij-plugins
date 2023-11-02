@@ -5,8 +5,8 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.dts.DtsBundle
 import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.psi.dtsVisitor
-import com.intellij.dts.zephyr.DtsZephyrBinding
-import com.intellij.dts.zephyr.DtsZephyrBindingProvider
+import com.intellij.dts.zephyr.binding.DtsZephyrBinding
+import com.intellij.dts.zephyr.binding.DtsZephyrBindingProvider
 import com.intellij.modcommand.ModPsiUpdater
 import com.intellij.modcommand.PsiUpdateModCommandQuickFix
 import com.intellij.openapi.project.Project

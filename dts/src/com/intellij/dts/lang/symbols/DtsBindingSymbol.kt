@@ -2,8 +2,8 @@ package com.intellij.dts.lang.symbols
 
 import com.intellij.dts.documentation.DtsBindingDocumentation
 import com.intellij.dts.util.DtsUtil
-import com.intellij.dts.zephyr.DtsZephyrBinding
-import com.intellij.dts.zephyr.DtsZephyrBindingProvider
+import com.intellij.dts.zephyr.binding.DtsZephyrBinding
+import com.intellij.dts.zephyr.binding.DtsZephyrBindingProvider
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.navigation.NavigatableSymbol

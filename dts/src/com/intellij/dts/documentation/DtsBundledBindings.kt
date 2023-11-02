@@ -2,8 +2,8 @@ package com.intellij.dts.documentation
 
 import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.psi.getDtsPath
-import com.intellij.dts.zephyr.DtsZephyrBinding
-import com.intellij.dts.zephyr.DtsZephyrBindingProvider
+import com.intellij.dts.zephyr.binding.DtsZephyrBinding
+import com.intellij.dts.zephyr.binding.DtsZephyrBindingProvider
 import com.intellij.openapi.util.NlsSafe
 
 enum class DtsBundledBindings(val nodeName: @NlsSafe String) {

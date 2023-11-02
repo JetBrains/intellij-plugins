@@ -11,6 +11,10 @@ sealed interface DtsValue : PsiElement {
         fun dtsParse(): kotlin.Int?
     }
 
+    interface Byte : DtsValue
+
+    interface Expression : DtsValue
+
     interface String : DtsValue {
         fun dtsParse(): kotlin.String
     }
@@ -21,5 +25,5 @@ sealed interface DtsValue : PsiElement {
         val dtsPHandlePath: PsiElement?
     }
 
-    interface Untyped : DtsValue
+    interface Macro : DtsValue
 }

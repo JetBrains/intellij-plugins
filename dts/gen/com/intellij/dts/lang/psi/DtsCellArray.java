@@ -2,7 +2,7 @@
 package com.intellij.dts.lang.psi;
 
 
-public interface DtsCellArray extends com.intellij.dts.lang.psi.DtsArray.Cell, com.intellij.dts.lang.psi.DtsValue.Untyped {
+public interface DtsCellArray extends com.intellij.dts.lang.psi.DtsArray.Cell {
 
   @org.jetbrains.annotations.Nullable
   com.intellij.dts.lang.psi.DtsCellArrayBits getCellArrayBits();

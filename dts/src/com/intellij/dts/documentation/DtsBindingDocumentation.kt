@@ -2,7 +2,7 @@ package com.intellij.dts.documentation
 
 import com.intellij.dts.DtsBundle
 import com.intellij.dts.util.DtsHtmlChunk
-import com.intellij.dts.zephyr.DtsZephyrBinding
+import com.intellij.dts.zephyr.binding.DtsZephyrBinding
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.HtmlChunk

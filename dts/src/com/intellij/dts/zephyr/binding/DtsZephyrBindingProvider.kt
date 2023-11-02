@@ -1,4 +1,4 @@
-package com.intellij.dts.zephyr
+package com.intellij.dts.zephyr.binding
 
 import com.intellij.dts.api.dtsSearch
 import com.intellij.dts.documentation.DtsBundledBindings
@@ -6,6 +6,7 @@ import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.psi.getDtsCompatibleStrings
 import com.intellij.dts.util.DtsTreeUtil
 import com.intellij.dts.util.cached
+import com.intellij.dts.zephyr.DtsZephyrProvider
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger

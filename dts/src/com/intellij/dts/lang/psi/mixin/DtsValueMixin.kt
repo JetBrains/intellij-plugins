@@ -1,5 +1,6 @@
 package com.intellij.dts.lang.psi.mixin
 
+import com.intellij.dts.lang.psi.DtsExprValue
 import com.intellij.dts.lang.psi.DtsInt
 import com.intellij.dts.lang.psi.DtsString
 import com.intellij.dts.lang.psi.DtsTypes
@@ -22,6 +23,13 @@ abstract class DtsIntMixin(node: ASTNode) : ASTWrapperPsiElement(node), DtsInt {
         } catch (e: NumberFormatException) {
             null
         }
+    }
+}
+
+abstract class DtsExpressionMixin(node: ASTNode) : ASTWrapperPsiElement(node), DtsExprValue {
+    override fun dtsParse(): Int? {
+        // expression evaluation not implemented
+        return null
     }
 }
 

@@ -2,7 +2,7 @@ package com.intellij.dts.documentation
 
 import com.intellij.dts.lang.psi.DtsProperty
 import com.intellij.dts.util.DtsTreeUtil
-import com.intellij.dts.zephyr.DtsZephyrBindingProvider
+import com.intellij.dts.zephyr.binding.DtsZephyrBindingProvider
 import com.intellij.model.Pointer
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation

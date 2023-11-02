@@ -8,7 +8,7 @@ import com.intellij.dts.lang.DtsFile
 import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.psi.DtsProperty
 import com.intellij.dts.lang.psi.dtsVisitor
-import com.intellij.dts.zephyr.DtsZephyrBindingProvider
+import com.intellij.dts.zephyr.binding.DtsZephyrBindingProvider
 import com.intellij.psi.PsiElementVisitor
 
 class DtsRequiredPropertyInspection : LocalInspectionTool() {

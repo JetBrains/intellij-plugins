@@ -1,4 +1,4 @@
-package com.intellij.dts.zephyr
+package com.intellij.dts.zephyr.binding
 
 import com.intellij.openapi.util.NlsSafe
 
@@ -32,7 +32,7 @@ enum class DtsZephyrPropertyType(val typeName: @NlsSafe kotlin.String) {
     Boolean("boolean"),
 
     /**
-     * Zero or more 32-bit values (cells).
+     * Zero or more 32-bit values (cells), can be split into several <> blocks.
      * Zephyr type: array
      * Example: offsets = <0x100 0x200 0x300>;
      */
@@ -46,7 +46,7 @@ enum class DtsZephyrPropertyType(val typeName: @NlsSafe kotlin.String) {
     Bytes("uint8-array"),
 
     /**
-     * Zero or more phandles (cell).
+     * Zero or more phandles (cell), can be split into several <> blocks.
      * Zephyr type: phandles
      * Example: pinctrl-0 = <&usart2_tx_pd5 &usart2_rx_pd6>;
      */
@@ -60,7 +60,8 @@ enum class DtsZephyrPropertyType(val typeName: @NlsSafe kotlin.String) {
     StringList("string-array"),
 
     /**
-     * A list of phandles and 32-bit cells (usually specifiers)
+     * A list of phandles and 32-bit cells (usually specifiers), can be split
+     * into several <> blocks.
      * Zephyr type: phandle-array
      * Example: dmas = <&dma0 2>, <&dma0 3>;
      */

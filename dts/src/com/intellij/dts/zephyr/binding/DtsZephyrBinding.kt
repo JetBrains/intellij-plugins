@@ -1,15 +1,15 @@
-package com.intellij.dts.zephyr
+package com.intellij.dts.zephyr.binding
 
 import com.intellij.openapi.util.NlsSafe
 
 data class DtsZephyrBinding(
-    val compatible: @NlsSafe String?,
-    val path: @NlsSafe String?,
-    val description: @NlsSafe String?,
-    val properties: Map<String, DtsZephyrPropertyBinding>,
-    val child: DtsZephyrBinding?,
-    val isChild: Boolean,
-    val allowUndeclaredProperties: Boolean,
+  val compatible: @NlsSafe String?,
+  val path: @NlsSafe String?,
+  val description: @NlsSafe String?,
+  val properties: Map<String, DtsZephyrPropertyBinding>,
+  val child: DtsZephyrBinding?,
+  val isChild: Boolean,
+  val allowUndeclaredProperties: Boolean,
 ) {
     class Builder(
         private val isChild: Boolean = false,
@@ -67,10 +67,10 @@ data class DtsZephyrBinding(
 }
 
 data class DtsZephyrPropertyBinding(
-    val name: @NlsSafe String,
-    val description: @NlsSafe String?,
-    val type: DtsZephyrPropertyType,
-    val required: Boolean,
+  val name: @NlsSafe String,
+  val description: @NlsSafe String?,
+  val type: DtsZephyrPropertyType,
+  val required: Boolean,
 ) {
     class Builder(private val name: String) {
         private var description: String? = null
@@ -93,10 +93,10 @@ data class DtsZephyrPropertyBinding(
         }
 
         fun build(): DtsZephyrPropertyBinding = DtsZephyrPropertyBinding(
-            name = name,
-            description = description,
-            type = type ?: DtsZephyrPropertyType.Compound,
-            required = required ?: false,
+          name = name,
+          description = description,
+          type = type ?: DtsZephyrPropertyType.Compound,
+          required = required ?: false,
         )
     }
 }

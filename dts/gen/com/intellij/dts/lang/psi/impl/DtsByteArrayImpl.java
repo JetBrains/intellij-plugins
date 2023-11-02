@@ -3,9 +3,9 @@ package com.intellij.dts.lang.psi.impl;
 
 import static com.intellij.dts.lang.psi.DtsTypes.*;
 
-public class DtsByteArrayImpl extends com.intellij.extapi.psi.ASTWrapperPsiElement implements com.intellij.dts.lang.psi.DtsByteArray {
+public class DtsByteArrayImpl extends com.intellij.dts.lang.psi.mixin.DtsByteArrayMixin implements com.intellij.dts.lang.psi.DtsByteArray {
 
-  public DtsByteArrayImpl(@org.jetbrains.annotations.NotNull com.intellij.lang.ASTNode node) {
+  public DtsByteArrayImpl(com.intellij.lang.ASTNode node) {
     super(node);
   }
 

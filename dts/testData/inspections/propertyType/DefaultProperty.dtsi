@@ -1,0 +1,7 @@
+node {
+    compatible = "string";
+    compatible = "string", "string";
+
+    <error descr="Expected property of type: string-array">compatible</error> = <4>;
+    <error descr="Expected property of type: string-array">compatible</error> = "string", <4>;
+};

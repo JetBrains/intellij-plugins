@@ -8,7 +8,7 @@ import com.intellij.dts.lang.symbols.DtsBindingSymbol
 import com.intellij.dts.lang.symbols.DtsDocumentationSymbol
 import com.intellij.dts.util.DtsUtil
 import com.intellij.dts.util.relativeTo
-import com.intellij.dts.zephyr.DtsZephyrBindingProvider
+import com.intellij.dts.zephyr.binding.DtsZephyrBindingProvider
 import com.intellij.model.Symbol
 import com.intellij.model.psi.PsiCompletableReference
 import com.intellij.model.psi.PsiSymbolReference

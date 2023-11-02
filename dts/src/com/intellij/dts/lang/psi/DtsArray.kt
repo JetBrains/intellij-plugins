@@ -1,8 +1,8 @@
 package com.intellij.dts.lang.psi
 
-import com.intellij.psi.PsiElement
+sealed interface DtsArray: DtsValue {
+    val dtsValues: List<DtsValue>
 
-sealed interface DtsArray : PsiElement {
     interface Cell : DtsArray {
         val dtsBits: Int?
     }

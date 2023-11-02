@@ -1,6 +1,8 @@
 package com.intellij.dts.zephyr
 
 import com.intellij.dts.DtsTestBase
+import com.intellij.dts.zephyr.binding.DtsZephyrBinding
+import com.intellij.dts.zephyr.binding.DtsZephyrBindingProvider
 
 class DtsZephyrBindingParserTest : DtsTestBase() {
     override fun setUp() {

@@ -2,6 +2,6 @@
 package com.intellij.dts.lang.psi;
 
 
-public interface DtsPpMacro extends com.intellij.dts.lang.psi.DtsValue.Untyped {
+public interface DtsPpMacro extends com.intellij.dts.lang.psi.DtsValue.Macro {
 
 }

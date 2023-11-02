@@ -182,6 +182,12 @@
                 level="ERROR"
                 implementationClass="com.intellij.dts.inspections.DtsUndeclaredPropertyInspection"/>
         <localInspection
+            language="DTS"
+            bundle="messages.DtsBundle" key="inspections.property_type.display_name" groupKey="inspections.group"
+            enabledByDefault="true"
+            level="ERROR"
+            implementationClass="com.intellij.dts.inspections.DtsPropertyTypeInspection"/>
+        <localInspection
                 language="DTS"
                 bundle="messages.DtsBundle" key="inspections.required_property.display_name" groupKey="inspections.group"
                 enabledByDefault="true"
