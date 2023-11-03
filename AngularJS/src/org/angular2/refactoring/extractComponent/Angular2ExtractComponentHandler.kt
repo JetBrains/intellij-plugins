@@ -2,6 +2,7 @@
 package org.angular2.refactoring.extractComponent
 
 import com.intellij.application.options.CodeStyle
+import com.intellij.ide.IdeEventQueue
 import com.intellij.lang.ecmascript6.psi.impl.ES6CreateImportUtil
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
@@ -14,27 +15,32 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult
+import com.intellij.model.Pointer
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.readAction
+import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.command.UndoConfirmationPolicy
-import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.colors.EditorColors
 import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.editor.markup.RangeHighlighter
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.progress.Task
+import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.progress.impl.pumpEventsForHierarchy
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.ActionCallback
 import com.intellij.openapi.util.Conditions
 import com.intellij.openapi.util.NlsContexts
-import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.ReadonlyStatusHandler
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.platform.ide.progress.ModalTaskOwner
+import com.intellij.platform.ide.progress.TaskCancellation
+import com.intellij.platform.ide.progress.withModalProgress
+import com.intellij.platform.util.progress.progressStep
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -44,7 +50,11 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageEditorUtil
 import com.intellij.psi.util.descendantsOfType
 import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.refactoring.RefactoringBundle
-import com.intellij.refactoring.util.CommonRefactoringUtil
+import com.intellij.refactoring.suggested.createSmartPointer
+import com.intellij.refactoring.util.CommonRefactoringUtil.showErrorHint
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.angular2.Angular2DecoratorUtil.INPUT_DEC
 import org.angular2.Angular2DecoratorUtil.OUTPUT_DEC
 import org.angular2.cli.AngularCliUtil
@@ -74,105 +84,170 @@ class Angular2ExtractComponentHandler : RefactoringActionHandler {
       showErrorHint(project, editor, Angular2Bundle.message("angular.notify.cli.required-package-not-installed"))
       return
     }
+    project.service<Angular2ExtractComponentHandlerService>().run(editor, file.createSmartPointer(), workingDir, cliDir)
+  }
+}
 
-    ProgressManager.getInstance().run(object : Task.Modal(project,
-                                                          Angular2Bundle.message("angular.refactor.extractComponent.task"),
-                                                          false) {
-      override fun run(indicator: ProgressIndicator) {
-        indicator.isIndeterminate = false
-        indicator.fraction = 0.33
-        val rangeHighlighterRef = Ref<RangeHighlighter>()
+@Service(Service.Level.PROJECT)
+class Angular2ExtractComponentHandlerService(
+  private val project: Project,
+  private val coroutineScope: CoroutineScope
+) {
+
+  fun run(editor: Editor, sourceFilePtr: Pointer<PsiFile>, workingDir: VirtualFile, cliDir: VirtualFile) {
+    var ex: Throwable? = null
+    val job = coroutineScope.launch {
+      withModalProgress(ModalTaskOwner.project(project), Angular2Bundle.message("angular.refactor.extractComponent.task"),
+                        TaskCancellation.nonCancellable()) {
         try {
-          val extractedComponent = try {
-            ApplicationManager.getApplication().runReadAction<Angular2ExtractedComponent> {
-              if (editor.caretModel.caretCount > 1) {
-                throw Angular2ExtractComponentUnsupportedException(
-                  Angular2Bundle.message("angular.refactor.extractComponent.unsupported-multiple-carets"))
-              }
-
-              val selectionStart = editor.selectionModel.selectionStart
-              val selectionEnd = editor.selectionModel.selectionEnd
-              Angular2ExtractedComponentBuilder(file, selectionStart, selectionEnd).build()
-            }
-          }
-          catch (e: Angular2ExtractComponentUnsupportedException) {
-            showErrorHint(project, editor, e.message!!)
-            return
-          }
-
-          addRangeHighlighter(editor, rangeHighlighterRef, extractedComponent)
-
-          val arguments = Angular2CliComponentGenerator.getInstance(project).showDialog()
-          // Check if cancelled
-          if (arguments == null) return
-
-          val postProcessCli = try {
-            Angular2CliComponentGenerator.getInstance(project).generateComponent(cliDir, workingDir, arguments)
-          }
-          catch (e: Exception) {
-            thisLogger().warn("Couldn't create component with Angular CLI", e)
-            showErrorHint(project, editor, Angular2Bundle.message("angular.refactor.extractComponent.cli-error"))
-            return
-          }
-
-          indicator.fraction = 0.66
-
-          DumbService.getInstance(project).smartInvokeAndWait {
-            WriteCommandAction.writeCommandAction(project)
-              .withName(Angular2Bundle.message("angular.refactor.extractComponent.dialog"))
-              .withGlobalUndo()
-              .withUndoConfirmationPolicy(UndoConfirmationPolicy.REQUEST_CONFIRMATION)
-              .run<Throwable> {
-                afterGenerator(project, editor, cliDir, extractedComponent, file, postProcessCli)
-              }
-          }
-
-          indicator.fraction = 1.0
+          runInsideCoroutine(editor, sourceFilePtr, workingDir, cliDir)
         }
-        finally {
-          clearRangeHighlighter(editor, rangeHighlighterRef)
+        catch (e: Throwable) {
+          if (e !is CancellationException && e !is ProcessCanceledException) {
+            ex = e
+          }
+          else throw e
         }
       }
-    })
+    }
+    IdeEventQueue.getInstance().pumpEventsForHierarchy {
+      job.isCompleted
+    }
+    if (ex != null) {
+      throw ex!!
+    }
   }
 
-  private fun afterGenerator(project: Project,
-                             editor: Editor,
-                             cliDir: VirtualFile,
-                             extractedComponent: Angular2ExtractedComponent,
-                             sourceFile: PsiFile,
-                             postProcessCli: () -> List<String>) {
-    try {
-      val affectedPaths = postProcessCli()
-      val componentPath = extractComponentPath(affectedPaths)!!
-      val componentVirtualFile = cliDir.findFileByRelativePath(componentPath)!!
-      val componentFile = PsiManager.getInstance(project).findFile(componentVirtualFile)!!
-
-      val componentClass = componentFile.descendantsOfType<TypeScriptClass>().first()
-      val component = Angular2EntitiesProvider.getEntity(componentClass) as Angular2Component
-      val selector = component.selector.text
-      val templateFile = component.templateFile!!
-
-      val sourceComponentFile = Angular2ComponentLocator.findComponentClasses(sourceFile).firstOrNull()?.containingFile
-
-      if (!ReadonlyStatusHandler.ensureFilesWritable(project, sourceFile.virtualFile, templateFile.virtualFile, componentVirtualFile)) {
-        throw IllegalStateException()
+  private suspend fun runInsideCoroutine(editor: Editor, sourceFilePtr: Pointer<PsiFile>, workingDir: VirtualFile, cliDir: VirtualFile) {
+    progressStep(0.1) {
+      writeAction {
+        PsiDocumentManager.getInstance(sourceFilePtr.dereference()!!.project).commitAllDocuments()
       }
-
+    }
+    val extractedComponent = progressStep(0.2) {
       try {
-        modifySourceFile(project, sourceFile, selector, extractedComponent)
-        modifyTemplateFile(project, sourceFile, templateFile, extractedComponent)
-        modifyComponentFile(project, sourceComponentFile, componentFile, componentClass, extractedComponent)
-      }
-      catch (e: Exception) {
-        thisLogger().warn("Something went wrong during file modification", e)
-        showErrorHint(project, editor, Angular2Bundle.message("angular.refactor.extractComponent.after-generator-error"))
-      }
+        readAction {
+          if (editor.caretModel.caretCount > 1) {
+            throw Angular2ExtractComponentUnsupportedException(
+              Angular2Bundle.message("angular.refactor.extractComponent.unsupported-multiple-carets"))
+          }
 
+          val selectionStart = editor.selectionModel.selectionStart
+          val selectionEnd = editor.selectionModel.selectionEnd
+          Angular2ExtractedComponentBuilder(sourceFilePtr.dereference()!!, selectionStart, selectionEnd).build()
+        }
+      }
+      catch (e: Angular2ExtractComponentUnsupportedException) {
+        showErrorHint(project, editor, e.message!!)
+        null
+      }
+    } ?: return
+
+    val postProcessCli = progressStep(0.4) {
+      val rangeHighlighter = addRangeHighlighter(editor, extractedComponent)
+      try {
+        val arguments = project.service<Angular2CliComponentGenerator>().showDialog()
+                        ?: return@progressStep null
+        try {
+          project.service<Angular2CliComponentGenerator>().generateComponent(cliDir, workingDir, arguments)
+        }
+        catch (e: Exception) {
+          thisLogger().warn("Couldn't create component with Angular CLI", e)
+          showErrorHint(project, editor, Angular2Bundle.message("angular.refactor.extractComponent.cli-error"))
+          null
+        }
+      }
+      finally {
+        clearRangeHighlighter(editor, rangeHighlighter)
+      }
+    } ?: return
+
+    val affectedPaths = progressStep(0.6) {
+      writeAction {
+        var result: List<String>? = null
+        CommandProcessor.getInstance().runUndoTransparentAction {
+          result = postProcessCli()
+        }
+        result
+      }
+    } ?: return
+
+    val context = progressStep(0.8) {
+      var context: GeneratorContext? = null
+      DumbService.getInstance(project).runReadActionInSmartMode {
+        try {
+          val sourceFile = sourceFilePtr.dereference()!!
+          val targetComponentPath = extractComponentPath(affectedPaths)!!
+          val targetComponentVirtualFile = cliDir.findFileByRelativePath(targetComponentPath)!!
+          val targetComponentFile = PsiManager.getInstance(project).findFile(targetComponentVirtualFile)!!
+
+          val targetComponentClass = targetComponentFile.descendantsOfType<TypeScriptClass>().first()
+          val targetComponent = Angular2EntitiesProvider.getEntity(targetComponentClass) as Angular2Component
+          val targetTemplateFile = targetComponent.templateFile!!
+          val sourceComponentClass = Angular2ComponentLocator.findComponentClasses(sourceFile).firstOrNull()
+          context = GeneratorContext(
+            sourceTemplateFile = sourceFile,
+            sourceComponentClass = sourceComponentClass,
+            targetTemplateFile = targetTemplateFile,
+            targetComponentClass = targetComponentClass,
+            targetComponentSelector = targetComponent.selector.text,
+          )
+        }
+        catch (e: Exception) {
+          thisLogger().warn("Unexpected CLI output", e)
+          showErrorHint(project, editor, Angular2Bundle.message("angular.refactor.extractComponent.unexpected-cli-output"))
+        }
+      }
+      context
+    } ?: return
+
+    progressStep(1.0) {
+      writeAction {
+        CommandProcessor.getInstance().executeCommand(
+          project,
+          {
+            CommandProcessor.getInstance().markCurrentCommandAsGlobal(project)
+            afterGenerator(project, editor, extractedComponent, context)
+          },
+          Angular2Bundle.message("angular.refactor.extractComponent.dialog"),
+          null,
+          UndoConfirmationPolicy.REQUEST_CONFIRMATION)
+      }
+    }
+  }
+
+  private fun afterGenerator(
+    project: Project,
+    editor: Editor,
+    extractedComponent: Angular2ExtractedComponent,
+    generatorContext: GeneratorContext,
+  ) {
+    val sourceTemplateFile = generatorContext.sourceTemplateFile
+    val targetTemplateFile = generatorContext.targetTemplateFile
+    val targetComponentClass = generatorContext.targetComponentClass
+    val targetComponentFile = targetComponentClass?.containingFile
+
+    if (sourceTemplateFile == null || targetTemplateFile == null || targetComponentFile == null) {
+      thisLogger().warn("Failed to restore pointers.")
+      showErrorHint(project, editor, Angular2Bundle.message("angular.refactor.extractComponent.after-generator-error"))
+      return
+    }
+
+    if (!ReadonlyStatusHandler.ensureFilesWritable(project, sourceTemplateFile.virtualFile, targetTemplateFile.virtualFile,
+                                                   targetComponentFile.virtualFile)) {
+      thisLogger().warn("Failed to ensure files are writable.")
+      showErrorHint(project, editor, Angular2Bundle.message("angular.refactor.extractComponent.after-generator-error"))
+      return
+    }
+
+    try {
+      modifySourceTemplateFile(project, extractedComponent, generatorContext)
+      modifyTargetTemplateFile(project, extractedComponent, generatorContext)
+      modifyTargetComponentFile(project, extractedComponent, generatorContext)
     }
     catch (e: Exception) {
-      thisLogger().warn("Unexpected CLI output", e)
-      showErrorHint(project, editor, Angular2Bundle.message("angular.refactor.extractComponent.unexpected-cli-output"))
+      thisLogger().warn("Something went wrong during file modification", e)
+      showErrorHint(project, editor, Angular2Bundle.message("angular.refactor.extractComponent.after-generator-error"))
     }
   }
 
@@ -188,11 +263,11 @@ class Angular2ExtractComponentHandler : RefactoringActionHandler {
     return null
   }
 
-  private fun modifySourceFile(project: Project,
-                               sourceFile: PsiFile,
-                               selector: String,
-                               extractedComponent: Angular2ExtractedComponent) {
-    val sourceDocument = PsiDocumentManager.getInstance(project).getDocument(sourceFile)!!
+  private fun modifySourceTemplateFile(project: Project,
+                                       extractedComponent: Angular2ExtractedComponent,
+                                       context: GeneratorContext) {
+    val sourceTemplateFile = context.sourceTemplateFile!!
+    val sourceDocument = PsiDocumentManager.getInstance(project).getDocument(sourceTemplateFile)!!
 
     val attrs = StringBuilder()
     for (attribute in extractedComponent.attributes) {
@@ -200,18 +275,31 @@ class Angular2ExtractComponentHandler : RefactoringActionHandler {
 
       attrs.append(" $attrName=\"${attribute.assignedValue}\"")
     }
+    val selector = context.targetComponentSelector
     val usage = "<$selector$attrs></$selector>"
 
     val sourceStartOffset = extractedComponent.sourceStartOffset
     sourceDocument.replaceString(sourceStartOffset, sourceStartOffset + extractedComponent.template.length, usage)
     PsiDocumentManager.getInstance(project).commitDocument(sourceDocument)
+
+    // A really wierd workaround to get pointers within reformatText working with injected template
+    val sourceFile = context.sourceTemplateFile!!.let { file ->
+      val injectedLanguageManager = InjectedLanguageManager.getInstance(project)
+      injectedLanguageManager.getInjectionHost(file)
+        ?.let { host -> injectedLanguageManager.getInjectedPsiFiles(host) }
+        ?.takeIf { it.size == 1 }
+        ?.get(0)
+        ?.first?.containingFile
+      ?: file
+    }
+
     CodeStyleManager.getInstance(project).reformatText(sourceFile, sourceStartOffset, sourceStartOffset + usage.length)
   }
 
-  private fun modifyTemplateFile(project: Project,
-                                 sourceTemplateFile: PsiFile?,
-                                 templateFile: PsiFile,
-                                 extractedComponent: Angular2ExtractedComponent) {
+  private fun modifyTargetTemplateFile(project: Project,
+                                       extractedComponent: Angular2ExtractedComponent,
+                                       context: GeneratorContext) {
+    val templateFile: PsiFile = context.targetTemplateFile!!
     val templateDocument = PsiDocumentManager.getInstance(project).getDocument(templateFile)!!
 
     var template = extractedComponent.template
@@ -227,6 +315,7 @@ class Angular2ExtractComponentHandler : RefactoringActionHandler {
     templateDocument.setText(template)
     PsiDocumentManager.getInstance(project).commitDocument(templateDocument)
 
+    val sourceTemplateFile = context.sourceTemplateFile
     if (sourceTemplateFile != null) {
       CodeStyle.reformatWithFileContext(templateFile, sourceTemplateFile)
     }
@@ -235,11 +324,10 @@ class Angular2ExtractComponentHandler : RefactoringActionHandler {
     }
   }
 
-  private fun modifyComponentFile(project: Project,
-                                  sourceComponentFile: PsiFile?,
-                                  componentFile: PsiFile,
-                                  componentClass: TypeScriptClass,
-                                  extractedComponent: Angular2ExtractedComponent) {
+  private fun modifyTargetComponentFile(project: Project,
+                                        extractedComponent: Angular2ExtractedComponent,
+                                        context: GeneratorContext) {
+    val componentClass = context.targetComponentClass!!
     val anchor = componentClass.constructors.firstOrNull() ?: componentClass.lastChild
     val semicolon = JSCodeStyleSettings.getSemicolon(componentClass)
 
@@ -276,10 +364,11 @@ class Angular2ExtractComponentHandler : RefactoringActionHandler {
       }
     }
 
-    insertImports(extractedComponent, componentFile, seenInput, seenOutput)
+    insertImports(extractedComponent, componentClass.containingFile, seenInput, seenOutput)
 
+    val sourceComponentFile = context.sourceComponentClass?.containingFile
     if (sourceComponentFile != null) {
-      CodeStyle.reformatWithFileContext(componentFile, sourceComponentFile)
+      CodeStyle.reformatWithFileContext(componentClass.containingFile, sourceComponentFile)
     }
   }
 
@@ -309,52 +398,50 @@ class Angular2ExtractComponentHandler : RefactoringActionHandler {
     ES6ImportPsiUtil.insertJSImport(targetFile, createInfo, input)
   }
 
-  private fun showErrorHint(project: Project, editor: Editor, @NlsContexts.DialogMessage message: String) {
-    CommonRefactoringUtil.showErrorHint(
-      project,
-      InjectedLanguageEditorUtil.getTopLevelEditor(editor),
-      RefactoringBundle.getCannotRefactorMessage(message),
-      Angular2Bundle.message("angular.refactor.extractComponent.dialog"),
-      null
-    )
-  }
+  private suspend fun addRangeHighlighter(editor: Editor,
+                                          extractedComponent: Angular2ExtractedComponent): RangeHighlighter =
+    writeAction {
+      editor.markupModel.addRangeHighlighter(
+        EditorColors.SEARCH_RESULT_ATTRIBUTES,
+        extractedComponent.sourceStartOffset, extractedComponent.sourceStartOffset + extractedComponent.template.length,
+        HighlighterLayer.SELECTION + 1,
+        HighlighterTargetArea.EXACT_RANGE
+      )
+    }
 
-  private fun addRangeHighlighter(editor: Editor,
-                                  rangeHighlighterRef: Ref<RangeHighlighter>,
-                                  extractedComponent: Angular2ExtractedComponent) {
-    ApplicationManager.getApplication().invokeAndWait {
-      ApplicationManager.getApplication().runWriteAction {
-        editor.markupModel.addRangeHighlighter(
-          EditorColors.SEARCH_RESULT_ATTRIBUTES,
-          extractedComponent.sourceStartOffset, extractedComponent.sourceStartOffset + extractedComponent.template.length,
-          HighlighterLayer.SELECTION + 1,
-          HighlighterTargetArea.EXACT_RANGE
-        ).let(rangeHighlighterRef::set)
+  private suspend fun clearRangeHighlighter(editor: Editor, rangeHighlighter: RangeHighlighter?) {
+    if (rangeHighlighter != null) {
+      writeAction {
+        editor.markupModel.removeHighlighter(rangeHighlighter)
       }
     }
   }
 
-  private fun clearRangeHighlighter(editor: Editor, rangeHighlighterRef: Ref<RangeHighlighter>) {
-    val highlighter = rangeHighlighterRef.get()
-    if (highlighter != null) {
-      ApplicationManager.getApplication().invokeAndWait {
-        ApplicationManager.getApplication().runWriteAction {
-          editor.markupModel.removeHighlighter(highlighter)
-        }
-      }
-    }
-  }
+  private class GeneratorContext(
+    sourceTemplateFile: PsiFile,
+    sourceComponentClass: TypeScriptClass?,
+    targetTemplateFile: PsiFile,
+    targetComponentClass: TypeScriptClass,
+    val targetComponentSelector: String,
+  ) {
+    private val sourceTemplateFilePtr: Pointer<PsiFile> = sourceTemplateFile.createSmartPointer()
+    private val sourceComponentClassPtr: Pointer<TypeScriptClass>? = sourceComponentClass?.createSmartPointer()
+    private val targetTemplateFilePtr: Pointer<PsiFile> = targetTemplateFile.createSmartPointer()
+    private val targetComponentClassPtr: Pointer<TypeScriptClass> = targetComponentClass.createSmartPointer()
 
-  private inline fun DumbService.smartInvokeAndWait(crossinline runnable: () -> Unit) {
-    val actionCallback = ActionCallback()
-    DumbService.getInstance(project).smartInvokeLater {
-      try {
-        runnable()
-      }
-      finally {
-        actionCallback.setDone()
-      }
-    }
-    actionCallback.waitFor(Long.MAX_VALUE)
+    val sourceTemplateFile: PsiFile? get() = sourceTemplateFilePtr.dereference()
+    val sourceComponentClass: TypeScriptClass? get() = sourceComponentClassPtr?.dereference()
+    val targetTemplateFile: PsiFile? get() = targetTemplateFilePtr.dereference()
+    val targetComponentClass: TypeScriptClass? get() = targetComponentClassPtr.dereference()
   }
+}
+
+private fun showErrorHint(project: Project, editor: Editor, @NlsContexts.DialogMessage message: String) {
+  showErrorHint(
+    project,
+    InjectedLanguageEditorUtil.getTopLevelEditor(editor),
+    RefactoringBundle.getCannotRefactorMessage(message),
+    Angular2Bundle.message("angular.refactor.extractComponent.dialog"),
+    null
+  )
 }
