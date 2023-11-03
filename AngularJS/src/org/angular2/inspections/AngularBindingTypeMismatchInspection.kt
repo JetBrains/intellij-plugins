@@ -17,6 +17,7 @@ import org.angular2.codeInsight.config.Angular2Compiler.isStrictTemplates
 import org.angular2.inspections.quickfixes.Angular2FixesFactory.getCreateInputTransformFixes
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.psi.Angular2Binding
+import org.angular2.lang.expr.psi.Angular2Interpolation
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.lang.types.BindingsTypeResolver
@@ -47,7 +48,10 @@ class AngularBindingTypeMismatchInspection : AngularHtmlLikeTemplateLocalInspect
 
   private fun checkPropertyBinding(holder: ProblemsHolder, attribute: XmlAttribute, descriptor: Angular2AttributeDescriptor) {
     val expression = Angular2Binding.get(attribute)?.expression
-    if ((expression == null || expression is JSEmptyExpression) && isStrictTemplates(attribute)) {
+    if ((expression == null || expression is JSEmptyExpression)
+        && Angular2Interpolation.get(attribute).isEmpty()
+        && isStrictTemplates(attribute)
+    ) {
       checkTypes(holder, attribute, descriptor, null, BindingsTypeResolver.get(attribute.parent), false)
     }
   }

@@ -140,6 +140,8 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
   fun testBlockSwitch() = checkHighlighting(ANGULAR_CORE_17_0_0_RC_0, extension = "ts")
 
+  fun testInterpolationStrictMode() = checkHighlighting(ANGULAR_CORE_16_2_8, strictTemplates = true, extension = "ts")
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
