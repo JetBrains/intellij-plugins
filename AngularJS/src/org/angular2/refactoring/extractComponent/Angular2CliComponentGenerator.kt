@@ -12,13 +12,11 @@ import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter
 import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.command.CommandProcessor
-import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.NonEmptyInputValidator
-import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
@@ -26,6 +24,8 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
 import com.intellij.util.PathUtil
 import com.intellij.util.containers.ContainerUtil
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.angular2.cli.AngularCliFilter
 import org.angular2.cli.GenerateCommand
 import org.angular2.cli.GenerateCommandKind
@@ -37,7 +37,7 @@ import java.io.File
 import java.nio.charset.StandardCharsets
 
 interface Angular2CliComponentGenerator {
-  fun showDialog(): Array<String>?
+  suspend fun showDialog(): Array<String>?
 
   /**
    * Executes Angular CLI schematic.
@@ -47,31 +47,30 @@ interface Angular2CliComponentGenerator {
    * @return Function to be called inside a command. It might create PsiFiles for supported Angular CLI versions,
    * otherwise files are eagerly created by the CLI and synced by the VFS.
    */
-  fun generateComponent(cliDir: VirtualFile, workingDir: VirtualFile, arguments: Array<String>): () -> List<String>
+  suspend fun generateComponent(cliDir: VirtualFile, workingDir: VirtualFile, arguments: Array<String>): () -> List<String>
 
-  companion object {
-    fun getInstance(project: Project): Angular2CliComponentGenerator = project.service()
-  }
 }
 
 class Angular2CliComponentGeneratorImpl(val project: Project) : Angular2CliComponentGenerator {
-  override fun showDialog(): Array<String>? {
-    val ref = Ref<Array<String>?>(null)
-    ApplicationManager.getApplication().invokeAndWait {
-      val str = Messages.showInputDialog(project, Angular2Bundle.message("angular.refactor.extractComponent.dialog.name"), Angular2Bundle.message("angular.refactor.extractComponent.dialog"), null, null, NonEmptyInputValidator())
+  override suspend fun showDialog(): Array<String>? {
+    var result: Array<String>? = null
+    withContext(Dispatchers.EDT) {
+      val str = Messages.showInputDialog(project, Angular2Bundle.message("angular.refactor.extractComponent.dialog.name"),
+                                         Angular2Bundle.message("angular.refactor.extractComponent.dialog"), null, null,
+                                         NonEmptyInputValidator())
 
       if (str != null) {
         // instead of validation we sanitize value because Angular CLI has built in name normalization
         // that could drift apart from our validation
-        ref.set(arrayOf(str.replace(" --", "-").replace(" ", "")))
+        result = arrayOf(str.replace(" --", "-").replace(" ", ""))
       }
     }
-    return ref.get()
+    return result
   }
 
-  override fun generateComponent(cliDir: VirtualFile,
-                                 workingDir: VirtualFile,
-                                 arguments: Array<String>): () -> List<String> {
+  override suspend fun generateComponent(cliDir: VirtualFile,
+                                         workingDir: VirtualFile,
+                                         arguments: Array<String>): () -> List<String> {
     try {
       return generateComponentVirtual(cliDir, workingDir, arguments)
     }
@@ -148,10 +147,11 @@ class Angular2CliComponentGeneratorImpl(val project: Project) : Angular2CliCompo
 
     val output = executeNode(interpreter, workingDir, arrayOf(binPath, "generate", "component", *arguments))
 
-    cliDir.refresh(false, true)
-    cliDir.children
-
-    return { extractPaths(output) }
+    return {
+      cliDir.refresh(false, true)
+      cliDir.children
+      extractPaths(output)
+    }
   }
 
   private fun findCliPackage(cliDir: VirtualFile): CompletionModuleInfo? {

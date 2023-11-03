@@ -83,7 +83,7 @@ class Angular2ExtractedComponentBuilder(private val sourceFile: PsiFile, private
         }
       }
     }
-    catch (e: Exception) {
+    catch (e: IllegalStateException) {
       throw Angular2ExtractComponentUnsupportedException(
         Angular2Bundle.message("angular.refactor.extractComponent.unsupported-selection"))
     }

@@ -12,14 +12,12 @@ import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.tags.Angular2ElementDescriptor
 import org.angular2.entities.Angular2Directive
 import org.angular2.lang.Angular2LangUtil
-import org.angular2.lang.html.Angular2HtmlFileType
-import org.angular2.lang.html.Angular2HtmlLanguage
 
 object Angular2EditorUtils {
 
   internal fun getDirectivesAtCaret(context: DataContext): List<Angular2Directive> {
     val file = context.getData(CommonDataKeys.PSI_FILE) ?: return emptyList()
-    if (file.fileType !in listOf(TypeScriptFileType.INSTANCE, Angular2HtmlFileType.INSTANCE)
+    if (!file.fileType.let { it == TypeScriptFileType.INSTANCE || Angular2LangUtil.isAngular2HtmlFileType(it) }
         || !Angular2LangUtil.isAngular2Context(file))
       return emptyList()
 
