@@ -251,6 +251,29 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
       if (pt.equals("skysql-beta")) {
         pt = "skysql";
       }
+      if (pt.equals("centrify")) {
+        if (rt.startsWith("centrify" + '_')) continue;
+        if (rt.startsWith("centrifyvault" + '_')) continue;
+      }
+      if (pt.equals("dbtcloud")) {
+        if (rt.startsWith("dbtcloud" + '_')) continue;
+        if (rt.startsWith("dbt_cloud" + '_')) continue;
+      }
+      if (pt.equals("ks3")) {
+        pt = "ksyun_ks3";
+      }
+      if (pt.equals("onelogin-1")) {
+        pt = "onelogin";
+      }
+      if (pt.equals("gcp-ipam-autopilot")) {
+        pt = "ipam";
+      }
+      if (pt.equals("port-labs")) {
+        pt = "port";
+      }
+      if (pt.equals("appstore")) {
+        pt = "applet";
+      }
       if (rt.equals(pt)) continue;
       if (rt.startsWith(pt + '_')) continue;
       failedResources.add(block);
@@ -354,6 +377,30 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
       }
       if (pt.equals("hash-sum")) {
         pt = "hashsum";
+      }
+      if (pt.equals("centrify")) {
+        if (rt.startsWith("centrify" + '_')) continue;
+        if (rt.startsWith("centrifyvault" + '_')) continue;
+      }
+      if (pt.equals("dbtcloud")) {
+        if (rt.startsWith("dbtcloud" + '_')) continue;
+        if (rt.startsWith("dbt_cloud" + '_')) continue;
+      }
+      if (pt.equals("ks3")) {
+        pt = "ksyun_ks3";
+      }
+      if (pt.equals("onelogin-1")) {
+        pt = "onelogin";
+      }
+      if (pt.equals("sloth-sli")) {
+        pt = "sli";
+      }
+      if (pt.equals("version-validator")) {
+        pt = "version_validator";
+      }
+      if (pt.equals("alibabacloudstack")) {
+        if (rt.startsWith("alibabacloudStack" + '_')) continue;
+        if (rt.startsWith("alibabacloudstack" + '_')) continue;
       }
       if (rt.equals(pt)) continue;
       if (rt.startsWith(pt + '_')) continue;

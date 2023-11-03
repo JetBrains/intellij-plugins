@@ -5,7 +5,7 @@ apply plugin: 'java'
 apply plugin: 'maven-publish'
 
 group = 'org.intellij.plugins.hcl.terraform'
-version = '2023.2.1'
+version = '2023.3.0'
 
 boolean isSnapshot = version.endsWith('-SNAPSHOT')
 

@@ -15,9 +15,9 @@ object TFBaseLoader {
       Block   *block `json:"block,omitempty"`
     }
    */
-  fun parseSchema(context: LoadContext, obj: ObjectNode, name: String): Pair<BlockType, Int> {
+  fun parseSchema(context: LoadContext, obj: ObjectNode, name: String): Pair<BlockType, Int>? {
     val version = obj.number("version")!!.toInt()
-    val block = obj.obj("block")!!
+    val block = obj.obj("block") ?: return null
     return parseBlock(context, block, name, null) to version
   }
 
@@ -302,8 +302,8 @@ class TerraformProvidersSchema : VersionedMetadataLoader {
 
   }
 
-  private fun parseProviderInfo(context: LoadContext, name: String, obj: ObjectNode): ProviderType {
-    val (parsed, version) = TFBaseLoader.parseSchema(context, obj, name)
+  private fun parseProviderInfo(context: LoadContext, name: String, obj: ObjectNode): ProviderType? {
+    val (parsed, version) = TFBaseLoader.parseSchema(context, obj, name) ?: return null
     // TODO: Support description and version
     return ProviderType(name, parsed.properties.values.toList())
   }
@@ -313,6 +313,7 @@ class TerraformProvidersSchema : VersionedMetadataLoader {
     assert(entry.value is ObjectNode) { "Right part of resource should be object" }
     val obj = entry.value as ObjectNode
     val (parsed, version) = TFBaseLoader.parseSchema(context, obj, name)
+                            ?: throw IllegalArgumentException("can't parse schema parseResourceInfo $name, entry = $entry")
     return ResourceType(name, info, parsed.properties.values.toList())    // TODO: Support description and version
   }
 
@@ -321,6 +322,7 @@ class TerraformProvidersSchema : VersionedMetadataLoader {
     assert(entry.value is ObjectNode) { "Right part of data-source should be object" }
     val obj = entry.value as ObjectNode
     val (parsed, version) = TFBaseLoader.parseSchema(context, obj, name)
+                            ?: throw IllegalArgumentException("can't parse schema parseDataSourceInfo $name, entry = $entry")
     // TODO: Support description
     return DataSourceType(name, info, parsed.properties.values.toList())
   }
