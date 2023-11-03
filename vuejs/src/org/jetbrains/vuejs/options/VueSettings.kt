@@ -24,7 +24,7 @@ class VueSettings(val project: Project) : SimplePersistentStateComponent<VueSett
     }
 
   var packageRef
-    get() = createPackageRef(state.packageName, volarLspServerPackageDescriptor.serverPackage)
+    get() = createPackageRef(state.packageName, volarLspServerPackageDescriptor().serverPackage)
     set(value) {
       val refText = extractRefText(value)
       val changed = state.packageName != refText

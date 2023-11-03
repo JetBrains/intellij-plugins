@@ -11,7 +11,6 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.util.convertMarkupContentToHtml
 import com.intellij.psi.PsiFile
-import com.intellij.util.text.SemVer
 import org.eclipse.lsp4j.MarkupContent
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.typescript.service.isVolarEnabledAndAvailable
@@ -22,10 +21,6 @@ class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(projec
     get() = VueBundle.message("vue.service.name")
   override val prefix: String
     get() = VueBundle.message("vue.service.prefix")
-
-  override fun getServiceVersion(): SemVer {
-    return VolarExecutableDownloader.calculateVersion(project)
-  }
 
   override fun createQuickInfoResponse(markupContent: MarkupContent): TypeScriptQuickInfoResponse {
     return TypeScriptQuickInfoResponse().apply {
