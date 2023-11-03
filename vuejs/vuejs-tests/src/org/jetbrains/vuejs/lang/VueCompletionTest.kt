@@ -2140,6 +2140,19 @@ export default {
     }
   }
 
+  fun testVueTscComponentQualifiedComponentType() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4, additionalDependencies = mapOf("vee-validate" to "1.0.0"))
+
+    val name = getTestName(true)
+    myFixture.copyDirectoryToProject(name, "")
+    myFixture.configureFromTempProjectFile("$name.vue")
+
+    myFixture.completeBasic()
+    myFixture.type('\n')
+
+    myFixture.checkResultByFile("$name.after.vue")
+  }
+
   fun testWatchProperty() {
     myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
     myFixture.configureByFile("watchProperty.vue")
