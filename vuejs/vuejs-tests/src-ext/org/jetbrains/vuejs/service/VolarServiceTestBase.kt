@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.library.typings.TypeScriptExternalDefinition
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
 import com.intellij.lang.typescript.library.download.TypeScriptDefinitionFilesDirectory
 import com.intellij.openapi.util.Disposer
+import com.intellij.util.text.SemVer
 import org.jetbrains.vuejs.lang.typescript.service.volar.VolarExecutableDownloader
 import org.jetbrains.vuejs.lang.typescript.service.volar.VolarTypeScriptService
 import org.jetbrains.vuejs.options.VueServiceSettings
@@ -38,7 +39,7 @@ abstract class VolarServiceTestBase : BaseLspTypeScriptServiceTest() {
     ensureServerDownloaded(VolarExecutableDownloader)
   }
 
-  protected fun assertCorrectService() {
-    assertCorrectServiceImpl<VolarTypeScriptService>()
+  protected fun assertCorrectService(version: SemVer? = null) {
+    assertCorrectServiceImpl<VolarTypeScriptService>(version)
   }
 }

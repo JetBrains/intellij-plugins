@@ -8,10 +8,12 @@ import com.intellij.lang.javascript.typescript.service.TypeScriptServiceTestBase
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
 import com.intellij.openapi.Disposable
 import com.intellij.platform.lsp.tests.checkLspHighlighting
+import com.intellij.util.text.SemVer
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.VueInspectionsProvider
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
+import org.jetbrains.vuejs.options.getVueSettings
 import org.junit.Test
 
 class VolarServiceTest : VolarServiceTestBase() {
@@ -210,6 +212,40 @@ class VolarServiceTest : VolarServiceTestBase() {
     // duplicated question mark is definitely unwanted, but for now, this is what we get from Volar, so let's encode it in test
     TestCase.assertTrue("Lookup element presentation must match expected", presentationTexts.contains("bar??"))
     assertHasServiceItems(elements, true)
+  }
+
+  @Test
+  fun testSimpleCustomVersionVue() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    val version = SemVer.parseFromText("1.8.10")
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0, additionalDependencies = mapOf("@vue/language-server" to version.toString()))
+    myFixture.configureByText("tsconfig.json", tsconfig)
+    performNpmInstallForPackageJson("package.json")
+    val state = getVueSettings(project).state
+    val old = state.packageName
+    disposeOnTearDown(Disposable { state.packageName = old })
+    val path = myFixture.findFileInTempDir("node_modules/@vue/language-server").path
+    TestCase.assertNotNull(path)
+    state.packageName = path
+
+    myFixture.configureByText("Simple.vue", """
+      <script setup lang="ts">
+      let <error descr="Vue: Type 'number' is not assignable to type 'string'.">a</error>: string = 1;
+      
+      function acceptNumber(num: number): number { return num; }
+      
+      acceptNumber(<error descr="Vue: Argument of type 'boolean' is not assignable to parameter of type 'number'.">true</error>);
+      </script>
+      
+      <template>
+        <div v-text="acceptNumber(<error descr="Vue: Argument of type 'boolean' is not assignable to parameter of type 'number'.">true</error>)" />
+        <!-- todo remove duplicate internal warning -->
+        <div>{{acceptNumber(<error descr="Argument type true is not assignable to parameter type number"><error descr="Vue: Argument of type 'boolean' is not assignable to parameter of type 'number'.">true</error></error>)}}</div>
+      </template>
+    """)
+    myFixture.checkLspHighlighting()
+
+    assertCorrectService(version)
   }
 
   private fun getPresentationTexts(elements: Array<LookupElement>): List<String?> {

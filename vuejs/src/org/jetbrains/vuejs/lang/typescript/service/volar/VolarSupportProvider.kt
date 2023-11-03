@@ -6,6 +6,7 @@ import com.intellij.lang.typescript.lsp.JSFrameworkLspServerDescriptor
 import com.intellij.lang.typescript.lsp.LspServerDownloader
 import com.intellij.lang.typescript.lsp.LspServerPackageDescriptor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspServerSupportProvider
 import com.intellij.platform.lsp.api.LspServerSupportProvider.LspServerStarter
@@ -14,9 +15,11 @@ import org.jetbrains.vuejs.lang.typescript.service.isVolarEnabledAndAvailable
 import org.jetbrains.vuejs.lang.typescript.service.isVolarFileTypeAcceptable
 import org.jetbrains.vuejs.options.getVueSettings
 
-val volarLspServerPackageDescriptor = LspServerPackageDescriptor("@vue/language-server",
-                                                                 "1.8.2",
-                                                                 "/bin/vue-language-server.js")
+val volarLspServerPackageDescriptor: () -> LspServerPackageDescriptor = {
+  LspServerPackageDescriptor("@vue/language-server",
+                             Registry.stringValue("vue.language.server.default.version"),
+                             "/bin/vue-language-server.js")
+}
 
 class VolarSupportProvider : LspServerSupportProvider {
   override fun fileOpened(project: Project, file: VirtualFile, serverStarter: LspServerStarter) {
@@ -26,12 +29,12 @@ class VolarSupportProvider : LspServerSupportProvider {
   }
 }
 
-class VolarServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, volarLspServerPackageDescriptor, "Vue") {
+class VolarServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, VolarExecutableDownloader, "Vue") {
   override fun isSupportedFile(file: VirtualFile): Boolean = isVolarFileTypeAcceptable(file)
 }
 
 @ApiStatus.Experimental
-object VolarExecutableDownloader : LspServerDownloader(volarLspServerPackageDescriptor) {
+object VolarExecutableDownloader : LspServerDownloader(volarLspServerPackageDescriptor()) {
   override fun getSelectedPackageRef(project: Project): NodePackageRef {
     return getVueSettings(project).packageRef
   }

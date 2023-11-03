@@ -20,7 +20,7 @@ class AstroLspServerSupportProvider : LspServerSupportProvider {
   }
 }
 
-class AstroLspServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, astroLspServerPackageDescriptor, "Astro") {
+class AstroLspServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, AstroLspExecutableDownloader, "Astro") {
   override fun isSupportedFile(file: VirtualFile): Boolean = isFileAcceptableForService(file)
 }
 
