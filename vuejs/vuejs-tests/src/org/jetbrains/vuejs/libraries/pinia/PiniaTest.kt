@@ -1,6 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.libraries.pinia
 
+import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
@@ -72,4 +73,12 @@ class PiniaTest : BasePlatformTestCase() {
     myFixture.checkHighlighting()
   }
 
+  fun testAddTypeFromDestructuringVar() {
+    // WEB-61561
+    myFixture.enableInspections(JSDaemonAnalyzerLightTestCase.defaultInspections().map { it::class.java })
+    myFixture.copyDirectoryToProject(getTestName(false), ".")
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2, VueTestModule.PINIA_2_0_22)
+    myFixture.configureFromTempProjectFile(getTestName(false) + ".js")
+    myFixture.checkHighlighting()
+  }
 }

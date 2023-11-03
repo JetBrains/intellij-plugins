@@ -1,14 +1,14 @@
 <template>
   <div class='flex justify-center'>
     {{this.cartStore}}
-    {{this.foo(12)}}
+    {{this.foo(<error descr="Argument type 12 is not assignable to parameter type Product">12</error>)}}
     {{this.formattedCart}}
     {{this.formattedCart[0].<error descr="Unresolved variable cst">cst</error>}}
     {{this.<error descr="Unresolved variable total">total</error>}}
     {{this.cartStore.formattedCart}}
     {{this.cartStore.<error descr="Unresolved variable formattedGart">formattedGart</error>}}
     {{cartStore}}
-    {{foo(12)}}
+    {{foo(<error descr="Argument type 12 is not assignable to parameter type Product">12</error>)}}
     {{formattedCart}}
     {{formattedCart[0].<error descr="Unresolved variable cst">cst</error>}}
     {{<error descr="Unresolved variable or type total">total</error>}}
@@ -31,7 +31,7 @@ export default defineComponent({
   methods: {
     ...mapActions(useCartStore, {foo: 'add'}),
     test() {
-      this.foo(12)
+      this.foo(<error descr="Argument type 12 is not assignable to parameter type Product">12</error>)
     }
   },
   computed: {
