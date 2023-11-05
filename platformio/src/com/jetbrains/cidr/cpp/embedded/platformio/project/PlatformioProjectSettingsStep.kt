@@ -4,6 +4,7 @@ import com.intellij.execution.process.CapturingProcessHandler
 import com.intellij.execution.process.CapturingProcessRunner
 import com.intellij.icons.AllIcons
 import com.intellij.ide.util.projectWizard.AbstractNewProjectStep
+import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.util.Ref
 import com.intellij.platform.DirectoryProjectGenerator
 import com.intellij.ui.ColoredTreeCellRenderer
@@ -62,69 +63,72 @@ class PlatformioProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<
   }
 
   private fun watchPlatformio(presense: Presense) {
-    SwingUtilities.invokeLater {
-      when (presense) {
-        Presense.NO -> {
-          actionButton.isEnabled = false
-          setErrorText(null)
-          myTree.setPaintBusy(false)
-          myTree.emptyText.setText(ClionEmbeddedPlatformioBundle.message("dialog.message.platformio.utility.not.found"))
-          myTree.emptyText
-            .appendLine(ClionEmbeddedPlatformioBundle.message("open.settings.link"), SimpleTextAttributes.LINK_ATTRIBUTES,
-                        OpenSettings(null))
-            .appendLine(AllIcons.General.ContextHelp, ClionEmbeddedPlatformioBundle.message("install.guide"),
-                        SimpleTextAttributes.LINK_ATTRIBUTES, OpenInstallGuide)
-          myTree.model = EMPTY_TREE_MODEL
-        }
-        Presense.UNKNOWN -> {
-          actionButton.isEnabled = false
-          setErrorText(null)
-          myTree.setPaintBusy(true)
-          myTree.emptyText.clear()
-          myTree.model = EMPTY_TREE_MODEL
-        }
-        Presense.YES -> {
-          if (myTree.model === EMPTY_TREE_MODEL) {
-            myTree.emptyText.setText(ClionEmbeddedPlatformioBundle.message("gathering.info"))
-            myTree.invalidate()
-            val outputFuture =
-              application.executeOnPooledThread(
-                Callable {
-                  val commandLine = PlatfromioCliBuilder(null)
-                    .withParams("boards", "--json-output")
-                    .withRedirectErrorStream(true).build()
-                  CapturingProcessRunner(CapturingProcessHandler(commandLine)).runProcess(60000)
-                })
-            try {
-              val output = outputFuture.get()
-              val newModel: DefaultTreeModel
-              if (output.isExitCodeSet && output.exitCode == 0) {
-                newModel = DefaultTreeModel(parse(output.stdout))
+    application.invokeLater(
+      {
+        when (presense) {
+          Presense.NO -> {
+            actionButton.isEnabled = false
+            setErrorText(null)
+            myTree.setPaintBusy(false)
+            myTree.emptyText.setText(
+              ClionEmbeddedPlatformioBundle.message("dialog.message.platformio.utility.not.found"))
+            myTree.emptyText
+              .appendLine(ClionEmbeddedPlatformioBundle.message("open.settings.link"),
+                          SimpleTextAttributes.LINK_ATTRIBUTES,
+                          OpenSettings(null))
+              .appendLine(AllIcons.General.ContextHelp, ClionEmbeddedPlatformioBundle.message("install.guide"),
+                          SimpleTextAttributes.LINK_ATTRIBUTES, OpenInstallGuide)
+            myTree.model = EMPTY_TREE_MODEL
+          }
+          Presense.UNKNOWN -> {
+            actionButton.isEnabled = false
+            setErrorText(null)
+            myTree.setPaintBusy(true)
+            myTree.emptyText.clear()
+            myTree.model = EMPTY_TREE_MODEL
+          }
+          Presense.YES -> {
+            if (myTree.model === EMPTY_TREE_MODEL) {
+              myTree.emptyText.setText(ClionEmbeddedPlatformioBundle.message("gathering.info"))
+              myTree.invalidate()
+              val outputFuture =
+                application.executeOnPooledThread(
+                  Callable {
+                    val commandLine = PlatfromioCliBuilder(null)
+                      .withParams("boards", "--json-output")
+                      .withRedirectErrorStream(true).build()
+                    CapturingProcessRunner(CapturingProcessHandler(commandLine)).runProcess(60000)
+                  })
+              try {
+                val output = outputFuture.get()
+                val newModel: DefaultTreeModel
+                if (output.isExitCodeSet && output.exitCode == 0) {
+                  newModel = DefaultTreeModel(parse(output.stdout))
+                }
+                else {
+                  newModel = EMPTY_TREE_MODEL
+                }
+                if (output.isTimeout) {
+                  setErrorText(ClionEmbeddedPlatformioBundle.message("utility.timeout"))
+                }
+                else if (output.exitCode != 0) {
+                  setErrorText(ClionEmbeddedPlatformioBundle.message("platformio.exit.code", output.exitCode))
+                }
+                else {
+                  myTree.model = newModel
+                  myTree.clearSelection()
+                  checkValid()
+                  myTree.setPaintBusy(false)
+                }
               }
-              else {
-                newModel = EMPTY_TREE_MODEL
+              catch (e: Throwable) {
+                LOG.error(e)
+                setErrorText(e.message)
               }
-              if (output.isTimeout) {
-                setErrorText(ClionEmbeddedPlatformioBundle.message("utility.timeout"))
-              }
-              else if (output.exitCode != 0) {
-                setErrorText(ClionEmbeddedPlatformioBundle.message("platformio.exit.code", output.exitCode))
-              }
-              else {
-                myTree.model = newModel
-                myTree.clearSelection()
-                checkValid()
-                myTree.setPaintBusy(false)
-              }
-            }
-            catch (e: Throwable) {
-              LOG.error(e)
-              setErrorText(e.message)
             }
           }
         }
-      }
-    }
+      }, ModalityState.stateForComponent(myTree))
   }
 
   override fun createAdvancedSettings(): JPanel? {
