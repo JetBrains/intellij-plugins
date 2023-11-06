@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.lang.html
 
 import com.intellij.javascript.web.html.WebFrameworkHtmlFileType
+import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
@@ -16,10 +17,14 @@ class VueFileType private constructor() : WebFrameworkHtmlFileType(VueLanguage.I
               ?: (this is VueFile && isVueFileName(this.name))
 
     val VirtualFile.isDotVueFile
-      get() = nameSequence.endsWith(VUE_FILE_EXTENSION)
+      get() = isVueFileName(nameSequence)
 
-    fun isVueFileName(name: String) =
-      name.endsWith(VUE_FILE_EXTENSION)
+    fun isVueFileName(name: String) = isVueFileName(name as CharSequence)
+
+    private fun isVueFileName(name: CharSequence): Boolean =
+      name.endsWith(VUE_FILE_EXTENSION) ||
+      FileTypeManager.getInstance().getAssociations(INSTANCE)
+        .any { it.acceptsCharSequence(name) }
 
   }
 }
