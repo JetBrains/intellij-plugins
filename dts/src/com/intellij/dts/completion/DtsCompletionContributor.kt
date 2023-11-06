@@ -3,7 +3,7 @@ package com.intellij.dts.completion
 import com.intellij.codeInsight.completion.CompletionContributor
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
-import com.intellij.codeInsight.completion.CompletionUtilCore
+import com.intellij.codeInsight.completion.PrioritizedLookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.dts.DtsBundle
 import com.intellij.dts.DtsIcons
@@ -28,7 +28,7 @@ class DtsCompletionContributor : CompletionContributor() {
                 .withTypeText(property.type.typeName)
                 .withIcon(DtsIcons.Property)
 
-            result.addElement(lookup)
+            result.addElement(PrioritizedLookupElement.withPriority(lookup, DtsLookupPriority.PROPERTY))
         }
     }
 
@@ -49,7 +49,7 @@ class DtsCompletionContributor : CompletionContributor() {
                     .withTypeText(DtsBundle.message("documentation.node_type"))
                     .withIcon(DtsIcons.Node)
 
-                result.addElement(lookup)
+                result.addElement(PrioritizedLookupElement.withPriority(lookup, DtsLookupPriority.SUB_NODE))
             }
         }
     }
@@ -70,8 +70,7 @@ class DtsCompletionContributor : CompletionContributor() {
             else -> null
         }
 
-        // include special prefixes, like: #
-        val set = result.withPrefixMatcher(name.text.removeSuffix(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED))
+        val set = result.withDtsPrefixMatcher(parameters)
 
         propertyParent?.let { addPropertyVariants(it, set) }
         nodeParent?.let { addSubNodeVariants(it, set) }

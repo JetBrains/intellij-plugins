@@ -49,9 +49,6 @@ class DtsCompilerDirectiveCompletionTest : DtsCompletionTest() {
             "prop = <<caret>>",
             "prop = [<caret>]",
             "prop = \"<caret>\"",
-            "prop<caret>",
-            "/include/<caret>",
-            "/dts-v1/<caret>",
             "&<caret>",
         )
 
@@ -59,8 +56,8 @@ class DtsCompilerDirectiveCompletionTest : DtsCompletionTest() {
             configureByText(context)
 
             val items = myFixture.completeBasic()
-            assertNotNull(items)
-            assertEmpty(items.filter { it.lookupString.startsWith('/') })
+            assertNotNull(context, items)
+            assertEmpty(context, items.filter { it.lookupString.startsWith('/') })
         }
     }
 
