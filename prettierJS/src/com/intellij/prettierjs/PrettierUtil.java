@@ -62,7 +62,9 @@ public final class PrettierUtil {
   public static final SemVer MIN_VERSION = new SemVer("1.13.0", 1, 13, 0);
   private static final Logger LOG = Logger.getInstance(PrettierUtil.class);
 
-  private static final Gson OUR_GSON_SERIALIZER = new GsonBuilder().create();
+  private static final class Holder {
+    static final Gson OUR_GSON_SERIALIZER = new GsonBuilder().create();
+  }
 
   private PrettierUtil() {
   }
@@ -175,7 +177,7 @@ public final class PrettierUtil {
         if (!packageJsonData.isDependencyOfAnyType(PACKAGE_NAME)) {
           return null;
         }
-        Object prettierProperty = ObjectUtils.coalesce(OUR_GSON_SERIALIZER.<Map<String, Object>>fromJson(file.getText(), Map.class),
+        Object prettierProperty = ObjectUtils.coalesce(Holder.OUR_GSON_SERIALIZER.<Map<String, Object>>fromJson(file.getText(), Map.class),
                                                        Collections.emptyMap()).get(PACKAGE_NAME);
         //noinspection unchecked
         return prettierProperty instanceof Map ? createFromMap(((Map)prettierProperty)) : null;
@@ -199,7 +201,7 @@ public final class PrettierUtil {
       if (reader.peek() == JsonToken.STRING) {
         return null;
       }
-      return createFromMap(OUR_GSON_SERIALIZER.fromJson(reader, Map.class));
+      return createFromMap(Holder.OUR_GSON_SERIALIZER.fromJson(reader, Map.class));
     }
     catch (IOException e) {
       LOG.info("Could not parse config from text", e);
