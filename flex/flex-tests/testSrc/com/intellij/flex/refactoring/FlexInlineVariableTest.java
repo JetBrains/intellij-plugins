@@ -3,15 +3,9 @@ package com.intellij.flex.refactoring;
 import com.intellij.flex.FlexTestOption;
 import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.editor.FlexProjectDescriptor;
-import com.intellij.flex.util.FlexModuleFixtureBuilder;
-import com.intellij.flex.util.FlexModuleFixtureBuilderImpl;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.HybridTestMode;
 import com.intellij.lang.javascript.refactoring.JSInlineVarOrFunctionTestBase;
 import com.intellij.testFramework.LightProjectDescriptor;
-import com.intellij.testFramework.builders.ModuleFixtureBuilder;
-import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
-import org.jetbrains.annotations.NotNull;
 
 public class FlexInlineVariableTest extends JSInlineVarOrFunctionTestBase {
   @Override
@@ -24,17 +18,8 @@ public class FlexInlineVariableTest extends JSInlineVarOrFunctionTestBase {
     return FlexProjectDescriptor.DESCRIPTOR;
   }
 
-  @NotNull
-  @Override
-  protected Class<? extends ModuleFixtureBuilder<?>> getModuleBuilderClass() {
-    return FlexModuleFixtureBuilder.class;
-  }
-
   @Override
   protected void setUp() throws Exception {
-    if (mode == HybridTestMode.CodeInsightFixture) {
-      IdeaTestFixtureFactory.getFixtureFactory().registerFixtureBuilder(FlexModuleFixtureBuilder.class, FlexModuleFixtureBuilderImpl.class);
-    }
     super.setUp();
     FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "as_refactoring/inlineVariable/");
     FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
