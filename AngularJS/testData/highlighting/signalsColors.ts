@@ -2,6 +2,7 @@
 import {
   <info descr="identifiers//exported function">Component</info>,
   <info descr="identifiers//exported function">computed</info>,
+  <info descr="types//type alias">Signal</info>,
   <info descr="identifiers//exported function">signal</info>,
 } <info descr="null">from</info> '@angular/core';
 import {<info descr="classes//exported class">NgIf</info>} <info descr="null">from</info> "@angular/common";
@@ -39,7 +40,7 @@ export interface <info descr="interface">Movie</info> {
 export class <info descr="classes//exported class">AppComponent</info> {
   /** foo */
   <info descr="ng-signal">movieSig</info> = <info descr="identifiers//exported function">signal</info><<info descr="interface">Movie</info> | <info descr="null">null</info>>(null);
-  <info descr="ng-signal">newMovieSig</info> = <info descr="identifiers//exported function">computed</info>(() => {
+  <info descr="ng-signal">newMovieSig</info>:<info descr="types//type alias">Signal</info><<info descr="interface">Movie</info> | <info descr="null">null</info>> = <info descr="identifiers//exported function">computed</info>(() => {
     let <info descr="identifiers//local variable">newMovie</info> = {
       <info descr="instance field">name</info>: 'Titanic',
       <info descr="instance field">genre</info>: 'Romance',
@@ -48,6 +49,7 @@ export class <info descr="classes//exported class">AppComponent</info> {
     };
     return <info descr="identifiers//local variable">newMovie</info>;
   });
+  <warning descr="Unused field withRegularColor"><info descr="instance field">withRegularColor</info></warning>: <info descr="types//type alias">Record</info><<info descr="null">any</info>,<info descr="null">any</info>>;
 
   <warning descr="Unused method setMovie"><info descr="instance method">setMovie</info></warning>() {
     this.<info descr="ng-signal">movieSig</info>.<info descr="instance method">set</info>({
