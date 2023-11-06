@@ -102,7 +102,7 @@ public class PrettierConfigParsingTest extends BasePlatformTestCase {
       assertEquals(expected, actual);
       return;
     }
-    assertEquals(JSLanguageServiceQueue.GSON.toJson(expected), JSLanguageServiceQueue.GSON.toJson(actual));
+    assertEquals(JSLanguageServiceQueue.Holder.GSON.toJson(expected), JSLanguageServiceQueue.Holder.GSON.toJson(actual));
   }
 
   private void doTest(PrettierConfig expected, String fileName, String fileContent) {

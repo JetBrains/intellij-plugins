@@ -18,7 +18,7 @@ public class TsLintFixInfo {
     try {
       if (element.isJsonArray()) {
         List<TsLintFixReplacements> replacements =
-          ContainerUtil.mapNotNull(element.getAsJsonArray(), el -> JSLanguageServiceQueue.GSON.fromJson(el, TsLintFixReplacements.class));
+          ContainerUtil.mapNotNull(element.getAsJsonArray(), el -> JSLanguageServiceQueue.Holder.GSON.fromJson(el, TsLintFixReplacements.class));
 
         TsLintFixInfo info = new TsLintFixInfo();
         info.innerReplacements = replacements.toArray(new TsLintFixReplacements[0]);
@@ -27,10 +27,10 @@ public class TsLintFixInfo {
       else {
         if (element.getAsJsonObject().has("innerReplacements")) {
           //tslint < 5 compatibility
-          return JSLanguageServiceQueue.GSON.fromJson(element, TsLintFixInfo.class);
+          return JSLanguageServiceQueue.Holder.GSON.fromJson(element, TsLintFixInfo.class);
         }
         else {
-          TsLintFixReplacements replacement = JSLanguageServiceQueue.GSON.fromJson(element, TsLintFixReplacements.class);
+          TsLintFixReplacements replacement = JSLanguageServiceQueue.Holder.GSON.fromJson(element, TsLintFixReplacements.class);
 
           TsLintFixInfo info = new TsLintFixInfo();
           info.innerReplacements = new TsLintFixReplacements[]{replacement};

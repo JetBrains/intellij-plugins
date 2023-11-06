@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-import static com.intellij.lang.javascript.service.JSLanguageServiceQueue.LOGGER;
+import static com.intellij.lang.javascript.service.JSLanguageServiceQueue.Holder.LOGGER;
 
 public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implements PrettierLanguageService {
   private final VirtualFile myWorkingDirectory;
