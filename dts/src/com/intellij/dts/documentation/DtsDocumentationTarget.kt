@@ -2,6 +2,7 @@ package com.intellij.dts.documentation
 
 import com.intellij.dts.DtsBundle
 import com.intellij.dts.lang.psi.DtsNode
+import com.intellij.dts.lang.psi.getDtsPath
 import com.intellij.dts.util.DtsHtmlChunk
 import com.intellij.dts.zephyr.DtsZephyrBinding
 import com.intellij.dts.zephyr.DtsZephyrPropertyBinding
@@ -49,9 +50,11 @@ abstract class DtsDocumentationTarget(protected val project: Project) : Document
      * Writes: "Declared in: <<path>> (<<file>>)"
      */
     protected fun buildDeclaredIn(html: DtsDocumentationHtmlBuilder, parent: DtsNode) {
+        val path = parent.getDtsPath() ?: return
+
         html.definition(DtsHtmlChunk.definitionName("documentation.declared_in"))
         html.appendToDefinition(
-            DtsHtmlChunk.path(parent),
+            DtsHtmlChunk.path(path),
             HtmlChunk.text(" (${parent.containingFile.name})").wrapWith(DocumentationMarkup.GRAYED_ELEMENT),
         )
     }

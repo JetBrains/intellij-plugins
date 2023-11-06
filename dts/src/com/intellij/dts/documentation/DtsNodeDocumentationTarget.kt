@@ -1,7 +1,9 @@
 package com.intellij.dts.documentation
 
 import com.intellij.dts.lang.psi.DtsNode
+import com.intellij.dts.lang.psi.DtsRefNode
 import com.intellij.dts.lang.psi.getDtsPresentableText
+import com.intellij.dts.lang.psi.getDtsReferenceTarget
 import com.intellij.dts.util.DtsTreeUtil
 import com.intellij.dts.zephyr.DtsZephyrBindingProvider
 import com.intellij.model.Pointer
@@ -22,9 +24,14 @@ class DtsNodeDocumentationTarget(private val node: DtsNode) : DtsDocumentationTa
         return TargetPresentation.builder(node.getDtsPresentableText()).icon(node.getIcon(0)).presentation()
     }
 
+    private fun nodeNameTarget(node: DtsNode): DtsNode {
+        if (node !is DtsRefNode) return node
+        return node.getDtsReferenceTarget() ?: node
+    }
+
     override fun buildDocumentation(html: DtsDocumentationHtmlBuilder) {
-        buildNodeName(html, node)
-        DtsTreeUtil.parentNode(node)?.let { parent -> buildDeclaredIn(html, parent) }
+        buildNodeName(html, nodeNameTarget(node))
+        DtsTreeUtil.findParentNode(node)?.let { parent -> buildDeclaredIn(html, parent) }
 
         val binding = DtsZephyrBindingProvider.bindingFor(node, fallbackBinding = false) ?: return
         buildNodeBinding(html, binding)

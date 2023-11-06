@@ -15,4 +15,12 @@ class DtsBindingDocumentationTest : DtsDocumentationTest() {
     fun `test compatible espressif,esp32-ledc`() = doTest()
 
     fun `test reference override`() = doTest()
+
+    fun `test direct child`() = doTest()
+
+    fun `test nested direct child`() = doTest()
+
+    fun `test ref child`() = doTest()
+
+    fun `test nested ref child`() = doTest()
 }

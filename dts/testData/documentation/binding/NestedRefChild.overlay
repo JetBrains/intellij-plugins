@@ -1,0 +1,13 @@
+/ {
+    label: node {
+        compatible = "espressif,esp32-pinctrl";
+    };
+};
+
+&label {
+    label2: child { };
+};
+
+&label2 {
+    child<caret> {};
+};

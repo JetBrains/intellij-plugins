@@ -1,0 +1,9 @@
+/ {
+    label: node {
+        compatible = "espressif,esp32-ledc";
+    };
+};
+
+&label {
+    child<caret> {};
+};

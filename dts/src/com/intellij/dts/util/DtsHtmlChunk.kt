@@ -1,12 +1,12 @@
 package com.intellij.dts.util
 
 import com.intellij.dts.DtsBundle
+import com.intellij.dts.api.DtsPath
 import com.intellij.dts.highlighting.DtsHighlightAnnotator
 import com.intellij.dts.highlighting.DtsTextAttributes
 import com.intellij.dts.lang.DtsLanguage
 import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.psi.DtsPHandle
-import com.intellij.dts.lang.psi.DtsRootNode
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.EditorColorsScheme
 import com.intellij.openapi.editor.colors.TextAttributesKey
@@ -118,22 +118,18 @@ object DtsHtmlChunk {
     }
 
     /**
-     * Generates the colored html for the path to a node from the root of the
-     * current file. Including the node itself.
+     * Generates the colored html for the node path.
      */
-    fun path(element: DtsNode): HtmlChunk {
-        val parents = DtsTreeUtil.parentNodes(element)
-        if (parents.isEmpty()) return node(element)
-
+    fun path(path: DtsPath): HtmlChunk {
         val builder = HtmlBuilder()
-        for (parent in parents.reversed()) {
-            if (parent !is DtsRootNode) {
-                builder.append(node(parent))
-            }
+        for (segment in path.segments) {
+            builder.append("/")
+            builder.append(nodeName(segment))
+        }
 
+        if (path.segments.isEmpty()) {
             builder.append("/")
         }
-        builder.append(node(element))
 
         return builder.toFragment()
     }

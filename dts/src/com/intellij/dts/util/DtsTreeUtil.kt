@@ -14,23 +14,6 @@ object DtsTreeUtil {
     }
 
     /**
-     * Gets all immediate parent nodes. Does not resolve references.
-     */
-    fun parentNodes(element: PsiElement): List<DtsNode> {
-        if (element is DtsRootNode) return emptyList()
-
-        val parents = mutableListOf<DtsNode>()
-
-        var parent = element.parent
-        while (parent != null) {
-            if (parent is DtsNode) parents.add(parent)
-            parent = parent.parent
-        }
-
-        return parents
-    }
-
-    /**
      * Gets the immediate parent property.
      */
     fun parentProperty(element: PsiElement): DtsProperty? {
@@ -48,17 +31,14 @@ object DtsTreeUtil {
     }
 
     /**
-     * Gets the actual parent of a node. If the node is in a ref node. The
-     * reference target is considered the parent. If the reference cannot be
-     * resolved, null is returned.
+     * Gets the actual parent of a node. All references will be resolved.
      */
     fun findParentNode(node: DtsNode): DtsNode? {
         if (node is DtsRefNode) {
-            return node.getDtsReferenceTarget()
+            return node.getDtsReferenceTarget()?.let(::findParentNode)
         }
 
-        val parent = PsiTreeUtil.findFirstParent(node, true) { it is DtsNode } as? DtsNode ?: return null
-
+        val parent = parentNode(node) ?: return null
         if (parent is DtsRefNode) {
             return parent.getDtsReferenceTarget()
         }
