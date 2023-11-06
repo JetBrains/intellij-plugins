@@ -358,3 +358,5 @@ child-binding:
         next-level-cache:
             type: phandle
             description: |
+                If present, indicates that another level of cache exists. The 
+                value is the phandle of the next level of cache.
