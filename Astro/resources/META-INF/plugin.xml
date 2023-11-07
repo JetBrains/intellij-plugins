@@ -82,6 +82,8 @@
                      implementationClass="org.jetbrains.astro.inspections.AstroMissingComponentImportInspection"
                      key="astro.inspection.display.name.missing.component.import" bundle="messages.AstroBundle"/>
 
+    <implicitUsageProvider implementation="org.jetbrains.astro.inspections.AstroImplicitUsageProvider" />
+
     <platform.lsp.serverSupportProvider implementation="org.jetbrains.astro.service.AstroLspServerSupportProvider" />
     <registryKey key="astro.enable.lsp" defaultValue="false" description="Enable Astro Language Tools service"/>
   </extensions>

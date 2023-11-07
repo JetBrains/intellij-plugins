@@ -18,6 +18,13 @@ const val ASTRO_IMPLICIT_OBJECT = "Astro"
 const val ASTRO_INLINE_DIRECTIVE = "is:inline"
 const val ASTRO_DEFINE_VARS_DIRECTIVE = "define:vars"
 
+val ASTRO_CONFIG_FILES = setOf(
+  "astro.config.js",
+  "astro.config.cjs",
+  "astro.config.mjs",
+  "astro.config.ts",
+)
+
 fun PsiElement.astroContentRoot(): AstroContentRoot? =
   containingFile?.astroContentRoot()
 
