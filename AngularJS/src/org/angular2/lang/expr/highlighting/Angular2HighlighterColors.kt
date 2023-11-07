@@ -8,7 +8,7 @@ interface Angular2HighlighterColors {
   companion object {
     @JvmField
     val NG_SIGNAL = TextAttributesKey.createTextAttributesKey(
-      "NG.SIGNAL", TypeScriptHighlighter.TS_INSTANCE_MEMBER_VARIABLE)
+      "NG.SIGNAL", TypeScriptHighlighter.TS_INSTANCE_MEMBER_FUNCTION)
 
     @JvmField
     val NG_VARIABLE = TextAttributesKey.createTextAttributesKey(
