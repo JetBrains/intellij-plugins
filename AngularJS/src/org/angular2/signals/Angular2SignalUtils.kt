@@ -10,7 +10,6 @@ import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl
 import com.intellij.lang.javascript.psi.types.JSUnionOrIntersectionType
-import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations
 import com.intellij.lang.javascript.psi.types.recordImpl.ComputedPropertySignatureImpl
 import com.intellij.psi.PsiElement
 import org.angular2.lang.Angular2LangUtil
@@ -43,17 +42,19 @@ object Angular2SignalUtils {
       ?.jsType
       ?.let { JSGenericTypeImpl(it.source, it, JSAnyType.get(it.source)) }
     if (signalType != null) {
-      val elementType = JSCompositeTypeFactory.optimizeTypeIfComposite(
-        TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(
-          if (targetElement is JSExpression)
-            JSResolveUtil.getExpressionJSType(targetElement)
-          else
-            JSResolveUtil.getElementJSType(targetElement),
-        ),
-        JSUnionOrIntersectionType.OptimizedKind.OPTIMIZED_REMOVED_NULL_UNDEFINED
-      )
+      val elementType =
+        if (targetElement is JSExpression) {
+          JSResolveUtil.getExpressionJSType(targetElement)
+        }
+        else {
+          JSResolveUtil.getElementJSType(targetElement)
+        }
+          ?.substitute()
+          ?.let {
+            JSCompositeTypeFactory.optimizeTypeIfComposite(it, JSUnionOrIntersectionType.OptimizedKind.OPTIMIZED_REMOVED_NULL_UNDEFINED)
+          }
       if (elementType != null
-          && elementType.asRecordType().properties.any { it is ComputedPropertySignatureImpl && it.memberName == "SIGNAL" }
+          && elementType.asRecordType().findPropertySignature("SIGNAL") is ComputedPropertySignatureImpl
           && signalType.isDirectlyAssignableType(elementType, null)
       ) {
         return true
