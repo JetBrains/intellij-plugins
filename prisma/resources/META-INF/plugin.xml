@@ -103,5 +103,8 @@
                            displayType="BALLOON"
                            bundle="messages.PrismaBundle"
                            key="notification.group.prisma"/>
+
+        <!-- Find Usages -->
+       <lang.findUsagesProvider language="Prisma" implementationClass="org.intellij.prisma.lang.findUsages.PrismaFindUsagesProvider"/>
     </extensions>
 </idea-plugin>
