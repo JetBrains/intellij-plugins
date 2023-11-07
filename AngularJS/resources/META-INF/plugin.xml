@@ -44,6 +44,12 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
+    <additionalTextAttributes scheme="IntelliJ Light" file="colorSchemes/Angular2IntelliJLight.xml"/>
+    <additionalTextAttributes scheme="Darcula" file="colorSchemes/Angular2Darcula.xml"/>
+    <additionalTextAttributes scheme="High contrast" file="colorSchemes/Angular2HighContrast.xml"/>
+    <additionalTextAttributes scheme="Light" file="colorSchemes/Angular2Light.xml"/>
+    <additionalTextAttributes scheme="Dark" file="colorSchemes/Angular2Dark.xml"/>
+
     <dependencySupport kind="javascript" coordinate="npm:@angular/core" displayName="Angular"/>
     <codeInsight.template.postfixTemplateProvider language="AngularJS"
                                                   implementationClass="com.intellij.codeInsight.template.postfix.templates.EmptyPostfixTemplateProvider"/>
