@@ -26,6 +26,7 @@ import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.intellij.platform.util.progress.rawProgressReporter
 import com.intellij.platform.util.progress.withRawProgressReporter
 import com.intellij.util.ArrayUtil
+import org.jetbrains.idea.maven.buildtool.MavenLogEventHandler
 import org.jetbrains.idea.maven.model.MavenWorkspaceMap
 import org.jetbrains.idea.maven.project.*
 import org.jetbrains.idea.maven.project.MavenEmbeddersManager.EmbedderTask
@@ -66,7 +67,7 @@ class Flexmojos3GenerateConfigTask(private val myModule: Module,
         val result = runBlockingMaybeCancellable {
           withBackgroundProgress(project, MavenProjectBundle.message("maven.updating.folders"), true) {
             withRawProgressReporter {
-              embedder.executeGoal(listOf(request), generateConfigGoal, rawProgressReporter!!, null)[0]
+              embedder.executeGoal(listOf(request), generateConfigGoal, rawProgressReporter!!, MavenLogEventHandler)[0]
             }
           }
         }
