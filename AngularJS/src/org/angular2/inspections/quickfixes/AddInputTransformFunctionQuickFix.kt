@@ -3,6 +3,7 @@ package org.angular2.inspections.quickfixes
 
 import com.intellij.codeInsight.daemon.impl.quickfix.EmptyExpression
 import com.intellij.codeInsight.intention.PriorityAction
+import com.intellij.codeInsight.intention.preview.IntentionPreviewUtils
 import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.codeInsight.template.impl.TextExpression
 import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement
@@ -23,6 +24,7 @@ import com.intellij.util.asSafely
 import org.angular2.Angular2DecoratorUtil.TRANSFORM_PROP
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.entities.source.Angular2SourceDirectiveProperty
+import org.angular2.inspections.quickfixes.Angular2FixesPsiUtil.remapToCopyIfNeeded
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.Angular2LangUtil.ANGULAR_CORE_PACKAGE
 
@@ -51,10 +53,12 @@ class AddInputTransformFunctionQuickFix(private val kind: TransformKind,
                     (property as? Angular2SourceDirectiveProperty)
                       ?.takeIf { it.name == inputName && !it.virtualProperty && it.transformParameterType == null }
                   } ?: return
-    val objectLiteral = Angular2FixesPsiUtil.getOrCreateInputObjectLiteral(input) ?: return
+    val objectLiteral = Angular2FixesPsiUtil.getOrCreateInputObjectLiteral(
+      input.declarationSource?.remapToCopyIfNeeded(startElement.containingFile)) ?: return
     if (kind == TransformKind.Custom) {
       val property = Angular2FixesPsiUtil.insertJSObjectLiteralProperty(
         objectLiteral, TRANSFORM_PROP, "(value: $expressionType): ${input.rawJsType} => ", preferNewLines = false)
+      if (IntentionPreviewUtils.isIntentionPreviewActive()) return
       OpenFileDescriptor(project, property.containingFile.virtualFile, property.textRange.endOffset)
         .takeIf { it.canNavigateToSource() }
         ?.navigate(true)
