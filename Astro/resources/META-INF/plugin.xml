@@ -101,8 +101,9 @@
                                             implementationClass="org.jetbrains.astro.lang.frontmatter.AstroFrontmatterConfigurableProvider"/>
     <analysisHandlersFactory language="AstroFrontmatter" implementationClass="org.jetbrains.astro.inspections.AstroFrontmatterAnalysisHandlersFactory" />
   </extensions>
-  <actions>
-    <action class="org.jetbrains.astro.CreateAstroComponentAction" id="CreateAstroComponent">
+  <actions resource-bundle="messages.AstroBundle">
+    <action class="org.jetbrains.astro.CreateAstroComponentAction" id="CreateAstroComponent"
+            icon="org.jetbrains.astro.AstroIcons.Astro">
       <add-to-group group-id="NewWebDevelopment" anchor="before" relative-to-action="NewJavaScriptFile"/>
     </action>
   </actions>

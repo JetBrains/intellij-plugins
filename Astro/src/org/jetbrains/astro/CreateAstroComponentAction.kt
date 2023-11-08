@@ -12,17 +12,13 @@ import org.jetbrains.annotations.Nls
 import org.jetbrains.astro.context.hasAstroFiles
 import org.jetbrains.astro.context.isAstroProject
 
-class CreateAstroComponentAction
-  : CreateFileFromTemplateAction(AstroBundle.message("astro.create.component.action.text"),
-                                 AstroBundle.message("astro.create.component.action.description"),
-                                 AstroIcons.Astro),
-    DumbAware {
+class CreateAstroComponentAction : CreateFileFromTemplateAction(), DumbAware {
 
   companion object {
     const val ASTRO_TEMPLATE_NAME: String = "Astro Component"
 
     @Nls
-    private val name = AstroBundle.message("astro.create.component.action.text")
+    private val name = AstroBundle.message("action.CreateAstroComponent.text")
   }
 
   override fun isAvailable(dataContext: DataContext): Boolean {

@@ -8,16 +8,16 @@ import org.jetbrains.annotations.PropertyKey
 import java.util.function.Supplier
 
 @NonNls
-private const val BUNDLE = "messages.AstroBundle"
+private const val BUNDLE = "messages.AstroDeprecatedMessagesBundle"
 
-object AstroBundle : DynamicBundle(BUNDLE) {
+internal object AstroDeprecatedMessagesBundle : DynamicBundle(BUNDLE) {
 
   @JvmStatic
   @Nls
   fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String =
-    if (containsKey(key)) getMessage(key, *params) else AstroDeprecatedMessagesBundle.message(key, *params)
+    getMessage(key, *params)
 
   @JvmStatic
   fun messagePointer(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): Supplier<@Nls String> =
-    if (containsKey(key)) getLazyMessage(key, *params) else AstroDeprecatedMessagesBundle.messagePointer(key, *params)
+    getLazyMessage(key, *params)
 }
