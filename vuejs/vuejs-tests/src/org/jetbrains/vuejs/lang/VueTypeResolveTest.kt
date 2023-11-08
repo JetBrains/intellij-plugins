@@ -316,6 +316,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
       "msg" to "string",
       "footerProps" to "{year?: number}",
       "footerProps.ye<caret>ar" to "number | undefined",
+      "pageTitleFromComponent" to "string | undefined",
       prefix = PREFIX_INTERPOLATION,
     )
   }
