@@ -15,6 +15,7 @@ import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider;
 import com.intellij.openapi.externalSystem.service.project.ProjectDataManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.SimpleJavaSdkType;
 import com.intellij.openapi.ui.Messages;
@@ -31,8 +32,6 @@ import org.jetbrains.idea.maven.importing.MavenRootModelAdapterLegacyImpl;
 import org.jetbrains.idea.maven.model.MavenId;
 import org.jetbrains.idea.maven.project.*;
 import org.jetbrains.idea.maven.server.MavenDistributionsCache;
-import org.jetbrains.idea.maven.utils.MavenProcessCanceledException;
-import org.jetbrains.idea.maven.utils.MavenProgressIndicator;
 import org.jetbrains.idea.maven.utils.MavenUtil;
 import org.jetbrains.jps.model.java.JavaSourceRootType;
 
@@ -55,7 +54,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
   private DataOutputStream out;
 
   private Process process;
-  private MavenProgressIndicator indicator;
+  private ProgressIndicator indicator;
   private final List<MavenProject> projects = new ArrayList<>();
   private final Map<Module, String> myModuleToConfigFilePath = new HashMap<>();
 
@@ -70,8 +69,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
   }
 
   @Override
-  public void perform(Project project, MavenEmbeddersManager embeddersManager, MavenConsole console, final MavenProgressIndicator indicator)
-    throws MavenProcessCanceledException {
+  public void perform(Project project, MavenEmbeddersManager embeddersManager, ProgressIndicator indicator) {
     final long start = System.currentTimeMillis();
     this.indicator = indicator;
 
@@ -159,8 +157,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
     myModuleToConfigFilePath.put(module, configFilePath);
   }
 
-  private void runGeneratorServer(MavenProjectsManager mavenProjectsManager, Project project)
-    throws IOException, ExecutionException, MavenProcessCanceledException {
+  private void runGeneratorServer(MavenProjectsManager mavenProjectsManager, Project project) throws IOException, ExecutionException {
     final SimpleJavaParameters params = new SimpleJavaParameters();
     params.setJdk(new SimpleJavaSdkType().createJdk("tmp", SystemProperties.getJavaHome()));
 

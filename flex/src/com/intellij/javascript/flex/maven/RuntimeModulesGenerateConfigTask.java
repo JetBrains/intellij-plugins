@@ -2,6 +2,7 @@
 package com.intellij.javascript.flex.maven;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.JDOMUtil;
@@ -12,8 +13,10 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.idea.maven.project.*;
-import org.jetbrains.idea.maven.utils.MavenProgressIndicator;
+import org.jetbrains.idea.maven.project.MavenEmbeddersManager;
+import org.jetbrains.idea.maven.project.MavenProject;
+import org.jetbrains.idea.maven.project.MavenProjectsProcessorBasicTask;
+import org.jetbrains.idea.maven.project.MavenProjectsTree;
 import org.jetbrains.idea.maven.utils.MavenUtil;
 
 import java.io.IOException;
@@ -69,8 +72,7 @@ public final class RuntimeModulesGenerateConfigTask extends MavenProjectsProcess
   @Override
   public void perform(final Project project,
                       final MavenEmbeddersManager embeddersManager,
-                      final MavenConsole console,
-                      final MavenProgressIndicator indicator) {
+                      final ProgressIndicator indicator) {
     final Element mainConfigRootElement = getClonedRootElementOfMainConfigFile(myMainConfigFilePath);
     if (mainConfigRootElement == null) return;
 

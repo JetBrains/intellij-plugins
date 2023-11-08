@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfiguration
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.options.ConfigurationException
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.runBlockingMaybeCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootManager
@@ -31,7 +32,6 @@ import org.jetbrains.idea.maven.project.MavenEmbeddersManager.EmbedderTask
 import org.jetbrains.idea.maven.server.MavenGoalExecutionRequest
 import org.jetbrains.idea.maven.utils.MavenLog
 import org.jetbrains.idea.maven.utils.MavenProcessCanceledException
-import org.jetbrains.idea.maven.utils.MavenProgressIndicator
 import org.jetbrains.idea.maven.utils.MavenUtil
 import java.io.File
 import java.io.IOException
@@ -48,8 +48,7 @@ class Flexmojos3GenerateConfigTask(private val myModule: Module,
   @Throws(MavenProcessCanceledException::class)
   override fun perform(project: Project,
                        embeddersManager: MavenEmbeddersManager,
-                       console: MavenConsole,
-                       indicator: MavenProgressIndicator) {
+                       indicator: ProgressIndicator) {
     if (myModule.isDisposed) return
 
     indicator.setText(FlexBundle.message("generating.flex.config.for", myMavenProject.displayName))
