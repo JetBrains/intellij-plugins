@@ -3,7 +3,10 @@ import SlotsProvider from "./SlotsProvider.vue";
 </script>
 
 <template>
-  <SlotsProvider>
+  <SlotsProvider v-slot:header="{pageTitle: pageTitleFromComponent}">
+    <div>
+      {{ pageTitleFromComponent }}
+    </div>
     <template #header="{pageTitle}">
       <div>{{ pageTitle }}</div>
     </template>

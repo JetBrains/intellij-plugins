@@ -23,29 +23,27 @@ const val SLOT_TAG_NAME: String = "slot"
 const val DEPRECATED_SLOT_ATTRIBUTE = "slot"
 
 fun getMatchingAvailableSlots(tag: XmlTag, name: String, newApi: Boolean): List<WebSymbol> =
-  processSlots(tag, newApi, WebSymbol::name) {
+  processSlots(tag, newApi) {
     runNameMatchQuery(WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_SLOTS, name)
   }
 
 fun getAvailableSlots(tag: XmlTag, expandPatterns: Boolean, newApi: Boolean): List<WebSymbol> =
-  processSlots(tag, newApi, WebSymbol::name) {
+  processSlots(tag, newApi) {
     runListSymbolsQuery(WebSymbol.HTML_SLOTS, expandPatterns)
   }
 
 fun getAvailableSlotsCompletions(tag: XmlTag, name: String, position: Int, newApi: Boolean): List<WebSymbolCodeCompletionItem> =
-  processSlots(tag, newApi, WebSymbolCodeCompletionItem::name) {
+  processSlots(tag, newApi) {
     runCodeCompletionQuery(WebSymbol.HTML_SLOTS, name, position)
   }
 
 private fun <T> processSlots(tag: XmlTag,
                              newApi: Boolean,
-                             nameProvider: (T) -> String,
                              process: WebSymbolElementDescriptor.() -> List<T>): List<T> =
   if (!newApi || tag.name == TEMPLATE_TAG_NAME)
     (tag.parentTag?.descriptor as? WebSymbolElementDescriptor)?.process() ?: emptyList()
   else
-    (tag.descriptor as? WebSymbolElementDescriptor)?.process()
-      ?.filter { nameProvider(it) == DEFAULT_SLOT_NAME } ?: emptyList()
+    (tag.descriptor as? WebSymbolElementDescriptor)?.process() ?: emptyList()
 
 
 fun getSlotTypeFromContext(context: PsiElement): JSType? =
