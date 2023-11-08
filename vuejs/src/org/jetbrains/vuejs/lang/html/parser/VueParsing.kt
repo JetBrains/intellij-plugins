@@ -180,11 +180,11 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
   private fun inScriptSetup(): Boolean =
     (peekTagInfo() as? VueHtmlTagInfo)?.hasScriptSetup == true
 
-  private class VueHtmlTagInfo(normalizedName: String,
-                               originalName: String,
-                               marker: PsiBuilder.Marker,
-                               var hasVPre: Boolean,
-                               var hasScriptSetup: Boolean = false)
+  private inner class VueHtmlTagInfo(normalizedName: String,
+                                     originalName: String,
+                                     marker: PsiBuilder.Marker,
+                                     var hasVPre: Boolean,
+                                     var hasScriptSetup: Boolean = false)
     : HtmlTagInfoImpl(normalizedName, originalName, marker)
 
   companion object {

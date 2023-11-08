@@ -31,7 +31,7 @@ class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSyntax, bu
         XmlTokenType.XML_START_TAG_START -> {
           xmlText = terminateText(xmlText)
           parseTag()
-          flushOpenItemsWhile { it is HtmlTagInfo }
+          flushIncompleteItemsWhile { it is HtmlTagInfo }
         }
         XmlTokenType.XML_PI_START -> {
           xmlText = terminateText(xmlText)
@@ -93,7 +93,7 @@ class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSyntax, bu
     return CUSTOM_CONTENT.contains(token())
   }
 
-  private val topLevelBlock: AngularBlock?
+  private val hasAngularBlockOnStack: Boolean
     get() {
       var result: AngularBlock? = null
       processStackItems {
@@ -103,7 +103,7 @@ class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSyntax, bu
         }
         else true
       }
-      return result
+      return result != null
     }
 
   override fun parseCustomTagContent(xmlText: Marker?): Marker? {
@@ -160,11 +160,12 @@ class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSyntax, bu
       }
       Angular2HtmlTokenTypes.BLOCK_END -> {
         result = terminateText(result)
-        if (topLevelBlock != null) {
+        if (hasAngularBlockOnStack) {
           advance()
-          flushOpenItemsWhile { it !is AngularBlock }
-          (popItemFromStack() as AngularBlock).done()
-        } else {
+          flushIncompleteItemsWhile { it !is AngularBlock }
+          completeTopItem()
+        }
+        else {
           builder.error(Angular2Bundle.message("angular.parse.template.unexpected-block-closing-rbrace"))
           advance()
         }
@@ -205,13 +206,6 @@ class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSyntax, bu
       builder.error(Angular2Bundle.message("angular.parse.template.missing-block-opening-lbrace"))
       startMarker.done(Angular2HtmlElementTypes.BLOCK)
     }
-  }
-
-  override fun autoCloseItem(item: HtmlParserStackItem, beforeMarker: Marker?) {
-    if (item is AngularBlock)
-      item.incomplete()
-    else
-      super.autoCloseItem(item, beforeMarker)
   }
 
   override fun parseCustomTopLevelContent(error: Marker?): Marker? {
@@ -449,28 +443,33 @@ class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSyntax, bu
     return result
   }
 
-  private class AngularHtmlTagInfo(normalizedName: String,
-                                   originalName: String,
-                                   marker: Marker,
-                                   var hasNgNonBindable: Boolean = false)
+  private inner class AngularHtmlTagInfo(normalizedName: String,
+                                         originalName: String,
+                                         marker: Marker,
+                                         var hasNgNonBindable: Boolean = false)
     : HtmlTagInfoImpl(normalizedName, originalName, marker)
 
   private class AngularBlock(private val startMarker: Marker, private val errorStartMarker: Marker, private val errorEndMarker: Marker)
     : HtmlParserStackItem {
 
-      fun done() {
-        errorStartMarker.drop()
-        errorEndMarker.drop()
-        startMarker.done(Angular2HtmlElementTypes.BLOCK)
-      }
-
-      fun incomplete() {
+    override fun done(builder: PsiBuilder,
+                      beforeMarker: Marker?,
+                      incomplete: Boolean) {
+      if (incomplete) {
         errorStartMarker.errorBefore(Angular2Bundle.message("angular.parse.template.missing-block-closing-rbrace"), errorEndMarker)
-        errorEndMarker.drop()
-        startMarker.done(Angular2HtmlElementTypes.BLOCK)
       }
-
+      else {
+        errorStartMarker.drop()
+      }
+      errorEndMarker.drop()
+      if (beforeMarker == null) {
+        startMarker.done(Angular2HtmlElementTypes.BLOCK)
+      } else {
+        startMarker.doneBefore(Angular2HtmlElementTypes.BLOCK, beforeMarker)
+      }
     }
+
+  }
 
   companion object {
     private val CUSTOM_CONTENT = TokenSet.create(Angular2HtmlTokenTypes.EXPANSION_FORM_START,
