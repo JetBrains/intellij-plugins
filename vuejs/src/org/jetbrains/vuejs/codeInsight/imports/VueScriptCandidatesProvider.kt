@@ -16,6 +16,7 @@ internal val SCRIPT_SETUP_API = setOf(
   WITH_DEFAULTS_FUN,
   DEFINE_MODEL_FUN,
   DEFINE_OPTIONS_FUN,
+  DEFINE_SLOTS_FUN,
 )
 
 class VueScriptCandidatesProvider(placeInfo: JSImportPlaceInfo) : JSImportCandidatesBase(placeInfo) {
