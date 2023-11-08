@@ -523,6 +523,24 @@ open class AstroLexerTest : LexerTestCase() {
     |{<div style="font-face: serif;"></div>}
   """.trimIndent())
 
+  // WEB-62543 WEB-59705
+  fun testPDoesntCloseUl() = doTest("""
+    |{
+    |  <ul>
+    |    <p>Foo</p>
+    |  </ul>
+    |}
+  """.trimIndent())
+
+  // WEB-62543 WEB-59705
+  fun testUlClosesP() = doTest("""
+    |{
+    |  <p>
+    |    <ul>Foo</ul>
+    |  </p>
+    |}
+  """.trimIndent())
+
   override fun createLexer(): Lexer = AstroLexer(fixture.project, false, false)
 
   override fun getDirPath() = "lang/lexer"
