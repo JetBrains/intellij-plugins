@@ -72,9 +72,8 @@ class ConnectPanel(private val toolWindow: ToolWindow) : JBSplitter(false, 0.4f,
     application.messageBus.connect(toolWindow.disposable)
       .subscribe(SERIAL_PORTS_TOPIC, object : SerialPortsListener {
         override fun portsStatusChanged() {
-          application.invokeLater {
-            ports.rescanProfiles()
-          }
+          application.invokeLater({ ports.rescanProfiles() },
+                                  { toolWindow.isDisposed })
         }
       })
   }
@@ -111,10 +110,12 @@ class ConnectPanel(private val toolWindow: ToolWindow) : JBSplitter(false, 0.4f,
     contentManager.addContent(content)
     val handler = object : SerialPortsListener {
       override fun portsStatusChanged() {
-        application.invokeLater {
-          val status = serialMonitor.getStatus()
-          content.icon = if (status == PortStatus.DISCONNECTED) AllIcons.Nodes.EmptyNode else status.icon
-        }
+        application.invokeLater(
+          {
+            val status = serialMonitor.getStatus()
+            content.icon = if (status == PortStatus.DISCONNECTED) AllIcons.Nodes.EmptyNode else status.icon
+          },
+          { toolWindow.isDisposed })
       }
     }
     application.messageBus.connect(content).subscribe<SerialPortsListener>(SERIAL_PORTS_TOPIC, handler)

@@ -175,7 +175,9 @@ class JeditermConsoleView(project: Project, connection: SerialPortService.Serial
         if (currentReader?.ready() == true) {
           return currentReader.read(buf, offset, length)
         }
-        lock.wait()
+        try {
+          lock.wait()
+        } catch (_: InterruptedException){}
       }
     }
   }

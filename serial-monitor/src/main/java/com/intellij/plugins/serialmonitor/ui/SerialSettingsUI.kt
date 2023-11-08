@@ -61,10 +61,13 @@ fun ConnectableList.createNewProfile(oldProfileName: String?, newPortName: Strin
     newName = "$nameBase ($i)"
   }
   val validator = object : InputValidatorEx {
-    override fun checkInput(inputString: @NlsSafe String): Boolean = !profiles.containsKey(inputString)
+    override fun checkInput(inputString: @NlsSafe String): Boolean = inputString.isNotBlank() && !profiles.containsKey(inputString)
     override fun canClose(inputString: @NlsSafe String): Boolean = checkInput(inputString)
-    override fun getErrorText(inputString: @NonNls String): @DetailedDescription String? = if (checkInput(inputString)) null
-    else message("text.profile.already.exists")
+    override fun getErrorText(inputString: @NonNls String): @DetailedDescription String? {
+      if(inputString.isBlank()) return message("text.enter.unique.profile.name")
+      if (checkInput(inputString)) return null
+      return message("text.profile.already.exists")
+    }
   }
   val finalName = Messages.showInputDialog(this, message("dialog.message.name"), message("dialog.title.new.profile"),
                                            null, newName, validator)
@@ -203,7 +206,7 @@ fun profileSettings(connectableList: ConnectableList, disposable: Disposable): D
           DialogValidation {
             val text = it.editor.item?.toString()
             return@DialogValidation when {
-              text.isNullOrBlank() -> ValidationInfoBuilder(it).error(message("dialog.message.port.profilename"))
+              text.isNullOrBlank() -> ValidationInfoBuilder(it).error(message("dialog.message.port.name"))
               !portNames.contains(text) -> ValidationInfoBuilder(it).warning(message("dialog.message.port.does.not.exists"))
               else -> null
             }
