@@ -94,7 +94,7 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
             registerProblem(ProblemType.RECURSIVE_IMPORT_EXPORT, Angular2Bundle.htmlMessage(
               "angular.inspection.cyclic-module-dependency.message.cycle",
               cycleTrack.joinToString(
-                " " + Angular2Bundle.htmlMessage(
+                " " + Angular2Bundle.message(
                   "angular.inspection.cyclic-module-dependency.message.separator") + " ") { it.htmlClassName }
             ))
             return
