@@ -67,7 +67,7 @@ class Flexmojos3GenerateConfigTask(private val myModule: Module,
         val result = runBlockingMaybeCancellable {
           withBackgroundProgress(project, MavenProjectBundle.message("maven.updating.folders"), true) {
             withRawProgressReporter {
-              embedder.executeGoal(listOf(request), generateConfigGoal, rawProgressReporter!!, null, console)[0]
+              embedder.executeGoal(listOf(request), generateConfigGoal, rawProgressReporter!!, null)[0]
             }
           }
         }
