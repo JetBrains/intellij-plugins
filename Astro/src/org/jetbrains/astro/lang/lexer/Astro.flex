@@ -342,7 +342,7 @@ import static com.intellij.util.ArrayUtil.*;
       var stackSize = elementNameStack.size();
       for (int i = 0; i < tagDepth && i < stackSize; i++) {
         String parentName = elementNameStack.get(stackSize - 1 - i);
-        ThreeState result = HtmlUtil.canOpeningTagAutoClose(childName, parentName, true);
+        ThreeState result = HtmlUtil.canOpeningTagAutoClose(parentName, childName, true);
         if (result != ThreeState.UNSURE) {
           return result.toBoolean();
         }
