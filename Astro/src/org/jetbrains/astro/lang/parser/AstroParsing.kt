@@ -88,7 +88,7 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
         advance()
       }
     }
-    flushOpenItemsWhile { it is HtmlTagInfo }
+    flushIncompleteItemsWhile { it is HtmlTagInfo }
     error?.error(XmlPsiBundle.message("xml.parsing.top.level.element.is.not.completed"))
     embeddedContent.done(AstroStubElementTypes.CONTENT_ROOT)
   }
@@ -223,14 +223,6 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
     }
   }
 
-  override fun doneTag() {
-    if (peekStackItem() is AstroExpressionItem) {
-      throw IllegalStateException(
-        "Expression marker should not be done within the tag parsing code - it will cause unbalanced tree issues.")
-    }
-    super.doneTag()
-  }
-
   override fun getHtmlTagElementType(info: HtmlTagInfo, tagLevel: Int): IElementType {
     // AstroTag:script is considered to have language Astro and not JS causing issues with formatting unlike HtmlTag:script
     return if (info.normalizedName == "script") XmlElementType.HTML_TAG
@@ -263,26 +255,22 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
   }
 
   private fun parseExpressionWithTagsHandled(parse: () -> Unit) {
-    val exprStart = mark()
-    pushItemToStack(AstroExpressionItem(exprStart))
+    pushItemToStack(AstroExpressionItem(mark()))
     parse()
-    // Since we're jumping in and out of HTML parser loop, expression parsing should be properly balanced.
-    // We can expect that our `exprStart` marker has not been closed yet.
-    while (hasTags()) {
-      val tagOnStack = peekTagInfo()
-      if (isEndTagRequired(tagOnStack)) {
-        error(XmlPsiBundle.message("xml.parsing.named.element.is.not.closed", tagOnStack.originalName))
-      }
-      doneTag()
-    }
-    if (stackSize() == 0 || peekStackItem().let { it !is AstroExpressionItem || it.startMarker != exprStart }) {
-      throw IllegalStateException("Expression marker has already been closed. The tree is unbalanced.")
-    }
-    exprStart.done(JSStubElementTypes.EMBEDDED_EXPRESSION)
-    popItemFromStack()
+    flushIncompleteItemsWhile { it !is AstroExpressionItem }
+    completeTopItem()
   }
 
-  private class AstroExpressionItem(val startMarker: Marker) : HtmlParserStackItem {
+  private class AstroExpressionItem(private val expressionStart: Marker) : HtmlParserStackItem {
+    override fun done(builder: PsiBuilder,
+                      beforeMarker: Marker?,
+                      incomplete: Boolean) {
+      if (beforeMarker == null) {
+        expressionStart.done(JSStubElementTypes.EMBEDDED_EXPRESSION)
+      } else {
+        expressionStart.doneBefore(JSStubElementTypes.EMBEDDED_EXPRESSION, beforeMarker)
+      }
+    }
   }
 
   inner class AstroJsxParser internal constructor() : TypeScriptParser(AstroLanguage.INSTANCE, builder) {
