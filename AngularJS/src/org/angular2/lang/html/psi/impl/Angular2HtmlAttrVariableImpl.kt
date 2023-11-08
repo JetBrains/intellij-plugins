@@ -43,10 +43,6 @@ class Angular2HtmlAttrVariableImpl : JSVariableImpl<JSVariableStub<JSVariable>, 
     return false
   }
 
-  override fun isExported(): Boolean {
-    return true
-  }
-
   override fun isConst(): Boolean {
     return true
   }
