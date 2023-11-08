@@ -10,10 +10,7 @@ import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil
 import com.intellij.lang.javascript.refactoring.FormatFixer
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil
-import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiWhiteSpace
-import com.intellij.psi.SmartPointerManager
+import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.applyIf
@@ -21,21 +18,26 @@ import com.intellij.util.asSafely
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2InjectionUtils
 import org.angular2.entities.Angular2ImportsOwner
-import org.angular2.entities.source.Angular2SourceDirectiveProperty
 
 object Angular2FixesPsiUtil {
 
-  fun getOrCreateInputObjectLiteral(input: Angular2SourceDirectiveProperty): JSObjectLiteralExpression? =
-    when (val declarationSource = input.declarationSource) {
+  fun <T : PsiElement> T.remapToCopyIfNeeded(targetFile: PsiFile): T =
+    if (targetFile.originalFile == this.containingFile)
+      PsiTreeUtil.findSameElementInCopy(this, targetFile)
+    else
+      this
+
+  fun getOrCreateInputObjectLiteral(inputDeclarationSource: PsiElement?): JSObjectLiteralExpression? =
+    when (inputDeclarationSource) {
       is JSLiteralExpression -> {
-        when (val parent = declarationSource.parent) {
-          is JSArrayLiteralExpression, is JSArgumentList -> replaceInputMappingWithObjectLiteral(declarationSource)
+        when (val parent = inputDeclarationSource.parent) {
+          is JSArrayLiteralExpression, is JSArgumentList -> replaceInputMappingWithObjectLiteral(inputDeclarationSource)
           is JSProperty -> parent.parent as? JSObjectLiteralExpression
           else -> null
         }
       }
-      is ES6Decorator -> getOrCreateDecoratorInitializer(declarationSource)
-      is JSObjectLiteralExpression -> declarationSource
+      is ES6Decorator -> getOrCreateDecoratorInitializer(inputDeclarationSource)
+      is JSObjectLiteralExpression -> inputDeclarationSource
       else -> null
     }
 
