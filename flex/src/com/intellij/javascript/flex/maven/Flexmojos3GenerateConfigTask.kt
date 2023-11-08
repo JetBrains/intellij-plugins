@@ -90,7 +90,6 @@ class Flexmojos3GenerateConfigTask(private val myModule: Module,
       }
       catch (e: Exception) {
         myFlexConfigInformer.showFlexConfigWarningIfNeeded(project)
-        console.printException(e)
         MavenLog.LOG.warn(e)
       }
       finally {
