@@ -8561,15 +8561,14 @@ public class DartParser implements PsiParser, LightPsiParser {
   public static boolean typeParameters(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "typeParameters")) return false;
     if (!nextTokenIs(b, LT)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, TYPE_PARAMETERS, null);
+    boolean r;
+    Marker m = enter_section_(b);
     r = consumeToken(b, LT);
-    p = r; // pin = 1
-    r = r && report_error_(b, typeParameters_1(b, l + 1));
-    r = p && report_error_(b, typeParameters_2(b, l + 1)) && r;
-    r = p && consumeToken(b, GT) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
+    r = r && typeParameters_1(b, l + 1);
+    r = r && typeParameters_2(b, l + 1);
+    r = r && consumeToken(b, GT);
+    exit_section_(b, m, TYPE_PARAMETERS, r);
+    return r;
   }
 
   // typeParameter?
