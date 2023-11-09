@@ -302,7 +302,7 @@ setterDeclaration ::= setterDeclarationWithReturnType | setterDeclarationWithout
 private setterDeclarationWithReturnType    ::= metadata* ('external' | 'static')* returnType 'set' componentName formalParameterList (';' | functionBodyOrNative) {pin=5}
 private setterDeclarationWithoutReturnType ::= metadata* ('external' | 'static')*            'set' componentName formalParameterList (';' | functionBodyOrNative) {pin=4}
 
-typeParameters ::= '<' typeParameter? (',' typeParameter)* '>' {pin=1}
+typeParameters ::= '<' typeParameter? (',' typeParameter)* '>'
 typeParameter ::= metadata* componentName ('extends' type)?
 {recoverWhile="type_parameter_recover" mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 
