@@ -169,7 +169,7 @@
   <extensions defaultExtensionNs="com.intellij">
     <!-- Language -->
     <fileType name="prototext" language="prototext" implementationClass="com.intellij.protobuf.lang.PbTextFileType"
-              extensions="pb;textproto"/>
+              extensions="pb;textproto;txtpb"/>
 
     <lang.parserDefinition language="prototext" implementationClass="com.intellij.protobuf.lang.PbTextParserDefinition"/>
     <filetype.stubBuilder filetype="prototext" implementationClass="com.intellij.protobuf.lang.stub.PbTextFileStubBuilder"/>
