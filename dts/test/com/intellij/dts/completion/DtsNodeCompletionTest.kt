@@ -16,7 +16,7 @@ class DtsNodeCompletionTest : DtsCompletionTest() {
     }
 
     fun `test new node (bundled nodes)`() = bundledNodes { variations, lookupString ->
-        doTest(variations, lookupString, "<caret>")
+        doTest(variations, lookupString, "<caret> // comment")
     }
 
     fun `test edit empty node (bundled nodes)`() = bundledNodes { variations, lookupString ->
@@ -41,7 +41,7 @@ class DtsNodeCompletionTest : DtsCompletionTest() {
                 lookupString,
                 input = input.replace("<caret>", "$variation<caret>"),
                 after = input.replace("<caret>", "$lookupString<caret>"),
-                surrounding = "/ { <embed> };",
+                surrounding = "/ {\n<embed>\n};",
                 useNodeContentVariations = true,
             )
         }

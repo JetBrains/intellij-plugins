@@ -1,5 +1,6 @@
 package com.intellij.dts.zephyr.binding
 
+import com.intellij.dts.lang.DtsPropertyType
 import com.intellij.openapi.util.NlsSafe
 
 data class DtsZephyrBinding(
@@ -67,14 +68,14 @@ data class DtsZephyrBinding(
 }
 
 data class DtsZephyrPropertyBinding(
-  val name: @NlsSafe String,
-  val description: @NlsSafe String?,
-  val type: DtsZephyrPropertyType,
-  val required: Boolean,
+    val name: @NlsSafe String,
+    val description: @NlsSafe String?,
+    val type: DtsPropertyType,
+    val required: Boolean,
 ) {
     class Builder(private val name: String) {
         private var description: String? = null
-        private var type: DtsZephyrPropertyType? = null
+        private var type: DtsPropertyType? = null
         private var required: Boolean? = null
 
         fun setDescription(value: String): Builder {
@@ -83,7 +84,7 @@ data class DtsZephyrPropertyBinding(
         }
 
         fun setType(value: String): Builder {
-            if (type == null) type = DtsZephyrPropertyType.fromZephyr(value)
+            if (type == null) type = DtsPropertyType.fromZephyr(value)
             return this
         }
 
@@ -95,7 +96,7 @@ data class DtsZephyrPropertyBinding(
         fun build(): DtsZephyrPropertyBinding = DtsZephyrPropertyBinding(
           name = name,
           description = description,
-          type = type ?: DtsZephyrPropertyType.Compound,
+          type = type ?: DtsPropertyType.Compound,
           required = required ?: false,
         )
     }

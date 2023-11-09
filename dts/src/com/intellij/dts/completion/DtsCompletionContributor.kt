@@ -10,8 +10,8 @@ import com.intellij.dts.DtsIcons
 import com.intellij.dts.documentation.DtsBundledBindings
 import com.intellij.dts.lang.symbols.DtsDocumentationSymbol
 import com.intellij.dts.documentation.DtsNodeBindingDocumentationTarget
-import com.intellij.dts.documentation.DtsPropertyBindingDocumentationTarget
 import com.intellij.dts.lang.psi.*
+import com.intellij.dts.lang.symbols.DtsPropertySymbol
 import com.intellij.dts.util.DtsTreeUtil
 import com.intellij.dts.zephyr.binding.DtsZephyrBindingProvider
 import com.intellij.psi.PsiErrorElement
@@ -22,11 +22,10 @@ class DtsCompletionContributor : CompletionContributor() {
         val binding = DtsZephyrBindingProvider.bindingFor(node) ?: return
 
         for (property in binding.properties.values) {
-            val symbol = DtsDocumentationSymbol.from(DtsPropertyBindingDocumentationTarget(node.project, property))
-
-            val lookup = LookupElementBuilder.create(symbol, property.name)
+            val lookup = LookupElementBuilder.create(DtsPropertySymbol(property).createPointer(), property.name)
                 .withTypeText(property.type.typeName)
                 .withIcon(DtsIcons.Property)
+                .withInsertHandler(DtsInsertHandler.PROPERTY)
 
             result.addElement(PrioritizedLookupElement.withPriority(lookup, DtsLookupPriority.PROPERTY))
         }
@@ -48,6 +47,7 @@ class DtsCompletionContributor : CompletionContributor() {
                 val lookup = LookupElementBuilder.create(symbol, binding.nodeName)
                     .withTypeText(DtsBundle.message("documentation.node_type"))
                     .withIcon(DtsIcons.Node)
+                    .withInsertHandler(DtsInsertHandler.SUB_NODE)
 
                 result.addElement(PrioritizedLookupElement.withPriority(lookup, DtsLookupPriority.SUB_NODE))
             }

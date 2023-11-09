@@ -1,4 +1,4 @@
-package com.intellij.dts.zephyr.binding
+package com.intellij.dts.lang
 
 import com.intellij.dts.lang.psi.DtsArray
 import com.intellij.dts.lang.psi.DtsProperty
@@ -41,20 +41,19 @@ private fun type(vararg types: KClass<*>): Predicate<DtsValue> {
     return Predicate { value -> types.any { type -> type.isInstance(value) } }
 }
 
-fun DtsProperty.dtsAssignableTo(type: DtsZephyrPropertyType): Boolean {
+fun DtsProperty.dtsAssignableTo(type: DtsPropertyType): Boolean {
     val predicate = when (type) {
-        DtsZephyrPropertyType.String -> scalar(type(DtsValue.String::class))
-        DtsZephyrPropertyType.Int -> scalar(cellArray(scalar(type(DtsValue.Int::class, DtsValue.Expression::class))))
-        DtsZephyrPropertyType.PHandle -> scalar(cellArray(scalar(type(DtsValue.PHandle::class))))
-        DtsZephyrPropertyType.Boolean -> Predicate { values -> values.isEmpty() }
-        DtsZephyrPropertyType.Ints -> list(cellArray(list(type(DtsValue.Int::class, DtsValue.Expression::class))))
-        DtsZephyrPropertyType.Bytes -> scalar(byteArray(list(type(DtsValue.Byte::class))))
-        DtsZephyrPropertyType.PHandles -> list(cellArray(list(type(DtsValue.PHandle::class))))
-        DtsZephyrPropertyType.StringList -> notEmptyList(type(DtsValue.String::class))
-        DtsZephyrPropertyType.PHandleList -> list(
-          cellArray(list(type(DtsValue.PHandle::class, DtsValue.Int::class, DtsValue.Expression::class))))
-        DtsZephyrPropertyType.Path -> scalar(type(DtsValue.String::class, DtsValue.PHandle::class))
-        DtsZephyrPropertyType.Compound -> Predicate { true }
+        DtsPropertyType.String -> scalar(type(DtsValue.String::class))
+        DtsPropertyType.Int -> scalar(cellArray(scalar(type(DtsValue.Int::class, DtsValue.Expression::class))))
+        DtsPropertyType.PHandle -> scalar(cellArray(scalar(type(DtsValue.PHandle::class))))
+        DtsPropertyType.Boolean -> Predicate { values -> values.isEmpty() }
+        DtsPropertyType.Ints -> list(cellArray(list(type(DtsValue.Int::class, DtsValue.Expression::class))))
+        DtsPropertyType.Bytes -> scalar(byteArray(list(type(DtsValue.Byte::class))))
+        DtsPropertyType.PHandles -> list(cellArray(list(type(DtsValue.PHandle::class))))
+        DtsPropertyType.StringList -> notEmptyList(type(DtsValue.String::class))
+        DtsPropertyType.PHandleList -> list(cellArray(list(type(DtsValue.PHandle::class, DtsValue.Int::class, DtsValue.Expression::class))))
+        DtsPropertyType.Path -> scalar(type(DtsValue.String::class, DtsValue.PHandle::class))
+        DtsPropertyType.Compound -> Predicate { true }
     }
 
     return predicate.test(dtsValues)

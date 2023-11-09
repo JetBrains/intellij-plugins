@@ -4,7 +4,7 @@ class DtsPropertyCompletionTest : DtsCompletionTest() {
     fun `test new property (compatible)`() = doTest(
         variations = listOf("c", "pati"),
         lookupString = "compatible",
-        input = "<caret>",
+        input = "<caret> // comment",
     )
 
     fun `test edit empty property (#size-cells)`() = doTest(
@@ -35,7 +35,7 @@ class DtsPropertyCompletionTest : DtsCompletionTest() {
                 lookupString,
                 input = input.replace("<caret>", "$variation<caret>"),
                 after = input.replace("<caret>", "$lookupString<caret>"),
-                surrounding = "/ { <embed> };",
+                surrounding = "/ {\n<embed>\n};",
                 useNodeContentVariations = true,
             )
         }

@@ -2,10 +2,10 @@ package com.intellij.dts.inspections
 
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.dts.lang.dtsAssignableTo
 import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.psi.dtsVisitor
 import com.intellij.dts.zephyr.binding.DtsZephyrBindingProvider
-import com.intellij.dts.zephyr.binding.dtsAssignableTo
 import com.intellij.psi.PsiElementVisitor
 
 class DtsPropertyTypeInspection : LocalInspectionTool() {

@@ -1,8 +1,8 @@
-package com.intellij.dts.zephyr.binding
+package com.intellij.dts.lang
 
 import com.intellij.openapi.util.NlsSafe
 
-enum class DtsZephyrPropertyType(val typeName: @NlsSafe kotlin.String) {
+enum class DtsPropertyType(val typeName: @NlsSafe kotlin.String) {
     /**
      * Exactly one string.
      * - Zephyr type: string
@@ -82,7 +82,7 @@ enum class DtsZephyrPropertyType(val typeName: @NlsSafe kotlin.String) {
     Compound("compound");
 
     companion object {
-        fun fromZephyr(type: kotlin.String?): DtsZephyrPropertyType {
+        fun fromZephyr(type: kotlin.String?): DtsPropertyType {
             for (entry in entries) {
                 if (entry.typeName == type) return entry
             }
