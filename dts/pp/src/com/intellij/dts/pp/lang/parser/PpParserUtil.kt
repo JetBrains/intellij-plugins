@@ -82,7 +82,7 @@ object PpParserUtil {
                 current == exitMarker -> break
 
                 // scopes should not be adjusted, abort
-                current.tokenType in builder.ppScopeSet -> return emptyList()
+                current.tokenType in builder.ppScopeSet -> return result
 
                 // maxEndIndex set when a preprocessor statement was found and if
                 // the endIndex is greater this is a child of the preprocessor

@@ -63,6 +63,8 @@ abstract class DtsiParsingTest(dataPath: String) : DtsParsingTestBase(dataPath, 
         fun testSubNodeLineBreak() = doTest()
 
         fun testLift() = doTest()
+
+        fun testLiftWithContent() = doTest()
     }
 
     class Reject : DtsiParsingTest("reject") {
