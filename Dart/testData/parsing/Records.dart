@@ -85,3 +85,23 @@ final x = <(int, String)>[];
 @metadata/**/(a, b) function() {} // record
 @metadata () function() => ""; // record
 @metadata() function() => ""; // args
+
+class BugReport {
+  Option<(String, String)> _maybeTupple;
+
+  set maybeTuple(Option<(String, String)> value) {
+    _maybeTupple = value;
+  }
+
+  Option<String> get first => _maybeTupple.map((x) {
+        var (first, _) = x;
+        return first;
+      });
+
+  Option<String> get second => _maybeTupple.map((x) {
+        var (_, second) = x;
+        return second;
+      });
+
+  BugReport() : _maybeTupple = Option.none();
+}
