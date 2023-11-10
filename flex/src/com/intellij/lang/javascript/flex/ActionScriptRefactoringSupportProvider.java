@@ -4,6 +4,7 @@ import com.intellij.javascript.flex.refactoring.extractSuper.FlexExtractInterfac
 import com.intellij.javascript.flex.refactoring.extractSuper.FlexExtractSuperClassDialog;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.refactoring.JavascriptRefactoringSupportProvider;
+import com.intellij.lang.javascript.refactoring.extractMethod.ActionScriptExtractFunctionHandler;
 import com.intellij.lang.javascript.refactoring.extractSuper.JSExtractInterfaceHandler;
 import com.intellij.lang.javascript.refactoring.extractSuper.JSExtractSuperClassHandler;
 import com.intellij.lang.javascript.refactoring.introduceConstant.FlexIntroduceConstantHandler;
@@ -48,6 +49,11 @@ public class ActionScriptRefactoringSupportProvider extends JavascriptRefactorin
   @Override
   public @Nullable RefactoringActionHandler getIntroduceVariableHandler() {
     return new ActionScriptIntroduceVariableHandler();
+  }
+
+  @Override
+  public @Nullable RefactoringActionHandler getExtractMethodHandler() {
+    return new ActionScriptExtractFunctionHandler();
   }
 
   @Override
