@@ -5,6 +5,7 @@ import com.intellij.execution.ExecutionTargetManager
 import com.intellij.execution.Platform
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.configurations.PathEnvironmentVariableUtil
+import com.intellij.execution.configurations.PtyCommandLine
 import com.intellij.ide.impl.isTrusted
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
@@ -21,6 +22,7 @@ private const val WIN_HOME_ENV_VAR_NAME = "USERPROFILE"
 const val ENV_PATH = "PATH"
 
 class PlatfromioCliBuilder(
+  usePty:Boolean,
   private val project: Project?,
   private var useEnvName: Boolean = false,
   private var verboseAllowed: Boolean = true
@@ -31,7 +33,7 @@ class PlatfromioCliBuilder(
     if (project?.isTrusted() == false) {
       throw ExecutionException(ClionEmbeddedPlatformioBundle.message("project.not.trusted"))
     }
-    commandLine = GeneralCommandLine()
+    commandLine = if(usePty) PtyCommandLine() else GeneralCommandLine()
   }
 
   fun withParams(vararg params: String): PlatfromioCliBuilder {
@@ -44,6 +46,7 @@ class PlatfromioCliBuilder(
     return this
   }
 
+  @Suppress("unused")
   fun withEnvName(appendKeys: Boolean = true): PlatfromioCliBuilder {
     useEnvName = appendKeys
     return this
@@ -73,7 +76,7 @@ class PlatfromioCliBuilder(
     val pioBinFolder = PlatformioConfigurable.pioBinFolder()
     val path = commandLine.effectiveEnvironment.getOrDefault(ENV_PATH, "")
     if (PathEnvironmentVariableUtil.getPathDirs(path).none { pioBinFolder == Path.of(it) }) {
-      commandLine.withEnvironment(ENV_PATH, path + Platform.current().pathSeparator + pioBinFolder?.toAbsolutePath())
+      commandLine.withEnvironment(ENV_PATH, path + Platform.current().pathSeparator + pioBinFolder.toAbsolutePath())
     }
     commandLine.withWorkDirectory(project?.basePath ?: FileUtil.getTempDirectory())
     return commandLine

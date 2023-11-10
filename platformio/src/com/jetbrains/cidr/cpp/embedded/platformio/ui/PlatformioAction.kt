@@ -11,7 +11,7 @@ import icons.ClionEmbeddedPlatformioIcons
 import org.jetbrains.annotations.Nls
 import javax.swing.Icon
 
-abstract class PlatformioAction(text: () -> @Nls String?,
+abstract class PlatformioAction(text: () -> @Nls String,
                                 toolTip: () -> @Nls String?,
                                 icon: Icon? = ClionEmbeddedPlatformioIcons.Platformio)
   : PlatformioActionBase(text, toolTip, icon) {

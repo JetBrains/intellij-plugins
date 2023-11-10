@@ -88,7 +88,7 @@ class PlatformioHomeDialog(private val project: Project?, parentComponent: JComp
   override fun beforeShowCallback() {
     super.beforeShowCallback()
     ApplicationManager.getApplication().executeOnPooledThread {
-      val commandLine = PlatfromioCliBuilder(null)
+      val commandLine = PlatfromioCliBuilder(false, null)
         .withRedirectErrorStream(true)
         .withParams("home", "--port", portNumber.toString(), "--no-open").build()
       try {

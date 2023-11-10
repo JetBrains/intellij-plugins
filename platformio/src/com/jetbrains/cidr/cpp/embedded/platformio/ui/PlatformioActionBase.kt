@@ -1,9 +1,6 @@
 package com.jetbrains.cidr.cpp.embedded.platformio.ui
 
-import com.intellij.execution.RunContentExecutor
-import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.BaseOSProcessHandler
-import com.intellij.execution.process.OSProcessHandler
 import com.intellij.execution.ui.RunContentManager
 import com.intellij.icons.AllIcons
 import com.intellij.ide.BrowserUtil
@@ -12,35 +9,29 @@ import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.components.service
 import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsContexts.TabTitle
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.ui.LayeredIcon
 import com.intellij.util.IconUtil
 import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurable
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
-import com.jetbrains.cidr.cpp.embedded.platformio.project.LOG
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatfromioCliBuilder
-import com.jetbrains.cidr.cpp.embedded.platformio.refreshProject
-import com.jetbrains.cidr.execution.CidrPathConsoleFilter
 import icons.ClionEmbeddedPlatformioIcons
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
-import java.nio.file.Path
 import javax.swing.Icon
 import javax.swing.SwingConstants
 
-private const val TIMEOUT_MS = 30000L
 private val NOTIFICATION_GROUP = NotificationGroupManager.getInstance().getNotificationGroup("PlatformIO plugin")
 
-abstract class PlatformioActionBase(private val text: @NlsSafe () -> String?,
+abstract class PlatformioActionBase(private  val text:  () -> @TabTitle String,
                                     val toolTip: @NlsSafe () -> String?,
-                                    icon: Icon?) : DumbAwareAction(text, icon) {
+                                    icon: Icon?) : DumbAwareAction(text, toolTip, icon) {
 
   protected fun actionPerformed(e: AnActionEvent,
                                 reloadProject: Boolean,
@@ -49,7 +40,7 @@ abstract class PlatformioActionBase(private val text: @NlsSafe () -> String?,
                                 vararg arguments: String) {
     val project = e.project
     if (project != null) {
-      val commandLine = PlatfromioCliBuilder(project, appendEnvKey, verboseAllowed).withParams(*arguments).build()
+      val commandLine = PlatfromioCliBuilder(true, project, appendEnvKey, verboseAllowed).withParams(*arguments).build()
       val runContentManager = RunContentManager.getInstance(project)
       val alreadyRunningDescriptor = runContentManager.allDescriptors.firstOrNull {
         val processHandler = it.processHandler as? BaseOSProcessHandler
@@ -57,42 +48,12 @@ abstract class PlatformioActionBase(private val text: @NlsSafe () -> String?,
       }
       if (alreadyRunningDescriptor == null) {
         val service = project.service<PlatformioService>()
-        doRun(service, commandLine, reloadProject)
+        doRun(service, @Suppress("HardCodedStringLiteral") text.invoke(), commandLine, reloadProject)
       }
       else {
         runContentManager.getToolWindowByDescriptor(alreadyRunningDescriptor)?.activate(null)
         runContentManager.selectRunContent(alreadyRunningDescriptor)
       }
-    }
-  }
-
-  private fun doRun(service: PlatformioService,
-                    commandLine: GeneralCommandLine,
-                    reloadProject: Boolean) {
-    try {
-      val processHandler = OSProcessHandler(commandLine)
-      RunContentExecutor(service.project, processHandler)
-        .withActivateToolWindow(true)
-        .withFilter(CidrPathConsoleFilter(service.project, null, service.project.basePath?.let(Path::of)))
-        .withFocusToolWindow(true)
-        .withTitle(@Suppress("HardCodedStringLiteral") text.invoke())
-        .withStop({ processHandler.destroyProcess() }, { with(processHandler) { !isProcessTerminated && !isProcessTerminating } })
-        .withAfterCompletion {
-          if (reloadProject) runInEdt { refreshProject(service.project, true) }
-        }
-        .withRerun {
-          ApplicationManager.getApplication().invokeLater {
-            processHandler.destroyProcess()
-            if (processHandler.waitFor(TIMEOUT_MS)) {
-              doRun(service, commandLine, reloadProject)
-            }
-          }
-        }
-        .run()
-    }
-    catch (e: Throwable) {
-      LOG.warn(e)
-      notifyPlatformioNotFound(service.project)
     }
   }
 
