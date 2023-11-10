@@ -278,7 +278,7 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
                      logStdout: Boolean = false): ProcessOutput {
     checkCancelled()
 
-    val commandLine = PlatfromioCliBuilder(project).withParams(parameters).withVerboseAllowed(false)
+    val commandLine = PlatfromioCliBuilder(false, project).withParams(parameters).withVerboseAllowed(false)
     val processHandler = CapturingAnsiEscapesAwareProcessHandler(commandLine.build())
     processHandlerToKill = processHandler
 

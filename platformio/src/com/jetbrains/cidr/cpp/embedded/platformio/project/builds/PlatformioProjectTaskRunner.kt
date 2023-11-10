@@ -83,7 +83,7 @@ class PlatformioTaskRunner : CidrTaskRunner {
     }
 
     try {
-      val compilerCommandLine = PlatfromioCliBuilder(project, true).withParams("run")
+      val compilerCommandLine = PlatfromioCliBuilder(false, project, true).withParams("run")
 
       @Nls val title: String
       when (task) {

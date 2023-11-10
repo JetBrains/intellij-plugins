@@ -1,10 +1,12 @@
 package com.jetbrains.cidr.cpp.embedded.platformio.project
 
+import com.google.gson.JsonParseException
 import com.intellij.execution.process.CapturingProcessHandler
 import com.intellij.execution.process.CapturingProcessRunner
 import com.intellij.icons.AllIcons
 import com.intellij.ide.util.projectWizard.AbstractNewProjectStep
 import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Ref
 import com.intellij.platform.DirectoryProjectGenerator
 import com.intellij.ui.ColoredTreeCellRenderer
@@ -28,6 +30,8 @@ import javax.swing.tree.DefaultTreeModel
 import javax.swing.tree.TreePath
 
 private val EMPTY_TREE_MODEL = DefaultTreeModel(DeviceTreeNode(null, DeviceTreeNode.TYPE.ROOT, "", SourceTemplate.EMPTY_BOARD_INFO))
+
+private val LOGGER = Logger.getInstance(PlatformioProjectSettingsStep::class.java)
 
 class PlatformioProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<Ref<BoardInfo?>>,
                                     callback: AbstractNewProjectStep.AbstractCallback<Ref<BoardInfo?>>) :
@@ -94,7 +98,7 @@ class PlatformioProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<
               val outputFuture =
                 application.executeOnPooledThread(
                   Callable {
-                    val commandLine = PlatfromioCliBuilder(null)
+                    val commandLine = PlatfromioCliBuilder(false, null)
                       .withParams("boards", "--json-output")
                       .withRedirectErrorStream(true).build()
                     CapturingProcessRunner(CapturingProcessHandler(commandLine)).runProcess(60000)
@@ -103,7 +107,13 @@ class PlatformioProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<
                 val output = outputFuture.get()
                 val newModel: DefaultTreeModel
                 if (output.isExitCodeSet && output.exitCode == 0) {
-                  newModel = DefaultTreeModel(parse(output.stdout))
+                  val pioOutText = output.stdout
+                  try {
+                    newModel = DefaultTreeModel(parse(pioOutText))
+                  } catch (e: JsonParseException) {
+                    LOGGER.warn("Error parsing platformio output: \n\r $pioOutText", e)
+                    throw e
+                  }
                 }
                 else {
                   newModel = EMPTY_TREE_MODEL

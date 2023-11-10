@@ -102,7 +102,7 @@ public class PlatformioLauncher extends CLionLauncher {
         public @NotNull
         GeneralCommandLine createDriverCommandLine(@NotNull DebuggerDriver driver, @NotNull ArchitectureType architectureType)
           throws ExecutionException {
-          return new PlatfromioCliBuilder(getProject(), true, true)
+          return new PlatfromioCliBuilder(false, getProject(), true, true)
             .withParams("debug", "--interface=gdb", "--interpreter=mi2", "-x", ".pioinit", "--iex", "set mi-async on")
             .withGdbHomeCompatibility()
             .withRedirectErrorStream(true)
