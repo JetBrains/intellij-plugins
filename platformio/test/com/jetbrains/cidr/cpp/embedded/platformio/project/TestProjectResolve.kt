@@ -43,6 +43,7 @@ class TestProjectResolve : LightPlatformTestCase() {
   private val expectedSourceFiles = mapOf(
     "main.cpp" to CLanguageKind.CPP,
     "nested.c" to CLanguageKind.C,
+    "nested_nested.c" to CLanguageKind.C,
     "forced_included.cpp" to CLanguageKind.CPP,
     "nothingA.cpp" to CLanguageKind.CPP,
     "nothingB.cpp" to CLanguageKind.CPP,
