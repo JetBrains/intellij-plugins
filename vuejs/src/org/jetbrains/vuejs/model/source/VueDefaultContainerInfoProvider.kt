@@ -38,7 +38,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     override val methods: List<VueMethod> get() = get(METHODS)
     override val props: List<VueInputProperty> get() = get(PROPS)
     override val emits: List<VueEmitCall> get() = get(EMITS)
-
+    override val slots: List<VueSlot> get() = get(SLOTS)
     override val model: VueModelDirectiveProperties get() = get(MODEL)
 
     override val delimiters: Pair<String, String>? get() = get(DELIMITERS).get()
@@ -59,6 +59,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
       val Computed = MemberReader(COMPUTED_PROP)
       val Methods = MemberReader(METHODS_PROP)
       val Emits = MemberReader(EMITS_PROP, true, false)
+      val Slots = MemberReader(SLOTS_PROP, customTypeProvider = ::getSlotsTypeFromTypedProperty)
       val Directives = MemberReader(DIRECTIVES_PROP)
       val Components = MemberReader(COMPONENTS_PROP)
       val Filters = MemberReader(FILTERS_PROP)
@@ -84,6 +85,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     private val COMPUTED = SimpleMemberAccessor(ContainerMember.Computed, ::VueSourceComputedProperty)
     private val METHODS = SimpleMemberAccessor(ContainerMember.Methods, ::VueSourceMethod)
     private val EMITS = SimpleMemberAccessor(ContainerMember.Emits, ::VueSourceEmitDefinition)
+    private val SLOTS = SimpleMemberAccessor(ContainerMember.Slots, ::VueSourceSlot)
 
     private val MODEL = ModelAccessor()
   }
@@ -304,6 +306,10 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
   private class VueSourceEmitDefinition(override val name: String,
                                         override val source: PsiElement?) : VueEmitCall
+
+  private class VueSourceSlot(override val name: String, override val source: PsiElement?) : VueSlot {
+    override val scope: JSType? = source.asSafely<JSTypeOwner>()?.jsType
+  }
 
   private class VueSourceInject(override val name: String, override val source: PsiElement?) : VueInject {
 

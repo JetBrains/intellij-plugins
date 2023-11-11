@@ -353,6 +353,20 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
+  fun testDefineSlotTypedProp() {
+    TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
+    myFixture.copyDirectoryToProject(getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+
+    doTest(
+      "bar" to "number",
+      "company" to "string",
+      "data" to "{year?: number}",
+      prefix = PREFIX_INTERPOLATION,
+    )
+  }
+
   private fun testVFor(vararg testCases: Triple<String, String, String>, iterations: Int = 3) {
     for (test in testCases) {
       for (i in 1..iterations) {

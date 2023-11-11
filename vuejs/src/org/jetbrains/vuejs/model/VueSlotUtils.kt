@@ -4,7 +4,12 @@ package org.jetbrains.vuejs.model
 import com.intellij.html.webSymbols.attributes.WebSymbolAttributeDescriptor
 import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
 import com.intellij.javascript.webSymbols.jsType
+import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.StubSafe
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptAsExpression
+import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl
+import com.intellij.lang.javascript.psi.types.JSNamedType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlAttribute
@@ -59,3 +64,22 @@ fun getSlotTypeFromContext(context: PsiElement): JSType? =
     ?.symbol
     ?.jsType
     ?.asCompleteType()
+
+/**
+ * Get type from an explicitly typed slots property when using Options API.
+ *
+ * ```
+ * slots: Object as SlotsType<{
+ *   default: { foo: string; bar: number },
+ *   item: { data: number }
+ * }>
+ * ```
+ */
+@StubSafe
+fun getSlotsTypeFromTypedProperty(property: JSProperty?): JSType? =
+  property
+    ?.initializerOrStub?.asSafely<TypeScriptAsExpression>()
+    ?.type?.jsType?.asSafely<JSGenericTypeImpl>()
+    ?.takeIf { JSNamedType.isNamedTypeWithName(it.type, "SlotsType") }
+    ?.arguments
+    ?.firstOrNull()

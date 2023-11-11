@@ -114,6 +114,8 @@ class VueComponentTest : BasePlatformTestCase() {
 
   fun testDefineModelsOverride() = doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_4))
 
+  fun testTypedSlots() = doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_4))
+
   /**
    * Runs `doTestInner` twice: once for default TS config, once for strict TS config
    */

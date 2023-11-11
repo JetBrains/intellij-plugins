@@ -1,0 +1,20 @@
+{
+ class: "VueSourceComponent",
+ slots: [
+  {
+   class: "VueSourceSlot",
+   name: "default",
+   scope: "{foo: string, bar: number}",
+  },
+  {
+   class: "VueSourceSlot",
+   name: "header",
+   scope: "{company: string}",
+  },
+  {
+   class: "VueSourceSlot",
+   name: "item",
+   scope: "{data: number}",
+  },
+ ],
+}

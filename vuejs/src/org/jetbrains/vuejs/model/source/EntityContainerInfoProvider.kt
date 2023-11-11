@@ -4,10 +4,7 @@ package org.jetbrains.vuejs.model.source
 import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclarationPart
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.JSStubElementTypes
-import com.intellij.lang.javascript.psi.JSElement
-import com.intellij.lang.javascript.psi.JSFile
-import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
-import com.intellij.lang.javascript.psi.JSTypeOwner
+import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
@@ -126,7 +123,8 @@ interface EntityContainerInfoProvider<T> {
                             private val canBeArray: Boolean = false,
                             private val canBeObject: Boolean = true,
                             private val canBeFunctionResult: Boolean = false,
-                            private val includeComputed: Boolean = false) {
+                            private val includeComputed: Boolean = false,
+                            private val customTypeProvider: ((JSProperty) -> JSType?)? = null) {
       fun readMembers(descriptor: JSElement): List<Pair<String, JSElement>> =
         when (descriptor) {
           is JSObjectLiteralExpression -> readObjectLiteral(descriptor)
@@ -136,6 +134,10 @@ interface EntityContainerInfoProvider<T> {
 
       private fun readObjectLiteral(descriptor: JSObjectLiteralExpression): List<Pair<String, JSElement>> {
         val property = descriptor.findProperty(propertyName) ?: return emptyList()
+
+        if (customTypeProvider != null) {
+          return customTypeProvider.invoke(property)?.let { processJSTypeMembers(it) } ?: emptyList()
+        }
 
         var propsObject = property.objectLiteralExpressionInitializer ?: getObjectLiteral(property)
         val initializerReference = JSPsiImplUtils.getInitializerReference(property)
