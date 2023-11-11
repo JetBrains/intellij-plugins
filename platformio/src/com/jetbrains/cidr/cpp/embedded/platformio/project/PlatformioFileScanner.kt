@@ -152,7 +152,7 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
 
     publishMessage(ClionEmbeddedPlatformioBundle.message("build.event.message.parsed.sources", fileList.size),
                    parentEventId = scanFilesEventId,
-                   details = fileList.joinToString("\n"))
+                   details = @Suppress("HardCodedStringLiteral") fileList.joinToString("\n"))
     val scanLibId = publishMessage(ClionEmbeddedPlatformioBundle.message("build.event.message.scanning.libraries"))
     val parsedLibPaths = mutableMapOf<String, String>()
     jsonConfig["libsource_dirs"].asSafely<List<String>>()?.forEach { libSource ->
@@ -194,7 +194,7 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
       }
     }
     publishMessage(message = ClionEmbeddedPlatformioBundle.message("build.event.message.parsed.libraries", parsedLibPaths.size),
-                   details = parsedLibPaths.values.joinToString("\n"),
+                   details = @Suppress("HardCodedStringLiteral") parsedLibPaths.values.joinToString("\n"),
                    parentEventId = scanLibId)
     return parsedLibPaths
   }
@@ -208,7 +208,7 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
     { virtualFile ->
       checkCancelled.run()
       val path = srcFolderPath.relativize(virtualFile.toNioPath())
-      val inclusion: Boolean? = buildSrcFilter.findLast { it.first.matches(path) }?.second
+      var inclusion: Boolean? = buildSrcFilter.findLast { it.first.matches(path) }?.second
       if (virtualFile.isFile) {
         when (inclusion) {
           true -> sourceFiles.add(VfsUtil.virtualToIoFile(virtualFile))
@@ -218,10 +218,14 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
           }
         }
       }
-      else
+      else if (virtualFile.isDirectory) {
+        if (inclusion == null) {
+          inclusion = subfoldersFilter[path.parent]
+        }
         if (inclusion != null) {
           subfoldersFilter[path] = inclusion
         }
+      }
       true
     }
     return sourceFiles
@@ -240,7 +244,7 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
       try {
         buildSrcFilterString = ((buildSrcFilterClause as List<Any>)[1] as List<String>).joinToString("")
       }
-      catch (e: RuntimeException) {
+      catch (_: RuntimeException) {
         throw ExternalSystemException(ClionEmbeddedPlatformioBundle.message("wrong.build.src.filter"))
       }
     }
