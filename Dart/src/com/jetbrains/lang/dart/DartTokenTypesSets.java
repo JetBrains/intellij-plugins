@@ -277,8 +277,11 @@ public interface DartTokenTypesSets {
     @Override
     protected ASTNode doParseContents(@NotNull ASTNode chameleon, @NotNull PsiElement psi) {
       PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(psi.getProject(), chameleon);
+      var startTime = System.nanoTime();
       new DartParser().parseLight(DartParserDefinition.DART_FILE, builder);
-      return builder.getTreeBuilt().getFirstChildNode();
+      var result = builder.getTreeBuilt().getFirstChildNode();
+      ParsingDiagnostics.registerParse(builder, getLanguage(), System.nanoTime() - startTime);
+      return result;
     }
 
     @Override
