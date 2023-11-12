@@ -1,10 +1,11 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.html.parser
 
 import com.intellij.lang.ASTNode
 import com.intellij.lang.LighterASTNode
 import com.intellij.lang.LighterLazyParseableNode
 import com.intellij.lang.PsiBuilderFactory
+import com.intellij.psi.ParsingDiagnostics
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.ILazyParseableElementType
@@ -40,10 +41,13 @@ object VueElementTypes {
       val htmlCompatMode = !file.isDotVueFile
       val lexer = VueParserDefinition.createLexer(file.project, null, htmlCompatMode, file.getUserData(VueScriptLangs.LANG_MODE))
       val builder = PsiBuilderFactory.getInstance().createBuilder(file.project, chameleon, lexer, language, chameleon.chars)
+      val startTime = System.nanoTime()
       builder.putUserData(VueScriptLangs.LANG_MODE, file.getUserData(VueScriptLangs.LANG_MODE))
       builder.putUserData(VueParsing.HTML_COMPAT_MODE, htmlCompatMode)
       val node = VueParser().parse(VueFileElementType.INSTANCE, builder)
-      return node.firstChildNode
+      val result = node.firstChildNode
+      ParsingDiagnostics.registerParse(builder, language, System.nanoTime() - startTime);
+      return result
     }
   }
 }
