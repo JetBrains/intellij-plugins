@@ -4,6 +4,7 @@ package com.jetbrains.lang.dart;
 import com.intellij.lang.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
+import com.intellij.psi.ParsingDiagnostics;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.TokenType;
@@ -254,8 +255,11 @@ public interface DartTokenTypesSets {
       if (isSyncOrAsync(lazyParseableBlock)) {
         builder.putUserData(DartGeneratedParserUtilBase.INSIDE_SYNC_OR_ASYNC_FUNCTION, true);
       }
+      var startTime = System.nanoTime();
       new DartParser().parseLight(BLOCK, builder);
-      return builder.getTreeBuilt().getFirstChildNode();
+      var result = builder.getTreeBuilt().getFirstChildNode();
+      ParsingDiagnostics.registerParse(builder, getLanguage(), System.nanoTime() - startTime);
+      return result;
     }
 
     private static boolean isSyncOrAsync(@NotNull final ASTNode newBlock) {
