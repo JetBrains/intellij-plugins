@@ -2,6 +2,7 @@
   "name": "Confusing Named Library",
   "build": {
     "includeDir": "main/inc",
-    "srcDir": "main/src"
+    "srcDir": "main/src",
+    "srcFilter": ["-<**/*.c>-<*.c>","+<**/*.cpp>+<*.cpp>"]
   }
 }
