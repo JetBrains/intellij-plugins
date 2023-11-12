@@ -172,7 +172,16 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
             libSrcFolder = VfsUtil.findRelativeFile(libDir, "src")
           }
           parsedLibPaths[libDir.path] = libName
-          val libSrcFilter = createSrcFilter(manifestBuildPart["srcFilter"].asSafely<String>())
+          val libSrcFilterValue = manifestBuildPart["srcFilter"]
+          val libSrcFilterString: String? =
+            if (libSrcFilterValue is String)
+              libSrcFilterValue
+            else
+              if (libSrcFilterValue is List<*>) libSrcFilterValue.joinToString("")
+              else
+                null
+
+          val libSrcFilter = createSrcFilter(libSrcFilterString)
           val libFlags = manifestBuildPart["flags"].asSafely<List<String>>()
           addSources(libSrcFolder ?: libDir, libSrcFilter, libFlags)
         }
@@ -229,7 +238,7 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
     var buildSrcFilterString: String? = null
     if (buildSrcFilterClause != null) {
       try {
-        buildSrcFilterString = ((buildSrcFilterClause as List<Any>)[1] as List<String>)[0]
+        buildSrcFilterString = ((buildSrcFilterClause as List<Any>)[1] as List<String>).joinToString("")
       }
       catch (e: RuntimeException) {
         throw ExternalSystemException(ClionEmbeddedPlatformioBundle.message("wrong.build.src.filter"))
