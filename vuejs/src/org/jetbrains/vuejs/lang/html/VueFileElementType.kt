@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.lang.html
 import com.intellij.lang.ASTNode
 import com.intellij.lang.LanguageParserDefinitions
 import com.intellij.lang.PsiBuilderFactory
+import com.intellij.psi.ParsingDiagnostics
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.StubBuilder
@@ -76,13 +77,14 @@ class VueFileElementType : IStubFileElementType<VueFileStubImpl>("vue", VueLangu
       val htmlCompatMode = !psi.containingFile.isDotVueFile
       val lexer = VueParserDefinition.createLexer(project, delimiters, htmlCompatMode)
       val builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, lexer, languageForParser, chameleon.chars)
+      val startTime = System.nanoTime()
       lexer as VueParsingLexer
       builder.putUserData(VueScriptLangs.LANG_MODE, lexer.lexedLangMode) // read in VueParsing
       builder.putUserData(VueParsing.HTML_COMPAT_MODE, htmlCompatMode)
       psi.putUserData(VueScriptLangs.LANG_MODE, lexer.lexedLangMode) // read in VueElementTypes
       val parser = LanguageParserDefinitions.INSTANCE.forLanguage(languageForParser)!!.createParser(project)
       val node = parser.parse(this, builder)
-
+      ParsingDiagnostics.registerParse(builder, language, System.nanoTime() - startTime);
       return node.firstChildNode
     }
 
