@@ -205,7 +205,7 @@ public abstract class TerraformExpressionTypesTest extends ParsingTestCase {
     }
 
     @Override
-    public String getKey() {
+    public @NotNull String getKey() {
       return myKey;
     }
 
