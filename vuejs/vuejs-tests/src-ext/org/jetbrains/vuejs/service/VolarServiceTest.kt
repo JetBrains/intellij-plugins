@@ -252,8 +252,6 @@ class VolarServiceTest : VolarServiceTestBase() {
   fun testMultilineCompletionItem() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
     myFixture.addFileToProject("tsconfig.json", tsconfig)
-
-    // Volar reports obscuring errors when there's no reference after dot, but we have to test caret placement directly after it
     myFixture.configureByText("main.vue", """
       <script lang="ts">
       import {defineComponent} from "vue"
