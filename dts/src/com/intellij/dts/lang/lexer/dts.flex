@@ -116,8 +116,8 @@ COMMENT_C         = "/*"([^*]|"*"[^/])*"*/"
     "}"                                             { return DtsTypes.RBRACE; }
     "("                                             { return DtsTypes.LPAREN; }
     ")"                                             { return DtsTypes.RPAREN; }
-    "["                                             { pushState(WAITING_BYTE); return DtsTypes.LBRAC; }
-    "]"                                             { return DtsTypes.RBRAC; }
+    "["                                             { pushState(WAITING_BYTE); return DtsTypes.LBRACKET; }
+    "]"                                             { return DtsTypes.RBRACKET; }
     "<"                                             { pushState(WAITING_CELL); return DtsTypes.LANGL; }
     ">"                                             { return DtsTypes.RANGL; }
 
@@ -168,7 +168,7 @@ COMMENT_C         = "/*"([^*]|"*"[^/])*"*/"
 }
 
 <WAITING_BYTE> {
-    "]"                                             { popState(); return DtsTypes.RBRAC; }
+    "]"                                             { popState(); return DtsTypes.RBRACKET; }
 
     {BYTE}                                          { return DtsTypes.BYTE_VALUE; }
     {NAME}":"                                       { return DtsTypes.LABEL; }

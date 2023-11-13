@@ -137,10 +137,10 @@ private cellArrayRecover ::= !(SEMICOLON | RBRACE | COMMA | RANGL | RPAREN)
 cellArrayBits ::= BITS (int | ppMacro) {pin=1 recoverWhile="cellArrayBitsRecover"}
 private cellArrayBitsRecover ::= !(SEMICOLON | RBRACE | LANGL)
 
-byteArray ::= LBRAC byteArrayContent RBRAC {pin=1}
+byteArray ::= LBRACKET byteArrayContent RBRACKET {pin=1}
 private byteArrayContent ::= byteArrayValue* {recoverWhile="byteArrayRecover"}
 private byteArrayValue ::= <<value (byte | ppMacro)>>
-private byteArrayRecover ::= !(SEMICOLON | RBRACE | COMMA | RBRAC | RPAREN)
+private byteArrayRecover ::= !(SEMICOLON | RBRACE | COMMA | RBRACKET | RPAREN)
 
 pHandle ::= HANDLE (NAME | pHandlePath) {pin=1}
 private pHandlePath ::= LBRACE path RBRACE {pin=1}

@@ -9,7 +9,7 @@ import com.intellij.psi.tree.IElementType
 // only on brace can be structural otherwise EnterAfterUnmatchedBraceHandler will get confused
 private val bracePairs = arrayOf(
     BracePair(DtsTypes.LBRACE, DtsTypes.RBRACE, true),
-    BracePair(DtsTypes.LBRAC, DtsTypes.RBRAC, false),
+    BracePair(DtsTypes.LBRACKET, DtsTypes.RBRACKET, false),
     BracePair(DtsTypes.LANGL, DtsTypes.RANGL, false),
     BracePair(DtsTypes.LPAREN, DtsTypes.RPAREN, false),
 )

@@ -90,7 +90,7 @@ class DtsSpacingBuilder(settings: CodeStyleSettings) {
             .betweenInside(cellArrayValues, cellArrayValues, DtsTypes.CELL_ARRAY).spaces(1)
             .betweenInside(DtsTypes.SLASH, DtsTypes.NAME, DtsTypes.PATH).none()
             .betweenInside(DtsTypes.NAME, DtsTypes.SLASH, DtsTypes.PATH).none()
-            .withinPair(DtsTypes.LBRAC, DtsTypes.RBRAC).spaceIf(common.SPACE_WITHIN_BRACKETS)
+            .withinPair(DtsTypes.LBRACKET, DtsTypes.RBRACKET).spaceIf(common.SPACE_WITHIN_BRACKETS)
             .withinPair(DtsTypes.LPAREN, DtsTypes.RPAREN).spaceIf(common.SPACE_WITHIN_PARENTHESES)
             .withinPair(DtsTypes.LANGL, DtsTypes.RANGL).spaceIf(custom.SPACE_WITHIN_ANGULAR_BRACKETS)
             .withinPairInside(DtsTypes.LBRACE, DtsTypes.RBRACE, DtsTypes.ROOT_NODE).spaceIf(custom.SPACE_WITHIN_EMPTY_NODE)

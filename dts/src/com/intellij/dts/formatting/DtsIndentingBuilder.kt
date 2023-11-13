@@ -29,7 +29,7 @@ class DtsIndentingBuilder {
                 if (afterRBrace) Indent.getNoneIndent() else Indent.getNormalIndent()
             }
             is DtsArray -> {
-                val afterRBrace = afterToken(parent, newChildIndex, DtsTypes.RBRAC, DtsTypes.RANGL)
+                val afterRBrace = afterToken(parent, newChildIndex, DtsTypes.RBRACKET, DtsTypes.RANGL)
                 if (afterRBrace) Indent.getNoneIndent() else Indent.getContinuationIndent()
             }
             is DtsNodeContent -> Indent.getNormalIndent()

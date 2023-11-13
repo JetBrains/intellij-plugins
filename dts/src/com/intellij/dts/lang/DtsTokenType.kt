@@ -37,8 +37,8 @@ class DtsTokenType(debugName: String) : IElementType(debugName, DtsLanguage) {
             DtsTypes.RBRACE -> "}"
             DtsTypes.LPAREN -> "("
             DtsTypes.RPAREN -> ")"
-            DtsTypes.LBRAC -> "["
-            DtsTypes.RBRAC -> "]"
+            DtsTypes.LBRACKET -> "["
+            DtsTypes.RBRACKET -> "]"
             DtsTypes.LANGL -> "<"
             DtsTypes.RANGL -> ">"
 

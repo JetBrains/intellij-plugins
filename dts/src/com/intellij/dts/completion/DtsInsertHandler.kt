@@ -95,9 +95,9 @@ private class InsertSession(val context: InsertionContext) {
 
     fun insertByteArray(): Boolean = insertPair(
         leftStr = "[",
-        leftToken = DtsTypes.LBRAC,
+        leftToken = DtsTypes.LBRACKET,
         rightStr = "]",
-        rightToken = DtsTypes.RBRAC,
+        rightToken = DtsTypes.RBRACKET,
         body = "",
     )
 

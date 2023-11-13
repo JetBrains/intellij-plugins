@@ -52,16 +52,16 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   /* ********************************************************** */
-  // LBRAC byteArrayContent RBRAC
+  // LBRACKET byteArrayContent RBRACKET
   public static boolean byteArray(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "byteArray")) return false;
-    if (!nextTokenIs(builder_, LBRAC)) return false;
+    if (!nextTokenIs(builder_, LBRACKET)) return false;
     boolean result_, pinned_;
     com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_, BYTE_ARRAY, null);
-    result_ = consumeToken(builder_, LBRAC);
+    result_ = consumeToken(builder_, LBRACKET);
     pinned_ = result_; // pin = 1
     result_ = result_ && report_error_(builder_, byteArrayContent(builder_, level_ + 1));
-    result_ = pinned_ && consumeToken(builder_, RBRAC) && result_;
+    result_ = pinned_ && consumeToken(builder_, RBRACKET) && result_;
     exit_section_(builder_, level_, marker_, result_, pinned_, null);
     return result_ || pinned_;
   }
@@ -81,7 +81,7 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   /* ********************************************************** */
-  // !(SEMICOLON | RBRACE | COMMA | RBRAC | RPAREN)
+  // !(SEMICOLON | RBRACE | COMMA | RBRACKET | RPAREN)
   static boolean byteArrayRecover(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "byteArrayRecover")) return false;
     boolean result_;
@@ -91,14 +91,14 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
     return result_;
   }
 
-  // SEMICOLON | RBRACE | COMMA | RBRAC | RPAREN
+  // SEMICOLON | RBRACE | COMMA | RBRACKET | RPAREN
   private static boolean byteArrayRecover_0(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "byteArrayRecover_0")) return false;
     boolean result_;
     result_ = consumeTokenFast(builder_, SEMICOLON);
     if (!result_) result_ = consumeTokenFast(builder_, RBRACE);
     if (!result_) result_ = consumeTokenFast(builder_, COMMA);
-    if (!result_) result_ = consumeTokenFast(builder_, RBRAC);
+    if (!result_) result_ = consumeTokenFast(builder_, RBRACKET);
     if (!result_) result_ = consumeTokenFast(builder_, RPAREN);
     return result_;
   }

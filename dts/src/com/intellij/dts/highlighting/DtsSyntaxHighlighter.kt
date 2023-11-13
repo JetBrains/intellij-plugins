@@ -37,7 +37,7 @@ class DtsSyntaxHighlighter : SyntaxHighlighterBase() {
 
         return when (tokenType) {
             DtsTypes.LBRACE, DtsTypes.RBRACE -> pack(DtsTextAttributes.BRACES)
-            DtsTypes.LBRAC, DtsTypes.RBRAC, DtsTypes.LANGL, DtsTypes.RANGL -> pack(DtsTextAttributes.BRACKETS)
+            DtsTypes.LBRACKET, DtsTypes.RBRACKET, DtsTypes.LANGL, DtsTypes.RANGL -> pack(DtsTextAttributes.BRACKETS)
             DtsTypes.DQUOTE, DtsTypes.SQUOTE -> pack(DtsTextAttributes.STRING)
             DtsTypes.INT_VALUE, DtsTypes.BYTE_VALUE -> pack(DtsTextAttributes.NUMBER)
             DtsTypes.SEMICOLON -> pack(DtsTextAttributes.SEMICOLON)

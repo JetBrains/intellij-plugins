@@ -1056,12 +1056,12 @@ class DtsLexer implements FlexLexer {
             // fall through
           case 80: break;
           case 13: 
-            { pushState(WAITING_BYTE); return DtsTypes.LBRAC;
+            { pushState(WAITING_BYTE); return DtsTypes.LBRACKET;
             } 
             // fall through
           case 81: break;
           case 14: 
-            { return DtsTypes.RBRAC;
+            { return DtsTypes.RBRACKET;
             } 
             // fall through
           case 82: break;
@@ -1096,7 +1096,7 @@ class DtsLexer implements FlexLexer {
             // fall through
           case 88: break;
           case 21: 
-            { popState(); return DtsTypes.RBRAC;
+            { popState(); return DtsTypes.RBRACKET;
             } 
             // fall through
           case 89: break;

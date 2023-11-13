@@ -80,8 +80,8 @@ public interface DtsTypes {
   com.intellij.psi.tree.IElementType INT_VALUE = new com.intellij.dts.lang.DtsTokenType("INT_VALUE");
   com.intellij.psi.tree.IElementType LABEL = new com.intellij.dts.lang.DtsTokenType("LABEL");
   com.intellij.psi.tree.IElementType LANGL = new com.intellij.dts.lang.DtsTokenType("LANGL");
-  com.intellij.psi.tree.IElementType LBRAC = new com.intellij.dts.lang.DtsTokenType("LBRAC");
   com.intellij.psi.tree.IElementType LBRACE = new com.intellij.dts.lang.DtsTokenType("LBRACE");
+  com.intellij.psi.tree.IElementType LBRACKET = new com.intellij.dts.lang.DtsTokenType("LBRACKET");
   com.intellij.psi.tree.IElementType LEQ = new com.intellij.dts.lang.DtsTokenType("LEQ");
   com.intellij.psi.tree.IElementType LES = new com.intellij.dts.lang.DtsTokenType("LES");
   com.intellij.psi.tree.IElementType LPAREN = new com.intellij.dts.lang.DtsTokenType("LPAREN");
@@ -115,8 +115,8 @@ public interface DtsTypes {
   com.intellij.psi.tree.IElementType PP_SYMBOL = new com.intellij.dts.lang.DtsTokenType("PP_SYMBOL");
   com.intellij.psi.tree.IElementType PP_UNDEF = new com.intellij.dts.lang.DtsTokenType("PP_UNDEF");
   com.intellij.psi.tree.IElementType RANGL = new com.intellij.dts.lang.DtsTokenType("RANGL");
-  com.intellij.psi.tree.IElementType RBRAC = new com.intellij.dts.lang.DtsTokenType("RBRAC");
   com.intellij.psi.tree.IElementType RBRACE = new com.intellij.dts.lang.DtsTokenType("RBRACE");
+  com.intellij.psi.tree.IElementType RBRACKET = new com.intellij.dts.lang.DtsTokenType("RBRACKET");
   com.intellij.psi.tree.IElementType RPAREN = new com.intellij.dts.lang.DtsTokenType("RPAREN");
   com.intellij.psi.tree.IElementType RSH = new com.intellij.dts.lang.DtsTokenType("RSH");
   com.intellij.psi.tree.IElementType SEMICOLON = new com.intellij.dts.lang.DtsTokenType("SEMICOLON");
