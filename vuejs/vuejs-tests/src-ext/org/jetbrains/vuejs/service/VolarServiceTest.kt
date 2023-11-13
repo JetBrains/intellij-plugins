@@ -248,6 +248,39 @@ class VolarServiceTest : VolarServiceTestBase() {
     assertCorrectService(version)
   }
 
+  @Test
+  fun testMultilineCompletionItem() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
+    myFixture.addFileToProject("tsconfig.json", tsconfig)
+
+    // Volar reports obscuring errors when there's no reference after dot, but we have to test caret placement directly after it
+    myFixture.configureByText("main.vue", """
+      <script lang="ts">
+      import {defineComponent} from "vue"
+      export default defineComponent({
+        <caret>
+        setup(){}
+      })
+      </script>
+    """.trimIndent())
+
+    myFixture.checkLspHighlighting()
+    myFixture.type("spre")
+    myFixture.completeBasic()
+
+    checkHighlightingByText(myFixture, """
+      <script lang="ts">
+      import {defineComponent} from "vue"
+      export default defineComponent({
+        serverPrefetch() {
+            <caret>
+        },
+        setup(){}
+      })
+      </script>
+    """.trimIndent(), true)
+  }
+
   private fun getPresentationTexts(elements: Array<LookupElement>): List<String?> {
     return elements.map { element ->
       val presentation = LookupElementPresentation()
