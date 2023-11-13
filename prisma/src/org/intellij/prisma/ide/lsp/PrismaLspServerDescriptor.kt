@@ -49,4 +49,6 @@ class PrismaLspServerDescriptor(project: Project) : ProjectWideLspServerDescript
 
   // code formatting is implemented without using the LSP server
   override val lspFormattingSupport = null
+
+  override val lspHoverSupport = false
 }
