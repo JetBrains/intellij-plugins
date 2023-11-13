@@ -28,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
 import static com.intellij.lang.javascript.service.JSLanguageServiceQueue.Holder.LOGGER;
@@ -94,9 +95,10 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
 
   @Nullable
   @Override
-  protected JSLanguageServiceQueue createLanguageServiceQueue() {
-    return new JSLanguageServiceQueueImpl(myProject, new Protocol(myProject, o -> {}),
-                                          myProcessConnector, myDefaultReporter, new JSLanguageServiceDefaultCacheData());
+  protected Pair<JSLanguageServiceQueue, Future<Void>> createLanguageServiceQueueWithInit() {
+    var queue = new JSLanguageServiceQueueImpl(myProject, new Protocol(myProject, o -> {}),
+                                               myProcessConnector, myDefaultReporter, new JSLanguageServiceDefaultCacheData());
+    return new Pair<>(queue, CompletableFuture.completedFuture(null));
   }
 
   @Override

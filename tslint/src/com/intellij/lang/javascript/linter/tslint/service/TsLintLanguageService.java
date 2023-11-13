@@ -17,6 +17,7 @@ import com.intellij.lang.javascript.service.*;
 import com.intellij.lang.javascript.service.protocol.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 import java.util.function.BiFunction;
 
 
@@ -139,10 +141,11 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
   }
 
   @Override
-  protected JSLanguageServiceQueue createLanguageServiceQueue() {
-    return new JSLanguageServiceQueueImpl(myProject, new Protocol(myNodePackage, myWorkingDirectory, myProject), myProcessConnector,
-                                          myDefaultReporter,
-                                          new JSLanguageServiceDefaultCacheData());
+  protected Pair<JSLanguageServiceQueue, Future<Void>> createLanguageServiceQueueWithInit() {
+    var queue = new JSLanguageServiceQueueImpl(myProject, new Protocol(myNodePackage, myWorkingDirectory, myProject), myProcessConnector,
+                                               myDefaultReporter,
+                                               new JSLanguageServiceDefaultCacheData());
+    return new Pair<>(queue, CompletableFuture.completedFuture(null));
   }
 
   @Override
