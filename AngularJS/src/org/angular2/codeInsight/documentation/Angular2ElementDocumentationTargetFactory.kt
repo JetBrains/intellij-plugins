@@ -3,7 +3,9 @@ package org.angular2.codeInsight.documentation
 
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.documentation.PsiDocumentationTargetProvider
+import com.intellij.psi.PsiDirectoryContainer
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.parents
 import com.intellij.psi.util.prevLeafs
@@ -14,6 +16,8 @@ class Angular2ElementDocumentationTargetFactory : PsiDocumentationTargetProvider
   override fun documentationTarget(element: PsiElement, originalElement: PsiElement?): DocumentationTarget? =
     if (
       originalElement != null
+      && originalElement !is PsiDirectoryContainer
+      && originalElement !is PsiFileSystemItem
       && originalElement.parents(true)
         // In code completion we get the next token as a context
         .plus(originalElement.prevLeafs.firstOrNull { it !is PsiWhiteSpace }?.parents(true) ?: emptySequence())
