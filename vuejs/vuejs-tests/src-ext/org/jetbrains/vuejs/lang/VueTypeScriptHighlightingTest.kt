@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
-import com.intellij.javascript.debugger.com.intellij.lang.javascript.FromInterfacesRunner
+import com.intellij.lang.javascript.FromInterfacesRunner
 import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.typescript.TypeScriptHighlightingWithoutServerTest
