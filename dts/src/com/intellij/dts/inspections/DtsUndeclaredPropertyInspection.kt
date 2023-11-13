@@ -2,15 +2,11 @@ package com.intellij.dts.inspections
 
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemsHolder
-import com.intellij.dts.DtsBundle
+import com.intellij.dts.inspections.fixes.DtsRemovePropertyFix
 import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.psi.dtsVisitor
 import com.intellij.dts.zephyr.binding.DtsZephyrBinding
 import com.intellij.dts.zephyr.binding.DtsZephyrBindingProvider
-import com.intellij.modcommand.ModPsiUpdater
-import com.intellij.modcommand.PsiUpdateModCommandQuickFix
-import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 
 class DtsUndeclaredPropertyInspection : LocalInspectionTool() {
@@ -39,18 +35,9 @@ class DtsUndeclaredPropertyInspection : LocalInspectionTool() {
             holder.registerProblem(
                 property,
                 bundleKey = "inspections.undeclared_property.error",
-                fix = if (property.dtsIsComplete) RemovePropertyFix else null
+                fix = if (property.dtsIsComplete) DtsRemovePropertyFix else null
             )
         }
     }
 }
 
-private object RemovePropertyFix : PsiUpdateModCommandQuickFix() {
-    override fun getFamilyName(): String {
-        return DtsBundle.message("inspections.undeclared_property.fix")
-    }
-
-    override fun applyFix(project: Project, element: PsiElement, updater: ModPsiUpdater) {
-        element.parent.delete()
-    }
-}

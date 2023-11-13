@@ -1,0 +1,19 @@
+/ {
+    prop = "";
+
+    label: node {
+        prop = "";
+
+        subNode {
+            prop = "";
+        };
+    };
+};
+
+&label {
+    prop = "";
+};
+
+&{/} {
+    prop = "";
+};

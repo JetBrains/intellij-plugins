@@ -38,8 +38,8 @@ abstract class DtsNodeMixin<T : StubBase<*>> : DtsStubBasedElement<T>, DtsStatem
     override val dtsProperties: List<DtsProperty>
         get() = dtsContent?.dtsProperties ?: emptyList()
 
-    override val dtsSubNodes: List<DtsNode>
-        get() = dtsContent?.dtsNodes ?: emptyList()
+    override val dtsSubNodes: List<DtsSubNode>
+        get() = dtsContent?.dtsNodes?.filterIsInstance<DtsSubNode>() ?: emptyList()
 
     override fun getIcon(flags: Int): Icon = DtsIcons.Node
 

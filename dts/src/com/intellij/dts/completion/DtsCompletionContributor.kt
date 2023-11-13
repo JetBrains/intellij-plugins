@@ -21,7 +21,10 @@ class DtsCompletionContributor : CompletionContributor() {
     private fun addPropertyVariants(node: DtsNode, result: CompletionResultSet) {
         val binding = DtsZephyrBindingProvider.bindingFor(node) ?: return
 
-        for (property in binding.properties.values) {
+        val presentProperties = node.dtsProperties.map { it.dtsName }
+        val newProperties = binding.properties.values.filter { !presentProperties.contains(it.name) }
+
+        for (property in newProperties) {
             val lookup = LookupElementBuilder.create(DtsPropertySymbol(property).createPointer(), property.name)
                 .withTypeText(property.type.typeName)
                 .withIcon(DtsIcons.Property)
@@ -32,25 +35,28 @@ class DtsCompletionContributor : CompletionContributor() {
     }
 
     private fun addSubNodeVariants(node: DtsNode, result: CompletionResultSet) {
-        if (node.isDtsRootNode()) {
-            val provider = DtsZephyrBindingProvider.of(node.project)
+        if (!node.isDtsRootNode()) return
 
-            for (binding in DtsBundledBindings.entries) {
-                val build = binding.build(provider) ?: continue
+        // no removal of present nodes in suggestions, because some nodes can be
+        // suffixed with @... which makes them different
 
-                val symbol = DtsDocumentationSymbol.from(DtsNodeBindingDocumentationTarget(
-                    node.project,
-                    binding.nodeName,
-                    build,
-                ))
+        val provider = DtsZephyrBindingProvider.of(node.project)
 
-                val lookup = LookupElementBuilder.create(symbol, binding.nodeName)
-                    .withTypeText(DtsBundle.message("documentation.node_type"))
-                    .withIcon(DtsIcons.Node)
-                    .withInsertHandler(DtsInsertHandler.SUB_NODE)
+        for (binding in DtsBundledBindings.entries) {
+            val build = binding.build(provider) ?: continue
 
-                result.addElement(PrioritizedLookupElement.withPriority(lookup, DtsLookupPriority.SUB_NODE))
-            }
+            val symbol = DtsDocumentationSymbol.from(DtsNodeBindingDocumentationTarget(
+                node.project,
+                binding.nodeName,
+                build,
+            ))
+
+            val lookup = LookupElementBuilder.create(symbol, binding.nodeName)
+                .withTypeText(DtsBundle.message("documentation.node_type"))
+                .withIcon(DtsIcons.Node)
+                .withInsertHandler(DtsInsertHandler.SUB_NODE)
+
+            result.addElement(PrioritizedLookupElement.withPriority(lookup, DtsLookupPriority.SUB_NODE))
         }
     }
 

@@ -38,7 +38,7 @@ sealed interface DtsStatement : PsiElement {
 
         val dtsProperties: List<DtsProperty>
 
-        val dtsSubNodes: List<DtsNode>
+        val dtsSubNodes: List<DtsSubNode>
     }
 
     interface Property : DtsStatement, Iconable {
