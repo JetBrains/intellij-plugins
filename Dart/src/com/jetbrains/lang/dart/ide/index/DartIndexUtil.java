@@ -19,7 +19,7 @@ import static com.jetbrains.lang.dart.ide.index.DartImportOrExportInfo.Kind;
 
 public final class DartIndexUtil {
   // inc when change parser
-  public static final int INDEX_VERSION = 26;
+  public static final int INDEX_VERSION = 27;
 
   private static final Key<DartFileIndexData> ourDartCachesData = Key.create("dart.caches.index.data");
 
