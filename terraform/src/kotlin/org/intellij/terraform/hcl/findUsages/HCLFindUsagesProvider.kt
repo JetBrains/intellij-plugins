@@ -6,14 +6,14 @@ import com.intellij.lang.findUsages.FindUsagesProvider
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
-import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.hcl.HCLParserDefinition
-import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.hcl.HCLBundle
+import org.intellij.terraform.hcl.createHclLexer
+import org.intellij.terraform.hcl.psi.*
 
 open class HCLFindUsagesProvider : FindUsagesProvider {
   override fun getWordsScanner(): WordsScanner? {
-    return HCLWordsScanner(HCLParserDefinition.createLexer())
+    return HCLWordsScanner(createHclLexer())
   }
 
   override fun canFindUsagesFor(psiElement: PsiElement): Boolean {

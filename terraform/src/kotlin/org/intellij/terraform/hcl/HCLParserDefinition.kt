@@ -17,8 +17,14 @@ import org.intellij.terraform.hcl.psi.impl.HCLFileImpl
 import org.jetbrains.annotations.NotNull
 import java.util.*
 
+private val FILE: IFileElementType by lazy { IFileElementType(HCLLanguage) }
+
+internal fun createHclLexer(): HCLLexer {
+  return HCLLexer(EnumSet.of(HCLCapability.INTERPOLATION_LANGUAGE))
+}
+
 open class HCLParserDefinition : ParserDefinition {
-  override fun createLexer(project: Project): Lexer = createLexer()
+  override fun createLexer(project: Project): Lexer = createHclLexer()
 
   override fun createParser(project: Project): PsiParser {
     return HCLParser()
@@ -47,13 +53,5 @@ open class HCLParserDefinition : ParserDefinition {
   override fun spaceExistenceTypeBetweenTokens(left: ASTNode?, right: ASTNode?): ParserDefinition.SpaceRequirements {
     if (HCLTokenTypes.HCL_LINE_COMMENTS.contains(left?.elementType)) return ParserDefinition.SpaceRequirements.MUST_LINE_BREAK
     return ParserDefinition.SpaceRequirements.MAY
-  }
-
-  companion object {
-    val FILE: IFileElementType = IFileElementType(HCLLanguage)
-
-    fun createLexer(): HCLLexer {
-      return HCLLexer(EnumSet.of(HCLCapability.INTERPOLATION_LANGUAGE))
-    }
   }
 }

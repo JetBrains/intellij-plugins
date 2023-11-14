@@ -6,7 +6,7 @@ import com.intellij.lexer.Lexer;
 import com.intellij.psi.tree.IElementType;
 import org.intellij.terraform.BaseLexerTestCase;
 import org.intellij.terraform.hcl.HCLElementTypes;
-import org.intellij.terraform.hcl.HCLParserDefinition;
+import org.intellij.terraform.hcl.HCLParserDefinitionKt;
 import org.intellij.terraform.hcl.refactoring.HCLElementRenameValidator;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,7 +16,7 @@ import java.util.List;
 public class HCLLexerTest extends BaseLexerTestCase {
   @Override
   protected @NotNull Lexer createLexer() {
-    return HCLParserDefinition.Companion.createLexer();
+    return HCLParserDefinitionKt.createHclLexer();
   }
 
   @Override

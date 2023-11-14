@@ -8,15 +8,16 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.refactoring.rename.RenameInputValidator
 import com.intellij.util.ProcessingContext
-import org.intellij.terraform.hcl.HCLParserDefinition
 import org.intellij.terraform.hcl.HCLTokenTypes
+import org.intellij.terraform.hcl.createHclLexer
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLIdentifier
 import org.intellij.terraform.hcl.psi.HCLProperty
 import org.intellij.terraform.hcl.psi.HCLStringLiteral
 
+internal class HCLElementRenameValidator : RenameInputValidator {
+  private val lexer = createHclLexer()
 
-class HCLElementRenameValidator : RenameInputValidator {
   override fun getPattern(): ElementPattern<out PsiElement> {
     return or(
         psiElement(HCLProperty::class.java),
@@ -25,8 +26,6 @@ class HCLElementRenameValidator : RenameInputValidator {
         psiElement(HCLIdentifier::class.java)
     )
   }
-
-  private val lexer = HCLParserDefinition.createLexer()
 
   override fun isInputValid(name: String, element: PsiElement, context: ProcessingContext): Boolean {
     if (!pattern.accepts(element)) return false

@@ -7,15 +7,13 @@ import com.intellij.psi.impl.search.IndexPatternBuilder
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.intellij.terraform.hcl.HCLElementTypes
-import org.intellij.terraform.hcl.HCLParserDefinition
 import org.intellij.terraform.hcl.HCLTokenTypes
+import org.intellij.terraform.hcl.createHclLexer
 import org.intellij.terraform.hcl.psi.HCLFile
 
-class HCLIndexPatternBuilder : IndexPatternBuilder {
+private class HCLIndexPatternBuilder : IndexPatternBuilder {
   override fun getIndexingLexer(file: PsiFile): Lexer? {
-    return if (file is HCLFile) {
-      HCLParserDefinition.createLexer()
-    } else null
+    return if (file is HCLFile) createHclLexer() else null
   }
 
   override fun getCommentTokenSet(file: PsiFile): TokenSet? {

@@ -86,6 +86,6 @@ open class HCLSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
   }
 
   override fun getSyntaxHighlighter(project: Project?, virtualFile: VirtualFile?): SyntaxHighlighter {
-    return MySyntaxHighlighter(HCLParserDefinition.createLexer())
+    return MySyntaxHighlighter(createHclLexer())
   }
 }
