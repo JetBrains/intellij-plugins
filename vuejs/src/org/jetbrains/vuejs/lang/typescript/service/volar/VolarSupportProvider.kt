@@ -15,7 +15,7 @@ import org.jetbrains.vuejs.lang.typescript.service.isVolarEnabledAndAvailable
 import org.jetbrains.vuejs.lang.typescript.service.isVolarFileTypeAcceptable
 import org.jetbrains.vuejs.options.getVueSettings
 
-val volarLspServerPackageDescriptor: () -> LspServerPackageDescriptor = {
+private val volarLspServerPackageDescriptor: () -> LspServerPackageDescriptor = {
   LspServerPackageDescriptor("@vue/language-server",
                              Registry.stringValue("vue.language.server.default.version"),
                              "/bin/vue-language-server.js")

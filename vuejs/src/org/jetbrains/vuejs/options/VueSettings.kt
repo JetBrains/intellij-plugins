@@ -7,7 +7,7 @@ import com.intellij.lang.typescript.lsp.extractRefText
 import com.intellij.lang.typescript.lsp.restartTypeScriptServicesAsync
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
-import org.jetbrains.vuejs.lang.typescript.service.volar.volarLspServerPackageDescriptor
+import org.jetbrains.vuejs.lang.typescript.service.volar.VolarExecutableDownloader
 
 fun getVueSettings(project: Project): VueSettings = project.service<VueSettings>()
 
@@ -24,7 +24,7 @@ class VueSettings(val project: Project) : SimplePersistentStateComponent<VueSett
     }
 
   var packageRef
-    get() = createPackageRef(state.packageName, volarLspServerPackageDescriptor().serverPackage)
+    get() = createPackageRef(state.packageName, VolarExecutableDownloader.packageDescriptor.serverPackage)
     set(value) {
       val refText = extractRefText(value)
       val changed = state.packageName != refText
