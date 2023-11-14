@@ -9,7 +9,7 @@ import com.intellij.platform.lsp.api.LspServerSupportProvider
 import com.intellij.platform.lsp.api.LspServerSupportProvider.LspServerStarter
 import org.jetbrains.annotations.ApiStatus
 
-val astroLspServerPackageDescriptor: () -> LspServerPackageDescriptor = {
+private val astroLspServerPackageDescriptor: () -> LspServerPackageDescriptor = {
   LspServerPackageDescriptor("@astrojs/language-server",
                              Registry.stringValue("astro.language.server.default.version"),
                              "/bin/nodeServer.js")
