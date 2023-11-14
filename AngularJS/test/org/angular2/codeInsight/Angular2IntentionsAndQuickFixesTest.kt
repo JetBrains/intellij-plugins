@@ -46,7 +46,7 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
 
   fun testCreateSignalFromUsage() =
     doTest(Angular2Bundle.message("angular.quickfix.template.create-signal.name", "fooSig"),
-           ANGULAR_CORE_16_2_8)
+           ANGULAR_CORE_16_2_8, checkIntentionPreview = false)
 
   fun testNoCreateSignalFromUsage() =
     checkNoIntention(Angular2Bundle.message("angular.quickfix.template.create-signal.name", "fooSig"),
@@ -54,15 +54,15 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
 
   fun testCreateObservablePropertyFromUsage() =
     doTest(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"),
-           ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, RXJS_7_8_1, checkCodeCompletion = true)
+           ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, RXJS_7_8_1, checkCodeCompletion = true, checkIntentionPreview = false)
 
   fun testCreateObservableMethodFromUsage() =
     doTest(JavaScriptBundle.message("javascript.create.method.intention.name", "foo"),
-           ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, RXJS_7_8_1)
+           ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, RXJS_7_8_1, checkIntentionPreview = false)
 
   fun testCreateComponentOutputFromUsage() =
     doTest(Angular2Bundle.message("angular.quickfix.template.create-output.name", "emitter"),
-           ANGULAR_CORE_16_2_8)
+           ANGULAR_CORE_16_2_8, checkIntentionPreview = false)
 
   fun testNoCreateComponentOutputFromUsage() =
     checkNoIntention(Angular2Bundle.message("angular.quickfix.template.create-output.name", "emitter"),
@@ -74,64 +74,69 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
 
   fun testBasicFieldCreation() {
     doTest(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"),
-           dir = true, configureFileName = "template.html")
+           dir = true, configureFileName = "template.html", checkIntentionPreview = false)
   }
 
   fun testThisQualifiedFieldCreation() {
     doTest(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"),
-           dir = true, configureFileName = "template.html")
+           dir = true, configureFileName = "template.html", checkIntentionPreview = false)
   }
 
   fun testQualifiedFieldCreation() {
     doTest(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"),
-           dir = true, configureFileName = "template.html")
+           dir = true, configureFileName = "template.html", checkIntentionPreview = false)
   }
 
   fun testBasicMethodCreation() {
     doTest(JavaScriptBundle.message("javascript.create.method.intention.name", "foo"),
-           dir = true, configureFileName = "template.html")
+           dir = true, configureFileName = "template.html", checkIntentionPreview = false)
   }
 
   fun testThisQualifiedMethodCreation() {
     doTest(JavaScriptBundle.message("javascript.create.method.intention.name", "foo"),
-           dir = true, configureFileName = "template.html")
+           dir = true, configureFileName = "template.html", checkIntentionPreview = false)
   }
 
   fun testQualifiedMethodCreation() {
     doTest(JavaScriptBundle.message("javascript.create.method.intention.name", "foo"),
-           dir = true, configureFileName = "template.html")
+           dir = true, configureFileName = "template.html", checkIntentionPreview = false)
   }
 
   fun testComputeConstantInTemplate() {
-    doTest(JSIntentionBundle.message("string.join-concatenated-string-literals.display-name"), extension = "html")
+    doTest(JSIntentionBundle.message("string.join-concatenated-string-literals.display-name"), extension = "html",
+           checkIntentionPreview = false)
   }
 
   fun testFlipConditionalInTemplate() {
-    doTest(JSIntentionBundle.message("conditional.flip-conditional.display-name"), extension = "html")
+    doTest(JSIntentionBundle.message("conditional.flip-conditional.display-name"), extension = "html", checkIntentionPreview = false)
   }
 
   fun testDeMorgansLawInTemplate() {
-    doTest(JSIntentionBundle.message("bool.de-morgans-law.display-name.ANDAND"), extension = "html")
+    doTest(JSIntentionBundle.message("bool.de-morgans-law.display-name.ANDAND"), extension = "html", checkIntentionPreview = false)
   }
 
   fun testCreateComponentInputBasic() =
-    doTest(Angular2Bundle.message("angular.quickfix.template.create-input.name", "foo"), ANGULAR_CORE_16_2_8)
+    doTest(Angular2Bundle.message("angular.quickfix.template.create-input.name", "foo"), ANGULAR_CORE_16_2_8, checkIntentionPreview = false)
 
   fun testCreateDirectiveInputAsSelector() =
-    doTest(Angular2Bundle.message("angular.quickfix.template.create-input.name", "test"), ANGULAR_CORE_16_2_8)
+    doTest(Angular2Bundle.message("angular.quickfix.template.create-input.name", "test"), ANGULAR_CORE_16_2_8,
+           checkIntentionPreview = false)
 
   fun testCreateDirectiveInputWithDash() =
-    doTest(Angular2Bundle.message("angular.quickfix.template.create-input.name", "foo-bar"), ANGULAR_CORE_16_2_8)
+    doTest(Angular2Bundle.message("angular.quickfix.template.create-input.name", "foo-bar"), ANGULAR_CORE_16_2_8,
+           checkIntentionPreview = false)
 
   fun testNoCreateLibDirectiveInput() =
     checkNoIntention(Angular2Bundle.message("angular.quickfix.template.create-input.name", "foo"),
                      ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, ANGULAR_CDK_14_2_0)
 
   fun testCreateDirectiveOutputBasic() =
-    doTest(Angular2Bundle.message("angular.quickfix.template.create-output.name", "foo"), ANGULAR_CORE_16_2_8)
+    doTest(Angular2Bundle.message("angular.quickfix.template.create-output.name", "foo"), ANGULAR_CORE_16_2_8,
+           checkIntentionPreview = false)
 
   fun testCreateDirectiveOutputWithDash() =
-    doTest(Angular2Bundle.message("angular.quickfix.template.create-output.name", "foo-bar"), ANGULAR_CORE_16_2_8)
+    doTest(Angular2Bundle.message("angular.quickfix.template.create-output.name", "foo-bar"), ANGULAR_CORE_16_2_8,
+           checkIntentionPreview = false)
 
   fun testNoCreateLibDirectiveOutput() =
     checkNoIntention(Angular2Bundle.message("angular.quickfix.template.create-input.name", "foo"),
@@ -163,6 +168,7 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
                      dir: Boolean = false,
                      extension: String = defaultExtension,
                      configureFileName: String = "$testName.$extension",
+                     checkIntentionPreview: Boolean = true,
                      checkCodeCompletion: Boolean = false
   ) {
     doConfiguredTest(*modules, dir = dir,
@@ -172,7 +178,12 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
     ) {
       if (checkCodeCompletion)
         TemplateManagerImpl.setTemplateTesting(testRootDisposable)
-      launchAction(findSingleIntention(intentionName))
+      if (checkIntentionPreview) {
+        checkPreviewAndLaunchAction(findSingleIntention(intentionName))
+      }
+      else {
+        launchAction(findSingleIntention(intentionName))
+      }
       if (checkCodeCompletion) {
         checkListByFile(renderLookupItems(false, false),
                         if (dir) "${testName}/items.txt" else "${testName}.items.txt", false)
