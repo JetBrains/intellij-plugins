@@ -8,11 +8,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
-import org.intellij.terraform.hcl.HCLParserDefinition
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.psi.HCLFile
 
-class TerraformInterpolationStartTypedHandler : TypedHandlerDelegate() {
+private class TerraformInterpolationStartTypedHandler : TypedHandlerDelegate() {
   override fun charTyped(c: Char, project: Project, editor: Editor, file: PsiFile): Result {
     if (c != '{') return Result.CONTINUE
 

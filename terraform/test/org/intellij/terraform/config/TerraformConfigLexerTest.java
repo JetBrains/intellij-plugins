@@ -14,6 +14,7 @@ public class TerraformConfigLexerTest extends HCLLexerTest {
     return TerraformParserDefinition.createLexer();
   }
 
+  @Override
   public void testTerraformIL() {
     doTest("count = \"${count()}\"", """
       ID ('count')
@@ -41,6 +42,7 @@ public class TerraformConfigLexerTest extends HCLLexerTest {
       DOUBLE_QUOTED_STRING ('"${{$}$}}"')""");
   }
 
+  @Override
   public void testTerraformILInception() {
     doTest("count = \"${foo(${bar()})}\"", """
       ID ('count')
@@ -50,6 +52,7 @@ public class TerraformConfigLexerTest extends HCLLexerTest {
       DOUBLE_QUOTED_STRING ('"${foo(${bar()})}"')""");
   }
 
+  @Override
   public void testTerraformILInception2() {
     doTest("count = \"${${}}\"", """
       ID ('count')
@@ -59,6 +62,7 @@ public class TerraformConfigLexerTest extends HCLLexerTest {
       DOUBLE_QUOTED_STRING ('"${${}}"')""");
   }
 
+  @Override
   public void testTerraformILWithString() {
     doTest("count = \"${call(\"count\")}\"", """
       ID ('count')
@@ -77,6 +81,7 @@ public class TerraformConfigLexerTest extends HCLLexerTest {
       DOUBLE_QUOTED_STRING ('"${call(incomplete")}"')""");
   }
 
+  @Override
   public void testTerraformILWithString2() {
     doTest("count = '${call(\"count\")}'", """
       ID ('count')
@@ -125,6 +130,7 @@ public class TerraformConfigLexerTest extends HCLLexerTest {
       SINGLE_QUOTED_STRING (''}')""");
   }
 
+  @Override
   public void testComplicatedTerraformConfigWithILStings() {
     doTest("container_definitions = \"${file(\"ecs-container-definitions.json\")}\"", """
       ID ('container_definitions')
@@ -134,6 +140,7 @@ public class TerraformConfigLexerTest extends HCLLexerTest {
       DOUBLE_QUOTED_STRING ('"${file("ecs-container-definitions.json")}"')""");
   }
 
+  @Override
   public void testUnfinishedInterpolation() {
     doTest("a = \"${b(\"c\")}${{}}\"", """
       ID ('a')
@@ -143,6 +150,7 @@ public class TerraformConfigLexerTest extends HCLLexerTest {
       DOUBLE_QUOTED_STRING ('"${b("c")}${{}}"')""");
   }
 
+  @Override
   public void testUnfinishedInterpolation2() {
     doTest("a = \"${b(\"c\")}${\"\nx=y", """
       ID ('a')

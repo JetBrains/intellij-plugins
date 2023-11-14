@@ -5,7 +5,7 @@ import com.intellij.icons.AllIcons
 import com.intellij.util.PlatformIcons
 import javax.swing.Icon
 
-object Icons {
+internal object Icons {
   object FileTypes {
     // TODO: Create icons
     val HCL: Icon by lazy { AllIcons.FileTypes.Text }
@@ -13,6 +13,6 @@ object Icons {
   }
 
   val Property: Icon by lazy { PlatformIcons.PROPERTY_ICON }
-  val Array: Icon by lazy { AllIcons.Json.Array}
-  val Object: Icon by lazy { AllIcons.Json.Object}
+  val Array: Icon by lazy { AllIcons.Json.Array }
+  val Object: Icon by lazy { AllIcons.Json.Object }
 }

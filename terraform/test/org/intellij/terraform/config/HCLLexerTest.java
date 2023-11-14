@@ -16,7 +16,7 @@ import java.util.List;
 public class HCLLexerTest extends BaseLexerTestCase {
   @Override
   protected @NotNull Lexer createLexer() {
-    return HCLParserDefinition.createLexer();
+    return HCLParserDefinition.Companion.createLexer();
   }
 
   @Override
@@ -24,14 +24,14 @@ public class HCLLexerTest extends BaseLexerTestCase {
     return "data/hcl/lexer";
   }
 
-  public void testSimple() throws Exception {
+  public void testSimple() {
     doTest("a=1", """
       ID ('a')
       = ('=')
       NUMBER ('1')""");
   }
 
-  public void testNumberWithSuffix() throws Exception {
+  public void testNumberWithSuffix() {
     doTest("a=[1k, 1Kb]", """
       ID ('a')
       = ('=')
@@ -45,35 +45,35 @@ public class HCLLexerTest extends BaseLexerTestCase {
       ] (']')""");
   }
 
-  public void testStringWithCurves() throws Exception {
+  public void testStringWithCurves() {
     doTest("a=\"{}\"", """
       ID ('a')
       = ('=')
       DOUBLE_QUOTED_STRING ('"{}"')""");
   }
 
-  public void testStringWith$() throws Exception {
+  public void testStringWith$() {
     doTest("dollar=\"$\"", """
       ID ('dollar')
       = ('=')
       DOUBLE_QUOTED_STRING ('"$"')""");
   }
 
-  public void testQuotes1() throws Exception {
+  public void testQuotes1() {
     doTest("a='\"1\"'", """
       ID ('a')
       = ('=')
       SINGLE_QUOTED_STRING (''"1"'')""");
   }
 
-  public void testQuotes2() throws Exception {
+  public void testQuotes2() {
     doTest("a=\"'1'\"", """
       ID ('a')
       = ('=')
       DOUBLE_QUOTED_STRING ('"'1'"')""");
   }
 
-  public void testTerraformIL() throws Exception {
+  public void testTerraformIL() {
     doTest("count = \"${count()}\"", """
       ID ('count')
       WHITE_SPACE (' ')
@@ -82,7 +82,7 @@ public class HCLLexerTest extends BaseLexerTestCase {
       DOUBLE_QUOTED_STRING ('"${count()}"')""");
   }
 
-  public void testTerraformILInception() throws Exception {
+  public void testTerraformILInception() {
     doTest("count = \"${foo(${bar()})}\"", """
       ID ('count')
       WHITE_SPACE (' ')
@@ -91,7 +91,7 @@ public class HCLLexerTest extends BaseLexerTestCase {
       DOUBLE_QUOTED_STRING ('"${foo(${bar()})}"')""");
   }
 
-  public void testTerraformILInception2() throws Exception {
+  public void testTerraformILInception2() {
     doTest("count = \"${${}}\"", """
       ID ('count')
       WHITE_SPACE (' ')
@@ -100,7 +100,7 @@ public class HCLLexerTest extends BaseLexerTestCase {
       DOUBLE_QUOTED_STRING ('"${${}}"')""");
   }
 
-  public void testTerraformILWithString() throws Exception {
+  public void testTerraformILWithString() {
     doTest("count = \"${call(\"count\")}\"", """
       ID ('count')
       WHITE_SPACE (' ')
@@ -109,7 +109,7 @@ public class HCLLexerTest extends BaseLexerTestCase {
       DOUBLE_QUOTED_STRING ('"${call("count")}"')""");
   }
 
-  public void testTerraformILWithString2() throws Exception {
+  public void testTerraformILWithString2() {
     doTest("count = '${call(\"count\")}'", """
       ID ('count')
       WHITE_SPACE (' ')
@@ -118,7 +118,7 @@ public class HCLLexerTest extends BaseLexerTestCase {
       SINGLE_QUOTED_STRING (''${call("count")}'')""");
   }
 
-  public void testComplicatedTerraformConfigWithILStings() throws Exception {
+  public void testComplicatedTerraformConfigWithILStings() {
     doTest("container_definitions = \"${file(\"ecs-container-definitions.json\")}\"", """
       ID ('container_definitions')
       WHITE_SPACE (' ')
@@ -127,7 +127,7 @@ public class HCLLexerTest extends BaseLexerTestCase {
       DOUBLE_QUOTED_STRING ('"${file("ecs-container-definitions.json")}"')""");
   }
 
-  public void testUnfinishedString() throws Exception {
+  public void testUnfinishedString() {
     doTest("a=\"x\"\"\n", """
       ID ('a')
       = ('=')
@@ -136,7 +136,7 @@ public class HCLLexerTest extends BaseLexerTestCase {
       WHITE_SPACE ('\\n')""");
   }
 
-  public void testUnfinishedString2() throws Exception {
+  public void testUnfinishedString2() {
     doTest("a=\r\n\"x\"\"\r\n", """
       ID ('a')
       = ('=')
@@ -148,7 +148,7 @@ public class HCLLexerTest extends BaseLexerTestCase {
       \\n')""");
   }
 
-  public void testUnfinishedStringInObjectSingleLine() throws Exception {
+  public void testUnfinishedStringInObjectSingleLine() {
     doTest("a={y = \"x\"\"}", """
       ID ('a')
       = ('=')
@@ -161,7 +161,7 @@ public class HCLLexerTest extends BaseLexerTestCase {
       DOUBLE_QUOTED_STRING ('"}')""");
   }
 
-  public void testUnfinishedStringInObjectMultiLine() throws Exception {
+  public void testUnfinishedStringInObjectMultiLine() {
     doTest("a={\ny = \"x\"\"\n}", """
       ID ('a')
       = ('=')
@@ -177,7 +177,7 @@ public class HCLLexerTest extends BaseLexerTestCase {
       } ('}')""");
   }
 
-  public void testUnfinishedStringWithBackslash() throws Exception {
+  public void testUnfinishedStringWithBackslash() {
     doTest("a=\"x\\\ny\"", """
       ID ('a')
       = ('=')
@@ -187,7 +187,7 @@ public class HCLLexerTest extends BaseLexerTestCase {
       DOUBLE_QUOTED_STRING ('"')""");
   }
 
-  public void testUnfinishedInterpolation() throws Exception {
+  public void testUnfinishedInterpolation() {
     doTest("a = \"${b(\"c\")}${{}}\"", """
       ID ('a')
       WHITE_SPACE (' ')
@@ -196,7 +196,7 @@ public class HCLLexerTest extends BaseLexerTestCase {
       DOUBLE_QUOTED_STRING ('"${b("c")}${{}}"')""");
   }
 
-  public void testUnfinishedInterpolation2() throws Exception {
+  public void testUnfinishedInterpolation2() {
     doTest("a = \"${b(\"c\")}${{}}\"\nx=y", """
       ID ('a')
       WHITE_SPACE (' ')
@@ -209,7 +209,7 @@ public class HCLLexerTest extends BaseLexerTestCase {
       ID ('y')""");
   }
 
-  public void testMultilineString() throws Exception {
+  public void testMultilineString() {
     doTest("ml=\"hello\n  world\"", """
       ID ('ml')
       = ('=')
@@ -220,7 +220,7 @@ public class HCLLexerTest extends BaseLexerTestCase {
       """);
   }
 
-  public void testHereDoc() throws Exception {
+  public void testHereDoc() {
     doTest("""
              foo = <<EOF
              bar
@@ -242,7 +242,7 @@ public class HCLLexerTest extends BaseLexerTestCase {
              """);
   }
 
-  public void testHereDoc2() throws Exception {
+  public void testHereDoc2() {
     doTest("""
              foo = <<EOF
              bar
@@ -265,7 +265,7 @@ public class HCLLexerTest extends BaseLexerTestCase {
              WHITE_SPACE ('\\n')""");
   }
 
-  public void testHereDoc_Indented() throws Exception {
+  public void testHereDoc_Indented() {
     doTest("""
              foo = <<-EOF
                bar
@@ -288,7 +288,7 @@ public class HCLLexerTest extends BaseLexerTestCase {
              WHITE_SPACE ('\\n')""");
   }
 
-  public void testHereDoc_Indented_End() throws Exception {
+  public void testHereDoc_Indented_End() {
     doTest("""
              foo = <<EOF
                bar
@@ -311,7 +311,7 @@ public class HCLLexerTest extends BaseLexerTestCase {
              WHITE_SPACE ('\\n')""");
   }
 
-  public void testHereDoc_Empty() throws Exception {
+  public void testHereDoc_Empty() {
     doTest("foo = <<EOF\n" +
             "EOF",
            """
@@ -326,7 +326,7 @@ public class HCLLexerTest extends BaseLexerTestCase {
              """);
   }
 
-  public void testHereDoc_EmptyLines() throws Exception {
+  public void testHereDoc_EmptyLines() {
     doTest("""
              foo = <<EOF
 
@@ -348,7 +348,7 @@ public class HCLLexerTest extends BaseLexerTestCase {
              """);
   }
 
-  public void testHereDoc_SingleLineEmpty() throws Exception {
+  public void testHereDoc_SingleLineEmpty() {
     doTest("""
              foo = <<EOF
 
@@ -367,7 +367,7 @@ public class HCLLexerTest extends BaseLexerTestCase {
              """);
   }
 
-  public void testHereDoc_Incomplete() throws Exception {
+  public void testHereDoc_Incomplete() {
     doTest("""
              foo = <<EOF
              bar
@@ -385,7 +385,7 @@ public class HCLLexerTest extends BaseLexerTestCase {
              BAD_CHARACTER ('')""");
   }
 
-  public void testHereDoc_IncompleteStart() throws Exception {
+  public void testHereDoc_IncompleteStart() {
     doTest("""
              foo = <<
              bar
@@ -401,7 +401,7 @@ public class HCLLexerTest extends BaseLexerTestCase {
              WHITE_SPACE ('\\n')""");
   }
 
-  public void testHereDoc_BackSlash_Start() throws Exception {
+  public void testHereDoc_BackSlash_Start() {
     doTest("""
              foo = <<EOF\\
              EOF
@@ -420,7 +420,7 @@ public class HCLLexerTest extends BaseLexerTestCase {
              WHITE_SPACE ('\\n')""");
   }
 
-  public void testHereDoc_BackSlash_Line() throws Exception {
+  public void testHereDoc_BackSlash_Line() {
     doTest("""
              foo = <<EOF
              a\\
@@ -458,7 +458,7 @@ public class HCLLexerTest extends BaseLexerTestCase {
 
   // testSimpleTokens_* methods uses inputs from hcl/scanner/scanner_test.go#tokenLists
 
-  public void testSimpleTokens_Comment() throws Exception {
+  public void testSimpleTokens_Comment() {
     List<String> line_c_comments = Arrays.asList(
         "//",
         "////",
@@ -505,12 +505,12 @@ public class HCLLexerTest extends BaseLexerTestCase {
     }
   }
 
-  public void testSimpleTokens_Boolean() throws Exception {
+  public void testSimpleTokens_Boolean() {
     doSimpleTokenTest(HCLElementTypes.TRUE, "true");
     doSimpleTokenTest(HCLElementTypes.FALSE, "false");
   }
 
-  public void testSimpleTokens_Identifier() throws Exception {
+  public void testSimpleTokens_Identifier() {
     List<String> identifiers = Arrays.asList(
         "a",
         "a0",
@@ -539,7 +539,7 @@ public class HCLLexerTest extends BaseLexerTestCase {
     }
   }
 
-  public void testSimpleTokens_String() throws Exception {
+  public void testSimpleTokens_String() {
     List<String> strings = Arrays.asList(
         "\" \"",
         "\"a\"",
@@ -567,7 +567,7 @@ public class HCLLexerTest extends BaseLexerTestCase {
     }
   }
 
-  public void testSimpleTokens_Number() throws Exception {
+  public void testSimpleTokens_Number() {
     List<String> numbers = Arrays.asList(
         "0",
         "1",
@@ -621,7 +621,7 @@ public class HCLLexerTest extends BaseLexerTestCase {
     }
   }
 
-  public void testSimpleTokens_Float() throws Exception {
+  public void testSimpleTokens_Float() {
     List<String> floats = Arrays.asList(
         "0.0",
         "1.0",
@@ -701,7 +701,7 @@ public class HCLLexerTest extends BaseLexerTestCase {
     }
   }
 
-  public void testNonEscapedQuote() throws Exception {
+  public void testNonEscapedQuote() {
     doTest("""
              x=[
               "a",
@@ -721,7 +721,7 @@ public class HCLLexerTest extends BaseLexerTestCase {
   }
 
   // From several 'panic' issues in HCL itself
-  public void testBrokenInput() throws Exception {
+  public void testBrokenInput() {
     doTestNoException("{\"\\0"); // #194
     doTestNoException("wÔΩø\u00dc<<070005000\n"); // #130
     doTestNoException("t\"\\400n\"{}"); // #129

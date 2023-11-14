@@ -12,30 +12,25 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.tree.IFileElementType
 import com.intellij.psi.tree.TokenSet
-import org.intellij.terraform.hcl.HCLElementTypes.*
+import org.intellij.terraform.hcl.HCLElementTypes.Factory
 import org.intellij.terraform.hcl.psi.impl.HCLFileImpl
 import org.jetbrains.annotations.NotNull
 import java.util.*
 
 open class HCLParserDefinition : ParserDefinition {
-
   override fun createLexer(project: Project): Lexer = createLexer()
 
   override fun createParser(project: Project): PsiParser {
     return HCLParser()
   }
 
-  override fun getFileNodeType(): IFileElementType {
-    return FILE
-  }
+  override fun getFileNodeType(): IFileElementType = FILE
 
   override fun getCommentTokens(): TokenSet {
     return HCLTokenTypes.HCL_COMMENTARIES
   }
 
-  override fun getStringLiteralElements(): TokenSet {
-    return HCLTokenTypes.STRING_LITERALS
-  }
+  override fun getStringLiteralElements(): TokenSet = HCLTokenTypes.STRING_LITERALS
 
   override fun createElement(node: ASTNode): PsiElement {
     val type = node.elementType
@@ -57,7 +52,6 @@ open class HCLParserDefinition : ParserDefinition {
   companion object {
     val FILE: IFileElementType = IFileElementType(HCLLanguage)
 
-    @JvmStatic
     fun createLexer(): HCLLexer {
       return HCLLexer(EnumSet.of(HCLCapability.INTERPOLATION_LANGUAGE))
     }

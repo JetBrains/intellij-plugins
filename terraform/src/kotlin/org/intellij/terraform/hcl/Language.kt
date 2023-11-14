@@ -5,6 +5,5 @@ import com.intellij.lang.Language
 
 object HCLLanguage : Language("HCL") {
   override fun isCaseSensitive() = true
-
 }
 

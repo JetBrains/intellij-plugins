@@ -2,16 +2,16 @@
 package org.intellij.terraform.hcl
 
 import com.intellij.openapi.fileTypes.LanguageFileType
+import javax.swing.Icon
 
 object HCLFileType : LanguageFileType(HCLLanguage) {
+  override fun getIcon(): Icon = Icons.FileTypes.HCL
 
-  override fun getIcon() = Icons.FileTypes.HCL
+  override fun getDefaultExtension(): String = "hcl"
 
-  override fun getDefaultExtension() = "hcl"
+  override fun getDescription(): String = HCLBundle.message("HCLFileType.description")
 
-  override fun getDescription() = HCLBundle.message("HCLFileType.description")
+  override fun getName(): String = "HCL"
 
-  override fun getName() = "HCL"
-
-  override fun toString() = name
+  override fun toString(): String = name
 }
