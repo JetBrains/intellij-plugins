@@ -88,7 +88,7 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
         advance()
       }
     }
-    flushIncompleteItemsWhile { it is HtmlTagInfo }
+    flushIncompleteStackItemsWhile { it is HtmlTagInfo }
     error?.error(XmlPsiBundle.message("xml.parsing.top.level.element.is.not.completed"))
     embeddedContent.done(AstroStubElementTypes.CONTENT_ROOT)
   }
@@ -257,8 +257,8 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
   private fun parseExpressionWithTagsHandled(parse: () -> Unit) {
     pushItemToStack(AstroExpressionItem(mark()))
     parse()
-    flushIncompleteItemsWhile { it !is AstroExpressionItem }
-    completeTopItem()
+    flushIncompleteStackItemsWhile { it !is AstroExpressionItem }
+    completeTopStackItem()
   }
 
   private class AstroExpressionItem(private val expressionStart: Marker) : HtmlParserStackItem {
