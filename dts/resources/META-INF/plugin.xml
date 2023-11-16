@@ -53,6 +53,9 @@
                 implementation="com.intellij.dts.ide.DtsBreadcrumbsProvider"/>
         <projectViewNodeDecorator
                 implementation="com.intellij.dts.ide.DtsProjectViewDecorator"/>
+        <codeInsight.lineMarkerProvider
+                language="DTS"
+                implementationClass="com.intellij.dts.ide.DtsOverrideLineMarkerProvider"/>
 
         <!-- settings -->
         <projectConfigurable
