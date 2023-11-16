@@ -98,6 +98,7 @@
     <inheritedLanguagesConfigurableProvider language="AstroFrontmatter"
                                             implementationClass="org.jetbrains.astro.lang.frontmatter.AstroFrontmatterConfigurableProvider"/>
     <analysisHandlersFactory language="AstroFrontmatter" implementationClass="org.jetbrains.astro.inspections.AstroFrontmatterAnalysisHandlersFactory" />
+    <elementScopeProvider implementation="org.jetbrains.astro.AstroElementResolveScopeProvider"/>
   </extensions>
   <actions>
     <action class="org.jetbrains.astro.CreateAstroComponentAction" id="CreateAstroComponent">
