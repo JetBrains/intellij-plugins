@@ -6,7 +6,9 @@ import java.util.*
 import javax.swing.*
 import javax.swing.tree.*
 
-class MakefileTargetNode(val target: MakefileTarget) : MakefileTreeNode(target.name) {
+class MakefileTargetNode(target: MakefileTarget) : MakefileTreeNode(target.name) {
+  val isSpecialTarget: Boolean = target.isSpecialTarget
+
   override val icon: Icon
     get() = MakefileTargetIcon
 
