@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.web.scopes
 
+import com.intellij.html.webSymbols.WebSymbolsHtmlQueryConfigurator
 import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
 import com.intellij.javascript.webSymbols.jsType
 import com.intellij.javascript.webSymbols.types.TypeScriptSymbolTypeSupport
@@ -52,6 +53,10 @@ internal class OneTimeBindingsScope(tag: XmlTag) : WebSymbolsScopeWithCache<XmlT
                 ?: emptyList()
     val attributeSelectors = queryExecutor
       .runListSymbolsQuery(NG_DIRECTIVE_ATTRIBUTE_SELECTORS, expandPatterns = true, scope = scope)
+      .plus(queryExecutor
+              .runListSymbolsQuery(WebSymbol.HTML_ATTRIBUTES, expandPatterns = false, virtualSymbols = false, scope = scope)
+              .filterIsInstance<WebSymbolsHtmlQueryConfigurator.StandardHtmlSymbol>()
+      )
       .filter { it.attributeValue?.required == false }
       .mapSmartSet { it.name }
 

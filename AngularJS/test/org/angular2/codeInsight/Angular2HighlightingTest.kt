@@ -142,7 +142,8 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
   fun testInterpolationStrictMode() = checkHighlighting(ANGULAR_CORE_16_2_8, strictTemplates = true, extension = "ts")
 
-  fun testStandardAttributesStrictMode() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_MATERIAL_16_2_8, strictTemplates = true, extension = "ts")
+  fun testOneTimeAttributesWithoutValueInStrictMode() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_MATERIAL_16_2_8,
+                                                                          strictTemplates = true, extension = "ts")
 
   fun testNgSrcAttribute() = checkHighlighting(ANGULAR_CORE_17_0_0_RC_0, ANGULAR_COMMON_17_0_0_RC_0,
                                                strictTemplates = true, extension = "ts", dir = true)

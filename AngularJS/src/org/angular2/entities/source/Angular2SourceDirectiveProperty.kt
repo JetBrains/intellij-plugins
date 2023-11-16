@@ -4,6 +4,7 @@ package org.angular2.entities.source
 import com.intellij.javascript.webSymbols.apiStatus
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil.isStubBased
 import com.intellij.model.Pointer
@@ -57,7 +58,13 @@ abstract class Angular2SourceDirectiveProperty(
       ?.inferredType
 
   override val rawJsType: JSType?
-    get() = transformParameterType ?: signature.jsTypeWithOptionality
+    get() = transformParameterType
+            ?: signature.memberSource.allSourceElements
+              .find { it is TypeScriptFunction && it.isSetProperty }
+              ?.asSafely<TypeScriptFunction>()
+              ?.parameters
+              ?.takeIf { it.size == 1 }?.get(0)?.inferredType
+            ?: signature.jsTypeWithOptionality
 
   override val virtualProperty: Boolean
     get() = false
