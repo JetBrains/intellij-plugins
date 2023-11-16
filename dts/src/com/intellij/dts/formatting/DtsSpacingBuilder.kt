@@ -111,12 +111,12 @@ class DtsSpacingBuilder(settings: CodeStyleSettings) {
         return when (element.dtsStatement) {
             is DtsStatement.CompilerDirective -> BlankLinesRang(0, common.KEEP_BLANK_LINES_IN_CODE)
             is DtsStatement.Node -> BlankLinesRang.fromSettings(
-                custom.MIN_BLANK_LINES_AROUND_NODE,
-                custom.MAX_BLANK_LINES_AROUND_NODE,
+                custom.MIN_BLANK_LINES_BETWEEN_NODES,
+                custom.MAX_BLANK_LINES_BETWEEN_NODES,
             )
             is DtsStatement.Property -> BlankLinesRang.fromSettings(
-                custom.MIN_BLANK_LINES_AROUND_PROPERTY,
-                custom.MAX_BLANK_LINES_AROUND_PROPERTY,
+                custom.MIN_BLANK_LINES_BETWEEN_PROPERTIES,
+                custom.MAX_BLANK_LINES_BETWEEN_PROPERTIES,
             )
         }
     }

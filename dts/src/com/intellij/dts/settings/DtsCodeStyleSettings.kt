@@ -19,11 +19,11 @@ class DtsCodeStyleSettings(container: CodeStyleSettings) : CustomCodeStyleSettin
     var ALIGN_PROPERTY_VALUES = true
 
     @JvmField
-    var MAX_BLANK_LINES_AROUND_PROPERTY = 1
+    var MAX_BLANK_LINES_BETWEEN_PROPERTIES = 1
     @JvmField
-    var MIN_BLANK_LINES_AROUND_PROPERTY = 0
+    var MIN_BLANK_LINES_BETWEEN_PROPERTIES = 0
     @JvmField
-    var MAX_BLANK_LINES_AROUND_NODE = 1
+    var MAX_BLANK_LINES_BETWEEN_NODES = 1
     @JvmField
-    var MIN_BLANK_LINES_AROUND_NODE = 1
+    var MIN_BLANK_LINES_BETWEEN_NODES = 1
 }

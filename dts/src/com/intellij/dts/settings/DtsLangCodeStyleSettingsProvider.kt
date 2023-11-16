@@ -113,26 +113,26 @@ class DtsLangCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
 
         consumer.showCustomOption(
             DtsCodeStyleSettings::class.java,
-            "MAX_BLANK_LINES_AROUND_PROPERTY",
-            DtsBundle.message("settings.style.blank_lines_around_property"),
+            "MAX_BLANK_LINES_BETWEEN_PROPERTIES",
+            DtsBundle.message("settings.style.blank_lines_between_properties") + ":",
             options.BLANK_LINES_KEEP,
         )
         consumer.showCustomOption(
             DtsCodeStyleSettings::class.java,
-            "MIN_BLANK_LINES_AROUND_PROPERTY",
-            DtsBundle.message("settings.style.blank_lines_around_property"),
+            "MIN_BLANK_LINES_BETWEEN_PROPERTIES",
+            DtsBundle.message("settings.style.blank_lines_between_properties") + ":",
             options.BLANK_LINES,
         )
         consumer.showCustomOption(
             DtsCodeStyleSettings::class.java,
-            "MAX_BLANK_LINES_AROUND_NODE",
-            DtsBundle.message("settings.style.blank_lines_around_node"),
+            "MAX_BLANK_LINES_BETWEEN_NODES",
+            DtsBundle.message("settings.style.blank_lines_between_nodes") + ":",
             options.BLANK_LINES_KEEP,
         )
         consumer.showCustomOption(
             DtsCodeStyleSettings::class.java,
-            "MIN_BLANK_LINES_AROUND_NODE",
-            DtsBundle.message("settings.style.blank_lines_around_node"),
+            "MIN_BLANK_LINES_BETWEEN_NODES",
+            DtsBundle.message("settings.style.blank_lines_between_nodes") + ":",
             options.BLANK_LINES,
         )
     }
