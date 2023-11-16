@@ -3,7 +3,6 @@ package org.angular2.inspections
 
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
-import com.intellij.html.webSymbols.WebSymbolsHtmlQueryConfigurator
 import com.intellij.javascript.webSymbols.jsType
 import com.intellij.lang.javascript.psi.JSEmptyExpression
 import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory
@@ -41,9 +40,7 @@ class AngularBindingTypeMismatchInspection : AngularHtmlLikeTemplateLocalInspect
   private fun checkOneTimeBindingType(holder: ProblemsHolder, attribute: XmlAttribute, descriptor: Angular2AttributeDescriptor) {
     val value = attribute.valueElement
     val isOneTimeBinding = descriptor.symbol.unwrapMatchedSymbols()
-                             .any { it.qualifiedKind == NG_DIRECTIVE_ONE_TIME_BINDINGS }
-                           && descriptor.symbol.unwrapMatchedSymbols()
-                             .none { it is WebSymbolsHtmlQueryConfigurator.StandardHtmlSymbol }
+      .any { it.qualifiedKind == NG_DIRECTIVE_ONE_TIME_BINDINGS }
     if (isOneTimeBinding && isStrictTemplates(attribute)) {
       checkTypes(holder, attribute, descriptor, value?.value ?: "", BindingsTypeResolver.get(attribute.parent), true)
     }
