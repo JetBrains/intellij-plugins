@@ -1,5 +1,7 @@
 package com.intellij.dts
 
+import com.intellij.application.options.CodeStyle
+import com.intellij.dts.lang.DtsFileType
 import com.intellij.dts.settings.DtsSettings
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.roots.ModuleRootModificationUtil
@@ -11,6 +13,13 @@ import java.util.*
 import kotlin.io.path.*
 
 abstract class DtsTestBase : BasePlatformTestCase() {
+    override fun setUp() {
+        super.setUp()
+
+        val settings = CodeStyle.getSettings(project).getIndentOptions(DtsFileType)
+        settings.USE_TAB_CHARACTER = false
+    }
+
     protected val testName: String
         get() = getTestName(false)
             .replace(Regex("[#@_.,-]+"), " ")

@@ -3,6 +3,6 @@
         compatible = "espressif,esp32-eth";
 
         local-mac-address = [12 34];
-        <error descr="Expected property of type: uint8-array">local-mac-address</error> = "string";
+        local-mac-address = <error descr="Expected property of type: uint8-array">"string"</error>;
     };
 };

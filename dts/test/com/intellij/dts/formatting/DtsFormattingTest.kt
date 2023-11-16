@@ -1,5 +1,6 @@
 package com.intellij.dts.formatting
 
+import com.intellij.dts.lang.DtsFileType
 import com.intellij.dts.lang.DtsLanguage
 import com.intellij.dts.settings.DtsCodeStyleSettings
 import com.intellij.psi.formatter.FormatterTestCase
@@ -20,6 +21,9 @@ abstract class DtsFormattingTest : FormatterTestCase() {
         maxBlankLinesBetweenNodes: Int = 1,
         minBlankLinesBetweenNodes: Int = 1
     ) {
+        val indent = settings.getIndentOptions(DtsFileType)
+        indent.USE_TAB_CHARACTER = false
+
         val common = settings.getCommonSettings(DtsLanguage)
         common.KEEP_LINE_BREAKS = keepLineBreaks
 
