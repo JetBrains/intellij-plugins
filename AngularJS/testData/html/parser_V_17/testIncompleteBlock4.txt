@@ -2,10 +2,10 @@ HtmlFile:test.html
   PsiElement(HTML_DOCUMENT)
     PsiElement(XML_PROLOG)
       <empty list>
-    PsiElement(NG:BLOCK)
+    Angular2HtmlBlock (@if)
       PsiElement(NG:BLOCK_NAME)('@if')
       PsiWhiteSpace(' ')
-      PsiElement(NG:BLOCK_PARAMETERS)
+      Angular2HtmlBlockParameters
         PsiElement(NG:BLOCK_PARAMETERS_START)('(')
         ASTWrapperPsiElement(NG:BLOCK_PARAMETER (if:0))
           PsiWhiteSpace(' ')
@@ -13,7 +13,7 @@ HtmlFile:test.html
             <empty list>
         PsiElement(NG:BLOCK_PARAMETERS_END)(')')
       PsiWhiteSpace(' \n')
-      PsiElement(NG:BLOCK_CONTENTS)
+      Angular2HtmlBlockContents
         PsiErrorElement:Incomplete block - missing }
           PsiElement(NG:BLOCK_START)('{')
         XmlToken:XML_DATA_CHARACTERS('this')

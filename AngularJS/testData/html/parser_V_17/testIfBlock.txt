@@ -2,10 +2,10 @@ HtmlFile:test.html
   PsiElement(HTML_DOCUMENT)
     PsiElement(XML_PROLOG)
       <empty list>
-    PsiElement(NG:BLOCK)
+    Angular2HtmlBlock (@if)
       PsiElement(NG:BLOCK_NAME)('@if')
       PsiWhiteSpace(' ')
-      PsiElement(NG:BLOCK_PARAMETERS)
+      Angular2HtmlBlockParameters
         PsiElement(NG:BLOCK_PARAMETERS_START)('(')
         ASTWrapperPsiElement(NG:BLOCK_PARAMETER (if:0))
           PsiWhiteSpace(' ')
@@ -18,7 +18,7 @@ HtmlFile:test.html
           PsiWhiteSpace(' ')
         PsiElement(NG:BLOCK_PARAMETERS_END)(')')
       PsiWhiteSpace(' ')
-      PsiElement(NG:BLOCK_CONTENTS)
+      Angular2HtmlBlockContents
         PsiElement(NG:BLOCK_START)('{')
         PsiWhiteSpace('\n  ')
         HtmlTag:human-profile
@@ -41,10 +41,10 @@ HtmlFile:test.html
           PsiWhiteSpace('\n')
         PsiElement(NG:BLOCK_END)('}')
     PsiWhiteSpace(' ')
-    PsiElement(NG:BLOCK)
+    Angular2HtmlBlock (@else if)
       PsiElement(NG:BLOCK_NAME)('@else if')
       PsiWhiteSpace(' \n')
-      PsiElement(NG:BLOCK_PARAMETERS)
+      Angular2HtmlBlockParameters
         PsiElement(NG:BLOCK_PARAMETERS_START)('(')
         ASTWrapperPsiElement(NG:BLOCK_PARAMETER (else if:0))
           Angular2BlockParameter
@@ -55,7 +55,7 @@ HtmlFile:test.html
               PsiElement(JS:IDENTIFIER)('isRobot')
         PsiElement(NG:BLOCK_PARAMETERS_END)(')')
       PsiWhiteSpace(' \n')
-      PsiElement(NG:BLOCK_CONTENTS)
+      Angular2HtmlBlockContents
         PsiElement(NG:BLOCK_START)('{')
         XmlText
           PsiWhiteSpace('\n    ')
@@ -79,10 +79,10 @@ HtmlFile:test.html
           PsiWhiteSpace('\n')
         PsiElement(NG:BLOCK_END)('}')
     PsiWhiteSpace(' ')
-    PsiElement(NG:BLOCK)
+    Angular2HtmlBlock (@else)
       PsiElement(NG:BLOCK_NAME)('@else')
       PsiWhiteSpace(' ')
-      PsiElement(NG:BLOCK_CONTENTS)
+      Angular2HtmlBlockContents
         PsiElement(NG:BLOCK_START)('{')
         XmlText
           PsiWhiteSpace('\n  ')

@@ -2,13 +2,12 @@
 package org.angular2.lang.html.psi.impl
 
 import com.intellij.psi.PsiElementVisitor
-import com.intellij.psi.impl.source.tree.CompositePsiElement
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor
 import org.angular2.lang.html.psi.Angular2HtmlExpansionFormCase
 
 class Angular2HtmlExpansionFormCaseImpl(type: Angular2HtmlElementTypes.Angular2ElementType)
-  : CompositePsiElement(type), Angular2HtmlExpansionFormCase {
+  : Angular2HtmlCompositePsiElement(type), Angular2HtmlExpansionFormCase {
   override fun accept(visitor: PsiElementVisitor) {
     when (visitor) {
       is Angular2HtmlElementVisitor -> {

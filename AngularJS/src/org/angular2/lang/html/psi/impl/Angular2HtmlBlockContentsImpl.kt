@@ -2,14 +2,13 @@
 package org.angular2.lang.html.psi.impl
 
 import com.intellij.psi.PsiElementVisitor
-import com.intellij.psi.impl.source.tree.CompositePsiElement
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes
 import org.angular2.lang.html.psi.Angular2HtmlBlock
 import org.angular2.lang.html.psi.Angular2HtmlBlockContents
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor
 
 class Angular2HtmlBlockContentsImpl(type: Angular2HtmlElementTypes.Angular2ElementType)
-  : CompositePsiElement(type), Angular2HtmlBlockContents {
+  : Angular2HtmlCompositePsiElement(type), Angular2HtmlBlockContents {
   override fun accept(visitor: PsiElementVisitor) {
     when (visitor) {
       is Angular2HtmlElementVisitor -> {
