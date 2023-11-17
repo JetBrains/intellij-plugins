@@ -13,7 +13,7 @@ object Angular2HtmlBlockInsertHandler : InsertHandler<LookupElement> {
   override fun handleInsert(context: InsertionContext, item: LookupElement) {
     val name = item.lookupString.removePrefix("@")
     val config = getAngular2HtmlBlocksConfig(context.file)
-    val definition = config.definitions[name]
+    val definition = config[name]
     val insertOffset = context.editor.caretModel.offset
     val hasParameters = definition != null && definition.parameters.isNotEmpty()
     if (hasParameters) {

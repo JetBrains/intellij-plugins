@@ -83,6 +83,11 @@ interface Angular2HtmlElementTypes : XmlElementType, Angular2HtmlTokenTypes, Ang
     }
 
     @JvmField
+    val BLOCK_CONTENTS: IElementType = Angular2ElementType("NG:BLOCK_CONTENTS") { node ->
+      Angular2HtmlBlockContentsImpl(node)
+    }
+
+    @JvmField
     val ALL_ATTRIBUTES = TokenSet.create(
       EVENT,
       BANANA_BOX_BINDING,

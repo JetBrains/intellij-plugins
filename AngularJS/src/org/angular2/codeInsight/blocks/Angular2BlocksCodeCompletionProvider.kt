@@ -18,6 +18,7 @@ import com.intellij.webSymbols.completion.WebSymbolsCompletionProviderBase
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 import org.angular2.lang.html.psi.Angular2HtmlBlock
+import org.angular2.lang.html.psi.Angular2HtmlBlockContents
 
 class Angular2BlocksCodeCompletionProvider : WebSymbolsCompletionProviderBase<PsiElement>() {
   override fun addCompletions(parameters: CompletionParameters,
@@ -31,12 +32,12 @@ class Angular2BlocksCodeCompletionProvider : WebSymbolsCompletionProviderBase<Ps
       HtmlCompletionContributor.patchResultSetForHtmlElementInTextCompletion(this, parameters)
     }
 
-    val parentPrimaryBlockName = blocksConfig.definitions[(context.parent as? Angular2HtmlBlock)?.getName()]
+    val parentPrimaryBlockName = blocksConfig[context.parent.asSafely<Angular2HtmlBlockContents>()?.block]
       ?.takeIf { it.hasNestedSecondaryBlocks }
       ?.name
 
     val prevBlocksCount = context.previousBlocks()
-      .takeWhile { blocksConfig.definitions[it.getName()]?.isPrimary != true }
+      .takeWhile { blocksConfig[it]?.isPrimary != true }
       .groupBy { it.getName() }
       .mapValues { it.value.count() }
 
@@ -47,14 +48,13 @@ class Angular2BlocksCodeCompletionProvider : WebSymbolsCompletionProviderBase<Ps
       val primaryBlockName =
         context.previousBlocks()
           .firstOrNull()
-          ?.asSafely<Angular2HtmlBlock>()
-          ?.let { blocksConfig.definitions[it.getName()] }
+          ?.let { blocksConfig[it] }
           ?.takeIf { !it.last }
           ?.let {
             if (it.isPrimary) it.name
             else it.primaryBlock
           }
-          ?.takeIf { blocksConfig.definitions[it]?.hasNestedSecondaryBlocks != true }
+          ?.takeIf { blocksConfig[it]?.hasNestedSecondaryBlocks != true }
 
       blocksConfig.primaryBlocks
         .plus(blocksConfig.secondaryBlocks[primaryBlockName] ?: emptyList())
