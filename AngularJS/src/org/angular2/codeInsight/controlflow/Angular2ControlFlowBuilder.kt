@@ -1,6 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight.controlflow
 
+import com.intellij.codeInsight.controlflow.Instruction
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.controlflow.JSControlFlowBuilder
@@ -9,19 +10,22 @@ import com.intellij.lang.javascript.psi.controlflow.instruction.JSConditionInstr
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.lang.javascript.psi.types.JSExoticStringLiteralType
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.Pair
 import com.intellij.psi.PsiElement
 import com.intellij.psi.html.HtmlTag
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.asSafely
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
+import org.angular2.codeInsight.blocks.BLOCK_ELSE
+import org.angular2.codeInsight.blocks.BLOCK_ELSE_IF
+import org.angular2.codeInsight.blocks.BLOCK_IF
 import org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.Companion.isTemplateTag
 import org.angular2.entities.Angular2Directive
 import org.angular2.lang.expr.psi.Angular2Binding
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
-import org.angular2.lang.html.psi.Angular2HtmlLet
-import org.angular2.lang.html.psi.PropertyBindingType
+import org.angular2.lang.html.psi.*
 
 /**
  * @see JSControlFlowBuilder
@@ -63,10 +67,59 @@ class Angular2ControlFlowBuilder : JSControlFlowBuilder() {
           super.visitElement(element)
         }
       }
-      is XmlAttribute -> {
-        if (visitedNodes.add(element)) super.visitElement(element)
+      is XmlAttribute, is Angular2HtmlBlockParameters -> {
+        if (visitedNodes.add(element))
+          super.visitElement(element)
       }
+      is Angular2HtmlBlock -> {
+        if (visitedNodes.add(element)) {
+          when (element.getName()) {
+            BLOCK_IF, BLOCK_ELSE_IF -> {
+              visitIfBlock(element)
+            }
+            BLOCK_ELSE -> {
+              myBuilder.startNode(element)
+              super.visitElement(element)
+            }
+            else -> {
+              super.visitElement(element)
+            }
+          }
+        }
+      }
+      is Angular2HtmlBlockContents ->
+        if (visitedNodes.add(element)) {
+          super.visitElement(element)
+        }
       else -> super.visitElement(element)
+    }
+  }
+
+  override fun createConditionInstruction(conditionExpression: JSExpression,
+                                          value: Boolean,
+                                          state: JSConditionInstruction.ConditionState): JSConditionInstruction =
+    conditionExpression.getUserData(CUSTOM_GUARD)
+      ?.let { Angular2CustomGuardConditionInstruction(conditionExpression, it, value, state) }
+    ?: super.createConditionInstruction(conditionExpression, value, state)
+
+
+  override fun isStatementCondition(parent: PsiElement?, currentElement: PsiElement?): Boolean =
+    currentElement == currentTopConditionExpression
+
+  private fun visitIfBlock(element: Angular2HtmlBlock) {
+    myBuilder.startNode(element)
+    currentTopConditionExpression = element.parameters.getOrNull(0)?.expression
+    processBranching(element, currentTopConditionExpression,
+                     element.contents, element.blockSiblingsForward().firstOrNull(), BranchOwner.IF)
+    currentTopConditionExpression = null
+    flushDelayedPendingEdges()
+  }
+
+  override fun addPendingEdgeFromBranching(owner: PsiElement, instruction: Instruction?) {
+    if (owner is Angular2HtmlBlock && owner.primaryBlockDefinition?.name == BLOCK_IF) {
+      addDelayedPendingEdge(owner, instruction)
+    } else {
+      super.addPendingEdgeFromBranching(owner, instruction)
     }
   }
 
@@ -121,10 +174,6 @@ class Angular2ControlFlowBuilder : JSControlFlowBuilder() {
 
   private var currentTopConditionExpression: JSExpression? = null
 
-  override fun isStatementCondition(parent: PsiElement?, currentElement: PsiElement?): Boolean {
-    return currentElement == currentTopConditionExpression
-  }
-
   private fun processIfBranching(element: HtmlTag, conditionExpression: JSExpression?) {
     myBuilder.startNode(element)
     val elseBranch = null // no support for the else branch narrowing in Angular, see https://github.com/angular/angular/issues/21504
@@ -133,16 +182,25 @@ class Angular2ControlFlowBuilder : JSControlFlowBuilder() {
     currentTopConditionExpression = null
   }
 
-  override fun createConditionInstruction(conditionExpression: JSExpression,
-                                          value: Boolean,
-                                          state: JSConditionInstruction.ConditionState): JSConditionInstruction {
-    return Angular2ConditionInstruction(conditionExpression, conditionExpression.getUserData(CUSTOM_GUARD), value, state)
+  // Angular does not have strict parent relationships of scopes for blocks
+  private val delayedPendingEdges: MutableList<Pair<PsiElement, Instruction>> = ArrayList()
+
+  private fun addDelayedPendingEdge(pendingScope: PsiElement?, instruction: Instruction?) {
+    if (instruction == null) return
+    delayedPendingEdges.add(Pair.create(pendingScope, instruction))
   }
 
-  class Angular2ConditionInstruction(element: PsiElement,
-                                     val customGuard: JSElement?,
-                                     value: Boolean,
-                                     state: ConditionState)
+  private fun flushDelayedPendingEdges() {
+    delayedPendingEdges.forEach { pair ->
+      myBuilder.addPendingEdge(pair.first, pair.second)
+    }
+    delayedPendingEdges.clear()
+  }
+
+  class Angular2CustomGuardConditionInstruction(element: PsiElement,
+                                                val customGuard: JSElement?,
+                                                value: Boolean,
+                                                state: ConditionState)
     : JSConditionInstruction(element, value, state)
 
   private data class Angular2GuardInfo(val classMember: JSElement, val templateExpression: JSExpression?) {

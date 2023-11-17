@@ -1,0 +1,33 @@
+0(1) element: null
+1(2) element: Angular2HtmlBlock (@if)
+2(3,4) element: JSReferenceExpression Read(foo)
+3(5) element: JSBinaryExpression condition: true, reachable
+4(9) element: JSBinaryExpression condition: false, reachable
+5(6) element: Angular2HtmlBlock (@if) IF (branch) true
+6(7) element: JSReferenceExpression Read(test)
+7(8) element: JSReferenceExpression Read(foo)
+8(32) element: JSCallExpression
+9(10) element: Angular2HtmlBlock (@if) IF (branch) false
+10(11) element: Angular2HtmlBlock (@else if)
+11(12,13) element: JSReferenceExpression Read(foo)
+12(14) element: JSBinaryExpression condition: true, reachable
+13(18) element: JSBinaryExpression condition: false, reachable
+14(15) element: Angular2HtmlBlock (@else if) IF (branch) true
+15(16) element: JSReferenceExpression Read(test)
+16(17) element: JSReferenceExpression Read(foo)
+17(32) element: JSCallExpression
+18(19) element: Angular2HtmlBlock (@else if) IF (branch) false
+19(20) element: Angular2HtmlBlock (@else if)
+20(21,22) element: JSReferenceExpression Read(foo)
+21(23) element: JSBinaryExpression condition: true, reachable
+22(27) element: JSBinaryExpression condition: false, reachable
+23(24) element: Angular2HtmlBlock (@else if) IF (branch) true
+24(25) element: JSReferenceExpression Read(test)
+25(26) element: JSReferenceExpression Read(foo)
+26(32) element: JSCallExpression
+27(28) element: Angular2HtmlBlock (@else if) IF (branch) false
+28(29) element: Angular2HtmlBlock (@else)
+29(30) element: JSReferenceExpression Read(test)
+30(31) element: JSReferenceExpression Read(foo)
+31(32) element: JSCallExpression
+32() element: null
