@@ -8,6 +8,7 @@ import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
 import com.intellij.webSymbols.utils.qualifiedKind
+import org.angular2.lang.html.psi.Angular2HtmlBlock
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_BLOCKS
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_BLOCK_PARAMETERS
 
@@ -21,7 +22,7 @@ fun getAngular2HtmlBlocksConfig(location: PsiElement): Angular2HtmlBlocksConfig 
   }
 }
 
-class Angular2HtmlBlocksConfig(val definitions: Map<String, Angular2HtmlBlockDefinition>) {
+class Angular2HtmlBlocksConfig(private val definitions: Map<String, Angular2HtmlBlockDefinition>) {
 
   val primaryBlocks: List<Angular2HtmlBlockDefinition> by lazy(LazyThreadSafetyMode.PUBLICATION) {
     definitions.values.filter { it.isPrimary }
@@ -30,6 +31,12 @@ class Angular2HtmlBlocksConfig(val definitions: Map<String, Angular2HtmlBlockDef
   val secondaryBlocks: Map<String, List<Angular2HtmlBlockDefinition>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
     definitions.values.filter { !it.isPrimary && it.primaryBlock != null }.groupBy { it.primaryBlock!! }
   }
+
+  operator fun get(block: Angular2HtmlBlock?): Angular2HtmlBlockDefinition? =
+    definitions[block?.getName()]
+
+  operator fun get(blockName: String?): Angular2HtmlBlockDefinition? =
+    definitions[blockName]
 
 }
 

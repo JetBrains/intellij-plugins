@@ -10,7 +10,7 @@ import com.intellij.lang.javascript.types.JSFileElementType
 import com.intellij.psi.formatter.WrappingUtil
 import com.intellij.psi.xml.XmlDocument
 import com.intellij.psi.xml.XmlTag
-import org.angular2.lang.html.psi.Angular2HtmlBlock
+import org.angular2.lang.html.psi.Angular2HtmlBlockContents
 import org.angular2.lang.html.psi.formatter.Angular2HtmlCodeStyleSettings
 
 class Angular2FormattingModelBuilder : JavascriptFormattingModelBuilder() {
@@ -21,7 +21,7 @@ class Angular2FormattingModelBuilder : JavascriptFormattingModelBuilder() {
     val alignment = element.node.getUserData(BLOCK_ALIGNMENT)
     val jsBlockContext: JSBlockContext = createBlockFactory(settings, dialect, formattingContext.formattingMode)
     var rootBlock: Block
-    if (element.parent.let { it is XmlTag || it is XmlDocument || it is Angular2HtmlBlock }) {
+    if (element.parent.let { it is XmlTag || it is XmlDocument || it is Angular2HtmlBlockContents }) {
       // interpolations
       val wrapType = WrappingUtil.getWrapType(settings.getCustomSettings(Angular2HtmlCodeStyleSettings::class.java).INTERPOLATION_WRAP)
       rootBlock = jsBlockContext.createBlock(element.node, Wrap.createWrap(wrapType, true),

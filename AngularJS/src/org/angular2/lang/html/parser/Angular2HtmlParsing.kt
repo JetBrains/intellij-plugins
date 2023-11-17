@@ -200,7 +200,7 @@ class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSyntax, bu
       val errorStartMarker = builder.mark()
       builder.advanceLexer()
       val errorEndMarker = builder.mark()
-      pushItemToStack(AngularBlock(startMarker, errorStartMarker, errorEndMarker))
+      pushItemToStack(AngularBlock(startMarker, errorStartMarker.precede(), errorStartMarker, errorEndMarker))
     }
     else {
       builder.error(Angular2Bundle.message("angular.parse.template.missing-block-opening-lbrace"))
@@ -449,7 +449,10 @@ class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSyntax, bu
                                          var hasNgNonBindable: Boolean = false)
     : HtmlTagInfoImpl(normalizedName, originalName, marker)
 
-  private class AngularBlock(private val startMarker: Marker, private val errorStartMarker: Marker, private val errorEndMarker: Marker)
+  private class AngularBlock(private val startMarker: Marker,
+                             private val contentsMarker: Marker,
+                             private val errorStartMarker: Marker,
+                             private val errorEndMarker: Marker)
     : HtmlParserStackItem {
 
     override fun done(builder: PsiBuilder,
@@ -463,8 +466,11 @@ class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSyntax, bu
       }
       errorEndMarker.drop()
       if (beforeMarker == null) {
+        contentsMarker.done(Angular2HtmlElementTypes.BLOCK_CONTENTS)
         startMarker.done(Angular2HtmlElementTypes.BLOCK)
-      } else {
+      }
+      else {
+        contentsMarker.doneBefore(Angular2HtmlElementTypes.BLOCK_CONTENTS, beforeMarker)
         startMarker.doneBefore(Angular2HtmlElementTypes.BLOCK, beforeMarker)
       }
     }

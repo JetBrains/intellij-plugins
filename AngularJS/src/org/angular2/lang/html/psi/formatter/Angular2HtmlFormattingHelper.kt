@@ -5,12 +5,13 @@ import com.intellij.formatting.*
 import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.formatter.common.AbstractBlock
-import com.intellij.psi.formatter.xml.*
+import com.intellij.psi.formatter.xml.AnotherLanguageBlockWrapper
+import com.intellij.psi.formatter.xml.XmlBlock
+import com.intellij.psi.formatter.xml.XmlFormattingPolicy
+import com.intellij.psi.formatter.xml.XmlTagBlock
 import com.intellij.psi.tree.IElementType
-import com.intellij.psi.util.siblings
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlElementType
-import org.angular2.codeInsight.blocks.getAngular2HtmlBlocksConfig
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes
@@ -25,16 +26,28 @@ internal object Angular2HtmlFormattingHelper {
   fun createSimpleChild(parent: ASTNode, child: ASTNode, indent: Indent?, wrap: Wrap?,
                         alignment: Alignment?, range: TextRange?, xmlFormattingPolicy: XmlFormattingPolicy,
                         preserveSpace: Boolean): XmlBlock =
-    if (parent.elementType == Angular2HtmlElementTypes.BLOCK) {
-      createAngularBlockChild(child, alignment, range, xmlFormattingPolicy, preserveSpace)
-    }
-    else {
-      Angular2HtmlFormattingBlock(child, wrap, alignment, xmlFormattingPolicy, indent, range, preserveSpace)
+    when (parent.elementType) {
+      Angular2HtmlElementTypes.BLOCK -> {
+        Angular2HtmlFormattingBlock(child, null, alignment, xmlFormattingPolicy, Indent.getNoneIndent(), range, false)
+      }
+      Angular2HtmlElementTypes.BLOCK_CONTENTS -> {
+        when (child.elementType) {
+          Angular2HtmlTokenTypes.BLOCK_START, Angular2HtmlTokenTypes.BLOCK_END -> {
+            Angular2HtmlFormattingBlock(child, null, alignment, xmlFormattingPolicy, Indent.getNoneIndent(), range, false)
+          }
+          else -> {
+            Angular2HtmlFormattingBlock(child, null, alignment, xmlFormattingPolicy, Indent.getNormalIndent(), range, preserveSpace)
+          }
+        }
+      }
+      else -> {
+        Angular2HtmlFormattingBlock(child, wrap, alignment, xmlFormattingPolicy, indent, range, preserveSpace)
+      }
     }
 
   fun createTagBlock(parent: ASTNode, child: ASTNode, indent: Indent?, wrap: Wrap?, alignment: Alignment?,
                      xmlFormattingPolicy: XmlFormattingPolicy, preserveSpace: Boolean): XmlTagBlock =
-    if (parent.elementType == Angular2HtmlElementTypes.BLOCK) {
+    if (parent.elementType == Angular2HtmlElementTypes.BLOCK_CONTENTS) {
       Angular2HtmlTagBlock(child, wrap, alignment, xmlFormattingPolicy, Indent.getNormalIndent(), preserveSpace)
     }
     else {
@@ -52,15 +65,11 @@ internal object Angular2HtmlFormattingHelper {
                    originalProcessChild: (MutableList<Block>, ASTNode, Wrap?, Alignment?, Indent?) -> ASTNode?): ASTNode? {
     if (child.elementType == Angular2HtmlElementTypes.BLOCK) {
       val firstBlock = child.psi as Angular2HtmlBlock
-      val blocksConfig = getAngular2HtmlBlocksConfig(firstBlock)
-      if (blocksConfig.definitions[firstBlock.getName()]?.isPrimary == true) {
-        val primaryBlockName = firstBlock.getName()
+      if (firstBlock.isPrimary) {
         val subBlocks = mutableListOf<Block>(
           Angular2HtmlFormattingBlock(child, null, null, xmlFormattingPolicy, Indent.getNoneIndent(), null, preserveSpace)
         )
-        firstBlock.siblings(true, false)
-          .filter { !AbstractXmlBlock.containsWhiteSpacesOnly(it.node) && it.node.getTextLength() > 0 }
-          .takeWhile { it is Angular2HtmlBlock && blocksConfig.definitions[it.getName()]?.primaryBlock == primaryBlockName }
+        firstBlock.blockSiblingsForward()
           .mapTo(subBlocks) {
             Angular2HtmlFormattingBlock(it.node, null, null, xmlFormattingPolicy, Indent.getNoneIndent(), null, preserveSpace)
           }
@@ -84,11 +93,12 @@ internal object Angular2HtmlFormattingHelper {
     ?: getSpacingIfInterpolationBorder(child1, child2, xmlFormattingPolicy, subBlocksProvider)
 
   fun getChildAttributes(block: Angular2HtmlFormattingBlock): ChildAttributes? =
-    if (block.node.elementType == Angular2HtmlElementTypes.BLOCK
-        || block.node.elementType == Angular2HtmlElementTypes.BLOCK_PARAMETERS) {
-      ChildAttributes(Indent.getNormalIndent(), null)
+    when (block.node.elementType) {
+      Angular2HtmlElementTypes.BLOCK_CONTENTS, Angular2HtmlElementTypes.BLOCK_PARAMETERS -> {
+        ChildAttributes(Indent.getNormalIndent(), null)
+      }
+      else -> null
     }
-    else null
 
   private fun getSpacingBetweenAngularBlockGroups(child1: Block?,
                                                   child2: Block,
@@ -105,9 +115,8 @@ internal object Angular2HtmlFormattingHelper {
     if ((child1 as? AbstractBlock)?.node?.elementType == Angular2HtmlElementTypes.BLOCK
         && (child2 as? AbstractBlock)?.node?.elementType == Angular2HtmlElementTypes.BLOCK) {
       val block1 = child1.node.psi as Angular2HtmlBlock
-      val blocksConfig = getAngular2HtmlBlocksConfig(block1)
       // Blocks from the same primary block are always grouped together within a synthetic block - see processChild above
-      if (blocksConfig.definitions[blocksConfig.definitions[block1.getName()]?.primaryBlock]?.hasNestedSecondaryBlocks != true) {
+      if (block1.primaryBlockDefinition?.hasNestedSecondaryBlocks != true) {
         Spacing.createSpacing(1, 1, 0, false, 0)
       }
       else {
@@ -124,9 +133,18 @@ internal object Angular2HtmlFormattingHelper {
       Angular2HtmlElementTypes.BLOCK -> {
         when ((child1 as? AbstractBlock)?.node?.elementType) {
           Angular2HtmlTokenTypes.BLOCK_NAME,
-          Angular2HtmlElementTypes.BLOCK_PARAMETERS -> {
+          Angular2HtmlElementTypes.BLOCK_PARAMETERS,
+          Angular2HtmlElementTypes.BLOCK_CONTENTS -> {
             Spacing.createSpacing(1, 1, 0, false, xmlFormattingPolicy.keepBlankLines)
           }
+          else -> null
+        }
+      }
+      Angular2HtmlElementTypes.BLOCK_PARAMETERS -> {
+        Spacing.createSpacing(0, 0, 0, false, xmlFormattingPolicy.keepBlankLines)
+      }
+      Angular2HtmlElementTypes.BLOCK_CONTENTS -> {
+        when ((child1 as? AbstractBlock)?.node?.elementType) {
           Angular2HtmlTokenTypes.BLOCK_START -> {
             Spacing.createSpacing(0, 0, 1, false, xmlFormattingPolicy.keepBlankLines)
           }
@@ -137,9 +155,6 @@ internal object Angular2HtmlFormattingHelper {
             else -> null
           }
         }
-      }
-      Angular2HtmlElementTypes.BLOCK_PARAMETERS -> {
-        Spacing.createSpacing(0, 0, 0, false, xmlFormattingPolicy.keepBlankLines)
       }
       else -> null
     }
@@ -191,19 +206,5 @@ internal object Angular2HtmlFormattingHelper {
     (child1 is Angular2HtmlFormattingBlock && (child1.node.elementType == Angular2HtmlTokenTypes.INTERPOLATION_START
                                                || child1.node.elementType == Angular2HtmlTokenTypes.INTERPOLATION_END))
     && (child2 as? AnotherLanguageBlockWrapper)?.node?.psi?.let { it.language is Angular2Language && it.parent !is XmlAttribute } == true
-
-  private fun createAngularBlockChild(child: ASTNode,
-                                      alignment: Alignment?,
-                                      range: TextRange?,
-                                      xmlFormattingPolicy: XmlFormattingPolicy,
-                                      preserveSpace: Boolean): XmlBlock =
-    when (child.elementType) {
-      Angular2HtmlTokenTypes.BLOCK_NAME,
-      Angular2HtmlElementTypes.BLOCK_PARAMETERS,
-      Angular2HtmlTokenTypes.BLOCK_START,
-      Angular2HtmlTokenTypes.BLOCK_END ->
-        Angular2HtmlFormattingBlock(child, null, alignment, xmlFormattingPolicy, Indent.getNoneIndent(), range, false)
-      else -> Angular2HtmlFormattingBlock(child, null, alignment, xmlFormattingPolicy, Indent.getNormalIndent(), range, preserveSpace)
-    }
 
 }

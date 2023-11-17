@@ -2,10 +2,9 @@
 package org.angular2.lang.html.psi
 
 import com.intellij.psi.PsiElement
-import org.angular2.lang.expr.psi.Angular2BlockParameter
 
-interface Angular2HtmlBlockParameters : PsiElement {
+interface Angular2HtmlBlockContents : PsiElement {
 
-  val parameters: List<Angular2BlockParameter>
+  val block: Angular2HtmlBlock
 
 }

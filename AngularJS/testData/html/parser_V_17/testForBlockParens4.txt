@@ -39,11 +39,12 @@ HtmlFile:test.html
                 PsiElement(JS:RPAR)(')')
         PsiElement(NG:BLOCK_PARAMETERS_END)(')')
       PsiWhiteSpace(' ')
-      PsiElement(NG:BLOCK_START)('{')
-      PsiElement(NG:INTERPOLATION_START)('{{')
-      ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
-        Angular2Interpolation
-          JSReferenceExpression
-            PsiElement(JS:IDENTIFIER)('item')
-      PsiElement(NG:INTERPOLATION_END)('}}')
-      PsiElement(NG:BLOCK_END)('}')
+      PsiElement(NG:BLOCK_CONTENTS)
+        PsiElement(NG:BLOCK_START)('{')
+        PsiElement(NG:INTERPOLATION_START)('{{')
+        ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
+          Angular2Interpolation
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('item')
+        PsiElement(NG:INTERPOLATION_END)('}}')
+        PsiElement(NG:BLOCK_END)('}')
