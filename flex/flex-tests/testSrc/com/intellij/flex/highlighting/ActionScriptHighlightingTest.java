@@ -275,41 +275,19 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     doTestFor(true, testName + ".js2", testName + "_2.js2");
   }
 
-  public void testSpellChecker() throws Exception {
+  public void testSpellChecker() {
     enableInspectionTool(new SpellCheckingInspection());
-    doSimpleHighlightingWithInvokeFixAndCheckResult(RenameTo.getFixName());
+    defaultTest();
   }
 
-  public void testSpellChecker_2() throws Exception {
-    runRenameSpellcheckerFixWithChooseVariant("typo");
-  }
-
-  private void runRenameSpellcheckerFixWithChooseVariant(String variantName) throws Exception {
-    TemplateManagerImpl.setTemplateTesting(getTestRootDisposable());
+  public void testSpellChecker_2() {
     enableInspectionTool(new SpellCheckingInspection());
-
-    doSimpleHighlightingWithInvokeFixAndCheckResult(RenameTo.getFixName());
-
-    final LookupEx lookup = LookupManager.getActiveLookup(myEditor);
-    assertNotNull(lookup);
-    boolean selected = false;
-
-    for (LookupElement l : lookup.getItems()) {
-      if (variantName.equals(l.getLookupString())) {
-        selected = true;
-        ((LookupImpl)lookup).finishLookup(Lookup.AUTO_INSERT_SELECT_CHAR, l);
-      }
-    }
-
-    assertTrue(selected);
-
-    LookupManager.hideActiveLookup(myProject);
-
-    checkResultByFile(BASE_PATH + getTestName(false) + "_after2.js2");
+    defaultTest();
   }
 
-  public void testSpellChecker2() throws Exception {
-    runRenameSpellcheckerFixWithChooseVariant("typo");
+  public void testSpellChecker2() {
+    enableInspectionTool(new SpellCheckingInspection());
+    defaultTest();
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)

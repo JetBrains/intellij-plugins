@@ -1,6 +1,0 @@
-class Foo {
-  function foo():void {
-    var typo:int;
-    typo = 1;
-  }
-}

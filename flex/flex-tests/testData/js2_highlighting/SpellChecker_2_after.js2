@@ -1,6 +1,6 @@
 class Foo {
   function foo():void {
-    var <selection>typ<caret>ppo</selection>:int;
-    typppo = 1;
+    var typo:int;
+    typo = 1;
   }
 }
