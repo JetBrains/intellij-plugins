@@ -23,7 +23,7 @@ class Angular2TypeGuard(element: PsiElement) : TypeScriptTypeGuard(element) {
 
   override fun getDialectSpecificTypeOperation(flow: JSControlFlowService.JSControlFlow,
                                                instruction: Instruction): JSTypeOperation? {
-    if (instruction is Angular2ControlFlowBuilder.Angular2ConditionInstruction) {
+    if (instruction is Angular2ControlFlowBuilder.Angular2CustomGuardConditionInstruction) {
       val element = instruction.getElement()
       if (element is JSExpression) {
         val guard = instruction.customGuard
