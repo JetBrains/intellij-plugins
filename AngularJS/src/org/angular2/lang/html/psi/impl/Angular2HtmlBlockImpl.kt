@@ -3,7 +3,6 @@ package org.angular2.lang.html.psi.impl
 
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.formatter.xml.AbstractXmlBlock
-import com.intellij.psi.impl.source.tree.CompositePsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.siblings
@@ -22,7 +21,7 @@ import org.angular2.lang.html.psi.Angular2HtmlBlockParameters
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor
 
 class Angular2HtmlBlockImpl(type: Angular2HtmlElementTypes.Angular2ElementType)
-  : CompositePsiElement(type), Angular2HtmlBlock {
+  : Angular2HtmlCompositePsiElement(type), Angular2HtmlBlock {
 
   override fun getName(): String =
     findChildByType(Angular2HtmlTokenTypes.BLOCK_NAME)
@@ -87,4 +86,7 @@ class Angular2HtmlBlockImpl(type: Angular2HtmlElementTypes.Angular2ElementType)
       }
     }
   }
+
+  override fun toString(): String =
+    super.toString() + " (@$name)"
 }

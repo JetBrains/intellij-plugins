@@ -10,7 +10,7 @@ HtmlFile:test.html
         XmlToken:XML_START_TAG_START('<')
         XmlToken:XML_NAME('span')
         XmlToken:XML_TAG_END('>')
-        PsiElement(NG:EXPANSION_FORM)
+        Angular2HtmlExpansionForm
           PsiElement(NG:EXPANSION_FORM_START)('{')
           ASTWrapperPsiElement(NG:BINDING_EXPR)
             Angular2Binding
@@ -21,7 +21,7 @@ HtmlFile:test.html
           XmlToken:XML_DATA_CHARACTERS('plural')
           XmlToken:XML_COMMA(',')
           PsiWhiteSpace(' ')
-          PsiElement(NG:EXPANSION_FORM_CASE)
+          Angular2HtmlExpansionFormCase
             XmlToken:XML_DATA_CHARACTERS('=0')
             PsiWhiteSpace(' ')
             PsiElement(NG:EXPANSION_FORM_CASE_START)('{')

@@ -2,7 +2,7 @@ HtmlFile:test.html
   PsiElement(HTML_DOCUMENT)
     PsiElement(XML_PROLOG)
       <empty list>
-    PsiElement(NG:EXPANSION_FORM)
+    Angular2HtmlExpansionForm
       PsiElement(NG:EXPANSION_FORM_START)('{')
       ASTWrapperPsiElement(NG:BINDING_EXPR)
         Angular2Binding
@@ -13,7 +13,7 @@ HtmlFile:test.html
       XmlToken:XML_DATA_CHARACTERS('select')
       XmlToken:XML_COMMA(',')
       PsiWhiteSpace(' ')
-      PsiElement(NG:EXPANSION_FORM_CASE)
+      Angular2HtmlExpansionFormCase
         XmlToken:XML_DATA_CHARACTERS('male')
         PsiWhiteSpace(' ')
         PsiElement(NG:EXPANSION_FORM_CASE_START)('{')
@@ -22,7 +22,7 @@ HtmlFile:test.html
             XmlToken:XML_DATA_CHARACTERS('m')
         PsiElement(NG:EXPANSION_FORM_CASE_END)('}')
       PsiWhiteSpace(' ')
-      PsiElement(NG:EXPANSION_FORM_CASE)
+      Angular2HtmlExpansionFormCase
         XmlToken:XML_DATA_CHARACTERS('female')
         PsiWhiteSpace(' ')
         PsiElement(NG:EXPANSION_FORM_CASE_START)('{')
@@ -31,7 +31,7 @@ HtmlFile:test.html
             XmlToken:XML_DATA_CHARACTERS('f')
         PsiElement(NG:EXPANSION_FORM_CASE_END)('}')
       PsiWhiteSpace(' ')
-      PsiElement(NG:EXPANSION_FORM_CASE)
+      Angular2HtmlExpansionFormCase
         XmlToken:XML_DATA_CHARACTERS('0')
         PsiWhiteSpace(' ')
         PsiElement(NG:EXPANSION_FORM_CASE_START)('{')
