@@ -8,7 +8,7 @@ HtmlFile:test.html
       XmlToken:XML_TAG_END('>')
       XmlText
         XmlToken:XML_DATA_CHARACTERS('Text')
-      PsiElement(NG:EXPANSION_FORM)
+      Angular2HtmlExpansionForm
         PsiElement(NG:EXPANSION_FORM_START)('{')
         PsiWhiteSpace(' ')
         ASTWrapperPsiElement(NG:BINDING_EXPR)
@@ -20,7 +20,7 @@ HtmlFile:test.html
         XmlToken:XML_DATA_CHARACTERS('open')
         XmlToken:XML_COMMA(',')
         PsiWhiteSpace(' ')
-        PsiElement(NG:EXPANSION_FORM_CASE)
+        Angular2HtmlExpansionFormCase
           XmlToken:XML_DATA_CHARACTERS('=23')
           PsiWhiteSpace(' ')
           PsiElement(NG:EXPANSION_FORM_CASE_START)('{')
@@ -43,7 +43,7 @@ HtmlFile:test.html
               PsiWhiteSpace(' ')
               XmlToken:XML_DATA_CHARACTERS('is')
               PsiWhiteSpace(' ')
-            PsiElement(NG:EXPANSION_FORM)
+            Angular2HtmlExpansionForm
               PsiElement(NG:EXPANSION_FORM_START)('{')
               ASTWrapperPsiElement(NG:BINDING_EXPR)
                 Angular2Binding
@@ -54,7 +54,7 @@ HtmlFile:test.html
               XmlToken:XML_DATA_CHARACTERS('open')
               XmlToken:XML_COMMA(',')
               PsiWhiteSpace(' ')
-              PsiElement(NG:EXPANSION_FORM_CASE)
+              Angular2HtmlExpansionFormCase
                 XmlToken:XML_DATA_CHARACTERS('=34')
                 PsiElement(NG:EXPANSION_FORM_CASE_START)('{')
                 XmlASTWrapperPsiElement(NG:EXPANSION_FORM_CASE_CONTENT_TOKEN)
@@ -70,7 +70,7 @@ HtmlFile:test.html
                     PsiWhiteSpace(' ')
                 PsiElement(NG:EXPANSION_FORM_CASE_END)('}')
               PsiWhiteSpace(' ')
-              PsiElement(NG:EXPANSION_FORM_CASE)
+              Angular2HtmlExpansionFormCase
                 XmlToken:XML_DATA_CHARACTERS('=12')
                 PsiElement(NG:EXPANSION_FORM_CASE_START)('{')
                 XmlASTWrapperPsiElement(NG:EXPANSION_FORM_CASE_CONTENT_TOKEN)
