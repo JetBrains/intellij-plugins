@@ -16,11 +16,12 @@ HtmlFile:test.html
               PsiElement(JS:IDENTIFIER)('name')
         PsiElement(NG:BLOCK_PARAMETERS_END)(')')
       PsiWhiteSpace(' ')
-      PsiElement(NG:BLOCK_START)('{')
-      PsiWhiteSpace('\n    ')
-      PsiElement(NG:BLOCK)
-        PsiElement(NG:BLOCK_NAME)('@c')
-        PsiErrorElement:Incomplete block - missing {
-          <empty list>
-      PsiWhiteSpace('\n')
-      PsiElement(NG:BLOCK_END)('}')
+      PsiElement(NG:BLOCK_CONTENTS)
+        PsiElement(NG:BLOCK_START)('{')
+        PsiWhiteSpace('\n    ')
+        PsiElement(NG:BLOCK)
+          PsiElement(NG:BLOCK_NAME)('@c')
+          PsiErrorElement:Incomplete block - missing {
+            <empty list>
+        PsiWhiteSpace('\n')
+        PsiElement(NG:BLOCK_END)('}')

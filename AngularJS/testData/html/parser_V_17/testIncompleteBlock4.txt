@@ -13,12 +13,13 @@ HtmlFile:test.html
             <empty list>
         PsiElement(NG:BLOCK_PARAMETERS_END)(')')
       PsiWhiteSpace(' \n')
-      PsiErrorElement:Incomplete block - missing }
-        PsiElement(NG:BLOCK_START)('{')
-      XmlToken:XML_DATA_CHARACTERS('this')
-      PsiWhiteSpace(' ')
-      XmlToken:XML_DATA_CHARACTERS('is')
-      PsiWhiteSpace(' ')
-      XmlToken:XML_DATA_CHARACTERS('not')
-      PsiWhiteSpace(' ')
-      XmlToken:XML_DATA_CHARACTERS('finished')
+      PsiElement(NG:BLOCK_CONTENTS)
+        PsiErrorElement:Incomplete block - missing }
+          PsiElement(NG:BLOCK_START)('{')
+        XmlToken:XML_DATA_CHARACTERS('this')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('is')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('not')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('finished')

@@ -51,4 +51,8 @@ open class Angular2HtmlElementVisitor : XmlElementVisitor() {
   open fun visitBlockParameters(blockParameters: Angular2HtmlBlockParameters) {
     visitElement(blockParameters)
   }
+
+  open fun visitBlockContents(blockContents: Angular2HtmlBlockContents) {
+    visitElement(blockContents)
+  }
 }

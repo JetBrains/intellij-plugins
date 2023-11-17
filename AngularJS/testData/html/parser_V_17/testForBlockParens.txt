@@ -27,6 +27,7 @@ HtmlFile:test.html
             <empty list>
         PsiElement(NG:BLOCK_PARAMETERS_END)(')')
       PsiWhiteSpace(' ')
-      PsiElement(NG:BLOCK_START)('{')
-      PsiWhiteSpace('\n')
-      PsiElement(NG:BLOCK_END)('}')
+      PsiElement(NG:BLOCK_CONTENTS)
+        PsiElement(NG:BLOCK_START)('{')
+        PsiWhiteSpace('\n')
+        PsiElement(NG:BLOCK_END)('}')
