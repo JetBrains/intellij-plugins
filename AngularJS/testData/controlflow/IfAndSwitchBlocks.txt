@@ -1,0 +1,45 @@
+0(1) element: null
+1(2) element: Angular2HtmlBlock (@if)
+2(3,4) element: JSReferenceExpression Read(foo)
+3(5) element: JSReferenceExpression condition: true, reachable
+4(39) element: JSReferenceExpression condition: false, reachable
+5(6) element: Angular2HtmlBlock (@if) IF (branch) true
+6(7) element: Angular2HtmlBlock (@switch)
+7(8) element: JSReferenceExpression Read(foo)
+8(9,10) element: Angular2HtmlBlock (@case)
+9(11) element: {} condition: true, reachable
+10(15) element: {} condition: false, reachable
+11(12) element: Angular2HtmlBlock (@case) IF (branch) true
+12(13) element: JSReferenceExpression Read(test)
+13(14) element: JSReferenceExpression Read(foo)
+14(36) element: JSCallExpression
+15(16) element: Angular2HtmlBlock (@case) IF (branch) false
+16(17,18) element: Angular2HtmlBlock (@case)
+17(19) element: {} condition: true, reachable
+18(23) element: {} condition: false, reachable
+19(20) element: Angular2HtmlBlock (@case) IF (branch) true
+20(21) element: JSReferenceExpression Read(test)
+21(22) element: JSReferenceExpression Read(foo)
+22(36) element: JSCallExpression
+23(24) element: Angular2HtmlBlock (@case) IF (branch) false
+24(25,26) element: Angular2HtmlBlock (@case)
+25(27) element: {} condition: true, reachable
+26(31) element: {} condition: false, reachable
+27(28) element: Angular2HtmlBlock (@case) IF (branch) true
+28(29) element: JSReferenceExpression Read(test)
+29(30) element: JSReferenceExpression Read(foo)
+30(36) element: JSCallExpression
+31(32) element: Angular2HtmlBlock (@case) IF (branch) false
+32(33) element: Angular2HtmlBlock (@default)
+33(34) element: JSReferenceExpression Read(test)
+34(35) element: JSReferenceExpression Read(foo)
+35(36) element: JSCallExpression
+36(37) element: JSReferenceExpression Read(test)
+37(38) element: JSReferenceExpression Read(foo)
+38(44) element: JSCallExpression
+39(40) element: Angular2HtmlBlock (@if) IF (branch) false
+40(41) element: Angular2HtmlBlock (@else)
+41(42) element: JSReferenceExpression Read(test)
+42(43) element: JSReferenceExpression Read(foo)
+43(44) element: JSCallExpression
+44() element: null

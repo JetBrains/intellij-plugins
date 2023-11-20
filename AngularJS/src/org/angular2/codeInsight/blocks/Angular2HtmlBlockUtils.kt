@@ -4,6 +4,9 @@ package org.angular2.codeInsight.blocks
 const val BLOCK_IF = "if"
 const val BLOCK_ELSE_IF = "else if"
 const val BLOCK_ELSE = "else"
+const val BLOCK_SWITCH = "switch"
+const val BLOCK_CASE = "case"
+const val BLOCK_DEFAULT = "default"
 
 object Angular2HtmlBlockUtils {
 
