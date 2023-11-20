@@ -2,23 +2,29 @@
 package org.angular2.codeInsight.controlflow
 
 import com.intellij.codeInsight.controlflow.Instruction
+import com.intellij.lang.ASTNode
+import com.intellij.lang.javascript.JSTokenTypes
+import com.intellij.lang.javascript.psi.JSBinaryExpression
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.controlflow.JSControlFlowBuilder
 import com.intellij.lang.javascript.psi.controlflow.instruction.JSBranchInstruction.BranchOwner
 import com.intellij.lang.javascript.psi.controlflow.instruction.JSConditionInstruction
+import com.intellij.lang.javascript.psi.controlflow.instruction.JSConditionInstruction.ConditionState
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.lang.javascript.psi.types.JSExoticStringLiteralType
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.Pair
 import com.intellij.psi.PsiElement
 import com.intellij.psi.html.HtmlTag
+import com.intellij.psi.impl.FakePsiElement
+import com.intellij.psi.tree.IElementType
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.childrenOfType
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.asSafely
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
-import org.angular2.codeInsight.blocks.BLOCK_ELSE
-import org.angular2.codeInsight.blocks.BLOCK_ELSE_IF
-import org.angular2.codeInsight.blocks.BLOCK_IF
+import org.angular2.codeInsight.blocks.*
 import org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.Companion.isTemplateTag
 import org.angular2.entities.Angular2Directive
 import org.angular2.lang.expr.psi.Angular2Binding
@@ -77,9 +83,12 @@ class Angular2ControlFlowBuilder : JSControlFlowBuilder() {
             BLOCK_IF, BLOCK_ELSE_IF -> {
               visitIfBlock(element)
             }
-            BLOCK_ELSE -> {
+            BLOCK_ELSE, BLOCK_SWITCH, BLOCK_DEFAULT -> {
               myBuilder.startNode(element)
               super.visitElement(element)
+            }
+            BLOCK_CASE -> {
+              visitSwitchCaseBlock(element)
             }
             else -> {
               super.visitElement(element)
@@ -97,7 +106,7 @@ class Angular2ControlFlowBuilder : JSControlFlowBuilder() {
 
   override fun createConditionInstruction(conditionExpression: JSExpression,
                                           value: Boolean,
-                                          state: JSConditionInstruction.ConditionState): JSConditionInstruction =
+                                          state: ConditionState): JSConditionInstruction =
     conditionExpression.getUserData(CUSTOM_GUARD)
       ?.let { Angular2CustomGuardConditionInstruction(conditionExpression, it, value, state) }
     ?: super.createConditionInstruction(conditionExpression, value, state)
@@ -106,21 +115,40 @@ class Angular2ControlFlowBuilder : JSControlFlowBuilder() {
   override fun isStatementCondition(parent: PsiElement?, currentElement: PsiElement?): Boolean =
     currentElement == currentTopConditionExpression
 
+  override fun addPendingEdgeFromBranching(owner: PsiElement, instruction: Instruction?) {
+    if (owner.isControlFlowBlock) {
+      addDelayedPendingEdge(owner, instruction)
+    }
+    else {
+      super.addPendingEdgeFromBranching(owner, instruction)
+    }
+  }
+
   private fun visitIfBlock(element: Angular2HtmlBlock) {
     myBuilder.startNode(element)
     currentTopConditionExpression = element.parameters.getOrNull(0)?.expression
     processBranching(element, currentTopConditionExpression,
                      element.contents, element.blockSiblingsForward().firstOrNull(), BranchOwner.IF)
     currentTopConditionExpression = null
-    flushDelayedPendingEdges()
+    flushDelayedPendingEdges(element)
   }
 
-  override fun addPendingEdgeFromBranching(owner: PsiElement, instruction: Instruction?) {
-    if (owner is Angular2HtmlBlock && owner.primaryBlockDefinition?.name == BLOCK_IF) {
-      addDelayedPendingEdge(owner, instruction)
-    } else {
-      super.addPendingEdgeFromBranching(owner, instruction)
-    }
+  private fun visitSwitchCaseBlock(element: Angular2HtmlBlock) {
+    myBuilder.startNode(element)
+
+    val nextCase = element.blockSiblingsForward().firstOrNull { it.getName() == BLOCK_CASE }
+                   ?: element.parent.childrenOfType<Angular2HtmlBlock>().firstOrNull { it.getName() == BLOCK_DEFAULT }
+
+    val switchExpression = element.parent?.parent?.asSafely<Angular2HtmlBlock>()?.takeIf { it.getName() == BLOCK_SWITCH }
+      ?.parameters?.get(0)?.expression
+
+    val caseExpression = element.parameters.getOrNull(0)?.expression
+
+    currentTopConditionExpression = Angular2FakeBinaryExpression(element, switchExpression, caseExpression, JSTokenTypes.EQEQEQ)
+    processBranching(element, currentTopConditionExpression,
+                     element.contents, nextCase, BranchOwner.IF)
+    currentTopConditionExpression = null
+    flushDelayedPendingEdges(element)
   }
 
   private fun processAttribute(attribute: XmlAttribute, templateGuards: Map<String, List<JSElement>>): List<Angular2GuardInfo> {
@@ -190,12 +218,20 @@ class Angular2ControlFlowBuilder : JSControlFlowBuilder() {
     delayedPendingEdges.add(Pair.create(pendingScope, instruction))
   }
 
-  private fun flushDelayedPendingEdges() {
-    delayedPendingEdges.forEach { pair ->
-      myBuilder.addPendingEdge(pair.first, pair.second)
+  private fun flushDelayedPendingEdges(element: Angular2HtmlBlock) {
+    val scope = element.parent
+    val iterator = delayedPendingEdges.asReversed().listIterator()
+    while (iterator.hasNext()) {
+      val edge = iterator.next()
+      if (PsiTreeUtil.isAncestor(scope, edge.first, false)) {
+        iterator.remove()
+        myBuilder.addPendingEdge(edge.first, edge.second)
+      }
     }
-    delayedPendingEdges.clear()
   }
+
+  private val PsiElement.isControlFlowBlock
+    get() = this is Angular2HtmlBlock && primaryBlockDefinition?.name.let { def -> def == BLOCK_IF || def == BLOCK_SWITCH }
 
   class Angular2CustomGuardConditionInstruction(element: PsiElement,
                                                 val customGuard: JSElement?,
@@ -208,5 +244,23 @@ class Angular2ControlFlowBuilder : JSControlFlowBuilder() {
       get() = classMember.asSafely<TypeScriptField>()
         ?.jsType?.asSafely<JSExoticStringLiteralType>()
         ?.asSimpleLiteralType()?.literal == BINDING_GUARD
+  }
+
+  private class Angular2FakeBinaryExpression(private val parent: PsiElement?,
+                                             private val lOperand: JSExpression?,
+                                             private val rOperand: JSExpression?,
+                                             private val operationSign: IElementType) : FakePsiElement(), JSBinaryExpression {
+    override fun getOperationSign(): IElementType = operationSign
+    override fun getLOperand(): JSExpression? = lOperand
+    override fun getROperand(): JSExpression? = rOperand
+    override fun getParent(): PsiElement? = parent
+
+    override fun replace(other: JSExpression): JSExpression {
+      throw UnsupportedOperationException()
+    }
+
+    override fun getOperationNode(): ASTNode? {
+      throw UnsupportedOperationException()
+    }
   }
 }

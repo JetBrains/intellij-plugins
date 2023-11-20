@@ -6,7 +6,6 @@ import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.controlflow.BaseJSControlFlowTest
 import com.intellij.lang.javascript.psi.JSControlFlowScope
 import com.intellij.lang.javascript.psi.controlflow.JSControlFlowBuilder
-import com.intellij.psi.util.parentOfType
 import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile
@@ -46,6 +45,12 @@ class Angular2ControlFlowTest : BaseJSControlFlowTest() {
   fun testIfBlock() = doTest("@if <caret>(",
                              Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, Angular2TestModule.ANGULAR_COMMON_17_0_0_RC_0)
 
+  fun testSwitchBlock() = doTest("@switch <caret>(",
+                                 Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, Angular2TestModule.ANGULAR_COMMON_17_0_0_RC_0)
+
+  fun testIfAndSwitchBlocks() = doTest("@switch <caret>(",
+                                       Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, Angular2TestModule.ANGULAR_COMMON_17_0_0_RC_0)
+
   override fun createJSControlFlowBuilder(): JSControlFlowBuilder {
     return Angular2ControlFlowBuilder()
   }
@@ -55,7 +60,8 @@ class Angular2ControlFlowTest : BaseJSControlFlowTest() {
   }
 
   private fun doTest(signature: String, skipTSConfig: Boolean = false,
-                     modules: Array<out Angular2TestModule> = arrayOf(Angular2TestModule.ANGULAR_CORE_15_1_5, Angular2TestModule.ANGULAR_COMMON_15_1_5)) {
+                     modules: Array<out Angular2TestModule> = arrayOf(Angular2TestModule.ANGULAR_CORE_15_1_5,
+                                                                      Angular2TestModule.ANGULAR_COMMON_15_1_5)) {
     Angular2TestModule.configureCopy(myFixture, *modules)
     if (!skipTSConfig) {
       myFixture.configure(Angular2TsConfigFile())
