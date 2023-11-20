@@ -55,12 +55,4 @@ public class PbTextFileType extends LanguageFileType {
   public Icon getIcon() {
     return PbIcons.TEXT_FILE;
   }
-
-  public boolean equals(Object other) {
-    return other != null && getClass().equals(other.getClass());
-  }
-
-  public int hashCode() {
-    return getClass().hashCode();
-  }
 }

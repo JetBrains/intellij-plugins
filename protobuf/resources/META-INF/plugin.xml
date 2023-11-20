@@ -70,7 +70,7 @@
   <!-- Protobuf extensions -->
   <extensions defaultExtensionNs="com.intellij">
     <!-- Language -->
-    <fileType name="protobuf" language="protobuf" implementationClass="com.intellij.protobuf.lang.PbFileType" extensions="proto"/>
+    <fileType name="protobuf" language="protobuf" implementationClass="com.intellij.protobuf.lang.PbFileType" extensions="proto" fieldName="INSTANCE"/>
     <lang.parserDefinition language="protobuf" implementationClass="com.intellij.protobuf.lang.PbParserDefinition"/>
 
     <!-- Syntax highlighting -->
@@ -168,7 +168,7 @@
   <!-- Text format extensions -->
   <extensions defaultExtensionNs="com.intellij">
     <!-- Language -->
-    <fileType name="prototext" language="prototext" implementationClass="com.intellij.protobuf.lang.PbTextFileType"
+    <fileType name="prototext" language="prototext" implementationClass="com.intellij.protobuf.lang.PbTextFileType" fieldName="INSTANCE"
               extensions="pb;textproto;txtpb"/>
 
     <lang.parserDefinition language="prototext" implementationClass="com.intellij.protobuf.lang.PbTextParserDefinition"/>
