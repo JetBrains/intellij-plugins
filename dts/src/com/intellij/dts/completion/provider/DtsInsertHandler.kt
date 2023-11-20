@@ -1,4 +1,4 @@
-package com.intellij.dts.completion
+package com.intellij.dts.completion.provider
 
 import com.intellij.codeInsight.AutoPopupController
 import com.intellij.codeInsight.completion.CompletionType
@@ -26,8 +26,8 @@ private fun checkLineBlank(start: PsiElement): Boolean {
     return true
 }
 
-private class InsertSession(val context: InsertionContext) {
-    val isLineBlank: Boolean
+private class InsertSession(val context: InsertionContext, force: Boolean) {
+    val canInsert: Boolean
     val nextElement: PsiElement?
 
     var offset: Int = context.selectionEndOffset
@@ -36,10 +36,10 @@ private class InsertSession(val context: InsertionContext) {
         val start = context.file.findElementAt(offset)
 
         if (start == null) {
-            isLineBlank = true
+            canInsert = true
             nextElement = null
         } else {
-            isLineBlank = checkLineBlank(start)
+            canInsert = force || checkLineBlank(start)
             nextElement = DtsUtil.iterateLeafs(start, strict = false).firstOrNull()
         }
     }
@@ -54,7 +54,7 @@ private class InsertSession(val context: InsertionContext) {
     }
 
     private fun insertPair(leftStr: String, leftToken: IElementType, rightStr: String, rightToken: IElementType, body: String): Boolean {
-        if (!isLineBlank || nextElement.elementType == leftToken) return false
+        if (!canInsert || nextElement.elementType == leftToken) return false
         insertText(leftStr + body, moveCaret = true)
 
         if (nextElement.elementType == rightToken) return false
@@ -64,14 +64,21 @@ private class InsertSession(val context: InsertionContext) {
     }
 
     fun insertSpace(): Boolean {
-        if (!isLineBlank) return false
-        insertText(" ", moveCaret = true)
+        if (!canInsert) return false
+
+        val text = context.document.text
+
+        if (text.length > offset && text.slice(offset..offset) == " ") {
+            context.editor.caretModel.moveToOffset(++offset)
+        } else {
+            insertText(" ", moveCaret = true)
+        }
 
         return true
     }
 
     fun insertAssign(): Boolean {
-        if (!isLineBlank || nextElement.elementType == DtsTypes.ASSIGN) return false
+        if (!canInsert || nextElement.elementType == DtsTypes.ASSIGN) return false
         insertText(" = ", moveCaret = true)
 
         return true
@@ -110,7 +117,7 @@ private class InsertSession(val context: InsertionContext) {
     )
 
     fun insertSemicolon(moveCaret: Boolean = false): Boolean {
-        if (!isLineBlank || nextElement.elementType == DtsTypes.SEMICOLON) return false
+        if (!canInsert || nextElement.elementType == DtsTypes.SEMICOLON) return false
         insertText(";", moveCaret)
 
         return true
@@ -157,7 +164,7 @@ object DtsInsertHandler {
 
     val PROPERTY = InsertHandler<LookupElement> { context, item ->
         val symbol = getSymbol<DtsPropertySymbol>(item) ?: return@InsertHandler
-        val session = InsertSession(context)
+        val session = InsertSession(context, force = false)
 
         when (symbol.type) {
             DtsPropertyType.Boolean -> insertBool(session)
@@ -170,7 +177,12 @@ object DtsInsertHandler {
     }
 
     val SUB_NODE = InsertHandler<LookupElement> { context, _ ->
-        val session = InsertSession(context)
+        val session = InsertSession(context, force = false)
+        session.insertSpace() && session.insertNodeBraces() && session.insertSemicolon()
+    }
+
+    val ROOT_NODE = InsertHandler<LookupElement> { context, _ ->
+        val session = InsertSession(context, force = true)
         session.insertSpace() && session.insertNodeBraces() && session.insertSemicolon()
     }
 }

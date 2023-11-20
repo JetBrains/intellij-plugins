@@ -1,84 +1,50 @@
 package com.intellij.dts.completion
 
+import com.intellij.codeInsight.AutoPopupController
 import com.intellij.codeInsight.completion.CompletionContributor
-import com.intellij.codeInsight.completion.CompletionParameters
-import com.intellij.codeInsight.completion.CompletionResultSet
-import com.intellij.codeInsight.completion.PrioritizedLookupElement
-import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.dts.DtsBundle
-import com.intellij.dts.DtsIcons
-import com.intellij.dts.documentation.DtsBundledBindings
-import com.intellij.dts.lang.symbols.DtsDocumentationSymbol
-import com.intellij.dts.documentation.DtsNodeBindingDocumentationTarget
-import com.intellij.dts.lang.psi.*
-import com.intellij.dts.lang.symbols.DtsPropertySymbol
-import com.intellij.dts.util.DtsTreeUtil
-import com.intellij.dts.zephyr.binding.DtsZephyrBindingProvider
-import com.intellij.psi.PsiErrorElement
-import com.intellij.psi.util.elementType
+import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.codeInsight.editorActions.TypedHandlerDelegate
+import com.intellij.dts.completion.provider.DtsCompilerDirectiveProvider
+import com.intellij.dts.completion.provider.DtsNodeNameProvider
+import com.intellij.dts.completion.provider.DtsPropertyNameProvider
+import com.intellij.dts.completion.provider.DtsRootNodeProvider
+import com.intellij.dts.lang.DtsFile
+import com.intellij.dts.lang.psi.DtsTypes
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.patterns.PlatformPatterns.psiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.TokenType
+import com.intellij.psi.tree.TokenSet
 
 class DtsCompletionContributor : CompletionContributor() {
-    private fun addPropertyVariants(node: DtsNode, result: CompletionResultSet) {
-        val binding = DtsZephyrBindingProvider.bindingFor(node) ?: return
+    class AutoPopup : TypedHandlerDelegate() {
+        override fun checkAutoPopup(c: Char, project: Project, editor: Editor, file: PsiFile): Result {
+            if (file !is DtsFile || c != '/') return Result.CONTINUE
 
-        val presentProperties = node.dtsProperties.map { it.dtsName }
-        val newProperties = binding.properties.values.filter { !presentProperties.contains(it.name) }
+            AutoPopupController.getInstance(project).scheduleAutoPopup(editor, CompletionType.BASIC, null)
 
-        for (property in newProperties) {
-            val lookup = LookupElementBuilder.create(DtsPropertySymbol(property).createPointer(), property.name)
-                .withTypeText(property.type.typeName)
-                .withIcon(DtsIcons.Property)
-                .withInsertHandler(DtsInsertHandler.PROPERTY)
-
-            result.addElement(PrioritizedLookupElement.withPriority(lookup, DtsLookupPriority.PROPERTY))
+            return Result.CONTINUE
         }
     }
 
-    private fun addSubNodeVariants(node: DtsNode, result: CompletionResultSet) {
-        if (!node.isDtsRootNode()) return
+    private val propertyOrError = TokenSet.create(TokenType.ERROR_ELEMENT, DtsTypes.PROPERTY)
+    private val subNodeOrError = TokenSet.create(TokenType.ERROR_ELEMENT, DtsTypes.SUB_NODE)
 
-        // no removal of present nodes in suggestions, because some nodes can be
-        // suffixed with @... which makes them different
+    init {
+        val base = dtsBasePattern().and(dtsInsideContainer())
 
-        val provider = DtsZephyrBindingProvider.of(node.project)
+        extend(CompletionType.BASIC, base, DtsCompilerDirectiveProvider())
+        extend(CompletionType.BASIC, base, DtsRootNodeProvider())
 
-        for (binding in DtsBundledBindings.entries) {
-            val build = binding.build(provider) ?: continue
+        val propertyName = base
+            .withElementType(DtsTypes.NAME)
+            .withParent(psiElement().withElementType(propertyOrError))
+        extend(CompletionType.BASIC, propertyName, DtsPropertyNameProvider())
 
-            val symbol = DtsDocumentationSymbol.from(DtsNodeBindingDocumentationTarget(
-                node.project,
-                binding.nodeName,
-                build,
-            ))
-
-            val lookup = LookupElementBuilder.create(symbol, binding.nodeName)
-                .withTypeText(DtsBundle.message("documentation.node_type"))
-                .withIcon(DtsIcons.Node)
-                .withInsertHandler(DtsInsertHandler.SUB_NODE)
-
-            result.addElement(PrioritizedLookupElement.withPriority(lookup, DtsLookupPriority.SUB_NODE))
-        }
-    }
-
-    override fun fillCompletionVariants(parameters: CompletionParameters, result: CompletionResultSet) {
-        val name = parameters.position
-        if (name.elementType != DtsTypes.NAME) return
-
-        val propertyParent = when (val parent = name.parent) {
-            is DtsProperty -> DtsTreeUtil.parentNode(parent)
-            is PsiErrorElement -> parent.parent.parent as? DtsNode
-            else -> null
-        }
-
-        val nodeParent = when (val parent = name.parent) {
-            is DtsSubNode -> DtsTreeUtil.parentNode(parent)
-            is PsiErrorElement -> parent.parent.parent as? DtsNode
-            else -> null
-        }
-
-        val set = result.withDtsPrefixMatcher(parameters)
-
-        propertyParent?.let { addPropertyVariants(it, set) }
-        nodeParent?.let { addSubNodeVariants(it, set) }
+        val subNodeName = base
+            .withElementType(DtsTypes.NAME)
+            .withParent(psiElement().withElementType(subNodeOrError))
+        extend(CompletionType.BASIC, subNodeName, DtsNodeNameProvider())
     }
 }

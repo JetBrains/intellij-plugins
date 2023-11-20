@@ -1,4 +1,4 @@
-package com.intellij.dts.completion
+package com.intellij.dts.completion.contributer
 
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
