@@ -46,7 +46,6 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.*;
-import com.intellij.util.text.SyncDateFormat;
 import com.intellij.vcsUtil.VcsUtil;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenCustomHashMap;
@@ -78,8 +77,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.sql.Time;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -146,7 +147,7 @@ public final class PerforceRunner implements PerforceRunnerI {
   @NonNls public static final String SERVER_LICENSE = "Server license:";
   @NonNls public static final String SERVER_VERSION = "Server version:";
 
-  @NonNls private static final SyncDateFormat DATESPEC_DATE_FORMAT = new SyncDateFormat(new SimpleDateFormat("yyyy/MM/dd:HH:mm:ss", Locale.US));
+  @NonNls private static final DateTimeFormatter DATE_SPEC_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd:HH:mm:ss", Locale.US);
   @NonNls private static final String NOW = "now";
   @NonNls private static final String DEFAULT_CHANGELIST_NUMBER = "default";
 
@@ -1014,18 +1015,18 @@ public final class PerforceRunner implements PerforceRunnerI {
     final StringBuilder result = new StringBuilder();
     result.append('@');
     if (after != null) {
-      result.append(DATESPEC_DATE_FORMAT.format(after));
+      result.append(DATE_SPEC_DATE_FORMAT.format(after.toInstant().atZone(ZoneId.systemDefault())));
     }
     else if (afterChange != null) {
       result.append(afterChange.longValue() + (strictlyAfter ? 1 : 0));
     }
     else {
-      result.append(DATESPEC_DATE_FORMAT.format(new Date(0)));
+      result.append(DATE_SPEC_DATE_FORMAT.format(Instant.ofEpochMilli(0).atZone(ZoneId.systemDefault())));
     }
     result.append(',');
     result.append('@');
     if (before != null) {
-      result.append(DATESPEC_DATE_FORMAT.format(before));
+      result.append(DATE_SPEC_DATE_FORMAT.format(before.toInstant().atZone(ZoneId.systemDefault())));
     }
     else if (beforeChange != null) {
       result.append(beforeChange.longValue());
@@ -1533,7 +1534,7 @@ public final class PerforceRunner implements PerforceRunnerI {
       final List<P4Revision> p4Revisions = OutputMessageParser.processLogOutput(execResult.getStdout(), newDateFormat);
       return p4Revisions.toArray(new P4Revision[0]);
     }
-    catch (ParseException e) {
+    catch (DateTimeParseException e) {
       throw new VcsException(e);
     }
   }

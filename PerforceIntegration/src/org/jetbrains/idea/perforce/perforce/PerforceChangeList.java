@@ -39,7 +39,8 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
+import java.time.Instant;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -64,13 +65,13 @@ public class PerforceChangeList implements CommittedChangeList {
     try {
       // Perforce before 2003.1 did not include date in 'p4 changes' output
       if (data.DATE.indexOf(':') >= 0) {
-        myDate = ChangeListData.DATE_FORMAT.parse(data.DATE);
+        myDate = Date.from(Instant.from(ChangeListData.DATE_FORMAT.parse(data.DATE)));
       }
       else {
-        myDate = ChangeListData.DATE_ONLY_FORMAT.parse(data.DATE);
+        myDate = Date.from(Instant.from(ChangeListData.DATE_ONLY_FORMAT.parse(data.DATE)));
       }
     }
-    catch (ParseException e) {
+    catch (DateTimeParseException e) {
       LOG.error(e);
       myDate = new Date();
     }

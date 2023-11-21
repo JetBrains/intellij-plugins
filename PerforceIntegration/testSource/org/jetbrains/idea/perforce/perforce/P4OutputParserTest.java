@@ -1,20 +1,17 @@
 package org.jetbrains.idea.perforce.perforce;
 
 import com.intellij.openapi.util.Comparing;
-import com.intellij.util.text.SyncDateFormat;
 import junit.framework.TestCase;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.idea.perforce.ChangeListData;
 import org.jetbrains.idea.perforce.merge.BaseRevision;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-@NonNls public class P4OutputParserTest extends TestCase {
-  private static final SyncDateFormat DATE_FORMAT = new SyncDateFormat(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault()));
+public class P4OutputParserTest extends TestCase {
+  private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss", Locale.getDefault());
 
-  public void testLog() throws ParseException {
+  public void testLog() {
     String output = """
       //depot/javacvs/src/javacvs/org/netbeans/lib/cvsclient/NewClass.java
       ... #5 change 85 edit on 2004/11/03 14:00:53 by lesya@lesya-test (text)
@@ -55,7 +52,7 @@ import java.util.*;
 
   }
 
-  public void testLogForFileWithBranch() throws Exception{
+  public void testLogForFileWithBranch() {
     assertTrue(OutputMessageParser.LOG_PATTERN.matcher("... #3 change 66879 edit on 2005/03/15 17:03:00 by Dallas@omega (text)").matches());
     assertTrue(OutputMessageParser.DEPOT_PATTERN.matcher("//depot/Fabrique/fabrique-activeLibraries/controls/source/jetbrains/fabrique/web/ui/LayoutImpl.java").matches());
 

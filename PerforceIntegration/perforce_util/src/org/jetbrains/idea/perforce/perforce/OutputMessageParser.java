@@ -20,7 +20,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.util.text.SyncDateFormat;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,8 +32,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.StringReader;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -48,10 +48,8 @@ public class OutputMessageParser {
   private String myBranch = null;
   private final ProgressIndicator myProgressIndicator;
 
-  @NonNls private static final String NEW_PATTERN = "yyyy/MM/dd HH:mm:ss";
-  public static final SyncDateFormat NEW_DATE_FORMAT = new SyncDateFormat(new SimpleDateFormat(NEW_PATTERN, Locale.US));
-  @NonNls private static final String OLD_PATTERN = "yyyy/MM/dd";
-  public static final SyncDateFormat OLD_DATE_FORMAT = new SyncDateFormat(new SimpleDateFormat(OLD_PATTERN, Locale.US));
+  public static final DateTimeFormatter NEW_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss", Locale.US);
+  public static final DateTimeFormatter OLD_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd", Locale.US);
 
   @NonNls private static final String CLIENT_PREFIX = "Client";
   private static final String FILE_PREFIX = "...";
@@ -134,7 +132,7 @@ public class OutputMessageParser {
     }
   }
 
-  public static List<P4Revision> processLogOutput(String output, final boolean newDateFormat) throws ParseException {
+  public static List<P4Revision> processLogOutput(String output, final boolean newDateFormat) throws DateTimeParseException {
     ArrayList<P4Revision> result = new ArrayList<>();
     final OutputMessageParser parser = new OutputMessageParser(output);
 
@@ -145,8 +143,7 @@ public class OutputMessageParser {
     return result;
   }
 
-  @Nullable
-  private P4Revision readNextRevision(final boolean newDateFormat) throws ParseException {
+  private @Nullable P4Revision readNextRevision(final boolean newDateFormat) throws DateTimeParseException {
     if (myLines.isEmpty()) return null;
     myCurrentLine = myLines.remove(0);
     final Matcher logMatcher = LOG_PATTERN.matcher(myCurrentLine);
@@ -176,12 +173,12 @@ public class OutputMessageParser {
     }
   }
 
-  private static Date parseDate(boolean newDateFormat, String dateString) throws ParseException {
+  private static Date parseDate(boolean newDateFormat, String dateString) throws DateTimeParseException {
     try {
-      return (newDateFormat ? NEW_DATE_FORMAT : OLD_DATE_FORMAT).parse(dateString);
+      return Date.from(Instant.from((newDateFormat ? NEW_DATE_FORMAT : OLD_DATE_FORMAT).parse(dateString)));
     }
-    catch (ParseException e) {
-      return OLD_DATE_FORMAT.parse(dateString);
+    catch (DateTimeParseException e) {
+      return Date.from(Instant.from(OLD_DATE_FORMAT.parse(dateString)));
     }
   }
 

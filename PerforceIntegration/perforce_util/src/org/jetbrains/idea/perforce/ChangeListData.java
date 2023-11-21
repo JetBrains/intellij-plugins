@@ -1,20 +1,17 @@
 package org.jetbrains.idea.perforce;
 
-import com.intellij.util.text.SyncDateFormat;
-import org.jetbrains.annotations.NonNls;
-
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 public class ChangeListData {
+  public static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss", Locale.US);
+  public static final DateTimeFormatter DATE_ONLY_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd", Locale.US);
+
   public long NUMBER;
   public String DESCRIPTION;
   public String USER;
   public String CLIENT;
   public String DATE;
-  @NonNls private static final String PATTERN = "yyyy/MM/dd HH:mm:ss";
-  public static final SyncDateFormat DATE_FORMAT = new SyncDateFormat(new SimpleDateFormat(PATTERN, Locale.US));
-  @NonNls public static final SyncDateFormat DATE_ONLY_FORMAT = new SyncDateFormat(new SimpleDateFormat("yyyy/MM/dd", Locale.US));
 
   public boolean equals(final Object o) {
     if (this == o) return true;
@@ -33,7 +30,7 @@ public class ChangeListData {
 
   public int hashCode() {
     int result;
-    result = (int)(NUMBER ^ (NUMBER >>> 32));
+    result = (int)(NUMBER ^ NUMBER >>> 32);
     result = 31 * result + (DESCRIPTION != null ? DESCRIPTION.hashCode() : 0);
     result = 31 * result + (USER != null ? USER.hashCode() : 0);
     result = 31 * result + (CLIENT != null ? CLIENT.hashCode() : 0);

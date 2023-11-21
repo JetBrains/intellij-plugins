@@ -39,6 +39,7 @@ import org.jetbrains.idea.perforce.perforce.PerforceChangeCache;
 import org.jetbrains.idea.perforce.perforce.PerforceChangeList;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 
+import java.time.ZoneId;
 import java.util.Date;
 
 public class ShowAllSubmittedFilesAction extends AnAction implements DumbAware {
@@ -113,7 +114,7 @@ public class ShowAllSubmittedFilesAction extends AnAction implements DumbAware {
     final ChangeListData data = new ChangeListData();
     data.NUMBER = number;
     data.USER = user;
-    data.DATE  = ChangeListData.DATE_FORMAT.format(date);
+    data.DATE  = ChangeListData.DATE_FORMAT.format(date.toInstant().atZone(ZoneId.systemDefault()));
     data.DESCRIPTION = submitMessage;
 
     final PerforceChangeList changeList = new PerforceChangeList(data, project, connection, new PerforceChangeCache(project));
