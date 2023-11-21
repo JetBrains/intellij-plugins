@@ -241,12 +241,8 @@ public class P4OutputParserTest extends TestCase {
     assertEquals(247, file2.getRevision2());
   }
 
-  private void checkChange(final ChangeListData change,
-                           final int changeNum,
-                           final String date,
-                           final String user,
-                           final String client,
-                           final String description) throws ParseException {
+  @SuppressWarnings("SameParameterValue")
+  private static void checkChange(ChangeListData change, int changeNum, String date, String user, String client, String description) {
     assertEquals(changeNum, change.NUMBER);
     assertEquals(date, DATE_FORMAT.format(ChangeListData.DATE_FORMAT.parse(change.DATE)));
     assertEquals(user, change.USER);
@@ -254,15 +250,9 @@ public class P4OutputParserTest extends TestCase {
     assertEquals(description, change.DESCRIPTION);
   }
 
-
-  private void checkRevision(P4Revision rev1, int revNumber,
-                             int chNumber,
-                             String action,
-                             int day,
-                             int month,
-                             int year,
-                             String user,
-                             String client, String type, String message) {
+  @SuppressWarnings("SameParameterValue")
+  private static void checkRevision(P4Revision rev1, int revNumber, int chNumber, String action, int day, int month, int year, String user,
+                                    String client, String type, String message) {
     assertEquals(revNumber, rev1.getRevisionNumber());
 
     assertEquals(chNumber, rev1.getChangeNumber());
