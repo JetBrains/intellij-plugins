@@ -5,7 +5,7 @@ import com.intellij.codeInsight.documentation.DocumentationManager
 import com.intellij.codeInsight.documentation.DocumentationManagerProtocol
 import com.intellij.lang.documentation.ide.impl.browseAbsolute
 import com.intellij.lang.documentation.psi.PsiElementDocumentationTarget
-import com.intellij.lang.documentation.psi.psiDocumentationTarget
+import com.intellij.lang.documentation.psi.psiDocumentationTargets
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.component1
@@ -52,7 +52,7 @@ class Angular2DocumentationLinkHandler : DocumentationLinkHandler {
         return LinkResolveResult.resolvedTarget(
           Angular2EntitiesProvider.getEntity(resolved)
             ?.let { Angular2ElementDocumentationTarget.create(it.getName(), null, it) }
-          ?: psiDocumentationTarget(resolved, null)
+          ?: psiDocumentationTargets(resolved, null).first() //TODO support multi-targeting
         )
       }
     }
