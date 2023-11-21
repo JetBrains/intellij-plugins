@@ -1,7 +1,9 @@
 package com.intellij.dts.documentation
 
 import com.intellij.dts.lang.DtsFile
-import com.intellij.dts.lang.psi.*
+import com.intellij.dts.lang.psi.DtsNode
+import com.intellij.dts.lang.psi.DtsProperty
+import com.intellij.dts.lang.psi.getDtsAnnotationTarget
 import com.intellij.dts.util.DtsTreeUtil
 import com.intellij.dts.util.DtsUtil
 import com.intellij.platform.backend.documentation.DocumentationTarget
@@ -24,29 +26,29 @@ class DtsDocumentationProvider : DocumentationTargetProvider, PsiDocumentationTa
         return DtsUtil.singleResult {
             if (file !is DtsFile) return@singleResult null
 
-            val (target, original) = findTarget(file, offset)
-                ?: findTarget(file, offset - 1)
-                ?: return@singleResult null
+            val element = findTargetElement(file, offset)
+                          ?: findTargetElement(file, offset - 1)
+                          ?: return@singleResult null
 
-            documentationTarget(target, original)
+            createTarget(element)
         }
     }
 
-    override fun documentationTarget(element: PsiElement, originalElement: PsiElement?): DocumentationTarget? {
-        return when (element) {
-            is DtsNode -> DtsNodeDocumentationTarget(element)
-            is DtsProperty -> DtsPropertyDocumentationTarget(element)
-            else -> null
-        }
+  private fun createTarget(element: PsiElement): DocumentationTarget? {
+    return when (element) {
+      is DtsNode -> DtsNodeDocumentationTarget(element)
+      is DtsProperty -> DtsPropertyDocumentationTarget(element)
+      else -> null
     }
+  }
 
-    private fun findTarget(file: PsiFile, offset: Int): Pair<PsiElement, PsiElement>? {
+  private fun findTargetElement(file: PsiFile, offset: Int): PsiElement? {
         if (offset < 0) return null
 
         val originalElement = file.findElementAt(offset) ?: return null
         val targetElement = findTargetElement(originalElement) ?: return null
 
-        return Pair(targetElement, originalElement)
+        return targetElement
     }
 
     private fun findTargetElement(originalElement: PsiElement): PsiElement? {
