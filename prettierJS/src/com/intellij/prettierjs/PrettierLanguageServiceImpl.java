@@ -66,17 +66,20 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
     if (process == null || !process.isValid()) {
       return CompletableFuture.completedFuture(FormatResult.error(PrettierBundle.message("service.not.started.message")));
     }
+
+    // Prettier may remove trailing line break in Vue (WEB-56144, WEB-52196, https://github.com/prettier/prettier/issues/13399),
+    // even if the range doesn't include that line break. `forceLineBreakAtEof` helps to work around the problem.
+    boolean forceLineBreakAtEof = range != null && range.getEndOffset() < text.length() && text.endsWith("\n");
     ReformatFileCommand command =
       new ReformatFileCommand(myProject, filePath, prettierPackage, ignoreFilePath, text, range, myFlushConfigCache);
     return process.execute(command, (ignored, response) -> {
       myFlushConfigCache = false;
-      return parseReformatResponse(response);
+      return parseReformatResponse(response, forceLineBreakAtEof);
     });
   }
 
 
-  @NotNull
-  private static FormatResult parseReformatResponse(JSLanguageServiceAnswer response) {
+  private static @NotNull FormatResult parseReformatResponse(@NotNull JSLanguageServiceAnswer response, boolean forceLineBreakAtEof) {
     JsonObject jsonObject = response.getElement();
     final String error = JsonUtil.getChildAsString(jsonObject, "error");
     if (!StringUtil.isEmpty(error)) {
@@ -88,7 +91,14 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
     if (JsonUtil.getChildAsBoolean(jsonObject, "unsupported", false)) {
       return FormatResult.UNSUPPORTED;
     }
+
     String formattedResult = JsonUtil.getChildAsString(jsonObject, "formatted");
+    LOGGER.assertTrue(formattedResult != null);
+    if (forceLineBreakAtEof && !formattedResult.endsWith("\n")) {
+      // Prettier may remove trailing line break in Vue (WEB-56144, WEB-52196, https://github.com/prettier/prettier/issues/13399),
+      // even if the range doesn't include that line break. `forceLineBreakAtEof` helps to work around the problem.
+      formattedResult += '\n';
+    }
     return FormatResult.formatted(formattedResult);
   }
 
