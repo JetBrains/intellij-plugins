@@ -379,17 +379,28 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     Ref<String> text = Ref.create();
     Ref<String> filePath = Ref.create();
     Ref<String> ignoreFilePath = Ref.create();
+    Ref<TextRange> rangeForRequest = Ref.create(range);
 
     ReadAction.run(() -> {
       if (!currentFile.isValid()) return;
 
       VirtualFile currentVFile = currentFile.getVirtualFile();
       filePath.set(LocalFilePath.asLocalFilePath(currentVFile.toNioPath()));
+
       // PsiFile might be not committed at this point, take text from document
       Document document = PsiDocumentManager.getInstance(project).getDocument(currentFile);
       if (document == null) return;
+
       CharSequence content = document.getImmutableCharSequence();
+
+      if (range != null && range.getStartOffset() == 0 && range.getLength() == content.length()) {
+        // Prettier may remove trailing line break in Vue (WEB-56144, https://github.com/prettier/prettier/issues/13399).
+        // It's safer not pass a range when there's no need to.
+        rangeForRequest.set(null);
+      }
+
       text.set(JSLanguageServiceUtil.convertLineSeparatorsToFileOriginal(project, content, currentVFile).toString());
+
       VirtualFile ignoreVFile = PrettierUtil.findIgnoreFile(currentVFile, project);
       if (ignoreVFile != null) {
         ignoreFilePath.set(ignoreVFile.getPath());
@@ -404,7 +415,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     PrettierLanguageService service = PrettierLanguageService.getInstance(project, currentFile.getVirtualFile(), nodePackage);
 
     CompletableFuture<PrettierLanguageService.FormatResult> formatFuture =
-      service.format(filePath.get(), ignoreFilePath.get(), text.get(), nodePackage, range);
+      service.format(filePath.get(), ignoreFilePath.get(), text.get(), nodePackage, rangeForRequest.get());
     long timeout = edt ? EDT_TIMEOUT_MS : JSLanguageServiceUtil.getTimeout();
     return JSLanguageServiceUtil.awaitFuture(formatFuture, timeout, JSLanguageServiceUtil.QUOTA_MILLS, null, true, null, edt);
   }
