@@ -197,6 +197,14 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
                             """);
   }
 
+  public void testRangeInVue() {
+    // Prettier doesn't support range formatting in Vue (WEB-52196, WEB-52196, https://github.com/prettier/prettier/issues/13399),
+    // and even removes line break at the end of the file. This test checks IDE's workaround of Prettier bug.
+    myFixture.configureByText("foo.vue", "<template>\n<selection><div/></selection>\n</template>\n");
+    runReformatAction();
+    myFixture.checkResult("<template>\n<selection>  <div /></selection>\n</template>\n");
+  }
+
   private void configureYarnPrettierPackage(VirtualFile root) {
     PrettierConfiguration configuration = PrettierConfiguration.getInstance(getProject());
     YarnPnpNodePackage yarnPrettierPkg = YarnPnpNodePackage.create(getProject(),
