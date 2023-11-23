@@ -1,41 +1,41 @@
 package com.intellij.dts.parsing
 
 abstract class DtsParsingTest(dataPath: String) : DtsParsingTestBase(dataPath, "dts") {
-    class Accept : DtsParsingTest("accept") {
-        private fun doTest() = doTest(true, true)
+  class Accept : DtsParsingTest("accept") {
+    private fun doTest() = doTest(true, true)
 
-        fun testDeleteNode() = doTest()
+    fun testDeleteNode() = doTest()
 
-        fun testLabel() = doTest()
+    fun testLabel() = doTest()
 
-        fun testOmitNode() = doTest()
+    fun testOmitNode() = doTest()
 
-        fun testInclude() = doTest()
+    fun testInclude() = doTest()
 
-        fun testMultipleIncludes() = doTest()
-    }
+    fun testMultipleIncludes() = doTest()
+  }
 
-    class Recovery : DtsParsingTest("recovery") {
-        private fun doTest() = doTest(true, false)
+  class Recovery : DtsParsingTest("recovery") {
+    private fun doTest() = doTest(true, false)
 
-        fun testInvalidEntryWithHandle() = doTest()
+    fun testInvalidEntryWithHandle() = doTest()
 
-        fun testMemreserve() = doTest()
+    fun testMemreserve() = doTest()
 
-        fun testCompilerDirectiveLineBreak() = doTest()
+    fun testCompilerDirectiveLineBreak() = doTest()
 
-        fun testInclude() = doTest()
+    fun testInclude() = doTest()
 
-        fun testInvalidEntryFollowedByInclude() = doTest()
+    fun testInvalidEntryFollowedByInclude() = doTest()
 
-        fun testInvalidEntryFollowedByComment() = doTest()
-    }
+    fun testInvalidEntryFollowedByComment() = doTest()
+  }
 
-    class Reject : DtsParsingTest("reject") {
-        private fun doTest() = doTest(true, false)
+  class Reject : DtsParsingTest("reject") {
+    private fun doTest() = doTest(true, false)
 
-        fun testInvalidEntry() = doTest()
+    fun testInvalidEntry() = doTest()
 
-        fun testMissingSlashInPath() = doTest()
-    }
+    fun testMissingSlashInPath() = doTest()
+  }
 }

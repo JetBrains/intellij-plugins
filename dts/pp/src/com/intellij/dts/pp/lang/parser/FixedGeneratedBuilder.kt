@@ -9,21 +9,21 @@ import com.intellij.lexer.Lexer
 
 // workaround for PsiBuilderImpl casts in GeneratedParserUtilBase.Builder
 open class FixedGeneratedBuilder(
-    delegate: PsiBuilder,
-    state: GeneratedParserUtilBase.ErrorState,
-    parser: PsiParser
+  delegate: PsiBuilder,
+  state: GeneratedParserUtilBase.ErrorState,
+  parser: PsiParser
 ) : GeneratedParserUtilBase.Builder(delegate, state, parser) {
 
-    private fun getImplFromDelegate(builder: PsiBuilder): PsiBuilderImpl {
-        if (builder is PsiBuilderImpl) return builder
-        if (builder is PsiBuilderAdapter) return getImplFromDelegate(builder.delegate)
+  private fun getImplFromDelegate(builder: PsiBuilder): PsiBuilderImpl {
+    if (builder is PsiBuilderImpl) return builder
+    if (builder is PsiBuilderAdapter) return getImplFromDelegate(builder.delegate)
 
-        throw UnsupportedOperationException("${builder.javaClass.name} is not PsiBuilderImpl or PsiBuilderAdapter")
-    }
+    throw UnsupportedOperationException("${builder.javaClass.name} is not PsiBuilderImpl or PsiBuilderAdapter")
+  }
 
-    override fun getLexer(): Lexer = getImplFromDelegate(myDelegate).lexer
+  override fun getLexer(): Lexer = getImplFromDelegate(myDelegate).lexer
 
-    override fun getProductions(): List<PsiBuilderImpl.ProductionMarker> = getImplFromDelegate(myDelegate).productions
+  override fun getProductions(): List<PsiBuilderImpl.ProductionMarker> = getImplFromDelegate(myDelegate).productions
 
-    override fun getDelegate(): PsiBuilder = getImplFromDelegate(myDelegate)
+  override fun getDelegate(): PsiBuilder = getImplFromDelegate(myDelegate)
 }

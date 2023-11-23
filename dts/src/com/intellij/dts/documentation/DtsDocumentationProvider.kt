@@ -22,17 +22,17 @@ import com.intellij.psi.util.PsiTreeUtil
  * the autocomplete popup.
  */
 class DtsDocumentationProvider : DocumentationTargetProvider, PsiDocumentationTargetProvider {
-    override fun documentationTargets(file: PsiFile, offset: Int): List<DocumentationTarget> {
-        return DtsUtil.singleResult {
-            if (file !is DtsFile) return@singleResult null
+  override fun documentationTargets(file: PsiFile, offset: Int): List<DocumentationTarget> {
+    return DtsUtil.singleResult {
+      if (file !is DtsFile) return@singleResult null
 
-            val element = findTargetElement(file, offset)
-                          ?: findTargetElement(file, offset - 1)
-                          ?: return@singleResult null
+      val element = findTargetElement(file, offset)
+                    ?: findTargetElement(file, offset - 1)
+                    ?: return@singleResult null
 
-            createTarget(element)
-        }
+      createTarget(element)
     }
+  }
 
   override fun documentationTargets(element: PsiElement, originalElement: PsiElement?): List<DocumentationTarget> {
     return createTarget(element)?.let { listOf(it) } ?: emptyList()
@@ -47,22 +47,22 @@ class DtsDocumentationProvider : DocumentationTargetProvider, PsiDocumentationTa
   }
 
   private fun findTargetElement(file: PsiFile, offset: Int): PsiElement? {
-        if (offset < 0) return null
+    if (offset < 0) return null
 
-        val originalElement = file.findElementAt(offset) ?: return null
-        val targetElement = findTargetElement(originalElement) ?: return null
+    val originalElement = file.findElementAt(offset) ?: return null
+    val targetElement = findTargetElement(originalElement) ?: return null
 
-        return targetElement
-    }
+    return targetElement
+  }
 
-    private fun findTargetElement(originalElement: PsiElement): PsiElement? {
-        // annotation targets of statements
-        val statement = DtsTreeUtil.parentStatement(originalElement)
-        val partOfTarget = PsiTreeUtil.isAncestor(statement?.getDtsAnnotationTarget(), originalElement, false)
-        if (partOfTarget) return statement
+  private fun findTargetElement(originalElement: PsiElement): PsiElement? {
+    // annotation targets of statements
+    val statement = DtsTreeUtil.parentStatement(originalElement)
+    val partOfTarget = PsiTreeUtil.isAncestor(statement?.getDtsAnnotationTarget(), originalElement, false)
+    if (partOfTarget) return statement
 
-        // references to statements
-        val referenceHost = PsiTreeUtil.findFirstParent(originalElement, false) { it.reference != null }
-        return referenceHost?.reference?.resolve()
-    }
+    // references to statements
+    val referenceHost = PsiTreeUtil.findFirstParent(originalElement, false) { it.reference != null }
+    return referenceHost?.reference?.resolve()
+  }
 }

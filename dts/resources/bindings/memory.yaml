@@ -1,80 +1,80 @@
 description: |
-    A memory device node is required for all devicetrees and describes the 
-    physical memory layout for the system. If a system has multiple ranges of 
-    memory, multiple memory nodes can be created, or the ranges can be 
-    specified in the reg property of a single memory node.
-   
-    !!phtml
-    The client program may access memory not covered by any memory reservations 
-    using any storage attributes it chooses. However, before changing the 
-    storage attributes used to access a real page, the client program is 
-    responsible for performing actions required by the architecture and 
-    implementation, possibly including flushing the real page from the caches. 
-    The boot program is responsible for ensuring that, without taking any 
-    action associated with a change in storage attributes, the client program 
-    can safely access all memory (including memory covered by memory reservations)
-    as WIMG = 0b001x. That is:
-    <ul>
-        <li>not Write Through Required</li>
-        <li>not Caching Inhibited</li>
-        <li>Memory Coherence</li>
-        <li>Required either not Guarded or Guarded</li>
-    </ul>
-    If the VLE storage attribute is supported, with VLE=0.
-   
-    !!phtml 
-    For example, given a 64-bit Power system with the following physical memory 
-    layout:
-    <ul> 
-      <li>RAM: starting address 0x0, length 0x80000000 (2 GB) </li>
-      <li>RAM: starting address 0x100000000, length 0x100000000 (4 GB)</li>
-    </ul> 
-    Memory nodes could be defined as follows, assuming #address-cells = &lt;2&gt; and 
-    #size-cells = &lt;2&gt;:
-    
-    memory@0 {
-        device_type = "memory";
-        reg = <0x000000000 0x00000000 0x00000000 0x80000000>;
-    };
-    memory@100000000 {
-        device_type = "memory";
-        reg = <0x000000001 0x00000000 0x00000001 0x00000000>;
-    };
-    
-    The reg property is used to define the address and size of the two memory 
-    ranges. The 2 GB I/O region is skipped. Note that the #address-cells and 
-    #size-cells properties of the root node specify a value of 2, which means 
-    that two 32-bit cells are required to define the address and length for the 
-    reg property of the memory node.
-    
+  A memory device node is required for all devicetrees and describes the 
+  physical memory layout for the system. If a system has multiple ranges of 
+  memory, multiple memory nodes can be created, or the ranges can be 
+  specified in the reg property of a single memory node.
+  
+  !!phtml
+  The client program may access memory not covered by any memory reservations 
+  using any storage attributes it chooses. However, before changing the 
+  storage attributes used to access a real page, the client program is 
+  responsible for performing actions required by the architecture and 
+  implementation, possibly including flushing the real page from the caches. 
+  The boot program is responsible for ensuring that, without taking any 
+  action associated with a change in storage attributes, the client program 
+  can safely access all memory (including memory covered by memory reservations)
+  as WIMG = 0b001x. That is:
+  <ul>
+      <li>not Write Through Required</li>
+      <li>not Caching Inhibited</li>
+      <li>Memory Coherence</li>
+      <li>Required either not Guarded or Guarded</li>
+  </ul>
+  If the VLE storage attribute is supported, with VLE=0.
+  
+  !!phtml 
+  For example, given a 64-bit Power system with the following physical memory 
+  layout:
+  <ul> 
+    <li>RAM: starting address 0x0, length 0x80000000 (2 GB) </li>
+    <li>RAM: starting address 0x100000000, length 0x100000000 (4 GB)</li>
+  </ul> 
+  Memory nodes could be defined as follows, assuming #address-cells = &lt;2&gt; and 
+  #size-cells = &lt;2&gt;:
+  
+  memory@0 {
+      device_type = "memory";
+      reg = <0x000000000 0x00000000 0x00000000 0x80000000>;
+  };
+  memory@100000000 {
+      device_type = "memory";
+      reg = <0x000000001 0x00000000 0x00000001 0x00000000>;
+  };
+  
+  The reg property is used to define the address and size of the two memory 
+  ranges. The 2 GB I/O region is skipped. Note that the #address-cells and 
+  #size-cells properties of the root node specify a value of 2, which means 
+  that two 32-bit cells are required to define the address and length for the 
+  reg property of the memory node.
+
 properties:
-    device_type:
-        required: true
-        type: string
-        const: "memory"
-        description: |
-            Value shall be "memory"
-            
-    reg:
-        required: true
-        type: phandle-array
-        description: |
-            Consists of an arbitrary number of address and size pairs that 
-            specify the physical address and size of the memory ranges.
+  device_type:
+    required: true
+    type: string
+    const: "memory"
+    description: |
+      Value shall be "memory"
 
-    initial-mapped-area:
-        required: false
-        type: phandle-array
-        description: |
-            Specifies the address and size of the Initial Mapped Area Is a 
-            prop-encoded-array consisting of a triplet of (effective address, 
-            physical address, size). The effective and physical address shall 
-            each be 64-bit (<u64> value), and the size shall be 32-bits (<u32> 
-            value).
+  reg:
+    required: true
+    type: phandle-array
+    description: |
+      Consists of an arbitrary number of address and size pairs that 
+      specify the physical address and size of the memory ranges.
 
-    hotpluggable:
-        required: false
-        type: boolean
-        description: |
-            Specifies an explicit hint to the operating system that this memory 
-            may potentially be removed later.
+  initial-mapped-area:
+    required: false
+    type: phandle-array
+    description: |
+      Specifies the address and size of the Initial Mapped Area Is a 
+      prop-encoded-array consisting of a triplet of (effective address, 
+      physical address, size). The effective and physical address shall 
+      each be 64-bit (<u64> value), and the size shall be 32-bits (<u32> 
+      value).
+
+  hotpluggable:
+    required: false
+    type: boolean
+    description: |
+      Specifies an explicit hint to the operating system that this memory 
+      may potentially be removed later.

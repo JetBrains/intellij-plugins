@@ -17,23 +17,23 @@ import com.intellij.psi.tree.IFileElementType
 import com.intellij.psi.tree.TokenSet
 
 open class DtsParserDefinition : ParserDefinition {
-    override fun createLexer(project: Project?): Lexer = DtsLexerAdapter()
+  override fun createLexer(project: Project?): Lexer = DtsLexerAdapter()
 
-    override fun createParser(project: Project?): PsiParser = DtsParser()
+  override fun createParser(project: Project?): PsiParser = DtsParser()
 
-    override fun getFileNodeType(): IFileElementType = DtsFileStub.Type
+  override fun getFileNodeType(): IFileElementType = DtsFileStub.Type
 
-    override fun getCommentTokens(): TokenSet = DtsTokenSets.comments
+  override fun getCommentTokens(): TokenSet = DtsTokenSets.comments
 
-    override fun getStringLiteralElements(): TokenSet = DtsTokenSets.strings
+  override fun getStringLiteralElements(): TokenSet = DtsTokenSets.strings
 
-    override fun createElement(node: ASTNode?): PsiElement = DtsTypes.Factory.createElement(node)
+  override fun createElement(node: ASTNode?): PsiElement = DtsTypes.Factory.createElement(node)
 
-    override fun createFile(viewProvider: FileViewProvider): PsiFile {
-        return when (viewProvider.virtualFile.extension) {
-            "overlay" -> DtsFile.Overlay(viewProvider)
-            "dtsi" -> DtsFile.Include(viewProvider)
-            else -> DtsFile.Source(viewProvider)
-        }
+  override fun createFile(viewProvider: FileViewProvider): PsiFile {
+    return when (viewProvider.virtualFile.extension) {
+      "overlay" -> DtsFile.Overlay(viewProvider)
+      "dtsi" -> DtsFile.Include(viewProvider)
+      else -> DtsFile.Source(viewProvider)
     }
+  }
 }

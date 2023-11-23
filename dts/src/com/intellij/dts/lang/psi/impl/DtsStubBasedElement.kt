@@ -5,10 +5,10 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.StubElement
 
-abstract class DtsStubBasedElement<T: StubElement<*>> : StubBasedPsiElementBase<T> {
-    constructor(node: ASTNode) : super(node)
+abstract class DtsStubBasedElement<T : StubElement<*>> : StubBasedPsiElementBase<T> {
+  constructor(node: ASTNode) : super(node)
 
-    constructor(stub: T, elementType: IStubElementType<*, *>) : super(stub, elementType)
+  constructor(stub: T, elementType: IStubElementType<*, *>) : super(stub, elementType)
 
-    override fun toString(): String = "${this::class.simpleName}($elementType)"
+  override fun toString(): String = "${this::class.simpleName}($elementType)"
 }

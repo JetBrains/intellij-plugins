@@ -12,47 +12,47 @@ import com.intellij.dts.zephyr.binding.DtsZephyrBindingProvider
 import com.intellij.psi.PsiElementVisitor
 
 class DtsRequiredPropertyInspection : LocalInspectionTool() {
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor = dtsVisitor(DtsNode::class) { node ->
-        if (node.containingFile is DtsFile.Source || node.containingFile is DtsFile.Overlay) {
-            checkProperties(node, holder)
-        }
+  override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor = dtsVisitor(DtsNode::class) { node ->
+    if (node.containingFile is DtsFile.Source || node.containingFile is DtsFile.Overlay) {
+      checkProperties(node, holder)
     }
+  }
 
-    private fun collectProperties(node: DtsNode): Set<String> {
-        val properties = mutableSetOf<String>()
+  private fun collectProperties(node: DtsNode): Set<String> {
+    val properties = mutableSetOf<String>()
 
-        val visitor = object : DtsNodeVisitor {
-            override fun visitDelete() {
-                properties.clear()
-            }
+    val visitor = object : DtsNodeVisitor {
+      override fun visitDelete() {
+        properties.clear()
+      }
 
-            override fun visitProperty(property: DtsProperty) {
-                properties.add(property.dtsName)
-            }
+      override fun visitProperty(property: DtsProperty) {
+        properties.add(property.dtsName)
+      }
 
-            override fun visitDeleteProperty(name: String) {
-               properties.remove(name)
-            }
-        }
-        node.dtsAccept(visitor, strict = false)
-
-        return properties
+      override fun visitDeleteProperty(name: String) {
+        properties.remove(name)
+      }
     }
+    node.dtsAccept(visitor, strict = false)
 
-    private fun checkProperties(node: DtsNode, holder: ProblemsHolder) {
-        val propertyBindings = DtsZephyrBindingProvider.bindingFor(node, fallbackBinding = false)?.properties ?: return
+    return properties
+  }
 
-        val requiredProperties = propertyBindings.values.filter { it.required }.toMutableList()
-        if (requiredProperties.isEmpty()) return
+  private fun checkProperties(node: DtsNode, holder: ProblemsHolder) {
+    val propertyBindings = DtsZephyrBindingProvider.bindingFor(node, fallbackBinding = false)?.properties ?: return
 
-        val declaredProperties = collectProperties(node)
-        requiredProperties.removeAll { declaredProperties.contains(it.name) }
-        if (requiredProperties.isEmpty()) return
+    val requiredProperties = propertyBindings.values.filter { it.required }.toMutableList()
+    if (requiredProperties.isEmpty()) return
 
-        holder.registerProblem(
-            node,
-            bundleKey = "inspections.required_property.error",
-            bundleParam = requiredProperties.joinToString { "\"${it.name}\"" },
-        )
-    }
+    val declaredProperties = collectProperties(node)
+    requiredProperties.removeAll { declaredProperties.contains(it.name) }
+    if (requiredProperties.isEmpty()) return
+
+    holder.registerProblem(
+      node,
+      bundleKey = "inspections.required_property.error",
+      bundleParam = requiredProperties.joinToString { "\"${it.name}\"" },
+    )
+  }
 }

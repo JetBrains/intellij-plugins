@@ -13,14 +13,14 @@ class DtsNodeBindingDocumentationTarget(
   private val name: @Nls String,
   private val binding: DtsZephyrBinding,
 ) : DtsDocumentationTarget(project) {
-    override fun createPointer(): Pointer<out DocumentationTarget> = Pointer { this }
+  override fun createPointer(): Pointer<out DocumentationTarget> = Pointer { this }
 
-    override fun computePresentation(): TargetPresentation {
-        return TargetPresentation.builder(name).icon(DtsIcons.Node).presentation()
-    }
+  override fun computePresentation(): TargetPresentation {
+    return TargetPresentation.builder(name).icon(DtsIcons.Node).presentation()
+  }
 
-    override fun buildDocumentation(html: DtsDocumentationHtmlBuilder) {
-        buildNodeName(html, name)
-        buildNodeBinding(html, binding)
-    }
+  override fun buildDocumentation(html: DtsDocumentationHtmlBuilder) {
+    buildNodeName(html, name)
+    buildNodeBinding(html, binding)
+  }
 }

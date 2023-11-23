@@ -8,21 +8,21 @@ import com.intellij.platform.backend.documentation.SymbolDocumentationTargetProv
 import com.intellij.util.asSafely
 
 interface DtsDocumentationSymbol : Symbol {
-    fun getDocumentationTarget(project: Project): DocumentationTarget?
+  fun getDocumentationTarget(project: Project): DocumentationTarget?
 
-    class Provider : SymbolDocumentationTargetProvider {
-        override fun documentationTarget(project: Project, symbol: Symbol): DocumentationTarget? {
-            return symbol.asSafely<DtsDocumentationSymbol>()?.getDocumentationTarget(project)
-        }
+  class Provider : SymbolDocumentationTargetProvider {
+    override fun documentationTarget(project: Project, symbol: Symbol): DocumentationTarget? {
+      return symbol.asSafely<DtsDocumentationSymbol>()?.getDocumentationTarget(project)
     }
+  }
 
-    private data class FromTarget(val target: DocumentationTarget) : DtsDocumentationSymbol {
-        override fun createPointer(): Pointer<out Symbol> = Pointer { this }
+  private data class FromTarget(val target: DocumentationTarget) : DtsDocumentationSymbol {
+    override fun createPointer(): Pointer<out Symbol> = Pointer { this }
 
-        override fun getDocumentationTarget(project: Project): DocumentationTarget = target
-    }
+    override fun getDocumentationTarget(project: Project): DocumentationTarget = target
+  }
 
-    companion object {
-        fun from(target: DocumentationTarget): Pointer<out Symbol> = FromTarget(target).createPointer()
-    }
+  companion object {
+    fun from(target: DocumentationTarget): Pointer<out Symbol> = FromTarget(target).createPointer()
+  }
 }

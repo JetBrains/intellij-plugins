@@ -7,10 +7,10 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 
 interface IDtsCellArrayBits : PsiElement {
-    val dtsBitsValue: DtsValue?
+  val dtsBitsValue: DtsValue?
 }
 
 abstract class DtsCellArrayBitsMixin(node: ASTNode) : ASTWrapperPsiElement(node), DtsCellArrayBits {
-    override val dtsBitsValue: DtsValue?
-        get() = findChildByClass(DtsValue::class.java)
+  override val dtsBitsValue: DtsValue?
+    get() = findChildByClass(DtsValue::class.java)
 }

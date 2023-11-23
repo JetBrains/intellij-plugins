@@ -10,26 +10,26 @@ import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
 
 class DtsBindingDocumentation(
-    project: Project,
-    private val binding: DtsZephyrBinding,
+  project: Project,
+  private val binding: DtsZephyrBinding,
 ) : DtsDocumentationTarget(project) {
-    override fun createPointer(): Pointer<out DocumentationTarget> = Pointer { this }
+  override fun createPointer(): Pointer<out DocumentationTarget> = Pointer { this }
 
-    override fun computePresentation(): TargetPresentation {
-        return TargetPresentation.builder(DtsBundle.message("documentation.binding")).presentation()
-    }
+  override fun computePresentation(): TargetPresentation {
+    return TargetPresentation.builder(DtsBundle.message("documentation.binding")).presentation()
+  }
 
-    override fun buildDocumentation(html: DtsDocumentationHtmlBuilder) {
-        binding.compatible?.let { compatible ->
-            html.definition(DtsHtmlChunk.definitionName("documentation.compatible"))
-            html.appendToDefinition(HtmlChunk.text(compatible))
-        }
-        binding.path?.let { path ->
-            html.definition(DtsHtmlChunk.definitionName("documentation.path"))
-            html.appendToDefinition(HtmlChunk.text(path))
-        }
-        binding.description?.let { description ->
-            html.content(DtsHtmlChunk.binding(project, description))
-        }
+  override fun buildDocumentation(html: DtsDocumentationHtmlBuilder) {
+    binding.compatible?.let { compatible ->
+      html.definition(DtsHtmlChunk.definitionName("documentation.compatible"))
+      html.appendToDefinition(HtmlChunk.text(compatible))
     }
+    binding.path?.let { path ->
+      html.definition(DtsHtmlChunk.definitionName("documentation.path"))
+      html.appendToDefinition(HtmlChunk.text(path))
+    }
+    binding.description?.let { description ->
+      html.content(DtsHtmlChunk.binding(project, description))
+    }
+  }
 }

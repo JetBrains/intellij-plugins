@@ -7,36 +7,36 @@ import com.intellij.dts.lang.psi.dtsVisitor
 import com.intellij.psi.util.PsiTreeUtil
 
 class DtsStatementOrderInspection : LocalInspectionTool() {
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = dtsVisitor(DtsContainer::class) {
-        if (it.dtsAffiliation.isNode()) {
-            checkOrder(it, holder)
-        }
+  override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = dtsVisitor(DtsContainer::class) {
+    if (it.dtsAffiliation.isNode()) {
+      checkOrder(it, holder)
     }
+  }
 
-    private fun checkOrder(container: DtsContainer, holder: ProblemsHolder) {
-        val statements = container.dtsStatements
+  private fun checkOrder(container: DtsContainer, holder: ProblemsHolder) {
+    val statements = container.dtsStatements
 
-        // abort if this container contains any errors or statements with unknown kind
-        if (statements.any { it.dtsStatementKind.isUnknown() }) return
-        if (PsiTreeUtil.hasErrorElements(container)) return
+    // abort if this container contains any errors or statements with unknown kind
+    if (statements.any { it.dtsStatementKind.isUnknown() }) return
+    if (PsiTreeUtil.hasErrorElements(container)) return
 
-        // check the order of property and node definitions
-        var nodeDefinition = false
-        for (statement in container.dtsStatements) {
-            val kind = statement.dtsStatementKind
+    // check the order of property and node definitions
+    var nodeDefinition = false
+    for (statement in container.dtsStatements) {
+      val kind = statement.dtsStatementKind
 
-            if (kind.isNode()) {
-                nodeDefinition = true
-            }
+      if (kind.isNode()) {
+        nodeDefinition = true
+      }
 
-            if (kind.isProperty() && nodeDefinition) {
-                holder.registerProblem(
-                    statement,
-                    bundleKey = "inspections.statement_order.message",
-                )
+      if (kind.isProperty() && nodeDefinition) {
+        holder.registerProblem(
+          statement,
+          bundleKey = "inspections.statement_order.message",
+        )
 
-                return
-            }
-        }
+        return
+      }
     }
+  }
 }

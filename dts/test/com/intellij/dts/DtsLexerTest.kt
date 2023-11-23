@@ -5,15 +5,15 @@ import com.intellij.lexer.Lexer
 import com.intellij.testFramework.LexerTestCase
 
 class DtsLexerTest : LexerTestCase() {
-    override fun createLexer(): Lexer = DtsLexerAdapter()
+  override fun createLexer(): Lexer = DtsLexerAdapter()
 
-    override fun getDirPath(): String = "testData/lexer"
+  override fun getDirPath(): String = "testData/lexer"
 
-    override fun getPathToTestDataFile(extension: String): String {
-        return "$dirPath/${getTestName(false)}$extension"
-    }
+  override fun getPathToTestDataFile(extension: String): String {
+    return "$dirPath/${getTestName(false)}$extension"
+  }
 
-    fun testCompilerDirectiveAfterWaitingValue() = doTest()
+  fun testCompilerDirectiveAfterWaitingValue() = doTest()
 
-    private fun doTest() = doFileTest("dtsi")
+  private fun doTest() = doFileTest("dtsi")
 }

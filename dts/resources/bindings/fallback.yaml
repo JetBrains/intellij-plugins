@@ -1,266 +1,266 @@
 include: default.yaml
 
 properties:
-    model:
-        type: string
-        description: |
-            The model property value is a string that specifies the 
-            manufacturer's model number of the device.
-            
-            The recommended format is: "manufacturer,model", where manufacturer 
-            is a string describing the name of the manufacturer (such as a stock
-            ticker symbol), and model specifies the model number.
-            
-            For example:
-            
-            model = "fsl,MPC8349EMITX";
+  model:
+    type: string
+    description: |
+      The model property value is a string that specifies the 
+      manufacturer's model number of the device.
+      
+      The recommended format is: "manufacturer,model", where manufacturer 
+      is a string describing the name of the manufacturer (such as a stock
+      ticker symbol), and model specifies the model number.
+      
+      For example:
+      
+      model = "fsl,MPC8349EMITX";
 
-    reg:
-        type: array
-        description: |
-            The reg property describes the address of the device's resources 
-            within the address space defined by its parent bus. Most commonly 
-            this means the offsets and lengths of memory-mapped IO register 
-            blocks, but may have a different meaning on some bus types. 
-            Addresses in the address space defined by the root node are CPU real 
-            addresses.
-            
-            The value is a prop-encoded-array, composed of an arbitrary number 
-            of pairs of address and length. The number of u32 cells required to 
-            specify the address and length are bus-specific and are specified by
-            the #address-cells and #size-cells properties in the parent of the 
-            device node. If the parent node specifies a value of 0 for 
-            #size-cells, the length field in the value of reg shall be omitted.
-            
-            For example, suppose a device within a system-on-a-chip had two 
-            blocks of registers, a 32-byte block at offset 0x3000 in the SOC and 
-            a 256-byte block at offset 0xFE00. The reg property would be encoded 
-            as follows (assuming #address-cells and #size-cells values of 1):
-            
-            reg = <0x3000 0x20 0xFE00 0x100>;
+  reg:
+    type: array
+    description: |
+      The reg property describes the address of the device's resources 
+      within the address space defined by its parent bus. Most commonly 
+      this means the offsets and lengths of memory-mapped IO register 
+      blocks, but may have a different meaning on some bus types. 
+      Addresses in the address space defined by the root node are CPU real 
+      addresses.
+      
+      The value is a prop-encoded-array, composed of an arbitrary number 
+      of pairs of address and length. The number of u32 cells required to 
+      specify the address and length are bus-specific and are specified by
+      the #address-cells and #size-cells properties in the parent of the 
+      device node. If the parent node specifies a value of 0 for 
+      #size-cells, the length field in the value of reg shall be omitted.
+      
+      For example, suppose a device within a system-on-a-chip had two 
+      blocks of registers, a 32-byte block at offset 0x3000 in the SOC and 
+      a 256-byte block at offset 0xFE00. The reg property would be encoded 
+      as follows (assuming #address-cells and #size-cells values of 1):
+      
+      reg = <0x3000 0x20 0xFE00 0x100>;
 
-    virtual-reg:
-        type: int
-        description: |
-            The virtual-reg property specifies an effective address that maps to 
-            the first physical address specified in the reg property of the 
-            device node. This property enables boot programs to provide client 
-            programs with virtual-to-physical mappings that have been set up.
+  virtual-reg:
+    type: int
+    description: |
+      The virtual-reg property specifies an effective address that maps to 
+      the first physical address specified in the reg property of the 
+      device node. This property enables boot programs to provide client 
+      programs with virtual-to-physical mappings that have been set up.
 
-    dma-ranges:
-        type: array
-        description: |
-            !!html
-            The dma-ranges property is used to describe the direct memory access 
-            (DMA) structure of a memory-mapped bus whose devicetree parent can 
-            be accessed from DMA operations originating from the bus. It 
-            provides a means of defining a mapping or translation between the 
-            physical address space of the bus and the physical address space of 
-            the parent of the bus.
-            <br/><br/>
-            The format of the value of the dma-ranges property is an arbitrary 
-            number of triplets of (child-bus-address, parent-bus-address, 
-            length). Each triplet specified describes a contiguous DMA address 
-            range.
-            
-            <ul>
-                <li>
-                The child-bus-address is a physical address within the child 
-                bus' address space. The number of cells to represent the address 
-                depends on the bus and can be determined from the #address-cells 
-                of this node (the node in which the dma-ranges property appears).
-                </li>
-                <li>
-                The parent-bus-address is a physical address within the parent 
-                bus' address space. The number of cells to represent the parent 
-                address is bus dependent and can be determined from the 
-                #address-cells property of the node that defines the parent's 
-                address space.
-                <li>
-                The length specifies the size of the range in the child's 
-                address space. The number of cells to represent the size can be 
-                determined from the #size-cells of this node (the node in which 
-                the dma-ranges property appears).
-                </li>
-            </ul>
+  dma-ranges:
+    type: array
+    description: |
+      !!html
+      The dma-ranges property is used to describe the direct memory access 
+      (DMA) structure of a memory-mapped bus whose devicetree parent can 
+      be accessed from DMA operations originating from the bus. It 
+      provides a means of defining a mapping or translation between the 
+      physical address space of the bus and the physical address space of 
+      the parent of the bus.
+      <br/><br/>
+      The format of the value of the dma-ranges property is an arbitrary 
+      number of triplets of (child-bus-address, parent-bus-address, 
+      length). Each triplet specified describes a contiguous DMA address 
+      range.
+      
+      <ul>
+          <li>
+          The child-bus-address is a physical address within the child 
+          bus' address space. The number of cells to represent the address 
+          depends on the bus and can be determined from the #address-cells 
+          of this node (the node in which the dma-ranges property appears).
+          </li>
+          <li>
+          The parent-bus-address is a physical address within the parent 
+          bus' address space. The number of cells to represent the parent 
+          address is bus dependent and can be determined from the 
+          #address-cells property of the node that defines the parent's 
+          address space.
+          <li>
+          The length specifies the size of the range in the child's 
+          address space. The number of cells to represent the size can be 
+          determined from the #size-cells of this node (the node in which 
+          the dma-ranges property appears).
+          </li>
+      </ul>
 
-    dma-coherent:
-        type: boolean
-        description: |
-            For architectures which are by default non-coherent for I/O, the 
-            dma-coherent property is used to indicate a device is capable of 
-            coherent DMA operations. Some architectures have coherent DMA by 
-            default and this property is not applicable.
+  dma-coherent:
+    type: boolean
+    description: |
+      For architectures which are by default non-coherent for I/O, the 
+      dma-coherent property is used to indicate a device is capable of 
+      coherent DMA operations. Some architectures have coherent DMA by 
+      default and this property is not applicable.
 
-    dma-noncoherent:
-        type: boolean
-        description: |
-            For architectures which are by default coherent for I/O, the 
-            dma-noncoherent property is used to indicate a device is not capable 
-            of coherent DMA operations. Some architectures have non-coherent DMA 
-            by default and this property is not applicable.
+  dma-noncoherent:
+    type: boolean
+    description: |
+      For architectures which are by default coherent for I/O, the 
+      dma-noncoherent property is used to indicate a device is not capable 
+      of coherent DMA operations. Some architectures have non-coherent DMA 
+      by default and this property is not applicable.
 
-    name:
-        type: string
-        deprecated: true
-        description: |
-            The name property is a string specifying the name of the node. This 
-            property is deprecated, and its use is not recommended. However, it 
-            might be used in older non-DTSpec-compliant devicetrees. Operating 
-            system should determine a node's name based on the node-name 
-            component of the node name.
+  name:
+    type: string
+    deprecated: true
+    description: |
+      The name property is a string specifying the name of the node. This 
+      property is deprecated, and its use is not recommended. However, it 
+      might be used in older non-DTSpec-compliant devicetrees. Operating 
+      system should determine a node's name based on the node-name 
+      component of the node name.
 
-    interrupts:
-        type: array
-        description: |
-            The interrupts property of a device node defines the interrupt or 
-            interrupts that are generated by the device. The value of the 
-            interrupts property consists of an arbitrary number of interrupt 
-            specifiers. The format of an interrupt specifier is defined by the 
-            binding of the interrupt domain root.
-            
-            interrupts is overridden by the interrupts-extended property and 
-            normally only one or the other should be used.
+  interrupts:
+    type: array
+    description: |
+      The interrupts property of a device node defines the interrupt or 
+      interrupts that are generated by the device. The value of the 
+      interrupts property consists of an arbitrary number of interrupt 
+      specifiers. The format of an interrupt specifier is defined by the 
+      binding of the interrupt domain root.
+      
+      interrupts is overridden by the interrupts-extended property and 
+      normally only one or the other should be used.
 
-    interrupt-controller:
-        type: boolean
-        description: |
-            The presence of an interrupt-controller property defines a node as 
-            an interrupt controller node.
+  interrupt-controller:
+    type: boolean
+    description: |
+      The presence of an interrupt-controller property defines a node as 
+      an interrupt controller node.
 
-    interrupt-map:
-        type: array
-        description: |
-            !!html
-            An interrupt-map is a property on a nexus node that bridges one 
-            interrupt domain with a set of parent inter- rupt domains and 
-            specifies how interrupt specifiers in the child domain are mapped to 
-            their respective parent domains.
-            <br/><br/>
-            The interrupt map is a table where each row is a mapping entry 
-            consisting of five components: child-unit-address, 
-            child-interrupt-specifier, interrupt-parent, parent-unit-address,
-            parent-interrupt-specifier.
-            
-            <ul>
-                <li>
-                The child-unit-address is unit address of the child node being
-                mapped. The number of 32-bit cells required to specify this is 
-                described by the #address-cells property of the bus node on 
-                which the child is located.
-                </li>
-                <li>
-                The child-interrupt-specifier is the interrupt specifier of the 
-                child node being mapped. The number of 32-bit cells required to 
-                specify this component is described by the #interrupt-cells 
-                property of this node - the nexus node containing the interrupt-map 
-                property.
-                </li>
-                <li>
-                The interrupt-parent is a single phandle value that points to 
-                the interrupt parent to which the child domain is being mapped.
-                </li>
-                <li>
-                The parent-unit-address is the unit address in the domain of the 
-                interrupt parent. The number of 32-bit cells required to specify 
-                this address is described by the #address-cells property of the 
-                node pointed to by the interrupt-parent field.
-                </li>
-                <li>
-                The parent-interrupt-specifier is the interrupt specifier in the 
-                parent domain. The number of 32-bit cells required to specify 
-                this compo- nent is described by the #interrupt-cells property 
-                of the node pointed to by the interrupt-parent field.
-                </li>
-            </ul>
-            
-            Lookups are performed on the interrupt mapping table by matching a 
-            unit-address/interrupt specifier pair against the child components 
-            in the interrupt-map. Because some fields in the unit interrupt 
-            specifier may not be relevant, a mask is applied before the lookup 
-            is done. This mask is defined in the interrupt-map-mask property.
+  interrupt-map:
+    type: array
+    description: |
+      !!html
+      An interrupt-map is a property on a nexus node that bridges one 
+      interrupt domain with a set of parent inter- rupt domains and 
+      specifies how interrupt specifiers in the child domain are mapped to 
+      their respective parent domains.
+      <br/><br/>
+      The interrupt map is a table where each row is a mapping entry 
+      consisting of five components: child-unit-address, 
+      child-interrupt-specifier, interrupt-parent, parent-unit-address,
+      parent-interrupt-specifier.
+      
+      <ul>
+          <li>
+          The child-unit-address is unit address of the child node being
+          mapped. The number of 32-bit cells required to specify this is 
+          described by the #address-cells property of the bus node on 
+          which the child is located.
+          </li>
+          <li>
+          The child-interrupt-specifier is the interrupt specifier of the 
+          child node being mapped. The number of 32-bit cells required to 
+          specify this component is described by the #interrupt-cells 
+          property of this node - the nexus node containing the interrupt-map 
+          property.
+          </li>
+          <li>
+          The interrupt-parent is a single phandle value that points to 
+          the interrupt parent to which the child domain is being mapped.
+          </li>
+          <li>
+          The parent-unit-address is the unit address in the domain of the 
+          interrupt parent. The number of 32-bit cells required to specify 
+          this address is described by the #address-cells property of the 
+          node pointed to by the interrupt-parent field.
+          </li>
+          <li>
+          The parent-interrupt-specifier is the interrupt specifier in the 
+          parent domain. The number of 32-bit cells required to specify 
+          this compo- nent is described by the #interrupt-cells property 
+          of the node pointed to by the interrupt-parent field.
+          </li>
+      </ul>
+      
+      Lookups are performed on the interrupt mapping table by matching a 
+      unit-address/interrupt specifier pair against the child components 
+      in the interrupt-map. Because some fields in the unit interrupt 
+      specifier may not be relevant, a mask is applied before the lookup 
+      is done. This mask is defined in the interrupt-map-mask property.
 
-    interrupt-map-mask:
-        type: array
-        description: |
-            An interrupt-map-mask property is specified for a nexus node in the 
-            interrupt tree. This property specifies a mask that is ANDed with 
-            the incoming unit interrupt specifier being looked up in the table 
-            specified in the interrupt-map property.
+  interrupt-map-mask:
+    type: array
+    description: |
+      An interrupt-map-mask property is specified for a nexus node in the 
+      interrupt tree. This property specifies a mask that is ANDed with 
+      the incoming unit interrupt specifier being looked up in the table 
+      specified in the interrupt-map property.
 
-    "#address-cells":
-        type: int
-        description: |
-            The #address-cells property may be used in any device node that has 
-            children in the devicetree hierarchy and describes how child device 
-            nodes should be addressed. This property defines the number of u32 
-            cells used to encode the address field in a child node's reg property. 
-            
-            This property is not inherited from ancestors in the devicetree. It 
-            shall be explicitly defined.
-            
-            A DTSpec-compliant boot program shall supply #address-cells on all 
-            nodes that have children. If missing, a client program should assume 
-            a default value of 2.
-            
-            For example see the following devicetree excerpt:
-            
-            soc {
-                #address-cells = <1>; #size-cells = <1>;
-                    serial@4600 {
-                    compatible = "ns16550";
-                    reg = <0x4600 0x100>; clock-frequency = <0>; interrupts = <0xA 0x8>; interrupt-parent = <&ipic>;
-                }; 
-            };
-            
-            In this example, the #address-cells and #size-cells properties of 
-            the soc node are both set to 1. This setting specifies that one cell 
-            is required to represent an address and one cell is required to 
-            represent the size of nodes that are children of this node.
-            
-            The serial device reg property necessarily follows this 
-            specification set in the parent (soc) node - the address is 
-            represented by a single cell (0x4600), and the size is represented 
-            by a single cell (0x100).
+  "#address-cells":
+    type: int
+    description: |
+      The #address-cells property may be used in any device node that has 
+      children in the devicetree hierarchy and describes how child device 
+      nodes should be addressed. This property defines the number of u32 
+      cells used to encode the address field in a child node's reg property. 
+      
+      This property is not inherited from ancestors in the devicetree. It 
+      shall be explicitly defined.
+      
+      A DTSpec-compliant boot program shall supply #address-cells on all 
+      nodes that have children. If missing, a client program should assume 
+      a default value of 2.
+      
+      For example see the following devicetree excerpt:
+      
+      soc {
+          #address-cells = <1>; #size-cells = <1>;
+              serial@4600 {
+              compatible = "ns16550";
+              reg = <0x4600 0x100>; clock-frequency = <0>; interrupts = <0xA 0x8>; interrupt-parent = <&ipic>;
+          }; 
+      };
+      
+      In this example, the #address-cells and #size-cells properties of 
+      the soc node are both set to 1. This setting specifies that one cell 
+      is required to represent an address and one cell is required to 
+      represent the size of nodes that are children of this node.
+      
+      The serial device reg property necessarily follows this 
+      specification set in the parent (soc) node - the address is 
+      represented by a single cell (0x4600), and the size is represented 
+      by a single cell (0x100).
 
-    "#size-cells":
-        type: int
-        description: |
-            The #size-cells property may be used in any device node that has 
-            children in the devicetree hierarchy and describes how child device 
-            nodes should be addressed. This property defines the number of u32 
-            cells used to encode the size field in a child node's reg property.
-            
-            This property is not inherited from ancestors in the devicetree. It 
-            shall be explicitly defined.
-            
-            A DTSpec-compliant boot program shall supply #size-cells on all 
-            nodes that have children. If missing, a client program should assume 
-            a default value of 1.
-            
-            For example see the following devicetree excerpt:
-            
-            soc {
-                #address-cells = <1>; #size-cells = <1>;
-                    serial@4600 {
-                    compatible = "ns16550";
-                    reg = <0x4600 0x100>; clock-frequency = <0>; interrupts = <0xA 0x8>; interrupt-parent = <&ipic>;
-                }; 
-            };
-            
-            In this example, the #address-cells and #size-cells properties of 
-            the soc node are both set to 1. This setting specifies that one cell 
-            is required to represent an address and one cell is required to 
-            represent the size of nodes that are children of this node.
-            
-            The serial device reg property necessarily follows this 
-            specification set in the parent (soc) node - the address is 
-            represented by a single cell (0x4600), and the size is represented 
-            by a single cell (0x100).
+  "#size-cells":
+    type: int
+    description: |
+      The #size-cells property may be used in any device node that has 
+      children in the devicetree hierarchy and describes how child device 
+      nodes should be addressed. This property defines the number of u32 
+      cells used to encode the size field in a child node's reg property.
+      
+      This property is not inherited from ancestors in the devicetree. It 
+      shall be explicitly defined.
+      
+      A DTSpec-compliant boot program shall supply #size-cells on all 
+      nodes that have children. If missing, a client program should assume 
+      a default value of 1.
+      
+      For example see the following devicetree excerpt:
+      
+      soc {
+          #address-cells = <1>; #size-cells = <1>;
+              serial@4600 {
+              compatible = "ns16550";
+              reg = <0x4600 0x100>; clock-frequency = <0>; interrupts = <0xA 0x8>; interrupt-parent = <&ipic>;
+          }; 
+      };
+      
+      In this example, the #address-cells and #size-cells properties of 
+      the soc node are both set to 1. This setting specifies that one cell 
+      is required to represent an address and one cell is required to 
+      represent the size of nodes that are children of this node.
+      
+      The serial device reg property necessarily follows this 
+      specification set in the parent (soc) node - the address is 
+      represented by a single cell (0x4600), and the size is represented 
+      by a single cell (0x100).
 
-    "#interrupt-cells":
-        type: int
-        description: |
-            The #interrupt-cells property defines the number of cells required 
-            to encode an interrupt specifier for an interrupt domain.
+  "#interrupt-cells":
+    type: int
+    description: |
+      The #interrupt-cells property defines the number of cells required 
+      to encode an interrupt specifier for an interrupt domain.
 

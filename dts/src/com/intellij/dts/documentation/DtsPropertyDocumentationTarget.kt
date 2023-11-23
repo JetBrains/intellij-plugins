@@ -9,26 +9,26 @@ import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.refactoring.suggested.createSmartPointer
 
 class DtsPropertyDocumentationTarget(private val property: DtsProperty) : DtsDocumentationTarget(property.project) {
-    override fun createPointer(): Pointer<out DocumentationTarget> {
-        val propertyPtr = property.createSmartPointer()
+  override fun createPointer(): Pointer<out DocumentationTarget> {
+    val propertyPtr = property.createSmartPointer()
 
-        return Pointer {
-            propertyPtr.dereference()?.let { DtsPropertyDocumentationTarget(it) }
-        }
+    return Pointer {
+      propertyPtr.dereference()?.let { DtsPropertyDocumentationTarget(it) }
     }
+  }
 
-    override fun computePresentation(): TargetPresentation {
-        return TargetPresentation.builder(property.dtsName).icon(property.getIcon(0)).presentation()
-    }
+  override fun computePresentation(): TargetPresentation {
+    return TargetPresentation.builder(property.dtsName).icon(property.getIcon(0)).presentation()
+  }
 
-    override fun buildDocumentation(html: DtsDocumentationHtmlBuilder) {
-        buildPropertyName(html, property.dtsName)
+  override fun buildDocumentation(html: DtsDocumentationHtmlBuilder) {
+    buildPropertyName(html, property.dtsName)
 
-        val parent = DtsTreeUtil.parentNode(property) ?: return
-        buildDeclaredIn(html, parent)
+    val parent = DtsTreeUtil.parentNode(property) ?: return
+    buildDeclaredIn(html, parent)
 
-        val binding = DtsZephyrBindingProvider.bindingFor(parent) ?: return
-        val propertyBinding = binding.properties[property.dtsName] ?: return
-        buildPropertyBinding(html, propertyBinding)
-    }
+    val binding = DtsZephyrBindingProvider.bindingFor(parent) ?: return
+    val propertyBinding = binding.properties[property.dtsName] ?: return
+    buildPropertyBinding(html, propertyBinding)
+  }
 }

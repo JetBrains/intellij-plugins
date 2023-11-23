@@ -7,13 +7,13 @@ package com.intellij.dts.lang
  * - UNKNOWN: Indicates that the affiliation of the entry cannot be decided yet.
  */
 enum class DtsAffiliation {
-    ROOT,
-    NODE,
-    UNKNOWN;
+  ROOT,
+  NODE,
+  UNKNOWN;
 
-    fun isRoot(): Boolean = this == ROOT
+  fun isRoot(): Boolean = this == ROOT
 
-    fun isNode(): Boolean = this == NODE
+  fun isNode(): Boolean = this == NODE
 
-    fun isUnknown(): Boolean = this == UNKNOWN
+  fun isUnknown(): Boolean = this == UNKNOWN
 }

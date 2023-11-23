@@ -1,34 +1,34 @@
 package com.intellij.dts.pp.lang.lexer
 
+import com.intellij.dts.pp.lang.PpTokenTypes
 import com.intellij.lexer.Lexer
 import com.intellij.lexer.LexerUtil
 import com.intellij.lexer.LookAheadLexer
-import com.intellij.dts.pp.lang.PpTokenTypes
 
 open class PpLexerAdapter(private val tokenTypes: PpTokenTypes, baseLexer: Lexer) : LookAheadLexer(baseLexer) {
-    private val ppLexer = PpLexer(null, tokenTypes)
+  private val ppLexer = PpLexer(null, tokenTypes)
 
-    override fun lookAhead(baseLexer: Lexer) {
-        if (baseLexer.tokenType != tokenTypes.statementMarker) {
-            advanceLexer(baseLexer)
-            return
-        }
-
-        processStatementContent(baseLexer)
-        baseLexer.advance()
+  override fun lookAhead(baseLexer: Lexer) {
+    if (baseLexer.tokenType != tokenTypes.statementMarker) {
+      advanceLexer(baseLexer)
+      return
     }
 
-    private fun processStatementContent(baseLexer: Lexer) {
-        val content = LexerUtil.getTokenText(baseLexer)
+    processStatementContent(baseLexer)
+    baseLexer.advance()
+  }
 
-        ppLexer.reset(content, 0, content.length, PpLexer.YYINITIAL)
+  private fun processStatementContent(baseLexer: Lexer) {
+    val content = LexerUtil.getTokenText(baseLexer)
 
-        while (true) {
-            val token = ppLexer.advance() ?: break
+    ppLexer.reset(content, 0, content.length, PpLexer.YYINITIAL)
 
-            addToken(baseLexer.tokenStart + ppLexer.tokenEnd, token)
-        }
+    while (true) {
+      val token = ppLexer.advance() ?: break
 
-        addToken(baseLexer.tokenEnd, tokenTypes.statementEnd)
+      addToken(baseLexer.tokenStart + ppLexer.tokenEnd, token)
     }
+
+    addToken(baseLexer.tokenEnd, tokenTypes.statementEnd)
+  }
 }

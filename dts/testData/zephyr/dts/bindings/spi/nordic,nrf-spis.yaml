@@ -12,5 +12,5 @@ properties:
     type: int
     required: true
     description: |
-        Default character. Character clocked out when the slave was not
-        provided with buffers and is ignoring the transaction.
+      Default character. Character clocked out when the slave was not
+      provided with buffers and is ignoring the transaction.

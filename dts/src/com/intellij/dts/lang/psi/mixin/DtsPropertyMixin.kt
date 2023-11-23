@@ -10,28 +10,28 @@ import com.intellij.psi.util.PsiTreeUtil
 import javax.swing.Icon
 
 abstract class DtsPropertyMixin(node: ASTNode) : ASTWrapperPsiElement(node), DtsProperty {
-    override val dtsAffiliation: DtsAffiliation
-        get() = DtsAffiliation.NODE
+  override val dtsAffiliation: DtsAffiliation
+    get() = DtsAffiliation.NODE
 
-    override val dtsStatementKind: DtsStatementKind
-        get() = DtsStatementKind.PROPERTY
+  override val dtsStatementKind: DtsStatementKind
+    get() = DtsStatementKind.PROPERTY
 
-    override val dtsIsComplete: Boolean
-        get() = !PsiTreeUtil.hasErrorElements(this)
+  override val dtsIsComplete: Boolean
+    get() = !PsiTreeUtil.hasErrorElements(this)
 
-    override val dtsNameElement: PsiElement
-        get() = findNotNullChildByType<PsiElement>(DtsTypes.NAME)
+  override val dtsNameElement: PsiElement
+    get() = findNotNullChildByType<PsiElement>(DtsTypes.NAME)
 
-    override val dtsName: String
-        get() = dtsNameElement.text
+  override val dtsName: String
+    get() = dtsNameElement.text
 
-    override val dtsValues: List<DtsValue>
-        get() {
-            val content = findChildByClass(DtsPropertyContent::class.java) ?: return emptyList()
-            return PsiTreeUtil.getChildrenOfTypeAsList(content, DtsValue::class.java)
-        }
+  override val dtsValues: List<DtsValue>
+    get() {
+      val content = findChildByClass(DtsPropertyContent::class.java) ?: return emptyList()
+      return PsiTreeUtil.getChildrenOfTypeAsList(content, DtsValue::class.java)
+    }
 
-    override fun getTextOffset(): Int = dtsNameElement.textOffset
+  override fun getTextOffset(): Int = dtsNameElement.textOffset
 
-    override fun getIcon(flags: Int): Icon = DtsIcons.Property
+  override fun getIcon(flags: Int): Icon = DtsIcons.Property
 }

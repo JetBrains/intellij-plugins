@@ -14,24 +14,24 @@ import com.intellij.dts.zephyr.binding.DtsZephyrBindingProvider
 import com.intellij.util.ProcessingContext
 
 class DtsPropertyNameProvider : CompletionProvider<CompletionParameters>() {
-    override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
-        val container = context.getDtsContainer()
-        val resultSet = result.withDtsPrefixMatcher(parameters)
+  override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
+    val container = context.getDtsContainer()
+    val resultSet = result.withDtsPrefixMatcher(parameters)
 
-        val node = container.parent as? DtsNode ?: return
+    val node = container.parent as? DtsNode ?: return
 
-        val binding = DtsZephyrBindingProvider.bindingFor(node) ?: return
+    val binding = DtsZephyrBindingProvider.bindingFor(node) ?: return
 
-        val presentProperties = node.dtsProperties.map { it.dtsName }
-        val newProperties = binding.properties.values.filter { !presentProperties.contains(it.name) }
+    val presentProperties = node.dtsProperties.map { it.dtsName }
+    val newProperties = binding.properties.values.filter { !presentProperties.contains(it.name) }
 
-        for (property in newProperties) {
-            val lookup = LookupElementBuilder.create(DtsPropertySymbol(property).createPointer(), property.name)
-                .withTypeText(property.type.typeName)
-                .withIcon(DtsIcons.Property)
-                .withInsertHandler(DtsInsertHandler.PROPERTY)
+    for (property in newProperties) {
+      val lookup = LookupElementBuilder.create(DtsPropertySymbol(property).createPointer(), property.name)
+        .withTypeText(property.type.typeName)
+        .withIcon(DtsIcons.Property)
+        .withInsertHandler(DtsInsertHandler.PROPERTY)
 
-            resultSet.addElement(PrioritizedLookupElement.withPriority(lookup, DtsLookupPriority.PROPERTY))
-        }
+      resultSet.addElement(PrioritizedLookupElement.withPriority(lookup, DtsLookupPriority.PROPERTY))
     }
+  }
 }

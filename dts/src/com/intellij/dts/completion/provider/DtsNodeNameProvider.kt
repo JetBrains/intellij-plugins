@@ -18,34 +18,34 @@ import com.intellij.dts.zephyr.binding.DtsZephyrBindingProvider
 import com.intellij.util.ProcessingContext
 
 class DtsNodeNameProvider : CompletionProvider<CompletionParameters>() {
-    override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
-        val container = context.getDtsContainer()
-        val resultSet = result.withDtsPrefixMatcher(parameters)
+  override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
+    val container = context.getDtsContainer()
+    val resultSet = result.withDtsPrefixMatcher(parameters)
 
-        val node = container.parent as? DtsNode ?: return
+    val node = container.parent as? DtsNode ?: return
 
-        if (!node.isDtsRootNode()) return
+    if (!node.isDtsRootNode()) return
 
-        // no removal of present nodes in suggestions, because some nodes can be
-        // suffixed with @... which makes them different
+    // no removal of present nodes in suggestions, because some nodes can be
+    // suffixed with @... which makes them different
 
-        val provider = DtsZephyrBindingProvider.of(node.project)
+    val provider = DtsZephyrBindingProvider.of(node.project)
 
-        for (binding in DtsBundledBindings.entries) {
-            val build = binding.build(provider) ?: continue
+    for (binding in DtsBundledBindings.entries) {
+      val build = binding.build(provider) ?: continue
 
-            val symbol = DtsDocumentationSymbol.from(DtsNodeBindingDocumentationTarget(
-                node.project,
-                binding.nodeName,
-                build,
-            ))
+      val symbol = DtsDocumentationSymbol.from(DtsNodeBindingDocumentationTarget(
+        node.project,
+        binding.nodeName,
+        build,
+      ))
 
-            val lookup = LookupElementBuilder.create(symbol, binding.nodeName)
-                .withTypeText(DtsBundle.message("documentation.node_type"))
-                .withIcon(DtsIcons.Node)
-                .withInsertHandler(DtsInsertHandler.SUB_NODE)
+      val lookup = LookupElementBuilder.create(symbol, binding.nodeName)
+        .withTypeText(DtsBundle.message("documentation.node_type"))
+        .withIcon(DtsIcons.Node)
+        .withInsertHandler(DtsInsertHandler.SUB_NODE)
 
-            resultSet.addElement(PrioritizedLookupElement.withPriority(lookup, DtsLookupPriority.SUB_NODE))
-        }
+      resultSet.addElement(PrioritizedLookupElement.withPriority(lookup, DtsLookupPriority.SUB_NODE))
     }
+  }
 }

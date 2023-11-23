@@ -1,164 +1,164 @@
 description: |
-    Reserved memory is specified as a child node of the reserved-memory node. 
-    The operating system shall exclude reserved memory from normal usage. One 
-    can create child nodes describing particular reserved (excluded from normal 
-    use) memory regions. Such memory regions are usually designed for the 
-    special usage by various device drivers.
-    
-    Each child of the reserved-memory node specifies one or more regions of 
-    reserved memory. Each child node may either use a reg property to specify a 
-    specific range of reserved memory, or a size property with optional 
-    constraints to request a dynamically allocated block of memory.
-    
-    Following the generic-names recommended practice, node names should reflect 
-    the purpose of the node (ie. "framebuffer" or "dma-pool"). Unit address 
-    (@<address>) should be appended to the name if the node is a static 
-    allocation.
-    
-    This example defines 3 contiguous regions are defined for Linux kernel: 
-    one default of all device drivers (named linux, cma and 64MiB in size), 
-    one dedicated to the framebuffer device (named framebuffer@78000000, 8MiB), 
-    and one for multimedia processing (named multimedia@77000000, 64MiB).
-    
-    /{
-        #address-cells = <1>; 
-        #size-cells = <1>;
-        memory {
-            reg = <0x40000000 0x40000000>;
-        };
-        reserved-memory { 
-            #address-cells = <1>; 
-            #size-cells = <1>; 
-            ranges;
-            linux,cma {
-                compatible = "shared-dma-pool"; 
-                reusable;
-                size = <0x4000000>;
-                alignment = <0x2000>; linux,cma-default;
-            };
-            display_reserved: framebuffer@78000000 {
-                reg = <0x78000000 0x800000>;
-            };
-            multimedia_reserved: multimedia@77000000 { 
-                compatible = "acme,multimedia-memory"; 
-                reg = <0x77000000 0x4000000>;
-            }; 
-        };
-        fb0: video@12300000 {
-            memory-region = <&display_reserved>; 
-            /* ... */
-        };
-        scaler: scaler@12500000 {
-            memory-region = <&multimedia_reserved>; 
-            /* ... */
-        };
-        codec: codec@12600000 {
-            memory-region = <&multimedia_reserved>; 
-            /* ... */
-        }; 
-    };
+  Reserved memory is specified as a child node of the reserved-memory node. 
+  The operating system shall exclude reserved memory from normal usage. One 
+  can create child nodes describing particular reserved (excluded from normal 
+  use) memory regions. Such memory regions are usually designed for the 
+  special usage by various device drivers.
+  
+  Each child of the reserved-memory node specifies one or more regions of 
+  reserved memory. Each child node may either use a reg property to specify a 
+  specific range of reserved memory, or a size property with optional 
+  constraints to request a dynamically allocated block of memory.
+  
+  Following the generic-names recommended practice, node names should reflect 
+  the purpose of the node (ie. "framebuffer" or "dma-pool"). Unit address 
+  (@<address>) should be appended to the name if the node is a static 
+  allocation.
+  
+  This example defines 3 contiguous regions are defined for Linux kernel: 
+  one default of all device drivers (named linux, cma and 64MiB in size), 
+  one dedicated to the framebuffer device (named framebuffer@78000000, 8MiB), 
+  and one for multimedia processing (named multimedia@77000000, 64MiB).
+  
+  /{
+      #address-cells = <1>; 
+      #size-cells = <1>;
+      memory {
+          reg = <0x40000000 0x40000000>;
+      };
+      reserved-memory { 
+          #address-cells = <1>; 
+          #size-cells = <1>; 
+          ranges;
+          linux,cma {
+              compatible = "shared-dma-pool"; 
+              reusable;
+              size = <0x4000000>;
+              alignment = <0x2000>; linux,cma-default;
+          };
+          display_reserved: framebuffer@78000000 {
+              reg = <0x78000000 0x800000>;
+          };
+          multimedia_reserved: multimedia@77000000 { 
+              compatible = "acme,multimedia-memory"; 
+              reg = <0x77000000 0x4000000>;
+          }; 
+      };
+      fb0: video@12300000 {
+          memory-region = <&display_reserved>; 
+          /* ... */
+      };
+      scaler: scaler@12500000 {
+          memory-region = <&multimedia_reserved>; 
+          /* ... */
+      };
+      codec: codec@12600000 {
+          memory-region = <&multimedia_reserved>; 
+          /* ... */
+      }; 
+  };
 
 properties:
-    "#address-cells":
-        required: true
-        type: int
-        description: |
-            Specifies the number of <u32> cells to represent the address in 
-            the reg property in children of root.
-            
-    "#size-cells":
-        required: true
-        type: int
-        description: |
-            Specifies the number of <u32> cells to represent the size in the 
-            reg property in children of root.
+  "#address-cells":
+    required: true
+    type: int
+    description: |
+      Specifies the number of <u32> cells to represent the address in 
+      the reg property in children of root.
 
-    ranges:
-        required: true
-        type: phandle-array
-        description: |
-            Represents the mapping between parent address to child address spaces.
+  "#size-cells":
+    required: true
+    type: int
+    description: |
+      Specifies the number of <u32> cells to represent the size in the 
+      reg property in children of root.
+
+  ranges:
+    required: true
+    type: phandle-array
+    description: |
+      Represents the mapping between parent address to child address spaces.
 
 child-binding:
-    description: |
-        Each child of the reserved-memory node specifies one or more regions 
-        of reserved memory. Each child node may either use a reg property to 
-        specify a specific range of reserved memory, or a size property with 
-        optional constraints to request a dynamically allocated block of memory.
-        
-        Following the generic-names recommended practice, node names should 
-        reflect the purpose of the node (ie. "framebuffer" or "dma-pool"). 
-        Unit address (@<address>) should be appended to the name if the node 
-        is a static allocation.
-        
-        A reserved memory node requires either a reg property for static 
-        allocations, or a size property for dynamics allocations. Dynamic 
-        allocations may use alignment and alloc-ranges properties to constrain 
-        where the memory is allocated from. If both reg and size are present, 
-        then the region is treated as a static allocation with the reg 
-        property taking precedence and size is ignored.
+  description: |
+    Each child of the reserved-memory node specifies one or more regions 
+    of reserved memory. Each child node may either use a reg property to 
+    specify a specific range of reserved memory, or a size property with 
+    optional constraints to request a dynamically allocated block of memory.
+    
+    Following the generic-names recommended practice, node names should 
+    reflect the purpose of the node (ie. "framebuffer" or "dma-pool"). 
+    Unit address (@<address>) should be appended to the name if the node 
+    is a static allocation.
+    
+    A reserved memory node requires either a reg property for static 
+    allocations, or a size property for dynamics allocations. Dynamic 
+    allocations may use alignment and alloc-ranges properties to constrain 
+    where the memory is allocated from. If both reg and size are present, 
+    then the region is treated as a static allocation with the reg 
+    property taking precedence and size is ignored.
 
-    properties:
-        reg:
-            type: phandle-array
-            description: |
-                Consists of an arbitrary number of address and size pairs that 
-                specify the physical address and size of the memory ranges.
-                
-        size:
-            type: phandle-array
-            description: |
-                Size in bytes of memory to reserve for dynamically allocated 
-                regions. Size of this property is based on parent node's 
-                #size-cells property.
-                
-        alignment:
-            type: phandle-array
-            description: |
-                Address boundary for alignment of allocation. Size of this 
-                property is based on parent node's #size-cells property.
+  properties:
+    reg:
+      type: phandle-array
+      description: |
+        Consists of an arbitrary number of address and size pairs that 
+        specify the physical address and size of the memory ranges.
 
-        alloc-ranges:
-            type: phandle-array
-            description: |
-                Specifies regions of memory that are acceptable to allocate 
-                from. Format is (address, length pairs) tuples in same format 
-                as for reg properties.
+    size:
+      type: phandle-array
+      description: |
+        Size in bytes of memory to reserve for dynamically allocated 
+        regions. Size of this property is based on parent node's 
+        #size-cells property.
 
-        compatible:
-            type: string-array
-            description: |
-                !!html
-                May contain the following strings:
-                <ul>
-                    <li>
-                    shared-dma-pool: This indicates a region of memory meant 
-                    to be used as a shared pool of DMA buffers for a set of 
-                    devices. It can be used by an operating system to 
-                    instantiate the necessary pool management subsystem if 
-                    necessary.
-                    </li>
-                    <li>
-                    vendor specific string in the form &lt;vendor&gt;,[&lt;
-                    device&gt;-]&lt;usage&gt; 
-                    </li>
-                </ul>
+    alignment:
+      type: phandle-array
+      description: |
+        Address boundary for alignment of allocation. Size of this 
+        property is based on parent node's #size-cells property.
 
-        no-map:
-            type: boolean
-            description: |
-                If present, indicates the operating system must not create a 
-                virtual mapping of the region as part of its standard mapping 
-                of system memory, nor permit speculative access to it under any 
-                circumstances other than under the control of the device driver 
-                using the region.
-                
-        reusable:
-            type: boolean
-            description: |
-                The operating system can use the memory in this region with the 
-                limitation that the device driver(s) owning the region need to 
-                be able to reclaim it back. Typically that means that the 
-                operating system can use that region to store volatile or 
-                cached data that can be otherwise regenerated or migrated 
-                elsewhere.
+    alloc-ranges:
+      type: phandle-array
+      description: |
+        Specifies regions of memory that are acceptable to allocate 
+        from. Format is (address, length pairs) tuples in same format 
+        as for reg properties.
+
+    compatible:
+      type: string-array
+      description: |
+        !!html
+        May contain the following strings:
+        <ul>
+            <li>
+            shared-dma-pool: This indicates a region of memory meant 
+            to be used as a shared pool of DMA buffers for a set of 
+            devices. It can be used by an operating system to 
+            instantiate the necessary pool management subsystem if 
+            necessary.
+            </li>
+            <li>
+            vendor specific string in the form &lt;vendor&gt;,[&lt;
+            device&gt;-]&lt;usage&gt; 
+            </li>
+        </ul>
+
+    no-map:
+      type: boolean
+      description: |
+        If present, indicates the operating system must not create a 
+        virtual mapping of the region as part of its standard mapping 
+        of system memory, nor permit speculative access to it under any 
+        circumstances other than under the control of the device driver 
+        using the region.
+
+    reusable:
+      type: boolean
+      description: |
+        The operating system can use the memory in this region with the 
+        limitation that the device driver(s) owning the region need to 
+        be able to reclaim it back. Typically that means that the 
+        operating system can use that region to store volatile or 
+        cached data that can be otherwise regenerated or migrated 
+        elsewhere.

@@ -19,56 +19,56 @@ import kotlin.math.max
 import kotlin.math.min
 
 class DtsSemicolonEnterHandler : EnterHandlerDelegateAdapter() {
-    private fun isCommentOrWhitespace(token: IElementType): Boolean {
-        return token in DtsTokenSets.comments || token == TokenType.WHITE_SPACE
+  private fun isCommentOrWhitespace(token: IElementType): Boolean {
+    return token in DtsTokenSets.comments || token == TokenType.WHITE_SPACE
+  }
+
+  private fun findEntry(file: PsiFile, editor: Editor): DtsEntry? {
+    val offset = editor.caretModel.offset
+    val iterator = editor.highlighter.createIterator(offset)
+    if (iterator.end >= offset && iterator.start > 0) iterator.retreat()
+
+    while (iterator.start > 0 && isCommentOrWhitespace(iterator.tokenType)) {
+      iterator.retreat()
     }
 
-    private fun findEntry(file: PsiFile, editor: Editor): DtsEntry? {
-        val offset = editor.caretModel.offset
-        val iterator = editor.highlighter.createIterator(offset)
-        if (iterator.end >= offset && iterator.start > 0) iterator.retreat()
+    val element = file.findElementAt(iterator.start)
+    return PsiTreeUtil.findFirstParent(element) { it is DtsEntry } as? DtsEntry
+  }
 
-        while (iterator.start > 0 && isCommentOrWhitespace(iterator.tokenType)) {
-            iterator.retreat()
-        }
+  private fun findInsertPosition(statement: DtsStatement, editor: Editor): Int {
+    val iterator = editor.highlighter.createIterator(statement.endOffset)
 
-        val element = file.findElementAt(iterator.start)
-        return PsiTreeUtil.findFirstParent(element) { it is DtsEntry } as? DtsEntry
+    while (iterator.start > 0 && isCommentOrWhitespace(iterator.tokenType)) {
+      iterator.retreat()
     }
 
-    private fun findInsertPosition(statement: DtsStatement, editor: Editor): Int {
-        val iterator = editor.highlighter.createIterator(statement.endOffset)
+    return iterator.end
+  }
 
-        while (iterator.start > 0 && isCommentOrWhitespace(iterator.tokenType)) {
-            iterator.retreat()
-        }
+  override fun postProcessEnter(file: PsiFile, editor: Editor, dataContext: DataContext): Result {
+    if (file !is DtsFile || !Registry.`is`("dts.insert_semicolons")) return Result.Continue
 
-        return iterator.end
-    }
+    PsiDocumentManager.getInstance(file.project).commitDocument(editor.document)
 
-    override fun postProcessEnter(file: PsiFile, editor: Editor, dataContext: DataContext): Result {
-        if (file !is DtsFile || !Registry.`is`("dts.insert_semicolons")) return Result.Continue
+    val entry = findEntry(file, editor) ?: return Result.Continue
+    val statement = entry.dtsStatement
 
-        PsiDocumentManager.getInstance(file.project).commitDocument(editor.document)
+    // abort if the entry already has a semicolon or the statement has an error
+    if (entry.hasDtsSemicolon) return Result.Continue
+    if (!statement.dtsIsComplete) return Result.Continue
 
-        val entry = findEntry(file, editor) ?: return Result.Continue
-        val statement = entry.dtsStatement
+    // abort if there are more than two linebreaks
+    val caretOffset = editor.caretModel.offset
+    val insertOffset = findInsertPosition(statement, editor)
 
-        // abort if the entry already has a semicolon or the statement has an error
-        if (entry.hasDtsSemicolon) return Result.Continue
-        if (!statement.dtsIsComplete) return Result.Continue
+    val start = min(insertOffset, caretOffset)
+    val end = max(insertOffset, caretOffset)
 
-        // abort if there are more than two linebreaks
-        val caretOffset = editor.caretModel.offset
-        val insertOffset = findInsertPosition(statement, editor)
+    if (file.text.subSequence(start, end).count { it == '\n' } > 1) return Result.Continue
 
-        val start = min(insertOffset, caretOffset)
-        val end = max(insertOffset, caretOffset)
+    editor.document.insertString(insertOffset, ";")
 
-        if (file.text.subSequence(start, end).count { it == '\n' } > 1) return Result.Continue
-
-        editor.document.insertString(insertOffset, ";")
-
-        return Result.Default
-    }
+    return Result.Default
+  }
 }

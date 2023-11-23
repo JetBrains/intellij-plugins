@@ -1,136 +1,136 @@
 properties:
-    status:
-        type: string
-        enum: [ "okay", "disabled", "reserved", "fail", "fail-sss" ]
-        description: |
-            The status property indicates the operational status of a device. 
-            The lack of a status property should be treated as if the property 
-            existed with the value of "okay".
+  status:
+    type: string
+    enum: [ "okay", "disabled", "reserved", "fail", "fail-sss" ]
+    description: |
+      The status property indicates the operational status of a device. 
+      The lack of a status property should be treated as if the property 
+      existed with the value of "okay".
 
-    compatible:
-        type: string-array
-        description: |
-            The compatible property value consists of one or more strings that 
-            define the specific programming model for the device. This list of 
-            strings should be used by a client program for device driver 
-            selection. The property value consists of a concatenated list of 
-            null terminated strings, from most specific to most general. They 
-            allow a device to express its compatibility with a family of similar 
-            devices, potentially allowing a single device driver to match 
-            against several devices.
-            
-            The recommended format is "manufacturer,model", where manufacturer 
-            is a string describing the name of the manufacturer (such as a stock
-            ticker symbol), and model specifies the model number.
-            
-            The compatible string should consist only of lowercase letters, 
-            digits and dashes, and should start with a letter. A single comma is
-            typically only used following a vendor prefix. Underscores should 
-            not be used.
+  compatible:
+    type: string-array
+    description: |
+      The compatible property value consists of one or more strings that 
+      define the specific programming model for the device. This list of 
+      strings should be used by a client program for device driver 
+      selection. The property value consists of a concatenated list of 
+      null terminated strings, from most specific to most general. They 
+      allow a device to express its compatibility with a family of similar 
+      devices, potentially allowing a single device driver to match 
+      against several devices.
+      
+      The recommended format is "manufacturer,model", where manufacturer 
+      is a string describing the name of the manufacturer (such as a stock
+      ticker symbol), and model specifies the model number.
+      
+      The compatible string should consist only of lowercase letters, 
+      digits and dashes, and should start with a letter. A single comma is
+      typically only used following a vendor prefix. Underscores should 
+      not be used.
+      
+      For example:
+      
+      compatible = "fsl,mpc8641", "ns16550";
+      
+      In this example, an operating system would first try to locate a 
+      device driver that supported fsl,mpc8641. If a driver was not found,
+      it would then try to locate a driver that supported the more general 
+      ns16550 device type.
 
-            For example:
-            
-            compatible = "fsl,mpc8641", "ns16550";
-            
-            In this example, an operating system would first try to locate a 
-            device driver that supported fsl,mpc8641. If a driver was not found,
-            it would then try to locate a driver that supported the more general 
-            ns16550 device type.
+  phandle:
+    type: phandle
+    description: |
+      The phandle property specifies a numerical identifier for a node 
+      that is unique within the devicetree. The phandle property value is 
+      used by other nodes that need to refer to the node associated with 
+      the property.
+      
+      Note: Most devicetrees in DTS will not contain explicit phandle 
+      properties.The DTC tool automatically inserts the phandle properties
+      when the DTS is compiled into the binary DTB format.
+      
+      For example see the following devicetree excerpt:
+      
+      pic@10000000 {
+          phandle = <1>; interrupt-controller;
+          reg = <0x10000000 0x100>;
+      };
+      
+      A phandle value of 1 is defined. Another device node could reference 
+      the pic node with a phandle value of 1:
+      
+      another-device-node { 
+          interrupt-parent = <1>; 
+      };
 
-    phandle:
-        type: phandle
-        description: |
-            The phandle property specifies a numerical identifier for a node 
-            that is unique within the devicetree. The phandle property value is 
-            used by other nodes that need to refer to the node associated with 
-            the property.
-            
-            Note: Most devicetrees in DTS will not contain explicit phandle 
-            properties.The DTC tool automatically inserts the phandle properties
-            when the DTS is compiled into the binary DTB format.
+  ranges:
+    type: array
+    description: |
+      !!html
+      The ranges property provides a means of defining a mapping or 
+      translation between the address space of the bus (the child address 
+      space) and the address space of the bus node's parent (the parent 
+      address space).
+      <br/><br/>
+      The format of the value of the ranges property is an arbitrary 
+      number of triplets of (child-bus-address, parent- bus-address, 
+      length).
+      
+      <ul>
+          <li>
+          The child-bus-address is a physical address within the child bus' 
+          address space. The number of cells to represent the address is 
+          bus dependent and can be determined from the #address-cells of 
+          this node (the node in which the ranges property appears).
+          </li>
+          <li>
+          The parent-bus-address is a physical address within the parent 
+          bus' address space. The number of cells to represent the parent 
+          address is bus dependent and can be determined from the 
+          #address-cells property of the node that defines the parent's 
+          address space.
+          </li>
+          <li>
+          The length specifies the size of the range in the child's 
+          address space. The number of cells to represent the size can be 
+          determined from the #size-cells of this node (the node in which 
+          the ranges property appears).
+          </li>
+      </ul>
+      
+      If the property is defined with an empty value, it specifies that 
+      the parent and child address space is identical, and no address 
+      translation is required.
+      <br/><br/>
+      If the property is not present in a bus node, it is assumed that no 
+      mapping exists between children of the node and the parent address 
+      space.
 
-            For example see the following devicetree excerpt:
-            
-            pic@10000000 {
-                phandle = <1>; interrupt-controller;
-                reg = <0x10000000 0x100>;
-            };
-            
-            A phandle value of 1 is defined. Another device node could reference 
-            the pic node with a phandle value of 1:
-            
-            another-device-node { 
-                interrupt-parent = <1>; 
-            };
+  device_type:
+    type: string
+    deprecated: true
+    description: |
+      The device_type property was used in IEEE 1275 to describe the 
+      device's FCode programming model. Because DTSpec does not have 
+      FCode, new use of the property is deprecated, and it should be 
+      included only on cpu and memory nodes for compatibility with IEEE 
+      1275-derived devicetrees.
 
-    ranges:
-        type: array
-        description: |
-            !!html
-            The ranges property provides a means of defining a mapping or 
-            translation between the address space of the bus (the child address 
-            space) and the address space of the bus node's parent (the parent 
-            address space).
-            <br/><br/>
-            The format of the value of the ranges property is an arbitrary 
-            number of triplets of (child-bus-address, parent- bus-address, 
-            length).
+  interrupts-extended:
+    type: compound
+    description: |
+      The interrupts-extended property lists the interrupt(s) generated by
+      a device. interrupts-extended should be used instead of interrupts 
+      when a device is connected to multiple interrupt controllers as it 
+      encodes a parent phandle with each interrupt specifier.
 
-            <ul>
-                <li>
-                The child-bus-address is a physical address within the child bus' 
-                address space. The number of cells to represent the address is 
-                bus dependent and can be determined from the #address-cells of 
-                this node (the node in which the ranges property appears).
-                </li>
-                <li>
-                The parent-bus-address is a physical address within the parent 
-                bus' address space. The number of cells to represent the parent 
-                address is bus dependent and can be determined from the 
-                #address-cells property of the node that defines the parent's 
-                address space.
-                </li>
-                <li>
-                The length specifies the size of the range in the child's 
-                address space. The number of cells to represent the size can be 
-                determined from the #size-cells of this node (the node in which 
-                the ranges property appears).
-                </li>
-            </ul>
-            
-            If the property is defined with an empty value, it specifies that 
-            the parent and child address space is identical, and no address 
-            translation is required.
-            <br/><br/>
-            If the property is not present in a bus node, it is assumed that no 
-            mapping exists between children of the node and the parent address 
-            space.
-
-    device_type:
-        type: string
-        deprecated: true
-        description: |
-            The device_type property was used in IEEE 1275 to describe the 
-            device's FCode programming model. Because DTSpec does not have 
-            FCode, new use of the property is deprecated, and it should be 
-            included only on cpu and memory nodes for compatibility with IEEE 
-            1275-derived devicetrees.
-
-    interrupts-extended:
-        type: compound
-        description: |
-            The interrupts-extended property lists the interrupt(s) generated by
-            a device. interrupts-extended should be used instead of interrupts 
-            when a device is connected to multiple interrupt controllers as it 
-            encodes a parent phandle with each interrupt specifier.
-
-    interrupt-parent:
-        type: phandle
-        description: |
-            Because the hierarchy of the nodes in the interrupt tree might not 
-            match the devicetree, the interrupt-parent property is available to 
-            make the definition of an interrupt parent explicit. The value is 
-            the phandle to the interrupt parent. If this property is missing 
-            from a device, its interrupt parent is assumed to be its devicetree 
-            parent.
+  interrupt-parent:
+    type: phandle
+    description: |
+      Because the hierarchy of the nodes in the interrupt tree might not 
+      match the devicetree, the interrupt-parent property is available to 
+      make the definition of an interrupt parent explicit. The value is 
+      the phandle to the interrupt parent. If this property is missing 
+      from a device, its interrupt parent is assumed to be its devicetree 
+      parent.
 

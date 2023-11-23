@@ -11,14 +11,14 @@ class DtsPropertyBindingDocumentationTarget(
   project: Project,
   private val binding: DtsZephyrPropertyBinding,
 ) : DtsDocumentationTarget(project) {
-    override fun createPointer(): Pointer<out DocumentationTarget> = Pointer { this }
+  override fun createPointer(): Pointer<out DocumentationTarget> = Pointer { this }
 
-    override fun computePresentation(): TargetPresentation {
-        return TargetPresentation.builder(binding.name).icon(DtsIcons.Property).presentation()
-    }
+  override fun computePresentation(): TargetPresentation {
+    return TargetPresentation.builder(binding.name).icon(DtsIcons.Property).presentation()
+  }
 
-    override fun buildDocumentation(html: DtsDocumentationHtmlBuilder) {
-        buildPropertyName(html, binding.name)
-        buildPropertyBinding(html, binding)
-    }
+  override fun buildDocumentation(html: DtsDocumentationHtmlBuilder) {
+    buildPropertyName(html, binding.name)
+    buildPropertyBinding(html, binding)
+  }
 }

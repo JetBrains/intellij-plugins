@@ -7,20 +7,20 @@ import com.intellij.dts.zephyr.binding.DtsZephyrBindingProvider
 import com.intellij.openapi.util.NlsSafe
 
 enum class DtsBundledBindings(val nodeName: @NlsSafe String) {
-    ALIASES("aliases"),
-    CHOSEN("chosen"),
-    CPUS("cpus"),
-    MEMORY("memory"),
-    RESERVED_MEMORY("reserved-memory");
+  ALIASES("aliases"),
+  CHOSEN("chosen"),
+  CPUS("cpus"),
+  MEMORY("memory"),
+  RESERVED_MEMORY("reserved-memory");
 
-    fun build(provider: DtsZephyrBindingProvider): DtsZephyrBinding? {
-        return provider.buildBundledBinding(this)
-    }
+  fun build(provider: DtsZephyrBindingProvider): DtsZephyrBinding? {
+    return provider.buildBundledBinding(this)
+  }
 
-    companion object {
-        fun findBindingForNode(node: DtsNode): DtsBundledBindings? {
-           val name = node.getDtsPath()?.nameWithoutUnit() ?: return null
-           return entries.firstOrNull { it.nodeName == name }
-        }
+  companion object {
+    fun findBindingForNode(node: DtsNode): DtsBundledBindings? {
+      val name = node.getDtsPath()?.nameWithoutUnit() ?: return null
+      return entries.firstOrNull { it.nodeName == name }
     }
+  }
 }

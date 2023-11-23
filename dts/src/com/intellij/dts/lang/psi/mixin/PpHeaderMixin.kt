@@ -9,18 +9,18 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 
 interface IPpHeader : PsiElement {
-    val ppPath: String
+  val ppPath: String
 
-    val ppPathRange: TextRange
+  val ppPathRange: TextRange
 }
 
 abstract class PpHeaderMixin(node: ASTNode) : ASTWrapperPsiElement(node), DtsPpHeader {
-    private val path: PsiElement?
-        get() = findChildByType(DtsTypes.PP_PATH)
+  private val path: PsiElement?
+    get() = findChildByType(DtsTypes.PP_PATH)
 
-    override val ppPath: String
-        get() = path?.text ?: ""
+  override val ppPath: String
+    get() = path?.text ?: ""
 
-    override val ppPathRange: TextRange
-        get() = path?.textRange ?: textRange.trimEnds()
+  override val ppPathRange: TextRange
+    get() = path?.textRange ?: textRange.trimEnds()
 }

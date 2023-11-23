@@ -10,16 +10,16 @@ import com.intellij.psi.PsiElement
 import com.intellij.ui.breadcrumbs.BreadcrumbsProvider
 
 class DtsBreadcrumbsProvider : BreadcrumbsProvider {
-    override fun getLanguages(): Array<Language> = arrayOf(DtsLanguage)
+  override fun getLanguages(): Array<Language> = arrayOf(DtsLanguage)
 
-    override fun acceptElement(element: PsiElement): Boolean = when (element) {
-        is DtsNode, is DtsProperty -> true
-        else -> false
-    }
+  override fun acceptElement(element: PsiElement): Boolean = when (element) {
+    is DtsNode, is DtsProperty -> true
+    else -> false
+  }
 
-    override fun getElementInfo(element: PsiElement): String = when (element) {
-        is DtsStatement -> element.getDtsPresentableText()
-        else -> "unknown"
-    }
+  override fun getElementInfo(element: PsiElement): String = when (element) {
+    is DtsStatement -> element.getDtsPresentableText()
+    else -> "unknown"
+  }
 }
 

@@ -1,19 +1,19 @@
 description: |
-    A devicetree may have an aliases node that defines one or more alias 
-    properties. The alias node shall be at the root of the devicetree.
-    
-    Each property of the node defines an alias. The property name specifies the
-    alias name. The property value specifies the full path to a node in the 
-    devicetree. For example, the following property defines the alias serial0. 
-    
-    serial0 = "/simple-bus@fe000000/serial@llc500"; 
-    
-    An alias value is a device path and is encoded as a string. The value 
-    represents the full path to a node, but the path does not need to refer to 
-    a leaf node.
-    
-    A client program may use an alias property name to refer to a full device 
-    path as all or part of its string value. A client program, when considering 
-    a string as a device path, shall detect and use the alias.
+  A devicetree may have an aliases node that defines one or more alias 
+  properties. The alias node shall be at the root of the devicetree.
+  
+  Each property of the node defines an alias. The property name specifies the
+  alias name. The property value specifies the full path to a node in the 
+  devicetree. For example, the following property defines the alias serial0. 
+  
+  serial0 = "/simple-bus@fe000000/serial@llc500"; 
+  
+  An alias value is a device path and is encoded as a string. The value 
+  represents the full path to a node, but the path does not need to refer to 
+  a leaf node.
+  
+  A client program may use an alias property name to refer to a full device 
+  path as all or part of its string value. A client program, when considering 
+  a string as a device path, shall detect and use the alias.
 
 undeclared-properties: true

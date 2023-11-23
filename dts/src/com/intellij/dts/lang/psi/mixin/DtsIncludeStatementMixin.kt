@@ -11,14 +11,14 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiReference
 
 abstract class DtsIncludeStatementMixin(node: ASTNode) : ASTWrapperPsiElement(node), DtsIncludeStatement {
-    private val pathString: DtsString?
-        get() = findChildByClass(DtsString::class.java)
+  private val pathString: DtsString?
+    get() = findChildByClass(DtsString::class.java)
 
-    override val fileInclude: FileInclude?
-        get() = pathString?.let { DtsIncludeFile(it.dtsParse(), textOffset) }
+  override val fileInclude: FileInclude?
+    get() = pathString?.let { DtsIncludeFile(it.dtsParse(), textOffset) }
 
-    override val fileIncludeRange: TextRange?
-        get() = pathString?.dtsValueRange
+  override val fileIncludeRange: TextRange?
+    get() = pathString?.dtsValueRange
 
-    override fun getReference(): PsiReference? = FileIncludeReference.create(this)
+  override fun getReference(): PsiReference? = FileIncludeReference.create(this)
 }

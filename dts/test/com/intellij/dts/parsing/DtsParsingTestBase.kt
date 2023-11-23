@@ -11,21 +11,21 @@ import com.intellij.testFramework.ParsingTestCase
 import java.nio.charset.StandardCharsets
 
 abstract class DtsParsingTestBase(dataPath: String, fileExt: String) : ParsingTestCase(dataPath, fileExt, DtsParserDefinition()) {
-    override fun getTestDataPath(): String = "testData/parser"
+  override fun getTestDataPath(): String = "testData/parser"
 
-    override fun setUp() {
-        super.setUp()
+  override fun setUp() {
+    super.setUp()
 
-        // fixes issue when parser tests run before typing tests
-        addExplicitExtension(LanguageBraceMatching.INSTANCE, myLanguage, DtsBraceMatcher())
-    }
+    // fixes issue when parser tests run before typing tests
+    addExplicitExtension(LanguageBraceMatching.INSTANCE, myLanguage, DtsBraceMatcher())
+  }
 
-    override fun createFile(name: String, text: String): PsiFile {
-        val virtualFile = LightVirtualFile(name, DtsLanguage, text)
-        virtualFile.charset = StandardCharsets.UTF_8
+  override fun createFile(name: String, text: String): PsiFile {
+    val virtualFile = LightVirtualFile(name, DtsLanguage, text)
+    virtualFile.charset = StandardCharsets.UTF_8
 
-        SingleRootFileViewProvider.doNotCheckFileSizeLimit(virtualFile)
+    SingleRootFileViewProvider.doNotCheckFileSizeLimit(virtualFile)
 
-        return createFile(virtualFile)
-    }
+    return createFile(virtualFile)
+  }
 }

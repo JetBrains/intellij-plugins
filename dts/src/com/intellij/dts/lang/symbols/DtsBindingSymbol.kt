@@ -16,22 +16,22 @@ import com.intellij.platform.backend.navigation.NavigationTarget
 import java.nio.file.Path
 
 data class DtsBindingSymbol(val compatible: String) : DtsDocumentationSymbol, NavigatableSymbol {
-    override fun createPointer(): Pointer<out Symbol> = Pointer { this }
+  override fun createPointer(): Pointer<out Symbol> = Pointer { this }
 
-    private fun getBinding(project: Project): DtsZephyrBinding? = DtsZephyrBindingProvider.bindingFor(project, compatible)
+  private fun getBinding(project: Project): DtsZephyrBinding? = DtsZephyrBindingProvider.bindingFor(project, compatible)
 
-    override fun getDocumentationTarget(project: Project): DocumentationTarget? {
-        val binding = getBinding(project) ?: return null
-        return DtsBindingDocumentation(project, binding)
+  override fun getDocumentationTarget(project: Project): DocumentationTarget? {
+    val binding = getBinding(project) ?: return null
+    return DtsBindingDocumentation(project, binding)
+  }
+
+  override fun getNavigationTargets(project: Project): Collection<NavigationTarget> {
+    return DtsUtil.singleResult {
+      val path = getBinding(project)?.path ?: return@singleResult null
+      val virtualFile = VfsUtil.findFile(Path.of(path), true) ?: return@singleResult null
+      val psiFile = virtualFile.findPsiFile(project) ?: return@singleResult null
+
+      SymbolNavigationService.getInstance().psiFileNavigationTarget(psiFile)
     }
-
-    override fun getNavigationTargets(project: Project): Collection<NavigationTarget> {
-        return DtsUtil.singleResult {
-            val path = getBinding(project)?.path ?: return@singleResult null
-            val virtualFile = VfsUtil.findFile(Path.of(path), true) ?: return@singleResult null
-            val psiFile = virtualFile.findPsiFile(project) ?: return@singleResult null
-
-            SymbolNavigationService.getInstance().psiFileNavigationTarget(psiFile)
-        }
-    }
+  }
 }

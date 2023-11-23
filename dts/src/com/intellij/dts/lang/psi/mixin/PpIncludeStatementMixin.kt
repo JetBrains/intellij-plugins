@@ -11,14 +11,14 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiReference
 
 abstract class PpIncludeStatementMixin(node: ASTNode) : ASTWrapperPsiElement(node), DtsPpIncludeStatement {
-    private val header: DtsPpHeader?
-        get() = findChildByClass(DtsPpHeader::class.java)
+  private val header: DtsPpHeader?
+    get() = findChildByClass(DtsPpHeader::class.java)
 
-    override val fileInclude: FileInclude?
-        get() = header?.let { DtsIncludeFile(it.ppPath, textOffset) }
+  override val fileInclude: FileInclude?
+    get() = header?.let { DtsIncludeFile(it.ppPath, textOffset) }
 
-    override val fileIncludeRange: TextRange?
-        get() = header?.ppPathRange
+  override val fileIncludeRange: TextRange?
+    get() = header?.ppPathRange
 
-    override fun getReference(): PsiReference? = FileIncludeReference.create(this)
+  override fun getReference(): PsiReference? = FileIncludeReference.create(this)
 }

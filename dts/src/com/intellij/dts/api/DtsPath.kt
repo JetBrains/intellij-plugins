@@ -8,41 +8,41 @@ import com.intellij.dts.util.DtsUtil
  * to a specific node.
  */
 data class DtsPath(val absolut: Boolean, val segments: List<String>) {
-    companion object {
-        val root = DtsPath(true,  emptyList())
+  companion object {
+    val root = DtsPath(true, emptyList())
 
-        fun from(path: String): DtsPath {
-            return DtsPath(
-                path.startsWith('/'),
-                path.trim('/').split('/').filter { it.isNotEmpty() },
-            )
-        }
+    fun from(path: String): DtsPath {
+      return DtsPath(
+        path.startsWith('/'),
+        path.trim('/').split('/').filter { it.isNotEmpty() },
+      )
+    }
+  }
+
+  fun relativize(other: DtsPath): DtsPath? {
+    if (other.segments.size < segments.size) return null
+
+    for (i in segments.indices) {
+      if (segments[i] != other.segments[i]) return null
     }
 
-    fun relativize(other: DtsPath): DtsPath? {
-        if (other.segments.size < segments.size) return null
+    return DtsPath(false, other.segments.slice(segments.size until other.segments.size))
+  }
 
-        for (i in segments.indices) {
-            if (segments[i] != other.segments[i]) return null
-        }
+  fun parent(): DtsPath {
+    return DtsPath(absolut, segments.dropLast(1))
+  }
 
-        return DtsPath(false, other.segments.slice(segments.size until other.segments.size))
-    }
+  fun name(): String? {
+    return segments.lastOrNull()
+  }
 
-    fun parent(): DtsPath {
-        return DtsPath(absolut, segments.dropLast(1))
-    }
+  fun nameWithoutUnit(): String? {
+    val name = name() ?: return null
+    return DtsUtil.splitName(name).first
+  }
 
-    fun name(): String? {
-        return segments.lastOrNull()
-    }
-
-    fun nameWithoutUnit(): String? {
-        val name = name() ?: return null
-        return DtsUtil.splitName(name).first
-    }
-
-    override fun toString(): String {
-        return segments.joinToString(separator = "/", prefix = if (absolut) "/" else "")
-    }
+  override fun toString(): String {
+    return segments.joinToString(separator = "/", prefix = if (absolut) "/" else "")
+  }
 }

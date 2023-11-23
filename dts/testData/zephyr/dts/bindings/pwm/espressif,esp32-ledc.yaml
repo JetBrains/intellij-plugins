@@ -77,7 +77,7 @@ description: |
 
 compatible: "espressif,esp32-ledc"
 
-include: [pwm-controller.yaml, pinctrl-device.yaml, base.yaml]
+include: [ pwm-controller.yaml, pinctrl-device.yaml, base.yaml ]
 
 properties:
   "#pwm-cells":
@@ -91,22 +91,22 @@ child-binding:
       type: int
       required: true
       enum:
-      - 0
-      - 1
-      - 2
-      - 3
-      - 4
-      - 5
-      - 6
-      - 7
-      - 8
-      - 9
-      - 10
-      - 11
-      - 12
-      - 13
-      - 14
-      - 15
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
+        - 10
+        - 11
+        - 12
+        - 13
+        - 14
+        - 15
 
       description: |
         The ESP32 has 8 low speed channel and 8 high speed channels.
@@ -121,16 +121,16 @@ child-binding:
       type: int
       required: true
       enum:
-      - 0
-      - 1
-      - 2
-      - 3
+        - 0
+        - 1
+        - 2
+        - 3
       description: |
         Timer selection.
         For maximum flexibility, the high-speed as well as the low-speed channels can be driven from
         one of four high-speed/low-speed timers.
 
 pwm-cells:
-- channel
-- period
-- flags
+  - channel
+  - period
+  - flags

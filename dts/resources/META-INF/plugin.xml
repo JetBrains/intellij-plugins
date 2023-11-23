@@ -1,212 +1,212 @@
 <idea-plugin>
-    <id>com.intellij.dts</id>
-    <name>Devicetree</name>
-    <vendor>JetBrains</vendor>
+  <id>com.intellij.dts</id>
+  <name>Devicetree</name>
+  <vendor>JetBrains</vendor>
 
-    <description>Provides support for Devicetree (*.dts) files and Devicetree Include  (*.dtsi) files</description>
+  <description>Provides support for Devicetree (*.dts) files and Devicetree Include (*.dtsi) files</description>
 
-    <depends>com.intellij.modules.platform</depends>
+  <depends>com.intellij.modules.platform</depends>
 
-    <depends optional="true" config-file="dts-withCLion.xml">com.intellij.modules.clion</depends>
+  <depends optional="true" config-file="dts-withCLion.xml">com.intellij.modules.clion</depends>
 
-    <resource-bundle>messages.DtsBundle</resource-bundle>
+  <resource-bundle>messages.DtsBundle</resource-bundle>
 
-    <extensionPoints>
-        <extensionPoint
-            qualifiedName="com.intellij.clion.dtsUtil"
-            interface="com.intellij.dts.clion.DtsCLionUtil"
-            dynamic="true"/>
-    </extensionPoints>
+  <extensionPoints>
+    <extensionPoint
+      qualifiedName="com.intellij.clion.dtsUtil"
+      interface="com.intellij.dts.clion.DtsCLionUtil"
+      dynamic="true"/>
+  </extensionPoints>
 
-    <projectListeners>
-        <listener
-            class="com.intellij.dts.inspections.DtsInspectionsRestarter"
-            topic="com.intellij.dts.settings.DtsSettings$ChangeListener"/>
-    </projectListeners>
+  <projectListeners>
+    <listener
+      class="com.intellij.dts.inspections.DtsInspectionsRestarter"
+      topic="com.intellij.dts.settings.DtsSettings$ChangeListener"/>
+  </projectListeners>
 
-    <extensions defaultExtensionNs="com.intellij">
-        <fileType
-                language="DTS"
-                name="DTS"
-                implementationClass="com.intellij.dts.lang.DtsFileType"
-                fieldName="INSTANCE"
-                extensions="dts;dtsi;overlay"/>
-        <lang.parserDefinition
-                language="DTS"
-                implementationClass="com.intellij.dts.lang.parser.DtsParserDefinition"/>
-        <stubElementTypeHolder
-                externalIdPrefix="DTS."
-                class="com.intellij.dts.lang.stubs.DtsStubElementTypes"/>
+  <extensions defaultExtensionNs="com.intellij">
+    <fileType
+      language="DTS"
+      name="DTS"
+      implementationClass="com.intellij.dts.lang.DtsFileType"
+      fieldName="INSTANCE"
+      extensions="dts;dtsi;overlay"/>
+    <lang.parserDefinition
+      language="DTS"
+      implementationClass="com.intellij.dts.lang.parser.DtsParserDefinition"/>
+    <stubElementTypeHolder
+      externalIdPrefix="DTS."
+      class="com.intellij.dts.lang.stubs.DtsStubElementTypes"/>
 
-        <!-- indices -->
-        <stubIndex
-                implementation="com.intellij.dts.lang.stubs.DtsNodeLabelIndex"/>
+    <!-- indices -->
+    <stubIndex
+      implementation="com.intellij.dts.lang.stubs.DtsNodeLabelIndex"/>
 
-        <!-- ide features -->
-        <lang.foldingBuilder
-                language="DTS"
-                implementationClass="com.intellij.dts.ide.DtsFoldingBuilder"/>
-        <lang.psiStructureViewFactory
-                language="DTS"
-                implementationClass="com.intellij.dts.ide.DtsStructureViewFactory"/>
-        <breadcrumbsInfoProvider
-                implementation="com.intellij.dts.ide.DtsBreadcrumbsProvider"/>
-        <projectViewNodeDecorator
-                implementation="com.intellij.dts.ide.DtsProjectViewDecorator"/>
-        <codeInsight.lineMarkerProvider
-                language="DTS"
-                implementationClass="com.intellij.dts.ide.DtsOverrideLineMarkerProvider"/>
+    <!-- ide features -->
+    <lang.foldingBuilder
+      language="DTS"
+      implementationClass="com.intellij.dts.ide.DtsFoldingBuilder"/>
+    <lang.psiStructureViewFactory
+      language="DTS"
+      implementationClass="com.intellij.dts.ide.DtsStructureViewFactory"/>
+    <breadcrumbsInfoProvider
+      implementation="com.intellij.dts.ide.DtsBreadcrumbsProvider"/>
+    <projectViewNodeDecorator
+      implementation="com.intellij.dts.ide.DtsProjectViewDecorator"/>
+    <codeInsight.lineMarkerProvider
+      language="DTS"
+      implementationClass="com.intellij.dts.ide.DtsOverrideLineMarkerProvider"/>
 
-        <!-- settings -->
-        <projectConfigurable
-                parentId="language"
-                instance="com.intellij.dts.settings.DtsSettingsConfigurable"
-                id="com.intellij.dts.settings.DtsSettingsConfigurable"
-                bundle="messages.DtsBundle" key="settings.name"/>
+    <!-- settings -->
+    <projectConfigurable
+      parentId="language"
+      instance="com.intellij.dts.settings.DtsSettingsConfigurable"
+      id="com.intellij.dts.settings.DtsSettingsConfigurable"
+      bundle="messages.DtsBundle" key="settings.name"/>
 
-        <!-- documentation -->
-        <platform.backend.documentation.targetProvider
-                implementation="com.intellij.dts.documentation.DtsDocumentationProvider"/>
-        <platform.backend.documentation.psiTargetProvider
-                implementation="com.intellij.dts.documentation.DtsDocumentationProvider"/>
-        <platform.backend.documentation.symbolTargetProvider
-                implementation="com.intellij.dts.lang.symbols.DtsDocumentationSymbol$Provider"/>
+    <!-- documentation -->
+    <platform.backend.documentation.targetProvider
+      implementation="com.intellij.dts.documentation.DtsDocumentationProvider"/>
+    <platform.backend.documentation.psiTargetProvider
+      implementation="com.intellij.dts.documentation.DtsDocumentationProvider"/>
+    <platform.backend.documentation.symbolTargetProvider
+      implementation="com.intellij.dts.lang.symbols.DtsDocumentationSymbol$Provider"/>
 
-        <!-- syntax highlighting -->
-        <lang.syntaxHighlighterFactory
-                language="DTS"
-                implementationClass="com.intellij.dts.highlighting.DtsSyntaxHighlighter$Factory"/>
-        <annotator
-                language="DTS"
-                implementationClass="com.intellij.dts.highlighting.DtsHighlightAnnotator"/>
-        <colorSettingsPage
-                implementation="com.intellij.dts.settings.DtsColorSettingsPage"/>
-        <highlightErrorFilter
-                implementation="com.intellij.dts.lang.parser.DtsHighlightingErrorFilter"/>
+    <!-- syntax highlighting -->
+    <lang.syntaxHighlighterFactory
+      language="DTS"
+      implementationClass="com.intellij.dts.highlighting.DtsSyntaxHighlighter$Factory"/>
+    <annotator
+      language="DTS"
+      implementationClass="com.intellij.dts.highlighting.DtsHighlightAnnotator"/>
+    <colorSettingsPage
+      implementation="com.intellij.dts.settings.DtsColorSettingsPage"/>
+    <highlightErrorFilter
+      implementation="com.intellij.dts.lang.parser.DtsHighlightingErrorFilter"/>
 
-        <!-- code formatting -->
-        <lang.formatter
-                language="DTS"
-                implementationClass="com.intellij.dts.formatting.DtsFormattingBuilder"/>
-        <codeStyleSettingsProvider
-                implementation="com.intellij.dts.settings.DtsCodeStyleSettingsProvider"/>
-        <langCodeStyleSettingsProvider
-                implementation="com.intellij.dts.settings.DtsLangCodeStyleSettingsProvider"/>
+    <!-- code formatting -->
+    <lang.formatter
+      language="DTS"
+      implementationClass="com.intellij.dts.formatting.DtsFormattingBuilder"/>
+    <codeStyleSettingsProvider
+      implementation="com.intellij.dts.settings.DtsCodeStyleSettingsProvider"/>
+    <langCodeStyleSettingsProvider
+      implementation="com.intellij.dts.settings.DtsLangCodeStyleSettingsProvider"/>
 
-        <!-- completion -->
-        <lang.quoteHandler
-                language="DTS"
-                implementationClass="com.intellij.dts.completion.DtsQuoteHandler"/>
-        <lang.commenter
-                language="DTS"
-                implementationClass="com.intellij.dts.completion.DtsCommenter"/>
-        <lang.braceMatcher
-                language="DTS"
-                implementationClass="com.intellij.dts.completion.DtsBraceMatcher"/>
-        <lookup.charFilter
-                implementation="com.intellij.dts.completion.DtsCharFilter"/>
+    <!-- completion -->
+    <lang.quoteHandler
+      language="DTS"
+      implementationClass="com.intellij.dts.completion.DtsQuoteHandler"/>
+    <lang.commenter
+      language="DTS"
+      implementationClass="com.intellij.dts.completion.DtsCommenter"/>
+    <lang.braceMatcher
+      language="DTS"
+      implementationClass="com.intellij.dts.completion.DtsBraceMatcher"/>
+    <lookup.charFilter
+      implementation="com.intellij.dts.completion.DtsCharFilter"/>
 
-        <enterHandlerDelegate
-                implementation="com.intellij.dts.completion.DtsSemicolonEnterHandler"/>
+    <enterHandlerDelegate
+      implementation="com.intellij.dts.completion.DtsSemicolonEnterHandler"/>
 
-        <typedHandler
-                implementation="com.intellij.dts.completion.DtsAngularBraceTypedHandler"/>
-        <backspaceHandlerDelegate
-                implementation="com.intellij.dts.completion.DtsAngularBraceBackspaceHandler"/>
+    <typedHandler
+      implementation="com.intellij.dts.completion.DtsAngularBraceTypedHandler"/>
+    <backspaceHandlerDelegate
+      implementation="com.intellij.dts.completion.DtsAngularBraceBackspaceHandler"/>
 
-        <typedHandler
-                implementation="com.intellij.dts.lang.resolve.DtsLabelReference$AutoPopup"/>
-        <typedHandler
-                implementation="com.intellij.dts.lang.resolve.DtsPathReference$AutoPopup"/>
+    <typedHandler
+      implementation="com.intellij.dts.lang.resolve.DtsLabelReference$AutoPopup"/>
+    <typedHandler
+      implementation="com.intellij.dts.lang.resolve.DtsPathReference$AutoPopup"/>
 
-        <completion.contributor
-                language="DTS"
-                implementationClass="com.intellij.dts.completion.DtsCompletionContributor"/>
-        <typedHandler
-                implementation="com.intellij.dts.completion.DtsCompletionContributor$AutoPopup"/>
+    <completion.contributor
+      language="DTS"
+      implementationClass="com.intellij.dts.completion.DtsCompletionContributor"/>
+    <typedHandler
+      implementation="com.intellij.dts.completion.DtsCompletionContributor$AutoPopup"/>
 
-        <!-- inspections -->
-        <localInspection
-                language="DTS"
-                bundle="messages.DtsBundle" key="inspections.container.display_name" groupKey="inspections.group"
-                enabledByDefault="true"
-                level="ERROR"
-                implementationClass="com.intellij.dts.inspections.DtsContainerInspection"/>
-        <localInspection
-                language="DTS"
-                bundle="messages.DtsBundle" key="inspections.statement_order.display_name" groupKey="inspections.group"
-                enabledByDefault="true"
-                level="ERROR"
-                implementationClass="com.intellij.dts.inspections.DtsStatementOrderInspection"/>
-        <localInspection
-                language="DTS"
-                bundle="messages.DtsBundle" key="inspections.label_name.display_name" groupKey="inspections.group"
-                enabledByDefault="true"
-                level="ERROR"
-                implementationClass="com.intellij.dts.inspections.DtsLabelNameInspection"/>
-        <localInspection
-                language="DTS"
-                bundle="messages.DtsBundle" key="inspections.node_name.display_name" groupKey="inspections.group"
-                enabledByDefault="true"
-                level="ERROR"
-                implementationClass="com.intellij.dts.inspections.DtsNodeNameInspection"/>
-        <localInspection
-                language="DTS"
-                bundle="messages.DtsBundle" key="inspections.unit_name.display_name" groupKey="inspections.group"
-                enabledByDefault="false"
-                level="WARNING"
-                implementationClass="com.intellij.dts.inspections.DtsUnitNameInspection"/>
-        <localInspection
-                language="DTS"
-                bundle="messages.DtsBundle" key="inspections.property_name.display_name" groupKey="inspections.group"
-                enabledByDefault="true"
-                level="ERROR"
-                implementationClass="com.intellij.dts.inspections.DtsPropertyNameInspection"/>
-        <localInspection
-                language="DTS"
-                bundle="messages.DtsBundle" key="inspections.bits.display_name" groupKey="inspections.group"
-                enabledByDefault="true"
-                level="ERROR"
-                implementationClass="com.intellij.dts.inspections.DtsBitsInspection"/>
-        <localInspection
-                language="DTS"
-                bundle="messages.DtsBundle" key="inspections.phandle_whitespace.display_name" groupKey="inspections.group"
-                enabledByDefault="true"
-                level="ERROR"
-                implementationClass="com.intellij.dts.inspections.DtsPHandleWhitespaceInspection"/>
-        <localInspection
-                language="DTS"
-                bundle="messages.DtsBundle" key="inspections.undeclared_property.display_name" groupKey="inspections.group"
-                enabledByDefault="true"
-                level="ERROR"
-                implementationClass="com.intellij.dts.inspections.DtsUndeclaredPropertyInspection"/>
-        <localInspection
-                language="DTS"
-                bundle="messages.DtsBundle" key="inspections.property_type.display_name" groupKey="inspections.group"
-                enabledByDefault="true"
-                level="ERROR"
-                implementationClass="com.intellij.dts.inspections.DtsPropertyTypeInspection"/>
-        <localInspection
-                language="DTS"
-                bundle="messages.DtsBundle" key="inspections.required_property.display_name" groupKey="inspections.group"
-                enabledByDefault="true"
-                level="ERROR"
-                implementationClass="com.intellij.dts.inspections.DtsRequiredPropertyInspection"/>
-        <localInspection
-                language="DTS"
-                bundle="messages.DtsBundle" key="inspections.duplicate_element.display_name" groupKey="inspections.group"
-                enabledByDefault="true"
-                level="WARNING"
-                implementationClass="com.intellij.dts.inspections.DtsDuplicateElementInspection"/>
+    <!-- inspections -->
+    <localInspection
+      language="DTS"
+      bundle="messages.DtsBundle" key="inspections.container.display_name" groupKey="inspections.group"
+      enabledByDefault="true"
+      level="ERROR"
+      implementationClass="com.intellij.dts.inspections.DtsContainerInspection"/>
+    <localInspection
+      language="DTS"
+      bundle="messages.DtsBundle" key="inspections.statement_order.display_name" groupKey="inspections.group"
+      enabledByDefault="true"
+      level="ERROR"
+      implementationClass="com.intellij.dts.inspections.DtsStatementOrderInspection"/>
+    <localInspection
+      language="DTS"
+      bundle="messages.DtsBundle" key="inspections.label_name.display_name" groupKey="inspections.group"
+      enabledByDefault="true"
+      level="ERROR"
+      implementationClass="com.intellij.dts.inspections.DtsLabelNameInspection"/>
+    <localInspection
+      language="DTS"
+      bundle="messages.DtsBundle" key="inspections.node_name.display_name" groupKey="inspections.group"
+      enabledByDefault="true"
+      level="ERROR"
+      implementationClass="com.intellij.dts.inspections.DtsNodeNameInspection"/>
+    <localInspection
+      language="DTS"
+      bundle="messages.DtsBundle" key="inspections.unit_name.display_name" groupKey="inspections.group"
+      enabledByDefault="false"
+      level="WARNING"
+      implementationClass="com.intellij.dts.inspections.DtsUnitNameInspection"/>
+    <localInspection
+      language="DTS"
+      bundle="messages.DtsBundle" key="inspections.property_name.display_name" groupKey="inspections.group"
+      enabledByDefault="true"
+      level="ERROR"
+      implementationClass="com.intellij.dts.inspections.DtsPropertyNameInspection"/>
+    <localInspection
+      language="DTS"
+      bundle="messages.DtsBundle" key="inspections.bits.display_name" groupKey="inspections.group"
+      enabledByDefault="true"
+      level="ERROR"
+      implementationClass="com.intellij.dts.inspections.DtsBitsInspection"/>
+    <localInspection
+      language="DTS"
+      bundle="messages.DtsBundle" key="inspections.phandle_whitespace.display_name" groupKey="inspections.group"
+      enabledByDefault="true"
+      level="ERROR"
+      implementationClass="com.intellij.dts.inspections.DtsPHandleWhitespaceInspection"/>
+    <localInspection
+      language="DTS"
+      bundle="messages.DtsBundle" key="inspections.undeclared_property.display_name" groupKey="inspections.group"
+      enabledByDefault="true"
+      level="ERROR"
+      implementationClass="com.intellij.dts.inspections.DtsUndeclaredPropertyInspection"/>
+    <localInspection
+      language="DTS"
+      bundle="messages.DtsBundle" key="inspections.property_type.display_name" groupKey="inspections.group"
+      enabledByDefault="true"
+      level="ERROR"
+      implementationClass="com.intellij.dts.inspections.DtsPropertyTypeInspection"/>
+    <localInspection
+      language="DTS"
+      bundle="messages.DtsBundle" key="inspections.required_property.display_name" groupKey="inspections.group"
+      enabledByDefault="true"
+      level="ERROR"
+      implementationClass="com.intellij.dts.inspections.DtsRequiredPropertyInspection"/>
+    <localInspection
+      language="DTS"
+      bundle="messages.DtsBundle" key="inspections.duplicate_element.display_name" groupKey="inspections.group"
+      enabledByDefault="true"
+      level="WARNING"
+      implementationClass="com.intellij.dts.inspections.DtsDuplicateElementInspection"/>
 
-        <!-- registry keys -->
-        <registryKey
-                key="dts.parser_errors"
-                defaultValue="true"
-                description="Enables parser errors"/>
-        <registryKey
-                key="dts.insert_semicolons"
-                defaultValue="true"
-                description="Enables automatic semicolon insertion after entries"/>
-    </extensions>
+    <!-- registry keys -->
+    <registryKey
+      key="dts.parser_errors"
+      defaultValue="true"
+      description="Enables parser errors"/>
+    <registryKey
+      key="dts.insert_semicolons"
+      defaultValue="true"
+      description="Enables automatic semicolon insertion after entries"/>
+  </extensions>
 </idea-plugin>

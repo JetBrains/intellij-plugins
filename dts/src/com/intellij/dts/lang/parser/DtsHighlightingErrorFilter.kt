@@ -6,11 +6,12 @@ import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiErrorElement
 
 class DtsHighlightingErrorFilter : HighlightErrorFilter() {
-    override fun shouldHighlightErrorElement(element: PsiErrorElement): Boolean {
-        return if (element.language == DtsLanguage) {
-            Registry.`is`("dts.parser_errors")
-        } else {
-            true
-        }
+  override fun shouldHighlightErrorElement(element: PsiErrorElement): Boolean {
+    return if (element.language == DtsLanguage) {
+      Registry.`is`("dts.parser_errors")
     }
+    else {
+      true
+    }
+  }
 }

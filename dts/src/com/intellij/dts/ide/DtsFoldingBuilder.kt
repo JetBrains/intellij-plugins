@@ -15,29 +15,29 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.elementType
 
 class DtsFoldingBuilder : CustomFoldingBuilder(), DumbAware {
-    override fun buildLanguageFoldRegions(
-        descriptors: MutableList<FoldingDescriptor>,
-        root: PsiElement,
-        document: Document,
-        quick: Boolean
-    ) {
-        if (root !is DtsFile) return
+  override fun buildLanguageFoldRegions(
+    descriptors: MutableList<FoldingDescriptor>,
+    root: PsiElement,
+    document: Document,
+    quick: Boolean
+  ) {
+    if (root !is DtsFile) return
 
-        val visitor = dtsRecursiveVisitor(DtsNode::class) { node ->
-            if (!node.dtsIsComplete || node.dtsIsEmpty) return@dtsRecursiveVisitor
+    val visitor = dtsRecursiveVisitor(DtsNode::class) { node ->
+      if (!node.dtsIsComplete || node.dtsIsEmpty) return@dtsRecursiveVisitor
 
-            val lBrace = DtsUtil.children(node, forward = true).firstOrNull { it.elementType == DtsTypes.LBRACE }
-                ?: return@dtsRecursiveVisitor
-            val rBrace = DtsUtil.children(node, forward = false).firstOrNull { it.elementType == DtsTypes.RBRACE }
-                ?: return@dtsRecursiveVisitor
+      val lBrace = DtsUtil.children(node, forward = true).firstOrNull { it.elementType == DtsTypes.LBRACE }
+                   ?: return@dtsRecursiveVisitor
+      val rBrace = DtsUtil.children(node, forward = false).firstOrNull { it.elementType == DtsTypes.RBRACE }
+                   ?: return@dtsRecursiveVisitor
 
-            descriptors += FoldingDescriptor(node, TextRange(lBrace.textRange.startOffset, rBrace.textRange.endOffset))
-        }
-
-        root.accept(visitor)
+      descriptors += FoldingDescriptor(node, TextRange(lBrace.textRange.startOffset, rBrace.textRange.endOffset))
     }
 
-    override fun getLanguagePlaceholderText(node: ASTNode, range: TextRange): String = "{...}"
+    root.accept(visitor)
+  }
 
-    override fun isRegionCollapsedByDefault(node: ASTNode): Boolean = false
+  override fun getLanguagePlaceholderText(node: ASTNode, range: TextRange): String = "{...}"
+
+  override fun isRegionCollapsedByDefault(node: ASTNode): Boolean = false
 }

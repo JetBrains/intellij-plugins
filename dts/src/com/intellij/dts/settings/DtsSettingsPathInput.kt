@@ -14,55 +14,56 @@ import java.awt.event.FocusListener
 import javax.swing.JTextField
 import javax.swing.plaf.basic.BasicComboBoxEditor
 
-abstract class DtsSettingsPathInput<T>(private val disposable: Disposable?, private val browserTitle: @NlsContexts.DialogTitle String) : ComboBox<T>() {
-    protected val textField = ExtendableTextField()
+abstract class DtsSettingsPathInput<T>(private val disposable: Disposable?,
+                                       private val browserTitle: @NlsContexts.DialogTitle String) : ComboBox<T>() {
+  protected val textField = ExtendableTextField()
 
-    var text: String by textField::text
+  var text: String by textField::text
 
-    protected fun configure() {
-        val editor = object : BasicComboBoxEditor() {
-            override fun createEditorComponent(): JTextField {
-                val listener = BrowseFilesListener(
-                    textField,
-                    browserTitle,
-                    null,
-                    FileChooserDescriptorFactory.createSingleFolderDescriptor(),
-                )
+  protected fun configure() {
+    val editor = object : BasicComboBoxEditor() {
+      override fun createEditorComponent(): JTextField {
+        val listener = BrowseFilesListener(
+          textField,
+          browserTitle,
+          null,
+          FileChooserDescriptorFactory.createSingleFolderDescriptor(),
+        )
 
-                textField.addBrowseExtension({
-                    listener.actionPerformed(ActionEvent(textField, ActionEvent.ACTION_PERFORMED, "action"))
-                }, disposable)
+        textField.addBrowseExtension({
+                                       listener.actionPerformed(ActionEvent(textField, ActionEvent.ACTION_PERFORMED, "action"))
+                                     }, disposable)
 
-                return textField
-            }
+        return textField
+      }
 
-            override fun setItem(item: Any?) {
-                // do not update text if item is deselected
-                if (item == null) return
-                super.setItem(item)
-            }
-        }
-
-        isEditable = true
-        setEditor(editor)
-
-        textField.border = null
+      override fun setItem(item: Any?) {
+        // do not update text if item is deselected
+        if (item == null) return
+        super.setItem(item)
+      }
     }
 
-    fun onTextChanged(callback: () -> Unit) {
-        textField.document.whenTextChanged(disposable) { callback() }
+    isEditable = true
+    setEditor(editor)
+
+    textField.border = null
+  }
+
+  fun onTextChanged(callback: () -> Unit) {
+    textField.document.whenTextChanged(disposable) { callback() }
+  }
+
+  fun onFocusLost(callback: () -> Unit) {
+    val listener = object : FocusListener {
+      override fun focusGained(e: FocusEvent?) {}
+      override fun focusLost(e: FocusEvent?) = callback()
     }
 
-    fun onFocusLost(callback: () -> Unit) {
-        val listener = object : FocusListener {
-            override fun focusGained(e: FocusEvent?) {}
-            override fun focusLost(e: FocusEvent?) = callback()
-        }
+    textField.addFocusListener(listener)
 
-        textField.addFocusListener(listener)
-
-        disposable?.whenDisposed {
-            textField.removeFocusListener(listener)
-        }
+    disposable?.whenDisposed {
+      textField.removeFocusListener(listener)
     }
+  }
 }

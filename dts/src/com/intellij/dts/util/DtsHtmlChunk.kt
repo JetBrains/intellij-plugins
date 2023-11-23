@@ -27,238 +27,238 @@ import com.intellij.refactoring.suggested.startOffset
 import org.jetbrains.annotations.PropertyKey
 
 object DtsHtmlChunk {
-    private const val BINDING_HTML_TAG = "!!html"
-    private const val BINDING_PARAGRAPH_HTML_TAG = "!!phtml"
+  private const val BINDING_HTML_TAG = "!!html"
+  private const val BINDING_PARAGRAPH_HTML_TAG = "!!phtml"
 
-    private val bindingEndOfLineRx = Regex("\\s*\\n\\s*")
-    private val bindingLineBrakeRx = Regex("\\s*\\n\\s*\\n")
+  private val bindingEndOfLineRx = Regex("\\s*\\n\\s*")
+  private val bindingLineBrakeRx = Regex("\\s*\\n\\s*\\n")
 
-    private val highlightAnnotator = DtsHighlightAnnotator()
+  private val highlightAnnotator = DtsHighlightAnnotator()
 
-    private val dtsKeywords = listOf(
-        "#include", "#define",
-        "/include/", "/dts-v1/", "/plugin/", "/memreserve/", "/delete-node/", "/delete-property/", "/omit-if-no-ref/"
+  private val dtsKeywords = listOf(
+    "#include", "#define",
+    "/include/", "/dts-v1/", "/plugin/", "/memreserve/", "/delete-node/", "/delete-property/", "/omit-if-no-ref/"
+  )
+
+  private fun styledSpan(attr: DtsTextAttributes, text: String): @NlsSafe String {
+    return HtmlSyntaxInfoUtil.getStyledSpan(attr.attribute, text, 1.0f)
+  }
+
+  /**
+   * Generates bold definition name.
+   */
+  fun definitionName(key: @PropertyKey(resourceBundle = DtsBundle.BUNDLE) String): HtmlChunk {
+    return HtmlChunk.fragment(
+      bundle(key),
+      HtmlChunk.text(": "),
+    ).bold()
+  }
+
+  /**
+   * Generates the colored html for a property name.
+   */
+  fun propertyName(name: String): HtmlChunk {
+    return HtmlChunk.raw(styledSpan(DtsTextAttributes.PROPERTY_NAME, name))
+  }
+
+  /**
+   * Generates the colored html for a node name. If possible prefer [node]
+   * which can handle more cases.
+   */
+  fun nodeName(nodeName: String): HtmlChunk {
+    val (name, addr) = DtsUtil.splitName(nodeName)
+    if (addr == null) return HtmlChunk.raw(styledSpan(DtsTextAttributes.NODE_NAME, name))
+
+    return HtmlChunk.fragment(
+      HtmlChunk.raw(styledSpan(DtsTextAttributes.NODE_NAME, name)),
+      HtmlChunk.text("@"),
+      HtmlChunk.raw(styledSpan(DtsTextAttributes.NODE_UNIT_ADDR, addr))
+    )
+  }
+
+  private fun pHandle(handle: DtsPHandle): HtmlChunk {
+    val builder = HtmlBuilder()
+    builder.append("&")
+
+    val label = handle.dtsPHandleLabel
+    if (label != null) {
+      builder.appendRaw(styledSpan(DtsTextAttributes.LABEL, label.text))
+    }
+
+    val path = handle.dtsPHandlePath
+    if (path != null) {
+      builder.append("{")
+
+      val segments = path.text.split("/").filter { it.isNotEmpty() }
+      for (segment in segments) {
+        builder.append("/")
+        builder.append(nodeName(segment))
+      }
+
+      if (segments.isEmpty()) {
+        builder.append("/")
+      }
+
+      builder.append("}")
+    }
+
+    return builder.toFragment()
+  }
+
+  /**
+   * Generates the colored html for a node name. Can also handle references
+   * and root nodes.
+   */
+  fun node(element: DtsNode): HtmlChunk {
+    return when (element) {
+      is DtsNode.Root -> HtmlChunk.text("/")
+      is DtsNode.Sub -> nodeName(element.dtsName)
+      is DtsNode.Ref -> pHandle(element.dtsHandle)
+    }
+  }
+
+  /**
+   * Generates the colored html for the node path.
+   */
+  fun path(path: DtsPath): HtmlChunk {
+    val builder = HtmlBuilder()
+    for (segment in path.segments) {
+      builder.append("/")
+      builder.append(nodeName(segment))
+    }
+
+    if (path.segments.isEmpty()) {
+      builder.append("/")
+    }
+
+    return builder.toFragment()
+  }
+
+  fun bundle(key: @PropertyKey(resourceBundle = DtsBundle.BUNDLE) String): HtmlChunk {
+    return HtmlChunk.raw(DtsBundle.message(key))
+  }
+
+  fun string(text: @NlsSafe String): HtmlChunk {
+    return HtmlChunk.raw(styledSpan(DtsTextAttributes.STRING, text))
+  }
+
+  private fun tryParseDtsToHtml(project: Project, text: String): @NlsSafe String? {
+    val fakePsiFile = PsiFileFactory.getInstance(project).createFileFromText(
+      "comment.dtsi",
+      DtsLanguage, text.trim(),
+      false,
+      false,
     )
 
-    private fun styledSpan(attr: DtsTextAttributes, text: String): @NlsSafe String {
-        return HtmlSyntaxInfoUtil.getStyledSpan(attr.attribute, text, 1.0f)
+    val errors = SyntaxTraverser.psiTraverser(fakePsiFile).traverse().filter {
+      if (it !is PsiErrorElement) return@filter false
+
+      // Ignore ... sometimes used to skip missing properties and ignore
+      // errors at the end of the text. Probably just a missing semicolon.
+      it.text != "..." && it.startOffset != fakePsiFile.endOffset
     }
+    if (errors.isNotEmpty) return null
 
-    /**
-     * Generates bold definition name.
-     */
-    fun definitionName(key: @PropertyKey(resourceBundle = DtsBundle.BUNDLE) String): HtmlChunk {
-        return HtmlChunk.fragment(
-            bundle(key),
-            HtmlChunk.text(": "),
-        ).bold()
-    }
+    // reformat the file, because whitespace could be messed up after loaded
+    // from binding
+    CodeStyleManager.getInstance(project).reformat(fakePsiFile, true)
 
-    /**
-     * Generates the colored html for a property name.
-     */
-    fun propertyName(name: String): HtmlChunk {
-        return HtmlChunk.raw(styledSpan(DtsTextAttributes.PROPERTY_NAME, name))
-    }
+    val holder = AnnotationHolder()
 
-    /**
-     * Generates the colored html for a node name. If possible prefer [node]
-     * which can handle more cases.
-     */
-    fun nodeName(nodeName: String): HtmlChunk {
-        val (name, addr) = DtsUtil.splitName(nodeName)
-        if (addr == null) return HtmlChunk.raw(styledSpan(DtsTextAttributes.NODE_NAME, name))
-
-        return HtmlChunk.fragment(
-            HtmlChunk.raw(styledSpan(DtsTextAttributes.NODE_NAME, name)),
-            HtmlChunk.text("@"),
-            HtmlChunk.raw(styledSpan(DtsTextAttributes.NODE_UNIT_ADDR, addr))
-        )
-    }
-
-    private fun pHandle(handle: DtsPHandle): HtmlChunk {
-        val builder = HtmlBuilder()
-        builder.append("&")
-
-        val label = handle.dtsPHandleLabel
-        if (label != null) {
-            builder.appendRaw(styledSpan(DtsTextAttributes.LABEL, label.text))
+    fakePsiFile.accept(object : PsiRecursiveElementWalkingVisitor() {
+      override fun visitElement(element: PsiElement) {
+        if (element !is CompositeElement) {
+          highlightAnnotator.annotate(element, holder)
         }
 
-        val path = handle.dtsPHandlePath
-        if (path != null) {
-            builder.append("{")
+        super.visitElement(element)
+      }
+    })
 
-            val segments = path.text.split("/").filter { it.isNotEmpty() }
-            for (segment in segments) {
-                builder.append("/")
-                builder.append(nodeName(segment))
-            }
+    val scheme = EditorColorsManager.getInstance().schemeForCurrentUITheme
+    val content = HtmlSyntaxInfoUtil.getHtmlContent(
+      fakePsiFile,
+      fakePsiFile.text,
+      AnnotationHolderIterator(holder.annotations, scheme),
+      scheme,
+      0,
+      fakePsiFile.text.length,
+    ) ?: return null
 
-            if (segments.isEmpty()) {
-                builder.append("/")
-            }
+    return "<code>$content</code>"
+  }
 
-            builder.append("}")
-        }
-
-        return builder.toFragment()
+  private fun bindingHtml(project: Project, text: String): @NlsSafe String {
+    if (text.startsWith(BINDING_HTML_TAG)) {
+      return text.removePrefix(BINDING_HTML_TAG).trim()
     }
 
-    /**
-     * Generates the colored html for a node name. Can also handle references
-     * and root nodes.
-     */
-    fun node(element: DtsNode): HtmlChunk {
-        return when (element) {
-            is DtsNode.Root -> HtmlChunk.text("/")
-            is DtsNode.Sub -> nodeName(element.dtsName)
-            is DtsNode.Ref -> pHandle(element.dtsHandle)
-        }
+    val paragraphs = text.trim().split(bindingLineBrakeRx)
+
+    val html = paragraphs.map { paragraph ->
+      if (paragraph.startsWith(BINDING_PARAGRAPH_HTML_TAG)) {
+        return@map paragraph.removePrefix(BINDING_PARAGRAPH_HTML_TAG).trim().replace(bindingEndOfLineRx, " ")
+      }
+
+      val couldBeDtsCode = paragraph.contains(";") || dtsKeywords.any { paragraph.contains(it) }
+      if (couldBeDtsCode) {
+        val html = tryParseDtsToHtml(project, paragraph)
+        if (html != null) return@map html
+      }
+
+      StringUtil.escapeXmlEntities(paragraph.replace(bindingEndOfLineRx, " "))
     }
 
-    /**
-     * Generates the colored html for the node path.
-     */
-    fun path(path: DtsPath): HtmlChunk {
-        val builder = HtmlBuilder()
-        for (segment in path.segments) {
-            builder.append("/")
-            builder.append(nodeName(segment))
-        }
+    return html.joinToString("<br/><br/>")
+  }
 
-        if (path.segments.isEmpty()) {
-            builder.append("/")
-        }
-
-        return builder.toFragment()
-    }
-
-    fun bundle(key: @PropertyKey(resourceBundle = DtsBundle.BUNDLE) String): HtmlChunk {
-        return HtmlChunk.raw(DtsBundle.message(key))
-    }
-
-    fun string(text: @NlsSafe String): HtmlChunk {
-        return HtmlChunk.raw(styledSpan(DtsTextAttributes.STRING, text))
-    }
-
-    private fun tryParseDtsToHtml(project: Project, text: String): @NlsSafe String? {
-        val fakePsiFile = PsiFileFactory.getInstance(project).createFileFromText(
-            "comment.dtsi",
-            DtsLanguage, text.trim(),
-            false,
-            false,
-        )
-
-        val errors = SyntaxTraverser.psiTraverser(fakePsiFile).traverse().filter {
-            if (it !is PsiErrorElement) return@filter false
-
-            // Ignore ... sometimes used to skip missing properties and ignore
-            // errors at the end of the text. Probably just a missing semicolon.
-            it.text != "..." && it.startOffset != fakePsiFile.endOffset
-        }
-        if (errors.isNotEmpty) return null
-
-        // reformat the file, because whitespace could be messed up after loaded
-        // from binding
-        CodeStyleManager.getInstance(project).reformat(fakePsiFile, true)
-
-        val holder = AnnotationHolder()
-
-        fakePsiFile.accept(object : PsiRecursiveElementWalkingVisitor() {
-            override fun visitElement(element: PsiElement) {
-                if (element !is CompositeElement) {
-                    highlightAnnotator.annotate(element, holder)
-                }
-
-                super.visitElement(element)
-            }
-        })
-
-        val scheme = EditorColorsManager.getInstance().schemeForCurrentUITheme
-        val content = HtmlSyntaxInfoUtil.getHtmlContent(
-            fakePsiFile,
-            fakePsiFile.text,
-            AnnotationHolderIterator(holder.annotations, scheme),
-            scheme,
-            0,
-            fakePsiFile.text.length,
-        ) ?: return null
-
-        return "<code>$content</code>"
-    }
-
-    private fun bindingHtml(project: Project, text: String): @NlsSafe String {
-        if (text.startsWith(BINDING_HTML_TAG)) {
-            return text.removePrefix(BINDING_HTML_TAG).trim()
-        }
-
-        val paragraphs = text.trim().split(bindingLineBrakeRx)
-
-        val html = paragraphs.map { paragraph ->
-            if (paragraph.startsWith(BINDING_PARAGRAPH_HTML_TAG)) {
-                return@map paragraph.removePrefix(BINDING_PARAGRAPH_HTML_TAG).trim().replace(bindingEndOfLineRx, " ")
-            }
-
-            val couldBeDtsCode = paragraph.contains(";") || dtsKeywords.any { paragraph.contains(it) }
-            if (couldBeDtsCode) {
-                val html = tryParseDtsToHtml(project, paragraph)
-                if (html != null) return@map html
-            }
-
-            StringUtil.escapeXmlEntities(paragraph.replace(bindingEndOfLineRx, " "))
-        }
-
-        return html.joinToString("<br/><br/>")
-    }
-
-    /**
-     * Generates html from text which was loaded from a zephyr binding. If the
-     * text starts with "!!html" it will be loaded as raw html. Otherwise, the
-     * text is split into consecutive paragraphs and separated by two line
-     * breaks. If a paragraph can be successfully parsed by the dts parser, it
-     * is considered as dts code and will be colored and formatted accordingly.
-     * If a paragraph starts with "!!phtml" it will be loaded as raw html.
-     */
-    fun binding(project: Project, text: @NlsSafe String): HtmlChunk {
-        return HtmlChunk.raw(bindingHtml(project, text))
-    }
+  /**
+   * Generates html from text which was loaded from a zephyr binding. If the
+   * text starts with "!!html" it will be loaded as raw html. Otherwise, the
+   * text is split into consecutive paragraphs and separated by two line
+   * breaks. If a paragraph can be successfully parsed by the dts parser, it
+   * is considered as dts code and will be colored and formatted accordingly.
+   * If a paragraph starts with "!!phtml" it will be loaded as raw html.
+   */
+  fun binding(project: Project, text: @NlsSafe String): HtmlChunk {
+    return HtmlChunk.raw(bindingHtml(project, text))
+  }
 }
 
 private data class Annotation(val range: TextRange, val attribute: TextAttributesKey) {
-    val startOffset = range.startOffset
+  val startOffset = range.startOffset
 
-    val endOffset = range.endOffset
+  val endOffset = range.endOffset
 }
 
 private class AnnotationHolder : DtsHighlightAnnotator.Holder {
-    val annotations = mutableListOf<Annotation>()
+  val annotations = mutableListOf<Annotation>()
 
-    override fun newAnnotation(range: TextRange, attr: DtsTextAttributes) {
-        annotations.add(Annotation(range, attr.attribute))
-    }
+  override fun newAnnotation(range: TextRange, attr: DtsTextAttributes) {
+    annotations.add(Annotation(range, attr.attribute))
+  }
 }
 
 private class AnnotationHolderIterator(holder: Iterable<Annotation>, val scheme: EditorColorsScheme) : SyntaxInfoBuilder.RangeIterator {
-    private val iterator = holder.iterator()
-    private var annotation: Annotation? = null
+  private val iterator = holder.iterator()
+  private var annotation: Annotation? = null
 
-    private val requireAnnotation: Annotation
-        get() = requireNotNull(annotation) { "no annotation, check atEnd first" }
+  private val requireAnnotation: Annotation
+    get() = requireNotNull(annotation) { "no annotation, check atEnd first" }
 
-    override fun advance() {
-        if (iterator.hasNext()) {
-            annotation = iterator.next()
-        }
+  override fun advance() {
+    if (iterator.hasNext()) {
+      annotation = iterator.next()
     }
+  }
 
-    override fun atEnd(): Boolean = !iterator.hasNext()
+  override fun atEnd(): Boolean = !iterator.hasNext()
 
-    override fun getRangeStart(): Int = requireAnnotation.startOffset
+  override fun getRangeStart(): Int = requireAnnotation.startOffset
 
-    override fun getRangeEnd(): Int = requireAnnotation.endOffset
+  override fun getRangeEnd(): Int = requireAnnotation.endOffset
 
-    override fun getTextAttributes(): TextAttributes = scheme.getAttributes(requireAnnotation.attribute)
+  override fun getTextAttributes(): TextAttributes = scheme.getAttributes(requireAnnotation.attribute)
 
-    override fun dispose() {}
+  override fun dispose() {}
 }

@@ -9,9 +9,9 @@ import kotlin.math.min
  * trailing "...".
  */
 fun TextRange.trimEnds(): TextRange {
-    if (length < 2) return this
+  if (length < 2) return this
 
-    return grown(-2).shiftRight(1)
+  return grown(-2).shiftRight(1)
 }
 
 /**
@@ -20,11 +20,11 @@ fun TextRange.trimEnds(): TextRange {
  * the text range lies outside the parent.
  */
 fun TextRange.relativeTo(parent: TextRange): TextRange {
-    val start = max(0, startOffset - parent.startOffset)
-    val end = max(0, endOffset - parent.startOffset)
+  val start = max(0, startOffset - parent.startOffset)
+  val end = max(0, endOffset - parent.startOffset)
 
-    return TextRange(
-        min(parent.length, start),
-        min(parent.length, end),
-    )
+  return TextRange(
+    min(parent.length, start),
+    min(parent.length, end),
+  )
 }

@@ -16,26 +16,26 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 
 class DtsBindingReference(private val element: DtsString) : PsiSymbolReference, PsiCompletableReference {
-    override fun getElement(): PsiElement = element
+  override fun getElement(): PsiElement = element
 
-    override fun getRangeInElement(): TextRange = element.dtsValueRange.relativeTo(element.textRange)
+  override fun getRangeInElement(): TextRange = element.dtsValueRange.relativeTo(element.textRange)
 
-    override fun resolveReference(): Collection<Symbol> {
-        return DtsUtil.singleResult { DtsBindingSymbol(element.dtsParse()) }
+  override fun resolveReference(): Collection<Symbol> {
+    return DtsUtil.singleResult { DtsBindingSymbol(element.dtsParse()) }
+  }
+
+  override fun getCompletionVariants(): MutableCollection<LookupElement> {
+    val project = element.project
+    val variants = mutableListOf<LookupElement>()
+    val provider = DtsZephyrBindingProvider.of(project)
+
+    for (binding in provider.buildAllBindings()) {
+      val compatible = binding.compatible ?: continue
+      val symbol = DtsDocumentationSymbol.from(DtsBindingDocumentation(project, binding))
+
+      variants.add(LookupElementBuilder.create(symbol, compatible))
     }
 
-    override fun getCompletionVariants(): MutableCollection<LookupElement> {
-        val project = element.project
-        val variants = mutableListOf<LookupElement>()
-        val provider = DtsZephyrBindingProvider.of(project)
-
-        for (binding in provider.buildAllBindings()) {
-            val compatible = binding.compatible ?: continue
-            val symbol = DtsDocumentationSymbol.from(DtsBindingDocumentation(project, binding))
-
-            variants.add(LookupElementBuilder.create(symbol, compatible))
-        }
-
-        return variants
-    }
+    return variants
+  }
 }

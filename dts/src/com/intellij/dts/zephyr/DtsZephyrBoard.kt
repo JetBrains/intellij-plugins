@@ -8,34 +8,36 @@ import java.nio.file.Path
 import kotlin.io.path.name
 
 data class DtsZephyrBoard(val path: String) {
-    val name: String?
-    val arch: String?
+  val name: String?
+  val arch: String?
 
-    init {
-        val path = try {
-            Path.of(path)
-        } catch (_: InvalidPathException) {
-            null
-        }
-
-        name = path?.name
-        arch = path?.parent?.name
+  init {
+    val path = try {
+      Path.of(path)
+    }
+    catch (_: InvalidPathException) {
+      null
     }
 
-    val presentableText: @NlsSafe String?
-        get() {
-            if (name == null) return null
-            if (arch == null) return name
+    name = path?.name
+    arch = path?.parent?.name
+  }
 
-            return "$arch/$name"
-        }
+  val presentableText: @NlsSafe String?
+    get() {
+      if (name == null) return null
+      if (arch == null) return name
 
-    val virtualFile: VirtualFile?
-        get() {
-            return try {
-                VfsUtil.findFile(Path.of(path), true)
-            } catch (_: InvalidPathException) {
-                null
-            }
-        }
+      return "$arch/$name"
+    }
+
+  val virtualFile: VirtualFile?
+    get() {
+      return try {
+        VfsUtil.findFile(Path.of(path), true)
+      }
+      catch (_: InvalidPathException) {
+        null
+      }
+    }
 }

@@ -21,69 +21,70 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @FlowPreview
 class DtsZephyrCMakeSync(
-    val project: Project,
-    parentScope: CoroutineScope,
+  val project: Project,
+  parentScope: CoroutineScope,
 ) : CMakeWorkspaceListener, DtsSettings.ChangeListener, ExecutionTargetListener {
-    companion object {
-        private const val ZEPHYR_BOARD_PATH_VARIABLE = "BOARD_DIR"
-        private const val ZEPHYR_ROOT_PATH_VARIABLE = "ZEPHYR_BASE"
+  companion object {
+    private const val ZEPHYR_BOARD_PATH_VARIABLE = "BOARD_DIR"
+    private const val ZEPHYR_ROOT_PATH_VARIABLE = "ZEPHYR_BASE"
 
-        private val logger = Logger.getInstance(DtsZephyrCMakeSync::class.java)
+    private val logger = Logger.getInstance(DtsZephyrCMakeSync::class.java)
+  }
+
+  private val alarm = MutableSharedFlow<Unit>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+
+  init {
+    parentScope.launch(Dispatchers.IO) {
+      alarm.debounce(300.milliseconds).collectLatest {
+        syncSettings()
+      }
+    }
+  }
+
+  private fun syncSettings() {
+    val settings = DtsSettings.of(project)
+    if (!settings.zephyrCMakeSync) return
+
+    val target = ExecutionTargetManager.getInstance(project).activeTarget
+    if (target !is CMakeBuildProfileExecutionTarget) return
+
+    val workspace = CMakeWorkspace.getInstance(project)
+    if (!workspace.isInitialized) return
+
+    val configs = workspace.model?.configurationData ?: return
+    val activeConfig = configs.firstOrNull { it.configName == target.profileName } ?: return
+
+    val cache = try {
+      activeConfig.getCacheConfigurator()
+    }
+    catch (e: Exception) {
+      logger.debug("failed to get cmake cache configurator", e)
+      return
     }
 
-    private val alarm = MutableSharedFlow<Unit>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    val boardPath = cache.findVariable(ZEPHYR_BOARD_PATH_VARIABLE)?.value
+    val rootPath = cache.findVariable(ZEPHYR_ROOT_PATH_VARIABLE)?.value
 
-    init {
-        parentScope.launch(Dispatchers.IO) {
-            alarm.debounce(300.milliseconds).collectLatest {
-                syncSettings()
-            }
-        }
+    // do not update settings if nothing changed, prevents infinite loop
+    if (settings.zephyrRoot == rootPath && settings.zephyrBoard?.path == boardPath) return
+
+    settings.update {
+      zephyrRoot = rootPath ?: ""
+      zephyrBoard = boardPath ?: ""
     }
+  }
 
-    private fun syncSettings() {
-        val settings = DtsSettings.of(project)
-        if (!settings.zephyrCMakeSync) return
+  override fun reloadingFinished(canceled: Boolean) {
+    if (canceled) return
 
-        val target = ExecutionTargetManager.getInstance(project).activeTarget
-        if (target !is CMakeBuildProfileExecutionTarget) return
+    alarm.tryEmit(Unit)
+  }
 
-        val workspace = CMakeWorkspace.getInstance(project)
-        if (!workspace.isInitialized) return
+  override fun settingsChanged(settings: DtsSettings) {
+    alarm.tryEmit(Unit)
+  }
 
-        val configs = workspace.model?.configurationData ?: return
-        val activeConfig = configs.firstOrNull { it.configName == target.profileName } ?: return
-
-        val cache = try {
-            activeConfig.getCacheConfigurator()
-        } catch (e: Exception) {
-            logger.debug("failed to get cmake cache configurator", e)
-            return
-        }
-
-        val boardPath = cache.findVariable(ZEPHYR_BOARD_PATH_VARIABLE)?.value
-        val rootPath = cache.findVariable(ZEPHYR_ROOT_PATH_VARIABLE)?.value
-
-        // do not update settings if nothing changed, prevents infinite loop
-        if (settings.zephyrRoot == rootPath && settings.zephyrBoard?.path == boardPath) return
-
-        settings.update {
-            zephyrRoot = rootPath ?: ""
-            zephyrBoard = boardPath ?: ""
-        }
-    }
-
-    override fun reloadingFinished(canceled: Boolean) {
-        if (canceled) return
-
-        alarm.tryEmit(Unit)
-    }
-
-    override fun settingsChanged(settings: DtsSettings) {
-        alarm.tryEmit(Unit)
-    }
-
-    override fun activeTargetChanged(newTarget: ExecutionTarget) {
-        alarm.tryEmit(Unit)
-    }
+  override fun activeTargetChanged(newTarget: ExecutionTarget) {
+    alarm.tryEmit(Unit)
+  }
 }

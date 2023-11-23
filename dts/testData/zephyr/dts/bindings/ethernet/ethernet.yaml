@@ -6,7 +6,7 @@
 include: base.yaml
 
 description: |
-    Description of the ethernet binding.
+  Description of the ethernet binding.
 
 properties:
   local-mac-address:

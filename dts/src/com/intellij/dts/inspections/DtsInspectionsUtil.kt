@@ -14,41 +14,41 @@ import org.jetbrains.annotations.PropertyKey
 
 // similar to strspn for checks.c
 fun firstNotMatching(str: String, rx: Regex, callback: (Char) -> Unit): Boolean {
-    for (char in str.toCharArray()) {
-        if (!rx.matches(char.toString())) {
-            callback(char)
-            return true
-        }
+  for (char in str.toCharArray()) {
+    if (!rx.matches(char.toString())) {
+      callback(char)
+      return true
     }
+  }
 
-    return false
+  return false
 }
 
 private fun elementInspectionRange(element: PsiElement): TextRange? {
-    if (element !is DtsStatement) return null
+  if (element !is DtsStatement) return null
 
-    return element.getDtsAnnotationTarget().textRange.relativeTo(element.textRange)
+  return element.getDtsAnnotationTarget().textRange.relativeTo(element.textRange)
 }
 
 fun ProblemsHolder.registerProblem(
-    element: PsiElement,
-    bundleKey: @PropertyKey(resourceBundle = DtsBundle.BUNDLE) String,
-    bundleParam: Any? = null,
-    rangeInElement: TextRange? = null,
-    fix: LocalQuickFix? = null,
+  element: PsiElement,
+  bundleKey: @PropertyKey(resourceBundle = DtsBundle.BUNDLE) String,
+  bundleParam: Any? = null,
+  rangeInElement: TextRange? = null,
+  fix: LocalQuickFix? = null,
 ) {
-    val manager = InspectionManager.getInstance(element.project)
-    val params = bundleParam?.let { arrayOf(it) } ?: emptyArray<Any>()
-    val fixes = fix?.let { arrayOf(it) } ?: emptyArray()
+  val manager = InspectionManager.getInstance(element.project)
+  val params = bundleParam?.let { arrayOf(it) } ?: emptyArray<Any>()
+  val fixes = fix?.let { arrayOf(it) } ?: emptyArray()
 
-    val descriptor = manager.createProblemDescriptor(
-        element,
-        rangeInElement ?: elementInspectionRange(element),
-        DtsBundle.message(bundleKey, *params),
-        ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-        isOnTheFly,
-        *fixes,
-    )
+  val descriptor = manager.createProblemDescriptor(
+    element,
+    rangeInElement ?: elementInspectionRange(element),
+    DtsBundle.message(bundleKey, *params),
+    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+    isOnTheFly,
+    *fixes,
+  )
 
-    registerProblem(descriptor)
+  registerProblem(descriptor)
 }

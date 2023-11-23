@@ -8,16 +8,16 @@ import com.intellij.psi.tree.IElementType
 
 // only on brace can be structural otherwise EnterAfterUnmatchedBraceHandler will get confused
 private val bracePairs = arrayOf(
-    BracePair(DtsTypes.LBRACE, DtsTypes.RBRACE, true),
-    BracePair(DtsTypes.LBRACKET, DtsTypes.RBRACKET, false),
-    BracePair(DtsTypes.LANGL, DtsTypes.RANGL, false),
-    BracePair(DtsTypes.LPAREN, DtsTypes.RPAREN, false),
+  BracePair(DtsTypes.LBRACE, DtsTypes.RBRACE, true),
+  BracePair(DtsTypes.LBRACKET, DtsTypes.RBRACKET, false),
+  BracePair(DtsTypes.LANGL, DtsTypes.RANGL, false),
+  BracePair(DtsTypes.LPAREN, DtsTypes.RPAREN, false),
 )
 
 class DtsBraceMatcher : PairedBraceMatcher {
-    override fun getPairs(): Array<BracePair> = bracePairs
+  override fun getPairs(): Array<BracePair> = bracePairs
 
-    override fun isPairedBracesAllowedBeforeType(lbraceType: IElementType, contextType: IElementType?) = true
+  override fun isPairedBracesAllowedBeforeType(lbraceType: IElementType, contextType: IElementType?) = true
 
-    override fun getCodeConstructStart(file: PsiFile?, openingBraceOffset: Int): Int = openingBraceOffset
+  override fun getCodeConstructStart(file: PsiFile?, openingBraceOffset: Int): Int = openingBraceOffset
 }
