@@ -6,6 +6,7 @@ class CacheDelegate<T>(private val modificationCount: () -> Long, private val co
   private var cache: T? = null
   private var count: Long? = null
 
+  @Synchronized
   operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
     val currentCount = modificationCount()
 

@@ -141,8 +141,10 @@ class DtsZephyrBindingProvider(val project: Project) {
 
     private fun loadBinding(binding: String, name: String): YamlMap? {
         try {
-            val map = yaml.load<Map<*, *>>(binding)
-            return YamlMap(map)
+            return synchronized(yaml) {
+                val map = yaml.load<Map<*, *>>(binding)
+                YamlMap(map)
+            }
         } catch (e: ClassCastException) {
             logger.debug("unexpected yaml format: $name")
         } catch (e: YAMLException) {
