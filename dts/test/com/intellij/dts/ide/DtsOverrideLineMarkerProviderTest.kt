@@ -34,7 +34,7 @@ class DtsOverrideLineMarkerProviderTest : DtsTestBase() {
             $text
         """)
 
-        val gutter = myFixture.findAllGutters().filter { it.icon == DtsIcons.OverrwriteProperty }
+        val gutter = myFixture.findAllGutters().filter { it.icon == DtsIcons.OverrideProperty }
 
         assertSize(count, gutter)
     }
