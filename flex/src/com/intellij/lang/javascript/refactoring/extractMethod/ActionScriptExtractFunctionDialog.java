@@ -228,8 +228,11 @@ public class ActionScriptExtractFunctionDialog extends JSBaseClassBasedIntroduce
   }
 
   @Override
-  public boolean makeFunctionExpression() {
-    return getIntroductionScope().forceMakeFunExpr;
+  public @NotNull FunctionDeclarationType getDeclarationType() {
+    var forceDeclarationType = getIntroductionScope().forceDeclarationType;
+    return forceDeclarationType != null
+           ? forceDeclarationType
+           : FunctionDeclarationType.FUNCTION;
   }
 
   @Override
@@ -359,7 +362,7 @@ public class ActionScriptExtractFunctionDialog extends JSBaseClassBasedIntroduce
     if (isEcma4Context()) {
       return "refactoring.extractMethod.ActionScript";
     }
-    else if (isTypeScriptContext()){
+    else if (isTypeScriptContext()) {
       return "typescript_extract_method";
     }
     return "refactoring.extractMethod.JavaScript";

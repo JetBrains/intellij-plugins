@@ -23,7 +23,7 @@ class AstroExtractFunctionHandler : JSExtractFunctionHandler() {
     return super.createPairWithPresentation(parent)?.let {
       if (it.parent is AstroFrontmatterScript || it.parent is AstroContentRoot)
       // We need to point to Frontmatter parent, to be able to anchor at a next token after frontmatter content
-        IntroductionScope(it.parent, "frontmatter", it.forceMakeFunExpr)
+        IntroductionScope(it.parent, "frontmatter", it.forceDeclarationType)
       else
         it
     }

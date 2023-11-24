@@ -7,6 +7,7 @@ import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.refactoring.extractMethod.DefaultJSExtractFunctionSettings;
+import com.intellij.lang.javascript.refactoring.extractMethod.FunctionDeclarationType;
 import com.intellij.lang.javascript.refactoring.extractMethod.JSExtractFunctionBaseTest;
 import com.intellij.lang.javascript.refactoring.extractMethod.JSExtractFunctionSettings;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -68,7 +69,7 @@ public class FlexExtractFunctionTest extends JSExtractFunctionBaseTest {
         parametersInfo.variables.add(var);
         parametersInfo.variableOptions.put(var, new JSExtractFunctionSettings.ParameterInfo(var.getName() + "2", true, null, 0));
 
-        return new DefaultJSExtractFunctionSettings("created", true, false, JSAttributeList.AccessType.PUBLIC, parametersInfo, null, false);
+        return new DefaultJSExtractFunctionSettings("created", true, FunctionDeclarationType.FUNCTION, JSAttributeList.AccessType.PUBLIC, parametersInfo, null, false);
       },
       "js2"
     );
