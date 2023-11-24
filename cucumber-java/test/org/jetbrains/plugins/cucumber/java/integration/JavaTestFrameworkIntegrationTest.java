@@ -9,7 +9,6 @@ import com.intellij.execution.testframework.sm.UITestUtil;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerTestTreeView;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.execution.util.ExecUtil;
-import com.intellij.maven.testFramework.utils.MavenImportingTestCaseKt;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
@@ -26,10 +25,11 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.HeavyPlatformTestCase;
 import com.intellij.testFramework.PlatformTestUtil;
-import com.intellij.util.ui.UIUtil;
+import kotlin.coroutines.EmptyCoroutineContext;
+import kotlinx.coroutines.BuildersKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.idea.maven.model.MavenExplicitProfiles;
+import org.jetbrains.idea.maven.buildtool.MavenImportSpec;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
 
 import java.io.File;
@@ -66,13 +66,18 @@ public abstract class JavaTestFrameworkIntegrationTest extends HeavyPlatformTest
 
     MavenProjectsManager mavenProjectsManager = MavenProjectsManager.getInstance(getProject());
     mavenProjectsManager.initForTests();
-    mavenProjectsManager.resetManagedFilesAndProfilesInTests(pomFiles, new MavenExplicitProfiles(Collections.emptyList()));
-    mavenProjectsManager.waitForReadingCompletion();
+    mavenProjectsManager.addManagedFiles(pomFiles);
 
-    UIUtil.invokeAndWaitIfNeeded(() -> {
-      mavenProjectsManager.waitForReadingCompletion();
-    });
-    MavenImportingTestCaseKt.importMavenProjects(mavenProjectsManager, pomFiles);
+    // TODO: better convert to kotlin
+    try {
+      BuildersKt.runBlocking(
+        EmptyCoroutineContext.INSTANCE,
+        (scope, continuation) -> mavenProjectsManager.updateAllMavenProjects(MavenImportSpec.EXPLICIT_IMPORT, continuation)
+      );
+    }
+    catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
 
     Module module = ReadAction.compute(() -> ModuleManager.getInstance(myProject).findModuleByName("test-project-sample"));
     ModuleRootModificationUtil.updateModel(module, model -> {
