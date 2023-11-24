@@ -2,10 +2,12 @@
 package org.jetbrains.astro
 
 import com.intellij.lang.javascript.DialectDetector
-import com.intellij.lang.javascript.ecmascript6.TypeScriptWithFileTypeUnionInnerProvider
+import com.intellij.lang.javascript.ecmascript6.TypeScriptWithFileTypeUnionInnerProviderService
 import com.intellij.lang.javascript.psi.resolve.JSElementResolveScopeProvider
+import com.intellij.openapi.components.service
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.util.application
 import org.jetbrains.astro.lang.AstroFileType
 
 class AstroElementResolveScopeProvider : JSElementResolveScopeProvider {
@@ -19,6 +21,7 @@ class AstroElementResolveScopeProvider : JSElementResolveScopeProvider {
         || !DialectDetector.isTypeScript(element))
       return null
 
-    return TypeScriptWithFileTypeUnionInnerProvider.getResolveScope(virtualFile, element.project)
+    return application.service<TypeScriptWithFileTypeUnionInnerProviderService>().getProvider()
+      .getResolveScope(virtualFile, element.project)
   }
 }

@@ -3,10 +3,12 @@ package org.jetbrains.vuejs
 
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.DialectDetector
-import com.intellij.lang.javascript.ecmascript6.TypeScriptWithFileTypeUnionInnerProvider
+import com.intellij.lang.javascript.ecmascript6.TypeScriptWithFileTypeUnionInnerProviderService
 import com.intellij.lang.javascript.psi.resolve.JSElementResolveScopeProvider
+import com.intellij.openapi.components.service
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.util.application
 import org.jetbrains.vuejs.lang.html.VueFile
 
 class VueElementResolveScopeProvider : JSElementResolveScopeProvider {
@@ -15,7 +17,7 @@ class VueElementResolveScopeProvider : JSElementResolveScopeProvider {
     val psiFile = InjectedLanguageManager.getInstance(project).getTopLevelFile(element)
     if (psiFile !is VueFile) return null
     if (DialectDetector.isTypeScript(element)) {
-      return TypeScriptWithFileTypeUnionInnerProvider
+      return application.service<TypeScriptWithFileTypeUnionInnerProviderService>().getProvider()
         .getResolveScope(psiFile.viewProvider.virtualFile, project)
     }
     return null
