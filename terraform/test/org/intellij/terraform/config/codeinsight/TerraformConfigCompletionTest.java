@@ -567,6 +567,23 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
     doBasicCompletionTest("variable v{}\ndata x y {}\nmodule b {depends_on=[<caret>]}", 2, "data.x.y", "var.v");
   }
 
+  public void testCompleteResourceFromAnotherModuleInImportBlock() {
+    myFixture.addFileToProject("submodule/sub.tf", """
+      resource "MyType" "MyName" {}
+      """);
+    myFixture.configureByText("main.tf","""
+      import {
+        id = "terraform"
+        to = module.submodule.<caret>
+      }
+      
+      module "submodule" {
+        source = "./submodule"
+      }
+      """);
+    myFixture.testCompletionVariants("main.tf",  "MyType.MyName");
+  }
+
   private boolean isExcludeProvider(ProviderType provider, Map<String, Boolean> cache) {
     String key = provider.getType();
     Boolean cached = cache.get(key);

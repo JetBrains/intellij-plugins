@@ -29,7 +29,10 @@ import org.intellij.terraform.hcl.navigation.HCLQualifiedNameProvider
 import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.hcl.psi.common.*
 import org.intellij.terraform.hil.HILLanguage
+import org.intellij.terraform.hil.HilContainingBlockType
 import org.intellij.terraform.hil.codeinsight.ReferenceCompletionHelper.findByFQNRef
+import org.intellij.terraform.hil.getResourceTypeAndName
+import org.intellij.terraform.hil.guessContainingBlockType
 import org.intellij.terraform.hil.psi.*
 import org.intellij.terraform.hil.psi.impl.getHCLHost
 import java.util.*
@@ -376,11 +379,12 @@ class HILCompletionContributor : CompletionContributor() {
       val parent = element.parent as? SelectExpression<*> ?: return
 
       val expression = getGoodLeftElement(parent, element) ?: return
+      val contextType = guessContainingBlockType(expression)
       val references = HCLPsiUtil.getReferencesSelectAware(expression)
       if (references.isNotEmpty()) {
         val collectedTargets = references.asSequence()
           .flatMap { reference -> resolve(reference, true, false) }
-          .flatMap { collectVariants(it, false, 2) }
+          .flatMap { collectVariants(it, false, 2, contextType) }
           .toList()
         if (collectedTargets.isNotEmpty()) {
           result.addAllElements(collectedTargets)
@@ -403,10 +407,10 @@ class HILCompletionContributor : CompletionContributor() {
       }
     }
 
-    private fun collectVariants(r: PsiElement?, iteratorResolve: Boolean, depth: Int): List<LookupElement> {
+    private fun collectVariants(r: PsiElement?, iteratorResolve: Boolean, depth: Int, contextType: HilContainingBlockType = HilContainingBlockType.UNSPECIFIED): List<LookupElement> {
       when (r) {
         is HCLBlock -> {
-          return ArrayList<LookupElement>().also { getBlockProperties(r, it) }
+          return ArrayList<LookupElement>().also { getBlockProperties(r, contextType, it) }
         }
         is FakeTypeProperty -> return ArrayList<LookupElement>().also { collectTypeVariants(r.type, it) }
         is HCLProperty -> {
@@ -457,7 +461,7 @@ class HILCompletionContributor : CompletionContributor() {
         }
       }
 
-    private fun getBlockProperties(r: HCLBlock, found: ArrayList<LookupElement>) {
+    private fun getBlockProperties(r: HCLBlock, contextType: HilContainingBlockType, found: ArrayList<LookupElement>) {
       if (TerraformPatterns.VariableRootBlock.accepts(r)) {
         val variable = Variable(r)
         val defaultMap = variable.getDefault()
@@ -473,7 +477,15 @@ class HILCompletionContributor : CompletionContributor() {
         val module = Module.getAsModuleBlock(r)
         if (module != null) {
           // TODO: Add special LookupElementRenderer
-          module.getDefinedOutputs().map { create(it.name) }.toCollection(found)
+          val suitableBlocks = when (contextType) {
+            HilContainingBlockType.IMPORT_BLOCK -> {
+              module.getDeclaredResources().mapNotNull { resourceDeclaration -> getResourceTypeAndName(resourceDeclaration) }
+            }
+            HilContainingBlockType.UNSPECIFIED -> {
+              module.getDefinedOutputs().map { it.name }
+            }
+          }
+          suitableBlocks.map { create(it) }.toCollection(found)
         }
         return
       }

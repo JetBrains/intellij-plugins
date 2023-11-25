@@ -6,6 +6,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiPolyVariantReference
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
+import com.intellij.psi.util.parentOfType
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.findAllReferencesByText
 import com.intellij.testFramework.findReferenceByText
@@ -13,6 +14,8 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.asSafely
 import junit.framework.TestCase
 import org.intellij.terraform.config.inspection.TFIncorrectVariableTypeInspection
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLIdentifier
 import org.intellij.terraform.hcl.psi.HCLProperty
 import org.intellij.terraform.hil.inspection.HILUnknownResourceTypeInspection
 import org.intellij.terraform.hil.inspection.HILUnresolvedReferenceInspection
@@ -407,6 +410,32 @@ class TerraformReferencesTest : BasePlatformTestCase() {
     """.trimIndent())
     myFixture.checkHighlighting()
     
+  }
+
+  @Test
+  fun testResolveResourceFromOtherModuleInImportBlock() {
+    myFixture.addFileToProject("submodule/sub.tf", """
+      resource "MyType" "MyName" {}
+      """)
+    myFixture.configureByText("main.tf","""
+      import {
+        id = "terraform"
+        to = module.submodule.MyType.My<caret>Name
+      }
+      
+      module "submodule" {
+        source = "./submodule"
+      }
+      """)
+    myFixture.checkHighlighting()
+    val targetResource = myFixture.file.findElementAt(myFixture.caretOffset)
+      ?.parentOfType<HCLIdentifier>()
+      ?.reference
+      ?.resolve()
+    assertInstanceOf(targetResource, HCLBlock::class.java)
+    targetResource as HCLBlock
+    assertEquals("MyName", targetResource.name)
+    assertEquals("sub.tf", targetResource.containingFile.name)
   }
 
   private val DLR = "$"

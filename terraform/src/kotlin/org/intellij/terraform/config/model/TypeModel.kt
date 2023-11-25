@@ -158,7 +158,8 @@ class TypeModel(
     val Locals: BlockType = BlockType("locals")
     val Import: BlockType = BlockType("import", properties = listOf(
       PropertyType("id", Types.String, required = true),
-      PropertyType("to", Types.Identifier, required = true)
+      PropertyType("to", Types.Identifier, required = true),
+      PropertyType("provider", Types.String, required = false)
     ).toMap())
 
     val RootBlocks: List<BlockType> = listOf(Atlas, Module, Output, Variable, AbstractProvider,
