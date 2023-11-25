@@ -11,15 +11,19 @@ import com.intellij.util.ProcessingContext
 import com.intellij.util.SmartList
 import com.intellij.util.asSafely
 import com.intellij.util.containers.addIfNotNull
-import org.intellij.terraform.hcl.navigation.HCLQualifiedNameProvider
-import org.intellij.terraform.hcl.psi.*
-import org.intellij.terraform.hcl.psi.common.*
 import org.intellij.terraform.config.Constants
 import org.intellij.terraform.config.codeinsight.ModelHelper
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.config.psi.TerraformReferenceContributor.Companion.Resource_Provider_Property
+import org.intellij.terraform.hcl.navigation.HCLQualifiedNameProvider
+import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.common.*
+import org.intellij.terraform.hil.HilContainingBlockType
 import org.intellij.terraform.hil.codeinsight.HILCompletionContributor
+import org.intellij.terraform.hil.getResourceName
+import org.intellij.terraform.hil.getResourceType
+import org.intellij.terraform.hil.guessContainingBlockType
 import org.intellij.terraform.hil.inspection.PsiFakeAwarePolyVariantReference
 import org.intellij.terraform.hil.psi.impl.getHCLHost
 
@@ -61,6 +65,7 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
           reference.collectReferences(element, name, refs)
         } else {
           refs.add(HCLElementLazyReference(element, false) { incompleteCode, fake ->
+            val containingBlockType = guessContainingBlockType(element)
             val resolved = resolve(reference, incompleteCode, fake)
             val found = SmartList<HCLElement>()
             resolved.forEach {
@@ -70,13 +75,13 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
                 val objects = arr.elements.filterIsInstance<HCLObject>()
                 if (objects.isNotEmpty()) {
                   objects.forEach { o ->
-                    collectReferences(o, name, found, fake)
+                    collectReferences(o, name, found, fake, containingBlockType)
                   }
                   return@HCLElementLazyReference found
                 }
                 from = arr.elements.firstOrNull() ?: it
               }
-              collectReferences(from, name, found, fake)
+              collectReferences(from, name, found, fake, containingBlockType)
             }
             found
           })
@@ -114,7 +119,7 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
     })
   }
 
-  fun collectReferences(r: PsiElement, name: String, found: MutableList<HCLElement>, fake: Boolean) {
+  fun collectReferences(r: PsiElement, name: String, found: MutableList<HCLElement>, fake: Boolean, initialContextType: HilContainingBlockType = HilContainingBlockType.UNSPECIFIED) {
     when (r) {
       is HCLIdentifier -> {
         val p = r.parent
@@ -138,6 +143,8 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
         val fqn = HCLQualifiedNameProvider.getQualifiedModelName(r)
         if (ApplicationManager.getApplication().getService(TypeModelProvider::class.java).ignored_references.contains(fqn)) {
           if (fake) found.add(FakeHCLProperty(name, r))
+        } else if (isResourceReferencedFromImportBlock(r, initialContextType, name)) {
+          found.add(r)
         } else if (TerraformPatterns.ModuleRootBlock.accepts(r)) {
           // TODO: Move this special TerraformPatters supports somewhere else
           val module = Module.getAsModuleBlock(r)
@@ -147,9 +154,12 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
               found.add(FakeHCLProperty(name, r))
             }
           } else {
-            val outputs = module.getDefinedOutputs().filter { it.name == name }
-            if (outputs.isNotEmpty()) {
-              found.addAll(outputs)
+            val suitableResolveTargets = when(initialContextType) {
+              HilContainingBlockType.IMPORT_BLOCK -> module.getDeclaredResources().filter { getResourceType(it) == name }
+              HilContainingBlockType.UNSPECIFIED -> module.getDefinedOutputs().filter { it.name == name }
+            }
+            if (suitableResolveTargets.isNotEmpty()) {
+              found.addAll(suitableResolveTargets)
             } else if (fake) {
               //              found.add(FakeHCLProperty(name))
             }
@@ -282,6 +292,13 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
     }
   }
 
+  private fun isResourceReferencedFromImportBlock(maybeHclBlock: PsiElement, initialContextType: HilContainingBlockType, resolvableSegmentName: String): Boolean {
+    return maybeHclBlock is HCLBlock
+           && TerraformPatterns.ResourceRootBlock.accepts(maybeHclBlock)
+           && initialContextType == HilContainingBlockType.IMPORT_BLOCK
+           && getResourceName(maybeHclBlock) == resolvableSegmentName
+  }
+
   @Suppress("NAME_SHADOWING")
   private fun resolveInType(type: Type?, context: PsiElement, name: String): HCLElement? {
     // TODO: Use not FakeProperty but actual PSI element from Type declaration
@@ -313,7 +330,7 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
         .forEach {
           resolveVariableElementFromIterable(it, name, found, fake)
         }
-      else -> 
+      else ->
         // e.g. 'local.name' reference or something else
         collectReferenceFromForEachValue(value, name, found, fake)
     }
