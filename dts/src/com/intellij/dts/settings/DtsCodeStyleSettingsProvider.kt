@@ -17,8 +17,9 @@ class DtsCodeStyleSettingsProvider : CodeStyleSettingsProvider() {
   private class Configurable(settings: CodeStyleSettings, modelSettings: CodeStyleSettings) :
     CodeStyleAbstractConfigurable(settings, modelSettings, DtsLanguage.displayName) {
 
-    override fun createPanel(settings: CodeStyleSettings): CodeStyleAbstractPanel =
-      MainPanel(currentSettings, settings)
+    override fun getHelpTopic(): String = DtsHelpIds.CODESTYLE_SETTINGS
+
+    override fun createPanel(settings: CodeStyleSettings): CodeStyleAbstractPanel = MainPanel(currentSettings, settings)
   }
 
   override fun getConfigurableDisplayName(): String = DtsLanguage.displayName

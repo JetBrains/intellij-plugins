@@ -25,7 +25,7 @@ import java.nio.file.Path
 
 class DtsSettingsConfigurable(private val project: Project) : BoundSearchableConfigurable(
   displayName = DtsBundle.message("settings.name"),
-  helpTopic = "devitree.zephyr.settings",
+  helpTopic = DtsHelpIds.ZEPHYR_SETTINGS,
   _id = "com.intellij.dts.settings.DtsSettingsConfigurable",
 ) {
   private val state: DtsSettings.State = DtsSettings.of(project).state
