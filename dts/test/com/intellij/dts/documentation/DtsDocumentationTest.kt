@@ -16,6 +16,6 @@ abstract class DtsDocumentationTest : DtsTestBase() {
       .mapNotNull { computeDocumentationBlocking(it.createPointer())?.html }
 
     assertOneElement(documentations)
-    compareWithFixture("html", documentations.first())
+    compareWithTestFixture("html", documentations.first())
   }
 }

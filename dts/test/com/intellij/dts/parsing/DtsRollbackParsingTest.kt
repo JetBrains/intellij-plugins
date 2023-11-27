@@ -55,7 +55,7 @@ private class BuilderDiagnostics : PsiBuilderDiagnostics {
   }
 }
 
-class DtsRollbackParsingTest : DtsParsingTestBase("", "dtsi") {
+class DtsRollbackParsingTest : DtsParsingTestBase("") {
   private fun createNesting(depth: Int, text: String): String {
     val builder = StringBuilder()
 

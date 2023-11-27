@@ -2,7 +2,7 @@ package com.intellij.dts.parsing
 
 import com.intellij.testFramework.PlatformTestUtil
 
-class DtsPerformanceParsingTest : DtsParsingTestBase("", "dtsi") {
+class DtsPerformanceParsingTest : DtsParsingTestBase("") {
   fun testPerformance() {
     val file = loadFile("Performance.dts")
 

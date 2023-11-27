@@ -30,12 +30,35 @@ class DtsDocumentationTargetTest : DtsTestBase() {
        label: node {};
     """)
 
+  fun `test lookup label ref`() = doLookupTest("""
+      prop = &<caret>;
+      label1: node {}; 
+    """)
+
+  fun `test lookup path ref`() = doLookupTest("""
+      / { node1 {}; node2 {}; };
+      &{/<caret>} {};
+    """)
+
   private fun doTest(text: String) {
     configureByText(text)
 
     val targets = IdeDocumentationTargetProvider
       .getInstance(project)
       .documentationTargets(myFixture.editor, myFixture.file, myFixture.caretOffset)
+
+    assertOneElement(targets)
+  }
+
+  private fun doLookupTest(text: String) {
+    configureByText(text)
+
+    val completion = myFixture.completeBasic().toList()
+    assertNotEmpty(completion)
+
+    val targets = IdeDocumentationTargetProvider
+      .getInstance(project)
+      .documentationTargets(myFixture.editor, myFixture.file, completion.first())
 
     assertOneElement(targets)
   }

@@ -5,5 +5,5 @@
 };
 
 &label {
-    wakeup-source/*caret*/;
+    wakeup-source<caret>;
 };

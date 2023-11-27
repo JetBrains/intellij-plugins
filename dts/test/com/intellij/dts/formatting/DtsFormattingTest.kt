@@ -1,12 +1,13 @@
 package com.intellij.dts.formatting
 
+import com.intellij.dts.DTS_TEST_DATA_PATH
 import com.intellij.dts.lang.DtsFileType
 import com.intellij.dts.lang.DtsLanguage
 import com.intellij.dts.settings.DtsCodeStyleSettings
 import com.intellij.psi.formatter.FormatterTestCase
 
 abstract class DtsFormattingTest : FormatterTestCase() {
-  override fun getTestDataPath() = "testData/formatting"
+  override fun getTestDataPath() = "$DTS_TEST_DATA_PATH/formatting"
 
   override fun getFileExtension() = "dtsi"
 

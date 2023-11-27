@@ -1,7 +1,7 @@
 &pinctrl {
     ledc0_default {
         group1 {
-            output-enable/*caret*/;
+            output-enable<caret>;
         };
     };
 };

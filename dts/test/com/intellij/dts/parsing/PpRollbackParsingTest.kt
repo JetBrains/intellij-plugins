@@ -52,7 +52,7 @@ private class TreeToBuffer(private val buffer: Appendable, private val ignore: T
   }
 }
 
-class PpRollbackParsingTest : DtsParsingTestBase("ppRollback", "dts") {
+class PpRollbackParsingTest : DtsParsingTestBase("ppRollback") {
   private val variants = mapOf(
     DtsTypes.INCLUDE_STATEMENT to "/include/ \"file\"",
     DtsTypes.PP_INCLUDE_STATEMENT to "#include <file>",
@@ -75,7 +75,7 @@ class PpRollbackParsingTest : DtsParsingTestBase("ppRollback", "dts") {
   }
 
   private fun doTest() {
-    val content = loadFile("$testName.$myFileExt")
+    val content = loadFile("$testName.dts")
     require(content.contains("<pp-statement>"))
 
     val reference = parseFile(name, content.replace("<pp-statement>", ""))

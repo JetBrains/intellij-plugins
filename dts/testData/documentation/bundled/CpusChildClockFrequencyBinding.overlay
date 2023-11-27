@@ -1,7 +1,7 @@
 / {
     cpus {
         child {
-            clock-frequency/*caret*/ = "value";
+            clock-frequency<caret> = "value";
         };
     };
 };

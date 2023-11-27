@@ -7,7 +7,7 @@ import com.intellij.testFramework.LexerTestCase
 class DtsLexerTest : LexerTestCase() {
   override fun createLexer(): Lexer = DtsLexerAdapter()
 
-  override fun getDirPath(): String = "testData/lexer"
+  override fun getDirPath(): String = "$DTS_TEST_DATA_PATH/lexer"
 
   override fun getPathToTestDataFile(extension: String): String {
     return "$dirPath/${getTestName(false)}$extension"

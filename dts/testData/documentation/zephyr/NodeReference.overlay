@@ -4,4 +4,4 @@
     };
 };
 
-&label/*caret*/ { };
+&label<caret> { };

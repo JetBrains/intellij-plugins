@@ -50,9 +50,7 @@ class DtsDocumentationProvider : DocumentationTargetProvider, PsiDocumentationTa
     if (offset < 0) return null
 
     val originalElement = file.findElementAt(offset) ?: return null
-    val targetElement = findTargetElement(originalElement) ?: return null
-
-    return targetElement
+    return findTargetElement(originalElement)
   }
 
   private fun findTargetElement(originalElement: PsiElement): PsiElement? {

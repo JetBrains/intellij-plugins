@@ -2,6 +2,7 @@ package com.intellij.dts.documentation
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.intellij.dts.DTS_TEST_ROOT_PATH
 import com.networknt.schema.JsonSchemaFactory
 import com.networknt.schema.SpecVersion
 import java.nio.file.Path
@@ -13,7 +14,7 @@ class DtsBundledDocumentationTest : DtsDocumentationTest() {
   override fun getBasePath(): String = "documentation/bundled"
 
   fun `test only ascii in bundled bindings`() {
-    for (file in Path.of("resources/bindings").listDirectoryEntries()) {
+    for (file in Path.of(DTS_TEST_ROOT_PATH, "resources/bindings").listDirectoryEntries()) {
       for (character in file.readText()) {
         if (character.code > 0x7e) {
           fail("invalid character '$character' in binding: ${file.fileName}")
@@ -28,7 +29,7 @@ class DtsBundledDocumentationTest : DtsDocumentationTest() {
     val yamlFactory = JsonSchemaFactory.builder(factory).objectMapper(mapper).build()
     val schema = yamlFactory.getSchema(getFixture("documentation/BindingSchema.json"))
 
-    for (file in Path.of("resources/bindings").listDirectoryEntries()) {
+    for (file in Path.of(DTS_TEST_ROOT_PATH, "resources/bindings").listDirectoryEntries()) {
       for (result in schema.validate(mapper.readTree(file.readText()))) {
         fail("${file.name}: ${result.message}")
       }

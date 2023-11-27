@@ -1,6 +1,6 @@
 / {
     node {
         compatible = "espressif,esp32-eth";
-        wakeup-source/*caret*/;
+        wakeup-source<caret>;
     };
 };

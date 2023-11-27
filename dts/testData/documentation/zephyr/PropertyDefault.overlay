@@ -1,5 +1,5 @@
 / {
     node {
-        prop/*caret*/ = "value";
+        prop<caret> = "value";
     };
 };

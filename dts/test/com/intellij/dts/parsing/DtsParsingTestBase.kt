@@ -1,5 +1,6 @@
 package com.intellij.dts.parsing
 
+import com.intellij.dts.DTS_TEST_DATA_PATH
 import com.intellij.dts.completion.DtsBraceMatcher
 import com.intellij.dts.lang.DtsLanguage
 import com.intellij.dts.lang.parser.DtsParserDefinition
@@ -10,8 +11,8 @@ import com.intellij.testFramework.LightVirtualFile
 import com.intellij.testFramework.ParsingTestCase
 import java.nio.charset.StandardCharsets
 
-abstract class DtsParsingTestBase(dataPath: String, fileExt: String) : ParsingTestCase(dataPath, fileExt, DtsParserDefinition()) {
-  override fun getTestDataPath(): String = "testData/parser"
+abstract class DtsParsingTestBase(dataPath: String) : ParsingTestCase(dataPath, "", DtsParserDefinition()) {
+  override fun getTestDataPath(): String = "$DTS_TEST_DATA_PATH/parser"
 
   override fun setUp() {
     super.setUp()
@@ -27,5 +28,10 @@ abstract class DtsParsingTestBase(dataPath: String, fileExt: String) : ParsingTe
     SingleRootFileViewProvider.doNotCheckFileSizeLimit(virtualFile)
 
     return createFile(virtualFile)
+  }
+
+  fun doTest(extension: String, ensureNoErrorElements: Boolean) {
+    myFileExt = extension
+    super.doTest(true, ensureNoErrorElements)
   }
 }

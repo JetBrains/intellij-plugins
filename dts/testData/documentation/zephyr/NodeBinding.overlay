@@ -1,5 +1,5 @@
 / {
-    node/*caret*/ {
+    node<caret> {
         compatible = "espressif,esp32-eth";
     };
 };
