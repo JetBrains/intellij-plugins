@@ -54,7 +54,7 @@ class AnalysisServerFeedbackAction : DumbAwareAction(DartBundle.messagePointer("
 
     service<ReportFeedbackService>().coroutineScope.launch {
       withBackgroundProgress(project, IdeBundle.message("reportProblemAction.progress.title.submitting"), true) {
-        val platformDescription = StringUtil.replace(getDescription(), ";", " ").trim { it <= ' ' }
+        val platformDescription = StringUtil.replace(getDescription(project), ";", " ").trim { it <= ' ' }
 
         val url = DartBundle.message("dart.feedback.url", urlEncode("Analyzer Feedback from IntelliJ"))
         val body = DartBundle.message("dart.feedback.template", intellijBuild, sdkVersion, platformDescription)
