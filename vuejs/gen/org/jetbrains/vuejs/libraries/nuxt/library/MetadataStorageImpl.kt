@@ -8,8 +8,7 @@ import com.intellij.platform.workspace.storage.metadata.model.StorageTypeMetadat
 import com.intellij.platform.workspace.storage.metadata.model.ValueTypeMetadata
 
 object MetadataStorageImpl: MetadataStorageBase() {
-    init {
-
+    override fun initializeMetadata() {
         val primitiveTypeListNotNullable = ValueTypeMetadata.SimpleType.PrimitiveType(isNullable = false, type = "List")
 
         var typeMetadata: StorageTypeMetadata
@@ -24,4 +23,11 @@ OwnPropertyMetadata(isComputable = false, isKey = false, isOpen = false, name = 
 
         addMetadata(typeMetadata)
     }
+
+    override fun initializeMetadataHash() {
+        addMetadataHash(typeFqn = "org.jetbrains.vuejs.libraries.nuxt.library.NuxtFolderEntity", metadataHash = -1911763660)
+        addMetadataHash(typeFqn = "com.intellij.platform.workspace.storage.EntitySource", metadataHash = 1489809438)
+        addMetadataHash(typeFqn = "org.jetbrains.vuejs.libraries.nuxt.library.NuxtFolderEntity\$MyEntitySource", metadataHash = 1571223598)
+    }
+
 }
