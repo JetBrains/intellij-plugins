@@ -19,7 +19,6 @@ import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioProjectResolvePol
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioTargetAction
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioUploadMonitorAction
 import java.nio.file.Path
-import java.util.LinkedHashMap
 import java.util.concurrent.atomic.AtomicLong
 
 @Service(Service.Level.PROJECT)
@@ -96,7 +95,7 @@ class PlatformioService(val project: Project) : PersistentStateComponentWithModi
 
   fun setTargets(targets: List<PlatformioTargetData>) {
     val targetToActionId = LinkedHashMap<String, String>()
-    val actionManager = service<ActionManager>()
+    val actionManager = ActionManager.getInstance()
     targets.forEach {
       if (it.name != "debug") {
         val actionId = "target-platformio-${it.name}"
