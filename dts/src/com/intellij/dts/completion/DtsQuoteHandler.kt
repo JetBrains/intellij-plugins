@@ -12,9 +12,15 @@ private val stringTypes = TokenSet.create(
 )
 
 class DtsQuoteHandler : SimpleTokenSetQuoteHandler(stringTypes) {
+  override fun isClosingQuote(iterator: HighlighterIterator, offset: Int): Boolean {
+    // fixes inconsistent completion behavior
+    return super.isClosingQuote(iterator, offset) && iterator.end - iterator.start > 1
+  }
+
   override fun isNonClosedLiteral(iterator: HighlighterIterator, chars: CharSequence): Boolean {
     // simple heuristic for non-closed literals, return true if there is a line
     // break between the opening quote and the potential closing quote
-    return super.isNonClosedLiteral(iterator, chars) || chars.contains('\n')
+    val text = chars.slice(iterator.start until iterator.end)
+    return super.isNonClosedLiteral(iterator, chars) || text.contains('\n')
   }
 }

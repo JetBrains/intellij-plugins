@@ -79,6 +79,9 @@
     <annotator
       language="DTS"
       implementationClass="com.intellij.dts.highlighting.DtsHighlightAnnotator"/>
+    <annotator
+      language="DTS"
+      implementationClass="com.intellij.dts.highlighting.DtsSyntaxAnnotator"/>
     <colorSettingsPage
       implementation="com.intellij.dts.settings.DtsColorSettingsPage"/>
     <highlightErrorFilter
@@ -168,12 +171,6 @@
       enabledByDefault="true"
       level="ERROR"
       implementationClass="com.intellij.dts.inspections.DtsBitsInspection"/>
-    <localInspection
-      language="DTS"
-      bundle="messages.DtsBundle" key="inspections.phandle_whitespace.display_name" groupKey="inspections.group"
-      enabledByDefault="true"
-      level="ERROR"
-      implementationClass="com.intellij.dts.inspections.DtsPHandleWhitespaceInspection"/>
     <localInspection
       language="DTS"
       bundle="messages.DtsBundle" key="inspections.undeclared_property.display_name" groupKey="inspections.group"

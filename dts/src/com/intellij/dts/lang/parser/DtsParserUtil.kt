@@ -93,7 +93,7 @@ object DtsParserUtil : DtsJavaParserUtil() {
     }
 
     PpParserUtil.rollbackPreprocessorStatements(builder as PpBuildAdapter, marker)
-    marker.error(DtsBundle.message("parser.invalid_entry"))
+    marker.error(DtsBundle.message("syntax.invalid_entry"))
 
     return true
   }

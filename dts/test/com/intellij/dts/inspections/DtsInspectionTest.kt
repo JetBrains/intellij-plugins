@@ -4,10 +4,10 @@ import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.dts.DtsTestBase
 import kotlin.reflect.KClass
 
-abstract class DtsInspectionTest(private val inspectionClass: KClass<out LocalInspectionTool>) : DtsTestBase() {
+abstract class DtsInspectionTest(private vararg val inspectionClass: KClass<out LocalInspectionTool>) : DtsTestBase() {
   override fun setUp() {
     super.setUp()
-    myFixture.enableInspections(inspectionClass.java)
+    myFixture.enableInspections(inspectionClass.map { it.java })
   }
 
   protected fun doTest() {
