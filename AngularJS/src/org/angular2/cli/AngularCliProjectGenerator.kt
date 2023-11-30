@@ -88,9 +88,9 @@ class AngularCliProjectGenerator : NpmPackageProjectGenerator() {
       }
     }
 
-    if (isPackageGreaterOrEqual(settings.myPackage, 16, 0, 0) && ngSettings.useStandalone) {
-      if (result.none { param -> param == "--standalone"}) {
-        result.add("--standalone")
+    if (isPackageGreaterOrEqual(settings.myPackage, 16, 0, 0)) {
+      if (result.none { param -> param == "--standalone" || param.startsWith("--standalone=")}) {
+        result.add("--standalone=${ngSettings.useStandalone}")
       }
     }
 
