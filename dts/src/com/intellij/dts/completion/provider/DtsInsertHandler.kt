@@ -13,7 +13,6 @@ import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.TokenType
-import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.elementType
 import com.intellij.util.asSafely
 
@@ -54,12 +53,12 @@ private class InsertSession(val context: InsertionContext, force: Boolean) {
     }
   }
 
-  private fun insertPair(leftStr: String, leftToken: IElementType, rightStr: String, rightToken: IElementType, body: String): Boolean {
-    if (!canInsert || nextElement.elementType == leftToken) return false
-    insertText(leftStr + body, moveCaret = true)
+  private fun insertPair(left: Char, right: Char, body: String): Boolean {
+    if (!canInsert || nextElement?.text?.getOrNull(0) == left) return false
+    insertText(left + body, moveCaret = true)
 
-    if (nextElement.elementType == rightToken) return false
-    insertText(rightStr)
+    if (nextElement?.text?.getOrNull(0) == right) return false
+    insertText(right.toString())
 
     return true
   }
@@ -69,7 +68,7 @@ private class InsertSession(val context: InsertionContext, force: Boolean) {
 
     val text = context.document.text
 
-    if (text.length > offset && text.slice(offset..offset) == " ") {
+    if (text.getOrNull(offset) == ' ') {
       context.editor.caretModel.moveToOffset(++offset)
     }
     else {
@@ -86,37 +85,13 @@ private class InsertSession(val context: InsertionContext, force: Boolean) {
     return true
   }
 
-  fun insertString(): Boolean = insertPair(
-    leftStr = "\"",
-    leftToken = DtsTypes.DQUOTE,
-    rightStr = "\"",
-    rightToken = DtsTypes.DQUOTE,
-    body = "",
-  )
+  fun insertString(): Boolean = insertPair(left = '"', right = '"', body = "")
 
-  fun insertCellArray(body: String = ""): Boolean = insertPair(
-    leftStr = "<",
-    leftToken = DtsTypes.LANGL,
-    rightStr = ">",
-    rightToken = DtsTypes.RANGL,
-    body = body,
-  )
+  fun insertCellArray(body: String = ""): Boolean = insertPair(left = '<', right = '>', body = body)
 
-  fun insertByteArray(): Boolean = insertPair(
-    leftStr = "[",
-    leftToken = DtsTypes.LBRACKET,
-    rightStr = "]",
-    rightToken = DtsTypes.RBRACKET,
-    body = "",
-  )
+  fun insertByteArray(): Boolean = insertPair(left = '[', right = ']', body = "")
 
-  fun insertNodeBraces(): Boolean = insertPair(
-    leftStr = "{",
-    leftToken = DtsTypes.LBRACE,
-    rightStr = "}",
-    rightToken = DtsTypes.RBRACE,
-    body = "",
-  )
+  fun insertNodeBraces(): Boolean = insertPair(left = '{', right = '}', body = "")
 
   fun insertSemicolon(moveCaret: Boolean = false): Boolean {
     if (!canInsert || nextElement.elementType == DtsTypes.SEMICOLON) return false

@@ -9,10 +9,4 @@ public class DtsPpIncludeStatementImpl extends com.intellij.dts.lang.psi.mixin.P
     super(node);
   }
 
-  @java.lang.Override
-  @org.jetbrains.annotations.Nullable
-  public com.intellij.dts.lang.psi.DtsPpHeader getPpHeader() {
-    return com.intellij.psi.util.PsiTreeUtil.getChildOfType(this, com.intellij.dts.lang.psi.DtsPpHeader.class);
-  }
-
 }

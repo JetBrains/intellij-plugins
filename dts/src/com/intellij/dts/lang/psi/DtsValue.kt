@@ -19,6 +19,10 @@ sealed interface DtsValue : PsiElement {
     fun dtsParse(): kotlin.String
   }
 
+  interface Char : DtsValue {
+    fun dtsParse(): kotlin.Char?
+  }
+
   interface PHandle : DtsValue {
     val dtsPHandleLabel: PsiElement?
 

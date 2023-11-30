@@ -114,23 +114,10 @@ class DtsBraceTypingTest : DtsCompletionTest() {
     after = "prop = <a<caret>>",
   )
 
-  fun `test completes #include pp angel`() = doTypeTest(
-    character = "<",
-    input = "#include <caret>",
-    after = "#include <<caret>>",
-    useNodeContentVariations = true,
-  )
-
   fun `test no completion with closed pp angel`() = doTypeTest(
     character = "<",
     input = "#include <caret>>",
     after = "#include <<caret>>",
-  )
-
-  fun `test type out of pp angel`() = doTypeTest(
-    character = ">",
-    input = "#include <<caret>>",
-    after = "#include <><caret>",
   )
 
   fun `test type not out of pp angel`() = doTypeTest(

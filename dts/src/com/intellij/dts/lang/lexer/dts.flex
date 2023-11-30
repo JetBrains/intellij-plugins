@@ -68,19 +68,20 @@ PP_DIRECTIVES    = "include" | "ifdef" | "ifndef" | "endif" | "define" | "undef"
 NAME              = [a-zA-Z0-9,._+*#?@-]+
 PATH              = "/" | (("/"{NAME})+"/"?)
 
+INCLUDE_PATH      = \"[^\"\n]*\"?
+
 // c like identifier for macro names
 IDENTIFIER        = [a-zA-Z_][0-9a-zA-Z_]*
 
 BYTE              = [a-fA-F0-9]{2}
 INT               = ([0-9]+|0[xX][0-9a-fA-F]+)(U|L|UL|LL|ULL)?
-STRING            = ([^\"]|\\.)+
-CHAR              = [^']|(\\((x[0-9a-fA-F]{1,2})|([0-7][0-8]{0,2})|[^x0-7]))
+STRING            = \"[^\"]*\"?
+CHAR              = \'([^']|(\\((x[0-9a-fA-F]{1,2})|([0-7][0-8]{0,2})|[^x0-7])))?\'?
 
 COMMENT_EOL       = "//"[^\r\n]*
 COMMENT_C         = "/*"([^*]|"*"[^/])*"*/"
 
-%state WAITING_CELL WAITING_BYTE WAITING_VALUE WAITING_BITS WAITING_EXPR WAITING_STRING WAITING_CHAR WAITING_HANDLE
-%state WAITING_INCLUDE
+%state WAITING_CELL WAITING_BYTE WAITING_VALUE WAITING_BITS WAITING_EXPR WAITING_HANDLE WAITING_INCLUDE
 
 %%
 
@@ -121,26 +122,18 @@ COMMENT_C         = "/*"([^*]|"*"[^/])*"*/"
     "<"                                             { pushState(WAITING_CELL); return DtsTypes.LANGL; }
     ">"                                             { return DtsTypes.RANGL; }
 
+    {STRING}                                        { return DtsTypes.STRING_LITERAL; }
+
     {NAME}":"                                       { return DtsTypes.LABEL; }
     {IDENTIFIER}                                    { return DtsTypes.NAME; }
 }
 
-<YYINITIAL, WAITING_VALUE, WAITING_INCLUDE> {
-    "\""                                            { pushState(WAITING_STRING); return DtsTypes.DQUOTE; }
-}
-
-<WAITING_STRING> {
-    {STRING}                                        { return DtsTypes.STRING_VALUE; }
-    "\""                                            { popState(); return DtsTypes.DQUOTE; }
-}
-
-<WAITING_CHAR> {
-    {CHAR}                                          { return DtsTypes.CHAR_VALUE; }
-    "'"                                             { popState(); return DtsTypes.SQUOTE; }
+<WAITING_INCLUDE> {
+    {INCLUDE_PATH}                                  { return DtsTypes.INCLUDE_PATH; }
 }
 
 <WAITING_BITS> {
-    {INT}                                           { popState(); return DtsTypes.INT_VALUE; }
+    {INT}                                           { popState(); return DtsTypes.INT_LITERAL; }
 }
 
 <WAITING_HANDLE> {
@@ -158,11 +151,11 @@ COMMENT_C         = "/*"([^*]|"*"[^/])*"*/"
 <WAITING_CELL> {
     "("                                             { beginExpr(); return DtsTypes.LPAREN; }
     ">"                                             { popState(); return DtsTypes.RANGL; }
-    "'"                                             { pushState(WAITING_CHAR); return DtsTypes.SQUOTE; }
 
     "&"                                             { pushState(WAITING_HANDLE); return DtsTypes.HANDLE; }
 
-    {INT}                                           { return DtsTypes.INT_VALUE; }
+    {CHAR}                                          { return DtsTypes.CHAR_LITERAL; }
+    {INT}                                           { return DtsTypes.INT_LITERAL; }
     {NAME}":"                                       { return DtsTypes.LABEL; }
     {IDENTIFIER}                                    { return DtsTypes.NAME; }
 }
@@ -170,7 +163,7 @@ COMMENT_C         = "/*"([^*]|"*"[^/])*"*/"
 <WAITING_BYTE> {
     "]"                                             { popState(); return DtsTypes.RBRACKET; }
 
-    {BYTE}                                          { return DtsTypes.BYTE_VALUE; }
+    {BYTE}                                          { return DtsTypes.BYTE_LITERAL; }
     {NAME}":"                                       { return DtsTypes.LABEL; }
     {IDENTIFIER}                                    { return DtsTypes.NAME; }
 }
@@ -205,10 +198,10 @@ COMMENT_C         = "/*"([^*]|"*"[^/])*"*/"
 
     ","                                             { return DtsTypes.COMMA; }
 
-    {INT}                                           { return DtsTypes.INT_VALUE; }
+    {INT}                                           { return DtsTypes.INT_LITERAL; }
     {IDENTIFIER}                                    { return DtsTypes.NAME; }
+    {CHAR}                                          { return DtsTypes.CHAR_LITERAL; }
 
-    "'"                                             { pushState(WAITING_CHAR); return DtsTypes.SQUOTE; }
     "("                                             { openParen(); return DtsTypes.LPAREN; }
     ")"                                             { closeParen(); return DtsTypes.RPAREN; }
 }

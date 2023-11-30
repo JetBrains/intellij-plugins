@@ -38,12 +38,11 @@ class DtsSyntaxHighlighter : SyntaxHighlighterBase() {
     return when (tokenType) {
       DtsTypes.LBRACE, DtsTypes.RBRACE -> pack(DtsTextAttributes.BRACES)
       DtsTypes.LBRACKET, DtsTypes.RBRACKET, DtsTypes.LANGL, DtsTypes.RANGL -> pack(DtsTextAttributes.BRACKETS)
-      DtsTypes.DQUOTE, DtsTypes.SQUOTE -> pack(DtsTextAttributes.STRING)
-      DtsTypes.INT_VALUE, DtsTypes.BYTE_VALUE -> pack(DtsTextAttributes.NUMBER)
+      DtsTypes.INT_LITERAL, DtsTypes.BYTE_LITERAL -> pack(DtsTextAttributes.NUMBER)
       DtsTypes.SEMICOLON -> pack(DtsTextAttributes.SEMICOLON)
       DtsTypes.COMMA -> pack(DtsTextAttributes.COMMA)
       TokenType.BAD_CHARACTER -> pack(DtsTextAttributes.BAD_CHARACTER)
-      DtsTypes.PP_DQUOTE, DtsTypes.PP_RANGL, DtsTypes.PP_LANGL, DtsTypes.PP_PATH -> pack(DtsTextAttributes.STRING)
+      DtsTypes.INCLUDE_PATH, DtsTypes.PP_INCLUDE_PATH -> pack(DtsTextAttributes.STRING)
 
       else -> pack(null)
     }

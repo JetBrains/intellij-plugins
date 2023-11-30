@@ -3,9 +3,9 @@ package com.intellij.dts.lang.psi.impl;
 
 import static com.intellij.dts.lang.psi.DtsTypes.*;
 
-public class DtsCharImpl extends com.intellij.extapi.psi.ASTWrapperPsiElement implements com.intellij.dts.lang.psi.DtsChar {
+public class DtsCharImpl extends com.intellij.dts.lang.psi.mixin.DtsCharMixin implements com.intellij.dts.lang.psi.DtsChar {
 
-  public DtsCharImpl(@org.jetbrains.annotations.NotNull com.intellij.lang.ASTNode node) {
+  public DtsCharImpl(com.intellij.lang.ASTNode node) {
     super(node);
   }
 

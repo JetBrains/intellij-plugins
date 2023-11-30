@@ -39,7 +39,6 @@ public interface DtsTypes {
   com.intellij.psi.tree.IElementType PAREN_EXPR = new com.intellij.dts.lang.DtsElementType("PAREN_EXPR");
   com.intellij.psi.tree.IElementType PP_DEFINE_STATEMENT = new com.intellij.dts.lang.DtsElementType("PP_DEFINE_STATEMENT");
   com.intellij.psi.tree.IElementType PP_ENDIF_STATEMENT = new com.intellij.dts.lang.DtsElementType("PP_ENDIF_STATEMENT");
-  com.intellij.psi.tree.IElementType PP_HEADER = new com.intellij.dts.lang.DtsElementType("PP_HEADER");
   com.intellij.psi.tree.IElementType PP_IFDEF_STATEMENT = new com.intellij.dts.lang.DtsElementType("PP_IFDEF_STATEMENT");
   com.intellij.psi.tree.IElementType PP_IFNDEF_STATEMENT = new com.intellij.dts.lang.DtsElementType("PP_IFNDEF_STATEMENT");
   com.intellij.psi.tree.IElementType PP_INCLUDE_STATEMENT = new com.intellij.dts.lang.DtsElementType("PP_INCLUDE_STATEMENT");
@@ -62,8 +61,8 @@ public interface DtsTypes {
   com.intellij.psi.tree.IElementType AND = new com.intellij.dts.lang.DtsTokenType("AND");
   com.intellij.psi.tree.IElementType ASSIGN = new com.intellij.dts.lang.DtsTokenType("ASSIGN");
   com.intellij.psi.tree.IElementType BITS = new com.intellij.dts.lang.DtsTokenType("BITS");
-  com.intellij.psi.tree.IElementType BYTE_VALUE = new com.intellij.dts.lang.DtsTokenType("BYTE_VALUE");
-  com.intellij.psi.tree.IElementType CHAR_VALUE = new com.intellij.dts.lang.DtsTokenType("CHAR_VALUE");
+  com.intellij.psi.tree.IElementType BYTE_LITERAL = new com.intellij.dts.lang.DtsTokenType("BYTE_LITERAL");
+  com.intellij.psi.tree.IElementType CHAR_LITERAL = new com.intellij.dts.lang.DtsTokenType("CHAR_LITERAL");
   com.intellij.psi.tree.IElementType COLON = new com.intellij.dts.lang.DtsTokenType("COLON");
   com.intellij.psi.tree.IElementType COMMA = new com.intellij.dts.lang.DtsTokenType("COMMA");
   com.intellij.psi.tree.IElementType COMMENT_C = new com.intellij.dts.lang.DtsTokenType("COMMENT_C");
@@ -71,13 +70,13 @@ public interface DtsTypes {
   com.intellij.psi.tree.IElementType DELETE_NODE = new com.intellij.dts.lang.DtsTokenType("DELETE_NODE");
   com.intellij.psi.tree.IElementType DELETE_PROP = new com.intellij.dts.lang.DtsTokenType("DELETE_PROP");
   com.intellij.psi.tree.IElementType DIV = new com.intellij.dts.lang.DtsTokenType("DIV");
-  com.intellij.psi.tree.IElementType DQUOTE = new com.intellij.dts.lang.DtsTokenType("DQUOTE");
   com.intellij.psi.tree.IElementType EQ = new com.intellij.dts.lang.DtsTokenType("EQ");
   com.intellij.psi.tree.IElementType GEQ = new com.intellij.dts.lang.DtsTokenType("GEQ");
   com.intellij.psi.tree.IElementType GRT = new com.intellij.dts.lang.DtsTokenType("GRT");
   com.intellij.psi.tree.IElementType HANDLE = new com.intellij.dts.lang.DtsTokenType("HANDLE");
   com.intellij.psi.tree.IElementType INCLUDE = new com.intellij.dts.lang.DtsTokenType("INCLUDE");
-  com.intellij.psi.tree.IElementType INT_VALUE = new com.intellij.dts.lang.DtsTokenType("INT_VALUE");
+  com.intellij.psi.tree.IElementType INCLUDE_PATH = new com.intellij.dts.lang.DtsTokenType("INCLUDE_PATH");
+  com.intellij.psi.tree.IElementType INT_LITERAL = new com.intellij.dts.lang.DtsTokenType("INT_LITERAL");
   com.intellij.psi.tree.IElementType LABEL = new com.intellij.dts.lang.DtsTokenType("LABEL");
   com.intellij.psi.tree.IElementType LANGL = new com.intellij.dts.lang.DtsTokenType("LANGL");
   com.intellij.psi.tree.IElementType LBRACE = new com.intellij.dts.lang.DtsTokenType("LBRACE");
@@ -101,15 +100,12 @@ public interface DtsTypes {
   com.intellij.psi.tree.IElementType PLUGIN = new com.intellij.dts.lang.DtsTokenType("PLUGIN");
   com.intellij.psi.tree.IElementType PP_DEFINE = new com.intellij.dts.lang.DtsTokenType("PP_DEFINE");
   com.intellij.psi.tree.IElementType PP_DEFINE_VALUE = new com.intellij.dts.lang.DtsTokenType("PP_DEFINE_VALUE");
-  com.intellij.psi.tree.IElementType PP_DQUOTE = new com.intellij.dts.lang.DtsTokenType("PP_DQUOTE");
   com.intellij.psi.tree.IElementType PP_ENDIF = new com.intellij.dts.lang.DtsTokenType("PP_ENDIF");
   com.intellij.psi.tree.IElementType PP_IFDEF = new com.intellij.dts.lang.DtsTokenType("PP_IFDEF");
   com.intellij.psi.tree.IElementType PP_IFNDEF = new com.intellij.dts.lang.DtsTokenType("PP_IFNDEF");
   com.intellij.psi.tree.IElementType PP_INCLUDE = new com.intellij.dts.lang.DtsTokenType("PP_INCLUDE");
-  com.intellij.psi.tree.IElementType PP_LANGL = new com.intellij.dts.lang.DtsTokenType("PP_LANGL");
+  com.intellij.psi.tree.IElementType PP_INCLUDE_PATH = new com.intellij.dts.lang.DtsTokenType("PP_INCLUDE_PATH");
   com.intellij.psi.tree.IElementType PP_MACRO_ARG = new com.intellij.dts.lang.DtsTokenType("PP_MACRO_ARG");
-  com.intellij.psi.tree.IElementType PP_PATH = new com.intellij.dts.lang.DtsTokenType("PP_PATH");
-  com.intellij.psi.tree.IElementType PP_RANGL = new com.intellij.dts.lang.DtsTokenType("PP_RANGL");
   com.intellij.psi.tree.IElementType PP_STATEMENT_END = new com.intellij.dts.lang.DtsTokenType("PP_STATEMENT_END");
   com.intellij.psi.tree.IElementType PP_STATEMENT_MARKER = new com.intellij.dts.lang.DtsTokenType("PP_STATEMENT_MARKER");
   com.intellij.psi.tree.IElementType PP_SYMBOL = new com.intellij.dts.lang.DtsTokenType("PP_SYMBOL");
@@ -121,8 +117,7 @@ public interface DtsTypes {
   com.intellij.psi.tree.IElementType RSH = new com.intellij.dts.lang.DtsTokenType("RSH");
   com.intellij.psi.tree.IElementType SEMICOLON = new com.intellij.dts.lang.DtsTokenType("SEMICOLON");
   com.intellij.psi.tree.IElementType SLASH = new com.intellij.dts.lang.DtsTokenType("SLASH");
-  com.intellij.psi.tree.IElementType SQUOTE = new com.intellij.dts.lang.DtsTokenType("SQUOTE");
-  com.intellij.psi.tree.IElementType STRING_VALUE = new com.intellij.dts.lang.DtsTokenType("STRING_VALUE");
+  com.intellij.psi.tree.IElementType STRING_LITERAL = new com.intellij.dts.lang.DtsTokenType("STRING_LITERAL");
   com.intellij.psi.tree.IElementType SUB = new com.intellij.dts.lang.DtsTokenType("SUB");
   com.intellij.psi.tree.IElementType TERNARY = new com.intellij.dts.lang.DtsTokenType("TERNARY");
   com.intellij.psi.tree.IElementType V1 = new com.intellij.dts.lang.DtsTokenType("V1");
@@ -232,9 +227,6 @@ public interface DtsTypes {
       }
       else if (type == PP_ENDIF_STATEMENT) {
         return new com.intellij.dts.lang.psi.impl.DtsPpEndifStatementImpl(node);
-      }
-      else if (type == PP_HEADER) {
-        return new com.intellij.dts.lang.psi.impl.DtsPpHeaderImpl(node);
       }
       else if (type == PP_IFDEF_STATEMENT) {
         return new com.intellij.dts.lang.psi.impl.DtsPpIfdefStatementImpl(node);

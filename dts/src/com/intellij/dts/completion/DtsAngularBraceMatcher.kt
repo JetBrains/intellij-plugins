@@ -7,10 +7,7 @@ import com.intellij.dts.pp.completion.PpAngularBraceTypedHandler
 import com.intellij.lang.Language
 import com.intellij.psi.tree.IElementType
 
-private val bracePairs = listOf(
-  DtsTypes.LANGL to DtsTypes.RANGL,
-  DtsTypes.PP_LANGL to DtsTypes.PP_RANGL,
-)
+private val bracePairs = listOf(DtsTypes.LANGL to DtsTypes.RANGL)
 
 class DtsAngularBraceTypedHandler : PpAngularBraceTypedHandler() {
   override fun getLanguage(): Language = DtsLanguage

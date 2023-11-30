@@ -5,13 +5,21 @@ import kotlin.math.max
 import kotlin.math.min
 
 /**
- * Used to trim the ends of text range, like for string values to remove the
- * trailing "...".
+ * Returns a text range having leading and trailing characters from the chars
+ * array removed.
  */
-fun TextRange.trimEnds(): TextRange {
-  if (length < 2) return this
+fun TextRange.trim(value: String, vararg chars: Char): TextRange {
+  var result = this
 
-  return grown(-2).shiftRight(1)
+  val startTrimmed = value.trimStart(*chars)
+  val shiftRight = value.length - startTrimmed.length
+  result = TextRange(result.startOffset + shiftRight, result.endOffset)
+
+  val endTrimmed = startTrimmed.trimEnd(*chars)
+  val shiftLeft = startTrimmed.length - endTrimmed.length
+  result = TextRange(result.startOffset, result.endOffset - shiftLeft)
+
+  return result
 }
 
 /**

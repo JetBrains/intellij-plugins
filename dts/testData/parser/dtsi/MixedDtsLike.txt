@@ -12,7 +12,5 @@ DTSI file
       PsiWhiteSpace(' ')
       DtsPropertyContentImpl(PROPERTY_CONTENT)
         DtsStringImpl(STRING)
-          PsiElement(")('"')
-          PsiElement(string)('value')
-          PsiElement(")('"')
+          PsiElement(string)('"value"')
     PsiElement(;)(';')

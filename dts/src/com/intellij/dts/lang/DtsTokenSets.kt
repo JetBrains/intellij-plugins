@@ -10,8 +10,8 @@ object DtsTokenSets {
   )
 
   val strings = TokenSet.create(
-    DtsTypes.STRING_VALUE,
-    DtsTypes.CHAR_VALUE,
+    DtsTypes.STRING_LITERAL,
+    DtsTypes.CHAR_LITERAL,
   )
 
   val compilerDirectives = TokenSet.create(

@@ -30,12 +30,15 @@ EOL_ESC           = "\\"{LINE_WS}*{EOL}
 LINE_WS           = [\ \t]
 SYMBOL            = [a-zA-Z_][a-zA-Z_0-9]+
 
-%state WAITING_SYMBOL WAITING_HEADER WAITING_DEFINE_SYMBOL WAITING_DEFINE_VALUE
+PATH_CHAR         = [^>\"\n] | {EOL_ESC}
+INCLUDE_PATH      = ("<"{PATH_CHAR}*">"?) | (\"{PATH_CHAR}*\"?)
+
+%state WAITING_SYMBOL WAITING_DEFINE_SYMBOL WAITING_DEFINE_VALUE WAITING_INCLUDE
 
 %%
 
 <YYINITIAL> {
-    "#"{LINE_WS}*"include"  { yybegin(WAITING_HEADER); return tokenTypes.getInclude(); }
+    "#"{LINE_WS}*"include"  { yybegin(WAITING_INCLUDE); return tokenTypes.getInclude(); }
     "#"{LINE_WS}*"ifdef"    { yybegin(WAITING_SYMBOL); return tokenTypes.getIfdef(); }
     "#"{LINE_WS}*"ifndef"   { yybegin(WAITING_SYMBOL); return tokenTypes.getIfndef(); }
     "#"{LINE_WS}*"endif"    { return tokenTypes.getEndif(); }
@@ -51,11 +54,8 @@ SYMBOL            = [a-zA-Z_][a-zA-Z_0-9]+
     {SYMBOL}                { yybegin(WAITING_DEFINE_VALUE); return tokenTypes.getSymbol(); }
 }
 
-<WAITING_HEADER> {
-    "<"                     { return tokenTypes.getLAngl(); }
-    ">"                     { return tokenTypes.getRAngl(); }
-    "\""                    { return tokenTypes.getDQuote(); }
-    [^\ \t<>\"]+            { return tokenTypes.getPath(); }
+<WAITING_INCLUDE> {
+    {INCLUDE_PATH}          { return tokenTypes.getIncludePath(); }
 }
 
 <WAITING_DEFINE_VALUE> {

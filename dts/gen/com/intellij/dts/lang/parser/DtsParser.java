@@ -40,13 +40,13 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   };
 
   /* ********************************************************** */
-  // BYTE_VALUE
+  // BYTE_LITERAL
   public static boolean byte_$(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "byte_$")) return false;
-    if (!nextTokenIs(builder_, BYTE_VALUE)) return false;
+    if (!nextTokenIs(builder_, BYTE_LITERAL)) return false;
     boolean result_;
     com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, BYTE_VALUE);
+    result_ = consumeToken(builder_, BYTE_LITERAL);
     exit_section_(builder_, marker_, BYTE, result_);
     return result_;
   }
@@ -270,29 +270,15 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   /* ********************************************************** */
-  // SQUOTE CHAR_VALUE* SQUOTE
+  // CHAR_LITERAL
   public static boolean char_$(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "char_$")) return false;
-    if (!nextTokenIs(builder_, SQUOTE)) return false;
-    boolean result_, pinned_;
-    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_, CHAR, null);
-    result_ = consumeToken(builder_, SQUOTE);
-    pinned_ = result_; // pin = 1
-    result_ = result_ && report_error_(builder_, char_1(builder_, level_ + 1));
-    result_ = pinned_ && consumeToken(builder_, SQUOTE) && result_;
-    exit_section_(builder_, level_, marker_, result_, pinned_, null);
-    return result_ || pinned_;
-  }
-
-  // CHAR_VALUE*
-  private static boolean char_1(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "char_1")) return false;
-    while (true) {
-      int pos_ = current_position_(builder_);
-      if (!consumeToken(builder_, CHAR_VALUE)) break;
-      if (!empty_element_parsed_guard_(builder_, "char_1", pos_)) break;
-    }
-    return true;
+    if (!nextTokenIs(builder_, CHAR_LITERAL)) return false;
+    boolean result_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, CHAR_LITERAL);
+    exit_section_(builder_, marker_, CHAR, result_);
+    return result_;
   }
 
   /* ********************************************************** */
@@ -466,15 +452,14 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   /* ********************************************************** */
-  // () INCLUDE string
+  // () INCLUDE INCLUDE_PATH
   public static boolean includeStatement(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "includeStatement")) return false;
     boolean result_, pinned_;
     com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_, INCLUDE_STATEMENT, "<include statement>");
     result_ = includeStatement_0(builder_, level_ + 1);
     pinned_ = result_; // pin = 1
-    result_ = result_ && report_error_(builder_, consumeToken(builder_, INCLUDE));
-    result_ = pinned_ && string(builder_, level_ + 1) && result_;
+    result_ = result_ && report_error_(builder_, consumeTokens(builder_, -1, INCLUDE, INCLUDE_PATH));
     exit_section_(builder_, level_, marker_, result_, pinned_, null);
     return result_ || pinned_;
   }
@@ -485,13 +470,13 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   /* ********************************************************** */
-  // INT_VALUE
+  // INT_LITERAL
   public static boolean int_$(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "int_$")) return false;
-    if (!nextTokenIs(builder_, INT_VALUE)) return false;
+    if (!nextTokenIs(builder_, INT_LITERAL)) return false;
     boolean result_;
     com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, INT_VALUE);
+    result_ = consumeToken(builder_, INT_LITERAL);
     exit_section_(builder_, marker_, INT, result_);
     return result_;
   }
@@ -641,19 +626,6 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   /* ********************************************************** */
-  // ppSystemHeader | ppUserHeader
-  public static boolean ppHeader(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "ppHeader")) return false;
-    if (!nextTokenIs(builder_, "<pp header>", PP_DQUOTE, PP_LANGL)) return false;
-    boolean result_;
-    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_, PP_HEADER, "<pp header>");
-    result_ = ppSystemHeader(builder_, level_ + 1);
-    if (!result_) result_ = ppUserHeader(builder_, level_ + 1);
-    exit_section_(builder_, level_, marker_, result_, false, null);
-    return result_;
-  }
-
-  /* ********************************************************** */
   // PP_IFDEF PP_SYMBOL
   public static boolean ppIfdefStatement(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "ppIfdefStatement")) return false;
@@ -680,15 +652,14 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   /* ********************************************************** */
-  // PP_INCLUDE ppHeader
+  // PP_INCLUDE PP_INCLUDE_PATH
   public static boolean ppIncludeStatement(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "ppIncludeStatement")) return false;
     if (!nextTokenIs(builder_, PP_INCLUDE)) return false;
     boolean result_, pinned_;
     com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_, PP_INCLUDE_STATEMENT, null);
-    result_ = consumeToken(builder_, PP_INCLUDE);
+    result_ = consumeTokens(builder_, 1, PP_INCLUDE, PP_INCLUDE_PATH);
     pinned_ = result_; // pin = 1
-    result_ = result_ && ppHeader(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, result_, pinned_, null);
     return result_ || pinned_;
   }
@@ -755,19 +726,6 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   /* ********************************************************** */
-  // PP_LANGL PP_PATH PP_RANGL
-  static boolean ppSystemHeader(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "ppSystemHeader")) return false;
-    if (!nextTokenIs(builder_, PP_LANGL)) return false;
-    boolean result_, pinned_;
-    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_);
-    result_ = consumeTokens(builder_, 1, PP_LANGL, PP_PATH, PP_RANGL);
-    pinned_ = result_; // pin = 1
-    exit_section_(builder_, level_, marker_, result_, pinned_, null);
-    return result_ || pinned_;
-  }
-
-  /* ********************************************************** */
   // PP_UNDEF PP_SYMBOL
   public static boolean ppUndefStatement(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "ppUndefStatement")) return false;
@@ -775,19 +733,6 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
     boolean result_, pinned_;
     com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_, PP_UNDEF_STATEMENT, null);
     result_ = consumeTokens(builder_, 1, PP_UNDEF, PP_SYMBOL);
-    pinned_ = result_; // pin = 1
-    exit_section_(builder_, level_, marker_, result_, pinned_, null);
-    return result_ || pinned_;
-  }
-
-  /* ********************************************************** */
-  // PP_DQUOTE PP_PATH PP_DQUOTE
-  static boolean ppUserHeader(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "ppUserHeader")) return false;
-    if (!nextTokenIs(builder_, PP_DQUOTE)) return false;
-    boolean result_, pinned_;
-    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_);
-    result_ = consumeTokens(builder_, 1, PP_DQUOTE, PP_PATH, PP_DQUOTE);
     pinned_ = result_; // pin = 1
     exit_section_(builder_, level_, marker_, result_, pinned_, null);
     return result_ || pinned_;
@@ -1015,25 +960,15 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   /* ********************************************************** */
-  // DQUOTE STRING_VALUE? DQUOTE
+  // STRING_LITERAL
   public static boolean string(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "string")) return false;
-    if (!nextTokenIs(builder_, DQUOTE)) return false;
-    boolean result_, pinned_;
-    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_, STRING, null);
-    result_ = consumeToken(builder_, DQUOTE);
-    pinned_ = result_; // pin = 1
-    result_ = result_ && report_error_(builder_, string_1(builder_, level_ + 1));
-    result_ = pinned_ && consumeToken(builder_, DQUOTE) && result_;
-    exit_section_(builder_, level_, marker_, result_, pinned_, null);
-    return result_ || pinned_;
-  }
-
-  // STRING_VALUE?
-  private static boolean string_1(com.intellij.lang.PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "string_1")) return false;
-    consumeToken(builder_, STRING_VALUE);
-    return true;
+    if (!nextTokenIs(builder_, STRING_LITERAL)) return false;
+    boolean result_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, STRING_LITERAL);
+    exit_section_(builder_, marker_, STRING, result_);
+    return result_;
   }
 
   /* ********************************************************** */
@@ -1329,7 +1264,7 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   // int
   public static boolean intExpr(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "intExpr")) return false;
-    if (!nextTokenIsSmart(builder_, INT_VALUE)) return false;
+    if (!nextTokenIsSmart(builder_, INT_LITERAL)) return false;
     boolean result_;
     com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
     result_ = int_$(builder_, level_ + 1);
@@ -1340,7 +1275,7 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   // char
   public static boolean charExpr(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "charExpr")) return false;
-    if (!nextTokenIsSmart(builder_, SQUOTE)) return false;
+    if (!nextTokenIsSmart(builder_, CHAR_LITERAL)) return false;
     boolean result_;
     com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
     result_ = char_$(builder_, level_ + 1);

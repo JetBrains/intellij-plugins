@@ -1,18 +1,17 @@
 package com.intellij.dts.lang.psi.mixin
 
+import com.intellij.dts.lang.psi.DtsChar
 import com.intellij.dts.lang.psi.DtsExprValue
 import com.intellij.dts.lang.psi.DtsInt
 import com.intellij.dts.lang.psi.DtsString
-import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.dts.lang.resolve.DtsBindingReference
 import com.intellij.dts.util.DtsTreeUtil
 import com.intellij.dts.util.DtsUtil
-import com.intellij.dts.util.trimEnds
+import com.intellij.dts.util.trim
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
 import com.intellij.model.psi.PsiSymbolReference
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiElement
 
 abstract class DtsIntMixin(node: ASTNode) : ASTWrapperPsiElement(node), DtsInt {
   override fun dtsParse(): Int? {
@@ -35,13 +34,10 @@ abstract class DtsExpressionMixin(node: ASTNode) : ASTWrapperPsiElement(node), D
 }
 
 abstract class DtsStringMixin(node: ASTNode) : ASTWrapperPsiElement(node), DtsString {
-  private val value: PsiElement?
-    get() = findChildByType(DtsTypes.STRING_VALUE)
-
   override val dtsValueRange: TextRange
-    get() = value?.textRange ?: textRange.trimEnds()
+    get() = textRange.trim(text, '"')
 
-  override fun dtsParse(): String = value?.text ?: ""
+  override fun dtsParse(): String = text.trim('"')
 
   override fun getOwnReferences(): Collection<PsiSymbolReference> {
     return DtsUtil.singleResult {
@@ -51,4 +47,11 @@ abstract class DtsStringMixin(node: ASTNode) : ASTWrapperPsiElement(node), DtsSt
       DtsBindingReference(this)
     }
   }
+}
+
+abstract class DtsCharMixin(node: ASTNode) : ASTWrapperPsiElement(node), DtsChar {
+  override val dtsValueRange: TextRange
+    get() = textRange.trim(text, '\'')
+
+  override fun dtsParse(): Char? = text.trim('\'').elementAtOrNull(0)
 }

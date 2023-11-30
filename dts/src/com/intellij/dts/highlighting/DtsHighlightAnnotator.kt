@@ -83,7 +83,7 @@ class DtsHighlightAnnotator : Annotator {
     when (element.elementType) {
       DtsTypes.LABEL -> annotateLabel(element, holder)
       DtsTypes.NAME -> annotateName(element, holder)
-      DtsTypes.STRING_VALUE, DtsTypes.CHAR_VALUE -> annotateStringEscape(element, holder)
+      DtsTypes.STRING_LITERAL, DtsTypes.CHAR_LITERAL -> annotateStringEscape(element, holder)
     }
   }
 

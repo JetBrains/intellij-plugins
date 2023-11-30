@@ -56,7 +56,7 @@
   implements("int")="com.intellij.dts.lang.psi.DtsValue.Int"
   mixin("int")="com.intellij.dts.lang.psi.mixin.DtsIntMixin"
 
-  implements("char|byte")="com.intellij.dts.lang.psi.DtsValue.Byte"
+  implements("byte")="com.intellij.dts.lang.psi.DtsValue.Byte"
 
   implements("exprValue")="com.intellij.dts.lang.psi.DtsValue.Expression"
   implements("exprValue")="com.intellij.dts.lang.psi.DtsValue.Int"
@@ -66,6 +66,9 @@
 
   implements("string")="com.intellij.dts.lang.psi.DtsValue.String"
   mixin("string")="com.intellij.dts.lang.psi.mixin.DtsStringMixin"
+
+  implements("char")="com.intellij.dts.lang.psi.DtsValue.Char"
+  mixin("char")="com.intellij.dts.lang.psi.mixin.DtsCharMixin"
 
   implements("pHandle")="com.intellij.dts.lang.psi.DtsValue.PHandle"
   mixin("pHandle")="com.intellij.dts.lang.psi.mixin.DtsPHandleMixin"
@@ -83,9 +86,6 @@
 
   implements("ppIncludeStatement")="com.intellij.dts.lang.psi.PsiFileInclude"
   mixin("ppIncludeStatement")="com.intellij.dts.lang.psi.mixin.PpIncludeStatementMixin"
-
-  implements("ppHeader")="com.intellij.dts.lang.psi.mixin.IPpHeader"
-  mixin("ppHeader")="com.intellij.dts.lang.psi.mixin.PpHeaderMixin"
 
   tokens=[
     COMMENT_EOL="COMMENT_EOL"
@@ -158,10 +158,10 @@ private compilerDirectiveRecover ::= !(SEMICOLON | RBRACE | afterLineBreak)
 
 private cell ::= int | char | exprValue | ppMacro
 
-byte ::= BYTE_VALUE
-int ::= INT_VALUE
-string ::= DQUOTE STRING_VALUE? DQUOTE {pin=1}
-char ::= SQUOTE CHAR_VALUE* SQUOTE {pin=1}
+byte ::= BYTE_LITERAL
+int ::= INT_LITERAL
+string ::= STRING_LITERAL
+char ::= CHAR_LITERAL
 
 exprValue ::= LPAREN expr RPAREN {pin=1}
 
@@ -222,7 +222,7 @@ intExpr ::= int
 charExpr ::= char
 parenExpr ::= LPAREN expr RPAREN
 
-includeStatement ::= () INCLUDE string { pin=1 }
+includeStatement ::= () INCLUDE INCLUDE_PATH { pin=1 }
 
 external afterLineBreak ::= parseAfterLineBreak
 
@@ -244,10 +244,7 @@ private ppStatements ::=
 
 private pp_statementRecover ::= !(PP_STATEMENT_END)
 
-ppIncludeStatement ::= PP_INCLUDE ppHeader { pin=1 }
-ppHeader ::= ppSystemHeader | ppUserHeader
-private ppSystemHeader ::= PP_LANGL PP_PATH PP_RANGL { pin=1 }
-private ppUserHeader ::= PP_DQUOTE PP_PATH PP_DQUOTE { pin=1 }
+ppIncludeStatement ::= PP_INCLUDE PP_INCLUDE_PATH { pin=1 }
 
 ppIfdefStatement ::= PP_IFDEF PP_SYMBOL { pin=1 }
 ppIfndefStatement ::= PP_IFNDEF PP_SYMBOL { pin=1 }

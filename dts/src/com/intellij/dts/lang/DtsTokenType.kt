@@ -8,10 +8,10 @@ class DtsTokenType(debugName: String) : IElementType(debugName, DtsLanguage) {
     return when (this) {
       DtsTypes.LABEL -> "label"
       DtsTypes.NAME -> "name"
-      DtsTypes.INT_VALUE -> "integer"
-      DtsTypes.BYTE_VALUE -> "byte"
-      DtsTypes.STRING_VALUE -> "string"
-      DtsTypes.CHAR_VALUE -> "char"
+      DtsTypes.INT_LITERAL -> "integer"
+      DtsTypes.BYTE_LITERAL -> "byte"
+      DtsTypes.STRING_LITERAL -> "string"
+      DtsTypes.CHAR_LITERAL -> "char"
       DtsTypes.PATH -> "path"
 
       DtsTypes.SEMICOLON -> ";"
@@ -19,8 +19,6 @@ class DtsTokenType(debugName: String) : IElementType(debugName, DtsLanguage) {
       DtsTypes.COMMA -> ","
       DtsTypes.SLASH -> "/"
       DtsTypes.HANDLE -> "&"
-      DtsTypes.DQUOTE -> "\""
-      DtsTypes.SQUOTE -> "'"
 
       // compiler directives
       DtsTypes.V1 -> "/dts-v1/"
@@ -31,6 +29,8 @@ class DtsTokenType(debugName: String) : IElementType(debugName, DtsLanguage) {
       DtsTypes.DELETE_PROP -> "/delete-property/"
       DtsTypes.OMIT_NODE -> "/omit-if-no-ref/"
       DtsTypes.BITS -> "/bits/"
+
+      DtsTypes.INCLUDE_PATH -> "include path"
 
       // braces
       DtsTypes.LBRACE -> "{"
@@ -78,12 +78,8 @@ class DtsTokenType(debugName: String) : IElementType(debugName, DtsLanguage) {
       DtsTypes.PP_UNDEF -> "#undef"
 
       DtsTypes.PP_SYMBOL -> "identifier"
-      DtsTypes.PP_PATH -> "path"
       DtsTypes.PP_DEFINE_VALUE -> "value"
-
-      DtsTypes.PP_LANGL -> "<"
-      DtsTypes.PP_RANGL -> ">"
-      DtsTypes.PP_DQUOTE -> "\""
+      DtsTypes.PP_INCLUDE_PATH -> "include path"
 
       else -> super.toString()
     }

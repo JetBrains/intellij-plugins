@@ -1,7 +1,7 @@
 DTS file
   DtsIncludeStatementImpl(INCLUDE_STATEMENT)
     PsiElement(/include/)('/include/')
-    PsiErrorElement:'"' expected, got '/'
+    PsiErrorElement:include path expected, got '/'
       <empty list>
   PsiWhiteSpace('\n\n')
   DtsEntryImpl(ENTRY)

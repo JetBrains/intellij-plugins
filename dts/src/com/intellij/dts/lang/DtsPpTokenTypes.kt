@@ -21,17 +21,12 @@ object DtsPpTokenTypes : PpTokenTypes {
 
   override val includeStatement: IElementType = DtsTypes.PP_INCLUDE_STATEMENT
   override val include: IElementType = DtsTypes.PP_INCLUDE
+  override val includePath: IElementType = DtsTypes.PP_INCLUDE_PATH
 
   override val undefStatement: IElementType = DtsTypes.PP_UNDEF_STATEMENT
   override val undef: IElementType = DtsTypes.PP_UNDEF
 
   override val symbol: IElementType = DtsTypes.PP_SYMBOL
-  override val header: IElementType = DtsTypes.PP_HEADER
-  override val path: IElementType = DtsTypes.PP_PATH
-
-  override val dQuote: IElementType = DtsTypes.PP_DQUOTE
-  override val lAngl: IElementType = DtsTypes.PP_LANGL
-  override val rAngl: IElementType = DtsTypes.PP_RANGL
 
   override val statementEnd: IElementType = DtsTypes.PP_STATEMENT_END
   override val statementMarker: IElementType = DtsTypes.PP_STATEMENT_MARKER

@@ -56,27 +56,20 @@ abstract class DtsCompletionTest : DtsTestBase() {
     character: String,
     input: String,
     after: String,
+    surrounding: String = "<embed>",
     useRootContentVariations: Boolean = false,
     useNodeContentVariations: Boolean = false,
   ) {
-    require(input.contains("<caret>") && after.contains("<caret>")) {
-      "Test input and after must contain \"<caret>\" to indicate caret position"
-    }
-
     applyVariations(useRootContentVariations, useNodeContentVariations) { apply ->
-      configureByText(apply(input))
+      val embeddedInput = surrounding.replace("<embed>", apply(input))
+      val embeddedAfter = surrounding.replace("<embed>", apply(after))
+
+      configureByText(embeddedInput)
 
       myFixture.type(character)
-      myFixture.checkResult(apply(after))
+      myFixture.checkResult(embeddedAfter)
     }
   }
-
-  fun doEnterTest(
-    input: String,
-    after: String,
-    useRootContentVariations: Boolean = false,
-    useNodeContentVariations: Boolean = false,
-  ) = doTypeTest("\n", input, after, useRootContentVariations, useNodeContentVariations)
 
   private fun doCompletion(lookupString: String) {
     val items = myFixture.completeBasic() ?: return
@@ -93,13 +86,6 @@ abstract class DtsCompletionTest : DtsTestBase() {
     useRootContentVariations: Boolean = false,
     useNodeContentVariations: Boolean = false,
   ) {
-    require(input.contains("<caret>") && after.contains("<caret>")) {
-      "Test input and after must contain \"<caret>\" to indicate caret position"
-    }
-    require(surrounding.contains("<embed>")) {
-      "Surrounding must contain \"<embed>\" to indicate the input position"
-    }
-
     applyVariations(useRootContentVariations, useNodeContentVariations) { apply ->
       val embeddedInput = surrounding.replace("<embed>", apply(input))
       val embeddedAfter = surrounding.replace("<embed>", apply(after))
@@ -116,13 +102,6 @@ abstract class DtsCompletionTest : DtsTestBase() {
     useRootContentVariations: Boolean = false,
     useNodeContentVariations: Boolean = false,
   ) {
-    require(input.contains("<caret>")) {
-      "Test input and after must contain \"<caret>\" to indicate caret position"
-    }
-    require(surrounding.contains("<embed>")) {
-      "Surrounding must contain \"<embed>\" to indicate the input position"
-    }
-
     applyVariations(useRootContentVariations, useNodeContentVariations) { apply ->
       val embeddedInput = surrounding.replace("<embed>", apply(input))
       configureByText(embeddedInput)

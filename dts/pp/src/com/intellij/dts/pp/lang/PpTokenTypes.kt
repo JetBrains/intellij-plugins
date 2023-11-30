@@ -19,17 +19,12 @@ interface PpTokenTypes {
 
   val includeStatement: IElementType
   val include: IElementType
+  val includePath: IElementType
 
   val undefStatement: IElementType
   val undef: IElementType
 
   val symbol: IElementType
-  val header: IElementType
-  val path: IElementType
-
-  val dQuote: IElementType
-  val lAngl: IElementType
-  val rAngl: IElementType
 
   val statementEnd: IElementType
   val statementMarker: IElementType
