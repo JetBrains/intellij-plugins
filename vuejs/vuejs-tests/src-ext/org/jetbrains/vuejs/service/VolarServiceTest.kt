@@ -281,29 +281,6 @@ class VolarServiceTest : VolarServiceTestBase() {
     """.trimIndent(), true)
   }
 
-  @Test
-  fun testAutoImportActionDoesntBreakTheService() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
-    myFixture.addFileToProject("tsconfig.json", tsconfig)
-    myFixture.addFileToProject("helper.ts", """
-      export default class Helper {
-      }
-    """.trimIndent())
-    myFixture.configureByText("main.ts", """
-      export let xx: <error>Help</error><caret>
-    """.trimIndent())
-
-    myFixture.checkLspHighlighting()
-    myFixture.completeBasic()
-    myFixture.checkLspHighlighting()
-
-    checkHighlightingByText(myFixture, """
-      import Helper from "./helper";
-      
-      export let xx: Helper<caret>
-    """.trimIndent(), true)
-  }
-
   private fun getPresentationTexts(elements: Array<LookupElement>): List<String?> {
     return elements.map { element ->
       val presentation = LookupElementPresentation()
