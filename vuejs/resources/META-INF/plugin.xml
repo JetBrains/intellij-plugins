@@ -56,7 +56,7 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
-    <registryKey defaultValue="1.8.22" description="Vue service version for downloading" restartRequired="true" key="vue.language.server.default.version"/>
+    <registryKey defaultValue="1.8.24" description="Vue service version for downloading" restartRequired="true" key="vue.language.server.default.version"/>
     <dependencySupport kind="javascript" coordinate="npm:vue" displayName="Vue.js"/>
     <dependencySupport kind="javascript" coordinate="npm:nuxt" displayName="Nuxt"/>
     <css.embeddedCssProvider implementation="org.jetbrains.vuejs.css.VueEmbeddedCssProvider"/>
