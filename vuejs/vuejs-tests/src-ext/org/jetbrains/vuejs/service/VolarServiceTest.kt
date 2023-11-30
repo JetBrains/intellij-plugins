@@ -266,8 +266,8 @@ class VolarServiceTest : VolarServiceTestBase() {
     myFixture.checkLspHighlighting()
     myFixture.type("spre")
     myFixture.completeBasic()
-    waitForDiagnosticsFromLspServer(project, file.virtualFile)
 
+    waitForDiagnosticsFromLspServer(project, file.virtualFile)
     checkHighlightingByText(myFixture, """
       <script lang="ts">
       import {defineComponent} from "vue"
