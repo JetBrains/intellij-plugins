@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.StringReader;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
@@ -48,8 +49,8 @@ public class OutputMessageParser {
   private String myBranch = null;
   private final ProgressIndicator myProgressIndicator;
 
-  public static final DateTimeFormatter NEW_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss", Locale.US);
-  public static final DateTimeFormatter OLD_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd", Locale.US);
+  public static final DateTimeFormatter NEW_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss", Locale.US).withZone(ZoneId.systemDefault());
+  public static final DateTimeFormatter OLD_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd", Locale.US).withZone(ZoneId.systemDefault());
 
   @NonNls private static final String CLIENT_PREFIX = "Client";
   private static final String FILE_PREFIX = "...";

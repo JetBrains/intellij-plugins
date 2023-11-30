@@ -147,7 +147,7 @@ public final class PerforceRunner implements PerforceRunnerI {
   @NonNls public static final String SERVER_LICENSE = "Server license:";
   @NonNls public static final String SERVER_VERSION = "Server version:";
 
-  @NonNls private static final DateTimeFormatter DATE_SPEC_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd:HH:mm:ss", Locale.US);
+  @NonNls private static final DateTimeFormatter DATE_SPEC_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd:HH:mm:ss", Locale.US).withZone(ZoneId.systemDefault());
   @NonNls private static final String NOW = "now";
   @NonNls private static final String DEFAULT_CHANGELIST_NUMBER = "default";
 
