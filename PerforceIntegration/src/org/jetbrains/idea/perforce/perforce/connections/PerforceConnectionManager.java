@@ -1,6 +1,7 @@
 package org.jetbrains.idea.perforce.perforce.connections;
 
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
@@ -34,6 +35,7 @@ public class PerforceConnectionManager implements PerforceConnectionManagerI {
 
   private final Object myLock = new Object();
   private final PerforceConnectionProblemsNotifier myNotifier;
+  private boolean isInitializing;
 
   public PerforceConnectionManager(Project project) {
     myNotifier = project.getService(PerforceConnectionProblemsNotifier.class);
@@ -54,6 +56,11 @@ public class PerforceConnectionManager implements PerforceConnectionManagerI {
         return myConnectionMapper;
       }
     }
+    return initialize();
+  }
+
+  @NotNull
+  private PerforceConnectionMapper initialize() {
     PerforceConnectionMapper mapper;
     if (isSingletonConnectionUsed()) {
       mapper = SingletonConnection.getInstance(myProject);
@@ -89,6 +96,28 @@ public class PerforceConnectionManager implements PerforceConnectionManagerI {
   @Override
   public Map<VirtualFile, P4Connection> getAllConnections() {
     return getConnectionMapper().getAllConnections();
+  }
+
+  public void scheduleInitialization() {
+    synchronized (myLock) {
+      if (myConnectionMapper != null || isInitializing) {
+        return;
+      }
+
+      isInitializing = true;
+    }
+
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      if (myProject.isDisposed()) {
+        isInitializing = false;
+        return;
+      }
+
+      initialize();
+      synchronized (this) {
+        isInitializing = false;
+      }
+    });
   }
 
   private Project getProject() {

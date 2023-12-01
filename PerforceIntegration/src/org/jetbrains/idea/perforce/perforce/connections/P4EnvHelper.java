@@ -61,18 +61,24 @@ public class P4EnvHelper {
     final VirtualFile[] detailedVcsMappings = vcsManager.getRootsUnderVcs(vcs);
     P4ParamsCalculator calculator = new P4ParamsCalculator(project);
 
+    Map<String, String> oldMap;
     synchronized (this) {
-      Map<String, String> oldMap = new HashMap<>(myDefaultParamsMap);
+      oldMap = new HashMap<>(myDefaultParamsMap);
+    }
+
+    var newDefaultParams = new P4ConnectionParameters();
+    P4ConnectionParameters params = calculator.runSetOnFile(physicalParameters, newDefaultParams, SystemProperties.getUserHome());
+    takeProblemsIntoDefaultParams(params, newDefaultParams);
+    for (VirtualFile vcsMapping : detailedVcsMappings) {
+      P4ConnectionParameters mappingParams = calculator.runSetOnFile(physicalParameters, newDefaultParams, vcsMapping.getPath());
+      takeProblemsIntoDefaultParams(mappingParams, newDefaultParams);
+      if (newDefaultParams.allFieldsDefined())
+        break;
+    }
+
+    synchronized (this) {
       myDefaultParamsMap.clear();
-      myDefaultParams = new P4ConnectionParameters();
-      P4ConnectionParameters params = calculator.runSetOnFile(physicalParameters, myDefaultParams, SystemProperties.getUserHome());
-      takeProblemsIntoDefaultParams(params, myDefaultParams);
-      for (VirtualFile vcsMapping : detailedVcsMappings) {
-        P4ConnectionParameters mappingParams = calculator.runSetOnFile(physicalParameters, myDefaultParams, vcsMapping.getPath());
-        takeProblemsIntoDefaultParams(mappingParams, myDefaultParams);
-        if (myDefaultParams.allFieldsDefined())
-          break;
-      }
+      myDefaultParams = newDefaultParams;
 
       for (String envVar : ENV_CONFIGS) {
         String value = EnvironmentUtil.getValue(envVar);

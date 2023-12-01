@@ -37,6 +37,13 @@ class PerforceWorkspaceComboBoxAction : ComboBoxAction(), DumbAware {
       return
     }
 
+    val perforceConnectionManager = PerforceConnectionManager.getInstance(project) as PerforceConnectionManager
+    if (!perforceConnectionManager.isInitialized) {
+      perforceConnectionManager.scheduleInitialization()
+      e.presentation.isEnabledAndVisible = false
+      return
+    }
+
     val perforceSettings = PerforceSettings.getSettings(e.project)
     val allConnections = perforceSettings.allConnections
 
