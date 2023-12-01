@@ -1,21 +1,13 @@
 package org.jetbrains.astro.codeInsight
 
-import com.intellij.openapi.application.WriteAction
-import com.intellij.openapi.command.CommandProcessor
-import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.astro.AstroCodeInsightTestCase
 
 class AstroFormattingTest : AstroCodeInsightTestCase("codeInsight/formatting") {
 
-  fun testBasic() = doTest()
+  fun testBasic() = doFormattingTest()
 
-  fun testWhitespacesBeforeFrontmatter() = doTest()
+  fun testWhitespacesBeforeFrontmatter() = doFormattingTest()
 
-  fun testScriptTag() = doTest()
+  fun testScriptTag() = doFormattingTest()
 
-  //region Test configuration and helper methods
-  private fun doTest() {
-    doFormattingTest()
-  }
-  //endregion
 }
