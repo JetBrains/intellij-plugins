@@ -88,6 +88,8 @@ class Angular2FormattingTest : Angular2TestCase("formatting") {
 
   fun testBasicBlocks() = doFormattingTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html")
 
+  fun testEditorConfigWithInjection() = doFormattingTest(dir = true, editorConfigEnabled = true)
+
   private fun testInterpolation(newLineAfterStart: Boolean, newLineBeforeEnd: Boolean, wrap: Int) =
     doFormattingTest(configureFileName = "interpolation.html") {
       val vueSettings = getCustomSettings(Angular2HtmlCodeStyleSettings::class.java)
