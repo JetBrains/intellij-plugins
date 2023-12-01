@@ -236,7 +236,7 @@
               language="Angular2Html"/>
     <fileType name="Angular17Html" implementationClass="org.angular2.lang.html.Angular17HtmlFileType" fieldName="INSTANCE"
               language="Angular17Html"/>
-    <langCodeStyleSettingsProvider implementation="org.angular2.options.Angular2CodeStyleSettingsProvider"/>
+    <langCodeStyleSettingsProvider implementation="org.angular2.options.Angular2HtmlCodeStyleSettingsProvider"/>
     <fileIndentOptionsProvider implementation="org.angular2.lang.html.psi.formatter.Angular2HtmlFileIndentOptionsProvider"
                                id="angular2html" order="before html"/>
     <!--suppress PluginXmlValidity -->
