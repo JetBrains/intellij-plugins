@@ -57,6 +57,10 @@ class Angular2HtmlCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider(
   override fun customizeDefaults(commonSettings: CommonCodeStyleSettings, indentOptions: CommonCodeStyleSettings.IndentOptions) {
   }
 
+  override fun useBaseLanguageCommonSettings(): Boolean {
+    return true
+  }
+
   override fun createCustomSettings(settings: CodeStyleSettings): CustomCodeStyleSettings {
     return Angular2HtmlCodeStyleSettings(settings)
   }
