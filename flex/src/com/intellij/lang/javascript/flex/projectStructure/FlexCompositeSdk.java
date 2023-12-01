@@ -170,7 +170,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
 
   @Override
   @NotNull
-  public Object clone() {
+  public Sdk clone() {
     throw new UnsupportedOperationException();
   }
 
