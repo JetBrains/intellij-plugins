@@ -2,8 +2,13 @@
 package org.angular2.codeInsight
 
 import com.intellij.lang.html.HTMLLanguage
+import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 import com.intellij.psi.formatter.xml.HtmlCodeStyleSettings
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
+import com.intellij.webSymbols.findOffsetBySignature
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.lang.html.psi.formatter.Angular2HtmlCodeStyleSettings
@@ -89,6 +94,16 @@ class Angular2FormattingTest : Angular2TestCase("formatting") {
   fun testBasicBlocks() = doFormattingTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html")
 
   fun testEditorConfigWithInjection() = doFormattingTest(dir = true, editorConfigEnabled = true)
+
+  fun testEditorConfigWithinInjection() = doConfiguredTest(dir = true, checkResult = true, editorConfigEnabled = true) {
+    WriteCommandAction.runWriteCommandAction(project) {
+      PsiDocumentManager.getInstance(project).commitAllDocuments()
+      val injectedFile = InjectedLanguageUtil.findElementAtNoCommit(file, file.findOffsetBySignature("*<caret>cdkVirtualFor"))
+        .containingFile
+      val codeStyleManager = CodeStyleManager.getInstance(project)
+      codeStyleManager.reformat(injectedFile)
+    }
+  }
 
   private fun testInterpolation(newLineAfterStart: Boolean, newLineBeforeEnd: Boolean, wrap: Int) =
     doFormattingTest(configureFileName = "interpolation.html") {
