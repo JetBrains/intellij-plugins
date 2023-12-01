@@ -13,7 +13,7 @@ import org.angular2.lang.html.Angular17HtmlLanguage
 import org.angular2.lang.html.Angular2HtmlLanguage
 import org.angular2.lang.html.psi.formatter.Angular2HtmlCodeStyleSettings
 
-class Angular2CodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
+class Angular2HtmlCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
 
   override fun getLanguage(): Language = Angular2HtmlLanguage.INSTANCE
 
