@@ -6,10 +6,8 @@ import com.intellij.internal.statistic.eventLog.events.EventFields.Int
 import com.intellij.internal.statistic.service.fus.collectors.ApplicationUsagesCollector
 import com.intellij.openapi.components.service
 
-class SerialMonitorNumProfilesCollector : ApplicationUsagesCollector() {
-  override fun getGroup(): EventLogGroup {
-    return GROUP
-  }
+internal class SerialMonitorNumProfilesCollector : ApplicationUsagesCollector() {
+  override fun getGroup(): EventLogGroup = GROUP
 
   override fun getMetrics(): Set<MetricEvent> {
     val profileService: SerialProfileService = service<SerialProfileService>()
@@ -19,10 +17,8 @@ class SerialMonitorNumProfilesCollector : ApplicationUsagesCollector() {
     ))
   }
 
-  companion object {
-    private val GROUP = EventLogGroup("serial.monitor.profiles", 1)
-    private val NUMBER_SAVED_PROFILES = GROUP.registerEvent("serial.profiles",
-                                                            Int("saved"),
-                                                            Int("defaultBaudrate"))
-  }
+  private val GROUP = EventLogGroup("serial.monitor.profiles", 1)
+  private val NUMBER_SAVED_PROFILES = GROUP.registerEvent("serial.profiles",
+                                                          Int("saved"),
+                                                          Int("defaultBaudrate"))
 }
