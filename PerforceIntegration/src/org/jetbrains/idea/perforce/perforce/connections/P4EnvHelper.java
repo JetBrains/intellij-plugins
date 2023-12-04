@@ -1,5 +1,6 @@
 package org.jetbrains.idea.perforce.perforce.connections;
 
+import com.intellij.openapi.components.Service;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.util.BackgroundTaskUtil;
 import com.intellij.openapi.project.Project;
@@ -13,13 +14,13 @@ import org.jetbrains.idea.perforce.application.PerforceVcs;
 import org.jetbrains.idea.perforce.perforce.PerforcePhysicalConnectionParametersI;
 import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class P4EnvHelper {
+@Service(Service.Level.PROJECT)
+public final class P4EnvHelper {
   @Topic.ProjectLevel
   public static final Topic<P4EnvListener> P4_ENV_CHANGED = new Topic<>(P4EnvListener.class);
 
