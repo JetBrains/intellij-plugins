@@ -641,6 +641,8 @@
       "ng-blocks": [
         {
           "name": "defer",
+          "doc-url": "https://angular.dev/guide/defer#defer",
+          "description": "The content of the main `@defer` block is the section of content that is lazily loaded. It will not be rendered initially, and all of the content will appear once the specified trigger or `when` condition is met and the dependencies have been fetched. By default, a `@defer` block is triggered when the browser state becomes idle.",
           "is-primary": true,
           "ng-block-parameters": [
             {
@@ -663,6 +665,8 @@
         },
         {
           "name": "placeholder",
+          "doc-url": "https://angular.dev/guide/defer#placeholder",
+          "description": "By default, defer blocks do not render any content before they are triggered. The `@placeholder` is an optional block that declares content to show before the defer block is triggered. This placeholder content is replaced with the main content once the loading is complete. You can use any content in the placeholder section including plain HTML, components, directives, and pipes; however keep in mind the dependencies of the placeholder block are eagerly loaded.\n\n**Note:** For the best user experience, you should always specify a `@placeholder` block.",
           "primary-block": "defer",
           "max-count": 1,
           "ng-block-parameters": [
@@ -674,6 +678,8 @@
         },
         {
           "name": "loading",
+          "doc-url": "https://angular.dev/guide/defer#loading",
+          "description": "The `@loading` block is an optional block that allows you to declare content that will be shown during the loading of any deferred dependencies. For example, you could show a loading spinner. Similar to `@placeholder`, the dependencies of the `@loading` block are eagerly loaded.",
           "primary-block": "defer",
           "max-count": 1,
           "ng-block-parameters": [
@@ -689,12 +695,16 @@
         },
         {
           "name": "error",
+          "doc-url": "https://angular.dev/guide/defer#error",
+          "description": "The `@error` block allows you to declare content that will be shown if deferred loading fails. Similar to `@placeholder` and `@loading`, the dependencies of the `@error` block are eagerly loaded. The `@error` block is optional.",
           "primary-block": "defer",
           "max-count": 1
         },
         {
           "name": "for",
           "is-primary": true,
+          "doc-url": "https://angular.dev/guide/templates/control-flow#for-block---repeaters",
+          "description": "The `@for` repeatedly renders content of a block for each item in a collection. The collection can be represented as any JavaScript iterable but there are performance advantages of using a regular `Array`. A basic `@for` loop looks like:\n```Angular2Html\n@for (item of items; track item.id) {\n  {{ item.name }}\n}\n```",
           "ng-block-parameters": [
             {
               "name": "expression",
@@ -703,21 +713,62 @@
               "name-as-prefix": false
             },
             {
-              "name": "let"
+              "name": "let",
+              "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
+              "description": "Allows to alias one of the implicit variables: `$count`, `$index`, `$first`, `$last`, `$even` or `$odd`:\n```Angular2Html\n      \n@for (item of items; track item.id; let idx = $index, e = $even) {\n  Item #{{ idx }}: {{ item.name }}\n}\n```"
             },
             {
-              "name": "trackBy",
+              "name": "track",
+              "doc-url": "https://angular.dev/guide/templates/control-flow#track-for-calculating-difference-of-two-collections",
+              "description": "The value of the `track` expression determines a key used to associate array items with the views in the DOM. Having clear indication of the item identity allows Angular to execute a minimal set of DOM operations as items are added, removed or moved in a collection.\n\nLoops over immutable data without `trackBy` as one of the most common causes for performance issues across Angular applications. Because of the potential for poor performance, the `track` expression is required for the `@for` loops. When in doubt, using `track $index` is a good default.",
+              "required": true,
               "max-count": 1
+            }
+          ],
+          "ng-block-implicit-variables": [
+            {
+              "name": "$count",
+              "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
+              "description": "Number of items in a collection iterated over"
+            },
+            {
+              "name": "index",
+              "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
+              "description": "Index of the current row"
+            },
+            {
+              "name": "first",
+              "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
+              "description": "Whether the current row is the first row"
+            },
+            {
+              "name": "last",
+              "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
+              "description": "Whether the current row is the last row"
+            },
+            {
+              "name": "even",
+              "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
+              "description": "Whether the current row index is even"
+            },
+            {
+              "name": "$odd",
+              "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
+              "description": "Whether the current row index is odd"
             }
           ]
         },
         {
           "name": "empty",
+          "doc-url": "https://angular.dev/guide/templates/control-flow#empty-block",
+          "description": "You can optionally include an `@empty` section immediately after the `@for` block content. The content of the `@empty` block displays when there are no items:\n```Angular2Html\n@for (item of items; track item.name) {\n  <li> {{ item.name }} </li>\n} @empty {\n  <li> There are no items. </li>\n}\n```",
           "primary-block": "for",
           "max-count": 1
         },
         {
           "name": "if",
+          "doc-url": "https://angular.dev/guide/templates/control-flow#if-block-conditionals",
+          "description": "The `@if` block conditionally displays its content when its condition expression is truthy:\n```Angular2Html\n@if (a > b) {\n   {{a}} is greater than {{b}}\n}\n```\nThe `@if` block might have one or more associated `@else` blocks. Immediately after an `@if` block, you can optionally specify any number of `@else if` blocks and one `@else` block.",
           "is-primary": true,
           "ng-block-parameters": [
             {
@@ -734,6 +785,8 @@
         },
         {
           "name": "else if",
+          "doc-url": "https://angular.dev/guide/templates/control-flow#if-block-conditionals",
+          "description": "The `@else if` block conditionally displays its content when its condition expression is truthy and all previous `@if` and `@if else` conditions were false.",
           "primary-block": "if",
           "ng-block-parameters": [
             {
@@ -746,12 +799,16 @@
         },
         {
           "name": "else",
+          "doc-url": "https://angular.dev/guide/templates/control-flow#if-block-conditionals",
+          "description": "The `@else` block conditionally displays its content when all of previous `@if` and `@if else` conditions were false.",
           "primary-block": "if",
           "order": "last",
           "max-count": 1
         },
         {
           "name": "switch",
+          "doc-url": "https://angular.dev/guide/templates/control-flow#switch-block---selection",
+          "description": "The syntax for `@switch` is very similar to `@if`, and is inspired by the JavaScript `switch` statement:\n```Angular2Html\n@switch (condition) {\n  @case (caseA) {\n    Case A.\n  }\n  @case (caseB) {\n    Case B.\n  }\n  @default {\n    Default case.\n  }\n}\n```\nThe value of the conditional expression is compared to the case expression using the `===` operator.\n\n`@switch` does not have fallthrough, so you do not need an equivalent to a `break` or `return` statement.\n\nThe `@default` block is optional and can be omitted. If no `@case` matches the expression and there is no `@default` block, nothing is shown.",
           "is-primary": true,
           "nested-secondary-blocks": true,
           "ng-block-parameters": [
@@ -765,6 +822,8 @@
         },
         {
           "name": "case",
+          "doc-url": "https://angular.dev/guide/templates/control-flow#switch-block---selection",
+          "description": "The value of the conditional expression is compared to the case expression using the `===` operator.\n\n`@switch` does not have fallthrough, so you do not need an equivalent to a `break` or `return` statement.",
           "primary-block": "switch",
           "ng-block-parameters": [
             {
@@ -777,6 +836,8 @@
         },
         {
           "name": "default",
+          "doc-url": "https://angular.dev/guide/templates/control-flow#switch-block---selection",
+          "description": "The `@default` block is optional and can be omitted. If no `@case` matches the expression and there is no `@default` block, nothing is shown.",
           "primary-block": "switch",
           "order": "preferred-last",
           "max-count": 1
