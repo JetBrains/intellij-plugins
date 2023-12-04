@@ -211,17 +211,20 @@
     <webSymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2SelectorDeclarationProvider"/>
     <webSymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2DirectiveExportAsDeclarationProvider"/>
     <webSymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2DirectivePropertyDeclarationProvider"/>
+    <webSymbols.webTypes.symbolFactory namespace="html" kind="ng-blocks" implementation="org.angular2.codeInsight.blocks.Angular2HtmlBlockSymbol$Factory"/>
+    <webSymbols.webTypes.symbolFactory namespace="html" kind="ng-block-parameters" implementation="org.angular2.codeInsight.blocks.Angular2HtmlBlockParameterSymbol$Factory"/>
+    <webSymbols.documentationCustomizer implementation="org.angular2.web.Angular2WebSymbolDocumentationCustomizer"/>
     <elementDescriptionProvider
       order="first"
       implementation="org.angular2.refactoring.Angular2ElementDescriptionProvider"/>
     <referencesSearch implementation="org.angular2.findUsages.Angular2ReferenceSearcher"/>
     <gotoSymbolContributor implementation="org.angular2.navigation.Angular2GotoSymbolContributor"/>
     <gotoRelatedProvider implementation="org.angular2.navigation.Angular2GotoRelatedProvider"/>
-    <typedHandler implementation="org.angular2.codeInsight.blocks.Angular2BlocksTypedHandler"/>
+    <typedHandler implementation="org.angular2.codeInsight.blocks.Angular2HtmlBlocksTypedHandler"/>
     <typedHandler implementation="org.angular2.editor.Angular2BracesInterpolationTypedHandler"/>
     <moveFileHandler implementation="org.angular2.refactoring.Angular2MoveFileHandler" order="first"/>
     <completion.htmlInTextCompletionPopupExtension
-      implementation="org.angular2.codeInsight.blocks.Angular2BlocksInTextCompletionPopupExtension"/>
+      implementation="org.angular2.codeInsight.blocks.Angular2HtmlBlocksInTextCompletionPopupExtension"/>
 
     <liveTemplateContext contextId="Angular" implementation="org.angular2.liveTemplate.Angular2BaseLiveTemplateContextType"/>
     <liveTemplateContext contextId="ANGULAR_TOP_LEVEL_STATEMENT" baseContextId="Angular"

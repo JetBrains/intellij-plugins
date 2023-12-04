@@ -9,7 +9,7 @@ import com.intellij.psi.util.siblings
 import com.intellij.psi.xml.XmlText
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.takeWhileInclusive
-import org.angular2.codeInsight.blocks.Angular2HtmlBlockDefinition
+import org.angular2.codeInsight.blocks.Angular2HtmlBlockSymbol
 import org.angular2.codeInsight.blocks.Angular2HtmlBlockUtils.toCanonicalBlockName
 import org.angular2.codeInsight.blocks.getAngular2HtmlBlocksConfig
 import org.angular2.lang.expr.psi.Angular2BlockParameter
@@ -34,13 +34,13 @@ class Angular2HtmlBlockImpl(type: Angular2HtmlElementTypes.Angular2ElementType)
   override val contents: Angular2HtmlBlockContents?
     get() = PsiTreeUtil.findChildOfType(this, Angular2HtmlBlockContents::class.java)
 
-  override val definition: Angular2HtmlBlockDefinition?
+  override val definition: Angular2HtmlBlockSymbol?
     get() = getAngular2HtmlBlocksConfig(this)[this]
 
   override val isPrimary: Boolean
     get() = definition?.isPrimary == true
 
-  override val primaryBlockDefinition: Angular2HtmlBlockDefinition?
+  override val primaryBlockDefinition: Angular2HtmlBlockSymbol?
     get() = getAngular2HtmlBlocksConfig(this).let { config ->
       config[config[this]?.primaryBlock ?: getName().takeIf { config[this]?.isPrimary == true }]
     }

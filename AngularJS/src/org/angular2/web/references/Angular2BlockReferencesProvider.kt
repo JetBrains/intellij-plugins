@@ -8,7 +8,7 @@ import org.angular2.lang.html.psi.Angular2HtmlBlock
 class Angular2BlockReferencesProvider : WebSymbolReferenceProvider<Angular2HtmlBlock>() {
 
   override fun getSymbol(psiElement: Angular2HtmlBlock): WebSymbol? =
-    psiElement.definition?.symbol
+    psiElement.definition
 
   override fun getSymbolNameOffset(psiElement: Angular2HtmlBlock): Int = 1
 

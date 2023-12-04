@@ -3,7 +3,7 @@ package org.angular2.lang.html.psi
 
 import com.intellij.model.psi.PsiExternalReferenceHost
 import com.intellij.psi.PsiElement
-import org.angular2.codeInsight.blocks.Angular2HtmlBlockDefinition
+import org.angular2.codeInsight.blocks.Angular2HtmlBlockSymbol
 import org.angular2.lang.expr.psi.Angular2BlockParameter
 
 interface Angular2HtmlBlock : PsiElement, PsiExternalReferenceHost {
@@ -14,11 +14,11 @@ interface Angular2HtmlBlock : PsiElement, PsiExternalReferenceHost {
 
   val contents: Angular2HtmlBlockContents?
 
-  val definition: Angular2HtmlBlockDefinition?
+  val definition: Angular2HtmlBlockSymbol?
 
   val isPrimary: Boolean
 
-  val primaryBlockDefinition: Angular2HtmlBlockDefinition?
+  val primaryBlockDefinition: Angular2HtmlBlockSymbol?
 
   val primaryBlock: Angular2HtmlBlock?
 
