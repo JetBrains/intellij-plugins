@@ -12,9 +12,11 @@ import com.intellij.openapi.editor.XmlHighlighterColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.psi.PsiElement
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.NG_PIPE
+import org.angular2.codeInsight.blocks.Angular2HtmlBlockSymbol
 import org.angular2.entities.*
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.html.highlighting.Angular2HtmlHighlighterColors
+import org.angular2.lang.html.psi.Angular2HtmlBlock
 
 object Angular2HighlightingUtils {
 
@@ -29,7 +31,8 @@ object Angular2HighlightingUtils {
     NG_IN_OUT(Angular2HtmlHighlighterColors.NG_BANANA_BINDING_ATTR_NAME),
     NG_DIRECTIVE(TypeScriptHighlighter.TS_CLASS),
     NG_PIPE(NG_PIPE_KEY),
-    NG_EXPORT_AS(NG_EXPORT_AS_KEY)
+    NG_EXPORT_AS(NG_EXPORT_AS_KEY),
+    NG_BLOCK(Angular2HtmlHighlighterColors.NG_BLOCK_NAME)
   }
 
   val NG_EXPORT_AS_KEY: TextAttributesKey = TypeScriptHighlighter.TS_INSTANCE_MEMBER_VARIABLE
@@ -52,6 +55,12 @@ object Angular2HighlightingUtils {
 
   val JSClass.htmlName: String
     get() = highlightName(this, name ?: Angular2Bundle.message("angular.description.unknown-class"))
+
+  val Angular2HtmlBlock.htmlName: String
+    get() = "@${getName()}".withColor(TextAttributesKind.NG_BLOCK, this)
+
+  fun Angular2HtmlBlockSymbol?.htmlName(context: PsiElement): String =
+    "@${this?.name ?: "<unknown>"}".withColor(TextAttributesKind.NG_BLOCK, context)
 
   fun String.withNameColor(element: PsiElement) =
     highlightName(element, this)

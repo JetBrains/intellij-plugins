@@ -10,6 +10,8 @@ interface Angular2HtmlBlock : PsiElement, PsiExternalReferenceHost {
 
   fun getName(): String
 
+  val nameElement: PsiElement
+
   val parameters: List<Angular2BlockParameter>
 
   val contents: Angular2HtmlBlockContents?
