@@ -20,7 +20,7 @@ import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 import org.angular2.lang.html.psi.Angular2HtmlBlock
 import org.angular2.lang.html.psi.Angular2HtmlBlockContents
 
-class Angular2BlocksCodeCompletionProvider : WebSymbolsCompletionProviderBase<PsiElement>() {
+class Angular2HtmlBlocksCodeCompletionProvider : WebSymbolsCompletionProviderBase<PsiElement>() {
   override fun addCompletions(parameters: CompletionParameters,
                               result: CompletionResultSet,
                               position: Int,
@@ -64,7 +64,7 @@ class Angular2BlocksCodeCompletionProvider : WebSymbolsCompletionProviderBase<Ps
     availableBlocks
       .filter { def -> def.maxCount.let { it == null || it > (prevBlocksCount[def.name] ?: 0) } }
       .map { def ->
-        WebSymbolCodeCompletionItem.create("@" + def.name, 0, symbol = def.symbol)
+        WebSymbolCodeCompletionItem.create("@" + def.name, 0, symbol = def)
           .withPriority(if (!def.isPrimary) WebSymbol.Priority.HIGH else WebSymbol.Priority.NORMAL)
           .withInsertHandlerAdded(Angular2HtmlBlockInsertHandler)
       }

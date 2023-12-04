@@ -13,7 +13,7 @@ import com.intellij.psi.xml.XmlElementType
 import com.intellij.psi.xml.XmlText
 import org.angular2.lang.html.Angular2TemplateSyntax
 
-class Angular2BlocksTypedHandler : TypedHandlerDelegate() {
+class Angular2HtmlBlocksTypedHandler : TypedHandlerDelegate() {
 
   override fun checkAutoPopup(charTyped: Char, project: Project, editor: Editor, file: PsiFile): Result {
     if (charTyped == '@' && Angular2TemplateSyntax.of(file)?.enableBlockSyntax == true) {

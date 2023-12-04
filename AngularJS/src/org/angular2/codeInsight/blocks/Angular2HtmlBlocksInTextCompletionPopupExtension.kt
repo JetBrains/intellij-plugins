@@ -5,7 +5,7 @@ import com.intellij.codeInsight.completion.HtmlInTextCompletionPopupExtension
 import com.intellij.psi.PsiElement
 import org.angular2.lang.html.Angular2TemplateSyntax
 
-class Angular2BlocksInTextCompletionPopupExtension : HtmlInTextCompletionPopupExtension {
+class Angular2HtmlBlocksInTextCompletionPopupExtension : HtmlInTextCompletionPopupExtension {
 
   override fun isDeselectingFirstItemDisabled(element: PsiElement): Boolean =
     Angular2TemplateSyntax.of(element)?.enableBlockSyntax == true

@@ -211,7 +211,7 @@ class Angular2ElementDocumentationTarget private constructor(
 
   }
 
-  private class SyntaxPrinter(private val context: PsiElement) {
+  internal class SyntaxPrinter(private val context: PsiElement) {
     private val builder: StringBuilder = StringBuilder()
     private val scheme = EditorColorsManager.getInstance().globalScheme
     private val linkColor by lazy(LazyThreadSafetyMode.NONE) { ColorUtil.toHtmlColor(JBUI.CurrentTheme.Link.Foreground.ENABLED) }
