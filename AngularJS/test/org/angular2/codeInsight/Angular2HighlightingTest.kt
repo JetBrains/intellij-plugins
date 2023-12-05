@@ -151,6 +151,11 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
   fun testIfBlockAsVarType() = checkHighlighting(ANGULAR_CORE_17_0_0_RC_0, ANGULAR_COMMON_17_0_0_RC_0,
                                                  strictTemplates = true, extension = "ts")
 
+  fun testForBlockSemanticOfHighlighting() = checkHighlighting(ANGULAR_CORE_17_0_0_RC_0,
+                                                               strictTemplates = true, extension = "ts", checkInformation = true)
+
+  fun testForBlockVarType() = checkHighlighting(ANGULAR_CORE_17_0_0_RC_0,
+                                                strictTemplates = true, extension = "ts")
 
   override fun setUp() {
     super.setUp()

@@ -18,6 +18,8 @@ interface Angular2BlockParameter : Angular2EmbeddedExpression, PsiExternalRefere
 
   val isPrimaryExpression: Boolean
 
+  val index: Int
+
   val nameElement: PsiElement?
 
   val expression: JSExpression?

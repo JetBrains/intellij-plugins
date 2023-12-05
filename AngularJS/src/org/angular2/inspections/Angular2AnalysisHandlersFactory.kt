@@ -1,29 +1,33 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections
 
+import com.intellij.codeInsight.daemon.impl.analysis.HighlightInfoHolder
 import com.intellij.codeInspection.InspectionSuppressor
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.util.InspectionMessage
 import com.intellij.lang.javascript.DialectOptionHolder
+import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.ecmascript6.TypeScriptAnalysisHandlersFactory
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.highlighting.TypeScriptHighlighter
+import com.intellij.lang.javascript.psi.JSExpression
+import com.intellij.lang.javascript.psi.JSReferenceExpression
+import com.intellij.lang.javascript.psi.JSThisExpression
+import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSType.TypeTextFormat.CODE
-import com.intellij.lang.javascript.validation.JSProblemReporter
-import com.intellij.lang.javascript.validation.JSReferenceChecker
-import com.intellij.lang.javascript.validation.JSTypeChecker
-import com.intellij.lang.javascript.validation.TypeScriptReferenceChecker
+import com.intellij.lang.javascript.validation.*
 import com.intellij.lang.typescript.validation.TypeScriptTypeChecker
 import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveResult
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.ProcessingContext
-import com.intellij.util.asSafely
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.NG_PIPE
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
+import org.angular2.codeInsight.blocks.BLOCK_FOR
 import org.angular2.entities.Angular2ComponentLocator
 import org.angular2.inspections.quickfixes.*
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.psi.Angular2Action
+import org.angular2.lang.expr.psi.Angular2BlockParameter
 import org.angular2.lang.expr.psi.Angular2EmbeddedExpression
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression
 import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
@@ -116,6 +120,20 @@ class Angular2AnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
         return super.addCreateFromUsageFixes(referenceExpression, resolveResults, quickFixes, inTypeContext, ecma)
       }
 
+    }
+
+  override fun createKeywordHighlighterVisitor(holder: HighlightInfoHolder,
+                                               dialectOptionHolder: DialectOptionHolder): JSKeywordHighlighterVisitor =
+    object : TypeScriptKeywordHighlighterVisitor(holder) {
+      override fun visitElement(element: PsiElement) {
+        when (element) {
+          is Angular2BlockParameter -> if (element.block?.getName() == BLOCK_FOR && element.isPrimaryExpression)
+            element.node.findChildByType(JSTokenTypes.IDENTIFIER)
+              ?.let { highlightKeyword(it, TypeScriptHighlighter.TS_KEYWORD) }
+              ?.let { myHolder.add(it) }
+          else -> super.visitElement(element)
+        }
+      }
     }
 
 }

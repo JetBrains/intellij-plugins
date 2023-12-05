@@ -6,8 +6,8 @@ import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext
 import com.intellij.lang.javascript.psi.JSTypeUtils
 import com.intellij.lang.javascript.psi.types.JSPsiBasedTypeOfType
 import com.intellij.lang.javascript.psi.types.JSTypeSource
-import com.intellij.lang.javascript.psi.types.guard.JSTypeGuardChecker
 import com.intellij.psi.util.parentOfType
+import org.angular2.codeInsight.blocks.BLOCK_FOR
 import org.angular2.codeInsight.blocks.BLOCK_IF
 import org.angular2.codeInsight.blocks.PARAMETER_AS
 import org.angular2.lang.expr.psi.Angular2BlockParameter
@@ -36,6 +36,13 @@ class Angular2BlockVariableType : Angular2BaseType<Angular2BlockParameterVariabl
             ?.let { JSPsiBasedTypeOfType(it, false) }
             ?.substituteOrNull()
             ?.let { JSTypeUtils.removeFalsyComponents(it) }
+        }
+        else null
+      BLOCK_FOR ->
+        if (parameter.isPrimaryExpression) {
+          parameter.expression
+            ?.let { JSPsiBasedTypeOfType(it, false) }
+            ?.let { JSTypeUtils.getIterableComponentType(it) }
         }
         else null
       else -> null
