@@ -12,6 +12,7 @@ import com.intellij.openapi.editor.XmlHighlighterColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.psi.PsiElement
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.NG_PIPE
+import org.angular2.codeInsight.blocks.Angular2HtmlBlockParameterSymbol
 import org.angular2.codeInsight.blocks.Angular2HtmlBlockSymbol
 import org.angular2.entities.*
 import org.angular2.lang.Angular2Bundle
@@ -32,7 +33,8 @@ object Angular2HighlightingUtils {
     NG_DIRECTIVE(TypeScriptHighlighter.TS_CLASS),
     NG_PIPE(NG_PIPE_KEY),
     NG_EXPORT_AS(NG_EXPORT_AS_KEY),
-    NG_BLOCK(Angular2HtmlHighlighterColors.NG_BLOCK_NAME)
+    NG_BLOCK(Angular2HtmlHighlighterColors.NG_BLOCK_NAME),
+    NG_EXPRESSION_PREFIX(TypeScriptHighlighter.TS_KEYWORD)
   }
 
   val NG_EXPORT_AS_KEY: TextAttributesKey = TypeScriptHighlighter.TS_INSTANCE_MEMBER_VARIABLE
@@ -61,6 +63,9 @@ object Angular2HighlightingUtils {
 
   fun Angular2HtmlBlockSymbol?.htmlName(context: PsiElement): String =
     "@${this?.name ?: "<unknown>"}".withColor(TextAttributesKind.NG_BLOCK, context)
+
+  fun Angular2HtmlBlockParameterSymbol.htmlName(context: PsiElement): String =
+    name.withColor(TextAttributesKind.NG_EXPRESSION_PREFIX, context)
 
   fun String.withNameColor(element: PsiElement) =
     highlightName(element, this)

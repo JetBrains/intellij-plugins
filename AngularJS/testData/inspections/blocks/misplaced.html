@@ -8,12 +8,12 @@
 
 }
 
-@switch {
-  @case() {}
+@switch(foo) {
+  @case("a") {}
   <error descr="@else block must be a sibling of primary block @if">@else</error> {}
 }
 
-@switch {
-  <error descr="@if block cannot be nested under @switch">@if</error>() {
+@switch(foo) {
+  <error descr="@if block cannot be nested under @switch">@if</error>(bar) {
   }
 }

@@ -1,0 +1,21 @@
+@if (foo) {
+
+}
+<error descr="@else if requires an expression as a first parameter">@else    if</error> () {
+
+}
+@else if (bar) {
+
+}
+
+@else   if (bar; <error descr="@else if does not support parameter foo"><error descr="Unexpected token 'foo'">f</error>oo</error>) {
+
+}
+
+@else  if (bar; <error descr="@else if does not support parameter as"><error descr="Unexpected token 'as'">a</error>s</error> foo) {
+
+}
+
+@else if (as<error descr="Unexpected token 'foo'"> </error>foo) {
+
+}
