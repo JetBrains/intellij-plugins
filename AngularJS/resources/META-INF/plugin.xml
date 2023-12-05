@@ -357,6 +357,11 @@
     <codeInsight.parameterNameHints language="Angular2Html"
                                     implementationClass="org.angular2.editor.Angular2InlayParameterHintsProvider"/>
     <highlightVisitor implementation="org.angular2.lang.expr.highlighting.Angular2RainbowVisitor"/>
+    <psi.symbolReferenceProvider hostElementClass="org.angular2.lang.expr.psi.Angular2BlockParameter"
+                                 hostLanguage="Angular2"
+                                 referenceClass="com.intellij.webSymbols.references.WebSymbolReference"
+                                 implementationClass="org.angular2.web.references.Angular2BlockParameterReferencesProvider"
+                                 targetClass="com.intellij.webSymbols.WebSymbol"/>
 
     <!-- Angular2 metadata JSON contributions -->
     <stubElementTypeHolder class="org.angular2.entities.metadata.Angular2MetadataElementTypes" externalIdPrefix="NG-META:"/>

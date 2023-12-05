@@ -1,0 +1,1 @@
+prefetch on foo == 12

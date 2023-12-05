@@ -1,0 +1,5 @@
+JS:IDENTIFIER ('foo')
+WHITE_SPACE (' ')
+JS:EQEQ ('==')
+WHITE_SPACE (' ')
+JS:NUMERIC_LITERAL ('12')

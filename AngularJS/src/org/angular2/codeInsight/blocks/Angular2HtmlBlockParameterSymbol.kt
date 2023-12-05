@@ -6,8 +6,8 @@ import com.intellij.webSymbols.webTypes.WebTypesSymbolFactory
 
 class Angular2HtmlBlockParameterSymbol : WebTypesSymbolBase() {
 
-  val maxCount: Int?
-    get() = (properties["max-count"] as? Number)?.toInt()
+  val isUnique: Boolean
+    get() = properties["unique"] as? Boolean == true
 
   val isPrimaryExpression: Boolean
     get() = name == PRIMARY_EXPRESSION

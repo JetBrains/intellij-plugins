@@ -647,19 +647,19 @@
           "ng-block-parameters": [
             {
               "name": "when",
-              "max-count": 1
+              "unique": true
             },
             {
               "name": "on",
-              "max-count": 1
+              "unique": true
             },
             {
               "name": "prefetch when",
-              "max-count": 1
+              "unique": true
             },
             {
               "name": "prefetch on",
-              "max-count": 1
+              "unique": true
             }
           ]
         },
@@ -668,11 +668,11 @@
           "doc-url": "https://angular.dev/guide/defer#placeholder",
           "description": "By default, defer blocks do not render any content before they are triggered. The `@placeholder` is an optional block that declares content to show before the defer block is triggered. This placeholder content is replaced with the main content once the loading is complete. You can use any content in the placeholder section including plain HTML, components, directives, and pipes; however keep in mind the dependencies of the placeholder block are eagerly loaded.\n\n**Note:** For the best user experience, you should always specify a `@placeholder` block.",
           "primary-block": "defer",
-          "max-count": 1,
+          "unique": true,
           "ng-block-parameters": [
             {
               "name": "minimum",
-              "max-count": 1
+              "unique": true
             }
           ]
         },
@@ -681,15 +681,15 @@
           "doc-url": "https://angular.dev/guide/defer#loading",
           "description": "The `@loading` block is an optional block that allows you to declare content that will be shown during the loading of any deferred dependencies. For example, you could show a loading spinner. Similar to `@placeholder`, the dependencies of the `@loading` block are eagerly loaded.",
           "primary-block": "defer",
-          "max-count": 1,
+          "unique": true,
           "ng-block-parameters": [
             {
               "name": "minimum",
-              "max-count": 1
+              "unique": true
             },
             {
               "name": "after",
-              "max-count": 1
+              "unique": true
             }
           ]
         },
@@ -698,7 +698,7 @@
           "doc-url": "https://angular.dev/guide/defer#error",
           "description": "The `@error` block allows you to declare content that will be shown if deferred loading fails. Similar to `@placeholder` and `@loading`, the dependencies of the `@error` block are eagerly loaded. The `@error` block is optional.",
           "primary-block": "defer",
-          "max-count": 1
+          "unique": true
         },
         {
           "name": "for",
@@ -720,7 +720,7 @@
               "doc-url": "https://angular.dev/guide/templates/control-flow#track-for-calculating-difference-of-two-collections",
               "description": "The value of the `track` expression determines a key used to associate array items with the views in the DOM. Having clear indication of the item identity allows Angular to execute a minimal set of DOM operations as items are added, removed or moved in a collection.\n\nLoops over immutable data without `trackBy` as one of the most common causes for performance issues across Angular applications. Because of the potential for poor performance, the `track` expression is required for the `@for` loops. When in doubt, using `track $index` is a good default.",
               "required": true,
-              "max-count": 1
+              "unique": true
             }
           ],
           "ng-block-implicit-variables": [
@@ -761,7 +761,7 @@
           "doc-url": "https://angular.dev/guide/templates/control-flow#empty-block",
           "description": "You can optionally include an `@empty` section immediately after the `@for` block content. The content of the `@empty` block displays when there are no items:\n```Angular2Html\n@for (item of items; track item.name) {\n  <li> {{ item.name }} </li>\n} @empty {\n  <li> There are no items. </li>\n}\n```",
           "primary-block": "for",
-          "max-count": 1
+          "unique": true
         },
         {
           "name": "if",
@@ -775,7 +775,9 @@
             },
             {
               "name": "as",
-              "max-count": 1
+              "doc-url": "https://angular.dev/guide/templates/control-flow#referencing-the-conditional-expressions-result",
+              "description": "Use `as` parameter to reference conditional expression results:\n```Angular2Html\n@if (users$ | async; as users) {\n  {{ users.length }}\n}\n```",
+              "unique": true
             }
           ]
         },
@@ -797,7 +799,7 @@
           "description": "The `@else` block conditionally displays its content when all of previous `@if` and `@if else` conditions were falsy.",
           "primary-block": "if",
           "order": "last",
-          "max-count": 1
+          "unique": true
         },
         {
           "name": "switch",
@@ -831,7 +833,7 @@
           "description": "The `@default` block is optional and can be omitted. If no `@case` matches the expression and there is no `@default` block, nothing is shown.",
           "primary-block": "switch",
           "order": "preferred-last",
-          "max-count": 1
+          "unique": true
         }
       ]
     },

@@ -9,9 +9,12 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.util.parentOfType
+import org.angular2.codeInsight.blocks.Angular2HtmlBlockParameterSymbol
 import org.angular2.lang.expr.psi.Angular2BlockParameter
 import org.angular2.lang.expr.psi.Angular2ElementVisitor
 import org.angular2.lang.expr.psi.impl.Angular2BindingImpl.Companion.getExpression
+import org.angular2.lang.html.psi.Angular2HtmlBlock
 
 class Angular2BlockParameterImpl(elementType: IElementType?) : Angular2EmbeddedExpressionImpl(elementType), Angular2BlockParameter {
   override fun accept(visitor: PsiElementVisitor) {
@@ -24,6 +27,19 @@ class Angular2BlockParameterImpl(elementType: IElementType?) : Angular2EmbeddedE
   }
 
   override fun getName(): String? = nameElement?.text
+
+  override val block: Angular2HtmlBlock?
+    get() = parentOfType<Angular2HtmlBlock>()
+
+  override val definition: Angular2HtmlBlockParameterSymbol?
+    get() = block?.definition?.parameters?.let { definitions ->
+      if (isPrimaryExpression)
+        definitions.find { it.isPrimaryExpression }
+      else {
+        val name = name
+        definitions.find { it.name == name }
+      }
+    }
 
   override val isPrimaryExpression: Boolean
     get() = firstChild is JSExpression

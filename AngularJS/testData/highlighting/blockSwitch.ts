@@ -11,11 +11,11 @@ export interface User {
   selector: 'robot-profile',
   standalone: true,
   template: `
-    @switch (user.name; <error descr="Unexpected token 'ff'">f</error>f) {
+    @switch (user.name; <error descr="@switch does not support parameter ff">ff</error>) {
         @case ("foo") {
     
         }
-        @case ("bar"; <error descr="Unexpected token 'foo'">f</error>oo) {
+        @case ("bar"; <error descr="@case does not support parameter foo">foo</error>) {
     
         }
         @default {

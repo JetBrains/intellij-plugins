@@ -3,6 +3,8 @@ package org.angular2.lang.expr.lexer;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.lexer.FlexLexer;
 
+import org.angular2.codeInsight.blocks.Angular2HtmlBlockUtilsKt;
+
 import static org.angular2.lang.expr.lexer.Angular2TokenTypes.*;
 import static com.intellij.psi.TokenType.BAD_CHARACTER;
 import static com.intellij.psi.TokenType.WHITE_SPACE;
@@ -22,6 +24,11 @@ import static com.intellij.psi.TokenType.WHITE_SPACE;
       blockParamIndex = blockParameter.getIndex();
     }
   }
+
+  private boolean shouldStartWithParameter() {
+    return blockName != null && (blockParamIndex > 0 || !Angular2HtmlBlockUtilsKt.getBLOCKS_WITH_PRIMARY_EXPRESSION().contains(blockName));
+  }
+
 %}
 
 %unicode
@@ -48,11 +55,18 @@ TAG_NAME=({ALPHA}|"_"|":")({ALPHA}|{DIGIT}|"_"|":"|"."|"-")*
 
 IDENT=[_$a-zA-Z][$0-9_a-zA-Z]*
 
+%state YYEXPRESSION
 %state YYSTRING
 
 %%
 
 <YYINITIAL> {
+  {WHITE_SPACE}               { return WHITE_SPACE; }
+  ("prefetch"\s+)?[a-zA-Z_]+  { yybegin(YYEXPRESSION); if (shouldStartWithParameter()) return BLOCK_PARAMETER_NAME; else yypushback(yylength()); }
+  [^]                         { yypushback(1); yybegin(YYEXPRESSION); }
+}
+
+<YYEXPRESSION> {
   "&apos;"                    { yybegin(YYSTRING); quote = '\''; return XML_CHAR_ENTITY_REF; }
   "&quot;"                    { yybegin(YYSTRING); quote = '"'; return XML_CHAR_ENTITY_REF; }
   "'"                         { yybegin(YYSTRING); quote = '\''; return STRING_LITERAL_PART; }
@@ -122,13 +136,13 @@ IDENT=[_$a-zA-Z][$0-9_a-zA-Z]*
   [\\]u[0-9a-fA-F]{4}         { return ESCAPE_SEQUENCE; }
   [\\]u[^0-9a-fA-F]           { yypushback(1); return INVALID_ESCAPE_SEQUENCE; }
   [\\]u[0-9a-fA-F]{1,3}       { return INVALID_ESCAPE_SEQUENCE; }
-  "&apos;"                    { if (quote == '\'') yybegin(YYINITIAL); return XML_CHAR_ENTITY_REF; }
-  "&quot;"                    { if (quote == '"') yybegin(YYINITIAL); return XML_CHAR_ENTITY_REF; }
-  "'"                         { if (quote == '\'') yybegin(YYINITIAL); return STRING_LITERAL_PART; }
-  "\""                        { if (quote == '"') yybegin(YYINITIAL); return STRING_LITERAL_PART; }
+  "&apos;"                    { if (quote == '\'') yybegin(YYEXPRESSION); return XML_CHAR_ENTITY_REF; }
+  "&quot;"                    { if (quote == '"') yybegin(YYEXPRESSION); return XML_CHAR_ENTITY_REF; }
+  "'"                         { if (quote == '\'') yybegin(YYEXPRESSION); return STRING_LITERAL_PART; }
+  "\""                        { if (quote == '"') yybegin(YYEXPRESSION); return STRING_LITERAL_PART; }
   "&"{TAG_NAME}";" |
   "&#"(x|X)({DIGIT}|[a-fA-F])+";" |
   "&#"{DIGIT}+";"             { return XML_CHAR_ENTITY_REF; }
   [^&\'\"\n\r\\]+ | "&"       { return STRING_LITERAL_PART; }
-  [^]                         { yypushback(yytext().length()); yybegin(YYINITIAL); }
+  [^]                         { yypushback(yytext().length()); yybegin(YYEXPRESSION); }
 }

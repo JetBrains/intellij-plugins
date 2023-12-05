@@ -181,6 +181,12 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
   fun testNoGlobalImportInTsFiles() =
     doTypingTest("do1\n", dir = true)
 
+  fun testIfBlockParameters() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html", checkDocumentation = true)
+
+  fun testIfBlockParameterTyping() =
+    doTypingTest("\nfoo", Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0)
+
   private fun notAnElement(it: LookupElementInfo): Boolean = !it.lookupString.startsWith("<")
 
   private fun doBasicCompletionTest(vararg modules: WebFrameworkTestModule, dir: Boolean = false, extension: String = "ts") =

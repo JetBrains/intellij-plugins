@@ -17,10 +17,13 @@ interface Angular2TokenTypes : JSTokenTypes {
     val XML_CHAR_ENTITY_REF: IElementType = Angular2TokenType("NG:XML_CHAR_ENTITY_REF")
 
     @JvmField
+    val BLOCK_PARAMETER_NAME: IElementType = Angular2TokenType("NG:BLOCK_PARAMETER_NAME")
+
+    @JvmField
     val KEYWORDS = TokenSet.create(JSTokenTypes.VAR_KEYWORD, JSTokenTypes.LET_KEYWORD, JSTokenTypes.AS_KEYWORD, JSTokenTypes.NULL_KEYWORD,
                                    JSTokenTypes.UNDEFINED_KEYWORD, JSTokenTypes.TRUE_KEYWORD, JSTokenTypes.FALSE_KEYWORD,
                                    JSTokenTypes.IF_KEYWORD,
-                                   JSTokenTypes.ELSE_KEYWORD, JSTokenTypes.THIS_KEYWORD)
+                                   JSTokenTypes.ELSE_KEYWORD, JSTokenTypes.THIS_KEYWORD, BLOCK_PARAMETER_NAME)
 
     @JvmField
     val STRING_PART_SPECIAL_SEQ = TokenSet.create(ESCAPE_SEQUENCE, INVALID_ESCAPE_SEQUENCE, XML_CHAR_ENTITY_REF)
