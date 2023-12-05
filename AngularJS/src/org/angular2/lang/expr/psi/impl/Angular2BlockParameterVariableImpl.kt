@@ -11,13 +11,14 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import org.angular2.lang.expr.parser.Angular2StubElementTypes
+import org.angular2.lang.types.Angular2BlockVariableType
 
 class Angular2BlockParameterVariableImpl : JSVariableImpl<JSVariableStub<in JSVariable>, JSVariable> {
   constructor(node: ASTNode) : super(node)
   constructor(stub: JSVariableStub<JSVariable>) : super(stub, Angular2StubElementTypes.BLOCK_PARAMETER_VARIABLE)
 
-  override fun calculateType(): JSType? {
-    return null
+  override fun calculateType(): JSType {
+    return Angular2BlockVariableType(this)
   }
 
   override fun getJSType(): JSType? {

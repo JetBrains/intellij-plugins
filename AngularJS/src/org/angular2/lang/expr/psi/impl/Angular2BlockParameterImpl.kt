@@ -25,6 +25,9 @@ class Angular2BlockParameterImpl(elementType: IElementType?) : Angular2EmbeddedE
 
   override fun getName(): String? = nameElement?.text
 
+  override val isPrimaryExpression: Boolean
+    get() = firstChild is JSExpression
+
   override val nameElement: PsiElement?
     get() = firstChild
       .let { if (it is PsiErrorElement) it.nextSibling else it }

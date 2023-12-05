@@ -15,6 +15,8 @@ const val BLOCK_SWITCH = "switch"
 const val BLOCK_CASE = "case"
 const val BLOCK_DEFAULT = "default"
 
+const val PARAMETER_AS = "as"
+
 object Angular2HtmlBlockUtils {
 
   private val WHITESPACES = Regex("[ \t]+")
