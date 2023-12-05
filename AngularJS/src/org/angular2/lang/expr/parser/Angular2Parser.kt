@@ -11,6 +11,7 @@ import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
+import org.angular2.codeInsight.blocks.*
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.expr.lexer.Angular2TokenTypes
@@ -75,7 +76,8 @@ class Angular2Parser private constructor(builder: PsiBuilder,
           if (!parenExpectedReported && openParensCount > 0) {
             builder.error(JavaScriptBundle.message("javascript.parser.message.expected.rparen", builder.tokenText))
             parenExpectedReported = true
-          } else {
+          }
+          else {
             builder.error(Angular2Bundle.message("angular.parse.expression.unexpected-token", builder.tokenText!!))
           }
         }
@@ -507,20 +509,21 @@ class Angular2Parser private constructor(builder: PsiBuilder,
       parseRoot(builder, root, Angular2ElementTypes.BLOCK_PARAMETER_STATEMENT, false, false) { parser ->
         if (builder.eof()) return@parseRoot
         when (blockName) {
-          "if" -> when (parameterIndex) {
+          BLOCK_IF -> when (parameterIndex) {
             0 -> parser.parseChain()
             else -> parseAliasAsVariable(builder)
           }
-          "else if", "switch", "case" -> when (parameterIndex) {
+          BLOCK_ELSE_IF, BLOCK_SWITCH, BLOCK_CASE -> when (parameterIndex) {
             0 -> parser.parseChain()
+            else -> skipContents(builder)
           }
-          "for" -> when (parameterIndex) {
+          BLOCK_FOR -> when (parameterIndex) {
             0 -> parseForLoopMainExpression(builder, parser)
             else -> parseForLoopLetOrTrackExpression(builder, parser)
           }
-          "defer" -> parseDeferTrigger(builder, parser)
-          "placeholder" -> parsePlaceholderExpression(builder)
-          "loading" -> parseLoadingExpression(builder)
+          BLOCK_DEFER -> parseDeferTrigger(builder, parser)
+          BLOCK_PLACEHOLDER -> parsePlaceholderExpression(builder)
+          BLOCK_LOADING -> parseLoadingExpression(builder)
           else -> skipContents(builder)
         }
         if (!builder.eof()) {
@@ -531,39 +534,36 @@ class Angular2Parser private constructor(builder: PsiBuilder,
     }
 
     private fun parseDeferTrigger(builder: PsiBuilder, parser: Angular2StatementParser) {
-      if (isSemanticToken(builder, "prefetch")) {
-        builder.advanceLexer()
-      }
-      if (isSemanticToken(builder, "when")) {
+      if (isParameterName(builder, "when") || isParameterName(builder, "prefetch when")) {
         builder.advanceLexer()
         parser.parseChain()
       }
-      else if (isSemanticToken(builder, "on")) {
+      else if (isParameterName(builder, "on") || isParameterName(builder, "prefetch on")) {
         // pretty complex parsing, let's leave it for now
         skipContents(builder)
       }
       else {
-        builder.error(Angular2Bundle.message("angular.parse.expression.expected-when-on-prefetch"))
+        skipContents(builder)
       }
     }
 
     private fun parsePlaceholderExpression(builder: PsiBuilder) {
-      if (isSemanticToken(builder, "minimum")) {
+      if (isParameterName(builder, "minimum")) {
         builder.advanceLexer()
         skipContents(builder)
       }
       else {
-        builder.error(Angular2Bundle.message("angular.parse.expression.expected-minimum"))
+        skipContents(builder)
       }
     }
 
     private fun parseLoadingExpression(builder: PsiBuilder) {
-      if (isSemanticToken(builder, "minimum") || isSemanticToken(builder, "after")) {
+      if (isParameterName(builder, "minimum") || isParameterName(builder, "after")) {
         builder.advanceLexer()
         skipContents(builder)
       }
       else {
-        builder.error(Angular2Bundle.message("angular.parse.expression.expected-minimum-or-after"))
+        skipContents(builder)
       }
     }
 
@@ -594,8 +594,7 @@ class Angular2Parser private constructor(builder: PsiBuilder,
     }
 
     private fun parseAliasAsVariable(builder: PsiBuilder) {
-      if (builder.tokenType != JSTokenTypes.AS_KEYWORD) {
-        builder.error(JavaScriptBundle.message("javascript.parser.message.expected.as"))
+      if (!isParameterName(builder, "as")) {
         skipContents(builder)
         return
       }
@@ -620,7 +619,7 @@ class Angular2Parser private constructor(builder: PsiBuilder,
     }
 
     private fun parseForLoopLetOrTrackExpression(builder: PsiBuilder, parser: Angular2StatementParser) {
-      if (builder.tokenType == JSTokenTypes.LET_KEYWORD) {
+      if (isParameterName(builder, "let")) {
         builder.advanceLexer()
         while (!builder.eof()) {
           if (!tryParseParameterVariable(builder)) {
@@ -659,17 +658,21 @@ class Angular2Parser private constructor(builder: PsiBuilder,
           }
         }
       }
-      else if (isSemanticToken(builder, "track")) {
+      else if (isParameterName(builder, "track")) {
         builder.advanceLexer()
         parser.parseChain()
       }
       else {
-        builder.error(Angular2Bundle.message("angular.parse.expression.expected-let-or-track"))
+        skipContents(builder)
       }
     }
 
     private fun isSemanticToken(builder: PsiBuilder, name: String): Boolean =
       builder.tokenType == JSTokenTypes.IDENTIFIER && builder.tokenText == name
+
+    private fun isParameterName(builder: PsiBuilder, name: String): Boolean =
+      builder.tokenType == Angular2TokenTypes.BLOCK_PARAMETER_NAME
+      && builder.tokenText?.let { if (name.contains(' ')) it.replace("\\s*", " ") else it } == name
 
     private fun tryParseParameterVariable(builder: PsiBuilder): Boolean {
       if (!JSKeywordSets.TS_IDENTIFIERS_TOKENS_SET.contains(builder.tokenType)) {

@@ -57,20 +57,17 @@ class AngularIncorrectBlockUsageInspection : LocalInspectionTool() {
                                    block.htmlName,
                                    primaryBlockDefinition.htmlName(block)))
         }
-        val maxCount = definition.maxCount
         val name = block.getName()
-        if (maxCount != null && primaryBlock != null && primaryBlockDefinition != null) {
+        if (definition.isUnique && primaryBlock != null && primaryBlockDefinition != null) {
           val actualCount = if (primaryBlockDefinition.hasNestedSecondaryBlocks)
             primaryBlock.contents?.childrenOfType<Angular2HtmlBlock>()?.count { it.getName() == name } ?: 0
           else
             primaryBlock.blockSiblingsForward().count { it.getName() == name }
-          if (actualCount > maxCount) {
+          if (actualCount > 1) {
             holder.registerProblem(block.nameElement,
-                                   Angular2Bundle.icuHtmlMessage(
-                                     "angular.inspection.incorrect-block-usage.message.too-many-blocks",
-                                     "primary_block" to primaryBlockDefinition.htmlName(block),
-                                     "max_count" to maxCount,
-                                     "block" to block.htmlName,
+                                   Angular2Bundle.htmlMessage(
+                                     "angular.inspection.incorrect-block-usage.message.duplicated-block",
+                                     primaryBlockDefinition.htmlName(block), block.htmlName,
                                    ))
           }
         }
@@ -117,9 +114,10 @@ class AngularIncorrectBlockUsageInspection : LocalInspectionTool() {
 
           // Check if parameters are allowed
           val namedParameters = expectedParams.mapNotNull { if (!it.isPrimaryExpression) it.name to it else null }.toMap()
-          val countByPrefix = MultiMap<String, Angular2BlockParameter>()
-          if (actualParams.size > 1) {
-            for (parameter in actualParams.subList(1, actualParams.size)) {
+          val uniqueParameters = MultiMap<String, Angular2BlockParameter>()
+          val nameParametersOffset = if (expectedParams.any { it.isPrimaryExpression }) 1 else 0
+          if (actualParams.size > nameParametersOffset) {
+            for (parameter in actualParams.subList(nameParametersOffset, actualParams.size)) {
               val name = parameter.getName() ?: continue
               val parameterDefinition = namedParameters[name]
               if (parameterDefinition == null) {
@@ -128,21 +126,18 @@ class AngularIncorrectBlockUsageInspection : LocalInspectionTool() {
                                          "angular.inspection.incorrect-block-usage.message.unrecognized-parameter",
                                          block.htmlName, name.withColor(NG_EXPRESSION_PREFIX, block)))
               }
-              else if (parameterDefinition.maxCount != null) {
-                countByPrefix.putValue(name, parameter)
+              else if (parameterDefinition.isUnique) {
+                uniqueParameters.putValue(name, parameter)
               }
             }
           }
-          for ((name, params) in countByPrefix.entrySet()) {
-            val maxCount = namedParameters[name]?.maxCount ?: continue
-            if (params.size > maxCount) {
+          for ((name, params) in uniqueParameters.entrySet()) {
+            if (params.size > 1) {
               params.forEach {
                 holder.registerProblem(it.nameElement!!,
-                                       Angular2Bundle.icuHtmlMessage(
-                                         "angular.inspection.incorrect-block-usage.message.too-many-parameters",
-                                         "block" to primaryBlockDefinition.htmlName(block),
-                                         "max_count" to maxCount,
-                                         "param" to name.withColor(NG_EXPRESSION_PREFIX, block),
+                                       Angular2Bundle.htmlMessage(
+                                         "angular.inspection.incorrect-block-usage.message.duplicated-parameter",
+                                         primaryBlockDefinition.htmlName(block), name.withColor(NG_EXPRESSION_PREFIX, block),
                                        ))
               }
             }

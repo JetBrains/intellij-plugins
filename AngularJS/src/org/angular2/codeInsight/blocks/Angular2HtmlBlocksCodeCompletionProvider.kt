@@ -62,7 +62,7 @@ class Angular2HtmlBlocksCodeCompletionProvider : WebSymbolsCompletionProviderBas
     }
 
     availableBlocks
-      .filter { def -> def.maxCount.let { it == null || it > (prevBlocksCount[def.name] ?: 0) } }
+      .filter { def -> !def.isUnique || (prevBlocksCount[def.name] ?: 0) == 0 }
       .map { def ->
         WebSymbolCodeCompletionItem.create("@" + def.name, 0, symbol = def)
           .withPriority(if (!def.isPrimary) WebSymbol.Priority.HIGH else WebSymbol.Priority.NORMAL)

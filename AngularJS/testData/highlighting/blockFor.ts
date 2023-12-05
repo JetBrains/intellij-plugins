@@ -15,7 +15,7 @@ export interface User {
         item of array; 
         track item.name; 
         let first = $first, as<error descr="'=' expected"> </error>second; 
-        <error descr="'let' or 'track' expected">a</error>s third
+        <error descr="@for does not support parameter as">as</error> third
     ) {
         {{ item }} {{first}} {{$last}} {{$count}} {{<error descr="Unresolved variable or type $foo">$foo</error>}}
     }

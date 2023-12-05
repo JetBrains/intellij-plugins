@@ -14,6 +14,12 @@ const val BLOCK_ELSE = "else"
 const val BLOCK_SWITCH = "switch"
 const val BLOCK_CASE = "case"
 const val BLOCK_DEFAULT = "default"
+const val BLOCK_FOR = "for"
+const val BLOCK_DEFER = "defer"
+const val BLOCK_PLACEHOLDER = "placeholder"
+const val BLOCK_LOADING = "loading"
+
+val BLOCKS_WITH_PRIMARY_EXPRESSION = setOf(BLOCK_IF, BLOCK_ELSE_IF, BLOCK_SWITCH, BLOCK_CASE, BLOCK_FOR)
 
 const val PARAMETER_AS = "as"
 

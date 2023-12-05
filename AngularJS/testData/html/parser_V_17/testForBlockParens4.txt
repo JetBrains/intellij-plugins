@@ -23,7 +23,7 @@ HtmlFile:test.html
         ASTWrapperPsiElement(NG:BLOCK_PARAMETER (for:1))
           PsiWhiteSpace(' ')
           Angular2BlockParameter
-            PsiElement(JS:IDENTIFIER)('track')
+            PsiElement(NG:BLOCK_PARAMETER_NAME)('track')
             PsiWhiteSpace(' ')
             JSCallExpression
               JSReferenceExpression

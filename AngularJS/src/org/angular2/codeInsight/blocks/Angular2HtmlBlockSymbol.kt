@@ -13,8 +13,8 @@ class Angular2HtmlBlockSymbol : WebTypesSymbolBase() {
   val primaryBlock: String?
     get() = properties["primary-block"] as? String
 
-  val maxCount: Int?
-    get() = (properties["max-count"] as? Number)?.toInt()
+  val isUnique: Boolean
+    get() = properties["unique"] as? Boolean == true
 
   val last: Boolean
     get() = properties["order"] == "last"
@@ -29,7 +29,7 @@ class Angular2HtmlBlockSymbol : WebTypesSymbolBase() {
     get() = queryExecutor.runListSymbolsQuery(Angular2WebSymbolsQueryConfigurator.NG_BLOCK_PARAMETERS, true, scope = listOf(this))
       .filterIsInstance<Angular2HtmlBlockParameterSymbol>()
 
-  class Factory: WebTypesSymbolFactory {
+  class Factory : WebTypesSymbolFactory {
     override fun create(): WebTypesSymbolBase =
       Angular2HtmlBlockSymbol()
 

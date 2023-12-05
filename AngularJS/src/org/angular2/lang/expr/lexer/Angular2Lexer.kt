@@ -6,13 +6,23 @@ import com.intellij.lexer.*
 import com.intellij.psi.tree.IElementType
 import org.angular2.lang.expr.lexer.Angular2TokenTypes.Companion.STRING_PART_SPECIAL_SEQ
 
-class Angular2Lexer(config: Config) : MergingLexerAdapterBase(FlexAdapter(_Angular2Lexer(config))) {
+class Angular2Lexer(config: Config) : MergingLexerAdapterBase(FlexAdapter(_Angular2Lexer(config))), RestartableLexer {
 
   private var myMergeFunction: MyMergeFunction? = null
 
   override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int) {
     super.start(buffer, startOffset, endOffset, initialState)
     myMergeFunction = MyMergeFunction(false)
+  }
+
+  override fun getStartState(): Int =
+    _Angular2Lexer.YYINITIAL
+
+  override fun isRestartableState(state: Int): Boolean =
+    state == _Angular2Lexer.YYINITIAL || state == _Angular2Lexer.YYEXPRESSION
+
+  override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int, tokenIterator: TokenIterator?) {
+    start(buffer, startOffset, endOffset, initialState)
   }
 
   override fun getMergeFunction(): MergeFunction? {

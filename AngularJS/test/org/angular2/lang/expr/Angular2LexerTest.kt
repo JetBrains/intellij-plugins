@@ -3,11 +3,15 @@ package org.angular2.lang.expr
 
 import com.intellij.lexer.Lexer
 import com.intellij.testFramework.LexerTestCase
+import org.angular2.codeInsight.blocks.BLOCK_DEFER
+import org.angular2.codeInsight.blocks.BLOCK_IF
 import org.angular2.lang.expr.lexer.Angular2Lexer
 import org.angularjs.AngularTestUtil
 import org.jetbrains.annotations.NonNls
 
 class Angular2LexerTest : LexerTestCase() {
+  private var lexerFactory: () -> Lexer = { Angular2Lexer(Angular2Lexer.RegularBinding) }
+
   fun testIdent() {
     doFileTest("js")
   }
@@ -32,9 +36,31 @@ class Angular2LexerTest : LexerTestCase() {
     doFileTest("js")
   }
 
-  override fun createLexer(): Lexer {
-    return Angular2Lexer(Angular2Lexer.RegularBinding)
+  fun testIfBlockPrimaryExpression() {
+    doBlockTest(BLOCK_IF, 0)
   }
+
+  fun testIfBlockAsParameter() {
+    doBlockTest(BLOCK_IF, 1)
+  }
+
+  fun testIfBlockUnknownParameter() {
+    doBlockTest(BLOCK_IF, 1)
+  }
+
+  fun testDeferBlockParameter1() {
+    doBlockTest(BLOCK_DEFER, 1)
+  }
+
+  fun testDeferBlockParameter2() {
+    doBlockTest(BLOCK_DEFER, 1)
+  }
+
+  fun testDeferBlockParameter3() {
+    doBlockTest(BLOCK_DEFER, 1)
+  }
+
+  override fun createLexer(): Lexer = lexerFactory()
 
   override fun getDirPath(): String {
     return AngularTestUtil.getLexerTestDirPath() + "expr/lexer"
@@ -43,5 +69,16 @@ class Angular2LexerTest : LexerTestCase() {
   override fun doTest(text: @NonNls String) {
     super.doTest(text)
     checkCorrectRestart(text)
+  }
+
+  private fun doBlockTest(name: String, index: Int) {
+    doFileTest { Angular2Lexer(Angular2Lexer.BlockParameter(name, index)) }
+  }
+
+  private fun doFileTest(factory: () -> Lexer) {
+    val oldFactory = lexerFactory
+    lexerFactory = factory
+    doFileTest("js")
+    lexerFactory = oldFactory
   }
 }
