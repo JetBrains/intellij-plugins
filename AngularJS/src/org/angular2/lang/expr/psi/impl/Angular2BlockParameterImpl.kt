@@ -41,8 +41,11 @@ class Angular2BlockParameterImpl(elementType: IElementType?) : Angular2EmbeddedE
       }
     }
 
+  override val index: Int
+    get() = block?.parameters?.indexOf(this) ?: 0
+
   override val isPrimaryExpression: Boolean
-    get() = firstChild is JSExpression
+    get() = firstChild is JSExpression || firstChild is JSStatement
 
   override val nameElement: PsiElement?
     get() = firstChild
