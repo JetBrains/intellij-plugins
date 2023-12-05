@@ -9,6 +9,8 @@ interface Angular2BlockParameter : Angular2EmbeddedExpression {
 
   override fun getName(): String?
 
+  val isPrimaryExpression: Boolean
+
   val nameElement: PsiElement?
 
   val expression: JSExpression?

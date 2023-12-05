@@ -782,7 +782,7 @@
         {
           "name": "else if",
           "doc-url": "https://angular.dev/guide/templates/control-flow#if-block-conditionals",
-          "description": "The `@else if` block conditionally displays its content when its condition expression is truthy and all previous `@if` and `@if else` conditions were false.",
+          "description": "The `@else if` block conditionally displays its content when its condition expression is truthy and all previous `@if` and `@if else` conditions were falsy.",
           "primary-block": "if",
           "ng-block-parameters": [
             {
@@ -794,7 +794,7 @@
         {
           "name": "else",
           "doc-url": "https://angular.dev/guide/templates/control-flow#if-block-conditionals",
-          "description": "The `@else` block conditionally displays its content when all of previous `@if` and `@if else` conditions were false.",
+          "description": "The `@else` block conditionally displays its content when all of previous `@if` and `@if else` conditions were falsy.",
           "primary-block": "if",
           "order": "last",
           "max-count": 1
