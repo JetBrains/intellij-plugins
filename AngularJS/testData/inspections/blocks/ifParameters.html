@@ -1,0 +1,19 @@
+<error descr="@if requires an expression as a first parameter">@if</error> () {
+
+}
+
+@if (bar) {
+
+}
+
+@if (bar; <error descr="@if does not support parameter foo"><error descr="'as' expected">f</error>oo</error>) {
+
+}
+
+@if (bar; <error descr="@if block can only have one as parameter">as</error> foo; <error descr="@if block can only have one as parameter">as</error> bar) {
+
+}
+
+@if (as<error descr="Unexpected token 'foo'"> </error>foo) {
+
+}

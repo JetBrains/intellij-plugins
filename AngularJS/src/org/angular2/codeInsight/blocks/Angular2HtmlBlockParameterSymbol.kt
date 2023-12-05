@@ -9,13 +9,14 @@ class Angular2HtmlBlockParameterSymbol : WebTypesSymbolBase() {
   val maxCount: Int?
     get() = (properties["max-count"] as? Number)?.toInt()
 
-  val position: Int?
-    get() = (properties["position"] as? Number)?.toInt()
+  val isPrimaryExpression: Boolean
+    get() = name == PRIMARY_EXPRESSION
 
-  val nameAsPrefix: Boolean
-    get() = properties["name-as-prefix"] != false
+  companion object {
+    const val PRIMARY_EXPRESSION = "\$primary-expression"
+  }
 
-  class Factory: WebTypesSymbolFactory {
+  class Factory : WebTypesSymbolFactory {
     override fun create(): WebTypesSymbolBase =
       Angular2HtmlBlockParameterSymbol()
 

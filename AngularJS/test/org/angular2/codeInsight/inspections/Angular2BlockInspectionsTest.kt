@@ -17,6 +17,10 @@ class Angular2BlockInspectionsTest : Angular2TestCase("inspections/blocks") {
 
   fun testElseWithParameters() = doHighlightingTest()
 
+  fun testIfParameters() = doHighlightingTest()
+
+  fun testElseIfParameters() = doHighlightingTest()
+
   fun testMultipleEmpty() = doHighlightingTest()
 
   fun testEmptyWithParameters() = doHighlightingTest()

@@ -707,10 +707,8 @@
           "description": "The `@for` repeatedly renders content of a block for each item in a collection. The collection can be represented as any JavaScript iterable but there are performance advantages of using a regular `Array`. A basic `@for` loop looks like:\n```Angular2Html\n@for (item of items; track item.id) {\n  {{ item.name }}\n}\n```",
           "ng-block-parameters": [
             {
-              "name": "expression",
-              "position": 0,
-              "required": true,
-              "name-as-prefix": false
+              "name": "$primary-expression",
+              "required": true
             },
             {
               "name": "let",
@@ -732,22 +730,22 @@
               "description": "Number of items in a collection iterated over"
             },
             {
-              "name": "index",
+              "name": "$index",
               "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
               "description": "Index of the current row"
             },
             {
-              "name": "first",
+              "name": "$first",
               "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
               "description": "Whether the current row is the first row"
             },
             {
-              "name": "last",
+              "name": "$last",
               "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
               "description": "Whether the current row is the last row"
             },
             {
-              "name": "even",
+              "name": "$even",
               "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
               "description": "Whether the current row index is even"
             },
@@ -772,13 +770,11 @@
           "is-primary": true,
           "ng-block-parameters": [
             {
-              "name": "expression",
-              "position": 0,
-              "required": true,
-              "name-as-prefix": false
+              "name": "$primary-expression",
+              "required": true
             },
             {
-              "name": "after",
+              "name": "as",
               "max-count": 1
             }
           ]
@@ -790,10 +786,8 @@
           "primary-block": "if",
           "ng-block-parameters": [
             {
-              "name": "expression",
-              "position": 0,
-              "required": true,
-              "name-as-prefix": false
+              "name": "$primary-expression",
+              "required": true
             }
           ]
         },
@@ -813,10 +807,9 @@
           "nested-secondary-blocks": true,
           "ng-block-parameters": [
             {
-              "name": "expression",
-              "position": 0,
+              "name": "$primary-expression",
               "required": true,
-              "name-as-prefix": false
+              "prefix": ""
             }
           ]
         },
@@ -827,10 +820,8 @@
           "primary-block": "switch",
           "ng-block-parameters": [
             {
-              "name": "expression",
-              "position": 0,
-              "required": true,
-              "name-as-prefix": false
+              "name": "$primary-expression",
+              "required": true
             }
           ]
         },

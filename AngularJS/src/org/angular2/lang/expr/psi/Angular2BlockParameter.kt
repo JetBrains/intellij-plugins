@@ -3,10 +3,16 @@ package org.angular2.lang.expr.psi
 
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSVariable
+import com.intellij.psi.PsiElement
 
 interface Angular2BlockParameter : Angular2EmbeddedExpression {
 
+  override fun getName(): String?
+
+  val nameElement: PsiElement?
+
   val expression: JSExpression?
+
   val variables: List<JSVariable>
 
 }

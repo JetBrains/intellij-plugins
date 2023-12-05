@@ -2,9 +2,12 @@
 package org.angular2.lang.expr.psi.impl
 
 import com.intellij.lang.javascript.psi.JSExpression
+import com.intellij.lang.javascript.psi.JSStatement
 import com.intellij.lang.javascript.psi.JSVarStatement
 import com.intellij.lang.javascript.psi.JSVariable
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.tree.IElementType
 import org.angular2.lang.expr.psi.Angular2BlockParameter
 import org.angular2.lang.expr.psi.Angular2ElementVisitor
@@ -19,6 +22,13 @@ class Angular2BlockParameterImpl(elementType: IElementType?) : Angular2EmbeddedE
       super.accept(visitor)
     }
   }
+
+  override fun getName(): String? = nameElement?.text
+
+  override val nameElement: PsiElement?
+    get() = firstChild
+      .let { if (it is PsiErrorElement) it.nextSibling else it }
+      ?.takeIf { it !is JSExpression && it !is JSStatement }
 
   override val expression: JSExpression?
     get() = getExpression(this)

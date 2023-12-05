@@ -1,5 +1,5 @@
-@switch {
-  @case() {}
+@switch (foo) {
+  @case("a") {}
   <error descr="@switch block can only have one @default block">@default</error> {}
   <error descr="@switch block can only have one @default block">@default</error> {}
 }
