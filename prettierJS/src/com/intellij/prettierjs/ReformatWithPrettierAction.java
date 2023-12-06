@@ -119,7 +119,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     }
     Editor editor = e.getData(CommonDataKeys.EDITOR);
     if (editor != null) {
-      processFileInEditor(project, editor, myErrorHandler);
+      processFileInEditor(project, editor, myErrorHandler, null);
     }
     else {
       VirtualFile[] virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
@@ -173,7 +173,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     return checkNodeAndPackage(file, editor, errorHandler);
   }
 
-  public static void processFileInEditor(@NotNull Project project, @NotNull Editor editor, @NotNull ErrorHandler errorHandler) {
+  public static void processFileInEditor(@NotNull Project project, @NotNull Editor editor, @NotNull ErrorHandler errorHandler, @Nullable TextRange targetRange) {
     if (!isAvailable(project, editor, errorHandler)) return;
     PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
     if (file == null) {
@@ -187,8 +187,12 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       return;
     }
 
-    TextRange range = editor.getSelectionModel().hasSelection()
-                      ? new TextRange(editor.getSelectionModel().getSelectionStart(), editor.getSelectionModel().getSelectionEnd()) : null;
+    final TextRange range = (targetRange != null)
+                            ? targetRange
+                            : (editor.getSelectionModel().hasSelection())
+                              ? new TextRange(editor.getSelectionModel().getSelectionStart(), editor.getSelectionModel().getSelectionEnd())
+                              : null;
+
     ensureConfigsSaved(Collections.singletonList(vFile), project);
     ThrowableComputable<PrettierLanguageService.FormatResult, RuntimeException> computable = () -> performRequestForFile(file, range);
     PrettierLanguageService.FormatResult result = ProgressManager
