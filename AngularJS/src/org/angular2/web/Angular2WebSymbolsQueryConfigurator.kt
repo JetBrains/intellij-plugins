@@ -22,7 +22,9 @@ import com.intellij.webSymbols.WebSymbolsScope
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
 import org.angular2.Angular2Framework
+import org.angular2.codeInsight.blocks.Angular2HtmlBlockReferenceExpressionCompletionProvider
 import org.angular2.codeInsight.blocks.isJSReferenceInForBlockLetParameterAssignment
+import org.angular2.lang.expr.psi.Angular2EmbeddedExpression
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.lang.html.psi.Angular2HtmlBlock
@@ -69,18 +71,20 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
            DirectiveAttributeSelectorsScope(element.project))
 
   private fun calculateJavaScriptScopes(element: JSElement): List<WebSymbolsScope> =
-    when {
-      element is JSReferenceExpression
-      && isJSReferenceInForBlockLetParameterAssignment(element)
-      && element
-        .siblings(false, false)
-        .filter { it.elementType != TokenType.WHITE_SPACE }
-        .firstOrNull()?.elementType == JSTokenTypes.EQ -> listOfNotNull(element.parentOfType<Angular2HtmlBlock>()?.definition)
-      element is JSReferenceExpression || element is JSLiteralExpression ->
-        listOf(DirectivePropertyMappingCompletionScope(element))
-      else ->
-        emptyList()
-    }
+    if (element is JSReferenceExpression
+        && Angular2HtmlBlockReferenceExpressionCompletionProvider.canAddCompletions(element))
+      emptyList()
+    else if (element is JSReferenceExpression
+             && isJSReferenceInForBlockLetParameterAssignment(element)
+             && element
+               .siblings(false, false)
+               .filter { it.elementType != TokenType.WHITE_SPACE }
+               .firstOrNull()?.elementType == JSTokenTypes.EQ)
+      listOfNotNull(element.parentOfType<Angular2HtmlBlock>()?.definition)
+    else if (element is JSReferenceExpression || element is JSLiteralExpression)
+      listOfNotNull(DirectivePropertyMappingCompletionScope(element),
+                    element.parentOfType<Angular2EmbeddedExpression>()?.let { WebSymbolsTemplateScope(it) })
+    else emptyList()
 
   companion object {
     const val PROP_BINDING_PATTERN = "ng-binding-pattern"

@@ -4,6 +4,7 @@ package org.angular2.codeInsight.blocks
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.lang.javascript.JSTokenTypes
+import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.JSVarStatement
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.psi.PsiErrorElement
@@ -16,9 +17,7 @@ import org.angular2.lang.expr.psi.Angular2BlockParameter
 object Angular2HtmlBlockReferenceExpressionCompletionProvider {
   fun addCompletions(result: CompletionResultSet, ref: JSReferenceExpressionImpl): Boolean {
     // the "of" keyword in @for primary expression
-    if (ref.parent.let { it is Angular2BlockParameter && it.isPrimaryExpression && it.block?.getName() == BLOCK_FOR }
-        && ref.siblings(false, false)
-          .filter { it.elementType != TokenType.WHITE_SPACE && it !is PsiErrorElement }.firstOrNull() is JSVarStatement) {
+    if (addOfKeyword(ref)) {
       result.addElement(LookupElementBuilder.create("of")
                           .withIcon(AngularJSIcons.Angular2)
                           .withInsertHandler(Angular2BlockKeywordInsertHandler))
@@ -26,12 +25,7 @@ object Angular2HtmlBlockReferenceExpressionCompletionProvider {
       return true
     }
     // the "=" in @for "let" parameter
-    else if (isJSReferenceInForBlockLetParameterAssignment(ref)
-             && ref.siblings(false, false)
-               .filter { it.elementType != TokenType.WHITE_SPACE && it !is PsiErrorElement }
-               .firstOrNull()
-               ?.elementType == JSTokenTypes.IDENTIFIER
-    ) {
+    else if (addEq(ref)) {
       result.addElement(LookupElementBuilder.create("=")
                           .withIcon(AngularJSIcons.Angular2)
                           .withInsertHandler(Angular2BlockKeywordInsertHandler))
@@ -41,4 +35,18 @@ object Angular2HtmlBlockReferenceExpressionCompletionProvider {
     return false
   }
 
+  fun canAddCompletions(ref: JSReferenceExpression) =
+    addOfKeyword(ref) || addEq(ref)
+
+  private fun addOfKeyword(ref: JSReferenceExpression) =
+    ref.parent.let { it is Angular2BlockParameter && it.isPrimaryExpression && it.block?.getName() == BLOCK_FOR }
+    && ref.siblings(false, false)
+      .filter { it.elementType != TokenType.WHITE_SPACE && it !is PsiErrorElement }.firstOrNull() is JSVarStatement
+
+  private fun addEq(ref: JSReferenceExpression) =
+    isJSReferenceInForBlockLetParameterAssignment(ref)
+    && ref.siblings(false, false)
+      .filter { it.elementType != TokenType.WHITE_SPACE && it !is PsiErrorElement }
+      .firstOrNull()
+      ?.elementType == JSTokenTypes.IDENTIFIER
 }

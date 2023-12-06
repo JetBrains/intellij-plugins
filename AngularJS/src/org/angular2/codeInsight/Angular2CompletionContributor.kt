@@ -63,10 +63,6 @@ class Angular2CompletionContributor : CompletionContributor() {
            psiElement(Angular2TokenTypes.BLOCK_PARAMETER_NAME).with(language(Angular2Language.INSTANCE)),
            Angular2BlockParameterNameCompletionProvider())
 
-    extend(CompletionType.BASIC,
-           psiElement(Angular2TokenTypes.BLOCK_PARAMETER_NAME).with(language(Angular2Language.INSTANCE)),
-           Angular2BlockParameterNameCompletionProvider())
-
   }
 
   private class TemplateExpressionCompletionProvider : CompletionProvider<CompletionParameters>() {
