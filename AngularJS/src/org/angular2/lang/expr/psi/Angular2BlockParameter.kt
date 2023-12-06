@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSVariable
 import com.intellij.model.psi.PsiExternalReferenceHost
 import com.intellij.psi.PsiElement
-import org.angular2.codeInsight.blocks.Angular2HtmlBlockParameterSymbol
+import org.angular2.codeInsight.blocks.Angular2BlockParameterSymbol
 import org.angular2.lang.html.psi.Angular2HtmlBlock
 
 interface Angular2BlockParameter : Angular2EmbeddedExpression, PsiExternalReferenceHost {
@@ -14,7 +14,7 @@ interface Angular2BlockParameter : Angular2EmbeddedExpression, PsiExternalRefere
 
   val block: Angular2HtmlBlock?
 
-  val definition: Angular2HtmlBlockParameterSymbol?
+  val definition: Angular2BlockParameterSymbol?
 
   val isPrimaryExpression: Boolean
 

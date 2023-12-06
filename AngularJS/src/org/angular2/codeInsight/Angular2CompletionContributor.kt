@@ -27,14 +27,13 @@ import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
 import com.intellij.psi.util.PsiUtilCore
-import com.intellij.psi.util.parentOfType
 import com.intellij.util.ProcessingContext
 import com.intellij.util.asSafely
 import com.intellij.util.containers.ContainerUtil
-import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import icons.AngularJSIcons
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity
+import org.angular2.codeInsight.blocks.Angular2BlockParameterNameCompletionProvider
 import org.angular2.codeInsight.imports.Angular2GlobalImportCandidate
 import org.angular2.codeInsight.template.Angular2StandardSymbolsScopesProvider
 import org.angular2.codeInsight.template.Angular2TemplateScopesResolver
@@ -45,7 +44,6 @@ import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.lexer.Angular2TokenTypes
 import org.angular2.lang.expr.psi.Angular2PipeExpression
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression
-import org.angular2.lang.html.psi.Angular2HtmlBlock
 import org.angular2.signals.Angular2SignalUtils
 import org.jetbrains.annotations.NonNls
 
@@ -62,7 +60,7 @@ class Angular2CompletionContributor : CompletionContributor() {
 
     extend(CompletionType.BASIC,
            psiElement(Angular2TokenTypes.BLOCK_PARAMETER_NAME).with(language(Angular2Language.INSTANCE)),
-           BlockParameterCompletionProvider())
+           Angular2BlockParameterNameCompletionProvider())
 
   }
 
@@ -282,34 +280,6 @@ class Angular2CompletionContributor : CompletionContributor() {
                }
                ?.let { JSCompletionUtil.withJSLookupPriority(it, IMPORT_PRIORITY) }
              ?: lookupElement
-    }
-  }
-
-  private class BlockParameterCompletionProvider : CompletionProvider<CompletionParameters>() {
-    override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
-      val block = parameters.position.parentOfType<Angular2HtmlBlock>() ?: return
-      val definition = block.definition ?: return
-      val uniqueParams = definition.parameters.filter { it.isUnique }.map { parameter -> parameter.name }.toSet()
-      val providedParams = block.parameters.filter { uniqueParams.contains(it.name) }.mapNotNull { it.name }.toSet()
-
-      for (param in definition.parameters) {
-        if (!providedParams.contains(param.name) && param.pattern == null && !param.isPrimaryExpression) {
-          WebSymbolCodeCompletionItem.create(param.name, 0, symbol = param)
-            .withInsertHandlerAdded(BlockParameterInsertHandler)
-            .addToResult(parameters, result)
-        }
-      }
-
-      result.stopHere()
-    }
-
-  }
-
-  private object BlockParameterInsertHandler : InsertHandler<LookupElement> {
-    override fun handleInsert(context: InsertionContext, item: LookupElement) {
-      val document = context.document
-      document.insertString(context.tailOffset, " ")
-      context.editor.caretModel.moveToOffset(context.tailOffset)
     }
   }
 

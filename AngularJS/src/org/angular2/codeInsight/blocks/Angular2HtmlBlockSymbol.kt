@@ -25,9 +25,9 @@ class Angular2HtmlBlockSymbol : WebTypesSymbolBase() {
   val hasNestedSecondaryBlocks: Boolean
     get() = properties["nested-secondary-blocks"] == true
 
-  val parameters: List<Angular2HtmlBlockParameterSymbol>
+  val parameters: List<Angular2BlockParameterSymbol>
     get() = queryExecutor.runListSymbolsQuery(Angular2WebSymbolsQueryConfigurator.NG_BLOCK_PARAMETERS, true, scope = listOf(this))
-      .filterIsInstance<Angular2HtmlBlockParameterSymbol>()
+      .filterIsInstance<Angular2BlockParameterSymbol>()
 
   class Factory : WebTypesSymbolFactory {
     override fun create(): WebTypesSymbolBase =
