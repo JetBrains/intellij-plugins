@@ -4,7 +4,7 @@ package org.angular2.codeInsight.blocks
 import com.intellij.webSymbols.webTypes.WebTypesSymbolBase
 import com.intellij.webSymbols.webTypes.WebTypesSymbolFactory
 
-class Angular2HtmlBlockParameterSymbol : WebTypesSymbolBase() {
+class Angular2BlockParameterSymbol : WebTypesSymbolBase() {
 
   val isUnique: Boolean
     get() = properties["unique"] as? Boolean == true
@@ -18,7 +18,7 @@ class Angular2HtmlBlockParameterSymbol : WebTypesSymbolBase() {
 
   class Factory : WebTypesSymbolFactory {
     override fun create(): WebTypesSymbolBase =
-      Angular2HtmlBlockParameterSymbol()
+      Angular2BlockParameterSymbol()
 
   }
 }

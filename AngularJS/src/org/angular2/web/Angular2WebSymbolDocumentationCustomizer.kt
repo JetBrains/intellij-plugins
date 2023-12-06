@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.documentation.WebSymbolDocumentation
 import com.intellij.webSymbols.documentation.WebSymbolDocumentationCustomizer
-import org.angular2.codeInsight.blocks.Angular2HtmlBlockParameterSymbol
+import org.angular2.codeInsight.blocks.Angular2BlockParameterSymbol
 import org.angular2.codeInsight.blocks.Angular2HtmlBlockSymbol
 import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget.SyntaxPrinter
 import org.angular2.lang.html.highlighting.Angular2HtmlHighlighterColors.Companion.NG_BLOCK_NAME
@@ -30,7 +30,7 @@ class Angular2WebSymbolDocumentationCustomizer : WebSymbolDocumentationCustomize
           emptyMap()
       )
     }
-    else if (symbol is Angular2HtmlBlockParameterSymbol && location != null) {
+    else if (symbol is Angular2BlockParameterSymbol && location != null) {
       return documentation.with(
         definition = SyntaxPrinter(location).append(TypeScriptHighlighter.TS_KEYWORD, "parameter")
           .appendRaw(" ")

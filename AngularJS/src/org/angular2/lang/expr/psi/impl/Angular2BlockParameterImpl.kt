@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.parentOfType
-import org.angular2.codeInsight.blocks.Angular2HtmlBlockParameterSymbol
+import org.angular2.codeInsight.blocks.Angular2BlockParameterSymbol
 import org.angular2.lang.expr.psi.Angular2BlockParameter
 import org.angular2.lang.expr.psi.Angular2ElementVisitor
 import org.angular2.lang.expr.psi.impl.Angular2BindingImpl.Companion.getExpression
@@ -31,7 +31,7 @@ class Angular2BlockParameterImpl(elementType: IElementType?) : Angular2EmbeddedE
   override val block: Angular2HtmlBlock?
     get() = parentOfType<Angular2HtmlBlock>()
 
-  override val definition: Angular2HtmlBlockParameterSymbol?
+  override val definition: Angular2BlockParameterSymbol?
     get() = block?.definition?.parameters?.let { definitions ->
       if (isPrimaryExpression)
         definitions.find { it.isPrimaryExpression }
