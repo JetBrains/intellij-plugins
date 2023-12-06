@@ -50,5 +50,6 @@
     <orderEntry type="library" name="eclipse.lsp4j" level="project" />
     <orderEntry type="module" module-name="intellij.platform.backend.workspace" />
     <orderEntry type="library" name="commons-text" level="project" />
+    <orderEntry type="module" module-name="intellij.markdown" />
   </component>
 </module>

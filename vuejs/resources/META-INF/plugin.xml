@@ -44,6 +44,7 @@
     <plugin id="org.intellij.plugins.postcss"/>
   </dependencies>
   <depends optional="true" config-file="js-debugger.xml">JavaScriptDebugger</depends>
+  <depends optional="true" config-file="vue-markdown.xml">org.intellij.plugins.markdown</depends>
 
   <extensionPoints>
     <!--suppress PluginXmlValidity -->
