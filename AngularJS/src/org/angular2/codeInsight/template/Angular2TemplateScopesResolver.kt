@@ -7,29 +7,35 @@ import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveResult
 import com.intellij.util.Processor
+import com.intellij.webSymbols.WebSymbolsScope
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.html.Angular2HtmlLanguage
 
 object Angular2TemplateScopesResolver {
+
   @JvmStatic
-  fun resolve(element: PsiElement, processor: Processor<in ResolveResult>) {
+  fun getScopes(element: PsiElement): List<Angular2TemplateScope> {
     val original = CompletionUtil.getOriginalOrSelf(element)
     if (!checkLanguage(original)) {
-      return
+      return emptyList()
     }
     val expressionIsInjected = original.containingFile.language.`is`(Angular2Language.INSTANCE)
     val hostElement: PsiElement?
     if (expressionIsInjected) {
       //we are working within injection
       hostElement = InjectedLanguageManager.getInstance(element.project).getInjectionHost(element)
-                    ?: return
+                    ?: return emptyList()
     }
     else {
       hostElement = null
     }
-    Angular2TemplateScopesProvider.EP_NAME.extensionList
-      .asSequence()
+    return Angular2TemplateScopesProvider.EP_NAME.extensionList
       .flatMap { it.getScopes(element, hostElement) }
+  }
+
+  @JvmStatic
+  fun resolve(element: PsiElement, processor: Processor<in ResolveResult>) {
+    getScopes(element)
       .firstOrNull { it.resolveAllScopesInHierarchy(processor) }
   }
 

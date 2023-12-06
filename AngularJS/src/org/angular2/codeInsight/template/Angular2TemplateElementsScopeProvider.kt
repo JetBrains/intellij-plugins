@@ -2,7 +2,6 @@
 package org.angular2.codeInsight.template
 
 import com.intellij.codeInsight.completion.CompletionUtil
-import com.intellij.javascript.webSymbols.toJSImplicitElement
 import com.intellij.lang.javascript.psi.JSPsiElementBase
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult
@@ -11,13 +10,12 @@ import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.ResolveResult
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.*
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.containers.Stack
+import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.utils.qualifiedKind
 import org.angular2.Angular2InjectionUtils
 import org.angular2.codeInsight.blocks.BLOCK_FOR
 import org.angular2.codeInsight.blocks.PARAMETER_LET
@@ -50,7 +48,7 @@ class Angular2TemplateElementsScopeProvider : Angular2TemplateScopesProvider() {
     return listOfNotNull(templateRootScope.findBestMatchingTemplateScope(hostElement ?: element))
   }
 
-  private class Angular2TemplateElementScope(root: PsiElement, parent: Angular2TemplateElementScope?)
+  private class Angular2TemplateElementScope(private val root: PsiElement, parent: Angular2TemplateElementScope?)
     : Angular2TemplateScope(parent) {
 
     private val elements = ArrayList<JSPsiElementBase>()
@@ -62,12 +60,19 @@ class Angular2TemplateElementsScopeProvider : Angular2TemplateScopesProvider() {
       }
     }
 
+    override val symbols = ArrayList<WebSymbol>()
+
     override fun resolve(consumer: Consumer<in ResolveResult>) {
       elements.forEach { el -> consumer.accept(JSResolveResult(el)) }
     }
 
     fun add(element: JSPsiElementBase) {
       elements.add(element)
+    }
+
+    fun add(symbol: WebSymbol) {
+      assert(symbol.qualifiedKind == WebSymbol.JS_SYMBOLS)
+      symbols.add(symbol)
     }
 
     fun findBestMatchingTemplateScope(element: PsiElement): Angular2TemplateElementScope? {
@@ -87,10 +92,21 @@ class Angular2TemplateElementsScopeProvider : Angular2TemplateScopesProvider() {
         }
       }
       if (PsiTreeUtil.getParentOfType(element, Angular2HtmlTemplateBindings::class.java) != null && curScope != this) {
-        curScope = curScope!!.parent as Angular2TemplateElementScope?
+        curScope = curScope?.parent as Angular2TemplateElementScope?
+      }
+      else if (element.parentOfType<Angular2BlockParameter>(true)?.isPrimaryExpression == true) {
+        curScope = curScope?.parent as Angular2TemplateElementScope?
       }
       return curScope
     }
+
+    override fun equals(other: Any?): Boolean =
+      other is Angular2TemplateElementScope
+      && other.root == root
+      && other.myRange == myRange
+
+    override fun hashCode(): Int =
+      root.hashCode()
   }
 
   private open class Angular2BaseScopeBuilder(private val myTemplateFile: PsiFile) : Angular2HtmlRecursiveElementVisitor() {
@@ -121,6 +137,10 @@ class Angular2TemplateElementsScopeProvider : Angular2TemplateScopesProvider() {
 
     fun addElement(element: JSPsiElementBase) {
       currentScope().add(element)
+    }
+
+    fun addSymbol(symbol: WebSymbol) {
+      currentScope().add(symbol)
     }
 
     fun prevScope(): Angular2TemplateElementScope {
@@ -180,7 +200,7 @@ class Angular2TemplateElementsScopeProvider : Angular2TemplateScopesProvider() {
         block.definition
           ?.implicitVariables
           ?.filter { it.name !in usedVariables }
-          ?.forEach { addElement(it.toJSImplicitElement(block)) }
+          ?.forEach { addSymbol(it) }
       }
       popScope()
     }
