@@ -34,6 +34,7 @@ import icons.AngularJSIcons
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity
 import org.angular2.codeInsight.blocks.Angular2BlockParameterNameCompletionProvider
+import org.angular2.codeInsight.blocks.Angular2HtmlBlockReferenceExpressionCompletionProvider
 import org.angular2.codeInsight.imports.Angular2GlobalImportCandidate
 import org.angular2.codeInsight.template.Angular2StandardSymbolsScopesProvider
 import org.angular2.codeInsight.template.Angular2TemplateScopesResolver
@@ -57,6 +58,10 @@ class Angular2CompletionContributor : CompletionContributor() {
     extend(CompletionType.BASIC,
            psiElement().with(language(Angular2Language.INSTANCE)),
            TemplateExpressionCompletionProvider())
+
+    extend(CompletionType.BASIC,
+           psiElement(Angular2TokenTypes.BLOCK_PARAMETER_NAME).with(language(Angular2Language.INSTANCE)),
+           Angular2BlockParameterNameCompletionProvider())
 
     extend(CompletionType.BASIC,
            psiElement(Angular2TokenTypes.BLOCK_PARAMETER_NAME).with(language(Angular2Language.INSTANCE)),
@@ -136,6 +141,11 @@ class Angular2CompletionContributor : CompletionContributor() {
       else if (ref is JSReferenceExpressionImpl && (ref.qualifier == null || ref.qualifier is JSThisExpression)) {
         val contributedElements = HashSet<String>()
         val localNames = HashSet<String>()
+
+        // Block support
+        if (Angular2HtmlBlockReferenceExpressionCompletionProvider.addCompletions(result, ref)) {
+          return
+        }
 
         // Angular template scope
         Angular2TemplateScopesResolver.resolve(parameters.position) { resolveResult ->

@@ -1,8 +1,9 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight.blocks
 
-import com.intellij.codeInsight.completion.*
-import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.codeInsight.completion.CompletionParameters
+import com.intellij.codeInsight.completion.CompletionProvider
+import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.ProcessingContext
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
@@ -18,20 +19,12 @@ class Angular2BlockParameterNameCompletionProvider : CompletionProvider<Completi
     for (param in definition.parameters) {
       if (!providedParams.contains(param.name) && param.pattern == null && !param.isPrimaryExpression) {
         WebSymbolCodeCompletionItem.create(param.name, 0, symbol = param)
-          .withInsertHandlerAdded(BlockParameterNameInsertHandler)
+          .withInsertHandlerAdded(Angular2BlockKeywordInsertHandler)
           .addToResult(parameters, result)
       }
     }
 
     result.stopHere()
-  }
-
-  private object BlockParameterNameInsertHandler : InsertHandler<LookupElement> {
-    override fun handleInsert(context: InsertionContext, item: LookupElement) {
-      val document = context.document
-      document.insertString(context.tailOffset, " ")
-      context.editor.caretModel.moveToOffset(context.tailOffset)
-    }
   }
 
 }

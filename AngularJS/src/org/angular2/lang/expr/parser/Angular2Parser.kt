@@ -39,7 +39,7 @@ class Angular2Parser private constructor(builder: PsiBuilder,
   }
 
   inner class Angular2StatementParser(parser: Angular2Parser?) : StatementParser<Angular2Parser?>(parser) {
-    fun parseChain(openParens: Int = 0) {
+    fun parseChain(openParens: Int = 0, allowEmpty: Boolean = true) {
       assert(!myIsJavaScript)
       val chain = builder.mark()
       var count = 0
@@ -92,6 +92,9 @@ class Angular2Parser private constructor(builder: PsiBuilder,
           }
           else {
             chain.done(JSStubElementTypes.EMPTY_EXPRESSION)
+            if (!allowEmpty) {
+              chain.precede().error(JavaScriptBundle.message("javascript.parser.message.expected.expression"))
+            }
           }
         }
         1 -> chain.drop()
@@ -510,11 +513,11 @@ class Angular2Parser private constructor(builder: PsiBuilder,
         if (builder.eof()) return@parseRoot
         when (blockName) {
           BLOCK_IF -> when (parameterIndex) {
-            0 -> parser.parseChain()
+            0 -> parser.parseChain(allowEmpty = false)
             else -> parseAliasAsVariable(builder)
           }
           BLOCK_ELSE_IF, BLOCK_SWITCH, BLOCK_CASE -> when (parameterIndex) {
-            0 -> parser.parseChain()
+            0 -> parser.parseChain(allowEmpty = false)
             else -> skipContents(builder)
           }
           BLOCK_FOR -> when (parameterIndex) {
@@ -536,7 +539,7 @@ class Angular2Parser private constructor(builder: PsiBuilder,
     private fun parseDeferTrigger(builder: PsiBuilder, parser: Angular2StatementParser) {
       if (isParameterName(builder, "when") || isParameterName(builder, "prefetch when")) {
         builder.advanceLexer()
-        parser.parseChain()
+        parser.parseChain(allowEmpty = false)
       }
       else if (isParameterName(builder, "on") || isParameterName(builder, "prefetch on")) {
         // pretty complex parsing, let's leave it for now
@@ -615,17 +618,29 @@ class Angular2Parser private constructor(builder: PsiBuilder,
       else {
         builder.error(Angular2Bundle.message("angular.parse.expression.expected-of"))
       }
-      parser.parseChain(parensCount)
+      parser.parseChain(parensCount, allowEmpty = false)
     }
 
     private fun parseForLoopLetOrTrackExpression(builder: PsiBuilder, parser: Angular2StatementParser) {
       if (isParameterName(builder, "let")) {
         builder.advanceLexer()
+        if (builder.eof()) {
+          builder.error(JavaScriptBundle.message("javascript.parser.message.expected.identifier"))
+          return
+        }
+        val stmt = builder.mark()
         while (!builder.eof()) {
-          if (!tryParseParameterVariable(builder)) {
+          val variable = builder.mark()
+          if (!JSKeywordSets.TS_IDENTIFIERS_TOKENS_SET.contains(builder.tokenType)) {
+            builder.error(JavaScriptBundle.message("javascript.parser.message.expected.identifier"))
             if (builder.tokenType.let { it != JSTokenTypes.EQ && it != JSTokenTypes.COMMA }) {
               builder.advanceLexer()
             }
+          }
+          else {
+            val identifier = builder.mark()
+            builder.advanceLexer()
+            identifier.collapse(JSTokenTypes.IDENTIFIER)
           }
           if (builder.tokenType != JSTokenTypes.EQ) {
             builder.error(Angular2Bundle.message("angular.parse.expression.expected-eq"))
@@ -638,18 +653,18 @@ class Angular2Parser private constructor(builder: PsiBuilder,
               builder.error(JavaScriptBundle.message("javascript.parser.message.expected.identifier"))
             }
             else {
-              val start = builder.mark()
+              val errorStart = builder.mark()
               builder.advanceLexer()
-              start.error(JavaScriptBundle.message("javascript.parser.message.expected.identifier"))
+              errorStart.error(JavaScriptBundle.message("javascript.parser.message.expected.identifier"))
             }
           }
           else {
-            val marker = builder.mark()
+            val identifier = builder.mark()
             builder.advanceLexer()
-            marker.collapse(JSTokenTypes.IDENTIFIER)
-            // TODO create reference element, when resolve works
-            // marker.precede().done(JSElementTypes.REFERENCE_EXPRESSION)
+            identifier.collapse(JSTokenTypes.IDENTIFIER)
+            identifier.precede().done(JSElementTypes.REFERENCE_EXPRESSION)
           }
+          variable.done(Angular2StubElementTypes.BLOCK_PARAMETER_VARIABLE)
           if (!builder.eof() && builder.tokenType != JSTokenTypes.COMMA) {
             builder.error(Angular2Bundle.message("angular.parse.expression.expected-comma"))
           }
@@ -657,10 +672,11 @@ class Angular2Parser private constructor(builder: PsiBuilder,
             builder.advanceLexer()
           }
         }
+        stmt.done(JSStubElementTypes.VAR_STATEMENT)
       }
       else if (isParameterName(builder, "track")) {
         builder.advanceLexer()
-        parser.parseChain()
+        parser.parseChain(allowEmpty = false)
       }
       else {
         skipContents(builder)

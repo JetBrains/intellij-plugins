@@ -2,7 +2,9 @@
 package org.angular2.codeInsight.template
 
 import com.intellij.codeInsight.completion.CompletionUtil
+import com.intellij.javascript.webSymbols.toJSImplicitElement
 import com.intellij.lang.javascript.psi.JSPsiElementBase
+import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
@@ -17,6 +19,8 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.containers.Stack
 import org.angular2.Angular2InjectionUtils
+import org.angular2.codeInsight.blocks.BLOCK_FOR
+import org.angular2.codeInsight.blocks.PARAMETER_LET
 import org.angular2.lang.expr.psi.Angular2BlockParameter
 import org.angular2.lang.expr.psi.Angular2RecursiveVisitor
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
@@ -168,10 +172,15 @@ class Angular2TemplateElementsScopeProvider : Angular2TemplateScopesProvider() {
     override fun visitBlock(block: Angular2HtmlBlock) {
       pushScope(block)
       super.visitBlock(block)
-      if (block.getName() == "for") {
-        sequenceOf("\$index", "\$first", "\$last", "\$even", "\$odd", "\$count").forEach {
-          addElement(createVariable(it, block))
-        }
+      if (block.getName() == BLOCK_FOR) {
+        val usedVariables = block.parameters
+          .filter { it.name == PARAMETER_LET }
+          .flatMap { it.variables }
+          .mapNotNull { variable -> (variable.initializer as? JSReferenceExpression)?.takeIf { it.qualifier == null }?.referenceName }
+        block.definition
+          ?.implicitVariables
+          ?.filter { it.name !in usedVariables }
+          ?.forEach { addElement(it.toJSImplicitElement(block)) }
       }
       popScope()
     }

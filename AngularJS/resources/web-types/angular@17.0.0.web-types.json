@@ -719,42 +719,54 @@
               "name": "track",
               "doc-url": "https://angular.dev/guide/templates/control-flow#track-for-calculating-difference-of-two-collections",
               "description": "The value of the `track` expression determines a key used to associate array items with the views in the DOM. Having clear indication of the item identity allows Angular to execute a minimal set of DOM operations as items are added, removed or moved in a collection.\n\nLoops over immutable data without `trackBy` as one of the most common causes for performance issues across Angular applications. Because of the potential for poor performance, the `track` expression is required for the `@for` loops. When in doubt, using `track $index` is a good default.",
+              "priority": "highest",
               "required": true,
               "unique": true
             }
           ],
-          "ng-block-implicit-variables": [
-            {
-              "name": "$count",
-              "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
-              "description": "Number of items in a collection iterated over"
-            },
-            {
-              "name": "$index",
-              "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
-              "description": "Index of the current row"
-            },
-            {
-              "name": "$first",
-              "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
-              "description": "Whether the current row is the first row"
-            },
-            {
-              "name": "$last",
-              "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
-              "description": "Whether the current row is the last row"
-            },
-            {
-              "name": "$even",
-              "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
-              "description": "Whether the current row index is even"
-            },
-            {
-              "name": "$odd",
-              "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
-              "description": "Whether the current row index is odd"
-            }
-          ]
+          "exclusive-contributions": [
+            "/js/symbols"
+          ],
+          "js": {
+            "symbols": [
+              {
+                "name": "$count",
+                "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
+                "description": "Number of items in a collection iterated over",
+                "type": "number"
+              },
+              {
+                "name": "$index",
+                "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
+                "description": "Index of the current row",
+                "type": "number"
+              },
+              {
+                "name": "$first",
+                "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
+                "description": "Whether the current row is the first row",
+                "type": "number"
+              },
+              {
+                "name": "$last",
+                "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
+                "description": "Whether the current row is the last row",
+                "type": "number"
+              },
+              {
+                "name": "$even",
+                "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
+                "description": "Whether the current row index is even",
+                "type": "number"
+              },
+              {
+                "name": "$odd",
+                "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
+                "description": "Whether the current row index is odd",
+                "type": "number"
+              }
+            ]
+          }
         },
         {
           "name": "empty",

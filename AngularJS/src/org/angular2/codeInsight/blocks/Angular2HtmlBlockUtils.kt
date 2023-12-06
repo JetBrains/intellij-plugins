@@ -1,10 +1,13 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight.blocks
 
+import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
+import org.angular2.lang.expr.psi.Angular2BlockParameter
+import org.angular2.lang.expr.psi.impl.Angular2BlockParameterVariableImpl
 import org.angular2.lang.html.psi.Angular2HtmlBlock
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator
 
@@ -22,6 +25,7 @@ const val BLOCK_LOADING = "loading"
 val BLOCKS_WITH_PRIMARY_EXPRESSION = setOf(BLOCK_IF, BLOCK_ELSE_IF, BLOCK_SWITCH, BLOCK_CASE, BLOCK_FOR)
 
 const val PARAMETER_AS = "as"
+const val PARAMETER_LET = "let"
 
 object Angular2HtmlBlockUtils {
 
@@ -32,6 +36,9 @@ object Angular2HtmlBlockUtils {
 
 }
 
+fun isJSReferenceInForBlockLetParameterAssignment(ref: JSReferenceExpression) =
+  ref.parent is Angular2BlockParameterVariableImpl
+  && ref.parent.parent?.parent.let { it is Angular2BlockParameter && it.name == PARAMETER_LET && it.block?.getName() == BLOCK_FOR }
 
 fun getAngular2HtmlBlocksConfig(location: PsiElement): Angular2HtmlBlocksConfig {
   val file = location.containingFile.originalFile

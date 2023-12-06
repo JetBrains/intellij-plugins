@@ -1,12 +1,17 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web
 
+import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.psi.TokenType
 import com.intellij.psi.css.CssElement
+import com.intellij.psi.util.elementType
+import com.intellij.psi.util.parentOfType
+import com.intellij.psi.util.siblings
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
@@ -17,8 +22,10 @@ import com.intellij.webSymbols.WebSymbolsScope
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
 import org.angular2.Angular2Framework
+import org.angular2.codeInsight.blocks.isJSReferenceInForBlockLetParameterAssignment
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
+import org.angular2.lang.html.psi.Angular2HtmlBlock
 import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
 import org.angular2.web.scopes.*
 
@@ -62,10 +69,18 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
            DirectiveAttributeSelectorsScope(element.project))
 
   private fun calculateJavaScriptScopes(element: JSElement): List<WebSymbolsScope> =
-    if (element is JSReferenceExpression || element is JSLiteralExpression)
-      listOf(DirectivePropertyMappingCompletionScope(element))
-    else
-      emptyList()
+    when {
+      element is JSReferenceExpression
+      && isJSReferenceInForBlockLetParameterAssignment(element)
+      && element
+        .siblings(false, false)
+        .filter { it.elementType != TokenType.WHITE_SPACE }
+        .firstOrNull()?.elementType == JSTokenTypes.EQ -> listOfNotNull(element.parentOfType<Angular2HtmlBlock>()?.definition)
+      element is JSReferenceExpression || element is JSLiteralExpression ->
+        listOf(DirectivePropertyMappingCompletionScope(element))
+      else ->
+        emptyList()
+    }
 
   companion object {
     const val PROP_BINDING_PATTERN = "ng-binding-pattern"
