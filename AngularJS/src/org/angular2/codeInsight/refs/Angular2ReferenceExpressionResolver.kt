@@ -2,6 +2,7 @@
 package org.angular2.codeInsight.refs
 
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector
+import com.intellij.javascript.webSymbols.resolveWebSymbolsInJSReferenceExpression
 import com.intellij.lang.javascript.ecmascript6.TypeScriptReferenceExpressionResolver
 import com.intellij.lang.javascript.ecmascript6.types.JSTypeSignatureChooser
 import com.intellij.lang.javascript.findUsages.JSReadWriteAccessDetector
@@ -35,7 +36,7 @@ class Angular2ReferenceExpressionResolver(expression: JSReferenceExpressionImpl,
       if (undefinedResolve(null))
         return dummyResult(myRef)
       else
-        return resolveTemplateVariable(expression)
+        return resolveWebSymbolsInJSReferenceExpression(expression) ?: resolveTemplateVariable(expression)
     }
     return super.resolve(expression, incompleteCode)
   }

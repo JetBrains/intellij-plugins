@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight.blocks
 
+import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.webTypes.WebTypesSymbolBase
 import com.intellij.webSymbols.webTypes.WebTypesSymbolFactory
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator
@@ -28,6 +29,9 @@ class Angular2HtmlBlockSymbol : WebTypesSymbolBase() {
   val parameters: List<Angular2BlockParameterSymbol>
     get() = queryExecutor.runListSymbolsQuery(Angular2WebSymbolsQueryConfigurator.NG_BLOCK_PARAMETERS, true, scope = listOf(this))
       .filterIsInstance<Angular2BlockParameterSymbol>()
+
+  val implicitVariables: List<WebSymbol>
+    get() = queryExecutor.runListSymbolsQuery(WebSymbol.JS_SYMBOLS, true, scope = listOf(this))
 
   class Factory : WebTypesSymbolFactory {
     override fun create(): WebTypesSymbolBase =
