@@ -2,10 +2,11 @@
 package org.jetbrains.vuejs.lang.typescript.service.volar
 
 import com.intellij.javascript.nodejs.util.NodePackageRef
-import com.intellij.lang.typescript.lsp.JSFrameworkLspServerDescriptor
-import com.intellij.lang.typescript.lsp.LspServerDownloader
-import com.intellij.lang.typescript.lsp.LspServerPackageDescriptor
+import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
+import com.intellij.lang.typescript.lsp.*
+import com.intellij.lang.typescript.resolve.TypeScriptCompilerEvaluationFacade
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspServerSupportProvider
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.vuejs.lang.typescript.service.isVolarEnabledAndAvailable
 import org.jetbrains.vuejs.lang.typescript.service.isVolarFileTypeAcceptable
 import org.jetbrains.vuejs.options.getVueSettings
+import java.io.File
 
 private val volarLspServerPackageDescriptor: () -> LspServerPackageDescriptor = {
   LspServerPackageDescriptor("@vue/language-server",
@@ -37,5 +39,25 @@ class VolarServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(p
 object VolarExecutableDownloader : LspServerDownloader(volarLspServerPackageDescriptor()) {
   override fun getSelectedPackageRef(project: Project): NodePackageRef {
     return getVueSettings(project).packageRef
+  }
+
+  override fun getExecutable(project: Project, packageRef: NodePackageRef): String? {
+    val ref = extractRefText(packageRef)
+    if (ref == defaultPackageKey) {
+      if (TypeScriptCompilerEvaluationFacade.getInstance(project) != null) {
+        // work in progress
+        val file = File(TypeScriptUtil.getTypeScriptCompilerFolderFile(),
+                        "typescript/node_modules/tsc-vue/${packageDescriptor.packageRelativePath}")
+        val path = file.absolutePath
+        return path
+      }
+      else {
+        return getLspServerExecutablePath(packageDescriptor.serverPackage, packageDescriptor.packageRelativePath)
+      }
+    }
+
+    val suffix = FileUtil.toSystemDependentName(packageDescriptor.packageRelativePath)
+
+    return if (ref.endsWith(suffix)) ref else "$ref$suffix"
   }
 }

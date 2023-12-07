@@ -1,8 +1,11 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.service.volar
 
+import com.google.gson.JsonElement
 import com.intellij.lang.javascript.ecmascript6.TypeScriptAnnotatorCheckerProvider
 import com.intellij.lang.typescript.compiler.TypeScriptLanguageServiceAnnotatorCheckerProvider
+import com.intellij.lang.typescript.compiler.languageService.protocol.commands.LspGetElementTypeCommand
+import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptGetElementTypeRequestArgs
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
 import com.intellij.lang.typescript.lsp.BaseLspTypeScriptService
 import com.intellij.openapi.project.Project
@@ -67,4 +70,11 @@ class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(projec
   override fun isAcceptable(file: VirtualFile) = isVolarEnabledAndAvailable(project, file)
 
   override fun getServiceId(): String = "vue"
+
+  override suspend fun getIdeType(args: TypeScriptGetElementTypeRequestArgs): JsonElement? {
+    return withServer {
+      val server = this
+      server.requestExecutor.sendRequest(LspGetElementTypeCommand(server, args))
+    }
+  }
 }
