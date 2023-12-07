@@ -2,14 +2,28 @@
 package org.angular2.lang.expr.formatter
 
 import com.intellij.formatting.*
+import com.intellij.lang.ASTNode
+import com.intellij.lang.Language
+import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.JSLanguageUtil
+import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.formatter.JSBlockContext
+import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
+import com.intellij.lang.javascript.formatter.JSSpacingProcessor
 import com.intellij.lang.javascript.formatter.JavascriptFormattingModelBuilder
 import com.intellij.lang.javascript.formatter.blocks.CompositeJSBlock
 import com.intellij.lang.javascript.types.JSFileElementType
+import com.intellij.lang.typescript.formatter.TypedJSSpacingProcessor
+import com.intellij.psi.TokenType
+import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.formatter.WrappingUtil
 import com.intellij.psi.xml.XmlDocument
 import com.intellij.psi.xml.XmlTag
+import org.angular2.codeInsight.blocks.BLOCK_FOR
+import org.angular2.lang.expr.lexer.Angular2TokenTypes
+import org.angular2.lang.expr.parser.Angular2ElementTypes
+import org.angular2.lang.expr.parser.Angular2StubElementTypes
+import org.angular2.lang.expr.psi.Angular2BlockParameter
 import org.angular2.lang.html.psi.Angular2HtmlBlockContents
 import org.angular2.lang.html.psi.formatter.Angular2HtmlCodeStyleSettings
 
@@ -19,7 +33,7 @@ class Angular2FormattingModelBuilder : JavascriptFormattingModelBuilder() {
     val settings = formattingContext.codeStyleSettings
     val dialect = JSLanguageUtil.getLanguageDialect(element)
     val alignment = element.node.getUserData(BLOCK_ALIGNMENT)
-    val jsBlockContext: JSBlockContext = createBlockFactory(settings, dialect, formattingContext.formattingMode)
+    val jsBlockContext: JSBlockContext = Angular2BlockContext(settings, dialect, formattingContext)
     var rootBlock: Block
     if (element.parent.let { it is XmlTag || it is XmlDocument || it is Angular2HtmlBlockContents }) {
       // interpolations
@@ -35,4 +49,49 @@ class Angular2FormattingModelBuilder : JavascriptFormattingModelBuilder() {
     }
     return createJSFormattingModel(element.containingFile, settings, rootBlock)
   }
+
+  private class Angular2BlockContext(settings: CodeStyleSettings, dialect: Language, formattingContext: FormattingContext)
+    : JSBlockContext(settings, dialect, null, formattingContext.formattingMode) {
+    override fun createSpacingProcessor(node: ASTNode?, child1: ASTNode?, child2: ASTNode?): JSSpacingProcessor {
+      return Angular2SpacingProcessor(node, child1, child2, topSettings, dialect, dialectSettings)
+    }
+  }
+
+  private class Angular2SpacingProcessor(parent: ASTNode?,
+                                         child1: ASTNode?,
+                                         child2: ASTNode?,
+                                         settings: CodeStyleSettings?,
+                                         dialect: Language?,
+                                         dialectSettings: JSCodeStyleSettings?)
+    : TypedJSSpacingProcessor(parent, child1, child2, settings, dialect, dialectSettings) {
+
+    override fun visitElement(node: ASTNode) {
+      when (node.elementType) {
+        Angular2ElementTypes.BLOCK_PARAMETER_STATEMENT ->
+          visitBlockParameterStatement(node)
+        Angular2StubElementTypes.BLOCK_PARAMETER_VARIABLE ->
+          visitVariable(node)
+        else -> super.visitElement(node)
+      }
+    }
+
+    private fun visitBlockParameterStatement(node: ASTNode) {
+      if (myChild1.elementType == Angular2TokenTypes.BLOCK_PARAMETER_NAME) {
+        setSingleSpace(myChild2 != null && myChild2.elementType != TokenType.ERROR_ELEMENT)
+      }
+      else if (myChild1.elementType == JSElementTypes.VAR_STATEMENT
+               && myChild2.elementType == JSTokenTypes.IDENTIFIER
+               && myChild2.text == "of"
+               && (node.psi as Angular2BlockParameter).let { it.isPrimaryExpression && it.block?.getName() == BLOCK_FOR }) {
+        setSingleSpace(true)
+      }
+      else if (myChild1.elementType == JSTokenTypes.IDENTIFIER
+               && myChild1.text == "of"
+               && (node.psi as Angular2BlockParameter).let { it.isPrimaryExpression && it.block?.getName() == BLOCK_FOR }) {
+        setSingleSpace(myChild2.elementType != TokenType.ERROR_ELEMENT)
+      }
+    }
+
+  }
+
 }
