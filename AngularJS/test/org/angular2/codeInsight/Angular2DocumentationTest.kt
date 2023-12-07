@@ -75,6 +75,12 @@ class Angular2DocumentationTest : Angular2TestCase("documentation") {
   fun testBlockParameter() = doTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0,
                                     ext = "html")
 
+  fun testForBlockImplicitVariableInLet() = doTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0,
+                                                   ext = "html")
+
+  fun testForBlockImplicitVariableInExpr() = doTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0,
+                                                    ext = "html")
+
   private fun doTestWithDeps() {
     doConfiguredTest(additionalFiles = listOf("deps/list-item.component.ts", "deps/ng_for_of.ts", "deps/ng_if.ts", "deps/dir.ts",
                                               "deps/ng_plural.ts"),

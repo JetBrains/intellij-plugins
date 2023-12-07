@@ -171,6 +171,10 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
   fun testForBlockImplicitVariables() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html")
 
+  fun testForBlockImplicitVariableInExpr() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html", checkDocumentation = true,
+                 lookupItemFilter = { it.lookupString == "\$count" })
+
 
   private fun notAnElement(it: LookupElementInfo): Boolean = !it.lookupString.startsWith("<")
 
