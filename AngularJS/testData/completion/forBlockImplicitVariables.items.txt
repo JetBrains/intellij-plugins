@@ -1,0 +1,6 @@
+$count (typeText='number'; priority=100.0; typeGreyed)
+$even (typeText='number'; priority=100.0; typeGreyed)
+$first (typeText='number'; priority=100.0; typeGreyed)
+$index (typeText='number'; priority=100.0; typeGreyed)
+$last (typeText='number'; priority=100.0; typeGreyed)
+$odd (typeText='number'; priority=100.0; typeGreyed)
