@@ -1,5 +1,6 @@
 package com.jetbrains.plugins.meteor.tsStubs;
 
+import com.intellij.idea.IJIgnore;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -15,6 +16,7 @@ public class MeteorEnabledExcludeProjectTest extends MeteorProjectTestBase {
   /**
    * test {@link MeteorProjectComponent}
    */
+  @IJIgnore(issue = "WEB-64508")
   public void testExcludeLocalForMeteorProjectWithMeteorFolderAsSubDir() {
     ReadAction.run(() -> {
       Project project = myFixture.getProject();
