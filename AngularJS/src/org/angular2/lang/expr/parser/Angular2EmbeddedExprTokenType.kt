@@ -8,6 +8,7 @@ import com.intellij.lang.PsiBuilder
 import com.intellij.lexer.Lexer
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
+import com.intellij.util.ThreeState
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.lexer.Angular2Lexer
 import org.jetbrains.annotations.NonNls
@@ -62,15 +63,22 @@ open class Angular2EmbeddedExprTokenType : HtmlCustomEmbeddedContentTokenType {
     return XmlASTWrapperPsiElement(node)
   }
 
+  open fun compareTo(other: Angular2EmbeddedExprTokenType): ThreeState =
+    if (javaClass != other.javaClass || other.expressionType != expressionType || other.name != name || other.index != index)
+      ThreeState.NO
+    else
+      ThreeState.UNSURE
+
   class Angular2BlockExprTokenType
-  internal constructor(@NonNls debugName: String, expressionType: ExpressionType, @NonNls blockName: String?, parameterIndex: Int)
+  internal constructor(@NonNls debugName: String, expressionType: ExpressionType, @NonNls blockName: String, parameterIndex: Int)
     : Angular2EmbeddedExprTokenType(debugName, expressionType, blockName, parameterIndex) {
 
-    val lexerConfig: Angular2Lexer.Config =
-      Angular2Lexer.BlockParameter(name!!, index)
+    val lexerConfig: Angular2Lexer.Config
+      get() = Angular2Lexer.BlockParameter(name!!, index)
 
     override fun createLexer(): Lexer =
       Angular2Lexer(lexerConfig)
+
   }
 
   enum class ExpressionType {
@@ -129,10 +137,6 @@ open class Angular2EmbeddedExprTokenType : HtmlCustomEmbeddedContentTokenType {
     @JvmField
     val SIMPLE_BINDING_EXPR = Angular2EmbeddedExprTokenType(
       "NG:SIMPLE_BINDING_EXPR", ExpressionType.SIMPLE_BINDING)
-
-    @JvmField
-    val BLOCK_PARAMETER = Angular2EmbeddedExprTokenType(
-      "NG:BLOCK_PARAMETER", ExpressionType.BLOCK_PARAMETER)
 
     @JvmStatic
     fun createBlockParameter(blockName: String, parameterIndex: Int): Angular2EmbeddedExprTokenType {

@@ -510,7 +510,6 @@ class Angular2Parser private constructor(builder: PsiBuilder,
 
     fun parseBlockParameter(builder: PsiBuilder, root: IElementType, blockName: String, parameterIndex: Int) {
       parseRoot(builder, root, Angular2ElementTypes.BLOCK_PARAMETER_STATEMENT, false, false) { parser ->
-        if (builder.eof()) return@parseRoot
         when (blockName) {
           BLOCK_IF -> when (parameterIndex) {
             0 -> parser.parseChain(allowEmpty = false)

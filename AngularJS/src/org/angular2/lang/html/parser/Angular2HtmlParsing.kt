@@ -5,6 +5,7 @@ import com.intellij.lang.PsiBuilder
 import com.intellij.lang.PsiBuilder.Marker
 import com.intellij.lang.html.HtmlParsing
 import com.intellij.lang.javascript.JavaScriptBundle
+import com.intellij.psi.TokenType
 import com.intellij.psi.tree.ICustomParsingType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.ILazyParseableElementType
@@ -177,13 +178,26 @@ class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSyntax, bu
   private fun parseBlockStart() {
     assert(builder.tokenType == Angular2HtmlTokenTypes.BLOCK_NAME)
     val startMarker = builder.mark()
+    val blockName = builder.tokenText!!.removePrefix("@")
     builder.advanceLexer()
     if (builder.tokenType == Angular2HtmlTokenTypes.BLOCK_PARAMETERS_START) {
       val parameters = builder.mark()
       builder.advanceLexer()
       val parametersContents = builder.mark()
-      while (!builder.eof() && builder.tokenType != Angular2HtmlTokenTypes.BLOCK_PARAMETERS_END) {
-        builder.advanceLexer()
+      var parameterIndex = 0
+      while (!builder.eof()) {
+        if (builder.tokenType is Angular2EmbeddedExprTokenType) {
+          builder.advanceLexer()
+          if (builder.tokenType == Angular2HtmlTokenTypes.BLOCK_SEMICOLON) {
+            builder.advanceLexer()
+          }
+        } else if (builder.tokenType == Angular2HtmlTokenTypes.BLOCK_SEMICOLON) {
+          builder.mark().collapse(Angular2EmbeddedExprTokenType.createBlockParameter(blockName, parameterIndex))
+          builder.advanceLexer()
+        } else {
+          break
+        }
+        parameterIndex++
       }
       if (builder.eof()) {
         parameters.errorBefore(JavaScriptBundle.message("javascript.parser.message.missing.rparen"), parametersContents)

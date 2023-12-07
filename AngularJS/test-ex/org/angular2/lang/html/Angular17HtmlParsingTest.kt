@@ -41,4 +41,18 @@ class Angular17HtmlParsingTest : Angular2HtmlParsingTest() {
     """.trimIndent())
   }
 
+  fun testEmptyPrimaryExpressionBlock() {
+    doTestHtml("""
+      @for (; track ; ;) {{{item}}}
+    """.trimIndent())
+  }
+
+  fun testEmptyPrimaryExpressionBlockReparse() {
+    doReparseTest("""
+      @for (track) {}
+    """.trimIndent(), """
+      @for (;track) {}
+    """.trimIndent())
+  }
+
 }
