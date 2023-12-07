@@ -16,6 +16,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.utils.qualifiedKind
+import com.intellij.webSymbols.utils.withNavigationTarget
 import org.angular2.Angular2InjectionUtils
 import org.angular2.codeInsight.blocks.BLOCK_FOR
 import org.angular2.codeInsight.blocks.PARAMETER_LET
@@ -200,7 +201,7 @@ class Angular2TemplateElementsScopeProvider : Angular2TemplateScopesProvider() {
         block.definition
           ?.implicitVariables
           ?.filter { it.name !in usedVariables }
-          ?.forEach { addSymbol(it) }
+          ?.forEach { addSymbol(it.withNavigationTarget(block)) }
       }
       popScope()
     }
