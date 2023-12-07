@@ -1,0 +1,7 @@
+<div class='definition'><pre><span style='color: #000080'>parameter</span> <span style='color: #000000'>track</span></pre></div>
+<div class='content'>
+<p>The value of the <code>track</code> expression determines a key used to associate array items with the views in the DOM. Having clear indication of the item identity allows Angular to execute a minimal set of DOM operations as items are added, removed or moved in a collection.</p><p>Loops over immutable data without <code>trackBy</code> as one of the most common causes for performance issues across Angular applications. Because of the potential for poor performance, the <code>track</code> expression is required for the <code>@for</code> loops. When in doubt, using <code>track $index</code> is a good default.</p>
+</div><table class='sections'>
+<tr><td valign='top' class='section'><p>Required</td>
+<tr><td valign='top' class='section'><p>Library:</td><td valign='top'><p>@angular/core@17.0.0-rc.0</td>
+</table>

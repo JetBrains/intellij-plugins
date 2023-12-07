@@ -1,0 +1,10 @@
+<div class='definition'><pre><span style='color: #000080'>parameter</span> <span style='color: #000000'>let</span></pre></div>
+<div class='content'>
+<p>Allows to alias one of the implicit variables: <code>$count</code>, <code>$index</code>, <code>$first</code>, <code>$last</code>, <code>$even</code> or <code>$odd</code>:</p><pre><code class="language-Angular2Html">
+@for (item of items; track item.id; let idx = $index, e = $even) {
+  Item #{{ idx }}: {{ item.name }}
+}
+</pre>
+</div><table class='sections'>
+<tr><td valign='top' class='section'><p>Library:</td><td valign='top'><p>@angular/core@17.0.0-rc.0</td>
+</table>
