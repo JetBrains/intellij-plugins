@@ -1,6 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.libraries.pinia
 
+import com.intellij.idea.IJIgnore
 import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.psi.JSProperty
@@ -64,6 +65,7 @@ class PiniaTest : BasePlatformTestCase() {
     )
   }
 
+  @IJIgnore(issue = "WEB-64531")
   fun testUseWithMappers() {
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.copyDirectoryToProject(getTestName(false), ".")
