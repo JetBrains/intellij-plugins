@@ -745,25 +745,25 @@
                 "name": "$first",
                 "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
                 "description": "Whether the current row is the first row",
-                "type": "number"
+                "type": "boolean"
               },
               {
                 "name": "$last",
                 "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
                 "description": "Whether the current row is the last row",
-                "type": "number"
+                "type": "boolean"
               },
               {
                 "name": "$even",
                 "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
                 "description": "Whether the current row index is even",
-                "type": "number"
+                "type": "boolean"
               },
               {
                 "name": "$odd",
                 "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
                 "description": "Whether the current row index is odd",
-                "type": "number"
+                "type": "boolean"
               }
             ]
           }
