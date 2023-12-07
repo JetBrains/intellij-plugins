@@ -2,8 +2,8 @@
 package org.angular2.lang.html.psi
 
 import com.intellij.lang.javascript.psi.JSStatement
-import com.intellij.psi.PsiElement
+import com.intellij.psi.xml.XmlElement
 
-interface Angular2HtmlExpansionForm : PsiElement {
+interface Angular2HtmlExpansionForm : XmlElement {
   val switchValue: JSStatement?
 }

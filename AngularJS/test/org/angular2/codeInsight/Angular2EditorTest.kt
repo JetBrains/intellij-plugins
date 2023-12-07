@@ -14,4 +14,9 @@ class Angular2EditorTest : Angular2TestCase("editor"){
       myFixture.moveToOffsetBySignature("()<caret>")
       myFixture.type("{\n<div>")
     }
+
+  fun testBlockFolding() {
+    doFoldingTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0,
+                  extension = "html")
+  }
 }
