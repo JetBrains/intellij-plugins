@@ -33,13 +33,22 @@ open class NuxtFolderEntityImpl(private val dataSource: NuxtFolderEntityData) : 
   }
 
   override val nuxtFolderUrl: VirtualFileUrl
-    get() = dataSource.nuxtFolderUrl
+    get() {
+      readField("nuxtFolderUrl")
+      return dataSource.nuxtFolderUrl
+    }
 
   override val libraryFileUrls: List<VirtualFileUrl>
-    get() = dataSource.libraryFileUrls
+    get() {
+      readField("libraryFileUrls")
+      return dataSource.libraryFileUrls
+    }
 
   override val entitySource: EntitySource
-    get() = dataSource.entitySource
+    get() {
+      readField("entitySource")
+      return dataSource.entitySource
+    }
 
   override fun connectionIdList(): List<ConnectionId> {
     return connections

@@ -32,13 +32,22 @@ open class DenoEntityImpl(private val dataSource: DenoEntityData) : DenoEntity, 
   }
 
   override val depsFile: VirtualFileUrl?
-    get() = dataSource.depsFile
+    get() {
+      readField("depsFile")
+      return dataSource.depsFile
+    }
 
   override val denoTypes: VirtualFileUrl?
-    get() = dataSource.denoTypes
+    get() {
+      readField("denoTypes")
+      return dataSource.denoTypes
+    }
 
   override val entitySource: EntitySource
-    get() = dataSource.entitySource
+    get() {
+      readField("entitySource")
+      return dataSource.entitySource
+    }
 
   override fun connectionIdList(): List<ConnectionId> {
     return connections
