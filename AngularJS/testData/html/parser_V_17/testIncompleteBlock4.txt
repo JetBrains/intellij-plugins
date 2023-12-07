@@ -10,7 +10,9 @@ HtmlFile:test.html
         ASTWrapperPsiElement(NG:BLOCK_PARAMETER (if:0))
           PsiWhiteSpace(' ')
           Angular2BlockParameter
-            <empty list>
+            PsiErrorElement:Expression expected
+              JSEmptyExpression
+                <empty list>
         PsiElement(NG:BLOCK_PARAMETERS_END)(')')
       PsiWhiteSpace(' \n')
       Angular2HtmlBlockContents

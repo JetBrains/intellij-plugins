@@ -2,6 +2,7 @@ package org.angular2.lang.html.lexer;
 
 import com.intellij.lexer.FlexLexer;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.xml.XmlTokenType;
 import org.angular2.codeInsight.blocks.Angular2HtmlBlockUtils;
@@ -396,12 +397,14 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
      blockParenLevel++;
   }
   ";" {
-    yypushback(1);
-    blockParenLevel = 1;
-    yybegin(BLOCK_PARAMETER_END);
-    if (parameterStart < zzMarkedPos)
-       return Angular2EmbeddedExprTokenType.createBlockParameter(blockName, parameterIndex++);
-  }
+      yypushback(1);
+      blockParenLevel = 1;
+      yybegin(BLOCK_PARAMETER_END);
+      if (parameterStart < zzMarkedPos)
+         return Angular2EmbeddedExprTokenType.createBlockParameter(blockName, parameterIndex++);
+      else
+         parameterIndex++;
+    }
   "\\"[^]
   | "'"([^\\\']|\\[^])*("'"|\\)?
   | "\""([^\\\"]|\\[^])*("\""|\\)?

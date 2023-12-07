@@ -1,0 +1,42 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    Angular2HtmlBlock (@for)
+      PsiElement(NG:BLOCK_NAME)('@for')
+      PsiWhiteSpace(' ')
+      Angular2HtmlBlockParameters
+        PsiElement(NG:BLOCK_PARAMETERS_START)('(')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (for:0))
+          Angular2BlockParameter
+            PsiErrorElement:Identifier expected
+              <empty list>
+            PsiErrorElement:Expression expected
+              JSEmptyExpression
+                <empty list>
+        PsiElement(NG:BLOCK_SEMICOLON)(';')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (for:1))
+          PsiWhiteSpace(' ')
+          Angular2BlockParameter
+            PsiElement(NG:BLOCK_PARAMETER_NAME)('track')
+            PsiErrorElement:Expression expected
+              PsiWhiteSpace(' ')
+              JSEmptyExpression
+                <empty list>
+        PsiElement(NG:BLOCK_SEMICOLON)(';')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (for:2))
+          PsiWhiteSpace(' ')
+          Angular2BlockParameter
+            <empty list>
+        PsiElement(NG:BLOCK_SEMICOLON)(';')
+        PsiElement(NG:BLOCK_PARAMETERS_END)(')')
+      PsiWhiteSpace(' ')
+      Angular2HtmlBlockContents
+        PsiElement(NG:BLOCK_START)('{')
+        PsiElement(NG:INTERPOLATION_START)('{{')
+        ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
+          Angular2Interpolation
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('item')
+        PsiElement(NG:INTERPOLATION_END)('}}')
+        PsiElement(NG:BLOCK_END)('}')

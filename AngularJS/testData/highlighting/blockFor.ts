@@ -22,6 +22,8 @@ export interface User {
     @for(item<error descr="'of' expected"> </error>array; 
          track<error descr="Expression expected">;</error> 
          let<error descr="Identifier expected">)</error> {}
+    <error descr="@for requires track parameter">@for</error>(<error descr="Expression expected"><error descr="Identifier expected">;</error></error> let a<error descr="'=' expected"><error descr="Identifier expected">)</error></error> {
+    }     
   `
 })
 export class RobotProfileComponent {

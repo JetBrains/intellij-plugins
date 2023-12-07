@@ -29,7 +29,9 @@ import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorFactory2
 import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorProviderImpl
 import com.intellij.psi.impl.BlockSupportImpl
 import com.intellij.psi.impl.DebugUtil
+import com.intellij.psi.tree.CustomLanguageASTComparator
 import com.intellij.testFramework.UsefulTestCase
+import org.angular2.lang.expr.parser.Angular2HtmlASTComparator
 import org.angular2.lang.expr.parser.Angular2ParserDefinition
 import org.angular2.lang.html.lexer.Angular2HtmlEmbeddedContentSupport
 import org.angular2.lang.html.parser.Angular17HtmlParserDefinition
@@ -49,6 +51,8 @@ open class Angular2HtmlParsingTest : HtmlParsingTest("", "html") {
         Angular2TemplateSyntax.V_17 -> Angular17HtmlParserDefinition()
         else -> Angular2HtmlParserDefinition()
       }, "html")
+
+    addExplicitExtension(CustomLanguageASTComparator.EXTENSION_POINT_NAME, Angular2HtmlLanguage.INSTANCE, Angular2HtmlASTComparator())
 
     registerExtensions(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, EmbeddedTokenTypesProvider::class.java, listOf(
       CssEmbeddedTokenTypesProvider()))

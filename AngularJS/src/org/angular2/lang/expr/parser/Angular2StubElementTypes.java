@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.stubs.JSVariableStub;
 
 public interface Angular2StubElementTypes {
-  int STUB_VERSION = 5;
+  int STUB_VERSION = 6;
 
   String EXTERNAL_ID_PREFIX = "NG:";
 
