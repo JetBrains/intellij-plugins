@@ -25,6 +25,10 @@
 @for(  foo  of items; let a=  ) {}
 @for(  foo  of items; let a=  ;) {}
 
+@for(  foo  of items;
+let a=  ;
+let b= $index;
+track foo($index)) {}
 
 @default { }
 
