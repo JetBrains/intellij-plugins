@@ -1,9 +1,9 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.lang.html.psi
 
-import com.intellij.psi.PsiElement
+import com.intellij.psi.xml.XmlElement
 
-interface Angular2HtmlBlockContents : PsiElement {
+interface Angular2HtmlBlockContents : XmlElement {
 
   val block: Angular2HtmlBlock
 
