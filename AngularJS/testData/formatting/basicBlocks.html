@@ -15,9 +15,15 @@
 } @case(b) {
 
 
+@for(   item of    getItems ( 1   + 3) ;  track   foo;let    a=    $index    ) {}@empty() {}
 
 }
-
+@for(  foo  of  ;) {}
+@for(  foo  of  ) {}
+@for(  foo  of items; track  ) {}
+@for(  foo  of items; track  ;) {}
+@for(  foo  of items; let a=  ) {}
+@for(  foo  of items; let a=  ;) {}
 
 
 @default { }
