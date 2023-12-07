@@ -8,7 +8,7 @@ enum CdkColors {
 @Component({
              selector: 'app-component',
              template: `
-                {{CdkThemes.light;CdkColors.red;Math.abs(<caret>)}}
+                {{CdkThemes.light;CdkColors.red;Math.abs()}}
              `
            })
 export class CdkAppComponent {

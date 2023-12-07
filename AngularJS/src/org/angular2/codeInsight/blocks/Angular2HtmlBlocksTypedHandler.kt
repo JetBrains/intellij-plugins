@@ -7,15 +7,20 @@ import com.intellij.codeInsight.editorActions.TypedHandlerDelegate
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.elementType
+import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlDocument
 import com.intellij.psi.xml.XmlElementType
 import com.intellij.psi.xml.XmlText
+import com.intellij.util.asSafely
+import org.angular2.lang.expr.lexer.Angular2TokenTypes
 import org.angular2.lang.expr.psi.Angular2BlockParameter
 import org.angular2.lang.expr.psi.impl.Angular2BlockParameterVariableImpl
 import org.angular2.lang.html.Angular2TemplateSyntax
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
+import org.angular2.lang.html.psi.Angular2HtmlBlock
 
 class Angular2HtmlBlocksTypedHandler : TypedHandlerDelegate() {
 
@@ -31,10 +36,9 @@ class Angular2HtmlBlocksTypedHandler : TypedHandlerDelegate() {
     }
     else if (charTyped == ' ') {
       val at = file.findElementAt(editor.getCaretModel().offset - 1)
-      if (at != null && (at.elementType == Angular2HtmlTokenTypes.BLOCK_SEMICOLON
-                         || (at.elementType == JSTokenTypes.IDENTIFIER
-                             && at.parent is Angular2BlockParameterVariableImpl
-                             && at.parent.parent.parent.let { it is Angular2BlockParameter && it.block?.getName() == BLOCK_FOR }))) {
+      if (at != null && (afterSemicolon(at) || afterParameterName(at)
+                         || afterVarDefinitionInForBlock(at) || afterOfKeywordInForBlock(at)
+                         || afterEqInForBlock(at))) {
         AutoPopupController.getInstance(project)
           .scheduleAutoPopup(editor, CompletionType.BASIC, null)
       }
@@ -42,5 +46,31 @@ class Angular2HtmlBlocksTypedHandler : TypedHandlerDelegate() {
     return Result.CONTINUE
   }
 
+  private fun afterSemicolon(at: PsiElement): Boolean =
+    at.elementType == Angular2HtmlTokenTypes.BLOCK_SEMICOLON
+
+  private fun afterVarDefinitionInForBlock(at: PsiElement): Boolean =
+    at.elementType == JSTokenTypes.IDENTIFIER
+    && at.parent is Angular2BlockParameterVariableImpl
+    && at.parent.parent.parent.let { it is Angular2BlockParameter && it.block?.getName() == BLOCK_FOR }
+
+  private fun afterOfKeywordInForBlock(at: PsiElement): Boolean =
+    at.elementType == JSTokenTypes.IDENTIFIER
+    && at.textMatches("of")
+    && at.parent.asSafely<Angular2BlockParameter>()
+      ?.takeIf { it.isPrimaryExpression }
+      ?.parentOfType<Angular2HtmlBlock>()
+      ?.getName() == BLOCK_FOR
+
+  private fun afterEqInForBlock(at: PsiElement): Boolean =
+    at.elementType == JSTokenTypes.EQ
+    && at.parent.asSafely<Angular2BlockParameterVariableImpl>()
+      ?.parentOfType<Angular2BlockParameter>()
+      ?.takeIf { it.name == PARAMETER_LET }
+      ?.parentOfType<Angular2HtmlBlock>()
+      ?.getName() == BLOCK_FOR
+
+  private fun afterParameterName(at: PsiElement): Boolean =
+    at.elementType == Angular2TokenTypes.BLOCK_PARAMETER_NAME
 
 }
