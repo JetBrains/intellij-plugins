@@ -647,19 +647,74 @@
           "ng-block-parameters": [
             {
               "name": "when",
-              "unique": true
+              "doc-url": "https://angular.dev/guide/defer#triggers",
+              "description": "`when` specifies an imperative condition as an expression that returns a `boolean`. When this expression becomes truthy, the placeholder is swapped with the lazily loaded content (which may be an asynchronous operation if the dependencies need to be fetched)."
             },
             {
               "name": "on",
-              "unique": true
+              "doc-url": "https://angular.dev/guide/defer#triggers",
+              "description": "`on` specifies a trigger condition using one of available triggers. An example would be `on interaction` or `on viewport`. Multiple event triggers can be defined at once.",
+              "exclusive-contributions": [
+                "/js/symbols"
+              ],
+              "js": {
+                "symbols": [
+                  {
+                    "name": "Angular @defer on trigger",
+                    "pattern": {
+                      "items": "ng-defer-on-triggers"
+                    }
+                  }
+                ],
+                "ng-defer-on-triggers": [
+                  {
+                    "name": "idle",
+                    "doc-url": "https://angular.dev/guide/defer#on-idle",
+                    "description": "`idle` will trigger the deferred loading once the browser has reached an idle state (detected using the `requestIdleCallback` API under the hood). This is the default behavior with a defer block.",
+                    "kind": "Function"
+                  },
+                  {
+                    "name": "viewport",
+                    "doc-url": "https://angular.dev/guide/defer#on-viewport",
+                    "description": "`viewport` would trigger the deferred block when the specified content enters the viewport using the `IntersectionObserver` API. This could be the placeholder content or an element reference.\n\nBy default, the placeholder will act as the element watched for entering viewport as long as it is a single root element node. Alternatively, you can specify a template reference variable in the same template as the `@defer` block as the element that is watched to enter the viewport.",
+                    "parameter": "template-reference-variable",
+                    "kind": "Function"
+                  },
+                  {
+                    "name": "interaction",
+                    "doc-url": "https://angular.dev/guide/defer#on-interaction",
+                    "description": "`interaction` will trigger the deferred block when the user interacts with the specified element through click or keydown events.\n\nBy default, the placeholder will act as the interaction element as long as it is a single root element node. Alternatively, you can specify a template reference variable as the element that triggers interaction.",
+                    "parameter": "template-reference-variable",
+                    "kind": "Function"
+                  },
+                  {
+                    "name": "hover",
+                    "doc-url": "https://angular.dev/guide/defer#on-hover",
+                    "description": "`hover` triggers deferred loading when the mouse has hovered over the trigger area. Events used for this are `mouseenter` and `focusin`.\n\nBy default, the placeholder will act as the hover element as long as it is a single root element node. Alternatively, you can specify a template reference variable as the hover element.",
+                    "parameter": "template-reference-variable",
+                    "kind": "Function"
+                  },
+                  {
+                    "name": "immediate",
+                    "doc-url": "https://angular.dev/guide/defer#on-immediate",
+                    "description": "`immediate` triggers the deferred load immediately, meaning once the client has finished rendering, the defer chunk would then start fetching right away.",
+                    "kind": "Function"
+                  },
+                  {
+                    "name": "timer",
+                    "doc-url": "https://angular.dev/guide/defer#on-timer",
+                    "description": "`timer(x)` would trigger after a specified duration. The duration is required and can be specified in `ms` or `s`.",
+                    "parameter-required": true,
+                    "parameter": "time-duration",
+                    "kind": "Function"
+                  }
+                ]
+              }
             },
             {
-              "name": "prefetch when",
-              "unique": true
-            },
-            {
-              "name": "prefetch on",
-              "unique": true
+              "name": "prefetch",
+              "doc-url": "https://angular.dev/guide/defer#prefetching",
+              "description": "`@defer` allows to specify conditions when prefetching of the dependencies should be triggered. The `prefetch` syntax works similarly to the main defer conditions, and accepts `when` or `on` to declare the trigger."
             }
           ]
         },

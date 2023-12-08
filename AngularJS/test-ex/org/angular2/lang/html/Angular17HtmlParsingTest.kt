@@ -61,4 +61,10 @@ class Angular17HtmlParsingTest : Angular2HtmlParsingTest() {
     """.trimIndent())
   }
 
+  fun testDeferBlockOnTriggers() {
+    doTestHtml("""
+      @defer(prefetch on viewport; on idle(var); on timer(12ms); on idle var; prefetch when foo == 12; prefetch ;)
+    """.trimIndent())
+  }
+
 }

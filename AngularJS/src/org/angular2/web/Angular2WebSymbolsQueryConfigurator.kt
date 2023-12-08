@@ -1,17 +1,13 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web
 
-import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import com.intellij.psi.TokenType
 import com.intellij.psi.css.CssElement
-import com.intellij.psi.util.elementType
 import com.intellij.psi.util.parentOfType
-import com.intellij.psi.util.siblings
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
@@ -23,7 +19,10 @@ import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.blocks.Angular2HtmlBlockReferenceExpressionCompletionProvider
-import org.angular2.codeInsight.blocks.isJSReferenceInForBlockLetParameterAssignment
+import org.angular2.codeInsight.blocks.isDeferOnTriggerParameterReference
+import org.angular2.codeInsight.blocks.isDeferOnTriggerReference
+import org.angular2.codeInsight.blocks.isJSReferenceAfterEqInForBlockLetParameterAssignment
+import org.angular2.lang.expr.psi.Angular2BlockParameter
 import org.angular2.lang.expr.psi.Angular2EmbeddedExpression
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
@@ -71,20 +70,33 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
            DirectiveAttributeSelectorsScope(element.project))
 
   private fun calculateJavaScriptScopes(element: JSElement): List<WebSymbolsScope> =
-    if (element is JSReferenceExpression
-        && Angular2HtmlBlockReferenceExpressionCompletionProvider.canAddCompletions(element))
-      emptyList()
-    else if (element is JSReferenceExpression
-             && isJSReferenceInForBlockLetParameterAssignment(element)
-             && element
-               .siblings(false, false)
-               .filter { it.elementType != TokenType.WHITE_SPACE }
-               .firstOrNull()?.elementType == JSTokenTypes.EQ)
-      listOfNotNull(element.parentOfType<Angular2HtmlBlock>()?.definition)
-    else if (element is JSReferenceExpression || element is JSLiteralExpression)
-      listOfNotNull(DirectivePropertyMappingCompletionScope(element),
-                    element.parentOfType<Angular2EmbeddedExpression>()?.let { WebSymbolsTemplateScope(it) })
-    else emptyList()
+    when (element) {
+      is JSReferenceExpression -> {
+        when {
+          Angular2HtmlBlockReferenceExpressionCompletionProvider.canAddCompletions(element) ->
+            emptyList()
+
+          isJSReferenceAfterEqInForBlockLetParameterAssignment(element) ->
+            listOfNotNull(element.parentOfType<Angular2HtmlBlock>()?.definition)
+
+          isDeferOnTriggerReference(element) ->
+            listOfNotNull(element.parentOfType<Angular2BlockParameter>()?.definition)
+
+          isDeferOnTriggerParameterReference(element) ->
+            listOfNotNull(element.parentOfType<Angular2BlockParameter>()?.let { DeferOnTriggerParameterScope(it) })
+
+          else ->
+            listOfNotNull(DirectivePropertyMappingCompletionScope(element),
+                          element.parentOfType<Angular2EmbeddedExpression>()?.let { WebSymbolsTemplateScope(it) })
+        }
+      }
+      is JSLiteralExpression -> {
+        listOfNotNull(DirectivePropertyMappingCompletionScope(element),
+                      element.parentOfType<Angular2EmbeddedExpression>()?.let { WebSymbolsTemplateScope(it) })
+      }
+      else -> emptyList()
+    }
+
 
   companion object {
     const val PROP_BINDING_PATTERN = "ng-binding-pattern"
@@ -119,6 +131,7 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
 
     val NG_BLOCKS = WebSymbolQualifiedKind(NAMESPACE_HTML, "ng-blocks")
     val NG_BLOCK_PARAMETERS = WebSymbolQualifiedKind(NAMESPACE_HTML, "ng-block-parameters")
+    val NG_DEFER_ON_TRIGGERS = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-defer-on-triggers")
 
   }
 

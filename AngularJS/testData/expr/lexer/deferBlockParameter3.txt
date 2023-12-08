@@ -1,4 +1,6 @@
-NG:BLOCK_PARAMETER_NAME ('prefetch  when')
+NG:BLOCK_PARAMETER_NAME ('prefetch')
+WHITE_SPACE ('  ')
+NG:BLOCK_PARAMETER_NAME ('when')
 WHITE_SPACE (' ')
 JS:IDENTIFIER ('foo')
 WHITE_SPACE (' ')

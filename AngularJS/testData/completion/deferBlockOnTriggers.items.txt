@@ -1,0 +1,6 @@
+hover (typeText=null; priority=100.0; typeGreyed)
+idle (typeText=null; priority=100.0; typeGreyed)
+immediate (typeText=null; priority=100.0; typeGreyed)
+interaction (typeText=null; priority=100.0; typeGreyed)
+timer (typeText=null; priority=100.0; typeGreyed)
+viewport (typeText=null; priority=100.0; typeGreyed)

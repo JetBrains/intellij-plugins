@@ -537,15 +537,23 @@ class Angular2Parser private constructor(builder: PsiBuilder,
     }
 
     private fun parseDeferTrigger(builder: PsiBuilder, parser: Angular2StatementParser) {
-      if (isParameterName(builder, "when") || isParameterName(builder, "prefetch when")) {
+      var prefetchParsed = false
+      if (isParameterName(builder, "prefetch")) {
+        builder.advanceLexer()
+        prefetchParsed = true
+      }
+      if (isParameterName(builder, "when")) {
         builder.advanceLexer()
         parser.parseChain(allowEmpty = false)
       }
-      else if (isParameterName(builder, "on") || isParameterName(builder, "prefetch on")) {
-        // pretty complex parsing, let's leave it for now
-        skipContents(builder)
+      else if (isParameterName(builder, "on")) {
+        builder.advanceLexer()
+        parseOnTrigger(builder)
       }
       else {
+        if (prefetchParsed) {
+          builder.error(Angular2Bundle.message("angular.parse.expression.expected-on-when"))
+        }
         skipContents(builder)
       }
     }
@@ -570,7 +578,50 @@ class Angular2Parser private constructor(builder: PsiBuilder,
       }
     }
 
-    private fun parseDeferredTime(builder: PsiBuilder) {
+    private fun parseOnTrigger(builder: PsiBuilder) {
+      if (!JSKeywordSets.TS_IDENTIFIERS_TOKENS_SET.contains(builder.tokenType)) {
+        builder.error(JavaScriptBundle.message("javascript.parser.message.expected.identifier"))
+        skipContents(builder)
+        return
+      }
+      val identifier = builder.mark()
+      builder.advanceLexer()
+      identifier.done(JSElementTypes.REFERENCE_EXPRESSION)
+      if (builder.eof()) {
+        return
+      }
+      if (builder.tokenType != JSTokenTypes.LPAR) {
+        builder.error(JavaScriptBundle.message("javascript.parser.message.expected.lparen", builder.tokenText!!))
+      }
+      else {
+        builder.advanceLexer()
+      }
+      if (JSKeywordSets.TS_IDENTIFIERS_TOKENS_SET.contains(builder.tokenType)) {
+        val ref = builder.mark()
+        builder.advanceLexer()
+        ref.done(JSElementTypes.REFERENCE_EXPRESSION)
+      }
+      else if (builder.tokenType == JSTokenTypes.NUMERIC_LITERAL) {
+        parseDeferredTime(builder, JSTokenTypes.RPAR)
+      }
+      else if (!builder.eof()) {
+        builder.error(JavaScriptBundle.message("javascript.parser.message.unexpected.token", builder.tokenText))
+        skipContents(builder)
+        return
+      }
+      if (builder.tokenType != JSTokenTypes.RPAR) {
+        builder.error(JavaScriptBundle.message("javascript.parser.message.expected.rparen"))
+      }
+      else {
+        builder.advanceLexer()
+        if (!builder.eof()) {
+          builder.error(JavaScriptBundle.message("javascript.parser.message.unexpected.token", builder.tokenText))
+        }
+      }
+      skipContents(builder)
+    }
+
+    private fun parseDeferredTime(builder: PsiBuilder, endToken: IElementType? = null) {
       if (builder.tokenType != JSTokenTypes.NUMERIC_LITERAL) {
         builder.error(Angular2Bundle.message("angular.parse.expression.expected-numeric-literal"))
         skipContents(builder)
@@ -602,9 +653,11 @@ class Angular2Parser private constructor(builder: PsiBuilder,
         }
       }
       timeLiteral.done(Angular2StubElementTypes.DEFERRED_TIME_LITERAL_EXPRESSION)
-      if (!builder.eof()) {
+      if (!builder.eof() && builder.tokenType != endToken) {
         builder.error(JavaScriptBundle.message("javascript.parser.message.unexpected.token", builder.tokenText))
-        skipContents(builder)
+        while (!builder.eof() && builder.tokenType != endToken) {
+          builder.advanceLexer()
+        }
       }
     }
 
@@ -726,7 +779,7 @@ class Angular2Parser private constructor(builder: PsiBuilder,
 
     private fun isParameterName(builder: PsiBuilder, name: String): Boolean =
       builder.tokenType == Angular2TokenTypes.BLOCK_PARAMETER_NAME
-      && builder.tokenText?.let { if (name.contains(' ')) it.replace("\\s*", " ") else it } == name
+      && builder.tokenText == name
 
     private fun tryParseParameterVariable(builder: PsiBuilder): Boolean {
       if (!JSKeywordSets.TS_IDENTIFIERS_TOKENS_SET.contains(builder.tokenType)) {

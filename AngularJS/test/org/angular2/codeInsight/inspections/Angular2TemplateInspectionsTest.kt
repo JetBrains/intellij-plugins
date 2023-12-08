@@ -273,6 +273,12 @@ class Angular2TemplateInspectionsTest : Angular2CodeInsightFixtureTestCase() {
            "braceEscapeNg17.html")
   }
 
+  fun testDeferBlockOnParameter() {
+    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0)
+    doTest(AngularDeferBlockOnTriggerInspection::class.java,
+           "defer-block-on-trigger.html")
+  }
+
   private fun doTestNoFix(location: String,
                           inspection: Class<out LocalInspectionTool?>?,
                           quickFixName: String) {

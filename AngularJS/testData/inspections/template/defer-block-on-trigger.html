@@ -1,0 +1,11 @@
+@defer(on idle (<error descr="Trigger idle does not support arguments">12s</error>)) {}
+@defer(on viewport (<error descr="Trigger viewport supports only a template variable reference">12s</error>)) {}
+@defer(on timer (12s)) {}
+
+@defer(on <error descr="Trigger timer requires an argument">timer</error>) {}
+@defer(on viewport) {}
+@defer(on idle) {}
+
+@defer(on idle (<error descr="Trigger idle does not support arguments">foo</error>)) {}
+@defer(on viewport (foo)) {}
+@defer(on timer (<error descr="Trigger timer supports only a time duration">foo</error>)) {}
