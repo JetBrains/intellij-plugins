@@ -346,7 +346,7 @@ public final class DartAnalysisServerService implements Disposable {
         }
       }
 
-      myServerErrorHandler.handleError(message, stackTrace, isFatal, sdkVersion, debugLog.length() == 0 ? null : debugLog.toString());
+      myServerErrorHandler.handleError(message, stackTrace, isFatal, sdkVersion, debugLog.isEmpty() ? null : debugLog.toString());
     }
 
     @Override
