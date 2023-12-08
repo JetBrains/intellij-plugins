@@ -17,6 +17,8 @@ export interface User {
         {{<error descr="Unresolved variable or type isRobot">isRobot</error>}} {{user.name}}
     } @else {
         {{<error descr="Unresolved variable or type isRobot">isRobot</error>}} {{user.name}}
+        @if(user.name) {
+        }
     }
   `
 })
