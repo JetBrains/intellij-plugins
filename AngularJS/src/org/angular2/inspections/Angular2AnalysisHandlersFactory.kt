@@ -18,6 +18,8 @@ import com.intellij.lang.javascript.validation.*
 import com.intellij.lang.typescript.validation.TypeScriptTypeChecker
 import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveResult
+import com.intellij.psi.util.childLeafs
+import com.intellij.psi.util.elementType
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.ProcessingContext
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.NG_PIPE
@@ -26,10 +28,7 @@ import org.angular2.codeInsight.blocks.BLOCK_FOR
 import org.angular2.entities.Angular2ComponentLocator
 import org.angular2.inspections.quickfixes.*
 import org.angular2.lang.Angular2Bundle
-import org.angular2.lang.expr.psi.Angular2Action
-import org.angular2.lang.expr.psi.Angular2BlockParameter
-import org.angular2.lang.expr.psi.Angular2EmbeddedExpression
-import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression
+import org.angular2.lang.expr.psi.*
 import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
 import org.angular2.signals.Angular2SignalUtils
 
@@ -131,6 +130,11 @@ class Angular2AnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
             element.node.findChildByType(JSTokenTypes.IDENTIFIER)
               ?.let { highlightKeyword(it, TypeScriptHighlighter.TS_KEYWORD) }
               ?.let { myHolder.add(it) }
+          is Angular2DeferredTimeLiteralExpression -> element.childLeafs
+            .find { it.elementType == JSTokenTypes.IDENTIFIER }
+            ?.takeIf { it.text == "s" || it.text == "ms" }
+            ?.let { highlightKeyword(it.node, TypeScriptHighlighter.TS_NUMBER) }
+            ?.let { myHolder.add(it) }
           else -> super.visitElement(element)
         }
       }

@@ -5,10 +5,11 @@ import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSVariable
 import com.intellij.model.psi.PsiExternalReferenceHost
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiNamedElement
 import org.angular2.codeInsight.blocks.Angular2BlockParameterSymbol
 import org.angular2.lang.html.psi.Angular2HtmlBlock
 
-interface Angular2BlockParameter : Angular2EmbeddedExpression, PsiExternalReferenceHost {
+interface Angular2BlockParameter : Angular2EmbeddedExpression, PsiExternalReferenceHost, PsiNamedElement {
 
   override fun getName(): String?
 

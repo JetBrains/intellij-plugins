@@ -1,0 +1,70 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    Angular2HtmlBlock (@defer)
+      PsiElement(NG:BLOCK_NAME)('@defer')
+      Angular2HtmlBlockContents
+        PsiElement(NG:BLOCK_START)('{')
+        PsiElement(NG:BLOCK_END)('}')
+    PsiWhiteSpace(' ')
+    Angular2HtmlBlock (@placeholder)
+      PsiElement(NG:BLOCK_NAME)('@placeholder')
+      Angular2HtmlBlockParameters
+        PsiElement(NG:BLOCK_PARAMETERS_START)('(')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (placeholder:0))
+          Angular2BlockParameter
+            PsiElement(NG:BLOCK_PARAMETER_NAME)('minimum')
+            PsiWhiteSpace(' ')
+            Angular2DeferredTimeLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('12')
+              PsiElement(JS:IDENTIFIER)('s')
+        PsiElement(NG:BLOCK_PARAMETERS_END)(')')
+      PsiWhiteSpace(' ')
+      Angular2HtmlBlockContents
+        PsiElement(NG:BLOCK_START)('{')
+        PsiElement(NG:BLOCK_END)('}')
+    PsiWhiteSpace(' ')
+    Angular2HtmlBlock (@loading)
+      PsiElement(NG:BLOCK_NAME)('@loading')
+      Angular2HtmlBlockParameters
+        PsiElement(NG:BLOCK_PARAMETERS_START)('(')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (loading:0))
+          Angular2BlockParameter
+            PsiElement(NG:BLOCK_PARAMETER_NAME)('after')
+            PsiErrorElement:Numeric literal expected
+              <empty list>
+            PsiWhiteSpace(' ')
+            PsiElement(JS:IDENTIFIER)('two')
+        PsiElement(NG:BLOCK_SEMICOLON)(';')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (loading:1))
+          PsiWhiteSpace(' ')
+          Angular2BlockParameter
+            PsiElement(NG:BLOCK_PARAMETER_NAME)('minimum')
+            PsiWhiteSpace(' ')
+            Angular2DeferredTimeLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('12')
+              PsiErrorElement:Unexpected whitespace
+                <empty list>
+              PsiWhiteSpace(' ')
+              PsiElement(JS:IDENTIFIER)('ms')
+            PsiErrorElement:Unexpected token &&
+              <empty list>
+            PsiWhiteSpace(' ')
+            PsiElement(JS:ANDAND)('&&')
+        PsiElement(NG:BLOCK_SEMICOLON)(';')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (loading:2))
+          PsiWhiteSpace(' ')
+          Angular2BlockParameter
+            PsiElement(NG:BLOCK_PARAMETER_NAME)('maximum')
+            PsiWhiteSpace(' ')
+            Angular2DeferredTimeLiteralExpression
+              PsiErrorElement:Only natural or decimal numbers are allowed
+                PsiElement(JS:NUMERIC_LITERAL)('1e2')
+              PsiErrorElement:Only 's' and 'ms' time units are supported
+                PsiElement(JS:IDENTIFIER)('hr')
+        PsiElement(NG:BLOCK_PARAMETERS_END)(')')
+      PsiWhiteSpace(' ')
+      Angular2HtmlBlockContents
+        PsiElement(NG:BLOCK_START)('{')
+        PsiElement(NG:BLOCK_END)('}')

@@ -13,4 +13,7 @@ public interface Angular2StubElementTypes {
   JSStubElementType<JSVariableStub<JSVariable>, JSVariable> TEMPLATE_VARIABLE = new Angular2TemplateVariableElementType();
 
   JSStubElementType<JSVariableStub<JSVariable>, JSVariable> BLOCK_PARAMETER_VARIABLE = new Angular2BlockParameterVariableElementType();
+
+  Angular2DeferredTimeLiteralExpressionElementType DEFERRED_TIME_LITERAL_EXPRESSION =
+    new Angular2DeferredTimeLiteralExpressionElementType();
 }

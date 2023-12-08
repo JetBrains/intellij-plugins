@@ -672,6 +672,8 @@
           "ng-block-parameters": [
             {
               "name": "minimum",
+              "doc-url": "https://angular.dev/guide/defer#loading",
+              "description": "The minimum amount of time that the `@placeholder` content should be shown in milliseconds (ms) or seconds (s). If time unit is not specified, milliseconds are assumed.\n\nThis parameter exists to prevent fast flickering of `@placeholder` content in the case that the deferred dependencies are fetched quickly.",
               "unique": true
             }
           ]
@@ -685,10 +687,14 @@
           "ng-block-parameters": [
             {
               "name": "minimum",
+              "doc-url": "https://angular.dev/guide/defer#loading",
+              "description": "The minimum amount of time that `@loading` content should be shown in milliseconds (ms) or seconds (s). If time unit is not specified, milliseconds are assumed.\n\nThis parameter exists to prevent fast flickering of `@loading` content in the case that the deferred dependencies are fetched quickly.",
               "unique": true
             },
             {
               "name": "after",
+              "doc-url": "https://angular.dev/guide/defer#loading",
+              "description": "The amount of time to wait after loading begins before showing the `@loading` content in milliseconds (ms) or seconds (s). If time unit is not specified, milliseconds are assumed.\n\nThis parameter exists to prevent fast flickering of `@loading` content in the case that the deferred dependencies are fetched quickly.",
               "unique": true
             }
           ]

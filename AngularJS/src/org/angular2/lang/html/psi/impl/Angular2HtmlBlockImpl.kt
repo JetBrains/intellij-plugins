@@ -9,6 +9,7 @@ import com.intellij.psi.util.elementType
 import com.intellij.psi.util.siblings
 import com.intellij.psi.xml.XmlText
 import com.intellij.psi.xml.XmlTokenType
+import com.intellij.util.IncorrectOperationException
 import com.intellij.util.asSafely
 import com.intellij.util.takeWhileInclusive
 import org.angular2.codeInsight.blocks.Angular2HtmlBlockSymbol
@@ -96,6 +97,10 @@ class Angular2HtmlBlockImpl(type: Angular2HtmlElementTypes.Angular2ElementType)
         visitor.visitElement(this)
       }
     }
+  }
+
+  override fun setName(name: String): PsiElement {
+    throw IncorrectOperationException()
   }
 
   override fun toString(): String =

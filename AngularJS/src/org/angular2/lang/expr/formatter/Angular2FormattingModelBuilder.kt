@@ -71,6 +71,8 @@ class Angular2FormattingModelBuilder : JavascriptFormattingModelBuilder() {
           visitBlockParameterStatement(node)
         Angular2StubElementTypes.BLOCK_PARAMETER_VARIABLE ->
           visitVariable(node)
+        Angular2StubElementTypes.DEFERRED_TIME_LITERAL_EXPRESSION ->
+          visitDeferredTimeLiteralExpression()
         else -> super.visitElement(node)
       }
     }
@@ -89,6 +91,12 @@ class Angular2FormattingModelBuilder : JavascriptFormattingModelBuilder() {
                && myChild1.text == "of"
                && (node.psi as Angular2BlockParameter).let { it.isPrimaryExpression && it.block?.getName() == BLOCK_FOR }) {
         setSingleSpace(myChild2.elementType != TokenType.ERROR_ELEMENT)
+      }
+    }
+
+    private fun visitDeferredTimeLiteralExpression() {
+      if (myChild1.elementType == JSTokenTypes.NUMERIC_LITERAL && myChild2.elementType == JSTokenTypes.IDENTIFIER) {
+        setSingleSpace(false)
       }
     }
 

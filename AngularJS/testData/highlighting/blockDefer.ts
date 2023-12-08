@@ -13,7 +13,7 @@ export interface User {
   template: `
     @defer (prefetch when user.name; <error descr="@defer does not support parameter no">no</error>; on something) {
     
-    } @placeholder (minimum 12; <error descr="@placeholder does not support parameter dd">dd</error>) {
+    } @placeholder (minimum 12; <error descr="@placeholder does not support parameter dd">dd</error><error descr="Numeric literal expected">)</error> {
     
     } @error {
     
