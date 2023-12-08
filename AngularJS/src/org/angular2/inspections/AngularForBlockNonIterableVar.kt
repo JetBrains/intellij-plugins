@@ -5,8 +5,8 @@ import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.lang.javascript.psi.JSFunctionType
-import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSType.TypeTextFormat.CODE
+import com.intellij.lang.javascript.psi.JSTypeUtils
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory
 import com.intellij.lang.javascript.psi.types.JSTypeContext
@@ -26,14 +26,15 @@ class AngularForBlockNonIterableVar : LocalInspectionTool() {
 
       override fun visitBlock(block: Angular2HtmlBlock) {
         if (block.getName() == BLOCK_FOR) {
-          val expression =  block.parameters.getOrNull(0)
+          val expression = block.parameters.getOrNull(0)
             ?.takeIf { it.isPrimaryExpression }
             ?.expression
           val expressionType = expression
-            ?.let { JSResolveUtil.getExpressionJSType(it) }
-          if (expressionType == null)
-            return
+                                 ?.let { JSResolveUtil.getExpressionJSType(it) }
+                                 ?.substitute()
+                               ?: return
           val property = expressionType
+            .let { JSTypeUtils.removeNullableComponents(it) ?: return }
             .asRecordType()
             .findPropertySignature("[Symbol.iterator]")
           val type = property

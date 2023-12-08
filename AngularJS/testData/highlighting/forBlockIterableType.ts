@@ -5,6 +5,7 @@ import { Component } from '@angular/core';
  selector: 'todos',
  template: `
     @for (foo of iter; track $index)  {}
+    @for (foo of iterNull; track $index)  {}
     @for (foo of <error descr="Type { name: string } must have a [Symbol.iterator]() method that returns an iterator.">nonIter</error>; track $index)  {}
   `,
    standalone: true,
@@ -12,6 +13,7 @@ import { Component } from '@angular/core';
 export class ComponentStoreTodosComponent {
 
   iter!: { name: string }[];
+  iterNull!: { name: string }[] | null | undefined;
   nonIter!: { name: string };
 
 }
