@@ -8,7 +8,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
-import com.jetbrains.lang.dart.DartStartupActivity;
+import com.jetbrains.lang.dart.DartStartupActivityKt;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 
@@ -84,7 +84,7 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
       model.commit();
     });
 
-    DartStartupActivity.excludeBuildAndToolCacheFolders(getModule(), pubspec2);
+    DartStartupActivityKt.excludeBuildAndToolCacheFolders(getModule(), pubspec2);
 
     assertSameElements(ModuleRootManager.getInstance(getModule()).getContentEntries()[0].getExcludeFolderUrls(),
                        rootUrl + "/dir1/someFolder",
@@ -106,7 +106,7 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
                        rootUrl + "/dir2/example/packages/oldProject3Name"
     );
 
-    DartStartupActivity.excludeBuildAndToolCacheFolders(getModule(), pubspec3);
+    DartStartupActivityKt.excludeBuildAndToolCacheFolders(getModule(), pubspec3);
 
     assertSameElements(ModuleRootManager.getInstance(getModule()).getContentEntries()[0].getExcludeFolderUrls(),
                        rootUrl + "/dir1/someFolder",

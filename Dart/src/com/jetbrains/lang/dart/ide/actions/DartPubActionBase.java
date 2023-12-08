@@ -46,7 +46,7 @@ import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.ui.content.MessageView;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.DartStartupActivity;
+import com.jetbrains.lang.dart.DartStartupActivityKt;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.flutter.FlutterUtil;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
@@ -227,7 +227,7 @@ public abstract class DartPubActionBase extends AnAction implements DumbAware {
 
             ApplicationManager.getApplication().invokeLater(() -> {
               if (!module.isDisposed()) {
-                DartStartupActivity.excludeBuildAndToolCacheFolders(module, pubspecYamlFile);
+                DartStartupActivityKt.excludeBuildAndToolCacheFolders(module, pubspecYamlFile);
                 // refresh later than exclude, otherwise IDE may start indexing excluded folders
                 VfsUtil.markDirtyAndRefresh(true, true, true, pubspecYamlFile.getParent());
 

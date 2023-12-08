@@ -62,6 +62,7 @@ import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import kotlinx.coroutines.CoroutineScope;
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
@@ -124,6 +125,7 @@ public final class DartAnalysisServerService implements Disposable {
   private static final int MAX_DEBUG_LOG_LINE_LENGTH = 200; // Saw one line while testing that was > 50k
 
   @NotNull private final Project myProject;
+  @NotNull private final CoroutineScope myServiceScope;
   private boolean myInitializationOnServerStartupDone;
   private boolean mySubscribeToServerLog;
 
@@ -543,8 +545,9 @@ public final class DartAnalysisServerService implements Disposable {
     }
   }
 
-  public DartAnalysisServerService(@NotNull final Project project) {
+  public DartAnalysisServerService(@NotNull Project project, @NotNull CoroutineScope serviceScope) {
     myProject = project;
+    myServiceScope = serviceScope;
     myRootsHandler = new DartServerRootsHandler(project);
     myServerData = new DartServerData(this);
     myUpdateFilesAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, this);
@@ -552,6 +555,10 @@ public final class DartAnalysisServerService implements Disposable {
     myServerErrorHandler = new DartAnalysisServerErrorHandler(project);
 
     DartClosingLabelManager.getInstance().addListener(this::handleClosingLabelPreferenceChanged, this);
+  }
+
+  public @NotNull CoroutineScope getServiceScope() {
+    return myServiceScope;
   }
 
   @SuppressWarnings("unused") // for Flutter plugin
