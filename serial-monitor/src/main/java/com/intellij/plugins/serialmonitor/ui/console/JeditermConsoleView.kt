@@ -51,14 +51,20 @@ class JeditermConsoleView(project: Project, connection: SerialPortService.Serial
   private val bytesStream = object : InputStream() {
     override fun read(): Int {
       synchronized(lock) {
+        while (!Thread.interrupted() && !bytesBuffer.hasBytes()) {
+          lock.wait()
+        }
         return if (bytesBuffer.hasBytes()) bytesBuffer.read().toInt() else -1
       }
     }
 
     override fun read(buffer: ByteArray, offset: Int, length: Int): Int {
       synchronized(lock) {
-        val toRead =  min(length, bytesBuffer.currentNumberOfBytes)
-        bytesBuffer.read(buffer,offset,toRead)
+        while (!Thread.interrupted() && !bytesBuffer.hasBytes()) {
+          lock.wait()
+        }
+        val toRead = min(length, bytesBuffer.currentNumberOfBytes)
+        bytesBuffer.read(buffer, offset, toRead)
         return toRead
       }
     }
@@ -82,7 +88,7 @@ class JeditermConsoleView(project: Project, connection: SerialPortService.Serial
         }
     }
     widget.start(serialConnector)
-    Disposer.register(this,connection)
+    Disposer.register(this, connection)
   }
 
 
@@ -157,7 +163,7 @@ class JeditermConsoleView(project: Project, connection: SerialPortService.Serial
     }
   }
 
-  fun reconnect(charset: Charset, newLine: NewLine, localEcho:Boolean) {
+  fun reconnect(charset: Charset, newLine: NewLine, localEcho: Boolean) {
     emulator?.newLine = newLine
     widget.terminal.setAutoNewLine(newLine == NewLine.CRLF) //todo LF mode is not supported due JediTerm limitations
     serialConnector.charset = charset
@@ -177,7 +183,9 @@ class JeditermConsoleView(project: Project, connection: SerialPortService.Serial
         }
         try {
           lock.wait()
-        } catch (_: InterruptedException){}
+        }
+        catch (_: InterruptedException) {
+        }
       }
     }
   }

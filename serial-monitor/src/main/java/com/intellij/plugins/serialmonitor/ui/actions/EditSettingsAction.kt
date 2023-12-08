@@ -32,7 +32,7 @@ class EditSettingsAction(private val myName: @Nls String, private val consoleVie
 
   }
 
-  private inner class SettingsDialog(project: Project?) : DialogWrapper(project, false, IdeModalityType.PROJECT) {
+  private inner class SettingsDialog(project: Project?) : DialogWrapper(project, false, IdeModalityType.IDE/*todo change to PROJECT when platform is fixed*/) {
     init {
       title = SerialMonitorBundle.message("dialog.title.serial.port.settings", myName)
       init()
