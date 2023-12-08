@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.documentation.WebSymbolDocumentation
 import com.intellij.webSymbols.documentation.WebSymbolDocumentationCustomizer
+import com.intellij.webSymbols.utils.qualifiedKind
 import org.angular2.codeInsight.blocks.Angular2BlockParameterSymbol
 import org.angular2.codeInsight.blocks.Angular2HtmlBlockSymbol
 import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget.SyntaxPrinter
@@ -35,6 +36,14 @@ class Angular2WebSymbolDocumentationCustomizer : WebSymbolDocumentationCustomize
         definition = SyntaxPrinter(location).append(TypeScriptHighlighter.TS_KEYWORD, "parameter")
           .appendRaw(" ")
           .append(DefaultLanguageHighlighterColors.IDENTIFIER, symbol.name)
+          .toString()
+      )
+    }
+    else if (symbol.qualifiedKind == Angular2WebSymbolsQueryConfigurator.NG_DEFER_ON_TRIGGERS && location != null) {
+      return documentation.with(
+        definition = SyntaxPrinter(location).append(TypeScriptHighlighter.TS_KEYWORD, "trigger")
+          .appendRaw(" ")
+          .append(TypeScriptHighlighter.TS_GLOBAL_FUNCTION, symbol.name)
           .toString()
       )
     }
