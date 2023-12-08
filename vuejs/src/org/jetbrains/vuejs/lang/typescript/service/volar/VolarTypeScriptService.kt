@@ -71,10 +71,10 @@ class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(projec
 
   override fun getServiceId(): String = "vue"
 
-  override suspend fun getIdeType(args: TypeScriptGetElementTypeRequestArgs): JsonElement? {
+  override suspend fun getIdeType(virtualFile: VirtualFile, args: TypeScriptGetElementTypeRequestArgs): JsonElement? {
     return withServer {
       val server = this
-      server.requestExecutor.sendRequest(LspGetElementTypeCommand(server, args))
+      server.requestExecutor.sendRequest(LspGetElementTypeCommand(server, virtualFile, args))
     }
   }
 }
