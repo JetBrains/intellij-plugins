@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.inspections.*
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
 import com.intellij.webSymbols.moveToOffsetBySignature
 import org.angular2.Angular2TestCase
+import org.angular2.Angular2TestModule
 
 /**
  * @see Angular2DecoratorInspectionsTest
@@ -18,6 +19,13 @@ class Angular2TsInspectionsTest : Angular2TestCase("inspections/ts") {
 
   fun testUnusedSymbol() =
     checkHighlighting(configureFileName = "unused.ts",
+                      dir = true,
+                      inspections = listOf(JSUnusedGlobalSymbolsInspection::class.java,
+                                           JSUnusedLocalSymbolsInspection::class.java))
+
+  fun testUnusedSymbolNg17() =
+    checkHighlighting(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0,
+                      configureFileName = "unused.ts",
                       dir = true,
                       inspections = listOf(JSUnusedGlobalSymbolsInspection::class.java,
                                            JSUnusedLocalSymbolsInspection::class.java))

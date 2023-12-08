@@ -1,0 +1,12 @@
+@for(item of publicUsedField) {
+}
+@for(item of privateUsedField) {
+}
+@for(item of publicUsedConstructorField; track privateUsedMethod) {
+}
+@for(item of privateUsedConstructorField; track publicUsedMethod) {
+}
+@if(myObservable$ | async) {
+
+}
+{{ testFn() }}
