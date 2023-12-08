@@ -4,7 +4,7 @@ package org.angular2.lang.html.psi.impl
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.formatter.xml.AbstractXmlBlock
-import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.childrenOfType
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.siblings
 import com.intellij.psi.xml.XmlText
@@ -26,18 +26,16 @@ class Angular2HtmlBlockImpl(type: Angular2HtmlElementTypes.Angular2ElementType)
   : Angular2HtmlCompositePsiElement(type), Angular2HtmlBlock {
 
   override fun getName(): String =
-    findChildByType(Angular2HtmlTokenTypes.BLOCK_NAME)
-      ?.text?.toCanonicalBlockName()!!
+    nameElement.text?.toCanonicalBlockName()!!
 
   override val nameElement: PsiElement
-    get() = findChildByType(Angular2HtmlTokenTypes.BLOCK_NAME)!!.psi
+    get() = firstChild.takeIf { it.elementType == Angular2HtmlTokenTypes.BLOCK_NAME }!!
 
   override val parameters: List<Angular2BlockParameter>
-    get() = PsiTreeUtil.findChildOfType(this, Angular2HtmlBlockParameters::class.java)
-              ?.parameters ?: emptyList()
+    get() = childrenOfType<Angular2HtmlBlockParameters>().firstOrNull()?.parameters ?: emptyList()
 
   override val contents: Angular2HtmlBlockContents?
-    get() = PsiTreeUtil.findChildOfType(this, Angular2HtmlBlockContents::class.java)
+    get() = childrenOfType<Angular2HtmlBlockContents>().firstOrNull()
 
   override val definition: Angular2HtmlBlockSymbol?
     get() = getAngular2HtmlBlocksConfig(this)[this]
