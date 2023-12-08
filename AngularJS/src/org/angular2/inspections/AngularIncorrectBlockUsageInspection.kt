@@ -1,9 +1,12 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.inspections
 
+import com.intellij.codeInsight.daemon.impl.analysis.EscapeCharacterIntentionFix
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.util.childrenOfType
 import com.intellij.util.containers.MultiMap
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.NG_EXPRESSION_PREFIX
@@ -24,10 +27,21 @@ class AngularIncorrectBlockUsageInspection : LocalInspectionTool() {
       override fun visitBlock(block: Angular2HtmlBlock) {
         val definition = block.definition
         if (definition == null) {
-          holder.registerProblem(block.nameElement,
+          val nameElement = block.nameElement
+          holder.registerProblem(nameElement,
                                  Angular2Bundle.htmlMessage("angular.inspection.incorrect-block-usage.message.undefined",
-                                                            block.htmlName))
+                                                            block.htmlName),
+                                 EscapeCharacterIntentionFix(nameElement, TextRange(0, 1), "@", "&#64;"),
+                                 EscapeCharacterIntentionFix(nameElement, TextRange(0, 1), "@", "&commat;"))
           return
+        }
+        if (block.childrenOfType<PsiErrorElement>()
+            .any { it.errorDescription == Angular2Bundle.message("angular.parse.template.missing-block-opening-lbrace") }) {
+          val nameElement = block.nameElement
+          holder.registerProblem(nameElement,
+                                 Angular2Bundle.message("angular.parse.template.missing-block-opening-lbrace"),
+                                 EscapeCharacterIntentionFix(nameElement, TextRange(0, 1), "@", "&#64;"),
+                                 EscapeCharacterIntentionFix(nameElement, TextRange(0, 1), "@", "&commat;"))
         }
         val primaryBlockDefinition = block.primaryBlockDefinition
         validateBlocksStructure(block, definition, primaryBlockDefinition)
@@ -84,7 +98,7 @@ class AngularIncorrectBlockUsageInspection : LocalInspectionTool() {
                                           definition: Angular2HtmlBlockSymbol,
                                           primaryBlockDefinition: Angular2HtmlBlockSymbol?) {
         val expectedParams = definition.parameters
-        val actualParams = block.parameters
+        val actualParams = block.parameters.dropLastWhile { it.textLength == 0 }
 
         if (expectedParams.isEmpty() && actualParams.isNotEmpty()) {
           holder.registerProblem(block.node.findChildByType(Angular2HtmlElementTypes.BLOCK_PARAMETERS)!!.psi,
@@ -102,6 +116,7 @@ class AngularIncorrectBlockUsageInspection : LocalInspectionTool() {
                                        Angular2Bundle.htmlMessage(
                                          "angular.inspection.incorrect-block-usage.message.missing-primary-expression",
                                          block.htmlName))
+                break
               }
             }
             else if (actualParams.none { it.getName() == requiredParam.name }) {

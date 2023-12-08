@@ -5,7 +5,6 @@ import com.intellij.lang.PsiBuilder
 import com.intellij.lang.PsiBuilder.Marker
 import com.intellij.lang.html.HtmlParsing
 import com.intellij.lang.javascript.JavaScriptBundle
-import com.intellij.psi.TokenType
 import com.intellij.psi.tree.ICustomParsingType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.ILazyParseableElementType
@@ -191,10 +190,12 @@ class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSyntax, bu
           if (builder.tokenType == Angular2HtmlTokenTypes.BLOCK_SEMICOLON) {
             builder.advanceLexer()
           }
-        } else if (builder.tokenType == Angular2HtmlTokenTypes.BLOCK_SEMICOLON) {
+        }
+        else if (builder.tokenType == Angular2HtmlTokenTypes.BLOCK_SEMICOLON) {
           builder.mark().collapse(Angular2EmbeddedExprTokenType.createBlockParameter(blockName, parameterIndex))
           builder.advanceLexer()
-        } else {
+        }
+        else {
           break
         }
         parameterIndex++
@@ -377,7 +378,7 @@ class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSyntax, bu
     val errorMarker = mark()
     assert(token() === Angular2HtmlTokenTypes.EXPANSION_FORM_START)
     advance() //consume LBRACE
-    errorMarker.error(Angular2Bundle.message("angular.parse.template.unterminated-expansion-form-critical"))
+    errorMarker.error(Angular2Bundle.message("angular.parse.template.unterminated-expansion-form"))
   }
 
   private fun remapTokensUntilComma(textType: IElementType): Boolean {

@@ -311,6 +311,7 @@
     <localInspection implementationClass="org.angular2.inspections.AngularForBlockNonIterableVar"
                      groupKey="angular.inspection.group.name" enabledByDefault="true" language="Angular2Html"
                      level="ERROR" key="angular.inspection.for-block-non-iterable.name" bundle="messages.Angular2Bundle"/>
+    <errorQuickFixProvider implementation="org.angular2.inspections.Angular2ErrorQuickFixProvider"/>
     <idIndexer filetype="Angular2Html" implementationClass="org.angular2.lang.html.index.Angular2HtmlIdIndexer"/>
     <todoIndexer filetype="Angular2Html" implementationClass="org.angular2.lang.html.index.Angular2HtmlTodoIndexer"/>
     <idIndexer filetype="Angular17Html" implementationClass="org.angular2.lang.html.index.Angular17HtmlIdIndexer"/>

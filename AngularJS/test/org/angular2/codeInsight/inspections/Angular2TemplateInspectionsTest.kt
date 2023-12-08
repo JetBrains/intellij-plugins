@@ -220,6 +220,59 @@ class Angular2TemplateInspectionsTest : Angular2CodeInsightFixtureTestCase() {
            "inaccessibleSymbolStrict.ts")
   }
 
+  fun testUnknownBlock1() {
+    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0)
+    doTest(1,
+           "foo@b<caret>ar.com",
+           "Escape '@' with '&#",
+           AngularIncorrectBlockUsageInspection::class.java,
+           "unknownBlock.html")
+  }
+
+  fun testUnknownBlock2() {
+    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0)
+    doTest(2,
+           "something@f<caret>or.change.com",
+           "Escape '@' with '&commat;'",
+           AngularIncorrectBlockUsageInspection::class.java,
+           "unknownBlock.html")
+  }
+
+  fun testUnknownBlock3() {
+    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0)
+    doTest(3,
+           "to @foo o<caret>n",
+           "Escape '@' with '&#",
+           AngularIncorrectBlockUsageInspection::class.java,
+           "unknownBlock.html")
+  }
+
+  fun testBraceEscape() {
+    doTest(1,
+           "e {<caret> a",
+           "Escape '{' with '&#123;'",
+           AngularIncorrectBlockUsageInspection::class.java,
+           "braceEscape.html")
+  }
+
+  fun testBraceEscapeNg17_1() {
+    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0)
+    doTest(1,
+           "e {<caret> a",
+           "Escape '{' with '&#123;'",
+           AngularIncorrectBlockUsageInspection::class.java,
+           "braceEscapeNg17.html")
+  }
+
+  fun testBraceEscapeNg17_2() {
+    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0)
+    doTest(2,
+           "closing }<caret>",
+           "Escape '",
+           AngularIncorrectBlockUsageInspection::class.java,
+           "braceEscapeNg17.html")
+  }
+
   private fun doTestNoFix(location: String,
                           inspection: Class<out LocalInspectionTool?>?,
                           quickFixName: String) {
