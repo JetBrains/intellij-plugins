@@ -6,6 +6,7 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.javascript.web.css.CssInBindingExpressionCompletionProvider
 import com.intellij.lang.Language
+import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.completion.*
 import com.intellij.lang.javascript.completion.JSImportCompletionUtil.IMPORT_PRIORITY
 import com.intellij.lang.javascript.completion.JSLookupPriority.*
@@ -25,6 +26,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.ProcessingContext
@@ -43,6 +45,8 @@ import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.lexer.Angular2TokenTypes
+import org.angular2.lang.expr.psi.Angular2BlockParameter
+import org.angular2.lang.expr.psi.Angular2DeferredTimeLiteralExpression
 import org.angular2.lang.expr.psi.Angular2PipeExpression
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression
 import org.angular2.signals.Angular2SignalUtils
@@ -63,6 +67,39 @@ class Angular2CompletionContributor : CompletionContributor() {
            psiElement(Angular2TokenTypes.BLOCK_PARAMETER_NAME).with(language(Angular2Language.INSTANCE)),
            Angular2BlockParameterNameCompletionProvider())
 
+    // Disable regular completions in after and minimum parameters
+    extend(CompletionType.BASIC,
+           psiElement(JSTokenTypes.IDENTIFIER)
+             .withParent(psiElement(Angular2BlockParameter::class.java)
+                           .withName("after", "minimum"))
+             .with(language(Angular2Language.INSTANCE)),
+           EmptyCompletionProvider())
+
+    extend(CompletionType.BASIC,
+           psiElement(JSTokenTypes.IDENTIFIER)
+             .withParents(PsiErrorElement::class.java, Angular2DeferredTimeLiteralExpression::class.java),
+           DeferredTimeUnitsCompletionProvider())
+
+  }
+
+  private class EmptyCompletionProvider : CompletionProvider<CompletionParameters>() {
+    override fun addCompletions(parameters: CompletionParameters,
+                                context: ProcessingContext,
+                                result: CompletionResultSet) {
+      result.stopHere()
+    }
+  }
+
+  private class DeferredTimeUnitsCompletionProvider : CompletionProvider<CompletionParameters>() {
+    override fun addCompletions(parameters: CompletionParameters,
+                                context: ProcessingContext,
+                                result: CompletionResultSet) {
+      result.addElement(LookupElementBuilder.create("ms")
+                          .withIcon(AngularJSIcons.Angular2))
+      result.addElement(LookupElementBuilder.create("s")
+                          .withIcon(AngularJSIcons.Angular2))
+      result.stopHere()
+    }
   }
 
   private class TemplateExpressionCompletionProvider : CompletionProvider<CompletionParameters>() {
@@ -158,7 +195,7 @@ class Angular2CompletionContributor : CompletionContributor() {
                   override fun handleInsert(context: InsertionContext, item: LookupElement) {
                     runWithTimeout(200) {
                       if (Angular2SignalUtils.isSignal(item.psiElement)) {
-                        item.putUserData(JSInsertHandler.FORCED_COMPLETE_AS_FUNCTION, true)
+                        item.putUserData(FORCED_COMPLETE_AS_FUNCTION, true)
                       }
                     }
                     super.handleInsert(context, item)

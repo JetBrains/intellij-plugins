@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.*
 import com.intellij.lang.javascript.parsing.*
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.angular2.codeInsight.blocks.*
@@ -550,9 +551,9 @@ class Angular2Parser private constructor(builder: PsiBuilder,
     }
 
     private fun parsePlaceholderExpression(builder: PsiBuilder) {
-      if (isParameterName(builder, "minimum")) {
+      if (builder.tokenType == Angular2TokenTypes.BLOCK_PARAMETER_NAME) {
         builder.advanceLexer()
-        skipContents(builder)
+        parseDeferredTime(builder)
       }
       else {
         skipContents(builder)
@@ -560,11 +561,49 @@ class Angular2Parser private constructor(builder: PsiBuilder,
     }
 
     private fun parseLoadingExpression(builder: PsiBuilder) {
-      if (isParameterName(builder, "minimum") || isParameterName(builder, "after")) {
+      if (builder.tokenType == Angular2TokenTypes.BLOCK_PARAMETER_NAME) {
         builder.advanceLexer()
-        skipContents(builder)
+        parseDeferredTime(builder)
       }
       else {
+        skipContents(builder)
+      }
+    }
+
+    private fun parseDeferredTime(builder: PsiBuilder) {
+      if (builder.tokenType != JSTokenTypes.NUMERIC_LITERAL) {
+        builder.error(Angular2Bundle.message("angular.parse.expression.expected-numeric-literal"))
+        skipContents(builder)
+        return
+      }
+      val timeLiteral = builder.mark()
+      if (!builder.tokenText!!.matches(Regex("[0-9]+\\.?[0-9]*"))) {
+        val error = builder.mark()
+        builder.advanceLexer()
+        error.error(Angular2Bundle.message("angular.parse.expression.deferred-time.bad-numeric-format"))
+      }
+      else {
+        if (builder.rawLookup(1) == TokenType.WHITE_SPACE) {
+          builder.rawAdvanceLexer(1)
+          if (builder.rawLookup(1) == JSTokenTypes.IDENTIFIER)
+            builder.error(Angular2Bundle.message("angular.parse.expression.unexpected-whitespace"))
+        }
+        builder.advanceLexer()
+      }
+      if (builder.tokenType == JSTokenTypes.IDENTIFIER) {
+        val text = builder.tokenText
+        if (text != "s" && text != "ms") {
+          val error = builder.mark()
+          builder.advanceLexer()
+          error.error(Angular2Bundle.message("angular.parse.expression.deferred-time.wrong-time-unit"))
+        }
+        else {
+          builder.advanceLexer()
+        }
+      }
+      timeLiteral.done(Angular2StubElementTypes.DEFERRED_TIME_LITERAL_EXPRESSION)
+      if (!builder.eof()) {
+        builder.error(JavaScriptBundle.message("javascript.parser.message.unexpected.token", builder.tokenText))
         skipContents(builder)
       }
     }

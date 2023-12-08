@@ -55,4 +55,10 @@ class Angular17HtmlParsingTest : Angular2HtmlParsingTest() {
     """.trimIndent())
   }
 
+  fun testDeferredBlockTimeLiteral() {
+    doTestHtml("""
+      @defer{} @placeholder(minimum 12s) {} @loading(after two; minimum 12 ms &&; maximum 1e2hr) {}
+    """.trimIndent())
+  }
+
 }

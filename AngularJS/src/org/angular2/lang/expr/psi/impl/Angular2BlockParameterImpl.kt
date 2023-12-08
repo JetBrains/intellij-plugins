@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.parentOfType
+import com.intellij.util.IncorrectOperationException
 import org.angular2.codeInsight.blocks.Angular2BlockParameterSymbol
 import org.angular2.lang.expr.psi.Angular2BlockParameter
 import org.angular2.lang.expr.psi.Angular2ElementVisitor
@@ -58,4 +59,8 @@ class Angular2BlockParameterImpl(elementType: IElementType?) : Angular2EmbeddedE
   override val variables: List<JSVariable>
     get() = children.mapNotNull { it as? JSVarStatement }
       .flatMap { it.variables.asSequence() }
+
+  override fun setName(name: String): PsiElement {
+    throw IncorrectOperationException()
+  }
 }
