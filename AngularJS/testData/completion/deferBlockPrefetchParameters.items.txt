@@ -1,0 +1,2 @@
+on (typeText=null; priority=10.0; typeGreyed)
+when (typeText=null; priority=10.0; typeGreyed)

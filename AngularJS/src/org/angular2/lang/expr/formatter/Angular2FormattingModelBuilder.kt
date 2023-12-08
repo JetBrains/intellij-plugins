@@ -92,6 +92,11 @@ class Angular2FormattingModelBuilder : JavascriptFormattingModelBuilder() {
                && (node.psi as Angular2BlockParameter).let { it.isPrimaryExpression && it.block?.getName() == BLOCK_FOR }) {
         setSingleSpace(myChild2.elementType != TokenType.ERROR_ELEMENT)
       }
+      else if (myChild1.elementType == JSTokenTypes.LPAR
+               || myChild2.elementType == JSTokenTypes.LPAR
+               || myChild2.elementType == JSTokenTypes.RPAR) {
+        setSingleSpace(false)
+      }
     }
 
     private fun visitDeferredTimeLiteralExpression() {

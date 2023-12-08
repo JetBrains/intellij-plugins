@@ -181,6 +181,21 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
   fun testDeferBlockTimeExpressionTimeUnit() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html")
 
+  fun testDeferBlockParameters() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html")
+
+  fun testDeferBlockPrefetchParameters() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html")
+
+  fun testDeferBlockOnTriggers() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html")
+
+  fun testDeferBlockOnTimerNoArgCompletion() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html")
+
+  fun testDeferBlockOnViewport() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, extension = "html")
+
   private fun notAnElement(it: LookupElementInfo): Boolean = !it.lookupString.startsWith("<")
 
   private fun doBasicCompletionTest(vararg modules: WebFrameworkTestModule, dir: Boolean = false, extension: String = "ts") =

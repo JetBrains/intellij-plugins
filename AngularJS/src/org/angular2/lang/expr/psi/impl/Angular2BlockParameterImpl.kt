@@ -7,11 +7,11 @@ import com.intellij.lang.javascript.psi.JSVarStatement
 import com.intellij.lang.javascript.psi.JSVariable
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
-import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.IncorrectOperationException
 import org.angular2.codeInsight.blocks.Angular2BlockParameterSymbol
+import org.angular2.lang.expr.lexer.Angular2TokenTypes
 import org.angular2.lang.expr.psi.Angular2BlockParameter
 import org.angular2.lang.expr.psi.Angular2ElementVisitor
 import org.angular2.lang.expr.psi.impl.Angular2BindingImpl.Companion.getExpression
@@ -49,9 +49,9 @@ class Angular2BlockParameterImpl(elementType: IElementType?) : Angular2EmbeddedE
     get() = firstChild is JSExpression || firstChild is JSStatement
 
   override val nameElement: PsiElement?
-    get() = firstChild
-      .let { if (it is PsiErrorElement) it.nextSibling else it }
-      ?.takeIf { it !is JSExpression && it !is JSStatement }
+    get() = node.getChildren(null)
+      .lastOrNull { it.elementType == Angular2TokenTypes.BLOCK_PARAMETER_NAME }
+      ?.psi
 
   override val expression: JSExpression?
     get() = getExpression(this)

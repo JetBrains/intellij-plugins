@@ -1,0 +1,82 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    Angular2HtmlBlock (@defer)
+      PsiElement(NG:BLOCK_NAME)('@defer')
+      Angular2HtmlBlockParameters
+        PsiElement(NG:BLOCK_PARAMETERS_START)('(')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (defer:0))
+          Angular2BlockParameter
+            PsiElement(NG:BLOCK_PARAMETER_NAME)('prefetch')
+            PsiWhiteSpace(' ')
+            PsiElement(NG:BLOCK_PARAMETER_NAME)('on')
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('viewport')
+        PsiElement(NG:BLOCK_SEMICOLON)(';')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (defer:1))
+          PsiWhiteSpace(' ')
+          Angular2BlockParameter
+            PsiElement(NG:BLOCK_PARAMETER_NAME)('on')
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('idle')
+            PsiElement(JS:LPAR)('(')
+            PsiErrorElement:Unexpected token var
+              <empty list>
+            PsiElement(JS:VAR_KEYWORD)('var')
+            PsiElement(JS:RPAR)(')')
+        PsiElement(NG:BLOCK_SEMICOLON)(';')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (defer:2))
+          PsiWhiteSpace(' ')
+          Angular2BlockParameter
+            PsiElement(NG:BLOCK_PARAMETER_NAME)('on')
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('timer')
+            PsiElement(JS:LPAR)('(')
+            Angular2DeferredTimeLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('12')
+              PsiElement(JS:IDENTIFIER)('ms')
+            PsiElement(JS:RPAR)(')')
+        PsiElement(NG:BLOCK_SEMICOLON)(';')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (defer:3))
+          PsiWhiteSpace(' ')
+          Angular2BlockParameter
+            PsiElement(NG:BLOCK_PARAMETER_NAME)('on')
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('idle')
+            PsiErrorElement:( expected
+              <empty list>
+            PsiWhiteSpace(' ')
+            PsiElement(JS:VAR_KEYWORD)('var')
+        PsiElement(NG:BLOCK_SEMICOLON)(';')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (defer:4))
+          PsiWhiteSpace(' ')
+          Angular2BlockParameter
+            PsiElement(NG:BLOCK_PARAMETER_NAME)('prefetch')
+            PsiWhiteSpace(' ')
+            PsiElement(NG:BLOCK_PARAMETER_NAME)('when')
+            PsiWhiteSpace(' ')
+            JSBinaryExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('foo')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:EQEQ)('==')
+              PsiWhiteSpace(' ')
+              JSLiteralExpression
+                PsiElement(JS:NUMERIC_LITERAL)('12')
+        PsiElement(NG:BLOCK_SEMICOLON)(';')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (defer:5))
+          PsiWhiteSpace(' ')
+          Angular2BlockParameter
+            PsiElement(NG:BLOCK_PARAMETER_NAME)('prefetch')
+            PsiErrorElement:Expected 'when' or 'on'
+              <empty list>
+          PsiWhiteSpace(' ')
+        PsiElement(NG:BLOCK_SEMICOLON)(';')
+        PsiElement(NG:BLOCK_PARAMETERS_END)(')')
+      PsiErrorElement:Incomplete block - missing {
+        <empty list>

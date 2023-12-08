@@ -34,6 +34,7 @@ object Angular2HighlightingUtils {
     NG_PIPE(NG_PIPE_KEY),
     NG_EXPORT_AS(NG_EXPORT_AS_KEY),
     NG_BLOCK(Angular2HtmlHighlighterColors.NG_BLOCK_NAME),
+    NG_DEFER_TRIGGER(TypeScriptHighlighter.TS_GLOBAL_FUNCTION),
     NG_EXPRESSION_PREFIX(TypeScriptHighlighter.TS_KEYWORD)
   }
 

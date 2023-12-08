@@ -1,0 +1,1 @@
+foo (typeText='HTMLDivElement'; priority=100.0; typeGreyed)
