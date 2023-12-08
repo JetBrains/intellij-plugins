@@ -2,7 +2,7 @@ HtmlFile:test.html
   PsiElement(HTML_DOCUMENT)
     PsiElement(XML_PROLOG)
       <empty list>
-    PsiErrorElement:Unterminated expansion form. If you have unescaped '{', use '{{ "{" }}' to escape it.
+    PsiErrorElement:Unterminated expansion form
       PsiElement(NG:EXPANSION_FORM_START)('{')
     XmlToken:XML_DATA_CHARACTERS('messages.length')
     XmlText
