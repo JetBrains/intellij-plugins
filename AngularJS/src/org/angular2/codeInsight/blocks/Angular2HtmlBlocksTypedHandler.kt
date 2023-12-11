@@ -4,6 +4,7 @@ package org.angular2.codeInsight.blocks
 import com.intellij.codeInsight.AutoPopupController
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate
+import com.intellij.lang.javascript.JSExtendedLanguagesTokenSetProvider
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -26,6 +27,7 @@ class Angular2HtmlBlocksTypedHandler : TypedHandlerDelegate() {
 
   override fun checkAutoPopup(charTyped: Char, project: Project, editor: Editor, file: PsiFile): Result {
     if (charTyped == '@' && Angular2TemplateSyntax.of(file)?.enableBlockSyntax == true) {
+      // TODO do as much as possible through highlighter iterator
       val at = file.findElementAt(editor.getCaretModel().offset)
       if (at != null &&
           (at.parent.let { it is XmlDocument || it is XmlText }
@@ -41,6 +43,22 @@ class Angular2HtmlBlocksTypedHandler : TypedHandlerDelegate() {
                          || afterEqInForBlock(at))) {
         AutoPopupController.getInstance(project)
           .scheduleAutoPopup(editor, CompletionType.BASIC, null)
+      }
+    }
+    return Result.CONTINUE
+  }
+
+  override fun charTyped(c: Char, project: Project, editor: Editor, file: PsiFile): Result {
+    if (c == '(') {
+      val offset = editor.caretModel.offset
+      if (offset >= 2) {
+        val iterator = editor.highlighter.createIterator(offset - 2)
+        while (JSExtendedLanguagesTokenSetProvider.WHITE_SPACES.contains(iterator.tokenType)) {
+          iterator.retreat()
+        }
+        if (iterator.tokenType == Angular2HtmlTokenTypes.BLOCK_NAME) {
+          editor.document.insertString(offset, ")")
+        }
       }
     }
     return Result.CONTINUE

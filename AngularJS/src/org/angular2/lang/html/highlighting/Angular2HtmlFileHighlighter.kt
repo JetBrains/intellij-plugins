@@ -102,10 +102,6 @@ internal class Angular2HtmlFileHighlighter(private val templateSyntax: Angular2T
         put(p.first, XmlHighlighterColors.HTML_CODE, Angular2HtmlHighlighterColors.NG_EXPRESSION, p.second)
       }
 
-      for (token in sequenceOf(Angular2HtmlTokenTypes.BLOCK_PARAMETERS_START, Angular2HtmlTokenTypes.BLOCK_PARAMETERS_END)) {
-        put(token, XmlHighlighterColors.HTML_CODE,
-            Angular2HtmlHighlighterColors.NG_EXPRESSION, Angular2HtmlHighlighterColors.NG_BLOCK_PARENS)
-      }
       for (token in sequenceOf(Angular2HtmlTokenTypes.BLOCK_START, Angular2HtmlTokenTypes.BLOCK_END)) {
         put(token, XmlHighlighterColors.HTML_CODE, Angular2HtmlHighlighterColors.NG_BLOCK_BRACES)
       }

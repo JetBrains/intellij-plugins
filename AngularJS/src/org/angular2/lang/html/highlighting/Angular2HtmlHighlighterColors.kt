@@ -54,9 +54,5 @@ interface Angular2HtmlHighlighterColors {
     val NG_BLOCK_BRACES = TextAttributesKey.createTextAttributesKey(
       "NG.BLOCK_BRACES", DefaultLanguageHighlighterColors.BRACES)
 
-    @JvmField
-    val NG_BLOCK_PARENS = TextAttributesKey.createTextAttributesKey(
-      "NG.BLOCK_PARENS", DefaultLanguageHighlighterColors.PARENTHESES)
-
   }
 }

@@ -67,4 +67,17 @@ class Angular17HtmlParsingTest : Angular2HtmlParsingTest() {
     """.trimIndent())
   }
 
+  fun testIncompleteParameters() {
+    doTestHtml("""
+      @if(foo() {
+
+      }
+      @else if ( ) {
+        
+      } @else {
+      
+      }
+    """.trimIndent())
+  }
+
 }

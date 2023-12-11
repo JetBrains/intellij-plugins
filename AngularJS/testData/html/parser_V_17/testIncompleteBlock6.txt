@@ -6,7 +6,7 @@ HtmlFile:test.html
       PsiElement(NG:BLOCK_NAME)('@switch')
       PsiWhiteSpace(' ')
       Angular2HtmlBlockParameters
-        PsiElement(NG:BLOCK_PARAMETERS_START)('(')
+        PsiElement(JS:LPAR)('(')
         ASTWrapperPsiElement(NG:BLOCK_PARAMETER (switch:0))
           Angular2BlockParameter
             JSReferenceExpression
@@ -14,7 +14,7 @@ HtmlFile:test.html
                 PsiElement(JS:IDENTIFIER)('user')
               PsiElement(JS:DOT)('.')
               PsiElement(JS:IDENTIFIER)('name')
-        PsiElement(NG:BLOCK_PARAMETERS_END)(')')
+        PsiElement(JS:RPAR)(')')
       PsiWhiteSpace(' ')
       Angular2HtmlBlockContents
         PsiElement(NG:BLOCK_START)('{')

@@ -110,8 +110,6 @@ class Angular2ColorsAndFontsPage : RainbowColorSettingsPage, DisplayPrioritySort
                            Angular2HtmlHighlighterColors.NG_BLOCK_NAME),
       AttributesDescriptor(Angular2Bundle.message("angular.colors.block-braces"),
                            Angular2HtmlHighlighterColors.NG_BLOCK_BRACES),
-      AttributesDescriptor(Angular2Bundle.message("angular.colors.block-parens"),
-                           Angular2HtmlHighlighterColors.NG_BLOCK_PARENS),
     )
 
     private val tags = mapOf(

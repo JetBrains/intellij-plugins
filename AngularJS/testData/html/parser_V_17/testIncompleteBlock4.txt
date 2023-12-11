@@ -6,14 +6,14 @@ HtmlFile:test.html
       PsiElement(NG:BLOCK_NAME)('@if')
       PsiWhiteSpace(' ')
       Angular2HtmlBlockParameters
-        PsiElement(NG:BLOCK_PARAMETERS_START)('(')
+        PsiElement(JS:LPAR)('(')
         ASTWrapperPsiElement(NG:BLOCK_PARAMETER (if:0))
           PsiWhiteSpace(' ')
           Angular2BlockParameter
             PsiErrorElement:Expression expected
               JSEmptyExpression
                 <empty list>
-        PsiElement(NG:BLOCK_PARAMETERS_END)(')')
+        PsiElement(JS:RPAR)(')')
       PsiWhiteSpace(' \n')
       Angular2HtmlBlockContents
         PsiErrorElement:Incomplete block - missing }

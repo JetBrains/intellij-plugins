@@ -6,7 +6,7 @@ HtmlFile:test.html
       PsiElement(NG:BLOCK_NAME)('@for')
       PsiWhiteSpace(' ')
       Angular2HtmlBlockParameters
-        PsiElement(NG:BLOCK_PARAMETERS_START)('(')
+        PsiElement(JS:LPAR)('(')
         ASTWrapperPsiElement(NG:BLOCK_PARAMETER (for:0))
           Angular2BlockParameter
             PsiElement(JS:LPAR)('(')
@@ -25,7 +25,7 @@ HtmlFile:test.html
           PsiWhiteSpace(' ')
           Angular2BlockParameter
             <empty list>
-        PsiElement(NG:BLOCK_PARAMETERS_END)(')')
+        PsiElement(JS:RPAR)(')')
       PsiWhiteSpace(' ')
       Angular2HtmlBlockContents
         PsiElement(NG:BLOCK_START)('{')

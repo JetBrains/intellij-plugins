@@ -200,7 +200,7 @@ class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSyntax, bu
         }
         parameterIndex++
       }
-      if (builder.eof()) {
+      if (builder.eof() || builder.tokenType != Angular2HtmlTokenTypes.BLOCK_PARAMETERS_END) {
         parameters.errorBefore(JavaScriptBundle.message("javascript.parser.message.missing.rparen"), parametersContents)
         parametersContents.drop()
         parameters.precede().done(Angular2HtmlElementTypes.BLOCK_PARAMETERS)

@@ -1,6 +1,8 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.html.lexer
 
+import com.intellij.lang.javascript.JSTokenTypes
+import com.intellij.lang.javascript.types.JSWhiteSpaceTokenType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlTokenType
 import org.angular2.lang.expr.Angular2Language
@@ -36,17 +38,18 @@ interface Angular2HtmlTokenTypes : XmlTokenType {
     val BLOCK_END = Angular2HtmlTokenType("NG:BLOCK_END")
 
     @JvmField
-    val BLOCK_PARAMETERS_START = Angular2HtmlTokenType("NG:BLOCK_PARAMETERS_START")
+    val BLOCK_PARAMETERS_START: IElementType = JSTokenTypes.LPAR
 
     @JvmField
     val BLOCK_SEMICOLON = Angular2HtmlTokenType("NG:BLOCK_SEMICOLON")
 
     @JvmField
-    val BLOCK_PARAMETERS_END = Angular2HtmlTokenType("NG:BLOCK_PARAMETERS_END")
+    val BLOCK_PARAMETERS_END: IElementType = JSTokenTypes.RPAR
 
-    // Highlight only tokens
+    // Highlight only tokens - TODO consider removing special highlighting for Angular expressionsxs
     @JvmField
-    val EXPRESSION_WHITE_SPACE: IElementType = IElementType("NG:EXPRESSION_WHITE_SPACE", Angular2Language.INSTANCE)
+    val EXPRESSION_WHITE_SPACE: IElementType = object : IElementType("NG:EXPRESSION_WHITE_SPACE",
+                                                                     Angular2Language.INSTANCE), JSWhiteSpaceTokenType {}
 
     @JvmField
     val EXPANSION_FORM_CONTENT: IElementType = IElementType("NG:EXPANSION_FORM_CONTENT", Angular2HtmlLanguage.INSTANCE)

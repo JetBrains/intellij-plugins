@@ -367,14 +367,20 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
 }
 <BLOCK_PARAMETERS_START, BLOCK_START> {WHITE_SPACE_CHARS} { return XmlTokenType.XML_WHITE_SPACE; }
 
-<BLOCK_PARAMETERS_START> "(" {
-    yybegin(BLOCK_PARAMETER);
-    blockParenLevel = 1;
-    parameterIndex = 0;
-    parameterStart = zzMarkedPos;
-    return Angular2HtmlTokenTypes.BLOCK_PARAMETERS_START;
+<BLOCK_PARAMETERS_START> {
+  "(" {
+      yybegin(BLOCK_PARAMETER);
+      blockParenLevel = 1;
+      parameterIndex = 0;
+      parameterStart = zzMarkedPos;
+      return Angular2HtmlTokenTypes.BLOCK_PARAMETERS_START;
+  }
 }
 <BLOCK_PARAMETERS_START, BLOCK_START> {
+  ")" {
+      yybegin(BLOCK_START);
+      return Angular2HtmlTokenTypes.BLOCK_PARAMETERS_END;
+  }
   "{" {
     yybegin(YYINITIAL);
     return Angular2HtmlTokenTypes.BLOCK_START;
@@ -396,6 +402,13 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
   "(" {
      blockParenLevel++;
   }
+  "@" {
+       // Angular 2 expression cannot contain an `@` character
+       yypushback(1);
+       yybegin(YYINITIAL);
+       if (parameterStart < zzMarkedPos)
+          return Angular2EmbeddedExprTokenType.createBlockParameter(blockName, parameterIndex);
+      }
   ";" {
       yypushback(1);
       blockParenLevel = 1;
