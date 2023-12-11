@@ -193,7 +193,7 @@
       language="DTS"
       bundle="messages.DtsBundle" key="inspections.duplicate_element.display_name" groupKey="inspections.group"
       enabledByDefault="true"
-      level="WARNING"
+      level="ERROR"
       implementationClass="com.intellij.dts.inspections.DtsDuplicateElementInspection"/>
 
     <!-- registry keys -->
