@@ -54,8 +54,10 @@ abstract class DtsTestBase : BasePlatformTestCase() {
     val manager = ModuleManager.getInstance(project)
     ModuleRootModificationUtil.addContentRoot(manager.modules.first(), zephyr)
 
-    val settings = DtsSettings.of(project)
-    settings.state.zephyrBoard = Path.of(zephyr, "boards/xtensa/esp32").absolute().pathString
+    DtsSettings.of(project).update {
+      zephyrRoot = zephyr
+      zephyrBoard = "$zephyr/boards/xtensa/esp32"
+    }
   }
 
   protected fun getFixture(path: String): String {

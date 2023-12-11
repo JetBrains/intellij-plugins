@@ -1,15 +1,20 @@
 package com.intellij.dts.settings
 
 import com.intellij.dts.zephyr.DtsZephyrBoard
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.readAction
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
 import com.intellij.util.messages.Topic
 import com.intellij.util.xmlb.XmlSerializerUtil
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Service(Service.Level.PROJECT)
 @State(name = "com.intellij.dts.settings.DtsSettings", storages = [Storage("dtsSettings.xml")])
-class DtsSettings(private val project: Project) : PersistentStateComponent<DtsSettings.State> {
+class DtsSettings(
+  private val project: Project,
+  private val parentScope: CoroutineScope,
+) : PersistentStateComponent<DtsSettings.State> {
   companion object {
     fun of(project: Project): DtsSettings = project.service()
   }
@@ -35,18 +40,29 @@ class DtsSettings(private val project: Project) : PersistentStateComponent<DtsSe
   val zephyrCMakeSync: Boolean
     get() = state.zephyrCMakeSync
 
-  override fun getState(): State = state
+  override fun getState(): State = state.copy()
 
   override fun loadState(state: State) = XmlSerializerUtil.copyBean(state, this.state)
 
   @Synchronized
   fun update(block: State.() -> Unit) {
-    ApplicationManager.getApplication().invokeLater {
-      block(state)
-      project.messageBus.syncPublisher(ChangeListener.TOPIC).settingsChanged(this)
+    block(state)
+
+    parentScope.launch {
+      readAction {
+        if (project.isDisposed) return@readAction
+        project.messageBus.syncPublisher(ChangeListener.TOPIC).settingsChanged(this@DtsSettings)
+      }
     }
   }
 
+  /**
+   * Implementations can subscribe to the [TOPIC] to be notified if dts
+   * settings are changed.
+   *
+   * There are no guaranties whether the callback will be invoked on the EDT
+   * or a background thread.
+   */
   interface ChangeListener {
     companion object {
       @Topic.ProjectLevel

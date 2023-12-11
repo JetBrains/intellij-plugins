@@ -40,10 +40,9 @@ class DtsSettingsConfigurable(private val project: Project) : BoundSearchableCon
     else {
       val root = try {
         VfsUtil.findFile(Path.of(path), true)
-      }
-                 catch (_: InvalidPathException) {
-                   null
-                 } ?: return Either.Left(DtsBundle.message("settings.zephyr.root.not_found"))
+      } catch (_: InvalidPathException) {
+        null
+      } ?: return Either.Left(DtsBundle.message("settings.zephyr.root.not_found"))
 
       if (!DtsZephyrRoot.isValid(root)) {
         return Either.Left(DtsBundle.message("settings.zephyr.root.invalid"))
@@ -91,11 +90,14 @@ class DtsSettingsConfigurable(private val project: Project) : BoundSearchableCon
 
       override fun evaluate(state: String, result: Result<String>): ValidationInfo? {
         if (state.isBlank()) {
-          result.fold({
-                        rootInput.setEmptyText(DtsBundle.message("settings.zephyr.root.detecting.failed"))
-                      }, {
-                        rootInput.setEmptyText(DtsBundle.message("settings.zephyr.root.detecting.success", it))
-                      })
+          result.fold(
+            {
+              rootInput.setEmptyText(DtsBundle.message("settings.zephyr.root.detecting.failed"))
+            },
+            {
+              rootInput.setEmptyText(DtsBundle.message("settings.zephyr.root.detecting.success", it))
+            },
+          )
         }
 
         return super.evaluate(state, result)
@@ -121,13 +123,16 @@ class DtsSettingsConfigurable(private val project: Project) : BoundSearchableCon
       }
 
       override fun evaluate(state: String, result: Result<List<String>>): ValidationInfo? {
-        result.fold({
-                      boardInput.isEnabled = false
-                      boardInput.clearBoards()
-                    }, { boards ->
-                      boardInput.isEnabled = !syncInput.isSelected
-                      boardInput.setBoards(boards)
-                    })
+        result.fold(
+          {
+            boardInput.isEnabled = false
+            boardInput.clearBoards()
+          },
+          { boards ->
+            boardInput.isEnabled = !syncInput.isSelected
+            boardInput.setBoards(boards)
+          },
+        )
 
         return super.evaluate(state, result)
       }
@@ -192,7 +197,13 @@ class DtsSettingsConfigurable(private val project: Project) : BoundSearchableCon
   }
 
   override fun apply() {
-    DtsSettings.of(project).update { super.apply() }
+    super.apply()
+
+    DtsSettings.of(project).update {
+      zephyrRoot = state.zephyrRoot
+      zephyrBoard = state.zephyrBoard
+      zephyrCMakeSync = state.zephyrCMakeSync
+    }
   }
 }
 

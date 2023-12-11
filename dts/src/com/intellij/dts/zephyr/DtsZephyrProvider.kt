@@ -54,13 +54,16 @@ class DtsZephyrProvider(val project: Project) : Disposable.Default {
   init {
     val messageBus = project.messageBus.connect(this)
     messageBus.subscribe(
-      VirtualFileManager.VFS_CHANGES, BulkVirtualFileListenerAdapter(object : VirtualFileListener {
-      override fun fileCreated(event: VirtualFileEvent) = fileSystemTracker.incModificationCount()
+      VirtualFileManager.VFS_CHANGES,
+      BulkVirtualFileListenerAdapter(
+        object : VirtualFileListener {
+          override fun fileCreated(event: VirtualFileEvent) = fileSystemTracker.incModificationCount()
 
-      override fun fileDeleted(event: VirtualFileEvent) = fileSystemTracker.incModificationCount()
+          override fun fileDeleted(event: VirtualFileEvent) = fileSystemTracker.incModificationCount()
 
-      override fun fileMoved(event: VirtualFileMoveEvent) = fileSystemTracker.incModificationCount()
-    })
+          override fun fileMoved(event: VirtualFileMoveEvent) = fileSystemTracker.incModificationCount()
+        }
+      ),
     )
   }
 
@@ -81,11 +84,14 @@ class DtsZephyrProvider(val project: Project) : Disposable.Default {
     if (rootSource == source) return root
     rootSource = source
 
-    val newRoot = source.fold({ path ->
-                                LocalFileSystem.getInstance().findFileByIoFile(File(path))
-                              }, {
-                                DtsZephyrRoot.searchForRoot(project)
-                              })
+    val newRoot = source.fold(
+      { path ->
+        LocalFileSystem.getInstance().findFileByIoFile(File(path))
+      },
+      {
+        DtsZephyrRoot.searchForRoot(project)
+      },
+    )
 
     if (newRoot != root) {
       rootTracker.incModificationCount()

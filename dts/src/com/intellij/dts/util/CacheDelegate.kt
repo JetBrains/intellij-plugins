@@ -11,8 +11,10 @@ class CacheDelegate<T>(private val modificationCount: () -> Long, private val co
     val currentCount = modificationCount()
 
     return cache?.takeIf { count == currentCount } ?: run {
-      count = currentCount
-      compute().apply { cache = this }
+      compute().also {
+        cache = it
+        count = currentCount
+      }
     }
   }
 }
