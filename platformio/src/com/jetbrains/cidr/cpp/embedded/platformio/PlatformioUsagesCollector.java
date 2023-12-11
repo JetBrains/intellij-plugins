@@ -4,7 +4,7 @@ import com.intellij.internal.statistic.eventLog.EventLogGroup;
 import com.intellij.internal.statistic.eventLog.events.EventId;
 import com.intellij.internal.statistic.service.fus.collectors.CounterUsagesCollector;
 
-public class PlatformioUsagesCollector extends CounterUsagesCollector {
+public final class PlatformioUsagesCollector extends CounterUsagesCollector {
 
   public static final EventLogGroup EVENT_LOG_GROUP = new EventLogGroup("cidr.embedded.platformio", 2);
 
