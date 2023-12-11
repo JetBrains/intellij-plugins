@@ -7,7 +7,7 @@ HtmlFile:test.html
       PsiWhiteSpace(' ')
       Angular2HtmlBlockParameters
         PsiErrorElement:Missing )
-          PsiElement(NG:BLOCK_PARAMETERS_START)('(')
+          PsiElement(JS:LPAR)('(')
         ASTWrapperPsiElement(NG:BLOCK_PARAMETER (if:0))
           PsiWhiteSpace(' ')
           Angular2BlockParameter

@@ -5,7 +5,7 @@ HtmlFile:test.html
     Angular2HtmlBlock (@defer)
       PsiElement(NG:BLOCK_NAME)('@defer')
       Angular2HtmlBlockParameters
-        PsiElement(NG:BLOCK_PARAMETERS_START)('(')
+        PsiElement(JS:LPAR)('(')
         ASTWrapperPsiElement(NG:BLOCK_PARAMETER (defer:0))
           Angular2BlockParameter
             PsiElement(NG:BLOCK_PARAMETER_NAME)('prefetch')
@@ -77,6 +77,6 @@ HtmlFile:test.html
               <empty list>
           PsiWhiteSpace(' ')
         PsiElement(NG:BLOCK_SEMICOLON)(';')
-        PsiElement(NG:BLOCK_PARAMETERS_END)(')')
+        PsiElement(JS:RPAR)(')')
       PsiErrorElement:Incomplete block - missing {
         <empty list>

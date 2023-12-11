@@ -14,4 +14,8 @@ open class Angular17HtmlLexerTest : Angular2HtmlLexerTest() {
     doTest("""@for ((item of items); track trackingFn(item, compProp)) {{{item}}}""")
   }
 
+  fun testIncompleteParamsClosingParOnly() {
+    doTest("""<div>@if)</div>""")
+  }
+
 }

@@ -28,12 +28,13 @@ class Angular2HtmlFoldingBuilder : XmlFoldingBuilder() {
       val foldingGroup = FoldingGroup.newGroup(block.getName())
 
       fun Angular2HtmlBlock.addFolding() {
-        childrenOfType<Angular2HtmlBlockParameters>().firstOrNull()?.let { parameters ->
-          val range = parameters.textRange.let { TextRange(it.startOffset + 1, it.endOffset - 1) }
-          if (range.length > 4) {
+        childrenOfType<Angular2HtmlBlockParameters>()
+          .firstOrNull()
+          ?.takeIf { it.textLength > 6 }
+          ?.let { parameters ->
+            val range = parameters.textRange.let { TextRange(it.startOffset + 1, it.endOffset - 1) }
             descriptors.add(FoldingDescriptor(this.node, range, foldingGroup, "..."))
           }
-        }
         contents?.let { contents ->
           val range = contents.textRange.let { TextRange(it.startOffset + 1, it.endOffset - 1) }
           if (range.length > 0) {

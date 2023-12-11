@@ -1,0 +1,52 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    Angular2HtmlBlock (@if)
+      PsiElement(NG:BLOCK_NAME)('@if')
+      Angular2HtmlBlockParameters
+        PsiErrorElement:Missing )
+          PsiElement(JS:LPAR)('(')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (if:0))
+          Angular2BlockParameter
+            JSCallExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('foo')
+              JSArgumentList
+                PsiElement(JS:LPAR)('(')
+                PsiElement(JS:RPAR)(')')
+            PsiErrorElement:Unexpected token '{'
+              <empty list>
+            PsiWhiteSpace(' ')
+            JSObjectLiteralExpression
+              PsiElement(JS:LBRACE)('{')
+              PsiWhiteSpace('\n\n')
+              PsiElement(JS:RBRACE)('}')
+          PsiWhiteSpace('\n')
+      PsiErrorElement:Incomplete block - missing {
+        <empty list>
+    Angular2HtmlBlock (@else if)
+      PsiElement(NG:BLOCK_NAME)('@else if')
+      PsiWhiteSpace(' ')
+      Angular2HtmlBlockParameters
+        PsiElement(JS:LPAR)('(')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (else if:0))
+          PsiWhiteSpace(' ')
+          Angular2BlockParameter
+            PsiErrorElement:Expression expected
+              JSEmptyExpression
+                <empty list>
+        PsiElement(JS:RPAR)(')')
+      PsiWhiteSpace(' ')
+      Angular2HtmlBlockContents
+        PsiElement(NG:BLOCK_START)('{')
+        PsiWhiteSpace('\n  \n')
+        PsiElement(NG:BLOCK_END)('}')
+    PsiWhiteSpace(' ')
+    Angular2HtmlBlock (@else)
+      PsiElement(NG:BLOCK_NAME)('@else')
+      PsiWhiteSpace(' ')
+      Angular2HtmlBlockContents
+        PsiElement(NG:BLOCK_START)('{')
+        PsiWhiteSpace('\n\n')
+        PsiElement(NG:BLOCK_END)('}')

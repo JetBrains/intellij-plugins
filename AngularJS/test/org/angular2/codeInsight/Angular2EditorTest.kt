@@ -5,7 +5,7 @@ import com.intellij.webSymbols.moveToOffsetBySignature
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 
-class Angular2EditorTest : Angular2TestCase("editor"){
+class Angular2EditorTest : Angular2TestCase("editor") {
 
   fun testBlockTyping() =
     doConfiguredTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0,
@@ -25,4 +25,11 @@ class Angular2EditorTest : Angular2TestCase("editor"){
                      fileContents = "@if (foo) { {{foo}} } @else { <caret>", extension = "html", checkResult = true) {
       type("}")
     }
+
+  fun testDeletingParenInParams() =
+    doConfiguredTest(Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0,
+                     fileContents = "@if (((<caret>))) { }", extension = "html", checkResult = true) {
+      type("\b\b\b")
+    }
+
 }

@@ -1,0 +1,8 @@
+XML_START_TAG_START ('<')
+XML_NAME ('div')
+XML_TAG_END ('>')
+NG:BLOCK_NAME ('@if')
+JS:RPAR (')')
+XML_END_TAG_START ('</')
+XML_NAME ('div')
+XML_TAG_END ('>')
