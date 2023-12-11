@@ -22,7 +22,7 @@ import com.intellij.xdebugger.ui.XDebugTabLayouter;
 import com.jetbrains.cidr.ArchitectureType;
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatfromioCliBuilder;
 import com.jetbrains.cidr.cpp.execution.CLionLauncher;
-import com.jetbrains.cidr.cpp.execution.debugger.TrivialNativeToolchain;
+import com.jetbrains.cidr.cpp.toolchains.TrivialNativeToolchain;
 import com.jetbrains.cidr.cpp.execution.debugger.backend.CLionGDBDriverConfiguration;
 import com.jetbrains.cidr.cpp.execution.debugger.embedded.custom.McuResetActionKt;
 import com.jetbrains.cidr.cpp.execution.debugger.embedded.svd.SvdPanel;
