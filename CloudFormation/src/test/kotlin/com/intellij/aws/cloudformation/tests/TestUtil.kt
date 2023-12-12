@@ -8,7 +8,7 @@ import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiFile
-import com.intellij.rt.execution.junit.FileComparisonFailure
+import com.intellij.platform.testFramework.core.FileComparisonFailedError
 import junit.framework.TestCase
 import java.io.File
 import java.io.IOException
@@ -76,7 +76,7 @@ object TestUtil {
     }
 
     if (expectText != actualNormalized) {
-      throw FileComparisonFailure("Expected text mismatch", expectText, actualNormalized, expectFile.path)
+      throw FileComparisonFailedError("Expected text mismatch", expectText, actualNormalized, expectFile.path)
     }
   }
 
