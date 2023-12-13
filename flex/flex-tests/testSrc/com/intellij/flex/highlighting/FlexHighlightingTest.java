@@ -7,6 +7,7 @@ import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.daemon.impl.HighlightInfoFilter;
 import com.intellij.codeInsight.daemon.impl.analysis.XmlPathReferenceInspection;
+import com.intellij.codeInsight.daemon.impl.analysis.XmlUnresolvedReferenceInspection;
 import com.intellij.codeInsight.daemon.impl.analysis.XmlUnusedNamespaceInspection;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.LocalInspectionTool;
@@ -161,7 +162,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "");
     super.setUp();
     myAfterCommitRunnable = null;
-    enableInspectionTool(new XmlPathReferenceInspection());
+    enableInspectionTools(new XmlPathReferenceInspection(), new XmlUnresolvedReferenceInspection());
     suppressXmlNSAnnotator();
   }
 
