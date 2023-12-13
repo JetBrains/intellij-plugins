@@ -18,7 +18,7 @@ import com.intellij.refactoring.RefactoringActionHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ActionScriptRefactoringSupportProvider extends JavascriptRefactoringSupportProvider {
+public final class ActionScriptRefactoringSupportProvider extends JavascriptRefactoringSupportProvider {
 
   @Override
   public boolean isAvailable(@NotNull PsiElement context) {

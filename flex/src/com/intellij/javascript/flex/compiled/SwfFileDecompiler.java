@@ -15,7 +15,7 @@ import java.io.IOException;
 /**
  * @author Maxim.Mossienko
  */
-public class SwfFileDecompiler implements BinaryFileDecompiler {
+public final class SwfFileDecompiler implements BinaryFileDecompiler {
   @Override
   @NotNull
   public CharSequence decompile(@NotNull final VirtualFile file) {

@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class FlexCompilerProjectConfigurable implements SearchableConfigurable, Configurable.NoScroll {
+public final class FlexCompilerProjectConfigurable implements SearchableConfigurable, Configurable.NoScroll {
 
   private JPanel myMainPanel;
   private JRadioButton myBuiltInCompilerRadioButton;

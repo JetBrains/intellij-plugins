@@ -10,7 +10,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.validation.ValidateTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class FlexUnitMethodHasParametersInspection extends FlexUnitMethodInspectionBase {
+public final class FlexUnitMethodHasParametersInspection extends FlexUnitMethodInspectionBase {
 
   @Override
   @NotNull

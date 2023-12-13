@@ -13,7 +13,7 @@ import com.intellij.psi.templateLanguages.TemplateLanguageFileViewProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class HbFileIndentOptionsProvider extends FileIndentOptionsProvider {
+public final class HbFileIndentOptionsProvider extends FileIndentOptionsProvider {
   @Nullable
   @Override
   public CommonCodeStyleSettings.IndentOptions getIndentOptions(@NotNull Project project,

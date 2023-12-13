@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DroolsSyntaxHighlighter extends SyntaxHighlighterBase {
+public final class DroolsSyntaxHighlighter extends SyntaxHighlighterBase {
   private static final Map<IElementType,TextAttributesKey> myMap;
 
   static {

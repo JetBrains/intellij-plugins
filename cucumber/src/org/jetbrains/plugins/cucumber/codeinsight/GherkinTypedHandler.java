@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class GherkinTypedHandler extends TypedHandlerDelegate {
+public final class GherkinTypedHandler extends TypedHandlerDelegate {
 
   public static final char PIPE = '|';
 

@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 
 import static org.jetbrains.plugins.cucumber.CucumberUtil.getCucumberStepReference;
 
-public class CucumberStepRenameProcessor extends RenamePsiElementProcessor {
+public final class CucumberStepRenameProcessor extends RenamePsiElementProcessor {
   @Override
   public boolean canProcessElement(@NotNull PsiElement element) {
     return element instanceof GherkinStep || PsiTreeUtil.getParentOfType(element, GherkinStep.class) != null;

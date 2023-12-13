@@ -3,7 +3,7 @@ package com.jetbrains.lang.dart.ide.spelling;
 
 import com.intellij.spellchecker.BundledDictionaryProvider;
 
-public class DartBundledDictionaryProvider implements BundledDictionaryProvider {
+public final class DartBundledDictionaryProvider implements BundledDictionaryProvider {
   @Override
   public String[] getBundledDictionaries() {
     return new String[]{"/spelling/dart.dic"};

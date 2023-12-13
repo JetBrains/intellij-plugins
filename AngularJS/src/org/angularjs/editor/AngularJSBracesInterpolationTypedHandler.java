@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Dennis.Ushakov
  */
-public class AngularJSBracesInterpolationTypedHandler extends TypedHandlerDelegate {
+public final class AngularJSBracesInterpolationTypedHandler extends TypedHandlerDelegate {
   private final JSInjectionBracesUtil.InterpolationBracesCompleter myBracesCompleter;
 
   public AngularJSBracesInterpolationTypedHandler() {

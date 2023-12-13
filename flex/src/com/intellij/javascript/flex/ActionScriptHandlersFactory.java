@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Konstantin.Ulitin
  */
-public class ActionScriptHandlersFactory extends JSHandlersFactory {
+public final class ActionScriptHandlersFactory extends JSHandlersFactory {
 
   @NotNull
   @Override

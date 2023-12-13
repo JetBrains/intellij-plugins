@@ -10,7 +10,7 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.util.NlsContexts;
 import org.jetbrains.annotations.NotNull;
 
-public class FlexCSSDialect extends CssDialect {
+public final class FlexCSSDialect extends CssDialect {
   @Override
   public @NotNull String getName() {
     return "FLEX";

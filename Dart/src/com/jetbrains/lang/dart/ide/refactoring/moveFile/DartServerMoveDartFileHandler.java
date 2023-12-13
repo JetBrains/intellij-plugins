@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 
-public class DartServerMoveDartFileHandler extends MoveFileHandler {
+public final class DartServerMoveDartFileHandler extends MoveFileHandler {
 
   @Override
   public boolean canProcessElement(PsiFile psiFile) {

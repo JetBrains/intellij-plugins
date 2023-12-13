@@ -57,7 +57,7 @@ import static com.intellij.patterns.StandardPatterns.or;
 import static com.intellij.patterns.StandardPatterns.string;
 import static com.intellij.patterns.XmlPatterns.xmlAttribute;
 
-public class MxmlReferenceContributor extends PsiReferenceContributor {
+public final class MxmlReferenceContributor extends PsiReferenceContributor {
   private static final String STYLE_NAME_ATTR_SUFFIX = "StyleName";
   private static final String STYLE_NAME_ATTR = "styleName";
   private static final String BINDING_TAG_NAME = "Binding";

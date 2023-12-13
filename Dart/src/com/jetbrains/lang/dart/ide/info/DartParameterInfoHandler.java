@@ -19,7 +19,7 @@ import org.jetbrains.annotations.TestOnly;
 
 import java.util.List;
 
-public class DartParameterInfoHandler implements ParameterInfoHandler<PsiElement, DartFunctionDescription> {
+public final class DartParameterInfoHandler implements ParameterInfoHandler<PsiElement, DartFunctionDescription> {
   private String myParametersListPresentableText = "";
 
   @Nullable

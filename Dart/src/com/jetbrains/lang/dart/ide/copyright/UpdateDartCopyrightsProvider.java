@@ -10,7 +10,7 @@ import com.maddyhome.idea.copyright.psi.UpdateCopyright;
 import com.maddyhome.idea.copyright.psi.UpdateCopyrightsProvider;
 import com.maddyhome.idea.copyright.psi.UpdateJavaScriptFileCopyright;
 
-public class UpdateDartCopyrightsProvider extends UpdateCopyrightsProvider {
+public final class UpdateDartCopyrightsProvider extends UpdateCopyrightsProvider {
 
   @Override
   public UpdateCopyright createInstance(final Project project,

@@ -9,7 +9,7 @@ import com.jetbrains.lang.dart.DartLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettingsProvider {
+public final class DartLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettingsProvider {
 
   @NotNull
   @Override

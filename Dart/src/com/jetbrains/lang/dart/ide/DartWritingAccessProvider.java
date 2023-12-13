@@ -9,7 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartFileType;
 import org.jetbrains.annotations.NotNull;
 
-public class DartWritingAccessProvider implements NonProjectFileWritingAccessExtension {
+public final class DartWritingAccessProvider implements NonProjectFileWritingAccessExtension {
 
   private final Project myProject;
 

@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Dennis.Ushakov
  */
-public class DartPackagePathReferenceContributor extends PsiReferenceContributor {
+public final class DartPackagePathReferenceContributor extends PsiReferenceContributor {
   @Override
   public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
     DartPackagePathReferenceProvider provider = new DartPackagePathReferenceProvider();

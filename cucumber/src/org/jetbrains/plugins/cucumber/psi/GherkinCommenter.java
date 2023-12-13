@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author Roman.Chernyatchik
  */
-public class GherkinCommenter implements CodeDocumentationAwareCommenter {
+public final class GherkinCommenter implements CodeDocumentationAwareCommenter {
   @NonNls
   private static final String LINE_COMMENT_PREFIX = "#";
 

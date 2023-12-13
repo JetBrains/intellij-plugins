@@ -9,7 +9,7 @@ import com.intellij.lang.javascript.JSKeywordSets;
 import com.intellij.lang.javascript.dialects.ECMAL4LanguageDialect;
 import org.jetbrains.annotations.NotNull;
 
-public class ECMAL4NamesValidator extends JSNamesValidator {
+public final class ECMAL4NamesValidator extends JSNamesValidator {
   private static final ECMAL4NamesValidator DEFAULT_INSTANCE = new ECMAL4NamesValidator();
 
   public ECMAL4NamesValidator() {

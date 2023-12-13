@@ -16,7 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-public class ErrorProneCompilerDownloadingTask implements CompileTask {
+public final class ErrorProneCompilerDownloadingTask implements CompileTask {
   private static final Logger LOG = Logger.getInstance(ErrorProneCompilerDownloadingTask.class);
 
   @Override

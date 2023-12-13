@@ -36,7 +36,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.*;
 
-public class FlashBuilderImporter extends ProjectImportBuilder<String> {
+public final class FlashBuilderImporter extends ProjectImportBuilder<String> {
 
   public static final String DOT_PROJECT = ".project";
   public static final String DOT_FXP = ".fxp";

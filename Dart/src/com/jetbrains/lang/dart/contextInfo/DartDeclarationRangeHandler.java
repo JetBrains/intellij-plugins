@@ -8,7 +8,7 @@ import com.jetbrains.lang.dart.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartDeclarationRangeHandler implements DeclarationRangeHandler<DartPsiCompositeElement> {
+public final class DartDeclarationRangeHandler implements DeclarationRangeHandler<DartPsiCompositeElement> {
   @Override
   @Nullable
   public TextRange getDeclarationRange(@NotNull DartPsiCompositeElement element) {

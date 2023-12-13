@@ -34,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.TimeUnit;
 
-public class DartRunner extends GenericProgramRunner {
+public final class DartRunner extends GenericProgramRunner {
 
   private static final Logger LOG = Logger.getInstance(DartRunner.class.getName());
 
@@ -86,7 +86,7 @@ public class DartRunner extends GenericProgramRunner {
     }
   }
 
-  protected int getTimeout() {
+  private int getTimeout() {
     return OBSERVATORY_TIMEOUT_MS;
   }
 
@@ -167,7 +167,7 @@ public class DartRunner extends GenericProgramRunner {
     return debugSession.getRunContentDescriptor();
   }
 
-  protected DartUrlResolver getDartUrlResolver(@NotNull final Project project, @NotNull final VirtualFile contextFileOrDir) {
+  private DartUrlResolver getDartUrlResolver(@NotNull final Project project, @NotNull final VirtualFile contextFileOrDir) {
     return DartUrlResolver.getInstance(project, contextFileOrDir);
   }
 }

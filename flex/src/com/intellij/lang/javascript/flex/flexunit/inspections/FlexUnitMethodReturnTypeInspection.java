@@ -16,7 +16,7 @@ import com.intellij.lang.javascript.validation.fixes.JSChangeTypeFix;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class FlexUnitMethodReturnTypeInspection extends FlexUnitMethodInspectionBase {
+public final class FlexUnitMethodReturnTypeInspection extends FlexUnitMethodInspectionBase {
 
   @Override
   @NotNull

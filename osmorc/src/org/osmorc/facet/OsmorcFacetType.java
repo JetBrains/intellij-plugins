@@ -46,14 +46,14 @@ import javax.swing.*;
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
-public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfiguration> {
+public final class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfiguration> {
   public static final FacetTypeId<OsmorcFacet> ID = new FacetTypeId<>("Osmorc");
 
   public static OsmorcFacetType getInstance() {
     return findInstance(OsmorcFacetType.class);
   }
 
-  protected OsmorcFacetType() {
+  private OsmorcFacetType() {
     super(ID, "Osmorc", OsmorcBundle.message("facet.type.name"));
   }
 

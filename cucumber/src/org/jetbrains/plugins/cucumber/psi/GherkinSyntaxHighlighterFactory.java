@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
 
 
-public class GherkinSyntaxHighlighterFactory extends SyntaxHighlighterFactory {
+public final class GherkinSyntaxHighlighterFactory extends SyntaxHighlighterFactory {
   @Override
   @NotNull
   public SyntaxHighlighter getSyntaxHighlighter(Project project, VirtualFile virtualFile) {

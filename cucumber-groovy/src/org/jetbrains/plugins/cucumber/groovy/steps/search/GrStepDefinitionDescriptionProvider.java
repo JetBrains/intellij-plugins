@@ -14,7 +14,7 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrRefere
 /**
  * @author Max Medvedev
  */
-public class GrStepDefinitionDescriptionProvider implements ElementDescriptionProvider {
+public final class GrStepDefinitionDescriptionProvider implements ElementDescriptionProvider {
   @Nullable
   @Override
   public String getElementDescription(@NotNull PsiElement element, @NotNull ElementDescriptionLocation location) {

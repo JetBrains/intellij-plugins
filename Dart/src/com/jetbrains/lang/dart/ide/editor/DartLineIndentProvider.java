@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.psi.impl.source.codeStyle.lineIndent.JavaLikeLangLineIndentProvider.JavaLikeElement.*;
 
-public class DartLineIndentProvider extends JavaLikeLangLineIndentProvider {
+public final class DartLineIndentProvider extends JavaLikeLangLineIndentProvider {
 
   static HashMap<IElementType, SemanticEditorPosition.SyntaxElement> SYNTAX_MAP = new HashMap<>();
 

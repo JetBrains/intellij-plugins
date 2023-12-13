@@ -19,7 +19,7 @@ import java.util.Objects;
 /**
  * @author Dennis.Ushakov
  */
-public class AngularGotoSymbolContributor implements ChooseByNameContributorEx {
+public final class AngularGotoSymbolContributor implements ChooseByNameContributorEx {
   @Override
   public void processNames(@NotNull Processor<? super String> processor, @NotNull GlobalSearchScope scope, @Nullable IdFilter filter) {
     Project project = Objects.requireNonNull(scope.getProject());

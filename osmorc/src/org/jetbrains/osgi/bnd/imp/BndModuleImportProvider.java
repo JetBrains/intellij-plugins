@@ -26,7 +26,7 @@ import org.osmorc.i18n.OsmorcBundle;
 
 import java.io.File;
 
-public class BndModuleImportProvider extends ProjectImportProvider {
+public final class BndModuleImportProvider extends ProjectImportProvider {
   public BndModuleImportProvider() {
     super(new BndProjectImportBuilder());
   }

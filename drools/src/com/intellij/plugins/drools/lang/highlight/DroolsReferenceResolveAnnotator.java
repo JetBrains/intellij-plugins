@@ -12,7 +12,7 @@ import com.intellij.psi.ResolveResult;
 import org.jetbrains.annotations.NotNull;
 
 
-public class DroolsReferenceResolveAnnotator implements Annotator {
+public final class DroolsReferenceResolveAnnotator implements Annotator {
 
   @Override
   public void annotate(@NotNull PsiElement node, @NotNull AnnotationHolder holder) {

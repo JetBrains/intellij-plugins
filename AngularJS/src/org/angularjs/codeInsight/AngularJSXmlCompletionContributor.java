@@ -15,7 +15,7 @@ import java.util.Collection;
 
 import static org.angularjs.codeInsight.AngularJavaScriptCompletionContributor.addCompletionVariants;
 
-public class AngularJSXmlCompletionContributor extends CompletionContributor {
+public final class AngularJSXmlCompletionContributor extends CompletionContributor {
   @Override
   public void fillCompletionVariants(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result) {
     final PsiElement originalPosition = parameters.getOriginalPosition();

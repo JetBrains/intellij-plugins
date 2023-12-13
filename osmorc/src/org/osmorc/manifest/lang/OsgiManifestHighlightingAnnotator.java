@@ -42,7 +42,7 @@ import org.osmorc.manifest.lang.psi.Directive;
 /**
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
-public class OsgiManifestHighlightingAnnotator implements Annotator {
+public final class OsgiManifestHighlightingAnnotator implements Annotator {
   @Override
   public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     if (element instanceof HeaderValuePart) {

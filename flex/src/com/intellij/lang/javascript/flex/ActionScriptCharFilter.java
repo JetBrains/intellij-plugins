@@ -6,7 +6,7 @@ import com.intellij.lang.Language;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.psi.PsiElement;
 
-public class ActionScriptCharFilter extends CharFilter {
+public final class ActionScriptCharFilter extends CharFilter {
   @Override
   public Result acceptChar(char c, int prefixLength, Lookup lookup) {
     if (!lookup.isCompletion()) return null;

@@ -4,7 +4,7 @@ import com.dmarcotte.handlebars.HbBundle;
 import com.intellij.application.options.editor.CodeFoldingOptionsProvider;
 import com.intellij.openapi.options.BeanConfigurable;
 
-public class HbFoldingOptionsProvider
+public final class HbFoldingOptionsProvider
   extends BeanConfigurable<HbFoldingOptionsProvider.HbCodeFoldingOptionsBean> implements CodeFoldingOptionsProvider {
 
   public static class HbCodeFoldingOptionsBean {

@@ -11,7 +11,7 @@ import com.jetbrains.lang.dart.psi.DartExpression;
 import com.jetbrains.lang.dart.util.DartRefactoringUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class DartExpressionSurroundDescriptor implements SurroundDescriptor {
+public final class DartExpressionSurroundDescriptor implements SurroundDescriptor {
   @Override
   public PsiElement @NotNull [] getElementsToSurround(PsiFile file, int startOffset, int endOffset) {
     final DartExpression result = DartRefactoringUtil.findExpressionInRange(file, startOffset, endOffset);

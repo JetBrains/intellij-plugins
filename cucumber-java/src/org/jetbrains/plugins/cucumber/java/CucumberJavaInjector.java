@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
-public class CucumberJavaInjector implements MultiHostInjector {
+public final class CucumberJavaInjector implements MultiHostInjector {
   public static final Language regexpLanguage = Language.findLanguageByID("RegExp");
 
   @Override

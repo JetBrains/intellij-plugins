@@ -25,7 +25,7 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethod
 import java.util.ArrayList;
 import java.util.List;
 
-public class GrCucumberExtension extends AbstractCucumberJavaExtension {
+public final class GrCucumberExtension extends AbstractCucumberJavaExtension {
   @Override
   public boolean isStepLikeFile(@NotNull PsiElement child, @NotNull PsiElement parent) {
     return child instanceof GroovyFile && ((GroovyFile)child).getName().endsWith(".groovy");

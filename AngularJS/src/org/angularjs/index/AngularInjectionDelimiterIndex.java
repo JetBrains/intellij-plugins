@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Dennis.Ushakov
  */
-public class AngularInjectionDelimiterIndex extends AngularIndexBase {
+public final class AngularInjectionDelimiterIndex extends AngularIndexBase {
 
   public static final StubIndexKey<String, JSImplicitElementProvider> KEY = StubIndexKey.createIndexKey("angularjs.delimiter.index");
 

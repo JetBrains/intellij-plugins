@@ -18,7 +18,7 @@ import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.psi.impl.AbstractDartMethodDeclarationImpl;
 import org.jetbrains.annotations.NotNull;
 
-public class DartMethodLineMarkerProvider implements LineMarkerProvider {
+public final class DartMethodLineMarkerProvider implements LineMarkerProvider {
   @Override
   public LineMarkerInfo<?> getLineMarkerInfo(final @NotNull PsiElement element) {
     if (!DaemonCodeAnalyzerSettings.getInstance().SHOW_METHOD_SEPARATORS) {

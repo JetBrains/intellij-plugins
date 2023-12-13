@@ -31,8 +31,8 @@ import java.util.List;
 /**
  * @author Maxim.Mossienko
  */
-public class FlexBreakpointType extends XLineBreakpointTypeBase {
-  protected FlexBreakpointType() {
+public final class FlexBreakpointType extends XLineBreakpointTypeBase {
+  private FlexBreakpointType() {
     super("flex", FlexBundle.message("flex.break.point.title"), new FlexDebuggerEditorsProvider());
   }
 

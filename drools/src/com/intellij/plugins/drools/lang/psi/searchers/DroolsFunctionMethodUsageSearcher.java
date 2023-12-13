@@ -13,7 +13,7 @@ import com.intellij.psi.search.searches.MethodReferencesSearch;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 
-public class DroolsFunctionMethodUsageSearcher extends QueryExecutorBase<PsiReference, MethodReferencesSearch.SearchParameters> {
+public final class DroolsFunctionMethodUsageSearcher extends QueryExecutorBase<PsiReference, MethodReferencesSearch.SearchParameters> {
 
   public DroolsFunctionMethodUsageSearcher() {
     super(true);

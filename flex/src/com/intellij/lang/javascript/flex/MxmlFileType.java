@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class MxmlFileType extends XmlLikeFileType {
+public final class MxmlFileType extends XmlLikeFileType {
   public static final LanguageFileType MXML = new MxmlFileType();
 
   private MxmlFileType() {

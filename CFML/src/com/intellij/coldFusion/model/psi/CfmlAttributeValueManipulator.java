@@ -27,7 +27,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
-public class CfmlAttributeValueManipulator extends AbstractElementManipulator<CfmlCompositeElement> {
+public final class CfmlAttributeValueManipulator extends AbstractElementManipulator<CfmlCompositeElement> {
   @Override
   public CfmlCompositeElement handleContentChange(@NotNull CfmlCompositeElement expr, @NotNull TextRange range, String newContent) throws
                                                                                                                  IncorrectOperationException {

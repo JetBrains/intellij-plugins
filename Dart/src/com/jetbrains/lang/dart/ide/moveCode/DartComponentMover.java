@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Move top-level functions, entire class declarations, and class member declarations above or below the neighboring component.
  */
-public class DartComponentMover extends LineMover {
+public final class DartComponentMover extends LineMover {
 
   private enum CommentType {
     SINGLE_LINE_COMMENT,

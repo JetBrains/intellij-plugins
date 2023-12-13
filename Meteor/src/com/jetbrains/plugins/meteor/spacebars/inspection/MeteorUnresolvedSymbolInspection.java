@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public class MeteorUnresolvedSymbolInspection extends LocalInspectionTool {
+public final class MeteorUnresolvedSymbolInspection extends LocalInspectionTool {
   public static final TokenSet OPEN_TOKENS = TokenSet.create(HbTokenTypes.OPEN, HbTokenTypes.OPEN_PARTIAL);
   private static final Set<String> ignoredParentTags = ContainerUtil.newHashSet("polymer-element");
   public static final String THIS_KEYWORD = "this";

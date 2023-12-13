@@ -17,7 +17,7 @@ import java.util.List;
 
 import static org.jetbrains.plugins.groovy.lang.psi.GroovyElementTypes.*;
 
-public class GrCucumberStepIndex extends CucumberStepIndex {
+public final class GrCucumberStepIndex extends CucumberStepIndex {
   public static final ID<Boolean, List<Integer>> INDEX_ID = ID.create("groovy.cucumber.step");
   private static final String CUCUMBER_GROOVY_PACKAGE = "cucumber.api.groovy.";
   private static final String CUCUMBER_GROOVY_1_0_PACKAGE = "cucumber.runtime.groovy.";

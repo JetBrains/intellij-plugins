@@ -14,7 +14,7 @@ import com.intellij.refactoring.RefactoringActionHandler;
 import com.intellij.refactoring.RefactoringActionHandlerFactory;
 import org.jetbrains.annotations.NotNull;
 
-public class FlexUnitClassInProductSourceInspection extends FlexUnitClassInspectionBase {
+public final class FlexUnitClassInProductSourceInspection extends FlexUnitClassInspectionBase {
 
   @Override
   @NotNull

@@ -15,7 +15,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 
-public class CfmlEnterHandler extends EnterHandlerDelegateAdapter {
+public final class CfmlEnterHandler extends EnterHandlerDelegateAdapter {
   @Override
   public Result preprocessEnter(@NotNull final PsiFile file,
                                 @NotNull final Editor editor,

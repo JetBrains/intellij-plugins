@@ -26,7 +26,7 @@ import com.jetbrains.lang.dart.sdk.DartSdk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartCoverageProgramRunner extends GenericProgramRunner {
+public final class DartCoverageProgramRunner extends GenericProgramRunner {
   private static final Logger LOG = Logger.getInstance(DartCoverageProgramRunner.class.getName());
 
   private static final String ID = "DartCoverageProgramRunner";

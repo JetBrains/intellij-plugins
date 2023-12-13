@@ -11,11 +11,11 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.List;
 
-public class DartSdkLibraryPresentationProvider extends LibraryPresentationProvider<DummyLibraryProperties> {
+public final class DartSdkLibraryPresentationProvider extends LibraryPresentationProvider<DummyLibraryProperties> {
 
   private static final LibraryKind KIND = LibraryKind.create("dart");
 
-  protected DartSdkLibraryPresentationProvider() {
+  private DartSdkLibraryPresentationProvider() {
     super(KIND);
   }
 

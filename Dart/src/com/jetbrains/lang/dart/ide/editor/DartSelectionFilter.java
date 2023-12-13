@@ -9,7 +9,7 @@ import com.jetbrains.lang.dart.util.UsefulPsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartSelectionFilter implements Condition<PsiElement> {
+public final class DartSelectionFilter implements Condition<PsiElement> {
   @Override
   public boolean value(@NotNull final PsiElement psiElement) {
     if (getSiblingSemicolonIfExpression(psiElement) != null) {

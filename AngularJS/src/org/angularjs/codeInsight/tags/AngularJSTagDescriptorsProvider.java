@@ -26,7 +26,7 @@ import static org.angularjs.index.AngularJSDirectivesSupport.findTagDirectives;
 /**
  * @author Dennis.Ushakov
  */
-public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProvider, XmlTagNameProvider {
+public final class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProvider, XmlTagNameProvider {
 
   @Override
   public void addTagNameVariants(final List<LookupElement> elements, @NotNull XmlTag xmlTag, String prefix) {

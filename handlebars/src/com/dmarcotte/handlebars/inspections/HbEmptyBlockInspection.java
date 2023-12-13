@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public class HbEmptyBlockInspection extends LocalInspectionTool {
+public final class HbEmptyBlockInspection extends LocalInspectionTool {
   private static final Set<String> HELPERS_WITH_ARGUMENTS = Set.of("if", "each", "with");
 
   @NotNull

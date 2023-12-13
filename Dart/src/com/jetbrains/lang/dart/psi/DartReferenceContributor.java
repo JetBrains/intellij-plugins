@@ -27,7 +27,7 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.intellij.patterns.PlatformPatterns.psiFile;
 import static com.intellij.patterns.StandardPatterns.or;
 
-public class DartReferenceContributor extends PsiReferenceContributor {
+public final class DartReferenceContributor extends PsiReferenceContributor {
   private static final Logger LOG = Logger.getInstance(DartReferenceContributor.class);
 
   @Override

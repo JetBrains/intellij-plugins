@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
 
-public class DartEnterInStringHandler extends EnterHandlerDelegateAdapter {
+public final class DartEnterInStringHandler extends EnterHandlerDelegateAdapter {
 
   @Override
   public Result preprocessEnter(@NotNull final PsiFile file,

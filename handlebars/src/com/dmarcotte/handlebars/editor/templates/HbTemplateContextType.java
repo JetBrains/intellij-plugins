@@ -9,8 +9,8 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class HbTemplateContextType extends TemplateContextType {
-  protected HbTemplateContextType() {
+public final class HbTemplateContextType extends TemplateContextType {
+  private HbTemplateContextType() {
     super(HbBundle.message("template.context.name"));
   }
 

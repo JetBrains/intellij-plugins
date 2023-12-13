@@ -19,7 +19,7 @@ import com.jetbrains.lang.dart.ide.documentation.DartDocUtil;
 import org.jetbrains.annotations.NotNull;
 
 
-public class DartEnterInDocLineCommentHandler extends EnterHandlerDelegateAdapter {
+public final class DartEnterInDocLineCommentHandler extends EnterHandlerDelegateAdapter {
 
   // EnterInLineCommentHandler doesn't work well enough for Dart doc comments
   @Override

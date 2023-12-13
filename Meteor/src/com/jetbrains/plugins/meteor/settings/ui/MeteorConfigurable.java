@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
-public class MeteorConfigurable implements Configurable, Configurable.NoScroll {
+public final class MeteorConfigurable implements Configurable, Configurable.NoScroll {
 
   public static final String ID = "settings.javascript.meteor";
   private TextFieldWithHistoryWithBrowseButton myExecutablePathField;

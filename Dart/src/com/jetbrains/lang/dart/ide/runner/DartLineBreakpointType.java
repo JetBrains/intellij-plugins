@@ -10,9 +10,9 @@ import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.ide.runner.base.DartDebuggerEditorsProvider;
 import org.jetbrains.annotations.NotNull;
 
-public class DartLineBreakpointType extends XLineBreakpointTypeBase {
+public final class DartLineBreakpointType extends XLineBreakpointTypeBase {
 
-  protected DartLineBreakpointType() {
+  private DartLineBreakpointType() {
     super("Dart", DartBundle.message("dart.line.breakpoints.title"), new DartDebuggerEditorsProvider());
   }
 

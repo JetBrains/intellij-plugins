@@ -35,7 +35,7 @@ import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
  *
  * @author <a href="mailto:al@chilibi.org">Alain Greppin</a>
  */
-public class ConciergeIntegrator extends AbstractFrameworkIntegrator {
+public final class ConciergeIntegrator extends AbstractFrameworkIntegrator {
   private static final String FRAMEWORK_NAME = "Concierge";
 
   public ConciergeIntegrator() {

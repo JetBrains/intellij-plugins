@@ -16,7 +16,7 @@ import javax.swing.*;
 /**
  * @author Max Medvedev
  */
-public class GrStepDefinitionPresentationProvider implements ItemPresentationProvider<GrMethodCall> {
+public final class GrStepDefinitionPresentationProvider implements ItemPresentationProvider<GrMethodCall> {
   private static final Logger LOG = Logger.getInstance(GrStepDefinitionPresentationProvider.class);
 
   @Nullable

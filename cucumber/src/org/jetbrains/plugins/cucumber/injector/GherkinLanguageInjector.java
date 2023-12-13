@@ -18,7 +18,7 @@ import java.util.Optional;
 
 import static org.jetbrains.plugins.cucumber.psi.GherkinLexer.PYSTRING_MARKER;
 
-public class GherkinLanguageInjector implements MultiHostInjector {
+public final class GherkinLanguageInjector implements MultiHostInjector {
     @NotNull
     @Override
     public List<? extends Class<? extends PsiElement>> elementsToInjectIn() {

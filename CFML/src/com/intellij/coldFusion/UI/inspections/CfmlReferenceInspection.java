@@ -22,7 +22,7 @@ import static com.intellij.codeInspection.ProblemHighlightType.WEAK_WARNING;
 /**
  * Created by Lera Nikolaenko
  */
-public class CfmlReferenceInspection extends CfmlInspectionBase {
+public final class CfmlReferenceInspection extends CfmlInspectionBase {
   private static final Map<String, Condition<PsiElement>> myDictionary = new HashMap<>();
 
   static {

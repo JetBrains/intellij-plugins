@@ -29,7 +29,7 @@ import static com.jetbrains.lang.dart.util.DartRefactoringUtil.*;
  * Move executable statements within a method or function. Statements cannot be moved outside a component.
  * TODO: What about moving statements from a local function to the surrounding method?
  */
-public class DartStatementMover extends LineMover {
+public final class DartStatementMover extends LineMover {
   static final TokenSet NESTED_GUARDS = TokenSet.create(LIST_LITERAL_EXPRESSION, ARGUMENT_LIST, ARGUMENTS);
 
   private SmartPsiElementPointer statementToSurroundWithCodeBlock;

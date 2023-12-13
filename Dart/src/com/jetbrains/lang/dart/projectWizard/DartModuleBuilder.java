@@ -39,7 +39,7 @@ import javax.swing.*;
 import java.io.IOException;
 import java.util.Collection;
 
-public class DartModuleBuilder extends ModuleBuilder {
+public final class DartModuleBuilder extends ModuleBuilder {
   private static final Key<Boolean> PUB_GET_SCHEDULED_KEY = Key.create("PUB_GET_SCHEDULED_KEY");
 
   private DartProjectWizardData myWizardData;

@@ -18,7 +18,7 @@ import java.util.*;
 
 import static org.angularjs.AngularJSBundle.message;
 
-public class AngularJSMessageFormatAnnotator extends AngularJSElementVisitor implements Annotator {
+public final class AngularJSMessageFormatAnnotator extends AngularJSElementVisitor implements Annotator {
   private AnnotationHolder myHolder;
 
   @Override

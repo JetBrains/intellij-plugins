@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author Dennis.Ushakov
  */
-public class AngularJSDirectiveRenameProcessor extends JSDefaultRenameProcessor {
+public final class AngularJSDirectiveRenameProcessor extends JSDefaultRenameProcessor {
   @Override
   public boolean canProcessElement(@NotNull PsiElement element) {
     return DirectiveUtil.getDirective(element) != null;

@@ -6,7 +6,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartLineWrapPositionStrategy extends DefaultLineWrapPositionStrategy {
+public final class DartLineWrapPositionStrategy extends DefaultLineWrapPositionStrategy {
 
   public DartLineWrapPositionStrategy() {
     super();

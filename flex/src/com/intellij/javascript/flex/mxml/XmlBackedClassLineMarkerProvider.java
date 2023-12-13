@@ -24,7 +24,7 @@ import javax.swing.*;
 import java.util.Collection;
 import java.util.List;
 
-public class XmlBackedClassLineMarkerProvider extends LineMarkerProviderDescriptor {
+public final class XmlBackedClassLineMarkerProvider extends LineMarkerProviderDescriptor {
 
   @Override
   public LineMarkerInfo<?> getLineMarkerInfo(@NotNull PsiElement element) {

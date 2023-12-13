@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Created by Lera Nikolaenko
  */
-public class CfmlDocumentProvider implements DocumentationProvider {
+public final class CfmlDocumentProvider implements DocumentationProvider {
 
   @Override
   public @Nls String generateDoc(PsiElement element, PsiElement originalElement) {

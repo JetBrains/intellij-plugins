@@ -22,7 +22,7 @@ import org.jetbrains.yaml.psi.YAMLMapping;
 
 import java.util.Collection;
 
-public class PubspecYamlReferenceContributor extends PsiReferenceContributor {
+public final class PubspecYamlReferenceContributor extends PsiReferenceContributor {
   @Override
   public void registerReferenceProviders(@NotNull final PsiReferenceRegistrar registrar) {
     registrar.registerReferenceProvider(PlatformPatterns.psiElement(YAMLKeyValue.class), new PubspecYamlReferenceProvider());

@@ -7,7 +7,7 @@ import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.DartLanguage;
 import org.jetbrains.annotations.NotNull;
 
-public class DartXmlTypedHandlersAdditionalSupport implements XmlTypedHandlersAdditionalSupport {
+public final class DartXmlTypedHandlersAdditionalSupport implements XmlTypedHandlersAdditionalSupport {
   
   @Override
   public boolean isAvailable(@NotNull PsiFile psiFile, @NotNull Language lang) {

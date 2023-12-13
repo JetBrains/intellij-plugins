@@ -11,7 +11,7 @@ import org.jetbrains.plugins.cucumber.psi.impl.GherkinFileImpl;
 /**
  * @author Roman.Chernyatchik
  */
-public class GherkinLiveTemplateContextType extends TemplateContextType {
+public final class GherkinLiveTemplateContextType extends TemplateContextType {
   public GherkinLiveTemplateContextType() {
     super(CucumberBundle.message("live.templates.context.cucumber.name"));
   }

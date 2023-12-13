@@ -8,7 +8,7 @@ import com.intellij.psi.tree.TokenSet;
 
 import static com.dmarcotte.handlebars.parsing.HbTokenTypes.*;
 
-public class HbErrorFilter extends TemplateLanguageErrorFilter {
+public final class HbErrorFilter extends TemplateLanguageErrorFilter {
 
   public HbErrorFilter() {
     super(TokenSet.create(OPEN, OPEN_PARTIAL, OPEN_BLOCK, OPEN_INVERSE), HbFileViewProvider.class, "HTML");

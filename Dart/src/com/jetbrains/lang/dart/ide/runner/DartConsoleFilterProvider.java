@@ -5,7 +5,7 @@ import com.intellij.execution.filters.Filter;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public class DartConsoleFilterProvider implements ConsoleFilterProvider {
+public final class DartConsoleFilterProvider implements ConsoleFilterProvider {
   @Override
   public Filter @NotNull [] getDefaultFilters(final @NotNull Project project) {
     return new Filter[]{new DartConsoleFilter(project)};

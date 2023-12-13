@@ -18,7 +18,7 @@ import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 
-public class DroolsFilesSearcher extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
+public final class DroolsFilesSearcher extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
 
   public DroolsFilesSearcher() {
     super(true);

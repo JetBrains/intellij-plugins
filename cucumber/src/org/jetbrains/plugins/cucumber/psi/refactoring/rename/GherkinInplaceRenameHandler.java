@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.GherkinStepParameter;
 import org.jetbrains.plugins.cucumber.psi.GherkinTableCell;
 
-public class GherkinInplaceRenameHandler extends VariableInplaceRenameHandler {
+public final class GherkinInplaceRenameHandler extends VariableInplaceRenameHandler {
   @Override
   protected boolean isAvailable(@Nullable PsiElement element, @NotNull Editor editor, @NotNull PsiFile file) {
     return element instanceof GherkinStepParameter || element instanceof GherkinTableCell;

@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class FlexCompositeSdkProjectViewStructureProvider implements TreeStructureProvider, DumbAware {
+public final class FlexCompositeSdkProjectViewStructureProvider implements TreeStructureProvider, DumbAware {
 
   @NotNull
   @Override

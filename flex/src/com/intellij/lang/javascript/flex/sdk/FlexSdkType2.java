@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class FlexSdkType2 extends SdkType {
+public final class FlexSdkType2 extends SdkType {
 
   public static final String NAME = "Flex SDK Type (new)";
   public static final String LAST_SELECTED_FLEX_SDK_HOME_KEY = "last.selected.flex.sdk.home";

@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Dennis.Ushakov
  */
-public class AngularJSErrorFilter extends HighlightErrorFilter {
+public final class AngularJSErrorFilter extends HighlightErrorFilter {
   @Override
   public boolean shouldHighlightErrorElement(@NotNull PsiErrorElement error) {
     final Project project = error.getProject();

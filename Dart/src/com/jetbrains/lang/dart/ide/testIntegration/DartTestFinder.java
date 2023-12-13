@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 
-public class DartTestFinder implements TestFinder {
+public final class DartTestFinder implements TestFinder {
   private static final String TEST_DART_SUFFIX = "_test.dart";
 
   @Nullable

@@ -4,7 +4,7 @@ import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
 import com.intellij.psi.stubs.StubIndexKey;
 import org.jetbrains.annotations.NotNull;
 
-public class AngularUiRouterGenericStatesIndex extends AngularIndexBase {
+public final class AngularUiRouterGenericStatesIndex extends AngularIndexBase {
   public static final StubIndexKey<String, JSImplicitElementProvider> KEY =
     StubIndexKey.createIndexKey("angularjs.ui.router.generic.states.index");
 

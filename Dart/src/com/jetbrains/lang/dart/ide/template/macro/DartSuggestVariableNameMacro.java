@@ -5,7 +5,7 @@ import com.intellij.codeInsight.template.ExpressionContext;
 import com.intellij.codeInsight.template.Result;
 import org.jetbrains.annotations.NotNull;
 
-public class DartSuggestVariableNameMacro extends DartMacroBase {
+public final class DartSuggestVariableNameMacro extends DartMacroBase {
   @Override
   public String getName() {
     return "dartSuggestVariableName";

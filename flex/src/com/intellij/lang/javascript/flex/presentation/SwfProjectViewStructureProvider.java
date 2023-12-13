@@ -38,7 +38,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class SwfProjectViewStructureProvider implements SelectableTreeStructureProvider, DumbAware {
+public final class SwfProjectViewStructureProvider implements SelectableTreeStructureProvider, DumbAware {
 
   private static final Logger LOG = Logger.getInstance(SwfProjectViewStructureProvider.class.getName());
   private static final int MAX_TOTAL_SWFS_SIZE_IN_FOLDER_TO_SHOW_STRUCTURE = 5 * 1024 * 1024; // 5Mb

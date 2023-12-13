@@ -8,7 +8,7 @@ import com.intellij.psi.impl.beanProperties.BeanPropertyElement;
 import com.intellij.refactoring.rename.CommonEditorReferenceBeanPropertyRenameHandler;
 import org.jetbrains.annotations.Nullable;
 
-public class DroolsPropertyRenameHandler extends CommonEditorReferenceBeanPropertyRenameHandler {
+public final class DroolsPropertyRenameHandler extends CommonEditorReferenceBeanPropertyRenameHandler {
 
   public DroolsPropertyRenameHandler() {
     super(DroolsIdentifier.class);

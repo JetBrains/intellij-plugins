@@ -30,7 +30,7 @@ import java.util.List;
  * <p/>
  * Created by Masahiro Suzuka on 2014/05/05.
  */
-public class PhoneGapConfigurable implements Configurable {
+public final class PhoneGapConfigurable implements Configurable {
 
   private TextFieldWithHistoryWithBrowseButton myExecutablePath;
   private TextFieldWithHistoryWithBrowseButton myWorkingDirectory;

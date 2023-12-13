@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-public class DartComponentIndex extends FileBasedIndexExtension<String, DartComponentInfo> {
+public final class DartComponentIndex extends FileBasedIndexExtension<String, DartComponentInfo> {
   private static final ID<String, DartComponentInfo> DART_COMPONENT_INDEX = ID.create("DartComponentIndex");
 
   @NotNull

@@ -16,7 +16,7 @@ import java.util.ArrayList;
  * Add meteor 'templates' to 'find symbols'
  *
  */
-public class MeteorTemplatesSymbolContributor implements ChooseByNameContributor {
+public final class MeteorTemplatesSymbolContributor implements ChooseByNameContributor {
   @Override
   public String @NotNull [] getNames(Project project, boolean includeNonProjectItems) {
     if (!MeteorFacade.getInstance().isMeteorProject(project)) return ArrayUtilRt.EMPTY_STRING_ARRAY;

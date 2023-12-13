@@ -31,7 +31,7 @@ import java.util.*;
 
 import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.*;
 
-public class JSConditionalCompilationDefinitionsProviderImpl implements JSConditionalCompilationDefinitionsProvider {
+public final class JSConditionalCompilationDefinitionsProviderImpl implements JSConditionalCompilationDefinitionsProvider {
   private static final String[] CONDITIONAL_COMPILATION_DEFINITION_OPTION_ALIASES = {"define", "compiler.define"};
 
   private final Map<VirtualFile, Long> configFileToTimestamp = new HashMap<>();

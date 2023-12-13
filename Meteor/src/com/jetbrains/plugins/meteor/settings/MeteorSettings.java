@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @State(name = "MeteorSettings", storages = @Storage("meteorSettings.xml"))
-public class MeteorSettings implements PersistentStateComponent<MeteorSettings> {
+public final class MeteorSettings implements PersistentStateComponent<MeteorSettings> {
   public static final String METEOR_SIMPLE_NAME = "meteor";
   private boolean isExcludeMeteorLocalFolder = true;
   private String executablePath;

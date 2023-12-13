@@ -14,7 +14,7 @@ import com.jetbrains.lang.dart.psi.DartSetterDeclaration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartMethodHierarchyProvider implements HierarchyProvider {
+public final class DartMethodHierarchyProvider implements HierarchyProvider {
   @Nullable
   @Override
   public PsiElement getTarget(@NotNull DataContext dataContext) {

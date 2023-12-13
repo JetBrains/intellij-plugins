@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Dennis.Ushakov
  */
-public class AngularSymbolIndex extends AngularIndexBase {
+public final class AngularSymbolIndex extends AngularIndexBase {
   public static final StubIndexKey<String, JSImplicitElementProvider> KEY = StubIndexKey.createIndexKey("angularjs.symbol.index");
 
   @Override

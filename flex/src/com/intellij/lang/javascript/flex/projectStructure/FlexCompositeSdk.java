@@ -32,7 +32,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
 
   private static final String NAME_DELIM = "\t";
 
-  public static class SdkFinderImpl extends SdkFinder {
+  public static final class SdkFinderImpl extends SdkFinder {
     @Override
     public Sdk findSdk(@NotNull String name, @NotNull final String sdkType) {
       if (TYPE.getName().equals(sdkType)) {

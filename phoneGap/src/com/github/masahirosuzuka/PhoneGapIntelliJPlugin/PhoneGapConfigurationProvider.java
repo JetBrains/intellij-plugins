@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
  * then configuration  will be added to "JavaScript.Phonegap/Cordova"
  * If there is no the dependency we should use this provider for adding configuration in common list
  */
-public class PhoneGapConfigurationProvider extends ConfigurableProvider {
+public final class PhoneGapConfigurationProvider extends ConfigurableProvider {
 
   private final @NotNull Project myProject;
 

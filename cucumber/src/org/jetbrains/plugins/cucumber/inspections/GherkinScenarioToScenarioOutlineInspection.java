@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 
 import static org.jetbrains.plugins.cucumber.psi.GherkinElementTypes.EXAMPLES_BLOCK;
 
-public class GherkinScenarioToScenarioOutlineInspection extends GherkinInspection {
+public final class GherkinScenarioToScenarioOutlineInspection extends GherkinInspection {
 
   private static final class Holder {
     static final LocalQuickFix CONVERT_SCENARIO_TO_OUTLINE_FIX = new ConvertScenarioToOutlineFix();

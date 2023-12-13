@@ -16,7 +16,7 @@ import java.util.Map;
 
 import static com.jetbrains.lang.dart.highlight.DartSyntaxHighlighterColors.*;
 
-public class DartColorsAndFontsPage implements ColorSettingsPage {
+public final class DartColorsAndFontsPage implements ColorSettingsPage {
   private static final AttributesDescriptor[] ATTRS;
 
   private static final Map<String, TextAttributesKey> PREVIEW_TAGS = new HashMap<>();

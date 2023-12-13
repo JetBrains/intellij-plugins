@@ -17,7 +17,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 import org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes;
 
 
-public class CucumberEnterHandler extends EnterHandlerDelegateAdapter {
+public final class CucumberEnterHandler extends EnterHandlerDelegateAdapter {
   public static final String PYSTRING_QUOTES = "\"\"\"";
 
   @Override

@@ -30,7 +30,7 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
 
   public static Key<FlexBuildConfiguration> FORCE_BC = Key.create(FlexOrderEnumerationHandler.class.getName() + ".forceBc");
 
-  public static class FactoryImpl extends Factory {
+  public static final class FactoryImpl extends Factory {
     @Override
     public boolean isApplicable(@NotNull Module module) {
       return ModuleType.get(module) == FlexModuleType.getInstance();

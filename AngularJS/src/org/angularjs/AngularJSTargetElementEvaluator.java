@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author Dennis.Ushakov
  */
-public class AngularJSTargetElementEvaluator implements TargetElementEvaluator {
+public final class AngularJSTargetElementEvaluator implements TargetElementEvaluator {
   @Override
   public boolean includeSelfInGotoImplementation(@NotNull PsiElement element) {
     return false;

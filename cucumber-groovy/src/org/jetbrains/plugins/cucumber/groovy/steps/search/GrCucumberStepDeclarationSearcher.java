@@ -15,7 +15,7 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.literals
 /**
  * @author Max Medvedev
  */
-public class GrCucumberStepDeclarationSearcher extends PomDeclarationSearcher {
+public final class GrCucumberStepDeclarationSearcher extends PomDeclarationSearcher {
 
   @Override
   public void findDeclarationsAt(@NotNull PsiElement element, int offsetInElement, @NotNull Consumer<? super PomTarget> consumer) {

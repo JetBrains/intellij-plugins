@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-public class MeteorHelpersFrameworkIndexingHandler extends FrameworkIndexingHandler {
+public final class MeteorHelpersFrameworkIndexingHandler extends FrameworkIndexingHandler {
   private static final String METHOD_REGISTER_TEMPLATE_HELPERS = "helpers";
   private static final String METHOD_REGISTER_GLOBAL_HELPER = "registerHelper";
   private static final String[] INTERESTED_METHOD_NAMES = new String[]{METHOD_REGISTER_GLOBAL_HELPER};

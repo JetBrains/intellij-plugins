@@ -11,7 +11,7 @@ import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartUsageTypeProvider implements UsageTypeProvider {
+public final class DartUsageTypeProvider implements UsageTypeProvider {
   @Override
   public UsageType getUsageType(@NotNull PsiElement element) {
     if (!(element instanceof DartReference)) {

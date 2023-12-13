@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.openapi.module.ModuleUtilCore.findModuleForPsiElement;
 
-public class FlexCssReferenceContributor extends PsiReferenceContributor {
+public final class FlexCssReferenceContributor extends PsiReferenceContributor {
 
 
   @Override

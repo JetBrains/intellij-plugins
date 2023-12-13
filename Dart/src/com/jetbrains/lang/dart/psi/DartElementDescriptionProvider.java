@@ -9,7 +9,7 @@ import com.jetbrains.lang.dart.DartComponentType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartElementDescriptionProvider implements ElementDescriptionProvider {
+public final class DartElementDescriptionProvider implements ElementDescriptionProvider {
   @Nullable
   @Override
   public String getElementDescription(@NotNull final PsiElement element, @NotNull final ElementDescriptionLocation location) {

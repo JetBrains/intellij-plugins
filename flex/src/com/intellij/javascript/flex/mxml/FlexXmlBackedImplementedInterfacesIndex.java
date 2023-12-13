@@ -6,7 +6,7 @@ import com.intellij.util.indexing.ID;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class FlexXmlBackedImplementedInterfacesIndex extends FlexXmlBackedClassesIndex {
+public final class FlexXmlBackedImplementedInterfacesIndex extends FlexXmlBackedClassesIndex {
 
   public static final ID<String, Void> NAME = ID.create("FlexXmlBackedImplementedInterfacesIndex");
 

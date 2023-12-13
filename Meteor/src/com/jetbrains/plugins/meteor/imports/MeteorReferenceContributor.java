@@ -42,7 +42,7 @@ import java.util.List;
 import static com.jetbrains.plugins.meteor.ide.action.MeteorSyntheticLibraryProvider.getPackagesFolder;
 import static com.jetbrains.plugins.meteor.ide.action.MeteorSyntheticLibraryProvider.getWrappers;
 
-public class MeteorReferenceContributor implements JSModuleReferenceContributor {
+public final class MeteorReferenceContributor implements JSModuleReferenceContributor {
 
   private static final String METEOR_PREFIX = "meteor/";
   private static final int CACHE_VERSION = 2;

@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 
 import static org.jetbrains.plugins.cucumber.CucumberUtil.getCucumberStepReference;
 
-public class ScenarioToOutlineIntention implements IntentionAction {
+public final class ScenarioToOutlineIntention implements IntentionAction {
   public static final String ARGUMENT = "argument";
 
   @Override

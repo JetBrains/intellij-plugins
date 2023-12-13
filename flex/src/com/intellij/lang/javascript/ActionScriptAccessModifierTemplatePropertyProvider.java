@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Properties;
 
-public class ActionScriptAccessModifierTemplatePropertyProvider implements DefaultTemplatePropertiesProvider {
+public final class ActionScriptAccessModifierTemplatePropertyProvider implements DefaultTemplatePropertiesProvider {
 
   @Override
   public void fillProperties(@NotNull PsiDirectory directory, @NotNull Properties props) {

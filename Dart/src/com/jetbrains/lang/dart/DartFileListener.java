@@ -54,7 +54,7 @@ import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
  * @see DartStartupActivity
  * @see DartWorkspaceModelChangeListener
  */
-public class DartFileListener implements AsyncFileListener {
+public final class DartFileListener implements AsyncFileListener {
   private static final Logger LOG = Logger.getInstance(DartFileListener.class);
   private static final Object DART_PACKAGE_ROOTS_UPDATE_COALESCE = new Object();
 

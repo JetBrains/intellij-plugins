@@ -20,8 +20,8 @@ import com.intellij.coldFusion.model.files.CfmlFileViewProvider;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
-public class CfmlTemplateContextType extends TemplateContextType {
-  protected CfmlTemplateContextType() {
+public final class CfmlTemplateContextType extends TemplateContextType {
+  private CfmlTemplateContextType() {
     super(CfmlBundle.message("template.context.presentable.name.coldfusion"));
   }
 

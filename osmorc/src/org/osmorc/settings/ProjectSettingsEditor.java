@@ -35,7 +35,7 @@ import javax.swing.*;
 /**
  * @author <a href="janthomae@janthomae.de">Jan Thomä</a>
  */
-public class ProjectSettingsEditor implements SearchableConfigurable {
+public final class ProjectSettingsEditor implements SearchableConfigurable {
   private final Project myProject;
   private ProjectSettingsEditorComponent component;
 

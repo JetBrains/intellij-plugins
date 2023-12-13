@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Created by Lera Nikolaenko
  */
-public class CfmlBreadcrumbsInfoProvider implements BreadcrumbsProvider {
+public final class CfmlBreadcrumbsInfoProvider implements BreadcrumbsProvider {
   @Override
   public Language[] getLanguages() {
     return new Language[]{CfmlLanguage.INSTANCE, HTMLLanguage.INSTANCE};

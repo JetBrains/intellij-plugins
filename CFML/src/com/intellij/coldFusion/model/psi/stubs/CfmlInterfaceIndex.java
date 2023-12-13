@@ -6,7 +6,7 @@ import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.stubs.StubIndexKey;
 import org.jetbrains.annotations.NotNull;
 
-public class CfmlInterfaceIndex extends StringStubIndexExtension<CfmlComponent> {
+public final class CfmlInterfaceIndex extends StringStubIndexExtension<CfmlComponent> {
   public static final StubIndexKey<String, CfmlComponent> KEY = StubIndexKey.createIndexKey("cfml.interface.shortName");
 
   @Override

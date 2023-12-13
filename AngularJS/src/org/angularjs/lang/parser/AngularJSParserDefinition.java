@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Dennis.Ushakov
  */
-public class AngularJSParserDefinition extends JavascriptParserDefinition {
+public final class AngularJSParserDefinition extends JavascriptParserDefinition {
   public static final IFileElementType FILE = JSFileElementType.create(AngularJSLanguage.INSTANCE);
 
   @Override

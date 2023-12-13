@@ -7,7 +7,7 @@ import com.jetbrains.lang.dart.psi.DartStringLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartCharFilter extends CharFilter {
+public final class DartCharFilter extends CharFilter {
   @Nullable
   @Override
   public Result acceptChar(final char c, final int prefixLength, @NotNull final Lookup lookup) {

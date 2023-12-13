@@ -14,7 +14,7 @@ import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlText;
 import org.jetbrains.annotations.NotNull;
 
-public class FlexMxmlTypedHandler extends TypedHandlerDelegate {
+public final class FlexMxmlTypedHandler extends TypedHandlerDelegate {
   @NotNull
   @Override
   public Result beforeCharTyped(char c,

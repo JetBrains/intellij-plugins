@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
-public class DartExceptionBreakpointType
+public final class DartExceptionBreakpointType
   extends XBreakpointType<XBreakpoint<DartExceptionBreakpointProperties>, DartExceptionBreakpointProperties> {
 
   public DartExceptionBreakpointType() {

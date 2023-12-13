@@ -18,7 +18,7 @@ import com.jetbrains.lang.dart.psi.impl.DartDocCommentImpl;
 import com.jetbrains.lang.dart.psi.impl.DartEmbeddedContentImpl;
 import org.jetbrains.annotations.NotNull;
 
-public class DartParserDefinition implements ParserDefinition {
+public final class DartParserDefinition implements ParserDefinition {
   public static final IFileElementType DART_FILE = new IFileElementType("DARTFILE", DartLanguage.INSTANCE);
 
   @NotNull

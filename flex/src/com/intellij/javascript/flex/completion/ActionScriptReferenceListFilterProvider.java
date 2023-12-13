@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ActionScriptReferenceListFilterProvider extends JSReferenceListFilterProvider {
+public final class ActionScriptReferenceListFilterProvider extends JSReferenceListFilterProvider {
 
   @Override
   public @Nullable JSCompletionPlaceFilter forPlace(@NotNull PsiElement place) {

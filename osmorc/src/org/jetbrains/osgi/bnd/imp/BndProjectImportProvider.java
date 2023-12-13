@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.i18n.OsmorcBundle;
 
-public class BndProjectImportProvider extends ProjectImportProvider {
+public final class BndProjectImportProvider extends ProjectImportProvider {
   public BndProjectImportProvider() {
     super(new BndProjectImportBuilder());
   }

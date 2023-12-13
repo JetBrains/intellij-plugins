@@ -11,7 +11,7 @@ import com.intellij.util.xmlb.annotations.Property;
 import org.jetbrains.annotations.NotNull;
 
 @State(name = "FlexIdeProjectLevelCompilerOptionsHolder", storages = @Storage("flexCompiler.xml"))
-public class FlexProjectLevelCompilerOptionsHolderImpl extends FlexProjectLevelCompilerOptionsHolder
+public final class FlexProjectLevelCompilerOptionsHolderImpl extends FlexProjectLevelCompilerOptionsHolder
   implements PersistentStateComponent<FlexProjectLevelCompilerOptionsHolderImpl.State> {
 
   private final CompilerOptionsImpl myModel;

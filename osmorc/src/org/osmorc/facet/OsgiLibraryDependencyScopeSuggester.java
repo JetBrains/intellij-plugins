@@ -6,7 +6,7 @@ import com.intellij.openapi.roots.libraries.Library;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class OsgiLibraryDependencyScopeSuggester extends LibraryDependencyScopeSuggester {
+public final class OsgiLibraryDependencyScopeSuggester extends LibraryDependencyScopeSuggester {
   @Nullable
   @Override
   public DependencyScope getDefaultDependencyScope(@NotNull Library library) {

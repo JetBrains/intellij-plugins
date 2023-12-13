@@ -5,7 +5,7 @@ import com.intellij.codeInspection.InspectionSuppressor;
 import com.intellij.lang.javascript.JSAnalysisHandlersFactory;
 import org.jetbrains.annotations.NotNull;
 
-public class AngularJSAnalysisHandlersFactory extends JSAnalysisHandlersFactory {
+public final class AngularJSAnalysisHandlersFactory extends JSAnalysisHandlersFactory {
 
   @Override
   public @NotNull InspectionSuppressor getInspectionSuppressor() {

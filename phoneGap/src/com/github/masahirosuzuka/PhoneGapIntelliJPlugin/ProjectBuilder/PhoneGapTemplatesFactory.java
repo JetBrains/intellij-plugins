@@ -7,7 +7,7 @@ import com.intellij.platform.ProjectTemplatesFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class
+public final class
 PhoneGapTemplatesFactory extends ProjectTemplatesFactory {
   @Override
   public String @NotNull [] getGroups() {

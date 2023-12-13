@@ -17,7 +17,7 @@ import java.util.Map;
 
 import static com.intellij.plugins.drools.lang.highlight.DroolsSyntaxHighlighterColors.*;
 
-public class DroolsColorsAndFontsPage implements ColorSettingsPage {
+public final class DroolsColorsAndFontsPage implements ColorSettingsPage {
   private static final AttributesDescriptor[] ATTRS;
 
   @NonNls private static final Map<String, TextAttributesKey> ourTags = new HashMap<>();

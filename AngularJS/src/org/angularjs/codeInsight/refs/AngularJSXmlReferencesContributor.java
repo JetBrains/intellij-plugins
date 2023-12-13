@@ -19,7 +19,7 @@ import static org.angularjs.codeInsight.DirectiveUtil.normalizeAttributeName;
 /**
  * @author Dennis.Ushakov
  */
-public class AngularJSXmlReferencesContributor extends PsiReferenceContributor {
+public final class AngularJSXmlReferencesContributor extends PsiReferenceContributor {
   public static final PsiElementPattern.Capture<XmlAttributeValue> UI_VIEW_REF = xmlAttributePattern("uiSref");
   public static final PsiElementPattern.Capture<XmlAttributeValue> NG_APP_REF = xmlAttributePattern("ngApp");
 

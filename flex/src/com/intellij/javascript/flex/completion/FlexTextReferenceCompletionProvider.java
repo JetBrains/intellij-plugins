@@ -10,7 +10,7 @@ import com.intellij.lang.javascript.psi.ecmal4.impl.ActionScriptTextReference;
 import com.intellij.lang.javascript.psi.impl.JSTextReference;
 import org.jetbrains.annotations.NotNull;
 
-public class FlexTextReferenceCompletionProvider extends CompletionContributor {
+public final class FlexTextReferenceCompletionProvider extends CompletionContributor {
   @Override
   public void fillCompletionVariants(@NotNull final CompletionParameters parameters, @NotNull CompletionResultSet result) {
     LegacyCompletionContributor.processReferences(parameters, result, (reference, set) -> {

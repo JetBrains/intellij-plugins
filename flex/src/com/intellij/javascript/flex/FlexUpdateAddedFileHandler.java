@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Maxim.Mossienko
  */
-public class FlexUpdateAddedFileHandler extends UpdateAddedFileProcessor{
+public final class FlexUpdateAddedFileHandler extends UpdateAddedFileProcessor{
   @Override
   public boolean canProcessElement(@NotNull final PsiFile element) {
     return element instanceof JSFile || JavaScriptSupportLoader.isFlexMxmFile(element);

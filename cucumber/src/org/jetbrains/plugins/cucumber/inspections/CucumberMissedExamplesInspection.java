@@ -15,7 +15,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinExamplesBlockImpl;
 
 
-public class CucumberMissedExamplesInspection extends GherkinInspection {
+public final class CucumberMissedExamplesInspection extends GherkinInspection {
   @Override
   public boolean isEnabledByDefault() {
     return true;

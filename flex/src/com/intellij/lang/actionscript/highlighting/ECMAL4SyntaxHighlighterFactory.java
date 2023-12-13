@@ -5,7 +5,7 @@ import com.intellij.openapi.fileTypes.SingleLazyInstanceSyntaxHighlighterFactory
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import org.jetbrains.annotations.NotNull;
 
-public class ECMAL4SyntaxHighlighterFactory extends SingleLazyInstanceSyntaxHighlighterFactory {
+public final class ECMAL4SyntaxHighlighterFactory extends SingleLazyInstanceSyntaxHighlighterFactory {
   @Override
   @NotNull
   protected SyntaxHighlighter createHighlighter() {

@@ -51,7 +51,7 @@ import java.nio.file.Path;
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
-public class NonOsgiMavenDependencyInspection extends XmlSuppressableInspectionTool {
+public final class NonOsgiMavenDependencyInspection extends XmlSuppressableInspectionTool {
   @NotNull
   @Override
   public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder problemsHolder, boolean isOnTheFly) {

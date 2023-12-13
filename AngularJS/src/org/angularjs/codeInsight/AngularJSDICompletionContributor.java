@@ -11,7 +11,7 @@ import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.index.AngularSymbolIndex;
 import org.jetbrains.annotations.NotNull;
 
-public class AngularJSDICompletionContributor extends CompletionContributor {
+public final class AngularJSDICompletionContributor extends CompletionContributor {
   @Override
   public void fillCompletionVariants(final @NotNull CompletionParameters parameters, final @NotNull CompletionResultSet result) {
     if (AngularJSCompletionContributor.getElementLanguage(parameters).isKindOf(JavascriptLanguage.INSTANCE)) {

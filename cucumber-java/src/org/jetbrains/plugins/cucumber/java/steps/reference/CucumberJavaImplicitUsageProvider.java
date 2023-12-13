@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static org.jetbrains.plugins.cucumber.java.CucumberJavaUtil.*;
 
-public class CucumberJavaImplicitUsageProvider implements ImplicitUsageProvider {
+public final class CucumberJavaImplicitUsageProvider implements ImplicitUsageProvider {
   @Override
   public boolean isImplicitUsage(@NotNull PsiElement element) {
     if(element instanceof PsiClass) {

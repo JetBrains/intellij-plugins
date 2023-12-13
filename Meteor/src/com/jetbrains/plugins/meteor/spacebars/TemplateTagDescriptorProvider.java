@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
  * Description provider for "template" tag:
  * <template name="somethingName"> </template>
  */
-public class TemplateTagDescriptorProvider implements XmlElementDescriptorProvider {
+public final class TemplateTagDescriptorProvider implements XmlElementDescriptorProvider {
   private static final String TEMPLATE_TAG = "template";
 
   @Nullable

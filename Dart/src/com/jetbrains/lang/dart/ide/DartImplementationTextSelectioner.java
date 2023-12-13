@@ -10,7 +10,7 @@ import com.jetbrains.lang.dart.psi.DartVarInit;
 import com.jetbrains.lang.dart.util.UsefulPsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class DartImplementationTextSelectioner implements ImplementationTextSelectioner {
+public final class DartImplementationTextSelectioner implements ImplementationTextSelectioner {
   @Override
   public int getTextStartOffset(@NotNull PsiElement element) {
     if (element instanceof DartComponentName) {

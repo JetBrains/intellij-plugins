@@ -9,7 +9,7 @@ import org.jetbrains.plugins.cucumber.CucumberBundle;
 import javax.swing.*;
 
 
-public class GherkinFileType extends LanguageFileType {
+public final class GherkinFileType extends LanguageFileType {
   public static final GherkinFileType INSTANCE = new GherkinFileType();
 
   private GherkinFileType() {

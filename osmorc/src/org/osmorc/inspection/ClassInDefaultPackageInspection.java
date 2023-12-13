@@ -36,7 +36,7 @@ import org.osmorc.i18n.OsmorcBundle;
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
-public class ClassInDefaultPackageInspection extends AbstractOsgiVisitor {
+public final class ClassInDefaultPackageInspection extends AbstractOsgiVisitor {
   @NotNull
   @Override
   protected PsiElementVisitor buildVisitor(OsmorcFacet facet, final ProblemsHolder holder, boolean isOnTheFly) {

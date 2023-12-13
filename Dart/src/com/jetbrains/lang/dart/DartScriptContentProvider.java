@@ -7,7 +7,7 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.Nullable;
 
-public class DartScriptContentProvider implements HtmlScriptContentProvider {
+public final class DartScriptContentProvider implements HtmlScriptContentProvider {
   @Override
   public IElementType getScriptElementType() {
     return DartTokenTypesSets.EMBEDDED_CONTENT;

@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  */
-public class CfmlIndexPatternBuilder implements IndexPatternBuilder {
+public final class CfmlIndexPatternBuilder implements IndexPatternBuilder {
   @Override
   public Lexer getIndexingLexer(@NotNull final PsiFile file) {
     if (file instanceof CfmlFile) {

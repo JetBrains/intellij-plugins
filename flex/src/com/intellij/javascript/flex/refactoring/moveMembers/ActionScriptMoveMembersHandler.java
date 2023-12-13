@@ -39,7 +39,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ActionScriptMoveMembersHandler extends MoveHandlerDelegate {
+public final class ActionScriptMoveMembersHandler extends MoveHandlerDelegate {
   @Override
   public boolean tryToMove(PsiElement element, Project project, DataContext dataContext, @Nullable PsiReference reference, Editor editor) {
     if (JSClassUtils.isStaticMethodOrField(element)) {

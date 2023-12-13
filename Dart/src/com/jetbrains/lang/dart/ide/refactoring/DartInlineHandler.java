@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class DartInlineHandler extends InlineActionHandler {
+public final class DartInlineHandler extends InlineActionHandler {
   @Override
   public boolean canInlineElement(PsiElement element) {
     return false;

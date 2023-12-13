@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.psi.codeStyle.CodeStyleSettingsCustomizableOptions.getInstance;
 
-public class CfmlLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettingsProvider {
+public final class CfmlLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettingsProvider {
 
   @NotNull
   @Override

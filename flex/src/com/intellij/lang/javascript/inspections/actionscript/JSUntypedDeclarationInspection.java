@@ -45,7 +45,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Maxim.Mossienko
  */
-public class JSUntypedDeclarationInspection extends JSInspection {
+public final class JSUntypedDeclarationInspection extends JSInspection {
 
   @Override
   @NotNull

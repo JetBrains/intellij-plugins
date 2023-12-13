@@ -19,7 +19,7 @@ import com.jetbrains.plugins.meteor.spacebars.lang.SpacebarsLanguageDialect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class MeteorSpacebarsReferenceContributor extends PsiReferenceContributor {
+public final class MeteorSpacebarsReferenceContributor extends PsiReferenceContributor {
   static final class Holder {
     private static final PsiReference[] EMPTY_RESULT = PsiReference.EMPTY_ARRAY;
     static final TokenSet OPEN_TOKEN = TokenSet.create(HbTokenTypes.OPEN, HbTokenTypes.OPEN_UNESCAPED);

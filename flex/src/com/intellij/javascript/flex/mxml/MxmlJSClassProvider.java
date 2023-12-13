@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 
-public class MxmlJSClassProvider extends XmlBackedJSClassProvider {
+public final class MxmlJSClassProvider extends XmlBackedJSClassProvider {
   @NonNls public static final String SCRIPT_TAG_NAME = "Script";
 
   private static XmlTag[] getChildComponentTags(XmlTag tag) {

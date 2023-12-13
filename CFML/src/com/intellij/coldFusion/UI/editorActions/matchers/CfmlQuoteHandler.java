@@ -6,7 +6,7 @@ import com.intellij.coldFusion.model.lexer.CfmlTokenTypes;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 
-public class CfmlQuoteHandler implements QuoteHandler {
+public final class CfmlQuoteHandler implements QuoteHandler {
   @Override
   public boolean isClosingQuote(HighlighterIterator iterator, int offset) {
     return iterator.getTokenType() == CfmlTokenTypes.DOUBLE_QUOTE_CLOSER ||

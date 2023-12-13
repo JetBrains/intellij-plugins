@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-public class FlexMxmlGtTypedHandler extends XmlGtTypedHandler {
+public final class FlexMxmlGtTypedHandler extends XmlGtTypedHandler {
   @Override
   public @NotNull Result beforeCharTyped(char c,
                                          @NotNull Project project,

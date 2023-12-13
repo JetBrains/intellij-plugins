@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author Max Medvedev
  */
-public class GrStepFindUsageHandlerFactory extends FindUsagesHandlerFactory {
+public final class GrStepFindUsageHandlerFactory extends FindUsagesHandlerFactory {
   @Override
   public boolean canFindUsages(@NotNull PsiElement element) {
     return GrCucumberStepDefinitionSearcher.getStepDefinition(element) != null;

@@ -34,7 +34,7 @@ import java.util.*;
 
 import static org.jetbrains.jps.api.CmdlineRemoteProto.Message.ControllerMessage.ParametersMessage.TargetTypeBuildScope;
 
-public class FlexBuildTargetScopeProvider extends BuildTargetScopeProvider {
+public final class FlexBuildTargetScopeProvider extends BuildTargetScopeProvider {
 
   private static final Logger LOG = Logger.getInstance(FlexBuildTargetScopeProvider.class.getName());
 

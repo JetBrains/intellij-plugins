@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.analyzer.DartServerData;
 import com.jetbrains.lang.dart.resolve.DartResolver;
 import org.jetbrains.annotations.Nullable;
 
-public class DartHtmlElementDescriptorProvider implements XmlElementDescriptorProvider {
+public final class DartHtmlElementDescriptorProvider implements XmlElementDescriptorProvider {
   /**
    * Creates {@link DartHtmlElementDescriptor} for DartAngular-specific tags to provide tag name reference resolution and also to make
    * {@link com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection} happy.

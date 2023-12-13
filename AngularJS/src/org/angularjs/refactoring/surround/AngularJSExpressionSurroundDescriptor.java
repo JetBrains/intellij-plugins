@@ -7,7 +7,7 @@ import com.intellij.lang.surroundWith.Surrounder;
 import org.jetbrains.annotations.NotNull;
 
 
-public class AngularJSExpressionSurroundDescriptor extends JSExpressionSurroundDescriptor {
+public final class AngularJSExpressionSurroundDescriptor extends JSExpressionSurroundDescriptor {
 
   private static final Surrounder[] SURROUNDERS = {
     new JSWithParenthesesSurrounder(),

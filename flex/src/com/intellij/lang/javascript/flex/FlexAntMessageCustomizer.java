@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.lang.ant.config.execution.AntBuildMessageView.MessageType;
 
-public class FlexAntMessageCustomizer extends AntMessageCustomizer {
+public final class FlexAntMessageCustomizer extends AntMessageCustomizer {
 
   private static final String ERROR_MARKER = " Error: ";
   private static final String WARNING_MARKER = " Warning: ";

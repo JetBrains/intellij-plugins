@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.DialectOptionHolder;
 import com.intellij.lang.javascript.findUsages.JSWordsScanner;
 import com.intellij.lang.javascript.findUsages.JavaScriptFindUsagesProvider;
 
-public class ActionScriptFindUsagesProvider extends JavaScriptFindUsagesProvider {
+public final class ActionScriptFindUsagesProvider extends JavaScriptFindUsagesProvider {
   @Override
   public WordsScanner getWordsScanner() {
     return new JSWordsScanner(DialectOptionHolder.ECMA_4);

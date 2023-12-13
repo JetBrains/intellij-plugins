@@ -11,7 +11,7 @@ import com.intellij.psi.formatter.DocumentBasedFormattingModel;
 import com.jetbrains.lang.dart.psi.DartFile;
 import org.jetbrains.annotations.NotNull;
 
-public class DartFormattingModelBuilder implements FormattingModelBuilder {
+public final class DartFormattingModelBuilder implements FormattingModelBuilder {
 
   @Override
   public @NotNull FormattingModel createModel(@NotNull FormattingContext formattingContext) {

@@ -11,7 +11,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
-public class FlexUnitClassVisibilityInspection extends FlexUnitClassInspectionBase {
+public final class FlexUnitClassVisibilityInspection extends FlexUnitClassInspectionBase {
 
   @Override
   @NotNull

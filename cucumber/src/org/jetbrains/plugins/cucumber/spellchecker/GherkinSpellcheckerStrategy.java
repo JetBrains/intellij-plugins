@@ -15,7 +15,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinElementType;
 
 import java.util.ArrayList;
 
-public class GherkinSpellcheckerStrategy extends SpellcheckingStrategy {
+public final class GherkinSpellcheckerStrategy extends SpellcheckingStrategy {
   @NotNull
   @Override
   public Tokenizer getTokenizer(final PsiElement element) {

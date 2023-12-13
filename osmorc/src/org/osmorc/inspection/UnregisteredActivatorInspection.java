@@ -48,7 +48,7 @@ import org.osmorc.util.OsgiPsiUtil;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
-public class UnregisteredActivatorInspection extends AbstractOsgiVisitor {
+public final class UnregisteredActivatorInspection extends AbstractOsgiVisitor {
   @Override
   protected @NotNull PsiElementVisitor buildVisitor(final OsmorcFacet facet, final ProblemsHolder holder, boolean isOnTheFly) {
     if (!(holder.getFile() instanceof PsiClassOwner)) return PsiElementVisitor.EMPTY_VISITOR;

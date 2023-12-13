@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class CucumberGoToRelatedProvider extends GotoRelatedProvider {
+public final class CucumberGoToRelatedProvider extends GotoRelatedProvider {
   @Override
   @NotNull
   public List<? extends GotoRelatedItem> getItems(@NotNull DataContext context) {

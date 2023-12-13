@@ -35,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
+public final class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
   private @NonNls static final String IMPL_SUFFIX = "Impl";
 
   public CreateJSSubclassIntention() {

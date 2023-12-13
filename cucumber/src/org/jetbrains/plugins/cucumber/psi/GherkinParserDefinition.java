@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
 import org.jetbrains.plugins.cucumber.psi.impl.*;
 
-public class GherkinParserDefinition implements ParserDefinition {
+public final class GherkinParserDefinition implements ParserDefinition {
   public static final IFileElementType GHERKIN_FILE = new IFileElementType(GherkinLanguage.INSTANCE);
 
   @Override

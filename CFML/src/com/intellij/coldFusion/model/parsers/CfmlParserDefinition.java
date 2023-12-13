@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Created by Lera Nikolaenko
  */
-public class CfmlParserDefinition implements ParserDefinition {
+public final class CfmlParserDefinition implements ParserDefinition {
 
   @Override
   @NotNull

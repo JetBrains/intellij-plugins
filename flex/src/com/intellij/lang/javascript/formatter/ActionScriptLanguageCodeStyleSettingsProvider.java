@@ -17,7 +17,7 @@ import java.util.List;
 
 import static com.intellij.psi.codeStyle.CodeStyleSettingsCustomizableOptions.getInstance;
 
-public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettingsProvider {
+public final class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettingsProvider {
   public static final @NlsSafe String CONFIGURABLE_DISPLAY_NAME = "ActionScript";
 
   @NotNull
@@ -163,7 +163,7 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
       consumer.showStandardOptions("LINE_COMMENT_AT_FIRST_COLUMN");
     }
   }
-  protected String getPreviewText() {
+  private String getPreviewText() {
     return """
       /*
        Multiline

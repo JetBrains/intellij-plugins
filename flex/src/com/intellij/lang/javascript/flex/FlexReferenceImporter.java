@@ -15,7 +15,7 @@ import java.util.function.BooleanSupplier;
 /**
  * @author Maxim.Mossienko
  */
-public class FlexReferenceImporter implements ReferenceImporter {
+public final class FlexReferenceImporter implements ReferenceImporter {
   @Override
   public BooleanSupplier computeAutoImportAtOffset(@NotNull Editor editor, @NotNull PsiFile file, int offset, boolean allowCaretNearReference) {
     PsiElement expression = JSImportHandlingUtil.findUnresolvedImportableReference(editor, file, offset);

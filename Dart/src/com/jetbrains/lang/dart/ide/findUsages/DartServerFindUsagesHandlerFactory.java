@@ -23,7 +23,7 @@ import com.jetbrains.lang.dart.DartLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartServerFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
+public final class DartServerFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
   @Override
   public boolean canFindUsages(@NotNull final PsiElement element) {
     return element.getLanguage() == DartLanguage.INSTANCE && !(element instanceof PsiFile);

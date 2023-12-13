@@ -90,7 +90,7 @@ public abstract class DartStringLiteralExpressionBase extends DartClassReference
     return LiteralTextEscaper.createSimple(this);
   }
 
-  public static class DartStringManipulator extends AbstractElementManipulator<DartStringLiteralExpression> {
+  public static final class DartStringManipulator extends AbstractElementManipulator<DartStringLiteralExpression> {
     @Override
     public DartStringLiteralExpression handleContentChange(@NotNull final DartStringLiteralExpression oldElement,
                                                            @NotNull final TextRange range,

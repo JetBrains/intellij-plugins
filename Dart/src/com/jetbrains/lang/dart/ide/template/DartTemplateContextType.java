@@ -48,7 +48,7 @@ public abstract class DartTemplateContextType extends TemplateContextType {
     return new DartSyntaxHighlighter();
   }
 
-  public static class Generic extends DartTemplateContextType {
+  public static final class Generic extends DartTemplateContextType {
     public Generic() {
       super(DartBundle.message("template.context.type.dart"));
     }
@@ -59,7 +59,7 @@ public abstract class DartTemplateContextType extends TemplateContextType {
     }
   }
 
-  public static class Statement extends DartTemplateContextType {
+  public static final class Statement extends DartTemplateContextType {
     public Statement() {
       super(DartBundle.message("template.context.type.dart.statement"));
     }

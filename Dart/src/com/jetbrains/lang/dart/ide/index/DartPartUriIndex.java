@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class DartPartUriIndex extends SingleEntryFileBasedIndexExtension<List<String>> {
+public final class DartPartUriIndex extends SingleEntryFileBasedIndexExtension<List<String>> {
   public static final ID<Integer, List<String>> DART_PATH_INDEX = ID.create("DartPathIndex");
 
   @NotNull

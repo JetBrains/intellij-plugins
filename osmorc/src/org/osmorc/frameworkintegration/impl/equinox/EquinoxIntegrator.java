@@ -33,7 +33,7 @@ import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
 /**
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
-public class EquinoxIntegrator extends AbstractFrameworkIntegrator {
+public final class EquinoxIntegrator extends AbstractFrameworkIntegrator {
   private static final String FRAMEWORK_NAME = "Equinox";
 
   public EquinoxIntegrator() {

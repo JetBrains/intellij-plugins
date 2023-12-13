@@ -25,7 +25,7 @@ import java.util.List;
  * Information from the Dart Analysis Server is used.
  */
 
-public class DartHtmlAttributeDescriptorProvider implements XmlAttributeDescriptorsProvider {
+public final class DartHtmlAttributeDescriptorProvider implements XmlAttributeDescriptorsProvider {
   @Override
   public XmlAttributeDescriptor[] getAttributeDescriptors(XmlTag context) {
     return XmlAttributeDescriptor.EMPTY;

@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class FlexmojosSdkType extends SdkType {
+public final class FlexmojosSdkType extends SdkType {
 
   static final String COMPILER_POM_PATTERN_1 = ".+/com/adobe/flex/compiler/.+/compiler-.+\\.pom";
   static final String COMPILER_POM_PATTERN_2 = ".+/org/apache/flex/compiler/.+/compiler-.+\\.pom";

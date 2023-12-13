@@ -11,8 +11,8 @@ import com.intellij.xml.util.HtmlUtil;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class AngularJSReferenceSearcher extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
-  protected AngularJSReferenceSearcher() {
+public final class AngularJSReferenceSearcher extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
+  private AngularJSReferenceSearcher() {
     super(true);
   }
 

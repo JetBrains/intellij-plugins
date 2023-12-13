@@ -15,7 +15,7 @@ import org.dartlang.analysis.server.protocol.SourceEdit;
 import org.dartlang.analysis.server.protocol.SourceFileEdit;
 import org.jetbrains.annotations.NotNull;
 
-public class DartServerStatementCompletionProcessor extends SmartEnterProcessor {
+public final class DartServerStatementCompletionProcessor extends SmartEnterProcessor {
 
   @Override
   public boolean process(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile psiFile) {

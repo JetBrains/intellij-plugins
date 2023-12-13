@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class SwfFileType implements FileType {
+public final class SwfFileType implements FileType {
   public static final FileType SWF_FILE_TYPE = new SwfFileType();
 
   private SwfFileType() {

@@ -40,7 +40,7 @@ import static com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens.En
 import static com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens.Grouping.GROUP_PROPERTY_FIELD_WITH_GETTER_SETTER;
 import static com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens.Modifier.*;
 
-public class ActionScriptRearranger extends JSRearrangerBase {
+public final class ActionScriptRearranger extends JSRearrangerBase {
 
   private static final Logger LOG = Logger.getInstance(ActionScriptRearranger.class.getName());
 

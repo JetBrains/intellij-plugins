@@ -16,7 +16,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class DartPostfixTemplateProvider implements PostfixTemplateProvider {
+public final class DartPostfixTemplateProvider implements PostfixTemplateProvider {
   private static final String UNINITIALIZED_KEY = "none";
   private static final Map<String, Set<PostfixTemplate>> TEMPLATE_CACHE = new HashMap<>();
 

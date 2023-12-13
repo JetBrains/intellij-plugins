@@ -35,7 +35,7 @@ import java.util.Map;
 /**
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
-public class BndManifestHeaderParsers implements HeaderParserProvider {
+public final class BndManifestHeaderParsers implements HeaderParserProvider {
   private final Map<String, HeaderParser> myParsers;
 
   public BndManifestHeaderParsers() {

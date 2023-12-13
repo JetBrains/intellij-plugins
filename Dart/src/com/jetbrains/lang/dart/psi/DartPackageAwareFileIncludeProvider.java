@@ -31,7 +31,7 @@ import java.util.List;
 import static com.jetbrains.lang.dart.util.DartUrlResolver.PACKAGES_FOLDER_NAME;
 
 // pretty much like HtmlFileIncludeProvider, but we do not inherit from it so that Dart provider works in Community Edition
-public class DartPackageAwareFileIncludeProvider extends FileIncludeProvider {
+public final class DartPackageAwareFileIncludeProvider extends FileIncludeProvider {
   @NotNull
   @Override
   public String getId() {

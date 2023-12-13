@@ -8,7 +8,7 @@ import com.intellij.lang.Language;
 import com.intellij.lang.LanguageCommenters;
 import org.jetbrains.annotations.Nullable;
 
-public class HbCommenter implements Commenter {
+public final class HbCommenter implements Commenter {
   private static final Commenter ourHandlebarsCommenter = new HandlebarsCommenter();
 
   @Nullable

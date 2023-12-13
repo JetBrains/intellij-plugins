@@ -16,7 +16,7 @@ import com.jetbrains.lang.dart.psi.DartReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartTypeHierarchyProvider implements HierarchyProvider {
+public final class DartTypeHierarchyProvider implements HierarchyProvider {
   @Nullable
   @Override
   public DartClass getTarget(@NotNull final DataContext dataContext) {

@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MxmlTodoIndexer extends XmlTodoIndexer {
+public final class MxmlTodoIndexer extends XmlTodoIndexer {
   @NotNull
   @Override
   public Map<TodoIndexEntry, Integer> map(@NotNull final FileContent inputData) {

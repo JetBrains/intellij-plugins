@@ -35,7 +35,7 @@ import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
  *
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
-public class KnopflerfishIntegrator extends AbstractFrameworkIntegrator {
+public final class KnopflerfishIntegrator extends AbstractFrameworkIntegrator {
   private static final String FRAMEWORK_NAME = "Knopflerfish";
 
   public KnopflerfishIntegrator() {

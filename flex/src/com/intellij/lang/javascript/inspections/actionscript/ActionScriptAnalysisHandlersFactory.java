@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Konstantin.Ulitin
  */
-public class ActionScriptAnalysisHandlersFactory extends JSAnalysisHandlersFactory {
+public final class ActionScriptAnalysisHandlersFactory extends JSAnalysisHandlersFactory {
   @NotNull
   @Override
   public JSAnnotatingVisitor createAnnotatingVisitor(@NotNull PsiElement psiElement, @NotNull AnnotationHolder holder) {

@@ -10,7 +10,7 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-public class ActionScriptProblemFileHighlightFilter implements Condition<VirtualFile> {
+public final class ActionScriptProblemFileHighlightFilter implements Condition<VirtualFile> {
 
   private final Project myProject;
 

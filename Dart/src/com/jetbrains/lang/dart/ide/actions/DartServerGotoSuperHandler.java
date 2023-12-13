@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DartServerGotoSuperHandler implements LanguageCodeInsightActionHandler {
+public final class DartServerGotoSuperHandler implements LanguageCodeInsightActionHandler {
   @Override
   public void invoke(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
     final PsiElement at = file.findElementAt(editor.getCaretModel().getOffset());

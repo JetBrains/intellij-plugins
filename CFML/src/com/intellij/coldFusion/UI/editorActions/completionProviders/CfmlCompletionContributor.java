@@ -33,7 +33,7 @@ import static com.intellij.patterns.XmlPatterns.xmlTag;
 /**
  * Created by Lera Nikolaenko
  */
-public class CfmlCompletionContributor extends CompletionContributor {
+public final class CfmlCompletionContributor extends CompletionContributor {
 
   @Override
   public void beforeCompletion(@NotNull CompletionInitializationContext context) {

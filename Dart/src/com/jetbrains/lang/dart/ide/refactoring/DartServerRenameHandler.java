@@ -21,7 +21,7 @@ import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatus;
 import org.jetbrains.annotations.NotNull;
 
 // todo implement ContextAwareActionHandler?
-public class DartServerRenameHandler implements RenameHandler, TitledHandler {
+public final class DartServerRenameHandler implements RenameHandler, TitledHandler {
   @Override
   public String getActionTitle() {
     return DartBundle.message("action.title.dart.rename.refactoring");

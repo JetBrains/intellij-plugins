@@ -28,7 +28,7 @@ import static org.angularjs.codeInsight.DirectiveUtil.normalizeAttributeName;
 /**
  * @author Dennis.Ushakov
  */
-public class AngularJSReferencesContributor extends PsiReferenceContributor {
+public final class AngularJSReferencesContributor extends PsiReferenceContributor {
   private static final PsiElementPattern.Capture<JSLiteralExpression> TEMPLATE_PATTERN = literalInProperty("templateUrl");
   private static final PsiElementPattern.Capture<JSLiteralExpression> CONTROLLER_PATTERN = literalInProperty("controller");
   public static final PsiElementPattern.Capture<PsiElement> UI_VIEW_PATTERN = uiViewPattern();

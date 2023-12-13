@@ -13,7 +13,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ActionScriptCompletionPlaceFilterProvider implements JSCompletionPlaceFilterProvider {
+public final class ActionScriptCompletionPlaceFilterProvider implements JSCompletionPlaceFilterProvider {
 
   public static final JSCompletionPlaceFilter AS_TYPE_CONTEXT = new JSCompletionPlaceFilter() {
     @Override

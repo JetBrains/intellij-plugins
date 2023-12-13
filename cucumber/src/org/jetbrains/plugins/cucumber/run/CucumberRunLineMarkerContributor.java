@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.psi.*;
 
-public class CucumberRunLineMarkerContributor extends RunLineMarkerContributor {
+public final class CucumberRunLineMarkerContributor extends RunLineMarkerContributor {
   private static final TokenSet RUN_LINE_MARKER_ELEMENTS = TokenSet
     .create(GherkinTokenTypes.FEATURE_KEYWORD, GherkinTokenTypes.SCENARIO_KEYWORD, GherkinTokenTypes.SCENARIO_OUTLINE_KEYWORD,
             GherkinTokenTypes.RULE_KEYWORD, GherkinTokenTypes.EXAMPLE_KEYWORD);

@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Dennis.Ushakov
  */
-public class AngularDirectivesIndex extends AngularIndexBase {
+public final class AngularDirectivesIndex extends AngularIndexBase {
 
   public static final StubIndexKey<String, JSImplicitElementProvider> KEY = StubIndexKey.createIndexKey("angularjs.directives.index");
 

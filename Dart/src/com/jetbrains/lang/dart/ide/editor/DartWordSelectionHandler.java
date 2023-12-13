@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class DartWordSelectionHandler extends AbstractWordSelectioner {
+public final class DartWordSelectionHandler extends AbstractWordSelectioner {
 
   @Override
   public boolean canSelect(@NotNull final PsiElement e) {

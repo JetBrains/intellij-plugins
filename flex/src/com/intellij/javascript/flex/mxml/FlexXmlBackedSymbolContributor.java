@@ -38,7 +38,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.Collections;
 
-public class FlexXmlBackedSymbolContributor implements ChooseByNameContributorEx {
+public final class FlexXmlBackedSymbolContributor implements ChooseByNameContributorEx {
   @Override
   public void processNames(@NotNull Processor<? super String> processor, @NotNull GlobalSearchScope scope, @Nullable IdFilter filter) {
     if (!FileBasedIndex.getInstance().processAllKeys(FlexXmlBackedMembersIndex.NAME, processor, scope, filter)) return;

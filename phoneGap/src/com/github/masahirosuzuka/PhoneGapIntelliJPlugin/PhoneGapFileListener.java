@@ -23,7 +23,7 @@ import java.util.List;
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapStartupActivity.getExcludedFolderNames;
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapStartupActivity.getUpdateModuleExcludeByFSEventRunnable;
 
-public class PhoneGapFileListener implements AsyncFileListener {
+public final class PhoneGapFileListener implements AsyncFileListener {
 
   @Nullable
   @Override

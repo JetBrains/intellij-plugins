@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Created by Lera Nikolaenko
  */
-public class CfmlFileViewProviderFactory implements FileViewProviderFactory {
+public final class CfmlFileViewProviderFactory implements FileViewProviderFactory {
   @Override
   @NotNull
   public FileViewProvider createFileViewProvider(@NotNull VirtualFile file,

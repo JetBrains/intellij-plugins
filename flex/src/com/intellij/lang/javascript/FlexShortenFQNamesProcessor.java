@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 
-public class FlexShortenFQNamesProcessor implements TemplateOptionalProcessor {
+public final class FlexShortenFQNamesProcessor implements TemplateOptionalProcessor {
   private static final Logger LOG = Logger.getInstance(FlexShortenFQNamesProcessor.class);
 
   @Override

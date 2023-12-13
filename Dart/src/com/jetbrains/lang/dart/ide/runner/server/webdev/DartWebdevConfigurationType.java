@@ -16,7 +16,7 @@ import com.jetbrains.lang.dart.DartFileType;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 
-public class DartWebdevConfigurationType extends ConfigurationTypeBase implements DumbAware {
+public final class DartWebdevConfigurationType extends ConfigurationTypeBase implements DumbAware {
   @NotNull
   public static DartWebdevConfigurationType getInstance() {
     return ConfigurationTypeUtil.findConfigurationType(DartWebdevConfigurationType.class);

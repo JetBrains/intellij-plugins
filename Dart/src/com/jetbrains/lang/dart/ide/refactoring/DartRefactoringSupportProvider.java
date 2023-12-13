@@ -11,7 +11,7 @@ import com.jetbrains.lang.dart.psi.DartNamedElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartRefactoringSupportProvider extends RefactoringSupportProvider {
+public final class DartRefactoringSupportProvider extends RefactoringSupportProvider {
   @Override
   public boolean isInplaceRenameAvailable(@NotNull PsiElement element, PsiElement context) {
     return element instanceof DartNamedElement &&

@@ -15,7 +15,7 @@ import javax.swing.*;
 import java.util.Map;
 import java.util.Set;
 
-public class HbColorsPage implements ColorSettingsPage {
+public final class HbColorsPage implements ColorSettingsPage {
   private static final AttributesDescriptor[] ATTRS;
 
   static {

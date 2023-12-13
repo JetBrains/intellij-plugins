@@ -19,7 +19,7 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
-public class DartCoverageEngine extends CoverageEngine {
+public final class DartCoverageEngine extends CoverageEngine {
 
   public static DartCoverageEngine getInstance() {
     return CoverageEngine.EP_NAME.findExtensionOrFail(DartCoverageEngine.class);

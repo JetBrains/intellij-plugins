@@ -10,7 +10,7 @@ import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-public class HbBlockMismatchAnnotator implements Annotator {
+public final class HbBlockMismatchAnnotator implements Annotator {
   @Override
   public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     if (element instanceof HbOpenBlockMustache) {

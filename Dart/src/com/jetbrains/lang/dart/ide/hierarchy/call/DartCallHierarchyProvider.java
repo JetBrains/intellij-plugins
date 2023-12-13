@@ -9,7 +9,7 @@ import com.jetbrains.lang.dart.ide.hierarchy.DartHierarchyUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartCallHierarchyProvider implements HierarchyProvider {
+public final class DartCallHierarchyProvider implements HierarchyProvider {
   @Nullable
   @Override
   public PsiElement getTarget(@NotNull DataContext dataContext) {

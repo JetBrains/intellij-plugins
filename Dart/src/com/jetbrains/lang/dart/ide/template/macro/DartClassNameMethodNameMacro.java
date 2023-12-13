@@ -6,7 +6,7 @@ import com.intellij.codeInsight.template.Result;
 import com.intellij.codeInsight.template.TextResult;
 import org.jetbrains.annotations.NotNull;
 
-public class DartClassNameMethodNameMacro extends DartMacroBase {
+public final class DartClassNameMethodNameMacro extends DartMacroBase {
   @Override
   public String getName() {
     return "dartClassNameMethodName";

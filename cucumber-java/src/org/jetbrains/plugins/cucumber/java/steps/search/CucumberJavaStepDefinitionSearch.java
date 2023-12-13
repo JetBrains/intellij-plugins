@@ -27,7 +27,7 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
 import java.util.List;
 
-public class CucumberJavaStepDefinitionSearch implements QueryExecutor<PsiReference, ReferencesSearch.SearchParameters> {
+public final class CucumberJavaStepDefinitionSearch implements QueryExecutor<PsiReference, ReferencesSearch.SearchParameters> {
   @Override
   public boolean execute(@NotNull final ReferencesSearch.SearchParameters queryParameters,
                          @NotNull final Processor<? super PsiReference> consumer) {

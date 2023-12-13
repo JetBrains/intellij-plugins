@@ -23,7 +23,7 @@ import java.util.Collection;
 /**
  * @author Dennis.Ushakov
  */
-public class AngularJSCompletionContributor extends CompletionContributor {
+public final class AngularJSCompletionContributor extends CompletionContributor {
   private static final JSLookupPriority NG_VARIABLE_PRIORITY = JSLookupPriority.LOCAL_SCOPE_MAX_PRIORITY;
 
   @Override

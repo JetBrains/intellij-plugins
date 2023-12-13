@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public class DartSuggestIndexNameMacro extends DartMacroBase {
+public final class DartSuggestIndexNameMacro extends DartMacroBase {
   @Override
   public String getName() {
     return "dartSuggestIndexName";

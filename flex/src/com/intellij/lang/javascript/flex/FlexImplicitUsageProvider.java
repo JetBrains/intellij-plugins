@@ -29,7 +29,7 @@ import com.intellij.psi.xml.XmlAttribute;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public class FlexImplicitUsageProvider implements ImplicitUsageProvider, Condition<PsiElement> {
+public final class FlexImplicitUsageProvider implements ImplicitUsageProvider, Condition<PsiElement> {
   @Override
   public boolean isImplicitUsage(@NotNull PsiElement element) {
     if (element instanceof XmlAttribute &&

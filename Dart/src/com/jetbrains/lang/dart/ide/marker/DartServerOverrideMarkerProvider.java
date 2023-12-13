@@ -28,7 +28,7 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DartServerOverrideMarkerProvider implements LineMarkerProvider {
+public final class DartServerOverrideMarkerProvider implements LineMarkerProvider {
   @Override
   public LineMarkerInfo<?> getLineMarkerInfo(@NotNull PsiElement element) {
     if (!(element instanceof DartComponentName)) {

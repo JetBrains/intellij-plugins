@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
 import com.intellij.psi.stubs.StubIndexKey;
 import org.jetbrains.annotations.NotNull;
 
-public class AngularTemplateUrlIndex extends AngularIndexBase {
+public final class AngularTemplateUrlIndex extends AngularIndexBase {
 
   public static final StubIndexKey<String, JSImplicitElementProvider> KEY = StubIndexKey.createIndexKey("angularjs.templateUrl.index");
 

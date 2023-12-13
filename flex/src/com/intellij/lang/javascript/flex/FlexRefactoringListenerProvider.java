@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class FlexRefactoringListenerProvider implements RefactoringElementListenerProvider {
+public final class FlexRefactoringListenerProvider implements RefactoringElementListenerProvider {
 
   @Override
   @Nullable

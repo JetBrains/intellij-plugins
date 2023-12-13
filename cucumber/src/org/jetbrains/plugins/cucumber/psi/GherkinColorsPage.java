@@ -17,7 +17,7 @@ import java.util.Map;
 /**
  * @author Roman.Chernyatchik
  */
-public class GherkinColorsPage implements ColorSettingsPage {
+public final class GherkinColorsPage implements ColorSettingsPage {
 
  private static final String DEMO_TEXT =
    """

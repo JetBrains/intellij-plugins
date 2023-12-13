@@ -16,7 +16,7 @@ import java.util.Map;
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
 
-public class DartSyntaxHighlighter extends SyntaxHighlighterBase implements EmbeddedTokenHighlighter {
+public final class DartSyntaxHighlighter extends SyntaxHighlighterBase implements EmbeddedTokenHighlighter {
   private static final Map<IElementType, TextAttributesKey> ATTRIBUTES = new HashMap<>();
 
   static {

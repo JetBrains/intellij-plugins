@@ -10,7 +10,7 @@ import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.psi.GherkinElementVisitor;
 import org.jetbrains.plugins.cucumber.psi.GherkinScenario;
 
-public class GherkinMisplacedBackgroundInspection extends GherkinInspection {
+public final class GherkinMisplacedBackgroundInspection extends GherkinInspection {
   @NotNull
   @Override
   public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {

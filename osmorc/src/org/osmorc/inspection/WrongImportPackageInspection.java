@@ -22,7 +22,7 @@ import org.osmorc.util.OsgiPsiUtil;
 /**
  * @author Vladislav.Soroka
  */
-public class WrongImportPackageInspection extends AbstractOsgiVisitor {
+public final class WrongImportPackageInspection extends AbstractOsgiVisitor {
   @NotNull
   @Override
   protected PsiElementVisitor buildVisitor(OsmorcFacet facet, final ProblemsHolder holder, boolean isOnTheFly) {

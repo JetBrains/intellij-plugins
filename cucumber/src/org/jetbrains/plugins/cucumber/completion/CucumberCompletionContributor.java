@@ -37,7 +37,7 @@ import static com.intellij.openapi.module.ModuleUtilCore.findModuleForPsiElement
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
 
-public class CucumberCompletionContributor extends CompletionContributor {
+public final class CucumberCompletionContributor extends CompletionContributor {
   private static final Map<String, String> GROUP_TYPE_MAP = new HashMap<>();
   private static final Map<String, String> PARAMETERS_MAP = new HashMap<>();
 

@@ -14,7 +14,7 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.Set;
 
-public class FlexStylesIndexableSetContributor extends IndexableSetContributor {
+public final class FlexStylesIndexableSetContributor extends IndexableSetContributor {
   private static final Logger LOG = Logger.getInstance(FlexStylesIndexableSetContributor.class);
 
   private static final NotNullLazyValue<Set<VirtualFile>> ourFiles = NotNullLazyValue.atomicLazy(() -> {

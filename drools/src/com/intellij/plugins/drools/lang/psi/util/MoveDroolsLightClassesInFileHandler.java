@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public class MoveDroolsLightClassesInFileHandler extends MoveAllClassesInFileHandler {
+public final class MoveDroolsLightClassesInFileHandler extends MoveAllClassesInFileHandler {
 
   @Override
   public void processMoveAllClassesInFile(@NotNull Map<PsiClass, Boolean> allClasses, @NotNull PsiClass psiClass, PsiElement... elementsToMove) {

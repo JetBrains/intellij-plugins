@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 // TODO: control flow
-public class JSFieldCanBeLocalInspection extends JSInspection {
+public final class JSFieldCanBeLocalInspection extends JSInspection {
   private static final Logger LOG = Logger.getInstance(JSFieldCanBeLocalInspection.class);
 
   @NotNull

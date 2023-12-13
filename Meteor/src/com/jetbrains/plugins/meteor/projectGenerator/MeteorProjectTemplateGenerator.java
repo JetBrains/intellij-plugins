@@ -44,7 +44,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-public class MeteorProjectTemplateGenerator extends WebProjectTemplate<MeteorProjectTemplateGenerator.MeteorProjectSettings> {
+public final class MeteorProjectTemplateGenerator extends WebProjectTemplate<MeteorProjectTemplateGenerator.MeteorProjectSettings> {
 
 
   private static final Logger LOG = Logger.getInstance(MeteorProjectTemplateGenerator.class);
@@ -205,11 +205,11 @@ public class MeteorProjectTemplateGenerator extends WebProjectTemplate<MeteorPro
     runManager.setSelectedConfiguration(configuration);
   }
 
-  protected File createTemp() throws IOException {
+  private File createTemp() throws IOException {
     return FileUtil.createTempDirectory("intellij-meteor-generator", null, false);
   }
 
-  protected void deleteTemp(File tempProject) {
+  private void deleteTemp(File tempProject) {
     if (!FileUtil.delete(tempProject)) {
       LOG.warn("Cannot delete " + tempProject);
     }

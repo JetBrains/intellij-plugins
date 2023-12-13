@@ -13,7 +13,7 @@ import com.intellij.ui.ColoredTreeCellRenderer;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import org.jetbrains.annotations.NotNull;
 
-public class DartNodeDecorator implements ProjectViewNodeDecorator {
+public final class DartNodeDecorator implements ProjectViewNodeDecorator {
   @Override
   public void decorate(@NotNull final ProjectViewNode node, @NotNull final PresentationData presentation) {
     if (node instanceof PsiFileNode || node instanceof PsiDirectoryNode) {

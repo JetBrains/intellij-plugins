@@ -9,7 +9,7 @@ import com.intellij.psi.impl.source.xml.XmlFileImpl;
 import com.intellij.psi.tree.IFileElementType;
 import org.jetbrains.annotations.NotNull;
 
-public class MxmlParserDefinition extends XMLParserDefinition{
+public final class MxmlParserDefinition extends XMLParserDefinition{
   @Override
   public @NotNull PsiFile createFile(@NotNull FileViewProvider viewProvider) {
     return new MxmlFile(viewProvider);

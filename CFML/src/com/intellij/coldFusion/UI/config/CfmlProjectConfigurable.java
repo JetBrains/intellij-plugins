@@ -22,7 +22,7 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class CfmlProjectConfigurable implements SearchableConfigurable, Configurable.NoScroll {
+public final class CfmlProjectConfigurable implements SearchableConfigurable, Configurable.NoScroll {
 
   private final Project myProject;
   private CfmlMappingsForm myForm;

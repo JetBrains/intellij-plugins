@@ -36,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
-public class FlexMxmlColorAnnotator implements Annotator {
+public final class FlexMxmlColorAnnotator implements Annotator {
   @Override
   public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     if (!(element instanceof XmlAttribute attribute) || !JavaScriptSupportLoader.isFlexMxmFile(element.getContainingFile())) {

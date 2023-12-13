@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
  * Created by Lera Nikolaenko
  */
 // TODO: uncomment html style comments
-public class CfmlCommenter implements Commenter, SelfManagingCommenter<CfmlCommenter.MyCommenterData> {
+public final class CfmlCommenter implements Commenter, SelfManagingCommenter<CfmlCommenter.MyCommenterData> {
   private static final String CF_SCRIPT_BLOCK_COMMENT_PREFIX = "/*";
   private static final String CF_SCRIPT_BLOCK_COMMENT_SUFFIX = "*/";
   private static final String CF_SCRIPT_LINE_COMMENT_PREFIX = "//";

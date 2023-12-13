@@ -20,7 +20,7 @@ import static org.angularjs.index.AngularJSDirectivesSupport.findDirective;
 /**
  * @author Dennis.Ushakov
  */
-public class AngularJSDocumentationProvider implements DocumentationProvider {
+public final class AngularJSDocumentationProvider implements DocumentationProvider {
 
   private static PsiElement getElementForDocumentation(final Project project, final String directiveName) {
     JSImplicitElement directive = findDirective(project, directiveName);

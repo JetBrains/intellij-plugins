@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.intellij.openapi.module.ModuleUtilCore.findModuleForPsiElement;
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
-public class ActionScriptReferenceContributor extends PsiReferenceContributor {
+public final class ActionScriptReferenceContributor extends PsiReferenceContributor {
 
   public static final String SET_STYLE_METHOD_NAME = "setStyle";
 

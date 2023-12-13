@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class FlashPackagingSourceItemsProvider extends PackagingSourceItemsProvider {
+public final class FlashPackagingSourceItemsProvider extends PackagingSourceItemsProvider {
 
   @Override
   @NotNull

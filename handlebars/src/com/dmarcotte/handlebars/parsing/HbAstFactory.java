@@ -8,7 +8,7 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class HbAstFactory extends ASTFactory {
+public final class HbAstFactory extends ASTFactory {
   @Override
   public @Nullable LeafElement createLeaf(@NotNull IElementType type, @NotNull CharSequence text) {
     if (type == HbTokenTypes.OUTER_ELEMENT_TYPE) {

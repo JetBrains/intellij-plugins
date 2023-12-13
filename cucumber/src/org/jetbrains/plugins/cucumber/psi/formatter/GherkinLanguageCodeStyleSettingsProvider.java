@@ -8,7 +8,7 @@ import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.psi.GherkinLanguage;
 
-public class GherkinLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettingsProvider {
+public final class GherkinLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettingsProvider {
   @NotNull
   @Override
   public Language getLanguage() {

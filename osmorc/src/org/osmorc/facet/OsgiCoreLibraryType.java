@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-public class OsgiCoreLibraryType extends DownloadableLibraryType {
+public final class OsgiCoreLibraryType extends DownloadableLibraryType {
   private static final String ID = "org.osgi.core";
   private static final String DETECTOR_CLASS = "org.osgi.framework.Constants";
 

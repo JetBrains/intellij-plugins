@@ -35,7 +35,7 @@ import javax.swing.*;
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
-public class ApplicationSettingsEditor implements SearchableConfigurable {
+public final class ApplicationSettingsEditor implements SearchableConfigurable {
   private FrameworkDefinitionsEditorComponent myComponent;
 
   @Nls

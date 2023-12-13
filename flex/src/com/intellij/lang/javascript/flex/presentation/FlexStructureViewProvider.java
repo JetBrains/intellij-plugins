@@ -41,7 +41,7 @@ import java.util.*;
 /**
  * @author Maxim.Mossienko
  */
-public class FlexStructureViewProvider implements XmlStructureViewBuilderProvider {
+public final class FlexStructureViewProvider implements XmlStructureViewBuilderProvider {
 
   @Override
   public StructureViewBuilder createStructureViewBuilder(@NotNull final XmlFile file) {

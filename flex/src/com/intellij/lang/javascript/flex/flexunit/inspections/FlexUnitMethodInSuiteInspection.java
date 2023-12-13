@@ -10,7 +10,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
-public class FlexUnitMethodInSuiteInspection extends FlexUnitMethodInspectionBase {
+public final class FlexUnitMethodInSuiteInspection extends FlexUnitMethodInspectionBase {
 
   @Override
   @NotNull

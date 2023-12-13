@@ -19,7 +19,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 
-public class ActionScriptMethodsCompletionContributor extends CompletionContributor {
+public final class ActionScriptMethodsCompletionContributor extends CompletionContributor {
 
   public ActionScriptMethodsCompletionContributor() {
     extend(null, PlatformPatterns.psiElement(JSTokenTypes.IDENTIFIER)

@@ -31,7 +31,7 @@ import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import java.util.function.Function;
 
-public class DartEditorNotificationsProvider implements EditorNotificationProvider {
+public final class DartEditorNotificationsProvider implements EditorNotificationProvider {
   private static final NotificationGroup NOTIFICATION_GROUP = NotificationGroupManager.getInstance().getNotificationGroup("Dart Support");
 
   @Override

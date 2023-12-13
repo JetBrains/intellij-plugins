@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HbFoldingBuilder implements FoldingBuilder, DumbAware {
+public final class HbFoldingBuilder implements FoldingBuilder, DumbAware {
 
   @Override
   public FoldingDescriptor @NotNull [] buildFoldRegions(@NotNull ASTNode node, @NotNull Document document) {

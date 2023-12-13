@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class DartDocumentationProvider implements DocumentationProvider {
+public final class DartDocumentationProvider implements DocumentationProvider {
   private static final String BASE_DART_DOC_URL = "https://api.dart.dev/stable/";
 
   @Override

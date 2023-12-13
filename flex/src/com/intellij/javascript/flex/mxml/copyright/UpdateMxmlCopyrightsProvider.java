@@ -10,7 +10,7 @@ import com.maddyhome.idea.copyright.psi.UpdateCopyright;
 import com.maddyhome.idea.copyright.psi.UpdateCopyrightsProvider;
 import com.maddyhome.idea.copyright.psi.UpdateXmlCopyrightsProvider;
 
-public class UpdateMxmlCopyrightsProvider extends UpdateCopyrightsProvider {
+public final class UpdateMxmlCopyrightsProvider extends UpdateCopyrightsProvider {
 
   @Override
   public UpdateCopyright createInstance(final Project project,

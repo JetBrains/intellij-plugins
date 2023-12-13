@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
  * with name "JavaScript.lang.templates".
  * If there is no the dependency we should use this provider for adding configuration in common list
  */
-public class HbConfigurationProvider extends ConfigurableProvider {
+public final class HbConfigurationProvider extends ConfigurableProvider {
 
   @NotNull
   private final Project myProject;

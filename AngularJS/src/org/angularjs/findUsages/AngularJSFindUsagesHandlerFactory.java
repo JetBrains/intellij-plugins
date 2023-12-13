@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class AngularJSFindUsagesHandlerFactory extends JavaScriptFindUsagesHandlerFactory {
+public final class AngularJSFindUsagesHandlerFactory extends JavaScriptFindUsagesHandlerFactory {
 
     @Override
     public boolean canFindUsages(@NotNull PsiElement element) {

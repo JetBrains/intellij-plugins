@@ -33,7 +33,7 @@ import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class CfmlSpellcheckingStrategy extends SpellcheckingStrategy {
+public final class CfmlSpellcheckingStrategy extends SpellcheckingStrategy {
   private final Tokenizer<LeafPsiElement> myCfmlCommentTokenizer = TokenizerBase.create(CfmlCommentSplitter.INSTANCE);
 
   @NotNull

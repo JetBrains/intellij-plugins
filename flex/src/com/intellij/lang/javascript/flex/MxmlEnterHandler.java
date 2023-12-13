@@ -17,7 +17,7 @@ import com.intellij.psi.xml.XmlComment;
 import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class MxmlEnterHandler extends EnterHandlerDelegateAdapter {
+public final class MxmlEnterHandler extends EnterHandlerDelegateAdapter {
   @Override
   public Result preprocessEnter(@NotNull PsiFile file,
                                 @NotNull Editor editor,

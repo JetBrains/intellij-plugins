@@ -15,7 +15,7 @@ import com.intellij.psi.tree.IStubFileElementType;
 import com.jetbrains.plugins.meteor.spacebars.lang.parsing.SpacebarsParsing;
 import org.jetbrains.annotations.NotNull;
 
-public class SpacebarsParseDefinition extends HbParseDefinition {
+public final class SpacebarsParseDefinition extends HbParseDefinition {
   private static final IFileElementType FILE = new IStubFileElementType<>("spacebars", SpacebarsLanguageDialect.INSTANCE);
 
   @Override

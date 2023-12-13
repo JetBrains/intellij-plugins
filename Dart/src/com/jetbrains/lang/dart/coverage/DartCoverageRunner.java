@@ -28,7 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.SortedMap;
 
-public class DartCoverageRunner extends CoverageRunner {
+public final class DartCoverageRunner extends CoverageRunner {
   private static final String ID = "DartCoverageRunner";
   private static final Logger LOG = Logger.getInstance(DartCoverageRunner.class.getName());
 

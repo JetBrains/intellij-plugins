@@ -9,7 +9,7 @@ import com.sixrr.inspectjs.validity.BadExpressionStatementJSInspection;
 /**
  * @author Dennis.Ushakov
  */
-public class AngularJSInspectionFilter extends IntentionAndInspectionFilter {
+public final class AngularJSInspectionFilter extends IntentionAndInspectionFilter {
   @Override
   public boolean isSupportedInspection(String inspectionToolId) {
     return !inspectionToolId.equals(InspectionProfileEntry.getShortName(BadExpressionStatementJSInspection.class.getSimpleName())) &&

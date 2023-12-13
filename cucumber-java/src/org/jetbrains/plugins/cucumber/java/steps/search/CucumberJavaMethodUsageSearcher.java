@@ -30,7 +30,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinFileType;
 
 import java.util.List;
 
-public class CucumberJavaMethodUsageSearcher extends QueryExecutorBase<PsiReference, MethodReferencesSearch.SearchParameters> {
+public final class CucumberJavaMethodUsageSearcher extends QueryExecutorBase<PsiReference, MethodReferencesSearch.SearchParameters> {
   public CucumberJavaMethodUsageSearcher() {
     super(true);
   }

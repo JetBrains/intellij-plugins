@@ -40,7 +40,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-public class CfmlFoldingBuilder implements FoldingBuilder, DumbAware {
+public final class CfmlFoldingBuilder implements FoldingBuilder, DumbAware {
   @Override
   public FoldingDescriptor @NotNull [] buildFoldRegions(@NotNull ASTNode node, @NotNull Document document) {
     final PsiElement element = node.getPsi();

@@ -6,7 +6,7 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.options.Configurable;
 import org.jetbrains.annotations.Nullable;
 
-public class HbEmmetGenerator extends XmlZenCodingGeneratorImpl {
+public final class HbEmmetGenerator extends XmlZenCodingGeneratorImpl {
 
   @Override
   protected boolean isMyLanguage(Language language) {

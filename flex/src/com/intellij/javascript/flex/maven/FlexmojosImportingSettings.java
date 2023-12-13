@@ -8,7 +8,7 @@ import org.jetbrains.idea.maven.project.AdditionalMavenImportingSettings;
 
 import javax.swing.*;
 
-public class FlexmojosImportingSettings implements AdditionalMavenImportingSettings {
+public final class FlexmojosImportingSettings implements AdditionalMavenImportingSettings {
 
   @Override
   public UnnamedConfigurable createConfigurable(final Project project) {

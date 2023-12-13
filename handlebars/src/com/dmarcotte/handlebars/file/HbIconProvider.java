@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class HbIconProvider extends IconProvider {
+public final class HbIconProvider extends IconProvider {
 
   @Nullable
   @Override

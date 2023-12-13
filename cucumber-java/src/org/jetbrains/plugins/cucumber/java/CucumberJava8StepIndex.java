@@ -20,7 +20,7 @@ import java.util.List;
 
 import static com.intellij.psi.impl.source.tree.JavaElementType.*;
 
-public class CucumberJava8StepIndex extends CucumberStepIndex {
+public final class CucumberJava8StepIndex extends CucumberStepIndex {
   public static final ID<Boolean, List<Integer>> INDEX_ID = ID.create("java.cucumber.java8.step");
   private static final String JAVA_8_PACKAGE = "cucumber.api.java8.";
   private static final String JAVA_8_CUCUMBER_4_5_PACKAGE = "io.cucumber.java8.";

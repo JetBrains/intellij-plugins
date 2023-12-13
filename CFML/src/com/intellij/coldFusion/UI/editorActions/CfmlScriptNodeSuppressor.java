@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 // TODO: to generalize with com.jetbrains.php.config.sdk.PhpDiagnosticScriptNodeSuppressor
-public class CfmlScriptNodeSuppressor implements TreeStructureProvider, DumbAware {
+public final class CfmlScriptNodeSuppressor implements TreeStructureProvider, DumbAware {
 
   private static final Key<String> MARKER = Key.create(CfmlScriptNodeSuppressor.class.getName() + ".MARKER");
 

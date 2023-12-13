@@ -36,7 +36,7 @@ import java.util.*;
  * (parsing in the facet, Bnd-execution in the JPS build) is not the same as the
  * everything-at-once in an actual Maven build.
  */
-public class OsmorcBndFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetConfiguration, OsmorcFacetType> {
+public final class OsmorcBndFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetConfiguration, OsmorcFacetType> {
   private static final Logger LOG = Logger.getInstance(OsmorcBndFacetImporter.class);
   private static final String BND_PLUGIN_GOAL = "bnd-process";
 

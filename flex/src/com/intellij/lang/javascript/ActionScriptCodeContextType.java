@@ -9,7 +9,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public class ActionScriptCodeContextType extends TemplateContextType implements JSLikeTemplateContextType {
+public final class ActionScriptCodeContextType extends TemplateContextType implements JSLikeTemplateContextType {
 
   public ActionScriptCodeContextType() {
     super(FlexBundle.message("actionscript.template.context.type"));

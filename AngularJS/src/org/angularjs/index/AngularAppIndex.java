@@ -6,7 +6,7 @@ import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.KeyDescriptor;
 import org.jetbrains.annotations.NotNull;
 
-public class AngularAppIndex extends FileBasedIndexExtension<String, AngularNamedItemDefinition> {
+public final class AngularAppIndex extends FileBasedIndexExtension<String, AngularNamedItemDefinition> {
   public static final ID<String, AngularNamedItemDefinition> ANGULAR_APP_INDEX = ID.create("angularjs.app.index");
   private final AngularAttributeIndexer myIndexer = new AngularAttributeIndexer("ngApp");
 

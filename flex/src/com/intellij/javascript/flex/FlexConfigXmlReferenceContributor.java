@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.patterns.XmlPatterns.*;
 
-public class FlexConfigXmlReferenceContributor extends PsiReferenceContributor {
+public final class FlexConfigXmlReferenceContributor extends PsiReferenceContributor {
   public static final String CLASS_REFERENCE = "ClassReference";
 
   @Override

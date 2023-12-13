@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-public class DroolsClassFinder extends PsiElementFinder {
+public final class DroolsClassFinder extends PsiElementFinder {
 
   @Override
   @Nullable

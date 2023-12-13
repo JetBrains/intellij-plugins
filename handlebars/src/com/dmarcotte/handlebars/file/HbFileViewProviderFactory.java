@@ -9,7 +9,7 @@ import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 
 
-public class HbFileViewProviderFactory implements FileViewProviderFactory {
+public final class HbFileViewProviderFactory implements FileViewProviderFactory {
   @NotNull
   @Override
   public FileViewProvider createFileViewProvider(@NotNull VirtualFile virtualFile,

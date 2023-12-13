@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.jetbrains.lang.dart.DartTokenTypes.RAW_TRIPLE_QUOTED_STRING;
 import static com.jetbrains.lang.dart.DartTokenTypes.REGULAR_STRING_PART;
 
-public class DartStripTrailingSpacesFilterFactory extends PsiBasedStripTrailingSpacesFilter.Factory {
+public final class DartStripTrailingSpacesFilterFactory extends PsiBasedStripTrailingSpacesFilter.Factory {
 
   @NotNull
   @Override

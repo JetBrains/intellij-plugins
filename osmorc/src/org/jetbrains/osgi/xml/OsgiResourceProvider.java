@@ -19,7 +19,7 @@ import com.intellij.javaee.ResourceRegistrar;
 import com.intellij.javaee.StandardResourceProvider;
 import org.jetbrains.annotations.NotNull;
 
-public class OsgiResourceProvider implements StandardResourceProvider {
+public final class OsgiResourceProvider implements StandardResourceProvider {
   @Override
   public void registerResources(@NotNull ResourceRegistrar registrar) {
     registrar.addStdResource("http://www.osgi.org/xmlns/scr/v1.0.0", "/schemas/scr-1.0.0.xsd", getClass());

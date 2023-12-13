@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DartMethodParametersMacro extends DartMacroBase {
+public final class DartMethodParametersMacro extends DartMacroBase {
 
   @Override
   public String getName() {

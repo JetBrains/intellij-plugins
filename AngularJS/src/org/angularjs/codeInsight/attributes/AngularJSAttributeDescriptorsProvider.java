@@ -27,7 +27,7 @@ import static org.angularjs.index.AngularJSDirectivesSupport.findAttributeDirect
 /**
  * @author Dennis.Ushakov
  */
-public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescriptorsProvider {
+public final class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescriptorsProvider {
 
   @Override
   public XmlAttributeDescriptor[] getAttributeDescriptors(XmlTag xmlTag) {
@@ -47,10 +47,10 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     return XmlAttributeDescriptor.EMPTY;
   }
 
-  protected void addAttributes(@Nullable Project project,
-                               @NotNull Map<String, XmlAttributeDescriptor> result,
-                               @NotNull String directiveName,
-                               @NotNull PsiElement declaration) {
+  private void addAttributes(@Nullable Project project,
+                             @NotNull Map<String, XmlAttributeDescriptor> result,
+                             @NotNull String directiveName,
+                             @NotNull PsiElement declaration) {
     result.put(directiveName, createDescriptor(project, DirectiveUtil.getAttributeName(directiveName), declaration));
     if ("ngRepeat".equals(directiveName)) {
       result.put("ngRepeatStart", createDescriptor(project, "ng-repeat-start", declaration));

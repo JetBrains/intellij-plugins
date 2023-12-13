@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class DartPackagesLibraryType extends LibraryType<DartPackagesLibraryProperties> {
+public final class DartPackagesLibraryType extends LibraryType<DartPackagesLibraryProperties> {
 
   public static final String DART_PACKAGES_LIBRARY_NAME = "Dart Packages";
 
@@ -26,7 +26,7 @@ public class DartPackagesLibraryType extends LibraryType<DartPackagesLibraryProp
       }
     };
 
-  protected DartPackagesLibraryType() {
+  private DartPackagesLibraryType() {
     super(LIBRARY_KIND);
   }
 

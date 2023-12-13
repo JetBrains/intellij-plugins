@@ -3,7 +3,7 @@ package com.intellij.plugins.drools.lang.support;
 
 import com.intellij.lang.Commenter;
 
-public class DroolsCommenter implements Commenter {
+public final class DroolsCommenter implements Commenter {
   @Override
   public String getLineCommentPrefix() {
     return "//";

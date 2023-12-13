@@ -40,7 +40,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Maxim.Mossienko
  */
-public class JSImplicitlyInternalDeclarationInspection extends JSInspection {
+public final class JSImplicitlyInternalDeclarationInspection extends JSInspection {
 
   @Override
   @NotNull

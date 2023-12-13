@@ -44,7 +44,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAware {
+public final class FlexTreeStructureProvider implements TreeStructureProvider, DumbAware {
   @NotNull
   @Override
   public Collection<AbstractTreeNode<?>> modify(@NotNull AbstractTreeNode<?> parent,

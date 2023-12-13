@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public class ActionScriptPropertyFunctionRenameProcessor extends JSDefaultRenameProcessor {
+public final class ActionScriptPropertyFunctionRenameProcessor extends JSDefaultRenameProcessor {
   @Override
   public boolean canProcessElement(@NotNull PsiElement element) {
     return DialectDetector.isActionScript(element)

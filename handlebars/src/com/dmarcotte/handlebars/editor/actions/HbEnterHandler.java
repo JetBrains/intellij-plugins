@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Handler for custom plugin actions when {@code Enter} is typed by the user
  */
-public class HbEnterHandler extends EnterHandlerDelegateAdapter {
+public final class HbEnterHandler extends EnterHandlerDelegateAdapter {
 
   @Override
   public Result preprocessEnter(@NotNull final PsiFile file,

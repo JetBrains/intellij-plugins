@@ -10,7 +10,7 @@ import org.jetbrains.plugins.cucumber.psi.*;
 
 import java.util.List;
 
-public class GherkinBrokenTableInspection extends GherkinInspection {
+public final class GherkinBrokenTableInspection extends GherkinInspection {
   @NotNull
   @Override
   public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {

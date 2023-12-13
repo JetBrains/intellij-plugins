@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * @author Maxim.Mossienko
  */
-public class FlexRenameHandler extends RenamePsiElementProcessor {
+public final class FlexRenameHandler extends RenamePsiElementProcessor {
   @Override
   public boolean canProcessElement(@NotNull final PsiElement element) {
     return (element instanceof JSFunction || element instanceof JSFile) &&

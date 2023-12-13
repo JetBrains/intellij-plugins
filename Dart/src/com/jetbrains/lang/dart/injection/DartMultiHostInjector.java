@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class DartMultiHostInjector implements MultiHostInjector {
+public final class DartMultiHostInjector implements MultiHostInjector {
 
   // Trailing space is intentional, it helps to avoid errors like "XML attribute Dart_string_template_placeholderhref is not allowed here"
   // in strings like "<a ${label}href=''></a>". As for the leading space, we decided not to add it as we'd more likely get

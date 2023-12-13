@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * @author Dennis.Ushakov
  */
-public class AngularJSInjector implements MultiHostInjector {
+public final class AngularJSInjector implements MultiHostInjector {
   public static final NullableFunction<PsiElement, Pair<String, String>> BRACES_FACTORY = JSInjectionBracesUtil
     .delimitersFactory(AngularJSLanguage.INSTANCE.getDisplayName(),
                        (project, key) -> {

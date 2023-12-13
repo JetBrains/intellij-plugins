@@ -6,7 +6,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.xml.TagNameReference;
 import com.intellij.xml.DefaultXmlExtension;
 
-public class FlexXmlExtension extends DefaultXmlExtension {
+public final class FlexXmlExtension extends DefaultXmlExtension {
   @Override
   public boolean isAvailable(final PsiFile file) {
     return JavaScriptSupportLoader.isFlexMxmFile(file);

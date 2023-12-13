@@ -34,7 +34,7 @@ import java.util.Collection;
 /**
  * @author Maxim.Mossienko
  */
-public class FlexMoveFileRefactoringHandler extends MoveHandlerDelegate {
+public final class FlexMoveFileRefactoringHandler extends MoveHandlerDelegate {
   @Override
   public boolean tryToMove(PsiElement element, Project project, DataContext dataContext, @Nullable PsiReference reference, Editor editor) {
     PsiElement adjusted = adjustForMove(element);

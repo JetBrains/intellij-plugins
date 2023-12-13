@@ -20,7 +20,7 @@ import org.osgi.framework.Constants;
 
 import java.util.*;
 
-public class OsmorcFrameworkDetector extends FacetBasedFrameworkDetector<OsmorcFacet, OsmorcFacetConfiguration> {
+public final class OsmorcFrameworkDetector extends FacetBasedFrameworkDetector<OsmorcFacet, OsmorcFacetConfiguration> {
   private final String[] DETECTION_HEADERS = {Constants.BUNDLE_SYMBOLICNAME};
 
   public OsmorcFrameworkDetector() {

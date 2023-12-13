@@ -35,7 +35,7 @@ import java.util.List;
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapStartupActivity.EXCLUDED_WWW_DIRECTORY;
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.isIonicPath;
 
-public class CordovaProjectGenerator extends NpmPackageProjectGenerator {
+public final class CordovaProjectGenerator extends NpmPackageProjectGenerator {
   @Override
   protected Filter @NotNull [] filters(@NotNull Project project, @NotNull VirtualFile baseDir) {
     return Filter.EMPTY_ARRAY;
@@ -124,7 +124,7 @@ public class CordovaProjectGenerator extends NpmPackageProjectGenerator {
     runManager.setSelectedConfiguration(configuration);
   }
 
-  protected static void excludePlatforms(@NotNull Project project, @NotNull VirtualFile baseDir) {
+  private static void excludePlatforms(@NotNull Project project, @NotNull VirtualFile baseDir) {
     if (PhoneGapSettings.getInstance().isExcludePlatformFolder()) {
       VirtualFile platformsFolder = baseDir.findChild(PhoneGapUtil.FOLDER_PLATFORMS);
 

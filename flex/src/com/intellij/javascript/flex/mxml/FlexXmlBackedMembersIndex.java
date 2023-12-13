@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
+public final class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
   private static final int INDEX_VERSION = 1;
 
   public static final ID<String, Void> NAME = ID.create("FlexXmlBackedMembersIndex");

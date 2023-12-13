@@ -12,7 +12,7 @@ import com.intellij.psi.impl.source.tree.TreeElement;
 import com.intellij.psi.impl.source.tree.TreeUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class GherkinFormattingModelBuilder implements FormattingModelBuilder {
+public final class GherkinFormattingModelBuilder implements FormattingModelBuilder {
   @Override
   public @NotNull FormattingModel createModel(@NotNull FormattingContext formattingContext) {
     final PsiFile file = formattingContext.getContainingFile();

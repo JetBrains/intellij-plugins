@@ -22,7 +22,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartGotoDeclarationHandler extends GotoDeclarationHandlerBase {
+public final class DartGotoDeclarationHandler extends GotoDeclarationHandlerBase {
   @Nullable
   @Override
   public PsiElement getGotoDeclarationTarget(@Nullable final PsiElement element, @NotNull final Editor editor) {

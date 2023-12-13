@@ -16,7 +16,7 @@ package com.jetbrains.lang.dart.projectView;
 import com.intellij.ide.projectView.ProjectViewNestingRulesProvider;
 import org.jetbrains.annotations.NotNull;
 
-public class DartNestingRulesProvider implements ProjectViewNestingRulesProvider {
+public final class DartNestingRulesProvider implements ProjectViewNestingRulesProvider {
   @Override
   public void addFileNestingRules(@NotNull Consumer consumer) {
     consumer.addNestingRule(".dart", ".dart.js");

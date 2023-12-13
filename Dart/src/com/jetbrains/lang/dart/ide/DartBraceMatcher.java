@@ -9,7 +9,7 @@ import com.jetbrains.lang.dart.DartTokenTypesSets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartBraceMatcher implements PairedBraceMatcher {
+public final class DartBraceMatcher implements PairedBraceMatcher {
   private static final BracePair[] BRACE_PAIRS = {
     new BracePair(DartTokenTypes.LBRACE, DartTokenTypes.RBRACE, true),
     new BracePair(DartTokenTypes.LBRACKET, DartTokenTypes.RBRACKET, false),

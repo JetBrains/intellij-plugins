@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.inspections.suppress.GherkinSuppressionUtil;
 
-public class GherkinInspectionSuppressor implements InspectionSuppressor {
+public final class GherkinInspectionSuppressor implements InspectionSuppressor {
   @Override
   public boolean isSuppressedFor(@NotNull PsiElement element, @NotNull String toolId) {
     return GherkinSuppressionUtil.isSuppressedFor(element, toolId);

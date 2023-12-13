@@ -13,7 +13,7 @@ import com.intellij.psi.PsiFile;
 /**
  * Created by Lera Nikolaenko
  */
-public class CfmlBackspaceHandler extends BackspaceHandlerDelegate {
+public final class CfmlBackspaceHandler extends BackspaceHandlerDelegate {
 
   @Override
   public void beforeCharDeleted(char c, PsiFile file, Editor editor) {

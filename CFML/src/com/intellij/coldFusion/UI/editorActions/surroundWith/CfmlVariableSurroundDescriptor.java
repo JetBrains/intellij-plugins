@@ -27,7 +27,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class CfmlVariableSurroundDescriptor implements SurroundDescriptor {
+public final class CfmlVariableSurroundDescriptor implements SurroundDescriptor {
   public static final Surrounder[] SURROUNDERS = new Surrounder[]{
     new CfmlSharpSurrounder()
   };

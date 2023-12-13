@@ -11,7 +11,7 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DroolsPairedBraceMatcher extends PairedBraceMatcherAdapter {
+public final class DroolsPairedBraceMatcher extends PairedBraceMatcherAdapter {
   public static final BracePair[] PAIRS = new BracePair[]{
       //new BracePair(DroolsTokenTypes.RULE, DroolsTokenTypes.END, true),
       new BracePair(DroolsTokenTypes.LBRACE, DroolsTokenTypes.RBRACE, true),

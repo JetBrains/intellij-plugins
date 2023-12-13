@@ -7,7 +7,7 @@ import com.intellij.platform.ProjectTemplatesFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class MeteorTemplatesFactory extends ProjectTemplatesFactory {
+public final class MeteorTemplatesFactory extends ProjectTemplatesFactory {
   @Override
   public String @NotNull [] getGroups() {
     return new String[]{WebModuleBuilder.GROUP_NAME};

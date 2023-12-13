@@ -43,7 +43,7 @@ import java.util.Map;
 /**
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
-public class OsgiManifestColorsAndFontsPage implements ColorSettingsPage {
+public final class OsgiManifestColorsAndFontsPage implements ColorSettingsPage {
   private static final AttributesDescriptor[] ATTRIBUTE_DESCRIPTORS = {
     new AttributesDescriptor(OsmorcBundle.message("settings.colors.header.name"), ManifestColorsAndFonts.HEADER_NAME_KEY),
     new AttributesDescriptor(OsmorcBundle.message("settings.colors.header.assignment"), ManifestColorsAndFonts.HEADER_ASSIGNMENT_KEY),

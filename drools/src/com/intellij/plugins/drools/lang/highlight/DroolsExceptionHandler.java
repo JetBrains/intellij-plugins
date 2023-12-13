@@ -10,7 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DroolsExceptionHandler extends CustomExceptionHandler {
+public final class DroolsExceptionHandler extends CustomExceptionHandler {
   @Override
   public boolean isHandled(@Nullable PsiElement element, @NotNull PsiClassType exceptionType, PsiElement topElement) {
     return PsiTreeUtil.getParentOfType(element, DroolsJavaRhsStatement.class) != null  || PsiTreeUtil.getParentOfType(element, DroolsFunctionStatement.class) != null;

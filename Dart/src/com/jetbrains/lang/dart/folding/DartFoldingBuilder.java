@@ -29,7 +29,7 @@ import java.util.List;
 
 import static com.jetbrains.lang.dart.DartParserDefinition.DART_FILE;
 
-public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAware {
+public final class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAware {
 
   private static final String SMILEY = "<~>";
   private static final String DOT_DOT_DOT = "...";

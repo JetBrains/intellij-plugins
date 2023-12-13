@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileDebugTransport;
 
-public class FlexDebugRunner extends FlexBaseRunner {
+public final class FlexDebugRunner extends FlexBaseRunner {
 
   @Override
   public boolean canRun(@NotNull final String executorId, @NotNull final RunProfile profile) {

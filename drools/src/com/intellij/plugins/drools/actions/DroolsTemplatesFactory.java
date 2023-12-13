@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class DroolsTemplatesFactory implements FileTemplateGroupDescriptorFactory {
+public final class DroolsTemplatesFactory implements FileTemplateGroupDescriptorFactory {
   @Override
   public FileTemplateGroupDescriptor getFileTemplatesDescriptor() {
     final Icon icon = JbossDroolsIcons.Drools_16;

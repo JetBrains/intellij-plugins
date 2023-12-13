@@ -104,20 +104,20 @@ public class DartQuickAssistIntention implements IntentionAction, Comparable<Int
   }
 
   //@formatter:off
-  public static class DartQuickAssistIntention0  extends DartQuickAssistIntention{ public DartQuickAssistIntention0()  {super(0); } }
-  public static class DartQuickAssistIntention1  extends DartQuickAssistIntention{ public DartQuickAssistIntention1()  {super(1); } }
-  public static class DartQuickAssistIntention2  extends DartQuickAssistIntention{ public DartQuickAssistIntention2()  {super(2); } }
-  public static class DartQuickAssistIntention3  extends DartQuickAssistIntention{ public DartQuickAssistIntention3()  {super(3); } }
-  public static class DartQuickAssistIntention4  extends DartQuickAssistIntention{ public DartQuickAssistIntention4()  {super(4); } }
-  public static class DartQuickAssistIntention5  extends DartQuickAssistIntention{ public DartQuickAssistIntention5()  {super(5); } }
-  public static class DartQuickAssistIntention6  extends DartQuickAssistIntention{ public DartQuickAssistIntention6()  {super(6); } }
-  public static class DartQuickAssistIntention7  extends DartQuickAssistIntention{ public DartQuickAssistIntention7()  {super(7); } }
-  public static class DartQuickAssistIntention8  extends DartQuickAssistIntention{ public DartQuickAssistIntention8()  {super(8); } }
-  public static class DartQuickAssistIntention9  extends DartQuickAssistIntention{ public DartQuickAssistIntention9()  {super(9); } }
-  public static class DartQuickAssistIntention10 extends DartQuickAssistIntention{ public DartQuickAssistIntention10() {super(10);} }
-  public static class DartQuickAssistIntention11 extends DartQuickAssistIntention{ public DartQuickAssistIntention11() {super(11);} }
-  public static class DartQuickAssistIntention12 extends DartQuickAssistIntention{ public DartQuickAssistIntention12() {super(12);} }
-  public static class DartQuickAssistIntention13 extends DartQuickAssistIntention{ public DartQuickAssistIntention13() {super(13);} }
-  public static class DartQuickAssistIntention14 extends DartQuickAssistIntention{ public DartQuickAssistIntention14() {super(14);} }
+  public static final class DartQuickAssistIntention0  extends DartQuickAssistIntention{ public DartQuickAssistIntention0()  {super(0); } }
+  public static final class DartQuickAssistIntention1  extends DartQuickAssistIntention{ public DartQuickAssistIntention1()  {super(1); } }
+  public static final class DartQuickAssistIntention2  extends DartQuickAssistIntention{ public DartQuickAssistIntention2()  {super(2); } }
+  public static final class DartQuickAssistIntention3  extends DartQuickAssistIntention{ public DartQuickAssistIntention3()  {super(3); } }
+  public static final class DartQuickAssistIntention4  extends DartQuickAssistIntention{ public DartQuickAssistIntention4()  {super(4); } }
+  public static final class DartQuickAssistIntention5  extends DartQuickAssistIntention{ public DartQuickAssistIntention5()  {super(5); } }
+  public static final class DartQuickAssistIntention6  extends DartQuickAssistIntention{ public DartQuickAssistIntention6()  {super(6); } }
+  public static final class DartQuickAssistIntention7  extends DartQuickAssistIntention{ public DartQuickAssistIntention7()  {super(7); } }
+  public static final class DartQuickAssistIntention8  extends DartQuickAssistIntention{ public DartQuickAssistIntention8()  {super(8); } }
+  public static final class DartQuickAssistIntention9  extends DartQuickAssistIntention{ public DartQuickAssistIntention9()  {super(9); } }
+  public static final class DartQuickAssistIntention10 extends DartQuickAssistIntention{ public DartQuickAssistIntention10() {super(10);} }
+  public static final class DartQuickAssistIntention11 extends DartQuickAssistIntention{ public DartQuickAssistIntention11() {super(11);} }
+  public static final class DartQuickAssistIntention12 extends DartQuickAssistIntention{ public DartQuickAssistIntention12() {super(12);} }
+  public static final class DartQuickAssistIntention13 extends DartQuickAssistIntention{ public DartQuickAssistIntention13() {super(13);} }
+  public static final class DartQuickAssistIntention14 extends DartQuickAssistIntention{ public DartQuickAssistIntention14() {super(14);} }
   //@formatter:on
 }

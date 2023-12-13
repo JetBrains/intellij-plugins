@@ -11,7 +11,7 @@ import com.intellij.usages.UsageTarget;
 import com.intellij.usages.rules.PsiElementUsage;
 import org.jetbrains.annotations.NotNull;
 
-public class ImportFilteringRule extends com.intellij.usages.rules.ImportFilteringRule {
+public final class ImportFilteringRule extends com.intellij.usages.rules.ImportFilteringRule {
   @Override
   public boolean isVisible(@NotNull Usage usage, @NotNull UsageTarget @NotNull [] targets) {
     if (usage instanceof PsiElementUsage) {

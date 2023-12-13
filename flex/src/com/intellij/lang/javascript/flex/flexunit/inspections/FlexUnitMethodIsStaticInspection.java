@@ -13,7 +13,7 @@ import com.intellij.lang.javascript.validation.fixes.RemoveASTNodeFix;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
-public class FlexUnitMethodIsStaticInspection extends FlexUnitMethodInspectionBase {
+public final class FlexUnitMethodIsStaticInspection extends FlexUnitMethodInspectionBase {
 
   @Override
   @NotNull

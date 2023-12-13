@@ -20,7 +20,7 @@ import java.util.List;
 
 import static org.jetbrains.jps.api.CmdlineRemoteProto.Message.ControllerMessage.ParametersMessage.TargetTypeBuildScope;
 
-public class FlexResourceBuildTargetScopeProvider extends BuildTargetScopeProvider {
+public final class FlexResourceBuildTargetScopeProvider extends BuildTargetScopeProvider {
 
   private static final Key<Collection<Pair<Module, FlexBuildConfiguration>>> MODULES_AND_BCS_TO_COMPILE =
     Key.create("modules.and.bcs.to.compile");

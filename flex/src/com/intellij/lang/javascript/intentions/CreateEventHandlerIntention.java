@@ -13,7 +13,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class CreateEventHandlerIntention extends BaseIntentionAction {
+public final class CreateEventHandlerIntention extends BaseIntentionAction {
 
   public CreateEventHandlerIntention() {
     setText(FlexBundle.message("intention.create.event.handler"));

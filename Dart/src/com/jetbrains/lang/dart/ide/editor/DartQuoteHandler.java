@@ -6,7 +6,7 @@ import com.intellij.psi.tree.IElementType;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 
-public class DartQuoteHandler extends SimpleTokenSetQuoteHandler {
+public final class DartQuoteHandler extends SimpleTokenSetQuoteHandler {
 
   public DartQuoteHandler() {
     super(DartTokenTypesSets.STRINGS);

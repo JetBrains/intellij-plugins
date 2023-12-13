@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Created by Lera Nikolaenko
  */
-public class CfmllFindUsagesProvider implements FindUsagesProvider {
+public final class CfmllFindUsagesProvider implements FindUsagesProvider {
 
   @Override
   public boolean canFindUsagesFor(@NotNull final PsiElement psiElement) {

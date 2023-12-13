@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 
-public class HbBraceMatcher implements BraceMatcher {
+public final class HbBraceMatcher implements BraceMatcher {
 
   private static final Set<IElementType> LEFT_BRACES = new HashSet<>();
   private static final Set<IElementType> RIGHT_BRACES = new HashSet<>();

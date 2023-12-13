@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class GherkinFoldingBuilder implements FoldingBuilder, DumbAware {
+public final class GherkinFoldingBuilder implements FoldingBuilder, DumbAware {
   private static final TokenSet BLOCKS_TO_FOLD = TokenSet.create(GherkinElementTypes.SCENARIO,
                                                                  GherkinElementTypes.SCENARIO_OUTLINE,
                                                                  GherkinElementTypes.EXAMPLES_BLOCK,

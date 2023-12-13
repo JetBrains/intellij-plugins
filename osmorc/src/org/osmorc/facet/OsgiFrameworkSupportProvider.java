@@ -14,7 +14,7 @@ import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescri
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class OsgiFrameworkSupportProvider extends FacetBasedFrameworkSupportProvider<OsmorcFacet> {
+public final class OsgiFrameworkSupportProvider extends FacetBasedFrameworkSupportProvider<OsmorcFacet> {
   public OsgiFrameworkSupportProvider() {
     super(OsmorcFacetType.getInstance());
   }

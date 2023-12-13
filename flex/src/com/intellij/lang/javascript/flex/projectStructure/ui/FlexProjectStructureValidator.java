@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class FlexProjectStructureValidator extends ProjectStructureValidator {
+public final class FlexProjectStructureValidator extends ProjectStructureValidator {
 
   @Override
   protected boolean checkElement(final ProjectStructureElement element, final ProjectStructureProblemsHolder problemsHolder) {

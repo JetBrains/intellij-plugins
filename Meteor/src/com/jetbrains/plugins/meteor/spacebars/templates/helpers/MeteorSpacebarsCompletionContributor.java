@@ -32,7 +32,7 @@ import java.util.Collection;
 import java.util.List;
 
 
-public class MeteorSpacebarsCompletionContributor extends CompletionContributor {
+public final class MeteorSpacebarsCompletionContributor extends CompletionContributor {
 
   public MeteorSpacebarsCompletionContributor() {
     extend(CompletionType.BASIC, possibleTag(MeteorSpacebarsReferenceContributor.Holder.OPEN_PART_TOKEN), getPartialTagProvider());

@@ -19,7 +19,7 @@ import static com.intellij.util.ArrayUtilRt.EMPTY_STRING_ARRAY;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static org.angularjs.index.AngularJSDirectivesSupport.findTagDirectives;
 
-public class AngularJSCssElementDescriptionProvider extends CssElementDescriptorProvider {
+public final class AngularJSCssElementDescriptionProvider extends CssElementDescriptorProvider {
 
   @Override
   public boolean isMyContext(@Nullable PsiElement context) {

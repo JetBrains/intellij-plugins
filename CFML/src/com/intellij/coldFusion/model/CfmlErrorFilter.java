@@ -11,7 +11,7 @@ import com.intellij.psi.PsiErrorElement;
 import org.jetbrains.annotations.NotNull;
 
 
-public class CfmlErrorFilter extends HighlightErrorFilter {
+public final class CfmlErrorFilter extends HighlightErrorFilter {
 
   @Override
   public boolean shouldHighlightErrorElement(@NotNull final PsiErrorElement element) {

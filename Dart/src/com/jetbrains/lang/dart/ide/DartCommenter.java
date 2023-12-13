@@ -6,7 +6,7 @@ import com.intellij.psi.tree.IElementType;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 import org.jetbrains.annotations.Nullable;
 
-public class DartCommenter implements CodeDocumentationAwareCommenter {
+public final class DartCommenter implements CodeDocumentationAwareCommenter {
   @Override
   public String getLineCommentPrefix() {
     return "//";

@@ -30,7 +30,7 @@ import static com.intellij.psi.formatter.WrappingUtil.getWrapType;
  * Template aware formatter which provides formatting for Handlebars/Mustache syntax and delegates formatting
  * for the templated language to that languages formatter
  */
-public class HbFormattingModelBuilder extends TemplateLanguageFormattingModelBuilder {
+public final class HbFormattingModelBuilder extends TemplateLanguageFormattingModelBuilder {
 
 
   @Override

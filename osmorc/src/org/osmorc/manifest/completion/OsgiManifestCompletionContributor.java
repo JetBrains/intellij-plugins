@@ -29,7 +29,7 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
 /**
  * @author Vladislav.Soroka
  */
-public class OsgiManifestCompletionContributor extends CompletionContributor {
+public final class OsgiManifestCompletionContributor extends CompletionContributor {
   public OsgiManifestCompletionContributor() {
     extend(
       CompletionType.BASIC,

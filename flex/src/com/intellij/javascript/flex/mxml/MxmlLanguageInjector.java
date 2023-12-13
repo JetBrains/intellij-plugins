@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.List;
 
-public class MxmlLanguageInjector implements MultiHostInjector, JSTargetedInjector {
+public final class MxmlLanguageInjector implements MultiHostInjector, JSTargetedInjector {
   public static final String PRIVATE_TAG_NAME = "Private";
   private static final String FUNCTION_CALL_PREFIX = "(function (... _){}) (";
   private static final String FUNCTION_CALL_SUFFIX = ");";

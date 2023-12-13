@@ -14,7 +14,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinPystring;
 
 import static org.jetbrains.plugins.cucumber.psi.GherkinLexer.PYSTRING_MARKER;
 
-public class GherkinPyStringManipulator extends AbstractElementManipulator<GherkinPystring> {
+public final class GherkinPyStringManipulator extends AbstractElementManipulator<GherkinPystring> {
   private static final String PY_STRING_FILE_TEMPLATE =
     """
       Feature:\s

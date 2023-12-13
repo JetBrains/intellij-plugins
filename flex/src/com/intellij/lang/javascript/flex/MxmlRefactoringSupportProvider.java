@@ -11,7 +11,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.RefactoringActionHandler;
 import org.jetbrains.annotations.NotNull;
 
-public class MxmlRefactoringSupportProvider extends RefactoringSupportProvider {
+public final class MxmlRefactoringSupportProvider extends RefactoringSupportProvider {
 
   @Override
   public boolean isAvailable(@NotNull PsiElement context) {

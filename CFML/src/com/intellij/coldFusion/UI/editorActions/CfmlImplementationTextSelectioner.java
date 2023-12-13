@@ -22,7 +22,7 @@ import com.intellij.coldFusion.model.psi.CfmlTag;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-public class CfmlImplementationTextSelectioner extends DefaultImplementationTextSelectioner {
+public final class CfmlImplementationTextSelectioner extends DefaultImplementationTextSelectioner {
 
   @Override
   public int getTextEndOffset(@NotNull PsiElement element) {

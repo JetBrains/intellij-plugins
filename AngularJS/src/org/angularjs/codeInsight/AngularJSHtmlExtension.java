@@ -12,7 +12,7 @@ import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class AngularJSHtmlExtension extends HtmlXmlExtension {
+public final class AngularJSHtmlExtension extends HtmlXmlExtension {
   @Override
   public boolean isAvailable(PsiFile file) {
     return super.isAvailable(file) && AngularIndexUtil.hasAngularJS(file.getProject());

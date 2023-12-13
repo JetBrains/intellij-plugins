@@ -8,7 +8,7 @@ import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class DartHighlightingErrorFilter extends HighlightErrorFilter {
+public final class DartHighlightingErrorFilter extends HighlightErrorFilter {
   @Override
   public boolean shouldHighlightErrorElement(@NotNull final PsiErrorElement element) {
     if (!(element.getLanguage() == DartLanguage.INSTANCE)) return true;

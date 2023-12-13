@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class DartConsoleFolding extends ConsoleFolding {
+public final class DartConsoleFolding extends ConsoleFolding {
 
   private static final String DART_MARKER = SystemInfo.isWindows ? "\\bin\\dart.exe " : "/bin/dart ";
   private static final String WEBDEV_RUNNER_MARKER = SystemInfo.isWindows

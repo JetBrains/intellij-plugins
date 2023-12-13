@@ -7,7 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.projectView.DartIconProvider;
 import org.jetbrains.annotations.NotNull;
 
-public class DartTestSourcesFilter extends TestSourcesFilter {
+public final class DartTestSourcesFilter extends TestSourcesFilter {
   @Override
   public boolean isTestSource(@NotNull final VirtualFile file, @NotNull final Project project) {
     if (!file.isInLocalFileSystem()) return false;

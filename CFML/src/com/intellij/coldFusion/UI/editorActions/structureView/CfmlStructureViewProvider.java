@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Created by Lera Nikolaenko
  */
-public class CfmlStructureViewProvider implements PsiStructureViewFactory {
+public final class CfmlStructureViewProvider implements PsiStructureViewFactory {
   @Override
   public StructureViewBuilder getStructureViewBuilder(@NotNull PsiFile psiFile) {
     return TemplateLanguageStructureViewBuilder.create(psiFile, CfmlStructureViewModel::new);

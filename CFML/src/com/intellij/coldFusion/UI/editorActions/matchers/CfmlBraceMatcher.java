@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Created by Lera Nikolaenko
  */
-public class CfmlBraceMatcher implements BraceMatcher {
+public final class CfmlBraceMatcher implements BraceMatcher {
   private static final BracePair[] PAIRS = new BracePair[]{
     // new BracePair(CfmlTokenTypes.OPENER, CfmlTokenTypes.CLOSER, true),
     new BracePair(CfscriptTokenTypes.L_BRACKET, CfscriptTokenTypes.R_BRACKET, false),

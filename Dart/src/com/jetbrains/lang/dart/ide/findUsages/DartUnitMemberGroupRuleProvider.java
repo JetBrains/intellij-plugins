@@ -20,7 +20,7 @@ import com.intellij.usages.impl.FileStructureGroupRuleProvider;
 import com.intellij.usages.rules.UsageGroupingRule;
 import org.jetbrains.annotations.NotNull;
 
-public class DartUnitMemberGroupRuleProvider implements FileStructureGroupRuleProvider {
+public final class DartUnitMemberGroupRuleProvider implements FileStructureGroupRuleProvider {
   @Override
   public UsageGroupingRule getUsageGroupingRule(@NotNull Project project) {
     return new DartUnitMemberUsageGroupingRule();

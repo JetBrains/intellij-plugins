@@ -14,7 +14,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.css.CssString;
 import org.jetbrains.annotations.NotNull;
 
-public class FlexCssAnnotator implements Annotator {
+public final class FlexCssAnnotator implements Annotator {
   @Override
   public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     // skinClass: ClassReference("com.company.SomeClass");

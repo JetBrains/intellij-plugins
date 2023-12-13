@@ -11,7 +11,7 @@ import com.intellij.psi.search.UseScopeEnlarger;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class DroolsRhsScopeEnlarger extends UseScopeEnlarger {
+public final class DroolsRhsScopeEnlarger extends UseScopeEnlarger {
 
   @Override
   public SearchScope getAdditionalUseScope(@NotNull PsiElement element) {

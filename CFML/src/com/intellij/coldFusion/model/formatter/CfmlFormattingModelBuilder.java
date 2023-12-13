@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class CfmlFormattingModelBuilder extends TemplateLanguageFormattingModelBuilder {
+public final class CfmlFormattingModelBuilder extends TemplateLanguageFormattingModelBuilder {
 
   @Override
   public TemplateLanguageBlock createTemplateLanguageBlock(@NotNull ASTNode node,

@@ -15,7 +15,7 @@ import org.dartlang.analysis.server.protocol.SourceFileEdit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartImportOptimizer implements ImportOptimizer {
+public final class DartImportOptimizer implements ImportOptimizer {
   @NotNull
   @Override
   public Runnable processFile(@NotNull final PsiFile file) {

@@ -70,7 +70,7 @@ import static com.intellij.openapi.module.ModuleUtilCore.findModuleForFile;
 import static com.intellij.openapi.module.ModuleUtilCore.findModuleForPsiElement;
 import static com.intellij.psi.util.PsiUtilCore.toPsiElementArray;
 
-public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvider {
+public final class FlexCssElementDescriptorProvider extends CssElementDescriptorProvider {
   private final FlexCssValueValidator FLEX_CSS_VALUE_VALIDATOR = new FlexCssValueValidator(this);
   private final Map<String, CssFunctionDescriptor> myFunctionDescriptors = new HashMap<>();
 

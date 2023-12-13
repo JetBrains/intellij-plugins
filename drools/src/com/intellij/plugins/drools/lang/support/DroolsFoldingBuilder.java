@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DroolsFoldingBuilder implements FoldingBuilder, DumbAware {
+public final class DroolsFoldingBuilder implements FoldingBuilder, DumbAware {
 
   @Override
   public FoldingDescriptor @NotNull [] buildFoldRegions(@NotNull final ASTNode node, @NotNull final Document document) {

@@ -23,7 +23,7 @@ import java.util.Collections;
 /**
  * @author Maxim.Mossienko
  */
-public class SwfFileStubBuilder implements BinaryFileStubBuilder {
+public final class SwfFileStubBuilder implements BinaryFileStubBuilder {
   private static final int VERSION = 3;
 
   @Override

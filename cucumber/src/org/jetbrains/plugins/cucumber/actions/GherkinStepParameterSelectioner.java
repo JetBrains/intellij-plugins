@@ -24,7 +24,7 @@ import java.util.Set;
 /**
  * @author Dennis.Ushakov
  */
-public class GherkinStepParameterSelectioner extends AbstractWordSelectioner {
+public final class GherkinStepParameterSelectioner extends AbstractWordSelectioner {
   private final static Set<Pair<String, String>> START_END = new LinkedHashSet<>();
 
   static {

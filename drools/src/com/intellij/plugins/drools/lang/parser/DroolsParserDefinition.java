@@ -18,7 +18,7 @@ import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 
-public class DroolsParserDefinition implements ParserDefinition {
+public final class DroolsParserDefinition implements ParserDefinition {
   private static final IFileElementType DROOLS_FILE = new IFileElementType("DROOLS_FILE", DroolsLanguage.INSTANCE);
 
   @Override

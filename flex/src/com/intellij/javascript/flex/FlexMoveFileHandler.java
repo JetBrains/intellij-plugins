@@ -17,7 +17,7 @@ import java.util.Map;
 /**
  * @author Maxim.Mossienko
  */
-public class FlexMoveFileHandler extends MoveFileHandler {
+public final class FlexMoveFileHandler extends MoveFileHandler {
   @Override
   public boolean canProcessElement(final PsiFile element) {
     return element instanceof JSFile || JavaScriptSupportLoader.isFlexMxmFile(element);

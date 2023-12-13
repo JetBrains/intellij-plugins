@@ -8,7 +8,7 @@ import com.intellij.packaging.ui.PackagingSourceItem;
 import com.intellij.packaging.ui.PackagingSourceItemFilter;
 import org.jetbrains.annotations.NotNull;
 
-public class FlashPackagingSourceItemFilter extends PackagingSourceItemFilter {
+public final class FlashPackagingSourceItemFilter extends PackagingSourceItemFilter {
   @Override
   public boolean isAvailable(@NotNull PackagingSourceItem item, @NotNull ArtifactEditorContext context) {
     if (item instanceof ModuleSourceItemGroup &&

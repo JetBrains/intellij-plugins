@@ -3,7 +3,7 @@ package com.jetbrains.lang.dart.ide.template.macro;
 import com.jetbrains.lang.dart.psi.DartClass;
 import org.jetbrains.annotations.NotNull;
 
-public class DartListVariableMacro extends DartFilterByClassMacro {
+public final class DartListVariableMacro extends DartFilterByClassMacro {
   @Override
   public String getName() {
     return "dartListVariable";

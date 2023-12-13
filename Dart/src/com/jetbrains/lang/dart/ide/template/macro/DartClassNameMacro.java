@@ -11,7 +11,7 @@ import com.jetbrains.lang.dart.psi.DartClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartClassNameMacro extends DartMacroBase {
+public final class DartClassNameMacro extends DartMacroBase {
   @Override
   public String getName() {
     return "dartClassName";

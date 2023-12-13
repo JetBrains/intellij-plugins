@@ -11,7 +11,7 @@ import com.jetbrains.lang.dart.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartMethodReturnTypeMacro extends DartMacroBase {
+public final class DartMethodReturnTypeMacro extends DartMacroBase {
   @Override
   public String getName() {
     return "dartReturnType";

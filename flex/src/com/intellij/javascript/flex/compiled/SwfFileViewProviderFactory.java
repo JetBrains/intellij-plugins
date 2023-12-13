@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class SwfFileViewProviderFactory implements FileViewProviderFactory {
+public final class SwfFileViewProviderFactory implements FileViewProviderFactory {
   @Override
   @NotNull
   public FileViewProvider createFileViewProvider(@NotNull final VirtualFile file, Language language, @NotNull final PsiManager manager, final boolean eventSystemEnabled) {

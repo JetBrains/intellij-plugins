@@ -14,7 +14,7 @@ import org.jetbrains.plugins.cucumber.psi.impl.GherkinExamplesBlockImpl;
 /**
  * @author Dennis.Ushakov
  */
-public class CucumberExamplesColonInspection extends GherkinInspection {
+public final class CucumberExamplesColonInspection extends GherkinInspection {
 
   @Override
   public boolean isEnabledByDefault() {

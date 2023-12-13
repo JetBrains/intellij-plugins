@@ -33,7 +33,7 @@ public abstract class DartUriElementBase extends DartPsiCompositeElementImpl imp
     return new PsiReference[]{new DartFileReference(this, getUriStringAndItsRange().first)};
   }
 
-  public static class DartUriElementManipulator extends AbstractElementManipulator<DartUriElement> {
+  public static final class DartUriElementManipulator extends AbstractElementManipulator<DartUriElement> {
     @Override
     public DartUriElement handleContentChange(@NotNull final DartUriElement oldUriElement,
                                               @NotNull final TextRange range,

@@ -41,7 +41,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 
 
-public class FlexResolveHelper implements JSResolveHelper {
+public final class FlexResolveHelper implements JSResolveHelper {
   public static final PsiScopedImportSet ourPsiScopedImportSet = new PsiScopedImportSet();
 
   @Override

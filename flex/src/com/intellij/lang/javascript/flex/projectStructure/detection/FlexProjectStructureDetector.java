@@ -27,7 +27,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FlexProjectStructureDetector extends ProjectStructureDetector {
+public final class FlexProjectStructureDetector extends ProjectStructureDetector {
 
   public static final NullableFunction<CharSequence, String> PACKAGE_NAME_FETCHER = charSequence -> {
     Lexer lexer = LanguageParserDefinitions.INSTANCE.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).createLexer(null);

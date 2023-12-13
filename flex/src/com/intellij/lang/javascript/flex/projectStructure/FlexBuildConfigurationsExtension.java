@@ -42,7 +42,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class FlexBuildConfigurationsExtension extends ModuleStructureExtension {
+public final class FlexBuildConfigurationsExtension extends ModuleStructureExtension {
 
   final FlexBCConfigurator myConfigurator;
 

@@ -26,7 +26,7 @@ import java.util.List;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
-public class DroolsCompletionContributor extends CompletionContributor {
+public final class DroolsCompletionContributor extends CompletionContributor {
   public DroolsCompletionContributor() {
     extendRhsStatement();
     extendPatternBindExpressions();

@@ -16,7 +16,7 @@ import org.jetbrains.plugins.cucumber.steps.reference.CucumberStepReference;
 import static org.jetbrains.plugins.cucumber.CucumberUtil.getCucumberStepReference;
 
 
-public class CucumberStepInspection extends GherkinInspection {
+public final class CucumberStepInspection extends GherkinInspection {
   @Override
   public boolean isEnabledByDefault() {
     return true;

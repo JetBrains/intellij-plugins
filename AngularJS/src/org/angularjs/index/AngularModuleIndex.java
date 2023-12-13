@@ -14,7 +14,7 @@ import java.util.Set;
 /**
  * @author Dennis.Ushakov
  */
-public class AngularModuleIndex extends AngularIndexBase {
+public final class AngularModuleIndex extends AngularIndexBase {
   public static final StubIndexKey<String, JSImplicitElementProvider> KEY = StubIndexKey.createIndexKey("angularjs.module.index");
 
   @Override

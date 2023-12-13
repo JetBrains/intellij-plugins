@@ -11,7 +11,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 
 
-public class DroolsColorAnnotator implements Annotator {
+public final class DroolsColorAnnotator implements Annotator {
 
   @Override
   public void annotate(@NotNull PsiElement node, @NotNull AnnotationHolder holder) {

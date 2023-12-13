@@ -10,7 +10,7 @@ import com.jetbrains.plugins.meteor.MeteorFacade;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class MeteorClientUpdateConfigurationProvider extends UpdateConfigurationProvider {
+public final class MeteorClientUpdateConfigurationProvider extends UpdateConfigurationProvider {
   private static final UpdateConfiguration UPDATE_CONFIGURATION = new UpdateConfiguration() {
     @NotNull
     @Override

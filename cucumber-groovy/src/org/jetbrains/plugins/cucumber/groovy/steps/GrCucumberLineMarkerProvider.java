@@ -14,7 +14,7 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethod
 /**
  * @author Max Medvedev
  */
-public class GrCucumberLineMarkerProvider implements LineMarkerProvider {
+public final class GrCucumberLineMarkerProvider implements LineMarkerProvider {
   @Override
   public LineMarkerInfo<?> getLineMarkerInfo(@NotNull PsiElement element) {
     if (GrCucumberUtil.isStepDefinition(element)) {

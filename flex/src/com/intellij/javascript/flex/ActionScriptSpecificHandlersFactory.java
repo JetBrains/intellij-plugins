@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author Konstantin.Ulitin
  */
-public class ActionScriptSpecificHandlersFactory extends JSDialectSpecificHandlersFactory {
+public final class ActionScriptSpecificHandlersFactory extends JSDialectSpecificHandlersFactory {
   @NotNull
   @Override
   public JSTypeEvaluator newTypeEvaluator(@NotNull JSEvaluateContext context) {
