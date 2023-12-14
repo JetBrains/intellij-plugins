@@ -9,11 +9,9 @@ import com.intellij.model.Symbol
 import com.intellij.navigation.NavigatableSymbol
 import com.intellij.navigation.SymbolNavigationService
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.findPsiFile
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.navigation.NavigationTarget
-import java.nio.file.Path
 
 data class DtsBindingSymbol(val compatible: String) : DtsDocumentationSymbol, NavigatableSymbol {
   override fun createPointer(): Pointer<out Symbol> = Pointer { this }
@@ -28,7 +26,7 @@ data class DtsBindingSymbol(val compatible: String) : DtsDocumentationSymbol, Na
   override fun getNavigationTargets(project: Project): Collection<NavigationTarget> {
     return DtsUtil.singleResult {
       val path = getBinding(project)?.path ?: return@singleResult null
-      val virtualFile = VfsUtil.findFile(Path.of(path), true) ?: return@singleResult null
+      val virtualFile = DtsUtil.findFile(path) ?: return@singleResult null
       val psiFile = virtualFile.findPsiFile(project) ?: return@singleResult null
 
       SymbolNavigationService.getInstance().psiFileNavigationTarget(psiFile)

@@ -1,6 +1,7 @@
 package com.intellij.dts.zephyr
 
 import com.intellij.dts.settings.DtsSettings
+import com.intellij.dts.util.DtsUtil
 import com.intellij.dts.util.Either
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.Service
@@ -10,7 +11,6 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.SimpleModificationTracker
 import com.intellij.openapi.vfs.*
 import com.intellij.openapi.vfs.impl.BulkVirtualFileListenerAdapter
-import java.io.File
 
 @Service(Service.Level.PROJECT)
 class DtsZephyrProvider(val project: Project) : Disposable.Default {
@@ -85,12 +85,8 @@ class DtsZephyrProvider(val project: Project) : Disposable.Default {
     rootSource = source
 
     val newRoot = source.fold(
-      { path ->
-        LocalFileSystem.getInstance().findFileByIoFile(File(path))
-      },
-      {
-        DtsZephyrRoot.searchForRoot(project)
-      },
+      { path -> DtsUtil.findFile(path) },
+      { DtsZephyrRoot.searchForRoot(project) },
     )
 
     if (newRoot != root) {

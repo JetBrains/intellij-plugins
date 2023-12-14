@@ -1,10 +1,10 @@
 package com.intellij.dts.zephyr
 
+import com.intellij.dts.util.DtsUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.modules
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.vfs.*
-import java.nio.file.Path
 
 object DtsZephyrRoot {
   private const val BOARDS_PATH = "boards"
@@ -50,8 +50,7 @@ object DtsZephyrRoot {
 
     // search default installation directory
     if (candidates.isEmpty()) {
-      val path = Path.of(System.getProperty("user.home"), DEFAULT_PATH)
-      val file = VfsUtil.findFile(path, true)
+      val file = DtsUtil.findFile(System.getProperty("user.home"), DEFAULT_PATH)
 
       if (file != null && isValid(file)) {
         candidates.add(file)

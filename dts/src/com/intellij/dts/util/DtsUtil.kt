@@ -4,12 +4,16 @@ import com.intellij.dts.clion.DtsCLionUtil
 import com.intellij.dts.lang.DtsTokenSets
 import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.TokenType
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.siblings
+import java.nio.file.InvalidPathException
+import java.nio.file.Path
 import java.util.*
 
 object DtsUtil {
@@ -74,6 +78,14 @@ object DtsUtil {
     }
     else {
       Collections.singletonList(result)
+    }
+  }
+
+  fun findFile(first: String, vararg more: String): VirtualFile? {
+    return try {
+      VfsUtil.findFile(Path.of(first, *more), true)
+    } catch (_: InvalidPathException) {
+      null
     }
   }
 

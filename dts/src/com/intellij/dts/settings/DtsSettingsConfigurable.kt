@@ -11,8 +11,6 @@ import com.intellij.openapi.options.BoundSearchableConfigurable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.ValidationInfo
-import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.ui.CollectionComboBoxModel
 import com.intellij.ui.SimpleListCellRenderer
 import com.intellij.ui.components.CheckBox
@@ -20,8 +18,6 @@ import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.builder.toMutableProperty
 import org.jetbrains.annotations.Nls
-import java.nio.file.InvalidPathException
-import java.nio.file.Path
 
 class DtsSettingsConfigurable(private val project: Project) : BoundSearchableConfigurable(
   displayName = DtsBundle.message("settings.name"),
@@ -38,11 +34,7 @@ class DtsSettingsConfigurable(private val project: Project) : BoundSearchableCon
       return Either.Right(root.path)
     }
     else {
-      val root = try {
-        VfsUtil.findFile(Path.of(path), true)
-      } catch (_: InvalidPathException) {
-        null
-      } ?: return Either.Left(DtsBundle.message("settings.zephyr.root.not_found"))
+      val root = DtsUtil.findFile(path) ?: return Either.Left(DtsBundle.message("settings.zephyr.root.not_found"))
 
       if (!DtsZephyrRoot.isValid(root)) {
         return Either.Left(DtsBundle.message("settings.zephyr.root.invalid"))
@@ -118,8 +110,7 @@ class DtsSettingsConfigurable(private val project: Project) : BoundSearchableCon
       override fun readState(): String = rootInput.text
 
       override fun performCheck(state: String): Result<List<String>> = validateRoot(state).mapRight { rootPath ->
-        val root = LocalFileSystem.getInstance().findFileByPath(rootPath)
-        DtsZephyrRoot.getAllBoardDirs(root).toList()
+        DtsZephyrRoot.getAllBoardDirs(DtsUtil.findFile(rootPath)).toList()
       }
 
       override fun evaluate(state: String, result: Result<List<String>>): ValidationInfo? {
