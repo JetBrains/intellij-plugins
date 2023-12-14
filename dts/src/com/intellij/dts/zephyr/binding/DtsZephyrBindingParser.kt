@@ -13,9 +13,9 @@ class DtsZephyrBindingParser(
 
   data class Source(val path: String?, val data: Map<*, *>)
 
-  data class Filter(val allowedProperties: List<String>?, val blockedProperties: List<String>?, val childFilter: Filter?)
+  private data class Filter(val allowedProperties: List<String>?, val blockedProperties: List<String>?, val childFilter: Filter?)
 
-  data class Include(val name: String, val filter: Filter)
+  private data class Include(val name: String, val filter: Filter)
 
   private val cache = mutableMapOf<String, DtsZephyrBinding?>()
 
@@ -101,6 +101,9 @@ class DtsZephyrBindingParser(
         readValue<String>(property, "description")?.let(propertyBuilder::setDescription)
         readValue<String>(property, "type")?.let(propertyBuilder::setType)
         readValue<Boolean>(property, "required")?.let(propertyBuilder::setRequired)
+        readValue<Any>(property, "default")?.let(propertyBuilder::setDefault)
+        readValue<Any>(property, "const")?.let(propertyBuilder::setConst)
+        readValue<List<Any>>(property, "enum")?.let(propertyBuilder::setEnum)
       }
     }
 

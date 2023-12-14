@@ -24,7 +24,7 @@ abstract class DtsTestBase : BasePlatformTestCase() {
     settings.USE_TAB_CHARACTER = false
   }
 
-  private val testName: String
+  protected val testName: String
     get() = getTestName(false)
       .replace(Regex("[#@_.,-]+"), " ")
       .toPascalCase()

@@ -71,12 +71,18 @@ data class DtsZephyrPropertyBinding(
   val name: @NlsSafe String,
   val description: @NlsSafe String?,
   val type: DtsPropertyType,
+  val default: DtsPropertyValue?,
+  val const: DtsPropertyValue?,
+  val enum: List<DtsPropertyValue>?,
   val required: Boolean,
 ) {
   class Builder(private val name: String) {
     private var description: String? = null
     private var type: DtsPropertyType? = null
     private var required: Boolean? = null
+    private var default: DtsPropertyValue? = null
+    private var const: DtsPropertyValue? = null
+    private var enum: List<DtsPropertyValue>? = null
 
     fun setDescription(value: String): Builder {
       if (description == null) description = value
@@ -86,6 +92,25 @@ data class DtsZephyrPropertyBinding(
     fun setType(value: String): Builder {
       if (type == null) type = DtsPropertyType.fromZephyr(value)
       return this
+    }
+
+    fun setDefault(value: Any): Builder {
+      if (default == null) default = DtsPropertyValue.fromZephyr(value)
+      return this
+    }
+
+    fun setConst(value: Any): Builder {
+      if (const == null) const = DtsPropertyValue.fromZephyr(value)
+      return this
+    }
+
+    fun setEnum(value: List<Any>) {
+      if (enum != null) return
+
+      val mapped = value.mapNotNull(DtsPropertyValue.Companion::fromZephyr)
+      if (mapped.size != value.size) return
+
+      enum = mapped
     }
 
     fun setRequired(value: Boolean): Builder {
@@ -98,6 +123,9 @@ data class DtsZephyrPropertyBinding(
       description = description,
       type = type ?: DtsPropertyType.Compound,
       required = required ?: false,
+      default = default,
+      const = const,
+      enum = enum,
     )
   }
 }
