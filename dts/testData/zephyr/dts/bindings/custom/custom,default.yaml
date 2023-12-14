@@ -1,0 +1,28 @@
+description: Binding which defines some default values for testing
+
+compatible: "custom,default"
+
+properties:
+  prop-int:
+    type: int
+    default: 10
+
+  prop-int-hex:
+    type: int
+    default: 0x10
+
+  prop-string:
+    type: string
+    default: "value"
+
+  prop-cell-array:
+    type: array
+    default: [0, 1, 2, 3]
+
+  prop-byte-array:
+    type: uint8-array
+    default: [0, 1, 2, 3]
+
+  prop-string-array:
+    type: string-array
+    default: ["value1", "value2"]

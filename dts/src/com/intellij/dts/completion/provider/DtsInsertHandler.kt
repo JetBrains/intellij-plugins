@@ -9,6 +9,7 @@ import com.intellij.dts.lang.DtsPropertyType
 import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.dts.lang.symbols.DtsPropertySymbol
 import com.intellij.dts.util.DtsUtil
+import com.intellij.dts.zephyr.binding.DtsPropertyValue
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.psi.PsiElement
@@ -55,9 +56,10 @@ private class InsertSession(val context: InsertionContext, force: Boolean) {
 
   private fun insertPair(left: Char, right: Char, body: String): Boolean {
     if (!canInsert || nextElement?.text?.getOrNull(0) == left) return false
-    insertText(left + body, moveCaret = true)
+    insertText(left.toString(), moveCaret = true)
 
     if (nextElement?.text?.getOrNull(0) == right) return false
+    insertText(body, moveCaret = true)
     insertText(right.toString())
 
     return true
@@ -85,11 +87,11 @@ private class InsertSession(val context: InsertionContext, force: Boolean) {
     return true
   }
 
-  fun insertString(): Boolean = insertPair(left = '"', right = '"', body = "")
+  fun insertString(body: String): Boolean = insertPair(left = '"', right = '"', body = body)
 
-  fun insertCellArray(body: String = ""): Boolean = insertPair(left = '<', right = '>', body = body)
+  fun insertCellArray(body: String): Boolean = insertPair(left = '<', right = '>', body = body)
 
-  fun insertByteArray(): Boolean = insertPair(left = '[', right = ']', body = "")
+  fun insertByteArray(body: String): Boolean = insertPair(left = '[', right = ']', body = body)
 
   fun insertNodeBraces(): Boolean = insertPair(left = '{', right = '}', body = "")
 
@@ -123,16 +125,35 @@ object DtsInsertHandler {
   }
 
   private fun insertString(symbol: DtsPropertySymbol, session: InsertSession) {
+    val value = when (val default = symbol.defaultValue) {
+      is DtsPropertyValue.String -> default.value
+      is DtsPropertyValue.StringList -> default.value.joinToString(separator = "\", \"")
+      else -> ""
+    }
+
     val isCompatible = symbol.name == "compatible"
-    session.insertAssign() && session.insertString() && session.openAutocomplete(isCompatible) && session.insertSemicolon()
+    val openCompletion = isCompatible && value.isEmpty()
+
+    session.insertAssign() && session.insertString(body = value) && session.openAutocomplete(openCompletion) && session.insertSemicolon()
   }
 
-  private fun insertCellArray(session: InsertSession) {
-    session.insertAssign() && session.insertCellArray() && session.insertSemicolon()
+  private fun insertCellArray(symbol: DtsPropertySymbol, session: InsertSession) {
+    val value = when (val default = symbol.defaultValue) {
+      is DtsPropertyValue.Int -> default.value.toString()
+      is DtsPropertyValue.IntList -> default.asIntList().joinToString(separator = " ")
+      else -> ""
+    }
+
+    session.insertAssign() && session.insertCellArray(body = value) && session.insertSemicolon()
   }
 
-  private fun insertByteArray(session: InsertSession) {
-    session.insertAssign() && session.insertByteArray() && session.insertSemicolon()
+  private fun insertByteArray(symbol: DtsPropertySymbol, session: InsertSession) {
+    val value = when (val default = symbol.defaultValue) {
+      is DtsPropertyValue.IntList -> default.asByteList().joinToString(separator = " ")
+      else -> ""
+    }
+
+    session.insertAssign() && session.insertByteArray(body = value) && session.insertSemicolon()
   }
 
   private fun insertPHandle(session: InsertSession) {
@@ -146,9 +167,9 @@ object DtsInsertHandler {
     when (symbol.type) {
       DtsPropertyType.Boolean -> insertBool(session)
       DtsPropertyType.String, DtsPropertyType.StringList -> insertString(symbol, session)
-      DtsPropertyType.Int, DtsPropertyType.Ints, DtsPropertyType.PHandleList -> insertCellArray(session)
+      DtsPropertyType.Int, DtsPropertyType.Ints, DtsPropertyType.PHandleList -> insertCellArray(symbol, session)
       DtsPropertyType.PHandle, DtsPropertyType.PHandles -> insertPHandle(session)
-      DtsPropertyType.Bytes -> insertByteArray(session)
+      DtsPropertyType.Bytes -> insertByteArray(symbol, session)
       DtsPropertyType.Path, DtsPropertyType.Compound -> insertCompound(session)
     }
   }

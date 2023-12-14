@@ -142,6 +142,10 @@ object DtsHtmlChunk {
     return HtmlChunk.raw(styledSpan(DtsTextAttributes.STRING, text))
   }
 
+  fun int(text: @NlsSafe String): HtmlChunk {
+    return HtmlChunk.raw(styledSpan(DtsTextAttributes.NUMBER, text))
+  }
+
   private fun tryParseDtsToHtml(project: Project, text: String): @NlsSafe String? {
     val fakePsiFile = PsiFileFactory.getInstance(project).createFileFromText(
       "comment.dtsi",

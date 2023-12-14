@@ -1,13 +1,16 @@
 package com.intellij.dts.documentation
 
 import com.intellij.dts.DtsBundle
+import com.intellij.dts.lang.DtsPropertyType
 import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.psi.getDtsPath
 import com.intellij.dts.util.DtsHtmlChunk
+import com.intellij.dts.zephyr.binding.DtsPropertyValue
 import com.intellij.dts.zephyr.binding.DtsZephyrBinding
 import com.intellij.dts.zephyr.binding.DtsZephyrPropertyBinding
 import com.intellij.lang.documentation.DocumentationMarkup
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.text.HtmlBuilder
 import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.platform.backend.documentation.DocumentationResult
 import com.intellij.platform.backend.documentation.DocumentationTarget
@@ -59,6 +62,44 @@ abstract class DtsDocumentationTarget(protected val project: Project) : Document
     )
   }
 
+  private fun buildPropertyDefault(html: DtsDocumentationHtmlBuilder, type: DtsPropertyType, default: DtsPropertyValue) {
+    if (type !in default.assignableTo) return
+
+    val value = when (default) {
+      is DtsPropertyValue.String -> {
+        DtsHtmlChunk.string('"' + default.value + '"')
+      }
+      is DtsPropertyValue.Int -> {
+        val builder = HtmlBuilder()
+        builder.append("<").append(DtsHtmlChunk.int(default.value.toString())).append(">")
+        builder.toFragment()
+
+      }
+      is DtsPropertyValue.StringList -> {
+        val builder = HtmlBuilder()
+        builder.appendWithSeparators(HtmlChunk.text(", "), default.value.map(DtsHtmlChunk::string))
+        builder.toFragment()
+      }
+      is DtsPropertyValue.IntList -> {
+        val builder = HtmlBuilder()
+
+        if (type == DtsPropertyType.Bytes) {
+          builder.append("[")
+          builder.appendWithSeparators(HtmlChunk.text(" "), default.asByteList().map(DtsHtmlChunk::int))
+          builder.append("]")
+        } else {
+          builder.append("<")
+          builder.appendWithSeparators(HtmlChunk.text(" "), default.asIntList().map(DtsHtmlChunk::int))
+          builder.append(">")
+        }
+
+        builder.toFragment()
+      }
+    } ?: return
+
+    html.definition(DtsHtmlChunk.definitionName("documentation.property_default"), value)
+  }
+
   /**
    * Writes: "Type: <<property type>> (<<required>>)"
    * And the description.
@@ -68,14 +109,11 @@ abstract class DtsDocumentationTarget(protected val project: Project) : Document
     html.appendToDefinition(HtmlChunk.text(binding.type.typeName))
 
     if (binding.required) {
-      html.appendToDefinition(
-        HtmlChunk.text(" (${DtsBundle.message("documentation.required")})").wrapWith(DocumentationMarkup.GRAYED_ELEMENT),
-      )
+      html.appendToDefinition(HtmlChunk.text(" (${DtsBundle.message("documentation.required")})").wrapWith(DocumentationMarkup.GRAYED_ELEMENT))
     }
 
-    binding.description?.let {
-      html.content(DtsHtmlChunk.binding(project, it))
-    }
+    binding.default?.let { default -> buildPropertyDefault(html, binding.type, default) }
+    binding.description?.let { description -> html.content(DtsHtmlChunk.binding(project, description)) }
   }
 
   /**

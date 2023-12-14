@@ -8,9 +8,9 @@ class DtsPropertyInsertionTest : DtsCompletionTest() {
         /*comment*/
     """
 
-  fun `test string (compatible)`() = doTest(
-    input = "compatible",
-    after = "compatible = \"<caret>\";",
+  fun `test string (status)`() = doTest(
+    input = "status",
+    after = "status = \"<caret>\";",
   )
 
   fun `test string (model)`() = doTest(
@@ -64,7 +64,7 @@ class DtsPropertyInsertionTest : DtsCompletionTest() {
   fun `test no duplicated tokens (langl)`() = doTest(
     lookup = "phandle",
     input = "p<caret> $unproductiveStatements >;",
-    after = "phandle = <&<caret> $unproductiveStatements >;",
+    after = "phandle = <<caret> $unproductiveStatements >;",
   )
 
   // Fails because array content is not checked.
@@ -86,18 +86,69 @@ class DtsPropertyInsertionTest : DtsCompletionTest() {
     after = "phandle<caret> $unproductiveStatements = <&>;",
   )
 
+  fun `test default property value (int)`() = doTest(
+    lookup = "prop-int" ,
+    input = "<caret>",
+    after = "prop-int = <10<caret>>;",
+    compatible = "custom,default",
+  )
+
+  fun `test default property value (hex int)`() = doTest(
+    lookup = "prop-int-hex" ,
+    input = "<caret>",
+    after = "prop-int-hex = <16<caret>>;",
+    compatible = "custom,default",
+  )
+
+  fun `test default property value (string)`() = doTest(
+    lookup = "prop-string" ,
+    input = "<caret>",
+    after = "prop-string = \"value<caret>\";",
+    compatible = "custom,default",
+  )
+
+  fun `test default property value (cell array)`() = doTest(
+    lookup = "prop-cell-array" ,
+    input = "<caret>",
+    after = "prop-cell-array = <0 1 2 3<caret>>;",
+    compatible = "custom,default",
+  )
+
+  fun `test default property value (byte array)`() = doTest(
+    lookup = "prop-byte-array" ,
+    input = "<caret>",
+    after = "prop-byte-array = [00 01 02 03<caret>];",
+    compatible = "custom,default",
+  )
+
+  fun `test default property value (string array)`() = doTest(
+    lookup = "prop-string-array" ,
+    input = "<caret>",
+    after = "prop-string-array = \"value1\", \"value2<caret>\";",
+    compatible = "custom,default",
+  )
+
   private fun doTest(input: String, after: String) = doTest(
     lookup = input,
     input = "$input<caret>",
     after = after,
   )
 
-  private fun doTest(lookup: String, input: String, after: String) {
+  private fun doTest(lookup: String, input: String, after: String, compatible: String = "") {
+    addZephyr()
+
+    val surrounding = """
+      / {
+        compatible = "$compatible"; 
+        <embed>
+      }; 
+    """
+
     doCompletionTest(
       lookupString = lookup,
       input = input,
       after = after,
-      surrounding = "/ {\n<embed>\n};",
+      surrounding = surrounding,
       useNodeContentVariations = true,
     )
   }

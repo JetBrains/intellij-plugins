@@ -29,4 +29,6 @@ class DtsZephyrDocumentationTest : DtsDocumentationTest() {
   fun `test node default`() = doTest()
 
   fun `test dts code`() = doTest()
+
+  fun `test default value`() = doTest()
 }
