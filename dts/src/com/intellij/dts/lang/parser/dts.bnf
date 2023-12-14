@@ -57,6 +57,7 @@
   mixin("int")="com.intellij.dts.lang.psi.mixin.DtsIntMixin"
 
   implements("byte")="com.intellij.dts.lang.psi.DtsValue.Byte"
+  mixin("byte")="com.intellij.dts.lang.psi.mixin.DtsByteMixin"
 
   implements("exprValue")="com.intellij.dts.lang.psi.DtsValue.Expression"
   implements("exprValue")="com.intellij.dts.lang.psi.DtsValue.Int"

@@ -6,55 +6,81 @@ import com.intellij.dts.lang.psi.DtsValue
 import java.util.function.Predicate
 import kotlin.reflect.KClass
 
-private fun macroOr(value: DtsValue, predicate: Predicate<DtsValue>): Boolean {
-  return value is DtsValue.Macro || predicate.test(value)
-}
-
-private fun scalar(predicate: Predicate<DtsValue>): Predicate<List<DtsValue>> {
-  return Predicate { values -> values.size == 1 && macroOr(values[0], predicate) }
+private fun macroOrPredicate(predicate: Predicate<DtsValue>): Predicate<DtsValue> {
+  return Predicate { value -> value is DtsValue.Macro || predicate.test(value) }
 }
 
 private fun list(predicate: Predicate<DtsValue>): Predicate<List<DtsValue>> {
-  return Predicate { values -> values.all { value -> macroOr(value, predicate) } }
+  return Predicate { values -> values.all(predicate::test) }
 }
 
-private fun notEmptyList(predicate: Predicate<DtsValue>): Predicate<List<DtsValue>> {
-  return Predicate { values -> values.isNotEmpty() && list(predicate).test(values) }
+private fun scalarList(predicate: Predicate<DtsValue>): Predicate<List<DtsValue>> {
+  return Predicate { values -> values.size == 1 && predicate.test(values[0]) }
 }
 
-private fun dropMacros(values: List<DtsValue>, predicate: Predicate<List<DtsValue>>): Boolean {
-  val nonMacro = values.filter { value -> value !is DtsValue.Macro }
-  if (nonMacro.isEmpty() && values.isNotEmpty()) return true
-
-  return predicate.test(nonMacro)
+private inline fun <reified T : DtsArray> array(predicate: Predicate<DtsValue>): Predicate<DtsValue> {
+  return macroOrPredicate { value -> value is T && value.dtsValues.all(predicate::test) }
 }
 
-private fun cellArray(predicate: Predicate<List<DtsValue>>): Predicate<DtsValue> {
-  return Predicate { value -> value is DtsArray.Cell && dropMacros(value.dtsValues, predicate) }
+private inline fun <reified T : DtsArray> scalarArray(predicate: Predicate<DtsValue>): Predicate<DtsValue> {
+  return macroOrPredicate { value -> value is T && ensureOneElement(value.dtsValues) && value.dtsValues.all(predicate::test) }
 }
 
-private fun byteArray(predicate: Predicate<List<DtsValue>>): Predicate<DtsValue> {
-  return Predicate { value -> value is DtsArray.Byte && dropMacros(value.dtsValues, predicate) }
+private fun ensureOneElement(values: List<DtsValue>): Boolean {
+  return values.isNotEmpty() && values.filter { it !is DtsValue.Macro }.size <= 1
 }
 
 private fun type(vararg types: KClass<*>): Predicate<DtsValue> {
-  return Predicate { value -> types.any { type -> type.isInstance(value) } }
+  return macroOrPredicate { value -> types.any { type -> type.isInstance(value) } }
 }
 
 fun DtsProperty.dtsAssignableTo(type: DtsPropertyType): Boolean {
   val predicate = when (type) {
-    DtsPropertyType.String -> scalar(type(DtsValue.String::class))
-    DtsPropertyType.Int -> scalar(cellArray(scalar(type(DtsValue.Int::class, DtsValue.Expression::class))))
-    DtsPropertyType.PHandle -> scalar(cellArray(scalar(type(DtsValue.PHandle::class))))
+    DtsPropertyType.String -> scalarList(type(DtsValue.String::class))
+    DtsPropertyType.Int -> scalarList(scalarArray<DtsArray.Cell>(type(DtsValue.Int::class)))
+    DtsPropertyType.PHandle -> scalarList(scalarArray<DtsArray.Cell>(type(DtsValue.PHandle::class)))
     DtsPropertyType.Boolean -> Predicate { values -> values.isEmpty() }
-    DtsPropertyType.Ints -> list(cellArray(list(type(DtsValue.Int::class, DtsValue.Expression::class))))
-    DtsPropertyType.Bytes -> scalar(byteArray(list(type(DtsValue.Byte::class))))
-    DtsPropertyType.PHandles -> list(cellArray(list(type(DtsValue.PHandle::class))))
-    DtsPropertyType.StringList -> notEmptyList(type(DtsValue.String::class))
-    DtsPropertyType.PHandleList -> list(cellArray(list(type(DtsValue.PHandle::class, DtsValue.Int::class, DtsValue.Expression::class))))
-    DtsPropertyType.Path -> scalar(type(DtsValue.String::class, DtsValue.PHandle::class))
+    DtsPropertyType.Ints -> list(array<DtsArray.Cell>(type(DtsValue.Int::class)))
+    DtsPropertyType.Bytes -> list(array<DtsArray.Byte>(type(DtsValue.Byte::class)))
+    DtsPropertyType.PHandles -> list(array<DtsArray.Cell>(type(DtsValue.PHandle::class)))
+    DtsPropertyType.StringList -> list(type(DtsValue.String::class))
+    DtsPropertyType.PHandleList -> list(array<DtsArray.Cell>(type(DtsValue.PHandle::class, DtsValue.Int::class)))
+    DtsPropertyType.Path -> scalarList(type(DtsValue.String::class, DtsValue.PHandle::class))
     DtsPropertyType.Compound -> Predicate { true }
   }
 
   return predicate.test(dtsValues)
+}
+
+private fun iterateValues(values: List<DtsValue>): Sequence<DtsValue> = sequence {
+  for (value in values) {
+    if (value is DtsArray) {
+      yieldAll(value.dtsValues)
+    }
+    else {
+      yield(value)
+    }
+  }
+}
+
+fun DtsProperty.dtsAssignableTo(const: DtsPropertyValue): Boolean {
+  if (const.assignableTo.none(this::dtsAssignableTo)) return false
+
+  val expectedValues = when (const) {
+    is DtsPropertyValue.Int -> listOf(const.value)
+    is DtsPropertyValue.IntList -> const.value
+    is DtsPropertyValue.String -> listOf(const.value)
+    is DtsPropertyValue.StringList -> const.value
+  }
+
+  val actualValues = iterateValues(dtsValues).toList()
+
+  for ((i, element) in actualValues.takeWhile { it !is DtsValue.Macro }.withIndex()) {
+    if (i >= expectedValues.size || element !is DtsValue.Parseable<*>) return false
+
+    val value = element.dtsParse()
+    if (value != null && value != expectedValues[i]) return false
+  }
+
+  return actualValues.size == expectedValues.size || actualValues.any { it is DtsValue.Macro }
 }

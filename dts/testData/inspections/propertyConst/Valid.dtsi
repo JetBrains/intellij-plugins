@@ -1,0 +1,11 @@
+/ {
+    node {
+        compatible = "custom,const";
+
+        prop-int = <10>;
+        prop-string = "value";
+        prop-cell-array = <>, <0>, <1 2 3>;
+        prop-byte-array = [], [00], [010203];
+        prop-string-array = "value1", "value2";
+    };
+};

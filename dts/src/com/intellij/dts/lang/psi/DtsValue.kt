@@ -7,21 +7,19 @@ sealed interface DtsValue : PsiElement {
   val dtsValueRange: TextRange
     get() = textRange
 
-  interface Int : DtsValue {
-    fun dtsParse(): kotlin.Int?
+  interface Parseable<T> : DtsValue {
+    fun dtsParse(): T
   }
 
-  interface Byte : DtsValue
+  interface Int : Parseable<kotlin.Int?>
 
-  interface Expression : DtsValue
+  interface Byte : Parseable<kotlin.Int?>
 
-  interface String : DtsValue {
-    fun dtsParse(): kotlin.String
-  }
+  interface Expression : Int
 
-  interface Char : DtsValue {
-    fun dtsParse(): kotlin.Char?
-  }
+  interface String : Parseable<kotlin.String>
+
+  interface Char : Parseable<kotlin.Char?>
 
   interface PHandle : DtsValue {
     val dtsPHandleLabel: PsiElement?

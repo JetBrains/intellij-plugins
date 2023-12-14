@@ -1,6 +1,7 @@
 package com.intellij.dts.zephyr.binding
 
 import com.intellij.dts.lang.DtsPropertyType
+import com.intellij.dts.lang.DtsPropertyValue
 import com.intellij.openapi.util.NlsSafe
 
 data class DtsZephyrBinding(

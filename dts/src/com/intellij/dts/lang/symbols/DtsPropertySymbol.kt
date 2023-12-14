@@ -2,7 +2,7 @@ package com.intellij.dts.lang.symbols
 
 import com.intellij.dts.documentation.DtsPropertyBindingDocumentationTarget
 import com.intellij.dts.lang.DtsPropertyType
-import com.intellij.dts.zephyr.binding.DtsPropertyValue
+import com.intellij.dts.lang.DtsPropertyValue
 import com.intellij.dts.zephyr.binding.DtsZephyrPropertyBinding
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol

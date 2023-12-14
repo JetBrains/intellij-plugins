@@ -1,0 +1,11 @@
+/ {
+    node {
+        compatible = "custom,const";
+
+        prop-int = <error descr="Expected property value: <10>"><11></error>;
+        <error descr="Expected property value: \"value\"">prop-string</error>;
+        prop-cell-array = <error descr="Expected property value: <[0, 1, 2, 3]>"><>, <2></error>;
+        prop-byte-array = <error descr="Expected property value: [[00, 01, 02, 03]]">[]</error>;
+        prop-string-array = <error descr="Expected property value: \"value1\", \"value2\"">"", "value1", "value2"</error>;
+    };
+};

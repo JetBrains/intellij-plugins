@@ -8,7 +8,7 @@ import com.intellij.dts.lang.psi.dtsVisitor
 import com.intellij.dts.zephyr.binding.DtsZephyrBindingProvider
 import com.intellij.psi.PsiElementVisitor
 
-class DtsPropertyTypeInspection : LocalInspectionTool() {
+class DtsPropertyConstInspection : LocalInspectionTool() {
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
     return dtsVisitor(DtsNode::class) { checkPropertyType(it, holder) }
   }
@@ -18,12 +18,16 @@ class DtsPropertyTypeInspection : LocalInspectionTool() {
 
     for (property in node.dtsProperties) {
       val propertyBinding = binding.properties[property.dtsName] ?: continue
-      if (property.dtsAssignableTo(propertyBinding.type)) continue
+      val const = propertyBinding.const ?: continue
+
+      // if the binding is valid this check should not fail
+      if (propertyBinding.type !in const.assignableTo) continue
+      if (property.dtsAssignableTo(const)) continue
 
       holder.registerProblem(
         property,
-        bundleKey = "inspections.property_type.error",
-        bundleParam = propertyBinding.type.typeName,
+        bundleKey = "inspections.property_const.error",
+        bundleParam = propertyBinding.const.getPresentableText(propertyBinding.type),
         rangeInElement = propertyValueRange(property),
       )
     }

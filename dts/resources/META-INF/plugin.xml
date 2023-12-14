@@ -195,6 +195,12 @@
       enabledByDefault="true"
       level="ERROR"
       implementationClass="com.intellij.dts.inspections.DtsDuplicateElementInspection"/>
+    <localInspection
+      language="DTS"
+      bundle="messages.DtsBundle" key="inspections.property_const.display_name" groupKey="inspections.group"
+      enabledByDefault="true"
+      level="ERROR"
+      implementationClass="com.intellij.dts.inspections.DtsPropertyConstInspection"/>
 
     <!-- registry keys -->
     <registryKey

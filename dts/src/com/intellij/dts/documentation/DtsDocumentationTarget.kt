@@ -5,7 +5,7 @@ import com.intellij.dts.lang.DtsPropertyType
 import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.psi.getDtsPath
 import com.intellij.dts.util.DtsHtmlChunk
-import com.intellij.dts.zephyr.binding.DtsPropertyValue
+import com.intellij.dts.lang.DtsPropertyValue
 import com.intellij.dts.zephyr.binding.DtsZephyrBinding
 import com.intellij.dts.zephyr.binding.DtsZephyrPropertyBinding
 import com.intellij.lang.documentation.DocumentationMarkup

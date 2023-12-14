@@ -1,9 +1,6 @@
 package com.intellij.dts.lang.psi.mixin
 
-import com.intellij.dts.lang.psi.DtsChar
-import com.intellij.dts.lang.psi.DtsExprValue
-import com.intellij.dts.lang.psi.DtsInt
-import com.intellij.dts.lang.psi.DtsString
+import com.intellij.dts.lang.psi.*
 import com.intellij.dts.lang.resolve.DtsBindingReference
 import com.intellij.dts.util.DtsTreeUtil
 import com.intellij.dts.util.DtsUtil
@@ -19,6 +16,17 @@ abstract class DtsIntMixin(node: ASTNode) : ASTWrapperPsiElement(node), DtsInt {
 
     return try {
       Integer.decode(stripedText)
+    }
+    catch (e: NumberFormatException) {
+      null
+    }
+  }
+}
+
+abstract class DtsByteMixin(node: ASTNode) : ASTWrapperPsiElement(node), DtsByte {
+  override fun dtsParse(): Int? {
+    return try {
+      Integer.parseInt(text, 16)
     }
     catch (e: NumberFormatException) {
       null

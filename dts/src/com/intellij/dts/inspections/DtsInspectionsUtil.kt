@@ -5,11 +5,14 @@ import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.dts.DtsBundle
+import com.intellij.dts.lang.psi.DtsProperty
 import com.intellij.dts.lang.psi.DtsStatement
 import com.intellij.dts.lang.psi.getDtsAnnotationTarget
 import com.intellij.dts.util.relativeTo
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import com.intellij.refactoring.suggested.endOffset
+import com.intellij.refactoring.suggested.startOffset
 import org.jetbrains.annotations.PropertyKey
 
 // similar to strspn for checks.c
@@ -23,6 +26,14 @@ fun firstNotMatching(str: String, rx: Regex, callback: (Char) -> Unit): Boolean 
 
   return false
 }
+
+fun propertyValueRange(property: DtsProperty): TextRange? {
+    val values = property.dtsValues
+    if (values.isEmpty()) return null
+
+    val valuesRange = TextRange(values.first().startOffset, values.last().endOffset)
+    return valuesRange.relativeTo(property.textRange)
+  }
 
 private fun elementInspectionRange(element: PsiElement): TextRange? {
   if (element !is DtsStatement) return null

@@ -9,7 +9,7 @@ import com.intellij.dts.lang.DtsPropertyType
 import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.dts.lang.symbols.DtsPropertySymbol
 import com.intellij.dts.util.DtsUtil
-import com.intellij.dts.zephyr.binding.DtsPropertyValue
+import com.intellij.dts.lang.DtsPropertyValue
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.psi.PsiElement
