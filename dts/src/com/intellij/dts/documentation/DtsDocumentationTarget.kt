@@ -62,42 +62,59 @@ abstract class DtsDocumentationTarget(protected val project: Project) : Document
     )
   }
 
-  private fun buildPropertyDefault(html: DtsDocumentationHtmlBuilder, type: DtsPropertyType, default: DtsPropertyValue) {
-    if (type !in default.assignableTo) return
+  private fun buildPropertyValue(propertyType: DtsPropertyType, propertyValue: DtsPropertyValue?): HtmlChunk? {
+    if (propertyValue == null || propertyType !in propertyValue.assignableTo) return null
 
-    val value = when (default) {
+    return when (propertyValue) {
       is DtsPropertyValue.String -> {
-        DtsHtmlChunk.string('"' + default.value + '"')
+        DtsHtmlChunk.string('"' + propertyValue.value + '"')
       }
       is DtsPropertyValue.Int -> {
         val builder = HtmlBuilder()
-        builder.append("<").append(DtsHtmlChunk.int(default.value.toString())).append(">")
+        builder.append("<").append(DtsHtmlChunk.int(propertyValue.value.toString())).append(">")
         builder.toFragment()
 
       }
       is DtsPropertyValue.StringList -> {
         val builder = HtmlBuilder()
-        builder.appendWithSeparators(HtmlChunk.text(", "), default.value.map(DtsHtmlChunk::string))
+        builder.appendWithSeparators(HtmlChunk.text(", "), propertyValue.value.map(DtsHtmlChunk::string))
         builder.toFragment()
       }
       is DtsPropertyValue.IntList -> {
         val builder = HtmlBuilder()
 
-        if (type == DtsPropertyType.Bytes) {
+        if (propertyType == DtsPropertyType.Bytes) {
           builder.append("[")
-          builder.appendWithSeparators(HtmlChunk.text(" "), default.asByteList().map(DtsHtmlChunk::int))
+          builder.appendWithSeparators(HtmlChunk.text(" "), propertyValue.asByteList().map(DtsHtmlChunk::int))
           builder.append("]")
-        } else {
+        }
+        else {
           builder.append("<")
-          builder.appendWithSeparators(HtmlChunk.text(" "), default.asIntList().map(DtsHtmlChunk::int))
+          builder.appendWithSeparators(HtmlChunk.text(" "), propertyValue.asIntList().map(DtsHtmlChunk::int))
           builder.append(">")
         }
 
         builder.toFragment()
       }
-    } ?: return
+    }
+  }
 
-    html.definition(DtsHtmlChunk.definitionName("documentation.property_default"), value)
+  private fun buildPropertyType(html: DtsDocumentationHtmlBuilder, binding: DtsZephyrPropertyBinding) {
+    html.definition(DtsHtmlChunk.definitionName("documentation.property_type"))
+
+    val const = buildPropertyValue(binding.type, binding.const)
+    if (const != null) {
+      val hint = HtmlChunk.text(" (${DtsBundle.message("documentation.property_const")})")
+      html.appendToDefinition(const, hint.wrapWith(DocumentationMarkup.GRAYED_ELEMENT))
+      return
+    }
+
+    html.appendToDefinition(HtmlChunk.text(binding.type.typeName))
+
+    if (binding.required) {
+      val hint = HtmlChunk.text(" (${DtsBundle.message("documentation.required")})")
+      html.appendToDefinition(hint.wrapWith(DocumentationMarkup.GRAYED_ELEMENT))
+    }
   }
 
   /**
@@ -105,15 +122,15 @@ abstract class DtsDocumentationTarget(protected val project: Project) : Document
    * And the description.
    */
   protected fun buildPropertyBinding(html: DtsDocumentationHtmlBuilder, binding: DtsZephyrPropertyBinding) {
-    html.definition(DtsHtmlChunk.definitionName("documentation.property_type"))
-    html.appendToDefinition(HtmlChunk.text(binding.type.typeName))
+    buildPropertyType(html, binding)
 
-    if (binding.required) {
-      html.appendToDefinition(HtmlChunk.text(" (${DtsBundle.message("documentation.required")})").wrapWith(DocumentationMarkup.GRAYED_ELEMENT))
+    buildPropertyValue(binding.type, binding.default)?.let { default ->
+      html.definition(DtsHtmlChunk.definitionName("documentation.property_default"), default)
     }
 
-    binding.default?.let { default -> buildPropertyDefault(html, binding.type, default) }
-    binding.description?.let { description -> html.content(DtsHtmlChunk.binding(project, description)) }
+    binding.description?.let { description ->
+      html.content(DtsHtmlChunk.binding(project, description))
+    }
   }
 
   /**

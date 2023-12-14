@@ -1,0 +1,28 @@
+description: Binding which defines some const values for testing
+
+compatible: "custom,const"
+
+properties:
+  prop-int:
+    type: int
+    const: 10
+
+  prop-int-hex:
+    type: int
+    const: 0x10
+
+  prop-string:
+    type: string
+    const: "value"
+
+  prop-cell-array:
+    type: array
+    const: [0, 1, 2, 3]
+
+  prop-byte-array:
+    type: uint8-array
+    const: [0, 1, 2, 3]
+
+  prop-string-array:
+    type: string-array
+    const: ["value1", "value2"]

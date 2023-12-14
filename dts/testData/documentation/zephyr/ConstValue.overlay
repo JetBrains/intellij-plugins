@@ -1,0 +1,6 @@
+/ {
+    node {
+        compatible = "espressif,esp32-ledc";
+        #pwm-cells<caret> = "path";
+    };
+};

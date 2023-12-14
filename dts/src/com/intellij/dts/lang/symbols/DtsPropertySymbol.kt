@@ -14,7 +14,7 @@ data class DtsPropertySymbol(private val binding: DtsZephyrPropertyBinding) : Dt
 
   val type: DtsPropertyType get() = binding.type
 
-  val defaultValue: DtsPropertyValue? get() = binding.default?.takeIf { binding.type in it.assignableTo }
+  val defaultValue: DtsPropertyValue? get() = (binding.const ?: binding.default)?.takeIf { binding.type in it.assignableTo }
 
   override fun createPointer(): Pointer<out Symbol> = Pointer { this }
 
