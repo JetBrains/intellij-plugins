@@ -5,28 +5,24 @@ import com.intellij.execution.lineMarker.ExecutorAction
 import com.intellij.execution.lineMarker.RunLineMarkerContributor
 import com.intellij.icons.AllIcons
 import com.intellij.psi.PsiElement
-import com.intellij.util.Function
-import org.intellij.terraform.config.patterns.TerraformPatterns
-import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.psi.HCLBlock
+import java.util.function.Function
 
 class TerraformRunLineMarkerContributor : RunLineMarkerContributor() {
   override fun getInfo(leaf: PsiElement): Info? {
-    if (!HCLTokenTypes.IDENTIFYING_LITERALS.contains(leaf.node?.elementType)) return null
+    val psiFile = leaf.containingFile
+    if (psiFile.fileType.defaultExtension != "tf") {
+      return null
+    }
 
-    val identifier = leaf.parent ?: return null
-
-    val block = identifier.parent as? HCLBlock ?: return null
-
-    if (block.nameIdentifier !== identifier) return null
-
-    if (!TerraformPatterns.ResourceRootBlock.accepts(block)) return null
-
-    TerraformResourceConfigurationProducer.getResourceTarget(block) ?: return null
+    val firstHCLBlock = psiFile.children.firstOrNull { it is HCLBlock } ?: return null
+    if (leaf != firstHCLBlock) {
+      return null
+    }
 
     val actions = ExecutorAction.getActions(0)
     val event = createActionEvent(leaf)
     val tooltipProvider = Function<PsiElement, String?> { actions.mapNotNull { getText(it, event) }.joinToString("\n") }
-    return Info(AllIcons.RunConfigurations.TestState.Run, tooltipProvider, *actions)
+    return Info(AllIcons.RunConfigurations.TestState.Run, actions, tooltipProvider)
   }
 }
