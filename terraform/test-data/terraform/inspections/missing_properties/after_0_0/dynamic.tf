@@ -1,3 +1,7 @@
+# intention: "HCLBlockMissingProperty"
+# fix: "Add properties: registry_arn"
+# position: 5: "content {"
+#
 resource "aws_ecs_service" "ecss" {
   name = ""
   task_definition = ""

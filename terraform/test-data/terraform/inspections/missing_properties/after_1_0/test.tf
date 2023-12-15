@@ -1,11 +1,10 @@
 # intention: "HCLBlockMissingProperty"
-# fix: "Add properties: region"
-# position: 2: "provider "aws" {"
+# fix: "Add properties: source"
+# position: 11: "module "test-module" {"
 #
 provider "docker" {
 }
 provider "aws" {
-  region = ""
 }
 //noinspection MissingProperty
 provider "atlas" {
@@ -15,4 +14,5 @@ terraform {
   }
 }
 module "test-module" {
+  source = ""
 }

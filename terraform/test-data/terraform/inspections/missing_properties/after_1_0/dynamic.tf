@@ -1,10 +1,13 @@
+# intention: "HCLBlockMissingProperty"
+# fix: "Add properties: registry_arn"
+# position: 8: "service_registries {"
+#
 resource "aws_ecs_service" "ecss" {
   name = ""
   task_definition = ""
   dynamic "service_registries" {
     for_each = ""
     content {
-      registry_arn = ""
     }
   }
   service_registries {
