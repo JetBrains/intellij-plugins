@@ -9,20 +9,17 @@ import com.intellij.coverage.view.DirectoryCoverageViewExtension;
 import com.intellij.execution.configurations.RunConfigurationBase;
 import com.intellij.execution.configurations.WrappingRunConfiguration;
 import com.intellij.execution.configurations.coverage.CoverageEnabledConfiguration;
-import com.intellij.execution.testframework.AbstractTestProxy;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.source.html.HtmlFileImpl;
@@ -44,11 +41,6 @@ public class KarmaCoverageEngine extends CoverageEngine {
   @Override
   public boolean isApplicableTo(@NotNull RunConfigurationBase configuration) {
     return WrappingRunConfiguration.unwrapRunProfile(configuration) instanceof KarmaRunConfiguration;
-  }
-
-  @Override
-  public boolean canHavePerTestCoverage(@NotNull RunConfigurationBase configuration) {
-    return false;
   }
 
   @NotNull
@@ -108,13 +100,6 @@ public class KarmaCoverageEngine extends CoverageEngine {
   }
 
   @Override
-  public boolean recompileProjectAndRerunAction(@NotNull Module module,
-                                                @NotNull CoverageSuitesBundle suite,
-                                                @NotNull Runnable chooseSuiteAction) {
-    return false;
-  }
-
-  @Override
   public String getQualifiedName(@NotNull File outputFile, @NotNull PsiFile sourceFile) {
     return getQName(sourceFile);
   }
@@ -159,16 +144,6 @@ public class KarmaCoverageEngine extends CoverageEngine {
 
   @Override
   public List<Integer> collectSrcLinesForUntouchedFile(@NotNull File classFile, @NotNull CoverageSuitesBundle suite) {
-    return null;
-  }
-
-  @Override
-  public List<PsiElement> findTestsByNames(String @NotNull [] testNames, @NotNull Project project) {
-    return Collections.emptyList();
-  }
-
-  @Override
-  public String getTestMethodName(@NotNull PsiElement element, @NotNull AbstractTestProxy testProxy) {
     return null;
   }
 
