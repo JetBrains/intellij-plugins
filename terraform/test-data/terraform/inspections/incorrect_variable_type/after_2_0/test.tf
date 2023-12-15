@@ -1,11 +1,15 @@
+# intention: "TFIncorrectVariableType"
+# fix: "Change variable type to string"
+# position: 14: ""42""
+#
 variable "stringButMap" {
-  type = "map"
+  type = "string"
   default = {
     x = 42
   }
 }
 variable "stringButList" {
-  type = "list"
+  type = "string"
   default = [
     42
   ]

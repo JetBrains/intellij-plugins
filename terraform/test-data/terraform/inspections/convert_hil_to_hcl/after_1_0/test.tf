@@ -1,6 +1,10 @@
+# intention: "HILConvertToHCL"
+# fix: "Convert to HCL2 expression"
+# position: 9: ""${"prefix"}""
+#
 variable "foo" {}
 variable "bar" {}
-output "3" { value = var.foo }
+output "3" { value = "${var.foo}" }
 output "4" { value = "${var.foo} " }
 output "5" { value = "${var.foo}${var.bar}" }
 output "6" { value = "${var.foo} ${var.bar}" }

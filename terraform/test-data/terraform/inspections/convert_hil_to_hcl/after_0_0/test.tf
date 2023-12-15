@@ -1,3 +1,7 @@
+# intention: "HILConvertToHCL"
+# fix: "Convert to HCL2 expression"
+# position: 2: ""${var.foo}""
+#
 variable "foo" {}
 variable "bar" {}
 output "3" { value = var.foo }

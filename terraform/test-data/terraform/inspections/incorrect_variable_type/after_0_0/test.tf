@@ -1,3 +1,7 @@
+# intention: "TFIncorrectVariableType"
+# fix: "Change variable type to map"
+# position: 2: "{"
+#
 variable "stringButMap" {
   type = "map"
   default = {
