@@ -15,8 +15,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.uml.FlashUmlDataModel;
 import com.intellij.lang.javascript.uml.FlashUmlDependenciesSettingsOption;
 import com.intellij.lang.javascript.uml.FlashUmlProvider;
-import com.intellij.openapi.actionSystem.ActionPlaces;
-import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
@@ -122,14 +120,13 @@ public class FlashUmlTest extends JavaCodeInsightTestCase {
       String expectedPrefix = StringUtil.isNotEmpty(marker.getValue()) ? marker.getValue() : expectedFileNamePrefix;
 
       DataContext dataContext = DataManager.getInstance().getDataContext(null);
-      AnActionEvent event = AnActionEvent.createFromDataContext(ActionPlaces.UNKNOWN, null, dataContext);
-      List<DiagramProvider<?>> providers = ShowDiagramBase.findProviders(event).collect(Collectors.toList());
+      List<DiagramProvider<?>> providers = ShowDiagramBase.findProviders(dataContext).collect(Collectors.toList());
 
       FlashUmlProvider provider = ContainerUtil.findInstance(providers, FlashUmlProvider.class);
       assertNotNull("Flash UML provider not found", provider);
 
       String actualOriginFqn = provider.getVfsResolver().getQualifiedName(
-        provider.getElementManager().findInDataContext(event.getDataContext()));
+        provider.getElementManager().findInDataContext(dataContext));
 
       Object actualOrigin = provider.getVfsResolver().resolveElementByFQN(actualOriginFqn, getProject());
       builder = DiagramBuilderFactory.getInstance().create(myProject, provider, actualOrigin, null);
