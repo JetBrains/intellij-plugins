@@ -38,13 +38,14 @@ public class DartCoverageSuite extends BaseCoverageSuite {
     myCoverageProcess = null;
   }
 
-  public DartCoverageSuite(@NotNull final Project project,
-                           @NotNull final String name,
-                           @NotNull final CoverageFileProvider fileProvider,
-                           @NotNull final CoverageRunner coverageRunner,
-                           @Nullable final String contextFilePath,
-                           @Nullable final ProcessHandler coverageProcess) {
-    super(name, fileProvider, System.currentTimeMillis(), false, false, false, coverageRunner, project);
+  public DartCoverageSuite(@NotNull Project project,
+                           @NotNull String name,
+                           @NotNull CoverageFileProvider fileProvider,
+                           @NotNull CoverageRunner coverageRunner,
+                           long timestamp,
+                           @Nullable String contextFilePath,
+                           @Nullable ProcessHandler coverageProcess) {
+    super(name, project, coverageRunner, fileProvider, timestamp);
     myContextFilePath = contextFilePath;
     myCoverageProcess = coverageProcess;
   }

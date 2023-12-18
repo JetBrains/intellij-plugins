@@ -30,7 +30,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -60,9 +59,7 @@ public class KarmaCoverageEngine extends CoverageEngine {
                                            boolean branchCoverage,
                                            boolean trackTestFolders,
                                            Project project) {
-    return new KarmaCoverageSuite(covRunner, name, coverageDataFileProvider, lastCoverageTimeStamp,
-                                  coverageByTestEnabled, branchCoverage,
-                                  trackTestFolders, project, this);
+    return new KarmaCoverageSuite(name, project, covRunner, coverageDataFileProvider, lastCoverageTimeStamp, this);
   }
 
   @Override
@@ -72,8 +69,7 @@ public class KarmaCoverageEngine extends CoverageEngine {
                                            @NotNull CoverageEnabledConfiguration config) {
     if (config instanceof KarmaCoverageEnabledConfiguration) {
       Project project = config.getConfiguration().getProject();
-      return createCoverageSuite(covRunner, name, coverageDataFileProvider, null,
-                                 new Date().getTime(), null, false, false, true, project);
+      return new KarmaCoverageSuite(name, project, covRunner, coverageDataFileProvider, config.createTimestamp(), this);
     }
     return null;
   }

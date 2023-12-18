@@ -7,7 +7,6 @@ import com.intellij.execution.configurations.coverage.CoverageEnabledConfigurati
 public class KarmaCoverageEnabledConfiguration extends CoverageEnabledConfiguration {
   public KarmaCoverageEnabledConfiguration(RunConfigurationBase configuration) {
     super(configuration);
-    KarmaCoverageRunner coverageRunner = CoverageRunner.getInstance(KarmaCoverageRunner.class);
-    setCoverageRunner(coverageRunner);
+    setCoverageRunner(CoverageRunner.getInstance(KarmaCoverageRunner.class));
   }
 }

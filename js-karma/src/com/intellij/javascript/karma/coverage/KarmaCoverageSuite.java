@@ -6,7 +6,6 @@ import com.intellij.coverage.CoverageFileProvider;
 import com.intellij.coverage.CoverageRunner;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class KarmaCoverageSuite extends BaseCoverageSuite {
 
@@ -16,18 +15,15 @@ public class KarmaCoverageSuite extends BaseCoverageSuite {
     myKarmaCoverageEngine = karmaCoverageEngine;
   }
 
-  public KarmaCoverageSuite(CoverageRunner coverageRunner,
-                            String name,
-                            @Nullable final CoverageFileProvider fileProvider,
-                            long lastCoverageTimeStamp,
-                            boolean coverageByTestEnabled,
-                            boolean tracingEnabled,
-                            boolean trackTestFolders,
-                            final Project project,
+  public KarmaCoverageSuite(String name,
+                            Project project,
+                            CoverageRunner coverageRunner,
+                            CoverageFileProvider fileProvider,
+                            long timestamp,
                             KarmaCoverageEngine karmaCoverageEngine) {
-    super(name, fileProvider, lastCoverageTimeStamp, coverageByTestEnabled,
-          tracingEnabled, trackTestFolders, coverageRunner, project);
+    super(name, project, coverageRunner, fileProvider, timestamp);
     myKarmaCoverageEngine = karmaCoverageEngine;
+    myTrackTestFolders = true;
   }
 
   @NotNull
