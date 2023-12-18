@@ -3,6 +3,7 @@ package com.intellij.dts.zephyr.binding
 import com.intellij.dts.api.dtsSearch
 import com.intellij.dts.documentation.DtsBundledBindings
 import com.intellij.dts.lang.psi.DtsNode
+import com.intellij.dts.lang.psi.DtsProperty
 import com.intellij.dts.lang.psi.getDtsCompatibleStrings
 import com.intellij.dts.util.DtsTreeUtil
 import com.intellij.dts.util.cached
@@ -34,6 +35,11 @@ class DtsZephyrBindingProvider(val project: Project) {
 
     fun bindingFor(project: Project, compatible: String): DtsZephyrBinding? {
       return of(project).buildBinding(compatible)
+    }
+
+    fun bindingFor(property: DtsProperty): DtsZephyrPropertyBinding? {
+      val parent = DtsTreeUtil.parentNode(property) ?: return null
+      return bindingFor(parent)?.properties?.get(property.dtsName)
     }
 
     private const val BUNDLED_BINDINGS_PATH = "bindings"

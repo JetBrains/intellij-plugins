@@ -2,8 +2,7 @@ package com.intellij.dts.completion
 
 import com.intellij.dts.lang.DtsFile
 import com.intellij.dts.lang.DtsTokenSets
-import com.intellij.dts.lang.psi.DtsContainer
-import com.intellij.dts.lang.psi.DtsStatement
+import com.intellij.dts.lang.psi.*
 import com.intellij.dts.util.DtsTreeUtil
 import com.intellij.openapi.util.Key
 import com.intellij.patterns.PatternCondition
@@ -11,7 +10,10 @@ import com.intellij.patterns.PlatformPatterns.*
 import com.intellij.patterns.PsiElementPattern
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
+import com.intellij.refactoring.suggested.endOffset
+import com.intellij.refactoring.suggested.startOffset
 import com.intellij.util.ProcessingContext
+import com.intellij.util.asSafely
 
 fun dtsBasePattern(): PsiElementPattern.Capture<PsiElement> {
   return psiElement()
@@ -20,19 +22,19 @@ fun dtsBasePattern(): PsiElementPattern.Capture<PsiElement> {
 }
 
 fun dtsInsideContainer(): PsiElementPattern.Capture<PsiElement> {
-  return psiElement().with(DtsInsideContainer)
+  return psiElement().with(InsideContainer)
 }
 
-private object DtsInsideContainer : PatternCondition<PsiElement>("inside container") {
+private object InsideContainer : PatternCondition<PsiElement>("inside container") {
   val key = Key<DtsContainer>("container")
 
   override fun accepts(element: PsiElement, context: ProcessingContext): Boolean {
     val container = when (val parent = element.parent) {
-                      is DtsContainer -> parent
-                      is DtsStatement -> DtsTreeUtil.parentNode(parent)?.dtsContent
-                      is PsiErrorElement -> parent.parent as? DtsContainer
-                      else -> null
-                    } ?: return false
+      is DtsContainer -> parent
+      is DtsStatement -> DtsTreeUtil.parentNode(parent)?.dtsContent
+      is PsiErrorElement -> parent.parent as? DtsContainer
+      else -> null
+    } ?: return false
 
     context.put(key, container)
     return true
@@ -40,5 +42,43 @@ private object DtsInsideContainer : PatternCondition<PsiElement>("inside contain
 }
 
 fun ProcessingContext.getDtsContainer(): DtsContainer {
-  return get(DtsInsideContainer.key)
+  return get(InsideContainer.key)
+}
+
+fun dtsFirstValue(): PsiElementPattern.Capture<out PsiElement> {
+  return psiElement(DtsValue::class.java).with(PropertyFirstValue)
+}
+
+private object PropertyFirstValue : PatternCondition<PsiElement>("first value") {
+  val key = Key<DtsProperty>("property")
+
+  override fun accepts(element: PsiElement, context: ProcessingContext): Boolean {
+    if (element !is DtsValue) return false
+
+    // PSI hierarchy: value -> property content -> property
+    val content = element.parent.asSafely<DtsPropertyContent>() ?: return false
+    if (content.firstChild != element) return false
+
+    val property = content.parent.asSafely<DtsProperty>() ?: return false
+
+    context.put(key, property)
+    return true
+  }
+}
+
+fun ProcessingContext.getDtsProperty(): DtsProperty {
+  return get(PropertyFirstValue.key)
+}
+
+fun dtsFirstCell(): PsiElementPattern.Capture<PsiElement> {
+  return psiElement().with(ArrayFirstCell)
+}
+
+private object ArrayFirstCell : PatternCondition<PsiElement>("first cell") {
+  override fun accepts(element: PsiElement, context: ProcessingContext?): Boolean {
+    val array = element.parent.asSafely<DtsCellArray>() ?: return false
+    val cell = array.dtsValues.firstOrNull() ?: return false
+
+    return cell == element || cell.endOffset == element.startOffset
+  }
 }

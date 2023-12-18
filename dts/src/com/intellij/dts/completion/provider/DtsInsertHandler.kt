@@ -132,7 +132,8 @@ object DtsInsertHandler {
     }
 
     val isCompatible = symbol.name == "compatible"
-    val openCompletion = isCompatible && value.isEmpty()
+    val isStringEnum = symbol.enum?.filterIsInstance<DtsPropertyValue.String>()?.isNotEmpty() ?: false
+    val openCompletion = (isCompatible || isStringEnum) && value.isEmpty()
 
     session.insertAssign() && session.insertString(body = value) && session.openAutocomplete(openCompletion) && session.insertSemicolon()
   }
@@ -144,7 +145,10 @@ object DtsInsertHandler {
       else -> ""
     }
 
-    session.insertAssign() && session.insertCellArray(body = value) && session.insertSemicolon()
+    val isIntEnum = symbol.enum?.filterIsInstance<DtsPropertyValue.Int>()?.isNotEmpty() ?: false
+    val openCompletion = isIntEnum && value.isEmpty()
+
+    session.insertAssign() && session.insertCellArray(body = value) && session.openAutocomplete(openCompletion) && session.insertSemicolon()
   }
 
   private fun insertByteArray(symbol: DtsPropertySymbol, session: InsertSession) {

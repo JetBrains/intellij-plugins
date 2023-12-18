@@ -6,7 +6,6 @@ import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.PrioritizedLookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.dts.DtsIcons
-import com.intellij.dts.completion.contributer.withDtsPrefixMatcher
 import com.intellij.dts.completion.getDtsContainer
 import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.symbols.DtsPropertySymbol

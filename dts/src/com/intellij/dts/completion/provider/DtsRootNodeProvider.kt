@@ -7,7 +7,6 @@ import com.intellij.codeInsight.completion.PrioritizedLookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.dts.DtsBundle
 import com.intellij.dts.DtsIcons
-import com.intellij.dts.completion.contributer.withDtsPrefixMatcher
 import com.intellij.dts.completion.getDtsContainer
 import com.intellij.util.ProcessingContext
 
@@ -20,7 +19,7 @@ class DtsRootNodeProvider : CompletionProvider<CompletionParameters>() {
 
     val lookup = LookupElementBuilder.create("/")
       .withTailText(" {}")
-      .withTypeText(DtsBundle.message("documentation.node_type"))
+      .withTypeText(DtsBundle.message("documentation.node.lookup_type"))
       .withIcon(DtsIcons.Node)
       .withInsertHandler(DtsInsertHandler.ROOT_NODE)
 

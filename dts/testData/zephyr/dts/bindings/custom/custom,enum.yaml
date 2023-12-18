@@ -1,0 +1,28 @@
+description: Binding which defines some enum values for testing
+
+compatible: "custom,enum"
+
+properties:
+  prop-int:
+    type: int
+    enum: [10, 11]
+
+  prop-int-hex:
+    type: int
+    enum: [0x10, 0x11]
+
+  prop-string:
+    type: string
+    enum: ["value1", "value2"]
+
+  prop-cell-array:
+    type: array
+    enum: [[0, 1], [2, 3]]
+
+  prop-byte-array:
+    type: uint8-array
+    enum: [[0, 1], [2, 3]]
+
+  prop-string-array:
+    type: string-array
+    default: [["value11", "value12"], ["value11", "value12"]]

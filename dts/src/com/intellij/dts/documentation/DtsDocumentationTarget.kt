@@ -104,7 +104,7 @@ abstract class DtsDocumentationTarget(protected val project: Project) : Document
 
     val const = buildPropertyValue(binding.type, binding.const)
     if (const != null) {
-      val hint = HtmlChunk.text(" (${DtsBundle.message("documentation.property_const")})")
+      val hint = HtmlChunk.text(" (${DtsBundle.message("documentation.property_type.hint_const")})")
       html.appendToDefinition(const, hint.wrapWith(DocumentationMarkup.GRAYED_ELEMENT))
       return
     }
@@ -112,17 +112,28 @@ abstract class DtsDocumentationTarget(protected val project: Project) : Document
     html.appendToDefinition(HtmlChunk.text(binding.type.typeName))
 
     if (binding.required) {
-      val hint = HtmlChunk.text(" (${DtsBundle.message("documentation.required")})")
+      val hint = HtmlChunk.text(" (${DtsBundle.message("documentation.property_type.hint_required")})")
       html.appendToDefinition(hint.wrapWith(DocumentationMarkup.GRAYED_ELEMENT))
     }
   }
 
   /**
-   * Writes: "Type: <<property type>> (<<required>>)"
+   * Writes: "Type: <<property type>> (<<required | const>>)"
+   * And the enum: "In Enum: <<value>>"
+   * And the default value: "Default: <<value>>"
    * And the description.
    */
   protected fun buildPropertyBinding(html: DtsDocumentationHtmlBuilder, binding: DtsZephyrPropertyBinding) {
     buildPropertyType(html, binding)
+
+    binding.enum?.let { enum ->
+      val builder = HtmlBuilder()
+      builder.append("{ ")
+      builder.appendWithSeparators(HtmlChunk.text(", "), enum.map { buildPropertyValue(binding.type, it) })
+      builder.append(" }")
+
+      html.definition(DtsHtmlChunk.definitionName("documentation.property_enum"), builder.toFragment())
+    }
 
     buildPropertyValue(binding.type, binding.default)?.let { default ->
       html.definition(DtsHtmlChunk.definitionName("documentation.property_default"), default)

@@ -1,6 +1,6 @@
 package com.intellij.dts.completion
 
-class DtsPropertyInsertionTest : DtsCompletionTest() {
+class DtsPropertyValueCompletionTest : DtsCompletionTest() {
   private val unproductiveStatements = """
         // comment
         /include/ "file"
@@ -167,6 +167,20 @@ class DtsPropertyInsertionTest : DtsCompletionTest() {
     input = "<caret>",
     after = "prop-string-array = \"value1\", \"value2<caret>\";",
     compatible = "custom,default",
+  )
+
+  fun `test enum property value (int)`() = doTest(
+    lookup = "10",
+    input = "prop-int = <<caret>>;",
+    after = "prop-int = <10<caret>>;",
+    compatible = "custom,enum",
+  )
+
+  fun `test enum property value (string)`() = doTest(
+    lookup = "value1",
+    input = "prop-string = \"<caret>\";",
+    after = "prop-string = \"value1<caret>\";",
+    compatible = "custom,enum",
   )
 
   private fun doTest(input: String, after: String) = doTest(

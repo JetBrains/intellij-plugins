@@ -7,7 +7,6 @@ import com.intellij.codeInsight.completion.PrioritizedLookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.dts.DtsBundle
 import com.intellij.dts.DtsIcons
-import com.intellij.dts.completion.contributer.withDtsPrefixMatcher
 import com.intellij.dts.completion.getDtsContainer
 import com.intellij.dts.documentation.DtsBundledBindings
 import com.intellij.dts.documentation.DtsNodeBindingDocumentationTarget
@@ -41,7 +40,7 @@ class DtsNodeNameProvider : CompletionProvider<CompletionParameters>() {
       ))
 
       val lookup = LookupElementBuilder.create(symbol, binding.nodeName)
-        .withTypeText(DtsBundle.message("documentation.node_type"))
+        .withTypeText(DtsBundle.message("documentation.node.lookup_type"))
         .withIcon(DtsIcons.Node)
         .withInsertHandler(DtsInsertHandler.SUB_NODE)
 

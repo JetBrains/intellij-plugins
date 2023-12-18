@@ -5,7 +5,6 @@ import com.intellij.codeInsight.completion.CompletionProvider
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.PrioritizedLookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.dts.completion.contributer.withDtsPrefixMatcher
 import com.intellij.dts.completion.getDtsContainer
 import com.intellij.dts.lang.DtsAffiliation
 import com.intellij.util.ProcessingContext

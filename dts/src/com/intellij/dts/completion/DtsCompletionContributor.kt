@@ -4,10 +4,7 @@ import com.intellij.codeInsight.AutoPopupController
 import com.intellij.codeInsight.completion.CompletionContributor
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate
-import com.intellij.dts.completion.provider.DtsCompilerDirectiveProvider
-import com.intellij.dts.completion.provider.DtsNodeNameProvider
-import com.intellij.dts.completion.provider.DtsPropertyNameProvider
-import com.intellij.dts.completion.provider.DtsRootNodeProvider
+import com.intellij.dts.completion.provider.*
 import com.intellij.dts.lang.DtsFile
 import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.openapi.editor.Editor
@@ -46,5 +43,14 @@ class DtsCompletionContributor : CompletionContributor() {
       .withElementType(DtsTypes.NAME)
       .withParent(psiElement().withElementType(subNodeOrError))
     extend(CompletionType.BASIC, subNodeName, DtsNodeNameProvider())
+
+    val insideString = dtsBasePattern()
+      .withElementType(DtsTypes.STRING_LITERAL)
+      .withParent(dtsFirstValue())
+    extend(CompletionType.BASIC, insideString, DtsStringValueProvider())
+
+    val insideInt = dtsBasePattern()
+      .withParent(dtsFirstCell().withParent(dtsFirstValue()))
+    extend(CompletionType.BASIC, insideInt, DtsIntValueProvider())
   }
 }
