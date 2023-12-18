@@ -25,7 +25,7 @@ private val nodeDirectives = setOf(
   "/omit-if-no-ref/",
 )
 
-class DtsCompilerDirectiveProvider : CompletionProvider<CompletionParameters>() {
+object DtsCompilerDirectiveProvider : CompletionProvider<CompletionParameters>() {
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
     val container = context.getDtsContainer()
     val resultSet = result.withDtsPrefixMatcher(parameters)

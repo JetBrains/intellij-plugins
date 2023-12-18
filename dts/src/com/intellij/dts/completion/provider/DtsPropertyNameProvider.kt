@@ -12,7 +12,7 @@ import com.intellij.dts.lang.symbols.DtsPropertySymbol
 import com.intellij.dts.zephyr.binding.DtsZephyrBindingProvider
 import com.intellij.util.ProcessingContext
 
-class DtsPropertyNameProvider : CompletionProvider<CompletionParameters>() {
+object DtsPropertyNameProvider : CompletionProvider<CompletionParameters>() {
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
     val container = context.getDtsContainer()
     val resultSet = result.withDtsPrefixMatcher(parameters)

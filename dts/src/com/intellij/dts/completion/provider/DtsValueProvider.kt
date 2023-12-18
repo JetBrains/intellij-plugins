@@ -20,7 +20,7 @@ private inline fun <reified T : DtsPropertyValue> getValues(context: ProcessingC
   return values
 }
 
-class DtsStringValueProvider : CompletionProvider<CompletionParameters>() {
+object DtsStringValueProvider : CompletionProvider<CompletionParameters>() {
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
     val values = getValues<DtsPropertyValue.String>(context) ?: return
 
@@ -30,7 +30,7 @@ class DtsStringValueProvider : CompletionProvider<CompletionParameters>() {
   }
 }
 
-class DtsIntValueProvider : CompletionProvider<CompletionParameters>() {
+object DtsIntValueProvider : CompletionProvider<CompletionParameters>() {
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
     val values = getValues<DtsPropertyValue.Int>(context) ?: return
 

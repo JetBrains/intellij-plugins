@@ -10,7 +10,7 @@ import com.intellij.dts.DtsIcons
 import com.intellij.dts.completion.getDtsContainer
 import com.intellij.util.ProcessingContext
 
-class DtsRootNodeProvider : CompletionProvider<CompletionParameters>() {
+object DtsRootNodeProvider : CompletionProvider<CompletionParameters>() {
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
     val container = context.getDtsContainer()
     val resultSet = result.withDtsPrefixMatcher(parameters)

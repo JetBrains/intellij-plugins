@@ -31,26 +31,26 @@ class DtsCompletionContributor : CompletionContributor() {
   init {
     val base = dtsBasePattern().and(dtsInsideContainer())
 
-    extend(CompletionType.BASIC, base, DtsCompilerDirectiveProvider())
-    extend(CompletionType.BASIC, base, DtsRootNodeProvider())
+    extend(CompletionType.BASIC, base, DtsCompilerDirectiveProvider)
+    extend(CompletionType.BASIC, base, DtsRootNodeProvider)
 
     val propertyName = base
       .withElementType(DtsTypes.NAME)
       .withParent(psiElement().withElementType(propertyOrError))
-    extend(CompletionType.BASIC, propertyName, DtsPropertyNameProvider())
+    extend(CompletionType.BASIC, propertyName, DtsPropertyNameProvider)
 
     val subNodeName = base
       .withElementType(DtsTypes.NAME)
       .withParent(psiElement().withElementType(subNodeOrError))
-    extend(CompletionType.BASIC, subNodeName, DtsNodeNameProvider())
+    extend(CompletionType.BASIC, subNodeName, DtsNodeNameProvider)
 
     val insideString = dtsBasePattern()
       .withElementType(DtsTypes.STRING_LITERAL)
       .withParent(dtsFirstValue())
-    extend(CompletionType.BASIC, insideString, DtsStringValueProvider())
+    extend(CompletionType.BASIC, insideString, DtsStringValueProvider)
 
     val insideInt = dtsBasePattern()
       .withParent(dtsFirstCell().withParent(dtsFirstValue()))
-    extend(CompletionType.BASIC, insideInt, DtsIntValueProvider())
+    extend(CompletionType.BASIC, insideInt, DtsIntValueProvider)
   }
 }
