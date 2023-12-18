@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -72,7 +73,7 @@ public final class TerraformRunConfiguration extends LocatableConfigurationBase 
             .withWorkDirectory(parameters.getWorkingDirectory())
             .withParameters(parameters.getProgramParametersList().getParameters())
             .withPassParentEnvironment(parameters.isPassParentEnvs())
-            .withExtraEnvironment(parameters.getEnv())
+          .withExtraEnvironment(handleEnvVar(parameters.getEnv()))
             .showOutputOnError()
             .createCommandLine();
       }
@@ -83,6 +84,25 @@ public final class TerraformRunConfiguration extends LocatableConfigurationBase 
         ProgramParametersUtil.configureConfiguration(params, TerraformRunConfiguration.this);
 
         return params;
+      }
+
+      private static Map<String, String> handleEnvVar(Map<String, String> inputMap) {
+        var resultMap = new HashMap<String, String>();
+
+        for (var entry : inputMap.entrySet()) {
+          var key = entry.getKey();
+          var value = entry.getValue();
+
+          if (value != null && value.contains("$")) {
+            var replacedValue = System.getenv(value.substring(1));
+            resultMap.put(key, (replacedValue != null) ? replacedValue : value);
+          }
+          else {
+            resultMap.put(key, value);
+          }
+        }
+
+        return resultMap;
       }
     };
   }
