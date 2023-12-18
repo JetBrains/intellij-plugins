@@ -14,15 +14,3 @@ properties:
   prop-string:
     type: string
     enum: ["value1", "value2"]
-
-  prop-cell-array:
-    type: array
-    enum: [[0, 1], [2, 3]]
-
-  prop-byte-array:
-    type: uint8-array
-    enum: [[0, 1], [2, 3]]
-
-  prop-string-array:
-    type: string-array
-    default: [["value11", "value12"], ["value11", "value12"]]

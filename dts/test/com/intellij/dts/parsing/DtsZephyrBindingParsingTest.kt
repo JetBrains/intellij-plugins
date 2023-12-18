@@ -13,6 +13,8 @@ class DtsZephyrBindingParsingTest : DtsTestBase() {
 
   fun `test default values`() = doTest()
 
+  fun `test enum values`() = doTest()
+
   private fun loadBinding(): DtsZephyrBindingParser.Source {
     val binding = getTestFixture("yaml")
 

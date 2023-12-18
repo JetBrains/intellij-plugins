@@ -108,7 +108,10 @@ data class DtsZephyrPropertyBinding(
     fun setEnum(value: List<Any>) {
       if (enum != null) return
 
-      val mapped = value.mapNotNull(DtsPropertyValue.Companion::fromZephyr)
+      val mapped = value
+        .mapNotNull(DtsPropertyValue.Companion::fromZephyr)
+        .filter { it is DtsPropertyValue.String || it is DtsPropertyValue.Int }
+
       if (mapped.size != value.size) return
 
       enum = mapped

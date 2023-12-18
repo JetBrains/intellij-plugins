@@ -1,0 +1,8 @@
+/ {
+    node {
+        compatible = "custom,enum";
+
+        prop-int = <10>;
+        prop-string = "value1";
+    };
+};

@@ -201,6 +201,12 @@
       enabledByDefault="true"
       level="ERROR"
       implementationClass="com.intellij.dts.inspections.DtsPropertyConstInspection"/>
+    <localInspection
+      language="DTS"
+      bundle="messages.DtsBundle" key="inspections.property_enum.display_name" groupKey="inspections.group"
+      enabledByDefault="true"
+      level="ERROR"
+      implementationClass="com.intellij.dts.inspections.DtsPropertyEnumInspection"/>
 
     <!-- registry keys -->
     <registryKey
