@@ -4,9 +4,10 @@ import com.intellij.coverage.CoverageRunner;
 import com.intellij.execution.configurations.RunConfigurationBase;
 import com.intellij.execution.configurations.coverage.CoverageEnabledConfiguration;
 
+import java.util.Objects;
+
 public class KarmaCoverageEnabledConfiguration extends CoverageEnabledConfiguration {
   public KarmaCoverageEnabledConfiguration(RunConfigurationBase configuration) {
-    super(configuration);
-    setCoverageRunner(CoverageRunner.getInstance(KarmaCoverageRunner.class));
+    super(configuration, Objects.requireNonNull(CoverageRunner.getInstance(KarmaCoverageRunner.class)));
   }
 }
