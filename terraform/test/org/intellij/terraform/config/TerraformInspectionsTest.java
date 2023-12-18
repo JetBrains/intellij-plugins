@@ -6,7 +6,7 @@ import org.intellij.terraform.TerraformTestUtils;
 import org.intellij.terraform.config.inspection.*;
 import org.intellij.terraform.hil.inspection.*;
 
-public class TerraformInspectionsTestCase extends TerraformInspectionFixtureTestCase {
+public class TerraformInspectionsTest extends TerraformInspectionFixtureTestCase {
 
   @Override
   protected void setUp() throws Exception {
