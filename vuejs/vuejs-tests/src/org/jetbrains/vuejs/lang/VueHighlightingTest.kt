@@ -682,6 +682,11 @@ const props = {seeMe: {}}
     TypeScriptTestUtil.forceDefaultTsConfig(project, testRootDisposable)
     doTest(extension = "ts")
   }
+
+  fun testVuetifyWebTypesWithTrailingNewLine() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    doTest(addNodeModules = listOf(VueTestModule.VUETIFY_3_3_3))
+  }
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {
