@@ -491,6 +491,15 @@ void f23(Object obj) {
     case [var a, String s] when s.isNotEmpty:
       print(a);
   }
+  if (xhr.responseHeaders['content-length'] case final contentLengthHeader
+      when contentLengthHeader != null &&
+          !_digitRegex.hasMatch(contentLengthHeader)) {
+    completer.completeError(ClientException(
+      'Invalid content-length header [$contentLengthHeader].',
+      request.url,
+    ));
+    return;
+  }
 }
 
 void f24() {
