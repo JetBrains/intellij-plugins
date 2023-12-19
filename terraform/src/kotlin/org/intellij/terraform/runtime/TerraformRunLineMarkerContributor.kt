@@ -15,8 +15,15 @@ class TerraformRunLineMarkerContributor : RunLineMarkerContributor() {
       return null
     }
 
+    val identifier = leaf.parent ?: return null
+    val block = identifier.parent as? HCLBlock ?: return null
+
     val firstHCLBlock = psiFile.children.firstOrNull { it is HCLBlock } ?: return null
-    if (leaf != firstHCLBlock) {
+    if (block !== firstHCLBlock) {
+      return null
+    }
+
+    if (block.nameIdentifier !== identifier) {
       return null
     }
 
