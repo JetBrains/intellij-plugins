@@ -30,6 +30,7 @@ object Angular2DecoratorUtil {
   const val PIPE_DEC = "Pipe"
   const val MODULE_DEC = "NgModule"
   const val INPUT_DEC = "Input"
+  const val INPUT_FUN = "input"
   const val OUTPUT_DEC = "Output"
   const val ATTRIBUTE_DEC = "Attribute"
   const val VIEW_CHILD_DEC = "ViewChild"

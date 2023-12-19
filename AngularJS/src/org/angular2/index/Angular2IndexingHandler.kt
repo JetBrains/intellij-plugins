@@ -6,23 +6,25 @@ import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.JSStringUtil
 import com.intellij.lang.javascript.JSStubElementTypes
+import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClassExpression
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
 import com.intellij.lang.javascript.psi.impl.JSPropertyImpl
-import com.intellij.lang.javascript.psi.stubs.JSClassStub
-import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
-import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure
-import com.intellij.lang.javascript.psi.stubs.TypeScriptClassStub
+import com.intellij.lang.javascript.psi.stubs.*
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
+import com.intellij.lang.typescript.TypeScriptStubElementTypes
 import com.intellij.openapi.util.io.FileUtilRt.getNameWithoutExtension
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiFile
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.psi.tree.TokenSet
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.Consumer
 import com.intellij.util.SmartList
 import com.intellij.util.asSafely
@@ -34,6 +36,7 @@ import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
 import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
 import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
 import org.angular2.Angular2DecoratorUtil.INPUT_DEC
+import org.angular2.Angular2DecoratorUtil.INPUT_FUN
 import org.angular2.Angular2DecoratorUtil.MODULE_DEC
 import org.angular2.Angular2DecoratorUtil.NAME_PROP
 import org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP
@@ -59,18 +62,9 @@ import java.util.function.Predicate
 
 class Angular2IndexingHandler : FrameworkIndexingHandler() {
 
-  override fun shouldCreateStubForCallExpression(node: ASTNode): Boolean {
-    val parent = node.treeParent
-    if (parent != null && parent.elementType === JSStubElementTypes.ES6_DECORATOR) {
-      val methodExpression = node.firstChildNode
-      if (methodExpression.elementType !== JSElementTypes.REFERENCE_EXPRESSION) return false
-
-      val referencedNameElement = methodExpression.firstChildNode ?: return false
-      val decoratorName = referencedNameElement.text
-      return STUBBED_DECORATORS_STRING_ARGS.contains(decoratorName)
-    }
-    return false
-  }
+  override fun shouldCreateStubForCallExpression(node: ASTNode): Boolean =
+    isDecoratorCallStringArgStubbed(node)
+    || (isDecoratorLikeFunctionCall(node) && isDirectiveField(node.treeParent))
 
   override fun shouldCreateStubForLiteral(node: ASTNode): Boolean {
     val parent = node.treeParent ?: return false
@@ -104,6 +98,12 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
 
   override fun hasSignificantValue(expression: JSLiteralExpression): Boolean {
     return shouldCreateStubForLiteral(expression.node)
+  }
+
+  override fun processCallExpression(callExpression: JSCallExpression, outData: JSElementIndexingData) {
+    if (isDecoratorLikeFunctionCall(callExpression.node) && isDirectiveField(callExpression.node.treeParent)) {
+      createJSImplicitElementForDecoratorLikeFunctionCall(callExpression, outData)
+    }
   }
 
   override fun processDecorator(decorator: ES6Decorator, data: JSElementIndexingDataImpl?): JSElementIndexingDataImpl? {
@@ -250,6 +250,89 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
     return INDEX_MAP.keys
   }
 
+  private fun isDecoratorCallStringArgStubbed(callNode: ASTNode): Boolean {
+    val parent = callNode.treeParent
+    if (parent.elementType !== JSStubElementTypes.ES6_DECORATOR) return false
+    val methodExpression = callNode.firstChildNode
+    if (methodExpression.elementType !== JSElementTypes.REFERENCE_EXPRESSION) return false
+
+    val referencedNameElement = methodExpression.firstChildNode.takeIf { it.elementType == JSTokenTypes.IDENTIFIER }
+                                ?: return false
+    val decoratorName = referencedNameElement.text
+    return STUBBED_DECORATORS_STRING_ARGS.contains(decoratorName)
+  }
+
+  private fun isDecoratorLikeFunctionCall(callNode: ASTNode): Boolean {
+    if (callNode.elementType !== JSStubElementTypes.CALL_EXPRESSION) return false
+
+    val methodExpression = callNode.firstChildNode
+    if (methodExpression.elementType !== JSElementTypes.REFERENCE_EXPRESSION) return false
+
+    val referencedNameElement = methodExpression.firstChildNode
+                                  // Recognize `input.required()` syntax
+                                  .let { if (it.elementType == JSElementTypes.REFERENCE_EXPRESSION) it.firstChildNode else it }
+                                  .takeIf { it.elementType == JSTokenTypes.IDENTIFIER }
+                                ?: return false
+    val decoratorLikeFunctionName = referencedNameElement.text
+    return STUBBED_DECORATOR_LIKE_FUNCTIONS.contains(decoratorLikeFunctionName)
+  }
+
+  private fun isDirectiveField(fieldNode: ASTNode?): Boolean {
+    if (fieldNode?.elementType !== TypeScriptStubElementTypes.TYPESCRIPT_FIELD) return false
+    val classNode = fieldNode?.treeParent?.treeParent
+                      ?.takeIf { it.elementType === JSStubElementTypes.TYPESCRIPT_CLASS }
+                    ?: return false
+    return hasDecorator(classNode.psi as TypeScriptClass, COMPONENT_DEC, DIRECTIVE_DEC) != null
+  }
+
+  private fun createJSImplicitElementForDecoratorLikeFunctionCall(callExpression: JSCallExpression, outData: JSElementIndexingData) {
+    val reference = callExpression.methodExpression as? JSReferenceExpression ?: return
+    val referenceName = if (reference.hasQualifier()) {
+      val qualifier = reference.qualifier as? JSReferenceExpression ?: return
+      if (qualifier.hasQualifier())
+        return
+      else
+        qualifier.referenceName + "." + reference.referenceName
+    }
+    else {
+      reference.referenceName
+    }
+    recordFunctionName(callExpression, outData, referenceName ?: return)
+  }
+
+  private fun recordFunctionName(callExpression: JSCallExpression,
+                                 outData: JSElementIndexingData,
+                                 referenceName: String) {
+    outData.addImplicitElement(
+      JSImplicitElementImpl.Builder(referenceName, callExpression)
+        .setUserStringWithData(
+          this,
+          ANGULAR2_FUNCTION_NAME_USER_STRING,
+          null
+        )
+        .toImplicitElement()
+    )
+  }
+
+  private fun hasDecorator(attributeListOwner: JSAttributeListOwner, vararg names: String): ES6Decorator? {
+    val list = attributeListOwner.attributeList
+    if (list == null || names.isEmpty()) {
+      return null
+    }
+    for (decorator in PsiTreeUtil.getStubChildrenOfTypeAsList(list, ES6Decorator::class.java)) {
+      if (names.contains(decorator.decoratorName)) {
+        return decorator
+      }
+    }
+    if (attributeListOwner is TypeScriptClassExpression) {
+      val context = attributeListOwner.getContext() as? JSAttributeListOwner
+      if (context != null) {
+        return hasDecorator(context, *names)
+      }
+    }
+    return null
+  }
+
   companion object {
 
     private const val REQUIRE = "require"
@@ -265,6 +348,8 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
 
     @NonNls
     private val ANGULAR2_MODULE_INDEX_USER_STRING = "a2mi"
+
+    private const val ANGULAR2_FUNCTION_NAME_USER_STRING = "a2fn"
 
     @NonNls
     private val PIPE_TYPE = "P;;;"
@@ -287,16 +372,22 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
 
     private val STUBBED_PROPERTIES = ContainerUtil.newHashSet(
       TEMPLATE_URL_PROP, STYLE_URLS_PROP, SELECTOR_PROP, INPUTS_PROP, OUTPUTS_PROP)
+
     private val STUBBED_DECORATORS_STRING_ARGS = ContainerUtil.newHashSet(
       INPUT_DEC, OUTPUT_DEC, ATTRIBUTE_DEC)
 
-    private val INDEX_MAP = HashMap<String, StubIndexKey<String, JSImplicitElementProvider>>()
+    private val STUBBED_DECORATOR_LIKE_FUNCTIONS = ContainerUtil.newHashSet(
+      INPUT_FUN, "ɵ$INPUT_FUN"
+    )
+
+    private val INDEX_MAP = HashMap<String, StubIndexKey<String, JSImplicitElementProvider>?>()
 
     init {
       INDEX_MAP[ANGULAR2_TEMPLATE_URLS_INDEX_USER_STRING] = Angular2TemplateUrlIndex.KEY
       INDEX_MAP[ANGULAR2_DIRECTIVE_INDEX_USER_STRING] = Angular2SourceDirectiveIndex.KEY
       INDEX_MAP[ANGULAR2_PIPE_INDEX_USER_STRING] = Angular2SourcePipeIndex.KEY
       INDEX_MAP[ANGULAR2_MODULE_INDEX_USER_STRING] = Angular2SourceModuleIndex.KEY
+      INDEX_MAP[ANGULAR2_FUNCTION_NAME_USER_STRING] = null
     }
 
     @JvmStatic
@@ -335,6 +426,12 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
       }
       return result
     }
+
+    fun getFunctionNameFromIndex(call: JSCallExpression): String? =
+      call.indexingData
+        ?.implicitElements
+        ?.find { it.userString == ANGULAR2_FUNCTION_NAME_USER_STRING }
+        ?.name
 
     private fun getTemplateFileUrl(decorator: ES6Decorator): String? {
       val templateUrl = getPropertyStringValue(decorator, TEMPLATE_URL_PROP)

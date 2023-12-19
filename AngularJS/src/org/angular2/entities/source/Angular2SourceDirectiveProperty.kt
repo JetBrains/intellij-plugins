@@ -58,7 +58,14 @@ abstract class Angular2SourceDirectiveProperty(
       ?.inferredType
 
   override val rawJsType: JSType?
-    get() = transformParameterType
+    get() = signature.jsType
+              ?.asRecordType()
+              ?.let {
+                it.findPropertySignature("INPUT_SIGNAL_BRAND_WRITE_TYPE")
+                ?: it.findPropertySignature("ɵINPUT_SIGNAL_BRAND_WRITE_TYPE")
+              }
+              ?.jsTypeWithOptionality
+            ?: transformParameterType
             ?: signature.memberSource.allSourceElements
               .find { it is TypeScriptFunction && it.isSetProperty }
               ?.asSafely<TypeScriptFunction>()
