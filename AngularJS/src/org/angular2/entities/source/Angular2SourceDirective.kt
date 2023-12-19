@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.JSStringUtil.unquoteWithoutUnescapingStringL
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
 import com.intellij.lang.javascript.psi.impl.JSPropertyImpl
@@ -28,7 +29,10 @@ import com.intellij.webSymbols.WebSymbolQualifiedKind
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2DecoratorUtil.ALIAS_PROP
 import org.angular2.Angular2DecoratorUtil.HOST_DIRECTIVES_PROP
+import org.angular2.Angular2DecoratorUtil.INPUT_DEC
+import org.angular2.Angular2DecoratorUtil.INPUT_FUN
 import org.angular2.Angular2DecoratorUtil.NAME_PROP
+import org.angular2.Angular2DecoratorUtil.OUTPUT_DEC
 import org.angular2.Angular2DecoratorUtil.REQUIRED_PROP
 import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver
 import org.angular2.entities.*
@@ -157,8 +161,8 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
       .properties
       .forEach { prop ->
         for (el in getPropertySources(prop.memberSource.singleElement)) {
-          processProperty(clazz, prop, el, inputMap, Angular2DecoratorUtil.INPUT_DEC, NG_DIRECTIVE_INPUTS, inputs)
-          processProperty(clazz, prop, el, outputMap, Angular2DecoratorUtil.OUTPUT_DEC, NG_DIRECTIVE_OUTPUTS, outputs)
+          processProperty(clazz, prop, el, inputMap, INPUT_DEC, INPUT_FUN, NG_DIRECTIVE_INPUTS, inputs)
+          processProperty(clazz, prop, el, outputMap, OUTPUT_DEC, null, NG_DIRECTIVE_OUTPUTS, outputs)
         }
       }
 
@@ -279,6 +283,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
                                 field: JSAttributeListOwner,
                                 mappings: MutableMap<String, Angular2PropertyInfo>,
                                 decorator: String,
+                                functionName: String?,
                                 qualifiedKind: WebSymbolQualifiedKind,
                                 result: MutableMap<String, Angular2DirectiveProperty>) {
       val info: Angular2PropertyInfo? =
@@ -287,6 +292,10 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
           ?.decorators
           ?.firstOrNull { it.decoratorName == decorator }
           ?.let { createPropertyInfo(it, property.memberName) }
+        ?: field.asSafely<TypeScriptField>()
+          ?.initializerOrStub
+          ?.asSafely<JSCallExpression>()
+          ?.let { createPropertyInfo(it, functionName, property.memberName) }
       if (info != null) {
         result.putIfAbsent(info.name, Angular2SourceDirectiveProperty.create(sourceClass, property, qualifiedKind, info))
       }
@@ -363,6 +372,34 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
         }
         else -> Angular2PropertyInfo(defaultName, false, decorator, declaringElement = null)
       }
+
+    private fun createPropertyInfo(call: JSCallExpression, functionName: String?, defaultName: String): Angular2PropertyInfo? {
+      if (functionName == null) return null
+      val referenceNames = Angular2IndexingHandler.getFunctionNameFromIndex(call)
+                             ?.split('.')
+                             ?.takeIf { it.getOrNull(0) == functionName || it.getOrNull(0) == "ɵ$functionName" }
+                           ?: return null
+      return when (referenceNames.size) {
+        1 -> {
+          call.stubSafeCallArguments.firstOrNull().asSafely<JSObjectLiteralExpression>()
+            ?.let { parseInputObjectLiteral(it, defaultName) }
+            ?.copy(required = false)
+          ?: Angular2PropertyInfo(defaultName, false, call, declaringElement = null)
+        }
+        2 -> {
+          if (referenceNames[1] == REQUIRED_PROP) {
+            call.stubSafeCallArguments.lastOrNull().asSafely<JSObjectLiteralExpression>()
+              ?.let { parseInputObjectLiteral(it, defaultName) }
+              ?.copy(required = true)
+            ?: Angular2PropertyInfo(defaultName, true, call, declaringElement = null)
+          }
+          else null
+        }
+        else -> {
+          return null
+        }
+      }
+    }
 
   }
 }
