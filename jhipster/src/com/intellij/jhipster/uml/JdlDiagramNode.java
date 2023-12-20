@@ -2,34 +2,27 @@
 
 package com.intellij.jhipster.uml;
 
-import com.intellij.diagram.DiagramNode;
+import com.intellij.diagram.DiagramNodeBase;
 import com.intellij.diagram.DiagramProvider;
 import com.intellij.jhipster.uml.model.JdlNodeData;
-import com.intellij.openapi.util.UserDataHolderBase;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-final class JdlDiagramNode extends UserDataHolderBase implements DiagramNode<JdlNodeData> {
+final class JdlDiagramNode extends DiagramNodeBase<JdlNodeData> {
 
   private final JdlNodeData data;
-  private final DiagramProvider<JdlNodeData> provider;
 
-  public JdlDiagramNode(JdlNodeData data, DiagramProvider<JdlNodeData> provider) {
+  JdlDiagramNode(JdlNodeData data, DiagramProvider<JdlNodeData> provider) {
+    super(provider);
     this.data = data;
-    this.provider = provider;
   }
 
   @Override
   public @NotNull JdlNodeData getIdentifyingElement() {
     return data;
-  }
-
-  @Override
-  public @NotNull DiagramProvider<JdlNodeData> getProvider() {
-    return provider;
   }
 
   @Override
