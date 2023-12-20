@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.source
 
+import com.intellij.diagnostic.PluginException
 import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
 import com.intellij.lang.javascript.JSStubElementTypes
@@ -15,12 +16,14 @@ import com.intellij.lang.javascript.psi.util.JSProjectUtil
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
 import com.intellij.model.Pointer
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.PsiUtilCore
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.applyIf
 import com.intellij.util.asSafely
@@ -59,13 +62,13 @@ class VueComponents {
         ?.let { return it }
 
       val mixinObj = (implicitElement.parent as? JSProperty)?.parent as? JSObjectLiteralExpression
-      if (mixinObj != null) return VueSourceEntityDescriptor(mixinObj)
+      if (mixinObj != null) return VueSourceEntityDescriptor.tryCreate(mixinObj)
 
       val call = implicitElement.parent as? JSCallExpression
       if (call != null) {
         return JSStubBasedPsiTreeUtil.findDescendants(call, JSStubElementTypes.OBJECT_LITERAL_EXPRESSION)
           .firstOrNull { (it.context as? JSArgumentList)?.context == call || (it.context == call) }
-          ?.let { VueSourceEntityDescriptor(it) }
+          ?.let { VueSourceEntityDescriptor.tryCreate(it) }
       }
       return null
     }
@@ -109,7 +112,7 @@ class VueComponents {
       when (val resolved = resolveElementTo(element, JSObjectLiteralExpression::class, JSCallExpression::class,
                                             JSClass::class, JSEmbeddedContent::class, HtmlFileImpl::class)) {
         // {...}
-        is JSObjectLiteralExpression -> VueSourceEntityDescriptor(resolved)
+        is JSObjectLiteralExpression -> VueSourceEntityDescriptor.tryCreate(resolved)
 
         // Vue.extend({...})
         // defineComponent({...})
@@ -118,23 +121,23 @@ class VueComponents {
             resolved.stubSafeCallArguments
               .getOrNull(0)
               ?.let { it as? JSObjectLiteralExpression }
-              ?.let { VueSourceEntityDescriptor(it) }
+              ?.let { VueSourceEntityDescriptor.tryCreate(it) }
           }
           else null
 
         // @Component({...}) class MyComponent {...}
         is JSClass ->
-          VueSourceEntityDescriptor(getComponentDecorator(resolved)?.let { getDescriptorFromDecorator(it) },
-                                    resolved)
+          VueSourceEntityDescriptor.tryCreate(getComponentDecorator(resolved)?.let { getDescriptorFromDecorator(it) },
+                                              resolved)
 
         // <script setup>
         is JSEmbeddedContent ->
-          VueSourceEntityDescriptor(source = resolved.containingFile)
+          VueSourceEntityDescriptor.tryCreate(source = resolved.containingFile)
 
         // Vue file without script section
         is HtmlFileImpl ->
           if (resolved.virtualFile.isDotVueFile)
-            VueSourceEntityDescriptor(source = resolved)
+            VueSourceEntityDescriptor.tryCreate(source = resolved)
           else null
 
         else -> null
@@ -187,6 +190,9 @@ class VueSourceEntityDescriptor(val initializer: JSElement? /* JSObjectLiteralEx
                                 override val source: PsiElement = clazz ?: initializer!!) : VueEntityDescriptor {
   init {
     assert(initializer == null || initializer is JSObjectLiteralExpression || initializer is JSFile)
+    source.let { PsiUtilCore.ensureValid(it) }
+    initializer?.let { PsiUtilCore.ensureValid(it) }
+    clazz?.let { PsiUtilCore.ensureValid(it) }
   }
 
   fun <T> getCachedValue(provider: (descriptor: VueSourceEntityDescriptor) -> CachedValueProvider.Result<T>): T {
@@ -232,5 +238,18 @@ class VueSourceEntityDescriptor(val initializer: JSElement? /* JSObjectLiteralEx
       val source = sourcePtr.dereference() ?: return@Pointer null
       VueSourceEntityDescriptor(initializer, clazz, source)
     }
+  }
+
+  companion object {
+    fun tryCreate(initializer: JSElement? /* JSObjectLiteralExpression | PsiFile */ = null,
+                  clazz: JSClass? = null,
+                  source: PsiElement = clazz ?: initializer!!): VueSourceEntityDescriptor? =
+      try {
+        VueSourceEntityDescriptor(initializer, clazz, source)
+      }
+      catch (e: PluginException) {
+        thisLogger().error(e)
+        null
+      }
   }
 }

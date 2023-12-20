@@ -42,7 +42,9 @@ abstract class VuexContainerImpl : VuexContainer {
     getInfo()?.let { accessor.invoke(it) } == true
 
   private fun getInfo(): VuexContainerInfoProvider.VuexContainerInfo? =
-    initializer?.let { VuexContainerInfoProvider.INSTANCE.getInfo(VueSourceEntityDescriptor(it, null)) }
+    initializer
+      ?.let { VueSourceEntityDescriptor.tryCreate(it, null) }
+      ?.let { VuexContainerInfoProvider.INSTANCE.getInfo(it) }
 }
 
 class VuexModuleImpl(override val name: String,

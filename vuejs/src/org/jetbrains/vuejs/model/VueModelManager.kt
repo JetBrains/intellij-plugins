@@ -150,10 +150,10 @@ class VueModelManager {
           if (context is JSProperty) {
             if (indexData != null) {
               context.parent.asSafely<JSObjectLiteralExpression>()?.let {
-                return VueSourceEntityDescriptor(it)
+                return VueSourceEntityDescriptor.tryCreate(it)
               }
             }
-            return VueSourceEntityDescriptor(source = element)
+            return VueSourceEntityDescriptor.tryCreate(source = element)
           }
         }
       }
@@ -169,7 +169,7 @@ class VueModelManager {
             ?.arguments
             ?.find { it is JSObjectLiteralExpression }
         }.asSafely<JSObjectLiteralExpression>()
-        return VueSourceEntityDescriptor(initializer, source = initializer ?: context)
+        return VueSourceEntityDescriptor.tryCreate(initializer, source = initializer ?: context)
       }
       else if (context is JSProperty) {
         context = context.context
@@ -184,7 +184,7 @@ class VueModelManager {
       }
 
       return when (context) {
-        is JSObjectLiteralExpression -> VueSourceEntityDescriptor(initializer = context)
+        is JSObjectLiteralExpression -> VueSourceEntityDescriptor.tryCreate(initializer = context)
         is ES6Decorator -> {
           val clazz = when (val parentContext = context.context?.context) {
             is JSExportAssignment -> parentContext.stubSafeElement as? JSClass
@@ -193,7 +193,7 @@ class VueModelManager {
           }
           val obj = VueComponents.getDescriptorFromDecorator(context)
           if (clazz != null || obj != null)
-            VueSourceEntityDescriptor(initializer = obj, clazz = clazz)
+            VueSourceEntityDescriptor.tryCreate(initializer = obj, clazz = clazz)
           else
             null
         }
@@ -282,7 +282,7 @@ class VueModelManager {
           ?.asSafely<VueSourceEntityDescriptor>()
           ?.let { return it }
       }
-      return VueSourceEntityDescriptor(source = file)
+      return VueSourceEntityDescriptor.tryCreate(source = file)
     }
 
     private fun findVueApp(templateElement: PsiElement, global: VueGlobal): VueApp? {
