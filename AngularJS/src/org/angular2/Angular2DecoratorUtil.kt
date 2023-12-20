@@ -51,6 +51,7 @@ object Angular2DecoratorUtil {
   const val TEMPLATE_URL_PROP = "templateUrl"
   const val TEMPLATE_PROP = "template"
   const val STYLE_URLS_PROP = "styleUrls"
+  const val STYLE_URL_PROP = "styleUrl"
   const val STYLES_PROP = "styles"
   const val REQUIRED_PROP = "required"
   const val ALIAS_PROP = "alias"
