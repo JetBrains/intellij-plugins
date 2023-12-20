@@ -118,7 +118,7 @@ public class ActionScriptExtractFunctionDialog extends JSBaseClassBasedIntroduce
     if (isClassContext) {
       myDeclareStaticCheckBox.setEnabled(contextInfo.getJSContext() == JSContext.UNKNOWN
                                          && JSExtractFunctionHandler.possibleToExtractStaticFromInstance(ci, myIntroductionScope));
-      myDeclareStaticCheckBox.setSelected(JSExtractFunctionHandler.getDeclareStatic() || contextInfo.getJSContext() == JSContext.STATIC);
+      myDeclareStaticCheckBox.setSelected(ActionScriptExtractFunctionHandler.getDeclareStatic() || contextInfo.getJSContext() == JSContext.STATIC);
     }
     myVisibilityPanel.configureForClassMember(false, false, ci.holder);
     doInit();
@@ -377,7 +377,7 @@ public class ActionScriptExtractFunctionDialog extends JSBaseClassBasedIntroduce
       return;
     }
     if (myDeclareStaticCheckBox.isEnabled() && myDeclareStaticCheckBox.isVisible()) {
-      JSExtractFunctionHandler.saveDeclareStatic(myDeclareStaticCheckBox.isSelected());
+      ActionScriptExtractFunctionHandler.saveDeclareStatic(myDeclareStaticCheckBox.isSelected());
     }
     super.doOKAction();
   }
@@ -392,12 +392,12 @@ public class ActionScriptExtractFunctionDialog extends JSBaseClassBasedIntroduce
 
   @Override
   protected void saveLastUsedVisibility(@NotNull JSAttributeList.AccessType type) {
-    JSExtractFunctionHandler.saveClassMemberVisibility(type);
+    ActionScriptExtractFunctionHandler.saveClassMemberVisibility(type);
   }
 
   @Nullable
   @Override
   protected JSAttributeList.AccessType getLastUsedVisibility() {
-    return JSExtractFunctionHandler.getClassMemberVisibility();
+    return ActionScriptExtractFunctionHandler.getClassMemberVisibility();
   }
 }
