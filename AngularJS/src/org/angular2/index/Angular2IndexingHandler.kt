@@ -45,6 +45,7 @@ import org.angular2.Angular2DecoratorUtil.PIPE_DEC
 import org.angular2.Angular2DecoratorUtil.SELECTOR_PROP
 import org.angular2.Angular2DecoratorUtil.STYLES_PROP
 import org.angular2.Angular2DecoratorUtil.STYLE_URLS_PROP
+import org.angular2.Angular2DecoratorUtil.STYLE_URL_PROP
 import org.angular2.Angular2DecoratorUtil.TEMPLATE_PROP
 import org.angular2.Angular2DecoratorUtil.TEMPLATE_URL_PROP
 import org.angular2.Angular2DecoratorUtil.getClassForDecoratorElement
@@ -371,7 +372,7 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
                                           JSStubElementTypes.TYPESCRIPT_CLASS_EXPRESSION)
 
     private val STUBBED_PROPERTIES = ContainerUtil.newHashSet(
-      TEMPLATE_URL_PROP, STYLE_URLS_PROP, SELECTOR_PROP, INPUTS_PROP, OUTPUTS_PROP)
+      TEMPLATE_URL_PROP, STYLE_URLS_PROP, STYLE_URL_PROP, SELECTOR_PROP, INPUTS_PROP, OUTPUTS_PROP)
 
     private val STUBBED_DECORATORS_STRING_ARGS = ContainerUtil.newHashSet(
       INPUT_DEC, OUTPUT_DEC, ATTRIBUTE_DEC)
@@ -458,6 +459,7 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
 
       urlsGetter(STYLE_URLS_PROP) { Angular2DecoratorUtil.getExpressionStringValue(it) }
       urlsGetter(STYLES_PROP) { getExprReferencedFileUrl(it) }
+      getPropertyStringValue(decorator, STYLE_URL_PROP)?.let { result.add(it) }
 
       return result
     }

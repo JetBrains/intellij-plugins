@@ -54,6 +54,15 @@ class Angular2CssClassTest : Angular2CodeInsightFixtureTestCase() {
                                       "ext-html-class")
   }
 
+  fun testNewStylePropsCodeCompletion() {
+    myFixture.configureByFiles("newStyleProps.html", "newStyleProps.ts", "newStyleProps.css", "package.json")
+    myFixture.moveToOffsetBySignature("<div class=\"<caret>\">")
+    myFixture.completeBasic()
+    UsefulTestCase.assertSameElements(myFixture.getLookupElementStrings()!!,
+                                      "styles-no-array-class",
+                                      "style-url-class")
+  }
+
   fun testNonCliComplexScopeCodeCompletionInline() {
     myFixture.configureByFiles("complex.ts", "complex-global.css", "complex-internal.css", "package.json")
     myFixture.moveToOffsetBySignature("<div class=\"<caret>\">")

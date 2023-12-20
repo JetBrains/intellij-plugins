@@ -10,9 +10,11 @@ import com.intellij.psi.filters.ElementFilter
 import com.intellij.psi.filters.position.FilterPattern
 import com.intellij.util.ProcessingContext
 import com.intellij.util.asSafely
+import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
 import org.angular2.Angular2DecoratorUtil.NAME_PROP
 import org.angular2.Angular2DecoratorUtil.PIPE_DEC
 import org.angular2.Angular2DecoratorUtil.STYLE_URLS_PROP
+import org.angular2.Angular2DecoratorUtil.STYLE_URL_PROP
 import org.angular2.Angular2DecoratorUtil.VIEW_CHILDREN_DEC
 import org.angular2.Angular2DecoratorUtil.VIEW_CHILD_DEC
 import org.angular2.Angular2DecoratorUtil.isAngularEntityDecorator
@@ -23,7 +25,8 @@ import org.angularjs.codeInsight.refs.AngularJSTemplateReferencesProvider
 internal class Angular2TSReferencesContributor : PsiReferenceContributor() {
 
   override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
-    registrar.registerReferenceProvider(STYLE_PATTERN, Angular2StyleUrlsReferencesProvider())
+    registrar.registerReferenceProvider(STYLE_URLS_PATTERN, Angular2StyleUrlsReferencesProvider())
+    registrar.registerReferenceProvider(STYLE_URL_PATTERN, Angular2StyleUrlsReferencesProvider())
     registrar.registerReferenceProvider(VIEW_CHILD_PATTERN, Angular2ViewChildReferencesProvider())
     registrar.registerReferenceProvider(PIPE_NAME_PATTERN, Angular2PipeNameReferencesProvider())
   }
@@ -51,7 +54,9 @@ internal class Angular2TSReferencesContributor : PsiReferenceContributor() {
     }
   }))
 
-  private val STYLE_PATTERN = PlatformPatterns.psiElement(JSLiteralExpression::class.java).and(FilterPattern(object : ElementFilter {
+  private val STYLE_URL_PATTERN = ng2LiteralInDecoratorProperty(STYLE_URL_PROP, COMPONENT_DEC)
+
+  private val STYLE_URLS_PATTERN = PlatformPatterns.psiElement(JSLiteralExpression::class.java).and(FilterPattern(object : ElementFilter {
     override fun isAcceptable(element: Any, context: PsiElement?): Boolean {
       return element.asSafely<JSLiteralExpression>()
                ?.takeIf { it.isQuotedLiteral }

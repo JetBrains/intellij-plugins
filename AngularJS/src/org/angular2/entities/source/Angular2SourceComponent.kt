@@ -20,6 +20,7 @@ import com.intellij.util.SmartList
 import com.intellij.util.asSafely
 import org.angular2.Angular2DecoratorUtil.STYLES_PROP
 import org.angular2.Angular2DecoratorUtil.STYLE_URLS_PROP
+import org.angular2.Angular2DecoratorUtil.STYLE_URL_PROP
 import org.angular2.Angular2DecoratorUtil.TEMPLATE_PROP
 import org.angular2.Angular2DecoratorUtil.TEMPLATE_URL_PROP
 import org.angular2.Angular2DecoratorUtil.getProperty
@@ -106,6 +107,8 @@ class Angular2SourceComponent(decorator: ES6Decorator, implicitElement: JSImplic
   private fun findCssFiles(): List<PsiFile> {
     return findCssFiles(getDecoratorProperty(STYLE_URLS_PROP), true)
       .plus(findCssFiles(getDecoratorProperty(STYLES_PROP), false))
+      .plus(listOfNotNull(getReferencedFile(getDecoratorProperty(STYLES_PROP), false),
+                          getReferencedFile(getDecoratorProperty(STYLE_URL_PROP), true)))
       .toList()
   }
 
