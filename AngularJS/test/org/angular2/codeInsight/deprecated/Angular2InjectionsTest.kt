@@ -81,6 +81,13 @@ class Angular2InjectionsTest : Angular2CodeInsightFixtureTestCase() {
     assertEquals(CSSLanguage.INSTANCE, element!!.getLanguage())
   }
 
+  fun testNonArrayStyles() {
+    myFixture.configureByFiles("nonArrayStyles.ts", "package.json")
+    val offset = AngularTestUtil.findOffsetBySignature("Helvetica <caret>Neue", myFixture.getFile())
+    val element = InjectedLanguageManager.getInstance(project).findInjectedElementAt(myFixture.getFile(), offset)
+    assertEquals(CSSLanguage.INSTANCE, element!!.getLanguage())
+  }
+
   fun testHost() {
     myFixture.configureByFiles("host.ts", "package.json")
     for (signature in listOf(Pair("eve<caret>nt", Angular2Language.INSTANCE),

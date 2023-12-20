@@ -22,6 +22,8 @@ import com.intellij.util.NullableFunction
 import com.intellij.util.asSafely
 import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
 import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
+import org.angular2.Angular2DecoratorUtil.STYLES_PROP
+import org.angular2.Angular2DecoratorUtil.TEMPLATE_PROP
 import org.angular2.Angular2DecoratorUtil.VIEW_DEC
 import org.angular2.Angular2DecoratorUtil.isAngularEntityDecorator
 import org.angular2.cli.config.AngularConfigProvider
@@ -63,13 +65,14 @@ class Angular2Injector : MultiHostInjector {
       return
     }
 
-    if (isPropertyWithName(parent, "template")) {
+    if (isPropertyWithName(parent, TEMPLATE_PROP)) {
       injectIntoDecoratorExpr(registrar, context, parent, Angular2LangUtil.getTemplateSyntax(context).language, null)
       return
     }
 
     val grandParent = parent.parent
-    if (parent is JSArrayLiteralExpression && isPropertyWithName(grandParent, "styles")) {
+    if ((parent is JSArrayLiteralExpression && isPropertyWithName(grandParent, STYLES_PROP))
+        || isPropertyWithName(parent, STYLES_PROP)) {
       injectIntoDecoratorExpr(registrar, context, grandParent, getCssDialect(context), null)
       return
     }
