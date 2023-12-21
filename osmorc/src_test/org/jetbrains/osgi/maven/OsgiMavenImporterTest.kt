@@ -129,8 +129,8 @@ class OsgiMavenImporterTest : FacetImporterTestCase<OsmorcFacet>() {
 
   @Test 
   fun testImplicitResources() {
-    val resource1 = File(myDir, "project/src/main/resources/file1.txt")
-    val resource2 = File(myDir, "project/src/main/resources/file2.txt")
+    val resource1 = File(dir, "project/src/main/resources/file1.txt")
+    val resource2 = File(dir, "project/src/main/resources/file2.txt")
     FileUtil.createIfDoesntExist(resource1)
     FileUtil.createIfDoesntExist(resource2)
     importProject(pomContents("simple"))
@@ -142,8 +142,8 @@ class OsgiMavenImporterTest : FacetImporterTestCase<OsmorcFacet>() {
 
   @Test 
   fun testExplicitResources() {
-    val included = File(myDir, "project/src/main/resources/included.txt")
-    val excluded = File(myDir, "project/src/main/resources/excluded.txt")
+    val included = File(dir, "project/src/main/resources/included.txt")
+    val excluded = File(dir, "project/src/main/resources/excluded.txt")
     FileUtil.createIfDoesntExist(included)
     FileUtil.createIfDoesntExist(excluded)
     val instructions =
