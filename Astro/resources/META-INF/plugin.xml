@@ -86,6 +86,7 @@
 
     <platform.lsp.serverSupportProvider implementation="org.jetbrains.astro.service.AstroLspServerSupportProvider" />
     <registryKey key="astro.enable.lsp" defaultValue="false" description="Enable Astro Language Tools service"/>
+    <include.provider implementation="org.jetbrains.astro.AstroFileIncludeProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
