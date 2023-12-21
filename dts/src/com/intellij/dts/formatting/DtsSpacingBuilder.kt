@@ -84,6 +84,7 @@ class DtsSpacingBuilder(settings: CodeStyleSettings) {
       .around(logicalOperators).spaceIf(common.SPACE_AROUND_LOGICAL_OPERATORS)
       .between(DtsTypes.HANDLE, DtsTypes.NAME).none()
       .between(DtsTypes.HANDLE, DtsTypes.LBRACE).none()
+      .between(DtsTypes.LBRACE, DtsTypes.NODE_CONTENT).lineBreakInCode()
       .between(DtsTypes.NODE_CONTENT, DtsTypes.RBRACE).lineBreakInCode()
       .betweenInside(DtsTypes.BYTE, DtsTypes.BYTE, DtsTypes.BYTE_ARRAY).spaceIf(custom.SPACE_BETWEEN_BYTES)
       .betweenInside(byteArrayValues, byteArrayValues, DtsTypes.BYTE_ARRAY).spaces(1)

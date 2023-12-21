@@ -80,8 +80,8 @@
   extends(".*Expr")=expr
   consumeTokenMethod(".*Recover")="consumeTokenFast"
 
-  hooks("nodeContent")=[rightBinder="GREEDY_RIGHT_BINDER"]
-  hooks("entry")=[rightBinder="trailingCommentsBinder"]
+  hooks("nodeContent")=[rightBinder="GREEDY_RIGHT_BINDER" leftBinder="GREEDY_LEFT_BINDER"]
+  hooks("entry")=[rightBinder="trailingCommentsBinder" leftBinder="leadingCommentsBinder"]
 
   // c preprocessor rules
 

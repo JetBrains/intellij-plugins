@@ -2,7 +2,8 @@ node {
     // comment
 };
 
-node { // comment
+node {
+    // comment
     prop = "";
 };
 

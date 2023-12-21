@@ -9,21 +9,30 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
+import kotlin.math.max
 
 class DtsIndentingBuilder {
-  private fun afterToken(parent: Block?, newChildIndex: Int, vararg tokens: IElementType): Boolean {
-    val node = ASTBlock.getNode(parent) ?: return false
-
-    return node.getChildren(null).asSequence()
-      .filter(DtsBlock::isValidForBlock)
+  private fun afterToken(parent: Block, newChildIndex: Int, vararg tokens: IElementType): Boolean {
+    return parent.subBlocks
       .take(newChildIndex)
-      .any { it.elementType in tokens }
+      .mapNotNull(ASTBlock::getElementType)
+      .any { it in tokens }
   }
 
   fun getChildIndenting(parent: Block?, newChildIndex: Int): Indent? {
+    if (parent == null) return null
+
     val parentElement = ASTBlock.getPsiElement(parent) ?: return null
 
     return when (parentElement) {
+      is DtsEntry -> {
+        // delegate getChildIndent to child before the new child
+
+        val child = parent.subBlocks.getOrNull(max(0, newChildIndex - 1)) ?: return Indent.getNoneIndent()
+        val index = child.subBlocks.size
+
+        child.getChildAttributes(index).childIndent
+      }
       is DtsNode -> {
         val afterRBrace = afterToken(parent, newChildIndex, DtsTypes.RBRACE)
         if (afterRBrace) Indent.getNoneIndent() else Indent.getNormalIndent()

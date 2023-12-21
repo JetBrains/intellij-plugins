@@ -420,6 +420,7 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
     pinned_ = result_; // pin = 1
     result_ = result_ && consumeToken(builder_, SEMICOLON);
     register_hook_(builder_, RIGHT_BINDER, trailingCommentsBinder);
+    register_hook_(builder_, LEFT_BINDER, leadingCommentsBinder);
     exit_section_(builder_, level_, marker_, result_, pinned_, null);
     return result_ || pinned_;
   }
@@ -494,6 +495,7 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
       if (!empty_element_parsed_guard_(builder_, "nodeContent", pos_)) break;
     }
     register_hook_(builder_, RIGHT_BINDER, GREEDY_RIGHT_BINDER);
+    register_hook_(builder_, LEFT_BINDER, GREEDY_LEFT_BINDER);
     exit_section_(builder_, level_, marker_, result_, false, null);
     return result_;
   }

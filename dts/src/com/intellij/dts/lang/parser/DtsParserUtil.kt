@@ -15,26 +15,27 @@ import com.intellij.psi.tree.TokenSet
 
 object DtsParserUtil : DtsJavaParserUtil() {
   @JvmField
-  val trailingCommentsBinder = object : WhitespacesAndCommentsBinder {
-    val validTokens = TokenSet.create(
-      TokenType.WHITE_SPACE,
-      *DtsTokenSets.comments.types,
-    )
+  val trailingCommentsBinder = WhitespacesAndCommentsBinder { tokens, _, getter ->
+    tokens
+      .withIndex()
+      .asSequence()
+      .takeWhile { (index, token) -> token != TokenType.WHITE_SPACE || !getter.get(index).contains('\n') }
+      .filter { (_, token) -> token in DtsTokenSets.comments }
+      .map { (index, _) -> index }
+      .lastOrNull()?.let { it + 1 }
+    ?: 0
+  }
 
-    override fun getEdgePosition(
-      tokens: List<IElementType>,
-      atStreamEdge: Boolean,
-      getter: WhitespacesAndCommentsBinder.TokenTextGetter
-    ): Int {
-      var i = 0
-      while (i < tokens.size) {
-        if (tokens[i] !in validTokens || getter.get(i).contains('\n')) break
-        i++
-      }
-
-      return i
-    }
-
+  @JvmField
+  val leadingCommentsBinder = WhitespacesAndCommentsBinder { tokens, _, getter ->
+    tokens
+      .withIndex()
+      .reversed()
+      .takeWhile { (index, token) -> token != TokenType.WHITE_SPACE || getter.get(index).count { it == '\n' } <= 1 }
+      .filter { (_, token) -> token in DtsTokenSets.comments }
+      .map { (index, _) -> index }
+      .lastOrNull()
+    ?: tokens.size
   }
 
   private val invalidEntryEndTokens = TokenSet.create(
