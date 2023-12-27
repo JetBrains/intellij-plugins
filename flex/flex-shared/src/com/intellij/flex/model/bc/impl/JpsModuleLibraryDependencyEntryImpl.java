@@ -33,12 +33,6 @@ class JpsModuleLibraryDependencyEntryImpl extends JpsFlexDependencyEntryBase<Jps
     return new JpsModuleLibraryDependencyEntryImpl(this);
   }
 
-  @Override
-  public void applyChanges(@NotNull final JpsModuleLibraryDependencyEntryImpl modified) {
-    super.applyChanges(modified);
-    myLibraryId = modified.myLibraryId;
-  }
-
 // ------------------------------------
 
   @Override

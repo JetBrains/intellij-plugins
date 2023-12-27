@@ -45,19 +45,6 @@ public class JpsFlexCompilerProjectExtension extends JpsElementBase<JpsFlexCompi
     return new JpsFlexCompilerProjectExtension(this);
   }
 
-  @Override
-  public void applyChanges(@NotNull final JpsFlexCompilerProjectExtension modified) {
-    GENERATE_FLEXMOJOS_CONFIGS = modified.GENERATE_FLEXMOJOS_CONFIGS;
-
-    USE_BUILT_IN_COMPILER = modified.USE_BUILT_IN_COMPILER;
-    USE_FCSH = modified.USE_FCSH;
-    USE_MXMLC_COMPC = modified.USE_MXMLC_COMPC;
-    PREFER_ASC_20 = modified.PREFER_ASC_20;
-    MAX_PARALLEL_COMPILATIONS = modified.MAX_PARALLEL_COMPILATIONS;
-    HEAP_SIZE_MB = modified.HEAP_SIZE_MB;
-    VM_OPTIONS = modified.VM_OPTIONS;
-  }
-
   @NotNull
   public static JpsFlexCompilerProjectExtension getInstance(final JpsProject project) {
     final JpsFlexCompilerProjectExtension child = project.getContainer().getChild(ROLE);

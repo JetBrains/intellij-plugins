@@ -61,11 +61,6 @@ public class JpsOsmorcModuleExtensionImpl extends JpsElementBase<JpsOsmorcModule
     return new JpsOsmorcModuleExtensionImpl(XmlSerializerUtil.createCopy(myProperties));
   }
 
-  @Override
-  public void applyChanges(@NotNull JpsOsmorcModuleExtensionImpl modified) {
-    XmlSerializerUtil.copyBean(modified.myProperties, myProperties);
-  }
-
   @NotNull
   @Override
   public String getJarFileLocation() {

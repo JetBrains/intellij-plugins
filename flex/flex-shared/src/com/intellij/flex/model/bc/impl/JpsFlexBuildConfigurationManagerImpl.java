@@ -38,12 +38,6 @@ public class JpsFlexBuildConfigurationManagerImpl extends JpsCompositeElementBas
     return new JpsFlexBuildConfigurationManagerImpl(this);
   }
 
-  @Override
-  public void applyChanges(@NotNull final JpsFlexBuildConfigurationManagerImpl modified) {
-    super.applyChanges(modified);
-    //..
-  }
-
 // ------------------------------
 
   @Override

@@ -32,12 +32,6 @@ public class JpsAirPackageEntryImpl extends JpsElementBase<JpsAirPackageEntryImp
     return new JpsAirPackageEntryImpl(this);
   }
 
-  @Override
-  public void applyChanges(@NotNull final JpsAirPackageEntryImpl modified) {
-    myFilePath = modified.myFilePath;
-    myPathInPackage = modified.myPathInPackage;
-  }
-
 // ---------------------------------------------
 
   @Override

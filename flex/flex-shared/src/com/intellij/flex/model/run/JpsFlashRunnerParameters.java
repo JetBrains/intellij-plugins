@@ -31,15 +31,6 @@ public class JpsFlashRunnerParameters extends JpsBCBasedRunnerParameters<JpsFlas
     return new JpsFlashRunnerParameters(this);
   }
 
-  @Override
-  public void applyChanges(@NotNull final JpsFlashRunnerParameters modified) {
-    super.applyChanges(modified);
-
-    myOverrideMainClass = modified.myOverrideMainClass;
-    myOverriddenMainClass = modified.myOverriddenMainClass;
-    myOverriddenOutputFileName = modified.myOverriddenOutputFileName;
-  }
-
   // -----------------------
 
   public boolean isOverrideMainClass() {

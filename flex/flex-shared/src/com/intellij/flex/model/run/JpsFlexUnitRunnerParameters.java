@@ -71,17 +71,6 @@ public class JpsFlexUnitRunnerParameters extends JpsBCBasedRunnerParameters<JpsF
     return new JpsFlexUnitRunnerParameters(this);
   }
 
-  @Override
-  public void applyChanges(@NotNull final JpsFlexUnitRunnerParameters modified) {
-    super.applyChanges(modified);
-
-    myScope = modified.myScope;
-    myPackageName = modified.myPackageName;
-    myClassName = modified.myClassName;
-    myMethodName = modified.myMethodName;
-    myOutputLogLevel = modified.myOutputLogLevel;
-  }
-
   // ------------------
 
   @NotNull

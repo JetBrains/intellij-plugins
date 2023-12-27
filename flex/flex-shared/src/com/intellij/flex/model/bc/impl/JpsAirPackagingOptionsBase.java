@@ -27,15 +27,6 @@ abstract class JpsAirPackagingOptionsBase<Self extends JpsAirPackagingOptionsBas
     myPackageFileName = original.myPackageFileName;
   }
 
-  @Override
-  public void applyChanges(final @NotNull Self modified) {
-    super.applyChanges(modified);
-    setEnabled(modified.isEnabled());
-    setUseGeneratedDescriptor(modified.isUseGeneratedDescriptor());
-    setCustomDescriptorPath(modified.getCustomDescriptorPath());
-    setPackageFileName(modified.getPackageFileName());
-  }
-
 // ------------------------------------
 
   public boolean isEnabled() {

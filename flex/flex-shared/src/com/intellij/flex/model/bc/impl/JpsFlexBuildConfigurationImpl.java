@@ -71,25 +71,6 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
     return new JpsFlexBuildConfigurationImpl(this);
   }
 
-  @Override
-  public void applyChanges(@NotNull final JpsFlexBuildConfigurationImpl modified) {
-    super.applyChanges(modified);
-    // todo use setters & dispatch events
-    myTargetPlatform = modified.myTargetPlatform;
-    myPureAs = modified.myPureAs;
-    myOutputType = modified.myOutputType;
-    myOptimizeFor = modified.myOptimizeFor;
-    myMainClass = modified.myMainClass;
-    myOutputFileName = modified.myOutputFileName;
-    myOutputFolder = modified.myOutputFolder;
-    myUseHtmlWrapper = modified.myUseHtmlWrapper;
-    myWrapperTemplatePath = modified.myWrapperTemplatePath;
-    myRLMs = modified.myRLMs;
-    myCssFilesToCompile = modified.myCssFilesToCompile;
-    mySkipCompile = modified.mySkipCompile;
-    myTempBCForCompilation = modified.myTempBCForCompilation;
-  }
-
 // -----------------------------------------
 
   @Override

@@ -41,17 +41,6 @@ public final class JpsAirSigningOptionsImpl extends JpsElementBase<JpsAirSigning
     return new JpsAirSigningOptionsImpl(this);
   }
 
-  @Override
-  public void applyChanges(@NotNull final JpsAirSigningOptionsImpl modified) {
-    setUseTempCertificate(modified.isUseTempCertificate());
-    setProvisioningProfilePath(modified.getProvisioningProfilePath());
-    setKeystorePath(modified.getKeystorePath());
-    setKeystoreType(modified.getKeystoreType());
-    setKeyAlias(modified.getKeyAlias());
-    setProvider(modified.getProvider());
-    setTsa(modified.getTsa());
-  }
-
 // -----------------------------
 
   @Override

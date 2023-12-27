@@ -40,17 +40,6 @@ public final class JpsFlexCompilerOptionsImpl extends JpsElementBase<JpsFlexComp
     return new JpsFlexCompilerOptionsImpl(this);
   }
 
-  @Override
-  public void applyChanges(@NotNull final JpsFlexCompilerOptionsImpl modified) {
-    // todo use setters instead, because this method must throw events
-    myOptions.clear();
-    myOptions.putAll(modified.myOptions);
-    myResourceFilesMode = modified.myResourceFilesMode;
-    myFilesToIncludeInSWC = modified.myFilesToIncludeInSWC;
-    myAdditionalConfigFilePath = modified.myAdditionalConfigFilePath;
-    myAdditionalOptions = modified.myAdditionalOptions;
-  }
-
 // ------------------------------------
 
   @Override

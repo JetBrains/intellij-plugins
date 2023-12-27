@@ -62,14 +62,6 @@ final class JpsFlexDependenciesImpl extends JpsCompositeElementBase<JpsFlexDepen
     return new JpsFlexDependenciesImpl(this);
   }
 
-  @Override
-  public void applyChanges(@NotNull final JpsFlexDependenciesImpl modified) {
-    super.applyChanges(modified);
-    setTargetPlayer(modified.getTargetPlayer());
-    setComponentSet(modified.getComponentSet());
-    setFrameworkLinkage(modified.getFrameworkLinkage());
-  }
-
 // ------------------------------------
 
   @Override

@@ -35,11 +35,6 @@ public class JpsOsmorcProjectExtensionImpl extends JpsElementBase<JpsOsmorcProje
     myProperties = properties;
   }
 
-  @Override
-  public void applyChanges(@NotNull JpsOsmorcProjectExtensionImpl modified) {
-    XmlSerializerUtil.copyBean(modified.myProperties, myProperties);
-  }
-
   @NotNull
   @Override
   public JpsOsmorcProjectExtensionImpl createCopy() {
