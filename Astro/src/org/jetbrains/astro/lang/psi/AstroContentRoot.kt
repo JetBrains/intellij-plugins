@@ -80,7 +80,7 @@ class AstroContentRoot : JSEmbeddedContentImpl, XmlDocument {
     val defaultDescriptorsCache = if (strict) defaultDescriptorsCacheStrict else defaultDescriptorsCacheNotStrict
     var cachedValue = defaultDescriptorsCache[namespace]
     if (cachedValue == null) {
-      defaultDescriptorsCache[namespace] = PsiCachedValueImpl(manager, CachedValueProvider {
+      defaultDescriptorsCache[namespace] = PsiCachedValueImpl.Soft(manager, CachedValueProvider {
         val defaultNSDescriptorInner = XmlNsDescriptorUtil.getDefaultNSDescriptor(this, namespace, strict)
         if (XmlNsDescriptorUtil.isGeneratedFromDtd(this, defaultNSDescriptorInner)) {
           CachedValueProvider.Result(defaultNSDescriptorInner, this,
