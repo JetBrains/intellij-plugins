@@ -16,7 +16,6 @@ import com.intellij.javascript.nodejs.execution.NodeTargetRun;
 import com.intellij.javascript.nodejs.execution.NodeTargetRunOptions;
 import com.intellij.javascript.nodejs.library.yarn.pnp.YarnPnpNodePackage;
 import com.intellij.javascript.nodejs.util.NodePackage;
-import com.intellij.javascript.testing.AngularCliConfig;
 import com.intellij.lang.javascript.ConsoleCommandLineFolder;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -24,8 +23,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -200,12 +197,10 @@ public final class KarmaServer {
       File workingDir = new File(serverSettings.getWorkingDirectorySystemDependent());
       SemVer version = pkg.getVersion();
       if (version == null || version.isGreaterOrEqualThan(6, 0, 0)) {
-        AngularCliConfig config = AngularCliConfig.findProjectConfig(workingDir);
-        VirtualFile karmaConfFile = LocalFileSystem.getInstance().findFileByPath(configurationFilePath);
-        String defaultProject = config != null ? config.getProjectContainingFileOrDefault(karmaConfFile) : null;
-        if (defaultProject != null) {
-          commandLine.addParameter(defaultProject);
-          commandLineFolder.addPlaceholderText(defaultProject);
+        String projectName = serverSettings.getAngularProjectName();
+        if (projectName != null) {
+          commandLine.addParameter(projectName);
+          commandLineFolder.addPlaceholderText(projectName);
         }
         commandLine.addParameter("--karma-config");
         commandLine.addParameter(targetRun.path(configFile.getAbsolutePath()));
