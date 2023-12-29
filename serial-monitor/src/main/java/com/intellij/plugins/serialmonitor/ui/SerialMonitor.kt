@@ -42,12 +42,12 @@ class SerialMonitor(private val project: Project,
   private val mySend: JButton
   private val myCommand: TextFieldWithStoredHistory
   private val myLineEnd: JBCheckBox
-  private var duplexConsoleView: JeditermSerialMonitorDuplexConsoleView?
+  private val duplexConsoleView: JeditermSerialMonitorDuplexConsoleView
 
-  fun getStatus(): PortStatus = duplexConsoleView?.status ?: PortStatus.UNAVAILABLE
+  fun getStatus(): PortStatus = duplexConsoleView.status
 
   override fun portsStatusChanged() {
-    mySend.isEnabled = duplexConsoleView?.status == PortStatus.CONNECTED
+    mySend.isEnabled = duplexConsoleView.status == PortStatus.CONNECTED
     ActivityTracker.getInstance().inc()
   }
 
@@ -58,7 +58,7 @@ class SerialMonitor(private val project: Project,
     }
 
     if (s.isNotEmpty()) {
-      duplexConsoleView?.apply {
+      duplexConsoleView.apply {
         val bytes = s.toByteArray(this.charset)
         ApplicationManager.getApplication().executeOnPooledThread {
           try {
@@ -77,27 +77,24 @@ class SerialMonitor(private val project: Project,
 
 
   fun disconnect() {
-    duplexConsoleView?.connect(false)
-  }
-  override fun dispose() {
-    if (duplexConsoleView != null) {
-      Disposer.dispose(duplexConsoleView!!)
-      duplexConsoleView = null
-    }
+    duplexConsoleView.connect(false)
   }
 
+  override fun dispose() {}
+
   fun connect() {
-    duplexConsoleView?.connect(true)
+    duplexConsoleView.connect(true)
   }
 
   init {
     myPanel.setLoadingText(SerialMonitorBundle.message("connecting"))
     duplexConsoleView = JeditermSerialMonitorDuplexConsoleView.create(project, name, portProfile, myPanel)
-    val consoleComponent = duplexConsoleView!!.component
-    duplexConsoleView!!.component.border = BorderFactory.createEtchedBorder()
+    Disposer.register(this, duplexConsoleView)
+    val consoleComponent = duplexConsoleView.component
+    duplexConsoleView.component.border = BorderFactory.createEtchedBorder()
     val toolbarActions = DefaultActionGroup()
     val toolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.TOOLBAR, toolbarActions, false)
-    toolbarActions.addAll(*duplexConsoleView!!.createConsoleActions())
+    toolbarActions.addAll(*duplexConsoleView.createConsoleActions())
     toolbar.targetComponent = consoleComponent
     myCommand = TextFieldWithStoredHistory(HISTORY_KEY)
     myLineEnd = JBCheckBox(SerialMonitorBundle.message("checkbox.send.eol"), true)
@@ -130,8 +127,8 @@ class SerialMonitor(private val project: Project,
                 GridConstraints(0, 3, 1, 1, ANCHOR_NORTHEAST, FILL_NONE, SIZEPOLICY_FIXED, SIZEPOLICY_FIXED, null, null, null))
     myPanel.add(consoleComponent,
                 GridConstraints(1, 1, 1, 3, ANCHOR_NORTHWEST, FILL_BOTH, SIZE_POLICY_RESIZEABLE, SIZE_POLICY_RESIZEABLE, null, null, null))
-    duplexConsoleView!!.addSwitchListener(this::hideSendControls, this)
-    hideSendControls(duplexConsoleView!!.isPrimaryConsoleEnabled)
+    duplexConsoleView.addSwitchListener(this::hideSendControls, this)
+    hideSendControls(duplexConsoleView.isPrimaryConsoleEnabled)
   }
 
   private fun hideSendControls(q: Boolean) {

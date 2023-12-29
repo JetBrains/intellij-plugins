@@ -3,6 +3,7 @@ package com.intellij.plugins.serialmonitor.service
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.plugins.serialmonitor.Parity
 import com.intellij.plugins.serialmonitor.SerialMonitorConnectCollector
@@ -85,8 +86,8 @@ class SerialPortService : Disposable {
 
   fun getPortsNames(): Set<String> = portNames
 
-  fun newConnection(portName: String): SerialConnection? {
-    if (connections.containsKey(portName)) return null
+  fun newConnection(portName: String): SerialConnection {
+    connections[portName]?.also { Disposer.dispose(it) }
     val serialConnection = SerialConnection(portName)
     connections[portName] = serialConnection
     return serialConnection

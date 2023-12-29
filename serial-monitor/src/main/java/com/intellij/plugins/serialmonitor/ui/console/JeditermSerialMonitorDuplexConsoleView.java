@@ -25,7 +25,6 @@ import com.intellij.plugins.serialmonitor.ui.actions.EditSettingsAction;
 import com.intellij.ui.components.JBLoadingPanel;
 import icons.SerialMonitorIcons;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -53,7 +52,7 @@ public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<Je
   //todo auto reconnect while build
   //todo interoperability with other plugins
 
-  @Nullable
+  @NotNull
   public static JeditermSerialMonitorDuplexConsoleView create(@NotNull Project project,
                                                               @NlsSafe @NotNull final String name,
                                                               @NotNull SerialPortProfile portProfile,
@@ -61,7 +60,6 @@ public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<Je
     SerialPortService.SerialConnection connection =
       ApplicationManager.getApplication().getService(SerialPortService.class)
         .newConnection(portProfile.getPortName());
-    if(connection == null) return null;
     JeditermConsoleView textConsoleView = new JeditermConsoleView(project, connection);
     HexConsoleView hexConsoleView = new HexConsoleView(project, true);
     JeditermSerialMonitorDuplexConsoleView consoleView =
@@ -123,6 +121,7 @@ public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<Je
       new EditSettingsAction(myName, this)};
   }
 
+  @NotNull
   public PortStatus getStatus() {
     return myConnection.getStatus();
   }

@@ -176,7 +176,7 @@ fun portSettings(connectableList: ConnectableList, portName: String, disposable:
         }
       }
 
-      if (portStatus != PortStatus.READY || portStatus != PortStatus.BUSY) {
+      if (portStatus != PortStatus.READY && portStatus != PortStatus.BUSY) {
         button(message("button.open.console")) {
           connectableList.parent.openConsole(portName)
         }
