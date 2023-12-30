@@ -22,13 +22,13 @@ object ResourceTypesSaver {
     val resourceTypeLocations = fetchResourceTypeLocations()
     val predefinedParameters = fetchPredefinedParameters()
 
-    val unsupportedTypes = setOf( // broken links on web site
-      "AWS::EC2::VPNConnection",
-      "AWS::ElastiCache::SubnetGroup",
-      "AWS::ElasticBeanstalk::ApplicationVersion",
-      "AWS::IdentityStore::Group",
-      "AWS::IdentityStore::GroupMembership",
-      "AWS::M2::Application"
+    val unsupportedTypes = setOf( // broken links on website
+      "AWS::M2::Application",
+      "AMZN::SDC::Deployment",
+      "AWS::CodeTest::PersistentConfiguration",
+      "AWS::CodeTest::Series",
+      "AWS::GammaDilithium::JobDefinition",
+      "AWS::IoTThingsGraph::FlowTemplate"
     )
 
     val supportedTypeLocations = resourceTypeLocations.filter {
@@ -185,9 +185,10 @@ object ResourceTypesSaver {
 
           val name = term.text()
 
-          val href = term.previousElementSibling()
-          assert(href?.tagName() == "a")
-          assert(href?.hasAttr("id")?:false)
+          val href = term.previousElementSibling() ?: term.parent()
+          assert(href?.tagName() == "a" || href?.tagName() == "dt")
+          assert(href?.hasAttr("id") ?: false)
+
           val propertyId = href?.attr("id")
           assert(propertyId?.contains(name, ignoreCase = true)?:false) {
             "Property anchor id ($propertyId) should have a property name ($name) as substring in ${builder.url}"

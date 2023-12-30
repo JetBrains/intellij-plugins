@@ -27,7 +27,8 @@ publishing {
     maven(MavenPublication) {
       groupId = 'com.intellij.aws'
       artifactId = 'cloudformation-meta'
-      version = '2022.3.3'
+      version = '2023.3.4'
+
       artifact(jarArtifact)
       pom {
         name = 'AWS CloudFormation Metadata'
