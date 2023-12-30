@@ -62,7 +62,7 @@ abstract class BaseInspectionTestCase(private val folder: String) : CodeInsightF
     val allPsiFiles = myFixture.configureByFiles(*list.map { it.name }.toTypedArray())
     Assert.assertTrue(allPsiFiles.size == list.size)
 
-    allPsiFiles.forEach { psiFile ->
+    for (psiFile in allPsiFiles) {
       val actualContent = getTestResultContent(psiFile)
       val expectFile = File(myFixture.testDataPath, "${File(psiFile.virtualFile.path).nameWithoutExtension}.expected")
 

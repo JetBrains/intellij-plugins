@@ -1,24 +1,22 @@
 package com.intellij.aws.cloudformation.tests
 
 import com.intellij.codeInsight.completion.CompletionType
-import com.intellij.openapi.application.ApplicationInfo
-import com.intellij.openapi.util.BuildNumber
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.builders.ModuleFixtureBuilder
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase
 import com.intellij.testFramework.fixtures.ModuleFixture
-import java.util.Arrays
+import java.util.*
 
 class JsonCompletionTest : CodeInsightFixtureTestCase<ModuleFixtureBuilder<ModuleFixture>>() {
   fun testResourceType1() {
-    myFixture.configureByFiles("ResourceType1.template")
+    myFixture.configureByFile("ResourceType1.template")
     myFixture.complete(CompletionType.BASIC, 1)
     val strings = myFixture.lookupElementStrings!!
     UsefulTestCase.assertContainsElements(strings, "AWS::IAM::AccessKey")
   }
 
   fun testResourceType2() {
-    myFixture.configureByFiles("ResourceType2.template")
+    myFixture.configureByFile("ResourceType2.template")
     myFixture.complete(CompletionType.BASIC, 1)
     val strings = myFixture.lookupElementStrings!!
     UsefulTestCase.assertDoesntContain(strings, "AWS::IAM::AccessKey")
@@ -55,7 +53,7 @@ class JsonCompletionTest : CodeInsightFixtureTestCase<ModuleFixtureBuilder<Modul
 
   fun testGetAtt2() {
     checkBasicCompletion("GetAtt2.template",
-        "ConfigurationEndpoint.Address", "ConfigurationEndpoint.Port",
+        "ConfigurationEndpoint.Address", "ConfigurationEndpoint.Port", "Id",
         "RedisEndpoint.Address", "RedisEndpoint.Port")
   }
 
@@ -64,10 +62,6 @@ class JsonCompletionTest : CodeInsightFixtureTestCase<ModuleFixtureBuilder<Modul
   }
 
   fun testPrefix1() {
-    if (!checkIdeaHasWeb11859Fixed()) {
-      return
-    }
-
     myFixture.testCompletion("Prefix1.template", "Prefix1_after.template")
   }
 
@@ -76,10 +70,6 @@ class JsonCompletionTest : CodeInsightFixtureTestCase<ModuleFixtureBuilder<Modul
   }
 
   fun testPrefix3() {
-    if (!checkIdeaHasWeb11859Fixed()) {
-      return
-    }
-
     checkBasicCompletion("Prefix3.template", "AWS::ElasticBeanstalk::Application", "AWS::ElasticBeanstalk::ApplicationVersion")
   }
 
@@ -122,16 +112,6 @@ class JsonCompletionTest : CodeInsightFixtureTestCase<ModuleFixtureBuilder<Modul
     myFixture.complete(CompletionType.BASIC, 1)
     val strings = myFixture.lookupElementStrings!!
     UsefulTestCase.assertSameElements(strings, Arrays.asList(*expectedElements))
-  }
-
-  private fun checkIdeaHasWeb11859Fixed(): Boolean {
-    val build = ApplicationInfo.getInstance().build
-    if (build.compareTo(BuildNumber("IU", 135, 670)) < 0) {
-      println("fixed only by http://youtrack.jetbrains.com/issue/WEB-11859")
-      return false
-    }
-
-    return true
   }
 
   override fun setUp() {

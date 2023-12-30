@@ -6,7 +6,7 @@
 
   "Resources": {
     "WebServerUser": {
-      "Type": "AWS::EC2::Instance"
+      "Type": "AWS::EC2::VerifiedAccessEndpoint"
     }
   }
 }
