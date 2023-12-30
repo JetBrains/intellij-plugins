@@ -44,12 +44,12 @@ class YamlCompletionTest : CodeInsightFixtureTestCase<ModuleFixtureBuilder<Modul
 
   fun testServerless1() {
     val properties = arrayOf(
-      "Architectures", "AssumeRolePolicyDocument", "AutoPublishAlias", "AutoPublishCodeSha256", "CodeSigningConfigArn",
+      "Architectures", "AssumeRolePolicyDocument", "AutoPublishAlias", "AutoPublishAliasAllProperties",  "AutoPublishCodeSha256", "CodeSigningConfigArn",
       "CodeUri", "DeadLetterQueue", "DeploymentPreference", "Description", "Environment", "EphemeralStorage",
       "EventInvokeConfig", "Events", "FileSystemConfigs", "FunctionName", "FunctionUrlConfig", "ImageConfig", "ImageUri",
-      "InlineCode", "KmsKeyArn", "Layers", "MemorySize", "PackageType", "PermissionsBoundary", "Policies",
-      "ProvisionedConcurrencyConfig", "ReservedConcurrentExecutions", "Role", "Tags", "SnapStart", "Timeout", "Tracing",
-      "VersionDescription", "VpcConfig"
+      "InlineCode", "KmsKeyArn", "Layers", "LoggingConfig", "MemorySize", "PackageType", "PermissionsBoundary", "Policies", "PropagateTags",
+      "ProvisionedConcurrencyConfig", "ReservedConcurrentExecutions", "Role", "RolePath", "RuntimeManagementConfig", "SnapStart", "Tags",
+      "Timeout", "Tracing", "VersionDescription", "VpcConfig"
     )
 
     checkBasicCompletion("serverless_1.yaml", *properties)
@@ -69,6 +69,7 @@ class YamlCompletionTest : CodeInsightFixtureTestCase<ModuleFixtureBuilder<Modul
       "AWS::RedshiftServerless::Workgroup",
       "AWS::OpenSearchServerless::AccessPolicy",
       "AWS::OpenSearchServerless::Collection",
+      "AWS::OpenSearchServerless::LifecyclePolicy",
       "AWS::OpenSearchServerless::SecurityConfig",
       "AWS::OpenSearchServerless::SecurityPolicy",
       "AWS::OpenSearchServerless::VpcEndpoint"
@@ -84,6 +85,7 @@ class YamlCompletionTest : CodeInsightFixtureTestCase<ModuleFixtureBuilder<Modul
                          "AWS::RedshiftServerless::Workgroup",
                          "AWS::OpenSearchServerless::AccessPolicy",
                          "AWS::OpenSearchServerless::Collection",
+                         "AWS::OpenSearchServerless::LifecyclePolicy",
                          "AWS::OpenSearchServerless::SecurityConfig",
                          "AWS::OpenSearchServerless::SecurityPolicy",
                          "AWS::OpenSearchServerless::VpcEndpoint")

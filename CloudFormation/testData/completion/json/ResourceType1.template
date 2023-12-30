@@ -6,7 +6,7 @@
 
   "Resources": {
     "WebServerUser": {
-      "Type": "<caret>"
+      "Type": "AWS::IAM::<caret>"
     }
   }
 }

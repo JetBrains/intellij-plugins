@@ -161,29 +161,36 @@
 
 
     "AWSRegionArch2AMI" : {
-      "af-south-1"       : {"AL2x86" : "ami-0cec12e29ebe3f0d5", "AL2arm64" : "ami-0278bd8e5bd4a50fc"},
-      "ap-east-1"        : {"AL2x86" : "ami-814d0ff0", "AL2arm64" : "ami-6e490b1f"},
-      "ap-northeast-1"   : {"AL2x86" : "ami-0ce107ae7af2e92b5", "AL2arm64" : "ami-05f4d5a411fcc68e0"},
-      "ap-northeast-2"   : {"AL2x86" : "ami-03b42693dc6a7dc35", "AL2arm64" : "ami-08955c72e4bf1b0bd"},
-      "ap-northeast-3"   : {"AL2x86" : "ami-024125eb5035fd485", "AL2arm64" : "ami-02feb1749b9a07e17"},
-      "ap-south-1"       : {"AL2x86" : "ami-0e306788ff2473ccb", "AL2arm64" : "ami-001e484a60bb07f8d"},
-      "ap-southeast-1"   : {"AL2x86" : "ami-015a6758451df3cb9", "AL2arm64" : "ami-006eccfc9e6f597af"},
-      "ap-southeast-2"   : {"AL2x86" : "ami-0f96495a064477ffb", "AL2arm64" : "ami-0da8269b3b0487036"},
-      "ca-central-1"     : {"AL2x86" : "ami-0c2f25c1f66a1ff4d", "AL2arm64" : "ami-09ad96707b4cba4bf"},
-      "cn-north-1"       : {"AL2x86" : "ami-0f30329b403b2cd2f", "AL2arm64" : "NOT_SUPPORTED"},
-      "cn-northwest-1"   : {"AL2x86" : "ami-0b9e03ed3ef793940", "AL2arm64" : "NOT_SUPPORTED"},
-      "eu-central-1"     : {"AL2x86" : "ami-00a205cb8e06c3c4e", "AL2arm64" : "ami-0af7b869ea29400e8"},
-      "eu-north-1"       : {"AL2x86" : "ami-0653812935d0743fe", "AL2arm64" : "ami-0a004e452085cf147"},
-      "eu-south-1"       : {"AL2x86" : "ami-0759301b88845d121", "AL2arm64" : "ami-01959eb28c38d03ac"},
-      "eu-west-1"        : {"AL2x86" : "ami-0bb3fad3c0286ebd5", "AL2arm64" : "ami-036559f6f83de21be"},
-      "eu-west-2"        : {"AL2x86" : "ami-0a669382ea0feb73a", "AL2arm64" : "ami-07484ee100d51a201"},
-      "eu-west-3"        : {"AL2x86" : "ami-0de12f76efe134f2f", "AL2arm64" : "ami-05d465f81e4a520d4"},
-      "me-south-1"       : {"AL2x86" : "ami-08155c9ee8b845e35", "AL2arm64" : "ami-08a18837331e6f93f"},
-      "sa-east-1"        : {"AL2x86" : "ami-02898a1921d38a50b", "AL2arm64" : "ami-0259655fbb765ecc8"},
-      "us-east-1"        : {"AL2x86" : "ami-0947d2ba12ee1ff75", "AL2arm64" : "ami-007a607c4abd192db"},
-      "us-east-2"        : {"AL2x86" : "ami-03657b56516ab7912", "AL2arm64" : "ami-023b120e01f4779c1"},
-      "us-west-1"        : {"AL2x86" : "ami-0e4035ae3f70c400f", "AL2arm64" : "ami-026860fee24856fc0"},
-      "us-west-2"        : {"AL2x86" : "ami-0528a5175983e7f28", "AL2arm64" : "ami-0476b0c0bd036545d"}
+      "af-south-1"       : {"AL2x86" : "ami-0e0da87fdaf927717", "AL2arm64" : "ami-065d90114e5563b7c"},
+      "ap-east-1"        : {"AL2x86" : "ami-05676b11acc4161d5", "AL2arm64" : "ami-01b3c77ba543f2d37"},
+      "ap-northeast-1"   : {"AL2x86" : "ami-0e3ceefc9a200a838", "AL2arm64" : "ami-00d52b05e5d12f79a"},
+      "ap-northeast-2"   : {"AL2x86" : "ami-085a10255c2ecb4cb", "AL2arm64" : "ami-00830b77b77093c6a"},
+      "ap-northeast-3"   : {"AL2x86" : "ami-07795c2951dc11ce7", "AL2arm64" : "ami-0f7ace555021df0e1"},
+      "ap-south-1"       : {"AL2x86" : "ami-020562d2cd769c81b", "AL2arm64" : "ami-00d12fc74288c3d02"},
+      "ap-south-2"       : {"AL2x86" : "ami-09ec6c49d26d0518f", "AL2arm64" : "ami-0117f0f3a6394d2fb"},
+      "ap-southeast-1"   : {"AL2x86" : "ami-044d69b8549e33ff1", "AL2arm64" : "ami-0384c70c348cae8c3"},
+      "ap-southeast-2"   : {"AL2x86" : "ami-0e166015f8dee9d71", "AL2arm64" : "ami-02291da86850f876f"},
+      "ap-southeast-3"   : {"AL2x86" : "ami-0f8159cc3ab5fffaf", "AL2arm64" : "ami-04efb6fc83d0d0e8c"},
+      "ap-southeast-4"   : {"AL2x86" : "ami-04864bb4b01bd8038", "AL2arm64" : "ami-093057da2c3fbb346"},
+      "il-central-1"     : {"AL2x86" : "ami-0f552ebe7c7bc7655", "AL2arm64" : "ami-00d86501feea7cdcb"},
+      "ca-central-1"     : {"AL2x86" : "ami-09fa72aa5ea159b61", "AL2arm64" : "ami-00a83b65c29532f01"},
+      "cn-north-1"       : {"AL2x86" : "ami-05bed6d0f634de167", "AL2arm64" : "ami-0e84f29cb39a69c7a"},
+      "cn-northwest-1"   : {"AL2x86" : "ami-0ab2d03a762163a01", "AL2arm64" : "ami-0d3bcc6800743a385"},
+      "eu-central-1"     : {"AL2x86" : "ami-0d2820455d08be628", "AL2arm64" : "ami-0f4103bc88cb0f4f9"},
+      "eu-north-1"       : {"AL2x86" : "ami-0312b506c46eb9f64", "AL2arm64" : "ami-02dd950f6c0ff67c6"},
+      "eu-south-1"       : {"AL2x86" : "ami-08a273089ab10bfda", "AL2arm64" : "ami-0f68372349e5ad993"},
+      "eu-west-1"        : {"AL2x86" : "ami-052b48dff01bd3a2d", "AL2arm64" : "ami-0f234a8a091fb8dba"},
+      "eu-west-2"        : {"AL2x86" : "ami-0db2efede9f8bb581", "AL2arm64" : "ami-03fd61e716f019dfc"},
+      "eu-west-3"        : {"AL2x86" : "ami-05d9ff5247ae93752", "AL2arm64" : "ami-015c31cb07ec39e7d"},
+      "me-south-1"       : {"AL2x86" : "ami-0a6e54be87919a76a", "AL2arm64" : "ami-037cf52e27b534dac"},
+      "me-central-1"     : {"AL2x86" : "ami-0911d5289b0ceaafa", "AL2arm64" : "ami-0a54881bebc45facc"},
+      "eu-south-2"       : {"AL2x86" : "ami-0295ec06d7ecf07a2", "AL2arm64" : "ami-0e7f4e6ca73a34586"},
+      "eu-central-2"     : {"AL2x86" : "ami-0a37533ef40d2f340", "AL2arm64" : "ami-04f1f177f49d4d3b5"},
+      "sa-east-1"        : {"AL2x86" : "ami-0df03a6401e7a2943", "AL2arm64" : "ami-038cfeaa7767efece"},
+      "us-east-1"        : {"AL2x86" : "ami-0d887a308369b6881", "AL2arm64" : "ami-026924e4c3571e2ba"},
+      "us-east-2"        : {"AL2x86" : "ami-0e534f3e5321ed9ed", "AL2arm64" : "ami-06ea85b3c51430945"},
+      "us-west-1"        : {"AL2x86" : "ami-01cff12e087f492c6", "AL2arm64" : "ami-04618ab487317a0d0"},
+      "us-west-2"        : {"AL2x86" : "ami-0044a0897b53acfb6", "AL2arm64" : "ami-0a08b4e3d317bc481"}
     }
 
   },
@@ -193,8 +200,34 @@
     "ApplicationLoadBalancer" : {
       "Type" : "AWS::ElasticLoadBalancingV2::LoadBalancer",
       "Properties" : {
+        "SecurityGroups" : [ {"Ref" : "ALBSecurityGroup"} ],
         "Subnets" : { "Ref" : "Subnets"}
       }
+    },
+
+    "ALBSecurityGroup" : {
+        "Type" : "AWS::EC2::SecurityGroup",
+        "Properties" : {
+           "GroupDescription" : "Allow http in ingress to the ALB, and to the web server security group in egress.",
+            "VpcId" : { "Ref" : "VpcId" },
+            "SecurityGroupIngress" : [{
+                "IpProtocol" : "tcp",
+                "FromPort" : 80,
+                "ToPort" : 80,
+                "CidrIp" : "0.0.0.0/0"
+            }]
+        }
+    },
+
+    "ALBSecurityGroupEgressRule": {
+       "Type": "AWS::EC2::SecurityGroupEgress",
+       "Properties": {
+          "IpProtocol" : "tcp",
+          "FromPort" : 80,
+          "ToPort" : 80,
+          "DestinationSecurityGroupId" : { "Fn::GetAtt": [ "WebServerSecurityGroup", "GroupId" ]},
+          "GroupId" : { "Fn::GetAtt" : [ "ALBSecurityGroup", "GroupId" ]}
+       }
     },
 
     "ALBListener" : {
