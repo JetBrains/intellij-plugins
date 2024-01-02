@@ -57,13 +57,11 @@ abstract class Angular2SourceDirectiveProperty(
       ?.firstNotNullOfOrNull { signature -> signature.functionType.parameters.takeIf { it.size > 0 }?.get(0) }
       ?.inferredType
 
+  @Suppress("NonAsciiCharacters")
   override val rawJsType: JSType?
     get() = signature.jsType
               ?.asRecordType()
-              ?.let {
-                it.findPropertySignature("INPUT_SIGNAL_BRAND_WRITE_TYPE")
-                ?: it.findPropertySignature("ɵINPUT_SIGNAL_BRAND_WRITE_TYPE")
-              }
+              ?.findPropertySignature("ɵINPUT_SIGNAL_BRAND_WRITE_TYPE")
               ?.jsTypeWithOptionality
             ?: transformParameterType
             ?: signature.memberSource.allSourceElements

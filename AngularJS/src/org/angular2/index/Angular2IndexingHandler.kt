@@ -377,6 +377,7 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
     private val STUBBED_DECORATORS_STRING_ARGS = ContainerUtil.newHashSet(
       INPUT_DEC, OUTPUT_DEC, ATTRIBUTE_DEC)
 
+    // TODO Remove "ɵ" prefixed variant once `input()` syntax matures
     private val STUBBED_DECORATOR_LIKE_FUNCTIONS = ContainerUtil.newHashSet(
       INPUT_FUN, "ɵ$INPUT_FUN"
     )

@@ -377,11 +377,12 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
       if (functionName == null) return null
       val referenceNames = Angular2IndexingHandler.getFunctionNameFromIndex(call)
                              ?.split('.')
-                             ?.takeIf { it.getOrNull(0) == functionName || it.getOrNull(0) == "ɵ$functionName" }
+                             // TODO remove `?.removePrefix("ɵ")` part, when `input()` syntax matures
+                             ?.takeIf { it.getOrNull(0)?.removePrefix("ɵ") == functionName }
                            ?: return null
       return when (referenceNames.size) {
         1 -> {
-          call.stubSafeCallArguments.firstOrNull().asSafely<JSObjectLiteralExpression>()
+          call.stubSafeCallArguments.lastOrNull().asSafely<JSObjectLiteralExpression>()
             ?.let { parseInputObjectLiteral(it, defaultName) }
             ?.copy(required = false)
           ?: Angular2PropertyInfo(defaultName, false, call, declaringElement = null)
@@ -395,9 +396,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
           }
           else null
         }
-        else -> {
-          return null
-        }
+        else -> null
       }
     }
 
