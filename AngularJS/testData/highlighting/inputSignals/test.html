@@ -1,0 +1,14 @@
+<signal-inputs
+    [inputNoParams]=""
+    [inputWithType]="<error descr="Type number is not assignable to type string | undefined  Type number is not assignable to type string">12</error>"
+    <error descr="Type undefined is not assignable to type number">[inputWithInitialValue]</error>=""
+    <error descr="Property inputWithAlias is not provided by any applicable directives nor by <signal-inputs> element">[inputWithAlias]</error>=""
+    <error descr="Type undefined is not assignable to type number">[aliasedInput]</error>=""
+    <error descr="Type undefined is not assignable to type string">[inputWithTransformTyped]</error>=""
+    [inputWithTransformUntyped]=""
+    <error descr="Type undefined is not assignable to type string">[inputWithTransformParametrized]</error>=""
+    [inputRequired]="12"
+    <error descr="Property inputRequiredAliased is not provided by any applicable directives nor by <signal-inputs> element">[inputRequiredAliased]</error>=""
+    [aliasedRequiredInput]="<error descr="Type number is not assignable to type string">12</error>"
+/>
+<<error descr="Missing binding for required input aliasedRequiredInput of component TodoCmp"><error descr="Missing binding for required input inputRequired of component TodoCmp">signal-inputs</error></error> />

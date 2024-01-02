@@ -163,6 +163,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
   fun testDeferBlockSemanticHighlighting() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5,
                                                                strictTemplates = true, extension = "html", checkInformation = true)
 
+  fun testInputSignals() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5, configureFileName = "test.html",
+                                             strictTemplates = true, dir = true)
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
