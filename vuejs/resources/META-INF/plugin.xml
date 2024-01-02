@@ -57,7 +57,8 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
-    <registryKey defaultValue="1.8.25" description="Vue service version for downloading" restartRequired="true" key="vue.language.server.default.version"/>
+    <registryKey defaultValue="1.8.25" description="Vue service version for downloading" restartRequired="true"
+                 key="vue.language.server.default.version"/>
     <dependencySupport kind="javascript" coordinate="npm:vue" displayName="Vue.js"/>
     <dependencySupport kind="javascript" coordinate="npm:nuxt" displayName="Nuxt"/>
     <css.embeddedCssProvider implementation="org.jetbrains.vuejs.css.VueEmbeddedCssProvider"/>
@@ -362,6 +363,10 @@
       <add-to-group group-id="IntroduceActionsGroup" anchor="last"/>
     </action>
   </actions>
+  <applicationListeners>
+    <listener class="org.jetbrains.vuejs.lang.html.VueFileType$FileTypeChangeListener"
+              topic="com.intellij.openapi.fileTypes.FileTypeListener"/>
+  </applicationListeners>
 
   <extensions defaultExtensionNs="JavaScript">
     <elementScopeProvider implementation="org.jetbrains.vuejs.VueElementResolveScopeProvider"/>

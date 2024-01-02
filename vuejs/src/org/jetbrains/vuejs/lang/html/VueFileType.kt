@@ -2,7 +2,10 @@
 package org.jetbrains.vuejs.lang.html
 
 import com.intellij.javascript.web.html.WebFrameworkHtmlFileType
+import com.intellij.openapi.fileTypes.FileTypeEvent
+import com.intellij.openapi.fileTypes.FileTypeListener
 import com.intellij.openapi.fileTypes.FileTypeManager
+import com.intellij.openapi.util.ClearableLazyValue
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
@@ -21,10 +24,19 @@ class VueFileType private constructor() : WebFrameworkHtmlFileType(VueLanguage.I
 
     fun isVueFileName(name: String) = isVueFileName(name as CharSequence)
 
-    private fun isVueFileName(name: CharSequence): Boolean =
-      name.endsWith(VUE_FILE_EXTENSION) ||
-      FileTypeManager.getInstance().getAssociations(INSTANCE)
-        .any { it.acceptsCharSequence(name) }
+  }
 
+  class FileTypeChangeListener : FileTypeListener {
+    override fun fileTypesChanged(event: FileTypeEvent) {
+      vueFileTypeAssociations.drop()
+    }
   }
 }
+
+private val vueFileTypeAssociations = ClearableLazyValue.create {
+  FileTypeManager.getInstance().getAssociations(VueFileType.INSTANCE)
+}
+
+private fun isVueFileName(name: CharSequence): Boolean =
+  name.endsWith(VUE_FILE_EXTENSION)
+  || vueFileTypeAssociations.value.any { it.acceptsCharSequence(name) }
