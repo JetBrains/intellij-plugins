@@ -130,37 +130,37 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     myFixture.testRainbow("colors.html", FileUtil.loadFile(File("$testDataPath/$testName/colors.html")), true, true)
   }
 
-  fun testBlockDefer() = checkHighlighting(ANGULAR_CORE_17_0_0_RC_0, extension = "ts")
+  fun testBlockDefer() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5, extension = "ts")
 
-  fun testBlockFor() = checkHighlighting(ANGULAR_CORE_17_0_0_RC_0, extension = "ts")
+  fun testBlockFor() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5, extension = "ts")
 
-  fun testBlockForMultiVars() = checkHighlighting(ANGULAR_CORE_17_0_0_RC_0, extension = "ts")
+  fun testBlockForMultiVars() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5, extension = "ts")
 
-  fun testBlockIf() = checkHighlighting(ANGULAR_CORE_17_0_0_RC_0, extension = "ts")
+  fun testBlockIf() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5, extension = "ts")
 
-  fun testBlockSwitch() = checkHighlighting(ANGULAR_CORE_17_0_0_RC_0, extension = "ts")
+  fun testBlockSwitch() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5, extension = "ts")
 
   fun testInterpolationStrictMode() = checkHighlighting(ANGULAR_CORE_16_2_8, strictTemplates = true, extension = "ts")
 
   fun testOneTimeAttributesWithoutValueInStrictMode() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_MATERIAL_16_2_8,
                                                                           strictTemplates = true, extension = "ts")
 
-  fun testNgSrcAttribute() = checkHighlighting(ANGULAR_CORE_17_0_0_RC_0, ANGULAR_COMMON_17_0_0_RC_0,
+  fun testNgSrcAttribute() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5, ANGULAR_COMMON_17_1_0_NEXT_5,
                                                strictTemplates = true, extension = "ts", dir = true)
 
-  fun testIfBlockAsVarType() = checkHighlighting(ANGULAR_CORE_17_0_0_RC_0, ANGULAR_COMMON_17_0_0_RC_0,
+  fun testIfBlockAsVarType() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5, ANGULAR_COMMON_17_1_0_NEXT_5,
                                                  strictTemplates = true, extension = "ts")
 
-  fun testForBlockSemanticOfHighlighting() = checkHighlighting(ANGULAR_CORE_17_0_0_RC_0,
+  fun testForBlockSemanticOfHighlighting() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5,
                                                                strictTemplates = true, extension = "ts", checkInformation = true)
 
-  fun testForBlockVarType() = checkHighlighting(ANGULAR_CORE_17_0_0_RC_0,
+  fun testForBlockVarType() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5,
                                                 strictTemplates = true, extension = "ts")
 
-  fun testForBlockIterableType() = checkHighlighting(ANGULAR_CORE_17_0_0_RC_0,
+  fun testForBlockIterableType() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5,
                                                      strictTemplates = true, extension = "ts")
 
-  fun testDeferBlockSemanticHighlighting() = checkHighlighting(ANGULAR_CORE_17_0_0_RC_0,
+  fun testDeferBlockSemanticHighlighting() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5,
                                                                strictTemplates = true, extension = "html", checkInformation = true)
 
   override fun setUp() {

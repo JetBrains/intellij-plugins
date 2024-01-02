@@ -23,7 +23,7 @@ enum class Angular2TestModule(private val myPackageName: String, private val myV
   ANGULAR_COMMON_13_3_5("@angular/common", "13.3.5"),
   ANGULAR_COMMON_15_1_5("@angular/common", "15.1.5"),
   ANGULAR_COMMON_16_2_8("@angular/common", "16.2.8"),
-  ANGULAR_COMMON_17_0_0_RC_0("@angular/common", "17.0.0-rc.0"),
+  ANGULAR_COMMON_17_1_0_NEXT_5("@angular/common", "17.1.0-next.5"),
 
   ANGULAR_CORE_4_0_0("@angular/core", "4.0.0"),
   ANGULAR_CORE_8_2_14("@angular/core", "8.2.14"),
@@ -31,7 +31,7 @@ enum class Angular2TestModule(private val myPackageName: String, private val myV
   ANGULAR_CORE_13_3_5("@angular/core", "13.3.5"),
   ANGULAR_CORE_15_1_5("@angular/core", "15.1.5"),
   ANGULAR_CORE_16_2_8("@angular/core", "16.2.8"),
-  ANGULAR_CORE_17_0_0_RC_0("@angular/core", "17.0.0-rc.0"),
+  ANGULAR_CORE_17_1_0_NEXT_5("@angular/core", "17.1.0-next.5"),
 
   ANGULAR_FLEX_LAYOUT_13_0_0("@angular/flex-layout", "13.0.0-beta.36"),
 

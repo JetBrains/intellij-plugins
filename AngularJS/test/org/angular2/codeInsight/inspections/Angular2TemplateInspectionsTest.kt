@@ -221,7 +221,7 @@ class Angular2TemplateInspectionsTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testUnknownBlock1() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0)
+    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_17_1_0_NEXT_5)
     doTest(1,
            "foo@b<caret>ar.com",
            "Escape '@' with '&#",
@@ -230,7 +230,7 @@ class Angular2TemplateInspectionsTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testUnknownBlock2() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0)
+    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_17_1_0_NEXT_5)
     doTest(2,
            "something@f<caret>or.change.com",
            "Escape '@' with '&commat;'",
@@ -239,7 +239,7 @@ class Angular2TemplateInspectionsTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testUnknownBlock3() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0)
+    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_17_1_0_NEXT_5)
     doTest(3,
            "to @foo o<caret>n",
            "Escape '@' with '&#",
@@ -256,7 +256,7 @@ class Angular2TemplateInspectionsTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testBraceEscapeNg17_1() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0)
+    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_17_1_0_NEXT_5)
     doTest(1,
            "e {<caret> a",
            "Escape '{' with '&#123;'",
@@ -265,7 +265,7 @@ class Angular2TemplateInspectionsTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testBraceEscapeNg17_2() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0)
+    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_17_1_0_NEXT_5)
     doTest(2,
            "closing }<caret>",
            "Escape '",
@@ -274,7 +274,7 @@ class Angular2TemplateInspectionsTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testDeferBlockOnParameter() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0)
+    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_17_1_0_NEXT_5)
     doTest(AngularDeferBlockOnTriggerInspection::class.java,
            "defer-block-on-trigger.html")
   }

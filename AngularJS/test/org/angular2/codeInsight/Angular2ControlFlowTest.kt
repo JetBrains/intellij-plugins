@@ -43,13 +43,13 @@ class Angular2ControlFlowTest : BaseJSControlFlowTest() {
   fun testNullOrUndefinedComparison() = doTest("<div <caret>*ngIf")
 
   fun testIfBlock() = doTest("@if <caret>(",
-                             Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, Angular2TestModule.ANGULAR_COMMON_17_0_0_RC_0)
+                             Angular2TestModule.ANGULAR_CORE_17_1_0_NEXT_5, Angular2TestModule.ANGULAR_COMMON_17_1_0_NEXT_5)
 
   fun testSwitchBlock() = doTest("@switch <caret>(",
-                                 Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, Angular2TestModule.ANGULAR_COMMON_17_0_0_RC_0)
+                                 Angular2TestModule.ANGULAR_CORE_17_1_0_NEXT_5, Angular2TestModule.ANGULAR_COMMON_17_1_0_NEXT_5)
 
   fun testIfAndSwitchBlocks() = doTest("@switch <caret>(",
-                                       Angular2TestModule.ANGULAR_CORE_17_0_0_RC_0, Angular2TestModule.ANGULAR_COMMON_17_0_0_RC_0)
+                                       Angular2TestModule.ANGULAR_CORE_17_1_0_NEXT_5, Angular2TestModule.ANGULAR_COMMON_17_1_0_NEXT_5)
 
   override fun createJSControlFlowBuilder(): JSControlFlowBuilder {
     return Angular2ControlFlowBuilder()
