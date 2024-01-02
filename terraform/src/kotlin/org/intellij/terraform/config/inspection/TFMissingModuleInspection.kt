@@ -16,13 +16,13 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.util.PsiTreeUtil
+import org.intellij.terraform.config.TerraformFileType
+import org.intellij.terraform.config.model.ModuleDetectionUtil
+import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElementVisitor
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
-import org.intellij.terraform.config.TerraformFileType
-import org.intellij.terraform.config.model.ModuleDetectionUtil
-import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.runtime.TerraformConfigurationType
 import org.intellij.terraform.runtime.TerraformRunConfiguration
 import org.jetbrains.annotations.NonNls
@@ -95,8 +95,8 @@ class RunTerraformGetFix(private val directoryName: String) : LocalQuickFix {
       LOG.warn("Cannot run on non-local FS: $vf")
       return
     }
-    configuration.PROGRAM_PARAMETERS = "get"
-    configuration.WORKING_DIRECTORY = vf.path
+    configuration.programParameters = "get"
+    configuration.workingDirectory = vf.path
 
     try {
       ExecutionEnvironmentBuilder.create(DefaultRunExecutor.getRunExecutorInstance(), configurationSettings).buildAndExecute()

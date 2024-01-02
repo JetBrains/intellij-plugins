@@ -1,194 +1,163 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.intellij.terraform.runtime;
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.intellij.terraform.runtime
 
-import com.intellij.execution.CommonProgramRunConfigurationParameters;
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.Executor;
-import com.intellij.execution.ExternalizablePath;
-import com.intellij.execution.configuration.EnvironmentVariablesComponent;
-import com.intellij.execution.configurations.*;
-import com.intellij.execution.process.KillableColoredProcessHandler;
-import com.intellij.execution.process.OSProcessHandler;
-import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.process.ProcessTerminatedListener;
-import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.util.ProgramParametersUtil;
-import com.intellij.openapi.options.SettingsEditor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.xmlb.XmlSerializer;
-import org.intellij.terraform.config.util.TFExecutor;
-import org.intellij.terraform.hcl.HCLBundle;
-import org.jdom.Element;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.execution.CommonProgramRunConfigurationParameters
+import com.intellij.execution.ExecutionException
+import com.intellij.execution.Executor
+import com.intellij.execution.ExternalizablePath
+import com.intellij.execution.configuration.EnvironmentVariablesComponent
+import com.intellij.execution.configurations.*
+import com.intellij.execution.process.KillableColoredProcessHandler
+import com.intellij.execution.process.OSProcessHandler
+import com.intellij.execution.process.ProcessHandler
+import com.intellij.execution.process.ProcessTerminatedListener
+import com.intellij.execution.runners.ExecutionEnvironment
+import com.intellij.execution.util.ProgramParametersUtil
+import com.intellij.openapi.options.SettingsEditor
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.InvalidDataException
+import com.intellij.openapi.util.WriteExternalException
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.util.xmlb.XmlSerializer
+import org.intellij.terraform.config.util.TFExecutor
+import org.intellij.terraform.hcl.HCLBundle
+import org.jdom.Element
+import org.jetbrains.annotations.Nls
+import java.io.File
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+class TerraformRunConfiguration(project: Project, factory: ConfigurationFactory, name: String?) : LocatableConfigurationBase<Any?>(
+  project, factory, name), CommonProgramRunConfigurationParameters {
+  private var programParameters: String? = ""
+  private var directory: String = ""
+  private val myEnvs: MutableMap<String, String> = LinkedHashMap()
+  private var passParentEnvs: Boolean = true
 
-@SuppressWarnings("WeakerAccess")
-public final class TerraformRunConfiguration extends LocatableConfigurationBase implements CommonProgramRunConfigurationParameters {
-  public String PROGRAM_PARAMETERS = "";
-  public String WORKING_DIRECTORY = "";
-  private final Map<String, String> myEnvs = new LinkedHashMap<>();
-  public boolean PASS_PARENT_ENVS = true;
-
-  public TerraformRunConfiguration(final Project project, final ConfigurationFactory factory, final String name) {
-    super(project, factory, name);
+  override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration?> {
+    return TerraformRunConfigurationEditor()
   }
 
-  @NotNull
-  @Override
-  public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
-    return new TerraformRunConfigurationEditor();
-  }
-
-  @Override
-  public RunProfileState getState(@NotNull final Executor executor, @NotNull final ExecutionEnvironment env) throws ExecutionException {
-    final String error = getError();
+  @Throws(ExecutionException::class)
+  override fun getState(executor: Executor, env: ExecutionEnvironment): RunProfileState {
+    val error = error
     if (error != null) {
-      throw new ExecutionException(error);
+      throw ExecutionException(error)
     }
 
-    return new CommandLineState(env) {
-      @NotNull
-      @Override
-      protected ProcessHandler startProcess() throws ExecutionException {
-        OSProcessHandler handler;
-        handler = new KillableColoredProcessHandler(createCommandLine());
-        ProcessTerminatedListener.attach(handler);
-        return handler;
+    return object : CommandLineState(env) {
+      @Throws(ExecutionException::class)
+      override fun startProcess(): ProcessHandler {
+        val handler: OSProcessHandler = KillableColoredProcessHandler(createCommandLine())
+        ProcessTerminatedListener.attach(handler)
+        return handler
       }
 
-      private GeneralCommandLine createCommandLine() throws ExecutionException {
-        final SimpleProgramParameters parameters = getParameters();
+      @Throws(ExecutionException::class)
+      private fun createCommandLine(): GeneralCommandLine {
+        val parameters = parameters
 
-        return TFExecutor.in(getProject(), null)
-            .withPresentableName(HCLBundle.message("terraform.run.configuration.name"))
-            .withWorkDirectory(parameters.getWorkingDirectory())
-            .withParameters(parameters.getProgramParametersList().getParameters())
-            .withPassParentEnvironment(parameters.isPassParentEnvs())
-          .withExtraEnvironment(handleEnvVar(parameters.getEnv()))
-            .showOutputOnError()
-            .createCommandLine();
+        return TFExecutor.`in`(project, null)
+          .withPresentableName(HCLBundle.message("terraform.run.configuration.name"))
+          .withWorkDirectory(parameters.workingDirectory)
+          .withParameters(parameters.programParametersList.parameters)
+          .withPassParentEnvironment(parameters.isPassParentEnvs)
+          .withExtraEnvironment(parameters.env.handleEnvVar())
+          .showOutputOnError()
+          .createCommandLine()
       }
 
-      private SimpleProgramParameters getParameters() {
-        final SimpleProgramParameters params = new SimpleProgramParameters();
+      private val parameters: SimpleProgramParameters
+        get() {
+          val params = SimpleProgramParameters()
 
-        ProgramParametersUtil.configureConfiguration(params, TerraformRunConfiguration.this);
+          ProgramParametersUtil.configureConfiguration(params, this@TerraformRunConfiguration)
 
-        return params;
-      }
-
-      private static Map<String, String> handleEnvVar(Map<String, String> inputMap) {
-        var resultMap = new HashMap<String, String>();
-
-        for (var entry : inputMap.entrySet()) {
-          var key = entry.getKey();
-          var value = entry.getValue();
-
-          if (value != null && value.contains("$")) {
-            var replacedValue = System.getenv(value.substring(1));
-            resultMap.put(key, (replacedValue != null) ? replacedValue : value);
-          }
-          else {
-            resultMap.put(key, value);
-          }
+          return params
         }
 
-        return resultMap;
+      private fun Map<String, String>.handleEnvVar(): Map<String, String> = this.mapValues { (_, value) ->
+        if (value.startsWith('$')) {
+          System.getenv(value.substring(1)) ?: value
+        }
+        else {
+          value
+        }
       }
-    };
+    }
   }
 
-  @Override
-  public void checkConfiguration() throws RuntimeConfigurationException {
-    if (StringUtil.isEmptyOrSpaces(WORKING_DIRECTORY)) {
-      RuntimeConfigurationException exception = new RuntimeConfigurationException(HCLBundle.message("run.configuration.no.working.directory.specified"));
-      exception.setQuickFix(() -> setWorkingDirectory(getProject().getBasePath()));
-      throw exception;
+  @Throws(RuntimeConfigurationException::class)
+  override fun checkConfiguration() {
+    if (directory.isBlank()) {
+      val exception = RuntimeConfigurationException(HCLBundle.message("run.configuration.no.working.directory.specified"))
+      exception.setQuickFix(Runnable { workingDirectory = project.basePath })
+      throw exception
     }
 
-    final String error = getError();
+    val error = error
     if (error != null) {
-      throw new RuntimeConfigurationException(error);
+      throw RuntimeConfigurationException(error)
     }
   }
 
-  @Nls
-  private String getError() {
-    if (StringUtil.isEmptyOrSpaces(WORKING_DIRECTORY)) {
-      return (HCLBundle.message("run.configuration.no.working.directory.specified"));
+  private val error: @Nls String?
+    get() {
+      if (directory.isBlank()) {
+        return (HCLBundle.message("run.configuration.no.working.directory.specified"))
+      }
+      val terraformPath = TerraformToolProjectSettings.getInstance(project).terraformPath
+      if (terraformPath.isNullOrBlank()) {
+        return (HCLBundle.message("run.configuration.no.terraform.specified"))
+      }
+      if (!FileUtil.canExecute(File(terraformPath))) {
+        return (HCLBundle.message("run.configuration.terraform.path.incorrect"))
+      }
+      return null
     }
-    final String terraformPath = TerraformToolProjectSettings.getInstance(getProject()).getTerraformPath();
-    if (StringUtil.isEmptyOrSpaces(terraformPath)) {
-      return (HCLBundle.message("run.configuration.no.terraform.specified"));
-    }
-    if (!FileUtil.canExecute(new File(terraformPath))) {
-      return (HCLBundle.message("run.configuration.terraform.path.incorrect"));
-    }
-    return null;
+
+  override fun setProgramParameters(value: String?) {
+    programParameters = value
   }
 
-  @Override
-  public void setProgramParameters(String value) {
-    PROGRAM_PARAMETERS = value;
+  override fun getProgramParameters(): String? {
+    return programParameters
   }
 
-  @Override
-  public String getProgramParameters() {
-    return PROGRAM_PARAMETERS;
+  override fun setWorkingDirectory(value: String?) {
+    directory = ExternalizablePath.urlValue(value)
   }
 
-  @Override
-  public void setWorkingDirectory(String value) {
-    WORKING_DIRECTORY = ExternalizablePath.urlValue(value);
+  override fun getWorkingDirectory(): String? {
+    return ExternalizablePath.localPathValue(directory)
   }
 
-  @Override
-  public String getWorkingDirectory() {
-    return ExternalizablePath.localPathValue(WORKING_DIRECTORY);
+  override fun setPassParentEnvs(passParentEnvs: Boolean) {
+    this.passParentEnvs = passParentEnvs
   }
 
-  @Override
-  public void setPassParentEnvs(boolean passParentEnvs) {
-    PASS_PARENT_ENVS = passParentEnvs;
+  override fun getEnvs(): Map<String, String> {
+    return myEnvs
   }
 
-  @Override
-  @NotNull
-  public Map<String, String> getEnvs() {
-    return myEnvs;
+  override fun setEnvs(envs: Map<String, String>) {
+    myEnvs.clear()
+    myEnvs.putAll(envs)
   }
 
-  @Override
-  public void setEnvs(@NotNull final Map<String, String> envs) {
-    myEnvs.clear();
-    myEnvs.putAll(envs);
+  override fun isPassParentEnvs(): Boolean {
+    return passParentEnvs
   }
 
-  @Override
-  public boolean isPassParentEnvs() {
-    return PASS_PARENT_ENVS;
+  @Throws(InvalidDataException::class)
+  override fun readExternal(element: Element) {
+    super.readExternal(element)
+    XmlSerializer.deserializeInto(this, element)
+    EnvironmentVariablesComponent.readExternal(element, envs)
   }
 
-  @Override
-  public void readExternal(@NotNull final Element element) throws InvalidDataException {
-    super.readExternal(element);
-    XmlSerializer.deserializeInto(this, element);
-    EnvironmentVariablesComponent.readExternal(element, getEnvs());
-  }
-
-  @Override
-  public void writeExternal(@NotNull Element element) throws WriteExternalException {
-    super.writeExternal(element);
-    XmlSerializer.serializeInto(this, element);
-    EnvironmentVariablesComponent.writeExternal(element, getEnvs());
+  @Throws(WriteExternalException::class)
+  override fun writeExternal(element: Element) {
+    super.writeExternal(element)
+    XmlSerializer.serializeInto(this, element)
+    EnvironmentVariablesComponent.writeExternal(element, envs)
   }
 }
