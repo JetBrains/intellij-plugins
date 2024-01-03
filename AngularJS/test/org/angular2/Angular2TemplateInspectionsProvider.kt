@@ -6,11 +6,7 @@ import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.htmlInspections.*
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedAttributeInspection
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedTagInspection
-import com.intellij.lang.javascript.inspections.JSConstantReassignmentInspection
-import com.intellij.lang.javascript.inspections.JSUnresolvedReferenceInspection
-import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection
-import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection
-import com.intellij.lang.javascript.inspections.JSValidateTypesInspection
+import com.intellij.lang.javascript.inspections.*
 import com.intellij.lang.javascript.modules.TypeScriptCheckImportInspection
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
 import com.intellij.lang.typescript.inspections.TypeScriptValidateJSTypesInspection
@@ -39,7 +35,7 @@ class Angular2TemplateInspectionsProvider(private val strict: Boolean = false) :
       AngularBindingTypeMismatchInspection::class.java,
       AngularInaccessibleSymbolInspection::class.java,
       AngularIncorrectBlockUsageInspection::class.java,
-      AngularForBlockNonIterableVar::class.java,
+      AngularForBlockNonIterableVarInspection::class.java,
       // TS
       TypeScriptUnresolvedReferenceInspection::class.java,
       TypeScriptValidateTypesInspection::class.java,
