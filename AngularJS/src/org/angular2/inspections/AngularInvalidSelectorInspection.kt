@@ -18,6 +18,7 @@ import org.angular2.Angular2DecoratorUtil.getObjectLiteralInitializer
 import org.angular2.Angular2DecoratorUtil.isAngularEntityDecorator
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.TS_PROPERTY
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
+import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.inspections.quickfixes.AddJSPropertyQuickFix
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.Angular2LangUtil
@@ -54,7 +55,8 @@ class AngularInvalidSelectorInspection : LocalInspectionTool() {
             val initializer = getObjectLiteralInitializer(decorator) ?: return
             val selector = initializer.findProperty(SELECTOR_PROP)
             if (selector == null) {
-              if (DIRECTIVE_DEC == decorator.decoratorName) {
+              if (DIRECTIVE_DEC == decorator.decoratorName
+                  && Angular2EntitiesProvider.getDirective(decorator)?.isStandalone == false) {
                 holder.registerProblem(initializer,
                                        Angular2Bundle.htmlMessage(
                                          "angular.inspection.invalid-directive-selector.message.missing",
