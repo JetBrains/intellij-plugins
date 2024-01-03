@@ -344,8 +344,11 @@
 
     <!-- Angular 2 SVG contributions -->
     <lang.parserDefinition language="Angular2Svg" implementationClass="org.angular2.lang.svg.parser.Angular2SvgParserDefinition"/>
+    <lang.parserDefinition language="Angular17Svg" implementationClass="org.angular2.lang.svg.parser.Angular17SvgParserDefinition"/>
     <fileType name="Angular2Svg" implementationClass="org.angular2.lang.svg.Angular2SvgFileType" fieldName="INSTANCE"
               language="Angular2Svg"/>
+    <fileType name="Angular17Svg" implementationClass="org.angular2.lang.svg.Angular17SvgFileType" fieldName="INSTANCE"
+              language="Angular17Svg"/>
     <!--suppress PluginXmlValidity -->
     <quoteHandler className="com.intellij.codeInsight.editorActions.HtmlQuoteHandler" fileType="Angular2Svg"/>
 

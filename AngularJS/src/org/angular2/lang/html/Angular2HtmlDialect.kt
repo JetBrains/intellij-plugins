@@ -3,8 +3,10 @@ package org.angular2.lang.html
 
 import com.intellij.javascript.web.WebFrameworkDialect
 
-interface Angular2HtmlDialect: WebFrameworkDialect {
+interface Angular2HtmlDialect : WebFrameworkDialect {
 
   val templateSyntax: Angular2TemplateSyntax
+
+  val svgDialect: Boolean
 
 }

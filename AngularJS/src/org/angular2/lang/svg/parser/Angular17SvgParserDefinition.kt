@@ -2,11 +2,11 @@
 package org.angular2.lang.svg.parser
 
 import com.intellij.psi.tree.IFileElementType
-import org.angular2.lang.html.parser.Angular2HtmlParserDefinition
-import org.angular2.lang.svg.Angular2SvgFileElementType
+import org.angular2.lang.html.parser.Angular17HtmlParserDefinition
+import org.angular2.lang.svg.Angular17SvgFileElementType
 
-class Angular2SvgParserDefinition : Angular2HtmlParserDefinition() {
+class Angular17SvgParserDefinition : Angular17HtmlParserDefinition() {
   override fun getFileNodeType(): IFileElementType {
-    return Angular2SvgFileElementType.INSTANCE
+    return Angular17SvgFileElementType.INSTANCE
   }
 }

@@ -1,0 +1,12 @@
+<ng-container <weak_warning descr="No directive is matched on attribute ngIf">*ngIf</weak_warning>="<error descr="Unresolved variable or type someCondition">someCondition</error>; else elseBlock">
+  <span>Condition is true</span>
+</ng-container>
+<ng-template #elseBlock>
+  <span>Condition is false</span>
+</ng-template>
+
+@if (someCondition) <error descr="Unterminated expansion form">{</error>
+  <span>Condition is true</span>
+} @else <error descr="Unterminated expansion form">{</error>
+  <span>Condition is false</span>
+}

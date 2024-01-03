@@ -166,6 +166,10 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
   fun testInputSignals() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5, configureFileName = "test.html",
                                              strictTemplates = true, dir = true)
 
+  fun testSvgNoBlocksSyntax() = checkHighlighting(extension = "svg")
+
+  fun testSvgWithBlocksSyntax() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5, extension = "svg")
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
