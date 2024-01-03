@@ -609,6 +609,9 @@
         },
         {
           "name": "Animation trigger assignment",
+          "attribute-value": {
+            "required": false
+          },
           "pattern": {
             "template": [
               "@",
