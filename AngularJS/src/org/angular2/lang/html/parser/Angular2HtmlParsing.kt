@@ -179,6 +179,10 @@ class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSyntax, bu
     val startMarker = builder.mark()
     val blockName = builder.tokenText!!.removePrefix("@")
     builder.advanceLexer()
+    if (blockName == "") {
+      startMarker.done(Angular2HtmlElementTypes.BLOCK)
+      return
+    }
     if (builder.tokenType == Angular2HtmlTokenTypes.BLOCK_PARAMETERS_START) {
       val parameters = builder.mark()
       builder.advanceLexer()

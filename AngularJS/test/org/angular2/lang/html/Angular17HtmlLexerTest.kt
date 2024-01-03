@@ -10,6 +10,14 @@ open class Angular17HtmlLexerTest : Angular2HtmlLexerTest() {
     doTest("@i")
   }
 
+  fun testEmptyBlockName() {
+    doTest("An empty @ block")
+  }
+
+  fun testEmptyBlockName2() {
+    doTest("An empty @ (block) {}")
+  }
+
   fun testForBlockParens() {
     doTest("""@for ((item of items); track trackingFn(item, compProp)) {{{item}}}""")
   }

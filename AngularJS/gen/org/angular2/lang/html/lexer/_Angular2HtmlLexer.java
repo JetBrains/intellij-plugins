@@ -307,19 +307,20 @@ public class _Angular2HtmlLexer implements FlexLexer {
   private static final int [] ZZ_ACTION = zzUnpackAction();
 
   private static final String ZZ_ACTION_PACKED_0 =
-    "\12\0\1\1\21\0\1\2\1\3\3\4\2\2\1\5"+
-    "\1\6\3\5\1\7\2\5\4\10\1\11\1\12\2\13"+
-    "\1\14\1\15\1\13\1\16\1\13\1\17\1\20\1\21"+
-    "\1\6\1\22\1\23\1\24\1\22\1\6\1\25\1\26"+
-    "\1\25\2\27\1\1\1\30\1\5\3\31\3\32\1\10"+
-    "\1\32\1\33\1\34\1\35\1\36\2\37\1\40\1\41"+
-    "\2\40\1\4\2\42\2\43\1\44\1\45\2\46\1\5"+
-    "\2\47\1\50\1\51\1\52\4\41\1\53\1\54\1\55"+
-    "\1\56\2\41\1\57\1\60\7\0\1\61\1\62\1\63"+
-    "\1\64\1\0\1\65\5\0\1\61\1\66\1\22\2\0"+
-    "\1\67\1\0\1\70\3\41\2\0\1\71\7\0\1\72"+
-    "\3\0\1\73\1\0\1\74\1\75\2\0\1\76\1\0"+
-    "\1\20\1\0\1\77\1\5\3\0\1\100\2\0\1\101";
+    "\12\0\1\1\21\0\1\2\1\3\3\4\1\5\1\2"+
+    "\1\6\1\7\3\6\1\10\2\6\4\11\1\12\1\13"+
+    "\2\14\1\15\1\16\1\14\1\17\1\14\1\20\1\21"+
+    "\1\22\1\7\1\23\1\24\1\25\1\23\1\7\1\26"+
+    "\1\27\1\26\2\30\1\1\1\31\1\6\3\32\3\33"+
+    "\1\11\1\33\1\34\1\35\1\36\1\37\2\40\1\41"+
+    "\1\42\2\41\1\4\2\43\2\44\1\45\1\46\2\47"+
+    "\1\6\2\50\1\51\1\52\1\53\4\42\1\54\1\55"+
+    "\1\56\1\57\2\42\1\60\1\61\7\0\1\62\1\63"+
+    "\1\64\1\65\1\0\1\66\5\0\1\62\1\67\1\23"+
+    "\2\0\1\70\1\0\1\71\3\42\2\0\1\72\7\0"+
+    "\1\73\3\0\1\74\1\0\1\75\1\76\2\0\1\77"+
+    "\1\0\1\21\1\0\1\100\1\6\3\0\1\101\2\0"+
+    "\1\102";
 
   private static int [] zzUnpackAction() {
     int [] result = new int[180];
@@ -951,7 +952,7 @@ public class _Angular2HtmlLexer implements FlexLexer {
             { return XmlTokenType.XML_PI_TARGET;
             }
           // fall through
-          case 66: break;
+          case 67: break;
           case 2:
             { if (tryConsumeInterpolationBoundary(interpolationStart)) {
     if (inBuffer(interpolationEnd, 1)) {
@@ -978,38 +979,48 @@ public class _Angular2HtmlLexer implements FlexLexer {
   return XmlTokenType.XML_DATA_CHARACTERS;
             }
           // fall through
-          case 67: break;
+          case 68: break;
           case 3:
             { return XmlTokenType.XML_REAL_WHITE_SPACE;
             }
           // fall through
-          case 68: break;
+          case 69: break;
           case 4:
             { return XmlTokenType.XML_DATA_CHARACTERS;
             }
           // fall through
-          case 69: break;
-          case 5:
-            { return XmlTokenType.XML_BAD_CHARACTER;
-            }
-          // fall through
           case 70: break;
-          case 6:
-            { return XmlTokenType.XML_WHITE_SPACE;
+          case 5:
+            { if (enableBlockSyntax) {
+    blockName = "";
+    return Angular2HtmlTokenTypes.BLOCK_NAME;
+  } else {
+    return XmlTokenType.XML_DATA_CHARACTERS;
+  }
             }
           // fall through
           case 71: break;
-          case 7:
-            { yybegin(YYINITIAL); return XmlTokenType.XML_DOCTYPE_END;
+          case 6:
+            { return XmlTokenType.XML_BAD_CHARACTER;
             }
           // fall through
           case 72: break;
-          case 8:
-            { return XmlTokenType.XML_COMMENT_CHARACTERS;
+          case 7:
+            { return XmlTokenType.XML_WHITE_SPACE;
             }
           // fall through
           case 73: break;
+          case 8:
+            { yybegin(YYINITIAL); return XmlTokenType.XML_DOCTYPE_END;
+            }
+          // fall through
+          case 74: break;
           case 9:
+            { return XmlTokenType.XML_COMMENT_CHARACTERS;
+            }
+          // fall through
+          case 75: break;
+          case 10:
             { // according to HTML spec (http://www.w3.org/html/wg/drafts/html/master/syntax.html#comments)
   // comments should start with <!-- and end with -->. The comment <!--> is not valid, but should terminate
   // comment token. Please note that it's not true for XML (http://www.w3.org/TR/REC-xml/#sec-comments)
@@ -1022,63 +1033,63 @@ public class _Angular2HtmlLexer implements FlexLexer {
   return XmlTokenType.XML_COMMENT_CHARACTERS;
             }
           // fall through
-          case 74: break;
-          case 10:
+          case 76: break;
+          case 11:
             { yybegin(C_COMMENT_START); return XmlTokenType.XML_CONDITIONAL_COMMENT_START;
             }
           // fall through
-          case 75: break;
-          case 11:
+          case 77: break;
+          case 12:
             { yybegin(YYINITIAL); yypushback(1); break;
             }
           // fall through
-          case 76: break;
-          case 12:
+          case 78: break;
+          case 13:
             { yybegin(BEFORE_TAG_ATTRIBUTES); return XmlTokenType.XML_NAME;
             }
           // fall through
-          case 77: break;
-          case 13:
+          case 79: break;
+          case 14:
             { return XmlTokenType.XML_START_TAG_START;
             }
           // fall through
-          case 78: break;
-          case 14:
+          case 80: break;
+          case 15:
             { yybegin(TAG_ATTRIBUTES); return XmlTokenType.XML_WHITE_SPACE;
             }
           // fall through
-          case 79: break;
-          case 15:
+          case 81: break;
+          case 16:
             { yybegin(YYINITIAL); return XmlTokenType.XML_TAG_END;
             }
           // fall through
-          case 80: break;
-          case 16:
+          case 82: break;
+          case 17:
             { return XmlTokenType.XML_NAME;
             }
           // fall through
-          case 81: break;
-          case 17:
+          case 83: break;
+          case 18:
             { yybegin(ATTRIBUTE_VALUE_START); return XmlTokenType.XML_EQ;
             }
           // fall through
-          case 82: break;
-          case 18:
+          case 84: break;
+          case 19:
             { yybegin(TAG_ATTRIBUTES); return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN;
             }
           // fall through
-          case 83: break;
-          case 19:
+          case 85: break;
+          case 20:
             { yybegin(ATTRIBUTE_VALUE_DQ); return XmlTokenType.XML_ATTRIBUTE_VALUE_START_DELIMITER;
             }
           // fall through
-          case 84: break;
-          case 20:
+          case 86: break;
+          case 21:
             { yybegin(ATTRIBUTE_VALUE_SQ); return XmlTokenType.XML_ATTRIBUTE_VALUE_START_DELIMITER;
             }
           // fall through
-          case 85: break;
-          case 21:
+          case 87: break;
+          case 22:
             { if (yystate() == ATTRIBUTE_VALUE_DQ
       && tryConsumeInterpolationBoundary(interpolationStart)) {
     if (inBuffer(interpolationEnd, 1)) {
@@ -1091,13 +1102,13 @@ public class _Angular2HtmlLexer implements FlexLexer {
   return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN;
             }
           // fall through
-          case 86: break;
-          case 22:
+          case 88: break;
+          case 23:
             { yybegin(TAG_ATTRIBUTES); return XmlTokenType.XML_ATTRIBUTE_VALUE_END_DELIMITER;
             }
           // fall through
-          case 87: break;
-          case 23:
+          case 89: break;
+          case 24:
             { if (yystate() == ATTRIBUTE_VALUE_SQ
             && tryConsumeInterpolationBoundary(interpolationStart)) {
     if (inBuffer(interpolationEnd, 1)) {
@@ -1110,53 +1121,53 @@ public class _Angular2HtmlLexer implements FlexLexer {
   return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN;
             }
           // fall through
-          case 88: break;
-          case 24:
+          case 90: break;
+          case 25:
             { yybegin(YYINITIAL); return XmlTokenType.XML_PI_END;
             }
           // fall through
-          case 89: break;
-          case 25:
+          case 91: break;
+          case 26:
             { return XmlTokenType.XML_TAG_CHARACTERS;
             }
           // fall through
-          case 90: break;
-          case 26:
+          case 92: break;
+          case 27:
             { yybegin(COMMENT); return XmlTokenType.XML_COMMENT_CHARACTERS;
             }
           // fall through
-          case 91: break;
-          case 27:
+          case 93: break;
+          case 28:
             { yybegin(COMMENT); return XmlTokenType.XML_CONDITIONAL_COMMENT_END;
             }
           // fall through
-          case 92: break;
-          case 28:
+          case 94: break;
+          case 29:
             { return XmlTokenType.XML_COMMA;
             }
           // fall through
-          case 93: break;
-          case 29:
+          case 95: break;
+          case 30:
             { expansionFormNestingLevel++;
   yybegin(YYINITIAL);
   return Angular2HtmlTokenTypes.EXPANSION_FORM_CASE_START;
             }
           // fall through
-          case 94: break;
-          case 30:
+          case 96: break;
+          case 31:
             { yybegin(YYINITIAL);
   return Angular2HtmlTokenTypes.EXPANSION_FORM_END;
             }
           // fall through
-          case 95: break;
-          case 31:
+          case 97: break;
+          case 32:
             { expansionFormNestingLevel--;
   yypushback(1);
   yybegin(EXPANSION_FORM_CONTENT);
             }
           // fall through
-          case 96: break;
-          case 32:
+          case 98: break;
+          case 33:
             { if (inBuffer(interpolationEnd, 0)) {
     yybegin(INTERPOLATION_END);
     yypushback(1);
@@ -1167,13 +1178,13 @@ public class _Angular2HtmlLexer implements FlexLexer {
   }
             }
           // fall through
-          case 97: break;
-          case 33:
+          case 99: break;
+          case 34:
             { 
             }
           // fall through
-          case 98: break;
-          case 34:
+          case 100: break;
+          case 35:
             { yybegin(YYINITIAL);
   if (tryConsumeInterpolationBoundary(interpolationEnd)) {
     return Angular2HtmlTokenTypes.INTERPOLATION_END;
@@ -1181,8 +1192,8 @@ public class _Angular2HtmlLexer implements FlexLexer {
   return XmlTokenType.XML_BAD_CHARACTER;
             }
           // fall through
-          case 99: break;
-          case 35:
+          case 101: break;
+          case 36:
             { if (inBuffer(interpolationEnd, 0)) {
     yybegin(yystate() == INTERPOLATION_DQ ? INTERPOLATION_END_DQ : INTERPOLATION_END_SQ);
     yypushback(1);
@@ -1193,20 +1204,20 @@ public class _Angular2HtmlLexer implements FlexLexer {
   }
             }
           // fall through
-          case 100: break;
-          case 36:
+          case 102: break;
+          case 37:
             { rollbackInterpolation();
   yybegin(UNTERMINATED_INTERPOLATION_SQ);
             }
           // fall through
-          case 101: break;
-          case 37:
+          case 103: break;
+          case 38:
             { rollbackInterpolation();
   yybegin(UNTERMINATED_INTERPOLATION_DQ);
             }
           // fall through
-          case 102: break;
-          case 38:
+          case 104: break;
+          case 39:
             { yybegin(yystate() == INTERPOLATION_END_DQ ? ATTRIBUTE_VALUE_DQ : ATTRIBUTE_VALUE_SQ);
   if (tryConsumeInterpolationBoundary(interpolationEnd)) {
     return Angular2HtmlTokenTypes.INTERPOLATION_END;
@@ -1214,14 +1225,14 @@ public class _Angular2HtmlLexer implements FlexLexer {
   return XmlTokenType.XML_BAD_CHARACTER;
             }
           // fall through
-          case 103: break;
-          case 39:
+          case 105: break;
+          case 40:
             { yypushback(1);
     yybegin(YYINITIAL);
             }
           // fall through
-          case 104: break;
-          case 40:
+          case 106: break;
+          case 41:
             { yybegin(BLOCK_PARAMETER);
       blockParenLevel = 1;
       parameterIndex = 0;
@@ -1229,25 +1240,25 @@ public class _Angular2HtmlLexer implements FlexLexer {
       return Angular2HtmlTokenTypes.BLOCK_PARAMETERS_START;
             }
           // fall through
-          case 105: break;
-          case 41:
+          case 107: break;
+          case 42:
             { yybegin(BLOCK_START);
       return Angular2HtmlTokenTypes.BLOCK_PARAMETERS_END;
             }
           // fall through
-          case 106: break;
-          case 42:
+          case 108: break;
+          case 43:
             { yybegin(YYINITIAL);
     return Angular2HtmlTokenTypes.BLOCK_START;
             }
           // fall through
-          case 107: break;
-          case 43:
+          case 109: break;
+          case 44:
             { blockParenLevel++;
             }
           // fall through
-          case 108: break;
-          case 44:
+          case 110: break;
+          case 45:
             { if (--blockParenLevel <= 0) {
        yypushback(1);
        yybegin(BLOCK_PARAMETERS_END);
@@ -1256,8 +1267,8 @@ public class _Angular2HtmlLexer implements FlexLexer {
      }
             }
           // fall through
-          case 109: break;
-          case 45:
+          case 111: break;
+          case 46:
             { yypushback(1);
       blockParenLevel = 1;
       yybegin(BLOCK_PARAMETER_END);
@@ -1267,8 +1278,8 @@ public class _Angular2HtmlLexer implements FlexLexer {
          parameterIndex++;
             }
           // fall through
-          case 110: break;
-          case 46:
+          case 112: break;
+          case 47:
             { // Angular 2 expression cannot contain an `@` character
        yypushback(1);
        yybegin(YYINITIAL);
@@ -1276,44 +1287,44 @@ public class _Angular2HtmlLexer implements FlexLexer {
           return Angular2EmbeddedExprTokenType.createBlockParameter(blockName, parameterIndex);
             }
           // fall through
-          case 111: break;
-          case 47:
+          case 113: break;
+          case 48:
             { parameterStart = zzMarkedPos;
     yybegin(BLOCK_PARAMETER);
     return Angular2HtmlTokenTypes.BLOCK_SEMICOLON;
             }
           // fall through
-          case 112: break;
-          case 48:
+          case 114: break;
+          case 49:
             { yybegin(BLOCK_START);
         return Angular2HtmlTokenTypes.BLOCK_PARAMETERS_END;
             }
           // fall through
-          case 113: break;
-          case 49:
+          case 115: break;
+          case 50:
             { if (!tryRollbackInterpolation()) {
     return XmlTokenType.XML_END_TAG_START;
   }
             }
           // fall through
-          case 114: break;
-          case 50:
+          case 116: break;
+          case 51:
             { if (!tryRollbackInterpolation()) {
     yybegin(START_TAG_NAME);
     yypushback(yylength());
   }
             }
           // fall through
-          case 115: break;
-          case 51:
+          case 117: break;
+          case 52:
             { if (!tryRollbackInterpolation()) {
     yybegin(PROCESSING_INSTRUCTION);
     return XmlTokenType.XML_PI_START;
   }
             }
           // fall through
-          case 116: break;
-          case 52:
+          case 118: break;
+          case 53:
             { if (enableBlockSyntax) {
     yypushback(2);
     yybegin(BLOCK_NAME);
@@ -1322,82 +1333,82 @@ public class _Angular2HtmlLexer implements FlexLexer {
   }
             }
           // fall through
-          case 117: break;
-          case 53:
+          case 119: break;
+          case 54:
             { return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN;
             }
           // fall through
-          case 118: break;
-          case 54:
+          case 120: break;
+          case 55:
             { yybegin(YYINITIAL); return XmlTokenType.XML_EMPTY_ELEMENT_END;
             }
           // fall through
-          case 119: break;
-          case 55:
+          case 121: break;
+          case 56:
             { yybegin(COMMENT); return XmlTokenType.XML_CONDITIONAL_COMMENT_START_END;
             }
           // fall through
-          case 120: break;
-          case 56:
+          case 122: break;
+          case 57:
             { blockName = Angular2HtmlBlockUtils.INSTANCE.toCanonicalBlockName(yytext().toString());
   yybegin(BLOCK_PARAMETERS_START);
   return Angular2HtmlTokenTypes.BLOCK_NAME;
             }
           // fall through
-          case 121: break;
-          case 57:
+          case 123: break;
+          case 58:
             { if (!isWithinInterpolation()) return XmlTokenType.XML_ENTITY_REF_TOKEN;
             }
           // fall through
-          case 122: break;
-          case 58:
+          case 124: break;
+          case 59:
             { if (!tryRollbackInterpolation()) {
     yybegin(END_TAG_NAME); yypushback(yylength());
   }
             }
           // fall through
-          case 123: break;
-          case 59:
+          case 125: break;
+          case 60:
             { yybegin(YYINITIAL); return XmlTokenType.XML_COMMENT_END;
             }
           // fall through
-          case 124: break;
-          case 60:
+          case 126: break;
+          case 61:
             { yybegin(C_COMMENT_END); return XmlTokenType.XML_CONDITIONAL_COMMENT_END_START;
             }
           // fall through
-          case 125: break;
-          case 61:
+          case 127: break;
+          case 62:
             { if (!isWithinInterpolation()) return XmlTokenType.XML_CHAR_ENTITY_REF;
             }
           // fall through
-          case 126: break;
-          case 62:
+          case 128: break;
+          case 63:
             { if (!tryRollbackInterpolation()) {
     yybegin(COMMENT);
     return XmlTokenType.XML_COMMENT_START;
   }
             }
           // fall through
-          case 127: break;
-          case 63:
+          case 129: break;
+          case 64:
             { yybegin(YYINITIAL); return XmlTokenType.XML_BAD_CHARACTER;
             }
           // fall through
-          case 128: break;
-          case 64:
+          case 130: break;
+          case 65:
             { return XmlTokenType.XML_DOCTYPE_PUBLIC;
             }
           // fall through
-          case 129: break;
-          case 65:
+          case 131: break;
+          case 66:
             { if (!tryRollbackInterpolation()) {
     yybegin(DOC_TYPE);
     return XmlTokenType.XML_DOCTYPE_START;
   }
             }
           // fall through
-          case 130: break;
+          case 132: break;
           default:
             zzScanError(ZZ_NO_MATCH);
           }

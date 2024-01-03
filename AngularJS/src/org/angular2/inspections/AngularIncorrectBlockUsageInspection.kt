@@ -29,8 +29,11 @@ class AngularIncorrectBlockUsageInspection : LocalInspectionTool() {
         if (definition == null) {
           val nameElement = block.nameElement
           holder.registerProblem(nameElement,
-                                 Angular2Bundle.htmlMessage("angular.inspection.incorrect-block-usage.message.undefined",
-                                                            block.htmlName),
+                                 if (nameElement.textLength == 1)
+                                   Angular2Bundle.htmlMessage("angular.inspection.incorrect-block-usage.message.missing-block-name")
+                                 else
+                                   Angular2Bundle.htmlMessage(
+                                     "angular.inspection.incorrect-block-usage.message.undefined", block.htmlName),
                                  EscapeCharacterIntentionFix(nameElement, TextRange(0, 1), "@", "&#64;"),
                                  EscapeCharacterIntentionFix(nameElement, TextRange(0, 1), "@", "&commat;"))
           return
