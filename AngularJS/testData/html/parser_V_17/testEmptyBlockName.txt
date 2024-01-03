@@ -1,0 +1,18 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    XmlToken:XML_DATA_CHARACTERS('An')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('empty')
+    PsiWhiteSpace(' ')
+    Angular2HtmlBlock (@)
+      PsiElement(NG:BLOCK_NAME)('@')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_DATA_CHARACTERS('(block)')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Unterminated expansion form
+      PsiElement(NG:EXPANSION_FORM_START)('{')
+    XmlToken:XML_DATA_CHARACTERS('name')
+    PsiErrorElement:Top level element is not completed
+      PsiElement(NG:EXPANSION_FORM_END)('}')

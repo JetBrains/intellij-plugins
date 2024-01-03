@@ -80,4 +80,10 @@ class Angular17HtmlParsingTest : Angular2HtmlParsingTest() {
     """.trimIndent())
   }
 
+  fun testEmptyBlockName() {
+    doTestHtml("""
+      An empty @ (block) {name}
+    """.trimIndent())
+  }
+
 }
