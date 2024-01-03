@@ -256,6 +256,15 @@ class Angular2TemplateInspectionsTest : Angular2CodeInsightFixtureTestCase() {
            "unknownBlock.html")
   }
 
+  fun testUnknownBlockInjected() {
+    configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_17_1_0_NEXT_5)
+    doTest(1,
+           "the @<caret>unknown block",
+           "Escape '@' with '&#",
+           AngularIncorrectBlockUsageInspection::class.java,
+           "unknownBlockInjected.ts")
+  }
+
   fun testBraceEscape() {
     doTest(1,
            "e {<caret> a",
