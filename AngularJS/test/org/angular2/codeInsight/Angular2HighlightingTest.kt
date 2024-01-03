@@ -170,6 +170,8 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
   fun testSvgWithBlocksSyntax() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5, extension = "svg")
 
+  fun testAnimationTriggerNoAttributeValue() = checkHighlighting()
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
