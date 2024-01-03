@@ -157,7 +157,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
   fun testForBlockVarType() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5,
                                                 strictTemplates = true, extension = "ts")
 
-  fun testForBlockIterableType() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5,
+  fun testForBlockIterableType() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5, ANGULAR_COMMON_17_1_0_NEXT_5, RXJS_7_8_1,
                                                      strictTemplates = true, extension = "ts")
 
   fun testDeferBlockSemanticHighlighting() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5,

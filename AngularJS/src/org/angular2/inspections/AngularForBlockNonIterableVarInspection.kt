@@ -19,7 +19,7 @@ import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.html.psi.Angular2HtmlBlock
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor
 
-class AngularForBlockNonIterableVar : LocalInspectionTool() {
+class AngularForBlockNonIterableVarInspection : LocalInspectionTool() {
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor =
     object : Angular2HtmlElementVisitor() {
@@ -32,9 +32,10 @@ class AngularForBlockNonIterableVar : LocalInspectionTool() {
           val expressionType = expression
                                  ?.let { JSResolveUtil.getExpressionJSType(it) }
                                  ?.substitute()
+                                 ?.let { JSTypeUtils.removeNullableComponents(it) }
+                                 ?.takeIf { !JSTypeUtils.isAnyType(it) }
                                ?: return
           val property = expressionType
-            .let { JSTypeUtils.removeNullableComponents(it) ?: return }
             .asRecordType()
             .findPropertySignature("[Symbol.iterator]")
           val type = property

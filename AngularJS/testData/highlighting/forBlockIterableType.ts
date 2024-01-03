@@ -1,19 +1,39 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-import { Component } from '@angular/core';
+import {Component} from "@angular/core";
+import {Observable, of} from 'rxjs';
+import {AsyncPipe} from "@angular/common";
+
+interface Person {
+  id:number;
+  name: string;
+  phone: string
+}
 
 @Component({
- selector: 'todos',
- template: `
-    @for (foo of iter; track $index)  {}
-    @for (foo of iterNull; track $index)  {}
-    @for (foo of <error descr="Type { name: string } must have a [Symbol.iterator]() method that returns an iterator.">nonIter</error>; track $index)  {}
-  `,
+   selector: 'app-test',
    standalone: true,
+   template: `
+      @for (p of <error descr="Type Person must have a [Symbol.iterator]() method that returns an iterator.">person</error>; track p.id) {
+          {{ p.<weak_warning descr="Unresolved variable phone">phone</weak_warning> + p.<weak_warning descr="Unresolved variable foo">foo</weak_warning> }}
+      }
+      @for (p of persons; track p.id) {
+          {{ p.phone + p.<error descr="Unresolved variable foo">foo</error> }}
+      }
+      @for (p of personsAny; track p.id) {
+          {{ p.<weak_warning descr="Unresolved variable phone">phone</weak_warning> + p.<weak_warning descr="Unresolved variable foo">foo</weak_warning> }}
+      }
+      @for (p of personsOptional; track p.id) {
+          {{ p.phone + p.<error descr="Unresolved variable foo">foo</error> }}
+      }
+      @for (p of (persons$ | async); track p.id) {
+          {{ p.phone + p.<error descr="Unresolved variable foo">foo</error> }}
+      }
+    `,
+   imports: [AsyncPipe]
  })
-export class ComponentStoreTodosComponent {
-
-  iter!: { name: string }[];
-  iterNull!: { name: string }[] | null | undefined;
-  nonIter!: { name: string };
-
+export class TestComponent {
+  person!: Person
+  persons!: Person[]
+  personsAny: any
+  personsOptional?: Person[]
+  persons$: Observable<Person[]> = of(this.persons);
 }
