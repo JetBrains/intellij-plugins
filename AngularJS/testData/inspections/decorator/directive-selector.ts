@@ -51,6 +51,13 @@ export default class MyDirective {
 }
 
 @Directive({
+  standalone: true
+})
+export class MyDirective {
+
+}
+
+@Directive({
     selector: ""
 })
 export class MyDirective {
