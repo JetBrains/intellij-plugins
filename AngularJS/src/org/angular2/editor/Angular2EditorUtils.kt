@@ -17,7 +17,12 @@ object Angular2EditorUtils {
 
   internal fun getDirectivesAtCaret(context: DataContext): List<Angular2Directive> {
     val file = context.getData(CommonDataKeys.PSI_FILE) ?: return emptyList()
-    if (!file.fileType.let { it == TypeScriptFileType.INSTANCE || Angular2LangUtil.isAngular2HtmlFileType(it) }
+    if (!file.fileType
+        .let {
+          it == TypeScriptFileType.INSTANCE
+          || Angular2LangUtil.isAngular2HtmlFileType(it)
+          || Angular2LangUtil.isAngular2SvgFileType(it)
+        }
         || !Angular2LangUtil.isAngular2Context(file))
       return emptyList()
 

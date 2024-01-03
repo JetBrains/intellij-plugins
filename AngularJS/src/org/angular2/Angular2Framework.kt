@@ -16,9 +16,10 @@ import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.tags.Angular2ElementDescriptor
 import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.html.Angular17HtmlFileType
+import org.angular2.lang.html.Angular2HtmlDialect
 import org.angular2.lang.html.Angular2HtmlFileType
-import org.angular2.lang.html.Angular2HtmlLanguage
 import org.angular2.lang.html.Angular2TemplateSyntax
+import org.angular2.lang.svg.Angular17SvgFileType
 import org.angular2.lang.svg.Angular2SvgFileType
 import org.angular2.web.Angular2AttributeNameCodeCompletionFilter
 import javax.swing.Icon
@@ -37,12 +38,15 @@ class Angular2Framework : WebFramework() {
         Angular2TemplateSyntax.V_2, Angular2TemplateSyntax.V_2_NO_EXPANSION_FORMS -> Angular2HtmlFileType.INSTANCE
         Angular2TemplateSyntax.V_17 -> Angular17HtmlFileType.INSTANCE
       }
-      SourceFileKind.SVG -> Angular2SvgFileType.INSTANCE
+      SourceFileKind.SVG -> when (Angular2LangUtil.getTemplateSyntax(project, context)) {
+        Angular2TemplateSyntax.V_2, Angular2TemplateSyntax.V_2_NO_EXPANSION_FORMS -> Angular2SvgFileType.INSTANCE
+        Angular2TemplateSyntax.V_17 -> Angular17SvgFileType.INSTANCE
+      }
       else -> null
     }
 
   override fun isOwnTemplateLanguage(language: Language): Boolean =
-    language.isKindOf(Angular2HtmlLanguage.INSTANCE)
+    language is Angular2HtmlDialect
 
   override fun createHtmlAttributeDescriptor(info: WebSymbolHtmlAttributeInfo,
                                              tag: XmlTag?): WebSymbolAttributeDescriptor =

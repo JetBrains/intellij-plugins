@@ -8,9 +8,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.webSymbols.context.WebSymbolsContext
 import org.angular2.Angular2Framework.Companion.instance
-import org.angular2.lang.html.Angular2HtmlLanguage
+import org.angular2.lang.html.Angular2HtmlDialect
 import org.angular2.lang.html.Angular2TemplateSyntax
-import org.angular2.lang.svg.Angular2SvgLanguage
 
 object Angular2LangUtil {
   const val ANGULAR_CORE_PACKAGE: String = "@angular/core"
@@ -46,10 +45,10 @@ object Angular2LangUtil {
   }
 
   fun isAngular2HtmlFileType(fileType: FileType?) =
-    fileType is LanguageFileType && fileType.language.isKindOf(Angular2HtmlLanguage.INSTANCE)
+    fileType is LanguageFileType && fileType.language.let { it is Angular2HtmlDialect && !it.svgDialect }
 
   fun isAngular2SvgFileType(fileType: FileType?) =
-    fileType is LanguageFileType && fileType.language.isKindOf(Angular2SvgLanguage.INSTANCE)
+    fileType is LanguageFileType && fileType.language.let { it is Angular2HtmlDialect && it.svgDialect }
 
   private fun getTemplateSyntax(contextProvider: () -> String?): Angular2TemplateSyntax =
     contextProvider()

@@ -15,6 +15,9 @@ class Angular2HtmlLanguage private constructor()
   override val templateSyntax: Angular2TemplateSyntax
     get() = Angular2TemplateSyntax.V_2
 
+  override val svgDialect: Boolean
+    get() = false
+
   companion object {
     @JvmField
     val INSTANCE = Angular2HtmlLanguage()
