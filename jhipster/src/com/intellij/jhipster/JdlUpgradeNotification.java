@@ -11,6 +11,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.FUSEventSource;
 import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.PluginAdvertiserService;
 import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.SuggestedIde;
+import com.intellij.openapi.updateSettings.impl.upgradeToUltimate.installation.UltimateInstallationService;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotificationProvider;
@@ -42,7 +44,12 @@ final class JdlUpgradeNotification implements EditorNotificationProvider {
 
     panel.createActionLabel(IdeBundle.message("plugins.advertiser.action.try.ultimate", "IntelliJ IDEA Ultimate"), () -> {
       SuggestedIde ide = PluginAdvertiserService.Companion.getIdeaUltimate();
-      FUSEventSource.EDITOR.openDownloadPageAndLog(project, ide.getDownloadUrl(), PluginId.getId(""));
+      PluginId id = PluginId.getId("");
+      if (Registry.is("ide.show.plugins.in.editor")) {
+        project.getService(UltimateInstallationService.class).install(id);
+      } else {
+        FUSEventSource.EDITOR.openDownloadPageAndLog(project, ide.getDownloadUrl(), id);
+      }
     });
 
     panel.createActionLabel(IdeBundle.message("plugins.advertiser.action.ignore.ultimate"), () -> {
