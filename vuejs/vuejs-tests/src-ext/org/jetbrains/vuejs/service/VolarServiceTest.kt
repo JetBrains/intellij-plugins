@@ -304,6 +304,29 @@ class VolarServiceTest : VolarServiceTestBase() {
     """.trimIndent(), true)
   }
 
+  @Test
+  fun testImportsInCreatedFile() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
+    myFixture.addFileToProject("tsconfig.json", """
+      {
+        "compilerOptions": {
+          "paths": { "@/*": ["./src/*"] }
+        }
+      }
+    """.trimIndent())
+    myFixture.addFileToProject("src/components/HelloWorld.vue", "")
+    val text = """
+      <script setup lang="ts">
+      <weak_warning>import HelloWorld from '@/components/HelloWorld.vue'</weak_warning>
+      <weak_warning>import incorrect from <error descr="Vue: Cannot find module '@/components/incorrect.vue' or its corresponding type declarations.">'<error descr="Module is not listed in package.json dependencies">@/components</error>/incorrect.vue'</error></weak_warning>
+      </script>
+    """.trimIndent()
+    myFixture.configureByText("App.vue", text)
+    myFixture.checkLspHighlighting()
+    myFixture.configureByText("App1.vue", text)
+    myFixture.checkLspHighlighting()
+  }
+
   private fun getPresentationTexts(elements: Array<LookupElement>): List<String?> {
     return elements.map { element ->
       val presentation = LookupElementPresentation()
