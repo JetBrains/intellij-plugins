@@ -52,6 +52,9 @@ abstract class Angular2SourceDirectiveProperty(
         )
   }
 
+  override val fieldName: String
+    get() = signature.memberName
+
   val transformParameterType: JSType?
     get() = objectInitializer?.findProperty(Angular2DecoratorUtil.TRANSFORM_PROP)?.jsType?.asRecordType()?.callSignatures
       ?.firstNotNullOfOrNull { signature -> signature.functionType.parameters.takeIf { it.size > 0 }?.get(0) }
