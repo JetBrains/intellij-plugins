@@ -216,6 +216,17 @@ class Angular2ModelStructureTest : Angular2CodeInsightFixtureTestCase() {
     )
   }
 
+  fun testModuleWithExportDefault() {
+    doResolutionTest(
+      "export-default",
+      "comp-b.component.ts",
+      "export default class Comp<caret>BComponent",
+      "check.txt",
+      true,
+      Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.RXJS_7_8_1
+    )
+  }
+
   private fun doResolutionTest(directory: String,
                                moduleFile: String,
                                signature: String,
@@ -236,7 +247,7 @@ class Angular2ModelStructureTest : Angular2CodeInsightFixtureTestCase() {
     val moduleOffset = AngularTestUtil.findOffsetBySignature(signature, myFixture.getFile())
     val el = myFixture.getFile().findElementAt(moduleOffset)!!
     val moduleClass = PsiTreeUtil.getParentOfType(el, TypeScriptClass::class.java)!!
-    val module = getModule(moduleClass)!!
+    val module = getEntity(moduleClass) as Angular2ImportsOwner
     val result = Angular2EntitiesDebugOutputPrinter(printDirectives).printValue(module)
     myFixture.configureByText("__my-check.txt", result)
     myFixture.checkResultByFile("$directory/$checkFile", true)

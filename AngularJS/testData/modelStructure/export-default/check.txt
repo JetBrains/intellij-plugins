@@ -1,0 +1,32 @@
+CompBComponent: Angular2SourceComponent
+  standalone: true
+  selector: app-comp-b
+  kind: REGULAR
+  host directives fully resolved: true
+  imports:
+    ModModule: Angular2SourceModule
+      imports:
+      declarations:
+        CompAComponent: Angular2SourceComponent
+          standalone: false
+          selector: app-comp-a
+          kind: REGULAR
+          host directives fully resolved: true
+      exports:
+        CompAComponent: Angular2SourceComponent
+          <printed above>
+      all-exported-declarations:
+        CompAComponent: Angular2SourceComponent
+          <printed above>
+      scope:
+        CompAComponent: Angular2SourceComponent
+          <printed above>
+      scope fully resolved: false
+      exports fully resolved: true
+      declarations fully resolved: true
+  scope:
+    CompAComponent: Angular2SourceComponent
+      <printed above>
+    CompBComponent: Angular2SourceComponent
+      <printed above>
+  scope fully resolved: true
