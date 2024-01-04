@@ -4,9 +4,9 @@ package org.intellij.terraform.config.inspection
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import org.intellij.terraform.config.model.*
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.*
-import org.intellij.terraform.config.model.*
 import org.jetbrains.annotations.Nls
 
 // Beware: validator have recursive nature, must be called only on HCLExpression which is root of type specification
@@ -85,7 +85,7 @@ open class TypeSpecificationValidator(private val holder: ProblemsHolder?,
         TextRange(params[1].textRangeInParent.startOffset, params.last().textRangeInParent.endOffset)
       } else null
       when (methodName) {
-        "list", "set", "map", "optional" -> {
+        "list", "set", "map" -> {
           return error(e.parameterList,
                        HCLBundle.message("type.specification.validator.collection.argument.required.error.message", methodName), range)
         }
@@ -97,6 +97,10 @@ open class TypeSpecificationValidator(private val holder: ProblemsHolder?,
         }
       }
     }
+    if (methodName == "optional" && !(paramsSize == 1 || paramsSize == 2)) {
+      return error(e.parameterList, HCLBundle.message("type.specification.validator.optional.argument.required.error.message"))
+    }
+
     val firstArgument = params.first()
     when (methodName) {
       "bool", "string", "number", "any" -> return error(e.callee,
