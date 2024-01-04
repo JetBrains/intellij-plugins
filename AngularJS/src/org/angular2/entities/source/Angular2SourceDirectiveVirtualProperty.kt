@@ -33,6 +33,8 @@ class Angular2SourceDirectiveVirtualProperty(
            }
   )
 
+  override val fieldName: String?
+    get() = null
 
   override val rawJsType: JSType?
     get() = null

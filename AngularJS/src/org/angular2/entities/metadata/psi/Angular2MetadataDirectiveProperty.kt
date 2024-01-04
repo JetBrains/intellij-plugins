@@ -55,6 +55,10 @@ class Angular2MetadataDirectiveProperty internal constructor(
   override val owner: TypeScriptClass?
     get() = myOwner.typeScriptClass
 
+
+  override val fieldName: String?
+    get() = mySignature.value?.memberName
+
   override fun createPointer(): Pointer<Angular2MetadataDirectiveProperty> {
     val owner = myOwner.createSmartPointer()
     val name = this.name

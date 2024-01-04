@@ -32,6 +32,9 @@ class Angular2AliasedDirectiveProperty(
     else
       directive
 
+  override val fieldName: String?
+    get() = delegate.fieldName
+
   override val required: Boolean
     get() = delegate.required
 

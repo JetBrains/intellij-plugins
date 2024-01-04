@@ -26,6 +26,8 @@ interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element {
 
   override val required: Boolean
 
+  val fieldName: String?
+
   val rawJsType: JSType?
 
   val virtualProperty: Boolean
@@ -44,7 +46,7 @@ interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element {
       Angular2TypeUtils.extractEventVariableType(rawJsType)
     }
     else {
-      jsTypeFromAcceptInputType(owner, name) ?: rawJsType
+      fieldName?.let { jsTypeFromAcceptInputType(owner, it) } ?: rawJsType
     }
 
   val owner: TypeScriptClass?

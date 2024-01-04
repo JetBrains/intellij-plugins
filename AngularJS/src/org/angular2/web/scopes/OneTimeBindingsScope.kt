@@ -135,7 +135,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : WebSymbolsScopeWithCache<XmlT
       get() = false
 
     override val attributeValue: WebSymbolHtmlAttributeValue? by lazy(LazyThreadSafetyMode.PUBLICATION) {
-      if (isStrictTemplates(this.source)) {
+      if (isStrictTemplates(this.psiContext)) {
         WebSymbolHtmlAttributeValue.create(
           WebSymbolHtmlAttributeValue.Kind.PLAIN,
           WebSymbolHtmlAttributeValue.Type.COMPLEX,
