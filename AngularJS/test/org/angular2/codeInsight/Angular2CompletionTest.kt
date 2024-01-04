@@ -196,6 +196,9 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
   fun testDeferBlockOnViewport() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_NEXT_5, extension = "html")
 
+  fun testKeyofAttribute() =
+    doLookupTest()
+
   private fun notAnElement(it: LookupElementInfo): Boolean = !it.lookupString.startsWith("<")
 
   private fun doBasicCompletionTest(vararg modules: WebFrameworkTestModule, dir: Boolean = false, extension: String = "ts") =
