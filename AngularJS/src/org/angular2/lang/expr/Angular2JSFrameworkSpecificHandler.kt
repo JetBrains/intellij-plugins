@@ -13,7 +13,6 @@ import org.angular2.lang.Angular2HighlightDescriptor
 import org.angular2.lang.expr.psi.Angular2Binding
 import org.angular2.lang.expr.psi.Angular2Interpolation
 import org.angular2.lang.expr.psi.Angular2TemplateBinding
-import org.angular2.lang.expr.psi.impl.Angular2BindingImpl
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.lang.types.Angular2PropertyBindingType
@@ -22,16 +21,16 @@ import org.angular2.lang.types.Angular2TemplateBindingType
 class Angular2JSFrameworkSpecificHandler : JSFrameworkSpecificHandler {
   override fun findExpectedType(element: PsiElement, parent: PsiElement?, expectedTypeKind: JSExpectedTypeKind): JSType? {
     if (parent is Angular2Binding && parent.expression == element) {
-      val attribute = Angular2BindingImpl.getEnclosingAttribute(parent)
+      val attribute = parent.enclosingAttribute
       val descriptor = attribute?.descriptor as? WebSymbolAttributeDescriptor ?: return null
       val info = Angular2AttributeNameParser.parse(descriptor.name)
       if (info.type == Angular2AttributeType.PROPERTY_BINDING || info.type == Angular2AttributeType.BANANA_BOX_BINDING) {
-        return Angular2PropertyBindingType(attribute, expectedTypeKind)
+        return Angular2PropertyBindingType(attribute, expectedTypeKind).substitute()
       }
       return null
     }
     if (parent is Angular2TemplateBinding && parent.expression == element) {
-      return (parent.keyJSType as? Angular2TemplateBindingType)?.copyWithExpectedKind(expectedTypeKind)
+      return (parent.keyJSType as? Angular2TemplateBindingType)?.copyWithExpectedKind(expectedTypeKind)?.substitute()
     }
     if (parent is Angular2Interpolation && parent.expression == element) {
       return if (expectedTypeKind != JSExpectedTypeKind.TYPE_CHECKING)
