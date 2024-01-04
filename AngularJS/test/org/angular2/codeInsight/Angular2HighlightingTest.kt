@@ -172,6 +172,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
   fun testAnimationTriggerNoAttributeValue() = checkHighlighting()
 
+  fun testModuleWithExportDefault() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, RXJS_7_8_1,
+                                                           configureFileName = "comp-b.component.ts", dir = true)
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())

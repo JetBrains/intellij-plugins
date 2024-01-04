@@ -1,7 +1,9 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.source
 
+import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
 import com.intellij.lang.ecmascript6.psi.ES6ImportExportSpecifierAlias
+import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptSingleType
@@ -101,6 +103,14 @@ abstract class Angular2SourceEntityListProcessor<T : Angular2Entity>(private val
 
       override fun visitES6ImportExportSpecifierAlias(alias: ES6ImportExportSpecifierAlias) {
         addIfNotNull(result, alias.findAliasedElement())
+      }
+
+      override fun visitES6ImportedBinding(importedBinding: ES6ImportedBinding) {
+        result.addAll(importedBinding.findReferencedElements())
+      }
+
+      override fun visitES6ExportDefaultAssignment(node: ES6ExportDefaultAssignment) {
+        result.add(node.stubSafeElement)
       }
 
       override fun visitJSSpreadExpression(spreadExpression: JSSpreadExpression) {
