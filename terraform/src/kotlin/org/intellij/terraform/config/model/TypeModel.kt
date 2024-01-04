@@ -20,11 +20,12 @@ class TypeModel(
   @Suppress("MemberVisibilityCanBePrivate")
   companion object {
     private val VersionProperty = PropertyType("version", Types.String, hint = SimpleHint("VersionRange"), injectionAllowed = false)
-    val TerraformRequiredVersion = PropertyType("required_version", Types.String, hint = SimpleHint("VersionRange"),
-                                                injectionAllowed = false)
+    val TerraformRequiredVersion: PropertyType = PropertyType("required_version", Types.String, hint = SimpleHint("VersionRange"),
+                                                              injectionAllowed = false)
 
-    val DependsOnProperty = PropertyType("depends_on", Types.Array,
-                                         hint = ReferenceHint("resource.#name", "data_source.#name", "module.#name", "variable.#name"))
+    val DependsOnProperty: PropertyType = PropertyType("depends_on", Types.Array,
+                                                       hint = ReferenceHint("resource.#name", "data_source.#name", "module.#name",
+                                                                            "variable.#name"))
 
     val Atlas: BlockType = BlockType("atlas", 0, properties = listOf(
       PropertyType("name", Types.String, injectionAllowed = false, required = true)).toMap())
@@ -38,14 +39,15 @@ class TypeModel(
     ).toMap())
     val Output: BlockType = BlockType("output", 1, properties = listOf(
       PropertyType("value", Types.Any, required = true),
+      PropertyType("description", Types.String),
       DependsOnProperty,
       PropertyType("sensitive", Types.Boolean)
     ).toMap())
 
-    val Variable_Type = PropertyType("type", Types.Any, injectionAllowed = false)
-    val Variable_Default = PropertyType("default", Types.Any)
-    val Variable_Description = PropertyType("description", Types.String)
-    val Variable_Validation = BlockType("validation", 0, properties = listOf(
+    val Variable_Type: PropertyType = PropertyType("type", Types.Any, injectionAllowed = false)
+    val Variable_Default: PropertyType = PropertyType("default", Types.Any)
+    val Variable_Description: PropertyType = PropertyType("description", Types.String)
+    val Variable_Validation: BlockType = BlockType("validation", 0, properties = listOf(
       PropertyType("condition", Types.Boolean, injectionAllowed = false),
       PropertyType("error_message", Types.String)
     ).toMap())
@@ -177,7 +179,7 @@ class TypeModel(
 
     while (low <= high) {
       val mid = (low + high) ushr 1
-      val midVal: T = this.get(mid)
+      val midVal: T = this[mid]
       val cmp: Int = k(midVal).compareTo(elt)
       when {
         cmp < 0 -> low = mid + 1
@@ -252,5 +254,5 @@ fun Collection<PropertyOrBlockType>.toMap(): Map<String, PropertyOrBlockType> {
   if (broken.isNotEmpty()) {
     throw IllegalStateException("Grouping clash on keys: $broken")
   }
-  return this.map { it.name to it }.toMap()
+  return this.associateBy { it.name }
 }
