@@ -100,7 +100,7 @@ class Angular2PipesTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testAsyncNgIfAsContentAssist() {
-    configureCopy(myFixture, Angular2TestModule.ANGULAR_COMMON_8_2_14, Angular2TestModule.RXJS_6_4_0)
+    configureCopy(myFixture, Angular2TestModule.ANGULAR_COMMON_16_2_8, Angular2TestModule.RXJS_7_8_1)
     myFixture.configureByFiles("ngIfAs.ts")
     myFixture.completeBasic()
     myFixture.checkResultByFile("ngIfAs.after.ts")

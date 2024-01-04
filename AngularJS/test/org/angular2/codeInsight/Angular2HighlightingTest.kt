@@ -178,6 +178,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
   fun testNgAcceptInputOverAlias() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5, ANGULAR_CDK_17_1_0_NEXT_3,
                                                        strictTemplates = true, extension = "ts")
 
+  fun testTupleAssignment() = checkHighlighting(ANGULAR_CORE_16_2_8,
+                                                strictTemplates = true, extension = "ts")
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())

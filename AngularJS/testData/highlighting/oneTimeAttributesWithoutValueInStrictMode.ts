@@ -48,7 +48,7 @@ class IcnBtn {
             fixedInViewport/>
           <mat-sidenav
             class="sidenav"
-            [fixedInViewport]="<error descr="Type number is not assignable to type BooleanInput...  Type number is not assignable to type string | boolean | null | undefined">12</error>"/>
+            [fixedInViewport]="<error descr="Type number is not assignable to type BooleanInput  Type number is not assignable to type string | boolean | null | undefined    Type number is not assignable to type boolean">12</error>"/>
       </div>
   `,
   standalone: true,

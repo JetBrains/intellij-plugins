@@ -22,6 +22,7 @@ import com.intellij.psi.util.childLeafs
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.ProcessingContext
+import com.intellij.util.asSafely
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.NG_PIPE
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.codeInsight.blocks.BLOCK_FOR
@@ -29,7 +30,6 @@ import org.angular2.entities.Angular2ComponentLocator
 import org.angular2.inspections.quickfixes.*
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.psi.*
-import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
 import org.angular2.signals.Angular2SignalUtils
 
 class Angular2AnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
@@ -48,9 +48,8 @@ class Angular2AnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
                             context: ProcessingContext?,
                             holder: DialectOptionHolder?): Collection<LocalQuickFix> {
         val quickFixes = super.getFixes(expr, declaredJSType, elementToChangeTypeOf, expressionJSType, context, holder)
-        if (elementToChangeTypeOf is Angular2HtmlPropertyBinding) {
-          return Angular2FixesFactory.getCreateInputTransformFixes(elementToChangeTypeOf,
-                                                                   expressionJSType.substitute().getTypeText(CODE)) + quickFixes
+        expr?.parent?.asSafely<Angular2Binding>()?.enclosingAttribute?.let {
+          return Angular2FixesFactory.getCreateInputTransformFixes(it, expressionJSType.substitute().getTypeText(CODE)) + quickFixes
         }
         return quickFixes
       }
