@@ -6,6 +6,7 @@ import com.intellij.lang.typescript.lsp.JSFrameworkLspServerDescriptor
 import com.intellij.lang.typescript.lsp.LspServerDownloader
 import com.intellij.lang.typescript.lsp.LspServerPackageDescriptor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.OSAgnosticPathUtil.startsWithWindowsDrive
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspServerSupportProvider
@@ -31,6 +32,19 @@ class VolarSupportProvider : LspServerSupportProvider {
 
 class VolarServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, VolarExecutableDownloader, "Vue") {
   override fun isSupportedFile(file: VirtualFile): Boolean = isVolarFileTypeAcceptable(file)
+
+  override fun getFileUri(file: VirtualFile): String {
+    val uri = super.getFileUri(file)
+    val prefix = "file:///"
+    if (uri.startsWith(prefix) && startsWithWindowsDrive(uri.substring(prefix.length))) {
+      // VS Code always sends lowercased Windows drive letters, and always escapes colon
+      // See the issue and the related PR: https://github.com/microsoft/vscode-languageserver-node/issues/1280
+      // The LSP spec requires that all servers work fine with both `file:///C:/foo` and `file:///c%3A/foo`,
+      // but apparently some servers do not
+      return prefix + uri[prefix.length].lowercase() + "%3A" + uri.substring(prefix.length + 2)
+    }
+    return uri
+  }
 }
 
 @ApiStatus.Experimental
