@@ -48,11 +48,13 @@ class TypeModel(
       SensitiveProperty
     ).toMap())
 
+    val ErrorMessageProperty: PropertyType = PropertyType("error_message", Types.String)
+    val ConditionProperty: PropertyType = PropertyType("condition", Types.Boolean, injectionAllowed = false)
     val Variable_Type: PropertyType = PropertyType("type", Types.Any, injectionAllowed = false)
     val Variable_Default: PropertyType = PropertyType("default", Types.Any)
     val Variable_Validation: BlockType = BlockType("validation", 0, properties = listOf(
-      PropertyType("condition", Types.Boolean, injectionAllowed = false),
-      PropertyType("error_message", Types.String)
+      ConditionProperty,
+      ErrorMessageProperty
     ).toMap())
     val Variable: BlockType = BlockType("variable", 1, properties = listOf<PropertyOrBlockType>(
       Variable_Type,
@@ -94,12 +96,18 @@ class TypeModel(
       PropertyType("cacert", Types.String)
     ).toMap()
 
+    val PreconditionBlock: BlockType = BlockType("precondition", 0, properties = listOf(ConditionProperty, ErrorMessageProperty).toMap())
+    val PostconditionBlock: BlockType = BlockType("postcondition", 0, properties = listOf(ConditionProperty, ErrorMessageProperty).toMap())
+
     val ResourceLifecycle: BlockType = BlockType("lifecycle", 0,
                                                  description = "Describe to Terraform how to connect to the resource for provisioning", // TODO: Improve description
                                                  properties = listOf(
                                                    PropertyType("create_before_destroy", Types.Boolean),
                                                    PropertyType("prevent_destroy", Types.Boolean),
-                                                   PropertyType("ignore_changes", ListType(Types.Any))
+                                                   PropertyType("ignore_changes", ListType(Types.Any)),
+                                                   PropertyType("replace_triggered_by", ListType(Types.Any)),
+                                                   PreconditionBlock,
+                                                   PostconditionBlock
                                                  ).toMap())
     val AbstractResourceProvisioner: BlockType = BlockType("provisioner", 1, properties = listOf(
       Connection
@@ -135,6 +143,7 @@ class TypeModel(
       PropertyType("count", Types.Number, conflictsWith = listOf("for_each")),
       PropertyType("for_each", Types.Any, conflictsWith = listOf("count")),
       DependsOnProperty,
+      ResourceLifecycle,
       PropertyType("provider", Types.String, hint = ReferenceHint("provider.#type", "provider.#alias"))
     ).toMap())
 
