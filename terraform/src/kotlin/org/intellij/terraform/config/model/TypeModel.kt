@@ -41,12 +41,6 @@ class TypeModel(
       PropertyType("for_each", Types.Any, conflictsWith = listOf("count")),
       PropertyType("providers", MapType(Types.String))
     ).toMap())
-    val Output: BlockType = BlockType("output", 1, properties = listOf(
-      PropertyType("value", Types.Any, required = true),
-      DescriptionProperty,
-      DependsOnProperty,
-      SensitiveProperty
-    ).toMap())
 
     val ErrorMessageProperty: PropertyType = PropertyType("error_message", Types.String)
     val ConditionProperty: PropertyType = PropertyType("condition", Types.Boolean, injectionAllowed = false)
@@ -98,6 +92,14 @@ class TypeModel(
 
     val PreconditionBlock: BlockType = BlockType("precondition", 0, properties = listOf(ConditionProperty, ErrorMessageProperty).toMap())
     val PostconditionBlock: BlockType = BlockType("postcondition", 0, properties = listOf(ConditionProperty, ErrorMessageProperty).toMap())
+
+    val Output: BlockType = BlockType("output", 1, properties = listOf(
+      PropertyType("value", Types.Any, required = true),
+      DescriptionProperty,
+      DependsOnProperty,
+      SensitiveProperty,
+      PreconditionBlock
+    ).toMap())
 
     val ResourceLifecycle: BlockType = BlockType("lifecycle", 0,
                                                  description = "Describe to Terraform how to connect to the resource for provisioning", // TODO: Improve description
