@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections.quickfixes
 
+import com.intellij.codeInsight.intention.PriorityAction
 import com.intellij.codeInsight.intention.preview.IntentionPreviewInfo
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement
@@ -20,7 +21,7 @@ import org.jetbrains.annotations.Nls
 
 class ExportNgModuleDeclarationQuickFix private constructor(context: PsiElement,
                                                             declaration: Angular2SourceDeclaration)
-  : LocalQuickFixAndIntentionActionOnPsiElement(context) {
+  : LocalQuickFixAndIntentionActionOnPsiElement(context), PriorityAction {
 
   private val myDeclarationName: String = declaration.typeScriptClass.name!!
   private val myDeclarationDecorator: SmartPsiElementPointer<ES6Decorator> = SmartPointerManager.createPointer(declaration.decorator)
@@ -55,6 +56,9 @@ class ExportNgModuleDeclarationQuickFix private constructor(context: PsiElement,
   override fun generatePreview(project: Project, previewDescriptor: ProblemDescriptor): IntentionPreviewInfo {
     return IntentionPreviewInfo.EMPTY
   }
+
+  override fun getPriority(): PriorityAction.Priority =
+    PriorityAction.Priority.HIGH
 
   companion object {
 

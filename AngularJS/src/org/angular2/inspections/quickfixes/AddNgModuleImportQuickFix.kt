@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections.quickfixes
 
+import com.intellij.codeInsight.intention.PriorityAction
 import com.intellij.codeInsight.intention.preview.IntentionPreviewInfo
 import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement
 import com.intellij.codeInspection.ProblemDescriptor
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.Nls
 
 class AddNgModuleImportQuickFix(context: PsiElement,
                                 importableDeclarations: Collection<Angular2Declaration>)
-  : LocalQuickFixAndIntentionActionOnPsiElement(context) {
+  : LocalQuickFixAndIntentionActionOnPsiElement(context), PriorityAction {
 
   private val myModuleName: String?
 
@@ -72,4 +73,7 @@ class AddNgModuleImportQuickFix(context: PsiElement,
   override fun generatePreview(project: Project, editor: Editor, file: PsiFile): IntentionPreviewInfo {
     return IntentionPreviewInfo.EMPTY
   }
+
+  override fun getPriority(): PriorityAction.Priority =
+    PriorityAction.Priority.HIGH
 }

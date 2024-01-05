@@ -1,0 +1,3 @@
+Import FormsModule
+Create input 'ngModel'
+Remove attribute [ngModel]
