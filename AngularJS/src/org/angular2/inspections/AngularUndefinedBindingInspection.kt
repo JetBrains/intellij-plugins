@@ -109,6 +109,10 @@ class AngularUndefinedBindingInspection : AngularHtmlLikeTemplateLocalInspection
       REGULAR -> info.name.withColor(HTML_ATTRIBUTE, attribute)
       else -> return
     }
+    if (info.type == REGULAR && isFromNotSelector(attribute, descriptor)) {
+      if (!holder.isOnTheFly) return
+      severity = ProblemHighlightType.INFORMATION
+    }
     // TODO register error on the symbols themselves
     holder.registerProblem(attribute.nameElement,
                            Angular2Bundle.htmlMessage(
@@ -116,6 +120,22 @@ class AngularUndefinedBindingInspection : AngularHtmlLikeTemplateLocalInspection
                              "<${attribute.parent.name}>".withColor(Angular2HtmlLanguage.INSTANCE, attribute)),
                            severity,
                            *quickFixes.toTypedArray<LocalQuickFix>())
+  }
+
+  private fun isFromNotSelector(attribute: XmlAttribute, descriptor: Angular2AttributeDescriptor): Boolean {
+    val elementName = attribute.parent.name
+    val attributeName = descriptor.name
+    return descriptor.sourceDirectives.asSequence()
+             .flatMap { it.selector.simpleSelectors }
+             .filter { it.elementName == null || it.elementName.equals(elementName, true) }
+             .flatMap { it.notSelectors }
+             .flatMap { it.attrNames }
+             .any { it.equals(attributeName, true) }
+           && descriptor.sourceDirectives.asSequence()
+             .flatMap { it.selector.simpleSelectors }
+             .filter { it.elementName == null || it.elementName.equals(elementName, true) }
+             .flatMap { it.attrNames }
+             .none { it.equals(attributeName, true) }
   }
 
   private fun visitTemplateBindings(holder: ProblemsHolder,
