@@ -252,7 +252,8 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
     set.remove("id");
     doBasicCompletionTest("data \"x\" {\nid='a'\n<caret>\n}", set);
     doBasicCompletionTest("data abc {\n<caret> = true\n}", Collections.emptySet());
-    doBasicCompletionTest("data abc {\n<caret> {}\n}", 0);
+    // lifecycle block for DataSource, that's why size=1
+    doBasicCompletionTest("data abc {\n<caret> {}\n}", 1, "lifecycle");
   }
 
   public void testDataSourceCommonPropertyCompletionFromModel() throws Exception {
@@ -313,6 +314,39 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
     doBasicCompletionTest("provider aws {}\ndata <caret> \"aaa\" {}", set);
   }
   //</editor-fold>
+
+  public void testOutputBasicCompletion() throws Exception {
+    doBasicCompletionTest("output test1 {<caret>}", 5, "description");
+    doBasicCompletionTest("output test2 {\np<caret>}", 3, "precondition", "description", "depends_on");
+  }
+
+  public void testVariableBasicCompletion() throws Exception {
+    doBasicCompletionTest("variable test1 {\n<caret>}", 6, "type");
+    doBasicCompletionTest("variable test2 {\ns<caret>}", 2, "sensitive", "description");
+    doBasicCompletionTest("variable test3 {\nn<caret>}", 4, "nullable", "validation");
+    doBasicCompletionTest("variable test4 {\nd<caret>}", 3, "default");
+  }
+
+  public void testLifecycleBasicCompletion() throws Exception {
+    final var resource = """
+      resource null_resource test {
+        lifecycle {
+          con<caret>
+        }
+      }
+      """.trim();
+    doBasicCompletionTest(resource, 2, "precondition", "postcondition");
+
+    final var data = """
+      data "abbey_identity" "test" {
+        id = ""
+        lifecycle {
+          <caret>
+        }
+      }
+      """.trim();
+    doBasicCompletionTest(data, 6, "replace_triggered_by");
+  }
 
   public void testOutputDependsOnCompletion() throws Exception {
     doBasicCompletionTest("output o {<caret>}", "depends_on");
@@ -548,7 +582,7 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
   }
 
   public void testModuleForEachCompletion() throws Exception {
-    doBasicCompletionTest("module 'x' { id = <caret>}", Matcher.not("each"));
+    doBasicCompletionTest("module 'x' { id = <caret>}", not("each"));
     doBasicCompletionTest("module 'x' { for_each={}\n id = <caret>}", "each");
     doBasicCompletionTest("module 'x' { for_each={}\n id = each.<caret>}", 2, "key", "value");
   }
@@ -584,7 +618,7 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
     myFixture.testCompletionVariants("main.tf",  "MyType.MyName");
   }
 
-  private boolean isExcludeProvider(ProviderType provider, Map<String, Boolean> cache) {
+  private static boolean isExcludeProvider(ProviderType provider, Map<String, Boolean> cache) {
     String key = provider.getType();
     Boolean cached = cache.get(key);
     if (cached == null) {
