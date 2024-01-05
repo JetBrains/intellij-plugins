@@ -51,7 +51,7 @@ abstract class BaseCreateDirectiveInputOutputAction(context: PsiElement, fieldNa
   }
 
   override fun getPriority(): PriorityAction.Priority {
-    return PriorityAction.Priority.TOP
+    return PriorityAction.Priority.NORMAL
   }
 
   override fun calculateAnchors(psiElement: PsiElement): Pair<JSReferenceExpression?, PsiElement?> {

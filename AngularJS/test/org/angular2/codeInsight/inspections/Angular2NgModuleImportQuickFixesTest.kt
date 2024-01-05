@@ -1,10 +1,16 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight.inspections
 
+import com.intellij.codeInsight.intention.impl.ShowIntentionActionsHandler
 import com.intellij.lang.javascript.modules.imports.JSImportAction
 import com.intellij.lang.javascript.ui.NodeModuleNamesUtil
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
 import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.editor.Editor
+import com.intellij.psi.PsiFile
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageEditorUtil
+import com.intellij.psi.util.PsiUtilBase
+import com.intellij.webSymbols.checkListByFile
 import com.intellij.webSymbols.moveToOffsetBySignature
 import org.angular2.Angular2MultiFileFixtureTestCase
 import org.angular2.Angular2TestModule
@@ -15,6 +21,7 @@ import org.angular2.inspections.AngularUndefinedTagInspection
 import org.angular2.inspections.quickfixes.Angular2FixesFactory
 import org.angularjs.AngularTestUtil
 import java.io.IOException
+import java.util.*
 
 /**
  * Also tests completion InsertHandlers.
@@ -167,7 +174,8 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
                     "[ng<caret>Model]",
                     "Import FormsModule",
                     null,
-                    ANGULAR_8)
+                    ANGULAR_8,
+                    checkQuickFixList = true)
   }
 
   fun testFormsModule4() {
@@ -326,11 +334,19 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
                               signature: String?,
                               intention: String,
                               importName: String?,
-                              modules: Array<out Angular2TestModule> = ANGULAR_4) {
+                              modules: Array<out Angular2TestModule> = ANGULAR_4,
+                              checkQuickFixList: Boolean = false) {
     initInspections()
     doTest(
       { _, _ ->
         configureTestAndRun(mainFile, signature, importName, modules, Runnable {
+          if (checkQuickFixList) {
+            myFixture.availableIntentions // load intentions
+            val intentions = ShowIntentionActionsHandler.calcCachedIntentions(myFixture.getProject(), getHostEditor(), getHostFileAtCaret())
+            myFixture.checkListByFile((intentions.allActions.apply { retainAll(intentions.errorFixes + intentions.inspectionFixes) })
+                                        .map { it.text },
+                                      "$testName.quickFixes.txt", false)
+          }
           myFixture.launchAction(myFixture.findSingleIntention(intention))
         })
       }, testName)
@@ -387,6 +403,15 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
       TypeScriptUnresolvedReferenceInspection::class.java
     )
   }
+
+  private fun getHostEditor(): Editor {
+    return InjectedLanguageEditorUtil.getTopLevelEditor(myFixture.getEditor())
+  }
+
+  private fun getHostFileAtCaret(): PsiFile {
+    return PsiUtilBase.getPsiFileInEditor(getHostEditor(), project)!!
+  }
+
 
   companion object {
     private val ANGULAR_4 = arrayOf(Angular2TestModule.ANGULAR_CORE_4_0_0, Angular2TestModule.ANGULAR_COMMON_4_0_0,
