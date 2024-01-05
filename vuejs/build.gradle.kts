@@ -7,31 +7,34 @@ plugins {
   id("org.jetbrains.intellij")
 }
 
-val targetVersion = rootProject.extensions["targetVersion"]
-val iuVersion = rootProject.extensions["iuVersion"]
-
 intellij {
-  version.set(iuVersion.toString())
+  version.set("LATEST-EAP-SNAPSHOT")
   type.set("IU")
   pluginName.set("Vue.js")
   downloadSources.set(true)
   plugins.set(listOf("JavaScript", "JSIntentionPowerPack", "JavaScriptDebugger", "com.intellij.css", "HtmlTools",
                      "org.jetbrains.plugins.sass", "org.jetbrains.plugins.less", "intellij.webpack",
-                     "org.jetbrains.plugins.stylus:$targetVersion",
+                     // Needed for tests-only
+                     //"org.jetbrains.plugins.stylus:233.11799.172",
                      "org.intellij.plugins.postcss",
-                     "com.jetbrains.plugins.Jade:$targetVersion",
+                     // Needed for tests-only
+                     //"com.jetbrains.plugins.Jade:$targetVersion",
                      "intellij.prettierJS"
                      ))
 }
 
 tasks {
-  withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java) {
-    kotlinOptions.jvmTarget = "17"
-    kotlinOptions.freeCompilerArgs = listOf("-Xjvm-default=all")
+  compileKotlin {
+    kotlinOptions.jvmTarget = ext("kotlin.jvmTarget")
+    @Suppress("UNCHECKED_CAST")
+    kotlinOptions.freeCompilerArgs = rootProject.extensions["kotlin.freeCompilerArgs"] as List<String>
   }
   java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.toVersion(ext("java.sourceCompatibility"))
+    targetCompatibility = JavaVersion.toVersion(ext("java.targetCompatibility"))
+  }
+  wrapper {
+    gradleVersion = ext("gradle.version")
   }
   runIde {
     autoReloadPlugins.set(false)
@@ -57,3 +60,7 @@ sourceSets {
 dependencies {
   //testImplementation("com.jetbrains.intellij.javascript:javascript-test-framework:LATEST-EAP-SNAPSHOT")
 }
+
+fun ext(name: String): String =
+  rootProject.extensions[name] as? String
+  ?: error("Property `$name` is not defined")

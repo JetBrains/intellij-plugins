@@ -1,4 +1,5 @@
-*.class
+*~
+.DS_Store
 .idea
-build
-.gradle
+/build
+/out

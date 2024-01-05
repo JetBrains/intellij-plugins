@@ -7,10 +7,9 @@ plugins {
   id("org.jetbrains.intellij")
 }
 
-
 intellij {
   pluginName.set("AngularJS")
-  plugins.set(listOf("JavaScriptLanguage", "JSIntentionPowerPack", "CSS", "uml", "tslint", "intellij.webpack"))
+  plugins.set(listOf("JavaScript", "JSIntentionPowerPack", "HtmlTools", "com.intellij.css", "uml", "tslint", "intellij.webpack"))
 
   version.set("LATEST-EAP-SNAPSHOT")
   type.set("IU")
@@ -39,3 +38,25 @@ dependencies {
   testImplementation("com.mscharhag.oleaster:oleaster-matcher:0.2.0")
   testImplementation("com.mscharhag.oleaster:oleaster-runner:0.2.0")
 }
+
+tasks {
+  compileKotlin {
+    kotlinOptions.jvmTarget = ext("kotlin.jvmTarget")
+    @Suppress("UNCHECKED_CAST")
+    kotlinOptions.freeCompilerArgs = rootProject.extensions["kotlin.freeCompilerArgs"] as List<String>
+  }
+  java {
+    sourceCompatibility = JavaVersion.toVersion(ext("java.sourceCompatibility"))
+    targetCompatibility = JavaVersion.toVersion(ext("java.targetCompatibility"))
+  }
+  wrapper {
+    gradleVersion = "8.5"
+  }
+  runIde {
+    autoReloadPlugins.set(false)
+  }
+}
+
+fun ext(name: String): String =
+  rootProject.extensions[name] as? String
+  ?: error("Property `$name` is not defined")

@@ -6,7 +6,10 @@ repositories {
   maven("https://download.jetbrains.com/teamcity-repository")
 }
 
-// Check marketplace for published plugin versions
-rootProject.extensions.add("targetVersion","231.8109.2")
-// See https://www.jetbrains.com/intellij-repository/snapshots - com.jetbrains.intellij.idea
-rootProject.extensions.add("iuVersion","231.8109.2-EAP-SNAPSHOT")
+rootProject.extensions.add("gradle.version", "8.5")
+
+rootProject.extensions.add("kotlin.jvmTarget", "17")
+rootProject.extensions.add("kotlin.freeCompilerArgs", listOf("-Xjvm-default=all"))
+
+rootProject.extensions.add("java.sourceCompatibility", "17")
+rootProject.extensions.add("java.targetCompatibility", "17")

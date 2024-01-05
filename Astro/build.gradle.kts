@@ -7,12 +7,11 @@ plugins {
   id("org.jetbrains.intellij")
 }
 
-val targetVersion = rootProject.extensions.get("targetVersion")
-
 intellij {
   pluginName.set("Astro")
 
-  plugins.set(listOf("JavaScriptLanguage", "JSIntentionPowerPack", "JavaScriptDebugger", "CSS", "HtmlTools"))
+  plugins.set(listOf("JavaScript", "JSIntentionPowerPack", "JavaScriptDebugger",
+                     "com.intellij.css", "HtmlTools", "org.intellij.plugins.postcss"))
 
   version.set("LATEST-EAP-SNAPSHOT")
   type.set("IU")
@@ -37,3 +36,25 @@ sourceSets {
 dependencies {
   //testImplementation("com.jetbrains.intellij.javascript:javascript-test-framework:LATEST-EAP-SNAPSHOT")
 }
+
+tasks {
+  compileKotlin {
+    kotlinOptions.jvmTarget = ext("kotlin.jvmTarget")
+    @Suppress("UNCHECKED_CAST")
+    kotlinOptions.freeCompilerArgs = rootProject.extensions["kotlin.freeCompilerArgs"] as List<String>
+  }
+  java {
+    sourceCompatibility = JavaVersion.toVersion(ext("java.sourceCompatibility"))
+    targetCompatibility = JavaVersion.toVersion(ext("java.targetCompatibility"))
+  }
+  wrapper {
+    gradleVersion = ext("gradle.version")
+  }
+  runIde {
+    autoReloadPlugins.set(false)
+  }
+}
+
+fun ext(name: String): String =
+  rootProject.extensions[name] as? String
+    ?: error("Property `$name` is not defined")

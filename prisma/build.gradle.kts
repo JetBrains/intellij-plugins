@@ -1,16 +1,15 @@
 apply(from = "../contrib-configuration/common.gradle.kts")
 
 fun properties(key: String) = project.findProperty(key).toString()
+fun ext(name: String): String = rootProject.extensions[name] as? String ?: error("Property `$name` is not defined")
+
 
 plugins {
   id("java")
-  id("org.jetbrains.kotlin.jvm") version "1.7.10"
-  id("org.jetbrains.intellij") version "1.10.0"
+  id("org.jetbrains.kotlin.jvm")
+  id("org.jetbrains.intellij")
   id("org.jetbrains.changelog") version "1.3.1"
 }
-
-group = properties("pluginGroup")
-version = properties("pluginVersion")
 
 idea {
   module {
@@ -44,24 +43,26 @@ kotlin {
       resources.srcDir("test/testData")
     }
   }
-
-  jvmToolchain {
-    languageVersion.set(JavaLanguageVersion.of(properties("jvmVersion")))
-  }
 }
 
 intellij {
-  pluginName.set(properties("pluginName"))
-  version.set(properties("platformVersion"))
-  type.set(properties("platformType"))
-  plugins.set(properties("platformPlugins").split(',').map(String::trim).filter(String::isNotEmpty))
+  pluginName.set("Prisma ORM")
+  plugins.set(listOf("JavaScript"))
+
+  version.set("LATEST-EAP-SNAPSHOT")
+  type.set("IU")
 }
 
 tasks {
+  java {
+    sourceCompatibility = JavaVersion.toVersion(ext("java.sourceCompatibility"))
+    targetCompatibility = JavaVersion.toVersion(ext("java.targetCompatibility"))
+  }
+
   compileKotlin {
-    kotlinOptions {
-      jvmTarget = properties("jvmVersion")
-    }
+    kotlinOptions.jvmTarget = ext("kotlin.jvmTarget")
+    @Suppress("UNCHECKED_CAST")
+    kotlinOptions.freeCompilerArgs = rootProject.extensions["kotlin.freeCompilerArgs"] as List<String>
   }
 
   prepareSandbox {
@@ -74,16 +75,10 @@ tasks {
   }
 
   wrapper {
-    gradleVersion = properties("gradleVersion")
+    gradleVersion = ext("gradle.version")
   }
 
-  runPluginVerifier {
-    ideVersions.set(properties("pluginVerifierIdeVersions").split(',').map(String::trim).filter(String::isNotEmpty))
-  }
-
-  patchPluginXml {
-    version.set(properties("pluginVersion"))
-    sinceBuild.set(properties("pluginSinceBuild"))
-    untilBuild.set(properties("pluginUntilBuild"))
+  runIde {
+    autoReloadPlugins.set(false)
   }
 }
