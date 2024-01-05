@@ -27,6 +27,10 @@ class TypeModel(
                                                        hint = ReferenceHint("resource.#name", "data_source.#name", "module.#name",
                                                                             "variable.#name"))
 
+    val DescriptionProperty: PropertyType = PropertyType("description", Types.String)
+    val SensitiveProperty: PropertyType = PropertyType("sensitive", Types.Boolean)
+    val NullableProperty: PropertyType = PropertyType("nullable", Types.Boolean)
+
     val Atlas: BlockType = BlockType("atlas", 0, properties = listOf(
       PropertyType("name", Types.String, injectionAllowed = false, required = true)).toMap())
     val Module: BlockType = BlockType("module", 1, properties = listOf(
@@ -39,14 +43,13 @@ class TypeModel(
     ).toMap())
     val Output: BlockType = BlockType("output", 1, properties = listOf(
       PropertyType("value", Types.Any, required = true),
-      PropertyType("description", Types.String),
+      DescriptionProperty,
       DependsOnProperty,
-      PropertyType("sensitive", Types.Boolean)
+      SensitiveProperty
     ).toMap())
 
     val Variable_Type: PropertyType = PropertyType("type", Types.Any, injectionAllowed = false)
     val Variable_Default: PropertyType = PropertyType("default", Types.Any)
-    val Variable_Description: PropertyType = PropertyType("description", Types.String)
     val Variable_Validation: BlockType = BlockType("validation", 0, properties = listOf(
       PropertyType("condition", Types.Boolean, injectionAllowed = false),
       PropertyType("error_message", Types.String)
@@ -55,7 +58,9 @@ class TypeModel(
       Variable_Type,
       Variable_Default,
       Variable_Validation,
-      Variable_Description
+      DescriptionProperty,
+      SensitiveProperty,
+      NullableProperty
     ).toMap())
 
     val Connection: BlockType = BlockType("connection", 0, properties = listOf(

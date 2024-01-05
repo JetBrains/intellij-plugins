@@ -31,7 +31,7 @@ class Variable(val declaration: HCLBlock) : Block(TypeModel.Variable) {
   }
 
   fun getDescription(): HCLExpression? {
-    return declaration.`object`?.findProperty(TypeModel.Variable_Description.name)?.value
+    return declaration.`object`?.findProperty(TypeModel.DescriptionProperty.name)?.value
   }
 
   override fun equals(other: Any?): Boolean {
