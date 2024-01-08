@@ -24,6 +24,12 @@
       topic="com.intellij.dts.settings.DtsSettings$ChangeListener"/>
   </projectListeners>
 
+  <actions>
+    <action id="dts_new_file" class="com.intellij.dts.ide.DtsNewFileAction" icon="com.intellij.dts.DtsIcons.Dts">
+      <add-to-group group-id="NewGroup" anchor="last"/>
+    </action>
+  </actions>
+
   <extensions defaultExtensionNs="com.intellij">
     <fileType
       language="DTS"
