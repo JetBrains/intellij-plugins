@@ -10,7 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.html.VueFileType
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
+import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFile
 import org.jetbrains.vuejs.lang.typescript.service.volar.VolarExecutableDownloader
 import org.jetbrains.vuejs.options.VueServiceSettings
 import org.jetbrains.vuejs.options.getVueSettings
@@ -52,7 +52,7 @@ fun isVolarEnabledAndAvailable(project: Project, context: VirtualFile): Boolean 
 fun isVolarFileTypeAcceptable(file: VirtualFile): Boolean {
   if (!TypeScriptLanguageServiceUtil.IS_VALID_FILE_FOR_SERVICE.value(file)) return false
 
-  return file.isDotVueFile || TypeScriptLanguageServiceUtil.ACCEPTABLE_TS_FILE.value(file)
+  return file.isVueFile || TypeScriptLanguageServiceUtil.ACCEPTABLE_TS_FILE.value(file)
 }
 
 private fun isVolarEnabledByContextAndSettings(project: Project, context: VirtualFile): Boolean {

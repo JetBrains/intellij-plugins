@@ -18,7 +18,7 @@ import com.intellij.psi.xml.HtmlFileElementType
 import org.jetbrains.vuejs.lang.LangMode
 import org.jetbrains.vuejs.lang.VueScriptLangs
 import org.jetbrains.vuejs.lang.expr.parser.VueJSStubElementTypes
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
+import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFile
 import org.jetbrains.vuejs.lang.html.lexer.VueParsingLexer
 import org.jetbrains.vuejs.lang.html.parser.VueParserDefinition
 import org.jetbrains.vuejs.lang.html.parser.VueParsing
@@ -74,7 +74,7 @@ class VueFileElementType : IStubFileElementType<VueFileStubImpl>("vue", VueLangu
     // TODO support for custom delimiters - port to Angular and merge
     if (languageForParser === VueLanguage.INSTANCE) {
       val project = psi.project
-      val htmlCompatMode = !psi.containingFile.isDotVueFile
+      val htmlCompatMode = !psi.containingFile.isVueFile
       val lexer = VueParserDefinition.createLexer(project, delimiters, htmlCompatMode)
       val builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, lexer, languageForParser, chameleon.chars)
       val startTime = System.nanoTime()

@@ -53,7 +53,7 @@ import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.html.VueFile
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
+import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFile
 import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes
 import org.jetbrains.vuejs.libraries.componentDecorator.VueDecoratedComponentInfoProvider
 import org.jetbrains.vuejs.libraries.componentDecorator.isComponentDecorator
@@ -696,7 +696,7 @@ fun hasAttribute(tag: XmlTag, attributeName: String): Boolean =
 
 @StubSafe
 fun findTopLevelVueTag(xmlFile: XmlFile, tagName: String, accept: ((XmlTag) -> Boolean)? = null): XmlTag? {
-  if (xmlFile.isDotVueFile) {
+  if (xmlFile.isVueFile) {
     var result: XmlTag? = null
     if (xmlFile is PsiFileImpl) {
       xmlFile.stub?.let { stub ->
@@ -725,7 +725,7 @@ fun findTopLevelVueTag(xmlFile: XmlFile, tagName: String, accept: ((XmlTag) -> B
 }
 
 fun findTopLevelVueTags(xmlFile: XmlFile, tagName: String): List<XmlTag> {
-  if (xmlFile.isDotVueFile) {
+  if (xmlFile.isVueFile) {
     if (xmlFile is PsiFileImpl) {
       xmlFile.stub?.let { stub ->
         return stub.childrenStubs

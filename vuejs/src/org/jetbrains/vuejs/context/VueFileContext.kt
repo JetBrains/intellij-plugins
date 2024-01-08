@@ -15,16 +15,16 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.context.WebSymbolsContextProvider
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.index.VUE_MODULE
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
+import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFile
 
 class VueFileContext : WebSymbolsContextProvider {
 
   override fun isEnabled(file: VirtualFile, project: Project): Boolean {
-    return file.isDotVueFile
+    return file.isVueFile
   }
 
   override fun isEnabled(file: PsiFile): Boolean {
-    if (file.isDotVueFile) {
+    if (file.isVueFile) {
       return true
     }
     if (file is HtmlCompatibleFile) {

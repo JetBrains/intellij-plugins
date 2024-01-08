@@ -15,11 +15,11 @@ class VueFileType private constructor() : WebFrameworkHtmlFileType(VueLanguage.I
     @JvmField
     val INSTANCE: VueFileType = VueFileType()
 
-    val PsiFile.isDotVueFile
-      get() = originalFile.virtualFile?.isDotVueFile
+    val PsiFile.isVueFile
+      get() = originalFile.virtualFile?.isVueFile
               ?: (this is VueFile && isVueFileName(this.name))
 
-    val VirtualFile.isDotVueFile
+    val VirtualFile.isVueFile
       get() = isVueFileName(nameSequence)
 
     fun isVueFileName(name: String) = isVueFileName(name as CharSequence)

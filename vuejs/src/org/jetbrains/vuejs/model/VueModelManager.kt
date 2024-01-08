@@ -39,7 +39,7 @@ import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.lang.html.VueFile
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
+import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFile
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.getComponentDescriptor
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.getSourceComponentDescriptor
@@ -273,7 +273,7 @@ class VueModelManager {
     private fun getDescriptorFromVueModule(element: PsiElement): VueSourceEntityDescriptor? {
       val file = element.containingFile?.originalFile
                    ?.asSafely<VueFile>()
-                   ?.takeIf { it.isDotVueFile }
+                   ?.takeIf { it.isVueFile }
                  ?: return null
       val scriptModule = findModule(file, false)
       if (scriptModule != null) {

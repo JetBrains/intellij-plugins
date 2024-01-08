@@ -10,7 +10,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.vuejs.lang.LangMode
 import org.jetbrains.vuejs.lang.VueScriptLangs
 import org.jetbrains.vuejs.lang.html.VueFileElementType
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
+import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFile
 
 class VueSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
   override fun getSyntaxHighlighter(project: Project?, virtualFile: VirtualFile?): SyntaxHighlighter {
@@ -25,7 +25,7 @@ class VueSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
         langMode,
         project,
         VueFileElementType.readDelimiters(virtualFile?.name),
-        virtualFile?.isDotVueFile == false
+        virtualFile?.isVueFile == false
       )
   }
 

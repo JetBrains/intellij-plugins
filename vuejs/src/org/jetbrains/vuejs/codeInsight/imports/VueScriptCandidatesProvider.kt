@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.modules.JSImportPlaceInfo
 import com.intellij.lang.javascript.modules.imports.JSImportCandidatesBase
 import com.intellij.lang.javascript.modules.imports.providers.JSCandidatesProcessor
 import com.intellij.lang.javascript.modules.imports.providers.JSImportCandidatesProvider
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
+import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFile
 import org.jetbrains.vuejs.model.source.*
 import java.util.function.Predicate
 
@@ -33,6 +33,6 @@ class VueScriptCandidatesProvider(placeInfo: JSImportPlaceInfo) : JSImportCandid
 
 class VueScriptCandidatesProviderFactory : JSImportCandidatesProvider.CandidatesFactory {
   override fun createProvider(placeInfo: JSImportPlaceInfo): JSImportCandidatesProvider? {
-    return if (placeInfo.file.isDotVueFile) VueScriptCandidatesProvider(placeInfo) else null
+    return if (placeInfo.file.isVueFile) VueScriptCandidatesProvider(placeInfo) else null
   }
 }

@@ -11,7 +11,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiUtilBase
 import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.refactoring.actions.BaseRefactoringAction
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
+import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFile
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
 internal class VueExtractComponentAction : BaseRefactoringAction() {
@@ -24,7 +24,7 @@ internal class VueExtractComponentAction : BaseRefactoringAction() {
 
   override fun isAvailableForLanguage(language: Language?): Boolean = VueLanguage.INSTANCE == language
 
-  override fun isAvailableForFile(file: PsiFile?): Boolean = file?.isDotVueFile == true
+  override fun isAvailableForFile(file: PsiFile?): Boolean = file?.isVueFile == true
 
   override fun getHandler(dataContext: DataContext): RefactoringActionHandler {
     return object : RefactoringActionHandler {

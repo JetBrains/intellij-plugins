@@ -24,7 +24,7 @@ import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.isScriptSetupLocalDirectiveName
 import org.jetbrains.vuejs.index.findModule
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
+import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFile
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.web.scopes.*
@@ -78,7 +78,7 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
     }
 
     // Top level tags
-    if (tag != null && tag.parentTag == null && fileContext.isDotVueFile) {
+    if (tag != null && tag.parentTag == null && fileContext.isVueFile) {
       result.add(VueTopLevelElementsScope)
     }
 

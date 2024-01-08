@@ -30,7 +30,7 @@ import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.index.getVueIndexData
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
+import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFile
 import org.jetbrains.vuejs.libraries.componentDecorator.isComponentDecorator
 import org.jetbrains.vuejs.model.typed.VueTypedEntitiesProvider
 
@@ -136,7 +136,7 @@ class VueComponents {
 
         // Vue file without script section
         is HtmlFileImpl ->
-          if (resolved.virtualFile.isDotVueFile)
+          if (resolved.virtualFile.isVueFile)
             VueSourceEntityDescriptor.tryCreate(source = resolved)
           else null
 

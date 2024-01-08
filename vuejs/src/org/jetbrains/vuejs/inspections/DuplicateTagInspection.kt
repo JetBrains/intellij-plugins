@@ -15,14 +15,14 @@ import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
 import com.intellij.xml.util.XmlTagUtil
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.index.isScriptSetupTag
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
+import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFile
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
 class DuplicateTagInspection : LocalInspectionTool() {
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
     return object : XmlElementVisitor() {
       override fun visitXmlTag(tag: XmlTag) {
-        if (tag.language != VueLanguage.INSTANCE || !tag.containingFile.isDotVueFile) return
+        if (tag.language != VueLanguage.INSTANCE || !tag.containingFile.isVueFile) return
         val templateTag = TEMPLATE_TAG_NAME == tag.name
         val scriptTag = HtmlUtil.isScriptTag(tag)
         if (!templateTag && !scriptTag) return

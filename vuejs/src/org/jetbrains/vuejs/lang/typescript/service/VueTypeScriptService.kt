@@ -28,7 +28,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
+import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFile
 import org.jetbrains.vuejs.lang.typescript.service.protocol.VueTypeScriptServiceProtocol
 import java.util.function.Consumer
 
@@ -36,13 +36,13 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
 
   override fun isAcceptableNonTsFile(project: Project, service: TypeScriptConfigService, virtualFile: VirtualFile): Boolean {
     if (super.isAcceptableNonTsFile(project, service, virtualFile)) return true
-    if (!virtualFile.isDotVueFile) return false
+    if (!virtualFile.isVueFile) return false
 
     return service.getDirectIncludePreferableConfig(virtualFile) != null
   }
 
   override fun postprocessErrors(file: PsiFile, errors: List<JSAnnotationError>): List<JSAnnotationError> {
-    if (file.virtualFile?.isDotVueFile == true) {
+    if (file.virtualFile?.isVueFile == true) {
       return ReadAction.compute<List<JSAnnotationError>, Throwable> {
         val document = PsiDocumentManager.getInstance(file.project).getDocument(file) ?: return@compute emptyList()
         val regularModuleRangeFilter = getRangeFilter(file, false, document)
@@ -122,7 +122,7 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
   override fun canHighlight(file: PsiFile): Boolean {
     if (super.canHighlight(file)) return true
 
-    if (!file.isDotVueFile) return false
+    if (!file.isVueFile) return false
 
     val virtualFile = file.virtualFile ?: return false
 
@@ -161,7 +161,7 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
   override fun createFixSet(file: PsiFile,
                             cache: JSLanguageServiceFileCommandCache,
                             typescriptResult: TypeScriptLanguageServiceAnnotationResult): TypeScriptLanguageServiceFixSet {
-    if (file.isDotVueFile) {
+    if (file.isVueFile) {
       val textRanges = mutableListOf<TextRange>()
       findModule(file, true)?.let { textRanges.add(it.textRange) }
       findModule(file, false)?.let { textRanges.add(it.textRange) }

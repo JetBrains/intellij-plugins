@@ -6,11 +6,11 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
 import org.jetbrains.vuejs.VueBundle
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
+import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFile
 
 class VueTopLevelLiveTemplateContextType : TemplateContextType(VueBundle.message("vue.live.template.context.top.level")) {
   override fun isInContext(file: PsiFile, offset: Int): Boolean {
-    if (file.isDotVueFile) {
+    if (file.isVueFile) {
       val element = file.findElementAt(offset) ?: return true
       return PsiTreeUtil.getParentOfType(element, XmlTag::class.java) == null
     }
