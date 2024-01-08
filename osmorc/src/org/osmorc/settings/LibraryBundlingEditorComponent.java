@@ -28,6 +28,7 @@ import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.*;
@@ -110,7 +111,7 @@ public class LibraryBundlingEditorComponent {
             updateFields();
           }
         })
-        .addExtraAction(new AnActionButton(IdeBundle.message("button.copy"), PlatformIcons.COPY_ICON) {
+        .addExtraAction(new DumbAwareAction(IdeBundle.message("button.copy"), null, PlatformIcons.COPY_ICON) {
           @Override
           public void actionPerformed(@NotNull AnActionEvent e) {
             updateCurrentRule();
@@ -123,8 +124,8 @@ public class LibraryBundlingEditorComponent {
           }
 
           @Override
-          public boolean isEnabled() {
-            return myRulesList.getSelectedIndex() >= 0;
+          public void update(@NotNull AnActionEvent e) {
+            e.getPresentation().setEnabled(myRulesList.getSelectedIndex() >= 0);
           }
 
           @Override
