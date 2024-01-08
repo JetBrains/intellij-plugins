@@ -1,23 +1,22 @@
 package com.intellij.protobuf.ide.actions
 
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.protobuf.ide.PbIdeBundle
 import com.intellij.protobuf.ide.settings.PbProjectSettings
 import com.intellij.protobuf.ide.settings.computeDeterministicImportPaths
 import com.intellij.protobuf.ide.settings.getOrComputeImportPathsForAllImportStatements
-import com.intellij.ui.AnActionButton
 import com.intellij.util.execution.ParametersListUtil
 import com.intellij.util.io.URLUtil
 import java.awt.datatransfer.StringSelection
 
-class PbExportSettingsAsCliCommandAction : AnActionButton(
-  { PbIdeBundle.message("action.export.as.cli.argument.name") },
+class PbExportSettingsAsCliCommandAction : DumbAwareAction(
+  PbIdeBundle.messagePointer("action.export.as.cli.argument.name"),
   AllIcons.Actions.Copy
 ) {
   override fun actionPerformed(e: AnActionEvent) {
@@ -31,10 +30,6 @@ class PbExportSettingsAsCliCommandAction : AnActionButton(
       PbIdeBundle.message("action.export.as.cli.argument.progress.title"),
       true,
       project)
-  }
-
-  override fun getActionUpdateThread(): ActionUpdateThread {
-    return ActionUpdateThread.BGT
   }
 
   companion object {
