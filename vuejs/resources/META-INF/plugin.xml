@@ -352,6 +352,8 @@
 
     <lang.documentationProvider implementationClass="org.jetbrains.vuejs.codeInsight.documentation.VueDocumentationProvider"
                                 language="VueExpr"/>
+
+    <codeInsight.codeVisionSettingsPreviewLanguage language="Vue" modelId="component.usage"/>
   </extensions>
   <actions>
     <action class="org.jetbrains.vuejs.CreateVueSingleFileComponentAction" id="CreateVueSingleFileComp">
@@ -406,6 +408,7 @@
     <importCandidatesFactory implementation="org.jetbrains.vuejs.codeInsight.imports.VueComponentImportCandidatesProviderFactory"/>
     <scanningFileListenerContributor implementation="org.jetbrains.vuejs.libraries.nuxt.library.NuxtFolderScanningListenerContributor"/>
     <moduleExportsProvider id="vue" implementation="org.jetbrains.vuejs.codeInsight.imports.VueModuleExportsProvider"/>
+    <componentUsageProvider language="Vue" implementationClass="org.jetbrains.vuejs.codeInsight.hints.VueComponentUsageProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="intellij.webpack">

@@ -17,7 +17,7 @@ object AstroFileType : LanguageFileType(AstroLanguage.INSTANCE) {
   }
 
   override fun getDefaultExtension(): String {
-    return ".astro"
+    return "astro"
   }
 
   override fun getIcon(): Icon {

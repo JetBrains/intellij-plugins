@@ -87,6 +87,7 @@
     <platform.lsp.serverSupportProvider implementation="org.jetbrains.astro.service.AstroLspServerSupportProvider" />
     <registryKey key="astro.enable.lsp" defaultValue="false" description="Enable Astro Language Tools service"/>
     <include.provider implementation="org.jetbrains.astro.AstroFileIncludeProvider"/>
+    <codeInsight.codeVisionSettingsPreviewLanguage language="Astro" modelId="component.usage"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
@@ -102,6 +103,7 @@
                                             implementationClass="org.jetbrains.astro.lang.frontmatter.AstroFrontmatterConfigurableProvider"/>
     <analysisHandlersFactory language="AstroFrontmatter" implementationClass="org.jetbrains.astro.inspections.AstroFrontmatterAnalysisHandlersFactory" />
     <elementScopeProvider implementation="org.jetbrains.astro.AstroElementResolveScopeProvider"/>
+    <componentUsageProvider language="Astro" implementationClass="org.jetbrains.astro.codeInsight.AstroComponentUsageProvider"/>
   </extensions>
   <actions resource-bundle="messages.AstroBundle">
     <action class="org.jetbrains.astro.CreateAstroComponentAction" id="CreateAstroComponent"
