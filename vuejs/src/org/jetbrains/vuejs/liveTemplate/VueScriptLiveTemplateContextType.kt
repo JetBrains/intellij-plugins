@@ -7,8 +7,8 @@ import com.intellij.lang.javascript.JSStatementContextType
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSExpressionStatement
 import org.jetbrains.vuejs.VueBundle
-import org.jetbrains.vuejs.liveTemplate.VueBaseLiveTemplateContextType.Companion.evaluateContext
-import org.jetbrains.vuejs.liveTemplate.VueBaseLiveTemplateContextType.Companion.isTagEnd
+import org.jetbrains.vuejs.liveTemplate.VueBaseLiveTemplateContextType.Util.evaluateContext
+import org.jetbrains.vuejs.liveTemplate.VueBaseLiveTemplateContextType.Util.isTagEnd
 
 class VueScriptLiveTemplateContextType : TemplateContextType(VueBundle.message("vue.live.template.context.script.tag")) {
   override fun isInContext(templateActionContext: TemplateActionContext): Boolean {

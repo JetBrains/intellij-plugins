@@ -6,9 +6,6 @@ import com.intellij.webSymbols.WebSymbol
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueScriptSetupLocalDirective
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.PROP_VUE_MODEL_EVENT
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.PROP_VUE_MODEL_PROP
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.VUE_MODEL
 import org.jetbrains.vuejs.web.symbols.VueComponentSymbol
 import org.jetbrains.vuejs.web.symbols.VueDirectiveSymbol
 import org.jetbrains.vuejs.web.symbols.VueScriptSetupLocalDirectiveSymbol

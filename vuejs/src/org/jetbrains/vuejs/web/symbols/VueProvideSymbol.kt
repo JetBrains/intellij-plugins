@@ -9,7 +9,7 @@ import com.intellij.webSymbols.WebSymbolOrigin
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import org.jetbrains.vuejs.model.VueContainer
 import org.jetbrains.vuejs.model.VueProvide
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.VUE_PROVIDES
+import org.jetbrains.vuejs.web.VUE_PROVIDES
 
 class VueProvideSymbol(
   private val provide: VueProvide,

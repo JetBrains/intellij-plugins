@@ -16,7 +16,7 @@ import org.jetbrains.vuejs.lang.html.VueFileType
 class VueFileImportsResolver(project: Project,
                              resolveContext: JSImportResolveContext,
                              private val contextFile: VirtualFile) :
-  TypeScriptFileImportsResolverImpl(project, resolveContext, VUE_DEFAULT_EXTENSIONS_WITH_DOT, listOf(VueFileType.INSTANCE)) {
+  TypeScriptFileImportsResolverImpl(project, resolveContext, VUE_DEFAULT_EXTENSIONS_WITH_DOT, listOf(VueFileType)) {
 
   override fun processAllFilesInScope(includeScope: GlobalSearchScope, processor: Processor<in VirtualFile>) {
     if (includeScope == GlobalSearchScope.EMPTY_SCOPE) return

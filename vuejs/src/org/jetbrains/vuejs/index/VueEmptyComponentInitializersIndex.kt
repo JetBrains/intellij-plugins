@@ -80,14 +80,10 @@ class VueEmptyComponentInitializersIndex : ScalarIndexExtension<Boolean>() {
 
   override fun getVersion(): Int = 11
 
-  override fun getInputFilter(): FileBasedIndex.InputFilter = object : DefaultFileTypeSpecificInputFilter(VueFileType.INSTANCE) {
+  override fun getInputFilter(): FileBasedIndex.InputFilter = object : DefaultFileTypeSpecificInputFilter(VueFileType) {
     override fun acceptInput(file: VirtualFile): Boolean {
-      return file.fileType == VueFileType.INSTANCE
+      return file.fileType == VueFileType
     }
-  }
-
-  companion object {
-    val VUE_NO_INITIALIZER_COMPONENTS_INDEX = ID.create<Boolean, Void>("VueNoScriptFilesIndex")
   }
 
   override fun getKeyDescriptor(): KeyDescriptor<Boolean> = BooleanDataDescriptor.INSTANCE
@@ -95,3 +91,5 @@ class VueEmptyComponentInitializersIndex : ScalarIndexExtension<Boolean>() {
   override fun dependsOnFileContent(): Boolean = true
 
 }
+
+val VUE_NO_INITIALIZER_COMPONENTS_INDEX = ID.create<Boolean, Void>("VueNoScriptFilesIndex")

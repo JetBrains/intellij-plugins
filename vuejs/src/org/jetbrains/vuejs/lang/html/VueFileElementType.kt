@@ -18,7 +18,6 @@ import com.intellij.psi.xml.HtmlFileElementType
 import org.jetbrains.vuejs.lang.LangMode
 import org.jetbrains.vuejs.lang.VueScriptLangs
 import org.jetbrains.vuejs.lang.expr.parser.VueJSStubElementTypes
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFile
 import org.jetbrains.vuejs.lang.html.lexer.VueParsingLexer
 import org.jetbrains.vuejs.lang.html.parser.VueParserDefinition
 import org.jetbrains.vuejs.lang.html.parser.VueParsing
@@ -75,7 +74,7 @@ class VueFileElementType : IStubFileElementType<VueFileStubImpl>("vue", VueLangu
     if (languageForParser === VueLanguage.INSTANCE) {
       val project = psi.project
       val htmlCompatMode = !psi.containingFile.isVueFile
-      val lexer = VueParserDefinition.createLexer(project, delimiters, htmlCompatMode)
+      val lexer = VueParserDefinition.Util.createLexer(project, delimiters, htmlCompatMode)
       val builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, lexer, languageForParser, chameleon.chars)
       val startTime = System.nanoTime()
       lexer as VueParsingLexer
@@ -84,7 +83,7 @@ class VueFileElementType : IStubFileElementType<VueFileStubImpl>("vue", VueLangu
       psi.putUserData(VueScriptLangs.LANG_MODE, lexer.lexedLangMode) // read in VueElementTypes
       val parser = LanguageParserDefinitions.INSTANCE.forLanguage(languageForParser)!!.createParser(project)
       val node = parser.parse(this, builder)
-      ParsingDiagnostics.registerParse(builder, language, System.nanoTime() - startTime);
+      ParsingDiagnostics.registerParse(builder, language, System.nanoTime() - startTime)
       return node.firstChildNode
     }
 

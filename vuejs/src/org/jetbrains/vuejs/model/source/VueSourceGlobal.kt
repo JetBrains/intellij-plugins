@@ -76,7 +76,7 @@ class VueSourceGlobal(override val project: Project, override val packageJsonUrl
       // Add Vue files without regular initializer as possible imports
       val psiManager = PsiManager.getInstance(project)
       FileBasedIndex.getInstance().getFilesWithKey(
-        VueEmptyComponentInitializersIndex.VUE_NO_INITIALIZER_COMPONENTS_INDEX, setOf(true),
+        VUE_NO_INITIALIZER_COMPONENTS_INDEX, setOf(true),
         { file ->
           psiManager.findFile(file)
             ?.let { psiFile ->
@@ -155,27 +155,27 @@ class VueSourceGlobal(override val project: Project, override val packageJsonUrl
 
   companion object {
     private fun buildDirectives(searchScope: GlobalSearchScope): Map<String, VueDirective> =
-      getForAllKeys(searchScope, VueGlobalDirectivesIndex.KEY)
+      getForAllKeys(searchScope, VUE_GLOBAL_DIRECTIVES_INDEX_KEY)
         .map { Pair(it.name, VueSourceDirective(it.name, it.parent)) }
         // TODO properly support multiple directives with the same name
         .distinctBy { it.first }
         .toMap(TreeMap())
 
     private fun buildMixinsList(scope: GlobalSearchScope): List<VueMixin> =
-      resolve(GLOBAL, scope, VueMixinBindingIndex.KEY)
+      resolve(GLOBAL, scope, VUE_MIXIN_BINDING_INDEX_KEY)
         .asSequence()
         .mapNotNull { VueComponents.vueMixinDescriptorFinder(it) }
         .mapNotNull { VueModelManager.getMixin(it) }
         .toList()
 
     private fun buildAppsList(scope: GlobalSearchScope): List<VueApp> =
-      getForAllKeys(scope, VueOptionsIndex.KEY)
+      getForAllKeys(scope, VUE_OPTIONS_INDEX_KEY)
         .filter(VueComponents.Companion::isNotInLibrary)
         .mapNotNull { it as? JSObjectLiteralExpression ?: PsiTreeUtil.getContextOfType(it, JSObjectLiteralExpression::class.java) }
         .map { VueModelManager.getApp(it) }
         .filter { it.element != null }
         .plus(
-          resolve(CREATE_APP_FUN, scope, VueCompositionAppIndex.KEY)
+          resolve(CREATE_APP_FUN, scope, VUE_COMPOSITION_APP_INDEX_KEY)
             .asSequence()
             .filter(VueComponents.Companion::isNotInLibrary)
             .mapNotNull { (it.context as? JSCallExpression)?.let { call -> VueCompositionApp(call) } }
@@ -183,7 +183,7 @@ class VueSourceGlobal(override val project: Project, override val packageJsonUrl
         .toList()
 
     private fun buildFiltersMap(scope: GlobalSearchScope): Map<String, VueFilter> =
-      getForAllKeys(scope, VueGlobalFiltersIndex.KEY)
+      getForAllKeys(scope, VUE_GLOBAL_FILTERS_INDEX_KEY)
         .mapNotNull { element ->
           VueModelManager.getFilter(element)?.let {
             Pair(toAsset(element.name), it)

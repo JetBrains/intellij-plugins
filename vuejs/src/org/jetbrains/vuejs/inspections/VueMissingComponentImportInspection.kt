@@ -15,7 +15,8 @@ import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.inspections.quickfixes.VueImportComponentQuickFix
 import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
+import org.jetbrains.vuejs.web.PROP_VUE_COMPOSITION_COMPONENT
+import org.jetbrains.vuejs.web.PROP_VUE_PROXIMITY
 
 class VueMissingComponentImportInspection : LocalInspectionTool() {
 
@@ -28,8 +29,8 @@ class VueMissingComponentImportInspection : LocalInspectionTool() {
 
         val symbol = descriptor.symbol
         if (symbol !is PsiSourcedWebSymbol
-            || symbol.properties[VueWebSymbolsQueryConfigurator.PROP_VUE_PROXIMITY] != VueModelVisitor.Proximity.OUT_OF_SCOPE
-            || symbol.properties[VueWebSymbolsQueryConfigurator.PROP_VUE_COMPOSITION_COMPONENT] == true)
+            || symbol.properties[PROP_VUE_PROXIMITY] != VueModelVisitor.Proximity.OUT_OF_SCOPE
+            || symbol.properties[PROP_VUE_COMPOSITION_COMPONENT] == true)
           return
 
         val elementToImport = symbol.source ?: return

@@ -18,7 +18,8 @@ import org.jetbrains.vuejs.codeInsight.extractComponentSymbol
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.inspections.quickfixes.VueImportComponentQuickFix
 import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
+import org.jetbrains.vuejs.web.PROP_VUE_COMPOSITION_COMPONENT
+import org.jetbrains.vuejs.web.PROP_VUE_PROXIMITY
 import org.jetbrains.vuejs.web.symbols.VueComponentSymbol
 
 class VueImportComponentIntention : JavaScriptIntention(), HighPriorityAction {
@@ -31,8 +32,8 @@ class VueImportComponentIntention : JavaScriptIntention(), HighPriorityAction {
       ?.extractComponentSymbol()
       ?.takeIf { it.getElementToImport() != null }
       ?.properties?.let {
-        it[VueWebSymbolsQueryConfigurator.PROP_VUE_COMPOSITION_COMPONENT] == true
-        || it[VueWebSymbolsQueryConfigurator.PROP_VUE_PROXIMITY].let { proximity ->
+        it[PROP_VUE_COMPOSITION_COMPONENT] == true
+        || it[PROP_VUE_PROXIMITY].let { proximity ->
           proximity == null || (proximity != VueModelVisitor.Proximity.LOCAL && proximity != VueModelVisitor.Proximity.OUT_OF_SCOPE)
         }
       } == true
@@ -46,11 +47,11 @@ class VueImportComponentIntention : JavaScriptIntention(), HighPriorityAction {
   override fun invoke(project: Project, editor: Editor?, element: PsiElement) {
     val tag = element.parent as? XmlTag ?: return
     val elementToImport = tag.descriptor.asSafely<WebSymbolElementDescriptor>()
-                   ?.symbol
-                   ?.extractComponentSymbol()
-                   ?.getElementToImport()
+                            ?.symbol
+                            ?.extractComponentSymbol()
+                            ?.getElementToImport()
 
-                 ?: return
+                          ?: return
     VueImportComponentQuickFix(element, toAsset(tag.name), elementToImport).applyFix()
   }
 

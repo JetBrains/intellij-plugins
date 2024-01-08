@@ -16,7 +16,7 @@ open class VueLexerTest : LexerTestCase() {
 
   protected var interpolationConfig: Pair<String, String>? = null
 
-  override fun createLexer(): Lexer = VueParserDefinition.createLexer(fixture.project, interpolationConfig, false)
+  override fun createLexer(): Lexer = VueParserDefinition.Util.createLexer(fixture.project, interpolationConfig, false)
 
   override fun getDirPath() = "html/lexer"
 

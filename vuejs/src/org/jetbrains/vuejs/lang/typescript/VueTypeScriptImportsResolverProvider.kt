@@ -12,7 +12,7 @@ import com.intellij.psi.PsiManager
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.VUE_DEFAULT_EXTENSIONS_WITH_DOT
 import org.jetbrains.vuejs.index.findModule
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFile
+import org.jetbrains.vuejs.lang.html.isVueFile
 
 class VueTypeScriptImportsResolverProvider : TypeScriptImportsResolverProvider {
   override fun isImplicitTypeScriptFile(project: Project, file: VirtualFile): Boolean {

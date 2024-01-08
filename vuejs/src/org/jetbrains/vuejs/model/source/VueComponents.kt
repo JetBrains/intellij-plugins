@@ -28,9 +28,9 @@ import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.applyIf
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
-import org.jetbrains.vuejs.index.VueFrameworkHandler
+import org.jetbrains.vuejs.index.getFunctionNameFromVueIndex
 import org.jetbrains.vuejs.index.getVueIndexData
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFile
+import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.libraries.componentDecorator.isComponentDecorator
 import org.jetbrains.vuejs.model.typed.VueTypedEntitiesProvider
 
@@ -163,13 +163,13 @@ class VueComponents {
 
     @StubSafe
     fun isComponentDefiningCall(callExpression: JSCallExpression): Boolean =
-      VueFrameworkHandler.getFunctionNameFromVueIndex(callExpression).let {
+      getFunctionNameFromVueIndex(callExpression).let {
         it == DEFINE_COMPONENT_FUN || it == DEFINE_NUXT_COMPONENT_FUN || it == EXTEND_FUN || it == DEFINE_OPTIONS_FUN
       }
 
     @StubSafe
     fun isDefineOptionsCall(callExpression: JSCallExpression): Boolean =
-      VueFrameworkHandler.getFunctionNameFromVueIndex(callExpression) == DEFINE_OPTIONS_FUN
+      getFunctionNameFromVueIndex(callExpression) == DEFINE_OPTIONS_FUN
 
     fun isStrictComponentDefiningCall(callExpression: JSCallExpression): Boolean =
       callExpression.methodExpression?.let {

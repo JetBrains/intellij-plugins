@@ -39,7 +39,7 @@ import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.lang.html.VueFile
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFile
+import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.getComponentDescriptor
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.getSourceComponentDescriptor
@@ -218,13 +218,13 @@ class VueModelManager {
         val id = (scriptTag as XmlTag).getAttribute("id")?.value ?: return null
 
         var result: VueSourceEntityDescriptor? = null
-        StubIndex.getInstance().processElements(VueIdIndex.KEY, id, context.project,
+        StubIndex.getInstance().processElements(VUE_ID_INDEX_KEY, id, context.project,
                                                 GlobalSearchScope.projectScope(context.project),
                                                 PsiElement::class.java) { element ->
           if ((element as? JSProperty)?.indexingData
               ?.implicitElements
               ?.any {
-                it.userString == VueIdIndex.JS_KEY
+                it.userString == VUE_ID_INDEX_JS_KEY
                 && it?.qualifiedName == id
                 && it.isValid
               } == true) {
@@ -240,13 +240,13 @@ class VueModelManager {
       val name = file.viewProvider.virtualFile.name
       var result: VueSourceEntityDescriptor? = null
 
-      StubIndex.getInstance().processElements(VueUrlIndex.KEY, name, context.project,
+      StubIndex.getInstance().processElements(VUE_URL_INDEX_KEY, name, context.project,
                                               GlobalSearchScope.projectScope(context.project),
                                               PsiElement::class.java) { element ->
         if (element is JSImplicitElementProvider) {
           if (element.indexingData?.implicitElements
               ?.any {
-                it.userString == VueUrlIndex.JS_KEY
+                it.userString == VUE_URL_INDEX_JS_KEY
                 && it?.qualifiedName == name
                 && it.isValid
               } == true) {
@@ -341,7 +341,7 @@ class VueModelManager {
       }
 
     fun getFilter(implicitElement: JSImplicitElement): VueFilter? {
-      if (implicitElement.userString == VueGlobalFiltersIndex.JS_KEY) {
+      if (implicitElement.userString == VUE_GLOBAL_FILTERS_INDEX_JS_KEY) {
         val call = implicitElement.context ?: return null
         var filterMethod: PsiElement = implicitElement
         val functionReference = getVueIndexData(implicitElement)?.descriptorQualifiedReference
@@ -388,7 +388,7 @@ class VueModelManager {
     }
 
     private fun getComponentImplicitElement(declaration: PsiElement): JSImplicitElement? =
-      if (declaration is JSImplicitElement && declaration.userString == VueComponentsIndex.JS_KEY)
+      if (declaration is JSImplicitElement && declaration.userString == VUE_COMPONENTS_INDEX_JS_KEY)
         declaration
       else if (declaration is JSObjectLiteralExpression) {
         val implicitElement = declaration.findProperty("name")
@@ -412,7 +412,7 @@ class VueModelManager {
         buildImplicitElement(declaration, declaration.name ?: JavaScriptBundle.message("element.name.anonymous"))
       else
         (declaration as? JSImplicitElementProvider)?.indexingData?.implicitElements?.find {
-          it.userString == VueComponentsIndex.JS_KEY
+          it.userString == VUE_COMPONENTS_INDEX_JS_KEY
         }
 
 

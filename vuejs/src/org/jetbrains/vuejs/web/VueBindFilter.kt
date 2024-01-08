@@ -6,7 +6,6 @@ import com.intellij.webSymbols.WebSymbolsScope
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
 import com.intellij.webSymbols.webTypes.filters.WebSymbolsFilter
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.VUE_COMPONENT_PROPS
 
 class VueBindFilter : WebSymbolsFilter {
   override fun filterCodeCompletions(codeCompletions: List<WebSymbolCodeCompletionItem>,

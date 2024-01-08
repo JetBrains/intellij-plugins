@@ -42,10 +42,14 @@ class VueTypeScriptLineMarkersTest : TypeScriptLineMarkersTest() {
     var text: String = StringUtil.convertLineSeparators(VfsUtil.loadText(tsFile!!))
 
     val testName = getTestName(true)
-    localVarsMap[testName]?.forEach { text = text.replace("<info descr=\"identifiers//global variable\">$it", "<info descr=\"identifiers//local variable\">$it") }
-    localFunsMap[testName]?.forEach { text = text.replace("<info descr=\"identifiers//global function\">$it", "<info descr=\"identifiers//local function\">$it") }
+    localVarsMap[testName]?.forEach {
+      text = text.replace("<info descr=\"identifiers//global variable\">$it", "<info descr=\"identifiers//local variable\">$it")
+    }
+    localFunsMap[testName]?.forEach {
+      text = text.replace("<info descr=\"identifiers//global function\">$it", "<info descr=\"identifiers//local function\">$it")
+    }
 
-    myFixture.configureByText(VueFileType.INSTANCE, surroundWithScriptTag(text))
+    myFixture.configureByText(VueFileType, surroundWithScriptTag(text))
   }
 
   override fun checkEditorText(ext: String?) {

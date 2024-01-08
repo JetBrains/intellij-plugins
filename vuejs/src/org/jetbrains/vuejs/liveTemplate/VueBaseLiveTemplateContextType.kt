@@ -20,7 +20,7 @@ class VueBaseLiveTemplateContextType : TemplateContextType(VueBundle.message("vu
     return file is VueFile
   }
 
-  companion object {
+  object Util {
     fun evaluateContext(file: PsiFile, offset: Int,
                         scriptContextEvaluator: ((PsiElement) -> Boolean)? = null,
                         notVueFileType: ((PsiElement) -> Boolean)? = null,
@@ -68,4 +68,5 @@ class VueBaseLiveTemplateContextType : TemplateContextType(VueBundle.message("vu
 
     fun isTagEnd(element: PsiElement): Boolean = element.node.elementType == XmlTokenType.XML_END_TAG_START
   }
+
 }

@@ -11,7 +11,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ProcessingContext
 import com.intellij.util.asSafely
 import com.intellij.xml.util.HtmlUtil.SRC_ATTRIBUTE_NAME
-import org.jetbrains.vuejs.codeInsight.refs.VueReferenceContributor.Companion.STATIC_FILE_REF_PROVIDER
+import org.jetbrains.vuejs.codeInsight.refs.STATIC_FILE_REF_PROVIDER
 
 fun XmlTag.hasSrcReference(): Boolean =
   !stubSafeGetAttribute(SRC_ATTRIBUTE_NAME)?.value.isNullOrBlank()

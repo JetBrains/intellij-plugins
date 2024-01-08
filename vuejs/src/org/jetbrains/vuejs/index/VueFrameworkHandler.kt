@@ -53,10 +53,10 @@ import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.html.VueFile
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFile
+import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes
-import org.jetbrains.vuejs.libraries.componentDecorator.VueDecoratedComponentInfoProvider
 import org.jetbrains.vuejs.libraries.componentDecorator.isComponentDecorator
+import org.jetbrains.vuejs.libraries.componentDecorator.isVueComponentDecoratorName
 import org.jetbrains.vuejs.model.getSlotTypeFromContext
 import org.jetbrains.vuejs.model.hasSrcReference
 import org.jetbrains.vuejs.model.source.*
@@ -70,15 +70,15 @@ import kotlin.contracts.contract
 class VueFrameworkHandler : FrameworkIndexingHandler() {
 
   private val VUE_INDEXES = mapOf(
-    record(VueComponentsIndex.KEY),
-    record(VueCompositionAppIndex.KEY),
-    record(VueExtendsBindingIndex.KEY),
-    record(VueGlobalDirectivesIndex.KEY),
-    record(VueMixinBindingIndex.KEY),
-    record(VueOptionsIndex.KEY),
-    record(VueUrlIndex.KEY),
-    record(VueIdIndex.KEY),
-    record(VueGlobalFiltersIndex.KEY)
+    createIndexRecord(VUE_COMPONENTS_INDEX_KEY),
+    createIndexRecord(VUE_COMPOSITION_APP_INDEX_KEY),
+    createIndexRecord(VUE_EXTENDS_BINDING_INDEX_KEY),
+    createIndexRecord(VUE_GLOBAL_DIRECTIVES_INDEX_KEY),
+    createIndexRecord(VUE_MIXIN_BINDING_INDEX_KEY),
+    createIndexRecord(VUE_OPTIONS_INDEX_KEY),
+    createIndexRecord(VUE_URL_INDEX_KEY),
+    createIndexRecord(VUE_ID_INDEX_KEY),
+    createIndexRecord(VUE_GLOBAL_FILTERS_INDEX_KEY)
   )
   private val expectedLiteralOwnerExpressions = TokenSet.create(JSStubElementTypes.CALL_EXPRESSION,
                                                                 JSStubElementTypes.NEW_EXPRESSION,
@@ -87,73 +87,9 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
 
   companion object {
-    fun <T : PsiElement> record(key: StubIndexKey<String, T>): Pair<String, StubIndexKey<String, T>> {
-      return Pair(VueIndexBase.createJSKey(key), key)
-    }
 
     const val TYPED_COMPONENT_MARKER = "Vue Typed Component"
 
-    private const val REQUIRE = "require"
-
-    private val VUE_DESCRIPTOR_OWNERS = arrayOf(VUE_NAMESPACE, MIXIN_FUN, COMPONENT_FUN, EXTEND_FUN, DIRECTIVE_FUN, DELIMITERS_PROP,
-                                                FILTER_FUN, DEFINE_COMPONENT_FUN, DEFINE_NUXT_COMPONENT_FUN)
-    private val COMPONENT_INDICATOR_PROPS = setOf(TEMPLATE_PROP, DATA_PROP, "render", PROPS_PROP, "propsData", COMPUTED_PROP, METHODS_PROP,
-                                                  "watch", MIXINS_PROP, COMPONENTS_PROP, DIRECTIVES_PROP, FILTERS_PROP, SETUP_METHOD,
-                                                  MODEL_PROP, SLOTS_PROP)
-
-    private val INTERESTING_PROPERTIES = arrayOf(MIXINS_PROP, EXTENDS_PROP, DIRECTIVES_PROP, NAME_PROP, TEMPLATE_PROP)
-
-    private val SCRIPT_SETUP_MACROS = setOf(
-      DEFINE_EXPOSE_FUN, DEFINE_EMITS_FUN, DEFINE_SLOTS_FUN, DEFINE_PROPS_FUN,
-      WITH_DEFAULTS_FUN, DEFINE_MODEL_FUN, INJECT_FUN, PROVIDE_FUN, DEFINE_OPTIONS_FUN
-    )
-
-    private const val METHOD_NAME_USER_STRING = "vmn"
-
-    fun getFunctionNameFromVueIndex(call: JSCallExpression): String? {
-      // todo consider first using AST if loaded
-      return call.indexingData
-        ?.implicitElements?.find { it.userString == METHOD_NAME_USER_STRING }
-        ?.name
-    }
-
-    fun getFunctionImplicitElement(call: JSCallExpression): JSImplicitElement? =
-      call.indexingData
-        ?.implicitElements
-        ?.find { it.userString == METHOD_NAME_USER_STRING }
-
-    fun hasComponentIndicatorProperties(obj: JSObjectLiteralExpression, exclude: String? = null): Boolean =
-      obj.properties.any { it.name != exclude && COMPONENT_INDICATOR_PROPS.contains(it.name) }
-
-    fun isDefaultExports(expression: JSExpression?): Boolean =
-      expression is JSReferenceExpression && JSSymbolUtil.isAccurateReferenceExpressionName(expression as JSReferenceExpression?,
-                                                                                            JSSymbolUtil.EXPORTS, "default")
-
-    fun getExprReferencedFileUrl(expression: JSExpression?): String? {
-      if (expression is JSReferenceExpression) {
-        for (resolvedElement in resolveLocally(expression)) {
-          (resolvedElement as? ES6ImportedBinding)
-            ?.declaration
-            ?.fromClause
-            ?.let {
-              return it.referenceText?.let { ref -> StringUtil.unquoteString(ref) }
-            }
-        }
-      }
-      else if (expression is JSCallExpression) {
-        val referenceExpression = expression.methodExpression as? JSReferenceExpression
-        val arguments = expression.arguments
-        if (arguments.size == 1
-            && arguments[0] is JSLiteralExpression
-            && (arguments[0] as JSLiteralExpression).isQuotedLiteral
-            && referenceExpression != null
-            && referenceExpression.qualifier == null
-            && REQUIRE == referenceExpression.referenceName) {
-          return (arguments[0] as JSLiteralExpression).stringValue
-        }
-      }
-      return null
-    }
   }
 
   override fun findModule(result: PsiElement): PsiElement? =
@@ -186,7 +122,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       val obj = property.parent as JSObjectLiteralExpression
       if (componentName != null && obj.containingFile.name.contains(toAsset(componentName),
                                                                     true) && obj.containingFile.fileType is TypeScriptFileType) {
-        out.addImplicitElement(createImplicitElement(VueComponentsIndex.JS_KEY, componentName, property))
+        out.addImplicitElement(createImplicitElement(VUE_COMPONENTS_INDEX_JS_KEY, componentName, property))
       }
     }
     else if (TEMPLATE_PROP == name) {
@@ -197,7 +133,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
             ?.takeIf { it.startsWith("#") && it.length > 1 }
             ?.let {
               JSImplicitElementImpl.Builder(it.substring(1), property)
-                .setUserString(this, VueIdIndex.JS_KEY)
+                .setUserString(this, VUE_ID_INDEX_JS_KEY)
                 .forbidAstAccess()
                 .toImplicitElement()
             }
@@ -209,7 +145,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
             ?.takeIf { it.isNotBlank() }
             ?.let {
               JSImplicitElementImpl.Builder(it, property)
-                .setUserString(this, VueUrlIndex.JS_KEY)
+                .setUserString(this, VUE_URL_INDEX_JS_KEY)
                 .forbidAstAccess()
                 .toImplicitElement()
             }
@@ -233,7 +169,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       if (parent != null) {
         val componentName = property.name ?: ""
         if (out == null) out = JSElementIndexingDataImpl()
-        out.addImplicitElement(createImplicitElement(VueComponentsIndex.JS_KEY, componentName, property))
+        out.addImplicitElement(createImplicitElement(VUE_COMPONENTS_INDEX_JS_KEY, componentName, property))
       }
     }
 
@@ -246,7 +182,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
             ?.let { isComponentDefiningCall(it.node) } == true) {
         if (isPossiblyVueContainerInitializer(obj)) {
           if (out == null) out = JSElementIndexingDataImpl()
-          val element = createImplicitElement(VueComponentsIndex.JS_KEY, getComponentNameFromDescriptor(obj), property)
+          val element = createImplicitElement(VUE_COMPONENTS_INDEX_JS_KEY, getComponentNameFromDescriptor(obj), property)
           if (parent is JSArgumentList && parent.parent?.asSafely<JSCallExpression>()
               ?.let { isStrictComponentDefiningCall(it) } == false) {
             out.setAddUnderlyingElementToSymbolIndex(true)
@@ -257,7 +193,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       else if (((parent as? JSProperty) == null) && isDescriptorOfLinkedInstanceDefinition(obj)) {
         val binding = (obj.findProperty(EL_PROP)?.value as? JSLiteralExpression)?.stringValue
         if (out == null) out = JSElementIndexingDataImpl()
-        out.addImplicitElement(createImplicitElement(VueOptionsIndex.JS_KEY, binding ?: "", property))
+        out.addImplicitElement(createImplicitElement(VUE_OPTIONS_INDEX_JS_KEY, binding ?: "", property))
       }
     }
 
@@ -273,7 +209,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     val nameProperty = VueComponents.getDescriptorFromDecorator(decorator)?.findProperty(NAME_PROP)
     val name = getTextIfLiteral(nameProperty?.value) ?: FileUtil.getNameWithoutExtension(decorator.containingFile.name)
     val outData = data ?: JSElementIndexingDataImpl()
-    outData.addImplicitElement(createImplicitElement(VueComponentsIndex.JS_KEY, name, decorator))
+    outData.addImplicitElement(createImplicitElement(VUE_COMPONENTS_INDEX_JS_KEY, name, decorator))
     return outData
   }
 
@@ -324,7 +260,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
           componentName = (qualifierReferenceExpression?.referenceName ?: nameReferenceExpression.referenceName) + GLOBAL_BINDING_MARK
         }
 
-        outData.addImplicitElement(createImplicitElement(VueComponentsIndex.JS_KEY, componentName, callExpression,
+        outData.addImplicitElement(createImplicitElement(VUE_COMPONENTS_INDEX_JS_KEY, componentName, callExpression,
                                                          nameQualifiedReference, descriptor, true))
       }
     }
@@ -345,7 +281,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       if (arguments.size >= 2) {
         val filterName = getTextIfLiteral(arguments[0])
         if (!filterName.isNullOrBlank()) {
-          outData.addImplicitElement(createImplicitElement(VueGlobalFiltersIndex.JS_KEY, filterName, callExpression, null,
+          outData.addImplicitElement(createImplicitElement(VUE_GLOBAL_FILTERS_INDEX_JS_KEY, filterName, callExpression, null,
                                                            arguments[1], true))
         }
       }
@@ -380,7 +316,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       outData.addImplicitElement(
         JSImplicitElementImpl.Builder(normalizeNameForIndex(referenceName), callExpression)
           .setUserStringWithData(
-            this, VueCompositionAppIndex.JS_KEY,
+            this, VUE_COMPOSITION_APP_INDEX_JS_KEY,
             // Store reference name for resolution
             callExpression.arguments
               .getOrNull(if (referenceName == CREATE_APP_FUN || referenceName == MIXIN_FUN || referenceName == PROVIDE_FUN) 0 else 1)
@@ -396,7 +332,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
                               provider: JSImplicitElementProvider,
                               directiveName: String,
                               descriptorRef: PsiElement?) {
-    outData.addImplicitElement(createImplicitElement(VueGlobalDirectivesIndex.JS_KEY, directiveName, provider,
+    outData.addImplicitElement(createImplicitElement(VUE_GLOBAL_DIRECTIVES_INDEX_JS_KEY, directiveName, provider,
                                                      null, descriptorRef, true))
   }
 
@@ -404,14 +340,14 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
                           provider: JSImplicitElementProvider,
                           descriptorRef: PsiElement?,
                           isGlobal: Boolean) {
-    outData.addImplicitElement(createImplicitElement(VueMixinBindingIndex.JS_KEY, if (isGlobal) GLOBAL else LOCAL, provider, null,
+    outData.addImplicitElement(createImplicitElement(VUE_MIXIN_BINDING_INDEX_JS_KEY, if (isGlobal) GLOBAL else LOCAL, provider, null,
                                                      descriptorRef, isGlobal))
   }
 
   private fun recordExtends(outData: JSElementIndexingData,
                             provider: JSImplicitElementProvider,
                             descriptorRef: PsiElement?) {
-    outData.addImplicitElement(createImplicitElement(VueExtendsBindingIndex.JS_KEY, LOCAL, provider, null,
+    outData.addImplicitElement(createImplicitElement(VUE_EXTENDS_BINDING_INDEX_JS_KEY, LOCAL, provider, null,
                                                      descriptorRef, false))
   }
 
@@ -483,7 +419,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   private fun isVueComponentDecoratorCall(callNode: ASTNode): Boolean =
     callNode.treeParent?.elementType == JSElementTypes.ES6_DECORATOR
     && checkCallExpression(callNode) { refName, hasQualifier ->
-      !hasQualifier && VueDecoratedComponentInfoProvider.isVueComponentDecoratorName(refName)
+      !hasQualifier && isVueComponentDecoratorName(refName)
     }
 
   // limit building stub in other file types like js/html to Vue-descriptor-like members
@@ -509,7 +445,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     if (index != null) {
       sink?.occurrence(index, element.name)
     }
-    return index == VueUrlIndex.KEY
+    return index == VUE_URL_INDEX_KEY
   }
 
   private fun createImplicitElement(indexKey: String,
@@ -532,9 +468,9 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   }
 
   override fun computeJSImplicitElementUserStringKeys(): Set<String> =
-    setOf(VueUrlIndex.JS_KEY, VueOptionsIndex.JS_KEY, VueMixinBindingIndex.JS_KEY, VueComponentsIndex.JS_KEY,
-          VueGlobalDirectivesIndex.JS_KEY, VueExtendsBindingIndex.JS_KEY, VueGlobalFiltersIndex.JS_KEY, VueIdIndex.JS_KEY,
-          METHOD_NAME_USER_STRING, VueCompositionAppIndex.JS_KEY)
+    setOf(VUE_URL_INDEX_JS_KEY, VUE_OPTIONS_INDEX_JS_KEY, VUE_MIXIN_BINDING_INDEX_JS_KEY, VUE_COMPONENTS_INDEX_JS_KEY,
+          VUE_GLOBAL_DIRECTIVES_INDEX_JS_KEY, VUE_EXTENDS_BINDING_INDEX_JS_KEY, VUE_GLOBAL_FILTERS_INDEX_JS_KEY, VUE_ID_INDEX_JS_KEY,
+          METHOD_NAME_USER_STRING, VUE_COMPOSITION_APP_INDEX_JS_KEY)
 
   private fun isCompositionApiAppObjectCall(callNode: ASTNode): Boolean =
     checkCallExpression(callNode) { refName, hasQualifier ->
@@ -632,6 +568,70 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
     return type
   }
+}
+
+fun <T : PsiElement> createIndexRecord(key: StubIndexKey<String, T>): Pair<String, StubIndexKey<String, T>> {
+  return Pair(VueIndexBase.createJSKey(key), key)
+}
+
+private const val REQUIRE = "require"
+
+private const val METHOD_NAME_USER_STRING = "vmn"
+
+private val VUE_DESCRIPTOR_OWNERS = arrayOf(VUE_NAMESPACE, MIXIN_FUN, COMPONENT_FUN, EXTEND_FUN, DIRECTIVE_FUN, DELIMITERS_PROP,
+                                            FILTER_FUN, DEFINE_COMPONENT_FUN, DEFINE_NUXT_COMPONENT_FUN)
+private val COMPONENT_INDICATOR_PROPS = setOf(TEMPLATE_PROP, DATA_PROP, "render", PROPS_PROP, "propsData", COMPUTED_PROP, METHODS_PROP,
+                                              "watch", MIXINS_PROP, COMPONENTS_PROP, DIRECTIVES_PROP, FILTERS_PROP, SETUP_METHOD,
+                                              MODEL_PROP, SLOTS_PROP)
+private val INTERESTING_PROPERTIES = arrayOf(MIXINS_PROP, EXTENDS_PROP, DIRECTIVES_PROP, NAME_PROP, TEMPLATE_PROP)
+private val SCRIPT_SETUP_MACROS = setOf(
+  DEFINE_EXPOSE_FUN, DEFINE_EMITS_FUN, DEFINE_SLOTS_FUN, DEFINE_PROPS_FUN,
+  WITH_DEFAULTS_FUN, DEFINE_MODEL_FUN, INJECT_FUN, PROVIDE_FUN, DEFINE_OPTIONS_FUN
+)
+
+fun getFunctionNameFromVueIndex(call: JSCallExpression): String? {
+  // todo consider first using AST if loaded
+  return call.indexingData
+    ?.implicitElements?.find { it.userString == METHOD_NAME_USER_STRING }
+    ?.name
+}
+
+fun getFunctionImplicitElement(call: JSCallExpression): JSImplicitElement? =
+  call.indexingData
+    ?.implicitElements
+    ?.find { it.userString == METHOD_NAME_USER_STRING }
+
+fun hasComponentIndicatorProperties(obj: JSObjectLiteralExpression, exclude: String? = null): Boolean =
+  obj.properties.any { it.name != exclude && COMPONENT_INDICATOR_PROPS.contains(it.name) }
+
+fun isDefaultExports(expression: JSExpression?): Boolean =
+  expression is JSReferenceExpression && JSSymbolUtil.isAccurateReferenceExpressionName(expression as JSReferenceExpression?,
+                                                                                        JSSymbolUtil.EXPORTS, "default")
+
+fun getExprReferencedFileUrl(expression: JSExpression?): String? {
+  if (expression is JSReferenceExpression) {
+    for (resolvedElement in resolveLocally(expression)) {
+      (resolvedElement as? ES6ImportedBinding)
+        ?.declaration
+        ?.fromClause
+        ?.let {
+          return it.referenceText?.let { ref -> StringUtil.unquoteString(ref) }
+        }
+    }
+  }
+  else if (expression is JSCallExpression) {
+    val referenceExpression = expression.methodExpression as? JSReferenceExpression
+    val arguments = expression.arguments
+    if (arguments.size == 1
+        && arguments[0] is JSLiteralExpression
+        && (arguments[0] as JSLiteralExpression).isQuotedLiteral
+        && referenceExpression != null
+        && referenceExpression.qualifier == null
+        && REQUIRE == referenceExpression.referenceName) {
+      return (arguments[0] as JSLiteralExpression).stringValue
+    }
+  }
+  return null
 }
 
 //region UTILS
@@ -755,7 +755,7 @@ private enum class VueStaticMethod(val methodName: String) {
   Filter(FILTER_FUN);
 
   companion object {
-    fun matchesAny(referenceExpression: ASTNode): Boolean = values().any { it.matches(referenceExpression) }
+    fun matchesAny(referenceExpression: ASTNode): Boolean = entries.any { it.matches(referenceExpression) }
   }
 
   fun matches(reference: JSReferenceExpression): Boolean =

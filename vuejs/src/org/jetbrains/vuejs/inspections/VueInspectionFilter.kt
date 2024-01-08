@@ -11,9 +11,8 @@ class VueInspectionFilter : IntentionAndInspectionFilter() {
 
   override fun isSupportedInspection(inspectionToolId: String?): Boolean = !suppressedToolIds.contains(inspectionToolId)
 
-  companion object {
-    val suppressedToolIds = listOf(
-      BadExpressionStatementJSInspection::class, JSSplitDeclarationIntention::class
-    ).mapSmartSet { InspectionProfileEntry.getShortName(it.java.simpleName) }
-  }
 }
+
+private val suppressedToolIds = listOf(
+  BadExpressionStatementJSInspection::class, JSSplitDeclarationIntention::class
+).mapSmartSet { InspectionProfileEntry.getShortName(it.java.simpleName) }

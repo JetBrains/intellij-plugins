@@ -12,7 +12,7 @@ import org.jetbrains.vuejs.lang.html.VueFileType
  * ES6FileIncludeProvider doesn't work for vue files but we need these files in index for building ts imports graph
  * @see ES6FileIncludeProvider
  */
-class VueFileIncludeProvider : JSFrameworkFileIncludeProvider(VueFileType.INSTANCE) {
+class VueFileIncludeProvider : JSFrameworkFileIncludeProvider(VueFileType) {
   override fun getIncludeInfos(content: FileContent): Array<FileIncludeInfo> {
     if (!ES6FileIncludeProvider.checkTextHasFromKeyword(content)) return emptyArray()
 

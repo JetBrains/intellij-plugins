@@ -15,7 +15,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.context.WebSymbolsContextProvider
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.index.VUE_MODULE
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFile
+import org.jetbrains.vuejs.lang.html.isVueFile
 
 class VueFileContext : WebSymbolsContextProvider {
 

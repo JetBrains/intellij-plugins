@@ -21,25 +21,23 @@ import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInf
 import org.jetbrains.vuejs.types.optionalIf
 import java.util.*
 
+
+private const val PROP_DEC = "Prop"
+private const val PROP_SYNC_DEC = "PropSync"
+private const val MODEL_DEC = "Model"
+private const val EMIT_DEC = "Emit"
+
+private val DECS = setOf(PROP_DEC, PROP_SYNC_DEC, MODEL_DEC, EMIT_DEC)
+
+private fun getNameFromDecorator(decorator: ES6Decorator): String? {
+  return getDecoratorArgument(decorator, 0)
+    ?.let { getTextIfLiteral(it) }
+}
+
+fun isVueComponentDecoratorName(name: String) =
+  name in DECS
+
 class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedContainerInfoProvider(::VueDecoratedComponentInfo) {
-
-  companion object {
-
-    private const val PROP_DEC = "Prop"
-    private const val PROP_SYNC_DEC = "PropSync"
-    private const val MODEL_DEC = "Model"
-    private const val EMIT_DEC = "Emit"
-
-    private val DECS = setOf(PROP_DEC, PROP_SYNC_DEC, MODEL_DEC, EMIT_DEC)
-
-    private fun getNameFromDecorator(decorator: ES6Decorator): String? {
-      return getDecoratorArgument(decorator, 0)
-        ?.let { getTextIfLiteral(it) }
-    }
-
-    fun isVueComponentDecoratorName(name: String) =
-      name in DECS
-  }
 
   private class VueDecoratedComponentInfo(clazz: JSClass) : VueContainerInfo {
     override val mixins: List<VueMixin>

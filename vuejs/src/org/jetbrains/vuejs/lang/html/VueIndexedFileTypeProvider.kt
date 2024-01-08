@@ -5,5 +5,5 @@ import com.intellij.lang.javascript.index.IndexedFileTypeProvider
 import com.intellij.openapi.fileTypes.FileType
 
 class VueIndexedFileTypeProvider : IndexedFileTypeProvider {
-  override fun getFileTypesToIndex(): Array<FileType> = arrayOf(VueFileType.INSTANCE)
+  override fun getFileTypesToIndex(): Array<FileType> = arrayOf(VueFileType)
 }

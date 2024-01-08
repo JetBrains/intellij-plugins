@@ -4,4 +4,4 @@ package org.jetbrains.vuejs.run
 import com.intellij.javascript.debugger.JavaScriptDebugAwareBase
 import org.jetbrains.vuejs.lang.html.VueFileType
 
-internal class VueDebugAware : JavaScriptDebugAwareBase(VueFileType.INSTANCE)
+internal class VueDebugAware : JavaScriptDebugAwareBase(VueFileType)

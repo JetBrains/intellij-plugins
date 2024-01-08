@@ -9,7 +9,7 @@ import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScope
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.utils.ReferencingWebSymbol
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
+import org.jetbrains.vuejs.web.VUE_TOP_LEVEL_ELEMENTS
 
 object VueTopLevelElementsScope : WebSymbolsScope {
 
@@ -18,7 +18,7 @@ object VueTopLevelElementsScope : WebSymbolsScope {
     WebSymbol.KIND_HTML_ELEMENTS,
     "Vue Top Level Element",
     WebSymbolOrigin.empty(),
-    VueWebSymbolsQueryConfigurator.VUE_TOP_LEVEL_ELEMENTS
+    VUE_TOP_LEVEL_ELEMENTS
   )
 
   override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,

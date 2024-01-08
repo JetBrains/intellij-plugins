@@ -19,7 +19,7 @@ import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.index.VUE_MODULE
-import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.lang.html.isVueFileName
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.INSTANCE_EMIT_METHOD
 import org.jetbrains.vuejs.model.source.INSTANCE_PROPS_PROP
@@ -60,7 +60,7 @@ class VueTypedComponent(override val source: PsiElement,
       return importType.qualifiedName.name
         .takeIf { it.startsWith(prefix) && it.endsWith(")") }
         ?.let { it.substring(prefix.length + 1, it.length - 2) }
-        ?.takeIf { VueFileType.isVueFileName(it) }
+        ?.takeIf { isVueFileName(it) }
         ?.let { contextFile.virtualFile?.parent?.findFileByRelativePath(it) }
         ?.let { contextFile.manager.findFile(it) }
         ?.let { VueModelManager.findEnclosingContainer(it) as? VueRegularComponent }

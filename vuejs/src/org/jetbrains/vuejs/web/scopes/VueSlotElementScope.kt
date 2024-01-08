@@ -29,9 +29,9 @@ import org.jetbrains.vuejs.codeInsight.findJSExpression
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.web.VUE_COMPONENTS
+import org.jetbrains.vuejs.web.VUE_SPECIAL_PROPERTIES
 import org.jetbrains.vuejs.web.VueFramework
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.VUE_COMPONENTS
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.VUE_SPECIAL_PROPERTIES
 import org.jetbrains.vuejs.web.asWebSymbol
 
 private const val SLOT_LOCAL_COMPONENT = "\$local"

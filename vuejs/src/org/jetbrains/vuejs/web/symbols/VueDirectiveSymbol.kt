@@ -12,14 +12,16 @@ import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.model.VueDirective
 import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
+import org.jetbrains.vuejs.web.VUE_DIRECTIVES
+import org.jetbrains.vuejs.web.VUE_DIRECTIVE_ARGUMENT
+import org.jetbrains.vuejs.web.VUE_DIRECTIVE_MODIFIERS
 import org.jetbrains.vuejs.web.asWebSymbolPriority
 
 open class VueDirectiveSymbol(name: String, directive: VueDirective, private val vueProximity: VueModelVisitor.Proximity) :
   VueScopeElementSymbol<VueDirective>(fromAsset(name), directive) {
 
   override val qualifiedKind: WebSymbolQualifiedKind
-    get() = VueWebSymbolsQueryConfigurator.VUE_DIRECTIVES
+    get() = VUE_DIRECTIVES
 
   override val priority: WebSymbol.Priority
     get() = vueProximity.asWebSymbolPriority()
@@ -27,10 +29,7 @@ open class VueDirectiveSymbol(name: String, directive: VueDirective, private val
   override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbol> =
-    if (qualifiedName.matches(
-        VueWebSymbolsQueryConfigurator.VUE_DIRECTIVE_ARGUMENT,
-        VueWebSymbolsQueryConfigurator.VUE_DIRECTIVE_MODIFIERS,
-      )) {
+    if (qualifiedName.matches(VUE_DIRECTIVE_ARGUMENT, VUE_DIRECTIVE_MODIFIERS)) {
       listOf(VueAnySymbol(this.origin, WebSymbol.NAMESPACE_HTML, qualifiedName.kind, qualifiedName.name))
     }
     else emptyList()
@@ -38,7 +37,7 @@ open class VueDirectiveSymbol(name: String, directive: VueDirective, private val
   override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
                           params: WebSymbolsListSymbolsQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbol> =
-    if (qualifiedKind == VueWebSymbolsQueryConfigurator.VUE_DIRECTIVE_ARGUMENT) {
+    if (qualifiedKind == VUE_DIRECTIVE_ARGUMENT) {
       listOf(VueAnySymbol(this.origin, WebSymbol.NAMESPACE_HTML, qualifiedKind.kind, "Vue directive argument"))
     }
     else emptyList()

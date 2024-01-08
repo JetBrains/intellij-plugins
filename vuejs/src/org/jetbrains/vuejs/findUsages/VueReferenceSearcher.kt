@@ -30,7 +30,7 @@ import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.isScriptSetupTag
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFile
+import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.lang.html.psi.VueRefAttribute
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueRegularComponent

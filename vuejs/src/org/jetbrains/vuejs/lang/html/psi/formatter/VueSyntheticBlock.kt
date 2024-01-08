@@ -10,7 +10,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.formatter.xml.AnotherLanguageBlockWrapper
 import com.intellij.psi.formatter.xml.SyntheticBlock
 import com.intellij.psi.formatter.xml.XmlFormattingPolicy
-import org.jetbrains.vuejs.lang.expr.VueExprMetaLanguage
+import org.jetbrains.vuejs.lang.expr.isVueExprMetaLanguage
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_END
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_START
 
@@ -76,6 +76,6 @@ class VueSyntheticBlock(subBlocks: List<Block>,
   companion object {
     fun isVueInterpolationBorder(child1: Block?, child2: Block?): Boolean =
       (child1 is VueHtmlBlock || child1 is VueBlock)
-      && VueExprMetaLanguage.matches((child2 as? AnotherLanguageBlockWrapper)?.node?.psi?.language)
+      && isVueExprMetaLanguage((child2 as? AnotherLanguageBlockWrapper)?.node?.psi?.language)
   }
 }

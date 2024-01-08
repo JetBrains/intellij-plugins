@@ -58,7 +58,7 @@ import org.jetbrains.vuejs.model.VueModelProximityVisitor
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.types.asCompleteType
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
+import org.jetbrains.vuejs.web.VUE_COMPONENTS
 import java.util.*
 import kotlin.reflect.KClass
 
@@ -461,7 +461,7 @@ fun WebSymbol.extractComponentSymbol(): WebSymbol? =
     ?.toList()
     ?.takeIf { it.size == 2 && it[0].pattern != null }
     ?.get(1)
-    ?.takeIf { it.qualifiedKind == VueWebSymbolsQueryConfigurator.VUE_COMPONENTS }
+    ?.takeIf { it.qualifiedKind == VUE_COMPONENTS }
 
 inline fun <reified T : PsiElement> PsiElement.parentOfTypeInAttribute(): T? {
   val host = InjectedLanguageManager.getInstance(project).getInjectionHost(this) ?: this
@@ -473,4 +473,4 @@ fun isScriptSetupLocalDirectiveName(name: String): Boolean =
 
 fun createVueFileFromText(project: Project, text: String): VueFile =
   PsiFileFactory.getInstance(project)
-    .createFileFromText("dummy$VUE_FILE_EXTENSION", VueFileType.INSTANCE, text) as VueFile
+    .createFileFromText("dummy$VUE_FILE_EXTENSION", VueFileType, text) as VueFile

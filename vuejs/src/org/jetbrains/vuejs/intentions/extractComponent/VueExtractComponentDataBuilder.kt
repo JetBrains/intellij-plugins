@@ -33,7 +33,7 @@ import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 import org.jetbrains.vuejs.index.VueFileVisitor
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.findScriptTag
-import org.jetbrains.vuejs.lang.expr.VueExprMetaLanguage
+import org.jetbrains.vuejs.lang.expr.isVueExprMetaLanguage
 import org.jetbrains.vuejs.model.VueModelManager
 
 class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
@@ -57,7 +57,7 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
       }
       val resolved = refData.resolve() ?: return@forEach
       var parentTag = PsiTreeUtil.getParentOfType(resolved, XmlTag::class.java)
-      if (parentTag == null && VueExprMetaLanguage.matches(resolved.language)) {
+      if (parentTag == null && isVueExprMetaLanguage(resolved.language)) {
         val host = InjectedLanguageManager.getInstance(list[0].project).getInjectionHost(resolved)
         if (host != null) {
           parentTag = PsiTreeUtil.getParentOfType(host, XmlTag::class.java)

@@ -11,15 +11,15 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiUtilBase
 import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.refactoring.actions.BaseRefactoringAction
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFile
 import org.jetbrains.vuejs.lang.html.VueLanguage
+import org.jetbrains.vuejs.lang.html.isVueFile
 
 internal class VueExtractComponentAction : BaseRefactoringAction() {
   override fun isAvailableInEditorOnly(): Boolean = true
 
   override fun isEnabledOnElements(elements: Array<out PsiElement>): Boolean = true
   override fun isAvailableOnElementInEditorAndFile(element: PsiElement, editor: Editor, file: PsiFile, context: DataContext): Boolean {
-    return VueExtractComponentIntention.getContext(editor, element) != null
+    return getContextForExtractComponentIntention(editor, element) != null
   }
 
   override fun isAvailableForLanguage(language: Language?): Boolean = VueLanguage.INSTANCE == language
@@ -31,7 +31,7 @@ internal class VueExtractComponentAction : BaseRefactoringAction() {
       override fun invoke(project: Project, editor: Editor?, file: PsiFile?, dataContext: DataContext?) {
         editor ?: return
         val element = PsiUtilBase.getElementAtCaret(editor) ?: return
-        val context = VueExtractComponentIntention.getContext(editor, element) ?: return
+        val context = getContextForExtractComponentIntention(editor, element) ?: return
         beforeRefactoring(project, REFACTORING_ID, *context.toTypedArray())
         VueExtractComponentRefactoring(project, context, editor).perform(fireRefactoringEvents = true)
       }

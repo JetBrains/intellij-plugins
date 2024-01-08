@@ -13,6 +13,7 @@ import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.Compani
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 
+//TODO migrate to use symbols
 class VueCustomAttributeValueProvider : HtmlAttributeValueProvider() {
 
   override fun getCustomAttributeValues(tag: XmlTag, attributeName: String): String? {
@@ -41,20 +42,18 @@ class VueCustomAttributeValueProvider : HtmlAttributeValueProvider() {
     return null
   }
 
-  companion object {
+}
 
-    fun isVBindClassAttribute(attribute: XmlAttribute?): Boolean =
-      attribute
-        ?.let { parse(it.name, it.parent) }
-        .let { isVBindClassAttribute(it) }
+fun isVBindClassAttribute(attribute: XmlAttribute?): Boolean =
+  attribute
+    ?.let { parse(it.name, it.parent) }
+    .let { isVBindClassAttribute(it) }
 
-    fun isVBindClassAttribute(info: VueAttributeNameParser.VueAttributeInfo?): Boolean =
-      info is VueAttributeNameParser.VueDirectiveInfo
-      && info.directiveKind == VueAttributeNameParser.VueDirectiveKind.BIND
-      && info.arguments == HtmlUtil.CLASS_ATTRIBUTE_NAME
+fun isVBindClassAttribute(info: VueAttributeNameParser.VueAttributeInfo?): Boolean =
+  info is VueAttributeNameParser.VueDirectiveInfo
+  && info.directiveKind == VueAttributeNameParser.VueDirectiveKind.BIND
+  && info.arguments == HtmlUtil.CLASS_ATTRIBUTE_NAME
 
-    private fun getClassNames(attribute: XmlAttribute?): String {
-      return getClassesFromEmbeddedContent(PsiTreeUtil.findChildOfType(attribute, VueJSEmbeddedExpressionContent::class.java))
-    }
-  }
+private fun getClassNames(attribute: XmlAttribute?): String {
+  return getClassesFromEmbeddedContent(PsiTreeUtil.findChildOfType(attribute, VueJSEmbeddedExpressionContent::class.java))
 }

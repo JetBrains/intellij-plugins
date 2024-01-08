@@ -76,21 +76,19 @@ class TemplateLoaderComponentInfoProvider : VueContainerInfoProvider {
       return initializer.hashCode()
     }
   }
+}
 
-  companion object {
-    private fun resolveToFile(expression: JSExpression): XmlFile? {
-      return when (expression) {
-        is JSCallExpression -> expression.methodExpression as? JSReferenceExpression
-        is JSReferenceExpression -> expression
-        else -> null
-      }
-        ?.takeIf { it.referenceName.equals(WITH_RENDER, ignoreCase = true) }
-        ?.resolve()
-        ?.let {
-          JSStubBasedPsiTreeUtil.calculateMeaningfulElements(it)
-        }
-        ?.find { it is XmlFile }
-        ?.asSafely<XmlFile>()
-    }
+private fun resolveToFile(expression: JSExpression): XmlFile? {
+  return when (expression) {
+    is JSCallExpression -> expression.methodExpression as? JSReferenceExpression
+    is JSReferenceExpression -> expression
+    else -> null
   }
+    ?.takeIf { it.referenceName.equals(WITH_RENDER, ignoreCase = true) }
+    ?.resolve()
+    ?.let {
+      JSStubBasedPsiTreeUtil.calculateMeaningfulElements(it)
+    }
+    ?.find { it is XmlFile }
+    ?.asSafely<XmlFile>()
 }

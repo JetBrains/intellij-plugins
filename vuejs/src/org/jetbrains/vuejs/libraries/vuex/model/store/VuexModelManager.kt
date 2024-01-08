@@ -20,7 +20,8 @@ import org.jetbrains.vuejs.libraries.nuxt.model.NuxtModelManager
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.REGISTER_MODULE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.STORE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.isVuexContext
-import org.jetbrains.vuejs.libraries.vuex.index.VuexStoreIndex
+import org.jetbrains.vuejs.libraries.vuex.index.VUEX_STORE_INDEX_JS_KEY
+import org.jetbrains.vuejs.libraries.vuex.index.VUEX_STORE_INDEX_KEY
 
 object VuexModelManager {
 
@@ -40,13 +41,13 @@ object VuexModelManager {
 
   private fun getAllVuexStores(project: Project): List<VuexStore> {
     return CachedValuesManager.getManager(project).getCachedValue(project) {
-      val elements = StubIndex.getElements(VuexStoreIndex.KEY, STORE, project,
+      val elements = StubIndex.getElements(VUEX_STORE_INDEX_KEY, STORE, project,
                                            GlobalSearchScope.projectScope(project),
                                            JSImplicitElementProvider::class.java)
       val result = elements
         .asSequence()
         .filterIsInstance<JSCallExpression>()
-        .filter { call -> call.indexingData?.implicitElements?.find { it.userString == VuexStoreIndex.JS_KEY } != null }
+        .filter { call -> call.indexingData?.implicitElements?.find { it.userString == VUEX_STORE_INDEX_JS_KEY } != null }
         .map { VuexStoreImpl(it) }
         .toList()
 
@@ -57,7 +58,7 @@ object VuexModelManager {
   private fun getRegisteredModules(project: Project): List<VuexModule> {
     return CachedValuesManager.getManager(project).getCachedValue(project) {
       CachedValueProvider.Result.create(
-        StubIndex.getElements(VuexStoreIndex.KEY, REGISTER_MODULE, project,
+        StubIndex.getElements(VUEX_STORE_INDEX_KEY, REGISTER_MODULE, project,
                               GlobalSearchScope.projectScope(project),
                               JSImplicitElementProvider::class.java)
           .asSequence()
@@ -68,7 +69,7 @@ object VuexModelManager {
   }
 
   private fun createRegisteredModule(call: JSCallExpression): VuexModule? {
-    val implicitElement = call.indexingData?.implicitElements?.find { it.userString == VuexStoreIndex.JS_KEY }
+    val implicitElement = call.indexingData?.implicitElements?.find { it.userString == VUEX_STORE_INDEX_JS_KEY }
                           ?: return null
 
     val arguments = call.stubSafeCallArguments

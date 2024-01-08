@@ -7,8 +7,8 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
-import org.jetbrains.vuejs.intentions.extractComponent.VueExtractComponentIntention
 import org.jetbrains.vuejs.intentions.extractComponent.VueExtractComponentRefactoring
+import org.jetbrains.vuejs.intentions.extractComponent.getContextForExtractComponentIntention
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
 class VueExtractComponentTest : BasePlatformTestCase() {
@@ -1090,7 +1090,7 @@ export default {
 
       val element = myFixture.file.findElementAt(myFixture.editor.caretModel.currentCaret.offset)
       TestCase.assertNotNull(element)
-      val context = VueExtractComponentIntention.getContext(myFixture.editor, element!!)
+      val context = getContextForExtractComponentIntention(myFixture.editor, element!!)
       TestCase.assertNotNull(context)
       TestCase.assertEquals(numTags, context!!.size)
 

@@ -22,9 +22,9 @@ import org.jetbrains.vuejs.model.VueComputedProperty
 import org.jetbrains.vuejs.model.VueDataProperty
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.source.VueSourceComponent
+import org.jetbrains.vuejs.web.VUE_COMPONENT_COMPUTED_PROPERTIES
+import org.jetbrains.vuejs.web.VUE_COMPONENT_DATA_PROPERTIES
 import org.jetbrains.vuejs.web.VueFramework
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.VUE_COMPONENT_COMPUTED_PROPERTIES
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.VUE_COMPONENT_DATA_PROPERTIES
 import org.jetbrains.vuejs.web.symbols.VueComputedPropertySymbol
 import org.jetbrains.vuejs.web.symbols.VueDataPropertySymbol
 import org.jetbrains.vuejs.web.symbols.VueScopeElementOrigin

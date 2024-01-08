@@ -77,7 +77,7 @@ class VueFilterLexer(occurrenceConsumer: OccurrenceConsumer, originalLexer: Lexe
       // We need to choose lexer lang mode, since we don't have access to the indices here.
       // The JavaScript and TypeScript lexer do not produce significantly different results
       // in terms of ID or TO-DO scanning, so we can choose JS here, which is lighter.
-      return VueSyntaxHighlighterFactory.getSyntaxHighlighter(project, file, LangMode.NO_TS)
+      return VueSyntaxHighlighterFactory.Util.getSyntaxHighlighter(project, file, LangMode.NO_TS)
         .highlightingLexer
     }
 

@@ -24,36 +24,33 @@ import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.isScriptSetupLocalDirectiveName
 import org.jetbrains.vuejs.index.findModule
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFile
+import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.web.scopes.*
 
+val VUE_TOP_LEVEL_ELEMENTS = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-file-top-elements")
+val VUE_COMPONENTS = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-components")
+val VUE_COMPONENT_PROPS = WebSymbolQualifiedKind(NAMESPACE_HTML, "props")
+val VUE_COMPONENT_COMPUTED_PROPERTIES = WebSymbolQualifiedKind(NAMESPACE_HTML, "computed-properties")
+val VUE_COMPONENT_DATA_PROPERTIES = WebSymbolQualifiedKind(NAMESPACE_HTML, "data-properties")
+val VUE_DIRECTIVES = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-directives")
+val VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-script-setup-local-directives")
+val VUE_AVAILABLE_SLOTS = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-available-slots")
+val VUE_MODEL = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-model")
+val VUE_DIRECTIVE_ARGUMENT = WebSymbolQualifiedKind(NAMESPACE_HTML, "argument")
+val VUE_DIRECTIVE_MODIFIERS = WebSymbolQualifiedKind(NAMESPACE_HTML, "modifiers")
+val VUE_COMPONENT_NAMESPACES = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-component-namespaces")
+val VUE_PROVIDES = WebSymbolQualifiedKind(WebSymbol.NAMESPACE_JS, "vue-provides")
+val VUE_SPECIAL_PROPERTIES = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-special-properties")
+
+const val PROP_VUE_MODEL_PROP = "prop"
+const val PROP_VUE_MODEL_EVENT = "event"
+
+const val PROP_VUE_PROXIMITY = "x-vue-proximity"
+const val PROP_VUE_COMPOSITION_COMPONENT = "x-vue-composition-component"
+
 class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
-
-  companion object {
-    val VUE_TOP_LEVEL_ELEMENTS = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-file-top-elements")
-    val VUE_COMPONENTS = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-components")
-    val VUE_COMPONENT_PROPS = WebSymbolQualifiedKind(NAMESPACE_HTML, "props")
-    val VUE_COMPONENT_COMPUTED_PROPERTIES = WebSymbolQualifiedKind(NAMESPACE_HTML, "computed-properties")
-    val VUE_COMPONENT_DATA_PROPERTIES = WebSymbolQualifiedKind(NAMESPACE_HTML, "data-properties")
-    val VUE_DIRECTIVES = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-directives")
-    val VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-script-setup-local-directives")
-    val VUE_AVAILABLE_SLOTS = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-available-slots")
-    val VUE_MODEL = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-model")
-    val VUE_DIRECTIVE_ARGUMENT = WebSymbolQualifiedKind(NAMESPACE_HTML, "argument")
-    val VUE_DIRECTIVE_MODIFIERS = WebSymbolQualifiedKind(NAMESPACE_HTML, "modifiers")
-    val VUE_COMPONENT_NAMESPACES = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-component-namespaces")
-    val VUE_PROVIDES = WebSymbolQualifiedKind(WebSymbol.NAMESPACE_JS, "vue-provides")
-    val VUE_SPECIAL_PROPERTIES = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-special-properties")
-
-    const val PROP_VUE_MODEL_PROP = "prop"
-    const val PROP_VUE_MODEL_EVENT = "event"
-
-    const val PROP_VUE_PROXIMITY = "x-vue-proximity"
-    const val PROP_VUE_COMPOSITION_COMPONENT = "x-vue-composition-component"
-
-  }
 
   override fun getScope(project: Project,
                         location: PsiElement?,

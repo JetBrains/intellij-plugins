@@ -28,8 +28,8 @@ import com.intellij.util.NullableFunction
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
 import org.jetbrains.vuejs.context.isVueContext
-import org.jetbrains.vuejs.index.VueFrameworkHandler
-import org.jetbrains.vuejs.index.VueOptionsIndex
+import org.jetbrains.vuejs.index.VUE_OPTIONS_INDEX_KEY
+import org.jetbrains.vuejs.index.hasComponentIndicatorProperties
 import org.jetbrains.vuejs.index.resolve
 import org.jetbrains.vuejs.lang.VueScriptLangs
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
@@ -62,7 +62,7 @@ class VueInjector : MultiHostInjector {
       })
 
     private fun calculateDelimitersFromIndex(project: Project, key: String): Pair<String, PsiElement>? {
-      val elements = resolve("", GlobalSearchScope.projectScope(project), VueOptionsIndex.KEY)
+      val elements = resolve("", GlobalSearchScope.projectScope(project), VUE_OPTIONS_INDEX_KEY)
         .ifEmpty { return null }
       val element = onlyLocal(elements).firstOrNull() ?: return null
       val obj = element as? JSObjectLiteralExpression
@@ -81,8 +81,10 @@ class VueInjector : MultiHostInjector {
         it.qualifiedName in delimitersOptionHolders
       }.map {
         val delimiter = getDelimiterValue((it as PsiElement).context!!, key)
-        if (delimiter != null) return Pair.create(delimiter, it)
-        return null
+        if (delimiter != null)
+          Pair.create(delimiter, it as PsiElement)
+        else
+          null
       }.firstOrNull()
     }
 
@@ -156,7 +158,7 @@ class VueInjector : MultiHostInjector {
     val chars = template.node.chars
     if (chars.length > 2 && chars[1] == '#')
       return false
-    return VueFrameworkHandler.hasComponentIndicatorProperties(initializer, TEMPLATE_PROP)
+    return hasComponentIndicatorProperties(initializer, TEMPLATE_PROP)
            || PsiTreeUtil.getContextOfType(initializer, ES6Decorator::class.java)
              ?.let { isComponentDecorator(it) } == true
   }

@@ -14,8 +14,8 @@ import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
 import com.intellij.webSymbols.utils.ReferencingWebSymbol
 import org.jetbrains.vuejs.model.provides
 import org.jetbrains.vuejs.model.source.VueSourceComponent
+import org.jetbrains.vuejs.web.VUE_PROVIDES
 import org.jetbrains.vuejs.web.VueFramework
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.VUE_PROVIDES
 import org.jetbrains.vuejs.web.symbols.VueProvideSymbol
 import org.jetbrains.vuejs.web.symbols.VueScopeElementOrigin
 

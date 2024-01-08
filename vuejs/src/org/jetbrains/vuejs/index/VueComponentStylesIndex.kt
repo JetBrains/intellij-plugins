@@ -17,15 +17,14 @@ import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.html.VueFileType
 
+val VUE_COMPONENT_STYLES_INDEX_KEY = ID.create<String, Void>("VueComponentStylesIndex")
+
 /**
  * Indexes style languages used in *.vue files.
  */
 class VueComponentStylesIndex : ScalarIndexExtension<String>() {
-  companion object {
-    val KEY = ID.create<String, Void>("VueComponentStylesIndex")
-  }
 
-  override fun getName(): ID<String, Void> = KEY
+  override fun getName(): ID<String, Void> = VUE_COMPONENT_STYLES_INDEX_KEY
 
   override fun getIndexer(): DataIndexer<String, Void, FileContent> = DataIndexer { fileContent ->
     val result = mutableSetOf<String>()
@@ -46,7 +45,7 @@ class VueComponentStylesIndex : ScalarIndexExtension<String>() {
 
   override fun getInputFilter(): InputFilter = object : BaseFileTypeInputFilter(AFTER_SUBSTITUTION) {
     override fun acceptFileType(fileType: FileType): ThreeState {
-      return if (fileType == VueFileType.INSTANCE) {
+      return if (fileType == VueFileType) {
         ThreeState.UNSURE // check hasNodeModulesDirInPath
       }
       else {

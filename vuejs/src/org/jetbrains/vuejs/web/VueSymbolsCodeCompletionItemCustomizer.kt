@@ -16,7 +16,7 @@ import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItemCustomizer
 import org.jetbrains.vuejs.index.isScriptSetupTag
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFileName
+import org.jetbrains.vuejs.lang.html.isVueFileName
 import org.jetbrains.vuejs.web.symbols.VueComponentSymbol
 
 class VueSymbolsCodeCompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {
@@ -28,7 +28,7 @@ class VueSymbolsCodeCompletionItemCustomizer : WebSymbolCodeCompletionItemCustom
       when (qualifiedKind) {
         WebSymbol.HTML_ATTRIBUTES ->
           item.symbol
-            ?.takeIf { it.kind == VueWebSymbolsQueryConfigurator.VUE_COMPONENT_PROPS.kind || it.kind == WebSymbol.KIND_JS_EVENTS }
+            ?.takeIf { it.kind == VUE_COMPONENT_PROPS.kind || it.kind == WebSymbol.KIND_JS_EVENTS }
             ?.let { item.decorateWithSymbolType(it) }
           ?: item
         WebSymbol.HTML_ELEMENTS ->

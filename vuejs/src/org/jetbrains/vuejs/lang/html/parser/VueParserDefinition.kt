@@ -21,7 +21,7 @@ import org.jetbrains.vuejs.lang.html.psi.impl.VueFileImpl
 
 class VueParserDefinition : HTMLParserDefinition() {
 
-  companion object {
+  object Util {
     fun createLexer(project: Project,
                     interpolationConfig: Pair<String, String>?,
                     htmlCompatMode: Boolean,
@@ -35,7 +35,7 @@ class VueParserDefinition : HTMLParserDefinition() {
   }
 
   override fun createLexer(project: Project): Lexer {
-    return Companion.createLexer(project, null, true)
+    return Util.createLexer(project, null, true)
   }
 
   override fun getFileNodeType(): IFileElementType {

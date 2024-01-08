@@ -30,6 +30,7 @@ import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
 import com.intellij.xml.util.XmlTagUtil
 import org.jetbrains.vuejs.VueBundle
+import org.jetbrains.vuejs.codeInsight.imports.VueComponentCopyPasteProcessor.VueComponentImportsTransferableData
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.editor.VueComponentSourceEdit
 import org.jetbrains.vuejs.index.findModule
@@ -46,7 +47,7 @@ import java.awt.datatransfer.DataFlavor
 import kotlin.Pair
 import com.intellij.openapi.util.Pair as OpenApiPair
 
-class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentCopyPasteProcessor.VueComponentImportsTransferableData>() {
+class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentImportsTransferableData>() {
 
   override val dataFlavor: DataFlavor
     get() = VUE_COMPONENT_IMPORTS_FLAVOR
@@ -295,8 +296,6 @@ class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentCop
       return VUE_COMPONENT_IMPORTS_FLAVOR
     }
   }
-
-  companion object {
-    private val VUE_COMPONENT_IMPORTS_FLAVOR = DataFlavor(VueComponentImportsTransferableData::class.java, "vue component imports")
-  }
 }
+
+private val VUE_COMPONENT_IMPORTS_FLAVOR = DataFlavor(VueComponentImportsTransferableData::class.java, "vue component imports")

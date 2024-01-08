@@ -15,15 +15,14 @@ import com.intellij.psi.FileViewProvider
 import com.intellij.psi.tree.IFileElementType
 import org.jetbrains.vuejs.lang.expr.VueTSLanguage
 
-class VueTSParserDefinition : JavascriptParserDefinition() {
-  companion object {
-    private val FILE: IFileElementType = JSFileElementType.create(VueTSLanguage.INSTANCE)
+private val FILE: IFileElementType = JSFileElementType.create(VueTSLanguage.INSTANCE)
 
+class VueTSParserDefinition : JavascriptParserDefinition() {
+  object Util {
     @Suppress("UNUSED_PARAMETER")
     fun createLexer(project: Project?): Lexer {
       return JSFlexAdapter(DialectOptionHolder.TS)
     }
-
   }
 
   override fun createParser(project: Project?): PsiParser {
@@ -37,7 +36,7 @@ class VueTSParserDefinition : JavascriptParserDefinition() {
   }
 
   override fun createLexer(project: Project?): Lexer {
-    return Companion.createLexer(project)
+    return Util.createLexer(project)
   }
 
   override fun getFileNodeType(): IFileElementType {

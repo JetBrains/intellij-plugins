@@ -19,7 +19,7 @@ import com.intellij.psi.css.reference.CssReference
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiPolyVariantCachingReference
 import com.intellij.util.ProcessingContext
 import org.apache.commons.text.WordUtils
-import org.jetbrains.vuejs.codeInsight.attributes.VueCustomAttributeValueProvider.Companion.isVBindClassAttribute
+import org.jetbrains.vuejs.codeInsight.attributes.isVBindClassAttribute
 import org.jetbrains.vuejs.codeInsight.template.VueTemplateScopesResolver
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.VueTSLanguage
@@ -74,18 +74,20 @@ class VueCssReferencesContributor : PsiReferenceContributor() {
     }
 
     override fun getVariants(): Array<Any> {
-        val result = mutableListOf<Any>()
-        VueTemplateScopesResolver.resolve(myElement) { resolveResult ->
-          (resolveResult.element as? JSPsiNamedElementBase)
-            .takeIf { it !is JSFunctionItem
-                      && it?.name?.startsWith("$") == false
-                      && (it as? JSTypeOwner)?.jsType?.substitute() !is JSFunctionType}
-            ?.let {
-              result.add(JSLookupUtilImpl.createLookupElement(it, it.name!!))
-            }
-          true
-        }
-        return result.toTypedArray()
+      val result = mutableListOf<Any>()
+      VueTemplateScopesResolver.resolve(myElement) { resolveResult ->
+        (resolveResult.element as? JSPsiNamedElementBase)
+          .takeIf {
+            it !is JSFunctionItem
+            && it?.name?.startsWith("$") == false
+            && (it as? JSTypeOwner)?.jsType?.substitute() !is JSFunctionType
+          }
+          ?.let {
+            result.add(JSLookupUtilImpl.createLookupElement(it, it.name!!))
+          }
+        true
+      }
+      return result.toTypedArray()
     }
 
     override fun getCanonicalText(): String = myElement.text

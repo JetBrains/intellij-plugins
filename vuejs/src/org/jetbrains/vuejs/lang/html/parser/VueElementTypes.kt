@@ -13,8 +13,8 @@ import com.intellij.psi.tree.ILightLazyParseableElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.vuejs.lang.VueScriptLangs
 import org.jetbrains.vuejs.lang.html.VueFileElementType
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFile
 import org.jetbrains.vuejs.lang.html.VueLanguage
+import org.jetbrains.vuejs.lang.html.isVueFile
 
 object VueElementTypes {
 
@@ -27,7 +27,7 @@ object VueElementTypes {
       val file = chameleon.containingFile ?: error(chameleon)
 
       val htmlCompatMode = !file.isVueFile
-      val lexer = VueParserDefinition.createLexer(file.project, null, htmlCompatMode, file.getUserData(VueScriptLangs.LANG_MODE))
+      val lexer = VueParserDefinition.Util.createLexer(file.project, null, htmlCompatMode, file.getUserData(VueScriptLangs.LANG_MODE))
       val builder = PsiBuilderFactory.getInstance().createBuilder(file.project, chameleon, lexer, language, chameleon.text)
       builder.putUserData(VueScriptLangs.LANG_MODE, file.getUserData(VueScriptLangs.LANG_MODE))
       builder.putUserData(VueParsing.HTML_COMPAT_MODE, htmlCompatMode)
@@ -39,14 +39,14 @@ object VueElementTypes {
       val file = psi.containingFile ?: error(chameleon)
 
       val htmlCompatMode = !file.isVueFile
-      val lexer = VueParserDefinition.createLexer(file.project, null, htmlCompatMode, file.getUserData(VueScriptLangs.LANG_MODE))
+      val lexer = VueParserDefinition.Util.createLexer(file.project, null, htmlCompatMode, file.getUserData(VueScriptLangs.LANG_MODE))
       val builder = PsiBuilderFactory.getInstance().createBuilder(file.project, chameleon, lexer, language, chameleon.chars)
       val startTime = System.nanoTime()
       builder.putUserData(VueScriptLangs.LANG_MODE, file.getUserData(VueScriptLangs.LANG_MODE))
       builder.putUserData(VueParsing.HTML_COMPAT_MODE, htmlCompatMode)
       val node = VueParser().parse(VueFileElementType.INSTANCE, builder)
       val result = node.firstChildNode
-      ParsingDiagnostics.registerParse(builder, language, System.nanoTime() - startTime);
+      ParsingDiagnostics.registerParse(builder, language, System.nanoTime() - startTime)
       return result
     }
   }

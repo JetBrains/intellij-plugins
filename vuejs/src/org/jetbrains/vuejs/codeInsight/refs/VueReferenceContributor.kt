@@ -28,70 +28,67 @@ class VueReferenceContributor : PsiReferenceContributor() {
       REF_ATTRIBUTE_REF_PROVIDER
     )
   }
+}
 
-  companion object {
+private val STYLE_PATTERN = createSrcAttrValuePattern(STYLE_TAG_NAME)
 
-    val STYLE_PATTERN = createSrcAttrValuePattern(STYLE_TAG_NAME)
-
-    private val STYLE_REF_PROVIDER = object : PsiReferenceProvider() {
-      override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
-        val text = ElementManipulators.getValueText(element)
-        if (!hasHtmlPrefix(text)) {
-          val referenceData = getFileReferenceData(element)
-                              ?: return PsiReference.EMPTY_ARRAY
-          val suitableFileTypes =
-            (element.parent as? XmlAttribute)
-              ?.parent
-              ?.getAttribute(LANG_ATTRIBUTE_NAME)
-              ?.value
-              ?.trim()
-              ?.let { VueTagEmbeddedContentProvider.styleLanguage(it) }
-              ?.associatedFileType
-              ?.let { arrayOf(it) }
-            ?: emptyArray()
-
-          val referenceSet = StylesheetFileReferenceSet(element, referenceData.first,
-                                                        referenceData.second, *suitableFileTypes)
-          @Suppress("UNCHECKED_CAST")
-          return referenceSet.allReferences as Array<PsiReference>
-        }
-        return PsiReference.EMPTY_ARRAY
-      }
-    }
-
-    val STATIC_FILE_REF_PROVIDER = object : PsiReferenceProvider() {
-      override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
-        val result = mutableListOf<PsiReference>()
-        StaticPathReferenceProvider(FileType.EMPTY_ARRAY).apply {
-          setEndingSlashNotAllowed(false)
-          setRelativePathsAllowed(true)
-          createReferences(element, result, false)
-        }
-        return result.toTypedArray()
-      }
-    }
-
-    val REF_ATTRIBUTE_REF_PROVIDER = object : PsiReferenceProvider() {
-      override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> =
-        (element as? XmlAttributeValue)
+private val STYLE_REF_PROVIDER = object : PsiReferenceProvider() {
+  override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
+    val text = ElementManipulators.getValueText(element)
+    if (!hasHtmlPrefix(text)) {
+      val referenceData = getFileReferenceData(element)
+                          ?: return PsiReference.EMPTY_ARRAY
+      val suitableFileTypes =
+        (element.parent as? XmlAttribute)
           ?.parent
-          ?.asSafely<VueRefAttribute>()
-          ?.implicitElement
-          ?.takeIf { it !is VueRefAttribute.VueRefDeclaration }
-          ?.let {
-            arrayOf(VueRefReference(element, it))
-          }
-        ?: PsiReference.EMPTY_ARRAY
+          ?.getAttribute(LANG_ATTRIBUTE_NAME)
+          ?.value
+          ?.trim()
+          ?.let { VueTagEmbeddedContentProvider.styleLanguage(it) }
+          ?.associatedFileType
+          ?.let { arrayOf(it) }
+        ?: emptyArray()
+
+      val referenceSet = StylesheetFileReferenceSet(element, referenceData.first,
+                                                    referenceData.second, *suitableFileTypes)
+      @Suppress("UNCHECKED_CAST")
+      return referenceSet.allReferences as Array<PsiReference>
     }
-
-    private class VueRefReference(element: PsiElement, private val target: PsiElement)
-      : PsiReferenceBase<PsiElement>(element, ElementManipulators.getValueTextRange(element), false) {
-
-      override fun resolve(): PsiElement = target
-
-    }
-
-    private fun createSrcAttrValuePattern(tagName: String): XmlAttributeValuePattern =
-      XmlPatterns.xmlAttributeValue(SRC_ATTRIBUTE_NAME).withAncestor(2, XmlPatterns.xmlTag().withLocalName(tagName))
+    return PsiReference.EMPTY_ARRAY
   }
 }
+
+val STATIC_FILE_REF_PROVIDER = object : PsiReferenceProvider() {
+  override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
+    val result = mutableListOf<PsiReference>()
+    StaticPathReferenceProvider(FileType.EMPTY_ARRAY).apply {
+      setEndingSlashNotAllowed(false)
+      setRelativePathsAllowed(true)
+      createReferences(element, result, false)
+    }
+    return result.toTypedArray()
+  }
+}
+
+private val REF_ATTRIBUTE_REF_PROVIDER = object : PsiReferenceProvider() {
+  override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> =
+    (element as? XmlAttributeValue)
+      ?.parent
+      ?.asSafely<VueRefAttribute>()
+      ?.implicitElement
+      ?.takeIf { it !is VueRefAttribute.VueRefDeclaration }
+      ?.let {
+        arrayOf(VueRefReference(element, it))
+      }
+    ?: PsiReference.EMPTY_ARRAY
+}
+
+private class VueRefReference(element: PsiElement, private val target: PsiElement)
+  : PsiReferenceBase<PsiElement>(element, ElementManipulators.getValueTextRange(element), false) {
+
+  override fun resolve(): PsiElement = target
+
+}
+
+private fun createSrcAttrValuePattern(tagName: String): XmlAttributeValuePattern =
+  XmlPatterns.xmlAttributeValue(SRC_ATTRIBUTE_NAME).withAncestor(2, XmlPatterns.xmlTag().withLocalName(tagName))

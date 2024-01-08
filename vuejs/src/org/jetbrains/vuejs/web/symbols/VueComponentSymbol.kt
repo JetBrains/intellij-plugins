@@ -16,9 +16,7 @@ import org.jetbrains.vuejs.model.source.VueCompositionApp
 import org.jetbrains.vuejs.model.source.VueSourceContainer
 import org.jetbrains.vuejs.model.source.VueSourceEntityDescriptor
 import org.jetbrains.vuejs.model.source.VueUnresolvedComponent
-import org.jetbrains.vuejs.web.VueComponentSourceNavigationTarget
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
-import org.jetbrains.vuejs.web.asWebSymbolPriority
+import org.jetbrains.vuejs.web.*
 
 class VueComponentSymbol(name: String, component: VueComponent, private val vueProximity: VueModelVisitor.Proximity) :
   VueScopeElementSymbol<VueComponent>(name, component) {
@@ -32,7 +30,7 @@ class VueComponentSymbol(name: String, component: VueComponent, private val vueP
     get() = (item as? VueRegularComponent)?.typeParameters ?: emptyList()
 
   override val qualifiedKind: WebSymbolQualifiedKind
-    get() = VueWebSymbolsQueryConfigurator.VUE_COMPONENTS
+    get() = VUE_COMPONENTS
 
   // The source field is used for refactoring purposes by Web Symbols framework
   override val source: PsiElement?
@@ -53,8 +51,8 @@ class VueComponentSymbol(name: String, component: VueComponent, private val vueP
     item.source?.let { listOf(VueComponentSourceNavigationTarget(it)) } ?: emptyList()
 
   override val properties: Map<String, Any>
-    get() = mapOf(Pair(VueWebSymbolsQueryConfigurator.PROP_VUE_PROXIMITY, vueProximity), Pair(
-      VueWebSymbolsQueryConfigurator.PROP_VUE_COMPOSITION_COMPONENT, isCompositionComponent))
+    get() = mapOf(Pair(PROP_VUE_PROXIMITY, vueProximity), Pair(
+      PROP_VUE_COMPOSITION_COMPONENT, isCompositionComponent))
 
   override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
@@ -69,7 +67,7 @@ class VueComponentSymbol(name: String, component: VueComponent, private val vueP
                           params: WebSymbolsListSymbolsQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
     when (qualifiedKind) {
-      VueWebSymbolsQueryConfigurator.VUE_COMPONENT_PROPS -> {
+      VUE_COMPONENT_PROPS -> {
         val props = mutableListOf<VueInputProperty>()
         item.acceptPropertiesAndMethods(object : VueModelVisitor() {
           override fun visitInputProperty(prop: VueInputProperty, proximity: Proximity): Boolean {
@@ -79,7 +77,7 @@ class VueComponentSymbol(name: String, component: VueComponent, private val vueP
         })
         props.map { VueInputPropSymbol(it, item, this.origin) }
       }
-      VueWebSymbolsQueryConfigurator.VUE_COMPONENT_DATA_PROPERTIES -> {
+      VUE_COMPONENT_DATA_PROPERTIES -> {
         val props = mutableListOf<VueDataProperty>()
         item.acceptPropertiesAndMethods(object : VueModelVisitor() {
           override fun visitDataProperty(dataProperty: VueDataProperty, proximity: Proximity): Boolean {
@@ -89,7 +87,7 @@ class VueComponentSymbol(name: String, component: VueComponent, private val vueP
         }, onlyPublic = false)
         props.map { VueDataPropertySymbol(it, item, this.origin) }
       }
-      VueWebSymbolsQueryConfigurator.VUE_COMPONENT_COMPUTED_PROPERTIES -> {
+      VUE_COMPONENT_COMPUTED_PROPERTIES -> {
         val props = mutableListOf<VueComputedProperty>()
         item.acceptPropertiesAndMethods(object : VueModelVisitor() {
           override fun visitComputedProperty(computedProperty: VueComputedProperty, proximity: Proximity): Boolean {
@@ -105,7 +103,7 @@ class VueComponentSymbol(name: String, component: VueComponent, private val vueP
           ?.map { VueSlotSymbol(it, item, this.origin) }
         ?: emptyList()
       }
-      VueWebSymbolsQueryConfigurator.VUE_MODEL -> {
+      VUE_MODEL -> {
         (item as? VueContainer)
           ?.collectModelDirectiveProperties()
           ?.takeIf { it.prop != null || it.event != null }

@@ -10,22 +10,18 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 
-class VueFileType private constructor() : WebFrameworkHtmlFileType(VueLanguage.INSTANCE, "Vue.js", "vue") {
-  companion object {
-    @JvmField
-    val INSTANCE: VueFileType = VueFileType()
+val PsiFile.isVueFile
+  get() = originalFile.virtualFile?.isVueFile
+          ?: (this is VueFile && isVueFileName(this.name))
 
-    val PsiFile.isVueFile
-      get() = originalFile.virtualFile?.isVueFile
-              ?: (this is VueFile && isVueFileName(this.name))
+val VirtualFile.isVueFile
+  get() = isVueFileName(nameSequence)
 
-    val VirtualFile.isVueFile
-      get() = isVueFileName(nameSequence)
+fun isVueFileName(name: CharSequence): Boolean =
+  name.endsWith(VUE_FILE_EXTENSION)
+  || vueFileTypeAssociations.value.any { it.acceptsCharSequence(name) }
 
-    fun isVueFileName(name: String) = isVueFileName(name as CharSequence)
-
-  }
-
+object VueFileType : WebFrameworkHtmlFileType(VueLanguage.INSTANCE, "Vue.js", "vue") {
   class FileTypeChangeListener : FileTypeListener {
     override fun fileTypesChanged(event: FileTypeEvent) {
       vueFileTypeAssociations.drop()
@@ -34,9 +30,5 @@ class VueFileType private constructor() : WebFrameworkHtmlFileType(VueLanguage.I
 }
 
 private val vueFileTypeAssociations = ClearableLazyValue.create {
-  FileTypeManager.getInstance().getAssociations(VueFileType.INSTANCE)
+  FileTypeManager.getInstance().getAssociations(VueFileType)
 }
-
-private fun isVueFileName(name: CharSequence): Boolean =
-  name.endsWith(VUE_FILE_EXTENSION)
-  || vueFileTypeAssociations.value.any { it.acceptsCharSequence(name) }

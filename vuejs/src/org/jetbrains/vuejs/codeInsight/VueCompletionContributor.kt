@@ -15,7 +15,7 @@ import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.ProcessingContext
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeValueCompletionProvider
 import org.jetbrains.vuejs.codeInsight.attributes.VueRefValueCompletionProvider
-import org.jetbrains.vuejs.lang.expr.VueExprMetaLanguage
+import org.jetbrains.vuejs.lang.expr.isVueExprMetaLanguage
 
 class VueCompletionContributor : CompletionContributor() {
   init {
@@ -36,7 +36,7 @@ class VueCompletionContributor : CompletionContributor() {
   private fun <T : PsiElement> exprLanguage(): PatternCondition<T> {
     return object : PatternCondition<T>("exprlanguage") {
       override fun accepts(t: T, context: ProcessingContext): Boolean {
-        return VueExprMetaLanguage.matches(PsiUtilCore.findLanguageFromElement(t))
+        return isVueExprMetaLanguage(PsiUtilCore.findLanguageFromElement(t))
       }
     }
   }

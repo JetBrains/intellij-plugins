@@ -8,7 +8,7 @@ import com.intellij.webSymbols.WebSymbolQualifiedKind
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueComputedProperty
 import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
+import org.jetbrains.vuejs.web.VUE_COMPONENT_COMPUTED_PROPERTIES
 
 class VueComputedPropertySymbol(data: VueComputedProperty,
                                 owner: VueComponent,
@@ -16,7 +16,7 @@ class VueComputedPropertySymbol(data: VueComputedProperty,
   : VuePropertySymbol<VueComputedProperty>(data, owner, origin) {
 
   override val qualifiedKind: WebSymbolQualifiedKind
-    get() = VueWebSymbolsQueryConfigurator.VUE_COMPONENT_COMPUTED_PROPERTIES
+    get() = VUE_COMPONENT_COMPUTED_PROPERTIES
 
   override val type: JSType?
     get() = item.jsType

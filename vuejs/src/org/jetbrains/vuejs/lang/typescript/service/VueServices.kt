@@ -10,13 +10,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.html.VueFileType
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFile
+import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.lang.typescript.service.volar.VolarExecutableDownloader
 import org.jetbrains.vuejs.options.VueServiceSettings
 import org.jetbrains.vuejs.options.getVueSettings
 
 
-private fun isVueServiceContext(project: Project, context: VirtualFile): Boolean = context.fileType is VueFileType || isVueContext(context, project)
+private fun isVueServiceContext(project: Project, context: VirtualFile): Boolean = context.fileType is VueFileType || isVueContext(context,
+                                                                                                                                   project)
 
 private fun isTypeScriptServiceBefore5Context(project: Project): Boolean {
   val path = getTypeScriptServiceDirectory(project)

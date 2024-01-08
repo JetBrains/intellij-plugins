@@ -4,11 +4,8 @@ package org.jetbrains.vuejs.index
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubIndexKey
 
-class VueUrlIndex : VueIndexBase<PsiElement>(KEY) {
-  companion object {
-    val KEY: StubIndexKey<String, PsiElement> =
-      StubIndexKey.createIndexKey("vue.url.index")
+class VueUrlIndex : VueIndexBase<PsiElement>(VUE_URL_INDEX_KEY)
 
-    val JS_KEY: String = createJSKey(KEY)
-  }
-}
+val VUE_URL_INDEX_KEY: StubIndexKey<String, PsiElement> =
+  StubIndexKey.createIndexKey("vue.url.index")
+val VUE_URL_INDEX_JS_KEY: String = VueIndexBase.createJSKey(VUE_URL_INDEX_KEY)

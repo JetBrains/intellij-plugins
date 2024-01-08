@@ -6,7 +6,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
 import org.jetbrains.vuejs.VueBundle
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFile
+import org.jetbrains.vuejs.lang.html.isVueFile
 
 class VueTopLevelLiveTemplateContextType : TemplateContextType(VueBundle.message("vue.live.template.context.top.level")) {
   override fun isInContext(file: PsiFile, offset: Int): Boolean {

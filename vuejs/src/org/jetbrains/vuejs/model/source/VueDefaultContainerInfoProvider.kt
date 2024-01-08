@@ -33,28 +33,27 @@ import org.jetbrains.vuejs.types.optionalIf
 class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedContainerInfoProvider(::VueSourceContainerInfo) {
 
   private class VueSourceContainerInfo(declaration: JSElement) : VueInitializedContainerInfo(declaration) {
-    override val data: List<VueDataProperty> get() = get(DATA)
-    override val computed: List<VueComputedProperty> get() = get(COMPUTED)
-    override val methods: List<VueMethod> get() = get(METHODS)
-    override val props: List<VueInputProperty> get() = get(PROPS)
-    override val emits: List<VueEmitCall> get() = get(EMITS)
-    override val slots: List<VueSlot> get() = get(SLOTS)
-    override val model: VueModelDirectiveProperties get() = get(MODEL)
+    override val data: List<VueDataProperty> get() = get(Holder.DATA)
+    override val computed: List<VueComputedProperty> get() = get(Holder.COMPUTED)
+    override val methods: List<VueMethod> get() = get(Holder.METHODS)
+    override val props: List<VueInputProperty> get() = get(Holder.PROPS)
+    override val emits: List<VueEmitCall> get() = get(Holder.EMITS)
+    override val slots: List<VueSlot> get() = get(Holder.SLOTS)
+    override val model: VueModelDirectiveProperties get() = get(Holder.MODEL)
 
-    override val delimiters: Pair<String, String>? get() = get(DELIMITERS).get()
-    override val extends: List<VueMixin> get() = get(EXTENDS) + get(EXTENDS_CALL)
-    override val components: Map<String, VueComponent> get() = get(COMPONENTS)
-    override val directives: Map<String, VueDirective> get() = get(DIRECTIVES)
-    override val mixins: List<VueMixin> get() = get(MIXINS)
-    override val filters: Map<String, VueFilter> get() = get(FILTERS)
-    override val provides: List<VueProvide> get() = get(PROVIDES)
-    override val injects: List<VueInject> get() = get(INJECTS)
+    override val delimiters: Pair<String, String>? get() = get(Holder.DELIMITERS).get()
+    override val extends: List<VueMixin> get() = get(Holder.EXTENDS) + get(Holder.EXTENDS_CALL)
+    override val components: Map<String, VueComponent> get() = get(Holder.COMPONENTS)
+    override val directives: Map<String, VueDirective> get() = get(Holder.DIRECTIVES)
+    override val mixins: List<VueMixin> get() = get(Holder.MIXINS)
+    override val filters: Map<String, VueFilter> get() = get(Holder.FILTERS)
+    override val provides: List<VueProvide> get() = get(Holder.PROVIDES)
+    override val injects: List<VueInject> get() = get(Holder.INJECTS)
 
   }
 
-  companion object {
-
-    private val ContainerMember = object {
+  private object Holder {
+    object ContainerMember {
       val Props: MemberReader = MemberReader(PROPS_PROP, true)
       val Computed = MemberReader(COMPUTED_PROP)
       val Methods = MemberReader(METHODS_PROP)
@@ -70,24 +69,22 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
       val Injects = MemberReader(INJECT_PROP, canBeArray = true)
     }
 
-    private val EXTENDS = MixinsAccessor(EXTENDS_PROP, VueExtendsBindingIndex.KEY)
-    private val EXTENDS_CALL = ExtendsCallAccessor()
-    private val MIXINS = MixinsAccessor(MIXINS_PROP, VueMixinBindingIndex.KEY)
-    private val DIRECTIVES = DirectivesAccessor()
-    private val COMPONENTS = ComponentsAccessor()
-    private val FILTERS = SimpleMemberMapAccessor(ContainerMember.Filters, ::VueSourceFilter)
-    private val DELIMITERS = DelimitersAccessor()
-    private val PROVIDES = ProvidesAccessor()
-    private val INJECTS = SimpleMemberAccessor(ContainerMember.Injects, ::VueSourceInject)
-
-    private val PROPS = SimpleMemberAccessor(ContainerMember.Props, ::VueSourceInputProperty)
-    private val DATA = SimpleMemberAccessor(ContainerMember.Data, ::VueSourceDataProperty)
-    private val COMPUTED = SimpleMemberAccessor(ContainerMember.Computed, ::VueSourceComputedProperty)
-    private val METHODS = SimpleMemberAccessor(ContainerMember.Methods, ::VueSourceMethod)
-    private val EMITS = SimpleMemberAccessor(ContainerMember.Emits, ::VueSourceEmitDefinition)
-    private val SLOTS = SimpleMemberAccessor(ContainerMember.Slots, ::VueSourceSlot)
-
-    private val MODEL = ModelAccessor()
+    val EXTENDS = MixinsAccessor(EXTENDS_PROP, VUE_EXTENDS_BINDING_INDEX_KEY)
+    val EXTENDS_CALL = ExtendsCallAccessor()
+    val MIXINS = MixinsAccessor(MIXINS_PROP, VUE_MIXIN_BINDING_INDEX_KEY)
+    val DIRECTIVES = DirectivesAccessor()
+    val COMPONENTS = ComponentsAccessor()
+    val FILTERS = SimpleMemberMapAccessor(ContainerMember.Filters, ::VueSourceFilter)
+    val DELIMITERS = DelimitersAccessor()
+    val PROVIDES = ProvidesAccessor()
+    val INJECTS = SimpleMemberAccessor(ContainerMember.Injects, ::VueSourceInject)
+    val PROPS = SimpleMemberAccessor(ContainerMember.Props, ::VueSourceInputProperty)
+    val DATA = SimpleMemberAccessor(ContainerMember.Data, ::VueSourceDataProperty)
+    val COMPUTED = SimpleMemberAccessor(ContainerMember.Computed, ::VueSourceComputedProperty)
+    val METHODS = SimpleMemberAccessor(ContainerMember.Methods, ::VueSourceMethod)
+    val EMITS = SimpleMemberAccessor(ContainerMember.Emits, ::VueSourceEmitDefinition)
+    val SLOTS = SimpleMemberAccessor(ContainerMember.Slots, ::VueSourceSlot)
+    val MODEL = ModelAccessor()
   }
 
   private class ExtendsCallAccessor : ListAccessor<VueMixin>() {
@@ -98,7 +95,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
         ?.indexingData
         ?.implicitElements
         ?.asSequence()
-        ?.filter { it.userString == VueExtendsBindingIndex.JS_KEY }
+        ?.filter { it.userString == VUE_EXTENDS_BINDING_INDEX_JS_KEY }
         ?.mapNotNull { VueComponents.vueMixinDescriptorFinder(it) }
         ?.mapNotNull { VueModelManager.getMixin(it) }
         ?.toList()
@@ -138,7 +135,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
   private class DirectivesAccessor : MapAccessor<VueDirective>() {
     override fun build(declaration: JSElement): Map<String, VueDirective> {
-      return StreamEx.of(ContainerMember.Directives.readMembers(declaration))
+      return StreamEx.of(Holder.ContainerMember.Directives.readMembers(declaration))
         .mapToEntry({ it.first }, {
           (VueComponents.meaningfulExpression(it.second) ?: it.second)
             .let { meaningfulElement ->
@@ -156,7 +153,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
   private class ComponentsAccessor : MapAccessor<VueComponent>() {
     override fun build(declaration: JSElement): Map<String, VueComponent> {
-      return StreamEx.of(ContainerMember.Components.readMembers(declaration))
+      return StreamEx.of(Holder.ContainerMember.Components.readMembers(declaration))
         .mapToEntry({ p -> p.first }, { p -> p.second })
         .mapValues { element ->
           when (val meaningfulElement = VueComponents.meaningfulExpression(element) ?: element) {
@@ -188,7 +185,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
   private class ProvidesAccessor : ListAccessor<VueProvide>() {
     override fun build(declaration: JSElement): List<VueProvide> {
-      return ContainerMember.Provides.readMembers(declaration).mapNotNull { (name, element) ->
+      return Holder.ContainerMember.Provides.readMembers(declaration).mapNotNull { (name, element) ->
         if (element is JSComputedPropertyNameOwner && element.computedPropertyName != null) {
           JSStubBasedPsiTreeUtil.resolveLocally(name, element).asSafely<PsiNamedElement>()
             ?.let { VueSourceProvide(name, element, it) }
@@ -204,7 +201,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     override fun build(declaration: JSElement): VueModelDirectiveProperties {
       var prop: String? = null
       var event: String? = null
-      ContainerMember.Model.readMembers(declaration).forEach { (name, element) ->
+      Holder.ContainerMember.Model.readMembers(declaration).forEach { (name, element) ->
         (element as? JSProperty)?.value
           ?.let { getTextIfLiteral(it) }
           ?.let { value ->
@@ -220,7 +217,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
   private class DelimitersAccessor : MemberAccessor<Ref<Pair<String, String>>>() {
     override fun build(declaration: JSElement): Ref<Pair<String, String>> {
-      val delimiters = ContainerMember.Delimiters.readMembers(declaration)
+      val delimiters = Holder.ContainerMember.Delimiters.readMembers(declaration)
       if (delimiters.size == 2
           && delimiters[0].first.isNotBlank()
           && delimiters[1].first.isNotBlank()) {

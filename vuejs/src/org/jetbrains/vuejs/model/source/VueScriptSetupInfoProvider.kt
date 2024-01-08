@@ -28,8 +28,8 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlFile
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.*
-import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.index.findModule
+import org.jetbrains.vuejs.index.getFunctionNameFromVueIndex
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.types.VueSourceModelPropType
 import org.jetbrains.vuejs.types.optionalIf
@@ -121,7 +121,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       val modelDecls: MutableMap<String, VueModelDecl> = mutableMapOf()
 
       module.getStubSafeDefineCalls().forEach { call ->
-        when (VueFrameworkHandler.getFunctionNameFromVueIndex(call)) {
+        when (getFunctionNameFromVueIndex(call)) {
           DEFINE_PROPS_FUN -> {
             val defaults = when (val parent = call.context) {
               is JSDestructuringElement -> {
@@ -190,7 +190,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       val symbols: MutableList<VueNamedSymbol> = mutableListOf()
 
       module.getStubSafeDefineCalls().forEach { call ->
-        when (VueFrameworkHandler.getFunctionNameFromVueIndex(call)) {
+        when (getFunctionNameFromVueIndex(call)) {
           PROVIDE_FUN -> analyzeProvide(call)?.let { symbols.add(it) }
           INJECT_FUN -> analyzeInject(call)?.let { symbols.add(it) }
         }
@@ -317,7 +317,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       stubSafeCallArguments
         .getOrNull(0)
         .asSafely<JSCallExpression>()
-        ?.takeIf { VueFrameworkHandler.getFunctionNameFromVueIndex(it) == DEFINE_PROPS_FUN }
+        ?.takeIf { getFunctionNameFromVueIndex(it) == DEFINE_PROPS_FUN }
 
     private fun getLiteralValue(literal: JSLiteralExpression): String? =
       literal.significantValue

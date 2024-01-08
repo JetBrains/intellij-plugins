@@ -11,7 +11,7 @@ import org.jetbrains.vuejs.VueBundle
 
 class VueComponentDescriptorLiveTemplateContextType : TemplateContextType(VueBundle.message("vue.live.template.context.component")) {
   override fun isInContext(file: PsiFile, offset: Int): Boolean {
-    return VueBaseLiveTemplateContextType.evaluateContext(
+    return VueBaseLiveTemplateContextType.Util.evaluateContext(
       file, offset,
       scriptContextEvaluator = { it is JSExportAssignment || PsiTreeUtil.getParentOfType(it, JSExportAssignment::class.java) != null },
       notVueFileType = {

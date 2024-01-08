@@ -21,7 +21,7 @@ import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 import org.jetbrains.vuejs.intentions.extractComponent.VueComponentInplaceIntroducer.Companion.GROUP_ID
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.VUE_COMPONENTS
+import org.jetbrains.vuejs.web.VUE_COMPONENTS
 
 class VueExtractComponentRefactoring(private val project: Project,
                                      private val list: List<XmlTag>,

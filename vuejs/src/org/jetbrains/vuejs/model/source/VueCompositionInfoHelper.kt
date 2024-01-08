@@ -8,7 +8,7 @@ import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
 import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
-import org.jetbrains.vuejs.index.VueFrameworkHandler
+import org.jetbrains.vuejs.index.getFunctionNameFromVueIndex
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.types.VueUnwrapRefType
 
@@ -71,7 +71,7 @@ object VueCompositionInfoHelper {
 
     val typeSource =
       psiContext.asSafely<JSCallExpression>()
-        ?.takeIf { VueFrameworkHandler.getFunctionNameFromVueIndex(it) == DEFINE_EXPOSE_FUN }
+        ?.takeIf { getFunctionNameFromVueIndex(it) == DEFINE_EXPOSE_FUN }
         ?.stubSafeCallArguments?.getOrNull(0)
         ?.asSafely<JSObjectLiteralExpression>()
       ?: psiContext

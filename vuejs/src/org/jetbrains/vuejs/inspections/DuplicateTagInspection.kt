@@ -15,8 +15,8 @@ import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
 import com.intellij.xml.util.XmlTagUtil
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.index.isScriptSetupTag
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFile
 import org.jetbrains.vuejs.lang.html.VueLanguage
+import org.jetbrains.vuejs.lang.html.isVueFile
 
 class DuplicateTagInspection : LocalInspectionTool() {
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {

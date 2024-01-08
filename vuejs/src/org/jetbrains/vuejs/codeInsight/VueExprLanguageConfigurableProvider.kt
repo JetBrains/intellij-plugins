@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.*
 import com.intellij.psi.PsiElement
 import com.intellij.psi.SyntaxTraverser
 import com.intellij.psi.util.PsiTreeUtil.getContextOfType
-import org.jetbrains.vuejs.lang.expr.VueExprMetaLanguage
+import org.jetbrains.vuejs.lang.expr.isVueExprMetaLanguage
 import org.jetbrains.vuejs.lang.expr.psi.VueJSSlotPropsExpression
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForExpression
 
@@ -13,7 +13,7 @@ class VueExprLanguageConfigurableProvider : JSInheritedLanguagesConfigurableProv
   override fun isNeedToBeTerminated(element: PsiElement): Boolean = false
 
   override fun createParameterOrVariableItem(destruct: String, parent: PsiElement): PsiElement? {
-    if (!VueExprMetaLanguage.matches(parent.language) || parent !is JSElement) return null
+    if (!isVueExprMetaLanguage(parent.language) || parent !is JSElement) return null
     val paramsListOrVarStmt = getContextOfType(parent, false, JSVarStatement::class.java, JSParameterList::class.java)
     return when (paramsListOrVarStmt?.context) {
       is VueJSSlotPropsExpression -> "<li #slot=\"$destruct\">"

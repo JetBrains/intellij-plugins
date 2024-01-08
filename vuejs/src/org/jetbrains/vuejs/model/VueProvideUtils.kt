@@ -15,7 +15,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
-import org.jetbrains.vuejs.index.VueFrameworkHandler
+import org.jetbrains.vuejs.index.getFunctionImplicitElement
 import org.jetbrains.vuejs.model.source.VueCallInject
 import org.jetbrains.vuejs.model.source.VueSourceProvide
 import org.jetbrains.vuejs.types.optionalIf
@@ -33,7 +33,7 @@ private fun <T : VueNamedSymbol> analyzeCall(
   call: JSCallExpression,
   factory: (name: String, source: PsiElement, symbol: PsiNamedElement?) -> T
 ): T? {
-  val referenceName = VueFrameworkHandler.getFunctionImplicitElement(call)?.userStringData
+  val referenceName = getFunctionImplicitElement(call)?.userStringData
   val literal = call.stubSafeCallArguments.getOrNull(0).asSafely<JSLiteralExpression>()
   return when {
     referenceName != null -> JSStubBasedPsiTreeUtil.resolveLocally(referenceName, call).asSafely<PsiNamedElement>()
@@ -44,7 +44,7 @@ private fun <T : VueNamedSymbol> analyzeCall(
 }
 
 fun findInjectForCall(call: JSCallExpression, component: VueComponent): VueInject? {
-  val injectionKey = VueFrameworkHandler.getFunctionImplicitElement(call)?.userStringData
+  val injectionKey = getFunctionImplicitElement(call)?.userStringData
                      ?: call.stubSafeCallArguments.getOrNull(0).asSafely<JSLiteralExpression>()?.stubSafeStringValue
                      ?: return null
   return component.asSafely<VueContainer>()?.injects?.find { it.name == injectionKey }

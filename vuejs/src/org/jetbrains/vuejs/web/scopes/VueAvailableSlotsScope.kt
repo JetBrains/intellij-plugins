@@ -18,8 +18,8 @@ import org.jetbrains.vuejs.model.DEFAULT_SLOT_NAME
 import org.jetbrains.vuejs.model.getAvailableSlots
 import org.jetbrains.vuejs.model.getAvailableSlotsCompletions
 import org.jetbrains.vuejs.model.getMatchingAvailableSlots
+import org.jetbrains.vuejs.web.VUE_AVAILABLE_SLOTS
 import org.jetbrains.vuejs.web.VueFramework
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.VUE_AVAILABLE_SLOTS
 
 class VueAvailableSlotsScope(private val tag: XmlTag) : WebSymbolsScope {
 

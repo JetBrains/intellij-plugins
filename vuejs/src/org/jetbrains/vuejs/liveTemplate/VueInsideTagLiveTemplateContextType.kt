@@ -7,6 +7,6 @@ import org.jetbrains.vuejs.VueBundle
 
 class VueInsideTagLiveTemplateContextType : TemplateContextType(VueBundle.message("vue.live.template.context.template.tag.element")) {
   override fun isInContext(file: PsiFile, offset: Int): Boolean {
-    return VueBaseLiveTemplateContextType.evaluateContext(file, offset, forAttributeInsert = true)
+    return VueBaseLiveTemplateContextType.Util.evaluateContext(file, offset, forAttributeInsert = true)
   }
 }

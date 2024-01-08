@@ -20,7 +20,7 @@ import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.codeInsight.getFirstInjectedFile
 import org.jetbrains.vuejs.codeInsight.getHostFile
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
-import org.jetbrains.vuejs.index.VueUrlIndex
+import org.jetbrains.vuejs.index.VUE_URL_INDEX_KEY
 import org.jetbrains.vuejs.index.findTopLevelVueTag
 import org.jetbrains.vuejs.model.*
 
@@ -41,109 +41,104 @@ class VueComponentTemplateInfoProvider : VueContainerInfoProvider {
         }
       }
   }
+}
 
-  companion object {
-
-    private fun createInfo(template: PsiElement?): VueTemplate<*>? =
-      when (template) {
-        is XmlFile -> VueFileTemplate(template)
-        is XmlTag -> VueTagTemplate(template)
-        else -> null
-      }
-
-    private fun locateTemplateInTheSameVueFile(source: PsiElement): CachedValueProvider.Result<VueTemplate<*>?>? {
-      val context = source as? PsiFile ?: source.context!!
-      return context.containingFile
-        ?.asSafely<XmlFile>()
-        ?.let { findTopLevelVueTag(it, HtmlUtil.TEMPLATE_TAG_NAME) }
-        ?.let {
-          CachedValueProvider.Result.create(locateTemplateInTemplateTag(it), context, context.containingFile)
-        }
-    }
-
-    private fun locateTemplateInTemplateProperty(source: PsiElement): CachedValueProvider.Result<VueTemplate<*>?>? =
-      (source as? JSObjectLiteralExpression)
-        ?.findProperty(TEMPLATE_PROP)
-        ?.value
-        ?.let { expression ->
-          // Inline template
-          getFirstInjectedFile(expression)
-            ?.let { return CachedValueProvider.Result.create(createInfo(it), source, it) }
-
-          // Referenced template
-          getReferencedTemplate(expression)
-        }
-
-    private fun getReferencedTemplate(expression: JSExpression): CachedValueProvider.Result<VueTemplate<*>?> {
-      var directRefs = getTextIfLiteral(expression)?.startsWith("#") == true
-      var referenceExpr = expression
-
-      if (expression is JSCallExpression) {
-        val args = expression.arguments
-        if (args.size == 1) {
-          referenceExpr = args[0]
-          directRefs = true
-        }
-        else {
-          return CachedValueProvider.Result.create(null, expression)
-        }
-      }
-
-      var result: PsiElement? = null
-      refs@ for (ref in referenceExpr.references) {
-        val el = ref.resolve()
-        if (directRefs) {
-          if (el is PsiFile || el is XmlTag) {
-            result = el
-            break@refs
-          }
-        }
-        else if (el is ES6ImportedBinding) {
-          for (importedElement in el.findReferencedElements()) {
-            if (importedElement is PsiFile) {
-              result = importedElement
-              break@refs
-            }
-          }
-        }
-      }
-      return CachedValueProvider.Result.create(createInfo(result), expression, referenceExpr,
-                                               VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
-    }
-
-    private fun locateTemplateInReferencingVueFile(source: PsiElement): CachedValueProvider.Result<VueTemplate<*>?>? {
-      val file = getHostFile(source) ?: return null
-      val name = file.viewProvider.virtualFile.name
-      var result: CachedValueProvider.Result<VueTemplate<*>?>? = null
-
-      StubIndex.getInstance().processElements(VueUrlIndex.KEY, name, source.project,
-                                              GlobalSearchScope.projectScope(source.project), PsiElement::class.java) { element ->
-        if (element is XmlAttribute
-            && element.context?.asSafely<XmlTag>()
-              ?.takeIf { it.name == HtmlUtil.SCRIPT_TAG_NAME }
-              ?.tryResolveSrcReference() == source.containingFile
-        ) {
-          result = CachedValueProvider.Result.create(
-            element.containingFile
-              ?.asSafely<XmlFile>()
-              ?.let { findTopLevelVueTag(it, HtmlUtil.TEMPLATE_TAG_NAME) }
-              ?.let { locateTemplateInTemplateTag(it) },
-            element, element.containingFile,
-            source, source.containingFile,
-            VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS
-          )
-          return@processElements false
-        }
-        true
-      }
-      return result
-    }
-
-    private fun locateTemplateInTemplateTag(tag: XmlTag): VueTemplate<*>? {
-      val element = if (tag.hasSrcReference()) tag.tryResolveSrcReference() else tag
-      return createInfo(element)
-    }
-
+private fun createInfo(template: PsiElement?): VueTemplate<*>? =
+  when (template) {
+    is XmlFile -> VueFileTemplate(template)
+    is XmlTag -> VueTagTemplate(template)
+    else -> null
   }
 
+private fun locateTemplateInTheSameVueFile(source: PsiElement): CachedValueProvider.Result<VueTemplate<*>?>? {
+  val context = source as? PsiFile ?: source.context!!
+  return context.containingFile
+    ?.asSafely<XmlFile>()
+    ?.let { findTopLevelVueTag(it, HtmlUtil.TEMPLATE_TAG_NAME) }
+    ?.let {
+      CachedValueProvider.Result.create(locateTemplateInTemplateTag(it), context, context.containingFile)
+    }
+}
+
+private fun locateTemplateInTemplateProperty(source: PsiElement): CachedValueProvider.Result<VueTemplate<*>?>? =
+  (source as? JSObjectLiteralExpression)
+    ?.findProperty(TEMPLATE_PROP)
+    ?.value
+    ?.let { expression ->
+      // Inline template
+      getFirstInjectedFile(expression)
+        ?.let { return CachedValueProvider.Result.create(createInfo(it), source, it) }
+
+      // Referenced template
+      getReferencedTemplate(expression)
+    }
+
+private fun getReferencedTemplate(expression: JSExpression): CachedValueProvider.Result<VueTemplate<*>?> {
+  var directRefs = getTextIfLiteral(expression)?.startsWith("#") == true
+  var referenceExpr = expression
+
+  if (expression is JSCallExpression) {
+    val args = expression.arguments
+    if (args.size == 1) {
+      referenceExpr = args[0]
+      directRefs = true
+    }
+    else {
+      return CachedValueProvider.Result.create(null, expression)
+    }
+  }
+
+  var result: PsiElement? = null
+  refs@ for (ref in referenceExpr.references) {
+    val el = ref.resolve()
+    if (directRefs) {
+      if (el is PsiFile || el is XmlTag) {
+        result = el
+        break@refs
+      }
+    }
+    else if (el is ES6ImportedBinding) {
+      for (importedElement in el.findReferencedElements()) {
+        if (importedElement is PsiFile) {
+          result = importedElement
+          break@refs
+        }
+      }
+    }
+  }
+  return CachedValueProvider.Result.create(createInfo(result), expression, referenceExpr,
+                                           VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
+}
+
+private fun locateTemplateInReferencingVueFile(source: PsiElement): CachedValueProvider.Result<VueTemplate<*>?>? {
+  val file = getHostFile(source) ?: return null
+  val name = file.viewProvider.virtualFile.name
+  var result: CachedValueProvider.Result<VueTemplate<*>?>? = null
+
+  StubIndex.getInstance().processElements(VUE_URL_INDEX_KEY, name, source.project,
+                                          GlobalSearchScope.projectScope(source.project), PsiElement::class.java) { element ->
+    if (element is XmlAttribute
+        && element.context?.asSafely<XmlTag>()
+          ?.takeIf { it.name == HtmlUtil.SCRIPT_TAG_NAME }
+          ?.tryResolveSrcReference() == source.containingFile
+    ) {
+      result = CachedValueProvider.Result.create(
+        element.containingFile
+          ?.asSafely<XmlFile>()
+          ?.let { findTopLevelVueTag(it, HtmlUtil.TEMPLATE_TAG_NAME) }
+          ?.let { locateTemplateInTemplateTag(it) },
+        element, element.containingFile,
+        source, source.containingFile,
+        VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS
+      )
+      return@processElements false
+    }
+    true
+  }
+  return result
+}
+
+private fun locateTemplateInTemplateTag(tag: XmlTag): VueTemplate<*>? {
+  val element = if (tag.hasSrcReference()) tag.tryResolveSrcReference() else tag
+  return createInfo(element)
 }

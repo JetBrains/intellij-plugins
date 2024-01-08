@@ -16,8 +16,6 @@ import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.VUE_COMPONENTS
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.VUE_COMPONENT_PROPS
 import java.util.function.Predicate
 import javax.swing.Icon
 
@@ -31,7 +29,7 @@ class VueFramework : WebFramework() {
 
   override fun getFileType(kind: SourceFileKind, context: VirtualFile, project: Project): WebFrameworkHtmlFileType? =
     when (kind) {
-      SourceFileKind.HTML, SourceFileKind.STANDALONE -> VueFileType.INSTANCE
+      SourceFileKind.HTML, SourceFileKind.STANDALONE -> VueFileType
       else -> null
     }
 
@@ -70,7 +68,6 @@ class VueFramework : WebFramework() {
     VueAttributeNameCodeCompletionFilter(tag)
 
   companion object {
-    val instance get() = get("vue")
     const val ID = "vue"
   }
 }

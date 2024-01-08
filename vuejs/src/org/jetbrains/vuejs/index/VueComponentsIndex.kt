@@ -4,10 +4,8 @@ package org.jetbrains.vuejs.index
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider
 import com.intellij.psi.stubs.StubIndexKey
 
-class VueComponentsIndex : VueIndexBase<JSImplicitElementProvider>(KEY) {
-  companion object {
-    val KEY: StubIndexKey<String, JSImplicitElementProvider> =
-      StubIndexKey.createIndexKey("vue.components.index")
-    val JS_KEY: String = createJSKey(KEY)
-  }
-}
+class VueComponentsIndex : VueIndexBase<JSImplicitElementProvider>(VUE_COMPONENTS_INDEX_KEY)
+
+val VUE_COMPONENTS_INDEX_KEY: StubIndexKey<String, JSImplicitElementProvider> =
+  StubIndexKey.createIndexKey("vue.components.index")
+val VUE_COMPONENTS_INDEX_JS_KEY: String = VueIndexBase.createJSKey(VUE_COMPONENTS_INDEX_KEY)

@@ -25,7 +25,7 @@ import com.intellij.util.ProcessingContext
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.context.isVueContext
-import org.jetbrains.vuejs.index.VueIdIndex
+import org.jetbrains.vuejs.index.VUE_ID_INDEX_KEY
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.source.NAME_PROP
 import org.jetbrains.vuejs.model.source.TEMPLATE_PROP
@@ -38,123 +38,120 @@ class VueJSReferenceContributor : PsiReferenceContributor() {
     registrar.registerReferenceProvider(COMPONENT_NAME, VueComponentNameReferenceProvider())
     registrar.registerReferenceProvider(TEMPLATE_ID_REF, VueTemplateIdReferenceProvider())
   }
+}
 
-  companion object {
-    private val THIS_INSIDE_COMPONENT: ElementPattern<out PsiElement> = createThisInsideComponentPattern()
-    private val COMPONENT_NAME: ElementPattern<out PsiElement> = createComponentNamePattern()
-    private val TEMPLATE_ID_REF = JSPatterns.jsLiteral()
-      .withParent(JSPatterns.jsProperty().withName(TEMPLATE_PROP))
+private val THIS_INSIDE_COMPONENT: ElementPattern<out PsiElement> = createThisInsideComponentPattern()
+private val COMPONENT_NAME: ElementPattern<out PsiElement> = createComponentNamePattern()
+private val TEMPLATE_ID_REF = JSPatterns.jsLiteral()
+  .withParent(JSPatterns.jsProperty().withName(TEMPLATE_PROP))
 
-    private fun createThisInsideComponentPattern(): ElementPattern<out PsiElement> {
-      return PlatformPatterns.psiElement(JSReferenceExpression::class.java)
-        .and(FilterPattern(object : ElementFilter {
-          override fun isAcceptable(element: Any?, context: PsiElement?): Boolean {
-            return element.asSafely<JSReferenceExpression>()
-              ?.qualifier
-              ?.asSafely<JSThisExpression>()
-              ?.let { VueModelManager.findComponentForThisResolve(it) } != null
-          }
-
-          override fun isClassAcceptable(hintClass: Class<*>?): Boolean {
-            return true
-          }
-        }))
-    }
-
-    private fun createComponentNamePattern(): ElementPattern<out PsiElement> {
-      return PlatformPatterns.psiElement(JSLiteralExpression::class.java)
-        .withParent(JSPatterns.jsProperty().withName(NAME_PROP))
-        .and(FilterPattern(object : ElementFilter {
-          override fun isAcceptable(element: Any?, context: PsiElement?): Boolean {
-            if (element !is JSElement) return false
-            val component = VueModelManager.findEnclosingComponent(element) as? VueSourceEntity ?: return false
-            return component.initializer == element.parent?.parent
-          }
-
-          override fun isClassAcceptable(hintClass: Class<*>?): Boolean {
-            return true
-          }
-
-        }))
-    }
-  }
-
-
-  private class VueTemplateIdReferenceProvider : PsiReferenceProvider() {
-    override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
-      return if (getTextIfLiteral(element)?.startsWith("#") == true
-                 && isVueContext(element)) {
-        arrayOf(VueTemplateIdReference(element as JSLiteralExpression, TextRange(2, element.textLength - 1)))
+private fun createThisInsideComponentPattern(): ElementPattern<out PsiElement> {
+  return PlatformPatterns.psiElement(JSReferenceExpression::class.java)
+    .and(FilterPattern(object : ElementFilter {
+      override fun isAcceptable(element: Any?, context: PsiElement?): Boolean {
+        return element.asSafely<JSReferenceExpression>()
+          ?.qualifier
+          ?.asSafely<JSThisExpression>()
+          ?.let { VueModelManager.findComponentForThisResolve(it) } != null
       }
-      else emptyArray()
-    }
-  }
 
-  private class VueComponentLocalReferenceProvider : PsiReferenceProvider() {
-    override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
-      if (element is JSReferenceExpressionImpl) {
-        return arrayOf(VueComponentLocalReference(element, ElementManipulators.getValueTextRange(element)))
+      override fun isClassAcceptable(hintClass: Class<*>?): Boolean {
+        return true
       }
-      return emptyArray()
-    }
-  }
+    }))
+}
 
-  private class VueComponentLocalReference(reference: JSReferenceExpressionImpl,
-                                           textRange: TextRange?)
-    : CachingPolyReferenceBase<JSReferenceExpressionImpl>(reference, textRange) {
-
-    override fun resolveInner(): Array<ResolveResult> {
-      val ref = element
-      val name = ref.referenceName
-      if (name == null) return ResolveResult.EMPTY_ARRAY
-      return ref.qualifier
-               .asSafely<JSThisExpression>()
-               ?.let { VueModelManager.findComponentForThisResolve(it) }
-               ?.thisType
-               ?.asRecordType()
-               ?.findPropertySignature(name)
-               ?.memberSource
-               ?.allSourceElements
-               ?.mapNotNull { if (it.isValid) PsiElementResolveResult(it) else null }
-               ?.toTypedArray<ResolveResult>()
-             ?: ResolveResult.EMPTY_ARRAY
-    }
-  }
-
-  private class VueComponentNameReferenceProvider : PsiReferenceProvider() {
-    override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
-      if (element is JSLiteralExpression) {
-        return arrayOf(VueComponentNameReference(element, ElementManipulators.getValueTextRange(element)))
+private fun createComponentNamePattern(): ElementPattern<out PsiElement> {
+  return PlatformPatterns.psiElement(JSLiteralExpression::class.java)
+    .withParent(JSPatterns.jsProperty().withName(NAME_PROP))
+    .and(FilterPattern(object : ElementFilter {
+      override fun isAcceptable(element: Any?, context: PsiElement?): Boolean {
+        if (element !is JSElement) return false
+        val component = VueModelManager.findEnclosingComponent(element) as? VueSourceEntity ?: return false
+        return component.initializer == element.parent?.parent
       }
-      return emptyArray()
-    }
 
-  }
-
-  private class VueComponentNameReference(element: JSLiteralExpression,
-                                          rangeInElement: TextRange?) : CachingPolyReferenceBase<JSLiteralExpression>(element,
-                                                                                                                      rangeInElement) {
-    override fun resolveInner(): Array<ResolveResult> {
-      getParentOfType(element, JSPropertyImpl::class.java, true) ?: return emptyArray()
-      return arrayOf(PsiElementResolveResult(JSImplicitElementImpl(element.value.toString(), element)))
-    }
-  }
-
-  private class VueTemplateIdReference(element: JSLiteralExpression, rangeInElement: TextRange?)
-    : CachingPolyReferenceBase<JSLiteralExpression>(element, rangeInElement) {
-    override fun resolveInner(): Array<ResolveResult> {
-      val result = mutableListOf<ResolveResult>()
-      StubIndex.getInstance().processElements(VueIdIndex.KEY, value, element.project,
-                                              GlobalSearchScope.projectScope(element.project),
-                                              PsiElement::class.java) { element ->
-        (element as? XmlAttribute)
-          ?.context
-          ?.asSafely<XmlTag>()
-          ?.let { result.add(PsiElementResolveResult(it)) }
-        true
+      override fun isClassAcceptable(hintClass: Class<*>?): Boolean {
+        return true
       }
-      return result.toTypedArray()
+
+    }))
+}
+
+private class VueTemplateIdReferenceProvider : PsiReferenceProvider() {
+  override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
+    return if (getTextIfLiteral(element)?.startsWith("#") == true
+               && isVueContext(element)) {
+      arrayOf(VueTemplateIdReference(element as JSLiteralExpression, TextRange(2, element.textLength - 1)))
     }
+    else emptyArray()
+  }
+}
+
+private class VueComponentLocalReferenceProvider : PsiReferenceProvider() {
+  override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
+    if (element is JSReferenceExpressionImpl) {
+      return arrayOf(VueComponentLocalReference(element, ElementManipulators.getValueTextRange(element)))
+    }
+    return emptyArray()
+  }
+}
+
+private class VueComponentLocalReference(reference: JSReferenceExpressionImpl,
+                                         textRange: TextRange?)
+  : CachingPolyReferenceBase<JSReferenceExpressionImpl>(reference, textRange) {
+
+  override fun resolveInner(): Array<ResolveResult> {
+    val ref = element
+    val name = ref.referenceName
+    if (name == null) return ResolveResult.EMPTY_ARRAY
+    return ref.qualifier
+             .asSafely<JSThisExpression>()
+             ?.let { VueModelManager.findComponentForThisResolve(it) }
+             ?.thisType
+             ?.asRecordType()
+             ?.findPropertySignature(name)
+             ?.memberSource
+             ?.allSourceElements
+             ?.mapNotNull { if (it.isValid) PsiElementResolveResult(it) else null }
+             ?.toTypedArray<ResolveResult>()
+           ?: ResolveResult.EMPTY_ARRAY
+  }
+}
+
+private class VueComponentNameReferenceProvider : PsiReferenceProvider() {
+  override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
+    if (element is JSLiteralExpression) {
+      return arrayOf(VueComponentNameReference(element, ElementManipulators.getValueTextRange(element)))
+    }
+    return emptyArray()
   }
 
 }
+
+private class VueComponentNameReference(element: JSLiteralExpression,
+                                        rangeInElement: TextRange?) : CachingPolyReferenceBase<JSLiteralExpression>(element,
+                                                                                                                    rangeInElement) {
+  override fun resolveInner(): Array<ResolveResult> {
+    getParentOfType(element, JSPropertyImpl::class.java, true) ?: return emptyArray()
+    return arrayOf(PsiElementResolveResult(JSImplicitElementImpl(element.value.toString(), element)))
+  }
+}
+
+private class VueTemplateIdReference(element: JSLiteralExpression, rangeInElement: TextRange?)
+  : CachingPolyReferenceBase<JSLiteralExpression>(element, rangeInElement) {
+  override fun resolveInner(): Array<ResolveResult> {
+    val result = mutableListOf<ResolveResult>()
+    StubIndex.getInstance().processElements(VUE_ID_INDEX_KEY, value, element.project,
+                                            GlobalSearchScope.projectScope(element.project),
+                                            PsiElement::class.java) { element ->
+      (element as? XmlAttribute)
+        ?.context
+        ?.asSafely<XmlTag>()
+        ?.let { result.add(PsiElementResolveResult(it)) }
+      true
+    }
+    return result.toTypedArray()
+  }
+}
+

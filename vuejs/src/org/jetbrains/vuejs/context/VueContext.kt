@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.context
 
 import com.intellij.javascript.nodejs.PackageJsonData
+import com.intellij.javascript.web.WebFramework
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.openapi.project.DumbService
@@ -28,19 +29,20 @@ import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.libraries.*
 import org.jetbrains.vuejs.libraries.componentDecorator.COMPONENT_DEC
 import org.jetbrains.vuejs.libraries.componentDecorator.OPTIONS_DEC
+import org.jetbrains.vuejs.web.VUE_TOP_LEVEL_ELEMENTS
 import org.jetbrains.vuejs.web.VueFramework
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.VUE_TOP_LEVEL_ELEMENTS
 
+private val vueFrameworkInstance get() = WebFramework.get("vue")
 
-fun isVueContext(context: PsiElement): Boolean = VueFramework.instance.isInContext(context)
+fun isVueContext(context: PsiElement): Boolean = vueFrameworkInstance.isInContext(context)
 
-fun isVueContext(contextFile: VirtualFile, project: Project): Boolean = VueFramework.instance.isInContext(contextFile, project)
+fun isVueContext(contextFile: VirtualFile, project: Project): Boolean = vueFrameworkInstance.isInContext(contextFile, project)
 
 fun hasVueFiles(project: Project): Boolean =
   CachedValuesManager.getManager(project).getCachedValue(project) {
     CachedValueProvider.Result.create(
       FileBasedIndexImpl.disableUpToDateCheckIn<Boolean, Exception> {
-        FileTypeIndex.containsFileOfType(VueFileType.INSTANCE, GlobalSearchScope.projectScope(project))
+        FileTypeIndex.containsFileOfType(VueFileType, GlobalSearchScope.projectScope(project))
       },
       VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS,
       DumbService.getInstance(project)

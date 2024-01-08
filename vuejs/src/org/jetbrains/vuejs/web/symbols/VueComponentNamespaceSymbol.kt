@@ -21,9 +21,9 @@ import org.jetbrains.vuejs.model.VueLocallyDefinedRegularComponent
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.VueRegularComponent
+import org.jetbrains.vuejs.web.VUE_COMPONENTS
+import org.jetbrains.vuejs.web.VUE_COMPONENT_NAMESPACES
 import org.jetbrains.vuejs.web.VueFramework
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.VUE_COMPONENTS
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.VUE_COMPONENT_NAMESPACES
 import java.util.*
 
 class VueComponentNamespaceSymbol(

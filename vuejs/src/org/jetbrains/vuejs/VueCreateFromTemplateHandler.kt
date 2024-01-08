@@ -23,7 +23,7 @@ class VueCreateFromTemplateHandler : DefaultCreateFromTemplateHandler() {
 
   override fun handlesTemplate(template: FileTemplate): Boolean {
     val fileType = FileTypeManagerEx.getInstanceEx().getFileTypeByExtension(template.extension)
-    return VueFileType.INSTANCE == fileType && template.name
+    return VueFileType == fileType && template.name
       .let { it == VUE_CLASS_API_TEMPLATE_NAME || it == VUE_COMPOSITION_API_TEMPLATE_NAME || it == VUE_OPTIONS_API_TEMPLATE_NAME }
   }
 

@@ -22,7 +22,8 @@ import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.context.isVueContext
-import org.jetbrains.vuejs.index.VueCompositionAppIndex
+import org.jetbrains.vuejs.index.VUE_COMPOSITION_APP_INDEX_JS_KEY
+import org.jetbrains.vuejs.index.VUE_COMPOSITION_APP_INDEX_KEY
 import org.jetbrains.vuejs.index.resolve
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.getComponentDescriptor
@@ -132,7 +133,7 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
     private fun getImplicitElement(call: JSCallExpression): JSImplicitElement? =
       call.indexingData
         ?.implicitElements
-        ?.find { it.userString == VueCompositionAppIndex.JS_KEY }
+        ?.find { it.userString == VUE_COMPOSITION_APP_INDEX_JS_KEY }
 
     private fun getParam(element: JSImplicitElement,
                          call: JSCallExpression,
@@ -149,7 +150,7 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
       val searchScope = GlobalSearchScopeUtil.toGlobalSearchScope(LocalSearchScope(resolveScope ?: call.containingFile), call.project)
 
       fun <T> processCalls(funName: String, hasName: Boolean, processor: (String, PsiElement, JSLiteralExpression?) -> T?): Sequence<T> =
-        resolve(funName, searchScope, VueCompositionAppIndex.KEY)
+        resolve(funName, searchScope, VUE_COMPOSITION_APP_INDEX_KEY)
           .asSequence()
           .filter { resolveScope == null || PsiTreeUtil.isContextAncestor(resolveScope, it, false) }
           .mapNotNull { el ->
@@ -191,7 +192,7 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
         Pair(name, VueSourceFilter(name, nameLiteral!!))
       }.toMap()
 
-      val provides = resolve(PROVIDE_FUN, searchScope, VueCompositionAppIndex.KEY)
+      val provides = resolve(PROVIDE_FUN, searchScope, VUE_COMPOSITION_APP_INDEX_KEY)
         .asSequence()
         .filter { resolveScope == null || PsiTreeUtil.isContextAncestor(resolveScope, it, false) }
         .mapNotNull { el ->
@@ -206,7 +207,7 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
           }
         }.toList()
 
-      val element = resolve(MOUNT_FUN, searchScope, VueCompositionAppIndex.KEY)
+      val element = resolve(MOUNT_FUN, searchScope, VUE_COMPOSITION_APP_INDEX_KEY)
         .firstNotNullOfOrNull { element ->
           (element.context as? JSCallExpression)
             ?.let { getFilteredArgs(it) }

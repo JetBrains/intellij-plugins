@@ -14,16 +14,16 @@ import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterExpression
 class VueInlayParameterHintsProvider : JavaScriptInlayParameterHintsProvider() {
 
   override fun getShowNameForAllArgsOption(): Option {
-    return NAMES_FOR_ALL_ARGS
+    return Options.NAMES_FOR_ALL_ARGS
   }
 
   override fun getSupportedOptions(): List<Option> {
-    return listOf(showNameForAllArgsOption, NAMES_FOR_FILTERS)
+    return listOf(showNameForAllArgsOption, Options.NAMES_FOR_FILTERS)
   }
 
   override fun isSuitableCallExpression(expression: JSCallLikeExpression?): Boolean {
     return super.isSuitableCallExpression(expression)
-           && (NAMES_FOR_FILTERS.get() || expression !is VueJSFilterExpression)
+           && (Options.NAMES_FOR_FILTERS.get() || expression !is VueJSFilterExpression)
   }
 
   override fun skipIndex(i: Int, expression: JSCallLikeExpression): Boolean {
@@ -31,10 +31,11 @@ class VueInlayParameterHintsProvider : JavaScriptInlayParameterHintsProvider() {
     else super.skipIndex(i, expression)
   }
 
-  companion object {
+  private object Options {
     val NAMES_FOR_ALL_ARGS = Option(
       "vuejs.show.names.for.all.args", JavaScriptBundle.messagePointer("js.param.hints.show.names.for.all.args"), false)
     val NAMES_FOR_FILTERS = Option(
       "vuejs.show.names.for.filters", VueBundle.messagePointer("vue.param.hints.show.names.for.filters"), true)
   }
+
 }

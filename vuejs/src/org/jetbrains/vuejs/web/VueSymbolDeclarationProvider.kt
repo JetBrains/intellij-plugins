@@ -16,7 +16,7 @@ import com.intellij.webSymbols.declarations.WebSymbolDeclarationProvider
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
-import org.jetbrains.vuejs.index.VueFrameworkHandler
+import org.jetbrains.vuejs.index.getFunctionNameFromVueIndex
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.source.DEFINE_EMITS_FUN
@@ -46,7 +46,7 @@ class VueSymbolDeclarationProvider : WebSymbolDeclarationProvider {
           is JSArgumentList ->
             grandparent.parent
               ?.asSafely<JSCallExpression>()
-              ?.takeIf { VueFrameworkHandler.getFunctionNameFromVueIndex(it) == DEFINE_EMITS_FUN }
+              ?.takeIf { getFunctionNameFromVueIndex(it) == DEFINE_EMITS_FUN }
           else -> null
         }
           ?.let { VueModelManager.findEnclosingComponent(it) }

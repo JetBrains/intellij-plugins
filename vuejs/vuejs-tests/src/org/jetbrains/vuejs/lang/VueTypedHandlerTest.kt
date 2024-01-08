@@ -26,37 +26,37 @@ import org.jetbrains.vuejs.lang.html.VueFileType
 
 class VueTypedHandlerTest : BasePlatformTestCase() {
   fun testBracketsClosing() {
-    myFixture.configureByText(VueFileType.INSTANCE, "{<caret>")
+    myFixture.configureByText(VueFileType, "{<caret>")
     myFixture.type("{")
     myFixture.checkResult("{{<caret>}}")
   }
 
   fun testBracketsNotClosingTwice() {
-    myFixture.configureByText(VueFileType.INSTANCE, "{<caret>}}")
+    myFixture.configureByText(VueFileType, "{<caret>}}")
     myFixture.type("{")
     myFixture.checkResult("{{<caret>}}")
   }
 
   fun testBracketsNotBreakingAtEnd() {
-    myFixture.configureByText(VueFileType.INSTANCE, "{{<caret>")
+    myFixture.configureByText(VueFileType, "{{<caret>")
     myFixture.type("}")
     myFixture.checkResult("{{}}<caret>")
   }
 
   fun testClosingBracketsSkipped() {
-    myFixture.configureByText(VueFileType.INSTANCE, "{{<caret>}}")
+    myFixture.configureByText(VueFileType, "{{<caret>}}")
     myFixture.type("}")
     myFixture.checkResult("{{}<caret>}")
   }
 
   fun testSecondClosingBracket() {
-    myFixture.configureByText(VueFileType.INSTANCE, "{{}<caret>")
+    myFixture.configureByText(VueFileType, "{{}<caret>")
     myFixture.type("}")
     myFixture.checkResult("{{}}<caret>")
   }
 
   fun testInsertWhitespace() {
-    myFixture.configureByText(VueFileType.INSTANCE, "{<caret>")
+    myFixture.configureByText(VueFileType, "{<caret>")
     val settings = JSCodeStyleSettings.getSettings(myFixture.file)
     val oldWhitespace = settings.SPACES_WITHIN_INTERPOLATION_EXPRESSIONS
     try {
@@ -71,7 +71,7 @@ class VueTypedHandlerTest : BasePlatformTestCase() {
 
   @Throws(Exception::class)
   fun testOneSymbolDelimiterStartCompletes() {
-    myFixture.configureByText(VueFileType.INSTANCE, "<caret>")
+    myFixture.configureByText(VueFileType, "<caret>")
     doInterpolationBracesCompleterTest("$", "#", '$', true)
     myFixture.checkResult("$ <caret> #")
   }
@@ -133,7 +133,7 @@ class VueTypedHandlerTest : BasePlatformTestCase() {
   }
 
   fun testNoInterpolationInsideScript() {
-    myFixture.configureByText(VueFileType.INSTANCE, """
+    myFixture.configureByText(VueFileType, """
 <template></template>
 <script>{<caret></script>
 """)
@@ -161,7 +161,7 @@ export default
   }
 
   fun testBracesCompletionInsideVueScriptContents() {
-    myFixture.configureByText(VueFileType.INSTANCE, """
+    myFixture.configureByText(VueFileType, """
 <template></template>
 <script>
 export default <caret>

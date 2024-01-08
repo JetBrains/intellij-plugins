@@ -10,7 +10,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.util.indexing.FileBasedIndexEx
 import org.jetbrains.vuejs.context.*
-import org.jetbrains.vuejs.index.VueComponentStylesIndex
+import org.jetbrains.vuejs.index.VUE_COMPONENT_STYLES_INDEX_KEY
 import org.jetbrains.vuejs.libraries.VUE_CLASS_COMPONENT
 import java.util.*
 
@@ -47,7 +47,7 @@ class VueDefaultTemplatePropertiesProvider : DefaultTemplatePropertiesProvider {
   private fun getAllStyles(project: Project): Set<String> {
     val styles = mutableSetOf<String>()
     FileBasedIndex.getInstance().processAllKeys(
-      VueComponentStylesIndex.KEY,
+      VUE_COMPONENT_STYLES_INDEX_KEY,
       { style ->
         styles.add(style)
         true
@@ -58,7 +58,7 @@ class VueDefaultTemplatePropertiesProvider : DefaultTemplatePropertiesProvider {
 
   private fun countFiles(style: String, project: Project): Int =
     FileBasedIndex.getInstance()
-      .getContainingFiles(VueComponentStylesIndex.KEY, style, GlobalSearchScope.projectScope(project))
+      .getContainingFiles(VUE_COMPONENT_STYLES_INDEX_KEY, style, GlobalSearchScope.projectScope(project))
       .size
 
 }

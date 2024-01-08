@@ -18,19 +18,19 @@ import org.jetbrains.vuejs.lang.expr.VueTSLanguage
 import org.jetbrains.vuejs.lang.expr.highlighting.VueJSSyntaxHighlighter
 import org.jetbrains.vuejs.lang.expr.highlighting.VueTSSyntaxHighlighter
 import org.jetbrains.vuejs.lang.expr.parser.*
+import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.html.lexer.VueLangModeMarkerElementType
 import org.jetbrains.vuejs.lang.html.lexer.VueTagEmbeddedContentProvider
-import org.jetbrains.vuejs.lang.html.VueFile
 
 object VueScriptLangs {
   val LANG_MODE = Key.create<LangMode>("LANG_MODE")
 
   fun createLexer(langMode: LangMode, project: Project?): Lexer {
     if (langMode == LangMode.HAS_TS) {
-      return VueTSParserDefinition.createLexer(project)
+      return VueTSParserDefinition.Util.createLexer(project)
     }
     else {
-      return VueJSParserDefinition.createLexer(project)
+      return VueJSParserDefinition.Util.createLexer(project)
     }
   }
 
@@ -82,9 +82,10 @@ object VueScriptLangs {
  * Enum values are designed to be a little strange in order to make the reader think about the above.
  */
 enum class LangMode(val exprLang: JSLanguageDialect, scriptElementType: IElementType, vararg val attrValues: String?) {
-    PENDING(VueJSLanguage.INSTANCE, JSStubElementTypes.MOD_ES6_EMBEDDED_CONTENT),
-    NO_TS(VueJSLanguage.INSTANCE, JSStubElementTypes.MOD_ES6_EMBEDDED_CONTENT, "js", "javascript", null /* null -> lang attribute is missing */),
-    HAS_TS(VueTSLanguage.INSTANCE, JSStubElementTypes.MOD_TS_EMBEDDED_CONTENT, "ts", "typescript");
+  PENDING(VueJSLanguage.INSTANCE, JSStubElementTypes.MOD_ES6_EMBEDDED_CONTENT),
+  NO_TS(VueJSLanguage.INSTANCE, JSStubElementTypes.MOD_ES6_EMBEDDED_CONTENT, "js", "javascript",
+        null /* null -> lang attribute is missing */),
+  HAS_TS(VueTSLanguage.INSTANCE, JSStubElementTypes.MOD_TS_EMBEDDED_CONTENT, "ts", "typescript");
 
   val canonicalAttrValue: String get() = if (this == HAS_TS) "ts" else "js"
 
@@ -98,12 +99,12 @@ enum class LangMode(val exprLang: JSLanguageDialect, scriptElementType: IElement
     val knownAttrValues: Set<String?>
 
     init {
-      val attrValues = values().flatMap { it.attrValues.toList() }
+      val attrValues = entries.flatMap { it.attrValues.toList() }
       knownAttrValues = attrValues.toSet()
       assert(attrValues.size == knownAttrValues.size) { "more than one enum value claimed the same attr value" }
     }
 
-    private val reverseMap = values().flatMap { enumValue -> enumValue.attrValues.map { attrValue -> attrValue to enumValue } }.toMap()
+    private val reverseMap = entries.flatMap { enumValue -> enumValue.attrValues.map { attrValue -> attrValue to enumValue } }.toMap()
 
     fun fromAttrValue(attrValue: String?): LangMode {
       return reverseMap.getOrDefault(attrValue, NO_TS)

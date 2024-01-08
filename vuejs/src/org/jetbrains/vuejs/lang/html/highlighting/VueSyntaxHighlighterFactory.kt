@@ -10,15 +10,15 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.vuejs.lang.LangMode
 import org.jetbrains.vuejs.lang.VueScriptLangs
 import org.jetbrains.vuejs.lang.html.VueFileElementType
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFile
+import org.jetbrains.vuejs.lang.html.isVueFile
 
 class VueSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
   override fun getSyntaxHighlighter(project: Project?, virtualFile: VirtualFile?): SyntaxHighlighter {
     val langMode = VueScriptLangs.getLatestKnownLang(project, virtualFile)
-    return getSyntaxHighlighter(project, virtualFile, langMode)
+    return Util.getSyntaxHighlighter(project, virtualFile, langMode)
   }
 
-  companion object {
+  object Util {
     fun getSyntaxHighlighter(project: Project?, virtualFile: VirtualFile?, langMode: LangMode): SyntaxHighlighter =
       VueFileHighlighter(
         project?.let { JSRootConfiguration.getInstance(it).languageLevel } ?: JSLanguageLevel.getLevelForJSX(),

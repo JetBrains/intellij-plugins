@@ -8,8 +8,8 @@ import com.intellij.psi.codeStyle.CommonCodeStyleSettings.IndentOptions
 import com.intellij.psi.codeStyle.PsiBasedFileIndentOptionsProvider
 import com.intellij.psi.formatter.xml.HtmlCodeStyleSettings
 import com.intellij.util.asSafely
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFile
 import org.jetbrains.vuejs.lang.html.VueLanguage
+import org.jetbrains.vuejs.lang.html.isVueFile
 
 class VueFileIndentOptionsProvider : PsiBasedFileIndentOptionsProvider() {
 

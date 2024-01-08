@@ -32,6 +32,7 @@ import com.intellij.psi.xml.XmlText
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.VueBundle
+import org.jetbrains.vuejs.codeInsight.imports.VueTemplateExpressionsCopyPasteProcessor.VueTemplateExpressionsImportsTransferableData
 import org.jetbrains.vuejs.editor.VueComponentSourceEdit
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.lang.LangMode
@@ -43,7 +44,7 @@ import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.VueProperty
 import java.awt.datatransfer.DataFlavor
 
-class VueTemplateExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<VueTemplateExpressionsCopyPasteProcessor.VueTemplateExpressionsImportsTransferableData>() {
+class VueTemplateExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<VueTemplateExpressionsImportsTransferableData>() {
 
   override val dataFlavor: DataFlavor
     get() = VUE_TEMPLATE_EXPRESSIONS_IMPORTS_FLAVOR
@@ -195,8 +196,7 @@ class VueTemplateExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<VueTe
     }
   }
 
-  companion object {
-    private val VUE_TEMPLATE_EXPRESSIONS_IMPORTS_FLAVOR = DataFlavor(VueTemplateExpressionsImportsTransferableData::class.java,
-                                                                     "vue es6 imports")
-  }
 }
+
+private val VUE_TEMPLATE_EXPRESSIONS_IMPORTS_FLAVOR = DataFlavor(VueTemplateExpressionsImportsTransferableData::class.java,
+                                                                 "vue es6 imports")

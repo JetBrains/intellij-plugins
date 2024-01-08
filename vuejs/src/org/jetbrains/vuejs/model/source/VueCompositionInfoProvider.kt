@@ -19,7 +19,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
-import org.jetbrains.vuejs.index.VueFrameworkHandler
+import org.jetbrains.vuejs.index.getFunctionNameFromVueIndex
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInfo
 
@@ -79,7 +79,7 @@ class VueCompositionInfoProvider : VueContainerInfoProvider {
       resolveElementTo(initializer.findProperty(SETUP_METHOD), JSFunction::class)
         ?.let { JSStubBasedPsiTreeUtil.findDescendants<JSCallExpression>(it, TokenSet.create(JSStubElementTypes.CALL_EXPRESSION)) }
         ?.mapNotNull {
-          when (VueFrameworkHandler.getFunctionNameFromVueIndex(it)) {
+          when (getFunctionNameFromVueIndex(it)) {
             PROVIDE_FUN -> analyzeProvide(it)
             INJECT_FUN -> analyzeInject(it)
             else -> null

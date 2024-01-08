@@ -5,8 +5,7 @@ import com.intellij.psi.impl.source.xml.stub.XmlAttributeStubImpl
 import com.intellij.psi.impl.source.xml.stub.XmlStubBasedAttributeElementType
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.util.PathUtil
-import org.jetbrains.annotations.NonNls
-import org.jetbrains.vuejs.index.VueUrlIndex
+import org.jetbrains.vuejs.index.VUE_URL_INDEX_KEY
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
 class VueSrcAttributeElementType : XmlStubBasedAttributeElementType("SRC_ATTRIBUTE", VueLanguage.INSTANCE) {
@@ -14,6 +13,6 @@ class VueSrcAttributeElementType : XmlStubBasedAttributeElementType("SRC_ATTRIBU
     stub.value
       ?.let { PathUtil.getFileName(it) }
       ?.takeIf { it.isNotBlank() }
-      ?.let { sink.occurrence(VueUrlIndex.KEY, it) }
+      ?.let { sink.occurrence(VUE_URL_INDEX_KEY, it) }
   }
 }

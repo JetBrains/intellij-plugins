@@ -20,8 +20,6 @@ import com.intellij.webSymbols.webTypes.WebTypesSymbol
 import org.jetbrains.vuejs.codeInsight.detectVueScriptLanguage
 import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
 import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.PROP_VUE_COMPOSITION_COMPONENT
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.PROP_VUE_PROXIMITY
 import org.jetbrains.vuejs.web.symbols.VueWebTypesMergedSymbol
 
 class VueWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : WebSymbolsQueryResultsCustomizer {
@@ -43,7 +41,7 @@ class VueWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : Web
     if (qualifiedName.namespace != WebSymbol.NAMESPACE_HTML) return matches
 
     var result = matches
-    if (qualifiedName.matches(VueWebSymbolsQueryConfigurator.VUE_COMPONENTS)) {
+    if (qualifiedName.matches(VUE_COMPONENTS)) {
       if (result.size > 1) {
         val mergedSymbol = result.find { it is VueWebTypesMergedSymbol } as? VueWebTypesMergedSymbol
         if (mergedSymbol != null) {
@@ -70,7 +68,7 @@ class VueWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : Web
 
   override fun apply(item: WebSymbolCodeCompletionItem,
                      qualifiedKind: WebSymbolQualifiedKind): WebSymbolCodeCompletionItem {
-    if (qualifiedKind == VueWebSymbolsQueryConfigurator.VUE_COMPONENTS) {
+    if (qualifiedKind == VUE_COMPONENTS) {
       val proximity = item.symbol?.properties?.get(PROP_VUE_PROXIMITY)
       val element = (item.symbol as? PsiSourcedWebSymbol)?.source
       if (proximity == VueModelVisitor.Proximity.OUT_OF_SCOPE && element != null) {

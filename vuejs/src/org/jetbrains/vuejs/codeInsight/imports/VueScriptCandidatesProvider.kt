@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.modules.JSImportPlaceInfo
 import com.intellij.lang.javascript.modules.imports.JSImportCandidatesBase
 import com.intellij.lang.javascript.modules.imports.providers.JSCandidatesProcessor
 import com.intellij.lang.javascript.modules.imports.providers.JSImportCandidatesProvider
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFile
+import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.model.source.*
 import java.util.function.Predicate
 

@@ -18,8 +18,8 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.VUE_MODULE
-import org.jetbrains.vuejs.index.VueFrameworkHandler
-import org.jetbrains.vuejs.lang.expr.VueExprMetaLanguage
+import org.jetbrains.vuejs.index.hasComponentIndicatorProperties
+import org.jetbrains.vuejs.lang.expr.isVueExprMetaLanguage
 import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.source.COMPUTED_PROP
@@ -27,22 +27,22 @@ import org.jetbrains.vuejs.model.source.METHODS_PROP
 import org.jetbrains.vuejs.model.source.WATCH_PROP
 import org.jetbrains.vuejs.types.VueLazyThisType
 
+
 class VueFrameworkInsideScriptSpecificHandler : JSFrameworkSpecificHandler {
-  companion object {
-    fun isInsideScript(element: PsiElement): Boolean {
-      val tag = PsiTreeUtil.getParentOfType(element, XmlTag::class.java) ?: return false
-      return HtmlUtil.isScriptTag(tag)
-    }
+  private fun isInsideScript(element: PsiElement): Boolean {
+    val tag = PsiTreeUtil.getParentOfType(element, XmlTag::class.java) ?: return false
+    return HtmlUtil.isScriptTag(tag)
   }
 
+  @Deprecated("Deprecated in Java")
   override fun findExpectedType(element: PsiElement, expectedTypeKind: JSExpectedTypeKind): JSType? {
     if (element is JSObjectLiteralExpression) {
       val language = DialectDetector.languageOfElement(element)
       if ((element.containingFile is VueFile
            && isInsideScript(element)
-           && !VueExprMetaLanguage.matches(language)
-           && (VueFrameworkHandler.hasComponentIndicatorProperties(element) || element.context is ES6ExportDefaultAssignment))
-          || (element.containingFile is JSFile && VueFrameworkHandler.hasComponentIndicatorProperties(element)
+           && !isVueExprMetaLanguage(language)
+           && (hasComponentIndicatorProperties(element) || element.context is ES6ExportDefaultAssignment))
+          || (element.containingFile is JSFile && hasComponentIndicatorProperties(element)
               && isVueContext(element))) {
         return getObjectLiteralTypeForComponent(element)
       }

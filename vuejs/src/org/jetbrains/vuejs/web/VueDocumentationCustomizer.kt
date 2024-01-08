@@ -40,7 +40,7 @@ class VueDocumentationCustomizer : WebSymbolDocumentationCustomizer {
       }
     }
     else {
-      if (symbol.qualifiedKind == VueWebSymbolsQueryConfigurator.VUE_COMPONENT_PROPS) {
+      if (symbol.qualifiedKind == VUE_COMPONENT_PROPS) {
         symbol.renderJsTypeForDocs(Strings.escapeXmlEntities(symbol.name), getTypeSubstitutorFor(location))?.let {
           return documentation.withDefinition(it)
         }

@@ -28,9 +28,9 @@ import com.intellij.webSymbols.WebSymbolsScopeWithCache
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
 import com.intellij.webSymbols.webTypes.WebTypesSymbol
 import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.web.VUE_COMPONENTS
+import org.jetbrains.vuejs.web.VUE_DIRECTIVES
 import org.jetbrains.vuejs.web.VueFramework
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.VUE_COMPONENTS
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.VUE_DIRECTIVES
 import org.jetbrains.vuejs.web.asWebSymbol
 import org.jetbrains.vuejs.web.symbols.VueComponentSymbol
 import org.jetbrains.vuejs.web.symbols.VueDocumentedItemSymbol

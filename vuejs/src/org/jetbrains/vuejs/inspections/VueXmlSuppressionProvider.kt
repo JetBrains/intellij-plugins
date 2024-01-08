@@ -11,15 +11,13 @@ import org.jetbrains.vuejs.lang.html.VueLanguage
 
 class VueXmlSuppressionProvider : DefaultXmlSuppressionProvider() {
 
-  companion object {
-    val suppressedToolIds = listOf(
-      XmlInvalidIdInspection::class, XmlDuplicatedIdInspection::class
-    ).map { InspectionProfileEntry.getShortName(it.java.simpleName) }
-  }
-
   override fun isProviderAvailable(file: PsiFile): Boolean = file.language.isKindOf(VueLanguage.INSTANCE)
 
   override fun isSuppressedFor(element: PsiElement, inspectionId: String): Boolean {
     return if (suppressedToolIds.contains(inspectionId)) true else super.isSuppressedFor(element, inspectionId)
   }
 }
+
+private val suppressedToolIds = listOf(
+  XmlInvalidIdInspection::class, XmlDuplicatedIdInspection::class
+).map { InspectionProfileEntry.getShortName(it.java.simpleName) }

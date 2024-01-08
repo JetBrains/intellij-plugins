@@ -24,7 +24,7 @@ import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.util.asSafely
-import org.jetbrains.vuejs.index.VueFrameworkHandler
+import org.jetbrains.vuejs.index.createIndexRecord
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.CREATE_STORE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.PROP_NAMESPACED
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.PROP_ROOT
@@ -37,7 +37,7 @@ import org.jetbrains.vuejs.libraries.vuex.types.VuexStoreTypeProvider
 class VuexFrameworkHandler : FrameworkIndexingHandler() {
 
   private val VUEX_INDEXES = mapOf(
-    VueFrameworkHandler.record(VuexStoreIndex.KEY)
+    createIndexRecord(VUEX_STORE_INDEX_KEY)
   )
 
   override fun shouldCreateStubForCallExpression(node: ASTNode): Boolean {
@@ -110,7 +110,7 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
         || referenceName == CREATE_STORE) {
       outData.addImplicitElement(
         JSImplicitElementImpl.Builder(STORE, callExpression)
-          .setUserString(this, VuexStoreIndex.JS_KEY)
+          .setUserString(this, VUEX_STORE_INDEX_JS_KEY)
           .setType(JSImplicitElement.Type.Variable)
           .forbidAstAccess()
           .toImplicitElement())
@@ -120,7 +120,7 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
         ?.referenceName
       outData.addImplicitElement(
         JSImplicitElementImpl.Builder(REGISTER_MODULE, callExpression)
-          .setUserString(this, VuexStoreIndex.JS_KEY)
+          .setUserString(this, VUEX_STORE_INDEX_JS_KEY)
           .setJSType(type?.let {
             JSNamedTypeFactory.createType(it, JSTypeSource.EMPTY, JSContext.STATIC)
           })
@@ -141,6 +141,6 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
     VuexStoreTypeProvider.addTypeFromResolveResult(evaluator, result)
 
   override fun computeJSImplicitElementUserStringKeys(): Set<String> {
-    return setOf(VuexStoreIndex.JS_KEY)
+    return setOf(VUEX_STORE_INDEX_JS_KEY)
   }
 }

@@ -16,7 +16,7 @@ import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.util.PathUtil
-import org.jetbrains.vuejs.index.VueUrlIndex
+import org.jetbrains.vuejs.index.VUE_URL_INDEX_JS_KEY
 
 class TemplateLoaderFrameworkHandler : FrameworkIndexingHandler() {
 
@@ -57,7 +57,7 @@ class TemplateLoaderFrameworkHandler : FrameworkIndexingHandler() {
       ?.let {
         out.addImplicitElement(
           JSImplicitElementImpl.Builder(it, context)
-            .setUserString(VueUrlIndex.JS_KEY)
+            .setUserString(VUE_URL_INDEX_JS_KEY)
             .forbidAstAccess()
             .toImplicitElement()
         )

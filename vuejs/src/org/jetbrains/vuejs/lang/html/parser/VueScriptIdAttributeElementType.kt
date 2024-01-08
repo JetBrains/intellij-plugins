@@ -6,13 +6,12 @@ import com.intellij.psi.impl.source.xml.stub.XmlAttributeStubImpl
 import com.intellij.psi.impl.source.xml.stub.XmlStubBasedAttributeElementType
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.psi.xml.XmlAttribute
-import org.jetbrains.annotations.NonNls
-import org.jetbrains.vuejs.index.VueIdIndex
+import org.jetbrains.vuejs.index.VUE_ID_INDEX_KEY
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
 class VueScriptIdAttributeElementType : XmlStubBasedAttributeElementType("SCRIPT_ID_ATTRIBUTE", VueLanguage.INSTANCE) {
   override fun indexStub(stub: XmlAttributeStubImpl, sink: IndexSink) {
-    stub.value?.let { sink.occurrence(VueIdIndex.KEY, it) }
+    stub.value?.let { sink.occurrence(VUE_ID_INDEX_KEY, it) }
   }
 
   override fun shouldCreateStub(node: ASTNode?): Boolean {

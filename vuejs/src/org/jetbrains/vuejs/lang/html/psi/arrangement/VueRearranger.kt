@@ -22,14 +22,6 @@ class VueRearranger : HtmlRearranger() {
     return SETTINGS_SERIALIZER
   }
 
-  companion object {
-
-    val DEFAULT_SETTINGS: StdArrangementSettings = StdArrangementSettings.createByMatchRules(
-      emptyList(), VueAttributeKind.values().map { it.createRule() })
-
-    private val SETTINGS_SERIALIZER = DefaultArrangementSettingsSerializer(DEFAULT_SETTINGS)
-  }
-
   enum class VueAttributeKind(val pattern: String) {
     DEFINITION("(v-bind:|:|v-)?is"),
     LIST_RENDERING("v-for"),
@@ -54,3 +46,8 @@ class VueRearranger : HtmlRearranger() {
   }
 
 }
+
+private val DEFAULT_SETTINGS: StdArrangementSettings = StdArrangementSettings.createByMatchRules(
+  emptyList(), VueRearranger.VueAttributeKind.entries.map { it.createRule() })
+
+private val SETTINGS_SERIALIZER = DefaultArrangementSettingsSerializer(DEFAULT_SETTINGS)

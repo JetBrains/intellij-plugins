@@ -14,17 +14,14 @@ import com.intellij.util.containers.putValue
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.objectLiteralFor
-import org.jetbrains.vuejs.index.GLOBAL_BINDING_MARK
-import org.jetbrains.vuejs.index.VueComponentsIndex
-import org.jetbrains.vuejs.index.getForAllKeys
-import org.jetbrains.vuejs.index.getVueIndexData
+import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.lang.html.VueFile
 import java.util.*
 
 class VueComponentsCalculation {
   companion object {
     fun calculateScopeComponents(scope: GlobalSearchScope, globalize: Boolean): ComponentsData {
-      val allValues = getForAllKeys(scope, VueComponentsIndex.KEY)
+      val allValues = getForAllKeys(scope, VUE_COMPONENTS_INDEX_KEY)
       val libCompResolveMap = mutableMapOf<String, String>()
 
       val componentData = mutableMapOf<String, MutableList<Pair<PsiElement, Boolean>>>()

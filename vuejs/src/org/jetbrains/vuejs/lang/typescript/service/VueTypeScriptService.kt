@@ -28,7 +28,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
-import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFile
+import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.lang.typescript.service.protocol.VueTypeScriptServiceProtocol
 import java.util.function.Consumer
 

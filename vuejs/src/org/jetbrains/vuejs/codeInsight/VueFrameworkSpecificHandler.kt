@@ -18,8 +18,8 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.context.hasPinia
-import org.jetbrains.vuejs.index.VueFrameworkHandler
-import org.jetbrains.vuejs.lang.expr.VueExprMetaLanguage
+import org.jetbrains.vuejs.index.getFunctionNameFromVueIndex
+import org.jetbrains.vuejs.lang.expr.isVueExprMetaLanguage
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.INJECT_FUN
@@ -61,7 +61,7 @@ class VueFrameworkSpecificHandler : JSFrameworkSpecificHandler {
 
   private fun isInjectCall(element: JSCallExpression): Boolean =
     element
-      .takeIf { VueFrameworkHandler.getFunctionNameFromVueIndex(it) == INJECT_FUN }
+      .takeIf { getFunctionNameFromVueIndex(it) == INJECT_FUN }
       ?.methodExpression.asSafely<JSReferenceExpression>()
       ?.resolve()
       ?.containingFile?.virtualFile
@@ -76,7 +76,7 @@ class VueFrameworkSpecificHandler : JSFrameworkSpecificHandler {
   }
 
   private fun isTopmostVueExpression(element: PsiElement, parent: PsiElement?) =
-    VueExprMetaLanguage.matches(element.language) &&
+    isVueExprMetaLanguage(element.language) &&
     ((parent is JSExpressionStatement && JSStubBasedPsiTreeUtil.getParentOrNull(parent) is VueJSEmbeddedExpressionContent) ||
      (element is JSStringTemplateExpression && parent is VueJSEmbeddedExpressionContent))
 

@@ -16,8 +16,8 @@ import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
 import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.web.VUE_TOP_LEVEL_ELEMENTS
 import org.jetbrains.vuejs.web.VueFramework
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
 
 class VueI18NQueryConfigurator : WebSymbolsQueryConfigurator {
 
@@ -29,7 +29,7 @@ class VueI18NQueryConfigurator : WebSymbolsQueryConfigurator {
         && location is HtmlTag
         && location.name == "i18n"
         && location.parentTag == null
-        && location.containingFile?.virtualFile?.fileType == VueFileType.INSTANCE) {
+        && location.containingFile?.virtualFile?.fileType == VueFileType) {
       listOf(I18nTagInjectionKind(location))
     }
     else emptyList()
@@ -54,7 +54,7 @@ class VueI18NQueryConfigurator : WebSymbolsQueryConfigurator {
     override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
                             params: WebSymbolsListSymbolsQueryParams,
                             scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> {
-      if (qualifiedKind == VueWebSymbolsQueryConfigurator.VUE_TOP_LEVEL_ELEMENTS) {
+      if (qualifiedKind == VUE_TOP_LEVEL_ELEMENTS) {
         val language = tag.getAttributeValue(LANG_ATTRIBUTE_NAME)
                          ?.let { lang -> Language.getRegisteredLanguages().find { it.id.equals(lang, true) } }
                        ?: if (PsiTreeUtil.getChildOfType(tag, XmlTextImpl::class.java)

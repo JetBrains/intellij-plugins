@@ -1,8 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.nuxt.model
 
-import com.intellij.webpack.WebpackConfigManager
-import com.intellij.webpack.WebpackReferenceContributor
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -11,6 +9,8 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.asSafely
 import com.intellij.util.containers.MultiMap
+import com.intellij.webpack.WebpackConfigManager
+import com.intellij.webpack.WebpackReferenceContributor
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_COMPONENTS_DEFS
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_OUTPUT_FOLDER
@@ -27,9 +27,11 @@ class NuxtComponentProvider : VueContainerInfoProvider {
                                        sourceComponents: VueContainerInfoProvider.ComponentsInfo): VueContainerInfoProvider.ComponentsInfo? =
     NuxtModelManager.getApplication(scope)
       ?.config
-      ?.takeIf { config -> config.file.let {
-        // Ensure we have a config, and ensure we don't have the auto-generated list of components in .nuxt folder
-        it != null && it.parent?.findSubdirectory(NUXT_OUTPUT_FOLDER)?.findFile(NUXT_COMPONENTS_DEFS) == null}
+      ?.takeIf { config ->
+        config.file.let {
+          // Ensure we have a config, and ensure we don't have the auto-generated list of components in .nuxt folder
+          it != null && it.parent?.findSubdirectory(NUXT_OUTPUT_FOLDER)?.findFile(NUXT_COMPONENTS_DEFS) == null
+        }
       }
       ?.let { config ->
         // alternative idea: there's .nuxt/components/index.js that contains named exports with components,
@@ -112,9 +114,7 @@ class NuxtComponentProvider : VueContainerInfoProvider {
     }
       ?.takeIf { it.isDirectory && it.name != JSLibraryUtil.NODE_MODULES }
 
-  companion object {
-    val webpackReferenceProvider = WebpackReferenceContributor()
-    private val MULTI_HYPHEN_REGEX = Regex("-{2,}")
-  }
-
 }
+
+private val webpackReferenceProvider = WebpackReferenceContributor()
+private val MULTI_HYPHEN_REGEX = Regex("-{2,}")

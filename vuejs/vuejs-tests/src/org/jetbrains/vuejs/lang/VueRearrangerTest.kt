@@ -12,7 +12,7 @@ import org.jetbrains.vuejs.lang.html.VueLanguage
 class VueRearrangerTest : AbstractRearrangerTest() {
   override fun setUp() {
     super.setUp()
-    fileType = VueFileType.INSTANCE
+    fileType = VueFileType
     language = VueLanguage.INSTANCE
   }
 

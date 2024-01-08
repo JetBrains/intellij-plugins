@@ -16,17 +16,15 @@ import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import java.util.*
 import java.util.function.Consumer
 
+@NonNls
+private val EVENT = "\$event"
+
+private fun resolveEventType(@Suppress("UNUSED_PARAMETER") attribute: XmlAttribute): JSType? {
+  // TODO resolve event type
+  return null
+}
+
 class VueStandardSymbolsScopesProvider : VueTemplateScopesProvider() {
-
-  companion object {
-    @NonNls
-    val EVENT = "\$event"
-
-    private fun resolveEventType(@Suppress("UNUSED_PARAMETER") attribute: XmlAttribute): JSType? {
-      // TODO resolve event type
-      return null
-    }
-  }
 
   override fun getScopes(element: PsiElement, hostElement: PsiElement?): List<VueTemplateScope> {
     val result = SmartList<VueTemplateScope>()
