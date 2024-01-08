@@ -69,7 +69,7 @@ public class FlexExtractFunctionTest extends JSExtractFunctionBaseTest {
         parametersInfo.variables.add(var);
         parametersInfo.variableOptions.put(var, new JSExtractFunctionSettings.ParameterInfo(var.getName() + "2", true, null, 0));
 
-        return new DefaultJSExtractFunctionSettings("created", true, FunctionDeclarationType.FUNCTION, JSAttributeList.AccessType.PUBLIC, parametersInfo, null, false);
+        return new DefaultJSExtractFunctionSettings("created", true, null, FunctionDeclarationType.FUNCTION, JSAttributeList.AccessType.PUBLIC, parametersInfo, null, false);
       },
       "js2"
     );
