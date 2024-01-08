@@ -10,7 +10,7 @@ import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator
 import com.intellij.lang.javascript.boilerplate.NpxPackageDescriptor
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ReadAction
-import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.roots.ContentEntry
@@ -33,7 +33,6 @@ import icons.AngularJSIcons
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.Angular2LangUtil.ANGULAR_CLI_PACKAGE
 import org.jetbrains.annotations.Nls
-import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout
 import java.io.File
 import java.util.regex.Pattern
@@ -62,9 +61,7 @@ class AngularCliProjectGenerator : NpmPackageProjectGenerator() {
   }
 
   override fun customizeModule(baseDir: VirtualFile, entry: ContentEntry?) {
-    if (entry != null) {
-      AngularJSProjectConfigurator.excludeDefault(baseDir, entry)
-    }
+    entry?.addDefaultAngularExcludes(baseDir)
   }
 
   override fun generatorArgs(project: Project, baseDir: VirtualFile): Array<String> {
@@ -88,7 +85,7 @@ class AngularCliProjectGenerator : NpmPackageProjectGenerator() {
     }
 
     if (isPackageGreaterOrEqual(settings.myPackage, 16, 0, 0)) {
-      if (result.none { param -> param == "--standalone" || param.startsWith("--standalone=")}) {
+      if (result.none { param -> param == "--standalone" || param.startsWith("--standalone=") }) {
         result.add("--standalone=${ngSettings.useStandalone}")
       }
     }
@@ -242,7 +239,7 @@ class AngularCliProjectGenerator : NpmPackageProjectGenerator() {
               options.set(availableOptions)
             }
             catch (e: Exception) {
-              LOG.error("Failed to load schematics", e)
+              thisLogger().error("Failed to load schematics", e)
             }
 
             val packageVersion = NodePackageVersionUtil.getPackageVersion(nodePackage.systemIndependentPath)
@@ -271,41 +268,39 @@ class AngularCliProjectGenerator : NpmPackageProjectGenerator() {
     : Settings(settings.myInterpreterRef, settings.myPackage)
 
   companion object {
+    const val NG_EXECUTABLE = "ng"
+  }
+}
 
-    @NonNls
-    val NG_EXECUTABLE = "ng"
-    private val LOG = Logger.getInstance(AngularCliProjectGenerator::class.java)
-    private val NPX_PACKAGE_PATTERN = Pattern.compile("npx --package @angular/cli(?:@([0-9]+\\.[0-9]+\\.[0-9a-zA-Z-.]+))? ng")
-    private val VALID_NG_APP_NAME = Pattern.compile("[a-zA-Z][0-9a-zA-Z]*(-[a-zA-Z][0-9a-zA-Z]*)*")
-    private val UNKNOWN_VERSION = SemVer("0.0.0", 0, 0, 0)
+private val NPX_PACKAGE_PATTERN = Pattern.compile("npx --package @angular/cli(?:@([0-9]+\\.[0-9]+\\.[0-9a-zA-Z-.]+))? ng")
+private val VALID_NG_APP_NAME = Pattern.compile("[a-zA-Z][0-9a-zA-Z]*(-[a-zA-Z][0-9a-zA-Z]*)*")
+private val UNKNOWN_VERSION = SemVer("0.0.0", 0, 0, 0)
 
-    private fun isPackageGreaterOrEqual(pkg: NodePackage, major: Int, minor: Int, patch: Int): Boolean {
-      var ver: SemVer? = null
-      if (pkg.name == ANGULAR_CLI_PACKAGE) {
-        ver = pkg.version
-      }
-      else {
-        val m = NPX_PACKAGE_PATTERN.matcher(pkg.systemIndependentPath)
-        if (m.matches()) {
-          ver = SemVer.parseFromText(m.group(1))
-        }
-      }
-      return ver == null || ver.isGreaterOrEqualThan(major, minor, patch)
-    }
-
-    fun ng(path: String): String {
-      return path + File.separator + "bin" + File.separator + NG_EXECUTABLE
-    }
-
-    @DialogMessage
-    private fun validateFolderName(path: String, label: String): String? {
-      val fileName = PathUtil.getFileName(path)
-      return if (!VALID_NG_APP_NAME.matcher(fileName).matches()) {
-        XmlStringUtil.wrapInHtml(
-          Angular2Bundle.message("angular.action.new-project.wrong-folder-name", label, fileName)
-        )
-      }
-      else null
+private fun isPackageGreaterOrEqual(pkg: NodePackage, major: Int, minor: Int, patch: Int): Boolean {
+  var ver: SemVer? = null
+  if (pkg.name == ANGULAR_CLI_PACKAGE) {
+    ver = pkg.version
+  }
+  else {
+    val m = NPX_PACKAGE_PATTERN.matcher(pkg.systemIndependentPath)
+    if (m.matches()) {
+      ver = SemVer.parseFromText(m.group(1))
     }
   }
+  return ver == null || ver.isGreaterOrEqualThan(major, minor, patch)
+}
+
+fun ng(path: String): String {
+  return path + File.separator + "bin" + File.separator + AngularCliProjectGenerator.NG_EXECUTABLE
+}
+
+@DialogMessage
+private fun validateFolderName(path: String, label: String): String? {
+  val fileName = PathUtil.getFileName(path)
+  return if (!VALID_NG_APP_NAME.matcher(fileName).matches()) {
+    XmlStringUtil.wrapInHtml(
+      Angular2Bundle.message("angular.action.new-project.wrong-folder-name", label, fileName)
+    )
+  }
+  else null
 }

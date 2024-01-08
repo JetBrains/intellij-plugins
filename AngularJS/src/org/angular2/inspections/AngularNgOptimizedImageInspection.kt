@@ -25,9 +25,11 @@ import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider.Companion.IMG_TAG
 import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider.Companion.NG_SRC_ATTR
 import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider.Companion.SRC_ATTR
-import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider.Companion.isNgSrcAttribute
+import org.angular2.codeInsight.attributes.isNgSrcAttribute
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2EntitiesProvider
+import org.angular2.inspections.AngularNgOptimizedImageInspection.Companion.HEIGHT_ATTR
+import org.angular2.inspections.AngularNgOptimizedImageInspection.Companion.WIDTH_ATTR
 import org.angular2.inspections.actions.Angular2ActionFactory
 import org.angular2.inspections.quickfixes.Angular2FixesFactory
 import org.angular2.inspections.quickfixes.CreateAttributeQuickFix
@@ -38,6 +40,15 @@ import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.lang.html.psi.PropertyBindingType
 
 class AngularNgOptimizedImageInspection : LocalInspectionTool() {
+  companion object {
+
+    const val WIDTH_ATTR = "width"
+
+    const val FILL_ATTR = "fill"
+
+    const val HEIGHT_ATTR = "height"
+  }
+
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
     return if (holder.file is HtmlCompatibleFile && Angular2LangUtil.isAngular2Context(holder.file)) {
       object : XmlElementVisitor() {
@@ -151,54 +162,21 @@ class AngularNgOptimizedImageInspection : LocalInspectionTool() {
       CachedValueProvider.Result.create(NgSrcInfo(hasWidth, hasHeight, hasFill, hasNgSrc), tag)
     }
 
-  companion object {
-
-    const val WIDTH_ATTR = "width"
-
-    const val FILL_ATTR = "fill"
-
-    const val HEIGHT_ATTR = "height"
-
-    internal fun getNgSrcDirective(context: PsiElement): Angular2Directive? =
-      context.containingFile.let { file ->
-        CachedValuesManager.getCachedValue(file) {
-          CachedValueProvider.Result.create(
-            Angular2EntitiesProvider.findAttributeDirectivesCandidates(file.project, NG_SRC_ATTR)
-              .find { it.getName() == "NgOptimizedImage" },
-            PsiModificationTracker.MODIFICATION_COUNT)
-        }
-      }
-
-    private fun Angular2AttributeNameParser.AttributeInfo.isRegularOrBinding(name: String) =
-      this.name.equals(name, true)
-      && (this.asSafely<Angular2AttributeNameParser.PropertyBindingInfo>()?.bindingType == PropertyBindingType.PROPERTY
-          || type == Angular2AttributeType.REGULAR)
-
-    private fun fixWidthAndHeightAttributes(tag: XmlTag) {
-      fun String.sizeToInt() =
-        trim().removeSuffix("px").toIntOrNull()
-
-      val curWidth = tag.getAttributeValue(WIDTH_ATTR)?.sizeToInt()
-      val curHeight = tag.getAttributeValue(HEIGHT_ATTR)?.sizeToInt()
-      if (curWidth == null || curHeight == null) {
-        val info = HtmlReferenceProvider.SizeReference.getImageInfo(tag)
-                     ?.takeIf { it.height > 0 && it.width > 0 }
-                   ?: return
-        if (curWidth == null && curHeight == null) {
-          tag.setAttribute(HEIGHT_ATTR, info.height.toString())
-          tag.setAttribute(WIDTH_ATTR, info.width.toString())
-        }
-        else if (curWidth != null) {
-          val height = (curWidth * info.height) / info.width
-          tag.setAttribute(HEIGHT_ATTR, height.toString())
-        }
-        else {
-          val width = (curHeight!! * info.width) / info.height
-          tag.setAttribute(WIDTH_ATTR, width.toString())
-        }
+  internal fun getNgSrcDirective(context: PsiElement): Angular2Directive? =
+    context.containingFile.let { file ->
+      CachedValuesManager.getCachedValue(file) {
+        CachedValueProvider.Result.create(
+          Angular2EntitiesProvider.findAttributeDirectivesCandidates(file.project, NG_SRC_ATTR)
+            .find { it.getName() == "NgOptimizedImage" },
+          PsiModificationTracker.MODIFICATION_COUNT)
       }
     }
-  }
+
+  private fun Angular2AttributeNameParser.AttributeInfo.isRegularOrBinding(name: String) =
+    this.name.equals(name, true)
+    && (this.asSafely<Angular2AttributeNameParser.PropertyBindingInfo>()?.bindingType == PropertyBindingType.PROPERTY
+        || type == Angular2AttributeType.REGULAR)
+
 
   private data class NgSrcInfo(
     val hasWidth: Boolean,
@@ -242,5 +220,30 @@ class AngularNgOptimizedImageInspection : LocalInspectionTool() {
       fixWidthAndHeightAttributes(tag)
     }
 
+  }
+}
+
+private fun fixWidthAndHeightAttributes(tag: XmlTag) {
+  fun String.sizeToInt() =
+    trim().removeSuffix("px").toIntOrNull()
+
+  val curWidth = tag.getAttributeValue(WIDTH_ATTR)?.sizeToInt()
+  val curHeight = tag.getAttributeValue(HEIGHT_ATTR)?.sizeToInt()
+  if (curWidth == null || curHeight == null) {
+    val info = HtmlReferenceProvider.SizeReference.getImageInfo(tag)
+                 ?.takeIf { it.height > 0 && it.width > 0 }
+               ?: return
+    if (curWidth == null && curHeight == null) {
+      tag.setAttribute(HEIGHT_ATTR, info.height.toString())
+      tag.setAttribute(WIDTH_ATTR, info.width.toString())
+    }
+    else if (curWidth != null) {
+      val height = (curWidth * info.height) / info.width
+      tag.setAttribute(HEIGHT_ATTR, height.toString())
+    }
+    else {
+      val width = (curHeight!! * info.width) / info.height
+      tag.setAttribute(WIDTH_ATTR, width.toString())
+    }
   }
 }

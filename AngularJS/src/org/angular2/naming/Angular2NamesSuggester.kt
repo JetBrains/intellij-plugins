@@ -16,34 +16,32 @@ class Angular2NamesSuggester : JSNamesSuggester {
       namedElement, newElementName)
   }
 
-  companion object {
-    private val AngularDecoratorEntityMap = mapOf(
-      "Component" to "Component",
-      "Directive" to "Directive",
-      "NgModule" to "Module",
-      "Injectable" to "Service",
-      "Pipe" to "Pipe",
-    )
+  private val angularDecoratorEntityMap = mapOf(
+    "Component" to "Component",
+    "Directive" to "Directive",
+    "NgModule" to "Module",
+    "Injectable" to "Service",
+    "Pipe" to "Pipe",
+  )
 
-    private fun getAngularSpecificFileName(jsClass: JSClass, newElementName: String): String? {
-      val decorators = PsiTreeUtil.getChildrenOfType(jsClass.attributeList, ES6Decorator::class.java) ?: return null
-      for (decorator in decorators) {
-        val referenceName = decorator.decoratorName ?: return null
-        val entityName = AngularDecoratorEntityMap[referenceName]
-        if (entityName != null) {
-          val name = if (newElementName.endsWith(entityName)) {
-            newElementName.substring(0, newElementName.length - entityName.length)
-          }
-          else {
-            newElementName
-          }
-          val parts = name.split(JSNameSuggestionsUtil.SPLIT_BY_CAMEL_CASE_REGEX.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-          val finalName = StringUtil.join(parts, { str: String? -> StringUtil.toLowerCase(str) }, "-")
-          return ((if (StringUtil.isEmpty(finalName)) "" else "$finalName.")
-                  + StringUtil.toLowerCase(entityName))
+  private fun getAngularSpecificFileName(jsClass: JSClass, newElementName: String): String? {
+    val decorators = PsiTreeUtil.getChildrenOfType(jsClass.attributeList, ES6Decorator::class.java) ?: return null
+    for (decorator in decorators) {
+      val referenceName = decorator.decoratorName ?: return null
+      val entityName = angularDecoratorEntityMap[referenceName]
+      if (entityName != null) {
+        val name = if (newElementName.endsWith(entityName)) {
+          newElementName.substring(0, newElementName.length - entityName.length)
         }
+        else {
+          newElementName
+        }
+        val parts = name.split(JSNameSuggestionsUtil.SPLIT_BY_CAMEL_CASE_REGEX.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        val finalName = StringUtil.join(parts, { str: String? -> StringUtil.toLowerCase(str) }, "-")
+        return ((if (StringUtil.isEmpty(finalName)) "" else "$finalName.")
+                + StringUtil.toLowerCase(entityName))
       }
-      return null
     }
+    return null
   }
 }

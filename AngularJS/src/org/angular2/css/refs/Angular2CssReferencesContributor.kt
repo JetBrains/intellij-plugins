@@ -9,7 +9,7 @@ import com.intellij.psi.PsiReferenceRegistrar
 import com.intellij.psi.filters.ElementFilter
 import com.intellij.psi.filters.position.FilterPattern
 import com.intellij.psi.xml.XmlAttribute
-import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider
+import org.angular2.codeInsight.attributes.isNgClassAttribute
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.psi.Angular2Binding
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
@@ -33,7 +33,7 @@ internal class Angular2CssReferencesContributor : PsiReferenceContributor() {
       }))
 
     CssClassInJSLiteralOrIdentifierReferenceProvider.register(registrar, Angular2Language.INSTANCE, Angular2Binding::class.java) {
-      Angular2AttributeValueProvider.isNgClassAttribute(it)
+      isNgClassAttribute(it)
     }
     registrar.registerReferenceProvider(cssClassInAttributePattern, Angular2CssClassInAttributeReferenceProvider())
   }

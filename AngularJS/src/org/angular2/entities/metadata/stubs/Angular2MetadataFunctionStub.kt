@@ -8,7 +8,7 @@ import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import org.angular2.entities.metadata.Angular2MetadataElementTypes
 import org.angular2.entities.metadata.psi.Angular2MetadataFunction
-import org.angular2.index.Angular2MetadataFunctionIndex
+import org.angular2.index.Angular2MetadataFunctionIndexKey
 import org.angular2.lang.metadata.MetadataUtils.readStringPropertyValue
 import org.jetbrains.annotations.NonNls
 import java.io.IOException
@@ -30,7 +30,7 @@ class Angular2MetadataFunctionStub : Angular2MetadataElementStub<Angular2Metadat
   override fun index(sink: IndexSink) {
     super.index(sink)
     if (memberName != null) {
-      sink.occurrence(Angular2MetadataFunctionIndex.KEY, memberName!!)
+      sink.occurrence(Angular2MetadataFunctionIndexKey, memberName!!)
     }
   }
 

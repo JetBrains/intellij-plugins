@@ -21,7 +21,7 @@ import org.angular2.lang.expr.psi.Angular2Interpolation
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.lang.types.BindingsTypeResolver
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_ONE_TIME_BINDINGS
+import org.angular2.web.NG_DIRECTIVE_ONE_TIME_BINDINGS
 
 class AngularBindingTypeMismatchInspection : AngularHtmlLikeTemplateLocalInspectionTool() {
 

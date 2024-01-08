@@ -6,10 +6,9 @@ import com.intellij.psi.stubs.StubIndexKey
 
 class Angular2SourcePipeIndex : Angular2IndexBase<JSImplicitElementProvider>() {
 
-  override fun getKey(): StubIndexKey<String, JSImplicitElementProvider> = KEY
+  override fun getKey(): StubIndexKey<String, JSImplicitElementProvider> = Angular2SourcePipeIndexKey
 
-  companion object {
-    @JvmField
-    val KEY = StubIndexKey.createIndexKey<String, JSImplicitElementProvider>("angular2.source.pipe.index")
-  }
 }
+
+@JvmField
+val Angular2SourcePipeIndexKey = StubIndexKey.createIndexKey<String, JSImplicitElementProvider>("angular2.source.pipe.index")

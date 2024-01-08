@@ -35,12 +35,12 @@ class Angular2Framework : WebFramework() {
   override fun getFileType(kind: SourceFileKind, context: VirtualFile, project: Project): WebFrameworkHtmlFileType? =
     when (kind) {
       SourceFileKind.HTML -> when (Angular2LangUtil.getTemplateSyntax(project, context)) {
-        Angular2TemplateSyntax.V_2, Angular2TemplateSyntax.V_2_NO_EXPANSION_FORMS -> Angular2HtmlFileType.INSTANCE
-        Angular2TemplateSyntax.V_17 -> Angular17HtmlFileType.INSTANCE
+        Angular2TemplateSyntax.V_2, Angular2TemplateSyntax.V_2_NO_EXPANSION_FORMS -> Angular2HtmlFileType
+        Angular2TemplateSyntax.V_17 -> Angular17HtmlFileType
       }
       SourceFileKind.SVG -> when (Angular2LangUtil.getTemplateSyntax(project, context)) {
-        Angular2TemplateSyntax.V_2, Angular2TemplateSyntax.V_2_NO_EXPANSION_FORMS -> Angular2SvgFileType.INSTANCE
-        Angular2TemplateSyntax.V_17 -> Angular17SvgFileType.INSTANCE
+        Angular2TemplateSyntax.V_2, Angular2TemplateSyntax.V_2_NO_EXPANSION_FORMS -> Angular2SvgFileType
+        Angular2TemplateSyntax.V_17 -> Angular17SvgFileType
       }
       else -> null
     }
@@ -63,8 +63,8 @@ class Angular2Framework : WebFramework() {
 
     const val ID = "angular"
 
-    @JvmStatic
-    val instance: WebFramework
-      get() = get(ID)
   }
 }
+
+val angular2Framework: WebFramework
+  get() = WebFramework.get(Angular2Framework.ID)

@@ -9,7 +9,7 @@ import com.intellij.psi.xml.XmlText
 import org.angular2.inspections.quickfixes.RemoveTagContentQuickFix
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.html.Angular2HtmlLanguage
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.ELEMENT_NG_CONTENT
+import org.angular2.web.ELEMENT_NG_CONTENT
 
 class AngularNonEmptyNgContentInspection : AngularHtmlLikeTemplateLocalInspectionTool() {
 

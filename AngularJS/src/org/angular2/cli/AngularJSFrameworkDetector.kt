@@ -101,7 +101,7 @@ class AngularJSFrameworkDetector : FrameworkDetector(AngularJSFramework.ID) {
           modifiableModelsProvider.disposeModuleModifiableModel(model)
           continue
         }
-        AngularJSProjectConfigurator.excludeDefault(item!!.parent, entry)
+        entry.addDefaultAngularExcludes(item!!.parent)
         modifiableModelsProvider.commitModuleModifiableModel(model)
         for (vf in myNewFiles) {
           AngularCliUtil.createRunConfigurations(module.project, vf.parent)

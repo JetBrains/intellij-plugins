@@ -19,7 +19,7 @@ import com.intellij.psi.util.PsiTreeUtil.getStubChildrenOfTypeAsList
 import com.intellij.util.ArrayUtil.contains
 import com.intellij.util.AstLoadingFilter
 import com.intellij.util.asSafely
-import org.angular2.index.Angular2IndexingHandler
+import org.angular2.index.TS_CLASS_TOKENS
 import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.Angular2LangUtil.ANGULAR_CORE_PACKAGE
 import org.angularjs.index.AngularJSIndexingHandler
@@ -204,7 +204,7 @@ object Angular2DecoratorUtil {
                     ?: return null
     val context = getContextOfType(decorator, JSAttributeListOwner::class.java) ?: return null
     return context.asSafely<TypeScriptClass>()
-           ?: JSStubBasedPsiTreeUtil.getChildrenByType(context, Angular2IndexingHandler.TS_CLASS_TOKENS)
+           ?: JSStubBasedPsiTreeUtil.getChildrenByType(context, TS_CLASS_TOKENS)
              .firstOrNull() as? TypeScriptClass
   }
 }

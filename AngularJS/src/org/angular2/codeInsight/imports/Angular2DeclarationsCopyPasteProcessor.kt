@@ -25,6 +25,7 @@ import com.intellij.xml.util.XmlTagUtil
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
+import org.angular2.codeInsight.imports.Angular2DeclarationsCopyPasteProcessor.Angular2DeclarationsImportsTransferableData
 import org.angular2.entities.Angular2ComponentLocator
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2EntitiesProvider
@@ -38,7 +39,7 @@ import org.angular2.lang.html.Angular2HtmlFile
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector
 import java.awt.datatransfer.DataFlavor
 
-class Angular2DeclarationsCopyPasteProcessor : JSCopyPasteProcessorBase<Angular2DeclarationsCopyPasteProcessor.Angular2DeclarationsImportsTransferableData>() {
+class Angular2DeclarationsCopyPasteProcessor : JSCopyPasteProcessorBase<Angular2DeclarationsImportsTransferableData>() {
 
   override val dataFlavor: DataFlavor
     get() = ANGULAR2_DECLARATIONS_IMPORTS_FLAVOR
@@ -59,7 +60,7 @@ class Angular2DeclarationsCopyPasteProcessor : JSCopyPasteProcessorBase<Angular2
     Angular2ComponentLocator.findComponentClass(getContextElementOrFile(file, caret))?.containingFile
 
   override fun collectTransferableData(rangesWithParents: List<Pair<PsiElement, TextRange>>): Angular2DeclarationsImportsTransferableData? {
-    val expressionContexts = rangesWithParents.count { Angular2ExpressionsCopyPasteProcessor.isExpressionContext(it.first) }
+    val expressionContexts = rangesWithParents.count { Angular2ExpressionsCopyPasteProcessor.Util.isExpressionContext(it.first) }
     if (expressionContexts != 0 && expressionContexts != rangesWithParents.size)
       return null
     val componentClass = rangesWithParents.getOrNull(0)?.first?.let { Angular2ComponentLocator.findComponentClass(it) }
@@ -106,7 +107,7 @@ class Angular2DeclarationsCopyPasteProcessor : JSCopyPasteProcessorBase<Angular2
                                        exportScope: PsiElement,
                                        pasteContext: PsiElement,
                                        pasteContextLanguage: Language) {
-    val isExpressionContext = Angular2ExpressionsCopyPasteProcessor.isExpressionContext(pasteContext)
+    val isExpressionContext = Angular2ExpressionsCopyPasteProcessor.Util.isExpressionContext(pasteContext)
     val filteredValues = values.filter { it.isExpressionContext == isExpressionContext && (it.pipes.isNotEmpty() || it.directives.isNotEmpty()) }
     if (filteredValues.isEmpty())
       return
@@ -219,8 +220,7 @@ class Angular2DeclarationsCopyPasteProcessor : JSCopyPasteProcessorBase<Angular2
     val selector: Angular2DirectiveSimpleSelector
   )
 
-  companion object {
-    private val ANGULAR2_DECLARATIONS_IMPORTS_FLAVOR = DataFlavor(Angular2DeclarationsImportsTransferableData::class.java,
-                                                                  "angular2 declarations imports")
-  }
 }
+
+private val ANGULAR2_DECLARATIONS_IMPORTS_FLAVOR = DataFlavor(Angular2DeclarationsImportsTransferableData::class.java,
+                                                              "angular2 declarations imports")

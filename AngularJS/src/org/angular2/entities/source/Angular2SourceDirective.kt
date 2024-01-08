@@ -42,9 +42,10 @@ import org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF
 import org.angular2.entities.Angular2EntityUtils.VIEW_CONTAINER_REF
 import org.angular2.entities.ivy.Angular2IvyUtil.getIvyEntity
 import org.angular2.entities.metadata.Angular2MetadataUtil
-import org.angular2.index.Angular2IndexingHandler
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_INPUTS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_OUTPUTS
+import org.angular2.index.getFunctionNameFromIndex
+import org.angular2.index.isStringArgStubbed
+import org.angular2.web.NG_DIRECTIVE_INPUTS
+import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 
 open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSImplicitElement)
   : Angular2SourceDeclaration(decorator, implicitElement), Angular2Directive {
@@ -322,7 +323,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
 
     private fun getDecoratorParamValue(decorator: ES6Decorator?): PsiElement? =
       decorator
-        ?.takeIf { Angular2IndexingHandler.isDecoratorStringArgStubbed(it) }
+        ?.takeIf { it.isStringArgStubbed() }
         ?.getStubSafeChildren<JSCallExpression>()
         ?.firstOrNull()
         ?.stubSafeCallArguments
@@ -375,7 +376,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
 
     private fun createPropertyInfo(call: JSCallExpression, functionName: String?, defaultName: String): Angular2PropertyInfo? {
       if (functionName == null) return null
-      val referenceNames = Angular2IndexingHandler.getFunctionNameFromIndex(call)
+      val referenceNames = getFunctionNameFromIndex(call)
                              ?.split('.')
                              // TODO remove `?.removePrefix("ɵ")` part, when `input()` syntax matures
                              ?.takeIf { it.getOrNull(0)?.removePrefix("ɵ") == functionName }

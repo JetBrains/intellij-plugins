@@ -6,10 +6,9 @@ import org.angular2.entities.metadata.psi.Angular2MetadataPipe
 
 class Angular2MetadataPipeIndex : Angular2IndexBase<Angular2MetadataPipe>() {
 
-  override fun getKey(): StubIndexKey<String, Angular2MetadataPipe> = KEY
+  override fun getKey(): StubIndexKey<String, Angular2MetadataPipe> = Angular2MetadataPipeIndexKey
 
-  companion object {
-    @JvmField
-    val KEY = StubIndexKey.createIndexKey<String, Angular2MetadataPipe>("angular2.metadata.pipe.index")
-  }
 }
+
+@JvmField
+val Angular2MetadataPipeIndexKey = StubIndexKey.createIndexKey<String, Angular2MetadataPipe>("angular2.metadata.pipe.index")

@@ -23,8 +23,8 @@ import org.angular2.entities.Angular2DirectiveProperties
 import org.angular2.entities.Angular2DirectiveProperty
 import org.angular2.entities.metadata.stubs.Angular2MetadataClassStubBase
 import org.angular2.lang.Angular2Bundle
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_INPUTS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_OUTPUTS
+import org.angular2.web.NG_DIRECTIVE_INPUTS
+import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 
 abstract class Angular2MetadataClassBase<Stub : Angular2MetadataClassStubBase<*>>(element: Stub)
   : Angular2MetadataElement<Stub>(element) {

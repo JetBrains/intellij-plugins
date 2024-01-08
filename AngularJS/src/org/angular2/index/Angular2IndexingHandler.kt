@@ -145,7 +145,7 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
     }
     val userID = element.userString
     val index = if (userID != null) INDEX_MAP[userID] else null
-    if (index == Angular2SourceDirectiveIndex.KEY) {
+    if (index == Angular2SourceDirectiveIndexKey) {
       var type = element.toImplicitElement(null).userStringData
       if (type != null && type.startsWith(DIRECTIVE_TYPE)) {
         type = type.substring(DIRECTIVE_TYPE.length)
@@ -156,7 +156,7 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
     }
     else if (index != null) {
       sink.occurrence(index, element.name)
-      if (index == Angular2SourcePipeIndex.KEY) {
+      if (index == Angular2SourcePipeIndexKey) {
         sink.occurrence(AngularSymbolIndex.KEY, element.name)
       }
       else {
@@ -171,12 +171,12 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
       val entityDef = Angular2IvySymbolDef.get(jsClassStub, false)
       if (entityDef != null) {
         if (entityDef is Angular2IvySymbolDef.Module) {
-          sink.occurrence(Angular2IvyModuleIndex.KEY, NG_MODULE_INDEX_NAME)
+          sink.occurrence(Angular2IvyModuleIndexKey, NG_MODULE_INDEX_NAME)
         }
         else if (entityDef is Angular2IvySymbolDef.Pipe) {
           val name = entityDef.name
           if (name != null) {
-            sink.occurrence(Angular2IvyPipeIndex.KEY, name)
+            sink.occurrence(Angular2IvyPipeIndexKey, name)
             sink.occurrence(AngularSymbolIndex.KEY, name)
           }
         }
@@ -184,7 +184,7 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
           val selector = entityDef.selector
           if (selector != null) {
             for (indexName in Angular2EntityUtils.getDirectiveIndexNames(selector.trim { it <= ' ' })) {
-              sink.occurrence(Angular2IvyDirectiveIndex.KEY, indexName)
+              sink.occurrence(Angular2IvyDirectiveIndexKey, indexName)
             }
           }
         }
@@ -336,160 +336,144 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
 
   companion object {
 
-    private const val REQUIRE = "require"
-
-    @NonNls
-    private val ANGULAR2_TEMPLATE_URLS_INDEX_USER_STRING = "a2tui"
-
-    @NonNls
-    private val ANGULAR2_PIPE_INDEX_USER_STRING = "a2pi"
-
-    @NonNls
-    private val ANGULAR2_DIRECTIVE_INDEX_USER_STRING = "a2di"
-
-    @NonNls
-    private val ANGULAR2_MODULE_INDEX_USER_STRING = "a2mi"
-
-    private const val ANGULAR2_FUNCTION_NAME_USER_STRING = "a2fn"
-
-    @NonNls
-    private val PIPE_TYPE = "P;;;"
-
-    @NonNls
-    private val DIRECTIVE_TYPE = "D;;;"
-
-    @NonNls
-    private val MODULE_TYPE = "M;;;"
-
-    @NonNls
     const val NG_MODULE_INDEX_NAME = "ngModule"
+  }
+}
 
-    @NonNls
-    private val STYLESHEET_INDEX_PREFIX = "ss/"
+private const val REQUIRE = "require"
 
-    @JvmField
-    val TS_CLASS_TOKENS = TokenSet.create(JSStubElementTypes.TYPESCRIPT_CLASS,
-                                          JSStubElementTypes.TYPESCRIPT_CLASS_EXPRESSION)
+private const val ANGULAR2_TEMPLATE_URLS_INDEX_USER_STRING = "a2tui"
 
-    private val STUBBED_PROPERTIES = ContainerUtil.newHashSet(
-      TEMPLATE_URL_PROP, STYLE_URLS_PROP, STYLE_URL_PROP, SELECTOR_PROP, INPUTS_PROP, OUTPUTS_PROP)
+private const val ANGULAR2_PIPE_INDEX_USER_STRING = "a2pi"
 
-    private val STUBBED_DECORATORS_STRING_ARGS = ContainerUtil.newHashSet(
-      INPUT_DEC, OUTPUT_DEC, ATTRIBUTE_DEC)
+private const val ANGULAR2_DIRECTIVE_INDEX_USER_STRING = "a2di"
 
-    // TODO Remove "ɵ" prefixed variant once `input()` syntax matures
-    private val STUBBED_DECORATOR_LIKE_FUNCTIONS = ContainerUtil.newHashSet(
-      INPUT_FUN, "ɵ$INPUT_FUN"
-    )
+private const val ANGULAR2_MODULE_INDEX_USER_STRING = "a2mi"
 
-    private val INDEX_MAP = HashMap<String, StubIndexKey<String, JSImplicitElementProvider>?>()
+private const val ANGULAR2_FUNCTION_NAME_USER_STRING = "a2fn"
 
-    init {
-      INDEX_MAP[ANGULAR2_TEMPLATE_URLS_INDEX_USER_STRING] = Angular2TemplateUrlIndex.KEY
-      INDEX_MAP[ANGULAR2_DIRECTIVE_INDEX_USER_STRING] = Angular2SourceDirectiveIndex.KEY
-      INDEX_MAP[ANGULAR2_PIPE_INDEX_USER_STRING] = Angular2SourcePipeIndex.KEY
-      INDEX_MAP[ANGULAR2_MODULE_INDEX_USER_STRING] = Angular2SourceModuleIndex.KEY
-      INDEX_MAP[ANGULAR2_FUNCTION_NAME_USER_STRING] = null
-    }
+private const val PIPE_TYPE = "P;;;"
 
-    @JvmStatic
-    fun isPipe(element: JSImplicitElement): Boolean {
-      return ANGULAR2_PIPE_INDEX_USER_STRING == element.userString
-    }
+private const val DIRECTIVE_TYPE = "D;;;"
 
-    @JvmStatic
-    fun isDirective(element: JSImplicitElement): Boolean {
-      return ANGULAR2_DIRECTIVE_INDEX_USER_STRING == element.userString
-    }
+private const val MODULE_TYPE = "M;;;"
 
-    @JvmStatic
-    fun isModule(element: JSImplicitElement): Boolean {
-      return ANGULAR2_MODULE_INDEX_USER_STRING == element.userString
-    }
+private const val STYLESHEET_INDEX_PREFIX = "ss/"
 
-    @JvmStatic
-    fun isDecoratorStringArgStubbed(decorator: ES6Decorator): Boolean {
-      return STUBBED_DECORATORS_STRING_ARGS.contains(decorator.decoratorName)
-    }
+val TS_CLASS_TOKENS = TokenSet.create(JSStubElementTypes.TYPESCRIPT_CLASS,
+                                      JSStubElementTypes.TYPESCRIPT_CLASS_EXPRESSION)
 
-    @ApiStatus.Internal
-    @JvmStatic
-    fun resolveComponentsFromIndex(file: PsiFile, filter: Predicate<ES6Decorator>): List<TypeScriptClass> {
-      val name = (if (isStylesheet(file)) STYLESHEET_INDEX_PREFIX else "") + file.viewProvider.virtualFile.name
-      val result = SmartList<TypeScriptClass>()
-      AngularIndexUtil.multiResolve(file.project, Angular2TemplateUrlIndex.KEY, name) { el ->
-        if (el != null) {
-          val componentDecorator = el.parent
-          if (componentDecorator is ES6Decorator && filter.test(componentDecorator)) {
-            ContainerUtil.addIfNotNull(result, getClassForDecoratorElement(componentDecorator))
-          }
-        }
-        true
+private val STUBBED_PROPERTIES = ContainerUtil.newHashSet(
+  TEMPLATE_URL_PROP, STYLE_URLS_PROP, STYLE_URL_PROP, SELECTOR_PROP, INPUTS_PROP, OUTPUTS_PROP)
+
+private val STUBBED_DECORATORS_STRING_ARGS = ContainerUtil.newHashSet(
+  INPUT_DEC, OUTPUT_DEC, ATTRIBUTE_DEC)
+
+// TODO Remove "ɵ" prefixed variant once `input()` syntax matures
+private val STUBBED_DECORATOR_LIKE_FUNCTIONS = ContainerUtil.newHashSet(
+  INPUT_FUN, "ɵ$INPUT_FUN"
+)
+
+private val INDEX_MAP = HashMap<String, StubIndexKey<String, JSImplicitElementProvider>?>().also { INDEX_MAP ->
+  INDEX_MAP[ANGULAR2_TEMPLATE_URLS_INDEX_USER_STRING] = Angular2TemplateUrlIndexKey
+  INDEX_MAP[ANGULAR2_DIRECTIVE_INDEX_USER_STRING] = Angular2SourceDirectiveIndexKey
+  INDEX_MAP[ANGULAR2_PIPE_INDEX_USER_STRING] = Angular2SourcePipeIndexKey
+  INDEX_MAP[ANGULAR2_MODULE_INDEX_USER_STRING] = Angular2SourceModuleIndexKey
+  INDEX_MAP[ANGULAR2_FUNCTION_NAME_USER_STRING] = null
+}
+
+fun JSImplicitElement.isPipe(): Boolean {
+  return ANGULAR2_PIPE_INDEX_USER_STRING == userString
+}
+
+fun JSImplicitElement.isDirective(): Boolean {
+  return ANGULAR2_DIRECTIVE_INDEX_USER_STRING == userString
+}
+
+fun JSImplicitElement.isModule(): Boolean {
+  return ANGULAR2_MODULE_INDEX_USER_STRING == userString
+}
+
+@ApiStatus.Internal
+fun ES6Decorator.isStringArgStubbed(): Boolean {
+  return STUBBED_DECORATORS_STRING_ARGS.contains(decoratorName)
+}
+
+@ApiStatus.Internal
+fun resolveComponentsFromIndex(file: PsiFile, filter: Predicate<ES6Decorator>): List<TypeScriptClass> {
+  val name = (if (isStylesheet(file)) STYLESHEET_INDEX_PREFIX else "") + file.viewProvider.virtualFile.name
+  val result = SmartList<TypeScriptClass>()
+  AngularIndexUtil.multiResolve(file.project, Angular2TemplateUrlIndexKey, name) { el ->
+    if (el != null) {
+      val componentDecorator = el.parent
+      if (componentDecorator is ES6Decorator && filter.test(componentDecorator)) {
+        ContainerUtil.addIfNotNull(result, getClassForDecoratorElement(componentDecorator))
       }
-      return result
     }
+    true
+  }
+  return result
+}
 
-    fun getFunctionNameFromIndex(call: JSCallExpression): String? =
-      call.indexingData
-        ?.implicitElements
-        ?.find { it.userString == ANGULAR2_FUNCTION_NAME_USER_STRING }
-        ?.name
+fun getFunctionNameFromIndex(call: JSCallExpression): String? =
+  call.indexingData
+    ?.implicitElements
+    ?.find { it.userString == ANGULAR2_FUNCTION_NAME_USER_STRING }
+    ?.name
 
-    private fun getTemplateFileUrl(decorator: ES6Decorator): String? {
-      val templateUrl = getPropertyStringValue(decorator, TEMPLATE_URL_PROP)
-      if (templateUrl != null) {
-        return templateUrl
-      }
-      val property = getProperty(decorator, TEMPLATE_PROP)
-      return if (property != null) {
-        getExprReferencedFileUrl(property.value)
-      }
-      else null
-    }
+private fun getTemplateFileUrl(decorator: ES6Decorator): String? {
+  val templateUrl = getPropertyStringValue(decorator, TEMPLATE_URL_PROP)
+  if (templateUrl != null) {
+    return templateUrl
+  }
+  val property = getProperty(decorator, TEMPLATE_PROP)
+  return if (property != null) {
+    getExprReferencedFileUrl(property.value)
+  }
+  else null
+}
 
-    private fun getStylesUrls(decorator: ES6Decorator): List<String> {
-      val result = SmartList<String>()
+private fun getStylesUrls(decorator: ES6Decorator): List<String> {
+  val result = SmartList<String>()
 
-      val urlsGetter = { name: String, func: (JSExpression) -> String? ->
-        getProperty(decorator, name)
-          ?.value
-          ?.asSafely<JSArrayLiteralExpression>()
-          ?.expressions
-          ?.mapNotNullTo(result, func)
-      }
+  val urlsGetter = { name: String, func: (JSExpression) -> String? ->
+    getProperty(decorator, name)
+      ?.value
+      ?.asSafely<JSArrayLiteralExpression>()
+      ?.expressions
+      ?.mapNotNullTo(result, func)
+  }
 
-      urlsGetter(STYLE_URLS_PROP) { Angular2DecoratorUtil.getExpressionStringValue(it) }
-      urlsGetter(STYLES_PROP) { getExprReferencedFileUrl(it) }
-      getPropertyStringValue(decorator, STYLE_URL_PROP)?.let { result.add(it) }
+  urlsGetter(STYLE_URLS_PROP) { Angular2DecoratorUtil.getExpressionStringValue(it) }
+  urlsGetter(STYLES_PROP) { getExprReferencedFileUrl(it) }
+  getPropertyStringValue(decorator, STYLE_URL_PROP)?.let { result.add(it) }
 
-      return result
-    }
+  return result
+}
 
-    @JvmStatic
-    fun getExprReferencedFileUrl(expression: JSExpression?): String? {
-      if (expression is JSReferenceExpression) {
-        for (resolvedElement in AngularIndexUtil.resolveLocally(expression)) {
-          if (resolvedElement is ES6ImportedBinding) {
-            val from = resolvedElement.declaration?.fromClause
-            if (from != null) {
-              return from.referenceText?.let { StringUtil.unquoteString(it) }
-            }
-          }
-        }
-      }
-      else if (expression is JSCallExpression) {
-        val referenceExpression = expression.methodExpression as? JSReferenceExpression
-        val arguments = expression.arguments
-        if (arguments.size == 1
-            && arguments[0] is JSLiteralExpression
-            && (arguments[0] as JSLiteralExpression).isQuotedLiteral
-            && referenceExpression != null
-            && referenceExpression.qualifier == null
-            && REQUIRE == referenceExpression.referenceName) {
-          return (arguments[0] as JSLiteralExpression).stringValue
+@ApiStatus.Internal
+fun getExprReferencedFileUrl(expression: JSExpression?): String? {
+  if (expression is JSReferenceExpression) {
+    for (resolvedElement in AngularIndexUtil.resolveLocally(expression)) {
+      if (resolvedElement is ES6ImportedBinding) {
+        val from = resolvedElement.declaration?.fromClause
+        if (from != null) {
+          return from.referenceText?.let { StringUtil.unquoteString(it) }
         }
       }
-      return null
     }
   }
+  else if (expression is JSCallExpression) {
+    val referenceExpression = expression.methodExpression as? JSReferenceExpression
+    val arguments = expression.arguments
+    if (arguments.size == 1
+        && arguments[0] is JSLiteralExpression
+        && (arguments[0] as JSLiteralExpression).isQuotedLiteral
+        && referenceExpression != null
+        && referenceExpression.qualifier == null
+        && REQUIRE == referenceExpression.referenceName) {
+      return (arguments[0] as JSLiteralExpression).stringValue
+    }
+  }
+  return null
 }

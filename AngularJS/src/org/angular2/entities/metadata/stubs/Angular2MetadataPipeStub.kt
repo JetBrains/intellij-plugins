@@ -9,7 +9,7 @@ import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.io.StringRef
 import org.angular2.entities.metadata.Angular2MetadataElementTypes
 import org.angular2.entities.metadata.psi.Angular2MetadataPipe
-import org.angular2.index.Angular2MetadataPipeIndex
+import org.angular2.index.Angular2MetadataPipeIndexKey
 import org.angular2.lang.metadata.MetadataUtils
 import java.io.IOException
 
@@ -40,7 +40,7 @@ class Angular2MetadataPipeStub : Angular2MetadataEntityStub<Angular2MetadataPipe
 
   override fun index(sink: IndexSink) {
     super.index(sink)
-    sink.occurrence(Angular2MetadataPipeIndex.KEY, pipeName)
+    sink.occurrence(Angular2MetadataPipeIndexKey, pipeName)
   }
 
   override val loadInOuts: Boolean

@@ -9,7 +9,7 @@ import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.MultiMap
 import org.angular2.entities.metadata.Angular2MetadataFileType.METADATA_SUFFIX
-import org.angular2.index.Angular2MetadataNodeModuleIndex
+import org.angular2.index.Angular2MetadataNodeModuleIndexKey
 import org.jetbrains.annotations.NonNls
 
 class ExternalNodeModuleResolver(private val mySource: Angular2MetadataElement<*>,
@@ -43,7 +43,7 @@ class ExternalNodeModuleResolver(private val mySource: Angular2MetadataElement<*
   private fun resolveFromIndex(memberExtractor: (Angular2MetadataNodeModule) -> Angular2MetadataElement<*>?): Angular2MetadataElement<*>? {
     val candidates = MultiMap.createSet<Angular2MetadataElement<*>, Angular2MetadataNodeModule>()
     StubIndex.getInstance().processElements(
-      Angular2MetadataNodeModuleIndex.KEY, myModuleName, mySource.project,
+      Angular2MetadataNodeModuleIndexKey, myModuleName, mySource.project,
       GlobalSearchScope.allScope(mySource.project), Angular2MetadataNodeModule::class.java
     ) { nodeModule ->
       if (nodeModule.isValid) {

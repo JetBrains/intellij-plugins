@@ -22,8 +22,8 @@ import com.intellij.xml.XmlElementDescriptor
 import org.angular2.Angular2DecoratorUtil.getClassForDecoratorElement
 import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
 import org.angular2.web.Angular2Symbol
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_ATTRIBUTE_SELECTORS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_ELEMENT_SELECTORS
+import org.angular2.web.NG_DIRECTIVE_ATTRIBUTE_SELECTORS
+import org.angular2.web.NG_DIRECTIVE_ELEMENT_SELECTORS
 import org.angularjs.AngularJSBundle
 import java.util.*
 import java.util.regex.Pattern

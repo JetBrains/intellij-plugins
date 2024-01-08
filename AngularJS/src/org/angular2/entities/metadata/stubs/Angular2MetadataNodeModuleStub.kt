@@ -11,7 +11,7 @@ import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.io.StringRef
 import org.angular2.entities.metadata.Angular2MetadataElementTypes
 import org.angular2.entities.metadata.psi.Angular2MetadataNodeModule
-import org.angular2.index.Angular2MetadataNodeModuleIndex
+import org.angular2.index.Angular2MetadataNodeModuleIndexKey
 import org.angular2.lang.metadata.MetadataUtils
 import org.jetbrains.annotations.NonNls
 
@@ -57,7 +57,7 @@ class Angular2MetadataNodeModuleStub : Angular2MetadataElementStub<Angular2Metad
   override fun index(sink: IndexSink) {
     super.index(sink)
     if (importAs != null) {
-      sink.occurrence(Angular2MetadataNodeModuleIndex.KEY, importAs!!)
+      sink.occurrence(Angular2MetadataNodeModuleIndexKey, importAs!!)
     }
   }
 

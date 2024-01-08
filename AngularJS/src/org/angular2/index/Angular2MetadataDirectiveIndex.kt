@@ -6,10 +6,10 @@ import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveBase
 
 class Angular2MetadataDirectiveIndex : Angular2IndexBase<Angular2MetadataDirectiveBase<*>>() {
 
-  override fun getKey(): StubIndexKey<String, Angular2MetadataDirectiveBase<*>> = KEY
+  override fun getKey(): StubIndexKey<String, Angular2MetadataDirectiveBase<*>> = Angular2MetadataDirectiveIndexKey
 
-  companion object {
-    @JvmField
-    val KEY: StubIndexKey<String, Angular2MetadataDirectiveBase<*>> = StubIndexKey.createIndexKey("angular2.metadata.directive.index")
-  }
 }
+
+@JvmField
+val Angular2MetadataDirectiveIndexKey: StubIndexKey<String, Angular2MetadataDirectiveBase<*>> = StubIndexKey.createIndexKey(
+  "angular2.metadata.directive.index")

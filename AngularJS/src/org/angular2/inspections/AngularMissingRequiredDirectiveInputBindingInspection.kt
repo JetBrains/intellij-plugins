@@ -13,7 +13,7 @@ import org.angular2.codeInsight.Angular2HighlightingUtils.htmlClassName
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
-import org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.Companion.isTemplateTag
+import org.angular2.codeInsight.template.isTemplateTag
 import org.angular2.inspections.quickfixes.CreateAttributeQuickFix
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.psi.Angular2TemplateBindings

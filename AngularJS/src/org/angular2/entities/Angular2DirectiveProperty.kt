@@ -18,7 +18,7 @@ import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
 import org.angular2.entities.Angular2EntityUtils.jsTypeFromAcceptInputType
 import org.angular2.lang.types.Angular2TypeUtils
 import org.angular2.web.Angular2Symbol
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_OUTPUTS
+import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 
 interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element {
 

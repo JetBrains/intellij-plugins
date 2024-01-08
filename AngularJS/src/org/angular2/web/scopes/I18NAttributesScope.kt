@@ -16,7 +16,7 @@ import com.intellij.webSymbols.utils.nameSegments
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.web.Angular2PsiSourcedSymbol
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_I18N_ATTRIBUTES
+import org.angular2.web.NG_I18N_ATTRIBUTES
 import org.jetbrains.annotations.NonNls
 
 class I18NAttributesScope(private val tag: XmlTag) : WebSymbolsScope {

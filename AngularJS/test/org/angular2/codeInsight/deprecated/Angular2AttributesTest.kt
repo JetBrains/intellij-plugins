@@ -37,7 +37,8 @@ import org.angular2.entities.Angular2EntitiesProvider.getComponent
 import org.angular2.entities.source.Angular2SourceDirectiveVirtualProperty
 import org.angular2.inspections.AngularUndefinedBindingInspection
 import org.angular2.lang.html.psi.Angular2HtmlAttrVariable
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator
+import org.angular2.web.PROP_BINDING_PATTERN
+import org.angular2.web.PROP_ERROR_SYMBOL
 import org.angularjs.AngularTestUtil
 
 @Deprecated("Use test appropriate for IDE feature being tested - e.g. completion/resolve/highlighting ")
@@ -526,8 +527,8 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
         val wrap = attrWrap[i]
         val ref = myFixture.multiResolveWebSymbolReference(wrap.first + "<caret>" + name + wrap.second + "=")
           .filter { s: WebSymbol ->
-            s.properties[Angular2WebSymbolsQueryConfigurator.PROP_ERROR_SYMBOL] != true
-            && s.properties[Angular2WebSymbolsQueryConfigurator.PROP_BINDING_PATTERN] != true
+            s.properties[PROP_ERROR_SYMBOL] != true
+            && s.properties[PROP_BINDING_PATTERN] != true
           }
         val sources = ref.map { it.psiContext }
         val messageStart = "Attribute " + wrap.first + name + wrap.second

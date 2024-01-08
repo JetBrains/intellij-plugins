@@ -6,10 +6,9 @@ import org.angular2.entities.metadata.psi.Angular2MetadataFunction
 
 class Angular2MetadataFunctionIndex : Angular2IndexBase<Angular2MetadataFunction>() {
 
-  override fun getKey(): StubIndexKey<String, Angular2MetadataFunction> = KEY
+  override fun getKey(): StubIndexKey<String, Angular2MetadataFunction> = Angular2MetadataFunctionIndexKey
 
-  companion object {
-    @JvmField
-    val KEY = StubIndexKey.createIndexKey<String, Angular2MetadataFunction>("angular2.metadata.function.index")
-  }
 }
+
+@JvmField
+val Angular2MetadataFunctionIndexKey = StubIndexKey.createIndexKey<String, Angular2MetadataFunction>("angular2.metadata.function.index")

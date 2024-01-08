@@ -9,7 +9,6 @@ import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.lang.html.parser.Angular2AttributeType.*
 import org.angular2.lang.html.psi.PropertyBindingType.ATTRIBUTE
 import org.angular2.lang.html.psi.PropertyBindingType.PROPERTY
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.EVENT_ATTR_PREFIX
 import java.util.function.Predicate
 
 class Angular2AttributeNameCodeCompletionFilter(tag: XmlTag) : Predicate<String> {

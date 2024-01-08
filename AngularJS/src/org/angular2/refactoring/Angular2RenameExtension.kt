@@ -30,7 +30,6 @@ class Angular2RenameExtension : JSRenameExtension {
     return result
   }
 
-  companion object {
-    private val CANDIDATE_EXTENSIONS = arrayOf("css", "scss", "less", "styl", "html", "spec.ts")
-  }
+  private val CANDIDATE_EXTENSIONS = arrayOf("css", "scss", "less", "styl", "html", "spec.ts")
+
 }

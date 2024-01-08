@@ -326,28 +326,26 @@ class Angular2CompletionContributor : CompletionContributor() {
     }
   }
 
-  companion object {
+}
 
-    private val NG_VARIABLE_PRIORITY = LOCAL_SCOPE_MAX_PRIORITY
-    private val NG_PRIVATE_VARIABLE_PRIORITY = LOCAL_SCOPE_MAX_PRIORITY_EXOTIC
-    private val `NG_$ANY_PRIORITY` = TOP_LEVEL_SYMBOLS_FROM_OTHER_FILES
+private val NG_VARIABLE_PRIORITY = LOCAL_SCOPE_MAX_PRIORITY
+private val NG_PRIVATE_VARIABLE_PRIORITY = LOCAL_SCOPE_MAX_PRIORITY_EXOTIC
+private val `NG_$ANY_PRIORITY` = TOP_LEVEL_SYMBOLS_FROM_OTHER_FILES
 
-    @NonNls
-    private val NG_LIFECYCLE_HOOKS = ContainerUtil.newHashSet(
-      "ngOnChanges", "ngOnInit", "ngDoCheck", "ngOnDestroy", "ngAfterContentInit",
-      "ngAfterContentChecked", "ngAfterViewInit", "ngAfterViewChecked")
+@NonNls
+private val NG_LIFECYCLE_HOOKS = ContainerUtil.newHashSet(
+  "ngOnChanges", "ngOnInit", "ngDoCheck", "ngOnDestroy", "ngAfterContentInit",
+  "ngAfterContentChecked", "ngAfterViewInit", "ngAfterViewChecked")
 
-    @NonNls
-    private val SUPPORTED_KEYWORDS = ContainerUtil.newHashSet(
-      "var", "let", "as", "null", "undefined", "true", "false", "if", "else", "this"
-    )
+@NonNls
+private val SUPPORTED_KEYWORDS = ContainerUtil.newHashSet(
+  "var", "let", "as", "null", "undefined", "true", "false", "if", "else", "this"
+)
 
-    private fun <T : PsiElement> language(language: Language): PatternCondition<T> {
-      return object : PatternCondition<T>("language(" + language.id + ")") {
-        override fun accepts(t: T, context: ProcessingContext): Boolean {
-          return language.`is`(PsiUtilCore.findLanguageFromElement(t))
-        }
-      }
+private fun <T : PsiElement> language(language: Language): PatternCondition<T> {
+  return object : PatternCondition<T>("language(" + language.id + ")") {
+    override fun accepts(t: T, context: ProcessingContext): Boolean {
+      return language.`is`(PsiUtilCore.findLanguageFromElement(t))
     }
   }
 }

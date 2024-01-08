@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.webSymbols.WebSymbolApiStatus
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import org.angular2.web.Angular2PsiSourcedSymbol
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_ATTRIBUTES
+import org.angular2.web.NG_DIRECTIVE_ATTRIBUTES
 
 interface Angular2DirectiveAttribute : Angular2PsiSourcedSymbol, Angular2Element {
 

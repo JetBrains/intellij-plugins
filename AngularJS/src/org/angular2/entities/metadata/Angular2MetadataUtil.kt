@@ -12,8 +12,8 @@ import org.angular2.entities.Angular2EntitiesProvider.isDeclaredClass
 import org.angular2.entities.metadata.psi.Angular2MetadataClassBase
 import org.angular2.entities.metadata.psi.Angular2MetadataEntity
 import org.angular2.entities.metadata.psi.Angular2MetadataFunction
-import org.angular2.index.Angular2MetadataClassNameIndex
-import org.angular2.index.Angular2MetadataFunctionIndex
+import org.angular2.index.Angular2MetadataClassNameIndexKey
+import org.angular2.index.Angular2MetadataFunctionIndexKey
 
 object Angular2MetadataUtil {
   fun findMetadataFunction(function: JSFunction): Angular2MetadataFunction? {
@@ -23,7 +23,7 @@ object Angular2MetadataUtil {
     }
     val result = Ref<Angular2MetadataFunction>()
     StubIndex.getInstance().processElements(
-      Angular2MetadataFunctionIndex.KEY, function.name!!, function.project,
+      Angular2MetadataFunctionIndexKey, function.name!!, function.project,
       GlobalSearchScope.allScope(function.project),
       Angular2MetadataFunction::class.java) { f ->
       if (f.isValid) {
@@ -50,7 +50,7 @@ object Angular2MetadataUtil {
     }
     val result = Ref<T>()
     StubIndex.getInstance().processElements(
-      Angular2MetadataClassNameIndex.KEY, className, typeScriptClass.project,
+      Angular2MetadataClassNameIndexKey, className, typeScriptClass.project,
       GlobalSearchScope.allScope(typeScriptClass.project), Angular2MetadataClassBase::class.java
     ) { e ->
       val casted = tryCast(e, clazz)

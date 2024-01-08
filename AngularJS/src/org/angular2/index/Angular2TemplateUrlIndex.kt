@@ -6,10 +6,9 @@ import com.intellij.psi.stubs.StubIndexKey
 
 class Angular2TemplateUrlIndex : Angular2IndexBase<JSImplicitElementProvider>() {
 
-  override fun getKey(): StubIndexKey<String, JSImplicitElementProvider> = KEY
+  override fun getKey(): StubIndexKey<String, JSImplicitElementProvider> = Angular2TemplateUrlIndexKey
 
-  companion object {
-    @JvmField
-    val KEY = StubIndexKey.createIndexKey<String, JSImplicitElementProvider>("angular2.templateUrl.index")
-  }
 }
+
+@JvmField
+val Angular2TemplateUrlIndexKey = StubIndexKey.createIndexKey<String, JSImplicitElementProvider>("angular2.templateUrl.index")

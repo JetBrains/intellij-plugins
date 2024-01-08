@@ -23,7 +23,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
-import org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.Companion.isTemplateTag
+import org.angular2.codeInsight.template.isTemplateTag
 import org.angular2.entities.Angular2ComponentLocator.findComponentClass
 import org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF
 import org.angular2.lang.Angular2LangUtil

@@ -2,7 +2,6 @@ package org.angularjs.index;
 
 import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.ide.highlighter.XHtmlFileType;
-import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.indexing.DefaultFileTypeSpecificInputFilter;
 import org.angular2.lang.html.Angular2HtmlFileType;

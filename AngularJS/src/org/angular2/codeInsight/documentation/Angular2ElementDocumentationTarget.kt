@@ -41,9 +41,9 @@ import org.angular2.entities.*
 import org.angular2.entities.source.Angular2SourceDirectiveProperty
 import org.angular2.lang.types.Angular2TypeUtils.possiblyGenericJsType
 import org.angular2.lang.types.BindingsTypeResolver
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_INPUTS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_IN_OUTS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_OUTPUTS
+import org.angular2.web.NG_DIRECTIVE_INPUTS
+import org.angular2.web.NG_DIRECTIVE_IN_OUTS
+import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 import org.jetbrains.annotations.Nls
 
 class Angular2ElementDocumentationTarget private constructor(

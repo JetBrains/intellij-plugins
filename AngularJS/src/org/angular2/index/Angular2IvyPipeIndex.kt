@@ -6,10 +6,9 @@ import com.intellij.psi.stubs.StubIndexKey
 
 class Angular2IvyPipeIndex : Angular2IndexBase<TypeScriptClass>() {
 
-  override fun getKey(): StubIndexKey<String, TypeScriptClass> = KEY
+  override fun getKey(): StubIndexKey<String, TypeScriptClass> = Angular2IvyPipeIndexKey
 
-  companion object {
-    @JvmField
-    val KEY = StubIndexKey.createIndexKey<String, TypeScriptClass>("angular2.ivy.pipe.index")
-  }
 }
+
+@JvmField
+val Angular2IvyPipeIndexKey = StubIndexKey.createIndexKey<String, TypeScriptClass>("angular2.ivy.pipe.index")

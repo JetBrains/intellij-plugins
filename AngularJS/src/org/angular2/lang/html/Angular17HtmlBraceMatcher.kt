@@ -15,7 +15,7 @@ class Angular17HtmlBraceMatcher : XmlBraceMatcher() {
     super.getPairedBraceMatcher(tokenType) ?: AngularBlocksBraceMatcher
 
   override fun isFileTypeWithSingleHtmlTags(fileType: FileType?): Boolean =
-    fileType == Angular17HtmlFileType.INSTANCE
+    fileType == Angular17HtmlFileType
 
   private object AngularBlocksBraceMatcher : PairedBraceMatcher {
 

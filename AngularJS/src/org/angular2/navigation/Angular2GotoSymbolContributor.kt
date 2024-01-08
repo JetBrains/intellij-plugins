@@ -18,13 +18,13 @@ import org.angular2.entities.Angular2EntityUtils.getElementDirectiveIndexName
 import org.angular2.entities.Angular2EntityUtils.getElementName
 import org.angular2.entities.Angular2EntityUtils.isAttributeDirectiveIndexName
 import org.angular2.entities.Angular2EntityUtils.isElementDirectiveIndexName
-import org.angular2.index.Angular2SourceDirectiveIndex
+import org.angular2.index.Angular2SourceDirectiveIndexKey
 
 class Angular2GotoSymbolContributor : ChooseByNameContributorEx {
   override fun processNames(processor: Processor<in String>,
                             scope: GlobalSearchScope,
                             filter: IdFilter?) {
-    StubIndex.getInstance().processAllKeys(Angular2SourceDirectiveIndex.KEY, { key: String ->
+    StubIndex.getInstance().processAllKeys(Angular2SourceDirectiveIndexKey, { key: String ->
       val name = when {
         isElementDirectiveIndexName(key) -> {
           getElementName(key)
@@ -48,7 +48,7 @@ class Angular2GotoSymbolContributor : ChooseByNameContributorEx {
                                        parameters: FindSymbolParameters) {
     for (indexName in sequenceOf(getAttributeDirectiveIndexName(name), getElementDirectiveIndexName(name))) {
       StubIndex.getInstance().processElements(
-        Angular2SourceDirectiveIndex.KEY, indexName, parameters.project, parameters.searchScope,
+        Angular2SourceDirectiveIndexKey, indexName, parameters.project, parameters.searchScope,
         parameters.idFilter, JSImplicitElementProvider::class.java
       ) { provider ->
         for (element in provider.indexingData?.implicitElements ?: emptyList()) {
@@ -64,37 +64,35 @@ class Angular2GotoSymbolContributor : ChooseByNameContributorEx {
     }
   }
 
-  companion object {
-    private fun processSelectors(name: String,
-                                 selectors: List<SimpleSelectorWithPsi>,
-                                 processor: Processor<in NavigationItem>): Boolean {
-      for (selector in selectors) {
-        if (!processSelectorElement(name, selector.element, processor)) {
-          return false
-        }
-        for (attribute in selector.attributes) {
-          if (!processSelectorElement(name, attribute, processor)) {
-            return false
-          }
-        }
-        if (!processSelectors(name, selector.notSelectors, processor)) {
+  private fun processSelectors(name: String,
+                               selectors: List<SimpleSelectorWithPsi>,
+                               processor: Processor<in NavigationItem>): Boolean {
+    for (selector in selectors) {
+      if (!processSelectorElement(name, selector.element, processor)) {
+        return false
+      }
+      for (attribute in selector.attributes) {
+        if (!processSelectorElement(name, attribute, processor)) {
           return false
         }
       }
-      return true
+      if (!processSelectors(name, selector.notSelectors, processor)) {
+        return false
+      }
     }
+    return true
+  }
 
-    private fun processSelectorElement(name: String,
-                                       element: Angular2DirectiveSelectorSymbol?,
-                                       processor: Processor<in NavigationItem>): Boolean {
-      if (element == null || name != element.name) return true
-      for (target in element.getNavigationTargets(element.project)) {
-        val navigationItem = target.getNavigationItem()
-        if (navigationItem != null && processor.process(navigationItem)) {
-          return true
-        }
+  private fun processSelectorElement(name: String,
+                                     element: Angular2DirectiveSelectorSymbol?,
+                                     processor: Processor<in NavigationItem>): Boolean {
+    if (element == null || name != element.name) return true
+    for (target in element.getNavigationTargets(element.project)) {
+      val navigationItem = target.getNavigationItem()
+      if (navigationItem != null && processor.process(navigationItem)) {
+        return true
       }
-      return false
     }
+    return false
   }
 }

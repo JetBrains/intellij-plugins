@@ -17,7 +17,6 @@ import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
 import org.angular2.entities.Angular2AliasedDirectiveProperty
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2DirectiveSelectorSymbol
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.PROP_SYMBOL_DIRECTIVE
 import java.util.*
 
 open class Angular2DirectiveSymbolWrapper private constructor(val directive: Angular2Directive,

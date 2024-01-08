@@ -22,7 +22,7 @@ class AngularJSProjectConfigurator : DirectoryProjectConfigurator {
     val model = ModuleRootManager.getInstance(module).modifiableModel
     val entry = MarkRootActionBase.findContentEntry(model, baseDir)
     if (entry != null && cliJson != null) {
-      excludeDefault(baseDir, entry)
+      entry.addDefaultAngularExcludes(baseDir)
       ApplicationManager.getApplication().runWriteAction { model.commit() }
       project.save()
       AngularCliUtil.createRunConfigurations(project, baseDir)
@@ -31,12 +31,9 @@ class AngularJSProjectConfigurator : DirectoryProjectConfigurator {
       model.dispose()
     }
   }
+}
 
-  companion object {
-
-    fun excludeDefault(baseDir: VirtualFile, entry: ContentEntry) {
-      entry.addExcludeFolder(baseDir.url + "/dist")
-      entry.addExcludeFolder(baseDir.url + "/tmp")
-    }
-  }
+fun ContentEntry.addDefaultAngularExcludes(baseDir: VirtualFile) {
+  addExcludeFolder(baseDir.url + "/dist")
+  addExcludeFolder(baseDir.url + "/tmp")
 }

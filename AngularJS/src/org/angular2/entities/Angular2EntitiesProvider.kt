@@ -42,9 +42,6 @@ import org.angular2.entities.metadata.psi.Angular2MetadataPipe
 import org.angular2.entities.source.*
 import org.angular2.index.*
 import org.angular2.index.Angular2IndexingHandler.Companion.NG_MODULE_INDEX_NAME
-import org.angular2.index.Angular2IndexingHandler.Companion.isDirective
-import org.angular2.index.Angular2IndexingHandler.Companion.isModule
-import org.angular2.index.Angular2IndexingHandler.Companion.isPipe
 import org.angular2.lang.Angular2LangUtil.isAngular2Context
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector
 import org.angularjs.index.AngularIndexUtil
@@ -127,12 +124,12 @@ object Angular2EntitiesProvider {
   fun findPipes(project: Project, name: String): List<Angular2Pipe> {
     val result = SmartList<Angular2Pipe>()
     AngularIndexUtil.multiResolve(
-      project, Angular2SourcePipeIndex.KEY, name) { pipe ->
+      project, Angular2SourcePipeIndexKey, name) { pipe ->
       result.addIfNotNull(getSourceEntity(pipe) as? Angular2Pipe)
       true
     }
-    processIvyEntities(project, name, Angular2IvyPipeIndex.KEY, Angular2Pipe::class.java) { result.add(it) }
-    processMetadataEntities(project, name, Angular2MetadataPipe::class.java, Angular2MetadataPipeIndex.KEY) { result.add(it) }
+    processIvyEntities(project, name, Angular2IvyPipeIndexKey, Angular2Pipe::class.java) { result.add(it) }
+    processMetadataEntities(project, name, Angular2MetadataPipe::class.java, Angular2MetadataPipeIndexKey) { result.add(it) }
     return result
   }
 
@@ -179,9 +176,9 @@ object Angular2EntitiesProvider {
   fun getAllPipes(project: Project): Map<String, List<Angular2Pipe>> {
     return CachedValuesManager.getManager(project).getCachedValue(project) {
       create(
-        AngularIndexUtil.getAllKeys(Angular2SourcePipeIndex.KEY, project).asSequence()
-          .plus(AngularIndexUtil.getAllKeys(Angular2MetadataPipeIndex.KEY, project))
-          .plus(AngularIndexUtil.getAllKeys(Angular2IvyPipeIndex.KEY, project))
+        AngularIndexUtil.getAllKeys(Angular2SourcePipeIndexKey, project).asSequence()
+          .plus(AngularIndexUtil.getAllKeys(Angular2MetadataPipeIndexKey, project))
+          .plus(AngularIndexUtil.getAllKeys(Angular2IvyPipeIndexKey, project))
           .distinct()
           .associateBy({ it }, { findPipes(project, it) }),
         PsiModificationTracker.MODIFICATION_COUNT)
@@ -217,7 +214,7 @@ object Angular2EntitiesProvider {
   fun getAllModules(project: Project): List<Angular2Module> {
     return CachedValuesManager.getManager(project).getCachedValue(project) {
       val result = ArrayList<Angular2Module>()
-      StubIndex.getInstance().processElements(Angular2SourceModuleIndex.KEY, NG_MODULE_INDEX_NAME,
+      StubIndex.getInstance().processElements(Angular2SourceModuleIndexKey, NG_MODULE_INDEX_NAME,
                                               project, GlobalSearchScope.allScope(project),
                                               JSImplicitElementProvider::class.java) { module ->
         if (module.isValid) {
@@ -225,9 +222,9 @@ object Angular2EntitiesProvider {
         }
         true
       }
-      processIvyEntities(project, NG_MODULE_INDEX_NAME, Angular2IvyModuleIndex.KEY, Angular2Module::class.java) { result.add(it) }
+      processIvyEntities(project, NG_MODULE_INDEX_NAME, Angular2IvyModuleIndexKey, Angular2Module::class.java) { result.add(it) }
       processMetadataEntities(project, NG_MODULE_INDEX_NAME, Angular2MetadataModule::class.java,
-                              Angular2MetadataModuleIndex.KEY) { result.add(it) }
+                              Angular2MetadataModuleIndexKey) { result.add(it) }
       create<List<Angular2Module>>(result, PsiModificationTracker.MODIFICATION_COUNT)
     }
   }
@@ -277,7 +274,7 @@ object Angular2EntitiesProvider {
   }
 
   private fun isEntityImplicitElement(element: JSImplicitElement): Boolean {
-    return isDirective(element) || isPipe(element) || isModule(element)
+    return element.isDirective() || element.isPipe() || element.isModule()
   }
 
   private fun findDirectivesCandidates(project: Project, indexLookupName: String): List<Angular2Directive> =
@@ -288,7 +285,7 @@ object Angular2EntitiesProvider {
     }.computeIfAbsent(indexLookupName) {
       val result = ArrayList<Angular2Directive>()
       StubIndex.getInstance().processElements(
-        Angular2SourceDirectiveIndex.KEY, indexLookupName, project, GlobalSearchScope.allScope(project),
+        Angular2SourceDirectiveIndexKey, indexLookupName, project, GlobalSearchScope.allScope(project),
         JSImplicitElementProvider::class.java
       ) { provider ->
         provider.indexingData
@@ -300,9 +297,9 @@ object Angular2EntitiesProvider {
           }
         true
       }
-      processIvyEntities(project, indexLookupName, Angular2IvyDirectiveIndex.KEY, Angular2Directive::class.java) { result.add(it) }
+      processIvyEntities(project, indexLookupName, Angular2IvyDirectiveIndexKey, Angular2Directive::class.java) { result.add(it) }
       processMetadataEntities(project, indexLookupName, Angular2MetadataDirectiveBase::class.java,
-                              Angular2MetadataDirectiveIndex.KEY) { result.add(it) }
+                              Angular2MetadataDirectiveIndexKey) { result.add(it) }
       result
     }
 

@@ -11,8 +11,8 @@ import com.intellij.webSymbols.WebSymbolsScopeWithCache
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.Angular2CodeInsightUtils
 import org.angular2.codeInsight.Angular2DeclarationsScope
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_ATTRIBUTE_SELECTORS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_ELEMENT_SELECTORS
+import org.angular2.web.NG_DIRECTIVE_ATTRIBUTE_SELECTORS
+import org.angular2.web.NG_DIRECTIVE_ELEMENT_SELECTORS
 
 class NgContentSelectorsScope(tag: XmlTag)
   : WebSymbolsScopeWithCache<XmlTag, Unit>(Angular2Framework.ID, tag.project, tag, Unit) {

@@ -38,55 +38,55 @@ class AngularCliAddDependencyInspection : LocalInspectionTool() {
   }
 
   companion object {
-
     private const val TIMEOUT: Long = 2000
+  }
 
-    private fun annotate(file: JsonFile, holder: ProblemsHolder) {
-      val packageJson = file.virtualFile
-      val project = file.project
-      if (packageJson == null || !JSLibraryUtil.isInProjectAndOutsideOfLibraryRoots(project, packageJson)) return
+  private fun annotate(file: JsonFile, holder: ProblemsHolder) {
+    val packageJson = file.virtualFile
+    val project = file.project
+    if (packageJson == null || !JSLibraryUtil.isInProjectAndOutsideOfLibraryRoots(project, packageJson)) return
 
-      val properties = PackageJsonUtil.getDependencies(file, PackageJsonUtil.PROD_DEV_DEPENDENCIES)
-      if (properties.isEmpty()) return
-      val finder = NodeInstalledPackageFinder(project, packageJson)
-      for (property in properties) {
-        val nameLiteral = property.nameElement as? JsonStringLiteral
-        val versionLiteral = property.value as? JsonStringLiteral
-        if (nameLiteral == null) {
-          continue
-        }
+    val properties = PackageJsonUtil.getDependencies(file, PackageJsonUtil.PROD_DEV_DEPENDENCIES)
+    if (properties.isEmpty()) return
+    val finder = NodeInstalledPackageFinder(project, packageJson)
+    for (property in properties) {
+      val nameLiteral = property.nameElement as? JsonStringLiteral
+      val versionLiteral = property.value as? JsonStringLiteral
+      if (nameLiteral == null) {
+        continue
+      }
 
-        val packageName = property.name
-        val version = versionLiteral?.value ?: ""
-        val pkgVersion = finder.findInstalledPackage(packageName)
+      val packageName = property.name
+      val version = versionLiteral?.value ?: ""
+      val pkgVersion = finder.findInstalledPackage(packageName)
 
-        if ((pkgVersion != null && AngularCliSchematicsRegistryService.instance.supportsNgAdd(pkgVersion))
-            || (pkgVersion == null && AngularCliSchematicsRegistryService.instance.supportsNgAdd(packageName, TIMEOUT))) {
-          val message = Angular2Bundle.message("angular.inspection.install-with-ng-add.message",
-                                               StringUtil.wrapWithDoubleQuote(packageName))
-          val quickFix = AngularCliAddQuickFix(packageJson, packageName, version, pkgVersion != null)
-          if (versionLiteral != null) {
-            if (pkgVersion == null) {
-              holder.registerProblem(versionLiteral, getTextRange(versionLiteral), message, quickFix)
-            }
-            else if (holder.isOnTheFly) {
-              holder.registerProblem(versionLiteral, message, ProblemHighlightType.INFORMATION, quickFix)
-            }
+      if ((pkgVersion != null && AngularCliSchematicsRegistryService.instance.supportsNgAdd(pkgVersion))
+          || (pkgVersion == null && AngularCliSchematicsRegistryService.instance.supportsNgAdd(packageName, TIMEOUT))) {
+        val message = Angular2Bundle.message("angular.inspection.install-with-ng-add.message",
+                                             StringUtil.wrapWithDoubleQuote(packageName))
+        val quickFix = AngularCliAddQuickFix(packageJson, packageName, version, pkgVersion != null)
+        if (versionLiteral != null) {
+          if (pkgVersion == null) {
+            holder.registerProblem(versionLiteral, getTextRange(versionLiteral), message, quickFix)
           }
-          if (holder.isOnTheFly) {
-            holder.registerProblem(nameLiteral, message, ProblemHighlightType.INFORMATION, quickFix)
+          else if (holder.isOnTheFly) {
+            holder.registerProblem(versionLiteral, message, ProblemHighlightType.INFORMATION, quickFix)
           }
         }
+        if (holder.isOnTheFly) {
+          holder.registerProblem(nameLiteral, message, ProblemHighlightType.INFORMATION, quickFix)
+        }
       }
-    }
-
-    private fun getTextRange(element: JsonValue): TextRange {
-      val range = element.textRange
-      return if (element is JsonStringLiteral && range.length > 2
-                 && StringUtil.isQuotedString(element.getText())) {
-        TextRange(1, range.length - 1)
-      }
-      else TextRange.create(0, range.length)
     }
   }
+
+  private fun getTextRange(element: JsonValue): TextRange {
+    val range = element.textRange
+    return if (element is JsonStringLiteral && range.length > 2
+               && StringUtil.isQuotedString(element.getText())) {
+      TextRange(1, range.length - 1)
+    }
+    else TextRange.create(0, range.length)
+  }
+
 }

@@ -14,7 +14,7 @@ import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
 import org.angular2.lang.Angular2LangUtil.OUTPUT_CHANGE_SUFFIX
 import org.angular2.web.Angular2Symbol
 import org.angular2.web.Angular2SymbolDelegate
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_IN_OUTS
+import org.angular2.web.NG_DIRECTIVE_IN_OUTS
 import java.util.*
 
 class Angular2DirectiveProperties(inputs: Collection<Angular2DirectiveProperty>,

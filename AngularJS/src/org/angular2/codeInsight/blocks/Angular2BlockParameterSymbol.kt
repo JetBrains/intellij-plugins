@@ -4,7 +4,7 @@ package org.angular2.codeInsight.blocks
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.webTypes.WebTypesSymbolBase
 import com.intellij.webSymbols.webTypes.WebTypesSymbolFactory
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator
+import org.angular2.web.NG_DEFER_ON_TRIGGERS
 
 class Angular2BlockParameterSymbol : WebTypesSymbolBase() {
 
@@ -15,7 +15,7 @@ class Angular2BlockParameterSymbol : WebTypesSymbolBase() {
     get() = name == PRIMARY_EXPRESSION
 
   val triggers: List<WebSymbol>
-    get() = queryExecutor.runListSymbolsQuery(Angular2WebSymbolsQueryConfigurator.NG_DEFER_ON_TRIGGERS, true, scope = listOf(this))
+    get() = queryExecutor.runListSymbolsQuery(NG_DEFER_ON_TRIGGERS, true, scope = listOf(this))
 
   companion object {
     const val PRIMARY_EXPRESSION = "\$primary-expression"

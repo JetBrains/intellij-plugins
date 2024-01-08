@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.webSymbols.context.WebSymbolsContext
-import org.angular2.Angular2Framework.Companion.instance
+import org.angular2.angular2Framework
 import org.angular2.lang.html.Angular2HtmlDialect
 import org.angular2.lang.html.Angular2TemplateSyntax
 
@@ -23,7 +23,7 @@ object Angular2LangUtil {
 
   @JvmStatic
   fun isAngular2Context(context: PsiElement): Boolean {
-    return instance.isInContext(context)
+    return angular2Framework.isInContext(context)
   }
 
   @JvmStatic
@@ -41,7 +41,7 @@ object Angular2LangUtil {
 
   @JvmStatic
   fun isAngular2Context(project: Project, context: VirtualFile): Boolean {
-    return instance.isInContext(context, project)
+    return angular2Framework.isInContext(context, project)
   }
 
   fun isAngular2HtmlFileType(fileType: FileType?) =

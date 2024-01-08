@@ -19,7 +19,7 @@ import org.angular2.Angular2DecoratorUtil.PIPE_DEC
 import org.angular2.entities.Angular2DirectiveKind
 import org.angular2.entities.Angular2EntityUtils
 import org.angular2.entities.metadata.stubs.Angular2MetadataClassStubBase.EntityFactory
-import org.angular2.index.Angular2MetadataClassNameIndex
+import org.angular2.index.Angular2MetadataClassNameIndexKey
 import org.angular2.lang.metadata.MetadataUtils
 import org.angular2.lang.metadata.MetadataUtils.getPropertyValue
 import org.angular2.lang.metadata.MetadataUtils.readStringPropertyValue
@@ -105,7 +105,7 @@ open class Angular2MetadataClassStubBase<Psi : PsiElement> : Angular2MetadataEle
   override fun index(sink: IndexSink) {
     super.index(sink)
     if (className != null) {
-      sink.occurrence(Angular2MetadataClassNameIndex.KEY, className!!)
+      sink.occurrence(Angular2MetadataClassNameIndexKey, className!!)
     }
   }
 

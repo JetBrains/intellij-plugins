@@ -2,7 +2,7 @@
 package org.angular2.lang.html.psi.impl
 
 import com.intellij.codeInsight.FileModificationService
-import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.AbstractElementManipulator
@@ -25,21 +25,17 @@ class Angular2HtmlNgContentSelectorManipulator : AbstractElementManipulator<Angu
     val newSelectorElement = PsiTreeUtil.findChildOfType(
       newSelectAttribute.valueElement,
       Angular2HtmlNgContentSelector::class.java)
-    LOG.assertTrue(newSelectorElement != null, newSelectAttribute.parent.text)
+    thisLogger().assertTrue(newSelectorElement != null, newSelectAttribute.parent.text)
     return element.replace(newSelectorElement!!) as Angular2HtmlNgContentSelector
   }
 
-  companion object {
-    private val LOG = Logger.getInstance(Angular2HtmlNgContentSelectorManipulator::class.java)
-
-    private fun createNgContentSelectAttribute(project: Project, value: String): XmlAttribute {
-      val quotedValue = XmlElementFactoryImpl.quoteValue(value)
-      val tag = XmlElementFactory.getInstance(project).createTagFromText(
-        "<ng-content select=$quotedValue></ng-content>",
-        Angular2HtmlLanguage.INSTANCE)
-      val attributes = tag.attributes
-      LOG.assertTrue(attributes.size == 1, tag.text)
-      return attributes[0]
-    }
+  private fun createNgContentSelectAttribute(project: Project, value: String): XmlAttribute {
+    val quotedValue = XmlElementFactoryImpl.quoteValue(value)
+    val tag = XmlElementFactory.getInstance(project).createTagFromText(
+      "<ng-content select=$quotedValue></ng-content>",
+      Angular2HtmlLanguage.INSTANCE)
+    val attributes = tag.attributes
+    thisLogger().assertTrue(attributes.size == 1, tag.text)
+    return attributes[0]
   }
 }

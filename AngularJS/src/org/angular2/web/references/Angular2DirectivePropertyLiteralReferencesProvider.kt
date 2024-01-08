@@ -14,8 +14,8 @@ import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.references.WebSymbolReferenceProvider
 import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
 import org.angular2.entities.Angular2EntityUtils.getPropertyDeclarationOrReferenceKindAndDirective
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_INPUTS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_OUTPUTS
+import org.angular2.web.NG_DIRECTIVE_INPUTS
+import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 
 class Angular2DirectivePropertyLiteralReferencesProvider : WebSymbolReferenceProvider<JSLiteralExpression>() {
 

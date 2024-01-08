@@ -18,8 +18,8 @@ import com.intellij.util.SmartList
 import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
 import org.angular2.Angular2DecoratorUtil.findDecorator
 import org.angular2.Angular2DecoratorUtil.getClassForDecoratorElement
-import org.angular2.index.Angular2IndexingHandler
-import org.angular2.index.Angular2IndexingHandler.Companion.resolveComponentsFromIndex
+import org.angular2.index.TS_CLASS_TOKENS
+import org.angular2.index.resolveComponentsFromIndex
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.html.Angular2HtmlLanguage
 import java.util.Collections.emptyList
@@ -66,7 +66,7 @@ object Angular2ComponentLocator {
   @Suppress("unused")
   @JvmStatic
   fun findComponentClassesInFile(file: PsiFile, filter: BiPredicate<TypeScriptClass, ES6Decorator>?): List<TypeScriptClass> {
-    return JSStubBasedPsiTreeUtil.findDescendants<PsiElement>(file, Angular2IndexingHandler.TS_CLASS_TOKENS)
+    return JSStubBasedPsiTreeUtil.findDescendants<PsiElement>(file, TS_CLASS_TOKENS)
       .filterIsInstance<TypeScriptClass>()
       .filter {
         val dec = findDecorator(it, COMPONENT_DEC)

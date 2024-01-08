@@ -36,7 +36,7 @@ class Angular2ColorsAndFontsPage : RainbowColorSettingsPage, DisplayPrioritySort
   }
 
   override fun getHighlighter(): SyntaxHighlighter {
-    return SyntaxHighlighterFactory.getSyntaxHighlighter(Angular17HtmlFileType.INSTANCE, null, null)!!
+    return SyntaxHighlighterFactory.getSyntaxHighlighter(Angular17HtmlFileType, null, null)!!
   }
 
   override fun getDemoText(): String {
@@ -82,41 +82,40 @@ class Angular2ColorsAndFontsPage : RainbowColorSettingsPage, DisplayPrioritySort
   override fun getLanguage(): Language =
     Angular17HtmlLanguage.INSTANCE
 
-  companion object {
-    private val ATTRS: Array<AttributesDescriptor> = arrayOf(
-      AttributesDescriptor(Angular2Bundle.message("angular.colors.banana-binding"),
-                           Angular2HtmlHighlighterColors.NG_BANANA_BINDING_ATTR_NAME),
-      AttributesDescriptor(Angular2Bundle.message("angular.colors.event-binding"),
-                           Angular2HtmlHighlighterColors.NG_EVENT_BINDING_ATTR_NAME),
-      AttributesDescriptor(Angular2Bundle.message("angular.colors.property-binding"),
-                           Angular2HtmlHighlighterColors.NG_PROPERTY_BINDING_ATTR_NAME),
-      AttributesDescriptor(Angular2Bundle.message("angular.colors.template-binding"),
-                           Angular2HtmlHighlighterColors.NG_TEMPLATE_BINDINGS_ATTR_NAME),
-      AttributesDescriptor(Angular2Bundle.message("angular.colors.signal"),
-                           Angular2HighlighterColors.NG_SIGNAL),
-      AttributesDescriptor(Angular2Bundle.message("angular.colors.template-variable"),
-                           Angular2HighlighterColors.NG_VARIABLE),
-      AttributesDescriptor(Angular2Bundle.message("angular.colors.interpolation-delimiter"),
-                           Angular2HtmlHighlighterColors.NG_INTERPOLATION_DELIMITER),
-      AttributesDescriptor(Angular2Bundle.message("angular.colors.expansion-form"),
-                           Angular2HtmlHighlighterColors.NG_EXPANSION_FORM),
-      AttributesDescriptor(Angular2Bundle.message("angular.colors.expansion-form-comma"),
-                           Angular2HtmlHighlighterColors.NG_EXPANSION_FORM_COMMA),
-      AttributesDescriptor(Angular2Bundle.message("angular.colors.expansion-form-delimiter"),
-                           Angular2HtmlHighlighterColors.NG_EXPANSION_FORM_DELIMITER),
-      AttributesDescriptor(Angular2Bundle.message("angular.colors.template-expression"),
-                           Angular2HtmlHighlighterColors.NG_EXPRESSION),
-      AttributesDescriptor(Angular2Bundle.message("angular.colors.block-name"),
-                           Angular2HtmlHighlighterColors.NG_BLOCK_NAME),
-      AttributesDescriptor(Angular2Bundle.message("angular.colors.block-braces"),
-                           Angular2HtmlHighlighterColors.NG_BLOCK_BRACES),
-    )
-
-    private val tags = mapOf(
-      "ng-signal" to Angular2HighlighterColors.NG_SIGNAL,
-      "ng-variable" to Angular2HighlighterColors.NG_VARIABLE,
-      "instance_variable" to JSHighlighter.JS_INSTANCE_MEMBER_VARIABLE,
-      "instance_method" to JSHighlighter.JS_INSTANCE_MEMBER_FUNCTION,
-    )
-  }
 }
+
+private val ATTRS: Array<AttributesDescriptor> = arrayOf(
+  AttributesDescriptor(Angular2Bundle.message("angular.colors.banana-binding"),
+                       Angular2HtmlHighlighterColors.NG_BANANA_BINDING_ATTR_NAME),
+  AttributesDescriptor(Angular2Bundle.message("angular.colors.event-binding"),
+                       Angular2HtmlHighlighterColors.NG_EVENT_BINDING_ATTR_NAME),
+  AttributesDescriptor(Angular2Bundle.message("angular.colors.property-binding"),
+                       Angular2HtmlHighlighterColors.NG_PROPERTY_BINDING_ATTR_NAME),
+  AttributesDescriptor(Angular2Bundle.message("angular.colors.template-binding"),
+                       Angular2HtmlHighlighterColors.NG_TEMPLATE_BINDINGS_ATTR_NAME),
+  AttributesDescriptor(Angular2Bundle.message("angular.colors.signal"),
+                       Angular2HighlighterColors.NG_SIGNAL),
+  AttributesDescriptor(Angular2Bundle.message("angular.colors.template-variable"),
+                       Angular2HighlighterColors.NG_VARIABLE),
+  AttributesDescriptor(Angular2Bundle.message("angular.colors.interpolation-delimiter"),
+                       Angular2HtmlHighlighterColors.NG_INTERPOLATION_DELIMITER),
+  AttributesDescriptor(Angular2Bundle.message("angular.colors.expansion-form"),
+                       Angular2HtmlHighlighterColors.NG_EXPANSION_FORM),
+  AttributesDescriptor(Angular2Bundle.message("angular.colors.expansion-form-comma"),
+                       Angular2HtmlHighlighterColors.NG_EXPANSION_FORM_COMMA),
+  AttributesDescriptor(Angular2Bundle.message("angular.colors.expansion-form-delimiter"),
+                       Angular2HtmlHighlighterColors.NG_EXPANSION_FORM_DELIMITER),
+  AttributesDescriptor(Angular2Bundle.message("angular.colors.template-expression"),
+                       Angular2HtmlHighlighterColors.NG_EXPRESSION),
+  AttributesDescriptor(Angular2Bundle.message("angular.colors.block-name"),
+                       Angular2HtmlHighlighterColors.NG_BLOCK_NAME),
+  AttributesDescriptor(Angular2Bundle.message("angular.colors.block-braces"),
+                       Angular2HtmlHighlighterColors.NG_BLOCK_BRACES),
+)
+
+private val tags = mapOf(
+  "ng-signal" to Angular2HighlighterColors.NG_SIGNAL,
+  "ng-variable" to Angular2HighlighterColors.NG_VARIABLE,
+  "instance_variable" to JSHighlighter.JS_INSTANCE_MEMBER_VARIABLE,
+  "instance_method" to JSHighlighter.JS_INSTANCE_MEMBER_FUNCTION,
+)

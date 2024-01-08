@@ -48,64 +48,62 @@ class Angular2CssInclusionContext : CssInclusionContext() {
     }
     return PsiFile.EMPTY_ARRAY
   }
+}
 
-  private class ComponentCssContext(private val myComponent: Angular2Component, file: PsiFile) {
-    private val myAngularCliJson: VirtualFile?
+private class ComponentCssContext(private val myComponent: Angular2Component, file: PsiFile) {
+  private val myAngularCliJson: VirtualFile?
 
-    val dependencies: Array<Any>
-      get() = listOfNotNull(PsiModificationTracker.MODIFICATION_COUNT, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, myAngularCliJson)
-        .toTypedArray()
+  val dependencies: Array<Any>
+    get() = listOfNotNull(PsiModificationTracker.MODIFICATION_COUNT, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, myAngularCliJson)
+      .toTypedArray()
 
-    val cssFiles: Array<PsiFile>
-      get() {
-        val project = myComponent.sourceElement.project
-        val cssFilesList = ArrayList(myComponent.cssFiles)
-        val ngProject: AngularProject? = myAngularCliJson?.let { AngularConfigProvider.getAngularProject(project, it) }
-        if (ngProject != null) {
-          val psiManager = PsiManager.getInstance(project)
-          val html = ngProject.indexHtmlFile?.let { psiManager.findFile(it) }
-          if (html is XmlFile) {
-            AstLoadingFilter.forceAllowTreeLoading<Boolean, RuntimeException>(html) {
-              cssFilesList.addAll(CssResolveManager.getInstance().newResolver.resolveStyleSheets(html, null))
-            }
+  val cssFiles: Array<PsiFile>
+    get() {
+      val project = myComponent.sourceElement.project
+      val cssFilesList = ArrayList(myComponent.cssFiles)
+      val ngProject: AngularProject? = myAngularCliJson?.let { AngularConfigProvider.getAngularProject(project, it) }
+      if (ngProject != null) {
+        val psiManager = PsiManager.getInstance(project)
+        val html = ngProject.indexHtmlFile?.let { psiManager.findFile(it) }
+        if (html is XmlFile) {
+          AstLoadingFilter.forceAllowTreeLoading<Boolean, RuntimeException>(html) {
+            cssFilesList.addAll(CssResolveManager.getInstance().newResolver.resolveStyleSheets(html, null))
           }
-          cssFilesList.addAll(ngProject.globalStyleSheets.mapNotNull { file -> psiManager.findFile(file) as? StylesheetFile })
         }
-        return cssFilesList.toTypedArray<PsiFile>()
+        cssFilesList.addAll(ngProject.globalStyleSheets.mapNotNull { file -> psiManager.findFile(file) as? StylesheetFile })
       }
-
-    val isAngularCli: Boolean
-      get() = myAngularCliJson != null
-
-    init {
-      val original = InjectedLanguageManager.getInstance(file.project).getTopLevelFile(
-        CompletionUtil.getOriginalOrSelf(file))
-      val angularCliFolder = AngularCliUtil.findAngularCliFolder(
-        file.project, original.originalFile.viewProvider.virtualFile)
-      myAngularCliJson = AngularCliUtil.findCliJson(angularCliFolder)
+      return cssFilesList.toTypedArray<PsiFile>()
     }
+
+  val isAngularCli: Boolean
+    get() = myAngularCliJson != null
+
+  init {
+    val original = InjectedLanguageManager.getInstance(file.project).getTopLevelFile(
+      CompletionUtil.getOriginalOrSelf(file))
+    val angularCliFolder = AngularCliUtil.findAngularCliFolder(
+      file.project, original.originalFile.viewProvider.virtualFile)
+    myAngularCliJson = AngularCliUtil.findCliJson(angularCliFolder)
   }
+}
 
-  companion object {
+@NonNls
+private val COMPONENT_CONTEXT_KEY = Key<CachedValue<ComponentCssContext>>("ng.component.context")
 
-    @NonNls
-    private val COMPONENT_CONTEXT_KEY = Key<CachedValue<ComponentCssContext>>("ng.component.context")
-
-    private fun getComponentContext(context: PsiElement): ComponentCssContext? {
-      val file = context.containingFile
-      return CachedValuesManager.getCachedValue(file, COMPONENT_CONTEXT_KEY) {
-        val component = Angular2EntitiesProvider.getComponent(Angular2ComponentLocator.findComponentClass(file))
-        if (component != null) {
-          val componentCssContext = ComponentCssContext(component, file)
-          create(componentCssContext,
-                 *componentCssContext.dependencies)
-        }
-        else {
-          create(null,
-                 PsiModificationTracker.MODIFICATION_COUNT,
-                 VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
-        }
-      }
+private fun getComponentContext(context: PsiElement): ComponentCssContext? {
+  val file = context.containingFile
+  return CachedValuesManager.getCachedValue(file, COMPONENT_CONTEXT_KEY) {
+    val component = Angular2EntitiesProvider.getComponent(Angular2ComponentLocator.findComponentClass(file))
+    if (component != null) {
+      val componentCssContext = ComponentCssContext(component, file)
+      create(componentCssContext,
+             *componentCssContext.dependencies)
+    }
+    else {
+      create(null,
+             PsiModificationTracker.MODIFICATION_COUNT,
+             VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
     }
   }
 }
+

@@ -11,7 +11,7 @@ import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator
+import org.angular2.web.ELEMENT_NG_TEMPLATE
 import org.jetbrains.annotations.NonNls
 import java.util.function.Consumer
 import java.util.regex.Pattern
@@ -262,7 +262,7 @@ class Angular2DirectiveSimpleSelector private constructor(
         }
       }
       return Angular2DirectiveSimpleSelector(
-        Angular2WebSymbolsQueryConfigurator.ELEMENT_NG_TEMPLATE,
+        ELEMENT_NG_TEMPLATE,
         attributes
       )
     }

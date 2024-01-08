@@ -5,14 +5,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.containers.ContainerUtil
-import org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.Companion.isTemplateTag
+import org.angular2.codeInsight.template.isTemplateTag
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.entities.Angular2EntitiesProvider.findElementDirectivesCandidates
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector
 import org.angular2.lang.selector.Angular2SelectorMatcher
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.ELEMENT_NG_TEMPLATE
+import org.angular2.web.ELEMENT_NG_TEMPLATE
 
 /**
  * @see Angular2EntitiesProvider

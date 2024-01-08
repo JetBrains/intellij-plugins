@@ -33,12 +33,13 @@ import com.intellij.psi.util.parentOfTypes
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlText
 import com.intellij.util.asSafely
+import org.angular2.codeInsight.imports.Angular2ExpressionsCopyPasteProcessor.Angular2ExpressionsImportsTransferableData
 import org.angular2.entities.Angular2ComponentLocator
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.html.Angular2HtmlFile
 import java.awt.datatransfer.DataFlavor
 
-class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2ExpressionsCopyPasteProcessor.Angular2ExpressionsImportsTransferableData>() {
+class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2ExpressionsImportsTransferableData>() {
 
   override val dataFlavor: DataFlavor
     get() = ANGULAR2_EXPRESSIONS_IMPORTS_FLAVOR
@@ -83,7 +84,7 @@ class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2
   }
 
   override fun collectTransferableData(rangesWithParents: List<kotlin.Pair<PsiElement, TextRange>>): Angular2ExpressionsImportsTransferableData? {
-    val expressionContexts = rangesWithParents.count { isExpressionContext(it.first) }
+    val expressionContexts = rangesWithParents.count { Util.isExpressionContext(it.first) }
     if (expressionContexts != 0 && expressionContexts != rangesWithParents.size)
       return null
     val importedElements = processTextRanges(rangesWithParents)
@@ -102,7 +103,7 @@ class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2
                                      destinationModule: PsiElement,
                                      imports: Collection<Pair<ES6ImportPsiUtil.CreateImportExportInfo, PsiElement>>,
                                      pasteContextLanguage: Language) {
-    if (isExpressionContext(pasteContext) != data.isExpressionContext) return
+    if (Util.isExpressionContext(pasteContext) != data.isExpressionContext) return
     val globalImports = data.importedElements.mapNotNull {
       if (it.myInfo.importType == ImportExportType.BARE && it.myPath == "")
         Angular2GlobalImportCandidate(it.myInfo.exportedName ?: return@mapNotNull null,
@@ -171,13 +172,14 @@ class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2
     }
   }
 
-  companion object {
-    private val ANGULAR2_EXPRESSIONS_IMPORTS_FLAVOR = DataFlavor(Angular2ExpressionsImportsTransferableData::class.java,
-                                                                 "Angular2 es6 imports")
-
+  object Util {
     fun isExpressionContext(context: PsiElement) =
       (if (context is ASTWrapperPsiElement) context.firstChild else context)
         .parentOfTypes(JSExecutionScope::class, XmlTag::class, PsiFile::class, withSelf = true)
         .let { it != null && it is JSExecutionScope }
   }
+
 }
+
+private val ANGULAR2_EXPRESSIONS_IMPORTS_FLAVOR = DataFlavor(Angular2ExpressionsImportsTransferableData::class.java,
+                                                             "Angular2 es6 imports")

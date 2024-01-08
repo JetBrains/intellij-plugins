@@ -17,7 +17,7 @@ import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
 import org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP
 import org.angular2.Angular2DecoratorUtil.SELECTOR_PROP
 import org.angular2.entities.Angular2EntityUtils
-import org.angular2.index.Angular2MetadataDirectiveIndex
+import org.angular2.index.Angular2MetadataDirectiveIndexKey
 import org.angular2.lang.metadata.MetadataUtils.getPropertyValue
 import org.angular2.lang.metadata.MetadataUtils.readStringPropertyValue
 import org.angular2.lang.metadata.psi.MetadataElementType
@@ -87,7 +87,7 @@ abstract class Angular2MetadataDirectiveStubBase<Psi : PsiElement> : Angular2Met
     super.index(sink)
     if (selector != null) {
       Angular2EntityUtils.getDirectiveIndexNames(selector!!)
-        .forEach { indexName -> sink.occurrence(Angular2MetadataDirectiveIndex.KEY, indexName) }
+        .forEach { indexName -> sink.occurrence(Angular2MetadataDirectiveIndexKey, indexName) }
     }
   }
 

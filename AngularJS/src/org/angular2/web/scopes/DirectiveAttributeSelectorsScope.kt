@@ -11,16 +11,12 @@ import com.intellij.webSymbols.*
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.utils.psiModificationCount
 import org.angular2.Angular2Framework
-import org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.Companion.isTemplateTag
+import org.angular2.codeInsight.template.isTemplateTag
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2DirectiveProperty
 import org.angular2.entities.Angular2DirectiveSelectorSymbol
 import org.angular2.entities.Angular2EntitiesProvider.findElementDirectivesCandidates
-import org.angular2.web.Angular2DirectiveSymbolWrapper
-import org.angular2.web.Angular2StructuralDirectiveSymbol
-import org.angular2.web.Angular2Symbol
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_INPUTS
+import org.angular2.web.*
 
 class DirectiveAttributeSelectorsScope(val project: Project) : WebSymbolsScope {
 
@@ -141,7 +137,7 @@ class DirectiveAttributeSelectorsScope(val project: Project) : WebSymbolsScope {
         }
       }
       if (!isTemplateTag) {
-        for (candidate in findElementDirectivesCandidates(project, Angular2WebSymbolsQueryConfigurator.ELEMENT_NG_TEMPLATE)) {
+        for (candidate in findElementDirectivesCandidates(project, ELEMENT_NG_TEMPLATE)) {
           if (candidate.directiveKind.isStructural) {
             processStructuralDirective(candidate)
           }

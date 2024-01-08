@@ -24,8 +24,8 @@ import org.angular2.entities.source.Angular2PropertyInfo
 import org.angular2.entities.source.Angular2SourceDirective.Companion.getDirectiveKindNoCache
 import org.angular2.entities.source.Angular2SourceDirectiveProperty
 import org.angular2.entities.source.Angular2SourceDirectiveVirtualProperty
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_INPUTS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_OUTPUTS
+import org.angular2.web.NG_DIRECTIVE_INPUTS
+import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 
 open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
   : Angular2IvyDeclaration<Angular2IvySymbolDef.Directive>(entityDef), Angular2Directive {

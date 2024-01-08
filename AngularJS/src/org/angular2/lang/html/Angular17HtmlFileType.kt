@@ -4,14 +4,9 @@ package org.angular2.lang.html
 import com.intellij.javascript.web.html.WebFrameworkHtmlFileType
 import org.angularjs.AngularJSBundle
 
-class Angular17HtmlFileType private constructor()
+object Angular17HtmlFileType
   : WebFrameworkHtmlFileType(Angular17HtmlLanguage.INSTANCE, "Angular17Html", "html") {
   override fun getDescription(): String {
     return AngularJSBundle.message("filetype.angular17html.description")
-  }
-
-  companion object {
-    @JvmField
-    val INSTANCE = Angular17HtmlFileType()
   }
 }

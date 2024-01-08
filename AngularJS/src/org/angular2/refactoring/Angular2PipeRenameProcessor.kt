@@ -83,17 +83,16 @@ class Angular2PipeRenameProcessor : JSDefaultRenameProcessor() {
     }
   }
 
-  companion object {
-    private fun getDefaultPipeFileName(pipeName: String): String {
-      return "$pipeName.pipe.ts"
-    }
-
-    private fun getDefaultPipeSpecFileName(pipeName: String): String {
-      return "$pipeName.pipe.spec.ts"
-    }
-
-    private fun getDefaultPipeClassName(pipeName: String): String {
-      return StringUtil.capitalize(pipeName) + "Pipe"
-    }
+  private fun getDefaultPipeFileName(pipeName: String): String {
+    return "$pipeName.pipe.ts"
   }
+
+  private fun getDefaultPipeSpecFileName(pipeName: String): String {
+    return "$pipeName.pipe.spec.ts"
+  }
+
+  private fun getDefaultPipeClassName(pipeName: String): String {
+    return StringUtil.capitalize(pipeName) + "Pipe"
+  }
+
 }

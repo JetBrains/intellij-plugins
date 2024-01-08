@@ -14,7 +14,7 @@ import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.utils.WebSymbolDeclaredInPsi
 import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
 import org.angular2.web.Angular2Symbol
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_EXPORTS_AS
+import org.angular2.web.NG_DIRECTIVE_EXPORTS_AS
 import java.util.*
 
 class Angular2DirectiveExportAs(

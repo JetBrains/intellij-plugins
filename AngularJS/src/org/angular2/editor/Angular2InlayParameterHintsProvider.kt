@@ -20,16 +20,16 @@ import org.angular2.lang.expr.psi.Angular2PipeExpression
 class Angular2InlayParameterHintsProvider : TypeScriptInlayParameterHintsProvider() {
 
   override fun getShowNameForAllArgsOption(): Option {
-    return NAMES_FOR_ALL_ARGS
+    return Options.NAMES_FOR_ALL_ARGS
   }
 
   override fun getSupportedOptions(): List<Option> {
-    return listOf(showNameForAllArgsOption, NAMES_FOR_PIPES)
+    return listOf(showNameForAllArgsOption, Options.NAMES_FOR_PIPES)
   }
 
   override fun isSuitableCallExpression(expression: JSCallLikeExpression?): Boolean {
     if (!super.isSuitableCallExpression(expression)) return false
-    return NAMES_FOR_PIPES.get() || expression !is Angular2PipeExpression
+    return Options.NAMES_FOR_PIPES.get() || expression !is Angular2PipeExpression
   }
 
   override fun skipIndex(i: Int, expression: JSCallLikeExpression): Boolean {
@@ -43,36 +43,37 @@ class Angular2InlayParameterHintsProvider : TypeScriptInlayParameterHintsProvide
     else super.getParameterHints(element)
   }
 
-  companion object {
+  object Options {
     val NAMES_FOR_ALL_ARGS = Option(
       "angular.show.names.for.all.args", JavaScriptBundle.messagePointer("js.param.hints.show.names.for.all.args"), false)
     val NAMES_FOR_PIPES = Option(
       "angular.show.names.for.pipes", Angular2Bundle.messagePointer("angular.inlay.params.option.pipe.arguments"), true)
+  }
 
-    private fun isAllArgsSettingsPreview(element: JSCallExpression): Boolean {
-      // fast path for normal case
-      var parent = element.parent
-      if (parent !is Angular2Interpolation) return false
-      parent = parent.getParent()
-      if (parent !is ASTWrapperPsiElement) return false
-      parent = parent.getParent()
-      if (parent !is HtmlTag) return false
-      parent = parent.getParent()
-      if (parent !is HtmlTag) return false
-      parent = parent.getParent()
-      if (parent !is HtmlDocumentImpl) return false
-      parent = parent.getParent()
-      return if (parent !is HtmlFileImpl) false else "dummy" == parent.name && element.text == "foo(phone, 22)"
-    }
+  private fun isAllArgsSettingsPreview(element: JSCallExpression): Boolean {
+    // fast path for normal case
+    var parent = element.parent
+    if (parent !is Angular2Interpolation) return false
+    parent = parent.getParent()
+    if (parent !is ASTWrapperPsiElement) return false
+    parent = parent.getParent()
+    if (parent !is HtmlTag) return false
+    parent = parent.getParent()
+    if (parent !is HtmlTag) return false
+    parent = parent.getParent()
+    if (parent !is HtmlDocumentImpl) return false
+    parent = parent.getParent()
+    return if (parent !is HtmlFileImpl) false else "dummy" == parent.name && element.text == "foo(phone, 22)"
+  }
 
-    private fun getAllArgsSettingsPreviewInfo(callExpression: JSCallExpression): List<InlayInfo> {
-      val arguments = callExpression.arguments
-      if (arguments.size != 2) {
-        Logger.getInstance(Angular2InlayParameterHintsProvider::class.java).error("Unexpected call expression")
-        return emptyList()
-      }
-      return listOf(InlayInfo("a", arguments[0].textOffset),
-                    InlayInfo("b", arguments[1].textOffset))
+  private fun getAllArgsSettingsPreviewInfo(callExpression: JSCallExpression): List<InlayInfo> {
+    val arguments = callExpression.arguments
+    if (arguments.size != 2) {
+      Logger.getInstance(Angular2InlayParameterHintsProvider::class.java).error("Unexpected call expression")
+      return emptyList()
     }
+    return listOf(InlayInfo("a", arguments[0].textOffset),
+                  InlayInfo("b", arguments[1].textOffset))
+
   }
 }

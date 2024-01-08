@@ -28,17 +28,6 @@ import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity
 import org.angular2.entities.Angular2Directive
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_ATTRIBUTES
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_ATTRIBUTE_SELECTORS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_ELEMENT_SELECTORS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_INPUTS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_IN_OUTS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_ONE_TIME_BINDINGS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_OUTPUTS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_STRUCTURAL_DIRECTIVES
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.PROP_ERROR_SYMBOL
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.PROP_SCOPE_PROXIMITY
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.PROP_SYMBOL_DIRECTIVE
 import java.util.*
 
 class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val context: PsiElement) : WebSymbolsQueryResultsCustomizer {
@@ -118,7 +107,7 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
   }
 
   companion object {
-    private val svgAllowedElements = setOf("ng-container", "ng-template")
+    private val svgAllowedElements = setOf(ELEMENT_NG_CONTAINER, ELEMENT_NG_TEMPLATE)
 
     private val kinds = setOf(NG_STRUCTURAL_DIRECTIVES,
                               NG_DIRECTIVE_ONE_TIME_BINDINGS, NG_DIRECTIVE_ATTRIBUTES,

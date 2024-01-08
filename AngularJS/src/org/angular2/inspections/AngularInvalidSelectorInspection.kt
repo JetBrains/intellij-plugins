@@ -23,8 +23,8 @@ import org.angular2.inspections.quickfixes.AddJSPropertyQuickFix
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.ATTR_SELECT
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.ELEMENT_NG_CONTENT
+import org.angular2.web.ATTR_SELECT
+import org.angular2.web.ELEMENT_NG_CONTENT
 
 class AngularInvalidSelectorInspection : LocalInspectionTool() {
 

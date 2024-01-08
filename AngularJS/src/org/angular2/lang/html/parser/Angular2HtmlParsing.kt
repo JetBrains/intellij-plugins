@@ -19,7 +19,7 @@ import org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType.Companion.cre
 import org.angular2.lang.html.Angular2TemplateSyntax
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator
+import org.angular2.web.ATTR_NG_NON_BINDABLE
 
 class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSyntax, builder: PsiBuilder) : HtmlParsing(builder) {
 
@@ -242,7 +242,7 @@ class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSyntax, bu
     val att = mark()
     val tagName = XmlUtil.findLocalNameByQualifiedName(peekTagInfo().normalizedName)
     val attributeName = builder.tokenText
-    if (Angular2WebSymbolsQueryConfigurator.ATTR_NG_NON_BINDABLE == attributeName) {
+    if (ATTR_NG_NON_BINDABLE == attributeName) {
       (peekTagInfo() as AngularHtmlTagInfo).hasNgNonBindable = true
     }
     val attributeInfo = Angular2AttributeNameParser.parse(attributeName!!, tagName!!)

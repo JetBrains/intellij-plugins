@@ -9,9 +9,9 @@ import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.impl.JSCallExpressionImpl;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
+import com.intellij.lang.javascript.psi.jsdoc.JSDocBlockTags;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocComment;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTag;
-import com.intellij.lang.javascript.psi.jsdoc.JSDocBlockTags;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTagDefinition;
 import com.intellij.lang.javascript.psi.literal.JSLiteralImplicitElementProvider;
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
@@ -36,7 +36,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.*;
 import com.intellij.util.containers.BidirectionalMap;
-import org.angular2.index.Angular2IndexingHandler;
 import org.angularjs.codeInsight.AngularJSReferenceExpressionResolver;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.codeInsight.router.AngularJSUiRouterConstants;
@@ -49,6 +48,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.*;
 
+import static org.angular2.index.Angular2IndexingHandlerKt.getExprReferencedFileUrl;
 import static org.angularjs.index.AngularJSDirectivesSupport.getDirectiveIndexKeys;
 
 /**
@@ -758,7 +758,7 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     if ((expression instanceof JSReferenceExpression
          || expression instanceof JSCallExpression)
         && isControllerProperty(property)) {
-      return indexComponentTemplateRef(property, Angular2IndexingHandler.getExprReferencedFileUrl(expression), data);
+      return indexComponentTemplateRef(property, getExprReferencedFileUrl(expression), data);
     }
     return false;
   }

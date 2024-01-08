@@ -12,7 +12,7 @@ import com.intellij.util.asSafely
 import com.intellij.webSymbols.WebSymbol
 import org.angular2.entities.Angular2Component
 import org.angular2.lang.Angular2Bundle
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.PROP_SYMBOL_DIRECTIVE
+import org.angular2.web.PROP_SYMBOL_DIRECTIVE
 
 class Angular2TypeDeclarationProvider : TypeDeclarationProvider, SymbolTypeProvider {
 

@@ -10,7 +10,7 @@ import com.intellij.webSymbols.WebSymbolsScopeWithCache
 import org.angular2.Angular2Framework
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.web.Angular2DirectiveSymbolWrapper
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_ELEMENT_SELECTORS
+import org.angular2.web.NG_DIRECTIVE_ELEMENT_SELECTORS
 
 internal class DirectiveElementSelectorsScope(project: Project)
   : WebSymbolsScopeWithCache<Project, Unit>(Angular2Framework.ID, project, project, Unit) {

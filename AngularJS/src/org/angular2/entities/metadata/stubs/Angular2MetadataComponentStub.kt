@@ -17,8 +17,8 @@ import org.angular2.entities.metadata.psi.Angular2MetadataComponent
 import org.angular2.lang.html.Angular2HtmlLanguage
 import org.angular2.lang.html.psi.Angular2HtmlRecursiveElementWalkingVisitor
 import org.angular2.lang.metadata.MetadataUtils.readStringPropertyValue
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.ATTR_SELECT
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.ELEMENT_NG_CONTENT
+import org.angular2.web.ATTR_SELECT
+import org.angular2.web.ELEMENT_NG_CONTENT
 import java.io.IOException
 
 class Angular2MetadataComponentStub : Angular2MetadataDirectiveStubBase<Angular2MetadataComponent> {

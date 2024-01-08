@@ -4,12 +4,14 @@ package org.angular2.lang.html.parser
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil
-import org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.Companion.isTemplateTag
+import org.angular2.codeInsight.template.isTemplateTag
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.html.psi.Angular2HtmlEvent
 import org.angular2.lang.html.psi.Angular2HtmlEvent.AnimationPhase
 import org.angular2.lang.html.psi.PropertyBindingType
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator
+import org.angular2.web.ATTR_SELECT
+import org.angular2.web.ELEMENT_NG_CONTENT
+import org.angular2.web.ELEMENT_NG_TEMPLATE
 import org.jetbrains.annotations.Nls
 
 object Angular2AttributeNameParser {
@@ -29,11 +31,11 @@ object Angular2AttributeNameParser {
   }
 
   fun parse(name: String): AttributeInfo {
-    return parse(name, Angular2WebSymbolsQueryConfigurator.ELEMENT_NG_TEMPLATE)
+    return parse(name, ELEMENT_NG_TEMPLATE)
   }
 
   fun parse(name: String, tag: XmlTag?): AttributeInfo {
-    return parse(name, tag?.localName ?: Angular2WebSymbolsQueryConfigurator.ELEMENT_NG_TEMPLATE)
+    return parse(name, tag?.localName ?: ELEMENT_NG_TEMPLATE)
   }
 
   fun parse(name: String, tagName: String): AttributeInfo {
@@ -72,7 +74,7 @@ object Angular2AttributeNameParser {
       normalizedName.startsWith("@") -> {
         PropertyBindingInfo(normalizedName.substring(1), false, false, PropertyBindingType.ANIMATION)
       }
-      normalizedName == Angular2WebSymbolsQueryConfigurator.ATTR_SELECT && tagName == Angular2WebSymbolsQueryConfigurator.ELEMENT_NG_CONTENT -> {
+      normalizedName == ATTR_SELECT && tagName == ELEMENT_NG_CONTENT -> {
         AttributeInfo(normalizedName, false, Angular2AttributeType.NG_CONTENT_SELECTOR)
       }
       normalizedName.startsWith("i18n-") -> {

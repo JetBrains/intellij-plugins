@@ -41,7 +41,7 @@ import org.angular2.lang.expr.psi.Angular2ElementVisitor
 import org.angular2.lang.html.Angular2HtmlLanguage
 import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
 import org.angular2.lang.html.psi.PropertyBindingType
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_INPUTS
+import org.angular2.web.NG_DIRECTIVE_INPUTS
 
 class AngularInaccessibleSymbolInspection : LocalInspectionTool() {
 

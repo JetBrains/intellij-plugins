@@ -4,14 +4,9 @@ package org.angular2.lang.svg
 import com.intellij.javascript.web.html.WebFrameworkHtmlFileType
 import org.angularjs.AngularJSBundle
 
-class Angular17SvgFileType private constructor()
+object Angular17SvgFileType
   : WebFrameworkHtmlFileType(Angular17SvgLanguage.INSTANCE, "Angular17Svg", "svg") {
   override fun getDescription(): String {
     return AngularJSBundle.message("filetype.angular17svg.description")
-  }
-
-  companion object {
-    @JvmField
-    val INSTANCE = Angular17SvgFileType()
   }
 }

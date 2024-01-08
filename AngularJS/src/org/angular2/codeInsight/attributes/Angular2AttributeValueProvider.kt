@@ -76,32 +76,33 @@ class Angular2AttributeValueProvider : HtmlAttributeValueProvider() {
   companion object {
 
     @NonNls
-    val NG_CLASS_ATTR = "ngClass"
+    const val NG_CLASS_ATTR = "ngClass"
 
     @NonNls
-    val SRC_ATTR = "src"
+    const val SRC_ATTR = "src"
 
     @NonNls
-    val IMG_TAG = "img"
+    const val IMG_TAG = "img"
 
     @NonNls
-    val NG_SRC_ATTR = "ngSrc"
+    const val NG_SRC_ATTR = "ngSrc"
 
-    fun isNgClassAttribute(attribute: XmlAttribute?): Boolean {
-      return attribute != null && isNgClassAttribute(parse(attribute.name, attribute.parent))
-    }
-
-    fun isNgClassAttribute(info: AttributeInfo): Boolean {
-      return (info is PropertyBindingInfo
-              && info.bindingType == PropertyBindingType.PROPERTY
-              && NG_CLASS_ATTR == info.name)
-    }
-
-    fun isNgSrcAttribute(info: AttributeInfo): Boolean {
-      return NG_SRC_ATTR == info.name &&
-             (info.asSafely<PropertyBindingInfo>()?.bindingType == PropertyBindingType.PROPERTY
-             || info.type == Angular2AttributeType.REGULAR)
-    }
   }
 
+}
+
+fun isNgClassAttribute(attribute: XmlAttribute?): Boolean {
+  return attribute != null && isNgClassAttribute(parse(attribute.name, attribute.parent))
+}
+
+fun isNgClassAttribute(info: AttributeInfo): Boolean {
+  return (info is PropertyBindingInfo
+          && info.bindingType == PropertyBindingType.PROPERTY
+          && Angular2AttributeValueProvider.NG_CLASS_ATTR == info.name)
+}
+
+fun isNgSrcAttribute(info: AttributeInfo): Boolean {
+  return Angular2AttributeValueProvider.NG_SRC_ATTR == info.name &&
+         (info.asSafely<PropertyBindingInfo>()?.bindingType == PropertyBindingType.PROPERTY
+          || info.type == Angular2AttributeType.REGULAR)
 }

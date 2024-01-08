@@ -26,7 +26,7 @@ import org.angular2.lang.expr.psi.Angular2TemplateBindings
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType.*
 import org.angular2.lang.html.psi.*
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.ELEMENT_NG_TEMPLATE
+import org.angular2.web.ELEMENT_NG_TEMPLATE
 import org.jetbrains.annotations.NonNls
 import java.util.function.Consumer
 
@@ -271,22 +271,6 @@ class Angular2TemplateElementsScopeProvider : Angular2TemplateScopesProvider() {
         }
       }
     }
-  }
-
-  companion object {
-
-    @NonNls
-    private val LEGACY_TEMPLATE_TAG = "template"
-
-    @JvmStatic
-    fun isTemplateTag(tag: XmlTag?): Boolean {
-      return tag != null && isTemplateTag(tag.localName)
-    }
-
-    @JvmStatic
-    fun isTemplateTag(tagName: String?): Boolean {
-      return ELEMENT_NG_TEMPLATE.equals(tagName!!, ignoreCase = true) || LEGACY_TEMPLATE_TAG.equals(tagName, ignoreCase = true)
-    }
 
     private fun createVariable(name: String,
                                contributor: PsiElement): JSImplicitElement {
@@ -296,4 +280,15 @@ class Angular2TemplateElementsScopeProvider : Angular2TemplateScopesProvider() {
         .toImplicitElement()
     }
   }
+}
+
+@NonNls
+private const val LEGACY_TEMPLATE_TAG = "template"
+
+fun isTemplateTag(tag: XmlTag?): Boolean {
+  return tag != null && isTemplateTag(tag.localName)
+}
+
+fun isTemplateTag(tagName: String?): Boolean {
+  return ELEMENT_NG_TEMPLATE.equals(tagName!!, ignoreCase = true) || LEGACY_TEMPLATE_TAG.equals(tagName, ignoreCase = true)
 }

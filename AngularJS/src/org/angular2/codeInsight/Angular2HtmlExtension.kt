@@ -14,7 +14,7 @@ import com.intellij.util.SmartList
 import com.intellij.util.io.URLUtil
 import com.intellij.webSymbols.utils.unwrapMatchedSymbols
 import com.intellij.xml.util.XmlUtil
-import org.angular2.Angular2Framework
+import org.angular2.angular2Framework
 import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.html.psi.Angular2HtmlBananaBoxBinding
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor
@@ -26,7 +26,7 @@ class Angular2HtmlExtension : WebSymbolsXmlExtension() {
 
   override fun isAvailable(file: PsiFile?): Boolean {
     return (file != null
-            && WebFramework.forFileType(file.fileType) == Angular2Framework.instance
+            && WebFramework.forFileType(file.fileType) == angular2Framework
             && Angular2LangUtil.isAngular2Context(file))
   }
 
@@ -70,11 +70,10 @@ class Angular2HtmlExtension : WebSymbolsXmlExtension() {
     return result
   }
 
-  companion object {
-    private val NG_ENT_LOCATION = NotNullLazyValue.lazy {
-      val url = Angular2HtmlExtension::class.java.getResource("/dtd/ngChars.ent")
-      VfsUtilCore.urlToPath(VfsUtilCore.fixURLforIDEA(
-        URLUtil.unescapePercentSequences(url!!.toExternalForm())))
-    }
-  }
+}
+
+private val NG_ENT_LOCATION = NotNullLazyValue.lazy {
+  val url = Angular2HtmlExtension::class.java.getResource("/dtd/ngChars.ent")
+  VfsUtilCore.urlToPath(VfsUtilCore.fixURLforIDEA(
+    URLUtil.unescapePercentSequences(url!!.toExternalForm())))
 }

@@ -39,7 +39,7 @@ class Angular2WebSymbolDocumentationCustomizer : WebSymbolDocumentationCustomize
           .toString()
       )
     }
-    else if (symbol.qualifiedKind == Angular2WebSymbolsQueryConfigurator.NG_DEFER_ON_TRIGGERS && location != null) {
+    else if (symbol.qualifiedKind == NG_DEFER_ON_TRIGGERS && location != null) {
       return documentation.with(
         definition = SyntaxPrinter(location).append(TypeScriptHighlighter.TS_KEYWORD, "trigger")
           .appendRaw(" ")

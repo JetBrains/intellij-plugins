@@ -35,9 +35,9 @@ import org.angular2.Angular2Framework
 import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider
 import org.angular2.codeInsight.config.Angular2Compiler.isStrictTemplates
 import org.angular2.entities.Angular2DirectiveProperty
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_ATTRIBUTE_SELECTORS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_INPUTS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_ONE_TIME_BINDINGS
+import org.angular2.web.NG_DIRECTIVE_ATTRIBUTE_SELECTORS
+import org.angular2.web.NG_DIRECTIVE_INPUTS
+import org.angular2.web.NG_DIRECTIVE_ONE_TIME_BINDINGS
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 

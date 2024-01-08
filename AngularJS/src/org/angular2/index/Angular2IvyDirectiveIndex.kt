@@ -6,10 +6,9 @@ import com.intellij.psi.stubs.StubIndexKey
 
 class Angular2IvyDirectiveIndex : Angular2IndexBase<TypeScriptClass>() {
 
-  override fun getKey(): StubIndexKey<String, TypeScriptClass> = KEY
+  override fun getKey(): StubIndexKey<String, TypeScriptClass> = Angular2IvyDirectiveIndexKey
 
-  companion object {
-    @JvmField
-    val KEY = StubIndexKey.createIndexKey<String, TypeScriptClass>("angular2.ivy.directive.index")
-  }
 }
+
+@JvmField
+val Angular2IvyDirectiveIndexKey = StubIndexKey.createIndexKey<String, TypeScriptClass>("angular2.ivy.directive.index")

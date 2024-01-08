@@ -11,7 +11,7 @@ import org.angular2.Angular2DecoratorUtil.IMPORTS_PROP
 import org.angular2.entities.metadata.Angular2MetadataElementTypes
 import org.angular2.entities.metadata.psi.Angular2MetadataModule
 import org.angular2.index.Angular2IndexingHandler
-import org.angular2.index.Angular2MetadataModuleIndex
+import org.angular2.index.Angular2MetadataModuleIndexKey
 import java.io.IOException
 
 class Angular2MetadataModuleStub : Angular2MetadataEntityStub<Angular2MetadataModule> {
@@ -31,7 +31,7 @@ class Angular2MetadataModuleStub : Angular2MetadataEntityStub<Angular2MetadataMo
 
   override fun index(sink: IndexSink) {
     super.index(sink)
-    sink.occurrence(Angular2MetadataModuleIndex.KEY,
+    sink.occurrence(Angular2MetadataModuleIndexKey,
                     Angular2IndexingHandler.NG_MODULE_INDEX_NAME)
   }
 

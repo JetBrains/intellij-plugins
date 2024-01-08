@@ -12,7 +12,6 @@ import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import com.intellij.webSymbols.utils.coalesceWith
 import org.angular2.entities.Angular2Directive
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_STRUCTURAL_DIRECTIVES
 
 open class Angular2StructuralDirectiveSymbol private constructor(private val directive: Angular2Directive,
                                                                  sourceSymbol: Angular2Symbol,
@@ -43,7 +42,7 @@ open class Angular2StructuralDirectiveSymbol private constructor(private val dir
     get() = NG_STRUCTURAL_DIRECTIVES
 
   override val properties: Map<String, Any>
-    get() = super.properties + Pair(Angular2WebSymbolsQueryConfigurator.PROP_SYMBOL_DIRECTIVE, directive)
+    get() = super.properties + Pair(PROP_SYMBOL_DIRECTIVE, directive)
 
   override val apiStatus: WebSymbolApiStatus
     get() = directive.apiStatus.coalesceWith(delegate.apiStatus)

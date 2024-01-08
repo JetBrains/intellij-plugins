@@ -15,8 +15,8 @@ import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
 import com.intellij.webSymbols.utils.match
 import org.angular2.Angular2Framework
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_INPUTS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.PROP_BINDING_PATTERN
+import org.angular2.web.NG_DIRECTIVE_INPUTS
+import org.angular2.web.PROP_BINDING_PATTERN
 
 object AttributeWithInterpolationsScope : WebSymbolsScope {
 

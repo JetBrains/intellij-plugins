@@ -33,8 +33,8 @@ import org.angular2.entities.Angular2EntityUtils
 import org.angular2.entities.source.Angular2SourceDirective
 import org.angular2.lang.types.Angular2TypeUtils
 import org.angular2.web.Angular2Symbol
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_INPUTS
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.NG_DIRECTIVE_OUTPUTS
+import org.angular2.web.NG_DIRECTIVE_INPUTS
+import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 import org.angular2.web.references.Angular2DirectivePropertyLiteralReferencesProvider
 
 /**

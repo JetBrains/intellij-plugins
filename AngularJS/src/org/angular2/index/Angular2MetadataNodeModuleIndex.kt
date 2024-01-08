@@ -6,11 +6,9 @@ import org.angular2.entities.metadata.psi.Angular2MetadataNodeModule
 
 class Angular2MetadataNodeModuleIndex : Angular2IndexBase<Angular2MetadataNodeModule>() {
 
-  override fun getKey(): StubIndexKey<String, Angular2MetadataNodeModule> = KEY
+  override fun getKey(): StubIndexKey<String, Angular2MetadataNodeModule> = Angular2MetadataNodeModuleIndexKey
 
-  companion object {
-    @JvmField
-    val KEY = StubIndexKey.createIndexKey<String, Angular2MetadataNodeModule>("angular2.metadata.node.index")
-  }
 }
 
+@JvmField
+val Angular2MetadataNodeModuleIndexKey = StubIndexKey.createIndexKey<String, Angular2MetadataNodeModule>("angular2.metadata.node.index")

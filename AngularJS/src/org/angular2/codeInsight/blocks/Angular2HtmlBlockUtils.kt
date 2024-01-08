@@ -13,7 +13,7 @@ import org.angular2.lang.expr.lexer.Angular2TokenTypes
 import org.angular2.lang.expr.psi.Angular2BlockParameter
 import org.angular2.lang.expr.psi.impl.Angular2BlockParameterVariableImpl
 import org.angular2.lang.html.psi.Angular2HtmlBlock
-import org.angular2.web.Angular2WebSymbolsQueryConfigurator
+import org.angular2.web.NG_BLOCKS
 
 const val BLOCK_IF = "if"
 const val BLOCK_ELSE_IF = "else if"
@@ -71,7 +71,7 @@ fun getAngular2HtmlBlocksConfig(location: PsiElement): Angular2HtmlBlocksConfig 
     val queryExecutor = WebSymbolsQueryExecutorFactory.create(file, false)
     CachedValueProvider.Result.create(Angular2HtmlBlocksConfig(
       queryExecutor
-        .runListSymbolsQuery(Angular2WebSymbolsQueryConfigurator.NG_BLOCKS, true)
+        .runListSymbolsQuery(NG_BLOCKS, true)
         .filterIsInstance<Angular2HtmlBlockSymbol>()
         .associateBy { it.name }), queryExecutor)
   }
