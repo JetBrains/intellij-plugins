@@ -44,7 +44,7 @@ internal fun removeDenoEntity(project: Project) {
 
   ApplicationManager.getApplication().runWriteAction {
     WorkspaceModel.getInstance(project).updateProjectModel("Remove Deno entity") { builder ->
-      builder.entitiesBySource { it is DenoEntitySource }.values.flatMap { it.values }.flatten().forEach { builder.removeEntity(it) }
+      builder.entitiesBySource { it is DenoEntitySource }.forEach { builder.removeEntity(it) }
     }
   }
 }
