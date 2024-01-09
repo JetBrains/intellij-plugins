@@ -129,7 +129,7 @@ class Angular2AnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
             element.node.findChildByType(JSTokenTypes.IDENTIFIER)
               ?.let { highlightKeyword(it, TypeScriptHighlighter.TS_KEYWORD) }
               ?.let { myHolder.add(it) }
-          is Angular2DeferredTimeLiteralExpression -> element.childLeafs
+          is Angular2DeferredTimeLiteralExpression -> element.childLeafs()
             .find { it.elementType == JSTokenTypes.IDENTIFIER }
             ?.takeIf { it.text == "s" || it.text == "ms" }
             ?.let { highlightKeyword(it.node, TypeScriptHighlighter.TS_NUMBER) }

@@ -16,7 +16,7 @@ class Angular2BlockParameterReferencesProvider : WebSymbolReferenceProvider<Angu
     }
     else {
       val definitions = psiElement.block?.definition?.parameters ?: return emptyMap()
-      return psiElement.childLeafs
+      return psiElement.childLeafs()
         .filter { it.elementType == Angular2TokenTypes.BLOCK_PARAMETER_NAME }
         .mapNotNull {
           val name = it.text
