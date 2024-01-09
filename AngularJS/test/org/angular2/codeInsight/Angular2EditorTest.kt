@@ -9,10 +9,15 @@ class Angular2EditorTest : Angular2TestCase("editor") {
 
   fun testBlockTyping() =
     doConfiguredTest(Angular2TestModule.ANGULAR_CORE_17_1_0_NEXT_5,
-                     fileContents = "<div><caret></div>", extension = "html", checkResult = true) {
+                     fileContents = "<div></div><!--within tag-->\n <!--space-->\ntext", extension = "html", checkResult = true) {
+      moveToOffsetBySignature("<div><caret></div>")
       type("@if (")
       moveToOffsetBySignature("()<caret>")
       type("{\n<div>")
+      moveToOffsetBySignature("<caret> <!--space-->")
+      type("@if (")
+      moveToOffsetBySignature("<caret>text")
+      type("@if (")
     }
 
   fun testBlockFolding() {
@@ -31,5 +36,7 @@ class Angular2EditorTest : Angular2TestCase("editor") {
                      fileContents = "@if (((<caret>))) { }", extension = "html", checkResult = true) {
       type("\b\b\b")
     }
+
+
 
 }
