@@ -10,8 +10,9 @@ import com.intellij.webSymbols.WebSymbol.Companion.HTML_ATTRIBUTES
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
+import org.jetbrains.astro.webSymbols.ASTRO_COMPONENTS
 import org.jetbrains.astro.webSymbols.AstroProximity
-import org.jetbrains.astro.webSymbols.AstroQueryConfigurator
+import org.jetbrains.astro.webSymbols.PROP_ASTRO_PROXIMITY
 
 class AstroLocalComponent(override val name: String,
                           override val source: PsiElement,
@@ -40,10 +41,10 @@ class AstroLocalComponent(override val name: String,
     get() = NAMESPACE_HTML
 
   override val kind: SymbolKind
-    get() = AstroQueryConfigurator.ASTRO_COMPONENTS.kind
+    get() = ASTRO_COMPONENTS.kind
 
   override val properties: Map<String, Any>
-    get() = mapOf(AstroQueryConfigurator.PROP_ASTRO_PROXIMITY to AstroProximity.LOCAL)
+    get() = mapOf(PROP_ASTRO_PROXIMITY to AstroProximity.LOCAL)
 
   override fun createPointer(): Pointer<out PsiSourcedWebSymbol> {
     val name = name

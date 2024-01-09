@@ -8,7 +8,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.indexing.FileContent
 import org.jetbrains.astro.lang.AstroFileType
 
-class AstroFileIncludeProvider : JSFrameworkFileIncludeProvider(AstroFileType.INSTANCE) {
+class AstroFileIncludeProvider : JSFrameworkFileIncludeProvider(AstroFileType) {
   override fun getIncludeInfos(content: FileContent): Array<FileIncludeInfo> =
     createFileIncludeInfos(
       PsiTreeUtil.collectElementsOfType(

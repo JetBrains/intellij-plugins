@@ -22,10 +22,10 @@ class AstroAvailableComponentsScope(project: Project) : WebSymbolsScopeWithCache
   override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     val psiManager = PsiManager.getInstance(project)
     val files = if (ApplicationManager.getApplication().isUnitTestMode)
-      FileTypeIndex.getFiles(AstroFileType.INSTANCE, GlobalSearchScope.projectScope(project))
+      FileTypeIndex.getFiles(AstroFileType, GlobalSearchScope.projectScope(project))
     else
       FileBasedIndexImpl.disableUpToDateCheckIn<Collection<VirtualFile>, Exception> {
-        FileTypeIndex.getFiles(AstroFileType.INSTANCE, GlobalSearchScope.projectScope(project))
+        FileTypeIndex.getFiles(AstroFileType, GlobalSearchScope.projectScope(project))
       }
     files.forEach { vf ->
       psiManager.findFile(vf)?.let { consumer(AstroComponent(it)) }

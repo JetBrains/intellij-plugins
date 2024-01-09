@@ -5,5 +5,5 @@ import com.intellij.lang.javascript.index.IndexedFileTypeProvider
 import com.intellij.openapi.fileTypes.FileType
 
 class AstroIndexedFileTypeProvider : IndexedFileTypeProvider {
-  override fun getFileTypesToIndex(): Array<FileType> = arrayOf(AstroFileType.INSTANCE)
+  override fun getFileTypesToIndex(): Array<FileType> = arrayOf(AstroFileType)
 }

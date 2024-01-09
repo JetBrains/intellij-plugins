@@ -21,7 +21,7 @@ internal class AstroLanguageServiceProvider(project: Project) : JSLanguageServic
 
   override fun isHighlightingCandidate(file: VirtualFile): Boolean =
     TypeScriptLanguageServiceProvider.isJavaScriptOrTypeScriptFileType(file.fileType)
-           || file.fileType == AstroFileType.INSTANCE
+    || file.fileType == AstroFileType
 }
 
 @Service(Service.Level.PROJECT)

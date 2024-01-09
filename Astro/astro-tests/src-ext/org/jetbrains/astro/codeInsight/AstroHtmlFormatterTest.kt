@@ -7,7 +7,7 @@ import org.jetbrains.astro.lang.AstroFileType
 
 class AstroHtmlFormatterTest : HtmlFormatterTest() {
   override fun getFileType(fileName: String): FileType {
-    return AstroFileType.INSTANCE
+    return AstroFileType
   }
 
   override fun testWeb18909() {

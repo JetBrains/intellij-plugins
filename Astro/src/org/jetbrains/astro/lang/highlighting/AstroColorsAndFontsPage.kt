@@ -32,7 +32,7 @@ class AstroColorsAndFontsPage : ColorSettingsPage, DisplayPrioritySortable {
   }
 
   override fun getHighlighter(): SyntaxHighlighter {
-    return SyntaxHighlighterFactory.getSyntaxHighlighter(AstroFileType.INSTANCE, null, null)!!
+    return SyntaxHighlighterFactory.getSyntaxHighlighter(AstroFileType, null, null)!!
   }
 
   override fun getDemoText(): String {
@@ -55,10 +55,9 @@ class AstroColorsAndFontsPage : ColorSettingsPage, DisplayPrioritySortable {
     return DisplayPriority.LANGUAGE_SETTINGS
   }
 
-  companion object {
-    private val ATTRS: Array<AttributesDescriptor> = arrayOf(
-      AttributesDescriptor(AstroBundle.message("astro.colors.frontmatter.separator"),
-                           AstroHighlighterColors.ASTRO_FRONTMATTER_SEPARATOR),
-    )
-  }
 }
+
+private val ATTRS: Array<AttributesDescriptor> = arrayOf(
+  AttributesDescriptor(AstroBundle.message("astro.colors.frontmatter.separator"),
+                       AstroHighlighterColors.ASTRO_FRONTMATTER_SEPARATOR),
+)

@@ -18,6 +18,7 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.XmlTagUtil
 import org.jetbrains.astro.codeInsight.frontmatterScript
+import org.jetbrains.astro.codeInsight.imports.AstroComponentCopyPasteProcessor.AstroComponentImportsTransferableData
 import org.jetbrains.astro.editor.AstroComponentSourceEdit
 import org.jetbrains.astro.lang.AstroFileImpl
 import org.jetbrains.astro.lang.psi.AstroFrontmatterScript
@@ -25,7 +26,7 @@ import java.awt.datatransfer.DataFlavor
 import kotlin.Pair
 import com.intellij.openapi.util.Pair as OpenApiPair
 
-class AstroComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<AstroComponentCopyPasteProcessor.AstroComponentImportsTransferableData>() {
+class AstroComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<AstroComponentImportsTransferableData>() {
 
   override val dataFlavor: DataFlavor
     get() = ASTRO_COMPONENT_IMPORTS_FLAVOR
@@ -97,7 +98,6 @@ class AstroComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<AstroComponen
     }
   }
 
-  companion object {
-    private val ASTRO_COMPONENT_IMPORTS_FLAVOR = DataFlavor(AstroComponentImportsTransferableData::class.java, "vue component imports")
-  }
 }
+
+private val ASTRO_COMPONENT_IMPORTS_FLAVOR = DataFlavor(AstroComponentImportsTransferableData::class.java, "vue component imports")

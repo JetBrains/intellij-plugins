@@ -17,7 +17,7 @@ import org.jetbrains.astro.codeInsight.astroContentRoot
 class AstroFileImpl(provider: FileViewProvider)
   : PsiFileBase(provider, AstroLanguage.INSTANCE), HtmlCompatibleFile, XmlFile {
   override fun getFileType(): FileType =
-    AstroFileType.INSTANCE
+    AstroFileType
 
   override fun processElements(processor: PsiElementProcessor<*>, place: PsiElement): Boolean =
     document?.processElements(processor, place) == true

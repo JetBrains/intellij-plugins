@@ -13,7 +13,7 @@ class AstroHtmlExtension : WebSymbolsXmlExtension() {
 
   override fun isAvailable(file: PsiFile?): Boolean {
     return file != null
-            && file.fileType == AstroFileType.INSTANCE
+           && file.fileType == AstroFileType
   }
 
   override fun isSelfClosingTagAllowed(tag: XmlTag): Boolean {

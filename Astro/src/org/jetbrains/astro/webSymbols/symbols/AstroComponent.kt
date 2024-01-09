@@ -11,8 +11,9 @@ import com.intellij.webSymbols.*
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.utils.psiModificationCount
 import org.jetbrains.astro.AstroFramework
+import org.jetbrains.astro.webSymbols.ASTRO_COMPONENTS
 import org.jetbrains.astro.webSymbols.AstroProximity
-import org.jetbrains.astro.webSymbols.AstroQueryConfigurator
+import org.jetbrains.astro.webSymbols.PROP_ASTRO_PROXIMITY
 
 class AstroComponent(file: PsiFile)
   : PsiSourcedWebSymbol, WebSymbolsScopeWithCache<PsiFile, Unit>(AstroFramework.ID, file.project, file, Unit) {
@@ -27,13 +28,13 @@ class AstroComponent(file: PsiFile)
     get() = NAMESPACE_HTML
 
   override val kind: SymbolKind
-    get() = AstroQueryConfigurator.ASTRO_COMPONENTS.kind
+    get() = ASTRO_COMPONENTS.kind
 
   override val name: String
     get() = StringUtil.capitalize(FileUtil.getNameWithoutExtension(dataHolder.name))
 
   override val properties: Map<String, Any>
-    get() = mapOf(Pair(AstroQueryConfigurator.PROP_ASTRO_PROXIMITY, AstroProximity.OUT_OF_SCOPE))
+    get() = mapOf(Pair(PROP_ASTRO_PROXIMITY, AstroProximity.OUT_OF_SCOPE))
 
   override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     consumer(AstroComponentWildcardAttribute)

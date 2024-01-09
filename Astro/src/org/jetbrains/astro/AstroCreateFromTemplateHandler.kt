@@ -10,7 +10,7 @@ import org.jetbrains.astro.lang.AstroFileType
 class AstroCreateFromTemplateHandler : DefaultCreateFromTemplateHandler() {
   override fun handlesTemplate(template: FileTemplate): Boolean {
     val fileType = FileTypeManagerEx.getInstanceEx().getFileTypeByExtension(template.extension)
-    return AstroFileType.INSTANCE == fileType && ASTRO_TEMPLATE_NAME == template.name
+    return AstroFileType == fileType && ASTRO_TEMPLATE_NAME == template.name
   }
 
   override fun isNameRequired(): Boolean = true

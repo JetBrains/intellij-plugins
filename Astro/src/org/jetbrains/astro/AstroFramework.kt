@@ -20,8 +20,9 @@ class AstroFramework : WebFramework() {
     get() = AstroIcons.Astro
 
   companion object {
-    val instance: WebFramework
-      get() = get(ID)
     const val ID = "astro"
   }
 }
+
+val astroFramework: WebFramework
+  get() = WebFramework.get(AstroFramework.ID)

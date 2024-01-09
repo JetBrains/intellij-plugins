@@ -6,7 +6,7 @@ import org.jetbrains.astro.AstroBundle
 import org.jetbrains.astro.AstroIcons
 import javax.swing.Icon
 
-class AstroFileType private constructor(): LanguageFileType(AstroLanguage.INSTANCE) {
+object AstroFileType : LanguageFileType(AstroLanguage.INSTANCE) {
 
   override fun getName(): String {
     return "Astro"
@@ -22,10 +22,5 @@ class AstroFileType private constructor(): LanguageFileType(AstroLanguage.INSTAN
 
   override fun getIcon(): Icon {
     return AstroIcons.Astro
-  }
-
-  companion object {
-    @JvmField
-    val INSTANCE: LanguageFileType = AstroFileType()
   }
 }

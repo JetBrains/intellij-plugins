@@ -14,7 +14,7 @@ class AstroElementResolveScopeProvider : JSElementResolveScopeProvider {
     val virtualFile = file?.virtualFile
 
     if (!element.isValid
-        || file?.fileType != AstroFileType.INSTANCE
+        || file?.fileType != AstroFileType
         || virtualFile == null
         || !DialectDetector.isTypeScript(element))
       return null

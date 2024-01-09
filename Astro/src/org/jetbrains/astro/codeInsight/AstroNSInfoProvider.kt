@@ -8,11 +8,11 @@ import org.jetbrains.astro.lang.AstroFileImpl
 import org.jetbrains.astro.lang.AstroFileType
 
 class AstroNSInfoProvider : XmlFileNSInfoProvider {
-    override fun getDefaultNamespaces(file: XmlFile): Array<Array<String>>? {
-        return if (file is AstroFileImpl) arrayOf(arrayOf("", XmlUtil.XHTML_URI)) else null
-    }
+  override fun getDefaultNamespaces(file: XmlFile): Array<Array<String>>? {
+    return if (file is AstroFileImpl) arrayOf(arrayOf("", XmlUtil.XHTML_URI)) else null
+  }
 
-    override fun overrideNamespaceFromDocType(file: XmlFile): Boolean {
-        return file.fileType === AstroFileType.INSTANCE
-    }
+  override fun overrideNamespaceFromDocType(file: XmlFile): Boolean {
+    return file.fileType === AstroFileType
+  }
 }

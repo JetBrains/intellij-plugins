@@ -21,14 +21,11 @@ import org.jetbrains.astro.webSymbols.scope.AstroFrontmatterScope
 import org.jetbrains.astro.webSymbols.scope.AstroScriptDefineVarsScope
 import org.jetbrains.astro.webSymbols.scope.AstroStyleDefineVarsScope
 
+val ASTRO_COMPONENTS = WebSymbolQualifiedKind(NAMESPACE_HTML, "astro-components")
+
+const val PROP_ASTRO_PROXIMITY = "x-astro-proximity"
+
 class AstroQueryConfigurator : WebSymbolsQueryConfigurator {
-  companion object {
-    const val KIND_ASTRO_COMPONENT = "astro-components"
-
-    val ASTRO_COMPONENTS = WebSymbolQualifiedKind(NAMESPACE_HTML, "astro-components")
-
-    const val PROP_ASTRO_PROXIMITY = "x-astro-proximity"
-  }
 
   override fun getScope(project: Project, location: PsiElement?, context: WebSymbolsContext, allowResolve: Boolean): List<WebSymbolsScope> =
     if (context.framework == AstroFramework.ID && location?.containingFile is AstroFileImpl) {
@@ -37,7 +34,8 @@ class AstroQueryConfigurator : WebSymbolsQueryConfigurator {
         is JSElement -> calculateJsScopes(location)
         else -> calculateDefaultScopes(location)
       }
-    } else emptyList()
+    }
+    else emptyList()
 
   private fun calculateCssScopes(location: CssElement): MutableList<WebSymbolsScope> {
     val result = calculateDefaultScopes(location)

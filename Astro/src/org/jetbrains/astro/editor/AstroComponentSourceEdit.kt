@@ -30,7 +30,7 @@ class AstroComponentSourceEdit(private val file: AstroFileImpl) {
     file.frontmatterScript()?.let { return it }
 
     val dummyContentRoot = PsiFileFactory.getInstance(file.project)
-      .createFileFromText("dummy.astro", AstroFileType.INSTANCE, "---\n---\n")
+      .createFileFromText("dummy.astro", AstroFileType, "---\n---\n")
       .astroContentRoot()!!
 
     val oldContentRoot = file.astroContentRoot()!!

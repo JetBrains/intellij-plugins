@@ -14,7 +14,7 @@ import com.intellij.xml.util.XmlTagUtil
 import org.jetbrains.astro.AstroBundle
 import org.jetbrains.astro.inspections.quickfixes.AstroImportComponentQuickFix
 import org.jetbrains.astro.webSymbols.AstroProximity
-import org.jetbrains.astro.webSymbols.AstroQueryConfigurator
+import org.jetbrains.astro.webSymbols.PROP_ASTRO_PROXIMITY
 
 class AstroMissingComponentImportInspection : LocalInspectionTool() {
 
@@ -27,7 +27,7 @@ class AstroMissingComponentImportInspection : LocalInspectionTool() {
 
         val symbol = descriptor.symbol
         if (symbol !is PsiSourcedWebSymbol
-            || symbol.properties[AstroQueryConfigurator.PROP_ASTRO_PROXIMITY] != AstroProximity.OUT_OF_SCOPE)
+            || symbol.properties[PROP_ASTRO_PROXIMITY] != AstroProximity.OUT_OF_SCOPE)
           return
 
         val elementToImport = symbol.source ?: return

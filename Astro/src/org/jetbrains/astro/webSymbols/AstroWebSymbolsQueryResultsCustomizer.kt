@@ -5,7 +5,10 @@ import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.*
+import com.intellij.webSymbols.PsiSourcedWebSymbol
+import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.WebSymbolQualifiedName
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizer
@@ -14,7 +17,6 @@ import com.intellij.xml.util.Html5TagAndAttributeNamesProvider
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.codeInsight.completion.AstroImportInsertHandler
 import org.jetbrains.astro.lang.AstroFileImpl
-import org.jetbrains.astro.webSymbols.AstroQueryConfigurator.Companion.PROP_ASTRO_PROXIMITY
 import org.jetbrains.astro.webSymbols.symbols.AstroComponent
 
 class AstroWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : WebSymbolsQueryResultsCustomizer {
@@ -22,7 +24,7 @@ class AstroWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : W
   override fun apply(matches: List<WebSymbol>,
                      strict: Boolean,
                      qualifiedName: WebSymbolQualifiedName): List<WebSymbol> =
-    if (qualifiedName.qualifiedKind != AstroQueryConfigurator.ASTRO_COMPONENTS)
+    if (qualifiedName.qualifiedKind != ASTRO_COMPONENTS)
       matches
     else if (isHtmlTagName(qualifiedName.name))
       emptyList()
@@ -35,7 +37,7 @@ class AstroWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : W
       }
 
   override fun apply(item: WebSymbolCodeCompletionItem, qualifiedKind: WebSymbolQualifiedKind): WebSymbolCodeCompletionItem? {
-    if (qualifiedKind == AstroQueryConfigurator.ASTRO_COMPONENTS) {
+    if (qualifiedKind == ASTRO_COMPONENTS) {
       if (isHtmlTagName(item.name)) return null
       val proximity = item.symbol?.properties?.get(PROP_ASTRO_PROXIMITY)
       val element = (item.symbol as? PsiSourcedWebSymbol)?.source

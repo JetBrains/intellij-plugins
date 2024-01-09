@@ -16,12 +16,12 @@ fun isServiceEnabledAndAvailable(project: Project, context: VirtualFile): Boolea
 
 fun isFileAcceptableForService(file: VirtualFile): Boolean {
   if (!TypeScriptLanguageServiceUtil.IS_VALID_FILE_FOR_SERVICE.value(file)) return false
-  return file.fileType == AstroFileType.INSTANCE || TypeScriptLanguageServiceUtil.ACCEPTABLE_TS_FILE.value(file)
+  return file.fileType == AstroFileType || TypeScriptLanguageServiceUtil.ACCEPTABLE_TS_FILE.value(file)
 }
 
 fun isServiceEnabledByContextAndSettings(project: Project, context: VirtualFile): Boolean {
   if (!TypeScriptLanguageServiceUtil.isServiceEnabled(project)) return false
-  if (context.fileType != AstroFileType.INSTANCE) return false
+  if (context.fileType != AstroFileType) return false
   if (TypeScriptLibraryProvider.isLibraryOrBundledLibraryFile(project, context)) return false
 
   return Registry.`is`("astro.enable.lsp", false)
