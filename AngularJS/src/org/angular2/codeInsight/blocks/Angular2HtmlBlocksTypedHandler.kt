@@ -57,7 +57,10 @@ class Angular2HtmlBlocksTypedHandler : TypedHandlerDelegate() {
           iterator.retreat()
         }
         if (iterator.tokenType == Angular2HtmlTokenTypes.BLOCK_NAME) {
-          editor.document.insertString(offset, ")")
+          val fwdIterator = editor.highlighter.createIterator(offset)
+          if (!fwdIterator.atEnd() && fwdIterator.tokenType == JSTokenTypes.LT) {
+            editor.document.insertString(offset, ")")
+          }
         }
       }
     }
