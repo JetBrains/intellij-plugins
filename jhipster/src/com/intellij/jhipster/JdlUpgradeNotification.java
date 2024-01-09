@@ -46,7 +46,7 @@ final class JdlUpgradeNotification implements EditorNotificationProvider {
       SuggestedIde ide = PluginAdvertiserService.Companion.getIdeaUltimate();
       PluginId id = PluginId.getId("");
       if (Registry.is("ide.show.plugins.in.editor")) {
-        project.getService(UltimateInstallationService.class).install(id);
+        project.getService(UltimateInstallationService.class).install(id, ide.getDownloadUrl());
       } else {
         FUSEventSource.EDITOR.openDownloadPageAndLog(project, ide.getDownloadUrl(), id);
       }
