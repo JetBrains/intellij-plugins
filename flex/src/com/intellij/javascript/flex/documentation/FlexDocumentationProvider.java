@@ -10,6 +10,7 @@ import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.documentation.DocumentationMarkup;
 import com.intellij.lang.javascript.documentation.JSDocumentationBuilder;
 import com.intellij.lang.javascript.documentation.JSDocumentationProvider;
+import com.intellij.lang.javascript.documentation.JSQuickNavigateBuilder;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.lang.javascript.psi.*;
@@ -95,8 +96,9 @@ public final class FlexDocumentationProvider extends JSDocumentationProvider {
     DOCUMENTED_ATTRIBUTES.put("Effect", "effect:");
   }
 
-  public FlexDocumentationProvider() {
-    super(new FlexQuickNavigateBuilder());
+  @Override
+  protected @NotNull JSQuickNavigateBuilder createQuickNavigateBuilder() {
+    return new FlexQuickNavigateBuilder();
   }
 
   @Override
