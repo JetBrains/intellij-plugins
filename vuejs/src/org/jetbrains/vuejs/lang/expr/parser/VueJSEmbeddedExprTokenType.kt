@@ -41,13 +41,6 @@ class VueJSEmbeddedExprTokenType private constructor(debugName: String,
 
     @Deprecated(message = "please use overload that accepts LangMode of context")
     @ApiStatus.ScheduledForRemoval
-    fun createEmbeddedExpression(attributeInfo: VueAttributeInfo, project: Project?): VueJSEmbeddedExprTokenType {
-      thisLogger().warn("dysfunctional createEmbeddedExpression used. Please update the plugins relying on Vue plugin")
-      return createEmbeddedExpression(attributeInfo, LangMode.DEFAULT, project)
-    }
-
-    @Deprecated(message = "please use overload that accepts LangMode of context")
-    @ApiStatus.ScheduledForRemoval
     fun createInterpolationExpression(project: Project?): VueJSEmbeddedExprTokenType {
       thisLogger().warn("dysfunctional createInterpolationExpression used. Please update the plugins relying on Vue plugin")
       return createInterpolationExpression(LangMode.DEFAULT, project)
