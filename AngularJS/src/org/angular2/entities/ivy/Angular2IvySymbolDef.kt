@@ -281,7 +281,7 @@ abstract class Angular2IvySymbolDef private constructor(private val myFieldOrStu
                                                              itemMapper: (T) -> R?,
                                                              nullIfNotFound: Boolean): List<R>? {
     contract {
-      returnsNotNull() implies (!nullIfNotFound)
+      returns(null) implies (nullIfNotFound)
     }
     val declaration = getDefFieldArgument(index)
                       ?: return if (nullIfNotFound) null else emptyList()
