@@ -107,6 +107,6 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
 
   @Override
   public @Nullable Icon getIcon() {
-    return AngularJSIcons.Angular2;
+    return AngularJSIcons.AngularJS;
   }
 }

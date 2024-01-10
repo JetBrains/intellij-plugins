@@ -18,7 +18,6 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
-import org.angular2.lang.Angular2LangUtil;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.index.AngularJSIndexingHandler;
 import org.jetbrains.annotations.NotNull;
@@ -155,8 +154,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
           if (literal.isQuotedLiteral()) {
             final PsiElement parent = literal.getParent();
             if (parent instanceof JSProperty && propertyName.equals(((JSProperty)parent).getName())) {
-              return AngularIndexUtil.hasAngularJS(literal.getProject())
-                     || Angular2LangUtil.isAngular2Context(parent);
+              return AngularIndexUtil.hasAngularJS(literal.getProject());
             }
           }
         }

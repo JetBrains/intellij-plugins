@@ -46,7 +46,7 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
     String name = directive.getName();
     if (name == null) return;
     LookupElementBuilder element = LookupElementBuilder.create(directive, DirectiveUtil.getAttributeName(name))
-      .withIcon(AngularJSIcons.Angular2);
+      .withIcon(AngularJSIcons.AngularJS);
     if (language.isKindOf(XMLLanguage.INSTANCE)) {
       element = element.withInsertHandler(XmlTagInsertHandler.INSTANCE);
     }

@@ -48,7 +48,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.*;
 
-import static org.angular2.index.Angular2IndexingHandlerKt.getExprReferencedFileUrl;
 import static org.angularjs.index.AngularJSDirectivesSupport.getDirectiveIndexKeys;
 
 /**
@@ -663,7 +662,7 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       if (AngularJSReferenceExpressionResolver.isAsExpression(resolveParent)) {
         final String name = resolveParent.getFirstChild().getText();
         final JSTypeSource source = JSTypeSourceFactory.createTypeSource(resolveResult);
-        final JSType type = JSNamedType.createType(name, source, JSContext.INSTANCE);
+        final JSType type = JSNamedTypeFactory.createType(name, source, JSContext.INSTANCE);
         evaluator.addType(type);
         return true;
       }
@@ -679,7 +678,7 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     if (resolveResult instanceof JSParameter && context.isFromCurrentFile(resolveResult) && isInjectable(resolveResult)) {
       final String name = ((JSParameter)resolveResult).getName();
       final JSTypeSource source = JSTypeSourceFactory.createTypeSource(resolveResult);
-      final JSType type = JSNamedType.createType(name, source, JSContext.UNKNOWN);
+      final JSType type = JSNamedTypeFactory.createType(name, source, JSContext.UNKNOWN);
       evaluator.addType(type);
     }
     return false;
@@ -758,7 +757,7 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     if ((expression instanceof JSReferenceExpression
          || expression instanceof JSCallExpression)
         && isControllerProperty(property)) {
-      return indexComponentTemplateRef(property, getExprReferencedFileUrl(expression), data);
+      return indexComponentTemplateRef(property, UtilKt.getExprReferencedFileUrl(expression), data);
     }
     return false;
   }
