@@ -8,7 +8,7 @@ import org.angular2.Angular2TestModule
 class Angular2EditorTest : Angular2TestCase("editor") {
 
   fun testBlockTyping() =
-    doConfiguredTest(Angular2TestModule.ANGULAR_CORE_17_1_0_NEXT_5,
+    doConfiguredTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0,
                      fileContents = "<div></div><!--within tag-->\n <!--space-->\ntext", extension = "html", checkResult = true) {
       moveToOffsetBySignature("<div><caret></div>")
       type("@if (")
@@ -21,18 +21,18 @@ class Angular2EditorTest : Angular2TestCase("editor") {
     }
 
   fun testBlockFolding() {
-    doFoldingTest(Angular2TestModule.ANGULAR_CORE_17_1_0_NEXT_5,
+    doFoldingTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0,
                   extension = "html")
   }
 
   fun testClosingBraceWithInterpolation() =
-    doConfiguredTest(Angular2TestModule.ANGULAR_CORE_17_1_0_NEXT_5,
+    doConfiguredTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0,
                      fileContents = "@if (foo) { {{foo}} } @else { <caret>", extension = "html", checkResult = true) {
       type("}")
     }
 
   fun testDeletingParenInParams() =
-    doConfiguredTest(Angular2TestModule.ANGULAR_CORE_17_1_0_NEXT_5,
+    doConfiguredTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0,
                      fileContents = "@if (((<caret>))) { }", extension = "html", checkResult = true) {
       type("\b\b\b")
     }

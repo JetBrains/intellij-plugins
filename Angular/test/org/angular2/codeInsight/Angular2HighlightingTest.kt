@@ -130,52 +130,52 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     myFixture.testRainbow("colors.html", FileUtil.loadFile(File("$testDataPath/$testName/colors.html")), true, true)
   }
 
-  fun testBlockDefer() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5, extension = "ts")
+  fun testBlockDefer() = checkHighlighting(ANGULAR_CORE_17_1_0_RC_0, extension = "ts")
 
-  fun testBlockFor() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5, extension = "ts")
+  fun testBlockFor() = checkHighlighting(ANGULAR_CORE_17_1_0_RC_0, extension = "ts")
 
-  fun testBlockForMultiVars() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5, extension = "ts")
+  fun testBlockForMultiVars() = checkHighlighting(ANGULAR_CORE_17_1_0_RC_0, extension = "ts")
 
-  fun testBlockIf() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5, extension = "ts")
+  fun testBlockIf() = checkHighlighting(ANGULAR_CORE_17_1_0_RC_0, extension = "ts")
 
-  fun testBlockSwitch() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5, extension = "ts")
+  fun testBlockSwitch() = checkHighlighting(ANGULAR_CORE_17_1_0_RC_0, extension = "ts")
 
   fun testInterpolationStrictMode() = checkHighlighting(ANGULAR_CORE_16_2_8, strictTemplates = true, extension = "ts")
 
   fun testOneTimeAttributesWithoutValueInStrictMode() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_MATERIAL_16_2_8,
                                                                           strictTemplates = true, extension = "ts")
 
-  fun testNgSrcAttribute() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5, ANGULAR_COMMON_17_1_0_NEXT_5,
+  fun testNgSrcAttribute() = checkHighlighting(ANGULAR_CORE_17_1_0_RC_0, ANGULAR_COMMON_17_1_0_RC_0,
                                                strictTemplates = true, extension = "ts", dir = true)
 
-  fun testIfBlockAsVarType() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5, ANGULAR_COMMON_17_1_0_NEXT_5,
+  fun testIfBlockAsVarType() = checkHighlighting(ANGULAR_CORE_17_1_0_RC_0, ANGULAR_COMMON_17_1_0_RC_0,
                                                  strictTemplates = true, extension = "ts")
 
-  fun testForBlockSemanticOfHighlighting() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5,
+  fun testForBlockSemanticOfHighlighting() = checkHighlighting(ANGULAR_CORE_17_1_0_RC_0,
                                                                strictTemplates = true, extension = "ts", checkInformation = true)
 
-  fun testForBlockVarType() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5,
+  fun testForBlockVarType() = checkHighlighting(ANGULAR_CORE_17_1_0_RC_0,
                                                 strictTemplates = true, extension = "ts")
 
-  fun testForBlockIterableType() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5, ANGULAR_COMMON_17_1_0_NEXT_5, RXJS_7_8_1,
+  fun testForBlockIterableType() = checkHighlighting(ANGULAR_CORE_17_1_0_RC_0, ANGULAR_COMMON_17_1_0_RC_0, RXJS_7_8_1,
                                                      strictTemplates = true, extension = "ts")
 
-  fun testDeferBlockSemanticHighlighting() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5,
+  fun testDeferBlockSemanticHighlighting() = checkHighlighting(ANGULAR_CORE_17_1_0_RC_0,
                                                                strictTemplates = true, extension = "html", checkInformation = true)
 
-  fun testInputSignals() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5, configureFileName = "test.html",
+  fun testInputSignals() = checkHighlighting(ANGULAR_CORE_17_1_0_RC_0, configureFileName = "test.html",
                                              strictTemplates = true, dir = true)
 
   fun testSvgNoBlocksSyntax() = checkHighlighting(extension = "svg")
 
-  fun testSvgWithBlocksSyntax() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5, extension = "svg")
+  fun testSvgWithBlocksSyntax() = checkHighlighting(ANGULAR_CORE_17_1_0_RC_0, extension = "svg")
 
   fun testAnimationTriggerNoAttributeValue() = checkHighlighting()
 
   fun testModuleWithExportDefault() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, RXJS_7_8_1,
                                                            configureFileName = "comp-b.component.ts", dir = true)
 
-  fun testNgAcceptInputOverAlias() = checkHighlighting(ANGULAR_CORE_17_1_0_NEXT_5, ANGULAR_CDK_17_1_0_NEXT_3,
+  fun testNgAcceptInputOverAlias() = checkHighlighting(ANGULAR_CORE_17_1_0_RC_0, ANGULAR_CDK_17_1_0_RC_0,
                                                        strictTemplates = true, extension = "ts")
 
   fun testTupleAssignment() = checkHighlighting(ANGULAR_CORE_16_2_8,

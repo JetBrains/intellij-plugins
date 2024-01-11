@@ -24,7 +24,7 @@ class Angular2TsInspectionsTest : Angular2TestCase("inspections/ts") {
                                            JSUnusedLocalSymbolsInspection::class.java))
 
   fun testUnusedSymbolNg17() =
-    checkHighlighting(Angular2TestModule.ANGULAR_CORE_17_1_0_NEXT_5,
+    checkHighlighting(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0,
                       configureFileName = "unused.ts",
                       dir = true,
                       inspections = listOf(JSUnusedGlobalSymbolsInspection::class.java,
