@@ -1,7 +1,7 @@
 package com.intellij.dts.parsing
 
 import com.intellij.dts.DtsTestBase
-import com.intellij.dts.zephyr.binding.DtsZephyrBindingParser
+import com.intellij.dts.zephyr.binding.*
 import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.SafeConstructor
@@ -15,16 +15,28 @@ class DtsZephyrBindingParsingTest : DtsTestBase() {
 
   fun `test enum values`() = doTest()
 
-  private fun loadBinding(): DtsZephyrBindingParser.Source {
+  fun `test zephyr espressif,esp32-pinctrl`() = doZephyrTest("espressif,esp32-pinctrl")
+
+  fun `test zephyr espressif,esp32-ledc`() = doZephyrTest("espressif,esp32-ledc")
+
+  private fun loadBinding(): BindingFile {
     val binding = getTestFixture("yaml")
 
-    return DtsZephyrBindingParser.Source("", yaml.load(binding))
+    return BindingFile(null, yaml.load(binding))
   }
 
   private fun doTest() {
-    val sources = mapOf(testName to loadBinding())
-    val parser = DtsZephyrBindingParser(sources, null)
-    val binding = parser.parse(testName)
+    val source = BindingSource(mapOf(testName to loadBinding()), null)
+    val binding = parseExternalBindings(source).values().first()
+
+    compareWithTestFixture("txt", binding.toString())
+  }
+
+  private fun doZephyrTest(compatible: String) {
+    addZephyr()
+
+    val provider = DtsZephyrBindingProvider.of(project)
+    val binding = provider.getBindings(compatible).first()
 
     compareWithTestFixture("txt", binding.toString())
   }

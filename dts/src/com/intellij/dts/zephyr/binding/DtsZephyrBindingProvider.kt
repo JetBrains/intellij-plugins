@@ -12,12 +12,8 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.*
-import org.yaml.snakeyaml.LoaderOptions
-import org.yaml.snakeyaml.Yaml
-import org.yaml.snakeyaml.constructor.SafeConstructor
-import org.yaml.snakeyaml.error.YAMLException
-import java.io.IOException
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.util.containers.MultiMap
 
 @Service(Service.Level.PROJECT)
 class DtsZephyrBindingProvider(val project: Project) {
@@ -27,14 +23,10 @@ class DtsZephyrBindingProvider(val project: Project) {
     fun bindingFor(node: DtsNode, fallbackBinding: Boolean = true): DtsZephyrBinding? {
       val provider = of(node.project)
 
-      val nodeBinding = node.dtsSearch(forward = false, callback = provider::buildBinding)
+      val nodeBinding = node.dtsSearch(forward = false, callback = provider::getBinding)
       if (nodeBinding != null || !fallbackBinding) return nodeBinding
 
-      return provider.buildFallbackBinding()
-    }
-
-    fun bindingFor(project: Project, compatible: String): DtsZephyrBinding? {
-      return of(project).buildBinding(compatible)
+      return provider.getFallbackBinding()
     }
 
     fun bindingFor(property: DtsProperty): DtsZephyrPropertyBinding? {
@@ -46,111 +38,92 @@ class DtsZephyrBindingProvider(val project: Project) {
     private const val DEFAULT_BINDING_NAME = "default"
     private const val FALLBACK_BINDING_NAME = "fallback"
 
-    private val logger = Logger.getInstance(DtsZephyrBindingProvider::class.java)
+    val logger = Logger.getInstance(DtsZephyrBindingProvider::class.java)
   }
-
-  private val yaml = Yaml(SafeConstructor(LoaderOptions()))
 
   private val provider: DtsZephyrProvider by lazy { DtsZephyrProvider.of(project) }
 
   /**
    * Parser for bindings. Recreated if the zephyr provider is modified.
    */
-  private val bindingParser: DtsZephyrBindingParser by cached(provider::modificationCount) {
-    val sources = provider.getBindingsDir()?.let(::loadBindings) ?: emptyMap()
-    DtsZephyrBindingParser(sources, bundledBindingSources[DEFAULT_BINDING_NAME])
+  private val externalBindings: MultiMap<String, DtsZephyrBinding> by cached(provider::modificationCount) {
+    val dir = provider.getBindingsDir() ?: return@cached MultiMap.empty()
+
+    val files = loadExternalBindings(dir)
+    val default = bundledBindingsSource?.files?.get(DEFAULT_BINDING_NAME)
+
+    parseExternalBindings(BindingSource(files, default))
   }
 
   /**
    * Parser for bundled bindings.
    */
-  private val bundledBindingParser: DtsZephyrBindingParser by lazy {
-    DtsZephyrBindingParser(bundledBindingSources, null)
+  private val bundledBindings: Map<String, DtsZephyrBinding> by lazy {
+    val source = bundledBindingsSource ?: return@lazy emptyMap()
+
+    parseBundledBindings(source)
   }
 
   /**
    * Lazily loads all bundled yaml files. Located in: resources/bindings
    */
-  private val bundledBindingSources: Map<String, DtsZephyrBindingParser.Source> by lazy {
-    val folderUrl = javaClass.classLoader.getResource(BUNDLED_BINDINGS_PATH)
-    if (folderUrl == null) {
+  private val bundledBindingsSource: BindingSource? by lazy {
+    val url = javaClass.classLoader.getResource(BUNDLED_BINDINGS_PATH)
+    if (url == null) {
       logger.error("failed to load bundled bindings folder url")
-      return@lazy emptyMap()
+      return@lazy null
     }
 
-    val folder = VfsUtil.findFileByURL(folderUrl)
-    if (folder == null) {
+    val dir = VfsUtil.findFileByURL(url)
+    if (dir == null) {
       logger.error("failed to load bundled bindings folder")
-      return@lazy emptyMap()
+      return@lazy null
     }
 
-    try {
-      buildMap {
-        for (file in folder.children) {
-          val name = file.nameWithoutExtension
-
-          val binding = loadBinding(file.readText(), name)
-
-          if (binding != null) {
-            put(name, DtsZephyrBindingParser.Source(null, binding))
-          }
-          else {
-            logger.error("failed to load bundled binding: $name")
-          }
-        }
-      }
-    }
-    catch (e: IOException) {
-      logger.error("failed to load bundled bindings: $e")
-      emptyMap()
-    }
+    BindingSource(loadBundledBindings(dir), null)
   }
 
-  private fun loadBinding(binding: String, name: String): Map<*, *>? {
-    try {
-      return synchronized(yaml) {
-        yaml.load(binding)
-      }
+
+  fun getBindings(compatible: String): Collection<DtsZephyrBinding> = externalBindings.get(compatible)
+
+  private fun getBindingWithParent(compatibleStrings: List<String>, parentBinding: DtsZephyrBinding): DtsZephyrBinding? {
+    if (compatibleStrings.isEmpty()) {
+      return parentBinding.child
     }
-    catch (e: ClassCastException) {
-      logger.debug("unexpected yaml format: $name")
-    }
-    catch (e: YAMLException) {
-      logger.debug("not a valid yaml file: $name")
-    }
-    catch (e: Exception) {
-      logger.debug("unknown exception from yaml parser", e)
+
+    for (compatible in compatibleStrings) {
+      val bindings = externalBindings.get(compatible)
+
+      // first look for matching bus
+      val forBus = bindings.filter { parentBinding.buses.contains(it.onBus) }
+      if (forBus.isNotEmpty()) return forBus.first()
+
+      // fallback to binding without bus
+      val noBus = bindings.filter { it.onBus == null }
+      if (noBus.isNotEmpty()) return noBus.first()
     }
 
     return null
   }
 
-  private fun loadBindings(dir: VirtualFile): Map<String, DtsZephyrBindingParser.Source> {
-    val bindings = mutableMapOf<String, DtsZephyrBindingParser.Source>()
+  private fun getBindingFallback(compatibleStrings: List<String>): DtsZephyrBinding? {
+    for (compatible in compatibleStrings) {
+      val bindings = externalBindings.get(compatible)
+      if (bindings.isEmpty()) continue
 
-    val visitor = object : VirtualFileVisitor<Any>() {
-      override fun visitFile(file: VirtualFile): Boolean {
-        if (file.isDirectory || file.extension != "yaml") return true
+      // first look for binding without bus
+      val noBus = bindings.filter { it.onBus == null }
+      if (noBus.isNotEmpty()) return noBus.first()
 
-        loadBinding(file.readText(), file.name)?.let {
-          bindings[file.nameWithoutExtension] = DtsZephyrBindingParser.Source(file.path, it)
-        }
-
-        return true
-      }
+      // fallback to any binding
+      return bindings.first()
     }
-    VfsUtilCore.visitChildrenRecursively(dir, visitor)
 
-    return bindings
+    return null
   }
 
   /**
-   * Builds a binding for a specific compatible string.
-   */
-  fun buildBinding(compatible: String): DtsZephyrBinding? = bindingParser.parse(compatible)
-
-  /**
-   * Builds a binding for a specific node.
+   * Gets a binding for a specific node.
    *
    * If the node has a compatible property the binding will be built for the
    * matching string. If there is no matching binding this method searches
@@ -162,35 +135,39 @@ class DtsZephyrBindingProvider(val project: Project) {
    *
    * Resolves references automatically.
    */
-  fun buildBinding(node: DtsNode): DtsZephyrBinding? {
+  fun getBinding(node: DtsNode): DtsZephyrBinding? {
     val compatibleStrings = node.getDtsCompatibleStrings()
-    if (compatibleStrings.isNotEmpty()) {
-      return compatibleStrings.firstNotNullOfOrNull(::buildBinding)
+
+    val parentBinding = DtsTreeUtil.findParentNode(node)?.let(::getBinding)
+
+    val binding = if (parentBinding == null) {
+      getBindingFallback(compatibleStrings)
+    } else {
+      getBindingWithParent(compatibleStrings, parentBinding)
     }
+    if (binding != null) return binding
 
     val bundledBinding = DtsBundledBindings.findBindingForNode(node)
-    if (bundledBinding != null) return buildBundledBinding(bundledBinding)
-
-    val parentBinding = DtsTreeUtil.findParentNode(node)?.let(::buildBinding)
-    return parentBinding?.child
+    return bundledBinding?.let(::getBundledBinding)
   }
 
-  private fun buildBundledBinding(name: String): DtsZephyrBinding? = bundledBindingParser.parse(name)
+
+  private fun getBundledBinding(name: String): DtsZephyrBinding? = bundledBindings[name]
 
   /**
    * Builds a bundled binding.
    */
-  fun buildBundledBinding(binding: DtsBundledBindings): DtsZephyrBinding? = buildBundledBinding(binding.nodeName)
+  fun getBundledBinding(binding: DtsBundledBindings): DtsZephyrBinding? = getBundledBinding(binding.nodeName)
 
   /**
    * Builds the bundled fallback binding which contains the standard
    * documentation from the specification for known properties.
    */
-  fun buildFallbackBinding(): DtsZephyrBinding? = buildBundledBinding(FALLBACK_BINDING_NAME)
+  fun getFallbackBinding(): DtsZephyrBinding? = getBundledBinding(FALLBACK_BINDING_NAME)
 
   /**
    * List of all available bindings. Does not include bundled bindings since
    * they are matched on the node name and not the compatible string.
    */
-  fun buildAllBindings(): Collection<DtsZephyrBinding> = bindingParser.parseAll()
+  fun getAllBindings(): Collection<DtsZephyrBinding> = externalBindings.values()
 }

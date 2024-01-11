@@ -6,6 +6,7 @@ import com.intellij.dts.documentation.DtsBindingDocumentation
 import com.intellij.dts.lang.psi.DtsString
 import com.intellij.dts.lang.symbols.DtsBindingSymbol
 import com.intellij.dts.lang.symbols.DtsDocumentationSymbol
+import com.intellij.dts.util.DtsTreeUtil
 import com.intellij.dts.util.DtsUtil
 import com.intellij.dts.util.relativeTo
 import com.intellij.dts.zephyr.binding.DtsZephyrBindingProvider
@@ -21,7 +22,10 @@ class DtsBindingReference(private val element: DtsString) : PsiSymbolReference, 
   override fun getRangeInElement(): TextRange = element.dtsValueRange.relativeTo(element.textRange)
 
   override fun resolveReference(): Collection<Symbol> {
-    return DtsUtil.singleResult { DtsBindingSymbol(element.dtsParse()) }
+    val node = DtsTreeUtil.parentNode(element) ?: return emptyList()
+    val binding = DtsZephyrBindingProvider.bindingFor(node, fallbackBinding = false) ?: return emptyList()
+
+    return DtsUtil.singleResult { DtsBindingSymbol(binding) }
   }
 
   override fun getCompletionVariants(): MutableCollection<LookupElement> {
@@ -29,7 +33,7 @@ class DtsBindingReference(private val element: DtsString) : PsiSymbolReference, 
     val variants = mutableListOf<LookupElement>()
     val provider = DtsZephyrBindingProvider.of(project)
 
-    for (binding in provider.buildAllBindings()) {
+    for (binding in provider.getAllBindings()) {
       val compatible = binding.compatible ?: continue
       val symbol = DtsDocumentationSymbol.from(DtsBindingDocumentation(project, binding))
 

@@ -1,0 +1,447 @@
+DtsZephyrBinding(compatible=espressif,esp32-pinctrl, path=WORKING_DIRECTORY/zephyr/dts/bindings/pinctrl/espressif,esp32-pinctrl.yaml, description=Espressif's pin controller is in charge of controlling pin configurations, pin
+functionalities and pin properties as defined by pin states. In its turn, pin
+states are composed by groups of pre-defined pin muxing definitions and user
+provided pin properties.
+
+Each Zephyr-based application has its own set of pin muxing/pin configuration
+requirements. The next steps use ESP-WROVER-KIT's I2C_0 to illustrate how one
+could change a node's pin state properties. Though based on a particular board,
+the same steps can be tweaked to address specifics of any other target board.
+
+Suppose an application running on top of the ESP-WROVER-KIT board, for some
+reason it needs I2C_0's SDA signal to be routed to GPIO_33. When looking at
+that board's original device tree source file (i.e., 'esp_wrover_kit.dts'),
+you'll notice that the I2C_0 node is already assigned to a pre-defined state.
+Below is highlighted the information that most interests us on that file
+
+
+    #include "esp_wrover_kit-pinctrl.dtsi"
+
+    &i2c0 {
+            ...
+            pinctrl-0 = <&i2c0_default>;
+            pinctrl-names = "default";
+    };
+
+
+From the above excerpt, the pincrl-0 property is assigned the 'i2c0_default'
+state value. This and other pin states of the board are defined on another file
+(in this case, 'esp_wrover_kit-pinctrl.dtsi') on the same folder of the DTS file.
+Check below the excerpt describing I2C_0's default state on that file
+
+
+    i2c0_default: i2c0_default {
+            group1 {
+                    pinmux = <I2C0_SDA_GPIO21>,
+                             <I2C0_SCL_GPIO22>;
+                    bias-pull-up;
+                    drive-open-drain;
+                    output-high;
+            };
+    };
+
+
+Only the 'pinmux' property above is actually required, other properties can
+be chosen if meaningful for the target application and, of course, supported
+by your target hardware. For example, some custom board may have an external
+pull-up resistor soldered to GPIO_21's pin pad, in which case, 'bias-pull-up'
+could be no longer required.
+
+Back to our fictional application, the previous I2C_0 state definition does not
+meet our expectations as we would like to route I2C_0's SDA signal to GPIO_33
+instead of to GPIO_21. To achieve it, we need to update the 'pinmux' property
+accordingly.
+
+Note that replacing 'I2C0_SDA_GPIO21' by 'I2C0_SDA_GPIO33' is very tempting and
+may even work, however, unless you have checked the hardware documentation first,
+it is not recommended. That's because there are no guarantees that a particular
+IO pin has the capability to route any specific signal.
+
+The recommendation is to check the pinmux macros definitions available for the
+target SoC in the following URL
+
+
+https://github.com/zephyrproject-rtos/hal_espressif/tree/zephyr/include/dt-bindings/pinctrl
+
+
+The ESP-WROVER-KIT board is based on the ESP32 SoC, in that case, we search
+through the file 'esp32-pinctrl.h' in the above URL. Luckily for us, there is
+one definition on that file that corresponds to our needs
+
+
+    #define I2C0_SDA_GPIO33 \
+            ESP32_PINMUX(33, ESP_I2CEXT0_SDA_IN, ESP_I2CEXT0_SDA_OUT)
+
+
+Now, we go back to edit 'esp_wrover_kit-pinctrl.dtsi' and create a new pin state
+on that file (or replace/update the one already defined) using the pinmux macro
+definition above, yielding
+
+
+    i2c0_default: i2c0_default {
+            group1 {
+                    pinmux = <I2C0_SDA_GPIO33>,
+                             <I2C0_SCL_GPIO22>;
+                    bias-pull-up;
+                    drive-open-drain;
+                    output-high;
+            };
+    };
+
+
+With proper modifications, the same steps above apply when using different
+combinations of boards, SoCs, peripherals and peripheral pins.
+
+Note: Not all pins are available for a given peripheral, it depends if that
+      pin supports a set of properties required by the target peripheral.
+
+      When defining a state, the pin muxing information is constrained to
+      the definitions at 'hal_espressif', however, pin properties (like
+      bias-push-pull, drive-open-drain, etc) can be freely chosen, given the
+      property is meaningful to the peripheral signal and that it is also
+      available in the target GPIO.
+
+      Another thing worth noting is that all pin properties should be grouped.
+      All pins sharing common properties go under a common group (in the above
+      example, all pins are in 'group1'). Other peripherals can have more than
+      one group.
+, buses=[], onBus=null, properties={status=DtsZephyrPropertyBinding(name=status, description=The status property indicates the operational status of a device. 
+The lack of a status property should be treated as if the property 
+existed with the value of "okay".
+, type=String, default=null, const=null, enum=[String(value=okay), String(value=disabled), String(value=reserved), String(value=fail), String(value=fail-sss)], required=false), compatible=DtsZephyrPropertyBinding(name=compatible, description=The compatible property value consists of one or more strings that 
+define the specific programming model for the device. This list of 
+strings should be used by a client program for device driver 
+selection. The property value consists of a concatenated list of 
+null terminated strings, from most specific to most general. They 
+allow a device to express its compatibility with a family of similar 
+devices, potentially allowing a single device driver to match 
+against several devices.
+
+The recommended format is "manufacturer,model", where manufacturer 
+is a string describing the name of the manufacturer (such as a stock
+ticker symbol), and model specifies the model number.
+
+The compatible string should consist only of lowercase letters, 
+digits and dashes, and should start with a letter. A single comma is
+typically only used following a vendor prefix. Underscores should 
+not be used.
+
+For example:
+
+compatible = "fsl,mpc8641", "ns16550";
+
+In this example, an operating system would first try to locate a 
+device driver that supported fsl,mpc8641. If a driver was not found,
+it would then try to locate a driver that supported the more general 
+ns16550 device type.
+, type=StringList, default=null, const=null, enum=null, required=true), phandle=DtsZephyrPropertyBinding(name=phandle, description=The phandle property specifies a numerical identifier for a node 
+that is unique within the devicetree. The phandle property value is 
+used by other nodes that need to refer to the node associated with 
+the property.
+
+Note: Most devicetrees in DTS will not contain explicit phandle 
+properties.The DTC tool automatically inserts the phandle properties
+when the DTS is compiled into the binary DTB format.
+
+For example see the following devicetree excerpt:
+
+pic@10000000 {
+    phandle = <1>; interrupt-controller;
+    reg = <0x10000000 0x100>;
+};
+
+A phandle value of 1 is defined. Another device node could reference 
+the pic node with a phandle value of 1:
+
+another-device-node { 
+    interrupt-parent = <1>; 
+};
+, type=PHandle, default=null, const=null, enum=null, required=false), ranges=DtsZephyrPropertyBinding(name=ranges, description=!!html
+The ranges property provides a means of defining a mapping or 
+translation between the address space of the bus (the child address 
+space) and the address space of the bus node's parent (the parent 
+address space).
+<br/><br/>
+The format of the value of the ranges property is an arbitrary 
+number of triplets of (child-bus-address, parent- bus-address, 
+length).
+
+<ul>
+    <li>
+    The child-bus-address is a physical address within the child bus' 
+    address space. The number of cells to represent the address is 
+    bus dependent and can be determined from the #address-cells of 
+    this node (the node in which the ranges property appears).
+    </li>
+    <li>
+    The parent-bus-address is a physical address within the parent 
+    bus' address space. The number of cells to represent the parent 
+    address is bus dependent and can be determined from the 
+    #address-cells property of the node that defines the parent's 
+    address space.
+    </li>
+    <li>
+    The length specifies the size of the range in the child's 
+    address space. The number of cells to represent the size can be 
+    determined from the #size-cells of this node (the node in which 
+    the ranges property appears).
+    </li>
+</ul>
+
+If the property is defined with an empty value, it specifies that 
+the parent and child address space is identical, and no address 
+translation is required.
+<br/><br/>
+If the property is not present in a bus node, it is assumed that no 
+mapping exists between children of the node and the parent address 
+space.
+, type=Ints, default=null, const=null, enum=null, required=false), device_type=DtsZephyrPropertyBinding(name=device_type, description=The device_type property was used in IEEE 1275 to describe the 
+device's FCode programming model. Because DTSpec does not have 
+FCode, new use of the property is deprecated, and it should be 
+included only on cpu and memory nodes for compatibility with IEEE 
+1275-derived devicetrees.
+, type=String, default=null, const=null, enum=null, required=false), interrupts-extended=DtsZephyrPropertyBinding(name=interrupts-extended, description=The interrupts-extended property lists the interrupt(s) generated by
+a device. interrupts-extended should be used instead of interrupts 
+when a device is connected to multiple interrupt controllers as it 
+encodes a parent phandle with each interrupt specifier.
+, type=Compound, default=null, const=null, enum=null, required=false), interrupt-parent=DtsZephyrPropertyBinding(name=interrupt-parent, description=Because the hierarchy of the nodes in the interrupt tree might not 
+match the devicetree, the interrupt-parent property is available to 
+make the definition of an interrupt parent explicit. The value is 
+the phandle to the interrupt parent. If this property is missing 
+from a device, its interrupt parent is assumed to be its devicetree 
+parent.
+, type=PHandle, default=null, const=null, enum=null, required=false), reg=DtsZephyrPropertyBinding(name=reg, description=register space, type=Ints, default=null, const=null, enum=null, required=false), reg-names=DtsZephyrPropertyBinding(name=reg-names, description=name of each register space, type=StringList, default=null, const=null, enum=null, required=false), interrupts=DtsZephyrPropertyBinding(name=interrupts, description=interrupts for device, type=Ints, default=null, const=null, enum=null, required=false), interrupt-names=DtsZephyrPropertyBinding(name=interrupt-names, description=name of each interrupt, type=StringList, default=null, const=null, enum=null, required=false), label=DtsZephyrPropertyBinding(name=label, description=Human readable string describing the device (used as device_get_binding() argument)
+, type=String, default=null, const=null, enum=null, required=false), clocks=DtsZephyrPropertyBinding(name=clocks, description=Clock gate information, type=PHandleList, default=null, const=null, enum=null, required=false), clock-names=DtsZephyrPropertyBinding(name=clock-names, description=name of each clock, type=StringList, default=null, const=null, enum=null, required=false), #address-cells=DtsZephyrPropertyBinding(name=#address-cells, description=number of address cells in reg property, type=Int, default=null, const=null, enum=null, required=false), #size-cells=DtsZephyrPropertyBinding(name=#size-cells, description=number of size cells in reg property, type=Int, default=null, const=null, enum=null, required=false), dmas=DtsZephyrPropertyBinding(name=dmas, description=DMA channels specifiers, type=PHandleList, default=null, const=null, enum=null, required=false), dma-names=DtsZephyrPropertyBinding(name=dma-names, description=Provided names of DMA channel specifiers, type=StringList, default=null, const=null, enum=null, required=false), io-channels=DtsZephyrPropertyBinding(name=io-channels, description=IO channels specifiers, type=PHandleList, default=null, const=null, enum=null, required=false), io-channel-names=DtsZephyrPropertyBinding(name=io-channel-names, description=Provided names of IO channel specifiers, type=StringList, default=null, const=null, enum=null, required=false), mboxes=DtsZephyrPropertyBinding(name=mboxes, description=mailbox / IPM channels specifiers, type=PHandleList, default=null, const=null, enum=null, required=false), mbox-names=DtsZephyrPropertyBinding(name=mbox-names, description=Provided names of mailbox / IPM channel specifiers, type=StringList, default=null, const=null, enum=null, required=false), wakeup-source=DtsZephyrPropertyBinding(name=wakeup-source, description=Property to identify that a device can be used as wake up source.
+
+When this property is provided a specific flag is set into the
+device that tells the system that the device is capable of
+wake up the system.
+
+Wake up capable devices are disabled (interruptions will not wake up
+the system) by default but they can be enabled at runtime if necessary.
+, type=Boolean, default=null, const=null, enum=null, required=false), power-domain=DtsZephyrPropertyBinding(name=power-domain, description=
+Power domain the device belongs to.
+
+The device will be notified when the power domain it belongs to is either
+suspended or resumed.
+, type=PHandle, default=null, const=null, enum=null, required=false), zephyr,pm-device-runtime-auto=DtsZephyrPropertyBinding(name=zephyr,pm-device-runtime-auto, description=Automatically configure the device for runtime power management after the
+init function runs.
+, type=Boolean, default=null, const=null, enum=null, required=false)}, child=DtsZephyrBinding(compatible=espressif,esp32-pinctrl, path=null, description=Espressif pin controller pin configuration state nodes.
+, buses=[], onBus=null, properties={status=DtsZephyrPropertyBinding(name=status, description=The status property indicates the operational status of a device. 
+The lack of a status property should be treated as if the property 
+existed with the value of "okay".
+, type=String, default=null, const=null, enum=[String(value=okay), String(value=disabled), String(value=reserved), String(value=fail), String(value=fail-sss)], required=false), compatible=DtsZephyrPropertyBinding(name=compatible, description=The compatible property value consists of one or more strings that 
+define the specific programming model for the device. This list of 
+strings should be used by a client program for device driver 
+selection. The property value consists of a concatenated list of 
+null terminated strings, from most specific to most general. They 
+allow a device to express its compatibility with a family of similar 
+devices, potentially allowing a single device driver to match 
+against several devices.
+
+The recommended format is "manufacturer,model", where manufacturer 
+is a string describing the name of the manufacturer (such as a stock
+ticker symbol), and model specifies the model number.
+
+The compatible string should consist only of lowercase letters, 
+digits and dashes, and should start with a letter. A single comma is
+typically only used following a vendor prefix. Underscores should 
+not be used.
+
+For example:
+
+compatible = "fsl,mpc8641", "ns16550";
+
+In this example, an operating system would first try to locate a 
+device driver that supported fsl,mpc8641. If a driver was not found,
+it would then try to locate a driver that supported the more general 
+ns16550 device type.
+, type=StringList, default=null, const=null, enum=null, required=false), phandle=DtsZephyrPropertyBinding(name=phandle, description=The phandle property specifies a numerical identifier for a node 
+that is unique within the devicetree. The phandle property value is 
+used by other nodes that need to refer to the node associated with 
+the property.
+
+Note: Most devicetrees in DTS will not contain explicit phandle 
+properties.The DTC tool automatically inserts the phandle properties
+when the DTS is compiled into the binary DTB format.
+
+For example see the following devicetree excerpt:
+
+pic@10000000 {
+    phandle = <1>; interrupt-controller;
+    reg = <0x10000000 0x100>;
+};
+
+A phandle value of 1 is defined. Another device node could reference 
+the pic node with a phandle value of 1:
+
+another-device-node { 
+    interrupt-parent = <1>; 
+};
+, type=PHandle, default=null, const=null, enum=null, required=false), ranges=DtsZephyrPropertyBinding(name=ranges, description=!!html
+The ranges property provides a means of defining a mapping or 
+translation between the address space of the bus (the child address 
+space) and the address space of the bus node's parent (the parent 
+address space).
+<br/><br/>
+The format of the value of the ranges property is an arbitrary 
+number of triplets of (child-bus-address, parent- bus-address, 
+length).
+
+<ul>
+    <li>
+    The child-bus-address is a physical address within the child bus' 
+    address space. The number of cells to represent the address is 
+    bus dependent and can be determined from the #address-cells of 
+    this node (the node in which the ranges property appears).
+    </li>
+    <li>
+    The parent-bus-address is a physical address within the parent 
+    bus' address space. The number of cells to represent the parent 
+    address is bus dependent and can be determined from the 
+    #address-cells property of the node that defines the parent's 
+    address space.
+    </li>
+    <li>
+    The length specifies the size of the range in the child's 
+    address space. The number of cells to represent the size can be 
+    determined from the #size-cells of this node (the node in which 
+    the ranges property appears).
+    </li>
+</ul>
+
+If the property is defined with an empty value, it specifies that 
+the parent and child address space is identical, and no address 
+translation is required.
+<br/><br/>
+If the property is not present in a bus node, it is assumed that no 
+mapping exists between children of the node and the parent address 
+space.
+, type=Ints, default=null, const=null, enum=null, required=false), device_type=DtsZephyrPropertyBinding(name=device_type, description=The device_type property was used in IEEE 1275 to describe the 
+device's FCode programming model. Because DTSpec does not have 
+FCode, new use of the property is deprecated, and it should be 
+included only on cpu and memory nodes for compatibility with IEEE 
+1275-derived devicetrees.
+, type=String, default=null, const=null, enum=null, required=false), interrupts-extended=DtsZephyrPropertyBinding(name=interrupts-extended, description=The interrupts-extended property lists the interrupt(s) generated by
+a device. interrupts-extended should be used instead of interrupts 
+when a device is connected to multiple interrupt controllers as it 
+encodes a parent phandle with each interrupt specifier.
+, type=Compound, default=null, const=null, enum=null, required=false), interrupt-parent=DtsZephyrPropertyBinding(name=interrupt-parent, description=Because the hierarchy of the nodes in the interrupt tree might not 
+match the devicetree, the interrupt-parent property is available to 
+make the definition of an interrupt parent explicit. The value is 
+the phandle to the interrupt parent. If this property is missing 
+from a device, its interrupt parent is assumed to be its devicetree 
+parent.
+, type=PHandle, default=null, const=null, enum=null, required=false)}, child=DtsZephyrBinding(compatible=espressif,esp32-pinctrl, path=null, description=Espressif pin controller pin configuration group., buses=[], onBus=null, properties={status=DtsZephyrPropertyBinding(name=status, description=The status property indicates the operational status of a device. 
+The lack of a status property should be treated as if the property 
+existed with the value of "okay".
+, type=String, default=null, const=null, enum=[String(value=okay), String(value=disabled), String(value=reserved), String(value=fail), String(value=fail-sss)], required=false), compatible=DtsZephyrPropertyBinding(name=compatible, description=The compatible property value consists of one or more strings that 
+define the specific programming model for the device. This list of 
+strings should be used by a client program for device driver 
+selection. The property value consists of a concatenated list of 
+null terminated strings, from most specific to most general. They 
+allow a device to express its compatibility with a family of similar 
+devices, potentially allowing a single device driver to match 
+against several devices.
+
+The recommended format is "manufacturer,model", where manufacturer 
+is a string describing the name of the manufacturer (such as a stock
+ticker symbol), and model specifies the model number.
+
+The compatible string should consist only of lowercase letters, 
+digits and dashes, and should start with a letter. A single comma is
+typically only used following a vendor prefix. Underscores should 
+not be used.
+
+For example:
+
+compatible = "fsl,mpc8641", "ns16550";
+
+In this example, an operating system would first try to locate a 
+device driver that supported fsl,mpc8641. If a driver was not found,
+it would then try to locate a driver that supported the more general 
+ns16550 device type.
+, type=StringList, default=null, const=null, enum=null, required=false), phandle=DtsZephyrPropertyBinding(name=phandle, description=The phandle property specifies a numerical identifier for a node 
+that is unique within the devicetree. The phandle property value is 
+used by other nodes that need to refer to the node associated with 
+the property.
+
+Note: Most devicetrees in DTS will not contain explicit phandle 
+properties.The DTC tool automatically inserts the phandle properties
+when the DTS is compiled into the binary DTB format.
+
+For example see the following devicetree excerpt:
+
+pic@10000000 {
+    phandle = <1>; interrupt-controller;
+    reg = <0x10000000 0x100>;
+};
+
+A phandle value of 1 is defined. Another device node could reference 
+the pic node with a phandle value of 1:
+
+another-device-node { 
+    interrupt-parent = <1>; 
+};
+, type=PHandle, default=null, const=null, enum=null, required=false), ranges=DtsZephyrPropertyBinding(name=ranges, description=!!html
+The ranges property provides a means of defining a mapping or 
+translation between the address space of the bus (the child address 
+space) and the address space of the bus node's parent (the parent 
+address space).
+<br/><br/>
+The format of the value of the ranges property is an arbitrary 
+number of triplets of (child-bus-address, parent- bus-address, 
+length).
+
+<ul>
+    <li>
+    The child-bus-address is a physical address within the child bus' 
+    address space. The number of cells to represent the address is 
+    bus dependent and can be determined from the #address-cells of 
+    this node (the node in which the ranges property appears).
+    </li>
+    <li>
+    The parent-bus-address is a physical address within the parent 
+    bus' address space. The number of cells to represent the parent 
+    address is bus dependent and can be determined from the 
+    #address-cells property of the node that defines the parent's 
+    address space.
+    </li>
+    <li>
+    The length specifies the size of the range in the child's 
+    address space. The number of cells to represent the size can be 
+    determined from the #size-cells of this node (the node in which 
+    the ranges property appears).
+    </li>
+</ul>
+
+If the property is defined with an empty value, it specifies that 
+the parent and child address space is identical, and no address 
+translation is required.
+<br/><br/>
+If the property is not present in a bus node, it is assumed that no 
+mapping exists between children of the node and the parent address 
+space.
+, type=Ints, default=null, const=null, enum=null, required=false), device_type=DtsZephyrPropertyBinding(name=device_type, description=The device_type property was used in IEEE 1275 to describe the 
+device's FCode programming model. Because DTSpec does not have 
+FCode, new use of the property is deprecated, and it should be 
+included only on cpu and memory nodes for compatibility with IEEE 
+1275-derived devicetrees.
+, type=String, default=null, const=null, enum=null, required=false), interrupts-extended=DtsZephyrPropertyBinding(name=interrupts-extended, description=The interrupts-extended property lists the interrupt(s) generated by
+a device. interrupts-extended should be used instead of interrupts 
+when a device is connected to multiple interrupt controllers as it 
+encodes a parent phandle with each interrupt specifier.
+, type=Compound, default=null, const=null, enum=null, required=false), interrupt-parent=DtsZephyrPropertyBinding(name=interrupt-parent, description=Because the hierarchy of the nodes in the interrupt tree might not 
+match the devicetree, the interrupt-parent property is available to 
+make the definition of an interrupt parent explicit. The value is 
+the phandle to the interrupt parent. If this property is missing 
+from a device, its interrupt parent is assumed to be its devicetree 
+parent.
+, type=PHandle, default=null, const=null, enum=null, required=false), pinmux=DtsZephyrPropertyBinding(name=pinmux, description=Each array element represents pin muxing information of an individual
+pin. The array elements are pre-declared macros taken from Espressif's
+HAL.
+, type=Ints, default=null, const=null, enum=null, required=true), bias-disable=DtsZephyrPropertyBinding(name=bias-disable, description=disable any pin bias, type=Boolean, default=null, const=null, enum=null, required=false), bias-pull-up=DtsZephyrPropertyBinding(name=bias-pull-up, description=enable pull-up resistor, type=Boolean, default=null, const=null, enum=null, required=false), bias-pull-down=DtsZephyrPropertyBinding(name=bias-pull-down, description=enable pull-down resistor, type=Boolean, default=null, const=null, enum=null, required=false), drive-push-pull=DtsZephyrPropertyBinding(name=drive-push-pull, description=drive actively high and low, type=Boolean, default=null, const=null, enum=null, required=false), drive-open-drain=DtsZephyrPropertyBinding(name=drive-open-drain, description=drive with open drain (hardware AND), type=Boolean, default=null, const=null, enum=null, required=false), input-enable=DtsZephyrPropertyBinding(name=input-enable, description=enable input on pin (no effect on output, such as enabling an input
+buffer)
+, type=Boolean, default=null, const=null, enum=null, required=false), output-enable=DtsZephyrPropertyBinding(name=output-enable, description=enable output on a pin without actively driving it (such as enabling
+an output buffer)
+, type=Boolean, default=null, const=null, enum=null, required=false), output-low=DtsZephyrPropertyBinding(name=output-low, description=set the pin to output mode with low level, type=Boolean, default=null, const=null, enum=null, required=false), output-high=DtsZephyrPropertyBinding(name=output-high, description=set the pin to output mode with high level, type=Boolean, default=null, const=null, enum=null, required=false)}, child=null, isChild=true, allowUndeclaredProperties=false), isChild=true, allowUndeclaredProperties=false), isChild=false, allowUndeclaredProperties=false)

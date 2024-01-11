@@ -14,7 +14,7 @@ enum class DtsBundledBindings(val nodeName: @NlsSafe String) {
   RESERVED_MEMORY("reserved-memory");
 
   fun build(provider: DtsZephyrBindingProvider): DtsZephyrBinding? {
-    return provider.buildBundledBinding(this)
+    return provider.getBundledBinding(this)
   }
 
   companion object {

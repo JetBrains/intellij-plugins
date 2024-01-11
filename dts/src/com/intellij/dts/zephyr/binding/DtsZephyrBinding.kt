@@ -8,6 +8,8 @@ data class DtsZephyrBinding(
   val compatible: @NlsSafe String?,
   val path: @NlsSafe String?,
   val description: @NlsSafe String?,
+  val buses: List<@NlsSafe String>,
+  val onBus: @NlsSafe String?,
   val properties: Map<String, DtsZephyrPropertyBinding>,
   val child: DtsZephyrBinding?,
   val isChild: Boolean,
@@ -19,6 +21,8 @@ data class DtsZephyrBinding(
     private var compatible: String? = null
     private var path: String? = null
     private var description: String? = null
+    private var buses: List<String>? = null
+    private var onBus: String? = null
     private var properties: MutableMap<String, DtsZephyrPropertyBinding.Builder> = mutableMapOf()
     private var child: Builder? = null
     private var allowUndeclaredProperties: Boolean? = null
@@ -43,6 +47,16 @@ data class DtsZephyrBinding(
       return this
     }
 
+    fun setBusses(value: List<String>): Builder {
+      if (buses == null) buses = value
+      return this
+    }
+
+    fun setOnBus(value: String): Builder {
+      if (onBus == null) onBus = value
+      return this
+    }
+
     fun getPropertyBuilder(name: String): DtsZephyrPropertyBinding.Builder {
       return properties.getOrPut(name) { DtsZephyrPropertyBinding.Builder(name) }
     }
@@ -59,6 +73,8 @@ data class DtsZephyrBinding(
         compatible = compatible,
         path = path,
         description = description,
+        buses = buses ?: emptyList(),
+        onBus = onBus,
         properties = properties.mapValues { (_, builder) -> builder.build() },
         child = child?.build(),
         isChild = isChild,
