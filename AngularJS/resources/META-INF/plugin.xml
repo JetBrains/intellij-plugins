@@ -12,7 +12,6 @@
       <li>Code completion for components, built-in and custom directives, and methods in templates
       <li>Navigation from the component, custom directives, and event handlers to their definition
       <li>Collection of code snippets for AngularJS
-      <li>Option in the Welcome screen to create new Angular projects
     </ul>
     <h2>Getting started</h2>
     <p>For information on getting started, head over to the <a href="https://www.jetbrains.com/help/">documentation</a> for your IDE.
