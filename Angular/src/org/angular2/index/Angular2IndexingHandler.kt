@@ -367,18 +367,17 @@ private val STUBBED_PROPERTIES = ContainerUtil.newHashSet(
 private val STUBBED_DECORATORS_STRING_ARGS = ContainerUtil.newHashSet(
   INPUT_DEC, OUTPUT_DEC, ATTRIBUTE_DEC)
 
-// TODO Remove "ɵ" prefixed variant once `input()` syntax matures
 private val STUBBED_DECORATOR_LIKE_FUNCTIONS = ContainerUtil.newHashSet(
-  INPUT_FUN, "ɵ$INPUT_FUN"
+  INPUT_FUN
 )
 
-private val INDEX_MAP = HashMap<String, StubIndexKey<String, JSImplicitElementProvider>?>().also { INDEX_MAP ->
-  INDEX_MAP[ANGULAR2_TEMPLATE_URLS_INDEX_USER_STRING] = Angular2TemplateUrlIndexKey
-  INDEX_MAP[ANGULAR2_DIRECTIVE_INDEX_USER_STRING] = Angular2SourceDirectiveIndexKey
-  INDEX_MAP[ANGULAR2_PIPE_INDEX_USER_STRING] = Angular2SourcePipeIndexKey
-  INDEX_MAP[ANGULAR2_MODULE_INDEX_USER_STRING] = Angular2SourceModuleIndexKey
-  INDEX_MAP[ANGULAR2_FUNCTION_NAME_USER_STRING] = null
-}
+private val INDEX_MAP = mapOf<String, StubIndexKey<String, JSImplicitElementProvider>?>(
+  ANGULAR2_TEMPLATE_URLS_INDEX_USER_STRING to Angular2TemplateUrlIndexKey,
+  ANGULAR2_DIRECTIVE_INDEX_USER_STRING to Angular2SourceDirectiveIndexKey,
+  ANGULAR2_PIPE_INDEX_USER_STRING to Angular2SourcePipeIndexKey,
+  ANGULAR2_MODULE_INDEX_USER_STRING to Angular2SourceModuleIndexKey,
+  ANGULAR2_FUNCTION_NAME_USER_STRING to null,
+)
 
 fun JSImplicitElement.isPipe(): Boolean {
   return ANGULAR2_PIPE_INDEX_USER_STRING == userString

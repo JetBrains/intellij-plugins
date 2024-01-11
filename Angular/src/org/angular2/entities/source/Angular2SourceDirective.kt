@@ -378,8 +378,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
       if (functionName == null) return null
       val referenceNames = getFunctionNameFromIndex(call)
                              ?.split('.')
-                             // TODO remove `?.removePrefix("ɵ")` part, when `input()` syntax matures
-                             ?.takeIf { it.getOrNull(0)?.removePrefix("ɵ") == functionName }
+                             ?.takeIf { it.getOrNull(0) == functionName }
                            ?: return null
       return when (referenceNames.size) {
         1 -> {
