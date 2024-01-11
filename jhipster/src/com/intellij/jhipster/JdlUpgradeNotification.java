@@ -11,8 +11,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.FUSEventSource;
 import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.PluginAdvertiserService;
 import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.SuggestedIde;
-import com.intellij.openapi.updateSettings.impl.upgradeToUltimate.installation.UltimateInstallationService;
-import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotificationProvider;
@@ -22,6 +20,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.function.Function;
+
+import static com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.PluginAdvertiserServiceKt.tryUltimate;
 
 final class JdlUpgradeNotification implements EditorNotificationProvider {
   private static final String KEY = "jhipster.ultimate";
@@ -45,11 +45,7 @@ final class JdlUpgradeNotification implements EditorNotificationProvider {
     panel.createActionLabel(IdeBundle.message("plugins.advertiser.action.try.ultimate", "IntelliJ IDEA Ultimate"), () -> {
       SuggestedIde ide = PluginAdvertiserService.Companion.getIdeaUltimate();
       PluginId id = PluginId.getId("");
-      if (Registry.is("ide.show.plugins.in.editor")) {
-        project.getService(UltimateInstallationService.class).install(id, ide.getDownloadUrl());
-      } else {
-        FUSEventSource.EDITOR.openDownloadPageAndLog(project, ide.getDownloadUrl(), id);
-      }
+      tryUltimate(id, ide, project, FUSEventSource.EDITOR);
     });
 
     panel.createActionLabel(IdeBundle.message("plugins.advertiser.action.ignore.ultimate"), () -> {
