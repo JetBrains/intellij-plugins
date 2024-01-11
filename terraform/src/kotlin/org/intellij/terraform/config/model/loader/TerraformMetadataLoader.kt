@@ -3,7 +3,6 @@ package org.intellij.terraform.config.model.loader
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
-import com.intellij.openapi.application.Application
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProcessCanceledException
@@ -38,10 +37,9 @@ class TerraformMetadataLoader(external: Map<String, TypeModelProvider.Additional
   )
 
   fun load(): TypeModel? {
-    val application = ApplicationManager.getApplication()
     try {
-      loadExternal(application)
-      loadBundled(application)
+      loadExternal()
+      loadBundled()
 
       return TypeModel(
         model.resources,
@@ -51,13 +49,14 @@ class TerraformMetadataLoader(external: Map<String, TypeModelProvider.Additional
         model.backends,
         model.functions
       )
-    } catch(e: Exception) {
-      logErrorAndFailInInternalMode(application, "Failed to load Terraform Model", e)
+    }
+    catch (e: Exception) {
+      logErrorAndFailInInternalMode("Failed to load Terraform Model", e)
       return null
     }
   }
 
-  private fun loadBundled(application: Application) {
+  private fun loadBundled() {
     val resources: Collection<String> = getAllResourcesToLoad(ModelResourcesPrefix)
 
     for (it in resources) {
@@ -68,59 +67,62 @@ class TerraformMetadataLoader(external: Map<String, TypeModelProvider.Additional
         continue
       }
 
-      loadOne(application, file, stream)
+      loadOne(file, stream)
     }
   }
 
-  private fun loadExternal(application: Application) {
+  private fun loadExternal() {
     val schemas = getSharedSchemas()
     for (file in schemas) {
       val stream: FileInputStream
       try {
         stream = file.inputStream()
-      } catch (e: Exception) {
-        logErrorAndFailInInternalMode(application, "Cannot open stream for file '${file.absolutePath}'", e)
+      }
+      catch (e: Exception) {
+        logErrorAndFailInInternalMode("Cannot open stream for file '${file.absolutePath}'", e)
         continue
       }
-      loadOne(application, file.absolutePath, stream)
+      loadOne(file.absolutePath, stream)
     }
   }
 
-  private fun loadOne(application: Application, file: String, stream: InputStream) {
+  private fun loadOne(file: String, stream: InputStream) {
     val json: ObjectNode?
     try {
       json = stream.use {
         ObjectMapper().readTree(it) as ObjectNode?
       }
       if (json == null) {
-        logErrorAndFailInInternalMode(application, "In file '$file' no JSON found")
+        logErrorAndFailInInternalMode("In file '$file' no JSON found")
         return
       }
-    } catch(e: Exception) {
-      logErrorAndFailInInternalMode(application, "Failed to load json data from file '$file'", e)
+    }
+    catch (e: Exception) {
+      logErrorAndFailInInternalMode("Failed to load json data from file '$file'", e)
       return
     }
     try {
       parseFile(json, file)
-    } catch(e: Throwable) {
-      logErrorAndFailInInternalMode(application, "Failed to parse file '$file'", e)
+    }
+    catch (e: Throwable) {
+      logErrorAndFailInInternalMode("Failed to parse file '$file'", e)
     }
     return
   }
 
-  private fun logErrorAndFailInInternalMode(application: Application, msg: String, e: Throwable? = null) {
+  private fun logErrorAndFailInInternalMode(msg: String, e: Throwable? = null) {
     if (e is ProcessCanceledException) throw e
 
     val msg2 = if (e == null) msg else "$msg: ${e.message}"
     if (e == null) LOG.error(msg2) else LOG.error(msg2, e)
-    if (application.isInternal) {
+    if (ApplicationManager.getApplication().isInternal) {
       throw AssertionError(msg2, e)
     }
   }
 
   private fun getSharedSchemas(): List<File> {
     val terraform_d: File = getGlobalTerraformDir()
-        ?: return emptyList()
+                            ?: return emptyList()
 
     val result = ArrayList<File>()
 
@@ -162,7 +164,7 @@ class TerraformMetadataLoader(external: Map<String, TypeModelProvider.Additional
     @Throws(RuntimeException::class, NullPointerException::class)
     fun getResourceJson(path: String): Any? {
       val stream = getResource(path)
-          ?: return null
+                   ?: return null
       stream.use {
         return ObjectMapper().readTree(it)
       }
@@ -191,7 +193,8 @@ class TerraformMetadataLoader(external: Map<String, TypeModelProvider.Additional
         }
         val lines = stream.bufferedReader(Charsets.UTF_8).readLines().map { it.trim() }.filter { !it.isEmpty() }
         return LinkedHashSet<String>(lines)
-      } catch(e: Exception) {
+      }
+      catch (e: Exception) {
         LOG.warn("Cannot read 'ignored-references.list': ${e.message}")
         return emptySet()
       }
@@ -200,7 +203,8 @@ class TerraformMetadataLoader(external: Map<String, TypeModelProvider.Additional
     fun getGlobalTerraformDir(): File? {
       val terraform_d = if (SystemInfo.isWindows) {
         System.getenv("APPDATA")?.let { File(it, "terraform.d") }
-      } else {
+      }
+      else {
         val userHome = SystemProperties.getUserHome()
         File(userHome, ".terraform.d")
       }
@@ -216,7 +220,8 @@ class TerraformMetadataLoader(external: Map<String, TypeModelProvider.Additional
         ).firstOrNull { it.exists() && it.isFile }?.let {
           try {
             it.inputStream()
-          } catch (e: Exception) {
+          }
+          catch (e: Exception) {
             LOG.warn("Cannot open stream for file '${it.absolutePath}'", e)
             null
           }
