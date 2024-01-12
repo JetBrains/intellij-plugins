@@ -8,9 +8,7 @@ import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.FUSEventSource;
 import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.PluginAdvertiserService;
-import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.SuggestedIde;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotificationProvider;
@@ -21,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.function.Function;
 
-import static com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.PluginAdvertiserServiceKt.tryUltimate;
+import static com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.PluginAdvertiserServiceKt.createTryUltimateActionLabel;
 
 final class JdlUpgradeNotification implements EditorNotificationProvider {
   private static final String KEY = "jhipster.ultimate";
@@ -41,13 +39,8 @@ final class JdlUpgradeNotification implements EditorNotificationProvider {
     var panel = new EditorNotificationPanel(fileEditor, EditorNotificationPanel.Status.Info);
 
     panel.setText(JdlBundle.message("label.promo"));
-
-    panel.createActionLabel(IdeBundle.message("plugins.advertiser.action.try.ultimate", "IntelliJ IDEA Ultimate"), () -> {
-      SuggestedIde ide = PluginAdvertiserService.Companion.getIdeaUltimate();
-      PluginId id = PluginId.getId("");
-      tryUltimate(id, ide, project, FUSEventSource.EDITOR);
-    });
-
+    createTryUltimateActionLabel(panel, PluginAdvertiserService.Companion.getIdeaUltimate(), project, PluginId.getId(""), null);
+   
     panel.createActionLabel(IdeBundle.message("plugins.advertiser.action.ignore.ultimate"), () -> {
       PropertiesComponent.getInstance().setValue(KEY, true);
       EditorNotifications.getInstance(project).updateAllNotifications();
