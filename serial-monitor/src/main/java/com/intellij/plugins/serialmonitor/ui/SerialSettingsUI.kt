@@ -1,6 +1,5 @@
 package com.intellij.plugins.serialmonitor.ui
 
-import com.intellij.icons.AllIcons
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.service
 import com.intellij.openapi.ui.ComboBox
@@ -10,27 +9,18 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.validation.DialogValidation
 import com.intellij.openapi.util.NlsContexts.DetailedDescription
 import com.intellij.openapi.util.NlsSafe
-import com.intellij.plugins.serialmonitor.Parity
-import com.intellij.plugins.serialmonitor.SerialBits
-import com.intellij.plugins.serialmonitor.SerialPortProfile
-import com.intellij.plugins.serialmonitor.SerialProfileService
-import com.intellij.plugins.serialmonitor.StandardBauds
-import com.intellij.plugins.serialmonitor.StopBits
+import com.intellij.plugins.serialmonitor.*
 import com.intellij.plugins.serialmonitor.service.PortStatus
 import com.intellij.plugins.serialmonitor.service.SerialPortService
-import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle.*
+import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle.message
 import com.intellij.ui.ComboboxSpeedSearch
 import com.intellij.ui.components.JBCheckBox
-import com.intellij.ui.dsl.builder.Cell
-import com.intellij.ui.dsl.builder.Panel
-import com.intellij.ui.dsl.builder.RowLayout
-import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.dsl.builder.whenItemSelectedFromUi
-import com.intellij.ui.dsl.builder.whenStateChangedFromUi
+import com.intellij.ui.dsl.builder.*
+import com.intellij.ui.dsl.gridLayout.UnscaledGapsY
 import com.intellij.ui.layout.ValidationInfoBuilder
-import icons.SerialMonitorIcons
 import org.jetbrains.annotations.NonNls
 import java.nio.charset.Charset
+import javax.swing.JComponent
 import kotlin.reflect.KMutableProperty1
 
 private val charsets: Collection<String> = Charset.availableCharsets().filter { it.value.canEncode() }.keys
@@ -64,7 +54,7 @@ fun ConnectableList.createNewProfile(oldProfileName: String?, newPortName: Strin
     override fun checkInput(inputString: @NlsSafe String): Boolean = inputString.isNotBlank() && !profiles.containsKey(inputString)
     override fun canClose(inputString: @NlsSafe String): Boolean = checkInput(inputString)
     override fun getErrorText(inputString: @NonNls String): @DetailedDescription String? {
-      if(inputString.isBlank()) return message("text.enter.unique.profile.name")
+      if (inputString.isBlank()) return message("text.enter.unique.profile.name")
       if (checkInput(inputString)) return null
       return message("text.profile.already.exists")
     }
@@ -108,53 +98,66 @@ fun Panel.serialSettings(disposable: Disposable,
     }
     return this
   }
+
+  fun <T : JComponent> Cell<T>.stdWidth():Cell<T> =
+    this.widthGroup("portControl")
+
   row {
+    customize(UnscaledGapsY(top = 20))
     comboBox(StandardBauds)
       .changesBind(SerialPortProfile::baudRate)
       .speedSearch()
       .label(message("label.baud"))
       .enabled(!readOnly)
+      .stdWidth()
       .focused()
     comboBox(SerialBits)
       .changesBind(SerialPortProfile::bits)
       .enabled(!readOnly)
       .label(message("label.bits"))
-    comboBox(Parity.entries)
-      .changesBind(SerialPortProfile::parity)
-      .enabled(!readOnly)
-      .label(message("label.parity"))
+      .stdWidth()
+  }.layout(RowLayout.PARENT_GRID)
+  row {
     comboBox(StopBits.entries)
       .changesBind(SerialPortProfile::stopBits)
       .enabled(!readOnly)
       .label(message("label.stop.bits"))
-  }.layout(RowLayout.LABEL_ALIGNED)
+      .stdWidth()
+    comboBox(Parity.entries)
+      .changesBind(SerialPortProfile::parity)
+      .enabled(!readOnly)
+      .label(message("label.parity"))
+      .stdWidth()
+  }.layout(RowLayout.PARENT_GRID)
   row {
     comboBox(SerialProfileService.NewLine.entries)
       .changesBind(SerialPortProfile::newLine)
       .enabled(!readOnly)
       .label(message("label.new.line"))
+      .stdWidth()
+    checkBox("")
+      .changesBind(SerialPortProfile::localEcho)
+      .label(message("label.local.echo"))
+      .enabled(!readOnly)
+  }.layout(RowLayout.PARENT_GRID)
+  row {
     comboBox(charsets)
       .speedSearch()
       .changesBind(SerialPortProfile::encoding)
       .enabled(!readOnly)
       .label(message("label.encoding"))
-    checkBox("")
-      .label(message("label.local.echo"))
-      .enabled(!readOnly)
-      .changesBind(SerialPortProfile::localEcho)
-  }.layout(RowLayout.LABEL_ALIGNED)
+      .stdWidth()
+    customize(UnscaledGapsY(bottom = 20))
+  }.layout(RowLayout.PARENT_GRID)
 }
 
-
-fun portSettings(connectableList: ConnectableList, portName: String, disposable: Disposable): DialogPanel {
+fun portSettings(connectableList: ConnectableList, portName: @NlsSafe String, disposable: Disposable): DialogPanel {
   val portStatus = service<SerialPortService>().portStatus(portName)
   return panel {
     row {
-      label(message("label.port.name", portName)).applyToComponent {
-        if (portStatus == PortStatus.CONNECTED)
-          icon = SerialMonitorIcons.ConnectActive
-      }
-    }
+      customize(UnscaledGapsY(top = 10))
+      label(portName).label(message("label.port.name"))
+    }.layout(RowLayout.PARENT_GRID)
 
     serialSettings(profile = service<SerialProfileService>().copyDefaultProfile(portName),
                    readOnly = (portStatus != PortStatus.DISCONNECTED) && (portStatus != PortStatus.READY),
@@ -193,13 +196,9 @@ fun profileSettings(connectableList: ConnectableList, disposable: Disposable): D
     val status = service<SerialPortService>().portStatus(profile.portName)
     return panel {
       row {
-        label(message("label.profile", profileName)).applyToComponent {
-          icon = if (status == PortStatus.CONNECTED)
-            SerialMonitorIcons.ConnectActive
-          else
-            AllIcons.Nodes.EmptyNode
-        }
-      }
+        label(profileName).label(message("label.profile"))
+        customize(UnscaledGapsY(top = 10))
+      }.layout(RowLayout.PARENT_GRID)
       row {
         val portNames = service<SerialPortService>().getPortsNames()
         val portValidation = DialogValidation.WithParameter<ComboBox<String>> {
@@ -215,13 +214,14 @@ fun profileSettings(connectableList: ConnectableList, disposable: Disposable): D
 
         comboBox(portNames).label(message("label.port"))
           .validationOnInput(portValidation)
+          .columns(30)
           .applyToComponent {
             isEditable = true
             editor.item = profile.portName
             portCombobox = this
           }
 
-      }
+      }.layout(RowLayout.PARENT_GRID)
       serialSettings(disposable = disposable, profile = profile) {
         val service = service<SerialProfileService>()
         val profiles = service.getProfiles().toMutableMap()
