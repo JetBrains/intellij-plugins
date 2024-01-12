@@ -141,7 +141,7 @@ object BaseLoaderV2 : BaseLoader {
     val has_default_function: Boolean = value.string("DefaultFunc")?.isNotEmpty() ?: false
 
 
-    val additional = context.model.external[fqn] ?: TypeModelProvider.Additional(name)
+    val additional = context.model.external[fqn] ?: LoadingModel.Additional(name)
 
     val required = additional.required ?: value.boolean("Required") ?: false
     val optional = additional.optional ?: value.boolean("Optional") ?: false

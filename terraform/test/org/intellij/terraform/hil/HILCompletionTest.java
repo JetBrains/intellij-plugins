@@ -43,7 +43,7 @@ public class HILCompletionTest extends CompletionTestCase {
   @NotNull
   private SortedSet<String> getGlobalAvailable() {
     final TreeSet<String> result = new TreeSet<>();
-    final Collection<Function> functions = TypeModelProvider.getModel(getProject()).getFunctions();
+    final Collection<Function> functions = TypeModelProvider.getGlobalModel().getFunctions();
     for (Function function : functions) {
       result.add(function.getName());
     }

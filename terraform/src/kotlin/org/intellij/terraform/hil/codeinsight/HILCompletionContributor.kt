@@ -238,7 +238,7 @@ class HILCompletionContributor : CompletionContributor() {
           return
         }
       }
-      result.addAllElements(TypeModelProvider.getModel(position.project).functions.map { create(it) })
+      result.addAllElements(TypeModelProvider.getGlobalModel().functions.map { create(it) })
       result.addAllElements(GLOBAL_SCOPES.map { createScope(it) })
       if (getProvisionerOrConnectionResource(parent) != null) result.addElement(createScope("self"))
 
@@ -358,7 +358,7 @@ class HILCompletionContributor : CompletionContributor() {
 
       if (parameters.isExtendedCompletion) {
         @Suppress("NAME_SHADOWING")
-        var dataSources = ModelHelper.getTypeModel(parameters.position.project).dataSources
+        var dataSources = TypeModelProvider.getGlobalModel().dataSources
         val cache = HashMap<String, Boolean>()
         if (parameters.invocationCount == 2) {
           dataSources = dataSources.filter { isProviderUsed(module, it.provider.type, cache) }

@@ -276,7 +276,7 @@ class Module private constructor(val item: PsiFileSystemItem) {
   }
 
   val model: TypeModel
-    get() = TypeModelProvider.getModel(item.project)
+    get() = TypeModelProvider.getGlobalModel()
 
   override fun equals(other: Any?): Boolean {
     if (other !is Module) return false

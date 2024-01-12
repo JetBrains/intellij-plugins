@@ -13,11 +13,11 @@ import static org.assertj.core.api.BDDAssertions.then;
 public class TerraformModelProviderTest extends LightPlatformTestCase {
   public void testModelIsLoaded() {
     //noinspection unused
-    final TypeModel model = TypeModelProvider.Companion.getModel(getProject());
+    final TypeModel model = TypeModelProvider.Companion.getGlobalModel();
   }
 
   public void testProperlyParsedNetworkInterface() {
-    final TypeModel model = TypeModelProvider.Companion.getModel(getProject());
+    final TypeModel model = TypeModelProvider.Companion.getGlobalModel();
     assertNotNull(model);
     final ResourceType google_compute_instance = model.getResourceType("google_compute_instance");
     assertNotNull(google_compute_instance);
@@ -39,7 +39,7 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
 
   // Test for #67
   public void test_aws_cloudfront_distribution_forwarded_values() {
-    final TypeModel model = TypeModelProvider.Companion.getModel(getProject());
+    final TypeModel model = TypeModelProvider.Companion.getGlobalModel();
     assertNotNull(model);
 
     final ResourceType aws_cloudfront_distribution = model.getResourceType("aws_cloudfront_distribution");
@@ -68,7 +68,7 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
   }
 
   public void test_data_aws_kms_ciphertext_context() {
-    final TypeModel model = TypeModelProvider.Companion.getModel(getProject());
+    final TypeModel model = TypeModelProvider.Companion.getGlobalModel();
     assertNotNull(model);
 
     final DataSourceType aws_kms_ciphertext = model.getDataSourceType("aws_kms_ciphertext");
@@ -86,7 +86,7 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
 
   // Have explicit mode == attr, yet it's a block
   public void test_aws_security_group_ingress() {
-    final TypeModel model = TypeModelProvider.Companion.getModel(getProject());
+    final TypeModel model = TypeModelProvider.Companion.getGlobalModel();
     assertNotNull(model);
 
     final ResourceType aws_security_group = model.getResourceType("aws_security_group");
@@ -99,7 +99,7 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
   }
 
   public void test_containers_as_block_type_if_non_scalar_typed() {
-    final TypeModel model = TypeModelProvider.Companion.getModel(getProject());
+    final TypeModel model = TypeModelProvider.Companion.getGlobalModel();
     assertNotNull(model);
 
     assertInstanceOf(model.getResourceType("aws_instance").getProperties().get("security_groups"), PropertyType.class);
@@ -113,7 +113,7 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
 
   // Have dynamic attributes
   public void test_external_result() {
-    final TypeModel model = TypeModelProvider.Companion.getModel(getProject());
+    final TypeModel model = TypeModelProvider.Companion.getGlobalModel();
     assertNotNull(model);
 
     final DataSourceType external = model.getDataSourceType("external");
@@ -130,7 +130,7 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
   }
 
   public void test_kubernetes_provider_exec() {
-    final TypeModel model = TypeModelProvider.Companion.getModel(getProject());
+    final TypeModel model = TypeModelProvider.Companion.getGlobalModel();
     assertNotNull(model);
     ProviderType k8s = model.getProviderType("kubernetes");
     assertNotNull(k8s);
@@ -143,7 +143,7 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
   }
 
   public void testAllResourceHasProviderNameAsPrefix() {
-    final TypeModel model = TypeModelProvider.Companion.getModel(getProject());
+    final TypeModel model = TypeModelProvider.Companion.getGlobalModel();
     assertNotNull(model);
     final List<ResourceType> failedResources = new ArrayList<>();
     for (ResourceType block : model.getResources()) {
@@ -282,7 +282,7 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
   }
 
   public void testResourceWithSimilarNameInDifferentProviders() {
-    final TypeModel model = TypeModelProvider.Companion.getModel(getProject());
+    final TypeModel model = TypeModelProvider.Companion.getGlobalModel();
     assertNotNull(model);
 
     assertContainsElements(
@@ -294,7 +294,7 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
   }
 
   public void testDataSourcesHasProviderNameAsPrefix() {
-    final TypeModel model = TypeModelProvider.Companion.getModel(getProject());
+    final TypeModel model = TypeModelProvider.Companion.getGlobalModel();
     assertNotNull(model);
     final List<DataSourceType> failedDataSources = new ArrayList<>();
     for (DataSourceType block : model.getDataSources()) {

@@ -11,7 +11,7 @@ import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.Cell
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
-import org.intellij.terraform.config.model.TypeModelProvider.Companion.reloadModel
+import org.intellij.terraform.config.model.TypeModelProvider.Companion.reloadGlobalModel
 import org.intellij.terraform.hcl.HCLBundle
 import javax.swing.JButton
 
@@ -44,7 +44,7 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
           button?.enabled(false)
           val function = {
             try {
-              reloadModel(project)
+              reloadGlobalModel()
             }
             finally {
               button?.enabled(true)

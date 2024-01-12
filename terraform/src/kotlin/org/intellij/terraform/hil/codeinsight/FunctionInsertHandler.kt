@@ -34,7 +34,7 @@ object FunctionInsertHandler : BasicInsertHandler<LookupElement>() {
       e
     }) as? Identifier ?: return
 
-    val function = TypeModelProvider.getModel(project).getFunction(item.lookupString) ?: return
+    val function = TypeModelProvider.getGlobalModel().getFunction(item.lookupString) ?: return
 
 
     var offset: Int? = null

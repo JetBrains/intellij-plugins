@@ -38,7 +38,7 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
   //<editor-fold desc="Resources completion tests">
   public void testResourceTypeCompletion() throws Exception {
     final TreeSet<String> set = new TreeSet<>();
-    for (ResourceType resource : TypeModelProvider.Companion.getModel(getProject()).getResources()) {
+    for (ResourceType resource : TypeModelProvider.Companion.getGlobalModel().getResources()) {
       set.add(resource.getType());
     }
     final Predicate<Collection<String>> matcher = getPartialMatcher(new ArrayList<>(set).subList(0, 500));
@@ -52,7 +52,7 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
 
   public void testResourceQuotedTypeCompletion() throws Exception {
     final TreeSet<String> set = new TreeSet<>();
-    for (ResourceType resource : TypeModelProvider.Companion.getModel(getProject()).getResources()) {
+    for (ResourceType resource : TypeModelProvider.Companion.getGlobalModel().getResources()) {
       set.add(resource.getType());
     }
     final Predicate<Collection<String>> matcher = getPartialMatcher(new ArrayList<>(set).subList(0, 500));
@@ -99,7 +99,7 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
 
   public void testResourceCommonPropertyCompletionFromModel() throws Exception {
     final HashSet<String> base = new HashSet<>(COMMON_RESOURCE_PROPERTIES);
-    final ResourceType type = TypeModelProvider.Companion.getModel(getProject()).getResourceType("aws_instance");
+    final ResourceType type = TypeModelProvider.Companion.getGlobalModel().getResourceType("aws_instance");
     assertNotNull(type);
     for (PropertyOrBlockType it : type.getProperties().values()) {
       if (it.getConfigurable()) base.add(it.getName());
@@ -127,7 +127,7 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
   }
 
   public void testResourceCommonPropertyAlreadyDefinedNotShownAgain() throws Exception {
-    final ResourceType type = TypeModelProvider.Companion.getModel(getProject()).getResourceType("aws_vpc_endpoint");
+    final ResourceType type = TypeModelProvider.Companion.getGlobalModel().getResourceType("aws_vpc_endpoint");
     assertNotNull(type);
 
     // Should not add existing props to completion variants
@@ -202,7 +202,7 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
 
     final TreeSet<String> set = new TreeSet<>();
     final Map<String, Boolean> cache = new HashMap<>();
-    for (ResourceType resource : TypeModelProvider.Companion.getModel(getProject()).getResources()) {
+    for (ResourceType resource : TypeModelProvider.Companion.getGlobalModel().getResources()) {
       if (isExcludeProvider(resource.getProvider(), cache)) continue;
       set.add(resource.getType());
     }
@@ -224,7 +224,7 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
   public void testDataSourceTypeCompletion() throws Exception {
     Registry.get("ide.completion.variant.limit").setValue(100000, getTestRootDisposable());
     final TreeSet<String> set = new TreeSet<>();
-    for (DataSourceType ds : TypeModelProvider.Companion.getModel(getProject()).getDataSources()) {
+    for (DataSourceType ds : TypeModelProvider.Companion.getGlobalModel().getDataSources()) {
       set.add(ds.getType());
     }
     doBasicCompletionTest("data <caret>", set);
@@ -235,7 +235,7 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
   public void testDataSourceQuotedTypeCompletion() throws Exception {
     Registry.get("ide.completion.variant.limit").setValue(100000, getTestRootDisposable());
     final TreeSet<String> set = new TreeSet<>();
-    for (DataSourceType ds : TypeModelProvider.Companion.getModel(getProject()).getDataSources()) {
+    for (DataSourceType ds : TypeModelProvider.Companion.getGlobalModel().getDataSources()) {
       set.add(ds.getType());
     }
     doBasicCompletionTest("data \"<caret>", set);
@@ -258,7 +258,7 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
 
   public void testDataSourceCommonPropertyCompletionFromModel() throws Exception {
     final HashSet<String> base = new HashSet<>(COMMON_DATA_SOURCE_PROPERTIES);
-    final DataSourceType type = TypeModelProvider.Companion.getModel(getProject()).getDataSourceType("aws_ecs_container_definition");
+    final DataSourceType type = TypeModelProvider.Companion.getGlobalModel().getDataSourceType("aws_ecs_container_definition");
     assertNotNull(type);
     for (PropertyOrBlockType it : type.getProperties().values()) {
       if (it.getConfigurable()) base.add(it.getName());
@@ -304,7 +304,7 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
   public void testDataSourceTypeCompletionGivenDefinedProviders() throws Exception {
     final TreeSet<String> set = new TreeSet<>();
     final Map<String, Boolean> cache = new HashMap<>();
-    for (DataSourceType ds : TypeModelProvider.Companion.getModel(getProject()).getDataSources()) {
+    for (DataSourceType ds : TypeModelProvider.Companion.getGlobalModel().getDataSources()) {
       if (isExcludeProvider(ds.getProvider(), cache)) continue;
       set.add(ds.getType());
     }

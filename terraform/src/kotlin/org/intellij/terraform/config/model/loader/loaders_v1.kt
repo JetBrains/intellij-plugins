@@ -97,7 +97,7 @@ object BaseLoaderV1 : BaseLoader {
     val has_default_function: Boolean = value.string("DefaultFunc")?.isNotEmpty() ?: false
     // || m["InputDefault"]?.string("value") != null // Not sure about this property TODO: Investigate how it works in terraform
 
-    val additional = context.model.external[fqn] ?: TypeModelProvider.Additional(name)
+    val additional = context.model.external[fqn] ?: LoadingModel.Additional(name)
     // TODO: Consider move 'has_default' to Additional
 
     val required = additional.required ?: value.boolean("Required") ?: false

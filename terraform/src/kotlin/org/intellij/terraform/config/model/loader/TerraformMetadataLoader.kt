@@ -9,17 +9,14 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.SystemProperties
-import org.intellij.terraform.config.model.TypeModel
-import org.intellij.terraform.config.model.TypeModelProvider
-import org.intellij.terraform.config.model.ensureHavePrefix
-import org.intellij.terraform.config.model.string
+import org.intellij.terraform.config.model.*
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
 
-class TerraformMetadataLoader(external: Map<String, TypeModelProvider.Additional>) {
+class TerraformMetadataLoader {
   private val pool = ReusePool()
-  private val model = LoadingModel(external)
+  private val model = LoadingModel()
   private val context: LoadContext = LoadContext(pool, model)
 
   private val loaders: List<VersionedMetadataLoader> = listOf(
@@ -38,6 +35,7 @@ class TerraformMetadataLoader(external: Map<String, TypeModelProvider.Additional
 
   fun load(): TypeModel? {
     try {
+      model.external.putAll(loadExternalInformation())
       loadExternal()
       loadBundled()
 
@@ -55,6 +53,36 @@ class TerraformMetadataLoader(external: Map<String, TypeModelProvider.Additional
       return null
     }
   }
+
+  private fun loadExternalInformation(): Map<String, LoadingModel.Additional> {
+    val map = HashMap<String, LoadingModel.Additional>()
+
+    val stream = loadExternalResource("external-data.json") ?: return map
+    val json = stream.use {
+      ObjectMapper().readTree(it) as ObjectNode?
+    }
+
+    if (json is ObjectNode) {
+      for ((fqn, obj) in json.fields()) {
+        if (obj !is ObjectNode) {
+          LOG.warn("In external-data.json value for '$fqn' root key is not an object")
+          continue
+        }
+        val hintV = obj["hint"]
+        val hint: Hint? = when {
+          hintV == null -> null
+          hintV.isTextual -> ReferenceHint(hintV.textValue())
+          hintV.isArray -> SimpleValueHint(*hintV.mapNotNull { it.textValue() }.toTypedArray())
+          else -> null
+        }
+        val additional = LoadingModel.Additional(fqn, obj.string("description"), hint, obj.boolean("optional"),
+                                                 obj.boolean("required"))
+        map[fqn] = additional
+      }
+    }
+    return map
+  }
+
 
   private fun loadBundled() {
     val resources: Collection<String> = getAllResourcesToLoad(ModelResourcesPrefix)
@@ -150,24 +178,11 @@ class TerraformMetadataLoader(external: Map<String, TypeModelProvider.Additional
   }
 
   companion object {
-    internal val LOG by lazy { Logger.getInstance(TerraformMetadataLoader::class.java) }
-    const val ModelResourcesPrefix = "/terraform/model"
+    internal val LOG: Logger by lazy { Logger.getInstance(TerraformMetadataLoader::class.java) }
+    const val ModelResourcesPrefix: String = "/terraform/model"
 
     fun getResource(path: String): InputStream? {
-      return TypeModelProvider::class.java.getResourceAsStream(path)
-    }
-
-    fun getModelExternalInformation(path: String): Any? {
-      return getResourceJson("/terraform/model-external/$path")
-    }
-
-    @Throws(RuntimeException::class, NullPointerException::class)
-    fun getResourceJson(path: String): Any? {
-      val stream = getResource(path)
-                   ?: return null
-      stream.use {
-        return ObjectMapper().readTree(it)
-      }
+      return TerraformMetadataLoader::class.java.getResourceAsStream(path)
     }
 
     internal fun getAllResourcesToLoad(prefix: String): Collection<String> {
@@ -257,4 +272,5 @@ class TerraformMetadataLoader(external: Map<String, TypeModelProvider.Additional
     }
     loader.load(context, json, file)
   }
+
 }

@@ -5,7 +5,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.spellchecker.tokenizer.Tokenizer
 import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.hcl.spellchecker.HCLSpellcheckerStrategy
-import org.intellij.terraform.config.codeinsight.ModelHelper
+import org.intellij.terraform.config.model.TypeModelProvider
 import org.intellij.terraform.config.patterns.TerraformPatterns
 
 class TerraformSpellcheckingStrategy : HCLSpellcheckerStrategy() {
@@ -28,7 +28,7 @@ class TerraformSpellcheckingStrategy : HCLSpellcheckerStrategy() {
       }
     }
     if (element is HCLIdentifier && parent is HCLMethodCallExpression && element === parent.method) {
-      if (ModelHelper.getTypeModel(element.project).getFunction(element.text) != null) return EMPTY_TOKENIZER
+      if (TypeModelProvider.getGlobalModel().getFunction(element.text) != null) return EMPTY_TOKENIZER
     }
 
     return super.getTokenizer(element)
