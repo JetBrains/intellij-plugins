@@ -86,7 +86,7 @@ HtmlFile:I18nTag.vue
       XmlToken:XML_TAG_END('>')
       XmlText
         XmlToken:XML_DATA_CHARACTERS('\n  aa\n    bb\n')
-        YAML file
+        YAML file: I18nTag.vue
           YAML document
             PsiElement(Eol)('\n')
             PsiElement(indent)('  ')
@@ -114,7 +114,7 @@ HtmlFile:I18nTag.vue
       XmlToken:XML_TAG_END('>')
       XmlText
         XmlToken:XML_DATA_CHARACTERS('{}')
-        YAML file
+        YAML file: I18nTag.vue
           YAML document
             YAML hash
               PsiElement({)('{')
