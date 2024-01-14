@@ -23,7 +23,9 @@ class DtsBindingReference(private val element: DtsString) : PsiSymbolReference, 
 
   override fun resolveReference(): Collection<Symbol> {
     val node = DtsTreeUtil.parentNode(element) ?: return emptyList()
-    val binding = DtsZephyrBindingProvider.bindingFor(node, fallbackBinding = false) ?: return emptyList()
+
+    val provider = DtsZephyrBindingProvider.of(element.project)
+    val binding = provider.getBinding(node, listOf(element.dtsParse())) ?: return emptyList()
 
     return DtsUtil.singleResult { DtsBindingSymbol(binding) }
   }

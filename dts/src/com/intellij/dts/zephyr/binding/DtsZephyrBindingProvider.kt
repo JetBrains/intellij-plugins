@@ -123,11 +123,10 @@ class DtsZephyrBindingProvider(val project: Project) {
   }
 
   /**
-   * Gets a binding for a specific node.
+   * Gets a binding for a specific node from a set of compatible strings.
    *
-   * If the node has a compatible property the binding will be built for the
-   * matching string. If there is no matching binding this method searches
-   * the parents of the node for matching child bindings.
+   * Searches the compatible strings and returns the first binding that was
+   * found.
    *
    * If there is a bundled binding for the node and no compatible binding, the
    * bundled binding will be used. A list of bundled bindings can be found
@@ -135,15 +134,14 @@ class DtsZephyrBindingProvider(val project: Project) {
    *
    * Resolves references automatically.
    */
-  fun getBinding(node: DtsNode): DtsZephyrBinding? {
-    val compatibleStrings = node.getDtsCompatibleStrings()
-
+  fun getBinding(node: DtsNode, compatible: List<String>): DtsZephyrBinding? {
     val parentBinding = DtsTreeUtil.findParentNode(node)?.let(::getBinding)
 
     val binding = if (parentBinding == null) {
-      getBindingFallback(compatibleStrings)
-    } else {
-      getBindingWithParent(compatibleStrings, parentBinding)
+      getBindingFallback(compatible)
+    }
+    else {
+      getBindingWithParent(compatible, parentBinding)
     }
     if (binding != null) return binding
 
@@ -151,6 +149,11 @@ class DtsZephyrBindingProvider(val project: Project) {
     return bundledBinding?.let(::getBundledBinding)
   }
 
+  /**
+   * Gets a binding for a specific node. Class [getBinding] with the compatible
+   * strings found in the compatible property of the node.
+   */
+  fun getBinding(node: DtsNode): DtsZephyrBinding? = getBinding(node, node.getDtsCompatibleStrings())
 
   private fun getBundledBinding(name: String): DtsZephyrBinding? = bundledBindings[name]
 

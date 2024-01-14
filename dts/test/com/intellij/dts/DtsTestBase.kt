@@ -72,14 +72,18 @@ abstract class DtsTestBase : BasePlatformTestCase() {
     return Files.readString(Path.of(testDataPath, "$testName.$extension"))
   }
 
+  protected fun makeRelativeToWorkingDirectory(path: String): String {
+    return path.replace(DTS_TEST_DATA_PATH, "WORKING_DIRECTORY")
+  }
+
   protected fun compareWithTestFixture(extension: String, actual: String) {
     val path = Path.of(testDataPath, "$testName.$extension")
 
     if (path.exists()) {
-      assertSameLinesWithFile(path.absolutePathString(), actual.replacePath())
+      assertSameLinesWithFile(path.absolutePathString(), makeRelativeToWorkingDirectory(actual))
     }
     else {
-      path.writeText(actual.replacePath())
+      path.writeText(makeRelativeToWorkingDirectory(actual))
       fail("File ${path.pathString} did not exist. Created new fixture.")
     }
   }
@@ -89,8 +93,4 @@ private fun String.toPascalCase(): String {
   val capitalize = { word: String -> word.replaceFirstChar { it.titlecase(Locale.getDefault()) } }
 
   return split(' ').joinToString("", transform = capitalize)
-}
-
-private fun String.replacePath(): String {
-  return replace(DTS_TEST_DATA_PATH, "WORKING_DIRECTORY")
 }
