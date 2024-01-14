@@ -145,7 +145,8 @@ abstract class DtsDocumentationTarget(protected val project: Project) : Document
   }
 
   /**
-   * Writes: "[Child of] compatible: <<compatible>>"
+   * Writes: "[Child of] compatible: <<compatible>> [(on <<bus>> bus)]"
+   * And the bus: "Bus controller: <<buses>>"
    * And the description.
    */
   protected fun buildNodeBinding(html: DtsDocumentationHtmlBuilder, binding: DtsZephyrBinding) {
@@ -157,6 +158,18 @@ abstract class DtsDocumentationTarget(protected val project: Project) : Document
         html.definition(DtsHtmlChunk.definitionName("documentation.compatible"))
       }
       html.appendToDefinition(DtsHtmlChunk.string(compatible))
+
+      binding.onBus?.let { bus ->
+        val value = DtsBundle.message("documentation.compatible_on_bus", bus)
+        val chunk = HtmlChunk.text(" ($value)").wrapWith(DocumentationMarkup.GRAYED_ELEMENT)
+
+        html.appendToDefinition(chunk)
+      }
+    }
+
+    if (binding.buses.isNotEmpty()) {
+      val chunk = HtmlChunk.text(binding.buses.joinToString())
+      html.definition(DtsHtmlChunk.definitionName("documentation.bus_controller"), chunk)
     }
 
     binding.description?.let { description ->

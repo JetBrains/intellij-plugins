@@ -1,0 +1,5 @@
+&spi2 {
+  sensor<caret> {
+    compatible = "bosch,bme680";
+  };
+};

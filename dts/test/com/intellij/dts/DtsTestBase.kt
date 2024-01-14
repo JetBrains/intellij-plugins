@@ -3,10 +3,12 @@ package com.intellij.dts
 import com.intellij.application.options.CodeStyle
 import com.intellij.dts.lang.DtsFileType
 import com.intellij.dts.settings.DtsSettings
+import com.intellij.dts.util.DtsUtil
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.psi.PsiFile
+import com.intellij.testFramework.HeavyPlatformTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import java.nio.file.Files
 import java.nio.file.Path
@@ -53,6 +55,8 @@ abstract class DtsTestBase : BasePlatformTestCase() {
 
     val manager = ModuleManager.getInstance(project)
     ModuleRootModificationUtil.addContentRoot(manager.modules.first(), zephyr)
+
+    HeavyPlatformTestCase.refreshRecursively(DtsUtil.findFile(zephyr)!!)
 
     DtsSettings.of(project).update {
       zephyrRoot = zephyr

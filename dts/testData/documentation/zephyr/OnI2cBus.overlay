@@ -1,0 +1,5 @@
+&i2c1 {
+  sensor<caret> {
+    compatible = "bosch,bme680";
+  };
+};

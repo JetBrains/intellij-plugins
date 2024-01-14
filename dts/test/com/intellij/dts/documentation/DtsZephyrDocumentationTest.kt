@@ -33,4 +33,8 @@ class DtsZephyrDocumentationTest : DtsDocumentationTest() {
   fun `test default value`() = doTest()
 
   fun `test const value`() = doTest()
+
+  fun `test on spi bus`() = doTest()
+
+  fun `test on i2c bus`() = doTest()
 }
