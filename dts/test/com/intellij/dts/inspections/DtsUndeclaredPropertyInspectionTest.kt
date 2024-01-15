@@ -8,7 +8,7 @@ class DtsUndeclaredPropertyInspectionTest : DtsInspectionTest(DtsUndeclaredPrope
     addZephyr()
   }
 
-  fun `test child binding unresolved override`() = doTest()
+  fun `test child binding unresolved override`() = doInspectionTest()
 
-  fun `test default properties`() = doTest()
+  fun `test default properties`() = doInspectionTest()
 }

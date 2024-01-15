@@ -1,0 +1,10 @@
+/ {
+    node {
+        compatible = "espressif,esp32-spi";
+        reg = <>;
+        pinctrl-0 = <&>;
+        pinctrl-names = "";
+        #address-cells = <>;
+        #size-cells = <>;
+    };
+};

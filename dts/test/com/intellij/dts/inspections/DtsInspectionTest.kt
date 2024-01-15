@@ -10,8 +10,16 @@ abstract class DtsInspectionTest(private vararg val inspectionClass: KClass<out 
     myFixture.enableInspections(inspectionClass.map { it.java })
   }
 
-  protected fun doTest() {
+  protected fun doInspectionTest() {
     myFixture.configureByFile(testFile)
     myFixture.checkHighlighting()
+  }
+
+  protected fun doQuickfixTest(name: String) {
+    myFixture.configureByFile("$testName.${getTestFileExtension()}")
+
+    val intention = myFixture.filterAvailableIntentions(name).single()
+    myFixture.checkPreviewAndLaunchAction(intention)
+    myFixture.checkResultByFile("$testName-after.${getTestFileExtension()}", true)
   }
 }

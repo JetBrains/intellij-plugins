@@ -8,7 +8,7 @@ class DtsPropertyTypeInspectionTest : DtsInspectionTest(DtsPropertyTypeInspectio
     addZephyr()
   }
 
-  fun `test default property`() = doTest()
+  fun `test default property`() = doInspectionTest()
 
-  fun `test binding property`() = doTest()
+  fun `test binding property`() = doInspectionTest()
 }

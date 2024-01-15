@@ -8,6 +8,6 @@ class DtsPropertyConstInspectionTest : DtsInspectionTest(DtsPropertyConstInspect
     addZephyr()
   }
 
-  fun `test valid`() = doTest()
-  fun `test invalid`() = doTest()
+  fun `test valid`() = doInspectionTest()
+  fun `test invalid`() = doInspectionTest()
 }

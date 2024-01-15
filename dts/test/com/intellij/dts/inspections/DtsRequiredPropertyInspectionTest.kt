@@ -13,15 +13,15 @@ class DtsRequiredPropertyInspectionTest : DtsInspectionTest(DtsRequiredPropertyI
     addFile("Declaration.dtsi", declaration)
   }
 
-  fun `test node`() = doTest()
+  fun `test node`() = doInspectionTest()
 
-  fun `test ref node`() = doTest()
+  fun `test ref node`() = doInspectionTest()
 
-  fun `test delete property`() = doTest()
+  fun `test delete property`() = doInspectionTest()
 
-  fun `test delete node`() = doTest()
+  fun `test delete node`() = doInspectionTest()
 
-  fun `test delete node ref`() = doTest()
+  fun `test delete node ref`() = doInspectionTest()
 
-  fun `test delete node root`() = doTest()
+  fun `test delete node root`() = doInspectionTest()
 }

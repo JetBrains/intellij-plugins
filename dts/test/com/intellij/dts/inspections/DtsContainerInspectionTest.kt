@@ -5,13 +5,13 @@ class DtsContainerInspectionTest : DtsInspectionTest(DtsContainerInspection::cla
 
   override fun getTestFileExtension(): String = "dts"
 
-  fun `test root property`() = doTest()
-  fun `test root sub node`() = doTest()
-  fun `test root delete property`() = doTest()
-  fun `test root delete node by name`() = doTest()
-  fun `test root delete node by ref`() = doTest()
-  fun `test node root node`() = doTest()
-  fun `test node v1`() = doTest()
-  fun `test node delete node by name`() = doTest()
-  fun `test node delete node by ref`() = doTest()
+  fun `test root property`() = doInspectionTest()
+  fun `test root sub node`() = doInspectionTest()
+  fun `test root delete property`() = doInspectionTest()
+  fun `test root delete node by name`() = doInspectionTest()
+  fun `test root delete node by ref`() = doInspectionTest()
+  fun `test node root node`() = doInspectionTest()
+  fun `test node v1`() = doInspectionTest()
+  fun `test node delete node by name`() = doInspectionTest()
+  fun `test node delete node by ref`() = doInspectionTest()
 }

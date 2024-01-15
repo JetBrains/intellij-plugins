@@ -1,0 +1,10 @@
+/ {
+    compatible = "espressif,esp32-pinctrl";
+
+    node {
+        node {
+            prop = "value";
+            pinmux = <><caret>;
+        };
+    };
+};

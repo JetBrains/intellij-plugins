@@ -1,0 +1,5 @@
+/ {
+    node<caret> {
+        compatible = "espressif,esp32-spi";
+    };
+};

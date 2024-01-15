@@ -1,0 +1,7 @@
+/ {
+    compatible = "espressif,esp32-pinctrl";
+
+    node {
+        node<caret> { };
+    };
+};
