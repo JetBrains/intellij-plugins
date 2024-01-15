@@ -4,6 +4,7 @@ import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.dts.api.DtsNodeVisitor
 import com.intellij.dts.api.dtsAccept
+import com.intellij.dts.inspections.fixes.DtsCreatePropertyFix
 import com.intellij.dts.lang.DtsFile
 import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.psi.DtsProperty
@@ -53,6 +54,7 @@ class DtsRequiredPropertyInspection : LocalInspectionTool() {
       node,
       bundleKey = "inspections.required_property.error",
       bundleParam = requiredProperties.joinToString { "\"${it.name}\"" },
+      fix = DtsCreatePropertyFix(requiredProperties)
     )
   }
 }

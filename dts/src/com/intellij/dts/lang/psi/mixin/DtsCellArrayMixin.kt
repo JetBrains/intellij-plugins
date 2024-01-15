@@ -1,10 +1,15 @@
 package com.intellij.dts.lang.psi.mixin
 
 import com.intellij.dts.lang.psi.*
+import com.intellij.dts.util.trim
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
+import com.intellij.openapi.util.TextRange
 
 abstract class DtsCellArrayMixin(node: ASTNode) : ASTWrapperPsiElement(node), DtsCellArray {
+  override val dtsValueRange: TextRange
+    get() = textRange.trim(text,'<', '>')
+
   override val dtsValues: List<DtsValue>
     get() = findChildrenByClass(DtsValue::class.java).toList()
 
@@ -25,6 +30,9 @@ abstract class DtsCellArrayMixin(node: ASTNode) : ASTWrapperPsiElement(node), Dt
 }
 
 abstract class DtsByteArrayMixin(node: ASTNode) : ASTWrapperPsiElement(node), DtsByteArray {
+  override val dtsValueRange: TextRange
+    get() = textRange.trim(text,'[', ']')
+
   override val dtsValues: List<DtsValue>
     get() = findChildrenByClass(DtsValue::class.java).toList()
 }

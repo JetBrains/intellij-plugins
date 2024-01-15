@@ -52,6 +52,29 @@ abstract class DtsNodeMixin<T : StubBase<*>> : DtsStubBasedElement<T>, DtsStatem
       override fun getLocationString(): String? = containingFile.originalFile.virtualFile?.presentableName
     }
   }
+
+  private fun addContentWithProperty(property: DtsEntry): DtsEntry {
+    val content = DtsPsiFactory.createNodeContent(project)
+    content.add(property)
+
+    // find not null child is safe because lbrace is a pined character
+    val brace = findNotNullChildByType<PsiElement>(DtsTypes.LBRACE)
+
+    val actualContent = addAfter(content, brace) as DtsNodeContent
+
+    return actualContent.dtsEntries.single()
+  }
+
+  override fun addDtsProperty(property: DtsEntry): DtsEntry {
+    val content = dtsContent
+
+    if (content == null) {
+      return addContentWithProperty(property)
+    }
+
+    val lastProperty = content.dtsEntries.lastOrNull { it.dtsStatement.dtsStatementKind.isProperty() }
+    return content.addAfter(property, lastProperty) as DtsEntry
+  }
 }
 
 abstract class DtsSubNodeMixin : DtsNodeMixin<DtsSubNodeStub>, DtsSubNode {
