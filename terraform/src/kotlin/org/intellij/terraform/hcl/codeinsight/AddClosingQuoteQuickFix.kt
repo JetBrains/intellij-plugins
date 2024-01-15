@@ -19,7 +19,7 @@ class AddClosingQuoteQuickFix(element: PsiElement) : LocalQuickFixAndIntentionAc
   }
 
   override fun getText(): String {
-    return HCLBundle.message("hcl.literal.annotator.add.closing.quote.quick.fix.text")
+    return HCLBundle.message("hcl.literal.inspection.add.closing.quote.quick.fix.text")
   }
 
   override fun getFamilyName(): String {

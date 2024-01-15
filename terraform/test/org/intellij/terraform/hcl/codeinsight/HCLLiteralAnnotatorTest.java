@@ -48,10 +48,6 @@ public class HCLLiteralAnnotatorTest extends CodeInsightFixtureTestCase {
     doTestHighlighting(false, true, true);
   }
 
-  public void testHCL2StringKeys() throws Exception {
-    doTestHighlighting(false, true, true);
-  }
-
   public void test324() throws Exception {
     terraform();
     doTestHighlighting(false, true, true);

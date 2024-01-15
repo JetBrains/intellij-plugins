@@ -153,4 +153,23 @@ object HCLPsiUtil {
     return e.references
   }
 
+  fun isUnderPropertyUnderPropertyWithObjectValue(element: PsiElement?): Boolean {
+    val property = PsiTreeUtil.getParentOfType(element, HCLProperty::class.java, true) ?: return false
+    return property.parent is HCLObject && property.parent?.parent is HCLProperty
+  }
+
+  fun isUnderPropertyInsideObjectConditionalExpression(element: PsiElement?): Boolean {
+    val property = PsiTreeUtil.getParentOfType(element, HCLProperty::class.java, true) ?: return false
+    return property.parent is HCLObject && property.parent?.parent is HCLConditionalExpression
+  }
+
+  fun isUnderPropertyUnderPropertyWithObjectValueAndArray(element: PsiElement?): Boolean {
+    val property = PsiTreeUtil.getParentOfType(element, HCLProperty::class.java, true) ?: return false
+    return property.parent is HCLObject && property.parent?.parent is HCLArray && property.parent?.parent?.parent is HCLProperty
+  }
+
+  fun isUnderPropertyInsideObjectArgument(element: PsiElement?): Boolean {
+    val property = PsiTreeUtil.getParentOfType(element, HCLProperty::class.java, true) ?: return false
+    return property.parent is HCLObject && property.parent?.parent is HCLParameterList
+  }
 }

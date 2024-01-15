@@ -235,6 +235,11 @@
                      groupKey="terraform.files.inspection.group.display.name" enabledByDefault="true" level="ERROR"
                      suppressId="BlockNameValidness"
                      implementationClass="org.intellij.terraform.config.inspection.TFBlockNameValidnessInspection"/>
+    <localInspection language="HCL" applyToDialects="true" shortName="TFStringLiteral" bundle="messages.HCLBundle"
+                     key="hcl.literal.inspection.display.name"
+                     groupKey="terraform.files.inspection.group.display.name" enabledByDefault="true" level="ERROR"
+                     suppressId="StringLiteral"
+                     implementationClass="org.intellij.terraform.config.inspection.TFStringLiteralInspection"/>
 
     <!--region TF Duplicates-->
     <localInspection language="HCL" applyToDialects="true" shortName="TFDuplicatedProvider" bundle="messages.HCLBundle"

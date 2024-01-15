@@ -25,11 +25,11 @@ import org.intellij.terraform.config.model.getType
 import org.intellij.terraform.config.psi.TerraformElementGenerator
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLLanguage
-import org.intellij.terraform.hcl.codeinsight.HCLLiteralAnnotator.Companion.isUnderPropertyInsideObjectArgument
-import org.intellij.terraform.hcl.codeinsight.HCLLiteralAnnotator.Companion.isUnderPropertyUnderPropertyWithObjectValue
 import org.intellij.terraform.hcl.psi.HCLElementVisitor
 import org.intellij.terraform.hcl.psi.HCLExpression
 import org.intellij.terraform.hcl.psi.HCLPsiUtil
+import org.intellij.terraform.hcl.psi.HCLPsiUtil.isUnderPropertyInsideObjectArgument
+import org.intellij.terraform.hcl.psi.HCLPsiUtil.isUnderPropertyUnderPropertyWithObjectValue
 import org.intellij.terraform.hcl.psi.HCLStringLiteral
 import org.intellij.terraform.hil.HILFileType
 import org.intellij.terraform.hil.psi.*
@@ -65,8 +65,8 @@ class HILConvertToHCLInspection : LocalInspectionTool(), CleanupLocalInspectionT
   }
 
   class ConvertToHCLFix(e: HCLStringLiteral) : LocalQuickFixAndIntentionActionOnPsiElement(e), BatchQuickFix {
-    override fun getText() = HCLBundle.message("hil.convert.to.hcl.inspection.convert.to.hcl2.quick.fix.text")
-    override fun getFamilyName() = text
+    override fun getText(): String = HCLBundle.message("hil.convert.to.hcl.inspection.convert.to.hcl2.quick.fix.text")
+    override fun getFamilyName(): String = text
 
     override fun startInWriteAction(): Boolean = false
 
@@ -88,7 +88,7 @@ class HILConvertToHCLInspection : LocalInspectionTool(), CleanupLocalInspectionT
     override fun applyFix(project: Project, descriptors: Array<out CommonProblemDescriptor>, psiElementsToIgnore: MutableList<PsiElement>, refreshViews: Runnable?) {
       val targets = ArrayList<HCLStringLiteral>()
       for (descriptor in descriptors) {
-        descriptor.fixes?.filterIsInstance(ConvertToHCLFix::class.java)?.map { it.startElement }?.filterIsInstanceTo(targets, HCLStringLiteral::class.java)
+        descriptor.fixes?.filterIsInstance<ConvertToHCLFix>()?.map { it.startElement }?.filterIsInstanceTo(targets, HCLStringLiteral::class.java)
       }
 
       if (!FileModificationService.getInstance().preparePsiElementsForWrite(targets)) return
