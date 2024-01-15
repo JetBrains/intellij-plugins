@@ -32,8 +32,9 @@
     <plugin id="com.intellij.modules.json"/>
   </dependencies>
 
-  <actions>
-    <action id="NewCloudFormationFile" class="com.intellij.aws.cloudformation.NewCloudFormationFile">
+  <actions resource-bundle="messages.CloudFormationBundle">
+    <action id="NewCloudFormationFile" class="com.intellij.aws.cloudformation.NewCloudFormationFile"
+            icon="com.intellij.aws.cloudformation.CloudFormationIcons.AwsFile">
       <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewFromTemplate"/>
     </action>
   </actions>
