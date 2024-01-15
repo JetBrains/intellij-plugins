@@ -1,23 +1,15 @@
 package org.jetbrains.idea.perforce.actions
 
-import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.DumbAwareAction
-import com.intellij.openapi.util.NlsActions
 import com.intellij.openapi.vcs.VcsDataKeys
-import org.jetbrains.idea.perforce.PerforceBundle
 import org.jetbrains.idea.perforce.actions.ShelveAction.Handler.getConnections
 import org.jetbrains.idea.perforce.actions.ShelveAction.Handler.supportsShelve
 import org.jetbrains.idea.perforce.application.ShelvedChange
-import java.util.function.Supplier
-import javax.swing.Icon
 
-open class UnshelveActionBase(val delete: Boolean,
-                              dynamicText: Supplier<@NlsActions.ActionText String>,
-                              dynamicDescription: Supplier<@NlsActions.ActionDescription String>,
-                              icon: Icon?) : DumbAwareAction(dynamicText, dynamicDescription, icon) {
+open class UnshelveActionBase(val delete: Boolean) : DumbAwareAction() {
   override fun getActionUpdateThread(): ActionUpdateThread {
     return ActionUpdateThread.BGT
   }
@@ -42,10 +34,6 @@ open class UnshelveActionBase(val delete: Boolean,
   }
 }
 
-class UnshelveAction : UnshelveActionBase(false, PerforceBundle.messagePointer("shelf.unshelve"),
-                                          PerforceBundle.messagePointer("shelf.unshelve.action.description"),
-                                          null)
+class UnshelveAction : UnshelveActionBase(false)
 
-class UnshelveAndDeleteAction : UnshelveActionBase(true, PerforceBundle.messagePointer("shelf.unshelve.and.delete"),
-                                                   PerforceBundle.messagePointer("shelf.unshelve.and.delete.action.description"),
-                                                   AllIcons.Vcs.Unshelve)
+class UnshelveAndDeleteAction : UnshelveActionBase(true)

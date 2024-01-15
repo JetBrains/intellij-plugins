@@ -28,10 +28,6 @@ import java.util.Set;
 
 public class SyncToRevisionAction extends DumbAwareAction {
 
-  public SyncToRevisionAction() {
-    super(PerforceBundle.messagePointer("sync.to.revision"));
-  }
-
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
     Project project = e.getRequiredData(CommonDataKeys.PROJECT);

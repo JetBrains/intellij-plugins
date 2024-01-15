@@ -39,8 +39,8 @@ object ShelfUtils {
 
     browser.setChangesToDisplay(changes)
     browser.setIncludedChanges(changes)
-    browser.addToolbarAction(object : DumbAwareAction(PerforceBundle.messagePointer("shelf.unshelve"),
-                                                      PerforceBundle.messagePointer("shelf.unshelve.action.description"),
+    browser.addToolbarAction(object : DumbAwareAction(PerforceBundle.messagePointer("action.Perforce.Unshelve.text"),
+                                                      PerforceBundle.messagePointer("action.Perforce.Unshelve.description"),
                                                       AllIcons.Vcs.Unshelve) {
       override fun getActionUpdateThread(): ActionUpdateThread {
         return ActionUpdateThread.EDT
@@ -59,7 +59,7 @@ object ShelfUtils {
 
     dialogBuilder.setTitle(PerforceBundle.message("shelf.changes"))
     dialogBuilder.setActionDescriptors(DialogBuilder.OkActionDescriptor(), DialogBuilder.CloseDialogAction())
-    dialogBuilder.okAction.setText(PerforceBundle.message("shelf.unshelve.and.delete"))
+    dialogBuilder.okAction.setText(PerforceBundle.message("action.Perforce.Unshelve.And.Delete.text"))
     dialogBuilder.setOkOperation {
       FileDocumentManager.getInstance().saveAllDocuments() // to ensure Perforce will see up-to-date file content
       val selected = browser.includedChanges
@@ -112,7 +112,7 @@ object ShelfUtils {
         PerforceRunner.getInstance(project).unshelve(connection, changeList, specs)
       }
       catch (e: VcsException) {
-        AbstractVcsHelper.getInstance(project).showError(e, PerforceBundle.message("shelf.unshelve"))
+        AbstractVcsHelper.getInstance(project).showError(e, PerforceBundle.message("action.Perforce.Unshelve.text"))
       }
     }
   }
@@ -128,8 +128,8 @@ object ShelfUtils {
         toResolve = PerforceRunner.getInstance(project).getResolvedWithConflicts(connection, specs)
       }
       catch (resolveException: VcsException) {
-        AbstractVcsHelper.getInstance(project).showError(unshelveException, PerforceBundle.message("shelf.unshelve"))
-        AbstractVcsHelper.getInstance(project).showError(resolveException, PerforceBundle.message("shelf.unshelve"))
+        AbstractVcsHelper.getInstance(project).showError(unshelveException, PerforceBundle.message("action.Perforce.Unshelve.text"))
+        AbstractVcsHelper.getInstance(project).showError(resolveException, PerforceBundle.message("action.Perforce.Unshelve.text"))
         return
       }
 
@@ -141,7 +141,7 @@ object ShelfUtils {
       }
     }
 
-    AbstractVcsHelper.getInstance(project).showError(unshelveException, PerforceBundle.message("shelf.unshelve"))
+    AbstractVcsHelper.getInstance(project).showError(unshelveException, PerforceBundle.message("action.Perforce.Unshelve.text"))
   }
 
   @JvmStatic
