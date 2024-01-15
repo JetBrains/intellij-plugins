@@ -12,12 +12,12 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.intellij.lang.annotations.Language
-import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.hcl.HCLSyntaxHighlighterFactory
-import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.config.codeinsight.TerraformConfigCompletionContributor
 import org.intellij.terraform.config.inspection.TFVARSIncorrectElementInspection
 import org.intellij.terraform.config.model.getTerraformModule
+import org.intellij.terraform.hcl.HCLBundle
+import org.intellij.terraform.hcl.HCLSyntaxHighlighterFactory
+import org.intellij.terraform.hcl.psi.*
 import org.jetbrains.annotations.Nls
 import java.util.regex.Pattern
 
@@ -56,6 +56,11 @@ class HCLLiteralAnnotator : Annotator {
     fun isUnderPropertyUnderPropertyWithObjectValue(element: PsiElement?): Boolean {
       val property = PsiTreeUtil.getParentOfType(element, HCLProperty::class.java, true) ?: return false
       return property.parent is HCLObject && property.parent?.parent is HCLProperty
+    }
+
+    fun isUnderPropertyInsideObjectConditionalExpression(element: PsiElement?): Boolean {
+      val property = PsiTreeUtil.getParentOfType(element, HCLProperty::class.java, true) ?: return false
+      return property.parent is HCLObject && property.parent?.parent is HCLConditionalExpression
     }
 
     fun isUnderPropertyUnderPropertyWithObjectValueAndArray(element: PsiElement?): Boolean {
@@ -171,7 +176,8 @@ class HCLLiteralAnnotator : Annotator {
           // see test-data/terraform/annotator/HCL2StringKeys.hcl for details of if case
           if (!isUnderPropertyUnderPropertyWithObjectValue(element)
               && !isUnderPropertyUnderPropertyWithObjectValueAndArray(element)
-              && !isUnderPropertyInsideObjectArgument(element)) {
+              && !isUnderPropertyInsideObjectArgument(element)
+              && !isUnderPropertyInsideObjectConditionalExpression(element)) {
             holder.newAnnotation(HighlightSeverity.ERROR, HCLBundle.message("hcl.literal.annotator.argument.names.must.not.be.quoted"))
               .withFix(UnwrapHCLStringQuickFix(element))
               .newFix(UnwrapHCLStringQuickFix(element)).batch().registerFix()
