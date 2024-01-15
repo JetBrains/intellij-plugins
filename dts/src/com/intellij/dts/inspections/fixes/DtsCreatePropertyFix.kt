@@ -5,6 +5,7 @@ import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.psi.DtsProperty
 import com.intellij.dts.lang.psi.DtsPsiFactory
 import com.intellij.dts.lang.psi.DtsStatement
+import com.intellij.dts.lang.symbols.DtsPropertySymbol
 import com.intellij.dts.zephyr.binding.DtsZephyrPropertyBinding
 import com.intellij.modcommand.ModPsiUpdater
 import com.intellij.modcommand.PsiUpdateModCommandQuickFix
@@ -35,11 +36,11 @@ class DtsCreatePropertyFix(private val properties: List<DtsZephyrPropertyBinding
 
     val (head, tail) = properties.headTail()
 
-    val entry = element.addDtsProperty(DtsPsiFactory.createProperty(project, head.name, head.type))
+    val entry = element.addDtsProperty(DtsPsiFactory.createProperty(project, DtsPropertySymbol(head)))
     moveCursor(entry.dtsStatement, updater)
 
     for (binding in tail) {
-      element.addDtsProperty(DtsPsiFactory.createProperty(project, binding.name, binding.type))
+      element.addDtsProperty(DtsPsiFactory.createProperty(project, DtsPropertySymbol(binding)))
     }
   }
 }

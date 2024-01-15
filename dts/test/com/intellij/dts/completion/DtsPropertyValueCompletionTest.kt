@@ -58,26 +58,26 @@ class DtsPropertyValueCompletionTest : DtsCompletionTest() {
   fun `test no duplicated tokens (semicolon)`() = doTest(
     lookup = "phandle",
     input = "p<caret> $unproductiveStatements ;",
-    after = "phandle = <&<caret>> $unproductiveStatements ;",
+    after = "phandle = <&<caret>>$unproductiveStatements ;",
   )
 
   fun `test no duplicated tokens (langl)`() = doTest(
     lookup = "phandle",
     input = "p<caret> $unproductiveStatements >;",
-    after = "phandle = <<caret> $unproductiveStatements >;",
+    after = "phandle = <<caret>$unproductiveStatements >;",
   )
 
   // Fails because array content is not checked.
   fun `failing test no duplicated tokens (and)`() = doTest(
     lookup = "phandle",
     input = "p<caret> $unproductiveStatements &>;",
-    after = "phandle = <<caret> $unproductiveStatements &>;",
+    after = "phandle = <<caret>$unproductiveStatements &>;",
   )
 
   fun `test no duplicated tokens (rangl)`() = doTest(
     lookup = "phandle",
     input = "p<caret> $unproductiveStatements <&>;",
-    after = "phandle = <caret> $unproductiveStatements <&>;",
+    after = "phandle = <caret>$unproductiveStatements <&>;",
   )
 
   fun `test no duplicated tokens (assign)`() = doTest(

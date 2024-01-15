@@ -1,8 +1,10 @@
 package com.intellij.dts.lang.psi
 
+import com.intellij.dts.completion.insert.dtsInsertIntoString
+import com.intellij.dts.completion.insert.writePropertyValue
 import com.intellij.dts.lang.DtsFile
 import com.intellij.dts.lang.DtsFileType
-import com.intellij.dts.lang.DtsPropertyType
+import com.intellij.dts.lang.symbols.DtsPropertySymbol
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileFactory
@@ -21,22 +23,13 @@ object DtsPsiFactory {
     ) as DtsFile
   }
 
-  private fun propertyValueTemplate(type: DtsPropertyType): String {
-    return when (type) {
-      DtsPropertyType.String, DtsPropertyType.StringList -> " = \"\""
-      DtsPropertyType.Int, DtsPropertyType.Ints -> " = <>"
-      DtsPropertyType.PHandle, DtsPropertyType.PHandles, DtsPropertyType.PHandleList -> " = <&>"
-      DtsPropertyType.Boolean -> ""
-      DtsPropertyType.Bytes -> " = []"
-      DtsPropertyType.Path, DtsPropertyType.Compound -> " = "
+  fun createProperty(project: Project, symbol: DtsPropertySymbol): DtsEntry {
+    val property = dtsInsertIntoString {
+      write(symbol.name)
+      writePropertyValue(symbol)
     }
-  }
 
-  fun createProperty(project: Project, name: String, type: DtsPropertyType): DtsEntry {
-    return createFile(
-      project,
-      "$name${propertyValueTemplate(type)};"
-    ).dtsEntries.single()
+    return createFile(project, property).dtsEntries.single()
   }
 
   fun createNodeContent(project: Project): DtsNodeContent {

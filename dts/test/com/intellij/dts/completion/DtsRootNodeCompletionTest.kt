@@ -23,12 +23,12 @@ class DtsRootNodeCompletionTest : DtsCompletionTest() {
 
   fun `test trailing rbrace`() = doTest(
     input = "/<caret>{};",
-    after = "/ <caret>{};",
+    after = "/<caret> {};",
   )
 
   fun `test trailing space`() = doTest(
     input = "/<caret> {};",
-    after = "/ <caret>{};",
+    after = "/<caret> {};",
   )
 
   fun `test no completion in node`() = doTest(
