@@ -228,11 +228,13 @@ public class ActionScriptExtractFunctionDialog extends JSBaseClassBasedIntroduce
   }
 
   @Override
+  public boolean isDeclarationTypeConfigurable() {
+    return false;
+  }
+
+  @Override
   public @NotNull FunctionDeclarationType getDeclarationType() {
-    var forceDeclarationType = getIntroductionScope().forceDeclarationType;
-    return forceDeclarationType != null
-           ? forceDeclarationType
-           : FunctionDeclarationType.FUNCTION;
+    return FunctionDeclarationType.FUNCTION;
   }
 
   @Override
