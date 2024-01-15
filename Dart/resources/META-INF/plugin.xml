@@ -272,14 +272,18 @@
   </projectListeners>
 
   <actions>
-    <action id="Dart.stop.dart.webdev.server" class="com.jetbrains.lang.dart.pubServer.StopDartWebdevServerAction"/>
-    <action id="Dart.NewDartFile" class="com.jetbrains.lang.dart.ide.actions.CreateDartFileAction">
+    <action id="Dart.stop.dart.webdev.server" class="com.jetbrains.lang.dart.pubServer.StopDartWebdevServerAction"
+            icon="AllIcons.Actions.Suspend"/>
+    <action id="Dart.NewDartFile" class="com.jetbrains.lang.dart.ide.actions.CreateDartFileAction"
+            icon="DartIcons.Dart_file">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
     </action>
-    <action id="Dart.Reanalyze" class="com.jetbrains.lang.dart.ide.errorTreeView.ReanalyzeDartSourcesAction">
+    <action id="Dart.Reanalyze" class="com.jetbrains.lang.dart.ide.errorTreeView.ReanalyzeDartSourcesAction"
+            icon="AllIcons.Actions.Restart">
     </action>
     <!--suppress PluginXmlCapitalization -->
-    <action id="Dart.Restart.Analysis.Server" class="com.jetbrains.lang.dart.ide.errorTreeView.RestartDartAnalysisServerAction">
+    <action id="Dart.Restart.Analysis.Server" class="com.jetbrains.lang.dart.ide.errorTreeView.RestartDartAnalysisServerAction"
+            icon="AllIcons.Actions.ForceRefresh">
     </action>
     <action id="Dart.Analyzer.Diagnostics" class="com.jetbrains.lang.dart.ide.errorTreeView.AnalysisServerDiagnosticsAction">
     </action>

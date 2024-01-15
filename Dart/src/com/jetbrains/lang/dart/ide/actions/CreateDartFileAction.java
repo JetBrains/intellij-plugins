@@ -13,11 +13,6 @@ import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 
 public class CreateDartFileAction extends CreateFileFromTemplateAction {
-  public CreateDartFileAction() {
-    super(DartBundle.messagePointer("action.title.dart.file"),
-          DartBundle.messagePointer("action.description.create.dart.file"),
-          DartIcons.Dart_file);
-  }
 
   @Override
   protected boolean isAvailable(DataContext dataContext) {
