@@ -14,10 +14,12 @@ object VueBundle : DynamicBundle(BUNDLE) {
 
   @JvmStatic
   @Nls
-  fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String =
-    getMessage(key, *params)
+  fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String {
+    return if (containsKey(key)) getMessage(key, *params) else VueDeprecatedMessagesBundle.message(key, *params)
+  }
 
   @JvmStatic
-  fun messagePointer(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): Supplier<@Nls String> =
-    getLazyMessage(key, *params)
+  fun messagePointer(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): Supplier<@Nls String> {
+    return if (containsKey(key)) getLazyMessage(key, *params) else VueDeprecatedMessagesBundle.messagePointer(key, *params)
+  }
 }

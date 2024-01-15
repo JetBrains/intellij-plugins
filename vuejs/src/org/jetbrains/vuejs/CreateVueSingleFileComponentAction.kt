@@ -16,14 +16,11 @@ import org.jetbrains.vuejs.context.hasVueFiles
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.context.supportsScriptSetup
 
-class CreateVueSingleFileComponentAction : CreateFileFromTemplateAction(VueBundle.message("vue.create.single.file.component.action.text"),
-                                                                        VueBundle.message(
-                                                                          "vue.create.single.file.component.action.description"),
-                                                                        VuejsIcons.Vue), DumbAware {
+class CreateVueSingleFileComponentAction : CreateFileFromTemplateAction(), DumbAware {
   companion object {
 
     @Nls
-    private val name = VueBundle.message("vue.create.single.file.component.action.text")
+    private val name = VueBundle.message("action.CreateVueSingleFileComp.text")
   }
 
   override fun isAvailable(dataContext: DataContext): Boolean =
