@@ -11,5 +11,5 @@ import com.intellij.util.ProcessingContext
 class Angular2NgSrcReferencesProvider : PsiReferenceProvider() {
   override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> =
     PathReferenceManager.getInstance().createReferences(
-      element, false, false, true, HtmlReferenceProvider.IMAGE_FILE_TYPES)
+      element, false, false, true, HtmlReferenceProvider.IMAGE_FILE_TYPES.value)
 }
