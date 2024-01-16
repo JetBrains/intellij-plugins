@@ -113,7 +113,7 @@ public class FlexStructureViewProvider implements XmlStructureViewBuilderProvide
     }
 
     @Override
-    protected JSStructureViewElement createStructureViewElement(PsiElement element,
+    protected JSStructureViewElementBase createStructureViewElement(PsiElement element,
                                                                 @Nullable OwnAndAncestorSiblings ownAndAncestorSiblings) {
       if (element instanceof XmlBackedJSClassImpl) {
         return new FlexStructureViewClassElement((JSClass)element);
