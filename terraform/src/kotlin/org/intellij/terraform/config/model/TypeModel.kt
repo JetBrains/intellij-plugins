@@ -180,9 +180,14 @@ class TypeModel(
       PropertyType("provider", Types.String, required = false)
     ).toMap())
 
+    val AssertBlock: BlockType = BlockType("assert", 0, required = true,
+                                           properties = listOf(ConditionProperty, ErrorMessageProperty).toMap())
+
+    val CheckBlock: BlockType = BlockType("check", 1, properties = listOf(AbstractDataSource, AssertBlock).toMap())
+
     val RootBlocks: List<BlockType> = listOf(Atlas, Module, Output, Variable, AbstractProvider,
                                              AbstractResource, AbstractDataSource, Terraform,
-                                             Locals, Moved, Import)
+                                             Locals, Moved, Import, CheckBlock)
     val RootBlocksMap: Map<String, BlockType> = RootBlocks.associateBy(BlockType::literal)
   }
 
