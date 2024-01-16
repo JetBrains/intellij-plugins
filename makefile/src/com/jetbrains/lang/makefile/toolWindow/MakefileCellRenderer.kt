@@ -20,7 +20,7 @@ class MakefileCellRenderer(private val project: Project) : ColoredTreeCellRender
     else {
       append(value.name)
       if (value is MakefileFileNode && !project.isDisposed) {
-        val file = ReadAction.compute<VirtualFile, Exception> { value.psiFile.containingDirectory?.virtualFile } ?: return
+        val file = ReadAction.compute<VirtualFile, Exception> { value.psiFile?.containingDirectory?.virtualFile } ?: return
         if (rootDir != null) {
           val relativePath = VfsUtilCore.getRelativePath(file, rootDir) ?: file.path
           if (relativePath.isBlank()) {

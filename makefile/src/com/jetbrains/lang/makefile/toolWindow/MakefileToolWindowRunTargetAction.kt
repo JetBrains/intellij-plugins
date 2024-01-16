@@ -20,8 +20,10 @@ class MakefileToolWindowRunTargetAction(private val tree: Tree, private val proj
     val selectedNodes = tree.getSelectedNodes(MakefileTargetNode::class.java, {true})
     if (selectedNodes.any()) {
       val selected = selectedNodes.first()
+      if (selected.parent.psiFile == null)
+        return
       val elements = MakefileTargetIndex.getInstance().getTargets(selected.name, project,
-                                                                          GlobalSearchScope.fileScope(selected.parent.psiFile))
+                                                                          GlobalSearchScope.fileScope(selected.parent.psiFile!!))
       val target = elements.firstOrNull() ?: return
 
       val dataContext = SimpleDataContext.getSimpleContext(Location.DATA_KEY, PsiLocation(target), event.dataContext)

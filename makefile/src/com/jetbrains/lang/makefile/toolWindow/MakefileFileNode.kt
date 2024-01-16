@@ -7,12 +7,14 @@ import java.util.Collections.*
 import javax.swing.*
 import javax.swing.tree.*
 
-class MakefileFileNode(val psiFile: PsiFile, private val targets: List<MakefileTargetNode>) : MakefileTreeNode(psiFile.name) {
+class MakefileFileNode(private val myPsiFile: PsiFile, private val targets: List<MakefileTargetNode>) : MakefileTreeNode(myPsiFile.name) {
   init {
     for (target in targets) {
       target.parent = this
     }
   }
+
+  val psiFile: PsiFile? get() { return if (myPsiFile.isValid) myPsiFile else null }
 
   internal lateinit var parent: MakefileRootNode
 

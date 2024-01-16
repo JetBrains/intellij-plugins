@@ -1,27 +1,32 @@
 package com.jetbrains.lang.makefile.toolWindow
 
-import com.intellij.execution.impl.*
-import com.intellij.ide.*
+import com.intellij.execution.impl.RunManagerImpl
+import com.intellij.ide.CommonActionsManager
+import com.intellij.ide.DefaultTreeExpander
 import com.intellij.openapi.actionSystem.*
-import com.intellij.openapi.actionSystem.CommonDataKeys.*
-import com.intellij.openapi.project.*
+import com.intellij.openapi.actionSystem.CommonDataKeys.PSI_ELEMENT
+import com.intellij.openapi.project.DumbService
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupManager
-import com.intellij.openapi.ui.*
+import com.intellij.openapi.ui.SimpleToolWindowPanel
 import com.intellij.openapi.wm.*
 import com.intellij.openapi.wm.ex.ToolWindowEx
 import com.intellij.openapi.wm.ex.ToolWindowManagerEx
-import com.intellij.psi.search.*
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.ui.*
-import com.intellij.ui.content.impl.*
-import com.intellij.ui.treeStructure.*
-import com.intellij.util.ui.tree.*
+import com.intellij.ui.content.impl.ContentImpl
+import com.intellij.ui.treeStructure.Tree
+import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.lang.makefile.*
 import com.jetbrains.lang.makefile.psi.MakefileTarget
-import java.awt.*
-import java.awt.event.*
-import java.awt.event.MouseEvent.*
-import javax.swing.*
-import javax.swing.tree.*
+import java.awt.GridLayout
+import java.awt.event.KeyEvent
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
+import java.awt.event.MouseEvent.BUTTON1
+import javax.swing.JPanel
+import javax.swing.tree.DefaultTreeModel
+import javax.swing.tree.TreeSelectionModel
 
 private const val TOOLWINDOW_ID = "make" // the ID is unfortunate, but should be kept compatible with older versions
 
@@ -61,9 +66,11 @@ class MakeToolWindowFactory : ToolWindowFactory {
           if (PSI_ELEMENT.`is`(dataId)) {
             if (selectedNodes.any()) {
               val selected = selectedNodes.first()
+              if (selected.parent.psiFile == null)
+                return null
               return MakefileTargetIndex.getInstance().getTargets(selected.name, project,
                                                                           GlobalSearchScope.fileScope(
-                                                                            selected.parent.psiFile)).firstOrNull()
+                                                                            selected.parent.psiFile!!)).firstOrNull()
             }
           }
           return null
@@ -104,8 +111,12 @@ class MakeToolWindowFactory : ToolWindowFactory {
       val goToTargetAction = MakefileToolWindowGoToTargetAction(tree, project)
       goToTargetAction.registerCustomShortcutSet(CustomShortcutSet(KeyEvent.VK_F4), panel)
 
+      val refreshTargets = MakefileToolWindowRefreshAction(model, options)
+      refreshTargets.registerCustomShortcutSet(CustomShortcutSet(KeyEvent.VK_F5), panel)
+
       val group = DefaultActionGroup()
       group.add(runTargetAction)
+      group.add(refreshTargets )
       group.addSeparator()
       val treeExpander = DefaultTreeExpander(tree)
       group.add(CommonActionsManager.getInstance().createExpandAllAction(treeExpander, tree))
