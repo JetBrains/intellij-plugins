@@ -19,118 +19,125 @@ public class TerraformInspectionsTest extends TerraformInspectionFixtureTestCase
     return TerraformTestUtils.getTestDataPath() + "/terraform/inspections/";
   }
 
-  public void testResourcePropertyReferences() throws Exception {
+  public void testResourcePropertyReferences() {
     doTest("resource_property_reference", new HILUnresolvedReferenceInspection());
   }
 
-  public void testMappingVariableReference() throws Exception {
+  public void testMappingVariableReference() {
     doTest("mapping_variable_reference", new HILUnresolvedReferenceInspection());
   }
 
-  public void testWeirdBlockComputedPropertyReference() throws Exception {
+  public void testWeirdBlockComputedPropertyReference() {
     doTest("weird_block_computed_property_reference", new HILUnresolvedReferenceInspection());
   }
 
-  public void testUnresolvedVariable() throws Exception {
+  public void testUnresolvedVariable() {
     doTest("unresolved_variable", new HILUnresolvedReferenceInspection());
   }
 
-  public void testResolveForVariables() throws Exception {
+  public void testResolveForVariables() {
     doTest("resolve_for_variables", new HILUnresolvedReferenceInspection());
   }
 
-  public void testResolveDynamicVariables() throws Exception {
+  public void testResolveDynamicVariables() {
     doTest("resolve_dynamic_variables", new HILUnresolvedReferenceInspection());
   }
 
-  public void testResolveVariables() throws Exception {
+  public void testResolveVariables() {
     doTest("resolve_variables", new HILUnresolvedReferenceInspection());
   }
 
-  public void testResolveProvider() throws Exception {
+  public void testResolveProvider() {
     doTest("resolve_provider", new HILUnresolvedReferenceInspection());
   }
 
-  public void testModuleComplexOutputReferences() throws Exception {
+  public void testModuleComplexOutputReferences() {
     doTest("module_complex_output_references", new HILUnresolvedReferenceInspection());
   }
 
-  public void testSelfReferences() throws Exception {
+  public void testSelfReferences() {
     doTest("self_references", new HILUnresolvedReferenceInspection());
   }
 
-  public void testComplexPropertyKeys() throws Exception {
+  public void testComplexPropertyKeys() {
     doTest("complex_property_keys", new HILUnresolvedReferenceInspection());
   }
 
-  public void testKnownBlockNameFromModel() throws Exception {
+  public void testKnownBlockNameFromModel() {
     doTest("unknown_block_name", new HCLUnknownBlockTypeInspection());
   }
 
   // Test for issue #198
-  public void testNoUnknownBlocksForNomad() throws Exception {
+  public void testNoUnknownBlocksForNomad() {
     doTest("no_unknown_blocks_for_nomad", new HCLUnknownBlockTypeInspection());
   }
 
-  public void testIncorrectTFVARS() throws Exception {
+  public void testIncorrectTFVARS() {
     doTest("incorrect_tfvars", new TFVARSIncorrectElementInspection());
   }
 
-  public void testIncorrectVariableType() throws Exception {
+  public void testIncorrectVariableType() {
     doTest("incorrect_variable_type", new TFIncorrectVariableTypeInspection());
   }
 
-  public void testDuplicatedProvider() throws Exception {
+  public void testDuplicatedProvider() {
     doTest("duplicated_provider", new TFDuplicatedProviderInspection());
   }
 
-  public void testDuplicatedOutput() throws Exception {
+  public void testDuplicatedOutput() {
     doTest("duplicated_output", new TFDuplicatedOutputInspection());
   }
 
-  public void testDuplicatedVariable() throws Exception {
+  public void testDuplicatedVariable() {
     doTest("duplicated_variable", new TFDuplicatedVariableInspection());
   }
 
-  public void testDuplicatedBlockProperty() throws Exception {
+  public void testDuplicatedBlockProperty() {
     doTest("duplicated_block_property", new TFDuplicatedBlockPropertyInspection());
   }
 
-  public void testInterpolationsInWrongPlaces() throws Exception {
+  public void testInterpolationsInWrongPlaces() {
     doTest("interpolations_in_wrong_places", new TFNoInterpolationsAllowedInspection());
   }
 
-  public void testMissingBlockProperty() throws Exception {
+  public void testMissingBlockProperty() {
     doTest("missing_properties", new HCLBlockMissingPropertyInspection());
   }
 
   // ignored, because no "Conflicts" medatada is provided in recent updates
-  public void _testConflictingBlockProperty() throws Exception {
+  public void _testConflictingBlockProperty() {
     doTest("conflicting_properties", new HCLBlockConflictingPropertiesInspection());
   }
 
-  public void testMissingSelfInContext() throws Exception {
+  public void testMissingSelfInContext() {
     doTest("reference_to_self", new HILMissingSelfInContextInspection());
   }
 
-  public void testInterpolationBinaryExpressionsTypesCheck() throws Exception {
+  public void testInterpolationBinaryExpressionsTypesCheck() {
     doTest("interpolation_operations_types", new HILOperationTypesMismatchInspection());
   }
 
-  public void testConvertHILToHCL() throws Exception {
+  public void testConvertHILToHCL() {
     doTest("convert_hil_to_hcl", new HILConvertToHCLInspection());
   }
 
-  public void testNoConvertHILToHCL() throws Exception {
+  public void testNoConvertHILToHCL() {
     doTest("no_convert_hil_to_hcl", new HILConvertToHCLInspection());
   }
 
-  public void testSpellchecking() throws Exception {
+  public void testSpellchecking() {
     doTest("spellchecking", new SpellCheckingInspection());
   }
 
-  public void testUnknownResourceType() throws Exception {
+  public void testUnknownResourceType() {
     doTest("unknown_resource_type", new HILUnknownResourceTypeInspection());
   }
 
+  public void testDoubleQuotedStringLiteral() {
+    doTest("double_quoted_string_literal", new HCLLiteralValidnessInspection());
+  }
+
+  public void testStringLiteral() {
+    doTest("check_string_literal",  new HCLLiteralValidnessInspection());
+  }
 }

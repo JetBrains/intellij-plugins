@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<problems>
+  <problem>
+    <file>test.tf</file>
+    <line>2</line>
+    <module>0</module>
+    <problem_class id="HCLLiteralValidness" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Invalid string and number literal</problem_class>
+    <description>Argument names must not be quoted</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>4</line>
+    <module>0</module>
+    <problem_class id="HCLLiteralValidness" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Invalid string and number literal</problem_class>
+    <description>Argument names must not be quoted</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>5</line>
+    <module>0</module>
+    <problem_class id="HCLLiteralValidness" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Invalid string and number literal</problem_class>
+    <description>Argument names must not be quoted</description>
+  </problem>
+</problems>
