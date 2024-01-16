@@ -1,6 +1,6 @@
 <idea-plugin>
   <!--suppress PluginXmlCapitalization -->
-  <name>Next.js Support</name>
+  <name>Next.js</name>
   <id>intellij.nextjs</id>
   <category>JavaScript Frameworks and Tools</category>
   <resource-bundle>messages.NextJsBundle</resource-bundle>
