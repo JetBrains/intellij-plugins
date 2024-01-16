@@ -15,7 +15,9 @@
  */
 package com.intellij.protobuf.ide.settings;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.protobuf.ide.settings.PbProjectSettings.ImportPathEntry;
@@ -82,7 +84,13 @@ public final class SettingsFileResolveProvider implements FileResolveProvider {
 
   @Override
   public @Nullable VirtualFile getDescriptorFile(@NotNull Project project) {
-    return findFile(BUNDLED_DESCRIPTOR, project);
+    var configuredDescriptorPath = PbProjectSettings.getInstance(project).getDescriptorPath();
+    if (StringUtil.isNotEmpty(configuredDescriptorPath))
+      return findFile(configuredDescriptorPath, project);
+    else {
+      Logger.getInstance(SettingsFileResolveProvider.class).warn("No proto descriptor path provided, using bundled descriptor as fallback");
+      return findFile(BUNDLED_DESCRIPTOR, project);
+    }
   }
 
   @Override
