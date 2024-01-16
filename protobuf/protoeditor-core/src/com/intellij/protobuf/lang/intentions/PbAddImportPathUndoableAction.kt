@@ -25,9 +25,11 @@ internal class PbAddImportPathUndoableAction(pathToAdd: ImportPathData, private 
     PbProjectSettings.notifyUpdated(project)
   }
 
-  override var performedNanoTime: Long = -1
+  override fun getAffectedDocuments(): Array<DocumentReference> {
+    return arrayOf(currentDocumentReference)
+  }
 
-  override val affectedDocuments: Array<DocumentReference> = arrayOf(currentDocumentReference)
-
-  override val isGlobal: Boolean = true
+  override fun isGlobal(): Boolean {
+    return true
+  }
 }
