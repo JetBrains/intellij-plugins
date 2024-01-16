@@ -11,6 +11,7 @@ import org.intellij.terraform.config.codeinsight.TerraformConfigCompletionContri
 import org.intellij.terraform.config.model.getTerraformModule
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.codeinsight.AddClosingQuoteQuickFix
+import org.intellij.terraform.hcl.codeinsight.ReplaceToDoubleQuoteQuickFix
 import org.intellij.terraform.hcl.codeinsight.UnwrapHCLStringQuickFix
 import org.intellij.terraform.hcl.psi.HCLElementVisitor
 import org.intellij.terraform.hcl.psi.HCLNumberLiteral
@@ -18,7 +19,7 @@ import org.intellij.terraform.hcl.psi.HCLPsiUtil
 import org.intellij.terraform.hcl.psi.HCLStringLiteral
 import java.util.regex.Pattern
 
-class TFStringLiteralInspection : LocalInspectionTool() {
+class HCLLiteralValidnessInspection : LocalInspectionTool() {
   // TODO: Check HCL supported escapes
   @Language("RegExp")
   private val COMMON_REGEX = "[\\\\abfntrv]|([0-7]{3})|(X[0-9a-fA-F]{2})|(u[0-9a-fA-F]{4})|(U[0-9a-fA-F]{8})"
@@ -30,7 +31,7 @@ class TFStringLiteralInspection : LocalInspectionTool() {
   private val VALID_HEX_NUMBER_LITERAL = Pattern.compile("-?(0x)?([0-9a-f])+", Pattern.CASE_INSENSITIVE)
 
   override fun getID(): String {
-    return "StringLiteral"
+    return "LiteralValidness"
   }
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
@@ -93,6 +94,10 @@ class TFStringLiteralInspection : LocalInspectionTool() {
                                    ProblemHighlightType.ERROR, UnwrapHCLStringQuickFix(element))
           }
         }
+      }
+
+      if (element.quoteSymbol == '\'') {
+        holder.registerProblem(element, HCLBundle.message("hcl.literal.inspection.invalid.quotes"), ProblemHighlightType.ERROR, ReplaceToDoubleQuoteQuickFix(element))
       }
     }
 
