@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.maven
 
 import com.intellij.flex.model.bc.OutputType
@@ -23,8 +23,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.ide.progress.withBackgroundProgress
-import com.intellij.platform.util.progress.rawProgressReporter
-import com.intellij.platform.util.progress.withRawProgressReporter
+import com.intellij.platform.util.progress.reportRawProgress
 import com.intellij.util.ArrayUtil
 import org.jetbrains.idea.maven.buildtool.MavenLogEventHandler
 import org.jetbrains.idea.maven.model.MavenWorkspaceMap
@@ -66,8 +65,8 @@ class Flexmojos3GenerateConfigTask(private val myModule: Module,
         val request = MavenGoalExecutionRequest(File(myMavenProject.path), profilesIds)
         val result = runBlockingMaybeCancellable {
           withBackgroundProgress(project, MavenProjectBundle.message("maven.updating.folders"), true) {
-            withRawProgressReporter {
-              embedder.executeGoal(listOf(request), generateConfigGoal, rawProgressReporter!!, MavenLogEventHandler)[0]
+            reportRawProgress { reporter ->
+              embedder.executeGoal(listOf(request), generateConfigGoal, reporter, MavenLogEventHandler)[0]
             }
           }
         }

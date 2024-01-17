@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.refactoring.extractComponent
 
 import com.intellij.application.options.CodeStyle
@@ -40,7 +40,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.ide.progress.ModalTaskOwner
 import com.intellij.platform.ide.progress.TaskCancellation
 import com.intellij.platform.ide.progress.withModalProgress
-import com.intellij.platform.util.progress.progressStep
+import com.intellij.platform.util.progress.SequentialProgressReporter
+import com.intellij.platform.util.progress.reportSequentialProgress
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -119,60 +120,70 @@ class Angular2ExtractComponentHandlerService(
   }
 
   private suspend fun runInsideCoroutine(editor: Editor, sourceFilePtr: Pointer<PsiFile>, workingDir: VirtualFile, cliDir: VirtualFile) {
-    progressStep(0.1) {
-      writeAction {
-        PsiDocumentManager.getInstance(sourceFilePtr.dereference()!!.project).commitAllDocuments()
+    reportSequentialProgress { reporter ->
+      runInsideCoroutine(reporter, editor, sourceFilePtr, workingDir, cliDir)
+    }
+  }
+
+  private suspend fun runInsideCoroutine(
+    reporter: SequentialProgressReporter,
+    editor: Editor,
+    sourceFilePtr: Pointer<PsiFile>,
+    workingDir: VirtualFile,
+    cliDir: VirtualFile,
+  ) {
+    reporter.nextStep(endFraction = 10)
+    writeAction {
+      PsiDocumentManager.getInstance(sourceFilePtr.dereference()!!.project).commitAllDocuments()
+    }
+
+    reporter.nextStep(endFraction = 20)
+    val extractedComponent = try {
+      readAction {
+        if (editor.caretModel.caretCount > 1) {
+          throw Angular2ExtractComponentUnsupportedException(
+            Angular2Bundle.message("angular.refactor.extractComponent.unsupported-multiple-carets"))
+        }
+
+        val selectionStart = editor.selectionModel.selectionStart
+        val selectionEnd = editor.selectionModel.selectionEnd
+        Angular2ExtractedComponentBuilder(sourceFilePtr.dereference()!!, selectionStart, selectionEnd).build()
       }
     }
-    val extractedComponent = progressStep(0.2) {
+    catch (e: Angular2ExtractComponentUnsupportedException) {
+      showErrorHint(project, editor, e.message!!)
+      return
+    }
+
+    reporter.nextStep(endFraction = 40)
+    val rangeHighlighter = addRangeHighlighter(editor, extractedComponent)
+    val postProcessCli = try {
+      val arguments = project.service<Angular2CliComponentGenerator>().showDialog()
+                      ?: return
       try {
-        readAction {
-          if (editor.caretModel.caretCount > 1) {
-            throw Angular2ExtractComponentUnsupportedException(
-              Angular2Bundle.message("angular.refactor.extractComponent.unsupported-multiple-carets"))
-          }
+        project.service<Angular2CliComponentGenerator>().generateComponent(cliDir, workingDir, arguments)
+      }
+      catch (e: Exception) {
+        thisLogger().warn("Couldn't create component with Angular CLI", e)
+        showErrorHint(project, editor, Angular2Bundle.message("angular.refactor.extractComponent.cli-error"))
+        return
+      }
+    }
+    finally {
+      clearRangeHighlighter(editor, rangeHighlighter)
+    }
 
-          val selectionStart = editor.selectionModel.selectionStart
-          val selectionEnd = editor.selectionModel.selectionEnd
-          Angular2ExtractedComponentBuilder(sourceFilePtr.dereference()!!, selectionStart, selectionEnd).build()
-        }
+    reporter.nextStep(endFraction = 60)
+    val affectedPaths = writeAction {
+      var result: List<String>? = null
+      CommandProcessor.getInstance().runUndoTransparentAction {
+        result = postProcessCli()
       }
-      catch (e: Angular2ExtractComponentUnsupportedException) {
-        showErrorHint(project, editor, e.message!!)
-        null
-      }
+      result
     } ?: return
 
-    val postProcessCli = progressStep(0.4) {
-      val rangeHighlighter = addRangeHighlighter(editor, extractedComponent)
-      try {
-        val arguments = project.service<Angular2CliComponentGenerator>().showDialog()
-                        ?: return@progressStep null
-        try {
-          project.service<Angular2CliComponentGenerator>().generateComponent(cliDir, workingDir, arguments)
-        }
-        catch (e: Exception) {
-          thisLogger().warn("Couldn't create component with Angular CLI", e)
-          showErrorHint(project, editor, Angular2Bundle.message("angular.refactor.extractComponent.cli-error"))
-          null
-        }
-      }
-      finally {
-        clearRangeHighlighter(editor, rangeHighlighter)
-      }
-    } ?: return
-
-    val affectedPaths = progressStep(0.6) {
-      writeAction {
-        var result: List<String>? = null
-        CommandProcessor.getInstance().runUndoTransparentAction {
-          result = postProcessCli()
-        }
-        result
-      }
-    } ?: return
-
-    val context = progressStep(0.8) {
+    reporter.nextStep(endFraction = 80)
+    val context = run {
       var context: GeneratorContext? = null
       DumbService.getInstance(project).runReadActionInSmartMode {
         try {
@@ -201,18 +212,17 @@ class Angular2ExtractComponentHandlerService(
       context
     } ?: return
 
-    progressStep(1.0) {
-      writeAction {
-        CommandProcessor.getInstance().executeCommand(
-          project,
-          {
-            CommandProcessor.getInstance().markCurrentCommandAsGlobal(project)
-            afterGenerator(project, editor, extractedComponent, context)
-          },
-          Angular2Bundle.message("angular.refactor.extractComponent.dialog"),
-          null,
-          UndoConfirmationPolicy.REQUEST_CONFIRMATION)
-      }
+    reporter.nextStep(endFraction = 100)
+    writeAction {
+      CommandProcessor.getInstance().executeCommand(
+        project,
+        {
+          CommandProcessor.getInstance().markCurrentCommandAsGlobal(project)
+          afterGenerator(project, editor, extractedComponent, context)
+        },
+        Angular2Bundle.message("angular.refactor.extractComponent.dialog"),
+        null,
+        UndoConfirmationPolicy.REQUEST_CONFIRMATION)
     }
   }
 
