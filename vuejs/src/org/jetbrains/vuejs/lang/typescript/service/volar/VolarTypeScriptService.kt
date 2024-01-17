@@ -4,10 +4,11 @@ package org.jetbrains.vuejs.lang.typescript.service.volar
 import com.google.gson.JsonElement
 import com.intellij.lang.javascript.ecmascript6.TypeScriptAnnotatorCheckerProvider
 import com.intellij.lang.typescript.compiler.TypeScriptLanguageServiceAnnotatorCheckerProvider
-import com.intellij.lang.typescript.compiler.languageService.protocol.commands.LspGetElementTypeCommand
+import com.intellij.lang.typescript.compiler.languageService.protocol.commands.LspGetElementTypeRequestArgs
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptGetElementTypeRequestArgs
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
 import com.intellij.lang.typescript.lsp.BaseLspTypeScriptService
+import com.intellij.lang.typescript.lsp.JSFrameworkLsp4jServer
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.HtmlBuilder
 import com.intellij.openapi.util.text.StringUtil
@@ -73,8 +74,10 @@ class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(projec
 
   override suspend fun getIdeType(virtualFile: VirtualFile, args: TypeScriptGetElementTypeRequestArgs): JsonElement? {
     return withServer {
-      val server = this
-      server.requestExecutor.sendRequest(LspGetElementTypeCommand(server, virtualFile, args))
+      val params = LspGetElementTypeRequestArgs(file = descriptor.getFileUri(virtualFile),
+                                                range = args.range,
+                                                forceReturnType = args.forceReturnType)
+      sendRequest { (it as JSFrameworkLsp4jServer).getElementType(params) }
     }
   }
 }
