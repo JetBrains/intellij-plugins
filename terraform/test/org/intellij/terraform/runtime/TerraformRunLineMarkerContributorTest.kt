@@ -1,6 +1,9 @@
 package org.intellij.terraform.runtime
 
+import com.intellij.execution.actions.ConfigurationContext
+import com.intellij.execution.configurations.RuntimeConfigurationException
 import com.intellij.icons.AllIcons
+import com.intellij.psi.PsiElement
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.intellij.terraform.TerraformTestUtils
 
@@ -13,6 +16,14 @@ class TerraformRunLineMarkerContributorTest : BasePlatformTestCase() {
 
     assertNotNull(info)
     assertEquals(AllIcons.RunConfigurations.TestState.Run, info?.icon)
+
+    val configuration = getTerraformConfiguration(myFixture.elementAtCaret)
+    assertEquals("plan", configuration.programParameters)
+    assertEquals("/src", configuration.workingDirectory)
+    assertTrue(configuration.envs.isEmpty())
+
+    configuration.workingDirectory = ""
+    assertThrows(RuntimeConfigurationException::class.java) { configuration.checkConfiguration() }
   }
 
   fun testLineMarkerWithComment() {
@@ -32,5 +43,11 @@ class TerraformRunLineMarkerContributorTest : BasePlatformTestCase() {
 
     val gutters = myFixture.findAllGutters("whole_commented.tf")
     assertEmpty(gutters)
+  }
+
+  private fun getTerraformConfiguration(psiElement: PsiElement): TerraformRunConfiguration {
+    val configuration = ConfigurationContext(psiElement).configuration?.configuration
+    assertInstanceOf(configuration, TerraformRunConfiguration::class.java)
+    return configuration as TerraformRunConfiguration
   }
 }
