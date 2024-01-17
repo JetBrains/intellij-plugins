@@ -47,7 +47,7 @@ class VueExtractComponentRefactoring(private val project: Project,
       var startMarkAction: StartMarkAction? = null
       WriteAction.run<RuntimeException> {
         startMarkAction = StartMarkAction.start(editor, project, refactoringName)
-        startMarkAction!!.isGlobal = true
+        startMarkAction!!.setGlobal(true)
         newlyAdded = data.replaceWithNewTag(defaultName ?: "NewComponent") as? XmlTag
       }
       VueComponentInplaceIntroducer(newlyAdded!!, editor, data, oldText,
