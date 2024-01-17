@@ -183,7 +183,7 @@ class PerforceShelveTest : PerforceTestCase() {
     assertOneElement(list.changes)
     assertOneElement(shelf.getShelvedChanges(list))
 
-    RollbackWorker(myProject).doRollback(list.changes, false, null, null)
+    RollbackWorker(myProject).doRollback(list.changes, false)
     changeListManager.waitUntilRefreshed()
 
     assertTrue(findNotNullChangeList("xxx").changes.isEmpty())
