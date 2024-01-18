@@ -10,15 +10,31 @@ import com.intellij.patterns.PlatformPatterns.*
 import com.intellij.patterns.PsiElementPattern
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
+import com.intellij.psi.TokenType
+import com.intellij.psi.tree.TokenSet
 import com.intellij.refactoring.suggested.endOffset
 import com.intellij.refactoring.suggested.startOffset
 import com.intellij.util.ProcessingContext
 import com.intellij.util.asSafely
 
+private val errorOrProperty = TokenSet.create(TokenType.ERROR_ELEMENT, DtsTypes.PROPERTY)
+private val errorOrSubNode = TokenSet.create(TokenType.ERROR_ELEMENT, DtsTypes.SUB_NODE)
+
 fun dtsBasePattern(): PsiElementPattern.Capture<PsiElement> {
   return psiElement()
     .inFile(psiFile(DtsFile::class.java))
     .withElementType(not(elementType().tokenSet(DtsTokenSets.comments)))
+}
+
+fun dtsProperty(): PsiElementPattern.Capture<PsiElement> {
+  return psiElement().withElementType(errorOrProperty)
+}
+
+fun dtsSubNode(): PsiElementPattern.Capture<PsiElement> {
+  return psiElement().andOr(
+    psiElement().withElementType(errorOrSubNode),
+    psiElement().withElementType(DtsTypes.PROPERTY).withText(not(string().contains("="))),
+  )
 }
 
 fun dtsInsideContainer(): PsiElementPattern.Capture<PsiElement> {

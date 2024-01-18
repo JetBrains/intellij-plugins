@@ -13,5 +13,6 @@ fun DtsInsertSession.writeNodeContent() {
   if (!canWrite('}')) abort()
   write("}")
 
+  setThreshold(0)
   writeSemicolon()
 }

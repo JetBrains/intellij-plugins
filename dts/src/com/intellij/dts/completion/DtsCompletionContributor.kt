@@ -9,10 +9,7 @@ import com.intellij.dts.lang.DtsFile
 import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.TokenType
-import com.intellij.psi.tree.TokenSet
 
 class DtsCompletionContributor : CompletionContributor() {
   class AutoPopup : TypedHandlerDelegate() {
@@ -25,9 +22,6 @@ class DtsCompletionContributor : CompletionContributor() {
     }
   }
 
-  private val propertyOrError = TokenSet.create(TokenType.ERROR_ELEMENT, DtsTypes.PROPERTY)
-  private val subNodeOrError = TokenSet.create(TokenType.ERROR_ELEMENT, DtsTypes.SUB_NODE)
-
   init {
     val base = dtsBasePattern().and(dtsInsideContainer())
 
@@ -36,12 +30,12 @@ class DtsCompletionContributor : CompletionContributor() {
 
     val propertyName = base
       .withElementType(DtsTypes.NAME)
-      .withParent(psiElement().withElementType(propertyOrError))
+      .withParent(dtsProperty())
     extend(CompletionType.BASIC, propertyName, DtsPropertyNameProvider)
 
     val subNodeName = base
       .withElementType(DtsTypes.NAME)
-      .withParent(psiElement().withElementType(subNodeOrError))
+      .withParent(dtsSubNode())
     extend(CompletionType.BASIC, subNodeName, DtsNodeNameProvider)
 
     val insideString = dtsBasePattern()
