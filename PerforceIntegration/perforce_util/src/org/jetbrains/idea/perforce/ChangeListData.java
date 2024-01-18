@@ -31,7 +31,7 @@ public class ChangeListData {
 
   public int hashCode() {
     int result;
-    result = (int)(NUMBER ^ NUMBER >>> 32);
+    result = Long.hashCode(NUMBER);
     result = 31 * result + (DESCRIPTION != null ? DESCRIPTION.hashCode() : 0);
     result = 31 * result + (USER != null ? USER.hashCode() : 0);
     result = 31 * result + (CLIENT != null ? CLIENT.hashCode() : 0);

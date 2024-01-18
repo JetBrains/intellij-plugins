@@ -45,6 +45,6 @@ public class PerforceOnlyRevisionNumber implements VcsRevisionNumber {
 
   @Override
   public int hashCode() {
-    return (int)(myNumber ^ (myNumber >>> 32));
+    return java.lang.Long.hashCode(myNumber);
   }
 }

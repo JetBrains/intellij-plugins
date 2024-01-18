@@ -197,7 +197,7 @@ public class PerforceChangeList implements CommittedChangeList {
   public int hashCode() {
     int result;
     result = (myDate != null ? myDate.hashCode() : 0);
-    result = 31 * result + (int)(myNumber ^ (myNumber >>> 32));
+    result = 31 * result + Long.hashCode(myNumber);
     result = 31 * result + (myDescription != null ? myDescription.hashCode() : 0);
     result = 31 * result + (myUser != null ? myUser.hashCode() : 0);
     result = 31 * result + (myClient != null ? myClient.hashCode() : 0);

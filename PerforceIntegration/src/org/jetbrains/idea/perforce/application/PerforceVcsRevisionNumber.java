@@ -96,8 +96,8 @@ public class PerforceVcsRevisionNumber implements VcsRevisionNumber {
 
   public int hashCode() {
     int result;
-    result = (int)(myRevisionNumber ^ (myRevisionNumber >>> 32));
-    result = 29 * result + (int)(myChangeNumber ^ (myChangeNumber >>> 32));
+    result = java.lang.Long.hashCode(myRevisionNumber);
+    result = 29 * result + java.lang.Long.hashCode(myChangeNumber);
     if (myDepotPath != null) {
       result = 29 * result + myDepotPath.hashCode();
     }
