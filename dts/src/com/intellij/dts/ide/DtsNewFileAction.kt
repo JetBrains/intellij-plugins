@@ -1,6 +1,7 @@
 package com.intellij.dts.ide
 
 import com.intellij.dts.DtsBundle
+import com.intellij.dts.DtsIcons
 import com.intellij.ide.actions.CreateFileFromTemplateAction
 import com.intellij.ide.actions.CreateFileFromTemplateDialog
 import com.intellij.openapi.project.DumbAware
@@ -16,9 +17,9 @@ class DtsNewFileAction : CreateFileFromTemplateAction(), DumbAware {
 
   override fun buildDialog(project: Project, directory: PsiDirectory, builder: CreateFileFromTemplateDialog.Builder) {
     builder.setTitle(DtsBundle.message("action.dts_new_file.title"))
-      .addKind(DtsBundle.message("action.dts_new_file.kind.source"), null, SOURCE_FILE_TEMPLATE)
-      .addKind(DtsBundle.message("action.dts_new_file.kind.include"), null, INCLUDE_FILE_TEMPLATE)
-      .addKind(DtsBundle.message("action.dts_new_file.kind.overlay"), null, OVERLAY_FILE_TEMPLATE)
+      .addKind(DtsBundle.message("action.dts_new_file.kind.source"), DtsIcons.Dts, SOURCE_FILE_TEMPLATE)
+      .addKind(DtsBundle.message("action.dts_new_file.kind.include"), DtsIcons.Dts, INCLUDE_FILE_TEMPLATE)
+      .addKind(DtsBundle.message("action.dts_new_file.kind.overlay"), DtsIcons.Dts, OVERLAY_FILE_TEMPLATE)
   }
 
   override fun getActionName(directory: PsiDirectory?, newName: String, templateName: String?): String {
