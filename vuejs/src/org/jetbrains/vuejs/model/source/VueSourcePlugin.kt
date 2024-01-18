@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.model.source
 
 import com.intellij.javascript.nodejs.library.node_modules.NodeModulesDirectoryManager
+import com.intellij.javascript.nodejs.packages.NodePackageLinkResolver
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
@@ -66,8 +67,10 @@ class VueSourcePlugin(private val project: Project,
           dependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
         }
 
+        val indexedPsiDirectory: PsiDirectory = findIndexedDirectory(psiDirectory)
+
         components =
-          VueTypedEntitiesProvider.calculateDtsComponents(psiDirectory)
+          VueTypedEntitiesProvider.calculateDtsComponents(indexedPsiDirectory)
             .takeIf { it.isNotEmpty() }
             ?.let { Pair(VueModelVisitor.Proximity.OUT_OF_SCOPE, it) }
           ?: VueComponentsCalculation.calculateScopeComponents(scope, globalize).map.asSequence()
@@ -78,6 +81,11 @@ class VueSourcePlugin(private val project: Project,
       }
       CachedValueProvider.Result(components, *dependencies.toTypedArray())
     }
+
+  private fun findIndexedDirectory(psiDirectory: PsiDirectory): PsiDirectory {
+    val target = NodePackageLinkResolver.resolve(psiDirectory.virtualFile)
+    return psiDirectory.manager.findDirectory(target) ?: psiDirectory
+  }
 
   override fun equals(other: Any?): Boolean {
     return (other as? VueSourcePlugin)?.packageJsonFile == packageJsonFile
