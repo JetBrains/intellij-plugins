@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.psi;
 
+import com.intellij.openapi.components.Service;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.impl.AnyPsiChangeListener;
@@ -12,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.ConcurrentMap;
 
+@Service(Service.Level.PROJECT)
 public final class DartClassResolveCache {
   private final ConcurrentMap<DartClass, DartClassResolveResult> myMap = CollectionFactory.createConcurrentWeakMap();
 

@@ -4,6 +4,7 @@ package com.jetbrains.lang.dart.pubServer;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.components.Service;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -22,6 +23,7 @@ import org.jetbrains.builtInWebServer.ConsoleManager;
 import java.util.Collection;
 import java.util.Map;
 
+@Service(Service.Level.PROJECT)
 public final class PubServerManager implements Disposable {
   private static final Logger LOG = Logger.getInstance(PubServerManager.class);
 

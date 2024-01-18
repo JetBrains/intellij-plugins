@@ -199,9 +199,6 @@
     <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention14</className> <bundleName>messages.DartBundle</bundleName> <categoryKey>inspections.group.name</categoryKey> <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName></intentionAction>
 
     <projectService serviceImplementation="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"/>
-    <projectService serviceImplementation="com.jetbrains.lang.dart.psi.DartClassResolveCache"/>
-    <projectService serviceImplementation="com.jetbrains.lang.dart.pubServer.PubServerManager"/>
-    <projectService serviceImplementation="com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView"/>
 
     <toolWindow id="Dart Analysis" anchor="bottom" icon="DartIcons.Dart_13" doNotActivateOnStart="true" canCloseContents="false"
                 factoryClass="com.jetbrains.lang.dart.ide.errorTreeView.DartAnalysisToolWindowFactory"/>

@@ -3,6 +3,7 @@ package org.intellij.terraform.config.model
 
 import com.intellij.openapi.application.ex.ApplicationUtil
 import com.intellij.openapi.components.service
+import com.intellij.openapi.components.Service
 import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.psi.PsiElement
 import com.intellij.util.resettableLazy
@@ -10,6 +11,7 @@ import org.intellij.terraform.config.model.loader.TerraformMetadataLoader
 import org.intellij.terraform.config.model.local.LocalSchemaService
 import java.util.concurrent.Callable
 
+@Service
 class TypeModelProvider {
   private val _model_lazy = resettableLazy {
     // Run non-cancellable since it may take time, so it makes sense to finish loading even if caller was cancelled

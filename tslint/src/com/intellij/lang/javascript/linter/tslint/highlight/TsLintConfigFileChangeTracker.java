@@ -7,10 +7,12 @@ import com.intellij.lang.javascript.linter.JSLinterConfigFileUtil;
 import com.intellij.lang.javascript.linter.tslint.TslintUtil;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
+import com.intellij.openapi.components.Service;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
+@Service(Service.Level.PROJECT)
 public final class TsLintConfigFileChangeTracker extends JSLinterConfigChangeTracker {
 
   public TsLintConfigFileChangeTracker(@NotNull Project project) {

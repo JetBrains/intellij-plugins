@@ -32,8 +32,6 @@
                          order="last"/>
 
     <projectService serviceImplementation="com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration"/>
-    <projectService serviceImplementation="com.intellij.lang.javascript.linter.tslint.service.TslintLanguageServiceManager"/>
-    <projectService serviceImplementation="com.intellij.lang.javascript.linter.tslint.highlight.TsLintConfigFileChangeTracker"/>
     <JavaScript.linter.descriptor implementation="com.intellij.lang.javascript.linter.tslint.config.TsLintDescriptor"/>
 
     <localInspection language="TypeScript"

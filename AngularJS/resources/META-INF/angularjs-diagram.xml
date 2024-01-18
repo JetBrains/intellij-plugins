@@ -6,7 +6,6 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
-    <projectService serviceImplementation="org.angularjs.diagram.AngularUiRouterProviderContext"/>
     <diagram.Provider implementation="org.angularjs.diagram.AngularUiRouterDiagramProvider"/>
     <javascript.module.provider implementation="org.angularjs.diagram.AngularModulesProvider"/>
   </extensions>

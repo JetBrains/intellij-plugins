@@ -280,7 +280,6 @@
                             id="FlexTextReferenceCompletionProvider"
                             order="after JSCompletionContributor"/>
 
-    <projectService serviceImplementation="com.intellij.javascript.flex.mxml.schema.CodeContextHolder"/>
     <notificationGroup id="AIR Packaging" displayType="BALLOON" bundle="messages.FlexBundle" key="notification.group.air.packaging"/>
     <notificationGroup id="Flash app not compiled before launch" displayType="TOOL_WINDOW" toolWindowId="Run" bundle="messages.FlexBundle" key="check.flash.app.compiled.before.launch.notification.group" isLogByDefault="false"/>
     <notificationGroup id="Flash Compiler" displayType="BALLOON" bundle="messages.FlexBundle" key="notification.group.flash.compiler"/>

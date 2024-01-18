@@ -4,6 +4,7 @@ package com.intellij.javascript.karma.server;
 import com.intellij.javascript.karma.execution.KarmaServerSettings;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.Service;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,6 +14,7 @@ import org.jetbrains.concurrency.Promise;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+@Service(Service.Level.PROJECT)
 public final class KarmaServerRegistry implements Disposable {
 
   private final Project myProject;

@@ -5,10 +5,7 @@ import com.intellij.deno.roots.createDenoEntity
 import com.intellij.deno.roots.removeDenoEntity
 import com.intellij.deno.service.DenoLspSupportProvider
 import com.intellij.openapi.application.WriteAction
-import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.State
-import com.intellij.openapi.components.Storage
-import com.intellij.openapi.components.service
+import com.intellij.openapi.components.*
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.AdditionalLibraryRootsListener
@@ -31,6 +28,7 @@ class DenoState {
   """.trimIndent()
 }
 
+@Service(Service.Level.PROJECT)
 @State(name = "DenoSettings", storages = [Storage("deno.xml")])
 class DenoSettings(private val project: Project) : PersistentStateComponent<DenoState> {
   companion object {

@@ -26,6 +26,7 @@ package org.osmorc.settings;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.Service;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.CompilerProjectExtension;
@@ -47,6 +48,7 @@ import java.util.EventListener;
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  * @author Jan Thomä (janthomae@janthomae.de)
  */
+@Service(Service.Level.PROJECT)
 @State(name = "Osmorc")
 public final class ProjectSettings implements PersistentStateComponent<ProjectSettings> {
   private final EventDispatcher<ProjectSettingsListener> myDispatcher = EventDispatcher.create(ProjectSettingsListener.class);

@@ -8,10 +8,7 @@ import com.intellij.notification.*;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
+import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.NlsContexts;
@@ -45,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Service(Service.Level.PROJECT)
 @State(
   name = "DartProblemsView",
   storages = @Storage(StoragePathMacros.WORKSPACE_FILE)

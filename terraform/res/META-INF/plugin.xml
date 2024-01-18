@@ -194,7 +194,6 @@
     <lang.quoteHandler language="HCL-Terraform" implementationClass="org.intellij.terraform.hcl.formatter.HCLQuoteHandler"/>
     <!-- TODO: Better breadcrumbs provider-->
 
-    <applicationService serviceImplementation="org.intellij.terraform.config.model.TypeModelProvider"/>
     <applicationService serviceInterface="org.intellij.terraform.config.util.TFCommandLineService"
                         serviceImplementation="org.intellij.terraform.config.util.TFCommandLineServiceImpl"
                         testServiceImplementation="org.intellij.terraform.config.util.TFCommandLineServiceMock"/>

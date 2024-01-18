@@ -74,8 +74,6 @@
     <applicationService serviceImplementation="org.osmorc.frameworkintegration.FrameworkIntegratorRegistry"/>
     <applicationService serviceImplementation="org.jetbrains.osgi.project.BundleManifestCache"/>
 
-    <projectService serviceImplementation="org.osmorc.settings.ProjectSettings"/>
-
     <moduleService serviceImplementation="org.osmorc.impl.AdditionalJARContentsWatcherManager"/>
 
     <manifest.parser.provider implementation="org.osmorc.manifest.lang.header.OsgiManifestHeaderParsers"/>

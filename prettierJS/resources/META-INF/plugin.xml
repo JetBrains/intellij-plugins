@@ -34,7 +34,6 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
   <extensions defaultExtensionNs="com.intellij">
     <dependencySupport kind="javascript" coordinate="npm:prettier" displayName="Prettier"/>
     <projectService serviceImplementation="com.intellij.prettierjs.PrettierLanguageServiceManager"/>
-    <projectService serviceImplementation="com.intellij.prettierjs.PrettierConfiguration"/>
     <projectConfigurable
       parentId="Settings.JavaScript"
       id="settings.javascript.prettier"

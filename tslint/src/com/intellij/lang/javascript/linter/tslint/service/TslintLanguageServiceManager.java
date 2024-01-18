@@ -4,10 +4,12 @@ package com.intellij.lang.javascript.linter.tslint.service;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.linter.MultiRootJSLinterLanguageServiceManager;
 import com.intellij.lang.javascript.linter.tslint.TslintUtil;
+import com.intellij.openapi.components.Service;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
+@Service(Service.Level.PROJECT)
 public final class TslintLanguageServiceManager extends MultiRootJSLinterLanguageServiceManager<TsLintLanguageService> {
   public TslintLanguageServiceManager(@NotNull Project project) {
     super(project, TslintUtil.PACKAGE_NAME);

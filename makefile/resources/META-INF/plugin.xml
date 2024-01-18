@@ -45,7 +45,6 @@ Plugin source code was previously located at <a href="https://github.com/kropp/i
     <colorSettingsPage implementation="com.jetbrains.lang.makefile.MakefileColorSettingsPage"/>
     <completion.contributor language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileCompletionContributor"/>
     <configurationType implementation="com.jetbrains.lang.makefile.MakefileRunConfigurationType"/>
-    <projectService serviceImplementation="com.jetbrains.lang.makefile.MakefileProjectSettings"/>
     <projectConfigurable groupId="build.tools" groupWeight="110" id="reference.settingsdialog.project.make"
                          instance="com.jetbrains.lang.makefile.MakeConfigurable"
                          key="configurable.name" bundle="messages.MakefileLangBundle"/>
