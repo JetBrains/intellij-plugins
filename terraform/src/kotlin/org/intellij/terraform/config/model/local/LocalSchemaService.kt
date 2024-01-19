@@ -2,8 +2,10 @@
 package org.intellij.terraform.config.model.local
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
+import com.intellij.execution.ExecutionException
 import com.intellij.execution.process.CapturingProcessAdapter
 import com.intellij.openapi.application.readAction
+import com.intellij.openapi.application.readAndWriteAction
 import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.diagnostic.logger
@@ -27,6 +29,7 @@ import com.intellij.util.containers.ContainerUtil
 import kotlinx.coroutines.*
 import org.intellij.terraform.ExecuteLatest
 import org.intellij.terraform.config.model.TypeModel
+import org.intellij.terraform.config.model.getVFSParents
 import org.intellij.terraform.config.model.loader.TerraformMetadataLoader
 import org.intellij.terraform.config.util.TFExecutor
 import org.intellij.terraform.config.util.executeSuspendable
@@ -48,10 +51,11 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
 
   @OptIn(ExperimentalCoroutinesApi::class)
   @RequiresBlockingContext
-  fun getModel(lock: VirtualFile): TypeModel? {
+  fun getModel(virtualFile: VirtualFile): TypeModel? {
+    val lock = findLockFile(virtualFile) ?: return null
     val myDeferred = modelComputationCache[lock]
 
-    if (myDeferred == null || myDeferred.isCancelled) {
+    if (myDeferred == null || myDeferred.isCompleted && myDeferred.getCompletionExceptionOrNull() is CancellationException) {
       scheduleModelRebuild(setOf(lock))
       return null
     }
@@ -65,6 +69,33 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     }
     catch (e: Exception) {
       null
+    }
+  }
+
+  suspend fun clearLocalModel(virtualFile: VirtualFile) {
+    val lock = findLockFile(virtualFile) ?: return
+    modelComputationCache.remove(lock)?.cancel()
+
+    readAndWriteAction {
+      val relatedEntities = WorkspaceModel.getInstance(project).currentSnapshot.entities<TFLocalMetaEntity>().filter {
+        it.lockFile.virtualFile == lock
+      }.toList()
+      if (relatedEntities.isEmpty()) return@readAndWriteAction value(Unit)
+
+      writeAction {
+        WorkspaceModel.getInstance(project).updateProjectModel("remove related entities") { mutableEntityStorage ->
+          for (relatedEntity in relatedEntities) {
+            mutableEntityStorage.removeEntity(relatedEntity)
+          }
+        }
+      }
+    }
+  }
+
+  fun findLockFile(file: VirtualFile): VirtualFile? {
+    if (file.name == ".terraform.lock.hcl") return file
+    return getVFSParents(file, project).filter { it.isDirectory }.firstNotNullOfOrNull {
+      it.findChild(".terraform.lock.hcl")
     }
   }
 
@@ -84,15 +115,20 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     }
   }
 
-  fun scheduleModelRebuild(locks: Set<VirtualFile>) {
-    for (lock in locks) {
+  fun scheduleModelRebuild(locks: Set<VirtualFile>): Deferred<*> {
+    val scheduled = mutableListOf<Deferred<*>>()
+    for (lock in locks.mapNotNull { findLockFile(it) }) {
       modelComputationCache[lock]?.cancel()
       buildModel(lock).also {
         modelComputationCache[lock] = it
+        scheduled.add(it)
       }
     }
     if (locks.isNotEmpty()) {
       daemonRestarter.restart()
+    }
+    return scope.async {
+      scheduled.awaitAll()
     }
   }
 
@@ -102,27 +138,19 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
 
   private fun buildModel(lock: VirtualFile): Deferred<TypeModel?> {
     return modelBuildScope.async {
-      try {
-        withBackgroundProgress(project, HCLBundle.message("rebuilding.local.schema"), false) {
-          logger<LocalSchemaService>().info("building local model: $lock")
-          val json = indeterminateStep(HCLBundle.message("progress.text.retrieving.json.schema")) {
-            retrieveJsonForTFLock(lock)
-          } ?: return@withBackgroundProgress null
-          indeterminateStep(HCLBundle.message("progress.text.building.local.schema")) {
-            buildModelFromJson(json)
-          }
+      withBackgroundProgress(project, HCLBundle.message("rebuilding.local.schema"), false) {
+        logger<LocalSchemaService>().info("building local model: $lock")
+        val json = indeterminateStep(HCLBundle.message("progress.text.retrieving.json.schema")) {
+          retrieveJsonForTFLock(lock)
+        }
+        indeterminateStep(HCLBundle.message("progress.text.building.local.schema")) {
+          buildModelFromJson(json)
         }
       }
-      catch (e: Throwable) {
-        if (e is CancellationException) throw e
-        logger<LocalSchemaService>().error("Cannot build model: $lock", e)
-        throw e
-      }
     }
-
   }
 
-  private suspend fun retrieveJsonForTFLock(lock: VirtualFile): String? {
+  private suspend fun retrieveJsonForTFLock(lock: VirtualFile): String {
     val lockData = readAction {
       WorkspaceModel.getInstance(project).currentSnapshot.entities<TFLocalMetaEntity>().firstOrNull {
         it.lockFile.virtualFile == lock
@@ -135,9 +163,7 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
 
     if (lockData != null && lockData.timeStamp >= lock.timeStamp) {
       try {
-        return withContext(Dispatchers.IO) {
-          localModelPath.resolve(lockData.jsonPath).readText()
-        }
+        return readLockDataJsonFile(lockData)
       }
       catch (e: Exception) {
         if (e is CancellationException) throw e
@@ -145,19 +171,39 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
       }
     }
 
-    val jsonFilePath = generateNewJsonFile(lock) ?: lockData?.jsonPath
-    if (jsonFilePath != null) {
-      writeAction {
-        updateWorkspaceModel(lock, lockData, jsonFilePath)
-      }
+    val generateResult = runCatching { generateNewJsonFile(lock) }
+    if (generateResult.isFailure) {
+      logger<LocalSchemaService>().info(
+        "failed to generate new model for lock: ${lock.name}",
+        generateResult.exceptionOrNull()
+      )
     }
 
-    if (jsonFilePath == null) {
-      logger<LocalSchemaService>().info("empty local model: ${lock.name}, switching to global")
-      return null
+    val jsonFilePath: String = generateResult.getOrNull() ?: lockData?.let { ld ->
+      runCatching {
+        readLockDataJsonFile(ld)
+        logger<LocalSchemaService>().info("using previous logData for: ${lock.name}")
+        ld.jsonPath
+      }.getOrElse { lockDataException ->
+        logger<LocalSchemaService>().info("failed to load previous lock data: ${lock.name}", lockDataException)
+        generateResult.exceptionOrNull()?.let { generateException ->
+          generateException.addSuppressed(lockDataException)
+          throw generateException
+        } ?: throw lockDataException
+      }
+    } ?: generateResult.getOrThrow()
+
+    writeAction {
+      updateWorkspaceModel(lock, lockData, jsonFilePath)
     }
     return withContext(Dispatchers.IO) {
       localModelPath.resolve(jsonFilePath).readText()
+    }
+  }
+
+  private suspend fun readLockDataJsonFile(lockData: TFLocalMetaEntity): String {
+    return withContext(Dispatchers.IO) {
+      localModelPath.resolve(lockData.jsonPath).readText()
     }
   }
 
@@ -168,8 +214,8 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
       return localModelsPath
     }
 
-  private suspend fun generateNewJsonFile(lock: VirtualFile): @NlsSafe String? {
-    val jsonFromProcess = buildJsonFromTerraformProcess(project, lock) ?: return null
+  private suspend fun generateNewJsonFile(lock: VirtualFile): @NlsSafe String {
+    val jsonFromProcess = buildJsonFromTerraformProcess(project, lock)
     return withContext(Dispatchers.IO) {
       val uuid = UUID.randomUUID().toString()
       val jsonFile = localModelPath.resolve("$uuid.json")
@@ -231,7 +277,7 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     return loader.loadDefaults()!!
   }
 
-  private suspend fun buildJsonFromTerraformProcess(project: Project, lock: VirtualFile): @NlsSafe String? {
+  private suspend fun buildJsonFromTerraformProcess(project: Project, lock: VirtualFile): @NlsSafe String {
     logger<LocalSchemaService>().info("building local model buildJsonFromTerraformProcess: $lock")
     val capturingProcessAdapter = CapturingProcessAdapter()
 
@@ -246,13 +292,15 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
 
     logger<LocalSchemaService>().info(
       "building local model buildJsonFromTerraformProcess result: ${coroutineContext.isActive}, $success  $lock")
+    coroutineContext.ensureActive()
 
-    if (!success) {
+    val stdout = capturingProcessAdapter.output.stdout
+    if (!success || stdout.isEmpty()) {
       logger<LocalSchemaService>().warn("failed tp build model for $lock")
-      return null
+      throw ExecutionException(HCLBundle.message("dialog.message.failed.to.get.output.terraform.providers.command.for", lock))
     }
 
-    return capturingProcessAdapter.output.stdout.takeIf { it.isNotEmpty() }
+    return stdout
   }
 
 }

@@ -4,6 +4,7 @@ import com.intellij.openapi.application.readAction
 import com.intellij.openapi.components.service
 import com.intellij.platform.backend.workspace.WorkspaceModel
 import com.intellij.platform.backend.workspace.virtualFile
+import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.waitUntil
@@ -145,9 +146,9 @@ class TerraformLocalMetadataTest : BasePlatformTestCase() {
   fun testLocalMetadataLoaded() {
     loadAndCheckDoMetadata("dummyProp")
     timeoutRunBlocking {
-        waitUntil("one metadata file remains") {
-          1L == Files.list(localSchemaService.localModelPath).use { it.count() }
-        }
+      waitUntil("one metadata file remains") {
+        1L == Files.list(localSchemaService.localModelPath).use { it.count() }
+      }
     }
   }
 
@@ -175,6 +176,7 @@ class TerraformLocalMetadataTest : BasePlatformTestCase() {
     }
 
   }
+
   fun testPickUpOldMetaOnError() {
     loadAndCheckDoMetadata("dummyProp")
     TFCommandLineServiceMock.instance.mockCommandLine(
@@ -189,6 +191,30 @@ class TerraformLocalMetadataTest : BasePlatformTestCase() {
       localSchemaService.awaitModelsReady()
     }
     myFixture.testHighlighting("main.tf")
+  }
+
+  fun testNotPumpOnError() {
+    TFCommandLineServiceMock.instance.mockCommandLine(
+      "terraform providers schema -json", "", 1,
+      testRootDisposable)
+
+    myFixture.configureByText(".terraform.lock.hcl", MY_DO_LOCK)
+    timeoutRunBlocking {
+      waitUntil {
+        localSchemaService.awaitModelsReady()
+        TFCommandLineServiceMock.instance.requestsToVerify().isNotEmpty()
+      }
+    }
+    myFixture.enableInspections(HCLBlockMissingPropertyInspection::class.java)
+    myFixture.configureByText("main.tf", genInspectedMain("dummyProp"))
+    for (i in 0..5) {
+      timeoutRunBlocking {
+        localSchemaService.awaitModelsReady()
+      }
+      myFixture.doHighlighting()
+    }
+
+    assertEquals("", TFCommandLineServiceMock.instance.requestsToVerify().joinToString("\n"))
   }
 
 }

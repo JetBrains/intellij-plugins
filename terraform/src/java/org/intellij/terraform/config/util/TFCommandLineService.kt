@@ -5,6 +5,7 @@ import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.service
 import com.intellij.openapi.util.Disposer
+import com.intellij.util.containers.ConcurrentList
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.headTailOrNull
 import org.jetbrains.annotations.TestOnly
@@ -45,10 +46,15 @@ class TFCommandLineServiceMock : TFCommandLineService {
 
       override fun destroy() {}
     })
-    Disposer.register(disposable) { mocks.remove(commandLine) }
+    Disposer.register(disposable) {
+      mocks.remove(commandLine)
+      requests.clear()
+    }
   }
 
   private val errors = ContainerUtil.createConcurrentList<Throwable>()
+
+  private val requests = ContainerUtil.createConcurrentList<String>()
 
   private fun normalizedCmd(commandLine: GeneralCommandLine): String {
     val commandLineString = commandLine.commandLineString
@@ -60,6 +66,7 @@ class TFCommandLineServiceMock : TFCommandLineService {
   override fun wrapCommandLine(commandLine: GeneralCommandLine): GeneralCommandLine = object : GeneralCommandLine() {
     override fun createProcess(): Process {
       val commandLineString = normalizedCmd(commandLine)
+      requests.add(commandLineString)
       return mocks[commandLineString] ?: throw AssertionError("Missing mock for $commandLineString").also { errors.add(it) }
     }
   }
@@ -71,6 +78,12 @@ class TFCommandLineServiceMock : TFCommandLineService {
       head.addSuppressed(throwable)
     }
     throw head
+  }
+
+  fun requestsToVerify(): List<String> {
+    val result = requests.toList()
+    requests.clear()
+    return result
   }
 
   companion object {

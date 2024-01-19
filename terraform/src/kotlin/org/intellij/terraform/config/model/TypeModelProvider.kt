@@ -39,10 +39,8 @@ class TypeModelProvider {
 
     fun getModel(psiElement: PsiElement): TypeModel {
       val containingFile = psiElement.containingFile ?: return globalModel
-      val lockFile = getVFSParents(containingFile).filter { it.isDirectory }.firstNotNullOfOrNull {
-        it.findChild(".terraform.lock.hcl")
-      } ?: return globalModel
-      return containingFile.project.service<LocalSchemaService>().getModel(lockFile) ?: globalModel
+      val virtualFile = containingFile.virtualFile ?: return globalModel
+      return containingFile.project.service<LocalSchemaService>().getModel(virtualFile) ?: globalModel
     }
 
   }

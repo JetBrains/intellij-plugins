@@ -68,7 +68,7 @@ public abstract class TFExternalToolsAction extends DumbAwareAction {
     e.getPresentation().setEnabled(true);
   }
 
-  protected boolean isAvailableOnFile(@NotNull final VirtualFile file, boolean checkDirChildren) {
+  static boolean isAvailableOnFile(@NotNull final VirtualFile file, boolean checkDirChildren) {
     if (!file.isInLocalFileSystem()) return false;
     if (file.isDirectory()) {
       if (!checkDirChildren) return false;

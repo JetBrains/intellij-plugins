@@ -347,9 +347,12 @@
       <action id="TFFmtFileAction" class="org.intellij.terraform.config.actions.TFFmtFileAction">
         <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt F"/>
       </action>
+      <action id="org.intellij.terraform.config.actions.TFGenerateLocalMetadataAction"
+              class="org.intellij.terraform.config.actions.TFGenerateLocalMetadataAction"/>
       <add-to-group group-id="CodeMenu" anchor="last"/>
       <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
       <add-to-group group-id="EditorLangPopupMenu" anchor="last"/>
     </group>
+
   </actions>
 </idea-plugin>
