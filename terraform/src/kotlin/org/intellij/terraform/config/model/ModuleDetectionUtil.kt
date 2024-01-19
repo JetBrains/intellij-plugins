@@ -257,7 +257,7 @@ object ModuleDetectionUtil {
       LOG.warn(err)
     }
     val relativeModule = findRelativeModule(directory, moduleBlock, source)
-    return CachedValueProvider.Result(relativeModule to err, moduleBlock, directory, *getVFSChainOrVFS(directory, project),
+    return CachedValueProvider.Result(relativeModule to err, moduleBlock, directory, *getVFSChainOrVFS(directory),
                                       *getModuleFiles(relativeModule))
   }
 
@@ -329,27 +329,8 @@ object ModuleDetectionUtil {
     }
   }
 
-  private fun getVFSChainOrVFS(directory: PsiDirectory, project: Project): Array<out ModificationTracker> {
-    return getVFSChain(directory, project) ?: arrayOf(VirtualFileManager.getInstance())
-  }
-
-  private fun getVFSChain(file: PsiFileSystemItem, project: Project): Array<out VirtualFile>? {
-    val roots = getRoots(project).toSet()
-    val start = file.virtualFile
-    if (!roots.any { VfsUtilCore.isAncestor(it, start, false) }) {
-      LOG.warn("'$file' is not under project root nor any module content roots")
-      return null
-    }
-    val chain = ArrayList<VirtualFile>()
-
-    var parent: VirtualFile? = start
-    while (true) {
-      if (parent == null) return null
-      chain.add(parent)
-      if (roots.contains(parent)) break
-      parent = parent.parent
-    }
-    return chain.toTypedArray()
+  private fun getVFSChainOrVFS(directory: PsiDirectory): Array<out ModificationTracker> {
+    return getVFSParents(directory).ifEmpty { sequenceOf(VirtualFileManager.getInstance()) }.toList().toTypedArray()
   }
 
 
@@ -475,27 +456,31 @@ object ModuleDetectionUtil {
   }
 
   private fun getTerraformDirSomewhere(file: PsiDirectory): VirtualFile? {
-    val roots = getRoots(file.project).toSet()
-    val start = file.virtualFile
-    if (!roots.any { VfsUtilCore.isAncestor(it, start, false) }) {
-      LOG.warn("File $file is not under project root nor any module content roots")
-      return null
+    return getVFSParents(file).filter { it.isDirectory }.firstNotNullOfOrNull { parent ->
+      parent.findChild(".terraform")?.takeIf { it.isDirectory }
     }
-    var parent: VirtualFile? = start
-    while (true) {
-      if (parent == null) return null
-
-      val child = parent.findChild(".terraform")
-      if (child != null && child.isDirectory) {
-        return child
-      }
-      parent = parent.parent
-      if (roots.contains(parent)) break
-    }
-    return null
   }
 
   private fun getRoots(project: Project): Array<out VirtualFile> {
     return ProjectRootManager.getInstance(project).contentRootsFromAllModules
   }
 }
+
+fun getVFSParents(file: PsiFileSystemItem): Sequence<VirtualFile> {
+  return getVFSParents(file.virtualFile ?: return emptySequence(), file.project)
+}
+
+fun getVFSParents(start: VirtualFile, project: Project): Sequence<VirtualFile> {
+  val roots = ProjectRootManager.getInstance(project).contentRootsFromAllModules.toSet()
+
+  return sequence {
+    var parent: VirtualFile? = start
+    while (parent != null) {
+      yield(parent)
+      if (roots.contains(parent)) return@sequence
+      parent = parent.parent
+    }
+    Logger.getInstance(ModuleDetectionUtil::class.java).warn("'$start' is not under project root nor any module content roots")
+  }
+}
+

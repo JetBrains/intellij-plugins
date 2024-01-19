@@ -261,7 +261,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
 
   abstract class OurCompletionProvider : CompletionProvider<CompletionParameters>() {
     protected fun getTypeModel(project: Project): TypeModel {
-      return TypeModelProvider.getGlobalModel()
+      return TypeModelProvider.globalModel
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -665,7 +665,7 @@ object ModelHelper {
     if (TerraformPatterns.Backend.accepts(block)) {
       val fallback = TypeModel.AbstractBackend
       val name = block.getNameElementUnquoted(1) ?: return fallback
-      return TypeModelProvider.getGlobalModel().getBackendType(name) ?: return fallback
+      return TypeModelProvider.getModel(block).getBackendType(name) ?: return fallback
     }
     if (TerraformPatterns.DynamicBlockContent.accepts(block)) {
       val fallback = TypeModel.AbstractResourceDynamicContent
@@ -682,7 +682,7 @@ object ModelHelper {
     if (TerraformPatterns.ProvisionerBlock.accepts(block)) {
       val fallback = TypeModel.AbstractResourceProvisioner
       val name = block.getNameElementUnquoted(1) ?: return fallback
-      return TypeModelProvider.getGlobalModel().getProvisionerType(name)
+      return TypeModelProvider.getModel(block).getProvisionerType(name)
     }
     if (TerraformPatterns.ResourceLifecycleBlock.accepts(block)) {
       return TypeModel.ResourceLifecycle
@@ -698,17 +698,17 @@ object ModelHelper {
     if (type == "provider") {
       val fallback = TypeModel.AbstractProvider
       val name = block.getNameElementUnquoted(1) ?: return fallback
-      return TypeModelProvider.getGlobalModel().getProviderType(name)
+      return TypeModelProvider.getModel(block).getProviderType(name)
     }
     if (type == "resource") {
       val fallback = TypeModel.AbstractResource
       val name = block.getNameElementUnquoted(1) ?: return wrapIfCountForEach(fallback, block)
-      return wrapIfCountForEach(TypeModelProvider.getGlobalModel().getResourceType(name) ?: fallback, block)
+      return wrapIfCountForEach(TypeModelProvider.getModel(block).getResourceType(name) ?: fallback, block)
     }
     if (type == "data") {
       val fallback = TypeModel.AbstractDataSource
       val name = block.getNameElementUnquoted(1) ?: return wrapIfCountForEach(fallback, block)
-      return wrapIfCountForEach(TypeModelProvider.getGlobalModel().getDataSourceType(name) ?: fallback, block)
+      return wrapIfCountForEach(TypeModelProvider.getModel(block).getDataSourceType(name) ?: fallback, block)
     }
     if (type == "module") {
       val fallback = TypeModel.Module
@@ -767,19 +767,19 @@ object ModelHelper {
 
   private fun getProviderProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
     val type = block.getNameElementUnquoted(1)
-    val providerType = if (type != null) TypeModelProvider.getGlobalModel().getProviderType(type) else null
+    val providerType = if (type != null) TypeModelProvider.getModel(block).getProviderType(type) else null
     return getPropertiesWithDefaults(TypeModel.AbstractProvider, providerType)
   }
 
   private fun getProvisionerProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
     val type = block.getNameElementUnquoted(1)
-    val provisionerType = if (type != null) TypeModelProvider.getGlobalModel().getProvisionerType(type) else null
+    val provisionerType = if (type != null) TypeModelProvider.getModel(block).getProvisionerType(type) else null
     return getPropertiesWithDefaults(TypeModel.AbstractResourceProvisioner, provisionerType)
   }
 
   private fun getBackendProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
     val type = block.getNameElementUnquoted(1)
-    val backendType = if (type != null) TypeModelProvider.getGlobalModel().getBackendType(type) else null
+    val backendType = if (type != null) TypeModelProvider.getModel(block).getBackendType(type) else null
     return getPropertiesWithDefaults(TypeModel.AbstractBackend, backendType)
   }
 
@@ -809,13 +809,13 @@ object ModelHelper {
 
   fun getResourceProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
     val type = block.getNameElementUnquoted(1)
-    val resourceType = if (type != null) TypeModelProvider.getGlobalModel().getResourceType(type) else null
+    val resourceType = if (type != null) TypeModelProvider.getModel(block).getResourceType(type) else null
     return getPropertiesWithDefaults(TypeModel.AbstractResource, resourceType)
   }
 
   private fun getDataSourceProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
     val type = block.getNameElementUnquoted(1)
-    val dataSourceType = if (type != null) TypeModelProvider.getGlobalModel().getDataSourceType(type) else null
+    val dataSourceType = if (type != null) TypeModelProvider.getModel(block).getDataSourceType(type) else null
     return getPropertiesWithDefaults(TypeModel.AbstractDataSource, dataSourceType)
   }
 

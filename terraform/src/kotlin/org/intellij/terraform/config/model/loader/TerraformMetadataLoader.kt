@@ -33,7 +33,7 @@ class TerraformMetadataLoader {
     FunctionsLoaderV1()
   )
 
-  fun load(): TypeModel? {
+  fun loadDefaults(): TypeModel? {
     try {
       model.external.putAll(loadExternalInformation())
       loadExternal()
@@ -114,26 +114,26 @@ class TerraformMetadataLoader {
     }
   }
 
-  private fun loadOne(file: String, stream: InputStream) {
+  fun loadOne(sourceName: String, stream: InputStream) {
     val json: ObjectNode?
     try {
       json = stream.use {
         ObjectMapper().readTree(it) as ObjectNode?
       }
       if (json == null) {
-        logErrorAndFailInInternalMode("In file '$file' no JSON found")
+        logErrorAndFailInInternalMode("In file '$sourceName' no JSON found")
         return
       }
     }
     catch (e: Exception) {
-      logErrorAndFailInInternalMode("Failed to load json data from file '$file'", e)
+      logErrorAndFailInInternalMode("Failed to load json data from file '$sourceName'", e)
       return
     }
     try {
-      parseFile(json, file)
+      parseFile(json, sourceName)
     }
     catch (e: Throwable) {
-      logErrorAndFailInInternalMode("Failed to parse file '$file'", e)
+      logErrorAndFailInInternalMode("Failed to parse file '$sourceName'", e)
     }
     return
   }

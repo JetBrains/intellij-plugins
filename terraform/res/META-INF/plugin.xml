@@ -195,6 +195,12 @@
     <!-- TODO: Better breadcrumbs provider-->
 
     <applicationService serviceImplementation="org.intellij.terraform.config.model.TypeModelProvider"/>
+    <applicationService serviceInterface="org.intellij.terraform.config.util.TFCommandLineService"
+                        serviceImplementation="org.intellij.terraform.config.util.TFCommandLineServiceImpl"
+                        testServiceImplementation="org.intellij.terraform.config.util.TFCommandLineServiceMock"/>
+
+    <vfs.asyncListener implementation="org.intellij.terraform.config.model.local.LocalSchemaVfsListener"/>
+    <projectFileScanner implementation="org.intellij.terraform.config.model.local.LocalSchemaIndexableFileScanner"/>
 
     <!-- Code Inspections -->
     <!-- HCL used instead HCL-Terraform, to apply to all psi elements. .hcl files filtered out in #buildVisito method -->

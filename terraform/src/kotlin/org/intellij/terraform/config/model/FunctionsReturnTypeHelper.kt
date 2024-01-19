@@ -87,7 +87,7 @@ object FunctionsReturnTypeHelper {
           }
         }
       }
-      val function = TypeModelProvider.getGlobalModel().getFunction(method)
+      val function = TypeModelProvider.getModel(e).getFunction(method)
       function?.ret
     } else {
       null

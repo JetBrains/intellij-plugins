@@ -1,10 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.util;
 
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.ExecutionHelper;
-import com.intellij.execution.ExecutionModes;
-import com.intellij.execution.RunContentExecutor;
+import com.intellij.execution.*;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.ParametersList;
 import com.intellij.execution.configurations.PtyCommandLine;
@@ -133,13 +130,18 @@ public final class TFExecutor {
   }
 
   public boolean execute() {
+    return execute(new ExecutionModes.SameThreadMode(getPresentableName()));
+  }
+
+  public boolean execute(ExecutionMode executionMode) {
     ApplicationManager.getApplication().assertIsNonDispatchThread();
     Logger.getInstance(getClass()).assertTrue(myProcessHandler == null, "Process has already run with this executor instance");
     final Ref<Boolean> result = Ref.create(false);
     GeneralCommandLine commandLine = null;
     try {
       commandLine = createCommandLine();
-      GeneralCommandLine finalCommandLine = commandLine;
+      GeneralCommandLine finalCommandLine = ApplicationManager.getApplication()
+        .getService(TFCommandLineService.class).wrapCommandLine(commandLine);
       myProcessHandler = new KillableColoredProcessHandler(finalCommandLine);
       final HistoryProcessListener historyProcessListener = new HistoryProcessListener();
       myProcessHandler.addProcessListener(historyProcessListener);
@@ -171,8 +173,7 @@ public final class TFExecutor {
 
       myProcessHandler.addProcessListener(processAdapter);
       myProcessHandler.startNotify();
-      ExecutionModes.SameThreadMode sameThreadMode = new ExecutionModes.SameThreadMode(getPresentableName());
-      ExecutionHelper.executeExternalProcess(myProject, myProcessHandler, sameThreadMode, commandLine);
+      ExecutionHelper.executeExternalProcess(myProject, myProcessHandler, executionMode, commandLine);
 
       LOGGER.debug("Finished `" + getPresentableName() + "` with result: " + result.get());
       return result.get();
