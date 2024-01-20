@@ -199,7 +199,7 @@
 
     <registryKey key="terraform.registry.metadata.parallelism" defaultValue="4"
                  description="Specifies number of max parallel building metadata"
-                 restartRequired="true"/>
+                 restartRequired="false"/>
 
     <statementUpDownMover implementation="org.intellij.terraform.config.HCLStatementMover" id="HCL_SM" order="before line"/>
 

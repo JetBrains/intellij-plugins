@@ -25,6 +25,8 @@ import com.intellij.platform.backend.workspace.toVirtualFileUrl
 import com.intellij.platform.backend.workspace.virtualFile
 import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.intellij.platform.util.coroutines.childScope
+import com.intellij.platform.util.coroutines.compute.BatchAsyncProcessor
+import com.intellij.platform.util.coroutines.compute.completeByMapping
 import com.intellij.platform.workspace.storage.entities
 import com.intellij.platform.workspace.storage.url.VirtualFileUrl
 import com.intellij.psi.PsiFile
@@ -33,8 +35,6 @@ import com.intellij.util.SuspendingLazy
 import com.intellij.util.concurrency.annotations.RequiresBlockingContext
 import com.intellij.util.suspendingLazy
 import kotlinx.coroutines.*
-import kotlinx.coroutines.sync.Semaphore
-import kotlinx.coroutines.sync.withPermit
 import org.intellij.terraform.LatestInvocationRunner
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.model.TypeModel
@@ -170,21 +170,21 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     modelBuildScope.coroutineContext.job.children.filter { it.isActive }.forEach { it.join() }
   }
 
-  private val processesSemaphore = Semaphore(
-    RegistryManager.getInstance().intValue("terraform.registry.metadata.parallelism", 4)
-  )
+  private val batchModelBuilder = BatchAsyncProcessor<Pair<VirtualFile, Boolean>, TypeModel>(scope) { batch ->
+    withBackgroundProgress(project, HCLBundle.message("rebuilding.local.schema"), true) {
+      val parallelism = RegistryManager.getInstance().intValue("terraform.registry.metadata.parallelism", 4)
+      batch.completeByMapping(parallelism) { (lock, explicitlyAllowRunningProcess) ->
+        logger<LocalSchemaService>().info("building local model: $lock")
+        val json = retrieveJsonForTFLock(lock, explicitlyAllowRunningProcess)
+        buildModelFromJson(json)
+      }
+    }
+  }
 
   private fun buildModel(lock: VirtualFile, explicitlyAllowRunningProcess: Boolean): Deferred<TypeModel> {
     val startMode = if (buildLocalMetadataEagerly || explicitlyAllowRunningProcess) CoroutineStart.DEFAULT else CoroutineStart.LAZY
     return modelBuildScope.async(start = startMode) {
-      // a case for the BatchAsyncProcessor (IJPL-149050)
-      processesSemaphore.withPermit {
-        withBackgroundProgress(project, HCLBundle.message("rebuilding.local.schema"), false) {
-          logger<LocalSchemaService>().info("building local model: $lock")
-          val json = retrieveJsonForTFLock(lock, explicitlyAllowRunningProcess)
-          buildModelFromJson(json)
-        }
-      }
+      batchModelBuilder.submit(coroutineContext, lock to explicitlyAllowRunningProcess).await()
     }
   }
 
