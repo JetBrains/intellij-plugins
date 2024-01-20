@@ -72,7 +72,7 @@ public abstract class JavaTestFrameworkIntegrationTest extends HeavyPlatformTest
     try {
       BuildersKt.runBlocking(
         EmptyCoroutineContext.INSTANCE,
-        (scope, continuation) -> mavenProjectsManager.updateAllMavenProjects(MavenImportSpec.EXPLICIT_IMPORT, continuation)
+        (scope, continuation) -> mavenProjectsManager.updateAllMavenProjects(MavenImportSpec.IMPLICIT_IMPORT, continuation)
       );
     }
     catch (InterruptedException e) {
