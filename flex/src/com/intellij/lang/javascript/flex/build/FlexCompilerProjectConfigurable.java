@@ -99,9 +99,4 @@ public class FlexCompilerProjectConfigurable implements SearchableConfigurable, 
     myHeapSizeTextField.setText(String.valueOf(myConfig.HEAP_SIZE_MB));
     myVMOptionsEditor.setText(myConfig.VM_OPTIONS);
   }
-
-  @Override
-  public void disposeUIResources() {
-    SearchableConfigurable.super.disposeUIResources();
-  }
 }

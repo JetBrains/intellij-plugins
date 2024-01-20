@@ -62,10 +62,6 @@ public class ILIntroduceDialog extends DialogWrapper {
 
     myNameComboBox.addItemListener(e -> updateControls());
     ((EditorTextField)myNameComboBox.getEditor().getEditorComponent()).addDocumentListener(new DocumentListener() {
-      @Override
-      public void beforeDocumentChange(@NotNull DocumentEvent event) {
-        DocumentListener.super.beforeDocumentChange(event);
-      }
 
       @Override
       public void documentChanged(@NotNull DocumentEvent event) {

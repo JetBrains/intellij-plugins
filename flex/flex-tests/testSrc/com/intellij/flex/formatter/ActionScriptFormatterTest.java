@@ -22,11 +22,6 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
     return FlexTestUtils.getTestDataPath("");
   }
 
-  @Override
-  protected String getBasePath() {
-    return BASE_PATH;
-  }
-
   private CommonCodeStyleSettings getCommonJSSettings() {
     return CodeStyle.getSettings(getProject()).getCommonSettings(JavaScriptSupportLoader.ECMA_SCRIPT_L4);
   }

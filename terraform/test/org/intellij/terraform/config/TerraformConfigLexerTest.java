@@ -14,16 +14,6 @@ public class TerraformConfigLexerTest extends HCLLexerTest {
     return TerraformParserDefinition.createLexer();
   }
 
-  @Override
-  public void testTerraformIL() {
-    doTest("count = \"${count()}\"", """
-      ID ('count')
-      WHITE_SPACE (' ')
-      = ('=')
-      WHITE_SPACE (' ')
-      DOUBLE_QUOTED_STRING ('"${count()}"')""");
-  }
-
   public void testTerraformILWithSpecials() {
     doTest("a = \"${$()}\"", """
       ID ('a')
@@ -42,36 +32,6 @@ public class TerraformConfigLexerTest extends HCLLexerTest {
       DOUBLE_QUOTED_STRING ('"${{$}$}}"')""");
   }
 
-  @Override
-  public void testTerraformILInception() {
-    doTest("count = \"${foo(${bar()})}\"", """
-      ID ('count')
-      WHITE_SPACE (' ')
-      = ('=')
-      WHITE_SPACE (' ')
-      DOUBLE_QUOTED_STRING ('"${foo(${bar()})}"')""");
-  }
-
-  @Override
-  public void testTerraformILInception2() {
-    doTest("count = \"${${}}\"", """
-      ID ('count')
-      WHITE_SPACE (' ')
-      = ('=')
-      WHITE_SPACE (' ')
-      DOUBLE_QUOTED_STRING ('"${${}}"')""");
-  }
-
-  @Override
-  public void testTerraformILWithString() {
-    doTest("count = \"${call(\"count\")}\"", """
-      ID ('count')
-      WHITE_SPACE (' ')
-      = ('=')
-      WHITE_SPACE (' ')
-      DOUBLE_QUOTED_STRING ('"${call("count")}"')""");
-  }
-
   public void testTerraformILWithIncorrectString() {
     doTest("count = \"${call(incomplete\")}\"", """
       ID ('count')
@@ -79,16 +39,6 @@ public class TerraformConfigLexerTest extends HCLLexerTest {
       = ('=')
       WHITE_SPACE (' ')
       DOUBLE_QUOTED_STRING ('"${call(incomplete")}"')""");
-  }
-
-  @Override
-  public void testTerraformILWithString2() {
-    doTest("count = '${call(\"count\")}'", """
-      ID ('count')
-      WHITE_SPACE (' ')
-      = ('=')
-      WHITE_SPACE (' ')
-      SINGLE_QUOTED_STRING (''${call("count")}'')""");
   }
 
   public void testTerraformILWithStringWithClosingBrace() {
@@ -128,26 +78,6 @@ public class TerraformConfigLexerTest extends HCLLexerTest {
       WHITE_SPACE (' ')
       DOUBLE_QUOTED_STRING ('"${f("b.json")}"')
       SINGLE_QUOTED_STRING (''}')""");
-  }
-
-  @Override
-  public void testComplicatedTerraformConfigWithILStings() {
-    doTest("container_definitions = \"${file(\"ecs-container-definitions.json\")}\"", """
-      ID ('container_definitions')
-      WHITE_SPACE (' ')
-      = ('=')
-      WHITE_SPACE (' ')
-      DOUBLE_QUOTED_STRING ('"${file("ecs-container-definitions.json")}"')""");
-  }
-
-  @Override
-  public void testUnfinishedInterpolation() {
-    doTest("a = \"${b(\"c\")}${{}}\"", """
-      ID ('a')
-      WHITE_SPACE (' ')
-      = ('=')
-      WHITE_SPACE (' ')
-      DOUBLE_QUOTED_STRING ('"${b("c")}${{}}"')""");
   }
 
   @Override

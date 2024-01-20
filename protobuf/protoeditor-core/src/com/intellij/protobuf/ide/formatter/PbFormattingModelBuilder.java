@@ -69,10 +69,4 @@ public class PbFormattingModelBuilder implements FormattingModelBuilder {
         .around(ProtoTokenTypes.ASSIGN)
         .spaceIf(protoSettings.SPACE_AROUND_ASSIGNMENT_OPERATORS);
   }
-
-  @Nullable
-  @Override
-  public TextRange getRangeAffectingIndent(PsiFile file, int offset, ASTNode elementAtOffset) {
-    return FormattingModelBuilder.super.getRangeAffectingIndent(file, offset, elementAtOffset);
-  }
 }

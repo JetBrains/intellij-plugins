@@ -31,11 +31,6 @@ public class CreateRuleFileAction extends CreateFileAction {
   }
 
   @Override
-  public @NotNull ActionUpdateThread getActionUpdateThread() {
-    return super.getActionUpdateThread();
-  }
-
-  @Override
   protected boolean isAvailable(final DataContext dataContext) {
     if (!super.isAvailable(dataContext)) {
       return false;

@@ -63,11 +63,6 @@ public class FlexmojosSdkDataConfigurable implements AdditionalDataConfigurable 
     myFlexmojosSdkForm.setAirRuntimePath(data == null ? "" : data.getAirRuntimePath());
   }
 
-  @Override
-  public void disposeUIResources() {
-    AdditionalDataConfigurable.super.disposeUIResources();
-  }
-
   private static final class FlexmojosSdkForm {
     private JComponent myMainPanel;
     private JTextArea myClasspathTextArea;

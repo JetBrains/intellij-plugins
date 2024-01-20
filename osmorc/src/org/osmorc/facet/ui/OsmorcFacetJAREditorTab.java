@@ -356,9 +356,6 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
   }
 
   @Override
-  public void disposeUIResources() { super.disposeUIResources(); }
-
-  @Override
   public String getHelpTopic() {
     return "reference.settings.module.facet.osgi";
   }

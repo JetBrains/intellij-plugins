@@ -114,9 +114,4 @@ public class CucumberJavaRunConfigurationTest extends CucumberJavaCodeInsightTes
       }
     });
   }
-
-  @Override
-  protected LightProjectDescriptor getProjectDescriptor() {
-    return CucumberJavaTestUtil.createCucumber2ProjectDescriptor();
-  }
 }

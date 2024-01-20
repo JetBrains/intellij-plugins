@@ -163,11 +163,6 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
   }
 
   @Override
-  public boolean canCollapse(Object element) {
-    return super.canCollapse(element);
-  }
-
-  @Override
   public boolean isContainerFor(Object parent, Object child) {
     //if (parent instanceof JSPackage && child instanceof JSQualifiedNamedElement) {
     //  JSQualifiedNamedElement psiQualifiedNamedElement = (JSQualifiedNamedElement)child;

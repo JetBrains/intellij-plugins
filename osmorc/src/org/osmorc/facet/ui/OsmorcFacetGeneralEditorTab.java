@@ -258,9 +258,6 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
     updateGui();
   }
 
-  @Override
-  public void disposeUIResources() { super.disposeUIResources(); }
-
   private static VirtualFile[] getContentRoots(Module module) {
     return ModuleRootManager.getInstance(module).getContentRoots();
   }

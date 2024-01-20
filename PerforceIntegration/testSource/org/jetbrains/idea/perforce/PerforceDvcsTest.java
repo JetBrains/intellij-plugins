@@ -21,11 +21,6 @@ public class PerforceDvcsTest extends PerforceTestCase {
   }
 
   @Override
-  protected String getPerforceVersion() {
-    return "2015.1";
-  }
-
-  @Override
   protected void setupWorkspace() {
     PerforceSettings.getSettings(myProject).useP4CONFIG = true;
     AbstractP4Connection.setTestEnvironment(Map.of("PATH", myClientBinaryPath.getPath()), myTestRootDisposable);

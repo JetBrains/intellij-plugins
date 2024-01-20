@@ -38,10 +38,4 @@ abstract class PbSyntaxStatementMixin extends PbStatementBase implements PbSynta
     }
     return null;
   }
-
-  @Nullable
-  @Override
-  public PbStatementOwner getStatementOwner() {
-    return super.getStatementOwner();
-  }
 }

@@ -30,8 +30,4 @@ public class ILIntroduceVariableRefactoringTest extends BaseIntroduceVariableRef
   public void testStringExpressionSimple() throws Exception {
     doTest();
   }
-
-  protected void doTest() {
-    doTest(true);
-  }
 }

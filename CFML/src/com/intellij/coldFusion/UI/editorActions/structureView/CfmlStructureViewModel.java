@@ -49,11 +49,6 @@ public class CfmlStructureViewModel extends TextEditorBasedStructureViewModel {
   }
 
   @Override
-  public Filter @NotNull [] getFilters() {
-    return super.getFilters();
-  }
-
-  @Override
   protected Class @NotNull [] getSuitableClasses() {
     return myClasses;
   }

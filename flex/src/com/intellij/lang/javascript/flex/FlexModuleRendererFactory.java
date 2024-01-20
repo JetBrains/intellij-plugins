@@ -13,11 +13,6 @@ import org.jetbrains.annotations.NotNull;
 public final class FlexModuleRendererFactory extends DefaultModuleRendererFactory {
 
   @Override
-  protected boolean handles(final Object element) {
-    return super.handles(element);
-  }
-
-  @Override
   protected @Nls @NotNull String getPresentableName(OrderEntry order, VirtualFile vFile) {
     if (order instanceof ModuleJdkOrderEntry) {
       Sdk sdk = ((ModuleJdkOrderEntry)order).getJdk();

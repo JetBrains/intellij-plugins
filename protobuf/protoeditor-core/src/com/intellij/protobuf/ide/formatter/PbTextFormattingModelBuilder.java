@@ -62,10 +62,4 @@ public class PbTextFormattingModelBuilder implements FormattingModelBuilder {
         .after(ProtoTokenTypes.COLON)
         .spaceIf(commonSettings.SPACE_AFTER_COLON);
   }
-
-  @Nullable
-  @Override
-  public TextRange getRangeAffectingIndent(PsiFile file, int offset, ASTNode elementAtOffset) {
-    return FormattingModelBuilder.super.getRangeAffectingIndent(file, offset, elementAtOffset);
-  }
 }

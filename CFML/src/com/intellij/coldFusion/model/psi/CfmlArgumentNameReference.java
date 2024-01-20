@@ -91,17 +91,6 @@ public class CfmlArgumentNameReference extends CfmlReferenceExpression implement
 
   @NotNull
   @Override
-  protected CfmlReferenceExpression parseReference(String newText) {
-    return super.parseReference(newText);
-  }
-
-  @Override
-  protected PsiElement getSeparator() {
-    return super.getSeparator();
-  }
-
-  @NotNull
-  @Override
   public String getReferenceName() {
     PsiElement referenceNameElement = getReferenceNameElement();
     if (referenceNameElement != null) {

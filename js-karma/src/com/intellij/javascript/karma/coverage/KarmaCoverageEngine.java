@@ -117,28 +117,6 @@ public class KarmaCoverageEngine extends CoverageEngine {
   }
 
   @Override
-  public boolean includeUntouchedFileInCoverage(final @NotNull String qualifiedName,
-                                                final @NotNull File outputFile,
-                                                final @NotNull PsiFile sourceFile,
-                                                final @NotNull CoverageSuitesBundle suite) {
-    return super.includeUntouchedFileInCoverage(qualifiedName, outputFile, sourceFile, suite);
-  }
-
-  @Override
-  public boolean isReportGenerationAvailable(@NotNull Project project,
-                                             @NotNull DataContext dataContext,
-                                             @NotNull CoverageSuitesBundle currentSuite) {
-    return super.isReportGenerationAvailable(project, dataContext, currentSuite);
-  }
-
-  @Override
-  public void generateReport(final @NotNull Project project,
-                             final @NotNull DataContext dataContext,
-                             final @NotNull CoverageSuitesBundle currentSuite) {
-    super.generateReport(project, dataContext, currentSuite);
-  }
-
-  @Override
   public List<Integer> collectSrcLinesForUntouchedFile(@NotNull File classFile, @NotNull CoverageSuitesBundle suite) {
     return null;
   }

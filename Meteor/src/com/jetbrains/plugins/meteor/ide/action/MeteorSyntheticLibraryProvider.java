@@ -90,11 +90,6 @@ public final class MeteorSyntheticLibraryProvider extends AdditionalLibraryRoots
     }
 
     @Override
-    public @NotNull Set<VirtualFile> getExcludedRoots() {
-      return super.getExcludedRoots();
-    }
-
-    @Override
     public boolean equals(Object o) {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;

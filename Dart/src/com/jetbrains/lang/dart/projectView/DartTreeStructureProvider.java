@@ -172,11 +172,6 @@ final class DartTreeStructureProvider implements TreeStructureProvider, DumbAwar
     }
 
     @Override
-    public boolean canNavigateToSource() {
-      return super.canNavigateToSource();
-    }
-
-    @Override
     protected void updateImpl(final @NotNull PresentationData data) {
       super.updateImpl(data);
 

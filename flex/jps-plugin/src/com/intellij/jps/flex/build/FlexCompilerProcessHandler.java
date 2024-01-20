@@ -39,18 +39,8 @@ public class FlexCompilerProcessHandler extends BaseOSProcessHandler {
     }
 
     @Override
-    public void startNotified(@NotNull ProcessEvent event) {
-      ProcessListener.super.startNotified(event);
-    }
-
-    @Override
     public void onTextAvailable(@NotNull final ProcessEvent event, @NotNull final Key outputType) {
       handleText(event.getText());
-    }
-
-    @Override
-    public void processWillTerminate(@NotNull ProcessEvent event, boolean willBeDestroyed) {
-      ProcessListener.super.processWillTerminate(event, willBeDestroyed);
     }
 
     @Override

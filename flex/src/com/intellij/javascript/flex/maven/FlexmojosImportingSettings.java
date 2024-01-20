@@ -45,10 +45,5 @@ public class FlexmojosImportingSettings implements AdditionalMavenImportingSetti
     public void reset() {
       myGenerateFlexCompilerConfigurationCheckBox.setSelected(myConfig.GENERATE_FLEXMOJOS_CONFIGS);
     }
-
-    @Override
-    public void disposeUIResources() {
-      UnnamedConfigurable.super.disposeUIResources();
-    }
   }
 }

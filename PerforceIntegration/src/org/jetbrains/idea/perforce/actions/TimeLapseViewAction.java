@@ -31,11 +31,6 @@ public class TimeLapseViewAction extends RevisionGraphAction {
   }
 
   @Override
-  public @NotNull ActionUpdateThread getActionUpdateThread() {
-    return super.getActionUpdateThread();
-  }
-
-  @Override
   public void update(@NotNull final AnActionEvent e) {
     super.update(e);
     VirtualFile vf = e.getData(CommonDataKeys.VIRTUAL_FILE);

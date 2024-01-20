@@ -510,10 +510,6 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
     }
 
     @Override
-    public void onFinishTesting() {
-    }
-
-    @Override
     public void onTestsReporterAttached() {
     }
 

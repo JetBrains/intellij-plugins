@@ -34,11 +34,6 @@ public class ConceptParserTest extends ParsingTestCase {
   }
 
   @Override
-  protected boolean skipSpaces() {
-    return false;
-  }
-
-  @Override
   protected boolean includeRanges() {
     return true;
   }

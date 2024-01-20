@@ -70,11 +70,6 @@ public class CfmlBlock extends TemplateLanguageBlock {
   }
 
 
-  @Override
-  protected List<Block> buildChildren() {
-    return super.buildChildren();
-  }
-
   private static final IElementType[] WHITESPACE = new IElementType[]{XmlTokenType.XML_WHITE_SPACE, CfmlTokenTypes.WHITE_SPACE};
 
   // TODO this is a hack to be removed when template blocks are implemented properly

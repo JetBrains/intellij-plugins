@@ -681,11 +681,6 @@ public final class ValidateFlashConfigurationsPrecompileTask implements CompileT
     }
 
     @Override
-    public boolean canNavigateToSource() {
-      return false;
-    }
-
-    @Override
     public boolean canNavigate() {
       return !myModule.isDisposed() && FlexBuildConfigurationManager.getInstance(myModule).findConfigurationByName(myBCNme) != null;
     }

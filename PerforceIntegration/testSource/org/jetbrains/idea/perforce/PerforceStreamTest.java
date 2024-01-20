@@ -20,11 +20,6 @@ public class PerforceStreamTest extends PerforceTestCase {
   }
 
   @Override
-  protected String getPerforceVersion() {
-    return "2015.1";
-  }
-
-  @Override
   protected void setupWorkspace() {
     ensureNoEnvP4Config();
 

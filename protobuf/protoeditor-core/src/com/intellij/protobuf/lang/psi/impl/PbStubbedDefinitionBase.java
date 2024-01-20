@@ -38,12 +38,6 @@ abstract class PbStubbedDefinitionBase<T extends PbElementStub<?>> extends PbStu
     super(stub, nodeType);
   }
 
-  @Nullable
-  @Override
-  public PbStatementOwner getStatementOwner() {
-    return PbDefinition.super.getStatementOwner();
-  }
-
   @NotNull
   @Override
   public List<PbStatement> getStatements() {

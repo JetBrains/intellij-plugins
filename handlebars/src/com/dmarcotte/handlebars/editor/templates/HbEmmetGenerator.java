@@ -7,11 +7,6 @@ import com.intellij.openapi.options.Configurable;
 import org.jetbrains.annotations.Nullable;
 
 public class HbEmmetGenerator extends XmlZenCodingGeneratorImpl {
-  @Nullable
-  @Override
-  public Configurable createConfigurable() {
-    return super.createConfigurable();
-  }
 
   @Override
   protected boolean isMyLanguage(Language language) {

@@ -52,9 +52,6 @@ final class JdlPreviewFileEditor extends UserDataHolderBase implements FileEdito
 
     if (myDocument != null) {
       myDocument.addDocumentListener(new DocumentListener() {
-        @Override
-        public void beforeDocumentChange(@NotNull DocumentEvent e) {
-        }
 
         @Override
         public void documentChanged(@NotNull DocumentEvent e) {

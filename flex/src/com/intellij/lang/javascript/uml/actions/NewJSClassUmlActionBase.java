@@ -63,10 +63,6 @@ public abstract class NewJSClassUmlActionBase extends DiagramCreateNewElementAct
   }
 
   @Override
-  public @NotNull ActionUpdateThread getActionUpdateThread() {
-    return super.getActionUpdateThread();
-  }
-  @Override
   @Nullable
   public CreateClassParameters prepare(@NotNull AnActionEvent e) {
     DiagramBuilder diagramBuilder = getBuilder(e);

@@ -33,18 +33,6 @@ public class CfmlReferenceInspection extends CfmlInspectionBase {
   }
 
   @Override
-  @NotNull
-  public HighlightDisplayLevel getDefaultLevel() {
-    return super.getDefaultLevel();
-  }
-
-  @Override
-  public boolean isEnabledByDefault() {
-    return super.isEnabledByDefault();
-  }
-
-
-  @Override
   protected void registerProblems(PsiElement element, ProblemsHolder holder) {
     if (!(element instanceof CfmlReference ref)) {
       return;

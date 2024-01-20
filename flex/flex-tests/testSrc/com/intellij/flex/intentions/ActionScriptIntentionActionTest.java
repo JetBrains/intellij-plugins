@@ -30,11 +30,6 @@ public class ActionScriptIntentionActionTest extends LightJavaCodeInsightFixture
     myFixture.setTestDataPath(FlexTestUtils.getTestDataPath("js2_intentions"));
   }
 
-  @Override
-  protected String getBasePath() {
-    return super.getBasePath();
-  }
-
   public void testSplitDeclarationAndInitialization() {
     final String dirName = "splitDeclarationAndInitialization";
 

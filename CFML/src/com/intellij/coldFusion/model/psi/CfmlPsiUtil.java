@@ -344,11 +344,6 @@ public final class CfmlPsiUtil {
         }
 
         @Override
-        public void visitCfmlComponent(CfmlComponent component) {
-          super.visitCfmlComponent(component);
-        }
-
-        @Override
         public void visitCfmlFunction(CfmlFunction function) {
           if (function != lastParent) {  // skip function we are inside
             super.visitCfmlFunction(function);

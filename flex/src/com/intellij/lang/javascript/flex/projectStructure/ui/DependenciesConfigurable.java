@@ -327,11 +327,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
 
     @Override
-    public boolean canEdit() {
-      return super.canEdit();
-    }
-
-    @Override
     public Location.TableEntry getLocation() {
       return configurable != null ? Location.TableEntry.forBc(configurable) : Location.TableEntry.forBc(moduleName, bcName);
     }

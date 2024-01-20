@@ -39,14 +39,6 @@ public class DroolsImplicitVariable extends LightVariableBuilder implements Item
   }
 
   @Override
-  public boolean processDeclarations(@NotNull PsiScopeProcessor processor,
-                                     @NotNull ResolveState state,
-                                     PsiElement lastParent,
-                                     @NotNull PsiElement place) {
-    return super.processDeclarations(processor, state, lastParent, place);
-  }
-
-  @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (!(o instanceof DroolsImplicitVariable variable)) return false;

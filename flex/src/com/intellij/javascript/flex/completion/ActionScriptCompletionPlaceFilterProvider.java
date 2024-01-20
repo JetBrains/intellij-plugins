@@ -30,11 +30,6 @@ public class ActionScriptCompletionPlaceFilterProvider implements JSCompletionPl
       return (element instanceof JSClass || element instanceof JSPackage) &&
              !JSCommonTypeNames.ARGUMENTS_TYPE_NAME.equals(element.getName());
     }
-
-    @Override
-    public boolean isPartialResult(@NotNull JSPsiElementBase element) {
-      return super.isPartialResult(element);
-    }
   };
 
   public static final JSCompletionPlaceFilter AS_NEW_EXPRESSION_FILTER = new JSCompletionPlaceFilter() {
