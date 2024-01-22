@@ -106,7 +106,8 @@ public class TFFmtCheckinFactory extends CheckinHandlerFactory {
         List<PsiFile> psiFiles = new ArrayList<>();
         PsiManager manager = PsiManager.getInstance(panel.getProject());
         for (VirtualFile file : files) {
-          if (!SUPPORTED_FILE_EXTENSIONS.contains(file.getExtension())) continue;
+          String extension = file.getExtension();
+          if (extension == null || !SUPPORTED_FILE_EXTENSIONS.contains(extension)) continue;
           PsiFile psiFile = manager.findFile(file);
           if (psiFile instanceof HCLFile) {
             psiFiles.add(psiFile);
