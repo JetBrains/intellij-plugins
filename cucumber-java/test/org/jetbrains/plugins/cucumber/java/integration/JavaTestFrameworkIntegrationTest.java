@@ -29,7 +29,7 @@ import kotlin.coroutines.EmptyCoroutineContext;
 import kotlinx.coroutines.BuildersKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.idea.maven.buildtool.MavenImportSpec;
+import org.jetbrains.idea.maven.buildtool.MavenSyncSpec;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
 
 import java.io.File;
@@ -72,7 +72,7 @@ public abstract class JavaTestFrameworkIntegrationTest extends HeavyPlatformTest
     try {
       BuildersKt.runBlocking(
         EmptyCoroutineContext.INSTANCE,
-        (scope, continuation) -> mavenProjectsManager.updateAllMavenProjects(MavenImportSpec.IMPLICIT_IMPORT, continuation)
+        (scope, continuation) -> mavenProjectsManager.updateAllMavenProjects(MavenSyncSpec.FULL, continuation)
       );
     }
     catch (InterruptedException e) {
