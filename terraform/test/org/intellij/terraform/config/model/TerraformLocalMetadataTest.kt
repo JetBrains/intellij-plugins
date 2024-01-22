@@ -4,7 +4,6 @@ import com.intellij.openapi.application.readAction
 import com.intellij.openapi.components.service
 import com.intellij.platform.backend.workspace.WorkspaceModel
 import com.intellij.platform.backend.workspace.virtualFile
-import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.waitUntil
@@ -27,6 +26,11 @@ class TerraformLocalMetadataTest : BasePlatformTestCase() {
     finally {
       super.tearDown()
     }
+  }
+
+  override fun setUp() {
+    super.setUp()
+    TypeModelProvider.globalModel // ensure loaded, to avoid falling on the timeout
   }
 
   override fun runInDispatchThread(): Boolean = false

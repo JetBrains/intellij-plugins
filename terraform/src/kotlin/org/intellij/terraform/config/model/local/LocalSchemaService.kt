@@ -29,6 +29,7 @@ import com.intellij.util.containers.ContainerUtil
 import kotlinx.coroutines.*
 import org.intellij.terraform.ExecuteLatest
 import org.intellij.terraform.config.model.TypeModel
+import org.intellij.terraform.config.model.TypeModelProvider
 import org.intellij.terraform.config.model.getVFSParents
 import org.intellij.terraform.config.model.loader.TerraformMetadataLoader
 import org.intellij.terraform.config.util.TFExecutor
@@ -274,7 +275,8 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     json.byteInputStream().use { input ->
       loader.loadOne("local-schema.json", input)
     }
-    return loader.loadDefaults()!!
+    loader.loadFrom(TypeModelProvider.globalModel)
+    return loader.buildModel()
   }
 
   private suspend fun buildJsonFromTerraformProcess(project: Project, lock: VirtualFile): @NlsSafe String {

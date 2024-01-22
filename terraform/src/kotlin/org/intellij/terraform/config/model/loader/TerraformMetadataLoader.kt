@@ -39,19 +39,33 @@ class TerraformMetadataLoader {
       loadExternal()
       loadBundled()
 
-      return TypeModel(
-        model.resources,
-        model.dataSources,
-        model.providers,
-        model.provisioners,
-        model.backends,
-        model.functions
-      )
+      return buildModel()
     }
     catch (e: Exception) {
       logErrorAndFailInInternalMode("Failed to load Terraform Model", e)
       return null
     }
+  }
+
+  fun loadFrom(another: TypeModel) {
+    val tmp = buildModel()
+    model.resources.addAll(another.resources.filter { tmp.getResourceType(it.type) == null })
+    model.dataSources.addAll(another.dataSources.filter { tmp.getDataSourceType(it.type) == null })
+    model.providers.addAll(another.providers.filter { tmp.getProviderType(it.type) == null })
+    model.provisioners.addAll(another.provisioners.filter { tmp.getProvisionerType(it.type) == null })
+    model.backends.addAll(another.backends.filter { tmp.getBackendType(it.type) == null })
+    model.functions.addAll(another.functions.filter { tmp.getFunction(it.name) == null })
+  }
+
+  fun buildModel(): TypeModel {
+    return TypeModel(
+      model.resources,
+      model.dataSources,
+      model.providers,
+      model.provisioners,
+      model.backends,
+      model.functions
+    )
   }
 
   private fun loadExternalInformation(): Map<String, LoadingModel.Additional> {
