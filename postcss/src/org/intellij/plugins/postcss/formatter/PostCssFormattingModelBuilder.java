@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class PostCssFormattingModelBuilder extends CssFormattingModelBuilder {
   @Override
-  protected CssFormattingExtension createExtension(CodeStyleSettings settings) {
+  protected @NotNull CssFormattingExtension createExtension(@NotNull CodeStyleSettings settings) {
     return new PostCssFormattingExtension(settings.getCommonSettings(CSSLanguage.INSTANCE),
                                           settings.getCustomSettings(CssCodeStyleSettings.class));
   }
