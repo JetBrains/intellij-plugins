@@ -49,6 +49,9 @@ open class HCLFormattingBuilderModel(val language: Language = HCLLanguage) : For
         .after(OP_NOT).none()
         .around(L_CURLY).spaces(1)
         .around(R_CURLY).spaces(1)
+      .around(OP_MAPPING).spaces(1)
+      .withinPair(L_PAREN, R_PAREN).none()
+      .around(OP_QUEST).spaces(1)
   }
 
   override fun getRangeAffectingIndent(file: PsiFile?, offset: Int, elementAtOffset: ASTNode?): TextRange? {

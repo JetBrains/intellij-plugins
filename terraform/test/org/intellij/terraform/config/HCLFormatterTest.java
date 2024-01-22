@@ -92,7 +92,6 @@ public class HCLFormatterTest extends BasePlatformTestCase {
         }""");
     doSimpleTest(
       """
-        # documented resource
         resource "azurerm_role_assignment" "test" {
           # some docs for principal id
           principal_id="test-principal-id"
@@ -107,7 +106,6 @@ public class HCLFormatterTest extends BasePlatformTestCase {
           }
         }""",
       """
-        # documented resource
         resource "azurerm_role_assignment" "test" {
           # some docs for principal id
           principal_id = "test-principal-id"
@@ -121,6 +119,37 @@ public class HCLFormatterTest extends BasePlatformTestCase {
             another_long_property = val3
           }
         }""");
+    doSimpleTest(
+      """
+        locals {
+          a = true
+          b = false
+          c = (
+          a ?
+          "foo" :
+          (
+          b ?
+          "bar" :
+          "baz"
+          )
+          )
+        }
+        """,
+      """
+        locals {
+          a = true
+          b = false
+          c = (
+            a ?
+            "foo" :
+            (
+              b ?
+              "bar" :
+              "baz"
+            )
+          )
+        }
+         """);
   }
 
   @Test

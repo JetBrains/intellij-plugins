@@ -26,7 +26,7 @@ class HCLBlock(val parent: HCLBlock?,
                private val valueAlignment: Alignment? = null) : AbstractBlock(node, wrap, alignment) {
   private val myChildWrap: Wrap? = when (node.elementType) {
     BLOCK_OBJECT -> Wrap.createWrap(settings.OBJECT_WRAPPING, true)
-    OBJECT -> Wrap.createWrap(settings.OBJECT_WRAPPING, true)
+    OBJECT, CONDITIONAL_EXPRESSION -> Wrap.createWrap(settings.OBJECT_WRAPPING, true)
     ARRAY, FOR_ARRAY_EXPRESSION, FOR_OBJECT_EXPRESSION -> Wrap.createWrap(settings.ARRAY_WRAPPING, true)
     else -> null
   }

@@ -26,7 +26,7 @@ object HCLTokenTypes {
       HCLElementTypes.OP_QUEST, HCLElementTypes.OP_COLON
   )
 
-  val HCL_ALL_OPERATORS = TokenSet.orSet(HCL_UNARY_OPERATORS, HCL_BINARY_OPERATORS, HCL_TERNARY_OPERATOR_TOKENS)
+  val HCL_ALL_OPERATORS: TokenSet = TokenSet.orSet(HCL_UNARY_OPERATORS, HCL_BINARY_OPERATORS, HCL_TERNARY_OPERATOR_TOKENS)
 
   @JvmField
   val STRING_LITERALS: TokenSet = TokenSet.create(HCLElementTypes.SINGLE_QUOTED_STRING, HCLElementTypes.DOUBLE_QUOTED_STRING)
@@ -43,7 +43,8 @@ object HCLTokenTypes {
 
   @JvmField
   val HCL_CONTAINERS: TokenSet = TokenSet.create(HCLElementTypes.OBJECT, HCLElementTypes.BLOCK_OBJECT, HCLElementTypes.ARRAY,
-                                                 HCLElementTypes.FOR_ARRAY_EXPRESSION, HCLElementTypes.FOR_OBJECT_EXPRESSION)
+                                                 HCLElementTypes.FOR_ARRAY_EXPRESSION, HCLElementTypes.FOR_OBJECT_EXPRESSION,
+                                                 HCLElementTypes.CONDITIONAL_EXPRESSION)
 
   @JvmField
   val HCL_BOOLEANS: TokenSet = TokenSet.create(HCLElementTypes.TRUE, HCLElementTypes.FALSE)
