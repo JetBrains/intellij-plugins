@@ -35,10 +35,10 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Consumer;
 import com.intellij.util.EmptyConsumer;
 import com.intellij.util.ExceptionUtil;
+import org.intellij.terraform.config.TerraformConstants;
 import org.intellij.terraform.config.TerraformFileType;
 import org.intellij.terraform.config.util.TFExecutor;
 import org.intellij.terraform.hcl.HCLFileType;
-import org.intellij.terraform.config.TerraformConstants;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -61,14 +61,14 @@ public abstract class TFExternalToolsAction extends DumbAwareAction {
   public void update(@NotNull AnActionEvent e) {
     Project project = e.getProject();
     VirtualFile file = e.getData(CommonDataKeys.VIRTUAL_FILE);
-    if (project == null || file == null || !isAvailableOnFile(file, true)) {
+    if (project == null || file == null || !isAvailableOnFile(file, true, true)) {
       e.getPresentation().setEnabled(false);
       return;
     }
     e.getPresentation().setEnabled(true);
   }
 
-  static boolean isAvailableOnFile(@NotNull final VirtualFile file, boolean checkDirChildren) {
+  static boolean isAvailableOnFile(@NotNull final VirtualFile file, boolean checkDirChildren, boolean onlyTerraformFileType) {
     if (!file.isInLocalFileSystem()) return false;
     if (file.isDirectory()) {
       if (!checkDirChildren) return false;
@@ -76,12 +76,16 @@ public abstract class TFExternalToolsAction extends DumbAwareAction {
       VirtualFile[] children = file.getChildren();
       if (children != null) {
         for (VirtualFile child : children) {
-          if (isAvailableOnFile(child, false)) return true;
+          if (isAvailableOnFile(child, false, onlyTerraformFileType)) return true;
         }
       }
       return false;
     }
-    return FileTypeRegistry.getInstance().isFileOfType(file, HCLFileType.INSTANCE) || FileTypeRegistry.getInstance().isFileOfType(file, TerraformFileType.INSTANCE);
+
+    return onlyTerraformFileType
+           ? FileTypeRegistry.getInstance().isFileOfType(file, TerraformFileType.INSTANCE)
+           : FileTypeRegistry.getInstance().isFileOfType(file, HCLFileType.INSTANCE) ||
+             FileTypeRegistry.getInstance().isFileOfType(file, TerraformFileType.INSTANCE);
   }
 
   @Override

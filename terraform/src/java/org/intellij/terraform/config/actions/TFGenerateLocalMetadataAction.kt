@@ -22,7 +22,7 @@ class TFGenerateLocalMetadataAction : AnAction() {
   override fun update(e: AnActionEvent) {
     val project = e.project
     val file = e.getData(CommonDataKeys.VIRTUAL_FILE)
-    if (project == null || file == null || !TFExternalToolsAction.isAvailableOnFile(file, true)) {
+    if (project == null || file == null || !TFExternalToolsAction.isAvailableOnFile(file, true, false)) {
       e.presentation.isEnabled = false
       return
     }
