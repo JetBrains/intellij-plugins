@@ -43,13 +43,13 @@ public class HCLFormatterTest extends BasePlatformTestCase {
   }
 
   @Test
-  public void testBasicFormatting() throws Exception {
+  public void testBasicFormatting() {
     doSimpleTest("a=1", "a = 1");
     doSimpleTest("'a'=1", "'a' = 1");
   }
 
   @Test
-  public void testFormatBlock() throws Exception {
+  public void testFormatBlock() {
     doSimpleTest("block x{}", "block x {}");
     doSimpleTest("block 'x'{}", "block 'x' {}");
     doSimpleTest("block 'x'{\n}", "block 'x' {\n}");
@@ -60,17 +60,73 @@ public class HCLFormatterTest extends BasePlatformTestCase {
   }
 
   @Test
-  public void testAlignPropertiesOnEquals() throws Exception {
-    CodeStyle.getSettings(getProject()).getCustomSettings(HCLCodeStyleSettings.class).PROPERTY_ALIGNMENT = HCLCodeStyleSettings.ALIGN_PROPERTY_ON_EQUALS;
+  public void testAlignPropertiesOnEquals() {
+    CodeStyle.getSettings(getProject()).getCustomSettings(HCLCodeStyleSettings.class).PROPERTY_ALIGNMENT =
+      HCLCodeStyleSettings.ALIGN_PROPERTY_ON_EQUALS;
     doSimpleTest("a=true\nbaz=42", "a   = true\nbaz = 42");
     doSimpleTest("a = true\nbaz=42", "a   = true\nbaz = 42");
     doSimpleTest("a = true\nbaz = 42", "a   = true\nbaz = 42");
     doSimpleTest("a=true\nbaz = 42", "a   = true\nbaz = 42");
+    doSimpleTest(
+      """
+        resource "kafka_topic" "blah" {
+          provider=kafka.some_provider
+          name="blah"
+          replication_factor=3
+          partitions=1
+          config={
+            "retention.ms"=100000
+            "retention.bytes"=-1
+          }
+        }""",
+      """
+        resource "kafka_topic" "blah" {
+          provider           = kafka.some_provider
+          name               = "blah"
+          replication_factor = 3
+          partitions         = 1
+          config = {
+            "retention.ms"    = 100000
+            "retention.bytes" = -1
+          }
+        }""");
+    doSimpleTest(
+      """
+        # documented resource
+        resource "azurerm_role_assignment" "test" {
+          # some docs for principal id
+          principal_id="test-principal-id"
+          # some docs for scope
+          scope="test-scope"
+          nested_object {
+            # doc
+            property_1="val1"
+            # doc
+            prop_2=val2
+            another_long_property=val3
+          }
+        }""",
+      """
+        # documented resource
+        resource "azurerm_role_assignment" "test" {
+          # some docs for principal id
+          principal_id = "test-principal-id"
+          # some docs for scope
+          scope = "test-scope"
+          nested_object {
+            # doc
+            property_1 = "val1"
+            # doc
+            prop_2                = val2
+            another_long_property = val3
+          }
+        }""");
   }
 
   @Test
-  public void testAlignPropertiesOnValue() throws Exception {
-    CodeStyle.getSettings(getProject()).getCustomSettings(HCLCodeStyleSettings.class).PROPERTY_ALIGNMENT = HCLCodeStyleSettings.ALIGN_PROPERTY_ON_VALUE;
+  public void testAlignPropertiesOnValue() {
+    CodeStyle.getSettings(getProject()).getCustomSettings(HCLCodeStyleSettings.class).PROPERTY_ALIGNMENT =
+      HCLCodeStyleSettings.ALIGN_PROPERTY_ON_VALUE;
     doSimpleTest("a=true\nbaz=42", "a =   true\nbaz = 42");
     doSimpleTest("a = true\nbaz=42", "a =   true\nbaz = 42");
     doSimpleTest("a = true\nbaz = 42", "a =   true\nbaz = 42");
@@ -78,7 +134,7 @@ public class HCLFormatterTest extends BasePlatformTestCase {
   }
 
   @Test
-  public void testFormatHeredoc() throws Exception {
+  public void testFormatHeredoc() {
     doSimpleTest("a=<<E\nE", "a = <<E\nE");
     doSimpleTest("a=<<E\n  E", "a = <<E\n  E");
     doSimpleTest("a=<<E\n\tE", "a = <<E\n\tE");
@@ -88,7 +144,7 @@ public class HCLFormatterTest extends BasePlatformTestCase {
   }
 
   @Test
-  public void testFormatAfterHeredoc() throws Exception {
+  public void testFormatAfterHeredoc() {
     doSimpleTest("""
                    a_local = [
                      <<DATA
@@ -120,20 +176,21 @@ public class HCLFormatterTest extends BasePlatformTestCase {
   }
 
   @Test
-  public void testAlignPropertiesOnValueAndSplitByBlocks() throws Exception {
-    CodeStyle.getSettings(getProject()).getCustomSettings(HCLCodeStyleSettings.class).PROPERTY_ALIGNMENT = HCLCodeStyleSettings.ALIGN_PROPERTY_ON_VALUE;
+  public void testAlignPropertiesOnValueAndSplitByBlocks() {
+    CodeStyle.getSettings(getProject()).getCustomSettings(HCLCodeStyleSettings.class).PROPERTY_ALIGNMENT =
+      HCLCodeStyleSettings.ALIGN_PROPERTY_ON_VALUE;
     doSimpleTest("a=true\n\n\nbaz=42", "a = true\n\n\nbaz = 42");
   }
 
   @Test
-  public void testArrays() throws Exception {
+  public void testArrays() {
     doSimpleTest("a=[]", "a = []");
     doSimpleTest("a=[1,2]", "a = [1, 2]");
     doSimpleTest("a    =    [    1    ,    2    ]", "a = [1, 2]");
   }
 
   @Test
-  public void testObjects() throws Exception {
+  public void testObjects() {
     doSimpleTest("a={}", "a = {}");
     doSimpleTest("a    =    {    }", "a = {}");
 
@@ -149,7 +206,7 @@ public class HCLFormatterTest extends BasePlatformTestCase {
   }
 
   @Test
-  public void testValuesInParentheses() throws Exception {
+  public void testValuesInParentheses() {
     doSimpleTest("a=x(\nb,1\n)", "a = x(\n  b, 1\n)");
     doSimpleTest("a    =    x    (\n    b    ,    1\n)", "a = x(\n  b, 1\n)");
 
@@ -159,24 +216,24 @@ public class HCLFormatterTest extends BasePlatformTestCase {
   }
 
   @Test
-  public void testMultilineObjectsAsValue() throws Exception {
+  public void testMultilineObjectsAsValue() {
     doSimpleTest("obj = {\nx = 1\n}\ny   = 2", "obj = {\n  x = 1\n}\ny = 2");
     doSimpleTest("test = <<EOF\n\nEOF\nb       = true", "test = <<EOF\n\nEOF\nb    = true");
   }
 
   @Test
-  public void testNoSpacesAroundSelectExpression() throws Exception {
+  public void testNoSpacesAroundSelectExpression() {
     doSimpleTest("x = a. b .c", "x = a.b.c");
   }
 
   @Test
-  public void testNoSpacesBetweenMethodNameAndParen() throws Exception {
+  public void testNoSpacesBetweenMethodNameAndParen() {
     doSimpleTest("x = foo ()", "x = foo()");
   }
 
   @Test
   @Ignore
-  public void testNoSpaceBeforeEllipsis() throws Exception {
+  public void testNoSpaceBeforeEllipsis() {
     // TODO: Requires remapping 'for' and 'in' as keywords, not identifiers
     doSimpleTest("a =  { for  i  in  var.x : i => i   ...}", "a = { for i in var.x : i => i... }");
     doSimpleTest("""
@@ -192,17 +249,17 @@ public class HCLFormatterTest extends BasePlatformTestCase {
   }
 
   @Test
-  public void testNoSpaceBeforeComma() throws Exception {
+  public void testNoSpaceBeforeComma() {
     doSimpleTest("x  =  foo  (a   ,   b)", "x = foo(a, b)");
   }
 
   @Test
-  public void testNoSpaceAfterNot() throws Exception {
+  public void testNoSpaceAfterNot() {
     doSimpleTest("x  =  ! true", "x = !true");
   }
 
   @Test
-  public void testSpacesAroundBraces() throws Exception {
+  public void testSpacesAroundBraces() {
     doSimpleTest("foo={bar = baz}", "foo = { bar = baz }");
     doSimpleTest("foo{bar = baz}", "foo { bar = baz }");
     doSimpleTest("foo={   }", "foo = {}");
@@ -213,12 +270,12 @@ public class HCLFormatterTest extends BasePlatformTestCase {
 
 
   @SuppressWarnings("WeakerAccess")
-  public void doSimpleTest(String input, String expected) throws Exception {
+  public void doSimpleTest(String input, String expected) {
     doSimpleTest(input, expected, null);
   }
 
   @SuppressWarnings("WeakerAccess")
-  public void doSimpleTest(String input, String expected, @Nullable Runnable setupSettings) throws Exception {
+  public void doSimpleTest(String input, String expected, @Nullable Runnable setupSettings) {
     myFixture.configureByText(myFileType, input);
     final Project project = getProject();
     final PsiFile file = myFixture.getFile();

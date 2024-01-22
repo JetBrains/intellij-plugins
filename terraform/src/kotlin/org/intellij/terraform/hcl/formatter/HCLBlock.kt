@@ -3,15 +3,18 @@ package org.intellij.terraform.hcl.formatter
 
 import com.intellij.formatting.*
 import com.intellij.lang.ASTNode
+import com.intellij.psi.PsiComment
 import com.intellij.psi.TokenType
 import com.intellij.psi.formatter.common.AbstractBlock
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.IFileElementType
 import com.intellij.psi.tree.TokenSet
+import com.intellij.psi.util.elementType
 import com.intellij.util.text.CharArrayUtil
 import org.intellij.terraform.hcl.HCLElementTypes.*
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.psi.HCLPsiUtil
+import org.intellij.terraform.hcl.psi.getNextSiblingNonWhiteSpace
 
 class HCLBlock(val parent: HCLBlock?,
                node: ASTNode,
@@ -21,15 +24,11 @@ class HCLBlock(val parent: HCLBlock?,
                private val _indent: Indent?,
                val settings: HCLCodeStyleSettings,
                private val valueAlignment: Alignment? = null) : AbstractBlock(node, wrap, alignment) {
-  private val myChildWrap: Wrap?
-
-  init {
-    myChildWrap = when (node.elementType) {
-      BLOCK_OBJECT -> Wrap.createWrap(settings.OBJECT_WRAPPING, true)
-      OBJECT -> Wrap.createWrap(settings.OBJECT_WRAPPING, true)
-      ARRAY, FOR_ARRAY_EXPRESSION, FOR_OBJECT_EXPRESSION -> Wrap.createWrap(settings.ARRAY_WRAPPING, true)
-      else -> null
-    }
+  private val myChildWrap: Wrap? = when (node.elementType) {
+    BLOCK_OBJECT -> Wrap.createWrap(settings.OBJECT_WRAPPING, true)
+    OBJECT -> Wrap.createWrap(settings.OBJECT_WRAPPING, true)
+    ARRAY, FOR_ARRAY_EXPRESSION, FOR_OBJECT_EXPRESSION -> Wrap.createWrap(settings.ARRAY_WRAPPING, true)
+    else -> null
   }
 
   companion object {
@@ -104,8 +103,11 @@ class HCLBlock(val parent: HCLBlock?,
     }
     else if (myNode.isElementType(PROPERTY)) {
       // Handle properties alignment
+      // IDEA-305835 - Align all properties except objects and next properties which is documented
       val pva = valueAlignment
-      if (childNode.isElementType(EQUALS) && settings.PROPERTY_ALIGNMENT == HCLCodeStyleSettings.ALIGN_PROPERTY_ON_EQUALS) {
+      if (childNode.isElementType(EQUALS) && settings.PROPERTY_ALIGNMENT == HCLCodeStyleSettings.ALIGN_PROPERTY_ON_EQUALS &&
+          !myNode.isObjectProperty() && !myNode.isNextPropertyDocumented()
+      ) {
         assert(pva != null) { "Expected not null PVA, node ${node.elementType}, parent ${parent?.node?.elementType}" }
         alignment = pva
       }
@@ -229,4 +231,11 @@ private fun ASTNode.isFile(): Boolean {
 
 private fun ASTNode.isWhitespaceOrEmpty(): Boolean {
   return this.elementType == TokenType.WHITE_SPACE || this.textLength == 0
+}
+
+private fun ASTNode.isObjectProperty(): Boolean = this.lastChildNode.isElementType(OBJECT)
+
+private fun ASTNode.isNextPropertyDocumented(): Boolean {
+  val nextSibling = this.psi.getNextSiblingNonWhiteSpace()
+  return nextSibling is PsiComment && nextSibling.getNextSiblingNonWhiteSpace().elementType == PROPERTY
 }
