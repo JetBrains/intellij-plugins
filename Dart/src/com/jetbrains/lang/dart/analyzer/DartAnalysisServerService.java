@@ -136,7 +136,6 @@ public final class DartAnalysisServerService implements Disposable {
 
   @NotNull private String myServerVersion = "";
   @NotNull private String mySdkVersion = "";
-  //private boolean myDoEnableMLBasedCodeCompletion = false;
   @Nullable private String mySdkHome;
 
   private final DartServerRootsHandler myRootsHandler;
@@ -2118,11 +2117,6 @@ public final class DartAnalysisServerService implements Disposable {
         // NOP
       }
 
-      //boolean doEnableMLBasedCodeCompletion = computeDoEnableMLBasedCodeCompletion(sdk);
-      //if (doEnableMLBasedCodeCompletion) {
-      //  serverArgsRaw += " --enable-completion-model";
-      //}
-
       String firstArgument = useDartLangServerCall ? "language-server" : analysisServerPath;
       myServerSocket =
         new StdioServerSocket(runtimePath, StringUtil.split(vmArgsRaw, " "), firstArgument, StringUtil.split(serverArgsRaw, " "),
@@ -2177,7 +2171,6 @@ public final class DartAnalysisServerService implements Disposable {
         });
 
         mySdkVersion = sdk.getVersion();
-        //myDoEnableMLBasedCodeCompletion = doEnableMLBasedCodeCompletion;
 
         startedServer.analysis_updateOptions(new AnalysisOptions(true, true, true, true, false, true, false));
         startedServer.server_setClientCapabilities(List.of("openUrlRequest", "showMessageRequest"));
@@ -2219,11 +2212,9 @@ public final class DartAnalysisServerService implements Disposable {
 
     ApplicationManager.getApplication().assertReadAccessAllowed();
     synchronized (myLock) {
-      //boolean doEnableMLBasedCodeCompletion = computeDoEnableMLBasedCodeCompletion(sdk);
       if (myServer == null ||
           !sdk.getHomePath().equals(mySdkHome) ||
           !sdk.getVersion().equals(mySdkVersion) ||
-          //myDoEnableMLBasedCodeCompletion != doEnableMLBasedCodeCompletion ||
           !myServer.isSocketOpen()) {
         stopServer();
         DartProblemsView.getInstance(myProject).setInitialCurrentFileBeforeServerStart(getCurrentOpenFile());
@@ -2299,14 +2290,6 @@ public final class DartAnalysisServerService implements Disposable {
       TimeoutUtil.sleep(100);
     }
   }
-
-  // TODO(jwren) Re-enable when https://github.com/flutter/flutter-intellij/issues/4143 is resolved
-  //    When re-enabling, address the TODO in DartConfigurable.isMLCompletionApplicable(), and update the
-  //    ML_CODE_COMPLETION_MIN_DART_SDK_VERSION value.
-  //private boolean computeDoEnableMLBasedCodeCompletion(@NotNull final DartSdk sdk) {
-  //  return StringUtil.compareVersionNumbers(sdk.getVersion(), DartConfigurable.ML_CODE_COMPLETION_MIN_DART_SDK_VERSION) >= 0 &&
-  //         DartConfigurable.isMLCodeCompletionEnabled(myProject);
-  //}
 
   private void waitWhileServerBusy() {
     try {
