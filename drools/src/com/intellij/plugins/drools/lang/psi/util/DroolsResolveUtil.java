@@ -238,7 +238,9 @@ public final class DroolsResolveUtil {
       if (droolsLhsPattern != null) {
         PsiType psiType = ((DroolsUnaryAssignExpr)resolve).getType();
         if (processPsiClassTypeMembers(processor, psiType)) {
-          return processClassMembers(processor, Collections.singleton(((PsiClassType)psiType).resolve()), false);
+          if (psiType instanceof PsiClassType) {
+            return processClassMembers(processor, Collections.singleton(((PsiClassType)psiType).resolve()), false);
+          }
         }
       }
     }
