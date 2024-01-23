@@ -7,9 +7,9 @@ import com.intellij.javascript.webSymbols.jsType
 import com.intellij.lang.Language
 import com.intellij.lang.css.CSSLanguage
 import com.intellij.lang.documentation.DocumentationMarkup
+import com.intellij.lang.documentation.QuickDocCodeHighlightingHelper.getStyledInlineCodeFragment
 import com.intellij.lang.javascript.documentation.*
 import com.intellij.lang.javascript.documentation.JSDocSimpleInfoPrinter.addSections
-import com.intellij.lang.javascript.documentation.JSHtmlHighlightingUtil.STYLE_BOLD
 import com.intellij.lang.javascript.highlighting.TypeScriptHighlighter
 import com.intellij.lang.javascript.psi.JSFunctionItem
 import com.intellij.lang.javascript.psi.JSType
@@ -20,14 +20,12 @@ import com.intellij.lang.typescript.documentation.TypeScriptDocumentationProvide
 import com.intellij.model.Pointer
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.TextAttributesKey
-import com.intellij.openapi.editor.richcopy.HtmlSyntaxInfoUtil
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.platform.backend.documentation.DocumentationResult
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFileFactory
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.ui.ColorUtil
 import com.intellij.util.applyIf
@@ -243,14 +241,7 @@ class Angular2ElementDocumentationTarget private constructor(
       }
 
     fun append(text: String, language: Language): SyntaxPrinter {
-      builder.append(HtmlSyntaxInfoUtil.getHtmlContent(
-        PsiFileFactory.getInstance(context.project).createFileFromText(language, text),
-        text,
-        null,
-        EditorColorsManager.getInstance().globalScheme,
-        0,
-        text.length
-      )?.toString()?.replace(STYLE_BOLD, "") ?: text)
+      builder.append(getStyledInlineCodeFragment(text, language, context.project).replace(JSHtmlHighlightingUtil.STYLE_BOLD, ""))
       return this
     }
 

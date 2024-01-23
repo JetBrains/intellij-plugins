@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.lang.typescript.service.volar
 
 import com.google.gson.JsonElement
+import com.intellij.lang.documentation.QuickDocCodeHighlightingHelper.removeSurroundingStyledCodeBlock
 import com.intellij.lang.javascript.ecmascript6.TypeScriptAnnotatorCheckerProvider
 import com.intellij.lang.typescript.compiler.TypeScriptLanguageServiceAnnotatorCheckerProvider
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.LspGetElementTypeRequestArgs
@@ -28,7 +29,7 @@ class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(projec
 
   override fun createQuickInfoResponse(markupContent: MarkupContent): TypeScriptQuickInfoResponse {
     return TypeScriptQuickInfoResponse().apply {
-      val content = HtmlBuilder().appendRaw(convertMarkupContentToHtml(markupContent)).toString()
+      val content = HtmlBuilder().appendRaw(convertMarkupContentToHtml(markupContent, project)).toString()
       val index = content.indexOf("<p>")
       val hrIndex = content.indexOf("<hr />")
 
@@ -50,8 +51,7 @@ class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(projec
         secondPart = null
       }
 
-      displayString = firstPart
-        .removeSurrounding("<pre><code class=\"language-typescript\">", "</code></pre>")
+      displayString = removeSurroundingStyledCodeBlock(firstPart)
         .trim()
         .let(StringUtil::unescapeXmlEntities)
       if (secondPart != null) {

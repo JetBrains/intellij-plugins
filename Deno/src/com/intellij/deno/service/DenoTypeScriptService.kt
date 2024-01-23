@@ -3,6 +3,7 @@ package com.intellij.deno.service
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.deno.DenoSettings
+import com.intellij.lang.documentation.QuickDocCodeHighlightingHelper.removeSurroundingStyledCodeBlock
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.JSStringUtil
@@ -75,8 +76,8 @@ class DenoTypeScriptService(project: Project) : BaseLspTypeScriptService(project
 
   override fun createQuickInfoResponse(markupContent: MarkupContent): TypeScriptQuickInfoResponse {
     return TypeScriptQuickInfoResponse().apply {
-      val html = HtmlBuilder().appendRaw(convertMarkupContentToHtml(markupContent)).toString()
-      displayString = html.removeSurrounding("<pre>", "</pre>")
+      val html = HtmlBuilder().appendRaw(convertMarkupContentToHtml(markupContent, project)).toString()
+      displayString = removeSurroundingStyledCodeBlock(html)
     }
   }
 

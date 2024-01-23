@@ -1,9 +1,7 @@
 package org.intellij.prisma.ide.documentation
 
 import com.intellij.lang.documentation.DocumentationMarkup
-import com.intellij.openapi.editor.colors.EditorColorsManager
-import com.intellij.openapi.editor.colors.EditorColorsScheme
-import com.intellij.openapi.editor.richcopy.HtmlSyntaxInfoUtil
+import com.intellij.lang.documentation.QuickDocCodeHighlightingHelper
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
@@ -21,9 +19,9 @@ import org.intellij.markdown.html.GeneratingProvider
 import org.intellij.markdown.html.HtmlGenerator
 import org.intellij.markdown.parser.LinkMap
 import org.intellij.markdown.parser.MarkdownParser
+import org.intellij.prisma.lang.PrismaLanguage
 import org.intellij.prisma.lang.parser.PrismaParserDefinition
 import org.intellij.prisma.lang.psi.PrismaDocumentationOwner
-import org.intellij.prisma.lang.psi.PrismaElementFactory
 import org.intellij.prisma.lang.psi.skipWhitespacesBackwardWithoutNewLines
 import org.intellij.prisma.lang.psi.skipWhitespacesForwardWithoutNewLines
 import java.net.URI
@@ -86,7 +84,7 @@ internal fun StringBuilder.documentationComment(element: PsiElement?) {
 
 internal fun toHtml(project: Project, text: String): String {
   return try {
-    toHtml(project, text, EditorColorsManager.getInstance().globalScheme)
+    QuickDocCodeHighlightingHelper.getStyledInlineCodeFragment(text.replace("\t", "  "), PrismaLanguage, project)
   }
   catch (e: ProcessCanceledException) {
     throw e
@@ -94,13 +92,6 @@ internal fun toHtml(project: Project, text: String): String {
   catch (e: Exception) {
     text
   }
-}
-
-internal fun toHtml(project: Project, text: String, scheme: EditorColorsScheme): String {
-  val code = text.trimIndent().replace("\t", "  ")
-  val file = PrismaElementFactory.createFile(project, code)
-  return HtmlSyntaxInfoUtil
-           .getHtmlContent(file, code, null, scheme, 0, code.length)?.toString() ?: text
 }
 
 @NlsSafe
