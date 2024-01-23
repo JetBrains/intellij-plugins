@@ -2,13 +2,10 @@
 package org.intellij.terraform
 
 import com.intellij.openapi.util.text.StringUtil
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
+import kotlinx.coroutines.*
 import java.util.concurrent.atomic.AtomicReference
 
-fun String.nullize(nullizeSpaces:Boolean = false): String? {
+fun String.nullize(nullizeSpaces: Boolean = false): String? {
   return StringUtil.nullize(this, nullizeSpaces)
 }
 
@@ -24,28 +21,34 @@ fun joinCommaOr(list: List<String>): String = when (list.size) {
   else -> (list.dropLast(1).joinToString(postfix = " or " + list.last()))
 }
 
-class ExecuteLatest<T>(private val scope: CoroutineScope, private val f: suspend () -> T) : suspend () -> T {
-
-  private val deferredRef = AtomicReference<Deferred<T>>()
-
-  override suspend fun invoke(): T {
-    return restart().await()
-  }
-
-  tailrec fun restart(): Deferred<T> {
-    val newDeferred = scope.async(start = CoroutineStart.LAZY) { f.invoke() }
-    val prev = deferredRef.get()
-    prev?.cancel()
-    if (deferredRef.compareAndSet(prev, newDeferred)) {
-      newDeferred.invokeOnCompletion {
-        deferredRef.compareAndSet(newDeferred, null)
+fun <T> executeLatest(f: suspend () -> T): suspend () -> T {
+  val deferredRef = AtomicReference<Deferred<T>>()
+  return {
+    coroutineScope {
+      while (coroutineContext.isActive) {
+        val newDeferred = async(start = CoroutineStart.LAZY) { f() }
+        val prev = deferredRef.get()
+        prev?.cancel()
+        if (deferredRef.compareAndSet(prev, newDeferred)) {
+          try {
+            return@coroutineScope newDeferred.await()
+          }
+          catch (e: CancellationException) {
+            coroutineContext.ensureActive()
+          }
+          finally {
+            deferredRef.compareAndSet(newDeferred, null)
+          }
+        }
+        try {
+          deferredRef.get()?.let { return@coroutineScope it.await() }
+        }
+        catch (e: CancellationException) {
+          coroutineContext.ensureActive()
+        }
       }
-      newDeferred.start()
-      return newDeferred
-    }
-    else {
-      return deferredRef.get() ?: restart()
+      coroutineContext.ensureActive()
+      throw IllegalStateException("Unexpected state during `executeLatest` call")
     }
   }
-
 }

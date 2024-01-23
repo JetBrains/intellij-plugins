@@ -1,28 +1,6 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model.local
 
-import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
-import com.intellij.execution.process.CapturingProcessAdapter
-import com.intellij.openapi.application.readAction
-import com.intellij.openapi.application.writeAction
-import com.intellij.openapi.components.Service
-import com.intellij.openapi.components.service
-import com.intellij.openapi.diagnostic.logger
-import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.ProjectManager
-import com.intellij.openapi.project.guessProjectForFile
-import com.intellij.openapi.roots.ProjectFileIndex
-import com.intellij.openapi.util.NlsSafe
-import com.intellij.openapi.vfs.AsyncFileListener
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.newvfs.events.VFileDeleteEvent
-import com.intellij.openapi.vfs.newvfs.events.VFileEvent
-import com.intellij.platform.backend.workspace.WorkspaceModel
-import com.intellij.platform.backend.workspace.toVirtualFileUrl
-import com.intellij.platform.backend.workspace.virtualFile
-import com.intellij.platform.ide.progress.withBackgroundProgress
-import com.intellij.platform.util.coroutines.childScope
 import com.intellij.platform.workspace.storage.*
 import com.intellij.platform.workspace.storage.EntityInformation
 import com.intellij.platform.workspace.storage.EntitySource
@@ -39,19 +17,6 @@ import com.intellij.platform.workspace.storage.instrumentation.EntityStorageInst
 import com.intellij.platform.workspace.storage.instrumentation.EntityStorageInstrumentationApi
 import com.intellij.platform.workspace.storage.metadata.model.EntityMetadata
 import com.intellij.platform.workspace.storage.url.VirtualFileUrl
-import com.intellij.psi.PsiManager
-import com.intellij.util.concurrency.annotations.RequiresBlockingContext
-import com.intellij.util.containers.ContainerUtil
-import com.intellij.util.indexing.roots.IndexableFileScanner
-import kotlin.coroutines.coroutineContext
-import kotlinx.coroutines.*
-import org.intellij.terraform.ExecuteLatest
-import org.intellij.terraform.config.model.TypeModel
-import org.intellij.terraform.config.model.TypeModelProvider
-import org.intellij.terraform.config.model.loader.TerraformMetadataLoader
-import org.intellij.terraform.config.util.TFExecutor
-import org.intellij.terraform.config.util.executeSuspendable
-import org.intellij.terraform.hcl.HCLLanguage
 
 @GeneratedCodeApiVersion(2)
 @GeneratedCodeImplVersion(3)
