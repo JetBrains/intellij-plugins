@@ -768,7 +768,7 @@
           "name": "for",
           "is-primary": true,
           "doc-url": "https://angular.dev/guide/templates/control-flow#for-block---repeaters",
-          "description": "The `@for` repeatedly renders content of a block for each item in a collection. The collection can be represented as any JavaScript iterable but there are performance advantages of using a regular `Array`. A basic `@for` loop looks like:\n```Angular2Html\n@for (item of items; track item.id) {\n  {{ item.name }}\n}\n```",
+          "description": "The `@for` repeatedly renders content of a block for each item in a collection. The collection can be represented as any JavaScript iterable but there are performance advantages of using a regular `Array`. A basic `@for` loop looks like:\n```Angular17Html\n@for (item of items; track item.id) {\n  {{ item.name }}\n}\n```",
           "ng-block-parameters": [
             {
               "name": "$primary-expression",
@@ -777,7 +777,7 @@
             {
               "name": "let",
               "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
-              "description": "Allows to alias one of the implicit variables: `$count`, `$index`, `$first`, `$last`, `$even` or `$odd`:\n```Angular2Html\n      \n@for (item of items; track item.id; let idx = $index, e = $even) {\n  Item #{{ idx }}: {{ item.name }}\n}\n```"
+              "description": "Allows to alias one of the implicit variables: `$count`, `$index`, `$first`, `$last`, `$even` or `$odd`:\n```Angular17Html\n      \n@for (item of items; track item.id; let idx = $index, e = $even) {\n  Item #{{ idx }}: {{ item.name }}\n}\n```"
             },
             {
               "name": "track",
@@ -835,14 +835,14 @@
         {
           "name": "empty",
           "doc-url": "https://angular.dev/guide/templates/control-flow#empty-block",
-          "description": "You can optionally include an `@empty` section immediately after the `@for` block content. The content of the `@empty` block displays when there are no items:\n```Angular2Html\n@for (item of items; track item.name) {\n  <li> {{ item.name }} </li>\n} @empty {\n  <li> There are no items. </li>\n}\n```",
+          "description": "You can optionally include an `@empty` section immediately after the `@for` block content. The content of the `@empty` block displays when there are no items:\n```Angular17Html\n@for (item of items; track item.name) {\n  <li> {{ item.name }} </li>\n} @empty {\n  <li> There are no items. </li>\n}\n```",
           "primary-block": "for",
           "unique": true
         },
         {
           "name": "if",
           "doc-url": "https://angular.dev/guide/templates/control-flow#if-block-conditionals",
-          "description": "The `@if` block conditionally displays its content when its condition expression is truthy:\n```Angular2Html\n@if (a > b) {\n   {{a}} is greater than {{b}}\n}\n```\nThe `@if` block might have one or more associated `@else` blocks. Immediately after an `@if` block, you can optionally specify any number of `@else if` blocks and one `@else` block.",
+          "description": "The `@if` block conditionally displays its content when its condition expression is truthy:\n```Angular17Html\n@if (a > b) {\n   {{a}} is greater than {{b}}\n}\n```\nThe `@if` block might have one or more associated `@else` blocks. Immediately after an `@if` block, you can optionally specify any number of `@else if` blocks and one `@else` block.",
           "is-primary": true,
           "ng-block-parameters": [
             {
@@ -852,7 +852,7 @@
             {
               "name": "as",
               "doc-url": "https://angular.dev/guide/templates/control-flow#referencing-the-conditional-expressions-result",
-              "description": "Use `as` parameter to reference conditional expression results:\n```Angular2Html\n@if (users$ | async; as users) {\n  {{ users.length }}\n}\n```",
+              "description": "Use `as` parameter to reference conditional expression results:\n```Angular17Html\n@if (users$ | async; as users) {\n  {{ users.length }}\n}\n```",
               "unique": true
             }
           ]
@@ -880,7 +880,7 @@
         {
           "name": "switch",
           "doc-url": "https://angular.dev/guide/templates/control-flow#switch-block---selection",
-          "description": "The syntax for `@switch` is very similar to `@if`, and is inspired by the JavaScript `switch` statement:\n```Angular2Html\n@switch (condition) {\n  @case (caseA) {\n    Case A.\n  }\n  @case (caseB) {\n    Case B.\n  }\n  @default {\n    Default case.\n  }\n}\n```\nThe value of the conditional expression is compared to the case expression using the `===` operator.\n\n`@switch` does not have fallthrough, so you do not need an equivalent to a `break` or `return` statement.\n\nThe `@default` block is optional and can be omitted. If no `@case` matches the expression and there is no `@default` block, nothing is shown.",
+          "description": "The syntax for `@switch` is very similar to `@if`, and is inspired by the JavaScript `switch` statement:\n```Angular17Html\n@switch (condition) {\n  @case (caseA) {\n    Case A.\n  }\n  @case (caseB) {\n    Case B.\n  }\n  @default {\n    Default case.\n  }\n}\n```\nThe value of the conditional expression is compared to the case expression using the `===` operator.\n\n`@switch` does not have fallthrough, so you do not need an equivalent to a `break` or `return` statement.\n\nThe `@default` block is optional and can be omitted. If no `@case` matches the expression and there is no `@default` block, nothing is shown.",
           "is-primary": true,
           "nested-secondary-blocks": true,
           "ng-block-parameters": [

@@ -8,17 +8,12 @@ template for the <code>else</code> clause is blank.<p>A <a href="guide/structura
 <code>*ngIf=&quot;condition&quot;</code>, is generally used, provided
 as an attribute of the anchor element for the inserted template.
 Angular expands this into a more explicit version, in which the anchor element
-is contained in an <code>&lt;ng-template&gt;</code> element.<p>Simple form with shorthand syntax:<pre>&lt;div *ngIf=&quot;condition&quot;&gt;Content to render when condition is true.&lt;/div&gt;
-</pre><p>Simple form with expanded syntax:<pre>&lt;ng-template [ngIf]=&quot;condition&quot;&gt;&lt;div&gt;Content to render when condition is
-true.&lt;/div&gt;&lt;/ng-template&gt;
-</pre><p>Form with an &quot;else&quot; block:<pre>&lt;div *ngIf=&quot;condition; else elseBlock&quot;&gt;Content to render when condition is true.&lt;/div&gt;
-&lt;ng-template #elseBlock&gt;Content to render when condition is false.&lt;/ng-template&gt;
-</pre><p>Shorthand form with &quot;then&quot; and &quot;else&quot; blocks:<pre>&lt;div *ngIf=&quot;condition; then thenBlock else elseBlock&quot;&gt;&lt;/div&gt;
+is contained in an <code>&lt;ng-template&gt;</code> element.<p>Simple form with shorthand syntax:<div class='styled-code'><pre style="padding: 0px; margin: 0px">&lt;div *ngIf=&quot;condition&quot;&gt;Content to render when condition is true.&lt;/div&gt;</pre></div><p>Simple form with expanded syntax:<div class='styled-code'><pre style="padding: 0px; margin: 0px">&lt;ng-template [ngIf]=&quot;condition&quot;&gt;&lt;div&gt;Content to render when condition is
+true.&lt;/div&gt;&lt;/ng-template&gt;</pre></div><p>Form with an &quot;else&quot; block:<div class='styled-code'><pre style="padding: 0px; margin: 0px">&lt;div *ngIf=&quot;condition; else elseBlock&quot;&gt;Content to render when condition is true.&lt;/div&gt;
+&lt;ng-template #elseBlock&gt;Content to render when condition is false.&lt;/ng-template&gt;</pre></div><p>Shorthand form with &quot;then&quot; and &quot;else&quot; blocks:<div class='styled-code'><pre style="padding: 0px; margin: 0px">&lt;div *ngIf=&quot;condition; then thenBlock else elseBlock&quot;&gt;&lt;/div&gt;
 &lt;ng-template #thenBlock&gt;Content to render when condition is true.&lt;/ng-template&gt;
-&lt;ng-template #elseBlock&gt;Content to render when condition is false.&lt;/ng-template&gt;
-</pre><p>Form with storing the value locally:<pre>&lt;div *ngIf=&quot;condition as value; else elseBlock&quot;&gt;{{value}}&lt;/div&gt;
-&lt;ng-template #elseBlock&gt;Content to render when value is null.&lt;/ng-template&gt;
-</pre><h3>Usage Notes</h3>
+&lt;ng-template #elseBlock&gt;Content to render when condition is false.&lt;/ng-template&gt;</pre></div><p>Form with storing the value locally:<div class='styled-code'><pre style="padding: 0px; margin: 0px">&lt;div *ngIf=&quot;condition as value; else elseBlock&quot;&gt;{{value}}&lt;/div&gt;
+&lt;ng-template #elseBlock&gt;Content to render when value is null.&lt;/ng-template&gt;</pre></div><h3>Usage Notes</h3>
 <p>The <code>*ngIf</code> directive is most commonly used to conditionally show an inline template,
 as seen in the following  example.
 The default <code>else</code> template is blank.<h3>Showing an alternative template using <code>else</code></h3><p>To display a template when <code>expression</code> evaluates to false, use an <code>else</code> template
@@ -39,19 +34,18 @@ safe-navigation-operator (<code>?.</code>)
 to guard against null values when accessing properties.
 You can display an alternative template while waiting for the data.<h3>Shorthand syntax</h3><p>The shorthand syntax <code>*ngIf</code> expands into two separate template specifications
 for the &quot;then&quot; and &quot;else&quot; clauses. For example, consider the following shorthand statement,
-that is meant to show a loading page while waiting for data to be loaded.<pre>&lt;div class=&quot;hero-list&quot; *ngIf=&quot;heroes else loading&quot;&gt;
+that is meant to show a loading page while waiting for data to be loaded.<div class='styled-code'><pre style="padding: 0px; margin: 0px">&lt;div class=&quot;hero-list&quot; *ngIf=&quot;heroes else loading&quot;&gt;
  ...
 &lt;/div&gt;
 
 &lt;ng-template #loading&gt;
  &lt;div&gt;Loading...&lt;/div&gt;
-&lt;/ng-template&gt;
-</pre><p>You can see that the &quot;else&quot; clause references the <code>&lt;ng-template&gt;</code>
+&lt;/ng-template&gt;</pre></div><p>You can see that the &quot;else&quot; clause references the <code>&lt;ng-template&gt;</code>
 with the <code>#loading</code> label, and the template for the &quot;then&quot; clause
 is provided as the content of the anchor element.<p>However, when Angular expands the shorthand syntax, it creates
 another <code>&lt;ng-template&gt;</code> tag, with <code>ngIf</code> and <code>ngIfElse</code> directives.
 The anchor element containing the template for the &quot;then&quot; clause becomes
-the content of this unlabeled <code>&lt;ng-template&gt;</code> tag.<pre>&lt;ng-template [ngIf]=&quot;heroes&quot; [ngIfElse]=&quot;loading&quot;&gt;
+the content of this unlabeled <code>&lt;ng-template&gt;</code> tag.<div class='styled-code'><pre style="padding: 0px; margin: 0px">&lt;ng-template [ngIf]=&quot;heroes&quot; [ngIfElse]=&quot;loading&quot;&gt;
  &lt;div class=&quot;hero-list&quot;&gt;
   ...
  &lt;/div&gt;
@@ -59,7 +53,6 @@ the content of this unlabeled <code>&lt;ng-template&gt;</code> tag.<pre>&lt;ng-t
 
 &lt;ng-template #loading&gt;
  &lt;div&gt;Loading...&lt;/div&gt;
-&lt;/ng-template&gt;
-</pre><p>The presence of the implicit template object has implications for the nesting of
+&lt;/ng-template&gt;</pre></div><p>The presence of the implicit template object has implications for the nesting of
 structural directives. For more on this subject, see
 <a href="https://angular.io/guide/structural-directives#one-per-element">Structural Directives</a>.</div><table class='sections'><tr><td valign='top' class='section'><p>Selectors:</td><td valign='top'><p><pre><span style="">[</span><span style="color:#000080;">ngIf</span><span style="">]</span></pre></td><tr><td valign='top' class='section'><p>NgModule:</td><td valign='top'><p>CommonModule</td><tr><td valign='top' class='section'><p>Public API</td><td valign='top'><p></td><tr><td valign='top' colspan='2'><icon src='JavaScriptPsiIcons.FileTypes.TypeScriptFile'/>&nbsp;deps/ng_if.ts</td></table>
