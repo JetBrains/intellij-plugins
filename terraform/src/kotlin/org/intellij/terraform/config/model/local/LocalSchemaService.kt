@@ -21,7 +21,6 @@ import com.intellij.platform.backend.workspace.toVirtualFileUrl
 import com.intellij.platform.backend.workspace.virtualFile
 import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.intellij.platform.util.coroutines.childScope
-import com.intellij.platform.util.progress.indeterminateStep
 import com.intellij.platform.workspace.storage.entities
 import com.intellij.psi.PsiManager
 import com.intellij.util.concurrency.annotations.RequiresBlockingContext
@@ -141,12 +140,8 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     return modelBuildScope.async {
       withBackgroundProgress(project, HCLBundle.message("rebuilding.local.schema"), false) {
         logger<LocalSchemaService>().info("building local model: $lock")
-        val json = indeterminateStep(HCLBundle.message("progress.text.retrieving.json.schema")) {
-          retrieveJsonForTFLock(lock)
-        }
-        indeterminateStep(HCLBundle.message("progress.text.building.local.schema")) {
-          buildModelFromJson(json)
-        }
+        val json = retrieveJsonForTFLock(lock)
+        buildModelFromJson(json)
       }
     }
   }
@@ -181,16 +176,21 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     }
 
     val jsonFilePath: String = generateResult.getOrNull() ?: lockData?.let { ld ->
-      runCatching {
+      try {
         readLockDataJsonFile(ld)
         logger<LocalSchemaService>().info("using previous logData for: ${lock.name}")
         ld.jsonPath
-      }.getOrElse { lockDataException ->
+      }
+      catch (lockDataException: Exception) {
         logger<LocalSchemaService>().info("failed to load previous lock data: ${lock.name}", lockDataException)
-        generateResult.exceptionOrNull()?.let { generateException ->
+        val generateException = generateResult.exceptionOrNull()
+        if (generateException != null) {
           generateException.addSuppressed(lockDataException)
           throw generateException
-        } ?: throw lockDataException
+        }
+        else {
+          throw lockDataException
+        }
       }
     } ?: generateResult.getOrThrow()
 
@@ -230,7 +230,7 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
   private val orphanCollector: ExecuteLatest<Unit> = ExecuteLatest(scope) {
     delay(3000) // debounce
     awaitModelsReady()
-    withBackgroundProgress(project, "Removing unused metadata") {
+    withBackgroundProgress(project, HCLBundle.message("progress.title.removing.unused.metadata")) {
       val localModelPath = localModelPath
       val allModelFiles = withContext(Dispatchers.IO) {
         Files.list(localModelPath).use { paths -> paths.map { localModelPath.relativize(it) }.toList() }
@@ -250,10 +250,6 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
         }
       }
     }
-  }
-
-  fun scheduleOrphanMetadataCollection(): Job {
-    return orphanCollector.restart()
   }
 
   private fun updateWorkspaceModel(lock: VirtualFile, prevLockData: TFLocalMetaEntity?, newJson: @NlsSafe String) {
