@@ -11,6 +11,7 @@ import org.intellij.terraform.config.inspection.HCLBlockMissingPropertyInspectio
 import org.intellij.terraform.config.model.local.LocalSchemaService
 import org.intellij.terraform.config.model.local.TFLocalMetaEntity
 import org.intellij.terraform.config.util.TFCommandLineServiceMock
+import org.intellij.terraform.runtime.TerraformToolProjectSettings
 import org.junit.Assert
 import java.nio.file.Files
 
@@ -134,7 +135,7 @@ class TerraformLocalMetadataTest : BasePlatformTestCase() {
 
   private fun loadAndCheckDoMetadata(dummyPropName: String) {
     TFCommandLineServiceMock.instance.mockCommandLine(
-      "terraform providers schema -json", genDoModel(dummyPropName),
+      "$terraformExe providers schema -json", genDoModel(dummyPropName),
       testRootDisposable)
 
     myFixture.configureByText(".terraform.lock.hcl", MY_DO_LOCK)
@@ -165,7 +166,7 @@ class TerraformLocalMetadataTest : BasePlatformTestCase() {
 
   fun testNewLockPickedUp() {
     TFCommandLineServiceMock.instance.mockCommandLine(
-      "terraform providers schema -json", genDoModel("dummyProp"),
+      "$terraformExe providers schema -json", genDoModel("dummyProp"),
       testRootDisposable)
 
     val lockFile = myFixture.configureByText(".terraform.lock.hcl", MY_DO_LOCK)
@@ -184,7 +185,7 @@ class TerraformLocalMetadataTest : BasePlatformTestCase() {
   fun testPickUpOldMetaOnError() {
     loadAndCheckDoMetadata("dummyProp")
     TFCommandLineServiceMock.instance.mockCommandLine(
-      "terraform providers schema -json", "", 1,
+      "$terraformExe providers schema -json", "", 1,
       testRootDisposable)
 
     myFixture.configureByText(".terraform.lock.hcl", MY_DO_LOCK)
@@ -199,7 +200,7 @@ class TerraformLocalMetadataTest : BasePlatformTestCase() {
 
   fun testNotPumpOnError() {
     TFCommandLineServiceMock.instance.mockCommandLine(
-      "terraform providers schema -json", "", 1,
+      "$terraformExe providers schema -json", "", 1,
       testRootDisposable)
 
     myFixture.configureByText(".terraform.lock.hcl", MY_DO_LOCK)
@@ -220,5 +221,8 @@ class TerraformLocalMetadataTest : BasePlatformTestCase() {
 
     assertEquals("", TFCommandLineServiceMock.instance.requestsToVerify().joinToString("\n"))
   }
+
+  val terraformExe: String
+    get() = TerraformToolProjectSettings.getInstance(project).terraformPath
 
 }

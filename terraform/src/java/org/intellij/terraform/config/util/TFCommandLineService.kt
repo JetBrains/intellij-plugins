@@ -5,11 +5,9 @@ import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.service
 import com.intellij.openapi.util.Disposer
-import com.intellij.util.containers.ConcurrentList
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.headTailOrNull
 import org.jetbrains.annotations.TestOnly
-import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
 import java.util.concurrent.ConcurrentHashMap
@@ -33,7 +31,7 @@ class TFCommandLineServiceMock : TFCommandLineService {
     mockCommandLine(commandLine, stdout, 0, disposable)
 
   fun mockCommandLine(commandLine: String, stdout: String, exitCode: Int, disposable: Disposable) {
-    mocks.put(commandLine, object : Process() {
+    mocks[commandLine] = object : Process() {
       override fun getOutputStream(): OutputStream = OutputStream.nullOutputStream()
 
       override fun getInputStream(): InputStream = stdout.byteInputStream()
@@ -45,7 +43,7 @@ class TFCommandLineServiceMock : TFCommandLineService {
       override fun exitValue(): Int = exitCode
 
       override fun destroy() {}
-    })
+    }
     Disposer.register(disposable) {
       mocks.remove(commandLine)
       requests.clear()
@@ -56,18 +54,13 @@ class TFCommandLineServiceMock : TFCommandLineService {
 
   private val requests = ContainerUtil.createConcurrentList<String>()
 
-  private fun normalizedCmd(commandLine: GeneralCommandLine): String {
-    val commandLineString = commandLine.commandLineString
-    val separator = commandLine.exePath.lastIndexOf(File.separatorChar)
-    if (separator == -1) return commandLineString
-    return commandLineString.substring(separator + 1)
-  }
-
   override fun wrapCommandLine(commandLine: GeneralCommandLine): GeneralCommandLine = object : GeneralCommandLine() {
     override fun createProcess(): Process {
-      val commandLineString = normalizedCmd(commandLine)
+      val commandLineString = commandLine.commandLineString
       requests.add(commandLineString)
-      return mocks[commandLineString] ?: throw AssertionError("Missing mock for $commandLineString").also { errors.add(it) }
+      return mocks[commandLineString] ?: throw AssertionError(
+        "Missing mock for $commandLineString, available mocks = ${mocks.keys}"
+      ).also { errors.add(it) }
     }
   }
 
