@@ -29,6 +29,6 @@ object TerraformDocumentationUrlProvider {
     val (provider, id) = if (stringList.size < 2) Pair(identifier, identifier) else Pair(stringList[0], stringList[1])
     val version = getProviderVersion(provider, element)
     val org = getProviderOrg(provider, element)
-    return "https://registry.terraform.io/providers/${org}/${provider}/$version/docs/${type}/${id}" + (property?.let { "#$it" } ?: "")
+    return "https://registry.terraform.io/providers/${org}/${provider}/${version}/docs/${type}/${id}" + (property?.let { "#$it" } ?: "")
   }
 }
