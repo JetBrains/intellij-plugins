@@ -16,7 +16,6 @@ import com.intellij.openapi.project.getProjectDataPath
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.backend.workspace.WorkspaceModel
-import com.intellij.platform.backend.workspace.getVirtualFileUrlManager
 import com.intellij.platform.backend.workspace.toVirtualFileUrl
 import com.intellij.platform.backend.workspace.virtualFile
 import com.intellij.platform.ide.progress.withBackgroundProgress
@@ -255,11 +254,12 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
   private fun updateWorkspaceModel(lock: VirtualFile, prevLockData: TFLocalMetaEntity?, newJson: @NlsSafe String) {
     val low = (lock.timeStamp and 0xFFFFFFFFL).toInt()
     val high = (lock.timeStamp shr 32).toInt()
-    WorkspaceModel.getInstance(project).updateProjectModel("Update TF Local Model from $lock") { storage ->
+    val workspaceModel = WorkspaceModel.getInstance(project)
+    workspaceModel.updateProjectModel("Update TF Local Model from $lock") { storage ->
       if (prevLockData != null)
         storage.removeEntity(prevLockData)
       storage.addEntity(TFLocalMetaEntity(low, high, newJson,
-                                          lock.toVirtualFileUrl(getVirtualFileUrlManager(project)),
+                                          lock.toVirtualFileUrl(workspaceModel.getVirtualFileUrlManager()),
                                           TFLocalMetaEntity.LockEntitySource
 
       ))
