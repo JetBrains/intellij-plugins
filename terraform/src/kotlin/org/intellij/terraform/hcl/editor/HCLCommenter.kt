@@ -97,7 +97,7 @@ class HCLCommenter : CodeDocumentationAwareCommenter, SelfManagingCommenter<HCLC
     val file = data.psiFile ?: return "$LINE_POUND_COMMENT "
     val settings = CodeStyle.getCustomSettings(file, HCLCodeStyleSettings::class.java)
     val lineCommenterChar = LineCommenterPrefix.entries.find { it.id == settings.PROPERTY_LINE_COMMENTER_CHARACTER }
-                            ?: LineCommenterPrefix.LINE_DOUBLE_SLASHES
+                            ?: LineCommenterPrefix.LINE_POUND_SIGN
     return "${lineCommenterChar.prefix} "
   }
 }

@@ -1,4 +1,4 @@
-// "Add variable 'foobar'" "true"
+# "Add variable 'foobar'" "true"
 output "x" {
-  value = "${var.foo<caret>bar}"
+  value = var.foo<caret>bar
 }
