@@ -41,8 +41,7 @@ final class PrettierActionOnSave extends ActionsOnSaveFileDocumentManagerListene
       VirtualFile file = manager.getFile(document);
       if (file != null && prettierConfiguration.isRunOnReformat()) {
         FormatOnSaveOptions onSaveOptions = FormatOnSaveOptions.getInstance(project);
-        if (onSaveOptions.isRunOnSaveEnabled() &&
-            (onSaveOptions.isAllFileTypesSelected() || onSaveOptions.isFileTypeSelected(file.getFileType()))) {
+        if (onSaveOptions.isRunOnSaveEnabled() && onSaveOptions.isFileTypeSelected(file.getFileType())) {
           // already processed as com.intellij.prettierjs.PrettierPostFormatProcessor
           return null;
         }
