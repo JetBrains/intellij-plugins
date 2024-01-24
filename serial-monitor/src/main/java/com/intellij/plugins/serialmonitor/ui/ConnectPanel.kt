@@ -15,6 +15,7 @@ import com.intellij.plugins.serialmonitor.service.SerialPortsListener
 import com.intellij.plugins.serialmonitor.service.SerialPortsListener.Companion.SERIAL_PORTS_TOPIC
 import com.intellij.ui.JBSplitter
 import com.intellij.ui.components.JBPanel
+import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.content.Content
 import com.intellij.ui.content.ContentFactory
 import com.intellij.ui.dsl.builder.Align.Companion.FILL
@@ -42,15 +43,14 @@ class ConnectPanel(private val toolWindow: ToolWindow) : JBSplitter(false, 0.4f,
     disposable = Disposer.newDisposable("Serial Profile Parameters")
     Disposer.register(toolWindow.disposable, disposable)
     val portName = ports.getSelectedPortName()
-    var panel: DialogPanel? = null
-    if (portName != null) {
-      panel = portSettings(ports, portName, disposable)
-    }
-    else {
-      panel = profileSettings(ports, disposable)
-    }
+    val panel: DialogPanel? =
+      if (portName != null)
+        portSettings(ports, portName, disposable)
+      else
+        profileSettings(ports, disposable)
+
     if (panel != null) {
-      secondComponent = panel
+      secondComponent = JBScrollPane(panel)
       invalidate()
     }
   }

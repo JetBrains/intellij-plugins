@@ -99,7 +99,7 @@ fun Panel.serialSettings(disposable: Disposable,
     return this
   }
 
-  fun <T : JComponent> Cell<T>.stdWidth():Cell<T> =
+  fun <T : JComponent> Cell<T>.stdWidth(): Cell<T> =
     this.widthGroup("portControl")
 
   row {
@@ -135,18 +135,18 @@ fun Panel.serialSettings(disposable: Disposable,
       .enabled(!readOnly)
       .label(message("label.new.line"))
       .stdWidth()
-    checkBox("")
-      .changesBind(SerialPortProfile::localEcho)
-      .label(message("label.local.echo"))
-      .enabled(!readOnly)
-  }.layout(RowLayout.PARENT_GRID)
-  row {
     comboBox(charsets)
       .speedSearch()
       .changesBind(SerialPortProfile::encoding)
       .enabled(!readOnly)
       .label(message("label.encoding"))
       .stdWidth()
+  }.layout(RowLayout.PARENT_GRID)
+  row {
+    checkBox("")
+      .changesBind(SerialPortProfile::localEcho)
+      .label(message("label.local.echo"))
+      .enabled(!readOnly)
     customize(UnscaledGapsY(bottom = 20))
   }.layout(RowLayout.PARENT_GRID)
 }
