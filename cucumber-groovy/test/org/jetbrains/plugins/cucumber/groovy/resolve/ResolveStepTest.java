@@ -1,18 +1,17 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.jetbrains.plugins.cucumber.groovy.resolve
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.jetbrains.plugins.cucumber.groovy.resolve;
 
-import com.intellij.psi.PsiReference
-import groovy.transform.CompileStatic
-import org.jetbrains.plugins.cucumber.groovy.GrCucumberLightTestCase
-import org.jetbrains.plugins.groovy.util.ResolveTest
-import org.junit.Test
+import com.intellij.psi.PsiReference;
+import org.jetbrains.plugins.cucumber.groovy.GrCucumberLightTestCase;
+import org.jetbrains.plugins.groovy.util.ResolveTest;
+import org.junit.Test;
 
-@CompileStatic
-class ResolveStepTest extends GrCucumberLightTestCase implements ResolveTest {
+import static org.junit.Assert.assertNotNull;
 
+public class ResolveStepTest extends GrCucumberLightTestCase implements ResolveTest {
   @Test
-  void table() {
-    doTest('''\
+  public void table() {
+    doTest("""
 Feature: Shopping
 
   Scenario: Give correct change
@@ -23,7 +22,7 @@ Feature: Shopping
       | soap  | 5     |
     When I pay 25
     Then my change should be 4
-''', '''\
+""", """
 import static org.junit.Assert.assertEquals;
 
 this.metaClass.mixin(cucumber.runtime.groovy.Hooks)
@@ -49,12 +48,12 @@ public static class Grocery {
   public String name;
   public int price;
 }
-''')
+""");
   }
 
   @Test
-  void simple() {
-    doTest('''\
+  public void simple() {
+    doTest("""
 # language: en
 Feature: Division
   In order to avoid silly mistakes
@@ -65,7 +64,7 @@ Feature: Division
     And have entered 3 into the calculator
     When I press divide
     Then the stored result should be 2.0
-''', '''\
+""", """
 package calc
 
 import cucumber.runtime.PendingException
@@ -90,18 +89,17 @@ Given(~'I have entered (\\\\d+) into (.*) calculator') { int number, String igno
 Given(~'^(\\\\d+) into the$') {->
     throw new RuntimeException("should never get here since we're running with --guess")
 }
-''')
+""");
   }
 
   @Test
-  void methodWithTimeoutParameter() {
-    doTest(
-      '''
+  public void methodWithTimeoutParameter() {
+    doTest("""
 Feature: Division
   Scenario: More numbers
     Given calcula<caret>tor
-''',
-      '''
+""", """
+
 package calc
 
 import cucumber.runtime.PendingException
@@ -112,13 +110,12 @@ this.metaClass.mixin(cucumber.runtime.groovy.EN)
 Given(~'calculator', 1000) {->
     calc.push number
 }
-'''
-    )
+""");
   }
 
-  void doTest(String feature, String stepDef) {
-    fixture.configureByText('test.feature', feature)
-    fixture.addFileToProject('steps.groovy', stepDef)
-    assert referenceUnderCaret(PsiReference).resolve()
+  public void doTest(String feature, String stepDef) {
+    getFixture().configureByText("test.feature", feature);
+    getFixture().addFileToProject("steps.groovy", stepDef);
+    assertNotNull(referenceUnderCaret(PsiReference.class).resolve());
   }
 }
