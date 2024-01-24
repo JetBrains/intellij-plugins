@@ -3,7 +3,6 @@ package com.intellij.deno.service
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.deno.DenoSettings
-import com.intellij.lang.documentation.QuickDocHighlightingHelper.removeSurroundingStyledCodeBlock
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.JSStringUtil
@@ -15,18 +14,14 @@ import com.intellij.lang.javascript.service.JSLanguageServiceProvider
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
 import com.intellij.lang.typescript.compiler.TypeScriptService.CompletionMergeStrategy
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
-import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
 import com.intellij.lang.typescript.library.TypeScriptLibraryProvider
 import com.intellij.lang.typescript.lsp.BaseLspTypeScriptService
 import com.intellij.lang.typescript.lsp.LspAnnotationError
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.text.HtmlBuilder
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.platform.lsp.util.convertMarkupContentToHtml
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import org.eclipse.lsp4j.MarkupContent
 
 class DenoTypeScriptServiceProvider(val project: Project) : JSLanguageServiceProvider {
 
@@ -72,13 +67,6 @@ class DenoTypeScriptService(project: Project) : BaseLspTypeScriptService(project
 
   override fun getServiceFixes(file: PsiFile, element: PsiElement?, result: JSAnnotationError): Collection<IntentionAction> {
     return (result as? LspAnnotationError)?.quickFixes ?: emptyList()
-  }
-
-  override fun createQuickInfoResponse(markupContent: MarkupContent): TypeScriptQuickInfoResponse {
-    return TypeScriptQuickInfoResponse().apply {
-      val html = HtmlBuilder().appendRaw(convertMarkupContentToHtml(project, markupContent)).toString()
-      displayString = removeSurroundingStyledCodeBlock(html)
-    }
   }
 
   override fun canHighlight(file: PsiFile) = DialectDetector.isTypeScript(file)
