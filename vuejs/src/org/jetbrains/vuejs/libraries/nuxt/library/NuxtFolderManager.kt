@@ -22,7 +22,6 @@ import com.intellij.platform.workspace.storage.url.VirtualFileUrl
 import com.intellij.platform.workspace.storage.url.VirtualFileUrlManager
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.xmlb.annotations.XCollection
-import com.intellij.workspaceModel.ide.getInstance
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_OUTPUT_FOLDER
 
 @Service(Service.Level.PROJECT)
@@ -71,8 +70,9 @@ class NuxtFolderManager(private val project: Project) : PersistentStateComponent
 
   private fun addExcludeEntity(nuxtFolder: VirtualFile) {
     invokeUnderWriteAction(project) {
-      WorkspaceModel.getInstance(project).updateProjectModel("Exclude .nuxt/ for " + nuxtFolder.path) { storage ->
-        val virtualFileUrlManager = VirtualFileUrlManager.getInstance(project)
+      val workspaceModel = WorkspaceModel.getInstance(project)
+      workspaceModel.updateProjectModel("Exclude .nuxt/ for " + nuxtFolder.path) { storage ->
+        val virtualFileUrlManager = workspaceModel.getVirtualFileUrlManager()
         val nuxtFolderUrl = nuxtFolder.toVirtualFileUrl(virtualFileUrlManager)
         val entities = findEntities(storage, nuxtFolderUrl)
         entities.forEach(storage::removeEntity)
@@ -97,8 +97,9 @@ class NuxtFolderManager(private val project: Project) : PersistentStateComponent
   private fun doCreateLibrary(nuxtFolder: VirtualFile) {
     val library = NuxtFolderLibrary(nuxtFolder)
     invokeUnderWriteAction(project) {
-      WorkspaceModel.getInstance(project).updateProjectModel("Include library files from .nuxt/ for " + nuxtFolder.path) { storage ->
-        val virtualFileUrlManager = VirtualFileUrlManager.getInstance(project)
+      val workspaceModel = WorkspaceModel.getInstance(project)
+      workspaceModel.updateProjectModel("Include library files from .nuxt/ for " + nuxtFolder.path) { storage ->
+        val virtualFileUrlManager = workspaceModel.getVirtualFileUrlManager()
         val nuxtFolderUrl = nuxtFolder.toVirtualFileUrl(virtualFileUrlManager)
         val entities = findEntities(storage, nuxtFolderUrl)
         entities.forEach(storage::removeEntity)

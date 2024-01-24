@@ -7,7 +7,6 @@ import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.platform.backend.workspace.WorkspaceModel
 import com.intellij.platform.workspace.storage.url.VirtualFileUrl
 import com.intellij.platform.workspace.storage.url.VirtualFileUrlManager
-import com.intellij.workspaceModel.ide.getInstance
 
 class NuxtFolderLibraryStartupActivity : ProjectActivity {
   override suspend fun execute(project: Project) {
@@ -22,7 +21,7 @@ class NuxtFolderModelSynchronizer(private val project: Project) {
   private val libraries: List<NuxtFolderLibrary> = nuxtFolderManager.nuxtFolders.map {
     NuxtFolderLibrary(it)
   }
-  private val virtualFileUrlManager: VirtualFileUrlManager = VirtualFileUrlManager.getInstance(project)
+  private val virtualFileUrlManager: VirtualFileUrlManager = workspaceModel.getVirtualFileUrlManager()
 
   fun sync() {
     val actualEntities = buildActualEntities()

@@ -12,8 +12,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.backend.workspace.WorkspaceModel
 import com.intellij.platform.backend.workspace.toVirtualFileUrl
 import com.intellij.platform.workspace.storage.MutableEntityStorage
-import com.intellij.platform.workspace.storage.url.VirtualFileUrlManager
-import com.intellij.workspaceModel.ide.getInstance
 
 internal fun createDenoEntity(project: Project) {
   if (!useWorkspaceModel()) {
@@ -22,7 +20,7 @@ internal fun createDenoEntity(project: Project) {
 
   val (depsVirtualFile, denoTypingsVirtualFile) = getRoots(project)
 
-  val virtualFileUrlManager = VirtualFileUrlManager.getInstance(project)
+  val virtualFileUrlManager = WorkspaceModel.getInstance(project).getVirtualFileUrlManager()
 
   val builder = MutableEntityStorage.create()
   builder addEntity DenoEntity(DenoEntitySource) {
