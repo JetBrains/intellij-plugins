@@ -7,6 +7,7 @@ import com.intellij.dts.highlighting.DtsTextAttributes
 import com.intellij.dts.lang.DtsLanguage
 import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.psi.DtsPHandle
+import com.intellij.lang.documentation.QuickDocHighlightingHelper
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.EditorColorsScheme
 import com.intellij.openapi.editor.colors.TextAttributesKey
@@ -41,7 +42,7 @@ object DtsHtmlChunk {
   )
 
   private fun styledSpan(attr: DtsTextAttributes, text: String): @NlsSafe String {
-    return HtmlSyntaxInfoUtil.getStyledSpan(attr.attribute, text, 1.0f)
+    return QuickDocHighlightingHelper.getStyledFragment(text, attr.attribute)
   }
 
   /**

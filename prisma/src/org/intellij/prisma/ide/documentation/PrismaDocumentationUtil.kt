@@ -1,7 +1,7 @@
 package org.intellij.prisma.ide.documentation
 
 import com.intellij.lang.documentation.DocumentationMarkup
-import com.intellij.lang.documentation.QuickDocCodeHighlightingHelper
+import com.intellij.lang.documentation.QuickDocHighlightingHelper
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
@@ -84,7 +84,7 @@ internal fun StringBuilder.documentationComment(element: PsiElement?) {
 
 internal fun toHtml(project: Project, text: String): String {
   return try {
-    QuickDocCodeHighlightingHelper.getStyledInlineCodeFragment(text.replace("\t", "  "), PrismaLanguage, project)
+    QuickDocHighlightingHelper.getStyledInlineCodeFragment(project, PrismaLanguage, text.replace("\t", "  "))
   }
   catch (e: ProcessCanceledException) {
     throw e

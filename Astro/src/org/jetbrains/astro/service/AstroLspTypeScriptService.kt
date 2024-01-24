@@ -19,7 +19,7 @@ class AstroLspTypeScriptService(project: Project) : BaseLspTypeScriptService(pro
 
   override fun createQuickInfoResponse(markupContent: MarkupContent): TypeScriptQuickInfoResponse {
     return TypeScriptQuickInfoResponse().apply {
-      val content = HtmlBuilder().appendRaw(convertMarkupContentToHtml(markupContent, project)).toString()
+      val content = HtmlBuilder().appendRaw(convertMarkupContentToHtml(project, markupContent)).toString()
       displayString = content.trim().let(StringUtil::unescapeXmlEntities)
     }
   }

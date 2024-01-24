@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.lang.typescript.service.volar
 
 import com.google.gson.JsonElement
-import com.intellij.lang.documentation.QuickDocCodeHighlightingHelper.removeSurroundingStyledCodeBlock
+import com.intellij.lang.documentation.QuickDocHighlightingHelper.removeSurroundingStyledCodeBlock
 import com.intellij.lang.javascript.ecmascript6.TypeScriptAnnotatorCheckerProvider
 import com.intellij.lang.typescript.compiler.TypeScriptLanguageServiceAnnotatorCheckerProvider
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.LspGetElementTypeRequestArgs
@@ -29,7 +29,7 @@ class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(projec
 
   override fun createQuickInfoResponse(markupContent: MarkupContent): TypeScriptQuickInfoResponse {
     return TypeScriptQuickInfoResponse().apply {
-      val content = HtmlBuilder().appendRaw(convertMarkupContentToHtml(markupContent, project)).toString()
+      val content = HtmlBuilder().appendRaw(convertMarkupContentToHtml(project, markupContent)).toString()
       val index = content.indexOf("<p>")
       val hrIndex = content.indexOf("<hr />")
 
