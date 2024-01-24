@@ -1,13 +1,11 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hcl.patterns
 
-import com.intellij.patterns.ElementPattern
-import com.intellij.patterns.PlatformPatterns
-import com.intellij.patterns.PsiElementPattern
-import com.intellij.patterns.StandardPatterns
+import com.intellij.patterns.*
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
-import org.intellij.terraform.hcl.HCLParserDefinition
+import com.intellij.psi.util.parentsOfType
+import com.intellij.util.ProcessingContext
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.psi.*
 
@@ -33,6 +31,17 @@ object HCLPatterns {
   val IdentifierOrStringLiteral: ElementPattern<HCLValue> = PlatformPatterns.or(Identifier, Literal)
   val IdentifierOrStringLiteralOrSimple: ElementPattern<PsiElement> = PlatformPatterns.or(IdentifierOrStringLiteral, PlatformPatterns.psiElement().withElementType(
     HCLTokenTypes.IDENTIFYING_LITERALS))
+
+  val BlockTypeIdentifierLiteral: PsiElementPattern.Capture<HCLStringLiteral> =
+    PlatformPatterns.psiElement(HCLStringLiteral::class.java)
+      .withParent(HCLPatterns.Block)
+      .with(object : PatternCondition<HCLStringLiteral>("resource/data block type identifier") {
+        override fun accepts(literal: HCLStringLiteral, context: ProcessingContext?): Boolean {
+          return literal.parentsOfType<HCLBlock>(true)
+            .firstOrNull { block -> block.getNameElementUnquoted(1) == HCLPsiUtil.stripQuotes(literal.text) } != null
+        }
+      })
+
 
   val FileOrBlock: ElementPattern<PsiElement> = PlatformPatterns.or(File, Block)
   val PropertyOrBlock: ElementPattern<PsiElement> = PlatformPatterns.or(Property, Block)

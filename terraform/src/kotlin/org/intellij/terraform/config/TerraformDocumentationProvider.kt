@@ -3,19 +3,19 @@ package org.intellij.terraform.config
 
 import com.intellij.lang.documentation.AbstractDocumentationProvider
 import com.intellij.psi.PsiElement
-import org.intellij.terraform.hcl.psi.HCLBlock
-import org.intellij.terraform.hcl.psi.HCLProperty
-import org.intellij.terraform.hcl.psi.HCLValue
-import org.intellij.terraform.hcl.psi.common.LiteralExpression
-import org.intellij.terraform.hcl.psi.getNameElementUnquoted
+import com.intellij.psi.impl.FakePsiElement
+import com.intellij.psi.util.parentsOfType
+import org.intellij.terraform.config.TerraformDocumentationUrlProvider.getProviderUrl
+import org.intellij.terraform.config.TerraformDocumentationUrlProvider.getResourceOrDataSourceUrl
 import org.intellij.terraform.config.codeinsight.ModelHelper
-import org.intellij.terraform.config.model.BlockType
-import org.intellij.terraform.config.model.PropertyType
-import org.intellij.terraform.config.model.TypeModel
-import org.intellij.terraform.config.model.Variable
+import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.config.psi.TerraformDocReference
+import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.common.LiteralExpression
 import org.jetbrains.annotations.Nls
 
+//TODO Reimplement with a modern API
 internal class TerraformDocumentationProvider : AbstractDocumentationProvider() {
   override fun getQuickNavigateInfo(element: PsiElement?, originalElement: PsiElement?): @Nls String? {
     if (element is HCLProperty) {
@@ -53,102 +53,91 @@ internal class TerraformDocumentationProvider : AbstractDocumentationProvider() 
     if (!TerraformPatterns.TerraformFile.accepts(element.containingFile)) return null
 
     if (element is HCLProperty) {
-      val block = element.parent?.parent as? HCLBlock ?: return null
+      val block = element.parentsOfType<HCLBlock>(false).firstOrNull() ?: return null
       val properties = ModelHelper.getBlockProperties(block)
       val property = properties[element.name] as? PropertyType
       if (property != null) {
-        return buildString {
-          append("Property ")
-          append(element.name)
-          append(" (")
-          append(property.type.presentableText)
-          append(")")
-          if (property.description != null) {
-            append("<br/>")
-            append(property.description)
-          }
-        }
+        return "Property ${element.name} (${property.type.presentableText})<br/> ${property.description ?: ""}"
       }
       if (TerraformPatterns.LocalsRootBlock.accepts(block)) {
         return "Local value ${element.name}"
       }
-    } else if (element is HCLBlock) {
+    }
+    else if (element is HCLBlock) {
       if (TerraformPatterns.RootBlock.accepts(element)) {
         if (TerraformPatterns.VariableRootBlock.accepts(element)) {
           val variable = Variable(element)
-          variable.getTypeExpression()
-          variable.getDescription()
-          return buildString {
-            append("Variable ")
-            append(variable.name)
-            (variable.getTypeExpression() as? LiteralExpression)?.let {
-              append(" of type ")
-              append(it.unquotedText)
-            }
-            (variable.getDescription() as? LiteralExpression)?.let {
-              append("<br/><br/>")
-              append(it.unquotedText)
-            }
-            (variable.getDefault() as? HCLValue)?.let {
-              append("<br/>Default value: ")
-              append(it.text)
-            }
-          }
+          val typeExpression = (variable.getTypeExpression() as? LiteralExpression)?.unquotedText?.let{ " of type ${it}"} ?: ""
+          val description = (variable.getDescription() as? LiteralExpression)?.unquotedText?.let { "<br/><br/> ${it}" } ?: ""
+          val defaultValue = (variable.getDefault() as? HCLValue)?.text?.let { "<br/><br/>Default value: ${it}" } ?: ""
+
+          return "Variable ${variable.name} ${typeExpression} ${description} ${defaultValue}"
         }
         if (TerraformPatterns.ResourceRootBlock.accepts(element)) {
           return "Resource ${element.name} of type ${element.getNameElementUnquoted(1)}"
         }
         val block = TypeModel.RootBlocks.firstOrNull { it.literal == element.getNameElementUnquoted(0) } ?: return null
-        return buildString {
-          append("Block ")
-          append(element.name)
-          if (block.description != null) {
-            append("<br/>")
-            append(block.description)
-          }
-        }
+        return "Block ${element.name} <br/><br/> ${block.description ?: ""}"
       }
       val pp = element.parent?.parent
       if (pp is HCLBlock) {
         val properties = ModelHelper.getBlockProperties(pp)
         val block = properties[element.getNameElementUnquoted(0)!!] as? BlockType ?: return "Unknown block ${element.name}"
-        return buildString {
-          append("Block ")
-          append(element.name)
-          if (block.description != null) {
-            append("<br/>")
-            append(block.description)
-          }
-        }
+        return "Block ${element.name} <br/><br/> ${block.description ?: ""}"
       }
+    }
+    //Block parameters
+    else if (element is HCLIdentifier) {
+      val parentBlock = element.parentsOfType<HCLBlock>(true)
+        .firstOrNull { block -> block.name != element.id } ?: return null
+      val parentBlockType = parentBlock.getNameElementUnquoted(1) ?: parentBlock.getNameElementUnquoted(0)
+      val property = (ModelHelper.getBlockProperties(parentBlock)[element.id] as? BaseModelType) ?: return null
+      val description = property.description ?: ""
+      return "Parameter ${parentBlockType}.${element.id} <br/><br/> ${description}"
+    }
+    //Workaround for documentation - we do not parse type identifier in top-level blocks
+    else if (isDocumentationReference(element)) {
+      val blockType = originalElement?.text?.let { HCLPsiUtil.stripQuotes(it) } ?: return null
+      val relevantBlock = originalElement.parentsOfType<HCLBlock>(false)
+        .firstOrNull { block -> block.getNameElementUnquoted(1) == blockType } ?: return null
+      val description = (ModelHelper.getBlockType(relevantBlock) as BlockType).description ?: ""
+      return "Block ${blockType} <br/><br/> ${description}"
     }
     return null
   }
+
+  private fun isDocumentationReference(element: PsiElement?) =
+    element is FakePsiElement && element.parent.references.any { r -> r is TerraformDocReference }
 
   override fun getUrlFor(element: PsiElement?, originalElement: PsiElement?): List<String>? {
     if (element is HCLBlock) {
-      if (TerraformPatterns.RootBlock.accepts(element)) {
-        val identifier = element.getNameElementUnquoted(1) ?: return null
-        return when (element.getNameElementUnquoted(0)) {
-          "resource" -> listOf(getResourceOrDataSourceUrl(identifier, 'r'))
-          "data" -> listOf(getResourceOrDataSourceUrl(identifier, 'd'))
-          "provider" -> listOf(getProviderUrl(identifier))
-          else -> null
-        }
-      }
+        return getDocumentationUrl(element)
     }
-
+    else if (element is HCLIdentifier) {
+      val parentBlock = element.parentsOfType<HCLBlock>(true)
+                          .firstOrNull { block -> block.name != element.id } ?: return null
+      val paramName = ModelHelper.getBlockProperties(parentBlock)[element.id]?.name ?: return null
+      return getDocumentationUrl(parentBlock, paramName)
+    } else if (isDocumentationReference(element)) {
+      val blockType = originalElement?.text?.removeSurrounding("\"") ?: return null
+      val relevantBlock = originalElement.parentsOfType<HCLBlock>(true)
+                       .firstOrNull { block -> block.getNameElementUnquoted(1) == blockType } ?: return null
+      return getDocumentationUrl(relevantBlock)
+    }
     return null
   }
 
-  // https://www.terraform.io/docs/providers/$PROVIDER/index.html
-  private fun getProviderUrl(provider: String): String {
-    return "https://www.terraform.io/docs/providers/$provider/index.html"
+  private fun getDocumentationUrl(element: HCLBlock,
+                                  paramName: String? = null): List<String>? {
+    val identifier = element.getNameElementUnquoted(1) ?: return null
+    return when (element.getNameElementUnquoted(0)) {
+      "resource" -> listOf(getResourceOrDataSourceUrl(identifier, "resources", element, paramName))
+      "data" -> listOf(getResourceOrDataSourceUrl(identifier, "data-sources", element, paramName))
+      "provider" -> listOf(getProviderUrl(identifier, element, paramName))
+      else -> null
+    }
   }
 
-  //https://www.terraform.io/docs/providers/$PROVIDER/$TYPE/$NAME.html
-  private fun getResourceOrDataSourceUrl(identifier: String, type: Char): String {
-    val (provider, id) = identifier.split("_", limit = 2)
-    return "https://www.terraform.io/docs/providers/$provider/$type/$id"
-  }
+
+
 }
