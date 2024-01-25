@@ -100,7 +100,10 @@ internal class TerraformDocumentationProvider : AbstractDocumentationProvider() 
       val blockType = originalElement?.text?.let { HCLPsiUtil.stripQuotes(it) } ?: return null
       val relevantBlock = originalElement.parentsOfType<HCLBlock>(false)
         .firstOrNull { block -> block.getNameElementUnquoted(1) == blockType } ?: return null
-      val description = (ModelHelper.getBlockType(relevantBlock) as BlockType).description ?: ""
+      val description = when (val typeClass = ModelHelper.getBlockType(relevantBlock)) {
+        is BaseModelType -> typeClass.description
+        else -> ""
+      } ?: ""
       return "Block ${blockType} <br/><br/> ${description}"
     }
     return null
