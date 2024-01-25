@@ -18,7 +18,6 @@ import com.intellij.lang.javascript.service.protocol.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
@@ -234,15 +233,6 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
     protected void addNodeProcessAdditionalArguments(@NotNull NodeTargetRun targetRun) {
       super.addNodeProcessAdditionalArguments(targetRun);
       targetRun.path(JSLanguageServiceUtil.getPluginDirectory(getClass(), "js").getAbsolutePath());
-    }
-
-    @Override
-    protected void addNodeProcessAdditionalArguments(@NotNull JSCommandLineBuilder commandLine) {
-      super.addNodeProcessAdditionalArguments(commandLine);
-      if (myServiceName != null) {
-        JSLanguageServiceUtil.addNodeProcessArgumentsFromRegistry(commandLine, myServiceName,
-                                                                  () -> Registry.stringValue("tslint.service.node.arguments"));
-      }
     }
 
     @Override
