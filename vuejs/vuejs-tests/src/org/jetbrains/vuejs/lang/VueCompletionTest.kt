@@ -1379,6 +1379,20 @@ export default class ComponentInsertion extends Vue {
     assertContainsElements(myFixture.lookupElementStrings!!, "msg")
   }
 
+  fun testVueNoComponentNameAsStyleSelector() {
+    myFixture.configureByText("A.vue", """<template><div/></template>""")
+    myFixture.configureByText("B.vue", """
+      <template>
+        <div/>
+      </template>
+      <style lang="scss">
+      <caret>
+      </style>
+    """)
+    myFixture.completeBasic()
+    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, "A")
+  }
+
   fun testCompletionPriorityAndHints() {
     doLookupTest(VueTestModule.VUETIFY_1_2_10, VueTestModule.SHARDS_VUE_1_0_5, dir = true, lookupFilter = filterOutStandardHtmlSymbols)
   }
