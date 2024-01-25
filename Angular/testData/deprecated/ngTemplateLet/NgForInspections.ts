@@ -34,7 +34,7 @@ type Contacts = Contact[];
                 <td>{{contact}}</td>
                 <td>{{contact.username}}</td>
                 <td>{{contact.<error descr="Unresolved variable foo">foo</error>}}</td>
-                <td>{{err.<weak_warning descr="Unresolved function or method bar()">bar</weak_warning>()}}</td>
+                <td>{{err.bar()}}</td>
             </tr>
           </ng-template>
         </tbody>

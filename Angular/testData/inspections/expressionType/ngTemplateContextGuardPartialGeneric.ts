@@ -10,8 +10,8 @@ import {CommonModule} from "@angular/common";
     <div *weirdIf="let local from personPromise | async also 5 as other">
       {{expectPerson(local)}} <-- todo Argument type unknown is not assignable to parameter type Person -->
       {{local.length}} <!-- todo Unresolved variable length -->
-      {{local.<weak_warning descr="Unresolved variable familyName">familyName</weak_warning>}}
-      {{local.<weak_warning descr="Unresolved variable accomplishments">accomplishments</weak_warning>}}
+      {{local.familyName}}
+      {{local.accomplishments}}
       {{expectPerson(<error descr="Argument type number is not assignable to parameter type Person">other</error>)}}
       {{expectNumber(other)}}
     </div>

@@ -4,13 +4,13 @@ import {Component} from "@angular/core"
 @Component({
   template:`
     <div *ngFor='let item of foo'>
-      {{item.<weak_warning descr="Unresolved variable blibop">blibop</weak_warning>}}
+      {{item.blibop}}
     </div>
     <div *ngFor='let item of $any(foo)'>
-      {{item.<weak_warning descr="Unresolved variable blibop">blibop</weak_warning>}}
+      {{item.blibop}}
     </div>
     <div *ngFor='let item of $any(foo) | async'>
-      {{item.<weak_warning descr="Unresolved variable blibip">blibip</weak_warning>}}
+      {{item.blibip}}
     </div>
   `
 })

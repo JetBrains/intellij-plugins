@@ -8,7 +8,7 @@ import {CommonModule} from "@angular/common";
   standalone: true,
   template: `
     <div [appExported]="true" #hello="exported"></div>
-    {{expectNumber(hello.additionalField.<weak_warning descr="Unresolved variable allYouEverWanted">allYouEverWanted</weak_warning>)}}
+    {{expectNumber(hello.additionalField.allYouEverWanted)}}
   `,
 })
 export class TestComponent {

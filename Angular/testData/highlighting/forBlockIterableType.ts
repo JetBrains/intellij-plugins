@@ -13,13 +13,13 @@ interface Person {
    standalone: true,
    template: `
       @for (p of <error descr="Type Person must have a [Symbol.iterator]() method that returns an iterator.">person</error>; track p.id) {
-          {{ p.<weak_warning descr="Unresolved variable phone">phone</weak_warning> + p.<weak_warning descr="Unresolved variable foo">foo</weak_warning> }}
+          {{ p.phone + p.foo }}
       }
       @for (p of persons; track p.id) {
           {{ p.phone + p.<error descr="Unresolved variable foo">foo</error> }}
       }
       @for (p of personsAny; track p.id) {
-          {{ p.<weak_warning descr="Unresolved variable phone">phone</weak_warning> + p.<weak_warning descr="Unresolved variable foo">foo</weak_warning> }}
+          {{ p.phone + p.foo }}
       }
       @for (p of personsOptional; track p.id) {
           {{ p.phone + p.<error descr="Unresolved variable foo">foo</error> }}

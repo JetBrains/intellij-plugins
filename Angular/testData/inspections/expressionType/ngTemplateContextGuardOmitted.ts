@@ -11,19 +11,19 @@ import {CommonModule} from "@angular/common";
     <div *appFoo1="personPromise | async as local; let another = whatever">
       {{expectPerson(local)}}
       {{expectNumber(local)}}
-      {{local.<weak_warning descr="Unresolved variable allYouEverWanted">allYouEverWanted</weak_warning>}}
+      {{local.allYouEverWanted}}
       {{expectPerson(another)}}
       {{expectNumber(another)}}
-      {{another.<weak_warning descr="Unresolved variable allYouEverWanted">allYouEverWanted</weak_warning>}}
+      {{another.allYouEverWanted}}
       {{expectNumber(<error descr="Unresolved variable or type whatever">whatever</error>)}}
     </div>
     <div *appFoo2="personPromise | async as local; let another = whatever">
       {{expectPerson(local)}}
       {{expectNumber(local)}}
-      {{local.<weak_warning descr="Unresolved variable allYouEverWanted">allYouEverWanted</weak_warning>}}
+      {{local.allYouEverWanted}}
       {{expectPerson(another)}}
       {{expectNumber(another)}}
-      {{another.<weak_warning descr="Unresolved variable allYouEverWanted">allYouEverWanted</weak_warning>}}
+      {{another.allYouEverWanted}}
       {{expectNumber(<error descr="Unresolved variable or type whatever">whatever</error>)}}
     </div>
     <footer>{{<error descr="Indexed expression can be null or undefined">(personPromise | async)</error>[0]}}</footer> <!-- ensure that null checks work -->

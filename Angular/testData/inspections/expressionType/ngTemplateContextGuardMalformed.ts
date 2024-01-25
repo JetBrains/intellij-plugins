@@ -21,33 +21,33 @@ import {CommonModule} from "@angular/common";
       <!-- Angular evaluates local as any -->
       <div *appMalformed1="true; let local">
         {{expectNumber(local)}}
-        {{local.<weak_warning descr="Unresolved variable allYouEverWanted">allYouEverWanted</weak_warning>}}
+        {{local.allYouEverWanted}}
       </div>
       <div *appMalformed1="1; let local">
         {{expectNumber(local)}}
-        {{local.<weak_warning descr="Unresolved variable allYouEverWanted">allYouEverWanted</weak_warning>}}
+        {{local.allYouEverWanted}}
       </div>
     </section>
     <section>
       <!-- Angular evaluates local as any -->
       <div *appMalformed2="true; let local">
         {{expectNumber(local)}}
-        {{local.<weak_warning descr="Unresolved variable allYouEverWanted">allYouEverWanted</weak_warning>}}
+        {{local.allYouEverWanted}}
       </div>
       <div *appMalformed2="1; let local">
         {{expectNumber(local)}}
-        {{local.<weak_warning descr="Unresolved variable allYouEverWanted">allYouEverWanted</weak_warning>}}
+        {{local.allYouEverWanted}}
       </div>
     </section>
     <section>
       <!-- Angular evaluates local as any -->
       <div *appMalformed3="true; let local">
         {{expectNumber(local)}}
-        {{local.<weak_warning descr="Unresolved variable allYouEverWanted">allYouEverWanted</weak_warning>}}
+        {{local.allYouEverWanted}}
       </div>
       <div *appMalformed3="1; let local">
         {{expectNumber(local)}}
-        {{local.<weak_warning descr="Unresolved variable allYouEverWanted">allYouEverWanted</weak_warning>}}
+        {{local.allYouEverWanted}}
       </div>
     </section>
     <section>
@@ -65,22 +65,22 @@ import {CommonModule} from "@angular/common";
       <!-- Angular evaluates local as any -->
       <div *appMalformed5="true; let local">
         {{expectNumber(local)}}
-        {{local.<weak_warning descr="Unresolved variable allYouEverWanted">allYouEverWanted</weak_warning>}}
+        {{local.allYouEverWanted}}
       </div>
       <div *appMalformed5="1; let local">
         {{expectNumber(local)}}
-        {{local.<weak_warning descr="Unresolved variable allYouEverWanted">allYouEverWanted</weak_warning>}}
+        {{local.allYouEverWanted}}
       </div>
     </section>
     <section>
       <!-- Angular evaluates local as any -->
       <div *appMalformed6="true; let local">
         {{expectNumber(local)}}
-        {{local.<weak_warning descr="Unresolved variable allYouEverWanted">allYouEverWanted</weak_warning>}}
+        {{local.allYouEverWanted}}
       </div>
       <div *appMalformed6="1; let local">
         {{expectNumber(local)}}
-        {{local.<weak_warning descr="Unresolved variable allYouEverWanted">allYouEverWanted</weak_warning>}}
+        {{local.allYouEverWanted}}
       </div>
     </section>
   `,

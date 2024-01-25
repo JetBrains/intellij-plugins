@@ -5,8 +5,8 @@ import {Component} from '@angular/core';
 @Component({
   template: `
     {{items[0].myBar}}
-    {{items[0].<weak_warning descr="Unresolved variable myBars">myBars</weak_warning>}}
-    {{item.<weak_warning descr="Unresolved variable boo2">boo2</weak_warning>}}
+    {{items[0].myBars}}
+    {{item.boo2}}
     {{item.fooBar}}
   `
 })
@@ -19,8 +19,8 @@ export class AppComponent {
     // noinspection JSUnusedLocalSymbols
     let a = this.items[0].myBar;
     // noinspection JSUnusedLocalSymbols
-    let b = this.items[0].<weak_warning descr="Unresolved variable myBark">myBark</weak_warning>;
-    this.item.<weak_warning descr="Unresolved variable boo2">boo2</weak_warning>;
+    let b = this.items[0].myBark;
+    this.item.boo2;
     this.item.fooBar;
   }
 }
