@@ -478,6 +478,18 @@ class VueParserTest : HtmlParsingTest("", "vue",
     doReparseTest(baseText, baseText.replace("js", "ts"))
   }
 
+  fun testDeepWithSelectors() {
+    doTestVue("""
+      <template>
+      </template>
+      <style scoped>
+      .a :deep(.b > .c) {
+        color: red;
+      }
+      </style>
+    """.trimIndent())
+  }
+
   private class MockJSRootConfiguration(project: Project) : JSRootConfigurationBase(project) {
 
     override fun storeLanguageLevelAndUpdateCaches(languageLevel: JSLanguageLevel?) {
