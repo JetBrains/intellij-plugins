@@ -84,16 +84,13 @@ object DtsZephyrFileUtil {
     }
   }
 
-  fun getIncludeDirs(root: VirtualFile?, board: VirtualFile?): List<VirtualFile> {
+  fun getIncludeDirs(root: VirtualFile?, board: DtsZephyrBoard?): List<VirtualFile> {
     if (root == null) return emptyList()
 
     val includes = sequence {
       yieldAll(includePaths)
 
-      if (board != null) {
-        val arch = board.parent.name
-        yield("dts/$arch")
-      }
+      board?.arch?.let { yield("dts/$it") }
     }
 
     return includes.mapNotNull(root::findDirectory).toList()

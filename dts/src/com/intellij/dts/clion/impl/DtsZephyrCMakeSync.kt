@@ -66,7 +66,7 @@ class DtsZephyrCMakeSync(
     val rootPath = cache.findVariable(ZEPHYR_ROOT_PATH_VARIABLE)?.value
 
     // do not update settings if nothing changed, prevents infinite loop
-    if (settings.zephyrRoot == rootPath && settings.zephyrBoard?.path == boardPath) return
+    if (settings.zephyrRoot == rootPath && settings.zephyrBoard == boardPath) return
 
     settings.update {
       zephyrRoot = rootPath ?: ""

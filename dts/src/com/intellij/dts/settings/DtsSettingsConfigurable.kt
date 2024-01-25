@@ -3,7 +3,6 @@ package com.intellij.dts.settings
 import com.intellij.dts.DtsBundle
 import com.intellij.dts.util.DtsUtil
 import com.intellij.dts.util.Either
-import com.intellij.dts.zephyr.DtsZephyrBoard
 import com.intellij.dts.zephyr.DtsZephyrFileUtil
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationInfo
@@ -18,6 +17,9 @@ import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.builder.toMutableProperty
 import org.jetbrains.annotations.Nls
+import java.nio.file.InvalidPathException
+import kotlin.io.path.Path
+import kotlin.io.path.name
 
 class DtsSettingsConfigurable(private val project: Project) : BoundSearchableConfigurable(
   displayName = DtsBundle.message("settings.name"),
@@ -216,6 +218,25 @@ private class RootComboBox(disposable: Disposable?) : DtsSettingsPathInput<Strin
   }
 }
 
+private fun presentableTextFromBoard(board: String): String {
+  val path = try {
+    Path(board)
+  }
+  catch (_: InvalidPathException) {
+    return board
+  }
+
+  val arch = path.parent?.name
+  val name = path.name
+
+  return if (arch != null) {
+    "$arch/$name"
+  }
+  else {
+    name
+  }
+}
+
 private class BoardComboBox(disposable: Disposable?, initialValue: String) : DtsSettingsPathInput<String>(
   disposable,
   DtsBundle.message("settings.zephyr.board.browse"),
@@ -227,7 +248,7 @@ private class BoardComboBox(disposable: Disposable?, initialValue: String) : Dts
 
     configure()
 
-    renderer = SimpleListCellRenderer.create("") { path -> DtsZephyrBoard(path).presentableText }
+    renderer = SimpleListCellRenderer.create("", ::presentableTextFromBoard)
     model = collectionModel
 
     // deselect item if text is edited

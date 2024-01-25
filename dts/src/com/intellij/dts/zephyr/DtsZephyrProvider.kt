@@ -50,7 +50,7 @@ class DtsZephyrProvider(private val project: Project, scope: CoroutineScope) {
 
   val root: VirtualFile? get() = state.value?.root
 
-  val board: VirtualFile? get() = state.value?.board
+  val board: DtsZephyrBoard? get() = state.value?.board
 
   val bindings: MultiMap<String, DtsZephyrBinding> get() = state.value?.bindings ?: MultiMap.empty()
 
@@ -69,7 +69,7 @@ class DtsZephyrProvider(private val project: Project, scope: CoroutineScope) {
     val root = findSdk(reporter, settings.zephyrRoot)
     if (root == null) return null
 
-    val board = DtsUtil.findFileAndRefresh(settings.zephyrBoard)
+    val board = DtsUtil.findFileAndRefresh(settings.zephyrBoard)?.let(::DtsZephyrBoard)
 
     val bundledBindings = DtsZephyrBundledBindings.getInstance().getSource()
     val defaultBinding = bundledBindings?.files?.get(DtsZephyrBundledBindings.DEFAULT_BINDING)
@@ -89,7 +89,7 @@ class DtsZephyrProvider(private val project: Project, scope: CoroutineScope) {
 
   private data class State(
     val root: VirtualFile?,
-    val board: VirtualFile?,
+    val board: DtsZephyrBoard?,
     val bindings: MultiMap<String, DtsZephyrBinding>,
   )
 }

@@ -1,6 +1,7 @@
 package com.intellij.dts.ide
 
 import com.intellij.dts.settings.DtsSettings
+import com.intellij.dts.zephyr.DtsZephyrProvider
 import com.intellij.icons.AllIcons
 import com.intellij.ide.projectView.PresentationData
 import com.intellij.ide.projectView.ProjectView
@@ -31,7 +32,8 @@ class DtsProjectViewDecorator(
     val settings = DtsSettings.of(project)
     if (settings.zephyrCMakeSync) return
 
-    val board = settings.zephyrBoard ?: return
+    val zephyr = DtsZephyrProvider.of(project)
+    val board = zephyr.board ?: return
 
     val file = node?.virtualFile ?: return
     if (file.nameWithoutExtension != board.name) return

@@ -17,10 +17,10 @@ object DtsOverlayFile : FileInclude {
     if (context == null || !context.isValid) return null
 
     val name = "${context.nameWithoutExtension}.dts"
-    val boardDir = DtsZephyrProvider.of(anchor.project).board ?: return null
+    val board = DtsZephyrProvider.of(anchor.project).board ?: return null
 
     val candidates = mutableListOf<VirtualFile>()
-    VfsUtilCore.processFilesRecursively(boardDir) { virtualFile ->
+    VfsUtilCore.processFilesRecursively(board.file) { virtualFile ->
       if (virtualFile.name == name) {
         candidates.add(virtualFile)
       }
