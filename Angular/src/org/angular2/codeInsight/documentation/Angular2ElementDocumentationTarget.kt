@@ -7,7 +7,7 @@ import com.intellij.javascript.webSymbols.jsType
 import com.intellij.lang.Language
 import com.intellij.lang.css.CSSLanguage
 import com.intellij.lang.documentation.DocumentationMarkup
-import com.intellij.lang.documentation.QuickDocHighlightingHelper.getStyledInlineCodeFragment
+import com.intellij.lang.documentation.QuickDocHighlightingHelper.getStyledCodeFragment
 import com.intellij.lang.javascript.documentation.*
 import com.intellij.lang.javascript.documentation.JSDocSimpleInfoPrinter.addSections
 import com.intellij.lang.javascript.highlighting.TypeScriptHighlighter
@@ -241,7 +241,7 @@ class Angular2ElementDocumentationTarget private constructor(
       }
 
     fun append(text: String, language: Language): SyntaxPrinter {
-      builder.append(getStyledInlineCodeFragment(context.project, language, text).replace(JSHtmlHighlightingUtil.STYLE_BOLD, ""))
+      builder.append(getStyledCodeFragment(context.project, language, text).replace(JSHtmlHighlightingUtil.STYLE_BOLD, ""))
       return this
     }
 

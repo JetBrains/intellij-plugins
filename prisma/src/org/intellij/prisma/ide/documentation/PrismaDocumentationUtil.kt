@@ -84,7 +84,7 @@ internal fun StringBuilder.documentationComment(element: PsiElement?) {
 
 internal fun toHtml(project: Project, text: String): String {
   return try {
-    QuickDocHighlightingHelper.getStyledInlineCodeFragment(project, PrismaLanguage, text.replace("\t", "  "))
+    QuickDocHighlightingHelper.getStyledCodeFragment(project, PrismaLanguage, text.replace("\t", "  "))
   }
   catch (e: ProcessCanceledException) {
     throw e
