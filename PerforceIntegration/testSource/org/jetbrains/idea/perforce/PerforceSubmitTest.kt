@@ -8,32 +8,35 @@ import org.jetbrains.idea.perforce.application.PerforceManager
 import org.jetbrains.idea.perforce.application.PerforceVcs
 import org.jetbrains.idea.perforce.perforce.PerforceChange
 import org.junit.Assert
+import org.junit.Assert.*
 import org.junit.Test
-class PerforceSubmitTest extends PerforceTestCase {
-  @Override
-  void before() throws Exception {
+
+class PerforceSubmitTest : PerforceTestCase() {
+
+  override fun before() {
     super.before()
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD, VcsShowConfirmationOption.Value.DO_ACTION_SILENTLY)
   }
 
   @Test
-  void testIncludeStdoutDiagnosticsOnSubmitFailure() throws VcsException {
-    def file = createFileInCommand("a.txt", "aaa")
-    submitDefaultList('initial')
+  fun testIncludeStdoutDiagnosticsOnSubmitFailure() {
+    val file = createFileInCommand("a.txt", "aaa")
+    submitDefaultList("initial")
 
-    renameFileInCommand(file, 'b.txt')
+    renameFileInCommand(file, "b.txt")
     changeListManager.waitUntilRefreshed()
-    assert singleChange
+    assertNotNull(singleChange)
 
     try {
-      def env = new PerforceCheckinEnvironment(myProject, PerforceVcs.getInstance(myProject))
-      def job = new PerforceCheckinEnvironment.SubmitJob(env, connection)
-      job.addChanges([PerforceChange.createOn('//depot/a.txt\t# move/delete', PerforceManager.getInstance(myProject).getClient(connection))])
-      job.submit('comment', null)
-      Assert.fail()
+      val env = PerforceCheckinEnvironment(myProject, PerforceVcs.getInstance(myProject))
+      val job = env.SubmitJob(connection)
+      job.addChanges(
+        listOf(PerforceChange.createOn("//depot/a.txt\t# move/delete", PerforceManager.getInstance(myProject).getClient(connection))))
+      job.submit("comment", null)
+      fail()
     }
-    catch (VcsException e) {
-      assert e.message.contains('needs tofile')
+    catch (e: VcsException) {
+      assertTrue(e.message.contains("needs tofile"))
     }
   }
 

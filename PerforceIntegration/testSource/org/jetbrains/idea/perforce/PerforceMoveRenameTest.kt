@@ -7,42 +7,36 @@ import com.intellij.openapi.vcs.VcsException
 import com.intellij.openapi.vcs.VcsShowConfirmationOption
 import com.intellij.openapi.vcs.actions.VcsContextFactory
 import com.intellij.openapi.vcs.changes.Change
-import com.intellij.openapi.vcs.diff.DiffProvider
-import com.intellij.openapi.vcs.history.VcsFileRevision
-import com.intellij.openapi.vcs.history.VcsHistorySession
-import com.intellij.openapi.vcs.history.VcsRevisionNumber
 import com.intellij.openapi.vcs.impl.AbstractVcsHelperImpl
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.newvfs.RefreshWorker
 import com.intellij.openapi.vfs.newvfs.impl.VfsData
 import com.intellij.openapi.vfs.newvfs.persistent.PersistentFS
 import com.intellij.testFramework.EdtTestUtil
 import com.intellij.testFramework.TestLoggerFactory
+import com.intellij.testFramework.UsefulTestCase.*
 import com.intellij.util.Consumer
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.idea.perforce.application.PerforceFileRevision
 import org.jetbrains.idea.perforce.application.PerforceVcs
 import org.junit.Assert
 import org.junit.Test
 
-import static com.intellij.testFramework.UsefulTestCase.*
-import static junit.framework.TestCase.*
+open class PerforceMoveRenameTest : PerforceTestCase() {
+  private val LOG = Logger.getInstance(PerforceMoveRenameTest::class.java)
 
-class PerforceMoveRenameTest extends PerforceTestCase {
-  private static final Logger LOG = Logger.getInstance(PerforceMoveRenameTest.class)
-  @Override
-  void before() throws Exception {
+  override fun before() {
     super.before()
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD, VcsShowConfirmationOption.Value.DO_NOTHING_SILENTLY)
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.REMOVE, VcsShowConfirmationOption.Value.DO_NOTHING_SILENTLY)
   }
 
-  private void doTestIdeaRenameDirectory(boolean old) throws IOException, VcsException {
+  private fun doTestIdeaRenameDirectory(old: Boolean) {
     if (old) {
       forceDisableMoveCommand()
     }
 
-    final VirtualFile dir = createDirectoryWithFiveFiles("foo")
+    val dir = createDirectoryWithFiveFiles("foo")
 
     submitDefaultList("comment1")
 
@@ -50,57 +44,68 @@ class PerforceMoveRenameTest extends PerforceTestCase {
 
     getChangeListManager().waitUntilRefreshed()
 
-    assertEmpty(getChangeListManager().getUnversionedFiles())
+    assertEmpty(changeListManager.unversionedFiles)
 
     submitDefaultList("comment2")
     refreshChanges()
 
-    final List<VcsFileRevision> revisionList = getFileHistory(dir.findChild("e.txt"))
-    assertEquals(2, revisionList.size())
-    assertEquals(old ? "add" : "move/add", ((PerforceFileRevision)revisionList.get(0)).getAction())
+    val revisionList = getFileHistory(dir.findChild("e.txt"))
+    assertEquals(2, revisionList.size)
+    assertEquals(if (old) "add" else "move/add", (revisionList[0] as PerforceFileRevision).action)
   }
 
-  private VirtualFile createDirectoryWithFiveFiles(final String name) throws IOException {
-    final VirtualFile dir = createDirInCommand(myWorkingCopyDir, name)
-    addFile(name + "/" + createFileInCommand(dir, "a.txt", "").getName())
-    addFile(name + "/" + createFileInCommand(dir, "b.txt", "").getName())
-    addFile(name + "/" + createFileInCommand(dir, "c.txt", "").getName())
-    addFile(name + "/" + createFileInCommand(dir, "d.txt", "").getName())
-    addFile(name + "/" + createFileInCommand(dir, "e.txt", "").getName())
+  private fun createDirectoryWithFiveFiles(name: String): VirtualFile {
+    val dir = createDirInCommand(myWorkingCopyDir, name)
+    addFile("$name/" + createFileInCommand(dir, "a.txt", "").name)
+    addFile("$name/" + createFileInCommand(dir, "b.txt", "").name)
+    addFile("$name/" + createFileInCommand(dir, "c.txt", "").name)
+    addFile("$name/" + createFileInCommand(dir, "d.txt", "").name)
+    addFile("$name/" + createFileInCommand(dir, "e.txt", "").name)
     return dir
   }
 
   @Test
-  void testIdeaRenameDirectory() throws IOException, VcsException {
+  fun testIdeaRenameDirectory() {
     doTestIdeaRenameDirectory(false)
   }
 
   @Test
-  void testIdeaRenameDirectory_Old() throws IOException, VcsException {
+  fun testIdeaRenameDirectory_Old() {
     doTestIdeaRenameDirectory(true)
   }
 
 
   @Test
-  void testIdeaRename() throws Exception { testIdeaRenameOrMove(true, false) }
-  @Test
-  void testIdeaMove() throws Exception { testIdeaRenameOrMove(false, false) }
-  @Test
-  void testIdeaRename_Old() throws Exception { testIdeaRenameOrMove(true, true) }
-  @Test
-  void testIdeaMove_Old() throws Exception { testIdeaRenameOrMove(false, true) }
+  fun testIdeaRename() {
+    testIdeaRenameOrMove(true, false)
+  }
 
-  private void testIdeaRenameOrMove(boolean rename, boolean old) throws IOException, VcsException {
+  @Test
+  fun testIdeaMove() {
+    testIdeaRenameOrMove(false, false)
+  }
+
+  @Test
+  fun testIdeaRename_Old() {
+    testIdeaRenameOrMove(true, true)
+  }
+
+  @Test
+  fun testIdeaMove_Old() {
+    testIdeaRenameOrMove(false, true)
+  }
+
+  private fun testIdeaRenameOrMove(rename: Boolean, old: Boolean) {
     if (old) {
       forceDisableMoveCommand()
     }
 
-    final VirtualFile file = createFileInCommand("a.txt", "")
+    val file = createFileInCommand("a.txt", "")
     addFile("a.txt")
 
     submitDefaultList("comment1")
 
-    Assert.assertEquals(1, getFileHistory(file).size())
+    Assert.assertEquals(1, getFileHistory(file).size)
 
     openForEdit(file)
     if (rename) {
@@ -112,31 +117,31 @@ class PerforceMoveRenameTest extends PerforceTestCase {
 
     getChangeListManager().waitUntilRefreshed()
 
-    Change change = getSingleChange()
-    Assert.assertEquals(Change.Type.MOVED, change.getType())
-    verifyChange(change, "a.txt", rename ? "b.txt" : "newParent/a.txt")
+    val change = getSingleChange()
+    Assert.assertEquals(Change.Type.MOVED, change.type)
+    verifyChange(change, "a.txt", if (rename) "b.txt" else "newParent/a.txt")
 
     submitDefaultList("comment2")
     refreshChanges()
 
-    final List<VcsFileRevision> revisionList = getFileHistory(file)
-    assertEquals(2, revisionList.size())
-    assertEquals(old ? "add" : "move/add", ((PerforceFileRevision)revisionList.get(0)).getAction())
+    val revisionList = getFileHistory(file)
+    assertEquals(2, revisionList.size)
+    assertEquals(if (old) "add" else "move/add", (revisionList[0] as PerforceFileRevision).action)
   }
 
   @Test
-  void testCurrentRevisionAfterRename() throws IOException, VcsException {
+  fun testCurrentRevisionAfterRename() {
     doTestCurrentRevisionAfterRename()
   }
 
   @Test
-  void testCurrentRevisionAfterRename_Old() throws IOException, VcsException {
+  fun testCurrentRevisionAfterRename_Old() {
     forceDisableMoveCommand()
     doTestCurrentRevisionAfterRename()
   }
 
-  private void doTestCurrentRevisionAfterRename() throws IOException, VcsException {
-    final VirtualFile file = createFileInCommand("a.txt", "")
+  private fun doTestCurrentRevisionAfterRename() {
+    val file = createFileInCommand("a.txt", "")
     addFile("a.txt")
     submitDefaultList("comment1")
     refreshChanges()
@@ -150,81 +155,73 @@ class PerforceMoveRenameTest extends PerforceTestCase {
     submitDefaultList("comment3")
     refreshChanges()
 
-    final VcsHistorySession session = PerforceVcs.getInstance(myProject).getVcsHistoryProvider().createSessionFor(VcsContextFactory.instance.createFilePathOn(file))
-    assert session != null
-    assertNotNull(session.getCurrentRevisionNumber())
-    assertOrderedCollection(session.getRevisionList(), new Consumer<VcsFileRevision>() {
-      @Override
-      void consume(VcsFileRevision revision) {
-        assertTrue(revision.getCommitMessage().endsWith("comment3"))
-        assertTrue(session.isCurrentRevision(revision.getRevisionNumber()))
-      }
-    }, new Consumer<VcsFileRevision>() {
-      @Override
-      void consume(VcsFileRevision revision) {
-        assertTrue(revision.getCommitMessage().endsWith("comment2"))
-        assertFalse(session.isCurrentRevision(revision.getRevisionNumber()))
-      }
-    }, new Consumer<VcsFileRevision>() {
-      @Override
-      void consume(VcsFileRevision revision) {
-        assertTrue(revision.getCommitMessage().endsWith("comment1"))
-        assertFalse(session.isCurrentRevision(revision.getRevisionNumber()))
-      }
+    val session = PerforceVcs.getInstance(myProject).vcsHistoryProvider!!.createSessionFor(
+      VcsContextFactory.getInstance().createFilePathOn(file))
+    Assert.assertNotNull(session)
+    assertNotNull(session!!.currentRevisionNumber)
+    assertOrderedCollection(session.revisionList, Consumer { revision ->
+      assertTrue(revision.commitMessage!!.endsWith("comment3"))
+      assertTrue(session.isCurrentRevision(revision.revisionNumber))
+    }, Consumer { revision ->
+      assertTrue(revision.commitMessage!!.endsWith("comment2"))
+      assertFalse(session.isCurrentRevision(revision.revisionNumber))
+    }, Consumer { revision ->
+        assertTrue(revision.commitMessage!!.endsWith("comment1"))
+        assertFalse(session.isCurrentRevision(revision.revisionNumber))
     })
   }
 
   @Test
-  void testRevertAfterRename() throws IOException, VcsException {
+  fun testRevertAfterRename() {
     doTestRevertAfterRename()
   }
 
   @Test
-  void testRevertAfterRename_Old() throws IOException, VcsException {
+  fun testRevertAfterRename_Old() {
     forceDisableMoveCommand()
     doTestRevertAfterRename()
   }
 
-  private void doTestRevertAfterRename() throws IOException, VcsException {
-    final VirtualFile foo = createDirectoryWithFiveFiles("foo")
-    final VirtualFile bar = createDirectoryWithFiveFiles("bar")
+  private fun doTestRevertAfterRename() {
+    val foo = createDirectoryWithFiveFiles("foo")
+    val bar = createDirectoryWithFiveFiles("bar")
     refreshChanges()
-    assertEquals(10, assertOneElement(getChangeListManager().getChangeLists()).getChanges().size())
-    assertEmpty(getChangeListManager().getUnversionedFiles())
+    assertEquals(10, assertOneElement(getChangeListManager().changeLists).changes.size)
+    assertTrue(getChangeListManager().unversionedFiles.isEmpty())
 
     submitDefaultList("initial")
     refreshChanges()
-    assertEmpty(assertOneElement(getChangeListManager().getChangeLists()).getChanges())
-    assertEmpty(getChangeListManager().getUnversionedFiles())
+    assertTrue(assertOneElement(getChangeListManager().changeLists).changes.isEmpty())
+    assertTrue(getChangeListManager().unversionedFiles.isEmpty())
 
     renameFileInCommand(foo, "foo1")
     renameFileInCommand(bar, "bar1")
     getChangeListManager().waitUntilRefreshed()
 
-    assertEmpty(getChangeListManager().getUnversionedFiles())
-    final Collection<Change> changes = assertOneElement(getChangeListManager().getChangeLists()).getChanges()
-    assertEquals(10, changes.size())
+    assertTrue(getChangeListManager().unversionedFiles.isEmpty())
+    val changes = assertOneElement(getChangeListManager().changeLists).changes
+    assertEquals(10, changes.size)
 
-    rollbackChanges(changes as List)
+    rollbackChanges(changes as List<Change>)
     getChangeListManager().waitUntilRefreshed()
 
-    assertEmpty(assertOneElement(getChangeListManager().getChangeLists()).getChanges())
-    assertEmpty(getChangeListManager().getUnversionedFiles())
+    assertTrue(assertOneElement(getChangeListManager().changeLists).changes.isEmpty())
+    assertTrue(getChangeListManager().unversionedFiles.isEmpty())
   }
 
   @Test
-  void testDiffRevision() throws IOException, VcsException {
+  fun testDiffRevision() {
     doTestDiffRevision()
   }
 
   @Test
-  void testDiffRevision_Old() throws IOException, VcsException {
+  fun testDiffRevision_Old() {
     forceDisableMoveCommand()
     doTestDiffRevision()
   }
 
-  private void doTestDiffRevision() throws IOException, VcsException {
-    final VirtualFile file = createFileInCommand("a.txt", "foo")
+  private fun doTestDiffRevision() {
+    val file = createFileInCommand("a.txt", "foo")
     addFile("a.txt")
     submitDefaultList("comment1")
     refreshChanges()
@@ -236,30 +233,30 @@ class PerforceMoveRenameTest extends PerforceTestCase {
     editFileInCommand(file, "bar")
     refreshChanges()
 
-    DiffProvider diffProvider = PerforceVcs.getInstance(myProject).getDiffProvider()
-    assert diffProvider != null
-    VcsRevisionNumber currentRevision = diffProvider.getCurrentRevision(file)
+    val diffProvider = PerforceVcs.getInstance(myProject).diffProvider
+    assertNotNull(diffProvider)
+    val currentRevision = diffProvider!!.getCurrentRevision(file)
     assertNotNull(currentRevision)
-    assertEquals("foo", diffProvider.createFileContent(currentRevision, file).getContent())
+    assertEquals("foo", diffProvider.createFileContent(currentRevision, file)!!.content)
     assertNotNull(diffProvider.getLastRevision(file))
   }
 
   @Test
-  void testMoveBetweenRootsInSameWorkspace() {
+  fun testMoveBetweenRootsInSameWorkspace() {
     doTestMoveBetweenRootsInSameWorkspace(false)
   }
 
   @Test
-  void testMoveBetweenRootsInSameWorkspace_Old() {
+  fun testMoveBetweenRootsInSameWorkspace_Old() {
     forceDisableMoveCommand()
     doTestMoveBetweenRootsInSameWorkspace(true)
   }
 
-  private void doTestMoveBetweenRootsInSameWorkspace(boolean old) {
+  private fun doTestMoveBetweenRootsInSameWorkspace(old: Boolean) {
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD, VcsShowConfirmationOption.Value.DO_ACTION_SILENTLY)
-    VirtualFile dir1 = createDirInCommand(myWorkingCopyDir, "dir1")
-    VirtualFile dir2 = createDirInCommand(myWorkingCopyDir, "dir2")
-    VirtualFile file = createFileInCommand(dir1, "a.txt", "")
+    val dir1 = createDirInCommand(myWorkingCopyDir, "dir1")
+    val dir2 = createDirInCommand(myWorkingCopyDir, "dir2")
+    val file = createFileInCommand(dir1, "a.txt", "")
     submitDefaultList("initial")
 
     setP4ConfigRoots(dir1, dir2)
@@ -268,56 +265,56 @@ class PerforceMoveRenameTest extends PerforceTestCase {
     moveFileInCommand(file, dir2)
     getChangeListManager().waitUntilRefreshed()
 
-    assertEquals(Change.Type.MOVED, getSingleChange().getType())
+    assertEquals(Change.Type.MOVED, getSingleChange().type)
     submitDefaultList("moved")
     refreshChanges()
 
-    final List<VcsFileRevision> revisionList = getFileHistory(file)
-    assertEquals(2, revisionList.size())
-    assertEquals(old ? "add" : "move/add", ((PerforceFileRevision)revisionList.get(0)).getAction())
+    val revisionList = getFileHistory(file)
+    assertEquals(2, revisionList.size)
+    assertEquals(if (old) "add" else "move/add", (revisionList[0] as PerforceFileRevision).action)
   }
 
   @Test
-  void testDoubleRenameBC_AB() {
+  fun testDoubleRenameBC_AB() {
     doTestRenameBC_AB(true)
   }
 
   @Test
-  void testDoubleRenameBC_AB_Old() {
+  fun testDoubleRenameBC_AB_Old() {
     forceDisableMoveCommand()
     doTestRenameBC_AB(true)
   }
 
   @Test
-  void testSingleRenameBC_AB() {
+  fun testSingleRenameBC_AB() {
     doTestRenameBC_AB(false)
   }
 
   @Test
-  void testSingleRenameBC_AB_Old() {
+  fun testSingleRenameBC_AB_Old() {
     forceDisableMoveCommand()
     doTestRenameBC_AB(false)
   }
 
   // see https://youtrack.jetbrains.com/issue/IDEA-207595
-  private void ensureVfsIsReallyUpToDateAfterPreviousConcurrentRefreshes() {
+  private fun ensureVfsIsReallyUpToDateAfterPreviousConcurrentRefreshes() {
     refreshVfs()
   }
 
-  private void doTestRenameBC_AB(final boolean doubleRename) {
+  private fun doTestRenameBC_AB(doubleRename: Boolean) {
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD, VcsShowConfirmationOption.Value.DO_ACTION_SILENTLY)
-    VcsException hadException = null
-    AbstractVcsHelperImpl.setCustomExceptionHandler(myProject, { t -> hadException = t } as Consumer<VcsException>)
-    VirtualFile file1 = createFileInCommand("foo.txt", "")
-    VirtualFile file2 = createFileInCommand("bar.txt", "")
+    var hadException: VcsException? = null
+    AbstractVcsHelperImpl.setCustomExceptionHandler(myProject) { t -> hadException = t }
+    val file1 = createFileInCommand("foo.txt", "")
+    val file2 = createFileInCommand("bar.txt", "")
     submitDefaultList("initial")
 
     VfsUtil.markDirty(true, true, myWorkingCopyDir)
     refreshVfs()
-    assert !file1.writable
-    assert !file2.writable
+    assertNotNull(file1)
+    assertNotNull(file2)
     refreshChanges()
-    assertEmpty(getChangeListManager().getAllChanges())
+    assertTrue(getChangeListManager().allChanges.isEmpty())
 
     openForEdit(file1)
     openForEdit(file2)
@@ -326,29 +323,32 @@ class PerforceMoveRenameTest extends PerforceTestCase {
       renameFileInCommand(file1, "foo1.txt")
     }
 
-    String barPath = file2.getPath()
+    val barPath = file2.path
 
     ensureVfsIsReallyUpToDateAfterPreviousConcurrentRefreshes()
     renameFileInCommand(file2, "bar1.txt")
-    assert !hadException
+    assertNull(hadException)
     ensureVfsIsReallyUpToDateAfterPreviousConcurrentRefreshes()
     renameFileInCommand(file1, "bar.txt")
-    assert hadException?.message?.contains(PerforceBundle.message("exception.text.cannot.assure.no.file.being.on.server", barPath))
+    assertTrue(hadException?.message?.contains(PerforceBundle.message("exception.text.cannot.assure.no.file.being.on.server", barPath)) == true)
     hadException = null
     getChangeListManager().waitUntilRefreshed()
 
-    def changes = changeListManager.allChanges
-    if (doubleRename) {
-      assert changes.find { it.type == Change.Type.DELETED && it.beforeRevision.file.path.endsWith('foo.txt') }
-      assert changes.find { it.type == Change.Type.NEW && it.afterRevision.file.path.endsWith('foo1.txt') }
-    }
-    assert changes.find { it.type == Change.Type.MOVED && it.beforeRevision.file.path.endsWith('bar.txt') && it.afterRevision.file.path.endsWith('bar1.txt') }
-    assertSize(doubleRename ? 3 : 1, changes)
-    assertEmpty(getChangeListManager().getUnversionedFiles())
-    assertEmpty(getChangeListManager().getModifiedWithoutEditing())
-    assert assertOneElement(getChangeListManager().getDeletedFiles()).path.path.endsWith(doubleRename ? 'foo1.txt' : 'foo.txt')
+    val changes = getChangeListManager().allChanges
 
-    EdtTestUtil.runInEdtAndWait({
+    if (doubleRename) {
+      assertNotNull(changes.find { it.type == Change.Type.DELETED && it.beforeRevision!!.file.path.endsWith("foo.txt") })
+      assertNotNull(changes.find { it.type == Change.Type.NEW && it.afterRevision!!.file.path.endsWith("foo1.txt") })
+    }
+    assertNotNull(changes.find {
+      it.type == Change.Type.MOVED && it.beforeRevision!!.file.path.endsWith("bar.txt") && it.afterRevision!!.file.path.endsWith("bar1.txt")
+    })
+    assertEquals((if (doubleRename) 3 else 1), changes.size)
+    assertTrue(getChangeListManager().unversionedFiles.isEmpty())
+    assertTrue(getChangeListManager().modifiedWithoutEditing.isEmpty())
+    assertNotNull(assertOneElement(getChangeListManager ().deletedFiles).path.path.endsWith(if (doubleRename) "foo1.txt" else "foo.txt"))
+
+    EdtTestUtil.runInEdtAndWait(ThrowableRunnable {
       UndoManager.getInstance(myProject).undo(null)
     })
     getChangeListManager().waitUntilRefreshed()
@@ -359,7 +359,7 @@ class PerforceMoveRenameTest extends PerforceTestCase {
     assertEmpty(getChangeListManager().getModifiedWithoutEditing())
     assertEmpty(getChangeListManager().getDeletedFiles())
 
-    TestLoggerFactory.enableDebugLogging(myTestRootDisposable, RefreshWorker.class, PersistentFS.class, VfsData.class)
+    TestLoggerFactory.enableDebugLogging(myTestRootDisposable, PersistentFS::class.java, VfsData::class.java)
 
     submitDefaultList("move")
     VfsUtil.markDirty(true, false, file1, file2)
@@ -367,72 +367,69 @@ class PerforceMoveRenameTest extends PerforceTestCase {
 
     LOG.info("checking")
 
-    assert VfsUtil.virtualToIoFile(file1).exists()
-    assert VfsUtil.virtualToIoFile(file2).exists()
+    assertTrue(VfsUtil.virtualToIoFile(file1).exists())
+    assertTrue(VfsUtil.virtualToIoFile(file2).exists())
 
-    assert !VfsUtil.virtualToIoFile(file1).canWrite()
-    assert !VfsUtil.virtualToIoFile(file2).canWrite()
+    assertFalse(VfsUtil.virtualToIoFile(file1).canWrite())
+    assertFalse(VfsUtil.virtualToIoFile(file2).canWrite())
 
-    LOG.info("file2 id " + file2.id)
+    assertTrue(file1.isValid)
+    assertTrue(file2.isValid)
 
-    assert file1.valid
-    assert file2.valid
-
-    assert !file1.writable
-    assert !file2.writable
+    assertFalse(file1.isWritable)
+    assertFalse(file2.isWritable)
 
     refreshChanges()
 
     assertChangesViewEmpty()
 
     renameFileInCommand(file1, "bar.txt")
-    changeListManager.waitUntilRefreshed()
+    getChangeListManager().waitUntilRefreshed()
     getSingleChange()
 
-    assert !hadException
+    assertNull(hadException)
   }
 
   @Test
-  void testRenameChangingCase() {
+  fun testRenameChangingCase() {
     doTestRenameChangingCase()
   }
 
   @Test
-  void testRenameChangingCase_Old() {
+  fun testRenameChangingCase_Old() {
     forceDisableMoveCommand()
     doTestRenameChangingCase()
   }
 
-  void doTestRenameChangingCase() {
+  fun doTestRenameChangingCase() {
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD, VcsShowConfirmationOption.Value.DO_ACTION_SILENTLY)
 
-    def dir = createDirInCommand(myWorkingCopyDir, "dir")
-    createFileInCommand(dir, 'a.txt', 'asdf')
-    changeListManager.waitUntilRefreshed()
-    assert singleChange
+    val dir = createDirInCommand(myWorkingCopyDir, "dir")
+    createFileInCommand(dir, "a.txt", "asdf")
+    getChangeListManager().waitUntilRefreshed()
+    assertNotNull(getSingleChange())
 
-    renameFileInCommand(dir, 'Dir')
-    assert dir.valid
-    changeListManager.waitUntilRefreshed()
-    assert singleChange
+    renameFileInCommand(dir, "Dir")
+    assertTrue(dir.isValid)
+    assertNotNull(getSingleChange())
   }
 
   @Test
-  void testMoveUnversionedIntoAnotherModule() {
+  fun testMoveUnversionedIntoAnotherModule() {
     doTestMoveUnversionedIntoAnotherModule()
   }
 
   @Test
-  void testMoveUnversionedIntoAnotherModule_Old() {
+  fun testMoveUnversionedIntoAnotherModule_Old() {
     forceDisableMoveCommand()
     doTestMoveUnversionedIntoAnotherModule()
   }
 
-  private void doTestMoveUnversionedIntoAnotherModule() {
-    def dir1 = createDirInCommand(myWorkingCopyDir, "dir1")
-    def dir2 = createDirInCommand(myWorkingCopyDir, "dir2")
+  private fun doTestMoveUnversionedIntoAnotherModule() {
+    val dir1 = createDirInCommand(myWorkingCopyDir, "dir1")
+    val dir2 = createDirInCommand(myWorkingCopyDir, "dir2")
     setP4ConfigRoots(dir1, dir2)
-    def file = createFileInCommand(dir1, 'foo.txt', '')
+    val file = createFileInCommand(dir1, "foo.txt", "")
     refreshChanges()
     assertOneElement(changeListManager.unversionedFiles)
 
