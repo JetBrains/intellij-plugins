@@ -101,9 +101,10 @@ public final class FlexDocumentationProvider extends JSDocumentationProvider {
     return new FlexQuickNavigateBuilder();
   }
 
+  @Nullable
   @Override
-  public @Nls String generateDoc(PsiElement _element, PsiElement originalElement) {
-    String doc = super.generateDoc(_element, originalElement);
+  protected @Nls String generateDoc(PsiElement _element, @Nullable PsiElement originalElement, @Nullable Ref<String> definitionDetails) {
+    String doc = super.generateDoc(_element, originalElement, null);
     if (doc != null && doc.contains(DocumentationMarkup.CONTENT_START)) {
       return doc;
     }
