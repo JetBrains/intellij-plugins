@@ -2,6 +2,7 @@ package com.intellij.dts.lang.resolve.files
 
 import com.intellij.dts.lang.psi.FileInclude
 import com.intellij.dts.zephyr.DtsZephyrProvider
+import com.intellij.dts.zephyr.DtsZephyrFileUtil
 import com.intellij.psi.PsiFile
 
 /**
@@ -17,9 +18,10 @@ class DtsIncludeFile(val path: String, override val offset: Int) : FileInclude {
   }
 
   private fun findInIncludeDirs(anchor: PsiFile): PsiFile? {
-    val manager = anchor.manager
-    val includes = DtsZephyrProvider.of(anchor.project).getIncludeDirs()
+    val provider = DtsZephyrProvider.of(anchor.project)
+    val includes = DtsZephyrFileUtil.getIncludeDirs(provider.root, provider.board)
 
+    val manager = anchor.manager
     for (include in includes) {
       val file = include.findFileByRelativePath(path) ?: continue
       return manager.findFile(file) ?: continue

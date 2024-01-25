@@ -1,105 +1,95 @@
 package com.intellij.dts.zephyr
 
+import com.intellij.dts.DtsBundle
 import com.intellij.dts.settings.DtsSettings
 import com.intellij.dts.util.DtsUtil
-import com.intellij.dts.util.Either
-import com.intellij.openapi.Disposable
+import com.intellij.dts.zephyr.binding.*
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.util.SimpleModificationTracker
-import com.intellij.openapi.vfs.*
-import com.intellij.openapi.vfs.impl.BulkVirtualFileListenerAdapter
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.platform.ide.progress.withBackgroundProgress
+import com.intellij.platform.util.progress.SequentialProgressReporter
+import com.intellij.platform.util.progress.reportSequentialProgress
+import com.intellij.util.containers.MultiMap
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel.Factory.CONFLATED
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.*
+import org.jetbrains.annotations.TestOnly
+
+private fun settings(project: Project): Flow<DtsSettings.State> = channelFlow {
+  project.messageBus.connect(this@channelFlow).subscribe(DtsSettings.ChangeListener.TOPIC, DtsSettings.ChangeListener { settings ->
+    trySend(settings.state)
+  })
+
+  send(DtsSettings.of(project).state)
+
+  awaitClose {}
+}.buffer(CONFLATED)
 
 @Service(Service.Level.PROJECT)
-class DtsZephyrProvider(val project: Project) : Disposable.Default {
+class DtsZephyrProvider(private val project: Project, scope: CoroutineScope) {
   companion object {
     fun of(project: Project): DtsZephyrProvider = project.service()
   }
 
-  private val settings by lazy { DtsSettings.of(project) }
-  private val rootManager by lazy { ProjectRootManager.getInstance(project) }
-
-  private val fileSystemTracker = SimpleModificationTracker()
-  private val rootTracker = SimpleModificationTracker()
-
-  /**
-   * Stores the path to the current zephyr root. The root is either determined
-   * by the path specified by the user in the [DtsSettings] or inferred
-   * automatically if the path is empty.
-   */
-  private var root: VirtualFile? = null
-
-  /**
-   * Stores how the current root was determined. Left stores the path specified
-   * in the settings and right stores the state of the file system when the
-   * root was searched for.
-   */
-  private var rootSource: Either<String, Pair<Long, Long>>? = null
-
-  /**
-   * Checks if the root dir needs to change and increases if the root dir
-   * changes.
-   *
-   * Could interact with the file system.
-   */
-  val modificationCount: Long
-    get() {
-      getRootDir()
-
-      return rootTracker.modificationCount
-    }
+  private val state: MutableStateFlow<State?> = MutableStateFlow(null)
 
   init {
-    val messageBus = project.messageBus.connect(this)
-    messageBus.subscribe(
-      VirtualFileManager.VFS_CHANGES,
-      BulkVirtualFileListenerAdapter(
-        object : VirtualFileListener {
-          override fun fileCreated(event: VirtualFileEvent) = fileSystemTracker.incModificationCount()
-
-          override fun fileDeleted(event: VirtualFileEvent) = fileSystemTracker.incModificationCount()
-
-          override fun fileMoved(event: VirtualFileMoveEvent) = fileSystemTracker.incModificationCount()
+    scope.launch {
+      settings(project).collectLatest { settings ->
+        withBackgroundProgress(project, DtsBundle.message("background.load_zephyr.title")) {
+          reportSequentialProgress { reporter ->
+            state.value = update(reporter, settings)
+          }
         }
-      ),
-    )
+      }
+    }
   }
 
-  private fun getRootSource(): Either<String, Pair<Long, Long>> {
-    val path = settings.zephyrRoot
+  val root: VirtualFile? get() = state.value?.root
 
-    return if (path == null) {
-      Either.Right(Pair(fileSystemTracker.modificationCount, rootManager.modificationCount))
+  val board: VirtualFile? get() = state.value?.board
+
+  val bindings: MultiMap<String, DtsZephyrBinding> get() = state.value?.bindings ?: MultiMap.empty()
+
+  private suspend fun findSdk(reporter: SequentialProgressReporter, root: String): VirtualFile? {
+    return if (root.isBlank()) {
+      reporter.indeterminateStep(DtsBundle.message("background.load_zephyr.search")) {
+        DtsZephyrFileUtil.searchForRoot(project)
+      }
     }
     else {
-      Either.Left(path)
+      DtsUtil.findFileAndRefresh(root)
     }
   }
 
-  private fun getRootDir(): VirtualFile? {
-    val source = getRootSource()
+  private suspend fun update(reporter: SequentialProgressReporter, settings: DtsSettings.State): State? {
+    val root = findSdk(reporter, settings.zephyrRoot)
+    if (root == null) return null
 
-    if (rootSource == source) return root
-    rootSource = source
+    val board = DtsUtil.findFileAndRefresh(settings.zephyrBoard)
 
-    val newRoot = source.fold(
-      { path -> DtsUtil.findFile(path) },
-      { DtsZephyrRoot.searchForRoot(project) },
-    )
+    val bundledBindings = DtsZephyrBundledBindings.getInstance().getSource()
+    val defaultBinding = bundledBindings?.files?.get(DtsZephyrBundledBindings.DEFAULT_BINDING)
 
-    if (newRoot != root) {
-      rootTracker.incModificationCount()
-      root = newRoot
+    val bindings = reporter.indeterminateStep(DtsBundle.message("background.load_zephyr.bindings")) {
+      val files = loadExternalBindings(root)
+      parseExternalBindings(BindingSource(files, defaultBinding))
     }
 
-    return root
+    return State(root, board, bindings)
   }
 
-  fun getBoardDir(): VirtualFile? = settings.zephyrBoard?.virtualFile
+  @TestOnly
+  suspend fun awaitInit() {
+    state.first { it != null }
+  }
 
-  fun getBindingsDir(): VirtualFile? = DtsZephyrRoot.getBindingsDir(getRootDir())
-
-  fun getIncludeDirs(): List<VirtualFile> = DtsZephyrRoot.getIncludeDirs(getRootDir(), settings.zephyrBoard)
+  private data class State(
+    val root: VirtualFile?,
+    val board: VirtualFile?,
+    val bindings: MultiMap<String, DtsZephyrBinding>,
+  )
 }

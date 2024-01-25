@@ -3,8 +3,10 @@ package com.intellij.dts.documentation
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.intellij.dts.DTS_TEST_ROOT_PATH
+import com.intellij.dts.zephyr.binding.DtsZephyrBundledBindings
 import com.networknt.schema.JsonSchemaFactory
 import com.networknt.schema.SpecVersion
+import kotlinx.coroutines.runBlocking
 import java.nio.file.Path
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
@@ -12,6 +14,14 @@ import kotlin.io.path.readText
 
 class DtsBundledDocumentationTest : DtsDocumentationTest() {
   override fun getBasePath(): String = "documentation/bundled"
+
+  override fun setUp() {
+    super.setUp()
+
+    runBlocking {
+      DtsZephyrBundledBindings.getInstance().awaitInit()
+    }
+  }
 
   fun `test only ascii in bundled bindings`() {
     for (file in Path.of(DTS_TEST_ROOT_PATH, "resources/bindings").listDirectoryEntries()) {

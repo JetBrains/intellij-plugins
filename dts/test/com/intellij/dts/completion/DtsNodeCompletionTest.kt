@@ -1,10 +1,10 @@
 package com.intellij.dts.completion
 
-import com.intellij.dts.documentation.DtsBundledBindings
+import com.intellij.dts.zephyr.binding.DtsZephyrBundledBindings
 
 class DtsNodeCompletionTest : DtsCompletionTest() {
   private fun bundledNodes(callback: (name: String, lookupString: String) -> Unit) {
-    for (node in DtsBundledBindings.entries.map { it.nodeName }) {
+    for (node in DtsZephyrBundledBindings.NODE_BINDINGS) {
       callback(node, node)
       callback("", node)
     }

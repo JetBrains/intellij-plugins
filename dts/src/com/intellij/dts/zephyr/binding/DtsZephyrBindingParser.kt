@@ -1,5 +1,6 @@
 package com.intellij.dts.zephyr.binding
 
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.util.asSafely
 import com.intellij.util.containers.MultiMap
 import java.util.*
@@ -130,6 +131,8 @@ fun parseExternalBindings(source: BindingSource): MultiMap<String, DtsZephyrBind
   val bindings: MultiMap<String, DtsZephyrBinding> = MultiMap.create()
 
   for (file in source.files.values) {
+    ProgressManager.checkCanceled()
+
     val compatible = readValue<String>(file.data, "compatible") ?: continue
     val builder = DtsZephyrBinding.Builder().setCompatible(compatible)
 

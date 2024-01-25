@@ -1,12 +1,14 @@
 package com.intellij.dts.zephyr
 
-import com.intellij.dts.util.DtsUtil
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.modules
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.vfs.*
+import com.intellij.util.concurrency.ThreadingAssertions
+import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 
-object DtsZephyrRoot {
+object DtsZephyrFileUtil {
   private const val BOARDS_PATH = "boards"
   private const val BINDINGS_PATH = "dts/bindings"
   private const val DEFAULT_PATH = "zephyrproject/zephyr"
@@ -25,11 +27,16 @@ object DtsZephyrRoot {
     return true
   }
 
+  @RequiresBackgroundThread
   fun searchForRoot(project: Project): VirtualFile? {
+    ThreadingAssertions.assertBackgroundThread()
+
     val candidates = mutableListOf<VirtualFile>()
 
     val visitor = object : VirtualFileVisitor<Any>(limit(2)) {
       override fun visitFile(file: VirtualFile): Boolean {
+        ProgressManager.checkCanceled()
+
         if (isValid(file)) {
           candidates.add(file)
           return false
@@ -50,7 +57,7 @@ object DtsZephyrRoot {
 
     // search default installation directory
     if (candidates.isEmpty()) {
-      val file = DtsUtil.findFile(System.getProperty("user.home"), DEFAULT_PATH)
+      val file = VfsUtil.findRelativeFile(VfsUtil.getUserHomeDir(), DEFAULT_PATH)
 
       if (file != null && isValid(file)) {
         candidates.add(file)
@@ -60,13 +67,9 @@ object DtsZephyrRoot {
     return candidates.firstOrNull()
   }
 
-  private fun getBoardsDir(root: VirtualFile?): VirtualFile? {
-    return root?.findDirectory(BOARDS_PATH)
-  }
-
   fun getAllBoardDirs(root: VirtualFile?): Sequence<String> {
-    val boards = getBoardsDir(root)
-    if (boards == null) return emptySequence()
+    val boards = VfsUtil.findRelativeFile(root, BOARDS_PATH)
+    if (boards == null || !boards.isDirectory) return emptySequence()
 
     return sequence {
       for (arch in boards.children.filter { it.isDirectory }) {
@@ -81,16 +84,16 @@ object DtsZephyrRoot {
     }
   }
 
-  fun getBindingsDir(root: VirtualFile?): VirtualFile? {
-    return root?.findDirectory(BINDINGS_PATH)
-  }
-
-  fun getIncludeDirs(root: VirtualFile?, board: DtsZephyrBoard?): List<VirtualFile> {
+  fun getIncludeDirs(root: VirtualFile?, board: VirtualFile?): List<VirtualFile> {
     if (root == null) return emptyList()
 
     val includes = sequence {
       yieldAll(includePaths)
-      board?.arch?.let { yield("dts/$it") }
+
+      if (board != null) {
+        val arch = board.parent.name
+        yield("dts/$arch")
+      }
     }
 
     return includes.mapNotNull(root::findDirectory).toList()

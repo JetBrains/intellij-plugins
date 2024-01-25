@@ -12,6 +12,8 @@ import com.intellij.psi.TokenType
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.siblings
+import com.intellij.util.concurrency.ThreadingAssertions
+import com.intellij.util.concurrency.annotations.RequiresReadLockAbsence
 import java.nio.file.InvalidPathException
 import java.nio.file.Path
 import java.util.*
@@ -81,9 +83,20 @@ object DtsUtil {
     }
   }
 
-  fun findFile(first: String, vararg more: String): VirtualFile? {
+  @RequiresReadLockAbsence
+  fun findFileAndRefresh(first: String, vararg more: String): VirtualFile? {
+    ThreadingAssertions.assertNoReadAccess()
+
     return try {
       VfsUtil.findFile(Path.of(first, *more), true)
+    } catch (_: InvalidPathException) {
+      null
+    }
+  }
+
+  fun findFile(first: String, vararg more: String): VirtualFile? {
+    return try {
+      VfsUtil.findFile(Path.of(first, *more), false)
     } catch (_: InvalidPathException) {
       null
     }

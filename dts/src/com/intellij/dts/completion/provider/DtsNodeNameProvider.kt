@@ -8,12 +8,11 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.dts.DtsBundle
 import com.intellij.dts.DtsIcons
 import com.intellij.dts.completion.getDtsContainer
-import com.intellij.dts.documentation.DtsBundledBindings
 import com.intellij.dts.documentation.DtsNodeBindingDocumentationTarget
 import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.psi.isDtsRootNode
 import com.intellij.dts.lang.symbols.DtsDocumentationSymbol
-import com.intellij.dts.zephyr.binding.DtsZephyrBindingProvider
+import com.intellij.dts.zephyr.binding.DtsZephyrBundledBindings
 import com.intellij.util.ProcessingContext
 
 object DtsNodeNameProvider : CompletionProvider<CompletionParameters>() {
@@ -28,18 +27,18 @@ object DtsNodeNameProvider : CompletionProvider<CompletionParameters>() {
     // no removal of present nodes in suggestions, because some nodes can be
     // suffixed with @... which makes them different
 
-    val provider = DtsZephyrBindingProvider.of(node.project)
+    val provider = DtsZephyrBundledBindings.getInstance()
 
-    for (binding in DtsBundledBindings.entries) {
-      val build = binding.build(provider) ?: continue
+    for (name in DtsZephyrBundledBindings.NODE_BINDINGS) {
+      val binding = provider.getBinding(name) ?: continue
 
       val symbol = DtsDocumentationSymbol.from(DtsNodeBindingDocumentationTarget(
         node.project,
-        binding.nodeName,
-        build,
+        name,
+        binding,
       ))
 
-      val lookup = LookupElementBuilder.create(symbol, binding.nodeName)
+      val lookup = LookupElementBuilder.create(symbol, name)
         .withTypeText(DtsBundle.message("documentation.node.lookup_type"))
         .withIcon(DtsIcons.Node)
         .withInsertHandler(DtsInsertHandler.SUB_NODE)

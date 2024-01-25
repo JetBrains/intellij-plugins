@@ -4,12 +4,14 @@ import com.intellij.application.options.CodeStyle
 import com.intellij.dts.lang.DtsFileType
 import com.intellij.dts.settings.DtsSettings
 import com.intellij.dts.util.DtsUtil
+import com.intellij.dts.zephyr.DtsZephyrProvider
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.HeavyPlatformTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import kotlinx.coroutines.runBlocking
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
@@ -61,6 +63,10 @@ abstract class DtsTestBase : BasePlatformTestCase() {
     DtsSettings.of(project).update {
       zephyrRoot = zephyr
       zephyrBoard = "$zephyr/boards/xtensa/esp32"
+    }
+
+    runBlocking {
+      DtsZephyrProvider.of(project).awaitInit()
     }
   }
 

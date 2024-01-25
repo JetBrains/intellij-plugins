@@ -63,7 +63,7 @@ class DtsSettings(
    * There are no guaranties whether the callback will be invoked on the EDT
    * or a background thread.
    */
-  interface ChangeListener {
+  fun interface ChangeListener {
     companion object {
       @Topic.ProjectLevel
       @JvmField

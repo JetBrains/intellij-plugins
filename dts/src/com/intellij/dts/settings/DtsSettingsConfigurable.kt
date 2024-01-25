@@ -4,7 +4,7 @@ import com.intellij.dts.DtsBundle
 import com.intellij.dts.util.DtsUtil
 import com.intellij.dts.util.Either
 import com.intellij.dts.zephyr.DtsZephyrBoard
-import com.intellij.dts.zephyr.DtsZephyrRoot
+import com.intellij.dts.zephyr.DtsZephyrFileUtil
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.options.BoundSearchableConfigurable
@@ -30,13 +30,13 @@ class DtsSettingsConfigurable(private val project: Project) : BoundSearchableCon
 
   private fun validateRoot(path: String): Result<String> {
     if (path.isBlank()) {
-      val root = DtsZephyrRoot.searchForRoot(project) ?: return Either.Left(DtsBundle.message("settings.zephyr.root.not_found"))
+      val root = DtsZephyrFileUtil.searchForRoot(project) ?: return Either.Left(DtsBundle.message("settings.zephyr.root.not_found"))
       return Either.Right(root.path)
     }
     else {
-      val root = DtsUtil.findFile(path) ?: return Either.Left(DtsBundle.message("settings.zephyr.root.not_found"))
+      val root = DtsUtil.findFileAndRefresh(path) ?: return Either.Left(DtsBundle.message("settings.zephyr.root.not_found"))
 
-      if (!DtsZephyrRoot.isValid(root)) {
+      if (!DtsZephyrFileUtil.isValid(root)) {
         return Either.Left(DtsBundle.message("settings.zephyr.root.invalid"))
       }
 
@@ -45,7 +45,7 @@ class DtsSettingsConfigurable(private val project: Project) : BoundSearchableCon
   }
 
   private fun validateBoard(path: String): Result<String> {
-    return if (DtsZephyrBoard(path).virtualFile == null) {
+    return if (DtsUtil.findFileAndRefresh(path) == null) {
       Either.Left(DtsBundle.message("settings.zephyr.board.not_found"))
     }
     else {
@@ -110,7 +110,7 @@ class DtsSettingsConfigurable(private val project: Project) : BoundSearchableCon
       override fun readState(): String = rootInput.text
 
       override fun performCheck(state: String): Result<List<String>> = validateRoot(state).mapRight { rootPath ->
-        DtsZephyrRoot.getAllBoardDirs(DtsUtil.findFile(rootPath)).toList()
+        DtsZephyrFileUtil.getAllBoardDirs(DtsUtil.findFileAndRefresh(rootPath)).toList()
       }
 
       override fun evaluate(state: String, result: Result<List<String>>): ValidationInfo? {

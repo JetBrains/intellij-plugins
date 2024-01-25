@@ -5,6 +5,8 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.openapi.vfs.readText
+import com.intellij.util.concurrency.ThreadingAssertions
+import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.SafeConstructor
@@ -12,6 +14,7 @@ import org.yaml.snakeyaml.constructor.SafeConstructor
 data class BindingFile(val path: String?, val data: Map<*, *>)
 
 private val yaml = Yaml(SafeConstructor(LoaderOptions()))
+private val logger = Logger.getInstance("DtsZephyrBindingLoader")
 
 private fun loadFileData(file: VirtualFile): Map<*, *>? {
   try {
@@ -20,13 +23,16 @@ private fun loadFileData(file: VirtualFile): Map<*, *>? {
     }
   }
   catch (e: Exception) {
-    DtsZephyrBindingProvider.logger.debug("could not load yaml file", e)
+    logger.debug("could not load yaml file", e)
   }
 
   return null
 }
 
-fun loadExternalBindings(dir: VirtualFile): Map<String, BindingFile> {
+@RequiresBackgroundThread
+fun loadExternalBindings(root: VirtualFile): Map<String, BindingFile> {
+  ThreadingAssertions.assertBackgroundThread()
+
   val bindings = mutableMapOf<String, BindingFile>()
 
   val visitor = object : VirtualFileVisitor<Any>() {
@@ -40,12 +46,15 @@ fun loadExternalBindings(dir: VirtualFile): Map<String, BindingFile> {
       return true
     }
   }
-  VfsUtilCore.visitChildrenRecursively(dir, visitor)
+  VfsUtilCore.visitChildrenRecursively(root, visitor)
 
   return bindings
 }
 
+@RequiresBackgroundThread
 fun loadBundledBindings(dir: VirtualFile): Map<String, BindingFile> {
+  ThreadingAssertions.assertBackgroundThread()
+
   val bindings = mutableMapOf<String, BindingFile>()
 
   for (file in dir.children) {
@@ -57,7 +66,7 @@ fun loadBundledBindings(dir: VirtualFile): Map<String, BindingFile> {
       bindings[file.nameWithoutExtension] = BindingFile(null, binding)
     }
     else {
-      DtsZephyrBindingProvider.logger.error("could not load bundled binding: $file")
+      logger.error("could not load bundled binding: $file")
     }
   }
 
