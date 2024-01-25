@@ -9,7 +9,6 @@ import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedTagIn
 import com.intellij.lang.javascript.inspections.*
 import com.intellij.lang.javascript.modules.TypeScriptCheckImportInspection
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
-import com.intellij.lang.typescript.inspections.TypeScriptValidateJSTypesInspection
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection
 import com.intellij.xml.util.CheckEmptyTagInspection
 import com.sixrr.inspectjs.validity.ThisExpressionReferencesGlobalObjectJSInspection
@@ -39,7 +38,6 @@ class Angular2TemplateInspectionsProvider(private val strict: Boolean = false) :
       // TS
       TypeScriptUnresolvedReferenceInspection::class.java,
       TypeScriptValidateTypesInspection::class.java,
-      TypeScriptValidateJSTypesInspection::class.java,
       // JS
       ThisExpressionReferencesGlobalObjectJSInspection::class.java,
       JSUnusedGlobalSymbolsInspection::class.java,
