@@ -58,10 +58,12 @@ class HCLLiteralValidnessInspection : LocalInspectionTool() {
         '\'' -> SQS_VALID_ESCAPE
         '\"' -> DQS_VALID_ESCAPE
         else -> {
-          TerraformConfigCompletionContributor.failIfInUnitTestsMode(element,
-                                                                     "Unexpected string quote symbol '${element.quoteSymbol}', start of the string: ${
-                                                                       element.text.subSequence(0, 20)
-                                                                     }")
+          TerraformConfigCompletionContributor.failIfInUnitTestsMode(
+            element,
+            "Unexpected string quote symbol '${element.quoteSymbol}', start of the string: ${
+              element.text.subSequence(0, 20)
+            }"
+          )
           // Assume default string
           DQS_VALID_ESCAPE
         }
@@ -97,7 +99,8 @@ class HCLLiteralValidnessInspection : LocalInspectionTool() {
       }
 
       if (element.quoteSymbol == '\'') {
-        holder.registerProblem(element, HCLBundle.message("hcl.literal.inspection.invalid.quotes"), ProblemHighlightType.ERROR, ReplaceToDoubleQuoteQuickFix(element))
+        holder.registerProblem(element, HCLBundle.message("hcl.literal.inspection.invalid.quotes"), ProblemHighlightType.ERROR,
+                               ReplaceToDoubleQuoteQuickFix(element))
       }
     }
 
