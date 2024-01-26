@@ -15,6 +15,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
+import com.jetbrains.lang.dart.ide.toolingDaemon.DartToolingDaemonService
 import com.jetbrains.lang.dart.projectWizard.DartModuleBuilder
 import com.jetbrains.lang.dart.sdk.DartSdk
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil
@@ -66,6 +67,7 @@ class DartStartupActivity : ProjectActivity {
 
     readAction {
       DartAnalysisServerService.getInstance(project).serverReadyForRequest()
+      DartToolingDaemonService.getInstance(project).startService()
     }
   }
 }
