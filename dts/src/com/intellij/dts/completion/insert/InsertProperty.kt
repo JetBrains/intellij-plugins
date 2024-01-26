@@ -1,6 +1,5 @@
 package com.intellij.dts.completion.insert
 
-import com.intellij.dts.completion.provider.DtsInsertSession
 import com.intellij.dts.lang.DtsPropertyType
 import com.intellij.dts.lang.DtsPropertyValue
 import com.intellij.dts.lang.symbols.DtsPropertySymbol

@@ -1,6 +1,4 @@
-package com.intellij.dts.completion.provider
-
-import com.intellij.dts.completion.insert.DtsInsertBackend
+package com.intellij.dts.completion.insert
 
 private object InsertAbort : Exception()
 

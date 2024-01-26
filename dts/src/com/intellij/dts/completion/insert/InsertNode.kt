@@ -1,7 +1,5 @@
 package com.intellij.dts.completion.insert
 
-import com.intellij.dts.completion.provider.DtsInsertSession
-
 fun DtsInsertSession.writeNodeContent() {
   writeSpace()
 

@@ -1,9 +1,8 @@
+package com.intellij.dts.completion.insert
+
 import com.intellij.codeInsight.AutoPopupController
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.completion.InsertionContext
-import com.intellij.dts.completion.insert.DtsInsertBackend
-import com.intellij.dts.completion.provider.DtsInsertSession
-import com.intellij.dts.completion.provider.dtsRunInsertSession
 import com.intellij.dts.util.DtsUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.TokenType
