@@ -23,6 +23,9 @@
   <depends optional="true" config-file="flex-duplicates.xml">com.intellij.modules.duplicatesDetector</depends>
 
   <extensions defaultExtensionNs="com.intellij">
+    <lang.parserDefinition language="ECMA Script Level 4"
+                           implementationClass="com.intellij.lang.javascript.dialects.ECMAL4ParserDefinition"/>
+    <fileType name="ActionScript" fieldName="INSTANCE" implementationClass="com.intellij.lang.javascript.ActionScriptFileType" language="ECMA Script Level 4" extensions="as;es;js2"/>
     <moduleConfigurationEditorProvider implementation="com.intellij.lang.javascript.flex.FlexModuleConfigurationEditorProvider"/>
     <highlightingPassFactory implementation="com.intellij.lang.javascript.flex.ActionScriptUnusedImportsPassFactory"/>
     <lang.syntaxHighlighterFactory language="ECMA Script Level 4"
