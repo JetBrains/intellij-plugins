@@ -1,7 +1,6 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.psi
 
-import com.intellij.openapi.paths.WebReference
 import com.intellij.openapi.util.TextRange
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.PlatformPatterns
@@ -9,7 +8,6 @@ import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.patterns.PsiElementPattern
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.*
-import com.intellij.psi.impl.source.resolve.reference.impl.PsiDelegateReference
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.parentsOfType
@@ -111,11 +109,6 @@ class TerraformReferenceContributor : PsiReferenceContributor() {
   }
 }
 
-internal class TerraformDocReference(webReference: WebReference): PsiDelegateReference(webReference) {
-  override fun isSoft(): Boolean {
-    return true
-  }
-}
 internal object WebDocumentationReferenceProvider : PsiReferenceProvider() {
   override fun getReferencesByElement(element: PsiElement,
                                       context: ProcessingContext): Array<PsiReference> {
@@ -123,16 +116,11 @@ internal object WebDocumentationReferenceProvider : PsiReferenceProvider() {
     val identifier: String = parentBlock.getNameElementUnquoted(1) ?: return PsiReference.EMPTY_ARRAY
     val type = parentBlock.getNameElementUnquoted(0)
     val docUrl = when (type) {
-                   "resource" -> getResourceOrDataSourceUrl(identifier, "resources", parentBlock)
-                   "data" -> getResourceOrDataSourceUrl(identifier, "data-sources", parentBlock)
-                   else -> null
-                 } ?: return PsiReference.EMPTY_ARRAY
-    val range = if (element.textLength < 2) {
-      TextRange(1, 1)
-    } else {
-      TextRange(1, element.textLength-1)
+      "resource" -> getResourceOrDataSourceUrl(identifier, "resources", parentBlock)
+      "data" -> getResourceOrDataSourceUrl(identifier, "data-sources", parentBlock)
+      else -> return PsiReference.EMPTY_ARRAY
     }
-    val webReference = TerraformDocReference(WebReference(element, range, docUrl))
+    val webReference = TerraformDocReference(element, docUrl)
     return arrayOf(webReference)
   }
 }

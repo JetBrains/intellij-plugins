@@ -3,14 +3,13 @@ package org.intellij.terraform.config
 
 import com.intellij.lang.documentation.AbstractDocumentationProvider
 import com.intellij.psi.PsiElement
-import com.intellij.psi.impl.FakePsiElement
 import com.intellij.psi.util.parentsOfType
 import org.intellij.terraform.config.TerraformDocumentationUrlProvider.getProviderUrl
 import org.intellij.terraform.config.TerraformDocumentationUrlProvider.getResourceOrDataSourceUrl
 import org.intellij.terraform.config.codeinsight.ModelHelper
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TerraformPatterns
-import org.intellij.terraform.config.psi.TerraformDocReference
+import org.intellij.terraform.config.psi.TerraformDocumentPsi
 import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.hcl.psi.common.LiteralExpression
 import org.jetbrains.annotations.Nls
@@ -45,6 +44,11 @@ internal class TerraformDocumentationProvider : AbstractDocumentationProvider() 
       }
       return null
     }
+    //Workaround for documentation - we do not parse type identifier in top-level blocks
+    if (element is TerraformDocumentPsi) {
+      return "Block type ${element.name}"
+    }
+
     return null
   }
 
@@ -67,7 +71,7 @@ internal class TerraformDocumentationProvider : AbstractDocumentationProvider() 
       if (TerraformPatterns.RootBlock.accepts(element)) {
         if (TerraformPatterns.VariableRootBlock.accepts(element)) {
           val variable = Variable(element)
-          val typeExpression = (variable.getTypeExpression() as? LiteralExpression)?.unquotedText?.let{ " of type ${it}"} ?: ""
+          val typeExpression = (variable.getTypeExpression() as? LiteralExpression)?.unquotedText?.let { " of type ${it}" } ?: ""
           val description = (variable.getDescription() as? LiteralExpression)?.unquotedText?.let { "<br/><br/> ${it}" } ?: ""
           val defaultValue = (variable.getDefault() as? HCLValue)?.text?.let { "<br/><br/>Default value: ${it}" } ?: ""
 
@@ -88,47 +92,48 @@ internal class TerraformDocumentationProvider : AbstractDocumentationProvider() 
     }
     //Block parameters
     else if (element is HCLIdentifier) {
-      val parentBlock = element.parentsOfType<HCLBlock>(true)
-        .firstOrNull { block -> block.name != element.id } ?: return null
+      val parentBlock = getBlockForHclIdentifier(element) ?: return null
       val parentBlockType = parentBlock.getNameElementUnquoted(1) ?: parentBlock.getNameElementUnquoted(0)
       val property = (ModelHelper.getBlockProperties(parentBlock)[element.id] as? BaseModelType) ?: return null
       val description = property.description ?: ""
       return "Parameter ${parentBlockType}.${element.id} <br/><br/> ${description}"
     }
     //Workaround for documentation - we do not parse type identifier in top-level blocks
-    else if (isDocumentationReference(element)) {
-      val blockType = originalElement?.text?.let { HCLPsiUtil.stripQuotes(it) } ?: return null
-      val relevantBlock = originalElement.parentsOfType<HCLBlock>(false)
-        .firstOrNull { block -> block.getNameElementUnquoted(1) == blockType } ?: return null
+    else if (element is TerraformDocumentPsi) {
+      val relevantBlock = getBlockForDocumentationLink(element, element.name) ?: return null
       val description = when (val typeClass = ModelHelper.getBlockType(relevantBlock)) {
-        is BaseModelType -> typeClass.description
-        else -> ""
-      } ?: ""
-      return "Block ${blockType} <br/><br/> ${description}"
+                          is BaseModelType -> typeClass.description
+                          else -> ""
+                        } ?: ""
+      return "Block type ${element.name} <br/><br/> ${description}"
     }
     return null
   }
-
-  private fun isDocumentationReference(element: PsiElement?) =
-    element is FakePsiElement && element.parent.references.any { r -> r is TerraformDocReference }
 
   override fun getUrlFor(element: PsiElement?, originalElement: PsiElement?): List<String>? {
-    if (element is HCLBlock) {
+    when (element) {
+      is HCLBlock -> {
         return getDocumentationUrl(element)
+      }
+      is HCLIdentifier -> {
+        val parentBlock = getBlockForHclIdentifier(element) ?: return null
+        val paramName = ModelHelper.getBlockProperties(parentBlock)[element.id]?.name ?: return null
+        return getDocumentationUrl(parentBlock, paramName)
+      }
+      is TerraformDocumentPsi -> {
+        val relevantBlock = getBlockForDocumentationLink(element, element.name) ?: return null
+        return getDocumentationUrl(relevantBlock)
+      }
+      else -> return null
     }
-    else if (element is HCLIdentifier) {
-      val parentBlock = element.parentsOfType<HCLBlock>(true)
-                          .firstOrNull { block -> block.name != element.id } ?: return null
-      val paramName = ModelHelper.getBlockProperties(parentBlock)[element.id]?.name ?: return null
-      return getDocumentationUrl(parentBlock, paramName)
-    } else if (isDocumentationReference(element)) {
-      val blockType = originalElement?.text?.removeSurrounding("\"") ?: return null
-      val relevantBlock = originalElement.parentsOfType<HCLBlock>(true)
-                       .firstOrNull { block -> block.getNameElementUnquoted(1) == blockType } ?: return null
-      return getDocumentationUrl(relevantBlock)
-    }
-    return null
   }
+
+  private fun getBlockForHclIdentifier(element: HCLIdentifier) = element.parentsOfType<HCLBlock>(true)
+    .firstOrNull { block -> block.name != element.id }
+
+  private fun getBlockForDocumentationLink(element: TerraformDocumentPsi?, blockTypeLiteral: String): HCLBlock? =
+    element?.parentsOfType<HCLBlock>(false)
+      ?.firstOrNull { block -> block.getNameElementUnquoted(1) == blockTypeLiteral }
 
   private fun getDocumentationUrl(element: HCLBlock,
                                   paramName: String? = null): List<String>? {
@@ -140,7 +145,4 @@ internal class TerraformDocumentationProvider : AbstractDocumentationProvider() 
       else -> null
     }
   }
-
-
-
 }
