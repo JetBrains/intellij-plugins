@@ -1,14 +1,18 @@
 package org.intellij.terraform.config.model
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.components.service
+import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.platform.backend.workspace.WorkspaceModel
 import com.intellij.platform.backend.workspace.virtualFile
 import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.waitUntil
+import kotlinx.coroutines.delay
 import org.intellij.terraform.config.inspection.HCLBlockMissingPropertyInspection
 import org.intellij.terraform.config.model.local.LocalSchemaService
+import org.intellij.terraform.config.model.local.TERRAFORM_LOCK_FILE_NAME
 import org.intellij.terraform.config.model.local.TFLocalMetaEntity
 import org.intellij.terraform.config.util.TFCommandLineServiceMock
 import org.intellij.terraform.runtime.TerraformToolProjectSettings
@@ -138,7 +142,7 @@ class TerraformLocalMetadataTest : BasePlatformTestCase() {
       "$terraformExe providers schema -json", genDoModel(dummyPropName),
       testRootDisposable)
 
-    myFixture.configureByText(".terraform.lock.hcl", MY_DO_LOCK)
+    myFixture.configureByText(TERRAFORM_LOCK_FILE_NAME, MY_DO_LOCK)
 
     myFixture.enableInspections(HCLBlockMissingPropertyInspection::class.java)
     myFixture.configureByText("main.tf", genInspectedMain(dummyPropName))
@@ -169,7 +173,7 @@ class TerraformLocalMetadataTest : BasePlatformTestCase() {
       "$terraformExe providers schema -json", genDoModel("dummyProp"),
       testRootDisposable)
 
-    val lockFile = myFixture.configureByText(".terraform.lock.hcl", MY_DO_LOCK)
+    val lockFile = myFixture.configureByText(TERRAFORM_LOCK_FILE_NAME, MY_DO_LOCK)
 
     myFixture.enableInspections(HCLBlockMissingPropertyInspection::class.java)
     timeoutRunBlocking {
@@ -188,7 +192,7 @@ class TerraformLocalMetadataTest : BasePlatformTestCase() {
       "$terraformExe providers schema -json", "", 1,
       testRootDisposable)
 
-    myFixture.configureByText(".terraform.lock.hcl", MY_DO_LOCK)
+    myFixture.configureByText(TERRAFORM_LOCK_FILE_NAME, MY_DO_LOCK)
 
     myFixture.enableInspections(HCLBlockMissingPropertyInspection::class.java)
     myFixture.configureByText("main.tf", genInspectedMain("dummyProp"))
@@ -203,7 +207,7 @@ class TerraformLocalMetadataTest : BasePlatformTestCase() {
       "$terraformExe providers schema -json", "", 1,
       testRootDisposable)
 
-    myFixture.configureByText(".terraform.lock.hcl", MY_DO_LOCK)
+    myFixture.configureByText(TERRAFORM_LOCK_FILE_NAME, MY_DO_LOCK)
     timeoutRunBlocking {
       waitUntil {
         localSchemaService.awaitModelsReady()
@@ -222,7 +226,7 @@ class TerraformLocalMetadataTest : BasePlatformTestCase() {
     assertEquals("", TFCommandLineServiceMock.instance.requestsToVerify().joinToString("\n"))
   }
 
-  val terraformExe: String
+  private val terraformExe: String
     get() = TerraformToolProjectSettings.getInstance(project).terraformPath
 
 }

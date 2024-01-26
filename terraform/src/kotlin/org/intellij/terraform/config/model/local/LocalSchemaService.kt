@@ -10,6 +10,7 @@ import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.project.getProjectDataPath
@@ -21,11 +22,13 @@ import com.intellij.platform.backend.workspace.virtualFile
 import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.intellij.platform.util.coroutines.childScope
 import com.intellij.platform.workspace.storage.entities
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.util.concurrency.annotations.RequiresBlockingContext
 import com.intellij.util.containers.ContainerUtil
 import kotlinx.coroutines.*
 import org.intellij.terraform.ExecuteLatest
+import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.model.TypeModel
 import org.intellij.terraform.config.model.TypeModelProvider
 import org.intellij.terraform.config.model.getVFSParents
@@ -33,13 +36,19 @@ import org.intellij.terraform.config.model.loader.TerraformMetadataLoader
 import org.intellij.terraform.config.util.TFExecutor
 import org.intellij.terraform.config.util.executeSuspendable
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.hcl.HCLLanguage
+import org.intellij.terraform.hcl.HCLFileType
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
 import kotlin.coroutines.coroutineContext
 import kotlin.io.path.readText
 
+
+const val TERRAFORM_LOCK_FILE_NAME: String = ".terraform.lock.hcl"
+
+private const val DAEMON_RESTART_DEBOUNCE_TIMEOUT: Long = 300
+
+private const val ORPHAN_COLLECTOR_DEBOUNCE_TIMEOUT: Long = 3000
 
 @Service(Service.Level.PROJECT)
 class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
@@ -92,26 +101,32 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
   }
 
   fun findLockFile(file: VirtualFile): VirtualFile? {
-    if (file.name == ".terraform.lock.hcl") return file
+    if (file.name == TERRAFORM_LOCK_FILE_NAME) return file
     return getVFSParents(file, project).filter { it.isDirectory }.firstNotNullOfOrNull {
-      it.findChild(".terraform.lock.hcl")
+      it.findChild(TERRAFORM_LOCK_FILE_NAME)
     }
   }
 
   private val daemonRestarter: ExecuteLatest<Unit> = ExecuteLatest(scope) {
-    delay(300) // debounce
+    delay(DAEMON_RESTART_DEBOUNCE_TIMEOUT)
     awaitModelsReady()
     readAction {
-      val openTerraformFiles = ProjectManager.getInstance().openProjects.asSequence().flatMap { project ->
-        FileEditorManager.getInstance(project).openFiles.asSequence().mapNotNull { openFile ->
-          PsiManager.getInstance(project).findFile(openFile)?.takeIf { it.language.isKindOf(HCLLanguage) }
-        }
-      }.toSet()
+      val openTerraformFiles = getOpenTerraformFiles()
       logger<LocalSchemaService>().info("openTerraformFiles to restart: $openTerraformFiles")
       for (openTerraformFile in openTerraformFiles) {
         DaemonCodeAnalyzer.getInstance(openTerraformFile.project).restart(openTerraformFile)
       }
     }
+  }
+
+  private fun getOpenTerraformFiles(): Set<PsiFile> {
+    val fileTypeManager = FileTypeManager.getInstance()
+    val fileTypes = listOf(TerraformFileType, HCLFileType)
+    return ProjectManager.getInstance().openProjects.asSequence().flatMap { project ->
+      FileEditorManager.getInstance(project).openFiles.asSequence()
+        .filter { virtualFile -> fileTypes.any { fileTypeManager.isFileOfType(virtualFile, it) } }
+        .mapNotNull { openFile -> PsiManager.getInstance(project).findFile(openFile) }
+    }.toSet()
   }
 
   fun scheduleModelRebuild(locks: Set<VirtualFile>): Deferred<*> {
@@ -227,7 +242,7 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
 
 
   private val orphanCollector: ExecuteLatest<Unit> = ExecuteLatest(scope) {
-    delay(3000) // debounce
+    delay(ORPHAN_COLLECTOR_DEBOUNCE_TIMEOUT)
     awaitModelsReady()
     withBackgroundProgress(project, HCLBundle.message("progress.title.removing.unused.metadata")) {
       val localModelPath = localModelPath
