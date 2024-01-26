@@ -119,6 +119,9 @@ public final class DartAnalysisServerService implements Disposable {
   private static final long ANALYSIS_IN_TESTS_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
   private static final long TESTS_TIMEOUT_COEFF = 10;
 
+  // LSP over Legacy Dart Analysis Protocol
+  public static final long LSP_MESSAGE_TEXT_DOCUMENT_CONTENT_TIMEOUT = TimeUnit.SECONDS.toMillis(50);
+
   private static final Logger LOG = Logger.getInstance(DartAnalysisServerService.class);
 
   private static final int DEBUG_LOG_CAPACITY = 30;
@@ -2038,6 +2041,40 @@ public final class DartAnalysisServerService implements Disposable {
       return FileUtil.toSystemIndependentName(resultRef.get());
     }
 
+    return resultRef.get();
+  }
+
+  //
+  // LSP over Legacy Dart Analysis Server protocols
+  //
+  @Nullable
+  public String lspMessage_dart_textDocumentContent(@NotNull final String uri) {
+    final RemoteAnalysisServerImpl server = myServer;
+    if (server == null) {
+      return null;
+    }
+
+    final Ref<String> resultRef = new Ref<>();
+    final CountDownLatch latch = new CountDownLatch(1);
+    server.lspMessage_dart_textDocumentContent(uri, new DartLSPTextDocumentContentConsumer() {
+      @Override
+      public void computedDocumentContents(String contents) {
+        resultRef.set(contents);
+        latch.countDown();
+      }
+
+      @Override
+      public void onError(final RequestError error) {
+        logError("lspMessage_dart_textDocumentContent()", uri, error);
+        latch.countDown();
+      }
+    });
+
+    awaitForLatchCheckingCanceled(server, latch, LSP_MESSAGE_TEXT_DOCUMENT_CONTENT_TIMEOUT);
+
+    if (latch.getCount() > 0) {
+      logTookTooLongMessage("lspMessage_dart_textDocumentContent", LSP_MESSAGE_TEXT_DOCUMENT_CONTENT_TIMEOUT, uri);
+    }
     return resultRef.get();
   }
 
