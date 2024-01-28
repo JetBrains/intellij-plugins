@@ -85,7 +85,6 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
     Collections.addAll(result, "merged", "internal", "external", "caching", "rsl");
   }
 
-  @Override
   public void resolve(Project project, MavenProject mavenProject, NativeMavenProjectHolder nativeMavenProject,
                       MavenEmbedderWrapper embedder) throws MavenProcessCanceledException {
     final MavenPlugin plugin = getFlexmojosPlugin(mavenProject);
