@@ -20,7 +20,6 @@ public final class DartIcons {
   /** 16x16 */ public static final @NotNull Icon Dart_remote = load("icons/dart_remote.svg", -1472681987, 2);
   /** 16x16 */ public static final @NotNull Icon Dart_test = load("icons/dart_test.svg", -2083033960, 2);
   /** 16x16 */ public static final @NotNull Icon DartWeb = load("icons/dartWeb.svg", -471235906, 2);
-  /** 16x16 */ public static final @NotNull Icon Observatory = load("icons/observatory.svg", 1803348841, 2);
   /** 13x13 */ public static final @NotNull Icon PubServeToolWindow = load("icons/pubServeToolWindow.svg", -1642538183, 2);
   /** 6x6 */ public static final @NotNull Icon Warning_point = load("icons/warning_point.svg", -476289486, 2);
 }
