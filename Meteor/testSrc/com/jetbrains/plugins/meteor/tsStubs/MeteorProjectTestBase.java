@@ -4,6 +4,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.testFramework.IndexingTestUtil;
 import com.intellij.testFramework.builders.ModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.util.indexing.FileBasedIndex;
@@ -34,6 +35,7 @@ public abstract class MeteorProjectTestBase extends CodeInsightFixtureTestCase<M
     ReadAction.run(() -> FileBasedIndex.getInstance().ensureUpToDate(MeteorTemplateIndex.METEOR_TEMPLATES_INDEX, project, GlobalSearchScope.allScope(project)));
     MeteorLibraryUpdater.findAndInitMeteorRoots(project);
     UIUtil.pump(); // invokelater in com.jetbrains.plugins.meteor.MeteorProjectStartupActivity.findMeteorRoots
+    IndexingTestUtil.waitUntilIndexesAreReady(project);
   }
 
   @Override
