@@ -2,6 +2,7 @@
 package com.jetbrains.lang.dart
 
 import com.intellij.openapi.application.readAction
+import com.intellij.openapi.application.readActionBlocking
 import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
@@ -64,7 +65,7 @@ class DartStartupActivity : ProjectActivity {
     if (DartSdk.getDartSdk(project) == null) return
     if (ModuleManager.getInstance(project).modules.find { DartSdkLibUtil.isDartSdkEnabled(it) } == null) return
 
-    readAction {
+    readActionBlocking {
       DartAnalysisServerService.getInstance(project).serverReadyForRequest()
     }
   }
