@@ -13,94 +13,87 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.intellij.terraform.config.actions
 
-package org.intellij.terraform.config.actions;
+import com.intellij.execution.ExecutionException
+import com.intellij.notification.NotificationType
+import com.intellij.openapi.actionSystem.ActionUpdateThread
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.fileTypes.FileTypeRegistry
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleUtilCore
+import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.ExceptionUtil
+import org.intellij.terraform.config.TerraformConstants
+import org.intellij.terraform.config.TerraformFileType
+import org.intellij.terraform.hcl.HCLFileType
+import org.jetbrains.annotations.Nls
 
-import com.intellij.execution.ExecutionException;
-import com.intellij.notification.NotificationType;
-import com.intellij.openapi.actionSystem.ActionUpdateThread;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.fileTypes.FileTypeRegistry;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.ExceptionUtil;
-import org.intellij.terraform.config.TerraformConstants;
-import org.intellij.terraform.config.TerraformFileType;
-import org.intellij.terraform.hcl.HCLFileType;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+abstract class TFExternalToolsAction : DumbAwareAction() {
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
-@SuppressWarnings("WeakerAccess")
-public abstract class TFExternalToolsAction extends DumbAwareAction {
-  private static final Logger LOG = Logger.getInstance(TFExternalToolsAction.class);
-
-  private static void error(@NotNull @Nls String title, @NotNull Project project, @Nullable Exception ex) {
-    String message = ex == null ? "" : ExceptionUtil.getUserStackTrace(ex, LOG);
-    TerraformConstants.EXECUTION_NOTIFICATION_GROUP.createNotification(title, message, NotificationType.ERROR).notify(project);
-  }
-
-  @Override
-  public @NotNull ActionUpdateThread getActionUpdateThread() {
-    return ActionUpdateThread.BGT;
-  }
-
-  @Override
-  public void update(@NotNull AnActionEvent e) {
-    Project project = e.getProject();
-    VirtualFile file = e.getData(CommonDataKeys.VIRTUAL_FILE);
+  override fun update(e: AnActionEvent) {
+    val project = e.project
+    val file = e.getData(CommonDataKeys.VIRTUAL_FILE)
     if (project == null || file == null || !isAvailableOnFile(file, true, true)) {
-      e.getPresentation().setEnabled(false);
-      return;
+      e.presentation.isEnabled = false
+      return
     }
-    e.getPresentation().setEnabled(true);
+    e.presentation.isEnabled = true
   }
 
-  static boolean isAvailableOnFile(@NotNull final VirtualFile file, boolean checkDirChildren, boolean onlyTerraformFileType) {
-    if (!file.isInLocalFileSystem()) return false;
-    if (file.isDirectory()) {
-      if (!checkDirChildren) return false;
-      //noinspection UnsafeVfsRecursion
-      VirtualFile[] children = file.getChildren();
-      if (children != null) {
-        for (VirtualFile child : children) {
-          if (isAvailableOnFile(child, false, onlyTerraformFileType)) return true;
-        }
-      }
-      return false;
-    }
+  override fun actionPerformed(e: AnActionEvent) {
+    val project = e.project
+    val file = e.getRequiredData(CommonDataKeys.VIRTUAL_FILE)
+    assert(project != null)
+    val title = StringUtil.notNullize(e.presentation.text)
 
-    return onlyTerraformFileType
-           ? FileTypeRegistry.getInstance().isFileOfType(file, TerraformFileType.INSTANCE)
-           : FileTypeRegistry.getInstance().isFileOfType(file, HCLFileType.INSTANCE) ||
-             FileTypeRegistry.getInstance().isFileOfType(file, TerraformFileType.INSTANCE);
-  }
-
-  @Override
-  public void actionPerformed(@NotNull AnActionEvent e) {
-    Project project = e.getProject();
-    VirtualFile file = e.getRequiredData(CommonDataKeys.VIRTUAL_FILE);
-    assert project != null;
-    String title = StringUtil.notNullize(e.getPresentation().getText());
-
-    Module module = ModuleUtilCore.findModuleForFile(file, project);
+    val module = ModuleUtilCore.findModuleForFile(file, project!!)
     try {
-      invoke(project, module, title, file);
-    } catch (ExecutionException ex) {
-      error(title, project, ex);
-      LOG.error(ex);
+      invoke(project, module, title, file)
+    }
+    catch (ex: ExecutionException) {
+      error(title, project, ex)
+      LOG.error(ex)
     }
   }
 
-  abstract void invoke(@NotNull Project project,
-                       @Nullable Module module,
-                       @NotNull @Nls String title,
-                       @NotNull VirtualFile virtualFile) throws ExecutionException;
+  @Throws(ExecutionException::class)
+  abstract fun invoke(project: Project,
+                      module: Module?,
+                      title: @Nls String,
+                      virtualFile: VirtualFile)
 
+  companion object {
+    private val LOG = Logger.getInstance(TFExternalToolsAction::class.java)
+
+    private fun error(title: @Nls String, project: Project, ex: Exception?) {
+      val message = if (ex == null) "" else ExceptionUtil.getUserStackTrace(ex, LOG)
+      TerraformConstants.EXECUTION_NOTIFICATION_GROUP.createNotification(title, message, NotificationType.ERROR).notify(project)
+    }
+
+    fun isAvailableOnFile(file: VirtualFile, checkDirChildren: Boolean, onlyTerraformFileType: Boolean): Boolean {
+      if (!file.isInLocalFileSystem) return false
+      if (file.isDirectory) {
+        if (!checkDirChildren) return false
+        val children = file.children
+        if (children != null) {
+          for (child in children) {
+            if (isAvailableOnFile(child, false, onlyTerraformFileType)) return true
+          }
+        }
+        return false
+      }
+
+      return if (onlyTerraformFileType)
+        FileTypeRegistry.getInstance().isFileOfType(file, TerraformFileType)
+      else FileTypeRegistry.getInstance().isFileOfType(file, HCLFileType) ||
+           FileTypeRegistry.getInstance().isFileOfType(file, TerraformFileType)
+    }
+  }
 }
