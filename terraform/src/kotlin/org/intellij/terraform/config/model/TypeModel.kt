@@ -93,8 +93,9 @@ class TypeModel(
     val PreconditionBlock: BlockType = BlockType("precondition", 0, properties = listOf(ConditionProperty, ErrorMessageProperty).toMap())
     val PostconditionBlock: BlockType = BlockType("postcondition", 0, properties = listOf(ConditionProperty, ErrorMessageProperty).toMap())
 
+    val ValueProperty: PropertyType = PropertyType("value", Types.Any, required = true)
     val Output: BlockType = BlockType("output", 1, properties = listOf(
-      PropertyType("value", Types.Any, required = true),
+      ValueProperty,
       DescriptionProperty,
       DependsOnProperty,
       SensitiveProperty,

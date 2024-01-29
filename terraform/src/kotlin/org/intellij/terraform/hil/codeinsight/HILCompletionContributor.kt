@@ -10,7 +10,9 @@ import com.intellij.icons.AllIcons
 import com.intellij.lang.Language
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.debug
-import com.intellij.patterns.*
+import com.intellij.patterns.PatternCondition
+import com.intellij.patterns.PlatformPatterns
+import com.intellij.patterns.PsiElementPattern
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentsOfType
@@ -27,7 +29,10 @@ import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.hcl.navigation.HCLQualifiedNameProvider
 import org.intellij.terraform.hcl.psi.*
-import org.intellij.terraform.hcl.psi.common.*
+import org.intellij.terraform.hcl.psi.common.BaseExpression
+import org.intellij.terraform.hcl.psi.common.Identifier
+import org.intellij.terraform.hcl.psi.common.LiteralExpression
+import org.intellij.terraform.hcl.psi.common.SelectExpression
 import org.intellij.terraform.hil.HILLanguage
 import org.intellij.terraform.hil.HilContainingBlockType
 import org.intellij.terraform.hil.codeinsight.ReferenceCompletionHelper.findByFQNRef
@@ -36,7 +41,6 @@ import org.intellij.terraform.hil.guessContainingBlockType
 import org.intellij.terraform.hil.psi.*
 import org.intellij.terraform.hil.psi.impl.getHCLHost
 import java.util.*
-import kotlin.collections.ArrayList
 
 class HILCompletionContributor : CompletionContributor() {
   init {
@@ -44,11 +48,9 @@ class HILCompletionContributor : CompletionContributor() {
     extend(CompletionType.BASIC, METHOD_POSITION, ResourceTypesCompletionProvider)
     extend(null, METHOD_POSITION, FullReferenceCompletionProvider)
     extend(CompletionType.BASIC, PlatformPatterns.psiElement().withLanguages(HILLanguage, HCLLanguage)
-        .withParent(Identifier::class.java).withSuperParent(2, ILSE_FROM_KNOWN_SCOPE)
-        , KnownScopeCompletionProvider)
+      .withParent(Identifier::class.java).withSuperParent(2, ILSE_FROM_KNOWN_SCOPE), KnownScopeCompletionProvider)
     extend(CompletionType.BASIC, PlatformPatterns.psiElement().withLanguages(HILLanguage, HCLLanguage)
-        .withParent(Identifier::class.java).withSuperParent(2, ILSE_NOT_FROM_KNOWN_SCOPE)
-        , SelectCompletionProvider)
+      .withParent(Identifier::class.java).withSuperParent(2, ILSE_NOT_FROM_KNOWN_SCOPE), SelectCompletionProvider)
 
     extend(CompletionType.BASIC, VARIABLE_TYPE_POSITION, VariableTypeCompletionProvider)
 
@@ -63,7 +65,8 @@ class HILCompletionContributor : CompletionContributor() {
   }
 
   companion object {
-    @JvmField val GLOBAL_SCOPES: SortedSet<String> = sortedSetOf("var", "path", "data", "module", "local")
+    @JvmField
+    val GLOBAL_SCOPES: SortedSet<String> = sortedSetOf("var", "path", "data", "module", "local")
 
     private fun getScopeSelectPatternCondition(scopes: Set<String>): PatternCondition<SelectExpression<*>?> {
       return object : PatternCondition<SelectExpression<*>?>("ScopeSelect($scopes)") {
@@ -75,72 +78,71 @@ class HILCompletionContributor : CompletionContributor() {
     }
 
     private val SCOPE_PROVIDERS = listOf(
-        DataSourceCompletionProvider,
-        VariableCompletionProvider,
-        SelfCompletionProvider,
-        PathCompletionProvider,
-        CountCompletionProvider,
-        TerraformCompletionProvider,
-        LocalsCompletionProvider,
-        ModuleCompletionProvider
-    ).map { it.scope to it }.toMap()
-    val SCOPES = SCOPE_PROVIDERS.keys
+      DataSourceCompletionProvider,
+      VariableCompletionProvider,
+      SelfCompletionProvider,
+      PathCompletionProvider,
+      CountCompletionProvider,
+      TerraformCompletionProvider,
+      LocalsCompletionProvider,
+      ModuleCompletionProvider
+    ).associateBy { it.scope }
+    val SCOPES: Set<String> = SCOPE_PROVIDERS.keys
 
     private val METHOD_POSITION = PlatformPatterns.psiElement().withLanguages(HILLanguage, HCLLanguage)
-        .withParent(PlatformPatterns.psiElement(Identifier::class.java)
-            .with(object : PatternCondition<Identifier?>("Not a Block Identifier") {
-              override fun accepts(t: Identifier, context: ProcessingContext?): Boolean {
-                return t.parent !is HCLBlock
-              }
-            })
-            .withHCLHost(PlatformPatterns.psiElement(HCLElement::class.java)
-                .with(object : PatternCondition<HCLElement?>("Not in Variable block") {
-                  override fun accepts(t: HCLElement, context: ProcessingContext?): Boolean {
-                    val topmost = t.parentsOfType(HCLBlock::class.java).lastOrNull() ?: return true
-                    return !TerraformPatterns.VariableRootBlock.accepts(topmost)
-                  }
-                })
-                .andNot(PlatformPatterns.psiElement().inside(DependsOnProperty)))
-        )
-        .andNot(PlatformPatterns.psiElement().withSuperParent(2, SelectExpression::class.java))
+      .withParent(PlatformPatterns.psiElement(Identifier::class.java)
+                    .with(object : PatternCondition<Identifier?>("Not a Block Identifier") {
+                      override fun accepts(t: Identifier, context: ProcessingContext?): Boolean {
+                        return t.parent !is HCLBlock
+                      }
+                    })
+                    .withHCLHost(PlatformPatterns.psiElement(HCLElement::class.java)
+                                   .with(object : PatternCondition<HCLElement?>("Not in Variable block") {
+                                     override fun accepts(t: HCLElement, context: ProcessingContext?): Boolean {
+                                       val topmost = t.parentsOfType(HCLBlock::class.java).lastOrNull() ?: return true
+                                       return !TerraformPatterns.VariableRootBlock.accepts(topmost)
+                                     }
+                                   })
+                                   .andNot(PlatformPatterns.psiElement().inside(DependsOnProperty)))
+      )
+      .andNot(PlatformPatterns.psiElement().withSuperParent(2, SelectExpression::class.java))
 
     private val VARIABLE_TYPE_POSITION = PlatformPatterns.psiElement().withLanguages(HCLLanguage)
-        .withParent(PlatformPatterns.psiElement(HCLIdentifier::class.java)
-            .with(object : PatternCondition<HCLIdentifier?>("Not a Block Identifier") {
-              override fun accepts(t: HCLIdentifier, context: ProcessingContext?): Boolean {
-                return t.parent !is HCLBlock
-              }
-            })
-            .with(object : PatternCondition<HCLElement?>("In Variable block") {
-              override fun accepts(t: HCLElement, context: ProcessingContext?): Boolean {
-                val topmost = t.parentsOfType(HCLBlock::class.java).lastOrNull() ?: return false
-                return TerraformPatterns.VariableRootBlock.accepts(topmost)
-              }
-            }
-            ))
-        .andNot(PlatformPatterns.psiElement().withSuperParent(2, SelectExpression::class.java))
+      .withParent(PlatformPatterns.psiElement(HCLIdentifier::class.java)
+                    .with(object : PatternCondition<HCLIdentifier?>("Not a Block Identifier") {
+                      override fun accepts(t: HCLIdentifier, context: ProcessingContext?): Boolean {
+                        return t.parent !is HCLBlock
+                      }
+                    })
+                    .with(object : PatternCondition<HCLElement?>("In Variable block") {
+                      override fun accepts(t: HCLElement, context: ProcessingContext?): Boolean {
+                        val topmost = t.parentsOfType(HCLBlock::class.java).lastOrNull() ?: return false
+                        return TerraformPatterns.VariableRootBlock.accepts(topmost)
+                      }
+                    }
+                    ))
+      .andNot(PlatformPatterns.psiElement().withSuperParent(2, SelectExpression::class.java))
 
     private val FOR_EACH_ITERATOR_POSITION = PlatformPatterns.psiElement().withLanguages(HILLanguage, HCLLanguage)
-        .withParent(PlatformPatterns.psiElement(Identifier::class.java)
-            .withHCLHost(PlatformPatterns.psiElement(HCLElement::class.java)
-                .inside(TerraformPatterns.DynamicBlock)
-            )
-        )
-
+      .withParent(PlatformPatterns.psiElement(Identifier::class.java)
+                    .withHCLHost(PlatformPatterns.psiElement(HCLElement::class.java)
+                                   .inside(TerraformPatterns.DynamicBlock)
+                    )
+      )
 
     val ILSE_FROM_KNOWN_SCOPE = PlatformPatterns.psiElement(SelectExpression::class.java)
-        .with(getScopeSelectPatternCondition(SCOPES))
+      .with(getScopeSelectPatternCondition(SCOPES))
     val ILSE_NOT_FROM_KNOWN_SCOPE = PlatformPatterns.psiElement(SelectExpression::class.java)
-        .without(getScopeSelectPatternCondition(SCOPES))
+      .without(getScopeSelectPatternCondition(SCOPES))
     val ILSE_FROM_DATA_SCOPE = PlatformPatterns.psiElement(SelectExpression::class.java)
-        .with(getScopeSelectPatternCondition(setOf("data")))
+      .with(getScopeSelectPatternCondition(setOf("data")))
     val ILSE_DATA_SOURCE = PlatformPatterns.psiElement(SelectExpression::class.java)
-        .with(object : PatternCondition<SelectExpression<*>?>(" SE_Data_Source()") {
-          override fun accepts(t: SelectExpression<*>, context: ProcessingContext): Boolean {
-            val from = t.from as? SelectExpression<*> ?: return false
-            return ILSE_FROM_DATA_SCOPE.accepts(from)
-          }
-        })
+      .with(object : PatternCondition<SelectExpression<*>?>(" SE_Data_Source()") {
+        override fun accepts(t: SelectExpression<*>, context: ProcessingContext): Boolean {
+          val from = t.from as? SelectExpression<*> ?: return false
+          return ILSE_FROM_DATA_SCOPE.accepts(from)
+        }
+      })
     val INSIDE_FOR_EXPRESSION_BODY = PlatformPatterns.psiElement()
       .withParent(PlatformPatterns.psiElement(BaseExpression::class.java)
                     .withHCLHost(PlatformPatterns.psiElement()
@@ -266,7 +268,10 @@ class HILCompletionContributor : CompletionContributor() {
       doAddCompletions(parent, parameters, context, result)
     }
 
-    abstract fun doAddCompletions(variable: Identifier, parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet)
+    abstract fun doAddCompletions(variable: Identifier,
+                                  parameters: CompletionParameters,
+                                  context: ProcessingContext,
+                                  result: CompletionResultSet)
   }
 
   object KnownScopeCompletionProvider : CompletionProvider<CompletionParameters>() {
@@ -282,7 +287,10 @@ class HILCompletionContributor : CompletionContributor() {
   }
 
   private object VariableCompletionProvider : SelectFromScopeCompletionProvider("var") {
-    override fun doAddCompletions(variable: Identifier, parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
+    override fun doAddCompletions(variable: Identifier,
+                                  parameters: CompletionParameters,
+                                  context: ProcessingContext,
+                                  result: CompletionResultSet) {
       val variables: List<Variable> = getLocalDefinedVariables(variable)
       for (v in variables) {
         result.addElement(create(v.name))
@@ -291,7 +299,10 @@ class HILCompletionContributor : CompletionContributor() {
   }
 
   private object SelfCompletionProvider : SelectFromScopeCompletionProvider("self") {
-    override fun doAddCompletions(variable: Identifier, parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
+    override fun doAddCompletions(variable: Identifier,
+                                  parameters: CompletionParameters,
+                                  context: ProcessingContext,
+                                  result: CompletionResultSet) {
       // For now 'self' allowed only for provisioners inside resources
 
       val resource = getProvisionerOrConnectionResource(variable) ?: return
@@ -308,20 +319,29 @@ class HILCompletionContributor : CompletionContributor() {
   private object PathCompletionProvider : SelectFromScopeCompletionProvider("path") {
     private val PATH_REFERENCES = sortedSetOf("root", "module", "cwd")
 
-    override fun doAddCompletions(variable: Identifier, parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
+    override fun doAddCompletions(variable: Identifier,
+                                  parameters: CompletionParameters,
+                                  context: ProcessingContext,
+                                  result: CompletionResultSet) {
       result.addAllElements(PATH_REFERENCES.map { create(it) })
     }
   }
 
   private object CountCompletionProvider : SelectFromScopeCompletionProvider("count") {
-    override fun doAddCompletions(variable: Identifier, parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
+    override fun doAddCompletions(variable: Identifier,
+                                  parameters: CompletionParameters,
+                                  context: ProcessingContext,
+                                  result: CompletionResultSet) {
       getContainingResourceOrDataSourceOrModule(variable.getHCLHost()) ?: return
       result.addElement(create("index"))
     }
   }
 
   private object TerraformCompletionProvider : SelectFromScopeCompletionProvider("terraform") {
-    override fun doAddCompletions(variable: Identifier, parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
+    override fun doAddCompletions(variable: Identifier,
+                                  parameters: CompletionParameters,
+                                  context: ProcessingContext,
+                                  result: CompletionResultSet) {
       result.addElement(create("workspace"))
       getContainingResourceOrDataSource(variable.getHCLHost()) ?: return
       result.addElement(create("env"))
@@ -329,7 +349,10 @@ class HILCompletionContributor : CompletionContributor() {
   }
 
   private object LocalsCompletionProvider : SelectFromScopeCompletionProvider("local") {
-    override fun doAddCompletions(variable: Identifier, parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
+    override fun doAddCompletions(variable: Identifier,
+                                  parameters: CompletionParameters,
+                                  context: ProcessingContext,
+                                  result: CompletionResultSet) {
       val variables: List<String> = getLocalDefinedLocals(variable)
       for (v in variables) {
         result.addElement(create(v))
@@ -338,7 +361,10 @@ class HILCompletionContributor : CompletionContributor() {
   }
 
   private object ModuleCompletionProvider : SelectFromScopeCompletionProvider("module") {
-    override fun doAddCompletions(variable: Identifier, parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
+    override fun doAddCompletions(variable: Identifier,
+                                  parameters: CompletionParameters,
+                                  context: ProcessingContext,
+                                  result: CompletionResultSet) {
       val module = getTerraformModule(variable) ?: return
       val modules = module.getDefinedModules()
       for (m in modules) {
@@ -349,7 +375,10 @@ class HILCompletionContributor : CompletionContributor() {
   }
 
   private object DataSourceCompletionProvider : SelectFromScopeCompletionProvider("data") {
-    override fun doAddCompletions(variable: Identifier, parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
+    override fun doAddCompletions(variable: Identifier,
+                                  parameters: CompletionParameters,
+                                  context: ProcessingContext,
+                                  result: CompletionResultSet) {
       val module = getTerraformModule(variable) ?: return
 
       val dataSources = module.getDeclaredDataSources()
@@ -398,23 +427,26 @@ class HILCompletionContributor : CompletionContributor() {
         if (ILSE_DATA_SOURCE.accepts(parent)) {
           val dataSources = module.findDataSource(expression.name, null)
           dataSources.mapNotNull { it.getNameElementUnquoted(2) }.toCollection(names)
-        } else {
+        }
+        else {
           val resources = module.findResources(expression.name, null)
           resources.mapNotNull { it.getNameElementUnquoted(2) }.toCollection(names)
         }
         result.addAllElements(names.map { create(it) })
-        // TODO: support 'module.MODULE_NAME.OUTPUT_NAME' references (in that or another provider)
       }
     }
 
-    private fun collectVariants(r: PsiElement?, iteratorResolve: Boolean, depth: Int, contextType: HilContainingBlockType = HilContainingBlockType.UNSPECIFIED): List<LookupElement> {
+    private fun collectVariants(r: PsiElement?,
+                                iteratorResolve: Boolean,
+                                depth: Int,
+                                contextType: HilContainingBlockType = HilContainingBlockType.UNSPECIFIED): List<LookupElement> {
       when (r) {
         is HCLBlock -> {
           return ArrayList<LookupElement>().also { getBlockProperties(r, contextType, it) }
         }
         is FakeTypeProperty -> return ArrayList<LookupElement>().also { collectTypeVariants(r.type, it) }
         is HCLProperty -> {
-          when(val value = r.value) {
+          when (val value = r.value) {
             is HCLArray -> {
               return value.elements.reversed().flatMap { collectVariants(it, false, depth) }
             }
@@ -429,7 +461,7 @@ class HILCompletionContributor : CompletionContributor() {
         }
         is HCLObject -> {
           return ArrayList<LookupElement>().also { found ->
-            if(!iteratorResolve) {
+            if (!iteratorResolve) {
               found.addAll(r.propertyList.map { create(it.name) })
             }
             else if (depth > 0) {
@@ -466,14 +498,12 @@ class HILCompletionContributor : CompletionContributor() {
         val variable = Variable(r)
         val defaultMap = variable.getDefault()
         if (defaultMap is HCLObject) {
-          val names = HashSet<String>()
-          defaultMap.propertyList.mapNotNullTo(names) { it.name }
-          defaultMap.blockList.mapNotNullTo(names) { it.name }
-          names.mapTo(found) { create(it) }
+          defaultMap.handleHCLObject(found)
         }
         collectTypeVariants(variable.getType(), found)
         return
-      } else if (TerraformPatterns.ModuleRootBlock.accepts(r)) {
+      }
+      else if (TerraformPatterns.ModuleRootBlock.accepts(r)) {
         val module = Module.getAsModuleBlock(r)
         if (module != null) {
           // TODO: Add special LookupElementRenderer
@@ -489,6 +519,14 @@ class HILCompletionContributor : CompletionContributor() {
         }
         return
       }
+      else if (TerraformPatterns.OutputRootBlock.accepts(r)) {
+        val outputValue = r.`object`?.findProperty(TypeModel.ValueProperty.name)?.value
+        if (outputValue is HCLObject) {
+          outputValue.handleHCLObject(found)
+        }
+        collectTypeVariants(outputValue.getType(), found)
+        return
+      }
       val properties = ModelHelper.getBlockProperties(r).filterKeys { it != Constants.HAS_DYNAMIC_ATTRIBUTES }
       val done = properties.keys.toSet()
       found.addAll(properties.values.map { create(it) })
@@ -498,16 +536,25 @@ class HILCompletionContributor : CompletionContributor() {
       }
     }
 
+    private fun HCLObject.handleHCLObject(found: ArrayList<LookupElement>) {
+      val names = HashSet<String>()
+      this.propertyList.mapNotNullTo(names) { it.name }
+      this.blockList.mapNotNullTo(names) { it.name }
+      names.mapTo(found) { create(it) }
+    }
+
     private fun collectTypeVariants(type: Type?, found: ArrayList<LookupElement>) {
       if (type is ObjectType) {
         type.elements?.keys?.mapTo(found) { create(it) }
       }
       else if (type is TupleType) {
-        type.elements.filterIsInstance<ObjectType>().mapNotNull { it.elements }.flatMap { it.keys }.toSet().mapTo(found) { create(it) }
+        type.elements.asSequence().filterIsInstance<ObjectType>().mapNotNull { it.elements }.flatMap { it.keys }.toSet().mapTo(found) {
+          create(it)
+        }
       }
       else if (type is ContainerType<*>) {
         if (type.elements is ObjectType) {
-          (type.elements as ObjectType).elements?.keys?.mapTo(found) { create(it) }
+          type.elements.elements?.keys?.mapTo(found) { create(it) }
         }
       }
     }
@@ -536,7 +583,8 @@ class HILCompletionContributor : CompletionContributor() {
             // Same for 'providers' binding in 'module'
             if (outerProp.name == "providers" && type == "module" && isRootBlock) return
           }
-        } else {
+        }
+        else {
           // Since 'depends_on', 'provider' does not allows interpolations, don't add anything
           if (DependsOnProperty.accepts(property)) return
           if (property.name == "provider" && (type == "resource" || type == "data") && isRootBlock) return
@@ -584,17 +632,17 @@ class HILCompletionContributor : CompletionContributor() {
       if (hint is ReferenceHint) {
         val module = property.getTerraformModule()
         hint.hint
-            .mapNotNull { findByFQNRef(it, module) }
-            .flatten()
-            .mapNotNull {
-              return@mapNotNull when (it) {
-                is HCLBlock -> HCLQualifiedNameProvider.getQualifiedModelName(it)
-                is HCLProperty -> HCLQualifiedNameProvider.getQualifiedModelName(it)
-                is String -> it
-                else -> null
-              }
+          .mapNotNull { findByFQNRef(it, module) }
+          .flatten()
+          .mapNotNull {
+            return@mapNotNull when (it) {
+              is HCLBlock -> HCLQualifiedNameProvider.getQualifiedModelName(it)
+              is HCLProperty -> HCLQualifiedNameProvider.getQualifiedModelName(it)
+              is String -> it
+              else -> null
             }
-            .forEach { result.addElement(create(it)) }
+          }
+          .forEach { result.addElement(create(it)) }
         return
       }
       // TODO: Support other hint types

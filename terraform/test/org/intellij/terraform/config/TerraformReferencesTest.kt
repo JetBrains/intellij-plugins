@@ -330,7 +330,7 @@ class TerraformReferencesTest : BasePlatformTestCase() {
     val completionVariants = myFixture.getCompletionVariants("main.tf")!!
     UsefulTestCase.assertContainsElements(completionVariants, "f1", "f2", "f3", "f4")
   }
-  
+
   @Test
   fun reassignedInputVariable() {
     myFixture.enableInspections(HILUnknownResourceTypeInspection::class.java, HILUnresolvedReferenceInspection::class.java)
@@ -358,7 +358,7 @@ class TerraformReferencesTest : BasePlatformTestCase() {
     val completionVariants = myFixture.getCompletionVariants("main.tf")!!
     UsefulTestCase.assertContainsElements(completionVariants, "attribute_one", "attribute_three", "attribute_two")
   }
-  
+
   @Test
   fun nestedTypesCompletion() {
     myFixture.enableInspections(HILUnknownResourceTypeInspection::class.java, HILUnresolvedReferenceInspection::class.java)
@@ -384,7 +384,7 @@ class TerraformReferencesTest : BasePlatformTestCase() {
     val completionVariants = myFixture.getCompletionVariants("main.tf")!!
     UsefulTestCase.assertContainsElements(completionVariants, "name", "role_name")
   }
-  
+
   @Test
   fun variableTypesSOE() {
     myFixture.enableInspections(TFIncorrectVariableTypeInspection::class.java)
@@ -409,7 +409,7 @@ class TerraformReferencesTest : BasePlatformTestCase() {
       }
     """.trimIndent())
     myFixture.checkHighlighting()
-    
+
   }
 
   @Test
@@ -436,6 +436,36 @@ class TerraformReferencesTest : BasePlatformTestCase() {
     targetResource as HCLBlock
     assertEquals("MyName", targetResource.name)
     assertEquals("sub.tf", targetResource.containingFile.name)
+  }
+
+  @Test
+  fun testResolveOutputBlock() {
+    myFixture.enableInspections(HILUnknownResourceTypeInspection::class.java, HILUnresolvedReferenceInspection::class.java)
+    val file = myFixture.configureByText("main.tf", """
+      output "output_structure" {
+        value = {
+          name = "aws_lambda_function.function.function_name"
+          arn = "aws_lambda_function.function.arn"
+        
+          nested_field = {
+            field1 = false
+            field2 = "some_string"
+          }
+        }
+      }
+  
+      module "foo" {
+        source = "./"
+      }
+      
+      resource "test_instance" "x" {
+        some_attribute = module.foo.output_structure.<caret>arn
+      }
+    """.trimIndent())
+
+    myFixture.checkHighlighting()
+    assertResolvedNames(file.findReferenceByText("output_structure.arn", -1), "arn")
+    UsefulTestCase.assertContainsElements(myFixture.getCompletionVariants("main.tf")!!, "arn", "name", "nested_field")
   }
 
   private val DLR = "$"
