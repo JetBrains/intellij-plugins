@@ -57,6 +57,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
+import com.intellij.testFramework.IndexingTestUtil;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.util.ArrayUtil;
@@ -444,6 +445,7 @@ public final class FlexTestUtils {
         }
       }
     });
+    IndexingTestUtil.waitUntilIndexesAreReady(module.getProject());
   }
 
   private static VirtualFile copyTo(VirtualFile to, final String path) {
