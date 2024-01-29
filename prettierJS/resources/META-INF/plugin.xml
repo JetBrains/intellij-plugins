@@ -1,22 +1,21 @@
 <idea-plugin url="https://github.com/JetBrains/intellij-plugins/tree/master/prettierJS">
   <id>intellij.prettierJS</id>
   <name>Prettier</name>
-  <description><![CDATA[This plugin adds support for Prettier (<a href="https://prettier.io">https://prettier.io</a>), an opinionated code formatter.
-  <br/>
-  <br/>
-To use it:
-<ul>
-  <li>Add prettier to your project with <em>npm install prettier --save-dev</em> or install it globally</li>
-  <li>Select the code or file you want to format using Prettier</li>
-  <li>Use the "Reformat with Prettier" action (Alt-Shift-Cmd-P on macOS or Alt-Shift-Ctrl-P on Windows and Linux) or find it using the "Find
-    Action" popup (Cmd/Ctrl-Shift-A)
-  </li>
-</ul>
-<br/>To run Prettier on save, tick the "Run on save for files" option in Preferences/Settings | Languages \& Frameworks | JavaScript | Prettier.
-<br/>
-<br/>
-Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/WEB">issue tracker</a>.
-]]></description>
+  <description><![CDATA[
+    <p>Provides <a href="https://prettier.io/">Prettier</a> support to all JetBrains IDEs that
+    <a href="https://www.jetbrains.com/products/#lang=js&type=ide">support JavaScript</a>.
+
+    <h2>Features</h2>
+    <ul>
+      <li><code>.js</code>, <code>.ts</code>, <code>.jsx</code>, <code>.tsx</code>, <code>.vue</code>, and other file formatting according to Prettier rules
+      <li>an option to run Prettier on save
+    </ul>
+
+    <h2>Getting started</h2>
+    <p>For information on getting started, head over to the <a href="https://www.jetbrains.com/help/">documentation</a> for your IDE.
+      For WebStorm, you can check out this section in the
+      <a href="https://www.jetbrains.com/help/webstorm/prettier.html">documentation</a>.
+  ]]></description>
   <vendor>JetBrains</vendor>
   <category>JavaScript Frameworks and Tools</category>
 
