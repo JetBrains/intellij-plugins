@@ -22,22 +22,16 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.Consumer;
-import com.intellij.util.EmptyConsumer;
 import com.intellij.util.ExceptionUtil;
 import org.intellij.terraform.config.TerraformConstants;
 import org.intellij.terraform.config.TerraformFileType;
-import org.intellij.terraform.config.util.TFExecutor;
 import org.intellij.terraform.hcl.HCLFileType;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -97,61 +91,16 @@ public abstract class TFExternalToolsAction extends DumbAwareAction {
 
     Module module = ModuleUtilCore.findModuleForFile(file, project);
     try {
-      doSomething(file, module, project, title);
+      invoke(project, module, title, file);
     } catch (ExecutionException ex) {
       error(title, project, ex);
       LOG.error(ex);
     }
   }
 
-  protected boolean doSomething(@NotNull VirtualFile virtualFile,
-                                @Nullable Module module,
-                                @NotNull Project project,
-                                @NotNull @Nls String title) throws ExecutionException {
-    return doSomething(virtualFile, module, project, title, false);
-  }
+  abstract void invoke(@NotNull Project project,
+                       @Nullable Module module,
+                       @NotNull @Nls String title,
+                       @NotNull VirtualFile virtualFile) throws ExecutionException;
 
-  private boolean doSomething(@NotNull VirtualFile virtualFile,
-                              @Nullable Module module,
-                              @NotNull Project project,
-                              @NotNull @Nls String title,
-                              boolean withProgress) {
-    return doSomething(virtualFile, module, project, title, withProgress, EmptyConsumer.getInstance());
-  }
-
-  protected boolean doSomething(@NotNull final VirtualFile virtualFile,
-                                @Nullable Module module,
-                                @NotNull Project project,
-                                @NotNull @Nls String title,
-                                boolean withProgress,
-                                @NotNull final Consumer<Boolean> consumer) {
-    Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
-    if (document != null) {
-      FileDocumentManager.getInstance().saveDocument(document);
-    } else {
-      FileDocumentManager.getInstance().saveAllDocuments();
-    }
-
-    createExecutor(project, module, title, virtualFile).executeWithProgress(withProgress,
-        aBoolean -> {
-          consumer.consume(aBoolean);
-          VfsUtil.markDirtyAndRefresh(true, true, true, virtualFile);
-        });
-    return true;
-  }
-
-  protected TFExecutor createExecutor(@NotNull Project project,
-                                      @Nullable Module module,
-                                      @NotNull @Nls String title,
-                                      @NotNull VirtualFile virtualFile) {
-    String filePath = virtualFile.getCanonicalPath();
-    assert filePath != null;
-    return createExecutor(project, module, title, filePath);
-  }
-
-  @NotNull
-  protected abstract TFExecutor createExecutor(@NotNull Project project,
-                                               @Nullable Module module,
-                                               @NotNull @Nls String title,
-                                               @NotNull String filePath);
 }

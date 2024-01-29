@@ -18,7 +18,9 @@ package org.intellij.terraform.config.actions;
 
 import com.intellij.CommonBundle;
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.NlsSafe;
@@ -31,9 +33,11 @@ import com.intellij.openapi.vcs.changes.ui.BooleanCommitOption;
 import com.intellij.openapi.vcs.checkin.CheckinHandler;
 import com.intellij.openapi.vcs.checkin.CheckinHandlerFactory;
 import com.intellij.openapi.vcs.ui.RefreshableOnComponent;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.util.Consumer;
 import com.intellij.util.PairConsumer;
 import com.intellij.util.ui.UIUtil;
 import org.intellij.terraform.hcl.HCLBundle;
@@ -70,9 +74,21 @@ public class TFFmtCheckinFactory extends CheckinHandlerFactory {
           FileDocumentManager.getInstance().saveAllDocuments();
           for (PsiFile file : getPsiFiles()) {
             VirtualFile virtualFile = file.getVirtualFile();
-            new TFFmtFileAction().doSomething(virtualFile, ModuleUtilCore.findModuleForPsiElement(file), file.getProject(), terraformFmt, true,
-                result -> {
-                  if (!result) success.set(false);
+            @Nullable Module module = ModuleUtilCore.findModuleForPsiElement(file);
+            Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
+            if (document != null) {
+              FileDocumentManager.getInstance().saveDocument(document);
+            } else {
+              FileDocumentManager.getInstance().saveAllDocuments();
+            }
+
+            (new TFFmtFileAction()).createExecutor(file.getProject(), module, terraformFmt, virtualFile).executeWithProgress(
+              true,
+                aBoolean -> {
+                  ((Consumer<Boolean>)result -> {
+                    if (!result) success.set(false);
+                  }).consume(aBoolean);
+                  VfsUtil.markDirtyAndRefresh(true, true, true, virtualFile);
                 });
           }
           if (!success.get()) {
