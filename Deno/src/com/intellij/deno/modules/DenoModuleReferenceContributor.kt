@@ -7,20 +7,23 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.deno.DenoSettings
 import com.intellij.deno.DenoUtil.getOwnUrlForFile
+import com.intellij.deno.findDenoConfig
+import com.intellij.deno.isDenoEnableForContext
 import com.intellij.javascript.JSModuleBaseReference
 import com.intellij.json.psi.JsonFile
 import com.intellij.json.psi.JsonObject
 import com.intellij.json.psi.JsonStringLiteral
-import com.intellij.lang.ecmascript6.psi.impl.JSImportPathBuilder
 import com.intellij.lang.ecmascript6.psi.impl.JSImportPathConfiguration
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil.isRelative
-import com.intellij.lang.javascript.frameworks.modules.*
+import com.intellij.lang.javascript.frameworks.modules.JSExactFileReference
+import com.intellij.lang.javascript.frameworks.modules.JSImportMapContributorBase
+import com.intellij.lang.javascript.frameworks.modules.JSPathMappingsUtil
+import com.intellij.lang.javascript.frameworks.modules.JSUrlImportsUtil
 import com.intellij.lang.javascript.frameworks.modules.JSUrlImportsUtil.trimSchema
 import com.intellij.lang.javascript.modules.JSModuleDescriptorFactory
 import com.intellij.lang.javascript.modules.JSModuleNameInfo
 import com.intellij.lang.javascript.modules.imports.JSImportDescriptor
 import com.intellij.lang.javascript.modules.imports.JSSimpleImportDescriptor
-import com.intellij.lang.javascript.psi.resolve.JSModuleReferenceContributor
 import com.intellij.openapi.components.PathMacroManager
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.util.TextRange
@@ -31,30 +34,51 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceProvider
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiUtilCore
 import java.nio.charset.StandardCharsets
-import java.nio.file.Paths
 
 
-class DenoModuleReferenceContributor : JSModuleReferenceContributor {
+private const val npmPrefix = "npm:"
+private const val npmRegistry = "registry.npmjs.org"
 
-  override fun isApplicable(host: PsiElement): Boolean = DenoSettings.getService(host.project).isUseDeno()
+class DenoModuleReferenceContributor : JSImportMapContributorBase() {
 
-  override fun getAllReferences(unquotedRefText: String,
+  override fun isApplicable(host: PsiElement): Boolean = isDenoEnableForContext(host)
+
+  override fun getAllReferences(unquotedEscapedText: String,
                                 host: PsiElement,
                                 offset: Int,
                                 provider: PsiReferenceProvider?): Array<PsiReference> {
-    if (JSUrlImportsUtil.startsWithRemoteUrlPrefix(unquotedRefText)) {
-      return resolveAsUrl(unquotedRefText, host, TextRange(offset, offset + unquotedRefText.length))
+    if (JSUrlImportsUtil.startsWithRemoteUrlPrefix(unquotedEscapedText)) {
+      return resolveAsUrl(unquotedEscapedText, host, TextRange(offset, offset + unquotedEscapedText.length))
     }
 
-    if (isRelative(unquotedRefText)) {
-      return resolveAsDenoLibFile(unquotedRefText, host, TextRange(offset, offset + unquotedRefText.length))
+    if (isRelative(unquotedEscapedText)) {
+      return resolveAsDenoLibFile(unquotedEscapedText, host, TextRange(offset, offset + unquotedEscapedText.length))
     }
 
-    return resolveAsImportMap(unquotedRefText, host, offset)
+    if (unquotedEscapedText.startsWith(npmPrefix)) {
+      return resolveAsNpmPackage(unquotedEscapedText, host, TextRange(offset, offset + unquotedEscapedText.length))
+    }
+
+    return super.getAllReferences(unquotedEscapedText, host, offset, provider)
+  }
+
+  private fun resolveAsNpmPackage(unquotedEscapedText: String, host: PsiElement, range: TextRange): Array<PsiReference> {
+    val path = unquotedEscapedText.removePrefix(npmPrefix)
+    val parts = path.split("@")
+    val packagePath = parts[0]
+    val version = parts.getOrNull(1)
+    val denoNpm = DenoSettings.getService(host.project).getDenoNpm()
+
+    val url = "$denoNpm/$npmRegistry/$packagePath"
+    val virtualFile = PsiUtilCore.getVirtualFile(host) ?: return emptyArray()
+    val packageDirectory = virtualFile.fileSystem.findFileByPath(url) ?: return emptyArray()
+    val versionDirectory = packageDirectory.children.firstOrNull {
+      it.isDirectory && (it.name == version || version != null && it.name.startsWith(version))
+    } ?: return emptyArray()
+
+    return arrayOf(JSExactFileReference(host, range, listOf("$url/${versionDirectory.name}"), null))
   }
 
   override fun getAdditionalDescriptors(configuration: JSImportPathConfiguration,
@@ -68,7 +92,7 @@ class DenoModuleReferenceContributor : JSModuleReferenceContributor {
       return importMapDescriptors + descriptors
     }
 
-    return getImportMapDescriptors(configuration)
+    return super.getAdditionalDescriptors(configuration, baseDescriptor)
   }
 
   private fun getImportMapDescriptorsForCachedFiles(configuration: JSImportPathConfiguration,
@@ -88,7 +112,7 @@ class DenoModuleReferenceContributor : JSModuleReferenceContributor {
             val suffix = moduleName.substring(mapping.length)
             if (suffix.isNotEmpty() && !pathSubstitution.canStartWith()) continue
             val newModuleDescriptor = JSModuleDescriptorFactory.copyWithModuleName(configuration.place, moduleDescriptor,
-              pathSubstitution.mappedName + suffix)
+                                                                                   pathSubstitution.mappedName + suffix)
 
             result.add(JSSimpleImportDescriptor(newModuleDescriptor, descriptor))
           }
@@ -97,14 +121,6 @@ class DenoModuleReferenceContributor : JSModuleReferenceContributor {
     }
 
     return result
-  }
-
-  private fun getImportMapDescriptors(configuration: JSImportPathConfiguration): List<JSImportDescriptor> {
-    val (pathSubstitutions, importMapFile) = readImportMap(configuration.place) ?: return emptyList()
-    if (pathSubstitutions.isEmpty()) return emptyList()
-
-    val builder = JSImportPathBuilder.createBuilder(configuration)
-    return builder.getMappingsForBaseUrl(importMapFile.parent, pathSubstitutions)
   }
 
   private fun isCacheFile(place: PsiElement, file: VirtualFile): Boolean {
@@ -119,7 +135,7 @@ class DenoModuleReferenceContributor : JSModuleReferenceContributor {
     val moduleFileOrDirectory = moduleDescriptor.moduleFileOrDirectory
     val ownUrlForFile = getOwnUrlForFile(configuration.place, resolvedModuleFile) ?: return emptyList()
     val newInfo = JSModuleDescriptorFactory.createExactModuleDescriptor(ownUrlForFile, moduleFileOrDirectory, resolvedModuleFile,
-      configuration.place)
+                                                                        configuration.place)
     return listOf(JSSimpleImportDescriptor(newInfo, baseDescriptor))
   }
 
@@ -128,65 +144,26 @@ class DenoModuleReferenceContributor : JSModuleReferenceContributor {
   }
 
   override fun getLookupElements(unquotedEscapedText: String, host: PsiElement): Collection<LookupElement> {
-    val builder = LookupElementBuilder.create("https://deno.land").withIcon(JSUrlImportsUtil.getIcon())
-    return listOf(PrioritizedLookupElement.withPriority(builder, -1.0))
+    val denoLandElement = PrioritizedLookupElement.withPriority(
+      LookupElementBuilder.create("https://deno.land").withIcon(JSUrlImportsUtil.getIcon()), -1.0)
+    val npmElement = PrioritizedLookupElement.withPriority(LookupElementBuilder.create("npm:").withIcon(JSUrlImportsUtil.getIcon()), -1.0)
+    return listOf(denoLandElement, npmElement)
+  }
+
+  override fun findImportMapFile(host: PsiElement): VirtualFile? {
+    return extractImportMapPathFromDenoConfig(host) ?: extractImportMapPathFromInitObject(host)
   }
 }
 
-private fun resolveAsImportMap(unquotedRefText: String, host: PsiElement, offset: Int): Array<PsiReference> {
-  val (substitutions, importMapFile) = readImportMap(host) ?: return emptyArray()
-  if (substitutions.isEmpty()) return emptyArray()
+private fun extractImportMapPathFromDenoConfig(host: PsiElement): VirtualFile? {
+  val config = findDenoConfig(host.project, PsiUtilCore.getVirtualFile(host)) ?: return null
+  val findFile = host.manager.findFile(config) as? JsonFile ?: return null
 
-  val exactPath = JSPathMappingsUtil.substituteMappings(unquotedRefText, substitutions).firstOrNull() ?: return emptyArray()
-
-  if (exactPath != unquotedRefText) {
-    if (JSUrlImportsUtil.startsWithRemoteUrlPrefix(exactPath)) {
-      return resolveAsUrl(exactPath, host, TextRange(offset, offset + unquotedRefText.length))
-    }
-    else {
-      val file = JSPathMappingsUtil.getStringPathRelativeBaseUrlOrSelfIfAbsolute(importMapFile.parent, exactPath)
-                 ?: return PsiReference.EMPTY_ARRAY
-      val range = TextRange.create(offset, offset + unquotedRefText.length)
-      return arrayOf(object : JSExactFileReference(host, range, listOf(file), null) {
-        override fun getWeight(): Int = JSModuleBaseReference.ModuleTypes.PATH_MAPPING.weight()
-      })
-    }
-  }
-
-  return emptyArray()
+  val literal = (findFile.topLevelValue as? JsonObject)?.findProperty("import_map") as? JsonStringLiteral ?: return null
+  return JSPathMappingsUtil.getPathRelativeBaseUrlOrSelfIfAbsolute(config.parent, literal.value)
 }
 
-private fun readImportMap(host: PsiElement): Pair<List<JSModulePathSubstitution>, VirtualFile>? {
-  val importMapPath = extractImportMapPath(host) ?: return null
-  val virtualFile = PsiUtilCore.getVirtualFile(host) ?: return null
-  val importMapFile = virtualFile.fileSystem.findFileByPath(importMapPath) ?: return null
-  val jsonMap = host.manager.findFile(importMapFile) as? JsonFile ?: return null
-  return Pair(CachedValuesManager.getCachedValue(jsonMap, CachedValueProvider {
-    CachedValueProvider.Result(parseMap(jsonMap), jsonMap)
-  }), virtualFile)
-}
-
-private fun parseMap(file: JsonFile): List<JSModulePathSubstitution> {
-  val topLevelValue = file.topLevelValue
-  if (topLevelValue !is JsonObject) return emptyList()
-  val importsValue = topLevelValue.findProperty("imports")?.value ?: return emptyList()
-  if (importsValue !is JsonObject) return emptyList()
-
-  val result = mutableListOf<JSModulePathSubstitution>()
-  for (jsonProperty in importsValue.propertyList) {
-    val name = jsonProperty.name
-    val value = (jsonProperty.value as? JsonStringLiteral)?.value ?: continue
-    result.add(object : JSModulePathSubstitutionImpl(name, value) {
-      override fun canStartWith(): Boolean {
-        return mappedName.endsWith("/")
-      }
-    })
-  }
-
-  return result
-}
-
-private fun extractImportMapPath(host: PsiElement): String? {
+private fun extractImportMapPathFromInitObject(host: PsiElement): VirtualFile? {
   val pathMacroManager = PathMacroManager.getInstance(host.project)
   val initString = pathMacroManager.expandPath(DenoSettings.getService(host.project).getDenoInit())
   val parsed = JsonParser.parseString(initString)
@@ -194,10 +171,9 @@ private fun extractImportMapPath(host: PsiElement): String? {
   val importMapProperty = parsed.asJsonObject.get("importMap")
   if (importMapProperty == null || !importMapProperty.isJsonPrimitive) return null
   val value = importMapProperty.asString ?: return null
-  if (Paths.get(value).isAbsolute) return value
-  
   val guessProjectDir = host.project.guessProjectDir() ?: return null
-  return guessProjectDir.path + "/" + FileUtil.toSystemIndependentName(value)
+
+  return JSPathMappingsUtil.getPathRelativeBaseUrlOrSelfIfAbsolute(guessProjectDir, value)
 }
 
 fun resolveAsUrl(urlText: String,

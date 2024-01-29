@@ -13,20 +13,12 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.typescript.service.isVolarEnabledAndAvailable
-import org.jetbrains.vuejs.lang.typescript.service.isVolarFileTypeAcceptable
 
 class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(project, VolarSupportProvider::class.java) {
   override val name: String
     get() = VueBundle.message("vue.service.name")
   override val prefix: String
     get() = VueBundle.message("vue.service.prefix")
-
-  override fun canHighlight(file: PsiFile): Boolean {
-    val provider = TypeScriptAnnotatorCheckerProvider.getCheckerProvider(file)
-    if (provider !is TypeScriptLanguageServiceAnnotatorCheckerProvider) return false
-
-    return isVolarFileTypeAcceptable(file.virtualFile ?: return false)
-  }
 
   override fun isAcceptable(file: VirtualFile) = isVolarEnabledAndAvailable(project, file)
 

@@ -15,7 +15,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.util.SystemProperties
-import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 
 object DenoUtil {
   private val urlKey = Key.create<String?>("deno.file.url")
@@ -37,8 +38,9 @@ object DenoUtil {
     val userHome = FileUtil.toSystemIndependentName(SystemProperties.getUserHome())
 
     val exec = if (SystemInfoRt.isWindows) "deno.exe" else "deno"
-    val path = "$userHome/.deno/bin/$exec"
-    return if (File(path).exists()) listOf(path) else emptyList()
+    val candidate = "$userHome/.deno/bin/$exec"
+    val path = Path.of((candidate))
+    return if (Files.exists(path)) listOf (candidate) else emptyList()
   }
 
   fun getDenoCache(): String {

@@ -4,6 +4,7 @@ import com.intellij.deno.DenoSettings
 import com.intellij.deno.entities.DenoEntity
 import com.intellij.deno.entities.DenoEntitySource
 import com.intellij.deno.service.DenoTypings
+import com.intellij.deno.useDenoLibrary
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
@@ -49,7 +50,7 @@ internal fun removeDenoEntity(project: Project) {
 
 internal fun getRoots(project: Project): Pair<VirtualFile?, VirtualFile?> {
   val service = DenoSettings.getService(project)
-  if (!service.isUseDeno()) return null to null
+  if (!useDenoLibrary(project)) return null to null
 
   val denoPackages = service.getDenoCacheDeps()
   val typings = DenoTypings.getInstance(project)

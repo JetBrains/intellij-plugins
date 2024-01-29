@@ -1,13 +1,12 @@
 package com.intellij.deno.run
 
-import com.intellij.deno.DenoSettings
+import com.intellij.deno.isDenoEnableForContext
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.LazyRunConfigurationProducer
 import com.intellij.execution.configurations.runConfigurationType
 import com.intellij.execution.util.ScriptFileUtil
 import com.intellij.javascript.debugger.execution.DebuggableProcessRunConfigurationBase
 import com.intellij.lang.javascript.JavaScriptFileType
-import com.intellij.lang.javascript.TypeScriptFileType
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.util.Ref
@@ -28,12 +27,11 @@ class DenoRunConfigurationProducer : LazyRunConfigurationProducer<DenoRunConfigu
   override fun setupConfigurationFromContext(configuration: DenoRunConfiguration,
                                              context: ConfigurationContext,
                                              sourceElement: Ref<PsiElement>): Boolean {
-
-    if (!checkDeno(configuration) || !context.isAcceptable) {
+    val psiFile = sourceElement.get()?.containingFile ?: return false
+    if (!isDenoEnableForContext(psiFile) || !context.isAcceptable) {
       return false
     }
 
-    val psiFile = sourceElement.get()?.containingFile ?: return false
     val virtualFile = psiFile.virtualFile ?: return false
     val project = psiFile.project
 
@@ -64,16 +62,13 @@ class DenoRunConfigurationProducer : LazyRunConfigurationProducer<DenoRunConfigu
     return TypeScriptUtil.isTypeScriptFile(virtualFile) || fileType == JavaScriptFileType.INSTANCE
   }
 
-  private fun checkDeno(configuration: DenoRunConfiguration): Boolean {
-    return DenoSettings.getService(configuration.project).isUseDeno()
-  }
-
   override fun isConfigurationFromContext(configuration: DenoRunConfiguration, context: ConfigurationContext): Boolean {
-    if (!checkDeno(configuration) || !context.isAcceptable) {
-      return false
-    }
+    if (!context.isAcceptable) return false
 
     val location = context.location ?: return false
+    val psiElement = location.psiElement
+    if (!isDenoEnableForContext(psiElement)) return false
+
     val file = location.virtualFile ?: return false
 
     return ScriptFileUtil.getScriptFilePath(file) == configuration.inputPath ||

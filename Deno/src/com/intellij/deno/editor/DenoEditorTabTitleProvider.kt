@@ -1,7 +1,6 @@
 package com.intellij.deno.editor
 
 import com.intellij.deno.DenoUtil
-import com.intellij.deno.lang.DenoFileTypeOverrider
 import com.intellij.openapi.fileEditor.impl.EditorTabTitleProvider
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project

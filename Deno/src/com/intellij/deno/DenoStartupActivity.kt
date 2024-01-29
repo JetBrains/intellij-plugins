@@ -13,8 +13,7 @@ private class DenoStartupActivity : ProjectActivity {
       return
     }
 
-    val service = project.serviceAsync<DenoSettings>()
-    if (!service.isUseDeno()) {
+    if (!useDenoLibrary(project)) {
       return
     }
 

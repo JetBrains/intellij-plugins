@@ -1,6 +1,6 @@
 package com.intellij.deno.modules
 
-import com.intellij.deno.DenoSettings
+import com.intellij.deno.isDenoEnableForContext
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
 import com.intellij.lang.javascript.modules.JSModuleNameInfo
 import com.intellij.lang.javascript.modules.imports.path.JSImportModulePathStrategy
@@ -17,7 +17,5 @@ class DenoImportModulePathStrategy : JSImportModulePathStrategy {
     return null
   }
 
-  override fun isAvailable(place: PsiElement): Boolean {
-    return DenoSettings.getService(place.project).isUseDeno()
-  }
+  override fun isAvailable(place: PsiElement): Boolean = isDenoEnableForContext(place)
 }

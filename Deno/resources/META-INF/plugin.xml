@@ -22,7 +22,6 @@ To learn more about how to get started with Deno, check out <a href="https://blo
     <fileTypeOverrider implementation="com.intellij.deno.lang.DenoFileTypeOverrider"/>
     <runConfigurationProducer implementation="com.intellij.deno.run.DenoRunConfigurationProducer"/>
 
-    <annotator language="JavaScript" implementationClass="com.intellij.deno.inspection.DenoEditorNotificationAnnotator"/>
     <lang.inspectionSuppressor language="JavaScript" implementationClass="com.intellij.deno.inspection.DenoInspectionSuppressor"/>
 
     <platform.lsp.serverSupportProvider implementation="com.intellij.deno.service.DenoLspSupportProvider"/>

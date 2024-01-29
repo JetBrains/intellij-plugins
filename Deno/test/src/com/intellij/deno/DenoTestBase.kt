@@ -1,5 +1,6 @@
 package com.intellij.deno
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.project.RootsChangeRescanningInfo
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
@@ -7,20 +8,18 @@ import com.intellij.openapi.util.EmptyRunnable
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 abstract class DenoTestBase : BasePlatformTestCase() {
-  private var before = false
 
   override fun setUp() {
     super.setUp()
     val project = myFixture.project
     val service = DenoSettings.getService(project)
-    before = service.isUseDeno()
-    service.setUseDenoAndReload(true)
+    val before = service.getUseDeno()
+    service.setUseDenoAndReload(UseDeno.ENABLE)
+    disposeOnTearDown(Disposable { service.setUseDeno(before) })
   }
 
   override fun tearDown() {
     try {
-      DenoSettings.getService(project).setUseDeno(before)
-
       //required to reset deno libs
       WriteAction.run<RuntimeException> {
         ProjectRootManagerEx.getInstanceEx(myFixture.project).makeRootsChange(
@@ -29,7 +28,8 @@ abstract class DenoTestBase : BasePlatformTestCase() {
     }
     catch (e: Exception) {
       addSuppressedException(e)
-    } finally {
+    }
+    finally {
       super.tearDown()
     }
   }

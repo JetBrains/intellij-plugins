@@ -1,6 +1,6 @@
 package com.intellij.deno.modules
 
-import com.intellij.deno.DenoSettings
+import com.intellij.deno.isDenoEnableForContextDirectory
 import com.intellij.deno.service.DenoTypings
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfig
 import com.intellij.lang.typescript.tsconfig.TypeScriptFileImportsResolver
@@ -13,14 +13,15 @@ import com.intellij.util.Processor
 
 class DenoTypeScriptImportResolverProvider : TypeScriptImportsResolverProvider {
   override fun getExtensions(): Array<String> = emptyArray()
-  override fun contributeResolver(project: Project, config: TypeScriptConfig) = createDenoTypeScriptImportResolver(project)
+  override fun contributeResolver(project: Project, config: TypeScriptConfig) = createDenoTypeScriptImportResolver(project,
+                                                                                                                   config.configFile)
 
   override fun contributeResolver(project: Project,
                                   context: TypeScriptImportResolveContext,
-                                  contextFile: VirtualFile) = createDenoTypeScriptImportResolver(project)
+                                  contextFile: VirtualFile) = createDenoTypeScriptImportResolver(project, contextFile)
 
-  private fun createDenoTypeScriptImportResolver(project: Project): TypeScriptFileImportsResolver? =
-    if (!DenoSettings.getService(project).isUseDeno()) null else DenoLibTypeScriptImportResolver(project)
+  private fun createDenoTypeScriptImportResolver(project: Project, context: VirtualFile): TypeScriptFileImportsResolver? =
+    if (isDenoEnableForContextDirectory(project, context)) DenoLibTypeScriptImportResolver(project) else null
 }
 
 class DenoLibTypeScriptImportResolver(private val project: Project) : TypeScriptFileImportsResolver {

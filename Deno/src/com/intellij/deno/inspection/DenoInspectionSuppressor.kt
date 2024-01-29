@@ -2,7 +2,7 @@ package com.intellij.deno.inspection
 
 import com.intellij.codeInspection.InspectionSuppressor
 import com.intellij.codeInspection.SuppressQuickFix
-import com.intellij.deno.DenoSettings
+import com.intellij.deno.isDenoEnableForContext
 import com.intellij.psi.PsiElement
 
 class DenoInspectionSuppressor : InspectionSuppressor {
@@ -11,9 +11,8 @@ class DenoInspectionSuppressor : InspectionSuppressor {
   }
 
   override fun isSuppressedFor(element: PsiElement, toolId: String): Boolean {
-    if (!DenoSettings.getService(element.project).isUseDeno()) return false
+    if (!isDenoEnableForContext(element)) return false
 
-    return toolId == "ES6AwaitOutsideAsyncFunction" ||
-           toolId == "TypeScriptValidateJSTypes"
+    return toolId == "ES6AwaitOutsideAsyncFunction"
   }
 }

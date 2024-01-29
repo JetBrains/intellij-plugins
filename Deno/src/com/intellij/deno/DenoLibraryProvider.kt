@@ -40,7 +40,7 @@ class DenoLibraryProvider : AdditionalLibraryRootsProvider(), JSSyntheticLibrary
   override fun getAdditionalProjectLibraries(project: Project): Collection<SyntheticLibrary> {
     if (useWorkspaceModel()) return emptyList()
     val service = DenoSettings.getService(project)
-    if (!service.isUseDeno()) return emptyList()
+    if (!useDenoLibrary(project)) return emptyList()
 
     val libs = getLibs(project, service)
     if (libs.isEmpty()) return emptyList()
@@ -59,6 +59,6 @@ class DenoLibraryProvider : AdditionalLibraryRootsProvider(), JSSyntheticLibrary
   override fun getRootsToWatch(project: Project): Collection<VirtualFile> {
     if (useWorkspaceModel()) return emptyList()
     val service = DenoSettings.getService(project)
-    return if (!service.isUseDeno()) emptyList() else getLibs(project, service)
+    return if (useDenoLibrary(project)) getLibs(project, service) else emptyList()
   }
 }
