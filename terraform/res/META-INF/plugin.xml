@@ -342,10 +342,12 @@
     </group>
 
     <group id="TFTools" popup="true" class="com.intellij.ide.actions.NonTrivialActionGroup">
+      <action id="TFInitAction"
+              class="org.intellij.terraform.config.actions.TFInitAction"/>
       <action id="TFFmtFileAction" class="org.intellij.terraform.config.actions.TFFmtFileAction">
         <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt F"/>
       </action>
-      <action id="org.intellij.terraform.config.actions.TFGenerateLocalMetadataAction"
+      <action id="TFGenerateLocalMetadataAction"
               class="org.intellij.terraform.config.actions.TFGenerateLocalMetadataAction"/>
       <add-to-group group-id="CodeMenu" anchor="last"/>
       <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
