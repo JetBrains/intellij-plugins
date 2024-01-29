@@ -2,69 +2,32 @@
 package org.intellij.terraform.config.actions
 
 import com.intellij.notification.NotificationType
-import com.intellij.openapi.actionSystem.ActionUpdateThread
-import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
+import com.intellij.openapi.components.serviceAsync
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import org.intellij.terraform.config.TerraformConstants
 import org.intellij.terraform.config.model.local.LocalSchemaService
 import org.intellij.terraform.hcl.HCLBundle
 
-class TFGenerateLocalMetadataAction : AnAction() {
+class TFGenerateLocalMetadataAction : TFExternalToolsAction() {
 
-  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
-
-  override fun update(e: AnActionEvent) {
-    val project = e.project
-    val file = e.getData(CommonDataKeys.VIRTUAL_FILE)
-    if (project == null || file == null || !TFExternalToolsAction.isAvailableOnFile(file, true, false)) {
-      e.presentation.isEnabled = false
+  override suspend fun invoke(project: Project, module: Module?, title: String, virtualFile: VirtualFile) {
+    val localSchemaService = project.serviceAsync<LocalSchemaService>()
+    val lockFile = localSchemaService.findLockFile(virtualFile)
+    if (lockFile == null) {
+      TerraformConstants.EXECUTION_NOTIFICATION_GROUP
+        .createNotification(
+          HCLBundle.message("notification.title.cant.generate.model"),
+          HCLBundle.message("notification.content.there.no.terraform.lock.hcl.found.please.run.terraform.init"),
+          NotificationType.ERROR
+        ).notify(project)
       return
     }
-    e.presentation.isEnabled = true
+    localSchemaService.clearLocalModel(lockFile)
+    localSchemaService.scheduleModelRebuild(setOf(lockFile)).await()
   }
-
-  override fun actionPerformed(e: AnActionEvent) {
-    val project = e.project ?: return
-    val file = e.getData(CommonDataKeys.VIRTUAL_FILE) ?: return
-    project.service<CoroutineScopeProvider>().coroutineScope.launch {
-      val localSchemaService = project.service<LocalSchemaService>()
-      val lockFile = localSchemaService.findLockFile(file)
-      if (lockFile == null) {
-        TerraformConstants.EXECUTION_NOTIFICATION_GROUP
-          .createNotification(
-            HCLBundle.message("notification.title.cant.generate.model"),
-            HCLBundle.message("notification.content.there.no.terraform.lock.hcl.found.please.run.terraform.init"),
-            NotificationType.ERROR
-          ).notify(project)
-        return@launch
-      }
-      try {
-        localSchemaService.clearLocalModel(lockFile)
-        localSchemaService.scheduleModelRebuild(setOf(lockFile)).await()
-      }
-      catch (e: Exception) {
-        if (e is CancellationException) throw e
-        TerraformConstants.EXECUTION_NOTIFICATION_GROUP
-          .createNotification(
-            HCLBundle.message("notification.title.cant.generate.model"),
-            @Suppress("HardCodedStringLiteral")
-            generateSequence<Throwable>(e) { it.cause }
-              .mapNotNull { it.message }
-              .distinct()
-              .joinToString("\n"),
-            NotificationType.ERROR
-          ).notify(project)
-      }
-    }
-  }
-
-  @Service(Service.Level.PROJECT)
-  private class CoroutineScopeProvider(val coroutineScope: CoroutineScope)
 
 }

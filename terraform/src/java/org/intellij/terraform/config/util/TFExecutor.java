@@ -11,15 +11,10 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.Consumer;
-import com.intellij.util.EmptyConsumer;
 import com.intellij.util.ObjectUtils;
 import org.intellij.terraform.config.TerraformConstants;
 import org.intellij.terraform.hcl.HCLBundle;
@@ -188,44 +183,6 @@ public final class TFExecutor {
       LOGGER.debug("Finished `" + getPresentableName() + "` with an exception. Commandline: " + commandLineInfo, e);
       return false;
     }
-  }
-
-  public void executeWithProgress(boolean modal) {
-    executeWithProgress(modal, EmptyConsumer.getInstance());
-  }
-
-  public void executeWithProgress(final boolean modal, final @NotNull Consumer<? super Boolean> consumer) {
-    ProgressManager.getInstance().run(new Task.Backgroundable(myProject, getPresentableName(), true) {
-      private boolean doNotStart;
-
-      @Override
-      public void onCancel() {
-        doNotStart = true;
-        ProcessHandler handler = getProcessHandler();
-        if (handler != null) {
-          handler.destroyProcess();
-        }
-      }
-
-      @Override
-      public boolean shouldStartInBackground() {
-        return !modal;
-      }
-
-      @Override
-      public boolean isConditionalModal() {
-        return modal;
-      }
-
-      @Override
-      public void run(@NotNull ProgressIndicator indicator) {
-        if (doNotStart || myProject == null || myProject.isDisposed()) {
-          return;
-        }
-        indicator.setIndeterminate(true);
-        consumer.consume(execute());
-      }
-    });
   }
 
   public @Nullable ProcessHandler getProcessHandler() {

@@ -82,14 +82,7 @@ public class TFFmtCheckinFactory extends CheckinHandlerFactory {
               FileDocumentManager.getInstance().saveAllDocuments();
             }
 
-            (new TFFmtFileAction()).createExecutor(file.getProject(), module, terraformFmt, virtualFile).executeWithProgress(
-              true,
-                aBoolean -> {
-                  ((Consumer<Boolean>)result -> {
-                    if (!result) success.set(false);
-                  }).consume(aBoolean);
-                  VfsUtil.markDirtyAndRefresh(true, true, true, virtualFile);
-                });
+            (new TFFmtFileAction()).scheduleFormatFile(file.getProject(), module, terraformFmt, virtualFile);
           }
           if (!success.get()) {
             return showErrorMessage(executor);
