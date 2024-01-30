@@ -25,7 +25,7 @@ public class OpenDartObservatoryUrlAction extends DumbAwareAction {
   public OpenDartObservatoryUrlAction(@Nullable final String url, @NotNull final Computable<Boolean> isApplicable) {
     super(DartBundle.message("open.observatory.action.text"),
           DartBundle.message("open.observatory.action.description"),
-          DartIcons.Observatory);
+          DartIcons.Dart_16);
     myUrl = url;
     myIsApplicable = isApplicable;
   }
