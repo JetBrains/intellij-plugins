@@ -82,7 +82,7 @@ All contributed PRs should:
   - not break any of the tests that were passing before your changes
   - if possible, additional tests for the change in functionality should be included
 
-### How to open the Dart Analysis Server with Observatory and Dart DevTools
+### How to open the Dart Analysis Server with Dart DevTools
 
 1. Open the Registry... dialog by opening Find Action, `Ctrl + Shift + A` and typing `Registry...`
 2. Find the key `dart.server.vm.options` and include the flags: `--disable-service-auth-codes --observe=8888`
