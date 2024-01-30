@@ -18,10 +18,7 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.platform.workspace.jps.entities.LibraryId;
-import com.intellij.platform.workspace.jps.entities.LibraryTableId;
-import com.intellij.platform.workspace.jps.entities.ModuleDependencyItem;
-import com.intellij.platform.workspace.jps.entities.ModuleEntity;
+import com.intellij.platform.workspace.jps.entities.*;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PlatformUtils;
@@ -342,8 +339,8 @@ public final class DartSdkLibUtil {
   }
 
   public static boolean isDartSdkOrderEntry(@NotNull ModuleDependencyItem dependencyItem) {
-    if (dependencyItem instanceof ModuleDependencyItem.Exportable.LibraryDependency) {
-      LibraryId libraryId = ((ModuleDependencyItem.Exportable.LibraryDependency)dependencyItem).getLibrary();
+    if (dependencyItem instanceof LibraryDependency) {
+      LibraryId libraryId = ((LibraryDependency)dependencyItem).getLibrary();
       return libraryId.getTableId() instanceof LibraryTableId.ProjectLibraryTableId &&
              libraryId.getName().equals(DartSdk.DART_SDK_LIB_NAME);
     }
