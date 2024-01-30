@@ -18,7 +18,6 @@ open class HCLCompletionContributor : CompletionContributor() {
 
   init {
     extend(CompletionType.BASIC, AFTER_EQUALS_IN_PROPERTY, MyKeywordsCompletionProvider)
-    // FIXME: Make it work
     extend(CompletionType.BASIC, AFTER_COMMA_OR_BRACKET_IN_ARRAY, MyKeywordsCompletionProvider)
   }
 
@@ -32,7 +31,6 @@ open class HCLCompletionContributor : CompletionContributor() {
     private val KEYWORDS = arrayOf("null", "true", "false")
 
     override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
-      if (!parameters.isExtendedCompletion) return
       for (keyword in KEYWORDS) {
         result.addElement(LookupElementBuilder.create(keyword))
       }
