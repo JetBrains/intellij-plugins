@@ -606,6 +606,14 @@ public abstract class RemoteAnalysisServerImpl implements AnalysisServer {
     stopServer();
   }
 
+  //
+  // LSP over Legacy Dart Analysis Server protocol
+  //
+  public void lspMessage_dart_textDocumentContent(String uri, DartLspTextDocumentContentConsumer consumer) {
+    String id = generateUniqueId();
+    sendRequestToServer(id, RequestUtilities.generateLSPMessage_dart_textDocumentContent(id, uri), consumer);
+  }
+
   /**
    * Starts the analysis server.
    *
@@ -928,6 +936,12 @@ public abstract class RemoteAnalysisServerImpl implements AnalysisServer {
     }
     else if (consumer instanceof JsonConsumer) {
       ((JsonConsumer)consumer).onResponse(resultObject, requestError);
+    }
+    //
+    // LSP over Legacy DAS Dart Analysis Server protocol
+    //
+    else if (consumer instanceof DartLspTextDocumentContentConsumer) {
+      new DartLspTextDocumentContentProcessor((DartLspTextDocumentContentConsumer)consumer).process(resultObject, requestError);
     }
 
     synchronized (consumerMapLock) {
