@@ -24,6 +24,7 @@ import org.jetbrains.vuejs.lang.expr.psi.VueJSVForExpression
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueNamedSymbol
 import org.jetbrains.vuejs.model.VueRegularComponent
+import org.jetbrains.vuejs.web.scopes.VueBindingShorthandSymbol
 
 class VueResolveTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = getVueTestDataPath() + "/resolve/"
@@ -2358,6 +2359,23 @@ export default class UsageComponent extends Vue {
     myFixture.checkGotoDeclaration("customPro<caret>perty=\"Hello!\"",
                                    "defineProps<{ <caret>customProperty: string }>",
                                    "HelloWorld.vue")
+  }
+
+  fun testBindShorthand() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_4_0)
+    myFixture.copyDirectoryToProject(getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+    val declarations = myFixture
+      .multiResolveWebSymbolReference("v-bind:input<caret>Prop")
+      .asSequence()
+      .filterIsInstance<VueBindingShorthandSymbol>()
+      .flatMap { it.nameSegments }
+      .flatMap { it.symbols }
+      .filterIsInstance<PsiSourcedWebSymbol>()
+      .mapNotNull { if (it.source is JSImplicitElement) it.source?.context else it.source }
+      .map { it.text }
+      .toList()
+    assertSameElements(declarations, "inputProp = 'abc'", "inputProp?: string")
   }
 }
 

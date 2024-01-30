@@ -43,6 +43,7 @@ val VUE_DIRECTIVE_MODIFIERS = WebSymbolQualifiedKind(NAMESPACE_HTML, "modifiers"
 val VUE_COMPONENT_NAMESPACES = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-component-namespaces")
 val VUE_PROVIDES = WebSymbolQualifiedKind(WebSymbol.NAMESPACE_JS, "vue-provides")
 val VUE_SPECIAL_PROPERTIES = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-special-properties")
+val VUE_BINDING_SHORTHANDS = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-binding-shorthands")
 
 const val PROP_VUE_MODEL_PROP = "prop"
 const val PROP_VUE_MODEL_EVENT = "event"
@@ -62,13 +63,15 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
       return getScopeForJSElement(location, allowResolve)
 
     val result = SmartList<WebSymbolsScope>()
-    val tag = (location as? XmlAttribute)?.parent ?: location as? XmlTag
+    val attribute = location as? XmlAttribute
+    val tag = attribute?.parent ?: location as? XmlTag
     val fileContext = location.containingFile?.originalFile ?: return emptyList()
 
     if (allowResolve) {
       addEntityContainers(location, fileContext, result)
       tag?.let { result.add(VueAvailableSlotsScope(it)) }
       tag?.takeIf { it.name == SLOT_TAG_NAME }?.let { result.add(VueSlotElementScope(it)) }
+      attribute?.takeIf { it.valueElement == null }?.let { result.add(VueBindingShorthandScope(it)) }
       findModule(tag, true)?.let {
         result.add(VueScriptSetupNamespacedComponentsScope(it))
       }

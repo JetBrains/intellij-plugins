@@ -672,20 +672,21 @@ const props = {seeMe: {}}
   }
 
   fun testPropsWithDefaults() {
-    myFixture.enableInspections(VueInspectionsProvider())
     TypeScriptTestUtil.forceDefaultTsConfig(project, testRootDisposable)
     doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_4))
   }
 
   fun testPropsWithDefaultsInTs() {
-    myFixture.enableInspections(VueInspectionsProvider())
     TypeScriptTestUtil.forceDefaultTsConfig(project, testRootDisposable)
     doTest(extension = "ts")
   }
 
   fun testVuetifyWebTypesWithTrailingNewLine() {
-    myFixture.enableInspections(VueInspectionsProvider())
     doTest(addNodeModules = listOf(VueTestModule.VUETIFY_3_3_3))
+  }
+
+  fun testBindShorthandAttribute() {
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_4_0))
   }
 }
 
