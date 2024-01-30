@@ -4,10 +4,12 @@ package org.angular2.cli.config
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.intellij.lang.Language
 import com.intellij.lang.css.CSSLanguage
+import com.intellij.openapi.project.DefaultProjectFactory
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 
-abstract class AngularProject(internal val angularCliFolder: VirtualFile, internal val project: Project) {
+abstract class AngularProject(internal val angularCliFolder: VirtualFile) {
   abstract val name: String
 
   abstract val rootDir: VirtualFile?
@@ -28,7 +30,7 @@ abstract class AngularProject(internal val angularCliFolder: VirtualFile, intern
 
   abstract val protractorConfigFile: VirtualFile?
 
-  abstract val tsLintConfigurations: List<AngularLintConfiguration>
+  abstract fun getTsLintConfigurations(project: Project): List<AngularLintConfiguration>
 
   abstract val type: AngularProjectType?
 
@@ -42,12 +44,13 @@ abstract class AngularProject(internal val angularCliFolder: VirtualFile, intern
   }
 
   internal fun proximity(context: VirtualFile): Int {
-    val rootDirPath = (rootDir ?: return -1).path + "/"
-    val contextPath = context.path
-    if (!contextPath.startsWith(rootDirPath)) {
+    val rootDir = rootDir ?: return -1
+    val sourceDir = sourceDir ?: rootDir
+    if (!VfsUtil.isAncestor(rootDir, context, false))
       return -1
-    }
-    return contextPath.length - rootDirPath.length
+    return generateSequence(context) { it.parent }
+      .takeWhile { it != rootDir && it != sourceDir }
+      .count()
   }
 
   override fun toString(): String {
@@ -64,7 +67,10 @@ abstract class AngularProject(internal val angularCliFolder: VirtualFile, intern
       |       karmaConfigFile: ${karmaConfigFile}
       |       protractorConfigFile: ${protractorConfigFile}
       |       tsLintConfigurations: [
-      |         ${tsLintConfigurations.joinToString(",\n         ") { it.toString() }}
+      |         ${
+      getTsLintConfigurations(DefaultProjectFactory.getInstance().defaultProject)
+        .joinToString(",\n         ") { it.toString() }
+    }
       |       ]
       |     }
     """.trimMargin()
@@ -81,9 +87,8 @@ abstract class AngularProject(internal val angularCliFolder: VirtualFile, intern
 
 internal class AngularProjectImpl(override val name: String,
                                   private val ngProject: AngularJsonProject,
-                                  angularCliFolder: VirtualFile,
-                                  project: Project)
-  : AngularProject(angularCliFolder, project) {
+                                  angularCliFolder: VirtualFile)
+  : AngularProject(angularCliFolder) {
 
   override val rootDir = ngProject.rootPath?.let { angularCliFolder.findFileByRelativePath(it) }
 
@@ -110,14 +115,15 @@ internal class AngularProjectImpl(override val name: String,
 
   override val protractorConfigFile get() = resolveFile(ngProject.targets?.e2e?.options?.protractorConfig)
 
-  override val tsLintConfigurations: List<AngularLintConfiguration> = ngProject.targets?.lint?.let { lint ->
-    val result = mutableListOf<AngularLintConfiguration>()
-    lint.options?.let { result.add(AngularLintConfiguration(this, it)) }
-    lint.configurations.mapTo(result) { (name, config) ->
-      AngularLintConfiguration(this, config, name)
-    }
-    result
-  } ?: emptyList()
+  override fun getTsLintConfigurations(project: Project): List<AngularLintConfiguration> =
+    ngProject.targets?.lint?.let { lint ->
+      val result = mutableListOf<AngularLintConfiguration>()
+      lint.options?.let { result.add(AngularLintConfiguration(project, this, it)) }
+      lint.configurations.mapTo(result) { (name, config) ->
+        AngularLintConfiguration(project, this, config, name)
+      }
+      result
+    } ?: emptyList()
 
   override val type: AngularProjectType?
     get() = ngProject.projectType
@@ -131,9 +137,8 @@ internal class AngularProjectImpl(override val name: String,
 
 internal class AngularLegacyProjectImpl(private val angularJson: AngularJson,
                                         private val app: AngularJsonLegacyApp,
-                                        angularCliFolder: VirtualFile,
-                                        project: Project)
-  : AngularProject(angularCliFolder, project) {
+                                        angularCliFolder: VirtualFile)
+  : AngularProject(angularCliFolder) {
 
   override val name: String = app.name ?: angularJson.legacyProject?.name ?: "Angular project"
 
@@ -164,9 +169,9 @@ internal class AngularLegacyProjectImpl(private val angularJson: AngularJson,
   override val protractorConfigFile: VirtualFile?
     get() = resolveFile(angularJson.legacyE2E?.protractor?.config)
 
-  override val tsLintConfigurations
-    get() = angularJson.legacyLint.map { config ->
-      AngularLintConfiguration(this, config, null)
+  override fun getTsLintConfigurations(project: Project): List<AngularLintConfiguration> =
+    angularJson.legacyLint.map { config ->
+      AngularLintConfiguration(project, this, config, null)
     }
 
   override val type: AngularProjectType?

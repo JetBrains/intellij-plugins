@@ -65,7 +65,7 @@ class Angular2CssInspectionsTest : BasePlatformTestCase() {
         @import 'foo/bar/inFooBar.scss';
         @import 'foo/bar/_inFooBar';
         @import 'foo/bar/_inFooBar.scss';
-        @import '<error>bar</error>/<error>_inFooBar.scss</error>';
+        @import 'bar/_inFooBar.scss'; // TODO not an error if Angular framework detected
         @import '<error>_inFooBar.scss</error>';
         
         """.trimIndent())

@@ -10,7 +10,7 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import one.util.streamex.StreamEx
 import org.angular2.cli.config.AngularConfig
-import org.angular2.cli.config.AngularConfigProvider.Companion.getAngularConfig
+import org.angular2.cli.config.AngularConfigProvider.getAngularConfig
 import org.angular2.Angular2TestUtil
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -53,7 +53,7 @@ class Angular2ConfigTest : BasePlatformTestCase() {
     for (entry in tests.entrySet()) {
       val file = myFixture.findFileInTempDir(entry.key!!) ?: error(entry.key!!)
       val value = config.getProject(file)
-        ?.tsLintConfigurations
+        ?.getTsLintConfigurations(project)
         ?.firstNotNullOfOrNull { it.getTsLintConfig(file) }
         ?.path
       if (value != null) {

@@ -19,7 +19,7 @@ class TsLintConfigAngularDetector : TsLintConfigDetector {
       file = file.originalFile
     }
     return AngularConfigProvider.getAngularProject(project, file ?: return null)
-      ?.tsLintConfigurations
+      ?.getTsLintConfigurations(project)
       ?.map { Pair(it, it.getTsLintConfig(file)) }
       ?.firstOrNull { it.second != null }
       ?.let {

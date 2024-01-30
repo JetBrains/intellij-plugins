@@ -30,6 +30,7 @@ import com.intellij.webSymbols.context.WebSymbolsContextProvider
 import com.intellij.webSymbols.context.impl.WebSymbolsContextProviderExtensionPoint
 import com.intellij.webSymbols.moveToOffsetBySignature
 import com.intellij.webSymbols.resolveReference
+import junit.framework.TestCase
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.Companion.configureCopy
@@ -250,6 +251,14 @@ class Angular2InjectionsTest : Angular2CodeInsightFixtureTestCase() {
     UIUtil.dispatchAllInvocationEvents()
     val offsetBySignature = Angular2TestUtil.findOffsetBySignature("callAnonymous<caret>Api()", myFixture.getFile())
     assertNull(myFixture.getFile().findReferenceAt(offsetBySignature))
+  }
+
+  fun testAngularCliProjectWithReact() {
+    myFixture.configureByText("package.json", """{ "dependencies": {"react": "*"} }""")
+    myFixture.configureByText("angular.json", """{"projects":{"test":{"sourceRoot":"src","root":""}}}""")
+    TestCase.assertEquals(myFixture.configureByText ("root.html", "").language, HTMLLanguage.INSTANCE)
+    myFixture.tempDirFixture.createFile("src/src.html")
+    TestCase.assertEquals(myFixture.configureFromTempProjectFile ("src/src.html").language, Angular2HtmlLanguage.INSTANCE)
   }
 
   fun testTemplateReferencedThroughImportStatement() {

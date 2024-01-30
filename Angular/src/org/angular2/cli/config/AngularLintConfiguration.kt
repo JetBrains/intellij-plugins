@@ -4,12 +4,14 @@ package org.angular2.cli.config
 import com.intellij.lang.javascript.linter.JSLinterConfigFileUtil
 import com.intellij.lang.javascript.linter.tslint.TslintUtil
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.nullize
 import com.intellij.util.text.minimatch.Minimatch
 
-class AngularLintConfiguration internal constructor(private val ngProject: AngularProject,
+class AngularLintConfiguration internal constructor(private val project: Project,
+                                                    private val ngProject: AngularProject,
                                                     private val config: AngularJsonLintOptions,
                                                     val name: String? = null) {
   private val myIncludes = lazy { config.files.mapNotNull(::createGlobMatcher).nullize() }
@@ -37,7 +39,7 @@ class AngularLintConfiguration internal constructor(private val ngProject: Angul
              && !myExcludes.value.any { it.match(relativePath) }
     }
     return !myExcludes.value.any { it.match(relativePath) }
-           && tsConfigs.any { TypeScriptConfigUtil.configGraphIncludesFile(ngProject.project, file, it) }
+           && tsConfigs.any { TypeScriptConfigUtil.configGraphIncludesFile(project, file, it) }
   }
 
   override fun toString(): String {
