@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.execution.ExecutionBundle;
@@ -180,10 +180,10 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
         final FlexBCConfigurator configurator = FlexBuildConfigurationsExtension.getInstance().getConfigurator();
         final List<ModifiableFlexBuildConfiguration> bcs = configurator.getBCsByOutputPath(myConfiguration.getActualOutputFilePath());
         if (bcs != null) {
-          for (ModifiableFlexBuildConfiguration bc : bcs) {
-            if (bc == myConfiguration) continue;
-            myContext.getDaemonAnalyzer().queueUpdate(configurator.getBCConfigurable(bc).myStructureElement);
-          }
+          myContext.getDaemonAnalyzer().queueUpdates(ContainerUtil.mapNotNull(bcs, bc -> {
+            if (bc == myConfiguration) return null;
+            return configurator.getBCConfigurable(bc).myStructureElement;
+          }));
         }
       }
     };
