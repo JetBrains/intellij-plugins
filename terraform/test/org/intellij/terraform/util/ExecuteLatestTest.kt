@@ -59,4 +59,25 @@ class ExecuteLatestTest {
 
   }
 
+  @Test
+  fun noInfiniteRestarts() {
+    timeoutRunBlocking {
+      val endCounter = AtomicInteger(0)
+      val testFun = executeLatest {
+        delay(10) // increases chance of live-lock
+        endCounter.incrementAndGet()
+      }
+
+      val jobs = (1..100).map {
+        async(Dispatchers.Default) {
+          testFun()
+        }
+      }
+
+      val results = jobs.awaitAll()
+      Assertions.assertEquals(generateSequence { 1 }.take(100).toList(), results)
+    }
+
+  }
+
 }

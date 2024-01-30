@@ -40,11 +40,15 @@ fun <T> executeLatest(f: suspend () -> T): suspend () -> T {
             deferredRef.compareAndSet(newDeferred, null)
           }
         }
-        try {
-          deferredRef.get()?.let { return@coroutineScope it.await() }
-        }
-        catch (e: CancellationException) {
-          coroutineContext.ensureActive()
+        newDeferred.cancel()
+        while (coroutineContext.isActive) {
+          val storedDeferred = deferredRef.get() ?: break
+          try {
+            return@coroutineScope storedDeferred.await()
+          }
+          catch (e: CancellationException) {
+            coroutineContext.ensureActive()
+          }
         }
       }
       coroutineContext.ensureActive()
