@@ -30,7 +30,7 @@ public class AngularJSParserTest extends LightPlatformCodeInsightTestCase implem
 
   @Nullable
   @Override
-  public String getFileSuffix(String fileName) {
+  public String getFileSuffix(@NotNull String fileName) {
     return fileName.endsWith("js") ? fileName : null;
   }
 
@@ -54,7 +54,7 @@ public class AngularJSParserTest extends LightPlatformCodeInsightTestCase implem
   }
 
   @Override
-  public String getRelativeBasePath() {
+  public @NotNull String getRelativeBasePath() {
     return "";
   }
 }
