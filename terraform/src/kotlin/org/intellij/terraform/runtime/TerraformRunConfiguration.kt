@@ -12,6 +12,7 @@ import com.intellij.execution.process.OSProcessHandler
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.process.ProcessTerminatedListener
 import com.intellij.execution.runners.ExecutionEnvironment
+import com.intellij.execution.ui.ConsoleView
 import com.intellij.execution.util.ProgramParametersUtil
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
@@ -19,6 +20,7 @@ import com.intellij.openapi.util.InvalidDataException
 import com.intellij.openapi.util.WriteExternalException
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.xmlb.XmlSerializer
+import org.intellij.terraform.config.actions.TerraformInitCommandFilter
 import org.intellij.terraform.config.util.TFExecutor
 import org.intellij.terraform.hcl.HCLBundle
 import org.jdom.Element
@@ -49,6 +51,12 @@ class TerraformRunConfiguration(project: Project, factory: ConfigurationFactory,
         val handler: OSProcessHandler = KillableColoredProcessHandler(createCommandLine())
         ProcessTerminatedListener.attach(handler)
         return handler
+      }
+
+      override fun createConsole(executor: Executor): ConsoleView? {
+        val consoleView = super.createConsole(executor) ?: return null
+        consoleView.addMessageFilter(TerraformInitCommandFilter(project, parameters.workingDirectory))
+        return consoleView
       }
 
       @Throws(ExecutionException::class)
