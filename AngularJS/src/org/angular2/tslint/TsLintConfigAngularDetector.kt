@@ -18,7 +18,7 @@ class TsLintConfigAngularDetector : TsLintConfigDetector {
     while (file is LightVirtualFileBase) {
       file = file.originalFile
     }
-    return AngularConfigProvider.getAngularProject(project, file ?: return null)
+    return AngularConfigProvider.findAngularProject(project, file ?: return null)
       ?.getTsLintConfigurations(project)
       ?.map { Pair(it, it.getTsLintConfig(file)) }
       ?.firstOrNull { it.second != null }

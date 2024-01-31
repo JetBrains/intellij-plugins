@@ -97,7 +97,7 @@ class Angular2Injector : MultiHostInjector {
     val file = literalExpression.containingFile.originalFile
 
     return CachedValuesManager.getCachedValue(file) {
-      val angularConfig = AngularConfigProvider.getAngularConfig(file.project, file.virtualFile)
+      val angularConfig = AngularConfigProvider.findAngularConfig(file.project, file.virtualFile)
 
       if (angularConfig == null) {
         return@getCachedValue create<Language>(CSSLanguage.INSTANCE, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
@@ -111,7 +111,7 @@ class Angular2Injector : MultiHostInjector {
           cssDialect = projectCssDialect
         }
       }
-      create(cssDialect, angularConfig.angularJsonFile, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
+      create(cssDialect, angularConfig.file, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
     }
   }
 

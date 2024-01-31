@@ -105,5 +105,5 @@ private fun getOverrideContextFiles(angularProject: AngularProject, element: Psi
 
 private fun angularProject(element: PsiElement): AngularProject? {
   val file = PsiUtilCore.getVirtualFile(element) ?: return null
-  return AngularConfigProvider.getAngularProject(element.project, file)
+  return AngularConfigProvider.findAngularProject(element.project, file)
 }

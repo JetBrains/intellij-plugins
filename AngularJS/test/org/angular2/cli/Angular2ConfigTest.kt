@@ -10,7 +10,7 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import one.util.streamex.StreamEx
 import org.angular2.cli.config.AngularConfig
-import org.angular2.cli.config.AngularConfigProvider.getAngularConfig
+import org.angular2.cli.config.AngularConfigProvider.Companion.findAngularConfig
 import org.angularjs.AngularTestUtil
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -32,12 +32,9 @@ class Angular2ConfigTest : BasePlatformTestCase() {
   @Test
   fun testParsing() {
     val vFile = myFixture.copyDirectoryToProject(myDirName!!, "./")
-    val config = ReadAction.compute<AngularConfig?, RuntimeException> {
-      getAngularConfig(
-        project, vFile)
-    }!!
+    val config = ReadAction.compute<AngularConfig?, RuntimeException> { findAngularConfig(project, vFile) }!!
     myFixture.configureByText("out.txt", config.toString() + "\n")
-    myFixture.checkResultByFile(myDirName + "/" + config.angularJsonFile.getName() + ".parsed",
+    myFixture.checkResultByFile(myDirName + "/" + config.file.getName() + ".parsed",
                                 true)
   }
 
@@ -45,7 +42,7 @@ class Angular2ConfigTest : BasePlatformTestCase() {
   @Throws(Exception::class)
   fun testTsLintConfigSelection() {
     val rootDir = myFixture.copyDirectoryToProject(myDirName!!, "./")
-    val config = ReadAction.compute<AngularConfig, RuntimeException> { getAngularConfig(project, rootDir) }
+    val config = ReadAction.compute<AngularConfig, RuntimeException> { findAngularConfig(project, rootDir) }
     TestCase.assertNotNull(config)
     val tslintTest = rootDir.findFileByRelativePath("tslint-test.json") ?: error("no tslint-test.json")
     var tests: JsonObject

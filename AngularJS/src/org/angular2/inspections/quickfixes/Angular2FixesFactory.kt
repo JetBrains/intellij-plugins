@@ -245,7 +245,7 @@ object Angular2FixesFactory {
   private fun removeLocalLibraryElements(context: PsiElement,
                                          declarations: List<Angular2Declaration>): Collection<Angular2Declaration> {
     val contextFile = context.containingFile.originalFile.virtualFile
-    val config = AngularConfigProvider.getAngularConfig(context.project, contextFile) ?: return declarations
+    val config = AngularConfigProvider.findAngularConfig(context.project, contextFile) ?: return declarations
     val contextProject = config.getProject(contextFile) ?: return declarations
     val localRoots = map2SetNotNull(config.projects) { project ->
       if (project.type === AngularProject.AngularProjectType.LIBRARY && project != contextProject) {
@@ -257,7 +257,7 @@ object Angular2FixesFactory {
     // TODO do not provide proposals from dist dir for local lib context - requires parsing ng-package.json
     // localRoots.add(contextProject.getOutputDirectory())
 
-    val projectRoot = config.angularJsonFile.parent
+    val projectRoot = config.file.parent
     return declarations.filter { declaration ->
       val declarationFile = PsiUtilCore.getVirtualFile(declaration.sourceElement)
       var file = declarationFile

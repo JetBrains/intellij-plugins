@@ -40,6 +40,9 @@
                     dynamic="true"/>
     <extensionPoint qualifiedName="org.angular2.frameworkHandler"
                     interface="org.angular2.entities.Angular2FrameworkHandler"
+                   dynamic="true"/>
+   <extensionPoint qualifiedName="org.angular2.configProvider"
+                   interface="org.angular2.cli.config.AngularConfigProvider"
                     dynamic="true"/>
   </extensionPoints>
 
@@ -437,6 +440,7 @@
                             id="templateElements" order="after standardSymbols"/>
     <templateScopesProvider implementation="org.angular2.codeInsight.template.Angular2ComponentScopeProvider"
                             id="component" order="after templateElements"/>
+    <configProvider implementation="org.angular2.cli.config.AngularCliConfigProvider"/>
   </extensions>
 
   <actions resource-bundle="messages.Angular2Bundle">

@@ -110,7 +110,7 @@ object AngularCliUtil {
 
         val packageJsonPath = getPackageJson(baseDir)
                               ?: return@runReadActionInSmartMode
-        val config: AngularConfig = AngularConfigProvider.getAngularConfig(project, baseDir)
+        val config: AngularConfig = AngularConfigProvider.findAngularConfig(project, baseDir)
                                     ?: return@runReadActionInSmartMode
 
         createKarmaConfigurations(project, config)

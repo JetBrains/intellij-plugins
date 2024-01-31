@@ -60,7 +60,7 @@ class Angular2CssInclusionContext : CssInclusionContext() {
       get() {
         val project = myComponent.sourceElement.project
         val cssFilesList = ArrayList(myComponent.cssFiles)
-        val ngProject: AngularProject? = myAngularCliJson?.let { AngularConfigProvider.getAngularProject(project, it) }
+      val ngProject: AngularProject? = myAngularCliJson?.let { AngularConfigProvider.findAngularProject(project, it) }
         if (ngProject != null) {
           val psiManager = PsiManager.getInstance(project)
           val html = ngProject.indexHtmlFile?.let { psiManager.findFile(it) }

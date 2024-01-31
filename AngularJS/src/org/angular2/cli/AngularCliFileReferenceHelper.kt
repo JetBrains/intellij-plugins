@@ -18,11 +18,11 @@ class AngularCliFileReferenceHelper : FileReferenceHelper() {
     val psiFile = getPsiFileSystemItem(project, file)
     return ((psiFile is HtmlCompatibleFile || psiFile is StylesheetFile)
             && Angular2LangUtil.isAngular2Context(project, file)
-            && AngularConfigProvider.getAngularProject(project, file) != null)
+            && AngularConfigProvider.findAngularProject(project, file) != null)
   }
 
   override fun getContexts(project: Project, file: VirtualFile): Collection<PsiFileSystemItem> {
-    return AngularConfigProvider.getAngularProject(project, file)
+    return AngularConfigProvider.findAngularProject(project, file)
              ?.sourceDir
              ?.let { PsiManager.getInstance(project).findDirectory(it) }
              ?.let { listOf(it) }
