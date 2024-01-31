@@ -6,12 +6,12 @@ import com.intellij.psi.PsiElement
 object TerraformDocumentationUrlProvider {
 
   private fun getProviderOrg(provider: String, element: PsiElement): String {
-    //TODO Use LocalSchemaService.findLockFile(virtualFile) to find info about providers
+    //TODO IDEA-344621 Use LocalSchemaService.findLockFile(virtualFile) to find info about providers
     return "hashicorp"
   }
 
   private fun getProviderVersion(provider: String, element: PsiElement): String {
-    //TODO Use LocalSchemaService.findLockFile(virtualFile) to find info about provider version
+    //TODO IDEA-344621 Use LocalSchemaService.findLockFile(virtualFile) to find info about provider version
     return "latest"
   }
 
