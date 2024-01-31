@@ -10,15 +10,15 @@ import org.angular2.cli.config.AngularConfigProvider
 class AngularCliWebSymbolsContextProvider : WebSymbolsContextProvider {
 
   override fun isEnabled(project: Project, directory: VirtualFile): CachedValueProvider.Result<Int?> {
-    val config = AngularConfigProvider.getAngularConfig(project, directory)
+    val config = AngularConfigProvider.findAngularConfig(project, directory)
                  ?: return CachedValueProvider.Result.create(null, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
     val angularCliSourceDir = config.getProject(directory)?.sourceDir
-                              ?: return CachedValueProvider.Result.create(null, config.angularJsonFile,
+                              ?: return CachedValueProvider.Result.create(null, config.file,
                                                                           VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
     val depth = generateSequence(angularCliSourceDir) { it.parent }
       .takeWhile { it != angularCliSourceDir }
       .count()
-    return CachedValueProvider.Result.create(depth, config.angularJsonFile,
+    return CachedValueProvider.Result.create(depth, config.file,
                                              VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
   }
 }

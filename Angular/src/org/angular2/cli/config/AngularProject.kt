@@ -85,9 +85,9 @@ abstract class AngularProject(internal val angularCliFolder: VirtualFile) {
   }
 }
 
-internal class AngularProjectImpl(override val name: String,
-                                  private val ngProject: AngularJsonProject,
-                                  angularCliFolder: VirtualFile)
+class AngularProjectImpl(override val name: String,
+                         private val ngProject: AngularJsonProject,
+                         angularCliFolder: VirtualFile)
   : AngularProject(angularCliFolder) {
 
   override val rootDir = ngProject.rootPath?.let { angularCliFolder.findFileByRelativePath(it) }
