@@ -24,11 +24,15 @@ import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory.createSymbolRef
 import com.intellij.webSymbols.patterns.WebSymbolsPatternReferenceResolver
 import com.intellij.webSymbols.patterns.WebSymbolsPatternReferenceResolver.Reference
 import com.intellij.webSymbols.query.WebSymbolNameConversionRules
+import com.intellij.xml.util.HtmlUtil.SLOT_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.findJSExpression
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.toAsset
-import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.DEFAULT_SLOT_NAME
+import org.jetbrains.vuejs.model.SLOT_NAME_ATTRIBUTE
+import org.jetbrains.vuejs.model.VueModelManager
+import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.web.VUE_COMPONENTS
 import org.jetbrains.vuejs.web.VUE_SPECIAL_PROPERTIES
 import org.jetbrains.vuejs.web.VueFramework

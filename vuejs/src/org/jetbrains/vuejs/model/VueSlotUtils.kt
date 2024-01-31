@@ -23,7 +23,6 @@ import org.jetbrains.vuejs.types.asCompleteType
 
 const val DEFAULT_SLOT_NAME = "default"
 const val SLOT_NAME_ATTRIBUTE = "name"
-const val SLOT_TAG_NAME: String = "slot"
 
 const val DEPRECATED_SLOT_ATTRIBUTE = "slot"
 

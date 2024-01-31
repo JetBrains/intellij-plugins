@@ -10,9 +10,9 @@ import com.intellij.lang.javascript.psi.types.recordImpl.PropertySignatureImpl
 import com.intellij.lang.javascript.psi.util.stubSafeAttributes
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ProcessingContext
+import com.intellij.xml.util.HtmlUtil.SLOT_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.model.SLOT_NAME_ATTRIBUTE
-import org.jetbrains.vuejs.model.SLOT_TAG_NAME
 import org.jetbrains.vuejs.model.VueImplicitElement
 
 class VueSourceSlotScopeType private constructor(typeSource: JSTypeSource, private val tag: XmlTag, private val slotName: String)

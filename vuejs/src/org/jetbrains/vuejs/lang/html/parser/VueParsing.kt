@@ -22,7 +22,6 @@ import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_START
 import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes.SCRIPT_SETUP_JS_EMBEDDED_CONTENT
 import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes.SCRIPT_SETUP_TS_EMBEDDED_CONTENT
-import org.jetbrains.vuejs.model.SLOT_TAG_NAME
 import java.util.*
 
 class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {

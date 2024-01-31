@@ -4,8 +4,8 @@ package org.jetbrains.vuejs.lang.html.parser
 import com.intellij.lang.ASTNode
 import com.intellij.psi.impl.source.html.HtmlStubBasedTagElementType
 import com.intellij.psi.xml.XmlTag
+import com.intellij.xml.util.HtmlUtil.SLOT_TAG_NAME
 import org.jetbrains.vuejs.lang.html.VueLanguage
-import org.jetbrains.vuejs.model.SLOT_TAG_NAME
 
 open class VueStubBasedTagElementType(debugName: String) : HtmlStubBasedTagElementType(debugName, VueLanguage.INSTANCE) {
   override fun shouldCreateStub(node: ASTNode?): Boolean =

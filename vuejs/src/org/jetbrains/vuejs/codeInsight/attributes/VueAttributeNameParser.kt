@@ -8,7 +8,6 @@ import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.model.DEPRECATED_SLOT_ATTRIBUTE
 import org.jetbrains.vuejs.model.SLOT_NAME_ATTRIBUTE
-import org.jetbrains.vuejs.model.SLOT_TAG_NAME
 import java.util.*
 
 class VueAttributeNameParser private constructor() {
