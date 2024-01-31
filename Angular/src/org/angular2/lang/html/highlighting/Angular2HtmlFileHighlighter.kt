@@ -24,8 +24,8 @@ import org.angular2.lang.html.parser.Angular2HtmlElementTypes
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set
 
-internal class Angular2HtmlFileHighlighter(private val templateSyntax: Angular2TemplateSyntax,
-                                           private val interpolationConfig: Pair<String, String>?) : HtmlFileHighlighter() {
+class Angular2HtmlFileHighlighter(private val templateSyntax: Angular2TemplateSyntax,
+                                  private val interpolationConfig: Pair<String, String>?) : HtmlFileHighlighter() {
   override fun getTokenHighlights(tokenType: IElementType): Array<TextAttributesKey> {
     var result = keys[tokenType]
     if (result != null) {

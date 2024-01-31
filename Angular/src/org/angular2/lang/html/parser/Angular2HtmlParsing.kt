@@ -21,7 +21,7 @@ import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes
 import org.angular2.web.ATTR_NG_NON_BINDABLE
 
-class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSyntax, builder: PsiBuilder) : HtmlParsing(builder) {
+open class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSyntax, builder: PsiBuilder) : HtmlParsing(builder) {
 
   fun parseExpansionFormContent() {
     val expansionFormContent = mark()
