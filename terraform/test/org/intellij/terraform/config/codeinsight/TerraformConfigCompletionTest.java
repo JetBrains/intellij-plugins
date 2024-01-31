@@ -553,6 +553,21 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
                                 aws = <caret>\s
                               }
                             }""", 0);
+    doBasicCompletionTest("""
+                            variable "obj-var" {
+                              type = object({
+                                var1 = string
+                                var2 = list(string)
+                              })
+                            }
+                                                        
+                            module "kek" {
+                              source = "./"
+                              obj-var = {
+                                v<caret>
+                              }
+                            }
+                            """, Arrays.asList("var1", "var2"));
   }
 
   public void testModuleProvidersValueCompletion() {

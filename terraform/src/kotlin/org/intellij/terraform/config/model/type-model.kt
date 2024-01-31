@@ -27,9 +27,7 @@ open class TypeImpl(protected val baseName: String) : Type {
   }
 }
 
-open class PrimitiveType(name: String) : TypeImpl(name) {
-
-}
+open class PrimitiveType(name: String) : TypeImpl(name)
 
 // HCL2 expression types, from github.com/hashicorp/hcl2/typeexpr and github.com/zclconf/go-cty/cty
 // null as inner type means error in type definition
@@ -89,7 +87,7 @@ fun ObjectType(elements: Map<String, Type?>?, optional: Set<String>? = null): Ob
   return ObjectTypeImpl(elements, optional)
 }
 
-private open class ObjectTypeImpl(elements: Map<String, Type?>?, val optional: Set<String>? = null) : ContainerType<Map<String, Type?>?>(
+open class ObjectTypeImpl(elements: Map<String, Type?>?, val optional: Set<String>? = null) : ContainerType<Map<String, Type?>?>(
   "object", elements), ObjectType {
   override val presentableText: String
     get() {
@@ -155,10 +153,10 @@ fun getCommonSupertype(input: Collection<Type?>): Type? {
 
   if (set.all { it is ObjectType }) {
     val common = HashMap<String, MutableList<Type?>>()
-    val maps = set.filterIsInstance(ObjectType::class.java).mapNotNull { it.elements }
+    val maps = set.filterIsInstance<ObjectType>().mapNotNull { it.elements }
     for (map in maps) {
       for ((k, v) in map) {
-        common.getOrPut(k, { ArrayList(1) }).add(v)
+        common.getOrPut(k) { ArrayList(1) }.add(v)
       }
     }
     return ObjectType(common.mapValues { getCommonSupertype(it.value) })
@@ -475,26 +473,26 @@ interface PropertyOrBlockType {
 }
 
 object Types {
-  val Identifier = TypeImpl("identifier")
+  val Identifier: Type = TypeImpl("identifier")
 
-  val String = PrimitiveType("string")
-  val Number = PrimitiveType("number")
-  val Boolean = PrimitiveType("bool")
-  val Null = PrimitiveType("null") // TODO: Unify Null and Any
-  val Any = PrimitiveType("any") // supertype, like java.lang.Object
+  val String: PrimitiveType = PrimitiveType("string")
+  val Number: PrimitiveType = PrimitiveType("number")
+  val Boolean: PrimitiveType = PrimitiveType("bool")
+  val Null: PrimitiveType = PrimitiveType("null") // TODO: Unify Null and Any
+  val Any: PrimitiveType = PrimitiveType("any") // supertype, like java.lang.Object
 
-  val Array = ListType(null)
-  val Object = ObjectType(null)
-  val Invalid = TypeImpl("invalid") // special value for parsing errors, unsupported types, etc
+  val Array: ListType = ListType(null)
+  val Object: ObjectType = ObjectType(null)
+  val Invalid: Type = TypeImpl("invalid") // special value for parsing errors, unsupported types, etc
 
 
   // Separate, as could be used as String, Number, Boolean, etc
-  val StringWithInjection = PrimitiveType("string")
+  val StringWithInjection: PrimitiveType = PrimitiveType("string")
 
-  val SimpleValueTypes = setOf(String, Number, Boolean)
+  val SimpleValueTypes: Set<PrimitiveType> = setOf(String, Number, Boolean)
 
   // cty types
-  val Expression = TypeImpl("expression")
+  val Expression: Type = TypeImpl("expression")
 }
 
 class ResourceType(val type: String, val provider: ProviderType, properties: List<PropertyOrBlockType>) : BlockType("resource", 2, properties = withDefaults(properties, TypeModel.AbstractResource)) {

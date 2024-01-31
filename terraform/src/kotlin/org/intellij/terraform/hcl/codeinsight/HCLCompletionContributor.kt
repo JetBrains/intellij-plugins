@@ -31,6 +31,7 @@ open class HCLCompletionContributor : CompletionContributor() {
     private val KEYWORDS = arrayOf("null", "true", "false")
 
     override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
+      if (!parameters.isExtendedCompletion) return
       for (keyword in KEYWORDS) {
         result.addElement(LookupElementBuilder.create(keyword))
       }
