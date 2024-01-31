@@ -1,96 +1,55 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities
 
-import com.intellij.lang.javascript.psi.JSImplicitElementProvider
-import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
-import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
-import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.stubs.StubIndex
-import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.psi.util.CachedValueProvider.Result.create
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.util.ObjectUtils.tryCast
 import com.intellij.util.SmartList
 import com.intellij.util.containers.MultiMap
-import com.intellij.util.containers.addIfNotNull
-import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
-import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
-import org.angular2.Angular2DecoratorUtil.MODULE_DEC
-import org.angular2.Angular2DecoratorUtil.PIPE_DEC
-import org.angular2.Angular2DecoratorUtil.findDecorator
-import org.angular2.Angular2DecoratorUtil.isAngularEntityDecorator
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.entities.Angular2EntityUtils.anyElementDirectiveIndexName
 import org.angular2.entities.Angular2EntityUtils.getAttributeDirectiveIndexName
 import org.angular2.entities.Angular2EntityUtils.getElementDirectiveIndexName
-import org.angular2.entities.ivy.Angular2IvyUtil.getIvyEntity
-import org.angular2.entities.ivy.Angular2IvyUtil.hasIvyMetadata
-import org.angular2.entities.metadata.Angular2MetadataUtil
-import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveBase
-import org.angular2.entities.metadata.psi.Angular2MetadataEntity
-import org.angular2.entities.metadata.psi.Angular2MetadataModule
-import org.angular2.entities.metadata.psi.Angular2MetadataPipe
-import org.angular2.entities.source.*
-import org.angular2.index.*
-import org.angular2.index.Angular2IndexingHandler.Companion.NG_MODULE_INDEX_NAME
-import org.angular2.lang.Angular2LangUtil.isAngular2Context
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector
 import java.util.concurrent.ConcurrentHashMap
-import java.util.function.Consumer
 
 /**
  * @see Angular2ApplicableDirectivesProvider
  */
 object Angular2EntitiesProvider {
 
+  private val EP_NAME = ExtensionPointName<Angular2EntitiesSource>("org.angular2.entitiesSource")
+  private val entitiesSources get() = EP_NAME.extensionList.asSequence()
+
   const val TRANSFORM_METHOD = "transform"
 
   @JvmStatic
-  fun getEntity(element: PsiElement?): Angular2Entity? {
-    if (element == null) {
-      return null
-    }
-    val result = getSourceEntity(element)
-    return result ?: withJsonMetadataFallback(element, { getIvyEntity(it) }, { Angular2MetadataUtil.getMetadataEntity(it) })
-  }
+  fun getEntity(element: PsiElement?): Angular2Entity? =
+    if (element == null)
+      null
+    else
+      entitiesSources.firstNotNullOfOrNull { it.getEntity(element) }
 
   @JvmStatic
-  fun <R, E : PsiElement> withJsonMetadataFallback(element: E,
-                                                   ivy: (E) -> R,
-                                                   jsonFallback: (TypeScriptClass) -> R): R? {
-    val result = ivy(element)
-    return if (result == null
-               && element is TypeScriptClass
-               && !hasIvyMetadata(element)
-               && isAngular2Context(element)) {
-      jsonFallback(element as TypeScriptClass)
-    }
-    else result
-  }
+  fun getDeclaration(element: PsiElement?): Angular2Declaration? =
+    getEntity(element) as? Angular2Declaration
 
   @JvmStatic
-  fun getDeclaration(element: PsiElement?): Angular2Declaration? {
-    return getEntity(element) as? Angular2Declaration
-  }
+  fun getComponent(element: PsiElement?): Angular2Component? =
+    getEntity(element) as? Angular2Component
 
   @JvmStatic
-  fun getComponent(element: PsiElement?): Angular2Component? {
-    return getEntity(element) as? Angular2Component
-  }
-
-  @JvmStatic
-  fun getDirective(element: PsiElement?): Angular2Directive? {
-    return getEntity(element) as? Angular2Directive
-  }
+  fun getDirective(element: PsiElement?): Angular2Directive? =
+    getEntity(element) as? Angular2Directive
 
   @JvmStatic
   fun getPipe(element: PsiElement?): Angular2Pipe? {
@@ -104,50 +63,25 @@ object Angular2EntitiesProvider {
   }
 
   @JvmStatic
-  fun getModule(element: PsiElement?): Angular2Module? {
-    return getEntity(element) as? Angular2Module
-  }
+  fun getModule(element: PsiElement?): Angular2Module? =
+    getEntity(element) as? Angular2Module
 
   @JvmStatic
-  fun findElementDirectivesCandidates(project: Project, elementName: String): List<Angular2Directive> {
-    return findDirectivesCandidates(project, getElementDirectiveIndexName(elementName))
-  }
+  fun findElementDirectivesCandidates(project: Project, elementName: String): List<Angular2Directive> =
+    findDirectivesCandidates(project, getElementDirectiveIndexName(elementName))
 
   @JvmStatic
   fun findAttributeDirectivesCandidates(project: Project,
-                                        attributeName: String): List<Angular2Directive> {
-    return findDirectivesCandidates(project, getAttributeDirectiveIndexName(attributeName))
-  }
+                                        attributeName: String): List<Angular2Directive> =
+    findDirectivesCandidates(project, getAttributeDirectiveIndexName(attributeName))
 
   @JvmStatic
-  fun findPipes(project: Project, name: String): List<Angular2Pipe> {
-    val result = SmartList<Angular2Pipe>()
-    Angular2IndexUtil.multiResolve(project, Angular2SourcePipeIndexKey, name) { pipe ->
-      result.addIfNotNull(getSourceEntity(pipe) as? Angular2Pipe)
-      true
-    }
-    processIvyEntities(project, name, Angular2IvyPipeIndexKey, Angular2Pipe::class.java) { result.add(it) }
-    processMetadataEntities(project, name, Angular2MetadataPipe::class.java, Angular2MetadataPipeIndexKey) { result.add(it) }
-    return result
-  }
+  fun findPipes(project: Project, name: String): List<Angular2Pipe> =
+    entitiesSources.flatMap { it.findPipes(project, name) }.toList()
 
   @JvmStatic
-  fun findDirectives(selector: Angular2DirectiveSelectorSymbol): List<Angular2Directive> {
-    return when {
-      selector.isElementSelector -> findElementDirectivesCandidates(selector.project, selector.name)
-      selector.isAttributeSelector -> findAttributeDirectivesCandidates(selector.project, selector.name)
-      else -> emptyList()
-    }
-  }
-
-  @JvmStatic
-  fun findComponent(selector: Angular2DirectiveSelectorSymbol): Angular2Component? {
-    return findDirectives(selector).find { it.isComponent } as Angular2Component?
-  }
-
-  @JvmStatic
-  fun getAllElementDirectives(project: Project): Map<String, List<Angular2Directive>> {
-    return CachedValuesManager.getManager(project).getCachedValue(project) {
+  fun getAllElementDirectives(project: Project): Map<String, List<Angular2Directive>> =
+    CachedValuesManager.getManager(project).getCachedValue(project) {
       create(
         findDirectivesCandidates(project, anyElementDirectiveIndexName)
           .distinct()
@@ -168,27 +102,23 @@ object Angular2EntitiesProvider {
           .groupBy({ it.first }, { it.second }),
         PsiModificationTracker.MODIFICATION_COUNT)
     }
-  }
 
   @JvmStatic
-  fun getAllPipes(project: Project): Map<String, List<Angular2Pipe>> {
-    return CachedValuesManager.getManager(project).getCachedValue(project) {
+  fun getAllPipes(project: Project): Map<String, List<Angular2Pipe>> =
+    CachedValuesManager.getManager(project).getCachedValue(project) {
       create(
-        Angular2IndexUtil.getAllKeys(Angular2SourcePipeIndexKey, project).asSequence()
-          .plus(Angular2IndexUtil.getAllKeys(Angular2MetadataPipeIndexKey, project))
-          .plus(Angular2IndexUtil.getAllKeys(Angular2IvyPipeIndexKey, project))
+        entitiesSources
+          .flatMap { it.getAllPipeNames(project) }
           .distinct()
           .associateBy({ it }, { findPipes(project, it) }),
         PsiModificationTracker.MODIFICATION_COUNT)
     }
-  }
 
   @JvmStatic
-  fun isPipeTransformMethod(element: PsiElement?): Boolean {
-    return (element is TypeScriptFunction
-            && TRANSFORM_METHOD == element.name
-            && getPipe(element) != null)
-  }
+  fun isPipeTransformMethod(element: PsiElement?): Boolean =
+    (element is TypeScriptFunction
+     && TRANSFORM_METHOD == element.name
+     && getPipe(element) != null)
 
   @JvmStatic
   fun getExportedDeclarationToModuleMap(project: Project): MultiMap<Angular2Declaration, Angular2Module> {
@@ -211,58 +141,8 @@ object Angular2EntitiesProvider {
   @JvmStatic
   fun getAllModules(project: Project): List<Angular2Module> {
     return CachedValuesManager.getManager(project).getCachedValue(project) {
-      val result = ArrayList<Angular2Module>()
-      StubIndex.getInstance().processElements(Angular2SourceModuleIndexKey, NG_MODULE_INDEX_NAME,
-                                              project, GlobalSearchScope.allScope(project),
-                                              JSImplicitElementProvider::class.java) { module ->
-        if (module.isValid) {
-          result.addIfNotNull(getSourceEntity(module) as? Angular2Module)
-        }
-        true
-      }
-      processIvyEntities(project, NG_MODULE_INDEX_NAME, Angular2IvyModuleIndexKey, Angular2Module::class.java) { result.add(it) }
-      processMetadataEntities(project, NG_MODULE_INDEX_NAME, Angular2MetadataModule::class.java,
-                              Angular2MetadataModuleIndexKey) { result.add(it) }
-      create<List<Angular2Module>>(result, PsiModificationTracker.MODIFICATION_COUNT)
-    }
-  }
-
-  @JvmStatic
-  fun getSourceEntity(element: PsiElement): Angular2SourceEntity? {
-    var elementToCheck: PsiElement? = element
-    if (elementToCheck is JSImplicitElement) {
-      if (!isEntityImplicitElement(elementToCheck)) {
-        return null
-      }
-      elementToCheck = elementToCheck.getContext()
-    }
-    if (elementToCheck is TypeScriptClass) {
-      elementToCheck = findDecorator(elementToCheck, PIPE_DEC, COMPONENT_DEC, MODULE_DEC, DIRECTIVE_DEC)
-      if (elementToCheck == null) {
-        return null
-      }
-    }
-    else if (elementToCheck == null
-             || elementToCheck !is ES6Decorator
-             || !isAngularEntityDecorator(elementToCheck, PIPE_DEC, COMPONENT_DEC, MODULE_DEC, DIRECTIVE_DEC)) {
-      return null
-    }
-    val dec = elementToCheck as ES6Decorator
-    return CachedValuesManager.getCachedValue(dec) {
-      val entity: Angular2SourceEntity? =
-        dec.indexingData
-          ?.implicitElements
-          ?.find { isEntityImplicitElement(it) }
-          ?.let { entityElement ->
-            when (dec.decoratorName) {
-              COMPONENT_DEC -> Angular2SourceComponent(dec, entityElement)
-              DIRECTIVE_DEC -> Angular2SourceDirective(dec, entityElement)
-              MODULE_DEC -> Angular2SourceModule(dec, entityElement)
-              PIPE_DEC -> Angular2SourcePipe(dec, entityElement)
-              else -> null
-            }
-          }
-      create(entity, dec)
+      create(entitiesSources.flatMap { it.getAllModules(project) }.toList(),
+             PsiModificationTracker.MODIFICATION_COUNT)
     }
   }
 
@@ -271,62 +151,12 @@ object Angular2EntitiesProvider {
     return typeScriptClass.attributeList?.hasModifier(JSAttributeList.ModifierType.DECLARE) == true
   }
 
-  private fun isEntityImplicitElement(element: JSImplicitElement): Boolean {
-    return element.isDirective() || element.isPipe() || element.isModule()
-  }
-
   private fun findDirectivesCandidates(project: Project, indexLookupName: String): List<Angular2Directive> =
     CachedValuesManager.getManager(project).getCachedValue(project) {
       create(ConcurrentHashMap<String, List<Angular2Directive>>(),
              PsiModificationTracker.MODIFICATION_COUNT,
              VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
     }.computeIfAbsent(indexLookupName) {
-      val result = ArrayList<Angular2Directive>()
-      StubIndex.getInstance().processElements(
-        Angular2SourceDirectiveIndexKey, indexLookupName, project, GlobalSearchScope.allScope(project),
-        JSImplicitElementProvider::class.java
-      ) { provider ->
-        provider.indexingData
-          ?.implicitElements
-          ?.filter { it.isValid }
-          ?.firstNotNullOfOrNull { getSourceEntity(it) as? Angular2Directive }
-          ?.let { directive ->
-            result.add(directive)
-          }
-        true
-      }
-      processIvyEntities(project, indexLookupName, Angular2IvyDirectiveIndexKey, Angular2Directive::class.java) { result.add(it) }
-      processMetadataEntities(project, indexLookupName, Angular2MetadataDirectiveBase::class.java,
-                              Angular2MetadataDirectiveIndexKey) { result.add(it) }
-      result
+      entitiesSources.flatMap { it.findDirectivesCandidates(project, indexLookupName) }.toList()
     }
-
-  private fun <T : Angular2MetadataEntity<*>> processMetadataEntities(project: Project,
-                                                                      name: String,
-                                                                      entityClass: Class<T>,
-                                                                      key: StubIndexKey<String, T>,
-                                                                      consumer: Consumer<in T>) {
-    StubIndex.getInstance().processElements(key, name, project, GlobalSearchScope.allScope(project), entityClass) { el ->
-      if (el.isValid && !hasIvyMetadata(el)) {
-        consumer.accept(el)
-      }
-      true
-    }
-  }
-
-  private fun <T : Angular2Entity> processIvyEntities(project: Project,
-                                                      name: String,
-                                                      key: StubIndexKey<String, TypeScriptClass>,
-                                                      entityClass: Class<T>,
-                                                      consumer: Consumer<in T>) {
-    StubIndex.getInstance().processElements(key, name, project, GlobalSearchScope.allScope(project), TypeScriptClass::class.java) { el ->
-      if (el.isValid) {
-        val entity = tryCast(getIvyEntity(el), entityClass)
-        if (entity != null) {
-          consumer.accept(entity)
-        }
-      }
-      true
-    }
-  }
 }

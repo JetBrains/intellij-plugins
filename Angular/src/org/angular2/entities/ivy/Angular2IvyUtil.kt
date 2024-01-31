@@ -10,6 +10,7 @@ import com.intellij.psi.util.CachedValueProvider.Result.create
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiUtilCore
 import org.angular2.entities.Angular2EntitiesProvider.isDeclaredClass
+import org.angular2.lang.Angular2LangUtil
 
 object Angular2IvyUtil {
   fun hasIvyMetadata(el: PsiElement): Boolean =
@@ -52,5 +53,19 @@ object Angular2IvyUtil {
     else CachedValuesManager.getCachedValue(entityDef.field) {
       create(entityDef.createEntity(), entityDef.contextClass ?: entityDef.field)
     }
+  }
+
+  @JvmStatic
+  fun <R, E : PsiElement> withJsonMetadataFallback(element: E,
+                                                   ivy: (E) -> R,
+                                                   jsonFallback: (TypeScriptClass) -> R): R? {
+    val result = ivy(element)
+    return if (result == null
+               && element is TypeScriptClass
+               && !hasIvyMetadata(element)
+               && Angular2LangUtil.isAngular2Context(element)) {
+      jsonFallback(element as TypeScriptClass)
+    }
+    else result
   }
 }

@@ -1,0 +1,113 @@
+package org.angular2.entities.source
+
+import com.intellij.lang.javascript.psi.JSImplicitElementProvider
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.stubs.StubIndex
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
+import com.intellij.util.SmartList
+import com.intellij.util.containers.addIfNotNull
+import org.angular2.Angular2DecoratorUtil
+import org.angular2.entities.*
+import org.angular2.index.*
+
+class Angular2SourceEntitiesSource : Angular2EntitiesSource {
+
+  override fun getEntity(element: PsiElement): Angular2Entity? =
+    getSourceEntity(element)
+
+  override fun getAllModules(project: Project): Collection<Angular2Module> {
+    val result = ArrayList<Angular2Module>()
+    StubIndex.getInstance().processElements(Angular2SourceModuleIndexKey, Angular2IndexingHandler.NG_MODULE_INDEX_NAME,
+                                            project, GlobalSearchScope.allScope(project),
+                                            JSImplicitElementProvider::class.java) { module ->
+      if (module.isValid) {
+        result.addIfNotNull(getSourceEntity(module) as? Angular2Module)
+      }
+      true
+    }
+    return result
+  }
+
+  override fun getAllPipeNames(project: Project): Collection<String> =
+    Angular2IndexUtil.getAllKeys(Angular2SourcePipeIndexKey, project)
+
+  override fun findDirectivesCandidates(project: Project, indexLookupName: String): List<Angular2Directive> {
+    val result = ArrayList<Angular2Directive>()
+    StubIndex.getInstance().processElements(
+      Angular2SourceDirectiveIndexKey, indexLookupName, project, GlobalSearchScope.allScope(project),
+      JSImplicitElementProvider::class.java
+    ) { provider ->
+      provider.indexingData
+        ?.implicitElements
+        ?.filter { it.isValid }
+        ?.firstNotNullOfOrNull { getSourceEntity(it) as? Angular2Directive }
+        ?.let { directive ->
+          result.add(directive)
+        }
+      true
+    }
+    return result
+  }
+
+  override fun findPipes(project: Project, name: String): Collection<Angular2Pipe> {
+    val result = SmartList<Angular2Pipe>()
+    Angular2IndexUtil.multiResolve(project, Angular2SourcePipeIndexKey, name) { pipe ->
+      result.addIfNotNull(getSourceEntity(pipe) as? Angular2Pipe)
+      true
+    }
+    return result
+  }
+
+  private fun getSourceEntity(element: PsiElement): Angular2SourceEntity? {
+    var elementToCheck: PsiElement? = element
+    if (elementToCheck is JSImplicitElement) {
+      if (!isEntityImplicitElement(elementToCheck)) {
+        return null
+      }
+      elementToCheck = elementToCheck.getContext()
+    }
+    if (elementToCheck is TypeScriptClass) {
+      elementToCheck = Angular2DecoratorUtil.findDecorator(elementToCheck, Angular2DecoratorUtil.PIPE_DEC,
+                                                           Angular2DecoratorUtil.COMPONENT_DEC, Angular2DecoratorUtil.MODULE_DEC,
+                                                           Angular2DecoratorUtil.DIRECTIVE_DEC)
+      if (elementToCheck == null) {
+        return null
+      }
+    }
+    else if (elementToCheck == null
+             || elementToCheck !is ES6Decorator
+             || !Angular2DecoratorUtil.isAngularEntityDecorator(elementToCheck, Angular2DecoratorUtil.PIPE_DEC,
+                                                                Angular2DecoratorUtil.COMPONENT_DEC, Angular2DecoratorUtil.MODULE_DEC,
+                                                                Angular2DecoratorUtil.DIRECTIVE_DEC)) {
+      return null
+    }
+    val dec = elementToCheck as ES6Decorator
+    return CachedValuesManager.getCachedValue(dec) {
+      val entity: Angular2SourceEntity? =
+        dec.indexingData
+          ?.implicitElements
+          ?.find { isEntityImplicitElement(it) }
+          ?.let { entityElement ->
+            when (dec.decoratorName) {
+              Angular2DecoratorUtil.COMPONENT_DEC -> Angular2SourceComponent(dec, entityElement)
+              Angular2DecoratorUtil.DIRECTIVE_DEC -> Angular2SourceDirective(dec, entityElement)
+              Angular2DecoratorUtil.MODULE_DEC -> Angular2SourceModule(dec, entityElement)
+              Angular2DecoratorUtil.PIPE_DEC -> Angular2SourcePipe(dec, entityElement)
+              else -> null
+            }
+          }
+      CachedValueProvider.Result.create(entity, dec)
+    }
+  }
+
+  private fun isEntityImplicitElement(element: JSImplicitElement): Boolean {
+    return element.isDirective() || element.isPipe() || element.isModule()
+  }
+
+}

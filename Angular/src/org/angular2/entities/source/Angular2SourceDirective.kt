@@ -36,11 +36,11 @@ import org.angular2.Angular2DecoratorUtil.OUTPUT_DEC
 import org.angular2.Angular2DecoratorUtil.REQUIRED_PROP
 import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver
 import org.angular2.entities.*
-import org.angular2.entities.Angular2EntitiesProvider.withJsonMetadataFallback
 import org.angular2.entities.Angular2EntityUtils.ELEMENT_REF
 import org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF
 import org.angular2.entities.Angular2EntityUtils.VIEW_CONTAINER_REF
 import org.angular2.entities.ivy.Angular2IvyUtil.getIvyEntity
+import org.angular2.entities.ivy.Angular2IvyUtil.withJsonMetadataFallback
 import org.angular2.entities.metadata.Angular2MetadataUtil
 import org.angular2.index.getFunctionNameFromIndex
 import org.angular2.index.isStringArgStubbed
