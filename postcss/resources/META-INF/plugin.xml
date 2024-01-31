@@ -3,29 +3,30 @@
   <id>org.intellij.plugins.postcss</id>
   <category>Style Sheets</category>
   <vendor>JetBrains</vendor>
-  <description>
-    <![CDATA[
-      <p>Brings support for <a href="https://postcss.org">PostCSS</a>:</p>
+  <description><![CDATA[
+    <p>Provides <a href="https://postcss.org/">PostCSS</a> support to all JetBrains IDEs that
+    <a href="https://www.jetbrains.com/products/#lang=js&type=ide">support JavaScript</a>.
+
+    <h2>Features</h2>
+    <ul>
+      <li>Option to enable PostCSS support for <code>.css</code> files
+      <li>Syntax highlighting, code completion, and other code insight features for the following PostCSS plugins:
       <ul>
-          <li>The IDE now recognises .pcss files. You can also enable PostCSS support for your .css files in <em>Preferences | Languages & Frameworks | Stylesheets | Dialects</em>.</li>
-          <li>Syntax highlighting for PostCSS syntax. You can additionally configure it in <em>Preferences | Editor | Colors & Fonts</em>.</li>
-          <li>Intelligent code completion.</li>
-          <li>Configurable Code style and auto-formatting.</li>
-          <li><em>Go to declaration</em>, <em>Go to symbol</em>, and <em>Find usages</em> actions are available for custom selectors and custom media queries.</li>
-          <li>Rename custom selectors and custom media queries with ease.</li>
+        <li><a href="https://github.com/postcss/postcss-custom-properties">postcss-custom-properties</a><
+        <li><a href="https://github.com/pascalduez/postcss-apply">postcss-apply</a></li>
+        <li><a href="https://github.com/postcss/postcss-custom-media">postcss-custom-media</a></li>
+        <li><a href="https://github.com/postcss/postcss-media-minmax">postcss-media-minmax</a></li>
+        <li><a href="https://github.com/postcss/postcss-custom-selectors">postcss-custom-selectors</a></li>
+        <li><a href="https://github.com/jonathantneal/postcss-nesting">postcss-nesting</a></li>
+        <li><a href="https://github.com/postcss/postcss-nested">postcss-nested</a></li>
       </ul>
-      <p>The following PostCSS plugins are supported:</p>
-      <ul>
-          <li><a href="https://github.com/postcss/postcss-custom-properties">postcss-custom-properties</a></li>
-          <li><a href="https://github.com/pascalduez/postcss-apply">postcss-apply</a></li>
-          <li><a href="https://github.com/postcss/postcss-custom-media">postcss-custom-media</a></li>
-          <li><a href="https://github.com/postcss/postcss-media-minmax">postcss-media-minmax</a></li>
-          <li><a href="https://github.com/postcss/postcss-custom-selectors">postcss-custom-selectors</a></li>
-          <li><a href="https://github.com/jonathantneal/postcss-nesting">postcss-nesting</a></li>
-          <li><a href="https://github.com/postcss/postcss-nested">postcss-nested</a></li>
-      </ul>
-      ]]>
-  </description>
+    </ul>
+
+    <h2>Getting started</h2>
+    <p>For information on getting started, head over to the <a href="https://www.jetbrains.com/help/">documentation</a> for your IDE.
+      For WebStorm, you can check out this section in the
+      <a href="https://www.jetbrains.com/help/webstorm/style-sheets.html">documentation</a>.
+  ]]></description>
 
   <dependencies>
     <plugin id="com.intellij.css"/>
