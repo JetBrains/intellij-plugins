@@ -342,7 +342,7 @@ private val SUPPORTED_KEYWORDS = ContainerUtil.newHashSet(
   "var", "let", "as", "null", "undefined", "true", "false", "if", "else", "this"
 )
 
-private fun <T : PsiElement> language(language: Language): PatternCondition<T> {
+fun <T : PsiElement> language(language: Language): PatternCondition<T> {
   return object : PatternCondition<T>("language(" + language.id + ")") {
     override fun accepts(t: T, context: ProcessingContext): Boolean {
       return language.`is`(PsiUtilCore.findLanguageFromElement(t))

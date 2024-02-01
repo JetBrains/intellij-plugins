@@ -13,9 +13,9 @@ import org.angular2.lang.html.Angular2TemplateSyntax
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 
-class Angular2HtmlLexer(highlightMode: Boolean,
-                        templateSyntax: Angular2TemplateSyntax,
-                        interpolationConfig: Pair<String, String>?)
+open class Angular2HtmlLexer(highlightMode: Boolean,
+                             templateSyntax: Angular2TemplateSyntax,
+                             interpolationConfig: Pair<String, String>?)
   : HtmlLexer(Angular2HtmlMergingLexer(Angular2HtmlFlexAdapter(templateSyntax, interpolationConfig), highlightMode),
               true, highlightMode) {
 
