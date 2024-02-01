@@ -3,8 +3,10 @@ package org.intellij.terraform.hcl.codeinsight
 
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.util.ProcessingContext
+import org.intellij.terraform.hcl.patterns.HCLPatterns
 import org.intellij.terraform.hcl.psi.HCLArray
 import org.intellij.terraform.hcl.psi.HCLProperty
 
@@ -13,8 +15,23 @@ import org.intellij.terraform.hcl.psi.HCLProperty
  */
 open class HCLCompletionContributor : CompletionContributor() {
 
-  private val AFTER_EQUALS_IN_PROPERTY = psiElement().afterLeaf("=").withSuperParent(2, HCLProperty::class.java)
-  private val AFTER_COMMA_OR_BRACKET_IN_ARRAY = psiElement().afterLeaf(",", "[").withSuperParent(2, HCLArray::class.java)
+  private val AFTER_EQUALS_IN_PROPERTY = psiElement().afterLeaf("=").withSuperParent(2, HCLPatterns.Property
+    .with(object : PatternCondition<HCLProperty?>("Property except with 'type'") {
+      override fun accepts(t: HCLProperty, context: ProcessingContext?): Boolean {
+        return t.name != "type" && t.name != "aws"
+      }
+    })
+  )
+
+  private val AFTER_COMMA_OR_BRACKET_IN_ARRAY = psiElement().afterLeaf(",", "[")
+    .withSuperParent(2, HCLArray::class.java)
+    .withSuperParent(3, HCLPatterns.Property.with(
+      object : PatternCondition<HCLProperty?>("Array except 'depends_on'") {
+        override fun accepts(t: HCLProperty, context: ProcessingContext?): Boolean {
+          return t.name != "depends_on"
+        }
+      })
+    )
 
   init {
     extend(CompletionType.BASIC, AFTER_EQUALS_IN_PROPERTY, MyKeywordsCompletionProvider)
@@ -31,7 +48,6 @@ open class HCLCompletionContributor : CompletionContributor() {
     private val KEYWORDS = arrayOf("null", "true", "false")
 
     override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
-      if (!parameters.isExtendedCompletion) return
       for (keyword in KEYWORDS) {
         result.addElement(LookupElementBuilder.create(keyword))
       }

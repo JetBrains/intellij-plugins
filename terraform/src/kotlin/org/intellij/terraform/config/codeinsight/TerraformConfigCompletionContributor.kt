@@ -44,6 +44,7 @@ import org.intellij.terraform.hil.HILFileType
 import org.intellij.terraform.hil.codeinsight.ReferenceCompletionHelper.findByFQNRef
 import org.intellij.terraform.hil.psi.ILExpression
 import org.intellij.terraform.nullize
+import java.util.*
 
 class TerraformConfigCompletionContributor : HCLCompletionContributor() {
   init {
@@ -189,7 +190,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
     val ROOT_BLOCKS_SORTED: List<BlockType> = TypeModel.RootBlocks.sortedBy { it.literal }
 
     private val LOG = Logger.getInstance(TerraformConfigCompletionContributor::class.java)
-    fun DumpPsiFileModel(element: PsiElement): () -> String {
+    fun dumpPsiFileModel(element: PsiElement): () -> String {
       return { DebugUtil.psiToString(element.containingFile, true) }
     }
 
@@ -284,7 +285,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       val parent = position.parent
       val leftNWS = position.getPrevSiblingNonWhiteSpace()
       LOG.debug { "TF.BlockKeywordCompletionProvider{position=$position, parent=$parent, left=${position.prevSibling}, lnws=$leftNWS}" }
-      assert(getClearTextValue(leftNWS) == null, DumpPsiFileModel(position))
+      assert(getClearTextValue(leftNWS) == null, dumpPsiFileModel(position))
       result.addAllElements(ROOT_BLOCKS_SORTED.map { create(it) })
     }
   }
@@ -388,20 +389,18 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
           right = value.getType()
           if (right == Types.String && value is PsiLanguageInjectionHost) {
             // Check for Injection
-            InjectedLanguageManager.getInstance(pob.project).enumerate(value, object : PsiLanguageInjectionHost.InjectedPsiVisitor {
-              override fun visit(injectedPsi: PsiFile, places: List<PsiLanguageInjectionHost.Shred>) {
-                if (injectedPsi.fileType == HILFileType) {
-                  right = Types.StringWithInjection
-                  val root = injectedPsi.firstChild
-                  if (root == injectedPsi.lastChild && root is ILExpression) {
-                    val type = root.getType()
-                    if (type != null && type != Types.Any) {
-                      right = type
-                    }
+            InjectedLanguageManager.getInstance(pob.project).enumerate(value) { injectedPsi, _ ->
+              if (injectedPsi.fileType == HILFileType) {
+                right = Types.StringWithInjection
+                val root = injectedPsi.firstChild
+                if (root == injectedPsi.lastChild && root is ILExpression) {
+                  val type = root.getType()
+                  if (type != null && type != Types.Any) {
+                    right = type
                   }
                 }
               }
-            })
+            }
           }
           isProperty = true
         }
@@ -452,7 +451,8 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
             incomplete)))) || (it is BlockType)
         }
         .filter { it.configurable }
-        .map { create(it) })
+        .map { create(it) }
+        .toList())
     }
 
     private fun isRightOfPropertyWithCompatibleType(isProperty: Boolean, it: PropertyOrBlockType, right: Type?): Boolean {
@@ -793,7 +793,7 @@ object ModelHelper {
     val properties = HashMap<String, PropertyOrBlockType>()
     properties.putAll(TypeModel.Connection.properties)
     if (type is HCLStringLiteral) {
-      when (type.value.toLowerCase().trim()) {
+      when (type.value.lowercase(Locale.getDefault()).trim()) {
         "ssh" -> properties.putAll(TypeModel.ConnectionPropertiesSSH)
         "winrm" -> properties.putAll(TypeModel.ConnectionPropertiesWinRM)
         // TODO: Support interpolation resolving
@@ -843,6 +843,4 @@ object ModelHelper {
     result.putAll(origin.properties)
     return result
   }
-
-
 }
