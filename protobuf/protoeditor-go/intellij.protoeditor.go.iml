@@ -23,5 +23,6 @@
     <orderEntry type="library" scope="TEST" name="truth" level="project" />
     <orderEntry type="module" module-name="intellij.go.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.go.plugin" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.go.frontback" />
   </component>
 </module>
