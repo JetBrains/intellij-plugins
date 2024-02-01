@@ -177,7 +177,7 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
   }
 
   private fun inScriptSetup(): Boolean =
-    (peekTagInfo() as? VueHtmlTagInfo)?.hasScriptSetup == true
+    stackSize() > 0 && (peekTagInfo() as? VueHtmlTagInfo)?.hasScriptSetup == true
 
   private inner class VueHtmlTagInfo(normalizedName: String,
                                      originalName: String,
