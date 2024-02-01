@@ -1,19 +1,23 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.resolve;
 
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiNameIdentifierOwner;
+import com.intellij.psi.*;
+import com.intellij.psi.impl.PsiFileFactoryImpl;
+import com.intellij.psi.impl.source.LightPsiFileImpl;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.Processor;
 import com.intellij.util.SmartList;
+import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.analyzer.DartServerData;
 import com.jetbrains.lang.dart.analyzer.DartServerData.DartNavigationRegion;
@@ -118,7 +122,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
 
   @Nullable
   public static PsiFile findPsiFile(@NotNull Project project, @NotNull String path) {
-    VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(path);
+    VirtualFile virtualFile = DartAnalysisServerService.getInstance(project).getVirtualFileFromURI(path);
     if (virtualFile != null) {
       return PsiManager.getInstance(project).findFile(virtualFile);
     }

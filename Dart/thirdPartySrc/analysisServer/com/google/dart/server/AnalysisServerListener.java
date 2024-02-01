@@ -222,4 +222,6 @@ public interface AnalysisServerListener {
    * @param existingImports a map from imported library uri onto the names declared by the imported library.
    */
   void computedExistingImports(String file, Map<String, Map<String, Set<String>>> existingImports);
+
+  public void lspTextDocumentContentDidChange(String url);
 }

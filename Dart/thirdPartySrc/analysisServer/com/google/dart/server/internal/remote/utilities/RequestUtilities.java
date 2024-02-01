@@ -14,12 +14,21 @@
 package com.google.dart.server.internal.remote.utilities;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.dart.server.utilities.general.StringUtilities;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.SmartList;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import org.dartlang.analysis.server.protocol.*;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -227,7 +236,7 @@ public class RequestUtilities {
    */
   public static JsonObject generateAnalysisGetErrors(String idValue, String file) {
     JsonObject params = new JsonObject();
-    params.addProperty(FILE, file);
+    params.addProperty(FILE, convertAbsolutePathToFileUri(file));
     return buildJsonObjectRequest(idValue, METHOD_ANALYSIS_GET_ERRORS, params);
   }
 
@@ -247,14 +256,14 @@ public class RequestUtilities {
    */
   public static JsonObject generateAnalysisGetHover(String idValue, String file, int offset) {
     JsonObject params = new JsonObject();
-    params.addProperty(FILE, file);
+    params.addProperty(FILE, convertAbsolutePathToFileUri(file));
     params.addProperty(OFFSET, offset);
     return buildJsonObjectRequest(idValue, METHOD_ANALYSIS_GET_HOVER, params);
   }
 
   public static JsonObject generateAnalysisGetImportedElements(String id, String file, int offset, int length) {
     JsonObject params = new JsonObject();
-    params.addProperty(FILE, file);
+    params.addProperty(FILE, convertAbsolutePathToFileUri(file));
     params.addProperty(OFFSET, offset);
     params.addProperty(LENGTH, length);
     return buildJsonObjectRequest(id, METHOD_ANALYSIS_GET_IMPORTED_ELEMENTS, params);
@@ -292,7 +301,7 @@ public class RequestUtilities {
   public static JsonObject generateAnalysisGetNavigation(String idValue, String file, int offset,
                                                          int length) {
     JsonObject params = new JsonObject();
-    params.addProperty(FILE, file);
+    params.addProperty(FILE, convertAbsolutePathToFileUri(file));
     params.addProperty(OFFSET, offset);
     params.addProperty(LENGTH, length);
     return buildJsonObjectRequest(idValue, METHOD_ANALYSIS_GET_NAVIGATION, params);
@@ -330,8 +339,8 @@ public class RequestUtilities {
   public static JsonObject generateAnalysisSetAnalysisRoots(String id, List<String> included,
                                                             List<String> excluded, Map<String, String> packageRoots) {
     JsonObject params = new JsonObject();
-    params.add(INCLUDED, buildJsonElement(included));
-    params.add(EXCLUDED, buildJsonElement(excluded));
+    params.add(INCLUDED, buildJsonElement(convertAbsolutePathToFileUri(included)));
+    params.add(EXCLUDED, buildJsonElement(convertAbsolutePathToFileUri(excluded)));
     if (packageRoots != null) {
       params.add("packageRoots", buildJsonElement(packageRoots));
     }
@@ -373,7 +382,7 @@ public class RequestUtilities {
    */
   public static JsonObject generateAnalysisSetPriorityFiles(String id, List<String> files) {
     JsonObject params = new JsonObject();
-    params.add("files", buildJsonElement(files));
+    params.add("files", buildJsonElement(convertAbsolutePathToFileUri(files)));
     return buildJsonObjectRequest(id, METHOD_ANALYSIS_SET_PRIORITY_FILES, params);
   }
 
@@ -393,7 +402,13 @@ public class RequestUtilities {
   public static JsonObject generateAnalysisSetSubscriptions(String id,
                                                             Map<String, List<String>> subscriptions) {
     JsonObject params = new JsonObject();
-    params.add(SUBSCRIPTIONS, buildJsonElement(subscriptions));
+    if(!DartAnalysisServerService.ENABLE_MACROS) {
+      params.add(SUBSCRIPTIONS, buildJsonElement(subscriptions));
+    } else {
+      Map<String, List<String>> copy = Maps.newHashMap(subscriptions);
+      copy.replaceAll((k,v)->v=convertAbsolutePathToFileUri(v));
+      params.add(SUBSCRIPTIONS, buildJsonElement(copy));
+    }
     return buildJsonObjectRequest(id, METHOD_ANALYSIS_SET_SUBSCRIPTIONS, params);
   }
 
@@ -453,7 +468,7 @@ public class RequestUtilities {
    */
   public static JsonObject generateCompletionGetSuggestionDetails(String idValue, String file, int id, String label, int offset) {
     JsonObject params = new JsonObject();
-    params.addProperty(FILE, file);
+    params.addProperty(FILE, convertAbsolutePathToFileUri(file));
     params.addProperty(ID, id);
     params.addProperty(LABEL, label);
     params.addProperty(OFFSET, offset);
@@ -482,7 +497,7 @@ public class RequestUtilities {
                                                                    String completion,
                                                                    String libraryUri) {
     JsonObject params = new JsonObject();
-    params.addProperty(FILE, file);
+    params.addProperty(FILE, convertAbsolutePathToFileUri(file));
     params.addProperty(OFFSET, offset);
     params.addProperty(COMPLETION, completion);
     params.addProperty(LIBRARY_URI, libraryUri);
@@ -505,7 +520,7 @@ public class RequestUtilities {
    */
   public static JsonObject generateCompletionGetSuggestions(String idValue, String file, int offset) {
     JsonObject params = new JsonObject();
-    params.addProperty(FILE, file);
+    params.addProperty(FILE, convertAbsolutePathToFileUri(file));
     params.addProperty(OFFSET, offset);
     return buildJsonObjectRequest(idValue, METHOD_COMPLETION_GET_SUGGESTIONS, params);
   }
@@ -537,7 +552,7 @@ public class RequestUtilities {
                                                              int invocationCount,
                                                              int timeout) {
     JsonObject params = new JsonObject();
-    params.addProperty(FILE, file);
+    params.addProperty(FILE, convertAbsolutePathToFileUri(file));
     params.addProperty(OFFSET, offset);
     params.addProperty(MAX_RESULTS, maxResults);
     params.addProperty(COMPLETION_MATCHING_MODE, completionCaseMatchingMode);
@@ -586,7 +601,7 @@ public class RequestUtilities {
   public static JsonObject generateEditFormat(String idValue, String file, int offset, int length,
                                               int lineLength) {
     JsonObject params = new JsonObject();
-    params.addProperty(FILE, file);
+    params.addProperty(FILE, convertAbsolutePathToFileUri(file));
     params.addProperty(SELECTION_OFFSET, offset);
     params.addProperty(SELECTION_LENGTH, length);
     if (lineLength != -1) {
@@ -613,7 +628,7 @@ public class RequestUtilities {
   public static JsonObject generateEditGetAssists(String idValue, String file, int offset,
                                                   int length) {
     JsonObject params = new JsonObject();
-    params.addProperty(FILE, file);
+    params.addProperty(FILE, convertAbsolutePathToFileUri(file));
     params.addProperty(OFFSET, offset);
     params.addProperty(LENGTH, length);
     return buildJsonObjectRequest(idValue, METHOD_EDIT_GET_ASSISTS, params);
@@ -637,7 +652,7 @@ public class RequestUtilities {
   public static JsonObject generateEditGetAvaliableRefactorings(String idValue, String file,
                                                                 int offset, int length) {
     JsonObject params = new JsonObject();
-    params.addProperty(FILE, file);
+    params.addProperty(FILE, convertAbsolutePathToFileUri(file));
     params.addProperty(OFFSET, offset);
     params.addProperty(LENGTH, length);
     return buildJsonObjectRequest(idValue, METHOD_EDIT_GET_AVAILABLE_REFACTORING, params);
@@ -659,14 +674,14 @@ public class RequestUtilities {
    */
   public static JsonObject generateEditGetFixes(String idValue, String file, int offset) {
     JsonObject params = new JsonObject();
-    params.addProperty(FILE, file);
+    params.addProperty(FILE, convertAbsolutePathToFileUri(file));
     params.addProperty(OFFSET, offset);
     return buildJsonObjectRequest(idValue, METHOD_EDIT_GET_FIXES, params);
   }
 
   public static JsonObject generateIsPostfixCompletionApplicable(String idValue, String file, int offset, String key) {
     JsonObject params = new JsonObject();
-    params.addProperty(FILE, file);
+    params.addProperty(FILE, convertAbsolutePathToFileUri(file));
     params.addProperty(OFFSET, offset);
     params.addProperty(KEY, key);
     return buildJsonObjectRequest(idValue, METHOD_IS_POSTFIX_COMPLETION_APPLICABLE, params);
@@ -1048,9 +1063,10 @@ public class RequestUtilities {
    * }
    * </pre>
    */
-  public static JsonObject generateClientCapabilities(String idValue, List<String> requests) {
+  public static JsonObject generateClientCapabilities(String idValue, List<String> requests, boolean supportsUris) {
     JsonObject params = new JsonObject();
     params.add(REQUESTS, buildJsonElement(requests));
+    //params.addProperty("supportsUris", supportsUris);
     return buildJsonObjectRequest(idValue, METHOD_SERVER_SET_CAPABILITIES, params);
   }
 
@@ -1237,6 +1253,33 @@ public class RequestUtilities {
     JsonObject lspParams = new JsonObject();
     lspParams.addProperty("uri", uri);
     return generateLSPMessage(idValue, LSP_DART_TEXT_DOCUMENT_CONTENT, lspParams);
+  }
+
+  public static List<String> convertAbsolutePathToFileUri(List<String> paths) {
+    if(paths == null || paths.isEmpty()) {
+      return StringUtilities.EMPTY_LIST;
+    }
+    if(!DartAnalysisServerService.ENABLE_MACROS) {
+      return paths;
+    }
+    ArrayList<String> result = new ArrayList<>(paths.size());
+    for (String path : paths) {
+      result.add(convertAbsolutePathToFileUri(path));
+    }
+    return result;
+  }
+
+  /**
+   * If Macros are enabled {@link DartAnalysisServerService#ENABLE_MACROS}, then convert absolute paths to file uris for communication to
+   * the Dart Analysis Server.
+   */
+  public static String convertAbsolutePathToFileUri(String path) {
+    File file = new File(path);
+    if(DartAnalysisServerService.ENABLE_MACROS && file.isAbsolute()) {
+      // file.toURI() returns "file:/path/path/...", instead of "file:///path/path/..." which is required by the Analysis Server
+      return "file://" + path;
+    }
+    return path;
   }
 
   private RequestUtilities() {

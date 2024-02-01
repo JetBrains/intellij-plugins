@@ -30,6 +30,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import org.dartlang.analysis.server.protocol.*;
 import org.osgi.framework.Version;
 
@@ -85,6 +86,10 @@ public abstract class RemoteAnalysisServerImpl implements AnalysisServer {
 
   // Execution domain
   private static final String LAUNCH_DATA_NOTIFICATION_RESULTS = "execution.launchData";
+
+  // LSP
+  public static final String LSP_NOTIFICATION= "lsp.notification";
+
   private final AnalysisServerSocket socket;
   private final Object requestSinkLock = new Object();
   private RequestSink requestSink;
@@ -585,7 +590,7 @@ public abstract class RemoteAnalysisServerImpl implements AnalysisServer {
     if (requests == null) {
       requests = StringUtilities.EMPTY_LIST;
     }
-    sendRequestToServer(id, RequestUtilities.generateClientCapabilities(id, requests));
+    sendRequestToServer(id, RequestUtilities.generateClientCapabilities(id, requests, DartAnalysisServerService.ENABLE_MACROS));
   }
 
   @Override
@@ -727,6 +732,10 @@ public abstract class RemoteAnalysisServerImpl implements AnalysisServer {
     }
     else if (event.equals(LAUNCH_DATA_NOTIFICATION_RESULTS)) {
       new NotificationExecutionLaunchDataProcessor(listener).process(response);
+    }
+    else if(event.equals(LSP_NOTIFICATION)) {
+      // lsp.notification
+      new NotificationLspProcessor(listener).process(response);
     }
     // it is a notification, even if we did not handle it
     return true;

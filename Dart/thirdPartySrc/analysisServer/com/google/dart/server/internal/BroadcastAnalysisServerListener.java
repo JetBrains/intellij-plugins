@@ -220,6 +220,13 @@ public class BroadcastAnalysisServerListener implements AnalysisServerListener {
     }
   }
 
+  @Override
+  public void lspTextDocumentContentDidChange(String url) {
+    for (AnalysisServerListener listener : getListeners()) {
+      listener.lspTextDocumentContentDidChange(url);
+    }
+  }
+
   /**
    * Returns an immutable copy of {@link #listeners}.
    */

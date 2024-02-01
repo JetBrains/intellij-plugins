@@ -40,9 +40,11 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.SearchScope;
+import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.Consumer;
 import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
@@ -92,6 +94,8 @@ public final class DartAnalysisServerService implements Disposable {
   // should be used going forward instead of `dart .../analysis_server.dart.snapshot`.
   public static final String MIN_DART_LANG_SERVER_SDK_VERSION = "2.16.0";
 
+  public static final String MIN_DART_MACRO_SDK_VERSION = "3.4.0";
+
   private static final long UPDATE_FILES_TIMEOUT = 300;
 
   private static final long CHECK_CANCELLED_PERIOD = 10;
@@ -119,6 +123,9 @@ public final class DartAnalysisServerService implements Disposable {
   private static final long ANALYSIS_IN_TESTS_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
   private static final long LSP_MESSAGE_TEXT_DOCUMENT_CONTENT_TIMEOUT = TimeUnit.SECONDS.toMillis(50);
   private static final long TESTS_TIMEOUT_COEFF = 10;
+
+  // LSP over Legacy Dart Analysis Protocol
+  public static final boolean ENABLE_MACROS = true;
 
   private static final Logger LOG = Logger.getInstance(DartAnalysisServerService.class);
 
@@ -373,6 +380,11 @@ public final class DartAnalysisServerService implements Disposable {
         stopShowingServerProgress();
       }
     }
+
+    @Override
+    public void lspTextDocumentContentDidChange(String uri) {
+      myServerData.uriFileContentsChanged(uri);
+    }
   };
 
   private static int ensureNotZero(int i) {
@@ -471,6 +483,10 @@ public final class DartAnalysisServerService implements Disposable {
 
   public static boolean isDartSdkVersionSufficientForDartLangServer(@NotNull final DartSdk sdk) {
     return StringUtil.compareVersionNumbers(sdk.getVersion(), MIN_DART_LANG_SERVER_SDK_VERSION) >= 0;
+  }
+
+  public static boolean isDartSdkVersionSufficientForDartMacroSupport(@NotNull final DartSdk sdk) {
+    return StringUtil.compareVersionNumbers(sdk.getVersion(), MIN_DART_MACRO_SDK_VERSION) >= 0;
   }
 
   public boolean shouldUseCompletion2() {
@@ -2042,7 +2058,44 @@ public final class DartAnalysisServerService implements Disposable {
     return resultRef.get();
   }
 
+  public VirtualFile getVirtualFileFromURI(String filePath) {
+    VirtualFile file;
+    if(ENABLE_MACROS) {
+      if(filePath.startsWith("file://")) {
+        filePath = filePath.substring("file://".length());
+        file = LocalFileSystem.getInstance().findFileByPath(filePath);
+      } else {
+        final String virtualFileName = filePath.substring(filePath.lastIndexOf('/') + 1) + "#macro";
+        file = new LightVirtualFile(virtualFileName, DartFileType.INSTANCE, getMacroGeneratedFileContents(filePath));
+        ((LightVirtualFile)file).setWritable(false);
+      }
+    } else {
+      file = LocalFileSystem.getInstance().findFileByPath(filePath);
+    }
+    return file;
+  }
+
+  /**
+   * This is the method that various services in the plugin should use to get the file contents for some macro uri,
+   * see comments in {@link #lspMessage_dart_textDocumentContent(String)}.
+   */
+  @NotNull
+  public String getMacroGeneratedFileContents(@NotNull String uri) {
+    String fileContents = myServerData.getMacroGeneratedFileContents(uri);
+    if(fileContents == null) {
+      return "";
+    } else {
+      return fileContents;
+    }
+  }
+
   // LSP over Legacy Dart Analysis Server protocols
+
+  /**
+   * This calls out to the Dart Analysis Server to get and return the macro file contents, given some String uri.
+   * <p>The contents of the result of this method is stored in the #DartServerData object, and updated through a
+   * "lsp.notification", in general to get this content, use {@link #getMacroGeneratedFileContents(String)}.
+   */
   public @Nullable String lspMessage_dart_textDocumentContent(@NotNull String uri) {
     RemoteAnalysisServerImpl server = myServer;
     if (server == null) {

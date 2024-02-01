@@ -10,12 +10,16 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.SearchScope;
+import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.SmartList;
+import com.jetbrains.lang.dart.DartFileType;
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.*;
 
@@ -39,6 +43,7 @@ public final class DartServerData {
   private final Map<String, Outline> myOutlineData = Collections.synchronizedMap(new HashMap<>());
   private final Map<Integer, AvailableSuggestionSet> myAvailableSuggestionSetMap = Collections.synchronizedMap(new HashMap<>());
   private final Map<String, Map<String, Map<String, Set<String>>>> myExistingImports = Collections.synchronizedMap(new HashMap<>());
+  private final Map<String, String> myMacroURIToContentsMap = Collections.synchronizedMap(new HashMap<>());
 
   private final Set<String> myFilePathsWithUnsentChanges = Sets.newConcurrentHashSet();
 
@@ -103,11 +108,11 @@ public final class DartServerData {
     forceFileAnnotation(file, false);
   }
 
-  void computedNavigation(@NotNull final String filePath, final @NotNull List<? extends NavigationRegion> regions) {
+  void computedNavigation(@NotNull String filePath, final @NotNull List<? extends NavigationRegion> regions) {
     if (myFilePathsWithUnsentChanges.contains(filePath)) return;
 
     final List<DartNavigationRegion> newRegions = new ArrayList<>(regions.size());
-    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
+    final VirtualFile file = myService.getVirtualFileFromURI(filePath);
 
     for (NavigationRegion region : regions) {
       if (region.getLength() > 0) {
@@ -115,6 +120,9 @@ public final class DartServerData {
         newRegions.add(dartNavigationRegion);
       }
     }
+
+    // The myNavigationData doesn't yet support filePaths in the URI format, convert back
+    filePath = StringUtil.trimStart(filePath, "file://");
 
     myNavigationData.put(filePath, newRegions);
     forceFileAnnotation(file, true);
@@ -327,6 +335,23 @@ public final class DartServerData {
     myFilePathsWithUnsentChanges.clear();
   }
 
+  public void uriFileContentsChanged(String uri) {
+    ApplicationManager.getApplication().invokeLater(() -> {
+      String contents = myService.lspMessage_dart_textDocumentContent(uri);
+      if(contents == null || contents.isEmpty()) {
+        myMacroURIToContentsMap.remove(uri);
+      } else {
+        myMacroURIToContentsMap.put(uri, contents);
+      }
+    });
+  }
+
+  @Nullable
+  public String getMacroGeneratedFileContents(@NotNull String uri) {
+    return myMacroURIToContentsMap.get(uri);
+  }
+
+
   void onFileClosed(@NotNull final VirtualFile file) {
     // do not remove from myErrorData, this map is always kept up-to-date for all files, not only for visible
     myHighlightData.remove(file.getPath());
@@ -345,6 +370,7 @@ public final class DartServerData {
     removeAllFromMap(myImplementedClassData, filePaths);
     removeAllFromMap(myImplementedMemberData, filePaths);
     removeAllFromMap(myOutlineData, filePaths);
+    removeAllFromMap(myMacroURIToContentsMap, filePaths);
   }
 
   private static <T> void removeAllFromMap(@NotNull Map<T, ?> map, @NotNull List<? extends T> keys) {
