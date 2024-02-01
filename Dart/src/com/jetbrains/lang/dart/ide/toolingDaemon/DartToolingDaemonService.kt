@@ -38,6 +38,7 @@ class DartToolingDaemonService(private val myProject: Project) : Disposable {
   private val consumerMap: MutableMap<String, ToolingDaemonConsumer> = Maps.newHashMap()
 
   private val listeners: MutableList<ToolingDaemonListener> = ArrayList()
+  private lateinit var dtdProcessHandler: ColoredProcessHandler;
 
   @Throws(ExecutionException::class)
   fun startService() {
@@ -50,76 +51,80 @@ class DartToolingDaemonService(private val myProject: Project) : Disposable {
     result.exePath = FileUtil.toSystemDependentName("dart")
     result.addParameter("tooling-daemon")
 
-    val handler = ColoredProcessHandler(result)
-    handler.addProcessListener(object : ProcessListener {
+    dtdProcessHandler = ColoredProcessHandler(result)
+    dtdProcessHandler.addProcessListener(object : ProcessListener {
       override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
         val text = event.text.trim { it <= ' ' }
         if (text.startsWith(STARTUP_MESSAGE_PREFIX)) {
           val address: String = text.split(STARTUP_MESSAGE_PREFIX.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray().get(1)
-          try {
-            myWebSocket = WebSocket(URI("ws://$address/ws"))
-            myWebSocket!!.eventHandler = object : WebSocketEventHandler {
-              override fun onClose() {
-              }
-
-              override fun onMessage(message: WebSocketMessage) {
-                val json: JsonObject
-                try {
-                  json = JsonParser.parseString(message.text) as JsonObject
-                }
-                catch (e: Exception) {
-                  println("Parse message failed: " + message.text + e)
-                  return
-                }
-
-                val method = json["method"]?.asString
-                if (method == "streamNotify") {
-                  val params = json["params"].asJsonObject
-                  for (listener in java.util.ArrayList(listeners)) {
-                    listener.received(params["streamId"].asString, json)
-                  }
-                }
-
-                val id = json["id"].asString
-                val consumer = consumerMap.remove(id)
-                consumer?.received(json)
-              }
-
-              override fun onOpen() {
-                // Fake request to make sure the tooling daemon works
-                val params = JsonObject()
-                params.addProperty("streamId", "foo_stream")
-                try {
-                  sendRequest("streamListen", params,
-                              ToolingDaemonConsumer { response ->
-                                println("received response from streamListen")
-                                println(response)
-                              })
-                }
-                catch (e: WebSocketException) {
-                  throw RuntimeException(e)
-                }
-              }
-
-              override fun onPing() {
-              }
-
-              override fun onPong() {
-              }
-            }
-            myWebSocket!!.connect()
-          }
-          catch (e: WebSocketException) {
-            throw RuntimeException(e)
-          }
-          catch (e: URISyntaxException) {
-            throw RuntimeException(e)
-          }
+          connectToDTDWebsocket(address)
         }
       }
     })
 
-    handler.startNotify()
+    dtdProcessHandler.startNotify()
+  }
+
+  private fun connectToDTDWebsocket(address: String) {
+    try {
+      myWebSocket = WebSocket(URI("ws://$address/ws"))
+      myWebSocket!!.eventHandler = object : WebSocketEventHandler {
+        override fun onClose() {
+        }
+
+        override fun onMessage(message: WebSocketMessage) {
+          val json: JsonObject
+          try {
+            json = JsonParser.parseString(message.text) as JsonObject
+          }
+          catch (e: Exception) {
+            println("Parse message failed: " + message.text + e)
+            return
+          }
+
+          val method = json["method"]?.asString
+          if (method == "streamNotify") {
+            val params = json["params"].asJsonObject
+            for (listener in java.util.ArrayList(listeners)) {
+              listener.received(params["streamId"].asString, json)
+            }
+          }
+
+          val id = json["id"].asString
+          val consumer = consumerMap.remove(id)
+          consumer?.received(json)
+        }
+
+        override fun onOpen() {
+          // Fake request to make sure the tooling daemon works
+          //val params = JsonObject()
+          //params.addProperty("streamId", "foo_stream")
+          //try {
+          //  sendRequest("streamListen", params
+          //  ) { response ->
+          //    println("received response from streamListen")
+          //    println(response)
+          //  }
+          //}
+          //catch (e: WebSocketException) {
+          //  throw RuntimeException(e)
+          //}
+        }
+
+        override fun onPing() {
+        }
+
+        override fun onPong() {
+        }
+      }
+      myWebSocket!!.connect()
+    }
+    catch (e: WebSocketException) {
+      throw RuntimeException(e)
+    }
+    catch (e: URISyntaxException) {
+      throw RuntimeException(e)
+    }
   }
 
   @Throws(WebSocketException::class)
@@ -147,16 +152,10 @@ class DartToolingDaemonService(private val myProject: Project) : Disposable {
   }
 
   override fun dispose() {
+    dtdProcessHandler.killProcess()
   }
 
   private fun isDartSdkVersionSufficient(sdk: DartSdk): Boolean {
     return StringUtil.compareVersionNumbers(sdk.version, MIN_SDK_VERSION) >= 0
   }
-
-  companion object {
-    fun getInstance(project: Project): DartToolingDaemonService {
-      return project.getService(DartToolingDaemonService::class.java)
-    }
-  }
-
 }

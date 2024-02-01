@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart
 
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.components.service
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.module.ModuleUtilCore
@@ -67,7 +68,7 @@ class DartStartupActivity : ProjectActivity {
 
     readAction {
       DartAnalysisServerService.getInstance(project).serverReadyForRequest()
-      DartToolingDaemonService.getInstance(project).startService()
+      project.service<DartToolingDaemonService>().startService()
     }
   }
 }
