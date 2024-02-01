@@ -15,7 +15,6 @@ import com.intellij.ui.components.JBCheckBox
 import com.intellij.util.ui.UIUtil
 import icons.NextjsIcons
 import javax.swing.Icon
-import javax.swing.JPanel
 
 private const val CREATE_NEXT_APP = "create-next-app"
 private val ARGUMENTS = Key.create<Array<String>>("create.next.args")
@@ -51,15 +50,9 @@ class NextJsProjectGenerator : NpmPackageProjectGenerator(), ReactLikeProjectGen
   override fun createPeer(): ProjectGeneratorPeer<Settings?> {
     return object : NpmPackageGeneratorPeer() {
       private lateinit var typescript: JBCheckBox
-      override fun createPanel(): JPanel {
-        val panel = super.createPanel()
-        typescript = JBCheckBox(UIUtil.replaceMnemonicAmpersand(NextJsBundle.message("create.next.app.typescript.checkbox")))
-        panel.add(typescript)
-        return panel
-      }
 
-      override fun buildUI(settingsStep: SettingsStep) {
-        super.buildUI(settingsStep)
+      override fun addExtraFields(settingsStep: SettingsStep) {
+        typescript = JBCheckBox(UIUtil.replaceMnemonicAmpersand(NextJsBundle.message("create.next.app.typescript.checkbox")))
         settingsStep.addSettingsComponent(typescript)
       }
 

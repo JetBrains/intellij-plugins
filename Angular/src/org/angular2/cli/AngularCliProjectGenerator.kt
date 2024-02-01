@@ -170,8 +170,7 @@ class AngularCliProjectGenerator : NpmPackageProjectGenerator() {
       return panel
     }
 
-    override fun buildUI(settingsStep: SettingsStep) {
-      super.buildUI(settingsStep)
+    override fun addExtraFields(settingsStep: SettingsStep) {
       val field = settingsStep.moduleNameLocationSettings
       if (field != null) {
         myContentRoot = object : TextAccessor {

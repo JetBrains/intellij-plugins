@@ -67,8 +67,7 @@ class VueCliProjectGenerator : NpmPackageProjectGenerator() {
         return panel
       }
 
-      override fun buildUI(settingsStep: SettingsStep) {
-        super.buildUI(settingsStep)
+      override fun addExtraFields(settingsStep: SettingsStep) {
         settingsStep.addSettingsComponent(defaultSetupCheckbox)
       }
 
