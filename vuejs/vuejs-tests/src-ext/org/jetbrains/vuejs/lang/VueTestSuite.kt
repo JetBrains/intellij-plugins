@@ -49,6 +49,7 @@ import org.junit.runners.Suite
   VueWebTypesDocumentationTest::class,
   VueCreateTsVariableTest::class,
   VueCopyrightTest::class,
+  VueRefAttrsTest::class,
   VueAutoPopupTest::class,
   VueEmmetTest::class,
   VueTypeResolveTest::class,
