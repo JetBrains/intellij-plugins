@@ -44,6 +44,7 @@ import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.utils.qualifiedKind
 import com.intellij.webSymbols.utils.unwrapMatchedSymbols
+import com.intellij.xml.util.HtmlUtil.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.index.resolveLocally
@@ -62,7 +63,6 @@ import org.jetbrains.vuejs.web.VUE_COMPONENTS
 import java.util.*
 import kotlin.reflect.KClass
 
-const val LANG_ATTRIBUTE_NAME = "lang"
 const val SETUP_ATTRIBUTE_NAME = "setup"
 const val REF_ATTRIBUTE_NAME = "ref"
 const val MODULE_ATTRIBUTE_NAME = "module"

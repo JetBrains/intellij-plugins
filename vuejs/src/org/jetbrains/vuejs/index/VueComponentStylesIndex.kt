@@ -13,7 +13,7 @@ import com.intellij.util.indexing.hints.FileTypeSubstitutionStrategy.AFTER_SUBST
 import com.intellij.util.io.EnumeratorStringDescriptor
 import com.intellij.util.io.KeyDescriptor
 import com.intellij.xml.util.HtmlUtil
-import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
+import com.intellij.xml.util.HtmlUtil.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.html.VueFileType
 

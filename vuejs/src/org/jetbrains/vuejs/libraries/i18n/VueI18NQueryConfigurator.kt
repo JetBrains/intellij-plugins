@@ -14,7 +14,7 @@ import com.intellij.webSymbols.*
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
-import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
+import com.intellij.xml.util.HtmlUtil.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.web.VUE_TOP_LEVEL_ELEMENTS
 import org.jetbrains.vuejs.web.VueFramework

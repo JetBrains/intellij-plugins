@@ -18,9 +18,9 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlElementType.HTML_EMBEDDED_CONTENT
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.xml.util.HtmlUtil
+import com.intellij.xml.util.HtmlUtil.LANG_ATTRIBUTE_NAME
 import com.intellij.xml.util.HtmlUtil.TYPE_ATTRIBUTE_NAME
 import org.intellij.plugins.postcss.PostCssLanguage
-import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.lang.LangMode
 import org.jetbrains.vuejs.lang.VueScriptLangs

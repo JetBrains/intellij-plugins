@@ -13,7 +13,6 @@ import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.util.ProcessingContext
 import com.intellij.util.asSafely
 import com.intellij.xml.util.HtmlUtil.*
-import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.lang.html.lexer.VueTagEmbeddedContentProvider
 import org.jetbrains.vuejs.lang.html.psi.VueRefAttribute
 
