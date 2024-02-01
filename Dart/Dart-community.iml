@@ -68,5 +68,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.projectModel.impl" />
   </component>
 </module>
