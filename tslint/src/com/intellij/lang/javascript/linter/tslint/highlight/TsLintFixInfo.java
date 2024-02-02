@@ -1,6 +1,6 @@
 package com.intellij.lang.javascript.linter.tslint.highlight;
 
-
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.intellij.lang.javascript.linter.tslint.TslintUtil;
 import com.intellij.lang.javascript.service.JSLanguageServiceQueue;
@@ -17,8 +17,11 @@ public class TsLintFixInfo {
 
     try {
       if (element.isJsonArray()) {
+        Gson gson = JSLanguageServiceQueue.SharedGson.GSON;
         List<TsLintFixReplacements> replacements =
-          ContainerUtil.mapNotNull(element.getAsJsonArray(), el -> JSLanguageServiceQueue.Holder.GSON.fromJson(el, TsLintFixReplacements.class));
+          ContainerUtil.mapNotNull(element.getAsJsonArray(), el -> {
+            return gson.fromJson(el, TsLintFixReplacements.class);
+          });
 
         TsLintFixInfo info = new TsLintFixInfo();
         info.innerReplacements = replacements.toArray(new TsLintFixReplacements[0]);
@@ -27,10 +30,10 @@ public class TsLintFixInfo {
       else {
         if (element.getAsJsonObject().has("innerReplacements")) {
           //tslint < 5 compatibility
-          return JSLanguageServiceQueue.Holder.GSON.fromJson(element, TsLintFixInfo.class);
+          return JSLanguageServiceQueue.SharedGson.GSON.fromJson(element, TsLintFixInfo.class);
         }
         else {
-          TsLintFixReplacements replacement = JSLanguageServiceQueue.Holder.GSON.fromJson(element, TsLintFixReplacements.class);
+          TsLintFixReplacements replacement = JSLanguageServiceQueue.SharedGson.GSON.fromJson(element, TsLintFixReplacements.class);
 
           TsLintFixInfo info = new TsLintFixInfo();
           info.innerReplacements = new TsLintFixReplacements[]{replacement};

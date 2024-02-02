@@ -1,5 +1,6 @@
 package com.intellij.prettierjs;
 
+import com.google.gson.Gson;
 import com.intellij.lang.javascript.service.JSLanguageServiceQueue;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
@@ -102,7 +103,8 @@ public class PrettierConfigParsingTest extends BasePlatformTestCase {
       assertEquals(expected, actual);
       return;
     }
-    assertEquals(JSLanguageServiceQueue.Holder.GSON.toJson(expected), JSLanguageServiceQueue.Holder.GSON.toJson(actual));
+    Gson gson = JSLanguageServiceQueue.SharedGson.GSON;
+    assertEquals(gson.toJson(expected), gson.toJson(actual));
   }
 
   private void doTest(PrettierConfig expected, String fileName, String fileContent) {
