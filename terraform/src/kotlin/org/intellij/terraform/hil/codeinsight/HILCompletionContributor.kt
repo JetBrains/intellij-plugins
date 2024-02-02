@@ -498,7 +498,7 @@ class HILCompletionContributor : CompletionContributor() {
         val variable = Variable(r)
         val defaultMap = variable.getDefault()
         if (defaultMap is HCLObject) {
-          defaultMap.handleHCLObject(found)
+          handleHCLObject(defaultMap, found)
         }
         collectTypeVariants(variable.getType(), found)
         return
@@ -522,7 +522,7 @@ class HILCompletionContributor : CompletionContributor() {
       else if (TerraformPatterns.OutputRootBlock.accepts(r)) {
         val outputValue = r.`object`?.findProperty(TypeModel.ValueProperty.name)?.value
         if (outputValue is HCLObject) {
-          outputValue.handleHCLObject(found)
+          handleHCLObject(outputValue, found)
         }
         collectTypeVariants(outputValue.getType(), found)
         return
@@ -536,10 +536,10 @@ class HILCompletionContributor : CompletionContributor() {
       }
     }
 
-    private fun HCLObject.handleHCLObject(found: ArrayList<LookupElement>) {
+    private fun handleHCLObject(objectProperty: HCLObject, found: ArrayList<LookupElement>) {
       val names = HashSet<String>()
-      this.propertyList.mapNotNullTo(names) { it.name }
-      this.blockList.mapNotNullTo(names) { it.name }
+      objectProperty.propertyList.mapNotNullTo(names) { it.name }
+      objectProperty.blockList.mapNotNullTo(names) { it.name }
       names.mapTo(found) { create(it) }
     }
 
