@@ -9,9 +9,8 @@
 
   <description>
     <![CDATA[
-Provides <a href="https://webassembly.org/">WebAssembly</a> language support to all JetBrains IDEs that <a href="https://www.jetbrains.com/products/#lang=js&type=ide">support JavaScript</a>.
-<br>
-<b>Features</b>
+    <p>Provides <a href="https://webassembly.org/">WebAssembly</a> language support to all JetBrains IDEs that <a href="https://www.jetbrains.com/products/#lang=js&type=ide">support JavaScript</a>.
+<h2>Features</h2>
 <ul>
   <li>Syntax highlighting
   <li>Brace matching, commenting, and code folding
@@ -20,9 +19,9 @@ Provides <a href="https://webassembly.org/">WebAssembly</a> language support to 
   <li>Bulk instructions and reference types support
 </ul>
 
-<br>
-<b>Getting started</b>
-For information on getting started, head over to the <a href="https://www.jetbrains.com/help/">documentation</a> for your IDE. For IntelliJ IDEA, you can check out this section in the <a href="https://www.jetbrains.com/help/idea/webassembly-project.html">documentation</a>.
+<h2>Getting started</h2>
+<p>For information on getting started, head over to the <a href="https://www.jetbrains.com/help/">documentation</a> for your IDE.
+For IntelliJ IDEA, you can check out this section in the <a href="https://www.jetbrains.com/help/idea/webassembly-project.html">documentation</a>.
         ]]>
   </description>
 
