@@ -6,14 +6,21 @@
   <vendor>JetBrains</vendor>
 
   <description><![CDATA[
-<p>Support for <a href="https://handlebarsjs.com/">Handlebars</a> and <a href="https://mustache.github.io/">Mustache</a> template languages</p>
-<p>Features</p>
+<p>Provides support for the <a href="https://handlebarsjs.com/">Handlebars</a>
+and <a href="https://mustache.github.io/">Mustache</a> template languages
+to all JetBrains IDEs that <a href="https://www.jetbrains.com/products/#lang=js&type=ide">support JavaScript</a>.
+
+<h2>Features</h2>
 <ul>
-<li>Customizable highlighting for the template syntax</li>
-<li>Completion for closing tags and braces as well as for HTML tags</li>
-<li>Files with the .html extension can be treated as Handlebars or Mustache files</li>
-<li>Automatic indentation when typing</li>
-</ul>]]>
+<li>Customizable highlighting for the template syntax
+<li>Completion of closing tags, braces, and HTML tags
+<li>.html files treated as Handlebars or Mustache files
+<li>Automatic indentation when typing
+</ul>
+<h2>Getting started</h2>
+<p>For information on getting started, head over to the <a href="https://www.jetbrains.com/help/">documentation</a> for your IDE.
+For WebStorm, you can check out this section in the <a href="https://www.jetbrains.com/help/webstorm/using-handlebars-and-mustache-templates.html">documentation</a>.
+]]>
   </description>
 
   <depends>com.intellij.modules.lang</depends>
