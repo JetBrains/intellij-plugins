@@ -9,15 +9,20 @@
 
   <description>
     <![CDATA[
-        The plugin supports the WebAssembly language. The following features are available for wat-files:
-        <br>
-        <ul>
-            <li>Syntax highlighting</li>
-            <li>Minor features (brace matching, commenter, code folding)</li>
-            <li>Code completion</li>
-            <li>References and navigation</li>
-            <li>Features of the new release (bulk instructions, reference types)</li>
-        </ul>
+Provides <a href="https://webassembly.org/">WebAssembly</a> language support to all JetBrains IDEs that <a href="https://www.jetbrains.com/products/#lang=js&type=ide">support JavaScript</a>.
+<br>
+<b>Features</b>
+<ul>
+  <li>Syntax highlighting
+  <li>Brace matching, commenting, and code folding
+  <li>Code completion
+  <li>References and navigation
+  <li>Bulk instructions and reference types support
+</ul>
+
+<br>
+<b>Getting started</b>
+For information on getting started, head over to the <a href="https://www.jetbrains.com/help/">documentation</a> for your IDE. For IntelliJ IDEA, you can check out this section in the <a href="https://www.jetbrains.com/help/idea/webassembly-project.html">documentation</a>.
         ]]>
   </description>
 
