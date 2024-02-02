@@ -131,8 +131,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       .inFile(TerraformConfigFile)
       .withParent(Object)
       .withSuperParent(2, PropertyOrBlock)
-      .withSuperParent(3, Object)
-      .withSuperParent(4, Block), PropertyObjectKeyCompletionProvider)
+      .withSuperParent(3, Object), PropertyObjectKeyCompletionProvider)
     // property = { <caret>a="" }
     // property = { "<caret>a"="" }
     // property { <caret>="" }
@@ -443,6 +442,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
         LOG.debug { "Including properties which contains incomplete result: $incomplete" }
       }
       addResultsWithCustomSorter(result, parameters, properties.values
+        .asSequence()
         .filter { it.name != Constants.HAS_DYNAMIC_ATTRIBUTES }
         .filter { isRightOfPropertyWithCompatibleType(isProperty, it, right) || (isBlock && it is BlockType) || (!isProperty && !isBlock) }
         // TODO: Filter should be based on 'max-count' model property (?)

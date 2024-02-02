@@ -544,8 +544,6 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
                                 aws = "aws"\s
                               }
                             }""", Arrays.asList("aws.second"));
-
-
     doBasicCompletionTest("""
                             module x {
                               source = "./module/"
@@ -555,19 +553,33 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
                             }""", 0);
     doBasicCompletionTest("""
                             variable "obj-var" {
-                              type = object({
-                                var1 = string
-                                var2 = list(string)
-                              })
-                            }
-                                                        
-                            module "kek" {
-                              source = "./"
-                              obj-var = {
-                                v<caret>
-                              }
-                            }
-                            """, Arrays.asList("var1", "var2"));
+                               type = object({
+                                 var1 = string
+                                 var2 = list(string)
+                                 var3 = object({
+                                   var4 = object({
+                                     var6 = list(any)
+                                     var7 = list(bool)
+                                     var8 = list(number)
+                                   })
+                                 })
+                               })
+                             }
+                             
+                             module "test" {
+                               source = "./"
+                             
+                               obj-var = {
+                                 var1 = ""
+                                 var2 = []
+                                 var3 = {
+                                   var4 = {
+                                    <caret>
+                                   }
+                                 }
+                               }
+                             }
+                            """, Arrays.asList("var6", "var7", "var8"));
   }
 
   public void testModuleProvidersValueCompletion() {

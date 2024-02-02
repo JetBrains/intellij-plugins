@@ -8,6 +8,7 @@ import com.intellij.openapi.diagnostic.debug
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
+import com.intellij.util.containers.tail
 import org.intellij.terraform.config.codeinsight.TerraformConfigCompletionContributor.Companion.getIncomplete
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.hcl.psi.*
@@ -22,7 +23,7 @@ object PropertyObjectKeyCompletionProvider : TerraformConfigCompletionContributo
     if (parent is HCLStringLiteral || parent is HCLIdentifier) {
       // Do not complete values
       if (HCLPsiUtil.isPartOfPropertyValue(parent)) {
-        return addPropertyValueCompletions(parameters, result, obj)
+        return addPropertyValueCompletions(result, obj)
       }
     }
     LOG.debug { "TF.PropertyObjectKeyCompletionProvider{position=$position, parent=$parent, obj=$obj}" }
@@ -43,7 +44,7 @@ object PropertyObjectKeyCompletionProvider : TerraformConfigCompletionContributo
     return null
   }
 
-  private fun addPropertyValueCompletions(parameters: CompletionParameters, result: CompletionResultSet, obj: HCLObject) {
+  private fun addPropertyValueCompletions(result: CompletionResultSet, obj: HCLObject) {
     val inner = obj.parent ?: return
     val block = inner.getParent(HCLBlock::class.java, true) ?: return
     LOG.debug { "TF.PropertyObjectKeyCompletionProvider.InSomethingValue{block=$block, inner=$inner}" }
@@ -71,14 +72,29 @@ object PropertyObjectKeyCompletionProvider : TerraformConfigCompletionContributo
       return
     }
     else if (type == "module") {
-      val variable = block.getTerraformModule().findVariables(property.name).firstOrNull() ?: return
-      val objectType = variable.getType()
-
-      if (objectType is ObjectTypeImpl) {
-        val properties = objectType.elements?.map { PropertyType(it.key, it.value ?: Types.Any) } ?: return
-        result.addAllElements(properties.map { TerraformConfigCompletionContributor.create(it) })
-      }
+      val pathToRoot = pathToRootObject(property)
+      val objTypeProperty = findObjectTypeInModule(block, pathToRoot.reversed())
+      val properties = objTypeProperty?.elements?.map { PropertyType(it.key, it.value ?: Types.Any) } ?: return
+      result.addAllElements(properties.map { TerraformConfigCompletionContributor.create(it) })
     }
+  }
+
+  private fun pathToRootObject(element: HCLProperty): List<String> {
+    val pathToRoot = mutableListOf(element.name)
+    var current: HCLProperty? = element
+    while (current?.parent is HCLObject && current.parent?.parent is HCLProperty) {
+      current = current.parent.parent as? HCLProperty ?: break
+      pathToRoot.add(current.name)
+    }
+    return pathToRoot
+  }
+
+  private fun findObjectTypeInModule(block: HCLBlock, pathFromRoot: List<String>): ObjectType? {
+    var currentObject: ObjectType? = block.getTerraformModule().findVariables(pathFromRoot.first()).firstOrNull()?.getType() as? ObjectType
+    pathFromRoot.tail().forEach {
+      currentObject = currentObject?.elements?.get(it) as? ObjectType ?: return@forEach
+    }
+    return currentObject
   }
 
   private fun addInnerBlockCompletions(parameters: CompletionParameters, result: CompletionResultSet, obj: HCLObject) {
