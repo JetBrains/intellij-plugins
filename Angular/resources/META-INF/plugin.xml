@@ -47,6 +47,9 @@
    <extensionPoint qualifiedName="org.angular2.entitiesSource"
                    interface="org.angular2.entities.Angular2EntitiesSource"
                    dynamic="true"/>
+   <extensionPoint qualifiedName="org.angular2.jsHandlersFactory"
+                   interface="org.angular2.codeInsight.Angular2JSHandlersFactory"
+                   dynamic="true"/>
  </extensionPoints>
 
  <extensions defaultExtensionNs="com.intellij">
@@ -377,6 +380,8 @@
                     order="after source"/>
     <entitiesSource implementation="org.angular2.entities.metadata.Angular2MetadataEntitiesSource" id="metadata"
                     order="after ivy"/>
+    <jsHandlersFactory implementation="org.angular2.codeInsight.DefaultAngular2HandlersFactory"
+                       id="default" order="last"/>
   </extensions>
 
   <actions resource-bundle="messages.Angular2Bundle">
