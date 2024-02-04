@@ -328,24 +328,30 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
   }
 
   public void testLifecycleBasicCompletion() throws Exception {
-    final var resource = """
-      resource null_resource test {
-        lifecycle {
-          con<caret>
-        }
-      }
-      """.trim();
-    doBasicCompletionTest(resource, 2, "precondition", "postcondition");
+    doBasicCompletionTest("""
+                            resource null_resource test {
+                              lifecycle {
+                                con<caret>
+                              }
+                            }
+                            """.trim(), 2, "precondition", "postcondition");
 
-    final var data = """
-      data "abbey_identity" "test" {
-        id = ""
-        lifecycle {
-          <caret>
-        }
-      }
-      """.trim();
-    doBasicCompletionTest(data, 6, "replace_triggered_by");
+    doBasicCompletionTest("""
+                            data "abbey_identity" "test" {
+                              id = ""
+                              lifecycle {
+                                <caret>
+                              }
+                            }
+                            """.trim(), 6, "replace_triggered_by");
+
+    doBasicCompletionTest("""
+                            resource null_resource test {
+                              lifecycle {
+                                create_before_destroy = f<caret>
+                              }
+                            }
+                            """.trim(), "false");
   }
 
   public void testOutputDependsOnCompletion() throws Exception {

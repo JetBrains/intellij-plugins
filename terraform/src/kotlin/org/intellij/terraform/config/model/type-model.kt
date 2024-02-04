@@ -5,6 +5,8 @@ package org.intellij.terraform.config.model
 
 interface Type {
   val presentableText: String
+  val defaultValues: List<String>?
+    get() = null
 }
 
 open class TypeImpl(protected val baseName: String) : Type {
@@ -27,7 +29,7 @@ open class TypeImpl(protected val baseName: String) : Type {
   }
 }
 
-open class PrimitiveType(name: String) : TypeImpl(name)
+open class PrimitiveType(name: String, override val defaultValues: List<String>? = null) : TypeImpl(name)
 
 // HCL2 expression types, from github.com/hashicorp/hcl2/typeexpr and github.com/zclconf/go-cty/cty
 // null as inner type means error in type definition
@@ -317,7 +319,6 @@ open class ReferenceHint(vararg val hint: String) : Hint
 open class SimpleValueHint(vararg hint: String) : SimpleHint(*hint)
 //endregion hints
 
-// TODO: Support 'default' values for certain types
 open class PropertyType(override val name: String, val type: Type,
                         val hint: Hint? = null,
                         val injectionAllowed: Boolean = true,
@@ -477,7 +478,7 @@ object Types {
 
   val String: PrimitiveType = PrimitiveType("string")
   val Number: PrimitiveType = PrimitiveType("number")
-  val Boolean: PrimitiveType = PrimitiveType("bool")
+  val Boolean: PrimitiveType = PrimitiveType("bool", listOf("false", "true"))
   val Null: PrimitiveType = PrimitiveType("null") // TODO: Unify Null and Any
   val Any: PrimitiveType = PrimitiveType("any") // supertype, like java.lang.Object
 

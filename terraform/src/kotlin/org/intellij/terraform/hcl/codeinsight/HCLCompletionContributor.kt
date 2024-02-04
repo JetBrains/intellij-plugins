@@ -15,14 +15,6 @@ import org.intellij.terraform.hcl.psi.HCLProperty
  */
 open class HCLCompletionContributor : CompletionContributor() {
 
-  private val AFTER_EQUALS_IN_PROPERTY = psiElement().afterLeaf("=").withSuperParent(2, HCLPatterns.Property
-    .with(object : PatternCondition<HCLProperty?>("Property except with 'type'") {
-      override fun accepts(t: HCLProperty, context: ProcessingContext?): Boolean {
-        return t.name != "type" && t.name != "aws"
-      }
-    })
-  )
-
   private val AFTER_COMMA_OR_BRACKET_IN_ARRAY = psiElement().afterLeaf(",", "[")
     .withSuperParent(2, HCLArray::class.java)
     .withSuperParent(3, HCLPatterns.Property.with(
@@ -34,7 +26,6 @@ open class HCLCompletionContributor : CompletionContributor() {
     )
 
   init {
-    extend(CompletionType.BASIC, AFTER_EQUALS_IN_PROPERTY, MyKeywordsCompletionProvider)
     extend(CompletionType.BASIC, AFTER_COMMA_OR_BRACKET_IN_ARRAY, MyKeywordsCompletionProvider)
   }
 

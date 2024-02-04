@@ -382,9 +382,14 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       if (_parent is HCLIdentifier || _parent is HCLStringLiteral) {
         val pob = _parent.parent // Property or Block
         if (pob is HCLProperty) {
-          // TODO: Support expressions
           val value = pob.value as? HCLValue
-          if (value === _parent) return
+          if (value === _parent) {
+            val valueBlock = PsiTreeUtil.getParentOfType(pob, HCLBlock::class.java) ?: return
+            val property = ModelHelper.getBlockProperties(valueBlock).get(pob.name) as? PropertyType
+            val defaultsOfProperty = property?.type?.defaultValues
+            defaultsOfProperty?.map { LookupElementBuilder.create(it) }?.let { result.addAllElements(it) }
+            return
+          }
           right = value.getType()
           if (right == Types.String && value is PsiLanguageInjectionHost) {
             // Check for Injection
