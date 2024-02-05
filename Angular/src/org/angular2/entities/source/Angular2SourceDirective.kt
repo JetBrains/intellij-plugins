@@ -1,7 +1,6 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.source
 
-import com.intellij.lang.javascript.JSStringUtil.unquoteWithoutUnescapingStringLiteralValue
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
@@ -55,30 +54,9 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
 
   override val selector: Angular2DirectiveSelector
     get() = getCachedValue {
-      val property = Angular2DecoratorUtil.getProperty(decorator, Angular2DecoratorUtil.SELECTOR_PROP)
-      var value: String? = null
-      if (property != null) {
-        val initializer: JSLiteralExpression?
-        val stub = (property as JSPropertyImpl).stub
-        if (stub != null) {
-          initializer = stub.childrenStubs.firstNotNullOfOrNull { it.psi as? JSLiteralExpression }
-          value = initializer?.significantValue
-            ?.let { unquoteWithoutUnescapingStringLiteralValue(it) }
-        }
-        else {
-          initializer = property.value as? JSLiteralExpression
-          value = initializer?.stringValue
-        }
-        if (value != null && initializer != null) {
-          return@getCachedValue Result.create(
-            Angular2DirectiveSelectorImpl(initializer, StringUtil.unquoteString(value), 1),
-            property)
-        }
-        value = AstLoadingFilter.forceAllowTreeLoading<String, RuntimeException>(property.containingFile) {
-          Angular2DecoratorUtil.getExpressionStringValue(property.value)
-        }
-      }
-      Result.create(Angular2DirectiveSelectorImpl(decorator, value, null), decorator)
+      Result.create(
+        Angular2SourceUtil.getComponentSelector(decorator, Angular2DecoratorUtil.getProperty(decorator, Angular2DecoratorUtil.SELECTOR_PROP)),
+        decorator.containingFile)
     }
 
   override val directiveKind: Angular2DirectiveKind

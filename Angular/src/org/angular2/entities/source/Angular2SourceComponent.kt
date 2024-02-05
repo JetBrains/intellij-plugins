@@ -13,10 +13,8 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.FakePsiElement
-import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.psi.util.CachedValueProvider.Result.create
 import com.intellij.util.AstLoadingFilter
-import com.intellij.util.SmartList
 import com.intellij.util.asSafely
 import org.angular2.Angular2DecoratorUtil.STYLES_PROP
 import org.angular2.Angular2DecoratorUtil.STYLE_URLS_PROP
@@ -27,9 +25,6 @@ import org.angular2.Angular2DecoratorUtil.getProperty
 import org.angular2.Angular2InjectionUtils
 import org.angular2.codeInsight.refs.Angular2TemplateReferencesProvider
 import org.angular2.entities.*
-import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector
-import org.angular2.lang.html.psi.Angular2HtmlRecursiveElementWalkingVisitor
-import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes.NG_CONTENT_SELECTOR
 
 class Angular2SourceComponent(decorator: ES6Decorator, implicitElement: JSImplicitElement)
   : Angular2SourceDirective(decorator, implicitElement), Angular2Component {
@@ -62,28 +57,8 @@ class Angular2SourceComponent(decorator: ES6Decorator, implicitElement: JSImplic
 
   override val ngContentSelectors: List<Angular2DirectiveSelector>
     get() = getCachedValue {
-      val template = templateFile
-      if (template is PsiFileImpl) {
-        val result = SmartList<Angular2DirectiveSelector>()
-        val root = template.greenStub
-        if (root != null) {
-          for (el in root.childrenStubs) {
-            if (el.stubType === NG_CONTENT_SELECTOR) {
-              result.add((el.psi as Angular2HtmlNgContentSelector).selector)
-            }
-          }
-        }
-        else {
-          template.accept(object : Angular2HtmlRecursiveElementWalkingVisitor() {
-            override fun visitNgContentSelector(ngContentSelector: Angular2HtmlNgContentSelector) {
-              result.add(ngContentSelector.selector)
-            }
-          })
-        }
-        return@getCachedValue create<List<Angular2DirectiveSelector>>(result, template, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS,
-                                                                      decorator)
-      }
-      create(emptyList(), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, decorator)
+      create(Angular2SourceUtil.getNgContentSelectors(templateFile),
+             VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, decorator)
     }
 
   override val directiveKind: Angular2DirectiveKind
