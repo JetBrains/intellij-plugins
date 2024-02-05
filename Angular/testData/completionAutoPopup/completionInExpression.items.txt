@@ -20,14 +20,7 @@ CDK_DROP_LIST_GROUP (typeText='InjectionToken<CdkDropListGroup<unknown>>'; prior
 CDK_MENU (typeText='InjectionToken<Menu>'; priority=0.0; bold)
 CDK_ROW_TEMPLATE (typeText='"<ng-container cdkCellOutlet></ng-container>"'; priority=0.0; bold)
 CDK_TABLE (typeText='InjectionToken<any>'; priority=0.0; bold)
-CDK_TABLE_TEMPLATE (typeText='"
-  <ng-content select=\"caption\"></ng-content>
-  <ng-content select=\"colgroup, col\"></ng-content>
-  <ng-container headerRowOutlet></ng-container>
-  <ng-container rowOutlet></ng-container>
-  <ng-container noDataRowOutlet></ng-container>
-  <ng-container footerRowOutlet></ng-container>
-"'; priority=0.0; bold)
+CDK_TABLE_TEMPLATE (typeText='"\n  <ng-content select=\"caption\"></ng-content>\n  <ng-content select=\"colgroup, col\"></ng-content>\n  <ng-container headerRowOutlet></ng-container>\n  <ng-container rowOutlet></ng-container>\n  <ng-container noDataRowOutlet></ng-container>\n  <ng-container footerRowOutlet></ng-container>\n"'; priority=0.0; bold)
 CDK_TREE_NODE_OUTLET_NODE (typeText=null; priority=0.0; bold)
 CSSStyleDeclaration (typeText='CSSStyleDeclaration'; priority=0.0; bold)
 CanvasRenderingContext2D (typeText='CanvasRenderingContext2D'; priority=0.0; bold)
