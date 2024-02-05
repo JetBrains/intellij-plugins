@@ -28,7 +28,8 @@ import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 
 open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
-  : Angular2IvyDeclaration<Angular2IvySymbolDef.Directive>(entityDef), Angular2Directive {
+  : Angular2IvyDeclaration<Angular2IvySymbolDef.Directive>(entityDef), Angular2Directive,
+    Angular2HostDirectivesResolver.Angular2DirectiveWithHostDirectives {
 
   @Suppress("LeakingThis")
   private val hostDirectivesResolver = Angular2HostDirectivesResolver(this)
@@ -62,10 +63,10 @@ open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
   override fun areHostDirectivesFullyResolved(): Boolean =
     hostDirectivesResolver.hostDirectivesFullyResolved
 
-  internal val directExportAs: Map<String, Angular2DirectiveExportAs>
+  override val directExportAs: Map<String, Angular2DirectiveExportAs>
     get() = getLazyValue(IVY_EXPORT_AS) { myEntityDef.exportAsList.associateWith { Angular2DirectiveExportAs(it, this) } }
 
-  internal val directHostDirectivesSet: Angular2ResolvedSymbolsSet<Angular2HostDirective>
+  override val directHostDirectivesSet: Angular2ResolvedSymbolsSet<Angular2HostDirective>
     get() = getHostDirectives(myEntityDef)
 
   private fun getPropertiesNoCache(): Angular2DirectiveProperties {

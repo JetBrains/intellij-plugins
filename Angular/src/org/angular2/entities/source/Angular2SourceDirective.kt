@@ -47,7 +47,8 @@ import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 
 open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSImplicitElement)
-  : Angular2SourceDeclaration(decorator, implicitElement), Angular2Directive {
+  : Angular2SourceDeclaration(decorator, implicitElement), Angular2Directive,
+    Angular2HostDirectivesResolver.Angular2DirectiveWithHostDirectives {
 
   @Suppress("LeakingThis")
   private val hostDirectivesResolver = Angular2HostDirectivesResolver(this)
@@ -89,14 +90,14 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
     }
   }
 
-  internal val directHostDirectivesSet: Angular2ResolvedSymbolsSet<Angular2HostDirective>
+  override val directHostDirectivesSet: Angular2ResolvedSymbolsSet<Angular2HostDirective>
     get() = decorator.let { dec ->
       CachedValuesManager.getCachedValue(dec) {
         HostDirectivesCollector(dec).collect(Angular2DecoratorUtil.getProperty(dec, HOST_DIRECTIVES_PROP))
       }
     }
 
-  internal val directExportAs: Map<String, Angular2DirectiveExportAs>
+  override val directExportAs: Map<String, Angular2DirectiveExportAs>
     get() = getCachedValue { Result.create(getExportAsNoCache(), decorator) }
 
   private fun getExportAsNoCache(): Map<String, Angular2DirectiveExportAs> =

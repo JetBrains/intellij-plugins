@@ -6,10 +6,9 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.SmartList
-import org.angular2.entities.ivy.Angular2IvyDirective
-import org.angular2.entities.source.Angular2SourceDirective
+import com.intellij.util.asSafely
 
-class Angular2HostDirectivesResolver(private val directive: Angular2Directive) {
+class Angular2HostDirectivesResolver(private val directive: Angular2DirectiveWithHostDirectives) {
 
   val hostDirectives: Collection<Angular2HostDirective> get() = resolveHostDirectives().hostDirectives
 
@@ -21,7 +20,6 @@ class Angular2HostDirectivesResolver(private val directive: Angular2Directive) {
     CachedValuesManager.getManager(directive.sourceElement.project).getCachedValue(directive as UserDataHolder) {
       CachedValueProvider.Result.create(collectAll(), PsiModificationTracker.MODIFICATION_COUNT)
     }
-
 
   private fun collectAll(): CollectedResults {
     val hostDirectives = SmartList<Angular2HostDirective>()
@@ -45,25 +43,21 @@ class Angular2HostDirectivesResolver(private val directive: Angular2Directive) {
   }
 
   private val Angular2Directive.directHostDirectivesSet
-    get() =
-      when (this) {
-        is Angular2IvyDirective -> directHostDirectivesSet
-        is Angular2SourceDirective -> directHostDirectivesSet
-        else -> Angular2ResolvedSymbolsSet.createResult(emptySet<Angular2HostDirective>(), true, emptySet<Any>()).value
-      }
+    get() = asSafely<Angular2DirectiveWithHostDirectives>()?.directHostDirectivesSet
+            ?: Angular2ResolvedSymbolsSet.createResult(emptySet<Angular2HostDirective>(), true, emptySet<Any>()).value
 
   private val Angular2Directive.directExportAs
-    get() =
-      when (this) {
-        is Angular2IvyDirective -> directExportAs
-        is Angular2SourceDirective -> directExportAs
-        else -> exportAs
-      }
+    get() = asSafely<Angular2DirectiveWithHostDirectives>()?.directExportAs ?: exportAs
 
   private data class CollectedResults(
     val hostDirectives: Collection<Angular2HostDirective>,
     val hostDirectivesFullyResolved: Boolean,
     val exportAs: Map<String, Angular2DirectiveExportAs>,
   )
+
+  interface Angular2DirectiveWithHostDirectives : Angular2Directive {
+    val directExportAs: Map<String, Angular2DirectiveExportAs>
+    val directHostDirectivesSet: Angular2ResolvedSymbolsSet<Angular2HostDirective>
+  }
 
 }
