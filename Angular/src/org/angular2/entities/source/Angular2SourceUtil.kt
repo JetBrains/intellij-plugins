@@ -1,17 +1,22 @@
 package org.angular2.entities.source
 
+import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.JSStringUtil
-import com.intellij.lang.javascript.psi.JSLiteralExpression
-import com.intellij.lang.javascript.psi.JSProperty
+import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.impl.JSPropertyImpl
+import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.impl.FakePsiElement
 import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.util.AstLoadingFilter
 import com.intellij.util.SmartList
+import com.intellij.util.asSafely
 import org.angular2.Angular2DecoratorUtil
+import org.angular2.Angular2InjectionUtils
+import org.angular2.codeInsight.refs.Angular2TemplateReferencesProvider
 import org.angular2.entities.Angular2DirectiveSelector
 import org.angular2.entities.Angular2DirectiveSelectorImpl
 import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector
@@ -65,6 +70,120 @@ object Angular2SourceUtil {
       }
     }
     return Angular2DirectiveSelectorImpl(propertyOwner, value, null)
+  }
+
+  fun findCssFiles(property: JSProperty?, directRefs: Boolean): Sequence<PsiFile> {
+    if (property == null) {
+      return emptySequence()
+    }
+    // TODO need stubbed references
+    if (directRefs) { // styles property can contain references to CSS files imported through import statements
+      val stub = (property as JSPropertyImpl).stub
+      if (stub != null) {
+        return stub.childrenStubs
+          .asSequence()
+          .map { it.psi }
+          .filterIsInstance<JSExpression>()
+          .mapNotNull { getReferencedFileFromStub(it, directRefs) }
+      }
+    }
+    return AstLoadingFilter.forceAllowTreeLoading<Sequence<PsiFile>, RuntimeException>(property.containingFile) {
+      property.value
+        .asSafely<JSArrayLiteralExpression>()
+        ?.expressions
+        ?.asSequence()
+        ?.mapNotNull { getReferencedFileFromPsi(it, directRefs) }
+      ?: emptySequence()
+    }
+  }
+
+  @StubSafe
+  fun getReferencedFile(property: JSProperty?, directRefs: Boolean): PsiFile? {
+    if (property == null) {
+      return null
+    }
+    // TODO need stubbed references
+    if (directRefs) { // template property can contain references to HTML files imported through import statements
+      val stub = (property as JSPropertyImpl).stub
+      if (stub != null) {
+        return getReferencedFileFromStub(stub.childrenStubs.firstNotNullOfOrNull { it.psi as? JSExpression }, directRefs)
+      }
+    }
+    return AstLoadingFilter.forceAllowTreeLoading<PsiFile, RuntimeException>(property.containingFile) {
+      getReferencedFileFromPsi(property.value, directRefs)
+    }
+  }
+
+
+  @StubSafe
+  private fun getReferencedFileFromStub(stubbedExpression: JSExpression?, directRefs: Boolean): PsiFile? {
+    val literal = if (!directRefs && stubbedExpression is JSCallExpression && stubbedExpression.isRequireCall) {
+      JSStubBasedPsiTreeUtil.findRequireCallArgument((stubbedExpression as JSCallExpression?)!!)
+    }
+                  else {
+      stubbedExpression
+    } as? JSLiteralExpression ?: return null
+
+    val url = literal.significantValue ?: return null
+    val fakeUrlElement = FakeStringLiteral(literal, url)
+    for (ref in Angular2TemplateReferencesProvider.Angular2SoftFileReferenceSet(fakeUrlElement).allReferences) {
+      ref.resolve()
+        .asSafely<PsiFile>()
+        ?.let { return it }
+    }
+    return null
+  }
+
+  @StubUnsafe
+  private fun getReferencedFileFromPsi(expression: JSExpression?, directRefs: Boolean): PsiFile? {
+    expression ?: return null
+    if (!directRefs) {
+      Angular2InjectionUtils.getFirstInjectedFile(expression)
+        ?.let { return it }
+    }
+    val expressionToCheck: JSExpression
+    val actualDirectRefs: Boolean
+    if (expression is JSCallExpression) {
+      val args = expression.arguments
+      if (args.size == 1) {
+        expressionToCheck = args[0]
+        actualDirectRefs = true
+      }
+      else {
+        return null
+      }
+    }
+    else {
+      expressionToCheck = expression
+      actualDirectRefs = directRefs
+    }
+    for (ref in expressionToCheck.references) {
+      val el = ref.resolve()
+      if (actualDirectRefs) {
+        if (el is PsiFile) {
+          return el
+        }
+      }
+      else if (el is ES6ImportedBinding) {
+        for (importedElement in el.findReferencedElements()) {
+          if (importedElement is PsiFile) {
+            return importedElement
+          }
+        }
+      }
+    }
+    return null
+  }
+
+  private class FakeStringLiteral(private val myParent: PsiElement, value: String) : FakePsiElement() {
+    private val myValue: String = StringUtil.unquoteString(value)
+    override fun getParent(): PsiElement = myParent
+    override fun getText(): String = myValue
+    override fun getTextLength(): Int = myValue.length
+
+    override fun getStartOffsetInParent(): Int {
+      throw IllegalStateException()
+    }
   }
 
 }
