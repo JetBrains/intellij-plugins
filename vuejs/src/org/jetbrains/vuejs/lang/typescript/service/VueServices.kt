@@ -24,7 +24,7 @@ private fun isTypeScriptServiceBefore5Context(project: Project): Boolean {
   val path = getTypeScriptServiceDirectory(project)
 
   val packageJson = TypeScriptServerState.getPackageJsonFromServicePath(path)
-  if (packageJson == null) return true
+  if (packageJson == null) return false // Nuxt doesn't have correct TS detection. Let's assume TS 5+
   val version = PackageJsonData.getOrCreate(packageJson).version ?: return true
   return version.major < 5
 }
