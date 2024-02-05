@@ -7,9 +7,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
-import com.intellij.lang.javascript.psi.impl.JSPropertyImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
-import com.intellij.lang.javascript.psi.types.JSBooleanLiteralTypeImpl
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser
 import com.intellij.lang.javascript.psi.util.JSClassUtils
 import com.intellij.lang.javascript.psi.util.getStubSafeChildren
@@ -17,8 +15,6 @@ import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
 import com.intellij.lang.javascript.psi.util.stubSafeStringValue
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.Ref
-import com.intellij.openapi.util.TextRange
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
@@ -26,13 +22,10 @@ import com.intellij.util.AstLoadingFilter
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import org.angular2.Angular2DecoratorUtil
-import org.angular2.Angular2DecoratorUtil.ALIAS_PROP
 import org.angular2.Angular2DecoratorUtil.HOST_DIRECTIVES_PROP
 import org.angular2.Angular2DecoratorUtil.INPUT_DEC
 import org.angular2.Angular2DecoratorUtil.INPUT_FUN
-import org.angular2.Angular2DecoratorUtil.NAME_PROP
 import org.angular2.Angular2DecoratorUtil.OUTPUT_DEC
-import org.angular2.Angular2DecoratorUtil.REQUIRED_PROP
 import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver
 import org.angular2.entities.*
 import org.angular2.entities.Angular2EntityUtils.ELEMENT_REF
@@ -43,7 +36,8 @@ import org.angular2.entities.ivy.Angular2IvyUtil.getIvyEntity
 import org.angular2.entities.ivy.Angular2IvyUtil.withJsonMetadataFallback
 import org.angular2.entities.metadata.Angular2MetadataUtil
 import org.angular2.entities.source.Angular2SourceUtil.getExportAs
-import org.angular2.index.getFunctionNameFromIndex
+import org.angular2.entities.source.Angular2SourceUtil.parseInputObjectLiteral
+import org.angular2.entities.source.Angular2SourceUtil.readDirectivePropertyMappings
 import org.angular2.index.isStringArgStubbed
 import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
@@ -175,47 +169,6 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
 
   companion object {
 
-    @JvmStatic
-    internal fun readDirectivePropertyMappings(jsProperty: JSProperty?): MutableMap<String, Angular2PropertyInfo> {
-      if (jsProperty == null) return LinkedHashMap()
-
-      val items = (jsProperty as JSPropertyImpl).stub?.childrenStubs?.asSequence()?.mapNotNull { it.psi }
-                  ?: jsProperty.value.asSafely<JSArrayLiteralExpression>()?.expressions?.asSequence()
-                  ?: emptySequence()
-
-      return items
-        .mapNotNull {
-          when (val expr = it) {
-            is JSLiteralExpression ->
-              Angular2EntityUtils.parsePropertyMapping(expr.stubSafeStringValue ?: return@mapNotNull null, expr)
-            is JSObjectLiteralExpression -> {
-              val name = expr.findProperty(NAME_PROP)?.literalExpressionInitializer?.stubSafeStringValue
-                         ?: return@mapNotNull null
-              Pair(name, parseInputObjectLiteral(expr, name))
-            }
-            else -> null
-          }
-        }
-        .filter { it.second.name.isNotBlank() }
-        .toMap(LinkedHashMap())
-    }
-
-    @JvmStatic
-    internal fun getPropertySources(property: PsiElement?): List<JSAttributeListOwner> {
-      if (property is TypeScriptFunction) {
-        if (!property.isSetProperty && !property.isGetProperty) {
-          return listOf(property)
-        }
-        val result = mutableListOf<JSAttributeListOwner>(property)
-        Angular2ReferenceExpressionResolver.findPropertyAccessor(property, property.isGetProperty) { result.add(it) }
-        return result
-      }
-      else if (property is JSAttributeListOwner) {
-        return listOf(property)
-      }
-      return emptyList()
-    }
-
     private fun processProperty(sourceClass: TypeScriptClass,
                                 property: JSRecordType.PropertySignature,
                                 field: JSAttributeListOwner,
@@ -233,7 +186,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
         ?: field.asSafely<TypeScriptField>()
           ?.initializerOrStub
           ?.asSafely<JSCallExpression>()
-          ?.let { createPropertyInfo(it, functionName, property.memberName) }
+          ?.let { Angular2SourceUtil.createPropertyInfo(it, functionName, property.memberName) }
       if (info != null) {
         result.putIfAbsent(info.name, Angular2SourceDirectiveProperty.create(sourceClass, property, qualifiedKind, info))
       }
@@ -289,17 +242,20 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
       return if (result.isNull) Angular2DirectiveKind.REGULAR else result.get()
     }
 
-
-    private fun parseInputObjectLiteral(expr: JSObjectLiteralExpression, name: String): Angular2PropertyInfo {
-      val aliasLiteral = expr.findProperty(ALIAS_PROP)?.literalExpressionInitializer
-      val alias = aliasLiteral?.stubSafeStringValue
-      return Angular2PropertyInfo(
-        alias ?: name,
-        expr.findProperty(REQUIRED_PROP)?.jsType?.asSafely<JSBooleanLiteralTypeImpl>()?.literal == true,
-        expr,
-        aliasLiteral,
-        declarationRange = if (alias != null) TextRange(1, 1 + alias.length) else null
-      )
+    @JvmStatic
+    internal fun getPropertySources(property: PsiElement?): List<JSAttributeListOwner> {
+      if (property is TypeScriptFunction) {
+        if (!property.isSetProperty && !property.isGetProperty) {
+          return listOf(property)
+        }
+        val result = mutableListOf<JSAttributeListOwner>(property)
+        Angular2ReferenceExpressionResolver.findPropertyAccessor(property, property.isGetProperty) { result.add(it) }
+        return result
+      }
+      else if (property is JSAttributeListOwner) {
+        return listOf(property)
+      }
+      return emptyList()
     }
 
     private fun createPropertyInfo(decorator: ES6Decorator, defaultName: String): Angular2PropertyInfo =
@@ -310,32 +266,6 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
         }
         else -> Angular2PropertyInfo(defaultName, false, decorator, declaringElement = null)
       }
-
-    private fun createPropertyInfo(call: JSCallExpression, functionName: String?, defaultName: String): Angular2PropertyInfo? {
-      if (functionName == null) return null
-      val referenceNames = getFunctionNameFromIndex(call)
-                             ?.split('.')
-                             ?.takeIf { it.getOrNull(0) == functionName }
-                           ?: return null
-      return when (referenceNames.size) {
-        1 -> {
-          call.stubSafeCallArguments.lastOrNull().asSafely<JSObjectLiteralExpression>()
-            ?.let { parseInputObjectLiteral(it, defaultName) }
-            ?.copy(required = false)
-          ?: Angular2PropertyInfo(defaultName, false, call, declaringElement = null)
-        }
-        2 -> {
-          if (referenceNames[1] == REQUIRED_PROP) {
-            call.stubSafeCallArguments.lastOrNull().asSafely<JSObjectLiteralExpression>()
-              ?.let { parseInputObjectLiteral(it, defaultName) }
-              ?.copy(required = true)
-            ?: Angular2PropertyInfo(defaultName, true, call, declaringElement = null)
-          }
-          else null
-        }
-        else -> null
-      }
-    }
 
   }
 }

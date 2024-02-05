@@ -4,7 +4,10 @@ import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.JSStringUtil
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.impl.JSPropertyImpl
+import com.intellij.lang.javascript.psi.types.JSBooleanLiteralTypeImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
+import com.intellij.lang.javascript.psi.util.stubSafeStringValue
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
@@ -17,16 +20,15 @@ import com.intellij.util.asSafely
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2InjectionUtils
 import org.angular2.codeInsight.refs.Angular2TemplateReferencesProvider
-import org.angular2.entities.Angular2Directive
-import org.angular2.entities.Angular2DirectiveExportAs
-import org.angular2.entities.Angular2DirectiveSelector
-import org.angular2.entities.Angular2DirectiveSelectorImpl
+import org.angular2.entities.*
+import org.angular2.index.getFunctionNameFromIndex
 import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector
 import org.angular2.lang.html.psi.Angular2HtmlRecursiveElementWalkingVisitor
 import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes
 
 object Angular2SourceUtil {
 
+  @JvmStatic
   fun getNgContentSelectors(template: PsiFile?): List<Angular2DirectiveSelector> =
     if (template is PsiFileImpl) {
       val result = SmartList<Angular2DirectiveSelector>()
@@ -50,6 +52,7 @@ object Angular2SourceUtil {
     else
       emptyList()
 
+  @JvmStatic
   fun getComponentSelector(propertyOwner: PsiElement, property: JSProperty?): Angular2DirectiveSelector {
     var value: String? = null
     if (property != null) {
@@ -74,6 +77,7 @@ object Angular2SourceUtil {
     return Angular2DirectiveSelectorImpl(propertyOwner, value, null)
   }
 
+  @JvmStatic
   fun getExportAs(directive: Angular2Directive, property: JSProperty?): Map<String, Angular2DirectiveExportAs> {
     val propertyValue = property?.value
     return if (propertyValue is JSLiteralExpression && propertyValue.isQuotedLiteral) {
@@ -101,6 +105,7 @@ object Angular2SourceUtil {
     }
   }
 
+  @JvmStatic
   fun findCssFiles(property: JSProperty?, directRefs: Boolean): Sequence<PsiFile> {
     if (property == null) {
       return emptySequence()
@@ -127,6 +132,7 @@ object Angular2SourceUtil {
   }
 
   @StubSafe
+  @JvmStatic
   fun getReferencedFile(property: JSProperty?, directRefs: Boolean): PsiFile? {
     if (property == null) {
       return null
@@ -141,6 +147,71 @@ object Angular2SourceUtil {
     return AstLoadingFilter.forceAllowTreeLoading<PsiFile, RuntimeException>(property.containingFile) {
       getReferencedFileFromPsi(property.value, directRefs)
     }
+  }
+
+  @JvmStatic
+  fun readDirectivePropertyMappings(jsProperty: JSProperty?): MutableMap<String, Angular2PropertyInfo> {
+    if (jsProperty == null) return LinkedHashMap()
+
+    val items = (jsProperty as JSPropertyImpl).stub?.childrenStubs?.asSequence()?.mapNotNull { it.psi }
+                ?: jsProperty.value.asSafely<JSArrayLiteralExpression>()?.expressions?.asSequence()
+                ?: emptySequence()
+
+    return items
+      .mapNotNull {
+        when (val expr = it) {
+          is JSLiteralExpression ->
+            Angular2EntityUtils.parsePropertyMapping(expr.stubSafeStringValue ?: return@mapNotNull null, expr)
+          is JSObjectLiteralExpression -> {
+            val name = expr.findProperty(Angular2DecoratorUtil.NAME_PROP)?.literalExpressionInitializer?.stubSafeStringValue
+                       ?: return@mapNotNull null
+            Pair(name, parseInputObjectLiteral(expr, name))
+          }
+          else -> null
+        }
+      }
+      .filter { it.second.name.isNotBlank() }
+      .toMap(LinkedHashMap())
+  }
+
+  @JvmStatic
+  fun createPropertyInfo(call: JSCallExpression, functionName: String?, defaultName: String): Angular2PropertyInfo? {
+    if (functionName == null) return null
+    val referenceNames = getFunctionNameFromIndex(call)
+                           ?.split('.')
+                           ?.takeIf { it.getOrNull(0) == functionName }
+                         ?: return null
+    return when (referenceNames.size) {
+      1 -> {
+        call.stubSafeCallArguments.lastOrNull().asSafely<JSObjectLiteralExpression>()
+          ?.let { parseInputObjectLiteral(it, defaultName) }
+          ?.copy(required = false)
+        ?: Angular2PropertyInfo(defaultName, false, call, declaringElement = null)
+      }
+      2 -> {
+        if (referenceNames[1] == Angular2DecoratorUtil.REQUIRED_PROP) {
+          call.stubSafeCallArguments.lastOrNull().asSafely<JSObjectLiteralExpression>()
+            ?.let { parseInputObjectLiteral(it, defaultName) }
+            ?.copy(required = true)
+          ?: Angular2PropertyInfo(defaultName, true, call, declaringElement = null)
+        }
+        else null
+      }
+      else -> null
+    }
+  }
+
+  @JvmStatic
+  fun parseInputObjectLiteral(expr: JSObjectLiteralExpression, name: String): Angular2PropertyInfo {
+    val aliasLiteral = expr.findProperty(Angular2DecoratorUtil.ALIAS_PROP)?.literalExpressionInitializer
+    val alias = aliasLiteral?.stubSafeStringValue
+    return Angular2PropertyInfo(
+      alias ?: name,
+      expr.findProperty(Angular2DecoratorUtil.REQUIRED_PROP)?.jsType?.asSafely<JSBooleanLiteralTypeImpl>()?.literal == true,
+      expr,
+      aliasLiteral,
+      declarationRange = if (alias != null) TextRange(1, 1 + alias.length) else null
+    )
   }
 
 

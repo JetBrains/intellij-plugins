@@ -11,7 +11,7 @@ import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
 import org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP
 import org.angular2.entities.*
-import org.angular2.entities.source.Angular2SourceDirective.Companion.readDirectivePropertyMappings
+import org.angular2.entities.source.Angular2SourceUtil.readDirectivePropertyMappings
 import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 
