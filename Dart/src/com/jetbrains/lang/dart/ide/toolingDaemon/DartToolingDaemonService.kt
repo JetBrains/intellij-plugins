@@ -127,10 +127,11 @@ class DartToolingDaemonService private constructor(private val project: Project)
           listener.received(params["streamId"].asString, json)
         }
       }
-
-      val id = json["id"].asString
-      val consumer = consumerMap.remove(id)
-      consumer?.received(json)
+      else {
+        val id = json["id"].asString
+        val consumer = consumerMap.remove(id)
+        consumer?.received(json)
+      }
     }
 
     override fun onClose() {}
