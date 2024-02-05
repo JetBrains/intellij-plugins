@@ -1,6 +1,7 @@
 package org.angular2.entities.ivy
 
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
@@ -13,6 +14,9 @@ import org.angular2.index.*
 import java.util.function.Consumer
 
 class Angular2IvyEntitiesSource : Angular2EntitiesSource {
+
+  override fun getSupportedEntityPsiElements(): List<Class<out PsiElement>> =
+    listOf(TypeScriptClass::class.java, TypeScriptField::class.java)
 
   override fun getEntity(element: PsiElement): Angular2Entity? =
     Angular2IvyUtil.withJsonMetadataFallback(
@@ -30,7 +34,7 @@ class Angular2IvyEntitiesSource : Angular2EntitiesSource {
   override fun getAllPipeNames(project: Project): Collection<String> =
     Angular2IndexUtil.getAllKeys(Angular2IvyPipeIndexKey, project)
 
-  override fun findDirectivesCandidates(project: Project, indexLookupName: String): List<Angular2Directive> {
+  override fun findDirectiveCandidates(project: Project, indexLookupName: String): List<Angular2Directive> {
     val result = ArrayList<Angular2Directive>()
     processIvyEntities(project, indexLookupName, Angular2IvyDirectiveIndexKey, Angular2Directive::class.java) { result.add(it) }
     return result

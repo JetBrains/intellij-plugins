@@ -16,6 +16,9 @@ import java.util.function.Consumer
 
 class Angular2MetadataEntitiesSource : Angular2EntitiesSource {
 
+  override fun getSupportedEntityPsiElements(): List<Class<out PsiElement>> =
+    emptyList()
+
   override fun getEntity(element: PsiElement): Angular2Entity? =
   // The metadata entity is acquired by Angular2IvyEntitiesSource
     // in a fallback mode
@@ -31,7 +34,7 @@ class Angular2MetadataEntitiesSource : Angular2EntitiesSource {
   override fun getAllPipeNames(project: Project): Collection<String> =
     Angular2IndexUtil.getAllKeys(Angular2MetadataPipeIndexKey, project)
 
-  override fun findDirectivesCandidates(project: Project, indexLookupName: String): List<Angular2Directive> {
+  override fun findDirectiveCandidates(project: Project, indexLookupName: String): List<Angular2Directive> {
     val result = ArrayList<Angular2Directive>()
     processMetadataEntities(project, indexLookupName, Angular2MetadataDirectiveBase::class.java,
                             Angular2MetadataDirectiveIndexKey) { result.add(it) }

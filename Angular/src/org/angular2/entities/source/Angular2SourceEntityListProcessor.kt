@@ -40,8 +40,7 @@ abstract class Angular2SourceEntityListProcessor<T : Angular2Entity>(private val
 
   private val myAcceptNgModuleWithProviders: Boolean = myAcceptableEntityClass.isAssignableFrom(Angular2Module::class.java)
 
-  protected //it's ok, if array does not have any children
-  val resultsVisitor: JSElementVisitor = object : JSElementVisitor() {
+  protected val resultsVisitor: JSElementVisitor = object : JSElementVisitor() {
     override fun visitJSClass(aClass: JSClass) {
       val entity = getAcceptableEntity(aClass)
       if (entity != null) {
@@ -62,8 +61,14 @@ abstract class Angular2SourceEntityListProcessor<T : Angular2Entity>(private val
       resolveFunctionReturnType(node)
     }
 
-    override fun visitJSElement(node: JSElement) {
-      processAnyElement(node)
+    override fun visitElement(node: PsiElement) {
+      val entity = getAcceptableEntity(node)
+      if (entity != null) {
+        processAcceptableEntity(entity)
+      }
+      else {
+        processAnyElement(node)
+      }
     }
   }
 
@@ -84,7 +89,8 @@ abstract class Angular2SourceEntityListProcessor<T : Angular2Entity>(private val
           AstLoadingFilter.forceAllowTreeLoading<RuntimeException>(node.containingFile) {
             addIfNotNull(result, node.findProperty(NG_MODULE_PROP)?.value)
           }
-        } else {
+        }
+        else {
           super.visitJSObjectLiteralExpression(node)
         }
       }
@@ -177,7 +183,7 @@ abstract class Angular2SourceEntityListProcessor<T : Angular2Entity>(private val
 
   }
 
-  protected open fun processAnyElement(node: JSElement) {
+  protected open fun processAnyElement(node: PsiElement) {
 
   }
 
@@ -188,8 +194,8 @@ abstract class Angular2SourceEntityListProcessor<T : Angular2Entity>(private val
 
   }
 
-  private fun getAcceptableEntity(aClass: JSClass): T? {
-    return tryCast(Angular2EntitiesProvider.getEntity(aClass), myAcceptableEntityClass)
+  private fun getAcceptableEntity(element: PsiElement): T? {
+    return tryCast(Angular2EntitiesProvider.getEntity(element), myAcceptableEntityClass)
   }
 
   private fun resolveFunctionReturnType(function: JSFunction) {

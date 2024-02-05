@@ -28,16 +28,16 @@ import java.util.concurrent.ConcurrentHashMap
 object Angular2EntitiesProvider {
 
   private val EP_NAME = ExtensionPointName<Angular2EntitiesSource>("org.angular2.entitiesSource")
-  private val entitiesSources get() = EP_NAME.extensionList.asSequence()
+  private val entitySources get() = EP_NAME.extensionList.asSequence()
 
   const val TRANSFORM_METHOD = "transform"
 
   @JvmStatic
   fun getEntity(element: PsiElement?): Angular2Entity? =
-    if (element == null)
+    if (element == null || !isSupportedEntityClass(element::class.java))
       null
     else
-      entitiesSources.firstNotNullOfOrNull { it.getEntity(element) }
+      entitySources.firstNotNullOfOrNull { it.getEntity(element) }
 
   @JvmStatic
   fun getDeclaration(element: PsiElement?): Angular2Declaration? =
@@ -77,7 +77,7 @@ object Angular2EntitiesProvider {
 
   @JvmStatic
   fun findPipes(project: Project, name: String): List<Angular2Pipe> =
-    entitiesSources.flatMap { it.findPipes(project, name) }.toList()
+    entitySources.flatMap { it.findPipes(project, name) }.toList()
 
   @JvmStatic
   fun getAllElementDirectives(project: Project): Map<String, List<Angular2Directive>> =
@@ -107,7 +107,7 @@ object Angular2EntitiesProvider {
   fun getAllPipes(project: Project): Map<String, List<Angular2Pipe>> =
     CachedValuesManager.getManager(project).getCachedValue(project) {
       create(
-        entitiesSources
+        entitySources
           .flatMap { it.getAllPipeNames(project) }
           .distinct()
           .associateBy({ it }, { findPipes(project, it) }),
@@ -141,7 +141,7 @@ object Angular2EntitiesProvider {
   @JvmStatic
   fun getAllModules(project: Project): List<Angular2Module> {
     return CachedValuesManager.getManager(project).getCachedValue(project) {
-      create(entitiesSources.flatMap { it.getAllModules(project) }.toList(),
+      create(entitySources.flatMap { it.getAllModules(project) }.toList(),
              PsiModificationTracker.MODIFICATION_COUNT)
     }
   }
@@ -157,6 +157,13 @@ object Angular2EntitiesProvider {
              PsiModificationTracker.MODIFICATION_COUNT,
              VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
     }.computeIfAbsent(indexLookupName) {
-      entitiesSources.flatMap { it.findDirectivesCandidates(project, indexLookupName) }.toList()
+      entitySources.flatMap { it.findDirectiveCandidates(project, indexLookupName) }.toList()
     }
+
+  private fun isSupportedEntityClass(cls: Class<out PsiElement>): Boolean {
+    val supportedClasses = EP_NAME.computeIfAbsent(Angular2EntitiesProvider::class.java) {
+      EP_NAME.extensionList.flatMap { it.getSupportedEntityPsiElements() }.toSet()
+    }
+    return supportedClasses.any { it.isAssignableFrom(cls) }
+  }
 }

@@ -4,13 +4,13 @@ package org.angular2.inspections
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.lang.javascript.highlighting.TypeScriptHighlighter
-import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSElementVisitor
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.validation.JSTooltipWithHtmlHighlighter
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import org.angular2.Angular2DecoratorUtil.BOOTSTRAP_PROP
 import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
@@ -77,7 +77,7 @@ class AngularInvalidEntryComponentInspection : LocalInspectionTool() {
                                                  aClass.htmlName))
     }
 
-    override fun processAnyElement(node: JSElement) {
+    override fun processAnyElement(node: PsiElement) {
       registerProblem(ProblemType.INVALID_ENTRY_COMPONENT,
                       Angular2Bundle.message("angular.inspection.invalid-entry-component.message.not-array-of-class-types"))
     }

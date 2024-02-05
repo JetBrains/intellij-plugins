@@ -202,7 +202,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
       : Result<Angular2ResolvedSymbolsSet<Angular2HostDirective>> =
       Angular2ResolvedSymbolsSet.createResult(result, isFullyResolved, dependencies)
 
-    override fun processAnyElement(node: JSElement) {
+    override fun processAnyElement(node: PsiElement) {
       if (node is JSObjectLiteralExpression)
         result.add(Angular2SourceHostDirectiveWithMappings(node))
       else
