@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.service
 import com.intellij.lang.javascript.JSAbstractDocumentationTest
 import com.intellij.openapi.util.registry.RegistryManager
 import com.intellij.platform.lsp.tests.waitUntilFileOpenedByLspServer
+import com.intellij.webSymbols.checkDocumentationAtCaret
 import org.jetbrains.vuejs.lang.VueInspectionsProvider
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
@@ -37,9 +38,13 @@ class VolarServiceDocumentationTest : VolarServiceTestBase() {
 
   fun testRefUnwrapping() = defaultQuickNavigateTest()
 
+  fun testDefineEmits() {
+    defaultDocTest()
+  }
+
   // todo test injected interpolations after implementing support for them
 
-  private fun defaultQuickNavigateTest(directory: Boolean = false) {
+  private fun defaultQuickNavigateTest() {
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
 
@@ -50,5 +55,16 @@ class VolarServiceDocumentationTest : VolarServiceTestBase() {
 
     val doc = JSAbstractDocumentationTest.getQuickNavigateText(myFixture)
     JSAbstractDocumentationTest.checkExpected(doc, testDataPath + "/" + getTestName(false) + ".expected.html")
+  }
+
+  private fun defaultDocTest() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_4_0)
+
+    myFixture.addFileToProject("tsconfig.json", tsconfig)
+    myFixture.configureByFile(getTestName(false) + "." + extension)
+    waitUntilFileOpenedByLspServer(project, file.virtualFile)
+    assertCorrectService()
+
+    myFixture.checkDocumentationAtCaret()
   }
 }
