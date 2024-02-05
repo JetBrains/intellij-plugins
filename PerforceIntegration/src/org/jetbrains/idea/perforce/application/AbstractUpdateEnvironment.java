@@ -129,6 +129,7 @@ abstract class AbstractUpdateEnvironment implements UpdateEnvironment {
 
         try {
           final PerforceClient client = perforceManager.getClient(connection);
+          // todo: try to find common parent dirs to execute cmd
           for (FilePath path : map.get(connection)) {
             P4File p4Dir = P4File.create(path);
             final ExecResult execResult = performUpdate(p4Dir, settings);

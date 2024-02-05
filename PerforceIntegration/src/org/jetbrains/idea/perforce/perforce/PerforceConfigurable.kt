@@ -2,7 +2,11 @@ package org.jetbrains.idea.perforce.perforce
 
 import com.intellij.ide.actions.RevealFileAction
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.EDT
+import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.application.asContextElement
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
+import com.intellij.openapi.observable.util.whenDisposed
 import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
@@ -15,6 +19,7 @@ import com.intellij.openapi.vcs.VcsException
 import com.intellij.openapi.vcs.ex.ProjectLevelVcsManagerEx
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.platform.util.coroutines.childScope
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBRadioButton
@@ -25,6 +30,7 @@ import com.intellij.ui.dsl.builder.Row
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.listCellRenderer.textListCellRenderer
 import com.intellij.ui.layout.*
+import kotlinx.coroutines.*
 import org.jetbrains.idea.perforce.PerforceBundle
 import org.jetbrains.idea.perforce.application.*
 import org.jetbrains.idea.perforce.perforce.connections.*
@@ -47,7 +53,7 @@ private const val CHARSET_utf8: @NlsSafe String = "utf8"
 private val charsetValues = listOf(CHARSET_NONE, CHARSET_ISO8859_1, CHARSET_ISO8859_15, CHARSET_eucjp,
                                    CHARSET_eucjp, CHARSET_shiftjis, CHARSET_winansi, CHARSET_macosroman, CHARSET_utf8)
 
-private class PerforceConfigPanel(private val myProject: Project, private val myDisposable: Disposable) {
+private class PerforceConfigPanel(private val myProject: Project, private val myDisposable: Disposable, private val cs: CoroutineScope) {
   private val myP4EnvHelper = P4EnvHelper.getConfigHelper(myProject)
   private val mySettings = PerforceSettings.getSettings(myProject)
 
@@ -101,6 +107,9 @@ private class PerforceConfigPanel(private val myProject: Project, private val my
   }
 
   fun createPanel(): DialogPanel = panel {
+    myDisposable.whenDisposed {
+      cs.cancel()
+    }
     if (!myProject.isDefault) {
       row { checkBox(PerforceBundle.message("checkbox.configure.perforce.is.enabled"))
         .bindSelected({ mySettings.ENABLED }, {
@@ -174,14 +183,11 @@ private class PerforceConfigPanel(private val myProject: Project, private val my
     }
 
     onReset {
-      myP4EnvHelper.reset()
-      updateLabels()
+      updateEnv()
     }
 
     onApply {
-      myP4EnvHelper.reset()
-      ProjectLevelVcsManagerEx.getInstanceEx(myProject).scheduleMappedRootsUpdate()
-      updateLabels()
+      updateEnv(true)
     }
   }
 
@@ -287,8 +293,18 @@ private class PerforceConfigPanel(private val myProject: Project, private val my
       PerforceConnectionManager.getInstance(myProject).updateConnections()
     }
 
-    myP4EnvHelper.reset()
     updateLabels()
+  }
+
+  private fun updateEnv(mappedRootsUpdate: Boolean = false) {
+    cs.launch(ModalityState.current().asContextElement()) {
+      myP4EnvHelper.reset()
+      withContext(Dispatchers.EDT) {
+        if (mappedRootsUpdate)
+          ProjectLevelVcsManagerEx.getInstanceEx(myProject).scheduleMappedRootsUpdate()
+        updateLabels()
+      }
+    }
   }
 
   private fun showCancelledConnectionDialog() {
@@ -475,8 +491,8 @@ private class PerforceConfigPanel(private val myProject: Project, private val my
   }
 }
 
-internal class PerforceConfigurable(val myProject: Project) :
+internal class PerforceConfigurable(val myProject: Project, private val cs: CoroutineScope) :
   BoundConfigurable(PerforceVcs.NAME, "project.propVCSSupport.VCSs.Perforce") {
 
-  override fun createPanel(): DialogPanel = PerforceConfigPanel(myProject, disposable!!).createPanel()
+  override fun createPanel(): DialogPanel = PerforceConfigPanel(myProject, disposable!!, cs.childScope(CoroutineName("PerforceConfigPanel"))).createPanel()
 }
