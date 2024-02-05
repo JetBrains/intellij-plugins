@@ -1,12 +1,17 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities
 
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.openapi.util.UserDataHolder
+import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.SmartList
 import com.intellij.util.asSafely
+import org.angular2.entities.source.Angular2SourceHostDirectiveWithMappings
+import org.angular2.entities.source.Angular2SourceHostDirectiveWithoutMappings
+import org.angular2.entities.source.Angular2SourceSymbolCollectorBase
 
 class Angular2HostDirectivesResolver(private val directive: Angular2DirectiveWithHostDirectives) {
 
@@ -58,6 +63,28 @@ class Angular2HostDirectivesResolver(private val directive: Angular2DirectiveWit
   interface Angular2DirectiveWithHostDirectives : Angular2Directive {
     val directExportAs: Map<String, Angular2DirectiveExportAs>
     val directHostDirectivesSet: Angular2ResolvedSymbolsSet<Angular2HostDirective>
+  }
+
+  class HostDirectivesCollector(source: PsiElement)
+    : Angular2SourceSymbolCollectorBase<Angular2Directive, Angular2ResolvedSymbolsSet<Angular2HostDirective>>(
+    Angular2Directive::class.java, source) {
+
+    private val result = mutableSetOf<Angular2HostDirective>()
+
+    override fun createResult(isFullyResolved: Boolean, dependencies: Set<PsiElement>)
+      : CachedValueProvider.Result<Angular2ResolvedSymbolsSet<Angular2HostDirective>> =
+      Angular2ResolvedSymbolsSet.createResult(result, isFullyResolved, dependencies)
+
+    override fun processAnyElement(node: PsiElement) {
+      if (node is JSObjectLiteralExpression)
+        result.add(Angular2SourceHostDirectiveWithMappings(node))
+      else
+        super.processAnyElement(node)
+    }
+
+    override fun processAcceptableEntity(entity: Angular2Directive) {
+      result.add(Angular2SourceHostDirectiveWithoutMappings(entity))
+    }
   }
 
 }
