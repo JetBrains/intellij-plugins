@@ -38,6 +38,7 @@ import org.angular2.entities.metadata.Angular2MetadataUtil
 import org.angular2.entities.source.Angular2SourceUtil.getExportAs
 import org.angular2.entities.source.Angular2SourceUtil.parseInputObjectLiteral
 import org.angular2.entities.source.Angular2SourceUtil.readDirectivePropertyMappings
+import org.angular2.index.getFunctionNameFromIndex
 import org.angular2.index.isStringArgStubbed
 import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
@@ -186,7 +187,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
         ?: field.asSafely<TypeScriptField>()
           ?.initializerOrStub
           ?.asSafely<JSCallExpression>()
-          ?.let { Angular2SourceUtil.createPropertyInfo(it, functionName, property.memberName) }
+          ?.let { Angular2SourceUtil.createPropertyInfo(it, functionName, property.memberName, ::getFunctionNameFromIndex) }
       if (info != null) {
         result.putIfAbsent(info.name, Angular2SourceDirectiveProperty.create(sourceClass, property, qualifiedKind, info))
       }
