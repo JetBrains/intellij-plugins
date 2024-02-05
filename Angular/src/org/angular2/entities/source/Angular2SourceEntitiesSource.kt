@@ -18,6 +18,9 @@ import org.angular2.index.*
 
 class Angular2SourceEntitiesSource : Angular2EntitiesSource {
 
+  override fun getSupportedEntityPsiElements(): List<Class<out PsiElement>> =
+    listOf(JSImplicitElement::class.java, ES6Decorator::class.java, TypeScriptClass::class.java)
+
   override fun getEntity(element: PsiElement): Angular2Entity? =
     getSourceEntity(element)
 
@@ -37,7 +40,7 @@ class Angular2SourceEntitiesSource : Angular2EntitiesSource {
   override fun getAllPipeNames(project: Project): Collection<String> =
     Angular2IndexUtil.getAllKeys(Angular2SourcePipeIndexKey, project)
 
-  override fun findDirectivesCandidates(project: Project, indexLookupName: String): List<Angular2Directive> {
+  override fun findDirectiveCandidates(project: Project, indexLookupName: String): List<Angular2Directive> {
     val result = ArrayList<Angular2Directive>()
     StubIndex.getInstance().processElements(
       Angular2SourceDirectiveIndexKey, indexLookupName, project, GlobalSearchScope.allScope(project),
