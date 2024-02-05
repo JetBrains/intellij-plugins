@@ -36,7 +36,7 @@ fun isVueTypeScriptServiceEnabled(project: Project, context: VirtualFile): Boole
   if (!isVueServiceContext(project, context)) return false
 
   return when (getVueSettings(project).serviceType) {
-    VueServiceSettings.AUTO -> isTypeScriptServiceBefore5Context(project)
+    VueServiceSettings.AUTO -> false
     VueServiceSettings.VOLAR -> false
     VueServiceSettings.TS_SERVICE -> isTypeScriptServiceBefore5Context(project) // with TS 5+ project, nothing will be enabled
     VueServiceSettings.DISABLED -> false
@@ -64,7 +64,7 @@ private fun isVolarEnabledByContextAndSettings(project: Project, context: Virtua
   if (TypeScriptLibraryProvider.isLibraryOrBundledLibraryFile(project, context)) return false
 
   return when (getVueSettings(project).serviceType) {
-    VueServiceSettings.AUTO -> !isTypeScriptServiceBefore5Context(project)
+    VueServiceSettings.AUTO -> true
     VueServiceSettings.VOLAR -> true
     VueServiceSettings.TS_SERVICE -> false
     VueServiceSettings.DISABLED -> false
