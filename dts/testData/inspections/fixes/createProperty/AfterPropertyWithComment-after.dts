@@ -4,7 +4,7 @@
     node {
         node {
             prop = "value"; // comment
-            pinmux = <><caret>;
+            pinmux = <<caret>>;
         };
     };
 

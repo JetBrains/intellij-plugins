@@ -1,16 +1,20 @@
 package com.intellij.dts.inspections.fixes
 
+import com.intellij.codeInsight.AutoPopupController
+import com.intellij.codeInsight.AutoPopupController.*
+import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.dts.DtsBundle
+import com.intellij.dts.completion.insert.dtsInsertMetaData
+import com.intellij.dts.completion.insert.writePropertyValue
 import com.intellij.dts.lang.psi.DtsNode
-import com.intellij.dts.lang.psi.DtsProperty
 import com.intellij.dts.lang.psi.DtsPsiFactory
-import com.intellij.dts.lang.psi.DtsStatement
 import com.intellij.dts.lang.symbols.DtsPropertySymbol
 import com.intellij.dts.zephyr.binding.DtsZephyrPropertyBinding
 import com.intellij.modcommand.ModPsiUpdater
 import com.intellij.modcommand.PsiUpdateModCommandQuickFix
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.refactoring.suggested.startOffset
 import com.intellij.util.containers.headTail
 
 class DtsCreatePropertyFix(private val properties: List<DtsZephyrPropertyBinding>) : PsiUpdateModCommandQuickFix() {
@@ -18,17 +22,13 @@ class DtsCreatePropertyFix(private val properties: List<DtsZephyrPropertyBinding
     return DtsBundle.message("inspections.fix.create_property")
   }
 
-  private fun moveCursor(statement: DtsStatement, updater: ModPsiUpdater) {
-    if (statement !is DtsProperty) return
-
-    val values = statement.dtsValues
-
-    if (values.isEmpty()) {
-      updater.moveCaretTo(statement.textRange.endOffset)
+  private fun moveCursor(element: PsiElement, symbol: DtsPropertySymbol, updater: ModPsiUpdater) {
+    val metaData = dtsInsertMetaData {
+      write(symbol.name)
+      writePropertyValue(symbol)
     }
-    else {
-      updater.moveCaretTo(values.first().dtsValueRange.endOffset)
-    }
+
+    updater.moveCaretTo(element.startOffset + metaData.offset)
   }
 
   override fun applyFix(project: Project, element: PsiElement, updater: ModPsiUpdater) {
@@ -36,8 +36,9 @@ class DtsCreatePropertyFix(private val properties: List<DtsZephyrPropertyBinding
 
     val (head, tail) = properties.headTail()
 
-    val entry = element.addDtsProperty(DtsPsiFactory.createProperty(project, DtsPropertySymbol(head)))
-    moveCursor(entry.dtsStatement, updater)
+    val symbol = DtsPropertySymbol(head)
+    val entry = element.addDtsProperty(DtsPsiFactory.createProperty(project, symbol))
+    moveCursor(entry, symbol, updater)
 
     for (binding in tail) {
       element.addDtsProperty(DtsPsiFactory.createProperty(project, DtsPropertySymbol(binding)))
