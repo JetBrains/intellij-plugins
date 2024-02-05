@@ -16,8 +16,9 @@ import org.jetbrains.vuejs.options.VueServiceSettings
 import org.jetbrains.vuejs.options.getVueSettings
 
 
-private fun isVueServiceContext(project: Project, context: VirtualFile): Boolean = context.fileType is VueFileType || isVueContext(context,
-                                                                                                                                   project)
+private fun isVueServiceContext(project: Project, context: VirtualFile): Boolean {
+  return context.fileType is VueFileType || isVueContext(context, project)
+}
 
 private fun isTypeScriptServiceBefore5Context(project: Project): Boolean {
   val path = getTypeScriptServiceDirectory(project)
