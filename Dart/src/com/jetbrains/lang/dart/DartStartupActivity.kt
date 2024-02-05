@@ -68,6 +68,7 @@ class DartStartupActivity : ProjectActivity {
     readActionBlocking {
       DartAnalysisServerService.getInstance(project).serverReadyForRequest()
     }
+    //DartToolingDaemonService.getInstance(project).startService()
   }
 }
 
