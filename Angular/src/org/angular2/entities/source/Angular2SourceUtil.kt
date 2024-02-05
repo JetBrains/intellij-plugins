@@ -175,7 +175,8 @@ object Angular2SourceUtil {
   }
 
   @JvmStatic
-  fun createPropertyInfo(call: JSCallExpression, functionName: String?, defaultName: String): Angular2PropertyInfo? {
+  fun createPropertyInfo(call: JSCallExpression, functionName: String?, defaultName: String,
+                         getFunctionNameFromIndex: (JSCallExpression) -> String?): Angular2PropertyInfo? {
     if (functionName == null) return null
     val referenceNames = getFunctionNameFromIndex(call)
                            ?.split('.')
