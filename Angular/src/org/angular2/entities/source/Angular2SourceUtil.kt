@@ -5,18 +5,20 @@ import com.intellij.lang.javascript.JSStringUtil
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.impl.JSPropertyImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.FakePsiElement
 import com.intellij.psi.impl.source.PsiFileImpl
-import com.intellij.psi.util.CachedValueProvider
 import com.intellij.util.AstLoadingFilter
 import com.intellij.util.SmartList
 import com.intellij.util.asSafely
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2InjectionUtils
 import org.angular2.codeInsight.refs.Angular2TemplateReferencesProvider
+import org.angular2.entities.Angular2Directive
+import org.angular2.entities.Angular2DirectiveExportAs
 import org.angular2.entities.Angular2DirectiveSelector
 import org.angular2.entities.Angular2DirectiveSelectorImpl
 import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector
@@ -70,6 +72,33 @@ object Angular2SourceUtil {
       }
     }
     return Angular2DirectiveSelectorImpl(propertyOwner, value, null)
+  }
+
+  fun getExportAs(directive: Angular2Directive, property: JSProperty?): Map<String, Angular2DirectiveExportAs> {
+    val propertyValue = property?.value
+    return if (propertyValue is JSLiteralExpression && propertyValue.isQuotedLiteral) {
+      val text = propertyValue.stringValue ?: return emptyMap()
+      val split = text.split(',')
+      var offset = 1
+      val result = mutableMapOf<String, Angular2DirectiveExportAs>()
+      split.forEach { name ->
+        val startOffset = StringUtil.skipWhitespaceForward(name, 0)
+        val endOffset = StringUtil.skipWhitespaceBackward(name, name.length)
+        val trimmedName = name.substring(startOffset, endOffset)
+        result[trimmedName] = Angular2DirectiveExportAs(
+          trimmedName, directive, propertyValue, TextRange(offset + startOffset, offset + endOffset))
+        offset += name.length + 1
+      }
+      result.toMap()
+    }
+    else {
+      val exportAsString = Angular2DecoratorUtil.getExpressionStringValue(propertyValue)
+      if (exportAsString == null)
+        emptyMap()
+      else StringUtil.split(exportAsString, ",").map { it.trim() }.associateWith {
+        Angular2DirectiveExportAs(it, directive)
+      }
+    }
   }
 
   fun findCssFiles(property: JSProperty?, directRefs: Boolean): Sequence<PsiFile> {

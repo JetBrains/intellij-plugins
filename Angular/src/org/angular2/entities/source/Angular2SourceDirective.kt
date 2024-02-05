@@ -38,9 +38,11 @@ import org.angular2.entities.*
 import org.angular2.entities.Angular2EntityUtils.ELEMENT_REF
 import org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF
 import org.angular2.entities.Angular2EntityUtils.VIEW_CONTAINER_REF
+import org.angular2.entities.Angular2HostDirectivesResolver.HostDirectivesCollector
 import org.angular2.entities.ivy.Angular2IvyUtil.getIvyEntity
 import org.angular2.entities.ivy.Angular2IvyUtil.withJsonMetadataFallback
 import org.angular2.entities.metadata.Angular2MetadataUtil
+import org.angular2.entities.source.Angular2SourceUtil.getExportAs
 import org.angular2.index.getFunctionNameFromIndex
 import org.angular2.index.isStringArgStubbed
 import org.angular2.web.NG_DIRECTIVE_INPUTS
@@ -102,29 +104,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
 
   private fun getExportAsNoCache(): Map<String, Angular2DirectiveExportAs> =
     AstLoadingFilter.forceAllowTreeLoading<Map<String, Angular2DirectiveExportAs>, Throwable>(decorator.containingFile) {
-      val propertyValue = Angular2DecoratorUtil.getProperty(decorator, Angular2DecoratorUtil.EXPORT_AS_PROP)?.value
-      if (propertyValue is JSLiteralExpression && propertyValue.isQuotedLiteral) {
-        val text = propertyValue.stringValue ?: return@forceAllowTreeLoading emptyMap()
-        val split = text.split(',')
-        var offset = 1
-        val result = mutableMapOf<String, Angular2DirectiveExportAs>()
-        split.forEach { name ->
-          val startOffset = StringUtil.skipWhitespaceForward(name, 0)
-          val endOffset = StringUtil.skipWhitespaceBackward(name, name.length)
-          val trimmedName = name.substring(startOffset, endOffset)
-          result[trimmedName] = Angular2DirectiveExportAs(
-            trimmedName, this, propertyValue, TextRange(offset + startOffset, offset + endOffset))
-          offset += name.length + 1
-        }
-        result.toMap()
-      }
-      else {
-        val exportAsString = Angular2DecoratorUtil.getExpressionStringValue(propertyValue)
-        if (exportAsString == null) emptyMap()
-        else StringUtil.split(exportAsString, ",").map { it.trim() }.associateWith {
-          Angular2DirectiveExportAs(it, this)
-        }
-      }
+      getExportAs(this, Angular2DecoratorUtil.getProperty(decorator, Angular2DecoratorUtil.EXPORT_AS_PROP))
     }
 
   private fun getPropertiesNoCache(): Angular2DirectiveProperties {
@@ -192,28 +172,6 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
 
   private fun readPropertyMappings(source: String): MutableMap<String, Angular2PropertyInfo> =
     readDirectivePropertyMappings(Angular2DecoratorUtil.getProperty(decorator, source))
-
-  private class HostDirectivesCollector(decorator: ES6Decorator)
-    : Angular2SourceSymbolCollectorBase<Angular2Directive, Angular2ResolvedSymbolsSet<Angular2HostDirective>>(
-    Angular2Directive::class.java, decorator) {
-
-    private val result = mutableSetOf<Angular2HostDirective>()
-
-    override fun createResult(isFullyResolved: Boolean, dependencies: Set<PsiElement>)
-      : Result<Angular2ResolvedSymbolsSet<Angular2HostDirective>> =
-      Angular2ResolvedSymbolsSet.createResult(result, isFullyResolved, dependencies)
-
-    override fun processAnyElement(node: PsiElement) {
-      if (node is JSObjectLiteralExpression)
-        result.add(Angular2SourceHostDirectiveWithMappings(node))
-      else
-        super.processAnyElement(node)
-    }
-
-    override fun processAcceptableEntity(entity: Angular2Directive) {
-      result.add(Angular2SourceHostDirectiveWithoutMappings(entity))
-    }
-  }
 
   companion object {
 

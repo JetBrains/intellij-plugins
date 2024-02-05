@@ -3,7 +3,6 @@ package org.angular2.entities.source
 
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSProperty
-import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
@@ -12,17 +11,17 @@ import com.intellij.util.AstLoadingFilter
 import com.intellij.util.containers.Stack
 import org.angular2.entities.Angular2Entity
 
-internal abstract class Angular2SourceSymbolCollectorBase<T : Angular2Entity, R>(
-  entityClass: Class<T>, private val myDecorator: ES6Decorator
+abstract class Angular2SourceSymbolCollectorBase<T : Angular2Entity, R>(
+  entityClass: Class<T>, private val source: PsiElement
 ) : Angular2SourceEntityListProcessor<T>(entityClass) {
 
-  private var myIsFullyResolved = true
-  private val myDependencies = HashSet<PsiElement>()
-  private val myResolveQueue = Stack<PsiElement>()
+  private var isFullyResolved = true
+  private val dependencies = HashSet<PsiElement>()
+  private val resolveQueue = Stack<PsiElement>()
 
   fun collect(property: JSProperty?): Result<R> =
     if (property == null)
-      createResult(true, setOf(myDecorator))
+      createResult(true, setOf(source))
     else
       AstLoadingFilter.forceAllowTreeLoading<Result<R>, RuntimeException>(property.containingFile) {
         collect(property.value)
@@ -30,14 +29,14 @@ internal abstract class Angular2SourceSymbolCollectorBase<T : Angular2Entity, R>
 
   private fun collect(value: JSExpression?): Result<R> {
     if (value == null) {
-      return createResult(false, setOf(myDecorator))
+      return createResult(false, setOf(source))
     }
     val visited = HashSet<PsiElement>()
-    processCacheDependency(myDecorator)
-    myResolveQueue.push(value)
-    while (!myResolveQueue.empty()) {
+    processCacheDependency(source)
+    resolveQueue.push(value)
+    while (!resolveQueue.empty()) {
       ProgressManager.checkCanceled()
-      val element = myResolveQueue.pop()
+      val element = resolveQueue.pop()
       if (!visited.add(element)) {
         // Protect against cyclic references or visiting same thing several times
         continue
@@ -48,27 +47,27 @@ internal abstract class Angular2SourceSymbolCollectorBase<T : Angular2Entity, R>
         element.accept(resultsVisitor)
       }
       else {
-        myResolveQueue.addAll(children)
+        resolveQueue.addAll(children)
       }
     }
-    return createResult(myIsFullyResolved, myDependencies)
+    return createResult(isFullyResolved, dependencies)
   }
 
   protected abstract fun createResult(isFullyResolved: Boolean, dependencies: Set<PsiElement>): Result<R>
 
   final override fun processCacheDependency(element: PsiElement) {
-    myDependencies.add(element)
+    dependencies.add(element)
   }
 
   override fun processNonAcceptableEntityClass(aClass: JSClass) {
-    myIsFullyResolved = false
+    isFullyResolved = false
   }
 
   override fun processAnyType() {
-    myIsFullyResolved = false
+    isFullyResolved = false
   }
 
   override fun processAnyElement(node: PsiElement) {
-    myIsFullyResolved = false
+    isFullyResolved = false
   }
 }
