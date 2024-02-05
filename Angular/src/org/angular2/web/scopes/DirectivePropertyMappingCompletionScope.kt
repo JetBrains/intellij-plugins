@@ -31,6 +31,7 @@ import org.angular2.Angular2DecoratorUtil.OUTPUT_DEC
 import org.angular2.Angular2Framework
 import org.angular2.entities.Angular2EntityUtils
 import org.angular2.entities.source.Angular2SourceDirective
+import org.angular2.entities.source.Angular2SourceUtil.readDirectivePropertyMappings
 import org.angular2.lang.types.Angular2TypeUtils
 import org.angular2.web.Angular2Symbol
 import org.angular2.web.NG_DIRECTIVE_INPUTS
@@ -54,7 +55,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
 
         val context = dataHolder
 
-        val otherPropertyMappings = Angular2SourceDirective.readDirectivePropertyMappings(jsProperty)
+        val otherPropertyMappings = readDirectivePropertyMappings(jsProperty)
           .filter { entry ->
             entry.value.declaringElement != context
             && (context !is JSLiteralExpression || context.stringValue?.replace(CompletionUtil.DUMMY_IDENTIFIER, "") != entry.key)
