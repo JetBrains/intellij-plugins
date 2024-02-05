@@ -46,7 +46,9 @@ class Angular2CssCompletionTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.completeBasic()
 
     //todo remove src context
-    UsefulTestCase.assertSameElements(myFixture.getLookupElementStrings()!!, "~foo", "~foobar", "bar", "var2", "src")
+    UsefulTestCase.assertSameElements(myFixture.getLookupElementStrings()!!,
+                                      "var1", "foobar", "foo", // TODO - present only if Angular framework detected
+                                      "~foo", "~foobar", "bar", "var2", "src")
   }
 
   fun testBaseURLPriority() {
@@ -62,7 +64,9 @@ class Angular2CssCompletionTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.completeBasic()
 
     //todo remove src context
-    UsefulTestCase.assertSameElements(myFixture.getLookupElementStrings()!!, "~bar", "bar", "var2", "src")
+    UsefulTestCase.assertSameElements(myFixture.getLookupElementStrings()!!,
+                                      "var1", "foobar", "foo", // TODO - present only if Angular framework detected
+                                      "~bar", "bar", "var2", "src")
   }
 
   fun testLegacyPreprocessorIncludePaths() {
@@ -73,6 +77,8 @@ class Angular2CssCompletionTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.addFileToProject("src/foo/bar/_var3.scss", "")
     myFixture.configureByText("main.scss", "@import '<caret>';")
     myFixture.completeBasic()
-    UsefulTestCase.assertSameElements(myFixture.getLookupElementStrings()!!, "src", "~foo", "bar", "var2")
+    UsefulTestCase.assertSameElements(myFixture.getLookupElementStrings()!!,
+                                      "var1", "foo", // TODO - present only if Angular framework detected
+                                      "src", "~foo", "bar", "var2")
   }
 }
