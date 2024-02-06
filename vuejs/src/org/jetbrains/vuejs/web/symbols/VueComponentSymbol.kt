@@ -1,6 +1,7 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web.symbols
 
+import com.intellij.lang.javascript.navigation.JSDeclarationEvaluator
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameter
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
@@ -47,8 +48,11 @@ class VueComponentSymbol(name: String, component: VueComponent, private val vueP
     31 * super.hashCode() + vueProximity.hashCode()
 
   // Use actual item source field for navigation
-  override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
-    item.source?.let { listOf(VueComponentSourceNavigationTarget(it)) } ?: emptyList()
+  override fun getNavigationTargets(project: Project): Collection<NavigationTarget> {
+    val source = item.source ?: return emptyList()
+    val adjustedSources = JSDeclarationEvaluator.adjustDeclaration(source, null) ?: source
+    return listOf(VueComponentSourceNavigationTarget(adjustedSources))
+  }
 
   override val properties: Map<String, Any>
     get() = mapOf(Pair(PROP_VUE_PROXIMITY, vueProximity), Pair(

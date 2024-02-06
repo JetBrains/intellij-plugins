@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.html.psi.impl
 
 import com.intellij.lang.javascript.psi.JSType
@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
 import com.intellij.lang.javascript.psi.types.TypeScriptJSFunctionTypeImpl
 import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations
 import com.intellij.lang.javascript.psi.types.recordImpl.CallSignatureImpl
+import com.intellij.lang.javascript.psi.types.recordImpl.PropertySignatureImpl
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.FileViewProvider
 import com.intellij.psi.PsiElement
@@ -40,14 +41,21 @@ class VueFileImpl(viewProvider: FileViewProvider) : HtmlFileImpl(viewProvider, V
   override fun getDefaultExportedName(): String = toAsset(FileUtil.getNameWithoutExtension(name), true)
 
   override fun buildModuleType(module: PsiElement): JSType? {
-    if (module !is VueScriptSetupEmbeddedContentImpl) return null
+    if (module is VueFile) {
+      val defaultProperty = PropertySignatureImpl("default", null, true, true, module)
+      return JSRecordTypeImpl(JSTypeSourceFactory.createTypeSource(module, true), listOf(defaultProperty))
+    }
+    else if (module !is VueScriptSetupEmbeddedContentImpl) {
+      return null
+    }
 
     return CachedValuesManager.getCachedValue(module) {
       val returnType = VueModelManager.findEnclosingContainer(module).thisType.asRecordType()
       val returnTypeInstantiated = returnType.transformTypeHierarchy(TypeScriptTypeRelations.instantiationTransformer(false))
       val source = JSTypeSourceFactory.createTypeSource(module, true)
       val functionType = TypeScriptJSFunctionTypeImpl(source, emptyList(), emptyList(), null, returnTypeInstantiated)
-      val recordType = JSRecordTypeImpl(source, listOf(CallSignatureImpl(true, functionType)))
+      val defaultProperty = PropertySignatureImpl("default", null, true, true, module)
+      val recordType = JSRecordTypeImpl(source, listOf(CallSignatureImpl(true, functionType), defaultProperty))
       CachedValueProvider.Result.createSingleDependency(recordType, PsiModificationTracker.MODIFICATION_COUNT)
     }
   }
