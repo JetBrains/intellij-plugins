@@ -94,6 +94,24 @@ class TerraformReferencesTest : BasePlatformTestCase() {
   }
 
   @Test
+  fun forEachNestedProperty() {
+    val file = myFixture.configureByText("main.tf", """
+      resource "aws_instance" "resource-name-test0" {
+        for_each = {"vm1" = { type = "t2.micro", ami = "ami-052efd3df9dad4825", name = "resource-terraform-test0" }}
+        ami           = each.value.ami
+        instance_type = each.value.type
+        tags = {
+          Name = each.value.name
+        }
+      }
+    """.trimIndent())
+
+    assertResolvedNames(file.findReferenceByText("each.value.ami", -1), "ami")
+    assertResolvedNames(file.findReferenceByText("each.value.type", -1), "type")
+    assertResolvedNames(file.findReferenceByText("each.value.name", -1), "name")
+  }
+
+  @Test
   fun forGenerator() {
     myFixture.configureByText("main.tf", """
       locals {      

@@ -1,6 +1,4 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-
-
 package org.intellij.terraform.hil.psi
 
 import com.intellij.openapi.application.ApplicationManager
@@ -160,8 +158,6 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
             }
             if (suitableResolveTargets.isNotEmpty()) {
               found.addAll(suitableResolveTargets)
-            } else if (fake) {
-              //              found.add(FakeHCLProperty(name))
             }
           }
         } else if (TerraformPatterns.VariableRootBlock.accepts(r)) {
@@ -323,6 +319,7 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
       value is HCLForObjectExpression && value.value is HCLObject -> collectReferences(value.value, name, found, fake)
       value is HCLArray -> collectReferences(value, name, found, fake)
       value is HCLMethodCallExpression -> if (fake && block != null) found.add(FakeHCLProperty(name, block))
+      value is HCLObject -> value.propertyList.first().value?.let { collectReferences(it, name, found, fake) }
       isVariableReference(value) -> HCLPsiUtil.getReferencesSelectAware(value)
         .flatMap { resolve(it, false, fake) }
         .filterIsInstance<HCLBlock>()
@@ -502,6 +499,6 @@ fun getGoodLeftElement(select: SelectExpression<*>, right: BaseExpression, skipS
   return null
 }
 
-fun isStarOrNumber(text: String) = text == "*" || text.toIntOrNull() != null
+fun isStarOrNumber(text: String): Boolean = text == "*" || text.toIntOrNull() != null
 
 
