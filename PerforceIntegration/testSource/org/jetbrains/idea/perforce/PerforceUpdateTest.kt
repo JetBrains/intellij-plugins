@@ -1,11 +1,9 @@
 package org.jetbrains.idea.perforce
 
 import com.intellij.openapi.util.Ref
-import com.intellij.openapi.vcs.FilePath
 import com.intellij.openapi.vcs.VcsConfiguration
 import com.intellij.openapi.vcs.VcsShowConfirmationOption
 import com.intellij.openapi.vcs.changes.committed.CommittedChangesCache
-import com.intellij.openapi.vcs.update.SequentialUpdatesContext
 import com.intellij.openapi.vcs.update.UpdateSession
 import com.intellij.openapi.vcs.update.UpdatedFiles
 import com.intellij.openapi.vfs.VirtualFile
@@ -79,7 +77,7 @@ class PerforceUpdateTest : PerforceTestCase() {
 
     changeListManager.waitUntilRefreshed()
 
-    val commands = ContainerUtil.createEmptyCOWList<String>()
+    val commands = ContainerUtil.createConcurrentList<String>()
     AbstractP4Connection.setCommandCallback(CollectConsumer(commands), myTestRootDisposable)
 
     CommittedChangesCache.getInstance(myProject).refreshAllCachesAsync(true, false)

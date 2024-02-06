@@ -37,7 +37,7 @@ class PerforceAuthenticationTest : PerforceTestCase() {
       dirs.add(createDirInCommand(myWorkingCopyDir, "dir$i"))
     }
 
-    val commands: MutableList<String> = ContainerUtil.createEmptyCOWList()
+    val commands: MutableList<String> = ContainerUtil.createConcurrentList()
     AbstractP4Connection.setCommandCallback(CollectConsumer(commands), myTestRootDisposable)
     AbstractP4Connection.setTestEnvironment(mapOf("P4PORT" to "localhost:$ourP4port", "P4USER" to "test", "P4CLIENT" to "test"),
                                             myTestRootDisposable)
@@ -65,7 +65,7 @@ class PerforceAuthenticationTest : PerforceTestCase() {
     assertEquals(2, connections.size)
     assertNotEquals(connections[0].connectionKey, connections[1].connectionKey)
 
-    val commands: MutableList<String> = ContainerUtil.createEmptyCOWList()
+    val commands: MutableList<String> = ContainerUtil.createConcurrentList()
     AbstractP4Connection.setCommandCallback(CollectConsumer(commands), myTestRootDisposable)
     UIUtil.invokeAndWaitIfNeeded { PerforceLoginManager.getInstance(myProject).checkAndRepairAll() }
     refreshChanges()
@@ -109,7 +109,7 @@ class PerforceAuthenticationTest : PerforceTestCase() {
 
   @Test
   fun `test do not use login command when that setting is off`() {
-    val commands: MutableList<String> = ContainerUtil.createEmptyCOWList()
+    val commands: MutableList<String> = ContainerUtil.createConcurrentList()
     AbstractP4Connection.setCommandCallback(CollectConsumer(commands), myTestRootDisposable)
     UIUtil.invokeAndWaitIfNeeded { PerforceLoginManager.getInstance(myProject).checkAndRepairAll() }
     assertEquals(1, commands.filter { it.startsWith("login") }.size)
