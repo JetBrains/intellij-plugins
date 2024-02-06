@@ -2,11 +2,12 @@
 package org.intellij.terraform.config
 
 import com.intellij.lang.Language
+import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.hcl.HILCompatibleLanguage
 
 object TerraformLanguage : Language(HCLLanguage, "HCL-Terraform"), HILCompatibleLanguage {
   override fun getDisplayName(): String {
-    return "Terraform Config"
+    return HCLBundle.message("terraform.display.name")
   }
 }
