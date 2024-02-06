@@ -8,10 +8,4 @@
 
     <fileEditorProvider implementation="com.intellij.jhipster.uml.JdlSplitEditorProvider"/>
   </extensions>
-
-  <actions>
-    <action id="JDL.Layout.EditorOnly" class="com.intellij.jhipster.uml.JdlChangePreviewLayoutAction$EditorOnly"/>
-    <action id="JDL.Layout.EditorAndPreview" class="com.intellij.jhipster.uml.JdlChangePreviewLayoutAction$EditorAndPreview"/>
-    <action id="JDL.Layout.PreviewOnly" class="com.intellij.jhipster.uml.JdlChangePreviewLayoutAction$PreviewOnly"/>
-  </actions>
 </idea-plugin>
