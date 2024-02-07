@@ -319,7 +319,7 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
       value is HCLForObjectExpression && value.value is HCLObject -> collectReferences(value.value, name, found, fake)
       value is HCLArray -> collectReferences(value, name, found, fake)
       value is HCLMethodCallExpression -> if (fake && block != null) found.add(FakeHCLProperty(name, block))
-      value is HCLObject -> value.propertyList.first().value?.let { collectReferences(it, name, found, fake) }
+      value is HCLObject -> value.propertyList.forEach { property -> property.value?.let { collectReferences(it, name, found, fake) } }
       isVariableReference(value) -> HCLPsiUtil.getReferencesSelectAware(value)
         .flatMap { resolve(it, false, fake) }
         .filterIsInstance<HCLBlock>()
