@@ -43,7 +43,7 @@ class OsgiFacetConfigurationTest : JavaCodeInsightFixtureTestCase() {
     val resources = StringBuilder("Include-Resource=")
     for (i in 1..5000) resources.append(if (i > 1) "," else "").append("images/image$i.png=/src/images/image$i.png")
     config.setAdditionalProperties(resources.toString())
-    PlatformTestUtil.startPerformanceTest("OSGi Facet Serialization", { (1..5).forEach { serialize() } }).assertTiming()
+    PlatformTestUtil.newPerformanceTest("OSGi Facet Serialization", { (1..5).forEach { serialize() } }).start()
   }
 
   private fun serialize(): Element {

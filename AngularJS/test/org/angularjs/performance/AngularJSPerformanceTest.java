@@ -16,7 +16,7 @@ public class AngularJSPerformanceTest extends BasePlatformTestCase {
 
   public void testManyInjectionsHighlighting() {
     myFixture.configureByFiles("manyInjections.highlight.html", "angular.js", "custom.js");
-    PlatformTestUtil.startPerformanceTest(getTestName(false), () -> myFixture.checkHighlighting()).attempts(1).assertTiming();
+    PlatformTestUtil.newPerformanceTest(getTestName(false), () -> myFixture.checkHighlighting()).attempts(1).start();
   }
 
 }

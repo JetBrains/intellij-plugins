@@ -6,9 +6,9 @@ class DtsPerformanceParsingTest : DtsParsingTestBase("") {
   fun testPerformance() {
     val file = loadFile("Performance.dts")
 
-    PlatformTestUtil.startPerformanceTest("parser") {
+    PlatformTestUtil.newPerformanceTest("parser") {
       val root = createFile("file.dts", file)
       ensureParsed(root)
-    }.assertTiming()
+    }.start()
   }
 }
