@@ -5,11 +5,25 @@ import com.intellij.lang.typescript.lsp.createPackageRef
 import com.intellij.lang.typescript.lsp.defaultPackageKey
 import com.intellij.lang.typescript.lsp.extractRefText
 import com.intellij.lang.typescript.lsp.restartTypeScriptServicesAsync
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.vuejs.lang.typescript.service.volar.VolarExecutableDownloader
 
 fun getVueSettings(project: Project): VueSettings = project.service<VueSettings>()
+
+@TestOnly
+fun configureVueService(project: Project, disposable: Disposable, serviceSettings: VueServiceSettings) {
+  val vueSettings = getVueSettings(project)
+  val old = vueSettings.serviceType
+  vueSettings.serviceType = serviceSettings
+
+  Disposer.register(disposable) {
+    vueSettings.serviceType = old
+  }
+}
 
 @Service(Service.Level.PROJECT)
 @State(name = "VueSettings", storages = [Storage(StoragePathMacros.WORKSPACE_FILE)])
