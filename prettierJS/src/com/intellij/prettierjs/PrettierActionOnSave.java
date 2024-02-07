@@ -4,11 +4,13 @@ package com.intellij.prettierjs;
 import com.intellij.codeInsight.actions.onSave.FormatOnSaveOptions;
 import com.intellij.ide.actionsOnSave.impl.ActionsOnSaveFileDocumentManagerListener;
 import com.intellij.lang.javascript.linter.GlobPatternUtil;
+import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.SlowOperations;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,11 +51,13 @@ final class PrettierActionOnSave extends ActionsOnSaveFileDocumentManagerListene
       return file;
     });
 
-    List<VirtualFile> matchingFiles =
-      GlobPatternUtil.filterFilesMatchingGlobPattern(project, prettierConfiguration.getFilesPattern(), files);
+    try (AccessToken ignore = SlowOperations.knownIssue("IDEA-322963, EA-845939")) {
+      List<VirtualFile> matchingFiles =
+        GlobPatternUtil.filterFilesMatchingGlobPattern(project, prettierConfiguration.getFilesPattern(), files);
 
-    if (!matchingFiles.isEmpty()) {
-      ReformatWithPrettierAction.processVirtualFiles(project, matchingFiles, NOOP_ERROR_HANDLER);
+      if (!matchingFiles.isEmpty()) {
+        ReformatWithPrettierAction.processVirtualFiles(project, matchingFiles, NOOP_ERROR_HANDLER);
+      }
     }
   }
 }
