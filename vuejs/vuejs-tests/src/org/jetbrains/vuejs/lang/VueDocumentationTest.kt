@@ -180,6 +180,14 @@ class VueDocumentationTest : BasePlatformTestCase() {
     defaultTest()
   }
 
+  fun testNoComponentDocInCodeCompletion() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
+    myFixture.configureByFile("${getTestName(false)}.vue")
+    myFixture.checkLookupItems(checkDocumentation = true) {
+      it.lookupString == "NoComponentDocInCodeCompletion" || it.lookupString == "Component"
+    }
+  }
+
   private fun defaultTest() {
     myFixture.configureByFile("${getTestName(false)}.vue")
     myFixture.checkDocumentationAtCaret()
