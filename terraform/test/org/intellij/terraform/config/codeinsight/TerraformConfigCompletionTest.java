@@ -97,6 +97,45 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
     doBasicCompletionTest("resource 'null_resource' 'x' { for_each={}\n id = each.<caret>}", 2, "key", "value");
   }
 
+  public void testResourceEachValueCompletion() throws Exception {
+    doBasicCompletionTest("""
+                            resource "aws_instance" "resource-name-test0" {
+                              for_each = {"vm1" = { type = "t2.micro", ami = "ami-052efd3df9dad4825", name = "resource-terraform-test0" }}
+                              ami           = each.value.ami
+                              instance_type = each.value.<caret>
+                              tags = {
+                                Name = each.value.name
+                              }
+                            }
+                            """, 3, "ami", "name", "type");
+
+    doBasicCompletionTest("""
+                            variable "servers" {
+                              type = map(object({
+                                instance_type = string
+                                ami           = string
+                              }))
+                              default = {
+                                web = {
+                                  instance_type = "t2.micro"
+                                  ami           = "ami-12345678"
+                                }
+                                app = {
+                                  instance_type = "t2.medium"
+                                  ami           = "ami-87654321"
+                                }
+                              }
+                            }
+                                                        
+                            resource "aws_instance" "example" {
+                              for_each = var.servers
+                                                        
+                              ami           = each.value.<caret>
+                              instance_type = each.value.instance_type
+                            }
+                            """, 2, "ami", "instance_type");
+  }
+
   public void testResourceCommonPropertyCompletionFromModel() throws Exception {
     final HashSet<String> base = new HashSet<>(COMMON_RESOURCE_PROPERTIES);
     final ResourceType type = TypeModelProvider.Companion.getGlobalModel().getResourceType("aws_instance");

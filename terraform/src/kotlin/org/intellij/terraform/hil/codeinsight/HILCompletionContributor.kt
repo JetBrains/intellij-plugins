@@ -408,12 +408,13 @@ class HILCompletionContributor : CompletionContributor() {
       val parent = element.parent as? SelectExpression<*> ?: return
 
       val expression = getGoodLeftElement(parent, element) ?: return
+      val isEachValueProperty = expression.parent.text == "each.value"
       val contextType = guessContainingBlockType(expression)
       val references = HCLPsiUtil.getReferencesSelectAware(expression)
       if (references.isNotEmpty()) {
         val collectedTargets = references.asSequence()
           .flatMap { reference -> resolve(reference, true, false) }
-          .flatMap { collectVariants(it, false, 2, contextType) }
+          .flatMap { collectVariants(it, false, 2, isEachValueProperty, contextType) }
           .toList()
         if (collectedTargets.isNotEmpty()) {
           result.addAllElements(collectedTargets)
@@ -439,29 +440,37 @@ class HILCompletionContributor : CompletionContributor() {
     private fun collectVariants(r: PsiElement?,
                                 iteratorResolve: Boolean,
                                 depth: Int,
+                                isEachValueProperty: Boolean = false,
                                 contextType: HilContainingBlockType = HilContainingBlockType.UNSPECIFIED): List<LookupElement> {
       when (r) {
         is HCLBlock -> {
-          return ArrayList<LookupElement>().also { getBlockProperties(r, contextType, it) }
+          return ArrayList<LookupElement>().also { getBlockProperties(r, contextType, isEachValueProperty, it) }
         }
         is FakeTypeProperty -> return ArrayList<LookupElement>().also { collectTypeVariants(r.type, it) }
         is HCLProperty -> {
           when (val value = r.value) {
             is HCLArray -> {
-              return value.elements.reversed().flatMap { collectVariants(it, false, depth) }
+              return value.elements.reversed().flatMap { collectVariants(it, false, depth, isEachValueProperty) }
             }
             is HCLObject -> {
               if (depth > 0)
-                return collectVariants(value, iteratorResolve, depth)
+                return collectVariants(value, iteratorResolve, depth, isEachValueProperty)
               else
                 return emptyList()
             }
-            else -> return collectVariantsSelectAware(value, iteratorResolve, depth)
+            else -> return collectVariantsSelectAware(value, iteratorResolve, depth, isEachValueProperty)
           }
         }
         is HCLObject -> {
           return ArrayList<LookupElement>().also { found ->
-            if (!iteratorResolve) {
+            if (isEachValueProperty) {
+              // IDEA-297901 Need to complete the value of map with each.value context
+              val properties = r.propertyList
+              properties.forEach { property ->
+                (property.value as? HCLObject)?.propertyList?.mapNotNull { create(it.name) }?.let { found.addAll(it) }
+              }
+            }
+            else if (!iteratorResolve) {
               found.addAll(r.propertyList.map { create(it.name) })
             }
             else if (depth > 0) {
@@ -478,26 +487,26 @@ class HILCompletionContributor : CompletionContributor() {
         else -> {
           val rParent = r.parent
           if (rParent is HCLForIntro && rParent.container != r) {
-            return collectVariants(rParent.container, true, depth)
+            return collectVariants(rParent.container, true, depth, isEachValueProperty)
           }
           else
-            return collectVariantsSelectAware(r, iteratorResolve, depth)
+            return collectVariantsSelectAware(r, iteratorResolve, depth, isEachValueProperty)
         }
       }
     }
 
-    private fun collectVariantsSelectAware(value: PsiElement?, iteratorResolve: Boolean, depth: Int): List<LookupElement> =
+    private fun collectVariantsSelectAware(value: PsiElement?, iteratorResolve: Boolean, depth: Int, isEachValueProperty: Boolean): List<LookupElement> =
       HCLPsiUtil.getReferencesSelectAware(value).flatMap { ref ->
         resolve(ref, false, false).filter { it != value }.flatMap {
-          collectVariants(it, iteratorResolve, depth)
+          collectVariants(it, iteratorResolve, depth, isEachValueProperty)
         }
       }
 
-    private fun getBlockProperties(r: HCLBlock, contextType: HilContainingBlockType, found: ArrayList<LookupElement>) {
+    private fun getBlockProperties(r: HCLBlock, contextType: HilContainingBlockType, isEachValueProp: Boolean, found: ArrayList<LookupElement>) {
       if (TerraformPatterns.VariableRootBlock.accepts(r)) {
         val variable = Variable(r)
         val defaultMap = variable.getDefault()
-        if (defaultMap is HCLObject) {
+        if (defaultMap is HCLObject && !isEachValueProp) {
           handleHCLObject(defaultMap, found)
         }
         collectTypeVariants(variable.getType(), found)
