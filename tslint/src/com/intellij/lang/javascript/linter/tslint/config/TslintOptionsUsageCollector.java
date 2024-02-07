@@ -15,13 +15,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 public class TslintOptionsUsageCollector extends ProjectUsagesCollector {
   private static final EventLogGroup GROUP = new EventLogGroup("js.tslint.options", 2);
   private static final EventId ENABLED = GROUP.registerEvent("enabled");
-  private static final EventId NODE_INTERPRETER_CUSTOM = GROUP.registerEvent("node.interpreter.custom");
   private static final EventId NODE_PACKAGE_AUTODETECT = GROUP.registerEvent("node.package.autodetect");
   private static final EventId NODE_PACKAGE_CUSTOM_PACKAGE = GROUP.registerEvent("node.package.custom.package");
   private static final EventId ADDITIONAL_RULES_SPECIFIED = GROUP.registerEvent("additional.rules.specified");
@@ -38,9 +36,6 @@ public class TslintOptionsUsageCollector extends ProjectUsagesCollector {
     set.add(ENABLED.metric());
 
     TsLintState state = extendedState.getState();
-    if (!Objects.equals(state.getInterpreterRef(), TsLintState.DEFAULT.getInterpreterRef())) {
-      set.add(NODE_INTERPRETER_CUSTOM.metric());
-    }
 
     NodePackageRef nodePackageRef = state.getNodePackageRef();
     if (nodePackageRef == AutodetectLinterPackage.INSTANCE) {

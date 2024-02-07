@@ -6,6 +6,7 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.util.InspectionMessage;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.process.ProcessOutput;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.DialectOptionHolder;
@@ -119,7 +120,7 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
       return null;
     }
     final JSLinterFileLevelAnnotation interpreterAndPackageError =
-      JSLinterUtil.validateInterpreterAndPackage(project, linterState.getInterpreterRef().resolve(project),
+      JSLinterUtil.validateInterpreterAndPackage(project, NodeJsInterpreterManager.getInstance(project).getInterpreter(),
                                                  service.getNodePackage(), TsLintDescriptor.PACKAGE_NAME,
                                                  collectedInfo.getVirtualFile());
     if (interpreterAndPackageError != null) return JSLinterAnnotationResult.create(collectedInfo, interpreterAndPackageError, config);
