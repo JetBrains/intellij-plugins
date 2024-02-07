@@ -10,6 +10,7 @@ import org.intellij.terraform.config.codeinsight.ModelHelper
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.config.psi.TerraformDocumentPsi
+import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.hcl.psi.common.LiteralExpression
 import org.jetbrains.annotations.Nls
@@ -20,9 +21,9 @@ internal class TerraformDocumentationProvider : AbstractDocumentationProvider() 
     if (element is HCLProperty) {
       val block = element.parent?.parent as? HCLBlock
       if (TerraformPatterns.LocalsRootBlock.accepts(block)) {
-        return "local value ${element.name}"
+        return HCLBundle.message("terraform.doc.label.local.value.0", element.name)
       }
-      return "property ${element.name}"
+      return HCLBundle.message("terraform.doc.property.0", element.name)
     }
 
     if (element is HCLBlock) {
@@ -31,22 +32,22 @@ internal class TerraformDocumentationProvider : AbstractDocumentationProvider() 
 
       if (TerraformPatterns.RootBlock.accepts(element)) {
         when (type) {
-          "module" -> return "module \"$name\"" // todo: add short source
-          "variable" -> return "input variable \"$name\"" // todo: add short type
-          "output" -> return "output value \"$name\"" // todo: add short type
-          "provider" -> return "provider \"$name\""
-          "resource" -> return "resource \"$name\" of type ${element.getNameElementUnquoted(1)}"
-          "data" -> return "data source \"$name\" of type ${element.getNameElementUnquoted(1)}"
+          "module" -> return HCLBundle.message("terraform.doc.module.0", name) // todo: add short source
+          "variable" -> return HCLBundle.message("terraform.doc.input.variable.0", name) // todo: add short type
+          "output" -> return HCLBundle.message("terraform.doc.output.value.0", name) // todo: add short type
+          "provider" -> return HCLBundle.message("terraform.doc.provider.0", name)
+          "resource" -> return HCLBundle.message("terraform.doc.resource.0.of.type.1", name, element.getNameElementUnquoted(1))
+          "data" -> return HCLBundle.message("terraform.doc.data.source.0.of.type.1", name, element.getNameElementUnquoted(1))
 
-          "terraform" -> return "terraform configuration"
-          "locals" -> return "local values"
+          "terraform" -> return HCLBundle.message("terraform.doc.terraform.configuration")
+          "locals" -> return HCLBundle.message("terraform.doc.local.values")
         }
       }
       return null
     }
     //Workaround for documentation - we do not parse type identifier in top-level blocks
     if (element is TerraformDocumentPsi) {
-      return "Block type ${element.name}"
+      return HCLBundle.message("terraform.doc.block.type.0", element.name)
     }
 
     return null
@@ -61,10 +62,10 @@ internal class TerraformDocumentationProvider : AbstractDocumentationProvider() 
       val properties = ModelHelper.getBlockProperties(block)
       val property = properties[element.name] as? PropertyType
       if (property != null) {
-        return "Property ${element.name} (${property.type.presentableText})<br/> ${property.description ?: ""}"
+        return HCLBundle.message("terraform.doc.property.0.1.br.2", element.name, property.type.presentableText, property.description ?: "")
       }
       if (TerraformPatterns.LocalsRootBlock.accepts(block)) {
-        return "Local value ${element.name}"
+        return HCLBundle.message("terraform.doc.local.value.0", element.name)
       }
     }
     else if (element is HCLBlock) {
@@ -72,22 +73,22 @@ internal class TerraformDocumentationProvider : AbstractDocumentationProvider() 
         if (TerraformPatterns.VariableRootBlock.accepts(element)) {
           val variable = Variable(element)
           val typeExpression = (variable.getTypeExpression() as? LiteralExpression)?.unquotedText?.let { " of type ${it}" } ?: ""
-          val description = (variable.getDescription() as? LiteralExpression)?.unquotedText?.let { "<br/><br/> ${it}" } ?: ""
-          val defaultValue = (variable.getDefault() as? HCLValue)?.text?.let { "<br/><br/>Default value: ${it}" } ?: ""
+          val description = (variable.getDescription() as? LiteralExpression)?.unquotedText?.let { "<br/> ${it}" } ?: ""
+          val defaultValue = (variable.getDefault() as? HCLValue)?.text?.let { "<br/>Default value: ${it}" } ?: ""
 
-          return "Variable ${variable.name} ${typeExpression} ${description} ${defaultValue}"
+          return HCLBundle.message("terraform.doc.variable.0.1.2.3", variable.name, typeExpression, description, defaultValue)
         }
         if (TerraformPatterns.ResourceRootBlock.accepts(element)) {
-          return "Resource ${element.name} of type ${element.getNameElementUnquoted(1)}"
+          return HCLBundle.message("terraform.doc.hcl.resource.0.of.type.1", element.name, element.getNameElementUnquoted(1))
         }
         val block = TypeModel.RootBlocks.firstOrNull { it.literal == element.getNameElementUnquoted(0) } ?: return null
-        return "Block ${element.name} <br/><br/> ${block.description ?: ""}"
+        return HCLBundle.message("terraform.doc.block.0.br.1", element.name, block.description ?: "")
       }
       val pp = element.parent?.parent
       if (pp is HCLBlock) {
         val properties = ModelHelper.getBlockProperties(pp)
         val block = properties[element.getNameElementUnquoted(0)!!] as? BlockType ?: return "Unknown block ${element.name}"
-        return "Block ${element.name} <br/><br/> ${block.description ?: ""}"
+        return HCLBundle.message("terraform.doc.block.0.br.1", element.name, block.description ?: "")
       }
     }
     //Block parameters
@@ -96,7 +97,7 @@ internal class TerraformDocumentationProvider : AbstractDocumentationProvider() 
       val parentBlockType = parentBlock.getNameElementUnquoted(1) ?: parentBlock.getNameElementUnquoted(0)
       val property = (ModelHelper.getBlockProperties(parentBlock)[element.id] as? BaseModelType) ?: return null
       val description = property.description ?: ""
-      return "Parameter ${parentBlockType}.${element.id} <br/><br/> ${description}"
+      return HCLBundle.message("terraform.doc.argument.0.1.br.2", parentBlockType, element.id, description)
     }
     //Workaround for documentation - we do not parse type identifier in top-level blocks
     else if (element is TerraformDocumentPsi) {
@@ -105,7 +106,7 @@ internal class TerraformDocumentationProvider : AbstractDocumentationProvider() 
                           is BaseModelType -> typeClass.description
                           else -> ""
                         } ?: ""
-      return "Block type ${element.name} <br/><br/> ${description}"
+      return HCLBundle.message("terraform.doc.block.type.0.br.1", element.name, description)
     }
     return null
   }
