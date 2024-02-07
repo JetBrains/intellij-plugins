@@ -17,29 +17,7 @@ final class JdlEditorWithPreview extends TextEditorWithPreview {
       Layout.SHOW_EDITOR_AND_PREVIEW,
       false
     );
-
-    preview.setMainEditor(editor.getEditor());
-
     // todo subscribe to settings change
-  }
-
-  @Override
-  protected void onLayoutChange(Layout oldValue, Layout newValue) {
-    super.onLayoutChange(oldValue, newValue);
-    // Editor tab will lose focus after switching to JCEF preview for some reason.
-    // So we should explicitly request focus for our editor here.
-    if (newValue == Layout.SHOW_PREVIEW) {
-      requestFocusForPreview();
-    }
-  }
-
-  private void requestFocusForPreview() {
-    final var preferredComponent = myPreview.getPreferredFocusedComponent();
-    if (preferredComponent != null) {
-      preferredComponent.requestFocus();
-      return;
-    }
-    myPreview.getComponent().requestFocus();
   }
 
   @Override

@@ -2,60 +2,20 @@
 
 package com.intellij.jhipster.uml;
 
-import com.intellij.openapi.fileEditor.*;
+import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.fileEditor.TextEditor;
+import com.intellij.openapi.fileEditor.TextEditorWithPreviewProvider;
 import com.intellij.openapi.fileEditor.impl.text.PsiAwareTextEditorProvider;
-import com.intellij.openapi.project.DumbAware;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-final class JdlSplitEditorProvider implements FileEditorProvider, DumbAware {
-  private final FileEditorProvider myFirstProvider = new PsiAwareTextEditorProvider();
-  private final FileEditorProvider mySecondProvider = new JdlPreviewFileEditorProvider();
-
-  @Override
-  public @NotNull @NonNls String getEditorTypeId() {
-    return "jhipster-split-editor";
-  }
-
-  @Override
-  public @NotNull FileEditorPolicy getPolicy() {
-    return FileEditorPolicy.HIDE_DEFAULT_EDITOR;
-  }
-
-  @Override
-  public boolean accept(@NotNull Project project, @NotNull VirtualFile file) {
-    return myFirstProvider.accept(project, file) && mySecondProvider.accept(project, file);
-  }
-
-  @Override
-  public @NotNull FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
-    return createEditorAsync(project, file).build();
+final class JdlSplitEditorProvider extends TextEditorWithPreviewProvider {
+  JdlSplitEditorProvider() {
+    super(new PsiAwareTextEditorProvider(), new JdlPreviewFileEditorProvider());
   }
 
   @NotNull
-  public AsyncFileEditorProvider.Builder createEditorAsync(@NotNull final Project project, @NotNull final VirtualFile file) {
-    AsyncFileEditorProvider.Builder firstBuilder = getBuilderFromEditorProvider(myFirstProvider, project, file);
-    AsyncFileEditorProvider.Builder secondBuilder = getBuilderFromEditorProvider(mySecondProvider, project, file);
-
-    return new AsyncFileEditorProvider.Builder() {
-      @Override
-      public @NotNull FileEditor build() {
-        return new JdlEditorWithPreview((TextEditor)firstBuilder.build(), (JdlPreviewFileEditor)secondBuilder.build());
-      }
-    };
-  }
-
-  @NotNull
-  static AsyncFileEditorProvider.Builder getBuilderFromEditorProvider(@NotNull FileEditorProvider provider,
-                                                                      @NotNull Project project,
-                                                                      @NotNull VirtualFile file) {
-    return new AsyncFileEditorProvider.Builder() {
-      @Override
-      public @NotNull FileEditor build() {
-        return provider.createEditor(project, file);
-      }
-    };
+  @Override
+  protected FileEditor createSplitEditor(@NotNull FileEditor firstEditor, @NotNull FileEditor secondEditor) {
+    return new JdlEditorWithPreview((TextEditor)firstEditor, (JdlPreviewFileEditor)secondEditor);
   }
 }

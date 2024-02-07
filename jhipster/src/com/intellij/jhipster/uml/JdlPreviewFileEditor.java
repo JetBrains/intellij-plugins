@@ -6,7 +6,6 @@ import com.intellij.jhipster.JdlBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -43,9 +42,7 @@ final class JdlPreviewFileEditor extends UserDataHolderBase implements FileEdito
   private final MergingUpdateQueue mergingUpdateQueue = new MergingUpdateQueue("JDL", RENDERING_DELAY_MS, true, null, this);
   private final Alarm mySwingAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, this);
 
-  private Editor mainEditor;
-
-  public JdlPreviewFileEditor(@NotNull Project project, @NotNull VirtualFile file) {
+  JdlPreviewFileEditor(@NotNull Project project, @NotNull VirtualFile file) {
     myProject = project;
     myFile = file;
     myDocument = FileDocumentManager.getInstance().getDocument(myFile);
@@ -81,10 +78,7 @@ final class JdlPreviewFileEditor extends UserDataHolderBase implements FileEdito
         }, 0, ModalityState.stateForComponent(getComponent()));
       }
     });
-
-    if (isPreviewShown(project, file)) {
-      attachHtmlPanel();
-    }
+    attachHtmlPanel();
   }
 
   private void attachHtmlPanel() {
@@ -104,10 +98,6 @@ final class JdlPreviewFileEditor extends UserDataHolderBase implements FileEdito
       Disposer.dispose(myPanel);
       myPanel = null;
     }
-  }
-
-  private boolean isPreviewShown(Project project, VirtualFile file) {
-    return true;
   }
 
   @Override
@@ -188,9 +178,5 @@ final class JdlPreviewFileEditor extends UserDataHolderBase implements FileEdito
         });
       }
     });
-  }
-
-  public void setMainEditor(Editor mainEditor) {
-    this.mainEditor = mainEditor;
   }
 }
