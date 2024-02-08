@@ -18,7 +18,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class TslintOptionsUsageCollector extends ProjectUsagesCollector {
-  private static final EventLogGroup GROUP = new EventLogGroup("js.tslint.options", 2);
+  private static final EventLogGroup GROUP = new EventLogGroup("js.tslint.options", 3);
   private static final EventId ENABLED = GROUP.registerEvent("enabled");
   private static final EventId NODE_PACKAGE_AUTODETECT = GROUP.registerEvent("node.package.autodetect");
   private static final EventId NODE_PACKAGE_CUSTOM_PACKAGE = GROUP.registerEvent("node.package.custom.package");
