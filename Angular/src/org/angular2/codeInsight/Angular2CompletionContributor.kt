@@ -120,7 +120,7 @@ class Angular2CompletionContributor : CompletionContributor() {
             continue
           }
           val match = bestMatch.first
-          var builder = (match.typeScriptClass?.let { LookupElementBuilder.create(it, key) }
+          var builder = (match.entitySource?.let { LookupElementBuilder.create(it, key) }
                          ?: LookupElementBuilder.create(key))
             .withIcon(AngularIcons.Angular2)
             .withTypeText(Angular2Bundle.message("angular.description.pipe"), null, true)

@@ -25,6 +25,7 @@ import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.tags.Angular2ElementDescriptor
+import org.angular2.entities.Angular2ClassBasedEntity
 import org.angular2.lang.Angular2Bundle
 
 abstract class BaseCreateDirectiveInputOutputAction(context: PsiElement, fieldName: String?) : BaseCreateComponentFieldAction(fieldName) {
@@ -89,6 +90,7 @@ abstract class BaseCreateDirectiveInputOutputAction(context: PsiElement, fieldNa
       .asSequence()
       .flatMap { it.descriptor.asSafely<Angular2AttributeDescriptor>()?.sourceDirectives ?: emptyList() }
       .plus(context.parent.descriptor.asSafely<Angular2ElementDescriptor>()?.sourceDirectives ?: emptyList())
+      .filterIsInstance<Angular2ClassBasedEntity>()
       .mapNotNull { it.typeScriptClass }
       .filter { !JSProjectUtil.isInLibrary(it) }
       .distinct()

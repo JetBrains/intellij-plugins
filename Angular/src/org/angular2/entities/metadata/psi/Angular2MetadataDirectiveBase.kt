@@ -10,7 +10,7 @@ import org.angular2.entities.*
 import org.angular2.entities.metadata.stubs.Angular2MetadataDirectiveStubBase
 
 abstract class Angular2MetadataDirectiveBase<Stub : Angular2MetadataDirectiveStubBase<*>>(element: Stub)
-  : Angular2MetadataDeclaration<Stub>(element), Angular2Directive {
+  : Angular2MetadataDeclaration<Stub>(element), Angular2ClassBasedDirective {
 
   private val myExportAsList = NotNullLazyValue.lazy {
     val exportAsString = stub.exportAs

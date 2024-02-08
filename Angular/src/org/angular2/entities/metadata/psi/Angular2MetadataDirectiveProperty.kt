@@ -19,7 +19,7 @@ import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.utils.coalesceApiStatus
 import com.intellij.webSymbols.utils.coalesceWith
 import org.angular2.codeInsight.Angular2LibrariesHacks
-import org.angular2.entities.Angular2DirectiveProperty
+import org.angular2.entities.Angular2ClassBasedDirectiveProperty
 import org.angular2.entities.Angular2EntityUtils
 import java.util.*
 
@@ -28,7 +28,7 @@ class Angular2MetadataDirectiveProperty internal constructor(
   private val myFieldName: String,
   override val name: String,
   override val qualifiedKind: WebSymbolQualifiedKind,
-) : Angular2DirectiveProperty, PsiSourcedWebSymbol {
+) : Angular2ClassBasedDirectiveProperty, PsiSourcedWebSymbol {
 
   private val mySignature: NullableLazyValue<JSRecordType.PropertySignature> =
     lazyNullable { myOwner.getPropertySignature(myFieldName) }

@@ -10,9 +10,11 @@ import com.intellij.model.Symbol
 import com.intellij.model.search.SearchRequest
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.util.asSafely
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.references.WebSymbolReferenceProvider
 import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
+import org.angular2.entities.Angular2ClassBasedDirective
 import org.angular2.entities.Angular2EntityUtils.getPropertyDeclarationOrReferenceKindAndDirective
 import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
@@ -38,7 +40,9 @@ class Angular2DirectivePropertyLiteralReferencesProvider : WebSymbolReferencePro
       return mapOf(startOffset + 1 to symbol)
     }
     else {
-      val symbol = directive.typeScriptClass
+      val symbol = directive
+                     .asSafely<Angular2ClassBasedDirective>()
+                     ?.typeScriptClass
                      ?.asWebSymbol()
                      ?.getMatchingJSPropertySymbols(name, null)
                      ?.find { it.source is JSAttributeListOwner }

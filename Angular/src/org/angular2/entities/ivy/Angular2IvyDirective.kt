@@ -28,7 +28,7 @@ import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 
 open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
-  : Angular2IvyDeclaration<Angular2IvySymbolDef.Directive>(entityDef), Angular2Directive,
+  : Angular2IvyDeclaration<Angular2IvySymbolDef.Directive>(entityDef), Angular2ClassBasedDirective,
     Angular2HostDirectivesResolver.Angular2DirectiveWithHostDirectives {
 
   @Suppress("LeakingThis")

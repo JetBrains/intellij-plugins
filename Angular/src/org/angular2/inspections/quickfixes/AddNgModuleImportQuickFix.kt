@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.angular2.codeInsight.Angular2DeclarationsScope
+import org.angular2.entities.Angular2ClassBasedEntity
 import org.angular2.entities.Angular2Declaration
 import org.angular2.inspections.actions.Angular2ActionFactory
 import org.angular2.lang.Angular2Bundle
@@ -31,6 +32,7 @@ class AddNgModuleImportQuickFix(context: PsiElement,
         else
           scope.getPublicModulesExporting(declaration)
       }
+      .filterIsInstance<Angular2ClassBasedEntity>()
       .map { it.className }
       .distinct()
       .toList()

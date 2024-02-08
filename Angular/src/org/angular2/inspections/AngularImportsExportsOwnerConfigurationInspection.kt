@@ -55,7 +55,8 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
         registerProblem(
           ProblemType.ENTITY_WITH_MISMATCHED_TYPE,
           Angular2Bundle.htmlMessage("angular.inspection.wrong-entity-type.message.standalone-declarable", entity.htmlLabel),
-          MoveDeclarationOfStandaloneToImportsQuickFix(entity.className)
+          *listOfNotNull(entity.asSafely<Angular2ClassBasedEntity>()?.let { MoveDeclarationOfStandaloneToImportsQuickFix(it.className) })
+            .toTypedArray()
         )
       }
     }
@@ -134,7 +135,8 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
         registerProblem(
           ProblemType.ENTITY_WITH_MISMATCHED_TYPE,
           Angular2Bundle.htmlMessage("angular.inspection.wrong-entity-type.message.not-standalone", entity.htmlLabel),
-          ConvertToStandaloneQuickFix(entity.className)
+          *listOfNotNull(entity.asSafely<Angular2ClassBasedEntity>()?.let { ConvertToStandaloneQuickFix(it.className) })
+            .toTypedArray()
         )
       }
     }

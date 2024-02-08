@@ -37,7 +37,7 @@ class Angular2DirectiveExportAs(
     get() = NG_DIRECTIVE_EXPORTS_AS
 
   override val type: Any?
-    get() = directive.typeScriptClass?.jsType
+    get() = directive.entityJsType
 
   override fun createPointer(): Pointer<out Angular2DirectiveExportAs> {
     val name = name
@@ -57,11 +57,10 @@ class Angular2DirectiveExportAs(
 
   override val presentation: TargetPresentation
     get() {
-      val clazz = directive.typeScriptClass
       return TargetPresentation.builder(name)
         .icon(icon)
-        .locationText(clazz?.containingFile?.name)
-        .containerText(clazz?.name)
+        .locationText(directive.entitySource?.containingFile?.name)
+        .containerText(directive.getName())
         .presentation()
     }
 

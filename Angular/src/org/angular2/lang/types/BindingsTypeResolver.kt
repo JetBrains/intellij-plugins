@@ -25,6 +25,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ProcessingContext
 import com.intellij.util.SmartList
+import com.intellij.util.asSafely
 import com.intellij.util.containers.MultiMap
 import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.Angular2LibrariesHacks.hackNgModelChangeType
@@ -32,10 +33,7 @@ import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.config.Angular2Compiler.isStrictTemplates
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder.Companion.NG_TEMPLATE_CONTEXT_GUARD
-import org.angular2.entities.Angular2AliasedDirectiveProperty
-import org.angular2.entities.Angular2Directive
-import org.angular2.entities.Angular2DirectiveProperty
-import org.angular2.entities.Angular2EntitiesProvider
+import org.angular2.entities.*
 import org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF
 import org.angular2.lang.expr.psi.Angular2Binding
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
@@ -108,12 +106,12 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
       val instanceSubstitutor: JSTypeSubstitutor?
       when {
         hasExport -> {
-          val actualDirective = directive.exportAs[exportName]?.directive
+          val actualDirective = directive.exportAs[exportName]?.directive?.asSafely<Angular2ClassBasedDirective>()
           cls = actualDirective?.typeScriptClass ?: continue
           instanceSubstitutor = substitutors[actualDirective]
         }
         directive.isComponent -> {
-          cls = directive.typeScriptClass ?: continue
+          cls = directive.asSafely<Angular2ClassBasedDirective>()?.typeScriptClass ?: continue
           instanceSubstitutor = substitutors[directive]
         }
         else -> continue
@@ -323,7 +321,7 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
 
 
       directives2inputs.forEach { (directive, directiveInputs) ->
-        val cls = directive.typeScriptClass ?: return@forEach
+        val cls = directive.asSafely<Angular2ClassBasedDirective>()?.typeScriptClass ?: return@forEach
         val elementTypeSource = JSTypeSourceFactory.createTypeSource(element, true)
           .copyWithNewLanguage(JSTypeSource.SourceLanguage.TS) // sometimes we get the <ng-template> element, so we need to force TS
         val classTypeSource = cls.staticJSType.source
@@ -411,7 +409,7 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
       val genericArguments = MultiMap<JSTypeGenericId, JSType?>()
       val templateContextTypes: MutableList<JSType> = SmartList()
       directives.forEach { directive ->
-        val cls = directive.typeScriptClass ?: return@forEach
+        val cls = directive.asSafely<Angular2ClassBasedDirective>()?.typeScriptClass ?: return@forEach
 
         getTemplateContextTypeNonStrict(cls)?.let { templateContextType ->
           templateContextTypes.add(templateContextType)

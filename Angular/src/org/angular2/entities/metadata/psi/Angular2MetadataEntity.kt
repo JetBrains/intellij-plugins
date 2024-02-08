@@ -6,12 +6,12 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
 import com.intellij.util.NullableConsumer
 import com.intellij.util.containers.Stack
-import org.angular2.entities.Angular2Entity
+import org.angular2.entities.Angular2ClassBasedEntity
 import org.angular2.entities.Angular2EntityUtils
 import org.angular2.entities.metadata.stubs.Angular2MetadataEntityStub
 
 abstract class Angular2MetadataEntity<Stub : Angular2MetadataEntityStub<*>>(element: Stub)
-  : Angular2MetadataClassBase<Stub>(element), Angular2Entity {
+  : Angular2MetadataClassBase<Stub>(element), Angular2ClassBasedEntity {
 
   override val decorator: ES6Decorator?
     get() = null

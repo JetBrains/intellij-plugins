@@ -22,7 +22,7 @@ import com.intellij.webSymbols.utils.WebSymbolDeclaredInPsi
 import com.intellij.webSymbols.utils.coalesceApiStatus
 import com.intellij.webSymbols.utils.coalesceWith
 import org.angular2.Angular2DecoratorUtil
-import org.angular2.entities.Angular2DirectiveProperty
+import org.angular2.entities.Angular2ClassBasedDirectiveProperty
 import org.angular2.entities.Angular2EntityUtils
 import org.angular2.entities.source.Angular2SourceDirective.Companion.getPropertySources
 import java.util.*
@@ -34,7 +34,7 @@ abstract class Angular2SourceDirectiveProperty(
   override val name: String,
   override val required: Boolean,
   val declarationSource: PsiElement?,
-) : Angular2DirectiveProperty {
+) : Angular2ClassBasedDirectiveProperty {
 
   companion object {
     fun create(owner: TypeScriptClass,

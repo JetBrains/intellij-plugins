@@ -115,7 +115,7 @@ class Angular2ElementDocumentationTarget private constructor(
                                                   val directive: Angular2Directive?) {
     fun build(): @Nls String {
       val source = when (element) {
-        is Angular2Entity -> element.typeScriptClass
+        is Angular2Entity -> element.entitySource
         is Angular2SourceDirectiveProperty -> element.sources.find { hasNonPrivateDocComment(it) }
         is Angular2DirectiveExportAs -> null
         else -> element.sourceElement.takeIf { it !is TypeScriptClass }
@@ -123,7 +123,7 @@ class Angular2ElementDocumentationTarget private constructor(
       return (buildDefinition() + Angular2ElementDocProvider(buildAdditionalSections()).renderDocComment(source))
         .applyIf(element is Angular2Entity) {
           // remove self links
-          val link = Regex.escape(DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL + (element as Angular2Entity).className)
+          val link = Regex.escape(DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL + (element as Angular2Entity).entitySourceName)
           replace(Regex("<span\\s+style='[^']*'><a\\s+href=['\"]$link['\"]\\s*>(.*?)</a\\s*></span>"), "$1")
         }
     }
@@ -147,8 +147,9 @@ class Angular2ElementDocumentationTarget private constructor(
               }.toString())
             }
           element.hostDirectives.mapNotNullTo(result) { hostDirective ->
-            hostDirective.directive?.typeScriptClass?.let { cls ->
-              Pair("Host directives", SyntaxPrinter(cls).withPre { append(cls.jsType) }.toString())
+            hostDirective.directive?.let { directive ->
+              Pair("Host directives", SyntaxPrinter(directive.sourceElement)
+                .withPre { appendEntityType(directive) }.toString())
             }
           }
         }
@@ -183,15 +184,7 @@ class Angular2ElementDocumentationTarget private constructor(
 
       val bindingsTypeResolver: BindingsTypeResolver? = BindingsTypeResolver.get(location)
       if (element is Angular2Entity) {
-        val jsType = element.typeScriptClass?.possiblyGenericJsType?.let {
-          bindingsTypeResolver?.substituteTypeForDocumentation(directive, it) ?: it
-        }
-        if (jsType != null) {
-          result.append(jsType)
-        }
-        else {
-          result.append(TypeScriptHighlighter.TS_CLASS, element.getName())
-        }
+        result.appendEntityType(element, bindingsTypeResolver)
       }
       else if (element is WebSymbol) {
         result.append(TypeScriptHighlighter.TS_INSTANCE_MEMBER_VARIABLE,
@@ -207,7 +200,29 @@ class Angular2ElementDocumentationTarget private constructor(
       return result.appendRaw(DocumentationMarkup.DEFINITION_END).toString()
     }
 
+    private fun SyntaxPrinter.appendEntityType(entity: Angular2Entity) {
+      val jsType = entity.entityJsType
+      if (jsType != null) {
+        append(jsType)
+      }
+      else {
+        append(TypeScriptHighlighter.TS_CLASS, entity.getName())
+      }
+    }
+
+    private fun SyntaxPrinter.appendEntityType(entity: Angular2Entity, bindingsTypeResolver: BindingsTypeResolver?) {
+      val jsType = entity.asSafely<Angular2ClassBasedEntity>()?.typeScriptClass?.possiblyGenericJsType?.let {
+        bindingsTypeResolver?.substituteTypeForDocumentation(directive, it) ?: it
+      } ?: entity.entityJsType
+      if (jsType != null) {
+        append(jsType)
+      }
+      else {
+        append(TypeScriptHighlighter.TS_CLASS, entity.getName())
+      }
+    }
   }
+
 
   internal class SyntaxPrinter(private val context: PsiElement) {
     private val builder: StringBuilder = StringBuilder()

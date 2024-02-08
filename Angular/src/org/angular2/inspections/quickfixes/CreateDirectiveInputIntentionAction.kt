@@ -11,6 +11,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.asSafely
 import org.angular2.Angular2DecoratorUtil.INPUT_DEC
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
+import org.angular2.entities.Angular2ClassBasedEntity
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.Angular2LangUtil.ANGULAR_CORE_PACKAGE
 import org.angular2.lang.expr.psi.Angular2Binding
@@ -54,6 +55,7 @@ class CreateDirectiveInputIntentionAction(xmlAttribute: XmlAttribute, referenceN
             context.parent)
             ?.asSafely<Angular2AttributeDescriptor>()
             ?.sourceDirectives
+            ?.filterIsInstance<Angular2ClassBasedEntity>()
             ?.mapNotNull { it.typeScriptClass }
           ?: emptyList()
         )

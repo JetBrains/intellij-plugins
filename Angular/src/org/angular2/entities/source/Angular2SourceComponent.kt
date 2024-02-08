@@ -18,7 +18,7 @@ import org.angular2.entities.*
 import org.angular2.entities.source.Angular2SourceUtil.getReferencedFile
 
 class Angular2SourceComponent(decorator: ES6Decorator, implicitElement: JSImplicitElement)
-  : Angular2SourceDirective(decorator, implicitElement), Angular2Component {
+  : Angular2SourceDirective(decorator, implicitElement), Angular2ClassBasedComponent {
 
   private var moduleResolverField: Angular2ModuleResolver<ES6Decorator>? = null
   private val moduleResolver: Angular2ModuleResolver<ES6Decorator>

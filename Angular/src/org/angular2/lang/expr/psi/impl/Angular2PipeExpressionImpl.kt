@@ -78,9 +78,9 @@ class Angular2PipeExpressionImpl(elementType: IElementType?)
     val scope = Angular2DeclarationsScope(methodExpression)
     val pipe = findPipes(project, name).find { scope.contains(it) }
                ?: return true
-    val jsClass = pipe.typeScriptClass ?: return true
+    val jsClass = pipe.entityJsType ?: return true
     val typeSource = JSTypeSourceFactory.createTypeSource(this, true)
-    val instanceMethod = JSQualifiedReferenceType(Angular2EntitiesProvider.TRANSFORM_METHOD, jsClass.jsType, typeSource)
+    val instanceMethod = JSQualifiedReferenceType(Angular2EntitiesProvider.TRANSFORM_METHOD, jsClass, typeSource)
     val factory = JSPsiBasedTypeOfType.getArgumentTypeFactory(evaluateContext.isContextualOverloadEvaluation)
     val type = JSApplyCallType(instanceMethod, getArgumentTypes(factory), typeSource)
     typeProcessor.process(type, evaluateContext)

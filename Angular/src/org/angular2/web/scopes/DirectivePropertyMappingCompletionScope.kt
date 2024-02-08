@@ -17,6 +17,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.siblings
 import com.intellij.refactoring.suggested.createSmartPointer
+import com.intellij.util.asSafely
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.WebSymbol.Companion.JS_STRING_LITERALS
@@ -29,6 +30,7 @@ import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2DecoratorUtil.INPUT_DEC
 import org.angular2.Angular2DecoratorUtil.OUTPUT_DEC
 import org.angular2.Angular2Framework
+import org.angular2.entities.Angular2ClassBasedDirective
 import org.angular2.entities.Angular2EntityUtils
 import org.angular2.entities.source.Angular2SourceDirective
 import org.angular2.entities.source.Angular2SourceUtil.readDirectivePropertyMappings
@@ -78,7 +80,8 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
             NG_DIRECTIVE_INPUTS
           else
             NG_DIRECTIVE_OUTPUTS
-          directive.typeScriptClass
+          val typeScriptClass = directive.asSafely<Angular2ClassBasedDirective>()?.typeScriptClass
+          typeScriptClass
             ?.asWebSymbol()
             ?.getJSPropertySymbols()
             ?.filter { property ->
@@ -88,7 +91,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
                 source.attributeList?.decorators?.any { dec -> dec.decoratorName == INPUT_DEC || dec.decoratorName == OUTPUT_DEC } == true
               }
             }
-            ?.map { Angular2FieldPropertySymbol(it, symbolKind, directive.sourceElement.project, directive.typeScriptClass) }
+            ?.map { Angular2FieldPropertySymbol(it, symbolKind, directive.sourceElement.project, typeScriptClass) }
             ?.forEach(filterAndConsume)
         }
       }

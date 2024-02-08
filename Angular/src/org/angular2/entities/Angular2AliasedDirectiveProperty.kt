@@ -2,7 +2,6 @@
 package org.angular2.entities
 
 import com.intellij.lang.javascript.psi.JSType
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
@@ -38,14 +37,14 @@ class Angular2AliasedDirectiveProperty(
   override val required: Boolean
     get() = delegate.required
 
+  override val type: JSType?
+    get() = delegate.type
+
   override val rawJsType: JSType?
     get() = delegate.rawJsType
 
   override val virtualProperty: Boolean
     get() = delegate.virtualProperty
-
-  override val owner: TypeScriptClass?
-    get() = delegate.owner
 
   override val apiStatus: WebSymbolApiStatus
     get() = delegate.apiStatus

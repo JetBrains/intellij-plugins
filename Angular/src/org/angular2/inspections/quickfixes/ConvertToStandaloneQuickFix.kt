@@ -8,8 +8,10 @@ import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.openapi.project.Project
 import com.intellij.psi.util.parentOfTypes
+import com.intellij.util.asSafely
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2DecoratorUtil.STANDALONE_PROP
+import org.angular2.entities.Angular2ClassBasedEntity
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.Angular2Bundle
 import org.jetbrains.annotations.Nls
@@ -30,7 +32,7 @@ class ConvertToStandaloneQuickFix(private val className: String) : LocalQuickFix
     val decorator = when (val element = descriptor.psiElement) {
                       is JSReferenceExpression -> Angular2EntitiesProvider.getEntity(element.resolve())
                       else -> Angular2EntitiesProvider.getEntity(element.parentOfTypes(ES6Decorator::class, TypeScriptClass::class))
-                    }?.decorator ?: return
+                    }?.asSafely<Angular2ClassBasedEntity>()?.decorator ?: return
 
     val objectLiteral = Angular2DecoratorUtil.getObjectLiteralInitializer(decorator) ?: return
     Angular2FixesPsiUtil.insertJSObjectLiteralProperty(objectLiteral, STANDALONE_PROP, "true")

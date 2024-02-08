@@ -17,6 +17,7 @@ import com.intellij.util.applyIf
 import com.intellij.util.asSafely
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2InjectionUtils
+import org.angular2.entities.Angular2ClassBasedEntity
 import org.angular2.entities.Angular2ImportsOwner
 
 object Angular2FixesPsiUtil {
@@ -42,7 +43,7 @@ object Angular2FixesPsiUtil {
     }
 
   fun insertEntityDecoratorMember(module: Angular2ImportsOwner, propertyName: String, name: String): Boolean {
-    val decorator = module.decorator ?: return false
+    val decorator = module.asSafely<Angular2ClassBasedEntity>()?.decorator ?: return false
     val initializer = getOrCreateDecoratorInitializer(decorator) ?: return false
     var targetListProp = initializer.findProperty(propertyName)
     if (targetListProp == null) {

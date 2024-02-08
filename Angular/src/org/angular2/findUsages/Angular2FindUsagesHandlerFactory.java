@@ -21,10 +21,10 @@ public class Angular2FindUsagesHandlerFactory extends JavaScriptFindUsagesHandle
   public FindUsagesHandler createFindUsagesHandler(@NotNull PsiElement element, boolean forHighlightUsages) {
     final Angular2Entity entity;
     if (!forHighlightUsages && (entity = Angular2EntitiesProvider.getEntity(element)) != null) {
-      JSClass cls = entity.getTypeScriptClass();
+      PsiElement entitySource = entity.getEntitySource();
       return new JavaScriptFindUsagesHandler(
-        element != cls ? entity.getSourceElement() : cls,
-        element == cls ? new PsiElement[]{entity.getSourceElement()} : PsiElement.EMPTY_ARRAY);
+        element != entitySource ? entity.getSourceElement() : entitySource,
+        element == entitySource ? new PsiElement[]{entity.getSourceElement()} : PsiElement.EMPTY_ARRAY);
     }
     return super.createFindUsagesHandler(element, forHighlightUsages);
   }

@@ -40,7 +40,7 @@ class Angular2DeclarationsScope(element: PsiElement) {
     return export2NgModuleMap
       .computeIfAbsent(declaration.sourceElement.project) { Angular2EntitiesProvider.getExportedDeclarationToModuleMap(it) }
       .get(declaration)
-      .filter { it.isPublic && it.typeScriptClass != null }
+      .filter { it.isPublic && it.entitySource != null }
   }
 
   fun getDeclarationProximity(declaration: Angular2Declaration): DeclarationProximity {

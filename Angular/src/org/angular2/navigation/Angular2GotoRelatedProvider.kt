@@ -46,7 +46,7 @@ class Angular2GotoRelatedProvider : GotoRelatedProvider() {
     return when (components.size) {
       0 -> emptyList()
       1 -> getRelatedItems(components[0]).filter { filter != it.element?.containingFile }
-      else -> components.map { GotoRelatedItem(it.typeScriptClass!!, groupName) }
+      else -> components.mapNotNull { it.entitySource?.let { source -> GotoRelatedItem(source, groupName) } }
     }
   }
 
@@ -72,8 +72,8 @@ class Angular2GotoRelatedProvider : GotoRelatedProvider() {
 
   private fun getRelatedItems(component: Angular2Component): List<GotoRelatedItem> {
     val result: MutableList<GotoRelatedItem> = SmartList()
-    val cls = component.typeScriptClass
-    if (cls != null && cls.name != null) {
+    val cls = component.entitySource
+    if (cls != null) {
       result.add(Angular2GoToRelatedItem(cls, COMPONENT_INDEX, false,
                                          Angular2Bundle.message("angular.action.goto-related.component-class")))
     }
@@ -100,12 +100,10 @@ class Angular2GotoRelatedProvider : GotoRelatedProvider() {
                                                                 if (cssFiles.size == 1) "" else " " + count++)))
     }
     first = true
-    for (moduleClass in component.allDeclaringModules.mapNotNull { it.typeScriptClass }) {
-      if (moduleClass.name != null) {
-        result.add(Angular2GoToRelatedItem(moduleClass, if (first) MODULE_INDEX else -1, false,
-                                           Angular2Bundle.message("angular.action.goto-related.module")))
-        first = false
-      }
+    for (moduleEntitySource in component.allDeclaringModules.mapNotNull { it.entitySource }) {
+      result.add(Angular2GoToRelatedItem(moduleEntitySource, if (first) MODULE_INDEX else -1, false,
+                                         Angular2Bundle.message("angular.action.goto-related.module")))
+      first = false
     }
     return result
   }

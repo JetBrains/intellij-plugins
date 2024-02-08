@@ -26,6 +26,7 @@ import org.angular2.Angular2DecoratorUtil
 import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.codeInsight.imports.Angular2DeclarationsCopyPasteProcessor.Angular2DeclarationsImportsTransferableData
+import org.angular2.entities.Angular2ClassBasedEntity
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.entities.source.Angular2SourceUtil
@@ -170,7 +171,7 @@ class Angular2DeclarationsCopyPasteProcessor : JSCopyPasteProcessorBase<Angular2
                            ?: return@runAndWait
         val scope = Angular2DeclarationsScope(pasteContext)
         val importsOwner = scope.importsOwner
-        val destinationModuleClass = importsOwner?.typeScriptClass
+        val destinationModuleClass = importsOwner?.asSafely<Angular2ClassBasedEntity>()?.typeScriptClass
                                      ?: return@runAndWait
         val project = pasteContext.project
         CommandProcessor.getInstance().executeCommand(

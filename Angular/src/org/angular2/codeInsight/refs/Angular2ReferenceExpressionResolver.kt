@@ -58,7 +58,7 @@ class Angular2ReferenceExpressionResolver(expression: JSReferenceExpressionImpl,
     return if (!pipe.transformMembers.isEmpty())
       pipe.transformMembers.map { JSResolveResult(it) }.toTypedArray()
     else
-      arrayOf(JSResolveResult(pipe.typeScriptClass ?: pipe.sourceElement))
+      arrayOf(JSResolveResult(pipe.entitySource ?: pipe.sourceElement))
   }
 
   private fun resolveTemplateVariable(expression: JSReferenceExpressionImpl): Array<ResolveResult> {

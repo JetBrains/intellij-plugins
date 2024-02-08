@@ -8,11 +8,12 @@ import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import org.angular2.entities.Angular2Entity
+import org.angular2.entities.Angular2ClassBasedEntity
 import org.angular2.entities.Angular2EntityUtils
 import org.angular2.lang.Angular2Bundle
 
-abstract class Angular2SourceEntityBase protected constructor(override val typeScriptClass: TypeScriptClass) : UserDataHolderBase(), Angular2Entity {
+abstract class Angular2SourceEntityBase protected constructor(override val typeScriptClass: TypeScriptClass)
+  : UserDataHolderBase(), Angular2ClassBasedEntity {
 
   override fun getName(): String = StringUtil.notNullize(typeScriptClass.name, Angular2Bundle.message("angular.description.unnamed"))
 

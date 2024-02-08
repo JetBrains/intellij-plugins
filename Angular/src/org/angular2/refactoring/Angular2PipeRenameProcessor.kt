@@ -20,6 +20,7 @@ import org.angular2.Angular2DecoratorUtil.NAME_PROP
 import org.angular2.Angular2DecoratorUtil.PIPE_DEC
 import org.angular2.Angular2DecoratorUtil.findDecorator
 import org.angular2.Angular2DecoratorUtil.getProperty
+import org.angular2.entities.Angular2ClassBasedEntity
 import org.angular2.entities.Angular2EntitiesProvider.getPipe
 import org.angular2.lang.Angular2LangUtil
 import java.util.*
@@ -67,7 +68,7 @@ class Angular2PipeRenameProcessor : JSDefaultRenameProcessor() {
 
   override fun prepareRenaming(element: PsiElement, newName: String, allRenames: MutableMap<PsiElement, String>) {
     assert(element is JSImplicitElement)
-    val pipeClass: JSClass = getPipe(element)?.typeScriptClass ?: return
+    val pipeClass: JSClass = getPipe(element)?.asSafely<Angular2ClassBasedEntity>()?.typeScriptClass ?: return
     allRenames[pipeClass] = getDefaultPipeClassName(newName)
     if (pipeClass.containingFile.name == getDefaultPipeFileName((element as JSImplicitElement).name)) {
       allRenames[pipeClass.containingFile] = getDefaultPipeFileName(newName)

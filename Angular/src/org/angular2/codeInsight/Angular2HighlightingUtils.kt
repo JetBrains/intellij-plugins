@@ -54,7 +54,7 @@ object Angular2HighlightingUtils {
 
 
   val Angular2Entity.htmlClassName: String
-    get() = highlightName(typeScriptClass ?: sourceElement, className)
+    get() = highlightName(entitySource ?: sourceElement, entitySourceName)
 
   val JSClass.htmlName: String
     get() = highlightName(this, name ?: Angular2Bundle.message("angular.description.unknown-class"))

@@ -10,7 +10,7 @@ import org.angular2.entities.*
 import org.angular2.entities.metadata.stubs.Angular2MetadataComponentStub
 
 class Angular2MetadataComponent(element: Angular2MetadataComponentStub)
-  : Angular2MetadataDirectiveBase<Angular2MetadataComponentStub>(element), Angular2Component {
+  : Angular2MetadataDirectiveBase<Angular2MetadataComponentStub>(element), Angular2ClassBasedComponent {
 
   private val myNgContentSelectors = NotNullLazyValue.lazy {
     stub.ngContentSelectors.map { selector ->

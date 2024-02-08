@@ -15,10 +15,8 @@ interface Angular2Component : Angular2Directive, Angular2ImportsOwner {
   val ngContentSelectors: List<Angular2DirectiveSelector>
 
   val jsResolveScope: PsiElement?
-    get() = typeScriptClass
 
   val jsExportScope: PsiElement?
-    get() = typeScriptClass?.containingFile
 
   override val isComponent: Boolean
     get() = true

@@ -24,6 +24,7 @@ import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolQualifiedKind
+import org.angular2.entities.Angular2ClassBasedEntity
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2DirectiveProperty
 import org.angular2.entities.ivy.Angular2IvyDirective
@@ -81,7 +82,7 @@ object Angular2LibrariesHacks {
     if (!isIonicDirective(directive)) {
       return emptyMap()
     }
-    val cls = directive.typeScriptClass ?: return emptyMap()
+    val cls = directive.asSafely<Angular2ClassBasedEntity>()?.typeScriptClass ?: return emptyMap()
     val outputs = mutableMapOf<String, String>()
     // We can guess outputs by looking for fields with EventEmitter type
     cls.jsType.asRecordType().properties.forEach { prop ->

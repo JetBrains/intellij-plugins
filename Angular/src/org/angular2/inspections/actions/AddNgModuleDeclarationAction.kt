@@ -38,7 +38,7 @@ class AddNgModuleDeclarationAction(editor: Editor?,
     if (Angular2EntitiesProvider.getDeclaration(myDecorator.element) !is Angular2SourceDeclaration)
       return emptyList()
     return AddNgModuleDeclarationQuickFix.getCandidateModules(context)
-      .mapNotNull { it.typeScriptClass?.let { cls -> ES6ImportCandidate(myName, cls, context) } }
+      .mapNotNull { it.entitySource?.let { src -> ES6ImportCandidate(myName, src, context) } }
   }
 
   override fun runAction(editor: Editor?,

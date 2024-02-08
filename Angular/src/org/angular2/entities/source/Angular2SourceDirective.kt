@@ -44,7 +44,7 @@ import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 
 open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSImplicitElement)
-  : Angular2SourceDeclaration(decorator, implicitElement), Angular2Directive,
+  : Angular2SourceDeclaration(decorator, implicitElement), Angular2ClassBasedDirective,
     Angular2HostDirectivesResolver.Angular2DirectiveWithHostDirectives {
 
   @Suppress("LeakingThis")

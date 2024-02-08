@@ -26,7 +26,6 @@ import com.intellij.util.asSafely
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.blocks.*
 import org.angular2.codeInsight.template.isTemplateTag
-import org.angular2.entities.Angular2Directive
 import org.angular2.lang.expr.psi.Angular2Binding
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
@@ -195,10 +194,6 @@ class Angular2ControlFlowBuilder : JSControlFlowBuilder() {
     }
     return emptyList()
   }
-
-  private val Angular2Directive.templateGuards: List<JSElement>
-    get() = typeScriptClass?.members?.filter { it.name?.startsWith(NG_TEMPLATE_GUARD_PREFIX) == true }
-            ?: emptyList()
 
   private var currentTopConditionExpression: JSExpression? = null
 

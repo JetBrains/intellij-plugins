@@ -16,6 +16,7 @@ import org.angular2.Angular2DecoratorUtil.getClassForDecoratorElement
 import org.angular2.Angular2DecoratorUtil.isAngularEntityDecorator
 import org.angular2.codeInsight.Angular2HighlightingUtils.htmlClassName
 import org.angular2.codeInsight.Angular2HighlightingUtils.renderEntityList
+import org.angular2.entities.Angular2ClassBasedEntity
 import org.angular2.entities.Angular2Declaration
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.entities.Angular2FrameworkHandler
@@ -41,7 +42,7 @@ class AngularMissingOrInvalidDeclarationInModuleInspection : LocalInspectionTool
                 .any { h -> h.suppressModuleInspectionErrors(modules, declaration) }) {
               return
             }
-            val entity = Angular2EntitiesProvider.getEntity(decorator) ?: return
+            val entity = Angular2EntitiesProvider.getEntity(decorator) as? Angular2ClassBasedEntity ?: return
             val classIdentifier = getClassForDecoratorElement(decorator)?.nameIdentifier ?: decorator
             if (modules.isEmpty()) {
               holder.registerProblem(classIdentifier,

@@ -11,7 +11,7 @@ import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.webSymbols.WebSymbolApiStatus
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.utils.WebSymbolDeclaredInPsi
-import org.angular2.entities.Angular2DirectiveProperty
+import org.angular2.entities.Angular2ClassBasedDirectiveProperty
 import org.angular2.entities.Angular2EntityUtils
 import java.util.*
 
@@ -22,7 +22,7 @@ class Angular2SourceDirectiveVirtualProperty(
   override val required: Boolean,
   override val sourceElement: PsiElement,
   override val textRangeInSourceElement: TextRange?
-) : Angular2DirectiveProperty, WebSymbolDeclaredInPsi {
+) : Angular2ClassBasedDirectiveProperty, WebSymbolDeclaredInPsi {
 
   constructor(owner: TypeScriptClass, qualifiedKind: WebSymbolQualifiedKind, info: Angular2PropertyInfo)
     : this(owner, qualifiedKind, info.name, info.required, info.declaringElement ?: owner,

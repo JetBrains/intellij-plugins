@@ -7,8 +7,8 @@ import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2DirectiveKind
 import org.angular2.entities.metadata.stubs.Angular2MetadataDirectiveStub
 
-class Angular2MetadataDirective(element: Angular2MetadataDirectiveStub) : Angular2MetadataDirectiveBase<Angular2MetadataDirectiveStub>(
-  element) {
+class Angular2MetadataDirective(element: Angular2MetadataDirectiveStub)
+  : Angular2MetadataDirectiveBase<Angular2MetadataDirectiveStub>(element) {
 
   override val directiveKind: Angular2DirectiveKind
     get() {

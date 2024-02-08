@@ -9,7 +9,6 @@ import com.intellij.lang.ecmascript6.psi.impl.TypeScriptImportPathBuilder
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JSStringUtil.unquoteWithoutUnescapingStringLiteralValue
 import com.intellij.lang.javascript.ecmascript6.ES6QualifiedNamedElementRenderer
-import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory
 import com.intellij.lang.javascript.psi.types.JSUnionOrIntersectionType
@@ -263,7 +262,7 @@ object Angular2FixesFactory {
       var file = declarationFile
       while (file != null && file != projectRoot) {
         if (localRoots.contains(file)) {
-          return@filter hasNonRelativeModuleName(context, declaration.typeScriptClass, declarationFile!!)
+          return@filter hasNonRelativeModuleName(context, declaration.entitySource, declarationFile!!)
         }
         file = file.parent
       }
@@ -339,10 +338,10 @@ object Angular2FixesFactory {
 
     ThreadingAssertions.assertEventDispatchThread()
     val elementMap = declarations
-      .mapNotNull { it.typeScriptClass?.let { cls -> Pair(cls, it) } }
+      .mapNotNull { it.entitySource?.let { src -> Pair(src, it) } }
       .toMap()
 
-    val processor = PsiElementProcessor<JSElement> { element ->
+    val processor = PsiElementProcessor<PsiElement> { element ->
       elementMap[element]?.let(actionFactory)?.execute()
       false
     }
@@ -352,17 +351,17 @@ object Angular2FixesFactory {
       processor.execute(
         editor.getUserData(DECLARATION_TO_CHOOSE)
           ?.let { name -> declarations.find { declaration -> declaration.getName() == name } }
-          ?.typeScriptClass
+          ?.entitySource
         ?: throw AssertionError(
           "Declaration name must be specified in test mode. Available names: " +
-          declarations.filter { it.typeScriptClass != null }.joinToString { it.getName() }
+          declarations.filter { it.entitySource != null }.joinToString { it.getName() }
         )
       )
       return
     }
     if (editor.isDisposed) return
 
-    getPsiElementPopup(elements = elementMap.keys.toTypedArray<JSElement>(),
+    getPsiElementPopup(elements = elementMap.keys.toTypedArray<PsiElement>(),
                        renderer = ES6QualifiedNamedElementRenderer(),
                        title = title, processor = processor)
       .showInBestPositionFor(editor)
