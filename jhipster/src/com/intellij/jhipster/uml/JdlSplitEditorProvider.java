@@ -5,17 +5,16 @@ package com.intellij.jhipster.uml;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.fileEditor.TextEditorWithPreviewProvider;
-import com.intellij.openapi.fileEditor.impl.text.PsiAwareTextEditorProvider;
 import org.jetbrains.annotations.NotNull;
 
 final class JdlSplitEditorProvider extends TextEditorWithPreviewProvider {
   JdlSplitEditorProvider() {
-    super(new PsiAwareTextEditorProvider(), new JdlPreviewFileEditorProvider());
+    super(new JdlPreviewFileEditorProvider());
   }
 
   @NotNull
   @Override
-  protected FileEditor createSplitEditor(@NotNull FileEditor firstEditor, @NotNull FileEditor secondEditor) {
-    return new JdlEditorWithPreview((TextEditor)firstEditor, (JdlPreviewFileEditor)secondEditor);
+  protected FileEditor createSplitEditor(@NotNull TextEditor firstEditor, @NotNull FileEditor secondEditor) {
+    return new JdlEditorWithPreview(firstEditor, (JdlPreviewFileEditor)secondEditor);
   }
 }
