@@ -60,8 +60,8 @@ import org.angular2.Angular2DecoratorUtil.INPUT_DEC
 import org.angular2.Angular2DecoratorUtil.OUTPUT_DEC
 import org.angular2.cli.AngularCliUtil
 import org.angular2.entities.Angular2Component
-import org.angular2.entities.Angular2ComponentLocator
 import org.angular2.entities.Angular2EntitiesProvider
+import org.angular2.entities.source.Angular2SourceUtil
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.Angular2LangUtil.EVENT_EMITTER
@@ -195,7 +195,7 @@ class Angular2ExtractComponentHandlerService(
           val targetComponentClass = targetComponentFile.descendantsOfType<TypeScriptClass>().first()
           val targetComponent = Angular2EntitiesProvider.getEntity(targetComponentClass) as Angular2Component
           val targetTemplateFile = targetComponent.templateFile!!
-          val sourceComponentClass = Angular2ComponentLocator.findComponentClasses(sourceFile).firstOrNull()
+          val sourceComponentClass = Angular2SourceUtil.findComponentClasses(sourceFile).firstOrNull()
           context = GeneratorContext(
             sourceTemplateFile = sourceFile,
             sourceComponentClass = sourceComponentClass,

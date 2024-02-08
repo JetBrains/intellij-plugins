@@ -33,7 +33,7 @@ import org.angular2.codeInsight.Angular2HighlightingUtils.withNameColor
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.config.Angular2Compiler
 import org.angular2.codeInsight.config.Angular2Compiler.isStrictTemplates
-import org.angular2.entities.Angular2ComponentLocator
+import org.angular2.entities.source.Angular2SourceUtil
 import org.angular2.inspections.quickfixes.AngularChangeModifierQuickFix
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.Angular2Language
@@ -83,7 +83,7 @@ class AngularInaccessibleSymbolInspection : LocalInspectionTool() {
           if (element.bindingType == PropertyBindingType.PROPERTY) {
             if (!Angular2Compiler.isStrictInputAccessModifiers(element)) return
             val inputElements = getInputSourceElements(element)
-            val owner = Angular2ComponentLocator.findComponentClass(element)
+            val owner = Angular2SourceUtil.findComponentClass(element)
                         ?: return
             for (input in inputElements) {
               val accessType = input.attributeList?.accessType

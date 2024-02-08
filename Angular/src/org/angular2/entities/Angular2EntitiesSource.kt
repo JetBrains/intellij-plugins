@@ -17,4 +17,6 @@ interface Angular2EntitiesSource {
 
   fun findPipes(project: Project, name: String): Collection<Angular2Pipe>
 
+  fun findTemplateComponent(templateContext: PsiElement): Angular2Component?
+
 }

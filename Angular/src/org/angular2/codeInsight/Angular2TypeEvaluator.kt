@@ -10,7 +10,7 @@ import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.lang.javascript.psi.types.JSUnknownType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveResult
-import org.angular2.entities.Angular2ComponentLocator
+import org.angular2.entities.source.Angular2SourceUtil
 import org.angular2.lang.expr.psi.Angular2EmbeddedExpression
 
 class Angular2TypeEvaluator(context: JSEvaluateContext) : TypeScriptTypeEvaluator(context) {
@@ -38,7 +38,7 @@ class Angular2TypeEvaluator(context: JSEvaluateContext) : TypeScriptTypeEvaluato
 
   override fun processThisQualifierInExecutionScope(thisQualifier: JSThisExpression, thisScope: PsiElement) {
     if (thisScope is Angular2EmbeddedExpression) {
-      addType(Angular2ComponentLocator.findComponentClass(thisQualifier)?.jsType
+      addType(Angular2SourceUtil.findComponentClass(thisQualifier)?.jsType
               ?: JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS))
       return
     }

@@ -41,6 +41,9 @@ class Angular2MetadataEntitiesSource : Angular2EntitiesSource {
     return result
   }
 
+  override fun findTemplateComponent(templateContext: PsiElement): Angular2Component? =
+    null
+
   override fun findPipes(project: Project, name: String): Collection<Angular2Pipe> {
     val result = mutableListOf<Angular2Pipe>()
     processMetadataEntities(project, name, Angular2MetadataPipe::class.java,

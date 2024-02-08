@@ -16,6 +16,8 @@ abstract class Angular2MetadataEntity<Stub : Angular2MetadataEntityStub<*>>(elem
   override val decorator: ES6Decorator?
     get() = null
 
+  override val isModifiable: Boolean
+    get() = false
 
   override fun toString(): String {
     return Angular2EntityUtils.toString(this)

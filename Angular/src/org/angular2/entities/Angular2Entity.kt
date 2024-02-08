@@ -15,6 +15,8 @@ interface Angular2Entity : Angular2Element {
   val className: String
     get() = typeScriptClass?.name ?: Angular2Bundle.message("angular.description.unknown-class")
 
+  val isModifiable: Boolean
+
   val decorator: ES6Decorator?
 
   val typeScriptClass: TypeScriptClass?

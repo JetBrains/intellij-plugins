@@ -58,6 +58,10 @@ class Angular2SourceEntitiesSource : Angular2EntitiesSource {
     return result
   }
 
+  override fun findTemplateComponent(templateContext: PsiElement): Angular2Component? =
+    Angular2SourceUtil.findComponentClass(templateContext)
+      ?.let { Angular2EntitiesProvider.getComponent(it) }
+
   override fun findPipes(project: Project, name: String): Collection<Angular2Pipe> {
     val result = SmartList<Angular2Pipe>()
     Angular2IndexUtil.multiResolve(project, Angular2SourcePipeIndexKey, name) { pipe ->

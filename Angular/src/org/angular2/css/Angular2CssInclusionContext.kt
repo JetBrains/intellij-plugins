@@ -22,7 +22,6 @@ import org.angular2.cli.AngularCliUtil
 import org.angular2.cli.config.AngularConfigProvider
 import org.angular2.cli.config.AngularProject
 import org.angular2.entities.Angular2Component
-import org.angular2.entities.Angular2ComponentLocator
 import org.angular2.entities.Angular2EntitiesProvider
 import org.jetbrains.annotations.NonNls
 
@@ -39,7 +38,7 @@ class Angular2CssInclusionContext : CssInclusionContext() {
 
   override fun getLocalUseScope(file: PsiFile): Array<PsiFile> {
     if (file is StylesheetFile) {
-      val component = Angular2EntitiesProvider.getComponent(Angular2ComponentLocator.findComponentClass(file))
+      val component = Angular2EntitiesProvider.findTemplateComponent(file)
       if (component != null) {
         val files = ArrayList(component.cssFiles)
         component.templateFile?.let { files.add(it) }
@@ -93,7 +92,7 @@ private val COMPONENT_CONTEXT_KEY = Key<CachedValue<ComponentCssContext>>("ng.co
 private fun getComponentContext(context: PsiElement): ComponentCssContext? {
   val file = context.containingFile
   return CachedValuesManager.getCachedValue(file, COMPONENT_CONTEXT_KEY) {
-    val component = Angular2EntitiesProvider.getComponent(Angular2ComponentLocator.findComponentClass(file))
+    val component = Angular2EntitiesProvider.findTemplateComponent(file)
     if (component != null) {
       val componentCssContext = ComponentCssContext(component, file)
       create(componentCssContext,

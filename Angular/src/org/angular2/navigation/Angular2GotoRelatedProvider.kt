@@ -15,8 +15,8 @@ import com.intellij.testIntegration.TestFinderHelper
 import com.intellij.util.SmartList
 import org.angular2.Angular2InjectionUtils.getFirstInjectedFile
 import org.angular2.entities.Angular2Component
-import org.angular2.entities.Angular2ComponentLocator.findComponentClasses
 import org.angular2.entities.Angular2EntitiesProvider
+import org.angular2.entities.source.Angular2SourceUtil
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.Angular2LangUtil
 import org.jetbrains.annotations.Nls
@@ -39,7 +39,7 @@ class Angular2GotoRelatedProvider : GotoRelatedProvider() {
       }
     }
     else {
-      componentClasses.addAll(findComponentClasses(file))
+      componentClasses.addAll(Angular2SourceUtil.findComponentClasses(file))
     }
     val filter = getFirstInjectedFile(PsiTreeUtil.getParentOfType(psiElement, JSExpression::class.java)) ?: file
     val components = componentClasses.mapNotNull { Angular2EntitiesProvider.getComponent(it) }

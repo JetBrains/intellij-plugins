@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.ecmascript6.TypeScriptQualifiedNameResolver
 import com.intellij.lang.javascript.psi.resolve.JSImportHandler
 import com.intellij.lang.javascript.psi.resolve.JSTypeResolveResult
 import com.intellij.psi.PsiElement
-import org.angular2.entities.Angular2ComponentLocator
+import org.angular2.entities.Angular2EntitiesProvider
 
 class Angular2ImportHandler : TypeScriptImportHandler() {
 
@@ -14,9 +14,9 @@ class Angular2ImportHandler : TypeScriptImportHandler() {
                                sourceRaw: PsiElement,
                                typeContext: TypeScriptQualifiedNameResolver.StrictKind,
                                includeAugmentations: Boolean): JSTypeResolveResult {
-    val cls = Angular2ComponentLocator.findComponentClass(sourceRaw)
-    return if (cls != null) {
-      super.resolveNameImpl(type, cls, typeContext, includeAugmentations)
+    val resolveScope = Angular2EntitiesProvider.findTemplateComponent(sourceRaw)?.jsResolveScope
+    return if (resolveScope != null) {
+      super.resolveNameImpl(type, resolveScope, typeContext, includeAugmentations)
     }
     else {
       JS_IMPORT_HANDLER.resolveName(type, sourceRaw)

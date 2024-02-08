@@ -76,6 +76,10 @@ object Angular2EntitiesProvider {
     findDirectivesCandidates(project, getAttributeDirectiveIndexName(attributeName))
 
   @JvmStatic
+  fun findTemplateComponent(templateContext: PsiElement): Angular2Component? =
+    entitySources.firstNotNullOfOrNull { it.findTemplateComponent(templateContext) }
+
+  @JvmStatic
   fun findPipes(project: Project, name: String): List<Angular2Pipe> =
     entitySources.flatMap { it.findPipes(project, name) }.toList()
 

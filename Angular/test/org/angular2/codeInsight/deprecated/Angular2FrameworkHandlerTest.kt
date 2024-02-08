@@ -11,13 +11,13 @@ import com.intellij.util.containers.ContainerUtil
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.entities.Angular2Component
-import org.angular2.entities.Angular2ComponentLocator.findComponentClasses
-import org.angular2.entities.Angular2ComponentLocator.findComponentClassesInFile
 import org.angular2.entities.Angular2Declaration
 import org.angular2.entities.Angular2FrameworkHandler
 import org.angular2.entities.Angular2Module
 import org.angular2.inspections.AngularMissingOrInvalidDeclarationInModuleInspection
 import org.angular2.Angular2TestUtil
+import org.angular2.entities.source.Angular2SourceUtil
+import org.angular2.entities.source.Angular2SourceUtil.findComponentClasses
 
 @Deprecated("Use test appropriate for IDE feature being tested - e.g. completion/resolve/highlighting ")
 class Angular2FrameworkHandlerTest : Angular2CodeInsightFixtureTestCase() {
@@ -31,7 +31,7 @@ class Angular2FrameworkHandlerTest : Angular2CodeInsightFixtureTestCase() {
     Angular2FrameworkHandler.EP_NAME.point.registerExtension(object : Angular2FrameworkHandler {
       override fun findAdditionalComponentClasses(context: PsiFile): List<TypeScriptClass> {
         val componentsFile = PsiManager.getInstance(project).findFile(myFixture.findFileInTempDir("components.ts"))
-        return findComponentClassesInFile(
+        return Angular2SourceUtil.findComponentClassesInFile(
           componentsFile!!) { cls: TypeScriptClass, dec: ES6Decorator? -> "FooComponent" == cls.getName() }
       }
     }, disposable)

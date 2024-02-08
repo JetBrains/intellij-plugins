@@ -40,8 +40,8 @@ import org.angular2.codeInsight.blocks.Angular2HtmlBlockReferenceExpressionCompl
 import org.angular2.codeInsight.imports.Angular2GlobalImportCandidate
 import org.angular2.codeInsight.template.Angular2StandardSymbolsScopesProvider
 import org.angular2.codeInsight.template.Angular2TemplateScopesResolver
-import org.angular2.entities.Angular2ComponentLocator
 import org.angular2.entities.Angular2EntitiesProvider
+import org.angular2.entities.source.Angular2SourceUtil
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.lexer.Angular2TokenTypes
@@ -214,7 +214,7 @@ class Angular2CompletionContributor : CompletionContributor() {
         }
 
         // Declarations local to the component class
-        val componentClass = Angular2ComponentLocator.findComponentClass(ref)
+        val componentClass = Angular2SourceUtil.findComponentClass(ref)
         val componentContext = componentClass?.context
         if (componentContext != null) {
           val sink = CompletionResultSink(ref, result.prefixMatcher, localNames, false, false)

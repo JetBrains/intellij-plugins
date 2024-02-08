@@ -33,9 +33,9 @@ import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.config.Angular2Compiler.isStrictTemplates
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder.Companion.NG_TEMPLATE_CONTEXT_GUARD
 import org.angular2.entities.Angular2AliasedDirectiveProperty
-import org.angular2.entities.Angular2ComponentLocator.findComponentClass
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2DirectiveProperty
+import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF
 import org.angular2.lang.expr.psi.Angular2Binding
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
@@ -487,9 +487,9 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
 
     private fun getTypeSource(element: PsiElement,
                               types: List<JSType?>): JSTypeSource? {
-      val componentClass = findComponentClass(element)
-      return if (componentClass != null) {
-        JSTypeSourceFactory.createTypeSource(componentClass, true)
+      val resolveScope = Angular2EntitiesProvider.findTemplateComponent(element)?.jsResolveScope
+      return if (resolveScope != null) {
+        JSTypeSourceFactory.createTypeSource(resolveScope, true)
       }
       else types.firstOrNull()?.source
     }

@@ -4,11 +4,11 @@ package org.angular2.codeInsight
 import com.intellij.lang.javascript.psi.resolve.accessibility.TypeScriptConfigAccessibilityChecker
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
-import org.angular2.entities.Angular2ComponentLocator
+import org.angular2.entities.Angular2EntitiesProvider
 
 class Angular2ConfigAccessibilityChecker : TypeScriptConfigAccessibilityChecker() {
 
   override fun getScope(place: PsiElement?): VirtualFile? {
-    return place?.let { super.getScope(Angular2ComponentLocator.findComponentClass(it)) }
+    return place?.let { super.getScope(Angular2EntitiesProvider.findTemplateComponent(it)?.jsResolveScope) }
   }
 }

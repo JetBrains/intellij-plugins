@@ -9,13 +9,13 @@ import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser
 import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveResult
 import org.angular2.codeInsight.Angular2ComponentPropertyResolveResult
-import org.angular2.entities.Angular2ComponentLocator
+import org.angular2.entities.source.Angular2SourceUtil
 import java.util.function.Consumer
 
 class Angular2ComponentScopeProvider : Angular2TemplateScopesProvider() {
 
   override fun getScopes(element: PsiElement, hostElement: PsiElement?): List<Angular2TemplateScope> {
-    return Angular2ComponentLocator.findComponentClass(element)
+    return Angular2SourceUtil.findComponentClass(element)
              ?.let { listOf(Angular2ComponentScope(it)) }
            ?: emptyList()
   }

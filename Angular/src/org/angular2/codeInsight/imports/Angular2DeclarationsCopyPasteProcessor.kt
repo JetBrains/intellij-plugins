@@ -26,9 +26,9 @@ import org.angular2.Angular2DecoratorUtil
 import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.codeInsight.imports.Angular2DeclarationsCopyPasteProcessor.Angular2DeclarationsImportsTransferableData
-import org.angular2.entities.Angular2ComponentLocator
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2EntitiesProvider
+import org.angular2.entities.source.Angular2SourceUtil
 import org.angular2.inspections.actions.NgModuleImportAction
 import org.angular2.inspections.quickfixes.Angular2FixesPsiUtil
 import org.angular2.lang.Angular2Bundle
@@ -57,13 +57,13 @@ class Angular2DeclarationsCopyPasteProcessor : JSCopyPasteProcessorBase<Angular2
     false
 
   override fun getExportScope(file: PsiFile, caret: Int): PsiElement? =
-    Angular2ComponentLocator.findComponentClass(getContextElementOrFile(file, caret))?.containingFile
+    Angular2SourceUtil.findComponentClass(getContextElementOrFile(file, caret))?.containingFile
 
   override fun collectTransferableData(rangesWithParents: List<Pair<PsiElement, TextRange>>): Angular2DeclarationsImportsTransferableData? {
     val expressionContexts = rangesWithParents.count { Angular2ExpressionsCopyPasteProcessor.Util.isExpressionContext(it.first) }
     if (expressionContexts != 0 && expressionContexts != rangesWithParents.size)
       return null
-    val componentClass = rangesWithParents.getOrNull(0)?.first?.let { Angular2ComponentLocator.findComponentClass(it) }
+    val componentClass = rangesWithParents.getOrNull(0)?.first?.let { Angular2SourceUtil.findComponentClass(it) }
                          ?: return null
     val scopeFile = PsiUtilCore.getVirtualFile(componentClass) ?: return null
     val originFilePath = scopeFile.path

@@ -2,14 +2,14 @@
 package org.angular2.lang.html
 
 import com.intellij.lang.javascript.config.JSConfig
+import com.intellij.lang.javascript.config.JSConfigProvider
 import com.intellij.lang.javascript.psi.JSControlFlowScope
 import com.intellij.lang.javascript.psi.controlflow.JSControlFlowService
-import com.intellij.lang.javascript.config.JSConfigProvider
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
 import com.intellij.psi.FileViewProvider
 import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.tree.IFileElementType
-import org.angular2.entities.Angular2ComponentLocator
+import org.angular2.entities.source.Angular2SourceUtil
 
 class Angular2HtmlFile(viewProvider: FileViewProvider, fileElementType: IFileElementType)
   : HtmlFileImpl(viewProvider, fileElementType), JSControlFlowScope, JSConfigProvider {
@@ -22,7 +22,7 @@ class Angular2HtmlFile(viewProvider: FileViewProvider, fileElementType: IFileEle
   }
 
   override fun getJSConfig(): JSConfig? {
-    val importGraphIncludedFile = Angular2ComponentLocator.findComponentClass(this)?.containingFile ?: return null
+    val importGraphIncludedFile = Angular2SourceUtil.findComponentClass(this)?.containingFile ?: return null
     return TypeScriptConfigUtil.getConfigForPsiFile(importGraphIncludedFile)
   }
 }

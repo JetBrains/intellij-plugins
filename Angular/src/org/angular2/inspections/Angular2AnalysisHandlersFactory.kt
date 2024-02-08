@@ -26,7 +26,7 @@ import com.intellij.util.asSafely
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.NG_PIPE
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.codeInsight.blocks.BLOCK_FOR
-import org.angular2.entities.Angular2ComponentLocator
+import org.angular2.entities.source.Angular2SourceUtil
 import org.angular2.inspections.quickfixes.*
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.psi.*
@@ -67,7 +67,7 @@ class Angular2AnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
         }
         val qualifier = methodExpression.qualifier
         if (qualifier == null || qualifier is JSThisExpression) {
-          val componentClass = Angular2ComponentLocator.findComponentClass(methodExpression)
+          val componentClass = Angular2SourceUtil.findComponentClass(methodExpression)
           if (componentClass != null && methodExpression.referenceName != null) {
             quickFixes.add(CreateComponentMethodIntentionAction(methodExpression))
             if (Angular2SignalUtils.supportsSignals(componentClass)) {
@@ -106,7 +106,7 @@ class Angular2AnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
                                            ecma: Boolean): Boolean {
         val qualifier = referenceExpression.qualifier
         if (qualifier == null || qualifier is JSThisExpression) {
-          val componentClass = Angular2ComponentLocator.findComponentClass(referenceExpression)
+          val componentClass = Angular2SourceUtil.findComponentClass(referenceExpression)
           if (componentClass != null && referenceExpression.referenceName != null) {
             quickFixes.add(CreateComponentFieldIntentionAction(referenceExpression))
             if (referenceExpression.parentOfType<Angular2EmbeddedExpression>() is Angular2Action) {

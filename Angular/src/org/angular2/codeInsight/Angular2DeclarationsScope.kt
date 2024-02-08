@@ -11,7 +11,6 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.MultiMap
 import org.angular2.entities.*
-import org.angular2.entities.metadata.psi.Angular2MetadataEntity
 
 /**
  * Objects of this class should not be cached or stored. It is intended for single use.
@@ -86,10 +85,8 @@ class Angular2DeclarationsScope(element: PsiElement) {
   }
 
   fun isInSource(entity: Angular2Entity): Boolean {
-    if (entity is Angular2MetadataEntity<*> || entity.decorator == null) {
-      return false
-    }
-    val file = entity.decorator!!.containingFile ?: return false
+    if (!entity.isModifiable) return false
+    val file = entity.sourceElement.containingFile ?: return false
     val vf = file.viewProvider.virtualFile
     return fileIndex.value.isInContent(vf) && !fileIndex.value.isInLibrary(vf)
   }
@@ -108,7 +105,7 @@ class Angular2DeclarationsScope(element: PsiElement) {
       val file = element.containingFile
                  ?: return@createValue ScopeResult(null, null, false)
       CachedValuesManager.getCachedValue(file) {
-        val importsOwner = Angular2EntitiesProvider.getComponent(Angular2ComponentLocator.findComponentClass(file))
+        val importsOwner = Angular2EntitiesProvider.findTemplateComponent(file)
           ?.let { selectImportsOwner(it, file) }
         val result = ScopeResult(importsOwner, importsOwner?.declarationsInScope, importsOwner?.isScopeFullyResolved ?: false)
         CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT)

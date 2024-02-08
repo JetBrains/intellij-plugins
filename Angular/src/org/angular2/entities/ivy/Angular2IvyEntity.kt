@@ -19,6 +19,9 @@ abstract class Angular2IvyEntity<T : Angular2IvySymbolDef.Entity> protected cons
   protected val field: TypeScriptField
     get() = myEntityDef.field
 
+  override val isModifiable: Boolean
+    get() = false
+
   override val decorator: ES6Decorator?
     get() = null
 

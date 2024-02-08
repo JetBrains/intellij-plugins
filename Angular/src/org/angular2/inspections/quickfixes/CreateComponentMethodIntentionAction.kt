@@ -14,7 +14,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.refactoring.suggested.createSmartPointer
-import org.angular2.entities.Angular2ComponentLocator
+import org.angular2.entities.source.Angular2SourceUtil
 
 class CreateComponentMethodIntentionAction(methodExpression: JSReferenceExpression)
   : CreateJSFunctionIntentionAction(methodExpression.referenceName, true, false) {
@@ -22,7 +22,7 @@ class CreateComponentMethodIntentionAction(methodExpression: JSReferenceExpressi
   private val myRefExpressionPointer: SmartPsiElementPointer<JSReferenceExpression> = methodExpression.createSmartPointer()
 
   override fun applyFix(project: Project, psiElement: PsiElement, file: PsiFile, editor: Editor?) {
-    val componentClass = Angular2ComponentLocator.findComponentClass(psiElement)!!
+    val componentClass = Angular2SourceUtil.findComponentClass(psiElement)!!
     doApplyFix(project, componentClass, componentClass.containingFile, null)
   }
 

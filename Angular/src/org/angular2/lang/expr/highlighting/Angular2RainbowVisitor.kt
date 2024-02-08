@@ -15,7 +15,7 @@ import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.parentOfType
-import org.angular2.entities.Angular2ComponentLocator
+import org.angular2.entities.source.Angular2SourceUtil
 import org.angular2.lang.Angular2HighlightDescriptor
 import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.html.Angular2HtmlFile
@@ -40,7 +40,7 @@ class Angular2RainbowVisitor : RainbowVisitor() {
 
     if (target is JSVariable) {
       if (target.containingFile != element.containingFile &&
-          Angular2ComponentLocator.findComponentClass(element) != target.parentOfType<TypeScriptClass>()) {
+          Angular2SourceUtil.findComponentClass(element) != target.parentOfType<TypeScriptClass>()) {
         return
       }
 

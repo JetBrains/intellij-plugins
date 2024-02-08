@@ -51,9 +51,9 @@ import org.angular2.Angular2DecoratorUtil.TEMPLATE_URL_PROP
 import org.angular2.Angular2DecoratorUtil.getClassForDecoratorElement
 import org.angular2.Angular2DecoratorUtil.getProperty
 import org.angular2.Angular2DecoratorUtil.getPropertyStringValue
-import org.angular2.entities.Angular2ComponentLocator.isStylesheet
 import org.angular2.entities.Angular2EntityUtils
 import org.angular2.entities.ivy.Angular2IvySymbolDef
+import org.angular2.entities.source.Angular2SourceUtil.isStylesheet
 import org.angular2.lang.Angular2Bundle
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.annotations.NonNls

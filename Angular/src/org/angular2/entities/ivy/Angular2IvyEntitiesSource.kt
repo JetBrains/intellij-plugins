@@ -40,6 +40,9 @@ class Angular2IvyEntitiesSource : Angular2EntitiesSource {
     return result
   }
 
+  override fun findTemplateComponent(templateContext: PsiElement): Angular2Component? =
+    null
+
   override fun findPipes(project: Project, name: String): Collection<Angular2Pipe> {
     val result = mutableListOf<Angular2Pipe>()
     processIvyEntities(project, name, Angular2IvyPipeIndexKey, Angular2Pipe::class.java) { result.add(it) }

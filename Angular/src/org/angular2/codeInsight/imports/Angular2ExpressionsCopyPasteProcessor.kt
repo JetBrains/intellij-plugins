@@ -34,7 +34,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlText
 import com.intellij.util.asSafely
 import org.angular2.codeInsight.imports.Angular2ExpressionsCopyPasteProcessor.Angular2ExpressionsImportsTransferableData
-import org.angular2.entities.Angular2ComponentLocator
+import org.angular2.entities.source.Angular2SourceUtil
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.html.Angular2HtmlFile
 import java.awt.datatransfer.DataFlavor
@@ -96,7 +96,7 @@ class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2
     throw UnsupportedOperationException()
 
   override fun getExportScope(file: PsiFile, caret: Int): PsiElement? =
-    Angular2ComponentLocator.findComponentClass(getContextElementOrFile(file, caret))?.containingFile
+    Angular2SourceUtil.findComponentClass(getContextElementOrFile(file, caret))?.containingFile
 
   override fun insertRequiredImports(pasteContext: PsiElement,
                                      data: Angular2ExpressionsImportsTransferableData,

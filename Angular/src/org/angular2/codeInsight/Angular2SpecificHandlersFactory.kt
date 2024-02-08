@@ -7,7 +7,6 @@ import com.intellij.lang.javascript.JavaScriptSpecificHandlersFactory
 import com.intellij.lang.javascript.ecmascript6.TypeScriptQualifiedItemProcessor
 import com.intellij.lang.javascript.findUsages.JSDialectSpecificReadWriteAccessDetector
 import com.intellij.lang.javascript.psi.*
-import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.*
 import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeGuard
@@ -21,7 +20,7 @@ import com.intellij.psi.impl.source.resolve.ResolveCache.PolyVariantResolver
 import org.angular2.codeInsight.config.Angular2Compiler.isStrictNullInputTypes
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder
 import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver
-import org.angular2.entities.Angular2ComponentLocator
+import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.findUsages.Angular2ReadWriteAccessDetector
 import org.angular2.lang.expr.psi.Angular2Binding
 import org.angular2.lang.expr.psi.Angular2TemplateBinding
@@ -38,7 +37,7 @@ class Angular2SpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
   }
 
   override fun <T : ResultSink> createQualifiedItemProcessor(sink: T, place: PsiElement): QualifiedItemProcessor<T> {
-    val clazz: JSClass? = Angular2ComponentLocator.findComponentClass(place)
+    val clazz: PsiElement? = Angular2EntitiesProvider.findTemplateComponent(place)?.jsResolveScope
     return if (clazz != null && DialectDetector.isTypeScript(clazz)) {
       TypeScriptQualifiedItemProcessor(sink, place.containingFile)
     }
@@ -82,13 +81,12 @@ class Angular2SpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
     if (element is PsiFile)
       null
     else
-      Angular2ComponentLocator.findComponentClass(element)
-        ?.containingFile as? JSFile
+      (Angular2EntitiesProvider.findTemplateComponent(element)?.jsExportScope as? JSElement)
       ?: super.getExportScope(element)
 
   override fun resolveLimited(reference: PsiPolyVariantReference, referenceName: String): PsiElement? {
     return super.resolveLimited(reference, referenceName)
-           ?: Angular2ComponentLocator.findComponentClass(reference.element)?.let {
+           ?: Angular2EntitiesProvider.findTemplateComponent(reference.element)?.jsResolveScope?.let {
              JSStubBasedPsiTreeUtil.resolveLocally(referenceName, it, false)
            }
   }

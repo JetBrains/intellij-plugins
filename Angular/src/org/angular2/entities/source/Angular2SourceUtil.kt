@@ -1,19 +1,29 @@
 package org.angular2.entities.source
 
+import com.intellij.codeInsight.completion.CompletionUtil
+import com.intellij.javascript.web.js.WebJSResolveUtil
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
+import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.JSStringUtil
+import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
 import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.impl.JSPropertyImpl
 import com.intellij.lang.javascript.psi.types.JSBooleanLiteralTypeImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
 import com.intellij.lang.javascript.psi.util.stubSafeStringValue
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.css.StylesheetFile
 import com.intellij.psi.impl.FakePsiElement
 import com.intellij.psi.impl.source.PsiFileImpl
+import com.intellij.psi.impl.source.resolve.FileContextUtil
 import com.intellij.util.AstLoadingFilter
 import com.intellij.util.SmartList
 import com.intellij.util.asSafely
@@ -21,10 +31,15 @@ import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2InjectionUtils
 import org.angular2.codeInsight.refs.Angular2TemplateReferencesProvider
 import org.angular2.entities.*
-import org.angular2.index.getFunctionNameFromIndex
+import org.angular2.index.TS_CLASS_TOKENS
+import org.angular2.index.resolveComponentsFromIndex
+import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.html.Angular2HtmlLanguage
 import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector
 import org.angular2.lang.html.psi.Angular2HtmlRecursiveElementWalkingVisitor
 import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes
+import java.util.*
+import java.util.function.BiPredicate
 
 object Angular2SourceUtil {
 
@@ -215,6 +230,55 @@ object Angular2SourceUtil {
     )
   }
 
+  @JvmStatic
+  fun findComponentClass(templateContext: PsiElement): TypeScriptClass? {
+    return if (ApplicationManager.getApplication().let { it.isDispatchThread && !it.isUnitTestMode })
+      WebJSResolveUtil.disableIndexUpToDateCheckIn(templateContext) {
+        findComponentClasses(templateContext).firstOrNull()
+      }
+    else findComponentClasses(templateContext).firstOrNull()
+  }
+
+  @JvmStatic
+  fun findComponentClasses(templateContext: PsiElement): List<TypeScriptClass> {
+    val file = templateContext.containingFile
+    if (file == null || !(file.language.isKindOf(Angular2HtmlLanguage.INSTANCE)
+                          || file.language.`is`(Angular2Language.INSTANCE)
+                          || isStylesheet(file))) {
+      return Collections.emptyList()
+    }
+    val hostFile = getHostFile(templateContext) ?: return Collections.emptyList()
+    if (file.originalFile != hostFile && DialectDetector.isTypeScript(hostFile)) {
+      // inline content
+      return listOfNotNull(Angular2DecoratorUtil.getClassForDecoratorElement(
+        InjectedLanguageManager.getInstance(templateContext.project).getInjectionHost(file.originalFile))
+      )
+    }
+    // external content
+    val result = SmartList(Angular2FrameworkHandler.EP_NAME.extensionList.flatMap { h -> h.findAdditionalComponentClasses(hostFile) })
+    if (result.isEmpty() || isStylesheet(file)) {
+      result.addAll(resolveComponentsFromSimilarFile(hostFile))
+    }
+    if (result.isEmpty() || isStylesheet(file)) {
+      result.addAll(resolveComponentsFromIndex(hostFile) { dec -> hasFileReference(dec, hostFile) })
+    }
+    return result
+  }
+
+  @JvmStatic
+  fun findComponentClassesInFile(file: PsiFile, filter: BiPredicate<TypeScriptClass, ES6Decorator>?): List<TypeScriptClass> {
+    return JSStubBasedPsiTreeUtil.findDescendants<PsiElement>(file, TS_CLASS_TOKENS)
+      .filterIsInstance<TypeScriptClass>()
+      .filter {
+        val dec = Angular2DecoratorUtil.findDecorator(it, Angular2DecoratorUtil.COMPONENT_DEC)
+        dec != null && (filter == null || filter.test(it, dec))
+      }
+  }
+
+  @JvmStatic
+  fun isStylesheet(file: PsiFile): Boolean {
+    return file is StylesheetFile
+  }
 
   @StubSafe
   private fun getReferencedFileFromStub(stubbedExpression: JSExpression?, directRefs: Boolean): PsiFile? {
@@ -274,6 +338,34 @@ object Angular2SourceUtil {
       }
     }
     return null
+  }
+
+  private fun resolveComponentsFromSimilarFile(file: PsiFile): List<TypeScriptClass> {
+    val name = file.viewProvider.virtualFile.nameWithoutExtension
+    val dir = file.parent ?: return Collections.emptyList()
+    for (ext in TypeScriptUtil.TYPESCRIPT_EXTENSIONS_WITHOUT_DECLARATIONS) {
+      val directiveFile = dir.findFile(name + ext)
+
+      if (directiveFile != null) {
+        return findComponentClassesInFile(directiveFile) { _, dec -> hasFileReference(dec, file) }
+      }
+    }
+
+    return Collections.emptyList()
+  }
+
+  private fun hasFileReference(componentDecorator: ES6Decorator?, file: PsiFile): Boolean {
+    val component = Angular2EntitiesProvider.getComponent(componentDecorator)
+    return if (component != null) {
+      if (isStylesheet(file)) component.cssFiles.contains(file) else file == component.templateFile
+    }
+    else false
+  }
+
+  private fun getHostFile(context: PsiElement): PsiFile? {
+    val original = CompletionUtil.getOriginalOrSelf(context)
+    val hostFile = FileContextUtil.getContextFile(if (original !== context) original else context.containingFile.originalFile)
+    return hostFile?.originalFile
   }
 
   private class FakeStringLiteral(private val myParent: PsiElement, value: String) : FakePsiElement() {

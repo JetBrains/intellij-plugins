@@ -2,6 +2,7 @@
 package org.angular2.entities
 
 import com.intellij.model.Pointer
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.angular2.entities.Angular2EntityUtils.forEachEntity
 
@@ -12,6 +13,12 @@ interface Angular2Component : Angular2Directive, Angular2ImportsOwner {
   val cssFiles: List<PsiFile>
 
   val ngContentSelectors: List<Angular2DirectiveSelector>
+
+  val jsResolveScope: PsiElement?
+    get() = typeScriptClass
+
+  val jsExportScope: PsiElement?
+    get() = typeScriptClass?.containingFile
 
   override val isComponent: Boolean
     get() = true

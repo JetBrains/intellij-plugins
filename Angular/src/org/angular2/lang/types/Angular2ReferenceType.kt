@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
-import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult
 import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl
@@ -24,7 +23,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import org.angular2.codeInsight.template.isTemplateTag
-import org.angular2.entities.Angular2ComponentLocator.findComponentClass
+import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF
 import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.html.psi.Angular2HtmlAttrVariable
@@ -56,7 +55,7 @@ class Angular2ReferenceType : Angular2BaseType<Angular2HtmlAttrVariableImpl> {
              .resolveDirectiveExportAsType(exportName)
            ?: when {
              hasExport -> null
-             isTemplateTag(tag) -> getTemplateRefType(findComponentClass(tag), Angular2TypeUtils.getNgTemplateTagContextType(tag))
+             isTemplateTag(tag) -> getTemplateRefType(Angular2EntitiesProvider.findTemplateComponent(tag)?.jsResolveScope, Angular2TypeUtils.getNgTemplateTagContextType(tag))
              else -> getHtmlElementClassType(Angular2TypeUtils.createJSTypeSourceForXmlElement(tag), tag.name)
            }
   }
@@ -66,9 +65,10 @@ class Angular2ReferenceType : Angular2BaseType<Angular2HtmlAttrVariableImpl> {
 
   companion object {
     fun getUseScope(variable: Angular2HtmlAttrVariableImpl): SearchScope {
-      val clazz: JSClass? = findComponentClass(variable)
-      val localScope = if (clazz != null) {
-        LocalSearchScope(arrayOf<PsiElement>(clazz, variable.containingFile))
+      val resolveScope: PsiElement? = Angular2EntitiesProvider.findTemplateComponent(variable)?.jsResolveScope
+        ?.takeIf { it.containingFile != variable.containingFile }
+      val localScope = if (resolveScope != null) {
+        LocalSearchScope(arrayOf<PsiElement>(resolveScope, variable.containingFile))
       }
       else {
         LocalSearchScope(variable.containingFile)

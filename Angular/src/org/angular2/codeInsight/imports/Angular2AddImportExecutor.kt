@@ -15,17 +15,17 @@ import com.intellij.openapi.application.runUndoTransparentWriteAction
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleManager
-import org.angular2.entities.Angular2ComponentLocator
+import org.angular2.entities.source.Angular2SourceUtil
 
 class Angular2AddImportExecutor(place: PsiElement) : ES6AddImportExecutor(place) {
   override fun prepareScopeToAdd(place: PsiElement, fromExternalModule: Boolean): PsiElement? {
     ApplicationManager.getApplication().assertReadAccessAllowed()
-    return Angular2ComponentLocator.findComponentClass(place)?.containingFile
+    return Angular2SourceUtil.findComponentClass(place)?.containingFile
   }
 
   override fun postProcessScope(place: PsiElement, info: JSImportDescriptor, scope: PsiElement) {
     ApplicationManager.getApplication().assertReadAccessAllowed()
-    val componentClass = Angular2ComponentLocator.findComponentClass(place)
+    val componentClass = Angular2SourceUtil.findComponentClass(place)
     if (componentClass == null
         || info !is Angular2FieldImportCandidateDescriptor
         || (info.importedName == null && info.exportedName == null)

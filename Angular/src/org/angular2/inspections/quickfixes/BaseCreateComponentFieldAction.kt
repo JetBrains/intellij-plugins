@@ -11,16 +11,16 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import org.angular2.entities.Angular2ComponentLocator
+import org.angular2.entities.source.Angular2SourceUtil
 
 abstract class BaseCreateComponentFieldAction(fieldName: String?)
   : CreateJSVariableIntentionAction(fieldName, true, false, false) {
 
   override fun isAvailable(project: Project?, element: PsiElement?, editor: Editor?, file: PsiFile?): Boolean =
-    element != null && Angular2ComponentLocator.findComponentClass(element).let { it != null && !JSProjectUtil.isInLibrary(it) }
+    element != null && Angular2SourceUtil.findComponentClass(element).let { it != null && !JSProjectUtil.isInLibrary(it) }
 
   override fun applyFix(project: Project, psiElement: PsiElement, file: PsiFile, editor: Editor?) {
-    val targetClass = Angular2ComponentLocator.findComponentClass(psiElement) ?: return
+    val targetClass = Angular2SourceUtil.findComponentClass(psiElement) ?: return
     doApplyFix(project, targetClass, targetClass.containingFile, null)
   }
 

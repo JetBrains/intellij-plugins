@@ -13,6 +13,9 @@ abstract class Angular2SourceEntity(override val decorator: ES6Decorator,
                                     protected val implicitElement: JSImplicitElement)
   : Angular2SourceEntityBase(getClassForDecoratorElement(decorator)!!) {
 
+  override val isModifiable: Boolean
+    get() = true
+
   override val navigableElement: JSElement
     get() = decorator
 
