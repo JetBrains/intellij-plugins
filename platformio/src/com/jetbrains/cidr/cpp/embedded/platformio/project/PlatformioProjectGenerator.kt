@@ -13,7 +13,7 @@ import com.intellij.platform.DirectoryProjectGenerator
 import com.intellij.platform.GeneratorPeerImpl
 import com.intellij.platform.ProjectGeneratorPeer
 import com.jetbrains.cidr.cpp.cmake.projectWizard.generators.CLionProjectGenerator
-import com.jetbrains.cidr.cpp.embedded.EmbeddedBundle
+import com.intellij.clion.embedded.EmbeddedBundle
 import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle
 import com.jetbrains.cidr.cpp.embedded.platformio.home.PlatformioProjectSettingsDialogStep
 import icons.ClionEmbeddedPlatformioIcons
