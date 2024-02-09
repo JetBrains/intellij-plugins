@@ -50,7 +50,7 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
-    <registryKey defaultValue="1.8.25" description="Vue service version for downloading" restartRequired="true"
+    <registryKey defaultValue="1.8.27" description="Vue service version for downloading" restartRequired="true"
                  key="vue.language.server.default.version"/>
     <dependencySupport kind="javascript" coordinate="npm:vue" displayName="Vue.js"/>
     <dependencySupport kind="javascript" coordinate="npm:nuxt" displayName="Nuxt"/>
