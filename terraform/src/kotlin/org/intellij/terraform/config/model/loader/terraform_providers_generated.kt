@@ -282,14 +282,15 @@ class TerraformProvidersSchema : VersionedMetadataLoader {
 
     val providers = json.obj("provider_schemas")
     for ((n, provider) in providers!!.fields().asSequence()) {
-      val name = n.split("/").takeIf { it.size == 3 && it[0] == "registry.terraform.io" || it[0] == "terraform.io" }?.let { it[2] } ?: n
+      val stringList = n.split("/")
+      val (name, namespace) = stringList.takeIf { it.size == 3 && it[0] == "registry.terraform.io" || it[0] == "terraform.io" }?.let { Pair(it[2], it[1]) } ?: Pair(n, n)
       provider as ObjectNode
       if (model.loaded.containsKey("provider.$name")) {
         TerraformMetadataLoader.LOG.warn("Provider '$name' is already loaded from '${model.loaded["provider.$name"]}'")
         continue
       }
       model.loaded["provider.$name"] = file
-      val info = provider.obj("provider")?.let { parseProviderInfo(context, name, it) } ?: ProviderType(name, emptyList())
+      val info = provider.obj("provider")?.let { parseProviderInfo(context, name, namespace, it) } ?: ProviderType(name, emptyList(), namespace)
       model.providers.add(info)
       val resources = provider.obj("resource_schemas")
       val dataSources = provider.obj("data_source_schemas")
@@ -302,10 +303,10 @@ class TerraformProvidersSchema : VersionedMetadataLoader {
 
   }
 
-  private fun parseProviderInfo(context: LoadContext, name: String, obj: ObjectNode): ProviderType? {
+  private fun parseProviderInfo(context: LoadContext, name: String, namespace: String, obj: ObjectNode): ProviderType? {
     val (parsed, version) = TFBaseLoader.parseSchema(context, obj, name) ?: return null
     // TODO: Support description and version
-    return ProviderType(name, parsed.properties.values.toList())
+    return ProviderType(name, parsed.properties.values.toList(), namespace)
   }
 
   private fun parseResourceInfo(context: LoadContext, entry: Map.Entry<String, Any?>, info: ProviderType): ResourceType {

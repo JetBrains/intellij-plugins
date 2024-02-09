@@ -4,6 +4,8 @@ package org.intellij.terraform.config
 import com.intellij.lang.documentation.AbstractDocumentationProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentsOfType
+import org.intellij.terraform.config.TerraformDocumentationUrlProvider.DATASOURCES
+import org.intellij.terraform.config.TerraformDocumentationUrlProvider.RESOURCES
 import org.intellij.terraform.config.TerraformDocumentationUrlProvider.getProviderUrl
 import org.intellij.terraform.config.TerraformDocumentationUrlProvider.getResourceOrDataSourceUrl
 import org.intellij.terraform.config.codeinsight.ModelHelper
@@ -87,7 +89,7 @@ internal class TerraformDocumentationProvider : AbstractDocumentationProvider() 
       val pp = element.parent?.parent
       if (pp is HCLBlock) {
         val properties = ModelHelper.getBlockProperties(pp)
-        val block = properties[element.getNameElementUnquoted(0)!!] as? BlockType ?: return "Unknown block ${element.name}"
+        val block = properties[element.getNameElementUnquoted(0)!!] as? BlockType ?: return HCLBundle.message("unknown.block.0", element.name)
         return HCLBundle.message("terraform.doc.block.0.br.1", element.name, block.description ?: "")
       }
     }
@@ -114,16 +116,16 @@ internal class TerraformDocumentationProvider : AbstractDocumentationProvider() 
   override fun getUrlFor(element: PsiElement?, originalElement: PsiElement?): List<String>? {
     when (element) {
       is HCLBlock -> {
-        return getDocumentationUrl(element)
+        return getDocumentationUrl(element)?.ifEmpty { null }
       }
       is HCLIdentifier -> {
         val parentBlock = getBlockForHclIdentifier(element) ?: return null
         val paramName = ModelHelper.getBlockProperties(parentBlock)[element.id]?.name ?: return null
-        return getDocumentationUrl(parentBlock, paramName)
+        return getDocumentationUrl(parentBlock, paramName)?.ifEmpty { null }
       }
       is TerraformDocumentPsi -> {
         val relevantBlock = getBlockForDocumentationLink(element, element.name) ?: return null
-        return getDocumentationUrl(relevantBlock)
+        return getDocumentationUrl(relevantBlock)?.ifEmpty { null }
       }
       else -> return null
     }
@@ -140,8 +142,8 @@ internal class TerraformDocumentationProvider : AbstractDocumentationProvider() 
                                   paramName: String? = null): List<String>? {
     val identifier = element.getNameElementUnquoted(1) ?: return null
     return when (element.getNameElementUnquoted(0)) {
-      "resource" -> listOf(getResourceOrDataSourceUrl(identifier, "resources", element, paramName))
-      "data" -> listOf(getResourceOrDataSourceUrl(identifier, "data-sources", element, paramName))
+      "resource" -> listOf(getResourceOrDataSourceUrl(identifier, RESOURCES, element, paramName))
+      "data" -> listOf(getResourceOrDataSourceUrl(identifier, DATASOURCES, element, paramName))
       "provider" -> listOf(getProviderUrl(identifier, element, paramName))
       else -> null
     }

@@ -514,9 +514,9 @@ class DataSourceType(val type: String, val provider: ProviderType, properties: L
     get() = "data-source($type)"
 }
 
-class ProviderType(val type: String, properties: List<PropertyOrBlockType>) : BlockType("provider", 1, properties = withDefaults(properties, TypeModel.AbstractProvider)) {
+class ProviderType(val type: String, properties: List<PropertyOrBlockType>, val namespace: String = "") : BlockType("provider", 1, properties = withDefaults(properties, TypeModel.AbstractProvider)) {
   override fun toString(): String {
-    return "ProviderType(type='$type')"
+    return "ProviderType(type='$type' namespace='$namespace')"
   }
 
   override val presentableText: String

@@ -309,7 +309,7 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
 
     val stdout = capturingProcessAdapter.output.stdout
     if (!success || stdout.isEmpty()) {
-      logger<LocalSchemaService>().warn("failed tp build model for $lock")
+      logger<LocalSchemaService>().warn("failed to build model for $lock")
       throw ExecutionException(HCLBundle.message("dialog.message.failed.to.get.output.terraform.providers.command.for", lock))
     }
 
