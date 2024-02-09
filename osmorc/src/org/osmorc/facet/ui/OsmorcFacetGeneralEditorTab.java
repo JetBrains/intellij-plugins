@@ -202,8 +202,8 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
     OsmorcFacetConfiguration configuration = (OsmorcFacetConfiguration)myEditorContext.getFacet().getConfiguration();
     configuration.setManifestGenerationMode(
       myControlledByOsmorcRadioButton.isSelected() ? ManifestGenerationMode.OsmorcControlled :
-      myUseBndFileRadioButton.isSelected() && !myUseBndMavenPluginCheckBox.isSelected() ? ManifestGenerationMode.Bnd :
-      myUseBndFileRadioButton.isSelected() && myUseBndMavenPluginCheckBox.isSelected() ? ManifestGenerationMode.BndMavenPlugin :
+      myUseBndFileRadioButton.isSelected() ?
+        (!myUseBndMavenPluginCheckBox.isSelected() ? ManifestGenerationMode.Bnd : ManifestGenerationMode.BndMavenPlugin) :
       myUseBundlorFileRadioButton.isSelected() ? ManifestGenerationMode.Bundlor :
       ManifestGenerationMode.Manually);
     configuration.setManifestLocation(FileUtil.toSystemIndependentName(myManifestFileChooser.getText()));
