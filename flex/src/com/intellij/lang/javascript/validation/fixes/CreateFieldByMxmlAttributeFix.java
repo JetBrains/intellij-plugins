@@ -44,8 +44,11 @@ public class CreateFieldByMxmlAttributeFix extends CreateJSVariableIntentionActi
     }
 
     if (attributeValue.length() > 2 && attributeValue.startsWith("0x")) {
-      Long.parseLong(attributeValue.substring(2), 16);
-      return "uint";
+      try {
+        Long.parseLong(attributeValue.substring(2), 16);
+        return "uint";
+      }
+      catch (NumberFormatException e) {/* ignore */}
     }
 
     try {
