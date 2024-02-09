@@ -4,8 +4,8 @@
     "prisma:lsp": "cross-env NODE_ENV=production webpack --config webpack.config.js"
   },
   "dependencies": {
-    "@prisma/language-server": "^5.5.0",
-    "@prisma/prisma-schema-wasm": "^5.6.0-1.de2449110135e91857b477c346b7f74d52d61613"
+    "@prisma/language-server": "^5.9.1",
+    "@prisma/prisma-schema-wasm": "^5.9.0-32.23fdc5965b1e05fc54e5f26ed3de66776b93de64"
   },
   "devDependencies": {
     "webpack": "^5.74.0",
