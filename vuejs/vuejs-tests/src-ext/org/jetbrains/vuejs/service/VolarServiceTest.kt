@@ -36,8 +36,7 @@ class VolarServiceTest : VolarServiceTestBase() {
       
       <template>
         <div v-text="acceptNumber(<error descr="Vue: Argument of type 'boolean' is not assignable to parameter of type 'number'.">true</error>)" />
-        <!-- todo remove duplicate internal warning -->
-        <div>{{acceptNumber(<error descr="Argument type true is not assignable to parameter type number"><error descr="Vue: Argument of type 'boolean' is not assignable to parameter of type 'number'.">true</error></error>)}}</div>
+        <div>{{acceptNumber(<error descr="Vue: Argument of type 'boolean' is not assignable to parameter of type 'number'.">true</error>)}}</div>
       </template>
     """)
     myFixture.checkLspHighlighting()
@@ -240,8 +239,7 @@ class VolarServiceTest : VolarServiceTestBase() {
       
       <template>
         <div v-text="acceptNumber(<error descr="Vue: Argument of type 'boolean' is not assignable to parameter of type 'number'.">true</error>)" />
-        <!-- todo remove duplicate internal warning -->
-        <div>{{acceptNumber(<error descr="Argument type true is not assignable to parameter type number"><error descr="Vue: Argument of type 'boolean' is not assignable to parameter of type 'number'.">true</error></error>)}}</div>
+        <div>{{acceptNumber(<error descr="Vue: Argument of type 'boolean' is not assignable to parameter of type 'number'.">true</error>)}}</div>
       </template>
     """)
     myFixture.checkLspHighlighting()
