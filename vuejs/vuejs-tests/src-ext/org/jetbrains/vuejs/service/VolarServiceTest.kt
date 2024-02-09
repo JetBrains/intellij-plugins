@@ -44,6 +44,29 @@ class VolarServiceTest : VolarServiceTestBase() {
   }
 
   @Test
+  fun testVBindShorthand() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_4_0)
+
+    myFixture.configureByText("tsconfig.json", tsconfig)
+    myFixture.configureByText("Simple.vue", """
+      <script setup lang="ts">
+      const <error>shouldError</error>: string = 5;
+      const id = "el"
+      const <weak_warning>ariaLabel</weak_warning> = "hello"
+      </script>
+      
+      <template>
+        <div :id />
+        <!-- below is a bug in Vue LS, TODO wait & update -->
+        <div <error><warning>:<error>aria</error>-<error>label</error></warning></error> />
+      </template>
+    """)
+    myFixture.checkLspHighlighting()
+    assertCorrectService()
+  }
+
+  @Test
   fun testEnableSuggestions() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
     myFixture.configureByText("tsconfig.json", tsconfig)
