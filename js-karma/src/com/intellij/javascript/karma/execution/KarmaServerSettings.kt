@@ -12,7 +12,10 @@ import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.javascript.testing.AngularCliConfig
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.PathUtil
+import com.intellij.util.execution.ParametersListUtil
 import com.intellij.util.text.nullize
 import org.jdom.Element
 import java.io.File
@@ -75,6 +78,7 @@ class KarmaServerSettings(private val executor: Executor,
     }
 
     private fun detectAngularProjectName(settings: KarmaRunSettings): String? {
+      if (ParametersListUtil.parse(settings.karmaOptions).contains("--project")) return null
       val workingDir = settings.workingDirectorySystemDependent.nullize(true) ?: return null
       val config = AngularCliConfig.findProjectConfig(File(workingDir)) ?: return null
       val contextFile = getContextFile(settings)
@@ -86,7 +90,18 @@ class KarmaServerSettings(private val executor: Executor,
         KarmaScopeKind.TEST_FILE, KarmaScopeKind.SUITE, KarmaScopeKind.TEST -> s.testFileSystemDependentPath.toVirtualFile()
         else -> null
       }
-      return primaryFile ?: s.configPathSystemDependent.toVirtualFile() ?: s.workingDirectorySystemDependent.toVirtualFile()
+      if (primaryFile != null) return primaryFile
+      val configFileParentDir = PathUtil.getParentPath(s.configPathSystemDependent).toVirtualFile()
+      val workingDir = s.workingDirectorySystemDependent.toVirtualFile()
+      return getDeepestDirectory(configFileParentDir, workingDir)
+    }
+
+    private fun getDeepestDirectory(dir1: VirtualFile?, dir2: VirtualFile?): VirtualFile? {
+      if (dir1 != null && dir2 != null) {
+        if (VfsUtil.isAncestor(dir1, dir2, true)) return dir2
+        if (VfsUtil.isAncestor(dir2, dir1, true)) return dir1
+      }
+      return dir1 ?: dir2
     }
 
     private fun String?.toVirtualFile(): VirtualFile? = this.nullize(true)?.let {
