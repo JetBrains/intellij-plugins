@@ -1,5 +1,5 @@
 # intention: "HCLLiteralValidness"
-# fix: "Replace to double-quotes"
+# fix: "Replace with double-quotes"
 # position: 15: "'var'"
 #
 terraform {

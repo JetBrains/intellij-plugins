@@ -250,22 +250,22 @@
     <!--region TF Duplicates-->
     <localInspection language="HCL" applyToDialects="true" shortName="TFDuplicatedProvider" bundle="messages.HCLBundle"
                      key="duplicated.provider.inspection.display.name"
-                     groupPath="Terraform configs"
+                     groupPath="Terraform"
                      groupKey="terraform.files.duplicates.inspection.group.display.name" enabledByDefault="true" level="ERROR"
                      implementationClass="org.intellij.terraform.config.inspection.TFDuplicatedProviderInspection"/>
     <localInspection language="HCL" applyToDialects="true" shortName="TFDuplicatedVariable" bundle="messages.HCLBundle"
                      key="duplicated.variable.inspection.display.name"
-                     groupPath="Terraform configs"
+                     groupPath="Terraform"
                      groupKey="terraform.files.duplicates.inspection.group.display.name" enabledByDefault="true" level="ERROR"
                      implementationClass="org.intellij.terraform.config.inspection.TFDuplicatedVariableInspection"/>
     <localInspection language="HCL" applyToDialects="true" shortName="TFDuplicatedOutput" bundle="messages.HCLBundle"
                      key="duplicated.output.inspection.display.name"
-                     groupPath="Terraform configs"
+                     groupPath="Terraform"
                      groupKey="terraform.files.duplicates.inspection.group.display.name" enabledByDefault="true" level="ERROR"
                      implementationClass="org.intellij.terraform.config.inspection.TFDuplicatedOutputInspection"/>
     <localInspection language="HCL" applyToDialects="true" shortName="TFDuplicatedBlockProperty" bundle="messages.HCLBundle"
                      key="duplicated.block.property.inspection.display.name"
-                     groupPath="Terraform configs"
+                     groupPath="Terraform"
                      groupKey="terraform.files.duplicates.inspection.group.display.name" enabledByDefault="true" level="ERROR"
                      implementationClass="org.intellij.terraform.config.inspection.TFDuplicatedBlockPropertyInspection"/>
     <!--endregion Duplicates-->
