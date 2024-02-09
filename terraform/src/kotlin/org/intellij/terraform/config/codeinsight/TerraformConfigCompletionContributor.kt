@@ -386,7 +386,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
           if (value === _parent) {
             val valueBlock = PsiTreeUtil.getParentOfType(pob, HCLBlock::class.java) ?: return
             val property = ModelHelper.getBlockProperties(valueBlock).get(pob.name) as? PropertyType
-            val defaultsOfProperty = property?.type?.defaultValues
+            val defaultsOfProperty = property?.type?.validValues
             defaultsOfProperty?.map { LookupElementBuilder.create(it) }?.let { result.addAllElements(it) }
             return
           }

@@ -5,6 +5,7 @@ import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.debug
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
@@ -80,21 +81,20 @@ object PropertyObjectKeyCompletionProvider : TerraformConfigCompletionContributo
   }
 
   private fun pathToRootObject(element: HCLProperty): List<String> {
-    val pathToRoot = mutableListOf(element.name)
-    var current: HCLProperty? = element
-    while (current?.parent is HCLObject && current.parent?.parent is HCLProperty) {
-      current = current.parent.parent as? HCLProperty ?: break
-      pathToRoot.add(current.name)
-    }
-    return pathToRoot
+    return generateSequence(element) { current ->
+      ProgressManager.checkCanceled()
+      if (current.parent is HCLObject && current.parent?.parent is HCLProperty) {
+        current.parent.parent as? HCLProperty
+      }
+      else null
+    }.map { it.name }.toList()
   }
 
   private fun findObjectTypeInModule(block: HCLBlock, pathFromRoot: List<String>): ObjectType? {
-    var currentObject: ObjectType? = block.getTerraformModule().findVariables(pathFromRoot.first()).firstOrNull()?.getType() as? ObjectType
-    pathFromRoot.tail().forEach {
-      currentObject = currentObject?.elements?.get(it) as? ObjectType ?: return@forEach
+    val rootObject: ObjectType? = block.getTerraformModule().findVariables(pathFromRoot.first()).firstOrNull()?.getType() as? ObjectType
+    return pathFromRoot.tail().fold(rootObject) { current, pathElement ->
+      current?.elements?.get(pathElement) as? ObjectType ?: return current
     }
-    return currentObject
   }
 
   private fun addInnerBlockCompletions(parameters: CompletionParameters, result: CompletionResultSet, obj: HCLObject) {

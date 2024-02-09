@@ -5,8 +5,8 @@ package org.intellij.terraform.config.model
 
 interface Type {
   val presentableText: String
-  val defaultValues: List<String>?
-    get() = null
+  val validValues: List<String>
+    get() = emptyList()
 }
 
 open class TypeImpl(protected val baseName: String) : Type {
@@ -29,7 +29,7 @@ open class TypeImpl(protected val baseName: String) : Type {
   }
 }
 
-open class PrimitiveType(name: String, override val defaultValues: List<String>? = null) : TypeImpl(name)
+open class PrimitiveType(name: String, override val validValues: List<String> = emptyList()) : TypeImpl(name)
 
 // HCL2 expression types, from github.com/hashicorp/hcl2/typeexpr and github.com/zclconf/go-cty/cty
 // null as inner type means error in type definition
@@ -89,7 +89,7 @@ fun ObjectType(elements: Map<String, Type?>?, optional: Set<String>? = null): Ob
   return ObjectTypeImpl(elements, optional)
 }
 
-open class ObjectTypeImpl(elements: Map<String, Type?>?, val optional: Set<String>? = null) : ContainerType<Map<String, Type?>?>(
+private open class ObjectTypeImpl(elements: Map<String, Type?>?, val optional: Set<String>? = null) : ContainerType<Map<String, Type?>?>(
   "object", elements), ObjectType {
   override val presentableText: String
     get() {
