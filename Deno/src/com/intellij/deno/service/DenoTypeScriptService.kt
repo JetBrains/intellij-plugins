@@ -14,6 +14,7 @@ import com.intellij.lang.typescript.lsp.LspAnnotationError
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.platform.lsp.api.LspServerState
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 
@@ -38,13 +39,11 @@ class DenoTypeScriptService(project: Project) : BaseLspTypeScriptService(project
   override val prefix: String
     get() = "Deno"
 
-  override fun getStatusText() = withServer {
+  override fun getStatusText(): String? = when (getServer()?.state) {
     // TODO use super method (& display serverVersion)
-    when {
-      isRunning -> "Deno LSP"
-      isMalfunctioned -> "Deno LSP ⚠"
-      else -> "..."
-    }
+    LspServerState.Initializing, LspServerState.Running -> "Deno LSP"
+    LspServerState.ShutdownNormally, LspServerState.ShutdownUnexpectedly -> "Deno LSP ⚠"
+    null -> null
   }
 
   override fun getServiceFixes(file: PsiFile, element: PsiElement?, result: JSAnnotationError): Collection<IntentionAction> {
