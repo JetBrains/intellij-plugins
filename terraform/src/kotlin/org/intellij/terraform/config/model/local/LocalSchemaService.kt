@@ -27,6 +27,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.util.concurrency.annotations.RequiresBlockingContext
 import com.intellij.util.containers.ContainerUtil
 import kotlinx.coroutines.*
+import org.intellij.terraform.LatestInvocationRunner
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.model.TypeModel
 import org.intellij.terraform.config.model.TypeModelProvider
@@ -34,7 +35,6 @@ import org.intellij.terraform.config.model.getVFSParents
 import org.intellij.terraform.config.model.loader.TerraformMetadataLoader
 import org.intellij.terraform.config.util.TFExecutor
 import org.intellij.terraform.config.util.executeSuspendable
-import org.intellij.terraform.executeLatest
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLFileType
 import java.nio.file.Files
@@ -107,7 +107,7 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     }
   }
 
-  private val daemonRestarter: suspend () -> Unit = executeLatest {
+  private val daemonRestarter = LatestInvocationRunner {
     delay(DAEMON_RESTART_DEBOUNCE_TIMEOUT)
     awaitModelsReady()
     readAction {
@@ -139,7 +139,7 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
       }
     }
     if (locks.isNotEmpty()) {
-      scope.launch { daemonRestarter() }
+      scope.launch { daemonRestarter.cancelPreviousAndRun() }
     }
     return scope.async {
       scheduled.awaitAll()
@@ -235,13 +235,13 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
       val uuid = UUID.randomUUID().toString()
       val jsonFile = localModelPath.resolve("$uuid.json")
       Files.writeString(jsonFile, jsonFromProcess)
-      scope.launch { orphanCollector() }
+      scope.launch { orphanCollector.cancelPreviousAndRun() }
       localModelPath.relativize(jsonFile).toString()
     }
   }
 
 
-  private val orphanCollector: suspend () -> Unit = executeLatest {
+  private val orphanCollector = LatestInvocationRunner {
     delay(ORPHAN_COLLECTOR_DEBOUNCE_TIMEOUT)
     awaitModelsReady()
     withBackgroundProgress(project, HCLBundle.message("progress.title.removing.unused.metadata")) {

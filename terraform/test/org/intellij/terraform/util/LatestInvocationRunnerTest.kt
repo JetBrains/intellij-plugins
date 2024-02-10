@@ -3,13 +3,13 @@ package org.intellij.terraform.util
 import com.intellij.testFramework.common.timeoutRunBlocking
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Semaphore
-import org.intellij.terraform.executeLatest
+import org.intellij.terraform.LatestInvocationRunner
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.util.concurrent.atomic.AtomicInteger
 
 
-class ExecuteLatestTest {
+class LatestInvocationRunnerTest {
 
 
   @Test
@@ -17,13 +17,13 @@ class ExecuteLatestTest {
     timeoutRunBlocking {
       val waiter = CompletableDeferred<Unit>()
       val counter = AtomicInteger(0)
-      val testFun = executeLatest {
+      val latestExecutor = LatestInvocationRunner {
         waiter.await()
         counter.incrementAndGet()
       }
 
       val jobs = (1..10).map {
-        async(start = CoroutineStart.UNDISPATCHED) { testFun() }
+        async(start = CoroutineStart.UNDISPATCHED) { latestExecutor.cancelPreviousAndRun() }
       }
 
       waiter.complete(Unit)
@@ -40,15 +40,15 @@ class ExecuteLatestTest {
       val startSemaphore = Semaphore(1, 1)
       val endCounter = AtomicInteger(0)
 
-      val testFun = executeLatest {
+      val latestExecutor = LatestInvocationRunner {
         startSemaphore.release()
         waiter.await()
         endCounter.incrementAndGet()
       }
 
-      val job1 = async(CoroutineName("Job1"), start = CoroutineStart.UNDISPATCHED) { testFun() }
+      val job1 = async(CoroutineName("Job1"), start = CoroutineStart.UNDISPATCHED) { latestExecutor.cancelPreviousAndRun() }
       startSemaphore.acquire()
-      val job2 = async(CoroutineName("Job2"), start = CoroutineStart.UNDISPATCHED) { testFun() }
+      val job2 = async(CoroutineName("Job2"), start = CoroutineStart.UNDISPATCHED) { latestExecutor.cancelPreviousAndRun() }
       startSemaphore.acquire()
       job2.cancel()
       waiter.complete(Unit)
@@ -62,13 +62,13 @@ class ExecuteLatestTest {
   @Test
   fun noInfiniteRestarts() {
     timeoutRunBlocking {
-      val testFun = executeLatest {
+      val latestExecutor = LatestInvocationRunner {
         delay(10) // increases chance of live-lock
       }
 
       val jobs = (1..100).map {
         async(Dispatchers.Default) {
-          testFun()
+          latestExecutor.cancelPreviousAndRun()
         }
       }
 
