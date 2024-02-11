@@ -1,13 +1,19 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro.service
 
-import com.intellij.lang.typescript.lsp.*
+import com.intellij.lang.typescript.lsp.JSFrameworkLspServerDescriptor
+import com.intellij.lang.typescript.lsp.LspServerDownloader
+import com.intellij.lang.typescript.lsp.LspServerPackageDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.platform.lsWidget.LanguageServiceWidgetContext
+import com.intellij.platform.lsp.api.LspServer
 import com.intellij.platform.lsp.api.LspServerSupportProvider
 import com.intellij.platform.lsp.api.LspServerSupportProvider.LspServerStarter
+import com.intellij.platform.lsp.api.lsWidget.LspServerWidgetItem
 import org.jetbrains.annotations.ApiStatus
+import org.jetbrains.astro.AstroIcons
 
 private val astroLspServerPackageDescriptor: () -> LspServerPackageDescriptor = {
   LspServerPackageDescriptor("@astrojs/language-server",
@@ -21,6 +27,9 @@ class AstroLspServerSupportProvider : LspServerSupportProvider {
       serverStarter.ensureServerStarted(AstroLspServerDescriptor(project))
     }
   }
+
+  override fun getLspServerWidgetItem(context: LanguageServiceWidgetContext, lspServer: LspServer): LspServerWidgetItem =
+    LspServerWidgetItem(context, lspServer, AstroIcons.Astro, settingsPageClass = null) // TODO add reasonable widget action
 }
 
 class AstroLspServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, AstroLspExecutableDownloader, "Astro") {

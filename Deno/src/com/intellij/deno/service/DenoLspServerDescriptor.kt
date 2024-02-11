@@ -18,10 +18,12 @@ import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.platform.lsWidget.LanguageServiceWidgetContext
 import com.intellij.platform.lsp.api.LspServer
 import com.intellij.platform.lsp.api.LspServerSupportProvider
 import com.intellij.platform.lsp.api.ProjectWideLspServerDescriptor
 import com.intellij.platform.lsp.api.customization.LspCommandsSupport
+import com.intellij.platform.lsp.api.lsWidget.LspServerWidgetItem
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.text.nullize
@@ -38,6 +40,9 @@ class DenoLspSupportProvider : LspServerSupportProvider {
       }
     }
   }
+
+  override fun getLspServerWidgetItem(context: LanguageServiceWidgetContext, lspServer: LspServer): LspServerWidgetItem =
+    LspServerWidgetItem(context, lspServer, settingsPageClass = DenoConfigurable::class.java)
 }
 
 

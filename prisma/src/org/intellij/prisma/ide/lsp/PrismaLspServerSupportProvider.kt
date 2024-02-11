@@ -5,7 +5,11 @@ import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter
 import com.intellij.javascript.nodejs.interpreter.wsl.WslNodeInterpreter
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.platform.lsWidget.LanguageServiceWidgetContext
+import com.intellij.platform.lsp.api.LspServer
 import com.intellij.platform.lsp.api.LspServerSupportProvider
+import com.intellij.platform.lsp.api.lsWidget.LspServerWidgetItem
+import org.intellij.prisma.PrismaIcons
 import org.intellij.prisma.lang.PrismaFileType
 
 class PrismaLspServerSupportProvider : LspServerSupportProvider {
@@ -17,4 +21,7 @@ class PrismaLspServerSupportProvider : LspServerSupportProvider {
 
     serverStarter.ensureServerStarted(PrismaLspServerDescriptor(project))
   }
+
+  override fun getLspServerWidgetItem(context: LanguageServiceWidgetContext, lspServer: LspServer): LspServerWidgetItem =
+    LspServerWidgetItem(context, lspServer, PrismaIcons.PRISMA, settingsPageClass = null) // TODO add reasonable widget action
 }
