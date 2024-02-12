@@ -211,12 +211,11 @@ public class CfmlExpressionParser {
         myBuilder.error(CfmlBundle.message("cfml.parsing.expression.expected"));
       }
       expr.done(CfmlElementTypes.UNARY_EXPRESSION);
-      return true;
     }
     else {
       parseOperand();
-      return true;
     }
+    return true;
   }
 
   private boolean parseAssignmentExpression(boolean allowDotDot) {
