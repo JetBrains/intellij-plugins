@@ -9,7 +9,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.platform.lang.lsWidget.LanguageServiceWidgetContext
 import com.intellij.platform.lsp.api.LspServer
 import com.intellij.platform.lsp.api.LspServerSupportProvider
 import com.intellij.platform.lsp.api.LspServerSupportProvider.LspServerStarter
@@ -35,8 +34,8 @@ class VolarSupportProvider : LspServerSupportProvider {
     }
   }
 
-  override fun getLspServerWidgetItem(context: LanguageServiceWidgetContext, lspServer: LspServer): LspServerWidgetItem =
-    LspServerWidgetItem(context, lspServer, VuejsIcons.Vue, VueConfigurable::class.java)
+  override fun getLspServerWidgetItem(lspServer: LspServer, currentFile: VirtualFile?): LspServerWidgetItem =
+    LspServerWidgetItem(lspServer, currentFile, VuejsIcons.Vue, VueConfigurable::class.java)
 }
 
 class VolarServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, VolarExecutableDownloader, "Vue") {
