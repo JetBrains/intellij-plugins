@@ -2,6 +2,9 @@
 package org.intellij.terraform.config
 
 import com.intellij.lang.documentation.AbstractDocumentationProvider
+import com.intellij.lang.documentation.DocumentationProvider
+import com.intellij.lang.documentation.DocumentationProvider.DocumentationParts
+import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentsOfType
 import org.intellij.terraform.config.TerraformDocumentationUrlProvider.DATASOURCES
@@ -19,6 +22,7 @@ import org.jetbrains.annotations.Nls
 
 //TODO Reimplement with a modern API
 internal class TerraformDocumentationProvider : AbstractDocumentationProvider() {
+
   override fun getQuickNavigateInfo(element: PsiElement?, originalElement: PsiElement?): @Nls String? {
     if (element is HCLProperty) {
       val block = element.parent?.parent as? HCLBlock
@@ -53,6 +57,14 @@ internal class TerraformDocumentationProvider : AbstractDocumentationProvider() 
     }
 
     return null
+  }
+
+  override fun getDocumentationParts(element: PsiElement, originalElement: PsiElement?): DocumentationProvider.DocumentationParts? {
+    val doc = generateDoc(element, originalElement)
+    return if (doc == null) null else {
+      DocumentationParts("${HtmlChunk.p().addRaw(doc)}", null)
+    }
+
   }
 
   override fun generateDoc(element: PsiElement?, originalElement: PsiElement?): @Nls String? {
@@ -105,9 +117,9 @@ internal class TerraformDocumentationProvider : AbstractDocumentationProvider() 
     else if (element is TerraformDocumentPsi) {
       val relevantBlock = getBlockForDocumentationLink(element, element.name) ?: return null
       val description = when (val typeClass = ModelHelper.getBlockType(relevantBlock)) {
-                          is BaseModelType -> typeClass.description
+                          is BaseModelType -> typeClass.description ?: ""
                           else -> ""
-                        } ?: ""
+                        }
       return HCLBundle.message("terraform.doc.block.type.0.br.1", element.name, description)
     }
     return null
