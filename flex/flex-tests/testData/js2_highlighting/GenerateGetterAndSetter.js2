@@ -1,4 +1,4 @@
-package <error>foo</error> {
+package <error descr="Package name 'foo' does not correspond to file path ''">foo</error> {
 import flash.events.EventDispatcher;
 
 public class GenerateGetterAndSetter extends EventDispatcher {
@@ -9,8 +9,8 @@ public class GenerateGetterAndSetter extends EventDispatcher {
     var k;   <caret>
 }
 }
-package <error>bar</error> {
+<error descr="Package should be first statement in file">package</error> <error descr="Package name 'bar' does not correspond to file path ''">bar</error> {
   import foo.GenerateGetterAndSetter;
-  var <error>a</error>:GenerateGetterAndSetter;
+  var <error descr="Variable 'a' should be defined in file 'a.js2'">a</error>:GenerateGetterAndSetter;
   a.t = a.t + 1;
 }

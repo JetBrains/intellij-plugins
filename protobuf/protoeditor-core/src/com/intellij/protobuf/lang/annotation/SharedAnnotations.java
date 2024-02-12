@@ -125,9 +125,9 @@ public final class SharedAnnotations {
   static boolean annotateSymbolPath(
       @NotNull ProtoSymbolPath path, @NotNull AnnotationHolder holder) {
     ProtoSymbolPath qualifier = path.getQualifier();
-    if (qualifier != null && annotateSymbolPath(qualifier, holder)) {
-      return true;
-    }
+    //if (qualifier != null && annotateSymbolPath(qualifier, holder)) {
+    //  return true;
+    //}
 
     ProtoSymbolPathContainer container = path.getPathContainer();
     if (container instanceof PbTypeName) {

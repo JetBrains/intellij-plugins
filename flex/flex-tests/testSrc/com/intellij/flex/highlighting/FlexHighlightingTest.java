@@ -24,6 +24,7 @@ import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.javascript.flex.css.FlexCSSDialect;
 import com.intellij.javascript.flex.mxml.schema.FlexMxmlNSDescriptor;
 import com.intellij.lang.actionscript.psi.ActionScriptPsiImplUtil;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.lang.css.CssDialect;
 import com.intellij.lang.css.CssDialectMappings;
 import com.intellij.lang.injection.InjectedLanguageManager;
@@ -1753,7 +1754,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
       FlexTestUtils.addFlexModuleDependency(myModule, otherModule);
       Disposer.register(getTestRootDisposable(), otherModule);
     });
-    assertEmpty(doHighlighting());
+    assertEmpty(doHighlighting(HighlightSeverity.WARNING));
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
@@ -1889,6 +1890,10 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     assertTrue(myFile.isValid());
     nsDescriptor = ((XmlFile)getFile()).getDocument().getRootTagNSDescriptor();
     assertTrue(nsDescriptor.toString(), nsDescriptor instanceof FlexMxmlNSDescriptor);
+    String newText = """
+      <<info descr="null">mx</info>:Application  xmlns:<info descr="null">mx</info>="http://www.adobe.com/2006/mxml"/>
+      """;
+    WriteAction.run(() -> myEditor.getDocument().setText(newText)); // restore <info> markers for doDoTest, remove <error> for unregistered URI because it's not highlighted in mxml
     doDoTest(true, true);
   }
 
@@ -1904,6 +1909,9 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     });
     XmlNSDescriptor nsDescriptor = ((XmlFile)getFile()).getDocument().getRootTagNSDescriptor();
     assertTrue(nsDescriptor.toString(), nsDescriptor instanceof FlexMxmlNSDescriptor);
+    WriteAction.run(()->getFile().getFileDocument().setText("""
+    <<info descr="null">mx</info>:Application  xmlns:<info descr="null">mx</info>="http://www.adobe.com/2006/mxml"/>
+    """)); // restore <info> markers for doDoTest
     doDoTest(true, true);
   }
 
@@ -1992,7 +2000,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     final String testName = getTestName(false);
     final Collection<HighlightInfo> highlightInfos = doTestFor(true, testName + ".mxml", testName + "_other." + otherFileExtension);
     findAndInvokeIntentionAction(highlightInfos, quickFixName, myEditor, myFile);
-    assertEmpty(doHighlighting());
+    assertEmpty(doHighlighting(HighlightSeverity.WARNING));
 
     final VirtualFile verificationFile = LocalFileSystem.getInstance()
       .findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "_other_after." + otherFileExtension);

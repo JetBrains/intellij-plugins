@@ -1,22 +1,22 @@
-package <error>com.test</error> {
-    class <error>Foo</error> {
+package <error descr="Package name 'com.test' does not correspond to file path ''">com.test</error> {
+    class <error descr="Class 'Foo' should be defined in file 'Foo.js2'">Foo</error> {
 //import com.a.ns1;
 //import com.a.ns2;
-<error>ns1</error> function zzz() {}
-<error>ns2</error> function zzz2() {}
+<error descr="Unresolved variable or type ns1">ns1</error> function zzz() {}
+<error descr="Unresolved variable or type ns2">ns2</error> function zzz2() {}
 }
 }
 
-package <error>com.test2</error> {
+<error descr="Package should be first statement in file">package</error> <error descr="Package name 'com.test2' does not correspond to file path ''">com.test2</error> {
 import com.a.ns1;
 import com.a.ns2;
-class <error>Foo</error> {
+class <error descr="Class 'Foo' should be defined in file 'Foo.js2'">Foo</error> {
 ns1 function zzz() {}
 ns2 function zzz2() {}
 }
 }
 
-package <error>com.a</error> {
-public namespace <error>ns1</error> = "yyy";
-public const <error>ns2</error> = "xxx";
+<error descr="Package should be first statement in file">package</error> <error descr="Package name 'com.a' does not correspond to file path ''">com.a</error> {
+public namespace <error descr="More than one externally visible symbol defined in file"><error descr="Namespace 'ns1' should be defined in file 'ns1.js2'">ns1</error></error> = "yyy";
+public const <error descr="More than one externally visible symbol defined in file"><error descr="Variable 'ns2' should be defined in file 'ns2.js2'">ns2</error></error> = "xxx";
 }

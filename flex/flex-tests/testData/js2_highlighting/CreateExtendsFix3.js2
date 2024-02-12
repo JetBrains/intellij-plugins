@@ -3,16 +3,16 @@ package {
 
 public class CreateExtendsFix3 extends C {
   public function foo() {
-    var v : D = <error>super</error>;
+    var v : D = <error descr="Initializer type C is not assignable to variable type D">super</error>;
   }
 }
 }
 
-package {
-  public class <error>C</error> {}
+<error descr="Package should be first statement in file">package</error> {
+  public class <error descr="Class 'C' should be defined in file 'C.js2'">C</error> {}
 
 }
 
-package <error>com</error> {
-  public class <error>D</error> {}
+<error descr="Package should be first statement in file">package</error> <error descr="Package name 'com' does not correspond to file path ''">com</error> {
+  public class <error descr="Class 'D' should be defined in file 'D.js2'">D</error> {}
 }

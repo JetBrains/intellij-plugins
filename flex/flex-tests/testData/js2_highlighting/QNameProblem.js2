@@ -1,25 +1,25 @@
-package <error>test.utils</error>
+package <error descr="Package name 'test.utils' does not correspond to file path ''">test.utils</error>
 {
 import mypackage.ICollectionView;
 import mypackage.IList;
 
-public interface <error>IListView</error> extends test.utils.IList, ICollectionView
+public interface <error descr="Class 'IListView' should be defined in file 'IListView.js2'">IListView</error> extends test.utils.IList, ICollectionView
 {
     function addAll(addList:mypackage.IList):void
 }
 }
 
-package <error>test.utils</error>
+<error descr="Package should be first statement in file">package</error> <error descr="Package name 'test.utils' does not correspond to file path ''">test.utils</error>
 {
 import mypackage.IList;
-public interface <error>ICollection</error> extends IList
+public interface <error descr="Class 'ICollection' should be defined in file 'ICollection.js2'">ICollection</error> extends IList
 {
 }
 }
 
-package <error>test.utils</error>
+<error descr="Package should be first statement in file">package</error> <error descr="Package name 'test.utils' does not correspond to file path ''">test.utils</error>
 {
-public interface <error>IList</error> extends ICollection
+public interface <error descr="Class 'IList' should be defined in file 'IList.js2'">IList</error> extends ICollection
 {
 }
 }

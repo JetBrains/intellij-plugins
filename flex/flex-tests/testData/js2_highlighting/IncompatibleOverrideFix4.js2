@@ -1,11 +1,11 @@
 package {
-class <error>FooBase</error> {
+class <error descr="Class 'FooBase' should be defined in file 'FooBase.js2'">FooBase</error> {
     function foo() {}
 }
 }
 
-package {
-class Foo extends FooBase {
+<error descr="Package should be first statement in file">package</error> {
+class <error descr="Class 'Foo' should be defined in file 'Foo.js2'">Foo</error> extends FooBase {
     override function foo():<error descr="Incompatible override, should have return type ''">int</error> {
     }
 }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" mouseDown="<inject descr="null"><info descr="instance method">copy</info>()</inject>" mouseUp="<inject descr="null"><info descr="instance method">copy</info>()</inject>">
+<<info descr="null">mx</info>:Application xmlns:<info descr="null">mx</info>="http://www.adobe.com/2006/mxml" mouseDown="<inject descr="null"><info descr="instance method">copy</info>()</inject>" mouseUp="<inject descr="null"><info descr="instance method">copy</info>()</inject>">
 
-    <mx:Script><inject descr="null">public override function <lineMarker descr="Overrides method 'removeEventListener' in flash.events.EventDispatcher"><info descr="instance method">removeEventListener</info></lineMarker>(<info descr="identifiers//parameter">type</info>:<info descr="classes//class name">String</info>, <info descr="identifiers//parameter">listener</info>:<info descr="classes//class name">Function</info>, <info descr="identifiers//parameter">useCapture</info>:<info descr="classes//class name">Boolean</info> = false):void {}
+    <<info descr="null">mx</info>:Script><inject descr="null">public override function <lineMarker descr="Overrides method 'removeEventListener' in flash.events.EventDispatcher"><info descr="instance method">removeEventListener</info></lineMarker>(<info descr="identifiers//parameter">type</info>:<info descr="classes//class name">String</info>, <info descr="identifiers//parameter">listener</info>:<info descr="classes//class name">Function</info>, <info descr="identifiers//parameter">useCapture</info>:<info descr="classes//class name">Boolean</info> = false):void {}
 
     function <info descr="instance method">copy</info>() {
         <info descr="instance field">destination</info>.<info descr="instance method">text</info>=<info descr="instance field">source</info>.<info descr="instance method">text</info> = ' '
@@ -11,12 +11,12 @@
 
     function <info descr="instance method">copy_</info>() {
     }
-    </inject></mx:Script>
-    <mx:Script><![CDATA[<inject descr="null">
+    </inject></<info descr="null">mx</info>:Script>
+    <<info descr="null">mx</info>:Script><![CDATA[<inject descr="null">
     var <info descr="instance field">a</info> = <xxx>{<error descr="Unresolved variable or type zzz">zzz</error>}</xxx>;
     var <info descr="instance field">b</info> = <xxx>{<info descr="instance field">a</info>}</xxx>;
- </inject>]]></mx:Script>
+ </inject>]]></<info descr="null">mx</info>:Script>
 
-    <mx:TextInput id="source" width="100" horizontalCenter="0" verticalCenter="1"/>
-    <mx:TextInput id="destination" width="100" horizontalCenter="0" verticalCenter="1"/>
-</mx:Application>
+    <<info descr="null">mx</info>:TextInput id="source" width="100" horizontalCenter="0" verticalCenter="1"/>
+    <<info descr="null">mx</info>:TextInput id="destination" width="100" horizontalCenter="0" verticalCenter="1"/>
+</<info descr="null">mx</info>:Application>

@@ -1,13 +1,13 @@
-package <error>aaa</error> {
-public class <error>A</error> {
-  public function <warning>fo<caret>o</warning>():void { var i : int; }
+package <error descr="Package name 'aaa' does not correspond to file path ''">aaa</error> {
+public class <error descr="Class 'A' should be defined in file 'A.js2'">A</error> {
+  public function <warning descr="Method can be made 'static'">fo<caret>o</warning>():void { var i : int; }
 }
 }
 
-package <error>bbb</error> {
+<error descr="Package should be first statement in file">package</error> <error descr="Package name 'bbb' does not correspond to file path ''">bbb</error> {
 import aaa.A;
 
-public class <error>B</error> {
+public class <error descr="Class 'B' should be defined in file 'B.js2'">B</error> {
   public static function ref1():void {
     var v : A;
     v.foo();
@@ -16,28 +16,28 @@ public class <error>B</error> {
 }
 }
 
-package <error>ccc</error> {
+<error descr="Package should be first statement in file">package</error> <error descr="Package name 'ccc' does not correspond to file path ''">ccc</error> {
 import bbb.B;
 
-public class <error>C</error> {
+public class <error descr="Class 'C' should be defined in file 'C.js2'">C</error> {
   public static function ref1():void {
     B.getA().foo();
   }
 }
 }
 
-package <error>ddd</error> {
+<error descr="Package should be first statement in file">package</error> <error descr="Package name 'ddd' does not correspond to file path ''">ddd</error> {
 import bbb.B;
 
-public class <error>D</error> {
+public class <error descr="Class 'D' should be defined in file 'D.js2'">D</error> {
   public static function ref1():void {
     B.getA().foo();
   }
 }
 }
 
-package <error>ddd</error> {
+<error descr="Package should be first statement in file">package</error> <error descr="Package name 'ddd' does not correspond to file path ''">ddd</error> {
 
-public class <error>A</error> {
+public class <error descr="Class 'A' should be defined in file 'A.js2'">A</error> {
 }
 }

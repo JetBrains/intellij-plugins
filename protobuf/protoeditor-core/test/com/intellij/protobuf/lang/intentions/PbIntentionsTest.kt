@@ -38,7 +38,7 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
       import "<error descr="Cannot resolve import 'importMe.proto'">importMe.proto</error>";
       
       message MainMessage {
-        <error descr="Cannot resolve symbol 'ImportedMessage'">ImportedMessage</error> importedMessageField = 1;
+        <error descr="Cannot resolve symbol 'ImportedMessage'"><error descr="Message, enum, or built-in type expected">ImportedMessage</error></error> importedMessageField = 1;
       }
     """.trimIndent())
 
@@ -78,7 +78,7 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
       import "<error descr="Cannot resolve import 'unknown.proto'">unknown.proto</error>";
             
       message MainMessage {
-        <error descr="Cannot resolve symbol 'Imported<caret>Message'">ImportedMessage</error> importedMessageField = 1;
+        <error descr="Cannot resolve symbol 'ImportedMessage'"><error descr="Message, enum, or built-in type expected">Imported<caret>Message</error></error> importedMessageField = 1;
       }
     """.trimIndent())
 
@@ -114,7 +114,7 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
       import "<error descr="Cannot resolve import 'importMe.proto'">importMe.proto</error>";
             
       message MainMessage {
-        <error descr="Cannot resolve symbol 'Imported<caret>Message'">ImportedMessage</error> importedMessageField = 1;
+        <error descr="Cannot resolve symbol 'ImportedMessage'"><error descr="Message, enum, or built-in type expected">Imported<caret>Message</error></error> importedMessageField = 1;
       }
     """.trimIndent())
 
@@ -154,7 +154,7 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
       import "<error descr="Cannot resolve import 'imports/importMe.proto'">imports/importMe.proto</error>";
             
       message MainMessage {
-        <error descr="Cannot resolve symbol 'Imported<caret>Message'">ImportedMessage</error> importedMessageField = 1;
+        <error descr="Cannot resolve symbol 'ImportedMessage'"><error descr="Message, enum, or built-in type expected">Imported<caret>Message</error></error> importedMessageField = 1;
       }
     """.trimIndent())
 
@@ -188,7 +188,7 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
       syntax = "proto3";
                   
       message MainMessage {
-        <error descr="Cannot resolve symbol 'Unknown<caret>Message'">UnknownMessage</error> importedMessageField = 1;
+        <error descr="Cannot resolve symbol 'UnknownMessage'"><error descr="Message, enum, or built-in type expected">Unknown<caret>Message</error></error> importedMessageField = 1;
       }
     """.trimIndent())
 
@@ -206,7 +206,7 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
       syntax = "proto3";
                   
       message MainMessage {
-        <error descr="Cannot resolve symbol 'Imported<caret>Message'">ImportedMessage</error> importedMessageField = 1;
+        <error descr="Cannot resolve symbol 'ImportedMessage'"><error descr="Message, enum, or built-in type expected">Imported<caret>Message</error></error> importedMessageField = 1;
       }
     """.trimIndent())
     myFixture.checkHighlighting(true, true, true)
@@ -237,7 +237,7 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
 
     myFixture.configureByText("main.proto", """
       message MainMessage {
-        <error descr="Cannot resolve symbol 'Imported<caret>Message'">ImportedMessage</error> importedMessageField = 1;
+        <error descr="Fields must have labels in proto2 (optional, required, or repeated)"><error descr="Cannot resolve symbol 'ImportedMessage'"><error descr="Message, enum, or built-in type expected">Imported<caret>Message</error></error> importedMessageField = 1;</error>
       }
     """.trimIndent())
     myFixture.checkHighlighting(true, true, true)
@@ -269,7 +269,7 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
 
     myFixture.configureByText("main.proto", """
       message MainMessage {
-        <error descr="Cannot resolve symbol 'Imported<caret>Message'">ImportedMessage</error> importedMessageField = 1;
+        <error descr="Fields must have labels in proto2 (optional, required, or repeated)"><error descr="Cannot resolve symbol 'ImportedMessage'"><error descr="Message, enum, or built-in type expected">Imported<caret>Message</error></error> importedMessageField = 1;</error>
       }
     """.trimIndent())
     myFixture.checkHighlighting(true, true, true)
@@ -303,7 +303,7 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
       import "<error descr="Cannot resolve import 'aaa/imports2/importMe2.proto'">aaa/imports2/importMe2.proto</error>";
 
       message MainMessage {
-        <error descr="Cannot resolve symbol 'Imported<caret>Message'">ImportedMessage</error> importedMessageField = 1;
+        <error descr="Fields must have labels in proto2 (optional, required, or repeated)"><error descr="Cannot resolve symbol 'ImportedMessage'"><error descr="Message, enum, or built-in type expected">Imported<caret>Message</error></error> importedMessageField = 1;</error>
       }
     """.trimIndent())
     myFixture.checkHighlighting(true, true, true)
@@ -326,7 +326,7 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
       syntax = "proto3";
                   
       message MainMessage {
-        <error descr="Cannot resolve symbol 'Imported<caret>Message'">ImportedMessage</error> importedMessageField = 1;
+        <error descr="Cannot resolve symbol 'ImportedMessage'"><error descr="Message, enum, or built-in type expected">Imported<caret>Message</error></error> importedMessageField = 1;
       }
     """.trimIndent())
 
@@ -353,7 +353,7 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
       syntax = "proto3";
                   
       message MainMessage {
-        <error descr="Cannot resolve symbol 'ImportedMessage'">ImportedMessage</error> importedMessageField = 1;
+        <error descr="Cannot resolve symbol 'ImportedMessage'"><error descr="Message, enum, or built-in type expected">ImportedMessage</error></error> importedMessageField = 1;
       }
     """.trimIndent())
     Assert.assertFalse(
@@ -365,7 +365,7 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
 
   private fun findAndInvokeIntention(fixture: CodeInsightTestFixture) {
     val intention = fixture.getAvailableIntention("Add import statement and configure import path")
-    Assert.assertNotNull(intention)
+    Assert.assertNotNull("intentions: "+fixture.availableIntentions, intention)
     intention!!.invoke(fixture.project, fixture.editor, fixture.file)
   }
 

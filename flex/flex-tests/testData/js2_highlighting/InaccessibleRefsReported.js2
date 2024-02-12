@@ -1,10 +1,10 @@
-package <error>foo</error> {
+package <error descr="Package name 'foo' does not correspond to file path ''">foo</error> {
 class InaccessibleRefsReported {}
 }
 
-package <error>bar</error> {
+<error descr="Package should be first statement in file">package</error> <error descr="Package name 'bar' does not correspond to file path ''">bar</error> {
 import foo.<error descr="Element is not accessible">InaccessibleRefsReported</error>
-var <error>b</error>:<error descr="Element is not accessible">InaccessibleRefsReported</error>
+var <error descr="Variable 'b' should be defined in file 'b.js2'">b</error>:<error descr="Element is not accessible">InaccessibleRefsReported</error>
 }
 
 class Bar {

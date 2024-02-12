@@ -9,8 +9,8 @@ package {
 	}
 }
 
-package {
-  class <error>Bar</error> {
+<error descr="Package should be first statement in file">package</error> {
+  class <error descr="Class 'Bar' should be defined in file 'Bar.js2'">Bar</error> {
       function foo() {}
   }
 }

@@ -347,5 +347,5 @@ message AnyTest {
       <error descr="Non-repeated field 'type_url' is specified multiple times"><error descr="Non-repeated field 'value' is specified multiple times">[type.googleapis.com/foo.bar.AnyType]</error></error> {}
     }
   };
-  option (opt).<error descr="Repeated message field 'repeated_any' must be initialized using an aggregate value">repeated_any</error>.type_url = "foo";
+  option (opt).<error descr="Repeated message field 'repeated_any' must be initialized using an aggregate value">repeated_any</error>.<error descr="Non-repeated field 'type_url' is specified multiple times">type_url</error> = "foo";
 }

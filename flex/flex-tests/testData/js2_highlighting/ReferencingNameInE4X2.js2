@@ -4,9 +4,9 @@ var s:String = data.name;
 var s2:int = data.name.length();
 var b:Boolean = data.name is XMLList
 
-package {
+<error descr="Package should be first statement in file">package</error> {
   //import mypackage.getQualifiedClassName;
-  class <error>Test</error> {
+  class <error descr="Class 'Test' should be defined in file 'Test.js2'">Test</error> {
     public function E4XFilterByFunction() {
         var data2:XML = <data><type name="test::E4XFilter"/></data>;
         var aTypeId:uint = data2.type.(@name == getQualifiedClassName(E4XFilterByFunction)).@id;

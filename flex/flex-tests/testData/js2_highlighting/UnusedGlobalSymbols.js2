@@ -1,8 +1,8 @@
 package {
 public class UnusedGlobalSymbols
 {
-  public function <warning>foo</warning>() {}
-  function <warning>bar</warning>() {}
+  public function <warning descr="Unused method foo">foo</warning>() {}
+  function <warning descr="Unused method bar">bar</warning>() {}
   function bar2() {}
 
   public function usedFoo() {
@@ -15,7 +15,7 @@ public class UnusedGlobalSymbols
 class XXX {
     var x:XXX = new XXX2();
     function zzz():void {}
-    function <warning>zzz2</warning>():void {}
+    function <warning descr="Unused method zzz2">zzz2</warning>():void {}
     function test_zzz():void {
         x.zzz();
     }
@@ -26,8 +26,8 @@ class XXX2 extends XXX {
     override function zzz2():void {}
 }
 
-package {
-    public class <error>XXX3</error> extends XXX3_2 {
+<error descr="Package should be first statement in file">package</error> {
+    public class <error descr="Class 'XXX3' should be defined in file 'XXX3.js2'">XXX3</error> extends XXX3_2 {
         public override function call():* { return 1; }
     }
 }

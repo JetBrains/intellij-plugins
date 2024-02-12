@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" >
-  <mx:Script><inject descr="null">
+<<info descr="null">mx</info>:Application xmlns:<info descr="null">mx</info>="http://www.adobe.com/2006/mxml" >
+  <<info descr="null">mx</info>:Script><inject descr="null">
     static var <info descr="static field">staticField</info>:int;
     static function <info descr="static method">staticMethod</info>():void {}
     function <info descr="instance method">instanceMethod</info>(<info descr="identifiers//parameter">p</info>):int {}
@@ -14,8 +14,8 @@
         <info descr="identifiers//local variable">a</info>.<info descr="instance method">instanceMethod</info>(<info descr="identifiers//parameter">param</info>)
         <info descr="identifiers//local variable">a</info>.<info descr="instance field">instanceField</info> = 1
     }
-  </inject></mx:Script>
+  </inject></<info descr="null">mx</info>:Script>
 
-  <mx:Canvas width="{<inject descr="null"><info descr="instance field">conventionsChoiceForm</info>.<info descr="instance method">width</info></inject>}" />
-  <mx:Canvas id="conventionsChoiceForm" />
-</mx:Application>
+  <<info descr="null">mx</info>:Canvas width="{<inject descr="null"><info descr="instance field">conventionsChoiceForm</info>.<info descr="instance method">width</info></inject>}" />
+  <<info descr="null">mx</info>:Canvas id="conventionsChoiceForm" />
+</<info descr="null">mx</info>:Application>

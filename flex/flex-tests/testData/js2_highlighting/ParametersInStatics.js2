@@ -1,7 +1,7 @@
 import bbb.BBB;
 
-package <error>bbb</error> {
-  public class <error>BBB</error> {
+<error descr="Package should be first statement in file">package</error> <error descr="Package name 'bbb' does not correspond to file path ''">bbb</error> {
+  public class <error descr="Class 'BBB' should be defined in file 'BBB.js2'">BBB</error> {
     public function set aaa(a:*):void {}
   }
 }

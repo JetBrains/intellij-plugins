@@ -28,7 +28,7 @@ enum DuplicateNames {
   A = 2;
   B = 3;
   C = 4;
-  <error descr="'FOO' is already defined in scope 'com.foo'">FOO</error> = 5;
+  <error descr="'FOO' is already defined in scope 'com.foo'"><error descr="Enum value name 'FOO' conflicts with already-defined name 'FOO' when the enum prefix is removed and the name is pascal-cased ('Foo')">FOO</error></error> = 5;
 }
 
 enum ValueUsesReservedNumber {

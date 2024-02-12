@@ -1,8 +1,8 @@
 package {
-<error>static</error> function NoStaticFunctionWithoutClass() {}
-<error>static</error> var <error>NoStaticVarWithoutClass</error>;
+<error descr="Static modifier is allowed only for class members">static</error> function <error descr="More than one externally visible symbol defined in file">NoStaticFunctionWithoutClass</error>() {}
+<error descr="Static modifier is allowed only for class members">static</error> var <error descr="More than one externally visible symbol defined in file"><error descr="Variable 'NoStaticVarWithoutClass' should be defined in file 'NoStaticVarWithoutClass.js2'">NoStaticVarWithoutClass</error></error>;
 }
 
-<warning>static</warning> function foo2() {}
-<warning>static</warning> var v1;
-<warning>static</warning> const c1 = 100;
+<warning descr="Static modifier is allowed only for class members">static</warning> function foo2() {}
+<warning descr="Static modifier is allowed only for class members">static</warning> var v1;
+<warning descr="Static modifier is allowed only for class members">static</warning> const c1 = 100;

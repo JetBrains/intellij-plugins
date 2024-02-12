@@ -2,12 +2,12 @@ package {
 
 public class CreateExtendsFix1 {
   public function foo() {
-    var v : C = <error>new CreateExtendsFix1()</error>;
+    var v : C = <error descr="Initializer type CreateExtendsFix1 is not assignable to variable type C">new CreateExtendsFix1()</error>;
   }
 }
 }
 
-package {
-  public class <error>C</error> {}
+<error descr="Package should be first statement in file">package</error> {
+  public class <error descr="Class 'C' should be defined in file 'C.js2'">C</error> {}
 
 }

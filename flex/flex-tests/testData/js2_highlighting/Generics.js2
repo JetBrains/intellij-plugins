@@ -1,5 +1,5 @@
 package {
-  public class <error>Vector$object</error> {
+  public class <error descr="Class 'Vector' should be defined in file 'Vector.js2'"><info descr="classes//class name">Vector$object</info></error> {
       <info descr="attribute">[Bindable]</info>
       var <info descr="instance field">foo</info>;
   }

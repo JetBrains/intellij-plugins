@@ -1,15 +1,15 @@
 package {
 
 
-public interface <error><lineMarker descr="Has implementations">IFoo</lineMarker></error> {
-    function <info><lineMarker descr="Is implemented">foo</lineMarker></info>();
+public interface <error descr="Class 'IFoo' should be defined in file 'IFoo.js2'"><error descr="More than one externally visible symbol defined in file"><lineMarker descr="Has implementations"><info descr="interface">IFoo</info></lineMarker></error></error> {
+    function <info><lineMarker descr="Is implemented"><info descr="instance method">foo</info></lineMarker></info>();
 }
 
-public class <error><lineMarker descr="Has subclasses">Foo</lineMarker></error> implements <info>IFoo</info> {
+public class <error descr="Class 'Foo' should be defined in file 'Foo.js2'"><error descr="More than one externally visible symbol defined in file"><lineMarker descr="Has subclasses"><info descr="classes//class name">Foo</info></lineMarker></error></error> implements <info descr="interface">IFoo</info> {
     public function <info><lineMarker descr="Is overridden"><lineMarker descr="Implements method 'foo' in IFoo">foo</lineMarker></lineMarker></info>() {}
 }
 
-public class <error>FooEx</error> extends <info>Foo</info> {
+public class <error descr="Class 'FooEx' should be defined in file 'FooEx.js2'"><error descr="More than one externally visible symbol defined in file"><info descr="classes//class name">FooEx</info></error></error> extends <info descr="classes//class name">Foo</info> {
     public override function <info><lineMarker descr="Overrides method 'foo' in Foo">foo</lineMarker></info>() {}
 }
 

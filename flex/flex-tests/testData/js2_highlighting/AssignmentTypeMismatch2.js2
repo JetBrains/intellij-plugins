@@ -1,5 +1,5 @@
-package <error>foo</error> {}
-package <error>bar</error> {}
+package <error descr="Package name 'foo' does not correspond to file path ''">foo</error> {}
+<error descr="Package should be first statement in file">package</error> <error descr="Package name 'bar' does not correspond to file path ''">bar</error> {}
 public interface foo.IEvent {}
 
 public class foo.Event implements IEvent {}
@@ -20,8 +20,8 @@ class foo.Bar {
       if (bar == null) doFoo(new foo.Bar())
       bar.events = new Array()
       var testN:Number = 12;
-      var testS:String = <error>testN</error>;
-      testN = <error>testS</error>;
+      var testS:String = <error descr="Initializer type Number is not assignable to variable type String">testN</error>;
+      testN = <error descr="Assigned expression type String is not assignable to type Number">testS</error>;
     }
 }
 
@@ -67,15 +67,15 @@ class X {
         x = fff2();
         x = fff3();
 
-        x = <error>fff2</error>;
-        x = <error>fff3</error>;
-        x = <error>fff4()</error>;
+        x = <error descr="Assigned expression type Function is not assignable to type Array">fff2</error>;
+        x = <error descr="Assigned expression type Function is not assignable to type Array">fff3</error>;
+        x = <error descr="Assigned expression type Function is not assignable to type Array">fff4()</error>;
         x = fff4()();
-        x = <error>fff4</error>;
+        x = <error descr="Assigned expression type Function is not assignable to type Array">fff4</error>;
     }
 }
 
-var s222:String = <error>new X()</error>;
+var s222:String = <error descr="Initializer type X is not assignable to variable type String">new X()</error>;
 var s:String = new XML("<a>bla</a>");
 var s2:String = <></>;
 
@@ -93,8 +93,8 @@ function set dataProvider(value:Object):void {
 }
 
 var x6:Number = function(x:Number):Number { return x} (1);
-var x7:String = <error>String</error>;
-x7 = <error>String</error>
+var x7:String = <error descr="Initializer type Class is not assignable to variable type String">String</error>;
+x7 = <error descr="Assigned expression type Class is not assignable to type String">String</error>
 var x8:Boolean = 0;
 var x9:int = 0, x9_2:int = 0;
 x8 = !x9 == x9_2;
@@ -104,5 +104,5 @@ class Vector {
     var length:int;
 }
 
-var vi:Vector.<int> = new <int>[<error>,</error>123,123];
+var vi:Vector.<int> = new <int>[<error descr="Expression expected">,</error>123,123];
 x9 = (int)((1.0 + 3.0)/2.0);

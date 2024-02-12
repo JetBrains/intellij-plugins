@@ -1,7 +1,7 @@
 /*
 File header
 */
-var a:<error>X<caret>XX</error>;
-package <error>yyy</error> {
-  public class <error>XXX</error> {}
+var a:<error descr="Unresolved type XXX">X<caret>XX</error>;
+<error descr="Package should be first statement in file">package</error> <error descr="Package name 'yyy' does not correspond to file path ''">yyy</error> {
+  public class <error descr="Class 'XXX' should be defined in file 'XXX.js2'">XXX</error> {}
 }

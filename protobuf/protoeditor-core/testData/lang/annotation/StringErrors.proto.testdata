@@ -3,8 +3,8 @@ syntax = "proto3";
 package foo.bar;
 
 message abc {
-  string x = 10 [default = <EOLError descr="Unterminated string literal">"123</EOLError>
+  string x = 10 [<error descr="Default values are not supported in proto3">default = <EOLError descr="Unterminated string literal">"123</EOLError></error>
   ];
 
-  string z = 20 [default = "12<error descr="Illegal escape sequence in string literal">\z</error>3"];
+  string z = 20 [<error descr="Default values are not supported in proto3">default = "12<error descr="Illegal escape sequence in string literal">\z</error>3"</error>];
 }

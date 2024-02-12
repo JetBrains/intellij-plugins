@@ -6,8 +6,8 @@ public class CreateSubclassIntention3<caret> {
 }
 }
 
-package <error>com</error> {
-public class <error>Foo</error> {
+<error descr="Package should be first statement in file">package</error> <error descr="Package name 'com' does not correspond to file path ''">com</error> {
+public class <error descr="Class 'Foo' should be defined in file 'Foo.as'">Foo</error> {
 }
 }
 

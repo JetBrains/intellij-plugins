@@ -1,13 +1,13 @@
-package <error>bar</error> {
-public class <lineMarker descr="Has subclasses"><error>ClassB</error></lineMarker> {
+package <error descr="Package name 'bar' does not correspond to file path ''">bar</error> {
+public class <lineMarker descr="Has subclasses"><error descr="Class 'ClassB' should be defined in file 'ClassB.js2'"><info descr="classes//class name">ClassB</info></error></lineMarker> {
     function <info descr="instance method">foo</info>() {}
 }
 }
 
-package <error>foo</error> {
-import <info>bar.ClassB</info>;
+<error descr="Package should be first statement in file">package</error> <error descr="Package name 'foo' does not correspond to file path ''">foo</error> {
+import <info descr="classes//class name">bar.ClassB</info>;
 
-public class <error>ClassA</error> extends <info>ClassB</info> {
+public class <error descr="Class 'ClassA' should be defined in file 'ClassA.js2'"><info descr="classes//class name">ClassA</info></error> extends <info descr="classes//class name">ClassB</info> {
     function <info descr="instance method">foo</info>() {}
     <lineMarker></lineMarker>function <info descr="instance method">foo2</info>() {}
 }

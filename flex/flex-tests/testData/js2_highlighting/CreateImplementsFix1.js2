@@ -2,23 +2,23 @@ package {
 
 public class CreateImplementsFix1 {
   public function foo() {
-    C.ccc(<error>this</error>);
+    C.ccc(<error descr="Argument type CreateImplementsFix1 is not assignable to parameter type MyInt">this</error>);
   }
 }
 }
 
 
-package <error>com.foo</error> {
+<error descr="Package should be first statement in file">package</error> <error descr="Package name 'com.foo' does not correspond to file path ''">com.foo</error> {
 
-public interface <error>MyInt</error> {
+public interface <error descr="Class 'MyInt' should be defined in file 'MyInt.js2'">MyInt</error> {
 }
 
 }
 
-package {
+<error descr="Package should be first statement in file">package</error> {
   import com.foo.MyInt;
 
-  public class <error>C</error> {
+  public class <error descr="Class 'C' should be defined in file 'C.js2'">C</error> {
     internal static function ccc(i: MyInt) {}
   }
 

@@ -1,9 +1,9 @@
-package <error>foo</error> {
-public namespace <error>Foo</error> = "xxx";
+package <error descr="Package name 'foo' does not correspond to file path ''">foo</error> {
+public namespace <error descr="Namespace 'Foo' should be defined in file 'Foo.js2'">Foo</error> = "xxx";
 }
 
-package <error>bar</error> {
-  class <error>C</error> {
-      <err<caret>or>Foo</error> function foo() {}
+<error descr="Package should be first statement in file">package</error> <error descr="Package name 'bar' does not correspond to file path ''">bar</error> {
+  class <error descr="Class 'C' should be defined in file 'C.js2'">C</error> {
+      <error descr="Unresolved variable or type Foo">Foo</error> function foo() {}
   }
 }

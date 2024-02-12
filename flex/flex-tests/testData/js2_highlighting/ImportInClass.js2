@@ -1,8 +1,8 @@
-package <error>com.example</error> {
-public class <error>Foo</error> {}
+package <error descr="Package name 'com.example' does not correspond to file path ''">com.example</error> {
+public class <error descr="Class 'Foo' should be defined in file 'Foo.js2'">Foo</error> {}
 }
-package {
-internal class <error>FooClasses</error> {
+<error descr="Package should be first statement in file">package</error> {
+internal class <error descr="Class 'FooClasses' should be defined in file 'FooClasses.js2'">FooClasses</error> {
  import com.example.Foo; Foo;
 }
 }

@@ -1,20 +1,20 @@
 package {
-    public class <error>Base</error> {
+    public class <error descr="Class 'Base' should be defined in file 'Base.js2'">Base</error> {
         public function foo(a:int) {}
     }
 }
 
-package {
+<error descr="Package should be first statement in file">package</error> {
     public class IncompatibleOverrideFix5 extends Base {
-        override public function foo<error>(a:String, b:Boolean, c:*)</error> {}
+        override public function foo<error descr="Incompatible override, should have signature '(a:int)'">(a:String, b:Boolean, c:*)</error> {}
 
         private function zz() {
             var v : Base;
             v.foo(0);
-            v.foo<error>()</error>;
-            v.foo<error>(1, 2, 3, 4, 5)</error>;
+            v.foo<error descr="Invalid number of arguments, expected 1">()</error>;
+            v.foo<error descr="Invalid number of arguments, expected 1">(1, 2, 3, 4, 5)</error>;
             var v2 : IncompatibleOverrideFix5;
-            v2.foo<error>()</error>;
+            v2.foo<error descr="Invalid number of arguments, expected 3">()</error>;
         }
     }
 }

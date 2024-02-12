@@ -1,44 +1,44 @@
-package <error>foo</error> {
+package <error descr="Package name 'foo' does not correspond to file path ''">foo</error> {
   class HighlightInternalThingsFromOtherPackage {}
 }
 
-package <error>foo2</error> {
-  public class <error>HighlightInternalThingsFromOtherPackage3</error> {
+<error descr="Package should be first statement in file">package</error> <error descr="Package name 'foo2' does not correspond to file path ''">foo2</error> {
+  public class <error descr="Class 'HighlightInternalThingsFromOtherPackage3' should be defined in file 'HighlightInternalThingsFromOtherPackage3.js2'">HighlightInternalThingsFromOtherPackage3</error> {
     function foo() {}
   }
 }
 
-package <error>foo3</error> {
-  public interface <error>HighlightInternalThingsFromOtherPackage4</error> {
+<error descr="Package should be first statement in file">package</error> <error descr="Package name 'foo3' does not correspond to file path ''">foo3</error> {
+  public interface <error descr="Class 'HighlightInternalThingsFromOtherPackage4' should be defined in file 'HighlightInternalThingsFromOtherPackage4.js2'">HighlightInternalThingsFromOtherPackage4</error> {
     function foo();
   }
 }
 
-package <error>bar</error> {
-  import foo.<error>HighlightInternalThingsFromOtherPackage</error>;
+<error descr="Package should be first statement in file">package</error> <error descr="Package name 'bar' does not correspond to file path ''">bar</error> {
+  import foo.<error descr="Element is not accessible">HighlightInternalThingsFromOtherPackage</error>;
   import foo2.HighlightInternalThingsFromOtherPackage3;
   import foo3.HighlightInternalThingsFromOtherPackage4;
-  var <error>x</error>:<error>HighlightInternalThingsFromOtherPackage</error>;
-  var <error>x2</error>:HighlightInternalThingsFromOtherPackage2;
-  var <error>x3</error>:HighlightInternalThingsFromOtherPackage3;
-  var <error>x4</error>:HighlightInternalThingsFromOtherPackage4;
-  x3.<error>foo</error>();
+  var <error descr="More than one externally visible symbol defined in file"><error descr="Variable 'x' should be defined in file 'x.js2'">x</error></error>:<error descr="Element is not accessible">HighlightInternalThingsFromOtherPackage</error>;
+  var <error descr="More than one externally visible symbol defined in file"><error descr="Variable 'x2' should be defined in file 'x2.js2'">x2</error></error>:HighlightInternalThingsFromOtherPackage2;
+  var <error descr="More than one externally visible symbol defined in file"><error descr="Variable 'x3' should be defined in file 'x3.js2'">x3</error></error>:HighlightInternalThingsFromOtherPackage3;
+  var <error descr="More than one externally visible symbol defined in file"><error descr="Variable 'x4' should be defined in file 'x4.js2'">x4</error></error>:HighlightInternalThingsFromOtherPackage4;
+  x3.<error descr="Element is not accessible">foo</error>();
   x4.foo();
 }
 
 import foo2.HighlightInternalThingsFromOtherPackage3;
 var x3:HighlightInternalThingsFromOtherPackage3;
-x3.<error>foo</error>();
+x3.<error descr="Element is not accessible">foo</error>();
 
-package <error>bar</error> {
-  class <error>HighlightInternalThingsFromOtherPackage2</error> {}
+<error descr="Package should be first statement in file">package</error> <error descr="Package name 'bar' does not correspond to file path ''">bar</error> {
+  class <error descr="Class 'HighlightInternalThingsFromOtherPackage2' should be defined in file 'HighlightInternalThingsFromOtherPackage2.js2'">HighlightInternalThingsFromOtherPackage2</error> {}
 }
 
-package <error>xyz</error> {
+<error descr="Package should be first statement in file">package</error> <error descr="Package name 'xyz' does not correspond to file path ''">xyz</error> {
 [ExcludeClass]
-public class <error>MineGod</error> {}
+public class <error descr="Class 'MineGod' should be defined in file 'MineGod.js2'">MineGod</error> {}
 }
 
-<error>package</error> {
+<error descr="Package should be first statement in file">package</error> {
   import xyz.MineGod;
 }

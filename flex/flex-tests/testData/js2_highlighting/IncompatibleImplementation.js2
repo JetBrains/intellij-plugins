@@ -1,5 +1,5 @@
-package <error>xxx</error> {
-  interface <error>Foo</error> {
+package <error descr="Package name 'xxx' does not correspond to file path ''">xxx</error> {
+  interface <error descr="Class 'Foo' should be defined in file 'Foo.js2'"><error descr="More than one externally visible symbol defined in file">Foo</error></error> {
     function foo();
     function bar(x);
   }
@@ -11,18 +11,18 @@ package <error>xxx</error> {
     }
   }
 
-  class <error>IncompatibleImplementation2</error> extends IncompatibleImplementation3 implements Foo2 {
-    protected function baz(<warning>a</warning>:MyClass) {
+  class <error descr="Class 'IncompatibleImplementation2' should be defined in file 'IncompatibleImplementation2.js2'"><error descr="Method bar2 from interface xxx.Foo2 is not implemented"><error descr="Method foo2 from interface xxx.Foo2 is not implemented"><error descr="More than one externally visible symbol defined in file">IncompatibleImplementation2</error></error></error></error> extends IncompatibleImplementation3 implements Foo2 {
+    protected function baz(<warning descr="Unused parameter a">a</warning>:MyClass) {
         import yyy.MyClass
     }
   }
 }
 
-package {
-	public class <error>A</error> implements IAny
+<error descr="Package should be first statement in file">package</error> {
+	public class <error descr="Class 'A' should be defined in file 'A.js2'">A</error> implements IAny
 	{
         public function firstMethod():<error descr="Incompatible implementation, should have return type ''">void</error> {}
-		public function secondMethod():<error descr="Incompatible implementation, should have return type 'void'">N<caret>umber</error>
+		public function secondMethod():<error descr="Incompatible implementation, should have return type 'void'">Number</error>
 		{
 		}
         public function thirdMethod<error descr="Incompatible implementation, should have signature '(x:Object = null)'">(x:Object)</error>:void {}

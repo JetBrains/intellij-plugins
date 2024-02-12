@@ -1,12 +1,12 @@
 package {
-    public interface <error>Int1</error> {
+    public interface <error descr="Class 'Int1' should be defined in file 'Int1.js2'">Int1</error> {
         function foo(a:int);
     }
 }
 
-package {
+<error descr="Package should be first statement in file">package</error> {
     public class IncompatibleImplementationFix5 implements Int1 {
-        public function foo<error>(a:String, b:Boolean, c:*)</error> {}
+        public function foo<error descr="Incompatible implementation, should have signature '(a:int)'">(a:String, b:Boolean, c:*)</error> {}
 
         private function zz() {
             var v : Int1;

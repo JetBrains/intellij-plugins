@@ -1,20 +1,20 @@
 import aaa.XXX;
 import bbb.YYY;
 
-package <error>aaa</error> {
-  public class <error>XXX</error> {}
+<error descr="Package should be first statement in file">package</error> <error descr="Package name 'aaa' does not correspond to file path ''">aaa</error> {
+  public class <error descr="Class 'XXX' should be defined in file 'XXX.js2'">XXX</error> {}
 }
 
-package <error>bbb</error> {
-  public class <error>YYY</error> {}
+<error descr="Package should be first statement in file">package</error> <error descr="Package name 'bbb' does not correspond to file path ''">bbb</error> {
+  public class <error descr="Class 'YYY' should be defined in file 'YYY.js2'">YYY</error> {}
 }
 
 function xxx():XXX {}
 var x:* = xxx();
 x = xxx();
 
-var y:YYY = <error>xxx()</error>;
-y = <error>x<caret>xx()</error>;
+var y:YYY = <error descr="Initializer type XXX is not assignable to variable type YYY">xxx()</error>;
+y = <error descr="Assigned expression type XXX is not assignable to type YYY">xx<caret>x()</error>;
 var a:uint = 1
 
 interface ITest {}
@@ -49,6 +49,6 @@ function test2():ITest {
   return new TestImpl()
 }
 
-package <error>xxx</error> {
-  public class <error>C</error> {}
+<error descr="Package should be first statement in file">package</error> <error descr="Package name 'xxx' does not correspond to file path ''">xxx</error> {
+  public class <error descr="Class 'C' should be defined in file 'C.js2'">C</error> {}
 }

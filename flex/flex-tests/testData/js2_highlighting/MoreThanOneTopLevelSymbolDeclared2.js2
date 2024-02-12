@@ -1,9 +1,9 @@
-package <error>model.tasks</error>
+package <error descr="Package name 'model.tasks' does not correspond to file path ''">model.tasks</error>
 {
-  public interface <error>ICallable</error> {}
+  public interface <error descr="Class 'ICallable' should be defined in file 'ICallable.js2'">ICallable</error> {}
 }
 
-package {
+<error descr="Package should be first statement in file">package</error> {
   import model.tasks.ICallable
-  public class <error>test</error> implements ICallable {}
+  public class <error descr="Class 'test' should be defined in file 'test.js2'">test</error> implements ICallable {}
 }

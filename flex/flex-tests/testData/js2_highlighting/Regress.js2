@@ -3,9 +3,9 @@ class Foo {
 
     function foo(event:int):
 
-    <error>event</error>
+    <error descr="Unresolved type event">event</error>
     {
-        _x = <error>val</error>;
+        _x = <error descr="Unresolved variable or type val">val</error>;
     }
     function bar():void {
         var x:Array = [];
@@ -18,7 +18,7 @@ class Foo {
         var t2:Foo = x[1];
 
         var y2:/*Object*/ Array = [];
-        var t3:Number = <error>y2[0]</error>;
+        var t3:Number = <error descr="Initializer type Object is not assignable to variable type Number">y2[0]</error>;
         var args:Array = arguments;
     }
 }
@@ -39,7 +39,7 @@ class Base {
 
 class Derived extends Base {
 override
-    <error>static</error>
+    <error descr="Static function cannot have override modifier">static</error>
     function f():void {
     }
 }
@@ -47,28 +47,28 @@ override
 var x66:String = <error>new Object()</error>
 switch(1) {
     default:
-    <error>default:</error>
+    <error descr="Only one default clause is allowed in switch">default:</error>
 }
 
-namespace foo = <error>x66.length</error>;
+namespace foo = <error descr="Namespace initializer should be string literal or another namespace reference">x66.length</error>;
 namespace bar = foo;
 
-for (<error>i</error> = 0; <error>i</error> < 10; <error>i</error>++) {
+for (<error descr="Unresolved variable or type i">i</error> = 0; <error descr="Unresolved variable or type i">i</error> < 10; <error descr="Unresolved variable or type i">i</error>++) {
 }
 
 function getStyle(x:String):String { return ""; }
 var test:String = (int(getStyle("left")) - 1).toString();
-var v:Vector.<int> = new <int>[0,1,2<warning>,</warning>];
-var v2 = [0,1,2<warning>,</warning>];
+var v:Vector.<int> = new <int>[0,1,2<warning descr="Unneeded comma">,</warning>];
+var v2 = [0,1,2<warning descr="Unneeded comma">,</warning>];
 
-package {
-  public class <error>Vector$object</error> {}
+<error descr="Package should be first statement in file">package</error> {
+  public class <error descr="Class 'Vector' should be defined in file 'Vector.js2'">Vector$object</error> {}
 }
 
 var x2:RegExp = /(\w*)=(.*?)(\s+|>)/gimxs;
 
-<warning>protected</warning> function foo78() {}
-<warning>protected</warning> function bar78() {
+<warning descr="Access modifier allowed for class members only">protected</warning> function foo78() {}
+<warning descr="Access modifier allowed for class members only">protected</warning> function bar78() {
   var f:Function = foo78;
 }
 
@@ -90,4 +90,4 @@ class Baz extends Bar implements IFoo {
   }
 }
 
-<error>debugger</error>;
+<error descr="Unresolved variable or type debugger">debugger</error>;

@@ -1,6 +1,6 @@
-package <error>xxx</error> {
-  namespace <error>ns</error> = "xxx";
-  class <error>Foo</error> {
+package <error descr="Package name 'xxx' does not correspond to file path ''">xxx</error> {
+  namespace <error descr="More than one externally visible symbol defined in file"><error descr="Namespace 'ns' should be defined in file 'ns.js2'">ns</error></error> = "xxx";
+  class <error descr="Class 'Foo' should be defined in file 'Foo.js2'"><error descr="More than one externally visible symbol defined in file">Foo</error></error> {
     protected function foo() {}
     protected function bar(x) {}
     ns function baz(x) {}
@@ -8,7 +8,7 @@ package <error>xxx</error> {
     ns function baz2(x) {}
   }
 
-  class Bar extends Foo {
+  class <error descr="Class 'Bar' should be defined in file 'Bar.js2'"><error descr="More than one externally visible symbol defined in file">Bar</error></error> extends Foo {
     protected override function bar<error descr="Incompatible override, should have signature '(x)'">()</error> {
     }
     <error descr="Incompatible override, should have 'protected' access modifier">private</error> override function foo() {
@@ -77,8 +77,8 @@ class C {
 }
 
 class D extends C {
-   public override function get currentImage():<error>D</error> {
-    return <error>new C()</error>;
+   public override function get currentImage():<error descr="Incompatible override, should have return type 'C'">D</error> {
+    return <error descr="Returned expression type C is not assignable to type D">new C()</error>;
   }
 
   public <error descr="Method does not override method from super class">override</error> function currentImage2():C {

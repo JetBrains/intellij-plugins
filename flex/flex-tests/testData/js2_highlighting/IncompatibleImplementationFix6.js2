@@ -1,13 +1,13 @@
 package {
 import flash.events.EventDispatcher;
-interface <error>FooBase</error> {
+interface <error descr="Class 'FooBase' should be defined in file 'FooBase.js2'">FooBase</error> {
     function foo(p: EventDispatcher):void;
 }
 }
 
-package {
-class <error>Foo</error> implements FooBase {
-    public function foo<error>()</error>:void {
+<error descr="Package should be first statement in file">package</error> {
+class <error descr="Class 'Foo' should be defined in file 'Foo.js2'">Foo</error> implements FooBase {
+    public function foo<error descr="Incompatible implementation, should have signature '(p: EventDispatcher)'">()</error>:void {
     }
 }
 }

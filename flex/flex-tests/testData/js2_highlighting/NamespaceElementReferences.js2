@@ -1,36 +1,36 @@
 package {
 use namespace myns;
 
-public class NamespaceElementReferences {
+public class <error descr="More than one externally visible symbol defined in file">NamespaceElementReferences</error> {
   fruit var orange:String = "Round citrus fruit";
   color var orange:String = "Color obtained by mixing red and yellow";
   myns var orange:String = "Color obtained by mixing red and yellow";
   var orange:String = "Color obtained by mixing red and yellow";
 
-  color var <error>orange2</error>:String = "Color obtained by mixing red and yellow";
-  color var <error>orange2</error>:String = "Color obtained by mixing red and yellow";
+  color var <error descr="Duplicate declaration">orange2</error>:String = "Color obtained by mixing red and yellow";
+  color var <error descr="Duplicate declaration">orange2</error>:String = "Color obtained by mixing red and yellow";
 
   public var orange3:String = "Color obtained by mixing red and yellow";
   color var orange3:String = "Color obtained by mixing red and yellow";
 
   public function Items() {
     trace(fruit::orange);
-    trace(fruit::<error>orange3</error>);
+    trace(fruit::<error descr="Member from unopened namespace">orange3</error>);
     trace(color::orange);
     trace(orange);
   }
 }
 
-function <error>test</error>() {
+function <error descr="Function 'test' should be defined in file 'test.js2'"><error descr="More than one externally visible symbol defined in file">test</error></error>() {
   var items:NamespaceElementReferences
 
   trace(items.fruit::orange);
   trace(items.color::orange);
-  trace(items.fruit::<error>orange3</error>);
+  trace(items.fruit::<error descr="Member from unopened namespace">orange3</error>);
   trace(items.orange);
 }
 
-function <error>trace</error>(... a):void {
+function <error descr="Function 'trace' should be defined in file 'trace.js2'"><error descr="More than one externally visible symbol defined in file">trace</error></error>(... a):void {
   a[1] = 2;
 }
 
@@ -40,9 +40,9 @@ namespace myns;
 namespace color;
 namespace fruit;
 
-package
+<error descr="Package should be first statement in file">package</error>
 {
-public class <error>NamespaceElementReferences2</error>
+public class <error descr="Class 'NamespaceElementReferences2' should be defined in file 'NamespaceElementReferences2.js2'">NamespaceElementReferences2</error>
 {
 
     private namespace mynamespace = "http://my.name.space";

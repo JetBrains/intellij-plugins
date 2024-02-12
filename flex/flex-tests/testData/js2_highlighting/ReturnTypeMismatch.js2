@@ -1,19 +1,19 @@
-package <error>foo</error> {
-  public class <error>SomeType</error> {}
+package <error descr="Package name 'foo' does not correspond to file path ''">foo</error> {
+  public class <error descr="Class 'SomeType' should be defined in file 'SomeType.js2'">SomeType</error> {}
 }
 
-package {
-  public class <error>Vector$object</error> {}
+<error descr="Package should be first statement in file">package</error> {
+  public class <error descr="Class 'Vector' should be defined in file 'Vector.js2'">Vector$object</error> {}
 }
 
 import foo.SomeType;
 function createSomething():SomeType {
     var v:Vector.<SomeType> = Vector.<SomeType>(new <SomeType>[]);
-    return <error>v</error>;
+    return <error descr="Returned expression type Vector.<SomeType> is not assignable to type SomeType">v</error>;
 }
 
 function createSomething2():Vector.<SomeType> {
-    return <error>new SomeType()</error>;
+    return <error descr="Returned expression type SomeType is not assignable to type Vector.<SomeType>">new SomeType()</error>;
 }
 
 function ttt():void {

@@ -104,27 +104,27 @@ public class StarlingEvent extends Sprite{
 }
 }
 
-package <error>starling.events</error>{
-    public class <error><error>Event</error></error>{}
-    public class <error><error>TouchEvent</error></error> extends Event {
+<error descr="Package should be first statement in file">package</error> <error descr="Package name 'starling.events' does not correspond to file path ''">starling.events</error>{
+    public class <error descr="Class 'Event' should be defined in file 'Event.as'"><error descr="More than one externally visible symbol defined in file">Event</error></error>{}
+    public class <error descr="Class 'TouchEvent' should be defined in file 'TouchEvent.as'"><error descr="More than one externally visible symbol defined in file">TouchEvent</error></error> extends Event {
         public static const TOUCH:String = "touch";
     }
-    public class <error><error>ResizeEvent</error></error> extends Event {}
-    public class <error><error>NotEvent</error></error> {}
-    public class <error><error>EventDispatcher</error></error> {
+    public class <error descr="Class 'ResizeEvent' should be defined in file 'ResizeEvent.as'"><error descr="More than one externally visible symbol defined in file">ResizeEvent</error></error> extends Event {}
+    public class <error descr="Class 'NotEvent' should be defined in file 'NotEvent.as'"><error descr="More than one externally visible symbol defined in file">NotEvent</error></error> {}
+    public class <error descr="Class 'EventDispatcher' should be defined in file 'EventDispatcher.as'"><error descr="More than one externally visible symbol defined in file">EventDispatcher</error></error> {
         public function addEventListener(type:String, listener:Function):void{}
     }
 }
 
-package <error>starling.display</error>{
+<error descr="Package should be first statement in file">package</error> <error descr="Package name 'starling.display' does not correspond to file path ''">starling.display</error>{
     import starling.events.EventDispatcher;
-    public class <error>Quad</error> extends starling.events.EventDispatcher {
+    public class <error descr="Class 'Quad' should be defined in file 'Quad.as'">Quad</error> extends starling.events.EventDispatcher {
         override public function addEventListener(type:String, listener:Function):void{}
     }
 }
 
-package <error>com.acme</error>{
-    public class <error>MyEventDispatcher</error> {
+<error descr="Package should be first statement in file">package</error> <error descr="Package name 'com.acme' does not correspond to file path ''">com.acme</error>{
+    public class <error descr="Class 'MyEventDispatcher' should be defined in file 'MyEventDispatcher.as'">MyEventDispatcher</error> {
         public function addEventListener(type:String, listener:Function):void{}
     }
 }

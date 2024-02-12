@@ -168,7 +168,7 @@ message ExtensionsAreNotAffectedByReservedNames {
 
 // Test that both reference and field errors show up together.
 message FieldAndReferenceError {
-  optional <error descr="Cannot resolve symbol 'UnknownType'">UnknownType</error> foo = 1;
+  optional <error descr="Cannot resolve symbol 'UnknownType'"><error descr="Message, enum, or built-in type expected">UnknownType</error></error> foo = 1;
   optional int32 use_same_field_number = <error descr="Field number 1 has already been used by field 'foo'">1</error>;
 }
 
