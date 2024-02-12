@@ -11,8 +11,7 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiFile
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.text.CharArrayUtil
-import org.intellij.terraform.hcl.HCLElementTypes.BLOCK_COMMENT
-import org.intellij.terraform.hcl.HCLElementTypes.LINE_HASH_COMMENT
+import org.intellij.terraform.hcl.HCLElementTypes.*
 import org.intellij.terraform.hcl.formatter.HCLCodeStyleSettings
 import org.intellij.terraform.hcl.formatter.HCLCodeStyleSettings.LineCommenterPrefix
 
@@ -35,6 +34,8 @@ class HCLCommenter : CodeDocumentationAwareCommenter, SelfManagingCommenter<HCLC
   override fun getCommentedBlockCommentSuffix(): String? = null
 
   override fun getLineCommentTokenType(): IElementType? = LINE_HASH_COMMENT
+
+  override fun getLineCommentTokenTypes(): List<IElementType> = listOf(LINE_HASH_COMMENT, LINE_C_COMMENT)
 
   override fun getBlockCommentTokenType(): IElementType? = BLOCK_COMMENT
 
