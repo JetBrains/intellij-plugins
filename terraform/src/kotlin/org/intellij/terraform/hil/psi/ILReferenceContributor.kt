@@ -12,28 +12,32 @@ import org.intellij.terraform.hil.patterns.HILPatterns
 
 class ILReferenceContributor : PsiReferenceContributor() {
   override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
-    registrar.registerReferenceProvider(psiElement(Identifier::class.java)
-                                          .withParent(HILPatterns.IlseFromKnownScope), ILSelectFromScopeReferenceProvider)
+    registrar.registerReferenceProvider(
+      psiElement(Identifier::class.java).withParent(HILPatterns.IlseFromKnownScope), ILSelectFromScopeReferenceProvider)
 
-    registrar.registerReferenceProvider(psiElement(Identifier::class.java)
-                                          .withParent(HILPatterns.IlseNotFromKnownScope), ILSelectFromSomethingReferenceProvider)
+    registrar.registerReferenceProvider(
+      psiElement(Identifier::class.java).withParent(HILPatterns.IlseNotFromKnownScope), ILSelectFromSomethingReferenceProvider)
 
-    registrar.registerReferenceProvider(psiElement(Identifier::class.java)
-                                          .withParent(HILPatterns.IlseFromKnownScope), ILScopeReferenceProvider)
+    registrar.registerReferenceProvider(
+      psiElement(Identifier::class.java).withParent(HILPatterns.IlseFromKnownScope), ILScopeReferenceProvider)
 
     // ForExpression variable
-    registrar.registerReferenceProvider(psiElement(Identifier::class.java)
-                                          .and(HILPatterns.InsideForExpressionBody), ForVariableReferenceProvider2())
+    registrar.registerReferenceProvider(
+      psiElement(Identifier::class.java).and(HILPatterns.InsideForExpressionBody), ForVariableReferenceProvider2())
 
     // 'dynamic' 'content' block reference
-    registrar.registerReferenceProvider(psiElement(Identifier::class.java)
-                                          .with(HILPatterns.IsSeFromCondition)
-        .withHCLHost(psiElement().inside(TerraformPatterns.DynamicBlock)), DynamicBlockVariableReferenceProvider)
+    registrar.registerReferenceProvider(
+      psiElement(Identifier::class.java).with(HILPatterns.IsSeFromCondition)
+        .withHCLHost(psiElement().inside(TerraformPatterns.DynamicBlock)),
+      DynamicBlockVariableReferenceProvider)
 
     // 'each' in resource or data source
-    registrar.registerReferenceProvider(psiElement(Identifier::class.java)
+    registrar.registerReferenceProvider(
+      psiElement(Identifier::class.java)
         .withText("each")
-                                          .with(HILPatterns.IsSeFromCondition)
-        .withHCLHost(psiElement().inside(true, or(TerraformPatterns.ResourceRootBlock, TerraformPatterns.DataSourceRootBlock, TerraformPatterns.ModuleRootBlock))), ResourceEachVariableReferenceProvider)
+        .with(HILPatterns.IsSeFromCondition)
+        .withHCLHost(psiElement().inside(true, or(
+          TerraformPatterns.ResourceRootBlock, TerraformPatterns.DataSourceRootBlock, TerraformPatterns.ModuleRootBlock))
+        ), ResourceEachVariableReferenceProvider)
   }
 }
