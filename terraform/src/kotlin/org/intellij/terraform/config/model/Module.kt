@@ -1,18 +1,27 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model
 
+import com.intellij.concurrency.ConcurrentCollectionFactory
+import com.intellij.model.search.SearchContext
+import com.intellij.model.search.SearchService
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.coroutineToIndicator
+import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileSystemItem
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiElementProcessor
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import org.intellij.terraform.hcl.psi.*
-import org.intellij.terraform.hcl.psi.common.LiteralExpression
+import com.intellij.util.Processor
 import org.intellij.terraform.config.TerraformLanguage
 import org.intellij.terraform.config.model.version.VersionConstraint
 import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.hcl.HCLLanguage
+import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.common.LiteralExpression
 
 class Module private constructor(val item: PsiFileSystemItem) {
   companion object {
@@ -23,7 +32,8 @@ class Module private constructor(val item: PsiFileSystemItem) {
       if (directory == null) {
         // File only in-memory, assume as only file in module
         return Module(file as HCLFile)
-      } else {
+      }
+      else {
         return Module(directory)
       }
     }
@@ -33,7 +43,7 @@ class Module private constructor(val item: PsiFileSystemItem) {
     }
 
     private class CollectVariablesVisitor(val name: String? = null) : HCLElementVisitor() {
-      val collected: MutableSet<Variable> = HashSet()
+      val collected: MutableSet<Variable> = ConcurrentCollectionFactory.createConcurrentSet()
       override fun visitBlock(o: HCLBlock) {
         if (!TerraformPatterns.VariableRootBlock.accepts(o)) return
         o.`object` ?: return
@@ -83,7 +93,7 @@ class Module private constructor(val item: PsiFileSystemItem) {
 
   fun getAllVariables(): List<Variable> {
     val visitor = CollectVariablesVisitor()
-    process(PsiElementProcessor { file -> file.acceptChildren(visitor); true })
+    processAllFilesWithVariables(Processor { file -> file.acceptChildren(visitor); true })
     return visitor.collected.toList()
   }
 
@@ -96,8 +106,27 @@ class Module private constructor(val item: PsiFileSystemItem) {
 
   fun findVariables(name: String): List<Variable> {
     val visitor = CollectVariablesVisitor(name)
-    process(PsiElementProcessor { file -> file.acceptChildren(visitor); true })
+    processAllFilesWithVariables(Processor { psiFile -> psiFile.acceptChildren(visitor); true })
     return visitor.collected.toList()
+  }
+
+  private fun processAllFilesWithVariables(processor: Processor<PsiFile>): Boolean {
+    fun doFind() = SearchService.getInstance().searchWord(item.project, "variable")
+      .inFilesWithLanguageOfKind(HCLLanguage)
+      .inScope(GlobalSearchScope.projectScope(item.project))
+      .inContexts(SearchContext.IN_CODE)
+      .buildQuery { occ -> listOfNotNull(occ.start.containingFile) }
+      .forEach(processor)
+
+    return if (ProgressManager.getInstance().hasProgressIndicator())
+      doFind()
+    else {
+      runBlockingCancellable {
+        coroutineToIndicator {
+          doFind()
+        }
+      }
+    }
   }
 
   fun getAllLocals(): List<Pair<String, HCLProperty>> {
@@ -188,7 +217,8 @@ class Module private constructor(val item: PsiFileSystemItem) {
           }
           if (alias == null && als == null) {
             if (type == tp) found.add(o)
-          } else {
+          }
+          else {
             if (alias == als) found.add(o)
           }
         }

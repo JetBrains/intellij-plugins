@@ -1,6 +1,8 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config
 
+import com.intellij.openapi.progress.EmptyProgressIndicator
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiPolyVariantReference
@@ -59,18 +61,21 @@ class TerraformReferencesTest : BasePlatformTestCase() {
 
     fun asAssertString(elt: PsiElement?): String? = elt.asSafely<HCLProperty>()?.name ?: elt?.toString()
 
-    when (ref) {
-      is PsiMultiReference ->
-        ref.references.map { ref ->
-          ref.resolve().also { if(ref.isSoft.not())TestCase.assertNotNull("reference $ref should be resolved", it) }
-        }.map(::asAssertString).toList()
-      is PsiPolyVariantReference ->
-        ref.multiResolve(false).map { (it.element as HCLProperty).name }.toList()
-      else ->
-        listOf(asAssertString(ref.resolve()))
-    }.let { strings ->
-      UsefulTestCase.assertOrderedEquals(strings, *names)
-    }
+    ProgressManager.getInstance().executeProcessUnderProgress(
+      {
+        when (ref) {
+          is PsiMultiReference ->
+            ref.references.map { ref ->
+              ref.resolve().also { if (ref.isSoft.not()) TestCase.assertNotNull("reference $ref should be resolved", it) }
+            }.map(::asAssertString).toList()
+          is PsiPolyVariantReference ->
+            ref.multiResolve(false).map { (it.element as HCLProperty).name }.toList()
+          else ->
+            listOf(asAssertString(ref.resolve()))
+        }.let { strings ->
+          UsefulTestCase.assertOrderedEquals(strings, *names)
+        }
+      }, EmptyProgressIndicator())
   }
 
   @Test
@@ -435,7 +440,7 @@ class TerraformReferencesTest : BasePlatformTestCase() {
     myFixture.addFileToProject("submodule/sub.tf", """
       resource "MyType" "MyName" {}
       """)
-    myFixture.configureByText("main.tf","""
+    myFixture.configureByText("main.tf", """
       import {
         id = "terraform"
         to = module.submodule.MyType.My<caret>Name
