@@ -22,10 +22,10 @@ import com.intellij.platform.backend.workspace.virtualFile
 import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.intellij.platform.util.coroutines.childScope
 import com.intellij.platform.workspace.storage.entities
+import com.intellij.platform.workspace.storage.url.VirtualFileUrl
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.util.concurrency.annotations.RequiresBlockingContext
-import com.intellij.util.containers.ContainerUtil
 import kotlinx.coroutines.*
 import org.intellij.terraform.LatestInvocationRunner
 import org.intellij.terraform.config.TerraformFileType
@@ -40,6 +40,7 @@ import org.intellij.terraform.hcl.HCLFileType
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.coroutineContext
 import kotlin.io.path.readText
 
@@ -55,7 +56,7 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
 
   private val modelBuildScope = scope.childScope()
 
-  private val modelComputationCache = ContainerUtil.createConcurrentWeakMap<VirtualFile, Deferred<TypeModel?>>()
+  private val modelComputationCache = VirtualFileMap<Deferred<TypeModel>>(project)
 
   @OptIn(ExperimentalCoroutinesApi::class)
   @RequiresBlockingContext
@@ -101,7 +102,7 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
   }
 
   fun findLockFile(file: VirtualFile): VirtualFile? {
-    if (file.name == TERRAFORM_LOCK_FILE_NAME) return file
+    if (isTFLock(file)) return file
     return getVFSParents(file, project).filter { it.isDirectory }.firstNotNullOfOrNull {
       it.findChild(TERRAFORM_LOCK_FILE_NAME)
     }
@@ -129,13 +130,19 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     }.toSet()
   }
 
-  fun scheduleModelRebuild(locks: Set<VirtualFile>): Deferred<*> {
+  fun scheduleModelRebuild(virtualFiles: Set<VirtualFile>): Deferred<*> {
     val scheduled = mutableListOf<Deferred<*>>()
-    for (lock in locks.mapNotNull { findLockFile(it) }) {
+    val locks = virtualFiles.mapNotNull { findLockFile(it) }
+    for (lock in locks) {
       modelComputationCache[lock]?.cancel()
-      buildModel(lock).also {
-        modelComputationCache[lock] = it
-        scheduled.add(it)
+      if (lock.exists()) {
+        buildModel(lock).also {
+          modelComputationCache[lock] = it
+          scheduled.add(it)
+        }
+      }
+      else {
+        modelComputationCache.remove(lock)
       }
     }
     if (locks.isNotEmpty()) {
@@ -150,7 +157,7 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     modelBuildScope.coroutineContext.job.children.forEach { it.join() }
   }
 
-  private fun buildModel(lock: VirtualFile): Deferred<TypeModel?> {
+  private fun buildModel(lock: VirtualFile): Deferred<TypeModel> {
     return modelBuildScope.async {
       withBackgroundProgress(project, HCLBundle.message("rebuilding.local.schema"), false) {
         logger<LocalSchemaService>().info("building local model: $lock")
@@ -318,4 +325,21 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
 
 }
 
+private class VirtualFileMap<T>(project: Project) {
+
+  private val innerCache = ConcurrentHashMap<VirtualFileUrl, T>()
+
+  private val vfm = WorkspaceModel.getInstance(project).getVirtualFileUrlManager()
+
+  operator fun set(key: VirtualFile, value: T) {
+    innerCache[key.toVirtualFileUrl(vfm)] = value
+  }
+
+  operator fun get(key: VirtualFile): T? = innerCache[key.toVirtualFileUrl(vfm)]
+
+  fun remove(key: VirtualFile): T? = innerCache.remove(key.toVirtualFileUrl(vfm))
+
+}
+
+internal fun isTFLock(virtualFile: VirtualFile?): Boolean = virtualFile?.name == TERRAFORM_LOCK_FILE_NAME
 

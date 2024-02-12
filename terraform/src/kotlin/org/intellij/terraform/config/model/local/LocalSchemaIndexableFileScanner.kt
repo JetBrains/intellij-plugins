@@ -8,7 +8,6 @@ import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.vfs.AsyncFileListener
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.newvfs.events.VFileDeleteEvent
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.intellij.util.indexing.roots.IndexableFileScanner
 
@@ -27,24 +26,30 @@ private class LocalSchemaIndexableFileScanner : IndexableFileScanner {
 
 private class LocalSchemaVfsListener : AsyncFileListener {
   override fun prepareChange(events: MutableList<out VFileEvent>): AsyncFileListener.ChangeApplier? {
-    val lockFiles = events.filter { isTFLock(it.file) && it !is VFileDeleteEvent }
+    val lockFiles = events.filter { isTFLock(it.file) }
     if (lockFiles.isEmpty()) return null
     logger<LocalSchemaService>().info("LocalSchemaVfsListener: $events")
     return object : AsyncFileListener.ChangeApplier {
       override fun afterVfsChange() {
         logger<LocalSchemaService>().info("LocalSchemaVfsListener after: $events")
 
-        val files = events.mapNotNullTo(mutableSetOf()) { it.file }
+        val files = lockFiles.mapNotNullTo(mutableSetOf()) { it.file }
         val projectFiles = mutableMapOf<Project, MutableSet<VirtualFile>>()
+        val openProjects = ProjectManager.getInstance().openProjects
+        openProjects.forEach { project -> projectFiles[project] = mutableSetOf() }
         for (file in files) {
-          for (project in ProjectManager.getInstance().openProjects) {
+          for (project in openProjects) {
             if (!ProjectFileIndex.getInstance(project).isInProject(file)) continue
-            projectFiles.getOrPut(project) { mutableSetOf() }.add(file)
+            projectFiles[project]!!.add(file)
           }
         }
 
+        val lostFiles = files.filterTo(mutableSetOf()) { file ->
+          openProjects.none { ProjectFileIndex.getInstance(it).isInProject(file) }
+        }
+
         for ((project, pfiles) in projectFiles) {
-          project.service<LocalSchemaService>().scheduleModelRebuild(pfiles)
+          project.service<LocalSchemaService>().scheduleModelRebuild(pfiles + lostFiles)
         }
 
       }
@@ -52,5 +57,3 @@ private class LocalSchemaVfsListener : AsyncFileListener {
   }
 
 }
-
-internal fun isTFLock(virtualFile: VirtualFile?): Boolean = virtualFile?.name == ".terraform.lock.hcl"
