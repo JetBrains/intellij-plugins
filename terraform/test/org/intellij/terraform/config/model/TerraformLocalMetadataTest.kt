@@ -1,15 +1,13 @@
 package org.intellij.terraform.config.model
 
-import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.components.service
-import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.platform.backend.workspace.WorkspaceModel
 import com.intellij.platform.backend.workspace.virtualFile
 import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.testFramework.waitUntil
-import kotlinx.coroutines.delay
 import org.intellij.terraform.config.inspection.HCLBlockMissingPropertyInspection
 import org.intellij.terraform.config.model.local.LocalSchemaService
 import org.intellij.terraform.config.model.local.TERRAFORM_LOCK_FILE_NAME
@@ -35,6 +33,7 @@ class TerraformLocalMetadataTest : BasePlatformTestCase() {
 
   override fun setUp() {
     super.setUp()
+    (myFixture as CodeInsightTestFixtureImpl).canChangeDocumentDuringHighlighting(true)
     TypeModelProvider.globalModel // ensure loaded, to avoid falling on the timeout
   }
 
