@@ -202,7 +202,8 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
         else -> null
       }
     }
-    TestCase.assertTrue(ActionUtil.lastUpdateAndCheckDumb(action, e, true))
+    ActionUtil.performDumbAwareUpdate(action, e, false)
+    assertTrue(e.presentation.isEnabledAndVisible)
     ActionUtil.performActionDumbAwareWithCallbacks(action, e)
     TestCase.assertEquals("newTest.vue", myFixture.file.name)
     WriteAction.runAndWait<Throwable> {

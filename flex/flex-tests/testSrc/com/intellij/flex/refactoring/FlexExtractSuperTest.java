@@ -18,6 +18,7 @@ import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrIn
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -311,11 +312,11 @@ public class FlexExtractSuperTest extends LightPlatformMultiFileFixtureTestCase 
 
   private void checkAction(String actionId, boolean enabled, int pos) {
     AnAction action = ActionManager.getInstance().getAction(actionId);
-    AnActionEvent e = TestActionEvent.createTestEvent(
-      action, DataManager.getInstance().getDataContext(myFixture.getEditor().getComponent()));
+    DataContext dataContext = DataManager.getInstance().getDataContext(myFixture.getEditor().getComponent());
+    AnActionEvent e = TestActionEvent.createTestEvent(action, dataContext);
     // warm up injections
     InjectedLanguageManager.getInstance(getProject()).findInjectedElementAt(myFixture.getFile(), myFixture.getCaretOffset());
-    ActionUtil.lastUpdateAndCheckDumb(action, e, false);
+    ActionUtil.performDumbAwareUpdate(action, e, false);
     assertEquals("Action " + actionId + " should be " + (enabled ? "enabled" : "disabled") + " at position " + pos, enabled,
                  e.getPresentation().isEnabled());
   }
