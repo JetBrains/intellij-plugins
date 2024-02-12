@@ -6,7 +6,7 @@ import com.intellij.codeInsight.documentation.DocumentationManagerProtocol
 import com.intellij.javascript.webSymbols.jsType
 import com.intellij.lang.Language
 import com.intellij.lang.css.CSSLanguage
-import com.intellij.lang.documentation.DocumentationMarkup
+import com.intellij.lang.documentation.DocumentationMarkup.*
 import com.intellij.lang.documentation.QuickDocHighlightingHelper.getStyledCodeFragment
 import com.intellij.lang.javascript.documentation.*
 import com.intellij.lang.javascript.documentation.JSDocSimpleInfoPrinter.addSections
@@ -80,31 +80,31 @@ class Angular2ElementDocumentationTarget private constructor(
         moduleRegex.find(doc)?.value?.let { module = it }
         val adjustedSections = doc
           .replace(moduleRegex, "")
-          .replace("<table class='sections'></table>", "")
-        val addSeparator = adjustedSections.contains("<div class='content")
-                           || adjustedSections.contains(DocumentationMarkup.SECTIONS_START)
-        if (addSeparator) result.append("<div class='separated'>")
+          .replace("<table class='$CLASS_SECTIONS'></table>", "")
+        val addSeparator = adjustedSections.contains("<div class='$CLASS_CONTENT")
+                           || adjustedSections.contains(SECTIONS_START)
+        if (addSeparator) result.append("<div class='$CLASS_SEPARATED'>")
         result.append(adjustedSections)
         if (addSeparator) result.append("</div>")
       }
       else {
         result.append(doc)
         if (!moduleRegex.containsMatchIn(doc) && module != null) {
-          result.append(DocumentationMarkup.SECTIONS_START)
+          result.append(SECTIONS_START)
           result.append(module)
-          result.append(DocumentationMarkup.SECTIONS_END)
+          result.append(SECTIONS_END)
         }
       }
       result.append("\n")
     }
-    if (!result.contains(DocumentationMarkup.SECTIONS_START) && !result.contains(DocumentationMarkup.CONTENT_START)) {
-      var prevIndex = result.lastIndexOf(DocumentationMarkup.DEFINITION_START)
-      var curIndex = result.lastIndexOf(DocumentationMarkup.DEFINITION_START, prevIndex - 1)
+    if (!result.contains(SECTIONS_START) && !result.contains(CONTENT_START)) {
+      var prevIndex = result.lastIndexOf(DEFINITION_START)
+      var curIndex = result.lastIndexOf(DEFINITION_START, prevIndex - 1)
       while (curIndex >= 0) {
         result.insert(prevIndex, "</div>")
-        result.insert(curIndex, "<div class='separated'>")
+        result.insert(curIndex, "<div class='$CLASS_SEPARATED'>")
         prevIndex = curIndex
-        curIndex = result.lastIndexOf(DocumentationMarkup.DEFINITION_START, prevIndex - 1)
+        curIndex = result.lastIndexOf(DEFINITION_START, prevIndex - 1)
       }
     }
     return DocumentationResult.documentation(result.toString())
@@ -173,7 +173,7 @@ class Angular2ElementDocumentationTarget private constructor(
         else -> throw UnsupportedOperationException(element::class.java.name)
       }
       val result = SyntaxPrinter(element.sourceElement)
-      result.appendRaw(DocumentationMarkup.DEFINITION_START)
+      result.appendRaw(DEFINITION_START)
 
       if (element is Angular2Declaration && element.isStandalone) {
         result.append(TypeScriptHighlighter.TS_KEYWORD, "standalone")
@@ -197,7 +197,7 @@ class Angular2ElementDocumentationTarget private constructor(
         }
       }
       @Suppress("HardCodedStringLiteral")
-      return result.appendRaw(DocumentationMarkup.DEFINITION_END).toString()
+      return result.appendRaw(DEFINITION_END).toString()
     }
 
     private fun SyntaxPrinter.appendEntityType(entity: Angular2Entity) {
@@ -296,9 +296,9 @@ class Angular2ElementDocumentationTarget private constructor(
       else if (additionalSections.isNotEmpty()) {
         @Nls
         val result = StringBuilder()
-        result.append(DocumentationMarkup.SECTIONS_START)
+        result.append(SECTIONS_START)
         addSections(additionalSections.toMultiMap(), result)
-        result.append(DocumentationMarkup.SECTIONS_END)
+        result.append(SECTIONS_END)
         return result.toString()
       }
       else return ""
