@@ -244,15 +244,17 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
 
   private void processVirtualGroupItemPresentation(JCheckBox checkBox, ImportPathGroup group) {
     boolean isGroupPresent = importPathModel.indexOf(group) != -1;
-    if (checkBox.isSelected() && !isGroupPresent) {
-      addVirtualGroup(group);
+    if (checkBox.isSelected()) {
+      if (!isGroupPresent) {
+        addVirtualGroup(group);
+      }
+      else {
+        removeVirtualGroup(group);
+        addVirtualGroup(group);
+      }
     }
     else if (!checkBox.isSelected() && isGroupPresent) {
       removeVirtualGroup(group);
-    }
-    else if (checkBox.isSelected() && isGroupPresent) {
-      removeVirtualGroup(group);
-      addVirtualGroup(group);
     }
   }
 
