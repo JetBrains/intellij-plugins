@@ -9,6 +9,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceProvider
 import com.intellij.util.ProcessingContext
+import org.intellij.terraform.config.codeinsight.CompletionUtil
 import org.intellij.terraform.config.codeinsight.TerraformConfigCompletionContributor
 import org.intellij.terraform.hcl.psi.HCLElement
 import org.intellij.terraform.hcl.psi.HCLForExpression
@@ -16,14 +17,14 @@ import org.intellij.terraform.hcl.psi.HCLForIntro
 import org.intellij.terraform.hcl.psi.HCLIdentifier
 import org.intellij.terraform.hcl.psi.common.Identifier
 import org.intellij.terraform.hcl.psi.common.SelectExpression
-import org.intellij.terraform.hil.codeinsight.HILCompletionContributor
+import org.intellij.terraform.hil.patterns.HILPatterns
 import org.intellij.terraform.hil.psi.impl.getHCLHost
 
 class ForVariableReferenceProvider2 : PsiReferenceProvider() {
   override fun getReferencesByElement(id: PsiElement, context: ProcessingContext): Array<out PsiReference> {
     if (id !is Identifier) return PsiReference.EMPTY_ARRAY
     id.getHCLHost() ?: return PsiReference.EMPTY_ARRAY
-    if (!HILCompletionContributor.INSIDE_FOR_EXPRESSION_BODY.accepts(id)) return PsiReference.EMPTY_ARRAY
+    if (!HILPatterns.InsideForExpressionBody.accepts(id)) return PsiReference.EMPTY_ARRAY
     val forExpr = forDeclarationForIdentifier(id) ?: return PsiReference.EMPTY_ARRAY
     if (forExpr.intro.identifiers.any { it.name == id.name }) {
       return arrayOf(ForVariableDirectReference(id))
@@ -43,7 +44,7 @@ class ForVariableCompletion : TerraformConfigCompletionContributor.OurCompletion
       .flatMap { it.intro.identifiers }
       .mapNotNull { it.name }
       .forEach {
-        result.addElement(HILCompletionContributor.create(it)) 
+        result.addElement(CompletionUtil.create(it))
       }
   }
 }

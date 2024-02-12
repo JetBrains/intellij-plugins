@@ -34,7 +34,7 @@ object HCLPatterns {
 
   val BlockTypeIdentifierLiteral: PsiElementPattern.Capture<HCLStringLiteral> =
     PlatformPatterns.psiElement(HCLStringLiteral::class.java)
-      .withParent(HCLPatterns.Block)
+      .withParent(Block)
       .with(object : PatternCondition<HCLStringLiteral>("resource/data block type identifier") {
         override fun accepts(literal: HCLStringLiteral, context: ProcessingContext?): Boolean {
           return literal.parentsOfType<HCLBlock>(true)

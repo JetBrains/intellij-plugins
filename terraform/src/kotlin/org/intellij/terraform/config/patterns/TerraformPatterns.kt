@@ -2,15 +2,14 @@
 package org.intellij.terraform.config.patterns
 
 import com.intellij.openapi.util.Ref
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.patterns.*
 import com.intellij.patterns.StandardPatterns.or
 import com.intellij.psi.PsiElement
 import com.intellij.util.ProcessingContext
-import org.intellij.terraform.hcl.patterns.HCLPatterns
-import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.TerraformLanguage
+import org.intellij.terraform.hcl.patterns.HCLPatterns
+import org.intellij.terraform.hcl.psi.*
 
 object TerraformPatterns {
   val TerraformFile: PsiFilePattern.Capture<HCLFile> =
@@ -125,7 +124,7 @@ object TerraformPatterns {
           .with(object: PatternCondition<HCLBlock?>("ModuleWithEmptySource") {
             override fun accepts(t: HCLBlock, context: ProcessingContext?): Boolean {
               val source = t.`object`?.findProperty("source")?.value as? HCLStringLiteral ?: return true
-              return StringUtil.isEmptyOrSpaces(source.value)
+              return source.value.isBlank()
             }
           })
 
@@ -154,6 +153,9 @@ object TerraformPatterns {
         }
       })
 
+  val ResourceProviderProperty: PsiElementPattern.Capture<HCLProperty> = propertyWithName("provider")
+    .withParent(HCLObject::class.java)
+    .withSuperParent(2, or(ResourceRootBlock, DataSourceRootBlock))
 
   private fun createBlockPattern(type: String): PatternCondition<HCLBlock?> {
     return object : PatternCondition<HCLBlock?>("HCLBlock($type)") {

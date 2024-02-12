@@ -6,13 +6,14 @@ import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentsOfType
 import com.intellij.util.ProcessingContext
+import org.intellij.terraform.config.codeinsight.CompletionUtil
+import org.intellij.terraform.config.codeinsight.TerraformConfigCompletionContributor
+import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLIdentifier
 import org.intellij.terraform.hcl.psi.HCLProperty
 import org.intellij.terraform.hcl.psi.common.Identifier
 import org.intellij.terraform.hcl.psi.common.SelectExpression
-import org.intellij.terraform.config.codeinsight.TerraformConfigCompletionContributor
-import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hil.psi.impl.getHCLHost
 
 object ForEachIteratorCompletionProvider : TerraformConfigCompletionContributor.OurCompletionProvider() {
@@ -36,7 +37,7 @@ object ForEachIteratorCompletionProvider : TerraformConfigCompletionContributor.
     for (dynamic in dynamics) {
       val iteratorPropertyValue = dynamic.`object`?.findProperty("iterator")?.value as? HCLIdentifier
       val iterator = iteratorPropertyValue?.id ?: dynamic.name
-      result.addElement(HILCompletionContributor.create(iterator))
+      result.addElement(CompletionUtil.create(iterator))
     }
     return
   }

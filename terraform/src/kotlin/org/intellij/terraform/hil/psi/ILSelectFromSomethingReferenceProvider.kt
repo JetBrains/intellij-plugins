@@ -10,19 +10,19 @@ import com.intellij.util.SmartList
 import com.intellij.util.asSafely
 import com.intellij.util.containers.addIfNotNull
 import org.intellij.terraform.config.Constants
+import org.intellij.terraform.config.codeinsight.CompletionUtil
 import org.intellij.terraform.config.codeinsight.ModelHelper
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TerraformPatterns
-import org.intellij.terraform.config.psi.TerraformReferenceContributor.Companion.Resource_Provider_Property
 import org.intellij.terraform.hcl.navigation.HCLQualifiedNameProvider
 import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.hcl.psi.common.*
 import org.intellij.terraform.hil.HilContainingBlockType
-import org.intellij.terraform.hil.codeinsight.HILCompletionContributor
 import org.intellij.terraform.hil.getResourceName
 import org.intellij.terraform.hil.getResourceType
 import org.intellij.terraform.hil.guessContainingBlockType
 import org.intellij.terraform.hil.inspection.PsiFakeAwarePolyVariantReference
+import org.intellij.terraform.hil.patterns.HILPatterns
 import org.intellij.terraform.hil.psi.impl.getHCLHost
 
 object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
@@ -34,7 +34,7 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
 
     val parent = element.parent as? SelectExpression<*> ?: return PsiReference.EMPTY_ARRAY
 
-    if (parent.from === element && name in HILCompletionContributor.SCOPES) return PsiReference.EMPTY_ARRAY
+    if (parent.from === element && name in CompletionUtil.Scopes) return PsiReference.EMPTY_ARRAY
 
     if (HCLPsiUtil.isPartOfPropertyKey(element)) return PsiReference.EMPTY_ARRAY
 
@@ -88,7 +88,7 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
       return refs.toTypedArray()
     }
 
-    if (Resource_Provider_Property.accepts(host.getParent(HCLProperty::class.java))) {
+    if (TerraformPatterns.ResourceProviderProperty.accepts(host.getParent(HCLProperty::class.java))) {
       // covered by ResourceProviderReferenceProvider
       return PsiReference.EMPTY_ARRAY
     }
@@ -101,7 +101,7 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
     // Rest logic would try to find resource or data provider by element text
     val ev = getSelectFieldText(expression) ?: return PsiReference.EMPTY_ARRAY
 
-    if (HILCompletionContributor.ILSE_DATA_SOURCE.accepts(parent)) {
+    if (HILPatterns.IlseDataSource.accepts(parent)) {
       return arrayOf(HCLElementLazyReference(element, false) { _, _ ->
         val module = this.element.getHCLHost()?.getTerraformModule()
         val dataSources = module?.findDataSource(ev, getSelectFieldText(element)!!) ?: emptyList()

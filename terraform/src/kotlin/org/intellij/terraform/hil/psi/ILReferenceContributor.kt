@@ -5,35 +5,35 @@ import com.intellij.patterns.PlatformPatterns.or
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiReferenceContributor
 import com.intellij.psi.PsiReferenceRegistrar
+import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.psi.common.Identifier
 import org.intellij.terraform.hcl.psi.withHCLHost
-import org.intellij.terraform.config.patterns.TerraformPatterns
-import org.intellij.terraform.hil.codeinsight.HILCompletionContributor
+import org.intellij.terraform.hil.patterns.HILPatterns
 
 class ILReferenceContributor : PsiReferenceContributor() {
   override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
     registrar.registerReferenceProvider(psiElement(Identifier::class.java)
-        .withParent(HILCompletionContributor.ILSE_FROM_KNOWN_SCOPE), ILSelectFromScopeReferenceProvider)
+                                          .withParent(HILPatterns.IlseFromKnownScope), ILSelectFromScopeReferenceProvider)
 
     registrar.registerReferenceProvider(psiElement(Identifier::class.java)
-        .withParent(HILCompletionContributor.ILSE_NOT_FROM_KNOWN_SCOPE), ILSelectFromSomethingReferenceProvider)
+                                          .withParent(HILPatterns.IlseNotFromKnownScope), ILSelectFromSomethingReferenceProvider)
 
     registrar.registerReferenceProvider(psiElement(Identifier::class.java)
-        .withParent(HILCompletionContributor.ILSE_FROM_KNOWN_SCOPE), ILScopeReferenceProvider)
+                                          .withParent(HILPatterns.IlseFromKnownScope), ILScopeReferenceProvider)
 
     // ForExpression variable
     registrar.registerReferenceProvider(psiElement(Identifier::class.java)
-        .and(HILCompletionContributor.INSIDE_FOR_EXPRESSION_BODY), ForVariableReferenceProvider2())
+                                          .and(HILPatterns.InsideForExpressionBody), ForVariableReferenceProvider2())
 
     // 'dynamic' 'content' block reference
     registrar.registerReferenceProvider(psiElement(Identifier::class.java)
-        .with(HILCompletionContributor.IS_SE_FROM_CONDITION)
+                                          .with(HILPatterns.IsSeFromCondition)
         .withHCLHost(psiElement().inside(TerraformPatterns.DynamicBlock)), DynamicBlockVariableReferenceProvider)
 
     // 'each' in resource or data source
     registrar.registerReferenceProvider(psiElement(Identifier::class.java)
         .withText("each")
-        .with(HILCompletionContributor.IS_SE_FROM_CONDITION)
+                                          .with(HILPatterns.IsSeFromCondition)
         .withHCLHost(psiElement().inside(true, or(TerraformPatterns.ResourceRootBlock, TerraformPatterns.DataSourceRootBlock, TerraformPatterns.ModuleRootBlock))), ResourceEachVariableReferenceProvider)
   }
 }

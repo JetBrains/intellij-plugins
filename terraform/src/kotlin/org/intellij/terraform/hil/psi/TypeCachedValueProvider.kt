@@ -7,14 +7,14 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiTreeUtil
-import org.intellij.terraform.hcl.HCLElementTypes
-import org.intellij.terraform.hcl.psi.*
-import org.intellij.terraform.hcl.psi.common.*
 import org.intellij.terraform.config.codeinsight.ModelHelper
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.hcl.HCLElementTypes
+import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.common.*
 import org.intellij.terraform.hil.HILElementTypes
-import org.intellij.terraform.hil.codeinsight.HILCompletionContributor
+import org.intellij.terraform.hil.patterns.HILPatterns
 import org.intellij.terraform.hil.psi.impl.getHCLHost
 import java.util.*
 
@@ -190,7 +190,8 @@ class TypeCachedValueProvider private constructor(private val e: BaseExpression)
       if (e.isInTerraformFile()) {
         if (e is IndexSelectExpression<*>) {
           // supported above or at the end as general selection from ObjectType or MapType
-        } else if (HILCompletionContributor.ILSE_FROM_KNOWN_SCOPE.accepts(e)) {
+        }
+        else if (HILPatterns.IlseFromKnownScope.accepts(e)) {
           val from = e.from as Identifier // type checked by ILSE_FROM_KNOWN_SCOPE
           val name = e.field?.text ?: return Types.Invalid
           val module = e.getHCLHost()?.getTerraformModule() ?: return Types.Invalid
@@ -215,7 +216,8 @@ class TypeCachedValueProvider private constructor(private val e: BaseExpression)
               }
             }
           }
-        } else if (HILCompletionContributor.ILSE_NOT_FROM_KNOWN_SCOPE.accepts(e)) {
+        }
+        else if (HILPatterns.IlseNotFromKnownScope.accepts(e)) {
           val name = e.field?.text ?: return Types.Invalid
           if (e.from is Identifier) {
             // first level select expression, e.g. `aws_instance.x`
@@ -233,7 +235,8 @@ class TypeCachedValueProvider private constructor(private val e: BaseExpression)
               val blockType = ModelHelper.getBlockType(block)
               return blockType ?: Types.Invalid
             }
-          } else if (HILCompletionContributor.ILSE_FROM_DATA_SCOPE.accepts(e.from)) {
+          }
+          else if (HILPatterns.IlseFromDataScope.accepts(e.from)) {
             // `data.aws_instance.x`
             val from = (e.from as SelectExpression<*>).field as? Identifier ?: return Types.Invalid
             val module = e.getHCLHost()?.getTerraformModule() ?: return Types.Invalid
@@ -349,7 +352,7 @@ class TypeCachedValueProvider private constructor(private val e: BaseExpression)
         }
       }
       val references = e.references
-      val forVariableReference = references.filterIsInstance(ForVariableDirectReference::class.java).firstOrNull()
+      val forVariableReference = references.filterIsInstance<ForVariableDirectReference>().firstOrNull()
       if (forVariableReference != null) {
         val resolved = forVariableReference.resolve() as? BaseExpression
         return resolved?.getType()

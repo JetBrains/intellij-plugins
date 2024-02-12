@@ -5,8 +5,6 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PlatformPatterns.psiElement
-import com.intellij.patterns.PsiElementPattern
-import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet
 import com.intellij.psi.tree.TokenSet
@@ -17,6 +15,7 @@ import org.intellij.terraform.config.inspection.TFNoInterpolationsAllowedInspect
 import org.intellij.terraform.config.model.Module
 import org.intellij.terraform.config.model.getTerraformModule
 import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.config.patterns.TerraformPatterns.ResourceProviderProperty
 import org.intellij.terraform.config.patterns.TerraformPatterns.TerraformConfigFile
 import org.intellij.terraform.config.patterns.TerraformPatterns.TerraformVariablesFile
 import org.intellij.terraform.config.patterns.TerraformPatterns.propertyWithName
@@ -30,26 +29,19 @@ import org.intellij.terraform.hil.psi.HCLElementLazyReference
 import org.intellij.terraform.hil.psi.HCLElementLazyReferenceBase
 
 class TerraformReferenceContributor : PsiReferenceContributor() {
-  companion object {
-    val Resource_Provider_Property: PsiElementPattern.Capture<HCLProperty> = propertyWithName("provider")
-        .withParent(HCLObject::class.java)
-        .withSuperParent(2, StandardPatterns.or(TerraformPatterns.ResourceRootBlock, TerraformPatterns.DataSourceRootBlock))
-  }
-
   override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
-
     registrar.registerReferenceProvider(
       psiElement()
         .and(PlatformPatterns.or(HCLPatterns.Identifier, HCLPatterns.Literal))
         .inFile(TerraformConfigFile)
-        .withParent(Resource_Provider_Property), ResourceProviderReferenceProvider)
+        .withParent(ResourceProviderProperty), ResourceProviderReferenceProvider)
 
     registrar.registerReferenceProvider(
       psiElement()
         .and(PlatformPatterns.or(HCLPatterns.Identifier, HCLPatterns.Literal))
         .inFile(TerraformConfigFile)
         .withParent(HCLPatterns.SelectExpression)
-        .withSuperParent(2, Resource_Provider_Property), ResourceProviderReferenceProvider)
+        .withSuperParent(2, ResourceProviderProperty), ResourceProviderReferenceProvider)
 
     // 'depends_on' in resources, data sources, modules and outputs
     registrar.registerReferenceProvider(
@@ -244,7 +236,7 @@ object VariableReferenceProvider : PsiReferenceProvider() {
       @Suppress("NAME_SHADOWING")
       val element = this.element
       if (incomplete) {
-        element.getTerraformModule().getAllVariables().mapNotNull { it.declaration }
+        element.getTerraformModule().getAllVariables().map { it.declaration }
       } else {
         val value = element.id
         element.getTerraformModule().findVariables(value.substringBefore('.')).map { it.declaration }

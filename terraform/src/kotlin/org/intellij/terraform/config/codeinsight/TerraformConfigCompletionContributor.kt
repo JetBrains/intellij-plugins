@@ -6,19 +6,25 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.codeInsight.lookup.LookupElementWeigher
 import com.intellij.lang.injection.InjectedLanguageManager
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.project.Project
 import com.intellij.patterns.PlatformPatterns.not
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.*
-import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.Plow.Companion.toPlow
 import com.intellij.util.ProcessingContext
 import com.intellij.util.Processor
 import org.intellij.terraform.config.Constants
+import org.intellij.terraform.config.codeinsight.CompletionUtil.RootBlockSorted
+import org.intellij.terraform.config.codeinsight.CompletionUtil.create
+import org.intellij.terraform.config.codeinsight.CompletionUtil.createWithInsertHandler
+import org.intellij.terraform.config.codeinsight.CompletionUtil.dumpPsiFileModel
+import org.intellij.terraform.config.codeinsight.CompletionUtil.failIfInUnitTestsMode
+import org.intellij.terraform.config.codeinsight.CompletionUtil.getClearTextValue
+import org.intellij.terraform.config.codeinsight.CompletionUtil.getIncomplete
+import org.intellij.terraform.config.codeinsight.CompletionUtil.getOriginalObject
 import org.intellij.terraform.config.inspection.TFNoInterpolationsAllowedInspection.Companion.DependsOnProperty
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TerraformPatterns
@@ -43,7 +49,6 @@ import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.hil.HILFileType
 import org.intellij.terraform.hil.codeinsight.ReferenceCompletionHelper.findByFQNRef
 import org.intellij.terraform.hil.psi.ILExpression
-import org.intellij.terraform.nullize
 import java.util.*
 
 class TerraformConfigCompletionContributor : HCLCompletionContributor() {
@@ -184,69 +189,9 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
   }
 
   companion object {
-    @JvmField
-    val ROOT_BLOCK_KEYWORDS: Set<String> = TypeModel.RootBlocks.map(BlockType::literal).toHashSet()
-    val ROOT_BLOCKS_SORTED: List<BlockType> = TypeModel.RootBlocks.sortedBy { it.literal }
-
-    private val LOG = Logger.getInstance(TerraformConfigCompletionContributor::class.java)
-    fun dumpPsiFileModel(element: PsiElement): () -> String {
-      return { DebugUtil.psiToString(element.containingFile, true) }
-    }
-
-    fun create(value: String, quote: Boolean = true): LookupElementBuilder {
-      var builder = LookupElementBuilder.create(value)
-      if (quote) {
-        builder = builder.withInsertHandler(QuoteInsertHandler)
-      }
-      return builder
-    }
-
-    fun create(value: PropertyOrBlockType, lookupString: String? = null): LookupElementBuilder {
-      var builder = LookupElementBuilder.create(value, lookupString ?: value.name)
-      builder = builder.withRenderer(TerraformLookupElementRenderer())
-      if (value is BlockType) {
-        builder = builder.withInsertHandler(ResourceBlockNameInsertHandler(value))
-      }
-      else if (value is PropertyType) {
-        builder = builder.withInsertHandler(ResourcePropertyInsertHandler)
-      }
-      return builder
-    }
-
-    fun failIfInUnitTestsMode(position: PsiElement, addition: String? = null) {
-      LOG.assertTrue(!ApplicationManager.getApplication().isUnitTestMode, {
-        var ret = ""
-        if (addition != null) {
-          ret = "$addition\n"
-        }
-        ret += " Position: $position\nFile: " + DebugUtil.psiToString(position.containingFile, true)
-        ret
-      })
-    }
-
-    fun getOriginalObject(parameters: CompletionParameters, obj: HCLObject): HCLObject {
-      val originalObject = parameters.originalFile.findElementAt(obj.textRange.startOffset)?.parent
-      return originalObject as? HCLObject ?: obj
-    }
-
-    fun getClearTextValue(element: PsiElement?): String? {
-      return when {
-        element == null -> null
-        element is HCLIdentifier -> element.id
-        element is HCLStringLiteral -> element.value
-        element.node?.elementType == HCLElementTypes.ID -> element.text
-        HCLTokenTypes.STRING_LITERALS.contains(element.node?.elementType) -> HCLPsiUtil.stripQuotes(element.text)
-        else -> return null
-      }
-    }
-
-    fun getIncomplete(parameters: CompletionParameters): String? {
-      val position = parameters.position
-      val text = getClearTextValue(position) ?: position.text
-      if (text == CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED) return null
-      return text.replace(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED, "").nullize(true)
-    }
+    val LOG: Logger = Logger.getInstance(TerraformConfigCompletionContributor::class.java)
   }
+
 
   private object PreferRequiredProperty : LookupElementWeigher("hcl.required.property") {
     override fun weigh(element: LookupElement): Comparable<Nothing> {
@@ -285,7 +230,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       val leftNWS = position.getPrevSiblingNonWhiteSpace()
       LOG.debug { "TF.BlockKeywordCompletionProvider{position=$position, parent=$parent, left=${position.prevSibling}, lnws=$leftNWS}" }
       assert(getClearTextValue(leftNWS) == null, dumpPsiFileModel(position))
-      result.addAllElements(ROOT_BLOCKS_SORTED.map { create(it) })
+      result.addAllElements(RootBlockSorted.map { createWithInsertHandler(it) })
     }
   }
 
@@ -456,7 +401,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
             incomplete)))) || (it is BlockType)
         }
         .filter { it.configurable }
-        .map { create(it) }
+        .map { createWithInsertHandler(it) }
         .toList())
     }
 

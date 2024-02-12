@@ -14,21 +14,21 @@ import static org.intellij.terraform.config.CompletionTestCase.Matcher.*;
 public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
 
   public void testBlockKeywordCompletion() throws Exception {
-    doBasicCompletionTest("<caret> {}", TerraformConfigCompletionContributor.ROOT_BLOCK_KEYWORDS);
-    doBasicCompletionTest("a=1\n<caret> {}", TerraformConfigCompletionContributor.ROOT_BLOCK_KEYWORDS);
+    doBasicCompletionTest("<caret> {}", CompletionUtil.INSTANCE.getRootBlockKeywords());
+    doBasicCompletionTest("a=1\n<caret> {}", CompletionUtil.INSTANCE.getRootBlockKeywords());
 
-    doBasicCompletionTest("<caret> ", TerraformConfigCompletionContributor.ROOT_BLOCK_KEYWORDS);
-    doBasicCompletionTest("a=1\n<caret> ", TerraformConfigCompletionContributor.ROOT_BLOCK_KEYWORDS);
+    doBasicCompletionTest("<caret> ", CompletionUtil.INSTANCE.getRootBlockKeywords());
+    doBasicCompletionTest("a=1\n<caret> ", CompletionUtil.INSTANCE.getRootBlockKeywords());
 
-    doBasicCompletionTest("\"<caret>\" {}", TerraformConfigCompletionContributor.ROOT_BLOCK_KEYWORDS);
-    doBasicCompletionTest("\"<caret> {}", TerraformConfigCompletionContributor.ROOT_BLOCK_KEYWORDS);
-    doBasicCompletionTest("a=1\n\"<caret>\" {}", TerraformConfigCompletionContributor.ROOT_BLOCK_KEYWORDS);
-    doBasicCompletionTest("a=1\n\"<caret> {}", TerraformConfigCompletionContributor.ROOT_BLOCK_KEYWORDS);
+    doBasicCompletionTest("\"<caret>\" {}", CompletionUtil.INSTANCE.getRootBlockKeywords());
+    doBasicCompletionTest("\"<caret> {}", CompletionUtil.INSTANCE.getRootBlockKeywords());
+    doBasicCompletionTest("a=1\n\"<caret>\" {}", CompletionUtil.INSTANCE.getRootBlockKeywords());
+    doBasicCompletionTest("a=1\n\"<caret> {}", CompletionUtil.INSTANCE.getRootBlockKeywords());
 
-    doBasicCompletionTest("\"<caret>\" ", TerraformConfigCompletionContributor.ROOT_BLOCK_KEYWORDS);
-    doBasicCompletionTest("\"<caret> ", TerraformConfigCompletionContributor.ROOT_BLOCK_KEYWORDS);
-    doBasicCompletionTest("a=1\n\"<caret>\" ", TerraformConfigCompletionContributor.ROOT_BLOCK_KEYWORDS);
-    doBasicCompletionTest("a=1\n\"<caret> ", TerraformConfigCompletionContributor.ROOT_BLOCK_KEYWORDS);
+    doBasicCompletionTest("\"<caret>\" ", CompletionUtil.INSTANCE.getRootBlockKeywords());
+    doBasicCompletionTest("\"<caret> ", CompletionUtil.INSTANCE.getRootBlockKeywords());
+    doBasicCompletionTest("a=1\n\"<caret>\" ", CompletionUtil.INSTANCE.getRootBlockKeywords());
+    doBasicCompletionTest("a=1\n\"<caret> ", CompletionUtil.INSTANCE.getRootBlockKeywords());
   }
 
   public void testNoBlockKeywordCompletion() throws Exception {

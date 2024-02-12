@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import com.intellij.util.containers.tail
-import org.intellij.terraform.config.codeinsight.TerraformConfigCompletionContributor.Companion.getIncomplete
+import org.intellij.terraform.config.codeinsight.CompletionUtil.getIncomplete
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.hcl.psi.*
 
@@ -56,7 +56,7 @@ object PropertyObjectKeyCompletionProvider : TerraformConfigCompletionContributo
     if (name == "providers" && type == "module") {
       val module = block.getTerraformModule()
       val providers = module.getDefinedProviders().map { it.second }
-      result.addAllElements(providers.map { TerraformConfigCompletionContributor.create(it) })
+      result.addAllElements(providers.map { CompletionUtil.create(it) })
       return
     }
   }
@@ -76,7 +76,7 @@ object PropertyObjectKeyCompletionProvider : TerraformConfigCompletionContributo
       val pathToRoot = pathToRootObject(property)
       val objTypeProperty = findObjectTypeInModule(block, pathToRoot.reversed())
       val properties = objTypeProperty?.elements?.map { PropertyType(it.key, it.value ?: Types.Any) } ?: return
-      result.addAllElements(properties.map { TerraformConfigCompletionContributor.create(it) })
+      result.addAllElements(properties.map { CompletionUtil.createWithInsertHandler(it) })
     }
   }
 
@@ -113,12 +113,12 @@ object PropertyObjectKeyCompletionProvider : TerraformConfigCompletionContributo
   private fun handleModuleProvidersMapping(block: HCLBlock, parameters: CompletionParameters, obj: HCLObject, result: CompletionResultSet) {
     val module = Module.getAsModuleBlock(block) ?: return
     val incomplete: String? = getIncomplete(parameters)
-    val defined = TerraformConfigCompletionContributor.getOriginalObject(parameters, obj).propertyList.map { it.name }
+    val defined = CompletionUtil.getOriginalObject(parameters, obj).propertyList.map { it.name }
     val providers = module.getDefinedProviders()
       .map { it.second }
       .filter { !defined.contains(it) || (incomplete != null && it.contains(incomplete)) }
     result.addAllElements(
-      providers.map { TerraformConfigCompletionContributor.create(it).withInsertHandler(ResourcePropertyInsertHandler) })
+      providers.map { CompletionUtil.create(it).withInsertHandler(ResourcePropertyInsertHandler) })
     return
   }
 }

@@ -70,7 +70,7 @@ object ResourceEachVariableReferenceProvider : PsiReferenceProvider() {
           found.add(DynamicValueReference(element))
         }
       } else {
-        found.add(object : PsiReferenceBase.Immediate<PsiElement>(element, true, null), EmptyResolveMessageProvider {
+        found.add(object : Immediate<PsiElement>(element, true, null), EmptyResolveMessageProvider {
           override fun getUnresolvedMessagePattern(): String {
             return "Unknown iterator field {0}"
           }

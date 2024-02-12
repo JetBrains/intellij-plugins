@@ -10,6 +10,7 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
+import org.intellij.terraform.config.codeinsight.CompletionUtil
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLElementTypes
 import org.intellij.terraform.hcl.psi.HCLFile
@@ -24,14 +25,11 @@ import org.intellij.terraform.hil.psi.getGoodLeftElement
 import org.intellij.terraform.hil.psi.impl.getHCLHost
 
 class HILVariableAnnotator : Annotator {
-  companion object {
-    private val DEBUG = ApplicationManager.getApplication().isUnitTestMode
-    val scopes = HILCompletionContributor.SCOPES
+  private val DEBUG = ApplicationManager.getApplication().isUnitTestMode
 
-    private val ellipsis = TokenSet.create(HILElementTypes.OP_ELLIPSIS, HCLElementTypes.OP_ELLIPSIS)
-    private val commas = TokenSet.create(HILElementTypes.COMMA, HCLElementTypes.COMMA)
-    private val r_parens = TokenSet.create(HILElementTypes.R_PAREN, HCLElementTypes.R_PAREN)
-  }
+  private val ellipsis = TokenSet.create(HILElementTypes.OP_ELLIPSIS, HCLElementTypes.OP_ELLIPSIS)
+  private val commas = TokenSet.create(HILElementTypes.COMMA, HCLElementTypes.COMMA)
+  private val r_parens = TokenSet.create(HILElementTypes.R_PAREN, HCLElementTypes.R_PAREN)
 
   override fun annotate(element: PsiElement, holder: AnnotationHolder) {
     if (ellipsis.contains(element.node?.elementType)) {
@@ -79,7 +77,7 @@ class HILVariableAnnotator : Annotator {
   }
 
   private fun annotateLeftmostInSelection(element: Identifier, holder: AnnotationHolder) {
-    if (scopes.contains(element.name)) {
+    if (CompletionUtil.Scopes.contains(element.name)) {
       createInfo(holder, "global scope", HILSyntaxHighlighterFactory.TIL_PREDEFINED_SCOPE)
     } else {
       createInfo(holder, "resource type reference", HILSyntaxHighlighterFactory.TIL_RESOURCE_TYPE_REFERENCE)
@@ -91,13 +89,13 @@ class HILVariableAnnotator : Annotator {
 fun isScopeElementReference(element: Identifier, parent: SelectExpression<*>): Boolean {
   val left = getGoodLeftElement(parent, element, false) as? Identifier ?: return false
   val lp = left.parent as? SelectExpression<*> ?: return false
-  return (left === lp.from) && HILVariableAnnotator.scopes.contains(left.name)
+  return (left === lp.from) && CompletionUtil.Scopes.contains(left.name)
 }
 
 fun isResourceInstanceReference(element: Identifier, parent: SelectExpression<*>): Boolean {
   val left = getGoodLeftElement(parent, element, false) as? Identifier ?: return false
   val lp = left.parent as? SelectExpression<*> ?: return false
-  return (left === lp.from) && !HILVariableAnnotator.scopes.contains(left.name)
+  return (left === lp.from) && !CompletionUtil.Scopes.contains(left.name)
 }
 
 fun isResourcePropertyReference(element: Identifier, parent: SelectExpression<*>): Boolean {
