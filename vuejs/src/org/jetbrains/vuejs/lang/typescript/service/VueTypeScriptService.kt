@@ -18,6 +18,7 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.F
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.editor.Document
+import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
@@ -25,12 +26,15 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.vuejs.VuejsIcons
 import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.lang.typescript.service.protocol.VueTypeScriptServiceProtocol
+import org.jetbrains.vuejs.options.VueConfigurable
 import java.util.function.Consumer
+import javax.swing.Icon
 
 class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(project, "Vue Console") {
 
@@ -170,4 +174,8 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
 
     return super.createFixSet(file, cache, typescriptResult)
   }
+
+  override fun getWidgetItemIcon(): Icon = VuejsIcons.Vue
+
+  override fun getSettingsPageClass(): Class<out Configurable> = VueConfigurable::class.java
 }

@@ -39,6 +39,8 @@ class DenoTypeScriptService(project: Project) : BaseLspTypeScriptService(project
   override val prefix: String
     get() = "Deno"
 
+  // TODO delete this overriding function when `TypeScriptStatusBarWidget` is deleted
+  @Deprecated("TypeScriptWidgetItemsProvider uses getWidgetItem(), other usages not expected", ReplaceWith("//not needed"))
   override fun getStatusText(): String? = when (getServer()?.state) {
     // TODO use super method (& display serverVersion)
     LspServerState.Initializing, LspServerState.Running -> "Deno LSP"
