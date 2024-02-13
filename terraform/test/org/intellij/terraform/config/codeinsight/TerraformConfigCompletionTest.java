@@ -271,6 +271,21 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
     doBasicCompletionTest("data <caret> \"aaa\" {}", set);
   }
 
+  public void testCheckBlockCompletion() throws Exception {
+    doBasicCompletionTest("check {<caret>}", "assert", "data");
+    doBasicCompletionTest(
+      """
+        check "certificate" {
+          assert {
+            condition     = aws_acm_certificate.cert.status == "ERRORED"
+            error_message = "Certificate status is ${aws_acm_certificate.cert.status}"
+          }
+          data abc {
+            <caret>
+          }"
+        }""", COMMON_DATA_SOURCE_PROPERTIES);
+  }
+
   public void testDataSourceQuotedTypeCompletion() throws Exception {
     Registry.get("ide.completion.variant.limit").setValue(100000, getTestRootDisposable());
     final TreeSet<String> set = new TreeSet<>();

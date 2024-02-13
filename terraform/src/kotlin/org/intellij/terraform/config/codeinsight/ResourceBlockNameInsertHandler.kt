@@ -6,11 +6,9 @@ import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
+import org.intellij.terraform.config.model.BlockType
 import org.intellij.terraform.hcl.HCLElementTypes
 import org.intellij.terraform.hcl.psi.*
-import org.intellij.terraform.config.model.BlockType
-import org.intellij.terraform.config.model.TypeModel
 
 class ResourceBlockNameInsertHandler(val type: BlockType) : BasicInsertHandler<LookupElement>() {
   override fun handleInsert(context: InsertionContext, item: LookupElement) {
@@ -37,10 +35,6 @@ class ResourceBlockNameInsertHandler(val type: BlockType) : BasicInsertHandler<L
     }
 
     if (parent is HCLProperty) {
-      // ??? Do nothing
-      return
-    }
-    if (item.lookupString in TypeModel.RootBlocksMap.keys && (element.parent !is PsiFile && parent.parent !is PsiFile)) {
       return
     }
     var offset: Int? = null
