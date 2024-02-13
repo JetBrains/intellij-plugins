@@ -10,6 +10,4 @@ class AstroLspTypeScriptService(project: Project) : BaseLspTypeScriptService(pro
   override val prefix = "Astro"
 
   override fun isAcceptable(file: VirtualFile): Boolean = isServiceEnabledAndAvailable(project, file)
-
-  override fun getServiceId(): String = "astro"
 }

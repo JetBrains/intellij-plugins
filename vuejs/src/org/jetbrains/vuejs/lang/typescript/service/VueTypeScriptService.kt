@@ -170,6 +170,4 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
 
     return super.createFixSet(file, cache, typescriptResult)
   }
-
-  override fun getServiceId(): String = "ts-vue"
 }

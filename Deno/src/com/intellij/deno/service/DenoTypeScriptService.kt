@@ -57,6 +57,4 @@ class DenoTypeScriptService(project: Project) : BaseLspTypeScriptService(project
     TypeScriptCompilerSettings.acceptFileType(file.fileType) &&
     !TypeScriptLibraryProvider.isLibraryOrBundledLibraryFile(project, file) &&
     isDenoEnableForContextDirectory(project, file)
-
-  override fun getServiceId(): String = "deno"
 }
