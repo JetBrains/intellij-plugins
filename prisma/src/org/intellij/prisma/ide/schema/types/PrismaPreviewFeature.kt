@@ -10,9 +10,11 @@ enum class PrismaPreviewFeature {
   FullTextSearch,
   Metrics,
   MultiSchema,
+  NativeDistinct,
   PostgresqlExtensions,
   Tracing,
-  Views;
+  Views,
+  RelationJoins;
 
   val presentation: String = StringUtil.decapitalize(name)
 }
