@@ -253,7 +253,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
         addVirtualGroup(group);
       }
     }
-    else if (!checkBox.isSelected() && isGroupPresent) {
+    else if (isGroupPresent) {
       removeVirtualGroup(group);
     }
   }
