@@ -25,9 +25,6 @@ For IntelliJ IDEA, you can check out this section in the <a href="https://www.je
         ]]>
   </description>
 
-  <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
-       on how to target different products -->
-
   <extensions defaultExtensionNs="com.intellij">
     <fileType name="WebAssembly file"
               implementationClass="com.intellij.webassembly.lang.psi.WebAssemblyFileType"

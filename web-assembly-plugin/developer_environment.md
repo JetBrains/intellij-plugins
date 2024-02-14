@@ -10,4 +10,4 @@ The project structure and dependencies are defined in [build.gradle](./build.gra
 
 **Useful links**
 * [gradle-intellij-plugin](https://github.com/JetBrains/gradle-intellij-plugin) documentation on available Gradle tasks and build.gradle configuration options
-* [IDEA SDK documentation](https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started.html) describes IDEA plugin development in general
+* [IntelliJ Platform SDK documentation](https://plugins.jetbrains.com/docs/intellij) describes IDE plugin development in general
