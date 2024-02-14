@@ -3,15 +3,15 @@
   <name>Deno</name>
   <category>JavaScript Frameworks and Tools</category>
   <description><![CDATA[
-Provides <a href="https://deno.land/">Deno</a> support to all <a href="https://www.jetbrains.com/products/#lang=js&amp;type=ide">JetBrains IDEs</a> that support JavaScript.
+<p>Provides <a href="https://deno.land/">Deno</a> support to all <a href="https://www.jetbrains.com/products/#lang=js&amp;type=ide">JetBrains IDEs</a> that support JavaScript.
 
-<br><br><b>Features</b>
+<h2>Features</h2>
 <ul>
-<li>Smart coding assistance for Deno that includes code completion, formatting, navigation, intentions, refactorings, and more.
-<li>New configuration for running and debugging TypeScript files with Deno.
+<li>Smart coding assistance for Deno that includes code completion, formatting, navigation, intentions, refactorings, and more
+<li>New configuration for running and debugging TypeScript files with Deno
 </ul>
-<br><b>Getting started</b>
-For more information on getting started with Deno in your IntelliJ-based IDE, check out this blog post.
+<h2>Getting started</h2>
+<p>For more information on getting started with Deno in your IntelliJ-based IDE, check out this <a href="https://blog.jetbrains.com/webstorm/2020/06/deno-support-in-jetbrains-ides/">blog post</a>.
 ]]></description>
 
   <vendor>JetBrains</vendor>
