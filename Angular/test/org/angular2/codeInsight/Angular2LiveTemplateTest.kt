@@ -57,7 +57,7 @@ class Angular2LiveTemplateTest : Angular2TestCase("liveTemplate") {
     template.setValue(Template.Property.USE_STATIC_IMPORT_IF_POSSIBLE, true)
     doConfiguredTest(checkResult = true, additionalFiles = listOf("injectable.ts")) {
       InvokeTemplateAction(template as TemplateImpl?, myFixture.editor, project, HashSet()).perform()
-      waitCoroutinesBlocking(JSImportsCoroutineScope.get())
+      waitCoroutinesBlocking(JSImportsCoroutineScope.get(project))
     }
   }
 
@@ -65,7 +65,7 @@ class Angular2LiveTemplateTest : Angular2TestCase("liveTemplate") {
     val template = TemplateManager.getInstance(project).createTemplate("", "", "injectable: Injectable;\$END\$")
     doConfiguredTest(checkResult = true, additionalFiles = listOf("injectable.ts")) {
       InvokeTemplateAction(template as TemplateImpl?, myFixture.editor, project, HashSet()).perform()
-      waitCoroutinesBlocking(JSImportsCoroutineScope.get())
+      waitCoroutinesBlocking(JSImportsCoroutineScope.get(project))
     }
   }
 
