@@ -40,7 +40,7 @@ class DenoLspSupportProvider : LspServerSupportProvider {
     }
   }
 
-  override fun getLspServerWidgetItem(lspServer: LspServer, currentFile: VirtualFile?): LspServerWidgetItem =
+  override fun createLspServerWidgetItem(lspServer: LspServer, currentFile: VirtualFile?): LspServerWidgetItem =
     LspServerWidgetItem(lspServer, currentFile, settingsPageClass = DenoConfigurable::class.java)
 }
 

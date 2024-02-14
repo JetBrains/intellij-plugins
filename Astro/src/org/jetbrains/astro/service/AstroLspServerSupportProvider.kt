@@ -27,7 +27,7 @@ class AstroLspServerSupportProvider : LspServerSupportProvider {
     }
   }
 
-  override fun getLspServerWidgetItem(lspServer: LspServer, currentFile: VirtualFile?): LspServerWidgetItem =
+  override fun createLspServerWidgetItem(lspServer: LspServer, currentFile: VirtualFile?): LspServerWidgetItem =
     LspServerWidgetItem(lspServer, currentFile, AstroIcons.Astro, settingsPageClass = null) // TODO add reasonable widget action
 }
 

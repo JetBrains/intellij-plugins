@@ -21,6 +21,6 @@ class PrismaLspServerSupportProvider : LspServerSupportProvider {
     serverStarter.ensureServerStarted(PrismaLspServerDescriptor(project))
   }
 
-  override fun getLspServerWidgetItem(lspServer: LspServer, currentFile: VirtualFile?): LspServerWidgetItem =
+  override fun createLspServerWidgetItem(lspServer: LspServer, currentFile: VirtualFile?): LspServerWidgetItem =
     LspServerWidgetItem(lspServer, currentFile, PrismaIcons.PRISMA, settingsPageClass = null) // TODO add reasonable widget action
 }

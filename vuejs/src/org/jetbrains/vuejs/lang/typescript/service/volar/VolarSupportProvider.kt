@@ -34,7 +34,7 @@ class VolarSupportProvider : LspServerSupportProvider {
     }
   }
 
-  override fun getLspServerWidgetItem(lspServer: LspServer, currentFile: VirtualFile?): LspServerWidgetItem =
+  override fun createLspServerWidgetItem(lspServer: LspServer, currentFile: VirtualFile?): LspServerWidgetItem =
     LspServerWidgetItem(lspServer, currentFile, VuejsIcons.Vue, VueConfigurable::class.java)
 }
 
