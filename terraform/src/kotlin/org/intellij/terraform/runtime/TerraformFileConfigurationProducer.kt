@@ -5,6 +5,7 @@ import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.ConfigurationFromContext
 import com.intellij.execution.actions.LazyRunConfigurationProducer
 import com.intellij.execution.configurations.ConfigurationFactory
+import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import org.intellij.terraform.config.model.getTerraformModule
@@ -12,7 +13,7 @@ import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.firstOrNull
 import org.intellij.terraform.hcl.psi.HCLElement
 
-sealed class TerraformFileConfigurationProducer(private val type: Type) : LazyRunConfigurationProducer<TerraformRunConfiguration>() {
+sealed class TerraformFileConfigurationProducer(private val type: Type) : LazyRunConfigurationProducer<TerraformRunConfiguration>(), DumbAware {
   enum class Type(val title: String, val factory: () -> ConfigurationFactory) {
     PLAN("Plan", { TerraformConfigurationType.getInstance().planFactory }),
     APPLY("Apply", { TerraformConfigurationType.getInstance().applyFactory }),

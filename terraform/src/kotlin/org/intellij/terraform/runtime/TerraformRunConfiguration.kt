@@ -15,6 +15,7 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.ui.ConsoleView
 import com.intellij.execution.util.ProgramParametersUtil
 import com.intellij.openapi.options.SettingsEditor
+import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.InvalidDataException
 import com.intellij.openapi.util.WriteExternalException
@@ -28,7 +29,7 @@ import org.jetbrains.annotations.Nls
 import java.io.File
 
 class TerraformRunConfiguration(project: Project, factory: ConfigurationFactory, name: String?) : LocatableConfigurationBase<Any?>(
-  project, factory, name), CommonProgramRunConfigurationParameters {
+  project, factory, name), CommonProgramRunConfigurationParameters, DumbAware {
   private var programParameters: String? = ""
   private var directory: String = ""
   private val myEnvs: MutableMap<String, String> = LinkedHashMap()

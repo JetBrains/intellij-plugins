@@ -5,6 +5,7 @@ import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import org.intellij.terraform.TerraformIcons;
 import org.intellij.terraform.hcl.HCLBundle;
@@ -14,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class TerraformConfigurationType implements ConfigurationType {
+public class TerraformConfigurationType implements ConfigurationType, DumbAware {
   private final ConfigurationFactory myBaseFactory;
   private final ConfigurationFactory myPlanFactory;
   private final ConfigurationFactory myApplyFactory;
@@ -74,7 +75,7 @@ public class TerraformConfigurationType implements ConfigurationType {
     @Nls private final String myNameSuffix;
     private final String myId;
 
-    public MyConfigurationFactory(@Nls @Nullable String nameSuffix, String parameters, String id) {
+    private MyConfigurationFactory(@Nls @Nullable String nameSuffix, String parameters, String id) {
       super(TerraformConfigurationType.this);
       myNameSuffix = nameSuffix;
       myParameters = parameters;

@@ -4,11 +4,12 @@ package org.intellij.terraform.runtime
 import com.intellij.execution.lineMarker.ExecutorAction
 import com.intellij.execution.lineMarker.RunLineMarkerContributor
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.project.DumbAware
 import com.intellij.psi.PsiElement
 import org.intellij.terraform.hcl.psi.HCLBlock
 import java.util.function.Function
 
-class TerraformRunLineMarkerContributor : RunLineMarkerContributor() {
+class TerraformRunLineMarkerContributor : RunLineMarkerContributor(), DumbAware {
   override fun getInfo(leaf: PsiElement): Info? {
     val psiFile = leaf.containingFile
     if (psiFile.fileType.defaultExtension != "tf") {
