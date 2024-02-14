@@ -2,12 +2,12 @@
 package org.intellij.terraform.config.codeinsight;
 
 public class TFBackendCompletionTestCase extends TFBaseCompletionTestCase {
-  public void testTerraformBlockAdvised() throws Exception {
+  public void testTerraformBlockAdvised() {
     doBasicCompletionTest("<caret>", "terraform");
     doBasicCompletionTest("t<caret>", "terraform");
   }
 
-  public void testBackendAllowedInTerraform() throws Exception {
+  public void testBackendAllowedInTerraform() {
     doBasicCompletionTest("terraform{<caret>}", "backend");
     doBasicCompletionTest("terraform{backend \"<caret>\" {}}", "s3");
     doBasicCompletionTest("terraform{backend <caret> {}}", "s3");
@@ -17,7 +17,7 @@ public class TFBackendCompletionTestCase extends TFBaseCompletionTestCase {
 //    doBasicCompletionTest("terraform{backend <caret>}", "s3");
   }
 
-  public void testPropertiesInBackend() throws Exception {
+  public void testPropertiesInBackend() {
     doBasicCompletionTest("terraform{backend \"s3\" {<caret>}}", "bucket", "key");
   }
 
@@ -28,7 +28,7 @@ public class TFBackendCompletionTestCase extends TFBaseCompletionTestCase {
                                        id = ""
                                        to = ""
                                      }
-                                     """.trim());
+                                     """.trim(), true);
   }
 
   public void testImportToCompletion() {

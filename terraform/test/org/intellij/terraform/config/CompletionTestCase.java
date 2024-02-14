@@ -30,9 +30,12 @@ public abstract class CompletionTestCase extends BasePlatformTestCase {
     myCompleteInvocationCount = 1;
   }
 
-  protected void doTheOnlyVariantCompletionTest(String textBefore, String textAfter) {
+  protected void doTheOnlyVariantCompletionTest(String textBefore, String textAfter, Boolean itemAutoCompleted) {
     final PsiFile psiFile = myFixture.configureByText(getFileName(), textBefore);
-    assertNull(myFixture.completeBasic());
+    final LookupElement[] variants = myFixture.completeBasic();
+    if (itemAutoCompleted) {
+      assertNull(variants);
+    }
     myFixture.checkResult(textAfter);
   }
 

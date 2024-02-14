@@ -284,6 +284,16 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
             <caret>
           }"
         }""", COMMON_DATA_SOURCE_PROPERTIES);
+    doTheOnlyVariantCompletionTest(
+      """
+        check "certificate" {
+          dat<caret>
+        }""",
+      """
+        check "certificate" {
+          data "" "" {}
+        }""", false
+    );
   }
 
   public void testDataSourceQuotedTypeCompletion() throws Exception {
@@ -319,9 +329,9 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
     }
     doBasicCompletionTest("data aws_ecs_container_definition x {\n<caret>\n}", base);
     doBasicCompletionTest("data aws_ecs_container_definition x {\n<caret> = \"name\"\n}",
-            "container_name",
-            "task_definition",
-            "provider"
+                          "container_name",
+                          "task_definition",
+                          "provider"
     );
     doBasicCompletionTest("data aws_elastic_beanstalk_solution_stack x {\n<caret> = true\n}", "most_recent");
     doBasicCompletionTest("data aws_kms_secret x {\n<caret> {}\n}", "secret");
@@ -692,17 +702,17 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
     myFixture.addFileToProject("submodule/sub.tf", """
       resource "MyType" "MyName" {}
       """);
-    myFixture.configureByText("main.tf","""
+    myFixture.configureByText("main.tf", """
       import {
         id = "terraform"
         to = module.submodule.<caret>
       }
-      
+            
       module "submodule" {
         source = "./submodule"
       }
       """);
-    myFixture.testCompletionVariants("main.tf",  "MyType.MyName");
+    myFixture.testCompletionVariants("main.tf", "MyType.MyName");
   }
 
   private static boolean isExcludeProvider(ProviderType provider, Map<String, Boolean> cache) {
@@ -712,7 +722,8 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
       cached = true;
       if (provider.getType().equals("aws")) {
         cached = false;
-      } else if (provider.getProperties().equals(TypeModel.AbstractProvider.getProperties())) {
+      }
+      else if (provider.getProperties().equals(TypeModel.AbstractProvider.getProperties())) {
         cached = false;
       }
       cache.put(key, cached);
