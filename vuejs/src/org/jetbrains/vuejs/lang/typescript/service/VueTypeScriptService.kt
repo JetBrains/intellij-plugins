@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceAnnotationResult
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
+import com.intellij.lang.typescript.compiler.languageService.TypeScriptServiceWidgetItem
 import com.intellij.lang.typescript.compiler.languageService.codeFixes.TypeScriptLanguageServiceFixSet
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.ConfigureRequest
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.ConfigureRequestArguments
@@ -18,10 +19,10 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.F
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.editor.Document
-import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.platform.lang.lsWidget.LanguageServiceWidgetItem
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -34,7 +35,6 @@ import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.lang.typescript.service.protocol.VueTypeScriptServiceProtocol
 import org.jetbrains.vuejs.options.VueConfigurable
 import java.util.function.Consumer
-import javax.swing.Icon
 
 class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(project, "Vue Console") {
 
@@ -175,7 +175,6 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
     return super.createFixSet(file, cache, typescriptResult)
   }
 
-  override fun getWidgetItemIcon(): Icon = VuejsIcons.Vue
-
-  override fun getSettingsPageClass(): Class<out Configurable> = VueConfigurable::class.java
+  override fun createWidgetItem(currentFile: VirtualFile?): LanguageServiceWidgetItem =
+    TypeScriptServiceWidgetItem(this, currentFile, VuejsIcons.Vue, VueConfigurable::class.java)
 }
