@@ -12,10 +12,10 @@ to all JetBrains IDEs that <a href="https://www.jetbrains.com/products/#lang=js&
 
 <h2>Features</h2>
 <ul>
-<li>Customizable highlighting for the template syntax
-<li>Completion of closing tags, braces, and HTML tags
-<li>.html files treated as Handlebars or Mustache files
-<li>Automatic indentation when typing
+  <li>Customizable highlighting for the template syntax
+  <li>Completion of closing tags, braces, and HTML tags
+  <li><code>.html</code> files treated as Handlebars or Mustache files
+  <li>Automatic indentation when typing
 </ul>
 <h2>Getting started</h2>
 <p>For information on getting started, head over to the <a href="https://www.jetbrains.com/help/">documentation</a> for your IDE.
