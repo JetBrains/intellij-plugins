@@ -86,8 +86,10 @@ public abstract class ActionBaseFile extends DumbAwareAction {
 
   @Override
   public void actionPerformed(@NotNull final AnActionEvent event) {
-    Project project = event.getRequiredData(CommonDataKeys.PROJECT);
-    VirtualFile[] vFiles = event.getRequiredData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
+    Project project = event.getData(CommonDataKeys.PROJECT);
+    if (project == null) return;
+    VirtualFile[] vFiles = event.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
+    if (vFiles == null || vFiles.length == 0) return;
 
     FileDocumentManager.getInstance().saveAllDocuments();
 

@@ -28,7 +28,7 @@ open class UnshelveActionBase(val delete: Boolean) : DumbAwareAction() {
 
   override fun actionPerformed(e: AnActionEvent) {
     FileDocumentManager.getInstance().saveAllDocuments()
-    val changes = e.getRequiredData(VcsDataKeys.CHANGES)
+    val changes = e.getData(VcsDataKeys.CHANGES) ?: return
 
     ShelfUtils.unshelveChanges(changes.map { (it as ShelvedChange.IdeaChange).original }, e.project!!, delete)
   }

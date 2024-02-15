@@ -30,7 +30,8 @@ public class SyncToRevisionAction extends DumbAwareAction {
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
-    Project project = e.getRequiredData(CommonDataKeys.PROJECT);
+    Project project = e.getData(CommonDataKeys.PROJECT);
+    if (project == null) return;
     String revision = String.valueOf(((PerforceChangeList)e.getRequiredData(VcsDataKeys.CHANGE_LISTS)[0]).getNumber());
 
     Set<VirtualFile> roots = PerforceConnectionManager.getInstance(project).getAllConnections().keySet();

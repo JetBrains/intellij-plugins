@@ -100,8 +100,10 @@ public class ResolveAction extends DumbAwareAction {
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
-    Project project = e.getRequiredData(CommonDataKeys.PROJECT);
-    VirtualFile[] vFiles = e.getRequiredData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
+    Project project = e.getData(CommonDataKeys.PROJECT);
+    if (project == null) return;
+    VirtualFile[] vFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
+    if (vFiles == null) return;
 
     List<VirtualFile> selectedFiles = getSelectedPerforceFiles(vFiles, project);
 

@@ -82,7 +82,8 @@ public class ResolveAllAction extends DumbAwareAction {
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
-    Project project = e.getRequiredData(CommonDataKeys.PROJECT);
+    Project project = e.getData(CommonDataKeys.PROJECT);
+    if (project == null) return;
 
     PerforceSettings settings = PerforceSettings.getSettings(project);
     if (!ResolveAction.serverSupportsConflictsResolve(settings, settings.getAllConnections())) {
