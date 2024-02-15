@@ -3,6 +3,7 @@ package org.intellij.terraform.hil.codeinsight
 
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.codeInsight.lookup.LookupElementBuilder.create
 import com.intellij.lang.Language
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.debug
@@ -13,12 +14,13 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.Constants
-import org.intellij.terraform.config.codeinsight.CompletionUtil.GlobalScopes
-import org.intellij.terraform.config.codeinsight.CompletionUtil.create
-import org.intellij.terraform.config.codeinsight.CompletionUtil.createScope
 import org.intellij.terraform.config.codeinsight.ModelHelper
+import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.GlobalScopes
+import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.createFunction
+import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.createScope
 import org.intellij.terraform.config.codeinsight.TerraformConfigCompletionContributor
 import org.intellij.terraform.config.codeinsight.TerraformConfigCompletionContributor.BlockTypeOrNameCompletionProvider.isProviderUsed
+import org.intellij.terraform.config.codeinsight.TerraformLookupElementRenderer
 import org.intellij.terraform.config.inspection.TFNoInterpolationsAllowedInspection.Companion.DependsOnProperty
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TerraformPatterns
@@ -130,7 +132,7 @@ class HILCompletionContributor : CompletionContributor() {
           return
         }
       }
-      result.addAllElements(TypeModelProvider.getModel(parent).functions.map { create(it) })
+      result.addAllElements(TypeModelProvider.getModel(parent).functions.map { createFunction(it) })
       result.addAllElements(GlobalScopes.map { createScope(it) })
       if (getProvisionerOrConnectionResource(parent) != null) result.addElement(createScope("self"))
 
@@ -428,7 +430,7 @@ class HILCompletionContributor : CompletionContributor() {
       }
       val properties = ModelHelper.getBlockProperties(r).filterKeys { it != Constants.HAS_DYNAMIC_ATTRIBUTES }
       val done = properties.keys.toSet()
-      found.addAll(properties.values.map { create(it) })
+      found.addAll(properties.values.map { create(it.name).withRenderer(TerraformLookupElementRenderer()) })
       val pl = r.`object`?.propertyList
       if (pl != null) {
         found.addAll(pl.map { it.name }.filter { it !in done }.map { create(it) })

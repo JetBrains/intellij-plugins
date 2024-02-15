@@ -4,6 +4,7 @@ package org.intellij.terraform.config.codeinsight
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.codeInsight.lookup.LookupElementBuilder.create
 import com.intellij.codeInsight.lookup.LookupElementWeigher
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.diagnostic.Logger
@@ -17,14 +18,13 @@ import com.intellij.util.Plow.Companion.toPlow
 import com.intellij.util.ProcessingContext
 import com.intellij.util.Processor
 import org.intellij.terraform.config.Constants
-import org.intellij.terraform.config.codeinsight.CompletionUtil.RootBlockSorted
-import org.intellij.terraform.config.codeinsight.CompletionUtil.create
-import org.intellij.terraform.config.codeinsight.CompletionUtil.createWithInsertHandler
-import org.intellij.terraform.config.codeinsight.CompletionUtil.dumpPsiFileModel
-import org.intellij.terraform.config.codeinsight.CompletionUtil.failIfInUnitTestsMode
-import org.intellij.terraform.config.codeinsight.CompletionUtil.getClearTextValue
-import org.intellij.terraform.config.codeinsight.CompletionUtil.getIncomplete
-import org.intellij.terraform.config.codeinsight.CompletionUtil.getOriginalObject
+import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.RootBlockSorted
+import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.createPropertyOrBlockType
+import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.dumpPsiFileModel
+import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.failIfInUnitTestsMode
+import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.getClearTextValue
+import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.getIncomplete
+import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.getOriginalObject
 import org.intellij.terraform.config.inspection.TFNoInterpolationsAllowedInspection.Companion.DependsOnProperty
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TerraformPatterns
@@ -230,7 +230,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       val leftNWS = position.getPrevSiblingNonWhiteSpace()
       LOG.debug { "TF.BlockKeywordCompletionProvider{position=$position, parent=$parent, left=${position.prevSibling}, lnws=$leftNWS}" }
       assert(getClearTextValue(leftNWS) == null, dumpPsiFileModel(position))
-      result.addAllElements(RootBlockSorted.map { createWithInsertHandler(it) })
+      result.addAllElements(RootBlockSorted.map { createPropertyOrBlockType(it) })
     }
   }
 
@@ -332,7 +332,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
             val valueBlock = PsiTreeUtil.getParentOfType(pob, HCLBlock::class.java) ?: return
             val property = ModelHelper.getBlockProperties(valueBlock).get(pob.name) as? PropertyType
             val defaultsOfProperty = property?.type?.validValues
-            defaultsOfProperty?.map { LookupElementBuilder.create(it) }?.let { result.addAllElements(it) }
+            defaultsOfProperty?.map { create(it) }?.let { result.addAllElements(it) }
             return
           }
           right = value.getType()
@@ -401,7 +401,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
             incomplete)))) || (it is BlockType)
         }
         .filter { it.configurable }
-        .map { createWithInsertHandler(it) }
+        .map { createPropertyOrBlockType(it) }
         .toList())
     }
 
@@ -429,7 +429,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       // TODO: Replace with 'ReferenceHint'
       if (property.name == "provider" && (type == "resource" || type == "data")) {
         val providers = property.getTerraformModule().getDefinedProviders()
-        result.addAllElements(providers.map { create(it.second) })
+        result.addAllElements(providers.map { create(it.second).withInsertHandler(QuoteInsertHandler) })
         return
       }
       if (DependsOnProperty.accepts(property) && inArray) {
@@ -450,13 +450,15 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
           else -> "unsupported"
         }
 
-        result.addAllElements(resources.asSequence().plus(datas).plus(modules).plus(variables).minus(current).map { create(it) }.toList())
+        result.addAllElements(resources.asSequence().plus(datas).plus(modules).plus(variables).minus(current).map {
+          create(it).withInsertHandler(QuoteInsertHandler)
+        }.toList())
         return
       }
       val prop = ModelHelper.getBlockProperties(block)[property.name] as? PropertyType
       val hint = prop?.hint ?: return
       if (hint is SimpleValueHint) {
-        result.addAllElements(hint.hint.map { create(it) })
+        result.addAllElements(hint.hint.map { create(it).withInsertHandler(QuoteInsertHandler) })
         return
       }
       if (hint is ReferenceHint) {
@@ -474,7 +476,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
               else -> null
             }
           }
-          .forEach { result.addElement(create(it)) }
+          .forEach { result.addElement(create(it).withInsertHandler(QuoteInsertHandler)) }
         return
       }
       // TODO: Support other hint types
@@ -500,7 +502,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
         else -> return
       }
       val variables = module.getAllVariables()
-      result.addAllElements(variables.map { create(it.name, false).withInsertHandler(ResourcePropertyInsertHandler) })
+      result.addAllElements(variables.map { create(it.name).withInsertHandler(ResourcePropertyInsertHandler) })
     }
   }
 

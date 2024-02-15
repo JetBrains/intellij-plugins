@@ -3,10 +3,10 @@ package org.intellij.terraform.hil.codeinsight
 
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.codeInsight.lookup.LookupElementBuilder.create
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentsOfType
 import com.intellij.util.ProcessingContext
-import org.intellij.terraform.config.codeinsight.CompletionUtil
 import org.intellij.terraform.config.codeinsight.TerraformConfigCompletionContributor
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.psi.HCLBlock
@@ -37,7 +37,7 @@ object ForEachIteratorCompletionProvider : TerraformConfigCompletionContributor.
     for (dynamic in dynamics) {
       val iteratorPropertyValue = dynamic.`object`?.findProperty("iterator")?.value as? HCLIdentifier
       val iterator = iteratorPropertyValue?.id ?: dynamic.name
-      result.addElement(CompletionUtil.create(iterator))
+      result.addElement(create(iterator))
     }
     return
   }

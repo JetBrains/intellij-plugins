@@ -24,69 +24,43 @@ import org.intellij.terraform.hil.codeinsight.ScopeSelectInsertHandler
 import org.intellij.terraform.nullize
 import java.util.*
 
-object CompletionUtil {
+object TerraformCompletionUtil {
   val Scopes: Set<String> = setOf("data", "var", "self", "path", "count", "terraform", "local", "module")
   val GlobalScopes: SortedSet<String> = sortedSetOf("var", "path", "data", "module", "local")
   val RootBlockKeywords: Set<String> = TypeModel.RootBlocks.map(BlockType::literal).toHashSet()
   val RootBlockSorted: List<BlockType> = TypeModel.RootBlocks.sortedBy { it.literal }
 
-  fun create(value: String): LookupElementBuilder {
-    return LookupElementBuilder.create(value)
-  }
+  fun createPropertyOrBlockType(value: PropertyOrBlockType, lookupString: String? = null): LookupElementBuilder =
+    LookupElementBuilder.create(value, lookupString ?: value.name)
+      .withRenderer(TerraformLookupElementRenderer())
+      .withInsertHandler(
+        when (value) {
+          is BlockType -> ResourceBlockNameInsertHandler(value)
+          is PropertyType -> ResourcePropertyInsertHandler
+          else -> null
+        }
+      )
 
-  fun createScope(value: String): LookupElementBuilder {
-    var builder = LookupElementBuilder.create(value)
-    builder = builder.withInsertHandler(ScopeSelectInsertHandler)
-    builder = builder.withRenderer(object : LookupElementRenderer<LookupElement?>() {
+  fun createScope(value: String): LookupElementBuilder = LookupElementBuilder.create(value)
+    .withInsertHandler(ScopeSelectInsertHandler)
+    .withRenderer(object : LookupElementRenderer<LookupElement?>() {
       override fun renderElement(element: LookupElement?, presentation: LookupElementPresentation?) {
         presentation?.icon = AllIcons.Nodes.Tag
         presentation?.itemText = element?.lookupString
       }
     })
-    return builder
-  }
 
-  fun create(f: Function): LookupElementBuilder {
-    var builder = LookupElementBuilder.create(f.name)
-    builder = builder.withInsertHandler(FunctionInsertHandler)
-    builder = builder.withRenderer(object : LookupElementRenderer<LookupElement?>() {
-      override fun renderElement(element: LookupElement?, presentation: LookupElementPresentation?) {
-        presentation?.icon = AllIcons.Nodes.Method // or Function
-        presentation?.itemText = element?.lookupString
-      }
-    })
-    return builder
-  }
+  fun createFunction(function: Function): LookupElementBuilder = LookupElementBuilder.create(function.name)
+    .withInsertHandler(FunctionInsertHandler)
+    .withRenderer(
+      object : LookupElementRenderer<LookupElement?>() {
+        override fun renderElement(element: LookupElement?, presentation: LookupElementPresentation?) {
+          presentation?.icon = AllIcons.Nodes.Method // or Function
+          presentation?.itemText = element?.lookupString
+        }
+      })
 
-  fun create(value: PropertyOrBlockType, lookupString: String? = null): LookupElementBuilder {
-    var builder = LookupElementBuilder.create(lookupString ?: value.name)
-    builder = builder.withRenderer(TerraformLookupElementRenderer())
-    return builder
-  }
-
-  fun dumpPsiFileModel(element: PsiElement): () -> String {
-    return { DebugUtil.psiToString(element.containingFile, true) }
-  }
-
-  fun create(value: String, quote: Boolean = true): LookupElementBuilder {
-    var builder = LookupElementBuilder.create(value)
-    if (quote) {
-      builder = builder.withInsertHandler(QuoteInsertHandler)
-    }
-    return builder
-  }
-
-  fun createWithInsertHandler(value: PropertyOrBlockType, lookupString: String? = null): LookupElementBuilder {
-    var builder = LookupElementBuilder.create(value, lookupString ?: value.name)
-    builder = builder.withRenderer(TerraformLookupElementRenderer())
-    if (value is BlockType) {
-      builder = builder.withInsertHandler(ResourceBlockNameInsertHandler(value))
-    }
-    else if (value is PropertyType) {
-      builder = builder.withInsertHandler(ResourcePropertyInsertHandler)
-    }
-    return builder
-  }
+  fun dumpPsiFileModel(element: PsiElement): () -> String = { DebugUtil.psiToString(element.containingFile, true) }
 
   fun failIfInUnitTestsMode(position: PsiElement, addition: String? = null) {
     TerraformConfigCompletionContributor.LOG.assertTrue(!ApplicationManager.getApplication().isUnitTestMode, {
@@ -104,15 +78,13 @@ object CompletionUtil {
     return originalObject as? HCLObject ?: obj
   }
 
-  fun getClearTextValue(element: PsiElement?): String? {
-    return when {
-      element == null -> null
-      element is HCLIdentifier -> element.id
-      element is HCLStringLiteral -> element.value
-      element.node?.elementType == HCLElementTypes.ID -> element.text
-      HCLTokenTypes.STRING_LITERALS.contains(element.node?.elementType) -> HCLPsiUtil.stripQuotes(element.text)
-      else -> return null
-    }
+  fun getClearTextValue(element: PsiElement?): String? = when {
+    element == null -> null
+    element is HCLIdentifier -> element.id
+    element is HCLStringLiteral -> element.value
+    element.node?.elementType == HCLElementTypes.ID -> element.text
+    HCLTokenTypes.STRING_LITERALS.contains(element.node?.elementType) -> HCLPsiUtil.stripQuotes(element.text)
+    else -> null
   }
 
   fun getIncomplete(parameters: CompletionParameters): String? {

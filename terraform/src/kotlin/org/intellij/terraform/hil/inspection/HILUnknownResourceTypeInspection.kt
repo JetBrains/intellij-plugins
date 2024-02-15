@@ -9,7 +9,7 @@ import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.psi.PsiElementVisitor
 import org.intellij.terraform.config.TerraformFileType
-import org.intellij.terraform.config.codeinsight.CompletionUtil
+import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil
 import org.intellij.terraform.config.model.getTerraformModule
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.HCLBundle
@@ -37,7 +37,7 @@ class HILUnknownResourceTypeInspection : LocalInspectionTool() {
 
       val name = element.name ?: return
 
-      if (CompletionUtil.Scopes.contains(name)) return
+      if (TerraformCompletionUtil.Scopes.contains(name)) return
       if (isExistingResourceType(element, host)) return
 
       if (DynamicBlockVariableReferenceProvider.getDynamicWithIteratorName(host, name) != null) return

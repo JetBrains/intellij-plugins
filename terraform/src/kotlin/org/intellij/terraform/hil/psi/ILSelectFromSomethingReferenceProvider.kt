@@ -10,8 +10,8 @@ import com.intellij.util.SmartList
 import com.intellij.util.asSafely
 import com.intellij.util.containers.addIfNotNull
 import org.intellij.terraform.config.Constants
-import org.intellij.terraform.config.codeinsight.CompletionUtil
 import org.intellij.terraform.config.codeinsight.ModelHelper
+import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.navigation.HCLQualifiedNameProvider
@@ -34,7 +34,7 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
 
     val parent = element.parent as? SelectExpression<*> ?: return PsiReference.EMPTY_ARRAY
 
-    if (parent.from === element && name in CompletionUtil.Scopes) return PsiReference.EMPTY_ARRAY
+    if (parent.from === element && name in TerraformCompletionUtil.Scopes) return PsiReference.EMPTY_ARRAY
 
     if (HCLPsiUtil.isPartOfPropertyKey(element)) return PsiReference.EMPTY_ARRAY
 

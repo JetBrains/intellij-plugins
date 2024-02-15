@@ -10,7 +10,7 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
-import org.intellij.terraform.config.codeinsight.CompletionUtil
+import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLElementTypes
 import org.intellij.terraform.hcl.psi.HCLFile
@@ -77,7 +77,7 @@ class HILVariableAnnotator : Annotator {
   }
 
   private fun annotateLeftmostInSelection(element: Identifier, holder: AnnotationHolder) {
-    if (CompletionUtil.Scopes.contains(element.name)) {
+    if (TerraformCompletionUtil.Scopes.contains(element.name)) {
       createInfo(holder, "global scope", HILSyntaxHighlighterFactory.TIL_PREDEFINED_SCOPE)
     } else {
       createInfo(holder, "resource type reference", HILSyntaxHighlighterFactory.TIL_RESOURCE_TYPE_REFERENCE)
@@ -89,13 +89,13 @@ class HILVariableAnnotator : Annotator {
 fun isScopeElementReference(element: Identifier, parent: SelectExpression<*>): Boolean {
   val left = getGoodLeftElement(parent, element, false) as? Identifier ?: return false
   val lp = left.parent as? SelectExpression<*> ?: return false
-  return (left === lp.from) && CompletionUtil.Scopes.contains(left.name)
+  return (left === lp.from) && TerraformCompletionUtil.Scopes.contains(left.name)
 }
 
 fun isResourceInstanceReference(element: Identifier, parent: SelectExpression<*>): Boolean {
   val left = getGoodLeftElement(parent, element, false) as? Identifier ?: return false
   val lp = left.parent as? SelectExpression<*> ?: return false
-  return (left === lp.from) && !CompletionUtil.Scopes.contains(left.name)
+  return (left === lp.from) && !TerraformCompletionUtil.Scopes.contains(left.name)
 }
 
 fun isResourcePropertyReference(element: Identifier, parent: SelectExpression<*>): Boolean {

@@ -7,7 +7,7 @@ import com.intellij.patterns.PsiElementPattern.Capture
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentsOfType
 import com.intellij.util.ProcessingContext
-import org.intellij.terraform.config.codeinsight.CompletionUtil.Scopes
+import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.Scopes
 import org.intellij.terraform.config.inspection.TFNoInterpolationsAllowedInspection
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.HCLLanguage

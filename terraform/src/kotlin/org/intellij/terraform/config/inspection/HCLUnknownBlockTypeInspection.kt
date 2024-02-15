@@ -17,8 +17,8 @@ import com.intellij.psi.PsiParserFacade
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.util.PsiTreeUtil
 import org.intellij.terraform.config.TerraformFileType
-import org.intellij.terraform.config.codeinsight.CompletionUtil
 import org.intellij.terraform.config.codeinsight.ModelHelper
+import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil
 import org.intellij.terraform.config.model.BlockType
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.HCLBundle
@@ -51,7 +51,7 @@ class HCLUnknownBlockTypeInspection : LocalInspectionTool() {
     ProgressIndicatorProvider.checkCanceled()
     when (parent) {
       is HCLFile -> {
-        if (CompletionUtil.RootBlockKeywords.contains(type)) return
+        if (TerraformCompletionUtil.RootBlockKeywords.contains(type)) return
         holder.registerProblem(block.nameElements.first(),
                                HCLBundle.message("unknown.block.type.inspection.unknown.block.type.error.message", type),
                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
@@ -66,7 +66,7 @@ class HCLUnknownBlockTypeInspection : LocalInspectionTool() {
         if (properties[type] is BlockType) return
 
         // Check for non-closed root block (issue #93)
-        if (TerraformPatterns.RootBlock.accepts(parent) && CompletionUtil.RootBlockKeywords.contains(type)) {
+        if (TerraformPatterns.RootBlock.accepts(parent) && TerraformCompletionUtil.RootBlockKeywords.contains(type)) {
           holder.registerProblem(block.nameElements.first(),
                                  HCLBundle.message("unknown.block.type.inspection.missing.closing.brace.error.message"),
                                  ProblemHighlightType.GENERIC_ERROR, AddClosingBraceFix(block.nameElements.first()))

@@ -3,13 +3,13 @@ package org.intellij.terraform.hil.psi
 
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.codeInsight.lookup.LookupElementBuilder.create
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceProvider
 import com.intellij.util.ProcessingContext
-import org.intellij.terraform.config.codeinsight.CompletionUtil
 import org.intellij.terraform.config.codeinsight.TerraformConfigCompletionContributor
 import org.intellij.terraform.hcl.psi.HCLElement
 import org.intellij.terraform.hcl.psi.HCLForExpression
@@ -44,7 +44,7 @@ class ForVariableCompletion : TerraformConfigCompletionContributor.OurCompletion
       .flatMap { it.intro.identifiers }
       .mapNotNull { it.name }
       .forEach {
-        result.addElement(CompletionUtil.create(it))
+        result.addElement(create(it))
       }
   }
 }
