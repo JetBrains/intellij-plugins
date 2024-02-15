@@ -38,19 +38,6 @@ import kotlin.coroutines.cancellation.CancellationException
 
 abstract class TFExternalToolsAction : DumbAwareAction() {
 
-  private fun error(title: @Nls String, project: Project, ex: Exception?) {
-    TerraformConstants.EXECUTION_NOTIFICATION_GROUP
-      .createNotification(
-        title,
-        @Suppress("HardCodedStringLiteral")
-        generateSequence<Throwable>(ex) { it.cause }
-          .mapNotNull { it.message }
-          .distinct()
-          .joinToString("\n"),
-        NotificationType.ERROR
-      ).notify(project)
-  }
-
   private fun isAvailableOnFile(file: VirtualFile, checkDirChildren: Boolean, onlyTerraformFileType: Boolean): Boolean {
     if (!file.isInLocalFileSystem) return false
     if (file.isDirectory) {
@@ -97,7 +84,7 @@ abstract class TFExternalToolsAction : DumbAwareAction() {
       }
       catch (ex: Exception) {
         if (ex is CancellationException) throw ex
-        error(title, project, ex)
+        notifyError(title, project, ex)
         LOG.error(ex)
       }
     }
@@ -114,4 +101,17 @@ abstract class TFExternalToolsAction : DumbAwareAction() {
 
   @Service(Service.Level.PROJECT)
   private class CoroutineScopeProvider(val coroutineScope: CoroutineScope)
+}
+
+internal fun notifyError(title: @Nls String, project: Project, ex: Exception?) {
+  TerraformConstants.EXECUTION_NOTIFICATION_GROUP
+    .createNotification(
+      title,
+      @Suppress("HardCodedStringLiteral")
+      generateSequence<Throwable>(ex) { it.cause }
+        .mapNotNull { it.message }
+        .distinct()
+        .joinToString("\n"),
+      NotificationType.ERROR
+    ).notify(project)
 }

@@ -86,15 +86,18 @@ abstract class TerraformInspectionFixtureTestCase : InspectionFixtureTestCase() 
   }
 
   //TODO: Fix preview
-  private val skipPreview = setOf("Add variable 'x'",
-                                  "Add closing braces before element",
-                                  "Rename output",
-                                  "Convert to HCL2 expression",
-                                  "Rename variable")
+  private val skipPreview = setOf(
+    "Add variable 'x'",
+    "Add closing braces before element",
+    "Rename output",
+    "Convert to HCL2 expression",
+    "Rename variable",
+    "Run Terraform init",
+  )
 
   open fun skipCheckPreview(intentionAction: IntentionAction): Boolean = intentionAction.text in skipPreview
 
-  private val skipQuickFix = setOf("Save  to dictionary", "Navigate to  duplicate", "View duplicates like this")
+  private val skipQuickFix = setOf("Save  to dictionary", "Navigate to  duplicate", "View duplicates like this", "Run Terraform init")
 
   open fun skipQuickFix(intentionAction: IntentionAction): Boolean = intentionAction.text in skipQuickFix
 

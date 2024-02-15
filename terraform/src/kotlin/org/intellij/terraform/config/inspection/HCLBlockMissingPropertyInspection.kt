@@ -10,7 +10,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.TokenType
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.containers.toArray
 import org.intellij.terraform.config.TerraformFileType
+import org.intellij.terraform.config.actions.TFInitRequiredAction
 import org.intellij.terraform.config.codeinsight.ModelHelper
 import org.intellij.terraform.config.codeinsight.ResourcePropertyInsertHandler
 import org.intellij.terraform.config.model.*
@@ -86,7 +88,8 @@ class HCLBlockMissingPropertyInspection : LocalInspectionTool() {
     for (it in obj.blockList) {
       if (DynamicBlock.accepts(it)) {
         all.add(it.name)
-      } else {
+      }
+      else {
         all.add(it.fullName)
       }
     }
@@ -111,7 +114,8 @@ class HCLBlockMissingPropertyInspection : LocalInspectionTool() {
         required.joinToString(", ") { it.name }
       ),
       ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-      AddResourcePropertiesFix(required)
+      *listOfNotNull(AddResourcePropertiesFix(required), TFInitRequiredAction.createQuickFixNotInitialized(block))
+        .toArray(LocalQuickFix.EMPTY_ARRAY)
     )
   }
 
@@ -148,7 +152,8 @@ class AddResourcePropertiesFix(@SafeFieldForPreview val add: Collection<Property
           value = ResourcePropertyInsertHandler.getProposedValueFromModelAndHint(it, element.getTerraformModule())?.first ?: value
 
           generator.createProperty(it.name, value)
-        } else generator.createBlock(it.name)
+        }
+        else generator.createBlock(it.name)
       }
       for (it in elements) {
         obj.addBefore(it, obj.lastChild)

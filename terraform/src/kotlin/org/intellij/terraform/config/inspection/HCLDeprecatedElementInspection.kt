@@ -2,19 +2,22 @@
 package org.intellij.terraform.config.inspection
 
 import com.intellij.codeInspection.LocalInspectionTool
+import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.PsiElementVisitor
-import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.hcl.psi.HCLBlock
-import org.intellij.terraform.hcl.psi.HCLElementVisitor
-import org.intellij.terraform.hcl.psi.getNameElementUnquoted
+import com.intellij.util.containers.toArray
 import org.intellij.terraform.config.TerraformFileType
+import org.intellij.terraform.config.actions.TFInitRequiredAction
 import org.intellij.terraform.config.codeinsight.ModelHelper
 import org.intellij.terraform.config.model.BlockType
 import org.intellij.terraform.config.model.PropertyOrBlockType
 import org.intellij.terraform.config.model.PropertyType
+import org.intellij.terraform.hcl.HCLBundle
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLElementVisitor
+import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 
 class HCLDeprecatedElementInspection : LocalInspectionTool() {
 
@@ -55,7 +58,8 @@ class HCLDeprecatedElementInspection : LocalInspectionTool() {
           HCLBundle.message(
             "deprecated.element.inspection.deprecated.property.error.message", name, reason,
             if (reason.isNotEmpty()) 0 else 1),
-          ProblemHighlightType.LIKE_DEPRECATED
+          ProblemHighlightType.LIKE_DEPRECATED,
+          *listOfNotNull(TFInitRequiredAction.createQuickFixNotInitialized(block)).toArray(LocalQuickFix.EMPTY_ARRAY)
         )
       }
     }

@@ -12,13 +12,16 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceOwner
+import com.intellij.util.containers.addIfNotNull
+import com.intellij.util.containers.toArray
+import org.intellij.terraform.config.TerraformFileType
+import org.intellij.terraform.config.TerraformLanguage
+import org.intellij.terraform.config.actions.TFInitRequiredAction
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.hcl.psi.HCLPsiUtil
 import org.intellij.terraform.hcl.psi.common.Identifier
 import org.intellij.terraform.hcl.psi.common.SelectExpression
-import org.intellij.terraform.config.TerraformFileType
-import org.intellij.terraform.config.TerraformLanguage
 import org.intellij.terraform.hil.HILLanguage
 import org.intellij.terraform.hil.codeinsight.isResourceInstanceReference
 import org.intellij.terraform.hil.codeinsight.isResourcePropertyReference
@@ -93,11 +96,14 @@ class HILUnresolvedReferenceInspection : LocalInspectionTool() {
               ", start offset: " + referenceRange.startOffset + ", end offset: " + referenceRange.endOffset)
         }
 
-        var fixes: Array<out LocalQuickFix> = emptyArray()
-        if (reference is LocalQuickFixProvider) {
-          reference.quickFixes?.let { fixes = it }
+        val fixes = buildList {
+          if (reference is LocalQuickFixProvider) {
+            addAll(reference.quickFixes.orEmpty())
+          }
+          addIfNotNull(TFInitRequiredAction.createQuickFixNotInitialized(reference.element))
         }
-        holder.registerProblem(value, description, ProblemHighlightType.LIKE_UNKNOWN_SYMBOL, referenceRange/*.shiftRight(startOffset)*/, *fixes)
+
+        holder.registerProblem(value, description, ProblemHighlightType.LIKE_UNKNOWN_SYMBOL, referenceRange/*.shiftRight(startOffset)*/, *fixes.toArray(LocalQuickFix.EMPTY_ARRAY))
       }
     }
   }

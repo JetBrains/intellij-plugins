@@ -2,19 +2,18 @@
 package org.intellij.terraform.config.actions
 
 import com.intellij.notification.NotificationType
-import com.intellij.openapi.components.service
 import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import kotlinx.coroutines.CancellationException
 import org.intellij.terraform.config.TerraformConstants
 import org.intellij.terraform.config.model.local.LocalSchemaService
 import org.intellij.terraform.hcl.HCLBundle
+import org.jetbrains.annotations.Nls
 
 class TFGenerateLocalMetadataAction : TFExternalToolsAction() {
 
-  override suspend fun invoke(project: Project, module: Module?, title: String, virtualFile: VirtualFile) {
+  override suspend fun invoke(project: Project, module: Module?, @Nls title: String, virtualFile: VirtualFile) {
     val localSchemaService = project.serviceAsync<LocalSchemaService>()
     val lockFile = localSchemaService.findLockFile(virtualFile)
     if (lockFile == null) {
@@ -28,6 +27,12 @@ class TFGenerateLocalMetadataAction : TFExternalToolsAction() {
     }
     localSchemaService.clearLocalModel(lockFile)
     localSchemaService.scheduleModelRebuild(setOf(lockFile)).await()
+    TerraformConstants.EXECUTION_NOTIFICATION_GROUP
+      .createNotification(
+        title,
+        HCLBundle.message("notification.content.local.model.has.been.generated.successfully"),
+        NotificationType.INFORMATION
+      ).notify(project)
   }
 
 }

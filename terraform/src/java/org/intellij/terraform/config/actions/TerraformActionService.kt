@@ -3,16 +3,19 @@ package org.intellij.terraform.config.actions
 
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.ide.progress.withBackgroundProgress
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.intellij.terraform.config.TerraformConstants
+import org.intellij.terraform.config.model.local.LocalSchemaService
 import org.intellij.terraform.config.util.TFExecutor
 import org.intellij.terraform.config.util.executeSuspendable
 import org.intellij.terraform.hcl.HCLBundle
@@ -36,10 +39,29 @@ internal class TerraformActionService(private val project: Project, private val 
           ).notify(project)
         return@launch
       }
-      val success = withBackgroundProgress(project, title) {
-        runTerraformInit(dirFile, project, module = null, title)
+      initTerraform(dirFile, title)
+    }
+  }
+
+  fun scheduleTerraformInit(dirFile: VirtualFile): Job {
+    return coroutineScope.launch {
+      initTerraform(dirFile, HCLBundle.message("progress.title.terraform.init"))
+    }
+  }
+
+  suspend fun initTerraform(dirFile: VirtualFile, title: @Nls String) {
+    withBackgroundProgress(project, title) {
+      if (!execTerraformInit(dirFile, project, module = null, title)) {
+        TerraformConstants.EXECUTION_NOTIFICATION_GROUP
+          .createNotification(
+            title,
+            HCLBundle.message("notification.content.terraform.init.failed"),
+            NotificationType.WARNING
+          ).notify(project)
+        return@withBackgroundProgress
       }
-      if (success) {
+      try {
+        project.service<LocalSchemaService>().scheduleModelRebuild(setOf(dirFile)).await()
         TerraformConstants.EXECUTION_NOTIFICATION_GROUP
           .createNotification(
             title,
@@ -47,21 +69,17 @@ internal class TerraformActionService(private val project: Project, private val 
             NotificationType.INFORMATION
           ).notify(project)
       }
-      else {
-        TerraformConstants.EXECUTION_NOTIFICATION_GROUP
-          .createNotification(
-            title,
-            HCLBundle.message("notification.content.terraform.init.failed"),
-            NotificationType.WARNING
-          ).notify(project)
+      catch (e: Exception) {
+        if (e is CancellationException) throw e
+        notifyError(title, project, e)
       }
     }
   }
 
-  suspend fun runTerraformInit(virtualFile: VirtualFile,
-                               project: Project,
-                               module: Module?,
-                               title: @Nls String): Boolean {
+  private suspend fun execTerraformInit(virtualFile: VirtualFile,
+                                        project: Project,
+                                        module: Module?,
+                                        title: @Nls String): Boolean {
     val directory = if (virtualFile.isDirectory) virtualFile else virtualFile.parent
     val success = TFExecutor.`in`(project, module)
       .withPresentableName(title)

@@ -132,7 +132,7 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
 
   fun scheduleModelRebuild(virtualFiles: Set<VirtualFile>): Deferred<*> {
     val scheduled = mutableListOf<Deferred<*>>()
-    val locks = virtualFiles.mapNotNull { findLockFile(it) }
+    val locks = virtualFiles.mapNotNullTo(mutableSetOf()) { findLockFile(it) }
     for (lock in locks) {
       modelComputationCache[lock]?.cancel()
       if (lock.exists()) {

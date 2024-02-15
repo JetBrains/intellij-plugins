@@ -16,7 +16,9 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.containers.toArray
 import org.intellij.terraform.config.TerraformFileType
+import org.intellij.terraform.config.actions.TFInitRequiredAction
 import org.intellij.terraform.config.model.ModuleDetectionUtil
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.HCLBundle
@@ -67,7 +69,10 @@ class TFMissingModuleInspection : LocalInspectionTool() {
     ProgressIndicatorProvider.checkCanceled()
 
     holder.registerProblem(block, HCLBundle.message("missing.module.inspection.missing.module.error.message", err),
-                           ProblemHighlightType.GENERIC_ERROR_OR_WARNING, RunTerraformGetFix(directory.name))
+                           ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                           *listOfNotNull(RunTerraformGetFix(directory.name),
+                                          TFInitRequiredAction.createQuickFixNotInitialized(block)).toArray(LocalQuickFix.EMPTY_ARRAY)
+    )
   }
 }
 
@@ -100,7 +105,8 @@ class RunTerraformGetFix(private val directoryName: String) : LocalQuickFix {
 
     try {
       ExecutionEnvironmentBuilder.create(DefaultRunExecutor.getRunExecutorInstance(), configurationSettings).buildAndExecute()
-    } catch (e: ExecutionException) {
+    }
+    catch (e: ExecutionException) {
       LOG.warn("Failed to run 'terraform get': ${e.message}", e)
       Messages.showMessageDialog(project,
                                  HCLBundle.message("missing.module.inspection.ru.terraform.get.quick.fix.failure.message", e.message),

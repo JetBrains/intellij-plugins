@@ -2,13 +2,16 @@
 package org.intellij.terraform.hil.inspection
 
 import com.intellij.codeInspection.LocalInspectionTool
+import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.util.containers.toArray
 import org.intellij.terraform.config.TerraformFileType
+import org.intellij.terraform.config.actions.TFInitRequiredAction
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil
 import org.intellij.terraform.config.model.getTerraformModule
 import org.intellij.terraform.config.patterns.TerraformPatterns
@@ -52,7 +55,8 @@ class HILUnknownResourceTypeInspection : LocalInspectionTool() {
       if (element.references.any { it is ForVariableDirectReference && it.resolve() != null }) return
 
       holder.registerProblem(element, HCLBundle.message("hil.unknown.resource.type.inspection.unknown.resource.type.error.message"),
-                             ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
+                             ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                             *listOfNotNull(TFInitRequiredAction.createQuickFixNotInitialized(element)).toArray(LocalQuickFix.EMPTY_ARRAY))
     }
   }
 
