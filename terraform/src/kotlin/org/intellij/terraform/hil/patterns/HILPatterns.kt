@@ -19,36 +19,30 @@ import org.intellij.terraform.hil.HILLanguage
 import org.intellij.terraform.hil.codeinsight.withLanguages
 
 object HILPatterns {
+  private val InVariableBlock: PatternCondition<HCLElement?> = object : PatternCondition<HCLElement?>("In Variable block") {
+    override fun accepts(t: HCLElement, context: ProcessingContext?): Boolean {
+      val topmost = t.parentsOfType(HCLBlock::class.java).lastOrNull() ?: return false
+      return TerraformPatterns.VariableRootBlock.accepts(topmost)
+    }
+  }
+
+  private val NotBlockIdentifier = object : PatternCondition<Identifier?>("Not a Block Identifier") {
+    override fun accepts(t: Identifier, context: ProcessingContext?): Boolean {
+      return t.parent !is HCLBlock
+    }
+  }
+
   val MethodPosition: Capture<PsiElement> = PlatformPatterns.psiElement().withLanguages(HILLanguage, HCLLanguage).withParent(
-    PlatformPatterns.psiElement(Identifier::class.java).with(
-      object : PatternCondition<Identifier?>("Not a Block Identifier") {
-        override fun accepts(t: Identifier, context: ProcessingContext?): Boolean {
-          return t.parent !is HCLBlock
-        }
-      })
-      .withHCLHost(PlatformPatterns.psiElement(HCLElement::class.java).with(
-        object : PatternCondition<HCLElement?>("Not in Variable block") {
-          override fun accepts(t: HCLElement, context: ProcessingContext?): Boolean {
-            val topmost = t.parentsOfType(HCLBlock::class.java).lastOrNull() ?: return true
-            return !TerraformPatterns.VariableRootBlock.accepts(topmost)
-          }
-        }).andNot(PlatformPatterns.psiElement().inside(TFNoInterpolationsAllowedInspection.DependsOnProperty)))
+    PlatformPatterns.psiElement(Identifier::class.java).with(NotBlockIdentifier).withHCLHost(
+      PlatformPatterns.psiElement(HCLElement::class.java).without(InVariableBlock).andNot(
+        PlatformPatterns.psiElement().inside(TFNoInterpolationsAllowedInspection.DependsOnProperty))
+    )
   ).andNot(PlatformPatterns.psiElement().withSuperParent(2, SelectExpression::class.java))
 
   val VariableTypePosition: Capture<PsiElement> = PlatformPatterns.psiElement().withLanguages(HCLLanguage)
-    .withParent(PlatformPatterns.psiElement(HCLIdentifier::class.java).with(
-      object : PatternCondition<HCLIdentifier?>("Not a Block Identifier") {
-        override fun accepts(t: HCLIdentifier, context: ProcessingContext?): Boolean {
-          return t.parent !is HCLBlock
-        }
-      }).with(
-      object : PatternCondition<HCLElement?>("In Variable block") {
-        override fun accepts(t: HCLElement, context: ProcessingContext?): Boolean {
-          val topmost = t.parentsOfType(HCLBlock::class.java).lastOrNull() ?: return false
-          return TerraformPatterns.VariableRootBlock.accepts(topmost)
-        }
-      }
-    )).andNot(PlatformPatterns.psiElement().withSuperParent(2, SelectExpression::class.java))
+    .withParent(PlatformPatterns.psiElement(HCLIdentifier::class.java).with(NotBlockIdentifier).with(InVariableBlock)).andNot(
+      PlatformPatterns.psiElement().withSuperParent(2, SelectExpression::class.java)
+    )
 
   val ForEachIteratorPosition: Capture<PsiElement> = PlatformPatterns.psiElement().withLanguages(HILLanguage, HCLLanguage)
     .withParent(PlatformPatterns.psiElement(Identifier::class.java).withHCLHost(
