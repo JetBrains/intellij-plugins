@@ -53,10 +53,10 @@ class Angular2HtmlBlocksTypedHandler : TypedHandlerDelegate() {
       val offset = editor.caretModel.offset
       if (offset >= 2) {
         val iterator = editor.highlighter.createIterator(offset - 2)
-        while (JSExtendedLanguagesTokenSetProvider.WHITE_SPACES.contains(iterator.tokenType)) {
+        while (!iterator.atEnd() && JSExtendedLanguagesTokenSetProvider.WHITE_SPACES.contains(iterator.tokenType)) {
           iterator.retreat()
         }
-        if (iterator.tokenType == Angular2HtmlTokenTypes.BLOCK_NAME) {
+        if (!iterator.atEnd() && iterator.tokenType == Angular2HtmlTokenTypes.BLOCK_NAME) {
           val fwdIterator = editor.highlighter.createIterator(offset)
           if (!fwdIterator.atEnd() && fwdIterator.tokenType == JSTokenTypes.LT) {
             editor.document.insertString(offset, ")")
