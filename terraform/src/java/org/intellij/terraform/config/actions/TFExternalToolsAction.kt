@@ -15,7 +15,6 @@
  */
 package org.intellij.terraform.config.actions
 
-import com.intellij.execution.ExecutionException
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -28,14 +27,11 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.ExceptionUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.intellij.terraform.config.TerraformConstants
 import org.intellij.terraform.config.TerraformFileType
-import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLFileType
 import org.jetbrains.annotations.Nls
 import kotlin.coroutines.cancellation.CancellationException
@@ -90,11 +86,11 @@ abstract class TFExternalToolsAction : DumbAwareAction() {
      = project.service<CoroutineScopeProvider>().coroutineScope
 
   override fun actionPerformed(e: AnActionEvent) {
-    val project = e.project
-    val file = e.getRequiredData(CommonDataKeys.VIRTUAL_FILE)
+    val project = e.project ?: return
+    val file = e.getData(CommonDataKeys.VIRTUAL_FILE) ?: return
     val title = e.presentation.text ?: "Processing..."
 
-    val module = ModuleUtilCore.findModuleForFile(file, project!!)
+    val module = ModuleUtilCore.findModuleForFile(file, project)
     getActionCoroutineScope(project).launch {
       try {
         invoke(project, module, title, file)
