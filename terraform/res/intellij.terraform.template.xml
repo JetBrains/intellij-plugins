@@ -1,0 +1,31 @@
+<idea-plugin package="org.intellij.terraform.template">
+  <dependencies>
+    <plugin id="com.intellij.modules.idea.ultimate"/>
+    <plugin id="com.intellij.modules.lang"/>
+  </dependencies>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <fileType name="Terraform Template"
+              language="TFTPL"
+              implementationClass="org.intellij.terraform.template.TerraformTemplateFileType"
+              fieldName="INSTANCE"
+              extensions="tftpl"/>
+    <lang.parserDefinition language="TFTPL"
+                           implementationClass="org.intellij.terraform.template.psi.TerraformTemplateParserDefinition"/>
+    <lang.fileViewProviderFactory language="TFTPL"
+                                  implementationClass="org.intellij.terraform.template.TftplFileViewProviderFactory"/>
+    <lang.syntaxHighlighterFactory language="TFTPL"
+                                   implementationClass="org.intellij.terraform.template.editor.TerraformTemplateSyntaxHighlightingFactory"/>
+    <completion.contributor language="HIL"
+                            implementationClass="org.intellij.terraform.template.editor.HilTemplateCompletionContributor"/>
+    <completion.contributor language="HIL"
+                            implementationClass="org.intellij.terraform.template.editor.InjectedHilTemplateCompletionContributor"/>
+
+    <completion.contributor language="HCL"
+                            implementationClass="org.intellij.terraform.template.editor.TerraformTemplateCompletionContributor"/>
+    <lang.foldingBuilder language="TFTPL" implementationClass="org.intellij.terraform.template.editor.TerraformTemplateFoldingBuilder"/>
+    <liveTemplateContext contextId="TFTPL_TEMPLATE" implementation="org.intellij.terraform.template.editor.TerraformTemplateContextType"/>
+    <defaultLiveTemplates file="liveTemplates/terraformTemplate.xml"/>
+    <gotoDeclarationHandler implementation="org.intellij.terraform.template.editor.TerraformTemplateVariableGoToDeclarationHandler"/>
+  </extensions>
+</idea-plugin>

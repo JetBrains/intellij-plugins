@@ -65,6 +65,7 @@
 
   <content>
     <module name="intellij.terraform/watchers"/>
+    <module name="intellij.terraform/template"/>
   </content>
 
   <dependencies>
@@ -184,6 +185,7 @@
     <useScopeEnlarger implementation="org.intellij.terraform.config.OutputsAndVariablesBlocksUseScopeEnlarger"/>
 
     <psi.referenceContributor language="HCL" implementation="org.intellij.terraform.config.psi.TerraformReferenceContributor"/>
+    <psi.referenceContributor language="HCL" implementation="org.intellij.terraform.config.codeinsight.HclFileReferenceContributor"/>
     <lang.documentationProvider language="HCL" implementationClass="org.intellij.terraform.config.TerraformDocumentationProvider"/>
 
     <statementUpDownMover implementation="org.intellij.terraform.config.HCLStatementMover" id="HCL_SM" order="before line"/>
