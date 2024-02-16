@@ -118,7 +118,12 @@ STRING_ELEMENT=([^\"\'\$\{\}\\]|\\[^\r\n\\])+
   "true"                      { return TRUE; }
   "false"                     { return FALSE; }
   "null"                      { return NULL; }
-
+  "for"                       { return FOR_KEYWORD; }
+  "in"                        { return IN_KEYWORD; }
+  "endfor"                    { return ENDFOR_KEYWORD; }
+  "if"                        { return IF_KEYWORD; }
+  "else"                      { return ELSE_KEYWORD; }
+  "endif"                     { return ENDIF_KEYWORD; }
   {NUMBER}                    { return NUMBER; }
   {ID}                        { return ID; }
 
