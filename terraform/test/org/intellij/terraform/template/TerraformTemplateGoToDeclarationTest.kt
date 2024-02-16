@@ -76,8 +76,7 @@ class TerraformTemplateGoToDeclarationTest : BasePlatformTestCase() {
     Assert.assertEquals(expectedTarget, actualTarget)
   }
 
-  //todo test claims that there is no progress indicator during reference resolve that happens inside GTD handler
-  fun `ignored test gtd for variables passed to template function via reference`() {
+  fun `test gtd for variables passed to template function via reference`() {
     val terraformFile = myFixture.addFileToProject("main.tf", """
       resource "resource" "example" {
         content = templatefile("test.tftpl", var.fromReference)
