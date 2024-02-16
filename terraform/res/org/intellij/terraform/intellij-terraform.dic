@@ -84,6 +84,7 @@ split
 strrev
 substr
 templatefile
+tftpl
 timeadd
 timestamp
 title

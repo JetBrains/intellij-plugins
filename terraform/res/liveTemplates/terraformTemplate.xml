@@ -1,0 +1,15 @@
+<templateSet group="Terraform Template">
+  <template name="for" value="%{~ for $LOOP_VARIABLE$ in $PROVIDED_VARIABLE$ ~}&#10;  $END$&#10;%{~ endfor ~}" description=".tftpl FOR loop" toReformat="false" toShortenFQNames="false">
+    <variable name="LOOP_VARIABLE" expression="" defaultValue="variable" alwaysStopAt="true" />
+    <variable name="PROVIDED_VARIABLE" expression="complete()" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="TFTPL_TEMPLATE" value="true"/>
+    </context>
+  </template>
+  <template name="if" value="%{~ if $CONDITION_EXPRESSION$ ~}&#10;  $END$&#10;%{~ endif ~}" description=".tftpl IF condition" toReformat="false" toShortenFQNames="false">
+    <variable name="CONDITION_EXPRESSION" expression="complete()" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="TFTPL_TEMPLATE" value="true" />
+    </context>
+  </template>
+</templateSet>

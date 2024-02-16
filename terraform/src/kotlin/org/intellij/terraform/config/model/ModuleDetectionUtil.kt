@@ -480,7 +480,7 @@ fun getVFSParents(start: VirtualFile, project: Project): Sequence<VirtualFile> {
       if (roots.contains(parent)) return@sequence
       parent = parent.parent
     }
-    Logger.getInstance(ModuleDetectionUtil::class.java).warn("'$start' is not under project root nor any module content roots")
+    Logger.getInstance(ModuleDetectionUtil::class.java).debug("'$start' is not under project root nor any module content roots")
   }
 }
 

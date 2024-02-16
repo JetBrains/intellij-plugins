@@ -5,14 +5,13 @@ import com.intellij.concurrency.ConcurrentCollectionFactory
 import com.intellij.model.search.SearchContext
 import com.intellij.model.search.SearchService
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.progress.coroutineToIndicator
-import com.intellij.openapi.progress.runBlockingCancellable
+import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiElementProcessor
+import com.intellij.psi.search.PsiFileSystemItemProcessor
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.Processor
@@ -22,6 +21,8 @@ import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.hcl.psi.common.LiteralExpression
+import org.intellij.terraform.template.psi.TftplFile
+import org.intellij.terraform.withGuaranteedProgressIndicator
 
 class Module private constructor(val item: PsiFileSystemItem) {
   companion object {
@@ -40,6 +41,30 @@ class Module private constructor(val item: PsiFileSystemItem) {
 
     fun getAsModuleBlock(moduleBlock: HCLBlock): Module? {
       return ModuleDetectionUtil.getAsModuleBlock(moduleBlock)
+    }
+
+    private class TemplateFilesVisitor : PsiFileSystemItemProcessor {
+      private val myTemplates = mutableListOf<TftplFile>()
+
+      fun getResults(): List<TftplFile> {
+        return myTemplates.toList()
+      }
+
+      override fun execute(element: PsiFileSystemItem): Boolean {
+        when {
+          element.isDirectory -> element.processChildren(this)
+          element is TftplFile -> myTemplates.add(element)
+        }
+        return true
+      }
+
+      override fun acceptItem(name: String, isDirectory: Boolean): Boolean {
+        return when {
+          isDirectory -> true
+          FileUtilRt.getExtension(name) == "tftpl" -> true
+          else -> false
+        }
+      }
     }
 
     private class CollectVariablesVisitor(val name: String? = null) : HCLElementVisitor() {
@@ -91,6 +116,12 @@ class Module private constructor(val item: PsiFileSystemItem) {
 
   constructor(directory: PsiDirectory) : this(directory as PsiFileSystemItem)
 
+  fun getAllTemplates(): List<TftplFile> {
+    val visitor = TemplateFilesVisitor()
+    item.processChildren(visitor)
+    return visitor.getResults()
+  }
+
   fun getAllVariables(): List<Variable> {
     val visitor = CollectVariablesVisitor()
     processAllFilesWithVariables(Processor { file -> file.acceptChildren(visitor); true })
@@ -118,14 +149,8 @@ class Module private constructor(val item: PsiFileSystemItem) {
       .buildQuery { occ -> listOfNotNull(occ.start.containingFile) }
       .forEach(processor)
 
-    return if (ProgressManager.getInstance().hasProgressIndicator())
+    return withGuaranteedProgressIndicator {
       doFind()
-    else {
-      runBlockingCancellable {
-        coroutineToIndicator {
-          doFind()
-        }
-      }
     }
   }
 
