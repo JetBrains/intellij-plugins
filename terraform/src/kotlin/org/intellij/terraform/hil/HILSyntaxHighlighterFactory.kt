@@ -19,7 +19,7 @@ import org.intellij.terraform.hcl.HCLSyntaxHighlighterFactory
 import org.intellij.terraform.hil.HILElementTypes.*
 import org.intellij.terraform.hil.psi.HILLexer
 
-class HILSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
+open class HILSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
 
   companion object {
     val TIL_PARENS: TextAttributesKey = TextAttributesKey.createTextAttributesKey("TIL.PARENS", DefaultLanguageHighlighterColors.PARENTHESES)
@@ -60,6 +60,12 @@ class HILSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
       fillMap(ourAttributes, TIL_NUMBER, NUMBER)
       fillMap(ourAttributes, HILTokenTypes.TIL_KEYWORDS, TIL_KEYWORD)
       fillMap(ourAttributes, TIL_IDENTIFIER, ID)
+      fillMap(ourAttributes, TIL_KEYWORD, FOR_KEYWORD)
+      fillMap(ourAttributes, TIL_KEYWORD, IN_KEYWORD)
+      fillMap(ourAttributes, TIL_KEYWORD, ENDFOR_KEYWORD)
+      fillMap(ourAttributes, TIL_KEYWORD, IF_KEYWORD)
+      fillMap(ourAttributes, TIL_KEYWORD, ELSE_KEYWORD)
+      fillMap(ourAttributes, TIL_KEYWORD, ENDIF_KEYWORD)
       fillMap(ourAttributes, HighlighterColors.BAD_CHARACTER, TokenType.BAD_CHARACTER)
 
       fillMap(ourAttributes, TIL_VALID_ESCAPE, StringEscapesTokenTypes.VALID_STRING_ESCAPE_TOKEN)
