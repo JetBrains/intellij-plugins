@@ -16,6 +16,7 @@ public class ILVariableImpl extends ILVariableMixin implements ILVariable {
     super(node);
   }
 
+  @Override
   public void accept(@NotNull ILGeneratedVisitor visitor) {
     visitor.visitILVariable(this);
   }

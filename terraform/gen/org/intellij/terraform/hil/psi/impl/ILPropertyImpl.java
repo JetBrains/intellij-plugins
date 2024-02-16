@@ -16,6 +16,7 @@ public class ILPropertyImpl extends ILPropertyMixin implements ILProperty {
     super(node);
   }
 
+  @Override
   public void accept(@NotNull ILGeneratedVisitor visitor) {
     visitor.visitILProperty(this);
   }
@@ -32,12 +33,12 @@ public class ILPropertyImpl extends ILPropertyMixin implements ILProperty {
   }
 
   @Override
-  public ILExpression getNameElement() {
+  public @NotNull ILExpression getNameElement() {
     return HILPsiImplUtilJ.getNameElement(this);
   }
 
   @Override
-  public ILExpression getValue() {
+  public @Nullable ILExpression getValue() {
     return HILPsiImplUtilJ.getValue(this);
   }
 

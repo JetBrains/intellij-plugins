@@ -21,7 +21,7 @@
     <completion.contributor language="HIL"
                             implementationClass="org.intellij.terraform.template.editor.InjectedHilTemplateCompletionContributor"/>
 
-    <completion.contributor language="HCL"
+    <completion.contributor language="any"
                             implementationClass="org.intellij.terraform.template.editor.TerraformTemplateCompletionContributor"/>
     <lang.foldingBuilder language="TFTPL" implementationClass="org.intellij.terraform.template.editor.TerraformTemplateFoldingBuilder"/>
     <liveTemplateContext contextId="TFTPL_TEMPLATE" implementation="org.intellij.terraform.template.editor.TerraformTemplateContextType"/>

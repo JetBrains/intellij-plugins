@@ -16,6 +16,6 @@ public interface ILMethodCallExpression extends ILExpression, MethodCallExpressi
 
   ILExpression getQualifier();
 
-  ILVariable getMethod();
+  @Nullable ILVariable getMethod();
 
 }

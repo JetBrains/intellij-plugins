@@ -4,8 +4,7 @@ package org.intellij.terraform.hil.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
-import org.intellij.terraform.hcl.psi.common.BaseExpression;
 
-public interface ILExpression extends BaseExpression {
+public interface ILSimpleExpression extends ILExpression {
 
 }

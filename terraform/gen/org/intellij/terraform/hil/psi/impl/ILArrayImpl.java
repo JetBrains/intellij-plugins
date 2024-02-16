@@ -16,6 +16,7 @@ public class ILArrayImpl extends ILExpressionBase implements ILArray {
     super(node);
   }
 
+  @Override
   public void accept(@NotNull ILGeneratedVisitor visitor) {
     visitor.visitILArray(this);
   }

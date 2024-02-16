@@ -16,6 +16,7 @@ public class ILTemplateHolderImpl extends ILExpressionBase implements ILTemplate
     super(node);
   }
 
+  @Override
   public void accept(@NotNull ILGeneratedVisitor visitor) {
     visitor.visitILTemplateHolder(this);
   }

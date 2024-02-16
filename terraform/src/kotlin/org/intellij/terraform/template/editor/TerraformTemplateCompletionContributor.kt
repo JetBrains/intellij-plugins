@@ -12,6 +12,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.elementType
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.hcl.HCLElementTypes
+import org.intellij.terraform.hil.HILElementType
+import org.intellij.terraform.hil.HILTokenType
 import org.intellij.terraform.template.model.TftplVariable
 import org.intellij.terraform.template.model.collectAvailableVariables
 
@@ -25,9 +27,11 @@ private val unparsedSegmentPattern: PsiElementPattern.Capture<PsiElement> = Plat
   .with(
     object : PatternCondition<PsiElement>("isHclTemplateDataLanguageButNotInjection") {
       override fun accepts(element: PsiElement, context: ProcessingContext?): Boolean {
-        return (element.elementType != HCLElementTypes.DOUBLE_QUOTED_STRING
-                || !InjectedLanguageManager.getInstance(element.project).isInjectedFragment(element.containingFile))
+        return element.elementType !is HILElementType
+               && element.elementType !is HILTokenType
                && getTemplateFileViewProvider(element) != null
+               && (element.elementType != HCLElementTypes.DOUBLE_QUOTED_STRING
+                   || !InjectedLanguageManager.getInstance(element.project).isInjectedFragment(element.containingFile))
       }
     }
   )

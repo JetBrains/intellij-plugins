@@ -120,7 +120,35 @@ ILExpression ::=
   name="expression"
   implements=[
     "org.intellij.terraform.hcl.psi.common.BaseExpression"
-    "com.intellij.psi.templateLanguages.OuterLanguageElement"
+  ]
+  methods =[
+  ]
+}
+
+ILSimpleExpression ::=
+    ILParenthesizedExpression
+  | ILConditionalExpression
+
+  | ILBinaryOrExpression
+  | ILBinaryAndExpression
+
+  | ILBinaryEqualityExpression
+  | ILBinaryRelationalExpression
+
+  | ILBinaryAdditionExpression
+  | ILBinaryMultiplyExpression
+
+  | ILMethodCallExpression
+  | ILUnaryExpression
+  | ILSelectExpression
+  | ILIndexSelectExpression
+  | ILCollectionValue
+  | ILVariable
+  | ILLiteralExpression
+{
+  name="expression"
+  implements=[
+    "org.intellij.terraform.hcl.psi.common.BaseExpression"
   ]
   methods =[
   ]
@@ -133,7 +161,7 @@ ILTemplateIfBlockExpression ::= IfBranch ElseBranch? EndIfBranch {
   recoverWhile = not_another_complete_control_structure
 }
 
-IfBranch ::= TEMPLATE_START IF_KEYWORD ILExpression '}' ILTemplateBlock? {
+IfBranch ::= TEMPLATE_START IF_KEYWORD (ILSimpleExpression) '}' ILTemplateBlock? {
   pin = 2
   recoverWhile = not_control_structure_symbol
 }
@@ -148,7 +176,7 @@ ILTemplateForBlockExpression ::= ForLoop EndFor {
   recoverWhile = not_another_complete_control_structure
 }
 
-ForLoop ::= TEMPLATE_START FOR_KEYWORD ForVariable ("," ForVariable)* IN_KEYWORD ILExpression '}' ILTemplateBlock? {
+ForLoop ::= TEMPLATE_START FOR_KEYWORD ForVariable ("," ForVariable)* IN_KEYWORD ILSimpleExpression '}' ILTemplateBlock? {
   pin = 2
   recoverWhile = not_control_structure_symbol
 }

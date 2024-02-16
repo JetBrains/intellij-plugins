@@ -23,8 +23,6 @@ class TerraformTemplateParserTest : ParsingTestCase("", "tftpl", false, Terrafor
     doTest(true, ensureNoErrorElements)
     shouldSkipSpaces = prevValue
   }
-  fun testForIncomplete() = doRunTest(ensureNoErrorElements = false)
-  fun testIfIncomplete() = doRunTest(ensureNoErrorElements = false)
 
   fun testIfExpression() = doRunTest()
   fun testForLoop() = doRunTest()
@@ -32,6 +30,9 @@ class TerraformTemplateParserTest : ParsingTestCase("", "tftpl", false, Terrafor
   fun testExampleWithDataLanguage() = doRunTest()
   fun testSimpleExamples() = doRunTest()
 
+  fun testForIncomplete() = doRunTest(ensureNoErrorElements = false)
+  fun testIfIncomplete() = doRunTest(ensureNoErrorElements = false)
+  fun testForLoopWithError() = doRunTest(ensureNoErrorElements = false)
   fun testIncorrectBracesInDataLanguage() = doRunTest(ensureNoErrorElements = false)
   fun testIncorrectOpeningBraceInIlSegment() = doRunTest(ensureNoErrorElements = false)
 }

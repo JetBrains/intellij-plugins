@@ -16,6 +16,7 @@ public class ILTemplateBlockImpl extends ILExpressionBase implements ILTemplateB
     super(node);
   }
 
+  @Override
   public void accept(@NotNull ILGeneratedVisitor visitor) {
     visitor.visitILTemplateBlock(this);
   }

@@ -16,6 +16,7 @@ public class IfBranchImpl extends ILExpressionBase implements IfBranch {
     super(node);
   }
 
+  @Override
   public void accept(@NotNull ILGeneratedVisitor visitor) {
     visitor.visitIfBranch(this);
   }

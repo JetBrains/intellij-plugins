@@ -4,7 +4,6 @@ package org.intellij.terraform.hil.psi;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElementVisitor;
 import org.intellij.terraform.hcl.psi.common.LiteralExpression;
-import com.intellij.psi.templateLanguages.OuterLanguageElement;
 import org.intellij.terraform.hcl.psi.common.BaseExpression;
 import org.intellij.terraform.hcl.psi.common.UnaryExpression;
 import org.intellij.terraform.hcl.psi.common.ConditionalExpression;
@@ -83,8 +82,7 @@ public class ILGeneratedVisitor extends PsiElementVisitor {
   }
 
   public void visitILExpression(@NotNull ILExpression o) {
-    visitOuterLanguageElement(o);
-    // visitBaseExpression(o);
+    visitBaseExpression(o);
   }
 
   public void visitILExpressionHolder(@NotNull ILExpressionHolder o) {
@@ -130,6 +128,10 @@ public class ILGeneratedVisitor extends PsiElementVisitor {
     // visitSelectExpression(o);
   }
 
+  public void visitILSimpleExpression(@NotNull ILSimpleExpression o) {
+    visitILExpression(o);
+  }
+
   public void visitILTemplateBlock(@NotNull ILTemplateBlock o) {
     visitILExpression(o);
   }
@@ -160,7 +162,7 @@ public class ILGeneratedVisitor extends PsiElementVisitor {
     visitILExpression(o);
   }
 
-  public void visitOuterLanguageElement(@NotNull OuterLanguageElement o) {
+  public void visitBaseExpression(@NotNull BaseExpression o) {
     visitElement(o);
   }
 

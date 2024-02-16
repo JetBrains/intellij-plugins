@@ -16,6 +16,7 @@ public class ElseBranchImpl extends ILExpressionBase implements ElseBranch {
     super(node);
   }
 
+  @Override
   public void accept(@NotNull ILGeneratedVisitor visitor) {
     visitor.visitElseBranch(this);
   }

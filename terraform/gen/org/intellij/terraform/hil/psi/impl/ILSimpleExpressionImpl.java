@@ -10,15 +10,15 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static org.intellij.terraform.hil.HILElementTypes.*;
 import org.intellij.terraform.hil.psi.*;
 
-public class EndIfBranchImpl extends ILExpressionBase implements EndIfBranch {
+public abstract class ILSimpleExpressionImpl extends ILExpressionImpl implements ILSimpleExpression {
 
-  public EndIfBranchImpl(@NotNull ASTNode node) {
+  public ILSimpleExpressionImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   @Override
   public void accept(@NotNull ILGeneratedVisitor visitor) {
-    visitor.visitEndIfBranch(this);
+    visitor.visitILSimpleExpression(this);
   }
 
   @Override

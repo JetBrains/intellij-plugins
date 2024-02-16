@@ -41,7 +41,8 @@ public class HILParser implements PsiParser, LightPsiParser {
       IL_BINARY_MULTIPLY_EXPRESSION, IL_BINARY_OR_EXPRESSION, IL_BINARY_RELATIONAL_EXPRESSION, IL_COLLECTION_VALUE,
       IL_CONDITIONAL_EXPRESSION, IL_EXPRESSION, IL_EXPRESSION_HOLDER, IL_INDEX_SELECT_EXPRESSION,
       IL_LITERAL_EXPRESSION, IL_METHOD_CALL_EXPRESSION, IL_PARENTHESIZED_EXPRESSION, IL_SELECT_EXPRESSION,
-      IL_TEMPLATE_FOR_BLOCK_EXPRESSION, IL_TEMPLATE_IF_BLOCK_EXPRESSION, IL_UNARY_EXPRESSION, IL_VARIABLE),
+      IL_SIMPLE_EXPRESSION, IL_TEMPLATE_FOR_BLOCK_EXPRESSION, IL_TEMPLATE_IF_BLOCK_EXPRESSION, IL_UNARY_EXPRESSION,
+      IL_VARIABLE),
   };
 
   /* ********************************************************** */
@@ -102,7 +103,7 @@ public class HILParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // TEMPLATE_START FOR_KEYWORD ForVariable ("," ForVariable)* IN_KEYWORD ILExpression '}' ILTemplateBlock?
+  // TEMPLATE_START FOR_KEYWORD ForVariable ("," ForVariable)* IN_KEYWORD ILSimpleExpression '}' ILTemplateBlock?
   public static boolean ForLoop(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "ForLoop")) return false;
     boolean r, p;
@@ -112,7 +113,7 @@ public class HILParser implements PsiParser, LightPsiParser {
     r = r && report_error_(b, ForVariable(b, l + 1));
     r = p && report_error_(b, ForLoop_3(b, l + 1)) && r;
     r = p && report_error_(b, consumeToken(b, IN_KEYWORD)) && r;
-    r = p && report_error_(b, ILExpression(b, l + 1, -1)) && r;
+    r = p && report_error_(b, ILSimpleExpression(b, l + 1)) && r;
     r = p && report_error_(b, consumeToken(b, R_CURLY)) && r;
     r = p && ForLoop_7(b, l + 1) && r;
     exit_section_(b, l, m, r, p, HILParser::not_control_structure_symbol);
@@ -321,6 +322,45 @@ public class HILParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // ILParenthesizedExpression
+  //   | ILConditionalExpression
+  //   | ILBinaryOrExpression
+  //   | ILBinaryAndExpression
+  //   | ILBinaryEqualityExpression
+  //   | ILBinaryRelationalExpression
+  //   | ILBinaryAdditionExpression
+  //   | ILBinaryMultiplyExpression
+  //   | ILMethodCallExpression
+  //   | ILUnaryExpression
+  //   | ILSelectExpression
+  //   | ILIndexSelectExpression
+  //   | ILCollectionValue
+  //   | ILVariable
+  //   | ILLiteralExpression
+  public static boolean ILSimpleExpression(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ILSimpleExpression")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _COLLAPSE_, IL_SIMPLE_EXPRESSION, "<expression>");
+    r = ILParenthesizedExpression(b, l + 1);
+    if (!r) r = ILExpression(b, l + 1, 1);
+    if (!r) r = ILExpression(b, l + 1, 2);
+    if (!r) r = ILExpression(b, l + 1, 3);
+    if (!r) r = ILExpression(b, l + 1, 4);
+    if (!r) r = ILExpression(b, l + 1, 5);
+    if (!r) r = ILExpression(b, l + 1, 6);
+    if (!r) r = ILExpression(b, l + 1, 7);
+    if (!r) r = ILExpression(b, l + 1, 8);
+    if (!r) r = ILUnaryExpression(b, l + 1);
+    if (!r) r = ILExpression(b, l + 1, 10);
+    if (!r) r = ILExpression(b, l + 1, 11);
+    if (!r) r = ILCollectionValue(b, l + 1);
+    if (!r) r = ILVariable(b, l + 1);
+    if (!r) r = ILLiteralExpression(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
   // ((shouldParseAsTemplate data_language_segment | ILExpression) | ILTemplateHolder | ILExpressionHolder)+
   public static boolean ILTemplateBlock(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "ILTemplateBlock")) return false;
@@ -418,18 +458,28 @@ public class HILParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // TEMPLATE_START IF_KEYWORD ILExpression '}' ILTemplateBlock?
+  // TEMPLATE_START IF_KEYWORD (ILSimpleExpression) '}' ILTemplateBlock?
   public static boolean IfBranch(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "IfBranch")) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, IF_BRANCH, "<if branch>");
     r = consumeTokens(b, 2, TEMPLATE_START, IF_KEYWORD);
     p = r; // pin = 2
-    r = r && report_error_(b, ILExpression(b, l + 1, -1));
+    r = r && report_error_(b, IfBranch_2(b, l + 1));
     r = p && report_error_(b, consumeToken(b, R_CURLY)) && r;
     r = p && IfBranch_4(b, l + 1) && r;
     exit_section_(b, l, m, r, p, HILParser::not_control_structure_symbol);
     return r || p;
+  }
+
+  // (ILSimpleExpression)
+  private static boolean IfBranch_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "IfBranch_2")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = ILSimpleExpression(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   // ILTemplateBlock?

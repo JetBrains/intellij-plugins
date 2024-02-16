@@ -45,7 +45,7 @@ public class ILMethodCallExpressionImpl extends ILExpressionImpl implements ILMe
   }
 
   @Override
-  public ILVariable getMethod() {
+  public @Nullable ILVariable getMethod() {
     return HILPsiImplUtilJ.getMethod(this);
   }
 
