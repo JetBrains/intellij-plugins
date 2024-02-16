@@ -1,6 +1,6 @@
 package com.intellij.dts.documentation
 
-import com.intellij.lang.documentation.DocumentationMarkup
+import com.intellij.lang.documentation.DocumentationMarkup.*
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.text.HtmlBuilder
 import com.intellij.openapi.util.text.HtmlChunk
@@ -26,8 +26,8 @@ class DtsDocumentationHtmlBuilder {
   fun build(): @NlsSafe String {
     val builder = HtmlBuilder()
 
-    builder.append(definitionBuilder.wrapWith("pre").wrapWith(DocumentationMarkup.DEFINITION_ELEMENT))
-    builder.append(contentBuilder.wrapWith(DocumentationMarkup.CONTENT_ELEMENT))
+    builder.append(definitionBuilder.wrapWith(PRE_ELEMENT).wrapWith(DEFINITION_ELEMENT))
+    builder.append(contentBuilder.wrapWith(CONTENT_ELEMENT))
 
     return builder.wrapWithHtmlBody().toString()
   }
