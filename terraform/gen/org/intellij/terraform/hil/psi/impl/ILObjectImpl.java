@@ -16,7 +16,6 @@ public class ILObjectImpl extends ILExpressionBase implements ILObject {
     super(node);
   }
 
-  @Override
   public void accept(@NotNull ILGeneratedVisitor visitor) {
     visitor.visitILObject(this);
   }

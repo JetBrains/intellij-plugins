@@ -5,9 +5,9 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface ILTemplateHolder extends ILExpression {
+public interface ForVariable extends ILExpression {
 
   @NotNull
-  ILExpression getILExpression();
+  PsiElement getId();
 
 }

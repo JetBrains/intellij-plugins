@@ -10,21 +10,26 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static org.intellij.terraform.hil.HILElementTypes.*;
 import org.intellij.terraform.hil.psi.*;
 
-public class ILTemplateEndIfStatementImpl extends ILTemplateStatementImpl implements ILTemplateEndIfStatement {
+public class ElseBranchImpl extends ILExpressionBase implements ElseBranch {
 
-  public ILTemplateEndIfStatementImpl(@NotNull ASTNode node) {
+  public ElseBranchImpl(@NotNull ASTNode node) {
     super(node);
   }
 
-  @Override
   public void accept(@NotNull ILGeneratedVisitor visitor) {
-    visitor.visitILTemplateEndIfStatement(this);
+    visitor.visitElseBranch(this);
   }
 
   @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof ILGeneratedVisitor) accept((ILGeneratedVisitor)visitor);
     else super.accept(visitor);
+  }
+
+  @Override
+  @Nullable
+  public ILTemplateBlock getILTemplateBlock() {
+    return findChildByClass(ILTemplateBlock.class);
   }
 
 }

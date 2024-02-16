@@ -10,8 +10,8 @@ public interface ILProperty extends ILExpression, PsiNameIdentifierOwner {
 
   @NotNull String getName();
 
-  @NotNull ILExpression getNameElement();
+  ILExpression getNameElement();
 
-  @Nullable ILExpression getValue();
+  ILExpression getValue();
 
 }

@@ -10,20 +10,32 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static org.intellij.terraform.hil.HILElementTypes.*;
 import org.intellij.terraform.hil.psi.*;
 
-public abstract class ILExpressionImpl extends ILExpressionBase implements ILExpression {
+public class IfBranchImpl extends ILExpressionBase implements IfBranch {
 
-  public ILExpressionImpl(@NotNull ASTNode node) {
+  public IfBranchImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull ILGeneratedVisitor visitor) {
-    visitor.visitILExpression(this);
+    visitor.visitIfBranch(this);
   }
 
   @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof ILGeneratedVisitor) accept((ILGeneratedVisitor)visitor);
     else super.accept(visitor);
+  }
+
+  @Override
+  @Nullable
+  public ILExpression getILExpression() {
+    return findChildByClass(ILExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public ILTemplateBlock getILTemplateBlock() {
+    return findChildByClass(ILTemplateBlock.class);
   }
 
 }

@@ -20,6 +20,26 @@ import org.intellij.terraform.hcl.psi.common.IndexSelectExpression;
 
 public class ILGeneratedVisitor extends PsiElementVisitor {
 
+  public void visitElseBranch(@NotNull ElseBranch o) {
+    visitILExpression(o);
+  }
+
+  public void visitEndFor(@NotNull EndFor o) {
+    visitILExpression(o);
+  }
+
+  public void visitEndIfBranch(@NotNull EndIfBranch o) {
+    visitILExpression(o);
+  }
+
+  public void visitForLoop(@NotNull ForLoop o) {
+    visitILExpression(o);
+  }
+
+  public void visitForVariable(@NotNull ForVariable o) {
+    visitILExpression(o);
+  }
+
   public void visitILArray(@NotNull ILArray o) {
     visitCollectionExpression(o);
   }
@@ -110,31 +130,19 @@ public class ILGeneratedVisitor extends PsiElementVisitor {
     // visitSelectExpression(o);
   }
 
-  public void visitILTemplateElseStatement(@NotNull ILTemplateElseStatement o) {
-    visitILTemplateStatement(o);
+  public void visitILTemplateBlock(@NotNull ILTemplateBlock o) {
+    visitILExpression(o);
   }
 
-  public void visitILTemplateEndForStatement(@NotNull ILTemplateEndForStatement o) {
-    visitILTemplateStatement(o);
-  }
-
-  public void visitILTemplateEndIfStatement(@NotNull ILTemplateEndIfStatement o) {
-    visitILTemplateStatement(o);
-  }
-
-  public void visitILTemplateForStatement(@NotNull ILTemplateForStatement o) {
-    visitILTemplateStatement(o);
+  public void visitILTemplateForBlockExpression(@NotNull ILTemplateForBlockExpression o) {
+    visitILExpression(o);
   }
 
   public void visitILTemplateHolder(@NotNull ILTemplateHolder o) {
     visitILExpression(o);
   }
 
-  public void visitILTemplateIfStatement(@NotNull ILTemplateIfStatement o) {
-    visitILTemplateStatement(o);
-  }
-
-  public void visitILTemplateStatement(@NotNull ILTemplateStatement o) {
+  public void visitILTemplateIfBlockExpression(@NotNull ILTemplateIfBlockExpression o) {
     visitILExpression(o);
   }
 
@@ -146,6 +154,10 @@ public class ILGeneratedVisitor extends PsiElementVisitor {
   public void visitILVariable(@NotNull ILVariable o) {
     visitILExpression(o);
     // visitIdentifier(o);
+  }
+
+  public void visitIfBranch(@NotNull IfBranch o) {
+    visitILExpression(o);
   }
 
   public void visitOuterLanguageElement(@NotNull OuterLanguageElement o) {

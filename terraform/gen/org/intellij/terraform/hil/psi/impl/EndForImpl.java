@@ -10,15 +10,14 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static org.intellij.terraform.hil.HILElementTypes.*;
 import org.intellij.terraform.hil.psi.*;
 
-public class ILTemplateElseStatementImpl extends ILTemplateStatementImpl implements ILTemplateElseStatement {
+public class EndForImpl extends ILExpressionBase implements EndFor {
 
-  public ILTemplateElseStatementImpl(@NotNull ASTNode node) {
+  public EndForImpl(@NotNull ASTNode node) {
     super(node);
   }
 
-  @Override
   public void accept(@NotNull ILGeneratedVisitor visitor) {
-    visitor.visitILTemplateElseStatement(this);
+    visitor.visitEndFor(this);
   }
 
   @Override

@@ -16,7 +16,6 @@ public class ILParameterListImpl extends ILExpressionBase implements ILParameter
     super(node);
   }
 
-  @Override
   public void accept(@NotNull ILGeneratedVisitor visitor) {
     visitor.visitILParameterList(this);
   }

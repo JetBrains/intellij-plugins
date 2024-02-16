@@ -10,15 +10,15 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static org.intellij.terraform.hil.HILElementTypes.*;
 import org.intellij.terraform.hil.psi.*;
 
-public class ILTemplateForStatementImpl extends ILTemplateStatementImpl implements ILTemplateForStatement {
+public class ILTemplateIfBlockExpressionImpl extends ILExpressionImpl implements ILTemplateIfBlockExpression {
 
-  public ILTemplateForStatementImpl(@NotNull ASTNode node) {
+  public ILTemplateIfBlockExpressionImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   @Override
   public void accept(@NotNull ILGeneratedVisitor visitor) {
-    visitor.visitILTemplateForStatement(this);
+    visitor.visitILTemplateIfBlockExpression(this);
   }
 
   @Override
@@ -28,18 +28,21 @@ public class ILTemplateForStatementImpl extends ILTemplateStatementImpl implemen
   }
 
   @Override
-  public @NotNull ILVariable getVar1() {
-    return HILPsiImplUtilJ.getVar1(this);
+  @Nullable
+  public ElseBranch getElseBranch() {
+    return findChildByClass(ElseBranch.class);
   }
 
   @Override
-  public @Nullable ILVariable getVar2() {
-    return HILPsiImplUtilJ.getVar2(this);
+  @Nullable
+  public EndIfBranch getEndIfBranch() {
+    return findChildByClass(EndIfBranch.class);
   }
 
   @Override
-  public @NotNull ILExpression getContainer() {
-    return HILPsiImplUtilJ.getContainer(this);
+  @NotNull
+  public IfBranch getIfBranch() {
+    return findNotNullChildByClass(IfBranch.class);
   }
 
 }

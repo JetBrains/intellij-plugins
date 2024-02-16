@@ -16,7 +16,6 @@ public class ILTemplateHolderImpl extends ILExpressionBase implements ILTemplate
     super(node);
   }
 
-  @Override
   public void accept(@NotNull ILGeneratedVisitor visitor) {
     visitor.visitILTemplateHolder(this);
   }
@@ -29,8 +28,8 @@ public class ILTemplateHolderImpl extends ILExpressionBase implements ILTemplate
 
   @Override
   @NotNull
-  public ILTemplateStatement getILTemplateStatement() {
-    return findNotNullChildByClass(ILTemplateStatement.class);
+  public ILExpression getILExpression() {
+    return findNotNullChildByClass(ILExpression.class);
   }
 
 }
