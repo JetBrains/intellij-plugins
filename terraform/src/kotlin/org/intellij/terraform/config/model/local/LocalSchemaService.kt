@@ -2,12 +2,13 @@
 package org.intellij.terraform.config.model.local
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
-import com.intellij.execution.ExecutionException
 import com.intellij.execution.process.CapturingProcessAdapter
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.readAndWriteAction
 import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.components.Service
+import com.intellij.openapi.diagnostic.Attachment
+import com.intellij.openapi.diagnostic.RuntimeExceptionWithAttachments
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileTypes.FileTypeManager
@@ -15,6 +16,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.project.getProjectDataPath
 import com.intellij.openapi.util.NlsSafe
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.backend.workspace.WorkspaceModel
 import com.intellij.platform.backend.workspace.toVirtualFileUrl
@@ -316,8 +318,17 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
 
     val stdout = capturingProcessAdapter.output.stdout
     if (!success || stdout.isEmpty()) {
-      logger<LocalSchemaService>().warn("failed to build model for $lock")
-      throw ExecutionException(HCLBundle.message("dialog.message.failed.to.get.output.terraform.providers.command.for", lock))
+      val truncatedOutput = StringUtil.shortenTextWithEllipsis(stdout, 1024, 256)
+      val stderr = capturingProcessAdapter.output.stderr
+      logger<LocalSchemaService>().warn("failed to build model for $lock: \n$truncatedOutput\n$stderr")
+
+      throw RuntimeExceptionWithAttachments(
+        HCLBundle.message("dialog.message.failed.to.get.output.terraform.providers.command.for",
+                          lock,
+                          capturingProcessAdapter.output.exitCode),
+        Attachment("truncatedOutput.txt", truncatedOutput),
+        Attachment("stderror.txt", stderr)
+      )
     }
 
     return stdout
