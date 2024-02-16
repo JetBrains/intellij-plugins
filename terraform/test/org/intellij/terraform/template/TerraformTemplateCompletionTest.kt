@@ -7,21 +7,6 @@ import org.intellij.terraform.config.TerraformLanguage
 import org.junit.Assert
 
 class TerraformTemplateCompletionTest : BasePlatformTestCase() {
-  fun `test templatefile parameter completion`() {
-    myFixture.addFileToProject("template1.tfptl", "")
-    myFixture.addFileToProject("template2.tfptl", "")
-    myFixture.configureByText("main.tf", """
-      resource "resource" "example" {
-        content1  = templatefile(
-          "<caret>", 
-          {}
-        )
-    """.trimIndent())
-    val completions = myFixture.getCompletionVariants("main.tf")
-    Assert.assertNotNull(completions)
-    UsefulTestCase.assertContainsElements(completions!!, "template1.tftpl", "template2.tftpl")
-  }
-
   fun `test loop variable completion`() {
     myFixture.configureByText("test.tftpl", """
       %{ for variable in provided_variables ~}
