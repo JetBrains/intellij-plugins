@@ -1,0 +1,66 @@
+TftplFile
+  ILTemplateHolder
+    ILTemplateForBlockExpression
+      ForLoop
+        PsiElement(%{)('%{')
+        PsiWhiteSpace(' ')
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        ForVariable
+          PsiElement(ID)('addr')
+        PsiWhiteSpace(' ')
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        ILVariable
+          PsiElement(ID)('ip_addrs')
+        PsiWhiteSpace(' ')
+        PsiElement(})('~}')
+        ILTemplateBlock
+          TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
+            PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)('\n')
+          ILTemplateHolder
+            ILTemplateForBlockExpression
+              ForLoop
+                PsiElement(%{)('%{')
+                PsiWhiteSpace(' ')
+                PsiElement(for)('for')
+                PsiWhiteSpace(' ')
+                ForVariable
+                  PsiElement(ID)('a')
+                PsiWhiteSpace(' ')
+                PsiElement(in)('in')
+                PsiWhiteSpace(' ')
+                ILVariable
+                  PsiElement(ID)('b')
+                PsiElement(})('}')
+                ILTemplateBlock
+                  TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
+                    PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)('\nbackend ')
+                  ILExpressionHolder
+                    PsiElement(${)('${')
+                    ILVariable
+                      PsiElement(ID)('addr')
+                    PsiElement(})('}')
+                  TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
+                    PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)(':')
+                  ILExpressionHolder
+                    PsiElement(${)('${')
+                    ILVariable
+                      PsiElement(ID)('port')
+                    PsiElement(})('}')
+                  TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
+                    PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)('\n')
+              EndFor
+                PsiElement(%{)('%{')
+                PsiWhiteSpace(' ')
+                PsiElement(endfor)('endfor')
+                PsiWhiteSpace(' ')
+                PsiElement(})('~}')
+          TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
+            PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)('\n')
+      EndFor
+        PsiElement(%{)('%{')
+        PsiWhiteSpace(' ')
+        PsiElement(endfor)('endfor')
+        PsiWhiteSpace(' ')
+        PsiElement(})('~}')

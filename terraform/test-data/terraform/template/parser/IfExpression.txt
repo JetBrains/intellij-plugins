@@ -1,0 +1,36 @@
+TftplFile
+  TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
+    PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)('hello ')
+  ILTemplateHolder
+    ILTemplateIfBlockExpression
+      IfBranch
+        PsiElement(%{)('%{')
+        PsiWhiteSpace(' ')
+        PsiElement(if)('if')
+        PsiWhiteSpace(' ')
+        ILSelectExpression
+          ILSelectExpression
+            ILVariable
+              PsiElement(ID)('a')
+            PsiElement(.)('.')
+            ILVariable
+              PsiElement(ID)('b')
+          PsiElement(.)('.')
+          ILVariable
+            PsiElement(ID)('c')
+        PsiWhiteSpace(' ')
+        PsiElement(})('}')
+        ILTemplateBlock
+          TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
+            PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)(' world ')
+      ElseBranch
+        PsiElement(%{)('%{')
+        PsiElement(else)('else')
+        PsiElement(})('}')
+        ILTemplateBlock
+          TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
+            PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)(' itsme ')
+      EndIfBranch
+        PsiElement(%{)('%{')
+        PsiElement(endif)('endif')
+        PsiElement(})('}')

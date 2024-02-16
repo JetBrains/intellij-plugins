@@ -1,0 +1,25 @@
+TftplFile
+  ILTemplateHolder
+    ILTemplateForBlockExpression
+      ForLoop
+        PsiElement(%{)('%{')
+        PsiWhiteSpace(' ')
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        ForVariable
+          PsiElement(ID)('p')
+        PsiWhiteSpace(' ')
+        PsiElement(in)('in')
+        PsiErrorElement:<expression> expected, got '}'
+          <empty list>
+        PsiWhiteSpace('  ')
+        PsiElement(})('}')
+        ILTemplateBlock
+          TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
+            PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)('\n\n')
+      EndFor
+        PsiElement(%{)('%{')
+        PsiWhiteSpace(' ')
+        PsiElement(endfor)('endfor')
+        PsiWhiteSpace(' ')
+        PsiElement(})('}')

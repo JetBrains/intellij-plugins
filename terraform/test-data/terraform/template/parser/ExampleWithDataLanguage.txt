@@ -1,0 +1,42 @@
+TftplFile
+  TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
+    PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)('hello ')
+  ILTemplateHolder
+    ILTemplateIfBlockExpression
+      IfBranch
+        PsiElement(%{)('%{')
+        PsiWhiteSpace(' ')
+        PsiElement(if)('if')
+        PsiWhiteSpace(' ')
+        ILSelectExpression
+          ILSelectExpression
+            ILVariable
+              PsiElement(ID)('a')
+            PsiElement(.)('.')
+            ILVariable
+              PsiElement(ID)('b')
+          PsiElement(.)('.')
+          ILVariable
+            PsiElement(ID)('c')
+        PsiWhiteSpace(' ')
+        PsiElement(})('}')
+        ILTemplateBlock
+          TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
+            PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)(' 1.3 world ')
+      ElseBranch
+        PsiElement(%{)('%{')
+        PsiWhiteSpace(' ')
+        PsiElement(else)('else')
+        PsiWhiteSpace(' ')
+        PsiElement(})('}')
+        ILTemplateBlock
+          TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
+            PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)(' intellij  2.2 ')
+      EndIfBranch
+        PsiElement(%{)('%{')
+        PsiWhiteSpace(' ')
+        PsiElement(endif)('endif')
+        PsiWhiteSpace(' ')
+        PsiElement(})('}')
+  TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
+    PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)(' rulezzz')

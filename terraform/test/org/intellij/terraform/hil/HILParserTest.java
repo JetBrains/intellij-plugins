@@ -183,7 +183,7 @@ public class HILParserTest extends ParsingTestCase {
   public void testUnfinishedConditional6() throws Exception {
     doCodeTest("?:", """
       HILFile: a.hil
-        PsiErrorElement:'?' unexpected
+        PsiErrorElement:'%{' expected, got '?'
           PsiElement(?)('?')
         PsiElement(:)(':')""");
   }
@@ -232,36 +232,20 @@ public class HILParserTest extends ParsingTestCase {
     doCodeTest("${foo({a=true\nb=false})}");
   }
 
-  public void testTemplateFor() throws IOException {
+  public void testTemplateForIncomplete() throws IOException {
     doCodeTest("%{for a, b in var.test~}");
   }
 
-  public void testTemplateIf() throws IOException {
-    doCodeTest("%{~ if test() > -1 ~}");
+  public void testTemplateFor() throws IOException {
+    doCodeTest("%{for a, b in var.test~} 123 %{endfor}");
   }
 
-  public void testTemplateEnds() throws IOException {
-    doCodeTest("%{endfor}", """
-      HILFile: a.hil
-        ILTemplateHolder
-          PsiElement(%{)('%{')
-          ILTemplateEndForStatement
-            PsiElement(ID)('endfor')
-          PsiElement(})('}')""");
-    doCodeTest("%{else}", """
-      HILFile: a.hil
-        ILTemplateHolder
-          PsiElement(%{)('%{')
-          ILTemplateElseStatement
-            PsiElement(ID)('else')
-          PsiElement(})('}')""");
-    doCodeTest("%{endif}", """
-      HILFile: a.hil
-        ILTemplateHolder
-          PsiElement(%{)('%{')
-          ILTemplateEndIfStatement
-            PsiElement(ID)('endif')
-          PsiElement(})('}')""");
+  public void testNestedTemplateFor() throws IOException {
+    doCodeTest("%{for a in var.test~} %{for b in var.test~} 123 %{endfor} %{endfor}");
+  }
+
+  public void testTemplateIf() throws IOException {
+    doCodeTest("%{~ if test() > -1 ~} 123 %{endif}");
   }
 
   @Override

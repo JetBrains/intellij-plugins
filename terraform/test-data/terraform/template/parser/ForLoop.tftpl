@@ -1,0 +1,5 @@
+%{ for addr in ip_addrs ~}
+%{ for a in b}
+backend ${addr}:${port}
+%{ endfor ~}
+%{ endfor ~}

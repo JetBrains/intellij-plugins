@@ -189,14 +189,14 @@ public class HILLexerTest extends BaseLexerTestCase {
   public void testTemplateFor() throws Exception {
     doTest("%{for a, b in var.test~}", """
       %{ ('%{')
-      ID ('for')
+      for ('for')
       WHITE_SPACE (' ')
       ID ('a')
       , (',')
       WHITE_SPACE (' ')
       ID ('b')
       WHITE_SPACE (' ')
-      ID ('in')
+      in ('in')
       WHITE_SPACE (' ')
       ID ('var')
       . ('.')

@@ -1,23 +1,33 @@
 HILFile: a.hil
   ILTemplateHolder
-    PsiElement(%{)('%{~')
-    PsiWhiteSpace(' ')
-    ILTemplateIfStatement
-      PsiElement(ID)('if')
-      PsiWhiteSpace(' ')
-      ILBinaryExpression
-        ILMethodCallExpression
-          ILVariable
-            PsiElement(ID)('test')
-          ILParameterList
-            PsiElement(()('(')
-            PsiElement())(')')
+    ILTemplateIfBlockExpression
+      IfBranch
+        PsiElement(%{)('%{~')
         PsiWhiteSpace(' ')
-        PsiElement(>)('>')
+        PsiElement(if)('if')
         PsiWhiteSpace(' ')
-        ILUnaryExpression
-          PsiElement(-)('-')
+        ILBinaryExpression
+          ILMethodCallExpression
+            ILVariable
+              PsiElement(ID)('test')
+            ILParameterList
+              PsiElement(()('(')
+              PsiElement())(')')
+          PsiWhiteSpace(' ')
+          PsiElement(>)('>')
+          PsiWhiteSpace(' ')
+          ILUnaryExpression
+            PsiElement(-)('-')
+            ILLiteral
+              PsiElement(NUMBER)('1')
+        PsiWhiteSpace(' ')
+        PsiElement(})('~}')
+        PsiWhiteSpace(' ')
+        ILTemplateBlock
           ILLiteral
-            PsiElement(NUMBER)('1')
-    PsiWhiteSpace(' ')
-    PsiElement(})('~}')
+            PsiElement(NUMBER)('123')
+      PsiWhiteSpace(' ')
+      EndIfBranch
+        PsiElement(%{)('%{')
+        PsiElement(endif)('endif')
+        PsiElement(})('}')

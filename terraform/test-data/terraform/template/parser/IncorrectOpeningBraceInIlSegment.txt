@@ -1,0 +1,20 @@
+TftplFile
+  ILTemplateHolder
+    ILTemplateIfBlockExpression
+      IfBranch
+        PsiElement(%{)('%{')
+        PsiWhiteSpace(' ')
+        PsiElement(if)('if')
+        PsiWhiteSpace(' ')
+        ILCollectionValue
+          ILObject
+            PsiElement({)('{')
+            PsiElement(true)('true')
+            PsiErrorElement:'(', <il property> or <operator> expected, got '}'
+              <empty list>
+            PsiElement(})('}')
+        PsiErrorElement:'(', <operator> or '}' expected, got '}'
+          <empty list>
+        ILTemplateBlock
+          TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
+            PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)(' }')
