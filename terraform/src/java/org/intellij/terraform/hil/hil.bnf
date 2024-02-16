@@ -4,6 +4,9 @@
   elementTypeClass = 'org.intellij.terraform.hil.HILElementType'
   parserClass = 'org.intellij.terraform.hil.HILParser'
   parserUtilClass = 'org.intellij.terraform.hil.psi.HILParserUtil'
+  parserImports = [
+    "static org.intellij.terraform.template.lexer.TerraformTemplateTokenTypes.DATA_LANGUAGE_TOKEN_UNPARSED;"
+  ]
   psiVisitorName = 'ILGeneratedVisitor'
   psiImplUtilClass = 'org.intellij.terraform.hil.psi.impl.HILPsiImplUtilJ'
 
@@ -17,8 +20,6 @@
 
   extends(".*Expression|.*Variable|ILExpressionHolder")=ILExpression
 
-  extends("ILTemplate.*Statement")=ILTemplateStatement
-
   tokens = [
 //    space = "regexp:\s+"
     TEMPLATE_START='%{'
@@ -31,6 +32,7 @@
     R_CURLY='}'
     COMMA=','
     EQUALS='='
+    DOLLAR='$'
 
     OP_DOT='.'
 
@@ -66,6 +68,12 @@
     TRUE='true'
     FALSE='false'
     NULL='null'
+    FOR_KEYWORD = "for"
+    IN_KEYWORD = "in"
+    ENDFOR_KEYWORD = "endfor"
+    IF_KEYWORD = "if"
+    ELSE_KEYWORD = "else"
+    ENDIF_KEYWORD = "endif"
 
     ID="regexp:[a-zA-Z_][0-9a-zA-Z\-_*]*"
   ]
@@ -73,11 +81,16 @@
 }
 
 // This bnf based on SpringEL bnf. Thanks to IntelliJ team
-
-private root ::= ILTemplateHolder | ILExpressionHolder
+private root ::= shouldParseAsTemplate (data_language_segment | template_segment)* | ILTemplateHolder | ILExpressionHolder
 {
   consumeTokenMethod = 'smart'
 }
+
+private template_segment ::= ILTemplateHolder | ILExpressionHolder
+
+external data_language_segment ::= parseDataLanguageToken
+private external shouldParseAsTemplate ::= isTemplatingSupported
+private external isDataLanguageSegment ::= isDataLanguageToken
 
 // Expressions
 // Update HILElementType.IL_EXPRESSIONS on change
@@ -113,30 +126,37 @@ ILExpression ::=
   ]
 }
 
-ILTemplateHolder ::= TEMPLATE_START ILTemplateStatement '}'
+ILTemplateHolder ::= ILTemplateForBlockExpression | ILTemplateIfBlockExpression
 
-ILTemplateStatement ::=
-    ILTemplateForStatement
-  | ILTemplateEndForStatement
-  | ILTemplateIfStatement
-  | ILTemplateElseStatement
-  | ILTemplateEndIfStatement
-
-ILTemplateForStatement ::= "for" identifier ("," identifier)? ("in" ILExpression)
-{
-  pin('.*')=1
-  methods=[
-    getVar1
-    getVar2
-    getContainer
-    ILExpression=""
-  ]
+ILTemplateIfBlockExpression ::= IfBranch ElseBranch? EndIfBranch {
+  pin = 1
+  recoverWhile = not_another_complete_control_structure
 }
-ILTemplateEndForStatement::= "endfor"
 
-ILTemplateIfStatement::= "if" ILExpression
-ILTemplateElseStatement::= "else"
-ILTemplateEndIfStatement::= "endif"
+IfBranch ::= TEMPLATE_START IF_KEYWORD ILExpression '}' ILTemplateBlock? {
+  pin = 2
+  recoverWhile = not_control_structure_symbol
+}
+ElseBranch ::= TEMPLATE_START ELSE_KEYWORD '}' ILTemplateBlock?
+EndIfBranch ::= TEMPLATE_START ENDIF_KEYWORD '}'
+
+ILTemplateForBlockExpression ::= ForLoop EndFor {
+  pin = 1
+  methods = [
+    getLoopVariables returns = "org.intellij.terraform.hil.psi.ForVariable"
+  ]
+  recoverWhile = not_another_complete_control_structure
+}
+
+ForLoop ::= TEMPLATE_START FOR_KEYWORD ForVariable ("," ForVariable)* IN_KEYWORD ILExpression '}' ILTemplateBlock? {
+  pin = 2
+  recoverWhile = not_control_structure_symbol
+}
+
+ForVariable ::= ID
+EndFor ::= TEMPLATE_START ENDFOR_KEYWORD '}'
+
+ILTemplateBlock ::= ((shouldParseAsTemplate data_language_segment | ILExpression) | ILTemplateHolder | ILExpressionHolder)+
 
 ILExpressionHolder ::= INTERPOLATION_START ILExpression '}'
 {
@@ -145,6 +165,7 @@ ILExpressionHolder ::= INTERPOLATION_START ILExpression '}'
     expression="ILExpression"
   ]
   implements="org.intellij.terraform.hcl.psi.common.ParenthesizedExpression<org.intellij.terraform.hil.psi.ILExpression>"
+  recoverWhile = not_control_structure_symbol
 }
 
 ILParenthesizedExpression ::= '(' ILExpression ')'
@@ -357,3 +378,5 @@ private number ::= NUMBER
 // Recoveries
 private not_bracket_or_next_value ::= !(']'|ILExpression)
 private not_brace_or_next_value_2 ::= !('}'|ObjectElement)
+private not_control_structure_symbol ::= !('}'|'{'|'${'|'%{'|isDataLanguageSegment)
+private not_another_complete_control_structure ::= !(ForLoop|EndFor|IfBranch|ElseBranch|EndIfBranch|isDataLanguageSegment)
