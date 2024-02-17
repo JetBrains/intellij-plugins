@@ -156,10 +156,9 @@ class TypeModel(
       VersionProperty
     ).toMap())
     val AbstractBackend: BlockType = BlockType("backend", 1)
-    val Moved: BlockType = BlockType("moved", properties = listOf(
-      PropertyType("from", Types.Identifier, required = true),
-      PropertyType("to", Types.Identifier, required = true)
-    ).toMap())
+    val FromProperty: PropertyType = PropertyType("from", Types.Identifier, required = true)
+    val ToProperty: PropertyType = PropertyType("to", Types.Identifier, required = true)
+    val Moved: BlockType = BlockType("moved", properties = listOf(FromProperty, ToProperty).toMap())
     val Cloud: BlockType = BlockType("cloud", properties = listOf(
       PropertyType("organization", Types.String),
       BlockType("workspaces", required = true, properties = listOf(
@@ -186,9 +185,11 @@ class TypeModel(
 
     val CheckBlock: BlockType = BlockType("check", 1, properties = listOf(AbstractDataSource, AssertBlock).toMap())
 
+    val RemovedBlock: BlockType = BlockType("removed", 0, properties = listOf(FromProperty, ResourceLifecycle).toMap())
+
     val RootBlocks: List<BlockType> = listOf(Atlas, Module, Output, Variable, AbstractProvider,
                                              AbstractResource, AbstractDataSource, Terraform,
-                                             Locals, Moved, Import, CheckBlock)
+                                             Locals, Moved, Import, CheckBlock, RemovedBlock)
     val RootBlocksMap: Map<String, BlockType> = RootBlocks.associateBy(BlockType::literal)
   }
 
@@ -207,7 +208,7 @@ class TypeModel(
         cmp < 0 -> low = mid + 1
         cmp > 0 -> high = mid - 1
         else -> return mid
-      } 
+      }
     }
     return -1
   }

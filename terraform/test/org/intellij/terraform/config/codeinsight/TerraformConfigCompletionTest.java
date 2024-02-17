@@ -88,7 +88,7 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
     doBasicCompletionTest("resource abc {\n dynamic x {<caret>}\n}", "for_each", "labels", "iterator", "content");
     doBasicCompletionTest("resource abc {\n dynamic <caret> \n}", not("lifecycle", "provisioner", "dynamic"));
 
-//    doBasicCompletionTest("resource abc {\n dynamic <caret> {}\n}", not("lifecycle", "provisioner", "dynamic"));
+    //    doBasicCompletionTest("resource abc {\n dynamic <caret> {}\n}", not("lifecycle", "provisioner", "dynamic"));
   }
 
   public void testResourceForEachCompletion() throws Exception {
@@ -202,8 +202,6 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
                               vpc_id = ""
                             }
                             """, and(not("vpc_id"), all("service_name")));
-
-
   }
 
   public void testResourceProviderCompletionFromModel() throws Exception {
@@ -294,6 +292,19 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
           data "" "" {}
         }""", false
     );
+  }
+
+  public void testRemovedBlockCompletion() throws Exception {
+    doBasicCompletionTest("removed {<caret>}", 2, "from", "lifecycle");
+    doBasicCompletionTest(
+      """
+        removed {
+          from = test
+          lifecycle {
+            <caret>
+          }
+        }""", 6, "postcondition", "precondition", "create_before_destroy", "ignore_changes",
+      "prevent_destroy", "replace_triggered_by");
   }
 
   public void testDataSourceQuotedTypeCompletion() throws Exception {
