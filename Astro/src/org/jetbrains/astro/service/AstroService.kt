@@ -4,9 +4,10 @@ package org.jetbrains.astro.service
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
 import com.intellij.lang.typescript.library.TypeScriptLibraryProvider
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.astro.lang.AstroFileType
+import org.jetbrains.astro.service.settings.AstroServiceMode
+import org.jetbrains.astro.service.settings.getAstroServiceSettings
 
 fun isServiceEnabledAndAvailable(project: Project, context: VirtualFile): Boolean {
   return isFileAcceptableForService(context) &&
@@ -23,6 +24,5 @@ fun isServiceEnabledByContextAndSettings(project: Project, context: VirtualFile)
   if (!TypeScriptLanguageServiceUtil.isServiceEnabled(project)) return false
   if (context.fileType != AstroFileType) return false
   if (TypeScriptLibraryProvider.isLibraryOrBundledLibraryFile(project, context)) return false
-
-  return Registry.`is`("astro.enable.lsp", false)
+  return getAstroServiceSettings(project).serviceMode == AstroServiceMode.ENABLED
 }
