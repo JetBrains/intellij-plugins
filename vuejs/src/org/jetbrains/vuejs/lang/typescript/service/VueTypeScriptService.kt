@@ -36,13 +36,59 @@ import org.jetbrains.vuejs.lang.typescript.service.protocol.VueTypeScriptService
 import org.jetbrains.vuejs.options.VueConfigurable
 import java.util.function.Consumer
 
+/**
+ * Provides limited features through TSServer protocol with custom typescript plugin that rewrites .vue files into valid .ts files.
+ *
+ * Doesn't work properly with TypeScript 5+.
+ * Superseded by integration with Vue Language Tools (Volar) through LSP.
+ */
 class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(project, "Vue Console") {
+
+  override fun getProcessName(): String = "Vue TypeScript"
+
+  override fun isDisabledByContext(context: VirtualFile): Boolean {
+    if (super.isDisabledByContext(context)) return true
+
+    return !isVueServiceAvailableByContext(context)
+  }
+
+  private fun isVueServiceAvailableByContext(context: VirtualFile): Boolean = isVueTypeScriptServiceEnabled(myProject, context)
 
   override fun isAcceptableNonTsFile(project: Project, service: TypeScriptConfigService, virtualFile: VirtualFile): Boolean {
     if (super.isAcceptableNonTsFile(project, service, virtualFile)) return true
     if (!virtualFile.isVueFile) return false
 
     return service.getDirectIncludePreferableConfig(virtualFile) != null
+  }
+
+  override fun createProtocol(readyConsumer: Consumer<*>, tsServicePath: String): JSLanguageServiceProtocol {
+    return VueTypeScriptServiceProtocol(myProject, mySettings, readyConsumer, createEventConsumer(), tsServicePath)
+  }
+
+  override fun getInitialOpenCommands(): Map<JSLanguageServiceSimpleCommand, Consumer<JSLanguageServiceObject>> {
+    //commands
+    val initialCommands = super.getInitialOpenCommands()
+    val result: MutableMap<JSLanguageServiceSimpleCommand, Consumer<JSLanguageServiceObject>> = linkedMapOf()
+    addConfigureCommand(result)
+
+    result.putAll(initialCommands)
+    return result
+  }
+
+  private fun addConfigureCommand(result: MutableMap<JSLanguageServiceSimpleCommand, Consumer<JSLanguageServiceObject>>) {
+    val arguments = ConfigureRequestArguments("IntelliJ")
+    val fileExtensionInfo = FileExtensionInfo()
+    fileExtensionInfo.extension = VUE_FILE_EXTENSION
+
+    //see ts.getSupportedExtensions
+    //x.scriptKind === ScriptKind.Deferred(7) || needJsExtensions && isJSLike(x.scriptKind) ? x.extension : undefined
+    //so only "ScriptKind.Deferred" kinds are accepted for file searching
+    fileExtensionInfo.scriptKind = 7
+
+    fileExtensionInfo.isMixedContent = false
+    arguments.extraFileExtensions = arrayOf(fileExtensionInfo)
+
+    result[ConfigureRequest(arguments)] = Consumer {}
   }
 
   override fun postprocessErrors(file: PsiFile, errors: List<JSAnnotationError>): List<JSAnnotationError> {
@@ -99,30 +145,6 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
     (error.line > startLine || error.line == startLine && error.column >= startColumn) &&
     (error.endLine < endLine || error.endLine == endLine && error.endColumn <= endColumn)
 
-  override fun getProcessName(): String = "Vue TypeScript"
-
-  override fun isDisabledByContext(context: VirtualFile): Boolean {
-    if (super.isDisabledByContext(context)) return true
-
-    return !isVueServiceAvailableByContext(context)
-  }
-
-  private fun isVueServiceAvailableByContext(context: VirtualFile): Boolean = isVueTypeScriptServiceEnabled(myProject, context)
-
-  override fun createProtocol(readyConsumer: Consumer<*>, tsServicePath: String): JSLanguageServiceProtocol {
-    return VueTypeScriptServiceProtocol(myProject, mySettings, readyConsumer, createEventConsumer(), tsServicePath)
-  }
-
-  override fun getInitialOpenCommands(): Map<JSLanguageServiceSimpleCommand, Consumer<JSLanguageServiceObject>> {
-    //commands
-    val initialCommands = super.getInitialOpenCommands()
-    val result: MutableMap<JSLanguageServiceSimpleCommand, Consumer<JSLanguageServiceObject>> = linkedMapOf()
-    addConfigureCommand(result)
-
-    result.putAll(initialCommands)
-    return result
-  }
-
   override fun canHighlight(file: PsiFile): Boolean {
     if (super.canHighlight(file)) return true
 
@@ -139,22 +161,6 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
     val configForFile = getConfigForFile(virtualFile)
 
     return configForFile != null
-  }
-
-  private fun addConfigureCommand(result: MutableMap<JSLanguageServiceSimpleCommand, Consumer<JSLanguageServiceObject>>) {
-    val arguments = ConfigureRequestArguments("IntelliJ")
-    val fileExtensionInfo = FileExtensionInfo()
-    fileExtensionInfo.extension = VUE_FILE_EXTENSION
-
-    //see ts.getSupportedExtensions
-    //x.scriptKind === ScriptKind.Deferred(7) || needJsExtensions && isJSLike(x.scriptKind) ? x.extension : undefined
-    //so only "ScriptKind.Deferred" kinds are accepted for file searching
-    fileExtensionInfo.scriptKind = 7
-
-    fileExtensionInfo.isMixedContent = false
-    arguments.extraFileExtensions = arrayOf(fileExtensionInfo)
-
-    result[ConfigureRequest(arguments)] = Consumer {}
   }
 
   override fun skipInternalErrors(element: PsiElement): Boolean {
