@@ -26,13 +26,13 @@ import org.jetbrains.vuejs.lang.typescript.service.VueTypeScriptService
 import org.jetbrains.vuejs.lang.vueRelativeTestDataPath
 import org.junit.Test
 
-fun CodeInsightTestFixture.configureFileAndCheckHighlighting(filePath: String) {
+private fun CodeInsightTestFixture.configureFileAndCheckHighlighting(filePath: String) {
   val myFixture = this
   myFixture.configureFromTempProjectFile(filePath)
   myFixture.checkHighlighting()
 }
 
-const val SERVICE_TEST_PATH = "/ts_ls_highlighting"
+private const val SERVICE_TEST_PATH = "/ts_ls_highlighting"
 
 
 class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
