@@ -20,11 +20,10 @@ class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(projec
   override fun isAcceptable(file: VirtualFile) = isVolarEnabledAndAvailable(project, file)
 
   override suspend fun getIdeType(virtualFile: VirtualFile, args: TypeScriptGetElementTypeRequestArgs): JsonElement? {
-    return withServer {
-      val params = LspGetElementTypeRequestArgs(file = descriptor.getFileUri(virtualFile),
-                                                range = args.range,
-                                                forceReturnType = args.forceReturnType)
-      sendRequest { (it as JSFrameworkLsp4jServer).getElementType(params) }
-    }
+    val server = getServer() ?: return null
+    val params = LspGetElementTypeRequestArgs(file = server.descriptor.getFileUri(virtualFile),
+                                              range = args.range,
+                                              forceReturnType = args.forceReturnType)
+    return server.sendRequest { (it as JSFrameworkLsp4jServer).getElementType(params) }
   }
 }
