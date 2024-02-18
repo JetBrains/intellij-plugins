@@ -22,20 +22,24 @@ import org.jetbrains.astro.webSymbols.scope.AstroScriptDefineVarsScope
 import org.jetbrains.astro.webSymbols.scope.AstroStyleDefineVarsScope
 
 val ASTRO_COMPONENTS = WebSymbolQualifiedKind(NAMESPACE_HTML, "astro-components")
+val ASTRO_COMPONENT_PROPS = WebSymbolQualifiedKind(NAMESPACE_HTML, "props")
+val ASTRO_COMMON_DIRECTIVES = WebSymbolQualifiedKind(NAMESPACE_HTML, "astro-common-directives")
+val ASTRO_CLIENT_DIRECTIVES = WebSymbolQualifiedKind(NAMESPACE_HTML, "astro-client-directives")
+val ASTRO_STYLE_DIRECTIVES = WebSymbolQualifiedKind(NAMESPACE_HTML, "astro-style-directives")
+val ASTRO_SCRIPT_STYLE_DIRECTIVES = WebSymbolQualifiedKind(NAMESPACE_HTML, "astro-script-style-directives")
 
 const val PROP_ASTRO_PROXIMITY = "x-astro-proximity"
 
 class AstroQueryConfigurator : WebSymbolsQueryConfigurator {
 
-  override fun getScope(project: Project, location: PsiElement?, context: WebSymbolsContext, allowResolve: Boolean): List<WebSymbolsScope> =
-    if (context.framework == AstroFramework.ID && location?.containingFile is AstroFileImpl) {
-      when (location) {
-        is CssElement -> calculateCssScopes(location)
-        is JSElement -> calculateJsScopes(location)
-        else -> calculateDefaultScopes(location)
-      }
+  override fun getScope(project: Project, location: PsiElement?, context: WebSymbolsContext, allowResolve: Boolean): List<WebSymbolsScope> {
+    if (context.framework != AstroFramework.ID || location?.containingFile !is AstroFileImpl) return emptyList()
+    return when (location) {
+      is CssElement -> calculateCssScopes(location)
+      is JSElement -> calculateJsScopes(location)
+      else -> calculateDefaultScopes(location)
     }
-    else emptyList()
+  }
 
   private fun calculateCssScopes(location: CssElement): MutableList<WebSymbolsScope> {
     val result = calculateDefaultScopes(location)
