@@ -42,7 +42,7 @@ import java.util.function.Consumer
  * Doesn't work properly with TypeScript 5+.
  * Superseded by integration with Vue Language Tools (Volar) through LSP.
  */
-class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(project, "Vue Console") {
+class VueClassicTypeScriptService(project: Project) : TypeScriptServerServiceImpl(project, "Vue Console") {
 
   override fun getProcessName(): String = "Vue TypeScript"
 

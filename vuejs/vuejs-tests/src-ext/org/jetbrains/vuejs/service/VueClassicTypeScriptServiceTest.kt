@@ -22,7 +22,7 @@ import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.VueInspectionsProvider
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
-import org.jetbrains.vuejs.lang.typescript.service.VueTypeScriptService
+import org.jetbrains.vuejs.lang.typescript.service.VueClassicTypeScriptService
 import org.jetbrains.vuejs.lang.vueRelativeTestDataPath
 import org.junit.Test
 
@@ -35,10 +35,10 @@ private fun CodeInsightTestFixture.configureFileAndCheckHighlighting(filePath: S
 private const val SERVICE_TEST_PATH = "/ts_ls_highlighting"
 
 
-class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
+class VueClassicTypeScriptServiceTest : TypeScriptServiceTestBase() {
   override fun getService(): JSLanguageServiceBase =
     JSLanguageServiceProvider.getLanguageServices(project)
-      .firstNotNullOf { it as? VueTypeScriptService }
+      .firstNotNullOf { it as? VueClassicTypeScriptService }
 
   override fun getExtension(): String {
     return "vue"

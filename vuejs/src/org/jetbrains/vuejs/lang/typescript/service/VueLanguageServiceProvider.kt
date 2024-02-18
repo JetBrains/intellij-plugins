@@ -14,7 +14,7 @@ import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.lang.typescript.service.volar.VolarTypeScriptService
 
 internal class VueLanguageServiceProvider(project: Project) : JSLanguageServiceProvider {
-  private val tsLanguageService by lazy(LazyThreadSafetyMode.PUBLICATION) { project.service<ServiceWrapper>() }
+  private val tsLanguageService by lazy(LazyThreadSafetyMode.PUBLICATION) { project.service<VueClassicServiceWrapper>() }
   private val volarLanguageService by lazy(LazyThreadSafetyMode.PUBLICATION) { project.service<VolarServiceWrapper>() }
 
   override fun getAllServices(): List<JSLanguageService> = listOf(tsLanguageService.service, volarLanguageService.service)
@@ -28,8 +28,8 @@ internal class VueLanguageServiceProvider(project: Project) : JSLanguageServiceP
 }
 
 @Service(Service.Level.PROJECT)
-private class ServiceWrapper(project: Project) : Disposable {
-  val service = VueTypeScriptService(project)
+private class VueClassicServiceWrapper(project: Project) : Disposable {
+  val service = VueClassicTypeScriptService(project)
 
   override fun dispose() {
     Disposer.dispose(service)
