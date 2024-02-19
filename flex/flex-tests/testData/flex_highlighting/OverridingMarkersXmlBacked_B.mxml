@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<<lineMarker descr="Has subclasses">OverridingMarkersXmlBacked_A</lineMarker> xmlns:<info descr="null">mx</info>="http://www.adobe.com/2006/mxml" xmlns="*" implements="<info descr="interface"><inject descr="null">IMyInterface</inject></info>">
-    <<info descr="null">mx</info>:Script><inject descr="null">
+<<lineMarker descr="Has subclasses">OverridingMarkersXmlBacked_A</lineMarker> xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*" implements="<info descr="interface"><inject descr="null">IMyInterface</inject></info>">
+    <mx:Script><inject descr="null">
 
     override function <lineMarker descr="Is overridden"><lineMarker descr="Overrides method 'foo' in OverridingMarkersXmlBacked_A"><info descr="instance method"><caret>foo</info></lineMarker></lineMarker>() : <info>String</info> {
         return "B";
@@ -11,5 +11,5 @@
             return "bar";
         }
 
-    </inject></<info descr="null">mx</info>:Script>
+    </inject></mx:Script>
 </OverridingMarkersXmlBacked_A>

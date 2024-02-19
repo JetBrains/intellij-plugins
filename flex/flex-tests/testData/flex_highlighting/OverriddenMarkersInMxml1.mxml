@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
-<<lineMarker descr="Has subclasses"><info descr="null">mx</info>:Application</lineMarker> xmlns:<info descr="null">mx</info>="http://www.adobe.com/2006/mxml">
-    <<info descr="null">mx</info>:Script><![CDATA[<inject descr="null">
+<<lineMarker descr="Has subclasses">mx:Application</lineMarker> xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script><![CDATA[<inject descr="null">
 
 
-        </inject>]]></<info descr="null">mx</info>:Script>
-    <<info descr="null">mx</info>:Script><![CDATA[<inject descr="null">
+        </inject>]]></mx:Script>
+    <mx:Script><![CDATA[<inject descr="null">
 
 
 
-        </inject>]]></<info descr="null">mx</info>:Script>
-</<info descr="null">mx</info>:Application>
+        </inject>]]></mx:Script>
+</mx:Application>

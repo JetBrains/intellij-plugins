@@ -1,1 +1,1 @@
-<<info descr="null">mx</info>:Application  xmlns:<info descr="null">mx</info>="<error descr="URI is not registered (Settings | Languages & Frameworks | Schemas and DTDs)">http://www.adobe.com/2006/mxml</error>"/>
+<mx:Application  xmlns:mx="<error descr="URI is not registered (Settings | Languages & Frameworks | Schemas and DTDs)">http://www.adobe.com/2006/mxml</error>"/>

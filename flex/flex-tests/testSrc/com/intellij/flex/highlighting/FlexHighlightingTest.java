@@ -1891,7 +1891,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     nsDescriptor = ((XmlFile)getFile()).getDocument().getRootTagNSDescriptor();
     assertTrue(nsDescriptor.toString(), nsDescriptor instanceof FlexMxmlNSDescriptor);
     String newText = """
-      <<info descr="null">mx</info>:Application  xmlns:<info descr="null">mx</info>="http://www.adobe.com/2006/mxml"/>
+      <mx:Application  xmlns:mx="http://www.adobe.com/2006/mxml"/>
       """;
     WriteAction.run(() -> myEditor.getDocument().setText(newText)); // restore <info> markers for doDoTest, remove <error> for unregistered URI because it's not highlighted in mxml
     doDoTest(true, true);
@@ -1910,7 +1910,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     XmlNSDescriptor nsDescriptor = ((XmlFile)getFile()).getDocument().getRootTagNSDescriptor();
     assertTrue(nsDescriptor.toString(), nsDescriptor instanceof FlexMxmlNSDescriptor);
     WriteAction.run(()->getFile().getFileDocument().setText("""
-    <<info descr="null">mx</info>:Application  xmlns:<info descr="null">mx</info>="http://www.adobe.com/2006/mxml"/>
+    <mx:Application  xmlns:mx="http://www.adobe.com/2006/mxml"/>
     """)); // restore <info> markers for doDoTest
     doDoTest(true, true);
   }
