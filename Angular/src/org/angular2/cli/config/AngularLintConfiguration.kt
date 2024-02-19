@@ -10,10 +10,10 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.nullize
 import com.intellij.util.text.minimatch.Minimatch
 
-class AngularLintConfiguration internal constructor(private val project: Project,
-                                                    private val ngProject: AngularProject,
-                                                    private val config: AngularJsonLintOptions,
-                                                    val name: String? = null) {
+class AngularLintConfiguration(private val project: Project,
+                               private val ngProject: AngularProject,
+                               private val config: AngularJsonLintOptions,
+                               val name: String? = null) {
   private val myIncludes = lazy { config.files.mapNotNull(::createGlobMatcher).nullize() }
   private val myExcludes = lazy { config.exclude.mapNotNull(::createGlobMatcher) }
 

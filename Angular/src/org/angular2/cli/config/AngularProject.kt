@@ -36,14 +36,9 @@ abstract class AngularProject(internal val angularCliFolder: VirtualFile) {
 
   abstract val inlineStyleLanguage: Language?
 
-  internal open fun resolveFile(filePath: String?): VirtualFile? {
-    return filePath?.let { path ->
-      rootDir?.takeIf { it.isValid }?.findFileByRelativePath(path)
-      ?: angularCliFolder.takeIf { it.isValid }?.findFileByRelativePath(path)
-    }
-  }
+  abstract fun resolveFile(filePath: String?): VirtualFile?
 
-  internal fun proximity(context: VirtualFile): Int {
+  fun proximity(context: VirtualFile): Int {
     val rootDir = rootDir ?: return -1
     val sourceDir = sourceDir ?: rootDir
     if (!VfsUtil.isAncestor(rootDir, context, false))
@@ -85,9 +80,9 @@ abstract class AngularProject(internal val angularCliFolder: VirtualFile) {
   }
 }
 
-class AngularProjectImpl(override val name: String,
-                         private val ngProject: AngularJsonProject,
-                         angularCliFolder: VirtualFile)
+open class AngularProjectImpl(override val name: String,
+                              private val ngProject: AngularJsonProject,
+                              angularCliFolder: VirtualFile)
   : AngularProject(angularCliFolder) {
 
   override val rootDir = ngProject.rootPath?.let { angularCliFolder.findFileByRelativePath(it) }
@@ -114,6 +109,13 @@ class AngularProjectImpl(override val name: String,
   override val karmaConfigFile get() = resolveFile(ngProject.targets?.test?.options?.karmaConfig)
 
   override val protractorConfigFile get() = resolveFile(ngProject.targets?.e2e?.options?.protractorConfig)
+
+  override fun resolveFile(filePath: String?): VirtualFile? {
+    return filePath?.let { path ->
+      rootDir?.takeIf { it.isValid }?.findFileByRelativePath(path)
+      ?: angularCliFolder.takeIf { it.isValid }?.findFileByRelativePath(path)
+    }
+  }
 
   override fun getTsLintConfigurations(project: Project): List<AngularLintConfiguration> =
     ngProject.targets?.lint?.let { lint ->
