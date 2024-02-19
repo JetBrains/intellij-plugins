@@ -3,6 +3,7 @@ package org.intellij.terraform.template
 
 import com.intellij.lang.Language
 import com.intellij.lang.LanguageParserDefinitions
+import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.LanguageSubstitutors
@@ -15,7 +16,6 @@ import com.intellij.psi.templateLanguages.TemplateDataElementType
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.OuterLanguageElementType
-import org.intellij.terraform.config.TerraformLanguage
 import org.intellij.terraform.template.lexer.TerraformTemplateTokenTypes
 
 internal class TerraformTemplateFileViewProvider(psiManager: PsiManager,
@@ -25,6 +25,7 @@ internal class TerraformTemplateFileViewProvider(psiManager: PsiManager,
 ) : MultiplePsiFilesPerDocumentFileViewProvider(psiManager, virtualFile, eventSystemEnabled), ConfigurableTemplateLanguageFileViewProvider {
 
   override fun createFile(lang: Language): PsiFile? {
+
     val dataLanguageParser = LanguageParserDefinitions.INSTANCE.forLanguage(lang)
     if (dataLanguageParser == null) {
       return null
@@ -61,7 +62,7 @@ internal class TerraformTemplateFileViewProvider(psiManager: PsiManager,
 // otherwise a mapping from the TemplateDataLanguageMappings would not be used resulting in inability to parse a file!
 private fun doComputeTemplateDataLanguage(virtualFile: VirtualFile, project: Project): Language {
   val dataLanguage = TemplateDataLanguageMappings.getInstance(project)?.getMapping(virtualFile)
-                     ?: TerraformLanguage
+                     ?: PlainTextLanguage.INSTANCE
   val substituteLang = LanguageSubstitutors.getInstance()
     .substituteLanguage(dataLanguage, virtualFile, project)
   return if (TemplateDataLanguageMappings.getTemplateableLanguages().contains(substituteLang)) {
