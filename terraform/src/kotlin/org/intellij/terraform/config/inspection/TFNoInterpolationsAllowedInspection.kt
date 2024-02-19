@@ -5,23 +5,17 @@ import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.util.TextRange
-import com.intellij.patterns.PatternCondition
-import com.intellij.patterns.PlatformPatterns.psiElement
-import com.intellij.patterns.PsiElementPattern
-import com.intellij.patterns.StandardPatterns.or
 import com.intellij.psi.InjectedLanguagePlaces
 import com.intellij.psi.PsiElementVisitor
-import com.intellij.util.ProcessingContext
+import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.config.patterns.TerraformPatterns.DependsOnPattern
+import org.intellij.terraform.config.patterns.TerraformPatterns.HeredocContentAnywhereInVariable
+import org.intellij.terraform.config.patterns.TerraformPatterns.ModuleRootBlock
+import org.intellij.terraform.config.patterns.TerraformPatterns.StringLiteralAnywhereInVariable
+import org.intellij.terraform.config.patterns.TerraformPatterns.TerraformRootBlock
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.hcl.psi.common.MethodCallExpression
-import org.intellij.terraform.config.patterns.TerraformPatterns
-import org.intellij.terraform.config.patterns.TerraformPatterns.DataSourceRootBlock
-import org.intellij.terraform.config.patterns.TerraformPatterns.ModuleRootBlock
-import org.intellij.terraform.config.patterns.TerraformPatterns.OutputRootBlock
-import org.intellij.terraform.config.patterns.TerraformPatterns.ResourceRootBlock
-import org.intellij.terraform.config.patterns.TerraformPatterns.TerraformRootBlock
-import org.intellij.terraform.config.patterns.TerraformPatterns.VariableRootBlock
 import org.intellij.terraform.hil.ILLanguageInjector
 
 class TFNoInterpolationsAllowedInspection : LocalInspectionTool() {
@@ -32,25 +26,6 @@ class TFNoInterpolationsAllowedInspection : LocalInspectionTool() {
     }
 
     return MyEV(holder)
-  }
-
-  companion object {
-    val StringLiteralAnywhereInVariable: PsiElementPattern.Capture<HCLStringLiteral> =
-        psiElement(HCLStringLiteral::class.java)
-            .inside(true, VariableRootBlock)
-    val HeredocContentAnywhereInVariable: PsiElementPattern.Capture<HCLHeredocContent> =
-        psiElement(HCLHeredocContent::class.java)
-            .inside(true, VariableRootBlock)
-
-    val DependsOnProperty: PsiElementPattern.Capture<HCLProperty> =
-        psiElement(HCLProperty::class.java)
-            .withSuperParent(1, HCLObject::class.java)
-            .withSuperParent(2, or(ResourceRootBlock, DataSourceRootBlock, ModuleRootBlock, OutputRootBlock))
-            .with(object : PatternCondition<HCLProperty?>("HCLProperty(depends_on)") {
-              override fun accepts(t: HCLProperty, context: ProcessingContext?): Boolean {
-                return t.name == "depends_on"
-              }
-            })
   }
 
   inner class MyEV(val holder: ProblemsHolder) : HCLElementVisitor() {
@@ -75,7 +50,7 @@ class TFNoInterpolationsAllowedInspection : LocalInspectionTool() {
     }
 
     override fun visitProperty(o: HCLProperty) {
-      if (DependsOnProperty.accepts(o)) {
+      if (DependsOnPattern.accepts(o)) {
         checkDependsOn(o)
       }
     }

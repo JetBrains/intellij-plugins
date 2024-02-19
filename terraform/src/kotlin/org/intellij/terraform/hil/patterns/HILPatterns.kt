@@ -8,8 +8,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentsOfType
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.Scopes
-import org.intellij.terraform.config.inspection.TFNoInterpolationsAllowedInspection
 import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.config.patterns.TerraformPatterns.DependsOnPattern
 import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.hcl.psi.common.BaseExpression
@@ -35,7 +35,7 @@ object HILPatterns {
   val MethodPosition: Capture<PsiElement> = PlatformPatterns.psiElement().withLanguages(HILLanguage, HCLLanguage).withParent(
     PlatformPatterns.psiElement(Identifier::class.java).with(NotBlockIdentifier).withHCLHost(
       PlatformPatterns.psiElement(HCLElement::class.java).without(InVariableBlock).andNot(
-        PlatformPatterns.psiElement().inside(TFNoInterpolationsAllowedInspection.DependsOnProperty))
+        PlatformPatterns.psiElement().inside(DependsOnPattern))
     )
   ).andNot(PlatformPatterns.psiElement().withSuperParent(2, SelectExpression::class.java))
 

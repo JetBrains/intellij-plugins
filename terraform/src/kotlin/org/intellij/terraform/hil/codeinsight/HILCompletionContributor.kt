@@ -21,9 +21,9 @@ import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.createS
 import org.intellij.terraform.config.codeinsight.TerraformConfigCompletionContributor
 import org.intellij.terraform.config.codeinsight.TerraformConfigCompletionContributor.BlockTypeOrNameCompletionProvider.isProviderUsed
 import org.intellij.terraform.config.codeinsight.TerraformLookupElementRenderer
-import org.intellij.terraform.config.inspection.TFNoInterpolationsAllowedInspection.Companion.DependsOnProperty
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.config.patterns.TerraformPatterns.DependsOnPattern
 import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.hcl.navigation.HCLQualifiedNameProvider
 import org.intellij.terraform.hcl.psi.*
@@ -122,7 +122,7 @@ class HILCompletionContributor : CompletionContributor() {
         }
 
         // Since 'depends_on', 'provider' does not allows interpolations, don't add anything
-        if (DependsOnProperty.accepts(property)) return
+        if (DependsOnPattern.accepts(property)) return
         if (property.name == "provider" && (type == "resource" || type == "data") && isRootBlock) return
         // Same for 'providers' binding in 'module'
         if (property.name == "providers" && type == "module" && isRootBlock) return
@@ -487,7 +487,7 @@ class HILCompletionContributor : CompletionContributor() {
         }
         else {
           // Since 'depends_on', 'provider' does not allows interpolations, don't add anything
-          if (DependsOnProperty.accepts(property)) return
+          if (DependsOnPattern.accepts(property)) return
           if (property.name == "provider" && (type == "resource" || type == "data") && isRootBlock) return
           // Same for 'providers' binding in 'module'
           if (property.name == "providers" && type == "module" && isRootBlock) return

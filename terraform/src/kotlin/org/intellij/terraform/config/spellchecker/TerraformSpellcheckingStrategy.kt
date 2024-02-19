@@ -2,17 +2,17 @@
 package org.intellij.terraform.config.spellchecker
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.spellchecker.tokenizer.Tokenizer
-import org.intellij.terraform.hcl.psi.*
-import org.intellij.terraform.hcl.spellchecker.HCLSpellcheckerStrategy
 import org.intellij.terraform.config.model.TypeModelProvider
 import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.config.patterns.TerraformPatterns.DependsOnPattern
+import org.intellij.terraform.config.spellchecker.TerraformSpellcheckingUtil.RootBlocksWithChangeableName
+import org.intellij.terraform.config.spellchecker.TerraformSpellcheckingUtil.StringLiteralTokenizer
+import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.spellchecker.HCLSpellcheckerStrategy
 
 class TerraformSpellcheckingStrategy : HCLSpellcheckerStrategy() {
-  companion object {
-    private val RootBlocksWithChangeableName = setOf("output", "variable", "module", "resource", "data")
-  }
-
   override fun getTokenizer(element: PsiElement?): Tokenizer<*> {
     if (element == null) return EMPTY_TOKENIZER
     val parent = element.parent
@@ -31,6 +31,11 @@ class TerraformSpellcheckingStrategy : HCLSpellcheckerStrategy() {
       if (TypeModelProvider.getModel(element).getFunction(element.text) != null) return EMPTY_TOKENIZER
     }
 
+    val inArray = parent.parent is HCLArray
+    val property = PsiTreeUtil.getParentOfType(element, HCLProperty::class.java)
+    if (DependsOnPattern.accepts(property) && inArray) {
+      return EMPTY_TOKENIZER
+    }
     return super.getTokenizer(element)
   }
 

@@ -157,6 +157,23 @@ object TerraformPatterns {
     .withParent(HCLObject::class.java)
     .withSuperParent(2, or(ResourceRootBlock, DataSourceRootBlock))
 
+  val StringLiteralAnywhereInVariable: PsiElementPattern.Capture<HCLStringLiteral> =
+    PlatformPatterns.psiElement(HCLStringLiteral::class.java)
+      .inside(true, VariableRootBlock)
+  val HeredocContentAnywhereInVariable: PsiElementPattern.Capture<HCLHeredocContent> =
+    PlatformPatterns.psiElement(HCLHeredocContent::class.java)
+      .inside(true, VariableRootBlock)
+
+  val DependsOnPattern: PsiElementPattern.Capture<HCLProperty> =
+    PlatformPatterns.psiElement(HCLProperty::class.java)
+      .withSuperParent(1, HCLObject::class.java)
+      .withSuperParent(2, or(ResourceRootBlock, DataSourceRootBlock, ModuleRootBlock, OutputRootBlock))
+      .with(object : PatternCondition<HCLProperty?>("HCLProperty(depends_on)") {
+        override fun accepts(t: HCLProperty, context: ProcessingContext?): Boolean {
+          return t.name == "depends_on"
+        }
+      })
+
   private fun createBlockPattern(type: String): PatternCondition<HCLBlock?> {
     return object : PatternCondition<HCLBlock?>("HCLBlock($type)") {
       override fun accepts(t: HCLBlock, context: ProcessingContext?): Boolean {

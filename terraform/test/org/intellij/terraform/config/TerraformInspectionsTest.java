@@ -129,6 +129,10 @@ public class TerraformInspectionsTest extends TerraformInspectionFixtureTestCase
     doTest("spellchecking", new SpellCheckingInspection());
   }
 
+  public void testSpellcheckingInDependsOn() {
+    doTest("spellchecking_depends_on", new SpellCheckingInspection());
+  }
+
   public void testUnknownResourceType() {
     doTest("unknown_resource_type", new HILUnknownResourceTypeInspection());
   }

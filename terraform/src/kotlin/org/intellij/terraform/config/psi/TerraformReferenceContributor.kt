@@ -11,10 +11,10 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.parentsOfType
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.TerraformDocumentationUrlProvider.getResourceOrDataSourceUrl
-import org.intellij.terraform.config.inspection.TFNoInterpolationsAllowedInspection.Companion.DependsOnProperty
 import org.intellij.terraform.config.model.Module
 import org.intellij.terraform.config.model.getTerraformModule
 import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.config.patterns.TerraformPatterns.DependsOnPattern
 import org.intellij.terraform.config.patterns.TerraformPatterns.ResourceProviderProperty
 import org.intellij.terraform.config.patterns.TerraformPatterns.TerraformConfigFile
 import org.intellij.terraform.config.patterns.TerraformPatterns.TerraformVariablesFile
@@ -48,7 +48,7 @@ class TerraformReferenceContributor : PsiReferenceContributor() {
         psiElement(HCLStringLiteral::class.java)
             .inFile(TerraformConfigFile)
             .withSuperParent(1, psiElement(HCLArray::class.java))
-            .withSuperParent(2, DependsOnProperty)
+          .withSuperParent(2, DependsOnPattern)
         , DependsOnReferenceProvider)
 
     // Resolve variables usage in .tfvars

@@ -25,9 +25,9 @@ import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.failIfI
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.getClearTextValue
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.getIncomplete
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.getOriginalObject
-import org.intellij.terraform.config.inspection.TFNoInterpolationsAllowedInspection.Companion.DependsOnProperty
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.config.patterns.TerraformPatterns.DependsOnPattern
 import org.intellij.terraform.config.patterns.TerraformPatterns.TerraformConfigFile
 import org.intellij.terraform.config.patterns.TerraformPatterns.TerraformVariablesFile
 import org.intellij.terraform.hcl.HCLElementTypes
@@ -432,7 +432,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
         result.addAllElements(providers.map { create(it.second).withInsertHandler(QuoteInsertHandler) })
         return
       }
-      if (DependsOnProperty.accepts(property) && inArray) {
+      if (DependsOnPattern.accepts(property) && inArray) {
         val resources = property.getTerraformModule().getDeclaredResources()
           .map { "${it.getNameElementUnquoted(1)}.${it.name}" }
         val datas = property.getTerraformModule().getDeclaredDataSources()
