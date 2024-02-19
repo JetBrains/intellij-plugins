@@ -45,6 +45,7 @@
       <action id="TimeLapseView" class="org.jetbrains.idea.perforce.actions.TimeLapseViewAction"/>
       <separator/>
       <action id="PerforceEnableIntegration" class="org.jetbrains.idea.perforce.actions.EnableAction"/>
+      <action id="PerforceCheckLoginStateAction" class="org.jetbrains.idea.perforce.actions.CheckLoginStateAction"/>
       <add-to-group group-id="VcsGroup" anchor="last"/>
       <add-to-group group-id="VcsGlobalGroup" anchor="after" relative-to-action="Vcs.Specific"/>
     </group>
