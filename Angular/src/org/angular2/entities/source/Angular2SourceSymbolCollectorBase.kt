@@ -17,7 +17,7 @@ abstract class Angular2SourceSymbolCollectorBase<T : Angular2Entity, R>(
 
   private var isFullyResolved = true
   private val dependencies = HashSet<PsiElement>()
-  private val resolveQueue = Stack<PsiElement>()
+  private val resolveQueue = Stack<PsiElement?>()
 
   fun collect(property: JSProperty?): Result<R> =
     if (property == null)
@@ -37,7 +37,7 @@ abstract class Angular2SourceSymbolCollectorBase<T : Angular2Entity, R>(
     while (!resolveQueue.empty()) {
       ProgressManager.checkCanceled()
       val element = resolveQueue.pop()
-      if (!visited.add(element)) {
+      if (element == null || !visited.add(element)) {
         // Protect against cyclic references or visiting same thing several times
         continue
       }
