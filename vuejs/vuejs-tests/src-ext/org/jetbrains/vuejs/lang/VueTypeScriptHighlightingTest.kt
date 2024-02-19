@@ -110,4 +110,8 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingWithoutServerTest() 
   override fun testAddExcessMembersToOtherFile() {
     // inapplicable
   }
+
+  override fun getPerformanceTestName(): String {
+    return "VueTypeScriptHighlighting - Highlighting rx observable"
+  }
 }
