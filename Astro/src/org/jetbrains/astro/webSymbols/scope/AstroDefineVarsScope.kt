@@ -11,19 +11,23 @@ import com.intellij.psi.util.childrenOfType
 import com.intellij.psi.xml.XmlTag
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.webSymbols.*
+import com.intellij.webSymbols.WebSymbol.Companion.JS_PROPERTIES
 import com.intellij.webSymbols.patterns.ComplexPatternOptions
 import com.intellij.webSymbols.patterns.WebSymbolsPattern
 import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
 import com.intellij.webSymbols.patterns.WebSymbolsPatternReferenceResolver
+import com.intellij.webSymbols.utils.qualifiedKind
 import org.jetbrains.astro.codeInsight.ASTRO_DEFINE_VARS_DIRECTIVE
 
-interface SymbolProvider {
-  val providedSymbol: WebSymbol?
-    get() = null
-}
-
 abstract class AstroDefineVarsScope(tag: XmlTag)
-  : WebSymbolsScopeWithCache<XmlTag, Unit>(null, tag.project, tag, Unit), SymbolProvider {
+  : WebSymbolsScopeWithCache<XmlTag, Unit>(null, tag.project, tag, Unit) {
+
+  protected abstract val providedSymbol: WebSymbol
+
+  override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+    qualifiedKind == providedSymbol.qualifiedKind
+    || qualifiedKind == JS_PROPERTIES
+
   override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
 
@@ -36,7 +40,7 @@ abstract class AstroDefineVarsScope(tag: XmlTag)
       ?.firstOrNull()
       ?.let {
         it.asWebSymbol().getJSPropertySymbols().forEach(consumer)
-        providedSymbol?.let(consumer)
+        providedSymbol.let(consumer)
       }
   }
 }
@@ -62,7 +66,7 @@ class AstroScriptDefineVarsScope(scriptTag: XmlTag) : AstroDefineVarsScope(scrip
         ComplexPatternOptions(symbolsResolver = WebSymbolsPatternReferenceResolver(
           WebSymbolsPatternReferenceResolver.Reference(
             qualifiedKind = WebSymbolQualifiedKind(WebSymbol.NAMESPACE_JS, WebSymbol.KIND_JS_PROPERTIES)),
-          )
+        )
         ),
         false,
         WebSymbolsPatternFactory.createPatternSequence(WebSymbolsPatternFactory.createSymbolReferencePlaceholder())
@@ -99,7 +103,7 @@ class AstroStyleDefineVarsScope(styleTag: XmlTag) : AstroDefineVarsScope(styleTa
         ComplexPatternOptions(symbolsResolver = WebSymbolsPatternReferenceResolver(
           WebSymbolsPatternReferenceResolver.Reference(
             qualifiedKind = WebSymbolQualifiedKind(WebSymbol.NAMESPACE_JS, WebSymbol.KIND_JS_PROPERTIES)),
-          )
+        )
         ),
         false,
         WebSymbolsPatternFactory.createPatternSequence(

@@ -17,6 +17,9 @@ import org.angular2.lang.html.psi.Angular2HtmlAttrVariable
 class DeferOnTriggerParameterScope(parameter: Angular2BlockParameter) :
   WebSymbolsScopeWithCache<Angular2BlockParameter, Unit>(null, parameter.project, parameter, Unit) {
 
+  override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+    qualifiedKind == WebSymbol.JS_SYMBOLS
+
   override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
     val names = mutableSetOf<String>()

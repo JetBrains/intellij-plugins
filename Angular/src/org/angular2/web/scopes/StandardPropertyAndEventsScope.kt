@@ -62,7 +62,8 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
                                                               templateFile, Pair(tagNamespace, tagName)), WebSymbol {
 
     override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
-      qualifiedKind == JS_PROPERTIES || qualifiedKind == JS_EVENTS
+      qualifiedKind == JS_PROPERTIES
+      || qualifiedKind == JS_EVENTS
 
     override val name: String
       get() = key.second

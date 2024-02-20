@@ -9,12 +9,10 @@ import com.intellij.model.Pointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.containers.Stack
-import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.WebSymbolQualifiedName
-import com.intellij.webSymbols.WebSymbolsScope
-import com.intellij.webSymbols.WebSymbolsScopeWithCache
+import com.intellij.webSymbols.*
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
+import org.jetbrains.vuejs.web.VUE_COMPONENT_NAMESPACES
 import org.jetbrains.vuejs.web.VueFramework
 import org.jetbrains.vuejs.web.symbols.VueComponentNamespaceSymbol
 
@@ -26,6 +24,9 @@ class VueScriptSetupNamespacedComponentsScope(module: JSExecutionScope)
       modulePtr.dereference()?.let { VueScriptSetupNamespacedComponentsScope(it) }
     }
   }
+
+  override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+    qualifiedKind == VUE_COMPONENT_NAMESPACES
 
   override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     JSStubBasedPsiTreeUtil.processDeclarationsInScope(

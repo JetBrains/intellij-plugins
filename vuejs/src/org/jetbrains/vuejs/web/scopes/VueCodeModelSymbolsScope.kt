@@ -24,14 +24,12 @@ import com.intellij.util.asSafely
 import com.intellij.util.containers.MultiMap
 import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScopeWithCache
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
 import com.intellij.webSymbols.webTypes.WebTypesSymbol
 import org.jetbrains.vuejs.model.*
-import org.jetbrains.vuejs.web.VUE_COMPONENTS
-import org.jetbrains.vuejs.web.VUE_DIRECTIVES
-import org.jetbrains.vuejs.web.VueFramework
-import org.jetbrains.vuejs.web.asWebSymbol
+import org.jetbrains.vuejs.web.*
 import org.jetbrains.vuejs.web.symbols.VueComponentSymbol
 import org.jetbrains.vuejs.web.symbols.VueDocumentedItemSymbol
 import org.jetbrains.vuejs.web.symbols.VueWebTypesMergedSymbol
@@ -78,6 +76,11 @@ class VueCodeModelSymbolsScope<K> private constructor(private val container: Vue
   override fun getModificationCount(): Long =
     PsiModificationTracker.getInstance(project).modificationCount +
     VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS.modificationCount
+
+  override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+    qualifiedKind == VUE_COMPONENTS
+    || qualifiedKind == VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES
+    || qualifiedKind == VUE_DIRECTIVES
 
   override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     val webTypesContributions = calculateWebTypesContributions()

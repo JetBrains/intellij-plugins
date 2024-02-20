@@ -14,6 +14,7 @@ import com.intellij.util.SmartList
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
+import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScope
 import com.intellij.webSymbols.context.WebSymbolsContext
@@ -41,7 +42,7 @@ val VUE_AVAILABLE_SLOTS = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-available-
 val VUE_MODEL = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-model")
 val VUE_DIRECTIVE_ARGUMENT = WebSymbolQualifiedKind(NAMESPACE_HTML, "argument")
 val VUE_DIRECTIVE_MODIFIERS = WebSymbolQualifiedKind(NAMESPACE_HTML, "modifiers")
-val VUE_COMPONENT_NAMESPACES = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-component-namespaces")
+val VUE_COMPONENT_NAMESPACES = WebSymbolQualifiedKind(NAMESPACE_JS, "vue-component-namespaces")
 val VUE_PROVIDES = WebSymbolQualifiedKind(WebSymbol.NAMESPACE_JS, "vue-provides")
 val VUE_SPECIAL_PROPERTIES = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-special-properties")
 val VUE_BINDING_SHORTHANDS = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-binding-shorthands")

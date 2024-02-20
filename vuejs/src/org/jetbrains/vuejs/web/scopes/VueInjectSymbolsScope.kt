@@ -6,6 +6,8 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
+import com.intellij.webSymbols.WebSymbol.Companion.JS_PROPERTIES
+import com.intellij.webSymbols.WebSymbol.Companion.JS_STRING_LITERALS
 import com.intellij.webSymbols.WebSymbol.Companion.KIND_JS_PROPERTIES
 import com.intellij.webSymbols.WebSymbol.Companion.KIND_JS_STRING_LITERALS
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
@@ -21,6 +23,11 @@ import org.jetbrains.vuejs.web.symbols.VueScopeElementOrigin
 
 class VueInjectSymbolsScope(private val enclosingComponent: VueSourceComponent)
   : WebSymbolsScopeWithCache<VueSourceComponent, Unit>(VueFramework.ID, enclosingComponent.source.project, enclosingComponent, Unit) {
+
+  override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+    qualifiedKind == VUE_PROVIDES
+    || qualifiedKind == JS_STRING_LITERALS
+    || qualifiedKind == JS_PROPERTIES
 
   override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     val origin = VueScopeElementOrigin(enclosingComponent)

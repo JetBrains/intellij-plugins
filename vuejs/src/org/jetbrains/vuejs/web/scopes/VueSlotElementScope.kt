@@ -11,6 +11,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.*
+import com.intellij.webSymbols.WebSymbol.Companion.HTML_ATTRIBUTES
 import com.intellij.webSymbols.WebSymbol.Companion.HTML_SLOTS
 import com.intellij.webSymbols.WebSymbol.Companion.JS_PROPERTIES
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
@@ -42,6 +43,10 @@ private const val SLOT_LOCAL_COMPONENT = "\$local"
 
 class VueSlotElementScope(tag: XmlTag)
   : WebSymbolsScopeWithCache<XmlTag, Unit>(VueFramework.ID, tag.project, tag, Unit) {
+
+  override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+    qualifiedKind == HTML_ATTRIBUTES
+    || qualifiedKind == VUE_COMPONENTS
 
   override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     VueModelManager.findEnclosingContainer(dataHolder)

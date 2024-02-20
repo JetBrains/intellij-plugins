@@ -45,7 +45,7 @@ class DirectiveAttributeSelectorsScope(val project: Project) : WebSymbolsScope {
     : WebSymbolsScopeWithCache<Project, String>(Angular2Framework.ID, project, project, tagName), WebSymbol {
 
     override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
-      qualifiedKind.namespace == WebSymbol.NAMESPACE_JS
+      qualifiedKind in providedKinds
 
     override val name: String
       get() = key
@@ -146,6 +146,10 @@ class DirectiveAttributeSelectorsScope(val project: Project) : WebSymbolsScope {
     }
 
     companion object {
+
+      val providedKinds = setOf(NG_DIRECTIVE_ELEMENT_SELECTORS, NG_DIRECTIVE_ATTRIBUTE_SELECTORS, NG_STRUCTURAL_DIRECTIVES,
+                                NG_DIRECTIVE_INPUTS, NG_DIRECTIVE_OUTPUTS, NG_DIRECTIVE_IN_OUTS, NG_DIRECTIVE_ATTRIBUTES)
+
       private fun fillNamesAndProperties(map: MutableMap<String, Angular2Symbol>,
                                          propertiesCollection: Collection<Angular2Symbol>) {
         map.clear()

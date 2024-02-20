@@ -6,6 +6,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbol.Companion.JS_SYMBOLS
+import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScopeWithCache
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.template.Angular2TemplateScope
@@ -13,6 +15,10 @@ import org.angular2.codeInsight.template.Angular2TemplateScopesResolver
 
 class WebSymbolsTemplateScope(context: PsiElement) :
   WebSymbolsScopeWithCache<PsiElement, Unit>(Angular2Framework.ID, context.project, context, Unit) {
+
+  override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+    qualifiedKind == JS_SYMBOLS
+
   override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
     val providedSymbols = mutableSetOf<String>()

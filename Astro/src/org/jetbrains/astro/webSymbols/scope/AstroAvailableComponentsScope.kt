@@ -12,12 +12,17 @@ import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.indexing.FileBasedIndexImpl
 import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScopeWithCache
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.lang.AstroFileType
+import org.jetbrains.astro.webSymbols.ASTRO_COMPONENTS
 import org.jetbrains.astro.webSymbols.symbols.AstroComponent
 
 class AstroAvailableComponentsScope(project: Project) : WebSymbolsScopeWithCache<Project, Unit>(AstroFramework.ID, project, project, Unit) {
+
+  override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+    qualifiedKind == ASTRO_COMPONENTS
 
   override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     val psiManager = PsiManager.getInstance(project)
