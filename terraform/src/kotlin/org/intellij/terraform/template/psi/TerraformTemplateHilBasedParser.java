@@ -4,6 +4,7 @@
 package org.intellij.terraform.template.psi;
 
 import org.intellij.terraform.hil.HILParser;
+import org.intellij.terraform.hil.psi.HILTemplateParser;
 
 @SuppressWarnings("ALL")
 public class TerraformTemplateHilBasedParser extends HILParser implements HILTemplateParser {
