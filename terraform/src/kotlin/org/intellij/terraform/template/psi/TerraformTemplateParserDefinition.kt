@@ -15,9 +15,9 @@ import com.intellij.psi.tree.TokenSet
 import org.intellij.terraform.hil.HILElementType
 import org.intellij.terraform.hil.HILElementTypes
 import org.intellij.terraform.hil.HILTokenType
+import org.intellij.terraform.hil.psi.TerraformTemplateTokenTypes.DATA_LANGUAGE_TOKEN_UNPARSED
 import org.intellij.terraform.template.TerraformTemplateLanguage
 import org.intellij.terraform.template.lexer.TerraformTemplateLexer
-import org.intellij.terraform.template.lexer.TerraformTemplateTokenTypes.DATA_LANGUAGE_TOKEN_UNPARSED
 
 internal class TerraformTemplateParserDefinition : ParserDefinition {
   private val TFTPL_FILE: IFileElementType = IFileElementType("TFTPL_FILE", TerraformTemplateLanguage)

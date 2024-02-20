@@ -10,7 +10,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.lang.PsiParser;
 import com.intellij.lang.LightPsiParser;
-import static org.intellij.terraform.template.lexer.TerraformTemplateTokenTypes.DATA_LANGUAGE_TOKEN_UNPARSED;;
+;
 
 @SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
 public class HILParser implements PsiParser, LightPsiParser {

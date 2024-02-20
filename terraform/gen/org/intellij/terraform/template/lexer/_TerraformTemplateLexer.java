@@ -7,7 +7,7 @@ import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
 import static com.intellij.psi.TokenType.BAD_CHARACTER;import static com.intellij.psi.TokenType.WHITE_SPACE;
 import static org.intellij.terraform.hil.HILElementTypes.*;
-import static org.intellij.terraform.template.lexer.TerraformTemplateTokenTypes.DATA_LANGUAGE_TOKEN_UNPARSED;
+import static org.intellij.terraform.hil.psi.TerraformTemplateTokenTypes.DATA_LANGUAGE_TOKEN_UNPARSED;
 
 public class _TerraformTemplateLexer implements FlexLexer {
 
