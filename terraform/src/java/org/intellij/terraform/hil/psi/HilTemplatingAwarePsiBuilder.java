@@ -4,7 +4,6 @@ package org.intellij.terraform.hil.psi;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
 import com.intellij.lang.parser.GeneratedParserUtilBase;
-import org.intellij.terraform.template.psi.HILTemplateParser;
 
 public class HilTemplatingAwarePsiBuilder extends GeneratedParserUtilBase.Builder {
   public HilTemplatingAwarePsiBuilder(PsiBuilder builder,
