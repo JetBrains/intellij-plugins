@@ -6,14 +6,15 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlTag
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbol.Companion.HTML_ATTRIBUTES
+import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScopeWithCache
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.Angular2LibrariesHacks
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.codeInsight.template.isTemplateTag
 import org.angular2.entities.Angular2Directive
-import org.angular2.web.Angular2DirectiveSymbolWrapper
-import org.angular2.web.Angular2Symbol
+import org.angular2.web.*
 
 class MatchedDirectivesScope(tag: XmlTag)
   : WebSymbolsScopeWithCache<XmlTag, Unit>(Angular2Framework.ID, tag.project, tag, Unit) {
@@ -24,6 +25,9 @@ class MatchedDirectivesScope(tag: XmlTag)
       tag.dereference()?.let { MatchedDirectivesScope(it) }
     }
   }
+
+  override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+    qualifiedKind in providedKinds
 
   override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
@@ -47,6 +51,11 @@ class MatchedDirectivesScope(tag: XmlTag)
     directive.attributes.forEach(consumer)
 
     Angular2LibrariesHacks.hackIonicComponentAttributeNames(directive).forEach(consumer)
+  }
+
+  companion object {
+    val providedKinds = setOf(NG_DIRECTIVE_INPUTS, NG_DIRECTIVE_OUTPUTS, NG_DIRECTIVE_IN_OUTS,
+                              NG_DIRECTIVE_ATTRIBUTES, NG_DIRECTIVE_EXPORTS_AS, HTML_ATTRIBUTES)
   }
 
 }

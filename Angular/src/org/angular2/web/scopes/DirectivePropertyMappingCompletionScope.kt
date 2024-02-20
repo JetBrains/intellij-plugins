@@ -128,9 +128,10 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
         }
       } == true
 
-
   override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
-    qualifiedKind in listOf(JS_STRING_LITERALS, NG_DIRECTIVE_INPUTS, NG_DIRECTIVE_OUTPUTS)
+    qualifiedKind == JS_STRING_LITERALS
+    || qualifiedKind == NG_DIRECTIVE_INPUTS
+    || qualifiedKind == NG_DIRECTIVE_OUTPUTS
 
   private object AngularEmptyOrigin : WebSymbolOrigin {
     override val framework: FrameworkId =
@@ -184,5 +185,4 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
     }
 
   }
-
 }

@@ -20,13 +20,14 @@ import org.jetbrains.astro.codeInsight.frontmatterScript
 import org.jetbrains.astro.codeInsight.propsInterface
 import org.jetbrains.astro.lang.AstroFileImpl
 import org.jetbrains.astro.webSymbols.ASTRO_COMPONENTS
+import org.jetbrains.astro.webSymbols.ASTRO_COMPONENT_PROPS
 import org.jetbrains.astro.webSymbols.AstroProximity
 import org.jetbrains.astro.webSymbols.PROP_ASTRO_PROXIMITY
 
 class AstroLocalComponent(override val name: String,
                           override val source: PsiElement,
                           override val priority: WebSymbol.Priority = WebSymbol.Priority.HIGH)
-  : PsiSourcedWebSymbol, WebSymbolsScopeWithCache<PsiElement, Unit>(AstroFramework.ID, source.project, source, Unit){
+  : PsiSourcedWebSymbol, WebSymbolsScopeWithCache<PsiElement, Unit>(AstroFramework.ID, source.project, source, Unit) {
 
   override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
@@ -35,6 +36,9 @@ class AstroLocalComponent(override val name: String,
       emptyList()
     else
       super<WebSymbolsScopeWithCache>.getMatchingSymbols(qualifiedName, params, scope)
+
+  override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+    qualifiedKind == ASTRO_COMPONENT_PROPS
 
   override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)

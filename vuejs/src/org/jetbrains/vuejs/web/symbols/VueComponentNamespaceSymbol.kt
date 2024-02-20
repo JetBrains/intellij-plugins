@@ -56,7 +56,7 @@ class VueComponentNamespaceSymbol(
         get() = VueFramework.ID
     }
   override val namespace: SymbolNamespace
-    get() = NAMESPACE_JS
+    get() = VUE_COMPONENT_NAMESPACES.namespace
 
   override val kind: SymbolKind
     get() = VUE_COMPONENT_NAMESPACES.kind
