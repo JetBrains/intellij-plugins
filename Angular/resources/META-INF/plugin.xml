@@ -150,7 +150,7 @@
     <psi.symbolReferenceProvider hostElementClass="org.angular2.lang.html.psi.Angular2HtmlBlock"
                                  hostLanguage="Angular2Html"
                                  referenceClass="com.intellij.webSymbols.references.WebSymbolReference"
-                                 implementationClass="org.angular2.web.references.Angular2BlockReferencesProvider"
+                                 implementationClass="org.angular2.codeInsight.blocks.Angular2BlockReferencesProvider"
                                  targetClass="com.intellij.webSymbols.WebSymbol"/>
     <webSymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2SelectorDeclarationProvider"/>
     <webSymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2DirectiveExportAsDeclarationProvider"/>
@@ -319,7 +319,7 @@
     <psi.symbolReferenceProvider hostElementClass="org.angular2.lang.expr.psi.Angular2BlockParameter"
                                  hostLanguage="Angular2"
                                  referenceClass="com.intellij.webSymbols.references.WebSymbolReference"
-                                 implementationClass="org.angular2.web.references.Angular2BlockParameterReferencesProvider"
+                                 implementationClass="org.angular2.codeInsight.blocks.Angular2BlockParameterReferencesProvider"
                                  targetClass="com.intellij.webSymbols.WebSymbol"/>
 
     <!-- Angular2 metadata JSON contributions -->
