@@ -173,14 +173,14 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   public void testFlexMetadataStyle() {
     String testName = getTestName(false);
     String s = BASE_PATH + testName;
-    doTest(new String[]{s + ".css", s + ".mxml"}, testName, false, Check.Content);
+    doTest(new String[]{s + ".css", s + ".mxml"}, testName, Check.Content);
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testFlexMetadataStyleMultidoc() {
     String testName = getTestName(false);
     String s = BASE_PATH + testName;
-    doTest(new String[]{s + ".css", s + "1.mxml", s + "2.mxml"}, testName, false, Check.Content);
+    doTest(new String[]{s + ".css", s + "1.mxml", s + "2.mxml"}, testName, Check.Content);
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
@@ -278,39 +278,39 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   }
 
   public void testWithAsDoc1() {
-    testWithLibrary("LibWithAsdoc.swc", null, "LibWithAsdoc_docs.zip", () -> doTest(getTestName(false), "as", "WithAsDoc", true, Check.Content));
+    testWithLibrary("LibWithAsdoc.swc", null, "LibWithAsdoc_docs.zip", () -> doTest(getTestName(false), "as", "WithAsDoc", Check.Content));
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testWithAsDoc2() {
-    testWithLibrary("LibWithAsdoc.swc", null, "LibWithAsdoc_docs.zip", () -> doTest(getTestName(false), "mxml", "WithAsDoc", true, Check.Content));
+    testWithLibrary("LibWithAsdoc.swc", null, "LibWithAsdoc_docs.zip", () -> doTest(getTestName(false), "mxml", "WithAsDoc", Check.Content));
   }
 
   public void testMxml1() {
-    doTest(getTestName(false), "mxml", getTestName(false), true, Check.Null);
+    doTest(getTestName(false), "mxml", getTestName(false), Check.Null);
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testPackageWrapper() {
-    doTest(getTestName(false), "mxml", getTestName(false), true, Check.Null);
+    doTest(getTestName(false), "mxml", getTestName(false), Check.Null);
   }
 
   public void testSeeClassInSamePackage() {
     String fullName = BASE_PATH + getTestName(false);
     final String[] files = {fullName + ".as", fullName + "_2.as", fullName + "_3.as"};
-    doTest(files, getTestName(false), false, Check.Content);
+    doTest(files, getTestName(false), Check.Content);
   }
 
   public void testSeeTopLevelClass() {
     String fullName = BASE_PATH + getTestName(false);
     final String[] files = {fullName + ".as", fullName + "_2.as", fullName + "_3.as"};
-    doTest(files, getTestName(false), false, Check.Content);
+    doTest(files, getTestName(false), Check.Content);
   }
 
   public void testSeeTopLevelClassFromDefaultPackage() {
     String fullName = BASE_PATH + getTestName(false);
     final String[] files = {fullName + ".as", fullName + "_2.as"};
-    doTest(files, getTestName(false), false, Check.Content);
+    doTest(files, getTestName(false), Check.Content);
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
@@ -323,7 +323,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
     VirtualFile asdoc = HttpFileSystem.getInstance().findFileByPath("livedocs.adobe.com/flex/3/langref");
     WriteAction.runAndWait(() -> FlexTestUtils.setupCustomSdk(getModule(), JarFileSystem.getInstance().getJarRootForLocalFile(swc), null, asdoc));
 
-    doTest(files, getTestName(false), false, Check.Url);
+    doTest(files, getTestName(false), Check.Url);
   }
 
   public void testDocsInsideFunction() {
@@ -360,7 +360,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
 
   public void testDocsInsideClass() {
     String testName = getTestName(false);
-    doTest(testName, "as", testName, false, Check.Content);
+    doTest(testName, "as", testName, Check.Content);
   }
 
   public void testClassInheritDoc1() {
