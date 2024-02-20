@@ -16,7 +16,7 @@ import com.intellij.psi.templateLanguages.TemplateDataElementType
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.OuterLanguageElementType
-import org.intellij.terraform.template.lexer.TerraformTemplateTokenTypes
+import org.intellij.terraform.hil.psi.TerraformTemplateTokenTypes
 
 internal class TerraformTemplateFileViewProvider(psiManager: PsiManager,
                                                  virtualFile: VirtualFile,
