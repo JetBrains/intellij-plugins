@@ -1,14 +1,15 @@
-import Component from './component';
+---
+<warning descr="Unused import {MyReactComponent} from \"./react-component\"">import {MyReactComponent} from "./react-component"</warning>
 ---
 <div>
-  <Component client:load />
-  <Component client:load=<warning descr="client:load does not accept any value">"incorrect"</warning> />
-  <Component client:idle />
-  <Component client:idle=<warning descr="client:idle does not accept any value">"incorrect"</warning> />
-  <Component client:visible />
-  <Component client:visible=<warning descr="client:visible does not accept any value">"incorrect"</warning> />
-  <Component <warning descr="client:media requires value">client:media</warning> />
-  <Component client:media="(max-width: 50em)" />
-  <Component <warning descr="client:only requires value">client:only</warning> />
-  <Component client:only="react" />
+  <MyReactComponent client:load />
+  <MyReactComponent client:load=<warning descr="client:load does not accept any value">"incorrect"</warning> />
+  <MyReactComponent client:idle />
+  <MyReactComponent client:idle=<warning descr="client:idle does not accept any value">"incorrect"</warning> />
+  <MyReactComponent client:visible />
+  <MyReactComponent client:visible=<warning descr="client:visible does not accept any value">"incorrect"</warning> />
+  <MyReactComponent <warning descr="client:media requires value">client:media</warning> />
+  <MyReactComponent client:media="(max-width: 50em)" />
+  <MyReactComponent <warning descr="client:only requires value">client:only</warning> />
+  <MyReactComponent client:only="react" />
 </div>

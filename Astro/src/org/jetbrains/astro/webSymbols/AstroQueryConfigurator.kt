@@ -23,6 +23,10 @@ import org.jetbrains.astro.webSymbols.scope.AstroStyleDefineVarsScope
 
 val ASTRO_COMPONENTS = WebSymbolQualifiedKind(NAMESPACE_HTML, "astro-components")
 val ASTRO_COMPONENT_PROPS = WebSymbolQualifiedKind(NAMESPACE_HTML, "props")
+
+val UI_FRAMEWORK_COMPONENTS = WebSymbolQualifiedKind(NAMESPACE_HTML, "ui-framework-components")
+val UI_FRAMEWORK_COMPONENT_PROPS = WebSymbolQualifiedKind(NAMESPACE_HTML, "ui-framework-component-props")
+
 val ASTRO_COMMON_DIRECTIVES = WebSymbolQualifiedKind(NAMESPACE_HTML, "astro-common-directives")
 val ASTRO_CLIENT_DIRECTIVES = WebSymbolQualifiedKind(NAMESPACE_HTML, "astro-client-directives")
 val ASTRO_STYLE_DIRECTIVES = WebSymbolQualifiedKind(NAMESPACE_HTML, "astro-style-directives")

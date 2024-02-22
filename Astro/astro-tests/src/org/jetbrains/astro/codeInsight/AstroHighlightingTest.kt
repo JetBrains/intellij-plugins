@@ -9,7 +9,7 @@ class AstroHighlightingTest : AstroCodeInsightTestCase("codeInsight/highlighting
 
   fun testUnusedComponentImports() = doTest(additionalFiles = listOf("component.astro"))
 
-  fun testClientDirectives() = doTest(additionalFiles = listOf("component.astro"))
+  fun testClientDirectives() = doTest(additionalFiles = listOf("react-component.tsx"))
 
   fun testUnusedImportFalsePositive() = doTest()
 

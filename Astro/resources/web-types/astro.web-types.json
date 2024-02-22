@@ -33,7 +33,50 @@
           "name": "Astro component",
           "pattern": {
             "items": "/html/astro-components"
-          }
+          },
+          "exclusive-contributions": ["/html/attributes"],
+          "attributes": [
+            {
+              "name": "Component property",
+              "pattern": {
+                "items": "props"
+              },
+              "value": {
+                "type": "of-match"
+              }
+            }
+          ]
+        },
+        {
+          "name": "UI Framework component",
+          "pattern": {
+            "items": "/html/ui-framework-components"
+          },
+          "exclusive-contributions": ["/html/attributes"],
+          "attributes": [
+            {
+              "name": "Component property",
+              "pattern": {
+                "items": "ui-framework-component-props"
+              },
+              "value": {
+                "type": "of-match"
+              }
+            },
+            {
+              "name": "Astro Client Directive",
+              "description": "Client directives control how [UI Framework components](/en/core-concepts/framework-components/) are hydrated on the page.\n\nBy default, a UI Framework component is not hydrated in the client. If no `client:*` directive is provided, its HTML is rendered onto the page without JavaScript.\n",
+              "doc-url": "https://docs.astro.build/en/reference/directives-reference/#client-directives",
+              "pattern": {
+                "items": "/html/astro-client-directives",
+                "template": [
+                  "client:",
+                  "#...",
+                  "#item"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "style",

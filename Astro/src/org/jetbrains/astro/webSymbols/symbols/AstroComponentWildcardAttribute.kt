@@ -5,13 +5,13 @@ import com.intellij.model.Pointer
 import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.SymbolNamespace
 import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.WebSymbol.Companion.KIND_HTML_ATTRIBUTES
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.WebSymbol.Companion.PROP_DOC_HIDE_PATTERN
 import com.intellij.webSymbols.WebSymbol.Companion.PROP_HIDE_FROM_COMPLETION
 import com.intellij.webSymbols.WebSymbolOrigin
 import com.intellij.webSymbols.patterns.WebSymbolsPattern
 import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
+import org.jetbrains.astro.webSymbols.UI_FRAMEWORK_COMPONENT_PROPS
 
 object AstroComponentWildcardAttribute: WebSymbol {
   override val origin: WebSymbolOrigin
@@ -21,7 +21,7 @@ object AstroComponentWildcardAttribute: WebSymbol {
     get() = NAMESPACE_HTML
 
   override val kind: SymbolKind
-    get() = KIND_HTML_ATTRIBUTES
+    get() = UI_FRAMEWORK_COMPONENT_PROPS.kind
 
   override val name: String
     get() = "Component Attribute"
