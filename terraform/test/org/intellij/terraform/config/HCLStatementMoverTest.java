@@ -75,27 +75,19 @@ public class HCLStatementMoverTest extends LightJavaCodeInsightFixtureTestCase {
     both();
   }
 
-  public void testPropertyIntoBlock() throws Exception {
+  public void testVariableBlocks() throws Exception {
     both();
   }
 
-  public void testPropertyFromBlock() throws Exception {
+  public void testPropertiesInBlock() throws Exception {
     both();
   }
 
-  public void testArrayElement() throws Exception {
+  public void testMixedPropertiesInBlock() throws Exception {
     both();
   }
 
   public void testNoEscapeFromArray() throws Exception {
-    both();
-  }
-
-  public void testBlockClosingBrace() throws Exception {
-    both();
-  }
-
-  public void testEmptyBlockClosingBrace() throws Exception {
     both();
   }
 }

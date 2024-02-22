@@ -46,6 +46,7 @@ import org.intellij.terraform.hcl.patterns.HCLPatterns.Property
 import org.intellij.terraform.hcl.patterns.HCLPatterns.PropertyOrBlock
 import org.intellij.terraform.hcl.patterns.HCLPatterns.WhiteSpace
 import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLPsiUtil.getPrevSiblingNonWhiteSpace
 import org.intellij.terraform.hil.HILFileType
 import org.intellij.terraform.hil.codeinsight.ReferenceCompletionHelper.findByFQNRef
 import org.intellij.terraform.hil.psi.ILExpression

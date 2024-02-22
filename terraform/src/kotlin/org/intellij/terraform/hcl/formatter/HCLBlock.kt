@@ -14,7 +14,7 @@ import com.intellij.util.text.CharArrayUtil
 import org.intellij.terraform.hcl.HCLElementTypes.*
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.psi.HCLPsiUtil
-import org.intellij.terraform.hcl.psi.getNextSiblingNonWhiteSpace
+import org.intellij.terraform.hcl.psi.HCLPsiUtil.getNextSiblingNonWhiteSpace
 
 class HCLBlock(val parent: HCLBlock?,
                node: ASTNode,
