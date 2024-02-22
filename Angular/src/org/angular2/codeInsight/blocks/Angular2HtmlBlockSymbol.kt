@@ -1,7 +1,10 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight.blocks
 
+import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbol.Companion.JS_SYMBOLS
+import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.webTypes.WebTypesSymbolBase
 import com.intellij.webSymbols.webTypes.WebTypesSymbolFactory
 import org.angular2.web.NG_BLOCK_PARAMETERS
@@ -27,11 +30,12 @@ class Angular2HtmlBlockSymbol : WebTypesSymbolBase() {
     get() = properties["nested-secondary-blocks"] == true
 
   val parameters: List<Angular2BlockParameterSymbol>
-    get() = queryExecutor.runListSymbolsQuery(NG_BLOCK_PARAMETERS, true, scope = listOf(this))
+    get() = getSymbols(NG_BLOCK_PARAMETERS, WebSymbolsListSymbolsQueryParams(queryExecutor, true), Stack(this))
       .filterIsInstance<Angular2BlockParameterSymbol>()
 
   val implicitVariables: List<WebSymbol>
-    get() = queryExecutor.runListSymbolsQuery(WebSymbol.JS_SYMBOLS, true, scope = listOf(this))
+    get() = getSymbols(JS_SYMBOLS, WebSymbolsListSymbolsQueryParams(queryExecutor, true), Stack(this))
+      .filterIsInstance<WebSymbol>()
 
   class Factory : WebTypesSymbolFactory {
     override fun create(): WebTypesSymbolBase =
