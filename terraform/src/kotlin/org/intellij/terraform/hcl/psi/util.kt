@@ -8,7 +8,6 @@ import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.PsiElementPattern
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
-import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.hcl.psi.common.BaseExpression
@@ -23,22 +22,6 @@ fun HCLBlock.getNameElementUnquoted(i: Int): String? {
     is HCLStringLiteral -> element.value
     else -> null
   }
-}
-
-fun PsiElement.getPrevSiblingNonWhiteSpace(): PsiElement? {
-  var prev = this.prevSibling
-  while (prev != null && prev is PsiWhiteSpace) {
-    prev = prev.prevSibling
-  }
-  return prev
-}
-
-fun PsiElement.getNextSiblingNonWhiteSpace(): PsiElement? {
-  var next = this.nextSibling
-  while (next != null && next is PsiWhiteSpace) {
-    next = next.nextSibling
-  }
-  return next
 }
 
 fun <T : PsiElement, Self : PsiElementPattern<T, Self>> PsiElementPattern<T, Self>.afterSiblingSkipping2(skip: ElementPattern<out Any>, pattern: ElementPattern<out PsiElement>): Self {

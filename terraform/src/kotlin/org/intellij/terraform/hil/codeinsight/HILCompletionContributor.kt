@@ -27,6 +27,7 @@ import org.intellij.terraform.config.patterns.TerraformPatterns.DependsOnPattern
 import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.hcl.navigation.HCLQualifiedNameProvider
 import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLPsiUtil.getPrevSiblingNonWhiteSpace
 import org.intellij.terraform.hcl.psi.common.BaseExpression
 import org.intellij.terraform.hcl.psi.common.Identifier
 import org.intellij.terraform.hcl.psi.common.LiteralExpression
