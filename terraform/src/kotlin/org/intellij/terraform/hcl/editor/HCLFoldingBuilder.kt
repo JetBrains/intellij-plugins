@@ -9,11 +9,10 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.intellij.terraform.hcl.HCLElementTypes
-import org.intellij.terraform.hcl.HCLParserDefinition
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.psi.HCLArray
 import org.intellij.terraform.hcl.psi.HCLObject
-import org.intellij.terraform.hcl.psi.getNextSiblingNonWhiteSpace
+import org.intellij.terraform.hcl.psi.HCLPsiUtil.getNextSiblingNonWhiteSpace
 
 class HCLFoldingBuilder : CustomFoldingBuilder(), DumbAware {
   override fun isRegionCollapsedByDefault(node: ASTNode): Boolean {

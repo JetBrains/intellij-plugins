@@ -4,6 +4,7 @@ package org.intellij.terraform.hcl.psi
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
 import org.intellij.terraform.hcl.psi.common.IndexSelectExpression
 import org.intellij.terraform.hcl.psi.common.SelectExpression
@@ -171,5 +172,23 @@ object HCLPsiUtil {
   fun isUnderPropertyInsideObjectArgument(element: PsiElement?): Boolean {
     val property = PsiTreeUtil.getParentOfType(element, HCLProperty::class.java, true) ?: return false
     return property.parent is HCLObject && property.parent?.parent is HCLParameterList
+  }
+
+  @JvmStatic
+  fun PsiElement.getPrevSiblingNonWhiteSpace(): PsiElement? {
+    var prev = this.prevSibling
+    while (prev != null && prev is PsiWhiteSpace) {
+      prev = prev.prevSibling
+    }
+    return prev
+  }
+
+  @JvmStatic
+  fun PsiElement.getNextSiblingNonWhiteSpace(): PsiElement? {
+    var next = this.nextSibling
+    while (next != null && next is PsiWhiteSpace) {
+      next = next.nextSibling
+    }
+    return next
   }
 }

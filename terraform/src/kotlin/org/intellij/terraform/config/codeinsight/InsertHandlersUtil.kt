@@ -14,11 +14,14 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
-import org.intellij.terraform.hcl.HCLParserDefinition
-import org.intellij.terraform.hcl.HCLTokenTypes
-import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.config.inspection.AddResourcePropertiesFix
 import org.intellij.terraform.config.inspection.HCLBlockMissingPropertyInspection
+import org.intellij.terraform.hcl.HCLTokenTypes
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLElementVisitor
+import org.intellij.terraform.hcl.psi.HCLIdentifier
+import org.intellij.terraform.hcl.psi.HCLPsiUtil.getNextSiblingNonWhiteSpace
+import org.intellij.terraform.hcl.psi.HCLStringLiteral
 
 object InsertHandlersUtil {
   internal fun isNextNameOnTheSameLine(element: PsiElement, document: Document): Boolean {
@@ -60,7 +63,7 @@ object InsertHandlersUtil {
       }
       for (result in holder.results) {
         val fixes = result.fixes
-        if (fixes != null && fixes.isNotEmpty()) {
+        if (!fixes.isNullOrEmpty()) {
           changed = true
           fixes.filterIsInstance<AddResourcePropertiesFix>().forEach { it.applyFix(project, result) }
         }

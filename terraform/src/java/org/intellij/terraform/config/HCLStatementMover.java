@@ -3,21 +3,17 @@ package org.intellij.terraform.config;
 
 import com.intellij.codeInsight.editorActions.moveUpDown.LineMover;
 import com.intellij.codeInsight.editorActions.moveUpDown.LineRange;
-import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.PsiDocumentManagerImpl;
+import com.intellij.psi.impl.PsiDocumentManagerBase;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
-import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
-import org.intellij.terraform.hcl.HCLElementTypes;
 import org.intellij.terraform.hcl.HCLLanguage;
 import org.intellij.terraform.hcl.psi.*;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +29,10 @@ public class HCLStatementMover extends LineMover {
   private static final Logger LOG = Logger.getInstance(HCLStatementMover.class);
 
   @Override
-  public boolean checkAvailable(@NotNull final Editor editor, @NotNull final PsiFile file, @NotNull final MoveInfo info, final boolean down) {
+  public boolean checkAvailable(@NotNull final Editor editor,
+                                @NotNull final PsiFile file,
+                                @NotNull final MoveInfo info,
+                                final boolean down) {
     final boolean available = super.checkAvailable(editor, file, info, down);
     if (!available) return false;
     LineRange range = info.toMove;
@@ -48,129 +47,29 @@ public class HCLStatementMover extends LineMover {
     range.firstElement = statements[0];
     range.lastElement = statements[statements.length - 1];
 
-    return checkMovingInsideOutside(file, editor, info, down) || info.prohibitMove();
+    final PsiElement element = range.firstElement.getParent();
+    final PsiElement next = down ? getNextSiblingElement(element) : getPrevSiblingElement(element);
+    if (next != null) {
+      info.toMove2 = new LineRange(next);
+      return true;
+    }
+    return info.prohibitMove();
   }
 
-  private boolean calcInsertOffset(@NotNull PsiFile file, @NotNull Editor editor, @NotNull LineRange range, @NotNull final MoveInfo info, final boolean down) {
-    int destLine = down ? range.endLine + 1 : range.startLine - 1;
-    int startLine = down ? range.endLine : range.startLine - 1;
-
-    if (destLine < 0 || startLine < 0) return false;
-    final PsiElement movingParent = range.firstElement.getParent();
-
-
-    while (true) {
-      final int offset = editor.logicalPositionToOffset(new LogicalPosition(destLine, 0));
-      PsiElement element;
-      {
-        ASTNode node = file.getNode().findLeafElementAt(offset);
-        if (node != null) {
-          PsiElement psi = node.getPsi();
-          // Last whitespace in file
-          if (down && psi instanceof PsiWhiteSpace && psi.getParent() instanceof PsiFile && psi.getNextSibling() == null) {
-            //noinspection ConstantConditions
-            return calcInsertOffsetFound(info, down, destLine, startLine);
-          }
-          element = firstNonWhiteElement(psi, true);
-        } else {
-          int lc = editor.getDocument().getLineCount();
-          // Workaround for moving block to latest non-empty line
-          if (down && (destLine < lc || (destLine == lc && startLine == lc - 1 && file.getNode().findLeafElementAt(editor.logicalPositionToOffset(new LogicalPosition(startLine, 0))) != null))) {
-            //noinspection ConstantConditions
-            return calcInsertOffsetFound(info, down, destLine, startLine);
-          }
-          element = null;
-        }
-      }
-
-      while (element != null && !(element instanceof PsiFile)) {
-        TextRange elementTextRange = element.getTextRange();
-        if (elementTextRange.isEmpty() || !elementTextRange.grown(-1).shiftRight(1).contains(offset)) {
-          boolean found = false;
-          ASTNode node = element.getNode();
-          if ((element instanceof HCLElement || element instanceof PsiComment) && statementCanBePlacedAlong(element, movingParent)) {
-            if (movingParent instanceof HCLArray && !movingParent.equals(element.getParent())) {
-              return info.prohibitMove();
-            }
-            found = true;
-          } else if (element instanceof LeafPsiElement && node != null) {
-            IElementType elementType = node.getElementType();
-            if (elementType == HCLElementTypes.R_CURLY && element.getParent() instanceof HCLObject) {
-              // before code block closing brace
-              found = true;
-            } else if (elementType == HCLElementTypes.R_BRACKET && element.getParent() instanceof HCLArray && element.getParent().equals(movingParent)) {
-              // before array closing bracket
-              found = true;
-            }
-          }
-          if (found) {
-            return calcInsertOffsetFound(info, down, destLine, startLine);
-          }
-        }
-        element = element.getParent();
-      }
-      destLine += down ? 1 : -1;
-      if (destLine < 0 || destLine >= editor.getDocument().getLineCount()) {
-        return false;
-      }
+  private static PsiElement getNextSiblingElement(final PsiElement element) {
+    if (element instanceof HCLBlock || element instanceof HCLProperty) {
+      final PsiElement next = HCLPsiUtil.getNextSiblingNonWhiteSpace(element);
+      return (next != null && !next.getText().equals("}")) ? next : null;
     }
+    return null;
   }
 
-  private boolean calcInsertOffsetFound(@NotNull MoveInfo info, boolean down, int endLine, int startLine) {
-    if (startLine > endLine) {
-      int tmp = endLine;
-      endLine = startLine;
-      startLine = tmp;
+  private static PsiElement getPrevSiblingElement(final PsiElement element) {
+    if (element instanceof HCLBlock || element instanceof HCLProperty) {
+      final PsiElement prev = HCLPsiUtil.getPrevSiblingNonWhiteSpace(element);
+      return (prev != null && !prev.getText().equals("{")) ? prev : null;
     }
-
-    info.toMove2 = down ? new LineRange(startLine, endLine) : new LineRange(startLine, endLine + 1);
-    return true;
-  }
-
-  @SuppressWarnings("RedundantIfStatement")
-  private static boolean statementCanBePlacedAlong(@NotNull final PsiElement element, final PsiElement movingParent) {
-    final PsiElement parent = element.getParent();
-    if (parent instanceof PsiFile) return true;
-    if (parent instanceof HCLObject) return true;
-    if (parent instanceof HCLProperty) return true;
-    if (parent instanceof HCLArray && parent.equals(movingParent)) return true;
-    // know nothing about that
-    return false;
-  }
-
-  private boolean checkMovingInsideOutside(@NotNull final PsiFile file, @NotNull final Editor editor, @NotNull final MoveInfo info, final boolean down) {
-    final int offset = editor.getCaretModel().getOffset();
-
-    Language language = findHCLOrLikeLanguage(file);
-    if (language == null) return false;
-
-    PsiElement elementAtOffset = file.getViewProvider().findElementAt(offset, language);
-    if (elementAtOffset == null) return false;
-
-    PsiElement brace = itIsTheClosingCurlyBraceWeAreMoving(file, editor);
-    if (brace != null) {
-      PsiElement parent = brace.getParent();
-      // Not empty object
-      if (parent instanceof HCLObject && (parent.getChildren().length != 0 || down)) {
-        int line = editor.getDocument().getLineNumber(offset);
-        final LineRange toMove = new LineRange(line, line + 1);
-        toMove.firstElement = toMove.lastElement = brace;
-        info.toMove = toMove;
-      } else return info.prohibitMove();
-    }
-
-    // cannot move in/outside method/class/initializer/comment
-    if (!calcInsertOffset(file, editor, info.toMove, info, down)) return false;
-    if (brace != null) {
-      int insertOffset = down ? getLineStartSafeOffset(editor.getDocument(), info.toMove2.endLine) : editor.getDocument().getLineStartOffset(info.toMove2.startLine);
-      PsiElement elementAtInsertOffset = file.getViewProvider().findElementAt(insertOffset, language);
-
-      if (PsiTreeUtil.getParentOfType(brace, HCLObject.class, false) != PsiTreeUtil.getParentOfType(elementAtInsertOffset, HCLObject.class, false)) {
-        info.indentSource = true;
-      }
-    }
-
-    return true;
+    return null;
   }
 
   private static LineRange expandLineRangeToCoverPsiElements(final LineRange range, Editor editor, final PsiFile file) {
@@ -183,12 +82,13 @@ public class HCLStatementMover extends LineMover {
     Document document = editor.getDocument();
     if (endOffset > document.getTextLength()) {
       LOG.assertTrue(!PsiDocumentManager.getInstance(file.getProject()).isUncommited(document));
-      LOG.assertTrue(PsiDocumentManagerImpl.checkConsistency(file, document));
+      LOG.assertTrue(PsiDocumentManagerBase.checkConsistency(file, document));
     }
     int endLine;
     if (endOffset == document.getTextLength()) {
       endLine = document.getLineCount();
-    } else {
+    }
+    else {
       endLine = editor.offsetToLogicalPosition(endOffset).line + 1;
       endLine = Math.min(endLine, document.getLineCount());
     }
@@ -196,20 +96,6 @@ public class HCLStatementMover extends LineMover {
     endLine = Math.max(endLine, range.endLine);
     return new LineRange(startLine, endLine);
   }
-
-  private static PsiElement itIsTheClosingCurlyBraceWeAreMoving(final PsiFile file, final Editor editor) {
-    LineRange range = getLineRangeFromSelection(editor);
-    if (range.endLine - range.startLine != 1) return null;
-    int offset = editor.getCaretModel().getOffset();
-    Document document = editor.getDocument();
-    int line = document.getLineNumber(offset);
-    int lineStartOffset = document.getLineStartOffset(line);
-    String lineText = document.getText().substring(lineStartOffset, document.getLineEndOffset(line));
-    if (!lineText.trim().equals("}")) return null;
-
-    return file.findElementAt(lineStartOffset + lineText.indexOf('}'));
-  }
-
 
   @Nullable
   private static Language findHCLOrLikeLanguage(@NotNull final PsiFile file) {
@@ -277,7 +163,10 @@ public class HCLStatementMover extends LineMover {
     }
     // Ensure only proper elements would be returned
     for (PsiElement element : array) {
-      if (!(element instanceof HCLElement || element instanceof PsiWhiteSpace || element instanceof PsiComment || element instanceof LeafPsiElement)) {
+      if (!(element instanceof HCLElement ||
+            element instanceof PsiWhiteSpace ||
+            element instanceof PsiComment ||
+            element instanceof LeafPsiElement)) {
         return PsiElement.EMPTY_ARRAY;
       }
     }

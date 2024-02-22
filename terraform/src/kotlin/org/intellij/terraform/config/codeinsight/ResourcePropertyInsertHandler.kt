@@ -8,13 +8,13 @@ import com.intellij.openapi.editor.EditorModificationUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.intellij.terraform.config.model.*
 import org.intellij.terraform.hcl.HCLElementTypes
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.psi.HCLElement
 import org.intellij.terraform.hcl.psi.HCLIdentifier
+import org.intellij.terraform.hcl.psi.HCLPsiUtil.getNextSiblingNonWhiteSpace
 import org.intellij.terraform.hcl.psi.HCLStringLiteral
-import org.intellij.terraform.hcl.psi.getNextSiblingNonWhiteSpace
-import org.intellij.terraform.config.model.*
 import org.intellij.terraform.hil.codeinsight.ReferenceCompletionHelper
 
 object ResourcePropertyInsertHandler : BasicInsertHandler<LookupElement>() {
