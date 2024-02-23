@@ -33,7 +33,8 @@ class HILColorPage : ColorSettingsPage, InspectionColorSettingsPage, DisplayPrio
       AttributesDescriptor(HCLBundle.message("hil.color.settings.resource.instance.reference"), HILSyntaxHighlighterFactory.TIL_RESOURCE_INSTANCE_REFERENCE),
       AttributesDescriptor(HCLBundle.message("hil.color.settings.property.reference"), HILSyntaxHighlighterFactory.TIL_PROPERTY_REFERENCE),
       AttributesDescriptor(HCLBundle.message("hil.color.settings.valid.escape.sequence"), HILSyntaxHighlighterFactory.TIL_VALID_ESCAPE),
-      AttributesDescriptor(HCLBundle.message("hil.color.settings.invalid.escape.sequence"), HILSyntaxHighlighterFactory.TIL_INVALID_ESCAPE)
+      AttributesDescriptor(HCLBundle.message("hil.color.settings.invalid.escape.sequence"), HILSyntaxHighlighterFactory.TIL_INVALID_ESCAPE),
+      AttributesDescriptor(HCLBundle.message("hil.color.settings.template.background"), HILSyntaxHighlighterFactory.TEMPLATE_BACKGROUND)
     )
     private val additional: Map<String, TextAttributesKey> = mapOf(
         "rt" to HILSyntaxHighlighterFactory.TIL_RESOURCE_TYPE_REFERENCE,
