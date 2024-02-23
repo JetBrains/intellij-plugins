@@ -15,8 +15,8 @@ import com.intellij.util.ProcessingContext
 import org.intellij.terraform.hil.HILElementTypes
 import org.intellij.terraform.hil.psi.ILExpressionHolder
 import org.intellij.terraform.hil.psi.ILVariable
+import org.intellij.terraform.hil.psi.TerraformTemplateLanguage
 import org.intellij.terraform.template.TerraformTemplateFileViewProvider
-import org.intellij.terraform.template.TerraformTemplateLanguage
 import org.intellij.terraform.template.model.TftplVariable
 import org.intellij.terraform.template.psi.TftplFile
 

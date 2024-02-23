@@ -4,8 +4,8 @@ package org.intellij.terraform.template.psi
 import com.intellij.extapi.psi.PsiFileBase
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.FileViewProvider
+import org.intellij.terraform.hil.psi.TerraformTemplateLanguage
 import org.intellij.terraform.template.TerraformTemplateFileType
-import org.intellij.terraform.template.TerraformTemplateLanguage
 
 class TftplFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, TerraformTemplateLanguage) {
   override fun getFileType(): FileType {
