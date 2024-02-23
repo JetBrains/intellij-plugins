@@ -31,7 +31,7 @@ class TerraformSpellcheckingStrategy : HCLSpellcheckerStrategy() {
       if (TypeModelProvider.getModel(element).getFunction(element.text) != null) return EMPTY_TOKENIZER
     }
 
-    val inArray = parent.parent is HCLArray
+    val inArray = parent?.parent is HCLArray
     val property = PsiTreeUtil.getParentOfType(element, HCLProperty::class.java)
     if (DependsOnPattern.accepts(property) && inArray) {
       return EMPTY_TOKENIZER
