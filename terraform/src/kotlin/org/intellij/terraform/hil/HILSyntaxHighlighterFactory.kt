@@ -22,6 +22,8 @@ import org.intellij.terraform.hil.psi.HILLexer
 open class HILSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
 
   companion object {
+    val TEMPLATE_BACKGROUND = TextAttributesKey.createTextAttributesKey("TERRAFORM_TEMPLATE_BACKGROUND", DefaultLanguageHighlighterColors.TEMPLATE_LANGUAGE_COLOR)
+
     val TIL_PARENS: TextAttributesKey = TextAttributesKey.createTextAttributesKey("TIL.PARENS", DefaultLanguageHighlighterColors.PARENTHESES)
     val TIL_BRACES: TextAttributesKey = TextAttributesKey.createTextAttributesKey("TIL.BRACES", DefaultLanguageHighlighterColors.BRACES)
     val TIL_BRACKETS: TextAttributesKey = TextAttributesKey.createTextAttributesKey("TIL.BRACKETS", DefaultLanguageHighlighterColors.BRACKETS)
@@ -46,8 +48,8 @@ open class HILSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
     val TIL_INVALID_ESCAPE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("TIL.INVALID_ESCAPE", DefaultLanguageHighlighterColors.INVALID_STRING_ESCAPE)
   }
 
-  object HILSyntaxHighlighter : SyntaxHighlighterBase() {
-    private val ourAttributes: MutableMap<IElementType, TextAttributesKey> = HashMap()
+  open class HILSyntaxHighlighter : SyntaxHighlighterBase() {
+    protected val ourAttributes: MutableMap<IElementType, TextAttributesKey> = HashMap()
 
     init {
       fillMap(ourAttributes, HILTokenTypes.TIL_BRACES, TIL_BRACES)
@@ -85,6 +87,6 @@ open class HILSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
   }
 
   override fun getSyntaxHighlighter(project: Project?, virtualFile: VirtualFile?): SyntaxHighlighter {
-    return HILSyntaxHighlighter
+    return HILSyntaxHighlighter()
   }
 }
