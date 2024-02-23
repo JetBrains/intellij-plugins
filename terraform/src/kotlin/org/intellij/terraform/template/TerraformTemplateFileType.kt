@@ -4,6 +4,7 @@ package org.intellij.terraform.template
 import com.intellij.openapi.fileTypes.LanguageFileType
 import org.intellij.terraform.TerraformIcons
 import org.intellij.terraform.hcl.HCLBundle
+import org.intellij.terraform.hil.psi.TerraformTemplateLanguage
 import javax.swing.Icon
 
 object TerraformTemplateFileType : LanguageFileType(TerraformTemplateLanguage) {

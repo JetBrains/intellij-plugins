@@ -2,6 +2,5 @@
 package org.intellij.terraform.hil.psi
 
 import com.intellij.psi.tree.IElementType
-import org.intellij.terraform.template.TerraformTemplateLanguage
 
 class TerraformTemplateTokenType(debugName: String) : IElementType(debugName, TerraformTemplateLanguage)
