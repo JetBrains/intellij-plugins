@@ -4,6 +4,7 @@ package com.jetbrains.lang.dart
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.readActionBlocking
 import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.components.service
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.module.ModuleUtilCore
@@ -16,6 +17,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
+import com.jetbrains.lang.dart.ide.devtools.DevToolsService
+import com.jetbrains.lang.dart.ide.toolingDaemon.DartToolingDaemonService
 import com.jetbrains.lang.dart.projectWizard.DartModuleBuilder
 import com.jetbrains.lang.dart.sdk.DartSdk
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil
@@ -67,6 +70,9 @@ class DartStartupActivity : ProjectActivity {
 
     readActionBlocking {
       DartAnalysisServerService.getInstance(project).serverReadyForRequest()
+      val dtdService = project.service<DartToolingDaemonService>();
+      dtdService.startService()
+      dtdService.dtdInfoFuture.thenAccept{ info -> project.service<DevToolsService>().startService(info.address, info.secret)}.exceptionally { e -> project.service<DevToolsService>().startService() }
     }
     //DartToolingDaemonService.getInstance(project).startService()
   }

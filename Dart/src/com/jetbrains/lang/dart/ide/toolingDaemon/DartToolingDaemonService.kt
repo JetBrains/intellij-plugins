@@ -24,7 +24,10 @@ import de.roderick.weberknecht.WebSocketException
 import de.roderick.weberknecht.WebSocketMessage
 import java.net.URI
 import java.nio.charset.StandardCharsets
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.atomic.AtomicInteger
+
+class DtdInfo(val address: String, val secret: String)
 
 @Service(Service.Level.PROJECT)
 class DartToolingDaemonService private constructor(private val project: Project) : Disposable {
@@ -34,6 +37,10 @@ class DartToolingDaemonService private constructor(private val project: Project)
   private val nextRequestId = AtomicInteger()
   private val consumerMap: MutableMap<String, DartToolingDaemonConsumer> = mutableMapOf()
   private val listeners: MutableList<DartToolingDaemonListener> = mutableListOf()
+
+  private val MIN_SDK_VERSION: String = "3.4"
+
+  val dtdInfoFuture: CompletableFuture<DtdInfo> = CompletableFuture();
 
   @Throws(ExecutionException::class)
   fun startService() {
@@ -46,16 +53,38 @@ class DartToolingDaemonService private constructor(private val project: Project)
     result.exePath = FileUtil.toSystemDependentName(DartSdkUtil.getDartExePath(sdk))
     result.charset = StandardCharsets.UTF_8
     result.addParameter("tooling-daemon")
+    result.addParameter("--machine")
 
     dtdProcessHandler = ColoredProcessHandler(result)
     dtdProcessHandler.addProcessListener(object : ProcessListener {
       override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
         val text = event.text.trim()
-        if (text.startsWith(STARTUP_MESSAGE_PREFIX)) {
-          dtdProcessHandler.removeProcessListener(this)
-          val address: String = text.substring(STARTUP_MESSAGE_PREFIX.length)
-          connectToDtdWebSocket(address)
+
+        // The first line of text is the command issued, which can be ignored.
+        if (text.startsWith("dart tooling-daemon")) {
+          return
         }
+
+        val json: JsonObject
+        try {
+          json = JsonParser.parseString(text) as JsonObject
+        }
+        catch (e: Exception) {
+          dtdInfoFuture.completeExceptionally(Exception("Parse message failed: $text $e"))
+          return
+        }
+
+        val details = json["tooling_daemon_details"]?.asJsonObject
+        if (details == null) {
+          dtdInfoFuture.completeExceptionally(Exception("No tooling daemon details found"))
+          return
+        }
+
+        val uri = details["uri"].asString
+        val secret = details["trusted_client_secret"].asString
+        dtdProcessHandler.removeProcessListener(this)
+        dtdInfoFuture.complete(DtdInfo(uri, secret))
+        connectToDtdWebSocket(uri)
       }
     })
 
