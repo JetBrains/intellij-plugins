@@ -81,7 +81,7 @@ class DevToolsService(private val myProject: Project) : Disposable {
   }
 
   override fun dispose() {
-    TODO("Not yet implemented")
+    processHandler.killProcess()
   }
 
   private fun isDartSdkVersionSufficient(sdk: DartSdk): Boolean {
