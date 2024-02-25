@@ -5,7 +5,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReferenceBase
 
-internal class TerraformDocReference(element: PsiElement, val url: String) : PsiReferenceBase<PsiElement>(element) {
+internal class TerraformDocReference(element: PsiElement) : PsiReferenceBase<PsiElement>(element) {
 
   private val displayText: String
 
@@ -16,9 +16,8 @@ internal class TerraformDocReference(element: PsiElement, val url: String) : Psi
     else {
       TextRange(1, element.textLength - 1)
     }
-    rangeInElement = range
     displayText = range.substring(element.text)
   }
 
-  override fun resolve(): PsiElement = TerraformDocumentPsi(element, rangeInElement, displayText, url)
+  override fun resolve(): PsiElement = TerraformDocumentPsi(element, displayText)
 }

@@ -17,6 +17,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.Plow.Companion.toPlow
 import com.intellij.util.ProcessingContext
 import com.intellij.util.Processor
+import org.intellij.terraform.TerraformIcons
 import org.intellij.terraform.config.Constants
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.RootBlockSorted
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.createPropertyOrBlockType
@@ -263,29 +264,44 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
         "resource" -> {
           getTypeModel(project).resources.toPlow()
             .filter { invocationCount >= 3 || isProviderUsed(parent, it.provider.type, cache) }
-            .map { create(it.type).withInsertHandler(ResourceBlockSubNameInsertHandler(it)) }
+            .map { create(it.type)
+              .withTypeText(it.description)
+              .withIcon(TerraformIcons.Terraform)
+              .withInsertHandler(ResourceBlockSubNameInsertHandler(it)) }
             .processWith(consumer)
         }
 
         "data" ->
           getTypeModel(project).dataSources.toPlow()
             .filter { invocationCount >= 3 || isProviderUsed(parent, it.provider.type, cache) }
-            .map { create(it.type).withInsertHandler(ResourceBlockSubNameInsertHandler(it)) }
+            .map { create(it.type)
+              .withTypeText(it.description)
+              .withIcon(TerraformIcons.Terraform)
+              .withInsertHandler(ResourceBlockSubNameInsertHandler(it)) }
             .processWith(consumer)
 
         "provider" ->
           getTypeModel(project).providers.toPlow()
-            .map { create(it.type).withInsertHandler(ResourceBlockSubNameInsertHandler(it)) }
+            .map { create(it.type)
+              .withTypeText(it.description)
+              .withIcon(TerraformIcons.Terraform)
+              .withInsertHandler(ResourceBlockSubNameInsertHandler(it)) }
             .processWith(consumer)
 
         "provisioner" ->
           getTypeModel(project).provisioners.toPlow()
-            .map { create(it.type).withInsertHandler(ResourceBlockSubNameInsertHandler(it)) }
+            .map { create(it.type)
+              .withTypeText(it.description)
+              .withIcon(TerraformIcons.Terraform)
+              .withInsertHandler(ResourceBlockSubNameInsertHandler(it)) }
             .processWith(consumer)
 
         "backend" ->
           getTypeModel(project).backends.toPlow()
-            .map { create(it.type).withInsertHandler(ResourceBlockSubNameInsertHandler(it)) }
+            .map { create(it.type)
+              .withTypeText(it.description)
+              .withIcon(TerraformIcons.Terraform)
+              .withInsertHandler(ResourceBlockSubNameInsertHandler(it)) }
             .processWith(consumer)
         
         else -> true

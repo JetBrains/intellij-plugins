@@ -8,9 +8,7 @@ import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet
 import com.intellij.psi.tree.TokenSet
-import com.intellij.psi.util.parentsOfType
 import com.intellij.util.ProcessingContext
-import org.intellij.terraform.config.TerraformDocumentationUrlProvider.getResourceOrDataSourceUrl
 import org.intellij.terraform.config.model.Module
 import org.intellij.terraform.config.model.getTerraformModule
 import org.intellij.terraform.config.patterns.TerraformPatterns
@@ -104,15 +102,7 @@ class TerraformReferenceContributor : PsiReferenceContributor() {
 internal object WebDocumentationReferenceProvider : PsiReferenceProvider() {
   override fun getReferencesByElement(element: PsiElement,
                                       context: ProcessingContext): Array<PsiReference> {
-    val parentBlock = element.parentsOfType<HCLBlock>(true).first() //Can safely assume since we have proper pattern
-    val identifier: String = parentBlock.getNameElementUnquoted(1) ?: return PsiReference.EMPTY_ARRAY
-    val type = parentBlock.getNameElementUnquoted(0)
-    val docUrl = when (type) {
-      "resource" -> getResourceOrDataSourceUrl(identifier, "resources", parentBlock)
-      "data" -> getResourceOrDataSourceUrl(identifier, "data-sources", parentBlock)
-      else -> return PsiReference.EMPTY_ARRAY
-    }
-    val webReference = TerraformDocReference(element, docUrl)
+    val webReference = TerraformDocReference(element)
     return arrayOf(webReference)
   }
 }
