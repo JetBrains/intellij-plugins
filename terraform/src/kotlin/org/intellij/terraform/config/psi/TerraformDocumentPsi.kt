@@ -2,21 +2,36 @@
 package org.intellij.terraform.config.psi
 
 import com.intellij.ide.BrowserUtil
-import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.application.readAction
+import com.intellij.openapi.components.service
 import com.intellij.psi.PsiElement
-import com.intellij.psi.SyntheticElement
 import com.intellij.psi.impl.FakePsiElement
+import com.intellij.psi.util.parentsOfType
+import com.intellij.util.concurrency.annotations.RequiresReadLock
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.intellij.terraform.config.documentation.TerraformWebDocUrlProvider
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLElement
 
 internal class TerraformDocumentPsi(val element: PsiElement,
-                                    private val rangeInElement: TextRange,
-                                    private val text: String,
-                                    val url: String) : FakePsiElement(), SyntheticElement {
+                                    private val text: String) : FakePsiElement(), HCLElement {
+
+  private val docUrlProvider: TerraformWebDocUrlProvider = element.project.service<TerraformWebDocUrlProvider>()
+
+  @RequiresReadLock
   override fun getParent(): PsiElement {
-    return element
+    return element.parentsOfType<HCLBlock>(true).first()
   }
 
   override fun navigate(requestFocus: Boolean) {
-    BrowserUtil.browse(url)
+    docUrlProvider.coroutineScope.launch {
+      val docUrl = docUrlProvider.getDocumentationUrl(readAction { parent }).firstOrNull()
+      withContext(Dispatchers.Main) {
+        docUrl?.let { BrowserUtil.browse(it) }
+      }
+    }
   }
 
   override fun getPresentableText(): String {
@@ -27,9 +42,5 @@ internal class TerraformDocumentPsi(val element: PsiElement,
     return text
   }
 
-  override fun getTextRange(): TextRange {
-    val rangeInElement: TextRange = rangeInElement
-    val elementRange: TextRange = element.getTextRange()
-    return rangeInElement.shiftRight(elementRange.startOffset)
-  }
+
 }

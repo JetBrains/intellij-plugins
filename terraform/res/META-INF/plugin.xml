@@ -186,7 +186,10 @@
 
     <psi.referenceContributor language="HCL" implementation="org.intellij.terraform.config.psi.TerraformReferenceContributor"/>
     <psi.referenceContributor language="HCL" implementation="org.intellij.terraform.config.codeinsight.HclFileReferenceContributor"/>
-    <lang.documentationProvider language="HCL" implementationClass="org.intellij.terraform.config.TerraformDocumentationProvider"/>
+
+    <platform.backend.documentation.targetProvider implementation="org.intellij.terraform.config.documentation.TerraformDocumentationProvider"/>
+    <platform.backend.documentation.psiTargetProvider implementation="org.intellij.terraform.config.documentation.TerraformDocumentationProvider"/>
+
 
     <statementUpDownMover implementation="org.intellij.terraform.config.HCLStatementMover" id="HCL_SM" order="before line"/>
 
