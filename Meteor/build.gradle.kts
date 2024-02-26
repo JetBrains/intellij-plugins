@@ -14,12 +14,12 @@ intellij {
   plugins.set(
     listOf(
       "JavaScript", "JavaScriptDebugger",
-      // Update version to the latest from the marketplace:https://plugins.jetbrains.com/plugin/6884-handlebars-mustache/versions
-      "com.dmarcotte.handlebars:233.11799.172",
+      // Update version to the latest from the marketplace: https://plugins.jetbrains.com/plugin/6884-handlebars-mustache/versions
+      "com.dmarcotte.handlebars:241.13688.16",
       // Update version to the latest from the marketplace
-      "com.intellij.plugins.html.instantEditing:233.11799.172",
+      "com.intellij.plugins.html.instantEditing:241.13688.16",
       // Update version to the latest from the marketplace: https://plugins.jetbrains.com/plugin/7177-file-watchers/versions/stable
-      "com.intellij.plugins.watcher:233.11799.188"
+      "com.intellij.plugins.watcher:241.13688.16"
     )
   )
 

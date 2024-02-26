@@ -6,6 +6,8 @@ buildscript {
     maven("https://www.jetbrains.com/intellij-repository/snapshots")
     maven("https://packages.jetbrains.team/maven/p/grazi/grazie-platform-public")
     maven("https://download.jetbrains.com/teamcity-repository")
+    maven("https://oss.sonatype.org/content/repositories/snapshots/")
+    gradlePluginPortal()
   }
 
   pluginManagement {

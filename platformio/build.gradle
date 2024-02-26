@@ -6,6 +6,7 @@ buildscript {
     }
   }
 }
+
 plugins {
   id 'java'
   id("org.jetbrains.kotlin.jvm") version "1.9.0"
@@ -23,7 +24,7 @@ version '232.SNAPSHOT'
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
   type = "CL"
-  version = "233-SNAPSHOT"
+  version = "LATEST-EAP-SNAPSHOT"
   plugins = ["com.intellij.cidr.base",
              "nativeDebug-plugin",
              "com.intellij.clion",

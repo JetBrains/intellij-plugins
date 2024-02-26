@@ -28,7 +28,7 @@ intellij {
   type = 'IU'
 
   if (ideaPath == null) {
-    version = '223-EAP-SNAPSHOT'
+    version = 'LATEST-EAP-SNAPSHOT'
   } else {
     localPath = ideaPath
   }
