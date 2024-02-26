@@ -61,7 +61,7 @@ class DartToolingDaemonService private constructor(private val project: Project)
         val text = event.text.trim()
 
         // The first line of text is the command issued, which can be ignored.
-        if (text.startsWith("dart tooling-daemon")) {
+        if (text.endsWith("dart tooling-daemon --machine")) {
           return
         }
 
