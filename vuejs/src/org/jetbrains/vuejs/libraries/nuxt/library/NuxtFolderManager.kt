@@ -110,7 +110,6 @@ class NuxtFolderManager(private val project: Project) : PersistentStateComponent
 
   private fun findEntities(storage: EntityStorage, nuxtFolderUrl: VirtualFileUrl): List<WorkspaceEntity> {
     return storage.getVirtualFileUrlIndex().findEntitiesByUrl(nuxtFolderUrl)
-      .map(Pair<WorkspaceEntity, String>::first)
       .filter {
         it is NuxtFolderEntity && it.nuxtFolderUrl == nuxtFolderUrl
       }.toList()
