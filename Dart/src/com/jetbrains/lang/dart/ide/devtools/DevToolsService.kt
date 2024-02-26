@@ -25,7 +25,7 @@ class DevToolsService(private val myProject: Project) : Disposable {
 
   private val devToolsFuture: CompletableFuture<DevToolsInstance> = CompletableFuture()
 
-  fun startService(dtdUri: String? = null, dtdKey: String? = null): Void? {
+  fun startService(dtdUri: String? = null): Void? {
     val sdk = DartSdk.getDartSdk(myProject)
     if (sdk == null || !isDartSdkVersionSufficient(sdk)) {
       return null
@@ -37,9 +37,6 @@ class DevToolsService(private val myProject: Project) : Disposable {
     result.addParameter("--machine")
     if (dtdUri != null) {
       result.addParameter("--dtd-uri=$dtdUri")
-    }
-    if (dtdKey !=  null) {
-      result.addParameter("--dtd-key=$dtdKey")
     }
 
     processHandler = ColoredProcessHandler(result)

@@ -987,6 +987,7 @@ public final class DartAnalysisServerService implements Disposable {
     myRootsHandler.scheduleDartRootsUpdate(null);
   }
 
+  // this is the function for roots
   boolean setAnalysisRoots(@NotNull final List<String> includedRoots, @NotNull final List<String> excludedRoots) {
     AnalysisServer server = myServer;
     if (server == null) {

@@ -72,7 +72,7 @@ class DartStartupActivity : ProjectActivity {
       DartAnalysisServerService.getInstance(project).serverReadyForRequest()
       val dtdService = project.service<DartToolingDaemonService>();
       dtdService.startService()
-      dtdService.dtdInfoFuture.thenAccept{ info -> project.service<DevToolsService>().startService(info.address, info.secret)}.exceptionally { e -> project.service<DevToolsService>().startService() }
+      dtdService.dtdInfoFuture.thenAccept{ info -> project.service<DevToolsService>().startService(info.address)}.exceptionally { e -> project.service<DevToolsService>().startService() }
     }
     //DartToolingDaemonService.getInstance(project).startService()
   }
