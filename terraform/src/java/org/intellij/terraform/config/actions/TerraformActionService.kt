@@ -2,18 +2,17 @@
 package org.intellij.terraform.config.actions
 
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.serviceAsync
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.ide.progress.withBackgroundProgress
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.intellij.terraform.config.TerraformConstants
 import org.intellij.terraform.config.model.local.LocalSchemaService
 import org.intellij.terraform.config.util.TFExecutor
@@ -87,6 +86,9 @@ internal class TerraformActionService(private val project: Project, private val 
                                         project: Project,
                                         module: Module?,
                                         title: @Nls String): Boolean {
+    withContext(Dispatchers.EDT) {
+      FileDocumentManager.getInstance().saveAllDocuments()
+    }
     val directory = if (virtualFile.isDirectory) virtualFile else virtualFile.parent
     val success = TFExecutor.`in`(project, module)
       .withPresentableName(title)
