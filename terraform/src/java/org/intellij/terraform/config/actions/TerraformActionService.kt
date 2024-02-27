@@ -3,7 +3,7 @@ package org.intellij.terraform.config.actions
 
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.components.Service
-import com.intellij.openapi.components.service
+import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
@@ -26,7 +26,6 @@ import kotlin.io.path.Path
 internal class TerraformActionService(private val project: Project, private val coroutineScope: CoroutineScope) {
 
   fun scheduleTerraformInit(directory: String): Job {
-
     return coroutineScope.launch {
       val title = HCLBundle.message("progress.title.terraform.init")
       val dirFile = LocalFileSystem.getInstance().findFileByNioFile(Path(directory))
@@ -39,17 +38,18 @@ internal class TerraformActionService(private val project: Project, private val 
           ).notify(project)
         return@launch
       }
-      initTerraform(dirFile, title)
+      initTerraform(dirFile)
     }
   }
 
   fun scheduleTerraformInit(dirFile: VirtualFile): Job {
     return coroutineScope.launch {
-      initTerraform(dirFile, HCLBundle.message("progress.title.terraform.init"))
+      initTerraform(dirFile)
     }
   }
 
-  suspend fun initTerraform(dirFile: VirtualFile, title: @Nls String) {
+  suspend fun initTerraform(dirFile: VirtualFile) {
+    val title = HCLBundle.message("progress.title.terraform.init")
     withBackgroundProgress(project, title) {
       if (!execTerraformInit(dirFile, project, module = null, title)) {
         TerraformConstants.EXECUTION_NOTIFICATION_GROUP
@@ -61,7 +61,12 @@ internal class TerraformActionService(private val project: Project, private val 
         return@withBackgroundProgress
       }
       try {
-        project.service<LocalSchemaService>().scheduleModelRebuild(setOf(dirFile)).await()
+        val localSchemaService = project.serviceAsync<LocalSchemaService>()
+        localSchemaService.scheduleModelRebuild(setOf(dirFile)).invokeOnCompletion { e ->
+          if (e != null && e !is CancellationException)
+            notifyError(title, project, e)
+        }
+        localSchemaService.awaitModelsReady()
         TerraformConstants.EXECUTION_NOTIFICATION_GROUP
           .createNotification(
             title,
@@ -87,7 +92,7 @@ internal class TerraformActionService(private val project: Project, private val 
       .showOutputOnError()
       .withWorkDirectory(directory.canonicalPath)
       .executeSuspendable()
-    VfsUtil.markDirtyAndRefresh(true, true, true, directory)
+    VfsUtil.markDirtyAndRefresh(false, true, true, directory)
     return success
   }
 

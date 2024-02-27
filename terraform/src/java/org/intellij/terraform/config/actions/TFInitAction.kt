@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nls
 open class TFInitAction : TFExternalToolsAction() {
 
   override suspend fun invoke(project: Project, module: Module?, title: @Nls String, virtualFile: VirtualFile) {
-    project.service<TerraformActionService>().initTerraform(virtualFile, title)
+    project.service<TerraformActionService>().initTerraform(virtualFile)
   }
 }
 
