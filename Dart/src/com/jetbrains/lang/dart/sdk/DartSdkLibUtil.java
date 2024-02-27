@@ -339,8 +339,8 @@ public final class DartSdkLibUtil {
   }
 
   public static boolean isDartSdkOrderEntry(@NotNull ModuleDependencyItem dependencyItem) {
-    if (dependencyItem instanceof LibraryDependency) {
-      LibraryId libraryId = ((LibraryDependency)dependencyItem).getLibrary();
+    if (dependencyItem instanceof ModuleDependencyItem.Exportable.LibraryDependency) {
+      LibraryId libraryId = ((ModuleDependencyItem.Exportable.LibraryDependency)dependencyItem).getLibrary();
       return libraryId.getTableId() instanceof LibraryTableId.ProjectLibraryTableId &&
              libraryId.getName().equals(DartSdk.DART_SDK_LIB_NAME);
     }

@@ -41,6 +41,7 @@ class DartToolingDaemonService private constructor(private val project: Project)
   private val MIN_SDK_VERSION: String = "3.4"
 
   val dtdInfoFuture: CompletableFuture<DtdInfo> = CompletableFuture();
+  val ready: CompletableFuture<Boolean> = CompletableFuture();
 
   @Throws(ExecutionException::class)
   fun startService() {
@@ -92,19 +93,22 @@ class DartToolingDaemonService private constructor(private val project: Project)
   }
 
   private fun connectToDtdWebSocket(address: String) {
-    webSocket = WebSocket(URI("ws://$address/ws"))
+    webSocket = WebSocket(URI(address))
     webSocket.eventHandler = DtdWebSocketEventHandler()
     webSocket.connect()
   }
 
   @Throws(WebSocketException::class)
-  fun sendRequest(method: String, params: JsonObject, consumer: DartToolingDaemonConsumer) {
+  fun sendRequest(method: String, params: JsonObject, includeSecret: Boolean, consumer: DartToolingDaemonConsumer) {
     val request = JsonObject()
     request.addProperty("jsonrpc", "2.0")
     request.addProperty("method", method)
 
     val id = nextRequestId.incrementAndGet().toString()
     request.addProperty("id", id)
+    if (includeSecret) {
+      params.addProperty("secret", dtdInfoFuture.get().secret)
+    }
     request.add("params", params)
 
     consumerMap[id] = consumer
@@ -131,6 +135,7 @@ class DartToolingDaemonService private constructor(private val project: Project)
 
   private inner class DtdWebSocketEventHandler : WebSocketEventHandler {
     override fun onOpen() {
+      ready.complete(true)
       // Fake request to make sure the tooling daemon works
       //val params = JsonObject()
       //params.addProperty("streamId", "foo_stream")
