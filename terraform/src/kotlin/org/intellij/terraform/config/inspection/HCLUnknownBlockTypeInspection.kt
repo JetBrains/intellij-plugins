@@ -15,7 +15,7 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.toArray
 import org.intellij.terraform.config.TerraformFileType
-import org.intellij.terraform.config.actions.TFInitRequiredAction
+import org.intellij.terraform.config.actions.TFInitAction
 import org.intellij.terraform.config.codeinsight.ModelHelper
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil
 import org.intellij.terraform.config.model.BlockType
@@ -54,7 +54,7 @@ class HCLUnknownBlockTypeInspection : LocalInspectionTool() {
         holder.registerProblem(block.nameElements.first(),
                                HCLBundle.message("unknown.block.type.inspection.unknown.block.type.error.message", type),
                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                               *listOfNotNull(TFInitRequiredAction.createQuickFixNotInitialized(block)).toArray(LocalQuickFix.EMPTY_ARRAY))
+                               *listOfNotNull(TFInitAction.createQuickFixNotInitialized(block)).toArray(LocalQuickFix.EMPTY_ARRAY))
       }
       is HCLBlock -> {
         parent.getNameElementUnquoted(0) ?: return
@@ -76,7 +76,7 @@ class HCLUnknownBlockTypeInspection : LocalInspectionTool() {
         holder.registerProblem(block.nameElements.first(),
                                HCLBundle.message("unknown.block.type.inspection.unknown.block.type.error.message", type),
                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                               *listOfNotNull(TFInitRequiredAction.createQuickFixNotInitialized(block)).toArray(LocalQuickFix.EMPTY_ARRAY))
+                               *listOfNotNull(TFInitAction.createQuickFixNotInitialized(block)).toArray(LocalQuickFix.EMPTY_ARRAY))
       }
       is HCLProperty -> {
         // TODO: Add some logic

@@ -25,7 +25,7 @@ import kotlin.io.path.Path
 @Service(Service.Level.PROJECT)
 internal class TerraformActionService(private val project: Project, private val coroutineScope: CoroutineScope) {
 
-  fun scheduleTerraformInit(directory: String): Job {
+  fun scheduleTerraformInit(directory: String, notifyOnSuccess: Boolean): Job {
     return coroutineScope.launch {
       val title = HCLBundle.message("progress.title.terraform.init")
       val dirFile = LocalFileSystem.getInstance().findFileByNioFile(Path(directory))
@@ -38,17 +38,17 @@ internal class TerraformActionService(private val project: Project, private val 
           ).notify(project)
         return@launch
       }
-      initTerraform(dirFile)
+      initTerraform(dirFile, notifyOnSuccess)
     }
   }
 
-  fun scheduleTerraformInit(dirFile: VirtualFile): Job {
+  fun scheduleTerraformInit(dirFile: VirtualFile, notifyOnSuccess: Boolean): Job {
     return coroutineScope.launch {
-      initTerraform(dirFile)
+      initTerraform(dirFile, notifyOnSuccess)
     }
   }
 
-  suspend fun initTerraform(dirFile: VirtualFile) {
+  suspend fun initTerraform(dirFile: VirtualFile, notifyOnSuccess: Boolean) {
     val title = HCLBundle.message("progress.title.terraform.init")
     withBackgroundProgress(project, title) {
       if (!execTerraformInit(dirFile, project, module = null, title)) {
@@ -66,13 +66,15 @@ internal class TerraformActionService(private val project: Project, private val 
           if (e != null && e !is CancellationException)
             notifyError(title, project, e)
         }
-        localSchemaService.awaitModelsReady()
-        TerraformConstants.EXECUTION_NOTIFICATION_GROUP
-          .createNotification(
-            title,
-            HCLBundle.message("notification.content.terraform.init.succeed"),
-            NotificationType.INFORMATION
-          ).notify(project)
+        if (notifyOnSuccess) {
+          localSchemaService.awaitModelsReady()
+          TerraformConstants.EXECUTION_NOTIFICATION_GROUP
+            .createNotification(
+              title,
+              HCLBundle.message("notification.content.terraform.init.succeed"),
+              NotificationType.INFORMATION
+            ).notify(project)
+        }
       }
       catch (e: Exception) {
         if (e is CancellationException) throw e

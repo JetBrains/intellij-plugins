@@ -11,7 +11,7 @@ import com.intellij.patterns.PlatformPatterns
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.util.containers.toArray
 import org.intellij.terraform.config.TerraformFileType
-import org.intellij.terraform.config.actions.TFInitRequiredAction
+import org.intellij.terraform.config.actions.TFInitAction
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil
 import org.intellij.terraform.config.model.getTerraformModule
 import org.intellij.terraform.config.patterns.TerraformPatterns
@@ -56,7 +56,7 @@ class HILUnknownResourceTypeInspection : LocalInspectionTool() {
 
       holder.registerProblem(element, HCLBundle.message("hil.unknown.resource.type.inspection.unknown.resource.type.error.message"),
                              ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                             *listOfNotNull(TFInitRequiredAction.createQuickFixNotInitialized(element)).toArray(LocalQuickFix.EMPTY_ARRAY))
+                             *listOfNotNull(TFInitAction.createQuickFixNotInitialized(element)).toArray(LocalQuickFix.EMPTY_ARRAY))
     }
   }
 
