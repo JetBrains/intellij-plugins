@@ -353,7 +353,8 @@
       <add-to-group group-id="EditorContextBarMenu"/>
     </action>
 
-    <group id="TFTools" popup="true" class="com.intellij.ide.actions.NonTrivialActionGroup">
+    <group id="TFTools" popup="true" icon="org.intellij.terraform.TerraformIcons.Terraform"
+           class="com.intellij.ide.actions.NonTrivialActionGroup">
       <action id="TFInitAction"
               class="org.intellij.terraform.config.actions.TFInitAction"/>
       <action id="TFFmtFileAction" class="org.intellij.terraform.config.actions.TFFmtFileAction">

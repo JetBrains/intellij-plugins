@@ -17,11 +17,6 @@ import org.jetbrains.annotations.Nls
 
 open class TFInitAction : TFExternalToolsAction() {
 
-  override fun update(e: AnActionEvent) {
-    super.update(e)
-    e.presentation.icon = TerraformIcons.Terraform
-  }
-
   override suspend fun invoke(project: Project, module: Module?, title: @Nls String, virtualFile: VirtualFile) {
     project.service<TerraformActionService>().initTerraform(virtualFile, title)
   }
@@ -31,6 +26,7 @@ class TFInitRequiredAction : TFInitAction() {
 
   override fun update(e: AnActionEvent) {
     super.update(e)
+    e.presentation.icon = TerraformIcons.Terraform
     if (!e.presentation.isEnabledAndVisible) {
       e.presentation.isVisible = false
       return
