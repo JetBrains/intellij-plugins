@@ -18,7 +18,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.toArray
 import org.intellij.terraform.config.TerraformFileType
-import org.intellij.terraform.config.actions.TFInitRequiredAction
+import org.intellij.terraform.config.actions.TFInitAction
 import org.intellij.terraform.config.model.ModuleDetectionUtil
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.HCLBundle
@@ -71,7 +71,7 @@ class TFMissingModuleInspection : LocalInspectionTool() {
     holder.registerProblem(block, HCLBundle.message("missing.module.inspection.missing.module.error.message", err),
                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                            *listOfNotNull(RunTerraformGetFix(directory.name),
-                                          TFInitRequiredAction.createQuickFixNotInitialized(block)).toArray(LocalQuickFix.EMPTY_ARRAY)
+                                          TFInitAction.createQuickFixNotInitialized(block)).toArray(LocalQuickFix.EMPTY_ARRAY)
     )
   }
 }

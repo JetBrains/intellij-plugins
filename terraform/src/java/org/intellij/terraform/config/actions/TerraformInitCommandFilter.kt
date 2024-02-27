@@ -20,7 +20,7 @@ class TerraformInitCommandFilter(
     return Filter.Result(entireLength - line.length + textRange.startOffset,
                          entireLength - line.length + textRange.endOffset
     ) {
-      project.service<TerraformActionService>().scheduleTerraformInit(directory)
+      project.service<TerraformActionService>().scheduleTerraformInit(directory, notifyOnSuccess = true)
     }
   }
 
