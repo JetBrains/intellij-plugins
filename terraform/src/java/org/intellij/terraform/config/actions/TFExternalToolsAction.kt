@@ -103,12 +103,12 @@ abstract class TFExternalToolsAction : DumbAwareAction() {
   private class CoroutineScopeProvider(val coroutineScope: CoroutineScope)
 }
 
-internal fun notifyError(title: @Nls String, project: Project, ex: Exception?) {
+internal fun notifyError(title: @Nls String, project: Project, ex: Throwable?) {
   TerraformConstants.EXECUTION_NOTIFICATION_GROUP
     .createNotification(
       title,
       @Suppress("HardCodedStringLiteral")
-      generateSequence<Throwable>(ex) { it.cause }
+      generateSequence(ex) { it.cause }
         .mapNotNull { it.message }
         .distinct()
         .joinToString("\n"),
