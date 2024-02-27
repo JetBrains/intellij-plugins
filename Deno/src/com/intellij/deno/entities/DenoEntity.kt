@@ -28,7 +28,10 @@ interface DenoEntity : WorkspaceEntity {
     @JvmOverloads
     @JvmStatic
     @JvmName("create")
-    operator fun invoke(entitySource: EntitySource, init: (Builder.() -> Unit)? = null): DenoEntity {
+    operator fun invoke(
+      entitySource: EntitySource,
+      init: (Builder.() -> Unit)? = null,
+    ): DenoEntity {
       val builder = builder()
       builder.entitySource = entitySource
       init?.invoke(builder)
@@ -39,6 +42,10 @@ interface DenoEntity : WorkspaceEntity {
 }
 
 //region generated code
-fun MutableEntityStorage.modifyEntity(entity: DenoEntity, modification: DenoEntity.Builder.() -> Unit): DenoEntity = modifyEntity(
-  DenoEntity.Builder::class.java, entity, modification)
+fun MutableEntityStorage.modifyEntity(
+  entity: DenoEntity,
+  modification: DenoEntity.Builder.() -> Unit,
+): DenoEntity {
+  return modifyEntity(DenoEntity.Builder::class.java, entity, modification)
+}
 //endregion

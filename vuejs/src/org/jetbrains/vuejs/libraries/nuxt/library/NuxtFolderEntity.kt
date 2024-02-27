@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.libraries.nuxt.library
 
 import com.intellij.platform.workspace.storage.*
@@ -29,10 +29,12 @@ interface NuxtFolderEntity: WorkspaceEntity {
     @JvmOverloads
     @JvmStatic
     @JvmName("create")
-    operator fun invoke(nuxtFolderUrl: VirtualFileUrl,
-                        libraryFileUrls: List<VirtualFileUrl>,
-                        entitySource: EntitySource,
-                        init: (Builder.() -> Unit)? = null): NuxtFolderEntity {
+    operator fun invoke(
+      nuxtFolderUrl: VirtualFileUrl,
+      libraryFileUrls: List<VirtualFileUrl>,
+      entitySource: EntitySource,
+      init: (Builder.() -> Unit)? = null,
+    ): NuxtFolderEntity {
       val builder = builder()
       builder.nuxtFolderUrl = nuxtFolderUrl
       builder.libraryFileUrls = libraryFileUrls.toMutableWorkspaceList()
@@ -45,7 +47,10 @@ interface NuxtFolderEntity: WorkspaceEntity {
 }
 
 //region generated code
-fun MutableEntityStorage.modifyEntity(entity: NuxtFolderEntity,
-                                      modification: NuxtFolderEntity.Builder.() -> Unit): NuxtFolderEntity = modifyEntity(
-  NuxtFolderEntity.Builder::class.java, entity, modification)
+fun MutableEntityStorage.modifyEntity(
+  entity: NuxtFolderEntity,
+  modification: NuxtFolderEntity.Builder.() -> Unit,
+): NuxtFolderEntity {
+  return modifyEntity(NuxtFolderEntity.Builder::class.java, entity, modification)
+}
 //endregion

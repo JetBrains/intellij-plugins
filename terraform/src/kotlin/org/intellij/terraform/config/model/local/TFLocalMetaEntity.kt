@@ -40,12 +40,14 @@ interface TFLocalMetaEntity : WorkspaceEntity {
     @JvmOverloads
     @JvmStatic
     @JvmName("create")
-    operator fun invoke(timeStampLow: Int,
-                        timeStampHigh: Int,
-                        jsonPath: String,
-                        lockFile: VirtualFileUrl,
-                        entitySource: EntitySource,
-                        init: (Builder.() -> Unit)? = null): TFLocalMetaEntity {
+    operator fun invoke(
+      timeStampLow: Int,
+      timeStampHigh: Int,
+      jsonPath: String,
+      lockFile: VirtualFileUrl,
+      entitySource: EntitySource,
+      init: (Builder.() -> Unit)? = null,
+    ): TFLocalMetaEntity {
       val builder = builder()
       builder.timeStampLow = timeStampLow
       builder.timeStampHigh = timeStampHigh
@@ -61,7 +63,10 @@ interface TFLocalMetaEntity : WorkspaceEntity {
 }
 
 //region generated code
-fun MutableEntityStorage.modifyEntity(entity: TFLocalMetaEntity,
-                                      modification: TFLocalMetaEntity.Builder.() -> Unit): TFLocalMetaEntity = modifyEntity(
-  TFLocalMetaEntity.Builder::class.java, entity, modification)
+fun MutableEntityStorage.modifyEntity(
+  entity: TFLocalMetaEntity,
+  modification: TFLocalMetaEntity.Builder.() -> Unit,
+): TFLocalMetaEntity {
+  return modifyEntity(TFLocalMetaEntity.Builder::class.java, entity, modification)
+}
 //endregion
