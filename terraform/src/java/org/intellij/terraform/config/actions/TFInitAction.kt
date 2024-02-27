@@ -3,14 +3,11 @@ package org.intellij.terraform.config.actions
 
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.components.service
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
-import org.intellij.terraform.TerraformIcons
 import org.intellij.terraform.config.model.local.LocalSchemaService
 import org.intellij.terraform.hcl.HCLBundle
 import org.jetbrains.annotations.Nls
@@ -18,22 +15,7 @@ import org.jetbrains.annotations.Nls
 open class TFInitAction : TFExternalToolsAction() {
 
   override suspend fun invoke(project: Project, module: Module?, title: @Nls String, virtualFile: VirtualFile) {
-    project.service<TerraformActionService>().initTerraform(virtualFile)
-  }
-}
-
-class TFInitRequiredAction : TFInitAction() {
-
-  override fun update(e: AnActionEvent) {
-    super.update(e)
-    e.presentation.icon = TerraformIcons.Terraform
-    if (!e.presentation.isEnabledAndVisible) {
-      e.presentation.isVisible = false
-      return
-    }
-    val file = e.getData(CommonDataKeys.VIRTUAL_FILE) ?: return
-    val project = e.project ?: return
-    e.presentation.isEnabledAndVisible = isInitRequired(project, file)
+    project.service<TerraformActionService>().initTerraform(virtualFile, notifyOnSuccess = true)
   }
 
   companion object {
@@ -49,7 +31,10 @@ class TFInitRequiredAction : TFInitAction() {
         override fun getFamilyName(): String = HCLBundle.message("action.TFInitRequiredAction.text")
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-          project.service<TerraformActionService>().scheduleTerraformInit(descriptor.psiElement.containingFile.virtualFile)
+          project.service<TerraformActionService>()
+            .scheduleTerraformInit(
+              descriptor.psiElement.containingFile.virtualFile, notifyOnSuccess = false
+            )
         }
 
       }

@@ -16,7 +16,7 @@ import com.intellij.util.containers.addIfNotNull
 import com.intellij.util.containers.toArray
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.TerraformLanguage
-import org.intellij.terraform.config.actions.TFInitRequiredAction
+import org.intellij.terraform.config.actions.TFInitAction
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.hcl.psi.HCLPsiUtil
@@ -100,7 +100,7 @@ class HILUnresolvedReferenceInspection : LocalInspectionTool() {
           if (reference is LocalQuickFixProvider) {
             addAll(reference.quickFixes.orEmpty())
           }
-          addIfNotNull(TFInitRequiredAction.createQuickFixNotInitialized(reference.element))
+          addIfNotNull(TFInitAction.createQuickFixNotInitialized(reference.element))
         }
 
         holder.registerProblem(value, description, ProblemHighlightType.LIKE_UNKNOWN_SYMBOL, referenceRange/*.shiftRight(startOffset)*/, *fixes.toArray(LocalQuickFix.EMPTY_ARRAY))

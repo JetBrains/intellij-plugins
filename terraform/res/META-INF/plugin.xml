@@ -238,6 +238,11 @@
                      groupKey="terraform.files.inspection.group.display.name" enabledByDefault="true" level="WARNING"
                      suppressId="MissingModule"
                      implementationClass="org.intellij.terraform.config.inspection.TFMissingModuleInspection"/>
+    <localInspection language="HCL" applyToDialects="true" shortName="TFNotInitialized" bundle="messages.HCLBundle"
+                     key="not.initialized.inspection.display.name"
+                     groupKey="terraform.files.inspection.group.display.name" enabledByDefault="true" level="WARNING"
+                     suppressId="NotInitialized"
+                     implementationClass="org.intellij.terraform.config.inspection.TFNotInitializedInspection"/>
     <localInspection language="HCL" applyToDialects="true" shortName="TFBlockNameValidness" bundle="messages.HCLBundle"
                      key="block.name.validness.inspection.display.name"
                      groupKey="terraform.files.inspection.group.display.name" enabledByDefault="true" level="ERROR"
@@ -344,11 +349,6 @@
       <!--<action id="GenerateTF" text="..." class=""/>-->
       <add-to-group group-id="GenerateGroup" anchor="first"/>
     </group>
-
-    <action id="TFInitRequiredAction"
-            class="org.intellij.terraform.config.actions.TFInitRequiredAction">
-      <add-to-group group-id="EditorContextBarMenu"/>
-    </action>
 
     <group id="TFTools" popup="true" icon="org.intellij.terraform.TerraformIcons.Terraform"
            class="com.intellij.ide.actions.NonTrivialActionGroup">

@@ -12,7 +12,7 @@ import com.intellij.psi.TokenType
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.toArray
 import org.intellij.terraform.config.TerraformFileType
-import org.intellij.terraform.config.actions.TFInitRequiredAction
+import org.intellij.terraform.config.actions.TFInitAction
 import org.intellij.terraform.config.codeinsight.ModelHelper
 import org.intellij.terraform.config.codeinsight.ResourcePropertyInsertHandler
 import org.intellij.terraform.config.model.*
@@ -114,7 +114,7 @@ class HCLBlockMissingPropertyInspection : LocalInspectionTool() {
         required.joinToString(", ") { it.name }
       ),
       ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-      *listOfNotNull(AddResourcePropertiesFix(required), TFInitRequiredAction.createQuickFixNotInitialized(block))
+      *listOfNotNull(AddResourcePropertiesFix(required), TFInitAction.createQuickFixNotInitialized(block))
         .toArray(LocalQuickFix.EMPTY_ARRAY)
     )
   }
