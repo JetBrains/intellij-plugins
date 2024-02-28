@@ -7,7 +7,7 @@ import com.intellij.lang.javascript.modules.imports.providers.JSCandidatesProces
 import com.intellij.lang.javascript.modules.imports.providers.JSImportCandidatesProvider
 import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.model.source.*
-import java.util.function.Predicate
+import java.util.function.Consumer
 
 internal val SCRIPT_SETUP_API = setOf(
   DEFINE_PROPS_FUN,
@@ -20,8 +20,8 @@ internal val SCRIPT_SETUP_API = setOf(
 )
 
 class VueScriptCandidatesProvider(placeInfo: JSImportPlaceInfo) : JSImportCandidatesBase(placeInfo) {
-  override fun getNames(keyFilter: Predicate<in String>): Set<String> {
-    return SCRIPT_SETUP_API.filter { keyFilter.test(it) }.toSet()
+  override fun collectNames(consumer: Consumer<String>) {
+    SCRIPT_SETUP_API.forEach { consumer.accept(it) }
   }
 
   override fun processCandidates(name: String, processor: JSCandidatesProcessor) {

@@ -9,13 +9,13 @@ import com.intellij.lang.typescript.resolve.TypeScriptClassResolver
 import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.html.Angular2HtmlFile
-import java.util.function.Predicate
+import java.util.function.Consumer
 
 class Angular2GlobalImportCandidatesProvider(private val placeInfo: JSImportPlaceInfo) : JSImportCandidatesBase(placeInfo) {
 
-  override fun getNames(keyFilter: Predicate<in String>): Set<String> =
+  override fun collectNames(consumer: Consumer<String>) {
     // Provided by Angular2CompletionContributor
-    emptySet()
+  }
 
   override fun processCandidates(name: String, processor: JSCandidatesProcessor) {
     TypeScriptClassResolver.getInstance().findGlobalElementsByQName(name, placeInfo.place)
