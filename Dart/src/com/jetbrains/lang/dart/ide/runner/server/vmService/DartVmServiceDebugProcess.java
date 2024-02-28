@@ -213,7 +213,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       }
 
       scheduleConnect(wsToConnect);
-      myOpenObservatoryAction.setUrl(debugUrl);
+      myOpenObservatoryAction.setWsUrl(wsToConnect);
     }
     else if (DebugType.CLI == myDebugType) {
       getProcessHandler().addProcessListener(new ProcessAdapter() {
@@ -225,15 +225,17 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
             getProcessHandler().removeProcessListener(this);
 
             final String urlBase = event.getText().substring(prefix.length());
-            scheduleConnect("ws://" + StringUtil.trimTrailing(urlBase.trim(), '/') + "/ws");
-            myOpenObservatoryAction.setUrl("http://" + urlBase);
+            final String wsUrl = "ws://" + StringUtil.trimTrailing(urlBase.trim(), '/') + "/ws";
+            scheduleConnect(wsUrl);
+            myOpenObservatoryAction.setWsUrl(wsUrl);
           }
           else if (event.getText().startsWith(prefix2)) {
             getProcessHandler().removeProcessListener(this);
 
             final String urlBase = event.getText().substring(prefix2.length());
-            scheduleConnect("ws://" + StringUtil.trimTrailing(urlBase.trim(), '/') + "/ws");
-            myOpenObservatoryAction.setUrl("http://" + urlBase);
+            final String wsUrl = "ws://" + StringUtil.trimTrailing(urlBase.trim(), '/') + "/ws";
+            scheduleConnect(wsUrl);
+            myOpenObservatoryAction.setWsUrl(wsUrl);
           }
         }
       });

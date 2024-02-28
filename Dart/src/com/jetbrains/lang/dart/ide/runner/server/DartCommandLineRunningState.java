@@ -85,7 +85,10 @@ public class DartCommandLineRunningState extends CommandLineState {
 
     final OpenDartObservatoryUrlAction openObservatoryAction =
       new OpenDartObservatoryUrlAction(null, () -> !processHandler.isProcessTerminated());
-    addObservatoryUrlConsumer(openObservatoryAction::setUrl);
+    addObservatoryUrlConsumer(observatoryUri -> {
+      final String prefix = "http";
+      openObservatoryAction.setWsUrl("ws" + observatoryUri.substring(prefix.length()) + "ws");
+    });
 
     actions.add(openObservatoryAction);
   }
@@ -219,6 +222,8 @@ public class DartCommandLineRunningState extends CommandLineState {
         addVmOption(sdk, commandLine, "--pause-isolates-on-exit");
       }
     }
+
+    addVmOption(sdk, commandLine, "--no-serve-devtools");
 
     appendParamsAfterVmOptionsBeforeArgs(commandLine);
 

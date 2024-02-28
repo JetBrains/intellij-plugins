@@ -9,6 +9,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.util.Computable;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.ide.devtools.DevToolsService;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,6 +18,7 @@ import java.util.List;
 
 public class OpenDartObservatoryUrlAction extends DumbAwareAction {
   @Nullable private String myUrl;
+  @Nullable private String myWebsocketUrl;
   private final Computable<Boolean> myIsApplicable;
 
   /**
@@ -34,6 +36,10 @@ public class OpenDartObservatoryUrlAction extends DumbAwareAction {
     myUrl = url;
   }
 
+  public void setWsUrl(@NotNull final String wsUrl) {
+    myWebsocketUrl = wsUrl;
+  }
+
   @Override
   public @NotNull ActionUpdateThread getActionUpdateThread() {
     return ActionUpdateThread.BGT;
@@ -41,13 +47,14 @@ public class OpenDartObservatoryUrlAction extends DumbAwareAction {
 
   @Override
   public void update(@NotNull final AnActionEvent e) {
-    e.getPresentation().setEnabled(myUrl != null && myIsApplicable.compute());
+    e.getPresentation().setEnabled(myWebsocketUrl != null && myIsApplicable.compute());
   }
 
   @Override
   public void actionPerformed(@NotNull final AnActionEvent e) {
-    if (myUrl != null) {
-      openUrlInChromeFamilyBrowser(myUrl);
+    if (myWebsocketUrl != null) {
+      final String url = e.getProject().getService(DevToolsService.class).getDevToolsInstance().getUrl() + "/?uri=" + myWebsocketUrl;
+      openUrlInChromeFamilyBrowser(url);
     }
   }
 

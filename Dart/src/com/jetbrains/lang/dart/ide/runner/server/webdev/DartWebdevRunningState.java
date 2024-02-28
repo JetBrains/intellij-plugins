@@ -38,6 +38,7 @@ public class DartWebdevRunningState extends CommandLineState {
 
   @NotNull protected DartWebdevParameters myDartWebdevParameters;
 
+  // TODO: Is this used?
   private final Collection<Consumer<String>> myObservatoryUrlConsumers = new ArrayList<>();
 
   public DartWebdevRunningState(final @NotNull ExecutionEnvironment env) throws ExecutionException {
