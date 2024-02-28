@@ -2,34 +2,27 @@
 package org.intellij.terraform.config.psi
 
 import com.intellij.ide.BrowserUtil
-import com.intellij.openapi.application.readAction
-import com.intellij.openapi.components.service
+import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.FakePsiElement
 import com.intellij.psi.util.parentsOfType
-import com.intellij.util.concurrency.annotations.RequiresReadLock
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.intellij.terraform.config.documentation.TerraformWebDocUrlProvider
+import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElement
 
 internal class TerraformDocumentPsi(val element: PsiElement,
                                     private val text: String) : FakePsiElement(), HCLElement {
 
-  private val docUrlProvider: TerraformWebDocUrlProvider = element.project.service<TerraformWebDocUrlProvider>()
+  private val parentElement: HCLBlock? = element.parentsOfType<HCLBlock>(true).firstOrNull()
 
-  @RequiresReadLock
-  override fun getParent(): PsiElement {
-    return element.parentsOfType<HCLBlock>(true).first()
-  }
+  override fun getParent(): PsiElement = parentElement as PsiElement
 
   override fun navigate(requestFocus: Boolean) {
-    docUrlProvider.coroutineScope.launch {
-      val docUrl = docUrlProvider.getDocumentationUrl(readAction { parent }).firstOrNull()
-      withContext(Dispatchers.Main) {
-        docUrl?.let { BrowserUtil.browse(it) }
+    parentElement?.run {
+      runWithModalProgressBlocking(project, HCLBundle.message("progress.title.opening.terraform.documentation")) {
+        val url = TerraformWebDocUrlProvider.getDocumentationUrl(parentElement).firstOrNull()
+        url?.let { BrowserUtil.browse(it) }
       }
     }
   }
@@ -41,6 +34,4 @@ internal class TerraformDocumentPsi(val element: PsiElement,
   override fun getName(): String {
     return text
   }
-
-
 }

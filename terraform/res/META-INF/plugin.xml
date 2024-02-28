@@ -187,9 +187,12 @@
     <psi.referenceContributor language="HCL" implementation="org.intellij.terraform.config.psi.TerraformReferenceContributor"/>
     <psi.referenceContributor language="HCL" implementation="org.intellij.terraform.config.codeinsight.HclFileReferenceContributor"/>
 
-    <platform.backend.documentation.targetProvider implementation="org.intellij.terraform.config.documentation.TerraformDocumentationProvider"/>
-    <platform.backend.documentation.psiTargetProvider implementation="org.intellij.terraform.config.documentation.TerraformDocumentationProvider"/>
+    <platform.backend.documentation.targetProvider implementation="org.intellij.terraform.config.documentation.TerraformDocTargetProvider"/>
+    <platform.backend.documentation.psiTargetProvider implementation="org.intellij.terraform.config.documentation.TerraformPsiDocTargetProvider"/>
 
+    <registryKey key="terraform.registry.connection.timeout" defaultValue="1000"
+                 description="Specifies timeout in ms for for connecting to Terraform registry and fetching docs from GitHub"
+                 restartRequired="false"/>
 
     <statementUpDownMover implementation="org.intellij.terraform.config.HCLStatementMover" id="HCL_SM" order="before line"/>
 
