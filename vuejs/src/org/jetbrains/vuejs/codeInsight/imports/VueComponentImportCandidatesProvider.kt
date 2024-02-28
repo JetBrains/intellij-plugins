@@ -17,14 +17,14 @@ import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.source.VueComponents
 import org.jetbrains.vuejs.model.source.VueSourceComponent
-import java.util.function.Predicate
+import java.util.function.Consumer
 
 class VueComponentImportCandidatesProvider(private val placeInfo: JSImportPlaceInfo) : JSImportCandidatesBase(placeInfo) {
 
-  override fun getNames(keyFilter: Predicate<in String>): Set<String> =
+  override fun collectNames(consumer: Consumer<String>) {
     VueModelManager.getGlobal(placeInfo.place).unregistered.components
-      .keys.asSequence().map { toAsset(it, true) }
-      .filter { keyFilter.test(it) }.toSet()
+      .keys.forEach { consumer.accept(toAsset(it, true)) }
+  }
 
   override fun processCandidates(name: String, processor: JSCandidatesProcessor) {
     val component = VueModelManager.getGlobal(placeInfo.place).unregistered.components[fromAsset(name)]
