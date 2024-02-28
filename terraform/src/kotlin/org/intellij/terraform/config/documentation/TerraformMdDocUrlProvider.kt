@@ -10,14 +10,18 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.diagnostic.fileLogger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.coroutineToIndicator
-import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
 import com.intellij.util.applyIf
+import com.intellij.util.concurrency.AppExecutorUtil
 import com.intellij.util.io.HttpRequests
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 @Service(Service.Level.PROJECT)
-internal class TerraformMdDocUrlProvider(val project: Project) : TerraformDocUrlProvider() {
+internal class TerraformMdDocUrlProvider(private val coroutineScope: CoroutineScope) : BaseTerraformDocUrlProvider() {
 
   private val PROVIDERS_REGISTRY_URL: String = "https://registry.terraform.io/v1/providers"
   private val GITHUB_RAW_FILES_URL: String = "https://raw.githubusercontent.com/"
@@ -25,34 +29,45 @@ internal class TerraformMdDocUrlProvider(val project: Project) : TerraformDocUrl
 
   private val providerInfoCache = Caffeine.newBuilder()
     .expireAfterAccess(5, TimeUnit.MINUTES)
-    .build<String, TerraformProviderInfo?>(::loadProviderInfo)
+    .executor(AppExecutorUtil.getAppExecutorService())
+    .build<String, Deferred<TerraformProviderInfo?>>(::loadProviderInfo)
 
-  override suspend fun getProviderDocUrl(provider: String, element: PsiElement, property: String?): String? {
-    val providerData = buildProviderInfo(element, provider, PROVIDER)?.let { coroutineToIndicator {  fetchProviderData(it) } } ?: return null
-    val docMetadata = providerData.docs.firstOrNull { it.category == "overview" } ?: return null
-    return "${providerData.source.replace(GITHUB_PREFIX, GITHUB_RAW_FILES_URL)}/${providerData.tag}/${docMetadata.path}"
+  private val mapper = ObjectMapper(JsonFactory()).registerModule(KotlinModule.Builder().build())
+
+  override suspend fun getDocUrl(blockData: BlockData, context: String): String? {
+    val providerData = blockData.provider?.let { fetchProviderData(it) } ?: return null
+    return when (context) {
+      PROVIDER -> providerData.docs.firstOrNull { it.category == "overview" }
+      RESOURCES, DATASOURCES -> providerData.docs.firstOrNull {
+        it.category == context && (it.title == blockData.identifier?.let { getResourceId(it) } || it.title == blockData.identifier)
+      }
+      else -> null
+    }?.let { docMetadata ->
+      "${providerData.source.replace(GITHUB_PREFIX, GITHUB_RAW_FILES_URL)}/${providerData.tag}/${docMetadata.path}"
+    }
   }
 
-  override suspend fun getResourceOrDataSourceDocUrl(identifier: String, type: String, element: PsiElement, property: String?): String? {
-    val providerData = buildProviderInfo(element, identifier, type)?.let { coroutineToIndicator {  fetchProviderData(it) } } ?: return null
-    val id = getResourceId(identifier)
-    val docMetadata = providerData.docs.firstOrNull { it.category == type && it.title == id } ?: return null
-    return "${providerData.source.replace(GITHUB_PREFIX, GITHUB_RAW_FILES_URL)}/${providerData.tag}/${docMetadata.path}"
+  private suspend fun fetchProviderData(info: ProviderData): TerraformProviderInfo? {
+    val (org, provider, version) = info
+    val metadataUrl = "$PROVIDERS_REGISTRY_URL/${org}/${provider}".applyIf(version != LATEST_VERSION) { plus("/${version}") }
+    return providerInfoCache.get(metadataUrl).await()
   }
 
-  private fun fetchProviderData(info: ProviderData): TerraformProviderInfo? {
-    val metadataUrl = "$PROVIDERS_REGISTRY_URL/${info.org}/${info.provider}".applyIf(info.version != LATEST_VERSION) { plus("/${info.version}") }
-    return providerInfoCache.get(metadataUrl)
-  }
-
-  private fun loadProviderInfo(metadataUrl: String): TerraformProviderInfo? {
-    return runCatching {
-      val response = HttpRequests.request(metadataUrl).connectTimeout(READ_TIMEOUT).readString(ProgressManager.getInstance().progressIndicator)
-      val mapper = ObjectMapper(JsonFactory()).registerModule(KotlinModule.Builder().build())
-      mapper.reader().readValue(response, TerraformProviderInfo::class.java)
-    }.getOrElse {
-      fileLogger().warnWithDebug("Cannot fetch terraform provider info from ${metadataUrl}. Exception message:  ${it::class.java}: ${it.message} Enable DEBUG log level to see stack trace", it)
-      null
+  private fun loadProviderInfo(metadataUrl: String): Deferred<TerraformProviderInfo?> {
+    return coroutineScope.async(Dispatchers.IO) {
+      coroutineToIndicator {
+        try {
+          val response = HttpRequests.request(metadataUrl)
+            .connectTimeout(FETCH_TIMEOUT)
+            .readTimeout(FETCH_TIMEOUT)
+            .readString(ProgressManager.getGlobalProgressIndicator())
+          mapper.reader().readValue(response, TerraformProviderInfo::class.java)
+        }
+        catch (ex: IOException) {
+          fileLogger().warnWithDebug("Cannot fetch terraform provider info from ${metadataUrl}: ${ex::class.java}: ${ex.message} Enable DEBUG log level to see stack trace", ex)
+          null
+        }
+      }
     }
   }
 
