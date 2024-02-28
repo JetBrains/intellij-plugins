@@ -6,10 +6,12 @@ import com.intellij.lang.javascript.modules.JSTempDirWithNodeInterpreterTest
 import com.intellij.lang.javascript.typescript.service.TypeScriptServiceTestBase
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
 import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.util.Disposer
 import com.intellij.platform.lsp.tests.checkLspHighlighting
+import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 
 class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
@@ -137,5 +139,29 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
                                      "console.log(<error descr=\"TS2304: Cannot find name 'Deno1'.\">Deno1</error>)")
     myFixture.configureFromTempProjectFile(path)
     myFixture.testHighlighting()
+  }
+
+  fun testDenoServiceFormatting() {
+    DenoSettings.getService(project).setUseDenoAndReload(UseDeno.CONFIGURE_AUTOMATICALLY)
+    DenoSettings.getService(project).setDenoFormattingEnabled(true)
+    myFixture.addFileToProject("deno/deno.json", "{\"fmt\": {\"singleQuote\": true}}")
+    val path = "./deno/src/fmt.ts"
+    myFixture.addFileToProject(path, """
+        console.log(    
+        
+           "Deno")
+    """)
+    myFixture.configureFromTempProjectFile(path)
+    myFixture.checkLspHighlighting()
+
+    val codeStyleManager = CodeStyleManager.getInstance(project)
+    WriteCommandAction.runWriteCommandAction(project) { codeStyleManager.reformat(file) }
+
+    myFixture.checkResult("""
+      console.log(
+        'Deno',
+      );
+      
+      """.trimIndent())
   }
 }

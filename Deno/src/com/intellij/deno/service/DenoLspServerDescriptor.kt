@@ -22,6 +22,7 @@ import com.intellij.platform.lsp.api.LspServer
 import com.intellij.platform.lsp.api.LspServerSupportProvider
 import com.intellij.platform.lsp.api.ProjectWideLspServerDescriptor
 import com.intellij.platform.lsp.api.customization.LspCommandsSupport
+import com.intellij.platform.lsp.api.customization.LspFormattingSupport
 import com.intellij.platform.lsp.api.lsWidget.LspServerWidgetItem
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
@@ -136,7 +137,13 @@ class DenoLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor
   override val lspHoverSupport = false
   override val lspCompletionSupport = null
   override val lspDiagnosticsSupport = null
-  override val lspFormattingSupport = null
+
+  override val lspFormattingSupport = object : LspFormattingSupport() {
+    override fun shouldFormatThisFileExclusivelyByServer(file: VirtualFile, ideCanFormatThisFileItself: Boolean, serverExplicitlyWantsToFormatThisFile: Boolean): Boolean {
+      return DenoSettings.getService(project).isDenoFormattingEnabled()
+             && isDenoEnableForContextDirectory(project, file)
+    }
+  }
 
   override val lspCommandsSupport: LspCommandsSupport = object : LspCommandsSupport() {
     override fun executeCommand(server: LspServer, contextFile: VirtualFile, command: Command) {

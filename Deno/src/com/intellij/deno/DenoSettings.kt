@@ -40,6 +40,7 @@ class DenoState : Cloneable {
   var denoPath = ""
   var denoCache = ""
   var denoInit = getDefaultInitTemplate()
+  var enableFormatting = false
 
   public override fun clone(): DenoState {
     val nextState = DenoState()
@@ -49,6 +50,7 @@ class DenoState : Cloneable {
     nextState.denoPath = this.denoPath
     nextState.denoCache = this.denoCache
     nextState.denoInit = this.denoInit
+    nextState.enableFormatting = this.enableFormatting
     return nextState
   }
 }
@@ -145,6 +147,14 @@ class DenoSettings(private val project: Project) : PersistentStateComponent<Deno
 
   fun setDenoInit(denoInit: String) {
     state.denoInit = denoInit
+  }
+
+  fun isDenoFormattingEnabled(): Boolean {
+    return this.state.enableFormatting
+  }
+
+  fun setDenoFormattingEnabled(denoFormatting: Boolean) {
+    this.state.enableFormatting = denoFormatting
   }
 
   fun setUseDenoAndReload(useDeno: UseDeno) {

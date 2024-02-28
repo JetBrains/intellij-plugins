@@ -10,8 +10,8 @@ import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
-import com.intellij.openapi.util.NlsContexts.Tooltip
 import com.intellij.openapi.util.NlsContexts.ConfigurableName
+import com.intellij.openapi.util.NlsContexts.Tooltip
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFileFactory
@@ -35,6 +35,7 @@ class DenoConfigurable(private val project: Project) : Configurable {
   private val myDisableDenoRb = JRadioButton(DenoBundle.message("deno.disabled"))
   private val myDenoPath = TextFieldWithBrowseButton()
   private val myDenoCache = TextFieldWithBrowseButton()
+  private val myDenoFormattingEnabled = JBCheckBox(DenoBundle.message("deno.formatting.enable"))
   private lateinit var mySettingsEditor: Editor
 
   override fun getDisplayName(): @ConfigurableName String {
@@ -52,6 +53,7 @@ class DenoConfigurable(private val project: Project) : Configurable {
     buttonGroup.add(myDisableDenoRb)
     myDenoPath.text = service.getDenoPath()
     myDenoCache.text = FileUtil.toSystemDependentName(service.getDenoCache())
+    myDenoFormattingEnabled.isSelected = service.isDenoFormattingEnabled()
     val fakeFile = PsiFileFactory.getInstance(project).createFileFromText("dummy", JsonLanguage.INSTANCE, service.getDenoInit(), true,
       false)
     SwingHelper.installFileCompletionAndBrowseDialog(
@@ -80,6 +82,7 @@ class DenoConfigurable(private val project: Project) : Configurable {
     mainFormBuilder.addLabeledComponent(DenoBundle.message("deno.path"), myDenoPath)
     mainFormBuilder.addLabeledComponent(DenoBundle.message("deno.cache"), myDenoCache)
     mainFormBuilder.addLabeledComponent(DenoBundle.message("deno.cache.init"), mySettingsEditor.component)
+    mainFormBuilder.addComponent(myDenoFormattingEnabled)
     val wrapper = JPanel(BorderLayout())
     wrapper.add(mainFormBuilder.panel, BorderLayout.NORTH)
     return wrapper
@@ -92,7 +95,8 @@ class DenoConfigurable(private val project: Project) : Configurable {
            myDisableDenoRb.isSelected != service.isDisableDeno() ||
            myDenoPath.text != service.getDenoPath() ||
            myDenoCache.text != FileUtil.toSystemDependentName(service.getDenoCache()) ||
-           mySettingsEditor.document.text.trim() != service.getDenoInit()
+           mySettingsEditor.document.text.trim() != service.getDenoInit() ||
+           myDenoFormattingEnabled.isSelected != service.isDenoFormattingEnabled()
   }
 
   override fun disposeUIResources() {
@@ -113,6 +117,7 @@ class DenoConfigurable(private val project: Project) : Configurable {
       }
       service.setUseDenoAndReload(nextUseDeno)
       service.setDenoInit(mySettingsEditor.document.text.trim())
+      service.setDenoFormattingEnabled(myDenoFormattingEnabled.isSelected)
     }
   }
 
