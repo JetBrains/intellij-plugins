@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang
 
 import com.intellij.lang.javascript.JSTestOption
@@ -10,9 +10,9 @@ import com.intellij.lang.javascript.modules.JSImportHighlightingAndCompletionLig
 import com.intellij.lang.javascript.modules.JSImportTestUtil
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.css.inspections.invalid.CssUnknownTargetInspection
-import com.intellij.util.Consumer
 import com.intellij.webpack.createAndSetWebpackConfig
 import org.jetbrains.plugins.scss.inspections.SassScssUnresolvedMixinInspection
+import java.util.function.Consumer
 
 private const val BASE_PATH = "/ts_imports"
 
@@ -133,6 +133,6 @@ class VueModuleImportTest : JSImportHighlightingAndCompletionLightTestBase() {
   fun testAutoImportFromVueWebpack() {
     doTestActionWithCopyDirectory(JSImportTestUtil.getActionName(), "vue", Consumer {
       createAndSetWebpackConfig(project, testRootDisposable, "aliasPath", "src", null, it.path)
-    }, null)
+    })
   }
 }
