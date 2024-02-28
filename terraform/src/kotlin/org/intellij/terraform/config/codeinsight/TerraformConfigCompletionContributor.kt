@@ -261,52 +261,36 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       val cache = HashMap<String, Boolean>()
       val project = position.project
       return when (type) {
-        "resource" -> {
+        "resource"  ->
           getTypeModel(project).resources.toPlow()
             .filter { invocationCount >= 3 || isProviderUsed(parent, it.provider.type, cache) }
-            .map { create(it.type)
-              .withTypeText(it.description)
-              .withIcon(TerraformIcons.Terraform)
-              .withInsertHandler(ResourceBlockSubNameInsertHandler(it)) }
+            .map { buildLookupElement(it, it.type) }
             .processWith(consumer)
-        }
-
         "data" ->
           getTypeModel(project).dataSources.toPlow()
             .filter { invocationCount >= 3 || isProviderUsed(parent, it.provider.type, cache) }
-            .map { create(it.type)
-              .withTypeText(it.description)
-              .withIcon(TerraformIcons.Terraform)
-              .withInsertHandler(ResourceBlockSubNameInsertHandler(it)) }
+            .map { buildLookupElement(it, it.type) }
             .processWith(consumer)
-
         "provider" ->
           getTypeModel(project).providers.toPlow()
-            .map { create(it.type)
-              .withTypeText(it.description)
-              .withIcon(TerraformIcons.Terraform)
-              .withInsertHandler(ResourceBlockSubNameInsertHandler(it)) }
+            .map { buildLookupElement(it, it.type) }
             .processWith(consumer)
-
         "provisioner" ->
           getTypeModel(project).provisioners.toPlow()
-            .map { create(it.type)
-              .withTypeText(it.description)
-              .withIcon(TerraformIcons.Terraform)
-              .withInsertHandler(ResourceBlockSubNameInsertHandler(it)) }
+            .map { buildLookupElement(it, it.type) }
             .processWith(consumer)
-
         "backend" ->
           getTypeModel(project).backends.toPlow()
-            .map { create(it.type)
-              .withTypeText(it.description)
-              .withIcon(TerraformIcons.Terraform)
-              .withInsertHandler(ResourceBlockSubNameInsertHandler(it)) }
+            .map { buildLookupElement(it, it.type) }
             .processWith(consumer)
-        
         else -> true
       }
     }
+
+    private fun buildLookupElement(it: BlockType, typeName: String) = create(typeName)
+      .withTypeText(it.description)
+      .withIcon(TerraformIcons.Terraform)
+      .withInsertHandler(ResourceBlockSubNameInsertHandler(it))
 
     fun isProviderUsed(element: PsiElement, providerName: String, cache: MutableMap<String, Boolean>): Boolean {
       val hclElement = PsiTreeUtil.getParentOfType(element, HCLElement::class.java, false)
