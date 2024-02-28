@@ -22,13 +22,13 @@ public final class DartProjectGenerator extends WebProjectTemplate<DartProjectWi
 
   @Override
   @NotNull
-  public final String getName() {
+  public String getName() {
     return DartBundle.message("dart.title");
   }
 
   @Override
   @NotNull
-  public final String getDescription() {
+  public String getDescription() {
     return DartBundle.message("dart.project.description");
   }
 
@@ -44,10 +44,10 @@ public final class DartProjectGenerator extends WebProjectTemplate<DartProjectWi
   }
 
   @Override
-  public final void generateProject(@NotNull final Project project,
-                                    @NotNull final VirtualFile baseDir,
-                                    @NotNull final DartProjectWizardData data,
-                                    @NotNull final Module module) {
+  public void generateProject(@NotNull final Project project,
+                              @NotNull final VirtualFile baseDir,
+                              @NotNull final DartProjectWizardData data,
+                              @NotNull final Module module) {
     ApplicationManager.getApplication().runWriteAction(
       () -> {
         final ModifiableRootModel modifiableModel = ModifiableModelsProvider.getInstance().getModuleModifiableModel(module);
