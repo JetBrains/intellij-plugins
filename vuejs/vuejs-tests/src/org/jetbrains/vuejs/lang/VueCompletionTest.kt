@@ -5,6 +5,7 @@ import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.javascript.web.filterOutStandardHtmlSymbols
+import com.intellij.javascript.web.forceReloadProjectRoots
 import com.intellij.lang.javascript.BaseJSCompletionTestCase.*
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.JavaScriptFormatterTestBase
@@ -2159,6 +2160,7 @@ export default {
 
     val name = getTestName(true)
     myFixture.copyDirectoryToProject(name, "")
+    forceReloadProjectRoots(project)
     myFixture.configureFromTempProjectFile("$name.vue")
 
     myFixture.completeBasic()
