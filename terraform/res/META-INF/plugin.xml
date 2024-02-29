@@ -246,7 +246,7 @@
                      implementationClass="org.intellij.terraform.config.inspection.TFMissingModuleInspection"/>
     <localInspection language="HCL" applyToDialects="true" shortName="TFNotInitialized" bundle="messages.HCLBundle"
                      key="not.initialized.inspection.display.name"
-                     groupKey="terraform.files.inspection.group.display.name" enabledByDefault="true" level="WARNING"
+                     groupKey="terraform.files.inspection.group.display.name" enabledByDefault="false" level="WARNING"
                      suppressId="NotInitialized"
                      implementationClass="org.intellij.terraform.config.inspection.TFNotInitializedInspection"/>
     <localInspection language="HCL" applyToDialects="true" shortName="TFBlockNameValidness" bundle="messages.HCLBundle"
@@ -356,10 +356,11 @@
       <add-to-group group-id="GenerateGroup" anchor="first"/>
     </group>
 
+    <action icon="AllIcons.General.Warning" id="TFInitRequiredAction" class="org.intellij.terraform.config.actions.TFInitRequiredAction"/>
+
     <group id="TFTools" popup="true" icon="org.intellij.terraform.TerraformIcons.Terraform"
            class="com.intellij.ide.actions.NonTrivialActionGroup">
-      <action id="TFInitAction"
-              class="org.intellij.terraform.config.actions.TFInitAction"/>
+      <action id="TFInitAction" class="org.intellij.terraform.config.actions.TFInitAction"/>
       <action id="TFFmtFileAction" class="org.intellij.terraform.config.actions.TFFmtFileAction">
         <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt F"/>
       </action>

@@ -4,10 +4,16 @@ package org.intellij.terraform.runtime
 import com.intellij.execution.lineMarker.ExecutorAction
 import com.intellij.execution.lineMarker.RunLineMarkerContributor
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.project.DumbAware
 import com.intellij.psi.PsiElement
+import com.intellij.ui.IconManager
+import org.intellij.terraform.config.actions.TFInitAction
+import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
 import java.util.function.Function
+import javax.swing.Icon
 
 class TerraformRunLineMarkerContributor : RunLineMarkerContributor(), DumbAware {
   override fun getInfo(leaf: PsiElement): Info? {
@@ -28,9 +34,23 @@ class TerraformRunLineMarkerContributor : RunLineMarkerContributor(), DumbAware 
       return null
     }
 
-    val actions = ExecutorAction.getActions(0)
-    val event = createActionEvent(leaf)
-    val tooltipProvider = Function<PsiElement, String?> { actions.mapNotNull { getText(it, event) }.joinToString("\n") }
-    return Info(AllIcons.RunConfigurations.TestState.Run, actions, tooltipProvider)
+    val actions = mutableListOf<AnAction>()
+    val icon: Icon
+    val tooltipProvider: Function<PsiElement, String?>
+
+    if (TFInitAction.isInitRequired(leaf.project, leaf.containingFile.virtualFile)) {
+      val initAction = ActionManager.getInstance().getAction("TFInitRequiredAction")
+      actions.add(initAction)
+      icon = IconManager.getInstance().createLayered(AllIcons.RunConfigurations.TestState.Run, AllIcons.Nodes.WarningMark)
+      tooltipProvider = Function<PsiElement, String?> { HCLBundle.message("not.initialized.inspection.error.message") }
+    }
+    else {
+      icon = AllIcons.RunConfigurations.TestState.Run
+      val event = createActionEvent(leaf)
+      tooltipProvider = Function<PsiElement, String?> { actions.mapNotNull { getText(it, event) }.joinToString("\n") }
+    }
+    actions.addAll(ExecutorAction.getActions(0))
+
+    return Info(icon, actions.toTypedArray(), tooltipProvider)
   }
 }
