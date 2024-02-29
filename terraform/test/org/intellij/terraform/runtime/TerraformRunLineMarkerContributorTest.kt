@@ -5,6 +5,7 @@ import com.intellij.execution.configurations.RuntimeConfigurationException
 import com.intellij.icons.AllIcons
 import com.intellij.psi.PsiElement
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.ui.IconManager
 import org.intellij.terraform.TerraformTestUtils
 
 class TerraformRunLineMarkerContributorTest : BasePlatformTestCase() {
@@ -15,7 +16,7 @@ class TerraformRunLineMarkerContributorTest : BasePlatformTestCase() {
     val info = file.findElementAt(myFixture.caretOffset)?.let { TerraformRunLineMarkerContributor().getInfo(it) }
 
     assertNotNull(info)
-    assertEquals(AllIcons.RunConfigurations.TestState.Run, info?.icon)
+    assertEquals(IconManager.getInstance().createLayered(AllIcons.RunConfigurations.TestState.Run, AllIcons.Nodes.WarningMark), info?.icon)
 
     val configuration = getTerraformConfiguration(myFixture.elementAtCaret)
     assertEquals("plan", configuration.programParameters)
@@ -30,11 +31,12 @@ class TerraformRunLineMarkerContributorTest : BasePlatformTestCase() {
     val file = myFixture.configureByFile("with_comment.tf")
     val info = file.findElementAt(myFixture.caretOffset)?.let { TerraformRunLineMarkerContributor().getInfo(it) }
     assertNotNull(info)
-    assertEquals(AllIcons.RunConfigurations.TestState.Run, info?.icon)
+    val warnedRun = IconManager.getInstance().createLayered(AllIcons.RunConfigurations.TestState.Run, AllIcons.Nodes.WarningMark)
+    assertEquals(warnedRun, info?.icon)
 
     val gutter = myFixture.findGutter("with_comment.tf")
     assertNotNull(gutter)
-    assertEquals(AllIcons.RunConfigurations.TestState.Run, gutter?.icon)
+    assertEquals(warnedRun, gutter?.icon)
   }
 
   fun testLineMarkerWithWholeCommented() {

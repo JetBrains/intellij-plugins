@@ -12,10 +12,10 @@ import org.intellij.terraform.config.model.local.LocalSchemaService
 import org.intellij.terraform.hcl.HCLBundle
 import org.jetbrains.annotations.Nls
 
-open class TFInitAction : TFExternalToolsAction() {
+open class TFInitAction(private val notifyOnSuccess: Boolean = true) : TFExternalToolsAction() {
 
   override suspend fun invoke(project: Project, module: Module?, title: @Nls String, virtualFile: VirtualFile) {
-    project.service<TerraformActionService>().initTerraform(virtualFile, notifyOnSuccess = true)
+    project.service<TerraformActionService>().initTerraform(virtualFile, notifyOnSuccess)
   }
 
   companion object {
@@ -40,7 +40,7 @@ open class TFInitAction : TFExternalToolsAction() {
       }
     }
 
-    private fun isInitRequired(project: Project, virtualFile: VirtualFile): Boolean {
+    fun isInitRequired(project: Project, virtualFile: VirtualFile): Boolean {
       val lock = project.service<LocalSchemaService>().findLockFile(virtualFile) ?: return true
       val terraformDirectory = lock.parent.findChild(".terraform") ?: return true
       return !terraformDirectory.isDirectory || terraformDirectory.children.isEmpty()
@@ -49,4 +49,6 @@ open class TFInitAction : TFExternalToolsAction() {
   }
 
 }
+
+class TFInitRequiredAction : TFInitAction(false)
 
