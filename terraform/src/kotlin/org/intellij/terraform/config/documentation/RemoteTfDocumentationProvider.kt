@@ -2,7 +2,6 @@
 package org.intellij.terraform.config.documentation
 
 import com.github.benmanes.caffeine.cache.Caffeine
-import com.intellij.markdown.utils.convertMarkdownToHtml
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.diagnostic.fileLogger
 import com.intellij.openapi.progress.ProgressManager
@@ -14,11 +13,17 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import org.intellij.markdown.IElementType
+import org.intellij.markdown.html.HtmlGenerator
+import org.intellij.markdown.parser.MarkdownParser
+import org.intellij.terraform.config.documentation.html.TfFlavourDescriptor
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 @Service(Service.Level.PROJECT)
 class RemoteTfDocumentationProvider(private val coroutineScope: CoroutineScope) {
+
+  private val embeddedHtmlType = IElementType("ROOT")
 
   private val docCache = Caffeine.newBuilder()
     .expireAfterAccess(5, TimeUnit.MINUTES)
@@ -27,19 +32,19 @@ class RemoteTfDocumentationProvider(private val coroutineScope: CoroutineScope) 
 
 
   @NlsSafe
-  suspend fun getDoc(urlString: String): String? =
-      docCache.get(urlString).await()?.let { convertMarkdownToHtml(it) }
+  suspend fun getDoc(urlString: String): String? = docCache.get(urlString).await()
 
   private fun fetchDocumentationText(urlString: String): Deferred<String?> {
-    return coroutineScope.async (Dispatchers.IO) {
+    return coroutineScope.async(Dispatchers.IO) {
       coroutineToIndicator {
         try {
           val rawDocText = HttpRequests.request(urlString)
             .connectTimeout(FETCH_TIMEOUT)
             .readTimeout(FETCH_TIMEOUT)
             .readString(ProgressManager.getGlobalProgressIndicator())
-          removeMdHeader(rawDocText)
-        } catch (ex: IOException) {
+          convertMarkdownToHtml(removeMdHeader(rawDocText))
+        }
+        catch (ex: IOException) {
           fileLogger().warnWithDebug("Cannot fetch documentation for url: ${urlString}, Exception: ${ex::class.java}: ${ex.message}. Enable DEBUG log level to see stack trace", ex)
           null
         }
@@ -60,6 +65,12 @@ class RemoteTfDocumentationProvider(private val coroutineScope: CoroutineScope) 
       }
     }
     return filteredLines.joinToString("\n").trim()
+  }
+
+  private fun convertMarkdownToHtml(@NlsSafe markdownText: String): String {
+    val flavour = TfFlavourDescriptor()
+    val parsedTree = MarkdownParser(flavour).parse(embeddedHtmlType, markdownText)
+    return HtmlGenerator(markdownText, parsedTree, flavour).generateHtml()
   }
 
 }
