@@ -60,6 +60,15 @@ module Minitest
       end
     end
 
+    def class_location
+      begin
+        location = Module.const_source_location(@class_name)
+        "file://#{location[0]}:#{location[1]}"
+      rescue NameError, NoMethodError
+        "ruby_minitest_qn://#{@class_name}.#{@method_name}"
+      end
+    end
+
     def klass=(klass)
       return if klass.nil?
       raise RuntimeError.new("Class expected, got #{klass}; #{klass.class}") unless klass.instance_of?(Class)
@@ -210,7 +219,7 @@ module Minitest
       first_in_suite = @test_data[class_name].empty?
       test_data = @test_data[class_name][test_name]
       test_data.klass = klass
-      suite_started(class_name, test_data.location) if first_in_suite
+      suite_started(class_name, test_data.class_location) if first_in_suite
       send_service_message(Rake::TeamCity::MessageFactory.create_test_started(normalize(test_name), test_data.location, class_name, test_data.fqn))
       debug("Test started: #{test_data.fqn} from #{test_data.location}")
     end
