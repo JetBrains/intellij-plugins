@@ -19,11 +19,11 @@ internal class TerraformDocumentPsi(val element: PsiElement,
   override fun getParent(): PsiElement = parentElement as PsiElement
 
   override fun navigate(requestFocus: Boolean) {
-    parentElement?.run {
-      runWithModalProgressBlocking(project, HCLBundle.message("progress.title.opening.terraform.documentation")) {
-        val url = TerraformWebDocUrlProvider.getDocumentationUrl(parentElement).firstOrNull()
-        url?.let { BrowserUtil.browse(it) }
-      }
+    parentElement ?: return
+
+    runWithModalProgressBlocking(project, HCLBundle.message("progress.title.opening.terraform.documentation")) {
+      val url = TerraformWebDocUrlProvider.getDocumentationUrl(parentElement).firstOrNull()
+      url?.let { BrowserUtil.browse(it) }
     }
   }
 

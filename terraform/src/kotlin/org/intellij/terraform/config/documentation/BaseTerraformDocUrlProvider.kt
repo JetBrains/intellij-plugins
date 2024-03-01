@@ -35,7 +35,7 @@ internal abstract class BaseTerraformDocUrlProvider {
     protected val PROVIDER: String = "provider"
   }
 
-  suspend fun getDocumentationUrl(element: PsiElement?): List<String?> {
+  internal suspend fun getDocumentationUrl(element: PsiElement?): List<String?> {
     element ?: return emptyList()
 
     val blockData = buildBlockData(element)
