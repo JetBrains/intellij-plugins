@@ -187,4 +187,13 @@ class TerraformTemplateCompletionTest : BasePlatformTestCase() {
     Assert.assertNotNull(completionVariants)
     UsefulTestCase.assertContainsElements(completionVariants!!, "first_inline", "second_inline", "third_external", "fourth_external")
   }
+
+  fun `test control structures completion inside template block`() {
+    myFixture.configureByText("template.tftpl", """
+      %{ <caret> }
+    """.trimIndent())
+    val completionVariants = myFixture.getCompletionVariants("template.tftpl")
+    Assert.assertNotNull(completionVariants)
+    UsefulTestCase.assertContainsElements(completionVariants!!, "for", "if", "in", "endif", "endfor")
+  }
 }

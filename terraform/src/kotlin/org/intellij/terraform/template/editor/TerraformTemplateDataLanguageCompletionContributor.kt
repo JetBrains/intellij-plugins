@@ -17,7 +17,7 @@ import org.intellij.terraform.hil.HILTokenType
 import org.intellij.terraform.template.model.TftplVariable
 import org.intellij.terraform.template.model.collectAvailableVariables
 
-internal class TerraformTemplateCompletionContributor : CompletionContributor() {
+internal class TerraformTemplateDataLanguageCompletionContributor : CompletionContributor() {
   init {
     extend(CompletionType.BASIC, unparsedSegmentPattern, TerraformTemplateVariableCompletionProvider())
   }

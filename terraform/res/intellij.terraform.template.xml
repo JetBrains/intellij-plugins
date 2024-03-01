@@ -20,9 +20,10 @@
                             implementationClass="org.intellij.terraform.template.editor.HilTemplateCompletionContributor"/>
     <completion.contributor language="HIL"
                             implementationClass="org.intellij.terraform.template.editor.InjectedHilTemplateCompletionContributor"/>
-
     <completion.contributor language="any"
-                            implementationClass="org.intellij.terraform.template.editor.TerraformTemplateCompletionContributor"/>
+                            implementationClass="org.intellij.terraform.template.editor.TerraformTemplateLanguageCompletionContributor"/>
+    <completion.contributor language="any"
+                            implementationClass="org.intellij.terraform.template.editor.TerraformTemplateDataLanguageCompletionContributor"/>
     <lang.foldingBuilder language="TFTPL" implementationClass="org.intellij.terraform.template.editor.TerraformTemplateFoldingBuilder"/>
     <liveTemplateContext contextId="TFTPL_TEMPLATE" implementation="org.intellij.terraform.template.editor.TerraformTemplateContextType"/>
     <defaultLiveTemplates file="liveTemplates/terraformTemplate.xml"/>

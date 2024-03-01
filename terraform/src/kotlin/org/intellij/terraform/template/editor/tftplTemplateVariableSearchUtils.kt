@@ -43,10 +43,10 @@ internal fun getTemplateFileViewProvider(element: PsiElement): TerraformTemplate
 internal val hilVariablePattern: ElementPattern<PsiElement> =
   PlatformPatterns.or(
     createHilVariablePattern { isTemplateFileElement(it) || isInjectedHil(it) },
-    createHilControlStructurePattern()
+    isRightAfterControlKeyword()
   )
 
-private fun isTemplateFileElement(psiElement: PsiElement): Boolean {
+internal fun isTemplateFileElement(psiElement: PsiElement): Boolean {
   return psiElement.containingFile is TftplFile
 }
 
@@ -67,7 +67,16 @@ internal fun createHilVariablePattern(test: (PsiElement) -> Boolean = { true }):
     })
 }
 
-internal fun createHilControlStructurePattern(): PsiElementPattern.Capture<PsiElement> {
+internal fun createPattern(test: (PsiElement) -> Boolean = { true }): PsiElementPattern.Capture<PsiElement> {
+  return PlatformPatterns.psiElement()
+    .with(object : PatternCondition<PsiElement>("commonHilElementPattern") {
+      override fun accepts(element: PsiElement, context: ProcessingContext?): Boolean {
+        return test(element)
+      }
+    })
+}
+
+private fun isRightAfterControlKeyword(): PsiElementPattern.Capture<PsiElement> {
   return PlatformPatterns.psiElement(HILElementTypes.ID)
     .with(object : PatternCondition<PsiElement>("isRightAfterControlKeyword") {
       override fun accepts(element: PsiElement, context: ProcessingContext?): Boolean {
