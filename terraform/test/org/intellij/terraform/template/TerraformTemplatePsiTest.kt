@@ -3,6 +3,8 @@ package org.intellij.terraform.template
 import com.intellij.lang.Language
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.intellij.terraform.hcl.HCLLanguage
+import org.intellij.terraform.template.psi.TftplFile
+import org.junit.Assert
 
 internal const val dollar = "$"
 
@@ -45,5 +47,11 @@ class TerraformTemplatePsiTest : BasePlatformTestCase() {
     withDataLanguageForFile(psiFile.virtualFile, Language.findLanguageByID("JSON")!!, project) {
       myFixture.checkHighlighting(true, false, true)
     }
+  }
+
+  fun `test detect data language by composite extension`() {
+    val file = myFixture.configureByText("example.js.tfpl", "")
+    Assert.assertEquals("JavaScript",
+                        file.viewProvider.allFiles.filterNot { it is TftplFile }.singleOrNull()?.language?.id)
   }
 }

@@ -3,6 +3,8 @@ package org.intellij.terraform.template
 
 import com.intellij.lang.Language
 import com.intellij.lang.LanguageParserDefinitions
+import com.intellij.openapi.fileTypes.FileTypeManager
+import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -16,6 +18,7 @@ import com.intellij.psi.templateLanguages.TemplateDataElementType
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.OuterLanguageElementType
+import com.intellij.util.asSafely
 import org.intellij.terraform.hil.psi.TerraformTemplateLanguage
 import org.intellij.terraform.hil.psi.TerraformTemplateTokenTypes
 
@@ -63,6 +66,7 @@ internal class TerraformTemplateFileViewProvider(psiManager: PsiManager,
 // otherwise a mapping from the TemplateDataLanguageMappings would not be used resulting in inability to parse a file!
 private fun doComputeTemplateDataLanguage(virtualFile: VirtualFile, project: Project): Language {
   val dataLanguage = TemplateDataLanguageMappings.getInstance(project)?.getMapping(virtualFile)
+                     ?: tryGuessLanguageByCompositeExtension(virtualFile.name)
                      ?: PlainTextLanguage.INSTANCE
   val substituteLang = LanguageSubstitutors.getInstance()
     .substituteLanguage(dataLanguage, virtualFile, project)
@@ -73,6 +77,22 @@ private fun doComputeTemplateDataLanguage(virtualFile: VirtualFile, project: Pro
     dataLanguage
   }
 }
+
+private fun tryGuessLanguageByCompositeExtension(fileName: String): Language? {
+  val (maybeDataLanguageExtension, maybeTemplateLanguageExtension) =
+    fileName.split('.')
+      .takeLast(2)
+      .takeIf { it.size == 2 }
+      ?.let { it.first() to it.last() } ?: return null
+
+  if (maybeTemplateLanguageExtension !in knownTemplateExtensions) return null
+  return FileTypeManager.getInstance()
+    .getFileTypeByExtension(maybeDataLanguageExtension)
+    .asSafely<LanguageFileType>()
+    ?.language
+}
+
+private val knownTemplateExtensions = setOf("tftpl", "tfpl", "tpl")
 
 private val TEMPLATE_FRAGMENT: IElementType = OuterLanguageElementType("TerraformTemplateSegmentElementType",
                                                                        TerraformTemplateLanguage)
