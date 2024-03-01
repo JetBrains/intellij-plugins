@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.perforce.StreamGobbler;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 public final class ExecResult {
@@ -32,6 +33,7 @@ public final class ExecResult {
   private StreamGobbler myErrorGobbler;
   private Throwable myException = null;
   private String myErrorString;
+  private Charset myCharset = StandardCharsets.UTF_8;
 
   @SuppressWarnings({"HardCodedStringLiteral"})
   public String toString() {
@@ -80,14 +82,14 @@ public final class ExecResult {
     if (myOutputGobbler != null) {
       myOutputGobbler.allowSafeStreamUsage(consumer);
     } else {
-      consumer.consume(new ByteArrayInputStream(myStdout.getBytes(StandardCharsets.UTF_8)));
+      consumer.consume(new ByteArrayInputStream(myStdout.getBytes(myCharset)));
     }
   }
 
   @NotNull
   public @NlsSafe String getStdout() {
     if (myOutputGobbler != null) {
-      return readStreamConvertingLineSeparators(myOutputGobbler);
+      return readStreamConvertingLineSeparators(myOutputGobbler, myCharset);
     }
     return myStdout;
   }
@@ -105,7 +107,7 @@ public final class ExecResult {
     if (myErrorGobbler != null) {
       if (myErrorString == null) {
         // when temp file is used, we can NOT read stream several times (it is destroyed after first read)
-        myErrorString = readStreamConvertingLineSeparators(myErrorGobbler);
+        myErrorString = readStreamConvertingLineSeparators(myErrorGobbler, myCharset);
       }
       return myErrorString;
     }
@@ -120,11 +122,19 @@ public final class ExecResult {
     myException = exception;
   }
 
-  private static String readStreamConvertingLineSeparators(final StreamGobbler gobbler) {
+  public Charset getCharset() {
+    return myCharset;
+  }
+
+  public void setCharset(Charset charset) {
+    myCharset = charset;
+  }
+
+  private static String readStreamConvertingLineSeparators(final StreamGobbler gobbler, Charset charset) {
     try {
       final StringBuilder result = new StringBuilder(gobbler.getResultLength());
       gobbler.allowSafeStreamUsage(inputStream -> {
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, charset));
         appendDataConvertingLineSeparators(reader, result);
       });
       return result.toString();

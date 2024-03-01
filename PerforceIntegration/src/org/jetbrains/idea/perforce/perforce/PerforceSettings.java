@@ -95,7 +95,7 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
   public boolean SYNC_RUN_RESOLVE = true;
   public boolean REVERT_UNCHANGED_FILES = true;
   public boolean REVERT_UNCHANGED_FILES_CHECKIN = false;
-  public @NlsSafe String CHARSET = getCharsetNone();
+  public @NlsSafe String CHARSET = PerforcePhysicalConnectionParametersI.getCharsetNone();
   public boolean SHOW_BRANCHES_HISTORY = true;
   public boolean ENABLED = true;
   public boolean USE_LOGIN = true;
@@ -368,7 +368,7 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
   }
 
   public boolean isNoneCharset() {
-    return StringUtil.isEmptyOrSpaces(CHARSET) || getCharsetNone().equals(CHARSET);
+    return StringUtil.isEmptyOrSpaces(CHARSET) || PerforcePhysicalConnectionParametersI.getCharsetNone().equals(CHARSET);
   }
 
   @Override
@@ -394,9 +394,5 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
   @Override
   public String getCharsetName() {
     return CHARSET;
-  }
-
-  public static @NlsSafe String getCharsetNone() {
-    return PerforceBundle.message("none.charset.presentation");
   }
 }

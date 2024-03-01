@@ -49,6 +49,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Collections;
@@ -137,8 +138,11 @@ public abstract class AbstractP4Connection implements P4Connection {
     }
 
     File cwd = getWorkingDirectory();
+    Charset charset = perforceSettings.getConsoleCharset();
+    retVal.setCharset(charset);
     GeneralCommandLine cmd = fillCmdLine(perforceSettings, connArgs, p4args);
     cmd.setWorkDirectory(cwd);
+    cmd.setCharset(charset);
     setEnvironment(cwd, cmd.getEnvironment());
 
     final CommandDebugInfoWrapper debugInfoWrapper = new CommandDebugInfoWrapper(cmd);
@@ -302,7 +306,7 @@ public abstract class AbstractP4Connection implements P4Connection {
     byte[] bytes;
     try {
       //noinspection SSBasedInspection
-      bytes = !PerforceSettings.getCharsetNone().equals(charsetName) ? inputData.getBytes(charsetName) : inputData.getBytes(
+      bytes = !PerforcePhysicalConnectionParametersI.getCharsetNone().equals(charsetName) ? inputData.getBytes(charsetName) : inputData.getBytes(
         StandardCharsets.UTF_8);
     }
     catch (UnsupportedEncodingException e) {
