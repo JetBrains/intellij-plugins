@@ -164,4 +164,21 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
       
       """.trimIndent())
   }
+
+  fun testDenoServiceFormattingDisabled() {
+    DenoSettings.getService(project).setUseDenoAndReload(UseDeno.CONFIGURE_AUTOMATICALLY)
+    DenoSettings.getService(project).setDenoFormattingEnabled(false)
+    myFixture.addFileToProject("deno/deno.json", "{\"fmt\": {\"singleQuote\": true, \"noSemicolons\": true}}")
+    val path = "./deno/src/fmt.ts"
+    myFixture.addFileToProject(path, """
+        console.log("Deno");""")
+    myFixture.configureFromTempProjectFile(path)
+    myFixture.checkLspHighlighting()
+
+    val codeStyleManager = CodeStyleManager.getInstance(project)
+    WriteCommandAction.runWriteCommandAction(project) { codeStyleManager.reformat(file) }
+
+    // do not respect singleQuote and noSemicolons
+    myFixture.checkResult("""console.log("Deno");""".trimIndent())
+  }
 }

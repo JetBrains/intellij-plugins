@@ -40,7 +40,7 @@ class DenoState : Cloneable {
   var denoPath = ""
   var denoCache = ""
   var denoInit = getDefaultInitTemplate()
-  var enableFormatting = false
+  var enableFormatting = true
 
   public override fun clone(): DenoState {
     val nextState = DenoState()
