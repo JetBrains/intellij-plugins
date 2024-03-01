@@ -92,8 +92,9 @@ class VueRefAttributeImpl : XmlStubBasedAttributeBase<VueRefAttributeStubImpl>, 
       PomRenameableTarget<PsiElement>, PomTargetPsiElement, PsiDeclaredTarget {
 
     override fun setName(name: String): PsiElement {
-      (myProvider as VueRefAttribute).setValue(name)
-      return myProvider.implicitElement!!
+      val vueRefAttribute = myProvider as VueRefAttribute
+      vueRefAttribute.setValue(name)
+      return vueRefAttribute.implicitElement!!
     }
 
     override fun getNavigationElement(): PsiElement {
