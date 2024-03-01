@@ -1,7 +1,6 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.documentation
 
-import com.intellij.openapi.application.readAction
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentsOfType
 import org.intellij.terraform.config.codeinsight.ModelHelper
@@ -16,11 +15,11 @@ import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.hcl.psi.common.LiteralExpression
 import org.jetbrains.annotations.Nls
 
-object LocalTfDocumentationProvider {
+internal object LocalTfDocumentationProvider {
 
   @Nls
-  suspend fun fetchLocalDescription(element: PsiElement?): String? = readAction {
-    when (element) {
+  internal fun fetchLocalDescription(element: PsiElement?): String? {
+    return when (element) {
       is HCLProperty -> {
         provideDocForProperty(element)
       }

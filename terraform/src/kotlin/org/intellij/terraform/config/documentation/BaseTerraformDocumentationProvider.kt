@@ -2,15 +2,14 @@
 package org.intellij.terraform.config.documentation
 
 import com.intellij.model.Pointer
-import com.intellij.openapi.application.readAction
 import com.intellij.openapi.components.service
-import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.platform.backend.documentation.DocumentationResult
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.psi.PsiElement
 import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.refactoring.suggested.createSmartPointer
+import com.intellij.util.applyIf
 import org.intellij.terraform.TerraformIcons
 import org.intellij.terraform.hcl.psi.HCLElement
 
@@ -38,30 +37,28 @@ internal abstract class BaseTerraformDocumentationProvider {
 
     override fun computeDocumentationHint(): String {
       val element = pointer.element ?: return NO_DOC
-      return runBlockingCancellable {
-        LocalTfDocumentationProvider.fetchLocalDescription(element)
-      } ?: NO_DOC
+      return LocalTfDocumentationProvider.fetchLocalDescription(element) ?: NO_DOC
     }
 
-    override fun computeDocumentation(): DocumentationResult = DocumentationResult.Companion.asyncDocumentation {
-      val element = readAction { pointer.element }
-      val docText = element ?.let { elem ->
-        val project = pointer.project
-        val urlString = project.service<TerraformMdDocUrlProvider>().getDocumentationUrl(elem).firstOrNull()
-        val remoteDocProvider = project.service<RemoteTfDocumentationProvider>()
-        urlString?.let { remoteDocProvider.getDoc(urlString) } ?: LocalTfDocumentationProvider.fetchLocalDescription(elem)
-      }
+    override fun computeDocumentation(): DocumentationResult {
+      val element = pointer.element
+      val project = pointer.project
+      val remoteDocProvider = project.service<RemoteTfDocumentationProvider>()
+      val mdDocUrlProvider = project.service<TerraformMdDocUrlProvider>()
+      val localDescription = element?.let { LocalTfDocumentationProvider.fetchLocalDescription(it) }
 
-      val doc = DocumentationResult.documentation(docText ?: NO_DOC)
-      val fullDoc = if (docText != null) {
-        val externalUrl = TerraformWebDocUrlProvider.getDocumentationUrl(element).firstOrNull()
-        val docAnchor = externalUrl?.substringAfterLast("#", "")
-        doc.externalUrl(externalUrl).anchor(docAnchor)
+      return DocumentationResult.Companion.asyncDocumentation {
+        val docText = element?.let { elem ->
+          val urlString = mdDocUrlProvider.getDocumentationUrl(elem).firstOrNull()
+          urlString?.let { remoteDocProvider.getDoc(urlString) } ?: localDescription
+        }
+
+        DocumentationResult.documentation(docText ?: NO_DOC).applyIf(docText != null) {
+          val externalUrl = TerraformWebDocUrlProvider.getDocumentationUrl(element).firstOrNull()
+          val docAnchor = externalUrl?.substringAfterLast("#", "")
+          externalUrl(externalUrl).anchor(docAnchor)
+        }
       }
-      else {
-        doc
-      }
-      fullDoc
     }
   }
 
