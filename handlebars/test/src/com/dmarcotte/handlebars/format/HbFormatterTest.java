@@ -20,8 +20,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.codeStyle.CodeStyleManager;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings;
+import com.intellij.testFramework.IndexingTestUtil;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
@@ -138,6 +138,7 @@ public abstract class HbFormatterTest extends BasePlatformTestCase implements Hb
     VirtualFile virtualFile = baseFile.getVirtualFile();
     assert virtualFile != null;
     TemplateDataLanguageMappings.getInstance(getProject()).setMapping(virtualFile, templateDataLanguageType.getLanguage());
+    IndexingTestUtil.waitUntilIndexesAreReady(getProject());
 
     // fetch a fresh instance of the file -- the template data mapping creates a new instance,
     // which was causing problems in PsiFileImpl.isValid()

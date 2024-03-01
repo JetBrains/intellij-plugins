@@ -5,6 +5,7 @@ import com.intellij.database.util.SqlDialects
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.sql.dialects.SqlDialectMappings
 import com.intellij.sql.dialects.SqlLanguageDialect
+import com.intellij.testFramework.IndexingTestUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.FileContentUtil
@@ -63,6 +64,7 @@ class CfmlSqlInjectionCompletionTest : BasePlatformTestCase() {
                               vararg variants: String) {
     val dialect = SqlDialects.findDialectById("SQL92")
     SqlDialectMappings.getInstance(project).setMapping(null, dialect as SqlLanguageDialect)
+    IndexingTestUtil.waitUntilIndexesAreReady(project)
     val file = myFixture.file
     if (file != null) FileContentUtil.reparseFiles(project, listOf<VirtualFile>(file.virtualFile), false)
     println(javaClass.simpleName + "." + getTestName(true) + ": " + dialect.getID())

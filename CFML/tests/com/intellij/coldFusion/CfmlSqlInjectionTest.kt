@@ -21,6 +21,7 @@ import com.intellij.sql.database.SqlDataSourceImpl
 import com.intellij.sql.database.SqlDataSourceManager
 import com.intellij.sql.dialects.SqlDialectMappings
 import com.intellij.sql.psi.SqlCommonKeywords
+import com.intellij.testFramework.IndexingTestUtil
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.FileContentUtil
 import com.intellij.util.ui.UIUtil
@@ -116,6 +117,7 @@ class CfmlSqlInjectionTest : CfmlCodeInsightFixtureTestCase() {
     prepare()
     val dialect = SqlDialects.findDialectById("SQL92")
     SqlDialectMappings.getInstance(project).setMapping(myFixture.file.virtualFile, dialect)
+    IndexingTestUtil.waitUntilIndexesAreReady(project)
     val file: PsiFile = myFixture.file
     FileContentUtil.reparseFiles(project, listOf<VirtualFile>(file.virtualFile), false)
     myFixture.configureFromExistingVirtualFile(file.virtualFile)
@@ -133,6 +135,7 @@ fun CodeInsightTestFixture.createDataSource(vararg ddlFiles: String): DbDataSour
     urls.add(virtualFile.url)
   }
 
+  IndexingTestUtil.waitUntilIndexesAreReady(project) // wait after setMapping
   val dataSource = SqlDataSourceImpl(dialect.dbms.name, project, null)
   dataSource.urls = urls
 
