@@ -72,7 +72,6 @@
     <webSymbols.webTypes enableByDefault="true" source="web-types/astro.web-types.json"/>
     <webSymbols.queryConfigurator implementation="org.jetbrains.astro.webSymbols.AstroQueryConfigurator"/>
     <webSymbols.queryResultsCustomizerFactory implementation="org.jetbrains.astro.webSymbols.AstroWebSymbolsQueryResultsCustomizer$Provider"/>
-    <webSymbols.codeCompletionItemCustomizer implementation="org.jetbrains.astro.webSymbols.AstroCodeCompletionItemCustomizer" />
 
     <html.embeddedContentSupport implementation="org.jetbrains.astro.lang.parser.AstroEmbeddedContentSupport" />
 
@@ -82,6 +81,8 @@
                      enabledByDefault="true" level="ERROR"
                      implementationClass="org.jetbrains.astro.inspections.AstroMissingComponentImportInspection"
                      key="astro.inspection.display.name.missing.component.import" bundle="messages.AstroBundle"/>
+
+    <implicitUsageProvider implementation="org.jetbrains.astro.inspections.AstroImplicitUsageProvider" />
 
     <platform.lsp.serverSupportProvider implementation="org.jetbrains.astro.service.AstroLspServerSupportProvider" />
     <projectConfigurable parentId="settings.typescriptcompiler"

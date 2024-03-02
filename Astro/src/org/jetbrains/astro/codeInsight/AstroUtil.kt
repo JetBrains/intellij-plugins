@@ -2,10 +2,8 @@
 package org.jetbrains.astro.codeInsight
 
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
-import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifierAlias
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
-import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.childrenOfType
@@ -16,7 +14,6 @@ import org.jetbrains.astro.lang.psi.AstroContentRoot
 const val ASTRO_PKG = "astro"
 const val ASTRO_GLOBAL_INTERFACE = "AstroGlobal"
 const val ASTRO_IMPLICIT_OBJECT = "Astro"
-const val ASTRO_PROPS = "Props"
 
 const val ASTRO_INLINE_DIRECTIVE = "is:inline"
 const val ASTRO_DEFINE_VARS_DIRECTIVE = "define:vars"
@@ -41,23 +38,7 @@ fun AstroContentRoot.frontmatterScript(): AstroFrontmatterScript? =
   children.firstNotNullOfOrNull { it as? AstroFrontmatterScript }
 
 fun AstroFrontmatterScript.propsInterface(): TypeScriptInterface? =
-  children.firstNotNullOfOrNull { child -> child.asSafely<TypeScriptInterface>()?.takeIf { it.name == ASTRO_PROPS } }
-  // Astro allows imported props of the following kinds:
-  // ```
-  // import type { Props } from '...'
-  // import type { Something as Props } from '...'
-  // ```
-  ?: JSStubBasedPsiTreeUtil.resolveLocallyWithMergedResults(ASTRO_PROPS, this)
-    .firstOrNull()
-    ?.let {
-      when (it) {
-        is ES6ImportSpecifier -> it
-        is ES6ImportSpecifierAlias -> it.findSpecifierElement()
-        else -> null
-      }
-    }
-    ?.resolve()
-    .asSafely<TypeScriptInterface>()
+  children.firstNotNullOfOrNull { child -> child.asSafely<TypeScriptInterface>()?.takeIf { it.name == "Props" } }
 
 
 fun JSPsiNamedElementBase.resolveIfImportSpecifier(): JSPsiNamedElementBase =
