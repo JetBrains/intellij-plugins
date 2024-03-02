@@ -13,7 +13,6 @@ import com.intellij.platform.lsp.api.LspServerSupportProvider.LspServerStarter
 import com.intellij.platform.lsp.api.lsWidget.LspServerWidgetItem
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.astro.AstroIcons
-import org.jetbrains.astro.service.settings.AstroServiceConfigurable
 
 private val astroLspServerPackageDescriptor: () -> LspServerPackageDescriptor = {
   LspServerPackageDescriptor("@astrojs/language-server",
@@ -29,7 +28,7 @@ class AstroLspServerSupportProvider : LspServerSupportProvider {
   }
 
   override fun createLspServerWidgetItem(lspServer: LspServer, currentFile: VirtualFile?): LspServerWidgetItem =
-    LspServerWidgetItem(lspServer, currentFile, AstroIcons.Astro, AstroServiceConfigurable::class.java)
+    LspServerWidgetItem(lspServer, currentFile, AstroIcons.Astro, settingsPageClass = null) // TODO add reasonable widget action
 }
 
 class AstroLspServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, AstroLspExecutableDownloader, "Astro") {

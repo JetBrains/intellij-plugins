@@ -31,7 +31,7 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
-    <registryKey defaultValue="2.7.4" description="Astro service version for downloading" restartRequired="true" key="astro.language.server.default.version"/>
+    <registryKey defaultValue="2.0.17" description="Astro service version for downloading" restartRequired="true" key="astro.language.server.default.version"/>
     <dependencySupport kind="javascript" coordinate="npm:astro" displayName="Astro"/>
 
     <internalFileTemplate name="Astro Component"/>
@@ -85,14 +85,7 @@
     <implicitUsageProvider implementation="org.jetbrains.astro.inspections.AstroImplicitUsageProvider" />
 
     <platform.lsp.serverSupportProvider implementation="org.jetbrains.astro.service.AstroLspServerSupportProvider" />
-    <projectConfigurable parentId="settings.typescriptcompiler"
-                         instance="org.jetbrains.astro.service.settings.AstroServiceConfigurable"
-                         id="settings.astroservice"
-                         bundle="messages.AstroBundle"
-                         key="astro.service.configurable.title"
-                         nonDefaultProject="true"
-    />
-
+    <registryKey key="astro.enable.lsp" defaultValue="false" description="Enable Astro Language Tools service"/>
     <include.provider implementation="org.jetbrains.astro.AstroFileIncludeProvider"/>
     <codeInsight.codeVisionSettingsPreviewLanguage language="Astro" modelId="component.usage"/>
   </extensions>
