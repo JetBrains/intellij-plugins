@@ -10,7 +10,6 @@ import com.intellij.psi.util.childrenOfType
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
-import org.intellij.terraform.config.codeinsight.ModelHelper
 import org.intellij.terraform.config.model.TypeModelProvider
 import org.intellij.terraform.config.model.local.LocalSchemaService
 import org.intellij.terraform.config.psi.TerraformDocumentPsi
@@ -82,7 +81,7 @@ internal abstract class BaseTerraformDocUrlProvider {
 
   private fun getBlockInfoForIdentifier(hclIdentifier: HCLIdentifier?): Pair<HCLBlock, String?>? {
     val parentBlock = hclIdentifier?.let { getBlockForHclIdentifier(it) }
-    val paramName = parentBlock?.let { ModelHelper.getBlockProperties(it)[hclIdentifier.id]?.name }
+    val paramName = hclIdentifier?.id
     return parentBlock?.let { Pair(it, paramName) }
   }
 
