@@ -9,6 +9,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import org.jetbrains.annotations.ApiStatus.Obsolete
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.vuejs.lang.typescript.service.volar.VolarExecutableDownloader
 
@@ -55,6 +56,10 @@ class VueSettingsState : BaseState() {
 
 enum class VueServiceSettings {
   AUTO,
+  /**
+   * Must work exactly the same as AUTO, kept for settings deserialization compatibility
+   */
+  @Obsolete
   VOLAR,
   TS_SERVICE,
   DISABLED

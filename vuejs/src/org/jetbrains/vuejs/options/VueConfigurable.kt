@@ -34,10 +34,6 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
             .comment(VueBundle.message("vue.configurable.service.auto.help"))
         }
         row {
-          radioButton(VueBundle.message("vue.configurable.service.volar"), VueServiceSettings.VOLAR)
-            .comment(VueBundle.message("vue.configurable.service.volar.help"))
-        }
-        row {
           radioButton(VueBundle.message("vue.configurable.service.ts"), VueServiceSettings.TS_SERVICE)
             .comment(VueBundle.message("vue.configurable.service.ts.help"))
         }
