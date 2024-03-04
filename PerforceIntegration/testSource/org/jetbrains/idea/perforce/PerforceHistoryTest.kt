@@ -302,9 +302,9 @@ class PerforceHistoryTest : PerforceTestCase() {
 
     val revisions = fileAnnotation.revisions!!
     assertEquals(3, revisions.size)
-    assertEquals("xxx\nyyy", StringUtil.convertLineSeparators(String(revisions[0].loadContent())))
-    assertEquals("xxx\n", StringUtil.convertLineSeparators(String(revisions[1].loadContent())))
-    assertEquals("aaa", String(revisions[2].loadContent()))
+    assertEquals("xxx\nyyy", StringUtil.convertLineSeparators(String(revisions[0].loadContent()!!)))
+    assertEquals("xxx\n", StringUtil.convertLineSeparators(String(revisions[1].loadContent()!!)))
+    assertEquals("aaa", String(revisions[2].loadContent()!!))
   }
 
   @Test
