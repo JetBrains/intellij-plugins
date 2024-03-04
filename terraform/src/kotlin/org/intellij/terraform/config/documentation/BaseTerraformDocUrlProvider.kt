@@ -96,7 +96,7 @@ internal abstract class BaseTerraformDocUrlProvider {
   private fun getDataFromLockFile(lockFile: PsiFile,
                                   type: String,
                                   identifier: String): ProviderData? {
-    val providerDescription = findProviderDescription(lockFile)
+    val providerDescription = findProviderDescription(lockFile, identifier)
     val provider = if (type in setOf(HCL_RESOURCE_IDENTIFIER, HCL_DATASOURCE_IDENTIFIER)) {
       getProvider(providerDescription)
     }
@@ -151,9 +151,11 @@ internal abstract class BaseTerraformDocUrlProvider {
     }
   }
 
-  private fun findProviderDescription(it: PsiFile): HCLBlock? {
+  private fun findProviderDescription(it: PsiFile, identifier: String): HCLBlock? {
     return SyntaxTraverser.psiTraverser(it)
-      .filter(HCLBlock::class.java).firstOrNull { it.nameElements[0].text == PROVIDER }
+      .filter(HCLBlock::class.java).filter{
+        it.nameElements[0].text == PROVIDER && getProvider(it) == identifier
+      }.firstOrNull()
   }
 
   private fun findPsiLockFile(element: PsiElement): PsiFile?  {
