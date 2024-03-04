@@ -40,15 +40,15 @@ internal abstract class BaseTerraformDocumentationProvider {
       return LocalTfDocumentationProvider.fetchLocalDescription(element) ?: NO_DOC
     }
 
-    override fun computeDocumentation(): DocumentationResult {
-      val element = pointer.element
+    override fun computeDocumentation(): DocumentationResult? {
+      val element = pointer.element ?: return null
       val project = pointer.project
       val remoteDocProvider = project.service<RemoteTfDocumentationProvider>()
       val mdDocUrlProvider = project.service<TerraformMdDocUrlProvider>()
-      val localDescription = element?.let { LocalTfDocumentationProvider.fetchLocalDescription(it) }
+      val localDescription = element.let { LocalTfDocumentationProvider.fetchLocalDescription(it) }
 
       return DocumentationResult.Companion.asyncDocumentation {
-        val docText = element?.let { elem ->
+        val docText = element.let { elem ->
           val urlString = mdDocUrlProvider.getDocumentationUrl(elem).firstOrNull()
           urlString?.let { remoteDocProvider.getDoc(urlString) } ?: localDescription
         }
