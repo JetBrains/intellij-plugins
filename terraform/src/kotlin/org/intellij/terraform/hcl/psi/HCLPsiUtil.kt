@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.siblings
 import org.intellij.terraform.hcl.psi.common.IndexSelectExpression
 import org.intellij.terraform.hcl.psi.common.SelectExpression
 
@@ -175,20 +176,10 @@ object HCLPsiUtil {
   }
 
   @JvmStatic
-  fun PsiElement.getPrevSiblingNonWhiteSpace(): PsiElement? {
-    var prev = this.prevSibling
-    while (prev != null && prev is PsiWhiteSpace) {
-      prev = prev.prevSibling
-    }
-    return prev
-  }
+  fun PsiElement.getPrevSiblingNonWhiteSpace(): PsiElement? =
+    this.siblings(forward = false, withSelf = false).firstOrNull { it !is PsiWhiteSpace}
 
   @JvmStatic
-  fun PsiElement.getNextSiblingNonWhiteSpace(): PsiElement? {
-    var next = this.nextSibling
-    while (next != null && next is PsiWhiteSpace) {
-      next = next.nextSibling
-    }
-    return next
-  }
+  fun PsiElement.getNextSiblingNonWhiteSpace(): PsiElement? =
+    this.siblings(forward = true, withSelf = false).firstOrNull { it !is PsiWhiteSpace}
 }
