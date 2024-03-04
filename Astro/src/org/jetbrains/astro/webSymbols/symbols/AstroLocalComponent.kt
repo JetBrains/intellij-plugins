@@ -46,7 +46,7 @@ class AstroLocalComponent(override val name: String,
     dataHolder
       .asSafely<ES6ImportedBinding>()
       ?.findReferencedElements()
-      ?.first()
+      ?.firstOrNull()
       ?.containingFile
       ?.takeIf { it is AstroFileImpl }
       ?.astroContentRoot()

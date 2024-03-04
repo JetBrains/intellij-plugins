@@ -50,6 +50,18 @@ class AstroCompletionTest : AstroCodeInsightTestCase("codeInsight/completion") {
   fun testTemplateLookupNestedHtml() =
     doLookupTest()
 
+  fun testAstroComponentProps() =
+    doLookupTest(additionalFiles = listOf("component.astro"))
+
+  fun testAstroComponentProps2() =
+    doLookupTest(additionalFiles = listOf("component.astro"))
+
+  fun testAstroDirectives() =
+    doLookupTest(additionalFiles = listOf("react-component.tsx"))
+
+  fun testAstroDirectives2() =
+    doLookupTest(additionalFiles = listOf("react-component.tsx"))
+
   // WEB-59265 only enabled completion at root level and nested in HTML but not as children of components.
   // This needs a fix before it can be enabled again.
   //fun testTemplateLookupNestedComponent() =
