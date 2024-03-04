@@ -2,7 +2,7 @@
 package org.intellij.terraform.config.spellchecker
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.parentOfType
 import com.intellij.spellchecker.tokenizer.Tokenizer
 import org.intellij.terraform.config.model.TypeModelProvider
 import org.intellij.terraform.config.patterns.TerraformPatterns
@@ -32,7 +32,7 @@ class TerraformSpellcheckingStrategy : HCLSpellcheckerStrategy() {
     }
 
     val inArray = parent?.parent is HCLArray
-    val property = PsiTreeUtil.getParentOfType(element, HCLProperty::class.java)
+    val property = element.parentOfType<HCLProperty>()
     if (DependsOnPattern.accepts(property) && inArray) {
       return EMPTY_TOKENIZER
     }

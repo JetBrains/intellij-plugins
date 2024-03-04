@@ -14,6 +14,7 @@ import com.intellij.psi.impl.PsiDocumentManagerBase;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
+import org.intellij.terraform.hcl.HCLElementTypes;
 import org.intellij.terraform.hcl.HCLLanguage;
 import org.intellij.terraform.hcl.psi.*;
 import org.jetbrains.annotations.NotNull;
@@ -59,7 +60,7 @@ public class HCLStatementMover extends LineMover {
   private static PsiElement getNextSiblingElement(final PsiElement element) {
     if (element instanceof HCLBlock || element instanceof HCLProperty) {
       final PsiElement next = HCLPsiUtil.getNextSiblingNonWhiteSpace(element);
-      return (next != null && !next.getText().equals("}")) ? next : null;
+      return (next != null && next.getNode().getElementType() != HCLElementTypes.R_CURLY) ? next : null;
     }
     return null;
   }
@@ -67,7 +68,7 @@ public class HCLStatementMover extends LineMover {
   private static PsiElement getPrevSiblingElement(final PsiElement element) {
     if (element instanceof HCLBlock || element instanceof HCLProperty) {
       final PsiElement prev = HCLPsiUtil.getPrevSiblingNonWhiteSpace(element);
-      return (prev != null && !prev.getText().equals("{")) ? prev : null;
+      return (prev != null && prev.getNode().getElementType() != HCLElementTypes.L_CURLY) ? prev : null;
     }
     return null;
   }

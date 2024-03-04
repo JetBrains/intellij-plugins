@@ -3,6 +3,8 @@ package org.intellij.terraform.config.spellchecker
 
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.component1
+import com.intellij.openapi.util.component2
 import com.intellij.psi.PsiElement
 import com.intellij.spellchecker.inspections.PlainTextSplitter
 import com.intellij.spellchecker.tokenizer.TokenConsumer
@@ -27,9 +29,7 @@ object TerraformSpellcheckingUtil {
 
   private fun handleTokenizing(element: PsiElement, textFragments: List<Pair<TextRange, String>>, consumer: TokenConsumer) {
     val textSplitter = PlainTextSplitter.getInstance()
-    for (fragment in textFragments) {
-      val fragmentRange = fragment.getFirst()
-      val escaped = fragment.getSecond()
+    for ((fragmentRange, escaped) in textFragments) {
       // Fragment without escaping, also not a broken escape sequence or a unicode code point
       if (escaped.length == fragmentRange.length && !escaped.startsWith("\\")) {
         consumer.consumeToken(element, escaped, false, fragmentRange.startOffset, TextRange.allOf(escaped), textSplitter)
