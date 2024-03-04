@@ -2,6 +2,7 @@ package com.jetbrains.plugins.meteor.tsStubs;
 
 import com.intellij.ide.startup.StartupManagerEx;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.testFramework.IndexingTestUtil;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.plugins.meteor.MeteorFacade;
@@ -51,6 +52,7 @@ public class MeteorSpacebarsCompletionTest extends CodeInsightFixtureTestCase {
     MeteorLibraryUpdater.get(getProject()).waitForUpdate();
     UIUtil.dispatchAllInvocationEvents();
     MeteorLibraryUpdater.get(getProject()).waitForUpdate();
+    IndexingTestUtil.waitUntilIndexesAreReady(getProject());
     assertTrue(MeteorFacade.getInstance().isMeteorProject(getProject()));
   }
 
