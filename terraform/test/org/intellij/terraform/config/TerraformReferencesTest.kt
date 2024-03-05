@@ -491,6 +491,37 @@ class TerraformReferencesTest : BasePlatformTestCase() {
     UsefulTestCase.assertContainsElements(myFixture.getCompletionVariants("main.tf")!!, "arn", "name", "nested_field")
   }
 
-  private val DLR = "$"
+  @Test
+  fun testResolveResourceFromMovedBlock() {
+    myFixture.addFileToProject("modules/compute/main.tf", """ 
+      resource "aws_instance" "example1" { }
+            
+      resource "aws_instance" "example" { }
+      """)
+    myFixture.configureByText("main.tf", """
+      module "ec2_instance" {
+        source         = "./modules/compute"
+        security_group = module.web_security_group.security_group_id
+        public_subnets = module.vpc.public_subnets
+      }
+            
+      moved {
+        from = aws_instance.example
+        to = module.ec2_instance.aws_instance.example<caret>1
+      }
+      """)
 
+    myFixture.checkHighlighting()
+    val targetResource = myFixture.file.findElementAt(myFixture.caretOffset)
+      ?.parentOfType<HCLIdentifier>()
+      ?.reference
+      ?.resolve()
+    assertInstanceOf(targetResource, HCLBlock::class.java)
+
+    targetResource as HCLBlock
+    assertEquals("example1", targetResource.name)
+    assertEquals("main.tf", targetResource.containingFile.name)
+  }
+
+  private val DLR = "$"
 }

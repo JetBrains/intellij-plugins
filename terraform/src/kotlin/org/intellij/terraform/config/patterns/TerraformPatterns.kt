@@ -100,6 +100,10 @@ object TerraformPatterns {
           .with(createBlockPattern("backend"))
           .withSuperParent(2, TerraformRootBlock)
 
+  private val MovedBlock: PsiElementPattern.Capture<HCLBlock> = PlatformPatterns.psiElement(HCLBlock::class.java)
+    .and(RootBlock)
+    .with(createBlockPattern("moved"))
+
   val DynamicBlock: PsiElementPattern.Capture<HCLBlock>
   val DynamicBlockContent: PsiElementPattern.Capture<HCLBlock>
 
@@ -173,6 +177,15 @@ object TerraformPatterns {
           return t.name == "depends_on"
         }
       })
+
+  val FromPropertyInMovedBlock: PsiElementPattern.Capture<HCLProperty> = PlatformPatterns.psiElement(HCLProperty::class.java)
+    .withSuperParent(1, HCLObject::class.java)
+    .withSuperParent(2, MovedBlock)
+    .with(object : PatternCondition<HCLProperty?>("HCLProperty(from)") {
+      override fun accepts(t: HCLProperty, context: ProcessingContext?): Boolean {
+        return t.name == "from"
+      }
+    })
 
   private fun createBlockPattern(type: String): PatternCondition<HCLBlock?> {
     return object : PatternCondition<HCLBlock?>("HCLBlock($type)") {

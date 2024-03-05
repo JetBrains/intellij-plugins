@@ -10,14 +10,14 @@ import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 
 // References inside import blocks have different resolve/completion logic -> we must remember the original PSI location by employing this enumzx
 enum class HilContainingBlockType {
-  UNSPECIFIED, IMPORT_BLOCK
+  UNSPECIFIED, IMPORT_OR_MOVED_BLOCK
 }
 
 internal fun guessContainingBlockType(expression: BaseExpression): HilContainingBlockType {
   val containingImportBlock = expression.parentOfType<HCLBlock>() ?: return HilContainingBlockType.UNSPECIFIED
   val type = ModelHelper.getBlockType(containingImportBlock)
-  return if (type is BlockType && type.literal == "import")
-    HilContainingBlockType.IMPORT_BLOCK
+  return if (type is BlockType && (type.literal == "import" || type.literal == "moved"))
+    HilContainingBlockType.IMPORT_OR_MOVED_BLOCK
   else
     HilContainingBlockType.UNSPECIFIED
 }

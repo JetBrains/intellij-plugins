@@ -410,7 +410,7 @@ class HILCompletionContributor : CompletionContributor() {
         if (module != null) {
           // TODO: Add special LookupElementRenderer
           val suitableBlocks = when (contextType) {
-            HilContainingBlockType.IMPORT_BLOCK -> {
+            HilContainingBlockType.IMPORT_OR_MOVED_BLOCK -> {
               module.getDeclaredResources().mapNotNull { resourceDeclaration -> getResourceTypeAndName(resourceDeclaration) }
             }
             HilContainingBlockType.UNSPECIFIED -> {
