@@ -12,13 +12,16 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceOwner
+import com.intellij.psi.util.parentOfType
 import com.intellij.util.containers.addIfNotNull
 import com.intellij.util.containers.toArray
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.TerraformLanguage
 import org.intellij.terraform.config.actions.TFInitAction
+import org.intellij.terraform.config.patterns.TerraformPatterns.FromPropertyInMovedBlock
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLLanguage
+import org.intellij.terraform.hcl.psi.HCLProperty
 import org.intellij.terraform.hcl.psi.HCLPsiUtil
 import org.intellij.terraform.hcl.psi.common.Identifier
 import org.intellij.terraform.hcl.psi.common.SelectExpression
@@ -58,6 +61,9 @@ class HILUnresolvedReferenceInspection : LocalInspectionTool() {
       element.getHCLHost() ?: return
 
       val parent = element.parent as? SelectExpression<*> ?: return
+      if (isFromPropertyInMovedBlock(parent)) {
+        return
+      }
       if (parent.from === element) {
         checkReferences(element)
       } else if (isScopeElementReference(element, parent)) {
@@ -108,6 +114,10 @@ class HILUnresolvedReferenceInspection : LocalInspectionTool() {
     }
   }
 
+  private fun isFromPropertyInMovedBlock(expression: SelectExpression<*>): Boolean {
+    val property = expression.parentOfType<HCLProperty>() ?: return false
+    return FromPropertyInMovedBlock.accepts(property)
+  }
 
   fun isUrlReference(reference: PsiReference): Boolean {
     return reference is FileReferenceOwner// || reference is com.intellij.xml.util.AnchorReference
