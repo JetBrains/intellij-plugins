@@ -726,6 +726,28 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
     myFixture.testCompletionVariants("main.tf", "MyType.MyName");
   }
 
+  public void testCompleteResourceFromMovedBlock() {
+    myFixture.addFileToProject("modules/compute/main.tf", """ 
+      resource "aws_instance" "example1" { }
+            
+      resource "aws_instance" "example" { }
+      """);
+    myFixture.configureByText("main.tf", """
+      module "ec2_instance" {
+        source         = "./modules/compute"
+        security_group = module.web_security_group.security_group_id
+        public_subnets = module.vpc.public_subnets
+      }
+            
+      moved {
+        from = aws_instance.example
+        to = module.ec2_instance.aws<caret>
+      }
+      """);
+    myFixture.testCompletionVariants("main.tf", "aws_instance.example", "aws_instance.example1");
+  }
+
+
   private static boolean isExcludeProvider(ProviderType provider, Map<String, Boolean> cache) {
     String key = provider.getType();
     Boolean cached = cache.get(key);

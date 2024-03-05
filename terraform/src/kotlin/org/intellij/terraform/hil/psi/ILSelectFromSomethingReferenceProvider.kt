@@ -153,7 +153,7 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
             }
           } else {
             val suitableResolveTargets = when(initialContextType) {
-              HilContainingBlockType.IMPORT_BLOCK -> module.getDeclaredResources().filter { getResourceType(it) == name }
+              HilContainingBlockType.IMPORT_OR_MOVED_BLOCK -> module.getDeclaredResources().filter { getResourceType(it) == name }
               HilContainingBlockType.UNSPECIFIED -> module.getDefinedOutputs().filter { it.name == name }
             }
             if (suitableResolveTargets.isNotEmpty()) {
@@ -291,7 +291,7 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
   private fun isResourceReferencedFromImportBlock(maybeHclBlock: PsiElement, initialContextType: HilContainingBlockType, resolvableSegmentName: String): Boolean {
     return maybeHclBlock is HCLBlock
            && TerraformPatterns.ResourceRootBlock.accepts(maybeHclBlock)
-           && initialContextType == HilContainingBlockType.IMPORT_BLOCK
+           && initialContextType == HilContainingBlockType.IMPORT_OR_MOVED_BLOCK
            && getResourceName(maybeHclBlock) == resolvableSegmentName
   }
 
