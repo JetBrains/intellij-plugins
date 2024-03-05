@@ -16,6 +16,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.util.EventDispatcher
+import com.jetbrains.lang.dart.ide.devtools.DartDevToolsService
 import com.jetbrains.lang.dart.sdk.DartSdk
 import com.jetbrains.lang.dart.sdk.DartSdkUtil
 import de.roderick.weberknecht.WebSocket
@@ -33,33 +35,49 @@ class DartToolingDaemonService private constructor(private val project: Project)
 
   private val nextRequestId = AtomicInteger()
   private val consumerMap: MutableMap<String, DartToolingDaemonConsumer> = mutableMapOf()
-  private val listeners: MutableList<DartToolingDaemonListener> = mutableListOf()
+
+  private val eventDispatcher: EventDispatcher<DartToolingDaemonListener> = EventDispatcher.create(DartToolingDaemonListener::class.java)
 
   @Throws(ExecutionException::class)
   fun startService() {
-    val sdk = DartSdk.getDartSdk(project)
-    if (sdk == null || !isDartSdkVersionSufficient(sdk)) {
-      return
-    }
+    val sdk = DartSdk.getDartSdk(project)?.takeIf { isDartSdkVersionSufficient(it) } ?: return
 
-    val result = GeneralCommandLine().withWorkDirectory(sdk.homePath)
-    result.exePath = FileUtil.toSystemDependentName(DartSdkUtil.getDartExePath(sdk))
-    result.charset = StandardCharsets.UTF_8
-    result.addParameter("tooling-daemon")
+    val commandLine = GeneralCommandLine().withWorkDirectory(sdk.homePath)
+    commandLine.exePath = FileUtil.toSystemDependentName(DartSdkUtil.getDartExePath(sdk))
+    commandLine.charset = StandardCharsets.UTF_8
+    commandLine.addParameter("tooling-daemon")
+    commandLine.addParameter("--machine")
 
-    dtdProcessHandler = ColoredProcessHandler(result)
+    dtdProcessHandler = ColoredProcessHandler(commandLine)
+
     dtdProcessHandler.addProcessListener(object : ProcessListener {
       override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
-        val text = event.text.trim()
-        if (text.startsWith(STARTUP_MESSAGE_PREFIX)) {
-          dtdProcessHandler.removeProcessListener(this)
-          val address: String = text.substring(STARTUP_MESSAGE_PREFIX.length)
-          connectToDtdWebSocket(address)
+        // The first line of text is the command issued, which can be ignored.
+        val text = event.text.trim().takeUnless { it.endsWith("dart tooling-daemon --machine") }
+                   ?: return
+
+        event.processHandler.removeProcessListener(this)
+
+        try {
+          val json = JsonParser.parseString(text) as JsonObject
+          val details = json["tooling_daemon_details"].asJsonObject
+          val uri = details["uri"].asString
+          val secret = details["trusted_client_secret"].asString
+          onServiceStarted(uri, secret)
+        }
+        catch (e: Exception) {
+          logger<DartToolingDaemonService>().warn("Failed to parse DTD init message. Error: ${e.message}. DTD message: $text")
+          onServiceStarted(null, null)
         }
       }
     })
 
     dtdProcessHandler.startNotify()
+  }
+
+  private fun onServiceStarted(uri: String?, secret: String?) {
+    DartDevToolsService.getInstance(project).startService(uri)
+    uri?.let { connectToDtdWebSocket(it) }
   }
 
   private fun connectToDtdWebSocket(address: String) {
@@ -82,13 +100,8 @@ class DartToolingDaemonService private constructor(private val project: Project)
     webSocket.send(request.toString())
   }
 
-  fun addToolingDaemonListener(listener: DartToolingDaemonListener) {
-    listeners.add(listener)
-  }
-
-  fun removeToolingDaemonListener(listener: DartToolingDaemonListener) {
-    listeners.remove(listener)
-  }
+  fun addToolingDaemonListener(listener: DartToolingDaemonListener, parentDisposable: Disposable) =
+    eventDispatcher.addListener(listener, parentDisposable)
 
   override fun dispose() {
     if (::dtdProcessHandler.isInitialized) {
@@ -123,9 +136,8 @@ class DartToolingDaemonService private constructor(private val project: Project)
       val method = json["method"]?.asString
       if (method == "streamNotify") {
         val params = json["params"].asJsonObject
-        for (listener in listeners) {
-          listener.received(params["streamId"].asString, json)
-        }
+        val streamId = params["streamId"].asString
+        eventDispatcher.multicaster.received(streamId, json)
       }
       else {
         val id = json["id"].asString
@@ -144,6 +156,5 @@ class DartToolingDaemonService private constructor(private val project: Project)
     fun getInstance(project: Project): DartToolingDaemonService = project.service()
 
     private const val MIN_SDK_VERSION: String = "3.4"
-    private const val STARTUP_MESSAGE_PREFIX = "The Dart Tooling Daemon is listening on "
   }
 }
