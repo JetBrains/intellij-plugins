@@ -496,8 +496,9 @@ public final class DartVmServiceValue extends XNamedValue {
       for (BoundField field : fields) {
         final InstanceRef value = field.getValue();
         if (value != null) {
-          childrenList
-            .add(new DartVmServiceValue(myDebugProcess, myIsolateId, field.getDecl().getName(), value, null, field.getDecl(), false));
+          Object nameObject = field.getName();
+          String name = nameObject != null ? nameObject.toString() : "";
+          childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, name, value, null, field.getDecl(), false));
         }
       }
     }
