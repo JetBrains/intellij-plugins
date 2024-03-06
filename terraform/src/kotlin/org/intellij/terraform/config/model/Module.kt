@@ -2,16 +2,13 @@
 package org.intellij.terraform.config.model
 
 import com.intellij.concurrency.ConcurrentCollectionFactory
-import com.intellij.model.search.SearchContext
-import com.intellij.model.search.SearchService
+import com.intellij.lang.LanguageMatcher
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileSystemItem
-import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.search.PsiElementProcessor
-import com.intellij.psi.search.PsiFileSystemItemProcessor
+import com.intellij.psi.search.*
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.Processor
@@ -123,9 +120,12 @@ class Module private constructor(val item: PsiFileSystemItem) {
   }
 
   fun getAllVariables(): List<Variable> {
-    val visitor = CollectVariablesVisitor()
-    processAllFilesWithVariables(Processor { file -> file.acceptChildren(visitor); true })
-    return visitor.collected.toList()
+    val collected = ConcurrentCollectionFactory.createConcurrentSet<Variable>()
+    processAllFilesWithVariables(Processor {
+      collected.addAll(getAllVariablesDeclaredInFile(it))
+      true
+    })
+    return collected.toList()
   }
 
   @Deprecated("There may be declaration duplicates", replaceWith = ReplaceWith("findVariables(name)"))
@@ -136,22 +136,37 @@ class Module private constructor(val item: PsiFileSystemItem) {
   }
 
   fun findVariables(name: String): List<Variable> {
-    val visitor = CollectVariablesVisitor(name)
-    processAllFilesWithVariables(Processor { psiFile -> psiFile.acceptChildren(visitor); true })
-    return visitor.collected.toList()
+    val collected = ConcurrentCollectionFactory.createConcurrentSet<Variable>()
+    processAllFilesWithVariables(Processor {
+      collected.addAll(getAllVariablesDeclaredInFile(it).asSequence().filter { it.name == name })
+      true
+    })
+    return collected.toList()
   }
 
   private fun processAllFilesWithVariables(processor: Processor<PsiFile>): Boolean {
-    fun doFind() = SearchService.getInstance().searchWord(item.project, "variable")
-      .inFilesWithLanguageOfKind(HCLLanguage)
-      .inScope(GlobalSearchScope.projectScope(item.project))
-      .inContexts(SearchContext.IN_CODE)
-      .buildQuery { occ -> listOfNotNull(occ.start.containingFile) }
-      .forEach(processor)
+
+    val terraformScope = PsiSearchScopeUtil.restrictScopeToFileLanguage(
+      item.project,
+      GlobalSearchScope.projectScope(item.project),
+      LanguageMatcher.matchWithDialects(HCLLanguage)
+    ) as GlobalSearchScope
+
+    fun doFind() =
+      PsiSearchHelper.getInstance(item.project)
+        .processAllFilesWithWord("variable", terraformScope, processor, true)
 
     return withGuaranteedProgressIndicator {
       doFind()
     }
+  }
+
+  private fun getAllVariablesDeclaredInFile(psiFile: PsiFile): Collection<Variable> {
+    return CachedValuesManager.getCachedValue(psiFile, CachedValueProvider {
+      val visitor = CollectVariablesVisitor()
+      psiFile.acceptChildren(visitor)
+      CachedValueProvider.Result.create(visitor.collected, psiFile)
+    })
   }
 
   fun getAllLocals(): List<Pair<String, HCLProperty>> {
