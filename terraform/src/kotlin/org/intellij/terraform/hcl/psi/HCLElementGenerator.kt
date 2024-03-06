@@ -99,6 +99,14 @@ open class HCLElementGenerator(private val project: Project) {
     return file.firstChild as HCLBlock
   }
 
+  fun createBlock(name: String, type: String): HCLBlock {
+    val nameString = if (!isIdentifier(name)) '"' + name + '"' else name
+    val typeString = if (!StringUtil.isQuotedString(type) ) '"' + type + '"' else type
+    val file = createDummyFile("$nameString ${typeString} {}")
+    return file.firstChild as HCLBlock
+  }
+
+
   fun createComma(): PsiElement {
     val array = createValue<HCLArray>("[1, 2]")
     return array.elements[0].nextSibling

@@ -17,9 +17,9 @@ fun HCLBlock.getNameElementUnquoted(i: Int): String? {
   val elements = this.nameElements
   if (elements.size < i + 1) return null
   return when (val element = elements[i]) {
-    is PsiNamedElement -> (element as PsiNamedElement).name
-    is HCLIdentifier -> element.id
-    is HCLStringLiteral -> element.value
+    is PsiNamedElement -> (element as PsiNamedElement).name?.trim()
+    is HCLIdentifier -> element.id.trim()
+    is HCLStringLiteral -> element.value.trim()
     else -> null
   }
 }

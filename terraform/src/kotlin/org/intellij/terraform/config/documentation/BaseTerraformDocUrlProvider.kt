@@ -161,7 +161,7 @@ internal abstract class BaseTerraformDocUrlProvider {
   private fun findPsiLockFile(element: PsiElement): PsiFile?  {
     val project = element.project
     val schemaService = project.service<LocalSchemaService>()
-    val vFile = element.containingFile.originalFile.virtualFile
+    val vFile = element.containingFile.originalFile.virtualFile ?: return null
     val lockFile = schemaService.findLockFile(vFile)
     val psiLockFile = lockFile?.let { PsiManager.getInstance(project).findFile(it) }
     return psiLockFile

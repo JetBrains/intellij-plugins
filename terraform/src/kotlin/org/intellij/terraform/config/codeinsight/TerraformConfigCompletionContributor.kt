@@ -7,6 +7,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.codeInsight.lookup.LookupElementBuilder.create
 import com.intellij.codeInsight.lookup.LookupElementWeigher
 import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.project.Project
@@ -26,6 +27,7 @@ import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.failIfI
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.getClearTextValue
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.getIncomplete
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.getOriginalObject
+import org.intellij.terraform.config.documentation.psi.HCLBlockFakePsiFactory
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.config.patterns.TerraformPatterns.DependsOnPattern
@@ -264,32 +266,33 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
         "resource"  ->
           getTypeModel(project).resources.toPlow()
             .filter { invocationCount >= 3 || isProviderUsed(parent, it.provider.type, cache) }
-            .map { buildLookupElement(it, it.type) }
+            .map { buildLookupElement(it, it.type, project) }
             .processWith(consumer)
         "data" ->
           getTypeModel(project).dataSources.toPlow()
             .filter { invocationCount >= 3 || isProviderUsed(parent, it.provider.type, cache) }
-            .map { buildLookupElement(it, it.type) }
+            .map { buildLookupElement(it, it.type, project) }
             .processWith(consumer)
         "provider" ->
           getTypeModel(project).providers.toPlow()
-            .map { buildLookupElement(it, it.type) }
+            .map { buildLookupElement(it, it.type, project) }
             .processWith(consumer)
         "provisioner" ->
           getTypeModel(project).provisioners.toPlow()
-            .map { buildLookupElement(it, it.type) }
+            .map { buildLookupElement(it, it.type, project) }
             .processWith(consumer)
         "backend" ->
           getTypeModel(project).backends.toPlow()
-            .map { buildLookupElement(it, it.type) }
+            .map { buildLookupElement(it, it.type, project) }
             .processWith(consumer)
         else -> true
       }
     }
 
-    private fun buildLookupElement(it: BlockType, typeName: String) = create(typeName)
+    private fun buildLookupElement(it: BlockType, typeName: String, project: Project) = create(typeName)
       .withTypeText(it.description)
       .withIcon(TerraformIcons.Terraform)
+      .withPsiElement(project.service<HCLBlockFakePsiFactory>().createFakeHCLBlock(it.literal, typeName))
       .withInsertHandler(ResourceBlockSubNameInsertHandler(it))
 
     fun isProviderUsed(element: PsiElement, providerName: String, cache: MutableMap<String, Boolean>): Boolean {
