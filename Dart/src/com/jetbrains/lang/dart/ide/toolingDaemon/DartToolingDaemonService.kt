@@ -61,16 +61,19 @@ class DartToolingDaemonService private constructor(private val project: Project)
 
         event.processHandler.removeProcessListener(this)
 
+        var uri: String? = null
+        var secret: String? = null
         try {
           val json = JsonParser.parseString(text) as JsonObject
           val details = json["tooling_daemon_details"].asJsonObject
-          val uri = details["uri"].asString
-          val secret = details["trusted_client_secret"].asString
-          onServiceStarted(uri, secret)
+          uri = details["uri"].asString
+          secret = details["trusted_client_secret"].asString
         }
         catch (e: Exception) {
           logger<DartToolingDaemonService>().warn("Failed to parse DTD init message. Error: ${e.message}. DTD message: $text")
-          onServiceStarted(null, null)
+        }
+        finally {
+          onServiceStarted(uri, secret)
         }
       }
     })
@@ -84,10 +87,14 @@ class DartToolingDaemonService private constructor(private val project: Project)
   }
 
   private fun connectToDtdWebSocket(address: String) {
-    // `address` looks like ws://127.0.0.1:65323/
-    webSocket = WebSocket(URI("${address}ws"))
-    webSocket.eventHandler = DtdWebSocketEventHandler()
-    webSocket.connect()
+    try { // `address` looks like ws://127.0.0.1:65323/
+      webSocket = WebSocket(URI("${address}ws"))
+      webSocket.eventHandler = DtdWebSocketEventHandler()
+      webSocket.connect()
+    }
+    catch (e: Exception) {
+      logger<DartToolingDaemonService>().error("Failed to connect to Dart Tooling Daemon", e)
+    }
   }
 
   @Throws(WebSocketException::class)
