@@ -17,6 +17,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.EventDispatcher
+import com.intellij.util.io.BaseOutputReader
 import com.jetbrains.lang.dart.ide.devtools.DartDevToolsService
 import com.jetbrains.lang.dart.sdk.DartSdk
 import com.jetbrains.lang.dart.sdk.DartSdkUtil
@@ -48,7 +49,9 @@ class DartToolingDaemonService private constructor(private val project: Project)
     commandLine.addParameter("tooling-daemon")
     commandLine.addParameter("--machine")
 
-    dtdProcessHandler = ColoredProcessHandler(commandLine)
+    dtdProcessHandler = object : ColoredProcessHandler(commandLine) {
+      override fun readerOptions(): BaseOutputReader.Options = BaseOutputReader.Options.forMostlySilentProcess()
+    }
 
     dtdProcessHandler.addProcessListener(object : ProcessListener {
       override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
