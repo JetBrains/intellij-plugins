@@ -15,6 +15,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.util.io.BaseOutputReader
 import com.jetbrains.lang.dart.sdk.DartSdk
 import java.nio.charset.StandardCharsets
 import java.util.concurrent.CompletableFuture
@@ -35,7 +36,9 @@ class DartDevToolsService(private val myProject: Project) : Disposable {
     commandLine.addParameter("--machine")
     dtdUri?.let { commandLine.addParameter("--dtd-uri=$it") }
 
-    processHandler = ColoredProcessHandler(commandLine)
+    processHandler = object : ColoredProcessHandler(commandLine) {
+      override fun readerOptions(): BaseOutputReader.Options = BaseOutputReader.Options.forMostlySilentProcess()
+    }
 
     processHandler.addProcessListener(object : ProcessListener {
       override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
