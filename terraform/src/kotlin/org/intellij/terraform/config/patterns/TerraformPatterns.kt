@@ -13,92 +13,92 @@ import org.intellij.terraform.hcl.psi.*
 
 object TerraformPatterns {
   val TerraformFile: PsiFilePattern.Capture<HCLFile> =
-      PlatformPatterns.psiFile(HCLFile::class.java)
-          .withLanguage(TerraformLanguage)
+    PlatformPatterns.psiFile(HCLFile::class.java)
+      .withLanguage(TerraformLanguage)
   val TerraformVariablesFile: PsiFilePattern.Capture<HCLFile> =
-      PlatformPatterns.psiFile(HCLFile::class.java)
-          .withLanguage(TerraformLanguage)
-          .inVirtualFile(PlatformPatterns.virtualFile().withExtension(TerraformFileType.TFVARS_EXTENSION))
+    PlatformPatterns.psiFile(HCLFile::class.java)
+      .withLanguage(TerraformLanguage)
+      .inVirtualFile(PlatformPatterns.virtualFile().withExtension(TerraformFileType.TFVARS_EXTENSION))
   val TerraformConfigFile: PsiFilePattern.Capture<HCLFile> =
-      PlatformPatterns.psiFile(HCLFile::class.java)
-          .withLanguage(TerraformLanguage)
-          .andNot(TerraformVariablesFile)
+    PlatformPatterns.psiFile(HCLFile::class.java)
+      .withLanguage(TerraformLanguage)
+      .andNot(TerraformVariablesFile)
   val ConfigOverrideFile: PsiFilePattern.Capture<HCLFile> =
-      PlatformPatterns.psiFile(HCLFile::class.java)
-          .and(TerraformConfigFile)
-          .inVirtualFile(
-              PlatformPatterns.virtualFile().withName(StandardPatterns.string().with(object : PatternCondition<String?>("Terraform override file name") {
-                override fun accepts(t: String, context: ProcessingContext?): Boolean {
-                  val suffix = "override." + TerraformFileType.DEFAULT_EXTENSION
-                  if (!t.endsWith(suffix)) return false
-                  // previous line enforces t.length >= suffix.length
-                  return t.length == suffix.length || t[t.length - suffix.length - 1] == '_'
-                }
-              })))
+    PlatformPatterns.psiFile(HCLFile::class.java)
+      .and(TerraformConfigFile)
+      .inVirtualFile(
+        PlatformPatterns.virtualFile().withName(StandardPatterns.string().with(object : PatternCondition<String?>("Terraform override file name") {
+          override fun accepts(t: String, context: ProcessingContext?): Boolean {
+            val suffix = "override." + TerraformFileType.DEFAULT_EXTENSION
+            if (!t.endsWith(suffix)) return false
+            // previous line enforces t.length >= suffix.length
+            return t.length == suffix.length || t[t.length - suffix.length - 1] == '_'
+          }
+        })))
 
   val RootBlock: PsiElementPattern.Capture<HCLBlock> =
-      PlatformPatterns.psiElement(HCLBlock::class.java)
-          .withParent(TerraformConfigFile)
+    PlatformPatterns.psiElement(HCLBlock::class.java)
+      .withParent(TerraformConfigFile)
 
   val ModuleRootBlock: PsiElementPattern.Capture<HCLBlock> =
-      PlatformPatterns.psiElement(HCLBlock::class.java)
-          .and(RootBlock)
-          .with(createBlockPattern("module"))
+    PlatformPatterns.psiElement(HCLBlock::class.java)
+      .and(RootBlock)
+      .with(createBlockPattern("module"))
 
   val VariableRootBlock: PsiElementPattern.Capture<HCLBlock> =
-      PlatformPatterns.psiElement(HCLBlock::class.java)
-          .and(RootBlock)
-          .with(createBlockPattern("variable"))
+    PlatformPatterns.psiElement(HCLBlock::class.java)
+      .and(RootBlock)
+      .with(createBlockPattern("variable"))
 
   val OutputRootBlock: PsiElementPattern.Capture<HCLBlock> =
-      PlatformPatterns.psiElement(HCLBlock::class.java)
-          .and(RootBlock)
-          .with(createBlockPattern("output"))
+    PlatformPatterns.psiElement(HCLBlock::class.java)
+      .and(RootBlock)
+      .with(createBlockPattern("output"))
 
   val ResourceRootBlock: PsiElementPattern.Capture<HCLBlock> =
-      PlatformPatterns.psiElement(HCLBlock::class.java)
-          .and(RootBlock)
-          .with(createBlockPattern("resource"))
+    PlatformPatterns.psiElement(HCLBlock::class.java)
+      .and(RootBlock)
+      .with(createBlockPattern("resource"))
 
   val DataSourceRootBlock: PsiElementPattern.Capture<HCLBlock> =
-      PlatformPatterns.psiElement(HCLBlock::class.java)
-          .and(RootBlock)
-          .with(createBlockPattern("data"))
+    PlatformPatterns.psiElement(HCLBlock::class.java)
+      .and(RootBlock)
+      .with(createBlockPattern("data"))
 
   val ProviderRootBlock: PsiElementPattern.Capture<HCLBlock> =
-      PlatformPatterns.psiElement(HCLBlock::class.java)
-          .withParent(TerraformConfigFile)
-          .with(createBlockPattern("provider"))
+    PlatformPatterns.psiElement(HCLBlock::class.java)
+      .withParent(TerraformConfigFile)
+      .with(createBlockPattern("provider"))
 
   val ProvisionerBlock: PsiElementPattern.Capture<HCLBlock> =
-      PlatformPatterns.psiElement(HCLBlock::class.java)
-          .withParent(or(ResourceRootBlock))
-          .with(createBlockPattern("provisioner"))
+    PlatformPatterns.psiElement(HCLBlock::class.java)
+      .withParent(or(ResourceRootBlock))
+      .with(createBlockPattern("provisioner"))
 
   val ResourceLifecycleBlock: PsiElementPattern.Capture<HCLBlock> =
-      PlatformPatterns.psiElement(HCLBlock::class.java)
-          .withParent(or(ResourceRootBlock))
-          .with(createBlockPattern("lifecycle"))
+    PlatformPatterns.psiElement(HCLBlock::class.java)
+      .withParent(or(ResourceRootBlock))
+      .with(createBlockPattern("lifecycle"))
 
   val ResourceConnectionBlock: PsiElementPattern.Capture<HCLBlock> =
-      PlatformPatterns.psiElement(HCLBlock::class.java)
-          .withParent(or(ResourceRootBlock, ProvisionerBlock))
-          .with(createBlockPattern("connection"))
+    PlatformPatterns.psiElement(HCLBlock::class.java)
+      .withParent(or(ResourceRootBlock, ProvisionerBlock))
+      .with(createBlockPattern("connection"))
 
   val TerraformRootBlock: PsiElementPattern.Capture<HCLBlock> =
-      PlatformPatterns.psiElement(HCLBlock::class.java)
-          .and(RootBlock)
-          .with(createBlockPattern("terraform"))
+    PlatformPatterns.psiElement(HCLBlock::class.java)
+      .and(RootBlock)
+      .with(createBlockPattern("terraform"))
 
   val LocalsRootBlock: PsiElementPattern.Capture<HCLBlock> =
-      PlatformPatterns.psiElement(HCLBlock::class.java)
-          .and(RootBlock)
-          .with(createBlockPattern("locals"))
+    PlatformPatterns.psiElement(HCLBlock::class.java)
+      .and(RootBlock)
+      .with(createBlockPattern("locals"))
 
   val Backend: PsiElementPattern.Capture<HCLBlock> =
-      PlatformPatterns.psiElement(HCLBlock::class.java)
-          .with(createBlockPattern("backend"))
-          .withSuperParent(2, TerraformRootBlock)
+    PlatformPatterns.psiElement(HCLBlock::class.java)
+      .with(createBlockPattern("backend"))
+      .withSuperParent(2, TerraformRootBlock)
 
   private val MovedBlock: PsiElementPattern.Capture<HCLBlock> = PlatformPatterns.psiElement(HCLBlock::class.java)
     .and(RootBlock)
@@ -110,11 +110,11 @@ object TerraformPatterns {
   init {
     val dynamicContentRef = Ref<ElementPattern<HCLBlock>>()
     DynamicBlock = PlatformPatterns.psiElement(HCLBlock::class.java)
-        .with(createBlockPattern("dynamic"))
-        .withSuperParent(2, HCLPatterns.Block)
-        .inside(true, or(ResourceRootBlock, DataSourceRootBlock, ProviderRootBlock, ProvisionerBlock, LazyInitElementPattern(dynamicContentRef)))
+      .with(createBlockPattern("dynamic"))
+      .withSuperParent(2, HCLPatterns.Block)
+      .inside(true, or(ResourceRootBlock, DataSourceRootBlock, ProviderRootBlock, ProvisionerBlock, LazyInitElementPattern(dynamicContentRef)))
     DynamicBlockContent = PlatformPatterns.psiElement(HCLBlock::class.java)
-        .with(createBlockPattern("content")).withSuperParent(2, DynamicBlock)
+      .with(createBlockPattern("content")).withSuperParent(2, DynamicBlock)
     dynamicContentRef.set(DynamicBlockContent)
   }
 
@@ -123,14 +123,14 @@ object TerraformPatterns {
   val DynamicBlockIterator: PsiElementPattern.Capture<HCLProperty> = propertyWithName("iterator").withSuperParent(2, DynamicBlock)
 
   val ModuleWithEmptySource: PsiElementPattern.Capture<HCLBlock> =
-      PlatformPatterns.psiElement(HCLBlock::class.java)
-          .and(ModuleRootBlock)
-          .with(object: PatternCondition<HCLBlock?>("ModuleWithEmptySource") {
-            override fun accepts(t: HCLBlock, context: ProcessingContext?): Boolean {
-              val source = t.`object`?.findProperty("source")?.value as? HCLStringLiteral ?: return true
-              return source.value.isBlank()
-            }
-          })
+    PlatformPatterns.psiElement(HCLBlock::class.java)
+      .and(ModuleRootBlock)
+      .with(object : PatternCondition<HCLBlock?>("ModuleWithEmptySource") {
+        override fun accepts(t: HCLBlock, context: ProcessingContext?): Boolean {
+          val source = t.`object`?.findProperty("source")?.value as? HCLStringLiteral ?: return true
+          return source.value.isBlank()
+        }
+      })
 
   val IsBlockNameIdentifier: PatternCondition<PsiElement> = object : PatternCondition<PsiElement>("IsBlockNameIdentifier") {
     override fun accepts(t: PsiElement, context: ProcessingContext?): Boolean {
@@ -140,22 +140,22 @@ object TerraformPatterns {
   }
 
   val PropertyUnderModuleProvidersPOB: PsiElementPattern.Capture<HCLProperty> = PlatformPatterns.psiElement(HCLProperty::class.java)
-      .withSuperParent(1, HCLPatterns.Object)
-      .withSuperParent(2, PlatformPatterns.psiElement().and(HCLPatterns.PropertyOrBlock).andOr(propertyWithName("providers"), PlatformPatterns.psiElement(HCLBlock::class.java).with(object : PatternCondition<HCLBlock?>("HCLBlock(providers)") {
-        override fun accepts(t: HCLBlock, context: ProcessingContext?): Boolean {
-          return t.nameElements.size == 1 && t.name == "providers"
-        }
-      }))).withSuperParent(3, HCLPatterns.Object)
-      .withSuperParent(4, ModuleRootBlock)
+    .withSuperParent(1, HCLPatterns.Object)
+    .withSuperParent(2, PlatformPatterns.psiElement().and(HCLPatterns.PropertyOrBlock).andOr(propertyWithName("providers"), PlatformPatterns.psiElement(HCLBlock::class.java).with(object : PatternCondition<HCLBlock?>("HCLBlock(providers)") {
+      override fun accepts(t: HCLBlock, context: ProcessingContext?): Boolean {
+        return t.nameElements.size == 1 && t.name == "providers"
+      }
+    }))).withSuperParent(3, HCLPatterns.Object)
+    .withSuperParent(4, ModuleRootBlock)
 
   val ForVariable: PsiElementPattern.Capture<HCLIdentifier> = PlatformPatterns.psiElement(HCLIdentifier::class.java)
-      .withParent(HCLForIntro::class.java)
-      .with(object : PatternCondition<HCLIdentifier?>("ForVariable") {
-        override fun accepts(t: HCLIdentifier, context: ProcessingContext?): Boolean {
-          val intro = t.parent as? HCLForIntro ?: return false
-          return t === intro.var1 || t === intro.var2
-        }
-      })
+    .withParent(HCLForIntro::class.java)
+    .with(object : PatternCondition<HCLIdentifier?>("ForVariable") {
+      override fun accepts(t: HCLIdentifier, context: ProcessingContext?): Boolean {
+        val intro = t.parent as? HCLForIntro ?: return false
+        return t === intro.var1 || t === intro.var2
+      }
+    })
 
   val ResourceProviderProperty: PsiElementPattern.Capture<HCLProperty> = propertyWithName("provider")
     .withParent(HCLObject::class.java)
@@ -187,7 +187,7 @@ object TerraformPatterns {
       }
     })
 
-  private fun createBlockPattern(type: String): PatternCondition<HCLBlock?> {
+  fun createBlockPattern(type: String): PatternCondition<HCLBlock?> {
     return object : PatternCondition<HCLBlock?>("HCLBlock($type)") {
       override fun accepts(t: HCLBlock, context: ProcessingContext?): Boolean {
         return t.getNameElementUnquoted(0) == type
