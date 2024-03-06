@@ -3,11 +3,12 @@ package org.intellij.terraform.config.model
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValuesManager
+import com.intellij.util.lazyPub
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLExpression
 
 class Variable(val declaration: HCLBlock) : Block(TypeModel.Variable) {
-  val name: String get() = declaration.name
+  val name: String by lazyPub { declaration.name }
   val nameIdentifier: PsiElement get() = declaration.nameIdentifier!!
 
   fun getDefault(): HCLExpression? {
