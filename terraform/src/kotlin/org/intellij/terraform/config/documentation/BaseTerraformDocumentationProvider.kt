@@ -55,7 +55,7 @@ internal abstract class BaseTerraformDocumentationProvider {
 
         DocumentationResult.documentation(docText ?: NO_DOC).applyIf(docText != null) {
           val externalUrl = TerraformWebDocUrlProvider.getDocumentationUrl(element).firstOrNull()
-          val docAnchor = externalUrl?.substringAfterLast("#", "")
+          val docAnchor = externalUrl?.substringAfterLast("#", ROOT_DOC_ANCHOR)
           externalUrl(externalUrl).anchor(docAnchor)
         }
       }

@@ -68,7 +68,7 @@ class RemoteTfDocumentationProvider(private val coroutineScope: CoroutineScope) 
   }
 
   private fun convertMarkdownToHtml(@NlsSafe markdownText: String): String {
-    val flavour = TfFlavourDescriptor()
+    val flavour = TfFlavourDescriptor(embeddedHtmlType)
     val parsedTree = MarkdownParser(flavour).parse(embeddedHtmlType, markdownText)
     return HtmlGenerator(markdownText, parsedTree, flavour).generateHtml()
   }
