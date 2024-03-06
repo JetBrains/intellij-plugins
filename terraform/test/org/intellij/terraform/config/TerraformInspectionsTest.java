@@ -133,9 +133,12 @@ public class TerraformInspectionsTest extends TerraformInspectionFixtureTestCase
     doTest("spellchecking_depends_on", new SpellCheckingInspection());
   }
 
-  public void
-  testSpellcheckingInHashesProperty() {
+  public void testSpellcheckingInHashesProperty() {
     doTest("spellchecking_hashes_property", new SpellCheckingInspection());
+  }
+
+  public void testSpellcheckingForBlockIdentifiers() {
+    doTest("spellchecking_block_identifiers", new SpellCheckingInspection());
   }
 
   public void testUnknownResourceType() {
