@@ -86,9 +86,9 @@ class DartToolingDaemonService private constructor(private val project: Project)
     uri?.let { connectToDtdWebSocket(it) }
   }
 
-  private fun connectToDtdWebSocket(address: String) {
-    try { // `address` looks like ws://127.0.0.1:65323/
-      webSocket = WebSocket(URI("${address}ws"))
+  private fun connectToDtdWebSocket(uri: String) {
+    try {
+      webSocket = WebSocket(URI(uri))
       webSocket.eventHandler = DtdWebSocketEventHandler()
       webSocket.connect()
     }
