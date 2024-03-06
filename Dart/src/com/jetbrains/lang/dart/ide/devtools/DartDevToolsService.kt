@@ -42,7 +42,12 @@ class DartDevToolsService(private val myProject: Project) : Disposable {
 
     processHandler.addProcessListener(object : ProcessListener {
       override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
-        val text = event.text.trim()
+        // The first line of text is the command issued, which can be ignored.
+        val text = event.text.trim().takeUnless { it.contains(" devtools --machine") }
+                   ?: return
+
+        event.processHandler.removeProcessListener(this)
+
         val json: JsonObject = try {
           JsonParser.parseString(text) as JsonObject
         }
