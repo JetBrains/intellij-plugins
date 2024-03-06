@@ -14,19 +14,35 @@ import org.intellij.markdown.ast.impl.ListItemCompositeNode
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.intellij.markdown.html.GeneratingProvider
 import org.intellij.markdown.html.HtmlGenerator
+import org.intellij.markdown.html.OpenCloseGeneratingProvider
 import org.intellij.markdown.html.SimpleTagProvider
 import org.intellij.markdown.html.entities.EntityConverter
 import org.intellij.markdown.lexer.Compat
 import org.intellij.markdown.parser.LinkMap
+import org.intellij.terraform.config.documentation.ROOT_DOC_ANCHOR
 import java.net.URI
 
-class TfFlavourDescriptor : GFMFlavourDescriptor(true, false) {
+class TfFlavourDescriptor(val root: IElementType) : GFMFlavourDescriptor(true, false) {
 
   override fun createHtmlGeneratingProviders(linkMap: LinkMap, baseURI: URI?): Map<IElementType, GeneratingProvider> {
     val parentProviders = super.createHtmlGeneratingProviders(linkMap, baseURI).toMutableMap()
+    parentProviders[root] = TfDocTagProvider()
     parentProviders[MarkdownElementTypes.LIST_ITEM] = ListItemGeneratingProvider()
 
     return parentProviders
+  }
+
+  open class TfDocTagProvider : OpenCloseGeneratingProvider() {
+    override fun openTag(visitor: HtmlGenerator.HtmlGeneratingVisitor, text: String, node: ASTNode) {
+      visitor.consumeTagOpen(node, "body")
+      visitor.consumeTagOpen(node, "article", """id = "${ROOT_DOC_ANCHOR}"""")
+    }
+
+    override fun closeTag(visitor: HtmlGenerator.HtmlGeneratingVisitor, text: String, node: ASTNode) {
+      visitor.consumeTagClose("article")
+      visitor.consumeTagClose("body")
+    }
+
   }
 
   internal class ListItemGeneratingProvider : SimpleTagProvider("li") {

@@ -19,6 +19,8 @@ import org.jetbrains.annotations.Nls
 internal val FETCH_TIMEOUT: Int = RegistryManager.getInstance().intValue("terraform.registry.connection.timeout", 1000)
 internal val NO_DOC: String = CodeInsightBundle.message("no.documentation.found")
 
+internal const val ROOT_DOC_ANCHOR = "provider-docs-content"
+
 internal const val HCL_RESOURCE_IDENTIFIER: String = "resource"
 internal const val HCL_DATASOURCE_IDENTIFIER: String = "data"
 internal const val HCL_PROVIDER_IDENTIFIER: String = "provider"
