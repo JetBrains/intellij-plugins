@@ -26,6 +26,9 @@ class TerraformSpellcheckingStrategy : HCLSpellcheckerStrategy() {
         }
         return EMPTY_TOKENIZER
       }
+      if (TerraformPatterns.BlockNameIdentifier.accepts(element)) {
+        return EMPTY_TOKENIZER
+      }
     }
     if (element is HCLIdentifier && parent is HCLMethodCallExpression && element === parent.method) {
       if (TypeModelProvider.getModel(element).getFunction(element.text) != null) return EMPTY_TOKENIZER

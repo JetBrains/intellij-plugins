@@ -4,7 +4,6 @@ package org.intellij.terraform.config.patterns
 import com.intellij.openapi.util.Ref
 import com.intellij.patterns.*
 import com.intellij.patterns.StandardPatterns.or
-import com.intellij.psi.PsiElement
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.TerraformLanguage
@@ -132,13 +131,6 @@ object TerraformPatterns {
         }
       })
 
-  val IsBlockNameIdentifier: PatternCondition<PsiElement> = object : PatternCondition<PsiElement>("IsBlockNameIdentifier") {
-    override fun accepts(t: PsiElement, context: ProcessingContext?): Boolean {
-      val parent = t.parent as? HCLBlock ?: return false
-      return parent.nameIdentifier === t
-    }
-  }
-
   val PropertyUnderModuleProvidersPOB: PsiElementPattern.Capture<HCLProperty> = PlatformPatterns.psiElement(HCLProperty::class.java)
     .withSuperParent(1, HCLPatterns.Object)
     .withSuperParent(2, PlatformPatterns.psiElement().and(HCLPatterns.PropertyOrBlock).andOr(propertyWithName("providers"), PlatformPatterns.psiElement(HCLBlock::class.java).with(object : PatternCondition<HCLBlock?>("HCLBlock(providers)") {
@@ -186,6 +178,11 @@ object TerraformPatterns {
         return t.name == "from"
       }
     })
+
+  val BlockNameIdentifier: PsiElementPattern.Capture<HCLIdentifier> = PlatformPatterns.psiElement(HCLIdentifier::class.java)
+    .withSuperParent(1, HCLBlock::class.java)
+    .withSuperParent(2, HCLBlockObject::class.java)
+    .withSuperParent(3, HCLBlock::class.java)
 
   fun createBlockPattern(type: String): PatternCondition<HCLBlock?> {
     return object : PatternCondition<HCLBlock?>("HCLBlock($type)") {
