@@ -108,7 +108,7 @@ class DartToolingDaemonService private constructor(private val project: Project)
     eventDispatcher.addListener(listener, parentDisposable)
 
   override fun dispose() {
-    if (::dtdProcessHandler.isInitialized) {
+    if (::dtdProcessHandler.isInitialized && !dtdProcessHandler.isProcessTerminated) {
       dtdProcessHandler.killProcess()
     }
   }

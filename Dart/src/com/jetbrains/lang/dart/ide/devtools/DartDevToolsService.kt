@@ -78,7 +78,7 @@ class DartDevToolsService(private val myProject: Project) : Disposable {
   fun getDevToolsInstance(): DartDevToolsInstance = devToolsFuture.get()
 
   override fun dispose() {
-    if (::processHandler.isInitialized) {
+    if (::processHandler.isInitialized && !processHandler.isProcessTerminated) {
       processHandler.killProcess()
     }
   }
