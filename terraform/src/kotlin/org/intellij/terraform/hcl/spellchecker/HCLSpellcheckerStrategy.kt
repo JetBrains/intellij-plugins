@@ -10,6 +10,7 @@ import com.intellij.spellchecker.tokenizer.Tokenizer
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.config.spellchecker.TerraformSpellcheckingUtil.HeredocContentTokenizer
 import org.intellij.terraform.config.spellchecker.TerraformSpellcheckingUtil.StringLiteralTokenizer
+import org.intellij.terraform.hcl.patterns.HCLPatterns.HashesStringLiterals
 import org.intellij.terraform.hcl.psi.HCLHeredocContent
 import org.intellij.terraform.hcl.psi.HCLHeredocMarker
 import org.intellij.terraform.hcl.psi.HCLIdentifier
@@ -22,7 +23,7 @@ open class HCLSpellcheckerStrategy : SpellcheckingStrategy() {
       return EMPTY_TOKENIZER
     }
     if (element is HCLStringLiteral) {
-      return StringLiteralTokenizer
+      return if (HashesStringLiterals.accepts(element)) EMPTY_TOKENIZER else StringLiteralTokenizer
     }
     if (element is HCLHeredocContent) {
       return HeredocContentTokenizer

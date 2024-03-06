@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.parentsOfType
 import com.intellij.util.ProcessingContext
+import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.psi.*
 
@@ -42,7 +43,15 @@ object HCLPatterns {
         }
       })
 
-
   val FileOrBlock: ElementPattern<PsiElement> = PlatformPatterns.or(File, Block)
   val PropertyOrBlock: ElementPattern<PsiElement> = PlatformPatterns.or(Property, Block)
+
+  val HashesStringLiterals: PsiElementPattern.Capture<HCLStringLiteral> =
+    PlatformPatterns.psiElement(HCLStringLiteral::class.java)
+      .withSuperParent(1, HCLArray::class.java)
+      .withSuperParent(2, TerraformPatterns.propertyWithName("hashes"))
+      .withSuperParent(3, HCLObject::class.java)
+      .withSuperParent(4, PlatformPatterns.psiElement(HCLBlock::class.java)
+        .with(TerraformPatterns.createBlockPattern("provider"))
+      )
 }
