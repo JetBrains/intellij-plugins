@@ -7,6 +7,7 @@ import com.intellij.platform.workspace.jps.entities.ModuleEntity;
 import com.intellij.platform.workspace.storage.EntityChange;
 import com.intellij.platform.workspace.storage.VersionedStorageChange;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.ide.toolingDaemon.DartToolingDaemonService;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import org.jetbrains.annotations.NotNull;
@@ -50,5 +51,6 @@ public class DartWorkspaceModelChangeListener implements WorkspaceModelChangeLis
 
     DartFileListener.scheduleDartPackageRootsUpdate(project);
     DartAnalysisServerService.getInstance(project).ensureAnalysisRootsUpToDate();
+    DartToolingDaemonService.getInstance(project).ensureRootsUpToDate();
   }
 }
