@@ -2,7 +2,9 @@
 package org.jetbrains.vuejs.service
 
 import com.intellij.lang.javascript.JSAbstractDocumentationTest
+import com.intellij.lang.typescript.documentation.TypeScriptDocumentationTargetProvider
 import com.intellij.openapi.util.registry.RegistryManager
+import com.intellij.platform.backend.documentation.PsiDocumentationTargetProvider
 import com.intellij.platform.lsp.tests.waitUntilFileOpenedByLspServer
 import com.intellij.webSymbols.checkDocumentationAtCaret
 import org.jetbrains.vuejs.lang.VueInspectionsProvider
@@ -20,6 +22,9 @@ class VolarServiceDocumentationTest : VolarServiceTestBase() {
   override fun setUp() {
     super.setUp()
     RegistryManager.getInstance().get("typescript.show.own.type").setValue(true, testRootDisposable)
+
+    PsiDocumentationTargetProvider.EP_NAME.point
+      .registerExtension(TypeScriptDocumentationTargetProvider(), testRootDisposable)
   }
 
   @Test
