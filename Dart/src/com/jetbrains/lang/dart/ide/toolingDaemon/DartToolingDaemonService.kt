@@ -55,17 +55,19 @@ class DartToolingDaemonService private constructor(private val project: Project)
     commandLine.addParameter("tooling-daemon")
     commandLine.addParameter("--machine")
 
+    logger.info("Starting Dart Tooling Daemon, sdk ${sdk.version}")
+
     dtdProcessHandler = object : KillableProcessHandler(commandLine) {
       override fun readerOptions(): BaseOutputReader.Options = BaseOutputReader.Options.forMostlySilentProcess()
     }
 
     dtdProcessHandler.addProcessListener(object : ProcessListener {
       override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
+        logger.debug("DTD output: ${event.text}")
+
         // The first line of text is the command issued, which can be ignored.
         val text = event.text.trim().takeUnless { it.endsWith("dart tooling-daemon --machine") }
                    ?: return
-
-        event.processHandler.removeProcessListener(this)
 
         var uri: String? = null
         var secret: String? = null
@@ -76,11 +78,15 @@ class DartToolingDaemonService private constructor(private val project: Project)
           secret = details["trusted_client_secret"].asString
         }
         catch (e: Exception) {
-          logger<DartToolingDaemonService>().warn("Failed to parse DTD init message. Error: ${e.message}. DTD message: $text")
+          logger.warn("Failed to parse DTD init message. Error: ${e.message}. DTD message: $text")
         }
         finally {
           onServiceStarted(uri, secret)
         }
+      }
+
+      override fun processTerminated(event: ProcessEvent) {
+        logger.debug("DTD terminated, exit code: ${event.exitCode}")
       }
     })
 
@@ -100,14 +106,14 @@ class DartToolingDaemonService private constructor(private val project: Project)
       webSocket.connect()
     }
     catch (e: Exception) {
-      logger<DartToolingDaemonService>().error("Failed to connect to Dart Tooling Daemon", e)
+      logger.error("Failed to connect to Dart Tooling Daemon, uri: $uri", e)
     }
   }
 
   @Throws(WebSocketException::class)
   fun sendRequest(method: String, params: JsonObject, includeSecret: Boolean, consumer: DartToolingDaemonConsumer) {
     if (!webSocketReady) {
-      logger<DartToolingDaemonService>().warn("DartToolingDaemonService.sendRequest($method) called when the socket is not ready")
+      logger.warn("DartToolingDaemonService.sendRequest($method) called when the socket is not ready")
       return
     }
 
@@ -121,7 +127,10 @@ class DartToolingDaemonService private constructor(private val project: Project)
     request.add("params", params)
 
     consumerMap[id] = consumer
-    webSocket.send(request.toString())
+
+    val requestString = request.toString()
+    logger.debug("--> $requestString")
+    webSocket.send(requestString)
   }
 
   fun addToolingDaemonListener(listener: DartToolingDaemonListener, parentDisposable: Disposable) =
@@ -139,6 +148,7 @@ class DartToolingDaemonService private constructor(private val project: Project)
 
   private inner class DtdWebSocketEventHandler : WebSocketEventHandler {
     override fun onOpen() {
+      logger.info("Connected to DTD successfully")
       webSocketReady = true
       // Fake request to make sure the tooling daemon works
       //val params = JsonObject()
@@ -150,11 +160,14 @@ class DartToolingDaemonService private constructor(private val project: Project)
     }
 
     override fun onMessage(message: WebSocketMessage) {
+      val text = message.text
+      logger.debug("<-- $text")
+
       val json: JsonObject = try {
-        JsonParser.parseString(message.text) as JsonObject
+        JsonParser.parseString(text) as JsonObject
       }
       catch (e: Exception) {
-        logger<DartToolingDaemonService>().warn("Failed to parse message, error: ${e.message}, message: ${message.text}")
+        logger.warn("Failed to parse message, error: ${e.message}, message: $text")
         return
       }
 
@@ -185,5 +198,6 @@ class DartToolingDaemonService private constructor(private val project: Project)
     fun getInstance(project: Project): DartToolingDaemonService = project.service()
 
     private const val MIN_SDK_VERSION: String = "3.4"
+    private val logger = logger<DartToolingDaemonService>()
   }
 }
