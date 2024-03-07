@@ -43,6 +43,7 @@ import java.util.concurrent.atomic.AtomicInteger
 class DartToolingDaemonService private constructor(private val project: Project) : Disposable {
 
   private lateinit var dtdProcessHandler: KillableProcessHandler
+  private var serviceRunning = false
 
   private lateinit var webSocket: WebSocket
   var webSocketReady = false
@@ -59,6 +60,11 @@ class DartToolingDaemonService private constructor(private val project: Project)
 
   @Throws(ExecutionException::class)
   fun startService() {
+    if (serviceRunning) {
+      logger.error("Ignoring startService() call. Dart Tooling Daemon is already running.")
+      return
+    }
+
     val sdk = DartSdk.getDartSdk(project)?.takeIf { isDartSdkVersionSufficient(it) } ?: return
 
     val commandLine = GeneralCommandLine().withWorkDirectory(sdk.homePath)
@@ -68,44 +74,15 @@ class DartToolingDaemonService private constructor(private val project: Project)
     commandLine.addParameter("--machine")
 
     logger.info("Starting Dart Tooling Daemon, sdk ${sdk.version}")
-
     dtdProcessHandler = object : KillableProcessHandler(commandLine) {
       override fun readerOptions(): BaseOutputReader.Options = BaseOutputReader.Options.forMostlySilentProcess()
     }
-
-    dtdProcessHandler.addProcessListener(object : ProcessListener {
-      override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
-        logger.debug("DTD output: ${event.text}")
-
-        // The first line of text is the command issued, which can be ignored.
-        val text = event.text.trim().takeUnless { it.endsWith("dart tooling-daemon --machine") }
-                   ?: return
-
-        var uri: String? = null
-        var secret: String? = null
-        try {
-          val json = JsonParser.parseString(text) as JsonObject
-          val details = json["tooling_daemon_details"].asJsonObject
-          uri = details["uri"].asString
-          secret = details["trusted_client_secret"].asString
-        }
-        catch (e: Exception) {
-          logger.warn("Failed to parse DTD init message. Error: ${e.message}. DTD message: $text")
-        }
-        finally {
-          onServiceStarted(uri, secret)
-        }
-      }
-
-      override fun processTerminated(event: ProcessEvent) {
-        logger.debug("DTD terminated, exit code: ${event.exitCode}")
-      }
-    })
-
+    dtdProcessHandler.addProcessListener(DtdProcessListener())
     dtdProcessHandler.startNotify()
   }
 
   private fun onServiceStarted(uri: String?, secret: String?) {
+    serviceRunning = true
     this.secret = secret
     DartDevToolsService.getInstance(project).startService(uri)
     uri?.let { connectToDtdWebSocket(it) }
@@ -199,6 +176,38 @@ class DartToolingDaemonService private constructor(private val project: Project)
   private fun isDartSdkVersionSufficient(sdk: DartSdk): Boolean =
     StringUtil.compareVersionNumbers(sdk.version, MIN_SDK_VERSION) >= 0
 
+
+  private inner class DtdProcessListener : ProcessListener {
+    override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
+      logger.debug("DTD output: ${event.text}")
+      if (serviceRunning) return
+
+      // The first line of text is the command issued, which can be ignored.
+      val text = event.text.trim().takeUnless { it.endsWith("dart tooling-daemon --machine") }
+                 ?: return
+
+      var uri: String? = null
+      var secret: String? = null
+      try {
+        val json = JsonParser.parseString(text) as JsonObject
+        val details = json["tooling_daemon_details"].asJsonObject
+        uri = details["uri"].asString
+        secret = details["trusted_client_secret"].asString
+      }
+      catch (e: Exception) {
+        logger.warn("Failed to parse DTD init message. Error: ${e.message}. DTD message: $text")
+      }
+      finally {
+        onServiceStarted(uri, secret)
+      }
+    }
+
+    override fun processTerminated(event: ProcessEvent) {
+      serviceRunning = false
+      webSocketReady = false
+      logger.debug("DTD terminated, exit code: ${event.exitCode}")
+    }
+  }
 
   private inner class DtdWebSocketEventHandler : WebSocketEventHandler {
     override fun onOpen() {
