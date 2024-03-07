@@ -5,7 +5,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.execution.process.ColoredProcessHandler
+import com.intellij.execution.process.KillableProcessHandler
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.process.ProcessListener
 import com.intellij.openapi.Disposable
@@ -32,7 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger
 @Service(Service.Level.PROJECT)
 class DartToolingDaemonService private constructor(private val project: Project) : Disposable {
   private lateinit var webSocket: WebSocket
-  private lateinit var dtdProcessHandler: ColoredProcessHandler
+  private lateinit var dtdProcessHandler: KillableProcessHandler
 
   private val nextRequestId = AtomicInteger()
   private val consumerMap: MutableMap<String, DartToolingDaemonConsumer> = mutableMapOf()
@@ -49,7 +49,7 @@ class DartToolingDaemonService private constructor(private val project: Project)
     commandLine.addParameter("tooling-daemon")
     commandLine.addParameter("--machine")
 
-    dtdProcessHandler = object : ColoredProcessHandler(commandLine) {
+    dtdProcessHandler = object : KillableProcessHandler(commandLine) {
       override fun readerOptions(): BaseOutputReader.Options = BaseOutputReader.Options.forMostlySilentProcess()
     }
 
