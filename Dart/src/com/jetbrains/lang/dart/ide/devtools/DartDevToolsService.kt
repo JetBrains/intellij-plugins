@@ -4,7 +4,7 @@ package com.jetbrains.lang.dart.ide.devtools
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.execution.process.ColoredProcessHandler
+import com.intellij.execution.process.KillableProcessHandler
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.process.ProcessListener
 import com.intellij.openapi.Disposable
@@ -23,7 +23,7 @@ import java.util.concurrent.CompletableFuture
 
 @Service(Service.Level.PROJECT)
 class DartDevToolsService(private val myProject: Project) : Disposable {
-  private lateinit var processHandler: ColoredProcessHandler
+  private lateinit var processHandler: KillableProcessHandler
 
   private val devToolsFuture: CompletableFuture<DartDevToolsInstance> = CompletableFuture()
 
@@ -37,7 +37,7 @@ class DartDevToolsService(private val myProject: Project) : Disposable {
     commandLine.addParameter("--machine")
     dtdUri?.let { commandLine.addParameter("--dtd-uri=$it") }
 
-    processHandler = object : ColoredProcessHandler(commandLine) {
+    processHandler = object : KillableProcessHandler(commandLine) {
       override fun readerOptions(): BaseOutputReader.Options = BaseOutputReader.Options.forMostlySilentProcess()
     }
 
