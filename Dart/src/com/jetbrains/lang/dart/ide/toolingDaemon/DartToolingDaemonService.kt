@@ -1,6 +1,7 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.toolingDaemon
 
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.intellij.execution.ExecutionException
@@ -9,17 +10,25 @@ import com.intellij.execution.process.KillableProcessHandler
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.process.ProcessListener
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.EventDispatcher
+import com.intellij.util.concurrency.AppExecutorUtil
+import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
+import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.intellij.util.io.BaseOutputReader
+import com.intellij.util.io.URLUtil
 import com.jetbrains.lang.dart.ide.devtools.DartDevToolsService
 import com.jetbrains.lang.dart.sdk.DartSdk
+import com.jetbrains.lang.dart.sdk.DartSdkLibUtil
 import com.jetbrains.lang.dart.sdk.DartSdkUtil
 import de.roderick.weberknecht.WebSocket
 import de.roderick.weberknecht.WebSocketEventHandler
@@ -27,6 +36,7 @@ import de.roderick.weberknecht.WebSocketException
 import de.roderick.weberknecht.WebSocketMessage
 import java.net.URI
 import java.nio.charset.StandardCharsets
+import java.util.concurrent.Callable
 import java.util.concurrent.atomic.AtomicInteger
 
 @Service(Service.Level.PROJECT)
@@ -39,6 +49,8 @@ class DartToolingDaemonService private constructor(private val project: Project)
     private set
 
   private var secret: String? = null
+
+  private var lastSentRootUris: List<String> = emptyList()
 
   private val nextRequestId = AtomicInteger()
   private val consumerMap: MutableMap<String, DartToolingDaemonConsumer> = mutableMapOf()
@@ -113,7 +125,7 @@ class DartToolingDaemonService private constructor(private val project: Project)
   @Throws(WebSocketException::class)
   fun sendRequest(method: String, params: JsonObject, includeSecret: Boolean, consumer: DartToolingDaemonConsumer) {
     if (!webSocketReady) {
-      logger.warn("DartToolingDaemonService.sendRequest($method) called when the socket is not ready")
+      logger.warn("sendRequest(\"$method\") called when the socket is not ready")
       return
     }
 
@@ -136,6 +148,48 @@ class DartToolingDaemonService private constructor(private val project: Project)
   fun addToolingDaemonListener(listener: DartToolingDaemonListener, parentDisposable: Disposable) =
     eventDispatcher.addListener(listener, parentDisposable)
 
+  fun ensureRootsUpToDate() {
+    if (!webSocketReady) return
+
+    ReadAction
+      .nonBlocking(Callable { calcRootUris() })
+      .coalesceBy(this)
+      .expireWith(this)
+      .finishOnUiThread(ModalityState.nonModal()) { rootUris: List<String> ->
+        if (!webSocketReady) return@finishOnUiThread
+        if (lastSentRootUris == rootUris) return@finishOnUiThread
+
+        // https://pub.dev/documentation/dtd/latest/dtd/DTDConnection/setIDEWorkspaceRoots.html
+        val params = JsonObject()
+        val rootUrisArray = JsonArray()
+        rootUris.forEach { rootUrisArray.add(it) }
+        params.add("roots", rootUrisArray)
+        sendRequest("FileSystem.setIDEWorkspaceRoots", params, true) {}
+
+        lastSentRootUris = rootUris
+      }
+      .submit(AppExecutorUtil.getAppExecutorService())
+  }
+
+  @RequiresReadLock
+  @RequiresBackgroundThread
+  // A simplified version of com.jetbrains.lang.dart.analyzer.DartServerRootsHandler.calcIncludedAndExcludedDartRoots
+  private fun calcRootUris(): List<String> {
+    DartSdk.getDartSdk(project) ?: return emptyList()
+
+    val newIncludedRoots: MutableList<String> = mutableListOf()
+    for (module in DartSdkLibUtil.getModulesWithDartSdkEnabled(project)) {
+      for (contentEntry in ModuleRootManager.getInstance(module).contentEntries) {
+        val contentEntryUrl = contentEntry.url
+        if (contentEntryUrl.startsWith(URLUtil.FILE_PROTOCOL + URLUtil.SCHEME_SEPARATOR)) {
+          newIncludedRoots.add(contentEntryUrl)
+        }
+      }
+    }
+
+    return newIncludedRoots
+  }
+
   override fun dispose() {
     if (::dtdProcessHandler.isInitialized && !dtdProcessHandler.isProcessTerminated) {
       dtdProcessHandler.killProcess()
@@ -150,6 +204,8 @@ class DartToolingDaemonService private constructor(private val project: Project)
     override fun onOpen() {
       logger.info("Connected to DTD successfully")
       webSocketReady = true
+      ensureRootsUpToDate()
+
       // Fake request to make sure the tooling daemon works
       //val params = JsonObject()
       //params.addProperty("streamId", "foo_stream")
@@ -190,11 +246,13 @@ class DartToolingDaemonService private constructor(private val project: Project)
     override fun onClose() {
       webSocketReady = false
       secret = null
+      lastSentRootUris = emptyList()
     }
   }
 
 
   companion object {
+    @JvmStatic
     fun getInstance(project: Project): DartToolingDaemonService = project.service()
 
     private const val MIN_SDK_VERSION: String = "3.4"
