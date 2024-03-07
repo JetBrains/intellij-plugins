@@ -81,11 +81,7 @@ class Angular2ElementDocumentationTarget private constructor(
         val adjustedSections = doc
           .replace(moduleRegex, "")
           .replace("<table class='$CLASS_SECTIONS'></table>", "")
-        val addSeparator = adjustedSections.contains("<div class='$CLASS_CONTENT")
-                           || adjustedSections.contains(SECTIONS_START)
-        if (addSeparator) result.append("<div class='$CLASS_SEPARATED'>")
         result.append(adjustedSections)
-        if (addSeparator) result.append("</div>")
       }
       else {
         result.append(doc)
@@ -96,16 +92,6 @@ class Angular2ElementDocumentationTarget private constructor(
         }
       }
       result.append("\n")
-    }
-    if (!result.contains(SECTIONS_START) && !result.contains(CONTENT_START)) {
-      var prevIndex = result.lastIndexOf(DEFINITION_START)
-      var curIndex = result.lastIndexOf(DEFINITION_START, prevIndex - 1)
-      while (curIndex >= 0) {
-        result.insert(prevIndex, "</div>")
-        result.insert(curIndex, "<div class='$CLASS_SEPARATED'>")
-        prevIndex = curIndex
-        curIndex = result.lastIndexOf(DEFINITION_START, prevIndex - 1)
-      }
     }
     return DocumentationResult.documentation(result.toString())
   }
