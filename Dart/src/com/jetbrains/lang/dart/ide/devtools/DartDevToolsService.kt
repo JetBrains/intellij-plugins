@@ -19,15 +19,22 @@ import com.intellij.util.io.BaseOutputReader
 import com.jetbrains.lang.dart.sdk.DartSdk
 import com.jetbrains.lang.dart.sdk.DartSdkUtil
 import java.nio.charset.StandardCharsets
-import java.util.concurrent.CompletableFuture
 
 @Service(Service.Level.PROJECT)
 class DartDevToolsService(private val myProject: Project) : Disposable {
-  private lateinit var processHandler: KillableProcessHandler
 
-  private val devToolsFuture: CompletableFuture<DartDevToolsInstance> = CompletableFuture()
+  private lateinit var processHandler: KillableProcessHandler
+  private var serviceRunning = false
+
+  var devToolsUri: String? = null
+    private set
 
   fun startService(dtdUri: String? = null) {
+    if (serviceRunning) {
+      logger.error("Ignoring startService() call. Dart Tooling Daemon is already running.")
+      return
+    }
+
     val sdk = DartSdk.getDartSdk(myProject)?.takeIf { isDartSdkVersionSufficient(it) } ?: return
 
     val commandLine = GeneralCommandLine().withWorkDirectory(sdk.homePath)
@@ -37,46 +44,13 @@ class DartDevToolsService(private val myProject: Project) : Disposable {
     commandLine.addParameter("--machine")
     dtdUri?.let { commandLine.addParameter("--dtd-uri=$it") }
 
+    logger.info("Starting Dart DevTools, sdk ${sdk.version}")
     processHandler = object : KillableProcessHandler(commandLine) {
       override fun readerOptions(): BaseOutputReader.Options = BaseOutputReader.Options.forMostlySilentProcess()
     }
-
-    processHandler.addProcessListener(object : ProcessListener {
-      override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
-        // The first line of text is the command issued, which can be ignored.
-        val text = event.text.trim().takeUnless { it.contains(" devtools --machine") }
-                   ?: return
-
-        event.processHandler.removeProcessListener(this)
-
-        val json: JsonObject = try {
-          JsonParser.parseString(text) as JsonObject
-        }
-        catch (e: Exception) {
-          logger<DartDevToolsService>().warn("Failed to parse message, error: ${e.message}, message: $text")
-          return
-        }
-
-        val method = json["method"]?.asString
-        if (method == "server.started") {
-          val params = json["params"].asJsonObject
-          val host: String = params.get("host").asString
-          val port: Int = params.get("port").asInt
-
-          if (port != -1) {
-            devToolsFuture.complete(DartDevToolsInstance(host, port))
-          }
-          else {
-            devToolsFuture.completeExceptionally(Exception("DevTools port was invalid"))
-          }
-        }
-      }
-    })
-
+    processHandler.addProcessListener(DevToolsProcessListener())
     processHandler.startNotify()
   }
-
-  fun getDevToolsInstance(): DartDevToolsInstance = devToolsFuture.get()
 
   override fun dispose() {
     if (::processHandler.isInitialized && !processHandler.isProcessTerminated) {
@@ -88,9 +62,44 @@ class DartDevToolsService(private val myProject: Project) : Disposable {
     StringUtil.compareVersionNumbers(sdk.version, MIN_SDK_VERSION) >= 0
 
 
+  private inner class DevToolsProcessListener : ProcessListener {
+    override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
+      logger.debug("DevTools output: ${event.text}")
+      if (serviceRunning) return
+
+      // The first line of text is the command issued, which can be ignored.
+      val text = event.text.trim().takeUnless { it.contains(" devtools --machine") }
+                 ?: return
+
+      try {
+        val json = JsonParser.parseString(text) as JsonObject
+        val method = json["method"]?.asString
+        if (method == "server.started") {
+          serviceRunning = true
+          val params = json["params"].asJsonObject
+          val host: String = params.get("host").asString
+          val port: Int = params.get("port").asInt
+          devToolsUri = "$host:$port"
+        }
+      }
+      catch (e: Exception) {
+        logger.warn("Failed to parse message, error: ${e.message}, message: $text")
+        return
+      }
+    }
+
+    override fun processTerminated(event: ProcessEvent) {
+      serviceRunning = false
+      devToolsUri = null
+      logger.debug("DevTools terminated, exit code: ${event.exitCode}")
+    }
+  }
+
+
   companion object {
     fun getInstance(project: Project): DartDevToolsService = project.service()
 
     private const val MIN_SDK_VERSION: String = "2.15"
+    private val logger = logger<DartDevToolsService>()
   }
 }
