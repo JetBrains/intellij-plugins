@@ -31,8 +31,14 @@ import java.util.concurrent.atomic.AtomicInteger
 
 @Service(Service.Level.PROJECT)
 class DartToolingDaemonService private constructor(private val project: Project) : Disposable {
-  private lateinit var webSocket: WebSocket
+
   private lateinit var dtdProcessHandler: KillableProcessHandler
+
+  private lateinit var webSocket: WebSocket
+  var webSocketReady = false
+    private set
+
+  private var secret: String? = null
 
   private val nextRequestId = AtomicInteger()
   private val consumerMap: MutableMap<String, DartToolingDaemonConsumer> = mutableMapOf()
@@ -82,6 +88,7 @@ class DartToolingDaemonService private constructor(private val project: Project)
   }
 
   private fun onServiceStarted(uri: String?, secret: String?) {
+    this.secret = secret
     DartDevToolsService.getInstance(project).startService(uri)
     uri?.let { connectToDtdWebSocket(it) }
   }
@@ -98,13 +105,19 @@ class DartToolingDaemonService private constructor(private val project: Project)
   }
 
   @Throws(WebSocketException::class)
-  fun sendRequest(method: String, params: JsonObject, consumer: DartToolingDaemonConsumer) {
+  fun sendRequest(method: String, params: JsonObject, includeSecret: Boolean, consumer: DartToolingDaemonConsumer) {
+    if (!webSocketReady) {
+      logger<DartToolingDaemonService>().warn("DartToolingDaemonService.sendRequest($method) called when the socket is not ready")
+      return
+    }
+
     val request = JsonObject()
     request.addProperty("jsonrpc", "2.0")
     request.addProperty("method", method)
 
     val id = nextRequestId.incrementAndGet().toString()
     request.addProperty("id", id)
+    secret?.takeIf { includeSecret }?.let { params.addProperty("secret", it) }
     request.add("params", params)
 
     consumerMap[id] = consumer
@@ -126,6 +139,7 @@ class DartToolingDaemonService private constructor(private val project: Project)
 
   private inner class DtdWebSocketEventHandler : WebSocketEventHandler {
     override fun onOpen() {
+      webSocketReady = true
       // Fake request to make sure the tooling daemon works
       //val params = JsonObject()
       //params.addProperty("streamId", "foo_stream")
@@ -157,9 +171,13 @@ class DartToolingDaemonService private constructor(private val project: Project)
       }
     }
 
-    override fun onClose() {}
     override fun onPing() {}
     override fun onPong() {}
+
+    override fun onClose() {
+      webSocketReady = false
+      secret = null
+    }
   }
 
 
