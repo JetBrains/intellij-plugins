@@ -91,7 +91,7 @@ class DartDevToolsService(private val myProject: Project) : Disposable {
     override fun processTerminated(event: ProcessEvent) {
       serviceRunning = false
       devToolsUri = null
-      logger.debug("DevTools terminated, exit code: ${event.exitCode}")
+      logger.info("DevTools terminated, exit code: ${event.exitCode}")
     }
   }
 
