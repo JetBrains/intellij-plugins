@@ -8,6 +8,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.SyntaxTraverser
+import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.config.codeinsight.ModelHelper
 import org.intellij.terraform.config.model.TypeModelProvider
 import org.intellij.terraform.config.model.local.LocalSchemaService

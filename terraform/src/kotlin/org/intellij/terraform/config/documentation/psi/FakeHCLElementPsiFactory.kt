@@ -7,14 +7,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.util.concurrency.AppExecutorUtil
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElementGenerator
-import java.util.concurrent.TimeUnit
 
 @Service(Service.Level.PROJECT)
-internal class HCLBlockFakePsiFactory(val project: Project) {
+internal class FakeHCLElementPsiFactory(val project: Project) {
 
   private val psiElementsCache = Caffeine.newBuilder()
-    .expireAfterAccess(5, TimeUnit.MINUTES)
     .softValues()
+    .maximumSize(100)
     .executor(AppExecutorUtil.getAppExecutorService())
     .build<Pair<String, String>, HCLBlock> { (name, type) ->
       generateBlock(name, type)

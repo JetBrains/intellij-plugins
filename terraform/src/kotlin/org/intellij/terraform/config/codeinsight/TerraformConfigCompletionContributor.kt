@@ -20,6 +20,15 @@ import com.intellij.util.ProcessingContext
 import com.intellij.util.Processor
 import org.intellij.terraform.TerraformIcons
 import org.intellij.terraform.config.Constants
+import org.intellij.terraform.config.Constants.HCL_BACKEND_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_MODULE_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_OUTPUT_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_PROVISIONER_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_TERRAFORM_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_VARIABLE_IDENTIFIER
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.RootBlockSorted
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.createPropertyOrBlockType
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.dumpPsiFileModel
@@ -27,7 +36,7 @@ import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.failIfI
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.getClearTextValue
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.getIncomplete
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.getOriginalObject
-import org.intellij.terraform.config.documentation.psi.HCLBlockFakePsiFactory
+import org.intellij.terraform.config.documentation.psi.FakeHCLElementPsiFactory
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.config.patterns.TerraformPatterns.DependsOnPattern
@@ -263,25 +272,25 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       val cache = HashMap<String, Boolean>()
       val project = position.project
       return when (type) {
-        "resource"  ->
+        HCL_RESOURCE_IDENTIFIER  ->
           getTypeModel(project).resources.toPlow()
             .filter { invocationCount >= 3 || isProviderUsed(parent, it.provider.type, cache) }
             .map { buildLookupElement(it, it.type, project) }
             .processWith(consumer)
-        "data" ->
+        HCL_DATASOURCE_IDENTIFIER ->
           getTypeModel(project).dataSources.toPlow()
             .filter { invocationCount >= 3 || isProviderUsed(parent, it.provider.type, cache) }
             .map { buildLookupElement(it, it.type, project) }
             .processWith(consumer)
-        "provider" ->
+        HCL_PROVIDER_IDENTIFIER ->
           getTypeModel(project).providers.toPlow()
             .map { buildLookupElement(it, it.type, project) }
             .processWith(consumer)
-        "provisioner" ->
+        HCL_PROVISIONER_IDENTIFIER ->
           getTypeModel(project).provisioners.toPlow()
             .map { buildLookupElement(it, it.type, project) }
             .processWith(consumer)
-        "backend" ->
+        HCL_BACKEND_IDENTIFIER ->
           getTypeModel(project).backends.toPlow()
             .map { buildLookupElement(it, it.type, project) }
             .processWith(consumer)
@@ -292,7 +301,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
     private fun buildLookupElement(it: BlockType, typeName: String, project: Project) = create(typeName)
       .withTypeText(it.description)
       .withIcon(TerraformIcons.Terraform)
-      .withPsiElement(project.service<HCLBlockFakePsiFactory>().createFakeHCLBlock(it.literal, typeName))
+      .withPsiElement(project.service<FakeHCLElementPsiFactory>().createFakeHCLBlock(it.literal, typeName))
       .withInsertHandler(ResourceBlockSubNameInsertHandler(it))
 
     fun isProviderUsed(element: PsiElement, providerName: String, cache: MutableMap<String, Boolean>): Boolean {
@@ -431,7 +440,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
 
       val type = block.getNameElementUnquoted(0)
       // TODO: Replace with 'ReferenceHint'
-      if (property.name == "provider" && (type == "resource" || type == "data")) {
+      if (property.name == HCL_PROVIDER_IDENTIFIER && (type == HCL_RESOURCE_IDENTIFIER || type == HCL_DATASOURCE_IDENTIFIER)) {
         val providers = property.getTerraformModule().getDefinedProviders()
         result.addAllElements(providers.map { create(it.second).withInsertHandler(QuoteInsertHandler) })
         return
@@ -447,10 +456,10 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
           .map { "var.${it.name}" }
 
         val current = when (type) {
-          "data" -> "data.${block.getNameElementUnquoted(1)}.${block.name}"
-          "resource" -> "${block.getNameElementUnquoted(1)}.${block.name}"
-          "module" -> "module.${block.name}"
-          "variable" -> "var.${block.name}"
+          HCL_DATASOURCE_IDENTIFIER -> "data.${block.getNameElementUnquoted(1)}.${block.name}"
+          HCL_RESOURCE_IDENTIFIER -> "${block.getNameElementUnquoted(1)}.${block.name}"
+          HCL_MODULE_IDENTIFIER -> "module.${block.name}"
+          HCL_VARIABLE_IDENTIFIER -> "var.${block.name}"
           else -> "unsupported"
         }
 
@@ -576,11 +585,11 @@ object ModelHelper {
       return getModelBlockProperties(block, type)
     }
     val props: Map<String, PropertyOrBlockType> = when (type) {
-      "provider" -> getProviderProperties(block)
-      "resource" -> getResourceProperties(block)
-      "data" -> getDataSourceProperties(block)
-      "module" -> getModuleProperties(block)
-      "terraform" -> getTerraformProperties(block)
+      HCL_PROVIDER_IDENTIFIER -> getProviderProperties(block)
+      HCL_RESOURCE_IDENTIFIER -> getResourceProperties(block)
+      HCL_DATASOURCE_IDENTIFIER -> getDataSourceProperties(block)
+      HCL_MODULE_IDENTIFIER -> getModuleProperties(block)
+      HCL_TERRAFORM_IDENTIFIER -> getTerraformProperties(block)
       else -> TypeModel.RootBlocksMap[type]?.properties ?: emptyMap()
     }
     return props
@@ -651,22 +660,22 @@ object ModelHelper {
       return null
     }
 
-    if (type == "provider") {
+    if (type == HCL_PROVIDER_IDENTIFIER) {
       val fallback = TypeModel.AbstractProvider
       val name = block.getNameElementUnquoted(1) ?: return fallback
       return TypeModelProvider.getModel(block).getProviderType(name)
     }
-    if (type == "resource") {
+    if (type == HCL_RESOURCE_IDENTIFIER) {
       val fallback = TypeModel.AbstractResource
       val name = block.getNameElementUnquoted(1) ?: return wrapIfCountForEach(fallback, block)
       return wrapIfCountForEach(TypeModelProvider.getModel(block).getResourceType(name) ?: fallback, block)
     }
-    if (type == "data") {
+    if (type == HCL_DATASOURCE_IDENTIFIER) {
       val fallback = TypeModel.AbstractDataSource
       val name = block.getNameElementUnquoted(1) ?: return wrapIfCountForEach(fallback, block)
       return wrapIfCountForEach(TypeModelProvider.getModel(block).getDataSourceType(name) ?: fallback, block)
     }
-    if (type == "module") {
+    if (type == HCL_MODULE_IDENTIFIER) {
       val fallback = TypeModel.Module
       val name = block.getNameElementUnquoted(1) ?: return fallback
       val module = Module.getAsModuleBlock(block) ?: return fallback
@@ -686,14 +695,14 @@ object ModelHelper {
 
       return ModuleType(name, result.map { PropertyType(it.key, type = it.value ?: Types.Any) })
     }
-    if (type == "terraform") {
+    if (type == HCL_TERRAFORM_IDENTIFIER) {
       return TypeModel.Terraform
     }
-    if (type == "variable") {
+    if (type == HCL_VARIABLE_IDENTIFIER) {
       val variable = Variable(block)
       return variable.getCombinedType()
     }
-    if (type == "output") {
+    if (type == HCL_OUTPUT_IDENTIFIER) {
       val value = block.`object`?.findProperty("value")?.value ?: return Types.Any
       return value.getType()
     }

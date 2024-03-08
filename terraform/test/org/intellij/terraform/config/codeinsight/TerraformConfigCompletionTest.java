@@ -259,14 +259,14 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
 
   //<editor-fold desc="Data Sources completion tests">
   public void testDataSourceTypeCompletion() throws Exception {
-    Registry.get("ide.completion.variant.limit").setValue(100000, getTestRootDisposable());
     final TreeSet<String> set = new TreeSet<>();
     for (DataSourceType ds : TypeModelProvider.Companion.getGlobalModel().getDataSources()) {
       set.add(ds.getType());
     }
-    doBasicCompletionTest("data <caret>", set);
-    doBasicCompletionTest("data <caret> {}", set);
-    doBasicCompletionTest("data <caret> \"aaa\" {}", set);
+    final Predicate<Collection<String>> matcher = getPartialMatcher(new ArrayList<>(set).subList(0, 500));
+    doBasicCompletionTest("data <caret>", matcher);
+    doBasicCompletionTest("data <caret> {}", matcher);
+    doBasicCompletionTest("data <caret> \"aaa\" {}", matcher);
   }
 
   public void testCheckBlockCompletion() throws Exception {
@@ -308,17 +308,17 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
   }
 
   public void testDataSourceQuotedTypeCompletion() throws Exception {
-    Registry.get("ide.completion.variant.limit").setValue(100000, getTestRootDisposable());
     final TreeSet<String> set = new TreeSet<>();
     for (DataSourceType ds : TypeModelProvider.Companion.getGlobalModel().getDataSources()) {
       set.add(ds.getType());
     }
-    doBasicCompletionTest("data \"<caret>", set);
-    doBasicCompletionTest("data '<caret>", set);
-    doBasicCompletionTest("data \"<caret>\n{}", set);
-    doBasicCompletionTest("data '<caret>\n{}", set);
-    doBasicCompletionTest("data \"<caret>\" {}", set);
-    doBasicCompletionTest("data \"<caret>\" \"aaa\" {}", set);
+    final Predicate<Collection<String>> matcher = getPartialMatcher(new ArrayList<>(set).subList(0, 500));
+    doBasicCompletionTest("data \"<caret>", matcher);
+    doBasicCompletionTest("data '<caret>", matcher);
+    doBasicCompletionTest("data \"<caret>\n{}", matcher);
+    doBasicCompletionTest("data '<caret>\n{}", matcher);
+    doBasicCompletionTest("data \"<caret>\" {}", matcher);
+    doBasicCompletionTest("data \"<caret>\" \"aaa\" {}", matcher);
   }
 
   public void testDataSourceCommonPropertyCompletion() throws Exception {

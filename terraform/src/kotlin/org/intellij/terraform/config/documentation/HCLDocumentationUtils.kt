@@ -7,6 +7,14 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.parentsOfType
 import com.intellij.util.concurrency.annotations.RequiresReadLock
+import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_LOCALS_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_MODULE_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_OUTPUT_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_TERRAFORM_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_VARIABLE_IDENTIFIER
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.config.psi.TerraformDocumentPsi
 import org.intellij.terraform.hcl.HCLBundle
@@ -18,17 +26,7 @@ import org.jetbrains.annotations.Nls
 
 internal val FETCH_TIMEOUT: Int = RegistryManager.getInstance().intValue("terraform.registry.connection.timeout", 1000)
 internal val NO_DOC: String = CodeInsightBundle.message("no.documentation.found")
-
-internal const val ROOT_DOC_ANCHOR = "provider-docs-content"
-
-internal const val HCL_RESOURCE_IDENTIFIER: String = "resource"
-internal const val HCL_DATASOURCE_IDENTIFIER: String = "data"
-internal const val HCL_PROVIDER_IDENTIFIER: String = "provider"
-internal const val HCL_MODULE_IDENTIFIER: String = "module"
-internal const val HCL_VARIABLE_IDENTIFIER: String = "variable"
-internal const val HCL_OUTPUT_IDENTIFIER: String = "output"
-internal const val HCL_TERRAFORM_IDENTIFIER: String = "terraform"
-internal const val HCL_LOCALS_IDENTIFIER: String = "locals"
+internal const val ROOT_DOC_ANCHOR: String = "provider-docs-content"
 
 
 @RequiresReadLock
@@ -66,7 +64,7 @@ internal fun getHelpWindowHeader(element: PsiElement?): @Nls String {
     is HCLBlock -> {
       val type = element.getNameElementUnquoted(0)
       val name = element.name
-      if (TerraformPatterns.RootBlock.accepts(element)) {
+      if (TerraformPatterns.RootBlock.accepts(element) || element.containingFile.virtualFile == null) {
         when (type) {
           HCL_MODULE_IDENTIFIER -> HCLBundle.message("terraform.doc.module.0", name) // todo: add short source
           HCL_VARIABLE_IDENTIFIER -> HCLBundle.message("terraform.doc.input.variable.0", name) // todo: add short type
