@@ -10,7 +10,7 @@ import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import org.intellij.terraform.config.model.getTerraformModule
 import org.intellij.terraform.config.patterns.TerraformPatterns
-import org.intellij.terraform.firstOrNull
+import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElement
 
 sealed class TerraformFileConfigurationProducer(private val type: Type) : LazyRunConfigurationProducer<TerraformRunConfiguration>(), DumbAware {
@@ -53,8 +53,8 @@ sealed class TerraformFileConfigurationProducer(private val type: Type) : LazyRu
 
     fun getModuleTarget(context: ConfigurationContext): Pair<String, String>? {
       val location = context.location ?: return null
-      val element = location.getAncestors(HCLElement::class.java, false).firstOrNull()?.psiElement ?: return null
-      return getModuleTarget(element)
+      val block = location.psiElement.containingFile?.children?.firstOrNull { it is HCLBlock } ?: return null
+      return getModuleTarget(block)
     }
 
     private fun getModuleTarget(element: PsiElement): Pair<String, String>? {
