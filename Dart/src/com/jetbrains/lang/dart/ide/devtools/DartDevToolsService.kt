@@ -26,7 +26,7 @@ class DartDevToolsService(private val myProject: Project) : Disposable {
   private lateinit var processHandler: KillableProcessHandler
   private var serviceRunning = false
 
-  var devToolsUri: String? = null
+  var devToolsHostAndPort: String? = null
     private set
 
   fun startService(dtdUri: String? = null) {
@@ -79,7 +79,7 @@ class DartDevToolsService(private val myProject: Project) : Disposable {
           val params = json["params"].asJsonObject
           val host: String = params.get("host").asString
           val port: Int = params.get("port").asInt
-          devToolsUri = "$host:$port"
+          devToolsHostAndPort = "$host:$port"
         }
       }
       catch (e: Exception) {
@@ -90,13 +90,14 @@ class DartDevToolsService(private val myProject: Project) : Disposable {
 
     override fun processTerminated(event: ProcessEvent) {
       serviceRunning = false
-      devToolsUri = null
+      devToolsHostAndPort = null
       logger.info("DevTools terminated, exit code: ${event.exitCode}")
     }
   }
 
 
   companion object {
+    @JvmStatic
     fun getInstance(project: Project): DartDevToolsService = project.service()
 
     private const val MIN_SDK_VERSION: String = "2.15"
