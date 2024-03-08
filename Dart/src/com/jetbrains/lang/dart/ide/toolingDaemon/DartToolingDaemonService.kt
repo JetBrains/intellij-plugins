@@ -205,7 +205,7 @@ class DartToolingDaemonService private constructor(private val project: Project)
     override fun processTerminated(event: ProcessEvent) {
       serviceRunning = false
       webSocketReady = false
-      logger.debug("DTD terminated, exit code: ${event.exitCode}")
+      logger.info("DTD terminated, exit code: ${event.exitCode}")
     }
   }
 
