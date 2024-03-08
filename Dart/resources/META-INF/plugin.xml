@@ -261,6 +261,9 @@
                        bundle="messages.DartBundle" key="notification.group.dart.analysis.issue"/>
 
     <iconMapper mappingFile="DartIconMappings.json"/>
+
+    <!--suppress PluginXmlCapitalization -->
+    <registryKey defaultValue="true" description="Launch Dart Tooling Daemon and DevTools" key="dart.launch.dtd.and.devtools"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains">
