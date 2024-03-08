@@ -5,12 +5,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface ForLoop extends ILExpression {
+public interface ForCondition extends ILExpression {
 
   @NotNull
   List<ILExpression> getILExpressionList();
 
-  @Nullable
-  ILTemplateBlock getILTemplateBlock();
+  @NotNull
+  PsiElement getTemplateStart();
 
 }

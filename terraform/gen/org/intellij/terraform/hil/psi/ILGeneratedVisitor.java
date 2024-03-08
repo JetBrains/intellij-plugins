@@ -19,7 +19,11 @@ import org.intellij.terraform.hcl.psi.common.IndexSelectExpression;
 
 public class ILGeneratedVisitor extends PsiElementVisitor {
 
-  public void visitElseBranch(@NotNull ElseBranch o) {
+  public void visitBadTag(@NotNull BadTag o) {
+    visitILExpression(o);
+  }
+
+  public void visitElseCondition(@NotNull ElseCondition o) {
     visitILExpression(o);
   }
 
@@ -27,11 +31,11 @@ public class ILGeneratedVisitor extends PsiElementVisitor {
     visitILExpression(o);
   }
 
-  public void visitEndIfBranch(@NotNull EndIfBranch o) {
+  public void visitEndIf(@NotNull EndIf o) {
     visitILExpression(o);
   }
 
-  public void visitForLoop(@NotNull ForLoop o) {
+  public void visitForCondition(@NotNull ForCondition o) {
     visitILExpression(o);
   }
 
@@ -132,7 +136,7 @@ public class ILGeneratedVisitor extends PsiElementVisitor {
     visitILExpression(o);
   }
 
-  public void visitILTemplateBlock(@NotNull ILTemplateBlock o) {
+  public void visitILTemplateBlockBody(@NotNull ILTemplateBlockBody o) {
     visitILExpression(o);
   }
 
@@ -158,7 +162,7 @@ public class ILGeneratedVisitor extends PsiElementVisitor {
     // visitIdentifier(o);
   }
 
-  public void visitIfBranch(@NotNull IfBranch o) {
+  public void visitIfCondition(@NotNull IfCondition o) {
     visitILExpression(o);
   }
 

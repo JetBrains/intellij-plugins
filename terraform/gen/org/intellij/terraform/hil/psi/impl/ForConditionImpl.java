@@ -10,15 +10,15 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static org.intellij.terraform.hil.HILElementTypes.*;
 import org.intellij.terraform.hil.psi.*;
 
-public class ForLoopImpl extends ILExpressionBase implements ForLoop {
+public class ForConditionImpl extends ILExpressionBase implements ForCondition {
 
-  public ForLoopImpl(@NotNull ASTNode node) {
+  public ForConditionImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   @Override
   public void accept(@NotNull ILGeneratedVisitor visitor) {
-    visitor.visitForLoop(this);
+    visitor.visitForCondition(this);
   }
 
   @Override
@@ -34,9 +34,9 @@ public class ForLoopImpl extends ILExpressionBase implements ForLoop {
   }
 
   @Override
-  @Nullable
-  public ILTemplateBlock getILTemplateBlock() {
-    return findChildByClass(ILTemplateBlock.class);
+  @NotNull
+  public PsiElement getTemplateStart() {
+    return findNotNullChildByType(TEMPLATE_START);
   }
 
 }

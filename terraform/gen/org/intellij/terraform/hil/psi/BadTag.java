@@ -5,6 +5,9 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface EndIfBranch extends ILExpression {
+public interface BadTag extends ILExpression {
+
+  @Nullable
+  PsiElement getTemplateStart();
 
 }

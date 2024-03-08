@@ -8,12 +8,13 @@ import org.intellij.terraform.hil.psi.impl.*;
 
 public interface HILElementTypes {
 
-  IElementType ELSE_BRANCH = new HILElementType("ELSE_BRANCH");
+  IElementType BAD_TAG = new HILElementType("BAD_TAG");
+  IElementType ELSE_CONDITION = new HILElementType("ELSE_CONDITION");
   IElementType END_FOR = new HILElementType("END_FOR");
-  IElementType END_IF_BRANCH = new HILElementType("END_IF_BRANCH");
-  IElementType FOR_LOOP = new HILElementType("FOR_LOOP");
+  IElementType END_IF = new HILElementType("END_IF");
+  IElementType FOR_CONDITION = new HILElementType("FOR_CONDITION");
   IElementType FOR_VARIABLE = new HILElementType("FOR_VARIABLE");
-  IElementType IF_BRANCH = new HILElementType("IF_BRANCH");
+  IElementType IF_CONDITION = new HILElementType("IF_CONDITION");
   IElementType IL_ARRAY = new HILElementType("IL_ARRAY");
   IElementType IL_BINARY_ADDITION_EXPRESSION = new HILElementType("IL_BINARY_ADDITION_EXPRESSION");
   IElementType IL_BINARY_AND_EXPRESSION = new HILElementType("IL_BINARY_AND_EXPRESSION");
@@ -34,7 +35,7 @@ public interface HILElementTypes {
   IElementType IL_PROPERTY = new HILElementType("IL_PROPERTY");
   IElementType IL_SELECT_EXPRESSION = new HILElementType("IL_SELECT_EXPRESSION");
   IElementType IL_SIMPLE_EXPRESSION = new HILElementType("IL_SIMPLE_EXPRESSION");
-  IElementType IL_TEMPLATE_BLOCK = new HILElementType("IL_TEMPLATE_BLOCK");
+  IElementType IL_TEMPLATE_BLOCK_BODY = new HILElementType("IL_TEMPLATE_BLOCK_BODY");
   IElementType IL_TEMPLATE_FOR_BLOCK_EXPRESSION = new HILElementType("IL_TEMPLATE_FOR_BLOCK_EXPRESSION");
   IElementType IL_TEMPLATE_HOLDER = new HILElementType("IL_TEMPLATE_HOLDER");
   IElementType IL_TEMPLATE_IF_BLOCK_EXPRESSION = new HILElementType("IL_TEMPLATE_IF_BLOCK_EXPRESSION");
@@ -80,29 +81,33 @@ public interface HILElementTypes {
   IElementType R_BRACKET = new HILTokenType("]");
   IElementType R_CURLY = new HILTokenType("}");
   IElementType R_PAREN = new HILTokenType(")");
-  IElementType TEMPLATE_START = new HILTokenType("%{");
+  IElementType TEMPLATE_START = new HILTokenType("TEMPLATE_START");
+  IElementType TILDA = new HILTokenType("~");
   IElementType TRUE = new HILTokenType("true");
 
   class Factory {
     public static PsiElement createElement(ASTNode node) {
       IElementType type = node.getElementType();
-      if (type == ELSE_BRANCH) {
-        return new ElseBranchImpl(node);
+      if (type == BAD_TAG) {
+        return new BadTagImpl(node);
+      }
+      else if (type == ELSE_CONDITION) {
+        return new ElseConditionImpl(node);
       }
       else if (type == END_FOR) {
         return new EndForImpl(node);
       }
-      else if (type == END_IF_BRANCH) {
-        return new EndIfBranchImpl(node);
+      else if (type == END_IF) {
+        return new EndIfImpl(node);
       }
-      else if (type == FOR_LOOP) {
-        return new ForLoopImpl(node);
+      else if (type == FOR_CONDITION) {
+        return new ForConditionImpl(node);
       }
       else if (type == FOR_VARIABLE) {
         return new ForVariableImpl(node);
       }
-      else if (type == IF_BRANCH) {
-        return new IfBranchImpl(node);
+      else if (type == IF_CONDITION) {
+        return new IfConditionImpl(node);
       }
       else if (type == IL_ARRAY) {
         return new ILArrayImpl(node);
@@ -158,8 +163,8 @@ public interface HILElementTypes {
       else if (type == IL_SELECT_EXPRESSION) {
         return new ILSelectExpressionImpl(node);
       }
-      else if (type == IL_TEMPLATE_BLOCK) {
-        return new ILTemplateBlockImpl(node);
+      else if (type == IL_TEMPLATE_BLOCK_BODY) {
+        return new ILTemplateBlockBodyImpl(node);
       }
       else if (type == IL_TEMPLATE_FOR_BLOCK_EXPRESSION) {
         return new ILTemplateForBlockExpressionImpl(node);

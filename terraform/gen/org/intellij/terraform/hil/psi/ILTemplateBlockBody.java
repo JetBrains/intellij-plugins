@@ -5,7 +5,10 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface ILTemplateBlock extends ILExpression {
+public interface ILTemplateBlockBody extends ILExpression {
+
+  @NotNull
+  List<BadTag> getBadTagList();
 
   @NotNull
   List<ILExpression> getILExpressionList();

@@ -10,7 +10,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.lang.PsiParser;
 import com.intellij.lang.LightPsiParser;
-;
+import static com.intellij.lang.WhitespacesBinders.*;
 
 @SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
 public class HILParser implements PsiParser, LightPsiParser {
@@ -59,94 +59,114 @@ public class HILParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // TEMPLATE_START ELSE_KEYWORD '}' ILTemplateBlock?
-  public static boolean ElseBranch(PsiBuilder b, int l) {
+  // (TEMPLATE_START|INTERPOLATION_START) <<templateBlockRecoveryUntil 'R_CURLY'>> R_CURLY
+  public static boolean BadTag(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "BadTag")) return false;
+    if (!nextTokenIs(b, "<bad tag>", INTERPOLATION_START, TEMPLATE_START)) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, BAD_TAG, "<bad tag>");
+    r = BadTag_0(b, l + 1);
+    r = r && templateBlockRecoveryUntil(b, l + 1, R_CURLY);
+    r = r && consumeToken(b, R_CURLY);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // TEMPLATE_START|INTERPOLATION_START
+  private static boolean BadTag_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "BadTag_0")) return false;
+    boolean r;
+    r = consumeToken(b, TEMPLATE_START);
+    if (!r) r = consumeToken(b, INTERPOLATION_START);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // ElseCondition ILTemplateBlockBody
+  static boolean ElseBranch(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "ElseBranch")) return false;
     if (!nextTokenIs(b, TEMPLATE_START)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, TEMPLATE_START, ELSE_KEYWORD, R_CURLY);
-    r = r && ElseBranch_3(b, l + 1);
-    exit_section_(b, m, ELSE_BRANCH, r);
+    r = ElseCondition(b, l + 1);
+    r = r && ILTemplateBlockBody(b, l + 1);
+    exit_section_(b, m, null, r);
     return r;
   }
 
-  // ILTemplateBlock?
-  private static boolean ElseBranch_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "ElseBranch_3")) return false;
-    ILTemplateBlock(b, l + 1);
-    return true;
+  /* ********************************************************** */
+  // TEMPLATE_START ELSE_KEYWORD R_CURLY
+  public static boolean ElseCondition(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ElseCondition")) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, ELSE_CONDITION, "<else condition>");
+    r = consumeTokens(b, 2, TEMPLATE_START, ELSE_KEYWORD, R_CURLY);
+    p = r; // pin = 2
+    exit_section_(b, l, m, r, p, HILParser::not_control_structure_symbol);
+    return r || p;
   }
 
   /* ********************************************************** */
-  // TEMPLATE_START ENDFOR_KEYWORD '}'
+  // TEMPLATE_START ENDFOR_KEYWORD R_CURLY
   public static boolean EndFor(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "EndFor")) return false;
-    if (!nextTokenIs(b, TEMPLATE_START)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, TEMPLATE_START, ENDFOR_KEYWORD, R_CURLY);
-    exit_section_(b, m, END_FOR, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // TEMPLATE_START ENDIF_KEYWORD '}'
-  public static boolean EndIfBranch(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "EndIfBranch")) return false;
-    if (!nextTokenIs(b, TEMPLATE_START)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, TEMPLATE_START, ENDIF_KEYWORD, R_CURLY);
-    exit_section_(b, m, END_IF_BRANCH, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // TEMPLATE_START FOR_KEYWORD ForVariable ("," ForVariable)* IN_KEYWORD ILSimpleExpression '}' ILTemplateBlock?
-  public static boolean ForLoop(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "ForLoop")) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, FOR_LOOP, "<for loop>");
+    Marker m = enter_section_(b, l, _NONE_, END_FOR, "<end for>");
+    r = consumeTokens(b, 2, TEMPLATE_START, ENDFOR_KEYWORD, R_CURLY);
+    p = r; // pin = 2
+    exit_section_(b, l, m, r, p, HILParser::not_control_structure_symbol);
+    return r || p;
+  }
+
+  /* ********************************************************** */
+  // TEMPLATE_START ENDIF_KEYWORD R_CURLY
+  public static boolean EndIf(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "EndIf")) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, END_IF, "<end if>");
+    r = consumeTokens(b, 2, TEMPLATE_START, ENDIF_KEYWORD, R_CURLY);
+    p = r; // pin = 2
+    exit_section_(b, l, m, r, p, HILParser::not_control_structure_symbol);
+    return r || p;
+  }
+
+  /* ********************************************************** */
+  // TEMPLATE_START FOR_KEYWORD ForVariable ("," ForVariable)* IN_KEYWORD ILSimpleExpression R_CURLY
+  public static boolean ForCondition(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ForCondition")) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, FOR_CONDITION, "<for condition>");
     r = consumeTokens(b, 2, TEMPLATE_START, FOR_KEYWORD);
     p = r; // pin = 2
     r = r && report_error_(b, ForVariable(b, l + 1));
-    r = p && report_error_(b, ForLoop_3(b, l + 1)) && r;
+    r = p && report_error_(b, ForCondition_3(b, l + 1)) && r;
     r = p && report_error_(b, consumeToken(b, IN_KEYWORD)) && r;
     r = p && report_error_(b, ILSimpleExpression(b, l + 1)) && r;
-    r = p && report_error_(b, consumeToken(b, R_CURLY)) && r;
-    r = p && ForLoop_7(b, l + 1) && r;
+    r = p && consumeToken(b, R_CURLY) && r;
     exit_section_(b, l, m, r, p, HILParser::not_control_structure_symbol);
     return r || p;
   }
 
   // ("," ForVariable)*
-  private static boolean ForLoop_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "ForLoop_3")) return false;
+  private static boolean ForCondition_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ForCondition_3")) return false;
     while (true) {
       int c = current_position_(b);
-      if (!ForLoop_3_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "ForLoop_3", c)) break;
+      if (!ForCondition_3_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "ForCondition_3", c)) break;
     }
     return true;
   }
 
   // "," ForVariable
-  private static boolean ForLoop_3_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "ForLoop_3_0")) return false;
+  private static boolean ForCondition_3_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ForCondition_3_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, COMMA);
     r = r && ForVariable(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
-  }
-
-  // ILTemplateBlock?
-  private static boolean ForLoop_7(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "ForLoop_7")) return false;
-    ILTemplateBlock(b, l + 1);
-    return true;
   }
 
   /* ********************************************************** */
@@ -361,66 +381,56 @@ public class HILParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ((shouldParseAsTemplate data_language_segment | ILExpression) | ILTemplateHolder | ILExpressionHolder)+
-  public static boolean ILTemplateBlock(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "ILTemplateBlock")) return false;
+  // (template_segment_support | ILExpression | ILTemplateHolder | ILExpressionHolder | BadTag)+
+  public static boolean ILTemplateBlockBody(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ILTemplateBlockBody")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, IL_TEMPLATE_BLOCK, "<il template block>");
-    r = ILTemplateBlock_0(b, l + 1);
+    Marker m = enter_section_(b, l, _NONE_, IL_TEMPLATE_BLOCK_BODY, "<il template block body>");
+    r = ILTemplateBlockBody_0(b, l + 1);
     while (r) {
       int c = current_position_(b);
-      if (!ILTemplateBlock_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "ILTemplateBlock", c)) break;
+      if (!ILTemplateBlockBody_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "ILTemplateBlockBody", c)) break;
     }
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
-  // (shouldParseAsTemplate data_language_segment | ILExpression) | ILTemplateHolder | ILExpressionHolder
-  private static boolean ILTemplateBlock_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "ILTemplateBlock_0")) return false;
+  // template_segment_support | ILExpression | ILTemplateHolder | ILExpressionHolder | BadTag
+  private static boolean ILTemplateBlockBody_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ILTemplateBlockBody_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = ILTemplateBlock_0_0(b, l + 1);
+    r = template_segment_support(b, l + 1);
+    if (!r) r = ILExpression(b, l + 1, -1);
     if (!r) r = ILTemplateHolder(b, l + 1);
     if (!r) r = ILExpressionHolder(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // shouldParseAsTemplate data_language_segment | ILExpression
-  private static boolean ILTemplateBlock_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "ILTemplateBlock_0_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = ILTemplateBlock_0_0_0(b, l + 1);
-    if (!r) r = ILExpression(b, l + 1, -1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // shouldParseAsTemplate data_language_segment
-  private static boolean ILTemplateBlock_0_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "ILTemplateBlock_0_0_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = isTemplatingSupported(b, l + 1);
-    r = r && parseDataLanguageToken(b, l + 1);
+    if (!r) r = BadTag(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   /* ********************************************************** */
-  // ForLoop EndFor
+  // ForCondition <<expectForEnd>> ILTemplateBlockBody? <<removeForEndExpectation>> EndFor
   public static boolean ILTemplateForBlockExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "ILTemplateForBlockExpression")) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, IL_TEMPLATE_FOR_BLOCK_EXPRESSION, "<il template for block expression>");
-    r = ForLoop(b, l + 1);
-    p = r; // pin = 1
+    if (!nextTokenIs(b, TEMPLATE_START)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = ForCondition(b, l + 1);
+    r = r && expectForEnd(b, l + 1);
+    r = r && ILTemplateForBlockExpression_2(b, l + 1);
+    r = r && removeForEndExpectation(b, l + 1);
     r = r && EndFor(b, l + 1);
-    exit_section_(b, l, m, r, p, HILParser::not_another_complete_control_structure);
-    return r || p;
+    exit_section_(b, m, IL_TEMPLATE_FOR_BLOCK_EXPRESSION, r);
+    return r;
+  }
+
+  // ILTemplateBlockBody?
+  private static boolean ILTemplateForBlockExpression_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ILTemplateForBlockExpression_2")) return false;
+    ILTemplateBlockBody(b, l + 1);
+    return true;
   }
 
   /* ********************************************************** */
@@ -437,56 +447,42 @@ public class HILParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // IfBranch ElseBranch? EndIfBranch
+  // IfCondition <<expectIfEnd>> ILTemplateBlockBody ElseBranch? <<removeIfEndExpectation>> EndIf
   public static boolean ILTemplateIfBlockExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "ILTemplateIfBlockExpression")) return false;
+    if (!nextTokenIs(b, TEMPLATE_START)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, IL_TEMPLATE_IF_BLOCK_EXPRESSION, "<il template if block expression>");
-    r = IfBranch(b, l + 1);
+    Marker m = enter_section_(b, l, _NONE_, IL_TEMPLATE_IF_BLOCK_EXPRESSION, null);
+    r = IfCondition(b, l + 1);
     p = r; // pin = 1
-    r = r && report_error_(b, ILTemplateIfBlockExpression_1(b, l + 1));
-    r = p && EndIfBranch(b, l + 1) && r;
-    exit_section_(b, l, m, r, p, HILParser::not_another_complete_control_structure);
+    r = r && report_error_(b, expectIfEnd(b, l + 1));
+    r = p && report_error_(b, ILTemplateBlockBody(b, l + 1)) && r;
+    r = p && report_error_(b, ILTemplateIfBlockExpression_3(b, l + 1)) && r;
+    r = p && report_error_(b, removeIfEndExpectation(b, l + 1)) && r;
+    r = p && EndIf(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
   // ElseBranch?
-  private static boolean ILTemplateIfBlockExpression_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "ILTemplateIfBlockExpression_1")) return false;
+  private static boolean ILTemplateIfBlockExpression_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ILTemplateIfBlockExpression_3")) return false;
     ElseBranch(b, l + 1);
     return true;
   }
 
   /* ********************************************************** */
-  // TEMPLATE_START IF_KEYWORD (ILSimpleExpression) '}' ILTemplateBlock?
-  public static boolean IfBranch(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "IfBranch")) return false;
+  // TEMPLATE_START IF_KEYWORD ILExpression R_CURLY
+  public static boolean IfCondition(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "IfCondition")) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, IF_BRANCH, "<if branch>");
+    Marker m = enter_section_(b, l, _NONE_, IF_CONDITION, "<if condition>");
     r = consumeTokens(b, 2, TEMPLATE_START, IF_KEYWORD);
     p = r; // pin = 2
-    r = r && report_error_(b, IfBranch_2(b, l + 1));
-    r = p && report_error_(b, consumeToken(b, R_CURLY)) && r;
-    r = p && IfBranch_4(b, l + 1) && r;
+    r = r && report_error_(b, ILExpression(b, l + 1, -1));
+    r = p && consumeToken(b, R_CURLY) && r;
     exit_section_(b, l, m, r, p, HILParser::not_control_structure_symbol);
     return r || p;
-  }
-
-  // (ILSimpleExpression)
-  private static boolean IfBranch_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "IfBranch_2")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = ILSimpleExpression(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ILTemplateBlock?
-  private static boolean IfBranch_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "IfBranch_4")) return false;
-    ILTemplateBlock(b, l + 1);
-    return true;
   }
 
   /* ********************************************************** */
@@ -639,32 +635,6 @@ public class HILParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // !(ForLoop|EndFor|IfBranch|ElseBranch|EndIfBranch|isDataLanguageSegment)
-  static boolean not_another_complete_control_structure(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "not_another_complete_control_structure")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NOT_);
-    r = !not_another_complete_control_structure_0(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // ForLoop|EndFor|IfBranch|ElseBranch|EndIfBranch|isDataLanguageSegment
-  private static boolean not_another_complete_control_structure_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "not_another_complete_control_structure_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = ForLoop(b, l + 1);
-    if (!r) r = EndFor(b, l + 1);
-    if (!r) r = IfBranch(b, l + 1);
-    if (!r) r = ElseBranch(b, l + 1);
-    if (!r) r = EndIfBranch(b, l + 1);
-    if (!r) r = isDataLanguageToken(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
   // !('}'|ObjectElement)
   static boolean not_brace_or_next_value_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "not_brace_or_next_value_2")) return false;
@@ -705,23 +675,33 @@ public class HILParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // !('}'|'{'|'${'|'%{'|isDataLanguageSegment)
+  // shouldParseAsTemplate !(L_CURLY|INTERPOLATION_START|TEMPLATE_START|isDataLanguageSegment)
   static boolean not_control_structure_symbol(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "not_control_structure_symbol")) return false;
     boolean r;
+    Marker m = enter_section_(b);
+    r = isTemplatingSupported(b, l + 1);
+    r = r && not_control_structure_symbol_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // !(L_CURLY|INTERPOLATION_START|TEMPLATE_START|isDataLanguageSegment)
+  private static boolean not_control_structure_symbol_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "not_control_structure_symbol_1")) return false;
+    boolean r;
     Marker m = enter_section_(b, l, _NOT_);
-    r = !not_control_structure_symbol_0(b, l + 1);
+    r = !not_control_structure_symbol_1_0(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
-  // '}'|'{'|'${'|'%{'|isDataLanguageSegment
-  private static boolean not_control_structure_symbol_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "not_control_structure_symbol_0")) return false;
+  // L_CURLY|INTERPOLATION_START|TEMPLATE_START|isDataLanguageSegment
+  private static boolean not_control_structure_symbol_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "not_control_structure_symbol_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, R_CURLY);
-    if (!r) r = consumeToken(b, L_CURLY);
+    r = consumeToken(b, L_CURLY);
     if (!r) r = consumeToken(b, INTERPOLATION_START);
     if (!r) r = consumeToken(b, TEMPLATE_START);
     if (!r) r = isDataLanguageToken(b, l + 1);
@@ -837,14 +817,13 @@ public class HILParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // shouldParseAsTemplate (data_language_segment | template_segment)* | ILTemplateHolder | ILExpressionHolder
+  // shouldParseAsTemplate (data_language_segment | template_segment)* | template_segment
   static boolean root(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "root")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = root_0(b, l + 1);
-    if (!r) r = ILTemplateHolder(b, l + 1);
-    if (!r) r = ILExpressionHolder(b, l + 1);
+    if (!r) r = template_segment(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -883,7 +862,7 @@ public class HILParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ILTemplateHolder | ILExpressionHolder
+  // ILTemplateHolder | ILExpressionHolder | BadTag
   static boolean template_segment(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "template_segment")) return false;
     if (!nextTokenIs(b, "", INTERPOLATION_START, TEMPLATE_START)) return false;
@@ -891,6 +870,19 @@ public class HILParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = ILTemplateHolder(b, l + 1);
     if (!r) r = ILExpressionHolder(b, l + 1);
+    if (!r) r = BadTag(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // shouldParseAsTemplate data_language_segment
+  static boolean template_segment_support(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "template_segment_support")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = isTemplatingSupported(b, l + 1);
+    r = r && parseDataLanguageToken(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }

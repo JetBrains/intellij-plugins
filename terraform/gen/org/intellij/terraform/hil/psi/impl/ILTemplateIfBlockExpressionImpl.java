@@ -29,20 +29,26 @@ public class ILTemplateIfBlockExpressionImpl extends ILExpressionImpl implements
 
   @Override
   @Nullable
-  public ElseBranch getElseBranch() {
-    return findChildByClass(ElseBranch.class);
+  public ElseCondition getElseCondition() {
+    return findChildByClass(ElseCondition.class);
   }
 
   @Override
   @Nullable
-  public EndIfBranch getEndIfBranch() {
-    return findChildByClass(EndIfBranch.class);
+  public EndIf getEndIf() {
+    return findChildByClass(EndIf.class);
   }
 
   @Override
   @NotNull
-  public IfBranch getIfBranch() {
-    return findNotNullChildByClass(IfBranch.class);
+  public List<ILTemplateBlockBody> getILTemplateBlockBodyList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, ILTemplateBlockBody.class);
+  }
+
+  @Override
+  @NotNull
+  public IfCondition getIfCondition() {
+    return findNotNullChildByClass(IfCondition.class);
   }
 
 }

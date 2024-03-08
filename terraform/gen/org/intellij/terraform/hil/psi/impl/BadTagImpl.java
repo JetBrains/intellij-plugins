@@ -10,21 +10,27 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static org.intellij.terraform.hil.HILElementTypes.*;
 import org.intellij.terraform.hil.psi.*;
 
-public class EndIfBranchImpl extends ILExpressionBase implements EndIfBranch {
+public class BadTagImpl extends ILExpressionBase implements BadTag {
 
-  public EndIfBranchImpl(@NotNull ASTNode node) {
+  public BadTagImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   @Override
   public void accept(@NotNull ILGeneratedVisitor visitor) {
-    visitor.visitEndIfBranch(this);
+    visitor.visitBadTag(this);
   }
 
   @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof ILGeneratedVisitor) accept((ILGeneratedVisitor)visitor);
     else super.accept(visitor);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getTemplateStart() {
+    return findChildByType(TEMPLATE_START);
   }
 
 }

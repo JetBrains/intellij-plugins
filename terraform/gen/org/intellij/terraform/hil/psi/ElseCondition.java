@@ -5,9 +5,9 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface ElseBranch extends ILExpression {
+public interface ElseCondition extends ILExpression {
 
-  @Nullable
-  ILTemplateBlock getILTemplateBlock();
+  @NotNull
+  PsiElement getTemplateStart();
 
 }

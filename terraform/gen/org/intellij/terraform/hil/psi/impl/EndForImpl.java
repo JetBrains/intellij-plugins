@@ -27,4 +27,10 @@ public class EndForImpl extends ILExpressionBase implements EndFor {
     else super.accept(visitor);
   }
 
+  @Override
+  @NotNull
+  public PsiElement getTemplateStart() {
+    return findNotNullChildByType(TEMPLATE_START);
+  }
+
 }

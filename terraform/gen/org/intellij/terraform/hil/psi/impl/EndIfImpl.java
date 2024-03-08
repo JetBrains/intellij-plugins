@@ -10,15 +10,15 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static org.intellij.terraform.hil.HILElementTypes.*;
 import org.intellij.terraform.hil.psi.*;
 
-public class ILTemplateBlockImpl extends ILExpressionBase implements ILTemplateBlock {
+public class EndIfImpl extends ILExpressionBase implements EndIf {
 
-  public ILTemplateBlockImpl(@NotNull ASTNode node) {
+  public EndIfImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   @Override
   public void accept(@NotNull ILGeneratedVisitor visitor) {
-    visitor.visitILTemplateBlock(this);
+    visitor.visitEndIf(this);
   }
 
   @Override
@@ -29,14 +29,8 @@ public class ILTemplateBlockImpl extends ILExpressionBase implements ILTemplateB
 
   @Override
   @NotNull
-  public List<ILExpression> getILExpressionList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, ILExpression.class);
-  }
-
-  @Override
-  @NotNull
-  public List<ILTemplateHolder> getILTemplateHolderList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, ILTemplateHolder.class);
+  public PsiElement getTemplateStart() {
+    return findNotNullChildByType(TEMPLATE_START);
   }
 
 }

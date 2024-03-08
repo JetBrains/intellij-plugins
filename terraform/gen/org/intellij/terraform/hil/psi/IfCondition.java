@@ -5,12 +5,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface IfBranch extends ILExpression {
+public interface IfCondition extends ILExpression {
 
   @Nullable
   ILExpression getILExpression();
 
-  @Nullable
-  ILTemplateBlock getILTemplateBlock();
+  @NotNull
+  PsiElement getTemplateStart();
 
 }

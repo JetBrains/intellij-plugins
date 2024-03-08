@@ -44,7 +44,7 @@ public class HILParserUtil extends GeneratedParserUtilBase {
   }
 
   public static boolean templateBlockRecoveryUntil(PsiBuilder b, int l, IElementType stopTokenType) {
-    if (!(b instanceof HilTemplatingAwarePsiBuilder hilBuilder)) return false;
+    if (!(b instanceof HilTemplatingAwarePsiBuilder hilBuilder)) return true;
 
     // process incomplete branches
     if (HILTokenTypes.getIL_CONTROL_STRUCTURE_START_KEYWORDS().contains(b.getTokenType())) return false;

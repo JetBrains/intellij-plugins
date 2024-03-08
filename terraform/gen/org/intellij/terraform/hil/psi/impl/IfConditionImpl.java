@@ -10,15 +10,15 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static org.intellij.terraform.hil.HILElementTypes.*;
 import org.intellij.terraform.hil.psi.*;
 
-public class ElseBranchImpl extends ILExpressionBase implements ElseBranch {
+public class IfConditionImpl extends ILExpressionBase implements IfCondition {
 
-  public ElseBranchImpl(@NotNull ASTNode node) {
+  public IfConditionImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   @Override
   public void accept(@NotNull ILGeneratedVisitor visitor) {
-    visitor.visitElseBranch(this);
+    visitor.visitIfCondition(this);
   }
 
   @Override
@@ -29,8 +29,14 @@ public class ElseBranchImpl extends ILExpressionBase implements ElseBranch {
 
   @Override
   @Nullable
-  public ILTemplateBlock getILTemplateBlock() {
-    return findChildByClass(ILTemplateBlock.class);
+  public ILExpression getILExpression() {
+    return findChildByClass(ILExpression.class);
+  }
+
+  @Override
+  @NotNull
+  public PsiElement getTemplateStart() {
+    return findNotNullChildByType(TEMPLATE_START);
   }
 
 }

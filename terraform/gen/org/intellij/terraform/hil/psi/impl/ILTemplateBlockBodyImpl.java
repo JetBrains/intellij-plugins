@@ -10,15 +10,15 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static org.intellij.terraform.hil.HILElementTypes.*;
 import org.intellij.terraform.hil.psi.*;
 
-public class ILTemplateForBlockExpressionImpl extends ILExpressionImpl implements ILTemplateForBlockExpression {
+public class ILTemplateBlockBodyImpl extends ILExpressionBase implements ILTemplateBlockBody {
 
-  public ILTemplateForBlockExpressionImpl(@NotNull ASTNode node) {
+  public ILTemplateBlockBodyImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   @Override
   public void accept(@NotNull ILGeneratedVisitor visitor) {
-    visitor.visitILTemplateForBlockExpression(this);
+    visitor.visitILTemplateBlockBody(this);
   }
 
   @Override
@@ -29,25 +29,20 @@ public class ILTemplateForBlockExpressionImpl extends ILExpressionImpl implement
 
   @Override
   @NotNull
-  public EndFor getEndFor() {
-    return findNotNullChildByClass(EndFor.class);
+  public List<BadTag> getBadTagList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, BadTag.class);
   }
 
   @Override
   @NotNull
-  public ForCondition getForCondition() {
-    return findNotNullChildByClass(ForCondition.class);
+  public List<ILExpression> getILExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, ILExpression.class);
   }
 
   @Override
-  @Nullable
-  public ILTemplateBlockBody getILTemplateBlockBody() {
-    return findChildByClass(ILTemplateBlockBody.class);
-  }
-
-  @Override
-  public @NotNull List<ForVariable> getLoopVariables() {
-    return HILPsiImplUtilJ.getLoopVariables(this);
+  @NotNull
+  public List<ILTemplateHolder> getILTemplateHolderList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, ILTemplateHolder.class);
   }
 
 }

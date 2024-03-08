@@ -7,11 +7,14 @@ import com.intellij.psi.PsiElement;
 
 public interface ILTemplateForBlockExpression extends ILExpression {
 
-  @Nullable
+  @NotNull
   EndFor getEndFor();
 
   @NotNull
-  ForLoop getForLoop();
+  ForCondition getForCondition();
+
+  @Nullable
+  ILTemplateBlockBody getILTemplateBlockBody();
 
   @NotNull List<ForVariable> getLoopVariables();
 

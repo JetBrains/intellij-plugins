@@ -8,12 +8,15 @@ import com.intellij.psi.PsiElement;
 public interface ILTemplateIfBlockExpression extends ILExpression {
 
   @Nullable
-  ElseBranch getElseBranch();
+  ElseCondition getElseCondition();
 
   @Nullable
-  EndIfBranch getEndIfBranch();
+  EndIf getEndIf();
 
   @NotNull
-  IfBranch getIfBranch();
+  List<ILTemplateBlockBody> getILTemplateBlockBodyList();
+
+  @NotNull
+  IfCondition getIfCondition();
 
 }
