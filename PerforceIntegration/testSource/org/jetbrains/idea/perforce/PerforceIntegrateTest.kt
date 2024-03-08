@@ -70,12 +70,12 @@ class PerforceIntegrateTest(private val myInMain: Boolean,
     val useDepotPath = targetDir != projectDir
     val pathPrefix = if (useDepotPath) "//depot/" + targetDir.name else targetDir.path
     val expectedFile = pathPrefix + "/a.txt" + if (useDepotPath) "#1" else ""
-    assertEquals(files.getGroupById(PerforceIntegrateEnvironment.BRANCHED).files,
+    assertEquals(files.getGroupById(PerforceIntegrateEnvironment.BRANCHED)!!.files,
                  if (useDepotPath) listOf(expectedFile) else listOf(FileUtil.toSystemDependentName(expectedFile)))
   }
 
   private fun integrate(): UpdatedFiles {
-    val s = PerforceSettings.getSettings(myProject).getSettings(getConnection())
+    val s = PerforceSettings.getSettings(myProject).getSettings(connection)
     s.INTEGRATE_BRANCH_NAME = "branch"
     s.INTEGRATE_REVERSE = myReverse
     s.INTEGRATE_CHANGE_LIST = myIntegrateChangeList
