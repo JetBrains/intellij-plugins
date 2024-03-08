@@ -12,12 +12,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
-@State(
-    name = "TerraformToolProjectSettings",
-    storages = @Storage("terraform.xml")
-)
+@State(name = "TerraformToolProjectSettings", storages = @Storage("terraform.xml"))
 public class TerraformToolProjectSettings implements PersistentStateComponent<TerraformToolProjectSettings.State> {
-  private State myState = new State();
+  private final State myState = new State();
 
   public static TerraformToolProjectSettings getInstance(@NotNull final Project project) {
     return project.getService(TerraformToolProjectSettings.class);
@@ -39,7 +36,7 @@ public class TerraformToolProjectSettings implements PersistentStateComponent<Te
   }
 
   public void setTerraformPath(String terraformPath) {
-    myState.myTerraformPath = terraformPath;
+    myState.myTerraformPath = terraformPath.trim().isEmpty() ? getDefaultTerraformPath() : terraformPath;
   }
 
   public static class State {
@@ -55,9 +52,9 @@ public class TerraformToolProjectSettings implements PersistentStateComponent<Te
 
     if (SystemInfo.isUnix) {
       return "terraform";
-    } else {
+    }
+    else {
       return "terraform.exe";
     }
   }
-
 }
