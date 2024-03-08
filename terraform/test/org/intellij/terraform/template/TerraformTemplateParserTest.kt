@@ -2,12 +2,10 @@ package org.intellij.terraform.template
 
 import com.intellij.openapi.application.PathManager
 import com.intellij.testFramework.ParsingTestCase
-import org.intellij.terraform.config.TerraformParserDefinition
-import org.intellij.terraform.hcl.HCLParserDefinition
 import org.intellij.terraform.hil.HILParserDefinition
 import org.intellij.terraform.template.psi.TerraformTemplateParserDefinition
 
-class TerraformTemplateParserTest : ParsingTestCase("", "tftpl", false, TerraformTemplateParserDefinition(), HILParserDefinition(), HCLParserDefinition(), TerraformParserDefinition()) {
+class TerraformTemplateParserTest : ParsingTestCase("", "tftpl", false, TerraformTemplateParserDefinition(), HILParserDefinition()) {
   override fun getTestDataPath(): String {
     return PathManager.getHomePath() + "/contrib/terraform/test-data/terraform/template/parser"
   }
@@ -24,6 +22,8 @@ class TerraformTemplateParserTest : ParsingTestCase("", "tftpl", false, Terrafor
     shouldSkipSpaces = prevValue
   }
 
+  fun testCorrectForLoop() = doRunTest()
+  fun testNestedConstructions() = doRunTest()
   fun testIfExpression() = doRunTest()
   fun testForLoop() = doRunTest()
   fun testCorrectBracesInDataLanguage() = doRunTest()

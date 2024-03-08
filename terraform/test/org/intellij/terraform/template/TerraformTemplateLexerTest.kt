@@ -9,14 +9,72 @@ internal class TerraformTemplateLexerTest : LexerTestCase() {
   override fun createLexer(): Lexer = TerraformTemplateLexer()
   override fun getDirPath(): String = "unused"
 
+  fun testBrokenFor() {
+    doTest(
+      """
+      %{~ for a in b ~}
+
+      %{~~~ endfor }
+
+      """.trimIndent(),
+      """
+        TEMPLATE_START ('%{~')
+        WHITE_SPACE (' ')
+        for ('for')
+        WHITE_SPACE (' ')
+        ID ('a')
+        WHITE_SPACE (' ')
+        in ('in')
+        WHITE_SPACE (' ')
+        ID ('b')
+        WHITE_SPACE (' ')
+        } ('~}')
+        DATA_LANGUAGE_TOKEN_UNPARSED ('\n\n')
+        TEMPLATE_START ('%{~')
+        ~ ('~')
+        ~ ('~')
+        WHITE_SPACE (' ')
+        endfor ('endfor')
+        WHITE_SPACE (' ')
+        } ('}')
+        DATA_LANGUAGE_TOKEN_UNPARSED ('\n') 
+      """.trimIndent())
+  }
+
+  fun testInvalidCharactersBeforeForLoopPin() {
+    doTest("""
+      %{ %{ for a in }
+      %{endfor}
+    """.trimIndent(),
+           """
+             TEMPLATE_START ('%{')
+             WHITE_SPACE (' ')
+             % ('%')
+             BAD_CHARACTER ('{')
+             WHITE_SPACE (' ')
+             for ('for')
+             WHITE_SPACE (' ')
+             ID ('a')
+             WHITE_SPACE (' ')
+             in ('in')
+             WHITE_SPACE (' ')
+             } ('}')
+             DATA_LANGUAGE_TOKEN_UNPARSED ('\n')
+             TEMPLATE_START ('%{')
+             endfor ('endfor')
+             } ('}')
+           """.trimIndent())
+
+  }
+
   fun testForLoop() {
     doTest("""
       %{ for a in }
-      
-      %{endfor}
+        123
+      %{endfor~}
     """.trimIndent(),
     """
-      %{ ('%{')
+      TEMPLATE_START ('%{')
       WHITE_SPACE (' ')
       for ('for')
       WHITE_SPACE (' ')
@@ -25,10 +83,10 @@ internal class TerraformTemplateLexerTest : LexerTestCase() {
       in ('in')
       WHITE_SPACE (' ')
       } ('}')
-      DATA_LANGUAGE_TOKEN_UNPARSED ('\n\n')
-      %{ ('%{')
+      DATA_LANGUAGE_TOKEN_UNPARSED ('\n  123\n')
+      TEMPLATE_START ('%{')
       endfor ('endfor')
-      } ('}')
+      } ('~}')
     """.trimIndent())
   }
 
@@ -42,49 +100,6 @@ internal class TerraformTemplateLexerTest : LexerTestCase() {
       """.trimIndent())
   }
 
-  fun testInvalidCode() {
-    doTest("""
-      $dollar{
-        jsonencode({
-          %{if cradle_v != "" }
-          "cradle": $dollar{cradle_v},
-          %{ endif }
-        })
-      }
-
-    """.trimIndent(),
-           """
-      $dollar{ ('$dollar{')
-      WHITE_SPACE ('\n  ')
-      ID ('jsonencode')
-      ( ('(')
-      { ('{')
-      WHITE_SPACE ('\n    ')
-      % ('%')
-      { ('{')
-      if ('if')
-      WHITE_SPACE (' ')
-      ID ('cradle_v')
-      WHITE_SPACE (' ')
-      != ('!=')
-      WHITE_SPACE (' ')
-      DOUBLE_QUOTED_STRING ('""')
-      WHITE_SPACE (' ')
-      } ('}')
-      DATA_LANGUAGE_TOKEN_UNPARSED ('\n    "cradle": ')
-      $dollar{ ('$dollar{')
-      ID ('cradle_v')
-      } ('}')
-      DATA_LANGUAGE_TOKEN_UNPARSED (',\n    ')
-      %{ ('%{')
-      WHITE_SPACE (' ')
-      endif ('endif')
-      WHITE_SPACE (' ')
-      } ('}')
-      DATA_LANGUAGE_TOKEN_UNPARSED ('\n  })\n}\n')
-    """.trimIndent())
-  }
-
   fun testDollarTemplateSegment() {
     doTest("""
       %{ if variable > 3 }
@@ -93,7 +108,7 @@ internal class TerraformTemplateLexerTest : LexerTestCase() {
       bar
       %{ endif }
     """.trimIndent(), """
-      %{ ('%{')
+      TEMPLATE_START ('%{')
       WHITE_SPACE (' ')
       if ('if')
       WHITE_SPACE (' ')
@@ -109,7 +124,7 @@ internal class TerraformTemplateLexerTest : LexerTestCase() {
       ID ('variable')
       } ('}')
       DATA_LANGUAGE_TOKEN_UNPARSED ('\nbar\n')
-      %{ ('%{')
+      TEMPLATE_START ('%{')
       WHITE_SPACE (' ')
       endif ('endif')
       WHITE_SPACE (' ')
@@ -119,12 +134,12 @@ internal class TerraformTemplateLexerTest : LexerTestCase() {
 
   fun testDetectProhibitedInterpolationInsideTemplateSegment() {
     doTest("%{ if \${a} }", """
-      %{ ('%{')
+      TEMPLATE_START ('%{')
       WHITE_SPACE (' ')
       if ('if')
       WHITE_SPACE (' ')
-      $dollar ('$dollar')
-      { ('{')
+      BAD_CHARACTER ('$dollar')
+      BAD_CHARACTER ('{')
       ID ('a')
       } ('}')
       DATA_LANGUAGE_TOKEN_UNPARSED (' }')
@@ -144,7 +159,7 @@ internal class TerraformTemplateLexerTest : LexerTestCase() {
     """.trimIndent(),
            """
       DATA_LANGUAGE_TOKEN_UNPARSED ('{\n  ')
-      %{ ('%{')
+      TEMPLATE_START ('%{')
       WHITE_SPACE (' ')
       if ('if')
       WHITE_SPACE (' ')
@@ -174,13 +189,13 @@ internal class TerraformTemplateLexerTest : LexerTestCase() {
       WHITE_SPACE (' ')
       } ('}')
       DATA_LANGUAGE_TOKEN_UNPARSED ('\n  "example_property": 123,\n  ')
-      %{ ('%{')
+      TEMPLATE_START ('%{')
       WHITE_SPACE (' ')
       endif ('endif')
       WHITE_SPACE (' ')
       } ('}')
       DATA_LANGUAGE_TOKEN_UNPARSED ('\n  ')
-      %{ ('%{')
+      TEMPLATE_START ('%{')
       if ('if')
       WHITE_SPACE (' ')
       ID ('jade_v')
@@ -195,7 +210,7 @@ internal class TerraformTemplateLexerTest : LexerTestCase() {
       ID ('jade_v')
       } ('}')
       DATA_LANGUAGE_TOKEN_UNPARSED (',\n  ')
-      %{ ('%{')
+      TEMPLATE_START ('%{')
       WHITE_SPACE (' ')
       endif ('endif')
       WHITE_SPACE (' ')
@@ -205,7 +220,7 @@ internal class TerraformTemplateLexerTest : LexerTestCase() {
 
   fun testSkeleton() {
     doTest("%{} abc", """
-      %{ ('%{')
+      TEMPLATE_START ('%{')
       } ('}')
       DATA_LANGUAGE_TOKEN_UNPARSED (' abc')
     """.trimIndent())
@@ -214,7 +229,7 @@ internal class TerraformTemplateLexerTest : LexerTestCase() {
   fun testIfCondition() {
     doTest("%{ if method(a, b) } { true } %{ else } { false }",
            """
-             %{ ('%{')
+             TEMPLATE_START ('%{')
              WHITE_SPACE (' ')
              if ('if')
              WHITE_SPACE (' ')
@@ -228,7 +243,7 @@ internal class TerraformTemplateLexerTest : LexerTestCase() {
              WHITE_SPACE (' ')
              } ('}')
              DATA_LANGUAGE_TOKEN_UNPARSED (' { true } ')
-             %{ ('%{')
+             TEMPLATE_START ('%{')
              WHITE_SPACE (' ')
              else ('else')
              WHITE_SPACE (' ')
@@ -244,7 +259,7 @@ internal class TerraformTemplateLexerTest : LexerTestCase() {
         
       """.trimIndent(),
       """
-        %{ ('%{')
+        TEMPLATE_START ('%{')
         if ('if')
         WHITE_SPACE (' ')
         ID ('variable')
@@ -262,11 +277,11 @@ internal class TerraformTemplateLexerTest : LexerTestCase() {
   fun testOpeningBraceInIlSegment() {
     doTest("%{ if {true} }",
            """
-            %{ ('%{')
+            TEMPLATE_START ('%{')
             WHITE_SPACE (' ')
             if ('if')
             WHITE_SPACE (' ')
-            { ('{')
+            BAD_CHARACTER ('{')
             true ('true')
             } ('}')
             DATA_LANGUAGE_TOKEN_UNPARSED (' }')
@@ -276,7 +291,7 @@ internal class TerraformTemplateLexerTest : LexerTestCase() {
   fun testIncorrectBracesInDataLanguage() {
     doTest("%{ if true } }}}} %{ else } }}{{{}",
            """
-             %{ ('%{')
+             TEMPLATE_START ('%{')
              WHITE_SPACE (' ')
              if ('if')
              WHITE_SPACE (' ')
@@ -284,7 +299,7 @@ internal class TerraformTemplateLexerTest : LexerTestCase() {
              WHITE_SPACE (' ')
              } ('}')
              DATA_LANGUAGE_TOKEN_UNPARSED (' }}}} ')
-             %{ ('%{')
+             TEMPLATE_START ('%{')
              WHITE_SPACE (' ')
              else ('else')
              WHITE_SPACE (' ')
@@ -296,7 +311,7 @@ internal class TerraformTemplateLexerTest : LexerTestCase() {
   fun testCorrectBracesInDataLanguage() {
     doTest("%{ if true } { yes } %{ else } { no }",
            """
-            %{ ('%{')
+            TEMPLATE_START ('%{')
             WHITE_SPACE (' ')
             if ('if')
             WHITE_SPACE (' ')
@@ -304,7 +319,7 @@ internal class TerraformTemplateLexerTest : LexerTestCase() {
             WHITE_SPACE (' ')
             } ('}')
             DATA_LANGUAGE_TOKEN_UNPARSED (' { yes } ')
-            %{ ('%{')
+            TEMPLATE_START ('%{')
             WHITE_SPACE (' ')
             else ('else')
             WHITE_SPACE (' ')
@@ -317,7 +332,7 @@ internal class TerraformTemplateLexerTest : LexerTestCase() {
     doTest("hello %{ if a.b.c } 1.3 world %{ else } intellij  2.2 %{ endif } rulezzz",
            """
              DATA_LANGUAGE_TOKEN_UNPARSED ('hello ')
-             %{ ('%{')
+             TEMPLATE_START ('%{')
              WHITE_SPACE (' ')
              if ('if')
              WHITE_SPACE (' ')
@@ -329,13 +344,13 @@ internal class TerraformTemplateLexerTest : LexerTestCase() {
              WHITE_SPACE (' ')
              } ('}')
              DATA_LANGUAGE_TOKEN_UNPARSED (' 1.3 world ')
-             %{ ('%{')
+             TEMPLATE_START ('%{')
              WHITE_SPACE (' ')
              else ('else')
              WHITE_SPACE (' ')
              } ('}')
              DATA_LANGUAGE_TOKEN_UNPARSED (' intellij  2.2 ')
-             %{ ('%{')
+             TEMPLATE_START ('%{')
              WHITE_SPACE (' ')
              endif ('endif')
              WHITE_SPACE (' ')
@@ -348,7 +363,7 @@ internal class TerraformTemplateLexerTest : LexerTestCase() {
   fun testSimpleExamples() {
     doTest("%{ if a.b.c } 1.3 %{ else } 2.2 %{ endif }",
            """
-             %{ ('%{')
+             TEMPLATE_START ('%{')
              WHITE_SPACE (' ')
              if ('if')
              WHITE_SPACE (' ')
@@ -360,13 +375,13 @@ internal class TerraformTemplateLexerTest : LexerTestCase() {
              WHITE_SPACE (' ')
              } ('}')
              DATA_LANGUAGE_TOKEN_UNPARSED (' 1.3 ')
-             %{ ('%{')
+             TEMPLATE_START ('%{')
              WHITE_SPACE (' ')
              else ('else')
              WHITE_SPACE (' ')
              } ('}')
              DATA_LANGUAGE_TOKEN_UNPARSED (' 2.2 ')
-             %{ ('%{')
+             TEMPLATE_START ('%{')
              WHITE_SPACE (' ')
              endif ('endif')
              WHITE_SPACE (' ')

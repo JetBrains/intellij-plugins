@@ -194,6 +194,6 @@ class TerraformTemplateCompletionTest : BasePlatformTestCase() {
     """.trimIndent())
     val completionVariants = myFixture.getCompletionVariants("template.tftpl")
     Assert.assertNotNull(completionVariants)
-    UsefulTestCase.assertContainsElements(completionVariants!!, "for", "if", "in", "endif", "endfor")
+    UsefulTestCase.assertContainsElements(completionVariants!!, "for", "if", "endif", "endfor")
   }
 }

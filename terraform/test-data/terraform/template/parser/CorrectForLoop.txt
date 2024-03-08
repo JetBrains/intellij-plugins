@@ -3,23 +3,28 @@ TftplFile
     ILTemplateForBlockExpression
       ForCondition
         PsiElement(TEMPLATE_START)('%{')
-        PsiWhiteSpace(' ')
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         ForVariable
-          PsiElement(ID)('p')
+          PsiElement(ID)('a')
+        PsiElement(,)(',')
+        PsiWhiteSpace(' ')
+        ForVariable
+          PsiElement(ID)('b')
         PsiWhiteSpace(' ')
         PsiElement(in)('in')
-        PsiErrorElement:<expression> expected, got '}'
-          <empty list>
-        PsiWhiteSpace('  ')
-        PsiElement(})('}')
+        PsiWhiteSpace(' ')
+        ILSelectExpression
+          ILVariable
+            PsiElement(ID)('var')
+          PsiElement(.)('.')
+          ILVariable
+            PsiElement(ID)('test')
+        PsiElement(})('~}')
       ILTemplateBlockBody
         TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
-          PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)('\n\n')
+          PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)(' 123 ')
       EndFor
         PsiElement(TEMPLATE_START)('%{')
-        PsiWhiteSpace(' ')
         PsiElement(endfor)('endfor')
-        PsiWhiteSpace(' ')
         PsiElement(})('}')

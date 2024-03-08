@@ -50,8 +50,8 @@ class TerraformTemplatePsiTest : BasePlatformTestCase() {
   }
 
   fun `test detect data language by composite extension`() {
-    val file = myFixture.configureByText("example.js.tfpl", "")
-    Assert.assertEquals("JavaScript",
+    val file = myFixture.configureByText("example.json.tftpl", "")
+    Assert.assertEquals("JSON",
                         file.viewProvider.allFiles.filterNot { it is TftplFile }.singleOrNull()?.language?.id)
   }
 }

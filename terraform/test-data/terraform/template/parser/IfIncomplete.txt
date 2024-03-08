@@ -1,19 +1,19 @@
 TftplFile
   ILTemplateHolder
     ILTemplateIfBlockExpression
-      IfBranch
-        PsiElement(%{)('%{')
+      IfCondition
+        PsiElement(TEMPLATE_START)('%{')
         PsiWhiteSpace(' ')
         PsiElement(if)('if')
         PsiErrorElement:<expression> expected, got '}'
           <empty list>
         PsiWhiteSpace('  ')
         PsiElement(})('}')
-        ILTemplateBlock
-          TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
-            PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)('\n\n')
-      EndIfBranch
-        PsiElement(%{)('%{')
+      ILTemplateBlockBody
+        TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
+          PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)('\n\n')
+      EndIf
+        PsiElement(TEMPLATE_START)('%{')
         PsiWhiteSpace(' ')
         PsiElement(endif)('endif')
         PsiWhiteSpace(' ')
@@ -22,8 +22,8 @@ TftplFile
     PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)('\n\n')
   ILTemplateHolder
     ILTemplateIfBlockExpression
-      IfBranch
-        PsiElement(%{)('%{')
+      IfCondition
+        PsiElement(TEMPLATE_START)('%{')
         PsiWhiteSpace(' ')
         PsiElement(if)('if')
         PsiWhiteSpace(' ')
@@ -31,33 +31,33 @@ TftplFile
           PsiElement(ID)('condition')
         PsiWhiteSpace(' ')
         PsiElement(})('}')
-        ILTemplateBlock
-          TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
-            PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)('\n')
-          ILTemplateHolder
-            ILTemplateForBlockExpression
-              ForLoop
-                PsiElement(%{)('%{')
-                PsiWhiteSpace(' ')
-                PsiElement(for)('for')
-                PsiWhiteSpace(' ')
-                ForVariable
-                  PsiElement(ID)('a')
-                PsiWhiteSpace(' ')
-                PsiElement(in)('in')
-                PsiWhiteSpace(' ')
-                ILVariable
-                  PsiElement(ID)('b')
-                PsiWhiteSpace(' ')
-                PsiElement(})('}')
-                ILTemplateBlock
-                  TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
-                    PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)('\n')
-              EndFor
-                PsiElement(%{)('%{')
-                PsiWhiteSpace(' ')
-                PsiElement(endfor)('endfor')
-                PsiWhiteSpace(' ')
-                PsiElement(})('}')
-    PsiErrorElement:'%{' expected
-      <empty list>
+      ILTemplateBlockBody
+        TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
+          PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)('\n')
+        ILTemplateHolder
+          ILTemplateForBlockExpression
+            ForCondition
+              PsiElement(TEMPLATE_START)('%{')
+              PsiWhiteSpace(' ')
+              PsiElement(for)('for')
+              PsiWhiteSpace(' ')
+              ForVariable
+                PsiElement(ID)('a')
+              PsiWhiteSpace(' ')
+              PsiElement(in)('in')
+              PsiWhiteSpace(' ')
+              ILVariable
+                PsiElement(ID)('b')
+              PsiWhiteSpace(' ')
+              PsiElement(})('}')
+            ILTemplateBlockBody
+              TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
+                PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)('\n')
+            EndFor
+              PsiElement(TEMPLATE_START)('%{')
+              PsiWhiteSpace(' ')
+              PsiElement(endfor)('endfor')
+              PsiWhiteSpace(' ')
+              PsiElement(})('}')
+      PsiErrorElement:<bad tag>, <expression> or TEMPLATE_START expected
+        <empty list>

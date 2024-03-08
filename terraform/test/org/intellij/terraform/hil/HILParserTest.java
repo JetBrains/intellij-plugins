@@ -232,10 +232,6 @@ public class HILParserTest extends ParsingTestCase {
     doCodeTest("${foo({a=true\nb=false})}");
   }
 
-  public void testTemplateForIncomplete() throws IOException {
-    doCodeTest("%{for a, b in var.test~}");
-  }
-
   public void testTemplateFor() throws IOException {
     doCodeTest("%{for a, b in var.test~} 123 %{endfor}");
   }

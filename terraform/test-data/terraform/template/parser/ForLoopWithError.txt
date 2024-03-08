@@ -1,8 +1,8 @@
 TftplFile
   ILTemplateHolder
     ILTemplateForBlockExpression
-      ForLoop
-        PsiElement(%{)('%{')
+      ForCondition
+        PsiElement(TEMPLATE_START)('%{')
         PsiWhiteSpace(' ')
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
@@ -13,15 +13,16 @@ TftplFile
         PsiErrorElement:<expression> expected, got '$'
           <empty list>
         PsiWhiteSpace(' ')
-        PsiElement($)('$')
-      PsiElement({)('{')
-      PsiWhiteSpace(' ')
-      PsiElement(})('~}')
-  TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
-    PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)('\n\n')
-  PsiErrorElement:'%{' unexpected
-    PsiElement(%{)('%{')
-  PsiWhiteSpace(' ')
-  PsiElement(endfor)('endfor')
-  PsiWhiteSpace(' ')
-  PsiElement(})('~}')
+        PsiElement(BAD_CHARACTER)('$')
+        PsiElement(BAD_CHARACTER)('{')
+        PsiWhiteSpace(' ')
+        PsiElement(})('~}')
+      ILTemplateBlockBody
+        TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
+          PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)('\n\n')
+      EndFor
+        PsiElement(TEMPLATE_START)('%{')
+        PsiWhiteSpace(' ')
+        PsiElement(endfor)('endfor')
+        PsiWhiteSpace(' ')
+        PsiElement(})('~}')

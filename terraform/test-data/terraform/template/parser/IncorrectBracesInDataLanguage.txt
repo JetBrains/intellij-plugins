@@ -1,8 +1,8 @@
 TftplFile
   ILTemplateHolder
     ILTemplateIfBlockExpression
-      IfBranch
-        PsiElement(%{)('%{')
+      IfCondition
+        PsiElement(TEMPLATE_START)('%{')
         PsiWhiteSpace(' ')
         PsiElement(if)('if')
         PsiWhiteSpace(' ')
@@ -10,17 +10,17 @@ TftplFile
           PsiElement(true)('true')
         PsiWhiteSpace(' ')
         PsiElement(})('}')
-        ILTemplateBlock
-          TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
-            PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)(' }}}} ')
-      ElseBranch
-        PsiElement(%{)('%{')
+      ILTemplateBlockBody
+        TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
+          PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)(' }}}} ')
+      ElseCondition
+        PsiElement(TEMPLATE_START)('%{')
         PsiWhiteSpace(' ')
         PsiElement(else)('else')
         PsiWhiteSpace(' ')
         PsiElement(})('}')
-        ILTemplateBlock
-          TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
-            PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)(' }}{{{}')
-    PsiErrorElement:'%{' or <expression> expected
-      <empty list>
+      ILTemplateBlockBody
+        TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
+          PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)(' }}{{{}')
+      PsiErrorElement:<bad tag>, <expression> or TEMPLATE_START expected
+        <empty list>

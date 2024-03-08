@@ -17,35 +17,35 @@ HILFile: a.hil
           ILVariable
             PsiElement(ID)('test')
         PsiElement(})('~}')
-        PsiWhiteSpace(' ')
-        ILTemplateBlock
-          ILTemplateHolder
-            ILTemplateForBlockExpression
-              ForLoop
-                PsiElement(%{)('%{')
-                PsiElement(for)('for')
-                PsiWhiteSpace(' ')
-                ForVariable
-                  PsiElement(ID)('b')
-                PsiWhiteSpace(' ')
-                PsiElement(in)('in')
-                PsiWhiteSpace(' ')
-                ILSelectExpression
-                  ILVariable
-                    PsiElement(ID)('var')
-                  PsiElement(.)('.')
-                  ILVariable
-                    PsiElement(ID)('test')
-                PsiElement(})('~}')
-                PsiWhiteSpace(' ')
-                ILTemplateBlock
-                  ILLiteral
-                    PsiElement(NUMBER)('123')
+      PsiWhiteSpace(' ')
+      ILTemplateBlockBody
+        ILTemplateHolder
+          ILTemplateForBlockExpression
+            ForCondition
+              PsiElement(TEMPLATE_START)('%{')
+              PsiElement(for)('for')
               PsiWhiteSpace(' ')
-              EndFor
-                PsiElement(%{)('%{')
-                PsiElement(endfor)('endfor')
-                PsiElement(})('}')
+              ForVariable
+                PsiElement(ID)('b')
+              PsiWhiteSpace(' ')
+              PsiElement(in)('in')
+              PsiWhiteSpace(' ')
+              ILSelectExpression
+                ILVariable
+                  PsiElement(ID)('var')
+                PsiElement(.)('.')
+                ILVariable
+                  PsiElement(ID)('test')
+              PsiElement(})('~}')
+            PsiWhiteSpace(' ')
+            ILTemplateBlockBody
+              ILLiteral
+                PsiElement(NUMBER)('123')
+            PsiWhiteSpace(' ')
+            EndFor
+              PsiElement(TEMPLATE_START)('%{')
+              PsiElement(endfor)('endfor')
+              PsiElement(})('}')
       PsiWhiteSpace(' ')
       EndFor
         PsiElement(%{)('%{')

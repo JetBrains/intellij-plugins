@@ -1,8 +1,8 @@
 TftplFile
   ILTemplateHolder
     ILTemplateIfBlockExpression
-      IfBranch
-        PsiElement(%{)('%{')
+      IfCondition
+        PsiElement(TEMPLATE_START)('%{')
         PsiWhiteSpace(' ')
         PsiElement(if)('if')
         PsiWhiteSpace(' ')
@@ -10,19 +10,19 @@ TftplFile
           PsiElement(true)('true')
         PsiWhiteSpace(' ')
         PsiElement(})('}')
-        ILTemplateBlock
-          TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
-            PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)(' { yes } ')
-      ElseBranch
-        PsiElement(%{)('%{')
+      ILTemplateBlockBody
+        TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
+          PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)(' { yes } ')
+      ElseCondition
+        PsiElement(TEMPLATE_START)('%{')
         PsiWhiteSpace(' ')
         PsiElement(else)('else')
         PsiWhiteSpace(' ')
         PsiElement(})('}')
-        ILTemplateBlock
-          TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
-            PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)(' { no } ')
-      EndIfBranch
-        PsiElement(%{)('%{')
+      ILTemplateBlockBody
+        TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
+          PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)(' { no } ')
+      EndIf
+        PsiElement(TEMPLATE_START)('%{')
         PsiElement(endif)('endif')
         PsiElement(})('}')

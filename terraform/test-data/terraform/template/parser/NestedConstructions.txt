@@ -1,0 +1,102 @@
+TftplFile
+  ILTemplateHolder
+    ILTemplateForBlockExpression
+      ForCondition
+        PsiElement(TEMPLATE_START)('%{~')
+        PsiWhiteSpace(' ')
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        ForVariable
+          PsiElement(ID)('a')
+        PsiWhiteSpace(' ')
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        ILVariable
+          PsiElement(ID)('a')
+        PsiWhiteSpace(' ')
+        PsiElement(})('~}')
+      ILTemplateBlockBody
+        TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
+          PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)('\n   ')
+        ILTemplateHolder
+          ILTemplateForBlockExpression
+            ForCondition
+              PsiElement(TEMPLATE_START)('%{~')
+              PsiWhiteSpace(' ')
+              PsiElement(for)('for')
+              PsiWhiteSpace('  ')
+              ForVariable
+                PsiElement(ID)('b')
+              PsiWhiteSpace(' ')
+              PsiElement(in)('in')
+              PsiWhiteSpace(' ')
+              ILVariable
+                PsiElement(ID)('b')
+              PsiWhiteSpace(' ')
+              PsiElement(})('~}')
+            ILTemplateBlockBody
+              TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
+                PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)('\n    ')
+              ILTemplateHolder
+                ILTemplateForBlockExpression
+                  ForCondition
+                    PsiElement(TEMPLATE_START)('%{~')
+                    PsiWhiteSpace(' ')
+                    PsiElement(for)('for')
+                    PsiWhiteSpace(' ')
+                    ForVariable
+                      PsiElement(ID)('c')
+                    PsiWhiteSpace(' ')
+                    PsiElement(in)('in')
+                    PsiWhiteSpace(' ')
+                    ILVariable
+                      PsiElement(ID)('c')
+                    PsiWhiteSpace(' ')
+                    PsiElement(})('~}')
+                  ILTemplateBlockBody
+                    TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
+                      PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)('\n      ')
+                    ILTemplateHolder
+                      ILTemplateIfBlockExpression
+                        IfCondition
+                          PsiElement(TEMPLATE_START)('%{~')
+                          PsiWhiteSpace(' ')
+                          PsiElement(if)('if')
+                          PsiWhiteSpace(' ')
+                          ILVariable
+                            PsiElement(ID)('d')
+                          PsiWhiteSpace(' ')
+                          PsiElement(})('~}')
+                        ILTemplateBlockBody
+                          TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
+                            PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)('\n        e\n      ')
+                        EndIf
+                          PsiElement(TEMPLATE_START)('%{~')
+                          PsiWhiteSpace(' ')
+                          PsiElement(endif)('endif')
+                          PsiWhiteSpace(' ')
+                          PsiElement(})('~}')
+                    TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
+                      PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)('\n    ')
+                  EndFor
+                    PsiElement(TEMPLATE_START)('%{~')
+                    PsiWhiteSpace(' ')
+                    PsiElement(endfor)('endfor')
+                    PsiWhiteSpace(' ')
+                    PsiElement(})('~}')
+              TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
+                PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)('\n   ')
+            EndFor
+              PsiElement(TEMPLATE_START)('%{~')
+              PsiWhiteSpace(' ')
+              PsiElement(endfor)('endfor')
+              PsiWhiteSpace(' ')
+              PsiElement(})('~}')
+        TftplDataLanguageSegmentImpl(DATA_LANGUAGE_TOKEN_UNPARSED)
+          PsiElement(DATA_LANGUAGE_TOKEN_UNPARSED)('\n')
+      EndFor
+        PsiElement(TEMPLATE_START)('%{~')
+        PsiWhiteSpace(' ')
+        PsiElement(endfor)('endfor')
+        PsiWhiteSpace(' ')
+        PsiElement(})('~}')

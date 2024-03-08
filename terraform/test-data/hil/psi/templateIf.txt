@@ -22,10 +22,10 @@ HILFile: a.hil
               PsiElement(NUMBER)('1')
         PsiWhiteSpace(' ')
         PsiElement(})('~}')
-        PsiWhiteSpace(' ')
-        ILTemplateBlock
-          ILLiteral
-            PsiElement(NUMBER)('123')
+      PsiWhiteSpace(' ')
+      ILTemplateBlockBody
+        ILLiteral
+          PsiElement(NUMBER)('123')
       PsiWhiteSpace(' ')
       EndIfBranch
         PsiElement(%{)('%{')

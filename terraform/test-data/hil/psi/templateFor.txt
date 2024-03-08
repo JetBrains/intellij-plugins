@@ -21,10 +21,10 @@ HILFile: a.hil
           ILVariable
             PsiElement(ID)('test')
         PsiElement(})('~}')
-        PsiWhiteSpace(' ')
-        ILTemplateBlock
-          ILLiteral
-            PsiElement(NUMBER)('123')
+      PsiWhiteSpace(' ')
+      ILTemplateBlockBody
+        ILLiteral
+          PsiElement(NUMBER)('123')
       PsiWhiteSpace(' ')
       EndFor
         PsiElement(%{)('%{')

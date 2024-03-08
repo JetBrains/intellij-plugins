@@ -187,8 +187,8 @@ public class HILLexerTest extends BaseLexerTestCase {
   }
 
   public void testTemplateFor() throws Exception {
-    doTest("%{for a, b in var.test~}", """
-      %{ ('%{')
+    doTest("%{for a, b in var.test~} 123 %{endfor} ", """
+      TEMPLATE_START ('%{')
       for ('for')
       WHITE_SPACE (' ')
       ID ('a')
@@ -201,7 +201,14 @@ public class HILLexerTest extends BaseLexerTestCase {
       ID ('var')
       . ('.')
       ID ('test')
-      } ('~}')""");
+      } ('~}')
+      WHITE_SPACE (' ')
+      NUMBER ('123')
+      WHITE_SPACE (' ')
+      TEMPLATE_START ('%{')
+      endfor ('endfor')
+      } ('}')
+      WHITE_SPACE (' ')""".trim());
   }
 
   public void testArray() throws Exception {
