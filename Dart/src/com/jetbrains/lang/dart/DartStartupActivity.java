@@ -1,8 +1,10 @@
 // Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart;
 
+import com.intellij.execution.ExecutionException;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -14,12 +16,14 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.ide.toolingDaemon.DartToolingDaemonService;
 import com.jetbrains.lang.dart.projectWizard.DartModuleBuilder;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
@@ -124,6 +128,15 @@ public final class DartStartupActivity implements StartupActivity, DumbAware {
       if (DartSdkLibUtil.isDartSdkEnabled(module)) {
         ReadAction.run(() -> DartAnalysisServerService.getInstance(project).serverReadyForRequest());
         break;
+      }
+    }
+
+    if (Registry.is("dart.launch.dtd.and.devtools", false)) {
+      try {
+        DartToolingDaemonService.getInstance(project).startService();
+      }
+      catch (ExecutionException e) {
+        Logger.getInstance(DartStartupActivity.class).warn("Failed to start DartToolingDaemonService: " + e.getMessage());
       }
     }
   }
