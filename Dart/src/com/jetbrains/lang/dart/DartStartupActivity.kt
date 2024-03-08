@@ -12,10 +12,12 @@ import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.startup.ProjectActivity
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
+import com.jetbrains.lang.dart.ide.toolingDaemon.DartToolingDaemonService
 import com.jetbrains.lang.dart.projectWizard.DartModuleBuilder
 import com.jetbrains.lang.dart.sdk.DartSdk
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil
@@ -68,7 +70,10 @@ class DartStartupActivity : ProjectActivity {
     readActionBlocking {
       DartAnalysisServerService.getInstance(project).serverReadyForRequest()
     }
-    //DartToolingDaemonService.getInstance(project).startService()
+
+    if (Registry.`is`("dart.launch.dtd.and.devtools", false)) {
+      DartToolingDaemonService.getInstance(project).startService()
+    }
   }
 }
 
