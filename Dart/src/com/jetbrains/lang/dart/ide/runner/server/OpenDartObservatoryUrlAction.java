@@ -7,8 +7,11 @@ import com.intellij.ide.browsers.WebBrowserManager;
 import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.ide.devtools.DartDevToolsService;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,10 +48,22 @@ public class OpenDartObservatoryUrlAction extends DumbAwareAction {
   }
 
   @Override
-  public void actionPerformed(@NotNull final AnActionEvent e) {
-    if (myUrl != null) {
-      openUrlInChromeFamilyBrowser(myUrl);
+  public void actionPerformed(@NotNull AnActionEvent e) {
+    Project project = e.getProject();
+    if (project == null || myUrl == null) return;
+
+    String urlToOpen;
+    String devToolsHostAndPort = DartDevToolsService.getInstance(project).getDevToolsHostAndPort();
+    if (devToolsHostAndPort != null) {
+      int colonIndex = myUrl.indexOf("://");
+      String webSocketUri = "ws" + StringUtil.trimEnd(myUrl.substring(colonIndex), "/") + "/ws";
+      urlToOpen = "http://" + devToolsHostAndPort + "/?uri=" + webSocketUri;
     }
+    else {
+      urlToOpen = myUrl;
+    }
+
+    openUrlInChromeFamilyBrowser(urlToOpen);
   }
 
   /**
