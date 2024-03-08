@@ -14,7 +14,7 @@ import com.intellij.util.concurrency.annotations.RequiresReadLock
 import org.intellij.terraform.config.codeinsight.HclFileReference
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.*
-import org.intellij.terraform.hil.psi.ForLoop
+import org.intellij.terraform.hil.psi.ForCondition
 import org.intellij.terraform.hil.psi.ILSelectFromScopeReferenceProvider
 import org.intellij.terraform.hil.psi.ILTemplateForBlockExpression
 import org.intellij.terraform.hil.psi.ILVariable
@@ -53,7 +53,7 @@ private fun collectLocalVariables(currentNode: PsiElement): Sequence<TftplVariab
 }
 
 private fun isLoopCollection(currentNode: PsiElement): Boolean {
-  return currentNode.parent is ILVariable && currentNode.parent.parent is ForLoop
+  return currentNode.parent is ILVariable && currentNode.parent.parent is ForCondition
 }
 
 private fun collectCallSiteVariables(currentNode: PsiElement): Sequence<TftplVariable> {

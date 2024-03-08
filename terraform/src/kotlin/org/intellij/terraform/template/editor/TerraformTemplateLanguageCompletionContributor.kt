@@ -23,12 +23,11 @@ private val hilEmptyControlStructurePattern: ElementPattern<PsiElement> =
   createPattern { element ->
     element is LeafPsiElement
     && getTemplateFileViewProvider(element) != null
-    && generateSequence(element, PsiTreeUtil::prevCodeLeaf)
-      .any { sibling -> sibling.elementType == HILElementTypes.TEMPLATE_START }
+    && PsiTreeUtil.prevCodeLeaf(element)?.elementType == HILElementTypes.TEMPLATE_START
   }
 
 private class HilTemplateAvailableSyntaxCompletionProvider : CompletionProvider<CompletionParameters>() {
-  private val availableControlStructures = setOf("if", "else", "for", "in", "endif", "endfor")
+  private val availableControlStructures = setOf("if", "else", "for", "endif", "endfor")
 
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
     result.addAllElements(availableControlStructures.map(::createLookup))

@@ -26,22 +26,26 @@ internal class TerraformTemplateFoldingBuilder : FoldingBuilder, DumbAware {
       }
 
       override fun visitILTemplateForBlockExpression(forBlock: ILTemplateForBlockExpression) {
-        addFoldingRegion(forBlock.node, forBlock.startOffset, forBlock.endOffset, result)
+        val forLoopStartOffset = forBlock.startOffset
+        val forLoopEndOffset = forBlock.endFor?.endOffset
+        if (forLoopEndOffset != null) {
+          addFoldingRegion(forBlock.node, forLoopStartOffset, forLoopEndOffset, result)
+        }
         super.visitILTemplateForBlockExpression(forBlock)
       }
 
       override fun visitILTemplateIfBlockExpression(ifBlock: ILTemplateIfBlockExpression) {
-        val elseBranchOrNull = ifBlock.elseBranch
+        val elseBranchOrNull = ifBlock.elseCondition
 
         val ifBranchStartOffset = ifBlock.startOffset
         val ifBranchEndOffset = elseBranchOrNull?.startOffset
-                                ?: ifBlock.endIfBranch?.endOffset
+                                ?: ifBlock.endIf?.endOffset
                                 ?: ifBlock.endOffset
         addFoldingRegion(ifBlock.node, ifBranchStartOffset, ifBranchEndOffset, result)
 
         if (elseBranchOrNull != null) {
           val elseBranchStartOffset = elseBranchOrNull.startOffset
-          val elseBranchEndOffset = ifBlock.endIfBranch?.endOffset
+          val elseBranchEndOffset = ifBlock.endIf?.endOffset
                                     ?: ifBlock.endOffset
           addFoldingRegion(ifBlock.node, elseBranchStartOffset, elseBranchEndOffset, result)
         }

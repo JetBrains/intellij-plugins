@@ -78,8 +78,7 @@ public final class HILPsiImplUtilJ {
 
   @NotNull
   public static List<ForVariable> getLoopVariables(@NotNull ILTemplateForBlockExpression forBlockExpression) {
-    ForLoop loop = forBlockExpression.getForLoop();
-    ForVariable[] variables = PsiTreeUtil.getChildrenOfType(loop, ForVariable.class);
+    ForVariable[] variables = PsiTreeUtil.getChildrenOfType(forBlockExpression.getForCondition(), ForVariable.class);
     if (variables == null || variables.length == 0) return Collections.emptyList();
     return new SmartList<>(variables);
   }
