@@ -21,7 +21,7 @@ public interface PerforcePhysicalConnectionParametersI {
   int getServerTimeout();
   @NotNull String getCharsetName();
 
-  public default Charset getConsoleCharset() {
+  default Charset getConsoleCharset() {
     String charsetName = getCharsetName();
     if (StringUtil.isEmptyOrSpaces(charsetName) || charsetName.equals(getCharsetNone())) {
       return EncodingManager.getInstance().getDefaultConsoleEncoding();
@@ -42,7 +42,7 @@ public interface PerforcePhysicalConnectionParametersI {
   }
 
 
-  public static @NlsSafe String getCharsetNone() {
+  static @NlsSafe String getCharsetNone() {
     return PerforceBundle.message("none.charset.presentation");
   }
 }
