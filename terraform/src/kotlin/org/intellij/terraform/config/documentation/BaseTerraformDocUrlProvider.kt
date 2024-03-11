@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.SyntaxTraverser
+import com.intellij.psi.util.childrenOfType
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
@@ -15,10 +16,7 @@ import org.intellij.terraform.config.codeinsight.ModelHelper
 import org.intellij.terraform.config.model.TypeModelProvider
 import org.intellij.terraform.config.model.local.LocalSchemaService
 import org.intellij.terraform.config.psi.TerraformDocumentPsi
-import org.intellij.terraform.hcl.psi.HCLBlock
-import org.intellij.terraform.hcl.psi.HCLIdentifier
-import org.intellij.terraform.hcl.psi.HCLObject
-import org.intellij.terraform.hcl.psi.getNameElementUnquoted
+import org.intellij.terraform.hcl.psi.*
 
 
 internal abstract class BaseTerraformDocUrlProvider {
@@ -61,10 +59,11 @@ internal abstract class BaseTerraformDocUrlProvider {
       is HCLBlock -> {
         Pair(element, null)
       }
+      is HCLProperty -> {
+        getBlockInfoForIdentifier(element.childrenOfType<HCLIdentifier>().firstOrNull())
+      }
       is HCLIdentifier -> {
-        val parentBlock = getBlockForHclIdentifier(element)
-        val paramName = parentBlock?.let { ModelHelper.getBlockProperties(it)[element.id]?.name }
-        parentBlock?.let { Pair(it, paramName) }
+        getBlockInfoForIdentifier(element)
       }
       is TerraformDocumentPsi -> {
         val relevantBlock = getBlockForDocumentationLink(element, element.name)
@@ -79,6 +78,12 @@ internal abstract class BaseTerraformDocUrlProvider {
     val providerData = lockFile?.let { getDataFromLockFile(it, type, identifier) } ?: getDataFromModel(element, type, identifier)
 
     BlockData(identifier, type, parameter, providerData)
+  }
+
+  private fun getBlockInfoForIdentifier(hclIdentifier: HCLIdentifier?): Pair<HCLBlock, String?>? {
+    val parentBlock = hclIdentifier?.let { getBlockForHclIdentifier(it) }
+    val paramName = parentBlock?.let { ModelHelper.getBlockProperties(it)[hclIdentifier.id]?.name }
+    return parentBlock?.let { Pair(it, paramName) }
   }
 
   private fun getDataFromModel(element: PsiElement,

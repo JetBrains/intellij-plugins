@@ -15,6 +15,7 @@ import com.intellij.patterns.PlatformPatterns.not
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.parentOfType
 import com.intellij.util.Plow.Companion.toPlow
 import com.intellij.util.ProcessingContext
 import com.intellij.util.Processor
@@ -272,7 +273,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       val cache = HashMap<String, Boolean>()
       val project = position.project
       return when (type) {
-        HCL_RESOURCE_IDENTIFIER  ->
+        HCL_RESOURCE_IDENTIFIER ->
           getTypeModel(project).resources.toPlow()
             .filter { invocationCount >= 3 || isProviderUsed(parent, it.provider.type, cache) }
             .map { buildLookupElement(it, it.type, project) }
@@ -404,6 +405,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       if (incomplete != null) {
         LOG.debug { "Including properties which contains incomplete result: $incomplete" }
       }
+      val hclElementPsiFactory = parent.project.service<FakeHCLElementPsiFactory>()
       addResultsWithCustomSorter(result, parameters, properties.values
         .asSequence()
         .filter { it.name != Constants.HAS_DYNAMIC_ATTRIBUTES }
@@ -414,7 +416,16 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
             incomplete)))) || (it is BlockType)
         }
         .filter { it.configurable }
-        .map { createPropertyOrBlockType(it) }
+        .map { property ->
+          val hclBlock = parent.parentOfType<HCLBlock>()
+          val hclProperty = hclBlock?.let { hclElementPsiFactory.createFakeHCLProperty(hclBlock, property) }
+          if (hclProperty != null) {
+            createPropertyOrBlockType(property).withPsiElement(hclProperty)
+          }
+          else {
+            createPropertyOrBlockType(property)
+          }
+        }
         .toList())
     }
 

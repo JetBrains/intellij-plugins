@@ -5,8 +5,8 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.lookup.LookupElementRenderer
 import com.intellij.openapi.util.text.StringUtil
-import org.intellij.terraform.hcl.Icons
 import org.intellij.terraform.config.model.*
+import org.intellij.terraform.hcl.Icons
 import javax.swing.Icon
 
 class TerraformLookupElementRenderer : LookupElementRenderer<LookupElement>() {
@@ -14,17 +14,16 @@ class TerraformLookupElementRenderer : LookupElementRenderer<LookupElement>() {
     presentation.itemText = element.lookupString
     val obj = element.`object`
     if (obj is PropertyOrBlockType) {
-      if (obj is PropertyType) {
-        presentation.icon = Icons.Property
-        presentation.isItemTextBold = obj.required
-        presentation.isStrikeout = obj.deprecated != null
-        presentation.setTailText(trimDescription(obj.description), true)
-        presentation.setTypeText(trimType(obj.type), getTypeIcon(obj.type))
-      } else if (obj is BlockType) {
-        presentation.icon = Icons.Object
-        presentation.isItemTextBold = obj.required
-        presentation.isStrikeout = obj.deprecated != null
-        presentation.setTailText(trimDescription(obj.description), true)
+      presentation.isItemTextBold = obj.required
+      presentation.isStrikeout = obj.deprecated != null
+      when (obj) {
+        is PropertyType -> {
+          presentation.icon = Icons.Property
+          presentation.setTypeText(trimType(obj.type), getTypeIcon(obj.type))
+        }
+        is BlockType -> {
+          presentation.icon = Icons.Object
+        }
       }
     }
   }

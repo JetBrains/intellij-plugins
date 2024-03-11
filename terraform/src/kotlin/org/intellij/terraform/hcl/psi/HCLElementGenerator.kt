@@ -25,9 +25,9 @@ open class HCLElementGenerator(private val project: Project) {
    */
   open fun createDummyFile(content: String): PsiFile {
     val psiFileFactory = PsiFileFactory.getInstance(project)
-    val psiFile = psiFileFactory.createFileFromText("dummy." + HCLFileType.defaultExtension, HCLFileType, content)
+    val psiFile = psiFileFactory.createFileFromText("dummy.${HCLFileType.defaultExtension}", HCLFileType, content)
     if (PsiTreeUtil.hasErrorElements(psiFile)) {
-      throw IllegalStateException("PsiFile contains PsiErrorElement: " + DebugUtil.psiToString(psiFile, true, true))
+      throw IllegalStateException("PsiFile contains PsiErrorElement: ${DebugUtil.psiToString(psiFile, true, true)}\n---\nError content: ${content}")
     }
     return psiFile
   }
@@ -70,7 +70,8 @@ open class HCLElementGenerator(private val project: Project) {
         append(unescapedContent.first())
         append(StringUtil.escapeStringCharacters(unescapedContent.substring(1..unescapedContent.lastIndex - 1)))
         append(unescapedContent.last())
-      } else {
+      }
+      else {
         append(quoteSymbol)
         append(StringUtil.escapeStringCharacters(unescapedContent))
         append(quoteSymbol)
@@ -82,7 +83,8 @@ open class HCLElementGenerator(private val project: Project) {
     val s: String
     if (isIdentifier(name)) {
       s = "$name = $value"
-    } else {
+    }
+    else {
       s = "\"$name\" = $value"
     }
     val file = createDummyFile(s)
@@ -99,13 +101,25 @@ open class HCLElementGenerator(private val project: Project) {
     return file.firstChild as HCLBlock
   }
 
-  fun createBlock(name: String, type: String): HCLBlock {
+  fun createBlock(name: String, properties: Map<String, String> = emptyMap(), vararg namedElements: String): HCLBlock {
     val nameString = if (!isIdentifier(name)) '"' + name + '"' else name
-    val typeString = if (!StringUtil.isQuotedString(type) ) '"' + type + '"' else type
-    val file = createDummyFile("$nameString ${typeString} {}")
+    val typeString = namedElements.joinToString(" ") { str ->
+      if (StringUtil.isQuotedString(str)) str
+      else {
+        val builder = StringBuilder(str)
+        StringUtil.quote(builder, '"')
+        builder.toString()
+      }
+    }
+    val propertiesString = properties.map { (name, value) -> "$name = \"${StringUtil.unquoteString(value)}\"" }.joinToString("\n", "\t")
+    val content = """
+      $nameString ${typeString} {
+      ${propertiesString}
+      }
+     """.trimIndent()
+    val file = createDummyFile(content)
     return file.firstChild as HCLBlock
   }
-
 
   fun createComma(): PsiElement {
     val array = createValue<HCLArray>("[1, 2]")
