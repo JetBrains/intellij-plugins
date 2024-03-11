@@ -10,9 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.webSymbols.context.WebSymbolsContext
 
-
 class NextJsImplicitUsageProvider : ImplicitUsageProvider {
-
   override fun isImplicitUsage(element: PsiElement): Boolean =
     isInNextJsContext(element) && (
       isKnownFunctionName(element)
@@ -32,15 +30,10 @@ class NextJsImplicitUsageProvider : ImplicitUsageProvider {
       && (element is JSFunction || element is JSVariable)
       && KNOWN_FUNCTIONS.contains(element.name)
 
-  private val KNOWN_FUNCTIONS = hashSetOf(
-    "getServerSideProps", "getStaticPaths", "getStaticProps",
-    "generateStaticParams", "generateMetadata", "generateImageMetadata"
-  )
-
   private fun isKnownObjectName(element: PsiElement): Boolean =
     (element is JSVariable)
       && element.isExported
-      && element.name == "metadata"
+      && KNOWN_OBJECTS.contains(element.name)
 
   private fun isExportDefault(element: PsiElement): Boolean = element is ES6ExportDefaultAssignment
 
@@ -54,16 +47,12 @@ class NextJsImplicitUsageProvider : ImplicitUsageProvider {
       && element.isExported
       && ROUTE_SEGMENT_OPTIONS.contains(element.name)
 
-  private val ROUTE_SEGMENT_OPTIONS = hashSetOf("dynamic", "dynamicParams", "revalidate", "fetchCache", "runtime", "preferredRegion")
-
   private fun isHttpMethod(element: PsiElement): Boolean =
     element.containingFile?.name?.startsWith("route.") == true
       && (element is JSElementBase)
       && element.isExported
       && (element is JSFunction || element is JSVariable)
       && HTTP_METHOD_FUNCTIONS.contains(element.name)
-
-  private val HTTP_METHOD_FUNCTIONS = hashSetOf("GET", "HEAD", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
 
   private fun isMiddlewareFunctionOrItsConfig(element: PsiElement): Boolean =
     element.containingFile?.name?.startsWith("middleware.") == true
@@ -76,4 +65,20 @@ class NextJsImplicitUsageProvider : ImplicitUsageProvider {
 
   override fun isImplicitRead(element: PsiElement) = false
   override fun isImplicitWrite(element: PsiElement) = false
+
+  private val KNOWN_FUNCTIONS = hashSetOf(
+    // Pages Router
+    "getServerSideProps", "getStaticPaths", "getStaticProps",
+    // App Router
+    "generateStaticParams", "generateMetadata", "generateImageMetadata",
+    "generateViewport"
+  )
+
+  private val KNOWN_OBJECTS = hashSetOf("metadata", "viewport")
+
+  private val ROUTE_SEGMENT_OPTIONS = hashSetOf(
+    "dynamic", "dynamicParams", "revalidate", "fetchCache", "runtime", "preferredRegion", "maxDuration"
+  )
+
+  private val HTTP_METHOD_FUNCTIONS = hashSetOf("GET", "HEAD", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
 }

@@ -54,11 +54,12 @@ class NextJsHighlightTest : JSDaemonAnalyzerLightTestCase() {
   fun testNextjsProject() {
     myFixture.enableInspections(JSUnusedLocalSymbolsInspection())
     val dir = getTestName(true)
-    myFixture.copyDirectoryToProject(dir, "");
+    myFixture.copyDirectoryToProject(dir, "")
     myFixture.testHighlightingAllFiles(
       true, false, true,
+      "app/layout.tsx",
       "app/page.tsx",
-      "app/route.js",
+      "app/route.ts",
       "otherDir/exportDefault.ts",
       "otherDir/knownFunctionsAndObjects.js",
       "otherDir/middleware.js",

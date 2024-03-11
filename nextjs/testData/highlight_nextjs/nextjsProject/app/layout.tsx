@@ -32,4 +32,4 @@ export function generateStaticParams() {
 
 export async function generateImageMetadata() {}
 
-export default function Page() {}
+export default function Layout() {}

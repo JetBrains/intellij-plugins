@@ -6,30 +6,16 @@ export const runtime = 'nodejs'
 export const preferredRegion = 'auto'
 export const maxDuration = 5
 
-export const metadata = {
-  title: '...',
-}
-
-export async function generateMetadata() {
-  return {
-    title: '...',
-  }
-}
-
-export const viewport = {
-  themeColor: 'black',
-}
-
-export function generateViewport() {
-  return {
-    themeColor: '...',
-  }
-}
-
 export function generateStaticParams() {
   return [{ id: '1' }, { id: '2' }, { id: '3' }]
 }
 
 export async function generateImageMetadata() {}
 
-export default function Page() {}
+export async function GET() {}
+export async function HEAD() {}
+export async function POST() {}
+export async function PUT() {}
+export async function DELETE() {}
+export async function PATCH() {}
+export async function OPTIONS() {}
