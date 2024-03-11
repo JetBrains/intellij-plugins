@@ -4,26 +4,18 @@
   <vendor>JetBrains</vendor>
 
   <description><![CDATA[
-    <p>
-      Adds support for <a href="https://github.com/hashicorp/hcl">HashiCorp Configuration Language (HCL)</a>
-      and <a href="https://github.com/hashicorp/hil">HashiCorp Interpolation Language (HIL)</a>, as well as their
-      combination used in <a href="https://www.terraform.io/">Terraform</a> configuration files (.tf).
+   <p>
+      Enhanced <a href="https://www.terraform.io/">Terraform</a> support is tailored for developers, SREs, and DevOps teams,
+      simplifying infrastructure management with features like syntax highlighting, code completion, and real-time error checking.
+      Streamline your infrastructure as code (IaC) workflow and boost productivity with comprehensive tooling designed to make development
+      and deployment more efficient.
     </p>
 
-    <p> The HCL format is also used for <a href="https://www.nomadproject.io/">Nomad</a> (.nomad files).</p>
-
+    <p>Features:</p>
     <ul>
-      <li>Adds syntax highlighting for HCL and HIL files.</li>
-      <li>
-        Adds other coding assistance features for HCL files (<code>.hcl</code>, <code>.tf</code>, and <code>.nomad</code>),
-        including structure outline, code formatting, folding, and commenting/uncommenting action.
-      </li>
-    </ul>
-
-    <p>Features specific to <a href="https://www.terraform.io/">Terraform</a> include the following:</p>
-
-    <ul>
-      <li>Autocompletion</li>
+      <li>Autocompletion, including for third-party providers from the Terraform Registry.</li>
+      <li><a href="https://github.com/hashicorp/hcl">HCL</a>, <a href="https://github.com/hashicorp/hil">HIL</a>, <a href="https://developer.hashicorp.com/terraform/language/functions/templatefile">TFTPL</a> syntax highlighting and validation</li>
+      <li>Integrated documentation, including for third-party providers from the Terraform Registry.</li>
       <li>Find Usages / Go to definition for resources, providers, variables and their properties</li>
       <li>Rename refactoring</li>
       <li>Introduce Variable refactoring (for string property values)</li>
@@ -41,6 +33,17 @@
   <!--suppress PluginXmlValidity -->
   <change-notes>
     <![CDATA[
+    2024.1
+      <li>Enhances code completion for a wide range of third-party Terraform providers from the Terraform Registry, facilitating efficient coding.</li>
+      <li>Integrates support for the latest documentation of providers directly in the IDE, enabling quick learning and exploration.</li>
+      <li>Adds support for the Terraform Template Language (TFTPL), enhancing workflows for configuration files, scripts, and program codes.</li>
+      <li>Offers an option to integrate TFTPL files with preferred programming languages for enhanced templating flexibility.</li>
+      <li>Recommends running "terraform init" to initialize the working directory, enhancing code autocompletion and inspections with local, up-to-date metadata.</li>
+      <li>Enables moving expressions, lines, or blocks of code up or down within a file.</li>
+      <li>Support for the "Removed" block has been added.</li>
+      <li>Now automatically adds comment markers when a new line is inserted within a comment block.</li>
+      <li>HCL syntax checks improved.</li>
+      <li>Added support for the lifecycle meta-argument.</li>
     2023.3
     <ul>
       <li>Support for import block</li>
