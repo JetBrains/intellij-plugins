@@ -183,7 +183,7 @@ public class HILParserTest extends ParsingTestCase {
   public void testUnfinishedConditional6() throws Exception {
     doCodeTest("?:", """
       HILFile: a.hil
-        PsiErrorElement:'%{' expected, got '?'
+        PsiErrorElement:${ or TEMPLATE_START expected, got '?'
           PsiElement(?)('?')
         PsiElement(:)(':')""");
   }

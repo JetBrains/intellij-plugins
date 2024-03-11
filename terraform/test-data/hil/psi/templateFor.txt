@@ -1,8 +1,8 @@
 HILFile: a.hil
   ILTemplateHolder
     ILTemplateForBlockExpression
-      ForLoop
-        PsiElement(%{)('%{')
+      ForCondition
+        PsiElement(TEMPLATE_START)('%{')
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         ForVariable
@@ -27,6 +27,6 @@ HILFile: a.hil
           PsiElement(NUMBER)('123')
       PsiWhiteSpace(' ')
       EndFor
-        PsiElement(%{)('%{')
+        PsiElement(TEMPLATE_START)('%{')
         PsiElement(endfor)('endfor')
         PsiElement(})('}')

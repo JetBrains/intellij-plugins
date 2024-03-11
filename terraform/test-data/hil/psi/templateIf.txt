@@ -1,8 +1,8 @@
 HILFile: a.hil
   ILTemplateHolder
     ILTemplateIfBlockExpression
-      IfBranch
-        PsiElement(%{)('%{~')
+      IfCondition
+        PsiElement(TEMPLATE_START)('%{~')
         PsiWhiteSpace(' ')
         PsiElement(if)('if')
         PsiWhiteSpace(' ')
@@ -27,7 +27,7 @@ HILFile: a.hil
         ILLiteral
           PsiElement(NUMBER)('123')
       PsiWhiteSpace(' ')
-      EndIfBranch
-        PsiElement(%{)('%{')
+      EndIf
+        PsiElement(TEMPLATE_START)('%{')
         PsiElement(endif)('endif')
         PsiElement(})('}')

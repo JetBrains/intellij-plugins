@@ -1,8 +1,8 @@
 HILFile: a.hil
   ILTemplateHolder
     ILTemplateForBlockExpression
-      ForLoop
-        PsiElement(%{)('%{')
+      ForCondition
+        PsiElement(TEMPLATE_START)('%{')
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         ForVariable
@@ -21,5 +21,5 @@ HILFile: a.hil
           ILVariable
             PsiElement(ID)('test')
         PsiElement(})('~}')
-    PsiErrorElement:'%{' expected
-      <empty list>
+      PsiErrorElement:<il template block body> expected
+        <empty list>
