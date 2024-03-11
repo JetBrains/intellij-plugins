@@ -38,5 +38,10 @@ class AstroComponentPropSymbol(private val propertySymbol: JSPropertySymbol)
   override val required: Boolean
     get() = !(propertySymbol.psiContext.asSafely<PropertySignature>()?.isOptional ?: false)
 
-  override fun createPointer(): Pointer<out PsiSourcedWebSymbol> = Pointer.hardPointer(this)
+  override fun createPointer(): Pointer<out PsiSourcedWebSymbol> {
+    val sourcePtr = propertySymbol.createPointer()
+    return Pointer {
+      sourcePtr.dereference()?.let { AstroComponentPropSymbol(propertySymbol) }
+    }
+  }
 }
