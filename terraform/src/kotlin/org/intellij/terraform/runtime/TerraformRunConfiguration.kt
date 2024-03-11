@@ -1,10 +1,7 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.runtime
 
-import com.intellij.execution.CommonProgramRunConfigurationParameters
-import com.intellij.execution.ExecutionException
-import com.intellij.execution.Executor
-import com.intellij.execution.ExternalizablePath
+import com.intellij.execution.*
 import com.intellij.execution.configuration.EnvironmentVariablesComponent
 import com.intellij.execution.configurations.*
 import com.intellij.execution.process.KillableColoredProcessHandler
@@ -28,8 +25,11 @@ import org.jdom.Element
 import org.jetbrains.annotations.Nls
 import java.io.File
 
-class TerraformRunConfiguration(project: Project, factory: ConfigurationFactory, name: String?) : LocatableConfigurationBase<Any?>(
-  project, factory, name), CommonProgramRunConfigurationParameters, DumbAware {
+class TerraformRunConfiguration(project: Project,
+                                factory: ConfigurationFactory,
+                                name: String?,
+                                override var envFilePaths: List<String>) :
+  LocatableConfigurationBase<Any?>(project, factory, name), CommonProgramRunConfigurationParameters, EnvFilesOptions, DumbAware {
   private var programParameters: String? = ""
   private var directory: String = ""
   private val myEnvs: MutableMap<String, String> = LinkedHashMap()

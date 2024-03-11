@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Collections;
 
 public class TerraformConfigurationType implements ConfigurationType, DumbAware {
   private final ConfigurationFactory myBaseFactory;
@@ -99,7 +100,7 @@ public class TerraformConfigurationType implements ConfigurationType, DumbAware 
     @NotNull
     @Override
     public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
-      TerraformRunConfiguration configuration = new TerraformRunConfiguration(project, this, "");
+      TerraformRunConfiguration configuration = new TerraformRunConfiguration(project, this, "", Collections.emptyList());
       String path = project.getBasePath();
       if (path != null) {
         configuration.setWorkingDirectory(path);
