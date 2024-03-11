@@ -92,7 +92,7 @@ private fun tryGuessLanguageByCompositeExtension(fileName: String): Language? {
     ?.language
 }
 
-private val knownTemplateExtensions = setOf("tftpl", "tfpl", "tpl")
+private val knownTemplateExtensions = setOf("tftpl", "tfpl")
 
 private val TEMPLATE_FRAGMENT: IElementType = OuterLanguageElementType("TerraformTemplateSegmentElementType",
                                                                        TerraformTemplateLanguage)
