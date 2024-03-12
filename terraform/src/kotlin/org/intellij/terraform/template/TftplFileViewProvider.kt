@@ -29,20 +29,21 @@ internal class TerraformTemplateFileViewProvider(psiManager: PsiManager,
 ) : MultiplePsiFilesPerDocumentFileViewProvider(psiManager, virtualFile, eventSystemEnabled), ConfigurableTemplateLanguageFileViewProvider {
 
   override fun createFile(lang: Language): PsiFile? {
+    val dataLanguageParser = LanguageParserDefinitions.INSTANCE.forLanguage(lang) ?: return null
 
-    val dataLanguageParser = LanguageParserDefinitions.INSTANCE.forLanguage(lang)
-    if (dataLanguageParser == null) {
-      return null
+    return when {
+      lang === baseLanguage -> {
+        dataLanguageParser.createFile(this)
+      }
+      lang === templateDataLanguage -> {
+        val file = dataLanguageParser.createFile(this) as PsiFileImpl
+        file.contentElementType = TEMPLATE_DATA
+        file
+      }
+      else -> {
+        null
+      }
     }
-    if (lang === templateDataLanguage) {
-      val file = dataLanguageParser.createFile(this) as PsiFileImpl
-      file.contentElementType = TEMPLATE_DATA
-      return file
-    }
-    if (lang === baseLanguage) {
-      return dataLanguageParser.createFile(this)
-    }
-    return null
   }
 
   override fun getContentElementType(language: Language): IElementType? {
@@ -64,7 +65,7 @@ internal class TerraformTemplateFileViewProvider(psiManager: PsiManager,
 
 // Note that the language MUST be computed for a physical virtual file, not a copy -
 // otherwise a mapping from the TemplateDataLanguageMappings would not be used resulting in inability to parse a file!
-private fun doComputeTemplateDataLanguage(virtualFile: VirtualFile, project: Project): Language {
+internal fun doComputeTemplateDataLanguage(virtualFile: VirtualFile, project: Project): Language {
   val dataLanguage = TemplateDataLanguageMappings.getInstance(project)?.getMapping(virtualFile)
                      ?: tryGuessLanguageByCompositeExtension(virtualFile.name)
                      ?: PlainTextLanguage.INSTANCE
@@ -81,8 +82,8 @@ private fun doComputeTemplateDataLanguage(virtualFile: VirtualFile, project: Pro
 private fun tryGuessLanguageByCompositeExtension(fileName: String): Language? {
   val (maybeDataLanguageExtension, maybeTemplateLanguageExtension) =
     fileName.split('.')
-      .takeLast(2)
-      .takeIf { it.size == 2 }
+      .takeIf { it.size == 3 }
+      ?.takeLast(2)
       ?.let { it.first() to it.last() } ?: return null
 
   if (maybeTemplateLanguageExtension !in knownTemplateExtensions) return null

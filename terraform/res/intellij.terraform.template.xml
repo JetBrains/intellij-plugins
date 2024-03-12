@@ -9,13 +9,14 @@
               language="TFTPL"
               implementationClass="org.intellij.terraform.template.TerraformTemplateFileType"
               fieldName="INSTANCE"
-              extensions="tftpl"/>
+              extensions="tfpl;tftpl"/>
     <lang.parserDefinition language="TFTPL"
                            implementationClass="org.intellij.terraform.template.psi.TerraformTemplateParserDefinition"/>
     <lang.fileViewProviderFactory language="TFTPL"
                                   implementationClass="org.intellij.terraform.template.TftplFileViewProviderFactory"/>
     <lang.syntaxHighlighterFactory language="TFTPL"
                                    implementationClass="org.intellij.terraform.template.editor.TerraformTemplateSyntaxHighlightingFactory"/>
+    <editorHighlighterProvider filetype="Terraform Template" implementationClass="org.intellij.terraform.template.editor.TerraformTemplateEditorHighlighterProvider"/>
     <completion.contributor language="HIL"
                             implementationClass="org.intellij.terraform.template.editor.HilTemplateCompletionContributor"/>
     <completion.contributor language="HIL"
