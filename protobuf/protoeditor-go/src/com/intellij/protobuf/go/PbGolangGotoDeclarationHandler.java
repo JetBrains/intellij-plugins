@@ -22,6 +22,7 @@ import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableList;
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationHandler;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.protobuf.lang.psi.PbFile;
 import com.intellij.protobuf.lang.psi.PbSymbol;
@@ -44,7 +45,8 @@ public class PbGolangGotoDeclarationHandler implements GotoDeclarationHandler {
   @Override
   public PsiElement @Nullable [] getGotoDeclarationTargets(
       @Nullable PsiElement sourceElement, int offset, Editor editor) {
-    return Optional.ofNullable(sourceElement)
+    if (sourceElement == null || DumbService.isDumb(sourceElement.getProject())) return PsiElement.EMPTY_ARRAY;
+    return Optional.of(sourceElement)
         .filter(e -> e.getLanguage().is(GoLanguage.INSTANCE))
         .filter(LeafPsiElement.class::isInstance)
         .map(LeafPsiElement.class::cast)
