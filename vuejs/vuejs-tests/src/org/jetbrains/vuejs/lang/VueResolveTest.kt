@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang
 
 import com.intellij.lang.ecmascript6.psi.ES6Property
@@ -2376,6 +2376,13 @@ export default class UsageComponent extends Vue {
       .map { it.text }
       .toList()
     assertSameElements(declarations, "inputProp = 'abc'", "inputProp?: string")
+  }
+
+  fun testNavigateThroughTypeofReferenceToImport() {
+    myFixture.configureVueDependencies()
+    myFixture.copyDirectoryToProject("globalComponentsWithTypeofImport", "")
+    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+    myFixture.checkGotoDeclaration("ButtonS<caret>FC", "eComponent({\n  <caret>props: {\n", "ButtonSFC.vue")
   }
 }
 
