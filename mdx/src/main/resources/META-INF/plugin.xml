@@ -39,7 +39,6 @@
                                implementationClass="org.intellij.plugin.mdx.lang.psi.MdxOuterLanguagePatcher"/>
     <lang.inspectionSuppressor language="MDX"
                                implementationClass="org.intellij.plugin.mdx.codeInspection.MdxInspectionSuppressor"/>
-    <xml.zenCodingGenerator implementation="org.intellij.plugin.mdx.js.MdxZenCodingGenerator"/>
     <editorFactoryListener implementation="org.intellij.plugin.mdx.js.MdxEditorFactoryListener"/>
     <lang.formatter language="MDX" implementationClass="org.intellij.plugin.mdx.format.MdxFormattingModelBuilder"/>
     <lang.formatter language="MdxJS" implementationClass="org.intellij.plugin.mdx.format.MdxJsFormattingModelBuilder"/>
