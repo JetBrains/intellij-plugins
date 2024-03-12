@@ -3,6 +3,7 @@ package org.intellij.terraform.config.model
 
 import com.intellij.concurrency.ConcurrentCollectionFactory
 import com.intellij.lang.LanguageMatcher
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.PsiDirectory
@@ -13,6 +14,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.Processor
 import org.intellij.terraform.config.TerraformLanguage
+import org.intellij.terraform.config.model.local.LocalSchemaService
 import org.intellij.terraform.config.model.version.VersionConstraint
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.HCLLanguage
@@ -145,10 +147,14 @@ class Module private constructor(val item: PsiFileSystemItem) {
   }
 
   private fun processAllFilesWithVariables(processor: Processor<PsiFile>): Boolean {
+    val contextFile = item.virtualFile?.let { item.project.service<LocalSchemaService>().findLockFile(it) } ?: item.virtualFile
+    val dirToSearch = contextFile.takeIf { it.isDirectory } ?: contextFile.parent
+    val searchScope = dirToSearch?.let { GlobalSearchScopes.directoryScope(item.project, it, true) }
+                      ?: GlobalSearchScope.projectScope(item.project)
 
     val terraformScope = PsiSearchScopeUtil.restrictScopeToFileLanguage(
       item.project,
-      GlobalSearchScope.projectScope(item.project),
+      searchScope,
       LanguageMatcher.matchWithDialects(HCLLanguage)
     ) as GlobalSearchScope
 
