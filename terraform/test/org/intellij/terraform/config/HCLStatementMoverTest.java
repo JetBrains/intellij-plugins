@@ -87,6 +87,10 @@ public class HCLStatementMoverTest extends LightJavaCodeInsightFixtureTestCase {
     both();
   }
 
+  public void testWithMultipleSelection() throws Exception {
+    both();
+  }
+
   public void testNoEscapeFromArray() throws Exception {
     both();
   }
