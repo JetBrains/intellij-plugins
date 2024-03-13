@@ -5,29 +5,29 @@
 
   <description><![CDATA[
    <p>
-      Enhanced <a href="https://www.terraform.io/">Terraform</a> support is tailored for developers, SREs, and DevOps teams,
-      simplifying infrastructure management with features like syntax highlighting, code completion, and real-time error checking.
+      Improved <a href="https://www.terraform.io/">Terraform</a> support is tailored for developers, SREs, and DevOps teams, supporting
+      infrastructure management with features like syntax highlighting, code completion, and real-time error checking.
       Streamline your infrastructure as code (IaC) workflow and boost productivity with comprehensive tooling designed to make development
       and deployment more efficient.
-    </p>
+   </p>
 
-    <p>Features:</p>
-    <ul>
-      <li>Autocompletion, including for third-party providers from the Terraform Registry.</li>
-      <li><a href="https://github.com/hashicorp/hcl">HCL</a>, <a href="https://github.com/hashicorp/hil">HIL</a>, <a href="https://developer.hashicorp.com/terraform/language/functions/templatefile">TFTPL</a> syntax highlighting and validation</li>
-      <li>Integrated documentation, including for third-party providers from the Terraform Registry.</li>
-      <li>Find Usages / Go to definition for resources, providers, variables and their properties</li>
-      <li>Rename refactoring</li>
-      <li>Introduce Variable refactoring (for string property values)</li>
-      <li>Several inspections</li>
-      <li>Report usage of deprecated properties</li>
-      <li>Unresolved reference checks (in interpolations)</li>
-      <li>Check required/missing properties in resource/provider</li>
-      <li><a href="https://www.terraform.io/docs/configuration/interpolation.html">Predefined Terraform methods</a> autocompletion in interpolations</li>
-      <li>(WIP) Better properties validation (type checking)</li>
-      <li>(WIP) Working with dependent modules</li>
-      <li>(WIP) Type-specific autocompletion in interpolations</li>
-    </ul>
+   <p>Features:</p>
+   <ul>
+     <li>Autocompletion, including for third-party providers from the Terraform Registry.</li>
+     <li><a href="https://github.com/hashicorp/hcl">HCL</a>, <a href="https://github.com/hashicorp/hil">HIL</a>, <a href="https://developer.hashicorp.com/terraform/language/functions/templatefile">TFTPL</a> syntax highlighting and validation</li>
+     <li>Integrated documentation, including for third-party providers from the Terraform Registry.</li>
+     <li>Find Usages / Go to definition for resources, providers, variables, and their properties</li>
+     <li>Rename refactoring</li>
+     <li>Introduce Variable refactoring (for string property values)</li>
+     <li>Several inspections</li>
+     <li>Report usage of deprecated properties</li>
+     <li>Unresolved reference checks (in interpolations)</li>
+     <li>Check required/missing properties in resource/provider</li>
+     <li><a href="https://www.terraform.io/docs/configuration/interpolation.html">Predefined Terraform methods</a> autocompletion in interpolations</li>
+     <li>(WIP) Better properties validation (type checking)</li>
+     <li>(WIP) Working with dependent modules</li>
+     <li>(WIP) Type-specific autocompletion in interpolations</li>
+   </ul>
     ]]></description>
 
   <!--suppress PluginXmlValidity -->
@@ -35,11 +35,11 @@
     <![CDATA[
     2024.1
     <ul>
-      <li>Enhances code completion for a wide range of third-party Terraform providers from the Terraform Registry, facilitating efficient coding.</li>
+      <li>Improves code completion for a wide range of third-party Terraform providers from the Terraform Registry, supporting efficient coding.</li>
       <li>Integrates support for the latest documentation of providers directly in the IDE, enabling quick learning and exploration.</li>
-      <li>Adds support for the Terraform Template Language (TFTPL), enhancing workflows for configuration files, scripts, and program codes.</li>
-      <li>Offers an option to integrate TFTPL files with preferred programming languages for enhanced templating flexibility.</li>
-      <li>Recommends running "terraform init" to initialize the working directory, enhancing code autocompletion and inspections with local, up-to-date metadata.</li>
+      <li>Adds support for the Terraform Template Language (TFTPL), improving workflows for configuration files, scripts, and program codes.</li>
+      <li>Offers an option to integrate TFTPL files with preferred programming languages for improved templating flexibility.</li>
+      <li>Recommends running "terraform init" to initialize the working directory, improving code autocompletion and inspections with local, up-to-date metadata.</li>
       <li>Enables moving expressions, lines, or blocks of code up or down within a file.</li>
       <li>Support for the "Removed" block has been added.</li>
       <li>Now automatically adds comment markers when a new line is inserted within a comment block.</li>
