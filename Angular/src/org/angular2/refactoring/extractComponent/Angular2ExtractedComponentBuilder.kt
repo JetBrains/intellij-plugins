@@ -241,10 +241,10 @@ class Angular2ExtractedComponentBuilder(private val sourceFile: PsiFile, private
         }
 
         if (jsType != null && !jsType.isTypeScript) {
-          return jsType.substitute().withNewSource(JSTypeSource.EMPTY_TS)
+          return jsType.substitute(element).withNewSource(JSTypeSource.EMPTY_TS)
         }
 
-        return jsType?.substitute() ?: JSAnyType.get(JSTypeSource.EMPTY_TS)
+        return jsType?.substitute(element) ?: JSAnyType.get(JSTypeSource.EMPTY_TS)
       }
     })
 

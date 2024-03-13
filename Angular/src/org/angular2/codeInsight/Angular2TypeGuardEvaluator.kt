@@ -16,13 +16,13 @@ object Angular2TypeGuardEvaluator : TypeScriptTypeGuardEvaluator() {
                                            resolvedElement: PsiElement?): JSType? {
     // Actually, expressions like {{isString(qux) && qux.length}} in Angular language tools are type-narrowed even outside strictTemplates,
     // so ideally we'd need 2 separate type narrowing mechanisms
-    if (isStrictTemplates(namedElement)) {
+    if (isStrictTemplates(place)) {
       return super.getTypeFromTypeGuard(namedElement, place, type, resolvedElement)
     }
 
     // Old, non-strict mode
     // Angular template syntax doesn't support type guards, so we need to remove strictness from union types
-    val optimized = TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(type)
+    val optimized = TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(type, place)
     return if (optimized is JSUnionType)
       optimized.copyWithStrict(false)
     else type

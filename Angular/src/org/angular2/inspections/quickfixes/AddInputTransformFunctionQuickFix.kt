@@ -71,7 +71,7 @@ class AddInputTransformFunctionQuickFix(private val kind: TransformKind,
         val template = TemplateManager.getInstance(project)
           .createTemplate("ng_insert_input_transform", "angular", "(value: \$TYPE0\$): \$TYPE1\$ => \$END$")
         template.addVariable("TYPE0", TextExpression(expressionType), TextExpression(expressionType), true, true)
-        val inputType = input.rawJsType?.substitute()?.getTypeText(JSType.TypeTextFormat.CODE)
+        val inputType = input.rawJsType?.substitute(startElement)?.getTypeText(JSType.TypeTextFormat.CODE)
         template.addVariable("TYPE1", TextExpression(inputType), TextExpression(inputType), true, true)
         template.addVariable("END", EmptyExpression(), true)
         template.setToReformat(true)

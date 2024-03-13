@@ -21,7 +21,7 @@ class VueDocumentationCustomizer : WebSymbolDocumentationCustomizer {
         && symbol.kind == WebSymbol.KIND_HTML_SLOTS
         && (symbol.origin.framework == VueFramework.ID
             || symbol.psiContext.let { it != null && isVueContext(it) })) {
-      symbol.renderJsTypeForDocs(null)
+      symbol.renderJsTypeForDocs(null, location)
         ?.replace(",", ",<br>")
         ?.let {
           @Suppress("HardCodedStringLiteral")
@@ -35,13 +35,13 @@ class VueDocumentationCustomizer : WebSymbolDocumentationCustomizer {
              && symbol.kind == WebSymbol.KIND_JS_EVENTS
              && (symbol.origin.framework == VueFramework.ID
                  || symbol.psiContext.let { it != null && isVueContext(it) })) {
-      symbol.renderJsTypeForDocs(Strings.escapeXmlEntities(symbol.name), getTypeSubstitutorFor(location))?.let {
+      symbol.renderJsTypeForDocs(Strings.escapeXmlEntities(symbol.name), location, getTypeSubstitutorFor(location))?.let {
         return documentation.withDefinition(it)
       }
     }
     else {
       if (symbol.qualifiedKind == VUE_COMPONENT_PROPS) {
-        symbol.renderJsTypeForDocs(Strings.escapeXmlEntities(symbol.name), getTypeSubstitutorFor(location))?.let {
+        symbol.renderJsTypeForDocs(Strings.escapeXmlEntities(symbol.name), location, getTypeSubstitutorFor(location))?.let {
           return documentation.withDefinition(it)
         }
       }

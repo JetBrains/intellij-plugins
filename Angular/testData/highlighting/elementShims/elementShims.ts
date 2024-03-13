@@ -6,4 +6,7 @@ import {Component} from '@angular/core';
     templateUrl: "./elementShims.html"
 })
 export class SelectChangeEventComponent {
+  apply(value: number) {
+
+  }
 }

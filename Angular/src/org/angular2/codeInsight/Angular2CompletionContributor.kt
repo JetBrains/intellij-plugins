@@ -148,7 +148,7 @@ class Angular2CompletionContributor : CompletionContributor() {
             val transformTypes = transformMembers
               .asSequence()
               .mapNotNull { transform ->
-                (transform as? JSTypeOwner)?.jsType?.substitute()
+                (transform as? JSTypeOwner)?.jsType?.substitute(parameters.originalFile)
                   ?.asSafely<JSFunctionType>()?.let { Pair(transform, it) }
               }
               .toMap()
@@ -186,7 +186,7 @@ class Angular2CompletionContributor : CompletionContributor() {
                         ?: return@resolve true
           val name = element.name
           if (name != null && !NG_LIFECYCLE_HOOKS.contains(name)
-              && contributedElements.add(name + "#" + JSLookupUtilImpl.getTypeAndTailTexts(element, null).tailAndType)) {
+              && contributedElements.add(name + "#" + JSLookupUtilImpl.getTypeAndTailTexts(element, JSLookupContext(parameters.originalFile)).tailAndType)) {
             localNames.add(name)
             result.consume(JSCompletionUtil.withJSLookupPriority(
               JSLookupUtilImpl.createLookupElement(element, name)

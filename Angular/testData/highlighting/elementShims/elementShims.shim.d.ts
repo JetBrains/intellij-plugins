@@ -8,5 +8,5 @@ interface SelectChangeEvent extends Event {
 }
 
 interface SelectChangeEventTarget extends EventTarget {
-  value: any
+  value: string
 }

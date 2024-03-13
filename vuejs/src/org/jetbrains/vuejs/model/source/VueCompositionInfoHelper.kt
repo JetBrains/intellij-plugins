@@ -20,7 +20,7 @@ object VueCompositionInfoHelper {
     return setupType
              ?.asRecordType()
              ?.properties
-             ?.mapNotNull { mapSignatureToRawBinding(it, JSTypeSubstitutionContextImpl(), context) }
+             ?.mapNotNull { mapSignatureToRawBinding(it, JSTypeSubstitutionContextImpl(context), context) }
            ?: emptyList()
   }
 

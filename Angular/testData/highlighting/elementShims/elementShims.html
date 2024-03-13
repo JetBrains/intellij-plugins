@@ -1,2 +1,3 @@
-<select (change)="$event.target.value"></select>
-<div (change)="$event.target.<error descr="Unresolved variable value">value</error>"></div>
+<select (change)="apply($event.target.<error descr="Qualifier of 'value' is possibly null">value</error>)"></select>
+<select (change)="apply(<error descr="Argument type string | undefined is not assignable to parameter type number  Type string is not assignable to type number">$event.target?.value</error>)"></select>
+<div (change)="apply($event.target.<error descr="Unresolved variable value">value</error>)"></div>

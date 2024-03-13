@@ -43,7 +43,7 @@ class Angular2BlockVariableType : Angular2BaseType<Angular2BlockParameterVariabl
         if (parameter.isPrimaryExpression) {
           parameter.expression
             ?.let { JSPsiBasedTypeOfType(it, false) }
-            ?.substitute()
+            ?.substitute(parameter.expression)
             ?.let { JSTypeUtils.removeNullableComponents(it) }
             ?.let { JSTypeUtils.getIterableComponentType(it) }
         }

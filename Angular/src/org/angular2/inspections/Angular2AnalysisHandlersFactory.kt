@@ -49,7 +49,7 @@ class Angular2AnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
                             holder: DialectOptionHolder?): Collection<LocalQuickFix> {
         val quickFixes = super.getFixes(expr, declaredJSType, elementToChangeTypeOf, expressionJSType, context, holder)
         expr?.parent?.asSafely<Angular2Binding>()?.enclosingAttribute?.let {
-          return Angular2FixesFactory.getCreateInputTransformFixes(it, expressionJSType.substitute().getTypeText(CODE)) + quickFixes
+          return Angular2FixesFactory.getCreateInputTransformFixes(it, expressionJSType.substitute(expr).getTypeText(CODE)) + quickFixes
         }
         return quickFixes
       }

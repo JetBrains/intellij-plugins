@@ -8,10 +8,7 @@ import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.completion.JSCompletionContributor;
-import com.intellij.lang.javascript.completion.JSLookupPriority;
-import com.intellij.lang.javascript.completion.JSLookupUtilImpl;
-import com.intellij.lang.javascript.completion.JSSmartCompletionContributor;
+import com.intellij.lang.javascript.completion.*;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.ImportUtils;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
@@ -59,7 +56,7 @@ public final class ActionScriptSmartCompletionContributor extends JSSmartComplet
     if (parent instanceof JSArgumentList &&
         ((JSArgumentList)parent).getArguments()[0] == location &&
         location.getQualifier() == null
-      ) {
+    ) {
       final JSExpression calledExpr = ((JSCallExpression)parent.getParent()).getMethodExpression();
 
       if (calledExpr instanceof JSReferenceExpression expression) {
@@ -69,7 +66,7 @@ public final class ActionScriptSmartCompletionContributor extends JSSmartComplet
             ActionScriptResolveUtil.REMOVE_EVENT_LISTENER_METHOD.equals(s) ||
             "willTrigger".equals(s) ||
             "hasEventListener".equals(s)
-          ) {
+        ) {
           final MyEventSubclassesProcessor subclassesProcessor = new MyEventSubclassesProcessor(location, variants);
           subclassesProcessor.findAcceptableVariants(expression);
           return variants;
@@ -77,7 +74,7 @@ public final class ActionScriptSmartCompletionContributor extends JSSmartComplet
       }
     }
 
-    JSType expectedClassType = JSTypeUtils.getValuableType(findClassType(parent));
+    JSType expectedClassType = JSTypeUtils.getValuableType(findClassType(parent), parent);
     if (expectedClassType != null) {
       JSClass clazz = expectedClassType.resolveClass();
 
@@ -149,7 +146,7 @@ public final class ActionScriptSmartCompletionContributor extends JSSmartComplet
             if (grandParent instanceof JSForInStatement &&
                 ((JSForInStatement)grandParent).isForEach() &&
                 parent2 == ((JSForInStatement)grandParent).getVarDeclaration()
-              ) {
+            ) {
               JSExpression expression = ((JSForInStatement)grandParent).getCollectionExpression();
               if (expression != null) {
                 JSType expressionType = JSResolveUtil.getExpressionJSType(expression);
@@ -329,7 +326,7 @@ public final class ActionScriptSmartCompletionContributor extends JSSmartComplet
         JSInheritanceUtil.isParentClass(ourClass, clazz, false) &&
         !JSResolveUtil.calculateStaticFromContext(location) &&
         JSCompletionContributor.getInstance().isDoingSmartCodeCompleteAction()
-      ) {
+    ) {
       variants.add(JSLookupUtilImpl.createPrioritizedLookupItem(
         null, "this", JSLookupPriority.SMART_PRIORITY
       ));
@@ -378,7 +375,7 @@ public final class ActionScriptSmartCompletionContributor extends JSSmartComplet
             attributeList.getAccessType() == JSAttributeList.AccessType.PUBLIC &&
             attributeList.hasModifier(JSAttributeList.ModifierType.STATIC) &&
             JSNamedType.isNamedTypeWithName(variable.getJSType(), JSCommonTypeNames.STRING_CLASS_NAME)
-          ) {
+        ) {
           final String s = variable.getLiteralOrReferenceInitializerText();
           if (s != null && StringUtil.startsWith(s, "\"") && StringUtil.endsWith(s, "\"")) {
             String key = StringUtil.unquoteString(s);
@@ -393,7 +390,7 @@ public final class ActionScriptSmartCompletionContributor extends JSSmartComplet
               ((JSClass)parent).getName() + "." + name,
               JSLookupPriority.SMART_PRIORITY,
               false,
-              null,
+              new JSLookupContext(myExpr),
               false,
               name
             );

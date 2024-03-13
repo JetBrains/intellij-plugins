@@ -47,7 +47,7 @@ class Angular2TemplateVariableImpl : JSVariableImpl<JSVariableStub<in JSVariable
       }
     }
 
-    return propertyType?.substitute()
+    return propertyType?.substitute(this)
   }
 
   override fun getJSType(): JSType? {

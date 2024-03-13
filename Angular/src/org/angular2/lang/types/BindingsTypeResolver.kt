@@ -351,18 +351,18 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
 
         val guardElement = cls.findFunctionByName(NG_TEMPLATE_CONTEXT_GUARD)
         if (guardElement != null && guardElement.jsContext == JSContext.STATIC) {
-          val guardFunctionType = JSPsiBasedTypeOfType(guardElement, false).substitute() // expected JSFunctionType
+          val guardFunctionType = JSPsiBasedTypeOfType(guardElement, false).substitute(element) // expected JSFunctionType
 
           val instanceType = JSTypeUtils.applyGenericArguments(genericConstructorReturnType, typeSubstitutor)
           val callType = JSApplyCallType(guardFunctionType, listOf(instanceType, JSUnknownType.TS_INSTANCE), classTypeSource)
-          val predicateType = callType.substitute()
+          val predicateType = callType.substitute(element)
 
           var contextType: JSType? = null
           if (predicateType is TypeScriptTypePredicateTypeImpl) {
             contextType = predicateType.guardType
           }
           if (contextType != null) {
-            templateContextTypes.add(contextType.substitute())
+            templateContextTypes.add(contextType.substitute(element))
           }
         }
       }
@@ -444,14 +444,15 @@ internal class BindingsTypeResolver private constructor(val element: PsiElement,
         // checking to be less strict here. Additionally, if `any` type is passed to e.g. async pipe it's going to be resolved
         // with `null`, so we need to check for `null` and `undefined` as well
         val anyType = JSAnyType.get(inputType.source)
-        TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(propertyType).accept(object : JSRecursiveTypeVisitor(true) {
-          override fun visitJSType(type: JSType) {
-            if (type is JSGenericParameterType) {
-              genericArguments.putValue(type.genericId, anyType)
+        TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(propertyType, inputExpression)
+          .accept(object : JSRecursiveTypeVisitor(true) {
+            override fun visitJSType(type: JSType) {
+              if (type is JSGenericParameterType) {
+                genericArguments.putValue(type.genericId, anyType)
+              }
+              super.visitJSType(type)
             }
-            super.visitJSType(type)
-          }
-        })
+          })
       }
       else {
         JSGenericTypesEvaluatorBase

@@ -56,7 +56,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
   fun testAnimationCallbacks() = checkHighlighting(dir = true)
 
-  fun testElementShims() = checkHighlighting(dir = true)
+  fun testElementShims() = checkHighlighting(dir = true, strictTemplates = true)
 
   fun testCustomUserEvents() = checkHighlighting(dir = true)
 
@@ -183,6 +183,8 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
   fun testNgNativeValidate() = checkHighlighting(ANGULAR_COMMON_16_2_8, ANGULAR_FORMS_16_2_8,
                                                  extension = "ts")
+
+  fun testStrictNullChecks() = checkHighlighting(dir = true, configureFileName = "src/check.ts")
 
   override fun setUp() {
     super.setUp()

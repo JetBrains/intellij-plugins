@@ -108,7 +108,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : WebSymbolsScopeWithCache<XmlT
     }
 
     private fun expandStringLiteralTypes(type: JSType): JSType =
-      TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(type)
+      TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(type, null)
         .transformTypeHierarchy { toApply -> if (toApply is JSPrimitiveType) STRING_TYPE else toApply }
   }
 

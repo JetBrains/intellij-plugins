@@ -7,6 +7,7 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.lang.javascript.completion.JSCompletionUtil
+import com.intellij.lang.javascript.completion.JSLookupContext
 import com.intellij.lang.javascript.completion.JSLookupElementRenderer
 import com.intellij.lang.javascript.completion.JSLookupPriority
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
@@ -110,7 +111,7 @@ class VuexStoreSymbolStringReference(element: PsiElement,
       ProgressManager.checkCanceled()
       val priority = JSLookupPriority.SMART_PRIORITY
       var builder = LookupElementBuilder.createWithSmartPointer(name, value)
-      builder = JSLookupElementRenderer(name, priority, false, null).applyToBuilder(builder)
+      builder = JSLookupElementRenderer(name, priority, false, JSLookupContext.EMPTY).applyToBuilder(builder)
         .withInsertHandler { context, _ ->
           if (context.completionChar == REPLACE_SELECT_CHAR) {
             PsiDocumentManager.getInstance(context.project).commitAllDocuments()

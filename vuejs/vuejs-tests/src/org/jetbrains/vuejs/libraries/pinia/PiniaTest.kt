@@ -5,7 +5,6 @@ import com.intellij.idea.IJIgnore
 import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.psi.JSProperty
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.UsefulTestCase
@@ -59,7 +58,7 @@ class PiniaTest : BasePlatformTestCase() {
     TestCase.assertTrue(
       PsiTreeUtil
         .findChildrenOfType(element?.containingFile, VueJSEmbeddedExpressionContent::class.java)
-        .mapNotNull { TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(JSResolveUtil.getElementJSType(it.firstChild)) }
+        .mapNotNull { TypeScriptTypeRelations.expandAndOptimizeElementTypeRecursive(it.firstChild) }
         .also { TestCase.assertEquals(3, it.size) }
         .all { it.typeText == "boolean" }
     )

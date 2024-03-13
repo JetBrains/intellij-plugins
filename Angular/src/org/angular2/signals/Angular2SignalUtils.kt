@@ -49,7 +49,7 @@ object Angular2SignalUtils {
         else {
           JSResolveUtil.getElementJSType(targetElement)
         }
-          ?.substitute()
+          ?.substitute(targetElement)
           ?.let {
             JSCompositeTypeFactory.optimizeTypeIfComposite(it, JSUnionOrIntersectionType.OptimizedKind.OPTIMIZED_REMOVED_NULL_UNDEFINED)
           }

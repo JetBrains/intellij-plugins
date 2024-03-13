@@ -25,12 +25,12 @@ class Angular2JSFrameworkSpecificHandler : JSFrameworkSpecificHandler {
       val descriptor = attribute?.descriptor as? WebSymbolAttributeDescriptor ?: return null
       val info = Angular2AttributeNameParser.parse(descriptor.name)
       if (info.type == Angular2AttributeType.PROPERTY_BINDING || info.type == Angular2AttributeType.BANANA_BOX_BINDING) {
-        return Angular2PropertyBindingType(attribute, expectedTypeKind).substitute()
+        return Angular2PropertyBindingType(attribute, expectedTypeKind).substitute(element)
       }
       return null
     }
     if (parent is Angular2TemplateBinding && parent.expression == element) {
-      return (parent.keyJSType as? Angular2TemplateBindingType)?.copyWithExpectedKind(expectedTypeKind)?.substitute()
+      return (parent.keyJSType as? Angular2TemplateBindingType)?.copyWithExpectedKind(expectedTypeKind)?.substitute(element)
     }
     if (parent is Angular2Interpolation && parent.expression == element) {
       return if (expectedTypeKind != JSExpectedTypeKind.TYPE_CHECKING)
