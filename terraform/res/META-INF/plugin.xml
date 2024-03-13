@@ -34,6 +34,7 @@
   <change-notes>
     <![CDATA[
     2024.1
+    <ul>
       <li>Enhances code completion for a wide range of third-party Terraform providers from the Terraform Registry, facilitating efficient coding.</li>
       <li>Integrates support for the latest documentation of providers directly in the IDE, enabling quick learning and exploration.</li>
       <li>Adds support for the Terraform Template Language (TFTPL), enhancing workflows for configuration files, scripts, and program codes.</li>
@@ -44,6 +45,7 @@
       <li>Now automatically adds comment markers when a new line is inserted within a comment block.</li>
       <li>HCL syntax checks improved.</li>
       <li>Added support for the lifecycle meta-argument.</li>
+    </ul>
     2023.3
     <ul>
       <li>Support for import block</li>
@@ -64,7 +66,7 @@
       <li>Terraform intentions and quickfixes now provide intention preview</li>
     </ul>
     ]]>
-  </change-notes>
+  </change-notes>§§
 
   <content>
     <module name="intellij.terraform/watchers"/>
