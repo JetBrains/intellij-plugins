@@ -24,6 +24,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.perforce.perforce.PerforceChange;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 
+import static org.jetbrains.idea.perforce.perforce.PerforceChangeListHelper.findOrCreateDefaultList;
+
 class PerforceChangeListCalculator {
   private final ChangeListManagerGate myAddGate;
   private final PerforceNumberNameSynchronizer mySynchronizer;
@@ -38,14 +40,6 @@ class PerforceChangeListCalculator {
   @NotNull
   ChangeList convert(PerforceChange perforceChange) {
     LocalChangeList list = myAddGate.findChangeList(mySynchronizer.getName(myConnectionKey, perforceChange.getChangeList()));
-    return list != null ? list : findOrCreateDefaultList();
-  }
-
-  private ChangeList findOrCreateDefaultList() {
-    for (String name : LocalChangeList.getAllDefaultNames()) {
-      LocalChangeList list = myAddGate.findChangeList(name);
-      if (list != null) return list;
-    }
-    return myAddGate.addChangeList(LocalChangeList.getDefaultName(), "");
+    return list != null ? list : findOrCreateDefaultList(myAddGate);
   }
 }

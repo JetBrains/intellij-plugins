@@ -276,8 +276,19 @@ public class PerforceChangeProvider implements ChangeProvider {
 
   private void refreshSynchronizer(final ChangeListManagerGate addGate, final MultiMap<ConnectionKey, PerforceChangeList> allLists) {
     for (final ConnectionKey key : allLists.keySet()) {
-      addGate.setListsToDisappear(mySynchronizer.acceptInfo(key, allLists.get(key), addGate));
+      Set<String> disappearedLists = mySynchronizer.acceptInfo(key, allLists.get(key), addGate);
+      for (final String changeListName : disappearedLists) {
+        LocalChangeList changeList = addGate.findChangeList(changeListName);
+        if (changeList != null && changeList.isDefault()) {
+          ChangeList defaultChangeList = PerforceChangeListHelper.findOrCreateDefaultList(addGate);
+          addGate.setDefaultChangeList(defaultChangeList.getName());
+          break;
+        }
+      }
+
+      addGate.setListsToDisappear(disappearedLists);
     }
+
     mySynchronizer.removeNonexistentKeys(allLists.keySet());
   }
 

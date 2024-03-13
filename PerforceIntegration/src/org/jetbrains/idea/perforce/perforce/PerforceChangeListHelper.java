@@ -2,6 +2,9 @@ package org.jetbrains.idea.perforce.perforce;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vcs.VcsException;
+import com.intellij.openapi.vcs.changes.ChangeList;
+import com.intellij.openapi.vcs.changes.ChangeListManagerGate;
+import com.intellij.openapi.vcs.changes.LocalChangeList;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
@@ -81,5 +84,13 @@ public final class PerforceChangeListHelper {
     catch (NumberFormatException e) {
       return -1;
     }
+  }
+
+  public static ChangeList findOrCreateDefaultList(ChangeListManagerGate addGate) {
+    for (String name : LocalChangeList.getAllDefaultNames()) {
+      LocalChangeList list = addGate.findChangeList(name);
+      if (list != null) return list;
+    }
+    return addGate.addChangeList(LocalChangeList.getDefaultName(), "");
   }
 }
