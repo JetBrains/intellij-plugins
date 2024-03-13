@@ -80,16 +80,12 @@
 }
 
 // This bnf based on SpringEL bnf. Thanks to IntelliJ team
-private root ::= shouldParseAsTemplate (data_language_segment | template_segment)* | template_segment
+private Root ::= <<isTemplatingSupported>> (<<parseDataLanguageToken>> | TemplateSegment)* | TemplateSegment
 {
   consumeTokenMethod = 'smart'
 }
 
-private template_segment ::= ILTemplateHolder | ILExpressionHolder | BadTag
-
-external data_language_segment ::= parseDataLanguageToken
-private external shouldParseAsTemplate ::= isTemplatingSupported
-private external isDataLanguageSegment ::= isDataLanguageToken
+private TemplateSegment ::= ILTemplateHolder | ILExpressionHolder | BadTag
 
 // Expressions
 // Update HILElementType.IL_EXPRESSIONS on change
@@ -155,25 +151,25 @@ ILSimpleExpression ::=
 
 ILTemplateHolder ::= ILTemplateForBlockExpression | ILTemplateIfBlockExpression
 
-ILTemplateIfBlockExpression ::= IfCondition <<expectIfEnd>> ILTemplateBlockBody ElseBranch? <<removeIfEndExpectation>> EndIf {
+BadTag ::= (TEMPLATE_START|INTERPOLATION_START) <<templateBlockRecoveryUntil 'R_CURLY'>> R_CURLY
+
+ILTemplateBlockBody ::= (<<isTemplatingSupported>> <<parseDataLanguageToken>> | ILExpression | ILTemplateHolder | ILExpressionHolder | BadTag)+
+
+ILTemplateIfBlockExpression ::= IfCondition <<expectIfEnd>> ILTemplateBlockBody IlElseBranch? <<removeIfEndExpectation>> EndIf {
   pin = 1
 }
-
 IfCondition ::= TEMPLATE_START IF_KEYWORD ILExpression R_CURLY {
   pin = 2
-  recoverWhile = not_control_structure_symbol
+  recoverWhile = notControlStructureSymbol
 }
-
-private ElseBranch ::= ElseCondition ILTemplateBlockBody
-
+private IlElseBranch ::= ElseCondition ILTemplateBlockBody
 ElseCondition ::= TEMPLATE_START ELSE_KEYWORD R_CURLY {
   pin = 2
-  recoverWhile = not_control_structure_symbol
+  recoverWhile = notControlStructureSymbol
 }
-
 EndIf ::= TEMPLATE_START ENDIF_KEYWORD R_CURLY {
   pin = 2
-  recoverWhile = not_control_structure_symbol
+  recoverWhile = notControlStructureSymbol
 }
 
 ILTemplateForBlockExpression ::= ForCondition <<expectForEnd>> ILTemplateBlockBody? <<removeForEndExpectation>> EndFor {
@@ -181,23 +177,17 @@ ILTemplateForBlockExpression ::= ForCondition <<expectForEnd>> ILTemplateBlockBo
     getLoopVariables returns = "org.intellij.terraform.hil.psi.ForVariable"
   ]
 }
-
-BadTag ::= (TEMPLATE_START|INTERPOLATION_START) <<templateBlockRecoveryUntil 'R_CURLY'>> R_CURLY
-
-ILTemplateBlockBody ::= (template_segment_support | ILExpression | ILTemplateHolder | ILExpressionHolder | BadTag)+
-private template_segment_support ::= shouldParseAsTemplate data_language_segment
 ForCondition ::= TEMPLATE_START FOR_KEYWORD ForVariable ("," ForVariable)* IN_KEYWORD ILSimpleExpression R_CURLY {
   pin = 2
-  recoverWhile = not_control_structure_symbol
+  recoverWhile = notControlStructureSymbol
 }
-
 EndFor ::= TEMPLATE_START ENDFOR_KEYWORD R_CURLY {
   pin = 2
-  recoverWhile = not_control_structure_symbol
+  recoverWhile = notControlStructureSymbol
 }
-ForVariable ::= ID
-
-
+ForVariable ::= ID {
+  name = "ForVariable"
+}
 
 ILExpressionHolder ::= INTERPOLATION_START ILExpression '}'
 {
@@ -206,7 +196,7 @@ ILExpressionHolder ::= INTERPOLATION_START ILExpression '}'
     expression="ILExpression"
   ]
   implements="org.intellij.terraform.hcl.psi.common.ParenthesizedExpression<org.intellij.terraform.hil.psi.ILExpression>"
-  recoverWhile = not_control_structure_symbol
+  recoverWhile = notControlStructureSymbol
 }
 
 ILParenthesizedExpression ::= '(' ILExpression ')'
@@ -314,7 +304,6 @@ ILCollectionValue ::= ILArray | ILObject {
 
 ILArray ::= '[' array_element* ']'  {
   methods=[
-//    getPresentation
     Elements="ILExpression"
   ]
   pin=1
@@ -323,15 +312,12 @@ ILArray ::= '[' array_element* ']'  {
 
 private array_element ::= (ILExpression) (','|&']') {
   pin=1
-  recoverWhile = not_bracket_or_next_value
+  recoverWhile = notBracketOrNextValue
 }
 
 ILObject ::= '{' object_element2* '}' {
   pin=1
   methods=[
-//    findProperty
-//    getPresentation
-//    getBlockList
     PropertyList="ILProperty"
     getElements
   ]
@@ -340,7 +326,7 @@ ILObject ::= '{' object_element2* '}' {
 
 private object_element2 ::= (ObjectElement) (','|&'}')? {
   pin=1
-  recoverWhile = not_brace_or_next_value_2
+  recoverWhile = notBraceOrNextValue
 }
 
 private ObjectElement ::= ILExpression ILProperty (','|&'}')?
@@ -402,14 +388,6 @@ private relationalOp ::= OP_LESS
 {
   name="operator"
 }
-private fake ConditionOp ::=
-    orOp
-  | andOp
-  | equalityOp
-  | relationalOp
-{
-  name="operator"
-}
 
 // Primitives
 private literal ::= DOUBLE_QUOTED_STRING
@@ -417,6 +395,6 @@ private identifier ::= ID
 private number ::= NUMBER
 
 // Recoveries
-private not_bracket_or_next_value ::= !(']'|ILExpression)
-private not_brace_or_next_value_2 ::= !('}'|ObjectElement)
-private not_control_structure_symbol ::= shouldParseAsTemplate !(L_CURLY|INTERPOLATION_START|TEMPLATE_START|isDataLanguageSegment)
+private notBracketOrNextValue ::= !(']'|ILExpression)
+private notBraceOrNextValue ::= !('}'|ObjectElement)
+private notControlStructureSymbol ::= <<isTemplatingSupported>> !(L_CURLY|INTERPOLATION_START|TEMPLATE_START|<<isDataLanguageToken>>)

@@ -6,6 +6,7 @@ import com.intellij.lang.PsiParser;
 import com.intellij.lang.parser.GeneratedParserUtilBase;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import org.intellij.terraform.hcl.HCLBundle;
 import org.intellij.terraform.hil.HILTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,48 +44,51 @@ public class HILParserUtil extends GeneratedParserUtilBase {
     return DATA_LANGUAGE_TOKEN_UNPARSED.equals(builder.getTokenType());
   }
 
-  public static boolean templateBlockRecoveryUntil(PsiBuilder b, int l, IElementType stopTokenType) {
-    if (!(b instanceof HilTemplatingAwarePsiBuilder hilBuilder)) return true;
+  public static boolean templateBlockRecoveryUntil(PsiBuilder builder, int level, IElementType stopTokenType) {
+    if (!(builder instanceof HilTemplatingAwarePsiBuilder hilBuilder)) return true;
 
     // process incomplete branches
-    if (HILTokenTypes.getIL_CONTROL_STRUCTURE_START_KEYWORDS().contains(b.getTokenType())) return false;
-    if (HILTokenTypes.getIL_CONTROL_STRUCTURE_END_KEYWORDS().contains(b.getTokenType()) && hilBuilder.isControlStructureTokenExpected(b.getTokenType())) return false;
+    if (HILTokenTypes.getIL_CONTROL_STRUCTURE_START_KEYWORDS().contains(builder.getTokenType())) return false;
+    if (HILTokenTypes.getIL_CONTROL_STRUCTURE_END_KEYWORDS().contains(builder.getTokenType()) && hilBuilder.isControlStructureTokenExpected(builder.getTokenType())) return false;
 
     // process empty tags
-    if (lookupClosingBrace(b, l)) return true;
+    if (lookupClosingBrace(builder)) return true;
 
     // process invalid tags
-    return recoverToToken(b, l, true, stopTokenType);
+    return recoverToToken(builder, stopTokenType);
   }
 
-  private static boolean recoverToToken(PsiBuilder b, int l, boolean reportError, IElementType stopTokenType) {
+  private static boolean recoverToToken(PsiBuilder builder, IElementType stopTokenType) {
     PsiBuilder.Marker marker = null;
-    while (!b.eof() && b.getTokenType() != stopTokenType) {
-      if (reportError) {
-        marker = b.mark();
-        b.advanceLexer();
-        reportError = false;
+    var errorAlreadyReported = false;
+    IElementType reportedTokenType = null;
+    while (!builder.eof() && builder.getTokenType() != stopTokenType) {
+      if (!errorAlreadyReported) {
+        marker = builder.mark();
+        reportedTokenType = builder.getTokenType();
+        builder.advanceLexer();
+        errorAlreadyReported = true;
       }
       else {
-        b.advanceLexer();
+        builder.advanceLexer();
       }
     }
-    if (marker != null) {
-      marker.error("RECOVER TO TOKEN");
+    if (marker != null && reportedTokenType != null) {
+      marker.error(HCLBundle.message("parsing.error.recover.to.token", stopTokenType.getDebugName(), reportedTokenType.getDebugName()));
     }
 
     return true;
   }
 
-  private static boolean lookupClosingBrace(PsiBuilder b, int l) {
+  private static boolean lookupClosingBrace(PsiBuilder builder) {
     var index = 0;
-    while (b.rawLookup(index) == WHITE_SPACE) {
+    while (builder.rawLookup(index) == WHITE_SPACE) {
       index++;
     }
-    var isEmptyTagWithOnlySpacesInside = b.rawLookup(index) == R_CURLY;
+    var isEmptyTagWithOnlySpacesInside = builder.rawLookup(index) == R_CURLY;
     if (isEmptyTagWithOnlySpacesInside) {
-      b.rawAdvanceLexer(index);
-      b.mark().error("Empty tags not allowed");
+      builder.rawAdvanceLexer(index);
+      builder.mark().error(HCLBundle.message("parsing.error.empty.tags.not.allowed"));
     }
     return isEmptyTagWithOnlySpacesInside;
   }
