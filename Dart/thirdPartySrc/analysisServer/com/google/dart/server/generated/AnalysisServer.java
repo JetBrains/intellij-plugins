@@ -517,9 +517,14 @@ public interface AnalysisServer {
    *        difference is that in test mode the fix processor will look for a configuration file that
    *        can modify the content of the data file used to compute the fixes when data-driven fixes
    *        are being considered. If this field is omitted the flag defaults to false.
+   * @param updatePubspec A flag indicating whether to validate that the dependencies used by the
+   *        included files are listed in the pubspec file. If specified, the fix processor will
+   *        compute the set of packages imported in the source and check to see if they are listed in
+   *        the corresponding pubspec file, and compute the fixes, if any. If this field is omitted
+   *        the flag defaults to false.
    * @param codes A list of diagnostic codes to be fixed.
    */
-  public void edit_bulkFixes(List<String> included, boolean inTestMode, List<String> codes, BulkFixesConsumer consumer);
+  public void edit_bulkFixes(List<String> included, boolean inTestMode, boolean updatePubspec, List<String> codes, BulkFixesConsumer consumer);
 
   /**
    * {@code edit.format}
@@ -1036,8 +1041,14 @@ public interface AnalysisServer {
    *        requests that can be specified:
    *        - openUrlRequest
    *        - showMessageRequest
+   * @param supportsUris True if the client supports the server sending URIs in place of file paths.
+   *        In this mode, the server will use URIs in all protocol fields with the type FilePath.
+   *        Returned URIs may be `file://` URIs or custom schemes. The client can fetch the file
+   *        contents for URIs with custom schemes (and receive modification events) through the LSP
+   *        protocol (see the "lsp" domain). LSP notifications are automatically enabled when the
+   *        client sets this capability.
    */
-  public void server_setClientCapabilities(List<String> requests);
+  public void server_setClientCapabilities(List<String> requests, boolean supportsUris);
 
   /**
    * {@code server.setSubscriptions}
