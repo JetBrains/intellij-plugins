@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "vue": "2.6.10",
+    "vue": "2.7.16",
     "element-ui": "2.15.1",
     "vuetify": "2.4.5"
   }
