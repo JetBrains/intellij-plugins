@@ -378,8 +378,8 @@
                                             implementationClass="org.jetbrains.vuejs.codeInsight.VueExprLanguageConfigurableProvider"/>
     <dialectSpecificHandlersFactory language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory"/>
     <dialectSpecificHandlersFactory language="VueTS" implementationClass="org.jetbrains.vuejs.codeInsight.VueTSSpecificHandlersFactory"/>
-    <dialectSpecificHandlersFactory language="Vue"
-                                    implementationClass="org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory"/> <!-- control flow only, refactor -->
+    <!-- control flow, strict null checks -->
+    <dialectSpecificHandlersFactory language="Vue" implementationClass="org.jetbrains.vuejs.codeInsight.VueFileSpecificHandlersFactory"/>
     <handlersFactory language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.VueJSHandlersFactory"/>
     <handlersFactory language="VueTS" implementationClass="org.jetbrains.vuejs.codeInsight.VueTSHandlersFactory"/>
     <handlersFactory language="Vue"

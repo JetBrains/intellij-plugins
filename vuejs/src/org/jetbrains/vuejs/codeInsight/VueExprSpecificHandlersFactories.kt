@@ -11,14 +11,18 @@ import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedScopeHandler
 import com.intellij.lang.typescript.TypeScriptSpecificHandlersFactory
+import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.resolve.ResolveCache
 import org.jetbrains.vuejs.codeInsight.controlflow.VueControlFlowBuilder
 import org.jetbrains.vuejs.codeInsight.refs.VueExprReferenceExpressionResolver
+import org.jetbrains.vuejs.lang.LangMode
+import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.html.VueFileType
 
-class VueJSSpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
+
+open class VueJSSpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
   override fun createReferenceExpressionResolver(referenceExpression: JSReferenceExpressionImpl,
                                                  ignorePerformanceLimits: Boolean): ResolveCache.PolyVariantResolver<JSReferenceExpressionImpl> =
     VueExprReferenceExpressionResolver(referenceExpression, ignorePerformanceLimits)
@@ -47,6 +51,17 @@ class VueTSSpecificHandlersFactory : TypeScriptSpecificHandlersFactory() {
 
   override fun getStubBasedScopeHandler(): JSStubBasedScopeHandler {
     return VueExprStubBasedScopeHandler
+  }
+
+}
+
+class VueFileSpecificHandlersFactory : VueJSSpecificHandlersFactory() {
+
+  override fun strictNullChecks(context: PsiElement): Boolean {
+    return if (context is VueFile && context.langMode == LangMode.HAS_TS)
+      TypeScriptConfigUtil.getConfigForPsiFile(context)?.strictNullChecks() == true
+    else
+      super.strictNullChecks(context)
   }
 
 }
