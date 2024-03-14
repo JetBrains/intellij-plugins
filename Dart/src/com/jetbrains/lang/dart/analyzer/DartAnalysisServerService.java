@@ -2205,7 +2205,7 @@ public final class DartAnalysisServerService implements Disposable {
         mySdkVersion = sdk.getVersion();
 
         startedServer.analysis_updateOptions(new AnalysisOptions(true, true, true, true, false, true, false));
-        startedServer.server_setClientCapabilities(List.of("openUrlRequest", "showMessageRequest"));
+        startedServer.server_setClientCapabilities(List.of("openUrlRequest", "showMessageRequest"), false);
 
         myServer = startedServer;
 
