@@ -113,7 +113,7 @@ class TerraformRunConfiguration(project: Project,
       if (directory.isBlank()) {
         return (HCLBundle.message("run.configuration.no.working.directory.specified"))
       }
-      val terraformPath = TerraformToolProjectSettings.getInstance(project).terraformPath
+      val terraformPath = TerraformToolProjectSettings.getInstance(project).actualTerraformPath
       if (terraformPath.isNullOrBlank()) {
         return (HCLBundle.message("run.configuration.no.terraform.specified"))
       }

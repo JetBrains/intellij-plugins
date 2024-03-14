@@ -10,7 +10,7 @@ import org.intellij.terraform.runtime.TerraformToolProjectSettings
 
 class TerraformExecutableMacro : Macro(), PathMacro {
   companion object {
-    const val NAME = "TerraformExecPath"
+    const val NAME: String = "TerraformExecPath"
   }
 
   override fun getName(): String {
@@ -24,6 +24,6 @@ class TerraformExecutableMacro : Macro(), PathMacro {
   @Throws(ExecutionCancelledException::class)
   override fun expand(dataContext: DataContext): String? {
     val project = CommonDataKeys.PROJECT.getData(dataContext) ?: return TerraformToolProjectSettings.getDefaultTerraformPath()
-    return TerraformToolProjectSettings.getInstance(project).terraformPath
+    return TerraformToolProjectSettings.getInstance(project).actualTerraformPath
   }
 }

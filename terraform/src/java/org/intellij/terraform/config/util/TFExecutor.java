@@ -46,7 +46,7 @@ public final class TFExecutor {
 
   private TFExecutor(@NotNull Project project) {
     myProject = project;
-    myExePath = TerraformToolProjectSettings.getInstance(myProject).getTerraformPath();
+    myExePath = TerraformToolProjectSettings.getInstance(myProject).getActualTerraformPath();
   }
 
   public static TFExecutor in(@NotNull Project project, @Nullable Module module) {

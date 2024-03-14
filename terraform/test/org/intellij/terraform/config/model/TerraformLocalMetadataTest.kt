@@ -226,6 +226,6 @@ class TerraformLocalMetadataTest : BasePlatformTestCase() {
   }
 
   private val terraformExe: String
-    get() = TerraformToolProjectSettings.getInstance(project).terraformPath
+    get() = TerraformToolProjectSettings.getInstance(project).actualTerraformPath
 
 }
