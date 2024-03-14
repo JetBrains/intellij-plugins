@@ -7,6 +7,7 @@ import com.intellij.openapi.options.SearchableConfigurable
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
+import com.intellij.openapi.ui.emptyText
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.Cell
 import com.intellij.ui.dsl.builder.bindText
@@ -35,8 +36,9 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
           fileChosen = { chosenFile ->
             return@textFieldWithBrowseButton chosenFile.path
           }
-        ).bindText(configuration::getTerraformPath, configuration::setTerraformPath)
-          .align(AlignX.FILL)
+        ).bindText(configuration::getTerraformPath, configuration::setTerraformPath).applyToComponent {
+          emptyText.text = TerraformToolProjectSettings.getDefaultTerraformPath()
+        }.align(AlignX.FILL)
       }
       row {
         var button: Cell<JButton>? = null
