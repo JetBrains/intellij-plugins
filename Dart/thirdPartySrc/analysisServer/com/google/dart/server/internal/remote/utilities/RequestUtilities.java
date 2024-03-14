@@ -1048,9 +1048,12 @@ public class RequestUtilities {
    * }
    * </pre>
    */
-  public static JsonObject generateClientCapabilities(String idValue, List<String> requests) {
+  public static JsonObject generateClientCapabilities(String idValue, List<String> requests, boolean supportsUris) {
     JsonObject params = new JsonObject();
     params.add(REQUESTS, buildJsonElement(requests));
+    if (supportsUris) {
+      params.addProperty("supportsUris", supportsUris);
+    }
     return buildJsonObjectRequest(idValue, METHOD_SERVER_SET_CAPABILITIES, params);
   }
 

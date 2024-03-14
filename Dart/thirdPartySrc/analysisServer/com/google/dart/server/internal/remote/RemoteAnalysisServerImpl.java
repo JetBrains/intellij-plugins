@@ -373,7 +373,7 @@ public abstract class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
-  public void edit_bulkFixes(List<String> included, boolean inTestMode, List<String> codes, BulkFixesConsumer consumer) { }
+  public void edit_bulkFixes(List<String> included, boolean inTestMode, boolean updatePubspec, List<String> codes, BulkFixesConsumer consumer) { }
 
   @Override
   public void edit_format(String file, int selectionOffset, int selectionLength, int lineLength, FormatConsumer consumer) {
@@ -584,12 +584,12 @@ public abstract class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
-  public void server_setClientCapabilities(List<String> requests) {
+  public void server_setClientCapabilities(List<String> requests, boolean supportsUris) {
     String id = generateUniqueId();
     if (requests == null) {
       requests = StringUtilities.EMPTY_LIST;
     }
-    sendRequestToServer(id, RequestUtilities.generateClientCapabilities(id, requests));
+    sendRequestToServer(id, RequestUtilities.generateClientCapabilities(id, requests, supportsUris));
   }
 
   @Override
