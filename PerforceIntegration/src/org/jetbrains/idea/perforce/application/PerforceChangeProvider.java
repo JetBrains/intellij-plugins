@@ -28,6 +28,7 @@ import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManage
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class PerforceChangeProvider implements ChangeProvider {
   private static final Logger LOG = Logger.getInstance(PerforceChangeProvider.class);
@@ -93,11 +94,16 @@ public class PerforceChangeProvider implements ChangeProvider {
 
     PerforceChangeCache changeCache = new PerforceChangeCache(myProject);
     MultiMap<ConnectionKey, PerforceChangeList> allLists = calcChangeListMap(changeCache);
-    refreshSynchronizer(addGate, allLists);
+    PerforceSettings settings = PerforceSettings.getSettings(myProject);
+    HashSet<String> ideaLists = new HashSet<>();
+    refreshSynchronizer(addGate, allLists, ideaLists);
+    if (settings.FORCE_SYNC_CHANGELISTS) {
+      removeUnsyncedIdeaChangelists(addGate, ideaLists);
+    }
 
     ChangeCreator creator = new ChangeCreator(myProject);
 
-    final Map<ConnectionKey, P4Connection> key2connection = PerforceSettings.getSettings(myProject).getConnectionsByKeys();
+    final Map<ConnectionKey, P4Connection> key2connection = settings.getConnectionsByKeys();
     MultiMap<ConnectionKey, VirtualFile> roots = getAffectedRoots(dirtyScope);
     for (ConnectionKey key : roots.keySet()) {
       P4Connection connection = key2connection.get(key);
@@ -120,6 +126,15 @@ public class PerforceChangeProvider implements ChangeProvider {
     }
     reportModifiedWithoutCheckout(builder, creator, writableFiles);
     myLastSuccessfulUpdateTracker.updateSuccessful();
+  }
+
+  private static void removeUnsyncedIdeaChangelists(@NotNull ChangeListManagerGate addGate, HashSet<String> ideaLists) {
+    Set<String> ideaOnlyChangelists = addGate.getListsCopy().stream()
+      .filter(it -> !it.hasDefaultName() && !ideaLists.contains(it.getName()))
+      .map(it -> it.getName())
+      .collect(Collectors.toSet());
+
+    addGate.setListsToDisappear(ideaOnlyChangelists);
   }
 
   private void reportModifiedWithoutCheckout(ChangelistBuilder builder, ChangeCreator creator, Set<VirtualFile> writableFiles) throws VcsException {
@@ -274,22 +289,27 @@ public class PerforceChangeProvider implements ChangeProvider {
     }
   }
 
-  private void refreshSynchronizer(final ChangeListManagerGate addGate, final MultiMap<ConnectionKey, PerforceChangeList> allLists) {
+  private void refreshSynchronizer(final ChangeListManagerGate addGate, final MultiMap<ConnectionKey, PerforceChangeList> allLists, Set<String> ideaLists) {
     for (final ConnectionKey key : allLists.keySet()) {
-      Set<String> disappearedLists = mySynchronizer.acceptInfo(key, allLists.get(key), addGate);
-      for (final String changeListName : disappearedLists) {
-        LocalChangeList changeList = addGate.findChangeList(changeListName);
-        if (changeList != null && changeList.isDefault()) {
-          ChangeList defaultChangeList = PerforceChangeListHelper.findOrCreateDefaultList(addGate);
-          addGate.setDefaultChangeList(defaultChangeList.getName());
-          break;
-        }
-      }
+      Collection<PerforceChangeList> lists = allLists.get(key);
+      Set<String> disappearedLists = mySynchronizer.acceptInfo(key, lists, addGate, ideaLists);
+      tryRestoreDefaultChangelist(addGate, disappearedLists);
 
       addGate.setListsToDisappear(disappearedLists);
     }
 
     mySynchronizer.removeNonexistentKeys(allLists.keySet());
+  }
+
+  private static void tryRestoreDefaultChangelist(ChangeListManagerGate addGate, Set<String> disappearedLists) {
+    for (final String changeListName : disappearedLists) {
+      LocalChangeList changeList = addGate.findChangeList(changeListName);
+      if (changeList != null && changeList.isDefault()) {
+        ChangeList defaultChangeList = PerforceChangeListHelper.findOrCreateDefaultList(addGate);
+        addGate.setDefaultChangeList(defaultChangeList.getName());
+        break;
+      }
+    }
   }
 
   private void processConnection(@NotNull final P4Connection connection,

@@ -105,6 +105,7 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
   public boolean USE_PERFORCE_JOBS = false;
   public boolean SHOW_INTEGRATED_IN_COMMITTED_CHANGES = true;
   public boolean USE_PATTERN_MATCHING_IGNORE = false;
+  public boolean FORCE_SYNC_CHANGELISTS = true;
 
   //
   // public PerforceSettings methods

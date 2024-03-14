@@ -118,13 +118,14 @@ public class PerforceNumberNameSynchronizer implements PersistentStateComponent<
   }
 
   /** @return the set of change lists not present anymore in p4, that have to be removed from IDEA */
-  Set<String> acceptInfo(ConnectionKey key, Collection<PerforceChangeList> lists, ChangeListManagerGate gate) {
+  Set<String> acceptInfo(ConnectionKey key, Collection<PerforceChangeList> lists, ChangeListManagerGate gate, Set<String> ideaLists) {
     synchronized (myLock) {
       PerforceNumberNameMap prevMap = ensureMapping(key);
       PerforceNumberNameMap currentMap = new PerforceNumberNameMap();
 
       for (PerforceChangeList changeList : ContainerUtil.sorted(lists, Comparator.comparing(PerforceChangeList::getNumber))) {
         String currentName = obtainIdeaChangeList(gate, prevMap, currentMap, changeList);
+        ideaLists.add(currentName);
         currentMap.put(currentName, changeList.getNumber());
       }
 

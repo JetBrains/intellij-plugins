@@ -6,10 +6,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.AbstractVcs;
 import com.intellij.openapi.vcs.AbstractVcsHelper;
 import com.intellij.openapi.vcs.VcsException;
-import com.intellij.openapi.vcs.changes.Change;
-import com.intellij.openapi.vcs.changes.ChangeList;
-import com.intellij.openapi.vcs.changes.ChangeListListener;
-import com.intellij.openapi.vcs.changes.ChangesUtil;
+import com.intellij.openapi.vcs.changes.*;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.idea.perforce.PerforceBundle;
 import org.jetbrains.idea.perforce.operations.P4MoveToChangeListOperation;
@@ -32,6 +29,31 @@ public class PerforceChangeListListener implements ChangeListListener {
   public PerforceChangeListListener(Project project, PerforceNumberNameSynchronizer synchronizer) {
     myProject = project;
     mySynchronizer = synchronizer;
+  }
+
+  @Override
+  public void changeListAdded(ChangeList list) {
+    if (!(list instanceof LocalChangeList localChangeList)) {
+      return;
+    }
+
+    final PerforceSettings settings = PerforceSettings.getSettings(myProject);
+    if (!settings.ENABLED || !settings.FORCE_SYNC_CHANGELISTS) {
+      return;
+    }
+
+    for(P4Connection connection: settings.getAllConnections()) {
+      if (!checkConnection(connection, PerforceBundle.message("changelist.create.error")))
+        continue;
+
+      try {
+        mySynchronizer.findOrCreate(connection, localChangeList);
+      }
+      catch (VcsException e) {
+        AbstractVcsHelper.getInstance(myProject).showError(e, PerforceBundle.message("changelist.create.error"));
+        LOG.info(e);
+      }
+    }
   }
 
   @Override
@@ -58,13 +80,8 @@ public class PerforceChangeListListener implements ChangeListListener {
     }
 
     for(P4Connection connection: settings.getAllConnections()) {
-      try {
-        PerforceManager.ensureValidClient(myProject, connection);      }
-      catch (VcsException e) {
-        AbstractVcsHelper.getInstance(myProject).showError(e, errorPrefix);
-        LOG.info(e);
+      if (!checkConnection(connection, errorPrefix))
         continue;
-      }
 
       final ConnectionKey connectionKey = connection.getConnectionKey();
 
@@ -131,4 +148,16 @@ public class PerforceChangeListListener implements ChangeListListener {
                                                        PerformInBackgroundOption.ALWAYS_BACKGROUND);
   }
 
+  private boolean checkConnection(P4Connection connection, @Nls String errorPrefix) {
+    try {
+      PerforceManager.ensureValidClient(myProject, connection);
+    }
+    catch (VcsException e) {
+      AbstractVcsHelper.getInstance(myProject).showError(e, errorPrefix);
+      LOG.info(e);
+      return false;
+    }
+
+    return true;
+  }
 }
