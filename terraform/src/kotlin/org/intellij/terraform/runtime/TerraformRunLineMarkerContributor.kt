@@ -46,8 +46,7 @@ class TerraformRunLineMarkerContributor : RunLineMarkerContributor(), DumbAware 
     }
     else {
       icon = AllIcons.RunConfigurations.TestState.Run
-      val event = createActionEvent(leaf)
-      tooltipProvider = Function<PsiElement, String?> { actions.mapNotNull { getText(it, event) }.joinToString("\n") }
+      tooltipProvider = Function<PsiElement, String?> { HCLBundle.message("terraform.run.text") }
     }
     actions.addAll(ExecutorAction.getActions(0))
 
