@@ -41,7 +41,7 @@ public class TerraformToolProjectSettings implements PersistentStateComponent<Te
   }
 
   public void setTerraformPath(String terraformPath) {
-    myState.myTerraformPath = terraformPath;
+    myState.myTerraformPath = terraformPath.trim();
   }
 
   public static class State {
