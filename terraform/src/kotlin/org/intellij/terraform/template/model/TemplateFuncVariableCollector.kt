@@ -66,7 +66,7 @@ private fun collectCallSiteVariables(currentNode: PsiElement): Sequence<TftplVar
     .map { variable -> TftplVariable(variable.name, TftplVariableType.EXTERNAL_VARIABLE, variable) }
 }
 
-private fun findTemplateUsage(templateFile: PsiFile): Sequence<HCLMethodCallExpression> {
+internal fun findTemplateUsage(templateFile: PsiFile): Sequence<HCLMethodCallExpression> {
   val searchScope = ModuleUtilCore.findModuleForFile(templateFile)?.moduleContentScope
                     ?: GlobalSearchScope.projectScope(templateFile.project)
 

@@ -87,13 +87,17 @@ private fun tryGuessLanguageByCompositeExtension(fileName: String): Language? {
       ?.let { it.first() to it.last() } ?: return null
 
   if (maybeTemplateLanguageExtension !in knownTemplateExtensions) return null
+  return getLanguageByExtension(maybeDataLanguageExtension)
+}
+
+internal fun getLanguageByExtension(maybeDataLanguageExtension: String): Language? {
   return FileTypeManager.getInstance()
     .getFileTypeByExtension(maybeDataLanguageExtension)
     .asSafely<LanguageFileType>()
     ?.language
 }
 
-private val knownTemplateExtensions = setOf("tftpl", "tfpl")
+internal val knownTemplateExtensions: Set<String> = setOf("tftpl", "tfpl")
 
 private val TEMPLATE_FRAGMENT: IElementType = OuterLanguageElementType("TerraformTemplateSegmentElementType",
                                                                        TerraformTemplateLanguage)
