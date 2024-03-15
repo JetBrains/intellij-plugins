@@ -264,6 +264,7 @@
 
     <!--suppress PluginXmlCapitalization -->
     <registryKey defaultValue="true" description="Launch Dart Tooling Daemon and DevTools" key="dart.launch.dtd.and.devtools"/>
+    <registryKey defaultValue="false" description="Dart macros support (SDK 3.4+)" key="dart.macros.support"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains">
