@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.libraries.nuxt.library
 
 import com.intellij.javascript.nodejs.library.yarn.pnp.workspaceModel.createStorageFrom
@@ -30,13 +30,13 @@ class NuxtFolderModelSynchronizer(private val project: Project) {
     }
   }
 
-  private fun buildActualEntities(): List<NuxtFolderEntity> {
+  private fun buildActualEntities(): List<NuxtFolderEntity.Builder> {
     return libraries.map {
       NuxtFolderManager.createEntity(it, virtualFileUrlManager)
     }
   }
 
-  private fun areEntitiesOutdated(actualEntities: List<NuxtFolderEntity>): Boolean {
+  private fun areEntitiesOutdated(actualEntities: List<NuxtFolderEntity.Builder>): Boolean {
     val workspaceModelEntities: List<NuxtFolderEntity> = getWorkspaceModelEntities()
     if (workspaceModelEntities.size != actualEntities.size) return true
     val wrappedWorkspaceModelEntities = workspaceModelEntities.mapTo(HashSet()) { NuxtFolderEntityWrapper(it) }
@@ -48,7 +48,7 @@ class NuxtFolderModelSynchronizer(private val project: Project) {
     return workspaceModel.currentSnapshot.entities(NuxtFolderEntity::class.java).toList()
   }
 
-  private fun updateEntities(actualEntities: List<NuxtFolderEntity>) {
+  private fun updateEntities(actualEntities: List<NuxtFolderEntity.Builder>) {
     val entitiesStorage = createStorageFrom(actualEntities)
     NuxtFolderManager.invokeUnderWriteAction(project) {
       workspaceModel.updateProjectModel(".nuxt outdated (new count: ${actualEntities.size})") { storage ->
@@ -58,9 +58,13 @@ class NuxtFolderModelSynchronizer(private val project: Project) {
   }
 }
 
-private class NuxtFolderEntityWrapper(entity: NuxtFolderEntity) {
-  private val nuxtFolderUrl: VirtualFileUrl = entity.nuxtFolderUrl
-  private val libraryFileUrls: Set<VirtualFileUrl> = entity.libraryFileUrls.toHashSet()
+private class NuxtFolderEntityWrapper(
+  entity: Any
+) {
+  private val nuxtFolderUrl: VirtualFileUrl = (entity as? NuxtFolderEntity)?.nuxtFolderUrl
+                                              ?: (entity as NuxtFolderEntity.Builder).nuxtFolderUrl
+  private val libraryFileUrls: Set<VirtualFileUrl> = (entity as? NuxtFolderEntity)?.libraryFileUrls?.toHashSet()
+                                                     ?: (entity as NuxtFolderEntity.Builder).libraryFileUrls.toHashSet()
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true

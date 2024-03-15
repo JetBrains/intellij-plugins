@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.libraries.nuxt.library
 
 import com.intellij.lang.javascript.library.JSLibraryUtil
@@ -139,7 +139,7 @@ class NuxtFolderManager(private val project: Project) : PersistentStateComponent
       }
     }
 
-    internal fun createEntity(library: NuxtFolderLibrary, virtualFileUrlManager: VirtualFileUrlManager): NuxtFolderEntity {
+    internal fun createEntity(library: NuxtFolderLibrary, virtualFileUrlManager: VirtualFileUrlManager): NuxtFolderEntity.Builder {
       val fileUrls = library.libraryFiles.map { it.toVirtualFileUrl(virtualFileUrlManager) }
       return NuxtFolderEntity(library.nuxtFolder.toVirtualFileUrl(virtualFileUrlManager), fileUrls, NuxtFolderEntity.MyEntitySource)
     }
