@@ -10,7 +10,6 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Couple;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -32,23 +31,23 @@ import java.util.List;
 
 public class DartServerRootsHandler {
 
-  @NotNull private final Project myProject;
+  private final @NotNull Project myProject;
 
-  private final List<String> myIncludedRoots = new SmartList<>();
-  private final List<String> myExcludedRoots = new SmartList<>();
+  private final List<String> myIncludedRootPaths = new SmartList<>();
+  private final List<String> myExcludedRootPaths = new SmartList<>();
 
-  public DartServerRootsHandler(@NotNull final Project project) {
+  public DartServerRootsHandler(@NotNull Project project) {
     myProject = project;
   }
 
   void onServerStopped() {
-    myIncludedRoots.clear();
-    myExcludedRoots.clear();
+    myIncludedRootPaths.clear();
+    myExcludedRootPaths.clear();
   }
 
   void onServerStarted() {
-    assert (myIncludedRoots.isEmpty());
-    assert (myExcludedRoots.isEmpty());
+    assert (myIncludedRootPaths.isEmpty());
+    assert (myExcludedRootPaths.isEmpty());
 
     scheduleDartRootsUpdate(() -> {
       DartAnalysisServerService das = DartAnalysisServerService.getInstance(myProject);
@@ -58,12 +57,12 @@ public class DartServerRootsHandler {
   }
 
   void scheduleDartRootsUpdate(@Nullable Runnable onSuccess) {
-    ReadAction.nonBlocking(() -> calcIncludedAndExcludedDartRoots())
+    ReadAction.nonBlocking(() -> calcIncludedAndExcludedDartRootPaths())
       .coalesceBy(this)
       .expireWith(DartAnalysisServerService.getInstance(myProject))
-      .finishOnUiThread(ModalityState.nonModal(), includedAndExcludedRoots -> {
-        if (includedAndExcludedRoots != null) {
-          sendSetAnalysisRootsRequest(includedAndExcludedRoots.first, includedAndExcludedRoots.second);
+      .finishOnUiThread(ModalityState.nonModal(), includedAndExcludedRootPaths -> {
+        if (includedAndExcludedRootPaths != null) {
+          sendSetAnalysisRootsRequest(includedAndExcludedRootPaths.first, includedAndExcludedRootPaths.second);
 
           if (onSuccess != null) {
             onSuccess.run();
@@ -73,15 +72,15 @@ public class DartServerRootsHandler {
       .submit(AppExecutorUtil.getAppExecutorService());
   }
 
-  private @Nullable Couple<List<String>> calcIncludedAndExcludedDartRoots() {
+  private @Nullable Couple<List<String>> calcIncludedAndExcludedDartRootPaths() {
     final DartSdk sdk = DartSdk.getDartSdk(myProject);
     if (sdk == null || !DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) {
       DartAnalysisServerService.getInstance(myProject).stopServer();
       return null;
     }
 
-    final List<String> newIncludedRoots = new SmartList<>();
-    final List<String> newExcludedRoots = new SmartList<>();
+    final List<String> newIncludedRootPaths = new SmartList<>();
+    final List<String> newExcludedRootPaths = new SmartList<>();
 
     final boolean isPackageScopedAnalysis =
       DartProblemsView.getScopeAnalysisMode(myProject) == DartProblemsViewSettings.ScopedAnalysisMode.DartPackage;
@@ -94,12 +93,12 @@ public class DartServerRootsHandler {
         return null; // keep server roots as is until another file is open
       }
 
-      newIncludedRoots.add(FileUtil.toSystemDependentName(getEnclosingDartPackageDirectory(currentFile)));
+      newIncludedRootPaths.add(getEnclosingDartPackageDirectoryPath(currentFile));
     }
 
     final String dotIdeaPath = PathUtil.getParentPath(StringUtil.notNullize(myProject.getProjectFilePath()));
     if (dotIdeaPath.endsWith("/.idea")) {
-      newExcludedRoots.add(FileUtil.toSystemDependentName(dotIdeaPath));
+      newExcludedRootPaths.add(dotIdeaPath);
     }
 
     for (Module module : DartSdkLibUtil.getModulesWithDartSdkEnabled(myProject)) {
@@ -107,36 +106,36 @@ public class DartServerRootsHandler {
         final String contentEntryUrl = contentEntry.getUrl();
         if (contentEntryUrl.startsWith(URLUtil.FILE_PROTOCOL + URLUtil.SCHEME_SEPARATOR)) {
           if (!isPackageScopedAnalysis) {
-            newIncludedRoots.add(FileUtil.toSystemDependentName(VfsUtilCore.urlToPath(contentEntryUrl)));
+            newIncludedRootPaths.add(VfsUtilCore.urlToPath(contentEntryUrl));
           }
           for (String excludedUrl : contentEntry.getExcludeFolderUrls()) {
             // Analysis Server knows about special 'packages' folders, IDE doesn't need to explicitly list them as excluded.
             if (excludedUrl.startsWith(contentEntryUrl) && !excludedUrl.endsWith("/packages")) {
-              newExcludedRoots.add(FileUtil.toSystemDependentName(VfsUtilCore.urlToPath(excludedUrl)));
+              newExcludedRootPaths.add(VfsUtilCore.urlToPath(excludedUrl));
             }
           }
         }
       }
     }
 
-    if (myIncludedRoots.equals(newIncludedRoots) && myExcludedRoots.equals(newExcludedRoots)) {
+    if (myIncludedRootPaths.equals(newIncludedRootPaths) && myExcludedRootPaths.equals(newExcludedRootPaths)) {
       return null;
     }
 
-    return Couple.of(newIncludedRoots, newExcludedRoots);
+    return Couple.of(newIncludedRootPaths, newExcludedRootPaths);
   }
 
   private void sendSetAnalysisRootsRequest(@NotNull List<String> newIncludedRoots, @NotNull List<String> newExcludedRoots) {
-    myIncludedRoots.clear();
-    myExcludedRoots.clear();
+    myIncludedRootPaths.clear();
+    myExcludedRootPaths.clear();
 
     if (DartAnalysisServerService.getInstance(myProject).setAnalysisRoots(newIncludedRoots, newExcludedRoots)) {
-      myIncludedRoots.addAll(newIncludedRoots);
-      myExcludedRoots.addAll(newExcludedRoots);
+      myIncludedRootPaths.addAll(newIncludedRoots);
+      myExcludedRootPaths.addAll(newExcludedRoots);
     }
   }
 
-  boolean isInIncludedRoots(@Nullable final VirtualFile vFile) {
+  boolean isInIncludedRoots(@Nullable VirtualFile vFile) {
     if (vFile == null) return false;
 
     final DartProblemsViewSettings.ScopedAnalysisMode scopedAnalysisMode = DartProblemsView.getScopeAnalysisMode(myProject);
@@ -151,16 +150,16 @@ public class DartServerRootsHandler {
       else if (vFile.getName().equals("AndroidManifest.xml")) {
         // These types of files can be part of an android module, not dart sdk enabled,
         // but should still be considered in the root for Dart Analysis errors and warnings.
-        for (String root : myIncludedRoots) {
-          if (vFile.getPath().startsWith(FileUtil.toSystemIndependentName(root) + "/")) {
+        for (String root : myIncludedRootPaths) {
+          if (vFile.getPath().startsWith(root + "/")) {
             return true;
           }
         }
       }
     }
     else if (scopedAnalysisMode == DartProblemsViewSettings.ScopedAnalysisMode.DartPackage) {
-      for (String root : myIncludedRoots) {
-        if (vFile.getPath().startsWith(FileUtil.toSystemIndependentName(root) + "/")) {
+      for (String root : myIncludedRootPaths) {
+        if (vFile.getPath().startsWith(root + "/")) {
           return true;
         }
       }
@@ -168,8 +167,7 @@ public class DartServerRootsHandler {
     return false;
   }
 
-  @NotNull
-  private String getEnclosingDartPackageDirectory(@NotNull final VirtualFile vFile) {
+  private @NotNull String getEnclosingDartPackageDirectoryPath(@NotNull VirtualFile vFile) {
     final VirtualFile pubspec = Registry.is("dart.projects.without.pubspec", false)
                                 ? DartBuildFileUtil.findPackageRootBuildFile(myProject, vFile)
                                 : PubspecYamlUtil.findPubspecYamlFile(myProject, vFile);
