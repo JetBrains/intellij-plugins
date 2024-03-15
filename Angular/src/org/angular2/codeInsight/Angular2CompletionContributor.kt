@@ -194,7 +194,7 @@ class Angular2CompletionContributor : CompletionContributor() {
 
                   override fun handleInsert(context: InsertionContext, item: LookupElement) {
                     runWithTimeout(200) {
-                      if (Angular2SignalUtils.isSignal(item.psiElement)) {
+                      if (Angular2SignalUtils.isSignal(item.psiElement, null)) {
                         item.putUserData(FORCED_COMPLETE_AS_FUNCTION, true)
                       }
                     }
