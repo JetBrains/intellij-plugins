@@ -22,9 +22,9 @@ enum class Angular2HighlightDescriptor(val attributesKey: TextAttributesKey, pri
   override fun getAttributesKey(highlighter: JSHighlighter): TextAttributesKey = attributesKey
 
   companion object {
-    fun getFor(resolve: PsiElement): Angular2HighlightDescriptor? =
+    fun getFor(resolve: PsiElement, place: PsiElement): Angular2HighlightDescriptor? =
       when {
-        Angular2LangUtil.isAngular2Context(resolve) && Angular2SignalUtils.isSignal(resolve) ->
+        Angular2LangUtil.isAngular2Context(place) && (Angular2SignalUtils.isSignal(resolve, place)) ->
           SIGNAL
         resolve is Angular2TemplateVariableImpl
         || resolve is Angular2HtmlAttrVariable

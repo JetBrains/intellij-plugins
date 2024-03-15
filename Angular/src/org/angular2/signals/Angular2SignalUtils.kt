@@ -34,7 +34,8 @@ object Angular2SignalUtils {
   fun supportsSignals(context: PsiElement?) =
     signalTypeAlias(context) != null
 
-  fun isSignal(targetElement: PsiElement?): Boolean {
+  fun isSignal(targetElement: PsiElement?, place: PsiElement?): Boolean {
+    if (targetElement == null) return false
     val signalTypeAlias = signalTypeAlias(targetElement)
     if (signalTypeAlias == targetElement) return false
 
@@ -42,14 +43,15 @@ object Angular2SignalUtils {
       ?.jsType
       ?.let { JSGenericTypeImpl(it.source, it, JSAnyType.get(it.source)) }
     if (signalType != null) {
+      val toCheck = place ?: targetElement
       val elementType =
-        if (targetElement is JSExpression) {
-          JSResolveUtil.getExpressionJSType(targetElement)
+        if (toCheck is JSExpression) {
+          JSResolveUtil.getExpressionJSType(toCheck)
         }
         else {
-          JSResolveUtil.getElementJSType(targetElement)
+          JSResolveUtil.getElementJSType(toCheck)
         }
-          ?.substitute(targetElement)
+          ?.substitute(toCheck)
           ?.let {
             JSCompositeTypeFactory.optimizeTypeIfComposite(it, JSUnionOrIntersectionType.OptimizedKind.OPTIMIZED_REMOVED_NULL_UNDEFINED)
           }

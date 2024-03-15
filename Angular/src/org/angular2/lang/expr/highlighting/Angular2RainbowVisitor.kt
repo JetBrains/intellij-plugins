@@ -56,7 +56,7 @@ class Angular2RainbowVisitor : RainbowVisitor() {
   }
 
   private fun getColorKey(element: PsiElement): TextAttributesKey? {
-    Angular2HighlightDescriptor.getFor(element)
+    Angular2HighlightDescriptor.getFor(element, element)
       ?.let { return it.attributesKey }
     return if (element is JSVariable) {
       if (JSSemanticHighlightingVisitor.isLocalVariable(element, element))

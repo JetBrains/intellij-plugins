@@ -41,5 +41,5 @@ class Angular2JSFrameworkSpecificHandler : JSFrameworkSpecificHandler {
   }
 
   override fun buildHighlightForElement(resolve: PsiElement, place: PsiElement): JSHighlightDescriptor? =
-    Angular2HighlightDescriptor.getFor(resolve)
+    Angular2HighlightDescriptor.getFor(resolve, place)
 }
