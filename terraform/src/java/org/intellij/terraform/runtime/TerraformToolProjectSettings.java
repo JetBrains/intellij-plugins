@@ -7,10 +7,12 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.util.containers.SmartHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.Set;
 
 @State(name = "TerraformToolProjectSettings", storages = @Storage("terraform.xml"))
 public class TerraformToolProjectSettings implements PersistentStateComponent<TerraformToolProjectSettings.State> {
@@ -29,6 +31,7 @@ public class TerraformToolProjectSettings implements PersistentStateComponent<Te
   @Override
   public void loadState(@NotNull State state) {
     myState.myTerraformPath = state.myTerraformPath;
+    myState.ignoredTemplateCandidatePaths = state.ignoredTemplateCandidatePaths;
   }
 
   public String getTerraformPath() {
@@ -40,12 +43,21 @@ public class TerraformToolProjectSettings implements PersistentStateComponent<Te
     return path.isEmpty() ? getDefaultTerraformPath() : path;
   }
 
-  public void setTerraformPath(String terraformPath) {
+  public void setTerraformPath(@NotNull String terraformPath) {
     myState.myTerraformPath = terraformPath.trim();
+  }
+
+  public void addIgnoredTemplateCandidate(@NotNull String filePath) {
+    myState.ignoredTemplateCandidatePaths.add(filePath);
+  }
+
+  public boolean isIgnoredTemplateCandidate(@NotNull String filePath) {
+    return myState.ignoredTemplateCandidatePaths.contains(filePath);
   }
 
   public static class State {
     public String myTerraformPath = getDefaultTerraformPath();
+    public Set<String> ignoredTemplateCandidatePaths = new SmartHashSet<>();
   }
 
   public static String getDefaultTerraformPath() {
