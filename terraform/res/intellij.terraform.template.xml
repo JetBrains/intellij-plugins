@@ -27,5 +27,24 @@
     <liveTemplateContext contextId="TFTPL_TEMPLATE" implementation="org.intellij.terraform.template.editor.TerraformTemplateContextType"/>
     <defaultLiveTemplates file="liveTemplates/terraformTemplate.xml"/>
     <gotoDeclarationHandler implementation="org.intellij.terraform.template.editor.TerraformTemplateVariableGoToDeclarationHandler"/>
+    <localInspection language=""
+                     shortName="MaybeTerraformTemplateInspection"
+                     groupBundle="messages.HCLBundle" groupKey="inspection.possible.template.group.name"
+                     bundle="messages.HCLBundle" key="inspection.possible.template.name"
+                     enabledByDefault="true" level="WARNING"
+                     implementationClass="org.intellij.terraform.template.editor.MaybeTerraformTemplateInspection"/>
+    <localInspection language="TFTPL"
+                     shortName="TerraformUnselectedDataLanguage"
+                     groupBundle="messages.HCLBundle" groupKey="inspection.possible.template.group.name"
+                     bundle="messages.HCLBundle" key="inspection.unselected.data.language.name"
+                     enabledByDefault="true" level="WARNING"
+                     implementationClass="org.intellij.terraform.template.editor.TerraformUnselectedDataLanguageInspection"/>
+    <intentionAction>
+      <language>TFTPL</language>
+      <className>org.intellij.terraform.template.editor.TerraformRemoveFileTypeAssociationIntention</className>
+      <bundleName>messages.HCLBundle</bundleName>
+      <categoryKey>inspection.possible.template.group.name</categoryKey>
+      <skipBeforeAfter>true</skipBeforeAfter>
+    </intentionAction>
   </extensions>
 </idea-plugin>

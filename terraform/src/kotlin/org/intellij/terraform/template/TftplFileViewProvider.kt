@@ -3,6 +3,8 @@ package org.intellij.terraform.template
 
 import com.intellij.lang.Language
 import com.intellij.lang.LanguageParserDefinitions
+import com.intellij.openapi.fileTypes.FileTypeManager
+import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -16,6 +18,7 @@ import com.intellij.psi.templateLanguages.TemplateDataElementType
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.OuterLanguageElementType
+import com.intellij.util.asSafely
 import org.intellij.terraform.hil.psi.TerraformTemplateLanguage
 import org.intellij.terraform.hil.psi.TerraformTemplateTokenTypes
 
@@ -26,20 +29,21 @@ internal class TerraformTemplateFileViewProvider(psiManager: PsiManager,
 ) : MultiplePsiFilesPerDocumentFileViewProvider(psiManager, virtualFile, eventSystemEnabled), ConfigurableTemplateLanguageFileViewProvider {
 
   override fun createFile(lang: Language): PsiFile? {
+    val dataLanguageParser = LanguageParserDefinitions.INSTANCE.forLanguage(lang) ?: return null
 
-    val dataLanguageParser = LanguageParserDefinitions.INSTANCE.forLanguage(lang)
-    if (dataLanguageParser == null) {
-      return null
+    return when {
+      lang === baseLanguage -> {
+        dataLanguageParser.createFile(this)
+      }
+      lang === templateDataLanguage -> {
+        val file = dataLanguageParser.createFile(this) as PsiFileImpl
+        file.contentElementType = TEMPLATE_DATA
+        file
+      }
+      else -> {
+        null
+      }
     }
-    if (lang === templateDataLanguage) {
-      val file = dataLanguageParser.createFile(this) as PsiFileImpl
-      file.contentElementType = TEMPLATE_DATA
-      return file
-    }
-    if (lang === baseLanguage) {
-      return dataLanguageParser.createFile(this)
-    }
-    return null
   }
 
   override fun getContentElementType(language: Language): IElementType? {
@@ -61,8 +65,9 @@ internal class TerraformTemplateFileViewProvider(psiManager: PsiManager,
 
 // Note that the language MUST be computed for a physical virtual file, not a copy -
 // otherwise a mapping from the TemplateDataLanguageMappings would not be used resulting in inability to parse a file!
-private fun doComputeTemplateDataLanguage(virtualFile: VirtualFile, project: Project): Language {
+internal fun doComputeTemplateDataLanguage(virtualFile: VirtualFile, project: Project): Language {
   val dataLanguage = TemplateDataLanguageMappings.getInstance(project)?.getMapping(virtualFile)
+                     ?: tryGuessLanguageByCompositeExtension(virtualFile.name)
                      ?: PlainTextLanguage.INSTANCE
   val substituteLang = LanguageSubstitutors.getInstance()
     .substituteLanguage(dataLanguage, virtualFile, project)
@@ -73,6 +78,26 @@ private fun doComputeTemplateDataLanguage(virtualFile: VirtualFile, project: Pro
     dataLanguage
   }
 }
+
+private fun tryGuessLanguageByCompositeExtension(fileName: String): Language? {
+  val (maybeDataLanguageExtension, maybeTemplateLanguageExtension) =
+    fileName.split('.')
+      .takeIf { it.size == 3 }
+      ?.takeLast(2)
+      ?.let { it.first() to it.last() } ?: return null
+
+  if (maybeTemplateLanguageExtension !in knownTemplateExtensions) return null
+  return getLanguageByExtension(maybeDataLanguageExtension)
+}
+
+internal fun getLanguageByExtension(maybeDataLanguageExtension: String): Language? {
+  return FileTypeManager.getInstance()
+    .getFileTypeByExtension(maybeDataLanguageExtension)
+    .asSafely<LanguageFileType>()
+    ?.language
+}
+
+internal val knownTemplateExtensions: Set<String> = setOf("tftpl", "tfpl")
 
 private val TEMPLATE_FRAGMENT: IElementType = OuterLanguageElementType("TerraformTemplateSegmentElementType",
                                                                        TerraformTemplateLanguage)
