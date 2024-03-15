@@ -80,8 +80,6 @@
   <resource-bundle>messages.HCLBundle</resource-bundle>
 
   <extensions defaultExtensionNs="com.intellij">
-    <pluginSuggestionProvider implementation="org.intellij.terraform.ultimate.TerraformTemplateUltimateSuggestionProvider"/>
-
     <iconMapper mappingFile="TerraformIconMappings.json"/>
 
     <fileType name="HCL" language="HCL" extensions="hcl;nomad" implementationClass="org.intellij.terraform.hcl.HCLFileType" fieldName="INSTANCE"/>
