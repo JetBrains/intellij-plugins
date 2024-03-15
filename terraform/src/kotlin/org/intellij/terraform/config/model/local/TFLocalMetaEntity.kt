@@ -28,12 +28,12 @@ interface TFLocalMetaEntity : WorkspaceEntity {
 
   //region generated code
   @GeneratedCodeApiVersion(2)
-  interface Builder : TFLocalMetaEntity, WorkspaceEntity.Builder<TFLocalMetaEntity> {
+  interface Builder : WorkspaceEntity.Builder<TFLocalMetaEntity> {
     override var entitySource: EntitySource
-    override var timeStampLow: Int
-    override var timeStampHigh: Int
-    override var jsonPath: String
-    override var lockFile: VirtualFileUrl
+    var timeStampLow: Int
+    var timeStampHigh: Int
+    var jsonPath: String
+    var lockFile: VirtualFileUrl
   }
 
   companion object : EntityType<TFLocalMetaEntity, Builder>() {
@@ -47,7 +47,7 @@ interface TFLocalMetaEntity : WorkspaceEntity {
       lockFile: VirtualFileUrl,
       entitySource: EntitySource,
       init: (Builder.() -> Unit)? = null,
-    ): TFLocalMetaEntity {
+    ): Builder {
       val builder = builder()
       builder.timeStampLow = timeStampLow
       builder.timeStampHigh = timeStampHigh

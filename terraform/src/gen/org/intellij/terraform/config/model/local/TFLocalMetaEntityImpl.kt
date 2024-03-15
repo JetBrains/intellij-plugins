@@ -211,7 +211,7 @@ class TFLocalMetaEntityData : WorkspaceEntityData<TFLocalMetaEntity>() {
   override fun deserialize(de: EntityInformation.Deserializer) {
   }
 
-  override fun createDetachedEntity(parents: List<WorkspaceEntity>): WorkspaceEntity {
+  override fun createDetachedEntity(parents: List<WorkspaceEntity.Builder<*>>): WorkspaceEntity.Builder<*> {
     return TFLocalMetaEntity(timeStampLow, timeStampHigh, jsonPath, lockFile, entitySource) {
     }
   }

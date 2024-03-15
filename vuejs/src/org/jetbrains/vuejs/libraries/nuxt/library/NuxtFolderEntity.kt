@@ -19,10 +19,10 @@ interface NuxtFolderEntity: WorkspaceEntity {
 
   //region generated code
   @GeneratedCodeApiVersion(2)
-  interface Builder : NuxtFolderEntity, WorkspaceEntity.Builder<NuxtFolderEntity> {
+  interface Builder : WorkspaceEntity.Builder<NuxtFolderEntity> {
     override var entitySource: EntitySource
-    override var nuxtFolderUrl: VirtualFileUrl
-    override var libraryFileUrls: MutableList<VirtualFileUrl>
+    var nuxtFolderUrl: VirtualFileUrl
+    var libraryFileUrls: MutableList<VirtualFileUrl>
   }
 
   companion object : EntityType<NuxtFolderEntity, Builder>() {
@@ -34,7 +34,7 @@ interface NuxtFolderEntity: WorkspaceEntity {
       libraryFileUrls: List<VirtualFileUrl>,
       entitySource: EntitySource,
       init: (Builder.() -> Unit)? = null,
-    ): NuxtFolderEntity {
+    ): Builder {
       val builder = builder()
       builder.nuxtFolderUrl = nuxtFolderUrl
       builder.libraryFileUrls = libraryFileUrls.toMutableWorkspaceList()

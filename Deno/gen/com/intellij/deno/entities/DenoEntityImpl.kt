@@ -175,7 +175,7 @@ class DenoEntityData : WorkspaceEntityData<DenoEntity>() {
   override fun deserialize(de: EntityInformation.Deserializer) {
   }
 
-  override fun createDetachedEntity(parents: List<WorkspaceEntity>): WorkspaceEntity {
+  override fun createDetachedEntity(parents: List<WorkspaceEntity.Builder<*>>): WorkspaceEntity.Builder<*> {
     return DenoEntity(entitySource) {
       this.depsFile = this@DenoEntityData.depsFile
       this.denoTypes = this@DenoEntityData.denoTypes

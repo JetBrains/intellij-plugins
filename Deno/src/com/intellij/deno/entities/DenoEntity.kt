@@ -18,10 +18,10 @@ interface DenoEntity : WorkspaceEntity {
 
   //region generated code
   @GeneratedCodeApiVersion(2)
-  interface Builder : DenoEntity, WorkspaceEntity.Builder<DenoEntity> {
+  interface Builder : WorkspaceEntity.Builder<DenoEntity> {
     override var entitySource: EntitySource
-    override var depsFile: VirtualFileUrl?
-    override var denoTypes: VirtualFileUrl?
+    var depsFile: VirtualFileUrl?
+    var denoTypes: VirtualFileUrl?
   }
 
   companion object : EntityType<DenoEntity, Builder>() {
@@ -31,7 +31,7 @@ interface DenoEntity : WorkspaceEntity {
     operator fun invoke(
       entitySource: EntitySource,
       init: (Builder.() -> Unit)? = null,
-    ): DenoEntity {
+    ): Builder {
       val builder = builder()
       builder.entitySource = entitySource
       init?.invoke(builder)
