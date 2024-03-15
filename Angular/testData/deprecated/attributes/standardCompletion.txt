@@ -8,6 +8,7 @@
 (beforecut) (tailText=null; typeText=null; priority=50.0; typeGreyed)
 (beforeinput) (tailText=null; typeText='InputEvent'; priority=50.0; typeGreyed)
 (beforepaste) (tailText=null; typeText=null; priority=50.0; typeGreyed)
+(beforetoggle) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
 (blur) (tailText=null; typeText='FocusEvent'; priority=50.0; typeGreyed)
 (canplay) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
 (canplaythrough) (tailText=null; typeText='Event'; priority=50.0; typeGreyed)
