@@ -50,6 +50,10 @@ internal class TerraformActionService(private val project: Project, private val 
   suspend fun initTerraform(dirFile: VirtualFile, notifyOnSuccess: Boolean) {
     val title = HCLBundle.message("progress.title.terraform.init")
     withBackgroundProgress(project, title) {
+      if (!isTerraformExecutable(project)) {
+        return@withBackgroundProgress
+      }
+
       if (!execTerraformInit(dirFile, project, module = null, title)) {
         TerraformConstants.EXECUTION_NOTIFICATION_GROUP
           .createNotification(
