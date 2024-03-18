@@ -3,14 +3,17 @@ package org.intellij.terraform.template.model
 
 import com.intellij.icons.AllIcons
 import com.intellij.lang.injection.InjectedLanguageManager
-import com.intellij.openapi.module.ModuleUtilCore
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.impl.cache.CacheManager
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.UsageSearchContext.IN_CODE
 import com.intellij.psi.search.searches.ReferencesSearch
-import com.intellij.psi.util.parentOfType
-import com.intellij.psi.util.parents
+import com.intellij.psi.util.*
 import com.intellij.util.concurrency.annotations.RequiresReadLock
+import org.intellij.terraform.config.TerraformLanguage
 import org.intellij.terraform.config.codeinsight.HclFileReference
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.*
@@ -67,14 +70,24 @@ private fun collectCallSiteVariables(currentNode: PsiElement): Sequence<TftplVar
 }
 
 internal fun findTemplateUsage(templateFile: PsiFile): Sequence<HCLMethodCallExpression> {
-  val searchScope = ModuleUtilCore.findModuleForFile(templateFile)?.moduleContentScope
-                    ?: GlobalSearchScope.projectScope(templateFile.project)
-
-  return ReferencesSearch.search(templateFile.originalFile, searchScope, false)
+  val searchCandidates = getOrComputeSearchScope(templateFile.project).takeIf { it.isNotEmpty() } ?: return emptySequence()
+  val narrowedSearchScope = GlobalSearchScope.filesScope(templateFile.project, searchCandidates)
+  return ReferencesSearch.search(templateFile.originalFile, narrowedSearchScope, false)
     .filtering { reference -> reference is HclFileReference }
     .findAll()
     .asSequence()
     .mapNotNull { reference -> reference.element.parentOfType<HCLMethodCallExpression>() }
+}
+
+private fun getOrComputeSearchScope(project: Project): List<VirtualFile> {
+  return CachedValuesManager.getManager(project).getCachedValue(project) {
+    CachedValueProvider.Result.create(computeSearchScope(project), PsiModificationTracker.getInstance(project).forLanguage(TerraformLanguage))
+  }
+}
+
+private fun computeSearchScope(project: Project): List<VirtualFile> {
+  return CacheManager.getInstance(project)
+    .getVirtualFilesWithWord(TEMPLATEFILE_FUNCTION_NAME, IN_CODE, GlobalSearchScope.projectScope(project), true).toList()
 }
 
 private fun collectVariablesFromTemplateFunctionParameters(templateFunctionCall: HCLMethodCallExpression): Sequence<HCLProperty> {
@@ -114,3 +127,4 @@ private fun collectVariablesFromObject(templateVariables: HCLObject): Sequence<H
 private const val EXPECTED_VARIABLES_PARAMETER_INDEX = 1
 private const val VARIABLE_ID = "variable"
 private const val DEFAULT_VARIABLE_VALUE_FIELD = "default"
+private const val TEMPLATEFILE_FUNCTION_NAME = "templatefile"
