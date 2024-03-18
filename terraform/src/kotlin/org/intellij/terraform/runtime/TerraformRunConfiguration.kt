@@ -11,20 +11,15 @@ import com.intellij.execution.process.ProcessTerminatedListener
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.ui.ConsoleView
 import com.intellij.execution.util.ProgramParametersUtil
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationAction
-import com.intellij.notification.NotificationType
-import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.options.SettingsEditor
-import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.InvalidDataException
 import com.intellij.openapi.util.WriteExternalException
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.xmlb.XmlSerializer
-import org.intellij.terraform.config.TerraformConstants
 import org.intellij.terraform.config.actions.TerraformInitCommandFilter
+import org.intellij.terraform.config.actions.isTerraformExecutable
 import org.intellij.terraform.config.util.TFExecutor
 import org.intellij.terraform.hcl.HCLBundle
 import org.jdom.Element
@@ -48,7 +43,7 @@ class TerraformRunConfiguration(project: Project,
   @Throws(ExecutionException::class)
   override fun getState(executor: Executor, env: ExecutionEnvironment): RunProfileState? {
     val error = error
-    if (handleNonExecutablePath()) {
+    if (!isTerraformExecutable(project)) {
       return null
     }
     if (error != null) {
@@ -102,21 +97,6 @@ class TerraformRunConfiguration(project: Project,
       }
     }
   }
-
-  private fun handleNonExecutablePath(): Boolean =
-    if (!FileUtil.canExecute(File(terraformPath))) {
-      TerraformConstants.EXECUTION_NOTIFICATION_GROUP.createNotification(
-        HCLBundle.message("run.configuration.terraform.path.title"),
-        HCLBundle.message("run.configuration.terraform.path.incorrect", terraformPath),
-        NotificationType.ERROR
-      ).addAction(object : NotificationAction(HCLBundle.message("terraform.open.settings")) {
-        override fun actionPerformed(e: AnActionEvent, notification: Notification) {
-          ShowSettingsUtil.getInstance().showSettingsDialog(project, TerraformToolConfigurable::class.java)
-        }
-      }).notify(project)
-      true
-    }
-    else false
 
   @Throws(RuntimeConfigurationException::class)
   override fun checkConfiguration() {

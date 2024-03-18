@@ -15,6 +15,8 @@
  */
 package org.intellij.terraform.config.actions
 
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -25,15 +27,21 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
+import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.intellij.terraform.config.TerraformConstants
 import org.intellij.terraform.config.TerraformFileType
+import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLFileType
+import org.intellij.terraform.runtime.TerraformToolConfigurable
+import org.intellij.terraform.runtime.TerraformToolProjectSettings
 import org.jetbrains.annotations.Nls
+import java.io.File
 import kotlin.coroutines.cancellation.CancellationException
 
 abstract class TFExternalToolsAction : DumbAwareAction() {
@@ -114,4 +122,22 @@ internal fun notifyError(title: @Nls String, project: Project, ex: Throwable?) {
         .joinToString("\n"),
       NotificationType.ERROR
     ).notify(project)
+}
+
+internal fun isTerraformExecutable(project: Project): Boolean {
+  val terraformPath = TerraformToolProjectSettings.getInstance(project).actualTerraformPath
+  return if (FileUtil.canExecute(File(terraformPath))) {
+    true
+  } else {
+    TerraformConstants.EXECUTION_NOTIFICATION_GROUP.createNotification(
+      HCLBundle.message("run.configuration.terraform.path.title"),
+      HCLBundle.message("run.configuration.terraform.path.incorrect", terraformPath),
+      NotificationType.ERROR
+    ).addAction(object : NotificationAction(HCLBundle.message("terraform.open.settings")) {
+      override fun actionPerformed(e: AnActionEvent, notification: Notification) {
+        ShowSettingsUtil.getInstance().showSettingsDialog(e.project, TerraformToolConfigurable::class.java)
+      }
+    }).notify(project)
+    false
+  }
 }
