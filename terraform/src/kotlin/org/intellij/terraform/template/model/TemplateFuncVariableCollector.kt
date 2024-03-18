@@ -13,6 +13,7 @@ import com.intellij.psi.search.UsageSearchContext.IN_CODE
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.*
 import com.intellij.util.concurrency.annotations.RequiresReadLock
+import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.TerraformLanguage
 import org.intellij.terraform.config.codeinsight.HclFileReference
 import org.intellij.terraform.hcl.HCLBundle
@@ -87,7 +88,12 @@ private fun getOrComputeSearchScope(project: Project): List<VirtualFile> {
 
 private fun computeSearchScope(project: Project): List<VirtualFile> {
   return CacheManager.getInstance(project)
-    .getVirtualFilesWithWord(TEMPLATEFILE_FUNCTION_NAME, IN_CODE, GlobalSearchScope.projectScope(project), true).toList()
+    .getVirtualFilesWithWord(
+      TEMPLATEFILE_FUNCTION_NAME,
+      IN_CODE,
+      GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScope.projectScope(project), TerraformFileType),
+      true)
+    .toList()
 }
 
 private fun collectVariablesFromTemplateFunctionParameters(templateFunctionCall: HCLMethodCallExpression): Sequence<HCLProperty> {
