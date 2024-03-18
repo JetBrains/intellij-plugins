@@ -1,7 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
-import com.intellij.compiler.options.CompilerUIConfigurable;
+import com.intellij.compiler.options.CompilerUIConfigurableKt;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.CompilerOptionInfo;
 import com.intellij.flex.model.bc.ValueSource;
@@ -198,7 +198,7 @@ public final class CompilerOptionsConfigurable extends NamedConfigurable<Compile
     myResourcePatternsHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
       @Override
       protected void hyperlinkActivated(final @NotNull HyperlinkEvent e) {
-        ShowSettingsUtil.getInstance().editConfigurable(project, new CompilerUIConfigurable(module.getProject()));
+        ShowSettingsUtil.getInstance().editConfigurable(project, new CompilerUIConfigurableKt(module.getProject()));
       }
     });
 
