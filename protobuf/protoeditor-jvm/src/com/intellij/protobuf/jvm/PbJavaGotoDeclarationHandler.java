@@ -18,6 +18,7 @@ package com.intellij.protobuf.jvm;
 import com.google.common.collect.ImmutableList;
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationHandler;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.protobuf.jvm.names.NameGeneratorSelector;
 import com.intellij.protobuf.jvm.names.NameMatcher;
@@ -44,6 +45,7 @@ public class PbJavaGotoDeclarationHandler implements GotoDeclarationHandler {
   @Override
   public PsiElement @Nullable [] getGotoDeclarationTargets(
     @Nullable PsiElement sourceElement, int i, Editor editor) {
+    if (sourceElement == null || DumbService.isDumb(sourceElement.getProject())) return null;
     return findProtoDeclarationForJavaElement(sourceElement);
   }
 
