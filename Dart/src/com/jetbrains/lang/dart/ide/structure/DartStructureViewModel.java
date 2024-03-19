@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.analyzer.DartLocalFileInfo;
 import com.jetbrains.lang.dart.analyzer.DartServerData;
 import org.dartlang.analysis.server.protocol.Outline;
 import org.jetbrains.annotations.NotNull;
@@ -25,8 +26,10 @@ class DartStructureViewModel extends TextEditorBasedStructureViewModel implement
 
   @NotNull private final StructureViewTreeElement myRootElement;
 
-  private final DartServerData.OutlineListener myListener = filePath -> {
-    if (filePath.equals(getPsiFile().getVirtualFile().getPath())) {
+  private final DartServerData.OutlineListener myListener = fileInfo -> {
+    VirtualFile file = fileInfo instanceof DartLocalFileInfo ? ((DartLocalFileInfo)fileInfo).findFile() : null;
+
+    if (file != null && file.equals(getPsiFile().getVirtualFile())) {
       fireModelUpdate();
     }
   };

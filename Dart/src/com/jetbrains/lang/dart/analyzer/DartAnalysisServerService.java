@@ -206,11 +206,12 @@ public final class DartAnalysisServerService implements Disposable {
     }
 
     @Override
-    public void computedErrors(@NotNull final String filePathSD, @NotNull final List<AnalysisError> errors) {
-      final String fileName = PathUtil.getFileName(filePathSD);
+    public void computedErrors(@NotNull String filePathOrUri, @NotNull List<AnalysisError> errors) {
+      DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
 
       final ProgressIndicator indicator = myProgressIndicator;
-      if (indicator != null) {
+      if (indicator != null && fileInfo instanceof DartLocalFileInfo) {
+        String fileName = PathUtil.getFileName(((DartLocalFileInfo)fileInfo).getFilePath());
         indicator.setText(DartBundle.message("dart.analysis.progress.with.file", fileName));
       }
 
@@ -226,67 +227,79 @@ public final class DartAnalysisServerService implements Disposable {
         }
       }
 
-      final String filePathSI = FileUtil.toSystemIndependentName(filePathSD);
+      int newHash = errorsWithoutTodo.isEmpty() ? 0 : ensureNotZero(errorsWithoutTodo.hashCode());
 
-      final int oldHash;
-      synchronized (myFilePathsWithErrors) {
-        // TObjectIntHashMap returns 0 if there's no such entry, it's equivalent to empty error set for this file
-        oldHash = myFilePathToErrorsHash.getInt(filePathSI);
+      if (fileInfo instanceof DartLocalFileInfo) {
+        int oldHash;
+        synchronized (myFilePathsWithErrors) {
+          // TObjectIntHashMap returns 0 if there's no such entry, it's equivalent to empty error set for this file
+          oldHash = myFilePathToErrorsHash.getInt(((DartLocalFileInfo)fileInfo).getFilePath());
+        }
+
+        // do nothing if errors are the same as were already handled previously
+        if (oldHash == newHash && !myServerData.isErrorInfoInaccurate((DartLocalFileInfo)fileInfo)) return;
       }
 
-      final int newHash = errorsWithoutTodo.isEmpty() ? 0 : ensureNotZero(errorsWithoutTodo.hashCode());
-      // do nothing if errors are the same as were already handled previously
-      if (oldHash == newHash && !myServerData.isErrorInfoInaccurate(filePathSI)) return;
+      boolean restartHighlighting =
+        (fileInfo instanceof DartLocalFileInfo) && myVisibleFileUris.contains(getFileUriByPath(((DartLocalFileInfo)fileInfo).getFilePath()))
+        ||
+        (fileInfo instanceof DartNotLocalFileInfo) && myVisibleFileUris.contains(((DartNotLocalFileInfo)fileInfo).getFileUri());
 
-      final boolean visible = myVisibleFileUris.contains(filePathSD);
-      if (myServerData.computedErrors(filePathSI, errorsWithoutTodo, visible)) {
-        onErrorsUpdated(filePathSI, errorsWithoutTodo, hasSevereProblems, newHash);
+      if (myServerData.computedErrors(fileInfo, errorsWithoutTodo, restartHighlighting)) {
+        if (fileInfo instanceof DartLocalFileInfo) {
+          onErrorsUpdated((DartLocalFileInfo)fileInfo, errorsWithoutTodo, hasSevereProblems, newHash);
+        }
       }
     }
 
     @Override
-    public void computedHighlights(@NotNull final String filePath, @NotNull final List<HighlightRegion> regions) {
-      myServerData.computedHighlights(FileUtil.toSystemIndependentName(filePath), regions);
+    public void computedHighlights(@NotNull String filePathOrUri, @NotNull List<HighlightRegion> regions) {
+      DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
+      myServerData.computedHighlights(fileInfo, regions);
     }
 
     @Override
-    public void computedClosingLabels(@NotNull final String filePath, List<ClosingLabel> labels) {
-      myServerData.computedClosingLabels(FileUtil.toSystemIndependentName(filePath), labels);
+    public void computedClosingLabels(@NotNull String filePathOrUri, @NotNull List<ClosingLabel> labels) {
+      DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
+      myServerData.computedClosingLabels(fileInfo, labels);
     }
 
     @Override
-    public void computedImplemented(String _filePath,
-                                    List<ImplementedClass> implementedClasses,
-                                    List<ImplementedMember> implementedMembers) {
-      myServerData.computedImplemented(FileUtil.toSystemIndependentName(_filePath), implementedClasses, implementedMembers);
+    public void computedImplemented(@NotNull String filePathOrUri,
+                                    @NotNull List<ImplementedClass> implementedClasses,
+                                    @NotNull List<ImplementedMember> implementedMembers) {
+      DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
+      myServerData.computedImplemented(fileInfo, implementedClasses, implementedMembers);
     }
 
     @Override
-    public void computedNavigation(@NotNull final String _filePath, @NotNull final List<NavigationRegion> regions) {
-      myServerData.computedNavigation(FileUtil.toSystemIndependentName(_filePath), regions);
+    public void computedNavigation(@NotNull String filePathOrUri, @NotNull List<NavigationRegion> regions) {
+      DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
+      myServerData.computedNavigation(fileInfo, regions);
     }
 
     @Override
-    public void computedOverrides(@NotNull final String _filePath, @NotNull final List<OverrideMember> overrides) {
-      myServerData.computedOverrides(FileUtil.toSystemIndependentName(_filePath), overrides);
+    public void computedOverrides(@NotNull String filePathOrUri, @NotNull List<OverrideMember> overrides) {
+      DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
+      myServerData.computedOverrides(fileInfo, overrides);
     }
 
     @Override
-    public void computedOutline(@NotNull final String _filePath, @NotNull final Outline outline) {
-      myServerData.computedOutline(FileUtil.toSystemIndependentName(_filePath), outline);
+    public void computedOutline(@NotNull String filePathOrUri, @NotNull Outline outline) {
+      DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
+      myServerData.computedOutline(fileInfo, outline);
     }
 
     @Override
-    public void flushedResults(@NotNull final List<String> _filePaths) {
-      final List<String> filePaths = new ArrayList<>(_filePaths.size());
-      for (String path : _filePaths) {
-        filePaths.add(FileUtil.toSystemIndependentName(path));
-      }
+    public void flushedResults(@NotNull List<String> filePathsOrUris) {
+      List<DartFileInfo> fileInfos = ContainerUtil.map(filePathsOrUris, pathOrUri -> DartFileInfoKt.getDartFileInfo(pathOrUri));
 
-      myServerData.onFlushedResults(filePaths);
+      myServerData.onFlushedResults(fileInfos);
 
-      for (String filePath : filePaths) {
-        onErrorsUpdated(filePath, AnalysisError.EMPTY_LIST, false, 0);
+      for (DartFileInfo fileInfo : fileInfos) {
+        if (fileInfo instanceof DartLocalFileInfo) {
+          onErrorsUpdated((DartLocalFileInfo)fileInfo, AnalysisError.EMPTY_LIST, false, 0);
+        }
       }
     }
 
@@ -898,10 +911,10 @@ public final class DartAnalysisServerService implements Disposable {
    */
   @Contract("null->false")
   public static boolean isLocalAnalyzableFile(@Nullable final VirtualFile file) {
-    if (file != null && file.isInLocalFileSystem()) {
-      return isFileNameRespectedByAnalysisServer(file.getName());
-    }
-    return false;
+    if (file == null) return false;
+
+    return file.getUserData(DartFileInfoKt.DART_NOT_LOCAL_FILE_URI_KEY) != null ||
+           file.isInLocalFileSystem() && isFileNameRespectedByAnalysisServer(file.getName());
   }
 
   public static boolean isFileNameRespectedByAnalysisServer(@NotNull String _fileName) {
@@ -1016,10 +1029,11 @@ public final class DartAnalysisServerService implements Disposable {
     return true;
   }
 
-  private void onErrorsUpdated(@NotNull final String filePath,
+  private void onErrorsUpdated(@NotNull DartLocalFileInfo localFileInfo,
                                @NotNull List<? extends AnalysisError> errors,
                                boolean hasSevereProblems,
                                int errorsHash) {
+    String filePath = localFileInfo.getFilePath();
     updateFilesWithErrorsSet(filePath, hasSevereProblems, errorsHash);
     DartProblemsView.getInstance(myProject).updateErrorsForFile(filePath, errors);
   }

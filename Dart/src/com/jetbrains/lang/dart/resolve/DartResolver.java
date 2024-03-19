@@ -3,7 +3,6 @@ package com.jetbrains.lang.dart.resolve;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -103,8 +102,8 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
 
   @Nullable
   public static PsiElement getElementForNavigationTarget(Project project, DartNavigationTarget target) {
-    String targetPath = target.getFile();
-    PsiFile file = findPsiFile(project, targetPath);
+    VirtualFile targetFile = target.findFile();
+    PsiFile file = targetFile != null ? PsiManager.getInstance(project).findFile(targetFile) : null;
     if (file != null) {
       int targetOffset = target.getOffset(project, file.getVirtualFile());
       PsiElement elementAtOffset = file.findElementAt(targetOffset);
@@ -113,15 +112,6 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
       return nameOwner != null ? nameOwner : elementAtOffset;
     }
 
-    return null;
-  }
-
-  @Nullable
-  public static PsiFile findPsiFile(@NotNull Project project, @NotNull String path) {
-    VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(path);
-    if (virtualFile != null) {
-      return PsiManager.getInstance(project).findFile(virtualFile);
-    }
     return null;
   }
 

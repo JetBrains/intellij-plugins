@@ -17,7 +17,6 @@ import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.EventDispatcher;
 import com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings;
@@ -30,7 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DartClosingLabelManager implements @NotNull Disposable {
+public class DartClosingLabelManager implements Disposable {
   private final EventDispatcher<PreferenceChangeListener> myEventDispatcher = EventDispatcher.create(PreferenceChangeListener.class);
 
   interface PreferenceChangeListener extends EventListener {
@@ -69,12 +68,12 @@ public class DartClosingLabelManager implements @NotNull Disposable {
     myEventDispatcher.addListener(listener, parentDisposable);
   }
 
-  void computedClosingLabels(@NotNull Project project, @NotNull String filePath, @NotNull List<ClosingLabel> labels) {
+  void computedClosingLabels(@NotNull Project project, @NotNull DartFileInfo fileInfo, @NotNull List<ClosingLabel> labels) {
     if (!getShowClosingLabels()) {
       return;
     }
 
-    VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
+    VirtualFile file = fileInfo instanceof DartLocalFileInfo ? ((DartLocalFileInfo)fileInfo).findFile() : null;
     if (file == null) {
       return;
     }
