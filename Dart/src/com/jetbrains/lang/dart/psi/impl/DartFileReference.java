@@ -4,7 +4,6 @@ package com.jetbrains.lang.dart.psi.impl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
@@ -161,8 +160,7 @@ public class DartFileReference implements PsiPolyVariantReference {
         final List<DartNavigationTarget> targets = region.getTargets();
         if (!targets.isEmpty()) {
           final DartNavigationTarget target = targets.get(0);
-          final String targetPath = target.getFile();
-          final VirtualFile targetVirtualFile = LocalFileSystem.getInstance().findFileByPath(targetPath);
+          final VirtualFile targetVirtualFile = target.findFile();
           if (targetVirtualFile != null) {
             final PsiFile targetFile = reference.getElement().getManager().findFile(targetVirtualFile);
             if (targetFile != null) {
