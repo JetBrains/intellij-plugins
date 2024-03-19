@@ -5,7 +5,7 @@ import com.intellij.ide.util.projectWizard.SettingsStep
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator
 import com.intellij.lang.javascript.boilerplate.NpxPackageDescriptor.NpxCommand
 import com.intellij.lang.javascript.frameworks.nextjs.NextJsBundle
-import com.intellij.lang.javascript.frameworks.react.ReactLikeProjectGenerator
+import com.intellij.lang.javascript.frameworks.ReactLikeProjectGenerator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ContentEntry
 import com.intellij.openapi.util.Key
