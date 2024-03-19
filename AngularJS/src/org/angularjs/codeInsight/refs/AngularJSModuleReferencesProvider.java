@@ -119,7 +119,7 @@ public class AngularJSModuleReferencesProvider extends PsiReferenceProvider {
         }
         final GlobalSearchScope scopeForSearch = JSUnusedGlobalSymbolsInspection.skipLibraryFiles(project, (GlobalSearchScope)scope);
         final PsiSearchHelper.SearchCostResult cheapEnoughToSearch =
-          PsiSearchHelper.getInstance(project).isCheapEnoughToSearch(wrapper.getName(), scopeForSearch, null, null);
+          PsiSearchHelper.getInstance(project).isCheapEnoughToSearch(wrapper.getName(), scopeForSearch, null);
         if (cheapEnoughToSearch == PsiSearchHelper.SearchCostResult.TOO_MANY_OCCURRENCES) {
           continue;
         }
