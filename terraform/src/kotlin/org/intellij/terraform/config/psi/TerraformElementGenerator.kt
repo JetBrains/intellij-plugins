@@ -2,28 +2,58 @@
 package org.intellij.terraform.config.psi
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.util.PsiTreeUtil
+import org.intellij.terraform.config.TerraformFileType
+import org.intellij.terraform.config.model.Type
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElement
 import org.intellij.terraform.hcl.psi.HCLElementGenerator
 import org.intellij.terraform.hcl.psi.HCLLiteral
-import org.intellij.terraform.config.TerraformFileType
-import org.intellij.terraform.config.model.Type
 import org.intellij.terraform.hil.psi.ILExpression
 import org.intellij.terraform.hil.psi.ILLiteralExpression
 
 class TerraformElementGenerator(val project: Project) : HCLElementGenerator(project) {
-  override fun createDummyFile(content: String): PsiFile {
+
+  private fun createDummyFile(content: String, original: PsiFile?): PsiFile {
     val psiFileFactory = PsiFileFactory.getInstance(project)
-    val psiFile = psiFileFactory.createFileFromText("dummy." + TerraformFileType.defaultExtension, TerraformFileType, content)
-    if (PsiTreeUtil.hasErrorElements(psiFile)) {
+    val psiFile = if (original != null) {
+      psiFileFactory.createFileFromText(content, original)
+    } else {
+      psiFileFactory.createFileFromText("dummy.${TerraformFileType.defaultExtension}", TerraformFileType, content)
+    }
+    if (PsiTreeUtil.hasErrorElements(psiFile as PsiElement)) {
       throw IllegalStateException("PsiFile contains PsiErrorElement: " + DebugUtil.psiToString(psiFile, false, true))
     }
     return psiFile
+  }
+
+  override fun createDummyFile(content: String): PsiFile {
+    return createDummyFile(content, null)
+  }
+
+  fun createBlock(name: String, properties: Map<String, String> = emptyMap(), vararg namedElements: String, original: PsiFile? = null): HCLBlock {
+    val nameString = if (!isIdentifier(name)) '"' + name + '"' else name
+    val typeString = namedElements.joinToString(" ") { str ->
+      if (StringUtil.isQuotedString(str)) str
+      else {
+        val builder = StringBuilder(str)
+        StringUtil.quote(builder, '"')
+        builder.toString()
+      }
+    }
+    val propertiesString = properties.map { (name, value) -> "$name = \"${StringUtil.unquoteString(value)}\"" }.joinToString("\n", "\t")
+    val content = """
+      $nameString ${typeString} {
+      ${propertiesString}
+      }
+     """.trimIndent()
+    val file = createDummyFile(content, original)
+    return file.firstChild as HCLBlock
   }
 
   fun createVariable(name: String, type: Type?, initializer: ILExpression): HCLBlock {
@@ -38,7 +68,7 @@ class TerraformElementGenerator(val project: Project) : HCLElementGenerator(proj
   fun createVariable(name: String, type: Type?, value: String): HCLBlock {
     val content = buildString {
       append("variable \"").append(name).append("\" {")
-      val typeName = when(type) {
+      val typeName = when (type) {
         null -> null
         else -> type.presentableText.toLowerCase()
       }

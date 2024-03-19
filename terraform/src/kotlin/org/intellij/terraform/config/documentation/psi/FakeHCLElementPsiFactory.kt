@@ -3,24 +3,33 @@ package org.intellij.terraform.config.documentation.psi
 
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
 import org.intellij.terraform.config.model.PropertyOrBlockType
+import org.intellij.terraform.config.psi.TerraformElementGenerator
 import org.intellij.terraform.hcl.psi.HCLBlock
-import org.intellij.terraform.hcl.psi.HCLElementGenerator
 import org.intellij.terraform.hcl.psi.HCLProperty
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 
 @Service(Service.Level.PROJECT)
-internal class FakeHCLElementPsiFactory(val project: Project) {
+class FakeHCLElementPsiFactory(val project: Project) {
 
-  private val generator = HCLElementGenerator(project)
+  val emptyHCLBlock: HCLBlock by lazy {
+    createFakeHCLBlock("", "")
+  }
 
-  fun createFakeHCLBlock(blockName: String, blockType: String): HCLBlock = generator.createBlock(blockName, emptyMap(), blockType)
+  fun createFakeHCLBlock(blockName: String, blockType: String, original: PsiFile? = null): HCLBlock {
+    val hclBlock = TerraformElementGenerator(project).createBlock(blockName, emptyMap(), blockType, original = original)
+    return hclBlock
+  }
 
   fun createFakeHCLProperty(block: HCLBlock, property: PropertyOrBlockType): HCLProperty? {
-    val dummyBlock = generator.createBlock(block.getNameElementUnquoted(0)?:"", mapOf(property.name to "\"\""), block.getNameElementUnquoted(1) ?: "\"\"", block.getNameElementUnquoted(2) ?: "\"\"")
-    val hclProperty = generator.createProperty(property.name, "\"\"")
-    dummyBlock.`object`?.propertyList?.add(hclProperty)
-    return dummyBlock.`object`?.findProperty(property.name)
+    val dummyBlock = TerraformElementGenerator(project).createBlock(block.getNameElementUnquoted(0) ?: "",
+                                                                    mapOf(property.name to "\"\""),
+                                                                    namedElements = arrayOf(block.getNameElementUnquoted(1) ?: "\"\"",
+                                                                                            block.getNameElementUnquoted(2) ?: "\"\""),
+                                                                    original = block.containingFile.originalFile)
+    val hclProperty = dummyBlock.`object`?.findProperty(property.name)
+    return hclProperty
   }
 
 }

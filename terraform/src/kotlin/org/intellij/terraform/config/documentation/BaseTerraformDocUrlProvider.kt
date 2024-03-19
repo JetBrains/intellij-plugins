@@ -4,10 +4,8 @@ package org.intellij.terraform.config.documentation
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiManager
-import com.intellij.psi.SyntaxTraverser
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.*
 import com.intellij.psi.util.childrenOfType
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
@@ -28,10 +26,13 @@ internal abstract class BaseTerraformDocUrlProvider {
 
     @JvmStatic
     protected val LATEST_VERSION: String = "latest"
+
     @JvmStatic
     protected val RESOURCES: String = "resources"
+
     @JvmStatic
     protected val DATASOURCES: String = "data-sources"
+
     @JvmStatic
     protected val PROVIDER: String = "provider"
   }
@@ -75,7 +76,7 @@ internal abstract class BaseTerraformDocUrlProvider {
     val identifier = block?.getNameElementUnquoted(1) ?: ""
 
     val lockFile = findPsiLockFile(element)
-    val providerData = lockFile?.let { getDataFromLockFile(it, type, identifier) } ?: getDataFromModel(element, type, identifier)
+    val providerData = lockFile?.let { getDataFromLockFile(it, type) } ?: getDataFromModel(element, type, identifier)
 
     BlockData(identifier, type, parameter, providerData)
   }
@@ -90,9 +91,9 @@ internal abstract class BaseTerraformDocUrlProvider {
                                type: String,
                                identifier: String): ProviderData? {
     val provider = if (type in setOf(HCL_RESOURCE_IDENTIFIER, HCL_DATASOURCE_IDENTIFIER)) {
-      getProvider(identifier, type, element)
+      getProviderName(identifier, type, element)
     }
-    else {
+                   else {
       identifier
     } ?: return null
 
@@ -102,33 +103,24 @@ internal abstract class BaseTerraformDocUrlProvider {
   }
 
   private fun getDataFromLockFile(lockFile: PsiFile,
-                                  type: String,
                                   identifier: String): ProviderData? {
-    val providerDescription = findProviderDescription(lockFile, identifier)
-    val provider = if (type in setOf(HCL_RESOURCE_IDENTIFIER, HCL_DATASOURCE_IDENTIFIER)) {
-      getProvider(providerDescription)
-    }
-    else {
-      identifier
-    } ?: return null
+    val providerId = identifier.substringBefore('_')
+    val providerDescription = findProviderDescription(lockFile, providerId) ?: return null
+    val provider = getProviderName(providerDescription) ?: return null
     val org = getProviderNamespace(providerDescription) ?: return null
     val version = getProviderVersion(providerDescription)
     return ProviderData(org, provider, version)
   }
 
-  private fun getProvider(lockBlock: HCLBlock?): String? {
-    val providerUrl =
-      lockBlock?.name?.split("/").takeIf { it?.size == 3 && it[0] == REGISTRY_DOMAIN || it?.get(0) == TERRAFORM_DOMAIN }?.let { it[2] }
-    return providerUrl
+  private fun getProviderName(lockBlock: HCLBlock?): String? {
+    return lockBlock?.name?.split("/").takeIf { it?.size == 3 && it[0] == REGISTRY_DOMAIN || it?.get(0) == TERRAFORM_DOMAIN }?.let { it[2] }
   }
 
   private fun getProviderNamespace(lockBlock: HCLBlock?): String? {
-    val providerUrl =
-      lockBlock?.name?.split("/").takeIf { it?.size == 3 && it[0] == REGISTRY_DOMAIN || it?.get(0) == TERRAFORM_DOMAIN }?.let { it[1] }
-    return providerUrl
+    return lockBlock?.name?.split("/").takeIf { it?.size == 3 && it[0] == REGISTRY_DOMAIN || it?.get(0) == TERRAFORM_DOMAIN }?.let { it[1] }
   }
 
-  private fun getProviderVersion(lockBlock: HCLBlock?): String  {
+  private fun getProviderVersion(lockBlock: HCLBlock?): String {
     return if (lockBlock?.`object` != null && lockBlock.`object` is HCLObject) {
       val providerVersion = (lockBlock.`object` as HCLObject).propertyList.firstOrNull { it.name == VERSION }?.value?.text
       StringUtil.unquoteString(providerVersion ?: LATEST_VERSION)
@@ -149,8 +141,7 @@ internal abstract class BaseTerraformDocUrlProvider {
     return model.getProviderType(identifier)?.namespace
   }
 
-
-  private fun getProvider(identifier: String, resourceType: String, element: PsiElement): String? {
+  private fun getProviderName(identifier: String, resourceType: String, element: PsiElement): String? {
     val model = TypeModelProvider.getModel(element)
     return when (resourceType) {
       HCL_RESOURCE_IDENTIFIER -> model.getResourceType(identifier)?.provider?.type
@@ -159,20 +150,31 @@ internal abstract class BaseTerraformDocUrlProvider {
     }
   }
 
-  private fun findProviderDescription(it: PsiFile, identifier: String): HCLBlock? {
-    return SyntaxTraverser.psiTraverser(it)
-      .filter(HCLBlock::class.java).filter{
-        it.nameElements[0].text == PROVIDER && getProvider(it) == identifier
+  private fun findProviderDescription(lockFile: PsiFile, identifier: String): HCLBlock? {
+    return SyntaxTraverser.psiTraverser(lockFile)
+      .filter(HCLBlock::class.java).filter {
+        it.nameElements[0].text == PROVIDER && getProviderName(it) == identifier
       }.firstOrNull()
   }
 
-  private fun findPsiLockFile(element: PsiElement): PsiFile?  {
+  private fun findPsiLockFile(element: PsiElement): PsiFile? {
     val project = element.project
     val schemaService = project.service<LocalSchemaService>()
-    val vFile = element.containingFile.originalFile.virtualFile ?: return null
-    val lockFile = schemaService.findLockFile(vFile)
+    val lockFile = findContainingVFile(element)?.let { schemaService.findLockFile(it) }
     val psiLockFile = lockFile?.let { PsiManager.getInstance(project).findFile(it) }
     return psiLockFile
+  }
+
+  private fun findContainingVFile(element: PsiElement): VirtualFile? {
+    val containingFile = element.containingFile
+    if (containingFile.originalFile != null) {
+      return containingFile.originalFile.virtualFile
+    }
+    val fileForFakePsi = containingFile.getUserData(PsiFileFactory.ORIGINAL_FILE)
+    if (fileForFakePsi != null) {
+      return fileForFakePsi.virtualFile
+    }
+    return null
   }
 
 }

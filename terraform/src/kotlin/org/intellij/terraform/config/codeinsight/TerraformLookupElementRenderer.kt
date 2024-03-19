@@ -32,24 +32,10 @@ class TerraformLookupElementRenderer : LookupElementRenderer<LookupElement>() {
     return StringUtil.shortenTextWithEllipsis(type.toString(), 30, 0)
   }
 
-  private fun trimDescription(description: String?): String? {
-    if (description == null) return null
-    return " " + StringUtil.shortenTextWithEllipsis(description, 55, 0, true)
-  }
-
   private fun getTypeIcon(type: Type): Icon? {
-    // TODO: Implement
     when {
-//      Types.Identifier ->
-//      Types.String ->
-//      Types.Number ->
       isObjectType(type) -> Icons.Object
       isListType(type)-> Icons.Array
-//      Types.StringWithInjection ->
-//      Types.Boolean ->
-//      Types.Null ->
-//      Types.Invalid ->
-//      Types.Any ->
     }
     return null
   }

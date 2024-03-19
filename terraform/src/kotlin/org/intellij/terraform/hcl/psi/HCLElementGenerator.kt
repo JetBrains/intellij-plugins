@@ -91,33 +91,13 @@ open class HCLElementGenerator(private val project: Project) {
     return file.firstChild as HCLProperty
   }
 
-  private fun isIdentifier(name: String): Boolean {
+  protected fun isIdentifier(name: String): Boolean {
     return name.matches("\\w+".toRegex()) && !name[0].isDigit()
   }
 
   fun createBlock(name: String): HCLBlock {
     val start = if (!isIdentifier(name)) '"' + name + '"' else name
     val file = createDummyFile("$start {}")
-    return file.firstChild as HCLBlock
-  }
-
-  fun createBlock(name: String, properties: Map<String, String> = emptyMap(), vararg namedElements: String): HCLBlock {
-    val nameString = if (!isIdentifier(name)) '"' + name + '"' else name
-    val typeString = namedElements.joinToString(" ") { str ->
-      if (StringUtil.isQuotedString(str)) str
-      else {
-        val builder = StringBuilder(str)
-        StringUtil.quote(builder, '"')
-        builder.toString()
-      }
-    }
-    val propertiesString = properties.map { (name, value) -> "$name = \"${StringUtil.unquoteString(value)}\"" }.joinToString("\n", "\t")
-    val content = """
-      $nameString ${typeString} {
-      ${propertiesString}
-      }
-     """.trimIndent()
-    val file = createDummyFile(content)
     return file.firstChild as HCLBlock
   }
 

@@ -276,33 +276,33 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
         HCL_RESOURCE_IDENTIFIER ->
           getTypeModel(project).resources.toPlow()
             .filter { invocationCount >= 3 || isProviderUsed(parent, it.provider.type, cache) }
-            .map { buildLookupElement(it, it.type, project) }
+            .map { buildLookupElement(it, it.type, position) }
             .processWith(consumer)
         HCL_DATASOURCE_IDENTIFIER ->
           getTypeModel(project).dataSources.toPlow()
             .filter { invocationCount >= 3 || isProviderUsed(parent, it.provider.type, cache) }
-            .map { buildLookupElement(it, it.type, project) }
+            .map { buildLookupElement(it, it.type, position) }
             .processWith(consumer)
         HCL_PROVIDER_IDENTIFIER ->
           getTypeModel(project).providers.toPlow()
-            .map { buildLookupElement(it, it.type, project) }
+            .map { buildLookupElement(it, it.type, position) }
             .processWith(consumer)
         HCL_PROVISIONER_IDENTIFIER ->
           getTypeModel(project).provisioners.toPlow()
-            .map { buildLookupElement(it, it.type, project) }
+            .map { buildLookupElement(it, it.type, position) }
             .processWith(consumer)
         HCL_BACKEND_IDENTIFIER ->
           getTypeModel(project).backends.toPlow()
-            .map { buildLookupElement(it, it.type, project) }
+            .map { buildLookupElement(it, it.type, position) }
             .processWith(consumer)
         else -> true
       }
     }
 
-    private fun buildLookupElement(it: BlockType, typeName: String, project: Project) = create(typeName)
+    private fun buildLookupElement(it: BlockType, typeName: String, position: PsiElement) = create(typeName)
       .withTypeText(it.description)
       .withIcon(TerraformIcons.Terraform)
-      .withPsiElement(project.service<FakeHCLElementPsiFactory>().createFakeHCLBlock(it.literal, typeName))
+      .withPsiElement(position.project.service<FakeHCLElementPsiFactory>().createFakeHCLBlock(it.literal, typeName, original = position.containingFile.originalFile))
       .withInsertHandler(ResourceBlockSubNameInsertHandler(it))
 
     fun isProviderUsed(element: PsiElement, providerName: String, cache: MutableMap<String, Boolean>): Boolean {
@@ -405,25 +405,28 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       if (incomplete != null) {
         LOG.debug { "Including properties which contains incomplete result: $incomplete" }
       }
-      val hclElementPsiFactory = parent.project.service<FakeHCLElementPsiFactory>()
+      val fakeHCLPsiFactory = parent.project.service<FakeHCLElementPsiFactory>()
       addResultsWithCustomSorter(result, parameters, properties.values
         .asSequence()
         .filter { it.name != Constants.HAS_DYNAMIC_ATTRIBUTES }
         .filter { isRightOfPropertyWithCompatibleType(isProperty, it, right) || (isBlock && it is BlockType) || (!isProperty && !isBlock) }
         // TODO: Filter should be based on 'max-count' model property (?)
         .filter {
-          (it is PropertyType && (parent.findProperty(it.name) == null || (incomplete != null && it.name.contains(
-            incomplete)))) || (it is BlockType)
+          (it is PropertyType &&
+           (parent.findProperty(it.name) == null || (incomplete != null && it.name.contains(incomplete)))
+          ) || (it is BlockType)
         }
         .filter { it.configurable }
         .map { property ->
-          val hclBlock = parent.parentOfType<HCLBlock>()
-          val hclProperty = hclBlock?.let { hclElementPsiFactory.createFakeHCLProperty(hclBlock, property) }
-          if (hclProperty != null) {
-            createPropertyOrBlockType(property).withPsiElement(hclProperty)
-          }
-          else {
-            createPropertyOrBlockType(property)
+          when {
+            (property is BaseModelType && property.description_kind != null) -> {
+              val hclBlock = parent.parentOfType<HCLBlock>()
+              val hclProperty = hclBlock?.let { fakeHCLPsiFactory.createFakeHCLProperty(hclBlock, property) }
+              createPropertyOrBlockType(property, property.name, hclProperty)
+            }
+            else -> {
+              createPropertyOrBlockType(property, property.name, fakeHCLPsiFactory.emptyHCLBlock)
+            }
           }
         }
         .toList())

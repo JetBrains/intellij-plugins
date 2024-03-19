@@ -18,8 +18,6 @@ internal abstract class BaseTerraformDocumentationProvider {
 
   protected fun computeDocumentationTarget(element: PsiElement): DocumentationTarget? {
     if (element !is HCLElement) return null
-    val file = element.containingFile
-    if (file == null) return null
     return TerraformDocumentationTarget(element.createSmartPointer())
   }
 

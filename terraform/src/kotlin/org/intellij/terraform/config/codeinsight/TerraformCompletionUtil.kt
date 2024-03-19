@@ -30,8 +30,12 @@ object TerraformCompletionUtil {
   val RootBlockKeywords: Set<String> = TypeModel.RootBlocks.map(BlockType::literal).toHashSet()
   val RootBlockSorted: List<BlockType> = TypeModel.RootBlocks.sortedBy { it.literal }
 
-  fun createPropertyOrBlockType(value: PropertyOrBlockType, lookupString: String? = null): LookupElementBuilder =
-    LookupElementBuilder.create(value, lookupString ?: value.name)
+  fun createPropertyOrBlockType(value: PropertyOrBlockType, lookupString: String? = null, psiElement: PsiElement? = null): LookupElementBuilder {
+    val elementBuilder = when {
+      psiElement == null -> LookupElementBuilder.create(value, lookupString ?: value.name)
+      else -> LookupElementBuilder.create(value, lookupString ?: value.name).withPsiElement(psiElement)
+    }
+    return elementBuilder
       .withRenderer(TerraformLookupElementRenderer())
       .withInsertHandler(
         when (value) {
@@ -40,6 +44,7 @@ object TerraformCompletionUtil {
           else -> null
         }
       )
+  }
 
   fun createScope(value: String): LookupElementBuilder = LookupElementBuilder.create(value)
     .withInsertHandler(ScopeSelectInsertHandler)

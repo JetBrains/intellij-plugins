@@ -13,6 +13,19 @@ import static org.intellij.terraform.config.CompletionTestCase.Matcher.*;
 @SuppressWarnings({"ArraysAsListWithZeroOrOneArgument", "RedundantThrows"})
 public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
 
+  private static final int ENTRIES_LIST_SIZE = 1000; //x2 to the default registry value
+
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+    Registry.get("ide.completion.variant.limit").setValue(ENTRIES_LIST_SIZE * 2, getTestRootDisposable());
+  }
+
+  @Override
+  protected void tearDown() throws Exception {
+    super.tearDown();
+  }
+
   public void testBlockKeywordCompletion() throws Exception {
     doBasicCompletionTest("<caret> {}", TerraformCompletionUtil.INSTANCE.getRootBlockKeywords());
     doBasicCompletionTest("a=1\n<caret> {}", TerraformCompletionUtil.INSTANCE.getRootBlockKeywords());
@@ -41,7 +54,7 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
     for (ResourceType resource : TypeModelProvider.Companion.getGlobalModel().getResources()) {
       set.add(resource.getType());
     }
-    final Predicate<Collection<String>> matcher = getPartialMatcher(new ArrayList<>(set).subList(0, 500));
+    final Predicate<Collection<String>> matcher = getPartialMatcher(new ArrayList<>(set).subList(0, Math.min(ENTRIES_LIST_SIZE, set.size())));
     doBasicCompletionTest("resource <caret>", matcher);
     doBasicCompletionTest("resource <caret> {}", matcher);
     doBasicCompletionTest("resource <caret> \"aaa\" {}", matcher);
@@ -55,13 +68,21 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
     for (ResourceType resource : TypeModelProvider.Companion.getGlobalModel().getResources()) {
       set.add(resource.getType());
     }
-    final Predicate<Collection<String>> matcher = getPartialMatcher(new ArrayList<>(set).subList(0, 500));
+    final Predicate<Collection<String>> matcher = getPartialMatcher(new ArrayList<>(set).subList(0, Math.min(ENTRIES_LIST_SIZE, set.size())));
     doBasicCompletionTest("resource \"<caret>", matcher);
     doBasicCompletionTest("resource '<caret>", matcher);
     doBasicCompletionTest("resource \"<caret>\n{}", matcher);
     doBasicCompletionTest("resource '<caret>\n{}", matcher);
     doBasicCompletionTest("resource \"<caret>\" {}", matcher);
     doBasicCompletionTest("resource \"<caret>\" \"aaa\" {}", matcher);
+  }
+
+  public void testResourceQuotedKeywordCompletion() throws Exception {
+    final TreeSet<String> set = new TreeSet<>();
+    for (ResourceType resource : TypeModelProvider.Companion.getGlobalModel().getResources()) {
+      set.add(resource.getType());
+    }
+    final Predicate<Collection<String>> matcher = getPartialMatcher(new ArrayList<>(set).subList(0, Math.min(ENTRIES_LIST_SIZE, set.size())));
     doBasicCompletionTest("\"resource\" \"<caret>", matcher);
     doBasicCompletionTest("\"resource\" '<caret>", matcher);
     doBasicCompletionTest("\"resource\" \"<caret>\n{}", matcher);
@@ -235,8 +256,6 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
   }
 
   public void testResourceTypeCompletionGivenDefinedProvidersOrForNoPropsProviders() throws Exception {
-    Registry.get("ide.completion.variant.limit").setValue(2000, getTestRootDisposable());
-
     final TreeSet<String> set = new TreeSet<>();
     final Map<String, Boolean> cache = new HashMap<>();
     for (ResourceType resource : TypeModelProvider.Companion.getGlobalModel().getResources()) {
@@ -244,9 +263,10 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
       set.add(resource.getType());
     }
     then(set).contains("template_file", "aws_vpc");
-    doBasicCompletionTest("provider aws {}\nresource <caret>", set);
-    doBasicCompletionTest("provider aws {}\nresource <caret> {}", set);
-    doBasicCompletionTest("provider aws {}\nresource <caret> \"aaa\" {}", set);
+    final Predicate<Collection<String>> matcher = getPartialMatcher(new ArrayList<>(set).subList(0, Math.min(ENTRIES_LIST_SIZE, set.size())));
+    doBasicCompletionTest("provider aws {}\nresource <caret>", matcher);
+    doBasicCompletionTest("provider aws {}\nresource <caret> {}", matcher);
+    doBasicCompletionTest("provider aws {}\nresource <caret> \"aaa\" {}", matcher);
   }
 
   public void testResourceNonConfigurablePropertyIsNotAdviced() throws Exception {
@@ -263,7 +283,7 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
     for (DataSourceType ds : TypeModelProvider.Companion.getGlobalModel().getDataSources()) {
       set.add(ds.getType());
     }
-    final Predicate<Collection<String>> matcher = getPartialMatcher(new ArrayList<>(set).subList(0, 500));
+    final Predicate<Collection<String>> matcher = getPartialMatcher(new ArrayList<>(set).subList(0, Math.min(ENTRIES_LIST_SIZE, set.size())));
     doBasicCompletionTest("data <caret>", matcher);
     doBasicCompletionTest("data <caret> {}", matcher);
     doBasicCompletionTest("data <caret> \"aaa\" {}", matcher);
@@ -312,7 +332,7 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
     for (DataSourceType ds : TypeModelProvider.Companion.getGlobalModel().getDataSources()) {
       set.add(ds.getType());
     }
-    final Predicate<Collection<String>> matcher = getPartialMatcher(new ArrayList<>(set).subList(0, 500));
+    final Predicate<Collection<String>> matcher = getPartialMatcher(new ArrayList<>(set).subList(0, Math.min(ENTRIES_LIST_SIZE, set.size())));
     doBasicCompletionTest("data \"<caret>", matcher);
     doBasicCompletionTest("data '<caret>", matcher);
     doBasicCompletionTest("data \"<caret>\n{}", matcher);
@@ -320,6 +340,21 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
     doBasicCompletionTest("data \"<caret>\" {}", matcher);
     doBasicCompletionTest("data \"<caret>\" \"aaa\" {}", matcher);
   }
+
+  public void testDataSourceQuotedKeywordCompletion() throws Exception {
+    final TreeSet<String> set = new TreeSet<>();
+    for (DataSourceType ds : TypeModelProvider.Companion.getGlobalModel().getDataSources()) {
+      set.add(ds.getType());
+    }
+    final Predicate<Collection<String>> matcher = getPartialMatcher(new ArrayList<>(set).subList(0, Math.min(ENTRIES_LIST_SIZE, set.size())));
+    doBasicCompletionTest("\"data\" \"<caret>", matcher);
+    doBasicCompletionTest("\"data\" '<caret>", matcher);
+    doBasicCompletionTest("\"data\" \"<caret>\n{}", matcher);
+    doBasicCompletionTest("\"data\" '<caret>\n{}", matcher);
+    doBasicCompletionTest("\"data\" \"<caret>\" {}", matcher);
+    doBasicCompletionTest("\"data\" \"<caret>\" \"aaa\" {}", matcher);
+  }
+
 
   public void testDataSourceCommonPropertyCompletion() throws Exception {
     doBasicCompletionTest("data abc {\n<caret>\n}", COMMON_DATA_SOURCE_PROPERTIES);
