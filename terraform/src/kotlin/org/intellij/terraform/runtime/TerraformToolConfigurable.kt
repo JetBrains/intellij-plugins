@@ -7,6 +7,7 @@ import com.intellij.openapi.options.SearchableConfigurable
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
+import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.ui.emptyText
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.Cell
@@ -22,15 +23,17 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
   HCLBundle.message("terraform.name"), null
 ), SearchableConfigurable {
 
+  private val configuration = TerraformToolProjectSettings.getInstance(project)
+  private lateinit var executorPathField: Cell<TextFieldWithBrowseButton>
+
   override fun getId(): String = CONFIGURABLE_ID
 
   override fun createPanel(): DialogPanel {
-    val configuration = TerraformToolProjectSettings.getInstance(project)
     val fileChooserDescriptor = FileChooserDescriptor(true, false, false, false, false, false)
 
     return panel {
       row(HCLBundle.message("terraform.settings.executable.path.label")) {
-        textFieldWithBrowseButton(
+        executorPathField = textFieldWithBrowseButton(
           browseDialogTitle = "",
           fileChooserDescriptor = fileChooserDescriptor,
           fileChosen = { chosenFile ->
@@ -59,5 +62,9 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
         }
       }
     }
+  }
+
+  override fun isModified(): Boolean {
+    return executorPathField.component.text.trim() != configuration.terraformPath
   }
 }
