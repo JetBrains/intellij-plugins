@@ -210,8 +210,8 @@ public final class DartAnalysisServerService implements Disposable {
       DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
 
       final ProgressIndicator indicator = myProgressIndicator;
-      if (indicator != null && fileInfo instanceof DartLocalFileInfo) {
-        String fileName = PathUtil.getFileName(((DartLocalFileInfo)fileInfo).getFilePath());
+      if (indicator != null && fileInfo instanceof DartLocalFileInfo localFileInfo) {
+        String fileName = PathUtil.getFileName(localFileInfo.getFilePath());
         indicator.setText(DartBundle.message("dart.analysis.progress.with.file", fileName));
       }
 
@@ -229,25 +229,25 @@ public final class DartAnalysisServerService implements Disposable {
 
       int newHash = errorsWithoutTodo.isEmpty() ? 0 : ensureNotZero(errorsWithoutTodo.hashCode());
 
-      if (fileInfo instanceof DartLocalFileInfo) {
+      if (fileInfo instanceof DartLocalFileInfo localFileInfo) {
         int oldHash;
         synchronized (myFilePathsWithErrors) {
           // TObjectIntHashMap returns 0 if there's no such entry, it's equivalent to empty error set for this file
-          oldHash = myFilePathToErrorsHash.getInt(((DartLocalFileInfo)fileInfo).getFilePath());
+          oldHash = myFilePathToErrorsHash.getInt(localFileInfo.getFilePath());
         }
 
         // do nothing if errors are the same as were already handled previously
-        if (oldHash == newHash && !myServerData.isErrorInfoInaccurate((DartLocalFileInfo)fileInfo)) return;
+        if (oldHash == newHash && !myServerData.isErrorInfoInaccurate(localFileInfo)) return;
       }
 
       boolean restartHighlighting =
-        (fileInfo instanceof DartLocalFileInfo) && myVisibleFileUris.contains(getFileUriByPath(((DartLocalFileInfo)fileInfo).getFilePath()))
+        fileInfo instanceof DartLocalFileInfo localFileInfo && myVisibleFileUris.contains(getFileUriByPath(localFileInfo.getFilePath()))
         ||
-        (fileInfo instanceof DartNotLocalFileInfo) && myVisibleFileUris.contains(((DartNotLocalFileInfo)fileInfo).getFileUri());
+        fileInfo instanceof DartNotLocalFileInfo notLocalFileInfo && myVisibleFileUris.contains(notLocalFileInfo.getFileUri());
 
       if (myServerData.computedErrors(fileInfo, errorsWithoutTodo, restartHighlighting)) {
-        if (fileInfo instanceof DartLocalFileInfo) {
-          onErrorsUpdated((DartLocalFileInfo)fileInfo, errorsWithoutTodo, hasSevereProblems, newHash);
+        if (fileInfo instanceof DartLocalFileInfo localFileInfo) {
+          onErrorsUpdated(localFileInfo, errorsWithoutTodo, hasSevereProblems, newHash);
         }
       }
     }
@@ -297,8 +297,8 @@ public final class DartAnalysisServerService implements Disposable {
       myServerData.onFlushedResults(fileInfos);
 
       for (DartFileInfo fileInfo : fileInfos) {
-        if (fileInfo instanceof DartLocalFileInfo) {
-          onErrorsUpdated((DartLocalFileInfo)fileInfo, AnalysisError.EMPTY_LIST, false, 0);
+        if (fileInfo instanceof DartLocalFileInfo localFileInfo) {
+          onErrorsUpdated(localFileInfo, AnalysisError.EMPTY_LIST, false, 0);
         }
       }
     }
