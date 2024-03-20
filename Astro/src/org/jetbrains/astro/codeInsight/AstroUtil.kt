@@ -8,10 +8,9 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.util.childrenOfType
 import com.intellij.util.asSafely
-import org.jetbrains.astro.lang.psi.AstroFrontmatterScript
 import org.jetbrains.astro.lang.psi.AstroContentRoot
+import org.jetbrains.astro.lang.psi.AstroFrontmatterScript
 
 const val ASTRO_PKG = "astro"
 const val ASTRO_GLOBAL_INTERFACE = "AstroGlobal"
@@ -35,7 +34,7 @@ fun PsiElement.frontmatterScript(): AstroFrontmatterScript? =
   containingFile?.astroContentRoot()?.frontmatterScript()
 
 fun PsiFile.astroContentRoot(): AstroContentRoot? =
-  this.childrenOfType<AstroContentRoot>().firstOrNull()
+  children.firstNotNullOfOrNull { it as? AstroContentRoot }
 
 fun AstroContentRoot.frontmatterScript(): AstroFrontmatterScript? =
   children.firstNotNullOfOrNull { it as? AstroFrontmatterScript }
