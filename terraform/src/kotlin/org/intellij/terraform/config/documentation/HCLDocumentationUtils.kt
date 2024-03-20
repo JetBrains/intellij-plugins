@@ -65,7 +65,7 @@ internal fun getHelpWindowHeader(element: PsiElement?): @Nls String {
     is HCLBlock -> {
       val type = element.getNameElementUnquoted(0)
       val name = element.name
-      if (TerraformPatterns.RootBlock.accepts(element) || element.containingFile.virtualFile == null) {
+      if (TerraformPatterns.RootBlock.accepts(element)) {
         if (name == element.getNameElementUnquoted(1)) {
           HCLBundle.message("terraform.doc.block.type.0", type?.replaceFirstChar { it.uppercase(Locale.getDefault()) }, element.name)
         }

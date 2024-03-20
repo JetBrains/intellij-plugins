@@ -2,6 +2,7 @@
 package org.intellij.terraform.config.documentation.psi
 
 import com.intellij.openapi.components.Service
+import com.intellij.openapi.diagnostic.fileLogger
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.intellij.terraform.config.model.PropertyOrBlockType
@@ -13,22 +14,36 @@ import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 @Service(Service.Level.PROJECT)
 class FakeHCLElementPsiFactory(val project: Project) {
 
-  val emptyHCLBlock: HCLBlock by lazy {
+  val emptyHCLBlock: HCLBlock? by lazy {
     createFakeHCLBlock("", "")
   }
 
-  fun createFakeHCLBlock(blockName: String, blockType: String, original: PsiFile? = null): HCLBlock {
-    val hclBlock = TerraformElementGenerator(project).createBlock(blockName, emptyMap(), blockType, original = original)
+  private val terraformElementGenerator = TerraformElementGenerator(project)
+
+  fun createFakeHCLBlock(blockName: String, blockType: String, original: PsiFile? = null): HCLBlock? {
+    val hclBlock = try {
+      terraformElementGenerator.createBlock(blockName, emptyMap(), blockType, original = original)
+    }
+    catch (e: IllegalStateException) {
+      fileLogger().warnWithDebug("Failed to create HCLBlock for content: ${blockName} ${blockType}. ${e.message}", e)
+      null
+    }
     return hclBlock
   }
 
   fun createFakeHCLProperty(block: HCLBlock, property: PropertyOrBlockType): HCLProperty? {
-    val dummyBlock = TerraformElementGenerator(project).createBlock(block.getNameElementUnquoted(0) ?: "",
-                                                                    mapOf(property.name to "\"\""),
-                                                                    namedElements = arrayOf(block.getNameElementUnquoted(1) ?: "\"\"",
-                                                                                            block.getNameElementUnquoted(2) ?: "\"\""),
-                                                                    original = block.containingFile.originalFile)
-    val hclProperty = dummyBlock.`object`?.findProperty(property.name)
+    val dummyBlock = try {
+      terraformElementGenerator.createBlock(block.getNameElementUnquoted(0) ?: "",
+                                            mapOf(property.name to "\"\""),
+                                            namedElements = arrayOf(block.getNameElementUnquoted(1) ?: "\"\"",
+                                                                    block.getNameElementUnquoted(2) ?: "\"\""),
+                                            original = block.containingFile.originalFile)
+    }
+    catch (e: IllegalStateException) {
+      fileLogger().warnWithDebug("Failed to create HCLProperty: ${property} for block ${block}. ${e.message}", e)
+      null
+    }
+    val hclProperty = dummyBlock?.`object`?.findProperty(property.name)
     return hclProperty
   }
 

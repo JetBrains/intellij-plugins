@@ -26,6 +26,9 @@ class TerraformElementGenerator(val project: Project) : HCLElementGenerator(proj
     } else {
       psiFileFactory.createFileFromText("dummy.${TerraformFileType.defaultExtension}", TerraformFileType, content)
     }
+    if (psiFile == null) {
+      throw IllegalStateException("Failed to create PsiFile for content $content and parent file $original")
+    }
     if (PsiTreeUtil.hasErrorElements(psiFile as PsiElement)) {
       throw IllegalStateException("PsiFile contains PsiErrorElement: " + DebugUtil.psiToString(psiFile, false, true))
     }
