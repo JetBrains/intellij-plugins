@@ -68,14 +68,14 @@ class TfFlavourDescriptor(val root: IElementType) : GFMFlavourDescriptor(true, f
         if (nodes.isEmpty()) return
         val codeSpan = nodes[0].takeIf { it.type == MarkdownElementTypes.CODE_SPAN }
         if (codeSpan != null) {
-          val textInNode = EntityConverter.replaceEntities(StringUtilRt.unquoteString (codeSpan.getTextInNode(text).toString(), '`'),
+          val textInNode = EntityConverter.replaceEntities(StringUtilRt.unquoteString(codeSpan.getTextInNode(text).toString(), '`'),
                                                            true,
                                                            true)
-          visitor.consumeTagOpen(codeSpan, "a", """href="#${textInNode}"""", """id="${textInNode}"""", """name="${textInNode}"""")
+          visitor.consumeTagOpen(codeSpan, "span", """id="${textInNode}"""", """name="${textInNode}"""")
           visitor.consumeTagOpen(codeSpan, "code")
           visitor.consumeHtml(textInNode)
           visitor.consumeTagClose("code")
-          visitor.consumeTagClose("a")
+          visitor.consumeTagClose("span")
           nodes.tail().forEach { child ->
             when (child) {
               is LeafASTNode -> {
