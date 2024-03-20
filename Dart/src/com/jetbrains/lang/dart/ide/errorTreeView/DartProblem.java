@@ -4,7 +4,6 @@ package com.jetbrains.lang.dart.ide.errorTreeView;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.NlsSafe;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.HtmlBuilder;
 import com.intellij.openapi.util.text.HtmlChunk;
@@ -14,7 +13,7 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.analyzer.*;
 import com.jetbrains.lang.dart.util.DartBuildFileUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.dartlang.analysis.server.protocol.AnalysisError;
@@ -80,7 +79,10 @@ public class DartProblem {
 
   public @NotNull String getSystemIndependentPath() {
     if (mySystemIndependentPath == null) {
-      mySystemIndependentPath = FileUtil.toSystemIndependentName(myAnalysisError.getLocation().getFile());
+      String filePathOrUri = myAnalysisError.getLocation().getFile();
+      DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
+      mySystemIndependentPath = fileInfo instanceof DartLocalFileInfo localFileInfo ? localFileInfo.getFilePath()
+                                                                                    : ((DartNotLocalFileInfo)fileInfo).getFileUri();
     }
     return mySystemIndependentPath;
   }
@@ -95,12 +97,15 @@ public class DartProblem {
     final VirtualFile packageRoot;
     final VirtualFile contentRoot;
 
-    file = LocalFileSystem.getInstance().findFileByPath(getSystemIndependentPath());
+    String filePathOrUri = myAnalysisError.getLocation().getFile();
+    DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
+    file = fileInfo instanceof DartLocalFileInfo localFileInfo ? localFileInfo.findFile() : null;
+
     if (file == null) {
       dartPackageName = null;
       packageRoot = null;
       contentRoot = null;
-      presentableFilePath = myAnalysisError.getLocation().getFile();
+      presentableFilePath = filePathOrUri;
     }
     else {
       contentRoot = ProjectRootManager.getInstance(myProject).getFileIndex().getContentRootForFile(file, false);
@@ -112,12 +117,12 @@ public class DartProblem {
         dartPackageName = null;
         if (contentRoot == null) {
           packageRoot = null;
-          presentableFilePath = myAnalysisError.getLocation().getFile();
+          presentableFilePath = filePathOrUri;
         }
         else {
           packageRoot = contentRoot;
           final String relativePath = VfsUtilCore.getRelativePath(file, contentRoot, File.separatorChar);
-          presentableFilePath = relativePath != null ? relativePath : myAnalysisError.getLocation().getFile();
+          presentableFilePath = relativePath != null ? relativePath : filePathOrUri;
         }
       }
       else {
@@ -127,7 +132,7 @@ public class DartProblem {
         dartPackageName = projectName != null ? projectName : "%unnamed%";
         packageRoot = pubspec.getParent();
         final String relativePath = VfsUtilCore.getRelativePath(file, pubspec.getParent(), File.separatorChar);
-        presentableFilePath = relativePath != null ? relativePath : myAnalysisError.getLocation().getFile();
+        presentableFilePath = relativePath != null ? relativePath : filePathOrUri;
       }
     }
 
@@ -188,7 +193,8 @@ public class DartProblem {
       for (DiagnosticMessage contextMessage : contextMessages) {
         Location location = contextMessage.getLocation();
         @NlsSafe String msg = StringUtil.trimEnd(contextMessage.getMessage(), '.');
-        String locationText = PathUtil.getFileName(location.getFile()) + ":" + location.getStartLine();
+        String filePathOrUri = location.getFile();
+        String locationText = PathUtil.getFileName(filePathOrUri) + ":" + location.getStartLine();
         listBuilder.append(HtmlChunk.li().addText(msg + " (" + locationText + ")."));
       }
       htmlBuilder.append(listBuilder.wrapWith("ul"));

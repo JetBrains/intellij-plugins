@@ -6,8 +6,6 @@ import com.intellij.find.findUsages.FindUsagesOptions;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
@@ -19,6 +17,9 @@ import com.intellij.psi.search.SearchScope;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.Processor;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.analyzer.DartFileInfo;
+import com.jetbrains.lang.dart.analyzer.DartFileInfoKt;
+import com.jetbrains.lang.dart.analyzer.DartLocalFileInfo;
 import com.jetbrains.lang.dart.psi.DartReference;
 import org.dartlang.analysis.server.protocol.Location;
 import org.dartlang.analysis.server.protocol.SearchResult;
@@ -53,8 +54,10 @@ public class DartServerFindUsagesHandler extends FindUsagesHandler {
       public void consumeInReadAction(SearchResult result) {
         if (result.getKind().equals(SearchResultKind.DECLARATION)) return;
 
-        final Location location = result.getLocation();
-        final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(location.getFile()));
+        Location location = result.getLocation();
+        String filePathOrUri = location.getFile();
+        DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
+        VirtualFile vFile = fileInfo instanceof DartLocalFileInfo localFileInfo? localFileInfo.findFile() : null;
         if (vFile == null) return;
 
         if (!scope.contains(vFile)) return;

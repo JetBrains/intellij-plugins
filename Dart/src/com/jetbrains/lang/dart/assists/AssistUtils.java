@@ -19,9 +19,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
@@ -30,6 +28,9 @@ import com.intellij.ui.IconManager;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.analyzer.DartFileInfo;
+import com.jetbrains.lang.dart.analyzer.DartFileInfoKt;
+import com.jetbrains.lang.dart.analyzer.DartLocalFileInfo;
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -95,8 +96,10 @@ public final class AssistUtils {
           runLinkedEdits(project, sourceChange, linkedEditTarget, sourceEditInfos);
         }
         else if (sourceChange.getSelection() != null) {
-          final Position selection = sourceChange.getSelection();
-          final VirtualFile file = findVirtualFile(selection.getFile());
+          Position selection = sourceChange.getSelection();
+          String filePathOrUri = selection.getFile();
+          DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
+          VirtualFile file = fileInfo instanceof DartLocalFileInfo localFileInfo ? localFileInfo.findFile() : null;
           if (file != null) {
             int offset = selection.getOffset();
             offset = DartAnalysisServerService.getInstance(project).getConvertedOffset(file, offset);
@@ -168,7 +171,8 @@ public final class AssistUtils {
 
       final VirtualFile file = findVirtualFile(fileEdit);
       if (file == null) {
-        throw new DartSourceEditException(DartBundle.message("error.failed.to.edit.file.file.not.found.0", fileEdit.getFile()));
+        String filePathOrUri = fileEdit.getFile();
+        throw new DartSourceEditException(DartBundle.message("error.failed.to.edit.file.file.not.found.0", filePathOrUri));
       }
 
       if (isInContent(project, file)) {
@@ -176,8 +180,8 @@ public final class AssistUtils {
       }
     }
     if (map.isEmpty() && !fileEdits.isEmpty()) {
-      throw new DartSourceEditException(
-        DartBundle.message("error.none.of.the.files.were.in.this.project.content.0", fileEdits.get(0).getFile()));
+      String filePathOrUri = fileEdits.get(0).getFile();
+      throw new DartSourceEditException(DartBundle.message("error.none.of.the.files.were.in.this.project.content.0", filePathOrUri));
     }
     return map;
   }
@@ -187,9 +191,10 @@ public final class AssistUtils {
     for (LinkedEditGroup group : sourceChange.getLinkedEditGroups()) {
       final List<Position> positions = group.getPositions();
       if (!positions.isEmpty()) {
-        final Position position = positions.get(0);
-        // find VirtualFile
-        VirtualFile virtualFile = findVirtualFile(position.getFile());
+        Position position = positions.get(0);
+        String filePathOrUri = position.getFile();
+        DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
+        VirtualFile virtualFile = fileInfo instanceof DartLocalFileInfo localFileInfo ? localFileInfo.findFile() : null;
         if (virtualFile == null) {
           return null;
         }
@@ -245,14 +250,10 @@ public final class AssistUtils {
     return leOffset;
   }
 
-  @Nullable
-  public static VirtualFile findVirtualFile(@NotNull final SourceFileEdit fileEdit) {
-    return findVirtualFile(fileEdit.getFile());
-  }
-
-  @Nullable
-  private static VirtualFile findVirtualFile(@NotNull final String path) {
-    return LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(path));
+  public static @Nullable VirtualFile findVirtualFile(@NotNull SourceFileEdit fileEdit) {
+    String filePathOrUri = fileEdit.getFile();
+    DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
+    return fileInfo instanceof DartLocalFileInfo localFileInfo ? localFileInfo.findFile() : null;
   }
 
   private static boolean isInContent(@NotNull Project project, @NotNull VirtualFile file) {
@@ -291,7 +292,9 @@ public final class AssistUtils {
       boolean firstPosition = true;
       groupIndex++;
       for (Position position : group.getPositions()) {
-        if (FileUtil.toSystemIndependentName(position.getFile()).equals(target.virtualFile.getPath())) {
+        String filePathOrUri = position.getFile();
+        DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
+        if (fileInfo instanceof DartLocalFileInfo localFileInfo && localFileInfo.getFilePath().equals(target.virtualFile.getPath())) {
           hasTextRanges = true;
 
           final int offset = getLinkedEditConvertedOffset(project, target.virtualFile, position.getOffset(), sourceEditInfos);
