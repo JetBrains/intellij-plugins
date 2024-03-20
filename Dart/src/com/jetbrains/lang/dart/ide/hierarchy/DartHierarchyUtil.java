@@ -8,13 +8,14 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.analyzer.DartFileInfo;
+import com.jetbrains.lang.dart.analyzer.DartFileInfoKt;
+import com.jetbrains.lang.dart.analyzer.DartLocalFileInfo;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.dartlang.analysis.server.protocol.Element;
@@ -125,13 +126,9 @@ public final class DartHierarchyUtil {
 
   @Nullable
   public static DartComponent findDartComponent(@NotNull final Project project, @NotNull final Location location) {
-    String filePath = location.getFile();
-    if (filePath == null) {
-      return null;
-    }
-    filePath = FileUtil.toSystemIndependentName(filePath);
-
-    final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(filePath);
+    String filePathOrUri = location.getFile();
+    DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
+    VirtualFile virtualFile = fileInfo instanceof DartLocalFileInfo localFileInfo ? localFileInfo.findFile() : null;
     if (virtualFile == null) {
       return null;
     }

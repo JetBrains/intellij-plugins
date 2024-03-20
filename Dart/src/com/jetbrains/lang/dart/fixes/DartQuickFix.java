@@ -24,6 +24,9 @@ import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.PathUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.analyzer.DartFileInfo;
+import com.jetbrains.lang.dart.analyzer.DartFileInfoKt;
+import com.jetbrains.lang.dart.analyzer.DartLocalFileInfo;
 import com.jetbrains.lang.dart.assists.AssistUtils;
 import com.jetbrains.lang.dart.assists.DartSourceEditException;
 import org.dartlang.analysis.server.protocol.SourceChange;
@@ -94,9 +97,12 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
                               @NotNull PsiFile file,
                               @NotNull SourceChange sourceChange,
                               @Nullable DartQuickFix dartQuickFix) {
-    final SourceFileEdit fileEdit = sourceChange.getEdits().get(0);
-    final String filePath = FileUtil.toSystemIndependentName(fileEdit.getFile());
+    SourceFileEdit fileEdit = sourceChange.getEdits().get(0);
+    String filePathOrUri = fileEdit.getFile();
+    DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
+    if (!(fileInfo instanceof DartLocalFileInfo localFileInfo)) return;
 
+    String filePath = localFileInfo.getFilePath();
     final VirtualFile virtualFile;
 
     // Create the file if it does not exist.
@@ -188,13 +194,11 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
       return false;
     }
 
-    String path = FileUtil.toSystemIndependentName(sourceChange.getEdits().get(0).getFile());
-    VirtualFile vFile = target.getOriginalFile().getVirtualFile();
-    if (vFile == null || !vFile.getPath().equals(path)) {
-      return false;
-    }
+    String filePathOrUri = sourceChange.getEdits().get(0).getFile();
+    DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
 
-    return true;
+    VirtualFile vFile = target.getOriginalFile().getVirtualFile();
+    return vFile != null && fileInfo instanceof DartLocalFileInfo localFileInfo && localFileInfo.getFilePath().equals(vFile.getPath());
   }
 
   public static void doInvokeForPreview(@NotNull PsiFile psiFile, @NotNull SourceChange sourceChange) {

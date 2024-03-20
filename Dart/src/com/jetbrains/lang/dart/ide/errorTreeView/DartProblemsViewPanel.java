@@ -17,7 +17,6 @@ import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.NlsSafe;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -32,10 +31,16 @@ import com.intellij.util.OpenSourceUtil;
 import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.analyzer.DartFileInfo;
+import com.jetbrains.lang.dart.analyzer.DartFileInfoKt;
+import com.jetbrains.lang.dart.analyzer.DartLocalFileInfo;
 import com.jetbrains.lang.dart.assists.AssistUtils;
 import com.jetbrains.lang.dart.assists.DartSourceEditException;
 import icons.DartIcons;
-import org.dartlang.analysis.server.protocol.*;
+import org.dartlang.analysis.server.protocol.AnalysisErrorFixes;
+import org.dartlang.analysis.server.protocol.DiagnosticMessage;
+import org.dartlang.analysis.server.protocol.Location;
+import org.dartlang.analysis.server.protocol.SourceChange;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -180,8 +185,9 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
 
       // Reference the Location, compute the VirtualFile
       Location location = diagnosticMessage.getLocation();
-      String filePath = location == null ? null : FileUtil.toSystemIndependentName(location.getFile());
-      VirtualFile vFile = filePath == null ? null : LocalFileSystem.getInstance().findFileByPath(filePath);
+      String filePathOrUri = location.getFile();
+      DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
+      VirtualFile vFile = fileInfo instanceof DartLocalFileInfo localFileInfo ? localFileInfo.findFile() : null;
 
       // Create the action for this DiagnosticMessage
       if (StringUtil.isNotEmpty(message) && vFile != null) {
