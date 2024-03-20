@@ -54,17 +54,13 @@ class RemoteTfDocumentationProvider(private val coroutineScope: CoroutineScope) 
 
   private fun removeMdHeader(input: String): String {
     var inFrontMatter = false
-    val filteredLines = input.lineSequence().filter { line ->
-      when { // Detect the start or end of a YAML front matter block
-        line.trim() == "---" -> {
-          inFrontMatter = !inFrontMatter
-          false // Exclude this line
-        } // Exclude lines that are within a YAML front matter block
-        inFrontMatter -> false // Include all other lines
-        else -> true
+    return input.lineSequence()
+      .dropWhile { line ->
+        if (line.trim() == "---") inFrontMatter = !inFrontMatter
+        inFrontMatter
       }
-    }
-    return filteredLines.joinToString("\n").trim()
+      .joinToString("\n")
+      .trim()
   }
 
   private fun convertMarkdownToHtml(@NlsSafe markdownText: String): String {

@@ -76,8 +76,7 @@ internal abstract class BaseTerraformDocUrlProvider {
     val identifier = block?.getNameElementUnquoted(1) ?: ""
 
     val lockFile = findPsiLockFile(element)
-    val providerData = lockFile?.let { getDataFromLockFile(it, type) } ?: getDataFromModel(element, type, identifier)
-
+    val providerData = lockFile?.let { getDataFromLockFile(it, identifier) } ?: getDataFromModel(element, type, identifier)
     BlockData(identifier, type, parameter, providerData)
   }
 
@@ -166,15 +165,7 @@ internal abstract class BaseTerraformDocUrlProvider {
   }
 
   private fun findContainingVFile(element: PsiElement): VirtualFile? {
-    val containingFile = element.containingFile
-    if (containingFile.originalFile != null) {
-      return containingFile.originalFile.virtualFile
-    }
-    val fileForFakePsi = containingFile.getUserData(PsiFileFactory.ORIGINAL_FILE)
-    if (fileForFakePsi != null) {
-      return fileForFakePsi.virtualFile
-    }
-    return null
+    return element.containingFile.originalFile.virtualFile
+           ?: element.containingFile.getUserData(PsiFileFactory.ORIGINAL_FILE)?.virtualFile
   }
-
 }
