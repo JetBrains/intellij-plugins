@@ -22,12 +22,10 @@ class TerraformElementGenerator(val project: Project) : HCLElementGenerator(proj
   private fun createDummyFile(content: String, original: PsiFile?): PsiFile {
     val psiFileFactory = PsiFileFactory.getInstance(project)
     val psiFile = if (original != null) {
-      psiFileFactory.createFileFromText(content, original)
+      psiFileFactory.createFileFromText("dummy.${original.fileType.defaultExtension}", original.fileType, content)
+        .also { it.putUserData(PsiFileFactory.ORIGINAL_FILE, original) } //The same as com.intellij.psi.impl.PsiFileFactoryImpl.createFileFromText(java.lang.CharSequence, com.intellij.psi.PsiFile)
     } else {
       psiFileFactory.createFileFromText("dummy.${TerraformFileType.defaultExtension}", TerraformFileType, content)
-    }
-    if (psiFile == null) {
-      throw IllegalStateException("Failed to create PsiFile for content $content and parent file $original")
     }
     if (PsiTreeUtil.hasErrorElements(psiFile as PsiElement)) {
       throw IllegalStateException("PsiFile contains PsiErrorElement: " + DebugUtil.psiToString(psiFile, false, true))
