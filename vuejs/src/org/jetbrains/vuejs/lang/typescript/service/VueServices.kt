@@ -6,8 +6,10 @@ import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageS
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerState
 import com.intellij.lang.typescript.library.TypeScriptLibraryProvider
 import com.intellij.lang.typescript.lsp.getTypeScriptServiceDirectory
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.isVueFile
@@ -58,6 +60,8 @@ fun isVolarFileTypeAcceptable(file: VirtualFile): Boolean {
 }
 
 private fun isVolarEnabledByContextAndSettings(project: Project, context: VirtualFile): Boolean {
+  if (ApplicationManager.getApplication().isUnitTestMode && forceEnabled) return true
+
   if (!TypeScriptLanguageServiceUtil.isServiceEnabled(project)) return false
   if (!isVueServiceContext(project, context)) return false
   if (TypeScriptLibraryProvider.isLibraryOrBundledLibraryFile(project, context)) return false
@@ -67,4 +71,14 @@ private fun isVolarEnabledByContextAndSettings(project: Project, context: Virtua
     VueServiceSettings.TS_SERVICE -> false
     VueServiceSettings.DISABLED -> false
   }
+}
+
+private var forceEnabled = false
+
+/**
+ * Please don't use unless there's no other choice, e.g., with [TypeScriptLanguageServiceUtil.TypeScriptUseServiceState.USE_FOR_EVALUATION]
+ */
+@TestOnly
+fun markVolarForceEnabled(value: Boolean) {
+  forceEnabled = value
 }
