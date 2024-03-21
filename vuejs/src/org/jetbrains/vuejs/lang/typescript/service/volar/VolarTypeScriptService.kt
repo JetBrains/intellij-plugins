@@ -3,6 +3,8 @@ package org.jetbrains.vuejs.lang.typescript.service.volar
 
 import com.google.gson.JsonElement
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptGetElementTypeRequestArgs
+import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptGetSymbolTypeRequestArgs
+import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptGetTypePropertiesRequestArgs
 import com.intellij.lang.typescript.lsp.BaseLspTypeScriptService
 import com.intellij.lang.typescript.lsp.JSFrameworkLsp4jServer
 import com.intellij.openapi.project.Project
@@ -21,5 +23,15 @@ class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(projec
   override suspend fun getIdeType(args: TypeScriptGetElementTypeRequestArgs): JsonElement? {
     val server = getServer() ?: return null
     return server.sendRequest { (it as JSFrameworkLsp4jServer).getElementType(args) }
+  }
+
+  override suspend fun getIdeSymbolType(args: TypeScriptGetSymbolTypeRequestArgs): JsonElement? {
+    val server = getServer() ?: return null
+    return server.sendRequest { (it as JSFrameworkLsp4jServer).getSymbolType(args) }
+  }
+
+  override suspend fun getIdeTypeProperties(args: TypeScriptGetTypePropertiesRequestArgs): JsonElement? {
+    val server = getServer() ?: return null
+    return server.sendRequest { (it as JSFrameworkLsp4jServer).getTypeProperties(args) }
   }
 }
