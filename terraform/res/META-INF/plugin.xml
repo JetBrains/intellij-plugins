@@ -137,7 +137,6 @@
     <!--Spellchecking -->
     <spellchecker.support language="HCL" implementationClass="org.intellij.terraform.hcl.spellchecker.HCLSpellcheckerStrategy"/>
     <spellchecker.bundledDictionaryProvider implementation="org.intellij.terraform.TerraformBundledDictionaryProvider"/>
-    <spellchecker.support language="HCL" implementationClass="org.intellij.terraform.config.spellchecker.TerraformSpellcheckingStrategy"/>
 
     <!-- Fixture for todos indexing -->
     <indexPatternBuilder implementation="org.intellij.terraform.hcl.search.HCLIndexPatternBuilder"/>

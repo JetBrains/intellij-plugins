@@ -1,6 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <problems>
   <problem>
+    <file>heredoc.tf</file>
+    <line>2</line>
+    <module>0</module>
+    <problem_class severity="TYPO" attribute_key="TYPO">Typo</problem_class>
+    <description>Typo: In word 'ASDASDA'</description>
+  </problem>
+  <problem>
+    <file>heredoc.tf</file>
+    <line>3</line>
+    <module>0</module>
+    <problem_class severity="TYPO" attribute_key="TYPO">Typo</problem_class>
+    <description>Typo: In word 'ASDASDA'</description>
+  </problem>
+  <problem>
+    <file>heredoc.tf</file>
+    <line>7</line>
+    <module>0</module>
+    <problem_class severity="TYPO" attribute_key="TYPO">Typo</problem_class>
+    <description>Typo: In word 'askbhsvaj'</description>
+  </problem>
+  <problem>
+    <file>heredoc.tf</file>
+    <line>9</line>
+    <module>0</module>
+    <problem_class severity="TYPO" attribute_key="TYPO">Typo</problem_class>
+    <description>Typo: In word 'afjjskdbh'</description>
+  </problem>
+  <problem>
     <file>main.tf</file>
     <line>1</line>
     <module>0</module>
@@ -51,38 +79,10 @@
   </problem>
   <problem>
     <file>main.tf</file>
-    <line>29</line>
+    <line>17</line>
     <module>0</module>
     <problem_class severity="TYPO" attribute_key="TYPO">Typo</problem_class>
-    <description>Typo: In word 'asjrhsbc'</description>
-  </problem>
-  <problem>
-    <file>heredoc.tf</file>
-    <line>2</line>
-    <module>0</module>
-    <problem_class severity="TYPO" attribute_key="TYPO">Typo</problem_class>
-    <description>Typo: In word 'ASDASDA'</description>
-  </problem>
-  <problem>
-    <file>heredoc.tf</file>
-    <line>3</line>
-    <module>0</module>
-    <problem_class severity="TYPO" attribute_key="TYPO">Typo</problem_class>
-    <description>Typo: In word 'ASDASDA'</description>
-  </problem>
-  <problem>
-    <file>heredoc.tf</file>
-    <line>7</line>
-    <module>0</module>
-    <problem_class severity="TYPO" attribute_key="TYPO">Typo</problem_class>
-    <description>Typo: In word 'askbhsvaj'</description>
-  </problem>
-  <problem>
-    <file>heredoc.tf</file>
-    <line>9</line>
-    <module>0</module>
-    <problem_class severity="TYPO" attribute_key="TYPO">Typo</problem_class>
-    <description>Typo: In word 'afjjskdbh'</description>
+    <description>Typo: In word 'dsvcbfafe'</description>
   </problem>
 </problems>
 

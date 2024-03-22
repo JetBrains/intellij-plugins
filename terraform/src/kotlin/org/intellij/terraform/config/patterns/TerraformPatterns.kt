@@ -39,6 +39,10 @@ object TerraformPatterns {
     PlatformPatterns.psiElement(HCLBlock::class.java)
       .withParent(TerraformConfigFile)
 
+  val RootBlockForHCLFiles: PsiElementPattern.Capture<HCLBlock> =
+    PlatformPatterns.psiElement(HCLBlock::class.java)
+      .withParent(HCLFile::class.java)
+
   val ModuleRootBlock: PsiElementPattern.Capture<HCLBlock> =
     PlatformPatterns.psiElement(HCLBlock::class.java)
       .and(RootBlock)
@@ -179,10 +183,7 @@ object TerraformPatterns {
       }
     })
 
-  val BlockNameIdentifier: PsiElementPattern.Capture<HCLIdentifier> = PlatformPatterns.psiElement(HCLIdentifier::class.java)
-    .withSuperParent(1, HCLBlock::class.java)
-    .withSuperParent(2, HCLBlockObject::class.java)
-    .withSuperParent(3, HCLBlock::class.java)
+  val DescriptionProperty: PsiElementPattern.Capture<HCLProperty> = propertyWithName("description")
 
   fun createBlockPattern(type: String): PatternCondition<HCLBlock?> {
     return object : PatternCondition<HCLBlock?>("HCLBlock($type)") {
