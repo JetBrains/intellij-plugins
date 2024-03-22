@@ -43,7 +43,7 @@ public final class AssistUtils {
    * @return {@code true} if file contents changed, {@code false} otherwise
    */
   public static boolean applyFileEdit(@NotNull final Project project, @NotNull final SourceFileEdit fileEdit) {
-    final VirtualFile file = findVirtualFile(fileEdit);
+    final VirtualFile file = findVirtualFile(project, fileEdit);
     final Document document = file == null ? null : FileDocumentManager.getInstance().getDocument(file);
     if (document == null) return false;
 
@@ -98,8 +98,8 @@ public final class AssistUtils {
         else if (sourceChange.getSelection() != null) {
           Position selection = sourceChange.getSelection();
           String filePathOrUri = selection.getFile();
-          DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
-          VirtualFile file = fileInfo instanceof DartLocalFileInfo localFileInfo ? localFileInfo.findFile() : null;
+          DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(project, filePathOrUri);
+          VirtualFile file = fileInfo.findFile();
           if (file != null) {
             int offset = selection.getOffset();
             offset = DartAnalysisServerService.getInstance(project).getConvertedOffset(file, offset);
@@ -169,7 +169,7 @@ public final class AssistUtils {
         continue;
       }
 
-      final VirtualFile file = findVirtualFile(fileEdit);
+      final VirtualFile file = findVirtualFile(project, fileEdit);
       if (file == null) {
         String filePathOrUri = fileEdit.getFile();
         throw new DartSourceEditException(DartBundle.message("error.failed.to.edit.file.file.not.found.0", filePathOrUri));
@@ -193,8 +193,8 @@ public final class AssistUtils {
       if (!positions.isEmpty()) {
         Position position = positions.get(0);
         String filePathOrUri = position.getFile();
-        DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
-        VirtualFile virtualFile = fileInfo instanceof DartLocalFileInfo localFileInfo ? localFileInfo.findFile() : null;
+        DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(project, filePathOrUri);
+        VirtualFile virtualFile = fileInfo.findFile();
         if (virtualFile == null) {
           return null;
         }
@@ -250,10 +250,10 @@ public final class AssistUtils {
     return leOffset;
   }
 
-  public static @Nullable VirtualFile findVirtualFile(@NotNull SourceFileEdit fileEdit) {
+  public static @Nullable VirtualFile findVirtualFile(@NotNull Project project, @NotNull SourceFileEdit fileEdit) {
     String filePathOrUri = fileEdit.getFile();
-    DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
-    return fileInfo instanceof DartLocalFileInfo localFileInfo ? localFileInfo.findFile() : null;
+    DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(project, filePathOrUri);
+    return fileInfo.findFile();
   }
 
   private static boolean isInContent(@NotNull Project project, @NotNull VirtualFile file) {
@@ -293,7 +293,7 @@ public final class AssistUtils {
       groupIndex++;
       for (Position position : group.getPositions()) {
         String filePathOrUri = position.getFile();
-        DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
+        DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(project, filePathOrUri);
         if (fileInfo instanceof DartLocalFileInfo localFileInfo && localFileInfo.getFilePath().equals(target.virtualFile.getPath())) {
           hasTextRanges = true;
 

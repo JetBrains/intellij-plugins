@@ -205,7 +205,7 @@ public final class DartAnalysisServerService implements Disposable {
 
     @Override
     public void computedErrors(@NotNull String filePathOrUri, @NotNull List<AnalysisError> errors) {
-      DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
+      DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(myProject, filePathOrUri);
 
       final ProgressIndicator indicator = myProgressIndicator;
       if (indicator != null && fileInfo instanceof DartLocalFileInfo localFileInfo) {
@@ -235,11 +235,11 @@ public final class DartAnalysisServerService implements Disposable {
         }
 
         // do nothing if errors are the same as were already handled previously
-        if (oldHash == newHash && !myServerData.isErrorInfoInaccurate(localFileInfo)) return;
+        if (oldHash == newHash && myServerData.isErrorInfoUpToDate(localFileInfo)) return;
       }
 
       boolean restartHighlighting =
-        fileInfo instanceof DartLocalFileInfo localFileInfo && myVisibleFileUris.contains(getFileUriByPath(localFileInfo.getFilePath()))
+        fileInfo instanceof DartLocalFileInfo localFileInfo && myVisibleFileUris.contains(getLocalFileUri(localFileInfo.getFilePath()))
         ||
         fileInfo instanceof DartNotLocalFileInfo notLocalFileInfo && myVisibleFileUris.contains(notLocalFileInfo.getFileUri());
 
@@ -252,13 +252,13 @@ public final class DartAnalysisServerService implements Disposable {
 
     @Override
     public void computedHighlights(@NotNull String filePathOrUri, @NotNull List<HighlightRegion> regions) {
-      DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
+      DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(myProject, filePathOrUri);
       myServerData.computedHighlights(fileInfo, regions);
     }
 
     @Override
     public void computedClosingLabels(@NotNull String filePathOrUri, @NotNull List<ClosingLabel> labels) {
-      DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
+      DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(myProject, filePathOrUri);
       myServerData.computedClosingLabels(fileInfo, labels);
     }
 
@@ -266,31 +266,31 @@ public final class DartAnalysisServerService implements Disposable {
     public void computedImplemented(@NotNull String filePathOrUri,
                                     @NotNull List<ImplementedClass> implementedClasses,
                                     @NotNull List<ImplementedMember> implementedMembers) {
-      DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
+      DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(myProject, filePathOrUri);
       myServerData.computedImplemented(fileInfo, implementedClasses, implementedMembers);
     }
 
     @Override
     public void computedNavigation(@NotNull String filePathOrUri, @NotNull List<NavigationRegion> regions) {
-      DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
+      DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(myProject, filePathOrUri);
       myServerData.computedNavigation(fileInfo, regions);
     }
 
     @Override
     public void computedOverrides(@NotNull String filePathOrUri, @NotNull List<OverrideMember> overrides) {
-      DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
+      DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(myProject, filePathOrUri);
       myServerData.computedOverrides(fileInfo, overrides);
     }
 
     @Override
     public void computedOutline(@NotNull String filePathOrUri, @NotNull Outline outline) {
-      DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
+      DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(myProject, filePathOrUri);
       myServerData.computedOutline(fileInfo, outline);
     }
 
     @Override
     public void flushedResults(@NotNull List<String> filePathsOrUris) {
-      List<DartFileInfo> fileInfos = ContainerUtil.map(filePathsOrUris, pathOrUri -> DartFileInfoKt.getDartFileInfo(pathOrUri));
+      List<DartFileInfo> fileInfos = ContainerUtil.map(filePathsOrUris, pathOrUri -> DartFileInfoKt.getDartFileInfo(myProject, pathOrUri));
 
       myServerData.onFlushedResults(fileInfos);
 
@@ -392,6 +392,12 @@ public final class DartAnalysisServerService implements Disposable {
         stopShowingServerProgress();
       }
     }
+
+    @Override
+    public void lspTextDocumentContentDidChange(@NotNull String fileUri) {
+      flushedResults(List.of(fileUri));
+      myServerData.textDocumentContentDidChange(fileUri);
+    }
   };
 
   private static int ensureNotZero(int i) {
@@ -438,7 +444,7 @@ public final class DartAnalysisServerService implements Disposable {
    * Must use it each time right after reading any offset or length from any class from org.dartlang.analysis.server.protocol package
    */
   public int getConvertedOffset(@Nullable final VirtualFile file, final int originalOffset) {
-    if (originalOffset <= 0 || file == null) return originalOffset;
+    if (originalOffset <= 0 || file == null || !file.isInLocalFileSystem()) return originalOffset;
     return myFilePathWithOverlaidContentToTimestamp.containsKey(file.getPath())
            ? originalOffset
            : FileOffsetsManager.getInstance().getConvertedOffset(file, originalOffset);
@@ -448,7 +454,7 @@ public final class DartAnalysisServerService implements Disposable {
    * Must use it right before sending any offsets and lengths to the AnalysisServer
    */
   public int getOriginalOffset(@Nullable final VirtualFile file, final int convertedOffset) {
-    if (file == null) return convertedOffset;
+    if (file == null || !file.isInLocalFileSystem()) return convertedOffset;
 
     return myFilePathWithOverlaidContentToTimestamp.containsKey(file.getPath())
            ? convertedOffset
@@ -859,6 +865,11 @@ public final class DartAnalysisServerService implements Disposable {
     return myServerData.getOutline(file);
   }
 
+  @Nullable
+  VirtualFile getNotLocalVirtualFile(@NotNull String fileUri) {
+    return myServerData.getNotLocalVirtualFile(fileUri);
+  }
+
   void updateCurrentFile() {
     ModalityUiUtil.invokeLaterIfNeeded(ModalityState.nonModal(), myDisposedCondition,
                                        () -> DartProblemsView.getInstance(myProject).setCurrentFile(getCurrentOpenFile())
@@ -872,7 +883,7 @@ public final class DartAnalysisServerService implements Disposable {
   @Nullable
   private VirtualFile getCurrentOpenFile() {
     final VirtualFile[] files = FileEditorManager.getInstance(myProject).getSelectedFiles();
-    if (files.length > 0) {
+    if (files.length > 0 && files[0].isInLocalFileSystem()) {
       return files[0];
     }
     return null;
@@ -886,7 +897,7 @@ public final class DartAnalysisServerService implements Disposable {
 
       for (VirtualFile file : FileEditorManager.getInstance(myProject).getSelectedFiles()) {
         if (isLocalAnalyzableFile(file)) {
-          newVisibleFileUris.add(getFileUriByPath(file.getPath()));
+          newVisibleFileUris.add(getFileUri(file));
         }
       }
 
@@ -957,12 +968,12 @@ public final class DartAnalysisServerService implements Disposable {
 
       for (Document document : documents) {
         final VirtualFile file = fileDocumentManager.getFile(document);
-        if (isLocalAnalyzableFile(file)) {
+        if (isLocalAnalyzableFile(file) && file.isInLocalFileSystem()) {
           oldTrackedFilePaths.remove(file.getPath());
 
           final Long oldTimestamp = myFilePathWithOverlaidContentToTimestamp.get(file.getPath());
           if (oldTimestamp == null || document.getModificationStamp() != oldTimestamp) {
-            fileUriToContentOverlay.put(getFileUriByPath(file.getPath()), new AddContentOverlay(document.getText()));
+            fileUriToContentOverlay.put(getLocalFileUri(file.getPath()), new AddContentOverlay(document.getText()));
             myFilePathWithOverlaidContentToTimestamp.put(file.getPath(), document.getModificationStamp());
           }
         }
@@ -972,14 +983,14 @@ public final class DartAnalysisServerService implements Disposable {
       filePathsToRemoveContentOverlay = Collections.unmodifiableSet(oldTrackedFilePaths);
       for (String oldPath : filePathsToRemoveContentOverlay) {
         if (myFilePathWithOverlaidContentToTimestamp.get(oldPath) != null) {
-          fileUriToContentOverlay.put(getFileUriByPath(oldPath), new RemoveContentOverlay());
+          fileUriToContentOverlay.put(getLocalFileUri(oldPath), new RemoveContentOverlay());
         }
       }
 
       if (LOG.isDebugEnabled()) {
         final Set<String> overlaidFileUris = new HashSet<>(fileUriToContentOverlay.keySet());
         for (String filePathToRemoveContentOverlay : filePathsToRemoveContentOverlay) {
-          overlaidFileUris.remove(getFileUriByPath(filePathToRemoveContentOverlay));
+          overlaidFileUris.remove(getLocalFileUri(filePathToRemoveContentOverlay));
         }
         if (!overlaidFileUris.isEmpty()) {
           LOG.debug("Sending overlaid content: " + StringUtil.join(overlaidFileUris, ",\n"));
@@ -1016,8 +1027,8 @@ public final class DartAnalysisServerService implements Disposable {
                 "\nexcluded:\n" + StringUtil.join(excludedRootPaths, ",\n"));
     }
 
-    List<String> includedRootUris = ContainerUtil.map(includedRootPaths, path -> getFileUriByPath(path));
-    List<String> excludedRootUris = ContainerUtil.map(excludedRootPaths, path -> getFileUriByPath(path));
+    List<String> includedRootUris = ContainerUtil.map(includedRootPaths, this::getLocalFileUri);
+    List<String> excludedRootUris = ContainerUtil.map(excludedRootPaths, this::getLocalFileUri);
     server.analysis_setAnalysisRoots(includedRootUris, excludedRootUris, null);
     return true;
   }
@@ -1085,7 +1096,7 @@ public final class DartAnalysisServerService implements Disposable {
       return HoverInformation.EMPTY_LIST;
     }
 
-    final String fileUri = getFileUriByPath(file.getPath());
+    final String fileUri = getFileUri(file);
     final List<HoverInformation> result = new ArrayList<>();
 
     final CountDownLatch latch = new CountDownLatch(1);
@@ -1121,7 +1132,7 @@ public final class DartAnalysisServerService implements Disposable {
       return null;
     }
 
-    final String fileUri = getFileUriByPath(file.getPath());
+    final String fileUri = getFileUri(file);
     final Ref<List<DartServerData.DartNavigationRegion>> resultRef = Ref.create();
 
     final CountDownLatch latch = new CountDownLatch(1);
@@ -1166,12 +1177,14 @@ public final class DartAnalysisServerService implements Disposable {
 
   @NotNull
   public List<SourceChange> edit_getAssists(@NotNull final VirtualFile file, final int _offset, final int _length) {
+    if (!file.isInLocalFileSystem()) return Collections.emptyList();
+
     final AnalysisServer server = myServer;
     if (server == null) {
       return Collections.emptyList();
     }
 
-    final String fileUri = getFileUriByPath(file.getPath());
+    final String fileUri = getLocalFileUri(file.getPath());
     final List<SourceChange> results = new ArrayList<>();
     final CountDownLatch latch = new CountDownLatch(1);
     final int offset = getOriginalOffset(file, _offset);
@@ -1201,12 +1214,14 @@ public final class DartAnalysisServerService implements Disposable {
   }
 
   public boolean edit_isPostfixCompletionApplicable(VirtualFile file, int _offset, String key) {
+    if (!file.isInLocalFileSystem()) return false;
+
     final AnalysisServer server = myServer;
     if (server == null) {
       return false;
     }
 
-    final String fileUri = getFileUriByPath(file.getPath());
+    final String fileUri = getLocalFileUri(file.getPath());
     final Ref<Boolean> resultRef = Ref.create(false);
     final CountDownLatch latch = new CountDownLatch(1);
     final int offset = getOriginalOffset(file, _offset);
@@ -1265,12 +1280,14 @@ public final class DartAnalysisServerService implements Disposable {
 
   @Nullable
   public SourceChange edit_getPostfixCompletion(@NotNull final VirtualFile file, final int _offset, final String key) {
+    if (!file.isInLocalFileSystem()) return null;
+
     final AnalysisServer server = myServer;
     if (server == null) {
       return null;
     }
 
-    final String fileUri = getFileUriByPath(file.getPath());
+    final String fileUri = getLocalFileUri(file.getPath());
     final Ref<SourceChange> resultRef = Ref.create();
     final CountDownLatch latch = new CountDownLatch(1);
     final int offset = getOriginalOffset(file, _offset);
@@ -1298,12 +1315,14 @@ public final class DartAnalysisServerService implements Disposable {
 
   @Nullable
   public SourceChange edit_getStatementCompletion(@NotNull final VirtualFile file, final int _offset) {
+    if (!file.isInLocalFileSystem()) return null;
+
     final AnalysisServer server = myServer;
     if (server == null) {
       return null;
     }
 
-    final String fileUri = getFileUriByPath(file.getPath());
+    final String fileUri = getLocalFileUri(file.getPath());
     final Ref<SourceChange> resultRef = Ref.create();
     final CountDownLatch latch = new CountDownLatch(1);
     final int offset = getOriginalOffset(file, _offset);
@@ -1347,12 +1366,18 @@ public final class DartAnalysisServerService implements Disposable {
   public void askForFixesAndWaitABitIfReceivedQuickly(@NotNull final VirtualFile file,
                                                       final int _offset,
                                                       @NotNull final Consumer<? super List<AnalysisErrorFixes>> consumer) {
-    final AnalysisServer server = myServer;
-    if (server == null) {
+    if (!file.isInLocalFileSystem()) {
+      consumer.consume(Collections.emptyList());
       return;
     }
 
-    final String fileUri = getFileUriByPath(file.getPath());
+    final AnalysisServer server = myServer;
+    if (server == null) {
+      consumer.consume(Collections.emptyList());
+      return;
+    }
+
+    final String fileUri = getLocalFileUri(file.getPath());
     final CountDownLatch latch = new CountDownLatch(1);
     final int offset = getOriginalOffset(file, _offset);
     server.edit_getFixes(fileUri, offset, new GetFixesConsumer() {
@@ -1386,7 +1411,7 @@ public final class DartAnalysisServerService implements Disposable {
       return;
     }
 
-    final String fileUri = getFileUriByPath(file.getPath());
+    final String fileUri = getFileUri(file);
     final Ref<String> searchIdRef = new Ref<>();
 
     final CountDownLatch latch = new CountDownLatch(1);
@@ -1448,7 +1473,7 @@ public final class DartAnalysisServerService implements Disposable {
       return results;
     }
 
-    final String fileUri = getFileUriByPath(file.getPath());
+    final String fileUri = getFileUri(file);
     final CountDownLatch latch = new CountDownLatch(1);
     final int offset = getOriginalOffset(file, _offset);
     server.search_getTypeHierarchy(fileUri, offset, superOnly, new GetTypeHierarchyConsumer() {
@@ -1478,12 +1503,14 @@ public final class DartAnalysisServerService implements Disposable {
                                                                     int id,
                                                                     String label,
                                                                     int _offset) {
+    if (!file.isInLocalFileSystem()) return null;
+
     final AnalysisServer server = myServer;
     if (server == null) {
       return null;
     }
 
-    final String fileUri = getFileUriByPath(file.getPath());
+    final String fileUri = getLocalFileUri(file.getPath());
     final Ref<Pair<String, SourceChange>> resultRef = new Ref<>();
     final CountDownLatch latch = new CountDownLatch(1);
     final int offset = getOriginalOffset(file, _offset);
@@ -1512,12 +1539,14 @@ public final class DartAnalysisServerService implements Disposable {
                                                                                int _offset,
                                                                                @NotNull String completion,
                                                                                @NotNull String libraryUri) {
+    if (!file.isInLocalFileSystem()) return null;
+
     final AnalysisServer server = myServer;
     if (server == null) {
       return null;
     }
 
-    final String fileUri = getFileUriByPath(file.getPath());
+    final String fileUri = getLocalFileUri(file.getPath());
     final Ref<Pair<String, SourceChange>> resultRef = new Ref<>();
     final CountDownLatch latch = new CountDownLatch(1);
     final int offset = getOriginalOffset(file, _offset);
@@ -1545,6 +1574,8 @@ public final class DartAnalysisServerService implements Disposable {
 
   @Nullable
   public String completion_getSuggestions(@NotNull final VirtualFile file, final int _offset) {
+    if (!file.isInLocalFileSystem()) return null;
+
     final AnalysisServer server = myServer;
     if (server == null) {
       return null;
@@ -1554,7 +1585,7 @@ public final class DartAnalysisServerService implements Disposable {
       extension.dartCompletionStart();
     }
 
-    final String fileUri = getFileUriByPath(file.getPath());
+    final String fileUri = getLocalFileUri(file.getPath());
     final Ref<String> resultRef = new Ref<>();
     final CountDownLatch latch = new CountDownLatch(1);
     final int offset = getOriginalOffset(file, _offset);
@@ -1591,6 +1622,8 @@ public final class DartAnalysisServerService implements Disposable {
                                                     final int maxResults,
                                                     final String completionMode,
                                                     final int invocationCount) {
+    if (!file.isInLocalFileSystem()) return null;
+
     final AnalysisServer server = myServer;
     if (server == null) {
       return null;
@@ -1600,7 +1633,7 @@ public final class DartAnalysisServerService implements Disposable {
       extension.dartCompletionStart();
     }
 
-    final String fileUri = getFileUriByPath(file.getPath());
+    final String fileUri = getLocalFileUri(file.getPath());
     final Ref<CompletionInfo2> resultRef = new Ref<>();
     final CountDownLatch latch = new CountDownLatch(1);
     final int offset = getOriginalOffset(file, _offset);
@@ -1664,12 +1697,14 @@ public final class DartAnalysisServerService implements Disposable {
                                   final int _selectionOffset,
                                   final int _selectionLength,
                                   final int lineLength) {
+    if (!file.isInLocalFileSystem()) return null;
+
     final AnalysisServer server = myServer;
     if (server == null) {
       return null;
     }
 
-    final String fileUri = getFileUriByPath(file.getPath());
+    final String fileUri = getLocalFileUri(file.getPath());
     final Ref<FormatResult> resultRef = new Ref<>();
 
     final CountDownLatch latch = new CountDownLatch(1);
@@ -1713,7 +1748,7 @@ public final class DartAnalysisServerService implements Disposable {
       return null;
     }
 
-    final String fileUri = getFileUriByPath(file.getPath());
+    final String fileUri = getFileUri(file);
     final Ref<List<ImportedElements>> resultRef = new Ref<>();
     final CountDownLatch latch = new CountDownLatch(1);
     final int selectionOffset = getOriginalOffset(file, _selectionOffset);
@@ -1753,7 +1788,7 @@ public final class DartAnalysisServerService implements Disposable {
       return null;
     }
 
-    final String fileUri = getFileUriByPath(file.getPath());
+    final String fileUri = getFileUri(file);
     final Ref<SourceFileEdit> resultRef = new Ref<>();
     final CountDownLatch latch = new CountDownLatch(1);
     final int offset = getOriginalOffset(file, _offset);
@@ -1790,12 +1825,14 @@ public final class DartAnalysisServerService implements Disposable {
                                      boolean validateOnly,
                                      RefactoringOptions options,
                                      GetRefactoringConsumer consumer) {
+    if (!file.isInLocalFileSystem()) return false;
+
     final AnalysisServer server = myServer;
     if (server == null) {
       return false;
     }
 
-    final String fileUri = getFileUriByPath(file.getPath());
+    final String fileUri = getLocalFileUri(file.getPath());
     final int offset = getOriginalOffset(file, _offset);
     final int length = getOriginalOffset(file, _offset + _length) - offset;
     server.edit_getRefactoring(kind, fileUri, offset, length, validateOnly, options, consumer);
@@ -1808,7 +1845,7 @@ public final class DartAnalysisServerService implements Disposable {
       return null;
     }
 
-    final String fileUri = getFileUriByPath(filePath);
+    final String fileUri = getLocalFileUri(filePath);
     final Ref<SourceFileEdit> resultRef = new Ref<>();
     final CountDownLatch latch = new CountDownLatch(1);
     server.edit_organizeDirectives(fileUri, new OrganizeDirectivesConsumer() {
@@ -1846,7 +1883,7 @@ public final class DartAnalysisServerService implements Disposable {
       return null;
     }
 
-    final String fileUri = getFileUriByPath(filePath);
+    final String fileUri = getLocalFileUri(filePath);
     final Ref<SourceFileEdit> resultRef = new Ref<>();
 
     final CountDownLatch latch = new CountDownLatch(1);
@@ -1934,7 +1971,7 @@ public final class DartAnalysisServerService implements Disposable {
       return null;
     }
 
-    final String fileUri = getFileUriByPath(filePath);
+    final String fileUri = getLocalFileUri(filePath);
     final Ref<String> resultRef = new Ref<>();
     final CountDownLatch latch = new CountDownLatch(1);
     server.execution_createContext(fileUri, new CreateContextConsumer() {
@@ -1978,7 +2015,7 @@ public final class DartAnalysisServerService implements Disposable {
       return new Pair<>(new ArrayList<>(), new ArrayList<>());
     }
 
-    final String contextFileUri = getFileUriByPath(contextFile.getPath());
+    final String contextFileUri = getFileUri(contextFile);
     final CountDownLatch latch = new CountDownLatch(1);
     final Ref<Pair<List<CompletionSuggestion>, List<RuntimeCompletionExpression>>> refResult = Ref.create();
     server.execution_getSuggestions(
@@ -2024,7 +2061,7 @@ public final class DartAnalysisServerService implements Disposable {
       return null;
     }
 
-    final String fileUri = _filePath != null ? getFileUriByPath(_filePath) : null;
+    final String fileUri = _filePath != null ? getLocalFileUri(_filePath) : null;
     final Ref<String> resultRef = new Ref<>();
 
     final CountDownLatch latch = new CountDownLatch(1);
@@ -2071,8 +2108,8 @@ public final class DartAnalysisServerService implements Disposable {
     CountDownLatch latch = new CountDownLatch(1);
     server.lspMessage_dart_textDocumentContent(fileUri, new DartLspTextDocumentContentConsumer() {
       @Override
-      public void computedDocumentContents(String contents) {
-        resultRef.set(contents);
+      public void computedDocumentContents(@NotNull String contents) {
+        resultRef.set(StringUtil.convertLineSeparators(contents));
         latch.countDown();
       }
 
@@ -2586,17 +2623,32 @@ public final class DartAnalysisServerService implements Disposable {
    * <li>for SDK version 3.3 and older, it's an absolute file path with OS-dependent slashes
    * <li>for SDK version 3.4 and newer, it's a URI, thanks to the `supportsUris` capability defined in the spec
    * </ul>
-   *
-   * @param filePath absolute file path (any slashes might be used), typically it's {@link VirtualFile#getPath()}
-   * @apiNote URI calculation is similar to {@link com.intellij.platform.lsp.api.LspServerDescriptor#getFileUri(VirtualFile)}
    */
-  public String getFileUriByPath(@NotNull String filePath) {
+  public String getFileUri(@NotNull VirtualFile file) {
     if (!isDartSdkVersionSufficientForFileUri(mySdkVersion)) {
       // prior to Dart SDK 3.4, the protocol required file paths instead of URIs
-      return FileUtil.toSystemDependentName(filePath);
+      return FileUtil.toSystemDependentName(file.getPath());
     }
 
-    String escapedPath = URLUtil.encodePath(FileUtil.toSystemIndependentName(filePath));
+    String fileUri = file.getUserData(DartFileInfoKt.DART_NOT_LOCAL_FILE_URI_KEY);
+    return fileUri != null ? fileUri : getLocalFileUri(file.getPath());
+  }
+
+  /**
+   * Prefer {@link #getFileUri(VirtualFile)}.
+   * Use this method only if the corresponding `VirtualFile` is not available at the call site,
+   * and you are sure that this is a local file path.
+   *
+   * @apiNote URI calculation is similar to {@link com.intellij.platform.lsp.api.LspServerDescriptor#getFileUri(VirtualFile)}
+   * @see #getFileUri(VirtualFile)
+   */
+  public String getLocalFileUri(@NotNull String localFilePath) {
+    if (!isDartSdkVersionSufficientForFileUri(mySdkVersion)) {
+      // prior to Dart SDK 3.4, the protocol required file paths instead of URIs
+      return FileUtil.toSystemDependentName(localFilePath);
+    }
+
+    String escapedPath = URLUtil.encodePath(FileUtil.toSystemIndependentName(localFilePath));
     String url = VirtualFileManager.constructUrl(URLUtil.FILE_PROTOCOL, escapedPath);
     URI uri = VfsUtil.toUri(url);
     return uri != null ? uri.toString() : url;
