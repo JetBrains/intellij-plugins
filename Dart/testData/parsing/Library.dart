@@ -1,4 +1,5 @@
 library custom;
+augment library 'a.dart';
 
 import "foo";
 import 'dart:html' as html;

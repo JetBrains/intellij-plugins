@@ -5,6 +5,15 @@ Dart File
       ID
         PsiElement(IDENTIFIER)('custom')
     PsiElement(;)(';')
+  LIBRARY_STATEMENT
+    PsiElement(augment)('augment')
+    PsiElement(library)('library')
+    URI_ELEMENT
+      STRING_LITERAL_EXPRESSION
+        PsiElement(OPEN_QUOTE)(''')
+        PsiElement(REGULAR_STRING_PART)('a.dart')
+        PsiElement(CLOSING_QUOTE)(''')
+    PsiElement(;)(';')
   IMPORT_STATEMENT
     PsiElement(import)('import')
     URI_ELEMENT

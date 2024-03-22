@@ -13,4 +13,7 @@ public interface DartLibraryStatement extends DartPsiCompositeElement {
   @NotNull
   List<DartMetadata> getMetadataList();
 
+  @Nullable
+  DartUriElement getUriElement();
+
 }
