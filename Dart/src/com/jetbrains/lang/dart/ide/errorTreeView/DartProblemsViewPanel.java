@@ -33,7 +33,6 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.analyzer.DartFileInfo;
 import com.jetbrains.lang.dart.analyzer.DartFileInfoKt;
-import com.jetbrains.lang.dart.analyzer.DartLocalFileInfo;
 import com.jetbrains.lang.dart.assists.AssistUtils;
 import com.jetbrains.lang.dart.assists.DartSourceEditException;
 import icons.DartIcons;
@@ -186,8 +185,8 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
       // Reference the Location, compute the VirtualFile
       Location location = diagnosticMessage.getLocation();
       String filePathOrUri = location.getFile();
-      DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
-      VirtualFile vFile = fileInfo instanceof DartLocalFileInfo localFileInfo ? localFileInfo.findFile() : null;
+      DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(myProject, filePathOrUri);
+      VirtualFile vFile = fileInfo.findFile();
 
       // Create the action for this DiagnosticMessage
       if (StringUtil.isNotEmpty(message) && vFile != null) {

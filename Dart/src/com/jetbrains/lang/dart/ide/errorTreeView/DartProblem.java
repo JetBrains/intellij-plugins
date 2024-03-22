@@ -78,14 +78,14 @@ public class DartProblem {
   }
 
   public int getOffset() {
-    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(mySystemIndependentPath);
+    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(getSystemIndependentPath());
     return DartAnalysisServerService.getInstance(myProject).getConvertedOffset(file, myAnalysisError.getLocation().getOffset());
   }
 
   public @NotNull String getSystemIndependentPath() {
     if (mySystemIndependentPath == null) {
       String filePathOrUri = myAnalysisError.getLocation().getFile();
-      DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
+      DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(myProject, filePathOrUri);
       mySystemIndependentPath = fileInfo instanceof DartLocalFileInfo localFileInfo ? localFileInfo.getFilePath()
                                                                                     : ((DartNotLocalFileInfo)fileInfo).getFileUri();
     }
@@ -105,8 +105,8 @@ public class DartProblem {
     final VirtualFile contentRoot;
 
     String filePathOrUri = myAnalysisError.getLocation().getFile();
-    DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
-    file = fileInfo instanceof DartLocalFileInfo localFileInfo ? localFileInfo.findFile() : null;
+    DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(myProject, filePathOrUri);
+    file = fileInfo.findFile();
 
     if (file == null) {
       dartPackageName = null;
