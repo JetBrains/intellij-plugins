@@ -6,7 +6,7 @@ import '''package:z''' hide x, y, z show a, b, c;
 import """bar""" show a;
 import r"""bar""" hide a;
 import r'''bar''' deferred as prefix show x hide a;
-
+import augment 'a.dart';
 import 'src/usage_impl_default.dart'
 if (dart.library.js) 'src/usage_impl_html.dart'
 if (dart.library.ui) 'src/usage_impl_flutter.dart'

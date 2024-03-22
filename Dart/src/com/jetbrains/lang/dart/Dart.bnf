@@ -61,6 +61,7 @@
 // BUILT_IN_IDENTIFIER
   ABSTRACT="abstract"
   AS="as"
+  AUGMENT="augment"
   BASE="base"
   COVARIANT="covariant"
   DEFERRED="deferred"
@@ -202,8 +203,8 @@ libraryNameElement ::= <<nonStrictID>> ('.' <<nonStrictID>>)* {
   methods=[getName]
 }
 
-importStatement ::= metadata* 'import' uriElement importConfig* ('deferred'? 'as' componentName )? combinator* ';' {
-  pin=3
+importStatement ::= metadata* 'import' 'augment'? uriElement importConfig* ('deferred'? 'as' componentName )? combinator* ';' {
+  pin=4
   implements="com.jetbrains.lang.dart.psi.DartImportOrExportStatement"
   methods = [
     getUriString
