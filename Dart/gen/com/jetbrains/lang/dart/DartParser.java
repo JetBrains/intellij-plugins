@@ -848,20 +848,21 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // metadata* (mixinClassModifiers | classModifiers) 'class' componentName typeParameters? (mixinApplication | standardClassDeclarationTail)
+  // metadata* 'augment'? (mixinClassModifiers | classModifiers) 'class' componentName typeParameters? (mixinApplication | standardClassDeclarationTail)
   public static boolean classDefinition(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "classDefinition")) return false;
     if (!nextTokenIs(b, "<class definition>", ABSTRACT, AT,
-      BASE, CLASS, FINAL, INTERFACE, MACRO, MIXIN, SEALED)) return false;
+      AUGMENT, BASE, CLASS, FINAL, INTERFACE, MACRO, MIXIN, SEALED)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, CLASS_DEFINITION, "<class definition>");
     r = classDefinition_0(b, l + 1);
     r = r && classDefinition_1(b, l + 1);
+    r = r && classDefinition_2(b, l + 1);
     r = r && consumeToken(b, CLASS);
     r = r && componentName(b, l + 1);
-    p = r; // pin = 4
-    r = r && report_error_(b, classDefinition_4(b, l + 1));
-    r = p && classDefinition_5(b, l + 1) && r;
+    p = r; // pin = 5
+    r = r && report_error_(b, classDefinition_5(b, l + 1));
+    r = p && classDefinition_6(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -877,9 +878,16 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // mixinClassModifiers | classModifiers
+  // 'augment'?
   private static boolean classDefinition_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "classDefinition_1")) return false;
+    consumeToken(b, AUGMENT);
+    return true;
+  }
+
+  // mixinClassModifiers | classModifiers
+  private static boolean classDefinition_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "classDefinition_2")) return false;
     boolean r;
     r = mixinClassModifiers(b, l + 1);
     if (!r) r = classModifiers(b, l + 1);
@@ -887,15 +895,15 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   // typeParameters?
-  private static boolean classDefinition_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "classDefinition_4")) return false;
+  private static boolean classDefinition_5(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "classDefinition_5")) return false;
     typeParameters(b, l + 1);
     return true;
   }
 
   // mixinApplication | standardClassDeclarationTail
-  private static boolean classDefinition_5(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "classDefinition_5")) return false;
+  private static boolean classDefinition_6(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "classDefinition_6")) return false;
     boolean r;
     r = mixinApplication(b, l + 1);
     if (!r) r = standardClassDeclarationTail(b, l + 1);
