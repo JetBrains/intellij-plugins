@@ -107,6 +107,8 @@ base class A {}
 final class A{}
 sealed class A{}
 macro class macro{}
+augment class augment{}
+augment abstract class A{}
 abstract class A{}
 abstract base class A{}
 abstract interface class A{}
