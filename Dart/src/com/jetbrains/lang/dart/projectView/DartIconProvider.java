@@ -3,13 +3,19 @@ package com.jetbrains.lang.dart.projectView;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.IconProvider;
+import com.intellij.ide.scratch.ScratchFileTypeIcon;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Iconable;
+import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.ui.LayeredIcon;
+import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.analyzer.DartFileInfoKt;
+import com.jetbrains.lang.dart.psi.DartFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,12 +24,21 @@ import javax.swing.*;
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
 public final class DartIconProvider extends IconProvider {
+  private static final NotNullLazyValue<Icon> DART_NOT_LOCAL_FILE_ICON =
+    NotNullLazyValue.lazy(() -> new ScratchFileTypeIcon(DartFileType.INSTANCE.getIcon()));
   private static final Icon FOLDER_SYMLINK_ICON = LayeredIcon.layeredIcon(() -> new Icon[]{AllIcons.Nodes.Folder, AllIcons.Nodes.Symlink});
   static final Icon EXCLUDED_FOLDER_SYMLINK_ICON =
     LayeredIcon.layeredIcon(() -> new Icon[]{AllIcons.Modules.ExcludeRoot, AllIcons.Nodes.Symlink});
 
   @Override
   public @Nullable Icon getIcon(final @NotNull PsiElement element, @Iconable.IconFlags final int flags) {
+    if (element instanceof DartFile) {
+      VirtualFile file = ((PsiFile)element).getVirtualFile();
+      if (file != null && file.getUserData(DartFileInfoKt.DART_NOT_LOCAL_FILE_URI_KEY) != null) {
+        return DART_NOT_LOCAL_FILE_ICON.get();
+      }
+    }
+
     if (element instanceof PsiDirectory) {
       final VirtualFile folder = ((PsiDirectory)element).getVirtualFile();
 
