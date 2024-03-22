@@ -35,10 +35,11 @@ class VolarTypeScriptServiceGetElementTypeTest : TypeScriptServiceGetElementType
     }
   }
 
+  // FIXME Mapped type js type declaration is not ready
   /**
    * @see [testInstantiateMappedType]
    */
-  fun testInstantiateMappedTypeVue() {
+  fun testInstantiateMappedTypeVue() = TypeScriptServiceTestMixin.temporarilyDisableJsTypeDeclarations {
     //myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
 
     @Language("TypeScript") val code = """
