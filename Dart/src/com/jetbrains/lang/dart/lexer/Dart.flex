@@ -181,6 +181,7 @@ HEX_NUMBER = 0 [Xx] {HEX_DIGIT}*
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "import"               { return IMPORT; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "interface"            { return INTERFACE; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "library"              { return LIBRARY; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "macro"                { return MACRO; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "mixin"                { return MIXIN; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "operator"             { return OPERATOR; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "part"                 { return PART; }

@@ -106,6 +106,7 @@ interface class MySubclass extends NoExtend {}
 base class A {}
 final class A{}
 sealed class A{}
+macro class macro{}
 abstract class A{}
 abstract base class A{}
 abstract interface class A{}

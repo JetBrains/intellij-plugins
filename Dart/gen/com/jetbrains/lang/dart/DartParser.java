@@ -852,7 +852,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   public static boolean classDefinition(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "classDefinition")) return false;
     if (!nextTokenIs(b, "<class definition>", ABSTRACT, AT,
-      BASE, CLASS, FINAL, INTERFACE, MIXIN, SEALED)) return false;
+      BASE, CLASS, FINAL, INTERFACE, MACRO, MIXIN, SEALED)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, CLASS_DEFINITION, "<class definition>");
     r = classDefinition_0(b, l + 1);
@@ -938,45 +938,46 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'sealed' | 'abstract'? ('base' | 'interface' | 'final')?
+  // 'sealed' | 'macro' | 'abstract'? ('base' | 'interface' | 'final')?
   static boolean classModifiers(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "classModifiers")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, SEALED);
-    if (!r) r = classModifiers_1(b, l + 1);
+    if (!r) r = consumeToken(b, MACRO);
+    if (!r) r = classModifiers_2(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // 'abstract'? ('base' | 'interface' | 'final')?
-  private static boolean classModifiers_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "classModifiers_1")) return false;
+  private static boolean classModifiers_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "classModifiers_2")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = classModifiers_1_0(b, l + 1);
-    r = r && classModifiers_1_1(b, l + 1);
+    r = classModifiers_2_0(b, l + 1);
+    r = r && classModifiers_2_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // 'abstract'?
-  private static boolean classModifiers_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "classModifiers_1_0")) return false;
+  private static boolean classModifiers_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "classModifiers_2_0")) return false;
     consumeToken(b, ABSTRACT);
     return true;
   }
 
   // ('base' | 'interface' | 'final')?
-  private static boolean classModifiers_1_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "classModifiers_1_1")) return false;
-    classModifiers_1_1_0(b, l + 1);
+  private static boolean classModifiers_2_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "classModifiers_2_1")) return false;
+    classModifiers_2_1_0(b, l + 1);
     return true;
   }
 
   // 'base' | 'interface' | 'final'
-  private static boolean classModifiers_1_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "classModifiers_1_1_0")) return false;
+  private static boolean classModifiers_2_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "classModifiers_2_1_0")) return false;
     boolean r;
     r = consumeToken(b, BASE);
     if (!r) r = consumeToken(b, INTERFACE);
