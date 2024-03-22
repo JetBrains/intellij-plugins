@@ -4159,7 +4159,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // metadata* 'import' uriElement importConfig* ('deferred'? 'as' componentName )? combinator* ';'
+  // metadata* 'import' 'augment'? uriElement importConfig* ('deferred'? 'as' componentName )? combinator* ';'
   public static boolean importStatement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "importStatement")) return false;
     if (!nextTokenIs(b, "<import statement>", AT, IMPORT)) return false;
@@ -4167,11 +4167,12 @@ public class DartParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, IMPORT_STATEMENT, "<import statement>");
     r = importStatement_0(b, l + 1);
     r = r && consumeToken(b, IMPORT);
+    r = r && importStatement_2(b, l + 1);
     r = r && uriElement(b, l + 1);
-    p = r; // pin = 3
-    r = r && report_error_(b, importStatement_3(b, l + 1));
-    r = p && report_error_(b, importStatement_4(b, l + 1)) && r;
+    p = r; // pin = 4
+    r = r && report_error_(b, importStatement_4(b, l + 1));
     r = p && report_error_(b, importStatement_5(b, l + 1)) && r;
+    r = p && report_error_(b, importStatement_6(b, l + 1)) && r;
     r = p && consumeToken(b, SEMICOLON) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
@@ -4188,30 +4189,37 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
+  // 'augment'?
+  private static boolean importStatement_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "importStatement_2")) return false;
+    consumeToken(b, AUGMENT);
+    return true;
+  }
+
   // importConfig*
-  private static boolean importStatement_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "importStatement_3")) return false;
+  private static boolean importStatement_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "importStatement_4")) return false;
     while (true) {
       int c = current_position_(b);
       if (!importConfig(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "importStatement_3", c)) break;
+      if (!empty_element_parsed_guard_(b, "importStatement_4", c)) break;
     }
     return true;
   }
 
   // ('deferred'? 'as' componentName )?
-  private static boolean importStatement_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "importStatement_4")) return false;
-    importStatement_4_0(b, l + 1);
+  private static boolean importStatement_5(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "importStatement_5")) return false;
+    importStatement_5_0(b, l + 1);
     return true;
   }
 
   // 'deferred'? 'as' componentName
-  private static boolean importStatement_4_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "importStatement_4_0")) return false;
+  private static boolean importStatement_5_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "importStatement_5_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = importStatement_4_0_0(b, l + 1);
+    r = importStatement_5_0_0(b, l + 1);
     r = r && consumeToken(b, AS);
     r = r && componentName(b, l + 1);
     exit_section_(b, m, null, r);
@@ -4219,19 +4227,19 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   // 'deferred'?
-  private static boolean importStatement_4_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "importStatement_4_0_0")) return false;
+  private static boolean importStatement_5_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "importStatement_5_0_0")) return false;
     consumeToken(b, DEFERRED);
     return true;
   }
 
   // combinator*
-  private static boolean importStatement_5(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "importStatement_5")) return false;
+  private static boolean importStatement_6(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "importStatement_6")) return false;
     while (true) {
       int c = current_position_(b);
       if (!combinator(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "importStatement_5", c)) break;
+      if (!empty_element_parsed_guard_(b, "importStatement_6", c)) break;
     }
     return true;
   }
