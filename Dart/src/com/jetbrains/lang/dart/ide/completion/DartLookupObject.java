@@ -22,7 +22,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.analyzer.DartFileInfo;
 import com.jetbrains.lang.dart.analyzer.DartFileInfoKt;
-import com.jetbrains.lang.dart.analyzer.DartLocalFileInfo;
 import com.jetbrains.lang.dart.psi.DartComponentName;
 import com.jetbrains.lang.dart.psi.DartId;
 import org.dartlang.analysis.server.protocol.Location;
@@ -51,8 +50,8 @@ public class DartLookupObject {
     if (myLocation == null) return null;
 
     String filePathOrUri = myLocation.getFile();
-    DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
-    VirtualFile vFile = fileInfo instanceof DartLocalFileInfo localFileInfo ? localFileInfo.findFile() : null;
+    DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(myProject, filePathOrUri);
+    VirtualFile vFile = fileInfo.findFile();
     final PsiFile psiFile = vFile == null ? null : PsiManager.getInstance(myProject).findFile(vFile);
     if (psiFile != null) {
       final int offset = DartAnalysisServerService.getInstance(myProject).getConvertedOffset(vFile, myLocation.getOffset());

@@ -17,6 +17,7 @@ import com.intellij.util.ObjectUtils;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.analyzer.DartFileInfoKt;
 import com.jetbrains.lang.dart.analyzer.DartServerData;
 import com.jetbrains.lang.dart.fixes.DartQuickFix;
 import com.jetbrains.lang.dart.fixes.DartQuickFixSet;
@@ -154,7 +155,8 @@ public final class DartAnnotator implements Annotator {
     if (sdk == null || !DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) return false;
 
     // server can highlight files from Dart SDK, packages and from modules with enabled Dart support
-    return DartAnalysisServerService.getInstance(project).isInIncludedRoots(file);
+    return file.getUserData(DartFileInfoKt.DART_NOT_LOCAL_FILE_URI_KEY) != null ||
+           DartAnalysisServerService.getInstance(project).isInIncludedRoots(file);
   }
 
   @Override

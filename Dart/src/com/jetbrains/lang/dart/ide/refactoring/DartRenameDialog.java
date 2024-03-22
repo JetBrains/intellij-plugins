@@ -177,7 +177,7 @@ final class DartRenameDialog extends ServerRefactoringDialog<ServerRenameRefacto
     final PsiManager psiManager = PsiManager.getInstance(myProject);
 
     for (SourceFileEdit fileEdit : change.getEdits()) {
-      final VirtualFile file = AssistUtils.findVirtualFile(fileEdit);
+      final VirtualFile file = AssistUtils.findVirtualFile(myProject, fileEdit);
       final PsiFile psiFile = file == null ? null : psiManager.findFile(file);
       if (psiFile == null) continue;
 
