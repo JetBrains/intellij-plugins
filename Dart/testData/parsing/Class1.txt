@@ -1988,6 +1988,29 @@ Dart File
         <empty list>
       PsiElement(})('}')
   CLASS_DEFINITION
+    PsiElement(augment)('augment')
+    PsiElement(class)('class')
+    COMPONENT_NAME
+      ID
+        PsiElement(augment)('augment')
+    CLASS_BODY
+      PsiElement({)('{')
+      CLASS_MEMBERS
+        <empty list>
+      PsiElement(})('}')
+  CLASS_DEFINITION
+    PsiElement(augment)('augment')
+    PsiElement(abstract)('abstract')
+    PsiElement(class)('class')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('A')
+    CLASS_BODY
+      PsiElement({)('{')
+      CLASS_MEMBERS
+        <empty list>
+      PsiElement(})('}')
+  CLASS_DEFINITION
     PsiElement(abstract)('abstract')
     PsiElement(class)('class')
     COMPONENT_NAME
