@@ -25,7 +25,7 @@ import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatfromioCliBuilder;
 import com.jetbrains.cidr.cpp.execution.CLionLauncher;
 import com.jetbrains.cidr.cpp.toolchains.TrivialNativeToolchain;
 import com.jetbrains.cidr.cpp.execution.debugger.backend.CLionGDBDriverConfiguration;
-import com.intellij.clion.embedded.execution.svd.SvdPanel;
+import com.jetbrains.cidr.cpp.execution.debugger.peripheralview.SvdPanel;
 import com.jetbrains.cidr.cpp.toolchains.CPPDebugger;
 import com.jetbrains.cidr.cpp.toolchains.CPPEnvironment;
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains;
