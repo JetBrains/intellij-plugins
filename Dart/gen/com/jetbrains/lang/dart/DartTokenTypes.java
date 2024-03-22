@@ -257,6 +257,7 @@ public interface DartTokenTypes {
   IElementType LT_EQ = new DartElementType("<=");
   IElementType LT_LT = new DartElementType("<<");
   IElementType LT_LT_EQ = new DartElementType("<<=");
+  IElementType MACRO = new DartElementType("macro");
   IElementType MINUS = new DartElementType("-");
   IElementType MINUS_EQ = new DartElementType("-=");
   IElementType MINUS_MINUS = new DartElementType("--");
