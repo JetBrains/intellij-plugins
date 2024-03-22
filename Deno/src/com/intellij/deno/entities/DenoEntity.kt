@@ -17,7 +17,7 @@ interface DenoEntity : WorkspaceEntity {
   val denoTypes: VirtualFileUrl?
 
   //region generated code
-  @GeneratedCodeApiVersion(2)
+  @GeneratedCodeApiVersion(3)
   interface Builder : WorkspaceEntity.Builder<DenoEntity> {
     override var entitySource: EntitySource
     var depsFile: VirtualFileUrl?
