@@ -92,6 +92,7 @@ public interface DartTokenTypesSets {
                                                   IMPORT,
                                                   INTERFACE,
                                                   LIBRARY,
+                                                  MACRO,
                                                   MIXIN,
                                                   OPERATOR,
                                                   PART,
