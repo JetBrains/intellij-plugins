@@ -19,7 +19,6 @@ import com.intellij.util.Processor;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.analyzer.DartFileInfo;
 import com.jetbrains.lang.dart.analyzer.DartFileInfoKt;
-import com.jetbrains.lang.dart.analyzer.DartLocalFileInfo;
 import com.jetbrains.lang.dart.psi.DartReference;
 import org.dartlang.analysis.server.protocol.Location;
 import org.dartlang.analysis.server.protocol.SearchResult;
@@ -56,8 +55,8 @@ public class DartServerFindUsagesHandler extends FindUsagesHandler {
 
         Location location = result.getLocation();
         String filePathOrUri = location.getFile();
-        DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
-        VirtualFile vFile = fileInfo instanceof DartLocalFileInfo localFileInfo? localFileInfo.findFile() : null;
+        DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(project, filePathOrUri);
+        VirtualFile vFile = fileInfo.findFile();
         if (vFile == null) return;
 
         if (!scope.contains(vFile)) return;

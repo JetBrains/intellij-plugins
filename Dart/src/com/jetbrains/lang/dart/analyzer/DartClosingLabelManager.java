@@ -73,7 +73,7 @@ public class DartClosingLabelManager implements Disposable {
       return;
     }
 
-    VirtualFile file = fileInfo instanceof DartLocalFileInfo localFileInfo ? localFileInfo.findFile() : null;
+    VirtualFile file = fileInfo.findFile();
     if (file == null) {
       return;
     }

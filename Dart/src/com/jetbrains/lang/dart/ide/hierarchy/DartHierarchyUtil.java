@@ -15,7 +15,6 @@ import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.analyzer.DartFileInfo;
 import com.jetbrains.lang.dart.analyzer.DartFileInfoKt;
-import com.jetbrains.lang.dart.analyzer.DartLocalFileInfo;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.dartlang.analysis.server.protocol.Element;
@@ -127,8 +126,8 @@ public final class DartHierarchyUtil {
   @Nullable
   public static DartComponent findDartComponent(@NotNull final Project project, @NotNull final Location location) {
     String filePathOrUri = location.getFile();
-    DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(filePathOrUri);
-    VirtualFile virtualFile = fileInfo instanceof DartLocalFileInfo localFileInfo ? localFileInfo.findFile() : null;
+    DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(project, filePathOrUri);
+    VirtualFile virtualFile = fileInfo.findFile();
     if (virtualFile == null) {
       return null;
     }
