@@ -4565,16 +4565,15 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // metadata* 'library' libraryNameElement? ';'
+  // metadata* ('library' libraryNameElement? | 'augment' 'library' uriElement) ';'
   public static boolean libraryStatement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "libraryStatement")) return false;
-    if (!nextTokenIs(b, "<library statement>", AT, LIBRARY)) return false;
+    if (!nextTokenIs(b, "<library statement>", AT, AUGMENT, LIBRARY)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, LIBRARY_STATEMENT, "<library statement>");
     r = libraryStatement_0(b, l + 1);
-    r = r && consumeToken(b, LIBRARY);
-    r = r && libraryStatement_2(b, l + 1);
-    p = r; // pin = 3
+    r = r && libraryStatement_1(b, l + 1);
+    p = r; // pin = 2
     r = r && consumeToken(b, SEMICOLON);
     exit_section_(b, l, m, r, p, null);
     return r || p;
@@ -4591,11 +4590,44 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
+  // 'library' libraryNameElement? | 'augment' 'library' uriElement
+  private static boolean libraryStatement_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "libraryStatement_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = libraryStatement_1_0(b, l + 1);
+    if (!r) r = libraryStatement_1_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // 'library' libraryNameElement?
+  private static boolean libraryStatement_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "libraryStatement_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, LIBRARY);
+    r = r && libraryStatement_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
   // libraryNameElement?
-  private static boolean libraryStatement_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "libraryStatement_2")) return false;
+  private static boolean libraryStatement_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "libraryStatement_1_0_1")) return false;
     libraryNameElement(b, l + 1);
     return true;
+  }
+
+  // 'augment' 'library' uriElement
+  private static boolean libraryStatement_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "libraryStatement_1_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeTokens(b, 0, AUGMENT, LIBRARY);
+    r = r && uriElement(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   /* ********************************************************** */

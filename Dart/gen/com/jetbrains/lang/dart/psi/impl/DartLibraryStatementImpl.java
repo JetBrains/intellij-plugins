@@ -39,4 +39,10 @@ public class DartLibraryStatementImpl extends DartPsiCompositeElementImpl implem
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMetadata.class);
   }
 
+  @Override
+  @Nullable
+  public DartUriElement getUriElement() {
+    return findChildByClass(DartUriElement.class);
+  }
+
 }

@@ -195,7 +195,7 @@ partOfStatement ::= metadata* 'part' 'of' (libraryId | uriElement)';' {
 libraryId ::= <<nonStrictID>> ('.' <<nonStrictID>>)*
 {mixin="com.jetbrains.lang.dart.psi.impl.DartLibraryIdBase" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
-libraryStatement ::= metadata* 'library' libraryNameElement? ';' {pin=3}
+libraryStatement ::= metadata* ('library' libraryNameElement? | 'augment' 'library' uriElement) ';' {pin=2}
 
 libraryNameElement ::= <<nonStrictID>> ('.' <<nonStrictID>>)* {
   mixin="com.jetbrains.lang.dart.psi.impl.DartLibraryNameElementBase"
