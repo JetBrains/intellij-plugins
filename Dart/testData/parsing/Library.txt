@@ -112,6 +112,15 @@ Dart File
     PsiElement(;)(';')
   IMPORT_STATEMENT
     PsiElement(import)('import')
+    PsiElement(augment)('augment')
+    URI_ELEMENT
+      STRING_LITERAL_EXPRESSION
+        PsiElement(OPEN_QUOTE)(''')
+        PsiElement(REGULAR_STRING_PART)('a.dart')
+        PsiElement(CLOSING_QUOTE)(''')
+    PsiElement(;)(';')
+  IMPORT_STATEMENT
+    PsiElement(import)('import')
     URI_ELEMENT
       STRING_LITERAL_EXPRESSION
         PsiElement(OPEN_QUOTE)(''')
