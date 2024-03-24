@@ -37,7 +37,7 @@ object Angular2MetadataFileType : MetadataJsonFileType() {
 
   private val FILE = object : MetadataStubFileElementType(MetadataJsonLanguage) {
     override fun getStubVersion(): Int {
-      return Angular2MetadataElementTypes.STUB_VERSION
+      return ANGULAR_STUB_VERSION
     }
   }
 

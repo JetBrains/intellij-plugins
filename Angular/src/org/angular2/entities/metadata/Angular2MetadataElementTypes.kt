@@ -7,8 +7,10 @@ import org.angular2.lang.metadata.MetadataJsonLanguage
 import org.angular2.lang.metadata.psi.MetadataElementType
 import org.jetbrains.annotations.NonNls
 
-interface Angular2MetadataElementTypes {
+internal const val ANGULAR_STUB_VERSION = 1
+internal const val EXTERNAL_PREFIX_ID = "NG-META:"
 
+interface Angular2MetadataElementTypes {
   class Angular2MetadataElementType<Stub : Angular2MetadataElementStub<*>>(
     @NonNls debugName: String,
     stubConstructor: MetadataStubConstructor<out Stub>,
@@ -19,18 +21,9 @@ interface Angular2MetadataElementTypes {
     override fun toString(): String {
       return EXTERNAL_PREFIX_ID + super.getDebugName()
     }
-
   }
 
-  @Suppress("MayBeConstant")
   companion object {
-
-    @JvmField
-    val STUB_VERSION = 1
-
-    @JvmField
-    val EXTERNAL_PREFIX_ID = "NG-META:"
-
     @JvmField
     val STRING: MetadataElementType<Angular2MetadataStringStub> = Angular2MetadataElementType(
       "STRING",
