@@ -11,17 +11,7 @@ import com.intellij.psi.xml.XmlElement
 import org.angular2.lang.html.Angular2HtmlLanguage
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 
-class Angular2BracesInterpolationTypedHandler : TypedHandlerDelegate() {
-  private val myBracesCompleter: InterpolationBracesCompleter =
-    object : InterpolationBracesCompleter(Angular2Injector.Holder.BRACES_FACTORY) {
-      override fun checkTypingContext(editor: Editor, file: PsiFile): Boolean {
-        val atCaret = getContextElement(editor, file)
-        return (atCaret == null
-                || atCaret is XmlElement
-                || atCaret.node.elementType === Angular2HtmlTokenTypes.INTERPOLATION_END)
-      }
-    }
-
+internal class Angular2BracesInterpolationTypedHandler : TypedHandlerDelegate() {
   override fun beforeCharTyped(c: Char,
                                project: Project,
                                editor: Editor,
@@ -29,8 +19,17 @@ class Angular2BracesInterpolationTypedHandler : TypedHandlerDelegate() {
                                fileType: FileType): Result {
     val language = file.language
     return if (language.isKindOf(Angular2HtmlLanguage.INSTANCE)) {
-      myBracesCompleter.beforeCharTyped(c, project, editor, file)
+      Angular2BracesCompleter.beforeCharTyped(c, project, editor, file)
     }
     else Result.CONTINUE
+  }
+}
+
+private object Angular2BracesCompleter : InterpolationBracesCompleter(Angular2Injector.Holder.BRACES_FACTORY) {
+  override fun checkTypingContext(editor: Editor, file: PsiFile): Boolean {
+    val atCaret = getContextElement(editor, file)
+    return (atCaret == null
+            || atCaret is XmlElement
+            || atCaret.node.elementType === Angular2HtmlTokenTypes.INTERPOLATION_END)
   }
 }
