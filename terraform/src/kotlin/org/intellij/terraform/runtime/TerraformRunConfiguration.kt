@@ -16,15 +16,14 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.InvalidDataException
 import com.intellij.openapi.util.WriteExternalException
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.xmlb.XmlSerializer
 import org.intellij.terraform.config.actions.TerraformInitCommandFilter
+import org.intellij.terraform.config.actions.isExecutable
 import org.intellij.terraform.config.actions.isTerraformExecutable
 import org.intellij.terraform.config.util.TFExecutor
 import org.intellij.terraform.hcl.HCLBundle
 import org.jdom.Element
 import org.jetbrains.annotations.Nls
-import java.io.File
 
 class TerraformRunConfiguration(project: Project,
                                 factory: ConfigurationFactory,
@@ -106,6 +105,18 @@ class TerraformRunConfiguration(project: Project,
       throw exception
     }
 
+    if (!terraformPath.isExecutable()) {
+      val exception = RuntimeConfigurationException(
+        HCLBundle.message("run.configuration.terraform.path.incorrect", terraformPath),
+        HCLBundle.message("terraform.message.error")
+      )
+      exception.setQuickFix(Runnable {
+        val settings = TerraformToolProjectSettings.getInstance(project)
+        settings.terraformPath = TerraformToolProjectSettings.getDefaultTerraformPath()
+      })
+      throw exception
+    }
+
     val error = error
     if (error != null) {
       throw RuntimeConfigurationException(error)
@@ -120,7 +131,7 @@ class TerraformRunConfiguration(project: Project,
       if (terraformPath.isNullOrBlank()) {
         return HCLBundle.message("run.configuration.no.terraform.specified")
       }
-      if (!FileUtil.canExecute(File(terraformPath))) {
+      if (!terraformPath.isExecutable()) {
         return HCLBundle.message("run.configuration.terraform.path.incorrect", terraformPath)
       }
       return null

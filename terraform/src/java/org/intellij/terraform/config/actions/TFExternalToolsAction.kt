@@ -126,7 +126,7 @@ internal fun notifyError(title: @Nls String, project: Project, ex: Throwable?) {
 
 internal fun isTerraformExecutable(project: Project): Boolean {
   val terraformPath = TerraformToolProjectSettings.getInstance(project).actualTerraformPath
-  return if (FileUtil.canExecute(File(terraformPath))) {
+  return if (terraformPath.isExecutable()) {
     true
   } else {
     TerraformConstants.EXECUTION_NOTIFICATION_GROUP.createNotification(
@@ -141,3 +141,5 @@ internal fun isTerraformExecutable(project: Project): Boolean {
     false
   }
 }
+
+internal fun String.isExecutable(): Boolean = FileUtil.canExecute(File(this))
