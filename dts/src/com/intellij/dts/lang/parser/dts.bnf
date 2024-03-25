@@ -240,7 +240,10 @@ private ppStatements ::=
     ppIfndefStatement |
     ppEndifStatement |
     ppDefineStatement |
-    ppUndefStatement
+    ppUndefStatement |
+    ppIfStatement |
+    ppElifStatement |
+    ppElseStatement
 { recoverWhile="pp_statementRecover" }
 
 private pp_statementRecover ::= !(PP_STATEMENT_END)
@@ -249,6 +252,9 @@ ppIncludeStatement ::= PP_INCLUDE PP_INCLUDE_PATH { pin=1 }
 
 ppIfdefStatement ::= PP_IFDEF PP_SYMBOL { pin=1 }
 ppIfndefStatement ::= PP_IFNDEF PP_SYMBOL { pin=1 }
+ppIfStatement ::= PP_IF PP_EXPRESSION { pin=1 }
+ppElifStatement ::= PP_ELIF PP_EXPRESSION { pin=1 }
+ppElseStatement ::= PP_ELSE
 ppEndifStatement ::= PP_ENDIF
 ppDefineStatement ::= PP_DEFINE PP_SYMBOL PP_DEFINE_VALUE? { pin=1 }
 ppUndefStatement ::= PP_UNDEF PP_SYMBOL { pin=1 }

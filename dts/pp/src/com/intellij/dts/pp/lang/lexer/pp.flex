@@ -33,17 +33,20 @@ SYMBOL            = [a-zA-Z_][a-zA-Z_0-9]+
 PATH_CHAR         = [^>\"\n] | {EOL_ESC}
 INCLUDE_PATH      = ("<"{PATH_CHAR}*">"?) | (\"{PATH_CHAR}*\"?)
 
-%state WAITING_SYMBOL WAITING_DEFINE_SYMBOL WAITING_DEFINE_VALUE WAITING_INCLUDE
+%state WAITING_SYMBOL WAITING_DEFINE_SYMBOL WAITING_DEFINE_VALUE WAITING_INCLUDE WAITING_EXPRESSION
 
 %%
 
 <YYINITIAL> {
-    "#"{LINE_WS}*"include"  { yybegin(WAITING_INCLUDE); return tokenTypes.getInclude(); }
-    "#"{LINE_WS}*"ifdef"    { yybegin(WAITING_SYMBOL); return tokenTypes.getIfdef(); }
-    "#"{LINE_WS}*"ifndef"   { yybegin(WAITING_SYMBOL); return tokenTypes.getIfndef(); }
-    "#"{LINE_WS}*"endif"    { return tokenTypes.getEndif(); }
-    "#"{LINE_WS}*"define"   { yybegin(WAITING_DEFINE_SYMBOL); return tokenTypes.getDefine(); }
-    "#"{LINE_WS}*"undef"    { yybegin(WAITING_SYMBOL); return tokenTypes.getUndef(); }
+    "#"{LINE_WS}*"include"  { yybegin(WAITING_INCLUDE); return tokenTypes.getIncludeDirective(); }
+    "#"{LINE_WS}*"ifdef"    { yybegin(WAITING_SYMBOL); return tokenTypes.getIfdefDirective(); }
+    "#"{LINE_WS}*"if"       { yybegin(WAITING_EXPRESSION); return tokenTypes.getIfDirective(); }
+    "#"{LINE_WS}*"ifndef"   { yybegin(WAITING_SYMBOL); return tokenTypes.getIfndefDirective(); }
+    "#"{LINE_WS}*"elif"     { yybegin(WAITING_EXPRESSION); return tokenTypes.getElifDirective(); }
+    "#"{LINE_WS}*"else"     { return tokenTypes.getElseDirective(); }
+    "#"{LINE_WS}*"endif"    { return tokenTypes.getEndifDirective(); }
+    "#"{LINE_WS}*"define"   { yybegin(WAITING_DEFINE_SYMBOL); return tokenTypes.getDefineDirective(); }
+    "#"{LINE_WS}*"undef"    { yybegin(WAITING_SYMBOL); return tokenTypes.getUndefDirective(); }
 }
 
 <WAITING_SYMBOL> {
@@ -60,6 +63,10 @@ INCLUDE_PATH      = ("<"{PATH_CHAR}*">"?) | (\"{PATH_CHAR}*\"?)
 
 <WAITING_DEFINE_VALUE> {
     [^]+                    { return tokenTypes.getDefineValue(); }
+}
+
+<WAITING_EXPRESSION> {
+    [^]+                    { return tokenTypes.getExpression(); }
 }
 
 ({LINE_WS} | {EOL_ESC})+    { return TokenType.WHITE_SPACE; }

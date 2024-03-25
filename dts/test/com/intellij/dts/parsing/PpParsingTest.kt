@@ -8,4 +8,14 @@ class PpParsingTest : DtsParsingTestBase("pp") {
   fun testMultiLine() = doTest("dts", ensureNoErrorElements = true)
 
   fun testRecovery() = doTest("dts", ensureNoErrorElements = false)
+
+  fun testIfdef() = doTest("dts", ensureNoErrorElements = false)
+
+  fun testIfndef() = doTest("dts", ensureNoErrorElements = false)
+
+  fun testIf() = doTest("dts", ensureNoErrorElements = false)
+
+  fun testElse() = doTest("dts", ensureNoErrorElements = false)
+
+  fun testElif() = doTest("dts", ensureNoErrorElements = false)
 }

@@ -62,7 +62,7 @@ EOL               = "\n" | "\r" | "\r\n"
 EOL_ESC           = "\\"{LINE_WS}*{EOL}
 LINE_WS           = [\ \t]
 
-PP_DIRECTIVES    = "include" | "ifdef" | "ifndef" | "endif" | "define" | "undef"
+PP_DIRECTIVES    = "include" | "if" | "ifdef" | "ifndef" | "else" | "elif" | "endif" | "define" | "undef"
 
 // node or property names
 NAME              = [a-zA-Z0-9,._+*#?@-]+

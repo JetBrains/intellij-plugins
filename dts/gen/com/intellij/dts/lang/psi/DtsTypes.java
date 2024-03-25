@@ -38,9 +38,12 @@ public interface DtsTypes {
   com.intellij.psi.tree.IElementType NODE_CONTENT = new com.intellij.dts.lang.DtsElementType("NODE_CONTENT");
   com.intellij.psi.tree.IElementType PAREN_EXPR = new com.intellij.dts.lang.DtsElementType("PAREN_EXPR");
   com.intellij.psi.tree.IElementType PP_DEFINE_STATEMENT = new com.intellij.dts.lang.DtsElementType("PP_DEFINE_STATEMENT");
+  com.intellij.psi.tree.IElementType PP_ELIF_STATEMENT = new com.intellij.dts.lang.DtsElementType("PP_ELIF_STATEMENT");
+  com.intellij.psi.tree.IElementType PP_ELSE_STATEMENT = new com.intellij.dts.lang.DtsElementType("PP_ELSE_STATEMENT");
   com.intellij.psi.tree.IElementType PP_ENDIF_STATEMENT = new com.intellij.dts.lang.DtsElementType("PP_ENDIF_STATEMENT");
   com.intellij.psi.tree.IElementType PP_IFDEF_STATEMENT = new com.intellij.dts.lang.DtsElementType("PP_IFDEF_STATEMENT");
   com.intellij.psi.tree.IElementType PP_IFNDEF_STATEMENT = new com.intellij.dts.lang.DtsElementType("PP_IFNDEF_STATEMENT");
+  com.intellij.psi.tree.IElementType PP_IF_STATEMENT = new com.intellij.dts.lang.DtsElementType("PP_IF_STATEMENT");
   com.intellij.psi.tree.IElementType PP_INCLUDE_STATEMENT = new com.intellij.dts.lang.DtsElementType("PP_INCLUDE_STATEMENT");
   com.intellij.psi.tree.IElementType PP_MACRO = new com.intellij.dts.lang.DtsElementType("PP_MACRO");
   com.intellij.psi.tree.IElementType PP_MACRO_EXPR = new com.intellij.dts.lang.DtsElementType("PP_MACRO_EXPR");
@@ -100,7 +103,11 @@ public interface DtsTypes {
   com.intellij.psi.tree.IElementType PLUGIN = new com.intellij.dts.lang.DtsTokenType("PLUGIN");
   com.intellij.psi.tree.IElementType PP_DEFINE = new com.intellij.dts.lang.DtsTokenType("PP_DEFINE");
   com.intellij.psi.tree.IElementType PP_DEFINE_VALUE = new com.intellij.dts.lang.DtsTokenType("PP_DEFINE_VALUE");
+  com.intellij.psi.tree.IElementType PP_ELIF = new com.intellij.dts.lang.DtsTokenType("PP_ELIF");
+  com.intellij.psi.tree.IElementType PP_ELSE = new com.intellij.dts.lang.DtsTokenType("PP_ELSE");
   com.intellij.psi.tree.IElementType PP_ENDIF = new com.intellij.dts.lang.DtsTokenType("PP_ENDIF");
+  com.intellij.psi.tree.IElementType PP_EXPRESSION = new com.intellij.dts.lang.DtsTokenType("PP_EXPRESSION");
+  com.intellij.psi.tree.IElementType PP_IF = new com.intellij.dts.lang.DtsTokenType("PP_IF");
   com.intellij.psi.tree.IElementType PP_IFDEF = new com.intellij.dts.lang.DtsTokenType("PP_IFDEF");
   com.intellij.psi.tree.IElementType PP_IFNDEF = new com.intellij.dts.lang.DtsTokenType("PP_IFNDEF");
   com.intellij.psi.tree.IElementType PP_INCLUDE = new com.intellij.dts.lang.DtsTokenType("PP_INCLUDE");
@@ -225,6 +232,12 @@ public interface DtsTypes {
       else if (type == PP_DEFINE_STATEMENT) {
         return new com.intellij.dts.lang.psi.impl.DtsPpDefineStatementImpl(node);
       }
+      else if (type == PP_ELIF_STATEMENT) {
+        return new com.intellij.dts.lang.psi.impl.DtsPpElifStatementImpl(node);
+      }
+      else if (type == PP_ELSE_STATEMENT) {
+        return new com.intellij.dts.lang.psi.impl.DtsPpElseStatementImpl(node);
+      }
       else if (type == PP_ENDIF_STATEMENT) {
         return new com.intellij.dts.lang.psi.impl.DtsPpEndifStatementImpl(node);
       }
@@ -233,6 +246,9 @@ public interface DtsTypes {
       }
       else if (type == PP_IFNDEF_STATEMENT) {
         return new com.intellij.dts.lang.psi.impl.DtsPpIfndefStatementImpl(node);
+      }
+      else if (type == PP_IF_STATEMENT) {
+        return new com.intellij.dts.lang.psi.impl.DtsPpIfStatementImpl(node);
       }
       else if (type == PP_INCLUDE_STATEMENT) {
         return new com.intellij.dts.lang.psi.impl.DtsPpIncludeStatementImpl(node);

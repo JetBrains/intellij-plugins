@@ -616,6 +616,31 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   }
 
   /* ********************************************************** */
+  // PP_ELIF PP_EXPRESSION
+  public static boolean ppElifStatement(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "ppElifStatement")) return false;
+    if (!nextTokenIs(builder_, PP_ELIF)) return false;
+    boolean result_, pinned_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_, PP_ELIF_STATEMENT, null);
+    result_ = consumeTokens(builder_, 1, PP_ELIF, PP_EXPRESSION);
+    pinned_ = result_; // pin = 1
+    exit_section_(builder_, level_, marker_, result_, pinned_, null);
+    return result_ || pinned_;
+  }
+
+  /* ********************************************************** */
+  // PP_ELSE
+  public static boolean ppElseStatement(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "ppElseStatement")) return false;
+    if (!nextTokenIs(builder_, PP_ELSE)) return false;
+    boolean result_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, PP_ELSE);
+    exit_section_(builder_, marker_, PP_ELSE_STATEMENT, result_);
+    return result_;
+  }
+
+  /* ********************************************************** */
   // PP_ENDIF
   public static boolean ppEndifStatement(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "ppEndifStatement")) return false;
@@ -625,6 +650,19 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
     result_ = consumeToken(builder_, PP_ENDIF);
     exit_section_(builder_, marker_, PP_ENDIF_STATEMENT, result_);
     return result_;
+  }
+
+  /* ********************************************************** */
+  // PP_IF PP_EXPRESSION
+  public static boolean ppIfStatement(com.intellij.lang.PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "ppIfStatement")) return false;
+    if (!nextTokenIs(builder_, PP_IF)) return false;
+    boolean result_, pinned_;
+    com.intellij.lang.PsiBuilder.Marker marker_ = enter_section_(builder_, level_, _NONE_, PP_IF_STATEMENT, null);
+    result_ = consumeTokens(builder_, 1, PP_IF, PP_EXPRESSION);
+    pinned_ = result_; // pin = 1
+    exit_section_(builder_, level_, marker_, result_, pinned_, null);
+    return result_ || pinned_;
   }
 
   /* ********************************************************** */
@@ -712,7 +750,10 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
   //     ppIfndefStatement |
   //     ppEndifStatement |
   //     ppDefineStatement |
-  //     ppUndefStatement
+  //     ppUndefStatement |
+  //     ppIfStatement |
+  //     ppElifStatement |
+  //     ppElseStatement
   static boolean ppStatements(com.intellij.lang.PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "ppStatements")) return false;
     boolean result_;
@@ -723,6 +764,9 @@ public class DtsParser implements com.intellij.lang.PsiParser, com.intellij.lang
     if (!result_) result_ = ppEndifStatement(builder_, level_ + 1);
     if (!result_) result_ = ppDefineStatement(builder_, level_ + 1);
     if (!result_) result_ = ppUndefStatement(builder_, level_ + 1);
+    if (!result_) result_ = ppIfStatement(builder_, level_ + 1);
+    if (!result_) result_ = ppElifStatement(builder_, level_ + 1);
+    if (!result_) result_ = ppElseStatement(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, result_, false, DtsParser::pp_statementRecover);
     return result_;
   }

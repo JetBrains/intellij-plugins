@@ -1,0 +1,11 @@
+DTS file
+  DtsPpIfStatementImpl(PP_IF_STATEMENT)
+    PsiElement(PP_IF)('#if')
+    PsiElement(PP_EXPRESSION)(' any expression here')
+  PsiWhiteSpace('\n')
+  DtsPpElifStatementImpl(PP_ELIF_STATEMENT)
+    PsiElement(PP_ELIF)('#elif')
+    PsiElement(PP_EXPRESSION)(' any expression here')
+  PsiWhiteSpace('\n')
+  DtsPpEndifStatementImpl(PP_ENDIF_STATEMENT)
+    PsiElement(#endif)('#endif')

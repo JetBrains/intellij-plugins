@@ -1,0 +1,8 @@
+DTS file
+  DtsPpIfdefStatementImpl(PP_IFDEF_STATEMENT)
+    PsiElement(#ifdef)('#ifdef')
+    PsiWhiteSpace(' ')
+    PsiElement(identifier)('SYMBOL')
+  PsiWhiteSpace('\n')
+  DtsPpEndifStatementImpl(PP_ENDIF_STATEMENT)
+    PsiElement(#endif)('#endif')

@@ -5,26 +5,38 @@ import com.intellij.psi.tree.TokenSet
 
 interface PpTokenTypes {
   val defineStatement: IElementType
-  val define: IElementType
+  val defineDirective: IElementType
   val defineValue: IElementType
 
   val endifStatement: IElementType
-  val endif: IElementType
+  val endifDirective: IElementType
+
+  val ifStatement: IElementType
+  val ifDirective: IElementType
 
   val ifdefStatement: IElementType
-  val ifdef: IElementType
+  val ifdefDirective: IElementType
 
   val ifndefStatement: IElementType
-  val ifndef: IElementType
+  val ifndefDirective: IElementType
+
+  val elifStatement: IElementType
+  val elifDirective: IElementType
+
+  val elseStatement: IElementType
+  val elseDirective: IElementType
 
   val includeStatement: IElementType
-  val include: IElementType
+  val includeDirective: IElementType
   val includePath: IElementType
 
   val undefStatement: IElementType
-  val undef: IElementType
+  val undefDirective: IElementType
 
   val symbol: IElementType
+
+  // placeholder for expressions
+  val expression: IElementType
 
   val statementEnd: IElementType
   val statementMarker: IElementType
@@ -32,12 +44,15 @@ interface PpTokenTypes {
   fun createScopeSet(): TokenSet
 
   fun createDirectivesSet(): TokenSet = TokenSet.create(
-    include,
-    define,
-    endif,
-    ifdef,
-    ifndef,
-    undef,
+    includeDirective,
+    defineDirective,
+    endifDirective,
+    ifdefDirective,
+    ifndefDirective,
+    undefDirective,
+    ifDirective,
+    elifDirective,
+    elseDirective,
   )
 
   fun createStatementSet(): TokenSet = TokenSet.create(
@@ -47,5 +62,8 @@ interface PpTokenTypes {
     ifdefStatement,
     ifndefStatement,
     undefStatement,
+    ifStatement,
+    elifStatement,
+    elseStatement
   )
 }
