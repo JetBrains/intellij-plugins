@@ -334,6 +334,6 @@
     </group>
     <action id="Dart.pub.outdated" class="com.jetbrains.lang.dart.ide.actions.DartPubOutdatedAction"/>
     <action id="Dart.pub.cache.repair" class="com.jetbrains.lang.dart.ide.actions.DartPubCacheRepairAction"/>
-    <action id="Dart.copy.dtd.uri" class="com.jetbrains.lang.dart.ide.actions.DtdUriCopyAction"/>
+    <action id="Dart.CopyDtdUri" class="com.jetbrains.lang.dart.ide.actions.DtdUriCopyAction" text="Dart: Copy DTD URI to Clipboard"/>
   </actions>
 </idea-plugin>
