@@ -19,11 +19,13 @@ import com.intellij.util.asSafely
 
 private val errorOrProperty = TokenSet.create(TokenType.ERROR_ELEMENT, DtsTypes.PROPERTY)
 private val errorOrSubNode = TokenSet.create(TokenType.ERROR_ELEMENT, DtsTypes.SUB_NODE)
+private val badCharacter = TokenSet.create(TokenType.BAD_CHARACTER)
 
 fun dtsBasePattern(): PsiElementPattern.Capture<PsiElement> {
   return psiElement()
     .inFile(psiFile(DtsFile::class.java))
     .withElementType(not(elementType().tokenSet(DtsTokenSets.comments)))
+    .withElementType(not(elementType().tokenSet(badCharacter)))
 }
 
 fun dtsProperty(): PsiElementPattern.Capture<PsiElement> {

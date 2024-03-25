@@ -44,6 +44,28 @@ class DtsRootNodeCompletionTest : DtsCompletionTest() {
     useRootContentVariations = false,
   )
 
+  fun `test no completion after pp statement`() {
+    val ppStatements = listOf(
+      "#define",
+      "#endif",
+      "#if",
+      "#ifdef",
+      "#ifndef",
+      "elif",
+      "else",
+      "#include",
+      "undef",
+    )
+
+   for (statement in ppStatements) {
+     doTest(
+       input = "#$statement<caret>",
+       after = "#$statement<caret>",
+       useRootContentVariations = false,
+     )
+   }
+  }
+
   private fun doTest(
     input: String,
     after: String,
