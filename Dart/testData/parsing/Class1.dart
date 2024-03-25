@@ -141,3 +141,24 @@ augment typedef foo(a);
 @a augment enum Enum {}
 @a augment typedef foo = bar;
 @a augment typedef foo(a);
+
+augment enum A {
+  second,
+  augment first;
+}
+
+augment int foo(){}
+
+augment var foo = 0;
+@a augment static var foo;
+@a augment const foo;
+@a augment get f() {}
+augment set asd();
+
+class y {
+  @a augment var foo = 0;
+  augment static var foo;
+  augment const foo;
+  augment get f();
+  @a augment set asd() {}
+}
