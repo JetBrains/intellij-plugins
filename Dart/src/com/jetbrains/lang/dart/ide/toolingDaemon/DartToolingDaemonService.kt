@@ -48,6 +48,7 @@ class DartToolingDaemonService private constructor(private val project: Project)
   private lateinit var webSocket: WebSocket
   var webSocketReady = false
     private set
+  var uri: String? = null
 
   private var secret: String? = null
 
@@ -84,6 +85,7 @@ class DartToolingDaemonService private constructor(private val project: Project)
   private fun onServiceStarted(uri: String?, secret: String?) {
     serviceRunning = true
     this.secret = secret
+    this.uri = uri
     DartDevToolsService.getInstance(project).startService(uri)
     uri?.let { connectToDtdWebSocket(it) }
   }
