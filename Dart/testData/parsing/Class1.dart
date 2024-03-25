@@ -127,3 +127,17 @@ extension type A<T>.named(int it) implements num {}
 extension type A.new(int it) implements num, int {}
 extension type const A(int it) implements num, int {}
 extension type A<T>.dynamic(int it) {  @a foo()  var a; }
+
+augment class Foo{}
+augment mixin Foo{}
+augment enum Enum {}
+augment extension foo on bar {}
+augment extension on bar {}
+augment typedef foo = bar;
+augment typedef foo(a);
+
+@a augment class Foo{}
+@a augment mixin Foo{}
+@a augment enum Enum {}
+@a augment typedef foo = bar;
+@a augment typedef foo(a);
