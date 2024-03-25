@@ -3,9 +3,9 @@ import org.jetbrains.grammarkit.tasks.GenerateLexerTask
 
 plugins {
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.9.0"
-    id("org.jetbrains.intellij") version "1.15.0"
-    id("org.jetbrains.grammarkit") version "2022.3.1"
+    id("org.jetbrains.kotlin.jvm") version "1.9.23"
+    id("org.jetbrains.intellij") version "1.17.2"
+    id("org.jetbrains.grammarkit") version "2022.3.2.2"
 }
 
 group = "com.jetbrains"
@@ -59,8 +59,7 @@ tasks {
 
         sourceFile.set(File("src/com/intellij/dts/lang/lexer/dts.flex"))
 
-        targetDir.set("gen/com/intellij/dts/lang/lexer")
-        targetClass.set("DtsLexer")
+        targetOutputDir.set(File("gen/com/intellij/dts/lang/lexer"))
         purgeOldFiles.set(true)
     }
 
@@ -68,15 +67,15 @@ tasks {
         dependsOn(generateLexer)
 
         sourceFile.set(File("src/com/intellij/dts/lang/parser/dts.bnf"))
-
-        targetRoot.set("gen")
         pathToParser.set("com/intellij/dts/lang/parser/DtsParser.java")
+
+        targetRootOutputDir.set(File("gen"))
         pathToPsiRoot.set("com/intellij/dts/lang/psi")
         purgeOldFiles.set(true)
     }
 
     patchPluginXml {
         sinceBuild.set("221")
-        untilBuild.set("233.*")
+        untilBuild.set("241.*")
     }
 }

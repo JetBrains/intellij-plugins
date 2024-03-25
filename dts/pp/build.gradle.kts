@@ -2,9 +2,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.9.0"
-    id("org.jetbrains.intellij") version "1.15.0"
-    id("org.jetbrains.grammarkit") version "2022.3.1"
+    id("org.jetbrains.kotlin.jvm") version "1.9.23"
+    id("org.jetbrains.intellij") version "1.17.2"
+    id("org.jetbrains.grammarkit") version "2022.3.2.2"
 }
 
 group = "com.intellij"
@@ -49,8 +49,7 @@ tasks {
     generateLexer {
         sourceFile.set(File("src/com/intellij/dts/pp/lang/lexer/pp.flex"))
 
-        targetDir.set("gen/com/intellij/dts/pp/lang/lexer")
-        targetClass.set("PpLexer")
+        targetOutputDir.set(File("gen/com/intellij/dts/pp/lang/lexer"))
         purgeOldFiles.set(true)
     }
 
