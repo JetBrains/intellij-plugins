@@ -262,13 +262,13 @@ classDefinition ::= metadata* 'augment'? (mixinClassModifiers | classModifiers) 
 private classModifiers ::= 'sealed' | 'macro' | 'abstract'? ('base' | 'interface' | 'final')?
 private mixinClassModifiers ::= 'abstract'? 'base'? 'mixin'
 
-mixinDeclaration ::= metadata* mixinModifier? 'mixin' componentName typeParameters? onMixins? interfaces? classBody
+mixinDeclaration ::= metadata* 'augment'? mixinModifier? 'mixin' componentName typeParameters? onMixins? interfaces? classBody
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartPsiClass" implements="com.jetbrains.lang.dart.psi.DartClass"}
 
 private mixinModifier ::= 'sealed' | 'base' | 'interface' | 'final'
 
-enumDefinition ::= metadata* 'enum' componentName typeParameters? mixins? interfaces? '{' enumConstantDeclaration? (',' enumConstantDeclaration)* ','? ';'? classMembers '}'
-{pin=3  mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartPsiClass" implements="com.jetbrains.lang.dart.psi.DartClass"}
+enumDefinition ::= metadata* 'augment'? 'enum' componentName typeParameters? mixins? interfaces? '{' enumConstantDeclaration? (',' enumConstantDeclaration)* ','? ';'? classMembers '}'
+{pin=4 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartPsiClass" implements="com.jetbrains.lang.dart.psi.DartClass"}
 
 enumConstantDeclaration ::= metadata* componentName typeArguments? '.' componentName arguments |
                             metadata* componentName typeArguments? arguments?
@@ -278,10 +278,10 @@ enumConstantDeclaration ::= metadata* componentName typeArguments? '.' component
   methods = [getComponentName]
 }
 
-extensionDeclaration ::= 'extension' typeParameters? 'on' type '?'? classBody |
-                         'extension' <<nonStrictID>> typeParameters? 'on' type '?'? classBody
+extensionDeclaration ::= 'augment'? 'extension' typeParameters? 'on' type '?'? classBody |
+                         'augment'? 'extension' <<nonStrictID>> typeParameters? 'on' type '?'? classBody
 
-extensionTypeDeclaration ::= 'extension' <<typeForExtensionType>> 'const'? componentName typeParameters? representationDeclaration interfaces? classBody {pin=4}
+extensionTypeDeclaration ::= 'augment'? 'extension' <<typeForExtensionType>> 'const'? componentName typeParameters? representationDeclaration interfaces? classBody {pin=5}
 private representationDeclaration ::=  ('.' (componentName | 'new'))? '(' metadata* type componentName ')'
 
 mixinApplication ::= '=' type mixins? interfaces? ';' {pin = 1}
@@ -358,9 +358,9 @@ private super_call_or_field_initializer_recover ::= !(<<nonStrictID>> | 'sync' |
                                                     'interface' | 'late' | 'library' | 'mixin' | 'native' | 'part' | 'sealed' | 'set' |
                                                     'static' | 'typedef' | 'var' | 'void' | '}' )
 
-functionTypeAlias ::= metadata* 'typedef' functionPrefix typeParameters? formalParameterList ';'?
-                    | metadata* 'typedef' componentName typeParameters? '=' type ';'?
-{pin=5 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
+functionTypeAlias ::= metadata* 'augment'? 'typedef' functionPrefix typeParameters? formalParameterList ';'? |
+                      metadata* 'augment'? 'typedef' componentName typeParameters? '=' type ';'?
+{pin=6 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 private functionPrefix ::= returnType componentName | componentName
 
 parameterTypeList ::= '(' ')'
