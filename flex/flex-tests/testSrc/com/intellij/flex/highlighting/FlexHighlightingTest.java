@@ -120,8 +120,6 @@ import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-import static com.intellij.codeInsight.daemon.impl.HighlightInfoFilter.EXTENSION_POINT_NAME;
-
 public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   @NonNls static final String BASE_PATH = "flex_highlighting";
 
@@ -169,7 +167,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   private void suppressXmlNSAnnotator() {
     HighlightInfoFilter filter = (info, file) -> info.forcedTextAttributesKey != XmlHighlighterColors.XML_NS_PREFIX;
-    ExtensionTestUtil.maskExtensions(EXTENSION_POINT_NAME, Collections.singletonList(filter), getTestRootDisposable());
+    ExtensionTestUtil.maskExtensions(HighlightInfoFilter.EXTENSION_POINT_NAME, Collections.singletonList(filter), getTestRootDisposable());
   }
 
   @Override
