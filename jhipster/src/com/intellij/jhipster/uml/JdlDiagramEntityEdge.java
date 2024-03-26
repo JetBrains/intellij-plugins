@@ -12,8 +12,9 @@ import com.intellij.jhipster.uml.model.JdlNodeData;
 import org.jetbrains.annotations.NotNull;
 
 final class JdlDiagramEntityEdge extends DiagramEdgeBase<JdlNodeData> {
-  public JdlDiagramEntityEdge(@NotNull DiagramNode<JdlNodeData> source, @NotNull DiagramNode<JdlNodeData> target,
-                              @NotNull JdlEntityNodeLinkType linkType) {
+  JdlDiagramEntityEdge(@NotNull DiagramNode<JdlNodeData> source,
+                       @NotNull DiagramNode<JdlNodeData> target,
+                       @NotNull JdlEntityNodeLinkType linkType) {
     super(source, target, toRelationshipInfo(linkType));
   }
 
@@ -26,7 +27,7 @@ final class JdlDiagramEntityEdge extends DiagramEdgeBase<JdlNodeData> {
     };
   }
 
-  static final DiagramRelationshipInfo ONE_TO_ONE = (new DiagramRelationshipInfoAdapter.Builder()).setName("TO_ONE")
+  static final DiagramRelationshipInfo ONE_TO_ONE = (new DiagramRelationshipInfoAdapter.Builder()).setName("ONE_TO_ONE")
     .setLineType(DiagramLineType.SOLID)
     .setSourceArrow(DiagramRelationshipInfo.ANGLE)
     .setTargetArrow(DiagramRelationshipInfo.ANGLE)
@@ -34,23 +35,23 @@ final class JdlDiagramEntityEdge extends DiagramEdgeBase<JdlNodeData> {
     .setUpperSourceLabel("1")
     .create();
 
-  static final DiagramRelationshipInfo ONE_TO_MANY = (new DiagramRelationshipInfoAdapter.Builder()).setName("TO_MANY")
+  static final DiagramRelationshipInfo ONE_TO_MANY = (new DiagramRelationshipInfoAdapter.Builder()).setName("ONE_TO_MANY")
     .setLineType(DiagramLineType.SOLID)
     .setSourceArrow(DiagramRelationshipInfo.ANGLE)
     .setTargetArrow(DiagramRelationshipInfo.DIAMOND)
-    .setUpperTargetLabel("1")
-    .setUpperSourceLabel("*")
-    .create();
-
-  static final DiagramRelationshipInfo MANY_TO_ONE = (new DiagramRelationshipInfoAdapter.Builder()).setName("TO_MANY")
-    .setLineType(DiagramLineType.SOLID)
-    .setSourceArrow(DiagramRelationshipInfo.DIAMOND)
-    .setTargetArrow(DiagramRelationshipInfo.ANGLE)
     .setUpperTargetLabel("*")
     .setUpperSourceLabel("1")
     .create();
 
-  static final DiagramRelationshipInfo MANY_TO_MANY = (new DiagramRelationshipInfoAdapter.Builder()).setName("TO_MANY")
+  static final DiagramRelationshipInfo MANY_TO_ONE = (new DiagramRelationshipInfoAdapter.Builder()).setName("MANY_TO_ONE")
+    .setLineType(DiagramLineType.SOLID)
+    .setSourceArrow(DiagramRelationshipInfo.DIAMOND)
+    .setTargetArrow(DiagramRelationshipInfo.ANGLE)
+    .setUpperTargetLabel("1")
+    .setUpperSourceLabel("*")
+    .create();
+
+  static final DiagramRelationshipInfo MANY_TO_MANY = (new DiagramRelationshipInfoAdapter.Builder()).setName("MANY_TO_MANY")
     .setLineType(DiagramLineType.SOLID)
     .setSourceArrow(DiagramRelationshipInfo.DIAMOND)
     .setTargetArrow(DiagramRelationshipInfo.DIAMOND)
