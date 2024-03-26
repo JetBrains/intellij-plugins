@@ -69,7 +69,6 @@ open class DenoEntityImpl(private val dataSource: DenoEntityData) : DenoEntity, 
       }
 
       this.diff = builder
-      this.snapshot = builder
       addToBuilder()
       this.id = getEntityData().createEntityId()
       // After adding entity data to the builder, we need to unbind it and move the control over entity data to builder
@@ -145,7 +144,6 @@ class DenoEntityData : WorkspaceEntityData<DenoEntity>() {
   override fun wrapAsModifiable(diff: MutableEntityStorage): WorkspaceEntity.Builder<DenoEntity> {
     val modifiable = DenoEntityImpl.Builder(null)
     modifiable.diff = diff
-    modifiable.snapshot = diff
     modifiable.id = createEntityId()
     return modifiable
   }
