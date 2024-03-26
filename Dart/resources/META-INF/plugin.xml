@@ -334,5 +334,6 @@
     </group>
     <action id="Dart.pub.outdated" class="com.jetbrains.lang.dart.ide.actions.DartPubOutdatedAction"/>
     <action id="Dart.pub.cache.repair" class="com.jetbrains.lang.dart.ide.actions.DartPubCacheRepairAction"/>
+    <action id="DartCopyDtdUriAction" class="com.jetbrains.lang.dart.ide.toolingDaemon.DartCopyDtdUriAction"/>
   </actions>
 </idea-plugin>
