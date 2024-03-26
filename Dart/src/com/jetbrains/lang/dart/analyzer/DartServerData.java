@@ -12,7 +12,7 @@ import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiManager;
+import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.SmartList;
@@ -307,15 +307,15 @@ public final class DartServerData {
   private void forceFileAnnotation(@Nullable final VirtualFile file, final boolean clearCache) {
     if (file != null) {
       final Project project = myService.getProject();
+      if (clearCache) {
+        ResolveCache.getInstance(project).clearCache(true);
+      }
 
       // It's ok to call DaemonCodeAnalyzer.restart() right in this thread, without invokeLater(),
       // but it will cache RemoteAnalysisServerImpl$ServerResponseReaderThread in FileStatusMap.threads and as a result,
       // DartAnalysisServerService.myProject will be leaked in tests
       ApplicationManager.getApplication()
         .invokeLater(() -> {
-                       if (clearCache) {
-                         PsiManager.getInstance(project).dropPsiCaches();
-                       }
                        DaemonCodeAnalyzer.getInstance(project).restart();
                      },
                      ModalityState.nonModal(),
