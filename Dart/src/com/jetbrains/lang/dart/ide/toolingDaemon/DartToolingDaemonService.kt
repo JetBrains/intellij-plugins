@@ -49,6 +49,8 @@ class DartToolingDaemonService private constructor(private val project: Project)
   var webSocketReady = false
     private set
 
+  var uri: String? = null
+    private set
   private var secret: String? = null
 
   private var lastSentRootUris: List<String> = emptyList()
@@ -83,6 +85,7 @@ class DartToolingDaemonService private constructor(private val project: Project)
 
   private fun onServiceStarted(uri: String?, secret: String?) {
     serviceRunning = true
+    this.uri = uri
     this.secret = secret
     DartDevToolsService.getInstance(project).startService(uri)
     uri?.let { connectToDtdWebSocket(it) }
@@ -205,6 +208,7 @@ class DartToolingDaemonService private constructor(private val project: Project)
     override fun processTerminated(event: ProcessEvent) {
       serviceRunning = false
       webSocketReady = false
+      uri = null
       logger.info("DTD terminated, exit code: ${event.exitCode}")
     }
   }
