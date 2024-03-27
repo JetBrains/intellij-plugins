@@ -8,7 +8,7 @@ import org.angular2.Angular2TestModule
 class Angular2CompletionAutoPopupTest : Angular2TestCase("completionAutoPopup") {
 
   fun testForBlockTyping1() =
-    doCompletionAutoPopupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0) {
+    doCompletionAutoPopupTest(Angular2TestModule.ANGULAR_CORE_17_3_0) {
       type("item ")
 
       // "of" keyword completion popup should show
@@ -45,7 +45,7 @@ class Angular2CompletionAutoPopupTest : Angular2TestCase("completionAutoPopup") 
     }
 
   fun testForBlockTyping2() =
-    doCompletionAutoPopupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0) {
+    doCompletionAutoPopupTest(Angular2TestModule.ANGULAR_CORE_17_3_0) {
       type("item ")
 
       // "of" keyword completion popup should show

@@ -91,9 +91,9 @@ class Angular2FormattingTest : Angular2TestCase("formatting") {
     wrap = CommonCodeStyleSettings.WRAP_AS_NEEDED
   )
 
-  fun testBasicBlocks() = doFormattingTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html")
+  fun testBasicBlocks() = doFormattingTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
-  fun testDeferBlock() = doFormattingTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html")
+  fun testDeferBlock() = doFormattingTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
   fun testEditorConfigWithInjection() = doFormattingTest(dir = true, editorConfigEnabled = true)
 
