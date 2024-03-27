@@ -173,7 +173,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
   fun testAnimationTriggerNoAttributeValue() = checkHighlighting()
 
   fun testModuleWithExportDefault() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, RXJS_7_8_1,
-                                                           configureFileName = "comp-b.component.ts", dir = true)
+                                                        configureFileName = "comp-b.component.ts", dir = true)
 
   fun testNgAcceptInputOverAlias() = checkHighlighting(ANGULAR_CORE_17_1_0_RC_0, ANGULAR_CDK_17_1_0_RC_0,
                                                        strictTemplates = true, extension = "ts")
@@ -186,6 +186,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
   fun testSetterWithGenericParameter() = checkHighlighting(ANGULAR_CORE_16_2_8,
                                                            strictTemplates = true, extension = "ts")
+
+  fun testForwardRef() = checkHighlighting(ANGULAR_CORE_16_2_8,
+                                           strictTemplates = true, extension = "ts")
 
   override fun setUp() {
     super.setUp()

@@ -34,6 +34,7 @@ import org.angular2.Angular2DecoratorUtil.ALIAS_PROP
 import org.angular2.Angular2DecoratorUtil.ATTRIBUTE_DEC
 import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
 import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
+import org.angular2.Angular2DecoratorUtil.FORWARD_REF_FUN
 import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
 import org.angular2.Angular2DecoratorUtil.INPUT_DEC
 import org.angular2.Angular2DecoratorUtil.INPUT_FUN
@@ -64,6 +65,7 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
   override fun shouldCreateStubForCallExpression(node: ASTNode): Boolean =
     isDecoratorCallStringArgStubbed(node)
     || (isDecoratorLikeFunctionCall(node) && isDirectiveField(node.treeParent))
+    || STUBBED_FUNCTIONS.contains(getFunctionReferenceName(node))
 
   override fun shouldCreateStubForLiteral(node: ASTNode): Boolean {
     val parent = node.treeParent ?: return false
@@ -102,6 +104,12 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
   override fun processCallExpression(callExpression: JSCallExpression, outData: JSElementIndexingData) {
     if (isDecoratorLikeFunctionCall(callExpression.node) && isDirectiveField(callExpression.node.treeParent)) {
       createJSImplicitElementForDecoratorLikeFunctionCall(callExpression, outData)
+    }
+    else {
+      val name = getFunctionReferenceName(callExpression.node)
+      if (name != null && STUBBED_FUNCTIONS.contains(name)) {
+        recordFunctionName(callExpression, outData, name)
+      }
     }
   }
 
@@ -276,6 +284,15 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
     return STUBBED_DECORATOR_LIKE_FUNCTIONS.contains(decoratorLikeFunctionName)
   }
 
+  private fun getFunctionReferenceName(callNode: ASTNode): String? =
+    callNode
+      .takeIf { it.elementType === JSStubElementTypes.CALL_EXPRESSION }
+      ?.firstChildNode
+      ?.takeIf { it.elementType === JSElementTypes.REFERENCE_EXPRESSION }
+      ?.firstChildNode
+      ?.takeIf { it.elementType === JSTokenTypes.IDENTIFIER }
+      ?.text
+
   private fun isDirectiveField(fieldNode: ASTNode?): Boolean {
     if (fieldNode?.elementType !== TypeScriptStubElementTypes.TYPESCRIPT_FIELD) return false
     val classNode = fieldNode?.treeParent?.treeParent
@@ -361,15 +378,17 @@ private const val STYLESHEET_INDEX_PREFIX = "ss/"
 val TS_CLASS_TOKENS = TokenSet.create(JSStubElementTypes.TYPESCRIPT_CLASS,
                                       JSStubElementTypes.TYPESCRIPT_CLASS_EXPRESSION)
 
-private val STUBBED_PROPERTIES = ContainerUtil.newHashSet(
+private val STUBBED_PROPERTIES = setOf(
   TEMPLATE_URL_PROP, STYLE_URLS_PROP, STYLE_URL_PROP, SELECTOR_PROP, INPUTS_PROP, OUTPUTS_PROP)
 
-private val STUBBED_DECORATORS_STRING_ARGS = ContainerUtil.newHashSet(
+private val STUBBED_DECORATORS_STRING_ARGS = setOf(
   INPUT_DEC, OUTPUT_DEC, ATTRIBUTE_DEC)
 
-private val STUBBED_DECORATOR_LIKE_FUNCTIONS = ContainerUtil.newHashSet(
-  INPUT_FUN
-)
+private val STUBBED_DECORATOR_LIKE_FUNCTIONS = setOf(
+  INPUT_FUN)
+
+private val STUBBED_FUNCTIONS = setOf(
+  FORWARD_REF_FUN)
 
 private val INDEX_MAP = mapOf<String, StubIndexKey<String, JSImplicitElementProvider>?>(
   ANGULAR2_TEMPLATE_URLS_INDEX_USER_STRING to Angular2TemplateUrlIndexKey,
