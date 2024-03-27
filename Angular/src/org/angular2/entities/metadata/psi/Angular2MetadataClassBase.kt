@@ -122,10 +122,9 @@ abstract class Angular2MetadataClassBase<Stub : Angular2MetadataClassStubBase<*>
   }
 
   fun getPropertySignature(fieldName: String): JSRecordType.PropertySignature? {
-    return typeScriptClass?.let { cls ->
-      TypeScriptTypeParser.buildTypeFromClass(cls, false)
-        .findPropertySignature(fieldName)
-    }
+    return typeScriptClass
+      ?.let { TypeScriptTypeParser.buildTypeFromClass(it, false) }
+      ?.findPropertySignature(fieldName)
   }
 
   private fun collectProperties(mappings: Map<String, String>,

@@ -4,8 +4,8 @@ package org.angular2.entities.source
 import com.intellij.javascript.webSymbols.apiStatus
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser
+import com.intellij.lang.javascript.psi.types.guard.JSTypeGuardUtil
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil.isStubBased
 import com.intellij.model.Pointer
 import com.intellij.navigation.SymbolNavigationService
@@ -14,6 +14,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.createSmartPointer
+import com.intellij.util.applyIf
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.PsiSourcedWebSymbol
 import com.intellij.webSymbols.WebSymbolApiStatus
@@ -67,12 +68,9 @@ abstract class Angular2SourceDirectiveProperty(
               ?.findPropertySignature("ɵINPUT_SIGNAL_BRAND_WRITE_TYPE")
               ?.jsTypeWithOptionality
             ?: transformParameterType
-            ?: signature.memberSource.allSourceElements
-              .find { it is TypeScriptFunction && it.isSetProperty }
-              ?.asSafely<TypeScriptFunction>()
-              ?.parameters
-              ?.takeIf { it.size == 1 }?.get(0)?.inferredType
-            ?: signature.jsTypeWithOptionality
+            ?: (signature.setterJSType ?: signature.jsType)?.applyIf(signature.isOptional) {
+              JSTypeGuardUtil.wrapWithUndefined(this, this.getSource())!!
+            }
 
   override val virtualProperty: Boolean
     get() = false

@@ -186,6 +186,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
   fun testStrictNullChecks() = checkHighlighting(dir = true, configureFileName = "src/check.ts")
 
+  fun testSetterWithGenericParameter() = checkHighlighting(ANGULAR_CORE_16_2_8,
+                                                           strictTemplates = true, extension = "ts")
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
