@@ -1,4 +1,4 @@
-import {Component, NgModule, Input, Directive, Output, EventEmitter} from '@angular/core';
+import {Component, NgModule, Input, Directive, Output, EventEmitter, input} from '@angular/core';
 
 @Directive({standalone: true, selector: '[foo]'})
 export class TestDir {
@@ -8,6 +8,7 @@ export class TestDir {
     private privateField!: string;
     @Input()
     readonly readonlyField!: string;
+    readonly readonlySignalField = input<string>();
 
     @Output()
     protected protectedEvent!: EventEmitter<string>;
@@ -31,6 +32,7 @@ export class TestDir2 {
     template: `
       <div foo
            <error descr="Cannot assign to input readonlyField because it is a read-only property">[readonlyField]</error>="value"
+           [readonlySignalField]="value"
            <error descr="Field protectedField is protected and it is only accessible within class TestDir and its subclasses">[protectedField]</error>="value"
            <error descr="Field privateField is private and it is only accessible within class TestDir">[privateField]</error>="value"
 
