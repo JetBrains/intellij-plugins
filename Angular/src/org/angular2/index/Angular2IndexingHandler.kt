@@ -38,6 +38,7 @@ import org.angular2.Angular2DecoratorUtil.FORWARD_REF_FUN
 import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
 import org.angular2.Angular2DecoratorUtil.INPUT_DEC
 import org.angular2.Angular2DecoratorUtil.INPUT_FUN
+import org.angular2.Angular2DecoratorUtil.MODEL_FUN
 import org.angular2.Angular2DecoratorUtil.MODULE_DEC
 import org.angular2.Angular2DecoratorUtil.NAME_PROP
 import org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP
@@ -385,7 +386,7 @@ private val STUBBED_DECORATORS_STRING_ARGS = setOf(
   INPUT_DEC, OUTPUT_DEC, ATTRIBUTE_DEC)
 
 private val STUBBED_DECORATOR_LIKE_FUNCTIONS = setOf(
-  INPUT_FUN)
+  INPUT_FUN, MODEL_FUN)
 
 private val STUBBED_FUNCTIONS = setOf(
   FORWARD_REF_FUN)

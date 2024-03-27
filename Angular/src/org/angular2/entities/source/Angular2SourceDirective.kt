@@ -25,6 +25,7 @@ import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2DecoratorUtil.HOST_DIRECTIVES_PROP
 import org.angular2.Angular2DecoratorUtil.INPUT_DEC
 import org.angular2.Angular2DecoratorUtil.INPUT_FUN
+import org.angular2.Angular2DecoratorUtil.MODEL_FUN
 import org.angular2.Angular2DecoratorUtil.OUTPUT_DEC
 import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver
 import org.angular2.entities.*
@@ -40,6 +41,7 @@ import org.angular2.entities.source.Angular2SourceUtil.parseInputObjectLiteral
 import org.angular2.entities.source.Angular2SourceUtil.readDirectivePropertyMappings
 import org.angular2.index.getFunctionNameFromIndex
 import org.angular2.index.isStringArgStubbed
+import org.angular2.lang.Angular2LangUtil.OUTPUT_CHANGE_SUFFIX
 import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 
@@ -116,8 +118,10 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
       .properties
       .forEach { prop ->
         for (el in getPropertySources(prop.memberSource.singleElement)) {
-          processProperty(clazz, prop, el, inputMap, INPUT_DEC, INPUT_FUN, NG_DIRECTIVE_INPUTS, inputs)
-          processProperty(clazz, prop, el, outputMap, OUTPUT_DEC, null, NG_DIRECTIVE_OUTPUTS, outputs)
+          if (!processModelSignal(clazz, prop, el, inputs, outputs)) {
+            processProperty(clazz, prop, el, inputMap, INPUT_DEC, INPUT_FUN, NG_DIRECTIVE_INPUTS, inputs)
+            processProperty(clazz, prop, el, outputMap, OUTPUT_DEC, null, NG_DIRECTIVE_OUTPUTS, outputs)
+          }
         }
       }
 
@@ -169,6 +173,26 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
     readDirectivePropertyMappings(Angular2DecoratorUtil.getProperty(decorator, source))
 
   companion object {
+
+    private fun processModelSignal(
+      sourceClass: TypeScriptClass,
+      property: JSRecordType.PropertySignature,
+      field: JSAttributeListOwner,
+      inputs: MutableMap<String, Angular2DirectiveProperty>,
+      outputs: MutableMap<String, Angular2DirectiveProperty>,
+    ): Boolean {
+      val modelInfo = field.asSafely<TypeScriptField>()
+        ?.initializerOrStub
+        ?.asSafely<JSCallExpression>()
+        ?.let { Angular2SourceUtil.createPropertyInfo(it, MODEL_FUN, property.memberName, ::getFunctionNameFromIndex) }
+      if (modelInfo != null) {
+        inputs.putIfAbsent(modelInfo.name, Angular2SourceDirectiveProperty.create(sourceClass, property, NG_DIRECTIVE_INPUTS, modelInfo))
+        val outputModelInfo = modelInfo.copy(name = modelInfo.name + OUTPUT_CHANGE_SUFFIX)
+        outputs.putIfAbsent(outputModelInfo.name, Angular2SourceDirectiveProperty.create(sourceClass, property, NG_DIRECTIVE_OUTPUTS, outputModelInfo))
+        return true
+      }
+      else return false
+    }
 
     private fun processProperty(sourceClass: TypeScriptClass,
                                 property: JSRecordType.PropertySignature,
