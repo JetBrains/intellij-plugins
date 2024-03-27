@@ -41,6 +41,7 @@ import org.angular2.lang.expr.psi.Angular2ElementVisitor
 import org.angular2.lang.html.Angular2HtmlLanguage
 import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
 import org.angular2.lang.html.psi.PropertyBindingType
+import org.angular2.signals.Angular2SignalUtils
 import org.angular2.web.NG_DIRECTIVE_INPUTS
 
 class AngularInaccessibleSymbolInspection : LocalInspectionTool() {
@@ -101,7 +102,8 @@ class AngularInaccessibleSymbolInspection : LocalInspectionTool() {
                   ),
                   AngularChangeModifierQuickFix(minAccessType, inputOwner.name))
               }
-              else if (input.attributeList?.hasModifier(JSAttributeList.ModifierType.READONLY) == true) {
+              else if (input.attributeList?.hasModifier(JSAttributeList.ModifierType.READONLY) == true
+                       && !Angular2SignalUtils.isSignal(input, null)) {
                 holder.registerProblem(
                   element.nameElement,
                   Angular2Bundle.htmlMessage(
