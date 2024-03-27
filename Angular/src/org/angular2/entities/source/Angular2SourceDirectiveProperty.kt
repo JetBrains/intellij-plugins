@@ -26,6 +26,7 @@ import org.angular2.Angular2DecoratorUtil
 import org.angular2.entities.Angular2ClassBasedDirectiveProperty
 import org.angular2.entities.Angular2EntityUtils
 import org.angular2.entities.source.Angular2SourceDirective.Companion.getPropertySources
+import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 import java.util.*
 
 abstract class Angular2SourceDirectiveProperty(
@@ -61,12 +62,14 @@ abstract class Angular2SourceDirectiveProperty(
       ?.firstNotNullOfOrNull { signature -> signature.functionType.parameters.takeIf { it.size > 0 }?.get(0) }
       ?.inferredType
 
-  @Suppress("NonAsciiCharacters")
+  override val type: JSType?
+    get() = if (qualifiedKind == NG_DIRECTIVE_OUTPUTS)
+      typeFromSignal ?: super.type
+    else
+      super.type
+
   override val rawJsType: JSType?
-    get() = signature.jsType
-              ?.asRecordType()
-              ?.findPropertySignature("ɵINPUT_SIGNAL_BRAND_WRITE_TYPE")
-              ?.jsTypeWithOptionality
+    get() = typeFromSignal
             ?: transformParameterType
             ?: (signature.setterJSType ?: signature.jsType)?.applyIf(signature.isOptional) {
               JSTypeGuardUtil.wrapWithUndefined(this, this.getSource())!!
@@ -114,6 +117,13 @@ abstract class Angular2SourceDirectiveProperty(
             ?: (declarationSource as? JSLiteralExpression)
               ?.context?.asSafely<JSProperty>()
               ?.context?.asSafely<JSObjectLiteralExpression>()
+
+  @Suppress("NonAsciiCharacters")
+  private val typeFromSignal: JSType? =
+    signature.jsType
+      ?.asRecordType()
+      ?.findPropertySignature("ɵINPUT_SIGNAL_BRAND_WRITE_TYPE")
+      ?.jsTypeWithOptionality
 
   private class Angular2SourceFieldDirectiveProperty(
     owner: TypeScriptClass,
