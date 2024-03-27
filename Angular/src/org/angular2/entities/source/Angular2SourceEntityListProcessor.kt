@@ -15,6 +15,7 @@ import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl
 import com.intellij.lang.javascript.psi.types.JSTypeImpl
 import com.intellij.lang.javascript.psi.types.JSTypeSource
+import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
@@ -24,6 +25,7 @@ import com.intellij.util.ObjectUtils.tryCast
 import com.intellij.util.SmartList
 import com.intellij.util.asSafely
 import com.intellij.util.containers.ContainerUtil.addIfNotNull
+import org.angular2.Angular2DecoratorUtil
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.entities.Angular2Entity
 import org.angular2.entities.Angular2Module
@@ -35,6 +37,7 @@ import org.angular2.entities.metadata.psi.Angular2MetadataFunction
 import org.angular2.entities.metadata.psi.Angular2MetadataModule
 import org.angular2.entities.metadata.psi.Angular2MetadataObject
 import org.angular2.entities.metadata.psi.Angular2MetadataReference
+import org.angular2.index.getFunctionNameFromIndex
 
 abstract class Angular2SourceEntityListProcessor<T : Angular2Entity>(private val myAcceptableEntityClass: Class<T>) {
 
@@ -133,7 +136,12 @@ abstract class Angular2SourceEntityListProcessor<T : Angular2Entity>(private val
       }
 
       override fun visitJSCallExpression(node: JSCallExpression) {
-        addIfNotNull(result, node.stubSafeMethodExpression)
+        if (getFunctionNameFromIndex(node) == Angular2DecoratorUtil.FORWARD_REF_FUN) {
+          addIfNotNull(result, node.stubSafeCallArguments.firstOrNull())
+        }
+        else {
+          addIfNotNull(result, node.stubSafeMethodExpression)
+        }
       }
 
       override fun visitJSFunctionDeclaration(node: JSFunction) {

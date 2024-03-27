@@ -31,6 +31,7 @@ object Angular2DecoratorUtil {
   const val INPUT_DEC = "Input"
   const val INPUT_FUN = "input"
   const val OUTPUT_DEC = "Output"
+  const val FORWARD_REF_FUN = "forwardRef"
   const val ATTRIBUTE_DEC = "Attribute"
   const val VIEW_CHILD_DEC = "ViewChild"
   const val VIEW_CHILDREN_DEC = "ViewChildren"
