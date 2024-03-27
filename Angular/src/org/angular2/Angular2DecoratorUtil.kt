@@ -38,6 +38,7 @@ object Angular2DecoratorUtil {
   const val VIEW_CHILD_DEC = "ViewChild"
   const val VIEW_CHILDREN_DEC = "ViewChildren"
   const val VIEW_DEC = "View"
+  const val OPTIONAL_DEC = "Optional"
   const val NAME_PROP = "name"
   const val SELECTOR_PROP = "selector"
   const val EXPORT_AS_PROP = "exportAs"
@@ -182,8 +183,7 @@ object Angular2DecoratorUtil {
     return (decoratorName != null
             && contains(decoratorName, *names)
             && (decoratorName != DIRECTIVE_DEC || getObjectLiteralInitializer(decorator) != null)
-            && (getClassForDecoratorElement(decorator)
-      ?.attributeList?.hasModifier(JSAttributeList.ModifierType.ABSTRACT) != true)
+            && (getClassForDecoratorElement(decorator)?.attributeList?.hasModifier(JSAttributeList.ModifierType.ABSTRACT) != true)
            )
            && Angular2LangUtil.isAngular2Context(decorator)
            && hasAngularImport(decoratorName, decorator.containingFile)

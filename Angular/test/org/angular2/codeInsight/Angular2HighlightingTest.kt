@@ -196,6 +196,8 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
   fun testModelSignals() = checkHighlighting(ANGULAR_CORE_17_3_0,
                                              strictTemplates = true, extension = "ts")
 
+  fun testOptionalTemplateRef() = checkHighlighting(ANGULAR_CORE_16_2_8, extension = "ts")
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
