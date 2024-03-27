@@ -184,6 +184,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
   fun testNgNativeValidate() = checkHighlighting(ANGULAR_COMMON_16_2_8, ANGULAR_FORMS_16_2_8,
                                                  extension = "ts")
 
+  fun testSetterWithGenericParameter() = checkHighlighting(ANGULAR_CORE_16_2_8,
+                                                           strictTemplates = true, extension = "ts")
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
