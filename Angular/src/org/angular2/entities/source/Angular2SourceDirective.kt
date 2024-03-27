@@ -27,6 +27,7 @@ import org.angular2.Angular2DecoratorUtil.INPUT_DEC
 import org.angular2.Angular2DecoratorUtil.INPUT_FUN
 import org.angular2.Angular2DecoratorUtil.MODEL_FUN
 import org.angular2.Angular2DecoratorUtil.OUTPUT_DEC
+import org.angular2.Angular2DecoratorUtil.OUTPUT_FUN
 import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver
 import org.angular2.entities.*
 import org.angular2.entities.Angular2EntityUtils.ELEMENT_REF
@@ -120,7 +121,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
         for (el in getPropertySources(prop.memberSource.singleElement)) {
           if (!processModelSignal(clazz, prop, el, inputs, outputs)) {
             processProperty(clazz, prop, el, inputMap, INPUT_DEC, INPUT_FUN, NG_DIRECTIVE_INPUTS, inputs)
-            processProperty(clazz, prop, el, outputMap, OUTPUT_DEC, null, NG_DIRECTIVE_OUTPUTS, outputs)
+            processProperty(clazz, prop, el, outputMap, OUTPUT_DEC, OUTPUT_FUN, NG_DIRECTIVE_OUTPUTS, outputs)
           }
         }
       }
