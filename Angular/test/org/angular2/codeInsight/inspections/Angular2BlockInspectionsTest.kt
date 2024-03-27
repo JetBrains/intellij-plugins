@@ -43,7 +43,7 @@ class Angular2BlockInspectionsTest : Angular2TestCase("inspections/blocks") {
   }
 
   private fun doHighlightingTest() {
-    doConfiguredTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, Angular2TestModule.ANGULAR_COMMON_17_1_0_RC_0,
+    doConfiguredTest(Angular2TestModule.ANGULAR_CORE_17_3_0, Angular2TestModule.ANGULAR_COMMON_17_3_0,
                      extension = "html", checkResult = false) {
       myFixture.checkHighlighting()
     }

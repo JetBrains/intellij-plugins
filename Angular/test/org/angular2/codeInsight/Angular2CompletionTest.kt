@@ -91,110 +91,110 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     doLookupTest(Angular2TestModule.ANGULAR_COMMON_16_2_8, extension = "html", configurators = listOf(Angular2TsConfigFile()))
 
   fun testPrimaryBlocks() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html")
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
   fun testPrimaryBlocksTopLevelText() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html", lookupItemFilter = ::notAnElement)
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html", lookupItemFilter = ::notAnElement)
 
   fun testPrimaryBlocksNestedText() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html", lookupItemFilter = ::notAnElement)
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html", lookupItemFilter = ::notAnElement)
 
   fun testIfSecondaryBlocks() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html")
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
   fun testIfSecondaryBlocksNested() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html")
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
   fun testIfSecondaryBlocksTopLevelText() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html", lookupItemFilter = ::notAnElement)
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html", lookupItemFilter = ::notAnElement)
 
   fun testIfSecondaryBlocksNestedText() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html", lookupItemFilter = ::notAnElement)
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html", lookupItemFilter = ::notAnElement)
 
   fun testAfterElseBlock() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html")
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
   fun testDeferSecondaryBlocks() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html")
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
   fun testDeferSecondaryBlocksUnique() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html")
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
   fun testForSecondaryBlocks() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html")
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
   fun testForSecondaryBlocksNested() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html")
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
   fun testForSecondaryBlocksUnique() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html")
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
   fun testSwitchSecondaryBlocks() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html")
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
   fun testSwitchNoSiblingSecondaryBlocks() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html")
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
   fun testSwitchSecondaryBlocksUnique() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html")
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
   fun testIfBlock() =
-    doTypingTest("if\n", Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0)
+    doTypingTest("if\n", Angular2TestModule.ANGULAR_CORE_17_3_0)
 
   fun testErrorBlock() =
-    doTypingTest("err\n", Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0)
+    doTypingTest("err\n", Angular2TestModule.ANGULAR_CORE_17_3_0)
 
   fun testTagsWithinBlock() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html")
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
   fun testTagsWithinBlock2() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html")
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
   fun testNoGlobalImportInTsFiles() =
     doTypingTest("do1\n", dir = true)
 
   fun testIfBlockParameters() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html", checkDocumentation = true)
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html", checkDocumentation = true)
 
   fun testIfBlockParameterTyping() =
-    doTypingTest("\nfoo", Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0)
+    doTypingTest("\nfoo", Angular2TestModule.ANGULAR_CORE_17_3_0)
 
   fun testForBlockOfKeyword() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html")
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
   fun testForBlockParams() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html", checkDocumentation = true)
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html", checkDocumentation = true)
 
   fun testForBlockLetEqKeyword() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html")
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
   fun testForBlockImplicitVariables() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html")
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
   fun testForBlockImplicitVariableInExpr() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html", checkDocumentation = true,
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html", checkDocumentation = true,
                  lookupItemFilter = { it.lookupString == "\$count" })
 
   fun testDeferBlockTimeExpressionStart() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html")
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
   fun testDeferBlockTimeExpressionTimeUnit() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html")
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
   fun testDeferBlockParameters() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html")
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
   fun testDeferBlockPrefetchParameters() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html")
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
   fun testDeferBlockOnTriggers() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html")
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
   fun testDeferBlockOnTimerNoArgCompletion() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html")
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
   fun testDeferBlockOnViewport() =
-    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_1_0_RC_0, extension = "html")
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
   fun testKeyofAttribute() =
     doLookupTest()
