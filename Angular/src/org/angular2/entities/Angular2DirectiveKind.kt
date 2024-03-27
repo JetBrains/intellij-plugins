@@ -14,6 +14,9 @@ enum class Angular2DirectiveKind {
 
   companion object {
 
+    operator fun Angular2DirectiveKind.plus(other: Angular2DirectiveKind) : Angular2DirectiveKind =
+      get(isRegular || other.isRegular, isStructural || other.isStructural)
+
     fun get(isRegular: Boolean, isStructural: Boolean): Angular2DirectiveKind =
       when {
         isRegular && isStructural -> BOTH
@@ -21,9 +24,9 @@ enum class Angular2DirectiveKind {
         else -> REGULAR
       }
 
-    fun get(hasElementRef: Boolean, hasTemplateRef: Boolean, hasViewContainerRef: Boolean): Angular2DirectiveKind? {
+    fun get(hasElementRef: Boolean, hasTemplateRef: Boolean, hasViewContainerRef: Boolean, isOptionalTemplateRef: Boolean): Angular2DirectiveKind? {
       return if (hasElementRef || hasTemplateRef || hasViewContainerRef)
-        get(hasElementRef || hasViewContainerRef && !hasTemplateRef,
+        get(isOptionalTemplateRef || hasElementRef || (hasViewContainerRef && !hasTemplateRef),
             hasTemplateRef || hasViewContainerRef)
       else
         null

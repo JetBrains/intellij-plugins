@@ -30,6 +30,7 @@ import org.angular2.Angular2DecoratorUtil.OUTPUT_DEC
 import org.angular2.Angular2DecoratorUtil.OUTPUT_FUN
 import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver
 import org.angular2.entities.*
+import org.angular2.entities.Angular2DirectiveKind.Companion.plus
 import org.angular2.entities.Angular2EntityUtils.ELEMENT_REF
 import org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF
 import org.angular2.entities.Angular2EntityUtils.VIEW_CONTAINER_REF
@@ -247,25 +248,35 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
 
     @JvmStatic
     fun getDirectiveKindNoCache(clazz: TypeScriptClass): Angular2DirectiveKind {
-      val result = Ref<Angular2DirectiveKind>(null)
+      var result: Angular2DirectiveKind? = null
       JSClassUtils.processClassesInHierarchy(clazz, false) { aClass, _, _ ->
         if (aClass is TypeScriptClass) {
-          val types = aClass.constructors
+          result = aClass.constructors
             .mapNotNull { it.parameterList }
-            .flatMap { it.parameters.toList() }
-            .mapNotNull { it.jsType }
-            .map { type -> type.typeText }
-            .toList()
-          result.set(Angular2DirectiveKind.get(
-            types.any { t -> t.contains(ELEMENT_REF) },
-            types.any { t -> t.contains(TEMPLATE_REF) },
-            types.any { t ->
-              t.contains(VIEW_CONTAINER_REF)
-            }))
+            .mapNotNull { paramList ->
+              var hasElementRef = false
+              var hasTemplateRef = false
+              var hasViewContainerRef = false
+              var isTemplateRefOptional = false
+              paramList.parameters.forEach {
+                val typeText = it.jsType?.typeText ?: return@forEach
+                when {
+                  typeText.contains(ELEMENT_REF) -> hasElementRef = true
+                  typeText.contains(VIEW_CONTAINER_REF) -> hasViewContainerRef = true
+                  typeText.contains(TEMPLATE_REF) -> {
+                    hasTemplateRef = true
+                    isTemplateRefOptional = it is JSAttributeListOwner
+                                            && Angular2DecoratorUtil.findDecorator(it, Angular2DecoratorUtil.OPTIONAL_DEC) != null
+                  }
+                }
+              }
+              Angular2DirectiveKind.get(hasElementRef, hasTemplateRef, hasViewContainerRef, isTemplateRefOptional)
+            }
+            .reduceOrNull { acc, kind -> acc + kind }
         }
-        result.isNull
+        result == null
       }
-      return if (result.isNull) Angular2DirectiveKind.REGULAR else result.get()
+      return result ?: Angular2DirectiveKind.REGULAR
     }
 
     @JvmStatic

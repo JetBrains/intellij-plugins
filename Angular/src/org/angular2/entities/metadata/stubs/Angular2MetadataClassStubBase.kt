@@ -118,7 +118,8 @@ open class Angular2MetadataClassStubBase<Psi : PsiElement> : Angular2MetadataEle
     val constructorText = if (constructor != null) constructor.text else ""
     val kind = Angular2DirectiveKind.get(constructorText.contains(Angular2EntityUtils.ELEMENT_REF),
                                          constructorText.contains(Angular2EntityUtils.TEMPLATE_REF),
-                                         constructorText.contains(Angular2EntityUtils.VIEW_CONTAINER_REF))
+                                         constructorText.contains(Angular2EntityUtils.VIEW_CONTAINER_REF),
+                                         false)
     writeFlag(IS_STRUCTURAL_DIRECTIVE_FLAG, kind != null && kind.isStructural)
     writeFlag(IS_REGULAR_DIRECTIVE_FLAG, kind != null && kind.isRegular)
   }
