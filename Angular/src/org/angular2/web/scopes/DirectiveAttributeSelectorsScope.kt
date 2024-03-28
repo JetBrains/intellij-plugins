@@ -9,7 +9,9 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
+import com.intellij.webSymbols.utils.MappedWebSymbol
 import com.intellij.webSymbols.utils.psiModificationCount
+import com.intellij.webSymbols.utils.qualifiedName
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.template.isTemplateTag
 import org.angular2.entities.Angular2Directive
@@ -126,6 +128,10 @@ class DirectiveAttributeSelectorsScope(val project: Project) : WebSymbolsScope {
                 }
               if (addSelector) {
                 consumer(Angular2DirectiveSymbolWrapper.create(candidate, attr))
+                if (kind.isStructural && isTemplateTag && !inputs.containsKey(attrName)) {
+                  // Add fake input
+                  consumer(MappedWebSymbol(NG_DIRECTIVE_INPUTS, attrName, attr.origin, attr.qualifiedName))
+                }
               }
             }
             for (notSelector in selector.notSelectors) {

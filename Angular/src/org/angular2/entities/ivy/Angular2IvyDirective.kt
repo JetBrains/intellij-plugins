@@ -49,7 +49,7 @@ open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
 
   override val directiveKind: Angular2DirectiveKind
     get() = getCachedValue {
-      create(getDirectiveKindNoCache(typeScriptClass), classModificationDependencies)
+      create(getDirectiveKindNoCache(typeScriptClass, selector), classModificationDependencies)
     }
 
   override val bindings: Angular2DirectiveProperties

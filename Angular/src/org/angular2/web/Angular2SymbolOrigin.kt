@@ -38,4 +38,12 @@ class Angular2SymbolOrigin(private val mySymbol: Angular2Symbol) : WebSymbolOrig
 
   override val defaultIcon: Icon
     get() = AngularIcons.Angular2
+
+  override fun equals(other: Any?): Boolean =
+    other === this
+    || other is Angular2SymbolOrigin
+    && other.versionAndName == versionAndName
+
+  override fun hashCode(): Int =
+    versionAndName.hashCode()
 }

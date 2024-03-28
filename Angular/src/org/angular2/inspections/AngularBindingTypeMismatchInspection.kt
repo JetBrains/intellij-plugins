@@ -12,14 +12,20 @@ import com.intellij.lang.javascript.validation.JSTypeChecker
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.webSymbols.utils.qualifiedKind
 import com.intellij.webSymbols.utils.unwrapMatchedSymbols
+import org.angular2.codeInsight.Angular2HighlightingUtils
+import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.config.Angular2Compiler.isStrictTemplates
+import org.angular2.codeInsight.template.isTemplateTag
 import org.angular2.inspections.quickfixes.Angular2FixesFactory.getCreateInputTransformFixes
+import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.psi.Angular2Binding
 import org.angular2.lang.expr.psi.Angular2Interpolation
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
+import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
+import org.angular2.lang.html.psi.PropertyBindingType
 import org.angular2.lang.types.BindingsTypeResolver
 import org.angular2.web.NG_DIRECTIVE_ONE_TIME_BINDINGS
 
@@ -53,6 +59,20 @@ class AngularBindingTypeMismatchInspection : AngularHtmlLikeTemplateLocalInspect
         && isStrictTemplates(attribute)
     ) {
       checkTypes(holder, attribute, descriptor, null, BindingsTypeResolver.get(attribute.parent), false)
+    }
+    else if (isTemplateTag(attribute.parent)
+             && (descriptor.info as Angular2AttributeNameParser.PropertyBindingInfo).bindingType == PropertyBindingType.PROPERTY
+             && expression != null && expression !is JSEmptyExpression
+             // Maybe a fake structural directive input
+             && descriptor.sourceDirectives.asSequence().filter { it.directiveKind.isStructural }
+               .flatMap { it.inputs }
+               .none { it.name == descriptor.info.name }) {
+      holder.registerProblem(attribute.nameElement ?: attribute,
+                             Angular2Bundle.htmlMessage(
+                               "angular.inspection.undefined-binding.message.embedded.property-not-provided",
+                               descriptor.info.name.withColor(Angular2HighlightingUtils.TextAttributesKind.NG_INPUT, attribute)),
+                             ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                             *getCreateInputTransformFixes(attribute, "string").toTypedArray())
     }
   }
 

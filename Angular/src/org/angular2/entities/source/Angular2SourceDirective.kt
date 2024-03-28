@@ -19,6 +19,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.AstLoadingFilter
+import com.intellij.util.applyIf
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import org.angular2.Angular2DecoratorUtil
@@ -44,6 +45,7 @@ import org.angular2.entities.source.Angular2SourceUtil.readDirectivePropertyMapp
 import org.angular2.index.getFunctionNameFromIndex
 import org.angular2.index.isStringArgStubbed
 import org.angular2.lang.Angular2LangUtil.OUTPUT_CHANGE_SUFFIX
+import org.angular2.web.ELEMENT_NG_TEMPLATE
 import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 
@@ -63,7 +65,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
 
   override val directiveKind: Angular2DirectiveKind
     get() = getCachedValue {
-      Result.create(getDirectiveKindNoCache(typeScriptClass), classModificationDependencies)
+      Result.create(getDirectiveKindNoCache(typeScriptClass, selector), classModificationDependencies)
     }
 
   override val exportAs: Map<String, Angular2DirectiveExportAs>
@@ -247,7 +249,13 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
         ?.firstOrNull()
 
     @JvmStatic
-    fun getDirectiveKindNoCache(clazz: TypeScriptClass): Angular2DirectiveKind {
+    fun getDirectiveKindNoCache(clazz: TypeScriptClass, selector: Angular2DirectiveSelector): Angular2DirectiveKind {
+      val anyNgTemplateSelector = selector.simpleSelectors.any { it.elementName == ELEMENT_NG_TEMPLATE }
+      val allNgTemplateSelectors = selector.simpleSelectors.all { it.elementName == ELEMENT_NG_TEMPLATE }
+      if (allNgTemplateSelectors) {
+        return Angular2DirectiveKind.STRUCTURAL
+      }
+
       var result: Angular2DirectiveKind? = null
       JSClassUtils.processClassesInHierarchy(clazz, false) { aClass, _, _ ->
         if (aClass is TypeScriptClass) {
@@ -276,7 +284,8 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
         }
         result == null
       }
-      return result ?: Angular2DirectiveKind.REGULAR
+      return (result ?: Angular2DirectiveKind.REGULAR)
+        .applyIf(anyNgTemplateSelector) { this + Angular2DirectiveKind.STRUCTURAL }
     }
 
     @JvmStatic

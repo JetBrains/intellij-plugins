@@ -33,7 +33,7 @@ class Angular2DirectiveSelectorSymbol(
   override val textRangeInSourceElement: TextRange,
   override val name: @NlsSafe String,
   private val myElementSelector: String?,
-  val isElementSelector: Boolean
+  private val isElementSelector: Boolean
 ) : Angular2Symbol, WebSymbolDeclaredInPsi {
 
   override val priority: WebSymbol.Priority
@@ -88,9 +88,6 @@ class Angular2DirectiveSelectorSymbol(
       }
       return listOf<WebSymbol>(this)
     }
-
-  val isAttributeSelector: Boolean
-    get() = !isElementSelector
 
   override val presentation: TargetPresentation
     get() {
