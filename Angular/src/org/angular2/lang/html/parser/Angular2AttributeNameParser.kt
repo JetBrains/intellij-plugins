@@ -3,6 +3,8 @@ package org.angular2.lang.html.parser
 
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.xml.XmlTag
+import com.intellij.xml.util.Html5TagAndAttributeNamesProvider
+import com.intellij.xml.util.Html5TagAndAttributeNamesProvider.Namespace
 import com.intellij.xml.util.HtmlUtil
 import org.angular2.codeInsight.template.isTemplateTag
 import org.angular2.lang.Angular2Bundle
@@ -24,10 +26,11 @@ object Angular2AttributeNameParser {
     "tabindex" to "tabIndex"
   )
 
-  fun parseBound(name: String): AttributeInfo {
+  fun parseBound(name: String, tagName: String): AttributeInfo {
     val info = parse(name)
     return if (info.type != Angular2AttributeType.REGULAR) info
-    else PropertyBindingInfo(info.name, info.isCanonical, false, PropertyBindingType.PROPERTY)
+    else PropertyBindingInfo(mapToHtmlProp(info.name, tagName), info.isCanonical,
+                             false, PropertyBindingType.PROPERTY)
   }
 
   fun parse(name: String): AttributeInfo {
@@ -42,16 +45,16 @@ object Angular2AttributeNameParser {
     val normalizedName = normalizeAttributeName(name)
     return when {
       normalizedName.startsWith("bindon-") -> {
-        parsePropertyBindingCanonical(normalizedName.substring(7), true)
+        parsePropertyBindingCanonical(normalizedName.substring(7), true, tagName)
       }
       normalizedName.startsWith("[(") && normalizedName.endsWith(")]") -> {
-        parsePropertyBindingShort(normalizedName.substring(2, normalizedName.length - 2), true)
+        parsePropertyBindingShort(normalizedName.substring(2, normalizedName.length - 2), true, tagName)
       }
       normalizedName.startsWith("bind-") -> {
-        parsePropertyBindingCanonical(normalizedName.substring(5), false)
+        parsePropertyBindingCanonical(normalizedName.substring(5), false, tagName)
       }
       normalizedName.startsWith("[") && normalizedName.endsWith("]") -> {
-        parsePropertyBindingShort(normalizedName.substring(1, normalizedName.length - 1), false)
+        parsePropertyBindingShort(normalizedName.substring(1, normalizedName.length - 1), false, tagName)
       }
       normalizedName.startsWith("on-") -> {
         parseEvent(normalizedName.substring(3), true)
@@ -93,25 +96,25 @@ object Angular2AttributeNameParser {
     else name
   }
 
-  private fun parsePropertyBindingShort(name: String, bananaBoxBinding: Boolean): AttributeInfo {
+  private fun parsePropertyBindingShort(name: String, bananaBoxBinding: Boolean, tagName: String): AttributeInfo {
     return when {
       !bananaBoxBinding && name.startsWith("@") -> {
         PropertyBindingInfo(name.substring(1), false, false, PropertyBindingType.ANIMATION)
       }
-      else -> parsePropertyBindingRest(name, false, bananaBoxBinding)
+      else -> parsePropertyBindingRest(name, false, bananaBoxBinding, tagName)
     }
   }
 
-  private fun parsePropertyBindingCanonical(name: String, bananaBoxBinding: Boolean): AttributeInfo {
+  private fun parsePropertyBindingCanonical(name: String, bananaBoxBinding: Boolean, tagName: String): AttributeInfo {
     return when {
       !bananaBoxBinding && name.startsWith("animate-") -> {
         PropertyBindingInfo(name.substring(8), true, false, PropertyBindingType.ANIMATION)
       }
-      else -> parsePropertyBindingRest(name, true, bananaBoxBinding)
+      else -> parsePropertyBindingRest(name, true, bananaBoxBinding, tagName)
     }
   }
 
-  private fun parsePropertyBindingRest(name: String, isCanonical: Boolean, bananaBoxBinding: Boolean): AttributeInfo {
+  private fun parsePropertyBindingRest(name: String, isCanonical: Boolean, bananaBoxBinding: Boolean, tagName: String): AttributeInfo {
     return when {
       name.startsWith("attr.") -> {
         PropertyBindingInfo(name.substring(5), isCanonical, bananaBoxBinding, PropertyBindingType.ATTRIBUTE)
@@ -122,7 +125,7 @@ object Angular2AttributeNameParser {
       name.startsWith("style.") -> {
         PropertyBindingInfo(name.substring(6), isCanonical, bananaBoxBinding, PropertyBindingType.STYLE)
       }
-      else -> PropertyBindingInfo(name, isCanonical, bananaBoxBinding, PropertyBindingType.PROPERTY)
+      else -> PropertyBindingInfo(mapToHtmlProp(name, tagName), isCanonical, bananaBoxBinding, PropertyBindingType.PROPERTY)
     }
   }
 
@@ -197,6 +200,12 @@ object Angular2AttributeNameParser {
     }
   }
 
+  private fun mapToHtmlProp(name: String, tagName: String): String =
+    if (Html5TagAndAttributeNamesProvider.getTags(Namespace.HTML, false).contains(tagName))
+      ATTR_TO_PROP_MAPPING.getOrDefault(name, name)
+    else
+      name
+
   open class AttributeInfo @JvmOverloads constructor(val name: String,
                                                      val isCanonical: Boolean,
                                                      val type: Angular2AttributeType,
@@ -212,11 +221,13 @@ object Angular2AttributeNameParser {
     }
   }
 
-  class PropertyBindingInfo(name: String,
-                            isCanonical: Boolean,
-                            bananaBoxBinding: Boolean,
-                            val bindingType: PropertyBindingType)
-    : AttributeInfo(ATTR_TO_PROP_MAPPING.getOrDefault(name, name), isCanonical,
+  class PropertyBindingInfo constructor(
+    name: String,
+    isCanonical: Boolean,
+    bananaBoxBinding: Boolean,
+    val bindingType: PropertyBindingType,
+  )
+    : AttributeInfo(name, isCanonical,
                     if (bananaBoxBinding) Angular2AttributeType.BANANA_BOX_BINDING else Angular2AttributeType.PROPERTY_BINDING) {
 
     override fun isEquivalent(otherInfo: AttributeInfo?): Boolean {

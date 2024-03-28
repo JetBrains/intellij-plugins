@@ -25,7 +25,7 @@ open class Angular2HtmlBoundAttributeImpl(elementType: Angular2HtmlElementTypes.
 
   override val attributeInfo: Angular2AttributeNameParser.AttributeInfo
     get() {
-      val info = Angular2AttributeNameParser.parseBound(name)
+      val info = Angular2AttributeNameParser.parseBound(name, parent?.localName ?: "")
       if (info.type.elementType !== elementType) {
         LOG.error("Element type mismatch on attribute info. Expected " + elementType
                   + ", but got " + info.type.elementType + ". Error for " +
