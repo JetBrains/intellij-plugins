@@ -3,15 +3,18 @@ package org.jetbrains.astro.webSymbols.symbols
 
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
+import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.WebSymbol.Companion.HTML_ATTRIBUTES
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import org.jetbrains.astro.AstroFramework
-import org.jetbrains.astro.webSymbols.*
+import org.jetbrains.astro.webSymbols.AstroProximity
+import org.jetbrains.astro.webSymbols.PROP_ASTRO_PROXIMITY
+import org.jetbrains.astro.webSymbols.UI_FRAMEWORK_COMPONENTS
+import org.jetbrains.astro.webSymbols.UI_FRAMEWORK_COMPONENT_PROPS
 
 // Currently, we don't support detection of props for components of other UI frameworks and use this
 // symbol as a wildcard for all components that aren't from Astro. Once we implement an extension point

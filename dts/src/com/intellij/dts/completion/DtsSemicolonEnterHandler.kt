@@ -14,7 +14,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.refactoring.suggested.endOffset
+import com.intellij.psi.util.endOffset
 import kotlin.math.max
 import kotlin.math.min
 

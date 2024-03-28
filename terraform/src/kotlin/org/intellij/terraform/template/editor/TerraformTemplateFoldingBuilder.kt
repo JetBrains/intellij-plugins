@@ -8,8 +8,8 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import com.intellij.refactoring.suggested.endOffset
-import com.intellij.refactoring.suggested.startOffset
+import com.intellij.psi.util.endOffset
+import com.intellij.psi.util.startOffset
 import org.intellij.terraform.hil.psi.ILTemplateForBlockExpression
 import org.intellij.terraform.hil.psi.ILTemplateIfBlockExpression
 import org.intellij.terraform.template.psi.TftplVisitor

@@ -11,7 +11,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.TokenType
 import com.intellij.psi.util.elementType
-import com.intellij.refactoring.suggested.endOffset
+import com.intellij.psi.util.endOffset
 import org.jetbrains.annotations.PropertyKey
 
 class DtsSyntaxAnnotator : Annotator {

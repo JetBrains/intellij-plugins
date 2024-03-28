@@ -16,10 +16,10 @@ import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
+import com.intellij.psi.createSmartPointer
 import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.contextOfType
-import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
 import com.intellij.util.containers.MultiMap
 import com.intellij.webSymbols.SymbolKind

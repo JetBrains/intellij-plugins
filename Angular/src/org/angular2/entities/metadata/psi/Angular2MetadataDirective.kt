@@ -2,7 +2,7 @@
 package org.angular2.entities.metadata.psi
 
 import com.intellij.model.Pointer
-import com.intellij.refactoring.suggested.createSmartPointer
+import com.intellij.psi.createSmartPointer
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2DirectiveKind
 import org.angular2.entities.metadata.stubs.Angular2MetadataDirectiveStub

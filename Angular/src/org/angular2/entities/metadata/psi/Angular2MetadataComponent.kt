@@ -4,8 +4,8 @@ package org.angular2.entities.metadata.psi
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiFile
+import com.intellij.psi.createSmartPointer
 import com.intellij.psi.impl.source.html.HtmlFileImpl
-import com.intellij.refactoring.suggested.createSmartPointer
 import org.angular2.entities.*
 import org.angular2.entities.metadata.stubs.Angular2MetadataComponentStub
 

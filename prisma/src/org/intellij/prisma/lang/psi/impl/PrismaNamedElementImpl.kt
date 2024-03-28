@@ -5,7 +5,7 @@ import com.intellij.navigation.ItemPresentation
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
-import com.intellij.refactoring.suggested.startOffset
+import com.intellij.psi.util.startOffset
 import org.intellij.prisma.lang.presentation.getPresentation
 import org.intellij.prisma.lang.presentation.icon
 import org.intellij.prisma.lang.psi.PrismaElementFactory

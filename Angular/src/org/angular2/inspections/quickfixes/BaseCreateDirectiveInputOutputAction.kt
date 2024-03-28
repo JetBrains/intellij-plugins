@@ -19,9 +19,9 @@ import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.createSmartPointer
 import com.intellij.psi.search.PsiElementProcessor
 import com.intellij.psi.xml.XmlAttribute
-import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.tags.Angular2ElementDescriptor

@@ -11,7 +11,7 @@ import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.contextOfType
-import com.intellij.refactoring.suggested.startOffset
+import com.intellij.psi.util.startOffset
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils

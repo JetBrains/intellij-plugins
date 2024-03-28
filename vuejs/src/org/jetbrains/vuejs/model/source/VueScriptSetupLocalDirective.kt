@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.model.source
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
-import com.intellij.refactoring.suggested.createSmartPointer
+import com.intellij.psi.createSmartPointer
 import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 import org.jetbrains.vuejs.model.VueDirective
 import org.jetbrains.vuejs.model.VueEntitiesContainer
@@ -36,5 +36,4 @@ class VueScriptSetupLocalDirective(name: String, override val rawSource: JSPsiNa
       VueScriptSetupLocalDirective(name, newSource)
     }
   }
-
 }

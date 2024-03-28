@@ -13,7 +13,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.psi.PsiElement
-import com.intellij.refactoring.suggested.createSmartPointer
+import com.intellij.psi.createSmartPointer
 import com.intellij.util.applyIf
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.PsiSourcedWebSymbol

@@ -9,7 +9,7 @@ import com.intellij.model.Pointer
 import com.intellij.openapi.util.NullableLazyValue
 import com.intellij.openapi.util.NullableLazyValue.lazyNullable
 import com.intellij.psi.PsiElement
-import com.intellij.refactoring.suggested.createSmartPointer
+import com.intellij.psi.createSmartPointer
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.WebSymbolApiStatus
 import com.intellij.webSymbols.utils.coalesceWith

@@ -29,7 +29,6 @@ import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlText
-import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.imports.VueTemplateExpressionsCopyPasteProcessor.VueTemplateExpressionsImportsTransferableData

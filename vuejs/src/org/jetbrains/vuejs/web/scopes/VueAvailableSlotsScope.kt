@@ -2,8 +2,8 @@
 package org.jetbrains.vuejs.web.scopes
 
 import com.intellij.model.Pointer
+import com.intellij.psi.createSmartPointer
 import com.intellij.psi.xml.XmlTag
-import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.WebSymbol.Companion.HTML_ATTRIBUTES

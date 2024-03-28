@@ -4,8 +4,8 @@ package org.angular2.inspections
 import com.intellij.codeInsight.daemon.impl.analysis.RemoveAttributeIntentionFix
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.psi.util.startOffset
 import com.intellij.psi.xml.XmlAttribute
-import com.intellij.refactoring.suggested.startOffset
 import com.intellij.util.SmartList
 import org.angular2.Angular2DecoratorUtil.EXPORT_AS_PROP
 import org.angular2.codeInsight.Angular2DeclarationsScope

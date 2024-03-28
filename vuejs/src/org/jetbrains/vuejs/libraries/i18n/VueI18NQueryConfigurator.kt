@@ -5,10 +5,10 @@ import com.intellij.lang.Language
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.psi.createSmartPointer
 import com.intellij.psi.html.HtmlTag
 import com.intellij.psi.impl.source.xml.XmlTextImpl
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.context.WebSymbolsContext

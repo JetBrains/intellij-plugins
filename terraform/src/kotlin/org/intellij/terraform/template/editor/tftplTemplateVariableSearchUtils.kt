@@ -10,7 +10,7 @@ import com.intellij.patterns.PsiElementPattern
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
-import com.intellij.refactoring.suggested.startOffset
+import com.intellij.psi.util.startOffset
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.hil.HILElementTypes
 import org.intellij.terraform.hil.psi.ILExpressionHolder

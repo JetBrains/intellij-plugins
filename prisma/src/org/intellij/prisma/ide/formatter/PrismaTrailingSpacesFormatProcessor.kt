@@ -6,7 +6,7 @@ import com.intellij.psi.*
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.impl.source.codeStyle.PostFormatProcessor
 import com.intellij.psi.util.elementType
-import com.intellij.refactoring.suggested.startOffset
+import com.intellij.psi.util.startOffset
 import com.intellij.util.containers.addIfNotNull
 import com.intellij.util.text.CharArrayUtil
 import org.intellij.prisma.lang.psi.PrismaElementTypes.ENUM_VALUE_DECLARATION

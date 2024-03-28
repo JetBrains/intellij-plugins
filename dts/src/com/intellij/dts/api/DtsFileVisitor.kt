@@ -5,7 +5,7 @@ import com.intellij.dts.lang.psi.*
 import com.intellij.dts.lang.resolve.files.DtsOverlayFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.refactoring.suggested.startOffset
+import com.intellij.psi.util.startOffset
 import com.intellij.util.asSafely
 
 class DtsVisitorCanceledException : Exception()

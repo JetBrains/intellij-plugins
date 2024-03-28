@@ -11,8 +11,8 @@ import com.intellij.lang.javascript.psi.stubs.TypeScriptFieldStub
 import com.intellij.lang.typescript.TypeScriptStubElementTypes
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
 import org.angular2.Angular2DecoratorUtil.ALIAS_PROP
 import org.angular2.Angular2DecoratorUtil.DECLARATIONS_PROP

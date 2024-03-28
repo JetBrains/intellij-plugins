@@ -6,8 +6,8 @@ import com.intellij.javascript.webSymbols.symbols.getJSPropertySymbols
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
+import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*

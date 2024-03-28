@@ -4,7 +4,7 @@ import com.intellij.dts.DtsTestBase
 import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.psi.getDtsPath
 import com.intellij.psi.PsiPolyVariantReference
-import com.intellij.refactoring.suggested.startOffset
+import com.intellij.psi.util.startOffset
 
 class DtsSearchTest : DtsTestBase() {
   override fun getTestFileExtension(): String = "dts"

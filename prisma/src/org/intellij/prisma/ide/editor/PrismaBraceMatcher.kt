@@ -5,7 +5,7 @@ import com.intellij.lang.PairedBraceMatcher
 import com.intellij.psi.PsiFile
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.findParentOfType
-import com.intellij.refactoring.suggested.startOffset
+import com.intellij.psi.util.startOffset
 import org.intellij.prisma.lang.psi.PrismaDeclaration
 import org.intellij.prisma.lang.psi.PrismaElementTypes
 

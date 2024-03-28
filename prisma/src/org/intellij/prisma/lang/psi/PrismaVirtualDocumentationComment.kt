@@ -7,8 +7,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.FakePsiElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.refactoring.suggested.endOffset
-import com.intellij.refactoring.suggested.startOffset
+import com.intellij.psi.util.endOffset
+import com.intellij.psi.util.startOffset
 import org.intellij.prisma.ide.documentation.stripDocCommentLinePrefix
 import org.intellij.prisma.lang.parser.PrismaParserDefinition
 

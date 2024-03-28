@@ -14,7 +14,7 @@ import com.intellij.modcommand.ModPsiUpdater
 import com.intellij.modcommand.PsiUpdateModCommandQuickFix
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import com.intellij.refactoring.suggested.startOffset
+import com.intellij.psi.util.startOffset
 import com.intellij.util.containers.headTail
 
 class DtsCreatePropertyFix(private val properties: List<DtsZephyrPropertyBinding>) : PsiUpdateModCommandQuickFix() {

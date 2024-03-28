@@ -8,7 +8,7 @@ import com.intellij.psi.PsiDocCommentBase
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.refactoring.suggested.startOffset
+import com.intellij.psi.util.startOffset
 import org.intellij.prisma.ide.schema.PrismaSchemaPath
 import org.intellij.prisma.lang.psi.*
 import org.intellij.prisma.lang.resolve.PrismaResolver

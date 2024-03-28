@@ -4,7 +4,7 @@ import com.intellij.formatting.Alignment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
-import com.intellij.refactoring.suggested.endOffset
+import com.intellij.psi.util.endOffset
 import org.intellij.prisma.lang.psi.PRISMA_TYPES
 import org.intellij.prisma.lang.psi.PrismaElementTypes.*
 import org.intellij.prisma.lang.psi.PrismaEnumValueDeclaration

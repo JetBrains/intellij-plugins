@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.model.Pointer
-import com.intellij.refactoring.suggested.createSmartPointer
+import com.intellij.psi.createSmartPointer
 import org.angular2.Angular2DecoratorUtil.getClassForDecoratorElement
 import java.util.*
 

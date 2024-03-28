@@ -8,7 +8,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.psi.PsiElement
-import com.intellij.refactoring.suggested.createSmartPointer
+import com.intellij.psi.createSmartPointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
@@ -210,5 +210,4 @@ class VueWebTypesMergedSymbol(override val name: String,
       }
     }
   }
-
 }

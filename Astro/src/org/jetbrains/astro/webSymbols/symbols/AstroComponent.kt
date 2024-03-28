@@ -6,7 +6,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.refactoring.suggested.createSmartPointer
+import com.intellij.psi.createSmartPointer
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.utils.psiModificationCount
@@ -54,5 +54,4 @@ class AstroComponent(file: PsiFile)
       filePtr.dereference()?.let { AstroComponent(it) }
     }
   }
-
 }

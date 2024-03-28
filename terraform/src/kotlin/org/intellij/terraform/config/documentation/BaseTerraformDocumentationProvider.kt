@@ -8,11 +8,10 @@ import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.psi.PsiElement
 import com.intellij.psi.SmartPsiElementPointer
-import com.intellij.refactoring.suggested.createSmartPointer
+import com.intellij.psi.createSmartPointer
 import com.intellij.util.applyIf
 import org.intellij.terraform.TerraformIcons
 import org.intellij.terraform.hcl.psi.HCLElement
-
 
 internal abstract class BaseTerraformDocumentationProvider {
 

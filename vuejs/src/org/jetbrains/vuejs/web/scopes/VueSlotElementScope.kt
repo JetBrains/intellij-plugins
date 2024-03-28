@@ -6,9 +6,9 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
 import com.intellij.lang.javascript.psi.util.stubSafeAttributes
 import com.intellij.model.Pointer
+import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlTag
-import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.WebSymbol.Companion.HTML_ATTRIBUTES

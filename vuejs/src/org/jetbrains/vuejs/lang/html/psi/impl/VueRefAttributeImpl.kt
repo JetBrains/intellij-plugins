@@ -22,7 +22,7 @@ import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.refactoring.suggested.startOffset
+import com.intellij.psi.util.startOffset
 import org.jetbrains.vuejs.codeInsight.ATTR_DIRECTIVE_PREFIX
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueDirectiveKind
 import org.jetbrains.vuejs.codeInsight.resolveLocalComponent

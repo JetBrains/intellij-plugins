@@ -6,7 +6,7 @@ import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import com.intellij.refactoring.suggested.createSmartPointer
+import com.intellij.psi.createSmartPointer
 import com.intellij.util.SmartList
 import com.intellij.util.concurrency.SynchronizedClearableLazy
 import org.angular2.entities.Angular2DirectiveSelector.SimpleSelectorWithPsi

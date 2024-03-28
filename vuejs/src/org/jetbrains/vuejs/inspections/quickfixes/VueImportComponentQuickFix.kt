@@ -9,9 +9,9 @@ import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlFile
-import com.intellij.refactoring.suggested.createSmartPointer
 import org.jetbrains.annotations.Nls
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.editor.VueComponentSourceEdit

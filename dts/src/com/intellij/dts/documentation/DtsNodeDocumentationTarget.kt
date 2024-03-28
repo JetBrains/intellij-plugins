@@ -9,7 +9,7 @@ import com.intellij.dts.zephyr.binding.DtsZephyrBindingProvider
 import com.intellij.model.Pointer
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
-import com.intellij.refactoring.suggested.createSmartPointer
+import com.intellij.psi.createSmartPointer
 
 class DtsNodeDocumentationTarget(private val node: DtsNode) : DtsDocumentationTarget(node.project) {
   override fun createPointer(): Pointer<out DocumentationTarget> {

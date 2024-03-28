@@ -20,7 +20,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.elementType
-import com.intellij.refactoring.suggested.startOffset
+import com.intellij.psi.util.startOffset
 import com.intellij.util.Processors
 
 private val refFollowSet = TokenSet.create(

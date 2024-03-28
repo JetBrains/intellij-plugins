@@ -10,10 +10,10 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.util.stubSafeAttributes
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
+import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider.Result.create
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.xml.XmlTag
-import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
 import com.intellij.xml.util.HtmlUtil.SLOT_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser

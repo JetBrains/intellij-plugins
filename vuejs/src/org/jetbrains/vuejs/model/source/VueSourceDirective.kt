@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
-import com.intellij.refactoring.suggested.createSmartPointer
+import com.intellij.psi.createSmartPointer
 import org.jetbrains.vuejs.model.VueDirective
 import org.jetbrains.vuejs.model.VueEntitiesContainer
 import java.util.*
@@ -32,5 +32,4 @@ class VueSourceDirective(name: String, override val source: PsiElement) : VueDir
       VueSourceDirective(name, newSource)
     }
   }
-
 }

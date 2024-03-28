@@ -11,8 +11,8 @@ import com.intellij.dts.lang.psi.getDtsAnnotationTarget
 import com.intellij.dts.util.relativeTo
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import com.intellij.refactoring.suggested.endOffset
-import com.intellij.refactoring.suggested.startOffset
+import com.intellij.psi.util.endOffset
+import com.intellij.psi.util.startOffset
 import org.jetbrains.annotations.PropertyKey
 
 // similar to strspn for checks.c

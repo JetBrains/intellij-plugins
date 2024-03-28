@@ -4,8 +4,8 @@ package org.jetbrains.vuejs.web.scopes
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiFile
+import com.intellij.psi.createSmartPointer
 import com.intellij.psi.xml.XmlFile
-import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*

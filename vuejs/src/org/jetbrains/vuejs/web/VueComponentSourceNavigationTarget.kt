@@ -10,7 +10,7 @@ import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.pom.Navigatable
 import com.intellij.psi.PsiElement
-import com.intellij.refactoring.suggested.createSmartPointer
+import com.intellij.psi.createSmartPointer
 import org.jetbrains.vuejs.model.source.VueComponents
 
 class VueComponentSourceNavigationTarget(private val myElement: PsiElement) : NavigationTarget {

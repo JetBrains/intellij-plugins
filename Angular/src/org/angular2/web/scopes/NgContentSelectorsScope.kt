@@ -2,9 +2,9 @@
 package org.angular2.web.scopes
 
 import com.intellij.model.Pointer
+import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlTag
-import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScopeWithCache

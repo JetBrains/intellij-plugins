@@ -13,7 +13,7 @@ import com.intellij.openapi.util.Pair
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.SmartPsiElementPointer
-import com.intellij.refactoring.suggested.createSmartPointer
+import com.intellij.psi.createSmartPointer
 import org.angular2.entities.source.Angular2SourceUtil
 
 class CreateComponentMethodIntentionAction(methodExpression: JSReferenceExpression)

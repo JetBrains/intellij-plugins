@@ -2,9 +2,9 @@
 package org.angular2.web.scopes
 
 import com.intellij.model.Pointer
+import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlTag
-import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbol.Companion.HTML_ATTRIBUTES
 import com.intellij.webSymbols.WebSymbolQualifiedKind
@@ -15,6 +15,15 @@ import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.codeInsight.template.isTemplateTag
 import org.angular2.entities.Angular2Directive
 import org.angular2.web.*
+
+private val providedKinds: Set<WebSymbolQualifiedKind> = setOf(
+  NG_DIRECTIVE_INPUTS,
+  NG_DIRECTIVE_OUTPUTS,
+  NG_DIRECTIVE_IN_OUTS,
+  NG_DIRECTIVE_ATTRIBUTES,
+  NG_DIRECTIVE_EXPORTS_AS,
+  HTML_ATTRIBUTES
+)
 
 class MatchedDirectivesScope(tag: XmlTag)
   : WebSymbolsScopeWithCache<XmlTag, Unit>(Angular2Framework.ID, tag.project, tag, Unit) {
@@ -52,10 +61,4 @@ class MatchedDirectivesScope(tag: XmlTag)
 
     Angular2LibrariesHacks.hackIonicComponentAttributeNames(directive).forEach(consumer)
   }
-
-  companion object {
-    val providedKinds = setOf(NG_DIRECTIVE_INPUTS, NG_DIRECTIVE_OUTPUTS, NG_DIRECTIVE_IN_OUTS,
-                              NG_DIRECTIVE_ATTRIBUTES, NG_DIRECTIVE_EXPORTS_AS, HTML_ATTRIBUTES)
-  }
-
 }

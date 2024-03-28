@@ -26,7 +26,6 @@ import com.intellij.psi.util.PsiUtilCore
 import com.intellij.psi.util.parentOfTypes
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
-import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
 import com.intellij.xml.util.XmlTagUtil
 import org.jetbrains.vuejs.VueBundle

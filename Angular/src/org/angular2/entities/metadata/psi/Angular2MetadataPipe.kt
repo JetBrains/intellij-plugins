@@ -3,7 +3,7 @@ package org.angular2.entities.metadata.psi
 
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.model.Pointer
-import com.intellij.refactoring.suggested.createSmartPointer
+import com.intellij.psi.createSmartPointer
 import org.angular2.entities.Angular2EntityUtils
 import org.angular2.entities.Angular2Pipe
 import org.angular2.entities.metadata.stubs.Angular2MetadataPipeStub

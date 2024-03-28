@@ -13,8 +13,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.SmartPsiElementPointer
+import com.intellij.psi.createSmartPointer
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings
-import com.intellij.refactoring.suggested.createSmartPointer
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.runtime.TerraformToolProjectSettings
 import org.intellij.terraform.template.TerraformTemplateFileType

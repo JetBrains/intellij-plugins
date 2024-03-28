@@ -3,8 +3,8 @@ package org.angular2.web.scopes
 
 import com.intellij.javascript.webSymbols.symbols.asWebSymbol
 import com.intellij.model.Pointer
+import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolQualifiedKind
@@ -46,5 +46,4 @@ class DeferOnTriggerParameterScope(parameter: Angular2BlockParameter) :
       context.dereference()?.let { DeferOnTriggerParameterScope(it) }
     }
   }
-
 }

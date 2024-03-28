@@ -15,8 +15,8 @@ import com.intellij.openapi.util.Pair
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.SmartPsiElementPointer
+import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.parentOfType
-import com.intellij.refactoring.suggested.createSmartPointer
 import org.angular2.lang.Angular2Bundle
 import org.angular2.signals.Angular2SignalUtils
 
