@@ -7,6 +7,7 @@ import com.intellij.model.Symbol
 import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
@@ -18,7 +19,6 @@ import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizer
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizerFactory
-import com.intellij.webSymbols.utils.psiModificationCount
 import com.intellij.webSymbols.utils.unwrapMatchedSymbols
 import com.intellij.xml.util.HtmlUtil
 import org.angular2.Angular2Framework
@@ -131,7 +131,7 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
     context.hashCode()
 
   override fun getModificationCount(): Long =
-    context.project.psiModificationCount
+    PsiModificationTracker.getInstance(context.project).modificationCount
 
   class Factory : WebSymbolsQueryResultsCustomizerFactory {
     override fun create(location: PsiElement, context: WebSymbolsContext): WebSymbolsQueryResultsCustomizer? =

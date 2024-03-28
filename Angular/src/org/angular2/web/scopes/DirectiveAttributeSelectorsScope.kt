@@ -10,7 +10,6 @@ import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.utils.MappedWebSymbol
-import com.intellij.webSymbols.utils.psiModificationCount
 import com.intellij.webSymbols.utils.qualifiedName
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.template.isTemplateTag
@@ -65,7 +64,7 @@ class DirectiveAttributeSelectorsScope(val project: Project) : WebSymbolsScope {
       get() = WebSymbol.KIND_HTML_ELEMENTS
 
     override fun getModificationCount(): Long =
-      project.psiModificationCount
+      PsiModificationTracker.getInstance(project).modificationCount
 
     override fun createPointer(): Pointer<HtmlAttributeDirectiveAttributeSelectorsExtension> =
       Pointer.hardPointer(this)

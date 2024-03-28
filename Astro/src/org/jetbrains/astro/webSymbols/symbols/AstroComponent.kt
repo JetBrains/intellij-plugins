@@ -6,10 +6,10 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.createSmartPointer
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
-import com.intellij.webSymbols.utils.psiModificationCount
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.webSymbols.ASTRO_COMPONENTS
 import org.jetbrains.astro.webSymbols.AstroProximity
@@ -46,7 +46,7 @@ class AstroComponent(file: PsiFile)
   }
 
   override fun getModificationCount(): Long =
-    project.psiModificationCount
+    PsiModificationTracker.getInstance(project).modificationCount
 
   override fun createPointer(): Pointer<AstroComponent> {
     val filePtr = dataHolder.createSmartPointer()

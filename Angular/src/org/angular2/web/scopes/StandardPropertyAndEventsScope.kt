@@ -21,7 +21,6 @@ import com.intellij.webSymbols.WebSymbol.Companion.JS_EVENTS
 import com.intellij.webSymbols.WebSymbol.Companion.JS_PROPERTIES
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
-import com.intellij.webSymbols.utils.psiModificationCount
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.attributes.DomElementSchemaRegistry
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
@@ -32,7 +31,8 @@ import java.util.*
 
 class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSymbolsScope {
 
-  override fun getModificationCount(): Long = templateFile.project.psiModificationCount
+  override fun getModificationCount(): Long =
+    PsiModificationTracker.getInstance(templateFile.project).modificationCount
 
   override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
@@ -81,7 +81,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
       get() = WebSymbol.KIND_HTML_ELEMENTS
 
     override fun getModificationCount(): Long =
-      project.psiModificationCount
+      PsiModificationTracker.getInstance(project).modificationCount
 
     override fun createPointer(): Pointer<HtmlElementStandardPropertyAndEventsExtension> {
       val templateFile = this.dataHolder.createSmartPointer()
