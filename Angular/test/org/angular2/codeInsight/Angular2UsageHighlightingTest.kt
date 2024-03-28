@@ -23,4 +23,10 @@ class Angular2UsageHighlightingTest : Angular2TestCase("usageHighlighting") {
 
   fun testDirectiveExportAsFromUsage() = checkUsageHighlighting()
 
+  fun testStructuralDirectiveWithNgTemplateSelectorFromBinding() = checkUsageHighlighting()
+
+  fun testStructuralDirectiveWithNgTemplateSelectorFromPlainAttr() = checkUsageHighlighting()
+
+  fun testStructuralDirectiveWithNgTemplateSelectorFromDefinition() = checkUsageHighlighting()
+
 }

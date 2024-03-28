@@ -132,4 +132,10 @@ class Angular2RenameTest : Angular2TestCase("refactoring/rename") {
   fun testHostDirectiveOutputWithJsTextRefToFilterOut() =
     checkSymbolRename("data-source.directive.ts", "newOutput", Angular2TestModule.ANGULAR_CORE_15_1_5)
 
+  fun testStructuralDirectiveWithNgTemplateSelector1() =
+    checkSymbolRename("appFoo", dir = false)
+
+  fun testStructuralDirectiveWithNgTemplateSelector2() =
+    checkSymbolRename("appFoo", dir = false)
+
 }

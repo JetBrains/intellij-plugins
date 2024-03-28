@@ -200,6 +200,8 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
   fun testStdTagAttributeMappings() = checkHighlighting(ANGULAR_CORE_16_2_8, extension = "ts")
 
+  fun testStructuralDirectiveWithNgTemplateSelector() = checkHighlighting(ANGULAR_CORE_16_2_8, extension = "ts")
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
