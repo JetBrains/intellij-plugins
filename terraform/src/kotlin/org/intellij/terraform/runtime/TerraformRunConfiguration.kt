@@ -1,6 +1,7 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.runtime
 
+import com.intellij.CommonBundle
 import com.intellij.execution.*
 import com.intellij.execution.configuration.EnvironmentVariablesComponent
 import com.intellij.execution.configurations.*
@@ -108,7 +109,7 @@ class TerraformRunConfiguration(project: Project,
     if (!terraformPath.isExecutable()) {
       val exception = RuntimeConfigurationException(
         HCLBundle.message("run.configuration.terraform.path.incorrect", terraformPath),
-        HCLBundle.message("terraform.message.error")
+        CommonBundle.getErrorTitle()
       )
       exception.setQuickFix(Runnable {
         val settings = TerraformToolProjectSettings.getInstance(project)
