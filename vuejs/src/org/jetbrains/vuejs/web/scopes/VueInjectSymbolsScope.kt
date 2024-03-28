@@ -8,9 +8,6 @@ import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.WebSymbol.Companion.JS_PROPERTIES
 import com.intellij.webSymbols.WebSymbol.Companion.JS_STRING_LITERALS
-import com.intellij.webSymbols.WebSymbol.Companion.KIND_JS_PROPERTIES
-import com.intellij.webSymbols.WebSymbol.Companion.KIND_JS_STRING_LITERALS
-import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
 import com.intellij.webSymbols.utils.ReferencingWebSymbol
@@ -67,16 +64,14 @@ class VueInjectSymbolsScope(private val enclosingComponent: VueSourceComponent)
   }
 
   private val vueInjectStringSymbol = ReferencingWebSymbol(
-    NAMESPACE_JS,
-    KIND_JS_STRING_LITERALS,
+    JS_STRING_LITERALS,
     "Vue Inject String",
     VueInjectSymbolOrigin,
     VUE_PROVIDES
   )
 
   private val vueInjectPropertySymbol = ReferencingWebSymbol(
-    NAMESPACE_JS,
-    KIND_JS_PROPERTIES,
+    JS_PROPERTIES,
     "Vue Inject Property",
     VueInjectSymbolOrigin,
     VUE_PROVIDES

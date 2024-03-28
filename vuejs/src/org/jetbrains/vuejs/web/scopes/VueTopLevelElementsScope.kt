@@ -14,8 +14,7 @@ import org.jetbrains.vuejs.web.VUE_TOP_LEVEL_ELEMENTS
 object VueTopLevelElementsScope : WebSymbolsScope {
 
   private val referencingSymbol = ReferencingWebSymbol(
-    WebSymbol.NAMESPACE_HTML,
-    WebSymbol.KIND_HTML_ELEMENTS,
+    WebSymbol.HTML_ELEMENTS,
     "Vue Top Level Element",
     WebSymbolOrigin.empty(),
     VUE_TOP_LEVEL_ELEMENTS

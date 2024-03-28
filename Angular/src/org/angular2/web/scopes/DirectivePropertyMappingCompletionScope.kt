@@ -21,8 +21,6 @@ import com.intellij.util.asSafely
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.WebSymbol.Companion.JS_STRING_LITERALS
-import com.intellij.webSymbols.WebSymbol.Companion.KIND_JS_STRING_LITERALS
-import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.utils.ReferencingWebSymbol
@@ -139,8 +137,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
   }
 
   private val inputOutputReference = ReferencingWebSymbol(
-    NAMESPACE_JS,
-    KIND_JS_STRING_LITERALS,
+    JS_STRING_LITERALS,
     "Directive property",
     AngularEmptyOrigin,
     NG_DIRECTIVE_INPUTS,
