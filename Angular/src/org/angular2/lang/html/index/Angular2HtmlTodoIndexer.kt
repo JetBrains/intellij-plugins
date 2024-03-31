@@ -14,7 +14,7 @@ class Angular2HtmlTodoIndexer : VersionedTodoIndexer() {
     return BaseFilterLexerUtil.calcTodoEntries(inputData) { consumer: OccurrenceConsumer ->
       Angular2HtmlFilterLexer(
         consumer,
-        SyntaxHighlighterFactory.getSyntaxHighlighter(Angular2HtmlLanguage.INSTANCE, inputData.project, inputData.file)
+        SyntaxHighlighterFactory.getSyntaxHighlighter(Angular2HtmlLanguage, inputData.project, inputData.file)
           .highlightingLexer)
     }
   }

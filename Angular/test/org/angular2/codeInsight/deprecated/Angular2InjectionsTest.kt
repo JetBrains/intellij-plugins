@@ -91,8 +91,8 @@ class Angular2InjectionsTest : Angular2CodeInsightFixtureTestCase() {
 
   fun testHost() {
     myFixture.configureByFiles("host.ts", "package.json")
-    for (signature in listOf(Pair("eve<caret>nt", Angular2Language.INSTANCE),
-                             Pair("bind<caret>ing", Angular2Language.INSTANCE),
+    for (signature in listOf(Pair("eve<caret>nt", Angular2Language),
+                             Pair("bind<caret>ing", Angular2Language),
                              Pair("at<caret>tribute", JavaScriptSupportLoader.TYPESCRIPT))) {
       val offset = Angular2TestUtil.findOffsetBySignature(signature.first, myFixture.getFile())
       var element = InjectedLanguageManager.getInstance(
@@ -148,7 +148,7 @@ class Angular2InjectionsTest : Angular2CodeInsightFixtureTestCase() {
 
   fun testUserSpecifiedInjection() {
     myFixture.configureByFiles("userSpecifiedLang.ts", "package.json")
-    for (signature in listOf(Pair("<div><caret></div>", Angular2HtmlLanguage.INSTANCE.id),
+    for (signature in listOf(Pair("<div><caret></div>", Angular2HtmlLanguage.id),
                              Pair("\$text<caret>-color", "SCSS"),  //fails if correct order of injectors is not ensured
                              Pair("color: <caret>#00aa00", CSSLanguage.INSTANCE.id))) {
       val offset = Angular2TestUtil.findOffsetBySignature(signature.first, myFixture.getFile())
@@ -258,7 +258,7 @@ class Angular2InjectionsTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.configureByText("angular.json", """{"projects":{"test":{"sourceRoot":"src","root":""}}}""")
     TestCase.assertEquals(myFixture.configureByText ("root.html", "").language, HTMLLanguage.INSTANCE)
     myFixture.tempDirFixture.createFile("src/src.html")
-    TestCase.assertEquals(myFixture.configureFromTempProjectFile ("src/src.html").language, Angular2HtmlLanguage.INSTANCE)
+    TestCase.assertEquals(myFixture.configureFromTempProjectFile ("src/src.html").language, Angular2HtmlLanguage)
   }
 
   fun testTemplateReferencedThroughImportStatement() {

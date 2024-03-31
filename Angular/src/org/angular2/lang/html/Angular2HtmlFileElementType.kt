@@ -9,7 +9,7 @@ import org.angular2.lang.expr.parser.Angular2StubElementTypes
 import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes
 
 class Angular2HtmlFileElementType private constructor()
-  : IStubFileElementType<PsiFileStub<HtmlFileImpl>>("html.angular2", Angular2HtmlLanguage.INSTANCE) {
+  : IStubFileElementType<PsiFileStub<HtmlFileImpl>>("html.angular2", Angular2HtmlLanguage) {
   override fun getStubVersion(): Int {
     return angular2HtmlStubVersion
   }

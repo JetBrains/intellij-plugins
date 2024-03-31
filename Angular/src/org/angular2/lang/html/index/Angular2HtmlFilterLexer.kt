@@ -75,9 +75,9 @@ class Angular2HtmlFilterLexer(occurrenceConsumer: OccurrenceConsumer, originalLe
     private val SUPPORTED_LANGUAGES: Set<Language> = setOf(
       XMLLanguage.INSTANCE,
       HTMLLanguage.INSTANCE,
-      Angular2HtmlLanguage.INSTANCE,
-      Angular2SvgLanguage.INSTANCE,
-      Angular2Language.INSTANCE,
+      Angular2HtmlLanguage,
+      Angular2SvgLanguage,
+      Angular2Language,
       Language.ANY
     )
     private val IDENTIFIERS = TokenSet.orSet(

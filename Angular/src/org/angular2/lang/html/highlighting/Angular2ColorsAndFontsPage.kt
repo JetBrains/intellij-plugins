@@ -79,9 +79,7 @@ class Angular2ColorsAndFontsPage : RainbowColorSettingsPage, DisplayPrioritySort
            || Angular2HighlighterColors.NG_VARIABLE == type
   }
 
-  override fun getLanguage(): Language =
-    Angular17HtmlLanguage.INSTANCE
-
+  override fun getLanguage(): Language = Angular17HtmlLanguage
 }
 
 private val ATTRS: Array<AttributesDescriptor> = arrayOf(

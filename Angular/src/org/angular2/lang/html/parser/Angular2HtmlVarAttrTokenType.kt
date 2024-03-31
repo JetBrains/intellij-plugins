@@ -22,7 +22,7 @@ import java.util.function.Supplier
 class Angular2HtmlVarAttrTokenType(debugName: String,
                                    private val myVarElementType: JSStubElementType<JSVariableStub<JSVariable>, JSVariable>,
                                    private val myPrefixTokenParserConstructor: Supplier<out TokenParser>)
-  : HtmlCustomEmbeddedContentTokenType(debugName, Angular2Language.INSTANCE) {
+  : HtmlCustomEmbeddedContentTokenType(debugName, Angular2Language) {
   override fun createLexer(): Lexer {
     return AbstractCustomLexer(listOf(myPrefixTokenParserConstructor.get(), VarIdentTokenParser()))
   }

@@ -18,7 +18,7 @@ interface Angular2ElementTypes : JSElementTypes, Angular2StubElementTypes {
 
   open class Angular2ElementType(@NonNls debugName: String,
                                  private val myClassConstructor: Function<Angular2ElementType, ASTNode>)
-    : IElementType(debugName, Angular2Language.INSTANCE), ICompositeElementType {
+    : IElementType(debugName, Angular2Language), ICompositeElementType {
 
     override fun createCompositeNode(): ASTNode {
       return myClassConstructor.apply(this)
@@ -30,7 +30,7 @@ interface Angular2ElementTypes : JSElementTypes, Angular2StubElementTypes {
     : Angular2ElementType(debugName, classConstructor), JSExpressionElementType
 
   class Angular2TemplateBindingType(private val myKey: String, private val myVar: Boolean, private val myName: String?)
-    : IElementType("NG:TEMPLATE_BINDING_STATEMENT", Angular2Language.INSTANCE, false), ICompositeElementType {
+    : IElementType("NG:TEMPLATE_BINDING_STATEMENT", Angular2Language, false), ICompositeElementType {
 
     override fun createCompositeNode(): ASTNode {
       return Angular2TemplateBindingImpl(TEMPLATE_BINDING_STATEMENT, myKey, myVar, myName)
@@ -38,7 +38,7 @@ interface Angular2ElementTypes : JSElementTypes, Angular2StubElementTypes {
   }
 
   class Angular2TemplateBindingsType(private val myTemplateName: String)
-    : IElementType("NG:TEMPLATE_BINDINGS_STATEMENT", Angular2Language.INSTANCE, false), ICompositeElementType {
+    : IElementType("NG:TEMPLATE_BINDINGS_STATEMENT", Angular2Language, false), ICompositeElementType {
 
     override fun createCompositeNode(): ASTNode {
       return Angular2TemplateBindingsImpl(TEMPLATE_BINDINGS_STATEMENT, myTemplateName)

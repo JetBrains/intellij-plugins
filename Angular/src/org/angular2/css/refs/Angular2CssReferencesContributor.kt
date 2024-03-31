@@ -24,7 +24,7 @@ internal class Angular2CssReferencesContributor : PsiReferenceContributor() {
 
         override fun isAcceptable(element: Any, context: PsiElement?): Boolean {
           val info: Angular2AttributeNameParser.AttributeInfo
-          if (context is Angular2HtmlPropertyBinding || context is XmlAttribute && !context.language.`is`(Angular2Language.INSTANCE)) {
+          if (context is Angular2HtmlPropertyBinding || context is XmlAttribute && !context.language.`is`(Angular2Language)) {
             info = Angular2AttributeNameParser.parse((context as XmlAttribute).name, context.parent)
             return info is Angular2AttributeNameParser.PropertyBindingInfo && info.bindingType == PropertyBindingType.CLASS
           }
@@ -32,7 +32,7 @@ internal class Angular2CssReferencesContributor : PsiReferenceContributor() {
         }
       }))
 
-    CssClassInJSLiteralOrIdentifierReferenceProvider.register(registrar, Angular2Language.INSTANCE, Angular2Binding::class.java) {
+    CssClassInJSLiteralOrIdentifierReferenceProvider.register(registrar, Angular2Language, Angular2Binding::class.java) {
       isNgClassAttribute(it)
     }
     registrar.registerReferenceProvider(cssClassInAttributePattern, Angular2CssClassInAttributeReferenceProvider())

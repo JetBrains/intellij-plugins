@@ -5,12 +5,10 @@ import com.intellij.javascript.web.html.WebFrameworkHtmlFileType
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.Angular2Language
 
-object Angular2HtmlFileType
-  : WebFrameworkHtmlFileType(Angular2HtmlLanguage.INSTANCE, "Angular2Html", "html") {
-
+object Angular2HtmlFileType : WebFrameworkHtmlFileType(Angular2HtmlLanguage, "Angular2Html", "html") {
   init {
     // Initialize Angular 2 language as well
-    Angular2Language.INSTANCE
+    Angular2Language
   }
 
   override fun getDescription(): String {

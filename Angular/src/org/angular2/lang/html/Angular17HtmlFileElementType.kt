@@ -6,7 +6,7 @@ import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.psi.tree.IStubFileElementType
 
 class Angular17HtmlFileElementType private constructor()
-  : IStubFileElementType<PsiFileStub<HtmlFileImpl>>("html.angular17", Angular17HtmlLanguage.INSTANCE) {
+  : IStubFileElementType<PsiFileStub<HtmlFileImpl>>("html.angular17", Angular17HtmlLanguage) {
   override fun getStubVersion(): Int {
     return Angular2HtmlFileElementType.angular2HtmlStubVersion
   }

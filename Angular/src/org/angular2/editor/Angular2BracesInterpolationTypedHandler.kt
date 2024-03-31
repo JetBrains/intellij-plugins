@@ -18,7 +18,7 @@ internal class Angular2BracesInterpolationTypedHandler : TypedHandlerDelegate() 
                                file: PsiFile,
                                fileType: FileType): Result {
     val language = file.language
-    return if (language.isKindOf(Angular2HtmlLanguage.INSTANCE)) {
+    return if (language.isKindOf(Angular2HtmlLanguage)) {
       Angular2BracesCompleter.beforeCharTyped(c, project, editor, file)
     }
     else Result.CONTINUE

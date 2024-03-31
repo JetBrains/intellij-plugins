@@ -13,8 +13,7 @@ import org.jetbrains.annotations.NonNls
 import java.io.IOException
 
 class Angular2HtmlNgContentSelectorElementType
-  : IStubElementType<Angular2HtmlNgContentSelectorStub, Angular2HtmlNgContentSelector>("NG_CONTENT_SELECTOR",
-                                                                                       Angular2HtmlLanguage.INSTANCE),
+  : IStubElementType<Angular2HtmlNgContentSelectorStub, Angular2HtmlNgContentSelector>("NG_CONTENT_SELECTOR", Angular2HtmlLanguage),
     ICompositeElementType {
   override fun toString(): @NonNls String {
     return Angular2HtmlStubElementTypes.EXTERNAL_ID_PREFIX + super.getDebugName()

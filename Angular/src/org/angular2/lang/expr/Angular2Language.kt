@@ -7,7 +7,7 @@ import com.intellij.lang.javascript.JSLanguageDialect
 import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lang.javascript.dialects.JSLanguageFeature
 
-class Angular2Language private constructor() : JSLanguageDialect("Angular2", Angular2Dialect()), DependentLanguage {
+object Angular2Language : JSLanguageDialect("Angular2", Angular2Dialect()), DependentLanguage {
   override fun isAtLeast(other: JSLanguageDialect): Boolean {
     return super.isAtLeast(other) || JavaScriptSupportLoader.TYPESCRIPT.isAtLeast(other)
   }
@@ -16,10 +16,5 @@ class Angular2Language private constructor() : JSLanguageDialect("Angular2", Ang
     override fun defineFeatures(): Set<JSLanguageFeature> {
       return setOf(JSLanguageFeature.IMPORT_DECLARATIONS)
     }
-  }
-
-  companion object {
-    @JvmField
-    val INSTANCE = Angular2Language()
   }
 }

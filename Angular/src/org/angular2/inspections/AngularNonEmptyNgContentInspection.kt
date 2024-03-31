@@ -20,7 +20,7 @@ class AngularNonEmptyNgContentInspection : AngularHtmlLikeTemplateLocalInspectio
         holder.registerProblem(tag, TextRange(content[0].textRangeInParent.startOffset,
                                               content[content.size - 1].textRangeInParent.endOffset),
                                Angular2Bundle.htmlMessage("angular.inspection.ng-content-with-content.message",
-                                                          highlightWithLexer(tag.project, "<ng-content>", Angular2HtmlLanguage.INSTANCE)),
+                                                          highlightWithLexer(tag.project, "<ng-content>", Angular2HtmlLanguage)),
                                RemoveTagContentQuickFix()
         )
       }

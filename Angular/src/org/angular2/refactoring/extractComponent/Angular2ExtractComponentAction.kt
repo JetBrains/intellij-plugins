@@ -23,8 +23,8 @@ class Angular2ExtractComponentAction : BaseRefactoringAction() {
 
   override fun isAvailableOnElementInEditorAndFile(element: PsiElement, editor: Editor, file: PsiFile, context: DataContext) = true
 
-  override fun isAvailableForLanguage(language: Language?): Boolean = language?.isKindOf(Angular2HtmlLanguage.INSTANCE) == true
-                                                                      && !language.isKindOf(Angular2SvgLanguage.INSTANCE)
+  override fun isAvailableForLanguage(language: Language?): Boolean = language?.isKindOf(Angular2HtmlLanguage) == true
+                                                                      && !language.isKindOf(Angular2SvgLanguage)
 
   override fun isAvailableForFile(file: PsiFile?): Boolean = file?.fileType.let { Angular2LangUtil.isAngular2HtmlFileType(it) }
 

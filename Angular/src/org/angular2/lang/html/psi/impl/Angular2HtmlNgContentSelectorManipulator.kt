@@ -33,7 +33,7 @@ class Angular2HtmlNgContentSelectorManipulator : AbstractElementManipulator<Angu
     val quotedValue = XmlElementFactoryImpl.quoteValue(value)
     val tag = XmlElementFactory.getInstance(project).createTagFromText(
       "<ng-content select=$quotedValue></ng-content>",
-      Angular2HtmlLanguage.INSTANCE)
+      Angular2HtmlLanguage)
     val attributes = tag.attributes
     thisLogger().assertTrue(attributes.size == 1, tag.text)
     return attributes[0]

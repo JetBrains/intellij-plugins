@@ -7,7 +7,7 @@ import com.intellij.psi.tree.IStubFileElementType
 import org.angular2.lang.html.Angular2HtmlFileElementType
 
 class Angular2SvgFileElementType private constructor()
-  : IStubFileElementType<PsiFileStub<HtmlFileImpl>>("svg.angular2", Angular2SvgLanguage.INSTANCE) {
+  : IStubFileElementType<PsiFileStub<HtmlFileImpl>>("svg.angular2", Angular2SvgLanguage) {
   override fun getStubVersion(): Int {
     return Angular2HtmlFileElementType.angular2HtmlStubVersion
   }

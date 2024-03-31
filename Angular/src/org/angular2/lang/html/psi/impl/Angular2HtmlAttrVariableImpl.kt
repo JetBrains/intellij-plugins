@@ -35,9 +35,7 @@ class Angular2HtmlAttrVariableImpl : JSVariableImpl<JSVariableStub<JSVariable>, 
     }
   }
 
-  override fun getLanguage(): Language {
-    return Angular2Language.INSTANCE
-  }
+  override fun getLanguage(): Language = Angular2Language
 
   override fun isLocal(): Boolean {
     return false

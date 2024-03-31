@@ -117,7 +117,7 @@ class AngularUndefinedBindingInspection : AngularHtmlLikeTemplateLocalInspection
     holder.registerProblem(attribute.nameElement,
                            Angular2Bundle.htmlMessage(
                              messageKey, htmlName,
-                             "<${attribute.parent.name}>".withColor(Angular2HtmlLanguage.INSTANCE, attribute)),
+                             "<${attribute.parent.name}>".withColor(Angular2HtmlLanguage, attribute)),
                            severity,
                            *quickFixes.toTypedArray<LocalQuickFix>())
   }
@@ -150,7 +150,7 @@ class AngularUndefinedBindingInspection : AngularHtmlLikeTemplateLocalInspection
       holder.registerProblem(attribute.nameElement,
                              Angular2Bundle.htmlMessage(
                                "angular.inspection.undefined-binding.message.embedded.no-directive-matched",
-                               bindings.templateName.withColor(Angular2HtmlLanguage.INSTANCE, attribute)
+                               bindings.templateName.withColor(Angular2HtmlLanguage, attribute)
                              ),
                              ProblemHighlightType.WEAK_WARNING,
                              *fixes.toTypedArray<LocalQuickFix>())

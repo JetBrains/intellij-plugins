@@ -8,9 +8,9 @@ import com.intellij.util.asSafely
 enum class Angular2TemplateSyntax(val tokenizeExpansionForms: Boolean,
                                   val enableBlockSyntax: Boolean,
                                   val language: WebFrameworkHtmlDialect) {
-  V_2(true, false, Angular2HtmlLanguage.INSTANCE),
-  V_2_NO_EXPANSION_FORMS(false, false, Angular2HtmlLanguage.INSTANCE),
-  V_17(true, true, Angular17HtmlLanguage.INSTANCE),
+  V_2(true, false, Angular2HtmlLanguage),
+  V_2_NO_EXPANSION_FORMS(false, false, Angular2HtmlLanguage),
+  V_17(true, true, Angular17HtmlLanguage),
   ;
   companion object {
     fun of(psiElement: PsiElement): Angular2TemplateSyntax? =

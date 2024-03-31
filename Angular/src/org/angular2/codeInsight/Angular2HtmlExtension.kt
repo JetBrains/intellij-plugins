@@ -31,7 +31,7 @@ class Angular2HtmlExtension : WebSymbolsXmlExtension() {
   }
 
   override fun isSelfClosingTagAllowed(tag: XmlTag): Boolean {
-    if (tag.language.`is`(Angular2SvgLanguage.INSTANCE)) return true
+    if (tag.language.`is`(Angular2SvgLanguage)) return true
     val descriptor = tag.descriptor
     if (descriptor is WebSymbolElementDescriptor) {
       val hasStandardSymbol = descriptor.symbol

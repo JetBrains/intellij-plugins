@@ -42,7 +42,7 @@ class Angular2HtmlTagBlock(node: ASTNode,
     }
 
   override fun useMyFormatter(myLanguage: Language, childLanguage: Language, childPsi: PsiElement): Boolean =
-    childLanguage.isKindOf(Angular2HtmlLanguage.INSTANCE)
+    childLanguage.isKindOf(Angular2HtmlLanguage)
     || super.useMyFormatter(myLanguage, childLanguage, childPsi)
 
   override fun isAttributeElementType(elementType: IElementType): Boolean =

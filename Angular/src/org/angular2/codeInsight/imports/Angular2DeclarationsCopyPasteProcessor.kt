@@ -51,7 +51,7 @@ class Angular2DeclarationsCopyPasteProcessor : JSCopyPasteProcessorBase<Angular2
   }
 
   override fun isAcceptablePasteContext(context: PsiElement): Boolean =
-    context.containingFile.let { it is Angular2HtmlFile || (it is JSFile && it.language == Angular2Language.INSTANCE) }
+    context.containingFile.let { it is Angular2HtmlFile || (it is JSFile && it.language == Angular2Language) }
 
   override fun hasUnsupportedContentInCopyContext(parent: PsiElement, textRange: TextRange): Boolean =
     false

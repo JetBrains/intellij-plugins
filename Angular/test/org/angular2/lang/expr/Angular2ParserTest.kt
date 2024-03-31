@@ -39,7 +39,7 @@ class Angular2ParserTest : LightPlatformCodeInsightTestCase(), FileBasedTestCase
     for (line in StringUtil.splitByLines(text)) {
       if (!result.isEmpty()) result.append("------\n")
       val psiFile = PsiFileFactory.getInstance(project)
-        .createFileFromText("test.$name.$extension", Angular2Language.INSTANCE, line)
+        .createFileFromText("test.$name.$extension", Angular2Language, line)
       result.append(DebugUtil.psiToString(psiFile, true, false))
     }
     UsefulTestCase.assertSameLinesWithFile(File(path, suffix.replace("js", "txt")).toString(), result.toString())

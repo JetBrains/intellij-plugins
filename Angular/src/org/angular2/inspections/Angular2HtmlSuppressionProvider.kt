@@ -15,7 +15,7 @@ class Angular2HtmlSuppressionProvider : DefaultXmlSuppressionProvider() {
   private val HTML_UNKNOWN_TARGET_INSPECTION_ID = InspectionProfileEntry.getShortName(HtmlUnknownTargetInspection::class.java.simpleName)
 
   override fun isProviderAvailable(file: PsiFile): Boolean {
-    return file.language.isKindOf(Angular2HtmlLanguage.INSTANCE)
+    return file.language.isKindOf(Angular2HtmlLanguage)
   }
 
   override fun isSuppressedFor(element: PsiElement, inspectionId: String): Boolean {

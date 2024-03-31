@@ -38,7 +38,7 @@ class Angular2HtmlFormattingBlock(node: ASTNode?,
     }
 
   override fun useMyFormatter(myLanguage: Language, childLanguage: Language, childPsi: PsiElement): Boolean =
-    childLanguage.isKindOf(Angular2HtmlLanguage.INSTANCE)
+    childLanguage.isKindOf(Angular2HtmlLanguage)
     || super.useMyFormatter(myLanguage, childLanguage, childPsi)
 
   override fun getSpacing(child1: Block?, child2: Block): Spacing? =

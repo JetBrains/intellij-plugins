@@ -50,7 +50,7 @@ class AngularInaccessibleSymbolInspection : LocalInspectionTool() {
                             isOnTheFly: Boolean,
                             session: LocalInspectionToolSession): PsiElementVisitor {
     val fileLang = holder.file.language
-    if (fileLang.isKindOf(Angular2HtmlLanguage.INSTANCE) || Angular2Language.INSTANCE.`is`(fileLang)) {
+    if (fileLang.isKindOf(Angular2HtmlLanguage) || Angular2Language.`is`(fileLang)) {
       return object : Angular2ElementVisitor() {
 
         override fun visitElement(element: PsiElement) {

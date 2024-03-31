@@ -12,7 +12,7 @@ import org.angular2.lang.html.Angular2HtmlLanguage
 class Angular2HtmlFileIndentOptionsProvider : PsiBasedFileIndentOptionsProvider() {
 
   override fun getIndentOptionsByPsiFile(settings: CodeStyleSettings, file: PsiFile): IndentOptions? {
-    if (file.language.isKindOf(Angular2HtmlLanguage.INSTANCE)) {
+    if (file.language.isKindOf(Angular2HtmlLanguage)) {
       // Treat file as an HTML file and apply HTML indentation settings
       var htmlIndentOptions = settings.getLanguageIndentOptions(HTMLLanguage.INSTANCE)
       if (settings.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_UNIFORM_INDENT) {

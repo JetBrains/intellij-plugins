@@ -4,8 +4,7 @@ package org.angular2.lang.svg
 import com.intellij.javascript.web.html.WebFrameworkHtmlFileType
 import org.angular2.lang.Angular2Bundle
 
-object Angular2SvgFileType
-  : WebFrameworkHtmlFileType(Angular2SvgLanguage.INSTANCE, "Angular2Svg", "svg") {
+object Angular2SvgFileType : WebFrameworkHtmlFileType(Angular2SvgLanguage, "Angular2Svg", "svg") {
   override fun getDescription(): String {
     return Angular2Bundle.message("filetype.angular2svg.description")
   }

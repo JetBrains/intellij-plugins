@@ -71,7 +71,7 @@ class Angular2ViewChildReferencesProvider : PsiReferenceProvider() {
     private fun processVariables(processor: BiPredicate<in String, in PsiElement>) {
       val template = template
       if (template != null) {
-        if (template.language.isKindOf(Angular2HtmlLanguage.INSTANCE)) {
+        if (template.language.isKindOf(Angular2HtmlLanguage)) {
           template.accept(object : Angular2HtmlRecursiveElementWalkingVisitor() {
             override fun visitReference(reference: Angular2HtmlReference) {
               val refVar = reference.variable

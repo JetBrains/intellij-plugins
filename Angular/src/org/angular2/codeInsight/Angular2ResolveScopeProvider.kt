@@ -14,7 +14,7 @@ import org.angular2.lang.expr.Angular2Language
 class Angular2ResolveScopeProvider : JSElementResolveScopeProvider {
 
   override fun getElementResolveScope(element: PsiElement): GlobalSearchScope? {
-    if (Angular2Language.INSTANCE.`is`(DialectDetector.languageDialectOfElement(element))) {
+    if (Angular2Language.`is`(DialectDetector.languageDialectOfElement(element))) {
       val clazz = Angular2EntitiesProvider.findTemplateComponent(element)?.jsResolveScope
       if (clazz != null) {
         return JSResolveUtil.getResolveScope(clazz)

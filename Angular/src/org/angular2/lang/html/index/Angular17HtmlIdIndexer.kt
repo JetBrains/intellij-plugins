@@ -14,7 +14,7 @@ class Angular17HtmlIdIndexer : LexingIdIndexer {
       Angular2HtmlFilterLexer(
         consumer,
         SyntaxHighlighterFactory.getSyntaxHighlighter(
-          Angular17HtmlLanguage.INSTANCE, inputData.project, inputData.file).highlightingLexer
+          Angular17HtmlLanguage, inputData.project, inputData.file).highlightingLexer
       )
     }
   }

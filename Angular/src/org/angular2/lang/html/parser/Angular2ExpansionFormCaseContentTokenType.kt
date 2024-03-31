@@ -12,7 +12,7 @@ import org.angular2.lang.html.Angular2TemplateSyntax
 import org.angular2.lang.html.lexer.Angular2HtmlLexer
 
 internal class Angular2ExpansionFormCaseContentTokenType private constructor(private val templateSyntax: Angular2TemplateSyntax)
-  : HtmlCustomEmbeddedContentTokenType("NG:EXPANSION_FORM_CASE_CONTENT_TOKEN", Angular2HtmlLanguage.INSTANCE) {
+  : HtmlCustomEmbeddedContentTokenType("NG:EXPANSION_FORM_CASE_CONTENT_TOKEN", Angular2HtmlLanguage) {
   override fun createLexer(): Lexer {
     return Angular2HtmlLexer(false, templateSyntax, null)
   }

@@ -42,7 +42,7 @@ class Angular2MetadataComponentStub : Angular2MetadataDirectiveStubBase<Angular2
       return
     }
     val file = PsiFileFactory.getInstance(source.project)
-      .createFileFromText(Angular2HtmlLanguage.INSTANCE, template)
+      .createFileFromText(Angular2HtmlLanguage, template)
     myNgContentSelectors = SmartList()
     file?.accept(object : Angular2HtmlRecursiveElementWalkingVisitor() {
       override fun visitXmlAttribute(attribute: XmlAttribute) {

@@ -7,7 +7,6 @@ import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveResult
 import com.intellij.util.Processor
-import com.intellij.webSymbols.WebSymbolsScope
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.html.Angular2HtmlLanguage
 
@@ -19,7 +18,7 @@ object Angular2TemplateScopesResolver {
     if (!checkLanguage(original)) {
       return emptyList()
     }
-    val expressionIsInjected = original.containingFile.language.`is`(Angular2Language.INSTANCE)
+    val expressionIsInjected = original.containingFile.language.`is`(Angular2Language)
     val hostElement: PsiElement?
     if (expressionIsInjected) {
       //we are working within injection
@@ -45,8 +44,8 @@ object Angular2TemplateScopesResolver {
   }
 
   private fun checkLanguage(element: PsiElement): Boolean {
-    return (element.language.`is`(Angular2Language.INSTANCE)
-            || element.language.isKindOf(Angular2HtmlLanguage.INSTANCE) || element.parent != null && (element.parent.language.`is`(
-      Angular2Language.INSTANCE) || element.parent.language.isKindOf(Angular2HtmlLanguage.INSTANCE)))
+    return (element.language.`is`(Angular2Language)
+            || element.language.isKindOf(Angular2HtmlLanguage) || element.parent != null && (element.parent.language.`is`(
+      Angular2Language) || element.parent.language.isKindOf(Angular2HtmlLanguage)))
   }
 }

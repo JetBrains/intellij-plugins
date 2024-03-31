@@ -40,7 +40,7 @@ import org.angular2.lang.html.parser.Angular2AttributeNameParser
 class Angular2Injector : MultiHostInjector {
   internal object Holder {
     val BRACES_FACTORY: NullableFunction<PsiElement, Pair<String, String>> = JSInjectionBracesUtil
-      .delimitersFactory(Angular2HtmlLanguage.INSTANCE.displayName) { _, _ -> null }/* no support for custom delimiters*/
+      .delimitersFactory(Angular2HtmlLanguage.displayName) { _, _ -> null }/* no support for custom delimiters*/
   }
 
   override fun elementsToInjectIn(): List<Class<out PsiElement>> {
@@ -50,8 +50,8 @@ class Angular2Injector : MultiHostInjector {
   override fun getLanguagesToInject(registrar: MultiHostRegistrar, context: PsiElement) {
     val parent = context.parent
     if (parent == null
-        || parent.language.`is`(Angular2Language.INSTANCE)
-        || parent.language.isKindOf(Angular2HtmlLanguage.INSTANCE)
+        || parent.language.`is`(Angular2Language)
+        || parent.language.isKindOf(Angular2HtmlLanguage)
         || !Angular2LangUtil.isAngular2Context(context)) {
       return
     }
@@ -88,7 +88,7 @@ class Angular2Injector : MultiHostInjector {
                           ?: return
       val ancestor = parent.parent.parent
       if (isPropertyWithName(ancestor, "host")) {
-        injectIntoDecoratorExpr(registrar, context, ancestor, Angular2Language.INSTANCE, fileExtension)
+        injectIntoDecoratorExpr(registrar, context, ancestor, Angular2Language, fileExtension)
       }
     }
   }
@@ -123,7 +123,7 @@ class Angular2Injector : MultiHostInjector {
                     ?: return false
     val expressionType: String? = getExpressionFileExtension(context.textLength, attribute.name, false)
     if (expressionType != null) {
-      inject(registrar, context, Angular2Language.INSTANCE, expressionType)
+      inject(registrar, context, Angular2Language, expressionType)
     }
     else {
       injectInterpolations(registrar, context)
@@ -133,7 +133,7 @@ class Angular2Injector : MultiHostInjector {
 
   private fun injectInterpolations(registrar: MultiHostRegistrar, context: PsiElement) {
     val braces = Holder.BRACES_FACTORY.`fun`(context) ?: return
-    JSInjectionBracesUtil.injectInXmlTextByDelimiters(registrar, context, Angular2Language.INSTANCE,
+    JSInjectionBracesUtil.injectInXmlTextByDelimiters(registrar, context, Angular2Language,
                                                       braces.first, braces.second, INTERPOLATION)
   }
 

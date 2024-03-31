@@ -48,13 +48,12 @@ interface Angular2HtmlTokenTypes : XmlTokenType {
 
     // Highlight only tokens - TODO consider removing special highlighting for Angular expressionsxs
     @JvmField
-    val EXPRESSION_WHITE_SPACE: IElementType = object : IElementType("NG:EXPRESSION_WHITE_SPACE",
-                                                                     Angular2Language.INSTANCE), JSWhiteSpaceTokenType {}
+    val EXPRESSION_WHITE_SPACE: IElementType = object : IElementType("NG:EXPRESSION_WHITE_SPACE", Angular2Language), JSWhiteSpaceTokenType {}
 
     @JvmField
-    val EXPANSION_FORM_CONTENT: IElementType = IElementType("NG:EXPANSION_FORM_CONTENT", Angular2HtmlLanguage.INSTANCE)
+    val EXPANSION_FORM_CONTENT: IElementType = IElementType("NG:EXPANSION_FORM_CONTENT", Angular2HtmlLanguage)
 
     @JvmField
-    val EXPANSION_FORM_COMMA: IElementType = IElementType("NG:EXPANSION_FORM_COMMA", Angular2HtmlLanguage.INSTANCE)
+    val EXPANSION_FORM_COMMA: IElementType = IElementType("NG:EXPANSION_FORM_COMMA", Angular2HtmlLanguage)
   }
 }

@@ -56,15 +56,15 @@ class Angular2CompletionContributor : CompletionContributor() {
   init {
 
     extend(CompletionType.BASIC,
-           psiElement().with(language(Angular2Language.INSTANCE)),
+           psiElement().with(language(Angular2Language)),
            CssInBindingExpressionCompletionProvider())
 
     extend(CompletionType.BASIC,
-           psiElement().with(language(Angular2Language.INSTANCE)),
+           psiElement().with(language(Angular2Language)),
            TemplateExpressionCompletionProvider())
 
     extend(CompletionType.BASIC,
-           psiElement(Angular2TokenTypes.BLOCK_PARAMETER_NAME).with(language(Angular2Language.INSTANCE)),
+           psiElement(Angular2TokenTypes.BLOCK_PARAMETER_NAME).with(language(Angular2Language)),
            Angular2BlockParameterNameCompletionProvider())
 
     // Disable regular completions in after and minimum parameters
@@ -72,7 +72,7 @@ class Angular2CompletionContributor : CompletionContributor() {
            psiElement(JSTokenTypes.IDENTIFIER)
              .withParent(psiElement(Angular2BlockParameter::class.java)
                            .withName("after", "minimum"))
-             .with(language(Angular2Language.INSTANCE)),
+             .with(language(Angular2Language)),
            EmptyCompletionProvider())
 
     extend(CompletionType.BASIC,

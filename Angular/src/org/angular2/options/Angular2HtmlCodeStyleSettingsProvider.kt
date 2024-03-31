@@ -15,7 +15,7 @@ import org.angular2.lang.html.psi.formatter.Angular2HtmlCodeStyleSettings
 
 class Angular2HtmlCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
 
-  override fun getLanguage(): Language = Angular2HtmlLanguage.INSTANCE
+  override fun getLanguage(): Language = Angular2HtmlLanguage
 
   override fun getCodeSample(settingsType: SettingsType): String = """
     <human-profile     *ngIf="user.isHuman else robot" 
@@ -40,7 +40,7 @@ class Angular2HtmlCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider(
 
   override fun createFileFromText(project: Project, text: String): PsiFile? =
     PsiFileFactory.getInstance(project).createFileFromText(
-      "angular.html", Angular17HtmlLanguage.INSTANCE, text, false, true)
+      "angular.html", Angular17HtmlLanguage, text, false, true)
 
   override fun createConfigurable(baseSettings: CodeStyleSettings, modelSettings: CodeStyleSettings): CodeStyleConfigurable {
     return object : CodeStyleAbstractConfigurable(baseSettings, modelSettings, configurableDisplayName) {

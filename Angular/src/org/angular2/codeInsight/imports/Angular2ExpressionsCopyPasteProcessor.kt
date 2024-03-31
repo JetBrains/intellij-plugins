@@ -51,7 +51,7 @@ class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2
   }
 
   override fun isAcceptablePasteContext(context: PsiElement): Boolean =
-    context.containingFile.let { it is Angular2HtmlFile || (it is JSFile && it.language == Angular2Language.INSTANCE) }
+    context.containingFile.let { it is Angular2HtmlFile || (it is JSFile && it.language == Angular2Language) }
 
   override fun hasUnsupportedContentInCopyContext(parent: PsiElement, textRange: TextRange): Boolean =
     false
@@ -114,7 +114,7 @@ class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2
     }
     if (imports.isNotEmpty() || globalImports.isNotEmpty()) {
       WriteAction.run<RuntimeException> {
-        ES6CreateImportUtil.addRequiredImports(pasteContext, Angular2Language.INSTANCE, imports)
+        ES6CreateImportUtil.addRequiredImports(pasteContext, Angular2Language, imports)
 
         globalImports.forEach {
           JSImportAction(null, pasteContext, it.name)

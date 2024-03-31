@@ -21,21 +21,21 @@ open class Angular2EmbeddedExprTokenType : HtmlCustomEmbeddedContentTokenType {
   protected val index: Int
 
   private constructor(@NonNls debugName: String, expressionType: ExpressionType)
-    : super(debugName, Angular2Language.INSTANCE) {
+    : super(debugName, Angular2Language) {
     this.expressionType = expressionType
     name = null
     index = -1
   }
 
   private constructor(@NonNls debugName: String, expressionType: ExpressionType, @NonNls templateKey: String?)
-    : super("$debugName ($templateKey)", Angular2Language.INSTANCE, false) {
+    : super("$debugName ($templateKey)", Angular2Language, false) {
     this.expressionType = expressionType
     name = templateKey
     index = -1
   }
 
   private constructor(@NonNls debugName: String, expressionType: ExpressionType, @NonNls blockName: String?, parameterIndex: Int)
-    : super("$debugName ($blockName:$parameterIndex)", Angular2Language.INSTANCE, false) {
+    : super("$debugName ($blockName:$parameterIndex)", Angular2Language, false) {
     this.expressionType = expressionType
     name = blockName
     index = parameterIndex

@@ -39,7 +39,7 @@ object Angular2InspectionSuppressor : InspectionSuppressor {
     @Throws(IncorrectOperationException::class)
     override fun createSuppression(project: Project, element: PsiElement, container: PsiElement) {
       val parserFacade = PsiParserFacade.getInstance(project)
-      val comment = parserFacade.createLineOrBlockCommentFromText(Angular2Language.INSTANCE, suppressText)
+      val comment = parserFacade.createLineOrBlockCommentFromText(Angular2Language, suppressText)
       container.parent.addAfter(comment, container)
     }
 

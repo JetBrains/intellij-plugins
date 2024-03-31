@@ -19,7 +19,7 @@ interface Angular2Interpolation : Angular2EmbeddedExpression {
       if (attribute is Angular2HtmlPropertyBinding) {
         return attribute.interpolations
       }
-      if (attribute.language.isKindOf(Angular2HtmlLanguage.INSTANCE)) {
+      if (attribute.language.isKindOf(Angular2HtmlLanguage)) {
         return emptyArray()
       }
       val value = attribute.valueElement

@@ -50,7 +50,7 @@ open class Angular2HtmlParsingTest : HtmlParsingTest("", "html") {
         else -> Angular2HtmlParserDefinition()
       }, "html")
 
-    addExplicitExtension(CustomLanguageASTComparator.EXTENSION_POINT_NAME, Angular2HtmlLanguage.INSTANCE, Angular2HtmlASTComparator())
+    addExplicitExtension(CustomLanguageASTComparator.EXTENSION_POINT_NAME, Angular2HtmlLanguage, Angular2HtmlASTComparator())
 
     registerExtensions(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, EmbeddedTokenTypesProvider::class.java, listOf(
       CssEmbeddedTokenTypesProvider()))

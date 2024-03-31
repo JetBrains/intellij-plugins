@@ -10,6 +10,6 @@ import org.angular2.lang.html.Angular2HtmlLanguage
  */
 class Angular2EmbeddedCssProvider : EmbeddedCssProvider() {
   override fun enableEmbeddedCssFor(language: Language): Boolean {
-    return language.isKindOf(Angular2HtmlLanguage.INSTANCE)
+    return language.isKindOf(Angular2HtmlLanguage)
   }
 }

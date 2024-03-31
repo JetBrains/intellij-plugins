@@ -8,8 +8,7 @@ import org.angular2.lang.html.Angular2HtmlLanguage
 import org.angular2.lang.html.Angular2TemplateSyntax
 import org.jetbrains.annotations.Nls
 
-class Angular2SvgLanguage private constructor()
-  : WebFrameworkHtmlDialect(Angular2HtmlLanguage.INSTANCE, "Angular2Svg"), Angular2HtmlDialect {
+object Angular2SvgLanguage : WebFrameworkHtmlDialect(Angular2HtmlLanguage, "Angular2Svg"), Angular2HtmlDialect {
   override fun getDisplayName(): @Nls String {
     return Angular2Bundle.message("angular.svg.template")
   }
@@ -19,9 +18,4 @@ class Angular2SvgLanguage private constructor()
 
   override val svgDialect: Boolean
     get() = true
-
-  companion object {
-    @JvmField
-    val INSTANCE = Angular2SvgLanguage()
-  }
 }

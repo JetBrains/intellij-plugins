@@ -95,7 +95,7 @@ class AngularBindingTypeMismatchInspection : AngularHtmlLikeTemplateLocalInspect
       descriptor.sourceDirectives.firstOrNull(),
       descriptor.symbol.jsType
     )
-    JSTypeChecker.getErrorMessageIfTypeNotAssignableToType(attribute, symbolType, valueType, Angular2Language.INSTANCE.optionHolder,
+    JSTypeChecker.getErrorMessageIfTypeNotAssignableToType(attribute, symbolType, valueType, Angular2Language.optionHolder,
                                                            "javascript.type.is.not.assignable.to.type")
       ?.let {
         holder.registerProblem(attribute.valueElement?.takeIf { reportOnValue } ?: attribute.nameElement ?: attribute, it,

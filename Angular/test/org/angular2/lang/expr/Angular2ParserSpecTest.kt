@@ -752,7 +752,7 @@ class Angular2ParserSpecTest {
     private fun parse(text: String, extension: String): ASTNode {
       return ReadAction.compute<FileASTNode, RuntimeException> {
         PsiFileFactory.getInstance(ProjectManager.getInstance().getDefaultProject())
-          .createFileFromText("test.$extension", Angular2Language.INSTANCE, text)
+          .createFileFromText("test.$extension", Angular2Language, text)
           .getNode()
       }
     }

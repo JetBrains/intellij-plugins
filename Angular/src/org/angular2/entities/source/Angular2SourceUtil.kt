@@ -242,8 +242,8 @@ object Angular2SourceUtil {
   @JvmStatic
   fun findComponentClasses(templateContext: PsiElement): List<TypeScriptClass> {
     val file = templateContext.containingFile
-    if (file == null || !(file.language.isKindOf(Angular2HtmlLanguage.INSTANCE)
-                          || file.language.`is`(Angular2Language.INSTANCE)
+    if (file == null || !(file.language.isKindOf(Angular2HtmlLanguage)
+                          || file.language.`is`(Angular2Language)
                           || isStylesheet(file))) {
       return Collections.emptyList()
     }

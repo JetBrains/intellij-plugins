@@ -17,9 +17,7 @@ import org.angular2.lang.expr.psi.Angular2EmbeddedExpression
 
 open class Angular2EmbeddedExpressionImpl(elementType: IElementType?)
   : JSElementImpl(elementType), JSSuppressionHolder, Angular2EmbeddedExpression, HintedReferenceHost {
-  override fun getLanguage(): Language {
-    return Angular2Language.INSTANCE
-  }
+  override fun getLanguage(): Language = Angular2Language
 
   override fun accept(visitor: PsiElementVisitor) {
     if (visitor is JSElementVisitor) {

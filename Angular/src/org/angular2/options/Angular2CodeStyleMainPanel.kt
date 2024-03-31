@@ -12,14 +12,14 @@ import org.angular2.lang.html.Angular17HtmlFileType
 import org.angular2.lang.html.Angular2HtmlLanguage
 
 class Angular2CodeStyleMainPanel(currentSettings: CodeStyleSettings?, settings: CodeStyleSettings)
-  : TabbedLanguageCodeStylePanel(Angular2HtmlLanguage.INSTANCE, currentSettings, settings) {
+  : TabbedLanguageCodeStylePanel(Angular2HtmlLanguage, currentSettings, settings) {
 
   private val previewFileType get() = Angular17HtmlFileType
 
   override fun initTabs(settings: CodeStyleSettings) {
     addSpacesTab(settings)
     addWrappingAndBracesTab(settings)
-    addTab(ArrangementSettingsPanel(settings, Angular2HtmlLanguage.INSTANCE))
+    addTab(ArrangementSettingsPanel(settings, Angular2HtmlLanguage))
   }
 
   override fun addSpacesTab(settings: CodeStyleSettings?) {

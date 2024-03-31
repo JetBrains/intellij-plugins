@@ -5,4 +5,4 @@ import com.intellij.psi.tree.IElementType
 import org.angular2.lang.html.Angular2HtmlLanguage
 import org.jetbrains.annotations.NonNls
 
-class Angular2HtmlTokenType(debugName: @NonNls String) : IElementType(debugName, Angular2HtmlLanguage.INSTANCE)
+class Angular2HtmlTokenType(debugName: @NonNls String) : IElementType(debugName, Angular2HtmlLanguage)
