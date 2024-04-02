@@ -17,6 +17,9 @@ import com.intellij.rt.coverage.data.LineData;
 import com.intellij.rt.coverage.data.ProjectData;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.analyzer.DartFileInfo;
+import com.jetbrains.lang.dart.analyzer.DartFileInfoKt;
+import com.jetbrains.lang.dart.analyzer.DartLocalFileInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -133,7 +136,12 @@ public final class DartCoverageRunner extends CoverageRunner {
       return null;
     }
 
-    return DartAnalysisServerService.getInstance(project).execution_mapUri(contextId, null, uri);
+    String filePathOrUri = DartAnalysisServerService.getInstance(project).execution_mapUri(contextId, uri);
+    DartFileInfo fileInfo = filePathOrUri != null ? DartFileInfoKt.getDartFileInfo(project, filePathOrUri) : null;
+    if (fileInfo instanceof DartLocalFileInfo localFileInfo) {
+      return localFileInfo.getFilePath();
+    }
+    return null;
   }
 
   @NotNull

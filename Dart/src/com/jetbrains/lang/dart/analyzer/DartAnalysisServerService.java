@@ -2053,8 +2053,19 @@ public final class DartAnalysisServerService implements Disposable {
     return refResult.get();
   }
 
-  @Nullable
-  public String execution_mapUri(@NotNull final String _id, @Nullable final String _filePath, @Nullable final String _uri) {
+  public @Nullable String execution_mapUri(@NotNull String _id, @NotNull VirtualFile _file) {
+    return execution_mapUri(_id, getFileUri(_file), null);
+  }
+
+  public @Nullable String execution_mapUri(@NotNull String _id, @NotNull String _executionContextUri) {
+    return execution_mapUri(_id, null, _executionContextUri);
+  }
+
+  /**
+   * @deprecated use {@link #execution_mapUri(String, VirtualFile)} or {@link #execution_mapUri(String, String)}
+   */
+  @Deprecated
+  public @Nullable String execution_mapUri(@NotNull String _id, @Nullable String _filePathOrUri, @Nullable String _executionContextUri) {
     final AnalysisServer server = myServer;
     if (server == null) {
       return null;
@@ -2063,16 +2074,19 @@ public final class DartAnalysisServerService implements Disposable {
     // From the Dart Analysis Server Spec:
     // Exactly one of the file and uri fields must be provided. If both fields are provided, then an error of type INVALID_PARAMETER will
     // be generated. Similarly, if neither field is provided, then an error of type INVALID_PARAMETER will be generated.
-    if ((_filePath == null && _uri == null) || (_filePath != null && _uri != null)) {
-      LOG.error("execution_mapUri - one of _filePath and _uri must be non-null.");
+    if ((_filePathOrUri == null && _executionContextUri == null) || (_filePathOrUri != null && _executionContextUri != null)) {
+      LOG.error("execution_mapUri - one of _filePathOrUri and _executionContextUri must be non-null.");
       return null;
     }
 
-    final String fileUri = _filePath != null ? getLocalFileUri(_filePath) : null;
+    if (_filePathOrUri != null && !_filePathOrUri.contains("://")) {
+      _filePathOrUri = FileUtil.toSystemDependentName(_filePathOrUri);
+    }
+
     final Ref<String> resultRef = new Ref<>();
 
     final CountDownLatch latch = new CountDownLatch(1);
-    server.execution_mapUri(_id, fileUri, _uri, new MapUriConsumer() {
+    server.execution_mapUri(_id, _filePathOrUri, _executionContextUri, new MapUriConsumer() {
       @Override
       public void computedFileOrUri(final String file, final String uri) {
         if (uri != null) {
@@ -2093,11 +2107,11 @@ public final class DartAnalysisServerService implements Disposable {
     awaitForLatchCheckingCanceled(server, latch, EXECUTION_MAP_URI_TIMEOUT);
 
     if (latch.getCount() > 0) {
-      logTookTooLongMessage("execution_mapUri", EXECUTION_MAP_URI_TIMEOUT, fileUri != null ? fileUri : _uri);
+      logTookTooLongMessage("execution_mapUri", EXECUTION_MAP_URI_TIMEOUT, _filePathOrUri != null ? _filePathOrUri : _executionContextUri);
       return null;
     }
 
-    if (_uri != null && !resultRef.isNull()) {
+    if (_executionContextUri != null && !resultRef.isNull()) {
       return FileUtil.toSystemIndependentName(resultRef.get());
     }
 

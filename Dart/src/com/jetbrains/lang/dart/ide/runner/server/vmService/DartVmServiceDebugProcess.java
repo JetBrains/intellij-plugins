@@ -38,6 +38,8 @@ import com.intellij.xdebugger.frame.XSuspendContext;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.analyzer.DartFileInfo;
+import com.jetbrains.lang.dart.analyzer.DartFileInfoKt;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.actions.DartPopFrameAction;
 import com.jetbrains.lang.dart.ide.runner.base.DartDebuggerEditorsProvider;
@@ -569,7 +571,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     // package: (if applicable)
     if (myDASExecutionContextId != null) {
       final String uriByServer =
-        DartAnalysisServerService.getInstance(getSession().getProject()).execution_mapUri(myDASExecutionContextId, filePath, null);
+        DartAnalysisServerService.getInstance(getSession().getProject()).execution_mapUri(myDASExecutionContextId, file);
       if (uriByServer != null) {
         result.add(uriByServer);
       }
@@ -618,10 +620,11 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       String uri = scriptRef.getUri();
 
       if (myDASExecutionContextId != null && !isDartPatchUri(uri)) {
-        final String path =
-          DartAnalysisServerService.getInstance(getSession().getProject()).execution_mapUri(myDASExecutionContextId, null, uri);
-        if (path != null) {
-          return LocalFileSystem.getInstance().findFileByPath(path);
+        String filePathOrUri =
+          DartAnalysisServerService.getInstance(getSession().getProject()).execution_mapUri(myDASExecutionContextId, uri);
+        if (filePathOrUri != null) {
+          DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(getSession().getProject(), filePathOrUri);
+          return fileInfo.findFile();
         }
       }
 
