@@ -23,4 +23,6 @@ class Angular2FindUsagesTest : Angular2TestCase("navigation/findUsages") {
 
   fun testHostDirectiveOneTimeBinding() = checkUsages(fileName = "mouseenter.directive.ts")
 
+  fun testDollarSymbolInInlineTemplate() = checkUsages(fileName = "hello1.service.ts")
+
 }
