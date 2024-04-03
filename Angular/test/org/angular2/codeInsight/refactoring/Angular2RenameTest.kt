@@ -138,4 +138,37 @@ class Angular2RenameTest : Angular2TestCase("refactoring/rename") {
   fun testStructuralDirectiveWithNgTemplateSelector2() =
     checkSymbolRename("appFoo", dir = false)
 
+  fun testSignalInputFromDeclaration() =
+    checkSymbolRename("newInput", dir = false)
+
+  fun testSignalInputFromUsage() =
+    checkSymbolRename("newInput", dir = false)
+
+  fun testSignalInputRequiredFromDeclaration() =
+    checkSymbolRename("newInput", dir = false)
+
+  fun testSignalInputAliasedFromDeclaration() =
+    checkSymbolRename("newAliasedInput", dir = false)
+
+  fun testSignalInputAliasedFromUsage() =
+    checkSymbolRename("newAliasedInput", dir = false)
+
+  fun testSignalInputAliasedRequiredFromDeclaration() =
+    checkSymbolRename("newAliasedInput", dir = false)
+
+  fun testSignalInputAliasedRequiredFromUsage() =
+    checkSymbolRename("newAliasedInput", dir = false)
+
+  fun testSignalOutputFromDeclaration() =
+    checkSymbolRename("newOutput", dir = false)
+
+  fun testSignalOutputFromUsage() =
+    checkSymbolRename("newOutput", dir = false)
+
+  fun testSignalOutputAliasedFromDeclaration() =
+    checkSymbolRename("newAliasedOutput", dir = false)
+
+  fun testSignalOutputAliasedFromUsage() =
+    checkSymbolRename("newAliasedOutput", dir = false)
+
 }
