@@ -2,6 +2,7 @@
 package org.angular2.codeInsight.refs
 
 import com.intellij.codeInsight.daemon.ImplicitUsageProvider
+import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSFunction
 import com.intellij.lang.javascript.psi.JSPsiElementBase
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
@@ -21,6 +22,7 @@ import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.AstLoadingFilter
+import com.intellij.util.asSafely
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
 import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
@@ -28,6 +30,8 @@ import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder.Companion
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder.Companion.NG_TEMPLATE_GUARD_PREFIX
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.entities.Angular2EntityUtils.NG_ACCEPT_INPUT_TYPE_PREFIX
+import org.angular2.index.getFunctionNameFromIndex
+import org.angular2.index.isDecoratorLikeSignalFunction
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.Angular2LangUtil
 
@@ -35,6 +39,14 @@ import org.angular2.lang.Angular2LangUtil
 class Angular2ImplicitUsageProvider : ImplicitUsageProvider {
 
   override fun isImplicitUsage(element: PsiElement): Boolean {
+    if (element is TypeScriptField) {
+      element.initializerOrStub
+        ?.asSafely<JSCallExpression>()
+        ?.let { getFunctionNameFromIndex(it) }
+        ?.takeIf { isDecoratorLikeSignalFunction(it) }
+        ?.let { return true }
+    }
+
     if (element is TypeScriptFunction || element is TypeScriptField) {
       val name = (element as JSAttributeListOwner).name
       if (name != null) {
