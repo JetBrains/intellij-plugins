@@ -14,6 +14,7 @@ import com.intellij.util.asSafely
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.references.WebSymbolReferenceProvider
 import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
+import org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP
 import org.angular2.entities.Angular2ClassBasedDirective
 import org.angular2.entities.Angular2EntityUtils.getPropertyDeclarationOrReferenceKindAndDirective
 import org.angular2.web.NG_DIRECTIVE_INPUTS
@@ -31,6 +32,9 @@ class Angular2DirectivePropertyLiteralReferencesProvider : WebSymbolReferencePro
 
     val (kind, directive, hostDirective) = getPropertyDeclarationOrReferenceKindAndDirective(psiElement, false)
                                            ?: return emptyMap()
+    if (kind != INPUTS_PROP && kind != OUTPUTS_PROP)
+      return emptyMap()
+
     val name = stringValue.substring(startOffset, endOffset)
 
     if (hostDirective) {

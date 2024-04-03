@@ -29,4 +29,20 @@ class Angular2UsageHighlightingTest : Angular2TestCase("usageHighlighting") {
 
   fun testStructuralDirectiveWithNgTemplateSelectorFromDefinition() = checkUsageHighlighting()
 
+  fun testModelSignalFromDeclaration() = checkUsageHighlighting()
+
+  fun testModelSignalFromUsage1() = checkUsageHighlighting()
+
+  fun testModelSignalFromUsage2() = checkUsageHighlighting()
+
+  fun testModelSignalFromUsage3() = checkUsageHighlighting()
+
+  fun testModelSignalAliasedFromDeclaration() = checkUsageHighlighting()
+
+  fun testModelSignalAliasedFromUsage1() = checkUsageHighlighting()
+
+  fun testModelSignalAliasedFromUsage2() = checkUsageHighlighting()
+
+  fun testModelSignalAliasedFromUsage3() = checkUsageHighlighting()
+
 }

@@ -7,6 +7,8 @@ import com.intellij.webSymbols.declarations.WebSymbolDeclaration
 import com.intellij.webSymbols.declarations.WebSymbolDeclarationProvider
 import com.intellij.webSymbols.utils.WebSymbolDeclaredInPsi
 import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
+import org.angular2.Angular2DecoratorUtil.MODEL_FUN
+import org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP
 import org.angular2.entities.Angular2EntityUtils.getPropertyDeclarationOrReferenceKindAndDirective
 
 class Angular2DirectivePropertyDeclarationProvider : WebSymbolDeclarationProvider {
@@ -21,7 +23,12 @@ class Angular2DirectivePropertyDeclarationProvider : WebSymbolDeclarationProvide
     val (kind, directive) = getPropertyDeclarationOrReferenceKindAndDirective(element, true)
                             ?: return emptyList()
 
-    return (if (kind == INPUTS_PROP) directive.inputs else directive.outputs)
+    return when (kind) {
+      INPUTS_PROP -> directive.inputs
+      OUTPUTS_PROP -> directive.outputs
+      MODEL_FUN -> directive.inOuts
+      else -> emptyList()
+    }
       .asSequence()
       .mapNotNull { property -> (property as? WebSymbolDeclaredInPsi)?.takeIf { it.name == name }?.declaration }
       .filter { it.declaringElement == element && (offsetInElement == -1 || it.rangeInDeclaringElement.contains(offsetInElement)) }
