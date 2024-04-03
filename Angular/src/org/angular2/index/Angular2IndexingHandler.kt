@@ -418,6 +418,11 @@ fun ES6Decorator.isStringArgStubbed(): Boolean {
 }
 
 @ApiStatus.Internal
+fun isDecoratorLikeSignalFunction(name: String): Boolean {
+  return STUBBED_DECORATOR_LIKE_FUNCTIONS.contains(name.takeWhile { it != '.' })
+}
+
+@ApiStatus.Internal
 fun resolveComponentsFromIndex(file: PsiFile, filter: Predicate<ES6Decorator>): List<TypeScriptClass> {
   val name = (if (isStylesheet(file)) STYLESHEET_INDEX_PREFIX else "") + file.viewProvider.virtualFile.name
   val result = SmartList<TypeScriptClass>()
