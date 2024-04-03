@@ -18,7 +18,7 @@ interface Angular2Directive : Angular2Declaration {
   val outputs: Collection<Angular2DirectiveProperty>
     get() = bindings.outputs + hostDirectives.flatMap { it.outputs }
 
-  val inOuts: List<Angular2Symbol>
+  val inOuts: Collection<Angular2Symbol>
     get() = bindings.inOuts + hostDirectives.flatMap { it.inOuts }
 
   val bindings: Angular2DirectiveProperties

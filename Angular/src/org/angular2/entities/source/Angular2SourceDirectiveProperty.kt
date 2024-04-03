@@ -112,6 +112,8 @@ abstract class Angular2SourceDirectiveProperty(
     return Objects.hash(owner, signature.memberName, name, kind, required)
   }
 
+  abstract override fun createPointer(): Pointer<out Angular2SourceDirectiveProperty>
+
   private val objectInitializer: JSObjectLiteralExpression?
     get() = declarationSource as? JSObjectLiteralExpression
             ?: (declarationSource as? JSLiteralExpression)
@@ -119,7 +121,7 @@ abstract class Angular2SourceDirectiveProperty(
               ?.context?.asSafely<JSObjectLiteralExpression>()
 
   @Suppress("NonAsciiCharacters")
-  private val typeFromSignal: JSType? =
+  public val typeFromSignal: JSType? =
     signature.jsType
       ?.asRecordType()
       ?.findPropertySignature("ɵINPUT_SIGNAL_BRAND_WRITE_TYPE")

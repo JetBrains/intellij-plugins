@@ -27,7 +27,9 @@ import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.utils.ReferencingWebSymbol
 import org.angular2.Angular2DecoratorUtil
+import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
 import org.angular2.Angular2DecoratorUtil.INPUT_DEC
+import org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP
 import org.angular2.Angular2DecoratorUtil.OUTPUT_DEC
 import org.angular2.Angular2Framework
 import org.angular2.entities.Angular2ClassBasedDirective
@@ -49,10 +51,12 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
   : WebSymbolsScopeWithCache<JSElement, Unit>(Angular2Framework.ID, element.project, element, Unit) {
 
   override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
+    cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
     dataHolder
       .takeIf { it is JSReferenceExpression || it is JSLiteralExpression }
       ?.let { Angular2EntityUtils.getPropertyDeclarationOrReferenceKindAndDirective(it, false) }
       ?.let { (kind, directive, hostDirective, jsProperty) ->
+        if (kind != INPUTS_PROP && kind != OUTPUTS_PROP) return@let
         consumer(inputOutputReference)
 
         val context = dataHolder
@@ -70,7 +74,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
         }
 
         if (hostDirective) {
-          if (kind == Angular2DecoratorUtil.INPUTS_PROP)
+          if (kind == INPUTS_PROP)
             directive.bindings.inputs.forEach(filterAndConsume)
           else
             directive.bindings.outputs.forEach(filterAndConsume)
@@ -95,7 +99,6 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
             ?.forEach(filterAndConsume)
         }
       }
-    cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
   }
 
   override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,

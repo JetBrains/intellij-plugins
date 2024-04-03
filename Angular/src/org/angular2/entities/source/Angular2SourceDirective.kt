@@ -44,9 +44,9 @@ import org.angular2.entities.source.Angular2SourceUtil.parseInputObjectLiteral
 import org.angular2.entities.source.Angular2SourceUtil.readDirectivePropertyMappings
 import org.angular2.index.getFunctionNameFromIndex
 import org.angular2.index.isStringArgStubbed
-import org.angular2.lang.Angular2LangUtil.OUTPUT_CHANGE_SUFFIX
 import org.angular2.web.ELEMENT_NG_TEMPLATE
 import org.angular2.web.NG_DIRECTIVE_INPUTS
+import org.angular2.web.NG_DIRECTIVE_IN_OUTS
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 
 open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSImplicitElement)
@@ -111,6 +111,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
   private fun getPropertiesNoCache(): Angular2DirectiveProperties {
     val inputs = LinkedHashMap<String, Angular2DirectiveProperty>()
     val outputs = LinkedHashMap<String, Angular2DirectiveProperty>()
+    val inOuts = LinkedHashMap<String, Angular2DirectiveProperty>()
 
     val inputMap = readPropertyMappings(Angular2DecoratorUtil.INPUTS_PROP)
     val outputMap = readPropertyMappings(Angular2DecoratorUtil.OUTPUTS_PROP)
@@ -122,10 +123,9 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
       .properties
       .forEach { prop ->
         for (el in getPropertySources(prop.memberSource.singleElement)) {
-          if (!processModelSignal(clazz, prop, el, inputs, outputs)) {
-            processProperty(clazz, prop, el, inputMap, INPUT_DEC, INPUT_FUN, NG_DIRECTIVE_INPUTS, inputs)
-            processProperty(clazz, prop, el, outputMap, OUTPUT_DEC, OUTPUT_FUN, NG_DIRECTIVE_OUTPUTS, outputs)
-          }
+          processProperty(clazz, prop, el, inputMap, INPUT_DEC, INPUT_FUN, NG_DIRECTIVE_INPUTS, inputs)
+          processProperty(clazz, prop, el, outputMap, OUTPUT_DEC, OUTPUT_FUN, NG_DIRECTIVE_OUTPUTS, outputs)
+          processProperty(clazz, prop, el, null, null, MODEL_FUN, NG_DIRECTIVE_IN_OUTS, inOuts)
         }
       }
 
@@ -160,7 +160,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
         outputs.putIfAbsent(prop.name, prop)
       }
     }
-    return Angular2DirectiveProperties(inputs.values, outputs.values)
+    return Angular2DirectiveProperties(inputs.values, outputs.values, inOuts.values)
   }
 
   private fun getAttributesNoCache(): Collection<Angular2DirectiveAttribute> {
@@ -177,37 +177,16 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
     readDirectivePropertyMappings(Angular2DecoratorUtil.getProperty(decorator, source))
 
   companion object {
-
-    private fun processModelSignal(
-      sourceClass: TypeScriptClass,
-      property: JSRecordType.PropertySignature,
-      field: JSAttributeListOwner,
-      inputs: MutableMap<String, Angular2DirectiveProperty>,
-      outputs: MutableMap<String, Angular2DirectiveProperty>,
-    ): Boolean {
-      val modelInfo = field.asSafely<TypeScriptField>()
-        ?.initializerOrStub
-        ?.asSafely<JSCallExpression>()
-        ?.let { Angular2SourceUtil.createPropertyInfo(it, MODEL_FUN, property.memberName, ::getFunctionNameFromIndex) }
-      if (modelInfo != null) {
-        inputs.putIfAbsent(modelInfo.name, Angular2SourceDirectiveProperty.create(sourceClass, property, NG_DIRECTIVE_INPUTS, modelInfo))
-        val outputModelInfo = modelInfo.copy(name = modelInfo.name + OUTPUT_CHANGE_SUFFIX)
-        outputs.putIfAbsent(outputModelInfo.name, Angular2SourceDirectiveProperty.create(sourceClass, property, NG_DIRECTIVE_OUTPUTS, outputModelInfo))
-        return true
-      }
-      else return false
-    }
-
     private fun processProperty(sourceClass: TypeScriptClass,
                                 property: JSRecordType.PropertySignature,
                                 field: JSAttributeListOwner,
-                                mappings: MutableMap<String, Angular2PropertyInfo>,
-                                decorator: String,
+                                mappings: MutableMap<String, Angular2PropertyInfo>?,
+                                decorator: String?,
                                 functionName: String?,
                                 qualifiedKind: WebSymbolQualifiedKind,
                                 result: MutableMap<String, Angular2DirectiveProperty>) {
       val info: Angular2PropertyInfo? =
-        mappings.remove(property.memberName)
+        mappings?.remove(property.memberName)
         ?: field.attributeList
           ?.decorators
           ?.firstOrNull { it.decoratorName == decorator }

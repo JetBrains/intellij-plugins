@@ -23,7 +23,6 @@ import org.angular2.entities.metadata.psi.Angular2MetadataEntity
 import org.angular2.entities.source.Angular2PropertyInfo
 import org.angular2.entities.source.Angular2SourceEntity
 import org.angular2.index.getFunctionNameFromIndex
-import org.angular2.index.isDecoratorLikeSignalFunction
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector.ParseException
 import org.jetbrains.annotations.NonNls
@@ -111,8 +110,9 @@ object Angular2EntityUtils {
               ?.let { getFunctionNameFromIndex(it) }
               ?.takeWhile { it != '.' }
             when (functionName) {
-              INPUT_FUN, MODEL_FUN -> Angular2DecoratorUtil.INPUTS_PROP
+              INPUT_FUN -> Angular2DecoratorUtil.INPUTS_PROP
               OUTPUT_FUN -> Angular2DecoratorUtil.OUTPUTS_PROP
+              MODEL_FUN -> MODEL_FUN
               else -> null
             }
           }
