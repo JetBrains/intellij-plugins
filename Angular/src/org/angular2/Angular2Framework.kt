@@ -11,6 +11,8 @@ import com.intellij.lang.Language
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.xml.XmlTag
+import com.intellij.webSymbols.WebSymbolQualifiedName
+import com.intellij.webSymbols.query.WebSymbolNamesProvider
 import icons.AngularIcons
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.tags.Angular2ElementDescriptor
@@ -22,6 +24,7 @@ import org.angular2.lang.html.Angular2TemplateSyntax
 import org.angular2.lang.svg.Angular17SvgFileType
 import org.angular2.lang.svg.Angular2SvgFileType
 import org.angular2.web.Angular2AttributeNameCodeCompletionFilter
+import org.angular2.web.NG_DIRECTIVE_IN_OUTS
 import javax.swing.Icon
 
 class Angular2Framework : WebFramework() {
@@ -58,6 +61,19 @@ class Angular2Framework : WebFramework() {
 
   override fun getAttributeNameCodeCompletionFilter(tag: XmlTag) =
     Angular2AttributeNameCodeCompletionFilter(tag)
+
+  override fun getNames(qualifiedName: WebSymbolQualifiedName,
+                        target: WebSymbolNamesProvider.Target): List<String> {
+    if (target == WebSymbolNamesProvider.Target.NAMES_QUERY
+        && qualifiedName.qualifiedKind == NG_DIRECTIVE_IN_OUTS) {
+      // Required to find usages and rename for model signal
+      return listOf(
+        qualifiedName.name,
+        qualifiedName.name + Angular2LangUtil.OUTPUT_CHANGE_SUFFIX
+      )
+    }
+    return super.getNames(qualifiedName, target)
+  }
 
   companion object {
 

@@ -12,7 +12,7 @@ interface Angular2HostDirective {
   val outputs: Collection<Angular2DirectiveProperty>
     get() = bindings.outputs
 
-  val inOuts: List<Angular2Symbol>
+  val inOuts: Collection<Angular2Symbol>
     get() = bindings.inOuts
 
   val bindings: Angular2DirectiveProperties
