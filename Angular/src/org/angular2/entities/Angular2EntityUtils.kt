@@ -4,6 +4,7 @@ package org.angular2.entities
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunctionSignature
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
@@ -14,10 +15,15 @@ import com.intellij.util.asSafely
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2DecoratorUtil.DIRECTIVE_PROP
 import org.angular2.Angular2DecoratorUtil.HOST_DIRECTIVES_PROP
+import org.angular2.Angular2DecoratorUtil.INPUT_FUN
+import org.angular2.Angular2DecoratorUtil.MODEL_FUN
+import org.angular2.Angular2DecoratorUtil.OUTPUT_FUN
 import org.angular2.entities.ivy.Angular2IvyEntity
 import org.angular2.entities.metadata.psi.Angular2MetadataEntity
 import org.angular2.entities.source.Angular2PropertyInfo
 import org.angular2.entities.source.Angular2SourceEntity
+import org.angular2.index.getFunctionNameFromIndex
+import org.angular2.index.isDecoratorLikeSignalFunction
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector.ParseException
 import org.jetbrains.annotations.NonNls
@@ -91,15 +97,28 @@ object Angular2EntityUtils {
     when (parent) {
       is JSArgumentList -> {
         if (!declaration && contextParent == parent) return null
-        val propertyDecorator = parent.parent?.parent?.asSafely<ES6Decorator>()
-        kind = propertyDecorator?.decoratorName?.let {
-          when (it) {
-            Angular2DecoratorUtil.INPUT_DEC -> Angular2DecoratorUtil.INPUTS_PROP
-            Angular2DecoratorUtil.OUTPUT_DEC -> Angular2DecoratorUtil.OUTPUTS_PROP
-            else -> null
+        val owner = parent.parent?.parent
+        kind = when (owner) {
+          is ES6Decorator -> owner.decoratorName?.let {
+            when (it) {
+              Angular2DecoratorUtil.INPUT_DEC -> Angular2DecoratorUtil.INPUTS_PROP
+              Angular2DecoratorUtil.OUTPUT_DEC -> Angular2DecoratorUtil.OUTPUTS_PROP
+              else -> null
+            }
           }
+          is TypeScriptField -> {
+            val functionName = parent.parent.asSafely<JSCallExpression>()
+              ?.let { getFunctionNameFromIndex(it) }
+              ?.takeWhile { it != '.' }
+            when (functionName) {
+              INPUT_FUN, MODEL_FUN -> Angular2DecoratorUtil.INPUTS_PROP
+              OUTPUT_FUN -> Angular2DecoratorUtil.OUTPUTS_PROP
+              else -> null
+            }
+          }
+          else -> null
         }
-        directiveDef = propertyDecorator?.contextOfType<TypeScriptClass>(false)
+        directiveDef = owner?.contextOfType<TypeScriptClass>(false)
         hostDirective = false
         property = null
       }
