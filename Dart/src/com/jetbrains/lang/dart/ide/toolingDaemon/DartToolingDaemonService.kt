@@ -20,6 +20,9 @@ import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.util.EventDispatcher
 import com.intellij.util.concurrency.AppExecutorUtil
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
@@ -153,21 +156,29 @@ class DartToolingDaemonService private constructor(private val project: Project)
 
   @RequiresReadLock
   @RequiresBackgroundThread
-  // A simplified version of com.jetbrains.lang.dart.analyzer.DartServerRootsHandler.calcIncludedAndExcludedDartRoots
+  /**
+   * A simplified version of [com.jetbrains.lang.dart.analyzer.DartServerRootsHandler.calcIncludedAndExcludedDartRootPaths].
+   * URIs are constructed in the same way as in [com.jetbrains.lang.dart.analyzer.DartAnalysisServerService.getLocalFileUri]
+   * but without falling back to plain OS-dependent paths for older SDK versions.
+   */
   private fun calcRootUris(): List<String> {
     DartSdk.getDartSdk(project) ?: return emptyList()
 
-    val newIncludedRoots: MutableList<String> = mutableListOf()
+    val rootUris: MutableList<String> = mutableListOf()
     for (module in DartSdkLibUtil.getModulesWithDartSdkEnabled(project)) {
       for (contentEntry in ModuleRootManager.getInstance(module).contentEntries) {
         val contentEntryUrl = contentEntry.url
         if (contentEntryUrl.startsWith(URLUtil.FILE_PROTOCOL + URLUtil.SCHEME_SEPARATOR)) {
-          newIncludedRoots.add(contentEntryUrl)
+          val rootPath = VfsUtilCore.urlToPath(contentEntryUrl)
+          val escapedPath = URLUtil.encodePath(rootPath)
+          val rootUrl = VirtualFileManager.constructUrl(URLUtil.FILE_PROTOCOL, escapedPath)
+          val rootUri = VfsUtil.toUri(rootUrl)?.toString() ?: rootUrl
+          rootUris.add(rootUri)
         }
       }
     }
 
-    return newIncludedRoots
+    return rootUris
   }
 
   override fun dispose() {
