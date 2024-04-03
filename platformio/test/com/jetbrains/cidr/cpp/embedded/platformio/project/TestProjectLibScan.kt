@@ -35,7 +35,7 @@ class TestProjectLibScan : LightPlatformTestCase() {
 
   fun testScanLibraries() {
     val taskId: ExternalSystemTaskId = ExternalSystemTaskId.create(ID, ExternalSystemTaskType.RESOLVE_PROJECT, project)
-    val testListener = object : ExternalSystemTaskNotificationListenerAdapter() {}
+    val testListener = ExternalSystemTaskNotificationListener.NULL_OBJECT
     val projectNode = PlatformioProjectResolverForTest().resolveProjectInfo(
       id = taskId,
       projectPath = projectPath,

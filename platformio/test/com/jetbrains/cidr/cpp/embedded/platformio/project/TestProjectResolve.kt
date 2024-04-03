@@ -177,7 +177,7 @@ class TestProjectResolve : LightPlatformTestCase() {
   }
 }
 
-internal class TaskNotificationListerForTest : ExternalSystemTaskNotificationListenerAdapter() {
+internal class TaskNotificationListerForTest : ExternalSystemTaskNotificationListener {
   var errorMessagesCounter = 0
   override fun onStatusChange(event: ExternalSystemTaskNotificationEvent) {
     if (event.asSafely<ExternalSystemBuildEvent>()?.buildEvent?.asSafely<MessageEvent>()?.kind == MessageEvent.Kind.ERROR)
