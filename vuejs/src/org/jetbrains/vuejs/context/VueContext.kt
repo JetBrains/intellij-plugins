@@ -3,20 +3,14 @@ package org.jetbrains.vuejs.context
 
 import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.javascript.web.WebFramework
+import com.intellij.javascript.web.hasFilesOfType
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.modules.NodeModuleUtil
-import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
-import com.intellij.psi.search.FileTypeIndex
-import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.asSafely
-import com.intellij.util.indexing.FileBasedIndexImpl
 import com.intellij.util.text.SemVer
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.context.WebSymbolsContext
@@ -39,15 +33,7 @@ fun isVueContext(context: PsiElement): Boolean = vueFrameworkInstance.isInContex
 fun isVueContext(contextFile: VirtualFile, project: Project): Boolean = vueFrameworkInstance.isInContext(contextFile, project)
 
 fun hasVueFiles(project: Project): Boolean =
-  CachedValuesManager.getManager(project).getCachedValue(project) {
-    CachedValueProvider.Result.create(
-      FileBasedIndexImpl.disableUpToDateCheckIn<Boolean, Exception> {
-        FileTypeIndex.containsFileOfType(VueFileType, GlobalSearchScope.projectScope(project))
-      },
-      VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS,
-      DumbService.getInstance(project)
-    )
-  }
+  hasFilesOfType(project, VueFileType)
 
 fun hasPinia(context: PsiElement) =
   WebSymbolsContext.get(KIND_VUE_STORE, context) == VUE_STORE_PINIA
