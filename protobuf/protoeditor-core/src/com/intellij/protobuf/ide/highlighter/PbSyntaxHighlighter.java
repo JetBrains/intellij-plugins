@@ -100,6 +100,7 @@ public class PbSyntaxHighlighter extends SyntaxHighlighterBase {
         KEYWORD,
         ProtoTokenTypes.BUILT_IN_TYPE,
         ProtoTokenTypes.DEFAULT,
+        ProtoTokenTypes.EDITION,
         ProtoTokenTypes.ENUM,
         ProtoTokenTypes.EXTEND,
         ProtoTokenTypes.EXTENSIONS,

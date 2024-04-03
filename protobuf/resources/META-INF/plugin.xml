@@ -84,6 +84,7 @@
     <annotator language="protobuf" implementationClass="com.intellij.protobuf.lang.annotation.PbAnnotator"/>
     <annotator language="protobuf" implementationClass="com.intellij.protobuf.lang.annotation.Proto2Annotator"/>
     <annotator language="protobuf" implementationClass="com.intellij.protobuf.lang.annotation.Proto3Annotator"/>
+    <annotator language="protobuf" implementationClass="com.intellij.protobuf.lang.annotation.EditionsAnnotator"/>
     <annotator language="protobuf" implementationClass="com.intellij.protobuf.lang.annotation.PbTextAnnotator"/>
 
     <!-- Structure view -->

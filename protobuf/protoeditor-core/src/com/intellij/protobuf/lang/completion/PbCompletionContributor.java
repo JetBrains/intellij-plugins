@@ -170,6 +170,12 @@ public class PbCompletionContributor extends CompletionContributor {
         .collect(Collectors.toList());
     }
 
+    private static List<LookupElement> createEditionsFieldLabels() {
+      return Stream.of("repeated")
+        .map(PbCompletionContributor::lookupElementWithSpace)
+        .collect(Collectors.toList());
+    }
+
     private static LookupElement createGroupKeyWord() { return lookupElementWithSpace("group"); }
 
     @Override
@@ -194,6 +200,7 @@ public class PbCompletionContributor extends CompletionContributor {
         result.addAllElements(switch (syntaxLevel) {
           case PROTO2 -> createProto2FieldLabels();
           case PROTO3 -> createProto3FieldLabels();
+          case EDITIONS -> createEditionsFieldLabels();
         });
       } else {
         // In proto2, we can have a "group" right after the field label.

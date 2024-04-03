@@ -31,6 +31,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 
 import java.util.*;
 
+import org.w3c.dom.ranges.Range;
+
 /**
  * Visits statements in a message type to track field numbers, reserved, and extension statements.
  * In the process, discovers problems like duplicate field numbers, use of reserved or extension
@@ -128,8 +130,25 @@ final class MessageFieldTracker {
         for (PbReservedRange reservedRange : reservedStatement.getReservedRangeList()) {
           visitReservedRange(reservedStatement, reservedRange);
         }
+        for (PbIdentifierValue reservedName : reservedStatement.getIdentifierValueList()) {
+          if (messageType.getPbFile().getSyntaxLevel() == SyntaxLevel.EDITIONS) {
+            visitReservedName(reservedStatement, reservedName);
+          } else {
+            queueError(
+                reservedStatement,
+                reservedName,
+                PbLangBundle.message("editions.field.reserved.identifier"));
+          }
+        }
         for (PbStringValue reservedName : reservedStatement.getStringValueList()) {
-          visitReservedName(reservedStatement, reservedName);
+          if (messageType.getPbFile().getSyntaxLevel() != SyntaxLevel.EDITIONS) {
+            visitReservedName(reservedStatement, reservedName);
+          } else {
+            queueError(
+                reservedStatement,
+                reservedName,
+                PbLangBundle.message("editions.field.reserved.string"));
+          }
         }
       }
     }
@@ -214,7 +233,7 @@ final class MessageFieldTracker {
     }
 
     private void visitReservedName(
-        PbReservedStatement reservedStatement, PbStringValue reservedName) {
+        PbReservedStatement reservedStatement, ProtoLiteral reservedName) {
       String name = reservedName.getAsString();
       if (!reservedNames.add(name)) {
         queueError(

@@ -133,6 +133,7 @@ String = {SingleQuotedString} | {DoubleQuotedString}
 
   "default"                 { return keyword(ProtoTokenTypes.DEFAULT); }
   "enum"                    { return keyword(ProtoTokenTypes.ENUM); }
+  "edition"                 { return keyword(ProtoTokenTypes.EDITION); }
   "extend"                  { return keyword(ProtoTokenTypes.EXTEND); }
   "extensions"              { return keyword(ProtoTokenTypes.EXTENSIONS); }
   "group"                   { return keyword(ProtoTokenTypes.GROUP); }

@@ -103,6 +103,14 @@ public class PbAnnotatorErrorTest extends PbCodeInsightFixtureTestCase {
     doTest("lang/annotation/Proto3Errors.proto.testdata");
   }
 
+  public void testProtoEditionUnsupportedErrorAnnotations() {
+    doTest("lang/annotation/EditionUnsupportedErrors.proto.testdata");
+  }
+
+  public void testProtoEdition2023ErrorAnnotations() {
+    doTest("lang/annotation/Edition2023Errors.proto.testdata");
+  }
+
   public void testFieldErrorAnnotations() {
     doTest("lang/annotation/FieldErrors.proto.testdata");
   }
