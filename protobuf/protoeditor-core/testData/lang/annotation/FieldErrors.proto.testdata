@@ -149,6 +149,10 @@ message ReservedNameTwice {
   reserved <error descr="Field name 'foo' is reserved multiple times">"foo"</error>;
 }
 
+message ReservedIdentifier {
+  reserved <error descr="Identifier reserved fields are not allowed before edition 2023">a</error>;
+}
+
 message UsesReservedName {
   optional int32 bar = 1;
   optional int32 <error descr="Field name 'foo' is reserved">foo</error> = 2;

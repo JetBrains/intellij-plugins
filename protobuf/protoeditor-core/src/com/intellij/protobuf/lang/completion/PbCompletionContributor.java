@@ -18,13 +18,13 @@ package com.intellij.protobuf.lang.completion;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.protobuf.lang.psi.*;
+import com.intellij.protobuf.lang.psi.util.PbPsiUtil;
+import com.intellij.protobuf.lang.util.BuiltInType;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
-import com.intellij.protobuf.lang.psi.*;
-import com.intellij.protobuf.lang.psi.util.PbPsiUtil;
-import com.intellij.protobuf.lang.util.BuiltInType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -170,6 +170,12 @@ public class PbCompletionContributor extends CompletionContributor {
         .collect(Collectors.toList());
     }
 
+    private static List<LookupElement> createEditionsFieldLabels() {
+      return Stream.of("repeated")
+        .map(PbCompletionContributor::lookupElementWithSpace)
+        .collect(Collectors.toList());
+    }
+
     private static LookupElement createGroupKeyWord() { return lookupElementWithSpace("group"); }
 
     @Override
@@ -194,6 +200,7 @@ public class PbCompletionContributor extends CompletionContributor {
         result.addAllElements(switch (syntaxLevel) {
           case PROTO2 -> createProto2FieldLabels();
           case PROTO3 -> createProto3FieldLabels();
+          case EDITIONS -> createEditionsFieldLabels();
         });
       } else {
         // In proto2, we can have a "group" right after the field label.

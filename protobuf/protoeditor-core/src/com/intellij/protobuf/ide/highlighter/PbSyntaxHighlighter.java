@@ -20,10 +20,10 @@ import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.HighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
+import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
 import com.intellij.psi.StringEscapesTokenTypes;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -100,6 +100,7 @@ public class PbSyntaxHighlighter extends SyntaxHighlighterBase {
         KEYWORD,
         ProtoTokenTypes.BUILT_IN_TYPE,
         ProtoTokenTypes.DEFAULT,
+        ProtoTokenTypes.EDITION,
         ProtoTokenTypes.ENUM,
         ProtoTokenTypes.EXTEND,
         ProtoTokenTypes.EXTENSIONS,

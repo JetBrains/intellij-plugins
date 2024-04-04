@@ -1,0 +1,58 @@
+edition = "2023";
+
+message RegularMessage {
+  int32 a = 1;
+  repeated string b = 2;
+  int32 required_field = 3 [features.field_presence = LEGACY_REQUIRED];
+
+  message SubMessage {
+    int32 a = 1;
+  }
+  SubMessage message_field = 4 [features.message_encoding = DELIMITED];
+
+  oneof oneof_field {
+    float oneof1 = 5;
+    int32 oneof2 = 6;
+    string oneof3 = 7;
+  }
+
+  map<int32, int64> map_field = 8;
+
+  extensions 100 to 200;
+}
+
+extend RegularMessage {
+  int32 regular_extension = 100;
+}
+
+enum RegularEnum {
+  option features.enum_type = CLOSED;
+  REGULAR_ENUM_UNKNOWN = 0;
+  REGULAR_ENUM_1 = 1;
+}
+
+message BannedMessage {
+  <error descr="The optional label is not allowed since edition 2023">optional</error> string optional_field = 2;
+  <error descr="The required label is not allowed since edition 2023">required</error> string required_field = 3;
+  <error descr="Group syntax is not allowed since edition 2023">group group_field = 4 {}</error>
+
+  reserved <error descr="String literal reserved fields are not allowed since edition 2023">"a"</error>,
+    <error descr="String literal reserved fields are not allowed since edition 2023">"b"</error>,
+    c;
+
+  reserved <error descr="Field name 'c' is reserved multiple times">c</error>;
+}
+
+extend RegularMessage {
+  <error descr="The optional label is not allowed since edition 2023">optional</error> int32 optional_ext = 150;
+  <error descr="The required label is not allowed since edition 2023">required</error> float required_ext = 151;
+  <error descr="Group syntax is not allowed since edition 2023">group group_ext = 152 {}</error>
+}
+
+
+enum BannedEnum {
+  BANNED_SYNTAX_UNKNOWN = 0;
+  reserved <error descr="String literal reserved enum values are not allowed since edition 2023">"VALUEA"</error>,
+    <error descr="String literal reserved enum values are not allowed since edition 2023">"VALUEB"</error>,
+    VALUEC;
+}

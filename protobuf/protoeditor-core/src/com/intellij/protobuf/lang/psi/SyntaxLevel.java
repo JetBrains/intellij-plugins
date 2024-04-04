@@ -20,7 +20,8 @@ import org.jetbrains.annotations.Nullable;
 /** An enum defining possible syntax levels. */
 public enum SyntaxLevel {
   PROTO2("proto2"),
-  PROTO3("proto3");
+  PROTO3("proto3"),
+  EDITIONS("editions");
 
   @Nullable
   public static SyntaxLevel forString(String level) {
