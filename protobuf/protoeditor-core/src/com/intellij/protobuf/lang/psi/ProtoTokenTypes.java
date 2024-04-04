@@ -70,6 +70,7 @@ public final class ProtoTokenTypes {
 
   // Keywords found in .proto files.
   public static final IElementType DEFAULT = put("default", new ProtoKeywordTokenType("default"));
+  public static final IElementType EDITION = put("edition", new ProtoKeywordTokenType("edition"));
   public static final IElementType ENUM = put("enum", new ProtoKeywordTokenType("enum"));
   public static final IElementType EXTEND = put("extend", new ProtoKeywordTokenType("extend"));
   public static final IElementType EXTENSIONS =
