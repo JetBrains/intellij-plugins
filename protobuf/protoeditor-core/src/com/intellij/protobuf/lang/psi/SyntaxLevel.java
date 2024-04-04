@@ -25,7 +25,7 @@ public enum SyntaxLevel {
 
   @Nullable
   public static SyntaxLevel forString(String level) {
-    for (SyntaxLevel possibility : SyntaxLevel.values()) {
+    for (SyntaxLevel possibility : values()) {
       if (possibility.toString().equals(level)) {
         return possibility;
       }
