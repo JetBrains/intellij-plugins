@@ -5,13 +5,13 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.originalFileOrSelf
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScopes
-import com.intellij.testFramework.LightVirtualFile
+import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.hcl.psi.common.BaseExpression
-import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hil.psi.ILExpression
 import org.intellij.terraform.hil.psi.TypeCachedValueProvider
 import org.intellij.terraform.hil.psi.impl.getHCLHost
@@ -32,10 +32,7 @@ fun PsiElement.getTerraformSearchScope(): GlobalSearchScope {
   }
   if (directory == null) {
     // File only in-memory, assume as only file in module
-    var vf: VirtualFile? = file.virtualFile
-    if (vf is LightVirtualFile) {
-      vf = vf.originalFile?:vf
-    }
+    val vf: VirtualFile? = file.virtualFile?.originalFileOrSelf()
     val parent = vf?.parent ?: return GlobalSearchScope.fileScope(file)
     return GlobalSearchScopes.directoryScope(file.project, parent, false)
   } else {
