@@ -274,7 +274,7 @@ private meta BlockEntry ::= !'}' <<p>> { pin = 1 }
 /*
  * Syntax statement.
  */
-SyntaxType ::= syntax | edition
+private SyntaxType ::= syntax | edition
 SyntaxStatement ::= SyntaxType '=' StringValue ';'
 {
   pin = 1
@@ -283,9 +283,6 @@ SyntaxStatement ::= SyntaxType '=' StringValue ';'
     'com.intellij.protobuf.lang.psi.PbStatement'
   ]
   mixin = 'com.intellij.protobuf.lang.psi.impl.PbSyntaxStatementMixin'
-  methods = [
-    syntaxType = 'SyntaxType'
-  ]
 }
 
 /*

@@ -35,6 +35,12 @@ public class PbEnumReservedStatementImpl extends PbStatementBase implements PbEn
 
   @Override
   @NotNull
+  public List<PbIdentifierValue> getIdentifierValueList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, PbIdentifierValue.class);
+  }
+
+  @Override
+  @NotNull
   public List<PbStringValue> getStringValueList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, PbStringValue.class);
   }

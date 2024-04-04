@@ -10,6 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static com.intellij.protobuf.lang.psi.PbTypes.*;
 import com.intellij.protobuf.lang.psi.*;
 import com.intellij.protobuf.lang.psi.util.PbPsiImplUtil;
+import static com.intellij.protobuf.lang.psi.ProtoTokenTypes.*;
 
 public class PbSyntaxStatementImpl extends PbSyntaxStatementMixin implements PbSyntaxStatement {
 
