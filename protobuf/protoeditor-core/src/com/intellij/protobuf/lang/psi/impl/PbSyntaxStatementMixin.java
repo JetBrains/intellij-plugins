@@ -16,11 +16,9 @@
 package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.protobuf.lang.psi.PbStatementOwner;
 import com.intellij.protobuf.lang.psi.PbStringValue;
 import com.intellij.protobuf.lang.psi.PbSyntaxStatement;
 import com.intellij.protobuf.lang.psi.SyntaxLevel;
-import com.intellij.protobuf.lang.psi.util.PbPsiImplUtil;
 import org.jetbrains.annotations.Nullable;
 
 abstract class PbSyntaxStatementMixin extends PbStatementBase implements PbSyntaxStatement {
@@ -32,9 +30,21 @@ abstract class PbSyntaxStatementMixin extends PbStatementBase implements PbSynta
   @Nullable
   @Override
   public SyntaxLevel getSyntaxLevel() {
+    if (getSyntaxType().getText().equals("edition")) {
+      return SyntaxLevel.EDITIONS;
+    }
     PbStringValue syntaxString = getStringValue();
     if (syntaxString != null) {
       return SyntaxLevel.forString(syntaxString.getAsString());
+    }
+    return null;
+  }
+
+  @Nullable
+  @Override
+  public String getEdition() {
+    if (getSyntaxLevel() == SyntaxLevel.EDITIONS) {
+      return getStringValue().getAsString();
     }
     return null;
   }

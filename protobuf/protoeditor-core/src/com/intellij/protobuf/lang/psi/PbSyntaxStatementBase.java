@@ -21,4 +21,7 @@ interface PbSyntaxStatementBase extends PbElement {
 
   @Nullable
   SyntaxLevel getSyntaxLevel();
+
+  @Nullable
+  String getEdition();
 }
