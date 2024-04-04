@@ -30,14 +30,16 @@ abstract class PbSyntaxStatementMixin extends PbStatementBase implements PbSynta
   @Nullable
   @Override
   public SyntaxLevel getSyntaxLevel() {
-    if (getSyntaxType().getText().equals("edition")) {
+    String syntaxType = getFirstChild().getText();
+    PbStringValue syntaxVersionPsi = getStringValue();
+    String syntaxVersion = syntaxVersionPsi == null ? "" : syntaxVersionPsi.getAsString();
+
+    if ("edition".equals(syntaxType)) {
       return SyntaxLevel.EDITIONS;
     }
-    PbStringValue syntaxString = getStringValue();
-    if (syntaxString != null) {
-      return SyntaxLevel.forString(syntaxString.getAsString());
+    else {
+      return SyntaxLevel.forString(syntaxVersion);
     }
-    return null;
   }
 
   @Nullable
