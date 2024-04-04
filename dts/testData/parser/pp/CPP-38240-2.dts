@@ -1,0 +1,6 @@
+/ {
+	fsl,pins = <
+			   #endif
+			   #ief defined()
+			   >;
+};

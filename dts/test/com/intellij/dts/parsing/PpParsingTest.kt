@@ -18,4 +18,8 @@ class PpParsingTest : DtsParsingTestBase("pp") {
   fun testElse() = doTest("dts", ensureNoErrorElements = false)
 
   fun testElif() = doTest("dts", ensureNoErrorElements = false)
+
+  fun `testCPP-38240-1`() = doTest("dts", ensureNoErrorElements = false)
+
+  fun `testCPP-38240-2`() = doTest("dts", ensureNoErrorElements = false)
 }

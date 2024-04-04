@@ -1,0 +1,6 @@
+/ {
+	fsl,pins = [
+			   #endif
+			   #if defined()
+			   >;
+};

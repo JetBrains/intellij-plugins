@@ -3,6 +3,7 @@ package com.intellij.dts.pp.lang.parser
 import com.intellij.lang.LighterASTNode
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.impl.PsiBuilderImpl
+import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
 
 object PpParserUtil {
@@ -79,18 +80,18 @@ object PpParserUtil {
     val result = mutableListOf<PsiBuilderImpl.ProductionMarker>()
     for (current in productions) {
       when {
-        // stop collecting if the exit marker was reached
-        current == exitMarker -> break
+        // stop collecting if the exit marker was reached or an error
+        current == exitMarker || current.tokenType == TokenType.ERROR_ELEMENT -> break
 
         // scopes should not be adjusted, abort
         current.tokenType in builder.ppScopeSet -> return result
 
-        // maxEndIndex set when a preprocessor statement was found and if
-        // the endIndex is greater this is a child of the preprocessor
-        // statement. This child is going to be rolled if the preprocessor
-        // statement is rolled back. Therefore, it needs to be skipped.
+        // maxEndIndex is set when a preprocessor statement was found. If
+        // the endIndex is greater than maxEndIndex, this is a child of the
+        // preprocessor statement. This child is going to be rolled if the
+        // preprocessor statement is rolled back. Therefore, it needs to be skipped.
         // If the last statement was not preprocessor statement (last != null)
-        // stop collecting because this is cannot be a child
+        // stop collecting because this cannot be a child
         current.endIndex > maxEndIndex -> if (last != null) break
 
         // if the current production is a preprocessor statement, skip all
