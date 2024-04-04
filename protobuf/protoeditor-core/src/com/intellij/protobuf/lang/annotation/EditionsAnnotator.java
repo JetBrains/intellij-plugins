@@ -15,7 +15,6 @@
  */
 package com.intellij.protobuf.lang.annotation;
 
-import com.google.common.base.Ascii;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.lang.annotation.HighlightSeverity;
@@ -24,20 +23,23 @@ import com.intellij.protobuf.lang.psi.*;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-import static com.intellij.protobuf.lang.psi.SyntaxLevelKt.isDeprecatedProto2Syntax;
-
-/** Annotations specific to proto2 syntax level. */
-public class Proto2Annotator implements Annotator {
+/** Annotations specific to editions >= 2023. */
+public class EditionsAnnotator implements Annotator {
   @Override
   public void annotate(@NotNull PsiElement element, @NotNull final AnnotationHolder holder) {
-    // Only operate on proto3 files.
+    // Only operate on editions files.
     if (!(element instanceof PbElement pbElement)
-        || !isDeprecatedProto2Syntax(pbElement.getPbFile().getSyntaxLevel())) {
+        || !(pbElement.getPbFile().getSyntaxLevel() instanceof SyntaxLevel.Edition)) {
       return;
     }
 
     element.accept(
         new PbVisitor() {
+          @Override
+          public void visitSyntaxStatement(@NotNull PbSyntaxStatement syntax) {
+            annotateEdition(syntax, holder);
+          }
+
           @Override
           public void visitField(@NotNull PbField field) {
             annotateField(field, holder);
@@ -51,39 +53,46 @@ public class Proto2Annotator implements Annotator {
   }
 
   /*
-   * In proto2, fields must have labels unless they're map fields or are part of oneof definitions.
+   * Check the edition specification.
    */
-  private static void annotateField(PbField field, AnnotationHolder holder) {
-    if (field instanceof PbMapField) {
-      return;
-    }
-    if (field.getStatementOwner() instanceof PbOneofDefinition) {
-      return;
-    }
-    if (field.getDeclaredLabel() == null) {
-      holder.newAnnotation(HighlightSeverity.ERROR, PbLangBundle.message("proto2.field.label.required"))
-          .range(field)
+  private static void annotateEdition(PbSyntaxStatement syntax, AnnotationHolder holder) {
+    SyntaxLevel syntaxLevel = syntax.getSyntaxLevel();
+    var effectiveSyntaxVersion = syntaxLevel == null ? "" : syntaxLevel.getVersion();
+    if (!"2023".equals(effectiveSyntaxVersion)) {
+      holder
+          .newAnnotation(
+              HighlightSeverity.ERROR,
+              PbLangBundle.message("editions.unsupported", effectiveSyntaxVersion))
+          .range(syntax)
           .create();
     }
   }
 
   /*
-   * Group fields must have labels.
-   * Group field names must start with a capital letter.
+   * In editions, only repeated or null labels are allowed.
+   */
+  private static void annotateField(PbField field, AnnotationHolder holder) {
+    if (field instanceof PbMapField) {
+      return;
+    }
+    PbFieldLabel label = field.getDeclaredLabel();
+    if (label != null && !label.getText().equals("repeated")) {
+      holder
+          .newAnnotation(
+              HighlightSeverity.ERROR,
+              PbLangBundle.message("editions.field.label." + label.getText()))
+          .range(label)
+          .create();
+    }
+  }
+
+  /*
+   * Group syntax is not allowed
    */
   private static void annotateGroupDefinition(PbGroupDefinition group, AnnotationHolder holder) {
-    PsiElement nameIdentifier = group.getNameIdentifier();
-    String name = group.getName();
-    if (name != null && nameIdentifier != null && !Ascii.isUpperCase(name.charAt(0))) {
-      holder.newAnnotation(HighlightSeverity.ERROR, PbLangBundle.message("proto2.group.name.capital.letter"))
-          .range(nameIdentifier)
-          .create();
-    }
-    if (!(group.getStatementOwner() instanceof PbOneofDefinition)
-        && group.getDeclaredLabel() == null) {
-      holder.newAnnotation(HighlightSeverity.ERROR, PbLangBundle.message("proto2.field.label.required"))
-          .range(group)
-          .create();
-    }
+    holder
+        .newAnnotation(HighlightSeverity.ERROR, PbLangBundle.message("editions.group.invalid"))
+        .range(group)
+        .create();
   }
 }

@@ -16,11 +16,11 @@
 package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.protobuf.lang.psi.PbStatementOwner;
 import com.intellij.protobuf.lang.psi.PbStringValue;
 import com.intellij.protobuf.lang.psi.PbSyntaxStatement;
 import com.intellij.protobuf.lang.psi.SyntaxLevel;
-import com.intellij.protobuf.lang.psi.util.PbPsiImplUtil;
+import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 abstract class PbSyntaxStatementMixin extends PbStatementBase implements PbSyntaxStatement {
@@ -32,16 +32,25 @@ abstract class PbSyntaxStatementMixin extends PbStatementBase implements PbSynta
   @Nullable
   @Override
   public SyntaxLevel getSyntaxLevel() {
-    PbStringValue syntaxString = getStringValue();
-    if (syntaxString != null) {
-      return SyntaxLevel.forString(syntaxString.getAsString());
-    }
-    return null;
+    String syntaxType = getSyntaxTypeExpression().getText();
+    PbStringValue syntaxVersionPsi = getSyntaxVersionExpression();
+    String syntaxVersion = syntaxVersionPsi == null ? "" : syntaxVersionPsi.getAsString();
+    return SyntaxLevel.parse(syntaxType, syntaxVersion);
+  }
+
+  @Override
+  public @NotNull PsiElement getSyntaxTypeExpression() {
+    return getFirstChild();
   }
 
   @Nullable
   @Override
   public PbStatementOwner getStatementOwner() {
     return super.getStatementOwner();
+  }
+
+  @Override
+  public @Nullable PbStringValue getSyntaxVersionExpression() {
+    return getStringValue();
   }
 }

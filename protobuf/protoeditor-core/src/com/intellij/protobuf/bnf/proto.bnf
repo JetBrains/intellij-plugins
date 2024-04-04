@@ -274,7 +274,8 @@ private meta BlockEntry ::= !'}' <<p>> { pin = 1 }
 /*
  * Syntax statement.
  */
-SyntaxStatement ::= syntax '=' StringValue ';'
+private SyntaxType ::= syntax | edition
+SyntaxStatement ::= SyntaxType '=' StringValue ';'
 {
   pin = 1
   implements = [
@@ -580,7 +581,8 @@ ReservedRange ::= IntegerValue (to (IntegerValue | max))?
 private ReservedRangeRecovery ::= !(IntegerValue | ',') MessageRecovery
 
 // These rules start with lookahead predicates (&...) for disambiguation.
-private ReservedNames ::= &StringValue <<CommaSeparatedList ';' StringValue>>
+private ReservedName ::= StringValue | IdentifierValue
+private ReservedNames ::= &ReservedName <<CommaSeparatedList ';' ReservedName>>
 private ReservedNumbers ::= &IntegerValue <<CommaSeparatedList ';' ReservedRange>>
 
 /*
@@ -653,7 +655,8 @@ EnumReservedRange ::= IntegerValue (to (IntegerValue | max))?
 private EnumReservedRangeRecovery ::= !(IntegerValue | ',') EnumRecovery
 
 // These rules start with lookahead predicates (&...) for disambiguation.
-private EnumReservedNames ::= &StringValue <<CommaSeparatedList ';' StringValue>>
+private EnumReservedName ::= StringValue | IdentifierValue
+private EnumReservedNames ::= &EnumReservedName <<CommaSeparatedList ';' EnumReservedName>>
 private EnumReservedNumbers ::= &IntegerValue <<CommaSeparatedList ';' EnumReservedRange>>
 
 /*

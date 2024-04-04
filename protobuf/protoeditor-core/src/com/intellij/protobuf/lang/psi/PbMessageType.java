@@ -47,9 +47,17 @@ public interface PbMessageType extends PbNamedTypeElement, PbSymbolOwner {
       return false;
     }
     for (PbReservedStatement reservedStatement : body.getReservedStatementList()) {
-      for (PbStringValue reservedName : reservedStatement.getStringValueList()) {
-        if (fieldName.equals(reservedName.getAsString())) {
-          return true;
+      if (getPbFile().getSyntaxLevel() instanceof SyntaxLevel.Edition) {
+        for (PbIdentifierValue reservedName : reservedStatement.getIdentifierValueList()) {
+          if (fieldName.equals(reservedName.getAsString())) {
+            return true;
+          }
+        }
+      } else {
+        for (PbStringValue reservedName : reservedStatement.getStringValueList()) {
+          if (fieldName.equals(reservedName.getAsString())) {
+            return true;
+          }
         }
       }
     }
