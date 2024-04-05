@@ -5,13 +5,12 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet.create
 import com.intellij.psi.tree.TokenSet.orSet
 import org.intellij.prisma.lang.PrismaLanguage
-import org.intellij.prisma.lang.parser.PrismaParserDefinition
 import org.intellij.prisma.lang.psi.PrismaElementTypes.*
 
 class PrismaTokenType(debugName: String) : IElementType(debugName, PrismaLanguage)
 
 val PRISMA_STRINGS = create(STRING_LITERAL)
-val PRISMA_COMMENTS = create(PrismaParserDefinition.DOC_COMMENT, PrismaParserDefinition.LINE_COMMENT)
+val PRISMA_COMMENTS = create(DOC_COMMENT, LINE_COMMENT)
 val PRISMA_WS = create(WHITE_SPACE)
 val PRISMA_KEYWORDS = create(MODEL, TYPE, VIEW, ENUM, GENERATOR, DATASOURCE)
 val PRISMA_BRACES = create(LBRACE, RBRACE)

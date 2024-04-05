@@ -43,6 +43,9 @@
     NUMERIC_LITERAL = 'regexp:-?\d+(\.\d+)?'
     IDENTIFIER      = 'regexp:[a-zA-Z][a-zA-Z0-9\-_]*'
     WHITE_SPACE     = 'regexp:\s+'
+
+    DOC_COMMENT     = 'regexp:///.*'
+    LINE_COMMENT    = 'regexp://.*'
   ]
 
   extends('FunctionCall|ArrayExpression|LiteralExpression|PathExpression')=Expression

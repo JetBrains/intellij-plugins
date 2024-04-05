@@ -10,8 +10,6 @@ import com.intellij.psi.TokenType.WHITE_SPACE
 import com.intellij.psi.formatter.FormatterUtil
 import com.intellij.psi.formatter.common.AbstractBlock
 import com.intellij.psi.tree.IElementType
-import org.intellij.prisma.lang.parser.PrismaParserDefinition.Companion.DOC_COMMENT
-import org.intellij.prisma.lang.parser.PrismaParserDefinition.Companion.LINE_COMMENT
 import org.intellij.prisma.lang.psi.*
 import org.intellij.prisma.lang.psi.PrismaElementTypes.*
 import com.intellij.psi.tree.TokenSet.create as ts

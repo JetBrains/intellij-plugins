@@ -10,7 +10,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.endOffset
 import com.intellij.psi.util.startOffset
 import org.intellij.prisma.ide.documentation.stripDocCommentLinePrefix
-import org.intellij.prisma.lang.parser.PrismaParserDefinition
 
 class PrismaVirtualDocumentationComment(val comments: List<PsiComment>) : FakePsiElement(), PsiDocCommentBase {
   init {
@@ -19,7 +18,7 @@ class PrismaVirtualDocumentationComment(val comments: List<PsiComment>) : FakePs
 
   override fun getParent(): PsiElement = comments.first().parent
 
-  override fun getTokenType(): IElementType = PrismaParserDefinition.DOC_COMMENT
+  override fun getTokenType(): IElementType = PrismaElementTypes.DOC_COMMENT
 
   override fun getOwner(): PsiElement? = PsiTreeUtil.skipWhitespacesAndCommentsForward(comments.last())
 

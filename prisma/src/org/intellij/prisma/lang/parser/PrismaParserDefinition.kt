@@ -27,12 +27,4 @@ class PrismaParserDefinition : ParserDefinition {
   override fun createElement(node: ASTNode?): PsiElement = PrismaElementTypes.Factory.createElement(node)
 
   override fun createFile(viewProvider: FileViewProvider): PsiFile = PrismaFile(viewProvider)
-
-  companion object {
-    @JvmField
-    val DOC_COMMENT = PrismaTokenType("DOC_COMMENT")
-
-    @JvmField
-    val LINE_COMMENT = PrismaTokenType("LINE_COMMENT")
-  }
 }

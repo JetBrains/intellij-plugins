@@ -18,7 +18,7 @@ import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter
 import com.intellij.javascript.nodejs.interpreter.wsl.WslNodeInterpreter
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.diagnostic.thisLogger
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.vfs.VfsUtil
@@ -34,15 +34,14 @@ import org.intellij.prisma.lang.psi.PrismaFile
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 
+private val LOG = logger<PrismaFormattingService>()
+
+internal val USE_PRISMA_FMT = Key.create<Boolean>("prisma.use.prisma.fmt")
+
+@NlsSafe
+private const val PRISMA_FMT = "prisma-fmt"
+
 class PrismaFormattingService : AsyncDocumentFormattingService() {
-  companion object {
-    private val LOG = thisLogger()
-
-    @NlsSafe
-    private const val PRISMA_FMT = "prisma-fmt"
-
-    internal val USE_PRISMA_FMT = Key.create<Boolean>("prisma.use.prisma.fmt")
-  }
 
   override fun getName(): String = PRISMA_FMT
 
@@ -83,7 +82,7 @@ class PrismaFormattingService : AsyncDocumentFormattingService() {
       charset = StandardCharsets.UTF_8
       setWorkingDirectory(nodeTargetRun.path(formatter.parent))
       addParameter(nodeTargetRun.path(formatter.path))
-      addParameter(createFormattingParamsArg(context, nodeTargetRun))
+      addParameter(createFormattingParamsArg(context))
     }
     val handler = nodeTargetRun.startProcess()
 
@@ -132,7 +131,7 @@ class PrismaFormattingService : AsyncDocumentFormattingService() {
     }
   }
 
-  private fun createFormattingParamsArg(context: FormattingContext, nodeTargetRun: NodeTargetRun): String {
+  private fun createFormattingParamsArg(context: FormattingContext): String {
     val indentOptions = context.codeStyleSettings.getIndentOptions(PrismaFileType)
     val params = PrismaDocumentFormattingParams(
       PrismaTextDocumentIdentifier(getFileUrl(context)),
@@ -153,8 +152,13 @@ class PrismaFormattingService : AsyncDocumentFormattingService() {
   }
 }
 
+@Suppress("unused")
 private class PrismaDocumentFormattingParams(val textDocument: PrismaTextDocumentIdentifier, val options: PrismaFormattingOptions)
+
+@Suppress("unused")
 private class PrismaTextDocumentIdentifier(val uri: String)
+
+@Suppress("unused")
 private class PrismaFormattingOptions(val tabSize: Int,
                                       val insertSpaces: Boolean,
                                       val trimTrailingWhitespace: Boolean = true,

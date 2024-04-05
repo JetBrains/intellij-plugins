@@ -47,6 +47,7 @@ public interface PrismaElementTypes {
   IElementType COLON = new PrismaTokenType(":");
   IElementType COMMA = new PrismaTokenType(",");
   IElementType DATASOURCE = new PrismaTokenType("datasource");
+  IElementType DOC_COMMENT = new PrismaTokenType("DOC_COMMENT");
   IElementType DOT = new PrismaTokenType(".");
   IElementType ENUM = new PrismaTokenType("enum");
   IElementType EQ = new PrismaTokenType("=");
@@ -55,6 +56,7 @@ public interface PrismaElementTypes {
   IElementType IDENTIFIER = new PrismaTokenType("IDENTIFIER");
   IElementType LBRACE = new PrismaTokenType("{");
   IElementType LBRACKET = new PrismaTokenType("[");
+  IElementType LINE_COMMENT = new PrismaTokenType("LINE_COMMENT");
   IElementType LPAREN = new PrismaTokenType("(");
   IElementType MODEL = new PrismaTokenType("model");
   IElementType NUMERIC_LITERAL = new PrismaTokenType("NUMERIC_LITERAL");

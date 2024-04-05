@@ -7,7 +7,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.util.IncorrectOperationException
-import org.intellij.prisma.ide.formatter.PrismaFormattingService
+import org.intellij.prisma.ide.formatter.USE_PRISMA_FMT
 
 class PrismaFormatterTest : JSTempDirWithNodeInterpreterTest() {
   override fun getBasePath(): String = "${getPrismaRelativeTestDataPath()}/formatter"
@@ -105,7 +105,7 @@ class PrismaFormatterTest : JSTempDirWithNodeInterpreterTest() {
   private fun format(psiFile: PsiFile, document: Document, usePrismaFmt: Boolean) {
     WriteCommandAction.runWriteCommandAction(project) {
       try {
-        PrismaFormattingService.USE_PRISMA_FMT.set(psiFile, usePrismaFmt)
+        USE_PRISMA_FMT.set(psiFile, usePrismaFmt)
         CodeStyleManager.getInstance(project)
           .reformatText(psiFile, psiFile.textRange.startOffset, psiFile.textRange.endOffset)
         PsiDocumentManager.getInstance(project).commitDocument(document)

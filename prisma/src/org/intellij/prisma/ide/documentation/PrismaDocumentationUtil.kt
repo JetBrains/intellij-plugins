@@ -20,8 +20,8 @@ import org.intellij.markdown.html.HtmlGenerator
 import org.intellij.markdown.parser.LinkMap
 import org.intellij.markdown.parser.MarkdownParser
 import org.intellij.prisma.lang.PrismaLanguage
-import org.intellij.prisma.lang.parser.PrismaParserDefinition
 import org.intellij.prisma.lang.psi.PrismaDocumentationOwner
+import org.intellij.prisma.lang.psi.PrismaElementTypes
 import org.intellij.prisma.lang.psi.skipWhitespacesBackwardWithoutNewLines
 import org.intellij.prisma.lang.psi.skipWhitespacesForwardWithoutNewLines
 import java.net.URI
@@ -148,7 +148,7 @@ fun PsiElement.nextDocComment(includeTrailing: Boolean = false): PsiComment? {
 }
 
 val PsiElement.isDocComment
-  get() = elementType == PrismaParserDefinition.DOC_COMMENT
+  get() = elementType == PrismaElementTypes.DOC_COMMENT
 
 fun PsiElement.collectPrecedingDocComments(strict: Boolean = true): List<PsiComment> =
   generateSequence(if (strict) prevDocComment() else this) { it.prevDocComment() }

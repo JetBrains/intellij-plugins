@@ -8,7 +8,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import static com.intellij.psi.TokenType.*;
 
 import static org.intellij.prisma.lang.psi.PrismaElementTypes.*;
-import static org.intellij.prisma.lang.parser.PrismaParserDefinition.*;
 
 
 /**
