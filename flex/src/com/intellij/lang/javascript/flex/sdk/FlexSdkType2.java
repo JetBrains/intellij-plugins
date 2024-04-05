@@ -6,6 +6,7 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.flashbuilder.FlashBuilderSdkFinder;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.JavadocOrderRootType;
 import com.intellij.openapi.roots.OrderRootType;
@@ -90,7 +91,7 @@ public class FlexSdkType2 extends SdkType {
   public void setupSdkPaths(@NotNull final Sdk sdk) {
     SdkModificator modificator = sdk.getSdkModificator();
     setupSdkPaths(sdk.getHomeDirectory(), modificator);
-    modificator.commitChanges();
+    WriteAction.run(() -> modificator.commitChanges());
   }
 
   @Override
