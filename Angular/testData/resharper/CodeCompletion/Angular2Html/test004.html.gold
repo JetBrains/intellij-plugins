@@ -49,7 +49,6 @@
 + baseline-shift
 + bbox
 + behavior
-+ bikeshedding
 + binding
 + block-ellipsis
 + block-progression
@@ -255,7 +254,6 @@
 + grid-template-rows
 + group-reset
 + hanging
-+ hanging-punctuation
 + height
 + horiz-adv-x
 + horiz-align
@@ -263,15 +261,13 @@
 + horiz-origin-y
 + hyphenate-character
 + hyphenate-limit-chars
-+ hyphenate-limit-last
-+ hyphenate-limit-lines
-+ hyphenate-limit-zone
-+ hyphenate-resource
 + hyphens
 + ideographic
 + image-orientation
 + image-rendering
++ inherits
 + initial-letter
++ initial-value
 + initial-letter-align
 + initial-letter-wrap
 + inline-size
@@ -574,7 +570,6 @@
 + target-position
 + text-after-overflow
 + text-align
-+ text-align-all
 + text-align-last
 + text-anchor
 + text-autospace
@@ -609,7 +604,6 @@
 + text-line-through-mode
 + text-line-through-style
 + text-orientation
-+ text-outline
 + text-overflow
 + text-overflow-ellipsis
 + text-overflow-mode
@@ -624,7 +618,6 @@
 + text-space
 + text-top
 + text-transform
-+ text-trim
 + text-underline
 + text-underline-color
 + text-underline-mode
@@ -676,6 +669,7 @@
 + voice-volume
 + volume
 + white-space
++ white-space-collapse
 + white-space-treatment
 + widows
 + width
