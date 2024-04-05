@@ -13,35 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intellij.protobuf.lang.psi;
+package com.intellij.protobuf.lang.psi
 
-import org.jetbrains.annotations.Nullable;
-
-/** An enum defining possible syntax levels. */
-public enum SyntaxLevel {
+/** An enum defining possible syntax levels.  */
+enum class SyntaxLevel(val id: String) {
   PROTO2("proto2"),
   PROTO3("proto3"),
   EDITIONS("editions");
 
-  @Nullable
-  public static SyntaxLevel forString(String level) {
-    for (SyntaxLevel possibility : values()) {
-      if (possibility.toString().equals(level)) {
-        return possibility;
-      }
+  companion object {
+    @JvmStatic
+    fun forString(level: String): SyntaxLevel? {
+      return entries.firstOrNull { it.id == level }
     }
-    return null;
-  }
-
-  private final String name;
-
-  SyntaxLevel(String name) {
-    this.name = name;
-  }
-
-  /** Returns the syntax name as it would appear in a syntax statement. */
-  @Override
-  public String toString() {
-    return name;
   }
 }
