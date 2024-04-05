@@ -38,8 +38,8 @@ import org.intellij.terraform.config.TerraformConstants
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLFileType
+import org.intellij.terraform.runtime.TerraformProjectSettings
 import org.intellij.terraform.runtime.TerraformToolConfigurable
-import org.intellij.terraform.runtime.TerraformToolProjectSettings
 import org.jetbrains.annotations.Nls
 import java.io.File
 import kotlin.coroutines.cancellation.CancellationException
@@ -125,7 +125,7 @@ internal fun notifyError(title: @Nls String, project: Project, ex: Throwable?) {
 }
 
 internal fun isTerraformExecutable(project: Project): Boolean {
-  val terraformPath = TerraformToolProjectSettings.getInstance(project).actualTerraformPath
+  val terraformPath = TerraformProjectSettings.getInstance(project).actualTerraformPath
   return if (terraformPath.isExecutable()) {
     true
   } else {

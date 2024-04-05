@@ -23,7 +23,7 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
   HCLBundle.message("terraform.name"), null
 ), SearchableConfigurable {
 
-  private val configuration = TerraformToolProjectSettings.getInstance(project)
+  private val configuration = TerraformProjectSettings.getInstance(project)
   private lateinit var executorPathField: Cell<TextFieldWithBrowseButton>
 
   override fun getId(): String = CONFIGURABLE_ID
@@ -39,8 +39,8 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
           fileChosen = { chosenFile ->
             return@textFieldWithBrowseButton chosenFile.path
           }
-        ).bindText(configuration::getTerraformPath, configuration::setTerraformPath).applyToComponent {
-          emptyText.text = TerraformToolProjectSettings.getDefaultTerraformPath()
+        ).bindText(configuration::terraformPath).applyToComponent {
+          emptyText.text = TerraformProjectSettings.getDefaultTerraformPath()
         }.align(AlignX.FILL)
       }
       row {

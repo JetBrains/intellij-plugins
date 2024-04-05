@@ -16,7 +16,7 @@ import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.runtime.TerraformToolProjectSettings
+import org.intellij.terraform.runtime.TerraformProjectSettings
 import org.intellij.terraform.template.TerraformTemplateFileType
 import org.intellij.terraform.template.getLanguageByExtension
 import org.intellij.terraform.template.model.findTemplateUsage
@@ -24,7 +24,7 @@ import org.intellij.terraform.template.model.findTemplateUsage
 internal class MaybeTerraformTemplateInspection : LocalInspectionTool() {
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
     if (isFileWithAlreadyOverriddenTemplateType(holder.file.virtualFile)
-        || TerraformToolProjectSettings.getInstance(holder.project).isIgnoredTemplateCandidate(holder.file.virtualFile.url)
+        || TerraformProjectSettings.getInstance(holder.project).isIgnoredTemplateCandidate(holder.file.virtualFile.url)
         || !isPossibleTemplateFile(holder.file)
     ) {
       return PsiElementVisitor.EMPTY_VISITOR
@@ -72,7 +72,7 @@ internal class TerraformIgnoreTemplateCandidateFix(private val filePointer: Smar
 
   override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
     val psiFile = filePointer.dereference() ?: return
-    TerraformToolProjectSettings.getInstance(project).addIgnoredTemplateCandidate(psiFile.virtualFile.url)
+    TerraformProjectSettings.getInstance(project).addIgnoredTemplateCandidate(psiFile.virtualFile.url)
     DaemonCodeAnalyzer.getInstance(project).restart(psiFile)
   }
 

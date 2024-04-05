@@ -112,8 +112,8 @@ class TerraformRunConfiguration(project: Project,
         CommonBundle.getErrorTitle()
       )
       exception.setQuickFix(Runnable {
-        val settings = TerraformToolProjectSettings.getInstance(project)
-        settings.terraformPath = TerraformToolProjectSettings.getDefaultTerraformPath()
+        val settings = TerraformProjectSettings.getInstance(project)
+        settings.terraformPath = TerraformProjectSettings.getDefaultTerraformPath()
       })
       throw exception
     }
@@ -139,7 +139,7 @@ class TerraformRunConfiguration(project: Project,
     }
 
   private val terraformPath
-    get() = TerraformToolProjectSettings.getInstance(project).actualTerraformPath
+    get() = TerraformProjectSettings.getInstance(project).actualTerraformPath
 
   override fun setProgramParameters(value: String?) {
     programParameters = value

@@ -13,7 +13,7 @@ import org.intellij.terraform.config.model.local.LocalSchemaService
 import org.intellij.terraform.config.model.local.TERRAFORM_LOCK_FILE_NAME
 import org.intellij.terraform.config.model.local.TFLocalMetaEntity
 import org.intellij.terraform.config.util.TFCommandLineServiceMock
-import org.intellij.terraform.runtime.TerraformToolProjectSettings
+import org.intellij.terraform.runtime.TerraformProjectSettings
 import org.junit.Assert
 import java.nio.file.Files
 
@@ -226,6 +226,6 @@ class TerraformLocalMetadataTest : BasePlatformTestCase() {
   }
 
   private val terraformExe: String
-    get() = TerraformToolProjectSettings.getInstance(project).actualTerraformPath
+    get() = TerraformProjectSettings.getInstance(project).actualTerraformPath
 
 }
