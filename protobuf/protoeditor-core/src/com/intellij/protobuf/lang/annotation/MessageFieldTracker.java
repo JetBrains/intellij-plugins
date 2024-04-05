@@ -129,7 +129,7 @@ final class MessageFieldTracker {
           visitReservedRange(reservedStatement, reservedRange);
         }
         for (PbIdentifierValue reservedName : reservedStatement.getIdentifierValueList()) {
-          if (messageType.getPbFile().getSyntaxLevel() == SyntaxLevel.EDITIONS) {
+          if (messageType.getPbFile().getSyntaxLevel() instanceof SyntaxLevel.Edition) {
             visitReservedName(reservedStatement, reservedName);
           } else {
             queueError(
@@ -139,7 +139,7 @@ final class MessageFieldTracker {
           }
         }
         for (PbStringValue reservedName : reservedStatement.getStringValueList()) {
-          if (messageType.getPbFile().getSyntaxLevel() != SyntaxLevel.EDITIONS) {
+          if (!(messageType.getPbFile().getSyntaxLevel() instanceof SyntaxLevel.Edition)) {
             visitReservedName(reservedStatement, reservedName);
           } else {
             queueError(

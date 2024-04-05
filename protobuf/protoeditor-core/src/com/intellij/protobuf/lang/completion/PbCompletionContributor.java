@@ -32,6 +32,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
+import static com.intellij.protobuf.lang.psi.SyntaxLevelKt.isDeprecatedProto2Syntax;
+import static com.intellij.protobuf.lang.psi.SyntaxLevelKt.isDeprecatedProto3Syntax;
 
 /** Provides editor completions for protobuf files. */
 public class PbCompletionContributor extends CompletionContributor {
@@ -197,14 +199,19 @@ public class PbCompletionContributor extends CompletionContributor {
           result.addAllElements(createMessageEntryStart());
           result.addAllElements(createMessageEntryStartNoSpace());
         }
-        result.addAllElements(switch (syntaxLevel) {
-          case PROTO2 -> createProto2FieldLabels();
-          case PROTO3 -> createProto3FieldLabels();
-          case EDITIONS -> createEditionsFieldLabels();
-        });
+
+        if (isDeprecatedProto2Syntax(syntaxLevel)) {
+          result.addAllElements(createProto2FieldLabels());
+        }
+        else if (isDeprecatedProto3Syntax(syntaxLevel)) {
+          result.addAllElements(createProto3FieldLabels());
+        }
+        else if (syntaxLevel instanceof SyntaxLevel.Edition) {
+          result.addAllElements(createEditionsFieldLabels());
+        }
       } else {
         // In proto2, we can have a "group" right after the field label.
-        if (syntaxLevel == SyntaxLevel.PROTO2) {
+        if (isDeprecatedProto2Syntax( syntaxLevel)) {
           List<PbElement> fieldElements =
               PsiTreeUtil.getChildrenOfTypeAsList(simpleField, PbElement.class);
           if (fieldElements.size() == 2) {

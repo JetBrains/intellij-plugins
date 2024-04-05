@@ -126,7 +126,7 @@ final class EnumTracker {
           visitReservedRange(reservedStatement, reservedRange);
         }
         for (PbIdentifierValue reservedName : reservedStatement.getIdentifierValueList()) {
-          if (enumDefinition.getPbFile().getSyntaxLevel() == SyntaxLevel.EDITIONS) {
+          if (enumDefinition.getPbFile().getSyntaxLevel() instanceof SyntaxLevel.Edition) {
             visitReservedName(reservedStatement, reservedName);
           } else {
             queueError(
@@ -136,7 +136,7 @@ final class EnumTracker {
           }
         }
         for (PbStringValue reservedName : reservedStatement.getStringValueList()) {
-          if (enumDefinition.getPbFile().getSyntaxLevel() != SyntaxLevel.EDITIONS) {
+          if (!(enumDefinition.getPbFile().getSyntaxLevel() instanceof SyntaxLevel.Edition)) {
             visitReservedName(reservedStatement, reservedName);
           } else {
             queueError(

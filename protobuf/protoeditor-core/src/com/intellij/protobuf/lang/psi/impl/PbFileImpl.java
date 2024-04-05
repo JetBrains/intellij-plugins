@@ -42,6 +42,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static com.intellij.protobuf.lang.psi.SyntaxLevelKt.PROTO_SYNTAX_V2;
+
 public class PbFileImpl extends PsiFileBase implements PbFile {
 
   private static final Logger logger = Logger.getInstance(PbFileImpl.class);
@@ -97,7 +99,7 @@ public class PbFileImpl extends PsiFileBase implements PbFile {
     if (statement != null) {
       level = statement.getSyntaxLevel();
     }
-    return level != null ? level : SyntaxLevel.PROTO2;
+    return level != null ? level : new SyntaxLevel.DeprecatedSyntax(PROTO_SYNTAX_V2);
   }
 
   @Override

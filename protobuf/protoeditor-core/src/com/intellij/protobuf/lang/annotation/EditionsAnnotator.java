@@ -28,8 +28,8 @@ public class EditionsAnnotator implements Annotator {
   @Override
   public void annotate(@NotNull PsiElement element, @NotNull final AnnotationHolder holder) {
     // Only operate on editions files.
-    if (!(element instanceof PbElement)
-        || ((PbElement) element).getPbFile().getSyntaxLevel() != SyntaxLevel.EDITIONS) {
+    if (!(element instanceof PbElement pbElement)
+        || !(pbElement.getPbFile().getSyntaxLevel() instanceof SyntaxLevel.Edition)) {
       return;
     }
 
@@ -56,11 +56,13 @@ public class EditionsAnnotator implements Annotator {
    * Check the edition specification.
    */
   private static void annotateEdition(PbSyntaxStatement syntax, AnnotationHolder holder) {
-    if (syntax.getEdition() == null || !syntax.getEdition().equals("2023")) {
+    SyntaxLevel syntaxLevel = syntax.getSyntaxLevel();
+    var effectiveSyntaxVersion = syntaxLevel == null ? "" : syntaxLevel.getVersion();
+    if (!"2023".equals(effectiveSyntaxVersion)) {
       holder
           .newAnnotation(
               HighlightSeverity.ERROR,
-              PbLangBundle.message("editions.unsupported", syntax.getEdition()))
+              PbLangBundle.message("editions.unsupported", effectiveSyntaxVersion))
           .range(syntax)
           .create();
     }
