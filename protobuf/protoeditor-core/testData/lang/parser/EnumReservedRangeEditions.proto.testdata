@@ -1,4 +1,4 @@
-edition = "2023;
+edition = "2023";
 
 enum TestEnumReservedRange {
   FOO = 0;

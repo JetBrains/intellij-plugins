@@ -15,6 +15,8 @@
  */
 package com.intellij.protobuf.lang.psi;
 
+import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 interface PbSyntaxStatementBase extends PbElement {
@@ -22,6 +24,9 @@ interface PbSyntaxStatementBase extends PbElement {
   @Nullable
   SyntaxLevel getSyntaxLevel();
 
+  @NotNull
+  PsiElement getSyntaxTypeExpression();
+
   @Nullable
-  String getEdition();
+  PsiElement getSyntaxVersionExpression();
 }

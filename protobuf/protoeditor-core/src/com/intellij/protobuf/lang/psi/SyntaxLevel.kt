@@ -15,16 +15,32 @@
  */
 package com.intellij.protobuf.lang.psi
 
-/** An enum defining possible syntax levels.  */
-enum class SyntaxLevel(val id: String) {
-  PROTO2("proto2"),
-  PROTO3("proto3"),
-  EDITIONS("editions");
+sealed class SyntaxLevel(val id: String, val version: String) {
+  class DeprecatedSyntax(version: String) : SyntaxLevel(SYNTAX_KEYWORD, version)
+  class Edition(version: String) : SyntaxLevel(EDITION_KEYWORD, version)
 
   companion object {
     @JvmStatic
-    fun forString(level: String): SyntaxLevel? {
-      return entries.firstOrNull { it.id == level }
+    fun parse(syntaxId: String?, version: String?): SyntaxLevel? {
+      return when {
+        syntaxId.isNullOrEmpty() || version.isNullOrEmpty() -> null
+        syntaxId == "syntax" -> DeprecatedSyntax(version)
+        syntaxId == "edition" -> Edition(version)
+        else -> null
+      }
     }
   }
 }
+
+internal fun isDeprecatedProto2Syntax(syntaxLevel: SyntaxLevel): Boolean {
+  return syntaxLevel is SyntaxLevel.DeprecatedSyntax && syntaxLevel.version == PROTO_SYNTAX_V2
+}
+
+internal fun isDeprecatedProto3Syntax(syntaxLevel: SyntaxLevel): Boolean {
+  return syntaxLevel is SyntaxLevel.DeprecatedSyntax && syntaxLevel.version == PROTO_SYNTAX_V3
+}
+
+internal const val SYNTAX_KEYWORD = "syntax"
+internal const val EDITION_KEYWORD = "edition"
+internal const val PROTO_SYNTAX_V2 = "proto2"
+internal const val PROTO_SYNTAX_V3 = "proto3"
