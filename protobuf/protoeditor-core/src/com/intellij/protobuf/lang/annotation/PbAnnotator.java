@@ -550,7 +550,7 @@ public class PbAnnotator implements Annotator {
     PsiElement qualifier = name.getSymbol();
     if (qualifier != null
         && qualifier.getText().equals("features")
-        && name.getPbFile().getSyntaxLevel() != SyntaxLevel.EDITIONS) {
+        && !(name.getPbFile().getSyntaxLevel() instanceof SyntaxLevel.Edition)) {
       // Features are not "special" options, but they are banned outside of editions files.
       holder
           .newAnnotation(
