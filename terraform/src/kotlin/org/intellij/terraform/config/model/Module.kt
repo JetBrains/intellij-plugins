@@ -5,7 +5,9 @@ import com.intellij.concurrency.ConcurrentCollectionFactory
 import com.intellij.lang.LanguageMatcher
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileSystemItem
@@ -147,10 +149,33 @@ class Module private constructor(val item: PsiFileSystemItem) {
   }
 
   private fun processAllFilesWithVariables(processor: Processor<PsiFile>): Boolean {
-    val contextFile = item.virtualFile?.let { item.project.service<LocalSchemaService>().findLockFile(it) } ?: item.virtualFile
+
+    val manifestResult = ModuleDetectionUtil.getTerraformDirSomewhere(item.virtualFile, item.project)
+      ?.let { ModuleDetectionUtil.getManifestForDirectory(it, item, item.project) }
+
+    val manifestRoots = manifestResult?.value?.let { manifest ->
+      manifest.modules.mapNotNull { module ->
+        val path = FileUtil.toSystemIndependentName(module.dir)
+        manifest.context.findFileByRelativePath(path)
+      }
+    }.orEmpty()
+
+    val moduleRootOrLockFile = item.virtualFile?.let { currentFile ->
+      manifestRoots.filter { VfsUtil.isAncestor(it, currentFile, false) }.maxByOrNull { it.path.length }
+      ?: item.project.service<LocalSchemaService>().findLockFile(currentFile)
+    }
+
+    val contextFile = moduleRootOrLockFile ?: item.virtualFile
     val dirToSearch = contextFile.takeIf { it.isDirectory } ?: contextFile.parent
-    val searchScope = dirToSearch?.let { GlobalSearchScopes.directoryScope(item.project, it, true) }
-                      ?: GlobalSearchScope.projectScope(item.project)
+
+    val exclusion = manifestRoots.filterNot { VfsUtil.isAncestor(it, dirToSearch, false) }.let { modulesDirs ->
+      GlobalSearchScopes.directoriesScope(item.project, true, *modulesDirs.toTypedArray())
+    }
+
+    val searchScope = dirToSearch?.let {
+      GlobalSearchScopes.directoryScope(item.project, it, moduleRootOrLockFile != null)
+        .intersectWith(GlobalSearchScope.notScope(exclusion))
+    } ?: GlobalSearchScope.projectScope(item.project)
 
     val terraformScope = PsiSearchScopeUtil.restrictScopeToFileLanguage(
       item.project,

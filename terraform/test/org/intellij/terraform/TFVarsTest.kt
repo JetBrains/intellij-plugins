@@ -8,7 +8,6 @@ import org.intellij.terraform.config.inspection.TFDuplicatedVariableInspection
 import org.intellij.terraform.config.inspection.TFVARSIncorrectElementInspection
 import org.intellij.terraform.config.model.local.TERRAFORM_LOCK_FILE_NAME
 
-@Suppress("UsagesOfObsoleteApi")
 class TFVarsTest : BasePlatformTestCase() {
 
 
