@@ -63,8 +63,8 @@ class TFMissingModuleInspection : LocalInspectionTool() {
     val directory = block.containingFile.containingDirectory ?: return
 
     val pair = ModuleDetectionUtil.getAsModuleBlockOrError(block)
-    if (pair.first != null) return
-    @NonNls val err = pair.second ?: "Unknown reason"
+    if (pair !is ModuleDetectionUtil.Result.Failure) return
+    @NonNls val err = pair.failureString
 
     ProgressIndicatorProvider.checkCanceled()
 
