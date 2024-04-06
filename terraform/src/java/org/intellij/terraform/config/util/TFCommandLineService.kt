@@ -73,6 +73,11 @@ class TFCommandLineServiceMock : TFCommandLineService {
     throw head
   }
 
+  fun clear() {
+    requests.clear()
+    errors.clear()
+  }
+
   fun requestsToVerify(): List<String> {
     val result = requests.toList()
     requests.clear()

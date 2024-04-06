@@ -13,6 +13,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.ModificationTracker
+import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
@@ -79,6 +80,13 @@ object ModuleDetectionUtil {
   sealed class Result<T>() {
     abstract val value: T?
     abstract val failureString: String?
+
+    inline fun getOr(fallback: (Failure<T>) -> T): T {
+      return when (this) {
+        is Failure -> fallback(this)
+        is Success -> this.value
+      }
+    }
 
     data class Success<T>(override val value: T) : Result<T>() {
       override val failureString: String? = null
@@ -167,6 +175,19 @@ object ModuleDetectionUtil {
     return modUri.couldBeReferencedBy(refUri)
   }
 
+  fun getManifestForDirectory(dotTerraform: VirtualFile, file: UserDataHolder, project: Project): Result<ModulesManifest> {
+
+    LOG.debug("Found .terraform directory: $dotTerraform")
+    val manifestFile = getTerraformModulesManifestFile(project, dotTerraform)
+                       ?: return Result.Failure("No modules/modules.json found in .terraform directory, please run `terraform get` in appropriate place")
+
+    LOG.debug("Found manifest.json: $manifestFile")
+    val manifest = CachedValuesManager.getManager(project).getCachedValue(file, ManifestCachedValueProvider(manifestFile.url))
+                   ?: return Result.Failure("Failed to parse .terraform/modules/modules.json, please rerun `terraform get`")
+
+    return Result.Success(manifest)
+  }
+
   private fun doGetAsModuleBlock(moduleBlock: HCLBlock): CachedValueProvider.Result<Result<Module>> {
     val name = moduleBlock.getNameElementUnquoted(1) ?: return CachedValueProvider.Result(Result.Failure("Unknown reason"), moduleBlock)
     val sourceVal = moduleBlock.`object`?.findProperty("source")?.value as? HCLStringLiteral
@@ -178,27 +199,16 @@ object ModuleDetectionUtil {
     val source = sourceVal.value
     val project = moduleBlock.project
 
-    val dotTerraform = getTerraformDirSomewhere(directory)
+    val dotTerraform = getTerraformDirSomewhere(directory.virtualFile, project)
     if (dotTerraform == null) {
       val err = "No .terraform found under project directory, please run `terraform get` in appropriate place"
       LOG.warn(err)
       return directoryResult(directory, source, err, moduleBlock)
     }
 
-    LOG.debug("Found .terraform directory: $dotTerraform")
-    val manifestFile = getTerraformModulesManifestFile(project, dotTerraform)
-    if (manifestFile == null) {
-      val err = "No modules/modules.json found in .terraform directory, please run `terraform get` in appropriate place"
-      LOG.warn(err)
-      return directoryResult(directory, source, err, moduleBlock)
-    }
-
-    LOG.debug("Found manifest.json: $manifestFile")
-    val manifest = CachedValuesManager.getManager(project).getCachedValue(file, ManifestCachedValueProvider(manifestFile.url))
-    if (manifest == null) {
-      val err = "Failed to parse .terraform/modules/modules.json, please rerun `terraform get`"
-      LOG.warn(err)
-      return directoryResult(directory, source, err, moduleBlock)
+    val manifest = getManifestForDirectory(dotTerraform, file, project).getOr {
+      LOG.warn(it.failureString)
+      return directoryResult(directory, source, it.failureString, moduleBlock)
     }
 
     LOG.debug("All modules from modules.json: ${manifest.modules}")
@@ -214,7 +224,7 @@ object ModuleDetectionUtil {
       if (pair.first == null) {
         return directoryResult(
           directory, source, pair.second ?: "Can't determine key prefix", moduleBlock, dotTerraform,
-          manifestFile)
+          manifest.context)
       }
       val keyPrefix = pair.first!!
 
@@ -239,7 +249,7 @@ object ModuleDetectionUtil {
     if (isRelativeSource(source)) {
       findRelativeModule(directory, source)?.let {
         LOG.debug("Shortcutting to relative module")
-        return CachedValueProvider.Result(Result.Success(it), moduleBlock, directory, dotTerraform, manifestFile, relative,
+        return CachedValueProvider.Result(Result.Success(it), moduleBlock, directory, dotTerraform, manifest.context, relative,
                                           getModuleFiles(it))
       }
     }
@@ -259,7 +269,7 @@ object ModuleDetectionUtil {
     }
     LOG.debug("Module search succeed, directory is $dir")
     val mod = Module(dir)
-    return CachedValueProvider.Result(Result.Success(mod), moduleBlock, directory, dotTerraform, manifestFile, relative,
+    return CachedValueProvider.Result(Result.Success(mod), moduleBlock, directory, dotTerraform, manifest.context, relative,
                                       getModuleFiles(mod))
   }
 
@@ -470,8 +480,9 @@ object ModuleDetectionUtil {
     }
   }
 
-  private fun getTerraformDirSomewhere(file: PsiDirectory): VirtualFile? {
-    return getVFSParents(file).filter { it.isDirectory }.firstNotNullOfOrNull { parent ->
+  fun getTerraformDirSomewhere(virtualFile: VirtualFile?, project: Project): VirtualFile? {
+    virtualFile ?: return null
+    return getVFSParents(virtualFile, project).filter { it.isDirectory }.firstNotNullOfOrNull { parent ->
       parent.findChild(".terraform")?.takeIf { it.isDirectory }
     }
   }
