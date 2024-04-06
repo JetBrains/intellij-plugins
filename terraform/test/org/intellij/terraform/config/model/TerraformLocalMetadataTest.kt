@@ -34,6 +34,7 @@ class TerraformLocalMetadataTest : BasePlatformTestCase() {
   override fun setUp() {
     super.setUp()
     (myFixture as CodeInsightTestFixtureImpl).canChangeDocumentDuringHighlighting(true)
+    TFCommandLineServiceMock.instance.clear() // to avoid getting errors from previous tests
     TypeModelProvider.globalModel // ensure loaded, to avoid falling on the timeout
   }
 

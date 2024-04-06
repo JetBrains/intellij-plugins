@@ -1,0 +1,14 @@
+{
+  "Modules": [
+    {
+      "Key": "",
+      "Source": "",
+      "Dir": "."
+    },
+    {
+      "Key": "main",
+      "Source": "./modules/fake_module",
+      "Dir": "modules/fake_module"
+    }
+  ]
+}
