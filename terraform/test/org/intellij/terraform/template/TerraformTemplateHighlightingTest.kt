@@ -32,7 +32,7 @@ class TerraformTemplateHighlightingTest : BasePlatformTestCase() {
       }
     """.trimIndent())
     myFixture.configureByText("noExtension.json", """
-      <warning descr="Possibly template file"><error descr="<value> expected, got '%'">%</error>{if condition}
+      <warning descr="Possible template file"><error descr="<value> expected, got '%'">%</error>{if condition}
         console.log("Hello world!")
         debugger
       %{endif}</warning>
