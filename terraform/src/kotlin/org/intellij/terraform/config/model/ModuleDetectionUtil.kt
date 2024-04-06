@@ -63,16 +63,29 @@ object ModuleDetectionUtil {
   }
 
   fun getAsModuleBlock(moduleBlock: HCLBlock): Module? {
-    return CachedValuesManager.getCachedValue(moduleBlock, ModuleCachedValueProvider(moduleBlock))?.first
+    return CachedValuesManager.getCachedValue(moduleBlock, ModuleCachedValueProvider(moduleBlock))?.value
   }
 
-  fun getAsModuleBlockOrError(moduleBlock: HCLBlock): Pair<Module?, String?> {
+  fun getAsModuleBlockOrError(moduleBlock: HCLBlock): Result<Module> {
     return CachedValuesManager.getCachedValue(moduleBlock, ModuleCachedValueProvider(moduleBlock))
   }
 
-  class ModuleCachedValueProvider(private val block: HCLBlock) : CachedValueProvider<Pair<Module?, String?>> {
-    override fun compute(): CachedValueProvider.Result<Pair<Module?, String?>> {
+  class ModuleCachedValueProvider(private val block: HCLBlock) : CachedValueProvider<Result<Module>> {
+    override fun compute(): CachedValueProvider.Result<Result<Module>> {
       return doGetAsModuleBlock(block)
+    }
+  }
+
+  sealed class Result<T>() {
+    abstract val value: T?
+    abstract val failureString: String?
+
+    data class Success<T>(override val value: T) : Result<T>() {
+      override val failureString: String? = null
+    }
+
+    data class Failure<T>(override val failureString: String) : Result<T>() {
+      override val value: T? = null
     }
   }
 
@@ -154,111 +167,113 @@ object ModuleDetectionUtil {
     return modUri.couldBeReferencedBy(refUri)
   }
 
-  private fun doGetAsModuleBlock(moduleBlock: HCLBlock): CachedValueProvider.Result<Pair<Module?, String?>> {
-    val name = moduleBlock.getNameElementUnquoted(1) ?: return CachedValueProvider.Result(null to null, moduleBlock)
+  private fun doGetAsModuleBlock(moduleBlock: HCLBlock): CachedValueProvider.Result<Result<Module>> {
+    val name = moduleBlock.getNameElementUnquoted(1) ?: return CachedValueProvider.Result(Result.Failure("Unknown reason"), moduleBlock)
     val sourceVal = moduleBlock.`object`?.findProperty("source")?.value as? HCLStringLiteral
-                    ?: return CachedValueProvider.Result(null to "No 'source' property", moduleBlock)
+                    ?: return CachedValueProvider.Result(Result.Failure("No 'source' property"), moduleBlock)
 
     val file = moduleBlock.containingFile.originalFile
-    val directory = file.containingDirectory ?: return CachedValueProvider.Result(null to null, moduleBlock, file)
-    var err: String? = null
+    val directory = file.containingDirectory ?: return CachedValueProvider.Result(Result.Failure("Unknown reason"), moduleBlock, file)
 
     val source = sourceVal.value
     val project = moduleBlock.project
 
     val dotTerraform = getTerraformDirSomewhere(directory)
-    if (dotTerraform != null) {
-      LOG.debug("Found .terraform directory: $dotTerraform")
-      val manifestFile = getTerraformModulesManifestFile(project, dotTerraform)
-      if (manifestFile != null) {
-        LOG.debug("Found manifest.json: $manifestFile")
-        val manifest = CachedValuesManager.getManager(project).getCachedValue(file, ManifestCachedValueProvider(manifestFile.url))
-        if (manifest != null) {
-          LOG.debug("All modules from modules.json: ${manifest.modules}")
-          val module: ModuleManifest?
-          if (isRegistrySource(source, sourceVal)) {
-            val version = (moduleBlock.`object`?.findProperty("version")?.value as? HCLStringLiteral)?.value
-            val constraint = getVersionConstraint(version) ?: VersionConstraint.AnyVersion
-            module = newestModuleManifest(constraint, manifest.modules
-              .filter { sourceMatch(it.source, source) })
-          }
-          else {
-            val pair = getKeyPrefix(directory, dotTerraform, manifest, name, source)
-            if (pair.first == null) {
-              val relativeModule = findRelativeModule(directory, moduleBlock, source)
-              return CachedValueProvider.Result(relativeModule to (pair.second
-                                                                   ?: "Can't determine key prefix"), moduleBlock, dotTerraform,
-                                                manifestFile, *getModuleFiles(relativeModule))
-            }
-            val keyPrefix = pair.first!!
+    if (dotTerraform == null) {
+      val err = "No .terraform found under project directory, please run `terraform get` in appropriate place"
+      LOG.warn(err)
+      return directoryResult(directory, source, err, moduleBlock)
+    }
 
-            LOG.debug("Searching for module with source '$source' and keyPrefix '$keyPrefix'")
-            module = manifest.modules.find {
-              sourceMatch(it.source, source) && it.key.startsWith(keyPrefix) && !it.key.removePrefix(keyPrefix).contains('|')
-            }
-          }
+    LOG.debug("Found .terraform directory: $dotTerraform")
+    val manifestFile = getTerraformModulesManifestFile(project, dotTerraform)
+    if (manifestFile == null) {
+      val err = "No modules/modules.json found in .terraform directory, please run `terraform get` in appropriate place"
+      LOG.warn(err)
+      return directoryResult(directory, source, err, moduleBlock)
+    }
 
-          if (module != null) {
-            LOG.debug("Found module $module")
-            val path = FileUtil.toSystemIndependentName(module.full)
-            var relative = manifest.context.findFileByRelativePath(path)
-            if (relative != null) {
-              LOG.debug("Absolute module dir: $relative")
-              if (isRelativeSource(source)) {
-                findRelativeModule(directory, moduleBlock, source)?.let {
-                  LOG.debug("Shortcutting to relative module")
-                  return CachedValueProvider.Result(it to null, moduleBlock, directory, dotTerraform, manifestFile, relative,
-                                                    getModuleFiles(it))
-                }
-              }
-              val canonical = relative.canonicalFile
-              // TODO: Symlink resolving probably would not work on Windows
-              if (canonical != null && canonical != relative) {
-                if (getRoots(project).any { VfsUtilCore.isAncestor(it, canonical, true) }) {
-                  LOG.debug("Replacing module relative path ('${relative.name}') with canonical: '$canonical'")
-                  relative = canonical
-                }
-              }
-              val dir = PsiManager.getInstance(project).findDirectory(relative)
-              if (dir != null) {
-                LOG.debug("Module search succeed, directory is $dir")
-                val mod = Module(dir)
-                return CachedValueProvider.Result(mod to null, moduleBlock, directory, dotTerraform, manifestFile, relative,
-                                                  getModuleFiles(mod))
-              }
-              else {
-                err = "Can't find PsiDirectory for $relative"
-                LOG.debug(err)
-              }
-            }
-            else {
-              err = "Can't find relative dir '$path' in '${manifest.context}'"
-              LOG.debug(err)
-            }
-          }
-        }
-        else {
-          err = "Failed to parse .terraform/modules/modules.json, please rerun `terraform get`"
-          LOG.warn(err)
-        }
-      }
-      else {
-        err = "No modules/modules.json found in .terraform directory, please run `terraform get` in appropriate place"
-        LOG.warn(err)
-      }
+    LOG.debug("Found manifest.json: $manifestFile")
+    val manifest = CachedValuesManager.getManager(project).getCachedValue(file, ManifestCachedValueProvider(manifestFile.url))
+    if (manifest == null) {
+      val err = "Failed to parse .terraform/modules/modules.json, please rerun `terraform get`"
+      LOG.warn(err)
+      return directoryResult(directory, source, err, moduleBlock)
+    }
+
+    LOG.debug("All modules from modules.json: ${manifest.modules}")
+    val module: ModuleManifest?
+    if (isRegistrySource(source, sourceVal)) {
+      val version = (moduleBlock.`object`?.findProperty("version")?.value as? HCLStringLiteral)?.value
+      val constraint = getVersionConstraint(version) ?: VersionConstraint.AnyVersion
+      module = newestModuleManifest(constraint, manifest.modules
+        .filter { sourceMatch(it.source, source) })
     }
     else {
-      err = "No .terraform found under project directory, please run `terraform get` in appropriate place"
-      LOG.warn(err)
+      val pair = getKeyPrefix(directory, dotTerraform, manifest, name, source)
+      if (pair.first == null) {
+        return directoryResult(
+          directory, source, pair.second ?: "Can't determine key prefix", moduleBlock, dotTerraform,
+          manifestFile)
+      }
+      val keyPrefix = pair.first!!
+
+      LOG.debug("Searching for module with source '$source' and keyPrefix '$keyPrefix'")
+      module = manifest.modules.find {
+        sourceMatch(it.source, source) && it.key.startsWith(keyPrefix) && !it.key.removePrefix(keyPrefix).contains('|')
+      }
     }
 
-    if (err != null) {
-      err = "Terraform Module '$name' with source '$source' directory not found locally, use `terraform get` to fetch modules."
-      LOG.warn(err)
+    if (module == null) return directoryResult(directory, source, null, moduleBlock)
+
+    LOG.debug("Found module $module")
+    val path = FileUtil.toSystemIndependentName(module.full)
+    var relative = manifest.context.findFileByRelativePath(path)
+    if (relative == null) {
+      val err = "Can't find relative dir '$path' in '${manifest.context}'"
+      LOG.debug(err)
+      return directoryResult(directory, source, err, moduleBlock)
     }
-    val relativeModule = findRelativeModule(directory, moduleBlock, source)
-    return CachedValueProvider.Result(relativeModule to err, moduleBlock, directory, *getVFSChainOrVFS(directory),
-                                      *getModuleFiles(relativeModule))
+
+    LOG.debug("Absolute module dir: $relative")
+    if (isRelativeSource(source)) {
+      findRelativeModule(directory, source)?.let {
+        LOG.debug("Shortcutting to relative module")
+        return CachedValueProvider.Result(Result.Success(it), moduleBlock, directory, dotTerraform, manifestFile, relative,
+                                          getModuleFiles(it))
+      }
+    }
+    val canonical = relative.canonicalFile
+    // TODO: Symlink resolving probably would not work on Windows
+    if (canonical != null && canonical != relative) {
+      if (getRoots(project).any { VfsUtilCore.isAncestor(it, canonical, true) }) {
+        LOG.debug("Replacing module relative path ('${relative.name}') with canonical: '$canonical'")
+        relative = canonical
+      }
+    }
+    val dir = PsiManager.getInstance(project).findDirectory(relative)
+    if (dir == null) {
+      val err = "Can't find PsiDirectory for $relative"
+      LOG.debug(err)
+      return directoryResult(directory, source, err, moduleBlock)
+    }
+    LOG.debug("Module search succeed, directory is $dir")
+    val mod = Module(dir)
+    return CachedValueProvider.Result(Result.Success(mod), moduleBlock, directory, dotTerraform, manifestFile, relative,
+                                      getModuleFiles(mod))
+  }
+
+  private fun directoryResult(
+    directory: PsiDirectory,
+    source: String,
+    err: String?,
+    vararg dependencies: Any,
+  ): CachedValueProvider.Result<Result<Module>> {
+    val relativeModule = findRelativeModule(directory, source)
+                           ?.let { Result.Success(it) }
+                         ?: Result.Failure(err ?: "Unknown reason")
+    return CachedValueProvider.Result(relativeModule, *dependencies, directory, *getVFSChainOrVFS(directory),
+                                      *getModuleFiles(relativeModule.value))
   }
 
   private fun newestModuleManifest(constraint: VersionConstraint, modules: List<ModuleManifest>): ModuleManifest? {
@@ -398,14 +413,14 @@ object ModuleDetectionUtil {
     }
   }
 
-  private fun findRelativeModule(directory: PsiDirectory, moduleBlock: HCLBlock, source: String): Module? {
+  private fun findRelativeModule(directory: PsiDirectory, source: String): Module? {
     // Prefer local file paths over loaded modules.
     // TODO: Consider removing that
     // Used in tests
 
     val relative = directory.virtualFile.findFileByRelativePath(source) ?: return null
     if (!relative.exists() || !relative.isDirectory) return null
-    return PsiManager.getInstance(moduleBlock.project).findDirectory(relative)?.let { Module(it) }
+    return PsiManager.getInstance(directory.project).findDirectory(relative)?.let { Module(it) }
   }
 
   private fun getKeyPrefix(directory: PsiDirectory,
