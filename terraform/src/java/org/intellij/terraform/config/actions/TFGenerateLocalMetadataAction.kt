@@ -3,7 +3,6 @@ package org.intellij.terraform.config.actions
 
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.components.serviceAsync
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.intellij.terraform.config.TerraformConstants
@@ -13,7 +12,7 @@ import org.jetbrains.annotations.Nls
 
 class TFGenerateLocalMetadataAction : TFExternalToolsAction() {
 
-  override suspend fun invoke(project: Project, module: Module?, @Nls title: String, virtualFile: VirtualFile) {
+  override suspend fun invoke(project: Project, @Nls title: String, virtualFile: VirtualFile) {
     val localSchemaService = project.serviceAsync<LocalSchemaService>()
     val lockFile = localSchemaService.findLockFile(virtualFile)
     if (lockFile == null) {

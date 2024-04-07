@@ -10,7 +10,6 @@ import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
@@ -49,17 +48,8 @@ public final class TFExecutor {
     myExePath = TerraformProjectSettings.Companion.getInstance(myProject).getActualTerraformPath();
   }
 
-  public static TFExecutor in(@NotNull Project project, @Nullable Module module) {
-    return module != null ? in(module) : in(project);
-  }
-
-  private static @NotNull TFExecutor in(@NotNull Project project) {
+  public static @NotNull TFExecutor in(@NotNull Project project) {
     return new TFExecutor(project);
-  }
-
-  public static @NotNull TFExecutor in(@NotNull Module module) {
-    // TODO: Decide whether 'module' is really needed
-    return new TFExecutor(module.getProject());
   }
 
   public @NotNull TFExecutor withPresentableName(@Nullable @Nls String presentableName) {

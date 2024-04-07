@@ -303,7 +303,7 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     logger<LocalSchemaService>().info("building local model buildJsonFromTerraformProcess: $lock")
     val capturingProcessAdapter = CapturingProcessAdapter()
 
-    val success = TFExecutor.`in`(project, null)
+    val success = TFExecutor.`in`(project)
       .withPresentableName(HCLBundle.message("rebuilding.local.schema"))
       .withParameters("providers", "schema", "-json")
       .withWorkDirectory(lock.parent.path)

@@ -6,7 +6,6 @@ import com.intellij.openapi.application.EDT
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
@@ -54,7 +53,7 @@ internal class TerraformActionService(private val project: Project, private val 
         return@withBackgroundProgress
       }
 
-      if (!execTerraformInit(dirFile, project, module = null, title)) {
+      if (!execTerraformInit(dirFile, project, title)) {
         TerraformConstants.EXECUTION_NOTIFICATION_GROUP
           .createNotification(
             title,
@@ -86,15 +85,12 @@ internal class TerraformActionService(private val project: Project, private val 
     }
   }
 
-  private suspend fun execTerraformInit(virtualFile: VirtualFile,
-                                        project: Project,
-                                        module: Module?,
-                                        title: @Nls String): Boolean {
+  private suspend fun execTerraformInit(virtualFile: VirtualFile, project: Project, title: @Nls String): Boolean {
     withContext(Dispatchers.EDT) {
       FileDocumentManager.getInstance().saveAllDocuments()
     }
     val directory = if (virtualFile.isDirectory) virtualFile else virtualFile.parent
-    val success = TFExecutor.`in`(project, module)
+    val success = TFExecutor.`in`(project)
       .withPresentableName(title)
       .withParameters("init")
       .showOutputOnError()

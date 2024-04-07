@@ -4,7 +4,6 @@ package org.intellij.terraform.config.actions
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.components.service
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
@@ -14,7 +13,7 @@ import org.jetbrains.annotations.Nls
 
 open class TFInitAction(private val notifyOnSuccess: Boolean = true) : TFExternalToolsAction() {
 
-  override suspend fun invoke(project: Project, module: Module?, title: @Nls String, virtualFile: VirtualFile) {
+  override suspend fun invoke(project: Project, title: @Nls String, virtualFile: VirtualFile) {
     project.service<TerraformActionService>().initTerraform(virtualFile, notifyOnSuccess)
   }
 

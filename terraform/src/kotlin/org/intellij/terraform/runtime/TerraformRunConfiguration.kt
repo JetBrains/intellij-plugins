@@ -68,7 +68,7 @@ class TerraformRunConfiguration(project: Project,
       private fun createCommandLine(): GeneralCommandLine {
         val parameters = parameters
 
-        return TFExecutor.`in`(project, null)
+        return TFExecutor.`in`(project)
           .withPresentableName(HCLBundle.message("terraform.run.configuration.name"))
           .withWorkDirectory(parameters.workingDirectory)
           .withParameters(parameters.programParametersList.parameters)
@@ -129,7 +129,7 @@ class TerraformRunConfiguration(project: Project,
       if (directory.isBlank()) {
         return HCLBundle.message("run.configuration.no.working.directory.specified")
       }
-      if (terraformPath.isNullOrBlank()) {
+      if (terraformPath.isBlank()) {
         return HCLBundle.message("run.configuration.no.terraform.specified")
       }
       if (!terraformPath.isExecutable()) {

@@ -25,8 +25,6 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileTypes.FileTypeRegistry
-import com.intellij.openapi.module.Module
-import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
@@ -85,10 +83,9 @@ abstract class TFExternalToolsAction : DumbAwareAction() {
     val file = e.getData(CommonDataKeys.VIRTUAL_FILE) ?: return
     val title = e.presentation.text ?: "Processing..."
 
-    val module = ModuleUtilCore.findModuleForFile(file, project)
     getActionCoroutineScope(project).launch {
       try {
-        invoke(project, module, title, file)
+        invoke(project, title, file)
       }
       catch (ex: Exception) {
         if (ex is CancellationException) throw ex
@@ -98,10 +95,7 @@ abstract class TFExternalToolsAction : DumbAwareAction() {
     }
   }
 
-  abstract suspend fun invoke(project: Project,
-                              module: Module?,
-                              title: @Nls String,
-                              virtualFile: VirtualFile)
+  abstract suspend fun invoke(project: Project, title: @Nls String, virtualFile: VirtualFile)
 
   companion object {
     private val LOG = Logger.getInstance(TFExternalToolsAction::class.java)
