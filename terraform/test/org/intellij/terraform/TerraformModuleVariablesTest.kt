@@ -1,7 +1,10 @@
 package org.intellij.terraform
 
+import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.runWriteActionAndWait
+import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.components.service
+import com.intellij.openapi.progress.blockingContextToIndicator
 import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
@@ -11,7 +14,36 @@ import org.intellij.terraform.config.inspection.TFVARSIncorrectElementInspection
 import org.intellij.terraform.config.model.TypeModelProvider
 import org.intellij.terraform.config.model.local.LocalSchemaService
 
-class TerraformModuleVariablesTest() : TerraformModuleVariablesTestBase("terraform/variables/tf-modules-subdirs")
+class TerraformModuleVariablesTest() : TerraformModuleVariablesTestBase("terraform/variables/tf-modules-subdirs") {
+
+  fun testModuleVariableDeclarationRename() = timeoutRunBlocking {
+    val file = myFixture.configureByFile("modules/fake_module/variables.tf")
+    val varToRename = file.text.indexOf("fake_var_1")
+    writeAction {
+      myFixture.editor.caretModel.moveToOffset(varToRename + 1)
+    }
+    val findUsages = readAction {
+      blockingContextToIndicator {
+        val elementAtCaret = myFixture.elementAtCaret
+        myFixture.findUsages(elementAtCaret)
+      }
+    }
+
+    assertEquals(1, findUsages.size)
+    writeAction { myFixture.renameElementAtCaret("new_fake_var_1") }
+    myFixture.checkResult("main.tf", """
+      module "main" {
+        source = "./modules/fake_module"
+
+        new_fake_var_1 = ""
+        fake_var_2 = ""
+
+        fake_var_4 = ""
+      }
+      
+    """.trimIndent(), true)
+  }
+}
 
 class TerraformModuleVariablesUninitialisedTest() : TerraformModuleVariablesTestBase("terraform/variables/tf-modules-subdirs-uninitialised")
 
