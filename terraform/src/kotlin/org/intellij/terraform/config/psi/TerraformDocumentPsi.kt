@@ -2,12 +2,15 @@
 package org.intellij.terraform.config.psi
 
 import com.intellij.ide.BrowserUtil
+import com.intellij.lang.Language
 import com.intellij.platform.ide.progress.runWithModalProgressBlocking
+import com.intellij.psi.ElementManipulators
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.FakePsiElement
 import com.intellij.psi.util.parentsOfType
 import org.intellij.terraform.config.documentation.TerraformWebDocUrlProvider
 import org.intellij.terraform.hcl.HCLBundle
+import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElement
 
@@ -18,6 +21,8 @@ internal class TerraformDocumentPsi(val element: PsiElement,
 
   override fun getParent(): PsiElement = parentElement as PsiElement
 
+  override fun getLanguage(): Language = HCLLanguage
+
   override fun navigate(requestFocus: Boolean) {
     parentElement ?: return
 
@@ -25,6 +30,12 @@ internal class TerraformDocumentPsi(val element: PsiElement,
       val url = TerraformWebDocUrlProvider.getDocumentationUrl(parentElement).firstOrNull()
       url?.let { BrowserUtil.browse(it) }
     }
+  }
+
+  override fun setName(name: String): PsiElement {
+    val manipulator = ElementManipulators.getManipulator(element) ?: return this
+    val element = manipulator.handleContentChange(element, name) ?: return this
+    return TerraformDocumentPsi(element, name)
   }
 
   override fun getPresentableText(): String {
