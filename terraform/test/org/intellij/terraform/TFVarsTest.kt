@@ -8,14 +8,10 @@ import org.intellij.terraform.config.inspection.TFDuplicatedVariableInspection
 import org.intellij.terraform.config.inspection.TFVARSIncorrectElementInspection
 import org.intellij.terraform.config.model.local.TERRAFORM_LOCK_FILE_NAME
 
-@Suppress("UsagesOfObsoleteApi")
 class TFVarsTest : BasePlatformTestCase() {
 
-
   fun testSameDir() {
-
     myFixture.enableInspections(TFVARSIncorrectElementInspection::class.java)
-
     myFixture.configureByText("simple.tf", """
       variable "foo" {
         default = "42"
@@ -25,15 +21,45 @@ class TFVarsTest : BasePlatformTestCase() {
         type = "map"
       }
     """.trimIndent())
-
     myFixture.configureByText("local.tfvars", """
       foo = "9000"
       baz = <warning descr="Incorrect variable value type. Expected: 'map'">1</warning>
       <warning descr="Undefined variable 'bar'">bar</warning> = 0
     """.trimIndent())
-
     myFixture.testHighlighting("local.tfvars")
+  }
 
+
+  fun testFindUsagesAndRename() {
+    myFixture.configureByText("local.tfvars", """
+      foo = "9000"
+      baz = 1
+    """.trimIndent())
+    myFixture.configureByText("simple.tf", """
+      variable "fo<caret>o" {
+        default = "42"
+        type = "string"
+      }
+      variable "baz" {
+        type = "map"
+      }
+    """.trimIndent())
+    val usages = myFixture.findUsages(myFixture.elementAtCaret)
+    assertEquals(1, usages.size)
+    myFixture.renameElementAtCaret("newFoo")
+    myFixture.checkResult("""
+      variable "newFoo" {
+        default = "42"
+        type = "string"
+      }
+      variable "baz" {
+        type = "map"
+      }
+    """.trimIndent())
+    myFixture.checkResult("local.tfvars", """
+        newFoo = "9000"
+        baz = 1
+    """.trimIndent(), true)
   }
 
   fun testDifferentDirsWithoutLock() {
