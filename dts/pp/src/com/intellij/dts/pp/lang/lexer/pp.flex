@@ -43,6 +43,8 @@ INCLUDE_PATH      = ("<"{PATH_CHAR}*">"?) | (\"{PATH_CHAR}*\"?)
     "#"{LINE_WS}*"if"       { yybegin(WAITING_EXPRESSION); return tokenTypes.getIfDirective(); }
     "#"{LINE_WS}*"ifndef"   { yybegin(WAITING_SYMBOL); return tokenTypes.getIfndefDirective(); }
     "#"{LINE_WS}*"elif"     { yybegin(WAITING_EXPRESSION); return tokenTypes.getElifDirective(); }
+    "#"{LINE_WS}*"elifdef"  { yybegin(WAITING_SYMBOL); return tokenTypes.getElifdefDirective(); }
+    "#"{LINE_WS}*"elifndef" { yybegin(WAITING_SYMBOL); return tokenTypes.getElifndefDirective(); }
     "#"{LINE_WS}*"else"     { return tokenTypes.getElseDirective(); }
     "#"{LINE_WS}*"endif"    { return tokenTypes.getEndifDirective(); }
     "#"{LINE_WS}*"define"   { yybegin(WAITING_DEFINE_SYMBOL); return tokenTypes.getDefineDirective(); }

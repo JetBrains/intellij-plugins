@@ -23,6 +23,12 @@ interface PpTokenTypes {
   val elifStatement: IElementType
   val elifDirective: IElementType
 
+  val elifdefStatement: IElementType
+  val elifdefDirective: IElementType
+
+  val elifndefStatement: IElementType
+  val elifndefDirective: IElementType
+
   val elseStatement: IElementType
   val elseDirective: IElementType
 
@@ -52,6 +58,8 @@ interface PpTokenTypes {
     undefDirective,
     ifDirective,
     elifDirective,
+    elifdefDirective,
+    elifndefDirective,
     elseDirective,
   )
 
@@ -64,6 +72,8 @@ interface PpTokenTypes {
     undefStatement,
     ifStatement,
     elifStatement,
+    elifdefStatement,
+    elifndefStatement,
     elseStatement
   )
 }

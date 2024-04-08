@@ -25,6 +25,12 @@ object DtsPpTokenTypes : PpTokenTypes {
   override val elifStatement: IElementType = DtsTypes.PP_ELIF_STATEMENT
   override val elifDirective: IElementType = DtsTypes.PP_ELIF
 
+  override val elifdefStatement: IElementType = DtsTypes.PP_ELIFDEF_STATEMENT
+  override val elifdefDirective: IElementType = DtsTypes.PP_ELIFDEF
+
+  override val elifndefStatement: IElementType = DtsTypes.PP_ELIFNDEF_STATEMENT
+  override val elifndefDirective: IElementType = DtsTypes.PP_ELIFNDEF
+
   override val elseStatement: IElementType = DtsTypes.PP_ELSE_STATEMENT
   override val elseDirective: IElementType = DtsTypes.PP_ELSE
 

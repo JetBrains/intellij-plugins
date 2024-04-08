@@ -103,11 +103,11 @@ class PpLexer implements FlexLexer {
   private static final String ZZ_ACTION_PACKED_0 =
     "\6\0\1\1\1\2\4\1\1\3\2\4\1\5\6\0"+
     "\1\2\1\6\1\7\3\4\3\0\1\10\2\0\2\4"+
-    "\11\0\1\11\1\12\6\0\1\13\1\14\2\0\1\15"+
-    "\1\16\1\17\1\0\1\20";
+    "\11\0\1\11\1\12\10\0\1\13\1\14\2\0\1\15"+
+    "\1\16\2\0\1\17\1\0\1\20\1\0\1\21\1\22";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[62];
+    int [] result = new int[69];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -137,12 +137,13 @@ class PpLexer implements FlexLexer {
     "\0\264\0\240\0\u0118\0\u012c\0\u0140\0\u0154\0\u0168\0\310"+
     "\0\334\0\170\0\u017c\0\u0190\0\u01a4\0\u01b8\0\u01cc\0\u01e0"+
     "\0\u01f4\0\u0208\0\u021c\0\u0230\0\u0244\0\u0258\0\u026c\0\u0280"+
-    "\0\u0294\0\u02a8\0\u02bc\0\u02d0\0\u02e4\0\170\0\170\0\u02f8"+
-    "\0\u030c\0\u0320\0\u0334\0\u0348\0\u035c\0\170\0\170\0\u0370"+
-    "\0\u0384\0\170\0\170\0\170\0\u0398\0\170";
+    "\0\u0294\0\u02a8\0\u02bc\0\u02d0\0\u02e4\0\u02f8\0\170\0\u030c"+
+    "\0\u0320\0\u0334\0\u0348\0\u035c\0\u0370\0\u0384\0\u0398\0\170"+
+    "\0\170\0\u03ac\0\u03c0\0\170\0\170\0\u03d4\0\u03e8\0\170"+
+    "\0\u03fc\0\170\0\u0410\0\170\0\170";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[62];
+    int [] result = new int[69];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -185,12 +186,14 @@ class PpLexer implements FlexLexer {
     "\4\17\1\0\3\17\1\32\1\17\1\34\11\17\17\0"+
     "\1\55\22\0\1\56\22\0\1\57\25\0\1\60\21\0"+
     "\1\61\22\0\1\62\27\0\1\63\20\0\1\64\27\0"+
-    "\1\65\20\0\1\66\23\0\1\67\22\0\1\70\31\0"+
-    "\1\71\16\0\1\72\22\0\1\73\24\0\1\74\21\0"+
-    "\1\75\24\0\1\76\6\0";
+    "\1\65\16\0\1\66\4\0\1\67\20\0\1\70\23\0"+
+    "\1\71\22\0\1\72\31\0\1\73\16\0\1\74\22\0"+
+    "\1\75\23\0\1\76\22\0\1\77\25\0\1\100\21\0"+
+    "\1\101\25\0\1\102\22\0\1\103\23\0\1\104\24\0"+
+    "\1\105\5\0";
 
   private static int [] zzUnpacktrans() {
-    int [] result = new int[940];
+    int [] result = new int[1060];
     int offset = 0;
     offset = zzUnpacktrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -229,11 +232,11 @@ class PpLexer implements FlexLexer {
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
     "\6\0\1\11\11\1\6\0\3\1\1\11\2\1\3\0"+
-    "\1\1\2\0\2\1\11\0\2\11\6\0\2\11\2\0"+
-    "\3\11\1\0\1\11";
+    "\1\1\2\0\2\1\11\0\1\1\1\11\10\0\2\11"+
+    "\2\0\2\11\2\0\1\11\1\0\1\11\1\0\2\11";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[62];
+    int [] result = new int[69];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -562,82 +565,92 @@ class PpLexer implements FlexLexer {
             { return TokenType.BAD_CHARACTER;
             }
           // fall through
-          case 17: break;
+          case 19: break;
           case 2:
             { return TokenType.WHITE_SPACE;
             }
           // fall through
-          case 18: break;
+          case 20: break;
           case 3:
             { return tokenTypes.getDefineValue();
             }
           // fall through
-          case 19: break;
+          case 21: break;
           case 4:
             { return tokenTypes.getIncludePath();
             }
           // fall through
-          case 20: break;
+          case 22: break;
           case 5:
             { return tokenTypes.getExpression();
             }
           // fall through
-          case 21: break;
+          case 23: break;
           case 6:
             { return tokenTypes.getSymbol();
             }
           // fall through
-          case 22: break;
+          case 24: break;
           case 7:
             { yybegin(WAITING_DEFINE_VALUE); return tokenTypes.getSymbol();
             }
           // fall through
-          case 23: break;
+          case 25: break;
           case 8:
             { yybegin(WAITING_EXPRESSION); return tokenTypes.getIfDirective();
             }
           // fall through
-          case 24: break;
+          case 26: break;
           case 9:
             { yybegin(WAITING_EXPRESSION); return tokenTypes.getElifDirective();
             }
           // fall through
-          case 25: break;
+          case 27: break;
           case 10:
             { return tokenTypes.getElseDirective();
             }
           // fall through
-          case 26: break;
+          case 28: break;
           case 11:
             { return tokenTypes.getEndifDirective();
             }
           // fall through
-          case 27: break;
+          case 29: break;
           case 12:
             { yybegin(WAITING_SYMBOL); return tokenTypes.getIfdefDirective();
             }
           // fall through
-          case 28: break;
+          case 30: break;
           case 13:
             { yybegin(WAITING_SYMBOL); return tokenTypes.getUndefDirective();
             }
           // fall through
-          case 29: break;
+          case 31: break;
           case 14:
             { yybegin(WAITING_DEFINE_SYMBOL); return tokenTypes.getDefineDirective();
             }
           // fall through
-          case 30: break;
+          case 32: break;
           case 15:
             { yybegin(WAITING_SYMBOL); return tokenTypes.getIfndefDirective();
             }
           // fall through
-          case 31: break;
+          case 33: break;
           case 16:
+            { yybegin(WAITING_SYMBOL); return tokenTypes.getElifdefDirective();
+            }
+          // fall through
+          case 34: break;
+          case 17:
             { yybegin(WAITING_INCLUDE); return tokenTypes.getIncludeDirective();
             }
           // fall through
-          case 32: break;
+          case 35: break;
+          case 18:
+            { yybegin(WAITING_SYMBOL); return tokenTypes.getElifndefDirective();
+            }
+          // fall through
+          case 36: break;
           default:
             zzScanError(ZZ_NO_MATCH);
           }

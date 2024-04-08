@@ -254,6 +254,8 @@ ppIfdefStatement ::= PP_IFDEF PP_SYMBOL { pin=1 }
 ppIfndefStatement ::= PP_IFNDEF PP_SYMBOL { pin=1 }
 ppIfStatement ::= PP_IF PP_EXPRESSION { pin=1 }
 ppElifStatement ::= PP_ELIF PP_EXPRESSION { pin=1 }
+ppElifdefStatement ::= PP_ELIFDEF PP_SYMBOL { pin=1 }
+ppElifndefStatement ::= PP_ELIFNDEF PP_SYMBOL { pin=1 }
 ppElseStatement ::= PP_ELSE
 ppEndifStatement ::= PP_ENDIF
 ppDefineStatement ::= PP_DEFINE PP_SYMBOL PP_DEFINE_VALUE? { pin=1 }
