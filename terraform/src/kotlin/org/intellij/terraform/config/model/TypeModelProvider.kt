@@ -2,8 +2,8 @@
 package org.intellij.terraform.config.model
 
 import com.intellij.openapi.application.ex.ApplicationUtil
-import com.intellij.openapi.components.service
 import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.psi.PsiElement
 import com.intellij.util.resettableLazy
@@ -29,15 +29,6 @@ class TypeModelProvider {
     @JvmStatic
     val globalModel: TypeModel
       get() = service<TypeModelProvider>()._model
-
-    @JvmStatic
-    fun reloadGlobalModel() {
-      // Unload, global way
-      service<TypeModelProvider>()._model_lazy.reset()
-
-      // Load, global way
-      service<TypeModelProvider>()._model
-    }
 
     fun getModel(psiElement: PsiElement): TypeModel {
       val containingFile = psiElement.containingFile ?: return globalModel
