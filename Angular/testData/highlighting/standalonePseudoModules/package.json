@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@angular/core": "*",
+    "igniteui-angular": "*"
+  }
+}

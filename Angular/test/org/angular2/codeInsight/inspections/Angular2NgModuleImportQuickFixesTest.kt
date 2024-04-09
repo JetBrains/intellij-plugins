@@ -321,6 +321,19 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
     )
   }
 
+  fun testImportStandalonePseudoModuleToStandaloneComponent() {
+    doMultiFileTest("standalonePseudoModule",
+                    "check.html",
+                    "<fo<caret>o>",
+                    "Import FooComponent",
+                    "FOO_COMPONENT_EXPORT_DECLARE_CONST_READ_ONLY - \"./foo\"",
+                    expectedImports = setOf("FooComponent - \"./foo\"",
+                                            "FOO_COMPONENT_EXPORT_DECLARE_CONST_READ_ONLY - \"./foo\"",
+                                            "FOO_COMPONENT_EXPORT_DECLARE_CONST - \"./foo\"",
+                                            "FOO_COMPONENT_EXPORT_CONST - \"./foo\"",
+                                            "FOO_COMPONENT_EXPORT_CONST_AS_CONST - \"./foo\""))
+  }
+
   private fun doMultiFileTest(mainFile: String,
                               intention: String,
                               importName: String? = null,
@@ -335,11 +348,12 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
                               intention: String,
                               importName: String?,
                               modules: Array<out Angular2TestModule> = ANGULAR_4,
-                              checkQuickFixList: Boolean = false) {
+                              checkQuickFixList: Boolean = false,
+                              expectedImports: Set<String> = emptySet()) {
     initInspections()
     doTest(
       { _, _ ->
-        configureTestAndRun(mainFile, signature, importName, modules, Runnable {
+        configureTestAndRun(mainFile, signature, importName, expectedImports, modules, Runnable {
           if (checkQuickFixList) {
             myFixture.availableIntentions // load intentions
             val intentions = ShowIntentionActionsHandler.calcCachedIntentions(myFixture.getProject(), getHostEditor(), getHostFileAtCaret())
@@ -366,7 +380,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
                                modules: Array<out Angular2TestModule> = ANGULAR_4) {
     doTest(
       { _, _ ->
-        configureTestAndRun(mainFile, "<caret>$toRemove", importToSelect, modules, Runnable {
+        configureTestAndRun(mainFile, "<caret>$toRemove", importToSelect, emptySet(), modules, Runnable {
           myFixture.getEditor().putUserData(Angular2FixesFactory.DECLARATION_TO_CHOOSE, "MyDirective")
           myFixture.getEditor().getSelectionModel().setSelection(myFixture.getCaretOffset(),
                                                                  myFixture.getCaretOffset() + toRemove.length)
@@ -379,7 +393,8 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
 
   @Throws(IOException::class)
   private fun configureTestAndRun(mainFile: String, signature: String?, importName: String?,
-                                  modules: Array<out Angular2TestModule>, runnable: Runnable) {
+                                  expectedImports: Set<String>, modules: Array<out Angular2TestModule>,
+                                  runnable: Runnable) {
     val hasPkgJson = myFixture.getTempDirFixture().getFile(NodeModuleNamesUtil.PACKAGE_JSON) != null
     configureLink(myFixture, *modules)
     myFixture.configureFromTempProjectFile(mainFile)
@@ -388,6 +403,9 @@ class Angular2NgModuleImportQuickFixesTest : Angular2MultiFileFixtureTestCase() 
     }
     if (importName != null) {
       myFixture.getEditor().putUserData(JSImportAction.NAME_TO_IMPORT, importName)
+    }
+    if (expectedImports.isNotEmpty()) {
+      myFixture.getEditor().putUserData(JSImportAction.EXPECTED_NAMES_TO_IMPORT, expectedImports)
     }
     runnable.run()
     if (!hasPkgJson) {

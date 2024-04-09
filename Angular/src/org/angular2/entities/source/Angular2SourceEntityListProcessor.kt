@@ -5,8 +5,7 @@ import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
 import com.intellij.lang.ecmascript6.psi.ES6ImportExportSpecifierAlias
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.psi.*
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptSingleType
+import com.intellij.lang.javascript.psi.ecma6.*
 import com.intellij.lang.javascript.psi.ecma6.impl.TypeScriptFunctionCachingVisitor
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSFunctionBaseImpl
@@ -83,6 +82,7 @@ abstract class Angular2SourceEntityListProcessor<T : Angular2Entity>(private val
 
   private fun createResolveVisitor(result: SmartList<PsiElement>): JSElementVisitor {
     return object : JSElementVisitor() {
+
       override fun visitJSArrayLiteralExpression(node: JSArrayLiteralExpression) {
         result.addAll(listOf(*node.expressions))
       }
@@ -169,6 +169,23 @@ abstract class Angular2SourceEntityListProcessor<T : Angular2Entity>(private val
             })
           }
         }
+      }
+
+      override fun visitTypeScriptCastExpression(node: TypeScriptCastExpression) {
+        if (node.isConstCast) {
+          result.add(node.expression)
+        }
+      }
+
+      override fun visitTypeScriptTupleType(tupleType: TypeScriptTupleType) {
+        tupleType.members.forEach {
+          if (it.tupleMemberName == null)
+            result.add(it.tupleMemberType)
+        }
+      }
+
+      override fun visitTypeScriptTypeOfType(typeofType: TypeScriptTypeofType) {
+        result.add(typeofType.expression)
       }
     }
   }

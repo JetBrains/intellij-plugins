@@ -1,8 +1,9 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.source
 
-import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSProperty
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
@@ -27,7 +28,23 @@ abstract class Angular2SourceSymbolCollectorBase<T : Angular2Entity, R>(
         collect(property.value)
       }
 
-  private fun collect(value: JSExpression?): Result<R> {
+  fun collect(variable: TypeScriptVariable?): Result<R> =
+    if (variable == null)
+      createResult(true, setOf(source))
+    else if (variable.isConst
+             && variable.isExported
+             && variable.attributeList?.hasModifier(JSAttributeList.ModifierType.DECLARE) == true
+             && variable.typeElement != null
+    )
+      AstLoadingFilter.forceAllowTreeLoading<Result<R>, RuntimeException>(variable.containingFile) {
+        collect(variable.typeElement)
+      }
+    else
+      AstLoadingFilter.forceAllowTreeLoading<Result<R>, RuntimeException>(variable.containingFile) {
+        collect(variable.initializer)
+      }
+
+  private fun collect(value: PsiElement?): Result<R> {
     if (value == null) {
       return createResult(false, setOf(source))
     }

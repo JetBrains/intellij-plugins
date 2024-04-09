@@ -2,16 +2,13 @@
 package org.angular2.index
 
 import com.intellij.lang.ASTNode
+import com.intellij.lang.children
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
-import com.intellij.lang.javascript.JSElementTypes
-import com.intellij.lang.javascript.JSStringUtil
-import com.intellij.lang.javascript.JSStubElementTypes
-import com.intellij.lang.javascript.JSTokenTypes
+import com.intellij.lang.javascript.*
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler
 import com.intellij.lang.javascript.psi.*
-import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptClassExpression
+import com.intellij.lang.javascript.psi.ecma6.*
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
 import com.intellij.lang.javascript.psi.impl.JSPropertyImpl
 import com.intellij.lang.javascript.psi.stubs.*
@@ -20,6 +17,7 @@ import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.typescript.TypeScriptStubElementTypes
 import com.intellij.openapi.util.io.FileUtilRt.getNameWithoutExtension
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.psi.stubs.StubIndexKey
@@ -91,6 +89,13 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
     else container
     val propName = getPropertyName(property)
     return propName != null && STUBBED_PROPERTIES.contains(propName)
+  }
+
+  override fun shouldCreateStubForArrayLiteral(node: ASTNode): Boolean {
+    return node.treeParent?.treeParent
+      ?.takeIf { it.elementType == TypeScriptStubElementTypes.TYPESCRIPT_VARIABLE }
+      ?.psi?.asSafely<TypeScriptVariable>()
+      ?.let { isStandalonePseudoModuleDeclaration(it) } == true
   }
 
   private fun getPropertyName(property: ASTNode): String? {
@@ -198,6 +203,14 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
         }
       }
     }
+  }
+
+  override fun getMarkers(elementToIndex: PsiElement): List<String> {
+    if (elementToIndex is TypeScriptVariable
+        && isStandalonePseudoModuleDeclaration(elementToIndex)) {
+      return listOf(NG_PSEUDO_MODULE_DECLARATION_MARKER)
+    }
+    return emptyList()
   }
 
   private fun addComponentExternalFilesRefs(decorator: ES6Decorator,
@@ -351,9 +364,48 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
     return null
   }
 
+  private fun isStandalonePseudoModuleDeclaration(variable: TypeScriptVariable): Boolean {
+    val attributeList = variable.attributeList
+    if (attributeList == null
+        || !variable.isConst
+        || !attributeList.hasModifier(JSAttributeList.ModifierType.EXPORT)
+        || variable is TypeScriptField)
+      return false
+    if (attributeList.hasModifier(JSAttributeList.ModifierType.DECLARE)) {
+      // export declare const foo = readonly [typeof a, typeof b]
+      // export declare const foo = [typeof a, typeof b]
+      val tuple = variable.node.children().find { it.elementType == TypeScriptStubElementTypes.TUPLE_TYPE }
+      return tuple != null && tuple.children()
+        .filter { it.elementType == TypeScriptStubElementTypes.TUPLE_MEMBER_ELEMENT }
+        .map { it.firstChildNode }
+        .all {
+          it?.elementType == TypeScriptStubElementTypes.TYPEOF_TYPE
+          && it.lastChildNode?.elementType == JSElementTypes.REFERENCE_EXPRESSION
+        }
+    }
+    else {
+      // export const foo = [a,b] as const
+      // export const foo = [a,b]
+      val arr = variable.node.children()
+                  .find { it.elementType == JSStubElementTypes.TYPE_AS_EXPRESSION }
+                  ?.takeIf {
+                    it.lastChildNode?.elementType == TypeScriptStubElementTypes.CONST_TYPE
+                  }
+                  ?.firstChildNode
+                  ?.takeIf { it.elementType == JSElementTypes.ARRAY_LITERAL_EXPRESSION }
+                ?: variable.node.children().find { it.elementType == JSElementTypes.ARRAY_LITERAL_EXPRESSION }
+      return arr != null && arr.children().all {
+        !JSExtendedLanguagesTokenSetProvider.EXPRESSIONS.contains(it.elementType)
+        || it.elementType == JSElementTypes.REFERENCE_EXPRESSION
+      }
+    }
+  }
+
   companion object {
 
     const val NG_MODULE_INDEX_NAME = "ngModule"
+
+    const val NG_PSEUDO_MODULE_DECLARATION_MARKER = "a2pmd"
   }
 }
 

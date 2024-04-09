@@ -63,12 +63,11 @@ class NgModuleImportAction internal constructor(editor: Editor?,
       val distanceCalculator = DistanceCalculator()
       val moduleToDeclarationDistances = MultiMap<Angular2Module, Int>()
       declarations.forEach { declaration ->
-        if (!declaration.isStandalone)
-          scope.getPublicModulesExporting(declaration)
-            .distinct()
-            .forEach { module ->
-              moduleToDeclarationDistances.putValue(module, distanceCalculator.get(module, declaration))
-            }
+        scope.getPublicModulesExporting(declaration)
+          .distinct()
+          .forEach { module ->
+            moduleToDeclarationDistances.putValue(module, distanceCalculator.get(module, declaration))
+          }
       }
       val averageDistances = HashMap<Angular2Entity, Double>()
       for ((key, value) in moduleToDeclarationDistances.entrySet()) {
@@ -77,7 +76,7 @@ class NgModuleImportAction internal constructor(editor: Editor?,
 
       for (declaration in declarations) {
         if (declaration.isStandalone) {
-          averageDistances[declaration] = 0.0
+          averageDistances[declaration] = -0.5
         }
       }
 
