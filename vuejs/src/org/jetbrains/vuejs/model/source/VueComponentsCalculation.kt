@@ -72,17 +72,10 @@ class VueComponentsCalculation {
       val indexData = getVueIndexData(element)
       val qualifiedReference = indexData?.descriptorQualifiedReference ?: return null
 
-      var resolved: PsiElement? = JSStubBasedPsiTreeUtil.resolveLocally(qualifiedReference, context) ?: return null
+      val resolved = JSStubBasedPsiTreeUtil.resolveLocally(qualifiedReference, context) ?: return null
 
-      var indexedAccessUsed = indexData.indexedAccessUsed
+      val indexedAccessUsed = indexData.indexedAccessUsed
 
-      resolved = (resolved as? JSVariable)?.jsType?.asSafely<JSApplyIndexedAccessType>()
-                   ?.qualifierType?.asSafely<JSReferenceType>()
-                   ?.let {
-                     indexedAccessUsed = true
-                     JSStubBasedPsiTreeUtil.resolveLocally(it.referenceName, resolved!!) ?: return null
-                   }
-                 ?: resolved
       return objectLiteralFor(resolved)
         ?.let { Pair(it, indexedAccessUsed) }
     }
