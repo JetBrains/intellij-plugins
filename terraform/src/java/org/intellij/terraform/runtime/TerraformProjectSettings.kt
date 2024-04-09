@@ -15,6 +15,7 @@ class TerraformProjectSettings : PersistentStateComponent<TerraformProjectSettin
   @Attribute
   private var ignoredTemplateCandidatePaths: MutableSet<String> = SmartHashSet()
 
+  @Volatile
   var terraformPath: String = getDefaultTerraformPath()
     set(value) {
       field = value.trim()

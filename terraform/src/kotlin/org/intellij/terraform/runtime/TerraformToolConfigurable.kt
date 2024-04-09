@@ -9,18 +9,17 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.ui.emptyText
+import com.intellij.openapi.ui.validation.validationErrorIf
 import com.intellij.openapi.util.NlsSafe
-import com.intellij.ui.dsl.builder.AlignX
-import com.intellij.ui.dsl.builder.Cell
-import com.intellij.ui.dsl.builder.bindText
-import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.builder.*
 import kotlinx.coroutines.ensureActive
 import org.intellij.terraform.config.util.TFExecutor
 import org.intellij.terraform.config.util.executeSuspendable
 import org.intellij.terraform.hcl.HCLBundle
+import java.io.File
 import kotlin.coroutines.coroutineContext
 
-private const val CONFIGURABLE_ID: String = "reference.settingsdialog.project.terraform"
+private const val CONFIGURABLE_ID: String = "reference.settings.dialog.project.terraform"
 
 class TerraformToolConfigurable(private val project: Project) : BoundConfigurable(
   HCLBundle.message("terraform.name"), null
@@ -76,15 +75,17 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
           }
         ).bindText(configuration::terraformPath).applyToComponent {
           emptyText.text = TerraformProjectSettings.getDefaultTerraformPath()
-        }.align(AlignX.FILL)
+        }.onChanged {
+          configuration.terraformPath = it.text
+        }.trimmedTextValidation(
+          validationErrorIf<String>(HCLBundle.message("terraform.invalid.path")) {
+            it.isNotBlank() && !File(it).exists()
+          }
+        ).align(AlignX.FILL)
       }
       row {
         cell(testTerraformButton)
       }
     }
-  }
-
-  override fun isModified(): Boolean {
-    return executorPathField.component.text.trim() != configuration.terraformPath
   }
 }

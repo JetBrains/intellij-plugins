@@ -327,7 +327,7 @@
 
     <!-- Terraform as Tool -->
     <projectConfigurable groupId="tools" instance="org.intellij.terraform.runtime.TerraformToolConfigurable"
-                         id="reference.settingsdialog.project.terraform"
+                         id="reference.settings.dialog.project.terraform"
                          key="terraform.name" bundle="messages.HCLBundle"/>
 
     <configurationType implementation="org.intellij.terraform.runtime.TerraformConfigurationType"/>
