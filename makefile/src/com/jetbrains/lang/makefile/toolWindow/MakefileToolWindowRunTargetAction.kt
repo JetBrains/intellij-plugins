@@ -17,7 +17,7 @@ class MakefileToolWindowRunTargetAction(private val tree: Tree, private val proj
              MakefileLangBundle.message("action.run.target.tool.window.description"),
              MakefileTargetIcon) {
   override fun actionPerformed(event: AnActionEvent) {
-    val selectedNodes = tree.getSelectedNodes(MakefileTargetNode::class.java, {true})
+    val selectedNodes = tree.getSelectedNodes(MakefileTargetNode::class.java) { true }
     if (selectedNodes.any()) {
       val selected = selectedNodes.first()
       if (selected.parent.psiFile == null)

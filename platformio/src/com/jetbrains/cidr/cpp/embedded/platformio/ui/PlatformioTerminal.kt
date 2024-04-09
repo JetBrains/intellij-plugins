@@ -93,17 +93,16 @@ fun doRun(service: PlatformioService,
       }
 
       override fun actionPerformed(e: AnActionEvent) {
-        application.executeOnPooledThread(
-          {
-            if (!project.isDisposed) {
-              processHandler.destroyProcess()
-              if (processHandler.waitFor(TIMEOUT_MS)) {
-                application.invokeLater({
-                                          doRun(service, text, commandLine, reloadProject)
-                                        }, { project.isDisposed() })
-              }
+        application.executeOnPooledThread {
+          if (!project.isDisposed) {
+            processHandler.destroyProcess()
+            if (processHandler.waitFor(TIMEOUT_MS)) {
+              application.invokeLater({
+                                        doRun(service, text, commandLine, reloadProject)
+                                      }, { project.isDisposed() })
             }
-          })
+          }
+        }
       }
 
       override fun update(e: AnActionEvent) {
