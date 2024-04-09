@@ -26,9 +26,8 @@ class AddNgModuleImportQuickFix(context: PsiElement,
     val scope = Angular2DeclarationsScope(context)
     val names = importableDeclarations
       .asSequence()
-      .flatMap { declaration ->
-        if (declaration.isStandalone)
-          listOf(declaration)
+      .flatMap { declaration -> if (declaration.isStandalone)
+          listOf(declaration) + scope.getPublicModulesExporting(declaration)
         else
           scope.getPublicModulesExporting(declaration)
       }

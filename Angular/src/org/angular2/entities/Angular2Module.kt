@@ -13,6 +13,9 @@ interface Angular2Module : Angular2Entity, Angular2ImportsOwner {
 
   val isPublic: Boolean
 
+  val isStandalonePseudoModule: Boolean
+    get() = false
+
   val allExportedDeclarations: Set<Angular2Declaration>
 
   override val declarationsInScope: Set<Angular2Declaration>

@@ -1,9 +1,12 @@
 package org.angular2.entities.source
 
+import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider
-import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.ecma6.*
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList.ModifierType
+import com.intellij.lang.javascript.psi.stubs.JSFrameworkMarkersIndex
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.lang.javascript.psi.util.stubSafeChildren
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
@@ -11,6 +14,7 @@ import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.SmartList
+import com.intellij.util.asSafely
 import com.intellij.util.containers.addIfNotNull
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.entities.*
@@ -19,7 +23,7 @@ import org.angular2.index.*
 class Angular2SourceEntitiesSource : Angular2EntitiesSource {
 
   override fun getSupportedEntityPsiElements(): List<Class<out PsiElement>> =
-    listOf(JSImplicitElement::class.java, ES6Decorator::class.java, TypeScriptClass::class.java)
+    listOf(JSImplicitElement::class.java, ES6Decorator::class.java, TypeScriptClass::class.java, TypeScriptVariable::class.java)
 
   override fun getEntity(element: PsiElement): Angular2Entity? =
     getSourceEntity(element)
@@ -31,6 +35,14 @@ class Angular2SourceEntitiesSource : Angular2EntitiesSource {
                                             JSImplicitElementProvider::class.java) { module ->
       if (module.isValid) {
         result.addIfNotNull(getSourceEntity(module) as? Angular2Module)
+      }
+      true
+    }
+    StubIndex.getInstance().processElements(JSFrameworkMarkersIndex.KEY, Angular2IndexingHandler.NG_PSEUDO_MODULE_DECLARATION_MARKER,
+                                            project, GlobalSearchScope.allScope(project),
+                                            PsiElement::class.java) { variable ->
+      if (variable is TypeScriptVariable && variable.isValid) {
+        result.addIfNotNull(getSourceEntity(variable) as? Angular2Module)
       }
       true
     }
@@ -71,7 +83,7 @@ class Angular2SourceEntitiesSource : Angular2EntitiesSource {
     return result
   }
 
-  private fun getSourceEntity(element: PsiElement): Angular2SourceEntity? {
+  private fun getSourceEntity(element: PsiElement): Angular2Entity? {
     var elementToCheck: PsiElement? = element
     if (elementToCheck is JSImplicitElement) {
       if (!isEntityImplicitElement(elementToCheck)) {
@@ -86,6 +98,9 @@ class Angular2SourceEntitiesSource : Angular2EntitiesSource {
       if (elementToCheck == null) {
         return null
       }
+    }
+    else if (elementToCheck is TypeScriptVariable && elementToCheck !is TypeScriptField) {
+      return tryGetStandalonePseudoModule(elementToCheck)
     }
     else if (elementToCheck == null
              || elementToCheck !is ES6Decorator
@@ -115,6 +130,29 @@ class Angular2SourceEntitiesSource : Angular2EntitiesSource {
 
   private fun isEntityImplicitElement(element: JSImplicitElement): Boolean {
     return element.isDirective() || element.isPipe() || element.isModule()
+  }
+
+  private fun tryGetStandalonePseudoModule(variable: TypeScriptVariable): Angular2Module? {
+    val attributeList = variable.attributeList
+    if (attributeList == null
+        || !variable.isConst
+        || !attributeList.hasModifier(ModifierType.EXPORT))
+      return null
+
+    if (
+      variable.typeElement
+        ?.asSafely<TypeScriptTupleType>()
+        ?.members
+        ?.all { it.tupleMemberName == null && it.tupleMemberType is TypeScriptTypeofType } == true
+      || variable.initializerOrStub
+        ?.asSafely<TypeScriptAsExpression>()
+        ?.stubSafeChildren
+        ?.let { children -> children.any { it is JSArrayLiteralExpression } && children.any { it is TypeScriptConstType } } == true
+      || variable.initializerOrStub
+        ?.asSafely<JSArrayLiteralExpression>() != null) {
+      return Angular2SourceStandalonePseudoModule(variable)
+    }
+    return null;
   }
 
 }

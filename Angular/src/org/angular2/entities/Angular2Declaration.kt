@@ -16,11 +16,9 @@ interface Angular2Declaration : Angular2Entity {
   val isStandalone: Boolean
 
   val allDeclaringModules: Collection<Angular2Module>
-    get() =
-      if (isStandalone)
-        emptyList()
-      else
-        Collections.unmodifiableCollection(getDeclarationToModuleMap(sourceElement.project).get(this))
+    get() = getDeclarationToModuleMap(sourceElement.project).get(this)
+      .filter { isStandalone == it.isStandalonePseudoModule }
+      .let { Collections.unmodifiableCollection(it) }
 
   override fun createPointer(): Pointer<out Angular2Declaration>
 }

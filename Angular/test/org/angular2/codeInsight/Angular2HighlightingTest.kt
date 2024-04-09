@@ -206,6 +206,8 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
   fun testSignalInputOutputModelNotUnused() = checkHighlighting(ANGULAR_CORE_17_3_0, extension = "ts")
 
+  fun testStandalonePseudoModules() = checkHighlighting(configureFileName = "check.ts", dir = true)
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
