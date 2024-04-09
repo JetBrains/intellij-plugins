@@ -66,7 +66,7 @@
       <li>Terraform intentions and quickfixes now provide intention preview</li>
     </ul>
     ]]>
-  </change-notes>§§
+  </change-notes>
 
   <content>
     <module name="intellij.terraform/watchers"/>
