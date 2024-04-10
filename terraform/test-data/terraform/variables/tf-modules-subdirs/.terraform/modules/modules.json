@@ -9,6 +9,12 @@
       "Key": "main",
       "Source": "./modules/fake_module",
       "Dir": "modules/fake_module"
+    },
+    {
+      "Key": "this",
+      "Source": "registry.terraform.io/cloudposse/label/null",
+      "Version": "0.25.0",
+      "Dir": ".terraform/modules/this"
     }
   ]
 }

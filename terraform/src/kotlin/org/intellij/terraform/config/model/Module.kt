@@ -151,24 +151,28 @@ class Module private constructor(val item: PsiFileSystemItem) {
 
   private fun calculateModuleAwareSearchScope(context: PsiFileSystemItem): GlobalSearchScope? {
     val currentFile = context.virtualFile ?: return null
-    val manifestRoots = findRootsFromManifest(context)
+    val currentFileDir = currentFile.takeIf { it.isDirectory } ?: currentFile.parent
+
+    val terraformDir = ModuleDetectionUtil.getTerraformDirSomewhere(currentFile, context.project)
+    if (terraformDir != null && currentFileDir != null && VfsUtil.isAncestor(terraformDir, currentFile, true)) {
+      return GlobalSearchScopes.directoryScope(context.project, currentFileDir, false)
+    }
+
+    val manifestRoots = terraformDir?.let { findRootsFromManifest(context, it) } ?: emptyList()
     val exactModuleRoot = manifestRoots
                             .filter { VfsUtil.isAncestor(it, currentFile, false) }
                             .maxByOrNull { it.path.length }
                           ?: context.project.service<LocalSchemaService>().findLockFile(currentFile)?.parent
 
-    val dirToSearchIn = exactModuleRoot ?: currentFile.takeIf { it.isDirectory } ?: currentFile.parent ?: return null
+    val dirToSearchIn = exactModuleRoot ?: currentFileDir ?: return null
     val otherModuleRoots = manifestRoots.filterNot { VfsUtil.isAncestor(it, dirToSearchIn, false) }
     val exclusion = GlobalSearchScopes.directoriesScope(context.project, true, *otherModuleRoots.toTypedArray())
     return GlobalSearchScopes.directoryScope(context.project, dirToSearchIn, exactModuleRoot != null)
       .intersectWith(GlobalSearchScope.notScope(exclusion))
   }
 
-  private fun findRootsFromManifest(context: PsiFileSystemItem): List<VirtualFile> {
-    val manifest = ModuleDetectionUtil.getTerraformDirSomewhere(context.virtualFile, context.project)
-                     ?.let { ModuleDetectionUtil.getManifestForDirectory(it, context, context.project).value }
-                   ?: return emptyList()
-
+  private fun findRootsFromManifest(context: PsiFileSystemItem, dotTerraformDir: VirtualFile): List<VirtualFile> {
+    val manifest = ModuleDetectionUtil.getManifestForDirectory(dotTerraformDir, context, context.project).value ?: return emptyList()
     return manifest.modules.mapNotNull { module ->
       val path = FileUtil.toSystemIndependentName(module.dir)
       manifest.context.findFileByRelativePath(path)
