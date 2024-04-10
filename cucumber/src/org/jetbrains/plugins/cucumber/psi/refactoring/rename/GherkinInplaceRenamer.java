@@ -1,5 +1,6 @@
 package org.jetbrains.plugins.cucumber.psi.refactoring.rename;
 
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.codeStyle.CodeStyleManager;
@@ -24,7 +25,7 @@ public class GherkinInplaceRenamer extends VariableInplaceRenamer {
 
         if (scenario != null) {
           final CodeStyleManager csManager = CodeStyleManager.getInstance(newVariable.getProject());
-          csManager.reformat(scenario);
+          WriteAction.run(() -> csManager.reformat(scenario));
         }
       }
     }

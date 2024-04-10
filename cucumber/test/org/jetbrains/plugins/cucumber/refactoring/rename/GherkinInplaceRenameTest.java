@@ -1,9 +1,9 @@
 package org.jetbrains.plugins.cucumber.refactoring.rename;
 
-import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.refactoring.RefactoringSettings;
-import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
+import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import org.jetbrains.plugins.cucumber.CucumberTestUtil;
 import org.jetbrains.plugins.cucumber.psi.refactoring.rename.GherkinInplaceRenameHandler;
 
@@ -18,7 +18,9 @@ public class GherkinInplaceRenameTest extends BasePlatformTestCase {
     boolean b = RefactoringSettings.getInstance().RENAME_SEARCH_IN_COMMENTS_FOR_FILE;
     try {
       myFixture.configureByFile(getTestName(true) + ".feature");
-      WriteCommandAction.runWriteCommandAction(getProject(), () -> CodeInsightTestUtil.doInlineRename(new GherkinInplaceRenameHandler(), newName, myFixture));
+      CommandProcessor.getInstance().executeCommand(
+        getProject(),
+        () -> CodeInsightTestUtil.doInlineRename(new GherkinInplaceRenameHandler(), newName, myFixture), "Rename", null);
 
       myFixture.checkResultByFile(getTestName(true) + "_after.feature");
     }
