@@ -1,4 +1,4 @@
-<idea-plugin url="https://github.com/JetBrains/intellij-plugins/tree/master/astro" package="org.jetbrains.astro">
+<idea-plugin url="https://github.com/JetBrains/intellij-plugins/tree/master/Astro" package="org.jetbrains.astro">
   <!--suppress PluginXmlCapitalization -->
   <name>Astro</name>
   <id>org.jetbrains.plugins.astro</id>
