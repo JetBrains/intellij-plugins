@@ -6,3 +6,12 @@ module "main" {
 
   fake_var_4 = ""
 }
+
+module "this" {
+  source    = "cloudposse/label/null"
+  version   = "0.25.0"
+  namespace = "em"
+  stage     = "test-stage"
+  name      = "test-name"
+  delimiter = "-"
+}
