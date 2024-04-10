@@ -16,6 +16,7 @@
 package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.protobuf.lang.psi.PbStatementOwner;
 import com.intellij.protobuf.lang.psi.PbStringValue;
 import com.intellij.protobuf.lang.psi.PbSyntaxStatement;
 import com.intellij.protobuf.lang.psi.SyntaxLevel;
