@@ -2,9 +2,9 @@
 package com.jetbrains.lang.dart.ide.refactoring.moveFile;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.refactoring.ServerRefactoring;
 import org.dartlang.analysis.server.protocol.MoveFileOptions;
 import org.dartlang.analysis.server.protocol.RefactoringFeedback;
@@ -19,7 +19,7 @@ public class MoveFileRefactoring extends ServerRefactoring {
 
   public MoveFileRefactoring(@NotNull final Project project, @NotNull final VirtualFile file, @NotNull final String newFilePath) {
     super(project, DartBundle.message("progress.title.move.file"), RefactoringKind.MOVE_FILE, file, 0, 0);
-    options = new MoveFileOptions(FileUtil.toSystemDependentName(newFilePath));
+    options = new MoveFileOptions(DartAnalysisServerService.getInstance(project).getLocalFileUri(newFilePath));
   }
 
   @Nullable
