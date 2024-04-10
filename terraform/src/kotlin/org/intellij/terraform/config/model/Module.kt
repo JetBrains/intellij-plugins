@@ -159,9 +159,7 @@ class Module private constructor(val item: PsiFileSystemItem) {
     }
 
     val manifestRoots = terraformDir?.let { findRootsFromManifest(context, it) } ?: emptyList()
-    val exactModuleRoot = manifestRoots
-                            .filter { VfsUtil.isAncestor(it, currentFile, false) }
-                            .maxByOrNull { it.path.length }
+    val exactModuleRoot = findClosestRoot(manifestRoots, currentFile)
                           ?: context.project.service<LocalSchemaService>().findLockFile(currentFile)?.parent
 
     val dirToSearchIn = exactModuleRoot ?: currentFileDir ?: return null
@@ -170,6 +168,11 @@ class Module private constructor(val item: PsiFileSystemItem) {
     return GlobalSearchScopes.directoryScope(context.project, dirToSearchIn, exactModuleRoot != null)
       .intersectWith(GlobalSearchScope.notScope(exclusion))
   }
+
+  private fun findClosestRoot(possibleRoots: List<VirtualFile>, currentFile: VirtualFile): VirtualFile? =
+    possibleRoots
+      .filter { VfsUtil.isAncestor(it, currentFile, false) }
+      .maxByOrNull { it.path.length }
 
   private fun findRootsFromManifest(context: PsiFileSystemItem, dotTerraformDir: VirtualFile): List<VirtualFile> {
     val manifest = ModuleDetectionUtil.getManifestForDirectory(dotTerraformDir, context, context.project).value ?: return emptyList()
