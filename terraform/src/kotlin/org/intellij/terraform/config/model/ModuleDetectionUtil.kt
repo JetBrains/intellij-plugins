@@ -81,13 +81,6 @@ object ModuleDetectionUtil {
     abstract val value: T?
     abstract val failureString: String?
 
-    inline fun getOr(fallback: (Failure<T>) -> T): T {
-      return when (this) {
-        is Failure -> fallback(this)
-        is Success -> this.value
-      }
-    }
-
     data class Success<T>(override val value: T) : Result<T>() {
       override val failureString: String? = null
     }
@@ -206,9 +199,12 @@ object ModuleDetectionUtil {
       return directoryResult(directory, source, err, moduleBlock)
     }
 
-    val manifest = getManifestForDirectory(dotTerraform, file, project).getOr {
-      LOG.warn(it.failureString)
-      return directoryResult(directory, source, it.failureString, moduleBlock)
+    val manifest = when (val manifestResult = getManifestForDirectory(dotTerraform, file, project)) {
+      is Result.Success -> manifestResult.value
+      is Result.Failure -> {
+        LOG.warn(manifestResult.failureString)
+        return directoryResult(directory, source, manifestResult.failureString, moduleBlock)
+      }
     }
 
     LOG.debug("All modules from modules.json: ${manifest.modules}")
