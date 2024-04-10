@@ -128,8 +128,25 @@ final class MessageFieldTracker {
         for (PbReservedRange reservedRange : reservedStatement.getReservedRangeList()) {
           visitReservedRange(reservedStatement, reservedRange);
         }
+        for (PbIdentifierValue reservedName : reservedStatement.getIdentifierValueList()) {
+          if (messageType.getPbFile().getSyntaxLevel() instanceof SyntaxLevel.Edition) {
+            visitReservedName(reservedStatement, reservedName);
+          } else {
+            queueError(
+                reservedStatement,
+                reservedName,
+                PbLangBundle.message("editions.field.reserved.identifier"));
+          }
+        }
         for (PbStringValue reservedName : reservedStatement.getStringValueList()) {
-          visitReservedName(reservedStatement, reservedName);
+          if (!(messageType.getPbFile().getSyntaxLevel() instanceof SyntaxLevel.Edition)) {
+            visitReservedName(reservedStatement, reservedName);
+          } else {
+            queueError(
+                reservedStatement,
+                reservedName,
+                PbLangBundle.message("editions.field.reserved.string"));
+          }
         }
       }
     }
@@ -214,7 +231,7 @@ final class MessageFieldTracker {
     }
 
     private void visitReservedName(
-        PbReservedStatement reservedStatement, PbStringValue reservedName) {
+        PbReservedStatement reservedStatement, ProtoLiteral reservedName) {
       String name = reservedName.getAsString();
       if (!reservedNames.add(name)) {
         queueError(

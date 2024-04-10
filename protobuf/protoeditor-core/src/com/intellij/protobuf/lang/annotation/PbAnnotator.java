@@ -468,6 +468,7 @@ public class PbAnnotator implements Annotator {
     annotateRepeatedMessageFieldInitialization(name, holder);
     annotateOptionOccurrences(name, holder);
     annotateSpecialOption(name, holder);
+    annotateFeatureOptions(name, holder);
   }
 
   private static void annotateExtensionName(
@@ -541,6 +542,21 @@ public class PbAnnotator implements Annotator {
       // field cannot be a qualifier.
       holder.newAnnotation(HighlightSeverity.ERROR, PbLangBundle.message("repeated.message.aggregate.value", field.getName()))
           .range(getOptionNameAnnotationElement(name))
+          .create();
+    }
+  }
+
+  private static void annotateFeatureOptions(PbOptionName name, AnnotationHolder holder) {
+    PsiElement qualifier = name.getSymbol();
+    if (qualifier != null
+        && qualifier.getText().equals("features")
+        && !(name.getPbFile().getSyntaxLevel() instanceof SyntaxLevel.Edition)) {
+      // Features are not "special" options, but they are banned outside of editions files.
+      holder
+          .newAnnotation(
+              HighlightSeverity.ERROR,
+              PbLangBundle.message("editions.features.invalid", name.getText()))
+          .range(qualifier)
           .create();
     }
   }

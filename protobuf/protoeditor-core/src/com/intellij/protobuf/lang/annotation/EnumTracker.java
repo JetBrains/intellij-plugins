@@ -125,8 +125,25 @@ final class EnumTracker {
         for (PbEnumReservedRange reservedRange : reservedStatement.getEnumReservedRangeList()) {
           visitReservedRange(reservedStatement, reservedRange);
         }
+        for (PbIdentifierValue reservedName : reservedStatement.getIdentifierValueList()) {
+          if (enumDefinition.getPbFile().getSyntaxLevel() instanceof SyntaxLevel.Edition) {
+            visitReservedName(reservedStatement, reservedName);
+          } else {
+            queueError(
+                reservedStatement,
+                reservedName,
+                PbLangBundle.message("editions.enum.value.reserved.identifier"));
+          }
+        }
         for (PbStringValue reservedName : reservedStatement.getStringValueList()) {
-          visitReservedName(reservedStatement, reservedName);
+          if (!(enumDefinition.getPbFile().getSyntaxLevel() instanceof SyntaxLevel.Edition)) {
+            visitReservedName(reservedStatement, reservedName);
+          } else {
+            queueError(
+                reservedStatement,
+                reservedName,
+                PbLangBundle.message("editions.enum.value.reserved.string"));
+          }
         }
       }
     }
@@ -211,7 +228,7 @@ final class EnumTracker {
     }
 
     private void visitReservedName(
-        PbEnumReservedStatement reservedStatement, PbStringValue reservedName) {
+        PbEnumReservedStatement reservedStatement, ProtoLiteral reservedName) {
       String name = reservedName.getAsString();
       if (!reservedNames.add(name)) {
         queueError(

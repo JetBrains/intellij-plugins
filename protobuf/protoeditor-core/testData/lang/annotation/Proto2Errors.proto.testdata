@@ -2,6 +2,8 @@ syntax = "proto2";
 
 package foo.bar;
 
+option <error descr="Features are not allowed before edition 2023">features</error>.enum_type = OPEN;
+
 message Test {
   optional string labeled_field = 1;
   optional group LabeledGroup = 2 {}

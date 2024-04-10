@@ -8,6 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface PbReservedStatement extends PbStatement {
 
   @NotNull
+  List<PbIdentifierValue> getIdentifierValueList();
+
+  @NotNull
   List<PbReservedRange> getReservedRangeList();
 
   @NotNull
