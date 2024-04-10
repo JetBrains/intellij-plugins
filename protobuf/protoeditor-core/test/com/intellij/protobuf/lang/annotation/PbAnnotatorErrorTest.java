@@ -15,9 +15,9 @@
  */
 package com.intellij.protobuf.lang.annotation;
 
-import com.intellij.psi.PsiFile;
 import com.intellij.protobuf.TestUtils;
 import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
+import com.intellij.psi.PsiFile;
 
 /** Tests for {@link PbAnnotator} error annotations. */
 public class PbAnnotatorErrorTest extends PbCodeInsightFixtureTestCase {
@@ -101,6 +101,14 @@ public class PbAnnotatorErrorTest extends PbCodeInsightFixtureTestCase {
     myFixture.configureByFile("lang/annotation/import1.proto");
     myFixture.configureByFile("lang/annotation/proto2enum.proto");
     doTest("lang/annotation/Proto3Errors.proto.testdata");
+  }
+
+  public void testProtoEditionUnsupportedErrorAnnotations() {
+    doTest("lang/annotation/EditionUnsupportedErrors.proto.testdata");
+  }
+
+  public void testProtoEdition2023ErrorAnnotations() {
+    doTest("lang/annotation/Edition2023Errors.proto.testdata");
   }
 
   public void testFieldErrorAnnotations() {

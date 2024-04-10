@@ -11,6 +11,9 @@ public interface PbEnumReservedStatement extends PbStatement {
   List<PbEnumReservedRange> getEnumReservedRangeList();
 
   @NotNull
+  List<PbIdentifierValue> getIdentifierValueList();
+
+  @NotNull
   List<PbStringValue> getStringValueList();
 
 }

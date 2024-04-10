@@ -29,6 +29,12 @@ public class PbReservedStatementImpl extends PbStatementBase implements PbReserv
 
   @Override
   @NotNull
+  public List<PbIdentifierValue> getIdentifierValueList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, PbIdentifierValue.class);
+  }
+
+  @Override
+  @NotNull
   public List<PbReservedRange> getReservedRangeList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, PbReservedRange.class);
   }

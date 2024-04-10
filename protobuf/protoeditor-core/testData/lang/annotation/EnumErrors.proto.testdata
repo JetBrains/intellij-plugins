@@ -74,6 +74,11 @@ enum ReservedNameTwice {
   REQUIRED2 = 1000;  // A value is required.
 }
 
+enum ReservedIdentifier {
+  NEW_FOO = 1;
+  reserved <error descr="Identifier reserved enum values are not allowed before edition 2023">FOO</error>;
+}
+
 enum ValueUsesReservedName {
   BAR = 1;
   <error descr="Enum value name 'FOO_RESERVED' is reserved">FOO_RESERVED</error> = 2;

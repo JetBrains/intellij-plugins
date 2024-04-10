@@ -33,58 +33,60 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.QualifiedName;
 import org.jetbrains.annotations.NotNull;
 
+import static com.intellij.protobuf.lang.psi.SyntaxLevelKt.isDeprecatedProto3Syntax;
+
 /** Annotations specific to proto3 syntax level. */
 public class Proto3Annotator implements Annotator {
   @Override
   public void annotate(@NotNull PsiElement element, @NotNull final AnnotationHolder holder) {
     // Only operate on proto3 files.
-    if (!(element instanceof PbElement)
-        || ((PbElement) element).getPbFile().getSyntaxLevel() != SyntaxLevel.PROTO3) {
+    if (!(element instanceof PbElement pbElement)
+        || !isDeprecatedProto3Syntax(pbElement.getPbFile().getSyntaxLevel())) {
       return;
     }
 
     element.accept(
-        new PbVisitor() {
-          @Override
-          public void visitEnumValue(@NotNull PbEnumValue value) {
-            annotateEnumValue(value, holder);
-          }
+      new PbVisitor() {
+        @Override
+        public void visitEnumValue(@NotNull PbEnumValue value) {
+          annotateEnumValue(value, holder);
+        }
 
-          @Override
-          public void visitExtendDefinition(@NotNull PbExtendDefinition extendDefinition) {
-            annotateExtendDefinition(extendDefinition, holder);
-          }
+        @Override
+        public void visitExtendDefinition(@NotNull PbExtendDefinition extendDefinition) {
+          annotateExtendDefinition(extendDefinition, holder);
+        }
 
-          @Override
-          public void visitExtensionsStatement(@NotNull PbExtensionsStatement statement) {
-            annotateExtensionsStatement(statement, holder);
-          }
+        @Override
+        public void visitExtensionsStatement(@NotNull PbExtensionsStatement statement) {
+          annotateExtensionsStatement(statement, holder);
+        }
 
-          @Override
-          public void visitField(@NotNull PbField field) {
-            annotateField(field, holder);
-          }
+        @Override
+        public void visitField(@NotNull PbField field) {
+          annotateField(field, holder);
+        }
 
-          @Override
-          public void visitImportStatement(@NotNull PbImportStatement statement) {
-            annotateImportStatement(statement, holder);
-          }
+        @Override
+        public void visitImportStatement(@NotNull PbImportStatement statement) {
+          annotateImportStatement(statement, holder);
+        }
 
-          @Override
-          public void visitGroupDefinition(@NotNull PbGroupDefinition group) {
-            annotateGroupDefinition(group, holder);
-          }
+        @Override
+        public void visitGroupDefinition(@NotNull PbGroupDefinition group) {
+          annotateGroupDefinition(group, holder);
+        }
 
-          @Override
-          public void visitOptionExpression(@NotNull PbOptionExpression option) {
-            annotateOptionExpression(option, holder);
-          }
+        @Override
+        public void visitOptionExpression(@NotNull PbOptionExpression option) {
+          annotateOptionExpression(option, holder);
+        }
 
-          @Override
-          public void visitOptionName(@NotNull PbOptionName name) {
-            annotateOptionName(name, holder);
-          }
-        });
+        @Override
+        public void visitOptionName(@NotNull PbOptionName name) {
+          annotateOptionName(name, holder);
+        }
+      });
   }
 
   /*
@@ -106,8 +108,8 @@ public class Proto3Annotator implements Annotator {
     Long enumNumber = numberValue.getLongValue();
     if (enumNumber != null && enumNumber != 0) {
       holder.newAnnotation(HighlightSeverity.ERROR, PbLangBundle.message("proto3.first.enum.value.zero"))
-          .range(value)
-          .create();
+        .range(value)
+        .create();
     }
   }
 
@@ -115,7 +117,7 @@ public class Proto3Annotator implements Annotator {
    * Extend definitions are only allowed for extending descriptor options.
    */
   private static void annotateExtendDefinition(
-      PbExtendDefinition extendDefinition, AnnotationHolder holder) {
+    PbExtendDefinition extendDefinition, AnnotationHolder holder) {
     Descriptor descriptor = Descriptor.locate(extendDefinition.getPbFile());
     if (descriptor == null) {
       return;
@@ -125,7 +127,7 @@ public class Proto3Annotator implements Annotator {
       return;
     }
     PbSymbol resolved =
-        PbPsiUtil.resolveRefToType(extendee.getEffectiveReference(), PbSymbol.class);
+      PbPsiUtil.resolveRefToType(extendee.getEffectiveReference(), PbSymbol.class);
     if (resolved == null) {
       return;
     }
@@ -140,18 +142,18 @@ public class Proto3Annotator implements Annotator {
       }
     }
     holder.newAnnotation(HighlightSeverity.ERROR, PbLangBundle.message("proto3.extensions"))
-        .range(extendee.getSymbolPath().getSymbol())
-        .create();
+      .range(extendee.getSymbolPath().getSymbol())
+      .create();
   }
 
   /*
    * Message extension ranges are not allowed.
    */
   private static void annotateExtensionsStatement(
-      PbExtensionsStatement statement, AnnotationHolder holder) {
+    PbExtensionsStatement statement, AnnotationHolder holder) {
     holder.newAnnotation(HighlightSeverity.ERROR, PbLangBundle.message("proto3.extension.ranges"))
-        .range(statement)
-        .create();
+      .range(statement)
+      .create();
   }
 
   /*
@@ -163,8 +165,8 @@ public class Proto3Annotator implements Annotator {
     PbFieldLabel label = field.getDeclaredLabel();
     if (label != null && "required".equals(label.getText())) {
       holder.newAnnotation(HighlightSeverity.ERROR, PbLangBundle.message("proto3.required.fields"))
-          .range(label)
-          .create();
+        .range(label)
+        .create();
     }
 
     PsiElement nameIdentifier = field.getNameIdentifier();
@@ -174,21 +176,21 @@ public class Proto3Annotator implements Annotator {
       String convertedName = toLowerWithoutUnderscores(nameIdentifier.getText());
       if (fieldNameMap.get(convertedName).size() > 1) {
         holder.newAnnotation(HighlightSeverity.ERROR, PbLangBundle.message("proto3.field.name.uniqueness"))
-            .range(nameIdentifier)
-            .create();
+          .range(nameIdentifier)
+          .create();
       }
     }
 
     PbTypeName fieldType = field.getTypeName();
     if (fieldType != null) {
       PbNamedTypeElement enumDef =
-          PbPsiUtil.resolveRefToType(fieldType.getEffectiveReference(), PbEnumDefinition.class);
+        PbPsiUtil.resolveRefToType(fieldType.getEffectiveReference(), PbEnumDefinition.class);
       if (enumDef != null) {
         PbFile definingFile = enumDef.getPbFile();
-        if (definingFile.getSyntaxLevel() != SyntaxLevel.PROTO3) {
+        if (!isDeprecatedProto3Syntax(definingFile.getSyntaxLevel())) {
           holder.newAnnotation(HighlightSeverity.ERROR, PbLangBundle.message("proto3.enums"))
-              .range(fieldType.getSymbolPath().getSymbol())
-              .create();
+            .range(fieldType.getSymbolPath().getSymbol())
+            .create();
         }
       }
     }
@@ -199,20 +201,20 @@ public class Proto3Annotator implements Annotator {
    */
   private static void annotateGroupDefinition(PbGroupDefinition group, AnnotationHolder holder) {
     holder.newAnnotation(HighlightSeverity.ERROR, PbLangBundle.message("proto3.group.fields"))
-        .range(group)
-        .create();
+      .range(group)
+      .create();
   }
 
   /*
    * Weak imports are not allowed.
    */
   private static void annotateImportStatement(
-      PbImportStatement statement, AnnotationHolder holder) {
+    PbImportStatement statement, AnnotationHolder holder) {
     PsiElement label = statement.getImportLabel();
     if (label != null && statement.isWeak()) {
       holder.newAnnotation(HighlightSeverity.ERROR, PbLangBundle.message("proto3.weak.imports"))
-          .range(label)
-          .create();
+        .range(label)
+        .create();
     }
   }
 
@@ -222,8 +224,8 @@ public class Proto3Annotator implements Annotator {
   private static void annotateOptionExpression(PbOptionExpression option, AnnotationHolder holder) {
     if (option.getOptionName().getSpecialType() == SpecialOptionType.FIELD_DEFAULT) {
       holder.newAnnotation(HighlightSeverity.ERROR, PbLangBundle.message("proto3.default.values"))
-          .range(option)
-          .create();
+        .range(option)
+        .create();
     }
   }
 
@@ -233,7 +235,7 @@ public class Proto3Annotator implements Annotator {
    */
   private static void annotateOptionName(PbOptionName optionName, AnnotationHolder holder) {
     PbOptionExpression optionExpression =
-        PsiTreeUtil.getParentOfType(optionName, PbOptionExpression.class);
+      PsiTreeUtil.getParentOfType(optionName, PbOptionExpression.class);
     if (optionExpression == null) {
       return;
     }
@@ -244,38 +246,39 @@ public class Proto3Annotator implements Annotator {
         return;
       }
       PbEnumValue enumValue =
-          PbPsiUtil.resolveRefToType(identifierValue.getReference(), PbEnumValue.class);
+        PbPsiUtil.resolveRefToType(identifierValue.getReference(), PbEnumValue.class);
       if (enumValue == null) {
         return;
       }
       if (!"NO_COMPATIBILITY".equals(enumValue.getName())) {
         holder.newAnnotation(HighlightSeverity.ERROR, PbLangBundle.message("proto3.cc_api_compatibility"))
-            .range(optionName)
-            .create();
+          .range(optionName)
+          .create();
       }
-    } else if (PbPsiUtil.isDescriptorOption(optionExpression, "message_set_wire_format")) {
+    }
+    else if (PbPsiUtil.isDescriptorOption(optionExpression, "message_set_wire_format")) {
       ProtoBooleanValue booleanValue = optionExpression.getBooleanValue();
       if (booleanValue != null && Boolean.TRUE.equals(booleanValue.getBooleanValue())) {
         holder.newAnnotation(HighlightSeverity.ERROR, PbLangBundle.message("proto3.messageset"))
-            .range(optionName)
-            .create();
+          .range(optionName)
+          .create();
       }
     }
   }
 
   private static Multimap<String, PbField> getProto3NameToFieldMap(PbSymbolOwner message) {
     return CachedValuesManager.getCachedValue(
-        message,
-        () -> {
-          Multimap<String, PbField> messageFieldNameMap = ArrayListMultimap.create();
-          for (PbField field : message.getSymbols(PbField.class)) {
-            String fieldName = field.getName();
-            if (fieldName != null) {
-              messageFieldNameMap.put(toLowerWithoutUnderscores(fieldName), field);
-            }
+      message,
+      () -> {
+        Multimap<String, PbField> messageFieldNameMap = ArrayListMultimap.create();
+        for (PbField field : message.getSymbols(PbField.class)) {
+          String fieldName = field.getName();
+          if (fieldName != null) {
+            messageFieldNameMap.put(toLowerWithoutUnderscores(fieldName), field);
           }
-          return Result.create(messageFieldNameMap, PbCompositeModificationTracker.byElement(message));
-        });
+        }
+        return Result.create(messageFieldNameMap, PbCompositeModificationTracker.byElement(message));
+      });
   }
 
   // Adapted from ToLowercaseWithoutUnderscores(...) in descriptor.cc.
@@ -285,8 +288,9 @@ public class Proto3Annotator implements Annotator {
       char c = name.charAt(i);
       if (c != '_') {
         if (c >= 'A' && c <= 'Z') {
-          newName.append((char) (c - 'A' + 'a'));
-        } else {
+          newName.append((char)(c - 'A' + 'a'));
+        }
+        else {
           newName.append(c);
         }
       }

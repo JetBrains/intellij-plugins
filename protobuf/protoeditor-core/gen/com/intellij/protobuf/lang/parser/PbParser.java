@@ -399,24 +399,33 @@ public class PbParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // &StringValue <<CommaSeparatedList ';' StringValue>>
+  // StringValue | IdentifierValue
+  static boolean EnumReservedName(PsiBuilder builder, int level) {
+    if (!recursion_guard_(builder, level, "EnumReservedName")) return false;
+    boolean result;
+    result = StringValue(builder, level + 1);
+    if (!result) result = IdentifierValue(builder, level + 1);
+    return result;
+  }
+
+  /* ********************************************************** */
+  // &EnumReservedName <<CommaSeparatedList ';' EnumReservedName>>
   static boolean EnumReservedNames(PsiBuilder builder, int level) {
     if (!recursion_guard_(builder, level, "EnumReservedNames")) return false;
-    if (!nextTokenIs(builder, STRING_LITERAL)) return false;
     boolean result;
     Marker marker = enter_section_(builder);
     result = EnumReservedNames_0(builder, level + 1);
-    result = result && CommaSeparatedList(builder, level + 1, SEMI_parser_, PbParser::StringValue);
+    result = result && CommaSeparatedList(builder, level + 1, SEMI_parser_, PbParser::EnumReservedName);
     exit_section_(builder, marker, null, result);
     return result;
   }
 
-  // &StringValue
+  // &EnumReservedName
   private static boolean EnumReservedNames_0(PsiBuilder builder, int level) {
     if (!recursion_guard_(builder, level, "EnumReservedNames_0")) return false;
     boolean result;
     Marker marker = enter_section_(builder, level, _AND_);
-    result = StringValue(builder, level + 1);
+    result = EnumReservedName(builder, level + 1);
     exit_section_(builder, level, marker, result, false, null);
     return result;
   }
@@ -1327,24 +1336,33 @@ public class PbParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // &StringValue <<CommaSeparatedList ';' StringValue>>
+  // StringValue | IdentifierValue
+  static boolean ReservedName(PsiBuilder builder, int level) {
+    if (!recursion_guard_(builder, level, "ReservedName")) return false;
+    boolean result;
+    result = StringValue(builder, level + 1);
+    if (!result) result = IdentifierValue(builder, level + 1);
+    return result;
+  }
+
+  /* ********************************************************** */
+  // &ReservedName <<CommaSeparatedList ';' ReservedName>>
   static boolean ReservedNames(PsiBuilder builder, int level) {
     if (!recursion_guard_(builder, level, "ReservedNames")) return false;
-    if (!nextTokenIs(builder, STRING_LITERAL)) return false;
     boolean result;
     Marker marker = enter_section_(builder);
     result = ReservedNames_0(builder, level + 1);
-    result = result && CommaSeparatedList(builder, level + 1, SEMI_parser_, PbParser::StringValue);
+    result = result && CommaSeparatedList(builder, level + 1, SEMI_parser_, PbParser::ReservedName);
     exit_section_(builder, marker, null, result);
     return result;
   }
 
-  // &StringValue
+  // &ReservedName
   private static boolean ReservedNames_0(PsiBuilder builder, int level) {
     if (!recursion_guard_(builder, level, "ReservedNames_0")) return false;
     boolean result;
     Marker marker = enter_section_(builder, level, _AND_);
-    result = StringValue(builder, level + 1);
+    result = ReservedName(builder, level + 1);
     exit_section_(builder, level, marker, result, false, null);
     return result;
   }
@@ -1730,18 +1748,30 @@ public class PbParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // syntax '=' StringValue ';'
+  // SyntaxType '=' StringValue ';'
   public static boolean SyntaxStatement(PsiBuilder builder, int level) {
     if (!recursion_guard_(builder, level, "SyntaxStatement")) return false;
-    if (!nextTokenIs(builder, SYNTAX)) return false;
+    if (!nextTokenIs(builder, "<syntax statement>", EDITION, SYNTAX)) return false;
     boolean result, pinned;
-    Marker marker = enter_section_(builder, level, _NONE_, SYNTAX_STATEMENT, null);
-    result = consumeTokens(builder, 1, SYNTAX, ASSIGN);
+    Marker marker = enter_section_(builder, level, _NONE_, SYNTAX_STATEMENT, "<syntax statement>");
+    result = SyntaxType(builder, level + 1);
     pinned = result; // pin = 1
-    result = result && report_error_(builder, StringValue(builder, level + 1));
+    result = result && report_error_(builder, consumeToken(builder, ASSIGN));
+    result = pinned && report_error_(builder, StringValue(builder, level + 1)) && result;
     result = pinned && consumeToken(builder, SEMI) && result;
     exit_section_(builder, level, marker, result, pinned, null);
     return result || pinned;
+  }
+
+  /* ********************************************************** */
+  // syntax | edition
+  static boolean SyntaxType(PsiBuilder builder, int level) {
+    if (!recursion_guard_(builder, level, "SyntaxType")) return false;
+    if (!nextTokenIs(builder, "", EDITION, SYNTAX)) return false;
+    boolean result;
+    result = consumeToken(builder, SYNTAX);
+    if (!result) result = consumeToken(builder, EDITION);
+    return result;
   }
 
   /* ********************************************************** */

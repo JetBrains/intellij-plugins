@@ -16,7 +16,10 @@
 package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.protobuf.lang.psi.*;
+import com.intellij.protobuf.lang.psi.PbMapField;
+import com.intellij.protobuf.lang.psi.PbMessageType;
+import com.intellij.protobuf.lang.psi.PbSymbol;
+import com.intellij.protobuf.lang.psi.PbTypeName;
 import com.intellij.protobuf.lang.psi.impl.PbElementFactory.FieldBuilder;
 import com.intellij.protobuf.lang.psi.impl.PbElementFactory.MessageBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +27,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+
+import static com.intellij.protobuf.lang.psi.SyntaxLevelKt.isDeprecatedProto2Syntax;
 
 abstract class PbMapFieldMixin extends PbFieldBase implements PbMapField {
 
@@ -92,7 +97,7 @@ abstract class PbMapFieldMixin extends PbFieldBase implements PbMapField {
     if (entryName == null) {
       return null;
     }
-    boolean needsOptionalLabel = getPbFile().getSyntaxLevel() == SyntaxLevel.PROTO2;
+    boolean needsOptionalLabel = isDeprecatedProto2Syntax(getPbFile().getSyntaxLevel());
     PbElementFactory factory = PbElementFactory.getInstance(getPbFile());
     MessageBuilder builder =
         factory

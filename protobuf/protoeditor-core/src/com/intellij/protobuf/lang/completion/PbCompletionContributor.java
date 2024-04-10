@@ -18,13 +18,13 @@ package com.intellij.protobuf.lang.completion;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.protobuf.lang.psi.*;
+import com.intellij.protobuf.lang.psi.util.PbPsiUtil;
+import com.intellij.protobuf.lang.util.BuiltInType;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
-import com.intellij.protobuf.lang.psi.*;
-import com.intellij.protobuf.lang.psi.util.PbPsiUtil;
-import com.intellij.protobuf.lang.util.BuiltInType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -32,6 +32,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
+import static com.intellij.protobuf.lang.psi.SyntaxLevelKt.isDeprecatedProto2Syntax;
+import static com.intellij.protobuf.lang.psi.SyntaxLevelKt.isDeprecatedProto3Syntax;
 
 /** Provides editor completions for protobuf files. */
 public class PbCompletionContributor extends CompletionContributor {
@@ -170,6 +172,12 @@ public class PbCompletionContributor extends CompletionContributor {
         .collect(Collectors.toList());
     }
 
+    private static List<LookupElement> createEditionsFieldLabels() {
+      return Stream.of("repeated")
+        .map(PbCompletionContributor::lookupElementWithSpace)
+        .collect(Collectors.toList());
+    }
+
     private static LookupElement createGroupKeyWord() { return lookupElementWithSpace("group"); }
 
     @Override
@@ -191,13 +199,19 @@ public class PbCompletionContributor extends CompletionContributor {
           result.addAllElements(createMessageEntryStart());
           result.addAllElements(createMessageEntryStartNoSpace());
         }
-        result.addAllElements(switch (syntaxLevel) {
-          case PROTO2 -> createProto2FieldLabels();
-          case PROTO3 -> createProto3FieldLabels();
-        });
+
+        if (isDeprecatedProto2Syntax(syntaxLevel)) {
+          result.addAllElements(createProto2FieldLabels());
+        }
+        else if (isDeprecatedProto3Syntax(syntaxLevel)) {
+          result.addAllElements(createProto3FieldLabels());
+        }
+        else if (syntaxLevel instanceof SyntaxLevel.Edition) {
+          result.addAllElements(createEditionsFieldLabels());
+        }
       } else {
         // In proto2, we can have a "group" right after the field label.
-        if (syntaxLevel == SyntaxLevel.PROTO2) {
+        if (isDeprecatedProto2Syntax( syntaxLevel)) {
           List<PbElement> fieldElements =
               PsiTreeUtil.getChildrenOfTypeAsList(simpleField, PbElement.class);
           if (fieldElements.size() == 2) {
