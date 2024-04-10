@@ -10,6 +10,10 @@ import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.psi.*
 
+internal const val HCL_RESOURCE_IDENTIFIER: String = "resource"
+internal const val HCL_DATASOURCE_IDENTIFIER: String = "data"
+internal const val HCL_PROVIDER_IDENTIFIER: String = "provider"
+
 object HCLPatterns {
   val Nothing: ElementPattern<PsiElement> = StandardPatterns.alwaysFalse()
 
@@ -38,7 +42,9 @@ object HCLPatterns {
       .withParent(Block)
       .with(object : PatternCondition<HCLStringLiteral>("resource/data block type identifier") {
         override fun accepts(literal: HCLStringLiteral, context: ProcessingContext?): Boolean {
+          val validIdentifiers = setOf(HCL_PROVIDER_IDENTIFIER, HCL_RESOURCE_IDENTIFIER, HCL_DATASOURCE_IDENTIFIER)
           return literal.parentsOfType<HCLBlock>(true)
+            .filter { it.getNameElementUnquoted(0) in validIdentifiers }
             .firstOrNull { block -> block.getNameElementUnquoted(1) == HCLPsiUtil.stripQuotes(literal.text) } != null
         }
       })
