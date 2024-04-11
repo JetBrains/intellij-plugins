@@ -16,6 +16,7 @@ import com.intellij.protobuf.lang.PbFileType
 import com.intellij.protobuf.lang.psi.PbFile
 import com.intellij.protobuf.lang.psi.PbMessageBody
 import com.intellij.protobuf.lang.psi.SyntaxLevel
+import com.intellij.protobuf.lang.psi.isDeprecatedProto2Syntax
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
@@ -126,7 +127,7 @@ internal class PbJsonCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
     return struct.fieldsMap.entries.mapIndexed { zeroBasedIndex, (fieldName, fieldValue) ->
       PbPastedEntity.PbField(name = fieldName,
                              isRepeated = fieldValue.hasListValue(),
-                             isOptional = syntaxLevel == SyntaxLevel.PROTO2,
+                             isOptional = isDeprecatedProto2Syntax(syntaxLevel),
                              type = mapFieldType(fieldValue, structNameGetter),
                              order = zeroBasedIndex + 1)
     }
