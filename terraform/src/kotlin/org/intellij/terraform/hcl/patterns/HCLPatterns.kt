@@ -6,12 +6,12 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.parentsOfType
 import com.intellij.util.ProcessingContext
-import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
-import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
-import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
-import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.psi.*
+
+internal const val HCL_RESOURCE_IDENTIFIER: String = "resource"
+internal const val HCL_DATASOURCE_IDENTIFIER: String = "data"
+internal const val HCL_PROVIDER_IDENTIFIER: String = "provider"
 
 object HCLPatterns {
   val Nothing: ElementPattern<PsiElement> = StandardPatterns.alwaysFalse()
