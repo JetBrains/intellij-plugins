@@ -39,6 +39,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.classMembers.MemberInfoBase;
 import com.intellij.util.ThreeState;
+import com.intellij.util.text.UniqueNameGenerator;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -109,13 +110,7 @@ public class CreateFlexUnitTestDialog extends DialogWrapper {
         }
 
         final String basePath = VfsUtilCore.urlToPath(contentEntry.getUrl()) + (mavenStyle ? "/src/test/flex" : "/testSrc");
-        String path = basePath;
-        int i = 0;
-        while (LocalFileSystem.getInstance().findFileByPath(path) != null) {
-          path = basePath + (++i);
-        }
-
-        return path;
+        return UniqueNameGenerator.generateUniqueNameOneBased(basePath, p -> LocalFileSystem.getInstance().findFileByPath(p) == null);
       }
     }
     return "";
