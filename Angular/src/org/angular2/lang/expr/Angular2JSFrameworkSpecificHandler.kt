@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.psi.PsiElement
+import com.intellij.util.applyIf
 import org.angular2.lang.Angular2HighlightDescriptor
 import org.angular2.lang.expr.psi.Angular2Binding
 import org.angular2.lang.expr.psi.Angular2Interpolation
@@ -17,6 +18,7 @@ import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.lang.types.Angular2PropertyBindingType
 import org.angular2.lang.types.Angular2TemplateBindingType
+import org.angular2.signals.Angular2SignalUtils
 
 class Angular2JSFrameworkSpecificHandler : JSFrameworkSpecificHandler {
   override fun findExpectedType(element: PsiElement, parent: PsiElement?, expectedTypeKind: JSExpectedTypeKind): JSType? {
@@ -26,6 +28,9 @@ class Angular2JSFrameworkSpecificHandler : JSFrameworkSpecificHandler {
       val info = Angular2AttributeNameParser.parse(descriptor.name)
       if (info.type == Angular2AttributeType.PROPERTY_BINDING || info.type == Angular2AttributeType.BANANA_BOX_BINDING) {
         return Angular2PropertyBindingType(attribute, expectedTypeKind).substitute()
+          .applyIf(info.type == Angular2AttributeType.BANANA_BOX_BINDING) {
+            Angular2SignalUtils.addWritableSignal(element, this)
+          }
       }
       return null
     }
