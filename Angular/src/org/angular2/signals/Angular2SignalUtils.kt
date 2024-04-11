@@ -3,13 +3,12 @@ package org.angular2.signals
 
 import com.intellij.javascript.web.js.WebJSResolveUtil
 import com.intellij.lang.javascript.psi.JSExpression
+import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
-import com.intellij.lang.javascript.psi.types.JSAnyType
-import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory
-import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl
-import com.intellij.lang.javascript.psi.types.JSUnionOrIntersectionType
+import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.recordImpl.ComputedPropertySignatureImpl
 import com.intellij.psi.PsiElement
 import org.angular2.lang.Angular2LangUtil
@@ -17,12 +16,19 @@ import org.angular2.lang.Angular2LangUtil
 object Angular2SignalUtils {
 
   const val SIGNAL_TYPE: String = "Signal"
+  const val WRITABLE_SIGNAL_TYPE: String = "WritableSignal"
   const val SIGNAL_FUNCTION: String = "signal"
 
   fun signalTypeAlias(context: PsiElement?): TypeScriptTypeAlias? =
     WebJSResolveUtil.resolveSymbolFromNodeModule(
       context, Angular2LangUtil.ANGULAR_CORE_PACKAGE, SIGNAL_TYPE,
       TypeScriptTypeAlias::class.java
+    )
+
+  fun writableSignalInterface(context: PsiElement?): TypeScriptInterface? =
+    WebJSResolveUtil.resolveSymbolFromNodeModule(
+      context, Angular2LangUtil.ANGULAR_CORE_PACKAGE, WRITABLE_SIGNAL_TYPE,
+      TypeScriptInterface::class.java
     )
 
   fun signalFunction(context: PsiElement?): TypeScriptFunction? =
@@ -63,6 +69,16 @@ object Angular2SignalUtils {
       }
     }
     return false
+  }
+
+  fun addWritableSignal(context:PsiElement?, propertyType: JSType): JSType {
+    val signal = writableSignalInterface(context)?.jsType
+                 ?: return propertyType
+    val source = propertyType.source
+    return JSCompositeTypeFactory.getCommonType(
+      propertyType, JSGenericTypeImpl(source, signal, propertyType),
+      source, true
+    )
   }
 
 }
