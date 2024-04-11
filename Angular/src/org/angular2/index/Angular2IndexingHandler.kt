@@ -2,7 +2,6 @@
 package org.angular2.index
 
 import com.intellij.lang.ASTNode
-import com.intellij.lang.children
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.*
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler
@@ -14,6 +13,7 @@ import com.intellij.lang.javascript.psi.impl.JSPropertyImpl
 import com.intellij.lang.javascript.psi.stubs.*
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
+import com.intellij.lang.tree.util.children
 import com.intellij.lang.typescript.TypeScriptStubElementTypes
 import com.intellij.openapi.util.io.FileUtilRt.getNameWithoutExtension
 import com.intellij.openapi.util.text.StringUtil
