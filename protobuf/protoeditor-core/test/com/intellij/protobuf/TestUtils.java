@@ -19,6 +19,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.extensions.LoadingOrder;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.Project;
@@ -37,7 +38,15 @@ import static org.junit.Assert.assertNotNull;
 
 /** Various testing utility methods. */
 public final class TestUtils {
+  public static String getTestHomeDirectory() {
+    var externalConfiguration = System.getProperty("ij.protoeditor.test.home.path");
+    if (externalConfiguration != null) return externalConfiguration;
+    return PathManager.getHomePath() + "/contrib/protobuf";
+  }
 
+  public static String getProtobufCoreTestDataPath() {
+    return getTestHomeDirectory() + "/protoeditor-core/testData/";
+  }
   public static final String OPENSOURCE_DESCRIPTOR_PATH = "google/protobuf/descriptor.proto";
 
   private static final Key<FileResolveProvider> TEST_FILE_RESOLVE_PROVIDER =

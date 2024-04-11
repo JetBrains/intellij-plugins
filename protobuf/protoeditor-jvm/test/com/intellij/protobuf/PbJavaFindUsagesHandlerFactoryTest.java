@@ -19,7 +19,6 @@ import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ImmutableList;
 import com.google.common.truth.StandardSubjectBuilder;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.protobuf.jvm.PbJavaFindUsagesHandlerFactory;
@@ -84,7 +83,7 @@ public class PbJavaFindUsagesHandlerFactoryTest extends LightJavaCodeInsightFixt
 
   @Override
   public String getTestDataPath() {
-    return PathManager.getHomePath() + "/contrib/protobuf/protoeditor-jvm/testData/";
+    return TestUtils.getTestHomeDirectory() + "/protoeditor-jvm/testData/";
   }
 
   private String getTestJarsDirectoryPath() {

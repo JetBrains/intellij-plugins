@@ -18,7 +18,6 @@ package com.intellij.protobuf;
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -89,7 +88,7 @@ public class PbJavaGotoDeclarationHandlerTest extends LightJavaCodeInsightFixtur
 
   @Override
   public String getTestDataPath() {
-    return PathManager.getHomePath() + "/contrib/protobuf/protoeditor-jvm/testData/";
+    return TestUtils.getTestHomeDirectory() + "/protoeditor-jvm/testData/";
   }
 
   private String getTestJarsDirectoryPath() {
