@@ -67,10 +67,10 @@ class PlatformioProjectTaskRunner : CidrProjectTaskRunner() {
 }
 
 class PlatformioTaskRunner : CidrTaskRunner {
-  override fun executeTask(project: Project,
-                           task: ProjectTask,
-                           sessionId: Any,
-                           context: ProjectTaskContext): Promise<ProjectTaskRunner.Result> {
+  override suspend fun executeTask(project: Project,
+                                   task: ProjectTask,
+                                   sessionId: Any,
+                                   context: ProjectTaskContext): Promise<ProjectTaskRunner.Result> {
     val promise = AsyncPromise<ProjectTaskRunner.Result>()
     val buildProgress = BuildViewManager.createBuildProgress(project)
     val basePath = project.basePath
