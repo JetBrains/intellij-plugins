@@ -4,10 +4,10 @@ package org.intellij.terraform.runtime
 import com.intellij.execution.configurations.PathEnvironmentVariableUtil
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.SystemInfo
 import com.intellij.util.containers.SmartHashSet
 import com.intellij.util.xmlb.XmlSerializerUtil
 import com.intellij.util.xmlb.annotations.Attribute
+import org.intellij.terraform.install.getBinaryName
 
 @Service(Service.Level.PROJECT)
 @State(name = "TerraformProjectSettings", storages = [Storage("terraform.xml")])
@@ -42,7 +42,7 @@ class TerraformProjectSettings : PersistentStateComponent<TerraformProjectSettin
     fun getInstance(project: Project): TerraformProjectSettings = project.service()
 
     fun getDefaultTerraformPath(): String {
-      val executorFileName = if (SystemInfo.isWindows) "terraform.exe" else "terraform"
+      val executorFileName = getBinaryName()
       val terraform = PathEnvironmentVariableUtil.findInPath(executorFileName)
 
       if (terraform != null && terraform.canExecute()) {

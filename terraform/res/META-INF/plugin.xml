@@ -360,6 +360,7 @@
     </group>
 
     <action icon="AllIcons.General.Warning" id="TFInitRequiredAction" class="org.intellij.terraform.config.actions.TFInitRequiredAction"/>
+    <action id="Terraform.InstallTerraform" class="org.intellij.terraform.install.InstallTerraformAction"/>
 
     <group id="TFTools" popup="true" icon="org.intellij.terraform.TerraformIcons.Terraform"
            class="com.intellij.ide.actions.NonTrivialActionGroup">

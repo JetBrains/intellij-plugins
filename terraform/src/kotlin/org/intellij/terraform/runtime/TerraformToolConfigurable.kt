@@ -5,6 +5,7 @@ import com.intellij.execution.process.CapturingProcessAdapter
 import com.intellij.openapi.fileChooser.FileChooserDescriptor
 import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.options.SearchableConfigurable
+import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
@@ -16,6 +17,7 @@ import kotlinx.coroutines.ensureActive
 import org.intellij.terraform.config.util.TFExecutor
 import org.intellij.terraform.config.util.executeSuspendable
 import org.intellij.terraform.hcl.HCLBundle
+import org.intellij.terraform.install.installTerraform
 import java.io.File
 import kotlin.coroutines.coroutineContext
 
@@ -30,7 +32,7 @@ class TerraformToolConfigurable(private val project: Project) : BoundConfigurabl
   private val testTerraformButton = TerraformTestButtonComponent(
     "terraform",
     {
-      // TODO - Implement downloading binary of terraform executable
+      resultHandler -> installTerraform(project, resultHandler, EmptyProgressIndicator())
     },
     {
       val versionLine = getVersionOfTerraform(project).lineSequence().firstOrNull()?.trim()
