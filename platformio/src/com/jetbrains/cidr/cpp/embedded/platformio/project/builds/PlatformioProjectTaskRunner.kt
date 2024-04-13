@@ -10,8 +10,7 @@ import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.process.ProcessListener
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.ide.impl.isTrusted
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.invokeAndWaitIfNeeded
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.components.service
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -31,6 +30,8 @@ import com.jetbrains.cidr.cpp.toolchains.CPPEnvironment
 import com.jetbrains.cidr.execution.build.runners.CidrProjectTaskRunner
 import com.jetbrains.cidr.execution.build.runners.CidrTaskRunner
 import com.jetbrains.cidr.execution.build.tasks.CidrCleanTask
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.Nls
 import org.jetbrains.concurrency.AsyncPromise
 import org.jetbrains.concurrency.Promise
@@ -78,7 +79,7 @@ class PlatformioTaskRunner : CidrTaskRunner {
       fail(buildProgress, promise)
       return promise
     }
-    invokeAndWaitIfNeeded {
+    withContext(Dispatchers.EDT) {
       FileDocumentManager.getInstance().saveAllDocuments()
     }
 
@@ -112,7 +113,7 @@ class PlatformioTaskRunner : CidrTaskRunner {
       val buildDescriptor = PlatformioBuildDescriptor(project, title, basePath, processHandler, indicator, buildProgress)
 
       buildProgress.start(buildDescriptor)
-      ApplicationManager.getApplication().invokeLater {
+      withContext(Dispatchers.EDT) {
         BuildContentManager.getInstance(project).getOrCreateToolWindow().activate(null, false)
       }
 
