@@ -15,6 +15,7 @@ import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection
 import com.intellij.lang.javascript.inspections.JSValidateTypesInspection
 import com.intellij.lang.javascript.library.JSCorePredefinedLibrariesProvider
 import com.intellij.psi.PsiFile
+import com.intellij.psi.css.inspections.CssUnusedSymbolInspection
 import com.intellij.psi.css.inspections.invalid.CssInvalidFunctionInspection
 import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection
 import com.intellij.spellchecker.inspections.SpellCheckingInspection
@@ -468,6 +469,11 @@ const props = {seeMe: {}}
 
   fun testCssSelectors() {
     myFixture.enableInspections(CssInvalidPseudoSelectorInspection())
+    doTest()
+  }
+
+  fun testCssUnusedPseudoSelector() {
+    myFixture.enableInspections(CssUnusedSymbolInspection())
     doTest()
   }
 
