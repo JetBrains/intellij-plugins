@@ -65,6 +65,11 @@ export class TestSignalComponent {
         [(optional)]="<error descr="Type Signal<number> is not assignable to type string | undefined | WritableSignal<string | undefined>...  Type Signal<number> is not assignable to type WritableSignal<string | undefined>    Type Signal<number> is not assignable to type string">signal3</error>" 
     ></app-test-signal>
     
+    <!-- test readonly signal -->
+    <app-test-annotation 
+        [(required)]="signal4"/>
+    <app-test-annotation 
+        [(required)]="<error descr="Attempt to assign to const or readonly variable">value4</error>"/>
   `,
   styles: [],
 })
@@ -75,4 +80,6 @@ export class AppComponent {
   signal1 = signal("test")
   signal2 = signal(12)
   signal3 = computed(() => this.signal2() + 1)
+  readonly signal4 = signal("test")
+  readonly value4: string
 }
