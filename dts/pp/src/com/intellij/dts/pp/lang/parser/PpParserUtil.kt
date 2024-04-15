@@ -44,7 +44,7 @@ object PpParserUtil {
 
     // collect all markers that need to be adjusted, all markers that are
     // after the preprocessor statement
-    val adjustProductions = trailingProductions.dropLastWhile { it.tokenType !in builder.ppStatementsSet }
+    val adjustProductions = trailingProductions.dropLastWhile { it.tokenType !in builder.ppStatementsSet }.distinct()
     if (adjustProductions.isEmpty()) return
 
     // check if all productions that need to be adjusted are actually marker
