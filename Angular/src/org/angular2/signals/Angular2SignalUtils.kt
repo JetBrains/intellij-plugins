@@ -40,9 +40,9 @@ object Angular2SignalUtils {
   fun supportsSignals(context: PsiElement?) =
     signalTypeAlias(context) != null
 
-  fun isSignal(targetElement: PsiElement?, place: PsiElement?): Boolean {
+  fun isSignal(targetElement: PsiElement?, place: PsiElement?, writable: Boolean = false): Boolean {
     if (targetElement == null) return false
-    val signalTypeAlias = signalTypeAlias(targetElement)
+    val signalTypeAlias = if (writable) writableSignalInterface(targetElement) else signalTypeAlias(targetElement)
     if (signalTypeAlias == targetElement) return false
 
     val signalType = signalTypeAlias
