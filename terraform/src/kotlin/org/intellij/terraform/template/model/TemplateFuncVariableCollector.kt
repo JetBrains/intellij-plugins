@@ -47,8 +47,8 @@ private fun collectLocalVariables(currentNode: PsiElement): Sequence<TftplVariab
   if (currentNode.containingFile !is TftplFile) return emptySequence()
 
   val amILoopVariable = isLoopCollection(currentNode)
-  return currentNode.parents(false)
-    .filterIsInstance<ILTemplateForBlockExpression>()
+  return currentNode
+    .parentsOfType<ILTemplateForBlockExpression>(false)
     .filterIndexed { index, _ -> !(amILoopVariable && index == 0) }
     .flatMap { forExpression ->
       forExpression.getLoopVariables()

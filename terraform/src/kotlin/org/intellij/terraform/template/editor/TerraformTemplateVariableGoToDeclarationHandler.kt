@@ -31,7 +31,7 @@ class TerraformTemplateVariableGoToDeclarationHandler : GotoDeclarationHandler {
   private fun tryResolveVariable(sourceElement: PsiElement?): Sequence<PsiElement> {
     val searchedVariableName = sourceElement?.text?.takeIf(String::isNotBlank) ?: return emptySequence()
     return withGuaranteedProgressIndicator {
-      return@withGuaranteedProgressIndicator collectAvailableVariables(sourceElement)
+      collectAvailableVariables(sourceElement)
         .filter { variable -> variable.name == searchedVariableName }
         .map(TftplVariable::navigationElement)
     }
