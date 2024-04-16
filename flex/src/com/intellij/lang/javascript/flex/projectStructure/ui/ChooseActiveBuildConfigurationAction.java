@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigu
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.impl.PresentationFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ShowSettingsUtil;
@@ -20,6 +21,7 @@ import com.intellij.ui.SimpleColoredText;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.icons.RowIcon;
 import com.intellij.ui.navigation.Place;
+import com.intellij.ui.popup.ActionPopupOptions;
 import com.intellij.ui.popup.PopupFactoryImpl;
 import com.intellij.ui.popup.list.PopupListElementRenderer;
 import com.intellij.util.PlatformIcons;
@@ -78,9 +80,12 @@ public final class ChooseActiveBuildConfigurationAction extends DumbAwareAction 
     actionGroup.addSeparator();
     actionGroup.add(new EditBcsAction(module));
 
-    return new PopupFactoryImpl.ActionGroupPopup(FlexBundle.message("choose.build.configuration.popup.title", module.getName()),
-                                                 actionGroup, dataContext, false, false, false, true, null, -1,
-                                                 anAction -> anAction instanceof SelectBcAction && ((SelectBcAction)anAction).getBC() == activeBc, null) {
+    ActionPopupOptions options = ActionPopupOptions.create(
+      false, false, false, true, -1, false,
+      anAction -> anAction instanceof SelectBcAction && ((SelectBcAction)anAction).getBC() == activeBc);
+    return new PopupFactoryImpl.ActionGroupPopup(
+      null, FlexBundle.message("choose.build.configuration.popup.title", module.getName()),
+      actionGroup, dataContext, ActionPlaces.POPUP, new PresentationFactory(), options, null) {
       @Override
       protected ListCellRenderer getListElementRenderer() {
         return new PopupListElementRenderer(this) {
