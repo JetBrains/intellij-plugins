@@ -337,8 +337,12 @@ class Angular2ElementDocumentationTarget private constructor(
       super.appendInnerSections(result, provider, false)
       appendLocation(result)
     }
-  }
 
+    override fun appendBodyDoc(result: java.lang.StringBuilder, hasDefinition: Boolean) {
+      super.appendBodyDoc(result, true)
+    }
+
+  }
   companion object {
 
     private val moduleRegex = Regex("<tr><td valign='top'( colspan='2')?><icon src='JavaScriptPsiIcons\\.FileTypes\\.[^']+'/>[^<]+</td>")

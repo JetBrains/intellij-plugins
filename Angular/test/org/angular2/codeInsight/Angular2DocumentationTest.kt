@@ -85,6 +85,8 @@ class Angular2DocumentationTest : Angular2TestCase("documentation") {
 
   fun testDeferBlockOnTrigger() = doTest(Angular2TestModule.ANGULAR_CORE_17_3_0, ext = "html")
 
+  fun testDefaultValueJSDoc() = doTest()
+
   private fun doTestWithDeps() {
     doConfiguredTest(additionalFiles = listOf("deps/list-item.component.ts", "deps/ng_for_of.ts", "deps/ng_if.ts", "deps/dir.ts",
                                               "deps/ng_plural.ts"),
