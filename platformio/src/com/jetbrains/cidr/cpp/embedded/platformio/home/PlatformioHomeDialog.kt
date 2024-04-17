@@ -29,7 +29,7 @@ import javax.swing.SwingUtilities
 private const val MIN_PRIVATE_IP_PORT: Int = 49152
 
 class PlatformioHomeDialog(private val project: Project?, parentComponent: JComponent?) : DialogWrapper(project, parentComponent, true,
-                                                                                                        IdeModalityType.PROJECT) {
+                                                                                                        IdeModalityType.IDE) {
   private val portNumber: Int = MIN_PRIVATE_IP_PORT + (Math.random() * (65535 - MIN_PRIVATE_IP_PORT)).toInt()
   private val browser: JBCefBrowser = JBCefBrowser().also {
     it.loadHTML(ClionEmbeddedPlatformioBundle.message("loading.platformio"))
