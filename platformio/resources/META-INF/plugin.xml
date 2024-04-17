@@ -82,7 +82,7 @@
   <actions>
     <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioRefreshAction"
             id="PlatformioRefreshAction"/>
-    <group id="platformio-group" popup="true" icon="ClionEmbeddedPlatformioIcons.Platformio">
+    <group id="platformio-group" popup="false">
       <reference id="PlatformioRefreshAction"/>
       <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioCheckAction"
               id="PlatformioCheckAction"/>
@@ -92,10 +92,17 @@
               id="PlatformioPkgUpdateAction"/>
       <action class="com.jetbrains.cidr.cpp.embedded.platformio.home.PlatformioHomeAction"
               id="PlatformioHomeAction"/>
+    </group>
+    <group id="platformio-group-tools-popup" popup="true"
+           class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionGroup"
+           icon="ClionEmbeddedPlatformioIcons.Platformio">
+      <reference id="platformio-group"/>
       <add-to-group group-id="ToolsMenu" anchor="last"/>
     </group>
-    <group id="platformio-group-file-popup"
-           class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionGroup" popup="true">
+    <group id="platformio-group-file-popup" popup="true"
+           class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionGroup"
+           icon="ClionEmbeddedPlatformioIcons.Platformio">
+      <reference id="platformio-group"/>
       <add-to-group group-id="ProjectViewPopupMenuRunGroup"/>
     </group>
     <action id="target-platformio-upload-monitor" class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioUploadMonitorAction"/>
