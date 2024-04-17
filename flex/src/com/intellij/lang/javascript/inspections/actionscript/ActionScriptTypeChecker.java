@@ -209,8 +209,8 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
     if (adHocQualifierExpr instanceof JSReferenceExpression) {
       PsiElement resolve = ((JSReferenceExpression)adHocQualifierExpr).resolve();
       if (resolve instanceof JSClass clazz) {
-        if (ActionScriptClassResolver.isParentClass((JSClass)resolve, FlexCommonTypeNames.FLASH_EVENT_FQN, false) ||
-            ActionScriptClassResolver.isParentClass((JSClass)resolve, FlexCommonTypeNames.STARLING_EVENT_FQN, false)) {
+        if (ActionScriptClassResolver.isParentClass(clazz, FlexCommonTypeNames.FLASH_EVENT_FQN, false) ||
+            ActionScriptClassResolver.isParentClass(clazz, FlexCommonTypeNames.STARLING_EVENT_FQN, false)) {
           return clazz;
         }
       }
