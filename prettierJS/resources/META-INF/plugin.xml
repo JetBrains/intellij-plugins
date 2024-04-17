@@ -19,7 +19,7 @@
   <vendor>JetBrains</vendor>
   <category>JavaScript Frameworks and Tools</category>
 
-  <depends>JavaScript</depends>
+  <depends>com.intellij.modules.javascript</depends>
   <depends>com.intellij.modules.platform</depends>
 
   <resource-bundle>messages.PrettierBundle</resource-bundle>
