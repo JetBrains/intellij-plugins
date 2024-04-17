@@ -278,10 +278,11 @@ enumConstantDeclaration ::= metadata* 'augment'? componentName typeArguments? '.
   methods = [getComponentName]
 }
 
-extensionDeclaration ::= 'augment'? 'extension' typeParameters? 'on' type '?'? classBody |
-                         'augment'? 'extension' <<nonStrictID>> typeParameters? 'on' type '?'? classBody
+extensionDeclaration ::= metadata* 'augment'? 'extension' typeParameters? 'on' type '?'? classBody |
+                         metadata* 'augment'? 'extension' <<nonStrictID>> typeParameters? 'on' type '?'? classBody
 
-extensionTypeDeclaration ::= 'augment'? 'extension' <<typeForExtensionType>> 'const'? componentName typeParameters? representationDeclaration interfaces? classBody {pin=5}
+extensionTypeDeclaration ::= metadata* 'augment'? 'extension' <<typeForExtensionType>> 'const'? componentName typeParameters? representationDeclaration interfaces? classBody
+{pin=6}
 private representationDeclaration ::=  ('.' (componentName | 'new'))? '(' metadata* type componentName ')'
 
 mixinApplication ::= '=' type mixins? interfaces? ';' {pin = 1}
