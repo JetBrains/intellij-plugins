@@ -73,6 +73,7 @@
                                         implementationClass="com.jetbrains.lang.dart.ide.DartImplementationTextSelectioner"/>
     <lang.formatter language="Dart" implementationClass="com.jetbrains.lang.dart.ide.formatter.DartFormattingModelBuilder"/>
     <postFormatProcessor implementation="com.jetbrains.lang.dart.ide.formatter.DartPostFormatProcessor"/>
+    <readerModeMatcher implementation="com.jetbrains.lang.dart.ide.DartReaderModeMatcher"/>
     <lang.psiStructureViewFactory language="Dart" implementationClass="com.jetbrains.lang.dart.ide.structure.DartStructureViewFactory"/>
     <psi.referenceContributor language="HTML" implementation="com.jetbrains.lang.dart.psi.DartPackagePathReferenceContributor"
                               order="last"/>
