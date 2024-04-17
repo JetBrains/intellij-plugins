@@ -2123,11 +2123,11 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'augment'? 'extension' typeParameters? 'on' type '?'? classBody |
-  //                          'augment'? 'extension' <<nonStrictID>> typeParameters? 'on' type '?'? classBody
+  // metadata* 'augment'? 'extension' typeParameters? 'on' type '?'? classBody |
+  //                          metadata* 'augment'? 'extension' <<nonStrictID>> typeParameters? 'on' type '?'? classBody
   public static boolean extensionDeclaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "extensionDeclaration")) return false;
-    if (!nextTokenIs(b, "<extension declaration>", AUGMENT, EXTENSION)) return false;
+    if (!nextTokenIs(b, "<extension declaration>", AT, AUGMENT, EXTENSION)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, EXTENSION_DECLARATION, "<extension declaration>");
     r = extensionDeclaration_0(b, l + 1);
@@ -2136,126 +2136,162 @@ public class DartParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // 'augment'? 'extension' typeParameters? 'on' type '?'? classBody
+  // metadata* 'augment'? 'extension' typeParameters? 'on' type '?'? classBody
   private static boolean extensionDeclaration_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "extensionDeclaration_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = extensionDeclaration_0_0(b, l + 1);
+    r = r && extensionDeclaration_0_1(b, l + 1);
     r = r && consumeToken(b, EXTENSION);
-    r = r && extensionDeclaration_0_2(b, l + 1);
+    r = r && extensionDeclaration_0_3(b, l + 1);
     r = r && consumeToken(b, ON);
     r = r && type(b, l + 1);
-    r = r && extensionDeclaration_0_5(b, l + 1);
+    r = r && extensionDeclaration_0_6(b, l + 1);
     r = r && classBody(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // 'augment'?
+  // metadata*
   private static boolean extensionDeclaration_0_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "extensionDeclaration_0_0")) return false;
+    while (true) {
+      int c = current_position_(b);
+      if (!metadata(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "extensionDeclaration_0_0", c)) break;
+    }
+    return true;
+  }
+
+  // 'augment'?
+  private static boolean extensionDeclaration_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "extensionDeclaration_0_1")) return false;
     consumeToken(b, AUGMENT);
     return true;
   }
 
   // typeParameters?
-  private static boolean extensionDeclaration_0_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "extensionDeclaration_0_2")) return false;
+  private static boolean extensionDeclaration_0_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "extensionDeclaration_0_3")) return false;
     typeParameters(b, l + 1);
     return true;
   }
 
   // '?'?
-  private static boolean extensionDeclaration_0_5(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "extensionDeclaration_0_5")) return false;
+  private static boolean extensionDeclaration_0_6(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "extensionDeclaration_0_6")) return false;
     consumeToken(b, QUEST);
     return true;
   }
 
-  // 'augment'? 'extension' <<nonStrictID>> typeParameters? 'on' type '?'? classBody
+  // metadata* 'augment'? 'extension' <<nonStrictID>> typeParameters? 'on' type '?'? classBody
   private static boolean extensionDeclaration_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "extensionDeclaration_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = extensionDeclaration_1_0(b, l + 1);
+    r = r && extensionDeclaration_1_1(b, l + 1);
     r = r && consumeToken(b, EXTENSION);
     r = r && nonStrictID(b, l + 1);
-    r = r && extensionDeclaration_1_3(b, l + 1);
+    r = r && extensionDeclaration_1_4(b, l + 1);
     r = r && consumeToken(b, ON);
     r = r && type(b, l + 1);
-    r = r && extensionDeclaration_1_6(b, l + 1);
+    r = r && extensionDeclaration_1_7(b, l + 1);
     r = r && classBody(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // 'augment'?
+  // metadata*
   private static boolean extensionDeclaration_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "extensionDeclaration_1_0")) return false;
+    while (true) {
+      int c = current_position_(b);
+      if (!metadata(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "extensionDeclaration_1_0", c)) break;
+    }
+    return true;
+  }
+
+  // 'augment'?
+  private static boolean extensionDeclaration_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "extensionDeclaration_1_1")) return false;
     consumeToken(b, AUGMENT);
     return true;
   }
 
   // typeParameters?
-  private static boolean extensionDeclaration_1_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "extensionDeclaration_1_3")) return false;
+  private static boolean extensionDeclaration_1_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "extensionDeclaration_1_4")) return false;
     typeParameters(b, l + 1);
     return true;
   }
 
   // '?'?
-  private static boolean extensionDeclaration_1_6(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "extensionDeclaration_1_6")) return false;
+  private static boolean extensionDeclaration_1_7(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "extensionDeclaration_1_7")) return false;
     consumeToken(b, QUEST);
     return true;
   }
 
   /* ********************************************************** */
-  // 'augment'? 'extension' <<typeForExtensionType>> 'const'? componentName typeParameters? representationDeclaration interfaces? classBody
+  // metadata* 'augment'? 'extension' <<typeForExtensionType>> 'const'? componentName typeParameters? representationDeclaration interfaces? classBody
   public static boolean extensionTypeDeclaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "extensionTypeDeclaration")) return false;
-    if (!nextTokenIs(b, "<extension type declaration>", AUGMENT, EXTENSION)) return false;
+    if (!nextTokenIs(b, "<extension type declaration>", AT, AUGMENT, EXTENSION)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, EXTENSION_TYPE_DECLARATION, "<extension type declaration>");
     r = extensionTypeDeclaration_0(b, l + 1);
+    r = r && extensionTypeDeclaration_1(b, l + 1);
     r = r && consumeToken(b, EXTENSION);
     r = r && typeForExtensionType(b, l + 1);
-    r = r && extensionTypeDeclaration_3(b, l + 1);
+    r = r && extensionTypeDeclaration_4(b, l + 1);
     r = r && componentName(b, l + 1);
-    p = r; // pin = 5
-    r = r && report_error_(b, extensionTypeDeclaration_5(b, l + 1));
+    p = r; // pin = 6
+    r = r && report_error_(b, extensionTypeDeclaration_6(b, l + 1));
     r = p && report_error_(b, representationDeclaration(b, l + 1)) && r;
-    r = p && report_error_(b, extensionTypeDeclaration_7(b, l + 1)) && r;
+    r = p && report_error_(b, extensionTypeDeclaration_8(b, l + 1)) && r;
     r = p && classBody(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
-  // 'augment'?
+  // metadata*
   private static boolean extensionTypeDeclaration_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "extensionTypeDeclaration_0")) return false;
+    while (true) {
+      int c = current_position_(b);
+      if (!metadata(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "extensionTypeDeclaration_0", c)) break;
+    }
+    return true;
+  }
+
+  // 'augment'?
+  private static boolean extensionTypeDeclaration_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "extensionTypeDeclaration_1")) return false;
     consumeToken(b, AUGMENT);
     return true;
   }
 
   // 'const'?
-  private static boolean extensionTypeDeclaration_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "extensionTypeDeclaration_3")) return false;
+  private static boolean extensionTypeDeclaration_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "extensionTypeDeclaration_4")) return false;
     consumeToken(b, CONST);
     return true;
   }
 
   // typeParameters?
-  private static boolean extensionTypeDeclaration_5(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "extensionTypeDeclaration_5")) return false;
+  private static boolean extensionTypeDeclaration_6(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "extensionTypeDeclaration_6")) return false;
     typeParameters(b, l + 1);
     return true;
   }
 
   // interfaces?
-  private static boolean extensionTypeDeclaration_7(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "extensionTypeDeclaration_7")) return false;
+  private static boolean extensionTypeDeclaration_8(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "extensionTypeDeclaration_8")) return false;
     interfaces(b, l + 1);
     return true;
   }

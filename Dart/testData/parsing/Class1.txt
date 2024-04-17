@@ -1520,6 +1520,11 @@ Dart File
             PsiElement(;)(';')
       PsiElement(})('}')
   EXTENSION_DECLARATION
+    METADATA
+      PsiElement(@)('@')
+      REFERENCE_EXPRESSION
+        ID
+          PsiElement(IDENTIFIER)('foo')
     PsiElement(extension)('extension')
     ID
       PsiElement(IDENTIFIER)('MyFancyList')
@@ -2160,6 +2165,11 @@ Dart File
         <empty list>
       PsiElement(})('}')
   EXTENSION_TYPE_DECLARATION
+    METADATA
+      PsiElement(@)('@')
+      REFERENCE_EXPRESSION
+        ID
+          PsiElement(IDENTIFIER)('foo')
     PsiElement(extension)('extension')
     ID
       PsiElement(IDENTIFIER)('type')

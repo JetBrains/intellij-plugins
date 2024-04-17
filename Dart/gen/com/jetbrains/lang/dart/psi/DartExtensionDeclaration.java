@@ -11,6 +11,9 @@ public interface DartExtensionDeclaration extends DartPsiCompositeElement {
   DartClassBody getClassBody();
 
   @NotNull
+  List<DartMetadata> getMetadataList();
+
+  @NotNull
   DartType getType();
 
   @Nullable

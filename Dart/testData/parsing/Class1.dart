@@ -82,6 +82,7 @@ extension Tricky on int {
       Iterable<int>.generate(to - this + 1, (i) => i + this);
 }
 
+@foo
 extension MyFancyList<T> on List<T> {
   int get doubleLength => this.length * 2;
   List<T> operator-() => this.reversed.toList();
@@ -123,6 +124,7 @@ interface mixin	A{}
 final mixin	A{}
 sealed mixin A{}
 
+@foo
 extension type A<T>.named(int it) implements num {}
 extension type A.new(int it) implements num, int {}
 extension type const A(int it) implements num, int {}
