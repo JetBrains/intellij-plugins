@@ -347,18 +347,6 @@
   </extensions>
 
   <actions>
-    <!-- Generate actions -->
-    <group id="TF.GenerateGroup">
-      <action id="GenerateTFResource" class="org.intellij.terraform.config.generate.GenerateResource"/>
-      <action id="GenerateTFDataSource" class="org.intellij.terraform.config.generate.GenerateDataSource"/>
-      <action id="GenerateTFVariable" class="org.intellij.terraform.config.generate.GenerateVariable"/>
-      <action id="GenerateTFOutput" class="org.intellij.terraform.config.generate.GenerateOutput"/>
-      <action id="GenerateTFProvider" class="org.intellij.terraform.config.generate.GenerateProvider"/>
-      <action id="GenerateTFModule" class="org.intellij.terraform.config.generate.GenerateModule"/>
-      <!--<action id="GenerateTF" text="..." class=""/>-->
-      <add-to-group group-id="GenerateGroup" anchor="first"/>
-    </group>
-
     <action icon="AllIcons.General.Warning" id="TFInitRequiredAction" class="org.intellij.terraform.config.actions.TFInitRequiredAction"/>
     <action id="Terraform.InstallTerraform" class="org.intellij.terraform.install.InstallTerraformAction"/>
 
