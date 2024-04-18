@@ -2,6 +2,7 @@ package org.jetbrains.plugins.cucumber.java.navigation;
 
 import com.intellij.ide.actions.GotoRelatedSymbolAction;
 import com.intellij.navigation.GotoRelatedItem;
+import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiJavaFile;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
@@ -13,7 +14,7 @@ public class CucumberGotoRelatedFileTest extends CucumberJavaCodeInsightTestCase
   public void testGotoRelated() {
     myFixture.copyDirectoryToProject("gotoRelated", "");
     myFixture.configureByFile("gotoRelated/test.feature");
-    List<GotoRelatedItem> items = GotoRelatedSymbolAction.getItems(myFixture.getFile(), myFixture.getEditor(), null);
+    List<GotoRelatedItem> items = GotoRelatedSymbolAction.getItems(myFixture.getFile(), myFixture.getEditor(), SimpleDataContext.EMPTY_CONTEXT);
     assertEquals(1, items.size());
     PsiElement gotoElement = items.get(0).getElement();
     assertTrue(gotoElement instanceof PsiJavaFile);

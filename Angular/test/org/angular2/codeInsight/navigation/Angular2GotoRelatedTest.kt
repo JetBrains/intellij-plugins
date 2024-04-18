@@ -64,7 +64,7 @@ class Angular2GotoRelatedTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   private val stringifiedRelatedItems: List<String>
-    get() = GotoRelatedSymbolAction.getItems(myFixture.getFile(), myFixture.getEditor(), null)
+    get() = GotoRelatedSymbolAction.getItems(myFixture.getFile(), myFixture.getEditor())
       .asSequence()
       .filter { it.group == "Angular Component" }
       .map { item ->
