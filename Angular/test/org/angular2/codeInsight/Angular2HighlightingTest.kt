@@ -206,6 +206,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
   fun testStandalonePseudoModules() = checkHighlighting(configureFileName = "check.ts", dir = true)
 
+  fun testNgIfOverObjectWithGenericArguments() = checkHighlighting(ANGULAR_FORMS_16_2_8, ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8,
+                                                                   extension = "ts")
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
