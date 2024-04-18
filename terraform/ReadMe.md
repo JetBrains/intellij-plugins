@@ -1,6 +1,6 @@
 # IntelliJ-HCL plugin
 
-Provides [HCL language](https://github.com/hashicorp/hcl) and [Terraform](https://terraform.io) configuration files (`.tf`) support for [IntelliJ Platform](https://www.jetbrains.org/pages/viewpage.action?pageId=983889)-based IDEs
+Provides [HCL language](https://github.com/hashicorp/hcl) and [Terraform](https://terraform.io) configuration files (`.tf`) support for [IntelliJ Platform](https://www.jetbrains.com/opensource/idea/)-based IDEs
 
 The HCL format is used for [Nomad](https://www.nomadproject.io/)(`.nomad` files).
 

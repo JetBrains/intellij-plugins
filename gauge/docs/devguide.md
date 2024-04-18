@@ -1,8 +1,8 @@
 #Developer Guide
 
  * install the intellij sdk
- * install necessary plugins Grammar-kit, and PsiViewer. For updated list, take a look at 
-  http://www.jetbrains.org/intellij/sdk/docs/tutorials/custom_language_support/prerequisites.html
+ * install necessary plugins Grammar-kit, and PsiViewer. For updated list, take a look at
+   https://plugins.jetbrains.com/docs/intellij/prerequisites.html
  * Create a run configuration (Plugin -> Use Classpath of module -> Choose the current module), hit run
  * A new instance of intellij will be launched with the plugin installed  
 

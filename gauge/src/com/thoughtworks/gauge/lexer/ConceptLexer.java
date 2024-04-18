@@ -23,7 +23,7 @@ import com.intellij.lexer.FlexAdapter;
  * It is used to break .cpt file text into semantic tokens.
  * <p>
  * Use of this code, and how to generate _ConceptLexer from the .flex file, can be found at
- * http://www.jetbrains.org/intellij/sdk/docs/tutorials/custom_language_support/lexer_and_parser_definition.html
+ * <a href="https://plugins.jetbrains.com/docs/intellij/implementing-lexer.html">IntelliJ Platform SDK Docs</a>
  */
 public final class ConceptLexer extends FlexAdapter {
   public ConceptLexer() {

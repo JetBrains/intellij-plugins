@@ -16,4 +16,4 @@ By default, the plugin handles `*.handlebars`, `*.hbs` and `*.mustache` files.  
 Issues and feature requests are managed at [https://youtrack.jetbrains.com/issues/WEB](https://youtrack.jetbrains.com/issues/WEB)
 
 ## Code contributions
-Pull requests welcome!  See the [development environment setup instructions](developer_environment.md) to get up and running, and please follow the [IntelliJ Coding Guidelines](http://www.jetbrains.org/display/IJOS/IntelliJ+Coding+Guidelines).
+Pull requests welcome!  See the [development environment setup instructions](developer_environment.md) to get up and running, and please follow the [IntelliJ Coding Guidelines](https://plugins.jetbrains.com/docs/intellij/intellij-coding-guidelines.html).
