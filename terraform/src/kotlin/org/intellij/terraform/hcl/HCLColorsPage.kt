@@ -41,12 +41,12 @@ class HCLColorsPage : ColorSettingsPage, InspectionColorSettingsPage, DisplayPri
       AttributesDescriptor(HCLBundle.message("hcl.color.settings.string.invalid.escape.sequence"), HCLSyntaxHighlighterFactory.HCL_INVALID_ESCAPE)
     )
     private val additional: Map<String, TextAttributesKey> = mapOf(
-        "pk" to HCLSyntaxHighlighterFactory.HCL_PROPERTY_KEY,
-        "bt1" to HCLSyntaxHighlighterFactory.HCL_BLOCK_FIRST_TYPE_KEY,
-        "bt2" to HCLSyntaxHighlighterFactory.HCL_BLOCK_SECOND_TYPE_KEY,
-        "btO" to HCLSyntaxHighlighterFactory.HCL_BLOCK_OTHER_TYPES_KEY,
-        "bn" to HCLSyntaxHighlighterFactory.HCL_BLOCK_NAME_KEY,
-        "bon" to HCLSyntaxHighlighterFactory.HCL_BLOCK_ONLY_NAME_KEY
+      "pk" to HCLSyntaxHighlighterFactory.HCL_PROPERTY_KEY,
+      "bt1" to HCLSyntaxHighlighterFactory.HCL_BLOCK_FIRST_TYPE_KEY,
+      "bt2" to HCLSyntaxHighlighterFactory.HCL_BLOCK_SECOND_TYPE_KEY,
+      "btO" to HCLSyntaxHighlighterFactory.HCL_BLOCK_OTHER_TYPES_KEY,
+      "bn" to HCLSyntaxHighlighterFactory.HCL_BLOCK_NAME_KEY,
+      "bon" to HCLSyntaxHighlighterFactory.HCL_BLOCK_ONLY_NAME_KEY
     )
   }
 

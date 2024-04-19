@@ -21,18 +21,17 @@ import com.intellij.refactoring.listeners.RefactoringEventListener
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.util.PairProcessor
 import com.intellij.util.SmartList
-import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.hcl.HCLParserDefinition
-import org.intellij.terraform.hcl.HCLTokenTypes
-import org.intellij.terraform.hcl.navigation.HCLQualifiedNameProvider
-import org.intellij.terraform.hcl.psi.*
-import org.intellij.terraform.hcl.psi.common.BaseExpression
 import org.intellij.terraform.config.codeinsight.ModelHelper
 import org.intellij.terraform.config.model.PropertyType
 import org.intellij.terraform.config.model.Type
 import org.intellij.terraform.config.model.Types
 import org.intellij.terraform.config.model.getType
 import org.intellij.terraform.config.psi.TerraformElementGenerator
+import org.intellij.terraform.hcl.HCLBundle
+import org.intellij.terraform.hcl.HCLTokenTypes
+import org.intellij.terraform.hcl.navigation.HCLQualifiedNameProvider
+import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.common.BaseExpression
 import org.intellij.terraform.hil.refactoring.ILIntroduceVariableHandler
 import org.intellij.terraform.hil.refactoring.ILRefactoringUtil
 import org.jetbrains.annotations.Contract
@@ -326,10 +325,10 @@ class TerraformIntroduceVariableHandler : BaseIntroduceVariableHandler<HCLElemen
     val anchor = if (operation.isReplaceAll) ILIntroduceVariableHandler.findAnchor(operation.occurrences) else ILIntroduceVariableHandler.findAnchor(operation.initializer!!)
     if (anchor == null) {
       CommonRefactoringUtil.showErrorHint(
-          operation.project,
-          operation.editor,
-          RefactoringBundle.getCannotRefactorMessage(HCLBundle.message("refactoring.introduce.anchor.error")),
-          HCLBundle.message("refactoring.introduce.error"), null
+        operation.project,
+        operation.editor,
+        RefactoringBundle.getCannotRefactorMessage(HCLBundle.message("refactoring.introduce.anchor.error")),
+        HCLBundle.message("refactoring.introduce.error"), null
       )
       return null
     }

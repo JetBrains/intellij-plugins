@@ -19,15 +19,15 @@ import com.intellij.refactoring.introduce.inplace.OccurrencesChooser
 import com.intellij.refactoring.listeners.RefactoringEventData
 import com.intellij.refactoring.listeners.RefactoringEventListener
 import com.intellij.refactoring.util.CommonRefactoringUtil
-import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.hcl.psi.HCLBlock
-import org.intellij.terraform.hcl.psi.common.BaseExpression
 import org.intellij.terraform.config.model.Type
 import org.intellij.terraform.config.model.Types
 import org.intellij.terraform.config.model.getType
 import org.intellij.terraform.config.psi.TerraformElementGenerator
 import org.intellij.terraform.config.refactoring.BaseIntroduceOperation
 import org.intellij.terraform.config.refactoring.BaseIntroduceVariableHandler
+import org.intellij.terraform.hcl.HCLBundle
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.common.BaseExpression
 import org.intellij.terraform.hil.psi.*
 import org.intellij.terraform.hil.psi.impl.getHCLHost
 import org.jetbrains.annotations.NonNls
@@ -350,10 +350,10 @@ open class ILIntroduceVariableHandler : BaseIntroduceVariableHandler<ILExpressio
     val anchor = if (operation.isReplaceAll) findAnchor(operation.occurrences) else findAnchor(operation.initializer!!)
     if (anchor == null) {
       CommonRefactoringUtil.showErrorHint(
-          operation.project,
-          operation.editor,
-          RefactoringBundle.getCannotRefactorMessage(HCLBundle.message("refactoring.introduce.anchor.error")),
-          HCLBundle.message("refactoring.introduce.error"), null
+        operation.project,
+        operation.editor,
+        RefactoringBundle.getCannotRefactorMessage(HCLBundle.message("refactoring.introduce.anchor.error")),
+        HCLBundle.message("refactoring.introduce.error"), null
       )
       return null
     }

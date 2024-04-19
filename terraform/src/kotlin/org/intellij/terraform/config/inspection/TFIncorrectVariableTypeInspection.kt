@@ -7,10 +7,10 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
-import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.hcl.HCLBundle
+import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.joinCommaOr
 
 class TFIncorrectVariableTypeInspection : LocalInspectionTool() {

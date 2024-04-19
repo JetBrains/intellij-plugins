@@ -15,15 +15,20 @@ import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hil.refactoring.ILIntroduceVariableHandler
 
 class AddVariableFix(element: PsiNamedElement, private val vName: String = element.name!!) : LocalQuickFixAndIntentionActionOnPsiElement(element) {
-  override fun getFamilyName() = HCLBundle.message("AddVariableFix.family.name")
-  override fun getText() = HCLBundle.message("AddVariableFix.text", vName)
+  override fun getFamilyName(): String = HCLBundle.message("AddVariableFix.family.name")
+
+  override fun getText(): String = HCLBundle.message("AddVariableFix.text", vName)
+
   override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
     val declaration = TerraformElementGenerator(project).createVariable(vName, null, "\"\"")
     val anchor = ILIntroduceVariableHandler.findAnchor(listOf(startElement, endElement))
     if (anchor == null) {
-      CommonRefactoringUtil.showErrorHint(project, editor,
-          RefactoringBundle.getCannotRefactorMessage(HCLBundle.message("refactoring.introduce.anchor.error")),
-          HCLBundle.message("refactoring.introduce.error"), null)
+      CommonRefactoringUtil.showErrorHint(
+        project,
+        editor,
+        RefactoringBundle.getCannotRefactorMessage(HCLBundle.message("refactoring.introduce.anchor.error")),
+        HCLBundle.message("refactoring.introduce.error"),
+        null)
       return
     }
     anchor.parent.addBefore(declaration, anchor) as HCLBlock

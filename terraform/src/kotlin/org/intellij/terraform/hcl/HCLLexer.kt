@@ -4,7 +4,8 @@ package org.intellij.terraform.hcl
 import com.intellij.lexer.FlexAdapter
 import java.util.*
 
-class HCLLexer(private val capabilities: EnumSet<HCLCapability> = EnumSet.noneOf(HCLCapability::class.java)) : FlexAdapter(_HCLLexer(capabilities)) {
+class HCLLexer(private val capabilities: EnumSet<HCLCapability> = EnumSet.noneOf(HCLCapability::class.java)) :
+  FlexAdapter(_HCLLexer(capabilities)) {
 
   companion object {
     private const val STRING_START_MASK: Int = 0xFFFF shl 0x10 // 0xFFFF0000

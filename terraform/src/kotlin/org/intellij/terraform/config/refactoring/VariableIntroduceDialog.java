@@ -1,5 +1,5 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.intellij.terraform.hil.refactoring;
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.intellij.terraform.config.refactoring;
 
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
@@ -12,9 +12,9 @@ import com.intellij.ui.EditorComboBoxEditor;
 import com.intellij.ui.EditorComboBoxRenderer;
 import com.intellij.ui.EditorTextField;
 import com.intellij.ui.StringComboboxEditor;
-import org.intellij.terraform.hcl.HCLBundle;
 import org.intellij.terraform.config.TerraformFileType;
-import org.intellij.terraform.hil.psi.ILExpression;
+import org.intellij.terraform.hcl.HCLBundle;
+import org.intellij.terraform.hcl.psi.HCLElement;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,21 +23,21 @@ import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 
-public class ILIntroduceDialog extends DialogWrapper {
+public class VariableIntroduceDialog extends DialogWrapper {
   private JPanel myContentPane;
   private JLabel myNameLabel;
-  private ComboBox<String> myNameComboBox;
+  private ComboBox myNameComboBox;
   private JCheckBox myReplaceAll;
 
   private final Project myProject;
   private final int myOccurrencesCount;
   private final IntroduceValidator myValidator;
-  private final ILExpression myExpression;
+  private final HCLElement myExpression;
 
-  public ILIntroduceDialog(@NotNull final Project project,
-                           @NotNull @Nls final String caption,
-                           @NotNull IntroduceValidator validator,
-                           final IntroduceOperation operation) {
+  public VariableIntroduceDialog(@NotNull final Project project,
+                                 @NotNull @Nls final String caption,
+                                 @NotNull IntroduceValidator validator,
+                                 final IntroduceOperation operation) {
     super(project, true);
     myOccurrencesCount = operation.getOccurrences().size();
     myValidator = validator;
@@ -92,7 +92,6 @@ public class ILIntroduceDialog extends DialogWrapper {
     }
   }
 
-  @Override
   public JComponent getPreferredFocusedComponent() {
     return myNameComboBox;
   }
@@ -115,7 +114,7 @@ public class ILIntroduceDialog extends DialogWrapper {
     return myProject;
   }
 
-  public ILExpression getExpression() {
+  public HCLElement getExpression() {
     return myExpression;
   }
 

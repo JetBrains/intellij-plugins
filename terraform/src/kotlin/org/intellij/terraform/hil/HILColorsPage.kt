@@ -37,10 +37,10 @@ class HILColorPage : ColorSettingsPage, InspectionColorSettingsPage, DisplayPrio
       AttributesDescriptor(HCLBundle.message("hil.color.settings.template.background"), HILSyntaxHighlighterFactory.TEMPLATE_BACKGROUND)
     )
     private val additional: Map<String, TextAttributesKey> = mapOf(
-        "rt" to HILSyntaxHighlighterFactory.TIL_RESOURCE_TYPE_REFERENCE,
-        "ri" to HILSyntaxHighlighterFactory.TIL_RESOURCE_INSTANCE_REFERENCE,
-        "pr" to HILSyntaxHighlighterFactory.TIL_PROPERTY_REFERENCE,
-        "s" to HILSyntaxHighlighterFactory.TIL_PREDEFINED_SCOPE
+      "rt" to HILSyntaxHighlighterFactory.TIL_RESOURCE_TYPE_REFERENCE,
+      "ri" to HILSyntaxHighlighterFactory.TIL_RESOURCE_INSTANCE_REFERENCE,
+      "pr" to HILSyntaxHighlighterFactory.TIL_PROPERTY_REFERENCE,
+      "s" to HILSyntaxHighlighterFactory.TIL_PREDEFINED_SCOPE
     )
   }
 
@@ -54,9 +54,9 @@ class HILColorPage : ColorSettingsPage, InspectionColorSettingsPage, DisplayPrio
 
   override fun getDemoText(): String {
     return "\${\"interpolation\".example.call(10, \"a\\n\\o\", \n" +
-        "<s>var</s>.foo, <s>path</s>.module, 1 - 0 + (11 * 4) / 2 % 1, \n" +
-        "\ttrue || !false, false && !true, true ? 1 : 2, null,\n" +
-        "<rt>aws_instance</rt>.<ri>inst</ri>.<pr>availability_zone</pr>[0])}"
+           "<s>var</s>.foo, <s>path</s>.module, 1 - 0 + (11 * 4) / 2 % 1, \n" +
+           "\ttrue || !false, false && !true, true ? 1 : 2, null,\n" +
+           "<rt>aws_instance</rt>.<ri>inst</ri>.<pr>availability_zone</pr>[0])}"
   }
 
   override fun getAdditionalHighlightingTagToDescriptorMap(): Map<String, TextAttributesKey> {
