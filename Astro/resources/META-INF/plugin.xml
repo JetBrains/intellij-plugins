@@ -53,6 +53,7 @@
 
     <stubElementTypeHolder class="org.jetbrains.astro.lang.parser.AstroStubElementTypes" externalIdPrefix="ASTRO:"/>
     <implicitUsageProvider implementation="org.jetbrains.astro.codeInsight.refs.AstroImplicitUsageProvider"/>
+    <implicitUsageProvider implementation="org.jetbrains.astro.codeInsight.refs.AstroConfigImplicitUsageProvider"/>
 
     <html.compatibleLanguage language="Astro"/>
     <xml.xmlExtension implementation="org.jetbrains.astro.codeInsight.AstroHtmlExtension" order="before html, before web-symbols-react"

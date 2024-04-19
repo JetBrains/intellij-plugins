@@ -20,11 +20,13 @@ const val ASTRO_PROPS = "Props"
 const val ASTRO_INLINE_DIRECTIVE = "is:inline"
 const val ASTRO_DEFINE_VARS_DIRECTIVE = "define:vars"
 
+const val ASTRO_CONFIG_NAME = "astro.config"
+
 val ASTRO_CONFIG_FILES = setOf(
-  "astro.config.js",
-  "astro.config.cjs",
-  "astro.config.mjs",
-  "astro.config.ts",
+  "$ASTRO_CONFIG_NAME.js",
+  "$ASTRO_CONFIG_NAME.cjs",
+  "$ASTRO_CONFIG_NAME.mjs",
+  "$ASTRO_CONFIG_NAME.ts",
 )
 
 fun PsiElement.astroContentRoot(): AstroContentRoot? =
