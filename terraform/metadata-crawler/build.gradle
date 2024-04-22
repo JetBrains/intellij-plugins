@@ -1,8 +1,18 @@
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+import com.bmuschko.gradle.docker.tasks.image.*
+
 plugins {
+  id 'com.bmuschko.docker-remote-api' version '9.4.0'
+}
+
+repositories {
+  mavenCentral()
 }
 
 apply plugin: 'java'
 apply plugin: 'maven-publish'
+apply plugin: 'com.bmuschko.docker-remote-api'
 
 group = 'org.intellij.plugins.hcl.terraform'
 version = '2023.3.0'
@@ -17,13 +27,52 @@ processResources {
         if (!isSnapshot) {
             print "${outputs.files.asPath}"
             fileTree(dir: outputs.files.asPath, include: '**/*.json').each {
-                file -> file.text = groovy.json.JsonOutput.toJson(new groovy.json.JsonSlurper().parse(file))
+                file -> file.text = JsonOutput.toJson(new JsonSlurper().parse(file))
             }
         }
     }
 }
 
 sourceSets.main.resources { srcDir 'terraform' }
+
+task copyModelDirs(type: Copy) {
+  from 'terraform'
+  exclude 'build.gradle', 'settings.gradle', 'gradlew'
+  into 'docker/terraform/resources'
+}
+
+task copyGradleWrapper(type: Copy) {
+  from 'gradle'
+  includeEmptyDirs true
+  into 'docker/terraform/gradle'
+}
+
+task copyGradleBin(type: Copy) {
+  from 'terraform'
+  includeEmptyDirs true
+  include 'build.gradle'
+  include 'settings.gradle'
+  include 'gradlew'
+  into 'docker/terraform'
+}
+
+task buildSchemasExtractor (type: GradleBuild) {
+  dir = 'ls-schemas-extractor'
+  tasks = ['build']
+}
+
+task copySchemasExtractor(type: Copy) {
+  dependsOn buildSchemasExtractor
+  from 'ls-schemas-extractor/build/distributions/'
+  include 'ls-schemas-extractor.zip'
+  into 'docker'
+}
+
+task buildDockerImage (type: DockerBuildImage) {
+  dependsOn copySchemasExtractor, copyModelDirs, copyGradleBin, copyGradleWrapper
+  inputDir = file('docker')
+  images.add("intellij.terraform/metadata-crawler:$version")
+}
 
 jar {
     includeEmptyDirs false
@@ -32,27 +81,27 @@ jar {
     }
 }
 
-def spaceUsername = rootProject.getProperty('spaceUsername')
-def spacePassword = rootProject.getProperty('spacePassword')
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            from components.java
-            groupId = project.group
-            artifactId = project.archivesBaseName
-            version = project.version
-            suppressAllPomMetadataWarnings()
-        }
-    }
-    repositories {
-        maven {
-            url "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies"
-            credentials {
-                username = spaceUsername
-                password = spacePassword
-            }
-        }
-    }
-}
+//def spaceUsername = rootProject.getProperty('spaceUsername')
+//def spacePassword = rootProject.getProperty('spacePassword')
+//
+//publishing {
+//    publications {
+//        maven(MavenPublication) {
+//            from components.java
+//            groupId = project.group
+//            artifactId = project.archivesBaseName
+//            version = project.version
+//            suppressAllPomMetadataWarnings()
+//        }
+//    }
+//    repositories {
+//        maven {
+//            url "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies"
+//            credentials {
+//                username = spaceUsername
+//                password = spacePassword
+//            }
+//        }
+//    }
+//}
 

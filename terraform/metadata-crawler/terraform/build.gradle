@@ -1,0 +1,40 @@
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+
+group = 'org.intellij.plugins.hcl.terraform'
+version = '2023.3.0'
+
+boolean isSnapshot = version.endsWith('-SNAPSHOT')
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+sourceSets.main.resources {srcDir 'resources'}
+sourceSets.main.resources { srcDirs += 'plugins-meta/resources' }
+
+task collectMetadata(type: Exec) {
+  commandLine 'bash', 'ls-schemas-extractor/bin/ls-schemas-extractor'
+}
+
+processResources {
+  dependsOn collectMetadata
+  doLast {
+    if (!isSnapshot) {
+      print "${outputs.files.asPath}"
+      fileTree(dir: outputs.files.asPath, include: '**/*.json').each {
+        file -> file.text = JsonOutput.toJson(new JsonSlurper().parse(file))
+      }
+    }
+  }
+}
+
+
+jar {
+  includeEmptyDirs false
+  eachFile { details ->
+    details.path = "resources/$details.path"
+  }
+}

@@ -1,7 +1,7 @@
 plugins {
   id("java")
   id("application")
-  id("org.jetbrains.kotlin.jvm") version "1.8.0"
+  id("org.jetbrains.kotlin.jvm") version "1.9.23"
 }
 
 group = "com.intellij"
@@ -13,6 +13,7 @@ repositories {
 
 dependencies {
   implementation("com.fasterxml.jackson.core:jackson-databind:2.13.4.2")
+  implementation(kotlin("stdlib-jdk8"))
 }
 
 sourceSets {
@@ -22,5 +23,18 @@ sourceSets {
 }
 
 application {
+  applicationName = "ls-schemas-extractor"
   mainClass.set("TerraformProvidersMetadataBuilder")
+}
+
+tasks {
+  val distributionName = application.applicationName
+
+  named<Zip>("distZip") {
+    archiveFileName.set("$distributionName.zip")
+  }
+
+  named<Tar>("distTar") {
+    archiveFileName.set("$distributionName.tar")
+  }
 }

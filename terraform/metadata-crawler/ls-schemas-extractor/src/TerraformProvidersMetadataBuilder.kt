@@ -1,5 +1,7 @@
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ArrayNode
+import com.fasterxml.jackson.databind.node.ObjectNode
 import java.io.File
 import java.net.URI
 import java.net.URLDecoder
@@ -8,7 +10,6 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
-import kotlin.Comparator
 
 object TerraformProvidersMetadataBuilder {
 
@@ -25,7 +26,7 @@ object TerraformProvidersMetadataBuilder {
   }
 
   private fun String.urlDecode(): String = URLDecoder.decode(this, StandardCharsets.UTF_8)
-  
+
   private fun getProvidersDataFromPages(): Sequence<JsonNode> {
     val host = "https://registry.terraform.io"
     println("loading providers from $host ...")
@@ -33,9 +34,14 @@ object TerraformProvidersMetadataBuilder {
       var httpResponse = getQuery("${host}/v2/providers")
       while (true) {
         val jsonResponse = objectMapper.readTree(httpResponse.body())
-
-        val next = jsonResponse["links"]["next"]?.takeIf { !it.isNull }?.asText()?.urlDecode()
-        yieldAll(jsonResponse["data"].elements())
+        val page = jsonResponse.get("meta")?.get("pagination")?.get("current-page")
+        val pageTotal = jsonResponse.get("meta")?.get("pagination")?.get("total-pages")
+        println("Loaded page ${page} of ${pageTotal}  ...")
+        val next = jsonResponse.get("links")?.get("next")?.takeIf { !it.isNull }?.asText()?.urlDecode()
+        when (val responseData = jsonResponse["data"]) {
+          is ObjectNode -> yield(responseData)
+          is ArrayNode -> yieldAll(responseData.elements())
+        }
         if (next == null) break
         httpResponse = getQuery("${host}${next}")
       }
@@ -61,22 +67,25 @@ object TerraformProvidersMetadataBuilder {
 
     val allProvidersData = objectMapper.readTree(allOut)
 
+    checkTotalProvidersAmount(allProvidersData)
+
     val buildInProvider = objectMapper.nodeFactory.let { nf ->
-      nf.objectNode()
-        .set<JsonNode>("attributes",
-                       nf.objectNode()
-                         .put("full-name", "terraform.io/builtin/terraform")
-                         .put("name", "terraform")
-                         .put("namespace", "terraform")
-                         .put("tier", "builtin"))
+      nf.objectNode().set<JsonNode>("attributes",
+                                    nf.objectNode()
+                                      .put("full-name", "terraform.io/builtin/terraform")
+                                      .put("name", "terraform")
+                                      .put("namespace", "terraform")
+                                      .put("tier", "builtin"))
     }
 
+    val providerVendorsTier = setOf("partner", "official")
+    val downloadsLimit = 10000
     val mostUsefulProviders = sequenceOf<JsonNode>(buildInProvider) +
                               allProvidersData.elements().asSequence()
                                 .filter { providerData ->
                                   val attributes = providerData["attributes"]
-                                  attributes["tier"].asText().let { it == "partner" || it == "official" } ||
-                                  attributes["downloads"].asLong() >= 10000
+                                  (providerVendorsTier.contains(attributes["tier"].asText()) || attributes["downloads"].asLong() >= downloadsLimit)
+                                  && attributes["full-name"].asText().contains("aws")
                                 }
     val selected = mostUsefulProviders
       .groupBy { it["attributes"]["name"] }
@@ -89,48 +98,76 @@ object TerraformProvidersMetadataBuilder {
             "is selected among ${ambiguous.map { it["attributes"]["full-name"] }}")
         }
         selected
-      }
-      .values
+      }.values
 
-    println("count = ${selected.size}")
+    println("Selected ${selected.size} most useful providers")
+
+    //checkMandatoryHashicorpProviders(selected)
 
     val version = getTerraformVersion()
     println("terraform version: $version")
 
-    val tfgendir = File("terrform-gen-dir")
     val outputDir = File("plugins-meta").apply { mkdirs() }
-    val failures = File(outputDir, "failed")
     val generatedJsonFileNames = mutableListOf<String>()
+    selected.asSequence().map {
+      buildProviderMetadata(it, version, outputDir)
+    }.forEach {file ->
+      if (file.exists()) {
+        println("Schema file generated: ${file.path}")
+        generatedJsonFileNames.add(file.nameWithoutExtension)
+      }
+      else {
+        println("Error generating schema for provider: ${file.nameWithoutExtension}")
+      }
+    }
+    File(File(outputDir, "resources/model").apply { mkdirs() }, "providers.list").writeText(generatedJsonFileNames.sorted().joinToString("\n"))
+  }
 
-    for (provider in selected) {
-      deleteDirRecursively(tfgendir)
+  private fun checkTotalProvidersAmount(allProvidersData: JsonNode) {
+    val totalProviders = allProvidersData.elements().asSequence().count()
+    println("Total providers downloaded: = $totalProviders")
+    val minProviders = 4108
+    assert(totalProviders >= minProviders, { "Terraform should provide at least ${minProviders}" })
+  }
+
+  private fun checkMandatoryHashicorpProviders(selected: Collection<JsonNode>) {
+    val mandatoryProviders = selected.count { provider ->
+      provider["attributes"]["namespace"].asText().contains("hashicorp")
+    }
+    val minMandatoryProviders = 33
+    assert(mandatoryProviders >= minMandatoryProviders, { "We must have all mandatory providers from hashicorp. Selected ${mandatoryProviders} of ${minMandatoryProviders}" })
+  }
+
+  private fun buildProviderMetadata(provider: JsonNode,
+                                    version: String,
+                                    outputDir: File): File {
+    return run {
+      val fullName = provider["attributes"]["full-name"].asText()
+      val name = provider["attributes"]["name"].asText().lowercase()
+      println("provider: $fullName")
+
+      val tfgendir = File("terraform-gen-dir/${name}")
       tfgendir.mkdirs()
 
-      val fullName = provider["attributes"]["full-name"].asText()
-      println("provider: $fullName")
       writeVersionsTfFile(tfgendir, version, fullName)
 
-      val initError = initTerraform(tfgendir)
-      val name = provider["attributes"]["name"].asText().lowercase()
+      val logFile = File(File(outputDir, "logs").apply { mkdirs() }, "$name.log")
+      val initError = initTerraform(tfgendir, logFile)
 
-      val schemaFile = File(File(outputDir, "providers").apply { mkdirs() }, "$name.json")
-
-      println("schemaFile = $schemaFile")
+      val schemaFile = File(File(outputDir, "resources/model/providers").apply { mkdirs() }, "$name.json")
       val schemaError: String = generateTerraformSchema(tfgendir, schemaFile)
-      if (schemaFile.length() > 0)
-        generatedJsonFileNames.add(name)
-      else {
+
+      if (schemaFile.length() <= 0L) {
         schemaFile.delete()
-        val failureDir = File(failures, name).apply { mkdirs() }
+        val failures = File(outputDir, "failed")
+        val failureDir = File(failures, name).apply { deleteRecursively() }.also { it.mkdirs() }
         File(tfgendir, "versions.tf").copyTo(File(failureDir, "versions.tf"))
         File(failureDir, "init.err").writeText(initError)
         File(failureDir, "schema.err").writeText(schemaError)
       }
-
+      deleteDirRecursively(tfgendir)
+      schemaFile
     }
-
-    File(outputDir, "providers.list").writeText(generatedJsonFileNames.sorted().joinToString("\n"))
-    println("Everything done!")
   }
 
   private fun getTerraformVersion(): String = ProcessBuilder(listOf("terraform", "-v", "--json"))
@@ -146,7 +183,7 @@ object TerraformProvidersMetadataBuilder {
       Files.walk(tfgendir.toPath())
         .sorted(Comparator.reverseOrder())
         .map { it.toFile() }
-        .forEach(File::delete);
+        .forEach(File::delete)
   }
 
   private fun writeVersionsTfFile(tfgendir: File, version: String?, fullName: String?) {
@@ -173,12 +210,12 @@ object TerraformProvidersMetadataBuilder {
     return schemaError
   }
 
-  private fun initTerraform(tfgendir: File): String {
+  private fun initTerraform(tfgendir: File, logFile: File): String {
     val initError: String
     ProcessBuilder(listOf("terraform", "init")).directory(tfgendir)
-      .redirectOutput(ProcessBuilder.Redirect.INHERIT)
+      .redirectOutput(logFile)
       .start().also {
-        it.errorStream.use { initError = it.reader().readText() }
+        it.errorStream.use { error -> initError = error.reader().readText() }
       }
       .waitFor()
     return initError
