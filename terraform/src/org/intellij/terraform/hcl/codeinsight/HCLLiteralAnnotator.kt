@@ -8,18 +8,19 @@ import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.colors.TextAttributesKey
+import com.intellij.openapi.project.DumbAware
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.intellij.terraform.config.inspection.TFVARSIncorrectElementInspection
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.hcl.HCLSyntaxHighlighterFactory
+import org.intellij.terraform.hcl.HCLSyntaxHighlighter
 import org.intellij.terraform.hcl.psi.*
 import org.jetbrains.annotations.Nls
 
 /**
  * Inspired by com.intellij.json.codeinsight.JsonLiteralAnnotator
  */
-class HCLLiteralAnnotator : Annotator {
+class HCLLiteralAnnotator : Annotator, DumbAware {
 
   private val DEBUG = ApplicationManager.getApplication().isUnitTestMode
 
@@ -44,17 +45,17 @@ class HCLLiteralAnnotator : Annotator {
     if (element is HCLExpression && HCLPsiUtil.isPropertyKey(element)) {
       if (DEBUG) {
         holder.newAnnotation(HighlightSeverity.INFORMATION,
-                             HCLBundle.message("hcl.literal.annotator.property.key")).textAttributes(HCLSyntaxHighlighterFactory.HCL_PROPERTY_KEY).create()
+                             HCLBundle.message("hcl.literal.annotator.property.key")).textAttributes(HCLSyntaxHighlighter.HCL_PROPERTY_KEY).create()
       }
       else {
-        holder.newSilentAnnotation(HighlightSeverity.INFORMATION).textAttributes(HCLSyntaxHighlighterFactory.HCL_PROPERTY_KEY).create()
+        holder.newSilentAnnotation(HighlightSeverity.INFORMATION).textAttributes(HCLSyntaxHighlighter.HCL_PROPERTY_KEY).create()
       }
     }
     if (element is LeafPsiElement) {
       val parent = element.parent
       if (parent is HCLForIntro) {
         if (element.textMatches("for") || element.textMatches("in")) {
-          holder.newSilentAnnotation(HighlightSeverity.INFORMATION).textAttributes(HCLSyntaxHighlighterFactory.HCL_KEYWORD).create()
+          holder.newSilentAnnotation(HighlightSeverity.INFORMATION).textAttributes(HCLSyntaxHighlighter.HCL_KEYWORD).create()
         }
       }
     }
@@ -65,10 +66,10 @@ class HCLLiteralAnnotator : Annotator {
         if (ne.size == 1 && ne[0] === element) {
           if (DEBUG) {
             holder.newAnnotation(HighlightSeverity.INFORMATION,
-                                 HCLBundle.message("hcl.literal.annotator.block.only.name.identifier")).textAttributes(HCLSyntaxHighlighterFactory.HCL_BLOCK_ONLY_NAME_KEY).create()
+                                 HCLBundle.message("hcl.literal.annotator.block.only.name.identifier")).textAttributes(HCLSyntaxHighlighter.HCL_BLOCK_ONLY_NAME_KEY).create()
           }
           else {
-            holder.newSilentAnnotation(HighlightSeverity.INFORMATION).textAttributes(HCLSyntaxHighlighterFactory.HCL_BLOCK_ONLY_NAME_KEY).create()
+            holder.newSilentAnnotation(HighlightSeverity.INFORMATION).textAttributes(HCLSyntaxHighlighter.HCL_BLOCK_ONLY_NAME_KEY).create()
           }
         } else for (i in ne.indices) {
           if (ne[i] === element) {
@@ -81,17 +82,17 @@ class HCLLiteralAnnotator : Annotator {
             }
             when (i) {
               ne.lastIndex -> {
-                addBlockNameAnnotation(holder, HCLBundle.message("hcl.literal.annotator.block.name.identifier"), HCLSyntaxHighlighterFactory.HCL_BLOCK_NAME_KEY, fix)
+                addBlockNameAnnotation(holder, HCLBundle.message("hcl.literal.annotator.block.name.identifier"), HCLSyntaxHighlighter.HCL_BLOCK_NAME_KEY, fix)
               }
               0 -> {
                 addBlockNameAnnotation(holder, HCLBundle.message("hcl.literal.annotator.block.type.1.element"),
-                                       HCLSyntaxHighlighterFactory.HCL_BLOCK_FIRST_TYPE_KEY, unifix = null)
+                                       HCLSyntaxHighlighter.HCL_BLOCK_FIRST_TYPE_KEY, unifix = null)
               }
               1 -> {
-                addBlockNameAnnotation(holder, HCLBundle.message("hcl.literal.annotator.block.type.2.element"), HCLSyntaxHighlighterFactory.HCL_BLOCK_SECOND_TYPE_KEY, fix)
+                addBlockNameAnnotation(holder, HCLBundle.message("hcl.literal.annotator.block.type.2.element"), HCLSyntaxHighlighter.HCL_BLOCK_SECOND_TYPE_KEY, fix)
               }
               else -> {
-                addBlockNameAnnotation(holder, HCLBundle.message("hcl.literal.annotator.block.type.3.element"), HCLSyntaxHighlighterFactory.HCL_BLOCK_OTHER_TYPES_KEY, fix)
+                addBlockNameAnnotation(holder, HCLBundle.message("hcl.literal.annotator.block.type.3.element"), HCLSyntaxHighlighter.HCL_BLOCK_OTHER_TYPES_KEY, fix)
               }
             }
 

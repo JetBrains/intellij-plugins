@@ -20,7 +20,7 @@ import org.intellij.terraform.hcl.psi.common.BaseExpression
 import org.intellij.terraform.hcl.psi.common.Identifier
 import org.intellij.terraform.hcl.psi.common.SelectExpression
 import org.intellij.terraform.hil.HILElementTypes
-import org.intellij.terraform.hil.HILSyntaxHighlighterFactory
+import org.intellij.terraform.hil.HILSyntaxHighlighter
 import org.intellij.terraform.hil.psi.getGoodLeftElement
 import org.intellij.terraform.hil.psi.impl.getHCLHost
 
@@ -57,11 +57,11 @@ class HILVariableAnnotator : Annotator {
       else if (parent.from === element) {
         annotateLeftmostInSelection(element, holder)
       } else if (isScopeElementReference(element, parent)) {
-        createInfo(holder, "scope value reference", HILSyntaxHighlighterFactory.TIL_PROPERTY_REFERENCE)
+        createInfo(holder, "scope value reference", HILSyntaxHighlighter.TIL_PROPERTY_REFERENCE)
       } else if (isResourceInstanceReference(element, parent)) {
-        createInfo(holder, "resource instance reference",HILSyntaxHighlighterFactory.TIL_RESOURCE_INSTANCE_REFERENCE)
+        createInfo(holder, "resource instance reference",HILSyntaxHighlighter.TIL_RESOURCE_INSTANCE_REFERENCE)
       } else if (isResourcePropertyReference(element, parent)) {
-        createInfo(holder, "property reference", HILSyntaxHighlighterFactory.TIL_PROPERTY_REFERENCE)
+        createInfo(holder, "property reference", HILSyntaxHighlighter.TIL_PROPERTY_REFERENCE)
       }
     }
   }
@@ -78,9 +78,9 @@ class HILVariableAnnotator : Annotator {
 
   private fun annotateLeftmostInSelection(element: Identifier, holder: AnnotationHolder) {
     if (TerraformCompletionUtil.Scopes.contains(element.name)) {
-      createInfo(holder, "global scope", HILSyntaxHighlighterFactory.TIL_PREDEFINED_SCOPE)
+      createInfo(holder, "global scope", HILSyntaxHighlighter.TIL_PREDEFINED_SCOPE)
     } else {
-      createInfo(holder, "resource type reference", HILSyntaxHighlighterFactory.TIL_RESOURCE_TYPE_REFERENCE)
+      createInfo(holder, "resource type reference", HILSyntaxHighlighter.TIL_RESOURCE_TYPE_REFERENCE)
     }
   }
 

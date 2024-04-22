@@ -16,33 +16,31 @@ import javax.swing.Icon
 
 class HILColorPage : ColorSettingsPage, InspectionColorSettingsPage, DisplayPrioritySortable {
 
-  companion object {
-    private val descriptors: Array<out AttributesDescriptor> = arrayOf(
-      AttributesDescriptor(HCLBundle.message("hil.color.settings.braces.operators.parentheses"), HILSyntaxHighlighterFactory.TIL_PARENS),
-      AttributesDescriptor(HCLBundle.message("hil.color.settings.braces.operators.braces"), HILSyntaxHighlighterFactory.TIL_BRACES),
-      AttributesDescriptor(HCLBundle.message("hil.color.settings.braces.operators.brackets"), HILSyntaxHighlighterFactory.TIL_BRACKETS),
-      AttributesDescriptor(HCLBundle.message("hil.color.settings.braces.operators.comma"), HILSyntaxHighlighterFactory.TIL_COMMA),
-      AttributesDescriptor(HCLBundle.message("hil.color.settings.braces.operators.operation.sign"), HILSyntaxHighlighterFactory.TIL_OPERATOR),
-      AttributesDescriptor(HCLBundle.message("hil.color.settings.braces.operators.dot"), HILSyntaxHighlighterFactory.TIL_DOT),
-      AttributesDescriptor(HCLBundle.message("hil.color.settings.number"), HILSyntaxHighlighterFactory.TIL_NUMBER),
-      AttributesDescriptor(HCLBundle.message("hil.color.settings.string"), HILSyntaxHighlighterFactory.TIL_STRING),
-      AttributesDescriptor(HCLBundle.message("hil.color.settings.keyword"), HILSyntaxHighlighterFactory.TIL_KEYWORD),
-      AttributesDescriptor(HCLBundle.message("hil.color.settings.identifier"), HILSyntaxHighlighterFactory.TIL_IDENTIFIER),
-      AttributesDescriptor(HCLBundle.message("hil.color.settings.predefined.scope"), HILSyntaxHighlighterFactory.TIL_PREDEFINED_SCOPE),
-      AttributesDescriptor(HCLBundle.message("hil.color.settings.resource.type.reference"), HILSyntaxHighlighterFactory.TIL_RESOURCE_TYPE_REFERENCE),
-      AttributesDescriptor(HCLBundle.message("hil.color.settings.resource.instance.reference"), HILSyntaxHighlighterFactory.TIL_RESOURCE_INSTANCE_REFERENCE),
-      AttributesDescriptor(HCLBundle.message("hil.color.settings.property.reference"), HILSyntaxHighlighterFactory.TIL_PROPERTY_REFERENCE),
-      AttributesDescriptor(HCLBundle.message("hil.color.settings.valid.escape.sequence"), HILSyntaxHighlighterFactory.TIL_VALID_ESCAPE),
-      AttributesDescriptor(HCLBundle.message("hil.color.settings.invalid.escape.sequence"), HILSyntaxHighlighterFactory.TIL_INVALID_ESCAPE),
-      AttributesDescriptor(HCLBundle.message("hil.color.settings.template.background"), HILSyntaxHighlighterFactory.TEMPLATE_BACKGROUND)
-    )
-    private val additional: Map<String, TextAttributesKey> = mapOf(
-      "rt" to HILSyntaxHighlighterFactory.TIL_RESOURCE_TYPE_REFERENCE,
-      "ri" to HILSyntaxHighlighterFactory.TIL_RESOURCE_INSTANCE_REFERENCE,
-      "pr" to HILSyntaxHighlighterFactory.TIL_PROPERTY_REFERENCE,
-      "s" to HILSyntaxHighlighterFactory.TIL_PREDEFINED_SCOPE
-    )
-  }
+  private val descriptors: Array<out AttributesDescriptor> = arrayOf(
+    AttributesDescriptor(HCLBundle.message("hil.color.settings.braces.operators.parentheses"), HILSyntaxHighlighter.TIL_PARENS),
+    AttributesDescriptor(HCLBundle.message("hil.color.settings.braces.operators.braces"), HILSyntaxHighlighter.TIL_BRACES),
+    AttributesDescriptor(HCLBundle.message("hil.color.settings.braces.operators.brackets"), HILSyntaxHighlighter.TIL_BRACKETS),
+    AttributesDescriptor(HCLBundle.message("hil.color.settings.braces.operators.comma"), HILSyntaxHighlighter.TIL_COMMA),
+    AttributesDescriptor(HCLBundle.message("hil.color.settings.braces.operators.operation.sign"), HILSyntaxHighlighter.TIL_OPERATOR),
+    AttributesDescriptor(HCLBundle.message("hil.color.settings.braces.operators.dot"), HILSyntaxHighlighter.TIL_DOT),
+    AttributesDescriptor(HCLBundle.message("hil.color.settings.number"), HILSyntaxHighlighter.TIL_NUMBER),
+    AttributesDescriptor(HCLBundle.message("hil.color.settings.string"), HILSyntaxHighlighter.TIL_STRING),
+    AttributesDescriptor(HCLBundle.message("hil.color.settings.keyword"), HILSyntaxHighlighter.TIL_KEYWORD),
+    AttributesDescriptor(HCLBundle.message("hil.color.settings.identifier"), HILSyntaxHighlighter.TIL_IDENTIFIER),
+    AttributesDescriptor(HCLBundle.message("hil.color.settings.predefined.scope"), HILSyntaxHighlighter.TIL_PREDEFINED_SCOPE),
+    AttributesDescriptor(HCLBundle.message("hil.color.settings.resource.type.reference"), HILSyntaxHighlighter.TIL_RESOURCE_TYPE_REFERENCE),
+    AttributesDescriptor(HCLBundle.message("hil.color.settings.resource.instance.reference"), HILSyntaxHighlighter.TIL_RESOURCE_INSTANCE_REFERENCE),
+    AttributesDescriptor(HCLBundle.message("hil.color.settings.property.reference"), HILSyntaxHighlighter.TIL_PROPERTY_REFERENCE),
+    AttributesDescriptor(HCLBundle.message("hil.color.settings.valid.escape.sequence"), HILSyntaxHighlighter.TIL_VALID_ESCAPE),
+    AttributesDescriptor(HCLBundle.message("hil.color.settings.invalid.escape.sequence"), HILSyntaxHighlighter.TIL_INVALID_ESCAPE),
+    AttributesDescriptor(HCLBundle.message("hil.color.settings.template.background"), HILSyntaxHighlighter.TEMPLATE_BACKGROUND)
+  )
+  private val additional: Map<String, TextAttributesKey> = mapOf(
+    "rt" to HILSyntaxHighlighter.TIL_RESOURCE_TYPE_REFERENCE,
+    "ri" to HILSyntaxHighlighter.TIL_RESOURCE_INSTANCE_REFERENCE,
+    "pr" to HILSyntaxHighlighter.TIL_PROPERTY_REFERENCE,
+    "s" to HILSyntaxHighlighter.TIL_PREDEFINED_SCOPE
+  )
 
   override fun getIcon(): Icon {
     return Icons.FileTypes.HIL

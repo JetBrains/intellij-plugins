@@ -7,8 +7,8 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.tree.IElementType
+import org.intellij.terraform.hil.HILSyntaxHighlighter
 import org.intellij.terraform.hil.HILSyntaxHighlighterFactory
-import org.intellij.terraform.hil.HILSyntaxHighlighterFactory.Companion.TEMPLATE_BACKGROUND
 import org.intellij.terraform.hil.psi.TerraformTemplateTokenTypes
 import org.intellij.terraform.template.lexer.TerraformTemplateLexer
 
@@ -18,7 +18,7 @@ class TerraformTemplateSyntaxHighlightingFactory : HILSyntaxHighlighterFactory()
   }
 }
 
-private class TerraformTemplateSyntaxHighlighter : HILSyntaxHighlighterFactory.HILSyntaxHighlighter() {
+private class TerraformTemplateSyntaxHighlighter : HILSyntaxHighlighter() {
   override fun getTokenHighlights(tokenType: IElementType?): Array<out TextAttributesKey> {
     return if (tokenType == TerraformTemplateTokenTypes.DATA_LANGUAGE_TOKEN_UNPARSED) {
       emptyArray()

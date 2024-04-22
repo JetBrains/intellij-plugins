@@ -14,41 +14,39 @@ import javax.swing.Icon
 
 class HCLColorsPage : ColorSettingsPage, InspectionColorSettingsPage, DisplayPrioritySortable {
 
-  companion object {
-    private val descriptors: Array<out AttributesDescriptor> = arrayOf(
-      AttributesDescriptor(HCLBundle.message("hcl.color.settings.braces.and.operators.brackets"), HCLSyntaxHighlighterFactory.HCL_BRACKETS),
-      AttributesDescriptor(HCLBundle.message("hcl.color.settings.braces.and.operators.braces"), HCLSyntaxHighlighterFactory.HCL_BRACES),
-      AttributesDescriptor(HCLBundle.message("hcl.color.settings.braces.and.operators.comma"), HCLSyntaxHighlighterFactory.HCL_COMMA),
-      AttributesDescriptor(HCLBundle.message("hcl.color.settings.braces.and.operators.operation.sign"), HCLSyntaxHighlighterFactory.HCL_OPERATION_SIGN),
+  private val descriptors: Array<out AttributesDescriptor> = arrayOf(
+    AttributesDescriptor(HCLBundle.message("hcl.color.settings.braces.and.operators.brackets"), HCLSyntaxHighlighter.HCL_BRACKETS),
+    AttributesDescriptor(HCLBundle.message("hcl.color.settings.braces.and.operators.braces"), HCLSyntaxHighlighter.HCL_BRACES),
+    AttributesDescriptor(HCLBundle.message("hcl.color.settings.braces.and.operators.comma"), HCLSyntaxHighlighter.HCL_COMMA),
+    AttributesDescriptor(HCLBundle.message("hcl.color.settings.braces.and.operators.operation.sign"), HCLSyntaxHighlighter.HCL_OPERATION_SIGN),
 
-      AttributesDescriptor(HCLBundle.message("hcl.color.settings.number"), HCLSyntaxHighlighterFactory.HCL_NUMBER),
-      AttributesDescriptor(HCLBundle.message("hcl.color.settings.keyword"), HCLSyntaxHighlighterFactory.HCL_KEYWORD),
-      AttributesDescriptor(HCLBundle.message("hcl.color.settings.identifier"), HCLSyntaxHighlighterFactory.HCL_IDENTIFIER),
+    AttributesDescriptor(HCLBundle.message("hcl.color.settings.number"), HCLSyntaxHighlighter.HCL_NUMBER),
+    AttributesDescriptor(HCLBundle.message("hcl.color.settings.keyword"), HCLSyntaxHighlighter.HCL_KEYWORD),
+    AttributesDescriptor(HCLBundle.message("hcl.color.settings.identifier"), HCLSyntaxHighlighter.HCL_IDENTIFIER),
 
-      AttributesDescriptor(HCLBundle.message("hcl.color.settings.comments.line.comment"), HCLSyntaxHighlighterFactory.HCL_LINE_COMMENT),
-      AttributesDescriptor(HCLBundle.message("hcl.color.settings.comments.block.comment"), HCLSyntaxHighlighterFactory.HCL_BLOCK_COMMENT),
+    AttributesDescriptor(HCLBundle.message("hcl.color.settings.comments.line.comment"), HCLSyntaxHighlighter.HCL_LINE_COMMENT),
+    AttributesDescriptor(HCLBundle.message("hcl.color.settings.comments.block.comment"), HCLSyntaxHighlighter.HCL_BLOCK_COMMENT),
 
-      AttributesDescriptor(HCLBundle.message("hcl.color.settings.property.name"), HCLSyntaxHighlighterFactory.HCL_PROPERTY_KEY),
+    AttributesDescriptor(HCLBundle.message("hcl.color.settings.property.name"), HCLSyntaxHighlighter.HCL_PROPERTY_KEY),
 
-      AttributesDescriptor(HCLBundle.message("hcl.color.settings.block.only.name.type"), HCLSyntaxHighlighterFactory.HCL_BLOCK_NAME_KEY),
-      AttributesDescriptor(HCLBundle.message("hcl.color.settings.block.first.type"), HCLSyntaxHighlighterFactory.HCL_BLOCK_FIRST_TYPE_KEY),
-      AttributesDescriptor(HCLBundle.message("hcl.color.settings.block.second.type"), HCLSyntaxHighlighterFactory.HCL_BLOCK_SECOND_TYPE_KEY),
-      AttributesDescriptor(HCLBundle.message("hcl.color.settings.block.other.types"), HCLSyntaxHighlighterFactory.HCL_BLOCK_OTHER_TYPES_KEY),
-      AttributesDescriptor(HCLBundle.message("hcl.color.settings.block.name"), HCLSyntaxHighlighterFactory.HCL_BLOCK_NAME_KEY),
+    AttributesDescriptor(HCLBundle.message("hcl.color.settings.block.only.name.type"), HCLSyntaxHighlighter.HCL_BLOCK_NAME_KEY),
+    AttributesDescriptor(HCLBundle.message("hcl.color.settings.block.first.type"), HCLSyntaxHighlighter.HCL_BLOCK_FIRST_TYPE_KEY),
+    AttributesDescriptor(HCLBundle.message("hcl.color.settings.block.second.type"), HCLSyntaxHighlighter.HCL_BLOCK_SECOND_TYPE_KEY),
+    AttributesDescriptor(HCLBundle.message("hcl.color.settings.block.other.types"), HCLSyntaxHighlighter.HCL_BLOCK_OTHER_TYPES_KEY),
+    AttributesDescriptor(HCLBundle.message("hcl.color.settings.block.name"), HCLSyntaxHighlighter.HCL_BLOCK_NAME_KEY),
 
-      AttributesDescriptor(HCLBundle.message("hcl.color.settings.string.text"), HCLSyntaxHighlighterFactory.HCL_STRING),
-      AttributesDescriptor(HCLBundle.message("hcl.color.settings.string.valid.escape.sequence"), HCLSyntaxHighlighterFactory.HCL_VALID_ESCAPE),
-      AttributesDescriptor(HCLBundle.message("hcl.color.settings.string.invalid.escape.sequence"), HCLSyntaxHighlighterFactory.HCL_INVALID_ESCAPE)
-    )
-    private val additional: Map<String, TextAttributesKey> = mapOf(
-      "pk" to HCLSyntaxHighlighterFactory.HCL_PROPERTY_KEY,
-      "bt1" to HCLSyntaxHighlighterFactory.HCL_BLOCK_FIRST_TYPE_KEY,
-      "bt2" to HCLSyntaxHighlighterFactory.HCL_BLOCK_SECOND_TYPE_KEY,
-      "btO" to HCLSyntaxHighlighterFactory.HCL_BLOCK_OTHER_TYPES_KEY,
-      "bn" to HCLSyntaxHighlighterFactory.HCL_BLOCK_NAME_KEY,
-      "bon" to HCLSyntaxHighlighterFactory.HCL_BLOCK_ONLY_NAME_KEY
-    )
-  }
+    AttributesDescriptor(HCLBundle.message("hcl.color.settings.string.text"), HCLSyntaxHighlighter.HCL_STRING),
+    AttributesDescriptor(HCLBundle.message("hcl.color.settings.string.valid.escape.sequence"), HCLSyntaxHighlighter.HCL_VALID_ESCAPE),
+    AttributesDescriptor(HCLBundle.message("hcl.color.settings.string.invalid.escape.sequence"), HCLSyntaxHighlighter.HCL_INVALID_ESCAPE)
+  )
+  private val additional: Map<String, TextAttributesKey> = mapOf(
+    "pk" to HCLSyntaxHighlighter.HCL_PROPERTY_KEY,
+    "bt1" to HCLSyntaxHighlighter.HCL_BLOCK_FIRST_TYPE_KEY,
+    "bt2" to HCLSyntaxHighlighter.HCL_BLOCK_SECOND_TYPE_KEY,
+    "btO" to HCLSyntaxHighlighter.HCL_BLOCK_OTHER_TYPES_KEY,
+    "bn" to HCLSyntaxHighlighter.HCL_BLOCK_NAME_KEY,
+    "bon" to HCLSyntaxHighlighter.HCL_BLOCK_ONLY_NAME_KEY
+  )
 
   override fun getIcon(): Icon {
     return Icons.FileTypes.HCL

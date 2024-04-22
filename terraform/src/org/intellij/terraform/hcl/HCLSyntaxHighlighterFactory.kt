@@ -17,6 +17,45 @@ import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
 
 open class HCLSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
+  override fun getSyntaxHighlighter(project: Project?, virtualFile: VirtualFile?): SyntaxHighlighter {
+    return HCLSyntaxHighlighter(createHclLexer())
+  }
+}
+
+class HCLSyntaxHighlighter(val lexer: HCLLexer) : SyntaxHighlighterBase() {
+  private val ourAttributes: MutableMap<IElementType, TextAttributesKey> = HashMap()
+
+  init {
+    fillMap(ourAttributes, HCL_BRACES, HCLElementTypes.L_CURLY, HCLElementTypes.R_CURLY)
+    fillMap(ourAttributes, HCL_BRACKETS, HCLElementTypes.L_BRACKET, HCLElementTypes.R_BRACKET)
+    fillMap(ourAttributes, HCL_COMMA, HCLElementTypes.COMMA)
+    fillMap(ourAttributes, HCL_OPERATION_SIGN, HCLElementTypes.EQUALS)
+    fillMap(ourAttributes, HCL_STRING, HCLElementTypes.DOUBLE_QUOTED_STRING)
+    fillMap(ourAttributes, HCL_STRING, HCLElementTypes.SINGLE_QUOTED_STRING)
+    fillMap(ourAttributes, HCL_NUMBER, HCLElementTypes.NUMBER)
+    fillMap(ourAttributes, HCL_KEYWORD, HCLElementTypes.TRUE, HCLElementTypes.FALSE, HCLElementTypes.NULL)
+    fillMap(ourAttributes, HCL_LINE_COMMENT, HCLElementTypes.LINE_C_COMMENT, HCLElementTypes.LINE_HASH_COMMENT)
+    fillMap(ourAttributes, HCL_BLOCK_COMMENT, HCLElementTypes.BLOCK_COMMENT)
+    fillMap(ourAttributes, HCL_IDENTIFIER, HCLElementTypes.ID)
+    fillMap(ourAttributes, HighlighterColors.BAD_CHARACTER, TokenType.BAD_CHARACTER)
+
+    fillMap(ourAttributes, HCL_VALID_ESCAPE, StringEscapesTokenTypes.VALID_STRING_ESCAPE_TOKEN)
+    fillMap(ourAttributes, HCL_INVALID_ESCAPE, StringEscapesTokenTypes.INVALID_CHARACTER_ESCAPE_TOKEN)
+    fillMap(ourAttributes, HCL_INVALID_ESCAPE, StringEscapesTokenTypes.INVALID_UNICODE_ESCAPE_TOKEN)
+  }
+
+  override fun getTokenHighlights(tokenType: IElementType?): Array<out TextAttributesKey> {
+    return pack(ourAttributes[tokenType])
+  }
+
+  override fun getHighlightingLexer(): Lexer {
+    val layeredLexer = LayeredLexer(lexer)
+
+    // TODO: Use custom StringLiteralLexer with \X, \U support
+    layeredLexer.registerSelfStoppingLayer(StringLiteralLexer('\"', HCLElementTypes.DOUBLE_QUOTED_STRING, false, "/vaUX", true, false), arrayOf(HCLElementTypes.DOUBLE_QUOTED_STRING), IElementType.EMPTY_ARRAY)
+    layeredLexer.registerSelfStoppingLayer(StringLiteralLexer('\'', HCLElementTypes.SINGLE_QUOTED_STRING, false, "/vaUX", true, false), arrayOf(HCLElementTypes.SINGLE_QUOTED_STRING), IElementType.EMPTY_ARRAY)
+    return layeredLexer
+  }
 
   companion object {
     val HCL_BRACKETS: TextAttributesKey = TextAttributesKey.createTextAttributesKey("HCL.BRACKETS", BRACKETS)
@@ -43,49 +82,5 @@ open class HCLSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
     // String escapes
     val HCL_VALID_ESCAPE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("HCL.VALID_ESCAPE", VALID_STRING_ESCAPE)
     val HCL_INVALID_ESCAPE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("HCL.INVALID_ESCAPE", INVALID_STRING_ESCAPE)
-  }
-
-
-  open class MySyntaxHighlighter(val lexer: HCLLexer) : SyntaxHighlighterBase() {
-    private val ourAttributes: MutableMap<IElementType, TextAttributesKey> = HashMap()
-
-
-    init {
-      fillMap(ourAttributes, HCL_BRACES, HCLElementTypes.L_CURLY, HCLElementTypes.R_CURLY)
-      fillMap(ourAttributes, HCL_BRACKETS, HCLElementTypes.L_BRACKET, HCLElementTypes.R_BRACKET)
-      fillMap(ourAttributes, HCL_COMMA, HCLElementTypes.COMMA)
-      fillMap(ourAttributes, HCL_OPERATION_SIGN, HCLElementTypes.EQUALS)
-      fillMap(ourAttributes, HCL_STRING, HCLElementTypes.DOUBLE_QUOTED_STRING)
-      fillMap(ourAttributes, HCL_STRING, HCLElementTypes.SINGLE_QUOTED_STRING)
-      fillMap(ourAttributes, HCL_NUMBER, HCLElementTypes.NUMBER)
-      fillMap(ourAttributes, HCL_KEYWORD, HCLElementTypes.TRUE, HCLElementTypes.FALSE, HCLElementTypes.NULL)
-      fillMap(ourAttributes, HCL_LINE_COMMENT, HCLElementTypes.LINE_C_COMMENT, HCLElementTypes.LINE_HASH_COMMENT)
-      fillMap(ourAttributes, HCL_BLOCK_COMMENT, HCLElementTypes.BLOCK_COMMENT)
-      fillMap(ourAttributes, HCL_IDENTIFIER, HCLElementTypes.ID)
-      fillMap(ourAttributes, HighlighterColors.BAD_CHARACTER, TokenType.BAD_CHARACTER)
-
-      fillMap(ourAttributes, HCL_VALID_ESCAPE, StringEscapesTokenTypes.VALID_STRING_ESCAPE_TOKEN)
-      fillMap(ourAttributes, HCL_INVALID_ESCAPE, StringEscapesTokenTypes.INVALID_CHARACTER_ESCAPE_TOKEN)
-      fillMap(ourAttributes, HCL_INVALID_ESCAPE, StringEscapesTokenTypes.INVALID_UNICODE_ESCAPE_TOKEN)
-    }
-
-
-    override fun getTokenHighlights(tokenType: IElementType?): Array<out TextAttributesKey> {
-      return pack(ourAttributes[tokenType])
-    }
-
-    override fun getHighlightingLexer(): Lexer {
-      val layeredLexer = LayeredLexer(lexer)
-
-      // TODO: Use custom StringLiteralLexer with \X, \U support
-      layeredLexer.registerSelfStoppingLayer(StringLiteralLexer('\"', HCLElementTypes.DOUBLE_QUOTED_STRING, false, "/vaUX", true, false), arrayOf(HCLElementTypes.DOUBLE_QUOTED_STRING), IElementType.EMPTY_ARRAY)
-      layeredLexer.registerSelfStoppingLayer(StringLiteralLexer('\'', HCLElementTypes.SINGLE_QUOTED_STRING, false, "/vaUX", true, false), arrayOf(HCLElementTypes.SINGLE_QUOTED_STRING), IElementType.EMPTY_ARRAY)
-      return layeredLexer
-    }
-
-  }
-
-  override fun getSyntaxHighlighter(project: Project?, virtualFile: VirtualFile?): SyntaxHighlighter {
-    return MySyntaxHighlighter(createHclLexer())
   }
 }

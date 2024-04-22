@@ -15,14 +15,55 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.StringEscapesTokenTypes
 import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
-import org.intellij.terraform.hcl.HCLSyntaxHighlighterFactory
+import org.intellij.terraform.hcl.HCLSyntaxHighlighter
 import org.intellij.terraform.hil.HILElementTypes.*
 import org.intellij.terraform.hil.psi.HILLexer
 
 open class HILSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
+  override fun getSyntaxHighlighter(project: Project?, virtualFile: VirtualFile?): SyntaxHighlighter {
+    return HILSyntaxHighlighter()
+  }
+}
+
+open class HILSyntaxHighlighter : SyntaxHighlighterBase() {
+  protected val ourAttributes: MutableMap<IElementType, TextAttributesKey> = HashMap()
+
+  init {
+    fillMap(ourAttributes, HILTokenTypes.TIL_BRACES, TIL_BRACES)
+    fillMap(ourAttributes, HILTokenTypes.TIL_BRACKETS, TIL_BRACKETS)
+    fillMap(ourAttributes, HILTokenTypes.TIL_PARENS, TIL_PARENS)
+    fillMap(ourAttributes, TIL_COMMA, COMMA)
+    fillMap(ourAttributes, TIL_DOT, OP_DOT)
+    fillMap(ourAttributes, HILTokenTypes.IL_ALL_OPERATORS, TIL_OPERATOR)
+    fillMap(ourAttributes, HILTokenTypes.STRING_LITERALS, TIL_STRING)
+    fillMap(ourAttributes, TIL_NUMBER, NUMBER)
+    fillMap(ourAttributes, HILTokenTypes.TIL_KEYWORDS, TIL_KEYWORD)
+    fillMap(ourAttributes, TIL_IDENTIFIER, ID)
+    fillMap(ourAttributes, TIL_KEYWORD, FOR_KEYWORD)
+    fillMap(ourAttributes, TIL_KEYWORD, IN_KEYWORD)
+    fillMap(ourAttributes, TIL_KEYWORD, ENDFOR_KEYWORD)
+    fillMap(ourAttributes, TIL_KEYWORD, IF_KEYWORD)
+    fillMap(ourAttributes, TIL_KEYWORD, ELSE_KEYWORD)
+    fillMap(ourAttributes, TIL_KEYWORD, ENDIF_KEYWORD)
+    fillMap(ourAttributes, HighlighterColors.BAD_CHARACTER, TokenType.BAD_CHARACTER)
+
+    fillMap(ourAttributes, TIL_VALID_ESCAPE, StringEscapesTokenTypes.VALID_STRING_ESCAPE_TOKEN)
+    fillMap(ourAttributes, TIL_INVALID_ESCAPE, StringEscapesTokenTypes.INVALID_CHARACTER_ESCAPE_TOKEN)
+    fillMap(ourAttributes, TIL_INVALID_ESCAPE, StringEscapesTokenTypes.INVALID_UNICODE_ESCAPE_TOKEN)
+  }
+
+  override fun getTokenHighlights(tokenType: IElementType?): Array<out TextAttributesKey> {
+    return pack(ourAttributes[tokenType])
+  }
+
+  override fun getHighlightingLexer(): Lexer {
+    val layeredLexer = LayeredLexer(HILLexer())
+    layeredLexer.registerSelfStoppingLayer(StringLiteralLexer('\"', DOUBLE_QUOTED_STRING, false, "/", false, false), arrayOf(DOUBLE_QUOTED_STRING), IElementType.EMPTY_ARRAY)
+    return layeredLexer
+  }
 
   companion object {
-    val TEMPLATE_BACKGROUND = TextAttributesKey.createTextAttributesKey("TERRAFORM_TEMPLATE_BACKGROUND", DefaultLanguageHighlighterColors.TEMPLATE_LANGUAGE_COLOR)
+    val TEMPLATE_BACKGROUND: TextAttributesKey = TextAttributesKey.createTextAttributesKey("TERRAFORM_TEMPLATE_BACKGROUND", DefaultLanguageHighlighterColors.TEMPLATE_LANGUAGE_COLOR)
 
     val TIL_PARENS: TextAttributesKey = TextAttributesKey.createTextAttributesKey("TIL.PARENS", DefaultLanguageHighlighterColors.PARENTHESES)
     val TIL_BRACES: TextAttributesKey = TextAttributesKey.createTextAttributesKey("TIL.BRACES", DefaultLanguageHighlighterColors.BRACES)
@@ -39,54 +80,12 @@ open class HILSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
 
     // Added by annotators
     val TIL_PREDEFINED_SCOPE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("TIL.PREDEFINED_SCOPE", DefaultLanguageHighlighterColors.PREDEFINED_SYMBOL)
-    val TIL_RESOURCE_TYPE_REFERENCE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("TIL.RESOURCE_TYPE_REFERENCE", HCLSyntaxHighlighterFactory.HCL_BLOCK_SECOND_TYPE_KEY)
-    val TIL_RESOURCE_INSTANCE_REFERENCE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("TIL.RESOURCE_INSTANCE_REFERENCE", HCLSyntaxHighlighterFactory.HCL_BLOCK_NAME_KEY)
-    val TIL_PROPERTY_REFERENCE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("TIL.PROPERTY_REFERENCE", HCLSyntaxHighlighterFactory.HCL_PROPERTY_KEY)
+    val TIL_RESOURCE_TYPE_REFERENCE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("TIL.RESOURCE_TYPE_REFERENCE", HCLSyntaxHighlighter.HCL_BLOCK_SECOND_TYPE_KEY)
+    val TIL_RESOURCE_INSTANCE_REFERENCE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("TIL.RESOURCE_INSTANCE_REFERENCE", HCLSyntaxHighlighter.HCL_BLOCK_NAME_KEY)
+    val TIL_PROPERTY_REFERENCE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("TIL.PROPERTY_REFERENCE", HCLSyntaxHighlighter.HCL_PROPERTY_KEY)
 
     // String escapes
     val TIL_VALID_ESCAPE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("TIL.VALID_ESCAPE", DefaultLanguageHighlighterColors.VALID_STRING_ESCAPE)
     val TIL_INVALID_ESCAPE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("TIL.INVALID_ESCAPE", DefaultLanguageHighlighterColors.INVALID_STRING_ESCAPE)
-  }
-
-  open class HILSyntaxHighlighter : SyntaxHighlighterBase() {
-    protected val ourAttributes: MutableMap<IElementType, TextAttributesKey> = HashMap()
-
-    init {
-      fillMap(ourAttributes, HILTokenTypes.TIL_BRACES, TIL_BRACES)
-      fillMap(ourAttributes, HILTokenTypes.TIL_BRACKETS, TIL_BRACKETS)
-      fillMap(ourAttributes, HILTokenTypes.TIL_PARENS, TIL_PARENS)
-      fillMap(ourAttributes, TIL_COMMA, COMMA)
-      fillMap(ourAttributes, TIL_DOT, OP_DOT)
-      fillMap(ourAttributes, HILTokenTypes.IL_ALL_OPERATORS, TIL_OPERATOR)
-      fillMap(ourAttributes, HILTokenTypes.STRING_LITERALS, TIL_STRING)
-      fillMap(ourAttributes, TIL_NUMBER, NUMBER)
-      fillMap(ourAttributes, HILTokenTypes.TIL_KEYWORDS, TIL_KEYWORD)
-      fillMap(ourAttributes, TIL_IDENTIFIER, ID)
-      fillMap(ourAttributes, TIL_KEYWORD, FOR_KEYWORD)
-      fillMap(ourAttributes, TIL_KEYWORD, IN_KEYWORD)
-      fillMap(ourAttributes, TIL_KEYWORD, ENDFOR_KEYWORD)
-      fillMap(ourAttributes, TIL_KEYWORD, IF_KEYWORD)
-      fillMap(ourAttributes, TIL_KEYWORD, ELSE_KEYWORD)
-      fillMap(ourAttributes, TIL_KEYWORD, ENDIF_KEYWORD)
-      fillMap(ourAttributes, HighlighterColors.BAD_CHARACTER, TokenType.BAD_CHARACTER)
-
-      fillMap(ourAttributes, TIL_VALID_ESCAPE, StringEscapesTokenTypes.VALID_STRING_ESCAPE_TOKEN)
-      fillMap(ourAttributes, TIL_INVALID_ESCAPE, StringEscapesTokenTypes.INVALID_CHARACTER_ESCAPE_TOKEN)
-      fillMap(ourAttributes, TIL_INVALID_ESCAPE, StringEscapesTokenTypes.INVALID_UNICODE_ESCAPE_TOKEN)
-    }
-
-    override fun getTokenHighlights(tokenType: IElementType?): Array<out TextAttributesKey> {
-      return pack(ourAttributes[tokenType])
-    }
-
-    override fun getHighlightingLexer(): Lexer {
-      val layeredLexer = LayeredLexer(HILLexer())
-      layeredLexer.registerSelfStoppingLayer(StringLiteralLexer('\"', DOUBLE_QUOTED_STRING, false, "/", false, false), arrayOf(DOUBLE_QUOTED_STRING), IElementType.EMPTY_ARRAY)
-      return layeredLexer
-    }
-  }
-
-  override fun getSyntaxHighlighter(project: Project?, virtualFile: VirtualFile?): SyntaxHighlighter {
-    return HILSyntaxHighlighter()
   }
 }
