@@ -1,10 +1,12 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web
 
+import com.intellij.javascript.nodejs.monorepo.JSMonorepoManager
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.findPsiFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.xml.XmlAttribute
@@ -12,7 +14,6 @@ import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.SmartList
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.WebSymbolQualifiedKind
@@ -43,7 +44,7 @@ val VUE_MODEL = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-model")
 val VUE_DIRECTIVE_ARGUMENT = WebSymbolQualifiedKind(NAMESPACE_HTML, "argument")
 val VUE_DIRECTIVE_MODIFIERS = WebSymbolQualifiedKind(NAMESPACE_HTML, "modifiers")
 val VUE_COMPONENT_NAMESPACES = WebSymbolQualifiedKind(NAMESPACE_JS, "vue-component-namespaces")
-val VUE_PROVIDES = WebSymbolQualifiedKind(WebSymbol.NAMESPACE_JS, "vue-provides")
+val VUE_PROVIDES = WebSymbolQualifiedKind(NAMESPACE_JS, "vue-provides")
 val VUE_SPECIAL_PROPERTIES = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-special-properties")
 val VUE_BINDING_SHORTHANDS = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-binding-shorthands")
 
@@ -169,6 +170,11 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
           containerToProximity[it] = VueModelVisitor.Proximity.OUT_OF_SCOPE
         }
       }
+
+      JSMonorepoManager.getInstance(element.project).getRelatedProjects(element).asSequence()
+        .mapNotNull { it.findPsiFile(element.project) }
+        .mapNotNull { VueModule.get(it) }
+        .forEach { containerToProximity[it] = VueModelVisitor.Proximity.OUT_OF_SCOPE }
 
       containerToProximity.forEach { (container, proximity) ->
         VueCodeModelSymbolsScope.create(container, proximity)

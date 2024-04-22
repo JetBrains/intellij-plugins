@@ -69,5 +69,8 @@ import org.junit.runners.Suite
   VueMoveTest::class,
   VueTypeScriptWithTslintTest::class,
   VueTypeScriptHighlightingTest::class,
+  VueIntegrationHighlightingTest::class,
+  VueNpmIntegrationCompletionTest::class,
+  VueYarnIntegrationCompletionTest::class,
 )
 class VueTestSuite

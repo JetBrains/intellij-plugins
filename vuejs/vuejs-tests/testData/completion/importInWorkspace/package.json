@@ -1,0 +1,12 @@
+{
+  "name": "monorepo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "John Doe",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "packages/foo-library",
+    "projects/bar-project"
+  ]
+}
