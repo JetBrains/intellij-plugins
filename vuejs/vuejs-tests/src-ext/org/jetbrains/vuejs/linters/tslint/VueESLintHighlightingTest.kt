@@ -15,7 +15,7 @@ class VueESLintHighlightingTest : EslintServiceTestBase() {
   override fun getPackageName(): String = "eslint"
 
   override fun getGlobalPackageVersionsToInstall(): Map<String, String> = mapOf(
-    "eslint" to "latest",
+    "eslint" to "8.57.0",
     "eslint-plugin-vue" to "latest",
     "@babel/core" to "latest",
     "@babel/eslint-parser" to "latest",
