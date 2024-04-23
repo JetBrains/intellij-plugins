@@ -20,6 +20,6 @@ export class TestComponent {
 export class AppComponent {
 
     foo() {
-        <caret>
+<selection>        return undefined;<caret></selection>
     }
 }

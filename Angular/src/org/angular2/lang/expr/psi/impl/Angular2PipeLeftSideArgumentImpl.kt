@@ -2,8 +2,10 @@
 package org.angular2.lang.expr.psi.impl
 
 import com.intellij.lang.javascript.JSExtendedLanguagesTokenSetProvider
+import com.intellij.lang.javascript.psi.JSElementVisitor
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.impl.JSElementImpl
+import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.ArrayUtil
 import org.angular2.lang.expr.parser.Angular2ElementTypes
@@ -25,6 +27,15 @@ class Angular2PipeLeftSideArgumentImpl(elementType: IElementType?) : JSElementIm
       .findChildByType(Angular2ElementTypes.PIPE_ARGUMENTS_LIST)
       ?.getPsi(Angular2PipeArgumentsListImpl::class.java)
       ?.pipeRightSideExpressions
+
+  override fun accept(visitor: PsiElementVisitor) {
+    if (visitor is JSElementVisitor) {
+      visitor.visitJSArgumentList(this)
+    }
+    else {
+      visitor.visitElement(this)
+    }
+  }
 
   override fun hasSpreadElement(): Boolean {
     return false
