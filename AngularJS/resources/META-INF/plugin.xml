@@ -27,7 +27,7 @@
   <depends>intellij.webpack</depends>
 
   <extensions defaultExtensionNs="com.intellij">
-    <dependencySupport kind="javascript" coordinate="npm:angular" displayName="Angular"/>
+    <dependencySupport kind="javascript" coordinate="npm:angular" displayName="AngularJS"/>
 
     <findUsagesHandlerFactory implementation="org.angularjs.findUsages.AngularJSFindUsagesHandlerFactory" order="before JavaScript"/>
     <codeInsight.template.postfixTemplateProvider language="AngularJS"
