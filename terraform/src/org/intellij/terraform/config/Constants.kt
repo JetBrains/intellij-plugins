@@ -1,6 +1,8 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config
 
+import com.intellij.openapi.options.advanced.AdvancedSettings
+
 object Constants {
   const val HAS_DYNAMIC_ATTRIBUTES: String = "__has_dynamic_attributes"
   const val TIMEOUTS: String = "__timeouts__"
@@ -15,5 +17,8 @@ object Constants {
   internal const val HCL_LOCALS_IDENTIFIER: String = "locals"
   internal const val HCL_PROVISIONER_IDENTIFIER: String = "provisioner"
   internal const val HCL_BACKEND_IDENTIFIER: String = "backend"
+
+  internal val shouldDownloadDocs: Boolean
+    get() = AdvancedSettings.getBoolean("org.intellij.terraform.config.documentation.download")
 
 }
