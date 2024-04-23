@@ -8,19 +8,14 @@ import com.intellij.util.io.EnumeratorStringDescriptor
 import com.intellij.util.io.KeyDescriptor
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.hcl.psi.*
-import org.jetbrains.annotations.NonNls
 
 class HCLSymbolIndex : ScalarIndexExtension<String>() {
-  companion object {
-    @NonNls
-    val NAME = ID.create<String, Void>("HCLSymbolIndex")
-  }
 
   override fun getName(): ID<String, Void> = NAME
 
   override fun getVersion(): Int = 0
 
-  override fun dependsOnFileContent() = true
+  override fun dependsOnFileContent(): Boolean = true
 
   override fun getInputFilter(): FileBasedIndex.InputFilter {
     return object : DefaultFileTypeSpecificInputFilter(HCLFileType, TerraformFileType) {
@@ -66,3 +61,5 @@ class HCLSymbolIndex : ScalarIndexExtension<String>() {
     }
   }
 }
+
+val NAME: ID<String, Void> = ID.create("HCLSymbolIndex")

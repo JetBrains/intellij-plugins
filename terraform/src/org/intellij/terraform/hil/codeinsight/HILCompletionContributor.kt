@@ -7,6 +7,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder.create
 import com.intellij.lang.Language
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.debug
+import com.intellij.openapi.project.DumbAware
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PsiElementPattern
@@ -48,7 +49,7 @@ import org.intellij.terraform.hil.psi.*
 import org.intellij.terraform.hil.psi.impl.getHCLHost
 import java.util.*
 
-class HILCompletionContributor : CompletionContributor() {
+class HILCompletionContributor : CompletionContributor(), DumbAware {
   private val scopeProviders = listOf(
     DataSourceCompletionProvider,
     VariableCompletionProvider,
