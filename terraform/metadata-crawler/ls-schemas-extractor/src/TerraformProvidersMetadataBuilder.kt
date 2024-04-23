@@ -17,6 +17,11 @@ object TerraformProvidersMetadataBuilder {
 
   private val httpClient: HttpClient = HttpClient.newBuilder().build()
 
+  private val terraformRegistryHost = System.getenv("TERRAFORM_REGISTRY_HOST") ?: "https://registry.terraform.io"
+  private val providersInRegistry = System.getenv("PROVIDERS_IN_REGISTRY")?.toInt() ?: 4108
+  private val downloadsLimitForProvider = System.getenv("DOWNLOADS_LIMIT_FOR_PROVIDER")?.toInt() ?: 10000
+  private val mandatoryProvidersCount = System.getenv("MANDATORY_PROVIDERS_COUNT")?.toInt() ?: 33
+
   private fun getQuery(httpQuery: String): HttpResponse<String> {
     val httpRequest =
       HttpRequest.newBuilder().uri(
@@ -28,10 +33,9 @@ object TerraformProvidersMetadataBuilder {
   private fun String.urlDecode(): String = URLDecoder.decode(this, StandardCharsets.UTF_8)
 
   private fun getProvidersDataFromPages(): Sequence<JsonNode> {
-    val host = "https://registry.terraform.io"
-    println("loading providers from $host ...")
+    println("loading providers from $terraformRegistryHost ...")
     return sequence {
-      var httpResponse = getQuery("${host}/v2/providers")
+      var httpResponse = getQuery("${terraformRegistryHost}/v2/providers")
       while (true) {
         val jsonResponse = objectMapper.readTree(httpResponse.body())
         val page = jsonResponse.get("meta")?.get("pagination")?.get("current-page")
@@ -43,7 +47,7 @@ object TerraformProvidersMetadataBuilder {
           is ArrayNode -> yieldAll(responseData.elements())
         }
         if (next == null) break
-        httpResponse = getQuery("${host}${next}")
+        httpResponse = getQuery("${terraformRegistryHost}${next}")
       }
     }
   }
@@ -79,13 +83,12 @@ object TerraformProvidersMetadataBuilder {
     }
 
     val providerVendorsTier = setOf("partner", "official")
-    val downloadsLimit = 10000
     val mostUsefulProviders = sequenceOf<JsonNode>(buildInProvider) +
                               allProvidersData.elements().asSequence()
                                 .filter { providerData ->
                                   val attributes = providerData["attributes"]
-                                  (providerVendorsTier.contains(attributes["tier"].asText()) || attributes["downloads"].asLong() >= downloadsLimit)
-                                  && attributes["full-name"].asText().contains("aws")
+                                  providerVendorsTier.contains(attributes["tier"].asText())
+                                   || attributes["downloads"].asLong() >= downloadsLimitForProvider
                                 }
     val selected = mostUsefulProviders
       .groupBy { it["attributes"]["name"] }
@@ -102,7 +105,7 @@ object TerraformProvidersMetadataBuilder {
 
     println("Selected ${selected.size} most useful providers")
 
-    //checkMandatoryHashicorpProviders(selected)
+    checkMandatoryHashicorpProviders(selected)
 
     val version = getTerraformVersion()
     println("terraform version: $version")
@@ -126,16 +129,14 @@ object TerraformProvidersMetadataBuilder {
   private fun checkTotalProvidersAmount(allProvidersData: JsonNode) {
     val totalProviders = allProvidersData.elements().asSequence().count()
     println("Total providers downloaded: = $totalProviders")
-    val minProviders = 4108
-    assert(totalProviders >= minProviders, { "Terraform should provide at least ${minProviders}" })
+    assert(totalProviders >= providersInRegistry, { "Terraform should provide at least ${providersInRegistry}" })
   }
 
   private fun checkMandatoryHashicorpProviders(selected: Collection<JsonNode>) {
     val mandatoryProviders = selected.count { provider ->
       provider["attributes"]["namespace"].asText().contains("hashicorp")
     }
-    val minMandatoryProviders = 33
-    assert(mandatoryProviders >= minMandatoryProviders, { "We must have all mandatory providers from hashicorp. Selected ${mandatoryProviders} of ${minMandatoryProviders}" })
+    assert(mandatoryProviders >= mandatoryProvidersCount, { "We must have all mandatory providers from hashicorp. Selected ${mandatoryProviders} of ${mandatoryProvidersCount}" })
   }
 
   private fun buildProviderMetadata(provider: JsonNode,

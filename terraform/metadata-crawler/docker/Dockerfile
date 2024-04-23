@@ -14,21 +14,29 @@ tee /etc/apt/sources.list.d/hashicorp.list
 RUN apt update
 RUN apt-get -yq install terraform
 
-#Copy existing metadata resources
+#Copy existing resources
 COPY terraform/ /opt/terraform-metadata
 
-#Install schemas extractor
-COPY ls-schemas-extractor.zip /opt/terraform-metadata
-RUN cd /opt/terraform-metadata && unzip /opt/terraform-metadata/ls-schemas-extractor.zip
-RUN rm /opt/terraform-metadata/ls-schemas-extractor.zip
+#Enable schemas extractor
 RUN chmod +x /opt/terraform-metadata/ls-schemas-extractor/bin/ls-schemas-extractor
-RUN mkdir -p /opt/terraform-metadata/ls-schemas-extractor/plugins-meta
 
 # Set working directory
 WORKDIR /opt/terraform-metadata
+
+ENV TERRAFORM_REGISTRY_HOST=https://registry.terraform.io
+ENV PROVIDERS_IN_REGISTRY=4108
+ENV DOWNLOADS_LIMIT_FOR_PROVIDER=10000
+ENV MANDATORY_PROVIDERS_COUNT=33
+ENV ARTIFACT_GROUP=org.intellij.plugins.hcl.terraform
+ENV ARTIFACT_VERSION=2023.3.0
+
+ENV REPO_URL=https://packages.jetbrains.team/maven/p/ij/intellij-dependencies
+ENV REPO_USERNAME=spaceUsername
+ENV REPO_PASSWORD=spacePassword
+
 # Pre-download all project dependencies
 RUN ./gradlew --no-daemon dependencies
 
-ENTRYPOINT ["bash"]
+ENTRYPOINT ["./gradlew", "--no-daemon"]
 
 VOLUME ["/opt/terraform-metadata/build/libs"]
