@@ -2,12 +2,14 @@
 package org.jetbrains.vuejs.intentions
 
 import com.intellij.codeInsight.intention.HighPriorityAction
+import com.intellij.codeInsight.intention.preview.IntentionPreviewInfo
 import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
 import com.intellij.lang.javascript.intentions.JavaScriptIntention
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.xml.XmlElementType
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
@@ -53,6 +55,10 @@ class VueImportComponentIntention : JavaScriptIntention(), HighPriorityAction {
 
                           ?: return
     VueImportComponentQuickFix(element, toAsset(tag.name), elementToImport).applyFix()
+  }
+
+  override fun generatePreview(project: Project, editor: Editor, file: PsiFile): IntentionPreviewInfo {
+    return IntentionPreviewInfo.EMPTY
   }
 
   private fun WebSymbol.getElementToImport() =
