@@ -1,0 +1,5 @@
+<ng-template i18n></ng-template>
+<ng-template title></ng-template>
+<ng-template ngNonBindable>{{foo}}</ng-template>
+<ng-template <warning descr="Attribute foo is not allowed here">foo</warning>></ng-template>
+{{<error descr="Unresolved variable or type foo">foo</error>}}
