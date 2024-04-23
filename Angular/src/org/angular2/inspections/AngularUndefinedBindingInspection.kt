@@ -54,7 +54,7 @@ class AngularUndefinedBindingInspection : AngularHtmlLikeTemplateLocalInspection
       proximity = NOT_REACHABLE
     }
     else if (descriptor.hasNonDirectiveSymbols) {
-      if (templateTag) {
+      if (templateTag && info.type != REGULAR) {
         proximity = NOT_REACHABLE
       }
       else {
