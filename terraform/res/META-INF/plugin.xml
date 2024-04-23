@@ -327,6 +327,13 @@
     <gotoSymbolContributor implementation="org.intellij.terraform.hcl.GoToSymbolContributor"/>
 
     <!-- Terraform as Tool -->
+    <advancedSetting id="org.intellij.terraform.config.documentation.download"
+                     default="true"
+                     groupKey="terraform.config.documentation"
+                     bundle="messages.HCLBundle"
+                     descriptionKey="terraform.documentation.download.enabled"/>
+
+
     <projectService serviceImplementation="org.intellij.terraform.runtime.TerraformToolProjectSettings"/>
     <projectConfigurable groupId="tools" instance="org.intellij.terraform.runtime.TerraformToolConfigurable"
                          id="reference.settingsdialog.project.terraform"

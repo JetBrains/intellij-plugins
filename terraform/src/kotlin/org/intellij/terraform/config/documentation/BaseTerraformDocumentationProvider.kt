@@ -11,6 +11,7 @@ import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.applyIf
 import org.intellij.terraform.TerraformIcons
+import org.intellij.terraform.config.Constants.shouldDownloadDocs
 import org.intellij.terraform.hcl.psi.HCLElement
 
 
@@ -49,7 +50,7 @@ internal abstract class BaseTerraformDocumentationProvider {
 
       return DocumentationResult.Companion.asyncDocumentation {
         val docText = element?.let { elem ->
-          val urlString = mdDocUrlProvider.getDocumentationUrl(elem).firstOrNull()
+          val urlString = if (shouldDownloadDocs) mdDocUrlProvider.getDocumentationUrl(elem).firstOrNull() else null
           urlString?.let { remoteDocProvider.getDoc(urlString) } ?: localDescription
         }
 
