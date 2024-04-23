@@ -8,15 +8,15 @@ import com.intellij.lang.javascript.DialectOptionHolder
 import com.intellij.lang.javascript.JSLanguageDialect
 import com.intellij.lang.javascript.JavaScriptSupportLoader
 
-class VueJSLanguage : JSLanguageDialect("VueJS", DialectOptionHolder.JS_WITH_JSX,
-                                        JavaScriptSupportLoader.ECMA_SCRIPT_6), DependentLanguage {
+class VueJSLanguage private constructor() : JSLanguageDialect("VueJS", DialectOptionHolder.JS_WITH_JSX,
+                                        JavaScriptSupportLoader.ECMA_SCRIPT_6), DependentLanguage  {
 
   companion object {
     val INSTANCE: VueJSLanguage = VueJSLanguage()
   }
 }
 
-class VueTSLanguage : JSLanguageDialect("VueTS", DialectOptionHolder.TS, JavaScriptSupportLoader.TYPESCRIPT), DependentLanguage {
+class VueTSLanguage private constructor() : JSLanguageDialect("VueTS", DialectOptionHolder.TS, JavaScriptSupportLoader.TYPESCRIPT), DependentLanguage {
 
   companion object {
     val INSTANCE: VueTSLanguage = VueTSLanguage()

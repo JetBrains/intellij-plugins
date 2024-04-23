@@ -17,11 +17,11 @@ public class HbLanguage extends Language implements TemplateLanguage, Injectable
     return HtmlFileType.INSTANCE;
   }
 
-  public HbLanguage() {
+  private HbLanguage() {
     super("Handlebars", "text/x-handlebars-template", "text/x-handlebars", "text/ractive");
   }
 
-  public HbLanguage(@Nullable Language baseLanguage, @NotNull @NonNls final String ID, @NonNls final String @NotNull ... mimeTypes) {
+  private HbLanguage(@Nullable Language baseLanguage, @NotNull @NonNls final String ID, @NonNls final String @NotNull ... mimeTypes) {
     super(baseLanguage, ID, mimeTypes);
   }
 }
