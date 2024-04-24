@@ -17,6 +17,7 @@ import org.angular2.Angular2DecoratorUtil.DIRECTIVE_PROP
 import org.angular2.Angular2DecoratorUtil.HOST_DIRECTIVES_PROP
 import org.angular2.Angular2DecoratorUtil.INPUT_FUN
 import org.angular2.Angular2DecoratorUtil.MODEL_FUN
+import org.angular2.Angular2DecoratorUtil.OUTPUT_FROM_OBSERVABLE_FUN
 import org.angular2.Angular2DecoratorUtil.OUTPUT_FUN
 import org.angular2.entities.ivy.Angular2IvyEntity
 import org.angular2.entities.metadata.psi.Angular2MetadataEntity
@@ -112,6 +113,7 @@ object Angular2EntityUtils {
             when (functionName) {
               INPUT_FUN -> Angular2DecoratorUtil.INPUTS_PROP
               OUTPUT_FUN -> Angular2DecoratorUtil.OUTPUTS_PROP
+              OUTPUT_FROM_OBSERVABLE_FUN -> Angular2DecoratorUtil.OUTPUTS_PROP
               MODEL_FUN -> MODEL_FUN
               else -> null
             }

@@ -171,6 +171,18 @@ class Angular2RenameTest : Angular2TestCase("refactoring/rename") {
   fun testSignalOutputAliasedFromUsage() =
     checkSymbolRename("newAliasedOutput", dir = false)
 
+  fun testSignalOutputFromObservableFromDeclaration() =
+    checkSymbolRename("newOutput", dir = false)
+
+  fun testSignalOutputFromObservableFromUsage() =
+    checkSymbolRename("newOutput", dir = false)
+
+  fun testSignalOutputFromObservableAliasedFromDeclaration() =
+    checkSymbolRename("newAliasedOutput", dir = false)
+
+  fun testSignalOutputFromObservableAliasedFromUsage() =
+    checkSymbolRename("newAliasedOutput", dir = false)
+
   fun testSignalModelFromDeclaration() =
     checkSymbolRename("newModel", dir = false)
 
