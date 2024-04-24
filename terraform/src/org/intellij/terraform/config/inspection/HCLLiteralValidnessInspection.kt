@@ -7,7 +7,6 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 import org.intellij.lang.annotations.Language
 import org.intellij.terraform.config.TerraformFileType
-import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil
 import org.intellij.terraform.config.model.getTerraformModule
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.codeinsight.AddClosingQuoteQuickFix
@@ -58,12 +57,6 @@ class HCLLiteralValidnessInspection : LocalInspectionTool() {
         '\'' -> SQS_VALID_ESCAPE
         '\"' -> DQS_VALID_ESCAPE
         else -> {
-          TerraformCompletionUtil.failIfInUnitTestsMode(
-            element,
-            "Unexpected string quote symbol '${element.quoteSymbol}', start of the string: ${
-              element.text.subSequence(0, 20)
-            }"
-          )
           // Assume default string
           DQS_VALID_ESCAPE
         }

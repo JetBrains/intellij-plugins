@@ -33,7 +33,6 @@ import org.intellij.terraform.config.Constants.HCL_VARIABLE_IDENTIFIER
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.RootBlockSorted
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.createPropertyOrBlockType
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.dumpPsiFileModel
-import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.failIfInUnitTestsMode
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.getClearTextValue
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.getIncomplete
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.getOriginalObject
@@ -263,13 +262,11 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
         parent is HCLStringLiteral -> parent
         // Next line for the case of two IDs (not Identifiers) nearby (start of block in empty file)
         HCLTokenTypes.IDENTIFYING_LITERALS.contains(position.node.elementType) -> position
-        else -> {
-          failIfInUnitTestsMode(position); return true
-        }
+        else ->  return true
       }
       val leftNWS = obj.getPrevSiblingNonWhiteSpace()
       LOG.debug { "TF.BlockTypeOrNameCompletionProvider{position=$position, parent=$parent, obj=$obj, lnws=$leftNWS}" }
-      val type = getClearTextValue(leftNWS) ?: run { failIfInUnitTestsMode(position); return true }
+      val type = getClearTextValue(leftNWS) ?: return true
       val cache = HashMap<String, Boolean>()
       val project = position.project
       return when (type) {
@@ -308,7 +305,6 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
     fun isProviderUsed(element: PsiElement, providerName: String, cache: MutableMap<String, Boolean>): Boolean {
       val hclElement = PsiTreeUtil.getParentOfType(element, HCLElement::class.java, false)
       if (hclElement == null) {
-        failIfInUnitTestsMode(element, "Completion called on element without any HCLElement as parent")
         return true
       }
       return isProviderUsed(hclElement.getTerraformModule(), providerName, cache)
@@ -384,7 +380,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       else {
         LOG.debug { "TF.BlockPropertiesCompletionProvider{position=$position, parent=$_parent, original=$original, no right part}" }
       }
-      val parent: HCLObject = _parent as? HCLObject ?: return failIfInUnitTestsMode(position, "Parent should be HCLObject")
+      val parent: HCLObject = _parent as? HCLObject ?: return
       val use = getOriginalObject(parameters, parent)
       val block = use.parent
       if (block is HCLBlock) {

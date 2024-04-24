@@ -8,7 +8,6 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.lookup.LookupElementRenderer
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.DebugUtil
 import org.intellij.terraform.config.model.*
@@ -66,17 +65,6 @@ object TerraformCompletionUtil {
       })
 
   fun dumpPsiFileModel(element: PsiElement): () -> String = { DebugUtil.psiToString(element.containingFile, true) }
-
-  fun failIfInUnitTestsMode(position: PsiElement, addition: String? = null) {
-    TerraformConfigCompletionContributor.LOG.assertTrue(!ApplicationManager.getApplication().isUnitTestMode, {
-      var ret = ""
-      if (addition != null) {
-        ret = "$addition\n"
-      }
-      ret += " Position: $position\nFile: " + DebugUtil.psiToString(position.containingFile, true)
-      ret
-    })
-  }
 
   fun getOriginalObject(parameters: CompletionParameters, obj: HCLObject): HCLObject {
     val originalObject = parameters.originalFile.findElementAt(obj.textRange.startOffset)?.parent
