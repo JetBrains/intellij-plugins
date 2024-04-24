@@ -28,6 +28,7 @@ import org.angular2.Angular2DecoratorUtil.INPUT_DEC
 import org.angular2.Angular2DecoratorUtil.INPUT_FUN
 import org.angular2.Angular2DecoratorUtil.MODEL_FUN
 import org.angular2.Angular2DecoratorUtil.OUTPUT_DEC
+import org.angular2.Angular2DecoratorUtil.OUTPUT_FROM_OBSERVABLE_FUN
 import org.angular2.Angular2DecoratorUtil.OUTPUT_FUN
 import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver
 import org.angular2.entities.*
@@ -123,9 +124,15 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
       .properties
       .forEach { prop ->
         for (el in getPropertySources(prop.memberSource.singleElement)) {
-          processProperty(clazz, prop, el, inputMap, INPUT_DEC, INPUT_FUN, NG_DIRECTIVE_INPUTS, inputs)
-          processProperty(clazz, prop, el, outputMap, OUTPUT_DEC, OUTPUT_FUN, NG_DIRECTIVE_OUTPUTS, outputs)
-          processProperty(clazz, prop, el, null, null, MODEL_FUN, NG_DIRECTIVE_IN_OUTS, inOuts)
+          processProperty(clazz, prop, el, inputMap, INPUT_DEC,
+                          listOf(INPUT_FUN),
+                          NG_DIRECTIVE_INPUTS, inputs)
+          processProperty(clazz, prop, el, outputMap, OUTPUT_DEC,
+                          listOf(OUTPUT_FUN, OUTPUT_FROM_OBSERVABLE_FUN),
+                          NG_DIRECTIVE_OUTPUTS, outputs)
+          processProperty(clazz, prop, el, null, null,
+                          listOf(MODEL_FUN),
+                          NG_DIRECTIVE_IN_OUTS, inOuts)
         }
       }
 
@@ -182,7 +189,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
                                 field: JSAttributeListOwner,
                                 mappings: MutableMap<String, Angular2PropertyInfo>?,
                                 decorator: String?,
-                                functionName: String?,
+                                functionNames: List<String>,
                                 qualifiedKind: WebSymbolQualifiedKind,
                                 result: MutableMap<String, Angular2DirectiveProperty>) {
       val info: Angular2PropertyInfo? =
@@ -194,7 +201,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
         ?: field.asSafely<TypeScriptField>()
           ?.initializerOrStub
           ?.asSafely<JSCallExpression>()
-          ?.let { Angular2SourceUtil.createPropertyInfo(it, functionName, property.memberName, ::getFunctionNameFromIndex) }
+          ?.let { Angular2SourceUtil.createPropertyInfo(it, functionNames, property.memberName, ::getFunctionNameFromIndex) }
       if (info != null) {
         result.putIfAbsent(info.name, Angular2SourceDirectiveProperty.create(sourceClass, property, qualifiedKind, info))
       }

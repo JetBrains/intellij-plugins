@@ -41,6 +41,7 @@ import org.angular2.Angular2DecoratorUtil.MODULE_DEC
 import org.angular2.Angular2DecoratorUtil.NAME_PROP
 import org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP
 import org.angular2.Angular2DecoratorUtil.OUTPUT_DEC
+import org.angular2.Angular2DecoratorUtil.OUTPUT_FROM_OBSERVABLE_FUN
 import org.angular2.Angular2DecoratorUtil.OUTPUT_FUN
 import org.angular2.Angular2DecoratorUtil.PIPE_DEC
 import org.angular2.Angular2DecoratorUtil.SELECTOR_PROP
@@ -439,7 +440,7 @@ private val STUBBED_DECORATORS_STRING_ARGS = setOf(
   INPUT_DEC, OUTPUT_DEC, ATTRIBUTE_DEC)
 
 private val STUBBED_DECORATOR_LIKE_FUNCTIONS = setOf(
-  INPUT_FUN, OUTPUT_FUN, MODEL_FUN)
+  INPUT_FUN, OUTPUT_FUN, OUTPUT_FROM_OBSERVABLE_FUN, MODEL_FUN)
 
 private val STUBBED_FUNCTIONS = setOf(
   FORWARD_REF_FUN)

@@ -1,4 +1,6 @@
 import {Component, EventEmitter, output, Output} from '@angular/core';
+import {outputFromObservable} from '@angular/core/rxjs-interop';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'app-test-annotation',
@@ -19,7 +21,9 @@ export class TestAnnotationComponent {
     styles: ``
 })
 export class TestSignalComponent {
-    output = output<string>();
+  output = output<string>();
+  onNameChange$ = new Observable<string>();
+  onNameChange = outputFromObservable(this.onNameChange$, {alias: "outputFromObservable"});
 }
 
 @Component({
@@ -29,14 +33,15 @@ export class TestSignalComponent {
   template: `
     <!-- split syntax: -->
     <app-test-annotation (output)="value2 = $event"></app-test-annotation>
-    <app-test-signal (output)="value2 = $event"></app-test-signal>
+    <app-test-signal (output)="value2 = $event"/>
+    <app-test-signal (outputFromObservable)="value2 = $event"/>
     
     <!-- check types -->
     <app-test-signal  
       (output)="value3 = <error descr="Assigned expression type string is not assignable to type number">$event</error>"
+      (outputFromObservable)="value3 = <error descr="Assigned expression type string is not assignable to type number">$event</error>"
       <error descr="Property foo is not provided by any applicable directives nor by <app-test-signal> element">[foo]</error>="12"
-    ></app-test-signal>
-    
+    />
   `,
   styles: [],
 })

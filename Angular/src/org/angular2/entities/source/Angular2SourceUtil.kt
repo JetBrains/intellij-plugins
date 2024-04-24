@@ -190,12 +190,20 @@ object Angular2SourceUtil {
   }
 
   @JvmStatic
+  @Deprecated(message = "Use createPropertyInfo overload with function names list",
+              replaceWith = ReplaceWith("createPropertyInfo(call, listOfNotNull(functionName), defaultName, getFunctionNameFromIndex)",
+                                        "org.angular2.entities.source.Angular2SourceUtil.createPropertyInfo"))
   fun createPropertyInfo(call: JSCallExpression, functionName: String?, defaultName: String,
+                         getFunctionNameFromIndex: (JSCallExpression) -> String?): Angular2PropertyInfo? =
+    createPropertyInfo(call, listOfNotNull(functionName), defaultName, getFunctionNameFromIndex)
+
+  @JvmStatic
+  fun createPropertyInfo(call: JSCallExpression, functionNames: List<String>, defaultName: String,
                          getFunctionNameFromIndex: (JSCallExpression) -> String?): Angular2PropertyInfo? {
-    if (functionName == null) return null
+    if (functionNames.isEmpty()) return null
     val referenceNames = getFunctionNameFromIndex(call)
                            ?.split('.')
-                           ?.takeIf { it.getOrNull(0) == functionName }
+                           ?.takeIf { qname -> functionNames.contains(qname.getOrNull(0)) }
                          ?: return null
     return when (referenceNames.size) {
       1 -> {
