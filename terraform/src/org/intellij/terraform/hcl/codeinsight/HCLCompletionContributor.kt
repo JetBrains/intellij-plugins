@@ -3,18 +3,18 @@ package org.intellij.terraform.hcl.codeinsight
 
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.openapi.project.DumbAware
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.hcl.patterns.HCLPatterns
 import org.intellij.terraform.hcl.psi.HCLArray
 import org.intellij.terraform.hcl.psi.HCLProperty
+import org.intellij.terraform.hil.codeinsight.HILCompletionContributor
 
 /**
  * Based on com.intellij.json.codeinsight.JsonCompletionContributor
  */
-open class HCLCompletionContributor : CompletionContributor(), DumbAware {
+open class HCLCompletionContributor : HILCompletionContributor() {
 
   private val AFTER_COMMA_OR_BRACKET_IN_ARRAY = psiElement().afterLeaf(",", "[")
     .withSuperParent(2, HCLArray::class.java)

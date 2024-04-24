@@ -25,7 +25,6 @@ import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.config.patterns.TerraformPatterns.DependsOnPattern
 import org.intellij.terraform.hcl.HCLLanguage
-import org.intellij.terraform.hcl.navigation.HCLQualifiedNameProvider
 import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.hcl.psi.HCLPsiUtil.getPrevSiblingNonWhiteSpace
 import org.intellij.terraform.hcl.psi.common.BaseExpression
@@ -34,7 +33,6 @@ import org.intellij.terraform.hcl.psi.common.LiteralExpression
 import org.intellij.terraform.hcl.psi.common.SelectExpression
 import org.intellij.terraform.hil.HILLanguage
 import org.intellij.terraform.hil.HilContainingBlockType
-import org.intellij.terraform.hil.codeinsight.ReferenceCompletionHelper.findByFQNRef
 import org.intellij.terraform.hil.getResourceTypeAndName
 import org.intellij.terraform.hil.guessContainingBlockType
 import org.intellij.terraform.hil.patterns.HILPatterns.ForEachIteratorPosition
@@ -48,7 +46,7 @@ import org.intellij.terraform.hil.psi.*
 import org.intellij.terraform.hil.psi.impl.getHCLHost
 import java.util.*
 
-class HILCompletionContributor : CompletionContributor(), DumbAware {
+open class HILCompletionContributor : CompletionContributor(), DumbAware {
   private val scopeProviders = listOf(
     CountCompletionProvider,
     DataSourceCompletionProvider,
@@ -63,9 +61,6 @@ class HILCompletionContributor : CompletionContributor(), DumbAware {
   init {
     extend(CompletionType.BASIC, MethodPosition, MethodsCompletionProvider)
     extend(CompletionType.BASIC, MethodPosition, ResourceTypesCompletionProvider)
-
-    // TODO - why null?
-    extend(null, MethodPosition, FullReferenceCompletionProvider)
 
     extend(CompletionType.BASIC, PlatformPatterns.psiElement().withLanguages(HILLanguage, HCLLanguage)
       .withParent(Identifier::class.java).withSuperParent(2, IlseFromKnownScope), KnownScopeCompletionProvider())
@@ -493,40 +488,6 @@ class HILCompletionContributor : CompletionContributor(), DumbAware {
       val resources = module.getDeclaredResources()
       val types = resources.mapNotNull { it.getNameElementUnquoted(1) }.toSortedSet()
       result.addAllElements(types.map { create(it) })
-    }
-  }
-
-  private object FullReferenceCompletionProvider : TerraformConfigCompletionContributor.OurCompletionProvider() {
-    override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
-      if (parameters.completionType != CompletionType.SMART && !parameters.isExtendedCompletion) return
-      val position = parameters.position
-      val parent = position.parent as? BaseExpression ?: return
-      val leftNWS = position.getPrevSiblingNonWhiteSpace()
-      LOG.debug { "HIL.ResourceTypesCompletionProvider{position=$position, parent=$parent, left=${position.prevSibling}, lnws=$leftNWS}" }
-
-      val host = parent.getHCLHost() ?: return
-
-      val property = PsiTreeUtil.getParentOfType(host, HCLProperty::class.java) ?: return
-      val block = PsiTreeUtil.getParentOfType(property, HCLBlock::class.java) ?: return
-
-      val hint = (ModelHelper.getBlockProperties(block)[property.name] as? PropertyType)?.hint
-      if (hint is ReferenceHint) {
-        val module = property.getTerraformModule()
-        hint.hint
-          .mapNotNull { findByFQNRef(it, module) }
-          .flatten()
-          .mapNotNull {
-            return@mapNotNull when (it) {
-              is HCLBlock -> HCLQualifiedNameProvider.getQualifiedModelName(it)
-              is HCLProperty -> HCLQualifiedNameProvider.getQualifiedModelName(it)
-              is String -> it
-              else -> null
-            }
-          }
-          .forEach { result.addElement(create(it)) }
-        return
-      }
-      // TODO: Support other hint types
     }
   }
 

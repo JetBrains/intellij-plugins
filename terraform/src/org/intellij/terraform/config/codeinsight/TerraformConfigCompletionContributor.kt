@@ -10,7 +10,6 @@ import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.debug
-import com.intellij.openapi.project.Project
 import com.intellij.patterns.PlatformPatterns.not
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
@@ -200,10 +199,6 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
     //endregion
   }
 
-  companion object {
-    val LOG: Logger = Logger.getInstance(TerraformConfigCompletionContributor::class.java)
-  }
-
   private object PreferRequiredProperty : LookupElementWeigher("hcl.required.property") {
     override fun weigh(element: LookupElement): Comparable<Nothing> {
       val obj = element.`object`
@@ -216,20 +211,16 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
   }
 
   abstract class OurCompletionProvider : CompletionProvider<CompletionParameters>() {
-    protected fun getTypeModel(project: Project): TypeModel {
+    protected fun getTypeModel(): TypeModel {
       return TypeModelProvider.globalModel
     }
 
     protected fun addResultsWithCustomSorter(result: CompletionResultSet,
-                                             parameters: CompletionParameters,
                                              toAdd: Collection<LookupElementBuilder>) {
       if (toAdd.isEmpty()) return
-      result
-        .withRelevanceSorter(
-          // CompletionSorter.defaultSorter(parameters, result.prefixMatcher)
-          CompletionSorter.emptySorter()
-            .weigh(PreferRequiredProperty))
-        .addAllElements(toAdd)
+      result.withRelevanceSorter(
+        CompletionSorter.emptySorter().weigh(PreferRequiredProperty)
+      ).addAllElements(toAdd)
     }
   }
 
@@ -265,28 +256,27 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       LOG.debug { "TF.BlockTypeOrNameCompletionProvider{position=$position, parent=$parent, obj=$obj, lnws=$leftNWS}" }
       val type = getClearTextValue(leftNWS) ?: return true
       val cache = HashMap<String, Boolean>()
-      val project = position.project
       return when (type) {
         HCL_RESOURCE_IDENTIFIER ->
-          getTypeModel(project).resources.toPlow()
+          getTypeModel().resources.toPlow()
             .filter { invocationCount >= 3 || isProviderUsed(parent, it.provider.type, cache) }
             .map { buildLookupElement(it, it.type, position) }
             .processWith(consumer)
         HCL_DATASOURCE_IDENTIFIER ->
-          getTypeModel(project).dataSources.toPlow()
+          getTypeModel().dataSources.toPlow()
             .filter { invocationCount >= 3 || isProviderUsed(parent, it.provider.type, cache) }
             .map { buildLookupElement(it, it.type, position) }
             .processWith(consumer)
         HCL_PROVIDER_IDENTIFIER ->
-          getTypeModel(project).providers.toPlow()
+          getTypeModel().providers.toPlow()
             .map { buildLookupElement(it, it.type, position) }
             .processWith(consumer)
         HCL_PROVISIONER_IDENTIFIER ->
-          getTypeModel(project).provisioners.toPlow()
+          getTypeModel().provisioners.toPlow()
             .map { buildLookupElement(it, it.type, position) }
             .processWith(consumer)
         HCL_BACKEND_IDENTIFIER ->
-          getTypeModel(project).backends.toPlow()
+          getTypeModel().backends.toPlow()
             .map { buildLookupElement(it, it.type, position) }
             .processWith(consumer)
         else -> true
@@ -399,7 +389,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
         LOG.debug { "Including properties which contains incomplete result: $incomplete" }
       }
       val fakeHCLPsiFactory = parent.project.service<FakeHCLElementPsiFactory>()
-      addResultsWithCustomSorter(result, parameters, properties.values
+      addResultsWithCustomSorter(result, properties.values
         .asSequence()
         .filter { it.name != Constants.HAS_DYNAMIC_ATTRIBUTES }
         .filter { isRightOfPropertyWithCompatibleType(isProperty, it, right) || (isBlock && it is BlockType) || (!isProperty && !isBlock) }
@@ -488,10 +478,6 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
           .flatten()
           .mapNotNull {
             return@mapNotNull when (it) {
-              // TODO: Enable or remove next two lines
-              //                is HCLBlock -> HCLQualifiedNameProvider.getQualifiedModelName(it)
-              //                is HCLProperty -> HCLQualifiedNameProvider.getQualifiedModelName(it)
-              // TODO: For TF 0.12 interpolation is not needed
               is String -> "" + '$' + "{$it}"
               else -> null
             }
@@ -501,7 +487,6 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       }
       // TODO: Support other hint types
     }
-
   }
 
   private object VariableNameTFVARSCompletionProvider : OurCompletionProvider() {
@@ -555,5 +540,9 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       result.addAllElements(
         defaults.flatMap { default -> default.propertyList.map { create(it.name).withInsertHandler(ResourcePropertyInsertHandler) } })
     }
+  }
+
+  companion object {
+    val LOG: Logger = Logger.getInstance(TerraformConfigCompletionContributor::class.java)
   }
 }
