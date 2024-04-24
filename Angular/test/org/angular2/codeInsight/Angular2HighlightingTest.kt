@@ -215,6 +215,10 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
   fun testPipeGenericTypeNarrowing() = checkHighlighting(ANGULAR_CORE_16_2_8, extension = "ts")
 
+  fun testPipeOverloadWithUndefined() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, RXJS_7_8_1,
+                                                          dir = true, configureFileName = "apps/app.component.html",
+                                                          configurators = emptyList())
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
