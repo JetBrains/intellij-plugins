@@ -13,7 +13,7 @@ def repoPassword = System.getenv('REPO_PASSWORD') ?: 'spacePassword'
 
 boolean isSnapshot = version.endsWith('-SNAPSHOT')
 
-sourceSets.main.resources {srcDir 'resources'}
+sourceSets.main.resources { srcDirs += 'resources' }
 sourceSets.main.resources { srcDirs += 'plugins-meta/resources' }
 
 task collectMetadata(type: Exec) {
@@ -35,29 +35,29 @@ processResources {
 jar {
   includeEmptyDirs false
   eachFile { details ->
-    details.path = "resources/$details.path"
+    details.path = "terraform/$details.path"
   }
 }
 
 
 publishing {
-    publications {
-        maven(MavenPublication) {
-            from components.java
-            groupId = project.group
-            artifactId = project.archivesBaseName
-            version = project.version
-            suppressAllPomMetadataWarnings()
-        }
+  publications {
+    maven(MavenPublication) {
+      from components.java
+      groupId = project.group
+      artifactId = project.archivesBaseName
+      version = project.version
+      suppressAllPomMetadataWarnings()
     }
-    repositories {
-        maven {
-            url repositoryUrl
-            allowInsecureProtocol true
-            credentials {
-                username = repoUsername
-                password = repoPassword
-            }
-        }
+  }
+  repositories {
+    maven {
+      url repositoryUrl
+      allowInsecureProtocol true
+      credentials {
+        username = repoUsername
+        password = repoPassword
+      }
     }
+  }
 }
