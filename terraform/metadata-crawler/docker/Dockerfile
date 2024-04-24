@@ -38,5 +38,3 @@ ENV REPO_PASSWORD=spacePassword
 RUN ./gradlew --no-daemon dependencies
 
 ENTRYPOINT ["./gradlew", "--no-daemon"]
-
-VOLUME ["/opt/terraform-metadata/build/libs"]

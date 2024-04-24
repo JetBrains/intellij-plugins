@@ -30,10 +30,9 @@ For example, if we want to change an artifact version, we can specify it in the 
 `docker run -d -e ARTIFACT_VERSION=2023.3.1  intellij.terraform/metadata-crawler:<IMAGE_VERSION> publish`
 
 ℹ️ PROVIDERS_IN_REGISTRY and MANDATORY_PROVIDERS_COUNT settings will fail the build only if assertions are enabled.
-Add `-e DEFAULT_JVM_OPTS="$DEFAULT_JVM_OPTS -ea"` to the docker start command to enable assertions.
+Add `-e LS_SCHEMAS_EXTRACTOR_OPTS=-ea` to the docker start command to enable assertions.
 
 ### How to build artifact only
 1. If we don't want to publish metadata, we can bind a local folder to a container folder and get the metadata 
 jar file: `docker run -d -v <LOCAL_FOLDER>:/opt/terraform-metadata/build/libs intellij.terraform/metadata-crawler:<IMAGE_VERSION> jar`
-A `VOLUME` directive is specified in the Docker image for this purpose. 
 2. After execution finished, we can publish the jar manually.
