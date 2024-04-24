@@ -20,7 +20,6 @@ import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.GlobalS
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.createFunction
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.createScope
 import org.intellij.terraform.config.codeinsight.TerraformConfigCompletionContributor
-import org.intellij.terraform.config.codeinsight.TerraformConfigCompletionContributor.BlockTypeOrNameCompletionProvider.isProviderUsed
 import org.intellij.terraform.config.codeinsight.TerraformLookupElementRenderer
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TerraformPatterns
@@ -51,20 +50,23 @@ import java.util.*
 
 class HILCompletionContributor : CompletionContributor(), DumbAware {
   private val scopeProviders = listOf(
-    DataSourceCompletionProvider,
-    VariableCompletionProvider,
-    SelfCompletionProvider,
-    PathCompletionProvider,
     CountCompletionProvider,
-    TerraformCompletionProvider,
+    DataSourceCompletionProvider,
     LocalsCompletionProvider,
-    ModuleCompletionProvider
+    ModuleCompletionProvider,
+    PathCompletionProvider,
+    SelfCompletionProvider,
+    TerraformCompletionProvider,
+    VariableCompletionProvider,
   ).associateBy { it.scope }
 
   init {
     extend(CompletionType.BASIC, MethodPosition, MethodsCompletionProvider)
     extend(CompletionType.BASIC, MethodPosition, ResourceTypesCompletionProvider)
+
+    // TODO - why null?
     extend(null, MethodPosition, FullReferenceCompletionProvider)
+
     extend(CompletionType.BASIC, PlatformPatterns.psiElement().withLanguages(HILLanguage, HCLLanguage)
       .withParent(Identifier::class.java).withSuperParent(2, IlseFromKnownScope), KnownScopeCompletionProvider())
     extend(CompletionType.BASIC, PlatformPatterns.psiElement().withLanguages(HILLanguage, HCLLanguage)
@@ -73,81 +75,12 @@ class HILCompletionContributor : CompletionContributor(), DumbAware {
     extend(CompletionType.BASIC, VariableTypePosition, VariableTypeCompletionProvider)
 
     extend(CompletionType.BASIC, ForEachIteratorPosition, ForEachIteratorCompletionProvider)
-    extend(CompletionType.BASIC, InsideForExpressionBody, ForVariableCompletion())
+    extend(CompletionType.BASIC, InsideForExpressionBody, ForVariableCompletion)
   }
 
   override fun beforeCompletion(context: CompletionInitializationContext) {
     if (context.dummyIdentifier != CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED) {
       context.dummyIdentifier = CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED
-    }
-  }
-
-  companion object {
-    private val LOG = Logger.getInstance(HILCompletionContributor::class.java)
-  }
-
-  private object MethodsCompletionProvider : CompletionProvider<CompletionParameters>() {
-    override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
-      val position = parameters.position
-      val parent = position.parent as? BaseExpression ?: return
-      val leftNWS = position.getPrevSiblingNonWhiteSpace()
-      LOG.debug { "HIL.MethodsCompletionProvider{position=$position, parent=$parent, left=${position.prevSibling}, lnws=$leftNWS}" }
-      // parent is usually HCLIdentifier or so
-      var property = PsiTreeUtil.getParentOfType(parent, HCLProperty::class.java, false, HCLBlock::class.java)
-      val block = PsiTreeUtil.getParentOfType(parent, HCLBlock::class.java)
-      if (property != null && property.nameIdentifier == parent) return
-      if (block != null && property != null) {
-        val isRootBlock = TerraformPatterns.RootBlock.accepts(block)
-        val type = (if (isRootBlock) block else PsiTreeUtil.getTopmostParentOfType(parent, HCLBlock::class.java))?.getNameElementUnquoted(0)
-
-        if (property.parent?.parent !== block) {
-          /* Case for:
-            (rootBlock,block)module x {
-              providers = {
-                (property)aws=<caret>
-              }
-            }
-           */
-          if (property.parent is HCLObject && property.parent.parent is HCLProperty) {
-            property = property.parent.parent as HCLProperty
-          }
-        }
-        if (!isRootBlock) {
-          /* Case for:
-            (rootBlock)module x {
-              (block)providers {
-                (property)aws=<caret>
-              }
-            }
-           */
-          if (block.fullName == "providers" && type == "module") return
-        }
-
-        // Since 'depends_on', 'provider' does not allows interpolations, don't add anything
-        if (DependsOnPattern.accepts(property)) return
-        if (property.name == "provider" && (type == "resource" || type == "data") && isRootBlock) return
-        // Same for 'providers' binding in 'module'
-        if (property.name == "providers" && type == "module" && isRootBlock) return
-
-        val hint = (ModelHelper.getBlockProperties(block)[property.name] as? PropertyType)?.hint
-        if (hint is SimpleValueHint || hint is ReferenceHint) {
-          return
-        }
-      }
-      result.addAllElements(TypeModelProvider.getModel(parent).functions.map { createFunction(it) })
-      result.addAllElements(GlobalScopes.map { createScope(it) })
-      if (getProvisionerOrConnectionResource(parent) != null) result.addElement(createScope("self"))
-
-      val host = parent.getHCLHost() ?: return
-      val resourceOrDataSource = getContainingResourceOrDataSourceOrModule(host)
-      if (resourceOrDataSource != null) {
-        if (resourceOrDataSource.`object`?.findProperty("for_each") != null) {
-          result.addElement(createScope("each"))
-        }
-        if (resourceOrDataSource.`object`?.findProperty("count") != null) {
-          result.addElement(createScope("count"))
-        }
-      }
     }
   }
 
@@ -278,15 +211,70 @@ class HILCompletionContributor : CompletionContributor(), DumbAware {
       val dataSources = module.getDeclaredDataSources()
       val types = dataSources.mapNotNull { it.getNameElementUnquoted(1) }.toSortedSet()
       result.addAllElements(types.map { create(it) })
+    }
+  }
 
-      if (parameters.isExtendedCompletion) {
-        @Suppress("NAME_SHADOWING")
-        var dataSources = TypeModelProvider.getModel(variable).dataSources
-        val cache = HashMap<String, Boolean>()
-        if (parameters.invocationCount == 2) {
-          dataSources = dataSources.filter { isProviderUsed(module, it.provider.type, cache) }
+  private object MethodsCompletionProvider : CompletionProvider<CompletionParameters>() {
+    override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
+      val position = parameters.position
+      val parent = position.parent as? BaseExpression ?: return
+      val leftNWS = position.getPrevSiblingNonWhiteSpace()
+      LOG.debug { "HIL.MethodsCompletionProvider{position=$position, parent=$parent, left=${position.prevSibling}, lnws=$leftNWS}" }
+      // parent is usually HCLIdentifier or so
+      var property = PsiTreeUtil.getParentOfType(parent, HCLProperty::class.java, false, HCLBlock::class.java)
+      val block = PsiTreeUtil.getParentOfType(parent, HCLBlock::class.java)
+      if (property != null && property.nameIdentifier == parent) return
+      if (block != null && property != null) {
+        val isRootBlock = TerraformPatterns.RootBlock.accepts(block)
+        val type = (if (isRootBlock) block else PsiTreeUtil.getTopmostParentOfType(parent, HCLBlock::class.java))?.getNameElementUnquoted(0)
+
+        if (property.parent?.parent !== block) {
+          /* Case for:
+            (rootBlock,block)module x {
+              providers = {
+                (property)aws=<caret>
+              }
+            }
+           */
+          if (property.parent is HCLObject && property.parent.parent is HCLProperty) {
+            property = property.parent.parent as HCLProperty
+          }
         }
-        result.addAllElements(dataSources.map { it.type }.filter { it !in types }.map { create(it) })
+        if (!isRootBlock) {
+          /* Case for:
+            (rootBlock)module x {
+              (block)providers {
+                (property)aws=<caret>
+              }
+            }
+           */
+          if (block.fullName == "providers" && type == "module") return
+        }
+
+        // Since 'depends_on', 'provider' does not allows interpolations, don't add anything
+        if (DependsOnPattern.accepts(property)) return
+        if (property.name == "provider" && (type == "resource" || type == "data") && isRootBlock) return
+        // Same for 'providers' binding in 'module'
+        if (property.name == "providers" && type == "module" && isRootBlock) return
+
+        val hint = (ModelHelper.getBlockProperties(block)[property.name] as? PropertyType)?.hint
+        if (hint is SimpleValueHint || hint is ReferenceHint) {
+          return
+        }
+      }
+      result.addAllElements(TypeModelProvider.getModel(parent).functions.map { createFunction(it) })
+      result.addAllElements(GlobalScopes.map { createScope(it) })
+      if (getProvisionerOrConnectionResource(parent) != null) result.addElement(createScope("self"))
+
+      val host = parent.getHCLHost() ?: return
+      val resourceOrDataSource = getContainingResourceOrDataSourceOrModule(host)
+      if (resourceOrDataSource != null) {
+        if (resourceOrDataSource.`object`?.findProperty("for_each") != null) {
+          result.addElement(createScope("each"))
+        }
+        if (resourceOrDataSource.`object`?.findProperty("count") != null) {
+          result.addElement(createScope("count"))
+        }
       }
     }
   }
@@ -505,16 +493,6 @@ class HILCompletionContributor : CompletionContributor(), DumbAware {
       val resources = module.getDeclaredResources()
       val types = resources.mapNotNull { it.getNameElementUnquoted(1) }.toSortedSet()
       result.addAllElements(types.map { create(it) })
-
-      if (parameters.isExtendedCompletion) {
-        @Suppress("NAME_SHADOWING")
-        var resources = getTypeModel(position.project).resources
-        val cache = HashMap<String, Boolean>()
-        if (parameters.invocationCount == 2) {
-          resources = resources.filter { isProviderUsed(module, it.provider.type, cache) }
-        }
-        result.addAllElements(resources.map { it.type }.filter { it !in types }.map { create(it) })
-      }
     }
   }
 
@@ -550,6 +528,10 @@ class HILCompletionContributor : CompletionContributor(), DumbAware {
       }
       // TODO: Support other hint types
     }
+  }
+
+  companion object {
+    private val LOG = Logger.getInstance(HILCompletionContributor::class.java)
   }
 }
 

@@ -33,7 +33,7 @@ class ForVariableReferenceProvider2 : PsiReferenceProvider() {
   }
 }
 
-class ForVariableCompletion : TerraformConfigCompletionContributor.OurCompletionProvider() {
+object ForVariableCompletion : TerraformConfigCompletionContributor.OurCompletionProvider() {
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
     val id = parameters.position.parent as? Identifier ?: return
     val parent = id.parent
