@@ -93,6 +93,9 @@
       implementation="com.intellij.dts.settings.DtsColorSettingsPage"/>
     <highlightErrorFilter
       implementation="com.intellij.dts.lang.parser.DtsHighlightingErrorFilter"/>
+    <annotator
+      language="DTS"
+      implementationClass="com.intellij.dts.highlighting.DtsPpHighlightAnnotator"/>
 
     <!-- code formatting -->
     <lang.formatter
@@ -214,6 +217,12 @@
       enabledByDefault="true"
       level="ERROR"
       implementationClass="com.intellij.dts.inspections.DtsPropertyEnumInspection"/>
+    <localInspection
+      language="DTS"
+      bundle="messages.DtsBundle" key="inspections.pp_parser.display_name" groupKey="inspections.group"
+      enabledByDefault="true"
+      level="ERROR"
+      implementationClass="com.intellij.dts.pp.highlighting.PpParserErrorInspection"/>
 
     <!-- registry keys -->
     <registryKey

@@ -65,6 +65,7 @@ tasks {
 
     generateParser {
         dependsOn(generateLexer)
+        dependsOn("pp:generateParser")
 
         sourceFile.set(File("src/com/intellij/dts/lang/parser/dts.bnf"))
         pathToParser.set("com/intellij/dts/lang/parser/DtsParser.java")

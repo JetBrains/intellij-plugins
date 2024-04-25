@@ -1,79 +1,50 @@
 package com.intellij.dts.pp.lang
 
+import com.intellij.dts.pp.lang.parser.PpAdHocParser
+import com.intellij.dts.pp.lang.psi.PpStatementPsiElement
+import com.intellij.lang.ASTNode
+import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 
-interface PpTokenTypes {
-  val defineStatement: IElementType
-  val defineDirective: IElementType
-  val defineValue: IElementType
+abstract class PpTokenTypes {
+  private val parser by lazy { PpAdHocParser(this) }
 
-  val endifStatement: IElementType
-  val endifDirective: IElementType
+  abstract val statement: IElementType
+  abstract val directive: IElementType
 
-  val ifStatement: IElementType
-  val ifDirective: IElementType
+  abstract val lineBreak: IElementType
+  abstract val comment: IElementType
+  abstract val inactive: IElementType
 
-  val ifdefStatement: IElementType
-  val ifdefDirective: IElementType
+  abstract val headerName: IElementType
 
-  val ifndefStatement: IElementType
-  val ifndefDirective: IElementType
+  abstract val identifier: IElementType
+  abstract val operatorOrPunctuator: IElementType
+  abstract val integerLiteral: IElementType
+  abstract val charLiteral: IElementType
+  abstract val floatLiteral: IElementType
+  abstract val stringLiteral: IElementType
 
-  val elifStatement: IElementType
-  val elifDirective: IElementType
+  /**
+   * Marker for the end of a preprocessor statement. Injected by the PpLexerAdapter.
+   */
+  abstract val statementEnd: IElementType
 
-  val elifdefStatement: IElementType
-  val elifdefDirective: IElementType
+  /**
+   * Marker for a preprocessor statement. Emitted by the lexer of the host language.
+   */
+  abstract val statementMarker: IElementType
 
-  val elifndefStatement: IElementType
-  val elifndefDirective: IElementType
+  abstract fun createScopeSet(): TokenSet
 
-  val elseStatement: IElementType
-  val elseDirective: IElementType
-
-  val includeStatement: IElementType
-  val includeDirective: IElementType
-  val includePath: IElementType
-
-  val undefStatement: IElementType
-  val undefDirective: IElementType
-
-  val symbol: IElementType
-
-  // placeholder for expressions
-  val expression: IElementType
-
-  val statementEnd: IElementType
-  val statementMarker: IElementType
-
-  fun createScopeSet(): TokenSet
-
-  fun createDirectivesSet(): TokenSet = TokenSet.create(
-    includeDirective,
-    defineDirective,
-    endifDirective,
-    ifdefDirective,
-    ifndefDirective,
-    undefDirective,
-    ifDirective,
-    elifDirective,
-    elifdefDirective,
-    elifndefDirective,
-    elseDirective,
-  )
-
-  fun createStatementSet(): TokenSet = TokenSet.create(
-    includeStatement,
-    defineStatement,
-    endifStatement,
-    ifdefStatement,
-    ifndefStatement,
-    undefStatement,
-    ifStatement,
-    elifStatement,
-    elifdefStatement,
-    elifndefStatement,
-    elseStatement
-  )
+  /**
+   * Wrapper for the PsiElement factory of the host language.
+   */
+  fun createElement(node: ASTNode?, hostFactory: (ASTNode?) -> PsiElement): PsiElement {
+    return when (node?.elementType) {
+      statement -> PpStatementPsiElement(node, parser)
+      else -> hostFactory(node)
+    }
+  }
 }

@@ -1,3 +1,4 @@
+import org.jetbrains.grammarkit.tasks.GenerateLexerTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -28,6 +29,7 @@ sourceSets {
 
     test {
         kotlin.srcDirs("test")
+        java.srcDirs("testGen")
         resources.srcDirs("testData")
     }
 }
@@ -40,13 +42,33 @@ tasks {
     }
 
     withType<KotlinCompile> {
-        dependsOn(generateLexer)
+        dependsOn(generateParser)
 
         kotlinOptions.jvmTarget = "17"
         kotlinOptions.freeCompilerArgs += "-Xjvm-default=all"
     }
 
+    generateParser {
+        dependsOn(generateLexer)
+
+        sourceFile.set(File("test/com/intellij/dts/pp/test/impl/test.bnf"))
+        pathToParser.set("com/intellij/dts/pp/test/impl/TestParser.java")
+
+        pathToPsiRoot.set("com/intellij/dts/pp/test/impl/psi")
+        targetRootOutputDir.set(File("testGen"))
+        purgeOldFiles.set(true)
+    }
+
+    val generateTestLexer by register<GenerateLexerTask>("generateTestLexer") {
+        sourceFile.set(File("test/com/intellij/dts/pp/test/impl/test.flex"))
+
+        targetOutputDir.set(File("testGen/com/intellij/dts/pp/test/impl"))
+        purgeOldFiles.set(true)
+    }
+
     generateLexer {
+        dependsOn(generateTestLexer)
+
         sourceFile.set(File("src/com/intellij/dts/pp/lang/lexer/pp.flex"))
 
         targetOutputDir.set(File("gen/com/intellij/dts/pp/lang/lexer"))

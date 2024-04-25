@@ -79,6 +79,16 @@ enum class DtsTextAttributes() {
     DefaultLanguageHighlighterColors.NUMBER,
     "settings.colors.number"
   ),
+  INACTIVE(
+    "DTS_INACTIVE",
+    TextAttributesKey.createTextAttributesKey("OC.CONDITIONALLY_NOT_COMPILED"), // TODO: what if not CLion?
+   "settings.colors.inactive",
+  ),
+  INCLUDE_PATH(
+    "DTS_INCLUDE_PATH",
+    DefaultLanguageHighlighterColors.STRING,
+    "settings.colors.inactive",
+  ),
   BAD_CHARACTER(
     "DTS_BAD_CHARACTER",
     HighlighterColors.BAD_CHARACTER,

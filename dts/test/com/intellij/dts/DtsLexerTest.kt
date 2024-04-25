@@ -1,11 +1,11 @@
 package com.intellij.dts
 
-import com.intellij.dts.lang.lexer.DtsLexerAdapter
+import com.intellij.dts.lang.lexer.DtsParserLexerAdapter
 import com.intellij.lexer.Lexer
 import com.intellij.testFramework.LexerTestCase
 
 class DtsLexerTest : LexerTestCase() {
-  override fun createLexer(): Lexer = DtsLexerAdapter()
+  override fun createLexer(): Lexer = DtsParserLexerAdapter()
 
   override fun getDirPath(): String = "$DTS_TEST_DATA_PATH/lexer"
 

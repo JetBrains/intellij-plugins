@@ -37,19 +37,8 @@ public interface DtsTypes {
   com.intellij.psi.tree.IElementType NEQ_EXPR = new com.intellij.dts.lang.DtsElementType("NEQ_EXPR");
   com.intellij.psi.tree.IElementType NODE_CONTENT = new com.intellij.dts.lang.DtsElementType("NODE_CONTENT");
   com.intellij.psi.tree.IElementType PAREN_EXPR = new com.intellij.dts.lang.DtsElementType("PAREN_EXPR");
-  com.intellij.psi.tree.IElementType PP_DEFINE_STATEMENT = new com.intellij.dts.lang.DtsElementType("PP_DEFINE_STATEMENT");
-  com.intellij.psi.tree.IElementType PP_ELIFDEF_STATEMENT = new com.intellij.dts.lang.DtsElementType("PP_ELIFDEF_STATEMENT");
-  com.intellij.psi.tree.IElementType PP_ELIFNDEF_STATEMENT = new com.intellij.dts.lang.DtsElementType("PP_ELIFNDEF_STATEMENT");
-  com.intellij.psi.tree.IElementType PP_ELIF_STATEMENT = new com.intellij.dts.lang.DtsElementType("PP_ELIF_STATEMENT");
-  com.intellij.psi.tree.IElementType PP_ELSE_STATEMENT = new com.intellij.dts.lang.DtsElementType("PP_ELSE_STATEMENT");
-  com.intellij.psi.tree.IElementType PP_ENDIF_STATEMENT = new com.intellij.dts.lang.DtsElementType("PP_ENDIF_STATEMENT");
-  com.intellij.psi.tree.IElementType PP_IFDEF_STATEMENT = new com.intellij.dts.lang.DtsElementType("PP_IFDEF_STATEMENT");
-  com.intellij.psi.tree.IElementType PP_IFNDEF_STATEMENT = new com.intellij.dts.lang.DtsElementType("PP_IFNDEF_STATEMENT");
-  com.intellij.psi.tree.IElementType PP_IF_STATEMENT = new com.intellij.dts.lang.DtsElementType("PP_IF_STATEMENT");
-  com.intellij.psi.tree.IElementType PP_INCLUDE_STATEMENT = new com.intellij.dts.lang.DtsElementType("PP_INCLUDE_STATEMENT");
   com.intellij.psi.tree.IElementType PP_MACRO = new com.intellij.dts.lang.DtsElementType("PP_MACRO");
   com.intellij.psi.tree.IElementType PP_MACRO_EXPR = new com.intellij.dts.lang.DtsElementType("PP_MACRO_EXPR");
-  com.intellij.psi.tree.IElementType PP_UNDEF_STATEMENT = new com.intellij.dts.lang.DtsElementType("PP_UNDEF_STATEMENT");
   com.intellij.psi.tree.IElementType PROPERTY = new com.intellij.dts.lang.DtsElementType("PROPERTY");
   com.intellij.psi.tree.IElementType PROPERTY_CONTENT = new com.intellij.dts.lang.DtsElementType("PROPERTY_CONTENT");
   com.intellij.psi.tree.IElementType P_HANDLE = new com.intellij.dts.lang.DtsElementType("P_HANDLE");
@@ -103,24 +92,21 @@ public interface DtsTypes {
   com.intellij.psi.tree.IElementType OR = new com.intellij.dts.lang.DtsTokenType("OR");
   com.intellij.psi.tree.IElementType PATH = new com.intellij.dts.lang.DtsTokenType("PATH");
   com.intellij.psi.tree.IElementType PLUGIN = new com.intellij.dts.lang.DtsTokenType("PLUGIN");
-  com.intellij.psi.tree.IElementType PP_DEFINE = new com.intellij.dts.lang.DtsTokenType("PP_DEFINE");
-  com.intellij.psi.tree.IElementType PP_DEFINE_VALUE = new com.intellij.dts.lang.DtsTokenType("PP_DEFINE_VALUE");
-  com.intellij.psi.tree.IElementType PP_ELIF = new com.intellij.dts.lang.DtsTokenType("PP_ELIF");
-  com.intellij.psi.tree.IElementType PP_ELIFDEF = new com.intellij.dts.lang.DtsTokenType("PP_ELIFDEF");
-  com.intellij.psi.tree.IElementType PP_ELIFNDEF = new com.intellij.dts.lang.DtsTokenType("PP_ELIFNDEF");
-  com.intellij.psi.tree.IElementType PP_ELSE = new com.intellij.dts.lang.DtsTokenType("PP_ELSE");
-  com.intellij.psi.tree.IElementType PP_ENDIF = new com.intellij.dts.lang.DtsTokenType("PP_ENDIF");
-  com.intellij.psi.tree.IElementType PP_EXPRESSION = new com.intellij.dts.lang.DtsTokenType("PP_EXPRESSION");
-  com.intellij.psi.tree.IElementType PP_IF = new com.intellij.dts.lang.DtsTokenType("PP_IF");
-  com.intellij.psi.tree.IElementType PP_IFDEF = new com.intellij.dts.lang.DtsTokenType("PP_IFDEF");
-  com.intellij.psi.tree.IElementType PP_IFNDEF = new com.intellij.dts.lang.DtsTokenType("PP_IFNDEF");
-  com.intellij.psi.tree.IElementType PP_INCLUDE = new com.intellij.dts.lang.DtsTokenType("PP_INCLUDE");
-  com.intellij.psi.tree.IElementType PP_INCLUDE_PATH = new com.intellij.dts.lang.DtsTokenType("PP_INCLUDE_PATH");
+  com.intellij.psi.tree.IElementType PP_CHAR_LITERAL = new com.intellij.dts.lang.DtsTokenType("PP_CHAR_LITERAL");
+  com.intellij.psi.tree.IElementType PP_COMMENT = new com.intellij.dts.lang.DtsTokenType("PP_COMMENT");
+  com.intellij.psi.tree.IElementType PP_DIRECTIVE = new com.intellij.dts.lang.DtsTokenType("PP_DIRECTIVE");
+  com.intellij.psi.tree.IElementType PP_FLOAT_LITERAL = new com.intellij.dts.lang.DtsTokenType("PP_FLOAT_LITERAL");
+  com.intellij.psi.tree.IElementType PP_HEADER_NAME = new com.intellij.dts.lang.DtsTokenType("PP_HEADER_NAME");
+  com.intellij.psi.tree.IElementType PP_IDENTIFIER = new com.intellij.dts.lang.DtsTokenType("PP_IDENTIFIER");
+  com.intellij.psi.tree.IElementType PP_INACTIVE = new com.intellij.dts.lang.DtsTokenType("PP_INACTIVE");
+  com.intellij.psi.tree.IElementType PP_INTEGER_LITERAL = new com.intellij.dts.lang.DtsTokenType("PP_INTEGER_LITERAL");
+  com.intellij.psi.tree.IElementType PP_LINE_BRAK = new com.intellij.dts.lang.DtsTokenType("PP_LINE_BREAK");
   com.intellij.psi.tree.IElementType PP_MACRO_ARG = new com.intellij.dts.lang.DtsTokenType("PP_MACRO_ARG");
+  com.intellij.psi.tree.IElementType PP_OPERATOR_OR_PUNCTUATOR = new com.intellij.dts.lang.DtsTokenType("PP_OPERATOR_OR_PUNCTUATOR");
+  com.intellij.psi.tree.IElementType PP_STATEMENT = new com.intellij.dts.lang.DtsTokenType("PP_STATEMENT");
   com.intellij.psi.tree.IElementType PP_STATEMENT_END = new com.intellij.dts.lang.DtsTokenType("PP_STATEMENT_END");
   com.intellij.psi.tree.IElementType PP_STATEMENT_MARKER = new com.intellij.dts.lang.DtsTokenType("PP_STATEMENT_MARKER");
-  com.intellij.psi.tree.IElementType PP_SYMBOL = new com.intellij.dts.lang.DtsTokenType("PP_SYMBOL");
-  com.intellij.psi.tree.IElementType PP_UNDEF = new com.intellij.dts.lang.DtsTokenType("PP_UNDEF");
+  com.intellij.psi.tree.IElementType PP_STRING_LITERAL = new com.intellij.dts.lang.DtsTokenType("PP_STRING_LITERAL");
   com.intellij.psi.tree.IElementType RANGL = new com.intellij.dts.lang.DtsTokenType("RANGL");
   com.intellij.psi.tree.IElementType RBRACE = new com.intellij.dts.lang.DtsTokenType("RBRACE");
   com.intellij.psi.tree.IElementType RBRACKET = new com.intellij.dts.lang.DtsTokenType("RBRACKET");
@@ -233,44 +219,11 @@ public interface DtsTypes {
       else if (type == PAREN_EXPR) {
         return new com.intellij.dts.lang.psi.impl.DtsParenExprImpl(node);
       }
-      else if (type == PP_DEFINE_STATEMENT) {
-        return new com.intellij.dts.lang.psi.impl.DtsPpDefineStatementImpl(node);
-      }
-      else if (type == PP_ELIFDEF_STATEMENT) {
-        return new com.intellij.dts.lang.psi.impl.DtsPpElifdefStatementImpl(node);
-      }
-      else if (type == PP_ELIFNDEF_STATEMENT) {
-        return new com.intellij.dts.lang.psi.impl.DtsPpElifndefStatementImpl(node);
-      }
-      else if (type == PP_ELIF_STATEMENT) {
-        return new com.intellij.dts.lang.psi.impl.DtsPpElifStatementImpl(node);
-      }
-      else if (type == PP_ELSE_STATEMENT) {
-        return new com.intellij.dts.lang.psi.impl.DtsPpElseStatementImpl(node);
-      }
-      else if (type == PP_ENDIF_STATEMENT) {
-        return new com.intellij.dts.lang.psi.impl.DtsPpEndifStatementImpl(node);
-      }
-      else if (type == PP_IFDEF_STATEMENT) {
-        return new com.intellij.dts.lang.psi.impl.DtsPpIfdefStatementImpl(node);
-      }
-      else if (type == PP_IFNDEF_STATEMENT) {
-        return new com.intellij.dts.lang.psi.impl.DtsPpIfndefStatementImpl(node);
-      }
-      else if (type == PP_IF_STATEMENT) {
-        return new com.intellij.dts.lang.psi.impl.DtsPpIfStatementImpl(node);
-      }
-      else if (type == PP_INCLUDE_STATEMENT) {
-        return new com.intellij.dts.lang.psi.impl.DtsPpIncludeStatementImpl(node);
-      }
       else if (type == PP_MACRO) {
         return new com.intellij.dts.lang.psi.impl.DtsPpMacroImpl(node);
       }
       else if (type == PP_MACRO_EXPR) {
         return new com.intellij.dts.lang.psi.impl.DtsPpMacroExprImpl(node);
-      }
-      else if (type == PP_UNDEF_STATEMENT) {
-        return new com.intellij.dts.lang.psi.impl.DtsPpUndefStatementImpl(node);
       }
       else if (type == PROPERTY) {
         return new com.intellij.dts.lang.psi.impl.DtsPropertyImpl(node);

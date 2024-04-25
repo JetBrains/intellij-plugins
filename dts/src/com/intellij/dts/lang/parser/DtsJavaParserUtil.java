@@ -5,15 +5,14 @@ import com.intellij.dts.pp.lang.parser.PpBuildAdapter;
 import com.intellij.dts.pp.lang.parser.PpParserUtilBase;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
-import com.intellij.lang.parser.GeneratedParserUtilBase;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 
-import java.util.Arrays;
+import java.util.List;
 
 public class DtsJavaParserUtil extends PpParserUtilBase {
   public static PsiBuilder adapt_builder_(IElementType root, PsiBuilder builder, PsiParser parser, TokenSet[] extendsSets) {
-    final var state = new GeneratedParserUtilBase.ErrorState();
+    final var state = new ErrorState();
     ErrorState.initState(state, builder, root, extendsSets);
 
     return new PpBuildAdapter(
@@ -21,7 +20,7 @@ public class DtsJavaParserUtil extends PpParserUtilBase {
       state,
       parser,
       DtsPpTokenTypes.INSTANCE,
-      Arrays.asList(new DtsIncludeParser(), new DtsPpParser())
+      List.of(new DtsIncludeParser())
     );
   }
 }

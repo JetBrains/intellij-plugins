@@ -16,10 +16,12 @@ class PpBuildAdapter(
   state: GeneratedParserUtilBase.ErrorState,
   parser: PsiParser,
   tokenTypes: PpTokenTypes,
-  private val parsers: List<PpStatementParser>,
+  additionalParsers: List<PpStatementParser> = listOf(),
 ) : FixedGeneratedBuilder(delegate, state, parser) {
-  val ppScopeSet = tokenTypes.createScopeSet()
-  val ppStatementsSet = TokenSet.orSet(*parsers.map { it.getStatementTokens() }.toTypedArray())
+  private val parsers = additionalParsers + PpStatementParserImpl(tokenTypes)
+
+  internal val ppScopeSet = tokenTypes.createScopeSet()
+  internal val ppStatementsSet = TokenSet.orSet(*parsers.map(PpStatementParser::getStatementTokens).toTypedArray())
 
   private fun builderFactory(): PsiBuilder {
     return FixedGeneratedBuilder(delegate, GeneratedParserUtilBase.ErrorState(), parser)

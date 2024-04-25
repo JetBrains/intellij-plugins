@@ -70,16 +70,14 @@ class DtsTokenType(debugName: String) : IElementType(debugName, DtsLanguage) {
       DtsTypes.TERNARY -> "?"
 
       // c preprocessor
-      DtsTypes.PP_INCLUDE -> "#include"
-      DtsTypes.PP_IFDEF -> "#ifdef"
-      DtsTypes.PP_IFNDEF -> "#ifndef"
-      DtsTypes.PP_ENDIF -> "#endif"
-      DtsTypes.PP_DEFINE -> "#define"
-      DtsTypes.PP_UNDEF -> "#undef"
-
-      DtsTypes.PP_SYMBOL -> "identifier"
-      DtsTypes.PP_DEFINE_VALUE -> "value"
-      DtsTypes.PP_INCLUDE_PATH -> "include path"
+      DtsTypes.PP_DIRECTIVE -> "directive"
+      DtsTypes.PP_IDENTIFIER -> "identifier"
+      DtsTypes.PP_HEADER_NAME -> "header"
+      DtsTypes.PP_OPERATOR_OR_PUNCTUATOR -> "operator or punctuator"
+      DtsTypes.PP_INTEGER_LITERAL -> "integer"
+      DtsTypes.PP_CHAR_LITERAL -> "char"
+      DtsTypes.PP_FLOAT_LITERAL -> "float"
+      DtsTypes.PP_STRING_LITERAL -> "string"
 
       else -> super.toString()
     }

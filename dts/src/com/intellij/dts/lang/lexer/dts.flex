@@ -62,7 +62,7 @@ EOL               = "\n" | "\r" | "\r\n"
 EOL_ESC           = "\\"{LINE_WS}*{EOL}
 LINE_WS           = [\ \t]
 
-PP_DIRECTIVES    = "include" | "if" | "ifdef" | "ifndef" | "else" | "elif" | "endif" | "define" | "undef"
+PP_DIRECTIVES    = "include" | "define" | "undef" | "if" | "ifdef" | "ifndef" | "else" | "elif" | "elifdef" | "elifndef" | "endif"
 
 // node or property names
 NAME              = [a-zA-Z0-9,._+*#?@-]+
@@ -89,7 +89,7 @@ COMMENT_C         = "/*"([^*]|"*"[^/])*"*/"
 {COMMENT_EOL}                                       { return DtsTypes.COMMENT_EOL; }
 
 // c prerpocssor statments
-"#"{LINE_WS}*{PP_DIRECTIVES} (.+ | {EOL_ESC})*     { return DtsTypes.PP_STATEMENT_MARKER; }
+"#"{LINE_WS}*{PP_DIRECTIVES} (.+ | {COMMENT_C} | {EOL_ESC})* { return DtsTypes.PP_STATEMENT_MARKER; }
 
 "/dts-v1/"                                          { resetState(); return DtsTypes.V1; }
 "/plugin/"                                          { resetState(); return DtsTypes.PLUGIN; }

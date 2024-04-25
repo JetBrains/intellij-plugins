@@ -1,8 +1,9 @@
 package com.intellij.dts.lang.parser
 
 import com.intellij.dts.lang.DtsFile
+import com.intellij.dts.lang.DtsPpTokenTypes
 import com.intellij.dts.lang.DtsTokenSets
-import com.intellij.dts.lang.lexer.DtsLexerAdapter
+import com.intellij.dts.lang.lexer.DtsParserLexerAdapter
 import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.dts.lang.stubs.DtsFileStub
 import com.intellij.lang.ASTNode
@@ -17,17 +18,17 @@ import com.intellij.psi.tree.IFileElementType
 import com.intellij.psi.tree.TokenSet
 
 open class DtsParserDefinition : ParserDefinition {
-  override fun createLexer(project: Project?): Lexer = DtsLexerAdapter()
+  override fun createLexer(project: Project?): Lexer = DtsParserLexerAdapter()
 
   override fun createParser(project: Project?): PsiParser = DtsParser()
 
   override fun getFileNodeType(): IFileElementType = DtsFileStub.Type
 
-  override fun getCommentTokens(): TokenSet = DtsTokenSets.comments
+  override fun getCommentTokens(): TokenSet = TokenSet.create(*DtsTokenSets.comments.types, DtsTypes.PP_INACTIVE)
 
   override fun getStringLiteralElements(): TokenSet = DtsTokenSets.strings
 
-  override fun createElement(node: ASTNode?): PsiElement = DtsTypes.Factory.createElement(node)
+  override fun createElement(node: ASTNode?): PsiElement = DtsPpTokenTypes.createElement(node, DtsTypes.Factory::createElement)
 
   override fun createFile(viewProvider: FileViewProvider): PsiFile {
     return when (viewProvider.virtualFile.extension) {

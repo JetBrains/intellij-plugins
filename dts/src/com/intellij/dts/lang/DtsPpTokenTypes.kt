@@ -5,44 +5,22 @@ import com.intellij.dts.pp.lang.PpTokenTypes
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 
-object DtsPpTokenTypes : PpTokenTypes {
-  override val defineStatement: IElementType = DtsTypes.PP_DEFINE_STATEMENT
-  override val defineDirective: IElementType = DtsTypes.PP_DEFINE
-  override val defineValue: IElementType = DtsTypes.PP_DEFINE_VALUE
+object DtsPpTokenTypes : PpTokenTypes() {
+  override val statement: IElementType = DtsTypes.PP_STATEMENT
+  override val directive: IElementType = DtsTypes.PP_DIRECTIVE
 
-  override val endifStatement: IElementType = DtsTypes.PP_ENDIF_STATEMENT
-  override val endifDirective: IElementType = DtsTypes.PP_ENDIF
+  override val lineBreak: IElementType = DtsTypes.PP_LINE_BRAK
+  override val comment: IElementType = DtsTypes.PP_COMMENT
+  override val inactive: IElementType = DtsTypes.PP_INACTIVE
 
-  override val ifStatement: IElementType = DtsTypes.PP_IF_STATEMENT
-  override val ifDirective: IElementType = DtsTypes.PP_IF
+  override val headerName: IElementType = DtsTypes.PP_HEADER_NAME
 
-  override val ifdefStatement: IElementType = DtsTypes.PP_IFDEF_STATEMENT
-  override val ifdefDirective: IElementType = DtsTypes.PP_IFDEF
-
-  override val ifndefStatement: IElementType = DtsTypes.PP_IFNDEF_STATEMENT
-  override val ifndefDirective: IElementType = DtsTypes.PP_IFNDEF
-
-  override val elifStatement: IElementType = DtsTypes.PP_ELIF_STATEMENT
-  override val elifDirective: IElementType = DtsTypes.PP_ELIF
-
-  override val elifdefStatement: IElementType = DtsTypes.PP_ELIFDEF_STATEMENT
-  override val elifdefDirective: IElementType = DtsTypes.PP_ELIFDEF
-
-  override val elifndefStatement: IElementType = DtsTypes.PP_ELIFNDEF_STATEMENT
-  override val elifndefDirective: IElementType = DtsTypes.PP_ELIFNDEF
-
-  override val elseStatement: IElementType = DtsTypes.PP_ELSE_STATEMENT
-  override val elseDirective: IElementType = DtsTypes.PP_ELSE
-
-  override val includeStatement: IElementType = DtsTypes.PP_INCLUDE_STATEMENT
-  override val includeDirective: IElementType = DtsTypes.PP_INCLUDE
-  override val includePath: IElementType = DtsTypes.PP_INCLUDE_PATH
-
-  override val undefStatement: IElementType = DtsTypes.PP_UNDEF_STATEMENT
-  override val undefDirective: IElementType = DtsTypes.PP_UNDEF
-
-  override val symbol: IElementType = DtsTypes.PP_SYMBOL
-  override val expression: IElementType = DtsTypes.PP_EXPRESSION
+  override val identifier: IElementType = DtsTypes.PP_IDENTIFIER
+  override val operatorOrPunctuator: IElementType = DtsTypes.PP_OPERATOR_OR_PUNCTUATOR
+  override val integerLiteral: IElementType = DtsTypes.PP_INTEGER_LITERAL
+  override val charLiteral: IElementType = DtsTypes.PP_CHAR_LITERAL
+  override val floatLiteral: IElementType = DtsTypes.PP_FLOAT_LITERAL
+  override val stringLiteral: IElementType = DtsTypes.PP_STRING_LITERAL
 
   override val statementEnd: IElementType = DtsTypes.PP_STATEMENT_END
   override val statementMarker: IElementType = DtsTypes.PP_STATEMENT_MARKER

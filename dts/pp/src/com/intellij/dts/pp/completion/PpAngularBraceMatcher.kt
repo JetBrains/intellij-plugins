@@ -12,6 +12,8 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 
+// TODO: migrate this to dts
+
 // implementation from com.intellij.codeInsight.editorActions.JavaTypedHandler
 abstract class PpAngularBraceTypedHandler : TypedHandlerDelegate() {
   private var lAngleTyped = false

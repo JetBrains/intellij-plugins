@@ -1,0 +1,45 @@
+{
+  parserImports="static com.intellij.lang.WhitespacesBinders.*"
+  parserClass="com.intellij.dts.pp.test.impl.TestParser"
+
+  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+  generate=[visitor="no" fqn="yes"]
+
+  psiClassPrefix="Test"
+  psiImplClassSuffix="Impl"
+  psiPackage="com.intellij.dts.pp.test.impl.psi"
+  psiImplPackage="com.intellij.dts.pp.test.impl.psi"
+
+  elementTypeHolderClass="com.intellij.dts.pp.test.impl.psi.TestTypes"
+  elementTypeClass="com.intellij.dts.pp.test.impl.TestElementType"
+
+  tokenTypeClass="com.intellij.dts.pp.test.impl.TestTokenType"
+
+  tokens=[
+    COMMENT="COMMENT"
+
+    PP_MACRO_ARG="PP_MACRO_ARG"
+
+    PP_STATEMENT_MARKER="PP_STATEMENT_MARKER"
+    PP_STATEMENT_END="PP_STATEMENT_END"
+
+    PP_STATEMENT ="PP_STATEMENT"
+    PP_DIRECTIVE ="PP_DIRECTIVE"
+
+    PP_LINE_BREAK="PP_LINE_BREAK"
+    PP_COMMENT="PP_COMMENT"
+    PP_INACTIVE="PP_INACTIVE"
+
+    PP_HEADER_NAME="PP_HEADER_NAME"
+
+    PP_IDENTIFIER="PP_IDENTIFIER"
+    PP_OPERATOR_OR_PUNCTUATOR ="PP_OPERATOR_OR_PUNCTUATOR"
+    PP_INTEGER_LITERAL ="PP_INTEGER_LITERAL"
+    PP_CHAR_LITERAL ="PP_CHAR_LITERAL"
+    PP_FLOAT_LITERAL ="PP_FLOAT_LITERAL"
+    PP_STRING_LITERAL ="PP_STRING_LITERAL"
+  ]
+}
+
+file ::= TOKEN

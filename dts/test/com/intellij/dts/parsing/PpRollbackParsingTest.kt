@@ -55,8 +55,7 @@ private class TreeToBuffer(private val buffer: Appendable, private val ignore: T
 class PpRollbackParsingTest : DtsParsingTestBase("ppRollback") {
   private val variants = mapOf(
     DtsTypes.INCLUDE_STATEMENT to "/include/ \"file\"",
-    DtsTypes.PP_INCLUDE_STATEMENT to "#include <file>",
-    DtsTypes.PP_DEFINE_STATEMENT to "#define VALUE value \\\nvalue",
+    DtsTypes.PP_STATEMENT to "#define test test",
   )
 
   private fun psiToString(element: PsiElement, ignore: TokenSet): String {

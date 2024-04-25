@@ -69,7 +69,7 @@ object DtsUtil {
     return type != TokenType.WHITE_SPACE &&
            type !in DtsTokenSets.comments &&
            type != DtsTypes.INCLUDE_STATEMENT &&
-           type !in DtsTokenSets.ppStatements
+           type != DtsTypes.PP_STATEMENT
   }
 
   fun <T> singleResult(callback: () -> T?): List<T> {

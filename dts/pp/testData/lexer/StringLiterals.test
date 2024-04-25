@@ -1,0 +1,9 @@
+// basic strings
+#test "string"
+#test "string
+#test u8""
+#test LR"'"
+
+// raw strings
+#test R"(string)"
+#test LR"$("")$"

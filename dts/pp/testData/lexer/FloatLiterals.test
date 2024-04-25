@@ -1,0 +1,19 @@
+// Decimal Floating-point Literals
+#test 12345.67890
+#test .12345
+#test 12345.
+#test 10e5
+#test 10E-5
+
+// Hexadecimal Floating-point Literals
+#test 0x1.1p1
+#test 0X1.1P-1
+#test 0x1p1
+#test 0X.1P1
+
+// Float Suffix Variants
+#test 12345.f
+#test 12345.f16
+#test 12345.f64
+#test 12345.f128
+#test 12345.BF16

@@ -1,0 +1,25 @@
+// Binary Literals
+#test 0b1'01010
+#test 0B1100'11
+
+// Octal Literals
+#test 0'12345
+#test 02513'7
+
+// Decimal Literals
+#test 1'2345
+#test 9782'61
+
+// Hexadecimal Literals
+#test 0x1'a3f
+#test 0Xbc9'2
+
+// Suffix Variants
+#test 0u
+#test 0UL
+#test 0lu
+#test 0L
+#test 0ll
+#test 0LL
+#test 0z
+#test 0Zu

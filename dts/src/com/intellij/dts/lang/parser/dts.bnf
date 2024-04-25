@@ -83,16 +83,30 @@
   hooks("nodeContent")=[rightBinder="GREEDY_RIGHT_BINDER" leftBinder="GREEDY_LEFT_BINDER"]
   hooks("entry")=[rightBinder="trailingCommentsBinder" leftBinder="leadingCommentsBinder"]
 
-  // c preprocessor rules
-
-  implements("ppIncludeStatement")="com.intellij.dts.lang.psi.PsiFileInclude"
-  mixin("ppIncludeStatement")="com.intellij.dts.lang.psi.mixin.PpIncludeStatementMixin"
-
   tokens=[
     COMMENT_EOL="COMMENT_EOL"
     COMMENT_C="COMMENT_C"
-    PP_STATEMENT_MARKER="PP_STATEMENT_MARKER"
+
     PP_MACRO_ARG="PP_MACRO_ARG"
+
+    PP_STATEMENT_MARKER="PP_STATEMENT_MARKER"
+    PP_STATEMENT_END="PP_STATEMENT_END"
+
+    PP_STATEMENT ="PP_STATEMENT"
+    PP_DIRECTIVE ="PP_DIRECTIVE"
+
+    PP_LINE_BRAK="PP_LINE_BREAK"
+    PP_COMMENT="PP_COMMENT"
+    PP_INACTIVE="PP_INACTIVE"
+
+    PP_HEADER_NAME="PP_HEADER_NAME"
+
+    PP_IDENTIFIER="PP_IDENTIFIER"
+    PP_OPERATOR_OR_PUNCTUATOR ="PP_OPERATOR_OR_PUNCTUATOR"
+    PP_INTEGER_LITERAL ="PP_INTEGER_LITERAL"
+    PP_CHAR_LITERAL ="PP_CHAR_LITERAL"
+    PP_FLOAT_LITERAL ="PP_FLOAT_LITERAL"
+    PP_STRING_LITERAL ="PP_STRING_LITERAL"
   ]
 }
 
@@ -230,33 +244,3 @@ external afterLineBreak ::= parseAfterLineBreak
 // fallback to handle unknown identifiers like macros
 ppMacro ::= parserPpMacro
 external parserPpMacro ::= parsePpMacro
-
-// c preprocessor rules
-private ppStatement ::= () (ppStatements) PP_STATEMENT_END { pin=1 }
-
-private ppStatements ::=
-    ppIncludeStatement |
-    ppIfdefStatement |
-    ppIfndefStatement |
-    ppEndifStatement |
-    ppDefineStatement |
-    ppUndefStatement |
-    ppIfStatement |
-    ppElifStatement |
-    ppElseStatement
-{ recoverWhile="pp_statementRecover" }
-
-private pp_statementRecover ::= !(PP_STATEMENT_END)
-
-ppIncludeStatement ::= PP_INCLUDE PP_INCLUDE_PATH { pin=1 }
-
-ppIfdefStatement ::= PP_IFDEF PP_SYMBOL { pin=1 }
-ppIfndefStatement ::= PP_IFNDEF PP_SYMBOL { pin=1 }
-ppIfStatement ::= PP_IF PP_EXPRESSION { pin=1 }
-ppElifStatement ::= PP_ELIF PP_EXPRESSION { pin=1 }
-ppElifdefStatement ::= PP_ELIFDEF PP_SYMBOL { pin=1 }
-ppElifndefStatement ::= PP_ELIFNDEF PP_SYMBOL { pin=1 }
-ppElseStatement ::= PP_ELSE
-ppEndifStatement ::= PP_ENDIF
-ppDefineStatement ::= PP_DEFINE PP_SYMBOL PP_DEFINE_VALUE? { pin=1 }
-ppUndefStatement ::= PP_UNDEF PP_SYMBOL { pin=1 }
