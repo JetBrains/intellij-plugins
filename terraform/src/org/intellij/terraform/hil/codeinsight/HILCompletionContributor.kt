@@ -79,17 +79,7 @@ open class HILCompletionContributor : CompletionContributor(), DumbAware {
     }
   }
 
-  private abstract class SelectFromScopeCompletionProvider(val scope: String) : CompletionProvider<CompletionParameters>() {
-    override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
-      val position = parameters.position
-      val parent = position.parent as? Identifier ?: return
-      val pp = parent.parent as? SelectExpression<*> ?: return
-      val from = pp.from as? Identifier ?: return
-      if (scope != from.name) return
-      LOG.debug { "HIL.SelectFromScopeCompletionProvider($scope){position=$position, parent=$parent, pp=$pp}" }
-      doAddCompletions(parent, parameters, context, result)
-    }
-
+  private abstract class SelectFromScopeCompletionProvider(val scope: String) {
     abstract fun doAddCompletions(variable: Identifier,
                                   parameters: CompletionParameters,
                                   context: ProcessingContext,
@@ -103,7 +93,7 @@ open class HILCompletionContributor : CompletionContributor(), DumbAware {
       val pp = parent.parent as? SelectExpression<*> ?: return
       val from = pp.from as? Identifier ?: return
       val provider = this@HILCompletionContributor.scopeProviders[from.name] ?: return
-      LOG.debug { "HIL.SelectFromScopeCompletionProviderAny($from.name){position=$position, parent=$parent, pp=$pp}" }
+      LOG.debug { "HIL.SelectFromScopeCompletionProvider(${from.name}){position=$position, parent=$parent, pp=$pp}" }
       provider.doAddCompletions(parent, parameters, context, result)
     }
   }
@@ -447,7 +437,7 @@ open class HILCompletionContributor : CompletionContributor(), DumbAware {
 
   }
 
-  private object ResourceTypesCompletionProvider : TerraformConfigCompletionContributor.OurCompletionProvider() {
+  private object ResourceTypesCompletionProvider : TerraformConfigCompletionContributor.TfCompletionProvider() {
     override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
       val position = parameters.position
       val parent = position.parent as? BaseExpression ?: return
@@ -503,4 +493,3 @@ fun <T : PsiElement, Self : PsiElementPattern<T, Self>> PsiElementPattern<T, Sel
     }
   })
 }
-

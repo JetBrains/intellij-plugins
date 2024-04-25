@@ -16,7 +16,7 @@ import org.intellij.terraform.hcl.psi.common.Identifier
 import org.intellij.terraform.hcl.psi.common.SelectExpression
 import org.intellij.terraform.hil.psi.impl.getHCLHost
 
-object ForEachIteratorCompletionProvider : TerraformConfigCompletionContributor.OurCompletionProvider() {
+object ForEachIteratorCompletionProvider : TerraformConfigCompletionContributor.TfCompletionProvider() {
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
     val id = parameters.position.parent as? Identifier ?: return
     val host = id.getHCLHost() ?: return

@@ -15,7 +15,7 @@ import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.getInco
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.hcl.psi.*
 
-object PropertyObjectKeyCompletionProvider : TerraformConfigCompletionContributor.OurCompletionProvider() {
+object PropertyObjectKeyCompletionProvider : TerraformConfigCompletionContributor.TfCompletionProvider() {
   private val LOG = Logger.getInstance(PropertyObjectKeyCompletionProvider::class.java)
 
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {

@@ -210,7 +210,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
     }
   }
 
-  abstract class OurCompletionProvider : CompletionProvider<CompletionParameters>() {
+  abstract class TfCompletionProvider : CompletionProvider<CompletionParameters>() {
     protected fun getTypeModel(): TypeModel {
       return TypeModelProvider.globalModel
     }
@@ -224,7 +224,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
     }
   }
 
-  private object BlockKeywordCompletionProvider : OurCompletionProvider() {
+  private object BlockKeywordCompletionProvider : TfCompletionProvider() {
     override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
       val position = parameters.position
       val parent = position.parent
@@ -235,7 +235,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
     }
   }
 
-  object BlockTypeOrNameCompletionProvider : OurCompletionProvider() {
+  object BlockTypeOrNameCompletionProvider : TfCompletionProvider() {
 
     override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
       val position = parameters.position
@@ -308,7 +308,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
     }
   }
 
-  private object BlockPropertiesCompletionProvider : OurCompletionProvider() {
+  private object BlockPropertiesCompletionProvider : TfCompletionProvider() {
     override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
       val position = parameters.position
       var parent: PsiElement? = position.parent
@@ -426,7 +426,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
     }
   }
 
-  private object PropertyValueCompletionProvider : OurCompletionProvider() {
+  private object PropertyValueCompletionProvider : TfCompletionProvider() {
     override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
       val position = parameters.position
       val parent = position.parent
@@ -489,7 +489,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
     }
   }
 
-  private object VariableNameTFVARSCompletionProvider : OurCompletionProvider() {
+  private object VariableNameTFVARSCompletionProvider : TfCompletionProvider() {
     override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
       val position = parameters.position
       val parent = position.parent
@@ -511,7 +511,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
     }
   }
 
-  private object MappedVariableTFVARSCompletionProvider : OurCompletionProvider() {
+  private object MappedVariableTFVARSCompletionProvider : TfCompletionProvider() {
     override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
       val position = parameters.position
       val parent = position.parent
