@@ -334,7 +334,7 @@ open class PropertyType(override val name: String, val type: Type,
                   deprecated = deprecated, conflictsWith = conflictsWith), PropertyOrBlockType {
 
   override fun toString(): String {
-    return "PropertyType(name='$name', type='${type.presentableText}')"
+    return "PropertyType (name='$name', type='${type.presentableText}')"
   }
 
   override fun equals(other: Any?): Boolean {
@@ -444,7 +444,7 @@ open class BlockType(val literal: String, val args: Int = 0,
   }
 
   override fun toString(): String {
-    return "BlockType(${this.presentableText})"
+    return "BlockType (${this.presentableText})"
   }
 }
 
@@ -498,56 +498,56 @@ object Types {
 
 class ResourceType(val type: String, val provider: ProviderType, properties: List<PropertyOrBlockType>) : BlockType("resource", 2, properties = withDefaults(properties, TypeModel.AbstractResource)) {
   override fun toString(): String {
-    return "ResourceType(type='$type', provider=${provider.type})"
+    return "ResourceType (type='$type', provider='${provider.presentableText}')"
   }
 
   override val presentableText: String
-    get() = "resource($type)"
+    get() = "$literal ($type)"
 }
 
 class DataSourceType(val type: String, val provider: ProviderType, properties: List<PropertyOrBlockType>) : BlockType("data", 2, properties = withDefaults(properties, TypeModel.AbstractDataSource)) {
   override fun toString(): String {
-    return "DataSourceType(type='$type', provider=${provider.type})"
+    return "DataSourceType (type='$type', provider='${provider.presentableText}')"
   }
 
   override val presentableText: String
-    get() = "data-source($type)"
+    get() = "$literal ($type)"
 }
 
 class ProviderType(val type: String, properties: List<PropertyOrBlockType>, val namespace: String = "") : BlockType("provider", 1, properties = withDefaults(properties, TypeModel.AbstractProvider)) {
   override fun toString(): String {
-    return "ProviderType(type='$type' namespace='$namespace')"
+    return "ProviderType (type='$type' namespace='$namespace')"
   }
 
   override val presentableText: String
-    get() = "provider($type)"
+    get() = "$literal ($namespace/$type)"
 }
 
 class ProvisionerType(val type: String, properties: List<PropertyOrBlockType>) : BlockType("provisioner", 1, properties = withDefaults(properties, TypeModel.AbstractResourceProvisioner)) {
   override fun toString(): String {
-    return "ProvisionerType(type='$type')"
+    return "ProvisionerType (type='$type')"
   }
 
   override val presentableText: String
-    get() = "provisioner($type)"
+    get() = "$literal ($type)"
 }
 
 class BackendType(val type: String, properties: List<PropertyOrBlockType>) : BlockType("backend", 1, properties = withDefaults(properties, TypeModel.AbstractBackend)) {
   override fun toString(): String {
-    return "BackendType(type='$type')"
+    return "BackendType (type='$type')"
   }
 
   override val presentableText: String
-    get() = "backend($type)"
+    get() = "$literal ($type)"
 }
 
 class ModuleType(override val name: String, properties: List<PropertyOrBlockType>) : BlockType("module", 1, properties = withDefaults(properties, TypeModel.Module)) {
   override fun toString(): String {
-    return "ModuleType(name='$name')"
+    return "ModuleType (name='$name')"
   }
 
   override val presentableText: String
-    get() = "module($name)"
+    get() = "$literal ($name)"
 }
 
 private fun withDefaults(properties: List<PropertyOrBlockType>, default: BlockType): Map<String, PropertyOrBlockType> {

@@ -263,9 +263,10 @@ class TerraformMetadataLoader {
   private fun parseFile(json: ObjectNode, file: String) {
     val type: String
     val version: String
-    if (json.has("format_version")) {
+    val schemasNode = json.get("schemas") ?: json
+    if (schemasNode.has("format_version"))  {
       type = "terraform-providers-schema-json"
-      version = json.string("format_version")!!
+      version = schemasNode.get("format_version").textValue()
     }
     else {
       type = json.string("type") ?: "unknown"

@@ -280,7 +280,7 @@ class TerraformProvidersSchema : VersionedMetadataLoader {
   override fun load(context: LoadContext, json: ObjectNode, file: String) {
     val model = context.model
 
-    val providers = json.obj("provider_schemas")
+    val providers = json.get("schemas")?.get("provider_schemas") ?: json.obj("provider_schemas")
     for ((n, provider) in providers!!.fields().asSequence()) {
       val stringList = n.split("/")
       val (name, namespace) = stringList.takeIf { it.size == 3 && it[0] == "registry.terraform.io" || it[0] == "terraform.io" }?.let { Pair(it[2], it[1]) } ?: Pair(n, n)
@@ -300,7 +300,6 @@ class TerraformProvidersSchema : VersionedMetadataLoader {
       resources?.let { it.fields().asSequence().mapTo(model.resources) { parseResourceInfo(context, it, info) } }
       dataSources?.let { it.fields().asSequence().mapTo(model.dataSources) { parseDataSourceInfo(context, it, info) } }
     }
-
   }
 
   private fun parseProviderInfo(context: LoadContext, name: String, namespace: String, obj: ObjectNode): ProviderType? {

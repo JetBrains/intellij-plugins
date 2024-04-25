@@ -10,6 +10,7 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
+import java.util.concurrent.atomic.AtomicInteger
 
 object TerraformProvidersMetadataBuilder {
 
@@ -18,7 +19,6 @@ object TerraformProvidersMetadataBuilder {
   private val httpClient: HttpClient = HttpClient.newBuilder().build()
 
   private val terraformRegistryHost = System.getenv("TERRAFORM_REGISTRY_HOST") ?: "https://registry.terraform.io"
-  private val providersInRegistry = System.getenv("PROVIDERS_IN_REGISTRY")?.toInt() ?: 4108
   private val downloadsLimitForProvider = System.getenv("DOWNLOADS_LIMIT_FOR_PROVIDER")?.toInt() ?: 10000
   private val mandatoryProvidersCount = System.getenv("MANDATORY_PROVIDERS_COUNT")?.toInt() ?: 33
 
@@ -59,7 +59,7 @@ object TerraformProvidersMetadataBuilder {
       "partner" -> 1
       else -> 0
     }
-  }.thenComparing(Comparator.comparing { it["attributes"]["downloads"].asLong() })
+  }.thenComparing(Comparator.comparing { it["attributes"]["downloads"].asLong() }).reversed()
 
   @JvmStatic
   fun main(args: Array<String>) {
@@ -68,10 +68,6 @@ object TerraformProvidersMetadataBuilder {
     if (!allOut.exists())
       objectMapper.writerWithDefaultPrettyPrinter().writeValue(allOut,
                                                                getProvidersDataFromPages().asIterable())
-
-    val allProvidersData = objectMapper.readTree(allOut)
-
-    checkTotalProvidersAmount(allProvidersData)
 
     val buildInProvider = objectMapper.nodeFactory.let { nf ->
       nf.objectNode().set<JsonNode>("attributes",
@@ -84,91 +80,74 @@ object TerraformProvidersMetadataBuilder {
 
     val providerVendorsTier = setOf("partner", "official")
     val mostUsefulProviders = sequenceOf<JsonNode>(buildInProvider) +
-                              allProvidersData.elements().asSequence()
+                              objectMapper.readTree(allOut).elements().asSequence()
                                 .filter { providerData ->
                                   val attributes = providerData["attributes"]
-                                  providerVendorsTier.contains(attributes["tier"].asText())
-                                   || attributes["downloads"].asLong() >= downloadsLimitForProvider
+                                  val unlisted = attributes["unlisted"].asBoolean()
+                                  !unlisted && (providerVendorsTier.contains(attributes["tier"].asText())
+                                                || attributes["downloads"].asLong() >= downloadsLimitForProvider)
                                 }
-    val selected = mostUsefulProviders
-      .groupBy { it["attributes"]["name"] }
-      .mapValues {
-        val ambiguous = it.value
-        val selected = ambiguous.maxWith(provComparator)
-        if (ambiguous.size > 1) {
-          println(
-            "multiple providers for '${selected["attributes"]["name"].asText()}, '${selected["attributes"]["full-name"].asText()}' " +
-            "is selected among ${ambiguous.map { it["attributes"]["full-name"] }}")
-        }
-        selected
-      }.values
-
-    println("Selected ${selected.size} most useful providers")
-
-    checkMandatoryHashicorpProviders(selected)
 
     val version = getTerraformVersion()
     println("terraform version: $version")
 
     val outputDir = File("plugins-meta").apply { mkdirs() }
     val generatedJsonFileNames = mutableListOf<String>()
-    selected.asSequence().map {
-      buildProviderMetadata(it, version, outputDir)
-    }.forEach {file ->
+    val hashicorpProvidersCount = AtomicInteger(0)
+    mostUsefulProviders.forEach { data ->
+      val name = data["attributes"]["full-name"].asText()
+      if (name.contains("hashicorp")) hashicorpProvidersCount.incrementAndGet()
+      println("Processing: $name")
+      val file = buildProviderMetadata(data, version, outputDir)
       if (file.exists()) {
         println("Schema file generated: ${file.path}")
-        generatedJsonFileNames.add(file.nameWithoutExtension)
+        generatedJsonFileNames.add(name)
       }
       else {
-        println("Error generating schema for provider: ${file.nameWithoutExtension}")
+        println("Error generating schema for provider: ${name}")
       }
     }
+    assert(hashicorpProvidersCount.toInt() >= mandatoryProvidersCount, { "We must have all mandatory providers from hashicorp. Selected ${hashicorpProvidersCount} of ${this.mandatoryProvidersCount}" })
     File(File(outputDir, "resources/model").apply { mkdirs() }, "providers.list").writeText(generatedJsonFileNames.sorted().joinToString("\n"))
   }
 
-  private fun checkTotalProvidersAmount(allProvidersData: JsonNode) {
-    val totalProviders = allProvidersData.elements().asSequence().count()
-    println("Total providers downloaded: = $totalProviders")
-    assert(totalProviders >= providersInRegistry, { "Terraform should provide at least ${providersInRegistry}" })
-  }
-
-  private fun checkMandatoryHashicorpProviders(selected: Collection<JsonNode>) {
-    val mandatoryProviders = selected.count { provider ->
-      provider["attributes"]["namespace"].asText().contains("hashicorp")
-    }
-    assert(mandatoryProviders >= mandatoryProvidersCount, { "We must have all mandatory providers from hashicorp. Selected ${mandatoryProviders} of ${mandatoryProvidersCount}" })
-  }
-
-  private fun buildProviderMetadata(provider: JsonNode,
+  private fun buildProviderMetadata(data: JsonNode,
                                     version: String,
                                     outputDir: File): File {
-    return run {
-      val fullName = provider["attributes"]["full-name"].asText()
-      val name = provider["attributes"]["name"].asText().lowercase()
-      println("provider: $fullName")
+    val name = data["attributes"]["full-name"].asText()
+    println("Provider: $name")
+    val dir = name.substringBeforeLast("/")
+    val file = name.substringAfterLast("/")
 
-      val tfgendir = File("terraform-gen-dir/${name}")
-      tfgendir.mkdirs()
 
-      writeVersionsTfFile(tfgendir, version, fullName)
+    val tfgendir = File("terraform-gen-dir/${dir}").apply { mkdirs() }
 
-      val logFile = File(File(outputDir, "logs").apply { mkdirs() }, "$name.log")
-      val initError = initTerraform(tfgendir, logFile)
+    writeVersionsTfFile(tfgendir, version, name)
 
-      val schemaFile = File(File(outputDir, "resources/model/providers").apply { mkdirs() }, "$name.json")
-      val schemaError: String = generateTerraformSchema(tfgendir, schemaFile)
+    val logFile = File(File(outputDir, "logs/$dir").apply { mkdirs() }, "$file.log")
+    val initError = initTerraform(tfgendir, logFile)
 
-      if (schemaFile.length() <= 0L) {
-        schemaFile.delete()
-        val failures = File(outputDir, "failed")
-        val failureDir = File(failures, name).apply { deleteRecursively() }.also { it.mkdirs() }
-        File(tfgendir, "versions.tf").copyTo(File(failureDir, "versions.tf"))
-        File(failureDir, "init.err").writeText(initError)
-        File(failureDir, "schema.err").writeText(schemaError)
-      }
-      deleteDirRecursively(tfgendir)
-      schemaFile
+    val schemaFile = File(File(outputDir, "resources/model/providers/$dir").apply { mkdirs() }, "$file.json")
+    val schemaError: String = generateTerraformSchema(tfgendir, schemaFile)
+
+    if (schemaFile.length() <= 0L) {
+      schemaFile.delete()
+      val failures = File(outputDir, "failed/$dir")
+      val failureDir = File(failures, file).apply { deleteRecursively() }.also { it.mkdirs() }
+      File(tfgendir, "versions.tf").copyTo(File(failureDir, "versions.tf"))
+      File(failureDir, "init.err").writeText(initError)
+      File(failureDir, "schema.err").writeText(schemaError)
     }
+    else {
+      val metadataFile = File(File(outputDir, "resources/model/providers/$dir").apply { mkdirs() }, "$file.json.metadata")
+      data.toPrettyString().byteInputStream().use { inputStream ->
+        metadataFile.outputStream().use { outputStream ->
+          inputStream.copyTo(outputStream)
+        }
+      }
+    }
+    deleteDirRecursively(tfgendir)
+    return schemaFile
   }
 
   private fun getTerraformVersion(): String = ProcessBuilder(listOf("terraform", "-v", "--json"))

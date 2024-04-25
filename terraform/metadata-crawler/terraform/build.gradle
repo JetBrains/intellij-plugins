@@ -5,7 +5,7 @@ apply plugin: 'java'
 apply plugin: 'maven-publish'
 
 group = System.getenv('ARTIFACT_GROUP') ?: 'org.intellij.plugins.hcl.terraform'
-version = System.getenv('ARTIFACT_VERSION') ?: '2023.3.0'
+version = System.getenv('ARTIFACT_VERSION') ?: '2024.1.2'
 
 def repositoryUrl = System.getenv('REPO_URL') ?: "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies"
 def repoUsername = System.getenv('REPO_USERNAME') ?: 'spaceUsername'
@@ -24,9 +24,29 @@ processResources {
   dependsOn collectMetadata
   doLast {
     if (!isSnapshot) {
-      print "${outputs.files.asPath}"
-      fileTree(dir: outputs.files.asPath, include: '**/*.json').each {
-        file -> file.text = JsonOutput.toJson(new JsonSlurper().parse(file))
+      println("Processing JSON files in ${outputs.files.asPath}")
+      def slurper = new JsonSlurper()
+      fileTree(dir: outputs.files.asPath).each { file ->
+        if (file.name.endsWith('.json')) {
+
+          println("Processing schemas json: ${file}")
+
+          def jsonContent = slurper.parse(file)
+
+          def metadataFile = new File(file.parent, "${file.name}.metadata")
+          println("Processing metadata json: ${metadataFile}")
+          def metadataContent = new HashMap()
+          if (metadataFile.exists()) {
+            metadataContent = slurper.parse(metadataFile as File)
+            metadataFile.delete()
+          }
+
+          def mergedContent = new HashMap()
+          mergedContent.put("metadata", metadataContent)
+          mergedContent.put("schemas", jsonContent)
+
+          file.text = JsonOutput.toJson(mergedContent)
+        }
       }
     }
   }

@@ -10,7 +10,7 @@ repositories {
 
 apply plugin: 'com.bmuschko.docker-remote-api'
 
-version = '2023.3.0'
+version = '2024.1.2'
 
 task clean {
   delete 'build'

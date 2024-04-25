@@ -287,10 +287,10 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
 
     assertContainsElements(
       model.getResources().stream().filter(it -> it.getType().equals("google_sql_database")).map(Object::toString).toList(),
-      "ResourceType(type='google_sql_database', provider=google)", "ResourceType(type='google_sql_database', provider=google-beta)");
+      "ResourceType (type='google_sql_database', provider='provider (drfaust92/google)')", "ResourceType (type='google_sql_database', provider='provider (hashicorp/google-beta)')");
     assertContainsElements(
       model.getDataSources().stream().filter(it -> it.getType().equals("google_compute_instance")).map(Object::toString).toList(),
-      "DataSourceType(type='google_compute_instance', provider=google)", "DataSourceType(type='google_compute_instance', provider=google-beta)");
+      "DataSourceType (type='google_compute_instance', provider='provider (drfaust92/google)')", "DataSourceType (type='google_compute_instance', provider='provider (hashicorp/google-beta)')");
   }
 
   public void testDataSourcesHasProviderNameAsPrefix() {

@@ -24,11 +24,10 @@ RUN chmod +x /opt/terraform-metadata/ls-schemas-extractor/bin/ls-schemas-extract
 WORKDIR /opt/terraform-metadata
 
 ENV TERRAFORM_REGISTRY_HOST=https://registry.terraform.io
-ENV PROVIDERS_IN_REGISTRY=4108
 ENV DOWNLOADS_LIMIT_FOR_PROVIDER=10000
 ENV MANDATORY_PROVIDERS_COUNT=33
 ENV ARTIFACT_GROUP=org.intellij.plugins.hcl.terraform
-ENV ARTIFACT_VERSION=2023.3.0
+ENV ARTIFACT_VERSION=2024.1.2
 
 ENV REPO_URL=https://packages.jetbrains.team/maven/p/ij/intellij-dependencies
 ENV REPO_USERNAME=spaceUsername

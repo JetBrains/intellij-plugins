@@ -14,22 +14,21 @@ is used
 
 For the image, we can specify the following environment configuration parameters
 
-| Variable Name              | Default Value                                          | Comment                                                           |
-|----------------------------|--------------------------------------------------------|-------------------------------------------------------------------|
-| TERRAFORM_REGISTRY_HOST    | https://registry.terraform.io                          |                                                                   |
-| PROVIDERS_IN_REGISTRY      | 4108                                                   | Minimum providers that can be fetched from the registry           |
-| DOWNLOADS_LIMIT_FOR_PROVIDER | 10000                                                 | Minimum download numbers for provider to include it into metadata |
-| MANDATORY_PROVIDERS_COUNT  | 33                                                     | Nesessary providers number from the `hashicorp` namespace         |
-| ARTIFACT_GROUP             | org.intellij.plugins.hcl.terraform                     | Maven coordinates for the metadata jar                            |
-| ARTIFACT_VERSION           | 2023.3.0                                               | Metadata version                                                  |
+| Variable Name              | Default Value                                                    | Comment                                                           |
+|----------------------------|------------------------------------------------------------------|-------------------------------------------------------------------|
+| TERRAFORM_REGISTRY_HOST    | https://registry.terraform.io                                    |                                                                   |
+| DOWNLOADS_LIMIT_FOR_PROVIDER | 10000                                                            | Minimum download numbers for provider to include it into metadata |
+| MANDATORY_PROVIDERS_COUNT  | 33                                                               | Nesessary providers number from the `hashicorp` namespace         |
+| ARTIFACT_GROUP             | org.intellij.plugins.hcl.terraform                               | Maven coordinates for the metadata jar                            |
+| ARTIFACT_VERSION           | 2024.1.2                                                         | Metadata version                                                  |
 | REPO_URL                   | https://packages.jetbrains.team/maven/p/ij/intellij-dependencies | Maven repository URL                                              |
-| REPO_USERNAME              | spaceUsername                                          | Maven repository username                                         |
-| REPO_PASSWORD              | spacePassword                                          | Maven repository password                                         |
+| REPO_USERNAME              | spaceUsername                                                    | Maven repository username                                         |
+| REPO_PASSWORD              | spacePassword                                                    | Maven repository password                                         |
 
 For example, if we want to change an artifact version, we can specify it in the command line:
-`docker run -d -e ARTIFACT_VERSION=2023.3.1  intellij.terraform/metadata-crawler:<IMAGE_VERSION> publish`
+`docker run -d -e ARTIFACT_VERSION=2024.2.0  intellij.terraform/metadata-crawler:<IMAGE_VERSION> publish`
 
-ℹ️ PROVIDERS_IN_REGISTRY and MANDATORY_PROVIDERS_COUNT settings will fail the build only if assertions are enabled.
+ℹ️Setting variable PROVIDERS_IN_REGISTRY will fail the build only if assertions are enabled.
 Add `-e LS_SCHEMAS_EXTRACTOR_OPTS=-ea` to the docker start command to enable assertions.
 
 ### How to build artifact only
