@@ -38,6 +38,7 @@ import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.getInco
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.getOriginalObject
 import org.intellij.terraform.config.documentation.psi.FakeHCLElementPsiFactory
 import org.intellij.terraform.config.model.*
+import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.config.patterns.TerraformPatterns.DependsOnPattern
 import org.intellij.terraform.config.patterns.TerraformPatterns.TerraformConfigFile
 import org.intellij.terraform.config.patterns.TerraformPatterns.TerraformVariablesFile
@@ -221,6 +222,19 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       result.withRelevanceSorter(
         CompletionSorter.emptySorter().weigh(PreferRequiredProperty)
       ).addAllElements(toAdd)
+    }
+
+    protected fun needCompletionForBlock(block: HCLBlock, property: HCLProperty, type: String?): Boolean {
+      val isRootBlock = TerraformPatterns.RootBlock.accepts(block)
+
+      // Since 'depends_on', 'provider' does not allow interpolations, don't add anything
+      if (DependsOnPattern.accepts(property)) return true
+      if (property.name == "provider" && (type == "resource" || type == "data") && isRootBlock) return true
+      // Same for 'providers' binding in 'module'
+      if (property.name == "providers" && type == "module" && isRootBlock) return true
+
+      val hint = (ModelHelper.getBlockProperties(block)[property.name] as? PropertyType)?.hint
+      return hint is SimpleValueHint || hint is ReferenceHint
     }
   }
 

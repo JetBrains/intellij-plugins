@@ -23,7 +23,6 @@ import org.intellij.terraform.config.codeinsight.TerraformConfigCompletionContri
 import org.intellij.terraform.config.codeinsight.TerraformLookupElementRenderer
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TerraformPatterns
-import org.intellij.terraform.config.patterns.TerraformPatterns.DependsOnPattern
 import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.hcl.psi.HCLPsiUtil.getPrevSiblingNonWhiteSpace
@@ -199,7 +198,7 @@ open class HILCompletionContributor : CompletionContributor(), DumbAware {
     }
   }
 
-  private object MethodsCompletionProvider : CompletionProvider<CompletionParameters>() {
+  private object MethodsCompletionProvider : TerraformConfigCompletionContributor.TfCompletionProvider() {
     override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
       val position = parameters.position
       val parent = position.parent as? BaseExpression ?: return
@@ -236,14 +235,7 @@ open class HILCompletionContributor : CompletionContributor(), DumbAware {
           if (block.fullName == "providers" && type == "module") return
         }
 
-        // Since 'depends_on', 'provider' does not allows interpolations, don't add anything
-        if (DependsOnPattern.accepts(property)) return
-        if (property.name == "provider" && (type == "resource" || type == "data") && isRootBlock) return
-        // Same for 'providers' binding in 'module'
-        if (property.name == "providers" && type == "module" && isRootBlock) return
-
-        val hint = (ModelHelper.getBlockProperties(block)[property.name] as? PropertyType)?.hint
-        if (hint is SimpleValueHint || hint is ReferenceHint) {
+        if (needCompletionForBlock(block, property, type)) {
           return
         }
       }
@@ -461,14 +453,7 @@ open class HILCompletionContributor : CompletionContributor(), DumbAware {
           }
         }
         else {
-          // Since 'depends_on', 'provider' does not allows interpolations, don't add anything
-          if (DependsOnPattern.accepts(property)) return
-          if (property.name == "provider" && (type == "resource" || type == "data") && isRootBlock) return
-          // Same for 'providers' binding in 'module'
-          if (property.name == "providers" && type == "module" && isRootBlock) return
-
-          val hint = (ModelHelper.getBlockProperties(block)[property.name] as? PropertyType)?.hint
-          if (hint is SimpleValueHint || hint is ReferenceHint) {
+          if (needCompletionForBlock(block, property, type)) {
             return
           }
         }

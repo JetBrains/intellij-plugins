@@ -8,6 +8,13 @@ import com.intellij.psi.tree.IElementType
 import org.intellij.terraform.hil.HILElementTypes.*
 
 class HILBraceMatcher : PairedBraceMatcher {
+  private val BRACE_PAIRS = arrayOf(
+    BracePair(INTERPOLATION_START, R_CURLY, true),
+    BracePair(TEMPLATE_START, R_CURLY, true),
+    BracePair(L_CURLY, R_CURLY, true),
+    BracePair(L_PAREN, R_PAREN, true),
+    BracePair(L_BRACKET, R_BRACKET, true)
+  )
 
   override fun getCodeConstructStart(file: PsiFile, openingBraceOffset: Int): Int {
     return openingBraceOffset
@@ -15,16 +22,6 @@ class HILBraceMatcher : PairedBraceMatcher {
 
   override fun isPairedBracesAllowedBeforeType(lbraceType: IElementType, contextType: IElementType?): Boolean {
     return true
-  }
-
-  companion object {
-    private val BRACE_PAIRS = arrayOf(
-        BracePair(INTERPOLATION_START, R_CURLY, true),
-        BracePair(TEMPLATE_START, R_CURLY, true),
-        BracePair(L_CURLY, R_CURLY, true),
-        BracePair(L_PAREN, R_PAREN, true),
-        BracePair(L_BRACKET, R_BRACKET, true)
-    )
   }
 
   override fun getPairs(): Array<BracePair> {
