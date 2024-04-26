@@ -15,7 +15,7 @@ class Angular2BlockParameterSymbol : WebTypesSymbolBase() {
     get() = name == PRIMARY_EXPRESSION
 
   val triggers: List<WebSymbol>
-    get() = queryExecutor.runListSymbolsQuery(NG_DEFER_ON_TRIGGERS, true, scope = listOf(this))
+    get() = queryExecutor.runListSymbolsQuery(NG_DEFER_ON_TRIGGERS, true, additionalScope = listOf(this))
 
   companion object {
     const val PRIMARY_EXPRESSION = "\$primary-expression"

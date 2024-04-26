@@ -23,7 +23,7 @@ class VueBindFilter : WebSymbolsFilter {
   private fun <T> List<T>.filterHtmlEventAttributes(queryExecutor: WebSymbolsQueryExecutor,
                                                     scope: List<WebSymbolsScope>,
                                                     getName: T.() -> String): List<T> {
-    val props = queryExecutor.runListSymbolsQuery(VUE_COMPONENT_PROPS, true, scope = scope)
+    val props = queryExecutor.runListSymbolsQuery(VUE_COMPONENT_PROPS, true, additionalScope = scope)
       .mapTo(HashSet()) { it.name }
     return filter {
       val name = it.getName()

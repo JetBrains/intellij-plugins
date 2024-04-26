@@ -86,8 +86,8 @@ object AttributeWithInterpolationsScope : WebSymbolsScope {
     override fun matchName(name: String,
                            scopeStack: Stack<WebSymbolsScope>,
                            queryExecutor: WebSymbolsQueryExecutor): List<WebSymbol> =
-      queryExecutor.runNameMatchQuery(JS_PROPERTIES.withName(name), scope = scopeStack) +
-      queryExecutor.runNameMatchQuery(NG_DIRECTIVE_INPUTS.withName(name), scope = scopeStack)
+      queryExecutor.runNameMatchQuery(JS_PROPERTIES.withName(name), additionalScope = scopeStack) +
+      queryExecutor.runNameMatchQuery(NG_DIRECTIVE_INPUTS.withName(name), additionalScope = scopeStack)
 
   }
 }

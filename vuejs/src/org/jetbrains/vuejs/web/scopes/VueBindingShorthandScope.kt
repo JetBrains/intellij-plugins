@@ -39,7 +39,7 @@ class VueBindingShorthandScope(attribute: XmlAttribute)
     val executor = WebSymbolsQueryExecutorFactory.create(dataHolder)
     val attributes = executor
       .runListSymbolsQuery(WebSymbol.HTML_ATTRIBUTES, virtualSymbols = false, expandPatterns = true,
-                           scope = executor.runNameMatchQuery(WebSymbol.HTML_ELEMENTS.withName(tag.name)))
+                           additionalScope = executor.runNameMatchQuery(WebSymbol.HTML_ELEMENTS.withName(tag.name)))
       .associateBy { it.name }
 
     VueTemplateScopesResolver.resolve(tag, Processor { resolveResult ->
