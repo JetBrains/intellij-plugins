@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.codeInsight;
 
 import com.intellij.flex.FlexTestOption;
@@ -5,12 +6,9 @@ import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.JSAbstractFindUsagesTest;
-import com.intellij.lang.javascript.JSTestUtils;
-import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.LightProjectDescriptor;
-
-import java.util.Arrays;
+import com.intellij.util.containers.ContainerUtil;
 
 public class FlexFindUsagesTest extends JSAbstractFindUsagesTest {
   @Override
@@ -106,20 +104,16 @@ public class FlexFindUsagesTest extends JSAbstractFindUsagesTest {
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testMixJsAndJs2() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.JS_1_8_5, getProject(), () -> {
     String testName = getTestName(false);
     PsiReference[] references = findElementAtCaret(testName + ".js2", testName + ".mxml", testName + ".js");
-    assertTrue(Arrays.stream(references).noneMatch(r -> r.getElement().getContainingFile().getName().endsWith(".js")));
-    });
+    assertFalse(ContainerUtil.exists(references, r -> r.getElement().getContainingFile().getName().endsWith(".js")));
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testMixJsAndJs2_2() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.JS_1_8_5, getProject(), () -> {
-      String testName = getTestName(false);
-      PsiReference[] references = findElementAtCaret(testName + ".js", testName + ".mxml", testName + ".js2");
-      assertEquals(2, references.length);
-    });
+    String testName = getTestName(false);
+    PsiReference[] references = findElementAtCaret(testName + ".js", testName + ".mxml", testName + ".js2");
+    assertEquals(2, references.length);
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)

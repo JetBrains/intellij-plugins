@@ -49,7 +49,7 @@ class Angular2Parser private constructor(builder: PsiBuilder,
       while (!builder.eof()) {
         count++
         val expression = builder.mark()
-        if (!expressionParser!!.parseExpressionOptional(false, false)) {
+        if (!expressionParser!!.parseExpressionOptional(false)) {
           builder.error(JavaScriptBundle.message("javascript.parser.message.expected.expression"))
           builder.advanceLexer()
           expression.drop()
