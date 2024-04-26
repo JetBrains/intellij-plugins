@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.css.CssElement
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlAttribute
+import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
@@ -49,14 +50,17 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
   private fun calculateHtmlScopes(element: XmlElement): MutableList<WebSymbolsScope> {
     val result = mutableListOf(DirectiveElementSelectorsScope(element.project),
                                DirectiveAttributeSelectorsScope(element.project))
-    ((element as? XmlAttribute)?.parent ?: element as? XmlTag)?.let {
-      result.addAll(listOf(
-        OneTimeBindingsScope(it),
-        StandardPropertyAndEventsScope(it.containingFile),
-        NgContentSelectorsScope(it),
-        MatchedDirectivesScope(it),
-        I18NAttributesScope(it),
-      ))
+
+    if (element is XmlAttributeValue || element is XmlAttribute || element is XmlTag) {
+      element.parentOfType<XmlTag>(withSelf = true)?.let {
+        result.addAll(listOf(
+          OneTimeBindingsScope(it),
+          StandardPropertyAndEventsScope(it.containingFile),
+          NgContentSelectorsScope(it),
+          MatchedDirectivesScope(it),
+          I18NAttributesScope(it),
+        ))
+      }
     }
     if (element is Angular2HtmlPropertyBinding
         && Angular2AttributeNameParser.parse(element.name).type == Angular2AttributeType.REGULAR) {

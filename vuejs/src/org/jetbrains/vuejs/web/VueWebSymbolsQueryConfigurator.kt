@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.findPsiFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.xml.XmlAttribute
+import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.SmartList
@@ -66,7 +67,7 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
       return getScopeForJSElement(location, allowResolve)
 
     val result = SmartList<WebSymbolsScope>()
-    val attribute = location as? XmlAttribute
+    val attribute = (location as? XmlAttributeValue)?.parent as? XmlAttribute ?: location as? XmlAttribute
     val tag = attribute?.parent ?: location as? XmlTag
     val fileContext = location.containingFile?.originalFile ?: return emptyList()
 
