@@ -34,7 +34,7 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
     get() = delegate.asSafely<VueComponent>()
 
   override val components: Map<String, VueComponent>
-    get() = (delegate?.components ?: emptyMap()) + getEntitiesAnalysis().components
+    get() = (delegate?.takeUnless { it is VueComponent }?.components ?: emptyMap()) + getEntitiesAnalysis().components
 
   override val directives: Map<String, VueDirective>
     get() = (delegate?.directives ?: emptyMap()) + getEntitiesAnalysis().directives

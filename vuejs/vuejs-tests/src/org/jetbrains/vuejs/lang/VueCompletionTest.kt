@@ -2159,6 +2159,16 @@ export default {
     myFixture.checkResultByFile("${getTestName(true)}/apps/vue-app/src/App.after.vue")
   }
 
+  fun testImportComponentUsedInApp() {
+    myFixture.copyDirectoryToProject(getTestName(true), "")
+    myFixture.configureFromTempProjectFile("src/components/CheckImportComponent.vue")
+
+    myFixture.type("orl")
+    myFixture.completeBasic()
+
+    myFixture.checkResultByFile("${getTestName(true)}/src/components/CheckImportComponent.after.vue")
+  }
+
   fun testVueTscComponent() {
     doLookupTest(VueTestModule.VUE_3_2_2, dir = true, renderPriority = true) {
       it.isItemTextBold
