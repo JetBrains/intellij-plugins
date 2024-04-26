@@ -7,9 +7,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.ide.progress.withBackgroundProgress
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import org.intellij.terraform.config.util.TFExecutor
 import org.intellij.terraform.config.util.executeSuspendable
@@ -37,13 +35,6 @@ class TFFmtFileAction : TFExternalToolsAction() {
         .withWorkDirectory(virtualFile.parent.canonicalPath)
         .executeSuspendable()
       VfsUtil.markDirtyAndRefresh(true, true, true, virtualFile)
-    }
-
-  }
-
-  fun scheduleFormatFile(project: Project, title: @Nls String, virtualFile: VirtualFile): Deferred<Unit> {
-    return getActionCoroutineScope(project).async {
-      invoke(project, title, virtualFile)
     }
   }
 }
