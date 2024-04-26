@@ -31,7 +31,7 @@ Plugin source code was previously located at <a href="https://github.com/kropp/i
   <depends optional="true" config-file="terminal-config.xml">org.jetbrains.plugins.terminal</depends>
 
   <extensions defaultExtensionNs="com.intellij">
-    <fileType name="Makefile" language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileFileType" fieldName="INSTANCE" extensions="mk" fileNamesCaseInsensitive="makefile;GNUmakefile"/>
+    <fileType name="Makefile" language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileFileType" fieldName="INSTANCE" extensions="mk" fileNamesCaseInsensitive="makefile;GNUmakefile;makefile.inc;GNUmakefile.inc"/>
     <lang.parserDefinition language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileParserDefinition"/>
     <lang.syntaxHighlighterFactory language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileSyntaxHighlighterFactory"/>
     <lang.foldingBuilder language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileFoldingBuilder"/>
