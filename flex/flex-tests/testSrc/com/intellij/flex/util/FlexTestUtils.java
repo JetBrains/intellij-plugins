@@ -314,6 +314,7 @@ public final class FlexTestUtils {
             }
           }
         });
+        IndexingTestUtil.waitUntilIndexesAreReady(modules[0].getProject());
       }
 
       @Override
