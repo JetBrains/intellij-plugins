@@ -128,31 +128,17 @@ public class PostCssParser extends CssParser2 {
       return super.parseSingleDeclarationInBlock(true, inlineCss, requirePropertyValue, elementType, false);
     }
     if (elementType == CssElementTypes.CSS_MEDIA_FEATURE) {
-      return super.parseSingleDeclarationInBlock(withPageMarginRules, inlineCss, requirePropertyValue, elementType, false);
+      return super.parseSingleDeclarationInBlock(withPageMarginRules, inlineCss, requirePropertyValue, elementType, parseNested);
     }
     myRulesetSeen = false;
     // Nesting
-    if (parseMedia() ||
-        parseKeyframes() ||
-        parseAllSimpleAtRules() ||
-        parseImport() ||
-        parseSupports() ||
-        parsePage() ||
-        parseDocument() ||
-        parseRegion() ||
-        parseScope() ||
-        parseCounterStyle() ||
-        parseKeyframesRuleset() ||
-        parseCustomSelectorAtRule() ||
-        parseCustomMediaAtRule() ||
-        parseCustomProperty() ||
+    if (parseCustomMediaAtRule() ||
         parseAtRuleNesting() ||
-        parseGenericAtRule() ||
-        tryToParseRuleset()) {
+        parseCustomSelectorAtRule()) {
       myRulesetSeen = true;
       return true;
     }
-    return super.parseSingleDeclarationInBlock(withPageMarginRules, inlineCss, requirePropertyValue, elementType, false);
+    return super.parseSingleDeclarationInBlock(withPageMarginRules, inlineCss, requirePropertyValue, elementType, parseNested);
   }
 
   private boolean parseCustomMediaAtRule() {
