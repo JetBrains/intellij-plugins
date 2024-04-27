@@ -1,12 +1,11 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.actionscript.parsing;
 
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.javascript.JSKeywordSets;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.parsing.ExpressionParser;
-import com.intellij.lang.javascript.parsing.JSPsiTypeParser;
-import com.intellij.lang.javascript.parsing.JavaScriptParser;
+import com.intellij.lang.javascript.parsing.*;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,5 +33,18 @@ public final class ActionScriptParser extends JavaScriptParser<ExpressionParser,
       myTypeParser.parseECMA4GenericSignature();
     }
     marker.done(type);
+  }
+
+  @Override
+  protected void doParseJS() {
+    while (!builder.eof()) {
+      if (builder.getTokenType() == JSTokenTypes.AT) {
+        builder.advanceLexer();
+        getStatementParser().parseAttributeBody();
+      }
+      else {
+        getStatementParser().parseStatement();
+      }
+    }
   }
 }

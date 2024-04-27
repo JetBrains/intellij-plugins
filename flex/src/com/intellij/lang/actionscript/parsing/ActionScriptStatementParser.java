@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.actionscript.parsing;
 
 import com.intellij.lang.PsiBuilder;
@@ -18,21 +19,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
     super(parser);
   }
 
-  @Override
-  public void parseSourceElement() {
-    final IElementType tokenType = builder.getTokenType();
-    if (tokenType == JSTokenTypes.PACKAGE_KEYWORD) {
-      parsePackage();
-    }
-    else if (tokenType == JSTokenTypes.AT) {
-      builder.advanceLexer();
-      parseAttributeBody();
-    } else {
-      super.parseSourceElement();
-    }
-  }
-
-  private void parseAttributeBody() {
+  public void parseAttributeBody() {
     final PsiBuilder.Marker attribute = builder.mark();
     if(!checkMatches(builder, JSTokenTypes.IDENTIFIER, "javascript.parser.message.expected.identifier")) {
       attribute.drop();
@@ -41,7 +28,6 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
     myJavaScriptParser.getFunctionParser().parseAttributeBody();
     attribute.done(JSStubElementTypes.ATTRIBUTE);
   }
-
 
   /** advances lexer */
   @Override
@@ -60,6 +46,12 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
   @Override
   protected void doParseStatement() {
     final IElementType firstToken = builder.getTokenType();
+
+    if (firstToken == JSTokenTypes.PACKAGE_KEYWORD) {
+      parsePackage();
+      return;
+    }
+
     if (firstToken == JSTokenTypes.DEFAULT_KEYWORD) {
       parseDefaultNsStatement();
       return;

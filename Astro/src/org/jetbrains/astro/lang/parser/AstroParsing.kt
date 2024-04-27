@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro.lang.parser
 
 import com.intellij.lang.PsiBuilder
@@ -99,7 +99,7 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
     // parse frontmatter
     builder.putUserData(JSParsingContextUtil.ASYNC_METHOD_KEY, true)
     while (builder.tokenType.let { it != null && it != AstroTokenTypes.FRONTMATTER_SEPARATOR }) {
-      typeScriptParser.statementParser.parseSourceElement()
+      typeScriptParser.statementParser.parseStatement()
     }
     frontmatterScript.done(AstroStubElementTypes.FRONTMATTER_SCRIPT)
     if (token() === AstroTokenTypes.FRONTMATTER_SEPARATOR) {
