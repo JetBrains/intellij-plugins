@@ -204,8 +204,9 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
 
     if (builder.getTokenType() != JSTokenTypes.LBRACE) {
       builder.error(JavaScriptBundle.message("javascript.parser.message.expected.name.or.lbrace"));
-    } else {
-      parseBlockOrFunctionBody(BlockType.PACKAGE_OR_CLASS_BODY);
+    }
+    else {
+      parseBlockAndAttachStatementsDirectly();
     }
     _package.done(JSStubElementTypes.PACKAGE_STATEMENT);
   }
@@ -268,7 +269,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
         parseReferenceList(JSStubElementTypes.IMPLEMENTS_LIST);
       }
 
-      parseBlockOrFunctionBody(BlockType.PACKAGE_OR_CLASS_BODY);
+      parseBlockAndAttachStatementsDirectly();
       clazz.done(ActionScriptElementTypes.ACTIONSCRIPT_CLASS);
       clazz.setCustomEdgeTokenBinders(INCLUDE_DOC_COMMENT_AT_LEFT, WhitespacesBinders.DEFAULT_RIGHT_BINDER);
     }
@@ -311,7 +312,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
   protected boolean parseDialectSpecificSourceElements(PsiBuilder.Marker marker) {
     IElementType tokenType = builder.getTokenType();
     if (tokenType == JSTokenTypes.LBRACE) {
-      parseBlockOrFunctionBody(BlockType.PACKAGE_OR_CLASS_BODY);
+      parseBlockAndAttachStatementsDirectly();
       marker.done(ActionScriptElementTypes.CONDITIONAL_COMPILE_BLOCK_STATEMENT);
       return true;
     }
