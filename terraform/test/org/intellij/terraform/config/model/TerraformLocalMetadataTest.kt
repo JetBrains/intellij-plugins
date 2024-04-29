@@ -1,13 +1,19 @@
 package org.intellij.terraform.config.model
 
+import com.intellij.openapi.actionSystem.ex.ActionUtil
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.components.service
+import com.intellij.openapi.options.advanced.withAdvancedSettingValue
 import com.intellij.platform.backend.workspace.WorkspaceModel
 import com.intellij.platform.backend.workspace.virtualFile
 import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.testFramework.waitUntil
+import junit.framework.TestCase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.intellij.terraform.config.inspection.HCLBlockMissingPropertyInspection
 import org.intellij.terraform.config.model.local.LocalSchemaService
 import org.intellij.terraform.config.model.local.TERRAFORM_LOCK_FILE_NAME
@@ -168,6 +174,42 @@ class TerraformLocalMetadataTest : BasePlatformTestCase() {
     loadAndCheckDoMetadata("dummyPro2")
   }
 
+  fun testLocalMetadataNotUpdatedIfForbidden() {
+    // setup prev meta
+    loadAndCheckDoMetadata("dummyProp1")
+    TestCase.assertFalse("Commands should have been executed", TFCommandLineServiceMock.instance.requestsToVerify().isEmpty())
+
+    withAdvancedSettingValue("org.intellij.terraform.config.build.metadata.auto", false) {
+      // testing no process was started implicitly
+      myFixture.configureByText(TERRAFORM_LOCK_FILE_NAME, MY_DO_LOCK)
+      myFixture.configureByText("main.tf", genInspectedMain("dummyProp1"))
+      timeoutRunBlocking {
+        localSchemaService.awaitModelsReady()
+      }
+      myFixture.testHighlighting("main.tf")
+      TestCase.assertTrue("Commands should have been not executed", TFCommandLineServiceMock.instance.requestsToVerify().isEmpty())
+    }
+  }
+
+  fun testActionWorksEvenIfLoadingIsForbidden() =
+    withAdvancedSettingValue("org.intellij.terraform.config.build.metadata.auto", false) {
+      timeoutRunBlocking {
+        TFCommandLineServiceMock.instance.mockCommandLine(
+          "$terraformExe providers schema -json", genDoModel("dummyProp1"),
+          testRootDisposable)
+
+        myFixture.configureByText(TERRAFORM_LOCK_FILE_NAME, MY_DO_LOCK)
+        myFixture.enableInspections(HCLBlockMissingPropertyInspection::class.java)
+        myFixture.configureByText("main.tf", genInspectedMain("dummyProp1"))
+        withContext(Dispatchers.EDT) {
+          myFixture.testAction(ActionUtil.getAction("TFGenerateLocalMetadataAction")!!)
+        }
+        waitUntil { TFCommandLineServiceMock.instance.requestsToVerify().isNotEmpty() }
+        localSchemaService.awaitModelsReady()
+        myFixture.testHighlighting("main.tf")
+      }
+    }
+
   fun testNewLockPickedUp() {
     TFCommandLineServiceMock.instance.mockCommandLine(
       "$terraformExe providers schema -json", genDoModel("dummyProp"),
@@ -197,6 +239,7 @@ class TerraformLocalMetadataTest : BasePlatformTestCase() {
     myFixture.enableInspections(HCLBlockMissingPropertyInspection::class.java)
     myFixture.configureByText("main.tf", genInspectedMain("dummyProp"))
     timeoutRunBlocking {
+      waitUntil { TFCommandLineServiceMock.instance.requestsToVerify().isNotEmpty() }
       localSchemaService.awaitModelsReady()
     }
     myFixture.testHighlighting("main.tf")

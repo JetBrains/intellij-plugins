@@ -12,6 +12,7 @@ import com.intellij.openapi.diagnostic.RuntimeExceptionWithAttachments
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileTypes.FileTypeManager
+import com.intellij.openapi.options.advanced.AdvancedSettings
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.project.getProjectDataPath
@@ -132,13 +133,13 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     }.toSet()
   }
 
-  fun scheduleModelRebuild(virtualFiles: Set<VirtualFile>): Deferred<*> {
+  fun scheduleModelRebuild(virtualFiles: Set<VirtualFile>, explicitlyAllowRunningProcess: Boolean = false): Deferred<*> {
     val scheduled = mutableListOf<Deferred<*>>()
     val locks = virtualFiles.mapNotNullTo(mutableSetOf()) { findLockFile(it) }
     for (lock in locks) {
       modelComputationCache[lock]?.cancel()
       if (lock.exists()) {
-        buildModel(lock).also {
+        buildModel(lock, explicitlyAllowRunningProcess).also {
           modelComputationCache[lock] = it
           scheduled.add(it)
         }
@@ -159,17 +160,17 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     modelBuildScope.coroutineContext.job.children.forEach { it.join() }
   }
 
-  private fun buildModel(lock: VirtualFile): Deferred<TypeModel> {
+  private fun buildModel(lock: VirtualFile, explicitlyAllowRunningProcess: Boolean): Deferred<TypeModel> {
     return modelBuildScope.async {
       withBackgroundProgress(project, HCLBundle.message("rebuilding.local.schema"), false) {
         logger<LocalSchemaService>().info("building local model: $lock")
-        val json = retrieveJsonForTFLock(lock)
+        val json = retrieveJsonForTFLock(lock, explicitlyAllowRunningProcess)
         buildModelFromJson(json)
       }
     }
   }
 
-  private suspend fun retrieveJsonForTFLock(lock: VirtualFile): String {
+  private suspend fun retrieveJsonForTFLock(lock: VirtualFile, explicitlyAllowRunningProcess: Boolean): String {
     val lockData = readAction {
       WorkspaceModel.getInstance(project).currentSnapshot.entities<TFLocalMetaEntity>().firstOrNull {
         it.lockFile.virtualFile == lock
@@ -190,7 +191,7 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
       }
     }
 
-    val generateResult = runCatching { generateNewJsonFile(lock) }
+    val generateResult = runCatching { generateNewJsonFile(lock, explicitlyAllowRunningProcess) }
     if (generateResult.isFailure) {
       logger<LocalSchemaService>().info(
         "failed to generate new model for lock: ${lock.name}",
@@ -238,7 +239,8 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
       return localModelsPath
     }
 
-  private suspend fun generateNewJsonFile(lock: VirtualFile): @NlsSafe String {
+  private suspend fun generateNewJsonFile(lock: VirtualFile, explicitlyAllowRunningProcess: Boolean): @NlsSafe String {
+    if (!explicitlyAllowRunningProcess && !buildLocalMetadataAutomatically) throw IllegalStateException("generateNewJsonFile is not enabled")
     val jsonFromProcess = buildJsonFromTerraformProcess(project, lock)
     return withContext(Dispatchers.IO) {
       val uuid = UUID.randomUUID().toString()
@@ -335,6 +337,9 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
   }
 
 }
+
+internal val buildLocalMetadataAutomatically: Boolean
+  get() = AdvancedSettings.getBoolean("org.intellij.terraform.config.build.metadata.auto")
 
 private class VirtualFileMap<T>(project: Project) {
 
