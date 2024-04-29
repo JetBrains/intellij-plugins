@@ -13,8 +13,8 @@ import org.jetbrains.annotations.Nls
 
 open class TFInitAction(private val notifyOnSuccess: Boolean = true) : TFExternalToolsAction() {
 
-  override suspend fun invoke(project: Project, title: @Nls String, virtualFile: VirtualFile) {
-    project.service<TerraformActionService>().initTerraform(virtualFile, notifyOnSuccess)
+  override suspend fun invoke(project: Project, title: @Nls String, vararg virtualFiles: VirtualFile) {
+    virtualFiles.firstOrNull()?.let { project.service<TerraformActionService>().initTerraform(it, notifyOnSuccess) }
   }
 
   companion object {

@@ -45,14 +45,12 @@ class TFFmtCheckinFactory : CheckinHandlerFactory() {
         }
       }
 
-      for (file in commitedPsiFiles) {
-        val virtualFile = file.virtualFile
-        try {
-          TFFmtFileAction().invoke(project, NAME, virtualFile)
-        }
-        catch (_: Exception) {
-          return TerraformFmtCommitProblem()
-        }
+      try {
+        val virtualFiles = commitedPsiFiles.map { it.virtualFile }.toTypedArray()
+        TFFmtFileAction().invoke(project, NAME, *virtualFiles)
+      }
+      catch (_: Exception) {
+        return TerraformFmtCommitProblem()
       }
       return null
     }

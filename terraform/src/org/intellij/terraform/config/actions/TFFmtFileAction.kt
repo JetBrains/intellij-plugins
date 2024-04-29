@@ -15,26 +15,27 @@ import org.jetbrains.annotations.Nls
 
 class TFFmtFileAction : TFExternalToolsAction() {
 
-  override suspend fun invoke(project: Project, title: @Nls String, virtualFile: VirtualFile) {
+  override suspend fun invoke(project: Project, title: @Nls String, vararg virtualFiles: VirtualFile) {
     withBackgroundProgress(project, title) {
       withContext(Dispatchers.EDT) {
-        val document = FileDocumentManager.getInstance().getDocument(virtualFile)
-        if (document != null) {
-          FileDocumentManager.getInstance().saveDocument(document)
-        }
-        else {
-          FileDocumentManager.getInstance().saveAllDocuments()
+        virtualFiles.forEach {
+          val document = FileDocumentManager.getInstance().getDocument(it)
+          if (document != null) {
+            FileDocumentManager.getInstance().saveDocument(document)
+          }
+          else {
+            FileDocumentManager.getInstance().saveAllDocuments()
+          }
         }
       }
 
-      val filePath = virtualFile.canonicalPath!!
+      val filePaths = virtualFiles.map { it.canonicalPath!! }.toTypedArray()
       TFExecutor.`in`(project)
         .withPresentableName(title)
-        .withParameters("fmt", filePath)
+        .withParameters("fmt", *filePaths)
         .showOutputOnError()
-        .withWorkDirectory(virtualFile.parent.canonicalPath)
         .executeSuspendable()
-      VfsUtil.markDirtyAndRefresh(true, true, true, virtualFile)
+      VfsUtil.markDirtyAndRefresh(true, true, true, *virtualFiles)
     }
   }
 }

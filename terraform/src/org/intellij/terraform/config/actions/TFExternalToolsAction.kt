@@ -95,7 +95,7 @@ abstract class TFExternalToolsAction : DumbAwareAction() {
     }
   }
 
-  abstract suspend fun invoke(project: Project, title: @Nls String, virtualFile: VirtualFile)
+  abstract suspend fun invoke(project: Project, title: @Nls String, vararg virtualFiles: VirtualFile)
 
   companion object {
     private val LOG = Logger.getInstance(TFExternalToolsAction::class.java)

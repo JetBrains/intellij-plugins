@@ -12,9 +12,9 @@ import org.jetbrains.annotations.Nls
 
 class TFGenerateLocalMetadataAction : TFExternalToolsAction() {
 
-  override suspend fun invoke(project: Project, @Nls title: String, virtualFile: VirtualFile) {
+  override suspend fun invoke(project: Project, @Nls title: String, vararg virtualFiles: VirtualFile) {
     val localSchemaService = project.serviceAsync<LocalSchemaService>()
-    val lockFile = localSchemaService.findLockFile(virtualFile)
+    val lockFile = virtualFiles.firstOrNull()?.let {  localSchemaService.findLockFile(it) }
     if (lockFile == null) {
       TerraformConstants.EXECUTION_NOTIFICATION_GROUP
         .createNotification(
