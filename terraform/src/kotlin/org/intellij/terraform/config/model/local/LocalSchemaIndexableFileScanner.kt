@@ -15,7 +15,7 @@ private class LocalSchemaIndexableFileScanner : IndexableFileScanner {
   override fun startSession(project: Project): IndexableFileScanner.ScanSession {
     return IndexableFileScanner.ScanSession {
       IndexableFileScanner.IndexableFileVisitor { fileOrDir ->
-        if (isTFLock(fileOrDir)) {
+        if (buildLocalMetadataAutomatically && isTFLock(fileOrDir)) {
           logger<LocalSchemaService>().info("Scanning local schema: $fileOrDir")
           project.service<LocalSchemaService>().scheduleModelRebuild(setOf(fileOrDir))
         }
@@ -26,6 +26,7 @@ private class LocalSchemaIndexableFileScanner : IndexableFileScanner {
 
 private class LocalSchemaVfsListener : AsyncFileListener {
   override fun prepareChange(events: MutableList<out VFileEvent>): AsyncFileListener.ChangeApplier? {
+    if (!buildLocalMetadataAutomatically) return null
     val lockFiles = events.filter { isTFLock(it.file) }
     if (lockFiles.isEmpty()) return null
     logger<LocalSchemaService>().info("LocalSchemaVfsListener: $events")
