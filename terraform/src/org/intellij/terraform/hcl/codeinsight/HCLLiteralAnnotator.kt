@@ -2,6 +2,7 @@
 package org.intellij.terraform.hcl.codeinsight
 
 import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement
+import com.intellij.ide.lightEdit.LightEditCompatible
 import com.intellij.lang.annotation.AnnotationBuilder
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
@@ -20,7 +21,7 @@ import org.jetbrains.annotations.Nls
 /**
  * Inspired by com.intellij.json.codeinsight.JsonLiteralAnnotator
  */
-class HCLLiteralAnnotator : Annotator, DumbAware {
+class HCLLiteralAnnotator : Annotator, DumbAware, LightEditCompatible {
 
   private val DEBUG = ApplicationManager.getApplication().isUnitTestMode
 
