@@ -59,7 +59,7 @@ public class FlexProjectViewTest extends BaseProjectViewTestCase {
     myStructure.setFlattenPackages(flattenPackages);
 
     PlatformTestUtil.expandAll(myPane.getTree());
-    PlatformTestUtil.assertTreeEqual(myPane.getTree(), expected + "\n" + " External Libraries\n", true);
+    PlatformTestUtil.assertTreeEqual(myPane.getTree(), expected + "\n" + " +External Libraries\n", true);
   }
 
   public void testSwfSortByName() {
