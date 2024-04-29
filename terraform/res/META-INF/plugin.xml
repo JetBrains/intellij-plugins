@@ -327,10 +327,15 @@
     <!-- Terraform as Tool -->
     <advancedSetting id="org.intellij.terraform.config.documentation.download"
                      default="true"
-                     groupKey="terraform.config.documentation"
+                     groupKey="advanced.setting.terraform"
                      bundle="messages.HCLBundle"
                      descriptionKey="terraform.documentation.download.enabled"/>
 
+    <advancedSetting id="org.intellij.terraform.config.build.metadata.auto"
+                     default="true"
+                     groupKey="advanced.setting.terraform"
+                     bundle="messages.HCLBundle"
+                     descriptionKey="terraform.metadata.build.auto"/>
 
     <projectConfigurable groupId="tools" instance="org.intellij.terraform.runtime.TerraformToolConfigurable"
                          id="reference.settings.dialog.project.terraform"
