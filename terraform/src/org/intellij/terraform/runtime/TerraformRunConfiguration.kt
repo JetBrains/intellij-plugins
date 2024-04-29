@@ -19,7 +19,7 @@ import com.intellij.openapi.util.InvalidDataException
 import com.intellij.openapi.util.WriteExternalException
 import com.intellij.util.xmlb.XmlSerializer
 import org.intellij.terraform.config.actions.TerraformInitCommandFilter
-import org.intellij.terraform.config.actions.isExecutable
+import org.intellij.terraform.config.actions.isPathExecutable
 import org.intellij.terraform.config.actions.isTerraformExecutable
 import org.intellij.terraform.config.util.TFExecutor
 import org.intellij.terraform.hcl.HCLBundle
@@ -106,7 +106,7 @@ class TerraformRunConfiguration(project: Project,
       throw exception
     }
 
-    if (!terraformPath.isExecutable()) {
+    if (!isPathExecutable(terraformPath)) {
       val exception = RuntimeConfigurationException(
         HCLBundle.message("run.configuration.terraform.path.incorrect", terraformPath),
         CommonBundle.getErrorTitle()
@@ -132,7 +132,7 @@ class TerraformRunConfiguration(project: Project,
       if (terraformPath.isBlank()) {
         return HCLBundle.message("run.configuration.no.terraform.specified")
       }
-      if (!terraformPath.isExecutable()) {
+      if (!isPathExecutable(terraformPath)) {
         return HCLBundle.message("run.configuration.terraform.path.incorrect", terraformPath)
       }
       return null
