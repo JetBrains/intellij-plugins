@@ -197,6 +197,10 @@
                  description="Specifies timeout in ms for for connecting to Terraform registry and fetching docs from GitHub"
                  restartRequired="false"/>
 
+    <registryKey key="terraform.registry.metadata.parallelism" defaultValue="4"
+                 description="Specifies number of max parallel building metadata"
+                 restartRequired="true"/>
+
     <statementUpDownMover implementation="org.intellij.terraform.config.HCLStatementMover" id="HCL_SM" order="before line"/>
 
     <!-- Formatter -->
