@@ -17,6 +17,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.project.getProjectDataPath
 import com.intellij.openapi.util.NlsSafe
+import com.intellij.openapi.util.registry.RegistryManager
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.backend.workspace.WorkspaceModel
@@ -30,6 +31,8 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.util.concurrency.annotations.RequiresBlockingContext
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import org.intellij.terraform.LatestInvocationRunner
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.model.TypeModel
@@ -160,12 +163,19 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     modelBuildScope.coroutineContext.job.children.forEach { it.join() }
   }
 
+  private val processesSemaphore = Semaphore(
+    RegistryManager.getInstance().intValue("terraform.registry.metadata.parallelism", 4)
+  )
+
   private fun buildModel(lock: VirtualFile, explicitlyAllowRunningProcess: Boolean): Deferred<TypeModel> {
     return modelBuildScope.async {
-      withBackgroundProgress(project, HCLBundle.message("rebuilding.local.schema"), false) {
-        logger<LocalSchemaService>().info("building local model: $lock")
-        val json = retrieveJsonForTFLock(lock, explicitlyAllowRunningProcess)
-        buildModelFromJson(json)
+      // a case for the BatchAsyncProcessor (IJPL-149050)
+      processesSemaphore.withPermit {
+        withBackgroundProgress(project, HCLBundle.message("rebuilding.local.schema"), false) {
+          logger<LocalSchemaService>().info("building local model: $lock")
+          val json = retrieveJsonForTFLock(lock, explicitlyAllowRunningProcess)
+          buildModelFromJson(json)
+        }
       }
     }
   }
