@@ -14,6 +14,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.PsiDocumentManager;
+import com.intellij.testFramework.IndexingTestUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
@@ -85,6 +86,7 @@ public final class DartTestUtils {
       Disposer.register(disposable, DartSdkLibUtil.configureDartSdkAndReturnUndoingDisposable(module.getProject(), sdkHome));
       Disposer.register(disposable, DartSdkLibUtil.enableDartSdkAndReturnUndoingDisposable(module));
     });
+    IndexingTestUtil.waitUntilIndexesAreReady(module.getProject());
   }
 
   public static List<CaretPositionInfo> extractPositionMarkers(@NotNull final Project project, @NotNull final Document document) {
