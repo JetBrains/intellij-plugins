@@ -29,7 +29,9 @@ import com.intellij.platform.workspace.storage.entities
 import com.intellij.platform.workspace.storage.url.VirtualFileUrl
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
+import com.intellij.util.SuspendingLazy
 import com.intellij.util.concurrency.annotations.RequiresBlockingContext
+import com.intellij.util.suspendingLazy
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
@@ -71,11 +73,12 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     val myDeferred = modelComputationCache[lock]
 
     if (myDeferred == null || myDeferred.isCompleted && myDeferred.getCompletionExceptionOrNull() is CancellationException) {
-      scheduleModelRebuild(setOf(lock))
+      scheduleModelRebuild(setOf(lock)).let { scope.launch { it.getValue() } }
       return null
     }
 
     if (!myDeferred.isCompleted) {
+      myDeferred.start()
       return null
     }
 
@@ -136,8 +139,8 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     }.toSet()
   }
 
-  fun scheduleModelRebuild(virtualFiles: Set<VirtualFile>, explicitlyAllowRunningProcess: Boolean = false): Deferred<*> {
-    val scheduled = mutableListOf<Deferred<*>>()
+  fun scheduleModelRebuild(virtualFiles: Set<VirtualFile>, explicitlyAllowRunningProcess: Boolean = false): SuspendingLazy<List<TypeModel>> {
+    val scheduled = mutableListOf<Deferred<TypeModel>>()
     val locks = virtualFiles.mapNotNullTo(mutableSetOf()) { findLockFile(it) }
     for (lock in locks) {
       modelComputationCache[lock]?.cancel()
@@ -154,13 +157,13 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     if (locks.isNotEmpty()) {
       scope.launch { daemonRestarter.cancelPreviousAndRun() }
     }
-    return scope.async {
+    return scope.suspendingLazy {
       scheduled.awaitAll()
     }
   }
 
   suspend fun awaitModelsReady() {
-    modelBuildScope.coroutineContext.job.children.forEach { it.join() }
+    modelBuildScope.coroutineContext.job.children.filter { it.isActive }.forEach { it.join() }
   }
 
   private val processesSemaphore = Semaphore(
@@ -168,7 +171,8 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
   )
 
   private fun buildModel(lock: VirtualFile, explicitlyAllowRunningProcess: Boolean): Deferred<TypeModel> {
-    return modelBuildScope.async {
+    val startMode = if (buildLocalMetadataEagerly || explicitlyAllowRunningProcess) CoroutineStart.DEFAULT else CoroutineStart.LAZY
+    return modelBuildScope.async(start = startMode) {
       // a case for the BatchAsyncProcessor (IJPL-149050)
       processesSemaphore.withPermit {
         withBackgroundProgress(project, HCLBundle.message("rebuilding.local.schema"), false) {
@@ -350,6 +354,9 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
 
 internal val buildLocalMetadataAutomatically: Boolean
   get() = AdvancedSettings.getBoolean("org.intellij.terraform.config.build.metadata.auto")
+
+internal val buildLocalMetadataEagerly: Boolean
+  get() = AdvancedSettings.getBoolean("org.intellij.terraform.config.build.metadata.eagerly")
 
 private class VirtualFileMap<T>(project: Project) {
 

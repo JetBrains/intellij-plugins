@@ -343,6 +343,12 @@
                      bundle="messages.HCLBundle"
                      descriptionKey="terraform.metadata.build.auto"/>
 
+    <advancedSetting id="org.intellij.terraform.config.build.metadata.eagerly"
+                     default="false"
+                     groupKey="advanced.setting.terraform"
+                     bundle="messages.HCLBundle"
+                     descriptionKey="terraform.metadata.build.eagerly"/>
+
     <projectService serviceImplementation="org.intellij.terraform.runtime.TerraformToolProjectSettings"/>
     <projectConfigurable groupId="tools" instance="org.intellij.terraform.runtime.TerraformToolConfigurable"
                          id="reference.settingsdialog.project.terraform"
