@@ -1,10 +1,9 @@
 
 import com.intellij.ReviseWhenPortedToJDK
 import com.intellij.aws.cloudformation.tests.TestUtil
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.Urls
+import com.intellij.util.io.DigestUtil
 import com.intellij.util.io.HttpRequests
-import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.FileUtils
 import org.jsoup.Jsoup
 import java.io.File
@@ -28,7 +27,7 @@ object OfficialExamplesSaver {
 
       val fileUrl = url.resolve(name.replace(" ", "%20"))
 
-      val localName = StringUtil.trimEnd(name.toLowerCase(), ".template") + "-" + DigestUtils.md5Hex(name).substring(0, 4) + ".template"
+      val localName = name.lowercase().removeSuffix(".template") + "-" + DigestUtil.sha1Hex(name).substring(0, 4) + ".template"
       val localFile = File(TestUtil.getTestDataFile("officialExamples/src"), localName)
 
       if (localFile.exists() && localFile.length() == size.toLong()) {
