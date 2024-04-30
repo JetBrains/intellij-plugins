@@ -26,7 +26,7 @@ class TFGenerateLocalMetadataAction : TFExternalToolsAction() {
       return
     }
     localSchemaService.clearLocalModel(lockFile)
-    localSchemaService.scheduleModelRebuild(setOf(lockFile), explicitlyAllowRunningProcess = true).await()
+    localSchemaService.scheduleModelRebuild(setOf(lockFile), explicitlyAllowRunningProcess = true).getValue()
     TerraformConstants.EXECUTION_NOTIFICATION_GROUP
       .createNotification(
         title,

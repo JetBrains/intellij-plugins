@@ -65,9 +65,18 @@ internal class TerraformActionService(private val project: Project, private val 
       }
       try {
         val localSchemaService = project.serviceAsync<LocalSchemaService>()
-        localSchemaService.scheduleModelRebuild(setOf(dirFile), explicitlyAllowRunningProcess = true).invokeOnCompletion { e ->
-          if (e != null && e !is CancellationException)
-            notifyError(title, project, e)
+        localSchemaService.scheduleModelRebuild(setOf(dirFile), explicitlyAllowRunningProcess = true).let { result ->
+          coroutineScope.launch {
+            try {
+              result.getValue()
+            }
+            catch (e: CancellationException) {
+              throw e
+            }
+            catch (e: Exception) {
+              notifyError(title, project, e)
+            }
+          }
         }
         if (notifyOnSuccess) {
           localSchemaService.awaitModelsReady()
