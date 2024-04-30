@@ -50,8 +50,6 @@ import java.util.Map;
 public final class DartProblemsView implements PersistentStateComponent<DartProblemsViewSettings>, Disposable {
   @NonNls public static final String TOOLWINDOW_ID = "Dart Analysis"; // the same as in plugin.xml, this is not a user-visible string
 
-  private static final NotificationGroup NOTIFICATION_GROUP = NotificationGroupManager.getInstance().getNotificationGroup("Dart Analysis");
-
   private static final int TABLE_REFRESH_PERIOD = 300;
 
   private final Project myProject;
@@ -244,7 +242,8 @@ public final class DartProblemsView implements PersistentStateComponent<DartProb
           .appendLink("never.show.again", DartBundle.message("notification.link.never.show.again"));
     }
 
-    myNotification = NOTIFICATION_GROUP.createNotification(title, content, notificationType).setListener(new NotificationListener.Adapter() {
+    myNotification = NotificationGroupManager.getInstance().getNotificationGroup("Dart Analysis")
+      .createNotification(title, content, notificationType).setListener(new NotificationListener.Adapter() {
       @Override
       protected void hyperlinkActivated(@NotNull final Notification notification, @NotNull final HyperlinkEvent e) {
         notification.expire();
@@ -259,7 +258,7 @@ public final class DartProblemsView implements PersistentStateComponent<DartProb
           myDisabledForSession = true;
         }
         else if ("never.show.again".equals(e.getDescription())) {
-          NOTIFICATION_GROUP
+          NotificationGroupManager.getInstance().getNotificationGroup("Dart Analysis")
             .createNotification(DartBundle.message("notification.title.warning.disabled"),
                                 DartBundle.message("notification.content.you.can.enable.it.back.in.the.a.href.event.log.a.settings",
                                                    ActionCenter.getToolwindowName()),
