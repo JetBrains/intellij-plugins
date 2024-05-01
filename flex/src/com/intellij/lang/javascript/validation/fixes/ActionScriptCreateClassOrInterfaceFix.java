@@ -391,6 +391,11 @@ public class ActionScriptCreateClassOrInterfaceFix extends FixAndIntentionAction
         @Override
         protected void appendFunctionBody(Template template, JSReferenceExpression refExpr, PsiElement anchorParent) {
         }
+
+        @Override
+        public void applyFix(Project project, PsiElement psiElement, @NotNull PsiFile file, @Nullable Editor editor) {
+          super.applyFix(project, psiElement, file, editor);
+        }
       }.applyFix(project, myContext, jsClassContainingFile, null);
     }
 
