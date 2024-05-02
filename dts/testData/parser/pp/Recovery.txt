@@ -1,18 +1,16 @@
 DTS file
-  DtsPpDefineStatementImpl(PP_DEFINE_STATEMENT)
-    PsiElement(#define)('#define')
-    PsiErrorElement:identifier expected
-      <empty list>
+  PpStatementPsiElement(PP_STATEMENT)
+    PsiElement(directive)('#define')
   PsiWhiteSpace('\n')
   DtsEntryImpl(ENTRY)
     DtsCompilerDirectiveImpl(COMPILER_DIRECTIVE)
       PsiElement(/dts-v1/)('/dts-v1/')
     PsiElement(;)(';')
   PsiWhiteSpace('\n')
-  DtsPpIncludeStatementImpl(PP_INCLUDE_STATEMENT)
-    PsiElement(#include)('#include')
+  PpStatementPsiElement(PP_STATEMENT)
+    PsiElement(directive)('#include')
     PsiWhiteSpace(' ')
-    PsiElement(include path)('"header')
+    PsiElement(header)('"header')
   PsiWhiteSpace('\n')
   DtsEntryImpl(ENTRY)
     DtsCompilerDirectiveImpl(COMPILER_DIRECTIVE)
