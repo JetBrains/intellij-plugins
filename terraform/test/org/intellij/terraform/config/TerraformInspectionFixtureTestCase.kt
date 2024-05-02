@@ -97,7 +97,13 @@ abstract class TerraformInspectionFixtureTestCase : InspectionFixtureTestCase() 
 
   open fun skipCheckPreview(intentionAction: IntentionAction): Boolean = intentionAction.text in skipPreview
 
-  private val skipQuickFix = setOf("Save  to dictionary", "Navigate to  duplicate", "View duplicates like this", "Run Terraform init")
+  private val skipQuickFix = setOf(
+    "Save  to dictionary",
+    "Navigate to  duplicate",
+    "View duplicates like this",
+    "Run Terraform init",
+    "Disable variable search in nested directories",
+  )
 
   open fun skipQuickFix(intentionAction: IntentionAction): Boolean = intentionAction.text in skipQuickFix
 
