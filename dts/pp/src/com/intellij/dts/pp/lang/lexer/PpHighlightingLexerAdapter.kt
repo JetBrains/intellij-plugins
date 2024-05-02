@@ -1,8 +1,9 @@
 package com.intellij.dts.pp.lang.lexer
 
 import com.intellij.dts.pp.lang.PpTokenTypes
+import com.intellij.dts.pp.lang.psi.PpElifStatement
 import com.intellij.dts.pp.lang.psi.PpIfStatement
-import com.intellij.dts.pp.lang.psi.PpStatementType.Else
+import com.intellij.dts.pp.lang.psi.PpStatementType.Endif
 import com.intellij.lexer.Lexer
 import java.util.*
 
@@ -12,16 +13,8 @@ import java.util.*
 open class PpHighlightingLexerAdapter(tokenTypes: PpTokenTypes, baseLexer: Lexer) : PpLexerAdapterBase(tokenTypes, baseLexer) {
   private val stateStack = Stack<Int>()
 
-  private var currentBuffer: CharSequence = ""
-  private var currentStartOffset: Int = 0
-  private var currentEndOffset: Int = 0
-
   override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int) {
     stateStack.clear()
-
-    currentBuffer = buffer
-    currentStartOffset = startOffset
-    currentEndOffset = endOffset
 
     super.start(buffer, startOffset, endOffset, initialState)
   }
@@ -34,10 +27,14 @@ open class PpHighlightingLexerAdapter(tokenTypes: PpTokenTypes, baseLexer: Lexer
     stateStack.push(baseLexer.state)
   }
 
-  private fun restoreState(baseLexer: Lexer) {
+  private fun applyState(baseLexer: Lexer) {
     if (stateStack.empty()) return
+    baseLexer.restoreState(stateStack.peek())
+  }
 
-    baseLexer.start(currentBuffer, baseLexer.tokenStart, currentEndOffset, stateStack.pop())
+  private fun popState(baseLexer: Lexer) {
+    if (stateStack.empty()) return
+    baseLexer.restoreState(stateStack.pop())
   }
 
   override fun processMarker(baseLexer: Lexer) {
@@ -45,15 +42,16 @@ open class PpHighlightingLexerAdapter(tokenTypes: PpTokenTypes, baseLexer: Lexer
 
     // forward tokens of the statement
     addStatementsTokens(baseLexer.tokenStart, tokens)
-    baseLexer.advance()
-
-    // TODO: handle elsif
 
     // store the lexer state before an if statement and restore it after an else statement
     val statement = parseStatement(tokens)
     when {
       statement is PpIfStatement -> storeState(baseLexer)
-      statement.type == Else -> restoreState(baseLexer)
+      statement is PpElifStatement -> applyState(baseLexer)
+      statement.type == Endif -> popState(baseLexer)
     }
+
+    // advance only after the lexer state has been restored
+    baseLexer.advance()
   }
 }

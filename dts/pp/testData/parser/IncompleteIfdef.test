@@ -1,0 +1,2 @@
+#ifdef I_AM_NOT_DEFINED
+I am a sentence.

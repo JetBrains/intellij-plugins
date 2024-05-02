@@ -20,6 +20,7 @@ class TestLexer implements FlexLexer {
 
   /** lexical states */
   public static final int YYINITIAL = 0;
+  public static final int IN_QUOTE = 2;
 
   /**
    * ZZ_LEXSTATE[l] is the state in the DFA for the lexical state l
@@ -28,7 +29,7 @@ class TestLexer implements FlexLexer {
    * l is of the form l = 2*k, k a non negative integer
    */
   private static final int ZZ_LEXSTATE[] = {
-     0, 0
+     0,  0,  1, 1
   };
 
   /**
@@ -65,8 +66,9 @@ class TestLexer implements FlexLexer {
   private static final int [] ZZ_CMAP_BLOCKS = zzUnpackcmap_blocks();
 
   private static final String ZZ_CMAP_BLOCKS_PACKED_0 =
-    "\12\0\1\1\3\2\25\0\1\3\13\0\1\4\125\0"+
-    "\1\2\u01a2\0\2\2\326\0\u0100\2";
+    "\12\0\1\1\3\2\22\0\1\3\2\0\1\4\12\0"+
+    "\1\5\1\6\14\0\1\7\1\0\1\10\2\0\72\11"+
+    "\12\0\1\2\u01a2\0\2\2\326\0\u0100\2";
 
   private static int [] zzUnpackcmap_blocks() {
     int [] result = new int[1024];
@@ -93,10 +95,11 @@ class TestLexer implements FlexLexer {
   private static final int [] ZZ_ACTION = zzUnpackAction();
 
   private static final String ZZ_ACTION_PACKED_0 =
-    "\1\0\1\1\1\2\1\0\1\3";
+    "\2\0\1\1\1\2\1\3\1\0\1\4\1\5\1\6"+
+    "\1\7";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[5];
+    int [] result = new int[10];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -121,10 +124,11 @@ class TestLexer implements FlexLexer {
   private static final int [] ZZ_ROWMAP = zzUnpackRowMap();
 
   private static final String ZZ_ROWMAP_PACKED_0 =
-    "\0\0\0\5\0\12\0\17\0\24";
+    "\0\0\0\12\0\24\0\36\0\50\0\62\0\50\0\74"+
+    "\0\50\0\106";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[5];
+    int [] result = new int[10];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -147,11 +151,14 @@ class TestLexer implements FlexLexer {
   private static final int [] ZZ_TRANS = zzUnpacktrans();
 
   private static final String ZZ_TRANS_PACKED_0 =
-    "\1\0\1\2\1\0\1\3\1\4\5\0\1\3\2\0"+
-    "\2\3\4\0\2\5\2\0\2\5";
+    "\1\0\1\3\1\0\1\3\1\4\1\5\1\6\1\7"+
+    "\1\0\1\10\1\0\1\3\1\0\1\3\1\4\1\5"+
+    "\1\6\1\7\1\11\1\10\1\0\1\3\1\0\1\3"+
+    "\6\0\1\4\2\0\7\4\20\0\1\12\14\0\1\10"+
+    "\1\12\2\0\7\12";
 
   private static int [] zzUnpacktrans() {
-    int [] result = new int[25];
+    int [] result = new int[80];
     int offset = 0;
     offset = zzUnpacktrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -189,10 +196,10 @@ class TestLexer implements FlexLexer {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\1\0\1\11\1\1\1\0\1\1";
+    "\2\0\2\1\1\11\1\0\1\11\1\1\1\11\1\1";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[5];
+    int [] result = new int[10];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -517,17 +524,37 @@ class TestLexer implements FlexLexer {
             { return TokenType.WHITE_SPACE;
             }
           // fall through
-          case 4: break;
+          case 8: break;
           case 2:
             { return TestTypes.PP_STATEMENT_MARKER;
             }
           // fall through
-          case 5: break;
+          case 9: break;
           case 3:
+            { return TestTypes.DOT;
+            }
+          // fall through
+          case 10: break;
+          case 4:
+            { yybegin(IN_QUOTE); return TestTypes.QUOTE_START;
+            }
+          // fall through
+          case 11: break;
+          case 5:
+            { return TestTypes.WORD;
+            }
+          // fall through
+          case 12: break;
+          case 6:
+            { yybegin(YYINITIAL); return TestTypes.QUOTE_END;
+            }
+          // fall through
+          case 13: break;
+          case 7:
             { return TestTypes.COMMENT;
             }
           // fall through
-          case 6: break;
+          case 14: break;
           default:
             zzScanError(ZZ_NO_MATCH);
           }

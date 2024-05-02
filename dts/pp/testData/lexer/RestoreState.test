@@ -1,0 +1,7 @@
+Quote <
+
+#ifdef I_AM_NOT_DEFINED
+  end>
+#else
+  end>
+#endif

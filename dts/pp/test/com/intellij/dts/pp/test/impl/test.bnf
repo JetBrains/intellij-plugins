@@ -15,6 +15,7 @@
   elementTypeClass="com.intellij.dts.pp.test.impl.TestElementType"
 
   tokenTypeClass="com.intellij.dts.pp.test.impl.TestTokenType"
+  parserUtilClass="com.intellij.dts.pp.test.impl.TestParserUtil"
 
   tokens=[
     COMMENT="COMMENT"
@@ -42,4 +43,8 @@
   ]
 }
 
-file ::= TOKEN
+file ::= sentence*
+
+sentence ::= (WORD | quote)+ DOT
+
+quote ::= QUOTE_START WORD* QUOTE_END

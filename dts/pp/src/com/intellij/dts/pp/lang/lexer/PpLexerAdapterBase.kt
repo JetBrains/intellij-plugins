@@ -13,6 +13,22 @@ abstract class PpLexerAdapterBase(protected val tokenTypes: PpTokenTypes, baseLe
   private val ppLexer = PpLexer(null, tokenTypes)
   private val ppParser = PpAdHocParser(tokenTypes)
 
+  private var currentBuffer: CharSequence = ""
+  private var currentStartOffset: Int = 0
+  private var currentEndOffset: Int = 0
+
+  override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int) {
+    currentBuffer = buffer
+    currentStartOffset = startOffset
+    currentEndOffset = endOffset
+
+    super.start(buffer, startOffset, endOffset, initialState)
+  }
+
+  protected fun Lexer.restoreState(state: Int) {
+    start(currentBuffer, tokenStart, currentEndOffset, state)
+  }
+
   final override fun lookAhead(baseLexer: Lexer) {
     if (baseLexer.tokenType != tokenTypes.statementMarker) {
       advanceLexer(baseLexer)

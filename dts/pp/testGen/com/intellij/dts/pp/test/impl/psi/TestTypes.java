@@ -4,8 +4,11 @@ package com.intellij.dts.pp.test.impl.psi;
 
 public interface TestTypes {
 
+  com.intellij.psi.tree.IElementType QUOTE = new com.intellij.dts.pp.test.impl.TestElementType("QUOTE");
+  com.intellij.psi.tree.IElementType SENTENCE = new com.intellij.dts.pp.test.impl.TestElementType("SENTENCE");
 
   com.intellij.psi.tree.IElementType COMMENT = new com.intellij.dts.pp.test.impl.TestTokenType("COMMENT");
+  com.intellij.psi.tree.IElementType DOT = new com.intellij.dts.pp.test.impl.TestTokenType("DOT");
   com.intellij.psi.tree.IElementType PP_CHAR_LITERAL = new com.intellij.dts.pp.test.impl.TestTokenType("PP_CHAR_LITERAL");
   com.intellij.psi.tree.IElementType PP_COMMENT = new com.intellij.dts.pp.test.impl.TestTokenType("PP_COMMENT");
   com.intellij.psi.tree.IElementType PP_DIRECTIVE = new com.intellij.dts.pp.test.impl.TestTokenType("PP_DIRECTIVE");
@@ -21,8 +24,20 @@ public interface TestTypes {
   com.intellij.psi.tree.IElementType PP_STATEMENT_END = new com.intellij.dts.pp.test.impl.TestTokenType("PP_STATEMENT_END");
   com.intellij.psi.tree.IElementType PP_STATEMENT_MARKER = new com.intellij.dts.pp.test.impl.TestTokenType("PP_STATEMENT_MARKER");
   com.intellij.psi.tree.IElementType PP_STRING_LITERAL = new com.intellij.dts.pp.test.impl.TestTokenType("PP_STRING_LITERAL");
-  com.intellij.psi.tree.IElementType TOKEN = new com.intellij.dts.pp.test.impl.TestTokenType("TOKEN");
+  com.intellij.psi.tree.IElementType QUOTE_END = new com.intellij.dts.pp.test.impl.TestTokenType("QUOTE_END");
+  com.intellij.psi.tree.IElementType QUOTE_START = new com.intellij.dts.pp.test.impl.TestTokenType("QUOTE_START");
+  com.intellij.psi.tree.IElementType WORD = new com.intellij.dts.pp.test.impl.TestTokenType("WORD");
 
   class Factory {
+    public static com.intellij.psi.PsiElement createElement(com.intellij.lang.ASTNode node) {
+      com.intellij.psi.tree.IElementType type = node.getElementType();
+      if (type == QUOTE) {
+        return new com.intellij.dts.pp.test.impl.psi.TestQuoteImpl(node);
+      }
+      else if (type == SENTENCE) {
+        return new com.intellij.dts.pp.test.impl.psi.TestSentenceImpl(node);
+      }
+      throw new AssertionError("Unknown element type: " + type);
+    }
   }
 }

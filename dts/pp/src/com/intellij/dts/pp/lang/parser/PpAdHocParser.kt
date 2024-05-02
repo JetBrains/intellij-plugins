@@ -59,8 +59,13 @@ internal class PpAdHocParser(internal val tokenTypes: PpTokenTypes) {
     parseStatement()
 
     return when (statement.type) {
+      If -> PpIfExprStatement(statement)
       IfDef -> PpIfDefStatement(statement)
       IfNdef -> PpIfNdefStatement(statement)
+      Else -> PpElseStatement(statement)
+      Elif -> PpElifExprStatement(statement)
+      ElifDef -> PpElifDefStatement(statement)
+      ElifNdef -> PpElifNdefStatement(statement)
       else -> statement
     }
   }
@@ -69,7 +74,7 @@ internal class PpAdHocParser(internal val tokenTypes: PpTokenTypes) {
     parseDirective()
 
     when (statement.type) {
-      IfDef, IfNdef -> {
+      IfDef, IfNdef, ElifDef, ElifNdef -> {
         parseIdentifier()
         parseEnd()
       }

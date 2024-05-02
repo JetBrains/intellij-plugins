@@ -27,5 +27,7 @@ class PpLexerTest : LexerTestCase() {
 
   fun `test operator punctuator`() = doTest()
 
+  fun `test restore state`() = doTest()
+
   private fun doTest() = doFileTest("test")
 }

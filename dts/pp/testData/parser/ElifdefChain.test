@@ -1,0 +1,13 @@
+This
+
+#ifdef I_AM_DEFINED
+  a
+#elifdef I_AM_DEFINED
+  long
+#elifdef I_AM_DEFINED
+  long
+#else
+  sentence
+#endif
+
+.

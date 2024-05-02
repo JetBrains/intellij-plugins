@@ -1,0 +1,9 @@
+FILE
+  PpStatementPsiElement(PP_STATEMENT)
+    PsiElement(PP_DIRECTIVE)('#define')
+    PsiWhiteSpace(' ')
+    PsiElement(PP_IDENTIFIER)('identifier')
+    PsiWhiteSpace(' ')
+    PsiElement(PP_IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(PP_INTEGER_LITERAL)('123')

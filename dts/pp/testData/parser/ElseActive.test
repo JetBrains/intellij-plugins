@@ -1,0 +1,9 @@
+I am
+
+#ifdef I_AM_NOT_DEFINED
+  a
+#else
+  the
+#endif
+
+sentence.

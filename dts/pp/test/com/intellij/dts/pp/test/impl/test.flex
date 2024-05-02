@@ -16,10 +16,19 @@ import com.intellij.dts.pp.test.impl.psi.TestTypes;
 %eof{  return;
 %eof}
 
+%state IN_QUOTE
+
 %%
 
-"//".* { return TestTypes.COMMENT; }
+"//".*     { return TestTypes.COMMENT; }
 
-"#".*  { return TestTypes.PP_STATEMENT_MARKER; }
+"#".*      { return TestTypes.PP_STATEMENT_MARKER; }
 
-"\n"   { return TokenType.WHITE_SPACE; }
+[ \n]+     { return TokenType.WHITE_SPACE; }
+
+[a-zA-z]+  { return TestTypes.WORD; }
+
+"."        { return TestTypes.DOT; }
+
+<YYINITIAL> "<" { yybegin(IN_QUOTE); return TestTypes.QUOTE_START; }
+<IN_QUOTE>  ">" { yybegin(YYINITIAL); return TestTypes.QUOTE_END; }

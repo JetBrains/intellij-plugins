@@ -1,14 +1,49 @@
 package com.intellij.dts.pp.lang.lexer
 
 import com.intellij.dts.pp.lang.PpTokenTypes
+import com.intellij.dts.pp.lang.psi.PpElifStatement
 import com.intellij.dts.pp.lang.psi.PpIfStatement
 import com.intellij.dts.pp.lang.psi.PpStatementType.*
 import com.intellij.dts.pp.lang.psi.PpToken
 import com.intellij.dts.pp.lang.psi.identifier
-import com.intellij.lexer.*
+import com.intellij.lexer.Lexer
+
+private class IfState {
+  private var inside: Boolean = false
+  private var wasActive: Boolean = false
+
+  /**
+   * Returns whether this if branch is active.
+   */
+  fun beginIf(result: Boolean): Boolean {
+    inside = true
+    wasActive = result
+
+    return result
+  }
+
+  /**
+   * Returns whether this elif branch is active.
+   */
+  fun elseIf(result: Boolean): Boolean {
+    // if there is no leading if statement, treat elsif as beginning
+    if (!inside) return beginIf(result)
+
+    // ensure only one branch can be active at once
+    if (wasActive || !result) return false
+
+    wasActive = true
+    return true
+  }
+
+  fun endIf() {
+    inside = false
+    wasActive = false
+  }
+}
 
 /**
- * Handles if statements depending on the defines. If the body of an if statements is not
+ * Handles if statements depending on the defines. If the body of an if-statement is not
  * active all tokens inside the body are joined to one [PpTokenTypes.inactive] token.
  *
  * This lexer should only be used for parsing since keeping track of the current defines
@@ -16,6 +51,7 @@ import com.intellij.lexer.*
  */
 open class PpParserLexerAdapter(tokenTypes: PpTokenTypes, baseLexer: Lexer) : PpLexerAdapterBase(tokenTypes, baseLexer) {
   private val defines = mutableListOf("I_AM_DEFINED")
+  private val ifState = IfState()
 
   override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int) {
     assert(startOffset == 0)
@@ -30,16 +66,17 @@ open class PpParserLexerAdapter(tokenTypes: PpTokenTypes, baseLexer: Lexer) : Pp
     addStatementsTokens(baseLexer.tokenStart, tokens)
     baseLexer.advance()
 
-    // TODO: handle elsif
-
     // map sections to inactive depending on the statement
     val statement = parseStatement(tokens)
     when {
-      statement.type == Else -> {
+      statement is PpIfStatement && !ifState.beginIf(statement.evaluate(defines)) -> {
         processInactiveSection(baseLexer)
       }
-      statement is PpIfStatement && !statement.evaluate(defines) -> {
+      statement is PpElifStatement && !ifState.elseIf(statement.evaluate(defines)) -> {
         processInactiveSection(baseLexer)
+      }
+      statement.type == Endif -> {
+        ifState.endIf()
       }
       statement.type == Define -> {
         statement.identifier?.let { defines.add(it.text.toString()) }
@@ -50,7 +87,17 @@ open class PpParserLexerAdapter(tokenTypes: PpTokenTypes, baseLexer: Lexer) : Pp
     }
   }
 
+  /**
+   * Processes an inactive code section. Therefore, the base lexer is advanced until
+   * the next preprocessor statement was reached. The overall if-state is tracked by
+   * [ifState].
+   *
+   * This function handles nested if statements and also restores the lexer state in
+   * the end.
+   */
   private fun processInactiveSection(baseLexer: Lexer) {
+    val baseLexerState = baseLexer.state
+
     var tokens: List<PpToken>
     var nestedIfs = 0
 
@@ -69,14 +116,16 @@ open class PpParserLexerAdapter(tokenTypes: PpTokenTypes, baseLexer: Lexer) : Pp
       tokens = tokenizeStatement(baseLexer)
       val statement = parseStatement(tokens)
 
-      // TODO: handle elsif
-
-      // find the end of the inactive code section, but mind nested ifs
-      when (statement.type) {
-        If, IfDef, IfNdef -> nestedIfs += 1
-        Endif -> if (nestedIfs == 0) break else nestedIfs -= 1
-        Else -> if (nestedIfs == 0) break
-        else -> {}
+      // find the end of the inactive code section, but mind nested ifs and elifs
+      when {
+        statement is PpIfStatement -> nestedIfs++
+        nestedIfs == 0 && statement.type == Endif -> break
+        nestedIfs >= 1 && statement.type == Endif -> nestedIfs--
+        nestedIfs == 0 && statement is PpElifStatement -> {
+          addToken(baseLexer.tokenStart, tokenTypes.inactive)
+          baseLexer.restoreState(baseLexerState)
+          return
+        }
       }
 
       baseLexer.advance()
@@ -87,6 +136,8 @@ open class PpParserLexerAdapter(tokenTypes: PpTokenTypes, baseLexer: Lexer) : Pp
 
     // forward tokens of last statement, it is no longer part of the inactive code section
     addStatementsTokens(baseLexer.tokenStart, tokens)
+    baseLexer.restoreState(baseLexerState)
+
     baseLexer.advance()
   }
 }
