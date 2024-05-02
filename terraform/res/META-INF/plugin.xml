@@ -347,6 +347,12 @@
                      bundle="messages.HCLBundle"
                      descriptionKey="terraform.metadata.build.eagerly"/>
 
+    <advancedSetting id="org.intellij.terraform.config.variables.deep.search"
+                     default="true"
+                     groupKey="advanced.setting.terraform"
+                     bundle="messages.HCLBundle"
+                     descriptionKey="terraform.variables.deep.search"/>
+
     <projectConfigurable groupId="tools" instance="org.intellij.terraform.runtime.TerraformToolConfigurable"
                          id="reference.settings.dialog.project.terraform"
                          key="terraform.name" bundle="messages.HCLBundle"/>
