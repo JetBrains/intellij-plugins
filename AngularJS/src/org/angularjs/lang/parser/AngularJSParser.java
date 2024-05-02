@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angularjs.lang.parser;
 
 import com.intellij.lang.PsiBuilder;
@@ -15,7 +16,7 @@ public class AngularJSParser
   extends JavaScriptParser<AngularJSParser.AngularJSExpressionParser, StatementParser, FunctionParser, JSPsiTypeParser> {
 
   public AngularJSParser(PsiBuilder builder) {
-    super(DialectOptionHolder.JS_1_5, builder);
+    super(JavascriptLanguage.INSTANCE, builder);
     myExpressionParser = new AngularJSExpressionParser();
     myStatementParser = new StatementParser<>(this) {
       @Override

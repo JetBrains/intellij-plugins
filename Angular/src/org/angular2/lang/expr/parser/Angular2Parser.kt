@@ -26,7 +26,7 @@ class Angular2Parser private constructor(builder: PsiBuilder,
                                          private val myIsAction: Boolean,
                                          private val myIsSimpleBinding: Boolean,
                                          private val myIsJavaScript: Boolean)
-  : JavaScriptParser<Angular2ExpressionParser, Angular2StatementParser, FunctionParser<*>, JSPsiTypeParser<*>>(DialectOptionHolder.JS_1_5,
+  : JavaScriptParser<Angular2ExpressionParser, Angular2StatementParser, FunctionParser<*>, JSPsiTypeParser<*>>(JavascriptLanguage.INSTANCE,
                                                                                                                builder) {
   constructor(builder: PsiBuilder) : this(builder, false, false, true)
 
