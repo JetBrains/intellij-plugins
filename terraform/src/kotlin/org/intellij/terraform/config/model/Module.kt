@@ -1,10 +1,15 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
+import com.intellij.codeInspection.LocalQuickFix
+import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.concurrency.ConcurrentCollectionFactory
 import com.intellij.lang.LanguageMatcher
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.options.advanced.AdvancedSettings
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.VfsUtil
@@ -20,6 +25,7 @@ import org.intellij.terraform.config.TerraformLanguage
 import org.intellij.terraform.config.model.local.LocalSchemaService
 import org.intellij.terraform.config.model.version.VersionConstraint
 import org.intellij.terraform.config.patterns.TerraformPatterns
+import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.hcl.psi.common.LiteralExpression
@@ -152,6 +158,9 @@ class Module private constructor(val item: PsiFileSystemItem) {
   private fun calculateModuleAwareSearchScope(context: PsiFileSystemItem): GlobalSearchScope? {
     val currentFile = context.virtualFile ?: return null
     val currentFileDir = currentFile.takeIf { it.isDirectory } ?: currentFile.parent
+    if (!isDeepVariableSearchEnabled) {
+      return GlobalSearchScopes.directoryScope(context.project, currentFileDir, false)
+    }
 
     val terraformDir = ModuleDetectionUtil.getTerraformDirSomewhere(currentFile, context.project)
     if (terraformDir != null && currentFileDir != null && VfsUtil.isAncestor(terraformDir, currentFile, true)) {
@@ -417,3 +426,24 @@ class Module private constructor(val item: PsiFileSystemItem) {
     return ObjectType(result)
   }
 }
+
+internal val isDeepVariableSearchEnabled: Boolean
+  get() = AdvancedSettings.getBoolean("org.intellij.terraform.config.variables.deep.search")
+
+internal fun createDisableDeepVariableSearchQuickFix(): LocalQuickFix? {
+  if (!isDeepVariableSearchEnabled) return null
+
+  return object : LocalQuickFix {
+
+    override fun startInWriteAction(): Boolean = false
+
+    override fun getFamilyName(): String = HCLBundle.message("disable.deep.variable.search")
+
+    override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+      AdvancedSettings.setBoolean("org.intellij.terraform.config.variables.deep.search", false)
+      DaemonCodeAnalyzer.getInstance(project).restart()
+    }
+
+  }
+}
+

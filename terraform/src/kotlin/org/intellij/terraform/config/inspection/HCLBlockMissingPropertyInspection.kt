@@ -114,8 +114,11 @@ class HCLBlockMissingPropertyInspection : LocalInspectionTool() {
         required.joinToString(", ") { it.name }
       ),
       ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-      *listOfNotNull(AddResourcePropertiesFix(required), TFInitAction.createQuickFixNotInitialized(block))
-        .toArray(LocalQuickFix.EMPTY_ARRAY)
+      *listOfNotNull(
+        AddResourcePropertiesFix(required),
+        TFInitAction.createQuickFixNotInitialized(block),
+        createDisableDeepVariableSearchQuickFix()
+      ).toArray(LocalQuickFix.EMPTY_ARRAY)
     )
   }
 
