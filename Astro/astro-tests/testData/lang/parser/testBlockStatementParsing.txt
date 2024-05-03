@@ -44,7 +44,7 @@ AstroFile:test.astro
               PsiWhiteSpace(' ')
               PsiElement(JS:EQGT)('=>')
               PsiWhiteSpace(' ')
-              JSBlockStatement
+              JSBlockStatementEager
                 PsiElement(JS:LBRACE)('{')
                 PsiWhiteSpace(' ')
                 JSReturnStatement

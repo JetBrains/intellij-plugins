@@ -1,12 +1,12 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro.lang.parser
 
 import com.intellij.html.embedding.HtmlCustomEmbeddedContentTokenType
-import com.intellij.lang.*
-import com.intellij.lang.javascript.DialectOptionHolder
+import com.intellij.lang.ASTNode
+import com.intellij.lang.ParserDefinition
+import com.intellij.lang.PsiBuilder
+import com.intellij.lang.PsiParser
 import com.intellij.lang.javascript.JSElementTypes
-import com.intellij.lang.javascript.JSFlexAdapter
-import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.JavascriptParserDefinition
 import com.intellij.lang.javascript.parsing.JavaScriptParser
 import com.intellij.lang.xml.XMLParserDefinition
@@ -25,7 +25,6 @@ import com.intellij.psi.xml.XmlElementType
 import com.intellij.psi.xml.XmlTokenType
 import org.jetbrains.astro.lang.AstroFileElementType
 import org.jetbrains.astro.lang.AstroFileImpl
-import org.jetbrains.astro.lang.AstroLanguage
 import org.jetbrains.astro.lang.lexer.AstroLexer
 import org.jetbrains.astro.lang.psi.AstroHtmlTag
 
@@ -40,24 +39,6 @@ open class AstroParserDefinition : JavascriptParserDefinition() {
 
   override fun createJSParser(builder: PsiBuilder): JavaScriptParser<*, *, *, *> {
     return AstroParsing(builder).tsxParser
-  }
-
-  override fun createLexerForLazyParse(project: Project, language: Language, chameleon: ASTNode): Lexer? {
-    if (language == AstroLanguage.INSTANCE) {
-      var search: ASTNode? = chameleon
-      while (search != null && search.elementType != JSStubElementTypes.EMBEDDED_EXPRESSION) {
-        search = search.treeParent
-      }
-      if (search != null) {
-        return AstroLexer(project, false, true)
-      }
-      else {
-        return JSFlexAdapter(DialectOptionHolder.TS)
-      }
-    }
-    else {
-      return super.createLexerForLazyParse(project, language, chameleon)
-    }
   }
 
   override fun getFileNodeType(): IFileElementType {
