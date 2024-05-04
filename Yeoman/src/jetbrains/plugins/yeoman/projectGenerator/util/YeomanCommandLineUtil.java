@@ -4,10 +4,10 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.*;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager;
 import com.intellij.javascript.nodejs.npm.NpmUtil;
-import com.intellij.lang.javascript.bower.BowerCommandLineUtil;
-import com.intellij.lang.javascript.bower.BowerSettings;
-import com.intellij.lang.javascript.bower.BowerSettingsManager;
+import com.intellij.javascript.nodejs.util.NodePackage;
+import com.intellij.javascript.nodejs.util.NodePackageRef;
 import com.intellij.lang.javascript.buildTools.npm.rc.NpmCommand;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -16,13 +16,13 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import com.intellij.util.Alarm;
-import jetbrains.plugins.yeoman.projectGenerator.template.YeomanProjectGenerator;
 import jetbrains.plugins.yeoman.settings.YeomanGlobalSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
@@ -130,16 +130,15 @@ public final class YeomanCommandLineUtil {
     };
   }
 
-  public static GeneralCommandLine createBowerInstallCommandLine(@NotNull Project project, @NotNull File workingDirectory) {
-    final BowerSettings settings = BowerSettingsManager.getInstance(project).getSettings();
-    final BowerSettings build = settings.createBuilder()
-      .setBowerJsonPath(new File(workingDirectory, YeomanProjectGenerator.BOWER_JSON).getAbsolutePath())
-      .build();
-
+  public static @Nullable GeneralCommandLine createBowerInstallCommandLine(@NotNull Project project, @NotNull File workingDirectory) {
     try {
-      GeneralCommandLine line = BowerCommandLineUtil.createCommandLine(build);
-      line.addParameter("install");
-      return line;
+      NodeJsInterpreter interpreter = NodeJsInterpreterManager.getInstance(project).getInterpreterOrThrow();
+      NodePackage npmPackage = NpmUtil.resolvePackageRefOrThrow(NodePackageRef.create(NpmUtil.NPM_PACKAGE_NAME), project, interpreter);
+      return NpmUtil.createNpmCommandLine(workingDirectory,
+                                          interpreter,
+                                          npmPackage,
+                                          NpmCommand.EXEC,
+                                          List.of("--", "bower", "install"));
     }
     catch (ExecutionException e) {
       return null;
