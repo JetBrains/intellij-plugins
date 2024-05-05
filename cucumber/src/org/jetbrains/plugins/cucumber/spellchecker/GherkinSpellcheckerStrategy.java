@@ -6,14 +6,13 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafElement;
-import com.intellij.spellchecker.quickfixes.ChangeTo;
-import com.intellij.spellchecker.quickfixes.SaveTo;
+import com.intellij.spellchecker.quickfixes.SpellCheckerQuickFixFactory;
 import com.intellij.spellchecker.tokenizer.SpellcheckingStrategy;
 import com.intellij.spellchecker.tokenizer.Tokenizer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.psi.GherkinElementType;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class GherkinSpellcheckerStrategy extends SpellcheckingStrategy {
   @NotNull
@@ -22,19 +21,19 @@ public class GherkinSpellcheckerStrategy extends SpellcheckingStrategy {
     if (element instanceof LeafElement) {
       final ASTNode node = element.getNode();
       if (node != null && node.getElementType() instanceof GherkinElementType){
-        return SpellcheckingStrategy.TEXT_TOKENIZER;
+        return TEXT_TOKENIZER;
       }
     }
     return super.getTokenizer(element);
   }
 
   @Override
-  public LocalQuickFix[] getRegularFixes(PsiElement element,
+  public LocalQuickFix[] getRegularFixes(@NotNull PsiElement element,
                                          @NotNull TextRange textRange,
                                          boolean useRename,
                                          String typo) {
-    ArrayList<LocalQuickFix> result = new ArrayList<>(new ChangeTo(typo, element, textRange).getAllAsFixes());
-    result.add(new SaveTo(typo));
+    List<LocalQuickFix> result = SpellCheckerQuickFixFactory.changeToVariants(element, textRange, typo);
+    result.add(SpellCheckerQuickFixFactory.saveTo(element, textRange, typo));
     return result.toArray(LocalQuickFix.EMPTY_ARRAY);
   }
 }
