@@ -367,7 +367,6 @@
     <checkinHandlerFactory implementation="org.intellij.terraform.config.actions.TFFmtCheckinFactory" order="last"/>
     <macro implementation="org.intellij.terraform.macros.TerraformExecutableMacro"/>
 
-    <fileTypeStatisticProvider implementation="org.intellij.terraform.hcl.TerraformFileTypeStatisticProvider"/>
     <notificationGroup id="Terraform Execution" displayType="TOOL_WINDOW" toolWindowId="Run" bundle="messages.HCLBundle" key="notification.group.terraform.execution"/>
 
     <dependencySupport kind="executable" coordinate="terraform"/>
@@ -389,6 +388,5 @@
       <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
       <add-to-group group-id="EditorLangPopupMenu" anchor="last"/>
     </group>
-
   </actions>
 </idea-plugin>
