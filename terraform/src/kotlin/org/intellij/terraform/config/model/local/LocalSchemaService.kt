@@ -73,12 +73,16 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     val myDeferred = modelComputationCache[lock]
 
     if (myDeferred == null || myDeferred.isCompleted && myDeferred.getCompletionExceptionOrNull() is CancellationException) {
-      scheduleModelRebuild(setOf(lock)).let { scope.launch { it.getValue() } }
+      if (buildLocalMetadataAutomatically) {
+        scheduleModelRebuild(setOf(lock)).let { scope.launch { it.getValue() } }
+      }
       return null
     }
 
     if (!myDeferred.isCompleted) {
-      myDeferred.start()
+      scope.launch {
+        myDeferred.join() // not myDeferred.start() because it logs exceptions
+      }
       return null
     }
 
