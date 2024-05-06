@@ -256,9 +256,9 @@ class Angular2InjectionsTest : Angular2CodeInsightFixtureTestCase() {
   fun testAngularCliProjectWithReact() {
     myFixture.configureByText("package.json", """{ "dependencies": {"react": "*"} }""")
     myFixture.configureByText("angular.json", """{"projects":{"test":{"sourceRoot":"src","root":""}}}""")
-    TestCase.assertEquals(myFixture.configureByText ("root.html", "").language, HTMLLanguage.INSTANCE)
+    TestCase.assertEquals(HTMLLanguage.INSTANCE, myFixture.configureByText ("root.html", "").language)
     myFixture.tempDirFixture.createFile("src/src.html")
-    TestCase.assertEquals(myFixture.configureFromTempProjectFile ("src/src.html").language, Angular2HtmlLanguage)
+    TestCase.assertEquals(Angular2HtmlLanguage, myFixture.configureFromTempProjectFile ("src/src.html").language)
   }
 
   fun testTemplateReferencedThroughImportStatement() {

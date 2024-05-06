@@ -87,7 +87,13 @@ open class AngularProjectImpl(override val name: String,
 
   override val rootDir = ngProject.rootPath?.let { angularCliFolder.findFileByRelativePath(it) }
 
-  override val sourceDir get() = ngProject.sourceRoot?.let { angularCliFolder.findFileByRelativePath(it) } ?: rootDir
+  override val sourceDir
+    get() = ngProject.sourceRoot.let {
+      if (it != null)
+        angularCliFolder.findFileByRelativePath(it)
+      else
+        rootDir
+    }
 
   override val cssResolveRootDir: VirtualFile? get() = rootDir
 

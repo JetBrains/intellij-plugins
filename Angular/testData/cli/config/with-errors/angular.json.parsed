@@ -5,7 +5,7 @@
        name: Webstorm-Test
        type: null
        rootDir: temp:///src
-       sourceDir: temp:///src
+       sourceDir: null
        indexHtml: null
        tsConfig: null
        globalStyleSheets: []
