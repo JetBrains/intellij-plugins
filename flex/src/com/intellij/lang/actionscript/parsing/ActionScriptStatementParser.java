@@ -44,7 +44,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
   }
 
   @Override
-  protected void doParseStatement() {
+  public void parseStatement() {
     final IElementType firstToken = builder.getTokenType();
 
     if (firstToken == JSTokenTypes.PACKAGE_KEYWORD) {
@@ -88,7 +88,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
       }
     }
 
-    super.doParseStatement();
+    super.parseStatement();
   }
 
   void parseIncludeDirective() {
