@@ -20,6 +20,7 @@ import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ui.JBUI;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.assists.AssistUtils;
 import com.jetbrains.lang.dart.assists.DartSourceEditException;
 import com.jetbrains.lang.dart.ide.refactoring.DartInlineHandler;
@@ -203,7 +204,7 @@ class DartServerExtractLocalVariableDialog extends ServerRefactoringDialog<Serve
     super(project, editor, refactoring);
 
     final String[] names = refactoring.getNames();
-    myVariableNameField = new NameSuggestionsField(names, project);
+    myVariableNameField = new NameSuggestionsField(names, project, DartFileType.INSTANCE);
 
     setTitle(DartBundle.message("dialog.title.extract.local.variable"));
     init();
