@@ -6,9 +6,9 @@ import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.codeInsight.template.impl.InvokeTemplateAction
 import com.intellij.codeInsight.template.impl.LiveTemplateCompletionContributor
 import com.intellij.codeInsight.template.impl.TemplateImpl
-import com.intellij.javascript.debugger.com.intellij.lang.javascript.waitCoroutinesBlocking
 import com.intellij.lang.ecmascript6.psi.impl.JSImportsCoroutineScope
 import com.intellij.lang.javascript.BaseJSCompletionTestCase
+import com.intellij.testFramework.utils.coroutines.waitCoroutinesBlocking
 import org.angular2.Angular2TestCase
 import org.angular2.codeInsight.Angular2LiveTemplateTest.TestMode.*
 
