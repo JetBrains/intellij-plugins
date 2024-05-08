@@ -498,5 +498,5 @@ private class PerforceConfigPanel(private val myProject: Project, private val my
 internal class PerforceConfigurable(val myProject: Project, private val cs: CoroutineScope) :
   BoundConfigurable(PerforceVcs.NAME, "project.propVCSSupport.VCSs.Perforce") {
 
-  override fun createPanel(): DialogPanel = PerforceConfigPanel(myProject, disposable!!, cs.childScope(CoroutineName("PerforceConfigPanel"))).createPanel()
+  override fun createPanel(): DialogPanel = PerforceConfigPanel(myProject, disposable!!, cs.childScope("PerforceConfigPanel")).createPanel()
 }
