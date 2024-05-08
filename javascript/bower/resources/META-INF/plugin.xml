@@ -1,0 +1,28 @@
+<idea-plugin>
+  <name>Bower</name>
+  <id>com.jetbrains.plugins.bower</id>
+  <category>JavaScript Frameworks and Tools</category>
+  <vendor>JetBrains</vendor>
+  <description><![CDATA[
+Provides integration with <a href="https://bower.io/">Bower</a>.
+<p/>
+Note that this plugin is not actively maintained and may stop working in future IDE releases.
+  ]]></description>
+
+  <depends>com.intellij.modules.lang</depends>
+  <depends>JavaScript</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <projectConfigurable id="Settings.JavaScript.Bower"
+                         parentId="Settings.JavaScript"
+                         instance="com.intellij.javascript.bower.BowerConfigurable"
+                         key="settings.javascript.bower.configurable.name"
+                         bundle="messages.BowerBundle"
+                         order="after Settings.JavaScript.Templates"/>
+    <projectService serviceImplementation="com.intellij.javascript.bower.BowerSettingsManager"/>
+    <fileType name="JSON" fileNames="bowerrc"/>
+    <completion.contributor language="JSON" implementationClass="com.intellij.javascript.bower.BowerCompletionContributor"/>
+    <spellchecker.support language="JSON" order="first" implementationClass="com.intellij.javascript.bower.BowerConfigFileSpellcheckingStrategy"/>
+  </extensions>
+
+</idea-plugin>
