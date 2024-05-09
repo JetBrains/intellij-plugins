@@ -1,0 +1,7 @@
+<main *ngIf="title != 'foo' as bar" [foo]="{a: car}">
+  <div [foo]="{a: car}" [foo2]="12 | thePipe">
+    <router-outlet #car="outlet"></router-outlet>
+  </div>
+</main>
+
+<span i18n>Updated {minutes, plural, =0 {just now} =1 {one minute ago} other {{{minutes}} minutes ago}}</span>

@@ -1,7 +1,6 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities
 
-import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.model.Pointer
 import com.intellij.webSymbols.WebSymbolApiStatus
 import org.angular2.web.Angular2Symbol
@@ -34,7 +33,11 @@ interface Angular2Directive : Angular2Declaration {
 
   val apiStatus: WebSymbolApiStatus
 
-  val templateGuards: List<JSElement>
+  val templateGuards: List<Angular2TemplateGuard>
+    get() = emptyList()
+
+  val hasTemplateContextGuard: Boolean
+    get() = false
 
   fun areHostDirectivesFullyResolved(): Boolean
 

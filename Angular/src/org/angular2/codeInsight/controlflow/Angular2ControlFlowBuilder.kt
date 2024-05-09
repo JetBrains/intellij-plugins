@@ -26,6 +26,8 @@ import com.intellij.util.asSafely
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.blocks.*
 import org.angular2.codeInsight.template.isTemplateTag
+import org.angular2.entities.Angular2TemplateGuard
+import org.angular2.entities.Angular2TemplateGuard.Kind
 import org.angular2.lang.expr.psi.Angular2Binding
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
@@ -41,7 +43,7 @@ class Angular2ControlFlowBuilder : JSControlFlowBuilder() {
     const val NG_TEMPLATE_GUARD_PREFIX = "ngTemplateGuard_"
 
     private val CUSTOM_GUARD = Key.create<JSElement>("CUSTOM_GUARD")
-    private const val BINDING_GUARD = "binding" // See interface TemplateGuardMeta in Angular sources
+    const val BINDING_GUARD = "binding" // See interface TemplateGuardMeta in Angular sources
   }
 
   private val visitedNodes = mutableSetOf<PsiElement>()
@@ -55,7 +57,7 @@ class Angular2ControlFlowBuilder : JSControlFlowBuilder() {
           return
         }
         val directives = element.attributes.flatMap { (it.descriptor as? Angular2AttributeDescriptor)?.sourceDirectives ?: emptyList() }
-        val templateGuards = directives.flatMap { it.templateGuards }.groupBy { it.name!!.removePrefix(NG_TEMPLATE_GUARD_PREFIX) }
+        val templateGuards = directives.flatMap { it.templateGuards }.groupBy { it.inputName }
 
         val guards = element.attributes.flatMap {
           processAttribute(it, templateGuards)
@@ -63,7 +65,7 @@ class Angular2ControlFlowBuilder : JSControlFlowBuilder() {
         if (guards.isNotEmpty()) {
           val guard = guards[0] // TODO support multiple guards
           val templateExpression: JSExpression? = guard.templateExpression
-          if (!guard.useNativeNarrowing) {
+          if (guard.kind == Kind.Method) {
             templateExpression?.putUserData(CUSTOM_GUARD, guard.classMember)
           }
           processIfBranching(element, templateExpression)
@@ -150,7 +152,7 @@ class Angular2ControlFlowBuilder : JSControlFlowBuilder() {
     flushDelayedPendingEdges(element)
   }
 
-  private fun processAttribute(attribute: XmlAttribute, templateGuards: Map<String, List<JSElement>>): List<Angular2GuardInfo> {
+  private fun processAttribute(attribute: XmlAttribute, templateGuards: Map<String, List<Angular2TemplateGuard>>): List<Angular2GuardInfo> {
     val descriptor = attribute.descriptor as? Angular2AttributeDescriptor
     val info = descriptor?.info
 
@@ -161,7 +163,7 @@ class Angular2ControlFlowBuilder : JSControlFlowBuilder() {
       templateBindings.bindings.asSequence().filter { !it.keyIsVar() }.forEach { binding ->
         val guardElements = templateGuards[binding.key]
         if (!guardElements.isNullOrEmpty()) {
-          result.addAll(guardElements.map { Angular2GuardInfo(it, binding.expression) })
+          result.addAll(guardElements.map { Angular2GuardInfo(it.member, it.type, binding.expression) })
         }
         else {
           binding.expression?.accept(this)
@@ -182,7 +184,7 @@ class Angular2ControlFlowBuilder : JSControlFlowBuilder() {
         val expression = Angular2Binding.get(attribute)?.expression
         if (expression != null && !guardElements.isNullOrEmpty()) {
           visitedNodes.add(attribute)
-          return guardElements.map { Angular2GuardInfo(it, expression) }
+          return guardElements.map { Angular2GuardInfo(it.member, it.type, expression) }
         }
       }
       if (attribute is Angular2HtmlLet) {
@@ -234,12 +236,9 @@ class Angular2ControlFlowBuilder : JSControlFlowBuilder() {
                                                 state: ConditionState)
     : JSConditionInstruction(element, value, state)
 
-  private data class Angular2GuardInfo(val classMember: JSElement, val templateExpression: JSExpression?) {
-    val useNativeNarrowing: Boolean
-      get() = classMember.asSafely<TypeScriptField>()
-        ?.jsType?.asSafely<JSExoticStringLiteralType>()
-        ?.asSimpleLiteralType()?.literal == BINDING_GUARD
-  }
+  private data class Angular2GuardInfo(val classMember: JSElement,
+                                       val kind: Kind,
+                                       val templateExpression: JSExpression?)
 
   private class Angular2FakeBinaryExpression(private val parent: PsiElement?,
                                              private val lOperand: JSExpression?,

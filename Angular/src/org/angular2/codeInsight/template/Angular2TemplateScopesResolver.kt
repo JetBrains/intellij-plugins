@@ -13,7 +13,7 @@ import org.angular2.lang.html.Angular2HtmlLanguage
 object Angular2TemplateScopesResolver {
 
   @JvmStatic
-  fun getScopes(element: PsiElement): List<Angular2TemplateScope> {
+  fun getScopes(element: PsiElement, providers: List<Angular2TemplateScopesProvider>? = null): List<Angular2TemplateScope> {
     val original = CompletionUtil.getOriginalOrSelf(element)
     if (!checkLanguage(original)) {
       return emptyList()
@@ -28,7 +28,7 @@ object Angular2TemplateScopesResolver {
     else {
       hostElement = null
     }
-    return Angular2TemplateScopesProvider.EP_NAME.extensionList
+    return (providers ?: Angular2TemplateScopesProvider.EP_NAME.extensionList)
       .flatMap { it.getScopes(element, hostElement) }
   }
 

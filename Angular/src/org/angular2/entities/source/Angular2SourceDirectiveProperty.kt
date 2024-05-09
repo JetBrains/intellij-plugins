@@ -62,6 +62,9 @@ abstract class Angular2SourceDirectiveProperty(
       ?.firstNotNullOfOrNull { signature -> signature.functionType.parameters.takeIf { it.size > 0 }?.get(0) }
       ?.inferredType
 
+  override val isCoerced: Boolean
+    get() = super.isCoerced || objectInitializer?.findProperty(Angular2DecoratorUtil.TRANSFORM_PROP) != null
+
   override val type: JSType?
     get() = if (qualifiedKind == NG_DIRECTIVE_OUTPUTS)
       typeFromSignal ?: super.type
@@ -121,7 +124,7 @@ abstract class Angular2SourceDirectiveProperty(
               ?.context?.asSafely<JSObjectLiteralExpression>()
 
   @Suppress("NonAsciiCharacters")
-  public val typeFromSignal: JSType? =
+  val typeFromSignal: JSType? =
     signature.jsType
       ?.asRecordType()
       ?.findPropertySignature("ɵINPUT_SIGNAL_BRAND_WRITE_TYPE")
