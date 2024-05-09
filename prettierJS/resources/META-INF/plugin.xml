@@ -57,6 +57,7 @@
     <prettierjs.codeStyleInstaller implementation="com.intellij.prettierjs.codeStyle.JSPrettierCodeStyleInstaller"/>
     <prettierjs.codeStyleInstaller implementation="com.intellij.prettierjs.codeStyle.HtmlPrettierCodeStyleInstaller"/>
     <eslint.ruleMappersFactory implementation="com.intellij.prettierjs.eslint.PrettierEslintRuleMappersFactory"/>
+    <implicitUsageProvider implementation="com.intellij.prettierjs.codeInsight.PrettierConfigImplicitUsageProvider"/>
   </extensions>
   <actions>
     <action id="ReformatWithPrettierAction" class="com.intellij.prettierjs.ReformatWithPrettierAction">

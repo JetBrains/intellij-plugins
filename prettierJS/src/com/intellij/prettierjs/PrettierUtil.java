@@ -42,6 +42,7 @@ public final class PrettierUtil {
   public static final String PACKAGE_NAME = "prettier";
   public static final String CONFIG_SECTION_NAME = PACKAGE_NAME;
   public static final String RC_FILE_NAME = ".prettierrc";
+  public static final String CONFIG_FILE_NAME = "prettier.config";
   private static final String IGNORE_FILE_NAME = ".prettierignore";
 
   /**
@@ -50,9 +51,9 @@ public final class PrettierUtil {
   private static final List<String> CONFIG_FILE_NAMES = List.of(
     ".prettierrc",
     ".prettierrc.json", ".prettierrc.yml", ".prettierrc.yaml", ".prettierrc.json5",
-    ".prettierrc.js", "prettier.config.js",
-    ".prettierrc.mjs", "prettier.config.mjs",
-    ".prettierrc.cjs", "prettier.config.cjs",
+    ".prettierrc.js", CONFIG_FILE_NAME + ".js",
+    ".prettierrc.mjs", CONFIG_FILE_NAME + ".mjs",
+    ".prettierrc.cjs", CONFIG_FILE_NAME + ".cjs",
     ".prettierrc.toml"
   );
 
