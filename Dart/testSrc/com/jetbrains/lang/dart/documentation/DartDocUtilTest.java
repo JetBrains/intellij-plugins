@@ -378,8 +378,7 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
              <p>text
                  code block</p><pre><code> code block too
              </code></pre><p>simple text
-                 $ code
-             \t$ code continues
+                 <span class="math" inline = "true">code</span> code continues
              code done</p>""",
            """
              ///    text
@@ -400,8 +399,7 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
              <p>text <code>one</code> <a href="www.example.com">two</a>
                  code block <code>three</code></p><pre><code> code block too &lt;code&gt;four&lt;/code&gt;
              </code></pre><p>simple text <code>five</code> <a href="www.example.com">six</a>
-                 $ code <code>seven</code>
-             \t$ code continues <code>eight</code>\s
+                 <span class="math" inline = "true">code <code>seven</code></span> code continues <code>eight</code>\s
              code done <code></code> <code>nine</code></p>""",
            """
              ///    text [one] [two](www.example.com)
