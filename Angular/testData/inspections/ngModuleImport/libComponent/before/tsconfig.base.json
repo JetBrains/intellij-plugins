@@ -1,0 +1,11 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "paths": {
+      "shared": [
+        "./dist/shared"
+      ]
+    }
+  }
+}

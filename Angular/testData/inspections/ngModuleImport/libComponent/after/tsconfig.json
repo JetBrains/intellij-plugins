@@ -15,11 +15,6 @@
     "declaration": false,
     "experimentalDecorators": true,
     "moduleResolution": "node",
-    "paths": {
-      "shared": [
-        "./dist/shared"
-      ]
-    },
     "importHelpers": true,
     "target": "ES2022",
     "module": "ES2022",
@@ -29,6 +24,7 @@
       "dom"
     ]
   },
+  "extends": "./tsconfig.base.json",
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
