@@ -105,7 +105,12 @@ abstract class TerraformInspectionFixtureTestCase : InspectionFixtureTestCase() 
     "Disable variable search in nested directories",
   )
 
+  private val skipQuickFixRegexps = setOf(
+    Regex("^Save '[a-zA-Z]*' to dictionary$")
+  )
+
   open fun skipQuickFix(intentionAction: IntentionAction): Boolean = intentionAction.text in skipQuickFix
+                                                                     || skipQuickFixRegexps.any { it.matches(intentionAction.text) }
 
 }
 
