@@ -284,18 +284,19 @@ class TerraformProvidersSchema : VersionedMetadataLoader {
     for ((n, provider) in providers!!.fields().asSequence()) {
       val stringList = n.split("/")
       val (name, namespace) = stringList.takeIf { it.size == 3 && it[0] == "registry.terraform.io" || it[0] == "terraform.io" }?.let { Pair(it[2], it[1]) } ?: Pair(n, n)
+      val fullName = "$namespace/$name"
       provider as ObjectNode
-      if (model.loaded.containsKey("provider.$name")) {
-        TerraformMetadataLoader.LOG.warn("Provider '$name' is already loaded from '${model.loaded["provider.$name"]}'")
+      if (model.loaded.containsKey("provider.$fullName")) {
+        TerraformMetadataLoader.LOG.warn("Provider '$fullName' is already loaded from '${model.loaded["provider.$fullName"]}'")
         continue
       }
-      model.loaded["provider.$name"] = file
+      model.loaded["provider.$fullName"] = file
       val info = provider.obj("provider")?.let { parseProviderInfo(context, name, namespace, it) } ?: ProviderType(name, emptyList(), namespace)
       model.providers.add(info)
       val resources = provider.obj("resource_schemas")
       val dataSources = provider.obj("data_source_schemas")
       if (resources == null && dataSources == null) {
-        TerraformMetadataLoader.LOG.warn("No resources nor data-sources defined for provider '$name' in file '$file'")
+        TerraformMetadataLoader.LOG.warn("No resources nor data-sources defined for provider '$fullName' in file '$file'")
       }
       resources?.let { it.fields().asSequence().mapTo(model.resources) { parseResourceInfo(context, it, info) } }
       dataSources?.let { it.fields().asSequence().mapTo(model.dataSources) { parseDataSourceInfo(context, it, info) } }

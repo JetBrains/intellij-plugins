@@ -263,14 +263,14 @@ class TerraformMetadataLoader {
   private fun parseFile(json: ObjectNode, file: String) {
     val type: String
     val version: String
-    val schemasNode = json.get("schemas") ?: json
+    val schemasNode = (json.get("schemas") as? ObjectNode) ?: json
     if (schemasNode.has("format_version"))  {
       type = "terraform-providers-schema-json"
       version = schemasNode.get("format_version").textValue()
     }
     else {
-      type = json.string("type") ?: "unknown"
-      version = json.string(".schema_version") ?: "1"
+      type = schemasNode.string("type") ?: "unknown"
+      version = schemasNode.string(".schema_version") ?: "1"
     }
     val loader = loaders.find {
       it.isSupportedType(type) && it.isSupportedVersion(version)
@@ -285,7 +285,7 @@ class TerraformMetadataLoader {
       LOG.warn(message)
       return
     }
-    loader.load(context, json, file)
+    loader.load(context, schemasNode, file)
   }
 
 }

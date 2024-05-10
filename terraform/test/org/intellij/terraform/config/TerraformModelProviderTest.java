@@ -3,6 +3,7 @@ package org.intellij.terraform.config;
 
 import com.intellij.testFramework.LightPlatformTestCase;
 import org.intellij.terraform.config.model.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -149,6 +150,8 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
     for (ResourceType block : model.getResources()) {
       final String rt = block.getType();
       String pt = block.getProvider().getType();
+      String ns = block.getProvider().getNamespace();
+      String fullProvName = "%s/%s".formatted(ns, pt);
       if (pt.equals("azure-classic")) {
         pt = "azure";
       }
@@ -242,7 +245,7 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
       if (pt.equals("gaia")) {
         continue; // it is known to have types with no common prefixes
       }
-      if (pt.equals("aws-4-49-0")) {
+      if (fullProvName.equals("figma/aws-4-49-0")) {
         pt = "aws";
       }
       if (pt.equals("data-platform-kafka")) {
@@ -274,6 +277,33 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
       if (pt.equals("appstore")) {
         pt = "applet";
       }
+      if (fullProvName.equals("cisco-open/appd")) {
+        pt = "appdynamicscloud";
+      }
+      if (fullProvName.equals("mehdiatbud/http")) {
+        pt = "http-wait";
+      }
+      if (fullProvName.equals("cisco-open/appd")) {
+        pt = "appdynamicscloud";
+      }
+      if (fullProvName.equals("jonwoodlief/catalog")) {
+        pt = "ibm";
+      }
+      if (fullProvName.equals("vmware/nsxt-virtual-private-cloud")) {
+        pt = "nsxt";
+      }
+      if (fullProvName.equals("openvpn/openvpn-cloud")) {
+        pt = "openvpncloud";
+      }
+      if (fullProvName.equals("timeweb-cloud/timeweb-cloud")) {
+        pt = "twc";
+      }
+      if (fullProvName.equals("toluna-terraform/toluna-v2")) {
+        pt = "toluna";
+      }
+      if (fullProvName.equals("andrei-funaru/vault-starter")) {
+        pt = "vaultstarter";
+      }
       if (rt.equals(pt)) continue;
       if (rt.startsWith(pt + '_')) continue;
       failedResources.add(block);
@@ -300,6 +330,8 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
     for (DataSourceType block : model.getDataSources()) {
       final String rt = block.getType();
       String pt = block.getProvider().getType();
+      String ns = block.getProvider().getNamespace();
+      String fullProvName = "%s/%s".formatted(ns, pt);
       if (pt.equals("azure-classic")) {
         pt = "azure";
       }
@@ -366,7 +398,7 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
       if (pt.equals("awsutils")) {
         continue; // it is known to have types with no common prefixes
       }
-      if (pt.equals("aws-4-49-0")) {
+      if (fullProvName.equals("figma/aws-4-49-0")) {
         pt = "aws";
       }
       if (pt.equals("data-platform-kafka")) {
@@ -402,10 +434,52 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
         if (rt.startsWith("alibabacloudStack" + '_')) continue;
         if (rt.startsWith("alibabacloudstack" + '_')) continue;
       }
+      if (fullProvName.equals("mehdiatbud/http")) {
+        pt = "http-wait";
+      }
+      if (fullProvName.equals("cisco-open/appd")) {
+        pt = "appdynamicscloud";
+      }
+      if (fullProvName.equals("jonwoodlief/catalog")) {
+        pt = "ibm";
+      }
+      if (fullProvName.equals("vmware/nsxt-virtual-private-cloud")) {
+        pt = "nsxt";
+      }
+      if (fullProvName.equals("openvpn/openvpn-cloud")) {
+        pt = "openvpncloud";
+      }
+      if (fullProvName.equals("timeweb-cloud/timeweb-cloud")) {
+        pt = "twc";
+      }
+      if (fullProvName.equals("toluna-terraform/toluna-v2")) {
+        pt = "toluna";
+      }
+      if (fullProvName.equals("andrei-funaru/vault-starter")) {
+        pt = "vaultstarter";
+      }
+      if (fullProvName.equals("saritasa-nest/mssql")) {
+        pt = "mysql";
+      }
+      if (fullProvName.equals("axiotl/nftower") && rt.equals("scaffolding_example")) {
+        pt = "scaffolding_example";
+      }
+      if (fullProvName.equals("mildred/sys") && rt.equals("uname")) {
+        pt = "uname";
+      }
       if (rt.equals(pt)) continue;
       if (rt.startsWith(pt + '_')) continue;
       failedDataSources.add(block);
     }
     then(failedDataSources).isEmpty();
   }
+
+  public void testProvisionersLoaded() {
+    final TypeModel model = TypeModelProvider.Companion.getGlobalModel();
+    List<@NotNull ProvisionerType> provisionerTypes = model.getProvisioners().stream().filter(prov -> prov.getType().contains("chef")).toList();
+    assertEquals(1, provisionerTypes.size());
+  }
+
+
+
 }
