@@ -1,0 +1,45 @@
+/*incorrect*/
+@scope {
+  div {
+    color: antiquewhite;
+  }
+}
+
+@scope .light-scheme
+{
+  div {
+    color: antiquewhite;
+  }
+}
+
+@scope to div {
+  div {
+    color: antiquewhite;
+  }
+}
+
+/*correct*/
+@scope to (div) {
+  div {
+    color: antiquewhite;
+  }
+}
+
+@scope (.light-scheme) to (div) {
+  div {
+    color: antiquewhite;
+  }
+}
+
+@scope (.light-scheme div, p + span) {
+  div {
+    color: antiquewhite;
+  }
+}
+
+@scope to (.light-scheme div, p + span) {
+  :scope {
+    background-color: darkmagenta;
+    color: antiquewhite;
+  }
+}
