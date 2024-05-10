@@ -13,12 +13,13 @@
     }
   },
   "contexts-config": {
-    "V_17": {
-      "kind": "angular-template-syntax",
-      "enable-when": {
-        "node-packages": [
-          "@angular/core"
-        ]
+    "angular-template-syntax": {
+      "V_17": {
+        "enable-when": {
+          "node-packages": [
+            "@angular/core"
+          ]
+        }
       }
     }
   },

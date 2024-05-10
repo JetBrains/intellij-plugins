@@ -10,13 +10,12 @@ import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.lang.AstroFileType
 
 private const val KIND_ASTRO_PROJECT = "astro-project"
-private const val CONTEXT_ASTRO = "astro"
 
 fun isAstroProject(context: PsiElement): Boolean =
-  WebSymbolsContext.get(KIND_ASTRO_PROJECT, context) == CONTEXT_ASTRO
+  WebSymbolsContext.get(KIND_ASTRO_PROJECT, context).let { it == "astro" || it == "true"}
 
 fun isAstroProject(contextFile: VirtualFile, project: Project): Boolean =
-  WebSymbolsContext.get(KIND_ASTRO_PROJECT, contextFile, project) == CONTEXT_ASTRO
+  WebSymbolsContext.get(KIND_ASTRO_PROJECT, contextFile, project).let { it == "astro" || it == "true"}
 
 fun isAstroFrameworkContext(context: PsiElement): Boolean =
   WebSymbolsContext.get(WebSymbolsContext.KIND_FRAMEWORK, context) == AstroFramework.ID

@@ -14,15 +14,16 @@
     }
   },
   "contexts-config": {
-    "astro": {
-      "kind": "astro-project",
-      "enable-when": {
-        "node-packages": [
-          "astro"
-        ],
-        "file-extensions": [
-          "astro"
-        ]
+    "astro-project": {
+      "true": {
+        "enable-when": {
+          "node-packages": [
+            "astro"
+          ],
+          "file-extensions": [
+            "astro"
+          ]
+        }
       }
     }
   },

@@ -22,7 +22,7 @@ class NextJsImplicitUsageProvider : ImplicitUsageProvider {
     )
 
   private fun isInNextJsContext(element: PsiElement): Boolean =
-    WebSymbolsContext.get("nextjs-project", element) == "nextjs"
+    WebSymbolsContext.get("nextjs-project", element).let { it == "nextjs" || it == "true" }
 
   private fun isKnownFunctionName(element: PsiElement): Boolean =
     (element is JSElementBase)

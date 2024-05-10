@@ -3,15 +3,16 @@
   "name": "nextjs-contexts",
   "version": "13.0.0",
   "contexts-config": {
-    "nextjs": {
-      "kind": "nextjs-project",
-      "enable-when": {
-        "node-packages": [
-          "next"
-        ],
-        "ide-libraries": [
-          "next"
-        ]
+    "nextjs-project": {
+      "true": {
+        "enable-when": {
+          "node-packages": [
+            "next"
+          ],
+          "ide-libraries": [
+            "next"
+          ]
+        }
       }
     }
   }

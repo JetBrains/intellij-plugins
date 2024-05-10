@@ -3,47 +3,46 @@
   "name": "vue-store-contexts",
   "version": "0.0.0",
   "contexts-config": {
-    "vuex": {
-      "kind": "vue-store",
-      "enable-when": {
-        "node-packages": [
-          "vuex"
-        ],
-        "ide-libraries": [
-          "vuex"
-        ]
+    "vue-store": {
+      "vuex": {
+        "enable-when": {
+          "node-packages": [
+            "vuex"
+          ],
+          "ide-libraries": [
+            "vuex"
+          ]
+        }
+      },
+      "pinia": {
+        "enable-when": {
+          "node-packages": [
+            "pinia"
+          ]
+        }
       }
     },
-    "pinia": {
-      "kind": "vue-store",
-      "enable-when": {
-        "node-packages": [
-          "pinia"
-        ]
-      }
-    },
-    "vue-class-component": {
-      "kind": "vue-class-component-library",
-      "enable-when": {
-        "node-packages": [
-          "vue-class-component"
-        ]
-      }
-    },
-    "vue-property-decorator": {
-      "kind": "vue-class-component-library",
-      "enable-when": {
-        "node-packages": [
-          "vue-property-decorator"
-        ]
-      }
-    },
-    "vue-facing-decorator": {
-      "kind": "vue-class-component-library",
-      "enable-when": {
-        "node-packages": [
-          "vue-facing-decorator"
-        ]
+    "vue-class-component-library": {
+      "vue-class-component": {
+        "enable-when": {
+          "node-packages": [
+            "vue-class-component"
+          ]
+        }
+      },
+      "vue-property-decorator": {
+        "enable-when": {
+          "node-packages": [
+            "vue-property-decorator"
+          ]
+        }
+      },
+      "vue-facing-decorator": {
+        "enable-when": {
+          "node-packages": [
+            "vue-facing-decorator"
+          ]
+        }
       }
     }
   }
