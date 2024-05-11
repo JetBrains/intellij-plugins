@@ -52,6 +52,7 @@
     <enterHandlerDelegate implementation="com.jetbrains.lang.dart.ide.editor.DartEnterInStringHandler" order="first"/>
     <enterBetweenBracesDelegate language="Dart"  implementationClass="com.intellij.codeInsight.editorActions.enter.EnterBetweenBracesAndBracketsDelegate"/>
     <lang.lineWrapStrategy language="Dart" implementationClass="com.jetbrains.lang.dart.ide.editor.DartLineWrapPositionStrategy"/>
+    <breadcrumbsInfoProvider implementation="com.jetbrains.lang.dart.ide.editor.DartBreadcrumbsInfoProvider"/>
     <stripTrailingSpacesFilterFactory implementation="com.jetbrains.lang.dart.ide.editor.DartStripTrailingSpacesFilterFactory"/>
     <copyPastePostProcessor implementation="com.jetbrains.lang.dart.ide.editor.DartCopyPasteProcessor"/>
     <autoImportOptionsProvider instance="com.jetbrains.lang.dart.ide.editor.DartAutoImportOptionsProvider"/>
