@@ -1,12 +1,14 @@
 package org.intellij.terraform
 
 import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.intellij.terraform.config.inspection.TFDuplicatedVariableInspection
 import org.intellij.terraform.config.inspection.TFVARSIncorrectElementInspection
 import org.intellij.terraform.config.model.local.TERRAFORM_LOCK_FILE_NAME
+import org.intellij.terraform.hil.inspection.HILUnresolvedReferenceInspection
 
 class TFVarsTest : BasePlatformTestCase() {
 
@@ -173,6 +175,26 @@ class TFVarsTest : BasePlatformTestCase() {
     myFixture.testCompletionVariants("dir/prod/prod.tfvars", "foo1", "foo2", "baz1", "baz2")
   }
 
+  fun testUnresolvedVarsNoIndex() {
+    myFixture.enableInspections(HILUnresolvedReferenceInspection::class.java)
+
+    ModuleRootModificationUtil.updateModel(myFixture.module) { model ->
+      model.contentEntries.single().excludePatterns = listOf("unindexed.tf")
+    }
+
+    myFixture.configureByText("unindexed.tf", """
+      variable "test_var1" {
+        default = ""
+      }
+      
+      locals = {
+        test = var.test_var1
+        test2 = var.<error descr="Unresolved reference test_var2">test_var2</error>
+      }
+    """.trimIndent())
+
+    myFixture.checkHighlighting()
+  }
 
   private fun configureByTextInDir(fileName: String, text: String) {
     WriteAction.compute<VirtualFile, Throwable> {

@@ -21,6 +21,7 @@ import com.intellij.psi.search.*
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.Processor
+import com.intellij.util.indexing.IndexableFilesIndex
 import org.intellij.terraform.config.TerraformLanguage
 import org.intellij.terraform.config.model.local.LocalSchemaService
 import org.intellij.terraform.config.model.version.VersionConstraint
@@ -201,12 +202,18 @@ class Module private constructor(val item: PsiFileSystemItem) {
       LanguageMatcher.matchWithDialects(HCLLanguage)
     ) as GlobalSearchScope
 
-    fun doFind() =
-      PsiSearchHelper.getInstance(item.project)
-        .processAllFilesWithWord("variable", terraformScope, processor, true)
-
     return withGuaranteedProgressIndicator {
-      doFind()
+      if (!PsiSearchHelper.getInstance(item.project).processAllFilesWithWord("variable", terraformScope, processor, true))
+        return@withGuaranteedProgressIndicator false
+
+      // also process all unindexed files in the same dir IJPL-148978
+      val indexableFilesIndex = IndexableFilesIndex.getInstance(item.project)
+      process(PsiElementProcessor { file ->
+        if (!indexableFilesIndex.shouldBeIndexed(file.virtualFile))
+          processor.process(file)
+        else
+          true
+      })
     }
   }
 
