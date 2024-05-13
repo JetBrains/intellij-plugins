@@ -21,6 +21,7 @@ object TerraformProvidersMetadataBuilder {
   private val terraformRegistryHost = System.getenv("TERRAFORM_REGISTRY_HOST") ?: "https://registry.terraform.io"
   private val downloadsLimitForProvider = System.getenv("DOWNLOADS_LIMIT_FOR_PROVIDER")?.toInt() ?: 10000
   private val mandatoryProvidersCount = System.getenv("MANDATORY_PROVIDERS_COUNT")?.toInt() ?: 33
+  private val cleanDownloadedData = System.getenv("CLEAN_DOWNLOADED_DATA")?.toBoolean() ?: true
 
   private fun getQuery(httpQuery: String): HttpResponse<String> {
     val httpRequest =
@@ -33,7 +34,7 @@ object TerraformProvidersMetadataBuilder {
   private fun String.urlDecode(): String = URLDecoder.decode(this, StandardCharsets.UTF_8)
 
   private fun getProvidersDataFromPages(): Sequence<JsonNode> {
-    println("loading providers from $terraformRegistryHost ...")
+    println("Loading providers from $terraformRegistryHost ...")
     return sequence {
       var httpResponse = getQuery("${terraformRegistryHost}/v2/providers")
       while (true) {
@@ -52,23 +53,15 @@ object TerraformProvidersMetadataBuilder {
     }
   }
 
-  private val provComparator: Comparator<JsonNode> = compareBy<JsonNode> { providerData ->
-    when (providerData["attributes"]["tier"].asText()) {
-      "builtin" -> 3
-      "official" -> 2
-      "partner" -> 1
-      else -> 0
-    }
-  }.thenComparing(Comparator.comparing { it["attributes"]["downloads"].asLong() }).reversed()
-
   @JvmStatic
   fun main(args: Array<String>) {
-
-    val allOut = File("allout.json")
+    val outputDir = File("plugins-meta").apply { mkdirs() }
+    val allOut = File(outputDir, "allout.json")
     if (!allOut.exists())
       objectMapper.writerWithDefaultPrettyPrinter().writeValue(allOut,
                                                                getProvidersDataFromPages().asIterable())
 
+    println("Providers from $terraformRegistryHost are loaded to ${allOut}")
     val buildInProvider = objectMapper.nodeFactory.let { nf ->
       nf.objectNode().set<JsonNode>("attributes",
                                     nf.objectNode()
@@ -77,7 +70,6 @@ object TerraformProvidersMetadataBuilder {
                                       .put("namespace", "terraform")
                                       .put("tier", "builtin"))
     }
-
     val providerVendorsTier = setOf("partner", "official")
     val mostUsefulProviders = sequenceOf<JsonNode>(buildInProvider) +
                               objectMapper.readTree(allOut).elements().asSequence()
@@ -87,14 +79,15 @@ object TerraformProvidersMetadataBuilder {
                                   !unlisted && (providerVendorsTier.contains(attributes["tier"].asText())
                                                 || attributes["downloads"].asLong() >= downloadsLimitForProvider)
                                 }
-
     val version = getTerraformVersion()
-    println("terraform version: $version")
+    println("Terraform version: $version")
 
-    val outputDir = File("plugins-meta").apply { mkdirs() }
     val generatedJsonFileNames = mutableListOf<String>()
     val hashicorpProvidersCount = AtomicInteger(0)
+    val totalProviders = AtomicInteger(0)
+    val errors = AtomicInteger(0)
     mostUsefulProviders.forEach { data ->
+      totalProviders.incrementAndGet()
       val name = data["attributes"]["full-name"].asText()
       if (name.contains("hashicorp")) hashicorpProvidersCount.incrementAndGet()
       println("Processing: $name")
@@ -105,10 +98,16 @@ object TerraformProvidersMetadataBuilder {
       }
       else {
         println("Error generating schema for provider: ${name}")
+        errors.incrementAndGet()
       }
     }
     assert(hashicorpProvidersCount.toInt() >= mandatoryProvidersCount, { "We must have all mandatory providers from hashicorp. Selected ${hashicorpProvidersCount} of ${this.mandatoryProvidersCount}" })
     File(File(outputDir, "resources/model").apply { mkdirs() }, "providers.list").writeText(generatedJsonFileNames.sorted().joinToString("\n"))
+    if (cleanDownloadedData) {
+      println("Deleting data about providers from file: ${allOut}")
+      allOut.delete()
+    }
+    println("Providing processing finished, processed ${totalProviders} providers, errors: ${errors}")
   }
 
   private fun buildProviderMetadata(data: JsonNode,

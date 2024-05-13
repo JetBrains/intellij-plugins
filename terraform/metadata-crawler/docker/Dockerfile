@@ -28,6 +28,7 @@ ENV DOWNLOADS_LIMIT_FOR_PROVIDER=10000
 ENV MANDATORY_PROVIDERS_COUNT=33
 ENV ARTIFACT_GROUP=org.intellij.plugins.hcl.terraform
 ENV ARTIFACT_VERSION=2024.1.2
+ENV CLEAN_DOWNLOADED_DATA=true
 
 ENV REPO_URL=https://packages.jetbrains.team/maven/p/ij/intellij-dependencies
 ENV REPO_USERNAME=spaceUsername

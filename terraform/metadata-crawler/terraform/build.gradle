@@ -16,7 +16,7 @@ boolean isSnapshot = version.endsWith('-SNAPSHOT')
 sourceSets.main.resources { srcDirs += 'resources' }
 sourceSets.main.resources { srcDirs += 'plugins-meta/resources' }
 
-task collectMetadata(type: Exec) {
+tasks.register('collectMetadata', Exec) {
   commandLine 'bash', 'ls-schemas-extractor/bin/ls-schemas-extractor'
 }
 
@@ -25,28 +25,21 @@ processResources {
   doLast {
     if (!isSnapshot) {
       println("Processing JSON files in ${outputs.files.asPath}")
-      def slurper = new JsonSlurper()
-      fileTree(dir: outputs.files.asPath).each { file ->
-        if (file.name.endsWith('.json')) {
-
-          println("Processing schemas json: ${file}")
-
-          def jsonContent = slurper.parse(file)
-
-          def metadataFile = new File(file.parent, "${file.name}.metadata")
-          println("Processing metadata json: ${metadataFile}")
-          def metadataContent = new HashMap()
-          if (metadataFile.exists()) {
-            metadataContent = slurper.parse(metadataFile as File)
-            metadataFile.delete()
-          }
-
-          def mergedContent = new HashMap()
-          mergedContent.put("metadata", metadataContent)
-          mergedContent.put("schemas", jsonContent)
-
-          file.text = JsonOutput.toJson(mergedContent)
+      fileTree(dir: outputs.files.asPath).filter { file -> file.name.endsWith('.json') }.each { file ->
+        def slurper = new JsonSlurper()
+        println("Processing schemas json: ${file}")
+        def jsonContent = slurper.parse(file)
+        def metadataFile = new File(file.parent, "${file.name}.metadata")
+        println("Processing metadata json: ${metadataFile}")
+        def metadataContent = new HashMap()
+        if (metadataFile.exists()) {
+          metadataContent.putAll(slurper.parse(metadataFile as File) as Map)
+          metadataFile.delete()
         }
+        def mergedContent = new HashMap()
+        mergedContent.put("metadata", metadataContent)
+        mergedContent.put("schemas", jsonContent)
+        file.text = JsonOutput.toJson(mergedContent)
       }
     }
   }
