@@ -17,6 +17,7 @@ import junit.framework.TestCase
 import org.intellij.lang.annotations.Language
 import org.jetbrains.vuejs.lang.typescript.service.markVolarForceEnabled
 import org.jetbrains.vuejs.lang.typescript.service.volar.VolarTypeScriptService
+import org.junit.Test
 
 class VolarTypeScriptServiceGetElementTypeTest : TypeScriptServiceGetElementTypeTest() {
 
@@ -39,6 +40,7 @@ class VolarTypeScriptServiceGetElementTypeTest : TypeScriptServiceGetElementType
   /**
    * @see [testInstantiateMappedType]
    */
+  @Test
   fun testInstantiateMappedTypeVue() = TypeScriptServiceTestMixin.temporarilyDisableJsTypeDeclarations {
     //myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
 
