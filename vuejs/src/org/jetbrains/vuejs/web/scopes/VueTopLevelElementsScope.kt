@@ -13,7 +13,7 @@ import org.jetbrains.vuejs.web.VUE_TOP_LEVEL_ELEMENTS
 
 object VueTopLevelElementsScope : WebSymbolsScope {
 
-  private val referencingSymbol = ReferencingWebSymbol(
+  private val referencingSymbol = ReferencingWebSymbol.create(
     WebSymbol.HTML_ELEMENTS,
     "Vue Top Level Element",
     WebSymbolOrigin.empty(),

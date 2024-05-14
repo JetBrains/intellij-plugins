@@ -139,7 +139,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
       Angular2Framework.ID
   }
 
-  private val inputOutputReference = ReferencingWebSymbol(
+  private val inputOutputReference = ReferencingWebSymbol.create(
     JS_STRING_LITERALS,
     "Directive property",
     AngularEmptyOrigin,

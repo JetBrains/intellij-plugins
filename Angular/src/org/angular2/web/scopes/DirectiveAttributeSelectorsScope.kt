@@ -129,7 +129,7 @@ class DirectiveAttributeSelectorsScope(val project: Project) : WebSymbolsScope {
                 consumer(Angular2DirectiveSymbolWrapper.create(candidate, attr))
                 if (kind.isStructural && isTemplateTag && !inputs.containsKey(attrName)) {
                   // Add fake input
-                  consumer(MappedWebSymbol(NG_DIRECTIVE_INPUTS, attrName, attr.origin, attr.qualifiedName))
+                  consumer(MappedWebSymbol.create(NG_DIRECTIVE_INPUTS, attrName, attr.origin, attr.qualifiedName))
                 }
               }
             }

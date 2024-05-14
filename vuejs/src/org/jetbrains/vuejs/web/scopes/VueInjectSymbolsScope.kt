@@ -63,14 +63,14 @@ class VueInjectSymbolsScope(private val enclosingComponent: VueSourceComponent)
       get() = VueFramework.ID
   }
 
-  private val vueInjectStringSymbol = ReferencingWebSymbol(
+  private val vueInjectStringSymbol = ReferencingWebSymbol.create(
     JS_STRING_LITERALS,
     "Vue Inject String",
     VueInjectSymbolOrigin,
     VUE_PROVIDES
   )
 
-  private val vueInjectPropertySymbol = ReferencingWebSymbol(
+  private val vueInjectPropertySymbol = ReferencingWebSymbol.create(
     JS_PROPERTIES,
     "Vue Inject Property",
     VueInjectSymbolOrigin,
