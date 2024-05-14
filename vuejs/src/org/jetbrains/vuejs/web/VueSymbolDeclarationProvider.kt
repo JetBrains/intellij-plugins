@@ -52,7 +52,7 @@ class VueSymbolDeclarationProvider : WebSymbolDeclarationProvider {
           ?.let { VueModelManager.findEnclosingComponent(it) }
           ?.asWebSymbol("", VueModelVisitor.Proximity.LOCAL)
           ?.getMatchingSymbols(WebSymbolQualifiedName(NAMESPACE_JS, KIND_JS_EVENTS, name),
-                               WebSymbolsNameMatchQueryParams(WebSymbolsQueryExecutorFactory.create(parent, false)),
+                               WebSymbolsNameMatchQueryParams.create(WebSymbolsQueryExecutorFactory.create(parent, false)),
                                Stack())
           ?.getOrNull(0)
           ?.asSafely<WebSymbol>()

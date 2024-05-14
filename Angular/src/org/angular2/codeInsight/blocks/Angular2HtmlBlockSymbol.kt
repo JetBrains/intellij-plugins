@@ -30,11 +30,11 @@ class Angular2HtmlBlockSymbol : WebTypesSymbolBase() {
     get() = properties["nested-secondary-blocks"] == true
 
   val parameters: List<Angular2BlockParameterSymbol>
-    get() = getSymbols(NG_BLOCK_PARAMETERS, WebSymbolsListSymbolsQueryParams(queryExecutor, true), Stack(this))
+    get() = getSymbols(NG_BLOCK_PARAMETERS, WebSymbolsListSymbolsQueryParams.create(queryExecutor, true), Stack(this))
       .filterIsInstance<Angular2BlockParameterSymbol>()
 
   val implicitVariables: List<WebSymbol>
-    get() = getSymbols(JS_SYMBOLS, WebSymbolsListSymbolsQueryParams(queryExecutor, true), Stack(this))
+    get() = getSymbols(JS_SYMBOLS, WebSymbolsListSymbolsQueryParams.create(queryExecutor, true), Stack(this))
       .filterIsInstance<WebSymbol>()
 
   class Factory : WebTypesSymbolFactory {
