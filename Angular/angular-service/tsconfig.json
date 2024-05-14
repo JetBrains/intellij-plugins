@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "target": "ES6",
+    "moduleResolution": "Node",
+    "outDir": "../gen/angular-service/node_modules/ws-typescript-angular-plugin",
+    "declaration": false,
+    "module": "commonjs",
+    "strictNullChecks": true,
+    "noImplicitThis": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true
+//    "sourceMap": true,
+//    "sourceRoot": "(path-to-repo)/ultimate/contrib/vuejs/vue-service"
+  },
+  "include": [
+    "**/*.ts"
+  ]
+}

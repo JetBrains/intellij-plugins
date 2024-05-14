@@ -1,0 +1,17 @@
+{
+  "name": "ws-typescript-vue-plugin",
+  "version": "0.0.1",
+  "private": true,
+  "main": "index.js",
+  "devDependencies": {
+    "@types/node": "^18.13.10",
+    "typescript": "^4.0.0"
+  },
+  "scripts": {
+    "build:clean": "npm run clean && npm run build",
+    "build": "npm run build:node-modules && npm run build:plugin",
+    "clean": "rm -rf ../gen/angular-service",
+    "build:plugin": "tsc && cp ./package.json ../gen/angular-service/node_modules/ws-typescript-angular-plugin",
+    "build:node-modules": "mkdir -p ../gen/angular-service/node_modules"
+  }
+}
