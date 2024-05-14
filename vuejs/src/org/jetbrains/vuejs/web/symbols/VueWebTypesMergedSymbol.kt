@@ -44,7 +44,7 @@ class VueWebTypesMergedSymbol(override val name: String,
     symbols.sumOf { it.modificationCount }
 
   override val nameSegments: List<WebSymbolNameSegment>
-    get() = listOf(WebSymbolNameSegment(
+    get() = listOf(WebSymbolNameSegment.create(
       0, name.length, symbols
     ))
 

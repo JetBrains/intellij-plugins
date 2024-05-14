@@ -67,7 +67,7 @@ class VueBindingShorthandSymbol(private val context: XmlAttribute,
   : PsiSourcedWebSymbolDelegate<PsiSourcedWebSymbol>(jsSymbol), CompositeWebSymbol {
 
   override val nameSegments: List<WebSymbolNameSegment>
-    get() = listOf(WebSymbolNameSegment(0, delegate.name.length, delegate, attrSymbol))
+    get() = listOf(WebSymbolNameSegment.create(0, delegate.name.length, delegate, attrSymbol))
 
   override val namespace: SymbolNamespace
     get() = VUE_BINDING_SHORTHANDS.namespace
