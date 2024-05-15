@@ -8,7 +8,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.vcs.CheckinProjectPanel
 import com.intellij.openapi.vcs.changes.CommitContext
-import com.intellij.openapi.vcs.changes.ui.BooleanCommitOption.Companion.create
+import com.intellij.openapi.vcs.changes.ui.BooleanCommitOption
 import com.intellij.openapi.vcs.checkin.*
 import com.intellij.openapi.vcs.ui.RefreshableOnComponent
 import com.intellij.psi.PsiFile
@@ -51,7 +51,7 @@ class TFFmtCheckinFactory : CheckinHandlerFactory() {
     }
 
     override fun getBeforeCheckinConfigurationPanel(): RefreshableOnComponent =
-      create(project, this, false, NAME, TerraformProjectSettings.getInstance(project)::isFormattedBeforeCommit)
+      BooleanCommitOption.create(project, this, false, NAME, TerraformProjectSettings.getInstance(project)::isFormattedBeforeCommit)
   }
 
   private class TerraformFmtCommitProblem : CommitProblem {

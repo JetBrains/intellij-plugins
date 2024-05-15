@@ -75,6 +75,7 @@
 
   <dependencies>
     <plugin id="com.intellij.modules.lang"/>
+    <module name="intellij.platform.vcs.impl"/>
   </dependencies>
 
   <resource-bundle>messages.HCLBundle</resource-bundle>
