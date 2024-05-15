@@ -13,8 +13,6 @@ import com.intellij.openapi.vcs.checkin.*
 import com.intellij.openapi.vcs.ui.RefreshableOnComponent
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLFile
 import org.intellij.terraform.runtime.TerraformProjectSettings
@@ -34,15 +32,12 @@ class TFFmtCheckinFactory : CheckinHandlerFactory() {
     override suspend fun runCheck(commitInfo: CommitInfo): CommitProblem? {
       FileDocumentManager.getInstance().saveAllDocuments()
 
-      val commitedPsiFiles: List<PsiFile> = withContext(Dispatchers.Default) {
-        val manager = PsiManager.getInstance(project)
-
-        readAction {
-          commitInfo.committedVirtualFiles
-            .filter { it.extension?.let { ext -> supportedFileExtensions.contains(ext) } ?: false }
-            .mapNotNull { manager.findFile(it) }
-            .filterIsInstance<HCLFile>()
-        }
+      val manager = PsiManager.getInstance(project)
+      val commitedPsiFiles: List<PsiFile> = readAction {
+        commitInfo.committedVirtualFiles
+          .filter { it.extension?.let { ext -> supportedFileExtensions.contains(ext) } ?: false }
+          .mapNotNull { manager.findFile(it) }
+          .filterIsInstance<HCLFile>()
       }
 
       try {

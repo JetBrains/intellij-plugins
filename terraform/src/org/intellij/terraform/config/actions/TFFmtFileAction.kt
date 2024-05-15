@@ -18,15 +18,7 @@ class TFFmtFileAction : TFExternalToolsAction() {
   override suspend fun invoke(project: Project, title: @Nls String, vararg virtualFiles: VirtualFile) {
     withBackgroundProgress(project, title) {
       withContext(Dispatchers.EDT) {
-        virtualFiles.forEach {
-          val document = FileDocumentManager.getInstance().getDocument(it)
-          if (document != null) {
-            FileDocumentManager.getInstance().saveDocument(document)
-          }
-          else {
-            FileDocumentManager.getInstance().saveAllDocuments()
-          }
-        }
+        FileDocumentManager.getInstance().saveAllDocuments()
       }
 
       val filePaths = virtualFiles.map { it.canonicalPath!! }.toTypedArray()
