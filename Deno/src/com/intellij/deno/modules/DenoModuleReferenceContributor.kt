@@ -106,7 +106,7 @@ class DenoModuleReferenceContributor : JSImportMapContributorBase() {
     for (descriptor in descriptors) {
       val moduleDescriptor = descriptor.moduleDescriptor
       val moduleName = moduleDescriptor.moduleName
-      for (pathSubstitution in pathSubstitutions) {
+      for (pathSubstitution in pathSubstitutions.substitutions) {
         for (mapping in pathSubstitution.mappings) {
           if (moduleName.startsWith(mapping)) {
             val suffix = moduleName.substring(mapping.length)
