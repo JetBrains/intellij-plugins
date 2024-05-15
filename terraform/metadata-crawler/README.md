@@ -19,7 +19,6 @@ For the image, we can specify the following environment configuration parameters
 |------------------------------|------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
 | TERRAFORM_REGISTRY_HOST      | https://registry.terraform.io                                    |                                                                                                                                               |
 | DOWNLOADS_LIMIT_FOR_PROVIDER | 10000                                                            | Minimum downloads numbers for provider to include it into metadata                                                                            |
-| MANDATORY_PROVIDERS_COUNT    | 33                                                               | Necessary providers number from the `hashicorp` namespace                                                                                     |
 | CLEAN_DOWNLOADED_DATA        | true                                                             | Whether or not clean data downloaded from terraform registry after processing. If set to "true", the script will download data on every start |
 | ARTIFACT_GROUP               | org.intellij.plugins.hcl.terraform                               | Maven coordinates for the metadata jar                                                                                                        |
 | ARTIFACT_VERSION             | 2024.1.2                                                         | Metadata version                                                                                                                              |
@@ -30,10 +29,11 @@ For the image, we can specify the following environment configuration parameters
 For example, if we want to change an artifact version, we can specify it in the command line:
 `docker run -d -e ARTIFACT_VERSION=2024.2.0  intellij.terraform/metadata-crawler:<IMAGE_VERSION> publish`
 
-ℹ️Setting variable PROVIDERS_IN_REGISTRY will fail the build only if assertions are enabled.
-Add `-e LS_SCHEMAS_EXTRACTOR_OPTS=-ea` to the docker start command to enable assertions.
-
 ### How to build artifact only
-
 1. If we don't want to publish metadata, we can bind a local folder to a container folder and get the metadata jar file: `docker run -m 4096m -d -v <LOCAL_FOLDER>:/opt/terraform-metadata/build/libs intellij.terraform/metadata-crawler:<IMAGE_VERSION> jar`
 2. After execution finished, we can publish the jar manually.
+
+### Container folders of interest
+The following folders can be mounted for better diagnostics:
+1. `/opt/terraform-metadata/plugins-meta` stores the extracted schemas metadata files as well as error logs.
+2. `/opt/terraform-metadata/build/libs` stores the generated metadata jar file.

@@ -15,10 +15,10 @@ RUN apt update
 RUN apt-get -yq install terraform
 
 #Copy existing resources
-COPY terraform/ /opt/terraform-metadata
-
+COPY terraform-metadata/ /opt/terraform-metadata
 #Enable schemas extractor
 RUN chmod +x /opt/terraform-metadata/ls-schemas-extractor/bin/ls-schemas-extractor
+RUN mkdir /opt/terraform-metadata/plugins-meta
 
 # Set working directory
 WORKDIR /opt/terraform-metadata

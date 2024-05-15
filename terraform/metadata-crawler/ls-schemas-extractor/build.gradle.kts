@@ -14,6 +14,7 @@ repositories {
 dependencies {
   implementation("com.fasterxml.jackson.core:jackson-databind:2.13.4.2")
   implementation(kotlin("stdlib-jdk8"))
+  implementation ("com.bertramlabs.plugins:hcl4j:0.9.1")
 }
 
 sourceSets {

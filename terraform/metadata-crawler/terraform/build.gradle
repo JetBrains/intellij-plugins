@@ -30,16 +30,18 @@ processResources {
         println("Processing schemas json: ${file}")
         def jsonContent = slurper.parse(file)
         def metadataFile = new File(file.parent, "${file.name}.metadata")
-        println("Processing metadata json: ${metadataFile}")
-        def metadataContent = new HashMap()
         if (metadataFile.exists()) {
+          println("Processing metadata json: ${metadataFile}")
+          def metadataContent = new HashMap()
           metadataContent.putAll(slurper.parse(metadataFile as File) as Map)
           metadataFile.delete()
+          def mergedContent = new HashMap()
+          mergedContent.put("metadata", metadataContent)
+          mergedContent.put("schemas", jsonContent)
+          file.text = JsonOutput.toJson(mergedContent)
+        } else {
+          file.text = JsonOutput.toJson(jsonContent)
         }
-        def mergedContent = new HashMap()
-        mergedContent.put("metadata", metadataContent)
-        mergedContent.put("schemas", jsonContent)
-        file.text = JsonOutput.toJson(mergedContent)
       }
     }
   }

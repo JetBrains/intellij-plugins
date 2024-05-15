@@ -14,7 +14,7 @@ version = '2024.1.2'
 
 task clean {
   delete 'build'
-  delete 'docker/terraform'
+  delete 'docker/terraform-metadata'
 }
 
 task buildSchemasExtractor(type: GradleBuild) {
@@ -25,18 +25,22 @@ task buildSchemasExtractor(type: GradleBuild) {
 task copyModelDir(type: Copy) {
   from 'terraform'
   includeEmptyDirs true
-  into 'docker/terraform'
+  into 'docker/terraform-metadata'
 }
 
 task copySchemasExtractor(type: Copy) {
   dependsOn buildSchemasExtractor
   from zipTree('ls-schemas-extractor/build/distributions/ls-schemas-extractor.zip')
   include '**/*'
-  into 'docker/terraform'
+  into 'docker/terraform-metadata'
+}
+
+task copyAll {
+  dependsOn clean, copySchemasExtractor, copyModelDir
 }
 
 task buildDockerImage(type: DockerBuildImage) {
-  dependsOn copySchemasExtractor, copyModelDir
+  dependsOn copyAll
   inputDir = file('docker')
   images.add("intellij.terraform/metadata-crawler:$version")
 }

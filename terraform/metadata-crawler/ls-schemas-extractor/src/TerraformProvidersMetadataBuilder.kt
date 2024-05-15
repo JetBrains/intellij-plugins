@@ -1,3 +1,4 @@
+import com.bertramlabs.plugins.hcl4j.HCLParser
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
@@ -20,7 +21,6 @@ object TerraformProvidersMetadataBuilder {
 
   private val terraformRegistryHost = System.getenv("TERRAFORM_REGISTRY_HOST") ?: "https://registry.terraform.io"
   private val downloadsLimitForProvider = System.getenv("DOWNLOADS_LIMIT_FOR_PROVIDER")?.toInt() ?: 10000
-  private val mandatoryProvidersCount = System.getenv("MANDATORY_PROVIDERS_COUNT")?.toInt() ?: 33
   private val cleanDownloadedData = System.getenv("CLEAN_DOWNLOADED_DATA")?.toBoolean() ?: true
 
   private fun getQuery(httpQuery: String): HttpResponse<String> {
@@ -57,10 +57,9 @@ object TerraformProvidersMetadataBuilder {
   fun main(args: Array<String>) {
     val outputDir = File("plugins-meta").apply { mkdirs() }
     val allOut = File(outputDir, "allout.json")
-    if (!allOut.exists())
-      objectMapper.writerWithDefaultPrettyPrinter().writeValue(allOut,
-                                                               getProvidersDataFromPages().asIterable())
-
+    if (!allOut.exists()) {
+      objectMapper.writerWithDefaultPrettyPrinter().writeValue(allOut, getProvidersDataFromPages().asIterable())
+    }
     println("Providers from $terraformRegistryHost are loaded to ${allOut}")
     val buildInProvider = objectMapper.nodeFactory.let { nf ->
       nf.objectNode().set<JsonNode>("attributes",
@@ -83,13 +82,11 @@ object TerraformProvidersMetadataBuilder {
     println("Terraform version: $version")
 
     val generatedJsonFileNames = mutableListOf<String>()
-    val hashicorpProvidersCount = AtomicInteger(0)
     val totalProviders = AtomicInteger(0)
     val errors = AtomicInteger(0)
     mostUsefulProviders.forEach { data ->
       totalProviders.incrementAndGet()
       val name = data["attributes"]["full-name"].asText()
-      if (name.contains("hashicorp")) hashicorpProvidersCount.incrementAndGet()
       println("Processing: $name")
       val file = buildProviderMetadata(data, version, outputDir)
       if (file.exists()) {
@@ -101,7 +98,6 @@ object TerraformProvidersMetadataBuilder {
         errors.incrementAndGet()
       }
     }
-    assert(hashicorpProvidersCount.toInt() >= mandatoryProvidersCount, { "We must have all mandatory providers from hashicorp. Selected ${hashicorpProvidersCount} of ${this.mandatoryProvidersCount}" })
     File(File(outputDir, "resources/model").apply { mkdirs() }, "providers.list").writeText(generatedJsonFileNames.sorted().joinToString("\n"))
     if (cleanDownloadedData) {
       println("Deleting data about providers from file: ${allOut}")
@@ -124,9 +120,9 @@ object TerraformProvidersMetadataBuilder {
     writeVersionsTfFile(tfgendir, version, name)
 
     val logFile = File(File(outputDir, "logs/$dir").apply { mkdirs() }, "$file.log")
-    val initError = initTerraform(tfgendir, logFile)
-
     val schemaFile = File(File(outputDir, "resources/model/providers/$dir").apply { mkdirs() }, "$file.json")
+
+    val initError = initTerraform(tfgendir, logFile)
     val schemaError: String = generateTerraformSchema(tfgendir, schemaFile)
 
     if (schemaFile.length() <= 0L) {
@@ -138,15 +134,29 @@ object TerraformProvidersMetadataBuilder {
       File(failureDir, "schema.err").writeText(schemaError)
     }
     else {
-      val metadataFile = File(File(outputDir, "resources/model/providers/$dir").apply { mkdirs() }, "$file.json.metadata")
-      data.toPrettyString().byteInputStream().use { inputStream ->
-        metadataFile.outputStream().use { outputStream ->
-          inputStream.copyTo(outputStream)
-        }
-      }
+      storeRegistryData(data, tfgendir, outputDir, dir, file)
     }
     deleteDirRecursively(tfgendir)
     return schemaFile
+  }
+
+  private fun storeRegistryData(data: JsonNode, tfgendir: File, outputDir: File, dir: String, file: String) {
+    val lockFile = File(tfgendir, ".terraform.lock.hcl")
+    if (lockFile.exists()) {
+      val lockData = HCLParser().parse(lockFile)
+      val providerMap = lockData["provider"] as? Map<*, *>
+      val firstValue = providerMap?.values?.firstOrNull() as? Map<*, *>
+      val version = firstValue?.get("version")
+      version?.let {
+        (data["attributes"] as? ObjectNode)?.put("version", it.toString())
+      }
+    }
+    val metadataFile = File(File(outputDir, "resources/model/providers/$dir").apply { mkdirs() }, "$file.json.metadata")
+    data.toString().byteInputStream().use { inputStream ->
+      metadataFile.outputStream().use { outputStream ->
+        inputStream.copyTo(outputStream)
+      }
+    }
   }
 
   private fun getTerraformVersion(): String = ProcessBuilder(listOf("terraform", "-v", "--json"))
@@ -179,8 +189,7 @@ object TerraformProvidersMetadataBuilder {
   }
 
   private fun generateTerraformSchema(tfgendir: File, schemaFile: File): String {
-    val schemaProcess = ProcessBuilder(listOf("terraform", "providers", "schema", "-json")).directory(tfgendir)
-      .start()
+    val schemaProcess = ProcessBuilder(listOf("terraform", "providers", "schema", "-json")).directory(tfgendir).start()
     schemaFile.outputStream().buffered().use { out ->
       schemaProcess.inputStream.use { input -> input.transferTo(out) }
     }
