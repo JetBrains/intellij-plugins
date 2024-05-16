@@ -21,6 +21,7 @@ import com.jetbrains.plugins.jade.JadeLanguage
 import org.jetbrains.plugins.sass.SASSLanguage
 import org.jetbrains.plugins.scss.SCSSLanguage
 import org.jetbrains.plugins.stylus.StylusLanguage
+import org.jetbrains.plugins.stylus.settings.StylusCodeStyleSettings
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.lang.html.psi.formatter.VueCodeStyleSettings
 import java.io.File
@@ -137,6 +138,16 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
       styleSettings.getCustomSettings(HtmlCodeStyleSettings::class.java).let {
         it.HTML_ENFORCE_QUOTES = true
         it.HTML_QUOTE_STYLE = CodeStyleSettings.QuoteStyle.Single
+      }
+      doTestFromFile("vue")
+    }
+  }
+
+  fun testColonFormattingInStylus() {
+    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->
+      styleSettings.getCustomSettings(StylusCodeStyleSettings::class.java).let {
+        it.IS_PROPERTY_NAME_VALUE_SEPARATED_BY_COLON = false
+        it.ENFORCE_PROPERTY_NAME_VALUE_SEPARATOR_ON_FORMAT = true
       }
       doTestFromFile("vue")
     }
