@@ -2,6 +2,7 @@
 package org.angular2.editor
 
 import com.intellij.lang.javascript.TypeScriptFileType
+import com.intellij.lang.javascript.psi.util.runWithTimeout
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.psi.xml.XmlAttribute
@@ -25,24 +26,25 @@ object Angular2EditorUtils {
         }
         || !Angular2LangUtil.isAngular2Context(file))
       return emptyList()
-
-    var element = getElementAtCaretFromContext(context)
-    var directives = emptyList<Angular2Directive>()
-    if (element != null && element.node.elementType === XML_NAME) {
-      element = element.parent
-    }
-    if (element is XmlAttribute) {
-      val descriptor = element.descriptor as? Angular2AttributeDescriptor
-      if (descriptor != null) {
-        directives = descriptor.sourceDirectives
+    return runWithTimeout(100) {
+      var element = getElementAtCaretFromContext(context)
+      var directives = emptyList<Angular2Directive>()
+      if (element != null && element.node.elementType === XML_NAME) {
+        element = element.parent
       }
-    }
-    else if (element is XmlTag) {
-      val descriptor = element.descriptor as? Angular2ElementDescriptor
-      if (descriptor != null) {
-        directives = descriptor.sourceDirectives
+      if (element is XmlAttribute) {
+        val descriptor = element.descriptor as? Angular2AttributeDescriptor
+        if (descriptor != null) {
+          directives = descriptor.sourceDirectives
+        }
       }
-    }
-    return directives
+      else if (element is XmlTag) {
+        val descriptor = element.descriptor as? Angular2ElementDescriptor
+        if (descriptor != null) {
+          directives = descriptor.sourceDirectives
+        }
+      }
+      directives
+    } ?: emptyList()
   }
 }
