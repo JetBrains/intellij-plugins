@@ -18,6 +18,12 @@ object Constants {
   internal const val HCL_PROVISIONER_IDENTIFIER: String = "provisioner"
   internal const val HCL_BACKEND_IDENTIFIER: String = "backend"
 
+  internal const val TERRAFORM_DOMAIN: String = "terraform.io"
+  internal const val REGISTRY_DOMAIN: String = "registry.terraform.io"
+  internal const val LATEST_VERSION: String = "latest"
+
+  internal val OFFICIAL_PROVIDERS_NAMESPACES = setOf("hashicorp")
+
   internal val shouldDownloadDocs: Boolean
     get() = AdvancedSettings.getBoolean("org.intellij.terraform.config.documentation.download")
 

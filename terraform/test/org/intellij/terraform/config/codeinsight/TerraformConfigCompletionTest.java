@@ -6,6 +6,7 @@ import org.intellij.terraform.config.model.*;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.intellij.terraform.config.CompletionTestCase.Matcher.*;
@@ -50,11 +51,12 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
 
   //<editor-fold desc="Resources completion tests">
   public void testResourceTypeCompletion() throws Exception {
-    final TreeSet<String> set = new TreeSet<>();
-    for (ResourceType resource : TypeModelProvider.Companion.getGlobalModel().getResources()) {
-      set.add(resource.getType());
-    }
-    final Predicate<Collection<String>> matcher = getPartialMatcher(new ArrayList<>(set).subList(0, Math.min(ENTRIES_LIST_SIZE, set.size())));
+    final Set<ProviderTier> defaultProviderTiers = Set.of(ProviderTier.TIER_LOCAL, ProviderTier.TIER_OFFICIAL);
+    final TreeSet<String> set = TypeModelProvider.Companion.getGlobalModel().getResources()
+      .stream().filter(ds -> defaultProviderTiers.contains(ds.getProvider().getTier()))
+      .map(ResourceType::getType).collect(Collectors.toCollection(TreeSet::new));
+    final Predicate<Collection<String>> matcher =
+      getPartialMatcher(new ArrayList<>(set).subList(0, Math.min(ENTRIES_LIST_SIZE, set.size())));
     doBasicCompletionTest("resource <caret>", matcher);
     doBasicCompletionTest("resource <caret> {}", matcher);
     doBasicCompletionTest("resource <caret> \"aaa\" {}", matcher);
@@ -64,11 +66,12 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
   }
 
   public void testResourceQuotedTypeCompletion() throws Exception {
-    final TreeSet<String> set = new TreeSet<>();
-    for (ResourceType resource : TypeModelProvider.Companion.getGlobalModel().getResources()) {
-      set.add(resource.getType());
-    }
-    final Predicate<Collection<String>> matcher = getPartialMatcher(new ArrayList<>(set).subList(0, Math.min(ENTRIES_LIST_SIZE, set.size())));
+    final Set<ProviderTier> defaultProviderTiers = Set.of(ProviderTier.TIER_LOCAL, ProviderTier.TIER_OFFICIAL);
+    final TreeSet<String> set = TypeModelProvider.Companion.getGlobalModel().getResources()
+      .stream().filter(ds -> defaultProviderTiers.contains(ds.getProvider().getTier()))
+      .map(ResourceType::getType).collect(Collectors.toCollection(TreeSet::new));
+    final Predicate<Collection<String>> matcher =
+      getPartialMatcher(new ArrayList<>(set).subList(0, Math.min(ENTRIES_LIST_SIZE, set.size())));
     doBasicCompletionTest("resource \"<caret>", matcher);
     doBasicCompletionTest("resource '<caret>", matcher);
     doBasicCompletionTest("resource \"<caret>\n{}", matcher);
@@ -78,11 +81,12 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
   }
 
   public void testResourceQuotedKeywordCompletion() throws Exception {
-    final TreeSet<String> set = new TreeSet<>();
-    for (ResourceType resource : TypeModelProvider.Companion.getGlobalModel().getResources()) {
-      set.add(resource.getType());
-    }
-    final Predicate<Collection<String>> matcher = getPartialMatcher(new ArrayList<>(set).subList(0, Math.min(ENTRIES_LIST_SIZE, set.size())));
+    final Set<ProviderTier> defaultProviderTiers = Set.of(ProviderTier.TIER_LOCAL, ProviderTier.TIER_OFFICIAL);
+    final TreeSet<String> set = TypeModelProvider.Companion.getGlobalModel().getResources()
+      .stream().filter(ds -> defaultProviderTiers.contains(ds.getProvider().getTier()))
+      .map(ResourceType::getType).collect(Collectors.toCollection(TreeSet::new));
+    final Predicate<Collection<String>> matcher =
+      getPartialMatcher(new ArrayList<>(set).subList(0, Math.min(ENTRIES_LIST_SIZE, set.size())));
     doBasicCompletionTest("\"resource\" \"<caret>", matcher);
     doBasicCompletionTest("\"resource\" '<caret>", matcher);
     doBasicCompletionTest("\"resource\" \"<caret>\n{}", matcher);
@@ -147,10 +151,10 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
                                 }
                               }
                             }
-                                                        
+                            
                             resource "aws_instance" "example" {
                               for_each = var.servers
-                                                        
+                            
                               ami           = each.value.<caret>
                               instance_type = each.value.instance_type
                             }
@@ -256,14 +260,13 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
   }
 
   public void testResourceTypeCompletionGivenDefinedProvidersOrForNoPropsProviders() throws Exception {
-    final TreeSet<String> set = new TreeSet<>();
-    final Map<String, Boolean> cache = new HashMap<>();
-    for (ResourceType resource : TypeModelProvider.Companion.getGlobalModel().getResources()) {
-      if (isExcludeProvider(resource.getProvider(), cache)) continue;
-      set.add(resource.getType());
-    }
-    then(set).contains("template_file", "aws_vpc");
-    final Predicate<Collection<String>> matcher = getPartialMatcher(new ArrayList<>(set).subList(0, Math.min(ENTRIES_LIST_SIZE, set.size())));
+    final Set<ProviderTier> defaultProviderTiers = Set.of(ProviderTier.TIER_LOCAL, ProviderTier.TIER_OFFICIAL);
+    final TreeSet<String> set = TypeModelProvider.Companion.getGlobalModel().getResources()
+      .stream().filter(ds -> defaultProviderTiers.contains(ds.getProvider().getTier()))
+      .map(ResourceType::getType).collect(Collectors.toCollection(TreeSet::new));
+    then(set).contains("template_file", "vault_kv_secret");
+    final Predicate<Collection<String>> matcher =
+      getPartialMatcher(new ArrayList<>(set).subList(0, Math.min(ENTRIES_LIST_SIZE, set.size())));
     doBasicCompletionTest("provider aws {}\nresource <caret>", matcher);
     doBasicCompletionTest("provider aws {}\nresource <caret> {}", matcher);
     doBasicCompletionTest("provider aws {}\nresource <caret> \"aaa\" {}", matcher);
@@ -279,11 +282,12 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
 
   //<editor-fold desc="Data Sources completion tests">
   public void testDataSourceTypeCompletion() throws Exception {
-    final TreeSet<String> set = new TreeSet<>();
-    for (DataSourceType ds : TypeModelProvider.Companion.getGlobalModel().getDataSources()) {
-      set.add(ds.getType());
-    }
-    final Predicate<Collection<String>> matcher = getPartialMatcher(new ArrayList<>(set).subList(0, Math.min(ENTRIES_LIST_SIZE, set.size())));
+    final Set<ProviderTier> defaultProviderTiers = Set.of(ProviderTier.TIER_LOCAL, ProviderTier.TIER_OFFICIAL);
+    final TreeSet<String> set = TypeModelProvider.Companion.getGlobalModel().getDataSources()
+      .stream().filter(ds -> defaultProviderTiers.contains(ds.getProvider().getTier()))
+      .map(DataSourceType::getType).collect(Collectors.toCollection(TreeSet::new));
+    final Predicate<Collection<String>> matcher =
+      getPartialMatcher(new ArrayList<>(set).subList(0, Math.min(ENTRIES_LIST_SIZE, set.size())));
     doBasicCompletionTest("data <caret>", matcher);
     doBasicCompletionTest("data <caret> {}", matcher);
     doBasicCompletionTest("data <caret> \"aaa\" {}", matcher);
@@ -328,11 +332,12 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
   }
 
   public void testDataSourceQuotedTypeCompletion() throws Exception {
-    final TreeSet<String> set = new TreeSet<>();
-    for (DataSourceType ds : TypeModelProvider.Companion.getGlobalModel().getDataSources()) {
-      set.add(ds.getType());
-    }
-    final Predicate<Collection<String>> matcher = getPartialMatcher(new ArrayList<>(set).subList(0, Math.min(ENTRIES_LIST_SIZE, set.size())));
+    final Set<ProviderTier> defaultProviderTiers = Set.of(ProviderTier.TIER_LOCAL, ProviderTier.TIER_OFFICIAL);
+    final TreeSet<String> set = TypeModelProvider.Companion.getGlobalModel().getDataSources()
+      .stream().filter(ds -> defaultProviderTiers.contains(ds.getProvider().getTier()))
+      .map(DataSourceType::getType).collect(Collectors.toCollection(TreeSet::new));
+    final Predicate<Collection<String>> matcher =
+      getPartialMatcher(new ArrayList<>(set).subList(0, Math.min(ENTRIES_LIST_SIZE, set.size())));
     doBasicCompletionTest("data \"<caret>", matcher);
     doBasicCompletionTest("data '<caret>", matcher);
     doBasicCompletionTest("data \"<caret>\n{}", matcher);
@@ -342,11 +347,12 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
   }
 
   public void testDataSourceQuotedKeywordCompletion() throws Exception {
-    final TreeSet<String> set = new TreeSet<>();
-    for (DataSourceType ds : TypeModelProvider.Companion.getGlobalModel().getDataSources()) {
-      set.add(ds.getType());
-    }
-    final Predicate<Collection<String>> matcher = getPartialMatcher(new ArrayList<>(set).subList(0, Math.min(ENTRIES_LIST_SIZE, set.size())));
+    final Set<ProviderTier> defaultProviderTiers = Set.of(ProviderTier.TIER_LOCAL, ProviderTier.TIER_OFFICIAL);
+    final TreeSet<String> set = TypeModelProvider.Companion.getGlobalModel().getDataSources()
+      .stream().filter(ds -> defaultProviderTiers.contains(ds.getProvider().getTier()))
+      .map(DataSourceType::getType).collect(Collectors.toCollection(TreeSet::new));
+    final Predicate<Collection<String>> matcher =
+      getPartialMatcher(new ArrayList<>(set).subList(0, Math.min(ENTRIES_LIST_SIZE, set.size())));
     doBasicCompletionTest("\"data\" \"<caret>", matcher);
     doBasicCompletionTest("\"data\" '<caret>", matcher);
     doBasicCompletionTest("\"data\" \"<caret>\n{}", matcher);
@@ -412,16 +418,16 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
   }
 
   public void testDataSourceTypeCompletionGivenDefinedProviders() throws Exception {
-    final TreeSet<String> set = new TreeSet<>();
-    final Map<String, Boolean> cache = new HashMap<>();
-    for (DataSourceType ds : TypeModelProvider.Companion.getGlobalModel().getDataSources()) {
-      if (isExcludeProvider(ds.getProvider(), cache)) continue;
-      set.add(ds.getType());
-    }
-    then(set).contains("template_file", "aws_vpc");
-    doBasicCompletionTest("provider aws {}\ndata <caret>", set);
-    doBasicCompletionTest("provider aws {}\ndata <caret> {}", set);
-    doBasicCompletionTest("provider aws {}\ndata <caret> \"aaa\" {}", set);
+    final Set<ProviderTier> defaultProviderTiers = Set.of(ProviderTier.TIER_LOCAL, ProviderTier.TIER_OFFICIAL);
+    final TreeSet<String> set = TypeModelProvider.Companion.getGlobalModel().getDataSources()
+      .stream().filter(ds -> defaultProviderTiers.contains(ds.getProvider().getTier()))
+      .map(DataSourceType::getType).collect(Collectors.toCollection(TreeSet::new));
+    then(set).contains("template_file", "vault_kv_secret");
+    final Predicate<Collection<String>> matcher =
+      getPartialMatcher(new ArrayList<>(set).subList(0, Math.min(ENTRIES_LIST_SIZE, set.size())));
+    doBasicCompletionTest("provider aws {}\ndata <caret>", matcher);
+    doBasicCompletionTest("provider aws {}\ndata <caret> {}", matcher);
+    doBasicCompletionTest("provider aws {}\ndata <caret> \"aaa\" {}", matcher);
   }
   //</editor-fold>
 
@@ -681,10 +687,10 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
                                  })
                                })
                              }
-                             
+                            
                              module "test" {
                                source = "./"
-                             
+                            
                                obj-var = {
                                  var1 = ""
                                  var2 = []
@@ -753,7 +759,7 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
         id = "terraform"
         to = module.submodule.<caret>
       }
-            
+      
       module "submodule" {
         source = "./submodule"
       }
@@ -764,7 +770,7 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
   public void testCompleteResourceFromMovedBlock() {
     myFixture.addFileToProject("modules/compute/main.tf", """ 
       resource "aws_instance" "example1" { }
-            
+      
       resource "aws_instance" "example" { }
       """);
     myFixture.configureByText("main.tf", """
@@ -773,29 +779,12 @@ public class TerraformConfigCompletionTest extends TFBaseCompletionTestCase {
         security_group = module.web_security_group.security_group_id
         public_subnets = module.vpc.public_subnets
       }
-            
+      
       moved {
         from = aws_instance.example
         to = module.ec2_instance.aws<caret>
       }
       """);
     myFixture.testCompletionVariants("main.tf", "aws_instance.example", "aws_instance.example1");
-  }
-
-
-  private static boolean isExcludeProvider(ProviderType provider, Map<String, Boolean> cache) {
-    String key = provider.getType();
-    Boolean cached = cache.get(key);
-    if (cached == null) {
-      cached = true;
-      if (provider.getType().equals("aws")) {
-        cached = false;
-      }
-      else if (provider.getProperties().equals(TypeModel.AbstractProvider.getProperties())) {
-        cached = false;
-      }
-      cache.put(key, cached);
-    }
-    return cached;
   }
 }

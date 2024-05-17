@@ -17,15 +17,18 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import org.intellij.terraform.config.Constants.LATEST_VERSION
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 @Service(Service.Level.PROJECT)
 internal class TerraformMdDocUrlProvider(private val coroutineScope: CoroutineScope) : BaseTerraformDocUrlProvider() {
 
-  private val PROVIDERS_REGISTRY_URL: String = "https://registry.terraform.io/v1/providers"
-  private val GITHUB_RAW_FILES_URL: String = "https://raw.githubusercontent.com/"
-  private val GITHUB_PREFIX: String = "https://github.com/"
+  companion object {
+    private const val PROVIDERS_REGISTRY_URL: String = "https://registry.terraform.io/v1/providers"
+    private const val GITHUB_RAW_FILES_URL: String = "https://raw.githubusercontent.com/"
+    private const val GITHUB_PREFIX: String = "https://github.com/"
+  }
 
   private val providerInfoCache = Caffeine.newBuilder()
     .expireAfterAccess(5, TimeUnit.MINUTES)

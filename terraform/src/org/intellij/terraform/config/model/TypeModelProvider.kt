@@ -32,10 +32,9 @@ class TypeModelProvider {
 
     fun getModel(psiElement: PsiElement): TypeModel {
       val containingFile = psiElement.containingFile ?: return globalModel
-      val virtualFile = containingFile.virtualFile ?: return globalModel
+      val virtualFile = containingFile.originalFile.virtualFile ?: return globalModel
       return containingFile.project.service<LocalSchemaService>().getModel(virtualFile) ?: globalModel
     }
-
   }
 
   private fun loadIgnoredReferences(): Set<String> {

@@ -150,8 +150,7 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
     for (ResourceType block : model.getResources()) {
       final String rt = block.getType();
       String pt = block.getProvider().getType();
-      String ns = block.getProvider().getNamespace();
-      String fullProvName = "%s/%s".formatted(ns, pt);
+      String fullProvName = block.getProvider().getFullName();
       if (pt.equals("azure-classic")) {
         pt = "azure";
       }
@@ -293,7 +292,8 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
         pt = "nsxt";
       }
       if (fullProvName.equals("openvpn/openvpn-cloud")) {
-        pt = "openvpncloud";
+        if (rt.startsWith("openvpncloud" + '_')) continue;
+        if (rt.startsWith("cloudconnexa" + '_')) continue;
       }
       if (fullProvName.equals("timeweb-cloud/timeweb-cloud")) {
         pt = "twc";
@@ -303,6 +303,9 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
       }
       if (fullProvName.equals("andrei-funaru/vault-starter")) {
         pt = "vaultstarter";
+      }
+      if (fullProvName.equals("kopicloud-ad-api/ad")) {
+        pt = "kopicloud";
       }
       if (rt.equals(pt)) continue;
       if (rt.startsWith(pt + '_')) continue;
@@ -330,8 +333,7 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
     for (DataSourceType block : model.getDataSources()) {
       final String rt = block.getType();
       String pt = block.getProvider().getType();
-      String ns = block.getProvider().getNamespace();
-      String fullProvName = "%s/%s".formatted(ns, pt);
+      String fullProvName = block.getProvider().getFullName();
       if (pt.equals("azure-classic")) {
         pt = "azure";
       }
@@ -447,7 +449,8 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
         pt = "nsxt";
       }
       if (fullProvName.equals("openvpn/openvpn-cloud")) {
-        pt = "openvpncloud";
+        if (rt.startsWith("openvpncloud" + '_')) continue;
+        if (rt.startsWith("cloudconnexa" + '_')) continue;
       }
       if (fullProvName.equals("timeweb-cloud/timeweb-cloud")) {
         pt = "twc";
@@ -466,6 +469,9 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
       }
       if (fullProvName.equals("mildred/sys") && rt.equals("uname")) {
         pt = "uname";
+      }
+      if (fullProvName.equals("kopicloud-ad-api/ad")) {
+        pt = "kopicloud";
       }
       if (rt.equals(pt)) continue;
       if (rt.startsWith(pt + '_')) continue;

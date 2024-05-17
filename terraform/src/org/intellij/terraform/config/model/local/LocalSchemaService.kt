@@ -1,6 +1,7 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model.local
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.execution.process.CapturingProcessAdapter
 import com.intellij.openapi.application.readAction
@@ -33,10 +34,12 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.util.SuspendingLazy
 import com.intellij.util.concurrency.annotations.RequiresBlockingContext
+import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.intellij.util.suspendingLazy
 import kotlinx.coroutines.*
 import org.intellij.terraform.LatestInvocationRunner
 import org.intellij.terraform.config.TerraformFileType
+import org.intellij.terraform.config.model.ProviderTier
 import org.intellij.terraform.config.model.TypeModel
 import org.intellij.terraform.config.model.TypeModelProvider
 import org.intellij.terraform.config.model.getVFSParents
@@ -121,6 +124,12 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
     }
   }
 
+  @RequiresReadLock
+  fun getLockFilePsi(file: VirtualFile?): PsiFile? {
+    if (!isTFLock(file) || file?.isValid != true) return null
+    return PsiManager.getInstance(project).findFile(file).takeIf { it?.isValid == true }
+  }
+
   private val daemonRestarter = LatestInvocationRunner {
     delay(DAEMON_RESTART_DEBOUNCE_TIMEOUT)
     awaitModelsReady()
@@ -175,10 +184,23 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
       val parallelism = RegistryManager.getInstance().intValue("terraform.registry.metadata.parallelism", 4)
       batch.completeByMapping(parallelism) { (lock, explicitlyAllowRunningProcess) ->
         logger<LocalSchemaService>().info("building local model: $lock")
-        val json = retrieveJsonForTFLock(lock, explicitlyAllowRunningProcess)
-        buildModelFromJson(json)
+        buildModelFromJson(retrieveJsonForTFLock(lock, explicitlyAllowRunningProcess))
       }
     }
+  }
+
+  @RequiresReadLock
+  private fun buildProviderMeta(lockData: LockFileObject?): String? {
+    lockData ?: return null
+    val providerInfo = lockData.providers.values.first()
+    val mapper = ObjectMapper()
+    val jsonNode = mapper.createObjectNode()
+    jsonNode.put("name", providerInfo.name)
+    jsonNode.put("namespace", providerInfo.namespace)
+    jsonNode.put("full-name", providerInfo.fullName)
+    jsonNode.put("tier", ProviderTier.TIER_LOCAL.label)
+    jsonNode.put(LockFileObject.VERSION, providerInfo.version)
+    return mapper.writeValueAsString(jsonNode)
   }
 
   private fun buildModel(lock: VirtualFile, explicitlyAllowRunningProcess: Boolean): Deferred<TypeModel> {
@@ -240,14 +262,24 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
       updateWorkspaceModel(lock, lockData, jsonFilePath)
     }
     return withContext(Dispatchers.IO) {
-      localModelPath.resolve(jsonFilePath).readText()
+      val lockFileData = readAction { buildProviderMeta(getLockFilePsi(lock)?.let { LockFileObject(it) }) } ?: ""
+      val localModelJson = localModelPath.resolve(jsonFilePath).readText()
+      addLockFileDataString(lockFileData, localModelJson)
     }
   }
 
   private suspend fun readLockDataJsonFile(lockData: TFLocalMetaEntity): String {
     return withContext(Dispatchers.IO) {
-      localModelPath.resolve(lockData.jsonPath).readText()
+      val lockFileData = readAction { buildProviderMeta(getLockFilePsi(lockData.lockFile.virtualFile)?.let { LockFileObject(it) }) } ?: ""
+      val localModelJson = localModelPath.resolve(lockData.jsonPath).readText()
+      addLockFileDataString(lockFileData, localModelJson)
     }
+  }
+
+  private fun addLockFileDataString(lockFileData: String, localModelJson: String): String {
+    return """
+    { "metadata": { "attributes": $lockFileData }, "schemas": $localModelJson }
+    """.trimIndent()
   }
 
   val localModelPath: Path

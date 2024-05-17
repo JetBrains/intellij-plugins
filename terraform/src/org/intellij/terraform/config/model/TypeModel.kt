@@ -1,24 +1,41 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model
 
+enum class ProviderTier(val label: String) {
+  TIER_BUILTIN("builtin"),
+  TIER_LOCAL("local"),
+  TIER_OFFICIAL("official"),
+  TIER_PARTNER("partner"),
+  TIER_COMMUNITY("community"),
+  TIER_NONE("none");
+
+  companion object {
+    fun findByLabel(label: String): ProviderTier? {
+      return entries.find { it.label == label }
+    }
+  }
+}
+
 class TypeModel(
-  resources: List<ResourceType> = emptyList(),
-  dataSources: List<DataSourceType> = emptyList(),
-  providers: List<ProviderType> = emptyList(),
+  val resources: List<ResourceType> = emptyList(),
+  val dataSources: List<DataSourceType> = emptyList(),
+  val providers: List<ProviderType> = emptyList(),
   provisioners: List<ProvisionerType> = emptyList(),
   backends: List<BackendType> = emptyList(),
   functions: List<Function> = emptyList()
 ) {
 
-  val resources: List<ResourceType> = resources.sortedBy { it.type }
-  val dataSources: List<DataSourceType> = dataSources.sortedBy { it.type }
-  val providers: List<ProviderType> = providers.sortedBy { it.type }
   val provisioners: List<ProvisionerType> = provisioners.sortedBy { it.type }
   val backends: List<BackendType> = backends.sortedBy { it.type }
   val functions: List<Function> = functions.sortedBy { it.name }
 
+  val resourcesByTier: Map<ProviderTier, List<ResourceType>> = resources.groupBy { it.provider.tier }.mapValues { (_, v) -> v.sortedBy { it.type } }
+  val providersByTier: Map<ProviderTier, List<ProviderType>> = providers.groupBy { it.tier }.mapValues { (_, v) -> v.sortedBy { it.type } }
+  val dataSourcesByTier: Map<ProviderTier, List<DataSourceType>> = dataSources.groupBy { it.provider.tier }.mapValues { (_, v) -> v.sortedBy { it.type } }
+
   @Suppress("MemberVisibilityCanBePrivate")
   companion object {
+
     private val VersionProperty = PropertyType("version", Types.String, hint = SimpleHint("VersionRange"), injectionAllowed = false)
     val TerraformRequiredVersion: PropertyType = PropertyType("required_version", Types.String, hint = SimpleHint("VersionRange"),
                                                               injectionAllowed = false)
@@ -214,15 +231,15 @@ class TypeModel(
   }
 
   fun getResourceType(name: String): ResourceType? {
-    return resources.findBinary(name) { it.type }
+    return ProviderTier.entries.mapNotNull { tier -> resourcesByTier[tier]?.findBinary(name) { it.type } }.firstOrNull()
   }
 
   fun getDataSourceType(name: String): DataSourceType? {
-    return dataSources.findBinary(name) { it.type }
+    return ProviderTier.entries.mapNotNull { tier -> dataSourcesByTier[tier]?.findBinary(name) { it.type } }.firstOrNull()
   }
 
   fun getProviderType(name: String): ProviderType? {
-    return providers.findBinary(name) { it.type }
+    return ProviderTier.entries.mapNotNull { tier -> providersByTier[tier]?.findBinary(name) { it.type } }.firstOrNull()
   }
 
   fun getProvisionerType(name: String): ProvisionerType? {

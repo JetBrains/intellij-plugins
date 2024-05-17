@@ -1,6 +1,14 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model
 
+import org.intellij.terraform.config.Constants.HCL_BACKEND_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_MODULE_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_PROVISIONER_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
+import org.intellij.terraform.config.Constants.OFFICIAL_PROVIDERS_NAMESPACES
+
 // Model for element types
 
 interface Type {
@@ -63,11 +71,14 @@ abstract class ContainerType<T>(name: String, val elements: T) : TypeImpl(name) 
 // List is a sequence of values identified by consecutive whole numbers starting with zero.
 // E.g. `list(number)` will match `[10, 20, 42]`
 open class ListType(elements: Type?) : ContainerType<Type?>("list", elements)
+
 // Set is a collection of unique values that do not have any secondary identifiers or ordering.
 open class SetType(elements: Type?) : ContainerType<Type?>("set", elements)
+
 // Map is a collection of values where each is identified by a string label.
 // E.g. `map(number)` will match `{a=10, b=20}`
 open class MapType(elements: Type?) : ContainerType<Type?>("map", elements)
+
 // Tuple is a sequence of elements identified by consecutive whole numbers starting with zero,
 // where each element has its own type.
 // E.g. `tuple([string, number, bool])` would match a value like `["a", 15, true]`
@@ -100,13 +111,14 @@ private open class ObjectTypeImpl(elements: Map<String, Type?>?, val optional: S
     }
 }
 
-fun isListType(type: Type?) :Boolean {
+fun isListType(type: Type?): Boolean {
   return when (type) {
     is ListType, is SetType, is TupleType -> true
     else -> false
   }
 }
-fun isObjectType(type: Type?) :Boolean {
+
+fun isObjectType(type: Type?): Boolean {
   return when (type) {
     is MapType, is ObjectType -> true
     else -> false
@@ -267,9 +279,9 @@ fun Type.isConvertibleTo(other: Type): Boolean {
     }
 
     is ListType -> return (other is SetType && (this.elements == null || other.elements == null || this.elements.isConvertibleTo(other.elements))) ||
-        (other is ListType && (this.elements == null || other.elements == null || this.elements.isConvertibleTo(other.elements)))
+                          (other is ListType && (this.elements == null || other.elements == null || this.elements.isConvertibleTo(other.elements)))
     is SetType -> return (other is SetType && (this.elements == null || other.elements == null || this.elements.isConvertibleTo(other.elements))) ||
-        (other is ListType && (this.elements == null || other.elements == null || this.elements.isConvertibleTo(other.elements)))
+                         (other is ListType && (this.elements == null || other.elements == null || this.elements.isConvertibleTo(other.elements)))
 
   }
 
@@ -496,7 +508,9 @@ object Types {
   val Expression: Type = TypeImpl("expression")
 }
 
-class ResourceType(val type: String, val provider: ProviderType, properties: List<PropertyOrBlockType>) : BlockType("resource", 2, properties = withDefaults(properties, TypeModel.AbstractResource)) {
+class ResourceType(val type: String,
+                   val provider: ProviderType,
+                   properties: List<PropertyOrBlockType>) : BlockType(HCL_RESOURCE_IDENTIFIER, 2, properties = withDefaults(properties, TypeModel.AbstractResource)) {
   override fun toString(): String {
     return "ResourceType (type='$type', provider='${provider.presentableText}')"
   }
@@ -505,7 +519,9 @@ class ResourceType(val type: String, val provider: ProviderType, properties: Lis
     get() = "$literal ($type)"
 }
 
-class DataSourceType(val type: String, val provider: ProviderType, properties: List<PropertyOrBlockType>) : BlockType("data", 2, properties = withDefaults(properties, TypeModel.AbstractDataSource)) {
+class DataSourceType(val type: String,
+                     val provider: ProviderType,
+                     properties: List<PropertyOrBlockType>) : BlockType(HCL_DATASOURCE_IDENTIFIER, 2, properties = withDefaults(properties, TypeModel.AbstractDataSource)) {
   override fun toString(): String {
     return "DataSourceType (type='$type', provider='${provider.presentableText}')"
   }
@@ -514,16 +530,27 @@ class DataSourceType(val type: String, val provider: ProviderType, properties: L
     get() = "$literal ($type)"
 }
 
-class ProviderType(val type: String, properties: List<PropertyOrBlockType>, val namespace: String = "") : BlockType("provider", 1, properties = withDefaults(properties, TypeModel.AbstractProvider)) {
+class ProviderType(val type: String,
+                   properties: List<PropertyOrBlockType>,
+                   val namespace: String = "",
+                   tier: ProviderTier = ProviderTier.TIER_NONE,
+                   val version: String = ""
+) : BlockType(HCL_PROVIDER_IDENTIFIER, 1, properties = withDefaults(properties, TypeModel.AbstractProvider)) {
+
+  val fullName: String = "$namespace/$type"
+  val tier: ProviderTier = if (tier == ProviderTier.TIER_NONE && OFFICIAL_PROVIDERS_NAMESPACES.contains(namespace)) ProviderTier.TIER_OFFICIAL else tier
+
   override fun toString(): String {
-    return "ProviderType (type='$type' namespace='$namespace')"
+    return "ProviderType (type='$type' namespace='$namespace' tier='${tier.label}')"
   }
 
   override val presentableText: String
-    get() = "$literal ($namespace/$type)"
+    get() = "$literal ($fullName)"
+
+  val lookupString = """${fullName}${if (version.isNotBlank()) " $version" else ""}"""
 }
 
-class ProvisionerType(val type: String, properties: List<PropertyOrBlockType>) : BlockType("provisioner", 1, properties = withDefaults(properties, TypeModel.AbstractResourceProvisioner)) {
+class ProvisionerType(val type: String, properties: List<PropertyOrBlockType>) : BlockType(HCL_PROVISIONER_IDENTIFIER, 1, properties = withDefaults(properties, TypeModel.AbstractResourceProvisioner)) {
   override fun toString(): String {
     return "ProvisionerType (type='$type')"
   }
@@ -532,7 +559,7 @@ class ProvisionerType(val type: String, properties: List<PropertyOrBlockType>) :
     get() = "$literal ($type)"
 }
 
-class BackendType(val type: String, properties: List<PropertyOrBlockType>) : BlockType("backend", 1, properties = withDefaults(properties, TypeModel.AbstractBackend)) {
+class BackendType(val type: String, properties: List<PropertyOrBlockType>) : BlockType(HCL_BACKEND_IDENTIFIER, 1, properties = withDefaults(properties, TypeModel.AbstractBackend)) {
   override fun toString(): String {
     return "BackendType (type='$type')"
   }
@@ -541,7 +568,7 @@ class BackendType(val type: String, properties: List<PropertyOrBlockType>) : Blo
     get() = "$literal ($type)"
 }
 
-class ModuleType(override val name: String, properties: List<PropertyOrBlockType>) : BlockType("module", 1, properties = withDefaults(properties, TypeModel.Module)) {
+class ModuleType(override val name: String, properties: List<PropertyOrBlockType>) : BlockType(HCL_MODULE_IDENTIFIER, 1, properties = withDefaults(properties, TypeModel.Module)) {
   override fun toString(): String {
     return "ModuleType (name='$name')"
   }

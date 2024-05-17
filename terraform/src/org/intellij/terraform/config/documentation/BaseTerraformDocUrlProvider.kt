@@ -3,37 +3,31 @@ package org.intellij.terraform.config.documentation
 
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.components.service
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 import com.intellij.psi.util.childrenOfType
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
+import org.intellij.terraform.config.Constants.LATEST_VERSION
 import org.intellij.terraform.config.model.TypeModelProvider
 import org.intellij.terraform.config.model.local.LocalSchemaService
+import org.intellij.terraform.config.model.local.LockFileObject
 import org.intellij.terraform.config.psi.TerraformDocumentPsi
 import org.intellij.terraform.hcl.psi.*
 
 
 internal abstract class BaseTerraformDocUrlProvider {
 
-  protected companion object {
-    protected const val VERSION: String = "version"
-    protected const val TERRAFORM_DOMAIN: String = "terraform.io"
-    protected const val REGISTRY_DOMAIN: String = "registry.terraform.io"
+  internal companion object {
+    @JvmStatic
+    val RESOURCES: String = "resources"
 
     @JvmStatic
-    protected val LATEST_VERSION: String = "latest"
+    val DATASOURCES: String = "data-sources"
 
     @JvmStatic
-    protected val RESOURCES: String = "resources"
-
-    @JvmStatic
-    protected val DATASOURCES: String = "data-sources"
-
-    @JvmStatic
-    protected val PROVIDER: String = "provider"
+    val PROVIDER: String = "provider"
   }
 
   internal suspend fun getDocumentationUrl(element: PsiElement?): List<String?> {
@@ -90,42 +84,23 @@ internal abstract class BaseTerraformDocUrlProvider {
                                identifier: String): ProviderData? {
     val provider = if (type in setOf(HCL_RESOURCE_IDENTIFIER, HCL_DATASOURCE_IDENTIFIER)) {
       getProviderName(identifier, type, element)
-    }
-                   else {
+    } else {
       identifier
     } ?: return null
 
     val org = getProviderNamespace(provider, element) ?: return null
-    val version = getProviderVersion(null)
-    return ProviderData(org, provider, version)
+    return ProviderData(org, provider, LATEST_VERSION)
   }
 
   private fun getDataFromLockFile(lockFile: PsiFile,
                                   identifier: String): ProviderData? {
+    val lockObject = LockFileObject(lockFile)
     val providerId = identifier.substringBefore('_')
-    val providerDescription = findProviderDescription(lockFile, providerId) ?: return null
-    val provider = getProviderName(providerDescription) ?: return null
-    val org = getProviderNamespace(providerDescription) ?: return null
-    val version = getProviderVersion(providerDescription)
+    val providerInfo = lockObject.getProviderInfo(providerId) ?: return null
+    val provider = providerInfo.name ?: return null
+    val org = providerInfo.namespace ?: return null
+    val version = providerInfo.version
     return ProviderData(org, provider, version)
-  }
-
-  private fun getProviderName(lockBlock: HCLBlock?): String? {
-    return lockBlock?.name?.split("/").takeIf { it?.size == 3 && it[0] == REGISTRY_DOMAIN || it?.get(0) == TERRAFORM_DOMAIN }?.let { it[2] }
-  }
-
-  private fun getProviderNamespace(lockBlock: HCLBlock?): String? {
-    return lockBlock?.name?.split("/").takeIf { it?.size == 3 && it[0] == REGISTRY_DOMAIN || it?.get(0) == TERRAFORM_DOMAIN }?.let { it[1] }
-  }
-
-  private fun getProviderVersion(lockBlock: HCLBlock?): String {
-    return if (lockBlock?.`object` != null && lockBlock.`object` is HCLObject) {
-      val providerVersion = (lockBlock.`object` as HCLObject).propertyList.firstOrNull { it.name == VERSION }?.value?.text
-      StringUtil.unquoteString(providerVersion ?: LATEST_VERSION)
-    }
-    else {
-      LATEST_VERSION
-    }
   }
 
   protected fun getResourceId(identifier: String): String {
@@ -148,19 +123,11 @@ internal abstract class BaseTerraformDocUrlProvider {
     }
   }
 
-  private fun findProviderDescription(lockFile: PsiFile, identifier: String): HCLBlock? {
-    return SyntaxTraverser.psiTraverser(lockFile)
-      .filter(HCLBlock::class.java).filter {
-        it.nameElements[0].text == PROVIDER && getProviderName(it) == identifier
-      }.firstOrNull()
-  }
-
   private fun findPsiLockFile(element: PsiElement): PsiFile? {
     val project = element.project
     val schemaService = project.service<LocalSchemaService>()
     val lockFile = findContainingVFile(element)?.let { schemaService.findLockFile(it) }
-    val psiLockFile = lockFile?.let { PsiManager.getInstance(project).findFile(it) }
-    return psiLockFile
+    return lockFile?.let { schemaService.getLockFilePsi(it) }
   }
 
   private fun findContainingVFile(element: PsiElement): VirtualFile? {

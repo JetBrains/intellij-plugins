@@ -21,6 +21,11 @@ import com.intellij.psi.search.*
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.Processor
+import org.intellij.terraform.config.Constants.HCL_MODULE_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_OUTPUT_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import com.intellij.util.indexing.IndexableFilesIndex
 import org.intellij.terraform.config.TerraformLanguage
 import org.intellij.terraform.config.model.local.LocalSchemaService
@@ -260,7 +265,7 @@ class Module private constructor(val item: PsiFileSystemItem) {
     process(PsiElementProcessor { file ->
       file.acceptChildren(object : HCLElementVisitor() {
         override fun visitBlock(o: HCLBlock) {
-          if ("resource" != o.getNameElementUnquoted(0)) return
+          if (HCL_RESOURCE_IDENTIFIER != o.getNameElementUnquoted(0)) return
           val t = o.getNameElementUnquoted(1) ?: return
           if (type != null && type != t) return
           val n = o.getNameElementUnquoted(2) ?: return
@@ -280,7 +285,7 @@ class Module private constructor(val item: PsiFileSystemItem) {
     process(PsiElementProcessor { file ->
       file.acceptChildren(object : HCLElementVisitor() {
         override fun visitBlock(o: HCLBlock) {
-          if ("data" != o.getNameElementUnquoted(0)) return
+          if (HCL_DATASOURCE_IDENTIFIER != o.getNameElementUnquoted(0)) return
           val t = o.getNameElementUnquoted(1) ?: return
           if (type != null && type != t) return
           val n = o.getNameElementUnquoted(2) ?: return
@@ -304,7 +309,7 @@ class Module private constructor(val item: PsiFileSystemItem) {
     process(PsiElementProcessor { file ->
       file.acceptChildren(object : HCLElementVisitor() {
         override fun visitBlock(o: HCLBlock) {
-          if ("provider" != o.getNameElementUnquoted(0)) return
+          if (HCL_PROVIDER_IDENTIFIER != o.getNameElementUnquoted(0)) return
           val tp = o.getNameElementUnquoted(1) ?: return
           val als = when (val value = o.`object`?.findProperty("alias")?.value) {
             is HCLStringLiteral -> value.value
@@ -328,7 +333,7 @@ class Module private constructor(val item: PsiFileSystemItem) {
     process(PsiElementProcessor { file ->
       file.acceptChildren(object : HCLElementVisitor() {
         override fun visitBlock(o: HCLBlock) {
-          if ("provider" != o.getNameElementUnquoted(0)) return
+          if (HCL_PROVIDER_IDENTIFIER != o.getNameElementUnquoted(0)) return
           val fqn = o.getProviderFQName() ?: return
           found.add(Pair(o, fqn))
         }
@@ -342,7 +347,7 @@ class Module private constructor(val item: PsiFileSystemItem) {
     process(PsiElementProcessor { file ->
       file.acceptChildren(object : HCLElementVisitor() {
         override fun visitBlock(o: HCLBlock) {
-          if ("module" != o.getNameElementUnquoted(0)) return
+          if (HCL_MODULE_IDENTIFIER != o.getNameElementUnquoted(0)) return
           val n = o.getNameElementUnquoted(1) ?: return
           if (name == n) found.add(o)
         }
@@ -356,7 +361,7 @@ class Module private constructor(val item: PsiFileSystemItem) {
     process(PsiElementProcessor { file ->
       file.acceptChildren(object : HCLElementVisitor() {
         override fun visitBlock(o: HCLBlock) {
-          if ("module" != o.getNameElementUnquoted(0)) return
+          if (HCL_MODULE_IDENTIFIER != o.getNameElementUnquoted(0)) return
           o.getNameElementUnquoted(1) ?: return
           found.add(o)
         }
@@ -370,7 +375,7 @@ class Module private constructor(val item: PsiFileSystemItem) {
     process(PsiElementProcessor { file ->
       file.acceptChildren(object : HCLElementVisitor() {
         override fun visitBlock(o: HCLBlock) {
-          if ("output" != o.getNameElementUnquoted(0)) return
+          if (HCL_OUTPUT_IDENTIFIER != o.getNameElementUnquoted(0)) return
           o.getNameElementUnquoted(1) ?: return
           found.add(o)
         }

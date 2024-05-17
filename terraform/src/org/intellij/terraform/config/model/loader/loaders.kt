@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.openapi.application.ApplicationManager
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.model.Function
-import kotlin.collections.HashMap
 import kotlin.collections.Map
 import kotlin.collections.MutableList
 import kotlin.collections.MutableMap
@@ -79,13 +78,7 @@ interface VersionedMetadataLoader {
   fun isSupportedVersion(version: String): Boolean
   fun isSupportedType(type: String): Boolean
 
-  fun load(context: LoadContext, json: ObjectNode, file: String)
-}
-
-abstract class VersionedMetadataLoaderImpl(val version: String) : VersionedMetadataLoader {
-  override fun isSupportedVersion(version: String): Boolean {
-    return version == this.version
-  }
+  fun load(context: LoadContext, json: ObjectNode, fileName: String)
 }
 
 interface BaseLoader {
@@ -110,12 +103,4 @@ internal fun warnOrFailInInternalMode(message: String) {
     assert(false) { message }
   }
   TerraformMetadataLoader.LOG.warn(message)
-}
-
-internal fun failInInternalMode(message: String) {
-  val application = ApplicationManager.getApplication()
-  if (application.isUnitTestMode || application.isInternal) {
-    TerraformMetadataLoader.LOG.error(message)
-    assert(false) { message }
-  }
 }

@@ -165,25 +165,25 @@ object BaseLoaderV1 : BaseLoader {
 abstract class ProviderLoader(protected val base: BaseLoader) : VersionedMetadataLoader {
   override fun isSupportedType(type: String) = type == "provider"
 
-  override fun load(context: LoadContext, json: ObjectNode, file: String) {
+  override fun load(context: LoadContext, json: ObjectNode, fileName: String) {
     val model = context.model
     val name = json.string("name")!!.pool(context)
     val provider = json.obj("provider")
     if (provider == null) {
-      LOG.warn("No provider schema in file '$file'")
+      LOG.warn("No provider schema in file '$fileName'")
       return
     }
     if (model.loaded.containsKey("provider.$name")) {
       LOG.warn("Provider '$name' is already loaded from '${model.loaded["provider.$name"]}'")
       return
     }
-    model.loaded["provider.$name"] = file
+    model.loaded["provider.$name"] = fileName
     val info = parseProviderInfo(context, name, provider)
     model.providers.add(info)
     val resources = json.obj("resources")
     val dataSources = json.obj("data-sources")
     if (resources == null && dataSources == null) {
-      LOG.warn("No resources nor data-sources defined for provider '$name' in file '$file'")
+      LOG.warn("No resources nor data-sources defined for provider '$name' in file '$fileName'")
     }
     resources?.let { it.fields().asSequence().mapTo(model.resources) { parseResourceInfo(context, it, info) } }
     dataSources?.let { it.fields().asSequence().mapTo(model.dataSources) { parseDataSourceInfo(context, it, info) } }
@@ -228,19 +228,20 @@ abstract class ProviderLoader(protected val base: BaseLoader) : VersionedMetadat
 
 abstract class ProvisionerLoader(protected val base: BaseLoader) : VersionedMetadataLoader {
   override fun isSupportedType(type: String) = type == "provisioner"
-  override fun load(context: LoadContext, json: ObjectNode, file: String) {
+  override fun load(context: LoadContext, json: ObjectNode, fileName: String) {
     val model = context.model
-    val name = json.string("name")!!.pool(context)
-    val provisioner = json.obj("schema")
+    val provisioner_schema = json.obj("schemas") ?: json
+    val name = provisioner_schema.string("name")!!.pool(context)
+    val provisioner = provisioner_schema.obj("schema")
     if (provisioner == null) {
-      LOG.warn("No provisioner schema in file '$file'")
+      LOG.warn("No provisioner schema in file '$fileName'")
       return
     }
     if (model.loaded.containsKey("provisioner.$name")) {
       LOG.warn("Provisioner '$name' is already loaded from '${model.loaded["provisioner.$name"]}'")
       return
     }
-    model.loaded["provisioner.$name"] = file
+    model.loaded["provisioner.$name"] = fileName
     val info = ProvisionerType(name, provisioner.fields().asSequence().map { base.parseSchemaElement(context, it, name) }.toList())
     model.provisioners.add(info)
   }
@@ -248,19 +249,20 @@ abstract class ProvisionerLoader(protected val base: BaseLoader) : VersionedMeta
 
 abstract class BackendLoader(protected val base: BaseLoader) : VersionedMetadataLoader {
   override fun isSupportedType(type: String) = type == "backend"
-  override fun load(context: LoadContext, json: ObjectNode, file: String) {
+  override fun load(context: LoadContext, json: ObjectNode, fileName: String) {
+    val backend_schema = json.obj("schemas") ?: json
     val model = context.model
-    val name = json.string("name")!!.pool(context)
-    val backend = json.obj("schema")
+    val name = backend_schema.string("name")!!.pool(context)
+    val backend = backend_schema.obj("schema")
     if (backend == null) {
-      LOG.warn("No backend schema in file '$file'")
+      LOG.warn("No backend schema in file '$fileName'")
       return
     }
     if (model.loaded.containsKey("backend.$name")) {
       LOG.warn("Backend '$name' is already loaded from '${model.loaded["backend.$name"]}'")
       return
     }
-    model.loaded["backend.$name"] = file
+    model.loaded["backend.$name"] = fileName
     val info = BackendType(name, backend.fields().asSequence().map { base.parseSchemaElement(context, it, name) }.toList())
     model.backends.add(info)
   }
@@ -282,18 +284,19 @@ class FunctionsLoaderV1 : VersionedMetadataLoader {
   override fun isSupportedType(type: String) = type == "functions"
   override fun isSupportedVersion(version: String) = version == "1"
 
-  override fun load(context: LoadContext, json: ObjectNode, file: String) {
+  override fun load(context: LoadContext, json: ObjectNode, fileName: String) {
     val model = context.model
-    val functions = json.obj("schema")
+    val function_schema = json.obj("schemas") ?: json
+    val functions = function_schema.obj("schema")
     if (functions == null) {
-      LOG.warn("No functions schema in file '$file'")
+      LOG.warn("No functions schema in file '$fileName'")
       return
     }
     if (model.loaded.containsKey("functions")) {
       LOG.warn("Functions definitions already loaded from '${model.loaded["functions"]}'")
       return
     }
-    model.loaded["functions"] = file
+    model.loaded["functions"] = fileName
     for ((k, v) in functions.fields()) {
       if (v !is ObjectNode) continue
       assert(v.string("Name").equals(k)) { "Name mismatch: $k != ${v.string("Name")}" }

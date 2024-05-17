@@ -260,10 +260,10 @@ class TerraformMetadataLoader {
     }
   }
 
-  private fun parseFile(json: ObjectNode, file: String) {
+  private fun parseFile(json: ObjectNode, fileName: String) {
     val type: String
     val version: String
-    val schemasNode = (json.get("schemas") as? ObjectNode) ?: json
+    val schemasNode = json.obj("schemas") ?: json
     if (schemasNode.has("format_version"))  {
       type = "terraform-providers-schema-json"
       version = schemasNode.get("format_version").textValue()
@@ -276,7 +276,7 @@ class TerraformMetadataLoader {
       it.isSupportedType(type) && it.isSupportedVersion(version)
     }
     if (loader == null) {
-      val message = "Cannot find loader for model file content '$file', type: '$type', version: '$version'"
+      val message = "Cannot find loader for model file content '$fileName', type: '$type', version: '$version'"
       val application = ApplicationManager.getApplication()
       if (application.isUnitTestMode || application.isInternal) {
         LOG.error(message)
@@ -285,7 +285,7 @@ class TerraformMetadataLoader {
       LOG.warn(message)
       return
     }
-    loader.load(context, schemasNode, file)
+    loader.load(context, json, fileName)
   }
 
 }

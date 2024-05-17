@@ -268,19 +268,20 @@ class FunctionsLoaderV2 : VersionedMetadataLoader {
   override fun isSupportedType(type: String) = type == "functions"
   override fun isSupportedVersion(version: String) = version == "2"
 
-  override fun load(context: LoadContext, json: ObjectNode, file: String) {
+  override fun load(context: LoadContext, json: ObjectNode, fileName: String) {
     val base = BaseLoaderV2
     val model = context.model
-    val functions = json.obj("schema")
+    val function_schema = json.obj("schemas") ?: json
+    val functions = function_schema.obj("schema")
     if (functions == null) {
-      LOG.warn("No functions schema in file '$file'")
+      LOG.warn("No functions schema in file '$fileName'")
       return
     }
     if (model.loaded.containsKey("functions")) {
       LOG.warn("Functions definitions already loaded from '${model.loaded["functions"]}'")
       return
     }
-    model.loaded["functions"] = file
+    model.loaded["functions"] = fileName
     for ((name, v) in functions.fields()) {
       if (v !is ObjectNode) continue
       val returnType = base.parseType(context, v.string("ReturnType")!!)

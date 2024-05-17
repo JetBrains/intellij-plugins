@@ -56,7 +56,8 @@ open class TerraformLocalMetadataTest : BasePlatformTestCase() {
               "provider_schemas": {
                 "registry.terraform.io/digitalocean/digitalocean": {
                   "provider": {
-                    "version": 0
+                    "version": 0,
+                    "block": {}
                   },
                   "resource_schemas": {
                     "digitalocean_droplet": {
