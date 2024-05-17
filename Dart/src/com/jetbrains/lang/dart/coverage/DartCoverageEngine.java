@@ -99,7 +99,7 @@ public final class DartCoverageEngine extends CoverageEngine {
 
   @NotNull
   @Override
-  public String getQualifiedName(@NotNull File outputFile, @NotNull PsiFile sourceFile) {
+  protected String getQualifiedName(@NotNull File outputFile, @NotNull PsiFile sourceFile) {
     return getQName(sourceFile);
   }
 

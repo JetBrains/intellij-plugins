@@ -12,7 +12,6 @@ import com.intellij.execution.configurations.coverage.CoverageEnabledConfigurati
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
 import com.intellij.lang.javascript.psi.JSFile;
-import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
@@ -96,7 +95,7 @@ public class KarmaCoverageEngine extends CoverageEngine {
   }
 
   @Override
-  public String getQualifiedName(@NotNull File outputFile, @NotNull PsiFile sourceFile) {
+  protected String getQualifiedName(@NotNull File outputFile, @NotNull PsiFile sourceFile) {
     return getQName(sourceFile);
   }
 
