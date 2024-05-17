@@ -22,7 +22,7 @@ import java.util.Set;
 public final class DartCoverageEngine extends CoverageEngine {
 
   public static DartCoverageEngine getInstance() {
-    return CoverageEngine.EP_NAME.findExtensionOrFail(DartCoverageEngine.class);
+    return EP_NAME.findExtensionOrFail(DartCoverageEngine.class);
   }
 
   @Override

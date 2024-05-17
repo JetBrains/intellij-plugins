@@ -30,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 public class KarmaCoverageEngine extends CoverageEngine {
@@ -142,8 +143,9 @@ public class KarmaCoverageEngine extends CoverageEngine {
         if (rootDir == null) {
           rootDir = ProjectUtil.guessProjectDir(myProject);
         }
+        assert rootDir != null;
         PsiDirectory psiRootDir = PsiManager.getInstance(myProject).findDirectory(rootDir);
-        return new CoverageListRootNode(myProject, psiRootDir, mySuitesBundle, myStateBean);
+        return new CoverageListRootNode(myProject, Objects.requireNonNull(psiRootDir), mySuitesBundle, myStateBean);
       }
     };
   }
