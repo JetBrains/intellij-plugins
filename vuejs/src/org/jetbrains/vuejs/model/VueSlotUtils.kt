@@ -28,7 +28,7 @@ const val DEPRECATED_SLOT_ATTRIBUTE = "slot"
 
 fun getMatchingAvailableSlots(tag: XmlTag, name: String, newApi: Boolean): List<WebSymbol> =
   processSlots(tag, newApi) {
-    runNameMatchQuery(WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_SLOTS, name)
+    runNameMatchQuery(WebSymbol.HTML_SLOTS.withName(name))
   }
 
 fun getAvailableSlots(tag: XmlTag, expandPatterns: Boolean, newApi: Boolean): List<WebSymbol> =
