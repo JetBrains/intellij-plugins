@@ -9,7 +9,7 @@ open class NextJsMoveTest: JSMoveTestBase()  {
   }
 
   override fun getTestRoot(): String {
-    return "/move_nextjs/"
+    return "/move/"
   }
   
   fun testForm() {

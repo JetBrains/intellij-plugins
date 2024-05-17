@@ -35,7 +35,9 @@
           "pattern": {
             "items": "/html/astro-components"
           },
-          "exclusive-contributions": ["/html/attributes"],
+          "exclusive-contributions": [
+            "/html/attributes"
+          ],
           "attributes": [
             {
               "name": "Component property",
@@ -53,7 +55,9 @@
           "pattern": {
             "items": "/html/ui-framework-components"
           },
-          "exclusive-contributions": ["/html/attributes"],
+          "exclusive-contributions": [
+            "/html/attributes"
+          ],
           "attributes": [
             {
               "name": "Component property",
@@ -288,6 +292,13 @@
           "attribute-value": {
             "kind": "expression"
           }
+        }
+      ]
+    },
+    "js": {
+      "additional-root-directories": [
+        {
+          "name": "pages"
         }
       ]
     }

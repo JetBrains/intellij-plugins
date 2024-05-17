@@ -1,0 +1,1 @@
+export const Declaration1 = <div/>

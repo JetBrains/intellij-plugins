@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.frameworks.nextjs.references
 
 import com.intellij.lang.javascript.DialectDetector
-import com.intellij.lang.javascript.frameworks.JSRouteUtil
+import com.intellij.lang.javascript.frameworks.JSXmlAttributePathUtil
 import com.intellij.lang.javascript.frameworks.html.getFixedVirtualFiles
 import com.intellij.lang.javascript.frameworks.modules.JSModuleFileReferenceSet
 import com.intellij.lang.javascript.frameworks.modules.resolver.JSDefaultFileReferenceContext
@@ -10,7 +10,6 @@ import com.intellij.openapi.paths.PathReferenceProviderBase
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiReference
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlTag
@@ -34,10 +33,9 @@ class NextJsPathReferenceProvider : PathReferenceProviderBase() {
                            isSoft: Boolean): Array<out PsiReference> {
     val context = object : JSDefaultFileReferenceContext(text, psiElement, null) {
       override fun getDefaultRoots(project: Project, moduleName: String, contextFile: VirtualFile): Collection<VirtualFile> {
-        val defaultContexts: Collection<VirtualFile> = super.getDefaultRoots(project, moduleName, contextFile)
-        val file: PsiFileSystemItem = myContext.containingFile?.originalFile ?: return defaultContexts
-
-        val items = getFixedVirtualFiles(file, JSRouteUtil.ROUTES)
+        val defaultContexts = super.getDefaultRoots(project, moduleName, contextFile)
+        val file = myContext.containingFile?.originalFile ?: return defaultContexts
+        val items = getFixedVirtualFiles(file, JSXmlAttributePathUtil.additionalRoots(psiElement))
         if (items.isEmpty()) return defaultContexts
 
         return items + defaultContexts.toSet()

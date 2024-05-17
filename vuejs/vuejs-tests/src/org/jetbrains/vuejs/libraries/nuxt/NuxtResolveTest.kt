@@ -1,6 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.nuxt
 
+import com.intellij.lang.javascript.JSTestUtils.checkResolveToDestination
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.webSymbols.multiResolveReference
 import com.intellij.webSymbols.resolveReference
@@ -40,4 +41,39 @@ class NuxtResolveTest : BasePlatformTestCase() {
       .let { TestCase.assertEquals("module2.js", it.containingFile.virtualFile.name) }
   }
 
+  fun testNuxtLinkHrefIndexResolve() {
+    doPathResolveTest("index.vue")
+  }
+
+  fun testNuxtLinkToDirectoryResolve() {
+    doPathResolveTest("insideDeclaration")
+  }
+
+  fun testNuxtLinkHrefFileResolve() {
+    doPathResolveTest("component.vue")
+  }
+
+  fun testCustomLinkHrefFileWithExtensionResolve() {
+    doPathResolveTest("component.vue")
+  }
+
+  fun testNuxtLinkToNotPagesResolve() {
+    doPathResolveTest("index.vue")
+  }
+
+  fun testNuxtLinkHrefUnresolvedDirectoryResolve() {
+    doPathResolveTest()
+  }
+
+  fun testRoutePathImportNotResolve() {
+    doPathResolveTest()
+  }
+
+  fun testPathImportResolve() {
+    doPathResolveTest("component.vue")
+  }
+
+  private fun doPathResolveTest(destination: String? = null) {
+    checkResolveToDestination(destination, myFixture, getTestName(false), "vue")
+  }
 }

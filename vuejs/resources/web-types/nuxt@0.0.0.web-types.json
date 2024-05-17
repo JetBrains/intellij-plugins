@@ -1,0 +1,15 @@
+{
+  "$schema": "../../../../community/platform/webSymbols/web-types-gen/resources/web-types.json",
+  "name": "nuxt",
+  "version": "0.0.0",
+  "description-markup": "markdown",
+  "contributions": {
+    "js": {
+      "additional-root-directories": [
+        {
+          "name": "pages"
+        }
+      ]
+    }
+  }
+}

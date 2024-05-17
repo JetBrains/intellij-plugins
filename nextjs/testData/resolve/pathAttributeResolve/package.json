@@ -1,0 +1,6 @@
+{
+  "name": "next-test",
+  "dependencies": {
+    "next": "*"
+  }
+}

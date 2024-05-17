@@ -2,17 +2,17 @@ package com.intellij.lang.javascript.frameworks.nextjs.inspections
 
 import com.intellij.codeInsight.daemon.ImplicitUsageProvider
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
+import com.intellij.lang.javascript.frameworks.nextjs.isNextJsContext
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.psi.JSElementBase
 import com.intellij.lang.javascript.psi.JSFunction
 import com.intellij.lang.javascript.psi.JSVariable
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiUtilCore
-import com.intellij.webSymbols.context.WebSymbolsContext
 
 class NextJsImplicitUsageProvider : ImplicitUsageProvider {
   override fun isImplicitUsage(element: PsiElement): Boolean =
-    isInNextJsContext(element) && (
+    isNextJsContext(element) && (
       isKnownFunctionName(element)
         || isKnownObjectName(element)
         || isExportDefault(element)
@@ -20,9 +20,6 @@ class NextJsImplicitUsageProvider : ImplicitUsageProvider {
         || isHttpMethod(element)
         || isMiddlewareFunctionOrItsConfig(element)
     )
-
-  private fun isInNextJsContext(element: PsiElement): Boolean =
-    WebSymbolsContext.get("nextjs-project", element).let { it == "nextjs" || it == "true" }
 
   private fun isKnownFunctionName(element: PsiElement): Boolean =
     (element is JSElementBase)

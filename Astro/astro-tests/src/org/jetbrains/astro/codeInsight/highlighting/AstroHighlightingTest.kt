@@ -1,5 +1,6 @@
 package org.jetbrains.astro.codeInsight.highlighting
 
+import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection
 import org.jetbrains.astro.codeInsight.ASTRO_CONFIG_FILES
 
@@ -20,5 +21,12 @@ class AstroHighlightingTest : AstroHighlightingTestBase("codeInsight/highlightin
       """.trimIndent())
       myFixture.testHighlighting(it)
     }
+  }
+
+  fun testPagesPathResolving() {
+    myFixture.enableInspections(HtmlUnknownTargetInspection())
+    val dir = getTestName(true)
+    myFixture.copyDirectoryToProject(dir, "")
+    myFixture.testHighlighting(true, false, true, "src/usage/usage.astro")
   }
 }
