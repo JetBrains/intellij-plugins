@@ -30,7 +30,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectCloseListener;
-import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -143,7 +142,10 @@ public final class AdditionalJARContentsWatcherManager {
     @Override
     public void projectClosing(@NotNull Project project) {
       for (Module module : ModuleManager.getInstance(project).getModules()) {
-        getInstance(module).cleanup();
+        AdditionalJARContentsWatcherManager manager = module.getServiceIfCreated(AdditionalJARContentsWatcherManager.class);
+        if (manager != null) {
+          manager.cleanup();
+        }
       }
     }
   }
