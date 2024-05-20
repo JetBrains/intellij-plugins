@@ -4,6 +4,6 @@ package org.intellij.terraform.hcl
 import com.intellij.lang.Language
 
 object HCLLanguage : Language("HCL") {
-  override fun isCaseSensitive() = true
+  override fun isCaseSensitive(): Boolean = true
 }
 
