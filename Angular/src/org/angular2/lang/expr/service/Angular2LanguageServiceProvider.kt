@@ -11,7 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 
-internal class AngularLanguageServiceProvider(project: Project) : JSLanguageServiceProvider {
+internal class Angular2LanguageServiceProvider(project: Project) : JSLanguageServiceProvider {
   private val tsLanguageService by lazy(LazyThreadSafetyMode.PUBLICATION) { project.service<AngularServiceWrapper>() }
 
   override fun getAllServices(): List<JSLanguageService> = listOf(tsLanguageService.service)
