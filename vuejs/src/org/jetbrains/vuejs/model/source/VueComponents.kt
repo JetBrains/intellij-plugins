@@ -149,7 +149,8 @@ class VueComponents {
 
       if (decorator is StubBasedPsiElementBase<*>) {
         decorator.stub?.let {
-          return it.findChildStubByType(JSStubElementTypes.OBJECT_LITERAL_EXPRESSION)
+          return (it.findChildStubByType(JSStubElementTypes.CALL_EXPRESSION) ?: it)
+            .findChildStubByType(JSStubElementTypes.OBJECT_LITERAL_EXPRESSION)
             ?.psi
         }
       }
