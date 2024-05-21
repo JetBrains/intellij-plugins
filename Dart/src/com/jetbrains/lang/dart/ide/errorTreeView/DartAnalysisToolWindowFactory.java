@@ -12,8 +12,6 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-
 final class DartAnalysisToolWindowFactory implements ToolWindowFactory, DumbAware {
   private static final String TOOL_WINDOW_VISIBLE_PROPERTY = "dart.analysis.tool.window.visible";
 
@@ -27,10 +25,7 @@ final class DartAnalysisToolWindowFactory implements ToolWindowFactory, DumbAwar
     DartProblemsViewPanel panel = new DartProblemsViewPanel(project, DartProblemsView.getInstance(project).getPresentationHelper());
     Content content = ContentFactory.getInstance().createContent(panel, "", false);
     toolWindow.getContentManager().addContent(content);
-
     toolWindow.setHelpId("reference.toolWindow.DartAnalysis");
-    toolWindow.setTitleActions(Collections.singletonList(new AnalysisServerFeedbackAction()));
-
     toolWindow.setAvailable(true);
 
     if (PropertiesComponent.getInstance(project).getBoolean(TOOL_WINDOW_VISIBLE_PROPERTY, true)) {
