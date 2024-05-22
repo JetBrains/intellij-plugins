@@ -11,7 +11,7 @@
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "strict": true,
-    "sourceMap": false,
+    "sourceMap": false
   },
   "include": [
     "src/index.ts"

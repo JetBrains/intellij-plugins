@@ -1,7 +1,8 @@
 import * as decorateLanguageServiceModule from "@volar/typescript/lib/node/decorateLanguageService"
 import {Language} from "@volar/language-core"
-import type * as ts from "typescript/lib/tsserverlibrary"
-import type {GetElementTypeResponse, Range} from "../../../../plugins/JavaScriptLanguage/src/tscplugin/protocol"
+import type * as TS from "tsc-ide-plugin/languageService"
+import type {GetElementTypeResponse, Range} from "tsc-ide-plugin/protocol"
+import type {ReverseMapper} from "tsc-ide-plugin/ide-get-element-type"
 import {getServiceScript} from "@volar/typescript/lib/node/utils"
 import {toGeneratedOffset} from "@volar/typescript/lib/node/transform"
 import {AngularVirtualCode} from "./code"
@@ -15,72 +16,80 @@ export function patchVolarToDecorateLanguageService() {
 
   // @ts-ignore TS2540
   decorateLanguageServiceModule.decorateLanguageService =
-    (language: Language, languageService: ts.LanguageService) => {
-      decorateLanguageService(language, languageService)
+    (language: Language, languageService: TS.LanguageService) => {
+      decorateLanguageService(language, languageService as any /* due to difference in TS version we need to cast to any */)
       decorateIdeLanguageServiceExtensions(language, languageService)
     }
 }
 
-function decorateIdeLanguageServiceExtensions(language: Language, languageService: ts.LanguageService) {
+function decorateIdeLanguageServiceExtensions(language: Language, languageService: TS.LanguageService) {
 
-  let {getElementType} = languageService
+  let {webStormGetElementType, webStormGetTypeProperties, webStormGetSymbolType} = languageService
 
-  if (getElementType === undefined)
+  if (webStormGetElementType === undefined || webStormGetElementType === undefined || webStormGetSymbolType === undefined)
     return
 
-  languageService.getElementType =
-    (ts: typeof import("typescript/lib/tsserverlibrary"),
-     fileName: string,
-     range: Range,
-     forceReturnType: boolean
-    ): GetElementTypeResponse => {
-      const [serviceScript, sourceScript, map] =
-        getServiceScript(language, fileName);
-      const program = languageService.getProgram()
-      const sourceFile = program?.getSourceFile(fileName);
+  languageService.webStormGetElementType = (
+    ts: typeof TS,
+    fileName: string,
+    range: Range,
+    forceReturnType: boolean,
+    reverseMapper?: ReverseMapper,
+  ): GetElementTypeResponse => {
+    const [serviceScript, sourceScript, map] =
+      getServiceScript(language, fileName);
+    const program = languageService.getProgram()
+    const sourceFile = program?.getSourceFile(fileName);
 
-      if (serviceScript && sourceFile) {
-        let angularCode = serviceScript.code as AngularVirtualCode
-        let originalFile = {
-          text: angularCode.sourceCode,
-          getLineAndCharacterOfPosition(position: number): ts.LineAndCharacter {
-            return ts.getLineAndCharacterOfPosition(this, position);
-          }
+    if (serviceScript && sourceFile) {
+      let angularCode = serviceScript.code as AngularVirtualCode
+      let originalFile = {
+        text: angularCode.sourceCode,
+        getLineAndCharacterOfPosition(position: number): TS.LineAndCharacter {
+          return ts.getLineAndCharacterOfPosition(this, position);
         }
-        try {
-          let originalRangePosStart = ts.getPositionOfLineAndCharacter(originalFile, range.start.line, range.start.character)
-          let originalRangePosEnd = ts.getPositionOfLineAndCharacter(originalFile, range.end.line, range.end.character)
-
-          const generatedRangePosStart = toGeneratedOffset(sourceScript, map, originalRangePosStart, () => true);
-          const generatedRangePosEnd = toGeneratedOffset(sourceScript, map, originalRangePosEnd, () => true);
-
-          if (generatedRangePosStart !== undefined && generatedRangePosEnd !== undefined) {
-            const start = ts.getLineAndCharacterOfPosition(sourceFile, generatedRangePosStart)
-            const end = ts.getLineAndCharacterOfPosition(sourceFile, generatedRangePosEnd)
-            return getElementType(ts as any, fileName, {start, end}, forceReturnType)
-          }
-        }
-        catch (e) {
-          // ignore
-        }
-        return undefined;
       }
-      else {
-        return getElementType(ts as any, fileName, range, forceReturnType)
+      try {
+        let originalRangePosStart = ts.getPositionOfLineAndCharacter(originalFile, range.start.line, range.start.character)
+        let originalRangePosEnd = ts.getPositionOfLineAndCharacter(originalFile, range.end.line, range.end.character)
+
+        const generatedRangePosStart = toGeneratedOffset(sourceScript, map, originalRangePosStart, () => true);
+        const generatedRangePosEnd = toGeneratedOffset(sourceScript, map, originalRangePosEnd, () => true);
+
+        if (generatedRangePosStart !== undefined && generatedRangePosEnd !== undefined) {
+          const start = ts.getLineAndCharacterOfPosition(sourceFile, generatedRangePosStart)
+          const end = ts.getLineAndCharacterOfPosition(sourceFile, generatedRangePosEnd)
+
+          //TODO support reverseMapper
+          return webStormGetElementType(ts as any, fileName, {start, end}, forceReturnType)
+        }
       }
+      catch (e) {
+        // ignore
+      }
+      return undefined;
     }
-
-}
-
-// TODO try to share this
-
-declare module "typescript/lib/tsserverlibrary" {
-  interface LanguageService {
-    getElementType(
-      ts: typeof import("typescript/lib/tsserverlibrary"),
-      fileName: string,
-      range: Range,
-      forceReturnType: boolean
-    ): GetElementTypeResponse
+    else {
+      return webStormGetElementType(ts as any, fileName, range, forceReturnType, reverseMapper)
+    }
   }
+
+  languageService.webStormGetSymbolType = (
+    ts,
+    symbolId: number,
+    reverseMapper?: ReverseMapper,
+  ) => {
+    //TODO support reverseMapper
+    return webStormGetSymbolType(ts, symbolId, reverseMapper)
+  }
+
+  languageService.webStormGetTypeProperties = (
+    ts,
+    typeId: number,
+    reverseMapper?: ReverseMapper,
+  ) => {
+    //TODO support reverseMapper
+    return webStormGetTypeProperties(ts, typeId, reverseMapper)
+  }
+
 }
