@@ -4,7 +4,7 @@ package com.intellij.flex.editor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.JSBaseEditorTestCase;
 
-public class FlexExtendSelectionTest extends JSBaseEditorTestCase {
+public class FlexSelectWordTest extends JSBaseEditorTestCase {
   @Override
   protected void setUp() throws Exception {
     FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "as_editor/");

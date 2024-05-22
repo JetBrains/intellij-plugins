@@ -6,7 +6,7 @@ import com.intellij.flex.bc.FlexProjectConfigTest;
 import com.intellij.flex.codeInsight.*;
 import com.intellij.flex.completion.*;
 import com.intellij.flex.editor.FlexEditorTest;
-import com.intellij.flex.editor.FlexExtendSelectionTest;
+import com.intellij.flex.editor.FlexSelectWordTest;
 import com.intellij.flex.editor.FlexLiveTemplatesTest;
 import com.intellij.flex.flashBuilder.FlashBuilderImportTest;
 import com.intellij.flex.flexunit.codeInsight.FlexUnitCompletionTest;
@@ -57,7 +57,7 @@ public final class FlexTestSuite {
 
     //com.intellij.flex.editor.*
     testSuite.addTestSuite(FlexEditorTest.class);
-    testSuite.addTestSuite(FlexExtendSelectionTest.class);
+    testSuite.addTestSuite(FlexSelectWordTest.class);
     testSuite.addTestSuite(FlexLiveTemplatesTest.class);
 
     //com.intellij.flex.flashBuilder.*
