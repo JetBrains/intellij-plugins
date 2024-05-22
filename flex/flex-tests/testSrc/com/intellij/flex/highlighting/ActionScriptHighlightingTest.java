@@ -5,12 +5,6 @@ import com.intellij.application.options.CodeStyle;
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.codeInsight.lookup.Lookup;
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.LookupEx;
-import com.intellij.codeInsight.lookup.LookupManager;
-import com.intellij.codeInsight.lookup.impl.LookupImpl;
-import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownBooleanAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
@@ -66,7 +60,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
-import com.intellij.spellchecker.quickfixes.RenameTo;
 import com.intellij.testFramework.ExpectedHighlightingData;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.PsiTestUtil;
@@ -182,7 +175,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   public void testHighlightExtends() {
     doTestFor(true, null, () -> {
-      JSTestUtils.HighlightUsagesInfo handler = JSTestUtils.getFindUsagesHandlerHighlights(myEditor, myFile);
+      JSTestUtils.HighlightUsagesInfo handler = JSTestUtils.getHighlightUsagesHighlights(myEditor, myFile);
       List<PsiElement> targets = handler.targets;
       assertEquals(1, targets.size());
       assertTrue(targets.get(0).getText().contains("class Foo"));
@@ -194,7 +187,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   public void testHighlightImplements() {
     doTestFor(true, null, () -> {
-      JSTestUtils.HighlightUsagesInfo handler = JSTestUtils.getFindUsagesHandlerHighlights(myEditor, myFile);
+      JSTestUtils.HighlightUsagesInfo handler = JSTestUtils.getHighlightUsagesHighlights(myEditor, myFile);
       assertNotNull(handler);
       List<PsiElement> targets = handler.targets;
       assertEquals(2, targets.size());
