@@ -9,6 +9,7 @@ import com.intellij.lang.typescript.lsp.BaseLspTypeScriptService
 import com.intellij.lang.typescript.lsp.JSFrameworkLsp4jServer
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.typescript.service.VueServiceSetActivationRule
 
@@ -34,4 +35,9 @@ class VolarTypeScriptService(project: Project) : BaseLspTypeScriptService(projec
     val server = getServer() ?: return null
     return server.sendRequest { (it as JSFrameworkLsp4jServer).getTypeProperties(args) }
   }
+
+  override fun supportsTypeEvaluation(virtualFile: VirtualFile, element: PsiElement): Boolean {
+    return virtualFile.extension == "vue" || super.supportsTypeEvaluation(virtualFile, element)
+  }
+
 }

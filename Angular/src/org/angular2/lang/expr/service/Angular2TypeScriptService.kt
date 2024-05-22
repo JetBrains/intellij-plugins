@@ -39,6 +39,9 @@ class AngularTypeScriptService(project: Project) : TypeScriptServerServiceImpl(p
 
   override val typeEvaluationSupport: TypeScriptServiceEvaluationSupport = Angular2CompilerServiceEvaluationSupport(project)
 
+  override fun supportsTypeEvaluation(virtualFile: VirtualFile, element: PsiElement): Boolean =
+    element.language is Angular2Language || super.supportsTypeEvaluation(virtualFile, element)
+
   override fun isDisabledByContext(context: VirtualFile): Boolean =
     super.isDisabledByContext(context)
     || !isAngularServiceAvailableByContext(context)
