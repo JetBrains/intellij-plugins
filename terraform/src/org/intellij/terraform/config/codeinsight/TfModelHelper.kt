@@ -3,6 +3,7 @@ package org.intellij.terraform.config.codeinsight
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiFile
+import com.intellij.psi.util.parentOfType
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_MODULE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_OUTPUT_IDENTIFIER
@@ -12,42 +13,36 @@ import org.intellij.terraform.config.Constants.HCL_TERRAFORM_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_VARIABLE_IDENTIFIER
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TerraformPatterns
-import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLObject
+import org.intellij.terraform.hcl.psi.HCLStringLiteral
+import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 import java.util.*
 
-object ModelHelper {
-  private val LOG = Logger.getInstance(ModelHelper::class.java)
+internal object TfModelHelper {
+  private val LOG = Logger.getInstance(TfModelHelper::class.java)
 
   fun getBlockProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
     val type = block.getNameElementUnquoted(0) ?: return emptyMap()
     // Special case for 'backend' blocks, since it's located not in root
-    if (TerraformPatterns.Backend.accepts(block)) {
-      return getBackendProperties(block)
-    }
-    if (TerraformPatterns.DynamicBlockContent.accepts(block)) {
-      val dynamic = block.getParent(HCLBlock::class.java, true) ?: return emptyMap()
-      assert(TerraformPatterns.DynamicBlock.accepts(dynamic))
-      val origin = dynamic.getParent(HCLBlock::class.java, true) ?: return emptyMap()
-      // origin is either ResourceRootBlock, DataSourceRootBlock, ProviderRootBlock or ProvisionerBlock
-      val blockType = getBlockProperties(origin)[dynamic.name] as? BlockType ?: return emptyMap()
-      return blockType.properties
-    }
-    if (TerraformPatterns.DynamicBlock.accepts(block)) {
-      return TypeModel.ResourceDynamic.properties
-    }
-    if (TerraformPatterns.ProvisionerBlock.accepts(block)) {
-      return getProvisionerProperties(block)
-    }
-    if (TerraformPatterns.ResourceLifecycleBlock.accepts(block)) {
-      return TypeModel.ResourceLifecycle.properties
-    }
-    if (TerraformPatterns.ResourceConnectionBlock.accepts(block)) {
-      return getConnectionProperties(block)
+
+    when {
+      TerraformPatterns.Backend.accepts(block) -> return getBackendProperties(block)
+      TerraformPatterns.DynamicBlockContent.accepts(block) -> {
+        val dynamic = block.parentOfType<HCLBlock>(withSelf = false) ?: return emptyMap()
+
+        val origin = dynamic.parentOfType<HCLBlock>(withSelf = false) ?: return emptyMap()
+        // origin is either ResourceRootBlock, DataSourceRootBlock, ProviderRootBlock or ProvisionerBlock
+        val blockType = getBlockProperties(origin)[dynamic.name] as? BlockType ?: return emptyMap()
+        return blockType.properties
+      }
+      TerraformPatterns.DynamicBlock.accepts(block) -> return TypeModel.ResourceDynamic.properties
+      TerraformPatterns.ProvisionerBlock.accepts(block) -> return getProvisionerProperties(block)
+      TerraformPatterns.ResourceLifecycleBlock.accepts(block) -> return TypeModel.ResourceLifecycle.properties
+      TerraformPatterns.ResourceConnectionBlock.accepts(block) -> return getConnectionProperties(block)
+      block.parent !is PsiFile -> return getModelBlockProperties(block, type)
     }
 
-    if (block.parent !is PsiFile) {
-      return getModelBlockProperties(block, type)
-    }
     val props: Map<String, PropertyOrBlockType> = when (type) {
       HCL_PROVIDER_IDENTIFIER -> getProviderProperties(block)
       HCL_RESOURCE_IDENTIFIER -> getResourceProperties(block)
@@ -66,25 +61,15 @@ object ModelHelper {
     }
 
     // non-root blocks, match using patterns
-    if (TerraformPatterns.Backend.accepts(block)) {
-      return TypeModel.AbstractBackend
+    return when {
+      TerraformPatterns.Backend.accepts(block) -> TypeModel.AbstractBackend
+      TerraformPatterns.DynamicBlock.accepts(block) -> TypeModel.ResourceDynamic
+      TerraformPatterns.DynamicBlockContent.accepts(block) -> TypeModel.AbstractResourceDynamicContent
+      TerraformPatterns.ProvisionerBlock.accepts(block) -> TypeModel.AbstractResourceProvisioner
+      TerraformPatterns.ResourceLifecycleBlock.accepts(block) -> TypeModel.ResourceLifecycle
+      TerraformPatterns.ResourceConnectionBlock.accepts(block) -> TypeModel.Connection
+      else -> null
     }
-    if (TerraformPatterns.DynamicBlock.accepts(block)) {
-      return TypeModel.ResourceDynamic
-    }
-    if (TerraformPatterns.DynamicBlockContent.accepts(block)) {
-      return TypeModel.AbstractResourceDynamicContent
-    }
-    if (TerraformPatterns.ProvisionerBlock.accepts(block)) {
-      return TypeModel.AbstractResourceProvisioner
-    }
-    if (TerraformPatterns.ResourceLifecycleBlock.accepts(block)) {
-      return TypeModel.ResourceLifecycle
-    }
-    if (TerraformPatterns.ResourceConnectionBlock.accepts(block)) {
-      return TypeModel.Connection
-    }
-    return null
   }
 
   fun getBlockType(block: HCLBlock): Type? {
@@ -98,9 +83,9 @@ object ModelHelper {
     }
     if (TerraformPatterns.DynamicBlockContent.accepts(block)) {
       val fallback = TypeModel.AbstractResourceDynamicContent
-      val dynamic = block.getParent(HCLBlock::class.java, true) ?: return fallback
-      assert(TerraformPatterns.DynamicBlock.accepts(dynamic))
-      val origin = dynamic.getParent(HCLBlock::class.java, true) ?: return fallback
+      val dynamic = block.parentOfType<HCLBlock>(withSelf = false) ?: return fallback
+
+      val origin = dynamic.parentOfType<HCLBlock>(withSelf = false) ?: return fallback
       // origin is either ResourceRootBlock, DataSourceRootBlock, ProviderRootBlock or ProvisionerBlock
       return getBlockProperties(origin)[dynamic.name] as? BlockType ?: return fallback
     }

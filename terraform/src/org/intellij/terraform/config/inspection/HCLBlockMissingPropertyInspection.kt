@@ -13,8 +13,8 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.toArray
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.actions.TFInitAction
-import org.intellij.terraform.config.codeinsight.ModelHelper
 import org.intellij.terraform.config.codeinsight.ResourcePropertyInsertHandler
+import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TerraformPatterns.ConfigOverrideFile
 import org.intellij.terraform.config.patterns.TerraformPatterns.DynamicBlock
@@ -61,7 +61,7 @@ class HCLBlockMissingPropertyInspection : LocalInspectionTool() {
         return
       }
       if (ConfigOverrideFile.accepts(block.containingFile)) return
-      val properties = ModelHelper.getBlockProperties(block)
+      val properties = TfModelHelper.getBlockProperties(block)
       doCheck(block, holder, properties)
       if (recursive) {
         visitElement(obj)

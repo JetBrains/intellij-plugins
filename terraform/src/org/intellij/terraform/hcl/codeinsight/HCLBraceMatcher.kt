@@ -8,12 +8,6 @@ import com.intellij.psi.tree.IElementType
 import org.intellij.terraform.hcl.HCLElementTypes.*
 
 class HCLBraceMatcher : PairedBraceMatcher {
-  private val BRACE_PAIRS = arrayOf(
-    BracePair(L_CURLY, R_CURLY, true),
-    BracePair(L_BRACKET, R_BRACKET, true),
-    BracePair(L_PAREN, R_PAREN, true)
-  )
-
   override fun getCodeConstructStart(file: PsiFile?, openingBraceOffset: Int): Int {
     return openingBraceOffset
   }
@@ -26,3 +20,9 @@ class HCLBraceMatcher : PairedBraceMatcher {
     return BRACE_PAIRS
   }
 }
+
+private val BRACE_PAIRS = arrayOf(
+  BracePair(L_CURLY, R_CURLY, true),
+  BracePair(L_BRACKET, R_BRACKET, true),
+  BracePair(L_PAREN, R_PAREN, true)
+)

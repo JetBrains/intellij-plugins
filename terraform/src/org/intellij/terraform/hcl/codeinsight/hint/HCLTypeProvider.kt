@@ -5,7 +5,7 @@ import com.intellij.lang.ExpressionTypeProvider
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.SyntaxTraverser
-import org.intellij.terraform.config.codeinsight.ModelHelper
+import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElement
 import org.intellij.terraform.hcl.psi.HCLProperty
@@ -15,7 +15,7 @@ class HCLTypeProvider : ExpressionTypeProvider<HCLElement>() {
     var text: String
     if (element is HCLBlock) {
       text = "block"
-      val type = ModelHelper.getBlockType(element)
+      val type = TfModelHelper.getBlockType(element)
       if (type != null) {
         text = type.presentableText
       }

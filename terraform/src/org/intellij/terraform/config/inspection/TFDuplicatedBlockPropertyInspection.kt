@@ -6,7 +6,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.util.NullableFunction
-import org.intellij.terraform.config.codeinsight.ModelHelper
+import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.PropertyType
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.navigation.HCLQualifiedNameProvider
@@ -28,7 +28,7 @@ class TFDuplicatedBlockPropertyInspection : TFDuplicatedInspectionBase() {
       HCLQualifiedNameProvider.getFQN(block) ?: return
       // TODO: Support sub-blocks (based on model)
       val properties = block.`object`?.propertyList ?: return
-      val model = ModelHelper.getBlockProperties(block)
+      val model = TfModelHelper.getBlockProperties(block)
       val groupedDuplicates = properties.groupBy { it.name }
           .filterValues { it.size >= 2 }
           .filterKeys { model[it] is PropertyType }

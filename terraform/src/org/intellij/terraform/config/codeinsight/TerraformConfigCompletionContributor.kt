@@ -230,7 +230,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       // Same for 'providers' binding in 'module'
       if (property.name == "providers" && type == "module" && isRootBlock) return true
 
-      val hint = (ModelHelper.getBlockProperties(block)[property.name] as? PropertyType)?.hint
+      val hint = (TfModelHelper.getBlockProperties(block)[property.name] as? PropertyType)?.hint
       return hint is SimpleValueHint || hint is ReferenceHint
     }
   }
@@ -337,7 +337,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
           val value = pob.value as? HCLValue
           if (value === parent) {
             val valueBlock = PsiTreeUtil.getParentOfType(pob, HCLBlock::class.java) ?: return
-            val property = ModelHelper.getBlockProperties(valueBlock)[pob.name] as? PropertyType
+            val property = TfModelHelper.getBlockProperties(valueBlock)[pob.name] as? PropertyType
             val defaultsOfProperty = property?.type?.suggestedValues
             defaultsOfProperty?.map { create(it) }?.let { result.addAllElements(it) }
             return
@@ -381,7 +381,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       val use = getOriginalObject(parameters, hclObject)
       val block = use.parent
       if (block is HCLBlock) {
-        val props = ModelHelper.getBlockProperties(block)
+        val props = TfModelHelper.getBlockProperties(block)
         doAddCompletion(isBlock, isProperty, use, result, right, parameters, props)
       }
     }
@@ -475,7 +475,7 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
         }.toList())
         return
       }
-      val prop = ModelHelper.getBlockProperties(block)[property.name] as? PropertyType
+      val prop = TfModelHelper.getBlockProperties(block)[property.name] as? PropertyType
       val hint = prop?.hint ?: return
       if (hint is SimpleValueHint) {
         result.addAllElements(hint.hint.map { create(it).withInsertHandler(QuoteInsertHandler) })

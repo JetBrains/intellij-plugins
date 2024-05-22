@@ -8,7 +8,6 @@ import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
@@ -16,7 +15,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ThrowableRunnable
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.codeinsight.InsertHandlersUtil
-import org.intellij.terraform.config.codeinsight.ModelHelper
+import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.config.refactoring.TerraformElementRenameValidator
 import org.intellij.terraform.hcl.HCLBundle
@@ -46,7 +45,7 @@ class TFBlockNameValidnessInspection : LocalInspectionTool() {
     override fun visitStringLiteral(o: HCLStringLiteral) {
       val parent = o.parent as? HCLBlock ?: return
       if (parent.nameIdentifier !== o) return
-      if (StringUtil.isEmptyOrSpaces(o.value)) {
+      if (o.value.isBlank()) {
         holder.registerProblem(o, HCLBundle.message("block.name.validness.inspection.block.name.should.not.be.empty.error.message"),
                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
       }
@@ -63,7 +62,7 @@ class TFBlockNameValidnessInspection : LocalInspectionTool() {
         }
       }
 
-      val type = ModelHelper.getAbstractBlockType(o) ?: return
+      val type = TfModelHelper.getAbstractBlockType(o) ?: return
       val nameElements = o.nameElements
 
       val required = (type.args + 1) - nameElements.size
@@ -90,7 +89,7 @@ class TFBlockNameValidnessInspection : LocalInspectionTool() {
       val block = startElement as? HCLBlock ?: return
       if (editor == null) return
       if (!TerraformPatterns.TerraformConfigFile.accepts(block.containingFile)) return
-      val type = ModelHelper.getAbstractBlockType(block) ?: return
+      val type = TfModelHelper.getAbstractBlockType(block) ?: return
       val nameElements = block.nameElements
       val required = (type.args + 1) - nameElements.size
       if (required <= 0) return
@@ -113,7 +112,7 @@ class TFBlockNameValidnessInspection : LocalInspectionTool() {
       val block = startElement as? HCLBlock ?: return
       val obj = block.`object` ?: return
       if (!TerraformPatterns.TerraformConfigFile.accepts(block.containingFile)) return
-      val type = ModelHelper.getAbstractBlockType(block) ?: return
+      val type = TfModelHelper.getAbstractBlockType(block) ?: return
       val extra = block.nameElements.size - (type.args + 1)
       if (extra <= 0) return
       val toRemove = block.nameElements.toList().takeLast(extra)

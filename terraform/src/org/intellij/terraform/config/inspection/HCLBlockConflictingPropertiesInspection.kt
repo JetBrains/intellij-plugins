@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.util.PsiTreeUtil
 import org.intellij.terraform.config.TerraformFileType
-import org.intellij.terraform.config.codeinsight.ModelHelper
+import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.PropertyOrBlockType
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.*
@@ -39,7 +39,7 @@ class HCLBlockConflictingPropertiesInspection : LocalInspectionTool() {
       ProgressIndicatorProvider.checkCanceled()
       val obj = property.parent as? HCLObject ?: return
       val block = obj.parent as? HCLBlock ?: return
-      val properties = ModelHelper.getBlockProperties(block)
+      val properties = TfModelHelper.getBlockProperties(block)
       if (property.value is HCLNullLiteral) return
       doCheck(holder, property, property.name, obj, properties)
     }
@@ -48,7 +48,7 @@ class HCLBlockConflictingPropertiesInspection : LocalInspectionTool() {
       ProgressIndicatorProvider.checkCanceled()
       val obj = inner.parent as? HCLObject ?: return
       val block = obj.parent as? HCLBlock ?: return
-      val properties = ModelHelper.getBlockProperties(block)
+      val properties = TfModelHelper.getBlockProperties(block)
       doCheck(holder, inner, inner.name, obj, properties)
     }
   }

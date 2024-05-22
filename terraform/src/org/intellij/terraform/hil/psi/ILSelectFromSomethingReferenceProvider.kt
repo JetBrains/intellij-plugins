@@ -10,8 +10,8 @@ import com.intellij.util.SmartList
 import com.intellij.util.asSafely
 import com.intellij.util.containers.addIfNotNull
 import org.intellij.terraform.config.Constants
-import org.intellij.terraform.config.codeinsight.ModelHelper
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil
+import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.navigation.HCLQualifiedNameProvider
@@ -207,7 +207,7 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
             }
           }
           if (fake) {
-            val properties = ModelHelper.getBlockProperties(r)
+            val properties = TfModelHelper.getBlockProperties(r)
             addBlockProperty(properties, name, r, found)
           }
         }

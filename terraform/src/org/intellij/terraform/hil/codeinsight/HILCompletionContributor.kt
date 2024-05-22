@@ -15,12 +15,12 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.Constants
-import org.intellij.terraform.config.codeinsight.ModelHelper
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.GlobalScopes
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.createFunction
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil.createScope
 import org.intellij.terraform.config.codeinsight.TerraformConfigCompletionContributor
 import org.intellij.terraform.config.codeinsight.TerraformLookupElementRenderer
+import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.HCLLanguage
@@ -117,7 +117,7 @@ open class HILCompletionContributor : CompletionContributor(), DumbAware {
       // For now 'self' allowed only for provisioners inside resources
 
       val resource = getProvisionerOrConnectionResource(variable) ?: return
-      val properties = ModelHelper.getBlockProperties(resource)
+      val properties = TfModelHelper.getBlockProperties(resource)
       // TODO: Filter already defined or computed properties (?)
       // TODO: Add type filtration
       val set = properties.keys.toHashSet()
@@ -395,7 +395,7 @@ open class HILCompletionContributor : CompletionContributor(), DumbAware {
         collectTypeVariants(outputValue.getType(), found)
         return
       }
-      val properties = ModelHelper.getBlockProperties(r).filterKeys { it != Constants.HAS_DYNAMIC_ATTRIBUTES }
+      val properties = TfModelHelper.getBlockProperties(r).filterKeys { it != Constants.HAS_DYNAMIC_ATTRIBUTES }
       val done = properties.keys.toSet()
       found.addAll(properties.values.map { create(it.name).withRenderer(TerraformLookupElementRenderer()) })
       val pl = r.`object`?.propertyList

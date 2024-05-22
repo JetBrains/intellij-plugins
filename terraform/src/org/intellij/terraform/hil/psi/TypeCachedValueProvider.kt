@@ -7,7 +7,7 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiTreeUtil
-import org.intellij.terraform.config.codeinsight.ModelHelper
+import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.HCLElementTypes
@@ -232,7 +232,7 @@ class TypeCachedValueProvider private constructor(private val e: BaseExpression)
               // TODO: Support not only resources
               // TODO: Add properties defined in block as well
               val block = module.findResources(from.name, name).firstOrNull() ?: return Types.Invalid
-              val blockType = ModelHelper.getBlockType(block)
+              val blockType = TfModelHelper.getBlockType(block)
               return blockType ?: Types.Invalid
             }
           }
@@ -242,7 +242,7 @@ class TypeCachedValueProvider private constructor(private val e: BaseExpression)
             val module = e.getHCLHost()?.getTerraformModule() ?: return Types.Invalid
 
             val block = module.findDataSource(from.name, name).firstOrNull() ?: return Types.Invalid
-            val blockType = ModelHelper.getBlockType(block)
+            val blockType = TfModelHelper.getBlockType(block)
             return blockType ?: Types.Invalid
           }
           if (fromType is ObjectType) {

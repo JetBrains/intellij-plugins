@@ -1,13 +1,14 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hil.psi
 
+import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.LocalQuickFixProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceBase
 import com.intellij.psi.PsiReferenceProvider
 import com.intellij.util.ProcessingContext
-import org.intellij.terraform.config.codeinsight.ModelHelper
+import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.getTerraformModule
 import org.intellij.terraform.hcl.psi.HCLElement
 import org.intellij.terraform.hcl.psi.HCLPsiUtil
@@ -66,7 +67,7 @@ object ILSelectFromScopeReferenceProvider : PsiReferenceProvider() {
       this.element.getHCLHost()?.getTerraformModule()?.findVariables(name)?.map { it.declaration }
     } ?: emptyList()
   }), LocalQuickFixProvider {
-    override fun getQuickFixes() = arrayOf(AddVariableFix(this.element))
+    override fun getQuickFixes(): Array<LocalQuickFix> = arrayOf(AddVariableFix(this.element))
     override fun toString(): String {
       return "Variable Ref: " + super.toString()
     }
@@ -83,7 +84,7 @@ object ILSelectFromScopeReferenceProvider : PsiReferenceProvider() {
       if (!blocks.isNullOrEmpty()) return blocks.map { it as HCLElement }
 
       if (includeFake) {
-        val properties = ModelHelper.getResourceProperties(resource)
+        val properties = TfModelHelper.getResourceProperties(resource)
         if (properties.containsKey(name)) {
           return listOf(FakeHCLProperty(name, resource))
         }

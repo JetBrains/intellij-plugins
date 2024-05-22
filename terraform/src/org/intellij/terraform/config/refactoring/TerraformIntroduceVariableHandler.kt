@@ -21,7 +21,7 @@ import com.intellij.refactoring.listeners.RefactoringEventListener
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.util.PairProcessor
 import com.intellij.util.SmartList
-import org.intellij.terraform.config.codeinsight.ModelHelper
+import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.PropertyType
 import org.intellij.terraform.config.model.Type
 import org.intellij.terraform.config.model.Types
@@ -404,7 +404,7 @@ private fun HCLElement.getExpectedType(): Type? {
   if (this is HCLProperty) {
     val pp = parent?.parent
     if (pp is HCLBlock) {
-      val properties = ModelHelper.getBlockProperties(pp)
+      val properties = TfModelHelper.getBlockProperties(pp)
       return (properties[name] as? PropertyType)?.type
     }
   } else if (this is HCLLiteral) {

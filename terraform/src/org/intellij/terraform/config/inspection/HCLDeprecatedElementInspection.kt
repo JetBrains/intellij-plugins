@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.util.containers.toArray
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.actions.TFInitAction
-import org.intellij.terraform.config.codeinsight.ModelHelper
+import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.BlockType
 import org.intellij.terraform.config.model.PropertyOrBlockType
 import org.intellij.terraform.config.model.PropertyType
@@ -35,7 +35,7 @@ class HCLDeprecatedElementInspection : LocalInspectionTool() {
       ProgressIndicatorProvider.checkCanceled()
       block.getNameElementUnquoted(0) ?: return
       block.`object` ?: return
-      val properties = ModelHelper.getBlockProperties(block)
+      val properties = TfModelHelper.getBlockProperties(block)
       doCheck(block, holder, properties)
     }
   }

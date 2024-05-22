@@ -2,7 +2,7 @@
 package org.intellij.terraform.hil
 
 import com.intellij.psi.util.parentOfType
-import org.intellij.terraform.config.codeinsight.ModelHelper
+import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.BlockType
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.common.BaseExpression
@@ -15,7 +15,7 @@ enum class HilContainingBlockType {
 
 internal fun guessContainingBlockType(expression: BaseExpression): HilContainingBlockType {
   val containingImportBlock = expression.parentOfType<HCLBlock>() ?: return HilContainingBlockType.UNSPECIFIED
-  val type = ModelHelper.getBlockType(containingImportBlock)
+  val type = TfModelHelper.getBlockType(containingImportBlock)
   return if (type is BlockType && (type.literal == "import" || type.literal == "moved"))
     HilContainingBlockType.IMPORT_OR_MOVED_BLOCK
   else
@@ -30,6 +30,6 @@ internal fun getResourceName(resourceDeclaration: HCLBlock): String? {
   return resourceDeclaration.getNameElementUnquoted(2)
 }
 
-internal fun getResourceTypeAndName(resourceDeclaration: HCLBlock): String? {
+internal fun getResourceTypeAndName(resourceDeclaration: HCLBlock): String {
   return listOfNotNull(getResourceType(resourceDeclaration), getResourceName(resourceDeclaration)).joinToString(separator = ".")
 }

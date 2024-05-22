@@ -16,8 +16,8 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.toArray
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.actions.TFInitAction
-import org.intellij.terraform.config.codeinsight.ModelHelper
 import org.intellij.terraform.config.codeinsight.TerraformCompletionUtil
+import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.BlockType
 import org.intellij.terraform.config.patterns.TerraformPatterns
 import org.intellij.terraform.hcl.HCLBundle
@@ -61,7 +61,7 @@ class HCLUnknownBlockTypeInspection : LocalInspectionTool() {
         parent.`object` ?: return
         if (TerraformPatterns.DynamicBlock.accepts(block)) return
         if (TerraformPatterns.DynamicBlockContent.accepts(block)) return
-        val properties = ModelHelper.getBlockProperties(parent)
+        val properties = TfModelHelper.getBlockProperties(parent)
         // TODO: (?) For some reason single name block could be represented as 'property' in model
         if (properties[type] is BlockType) return
 

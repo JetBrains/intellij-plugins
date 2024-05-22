@@ -3,7 +3,7 @@ package org.intellij.terraform.config.documentation
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentsOfType
-import org.intellij.terraform.config.codeinsight.ModelHelper
+import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.BaseModelType
 import org.intellij.terraform.config.model.PropertyType
 import org.intellij.terraform.config.model.TypeModel
@@ -38,7 +38,7 @@ internal object LocalTfDocumentationProvider {
 
   private fun provideDocForProperty(element: HCLProperty): @Nls String? {
     val block = element.parentsOfType<HCLBlock>(false).firstOrNull() ?: return null
-    val properties = ModelHelper.getBlockProperties(block)
+    val properties = TfModelHelper.getBlockProperties(block)
     val property = properties[element.name] as? PropertyType
     if (property != null) {
       return HCLBundle.message("terraform.doc.property.0.1.br.2", element.name, property.type.presentableText, property.description ?: "")
@@ -95,7 +95,7 @@ internal object LocalTfDocumentationProvider {
   private fun provideDocForIdentifier(element: HCLIdentifier):  String? {
     val parentBlock = getBlockForHclIdentifier(element) ?: return null
     val parentBlockType = parentBlock.getNameElementUnquoted(1) ?: parentBlock.getNameElementUnquoted(0)
-    val property = (ModelHelper.getBlockProperties(parentBlock)[element.id] as? BaseModelType) ?: return null
+    val property = (TfModelHelper.getBlockProperties(parentBlock)[element.id] as? BaseModelType) ?: return null
     val description = property.description ?: ""
     return HCLBundle.message("terraform.doc.argument.0.1.br.2", parentBlockType, element.id, description)
   }
