@@ -46,7 +46,4 @@ internal class LockFileObject(lockFile: PsiFile) {
     .filterNotNull()
     .map {block -> ProviderInfo(block) }
     .associateBy { info -> info.fullName }
-
-  internal fun getProviderInfo(identifier: String): ProviderInfo? = providers.filterKeys { it.substringAfter("/") == identifier }.values.firstOrNull()
-
 }

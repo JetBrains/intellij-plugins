@@ -2,17 +2,14 @@
 package org.intellij.terraform.config.documentation
 
 import com.intellij.openapi.application.readAction
-import com.intellij.openapi.components.service
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 import com.intellij.psi.util.childrenOfType
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.LATEST_VERSION
+import org.intellij.terraform.config.model.ProviderType
 import org.intellij.terraform.config.model.TypeModelProvider
-import org.intellij.terraform.config.model.local.LocalSchemaService
-import org.intellij.terraform.config.model.local.LockFileObject
 import org.intellij.terraform.config.psi.TerraformDocumentPsi
 import org.intellij.terraform.hcl.psi.*
 
@@ -67,9 +64,7 @@ internal abstract class BaseTerraformDocUrlProvider {
     } ?: Pair(null, null)
     val type = block?.getNameElementUnquoted(0) ?: ""
     val identifier = block?.getNameElementUnquoted(1) ?: ""
-
-    val lockFile = findPsiLockFile(element)
-    val providerData = lockFile?.let { getDataFromLockFile(it, identifier) } ?: getDataFromModel(element, type, identifier)
+    val providerData = getProviderData(element, type, identifier)
     BlockData(identifier, type, parameter, providerData)
   }
 
@@ -79,28 +74,11 @@ internal abstract class BaseTerraformDocUrlProvider {
     return parentBlock?.let { Pair(it, paramName) }
   }
 
-  private fun getDataFromModel(element: PsiElement,
-                               type: String,
-                               identifier: String): ProviderData? {
-    val provider = if (type in setOf(HCL_RESOURCE_IDENTIFIER, HCL_DATASOURCE_IDENTIFIER)) {
-      getProviderName(identifier, type, element)
-    } else {
-      identifier
-    } ?: return null
-
-    val org = getProviderNamespace(provider, element) ?: return null
-    return ProviderData(org, provider, LATEST_VERSION)
-  }
-
-  private fun getDataFromLockFile(lockFile: PsiFile,
-                                  identifier: String): ProviderData? {
-    val lockObject = LockFileObject(lockFile)
-    val providerId = identifier.substringBefore('_')
-    val providerInfo = lockObject.getProviderInfo(providerId) ?: return null
-    val provider = providerInfo.name ?: return null
-    val org = providerInfo.namespace ?: return null
-    val version = providerInfo.version
-    return ProviderData(org, provider, version)
+  private fun getProviderData(element: PsiElement,
+                              type: String,
+                              identifier: String): ProviderData? {
+    val provider = getProvider(identifier, type, element) ?: return null
+    return ProviderData(provider.namespace, provider.type, if (provider.version.isEmpty()) LATEST_VERSION else provider.version)
   }
 
   protected fun getResourceId(identifier: String): String {
@@ -109,29 +87,13 @@ internal abstract class BaseTerraformDocUrlProvider {
     return id
   }
 
-  private fun getProviderNamespace(identifier: String, element: PsiElement): String? {
-    val model = TypeModelProvider.getModel(element)
-    return model.getProviderType(identifier)?.namespace
-  }
-
-  private fun getProviderName(identifier: String, resourceType: String, element: PsiElement): String? {
+  private fun getProvider(identifier: String, resourceType: String, element: PsiElement): ProviderType? {
     val model = TypeModelProvider.getModel(element)
     return when (resourceType) {
-      HCL_RESOURCE_IDENTIFIER -> model.getResourceType(identifier)?.provider?.type
-      HCL_DATASOURCE_IDENTIFIER -> model.getDataSourceType(identifier)?.provider?.type
+      HCL_RESOURCE_IDENTIFIER -> model.getResourceType(identifier)?.provider
+      HCL_DATASOURCE_IDENTIFIER -> model.getDataSourceType(identifier)?.provider
+      HCL_PROVIDER_IDENTIFIER -> model.getProviderType(identifier)
       else -> null
     }
-  }
-
-  private fun findPsiLockFile(element: PsiElement): PsiFile? {
-    val project = element.project
-    val schemaService = project.service<LocalSchemaService>()
-    val lockFile = findContainingVFile(element)?.let { schemaService.findLockFile(it) }
-    return lockFile?.let { schemaService.getLockFilePsi(it) }
-  }
-
-  private fun findContainingVFile(element: PsiElement): VirtualFile? {
-    return element.containingFile.originalFile.virtualFile
-           ?: element.containingFile.getUserData(PsiFileFactory.ORIGINAL_FILE)?.virtualFile
   }
 }

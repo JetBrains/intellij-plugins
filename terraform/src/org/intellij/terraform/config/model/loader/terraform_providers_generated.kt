@@ -21,8 +21,8 @@ object TFBaseLoader {
     return parseBlock(context, block, name, null) to version
   }
 
-  internal fun parseMetadata(obj: ObjectNode?): ProviderMetadata {
-    val attrs = obj?.obj("attributes") ?: return ProviderMetadata()
+  internal fun parseMetadata(obj: ObjectNode?, name: String, namespace: String): ProviderMetadata {
+    val attrs = obj?.obj("${namespace}/${name}".lowercase())?.obj("attributes") ?: return ProviderMetadata()
     return ProviderMetadata(
       attrs.string("name") ?: "",
       attrs.string("namespace") ?: "",
@@ -326,7 +326,7 @@ internal class TerraformProvidersSchema : VersionedMetadataLoader {
 
   private fun parseProviderInfo(context: LoadContext, name: String, namespace: String, obj: ObjectNode, file: ObjectNode): ProviderType? {
     val (parsed, version) = TFBaseLoader.parseSchema(context, obj, name) ?: return null
-    val providerMetadata = TFBaseLoader.parseMetadata(file.obj("metadata"))
+    val providerMetadata = TFBaseLoader.parseMetadata(file.obj("metadata"), name, namespace)
     return ProviderType(name, parsed.properties.values.toList(), namespace, providerMetadata.tier, providerMetadata.version)
   }
 

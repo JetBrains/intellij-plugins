@@ -2,6 +2,7 @@
 package org.intellij.terraform.config.model.local
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.execution.process.CapturingProcessAdapter
 import com.intellij.openapi.application.readAction
@@ -191,16 +192,22 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
 
   @RequiresReadLock
   private fun buildProviderMeta(lockData: LockFileObject?): String? {
-    lockData ?: return null
-    val providerInfo = lockData.providers.values.first()
+    val providersInfo = lockData?.providers ?: return null
     val mapper = ObjectMapper()
-    val jsonNode = mapper.createObjectNode()
-    jsonNode.put("name", providerInfo.name)
-    jsonNode.put("namespace", providerInfo.namespace)
-    jsonNode.put("full-name", providerInfo.fullName)
-    jsonNode.put("tier", ProviderTier.TIER_LOCAL.label)
-    jsonNode.put(LockFileObject.VERSION, providerInfo.version)
-    return mapper.writeValueAsString(jsonNode)
+    val metadataNode = mapper.createObjectNode()
+    providersInfo.values.forEach { providerInfo ->
+      val info = mapper.createObjectNode()
+      info.put("type", "providers")
+      val attributes = mapper.createObjectNode()
+      attributes.put("name", providerInfo.name)
+      attributes.put("namespace", providerInfo.namespace)
+      attributes.put("full-name", providerInfo.fullName)
+      attributes.put("tier", ProviderTier.TIER_LOCAL.label)
+      attributes.put(LockFileObject.VERSION, providerInfo.version)
+      info.set<ObjectNode>("attributes", attributes)
+      metadataNode.set<ObjectNode>(providerInfo.fullName.lowercase(), info)
+    }
+    return mapper.writeValueAsString(metadataNode)
   }
 
   private fun buildModel(lock: VirtualFile, explicitlyAllowRunningProcess: Boolean): Deferred<TypeModel> {
@@ -262,23 +269,23 @@ class LocalSchemaService(val project: Project, val scope: CoroutineScope) {
       updateWorkspaceModel(lock, lockData, jsonFilePath)
     }
     return withContext(Dispatchers.IO) {
-      val lockFileData = readAction { buildProviderMeta(getLockFilePsi(lock)?.let { LockFileObject(it) }) } ?: ""
       val localModelJson = localModelPath.resolve(jsonFilePath).readText()
+      val lockFileData = readAction { buildProviderMeta(getLockFilePsi(lock)?.let { LockFileObject(it) }) }
       addLockFileDataString(lockFileData, localModelJson)
     }
   }
 
   private suspend fun readLockDataJsonFile(lockData: TFLocalMetaEntity): String {
     return withContext(Dispatchers.IO) {
-      val lockFileData = readAction { buildProviderMeta(getLockFilePsi(lockData.lockFile.virtualFile)?.let { LockFileObject(it) }) } ?: ""
       val localModelJson = localModelPath.resolve(lockData.jsonPath).readText()
+      val lockFileData = readAction { buildProviderMeta(getLockFilePsi(lockData.lockFile.virtualFile)?.let { LockFileObject(it) }) }
       addLockFileDataString(lockFileData, localModelJson)
     }
   }
 
-  private fun addLockFileDataString(lockFileData: String, localModelJson: String): String {
+  private fun addLockFileDataString(lockFileData: String?, localModelJson: String): String {
     return """
-    { "metadata": { "attributes": $lockFileData }, "schemas": $localModelJson }
+    { "metadata": ${lockFileData ?: "{}"}, "schemas": $localModelJson }
     """.trimIndent()
   }
 

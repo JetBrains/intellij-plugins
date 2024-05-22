@@ -6,6 +6,7 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFileFactory
 import com.intellij.util.resettableLazy
 import org.intellij.terraform.config.model.loader.TerraformMetadataLoader
 import org.intellij.terraform.config.model.local.LocalSchemaService
@@ -32,7 +33,8 @@ class TypeModelProvider {
 
     fun getModel(psiElement: PsiElement): TypeModel {
       val containingFile = psiElement.containingFile ?: return globalModel
-      val virtualFile = containingFile.originalFile.virtualFile ?: return globalModel
+      val virtualFile = containingFile.originalFile.virtualFile ?: containingFile.getUserData(PsiFileFactory.ORIGINAL_FILE)?.virtualFile
+      virtualFile ?: return globalModel
       return containingFile.project.service<LocalSchemaService>().getModel(virtualFile) ?: globalModel
     }
   }
