@@ -1,8 +1,11 @@
 import com.bmuschko.gradle.docker.tasks.image.*
+import com.bmuschko.gradle.docker.tasks.container.*
 
 plugins {
   id 'com.bmuschko.docker-remote-api' version '9.4.0'
 }
+
+def crawlerContainerName = "terraform_metadata_crawler"
 
 repositories {
   mavenCentral()
@@ -45,4 +48,25 @@ task buildDockerImage(type: DockerBuildImage) {
   images.add("intellij.terraform/metadata-crawler:$version")
 }
 
+task createContainer(type: DockerCreateContainer) {
+  dependsOn buildDockerImage
+  targetImageId buildDockerImage.imageId
+  containerName = "$crawlerContainerName"
+  //Uncomment for a local execution to see what we have in the final jar
+  hostConfig.getBinds().put("/Users/Shared/metadata", "/opt/terraform-metadata/build/libs")
+  hostConfig.memory = 4096L*1024*1024
+  cmd = ["publish"]
+}
+
+task startContainer(type: DockerStartContainer) {
+  targetContainerId("$crawlerContainerName")
+}
+
+task stopContainer(type: DockerStopContainer) {
+  targetContainerId("$crawlerContainerName")
+}
+
+task removeContainer(type: DockerRemoveContainer) {
+  targetContainerId("$crawlerContainerName")
+}
 

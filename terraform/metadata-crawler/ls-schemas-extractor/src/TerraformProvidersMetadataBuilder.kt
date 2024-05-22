@@ -37,19 +37,18 @@ object TerraformProvidersMetadataBuilder {
     println("Loading providers from $terraformRegistryHost ...")
     return sequence {
       var httpResponse = getQuery("${terraformRegistryHost}/v2/providers")
-      while (true) {
+      do {
         val jsonResponse = objectMapper.readTree(httpResponse.body())
-        val page = jsonResponse.get("meta")?.get("pagination")?.get("current-page")
-        val pageTotal = jsonResponse.get("meta")?.get("pagination")?.get("total-pages")
+        val page = jsonResponse.get("meta")?.get("pagination")?.get("current-page")?.asLong() ?: 0
+        val pageTotal = jsonResponse.get("meta")?.get("pagination")?.get("total-pages")?.asLong()
         println("Loaded page ${page} of ${pageTotal}  ...")
-        val next = jsonResponse.get("links")?.get("next")?.takeIf { !it.isNull }?.asText()?.urlDecode()
         when (val responseData = jsonResponse["data"]) {
           is ObjectNode -> yield(responseData)
           is ArrayNode -> yieldAll(responseData.elements())
         }
-        if (next == null) break
-        httpResponse = getQuery("${terraformRegistryHost}${next}")
-      }
+        val next = jsonResponse.get("links")?.get("next")?.takeIf { !it.isNull }?.asText()?.urlDecode()
+        if (next != null) httpResponse = getQuery("${terraformRegistryHost}${next}")
+      } while (next != null)
     }
   }
 
@@ -81,27 +80,26 @@ object TerraformProvidersMetadataBuilder {
     val version = getTerraformVersion()
     println("Terraform version: $version")
 
-    val generatedJsonFileNames = mutableListOf<String>()
+    val generatedJsonFileNames = File(File(outputDir, "resources/model").apply { mkdirs() }, "providers.list")
     val totalProviders = AtomicInteger(0)
     val errors = AtomicInteger(0)
-    mostUsefulProviders.forEach { data ->
+    mostUsefulProviders.forEachIndexed { index, data ->
       totalProviders.incrementAndGet()
       val name = data["attributes"]["full-name"].asText()
       println("Processing: $name")
       val file = buildProviderMetadata(data, version, outputDir)
       if (file.exists()) {
         println("Schema file generated: ${file.path}")
-        generatedJsonFileNames.add(name)
+        generatedJsonFileNames.appendText("$name\n")
       }
       else {
         println("Error generating schema for provider: ${name}")
         errors.incrementAndGet()
       }
     }
-    File(File(outputDir, "resources/model").apply { mkdirs() }, "providers.list").writeText(generatedJsonFileNames.sorted().joinToString("\n"))
     if (cleanDownloadedData) {
       println("Deleting data about providers from file: ${allOut}")
-      allOut.delete()
+      allOut.deleteOnExit()
     }
     println("Providing processing finished, processed ${totalProviders} providers, errors: ${errors}")
   }
@@ -120,13 +118,15 @@ object TerraformProvidersMetadataBuilder {
     writeVersionsTfFile(tfgendir, version, name)
 
     val logFile = File(File(outputDir, "logs/$dir").apply { mkdirs() }, "$file.log")
-    val schemaFile = File(File(outputDir, "resources/model/providers/$dir").apply { mkdirs() }, "$file.json")
+    val parentDir = File(outputDir, "resources/model/providers/$dir").apply { mkdirs() }
+    val schemaFile = File(parentDir, "$file.json")
 
     val initError = initTerraform(tfgendir, logFile)
     val schemaError: String = generateTerraformSchema(tfgendir, schemaFile)
 
     if (schemaFile.length() <= 0L) {
       schemaFile.delete()
+      parentDir.delete()
       val failures = File(outputDir, "failed/$dir")
       val failureDir = File(failures, file).apply { deleteRecursively() }.also { it.mkdirs() }
       File(tfgendir, "versions.tf").copyTo(File(failureDir, "versions.tf"))
@@ -152,7 +152,11 @@ object TerraformProvidersMetadataBuilder {
       }
     }
     val metadataFile = File(File(outputDir, "resources/model/providers/$dir").apply { mkdirs() }, "$file.json.metadata")
-    data.toString().byteInputStream().use { inputStream ->
+    val mapper = ObjectMapper()
+    val jsonNode = mapper.createObjectNode()
+    val fullName = ((data["attributes"] as? ObjectNode)?.get("full-name")?.asText() ?: "${dir}/${file}").lowercase()
+    jsonNode.putIfAbsent(fullName, data)
+    jsonNode.toString().byteInputStream().use { inputStream ->
       metadataFile.outputStream().use { outputStream ->
         inputStream.copyTo(outputStream)
       }
