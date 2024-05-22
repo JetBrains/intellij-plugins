@@ -319,11 +319,11 @@ public class TerraformModelProviderTest extends LightPlatformTestCase {
     assertNotNull(model);
 
     assertContainsElements(
-      model.getResources().stream().filter(it -> it.getType().equals("google_sql_database")).map(Object::toString).toList(),
-      "ResourceType (type='google_sql_database', provider='provider (drfaust92/google)')", "ResourceType (type='google_sql_database', provider='provider (hashicorp/google-beta)')");
+      model.getResources().stream().filter(it -> it.getType().equals("google_sql_database")).map(it -> it.getType()+": "+it.getProvider().getFullName()).toList(),
+      "google_sql_database: drfaust92/google", "google_sql_database: hashicorp/google-beta");
     assertContainsElements(
-      model.getDataSources().stream().filter(it -> it.getType().equals("google_compute_instance")).map(Object::toString).toList(),
-      "DataSourceType (type='google_compute_instance', provider='provider (drfaust92/google)')", "DataSourceType (type='google_compute_instance', provider='provider (hashicorp/google-beta)')");
+      model.getDataSources().stream().filter(it -> it.getType().equals("google_compute_instance")).map(it -> it.getType()+": "+it.getProvider().getFullName()).toList(),
+      "google_compute_instance: drfaust92/google", "google_compute_instance: hashicorp/google-beta");
   }
 
   public void testDataSourcesHasProviderNameAsPrefix() {

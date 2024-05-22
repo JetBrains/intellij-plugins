@@ -253,6 +253,10 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       doCompletion(position, Processor { result.addElement(it); !result.isStopped }, parameters)
     }
 
+    private fun buildProviderTypeText(provider: ProviderType) : String {
+      return   """${provider.fullName}${if (provider.version.isNotBlank()) " ${provider.version}" else ""}"""
+    }
+
     private fun doCompletion(position: PsiElement, consumer: Processor<LookupElement>, parameters: CompletionParameters): Boolean {
       val parent = position.parent
       LOG.debug { "TF.BlockTypeOrNameCompletionProvider{position=$position, parent=$parent}" }
@@ -272,18 +276,18 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       return when (type) {
         HCL_RESOURCE_IDENTIFIER ->
           typeModel.resources.toPlow()
-            .filter { addGlobalModelData || tiersToIncludeByDefault.contains(it.provider.tier)}
-            .map { buildLookupElement(it, it.type, it.provider.lookupString, position) }
+            .filter { addGlobalModelData || tiersToIncludeByDefault.contains(it.provider.tier) }
+            .map { buildLookupElement(it, it.type, buildProviderTypeText(it.provider), position) }
             .processWith(consumer)
         HCL_DATASOURCE_IDENTIFIER ->
           typeModel.dataSources.toPlow()
-            .filter { addGlobalModelData || tiersToIncludeByDefault.contains(it.provider.tier)}
-            .map { buildLookupElement(it, it.type, it.provider.lookupString, position) }
+            .filter { addGlobalModelData || tiersToIncludeByDefault.contains(it.provider.tier) }
+            .map { buildLookupElement(it, it.type, buildProviderTypeText(it.provider), position) }
             .processWith(consumer)
         HCL_PROVIDER_IDENTIFIER ->
           typeModel.providers.toPlow()
             .filter { addGlobalModelData || tiersToIncludeByDefault.contains(it.tier) }
-            .map { buildLookupElement(it, it.type, it.lookupString, position) }
+            .map { buildProviderLookupElement(it, it.type, position) }
             .processWith(consumer)
         HCL_PROVISIONER_IDENTIFIER ->
           typeModel.provisioners.toPlow()
@@ -297,9 +301,19 @@ class TerraformConfigCompletionContributor : HCLCompletionContributor() {
       }
     }
 
-    private fun buildLookupElement(it: BlockType, typeName: String, lookupString: String?, position: PsiElement) = create(typeName)
-      .withTypeText(lookupString, true)
+    private fun buildProviderLookupElement(it: ProviderType, typeName: String, position: PsiElement) = create(it)
+      .withTailText(" ${it.namespace}", true)
+      .withTypeText(it.version, true)
       .withIcon(TerraformIcons.Terraform)
+      .withPresentableText(typeName)
+      .withLookupString(it.fullName)
+      .withPsiElement(position.project.service<FakeHCLElementPsiFactory>().createFakeHCLBlock(it.literal, typeName, original = position.containingFile.originalFile))
+      .withInsertHandler(ProviderBlockInsertHandler(it))
+
+    private fun buildLookupElement(it: BlockType, typeName: String, typeText: String?, position: PsiElement) = create(typeName)
+      .withTypeText(typeText, true)
+      .withIcon(TerraformIcons.Terraform)
+      .withLookupString(typeName)
       .withPsiElement(position.project.service<FakeHCLElementPsiFactory>().createFakeHCLBlock(it.literal, typeName, original = position.containingFile.originalFile))
       .withInsertHandler(ResourceBlockSubNameInsertHandler(it))
   }

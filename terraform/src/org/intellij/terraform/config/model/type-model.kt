@@ -545,9 +545,7 @@ class ProviderType(val type: String,
   }
 
   override val presentableText: String
-    get() = "$literal ($fullName)"
-
-  val lookupString = """${fullName}${if (version.isNotBlank()) " $version" else ""}"""
+    get() = "$literal ($fullName: $version) "
 }
 
 class ProvisionerType(val type: String, properties: List<PropertyOrBlockType>) : BlockType(HCL_PROVISIONER_IDENTIFIER, 1, properties = withDefaults(properties, TypeModel.AbstractResourceProvisioner)) {
