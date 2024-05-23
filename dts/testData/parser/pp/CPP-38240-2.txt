@@ -16,7 +16,7 @@ DTS file
               DtsCellArrayImpl(CELL_ARRAY)
                 PsiElement(<)('<')
                 PsiWhiteSpace('\n\t\t\t   ')
-                PpStatementPsiElement(PP_STATEMENT)
+                DtsPpStatementElement(PP_STATEMENT)
                   PsiElement(directive)('#endif')
                 PsiWhiteSpace('\n\t\t\t   ')
                 PsiErrorElement:'&', '(', char, integer or label expected, got '#ief'

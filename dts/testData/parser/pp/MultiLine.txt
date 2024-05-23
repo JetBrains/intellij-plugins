@@ -1,11 +1,11 @@
 DTS file
-  PpStatementPsiElement(PP_STATEMENT)
+  DtsPpStatementElement(PP_STATEMENT)
     PsiElement(directive)('#include')
     PsiWhiteSpace(' ')
     PsiElement(PP_LINE_BREAK)('\\n')
     PsiElement(header)('"header"')
   PsiWhiteSpace('\n')
-  PpStatementPsiElement(PP_STATEMENT)
+  DtsPpStatementElement(PP_STATEMENT)
     PsiElement(directive)('#define')
     PsiWhiteSpace(' ')
     PsiElement(identifier)('SYMBOL')

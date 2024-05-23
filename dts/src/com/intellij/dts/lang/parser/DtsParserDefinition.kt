@@ -28,7 +28,7 @@ open class DtsParserDefinition : ParserDefinition {
 
   override fun getStringLiteralElements(): TokenSet = DtsTokenSets.strings
 
-  override fun createElement(node: ASTNode?): PsiElement = DtsPpTokenTypes.createElement(node, DtsTypes.Factory::createElement)
+  override fun createElement(node: ASTNode?): PsiElement = DtsPpTokenTypes.createElement(node)
 
   override fun createFile(viewProvider: FileViewProvider): PsiFile {
     return when (viewProvider.virtualFile.extension) {

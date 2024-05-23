@@ -2,6 +2,8 @@ package com.intellij.dts.pp.test.impl
 
 import com.intellij.dts.pp.lang.PpTokenTypes
 import com.intellij.dts.pp.test.impl.psi.TestTypes
+import com.intellij.lang.ASTNode
+import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 
@@ -26,4 +28,6 @@ object TestPpTokenTypes : PpTokenTypes() {
   override val statementMarker: IElementType = TestTypes.PP_STATEMENT_MARKER
 
   override fun createScopeSet(): TokenSet = TokenSet.EMPTY
+
+  override fun hostElementFactory(node: ASTNode?): PsiElement = TestTypes.Factory.createElement(node)
 }

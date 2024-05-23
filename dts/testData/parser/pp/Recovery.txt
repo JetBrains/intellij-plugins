@@ -1,5 +1,5 @@
 DTS file
-  PpStatementPsiElement(PP_STATEMENT)
+  DtsPpStatementElement(PP_STATEMENT)
     PsiElement(directive)('#define')
   PsiWhiteSpace('\n')
   DtsEntryImpl(ENTRY)
@@ -7,7 +7,7 @@ DTS file
       PsiElement(/dts-v1/)('/dts-v1/')
     PsiElement(;)(';')
   PsiWhiteSpace('\n')
-  PpStatementPsiElement(PP_STATEMENT)
+  DtsPpStatementElement(PP_STATEMENT)
     PsiElement(directive)('#include')
     PsiWhiteSpace(' ')
     PsiElement(header)('"header')

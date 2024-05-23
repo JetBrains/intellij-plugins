@@ -39,12 +39,23 @@ abstract class PpTokenTypes {
   abstract fun createScopeSet(): TokenSet
 
   /**
+   * The element factory of the host language.
+   */
+  abstract fun hostElementFactory(node: ASTNode?): PsiElement
+
+  /**
+   * Creates an instance of the [PpStatementPsiElement]. Can be overwritten to create
+   * a custom PsiElement specific to the host language.
+   */
+  open fun statementElementFactory(node: ASTNode, parser: PpAdHocParser): PpStatementPsiElement = PpStatementPsiElement(node, parser)
+
+  /**
    * Wrapper for the PsiElement factory of the host language.
    */
-  fun createElement(node: ASTNode?, hostFactory: (ASTNode?) -> PsiElement): PsiElement {
+  fun createElement(node: ASTNode?): PsiElement {
     return when (node?.elementType) {
-      statement -> PpStatementPsiElement(node, parser)
-      else -> hostFactory(node)
+      statement -> statementElementFactory(node, parser)
+      else -> hostElementFactory(node)
     }
   }
 }

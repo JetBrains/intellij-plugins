@@ -23,7 +23,7 @@ class TestParserDefinition : ParserDefinition {
 
   override fun getStringLiteralElements(): TokenSet = TokenSet.EMPTY
 
-  override fun createElement(node: ASTNode?): PsiElement = TestPpTokenTypes.createElement(node, TestTypes.Factory::createElement)
+  override fun createElement(node: ASTNode?): PsiElement = TestPpTokenTypes.createElement(node)
 
   override fun createFile(viewProvider: FileViewProvider): PsiFile = TestFile(viewProvider)
 }

@@ -1,8 +1,8 @@
 DTS file
-  PpStatementPsiElement(PP_STATEMENT)
+  DtsPpStatementElement(PP_STATEMENT)
     PsiElement(directive)('#ifndef')
     PsiWhiteSpace(' ')
     PsiElement(identifier)('SYMBOL')
   PsiWhiteSpace('\n')
-  PpStatementPsiElement(PP_STATEMENT)
+  DtsPpStatementElement(PP_STATEMENT)
     PsiElement(directive)('#endif')

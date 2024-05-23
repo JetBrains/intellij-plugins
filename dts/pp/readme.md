@@ -10,7 +10,8 @@
 5. Modify the `ParserDefinition` for the host language: (see `DtsParserDefinition`)
   - *createLexer*: return an instance of the parsing lexer
   - *getCommentTokens*: add the inactive token type to this set
-  - *createElement*: use the `createElement` function for the token types object
+  - *createElement*: use the `createElement` function of the token types object
+6. It is possible to provide a custom PsiElement by overriding the `statementElementFactory` function of `PpTokenTypes` (optional)
 
 ## Highlighting and inspections
 1. Use the highlighting lexer in the host syntax highlighter (see `DtsSyntaxHighlighter`)

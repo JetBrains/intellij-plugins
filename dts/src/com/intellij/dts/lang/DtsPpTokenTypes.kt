@@ -1,7 +1,12 @@
 package com.intellij.dts.lang
 
 import com.intellij.dts.lang.psi.DtsTypes
+import com.intellij.dts.lang.psi.impl.DtsPpStatementElement
 import com.intellij.dts.pp.lang.PpTokenTypes
+import com.intellij.dts.pp.lang.parser.PpAdHocParser
+import com.intellij.dts.pp.lang.psi.PpStatementPsiElement
+import com.intellij.lang.ASTNode
+import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 
@@ -26,4 +31,8 @@ object DtsPpTokenTypes : PpTokenTypes() {
   override val statementMarker: IElementType = DtsTypes.PP_STATEMENT_MARKER
 
   override fun createScopeSet(): TokenSet = TokenSet.create(DtsTypes.NODE_CONTENT)
+
+  override fun hostElementFactory(node: ASTNode?): PsiElement = DtsTypes.Factory.createElement(node)
+
+  override fun statementElementFactory(node: ASTNode, parser: PpAdHocParser): PpStatementPsiElement = DtsPpStatementElement(node, parser)
 }

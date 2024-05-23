@@ -17,7 +17,7 @@ private class StatementImpl(
   override val errors: MutableList<PpError> = mutableListOf()
 }
 
-internal class PpAdHocParser(internal val tokenTypes: PpTokenTypes) {
+class PpAdHocParser(internal val tokenTypes: PpTokenTypes) {
   private lateinit var iterator: Iterator<PpToken>
   private lateinit var statement: StatementImpl
 
@@ -66,6 +66,7 @@ internal class PpAdHocParser(internal val tokenTypes: PpTokenTypes) {
       Elif -> PpElifExprStatement(statement)
       ElifDef -> PpElifDefStatement(statement)
       ElifNdef -> PpElifNdefStatement(statement)
+      Include -> PpIncludeStatement(statement)
       else -> statement
     }
   }
@@ -79,6 +80,10 @@ internal class PpAdHocParser(internal val tokenTypes: PpTokenTypes) {
         parseEnd()
       }
       Else, Endif -> {
+        parseEnd()
+      }
+      Include -> {
+        parseHeaderName()
         parseEnd()
       }
       else -> {}
@@ -99,6 +104,10 @@ internal class PpAdHocParser(internal val tokenTypes: PpTokenTypes) {
 
   private fun parseIdentifier() {
     next(tokenTypes.identifier)
+  }
+
+  private fun parseHeaderName() {
+    next(tokenTypes.headerName)
   }
 
   private fun parseEnd() {

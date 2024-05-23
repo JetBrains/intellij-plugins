@@ -8,7 +8,7 @@ import com.intellij.openapi.util.TextRange
 import kotlin.math.max
 import kotlin.math.min
 
-class PpStatementPsiElement internal constructor(node: ASTNode, internal val parser: PpAdHocParser) : ASTWrapperPsiElement(node) {
+open class PpStatementPsiElement(node: ASTNode, private val parser: PpAdHocParser) : ASTWrapperPsiElement(node) {
   private fun TextRange.relativeTo(parent: TextRange): TextRange {
     val start = max(0, startOffset - parent.startOffset)
     val end = max(0, endOffset - parent.startOffset)

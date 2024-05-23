@@ -1,5 +1,5 @@
 DTS file
-  PpStatementPsiElement(PP_STATEMENT)
+  DtsPpStatementElement(PP_STATEMENT)
     PsiElement(directive)('#if')
     PsiWhiteSpace(' ')
     PsiElement(identifier)('any')
@@ -8,8 +8,8 @@ DTS file
     PsiWhiteSpace(' ')
     PsiElement(identifier)('here')
   PsiWhiteSpace('\n')
-  PpStatementPsiElement(PP_STATEMENT)
+  DtsPpStatementElement(PP_STATEMENT)
     PsiElement(directive)('#else')
   PsiComment(PP_INACTIVE)('\n')
-  PpStatementPsiElement(PP_STATEMENT)
+  DtsPpStatementElement(PP_STATEMENT)
     PsiElement(directive)('#endif')

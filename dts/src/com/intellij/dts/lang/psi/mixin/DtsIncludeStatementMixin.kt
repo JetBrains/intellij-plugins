@@ -5,7 +5,7 @@ import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.dts.lang.psi.FileInclude
 import com.intellij.dts.lang.resolve.FileIncludeReference
 import com.intellij.dts.lang.resolve.files.DtsIncludeFile
-import com.intellij.dts.util.trim
+import com.intellij.dts.util.relativeTo
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.TextRange
@@ -20,7 +20,7 @@ abstract class DtsIncludeStatementMixin(node: ASTNode) : ASTWrapperPsiElement(no
     get() = path?.let { DtsIncludeFile(it.text.trim('"'), textOffset) }
 
   override val fileIncludeRange: TextRange?
-    get() = path?.let { it.textRange.trim(it.text, '"') }
+    get() = path?.textRange?.relativeTo(textRange)
 
   override fun getReference(): PsiReference? = FileIncludeReference.create(this)
 }
