@@ -10,8 +10,13 @@ Please note that parsing heavy JSON files requires a lot of memory, so we recomm
 1. Set up Docker on the local computer
 2. Generate Docker image `./gradlew clean buildDockerImage`
 3. Push the image to a Docker registry of your choice using the command: `docker push intellij.terraform/metadata-crawler:<IMAGE_VERSION>` (optional)
-4. Run the image: `docker run -m 4096m -d intellij.terraform/metadata-crawler:<IMAGE_VERSION> publish`
-5. The application will collect metadata, build artifact and push it to the repository according to default settings. If we need to alter defaults, we need to redefine environment variables (see the table below).
+4. Create a container to run the application: `./gradlew clean createContainer`. This command will also build the image and put it to the local registry.
+   1. For the container, you can specify the following env variables:
+      * `METADATA_PATH` - default `/Users/Shared/metadata`. This is the folder for storing generated jar.
+   2. The container will be created with memory requirement `4Gb` and will run `jar` command.
+5. Run the image: `./gradlew startContainer`. It will run the container with the name `terraform_metadata_crawler`.
+6. The container will collect metadata, build artifact and put it to the metadata path. If we need to alter defaults, we need to redefine environment variables (see the table below).
+7. We can always run container manually using `docker` command.
 
 For the image, we can specify the following environment configuration parameters
 

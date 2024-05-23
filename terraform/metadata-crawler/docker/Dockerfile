@@ -1,7 +1,8 @@
-FROM eclipse-temurin:17-jdk-jammy
-
-#Install terraform
-RUN apt-get update && apt-get install -y gnupg software-properties-common && apt-get install -y unzip
+# Base layer with OpenJDK and Terraform
+FROM gradle:7.6.4-jdk17-jammy AS base
+#Install wget
+RUN apt-get update && apt-get install -y gnupg software-properties-common unzip wget
+#Install Terraform
 RUN wget -O- https://apt.releases.hashicorp.com/gpg | \
     gpg --dearmor | \
     tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null
@@ -14,26 +15,19 @@ tee /etc/apt/sources.list.d/hashicorp.list
 RUN apt update
 RUN apt-get -yq install terraform
 
+# Builder layer, where we build the crawler's folder structure
+FROM base AS builder
 #Copy existing resources
 COPY terraform-metadata/ /opt/terraform-metadata
 #Enable schemas extractor
 RUN chmod +x /opt/terraform-metadata/ls-schemas-extractor/bin/ls-schemas-extractor
 RUN mkdir /opt/terraform-metadata/plugins-meta
-
-# Set working directory
-WORKDIR /opt/terraform-metadata
-
 ENV TERRAFORM_REGISTRY_HOST=https://registry.terraform.io
 ENV DOWNLOADS_LIMIT_FOR_PROVIDER=10000
-ENV ARTIFACT_GROUP=org.intellij.plugins.hcl.terraform
-ENV ARTIFACT_VERSION=2024.1.2
 ENV CLEAN_DOWNLOADED_DATA=true
+WORKDIR /opt/terraform-metadata
 
-ENV REPO_URL=https://packages.jetbrains.team/maven/p/ij/intellij-dependencies
-ENV REPO_USERNAME=spaceUsername
-ENV REPO_PASSWORD=spacePassword
-
-# Pre-download all project dependencies
-RUN ./gradlew --no-daemon dependencies
-
-ENTRYPOINT ["./gradlew", "--no-daemon"]
+# Final layer, here we will actually run our application
+FROM builder
+RUN gradle --no-daemon dependencies
+ENTRYPOINT ["gradle", "--no-daemon"]

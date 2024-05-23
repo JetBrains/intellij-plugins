@@ -2,71 +2,122 @@ import com.bmuschko.gradle.docker.tasks.image.*
 import com.bmuschko.gradle.docker.tasks.container.*
 
 plugins {
+  id 'java'
+  id 'application'
+  id 'org.jetbrains.kotlin.jvm' version '1.9.23'
   id 'com.bmuschko.docker-remote-api' version '9.4.0'
 }
 
-def crawlerContainerName = "terraform_metadata_crawler"
+group 'com.intellij'
+version '1.0-SNAPSHOT'
 
 repositories {
   mavenCentral()
 }
 
 apply plugin: 'com.bmuschko.docker-remote-api'
+apply plugin: 'maven-publish'
 
-version = '2024.1.2'
+def repositoryUrl = System.getenv('REPO_URL') ?: "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies"
+def repoUsername = System.getenv('REPO_USERNAME') ?: 'spaceUsername'
+def repoPassword = System.getenv('REPO_PASSWORD') ?: 'spacePassword'
 
-task clean {
+def artifactGroup = System.getenv('ARTIFACT_GROUP') ?: 'org.intellij.plugins.hcl.terraform'
+def artifactVersion = System.getenv('ARTIFACT_VERSION') ?: '2024.1.2'
+def artifactName = "terraform-metadata"
+
+def crawlerContainerName = "terraform_metadata_crawler"
+def metadataPath = System.getenv('METADATA_PATH') ?: '/Users/Shared/metadata2'
+
+dependencies {
+  implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4.2'
+  implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+  implementation 'com.bertramlabs.plugins:hcl4j:0.9.2'
+  implementation 'org.slf4j:slf4j-api:1.7.36'
+  implementation 'ch.qos.logback:logback-core:1.4.14'
+  implementation 'ch.qos.logback:logback-classic:1.4.14'
+}
+
+application {
+  applicationName = 'ls-schemas-extractor'
+  getMainClass().set('TerraformProvidersMetadataBuilder')
+}
+
+clean {
   delete 'build'
+  delete 'plugins-meta'
+  delete 'terraform-gen-dir'
   delete 'docker/terraform-metadata'
 }
 
-task buildSchemasExtractor(type: GradleBuild) {
-  dir = 'ls-schemas-extractor'
-  tasks = ['clean', 'build']
+distZip {
+  archiveFileName = "${application.applicationName}.zip"
 }
 
-task copyModelDir(type: Copy) {
+tasks.register('copyModelDir', Copy) {
   from 'terraform'
   includeEmptyDirs true
   into 'docker/terraform-metadata'
 }
 
-task copySchemasExtractor(type: Copy) {
-  dependsOn buildSchemasExtractor
-  from zipTree('ls-schemas-extractor/build/distributions/ls-schemas-extractor.zip')
+tasks.register('copySchemasExtractor', Copy) {
+  dependsOn distZip
+  from zipTree('build/distributions/ls-schemas-extractor.zip')
   include '**/*'
   into 'docker/terraform-metadata'
 }
 
-task copyAll {
+tasks.register('copyAll') {
   dependsOn clean, copySchemasExtractor, copyModelDir
 }
 
-task buildDockerImage(type: DockerBuildImage) {
+tasks.register('buildDockerImage', DockerBuildImage) {
   dependsOn copyAll
   inputDir = file('docker')
-  images.add("intellij.terraform/metadata-crawler:$version")
+  version = artifactVersion
+  images.add("intellij.terraform/metadata-crawler:$artifactVersion")
 }
 
-task createContainer(type: DockerCreateContainer) {
+tasks.register('createContainer', DockerCreateContainer) {
   dependsOn buildDockerImage
   targetImageId buildDockerImage.imageId
   containerName = "$crawlerContainerName"
-  //Uncomment for a local execution to see what we have in the final jar
-  hostConfig.getBinds().put("/Users/Shared/metadata", "/opt/terraform-metadata/build/libs")
-  hostConfig.memory = 4096L*1024*1024
-  cmd = ["publish"]
+  hostConfig.getBinds().put("$metadataPath", "/opt/terraform-metadata/build/libs")
+  hostConfig.memory = 4096L * 1024 * 1024
+  cmd = ["jar"]
 }
 
-task startContainer(type: DockerStartContainer) {
+tasks.register('startContainer', DockerStartContainer) {
   targetContainerId("$crawlerContainerName")
 }
 
-task stopContainer(type: DockerStopContainer) {
+tasks.register('stopContainer', DockerStopContainer) {
   targetContainerId("$crawlerContainerName")
 }
 
-task removeContainer(type: DockerRemoveContainer) {
+tasks.register('removeContainer', DockerRemoveContainer) {
+  dependsOn stopContainer
   targetContainerId("$crawlerContainerName")
+}
+
+publishing {
+  publications {
+    metadata(MavenPublication) {
+      groupId = artifactGroup
+      artifactId = artifactName
+      version = artifactVersion
+      artifact("${metadataPath}/${artifactName}.jar")
+    }
+  }
+  repositories {
+    maven {
+      url repositoryUrl
+      allowInsecureProtocol true
+      credentials {
+        username = repoUsername
+        password = repoPassword
+      }
+    }
+  }
 }
 

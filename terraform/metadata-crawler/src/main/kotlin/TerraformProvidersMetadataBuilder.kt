@@ -3,6 +3,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.net.URI
 import java.net.URLDecoder
@@ -23,6 +24,8 @@ object TerraformProvidersMetadataBuilder {
   private val downloadsLimitForProvider = System.getenv("DOWNLOADS_LIMIT_FOR_PROVIDER")?.toInt() ?: 10000
   private val cleanDownloadedData = System.getenv("CLEAN_DOWNLOADED_DATA")?.toBoolean() ?: true
 
+  private val logger = LoggerFactory.getLogger(TerraformProvidersMetadataBuilder::class.java.simpleName)
+
   private fun getQuery(httpQuery: String): HttpResponse<String> {
     val httpRequest =
       HttpRequest.newBuilder().uri(
@@ -34,21 +37,22 @@ object TerraformProvidersMetadataBuilder {
   private fun String.urlDecode(): String = URLDecoder.decode(this, StandardCharsets.UTF_8)
 
   private fun getProvidersDataFromPages(): Sequence<JsonNode> {
-    println("Loading providers from $terraformRegistryHost ...")
+    logger.info("Loading providers from $terraformRegistryHost ...")
     return sequence {
       var httpResponse = getQuery("${terraformRegistryHost}/v2/providers")
       do {
         val jsonResponse = objectMapper.readTree(httpResponse.body())
         val page = jsonResponse.get("meta")?.get("pagination")?.get("current-page")?.asLong() ?: 0
         val pageTotal = jsonResponse.get("meta")?.get("pagination")?.get("total-pages")?.asLong()
-        println("Loaded page ${page} of ${pageTotal}  ...")
+        logger.info("Loaded page ${page} of ${pageTotal}  ...")
         when (val responseData = jsonResponse["data"]) {
           is ObjectNode -> yield(responseData)
           is ArrayNode -> yieldAll(responseData.elements())
         }
         val next = jsonResponse.get("links")?.get("next")?.takeIf { !it.isNull }?.asText()?.urlDecode()
         if (next != null) httpResponse = getQuery("${terraformRegistryHost}${next}")
-      } while (next != null)
+      }
+      while (next != null)
     }
   }
 
@@ -59,7 +63,7 @@ object TerraformProvidersMetadataBuilder {
     if (!allOut.exists()) {
       objectMapper.writerWithDefaultPrettyPrinter().writeValue(allOut, getProvidersDataFromPages().asIterable())
     }
-    println("Providers from $terraformRegistryHost are loaded to ${allOut}")
+    logger.info("Providers from $terraformRegistryHost are loaded to ${allOut}")
     val buildInProvider = objectMapper.nodeFactory.let { nf ->
       nf.objectNode().set<JsonNode>("attributes",
                                     nf.objectNode()
@@ -78,37 +82,37 @@ object TerraformProvidersMetadataBuilder {
                                                 || attributes["downloads"].asLong() >= downloadsLimitForProvider)
                                 }
     val version = getTerraformVersion()
-    println("Terraform version: $version")
+    logger.info("Terraform version: $version")
 
     val generatedJsonFileNames = File(File(outputDir, "resources/model").apply { mkdirs() }, "providers.list")
     val totalProviders = AtomicInteger(0)
     val errors = AtomicInteger(0)
-    mostUsefulProviders.forEachIndexed { index, data ->
+    mostUsefulProviders.forEach { data ->
       totalProviders.incrementAndGet()
       val name = data["attributes"]["full-name"].asText()
-      println("Processing: $name")
+      logger.info("Processing: $name")
       val file = buildProviderMetadata(data, version, outputDir)
       if (file.exists()) {
-        println("Schema file generated: ${file.path}")
+        logger.info("Schema file generated: ${file.path}")
         generatedJsonFileNames.appendText("$name\n")
       }
       else {
-        println("Error generating schema for provider: ${name}")
+        logger.error("Error generating schema for provider: ${name}")
         errors.incrementAndGet()
       }
     }
     if (cleanDownloadedData) {
-      println("Deleting data about providers from file: ${allOut}")
+      logger.info("Deleting data about providers from file: ${allOut}")
       allOut.deleteOnExit()
     }
-    println("Providing processing finished, processed ${totalProviders} providers, errors: ${errors}")
+    logger.info("Providing processing finished, processed ${totalProviders} providers, errors: ${errors}")
   }
 
   private fun buildProviderMetadata(data: JsonNode,
                                     version: String,
                                     outputDir: File): File {
     val name = data["attributes"]["full-name"].asText()
-    println("Provider: $name")
+    logger.info("Provider: $name")
     val dir = name.substringBeforeLast("/")
     val file = name.substringAfterLast("/")
 
