@@ -29,9 +29,9 @@ import org.angular2.lang.html.psi.Angular2HtmlExpansionFormCase
 import org.angular2.lang.html.psi.PropertyBindingType
 import java.util.*
 
-sealed interface TmplAstNode
+internal sealed interface TmplAstNode
 
-sealed interface TmplAstExpressionSymbol : TmplAstNode {
+internal sealed interface TmplAstExpressionSymbol : TmplAstNode {
   val name: String
   val keySpan: TextRange?
   val value: String?
@@ -39,7 +39,7 @@ sealed interface TmplAstExpressionSymbol : TmplAstNode {
   val sourceSpan: TextRange
 }
 
-sealed interface TmplAstDirectiveContainer : TmplAstNode {
+internal sealed interface TmplAstDirectiveContainer : TmplAstNode {
   val directives: Set<Angular2Directive>
   val inputs: Map<String, TmplAstBoundAttribute>
   val outputs: Map<String, TmplAstBoundEvent>
@@ -50,13 +50,13 @@ sealed interface TmplAstDirectiveContainer : TmplAstNode {
   val children: List<TmplAstNode>
 }
 
-sealed interface TmplAstAttribute : TmplAstNode {
+internal sealed interface TmplAstAttribute : TmplAstNode {
   val name: String
   val keySpan: TextRange?
   val sourceSpan: TextRange
 }
 
-class TmplAstVariable(
+internal class TmplAstVariable(
   override val name: String,
   override val value: String?,
   override val keySpan: TextRange?,
@@ -64,7 +64,7 @@ class TmplAstVariable(
   override val sourceSpan: TextRange,
 ) : TmplAstExpressionSymbol
 
-class TmplAstElement(
+internal class TmplAstElement(
   val name: String,
   override val directives: Set<Angular2Directive>,
   override val inputs: Map<String, TmplAstBoundAttribute>,
@@ -76,7 +76,7 @@ class TmplAstElement(
   override val children: List<TmplAstNode>,
 ) : TmplAstDirectiveContainer
 
-class TmplAstTemplate(
+internal class TmplAstTemplate(
   val tagName: String?,
   val templateAttrs: List<TmplAstAttribute>,
   override val directives: Set<Angular2Directive>,
@@ -90,7 +90,7 @@ class TmplAstTemplate(
   override val children: List<TmplAstNode>,
 ) : TmplAstDirectiveContainer
 
-class TmplAstReference(
+internal class TmplAstReference(
   var parent: TmplAstDirectiveContainer? = null,
   override val name: String,
   override val keySpan: TextRange,
@@ -99,11 +99,11 @@ class TmplAstReference(
   override val sourceSpan: TextRange,
 ) : TmplAstExpressionSymbol
 
-data class TmplAstBoundText(
+internal data class TmplAstBoundText(
   val value: JSExpression?,
 ) : TmplAstNode
 
-data class TmplAstBoundAttribute(
+internal data class TmplAstBoundAttribute(
   override val name: String,
   override val keySpan: TextRange?,
   val type: BindingType,
@@ -111,7 +111,7 @@ data class TmplAstBoundAttribute(
   override val sourceSpan: TextRange,
 ) : TmplAstAttribute
 
-class TmplAstTextAttribute(
+internal class TmplAstTextAttribute(
   override val name: String,
   override val keySpan: TextRange?,
   val value: String,
@@ -119,11 +119,11 @@ class TmplAstTextAttribute(
   override val sourceSpan: TextRange,
 ) : TmplAstAttribute
 
-class TmplAstContent(
+internal class TmplAstContent(
   val children: List<TmplAstNode>
 ) : TmplAstNode
 
-class TmplAstBoundEvent(
+internal class TmplAstBoundEvent(
   override val name: String,
   override val keySpan: TextRange?,
   val type: ParsedEventType,
@@ -134,47 +134,47 @@ class TmplAstBoundEvent(
   override val sourceSpan: TextRange,
 ) : TmplAstAttribute
 
-interface TmplAstForLoopBlock : TmplAstNode {
+internal interface TmplAstForLoopBlock : TmplAstNode {
 
 }
 
-interface TmplAstDeferredBlock : TmplAstNode {
+internal interface TmplAstDeferredBlock : TmplAstNode {
 
 }
 
-sealed interface TmplAstDeferredTrigger : TmplAstNode {
+internal sealed interface TmplAstDeferredTrigger : TmplAstNode {
 
 }
 
-interface TmplAstHoverDeferredTrigger : TmplAstDeferredTrigger {
+internal interface TmplAstHoverDeferredTrigger : TmplAstDeferredTrigger {
 
 }
 
-interface TmplAstInteractionDeferredTrigger : TmplAstDeferredTrigger {
+internal interface TmplAstInteractionDeferredTrigger : TmplAstDeferredTrigger {
 
 }
 
-interface TmplAstViewportDeferredTrigger : TmplAstDeferredTrigger {
+internal interface TmplAstViewportDeferredTrigger : TmplAstDeferredTrigger {
 
 }
 
-interface TmplAstIfBlock : TmplAstNode {
+internal interface TmplAstIfBlock : TmplAstNode {
 
 }
 
-interface TmplAstIfBlockBranch : TmplAstNode {
+internal interface TmplAstIfBlockBranch : TmplAstNode {
 
 }
 
-interface TmplAstSwitchBlock : TmplAstNode {
+internal interface TmplAstSwitchBlock : TmplAstNode {
 
 }
 
-interface TmplAstSwitchBlockCase : TmplAstNode {
+internal interface TmplAstSwitchBlockCase : TmplAstNode {
 
 }
 
-enum class BindingType {
+internal enum class BindingType {
   // A regular binding to a property (e.g. `[property]="expression"`).
   Property,
 
@@ -194,7 +194,7 @@ enum class BindingType {
   TwoWay,
 }
 
-enum class ParsedEventType {
+internal enum class ParsedEventType {
   // DOM or Directive event
   Regular,
 
@@ -205,7 +205,7 @@ enum class ParsedEventType {
   TwoWay,
 }
 
-class BoundTarget(component: Angular2Component) {
+internal class BoundTarget(component: Angular2Component) {
 
   private val psiVar2tmplAst: Map<PsiElement, TmplAstExpressionSymbol>
 

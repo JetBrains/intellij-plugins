@@ -16,22 +16,10 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler") {
     doConfiguredTest(Angular2TestModule.ANGULAR_COMMON_16_2_8, Angular2TestModule.ANGULAR_ROUTER_16_2_8, dir = true, configurators = listOf(
       Angular2TsConfigFile(strictTemplates = true)
     )) {
-      val boundTarget = BoundTarget(Angular2EntitiesProvider.getComponent(myFixture.elementAtCaret)!!)
-      val context = Context(
-        Environment(Angular2Compiler.getTypeCheckingConfig(myFixture.file)),
-        OutOfBandDiagnosticRecorder(), "1",
-        boundTarget,
-      )
+      val transpiledTemplate = Angular2TemplateTranspiler.transpileTemplate(Angular2EntitiesProvider.getComponent(myFixture.elementAtCaret)!!)
 
-      val scope = Scope.forNodes(context, null, null, boundTarget.templateRoots, null)
       checkTextByFile(
-        ts.Expression().apply {
-          val statements = scope.render()
-          for (it in context.env.getPipeStatements() + context.env.getDirectiveStatements() + statements) {
-            append(it.expression)
-            newLine()
-          }
-        }.toString(),
+        transpiledTemplate.generatedCode,
         "${testName}/result.ts"
       )
     }

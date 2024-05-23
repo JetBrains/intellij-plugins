@@ -19,7 +19,7 @@ import org.angular2.lang.expr.psi.Angular2PipeExpression
  * For compatibility, this logic is adapted from View Engine's expression_converter.ts so that the
  * Ivy checker can emulate this bug when needed.
  */
-class VeSafeLhsInferenceBugDetector : Angular2ElementVisitor() {
+internal class VeSafeLhsInferenceBugDetector : Angular2ElementVisitor() {
 
   private var result: Boolean = false
 

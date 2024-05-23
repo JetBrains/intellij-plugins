@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameter
 import com.intellij.psi.PsiElement
 
-class TypeParameterEmitter(private val typeParameters: Array<TypeScriptTypeParameter>) {
+internal class TypeParameterEmitter(private val typeParameters: Array<TypeScriptTypeParameter>) {
 
   /**
    * Determines whether the type parameters can be emitted. If this returns true, then a call to

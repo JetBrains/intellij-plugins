@@ -40,21 +40,21 @@ import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.types.Angular2TypeUtils.possiblyGenericJsType
 
 
-typealias `TcbOp|ts.Identifier` = Any
-typealias `Int|ts.Identifier` = Any
-typealias `Angular2Directive|TmplAstElement|TmplAstTemplate` = Any
-typealias `Angular2Directive|TmplAstElement` = Any
-typealias `TmplAstElement|TmplAstTemplate` = TmplAstDirectiveContainer
-typealias `TmplAstTemplate|TmplAstIfBlockBranch|TmplAstForLoopBlock` = TmplAstNode
-typealias `TmplAstElement|TmplAstTemplate|TmplAstVariable|TmplAstReference` = TmplAstNode
-typealias `TmplAstBoundAttribute|TmplAstTextAttribute` = TmplAstAttribute
-typealias `TmplAstBoundAttribute|TmplAstBoundEvent|TmplAstTextAttribute` = TmplAstAttribute
-typealias `EventParamType|JSType` = Any
+private typealias `TcbOp|Identifier` = Any
+private typealias `Int|Identifier` = Any
+internal typealias `Angular2Directive|TmplAstElement|TmplAstTemplate` = Any
+internal typealias `Angular2Directive|TmplAstElement` = Any
+internal typealias `TmplAstElement|TmplAstTemplate` = TmplAstDirectiveContainer
+private typealias `TmplAstTemplate|TmplAstIfBlockBranch|TmplAstForLoopBlock` = TmplAstNode
+private typealias `TmplAstElement|TmplAstTemplate|TmplAstVariable|TmplAstReference` = TmplAstNode
+private typealias `TmplAstBoundAttribute|TmplAstTextAttribute` = TmplAstAttribute
+internal typealias `TmplAstBoundAttribute|TmplAstBoundEvent|TmplAstTextAttribute` = TmplAstAttribute
+private typealias `EventParamType|JSType` = Any
 
-typealias AST = PsiElement
-typealias TemplateId = String
+internal typealias AST = PsiElement
+internal typealias TemplateId = String
 
-object ts {
+internal object ts {
   fun isObjectLiteralExpression(expr: Expression): Boolean =
     expr.toString().let { it.startsWith("(") && it.endsWith(")") }
 
@@ -65,67 +65,6 @@ object ts {
     Error,
     Warning,
   }
-
-  open class Expression {
-    private val code = StringBuilder()
-
-    fun append(code: String, originalRange: TextRange? = null): Expression {
-      this.code.append(code)
-      appendOriginalRange(originalRange)
-      return this
-    }
-
-    fun append(id: Identifier): Expression {
-      this.code.append(id.toString())
-      appendOriginalRange(id.sourceSpan)
-      return this
-    }
-
-    fun append(builder: Expression): Expression {
-      this.code.append(builder.code)
-      return this
-    }
-
-    fun withSourceSpan(originalRange: TextRange?, builder: Expression.() -> Unit): Expression {
-      this.builder()
-      appendOriginalRange(originalRange)
-      return this
-    }
-
-    fun withIgnoreDiagnostics(builder: Expression.() -> Unit): Expression {
-      this.builder()
-      //this.code.append( "/*D:ignore*/")
-      return this
-    }
-
-    fun codeBlock(builder: Expression.() -> Unit): Expression {
-      append("{\n")
-      this.builder()
-      append("}")
-      return this
-    }
-
-    fun newLine(): Expression {
-      append("\n")
-      return this
-    }
-
-    private fun appendOriginalRange(originalRange: TextRange?) {
-      if (originalRange != null) {
-        //this.code.append(" /*${originalRange.startOffset},${originalRange.endOffset}*/")
-      }
-    }
-
-    override fun toString(): String =
-      code.toString()
-
-  }
-
-  class Identifier(val name: String, val sourceSpan: TextRange? = null, val kind: ExpressionIdentifier? = null) {
-    override fun toString(): String = name
-  }
-
-  open class Statement(val expression: Expression)
 
 }
 
@@ -144,9 +83,9 @@ object ts {
  * order.
  *
  * Each `TcbOp` may insert statements into the body of the TCB, and also optionally return a
- * `ts.Expression` which can be used to reference the operation's result.
+ * `Expression` which can be used to reference the operation's result.
  */
-abstract class TcbOp {
+private abstract class TcbOp {
   /**
    * Set to true if this operation can be considered optional. Optional operations are only executed
    * when depended upon by other operations, otherwise they are disregarded. This allows for less
@@ -154,7 +93,7 @@ abstract class TcbOp {
    */
   abstract val optional: Boolean
 
-  abstract fun execute(): ts.Identifier?
+  abstract fun execute(): Identifier?
 
   /**
    * Replacement value or operation used while this `TcbOp` is executing (i.e. to resolve circular
@@ -164,7 +103,7 @@ abstract class TcbOp {
    * `TcbOp` can be returned in cases where additional code generation is necessary to deal with
    * circular references.
    */
-  open fun circularFallback(): `TcbOp|ts.Identifier` {
+  open fun circularFallback(): `TcbOp|Identifier` {
     return INFER_TYPE_FOR_CIRCULAR_OP_EXPR
   }
 }
@@ -175,7 +114,7 @@ abstract class TcbOp {
  *
  * Executing this operation returns a reference to the element variable.
  */
-class TcbElementOp(private val tcb: Context, private val scope: Scope, private val element: TmplAstElement) : TcbOp() {
+private class TcbElementOp(private val tcb: Context, private val scope: Scope, private val element: TmplAstElement) : TcbOp() {
 
   override val optional: Boolean
     get() {
@@ -185,7 +124,7 @@ class TcbElementOp(private val tcb: Context, private val scope: Scope, private v
       return true
     }
 
-  override fun execute(): ts.Identifier {
+  override fun execute(): Identifier {
     val id = this.tcb.allocateId()
     // Add the declaration of the element using document.createElement.
     this.scope.addStatement {
@@ -203,7 +142,7 @@ class TcbElementOp(private val tcb: Context, private val scope: Scope, private v
  *
  * Executing this operation returns a reference to the variable variable (lol).
  */
-class TcbTemplateVariableOp(
+private class TcbTemplateVariableOp(
   private val tcb: Context,
   private val scope: Scope,
   private val template: TmplAstTemplate,
@@ -212,7 +151,7 @@ class TcbTemplateVariableOp(
 
   override val optional: Boolean get() = false
 
-  override fun execute(): ts.Identifier {
+  override fun execute(): Identifier {
     // Look for a context variable for the template.
     val ctx = this.scope.resolve(this.template)
 
@@ -222,7 +161,7 @@ class TcbTemplateVariableOp(
     this.scope.addStatement {
       withSourceSpan(variable.sourceSpan) {
         append("var ")
-        append(id)
+        append(id, id.sourceSpan)
         append(" = ")
         withSourceSpan(variable.valueSpan) {
           append(ctx)
@@ -230,7 +169,7 @@ class TcbTemplateVariableOp(
           if (StringUtil.isJavaIdentifier(name))
             append(".").append(name)
           else
-            append("[\"").append(variable.value ?: `$IMPLICIT`).append("\"]")
+            append("[\"").append(name.replace("\"", "\\\"")).append("\"]")
         }
         append(";")
       }
@@ -244,12 +183,12 @@ class TcbTemplateVariableOp(
  *
  * Executing this operation returns a reference to the template's context variable.
  */
-class TcbTemplateContextOp(private val tcb: Context, private val scope: Scope) : TcbOp() {
+private class TcbTemplateContextOp(private val tcb: Context, private val scope: Scope) : TcbOp() {
 
   // The declaration of the context variable is only needed when the context is actually referenced.
   override val optional get() = true
 
-  override fun execute(): ts.Identifier {
+  override fun execute(): Identifier {
     // Allocate a template ctx variable and declare it with an 'any' type. The type of this variable
     // may be narrowed as a result of template guard conditions.
     val ctx = this.tcb.allocateId()
@@ -267,11 +206,11 @@ class TcbTemplateContextOp(private val tcb: Context, private val scope: Scope) :
  * This operation wraps the children's type-checking code in an `if` block, which may include one
  * or more type guard conditions that narrow types within the template body.
  */
-class TcbTemplateBodyOp(private val tcb: Context, private val scope: Scope, private val template: TmplAstTemplate) : TcbOp() {
+private class TcbTemplateBodyOp(private val tcb: Context, private val scope: Scope, private val template: TmplAstTemplate) : TcbOp() {
 
   override val optional get() = false
 
-  override fun execute(): ts.Identifier? {
+  override fun execute(): Identifier? {
     // An `if` will be constructed, within which the template's children will be type checked. The
     // `if` is used for two reasons: it creates a new syntactic scope, isolating variables declared
     // in the template's TCB from the outer context, and it allows any directives on the templates
@@ -281,7 +220,7 @@ class TcbTemplateBodyOp(private val tcb: Context, private val scope: Scope, priv
     // on the template can trigger extra guard expressions that serve to narrow types within the
     // `if`. `guard` is calculated by starting with `true` and adding other conditions as needed.
     // Collect these into `guards` by processing the directives.
-    val directiveGuards = mutableListOf<ts.Expression>()
+    val directiveGuards = mutableListOf<Expression>()
 
     val directives = this.tcb.boundTarget.getDirectivesOfNode(this.template)
 
@@ -304,8 +243,10 @@ class TcbTemplateBodyOp(private val tcb: Context, private val scope: Scope, priv
           val expr = tcbExpression(boundInput.value, this.tcb, this.scope).let {
             // The expression has already been checked in the type constructor invocation, so
             // it should be ignored when used within a template guard.
-            ts.Expression().withIgnoreDiagnostics {
-              append(it)
+            Expression {
+              withIgnoreDiagnostics {
+                append(it)
+              }
             }
           }
 
@@ -316,7 +257,7 @@ class TcbTemplateBodyOp(private val tcb: Context, private val scope: Scope, priv
           else {
             // Call the guard function on the directive with the directive instance and that
             // expression.
-            val guardInvoke = ts.Expression().withSourceSpan(boundInput.value?.textRange) {
+            val guardInvoke = Expression(boundInput.value?.textRange) {
               append("$dirId.$NG_TEMPLATE_GUARD_PREFIX${guard.inputName}($dirInstId, ")
               append(expr)
               append(")")
@@ -331,7 +272,7 @@ class TcbTemplateBodyOp(private val tcb: Context, private val scope: Scope, priv
       if (dir.hasTemplateContextGuard) {
         if (this.tcb.env.config.applyTemplateContextGuards) {
           val ctx = this.scope.resolve(this.template)
-          val guardInvoke = ts.Expression().withSourceSpan(this.template.sourceSpan) {
+          val guardInvoke = Expression(this.template.sourceSpan) {
             append("$dirId.$NG_TEMPLATE_CONTEXT_GUARD($dirInstId, $ctx)")
           }
           directiveGuards.add(guardInvoke)
@@ -349,13 +290,13 @@ class TcbTemplateBodyOp(private val tcb: Context, private val scope: Scope, priv
 
 
     // By default the guard is simply `true`.
-    var guard: ts.Expression? = null
+    var guard: Expression? = null
 
     // If there are any guards from directives, use them instead.
     if (directiveGuards.size > 0) {
       // Pop the first value and use it as the initializer to reduce(). This way, a single guard
       // will be used on its own, but two or more will be combined into binary AND expressions.
-      guard = ts.Expression().apply {
+      guard = Expression {
         directiveGuards.reversed().forEachIndexed { index, expression ->
           if (index > 0)
             append(" && ")
@@ -389,7 +330,7 @@ class TcbTemplateBodyOp(private val tcb: Context, private val scope: Scope, priv
         append(") ")
       }
       codeBlock {
-        statements.forEach { append(it.expression).newLine() }
+        statements.forEach(this::appendStatement)
       }
     }
     return null
@@ -401,11 +342,11 @@ class TcbTemplateBodyOp(private val tcb: Context, private val scope: Scope, priv
  *
  * Executing this operation returns nothing.
  */
-class TcbExpressionOp(private val tcb: Context, private val scope: Scope, private val expression: JSExpression?) : TcbOp() {
+private class TcbExpressionOp(private val tcb: Context, private val scope: Scope, private val expression: JSExpression?) : TcbOp() {
 
   override val optional get() = false
 
-  override fun execute(): ts.Identifier? {
+  override fun execute(): Identifier? {
     val expr = tcbExpression(this.expression, this.tcb, this.scope)
     this.scope.addStatement {
       append("\"\" + ").append(expr).append(";")
@@ -418,7 +359,7 @@ class TcbExpressionOp(private val tcb: Context, private val scope: Scope, privat
  * A `TcbOp` which constructs an instance of a directive. For generic directives, generic
  * parameters are set to `any` type.
  */
-abstract class TcbDirectiveTypeOpBase(
+private abstract class TcbDirectiveTypeOpBase(
   private val tcb: Context,
   protected val scope: Scope,
   protected val node: `TmplAstElement|TmplAstTemplate`,
@@ -430,7 +371,7 @@ abstract class TcbDirectiveTypeOpBase(
   // generating declarations for directives that don't have any inputs/outputs.
   override val optional get() = true
 
-  override fun execute(): ts.Identifier {
+  override fun execute(): Identifier {
     val rawType = (dir as? Angular2ClassBasedDirective)?.typeScriptClass?.possiblyGenericJsType
                   ?: dir.entityJsType
                   ?: JSAnyType.get(JSTypeSource.EMPTY_TS_EXPLICITLY_DECLARED)
@@ -459,13 +400,13 @@ abstract class TcbDirectiveTypeOpBase(
  * Executing this operation returns a reference to the directive instance variable with its inferred
  * type.
  */
-class TcbNonGenericDirectiveTypeOp(tcb: Context, scope: Scope, node: `TmplAstElement|TmplAstTemplate`, dir: Angular2Directive)
+private class TcbNonGenericDirectiveTypeOp(tcb: Context, scope: Scope, node: `TmplAstElement|TmplAstTemplate`, dir: Angular2Directive)
   : TcbDirectiveTypeOpBase(tcb, scope, node, dir) {
   /**
    * Creates a variable declaration for this op's directive of the argument type. Returns the id of
    * the newly created variable.
    */
-  override fun execute(): ts.Identifier {
+  override fun execute(): Identifier {
     assert(((dir as? Angular2ClassBasedDirective)?.typeScriptClass?.possiblyGenericJsType ?: dir.entityJsType) !is JSGenericTypeImpl)
     return super.execute()
   }
@@ -479,10 +420,10 @@ class TcbNonGenericDirectiveTypeOp(tcb: Context, scope: Scope, node: `TmplAstEle
  * Executing this operation returns a reference to the directive instance variable with its generic
  * type parameters set to `any`.
  */
-class TcbGenericDirectiveTypeWithAnyParamsOp(tcb: Context, scope: Scope, node: `TmplAstElement|TmplAstTemplate`, dir: Angular2Directive)
+private class TcbGenericDirectiveTypeWithAnyParamsOp(tcb: Context, scope: Scope, node: `TmplAstElement|TmplAstTemplate`, dir: Angular2Directive)
   : TcbDirectiveTypeOpBase(tcb, scope, node, dir) {
 
-  override fun execute(): ts.Identifier {
+  override fun execute(): Identifier {
     assert(((dir as? Angular2ClassBasedDirective)?.typeScriptClass?.possiblyGenericJsType ?: dir.entityJsType) is JSGenericTypeImpl)
     return super.execute()
   }
@@ -508,7 +449,7 @@ class TcbGenericDirectiveTypeWithAnyParamsOp(tcb: Context, scope: Scope, node: `
  * Executing this operation returns a reference to the directive instance variable with its inferred
  * type.
  */
-class TcbReferenceOp(
+private class TcbReferenceOp(
   private val tcb: Context,
   private val scope: Scope,
   private val node: TmplAstReference,
@@ -520,31 +461,29 @@ class TcbReferenceOp(
   // so it can map a reference variable in the template directly to a node in the TCB.
   override val optional get() = true
 
-  override fun execute(): ts.Identifier {
+  override fun execute(): Identifier {
     val id = this.tcb.allocateId(this.node.keySpan)
-    val reference: ts.Identifier = if (this.target is TmplAstDirectiveContainer)
+    val reference: Identifier = if (this.target is TmplAstDirectiveContainer)
       this.scope.resolve(this.target)
     else
       this.scope.resolve(this.host, this.target as Angular2Directive)
 
     // The reference is either to an element, an <ng-template> node, or to a directive on an
     // element or template.
-    val initializer = ts.Expression().withSourceSpan(this.node.sourceSpan) {
+    val initializer = Expression(this.node.sourceSpan) {
       if ((target is TmplAstElement && !tcb.env.config.checkTypeOfDomReferences) ||
           !tcb.env.config.checkTypeOfNonDomReferences) {
         // References to DOM nodes are pinned to 'any' when `checkTypeOfDomReferences` is `false`.
         // References to `TemplateRef`s and directives are pinned to 'any' when
         // `checkTypeOfNonDomReferences` is `false`.
-        append(reference)
-        append(" as any")
+        append(reference).append(" as any")
       }
       else if (target is TmplAstTemplate) {
         // Direct references to an <ng-template> node simply require a value of type
         // `TemplateRef<any>`. To get this, an expression of the form
         // `(_t1 as any as TemplateRef<any>)` is constructed.
         append("(")
-        append(reference)
-        append(" as any as")
+        append(reference).append(" as any as")
         append(tcb.env.referenceExternalType(ANGULAR_CORE_PACKAGE, TEMPLATE_REF))
         append(")")
       }
@@ -562,14 +501,14 @@ class TcbReferenceOp(
  * variable of type any for usages of the invalid reference to resolve to. The invalid reference
  * itself is recorded out-of-band.
  */
-class TcbInvalidReferenceOp(private val tcb: Context, private val scope: Scope) : TcbOp() {
+private class TcbInvalidReferenceOp(private val tcb: Context, private val scope: Scope) : TcbOp() {
 
   // The declaration of a missing reference is only needed when the reference is resolved.
   override val optional get() = true
 
-  override fun execute(): ts.Identifier {
+  override fun execute(): Identifier {
     val id = this.tcb.allocateId()
-    this.scope.addStatement(tsCreateVariable(id, ts.Expression().append("null as any")))
+    this.scope.addStatement(tsCreateVariable(id, Expression("null as any")))
     return id
   }
 }
@@ -586,7 +525,7 @@ class TcbInvalidReferenceOp(private val tcb: Context, private val scope: Scope) 
  * Executing this operation returns a reference to the directive instance variable with its inferred
  * type.
  */
-class TcbDirectiveCtorOp(
+private class TcbDirectiveCtorOp(
   private val tcb: Context,
   private val scope: Scope,
   private val node: `TmplAstElement|TmplAstTemplate`,
@@ -596,7 +535,7 @@ class TcbDirectiveCtorOp(
   // won"t report diagnostics by itself, so the operation is marked as optional.
   override val optional = true
 
-  override fun execute(): ts.Identifier {
+  override fun execute(): Identifier {
     val id = this.tcb.allocateId(this.node.startSourceSpan ?: this.node.sourceSpan, ExpressionIdentifier.Directive)
 
     val genericInputs = mutableMapOf<String, TcbDirectiveInput>()
@@ -638,7 +577,7 @@ class TcbDirectiveCtorOp(
 
     // Call the type constructor of the directive to infer a type, and assign the directive
     // instance.
-    val typeCtor = ts.Expression().apply {
+    val typeCtor = Expression {
       withIgnoreDiagnostics {
         append(tcbCallTypeCtor(dir, tcb, genericInputs.values))
       }
@@ -647,7 +586,7 @@ class TcbDirectiveCtorOp(
     return id
   }
 
-  override fun circularFallback(): `TcbOp|ts.Identifier` {
+  override fun circularFallback(): `TcbOp|Identifier` {
     return TcbDirectiveCtorCircularFallbackOp(this.tcb, this.scope, this.node, this.dir)
   }
 }
@@ -658,7 +597,7 @@ class TcbDirectiveCtorOp(
  *
  * Executing this operation returns nothing.
  */
-class TcbDirectiveInputsOp(
+private class TcbDirectiveInputsOp(
   private val tcb: Context,
   private val scope: Scope,
   private val node: `TmplAstElement|TmplAstTemplate`,
@@ -666,8 +605,8 @@ class TcbDirectiveInputsOp(
 
   override val optional get() = false
 
-  override fun execute(): ts.Identifier? {
-    var dirId: ts.Identifier? = null
+  override fun execute(): Identifier? {
+    var dirId: Identifier? = null
 
     // TODO(joost): report duplicate properties
 
@@ -677,12 +616,12 @@ class TcbDirectiveInputsOp(
       // For bound inputs, the property is assigned the binding expression.
       val expr = widenBinding(translateInput(attr.attribute, this.tcb, this.scope), this.tcb)
 
-      var assignment: ts.Expression = expr
+      var assignment: Expression = expr
 
       for (input in attr.inputs) {
         val fieldName = input.fieldName
         val isSignal = input.isSignal
-        var target: ts.Expression
+        var target: Expression
 
         // Note: There is no special logic for transforms/coercion with signal inputs.
         // For signal inputs, a `transformType` will never be set as we do not capture
@@ -691,12 +630,12 @@ class TcbDirectiveInputsOp(
         // setting the `WriteT` of such `InputSignalWithTransform<_, WriteT>`.
 
         if (fieldName != null && input.isCoerced && !input.isSignal) {
-          var type: ts.Expression
+          var type: Expression
 
           val transformType = input.transformType
           if (transformType != null) {
             // TODO detect stuff to import
-            type = ts.Expression().append(transformType.getTypeText(JSType.TypeTextFormat.CODE))
+            type = Expression(transformType.getTypeText(JSType.TypeTextFormat.CODE))
           }
           else {
             // The input has a coercion declaration which should be used instead of assigning the
@@ -710,7 +649,7 @@ class TcbDirectiveInputsOp(
           val id = this.tcb.allocateId()
           this.scope.addStatement(tsDeclareVariable(id, type))
 
-          target = ts.Expression().append(id)
+          target = Expression(id)
         }
         else if (fieldName == null) {
           // If no coercion declaration is present nor is the field declared (i.e. the input is
@@ -728,10 +667,10 @@ class TcbDirectiveInputsOp(
           }
 
           val id = this.tcb.allocateId()
-          val type = ts.Expression().append(dirId).append("[\"${fieldName}\"]")
+          val type = Expression { append(dirId!!).append("[\"${fieldName}\"]") }
           val temp = tsDeclareVariable(id, type)
           this.scope.addStatement(temp)
-          target = ts.Expression().append(id)
+          target = Expression(id)
         }
         else {
           if (dirId == null) {
@@ -742,9 +681,9 @@ class TcbDirectiveInputsOp(
           // when possible. String literal fields may not be valid JS identifiers so we use
           // literal element access instead for those cases.
           target = if (StringUtil.isJavaIdentifier(fieldName))
-            ts.Expression().append(dirId).append(".$fieldName")
+            Expression { append(dirId).append(".$fieldName") }
           else
-            ts.Expression().append(dirId).append("[\"$fieldName\"]")
+            Expression { append(dirId).append("[\"$fieldName\"]") }
         }
 
         // For signal inputs, we unwrap the target `InputSignal`. Note that
@@ -757,11 +696,11 @@ class TcbDirectiveInputsOp(
             R3Identifiers.InputSignalBrandWriteType.moduleName,
             R3Identifiers.InputSignalBrandWriteType.name)
 
-          target = ts.Expression().append(target).append("[").append(inputSignalBrandWriteSymbol).append("]")
+          target = Expression { append(target).append("[").append(inputSignalBrandWriteSymbol).append("]") }
         }
 
         if (attr.attribute.keySpan != null) {
-          target = ts.Expression().withSourceSpan(attr.attribute.keySpan) {
+          target = Expression(attr.attribute.keySpan) {
             append(target)
           }
         }
@@ -772,10 +711,10 @@ class TcbDirectiveInputsOp(
         }
 
         // Finally the assignment is extended by assigning it into the target expression.
-        assignment = ts.Expression().append(target).append(" = ").append(assignment)
+        assignment = Expression { append(target).append(" = ").append(assignment) }
       }
 
-      assignment = ts.Expression().withSourceSpan(attr.attribute.sourceSpan) {
+      assignment = Expression(attr.attribute.sourceSpan) {
         // Ignore diagnostics for text attributes if configured to do so.
         if (!tcb.env.config.checkTypeOfAttributes &&
             attr.attribute is TmplAstTextAttribute) {
@@ -812,7 +751,7 @@ class TcbDirectiveInputsOp(
  * input expressions. This infers the widest possible supertype for the directive, which is used to
  * resolve any recursive references required to infer the real type.
  */
-class TcbDirectiveCtorCircularFallbackOp(
+private class TcbDirectiveCtorCircularFallbackOp(
   private val tcb: Context,
   private val scope: Scope,
   private val node: `TmplAstElement|TmplAstTemplate`,
@@ -821,12 +760,13 @@ class TcbDirectiveCtorCircularFallbackOp(
 
   override val optional get() = false
 
-  override fun execute(): ts.Identifier {
+  override fun execute(): Identifier {
     val id = this.tcb.allocateId()
     val typeCtor = this.tcb.env.typeCtorFor(this.dir)
-    val circularPlaceholder = ts.Expression()
-      .append(typeCtor)
-      .append("(null!)")
+    val circularPlaceholder = Expression {
+      append(typeCtor)
+      append("(null!)")
+    }
     this.scope.addStatement(tsCreateVariable(id, circularPlaceholder))
     return id
   }
@@ -844,7 +784,7 @@ class TcbDirectiveCtorCircularFallbackOp(
  * of a control flow expression *would have been projected* into a specific slot, if the control
  * flow node didn't exist.
  *//*
-class TcbControlFlowContentProjectionOp(
+private class TcbControlFlowContentProjectionOp(
   private val tcb: Context,
   private val element: TmplAstElement,
   private val ngContentSelectors: List<String>,
@@ -863,7 +803,7 @@ class TcbControlFlowContentProjectionOp(
 
   override val optional get() = false
 
-  override fun execute(): ts.Identifier? {
+  override fun execute(): Identifier? {
     val controlFlowToCheck = this.findPotentialControlFlowNodes()
 
     if (controlFlowToCheck.size > 0) {
@@ -964,7 +904,7 @@ class TcbControlFlowContentProjectionOp(
  *
  * Executing this operation returns nothing.
  */
-class TcbUnclaimedInputsOp(
+private class TcbUnclaimedInputsOp(
   private val tcb: Context,
   private val scope: Scope,
   private val element: TmplAstElement,
@@ -973,10 +913,10 @@ class TcbUnclaimedInputsOp(
 
   override val optional get() = false
 
-  override fun execute(): ts.Identifier? {
+  override fun execute(): Identifier? {
     // `this.inputs` contains only those bindings not matched by any directive. These bindings go to
     // the element itself.
-    var elId: ts.Identifier? = null
+    var elId: Identifier? = null
 
     // TODO(alxhub): this could be more efficient.
     for (binding in this.element.inputs.values) {
@@ -1028,14 +968,14 @@ class TcbUnclaimedInputsOp(
  *
  * Executing this operation returns nothing.
  */
-class TcbDirectiveOutputsOp(
+private class TcbDirectiveOutputsOp(
   private val tcb: Context, private val scope: Scope, private val node: `TmplAstElement|TmplAstTemplate`,
   private val dir: Angular2Directive) : TcbOp() {
 
   override val optional get() = false
 
-  override fun execute(): ts.Identifier? {
-    var dirId: ts.Identifier? = null
+  override fun execute(): Identifier? {
+    var dirId: Identifier? = null
     val outputs = this.dir.outputs.associateBy { it.name }
 
     for (output in this.node.outputs.values) {
@@ -1054,9 +994,8 @@ class TcbDirectiveOutputsOp(
       if (dirId == null) {
         dirId = this.scope.resolve(this.node, this.dir)
       }
-      val outputField = ts.Expression().withSourceSpan(output.keySpan) {
-        append(dirId)
-        append("[\"$field\"]")
+      val outputField = Expression(output.keySpan) {
+        append(dirId).append("[\"$field\"]")
       }
       if (this.tcb.env.config.checkTypeOfOutputEvents) {
         // For strict checking of directive events, generate a call to the `subscribe` method
@@ -1097,7 +1036,7 @@ class TcbDirectiveOutputsOp(
  *
  * Executing this operation returns nothing.
  */
-class TcbUnclaimedOutputsOp(
+private class TcbUnclaimedOutputsOp(
   private val tcb: Context,
   private val scope: Scope,
   private val element: TmplAstElement,
@@ -1105,8 +1044,8 @@ class TcbUnclaimedOutputsOp(
 
   override val optional get() = false
 
-  override fun execute(): ts.Identifier? {
-    var elId: ts.Identifier? = null
+  override fun execute(): Identifier? {
+    var elId: Identifier? = null
 
     // TODO(alxhub): this could be more efficient.
     for (output in this.element.outputs.values) {
@@ -1128,7 +1067,7 @@ class TcbUnclaimedOutputsOp(
         val eventType = if (this.tcb.env.config.checkTypeOfAnimationEvents)
           this.tcb.env.referenceExternalType("@angular/animations", "AnimationEvent")
         else
-          ts.Expression().append("any")
+          Expression("any")
 
         val handler = tcbCreateEventHandler(output, this.tcb, this.scope, eventType)
         this.scope.addStatement(handler)
@@ -1147,12 +1086,9 @@ class TcbUnclaimedOutputsOp(
         this.scope.addStatement {
           withSourceSpan(output.sourceSpan) {
             withSourceSpan(output.keySpan) {
-              append(elId)
-              append(".addEventListener")
+              append(elId).append(".addEventListener")
             }
-            append("(\"${output.name}\", ")
-            append(handler)
-            append(")")
+            append("(\"${output.name}\", ").append(handler).append(")")
           }
           append(";")
         }
@@ -1174,16 +1110,16 @@ class TcbUnclaimedOutputsOp(
  *
  * Executing this operation returns the identifier which can be used to refer to the variable.
  *//*
-class TcbBlockVariableOp(
+private class TcbBlockVariableOp(
   private val tcb: Context,
   private val scope: Scope,
-  private val initializer: ts.Expression,
+  private val initializer: Expression,
   private val variable: TmplAstVariable
 ) : TcbOp() {
 
   override val optional get() = false
 
-  override fun execute(): ts.Identifier {
+  override fun execute(): Identifier {
     val id = this.tcb.allocateId()
     addParseSpanInfo(id, this.variable.keySpan)
     val variable = tsCreateVariable(id, wrapForTypeChecker(this.initializer))
@@ -1200,7 +1136,7 @@ class TcbBlockVariableOp(
  * Executing this operation returns the identifier which can be used to refer to the variable.
  *//*
 
-class TcbBlockImplicitVariableOp(
+private class TcbBlockImplicitVariableOp(
   private val tcb: Context,
   private val scope: Scope,
   private val type: JSType,
@@ -1209,7 +1145,7 @@ class TcbBlockImplicitVariableOp(
 
   override val optional get() = true
 
-  override fun execute(): ts.Identifier {
+  override fun execute(): Identifier {
     val id = this.tcb.allocateId()
     addParseSpanInfo(id, this.variable.keySpan)
     val variable = tsDeclareVariable(id, this.type)
@@ -1226,7 +1162,7 @@ class TcbBlockImplicitVariableOp(
  *
  * Executing this operation returns nothing.
  *//*
-class TcbIfOp(
+private class TcbIfOp(
   private val tcb: Context,
   private val scope: Scope,
   private val block: TmplAstIfBlock
@@ -1235,13 +1171,13 @@ class TcbIfOp(
 
   override val optional get() = false
 
-  override fun execute(): ts.Identifier? {
+  override fun execute(): Identifier? {
     val root = this.generateBranch(0)
     root && this.scope.addStatement(root)
     return null
   }
 
-  private fun generateBranch(index: Int): ts.Statement? {
+  private fun generateBranch(index: Int): Statement? {
     val branch = this.block.branches[index]
 
     if (!branch) {
@@ -1278,8 +1214,8 @@ class TcbIfOp(
     checkBody ? this.generateBranchGuard(index) : null)
   }
 
-  private fun generateBranchGuard(index: Int): ts.Expression? {
-    var guard: ts.Expression? = null
+  private fun generateBranchGuard(index: Int): Expression? {
+    var guard: Expression? = null
 
     // Since event listeners are inside callbacks, type narrowing doesn't apply to them anymore.
     // To recreate the behavior, we generate an expression that negates all the values of the
@@ -1301,7 +1237,7 @@ class TcbIfOp(
       }
 
       val expressionScope = this.expressionScopes.get(branch)!
-      var expression: ts.Expression
+      var expression: Expression
 
       if (branch.expressionAlias == null) {
         // We need to recreate the expression and mark it to be ignored for diagnostics,
@@ -1339,11 +1275,11 @@ class TcbIfOp(
  *
  * Executing this operation returns nothing.
  *//*
-class TcbSwitchOp(private val tcb: Context, private val scope: Scope, private val block: TmplAstSwitchBlock) : TcbOp() {
+private class TcbSwitchOp(private val tcb: Context, private val scope: Scope, private val block: TmplAstSwitchBlock) : TcbOp() {
 
   override val optional get() = false
 
-  override fun execute(): ts.Identifier? {
+  override fun execute(): Identifier? {
     val switchExpression = tcbExpression(this.block.expression, this.tcb, this.scope)
     val clauses = this.block.cases.map(current => {
       val checkBody = this.tcb.env.config.checkControlFlowBodies
@@ -1364,7 +1300,7 @@ class TcbSwitchOp(private val tcb: Context, private val scope: Scope, private va
     return null
   }
 
-  private fun generateGuard(node: TmplAstSwitchBlockCase, switchValue: ts.Expression): ts.Expression? {
+  private fun generateGuard(node: TmplAstSwitchBlockCase, switchValue: Expression): Expression? {
     // For non-default cases, the guard needs to compare against the case value, e.g.
     // `switchExpression === caseExpression`.
     if (node.expression != null) {
@@ -1383,7 +1319,7 @@ class TcbSwitchOp(private val tcb: Context, private val scope: Scope, private va
     //   @default {}
     // }
     // Will produce the guard `expr !== 1 && expr !== 2`.
-    var guard: ts.Expression? = null
+    var guard: Expression? = null
 
     for (current in this.block.cases) {
       if (current.expression == null) {
@@ -1414,11 +1350,11 @@ class TcbSwitchOp(private val tcb: Context, private val scope: Scope, private va
  *
  * Executing this operation returns nothing.
  *//*
-class TcbForOfOp(private val tcb: Context, private val scope: Scope, private val block: TmplAstForLoopBlock) : TcbOp() {
+private class TcbForOfOp(private val tcb: Context, private val scope: Scope, private val block: TmplAstForLoopBlock) : TcbOp() {
 
   override val optional = false
 
-  override fun execute(): ts.Identifier? {
+  override fun execute(): Identifier? {
     val loopScope = Scope.forNodes(
       this.tcb, this.scope, this.block,
       this.tcb.env.config.checkControlFlowBodies ? this.block.children : [], null)
@@ -1455,7 +1391,7 @@ class TcbForOfOp(private val tcb: Context, private val scope: Scope, private val
  * assertion of the null value (in TypeScript, the expression `null!`). This construction will infer
  * the least narrow type for whatever it's assigned to.
  */
-val INFER_TYPE_FOR_CIRCULAR_OP_EXPR = ts.Identifier("null!")
+private val INFER_TYPE_FOR_CIRCULAR_OP_EXPR = Identifier("null!")
 
 /**
  * Overall generation context for the type check block.
@@ -1464,7 +1400,7 @@ val INFER_TYPE_FOR_CIRCULAR_OP_EXPR = ts.Identifier("null!")
  * block. It's responsible for variable name allocation and management of any imports needed. It
  * also contains the template metadata itself.
  */
-class Context(
+internal class Context(
   val env: Environment,
   val oobRecorder: OutOfBandDiagnosticRecorder,
   val id: TemplateId,
@@ -1478,8 +1414,8 @@ class Context(
    * Currently this uses a monotonically increasing counter, but in the future the variable name
    * might change depending on the type of data being stored.
    */
-  fun allocateId(sourceSpan: TextRange? = null, kind: ExpressionIdentifier? = null): ts.Identifier {
-    return ts.Identifier("_t${this.nextId++}", sourceSpan, kind)
+  fun allocateId(sourceSpan: TextRange? = null, kind: ExpressionIdentifier? = null): Identifier {
+    return Identifier("_t${this.nextId++}", sourceSpan, kind)
   }
 
   fun getPipeByName(name: String?): Angular2Pipe? {
@@ -1500,11 +1436,11 @@ class Context(
  *
  * If a `TcbOp` requires the output of another, it can call `resolve()`.
  */
-class Scope(private val tcb: Context, private val parent: Scope? = null, private val guard: ts.Expression? = null) {
+internal class Scope(private val tcb: Context, private val parent: Scope? = null, private val guard: Expression? = null) {
   /**
    * A queue of operations which need to be performed to generate the TCB code for this scope.
    *
-   * This array can contain either a `TcbOp` which has yet to be executed, or a `ts.Expression|null`
+   * This array can contain either a `TcbOp` which has yet to be executed, or a `Expression|null`
    * representing the memoized result of executing the operation. As operations are executed, their
    * results are written into the `opQueue`, overwriting the original operation.
    *
@@ -1514,7 +1450,7 @@ class Scope(private val tcb: Context, private val parent: Scope? = null, private
    * that fits instead. This has the same semantics as TypeScript itself when types are referenced
    * circularly.
    */
-  private val opQueue = mutableListOf<`TcbOp|ts.Identifier`?>()
+  private val opQueue = mutableListOf<`TcbOp|Identifier`?>()
 
   /**
    * A map of `TmplAstElement`s to the index of their `TcbElementOp` in the `opQueue`
@@ -1543,14 +1479,14 @@ class Scope(private val tcb: Context, private val parent: Scope? = null, private
    * `TmplAstVariable` nodes) to the index of their `TcbVariableOp`s in the `opQueue`, or to
    * pre-resolved variable identifiers.
    */
-  private val varMap = mutableMapOf<TmplAstVariable, `Int|ts.Identifier`>()
+  private val varMap = mutableMapOf<TmplAstVariable, `Int|Identifier`>()
 
   /**
    * Statements for this template.
    *
    * Executing the `TcbOp`s in the `opQueue` populates this array.
    */
-  private val statements = mutableListOf<ts.Statement>()
+  private val statements = mutableListOf<Statement>()
 
   companion object {
     /**
@@ -1577,10 +1513,10 @@ class Scope(private val tcb: Context, private val parent: Scope? = null, private
      * @param guard an expression that is applied to this scope for type narrowing purposes.
      */
     @JvmStatic
-    fun forNodes(
+    internal fun forNodes(
       tcb: Context, parentScope: Scope?,
       scopedNode: `TmplAstTemplate|TmplAstIfBlockBranch|TmplAstForLoopBlock`?,
-      children: List<TmplAstNode>, guard: ts.Expression?): Scope {
+      children: List<TmplAstNode>, guard: Expression?): Scope {
       val scope = Scope(tcb, parentScope, guard)
 
       // If given an actual `TmplAstTemplate` instance, then process any additional information it
@@ -1644,9 +1580,9 @@ class Scope(private val tcb: Context, private val parent: Scope? = null, private
   }
 
   /**
-   * Look up a `ts.Expression` representing the value of some operation in the current `Scope`,
+   * Look up a `Expression` representing the value of some operation in the current `Scope`,
    * including any parent scope(s). This method always returns a mutable clone of the
-   * `ts.Expression` with the comments cleared.
+   * `Expression` with the comments cleared.
    *
    * @param node a `TmplAstNode` of the operation in question. The lookup performed will depend on
    * the type of this node:
@@ -1662,7 +1598,7 @@ class Scope(private val tcb: Context, private val parent: Scope? = null, private
    * look up instead of the default for an element or template node.
    */
   fun resolve(node: `TmplAstElement|TmplAstTemplate|TmplAstVariable|TmplAstReference`,
-              directive: Angular2Directive? = null): ts.Identifier {
+              directive: Angular2Directive? = null): Identifier {
     // Attempt to resolve the operation locally.
     val res = this.resolveLocal(node, directive)
     if (res != null) {
@@ -1680,22 +1616,22 @@ class Scope(private val tcb: Context, private val parent: Scope? = null, private
   /**
    * Add a statement to this scope.
    */
-  fun addStatement(stmt: ts.Statement) {
+  fun addStatement(stmt: Statement) {
     this.statements.add(stmt)
   }
 
-  fun addStatement(expr: ts.Expression) {
-    this.statements.add(ts.Statement(ts.Expression().append(expr).append(";")))
+  fun addStatement(expr: Expression) {
+    this.statements.add(Statement { append(expr).append(";") })
   }
 
-  fun addStatement(builder: ts.Expression.() -> Unit) {
-    addStatement(ts.Statement(ts.Expression().also(builder)))
+  fun addStatement(builder: Expression.ExpressionBuilder.() -> Unit) {
+    addStatement(Statement(builder))
   }
 
   /**
    * Get the statements.
    */
-  fun render(): List<ts.Statement> {
+  fun render(): List<Statement> {
     for (i in opQueue.indices) {
       // Optional statements cannot be skipped when we are generating the TCB for use
       // by the TemplateTypeChecker.
@@ -1709,8 +1645,8 @@ class Scope(private val tcb: Context, private val parent: Scope? = null, private
    * Returns an expression of all template guards that apply to this scope, including those of
    * parent scopes. If no guards have been applied, null is returned.
    */
-  fun guards(): ts.Expression? {
-    var parentGuards: ts.Expression? = null
+  fun guards(): Expression? {
+    var parentGuards: Expression? = null
     if (this.parent != null) {
       // Start with the guards from the parent scope, if present.
       parentGuards = this.parent.guards()
@@ -1729,17 +1665,17 @@ class Scope(private val tcb: Context, private val parent: Scope? = null, private
       // Both the parent scope and this scope provide a guard, so create a combination of the two.
       // It is important that the parent guard is used as left operand, given that it may provide
       // narrowing that is required for this scope's guard to be valid.
-      return ts.Expression().also {
-        it.append(parentGuards)
-        it.append(" && ")
-        it.append(this.guard)
+      return Expression {
+        append(parentGuards)
+        append(" && ")
+        append(this@Scope.guard)
       }
     }
   }
 
   private fun resolveLocal(
     ref: `TmplAstElement|TmplAstTemplate|TmplAstVariable|TmplAstReference`,
-    directive: Angular2Directive? = null): ts.Identifier? {
+    directive: Angular2Directive? = null): Identifier? {
     if (ref is TmplAstReference && this.referenceOpMap.contains(ref)) {
       return this.resolveOp(this.referenceOpMap[ref]!!)
     }
@@ -1747,7 +1683,7 @@ class Scope(private val tcb: Context, private val parent: Scope? = null, private
       // Resolving a context variable for this template.
       // Execute the `TcbVariableOp` associated with the `TmplAstVariable`.
       val opIndexOrNode = this.varMap[ref]!!
-      return if (opIndexOrNode is Int) this.resolveOp(opIndexOrNode) else (opIndexOrNode as ts.Identifier)
+      return if (opIndexOrNode is Int) this.resolveOp(opIndexOrNode) else (opIndexOrNode as Identifier)
     }
     else if (
       ref is TmplAstTemplate && directive == null &&
@@ -1778,9 +1714,9 @@ class Scope(private val tcb: Context, private val parent: Scope? = null, private
   }
 
   /**
-   * Like `executeOp`, but assert that the operation actually returned `ts.Expression`.
+   * Like `executeOp`, but assert that the operation actually returned `Expression`.
    */
-  private fun resolveOp(opIndex: Int): ts.Identifier {
+  private fun resolveOp(opIndex: Int): Identifier {
     val res = this.executeOp(opIndex, /* skipOptional */ false)
     if (res == null) {
       throw Error("Error resolving operation, got null")
@@ -1795,10 +1731,10 @@ class Scope(private val tcb: Context, private val parent: Scope? = null, private
    * and also protects against a circular dependency from the operation to itself by temporarily
    * setting the operation's result to a special expression.
    */
-  private fun executeOp(opIndex: Int, skipOptional: Boolean): ts.Identifier? {
+  private fun executeOp(opIndex: Int, skipOptional: Boolean): Identifier? {
     val op = this.opQueue[opIndex]
     if (op == null) return op
-    if (op is ts.Identifier) return op
+    if (op is Identifier) return op
     if (op !is TcbOp) throw IllegalStateException(op.javaClass.toString())
 
     if (skipOptional && op.optional) {
@@ -2066,12 +2002,12 @@ class Scope(private val tcb: Context, private val parent: Scope? = null, private
   //}
 }
 
-data class TcbBoundAttribute(
+private data class TcbBoundAttribute(
   val attribute: `TmplAstBoundAttribute|TmplAstTextAttribute`,
   val inputs: List<TcbBoundAttributeInput>,
 )
 
-data class TcbBoundAttributeInput(
+private data class TcbBoundAttributeInput(
   val fieldName: String?,
   val required: Boolean,
   val transformType: JSType?,
@@ -2082,26 +2018,22 @@ data class TcbBoundAttributeInput(
 )
 
 /**
- * Process an `AST` expression and convert it into a `ts.Expression`, generating references to the
+ * Process an `AST` expression and convert it into a `Expression`, generating references to the
  * correct identifiers in the current scope.
  */
-fun tcbExpression(ast: JSExpression?, tcb: Context, scope: Scope): ts.Expression {
-  val translator = TcbExpressionTranslator(tcb, scope)
-  return translator.translate(ast)
+private fun tcbExpression(ast: JSExpression?, tcb: Context, scope: Scope): Expression = Expression {
+  TcbExpressionTranslator(tcb, scope, this).translate(ast)
 }
 
-open class TcbExpressionTranslator(private val tcb: Context, protected val scope: Scope) : Angular2RecursiveVisitor() {
+private open class TcbExpressionTranslator(private val tcb: Context, protected val scope: Scope, private val result: Expression.ExpressionBuilder) : Angular2RecursiveVisitor() {
 
-  private val result = ts.Expression()
-
-  open fun translate(ast: JSElement?): ts.Expression {
+  open fun translate(ast: JSElement?) {
     if (ast != null) {
       ast.accept(this)
     }
     else {
       result.append("undefined")
     }
-    return result
   }
 
   override fun visitElement(element: PsiElement) {
@@ -2121,7 +2053,7 @@ open class TcbExpressionTranslator(private val tcb: Context, protected val scope
           ?.takeIf { it.qualifier == null && it.referenceName == "\$any" } != null
         && node.argumentSize == 1) {
       result.append("(")
-      result.append(translate(node.arguments[0]))
+      translate(node.arguments[0])
       result.append(" as any)")
     }
     else
@@ -2221,13 +2153,13 @@ open class TcbExpressionTranslator(private val tcb: Context, protected val scope
     val arguments = pipe.arguments
     val pipeName = pipe.methodExpression?.asSafely<Angular2PipeReferenceExpression>()?.referenceName
     val pipeInfo = tcb.getPipeByName(pipeName)
-    val pipeCall: ts.Expression
+    val pipeCall: Expression
     if (pipeInfo == null) {
       // No pipe by that name exists in scope. Record this as an error.
       tcb.oobRecorder.missingPipe(tcb.id, pipe)
 
       // Use an 'any' value to at least allow the rest in the expression to be checked.
-      pipeCall = ts.Expression().append("(null as any)")
+      pipeCall = Expression("(null as any)")
     }
     // TODO block support
     //else if (
@@ -2238,7 +2170,7 @@ open class TcbExpressionTranslator(private val tcb: Context, protected val scope
     //  tcb.oobRecorder.deferredPipeUsedEagerly(this.tcb.id, ast)
     //
     //  // Use an 'any' value to at least allow the rest of the expression to be checked.
-    //  pipeCall = ts.Expression().append("(null as any)")
+    //  pipeCall = Expression().append("(null as any)")
     //}
     else {
       // Use a variable declared as the pipe's type.
@@ -2289,17 +2221,17 @@ open class TcbExpressionTranslator(private val tcb: Context, protected val scope
 
   /**
    * Attempts to resolve a bound target for a given expression, and translates it into the
-   * appropriate `ts.Expression` that represents the bound target. If no target is available,
+   * appropriate `Expression` that represents the bound target. If no target is available,
    * `null` is returned.
    */
-  protected open fun resolveTarget(ast: JSReferenceExpression): ts.Expression? {
+  protected open fun resolveTarget(ast: JSReferenceExpression): Expression? {
     val binding = this.tcb.boundTarget.getExpressionTarget(ast)
     if (binding == null) {
       return null
     }
 
     val expr = this.scope.resolve(binding)
-    return ts.Expression().withSourceSpan(ast.textRange) {
+    return Expression(ast.textRange) {
       append(expr)
     }
   }
@@ -2309,7 +2241,7 @@ open class TcbExpressionTranslator(private val tcb: Context, protected val scope
  * Call the type constructor of a directive instance on a given template node, inferring a type for
  * the directive instance from any bound inputs.
  */
-fun tcbCallTypeCtor(dir: Angular2Directive, tcb: Context, inputs: Collection<TcbDirectiveInput>): ts.Expression {
+private fun tcbCallTypeCtor(dir: Angular2Directive, tcb: Context, inputs: Collection<TcbDirectiveInput>): Expression {
   val typeCtor = tcb.env.typeCtorFor(dir)
 
   // Construct an array in `ts.PropertyAssignment`s for each in the directive"s inputs.
@@ -2322,21 +2254,22 @@ fun tcbCallTypeCtor(dir: Angular2Directive, tcb: Context, inputs: Collection<Tcb
         expr = unwrapWritableSignal(expr, tcb)
       }
 
-      ts.Expression().withSourceSpan(input.sourceSpan) {
+      Expression(input.sourceSpan) {
         append("\"${input.field}\": ")
         append(expr)
+
       }
     }
     else {
       // A type constructor is required to be called with all input properties, so any unset
       // inputs are simply assigned a value of type `any` to ignore them.
-      ts.Expression().append("\"${input.field}\": null as any")
+      Expression("\"${input.field}\": null as any")
     }
   }
 
   // Call the `ngTypeCtor` method on the directive class, with an object literal argument created
   // from the matched inputs.
-  return ts.Expression().apply {
+  return Expression {
     append(typeCtor)
     append("({")
     members.forEachIndexed { index, expr ->
@@ -2349,7 +2282,7 @@ fun tcbCallTypeCtor(dir: Angular2Directive, tcb: Context, inputs: Collection<Tcb
   }
 }
 
-fun getBoundAttributes(directive: Angular2Directive, node: `TmplAstElement|TmplAstTemplate`): List<TcbBoundAttribute> {
+private fun getBoundAttributes(directive: Angular2Directive, node: `TmplAstElement|TmplAstTemplate`): List<TcbBoundAttribute> {
   val boundInputs = mutableListOf<TcbBoundAttribute>()
 
   val directiveInputs = directive.inputs.groupBy { it.name }
@@ -2395,23 +2328,23 @@ fun getBoundAttributes(directive: Angular2Directive, node: `TmplAstElement|TmplA
 }
 
 /**
- * Translates the given attribute binding to a `ts.Expression`.
+ * Translates the given attribute binding to a `Expression`.
  */
-fun translateInput(attr: `TmplAstBoundAttribute|TmplAstTextAttribute`, tcb: Context, scope: Scope): ts.Expression {
+private fun translateInput(attr: `TmplAstBoundAttribute|TmplAstTextAttribute`, tcb: Context, scope: Scope): Expression {
   if (attr is TmplAstBoundAttribute) {
     // Produce an expression representing the value of the binding.
     return tcbExpression(attr.value, tcb, scope)
   }
   else {
     // For regular attributes with a static string value, use the represented string literal.
-    return ts.Expression().append("\"${(attr as TmplAstTextAttribute).value}\"")
+    return Expression("\"${(attr as TmplAstTextAttribute).value}\"")
   }
 }
 
 /**
  * Potentially widens the type in `expr` according to the type-checking configuration.
  */
-fun widenBinding(expr: ts.Expression, tcb: Context): ts.Expression {
+private fun widenBinding(expr: Expression, tcb: Context): Expression {
   if (!tcb.env.config.checkTypeOfInputBindings) {
     // If checking the type of bindings is disabled, cast the resulting expression to 'any'
     // before the assignment.
@@ -2427,7 +2360,7 @@ fun widenBinding(expr: ts.Expression, tcb: Context): ts.Expression {
     else {
       // If strict null checks are disabled, erase `null` and `undefined` from the type by
       // wrapping the expression in a non-null assertion.
-      return ts.Expression().append(expr).append("!")
+      return Expression { append(expr).append("!") }
     }
   }
   else {
@@ -2439,29 +2372,29 @@ fun widenBinding(expr: ts.Expression, tcb: Context): ts.Expression {
 /**
  * Wraps an expression in an `unwrapSignal` call which extracts the signal"s value.
  */
-fun unwrapWritableSignal(expression: ts.Expression, tcb: Context): ts.Expression {
+private fun unwrapWritableSignal(expression: Expression, tcb: Context): Expression {
   val unwrapRef = tcb.env.referenceExternalSymbol(
     R3Identifiers.unwrapWritableSignal.moduleName, R3Identifiers.unwrapWritableSignal.name)
-  return ts.Expression().append(unwrapRef).append("(").append(expression).append(")")
+  return Expression { append(unwrapRef).append("(").append(expression).append(")") }
 }
 
-sealed interface TcbDirectiveInput {
+private sealed interface TcbDirectiveInput {
   val field: String
 }
 
 /**
  * An input binding that corresponds with a field of a directive.
  */
-data class TcbDirectiveBoundInput(
+private data class TcbDirectiveBoundInput(
   /**
    * The name of a field on the directive that is set.
    */
   override val field: String,
 
   /**
-   * The `ts.Expression` corresponding with the input binding expression.
+   * The `Expression` corresponding with the input binding expression.
    */
-  val expression: ts.Expression,
+  val expression: Expression,
 
   /**
    * The source span of the full attribute binding.
@@ -2477,16 +2410,16 @@ data class TcbDirectiveBoundInput(
 /**
  * Indicates that a certain field of a directive does not have a corresponding input binding.
  */
-data class TcbDirectiveUnsetInput(
+private data class TcbDirectiveUnsetInput(
   /**
    * The name of a field on the directive for which no input binding is present.
    */
   override val field: String,
 ) : TcbDirectiveInput
 
-const val EVENT_PARAMETER = Angular2StandardSymbolsScopesProvider.`$EVENT`
+private const val EVENT_PARAMETER = Angular2StandardSymbolsScopesProvider.`$EVENT`
 
-enum class EventParamType {
+private enum class EventParamType {
   /* Generates code to infer the type of `$event` based on how the listener is registered. */
   Infer,
 
@@ -2505,8 +2438,8 @@ enum class EventParamType {
  * parameter will have an explicit `any` type, effectively disabling strict type checking of event
  * bindings. Alternatively, an explicit type can be passed for the `$event` parameter.
  */
-fun tcbCreateEventHandler(event: TmplAstBoundEvent, tcb: Context, scope: Scope,
-                          eventType: `EventParamType|JSType`): ts.Expression {
+private fun tcbCreateEventHandler(event: TmplAstBoundEvent, tcb: Context, scope: Scope,
+                                  eventType: `EventParamType|JSType`): Expression {
   val handlers = event.handler.map {
     tcbEventHandlerExpression(it, tcb, scope)
   }
@@ -2515,7 +2448,7 @@ fun tcbCreateEventHandler(event: TmplAstBoundEvent, tcb: Context, scope: Scope,
   // repeated within the handler function for their narrowing to be in effect within the handler.
   val guards = scope.guards()
 
-  return ts.Expression().apply {
+  return Expression {
     append("(").append(EVENT_PARAMETER)
     if (eventType == EventParamType.Infer) {
       // do nothing
@@ -2525,28 +2458,31 @@ fun tcbCreateEventHandler(event: TmplAstBoundEvent, tcb: Context, scope: Scope,
     }
     else {
       append(": ")
-        .append((eventType as JSType).getTypeText(JSType.TypeTextFormat.CODE))
+      append((eventType as JSType).getTypeText(JSType.TypeTextFormat.CODE))
     }
     append("): any => ")
 
     codeBlock {
       if (guards != null) {
-        // Wrap the body in an `if` statement containing all guards that have to be applied.
-        append("if (")
-        append(guards)
-        append(")")
-        codeBlock {
-          handlers.forEach {
-            append(it)
-            append(";")
-            newLine()
+        appendStatement {
+          // Wrap the body in an `if` statement containing all guards that have to be applied.
+          append("if (")
+          append(guards)
+          append(")")
+          codeBlock {
+            handlers.forEach {
+              appendStatement {
+                append(it).append(";")
+              }
+            }
           }
         }
       }
       else {
         handlers.forEach {
-          append(it)
-          newLine()
+          appendStatement {
+            append(it).append(";")
+          }
         }
       }
     }
@@ -2555,15 +2491,14 @@ fun tcbCreateEventHandler(event: TmplAstBoundEvent, tcb: Context, scope: Scope,
 
 /**
  * Similar to `tcbExpression`, this function converts the provided `AST` expression into a
- * `ts.Expression`, with special handling of the `$event` variable that can be used within event
+ * `Expression`, with special handling of the `$event` variable that can be used within event
  * bindings.
  */
-fun tcbEventHandlerExpression(ast: JSElement?, tcb: Context, scope: Scope): ts.Expression {
-  val translator = TcbEventHandlerTranslator(tcb, scope)
-  return translator.translate(ast)
+private fun tcbEventHandlerExpression(ast: JSElement?, tcb: Context, scope: Scope): Expression = Expression {
+  TcbEventHandlerTranslator(tcb, scope, this).translate(ast)
 }
 
-fun isSplitTwoWayBinding(inputName: String, output: TmplAstBoundEvent, inputs: Map<String, TmplAstBoundAttribute>, tcb: Context): Boolean {
+private fun isSplitTwoWayBinding(inputName: String, output: TmplAstBoundEvent, inputs: Map<String, TmplAstBoundAttribute>, tcb: Context): Boolean {
   val input = inputs[inputName]
   if (input == null || input.sourceSpan != output.sourceSpan) {
     return false
@@ -2587,14 +2522,15 @@ fun isSplitTwoWayBinding(inputName: String, output: TmplAstBoundEvent, inputs: M
   return false
 }
 
-class TcbEventHandlerTranslator(tcb: Context, scope: Scope) : TcbExpressionTranslator(tcb, scope) {
-  override fun resolveTarget(ast: JSReferenceExpression): ts.Expression? {
+private class TcbEventHandlerTranslator(tcb: Context, scope: Scope, result: Expression.ExpressionBuilder)
+  : TcbExpressionTranslator(tcb, scope, result) {
+  override fun resolveTarget(ast: JSReferenceExpression): Expression? {
     // Recognize a property read on the implicit receiver corresponding with the event parameter
     // that is available in event bindings. Since this variable is a parameter of the handler
     // function that the converted expression becomes a child of, just create a reference to the
     // parameter by its name.
     if (ast.qualifier == null && ast.referenceName == EVENT_PARAMETER) {
-      return ts.Expression().append(EVENT_PARAMETER, ast.textRange)
+      return Expression(EVENT_PARAMETER, ast.textRange)
     }
     return super.resolveTarget(ast)
   }
@@ -2615,7 +2551,7 @@ class TcbEventHandlerTranslator(tcb: Context, scope: Scope) : TcbExpressionTrans
 //    }
 //  }
 //
-//  override fun resolve(ast: AST): ts.Expression? {
+//  override fun resolve(ast: AST): Expression? {
 //    if (ast is PropertyRead && ast.receiver is ImplicitReceiver) {
 //      val target = this.tcb.boundTarget.getExpressionTarget(ast)
 //
@@ -2628,14 +2564,14 @@ class TcbEventHandlerTranslator(tcb: Context, scope: Scope) : TcbExpressionTrans
 //  }
 //}
 
-fun tsCastToAny(expr: ts.Expression): ts.Expression {
+private fun tsCastToAny(expr: Expression): Expression {
   // Wrap `expr` in parentheses if needed (see `SAFE_TO_CAST_WITHOUT_PARENS` above).
   //if (!SAFE_TO_CAST_WITHOUT_PARENS.has(expr.kind)) {
   //  expr = ts.factory.createParenthesizedExpression(expr)
   //}
 
   // The outer expression is always wrapped in parentheses.
-  return ts.Expression().apply {
+  return Expression {
     append("((")
     append(expr)
     append(") as any)")
@@ -2650,21 +2586,23 @@ fun tsCastToAny(expr: ts.Expression): ts.Expression {
  * Unlike with `tsCreateVariable`, the type of the variable is explicitly specified.
  */
 
-fun tsDeclareVariable(id: ts.Identifier, type: ts.Expression): ts.Statement {
+private fun tsDeclareVariable(id: Identifier, type: Expression): Statement {
   // When we create a variable like `var _t1: boolean = null!`, TypeScript actually infers `_t1`
   // to be `never`, instead of a `boolean`. To work around it, we cast the value
   // in the initializer, e.g. `var _t1 = null! as boolean;`.
-  return ts.Statement(ts.Expression().also {
-    it.append("var ")
-    it.append(id)
-    it.append(" = null! as ")
-    it.append(type)
-    it.append(";")
-  })
+  return Statement {
+    append("var ")
+    append(id, id.sourceSpan)
+    append(" = null! as ")
+    append(type)
+    append(";")
+  }
 }
 
-fun tsDeclareVariable(id: ts.Identifier, type: JSType): ts.Statement {
-  return tsDeclareVariable(id, ts.Expression().append(type.getTypeText(JSType.TypeTextFormat.CODE)))
+internal fun tsDeclareVariable(id: Identifier, type: JSType): Statement {
+  return tsDeclareVariable(id, Expression {
+    append(type.getTypeText(JSType.TypeTextFormat.CODE))
+  })
 }
 
 /**
@@ -2676,8 +2614,10 @@ fun tsDeclareVariable(id: ts.Identifier, type: JSType): ts.Statement {
  * @param typeName The `EntityName` of the Directive where the static coerced input is defined.
  * @param coercedInputName The field name of the coerced input.
  */
-fun tsCreateTypeQueryForCoercedInput(typeName: String, coercedInputName: String): ts.Expression {
-  return ts.Expression().append("typeof $typeName.$NG_ACCEPT_INPUT_TYPE_PREFIX${coercedInputName}")
+private fun tsCreateTypeQueryForCoercedInput(typeName: String, coercedInputName: String): Expression {
+  return Expression {
+    append("typeof $typeName.$NG_ACCEPT_INPUT_TYPE_PREFIX${coercedInputName}")
+  }
 }
 
 /**
@@ -2686,18 +2626,14 @@ fun tsCreateTypeQueryForCoercedInput(typeName: String, coercedInputName: String)
  * Unlike with `tsDeclareVariable`, the type of the variable is inferred from the initializer
  * expression.
  */
-fun tsCreateVariable(id: ts.Identifier, initializer: ts.Expression): ts.Statement {
-  return tsCreateVariable(ts.Expression().append(id), initializer)
-}
-
-fun tsCreateVariable(id: ts.Expression, initializer: ts.Expression): ts.Statement {
-  return ts.Statement(ts.Expression().apply {
+private fun tsCreateVariable(id: Identifier, initializer: Expression): Statement {
+  return Statement {
     append("var ")
-    append(id)
+    append(id, id.sourceSpan)
     append(" = ")
     append(initializer)
     append(";")
-  })
+  }
 }
 
 enum class ExpressionIdentifier {
