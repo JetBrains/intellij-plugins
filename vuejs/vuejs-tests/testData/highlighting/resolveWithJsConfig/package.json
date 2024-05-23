@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "vexip-ui": "^2.2.24",
+    "vue": "^3.4.14"
+  }
+}
